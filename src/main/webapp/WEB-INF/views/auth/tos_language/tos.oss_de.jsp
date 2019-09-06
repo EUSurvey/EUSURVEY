@@ -1,0 +1,1 @@
+<h2>Bitte geben Sie hier Ihre Nutzungsbedingungen ein.</h2>

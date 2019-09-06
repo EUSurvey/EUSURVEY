@@ -1,0 +1,7 @@
+body, td, pre {
+font-size: 13px;
+}
+
+p {
+	border-bottom: 1px solid #ddd;
+}

@@ -1,0 +1,12 @@
+.scrollablediv {
+	max-height: 150px;
+	overflow: auto;
+}		
+img {
+	max-width: 220px;
+}		
+#usefullinkstable input, #backgrounddocumentstable input {
+	width: 180px;
+	margin-bottom: 0px;
+	border: 1px solid #bbb;
+}	

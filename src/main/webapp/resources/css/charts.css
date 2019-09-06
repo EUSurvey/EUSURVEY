@@ -1,0 +1,32 @@
+.questiontitle {
+	font-weight: bold;
+	padding-top: 15px;
+	text-indent: 0px;
+}
+
+.sectiontitle {
+	color: #004F98 !important;
+	font-size: 20px;
+	margin-top: 15px;
+	margin-bottom: 10px;
+	border-bottom: 2px solid #004F98;
+	line-height: normal;
+}
+
+.section2 {
+	font-size: 18px !important;
+	border-bottom: 0px;
+	margin-bottom: 5px;
+}
+
+.section3 {
+	font-size: 16px !important;
+	border-bottom: 0px;
+	margin-bottom: 5px;
+}
+
+.section4, .section5, .section6, .section7 {
+	font-size: 14px !important;
+	border-bottom: 0px;
+	margin-bottom: 5px;
+}

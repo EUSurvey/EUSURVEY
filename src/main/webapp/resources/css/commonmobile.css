@@ -1,0 +1,6 @@
+.message-error, .message-info, .message-success, .message-success-right, .message-error-right, .message-info-right {
+	width: 100% !important;
+	left: 0 !important;
+	margin-left: 0px !important;
+	top: 0px !important;
+}

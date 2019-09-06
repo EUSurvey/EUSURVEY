@@ -1,0 +1,276 @@
+body {
+	color: #000;
+	background-color: #fff;
+}
+
+.survey-element {
+	margin: 5px; 
+	margin-top: 25px;
+	max-width: 980px;
+	overflow-x: auto;
+}
+
+#runner-content a {
+	font-size: 16px !important;
+	color: #0026FF;
+}
+
+#runner-content li.active a {
+	color: #FFF;
+}
+
+a.btn-info {
+	color: #000 !important;
+}
+
+#runner-content .linkstitle {
+	color: #000;
+	font-size: 19px;
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+#runner-content .shortname {
+	color: #A6A6A6;
+	font-size: 16px;
+	font-weight: normal;
+}
+
+#runner-content .surveytitle {
+/* 	color: #787878; */
+	font-size: 24px;
+	font-weight: bold;
+	line-height: 24px;
+}
+
+#runner-content .sectiontitle {
+	color: #000;
+	font-size: 20px;
+	margin-bottom: 5px;
+	margin-top: 15px;
+}
+
+#runner-content .questiontitle {
+	color: #000;
+	font-size: 16px;
+	font-weight: normal;
+	margin-bottom: 7px;
+	margin-top: 14px;
+}
+
+#runner-content .answertext {
+	color: #000;
+	margin-left: 5px;
+	font-weight: normal;
+}
+
+#runner-content .questionhelp {
+	font-size: 15px;
+}
+
+#runner-content .tab, #runner-content .selected-tab, #runner-content .form-tab {
+	float: left;
+	padding: 7px;
+	border-left: 2px solid #999;
+	border-right: 2px solid #999;
+	border-top: 2px solid #999;
+	font-size: 13pt;
+	margin: 0px;
+	margin-left: 5px;
+}
+
+#runner-content .info-box {
+	margin-bottom: 20px;
+	padding: 10px;
+	font-size: 16px;
+}
+
+#runner-content .tab {
+	background-color: #f5f5f5;
+	border-bottom: 1px solid #999;
+}
+
+#runner-content .form-tab {
+	background-color: rgb(212, 230, 247);
+	color: rgb(45, 45, 45);
+}
+
+#runner-content .selected-tab {
+	background-color: #fff;
+	border-bottom: 1px solid #fff;
+}
+
+#runner-content .visiblelink {
+	text-decoration: underline;
+}
+
+#runner-content .matrix {}
+#runner-content .matrixtable td {padding: 5px; padding-left: 10px; padding-right: 10px; border: 1px solid #bbb; min-width: 10px; width: auto;}
+#runner-content .matrix-cell {text-align: center;}
+
+#runner-content .tabletable td {border: 1px solid #bbb; padding: 0 4px 0 4px; min-width: 50px; font-size: 16px;}
+
+#runner-content .table-label {
+	font-weight: bold;
+}
+
+ .tabletable textarea {
+    width: 100% !important;
+    /* height: 100% !important; */
+    margin: 0px !important;
+    display: block;
+    padding: 0px;
+    border: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.mandatory {
+	color: #a20000;
+}
+
+.optional {
+	visibility: hidden;
+}
+
+.numbering {
+    margin-right: 5px;
+}
+
+#runner-content .validation-error {
+	color: #f00; font-weight: bold;
+}
+
+#runner-content .limits {
+	color: #000;
+}
+
+#runner-content .right-area {
+float: right;
+border-left: 1px solid #ddd;
+padding-left: 20px;
+padding-right: 30px;
+margin-bottom: 30px;
+margin-left: 25px;
+width: 270px;
+overflow: visible;
+display: block;
+background-color: #fff;
+}
+
+.page {
+text-align: left;
+font-size: 16px;
+}
+
+#runner-content .freetext, .number, .date, .matrixtable, .tabletable, .dataTable, .email {
+	margin-left: 20px;
+}
+
+#runner-content .freetext {
+	font-size: 16px;
+}
+
+#runner-content .answertext {
+	font-size: 16px;
+}
+
+#runner-content legend {
+	display: none;
+}
+
+#runner-content label {
+	display: inline;
+}
+
+#runner-content label.hideme {
+	display: none;
+}
+
+#runner-content .handsontable td {
+	font-size: 16px !important;
+	color: #000 !important;
+}
+
+#runner-content .handsontable table {
+	table-layout: auto !important;	
+}
+
+#runner-content input[type="text"].freetext {
+    width: 550px;
+   	width: 645px;
+}
+
+#runner-content textarea.freetext {
+	width: 550px;
+ 	width: 645px;
+}
+
+#runner-content .number {
+	width: 215px;
+}
+
+#runner-content input.regex, textarea.regex {
+	width: 430px !important;
+}
+
+#runner-content input.email {
+	width: 402px !important;
+}
+
+#runner-content .multiple-choice {
+	padding: 5px !important;
+	margin: 0px;
+}
+
+#runner-content .single-choice {
+	padding: 5px !important;
+	margin: 0px;
+}
+
+#runner-content select.single-choice {
+	height: auto;
+	max-height: auto;	
+}
+
+#runner-content .questiontitle td {
+    vertical-align: top;
+}
+
+.right-area {
+	float: left; 
+	padding-left: 20px; 
+	padding-right: 30px;
+	padding-bottom: 30px;
+	margin-left: 25px;
+	width: 270px;
+	overflow: visible;
+	display: block;
+	background-color: #fff;
+}
+
+.left-area {
+ 	float: left;  
+	padding: 20px; 
+ 	width: 980px;
+	overflow: visible;
+	display: block;
+	background-color: #fff;
+}
+
+.footer {
+	Color: #000;
+}
+
+div#ecDisclaimer p {
+	color: #000;
+}
+
+.matrixtable tr:first-child {
+    text-align: center;
+}
+
+.tabletable tr:first-child {
+    text-align: center;
+}

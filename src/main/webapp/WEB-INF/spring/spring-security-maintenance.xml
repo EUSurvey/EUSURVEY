@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+     	 http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+   		http://www.springframework.org/schema/security 
+   		http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+	<!-- This is where we configure Spring-Security -->
+	<security:http auto-config="false" use-expressions="true"
+		access-denied-page="/auth/denied" entry-point-ref="authenticationEntryPoint">
+
+		<!--  The user is always redirected to the maintenance page since authentication is impossible.  -->
+		<security:intercept-url pattern="/info/maintenance" access="permitAll" />
+		<security:intercept-url pattern="/resources/css/**" access="permitAll" />
+		<security:intercept-url pattern="/resources/images/**" access="permitAll" />
+		<security:intercept-url pattern="/**" access="hasRole('ROLE_IMPOSSIBLE')" />
+
+		<security:logout invalidate-session="false" success-handler-ref="myLogoutSuccessHandler"
+			logout-url="/j_spring_security_logout" />
+
+		<security:custom-filter ref="blacklistFilter"
+			before="FILTER_SECURITY_INTERCEPTOR" />
+		<security:custom-filter ref="authenticationFilter"
+			position="FORM_LOGIN_FILTER" />
+		
+	</security:http>
+
+	<!-- Custom filter to deny unwanted users even though registered -->
+	<bean id="blacklistFilter" class="com.ec.survey.security.BlacklistFilter" />
+
+	<!-- Custom filter for username and password. The real customization is 
+		done in the customAthenticationManager -->
+	<bean id="authenticationFilter"
+		class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"
+		p:authenticationManager-ref="customAuthenticationManager"
+		p:authenticationFailureHandler-ref="customAuthenticationFailureHandler"
+		p:authenticationSuccessHandler-ref="customAuthenticationSuccessHandler" />
+
+	<!-- Custom authentication manager. In order to authenticate, username and 
+		password must not be the same -->
+	<bean id="customAuthenticationManager" class="com.ec.survey.security.CustomAuthenticationManager" />
+
+	<!-- We just actually need to set the default failure url here -->
+	<bean id="customAuthenticationFailureHandler"
+		class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler"
+		p:defaultFailureUrl="/auth/login?error=true" />
+
+	<!-- We just actually need to set the default target url here -->
+	<bean id="customAuthenticationSuccessHandler"
+		class="com.ec.survey.security.CustomAuthenticationSuccessHandler"
+		p:defaultTargetUrl="/dashboard" />
+
+	<!-- The AuthenticationEntryPoint is responsible for redirecting the user 
+		to a particular page, like a login page, whenever the server sends back a 
+		response requiring authentication -->
+	<!-- See Spring-Security Reference 5.4.1 for more info -->
+	<bean id="authenticationEntryPoint"	class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<constructor-arg value="/info/maintenance" />
+	</bean>
+
+	<!-- The tag below has no use but Spring Security needs it to autowire the 
+		parent property of org.springframework.security.authentication.ProviderManager. 
+		Otherwise we get an error A probable bug. This is still under investigation -->
+	<security:authentication-manager />
+</beans>

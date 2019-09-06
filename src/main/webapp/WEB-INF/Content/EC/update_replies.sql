@@ -1,0 +1,36 @@
+DELIMITER $$
+
+CREATE PROCEDURE `update_replies`()
+BEGIN
+	DECLARE done INT DEFAULT FALSE;
+	DECLARE count INT;	
+	DECLARE s_id INT;
+	DECLARE s_isdraft INT;
+	DECLARE s_name VARCHAR(255);
+	DECLARE cur1 CURSOR FOR SELECT SURVEY_ID, SURVEYNAME, ISDRAFT FROM SURVEYS;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+	OPEN cur1;
+
+	read_loop: LOOP
+
+		FETCH cur1 INTO s_id,s_name,s_isdraft;
+		IF done THEN
+		  LEAVE read_loop;
+		END IF;
+		
+		SELECT count(ANSWERS_SET.ANSWER_SET_ID) FROM ANSWERS_SET 
+			WHERE ANSWERS_SET.SURVEY_ID = s_id AND ANSWERS_SET.ISDRAFT = 0 INTO count;
+		
+		UPDATE SURVEYS SET numberOfAnswerSets = count WHERE SURVEY_ID = s_id;
+		
+		IF s_isdraft = 0 THEN			
+
+		UPDATE SURVEYS SET numberOfAnswerSetsPublished = count WHERE SURVEYNAME = s_name AND ISDRAFT = 1;
+		
+		END IF;
+		
+	END LOOP;
+
+	CLOSE cur1;
+END

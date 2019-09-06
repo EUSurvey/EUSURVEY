@@ -1,0 +1,29 @@
+/*
+loaded after bootstrap.css
+Use to override some classes coming from bootstrap
+*/
+
+.header .dropdown
+{
+	display: inline-block;
+}
+
+.header  .dropdown-menu
+{
+	background-color: #004F98;
+    max-height: none;
+    border: 0px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.header .dropdown-menu li a:not(.pagebutton)
+{
+	color: #CDE8FF;
+}
+
+.header .dropdown-toggle:focus, .dropdown-toggle:active
+{
+	color: #CDE8FF;
+	text-decoration:none;
+}

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+     	 http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+   		http://www.springframework.org/schema/security 
+   		http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+	<!-- This is where we configure Spring-Security -->
+	<security:http auto-config="false" use-expressions="true"
+		entry-point-ref="authenticationEntryPoint">
+		
+		<security:access-denied-handler error-page="/auth/denied"/>
+		
+		<!-- <security:form-login login-page="/auth/login"
+					username-parameter="j_username" 
+					password-parameter="j_password" 
+					login-processing-url="/j_spring_security_check" 
+					authentication-failure-url="/auth/login?login_error=1" 
+		/> -->
+		
+		<security:csrf request-matcher-ref="csrfSecurityRequestMatcher" />
+		<security:headers>
+			<security:frame-options policy="SAMEORIGIN"/>
+		</security:headers>
+		
+		<security:session-management session-fixation-protection="newSession"/>
+
+		<security:intercept-url pattern="/"	access="permitAll" />
+		<security:intercept-url pattern="/captcha.html"	access="permitAll" />
+		<security:intercept-url pattern="/editcontribution/**"	access="permitAll" />
+		<security:intercept-url pattern="/preparecontribution/**"	access="permitAll" />
+		<security:intercept-url pattern="/preparequizresults/**"	access="permitAll" />
+		<security:intercept-url pattern="/graphics/**"	access="permitAll" />
+		<security:intercept-url pattern="/printcontribution/**"	access="permitAll" />
+		<security:intercept-url pattern="/preparepublishedcontribution/**"	access="permitAll" />
+		<security:intercept-url pattern="/*/management/preparecharts/**"	access="permitAll" />
+		<security:intercept-url pattern="/*/management/preparestatistics/**"	access="permitAll" />
+		<security:intercept-url pattern="/*/management/preparestatisticsquiz/**"	access="permitAll" />
+		<security:intercept-url pattern="/*/management/statisticsJSON/**"	access="permitAll" />
+		<security:intercept-url pattern="/*/management/resultsJSON"	access="permitAll" />
+		<security:intercept-url pattern="/webservice/**" access="permitAll" />
+		<security:intercept-url pattern="/worker/**" access="${workerpermission}" />
+		<security:intercept-url pattern="/pdf/**"	access="permitAll" />
+		<security:intercept-url pattern="/errors/**"	access="permitAll" />
+		<security:intercept-url pattern="/files/**"	access="permitAll" />
+		<security:intercept-url pattern="/home/**"	access="permitAll" />
+		<security:intercept-url pattern="/validate/**"	access="permitAll" />
+		<security:intercept-url pattern="/validateNewEmail/**"	access="permitAll" />		
+		<security:intercept-url pattern="/runner/**"	access="permitAll" />
+		<security:intercept-url pattern="/runner2/**"	access="permitAll" />
+		<security:intercept-url pattern="/publication/**"	access="permitAll" />
+		<security:intercept-url pattern="/auth/**" access="permitAll" />
+		<security:intercept-url pattern="/resources/**" access="permitAll" />
+		<security:intercept-url pattern="/addressbook/**" access="hasAnyRole('ROLE_CONTACT_MANAGER','ROLE_CONTACT_ADMIN')" />
+		<security:intercept-url pattern="/administration" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN','ROLE_RIGHT_MANAGER')" />
+		<security:intercept-url pattern="/monitoring" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
+		<security:intercept-url pattern="/testdata/**" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
+		<security:intercept-url pattern="/administration/users"	access="hasAnyRole('ROLE_USER_ADMIN')" />
+		<security:intercept-url pattern="/administration/users/**"	access="hasAnyRole('ROLE_USER_ADMIN')" />
+		<security:intercept-url pattern="/administration/roles"	access="hasAnyRole('ROLE_RIGHT_ADMIN','ROLE_ROLE_MANAGER')" />
+		<security:intercept-url pattern="/administration/languages" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
+		<security:intercept-url pattern="/administration/departments" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
+		<security:intercept-url pattern="/administration/synchronizeLDAP" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
+		<security:intercept-url pattern="/administration/synchronizeDomains" access="hasAnyRole('ROLE_USER_ADMIN','ROLE_RIGHT_ADMIN')" />
+		<security:intercept-url pattern="/administration/checkPasswordNotWeak" access="permitAll" />
+		<security:intercept-url pattern="/administration/system/complexity" access="permitAll" />
+		<security:intercept-url pattern="/administration/system/message" access="permitAll" />
+		<security:intercept-url pattern="/administration/system/deletemessage" access="permitAll" />
+		<security:intercept-url pattern="/administration/system/messages" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/administration/system/messages/runner" access="permitAll" />
+		<security:intercept-url pattern="/administration/system/**" access="hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_SYSTEM_MANAGER')" />
+		<security:intercept-url pattern="/administration/publicsurveys/**" access="hasRole('ROLE_FORM_ADMIN')" />
+		<security:intercept-url pattern="/administration/**" access="hasAnyRole('ROLE_SYSTEM_ADMIN', 'ROLE_SYSTEM_MANAGER')" />
+		<security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/*/management/*" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/*/management/**" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/utils/**" access="permitAll" />
+
+		<security:logout invalidate-session="false" success-handler-ref="myLogoutSuccessHandler"
+			logout-url="/j_spring_security_logout" />
+
+		<security:custom-filter ref="blacklistFilter"
+			before="FILTER_SECURITY_INTERCEPTOR" />
+		
+		<!-- INITIAL FILTER -->
+ 		<security:custom-filter ref="authenticationFilter"
+			position="FORM_LOGIN_FILTER" /> 
+		
+	</security:http>
+
+	<!-- Custom filter to deny unwanted users even though registered -->
+	<bean id="blacklistFilter" class="com.ec.survey.security.BlacklistFilter" />
+
+	<!-- Custom filter for username and password. The real customization is 
+		done in the customAthenticationManager -->
+	<bean id="authenticationFilter"
+		class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"
+		p:postOnly="false"
+		p:authenticationManager-ref="customAuthenticationManager"
+		p:authenticationFailureHandler-ref="customAuthenticationFailureHandler"
+		p:authenticationSuccessHandler-ref="customAuthenticationSuccessHandler">
+			<property name="sessionAuthenticationStrategy">
+				<bean class="org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy">
+					<property name="migrateSessionAttributes" value="false"/>
+					<property name="alwaysCreateSession" value="true"/>
+				</bean>
+			</property>
+		</bean>
+
+  	<!-- JASIG CAS FILTER -->
+
+	<!-- END JASIG CAS FILTER -->
+
+	<!-- Custom authentication manager. In order to authenticate, username and 
+		password must not be the same -->
+	<bean id="customAuthenticationManager" class="com.ec.survey.security.CustomAuthenticationManager" />
+		
+	<bean id="customAuthenticationFailureHandler" 
+	    class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+	    <property name="exceptionMappings">
+	        <props>
+	            <prop key="com.ec.survey.tools.BadSurveyCredentialsException">
+	                    /errors/403.html
+	            </prop>
+	             <prop key="org.springframework.security.authentication.BadCredentialsException">
+	                    /auth/login?error=true
+	            </prop>
+	            <prop key="org.springframework.security.authentication.LockedException">
+	                    /errors/403.html
+	            </prop>	           
+	        </props>
+	    </property>
+	</bean>
+
+	<!-- We just actually need to set the default target url here -->
+	<bean id="customAuthenticationSuccessHandler"
+		class="com.ec.survey.security.CustomAuthenticationSuccessHandler"
+		p:defaultTargetUrl="/dashboard" />
+
+	<!-- The AuthenticationEntryPoint is responsible for redirecting the user 
+		to a particular page, like a login page, whenever the server sends back a 
+		response requiring authentication -->
+	<!-- See Spring-Security Reference 5.4.1 for more info -->
+	<bean id="authenticationEntryPoint"	class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<constructor-arg value="/auth/login" />		
+	</bean>
+	
+	<bean id="csrfSecurityRequestMatcher" class="com.ec.survey.security.CsrfSecurityRequestMatcher" />
+
+	<!-- The tag below has no use but Spring Security needs it to autowire the 
+		parent property of org.springframework.security.authentication.ProviderManager. 
+		Otherwise we get an error A probable bug. This is still under investigation -->
+	<security:authentication-manager />
+</beans>

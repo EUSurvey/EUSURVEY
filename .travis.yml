@@ -1,0 +1,29 @@
+language: java
+dist: trusty
+jdk: oraclejdk8
+cache: false
+env:
+  global:
+  - EX_GLOBAL=${TRAVIS_BUILD_DIR}
+services:
+- mysql
+addons:
+  sonarcloud:
+    organization: eusurvey
+    token:
+      secure: "$SONAR_TOKEN"
+before_install:
+- mysql -e "CREATE DATABASE eusurveydb;"
+- mysql -e "CREATE USER 'eusurveyuser'@'localhost' IDENTIFIED BY 'eusurveyuser';"
+- mysql -e "GRANT ALL PRIVILEGES ON eusurveydb.* TO 'eusurveyuser'@'localhost';"
+- mysql -e "GRANT EVENT ON eusurveydb.* TO 'eusurveyuser'@'localhost' IDENTIFIED BY 'eusurveyuser';"
+- mysql -e "SET GLOBAL event_scheduler = ON;"
+jobs:
+  include:
+  - stage: Tests
+    script:
+    - mvn clean test
+    - sonar-scanner
+  - stage: Deployment
+    script:
+    - mvn clean install -Dmaven.test.skip=true

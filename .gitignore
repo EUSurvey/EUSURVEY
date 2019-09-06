@@ -1,0 +1,52 @@
+#### ENCRYPTED FILES ####
+# encrypted with travis
+src/main/webapp/WEB-INF/Content/EC/departmentNumbers.txt
+src/main/webapp/WEB-INF/Content/EC/mailtemplateecofficial.html
+
+#### CONFIGURATION FILES ####
+/src/main/config/*
+!/src/main/config/oss
+!/src/main/config/oss/*
+
+#### TARGET AND GENERATED FILES ####
+/target/
+src/test/resources/WEB-INF/spring
+src/test/resources/WEB-INF/classes/ehcache.xml
+src/test/resources/META-INF/context.xml
+src/test/resources/log4j.xml
+src/test/resources/WEB-INF/spring.properties
+src/main/webapp/WEB-INF/views/version.txt
+src/main/webapp/WEB-INF/views/versionfooter.txt
+
+
+#### VS CODE ###
+.vscode
+
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### Eclipse ###
+.settings/
+.classpath
+.project

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Appenders -->
+<!-- 	<appender name="console" class="org.apache.log4j.ConsoleAppender"> -->
+<!-- 		<param name="Target" value="System.out" /> -->
+<!-- 		<layout class="org.apache.log4j.PatternLayout"> -->
+<!-- 			<param name="ConversionPattern" value="%-5p: %c - %m%n" /> -->
+<!-- 		</layout> -->
+<!-- 	</appender> -->
+	
+	<appender name="info" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/esurvey-info.log" />
+		<param name="MaxFileSize" value="4096KB" />
+		<param name="MaxBackupIndex" value="20" />
+		<param name="Append" value="false" />
+		<param name="Threshold" value="Info" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}-%-4r [%t] (%F:%L) %-5p %c %x - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="debug" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/esurvey-debug.log" />
+		<param name="MaxFileSize" value="4096KB" />
+		<param name="MaxBackupIndex" value="20" />
+		<param name="Append" value="false" />
+		<param name="Threshold" value="Debug" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}-%-4r [%t] (%F:%L) %-5p %c %x - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="error" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/esurvey-error.log" />
+		<param name="MaxFileSize" value="5120KB" />
+		<param name="MaxBackupIndex" value="20" />
+		<param name="Append" value="false" />
+		<param name="Threshold" value="Error" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}-%-4r [%t] (%F:%L) %-5p %c %x - %m%n" />
+		</layout>
+	</appender>
+	
+	<category name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper">
+        <priority value="off"/>
+    </category>
+
+	<!-- Application Loggers -->
+	<logger name="com.ec.survey">
+		<level value="info" />
+		<appender-ref ref="error" />
+		<appender-ref ref="info" />
+	</logger>
+	
+	<!-- 3rdparty Loggers -->
+	<logger name="org.springframework.core">
+		<level value="warn" />
+		<appender-ref ref="error" />
+		<appender-ref ref="info" />
+	</logger>
+
+	<logger name="org.springframework.beans">
+		<level value="warn" />
+		<appender-ref ref="error" />
+		<appender-ref ref="info" />
+	</logger>
+
+	<logger name="org.springframework.context">
+		<level value="warn" />
+		<appender-ref ref="error" />
+		<appender-ref ref="info" />
+	</logger>
+
+	<logger name="org.springframework.web">
+		<level value="warn" />
+		<appender-ref ref="error" />
+		<appender-ref ref="info" />
+	</logger>
+	
+	<logger name="net.bull.javamelody">
+		<level value="warn" />
+		<appender-ref ref="error" />
+		<appender-ref ref="info" />
+	</logger>
+	
+	<!-- http requests log  -->
+     <logger name="net.bull.javamelody.MonitoringFilter">
+             <level value="warn" />
+             <appender-ref ref="error" />
+             <appender-ref ref="info" />
+     </logger>
+
+  	<logger name="org.hibernate">
+        <level value="warn" />     
+        <appender-ref ref="info" />   
+    	<appender-ref ref="error" />
+    </logger>
+
+ 	<logger name="org.hibernate.SQL">
+        <level value="warn" />
+        <appender-ref ref="info" />
+    	<appender-ref ref="error" />
+    </logger>
+
+ 	<logger name="org.hibernate.tool.hbm2ddl">
+ 		<level value="warn"/>
+ 		<appender-ref ref="info" />
+ 		<appender-ref ref="error" />
+ 	</logger>
+ 	
+	<!-- Root Logger -->
+	<root>
+		<priority value="warn" />
+<!-- 		<appender-ref ref="console" /> 
+		<appender-ref ref="info" />
+		<appender-ref ref="error" />-->
+	</root>
+	
+
+</log4j:configuration>

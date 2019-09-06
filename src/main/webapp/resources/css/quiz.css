@@ -1,0 +1,55 @@
+.scoretable {
+	margin-top: 25px;
+	margin-bottom: 30px;
+}
+
+.scoretable td {
+	padding: 5px;
+	word-wrap: break-word;
+}
+
+.quizstartdiv {
+	width: 500px;
+	min-height: 400px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px;
+}
+
+.quizresultsdiv {
+	max-width: 800px;
+	min-height: 400px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px;
+}
+
+.score {
+	color: #777;
+}
+
+.scorerow td {
+	padding: 10px;
+	vertical-align: top;
+}
+
+.quizquestion {
+	font-weight: bold;
+}
+
+.quizfeedback {
+	color: #999;
+	padding-left: 20px;
+	word-wrap: break-word;
+}
+
+.quizsectionresults td, .quizsectionresults th {
+	padding: 5px;
+	border: 1px solid #ccc;
+}
+
+.noprogressbackground {
+	background-color: transparent;
+    box-shadow: unset;
+    -webkit-box-shadow: unset;
+}

@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.ec</groupId>
+	<artifactId>eusurvey</artifactId>
+	<name>eusurvey</name>
+	<packaging>war</packaging>
+	<version>1.4.3</version>
+	<properties>
+		<java-version>1.8</java-version>
+		<org.springframework-version>4.2.5.RELEASE</org.springframework-version>
+		<org.aspectj-version>1.8.8</org.aspectj-version>
+		<org.slf4j-version>1.5.10</org.slf4j-version>
+		<version.number>444</version.number>
+		<svnName>1.1.9</svnName>
+		<camel.version>2.17.1</camel.version>
+		<svn.buildNumber.doUpdate>false</svn.buildNumber.doUpdate>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<sonar.version>3.5.0.1254</sonar.version>
+		<jacoco.version>0.7.9</jacoco.version>
+		<environment>oss</environment>
+	</properties>
+	<scm>
+		<connection>scm:git:https://github.com/EUSurvey/EUsurvey.git</connection>
+		<tag>HEAD</tag>
+		<url>https://github.com/EUSurvey/EUsurvey</url>
+	</scm>
+	<dependencies>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>${jacoco.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.sonarsource.scanner.maven</groupId>
+			<artifactId>sonar-maven-plugin</artifactId>
+			<version>${sonar.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.5</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20180130</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.19</version>
+		</dependency>
+		<dependency>
+			<groupId>com.octo.captcha</groupId>
+			<artifactId>jcaptcha</artifactId>
+			<version>1.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>imaging</artifactId>
+					<groupId>com.jhlabs</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.owasp.esapi</groupId>
+			<artifactId>esapi</artifactId>
+			<version>2.1.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.54</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.8.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt</artifactId>
+			<version>1.9.2</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt-spring31</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>1.8.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jmimemagic</groupId>
+			<artifactId>jmimemagic</artifactId>
+			<version>0.1.4</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>xercesImpl</artifactId>
+					<groupId>xerces</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
+			<version>1.1.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-core</artifactId>
+			<version>9.0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-pdf</artifactId>
+			<version>9.0.9</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>bcprov-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bcmail-jdk14</artifactId>
+					<groupId>org.bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bcprov-jdk14</artifactId>
+					<groupId>org.bouncycastle</groupId>
+				</exclusion>
+			</exclusions>
+
+		</dependency>
+
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.5.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.10</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.odftoolkit</groupId>
+			<artifactId>simple-odf</artifactId>
+			<version>0.8.2-incubating</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>tools</artifactId>
+					<groupId>com.sun</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.supercsv</groupId>
+			<artifactId>super-csv</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>el-impl</artifactId>
+			<version>2.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.bull.javamelody</groupId>
+			<artifactId>javamelody-core</artifactId>
+			<version>1.59.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.5.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.5.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>2.0.2</version>
+		</dependency>
+
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.mobile</groupId>
+			<artifactId>spring-mobile-device</artifactId>
+			<version>1.1.5.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>4.0.3.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>4.0.3.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>4.0.3.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxrpc-api</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-discovery</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.6.3</version>
+		</dependency>
+		<!-- AspectJ -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${org.aspectj-version}</version>
+		</dependency>
+
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${org.slf4j-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${org.slf4j-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${org.slf4j-version}</version>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.mail</groupId>
+					<artifactId>mail</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.jms</groupId>
+					<artifactId>jms</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jdmk</groupId>
+					<artifactId>jmxtools</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jmx</groupId>
+					<artifactId>jmxri</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- @Inject -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
+
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.2</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.20.0-GA</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.38</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${org.springframework-version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${org.springframework-version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>4.3.11.Final</version>
+			<type>jar</type>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>2.7.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>4.3.11.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.13</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.13</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			<version>2.10.1</version>
+		</dependency>
+
+		<!-- Added for ehcache replication used when load balancer is setup -->
+		<dependency>
+			<groupId>org.jgroups</groupId>
+			<artifactId>jgroups</artifactId>
+			<version>3.6.12.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-jgroupsreplication</artifactId>
+			<version>1.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			<version>2.5.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+			<version>4.3.11.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>2.19.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-failsafe-plugin</artifactId>
+			<version>2.19.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat.maven</groupId>
+			<artifactId>tomcat7-maven-plugin</artifactId>
+			<version>2.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.9.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.10.19</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.springframework-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<version>1.3</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.vt.middleware</groupId>
+			<artifactId>vt-password</artifactId>
+			<version>3.1.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcprov-jdk15</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>2.53.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>19.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>buildnumber-maven-plugin</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.7.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.7.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-ftp</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>2.2.11</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.2.11</version>
+		</dependency>
+		<dependency>
+			<groupId>com.memetix</groupId>
+			<artifactId>microsoft-translator-java-api</artifactId>
+			<version>0.6.2</version>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+	<build>
+
+		<plugins>
+			<plugin>
+				<!-- Updates the build number from <scm> -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.3</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+						<configuration>
+							<doUpdate>${svn.buildNumber.doUpdate}</doUpdate>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>${java-version}</source>
+					<target>${java-version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Plugin used for moving the config from ${environment} to the target 
+					folder -->
+				<!-- Used for deployment -->
+				<!-- also used for generating version number -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<!-- Generates the footer version number -->
+					<execution>
+						<id>preparePackageAntCreateSvnVersionPropertiesForALl</id>
+						<phase>prepare-package</phase>
+						<configuration>
+							<target description="update the properties xml file">
+								<tstamp>
+									<format property="touch.time" pattern="dd/MM/yyyy HH:mm" />
+								</tstamp>
+								<property name="version.footer.build"
+									value="${scmBranch}.${buildNumber} (${touch.time})" />
+								<scriptdef name="updatescmbranch"
+									language="javascript">
+									<![CDATA[
+                                        var scm = project.getProperty("version.footer.build");
+                                        var branchPresent= scm.indexOf("branches"); if(branchPresent==0)
+                                        {
+                                            scm = "Version " + scm.substring(9);
+                                            project.setProperty("version.footer.build", scm);
+                                        }
+                                    ]]>
+								</scriptdef>
+								<updatescmbranch />
+								<echo>Version footer value = ${version.footer.build}</echo>
+								<property name="verfilename"
+									value="${basedir}/src/main/webapp/WEB-INF/views/versionfooter.txt" />
+								<echo output="${verfilename}"
+									message="${version.footer.build}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+
+					<!-- Generates the text file version -->
+					<execution>
+						<id>preparePackageAntCreateRevisionVersionPropertiesForALl</id>
+						<phase>prepare-package</phase>
+						<configuration>
+							<target
+								description="create version.txt for javascript refresh">
+								<property name="version.jscript.build"
+									value="${buildNumber}" />
+								<echo>Version in text file = ${version.jscript.build}</echo>
+								<property name="jscriptname"
+									value="${basedir}/src/main/webapp/WEB-INF/views/version.txt" />
+								<echo output="${jscriptname}"
+									message="${version.jscript.build}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<webResources>
+						<resource>
+						<!-- Copies src/main/config/environment/ehcache.xml to  -->
+						<!-- war/WEB-INF/classes/ehcache.xml -->
+						<directory>src/main/config/${environment}</directory>
+							<targetPath>WEB-INF/classes</targetPath>
+							<includes>
+							     <include>ehcache.xml</include>
+							</includes>
+						</resource>
+						<resource>
+						<!-- Copies src/main/config/environment/spring.properties to  -->
+                        <!-- war/WEB-INF/spring.properties -->
+                        <directory>src/main/config/${environment}</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <includes>
+                                 <include>spring.properties</include>
+                            </includes>
+                        </resource>
+					</webResources>
+					<warSourceExcludes>/WEB-INF/spring.propertie</warSourceExcludes>
+					<warName>eusurvey</warName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>install</id>
+						<phase>install</phase>
+						<goals>
+							<goal>sources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<configuration>
+					<excludes>
+						<!--whathever needs to be excluded from testing -->
+						<exclude>com.ec.survey.model.*</exclude>
+					</excludes>
+					<!--integration with surefire -->
+					<propertyName>surefireArgLine</propertyName>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<argLine>${surefireArgLine}</argLine>
+					<skip>maven.test.skip</skip>
+					<suiteXmlFiles>
+						<suiteXmlFile>./src/test/resources/testng.xml</suiteXmlFile>
+					</suiteXmlFiles>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.0</version>
+				<configuration>
+					<username>${tomcat.admin}</username>
+					<password>${tomcat.admin.password}</password>
+					<warFile>${project.build.directory}/eusurvey.war</warFile>
+					<url>${tomcat.deploy.url}</url>
+					<path>/eusurvey</path>
+					<update>true</update>
+					<fork>true</fork>
+				</configuration>
+				
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-compiler-plugin
+										</artifactId>
+										<versionRange>
+											[2.5.1,)
+										</versionRange>
+										<goals>
+											<goal>compile</goal>
+											<goal>testCompile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
