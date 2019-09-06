@@ -16,9 +16,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.LocaleResolver;
+
+import com.ec.survey.model.Setting;
+import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.LdapService;
+import com.ec.survey.service.SettingsService;
 import com.ec.survey.tools.EcasHelper;
 
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandlerExtended {
@@ -27,7 +31,10 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 	private LdapService ldapService;
 	
 	@Resource(name="administrationService")
-	private AdministrationService administrationService;
+	private AdministrationService administrationService;	
+	
+	@Resource(name="settingsService")
+	protected SettingsService settingsService;	
 	
 	@Autowired private LocaleResolver localeResolver;
 	
@@ -72,6 +79,12 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 					user.setLanguage("EN");
 					user.setType(User.ECAS);				
 				}
+				
+				String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
+				if (disabled.equalsIgnoreCase("true") && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
+	    		{
+	    			user.setCanCreateSurveys(false);
+	    		}
 									
 				//read data from ldap
 				EcasHelper.readData(user, ldapService);				

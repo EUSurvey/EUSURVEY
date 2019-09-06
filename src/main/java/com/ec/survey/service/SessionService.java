@@ -66,6 +66,12 @@ public class SessionService extends BasicService {
 		{
 			Session session = sessionFactory.getCurrentSession();
 			user = (User) session.merge(user);
+			
+			String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
+			if (disabled.equalsIgnoreCase("true") && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
+    		{
+    			user.setCanCreateSurveys(false);
+    		}
 		}
 		
 		if (checkTOS && user != null && !user.isAgreedToToS())

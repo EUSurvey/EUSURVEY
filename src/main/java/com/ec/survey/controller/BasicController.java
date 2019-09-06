@@ -120,7 +120,7 @@ public class BasicController implements BeanFactoryAware {
 	protected TaskExecutor taskExecutorLongRestore;
 	
 	@Resource(name="settingsService")
-	private SettingsService settingsService;	
+	protected SettingsService settingsService;	
 	
 	public @Value("${captcha.secret}") String captchasecret;
 	public @Value("${ui.enableresponsive}") String enableresponsive;	

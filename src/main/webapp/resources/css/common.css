@@ -923,6 +923,10 @@ legend {
  #surveyeditor .ActiveLinkButton .glyphicon {
  	display: none;
  }
+ 
+ .glyphicon.disabled {
+ 	color: #ccc;
+ }
 
 .inactive {
 	color: #ddd !important;

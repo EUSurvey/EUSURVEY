@@ -185,6 +185,8 @@ public class SurveyHelper {
 						answer.setQuestionId(q.getId());
 						answer.setQuestionUniqueId(q.getUniqueId());
 						answer.setValue(user.getGivenName());
+						
+						answerSet.clearAnswers(q);						
 						answerSet.addAnswer(answer);
 					} else if (q.getShortname().equalsIgnoreCase("surname"))
 					{
@@ -193,6 +195,8 @@ public class SurveyHelper {
 						answer.setQuestionId(q.getId());
 						answer.setQuestionUniqueId(q.getUniqueId());
 						answer.setValue(user.getSurName());
+						
+						answerSet.clearAnswers(q);
 						answerSet.addAnswer(answer);
 					} else if (q.getShortname().equalsIgnoreCase("email"))
 					{
@@ -201,6 +205,8 @@ public class SurveyHelper {
 						answer.setQuestionId(q.getId());
 						answer.setQuestionUniqueId(q.getUniqueId());
 						answer.setValue(user.getEmail());
+						
+						answerSet.clearAnswers(q);	
 						answerSet.addAnswer(answer);
 					}
 				}

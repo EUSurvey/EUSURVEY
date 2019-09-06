@@ -69,7 +69,7 @@
 		<div class="">
 			<div id="surveysarea" data-bind="visible: mode() == 'surveys'">	
 			
-				<c:if test="${USER.formPrivilege > 0}">
+				<c:if test="${USER.formPrivilege > 0 && USER.canCreateSurveys}">
 					<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived'">
 						<a class="btn btn-info" onclick="showCreateSurveyDialog();"><spring:message code="label.CreateFirstSurvey" /></a>
 					</div>
@@ -524,8 +524,11 @@
 												<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span style="color: #aaa" class="glyphicon glyphicon-pencil disabled"></span></a>
 												<!-- /ko -->
 												
-												<!-- ko if: formManagementRights -->
+												<!-- ko if: formManagementRights && canCreateSurveys -->
 												<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', 'true'); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
+												<!-- /ko -->
+												
+												<!-- ko if: formManagementRights -->
 												<a data-bind="attr: {href: '${contextpath}/noform/management/exportSurvey/false/' + shortname}" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></span></a>
 												<!-- /ko -->
 												

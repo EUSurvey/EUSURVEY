@@ -303,12 +303,12 @@
 							  
 							  var acopy = document.createElement("a");
 							  
-							  if(list[i].formManagementRights)
+							  if(list[i].formManagementRights && list[i].canCreateSurveys)
 							  {
 							     $(acopy).addClass("actionRowAction").append("<span class='glyphicon glyphicon-copy'></span>");
 							     $(acopy).attr('onclick', "copySurvey('" + list[i].id + "','" + list[i].title + "','" + list[i].language.code + "', '" + list[i].security+ "', '" + list[i].isQuiz + "');");
 							  } else {
-								  $(acopy).addClass("disabled actionRowAction").append("<span style='color: #ccc' class='glyphicon glyphicon-open'></span>");
+								  $(acopy).addClass("disabled actionRowAction").append("<span style='color: #ccc' class='glyphicon glyphicon-copy'></span>");
 							  }							     
 							     
 							  $(acopy).attr('rel','tooltip').attr("data-toggle","tooltip").attr('title','<spring:message code="label.Copy" />').attr("href", "#");
@@ -771,13 +771,13 @@
 											<a class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Open" />" id="lnk${survey.shortname}" href="<c:url value="/${survey.shortname}/management/overview" />"><span class="glyphicon glyphicon-folder-open"></</span></a>
 										
 											<c:choose>
-												<c:when test="${survey.formManagementRights}">
+												<c:when test="${survey.formManagementRights && survey.canCreateSurveys}">
 													<a onclick="copySurvey('${survey.id}', $(this).closest('.surveybox').find('.originalsurveytitle').html(), '${survey.language.code}', '${survey.security}', '${survey.isQuiz}')" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></</span></a>
 													<a href="<c:url value="/noform/management/exportSurvey/false/${survey.shortname}"/>" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></</span></a>
 												</c:when>
 												<c:otherwise>
-													<a class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><img src="<c:url value="/resources/images/icons/16/interface_grey.png" />" /></a>
-													<a class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><img src="<c:url value="/resources/images/icons/16/icon_download_grey.png" />" /></a>
+													<a class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy disabled"></</span></a>
+													<a class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt disabled"></</span></a>
 												</c:otherwise>
 											</c:choose>
 											

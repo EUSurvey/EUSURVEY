@@ -47,6 +47,7 @@ public class User implements java.io.Serializable {
 	private int badLoginAttempts = 0;
 	private boolean agreedToToS;
 	private Integer lastEditedSurvey;
+	private boolean canCreateSurveys = true;
 	
 	public static final String ECAS = "ECAS";
 	public static final String SYSTEM = "SYSTEM";
@@ -424,4 +425,11 @@ public class User implements java.io.Serializable {
 		return getECPrivilege() == 0;
 	}
 
+	@Transient
+	public boolean isCanCreateSurveys() {
+		return canCreateSurveys;
+	}
+	public void setCanCreateSurveys(boolean canCreateSurveys) {
+		this.canCreateSurveys = canCreateSurveys;
+	}
 }

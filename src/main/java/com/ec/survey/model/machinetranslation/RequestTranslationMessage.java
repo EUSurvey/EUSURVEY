@@ -35,7 +35,7 @@ public class RequestTranslationMessage {
 		requestType="txt";  
 		outputFormat="";
 		domains = "all";
-		priority =1;
+		priority = 6;
 		targetTranslationPath = "none";
 		
 	}

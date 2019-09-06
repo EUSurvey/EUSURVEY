@@ -16,6 +16,9 @@
 		<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("New Official EC Skin")}'>
 			<link href="${contextpath}/resources/css/ecnew.css" rel="stylesheet" type="text/css"></link>
 		</c:when>
+		<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("ECA Skin")}'>
+			<link href="${contextpath}/resources/css/ecanew.css" rel="stylesheet" type="text/css"></link>
+		</c:when>
 		<c:when test="${form.survey.skin != null && !form.wcagCompliance}">
 			<style type="text/css">
 				${form.survey.skin.getCss()}

@@ -65,9 +65,9 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			// check if we are on open Cas solution then use the validateservice  url to avoid exception
 			// other (ecas) we have to use the laxValidate to allow login with external user JIRA ESURVEY-2759
 			if(ldapService.isCasOss()){
-				ValidationURL = ecasvalidationhost + "/serviceValidate?ticket=" + ticket + "&service=" + host + service;
+				ValidationURL = ecasvalidationhost + "/serviceValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
 			}else{
-				ValidationURL = ecasvalidationhost + "/laxValidate?ticket=" + ticket + "&service=" + host + service;
+				ValidationURL = ecasvalidationhost + "/laxValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
 			}
 			
 			logger.debug("authenticate".toUpperCase() +" GET THE TICKET TO CHECK VALUE " + ValidationURL +" THE TICKET IS " + ticket);
@@ -80,6 +80,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 	    		logger.info("authenticate".toUpperCase() +" GET THE SOURCE CONTENT " + xmlValidationAnswer);
 	    		if (xmlValidationAnswer.contains("<cas:authenticationSuccess>")) {
 	    			String username = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user");
+	    			String type = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:employeeType");
 					
 					if (auth.getName() != null && auth.getName().startsWith("oldLogin:"))
 					{
@@ -113,31 +114,33 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 						user.setLogin(username);
 						user.setType(User.ECAS);	
 						user.setLanguage("EN");
+						user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
+						user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
+						user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
 						
-						if (ldapService.init(username, user))
+						if (!type.equalsIgnoreCase("n")) //  ldapService.init(username, user))
 						{
 							user.getRoles().add(ecRole);
 						} else {
-							user.getRoles().add(intRole);
+							user.getRoles().add(intRole);							
 						}
 						
 						administrationService.createUser(user);
 					} else {
-						logger.debug("authenticate".toUpperCase() +" User already exist update user if needed " +  user.getLogin());
-						
-						if (ldapService.init(username, user))
+						user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
+						user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
+						user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
+										
+						if (!type.equalsIgnoreCase("n")) //ldapService.init(username, user))
 						{
-							logger.debug("authenticate".toUpperCase() +" LDAP INITIALZED ");
 							if (ecRole != null)
 							{
 								if (user.getRoles().size() != 1 || !Objects.equals(user.getRoles().get(0).getId(), ecRole.getId()))
 								{
 									user.getRoles().clear();
 									user.getRoles().add(ecRole);
-									logger.debug("authenticate".toUpperCase() +" UPDATE USER TABLE WITH NEW ROLE ");
 									administrationService.updateUser(user);
 								}
-
 							}
 						} else {
 							if (intRole != null)
@@ -146,7 +149,6 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 								{
 									user.getRoles().clear();
 									user.getRoles().add(intRole);
-									logger.debug("authenticate".toUpperCase() +" UPDATE USER TABLE WITH NEW ROLE ");
 									administrationService.updateUser(user);
 								}
 							}

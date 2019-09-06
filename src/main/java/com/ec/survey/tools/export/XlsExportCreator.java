@@ -609,6 +609,11 @@ public class XlsExportCreator extends ExportCreator {
 			fileCounter++;
 			wb.write(outputStream);
 			outputStream.close();
+			
+			wb.close();
+		 	safeName = WorkbookUtil.createSafeSheetName("Content");
+		 	columnIndexInsertHeader = 0;
+			
 			String ext = FilenameUtils.getExtension(exportFilePath);
 			
 			outputStream = new FileOutputStream(exportFilePath.replace( "." + ext, "_" + fileCounter + "." + ext));

@@ -4241,6 +4241,12 @@ public class SurveyService extends BasicService {
 				survey.setFormManagementRights(access != null && access.getLocalPrivileges().get(LocalPrivilege.FormManagement) > 0);
 				survey.setAccessResultsRights(access != null && (access.getLocalPrivileges().get(LocalPrivilege.AccessResults) > 0 || access.getLocalPrivileges().get(LocalPrivilege.AccessDraft) > 0));
 			}
+			
+			String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
+			if (disabled.equalsIgnoreCase("true") && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
+    		{
+    			survey.setCanCreateSurveys(false);
+    		}
 		}		
 	}
 

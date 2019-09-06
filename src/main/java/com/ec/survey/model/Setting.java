@@ -32,6 +32,7 @@ public class Setting {
 	public final static String LastSurveyToDeleteAnswerPDFs = "lastsurveytodeleteanswerpdfs";
 	
 	public final static String ActivityLoggingEnabled = "ActivityLoggingEnabled";
+	public final static String CreateSurveysForExternalsDisabled = "CreateSurveysForExternalsDisabled";	
 		
 	@Id
 	@Column(name = "SETTINGS_ID")

@@ -20,7 +20,6 @@ import java.io.IOException;
 public class FtpClient {
 
 	protected static final Logger logger = Logger.getLogger(FtpClient.class);
-	
 	private final ProducerTemplate producerTemplate;
 	private final ConsumerTemplate consumerTemplate;
 	private @Value("${mt.fileDir}") String fileDir;

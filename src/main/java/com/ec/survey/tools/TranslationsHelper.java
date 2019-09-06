@@ -34,6 +34,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 
 public class TranslationsHelper {
 
@@ -1848,31 +1849,41 @@ public class TranslationsHelper {
 		if (translationsByKey.containsKey(Survey.CONFIRMATIONLINK) && notNullOrEmpty(translationsByKey.get(Survey.CONFIRMATIONLINK).getLabel())) survey.setConfirmationLink(translationsByKey.get(Survey.CONFIRMATIONLINK).getLabel());
 		
 		Set<String> linkstodelete = new HashSet<>();
+		Map<String, String> newlinks = new HashMap<String, String>();
 		for (String key : survey.getUsefulLinks().keySet())
 		{
 			String[] data = key.split("#");
 			if (translationsByKey.containsKey(data[0] + "#usefullink") && notNullOrEmpty(translationsByKey.get(data[0] + "#usefullink").getLabel()) && !translationsByKey.get(data[0] + "#usefullink").getLabel().equals(data[1]))
 			{
-				survey.getUsefulLinks().put(data[0] + "#" + translationsByKey.get(data[0] + "#usefullink").getLabel(), survey.getUsefulLinks().get(key));
+				newlinks.put(data[0] + "#" + translationsByKey.get(data[0] + "#usefullink").getLabel(), survey.getUsefulLinks().get(key));
 				linkstodelete.add(key);
 			}
 		}
+		for (Entry<String, String> link: newlinks.entrySet())
+		{
+			survey.getUsefulLinks().put(link.getKey(), link.getValue());
+		}				
 		for (String key: linkstodelete)
 		{
 			survey.getUsefulLinks().remove(key);
 		}
 		
 		Set<String> backdocstodelete = new HashSet<>();
+		Map<String, String> newbackdocs = new HashMap<String, String>();
 		for (String key : survey.getBackgroundDocuments().keySet())
 		{
 			if (translationsByKey.containsKey(key + "#backgrounddocument") && notNullOrEmpty(translationsByKey.get(key + "#backgrounddocument").getLabel()) && !translationsByKey.get(key + "#backgrounddocument").getLabel().equals(key))
 			{
-				survey.getBackgroundDocuments().put(translationsByKey.get(key + "#backgrounddocument").getLabel(), survey.getBackgroundDocuments().get(key));
+				newbackdocs.put(translationsByKey.get(key + "#backgrounddocument").getLabel(), survey.getBackgroundDocuments().get(key));
 				translations.getTranslations().add(new Translation(translationsByKey.get(key + "#backgrounddocument").getLabel() + "#backgrounddocument", translationsByKey.get(key + "#backgrounddocument").getLabel(), translations.getLanguage().getCode() , survey.getId(), translations));
 				translations.getTranslations().remove(translationsByKey.get(key + "#backgrounddocument"));
 				backdocstodelete.add(key);
 			}
 		}
+		for (Entry<String, String> doc: newbackdocs.entrySet())
+		{
+			survey.getBackgroundDocuments().put(doc.getKey(), doc.getValue());
+		}	
 		for (String key: backdocstodelete)
 		{
 			survey.getBackgroundDocuments().remove(key);

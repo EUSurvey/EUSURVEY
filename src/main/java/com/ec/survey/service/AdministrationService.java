@@ -158,6 +158,13 @@ public class AdministrationService extends BasicService {
 	public void updateUser(User user) {
 		Session session = sessionFactory.getCurrentSession();
 		user = (User) session.merge(user);
+		
+		String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
+		if (disabled.equalsIgnoreCase("true") && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
+		{
+			user.setCanCreateSurveys(false);
+		}
+		
 		session.setReadOnly(user, false);
 		session.update(user);
 	}
@@ -620,6 +627,13 @@ public class AdministrationService extends BasicService {
 	public User setLastEditedSurvey(User user, Integer surveyid) {
     	Session session = sessionFactory.getCurrentSession();
     	user = (User)session.merge(user);
+    	
+    	String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
+		if (disabled.equalsIgnoreCase("true") && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
+		{
+			user.setCanCreateSurveys(false);
+		}
+    	
     	user.setLastEditedSurvey(surveyid);
 		session.saveOrUpdate(user);
 		return user;

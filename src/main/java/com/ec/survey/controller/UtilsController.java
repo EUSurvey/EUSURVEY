@@ -269,7 +269,7 @@ public class UtilsController extends BasicController {
 		countryList.put("SyrianArabRepublic", resources.getMessage("label.un.SyrianArabRepublic", null, locale));
 		countryList.put("Tajikistan", resources.getMessage("label.un.Tajikistan", null, locale));
 		countryList.put("Thailand", resources.getMessage("label.un.Thailand", null, locale));
-		countryList.put("TheformerYugoslavRepublicofMacedonia", resources.getMessage("label.un.TheformerYugoslavRepublicofMacedonia", null, locale));
+		countryList.put("NorthMacedonia", resources.getMessage("label.un.NorthMacedonia", null, locale));
 		countryList.put("Timor-Leste", resources.getMessage("label.un.Timor-Leste", null, locale));
 		countryList.put("Togo", resources.getMessage("label.un.Togo", null, locale));
 		countryList.put("Tonga", resources.getMessage("label.un.Tonga", null, locale));

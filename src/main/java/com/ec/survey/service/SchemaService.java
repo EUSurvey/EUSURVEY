@@ -59,6 +59,45 @@ public class SchemaService extends BasicService {
 	private DomainUpdater domaintWorker;
 	
 	@Transactional
+	public void step87() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		String existing = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
+		if (existing == null)
+		{		
+			Setting s = new Setting();
+			s.setKey(Setting.CreateSurveysForExternalsDisabled);
+			s.setValue("true");
+			s.setFormat("true / false");				
+			session.saveOrUpdate(s);
+		}
+		status.setDbversion(87);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void step86() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		if (!isOss()) {
+		    Skin standardskin = skinService.get(1);				
+		    Skin ecaskin = new Skin();
+		    ecaskin.setName("ECA Skin");
+		    ecaskin.setOwner(standardskin.getOwner());
+		    ecaskin.setIsPublic(true);
+		    ecaskin.setUpdateDate(new Date());
+		    ecaskin.getElements().clear();
+		    for (SkinElement element: standardskin.getElements())
+		    {
+		    	ecaskin.getElements().add(element.copy());
+		    }
+		    skinService.add(ecaskin);
+		}
+		status.setDbversion(86);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
 	public void step85(ServletContext servletContext) throws IOException {
 		//copying file to new file system
 		

@@ -77,7 +77,7 @@ public class EcasHelper {
    }
 
 	public static void readData(User user, LdapService ldapService) {		
-		user.setEmail(ldapService.getEmail(user.getLogin()));	
+		//user.setEmail(ldapService.getEmail(user.getLogin()));	
 		user.setDisplayName(ldapService.getMoniker(user.getLogin()));
 		user.setDepartments(ldapService.getUserLDAPGroups(user.getLogin()));		
 	}

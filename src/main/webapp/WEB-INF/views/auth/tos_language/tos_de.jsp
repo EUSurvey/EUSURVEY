@@ -7,10 +7,8 @@
 			Anwendung ist EUSurvey dem Grundsatz des Datenschutzes verpflichtet.
 			Der Schutz natürlicher Personen bei der Verarbeitung
 			personenbezogener Daten durch die Organe und Einrichtungen der
-			Gemeinschaft gründet sich auf die <a
-				href="http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2001:008:0001:0022:EN:PDF"
-				target="_blank">Verordnung (EG) Nr. 45/2001</a> des Europäischen
-			Parlaments und des Rates vom 18. Dezember 2000.
+			Gemeinschaft gründet sich auf die Verordnung (EU) Nr. 2018/1725 des Europäischen
+			Parlaments und des Rates vom 23. Oktober 2018.
 		</p>
 		<p>Einige Seiten von EUSurvey können Links zu anderen
 			Internetseiten enthalten. ESurvey ist nicht für die
@@ -71,9 +69,7 @@
 			Umfrage-Eigentümer, die es von EU Login und aus der zentralen
 			Nutzer-Datenbank im Rechenzentrum der Europäischen Kommission abruft.
 			Das Rechenzentrum der Europäischen Kommission ist an die Bestimmungen
-			der <a
-				href="http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2001:008:0001:0022:EN:PDF"
-				target="_blank">Verordnung (EG) Nr. 45/2001</a> gebunden.
+			der Verordnung (EU) Nr. 2018/1725 gebunden.
 		</p>
 		<h5>Weitere personenbezogene Daten:</h5>
 		<p>Neben den von EUSurvey selbst verarbeiteten personenbezogenen
@@ -109,7 +105,7 @@
 		<h4>V. Wer hat Zugang zu Ihren Daten?</h4>
 		<p>Zugang zu Ihren Daten haben nur die Personen, die mit EUSurvey
 			und der Verarbeitung Ihrer Daten beschäftigt sind. Dies umfasst das
-			EUSurvey-Team (siehe Punkt VII), die Umfrage-Eigentümer und Personen,
+			EUSurvey-Team (siehe Punkt IX), die Umfrage-Eigentümer und Personen,
 			denen der Zugang zu den Fragebögen gewährt wurde.</p>
 		<p>Ihre Daten werden eventuell über das
 			EUSurvey-Veröffentlichungsmodul oder über andere Internetseiten

@@ -3,11 +3,11 @@
 	<li>
 		<h4>1. Introduction</h4>
 		<p>EUSurvey, as an application developed by the Commission of the
-			European Union, is committed to user privacy. The policy on
-			protection of individuals with regard to the processing of personal
-			data by the Community institutions is based on Regulation (EC) N°
-			45/2001 of the European Parliament and of the Council of 18 December
-			2000.</p>
+			European Union, is committed to user privacy. The policy on the
+			protection of natural persons with regard to the processing of
+			personal data by the Community institutions is based on Regulation
+			(EU) N� 2018/1725 of the European Parliament and of the Council of 23
+			October 2018 and on the free movement of such data.</p>
 		<p>Some EUSurvey pages may contain links to other websites. EU
 			Survey is not responsible for the privacy policies or practices of
 			third party websites.</p>
@@ -47,7 +47,7 @@
 				href="https://secure.edps.europa.eu/EDPSWEB/edps/EDPS">European
 				Data Protection Supervisor</a> (EDPS) is acting as an independent
 			supervisory authority. The EDPS makes sure that all EU institutions
-			and bodies respect people’s right to privacy when processing their
+			and bodies respect people's right to privacy when processing their
 			personal data.
 		</p>
 	</li>
@@ -60,14 +60,14 @@
 		<h5>Identity</h5>
 		<p>
 			The survey owners (i.e. those who want to create and exploit a
-			questionnaire) sign up to EU Login (the EC's Authentication Service).
-			Please, read the EU Login own privacy statement for further
-			information.<br /> EUSurvey stores the EU Login login as well as
-			e-mail addresses of the survey owners such as retrieved from EU Login
+			questionnaire) sign up to EULogin (the EC's Authentication Service).
+			Please, read the EULogin own privacy statement for further
+			information.<br /> EUSurvey stores the EULogin username as well as
+			e-mail addresses of the survey owners such as retrieved from EULogin
 			and the European Commission's Central User Database which is stored
 			at the Data Centre of the European Commission. The Data Centre of the
-			European Commission is bound to comply with Regulation (EC) N°
-			45/2001.
+			European Commission is bound to comply with Regulation (EU) N�
+			2018/1725.
 		</p>
 
 		<h5>Other personal data</h5>
@@ -91,7 +91,7 @@
 				session has been terminated.</li>
 			<li>local storage to save copies of the inputs of a participant
 				to a survey in order to have a backup if the server is not available
-				during submission or the user’s computer is switched off
+				during submission or the user's computer is switched off
 				accidentally or any other cause.<br /> The local storage contains
 				the IDs of the questions and the draft answers.<br /> Once a
 				participant has submitted one's answers successfully to the server

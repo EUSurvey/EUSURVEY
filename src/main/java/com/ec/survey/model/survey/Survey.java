@@ -136,6 +136,7 @@ public class Survey implements java.io.Serializable {
 	private boolean fullFormManagementRights = true;
 	private boolean formManagementRights = true;
 	private boolean accessResultsRights = true;
+	private boolean canCreateSurveys = true;
 	
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -2061,6 +2062,14 @@ public class Survey implements java.io.Serializable {
 	}
 	public void setAccessResultsRights(boolean accessResultsRights) {
 		this.accessResultsRights = accessResultsRights;
+	}
+	
+	@Transient
+	public boolean isCanCreateSurveys() {
+		return canCreateSurveys;
+	}
+	public void setCanCreateSurveys(boolean canCreateSurveys) {
+		this.canCreateSurveys = canCreateSurveys;
 	}
 							
 }

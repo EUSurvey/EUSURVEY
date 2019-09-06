@@ -42,7 +42,7 @@
 					  	<li id="settings-menu-tab"><a href="<c:url value="/settings/myAccount"/>"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.Settings" /></a></li>
 					  </c:if>
 					  
-					  <c:if test="${USER.formPrivilege > 0}">
+					  <c:if test="${USER.formPrivilege > 0 && USER.canCreateSurveys}">
 						  <li id="actions-menu-tab" class="dropdown menudropdown">
 						  	<a id="actions-menu-tab-toggle" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><div><spring:message code="label.NewSurvey" /> <span class="caret" style="margin-left: 5px"></span></div></a>
 					          <ul class="dropdown-menu" style="position: absolute">

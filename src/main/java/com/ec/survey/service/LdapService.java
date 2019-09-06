@@ -4,7 +4,6 @@ import com.ec.survey.model.DepartmentItem;
 import com.ec.survey.model.KeyValue;
 import com.ec.survey.model.LdapSearchResult;
 import com.ec.survey.model.administration.EcasUser;
-import com.ec.survey.model.administration.User;
 import com.ec.survey.tools.DepartmentUpdater;
 import com.ec.survey.tools.DomainUpdater;
 import com.ec.survey.tools.EcasUserUpdater;
@@ -116,52 +115,52 @@ public class LdapService extends BasicService {
         return email;
     }
     
-	@SuppressWarnings("unused")
-	public boolean init(String Username, User u) {
-		initialize();
-        try {
-        	logger.debug("INIT GET ATTRIBUTES FOR USER " + Username);
-        	Username = Tools.encodeForLDAP(Username);
-        	String searchValue= String.format(ldapSearchUserFormat, Username);
-        	
-        	Attributes attrs = ctx.getAttributes(searchValue);
-            
-            NamingEnumeration<String> enumIds= attrs.getIDs();
-
-            boolean useGivenName=false;
-            do {
-				String attrName = enumIds.nextElement();
-				if (attrName.equalsIgnoreCase("givenName")){
-					useGivenName=true;
-					break;
-				}
-            	
-            	if(attrName.equalsIgnoreCase("userPassword")){
-            		String valPwd = new String((byte[]) attrs.get(attrName).get());
-            	}
-
-			} while (enumIds.hasMoreElements());
-            
-            u.setEmail((String) attrs.get("mail").get());
-            u.setSurName((String) attrs.get("sn").get());
-            // look if cn is used instead the GivenName attribute
-            if(useGivenName){
-            	u.setGivenName((String) attrs.get("givenName").get());
-            }else{
-            	u.setGivenName((String) attrs.get("cn").get());
-            }
-         
-            boolean result=false;
-            if(isCasOss())
-            	return true;            
-            result =attrs.get("employeeType") != null && !attrs.get("employeeType").get().toString().equalsIgnoreCase("n");
-            return result;
-            
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-            return false;
-        }
-	}    
+//	@SuppressWarnings("unused")
+//	public boolean init(String Username, User u) {
+//		initialize();
+//        try {
+//        	logger.debug("INIT GET ATTRIBUTES FOR USER " + Username);
+//        	Username = Tools.encodeForLDAP(Username);
+//        	String searchValue= String.format(ldapSearchUserFormat, Username);
+//        	
+//        	Attributes attrs = ctx.getAttributes(searchValue);
+//            
+//            NamingEnumeration<String> enumIds= attrs.getIDs();
+//
+//            boolean useGivenName=false;
+//            do {
+//				String attrName = enumIds.nextElement();
+//				if (attrName.equalsIgnoreCase("givenName")){
+//					useGivenName=true;
+//					break;
+//				}
+//            	
+//            	if(attrName.equalsIgnoreCase("userPassword")){
+//            		String valPwd = new String((byte[]) attrs.get(attrName).get());
+//            	}
+//
+//			} while (enumIds.hasMoreElements());
+//            
+//            u.setEmail((String) attrs.get("mail").get());
+//            u.setSurName((String) attrs.get("sn").get());
+//            // look if cn is used instead the GivenName attribute
+//            if(useGivenName){
+//            	u.setGivenName((String) attrs.get("givenName").get());
+//            }else{
+//            	u.setGivenName((String) attrs.get("cn").get());
+//            }
+//         
+//            boolean result=false;
+//            if(isCasOss())
+//            	return true;            
+//            result =attrs.get("employeeType") != null && !attrs.get("employeeType").get().toString().equalsIgnoreCase("n");
+//            return result;
+//            
+//        } catch (Exception e) {
+//            logger.error(e.getLocalizedMessage(), e);
+//            return false;
+//        }
+//	}    
 
 	public String getMoniker(String login) {
 		  String moniker = "";

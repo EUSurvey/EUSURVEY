@@ -7,10 +7,8 @@
 			À ce titre, elle est attachée au respect de la vie privée. La
 			politique en matière de protection des personnes physiques à l'égard
 			du traitement des données à caractère personnel par les institutions
-			de l'UE se fonde sur <a
-				href="http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2001:008:0001:0022:EN:PDF"
-				target="_blank">le règlement (CE) n° 45/2001</a> du Parlement
-			européen et du Conseil du 18 décembre 2000.
+			de l'UE se fonde sur le règlement (EU) n° 2018/1725 du Parlement
+			européen et du Conseil du 23 octobre 2018.
 		</p>
 		<p>Certaines pages d'EUSurvey peuvent contenir des liens vers
 			d'autres sites web. EUSurvey n'est pas responsable des politiques ou
@@ -71,9 +69,7 @@
 			propriétaires de l'enquête tels qu'ils sont extraits d'EU Login et de
 			la base centrale sur les utilisateurs de la Commission européenne,
 			qui est stockée dans le centre de données de la Commission
-			européenne. Ce centre de données est tenu de se conformer au <a
-				href="http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2001:008:0001:0022:EN:PDF"
-				target="_blank">règlement (CE) n° 45/2001</a>.
+			européenne. Ce centre de données est tenu de se conformer au règlement (EU) n° 2018/1725.
 		</p>
 		<h5>Autres données à caractère personnel:</h5>
 		<p>Outre les informations personnelles traitées par le service
@@ -109,7 +105,7 @@
 		<h4>V. À qui vos données sont-elles communiquées?</h4>
 		<p>Seul le personnel chargé du traitement de vos données et ayant
 			un lien avec EUSurvey a accès à vos données. Il s'agit notamment de
-			l'équipe d'EUSurvey (voir les coordonnées au point VII), des
+			l'équipe d'EUSurvey (voir les coordonnées au point IX), des
 			propriétaires de l'enquête et de toute personne ayant obtenu l'accès
 			aux questionnaires.</p>
 		<p>Vos données peuvent être publiées au moyen du module de

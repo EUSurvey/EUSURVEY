@@ -652,12 +652,12 @@ public class AnswerService extends BasicService {
 							
 							String answerPart;	
 							
-							if (answer.length() > 2)
-							{
-								answerPart = "MATCH(a" + joincounter + ".VALUE) AGAINST (:answer" +i + ")";	
-							} else {
+//							if (answer.length() > 2)
+//							{
+//								answerPart = "MATCH(a" + joincounter + ".VALUE) AGAINST (:answer" +i + ")";	
+//							} else {
 								answerPart = "a" + joincounter + ".VALUE like :answer" + i;
-							}							
+//							}							
 							
 							if (answer.contains("|"))
 							{

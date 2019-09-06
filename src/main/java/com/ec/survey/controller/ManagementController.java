@@ -394,6 +394,12 @@ public class ManagementController extends BasicController {
     			throw new ForbiddenURLException();
     		}
         	
+        	String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
+    		if (disabled.equalsIgnoreCase("true") && u.getType().equalsIgnoreCase(User.ECAS) &&  u.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
+    		{
+    			throw new ForbiddenURLException();
+    		}
+        	
             writer = response.getWriter();
                
 	        if (request instanceof DefaultMultipartHttpServletRequest)
@@ -894,6 +900,12 @@ public class ManagementController extends BasicController {
 		User u = sessionService.getCurrentUser(request);
 		
 		if (u == null || u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 0)
+		{
+			throw new ForbiddenURLException();
+		}
+		
+		String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
+		if (disabled.equalsIgnoreCase("true") && u.getType().equalsIgnoreCase(User.ECAS) &&  u.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
 		{
 			throw new ForbiddenURLException();
 		}
