@@ -19,7 +19,7 @@
 	</c:choose>	
 	
 	<div style="margin-top: 120px; margin-bottom: 120px;">
-		<span class="label label-success"><spring:message code="info.EmailChanged" /></span>
+		<div class="alert alert-success"><spring:message code="info.EmailChanged" /></div>
 	</div>
 	
 	<%@ include file="../footer.jsp" %>

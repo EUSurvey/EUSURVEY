@@ -71,8 +71,7 @@
 		
 	<div class="fixedtitleform">
 		<div class="fixedtitleinner" style="width:880px">
-			<h1><spring:message code="label.Skins" /></h1>
-			<div id="action-bar" class="container action-bar" style="margin-top: 0px; width: 880px">
+			<div id="action-bar" class="container action-bar" style="margin-top: 10px; width: 880px">
 				<div class="row">
 					<div class="col-md-12" style="text-align:center">	
 						<a href="<c:url value="/settings/skin/new"/>" class="btn btn-default"><spring:message code="label.CreateNewSkin" /></a>
@@ -110,40 +109,40 @@
 								   <c:otherwise><spring:message code="label.No" /></c:otherwise>
 								</c:choose>
 							</td>
-							<td style="width: 130px; text-align: center">
+							<td style="width: 150px; text-align: center">
 								<c:choose>
 								   <c:when test="${skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
-								  	 	<a data-toggle="tooltip" href="${contextpath}/settings/skin/edit/${skin.id}" class="btn btn-default btn-xs" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
+								  	 	<a data-toggle="tooltip" href="${contextpath}/settings/skin/edit/${skin.id}" class="iconbutton" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
 								   </c:when>
 								   <c:otherwise>
-										<a data-toggle="tooltip" class="btn btn-xs disabled btn-default" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
+										<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
 								   </c:otherwise>
 								</c:choose>
 								
 								<c:choose>
 								   <c:when test="${skin.isPublic || skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
-										<a data-toggle="tooltip" href="${contextpath}/settings/skin/download/${skin.id}" class="btn btn-default btn-xs" title="<spring:message code="label.Download" />"><span class="glyphicon glyphicon-download"></span></a>
+										<a data-toggle="tooltip" href="${contextpath}/settings/skin/download/${skin.id}" class="iconbutton" title="<spring:message code="label.Download" />"><span class="glyphicon glyphicon-download"></span></a>
 									</c:when>
 								   <c:otherwise>
-										<a data-toggle="tooltip" class="btn btn-xs disabled btn-default" title="<spring:message code="label.Download" />"><span class="glyphicon glyphicon-download"></span></a>
+										<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Download" />"><span class="glyphicon glyphicon-download"></span></a>
 									</c:otherwise>
 								</c:choose>		
 																
 								<c:choose>
 								   <c:when test="${skin.isPublic || skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
-										<a data-toggle="tooltip" href="${contextpath}/settings/skin/copy/${skin.id}" class="btn btn-default btn-xs" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-share"></span></a>
+										<a data-toggle="tooltip" href="${contextpath}/settings/skin/copy/${skin.id}" class="iconbutton" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-share"></span></a>
 									</c:when>
 								   <c:otherwise>
-										<a data-toggle="tooltip" class="btn btn-xs disabled btn-default" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-share"></span></a>
+										<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-share"></span></a>
 									</c:otherwise>
 								</c:choose>								
 								
 								<c:choose>
 								   <c:when test="${skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
-										<a data-toggle="tooltip" onclick="showDeleteDialog('${skin.id}');"  class="btn btn-default btn-xs" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove icon-red"></span></a>
+										<a data-toggle="tooltip" onclick="showDeleteDialog('${skin.id}');"  class="iconbutton" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove icon-red"></span></a>
 									</c:when>
 								   <c:otherwise>
-										<a data-toggle="tooltip" class="btn btn-xs disabled btn-default" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove icon-red"></span></a>
+										<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove icon-red"></span></a>
 									</c:otherwise>
 								</c:choose>
 							</td>

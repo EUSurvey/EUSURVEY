@@ -312,6 +312,8 @@ function getIcon(element)
 		$(span).addClass("glyphicon glyphicon-font");
 	} else if (element.hasClass("imageitem")) {
 		$(span).addClass("glyphicon glyphicon-picture");
+	} else if (element.hasClass("ruleritem")) {
+		$(span).addClass("glyphicon glyphicon-minus");
 	} else if (element.hasClass("uploaditem")) {
 		$(span).addClass("glyphicon glyphicon-arrow-up");
 	} else if (element.hasClass("downloaditem")) {
@@ -344,7 +346,7 @@ function getDeleteElementRow(element, addignorebutton)
 		title = $(element).find("textarea").first().text();
 	}
 	
-	if ($(element).hasClass("matrix-header") && $(element).closest("tr").index() > 0)
+	if ($(element).hasClass("matrix-header"))
 	{
 		title = $("textarea[name^='text" + id + "']").first().text();
 	}
@@ -372,6 +374,8 @@ function getDeleteElementRow(element, addignorebutton)
 	} else if ($(element).hasClass("textitem")) {
 		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
 	} else if ($(element).hasClass("imageitem")) {
+		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+	} else if ($(element).hasClass("ruleritem")) {
 		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
 	} else if ($(element).hasClass("uploaditem")) {
 		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
@@ -409,27 +413,27 @@ function getDeleteElementRow(element, addignorebutton)
 	var stop = false;
 	if ($(element).hasClass("matrix-header") || $(element).hasClass("table-header"))
 	{
-		var isAnswer = $(element).closest("tr").index() == 0;
+		var isAnswer = $(element).closest("thead").length > 0 || ($(element).hasClass("table-header") &&  $(element).closest("tr").index() == 0);
 		if (isAnswer)
 		{
-			var remainingAnswers = $(element).closest("tr").find("td").length - 1 - $(element).closest("tr").find("td.selectedquestion").length;
-			if (remainingAnswers < 2)
+			var remainingAnswers = $(element).closest("tr").find("th").length - 1 - $(element).closest("tr").find("th.selectedquestion").length;
+			if (remainingAnswers < 1)
 			{
 				stop = true;
 				$(element).removeClass("selectedquestion");
 			}
 		} else {
 			var remainingQuestions = 0;
-			$(element).closest("table").find("tr").each(function(index){
-				if (index > 0)
-				{
-					if (!$(this).find("td").first().hasClass("selectedquestion"))
+			$(element).closest("tbody").find("tr").each(function(index){
+				if ($(element).hasClass("matrix-header") || index > 0)
+				{				
+					if (!$(this).find("th").first().hasClass("selectedquestion"))
 					{
 						remainingQuestions++;
 					}
 				}
 			});
-			if (remainingQuestions < 2)
+			if (remainingQuestions < 1)
 			{
 				stop = true;
 				$(element).removeClass("selectedquestion");
@@ -620,6 +624,8 @@ function saveForm(close)
 
 function internalSave(close)
 {
+	_actions.backup();
+	
 	var ids = "";
 	$('#content').children().each(function() { 
 		var id = $(this).attr("id");
@@ -645,7 +651,7 @@ function internalSave(close)
 		$(this).append(input);
 		
 		input = document.createElement("input");
-		var cols = $(this).find("tr").first().find("td").length;
+		var cols = $(this).find("tr").first().find("td, th").length;
 		$(input).attr("type", "hidden").attr("name", "matrixcols" + id).val(cols);
 		$(this).append(input);
 		
@@ -656,7 +662,7 @@ function internalSave(close)
 			for (var c = 0; c < cols; c++)
 			{
 				var row = $(this).find("tr")[r];
-				var cell = $(row).find("td")[c];
+				var cell = $(row).find("td, th")[c];
 				
 				if (r == 0)
 				{
@@ -703,11 +709,11 @@ function internalSave(close)
 		$(this).append(input);
 		
 		input = document.createElement("input");
-		var cols = $(this).find("tr").first().find("td").length;
+		var cols = $(this).find("tr").first().find("td, th").length;
 		$(input).attr("type", "hidden").attr("name", "columns" + id).val(cols);
 		$(this).append(input);
 		
-		$(this).find("tr").first().find("td").each(function(index){
+		$(this).find("tr").first().find("td, th").each(function(index){
 			if ($(this).find(".ui-resizable-handle").length > 0)
 			$(this).resizable( "destroy" );								
 		});
@@ -719,7 +725,7 @@ function internalSave(close)
 			for (var c = 0; c < cols; c++)
 			{
 				var row = $(this).find("tr")[r];
-				var cell = $(row).find("td")[c];
+				var cell = $(row).find("td, th")[c];
 				
 				if (r == 0)
 				{
@@ -800,6 +806,7 @@ function internalSave(close)
 		localStorage.setItem("showtoolboxbutton", $("#showtoolboxbutton").hasClass("selected"));
 		localStorage.setItem("showpropertiesbutton", $("#showpropertiesbutton").hasClass("selected"));
 		localStorage.setItem("dependenciesButton", $("#dependenciesButton").hasClass("selected"));
+		localStorage.setItem("backupButton", $("#backupButton").hasClass("selected"));
 		localStorage.setItem("multiselectButton", $("#multiselectButton").hasClass("selected"));
 	}		
 	
@@ -857,7 +864,7 @@ function updateDependenciesView()
 			var div = document.createElement("div");
 			var ids = dependencies.split(";");
 			
-			$(div).addClass("leftaligned glyphicon glyphicon-arrow-up black").hover(function(){
+			$(div).addClass("leftaligned padright10 glyphicon glyphicon-arrow-up black").hover(function(){
 				for (var i = 0; i < ids.length; i++)
 				{
 					if (ids[i].length > 0)
@@ -909,7 +916,7 @@ function updateTitles()
 		});
 		
 		$("#editcontent").find(".survey-element").each(function(){
-			if (!$(this).hasClass("sectionitem") && !$(this).hasClass("galleryitem") && !$(this).hasClass("imageitem"))
+			if (!$(this).hasClass("sectionitem") && !$(this).hasClass("galleryitem") && !$(this).hasClass("imageitem") && !$(this).hasClass("ruleritem"))
 			{
 				$(this).find(".questiontitle").first().html(getQuestionTitle(this, false));
 			}
@@ -944,15 +951,15 @@ function getQuestionTitle(question, dep)
 	var shortname = $(question).find("input[name^='shortname']").first().val();
 	var optional = $(question).find("input[name^='optional']").length == 0 || $(question).find("input[name^='optional']").first().val() == "true";
 	
-	if (!$(question).hasClass("imageitem"))
-	{						
-		if (!optional)
-		{
-			titleprefix += "<span class=\"mandatory\">*</span>";
-		} else {
-			titleprefix += "<span class=\"optional\">*</span>";
-		}
-	}		
+//	if (!$(question).hasClass("imageitem"))
+//	{						
+//		if (!optional)
+//		{
+//			titleprefix += "<span class=\"mandatory\">*</span>";
+//		} else {
+//			titleprefix += "<span class=\"optional\">*</span>";
+//		}
+//	}		
 	
 	if ($('#questionNumbering').val() == 0){
 		if (title.indexOf("<p") == 0)
@@ -977,7 +984,7 @@ function getQuestionTitle(question, dep)
 			}
 			first = false;
 		} else {
-			if (!$(this).hasClass("textitem") && !$(this).hasClass("imageitem"))
+			if (!$(this).hasClass("textitem") && !$(this).hasClass("imageitem") && !$(this).hasClass("ruleritem"))
 			{
 				counter++;
 				var qid = $(this).attr("id");
@@ -991,7 +998,7 @@ function getQuestionTitle(question, dep)
 						if (result.length > 0) result += ".";
 					}
 					
-					if (!$(question).hasClass("textitem") && !$(question).hasClass("imageitem") && !dep)
+					if (!$(question).hasClass("textitem") && !$(question).hasClass("imageitem") && !$(question).hasClass("ruleritem") && !dep)
 					{
 						switch (parseInt($('#questionNumbering').val()))
 						{

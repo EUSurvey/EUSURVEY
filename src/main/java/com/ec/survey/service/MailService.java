@@ -21,20 +21,20 @@ public class MailService extends BasicService {
 	@Resource(name="settingsService")
 	private SettingsService settingsService;
 	
-	public void SendHtmlMail(String to, String from, String reply, String subject, String body, String server, int port, File attachment, File attachment2, String info) {
+	public void SendHtmlMail(String to, String from, String reply, String subject, String body, String server, int port, File attachment, File attachment2, String info, boolean deleteFiles) throws Exception {
 		MailSender sender = (MailSender) context.getBean("mailSender");
-		sender.init(to, from, subject, reply, body, attachment, attachment2, info);		
+		sender.init(to, from, subject, reply, body, attachment, attachment2, info, deleteFiles);		
 		getMailPool().execute(sender);
 	}
 	
 	
-	public void SendHtmlMail(String to, String from, String reply, String subject, String body, String server, int port, File attachment, String info) {
+	public void SendHtmlMail(String to, String from, String reply, String subject, String body, String server, int port, File attachment, String info) throws Exception {
 		MailSender sender = (MailSender) context.getBean("mailSender");
-		sender.init(to, from, subject, reply, body, attachment, null, info);		
+		sender.init(to, from, subject, reply, body, attachment, null, info, false);		
 		getMailPool().execute(sender);
 	}
 	
-	public void SendHtmlMail(String to, String from, String reply, String subject, String body, String server, int port, String info) {
+	public void SendHtmlMail(String to, String from, String reply, String subject, String body, String server, int port, String info) throws Exception {
 		SendHtmlMail(to, from, reply, subject, body, server, port, null, info);
 	}
 	

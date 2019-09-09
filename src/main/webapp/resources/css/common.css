@@ -8,18 +8,36 @@ body {
 	color: #333;
 }
 
+.hpdiv {
+	height: 1px;
+	padding-top: 2px;
+	overflow: hidden;
+}
+
+label, th {
+	font-weight: normal !important;
+}
+
 table {
   border-spacing: 0;
   border-collapse: collapse;
 }
 
-.iconbutton {
+.iconbutton, .switchiconbutton {
 	color: #333;
     font-size: 18px;
     margin-left: 5px; margin-right: 5px;
 }
 
+.iconbutton.green {
+	color: #4caf50;
+}
+
 .iconbutton:hover, .iconbutton:active, .iconbutton:visited, .iconbutton:link {
+	color: #333;
+}
+
+.switchiconbutton:hover, .switchiconbutton:active, .switchiconbutton:visited, .switchiconbutton:link {
 	color: #333;
 }
 
@@ -27,9 +45,17 @@ table {
 	vertical-align: top !important;
 }
 
+.switchiconbutton.disabled {
+	color: #ccc;	
+}
+
 .iconbutton.disabled {
 	color: #ccc;	
 	cursor: not-allowed;
+}
+
+.iconbutton.disabled .glyphicon, .switchiconbutton.disabled .glyphicon {
+	color: #ccc;
 }
 	
 .internalcaptcha {
@@ -436,6 +462,14 @@ select {
  	margin-top: 180px; 
 }
 
+.fullpageform100 {
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: left;
+	margin-bottom: 50px;
+ 	margin-top: 100px; 
+}
+
 .fixedtitle {
 	position: fixed; 
 	top: 72px; 
@@ -666,7 +700,6 @@ h2 {
 
 hr {
 	color: #ddd;
-	background-color: #ddd;
 	height: 1px;
 	border: 0;
 }
@@ -886,6 +919,16 @@ legend {
 	font-size: 90%;
 }
 
+.ActiveLinkButton {
+	border: 1px solid #ccc;
+	border-bottom: 1px solid #fff;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	padding: 8px;
+	padding-bottom: 11px;
+	/*background-color: #eee;*/
+}
+
 .ActiveLinkButton span {
 	margin-right: 2px;	
 }
@@ -894,12 +937,16 @@ legend {
 	color: #0088CC;
 }
 
-.InactiveLinkButton span {
+.InactiveLinkButton span, .ActiveLinkButton span {
 	display: none;
 }
 
-.InactiveLinkButton i {
+.InactiveLinkButton i, .ActiveLinkButton i {
 	display: none;
+}
+
+.InactiveLinkButton a, .ActiveLinkButton a {
+	color: #245077;
 }
 
 .ActiveLinkButton {
@@ -974,10 +1021,10 @@ legend {
 .menu-tabs li.active {margin-bottom: 3px; margin-top: 5px; padding-top: 5px; padding-bottom: 0px; border-bottom: 1px solid #fff !important;}
 
 .matrix {}
-.matrixtable td {padding: 5px; padding-left: 10px; padding-right: 10px; border: 1px solid #bbb; min-width: 10px; width: auto;}
+.matrixtable td, .matrixtable th {padding: 5px; padding-left: 10px; padding-right: 10px; border: 1px solid #bbb; min-width: 10px; width: auto;}
 .matrix-cell {text-align: center;}
 
-.tabletable td {border: 1px solid #bbb; padding: 0 4px 0 4px; font-size: 13px;}
+.tabletable td, .tabletable th {border: 1px solid #bbb; padding: 0 4px 0 4px;}
 
 .table-label {
 	font-weight: bold;
@@ -1297,7 +1344,8 @@ legend {
 #contentstable2 .answercell {
 	width: 150px;
 	max-height: 100px;
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 .overlaymenu {
@@ -1733,4 +1781,8 @@ a {
 
 .titlediv {
 	word-break: break-word;
+}
+
+.filestable {
+	word-break: break-all;	
 }

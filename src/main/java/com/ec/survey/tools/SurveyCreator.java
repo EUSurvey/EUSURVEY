@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
+
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
@@ -788,7 +789,8 @@ public class SurveyCreator {
 	public static void createStressTestSurvey(User analyst, Language objLang, ServletContext servletContext, String fileDir, SurveyService surveyService, FileService fileService) {
 		InputStream inputStream = null;
 	    try {
-	    	inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/EC/stress01.eus");
+	    	logger.warn("creating stress test surveys");
+	    	inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/EC/StressTest10.eus");
 	    	
 	    	String uuid = UUID.randomUUID().toString().replace("/", "");
 	        java.io.File file = null;
@@ -810,8 +812,9 @@ public class SurveyCreator {
             	result.getActiveSurvey().setShortname("stress" + i);
             	result.getActiveSurvey().setUniqueId(uid);
             	int id = surveyService.importSurvey(result, analyst, false);            
-            	Survey survey = surveyService.getSurvey(id, false, false);            
-            	Survey published = surveyService.publish(survey, false, -1);    
+            	Survey survey = surveyService.getSurvey(id);            
+            	Survey published = surveyService.publish(survey, -1, -1, false, -1, false, true);
+            	surveyService.activate(survey, false, -1);
             	
             	published.getPublication().setAllContributions(true);
             	published.getPublication().setAllQuestions(true);
@@ -829,6 +832,51 @@ public class SurveyCreator {
 	    }
 		
 	}
-
+	
+	public static void createStressTestSurveys(User analyst, Language objLang, ServletContext servletContext, String fileDir, SurveyService surveyService, FileService fileService) {
+	    try {
+	    	logger.warn("creating stress test surveys");
+	    	
+	    	createStressTestSurvey("/WEB-INF/Content/EC/StressTest10.eus", analyst, servletContext, fileDir, surveyService, fileService);
+	    	createStressTestSurvey("/WEB-INF/Content/EC/StressTest20.eus", analyst, servletContext, fileDir, surveyService, fileService);
+	    	createStressTestSurvey("/WEB-INF/Content/EC/StressTest30.eus", analyst, servletContext, fileDir, surveyService, fileService);
+	    } catch (Exception e)
+	    {
+	    	logger.error(e.getLocalizedMessage(), e);
+	    }		
+	}
+	
+	private static void createStressTestSurvey(String path, User analyst, ServletContext servletContext, String fileDir, SurveyService surveyService, FileService fileService) throws Exception {
+		InputStream inputStream = servletContext.getResourceAsStream(path);
+    	
+    	String uuid = UUID.randomUUID().toString().replace("/", "");
+        java.io.File file = null;
+        ImportResult result = null;
+    	file = fileService.createTempFile("import" + uuid, null); 	        	        
+    	FileOutputStream fos = new FileOutputStream(file);
+        IOUtils.copy(inputStream, fos);
+        fos.close();
+        
+        result = SurveyExportHelper.importSurvey(file, fileDir, fileService, analyst.getEmail());
+        result.getSurvey().setIsActive(false);
+        result.getSurvey().setIsPublished(true);            
+       
+    	String uid = UUID.randomUUID().toString();
+    	result.getSurvey().setUniqueId(uid);
+    	result.getActiveSurvey().setUniqueId(uid);
+    	int id = surveyService.importSurvey(result, analyst, false);            
+    	Survey survey = surveyService.getSurvey(id);            
+    	Survey published = surveyService.publish(survey, -1, -1, false, -1, false, true);
+    	surveyService.activate(survey, false, -1);
+    	
+    	published.getPublication().setAllContributions(true);
+    	published.getPublication().setAllQuestions(true);
+    	published.getPublication().setShowCharts(true);
+    	published.getPublication().setShowContent(true);
+    	published.getPublication().setShowStatistics(true);
+    	published.getPublication().setShowSearch(true);
+    	
+    	surveyService.update(published, true);
+	}
 
 }

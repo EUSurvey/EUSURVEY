@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Ucs2Utf8 {
 
@@ -43,7 +44,7 @@ public class Ucs2Utf8 {
     public static HashMap<String,String[]> requestToHashMap(HttpServletRequest r, boolean escape) {
     	String re = "\\p{C}"; 
     	
-        HashMap<String,String[]> result = new HashMap<>();
+        HashMap<String,String[]> result = new LinkedHashMap<>();
         @SuppressWarnings("rawtypes")
 		Enumeration e = r.getParameterNames();
         while (e.hasMoreElements()) {

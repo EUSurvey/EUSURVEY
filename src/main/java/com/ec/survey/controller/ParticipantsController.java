@@ -12,7 +12,6 @@ import com.ec.survey.model.attendees.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
 import org.apache.commons.lang.StringUtils;
@@ -187,9 +186,9 @@ public class ParticipantsController extends BasicController {
 		List<String> groups = new ArrayList<>();
 		
 		String ids = request.getParameter("ids");		
-		if (ids != null && ids.length() > 0 && ids.contains("|"))
+		if (ids != null && ids.length() > 0 && ids.contains(";"))
 		{
-			String[] arrIDs = ids.split("\\|");
+			String[] arrIDs = ids.split("\\;");
 			for (String id: arrIDs)
 			{
 				if (id != null && id.length() > 0)
@@ -226,11 +225,11 @@ public class ParticipantsController extends BasicController {
 		
 		String ids = request.getParameter("ids");
 		String surveyUid = request.getParameter("surveyUid");	
-		if (ids != null && ids.length() > 0 && ids.contains("|"))
+		if (ids != null && ids.length() > 0 && ids.contains(";"))
 		{
 			List<Integer> running = mailService.getParticipationGroupsWithRunningMail(surveyUid);
 						
-			String[] arrIDs = ids.split("\\|");
+			String[] arrIDs = ids.split("\\;");
 			for (String id: arrIDs)
 			{
 				if (id != null && id.length() > 0)
@@ -357,7 +356,7 @@ public class ParticipantsController extends BasicController {
 	public ModelAndView sendInvitations(@PathVariable String shortname, @PathVariable String id, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		try {
-			form = sessionService.getForm(request, shortname, false);
+			form = sessionService.getForm(request, shortname, false, false);
 		} catch (NoFormLoadedException ne)
 		{
 			logger.error(ne.getLocalizedMessage(), ne);
@@ -431,7 +430,7 @@ public class ParticipantsController extends BasicController {
 	public ModelAndView sendInvitationsPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		try {
-			form = sessionService.getForm(request, shortname, false);
+			form = sessionService.getForm(request, shortname, false, false);
 		} catch (NoFormLoadedException ne)
 		{
 			logger.error(ne);
@@ -529,7 +528,7 @@ public class ParticipantsController extends BasicController {
 		User user = sessionService.getCurrentUser(request);
 		
 		Form form;
-		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true);
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
 		form = new Form(resources);
 		form.setSurvey(survey);
 		
@@ -571,7 +570,7 @@ public class ParticipantsController extends BasicController {
 		User u = sessionService.getCurrentUser(request);
 		
 		Form form;
-		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true);
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);
 		form = new Form(resources);
 		form.setSurvey(survey);
 				
@@ -661,12 +660,12 @@ public class ParticipantsController extends BasicController {
 	
 	
 	@RequestMapping(value = "/participantsJSONAll", headers="Accept=*/*", method=RequestMethod.GET)
-	public @ResponseBody Paging<Attendee> participantsSearchAll(HttpServletRequest request, HttpServletResponse response ) throws NotAgreedToTosException {
+	public @ResponseBody Paging<Attendee> participantsSearchAll(HttpServletRequest request, HttpServletResponse response ) throws Exception {
 		return participantsSearch(request, response, true);
 	}
 	
 	@RequestMapping(value = "/participantsJSON", headers="Accept=*/*", method=RequestMethod.GET)
-	public @ResponseBody Paging<Attendee> participantsSearch(HttpServletRequest request, HttpServletResponse response ) throws NotAgreedToTosException {
+	public @ResponseBody Paging<Attendee> participantsSearch(HttpServletRequest request, HttpServletResponse response ) throws Exception {
 		return participantsSearch(request, response, false);
 	}
 	
@@ -778,7 +777,7 @@ public class ParticipantsController extends BasicController {
 		return "ERROR";
 	}
 		
-	private @ResponseBody Paging<Attendee> participantsSearch(HttpServletRequest request, HttpServletResponse response, boolean all ) throws NotAgreedToTosException {
+	private @ResponseBody Paging<Attendee> participantsSearch(HttpServletRequest request, HttpServletResponse response, boolean all ) throws Exception {
 
 		User user = sessionService.getCurrentUser(request);
 		int owner = user.getId();
@@ -845,7 +844,7 @@ public class ParticipantsController extends BasicController {
 	public ModelAndView participantsPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		try {
-			form = sessionService.getForm(request, shortname, false);
+			form = sessionService.getForm(request, shortname, false, false);
 		} catch (NoFormLoadedException ne)
 		{
 			logger.error(ne);
@@ -996,7 +995,7 @@ public class ParticipantsController extends BasicController {
 			st.setKeepTaskList(true);
 			
 			st.start();
-			form = sessionService.getForm(request, shortname, false);			
+			form = sessionService.getForm(request, shortname, false, false);			
 			st.stop();
 			logger.info("SaveToken with FORM TOOK " + st.getTotalTimeMillis() );
 			
@@ -1107,7 +1106,7 @@ public class ParticipantsController extends BasicController {
 	public ModelAndView participantsStaticPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		try {
-			form = sessionService.getForm(request, shortname, false);
+			form = sessionService.getForm(request, shortname, false, false);
 		} catch (NoFormLoadedException ne)
 		{
 			logger.error(ne);
@@ -1202,7 +1201,7 @@ public class ParticipantsController extends BasicController {
 	public ModelAndView participantsDepartmentsPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		try {
-			form = sessionService.getForm(request, shortname, false);
+			form = sessionService.getForm(request, shortname, false, false);
 		} catch (NoFormLoadedException ne)
 		{
 			logger.error(ne);

@@ -56,125 +56,6 @@ public class XlsExportCreator extends ExportCreator {
 		questionTitleStyle.setFont(f);
 	}
 
-	@Override
-	void ExportCharts() throws Exception {
-		
-		String safeName = WorkbookUtil.createSafeSheetName("Charts");
-		Sheet sheet = wb.createSheet(safeName);
-		
-		Survey survey = surveyService.getSurveyInOriginalLanguage(form.getSurvey().getId(), form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
-			
-		form.setSurvey(survey);
-
-		// Create a row and put some cells in it. Rows are 0 based.
-		int rowIndex = InitWorkbook(sheet, export);
-		
-        Statistics statistics = form.getStatistics();
-      
-        HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
-        String cellValue;
-        
-        Set<String> visibleQuestions = null;
-		if (export.getResultFilter() != null) visibleQuestions = export.getResultFilter().getExportedQuestions();
-		if (visibleQuestions == null || visibleQuestions.size() == 0) visibleQuestions = export.getResultFilter().getVisibleQuestions();
-		
-        for (Element question : survey.getQuestionsAndSections()) {
-        	
-        	if (export.getResultFilter() == null || visibleQuestions.size() == 0 || visibleQuestions.contains(question.getId().toString()))	{      
-        		
-        		if (question instanceof Section)
-        		{
-        			Row row = sheet.createRow(rowIndex++);
-        			Cell cell = row.createCell(0);
-        			cell.setCellValue(ConversionTools.removeHTMLNoEscape(question.getTitle()));
-					cell.setCellStyle(questionTitleStyle);
-					row = sheet.createRow(rowIndex++);
-        		}        		
-        		
-				if (question instanceof ChoiceQuestion)
-				{
-					ChoiceQuestion choiceQuestion = (ChoiceQuestion)question;
-					Row row = sheet.createRow(rowIndex++);
-					Cell cell = row.createCell(0);
-					cellValue = ConversionTools.removeHTMLNoEscape(choiceQuestion.getTitle());
-					if (export != null && export.getShowShortnames())
-					{
-						cellValue += " (" + choiceQuestion.getShortname() + ")";
-					}
-					cell.setCellValue(cellValue);
-					cell.setCellStyle(questionTitleStyle);
-					for (PossibleAnswer possibleAnswer : choiceQuestion.getAllPossibleAnswers()) {							
-						double percent = statistics.getRequestedRecordsPercent().get(possibleAnswer.getId().toString());
-						CreateChartShape(patriarch, percent, rowIndex);
-						
-						cellValue = ConversionTools.removeHTMLNoEscape(possibleAnswer.getTitle());
-						if (export != null && export.getShowShortnames())
-						{
-							cellValue += " (" + possibleAnswer.getShortname() + ")";
-						}
-						
-						CreateChartAnswerRow(sheet, cellValue, rowIndex, percent);
-						rowIndex++;
-					}
-					row = sheet.createRow(rowIndex++);
-				} else if (question instanceof GalleryQuestion && ((GalleryQuestion)question).getSelection()) {
-					GalleryQuestion galleryQuestion = (GalleryQuestion)question;
-					Row row = sheet.createRow(rowIndex++);
-					Cell cell = row.createCell(0);
-					cellValue = ConversionTools.removeHTMLNoEscape(galleryQuestion.getTitle());
-					if (export != null && export.getShowShortnames())
-					{
-						cellValue += " (" + galleryQuestion.getShortname() + ")";
-					}
-					cell.setCellValue(cellValue);
-					cell.setCellStyle(questionTitleStyle);
-					for (int i = 0; i < galleryQuestion.getFiles().size(); i++) {							
-						double percent = statistics.getRequestedRecordsPercent().get(galleryQuestion.getId().toString() + "-" + i);
-						CreateChartShape(patriarch, percent, rowIndex);
-						
-						cellValue = ConversionTools.removeHTMLNoEscape(galleryQuestion.getFiles().get(i).getName());
-							
-						CreateChartAnswerRow(sheet, cellValue, rowIndex, percent);
-						rowIndex++;
-					}
-					row = sheet.createRow(rowIndex++);
-				} else if (question instanceof Matrix) {
-					Matrix matrix = (Matrix)question;
-					
-					for (Element matrixQuestion: matrix.getQuestions()) {	
-						Row row = sheet.createRow(rowIndex++);
-						Cell cell = row.createCell(0);
-						
-						cellValue = ConversionTools.removeHTMLNoEscape(ConversionTools.removeHTMLNoEscape(matrix.getTitle() + ": "+ matrixQuestion.getTitle()));
-						if (export != null && export.getShowShortnames())
-						{
-							cellValue += " (" + matrixQuestion.getShortname() + ")";
-						}
-						
-						cell.setCellValue(cellValue);
-						cell.setCellStyle(questionTitleStyle);
-						for (Element matrixAnswer: matrix.getAnswers()) {
-							double percent = statistics.getRequestedRecordsPercentForMatrix(matrixQuestion, matrixAnswer);
-							CreateChartShape(patriarch, percent, rowIndex);
-							
-							cellValue = ConversionTools.removeHTMLNoEscape(matrixAnswer.getTitle());
-							if (export != null && export.getShowShortnames())
-							{
-								cellValue += " (" + matrixAnswer.getShortname() + ")";
-							}
-							
-							CreateChartAnswerRow(sheet, cellValue, rowIndex, percent);
-							rowIndex++;					
-						}
-						row = sheet.createRow(rowIndex++);
-					}
-				}
-        	}
-        }       
-
-        wb.write(outputStream);
-	}
-
 	private void checkColumnInsertHeader(Export export)
 	{
 		if (columnIndexInsertHeader > 253)
@@ -205,7 +86,7 @@ public class XlsExportCreator extends ExportCreator {
 			if (publication != null || filter.exported(question.getId().toString()))
 			if (publication == null || publication.isAllQuestions() || publication.isSelected(question.getId()))
 			{
-				if (!(question instanceof Text || question instanceof Image || question instanceof Download || question instanceof Confirmation))
+				if (!(question instanceof Text || question instanceof Image || question instanceof Download || question instanceof Confirmation|| question instanceof Ruler))
 				{					
 					if (question instanceof Matrix) {
 						Matrix matrix = (Matrix)question;
@@ -412,7 +293,8 @@ public class XlsExportCreator extends ExportCreator {
 			}
 		}
 		
-		Map<String, List<File>> uploadedFilesByQuestionUID = new HashMap<>();
+		Map<String, Map<String, List<File>>> uploadedFilesByCodeAndQuestionUID = new HashMap<>();
+		Map<String, String> uploadQuestionNicenames = new HashMap<>();
 		
 		Session session;
 		Transaction t = null;
@@ -427,93 +309,123 @@ public class XlsExportCreator extends ExportCreator {
 		
 		if (export != null) session.evict(export);
 		session.evict(survey);
+		session.evict(filter);
+		if (publication != null) {
+			session.evict(publication);
+		}
 	
 		HashMap<String, Object> values = new HashMap<>();
 		
 		session.flush();
-	
-		String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN (" + answerService.getSql(null, form.getSurvey().getId(), filter, values, false, true)+ ") ORDER BY ans.ANSWER_SET_ID";
 		
-		SQLQuery query = session.createSQLQuery(sql);
-		
-		query.setReadOnly(true);		
-		
-		for (String attrib : values.keySet()) {
-			Object value = values.get(attrib);
-			if (value instanceof String)
+		if (publication != null && publication.isAllQuestions())
+		{
+			for (Element question: survey.getQuestions())
 			{
-				query.setString(attrib, (String)values.get(attrib));
-			} else if (value instanceof Integer)
-			{
-				query.setInteger(attrib, (Integer)values.get(attrib));
-			}  else if (value instanceof Date)
-			{
-				query.setTimestamp(attrib, (Date)values.get(attrib));
-			}
+				filter.getExportedQuestions().add(question.getId().toString());
+			}			
 		}
 		
-		query.setFetchSize(Integer.MIN_VALUE);
-		ScrollableResults results = query.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
+		filter.getVisibleQuestions().clear();
+		for (String question: filter.getExportedQuestions())
+		{
+			filter.getVisibleQuestions().add(question);
+		}
+	
+		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true, publication == null || publication.getShowUploadedDocuments(), false);
+		List<Question> questions = form.getSurvey().getQuestions();
 		
-		try {
-		
-			int lastAnswerSet = 0;
-			AnswerSet answerSet = new AnswerSet();
-			answerSet.setSurvey(survey);
-			List<Question> questions = form.getSurvey().getQuestions();
-			
-			session.flush();
-			
-			int counter = 0;
-			while (results.next()) 
+		if (answersets != null)
+		{
+			for (List<String> row : answersets)
 			{
-				
-				if (counter > 1000)
-				{
-					session.clear();
-					counter = 0;
-				}
-				counter++;
-				
-				Object[] a = results.get();
-				Answer answer = new Answer();
-				answer.setAnswerSetId(ConversionTools.getValue(a[0]));
-				answer.setQuestionId(ConversionTools.getValue(a[1]));
-				answer.setQuestionUniqueId((String) a[2]);
-				answer.setValue((String) a[3]);
-				answer.setColumn(ConversionTools.getValue(a[4]));
-				answer.setId(ConversionTools.getValue(a[5]));
-				answer.setRow(ConversionTools.getValue(a[6]));
-				answer.setPossibleAnswerId(ConversionTools.getValue(a[7]));
-				answer.setPossibleAnswerUniqueId((String) a[8]);
-				
-				if (lastAnswerSet == answer.getAnswerSetId())
-				{
-					answerSet.addAnswer(answer);
-				} else {
-					if (lastAnswerSet > 0)
-					{
-						session.flush();
-						parseAnswerSet(answerSet, publication, filter, filesByAnswer, export, questions, uploadedFilesByQuestionUID);					
-					}
-					
-					answerSet = new AnswerSet();
-					answerSet.setSurvey(survey);
-					answerSet.setId(answer.getAnswerSetId());
-					lastAnswerSet = answer.getAnswerSetId();
-					answerSet.getAnswers().add(answer);
-					answerSet.setDate((Date) a[10]);
-					answerSet.setUpdateDate((Date) a[11]);
-					answerSet.setUniqueCode((String) a[9]);				
-					answerSet.setInvitationId((String) a[12]);
-					answerSet.setResponderEmail((String) a[13]);
-					answerSet.setLanguageCode((String) a[14]);
-					answerSet.setScore(ConversionTools.getValue(a[15]));
-				}	
+				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, questions, uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
 			}
-			if (lastAnswerSet > 0) parseAnswerSet(answerSet, publication, filter, filesByAnswer, export, questions, uploadedFilesByQuestionUID);
-		} finally {
-			results.close();
+		} else {
+	
+			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN (" + answerService.getSql(null, form.getSurvey().getId(), filter, values, false, true)+ ") ORDER BY ans.ANSWER_SET_ID";
+			
+			SQLQuery query = session.createSQLQuery(sql);
+			
+			query.setReadOnly(true);		
+			
+			for (String attrib : values.keySet()) {
+				Object value = values.get(attrib);
+				if (value instanceof String)
+				{
+					query.setString(attrib, (String)values.get(attrib));
+				} else if (value instanceof Integer)
+				{
+					query.setInteger(attrib, (Integer)values.get(attrib));
+				}  else if (value instanceof Date)
+				{
+					query.setTimestamp(attrib, (Date)values.get(attrib));
+				}
+			}
+			
+			query.setFetchSize(Integer.MIN_VALUE);
+			ScrollableResults results = query.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
+			
+			try {
+			
+				int lastAnswerSet = 0;
+				AnswerSet answerSet = new AnswerSet();
+				answerSet.setSurvey(survey);
+				
+				session.flush();
+				
+				int counter = 0;
+				while (results.next()) 
+				{
+					
+					if (counter > 1000)
+					{
+						session.clear();
+						counter = 0;
+					}
+					counter++;
+					
+					Object[] a = results.get();
+					Answer answer = new Answer();
+					answer.setAnswerSetId(ConversionTools.getValue(a[0]));
+					answer.setQuestionId(ConversionTools.getValue(a[1]));
+					answer.setQuestionUniqueId((String) a[2]);
+					answer.setValue((String) a[3]);
+					answer.setColumn(ConversionTools.getValue(a[4]));
+					answer.setId(ConversionTools.getValue(a[5]));
+					answer.setRow(ConversionTools.getValue(a[6]));
+					answer.setPossibleAnswerId(ConversionTools.getValue(a[7]));
+					answer.setPossibleAnswerUniqueId((String) a[8]);
+					
+					if (lastAnswerSet == answer.getAnswerSetId())
+					{
+						answerSet.addAnswer(answer);
+					} else {
+						if (lastAnswerSet > 0)
+						{
+							session.flush();
+							parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions, uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);					
+						}
+						
+						answerSet = new AnswerSet();
+						answerSet.setSurvey(survey);
+						answerSet.setId(answer.getAnswerSetId());
+						lastAnswerSet = answer.getAnswerSetId();
+						answerSet.getAnswers().add(answer);
+						answerSet.setDate((Date) a[10]);
+						answerSet.setUpdateDate((Date) a[11]);
+						answerSet.setUniqueCode((String) a[9]);				
+						answerSet.setInvitationId((String) a[12]);
+						answerSet.setResponderEmail((String) a[13]);
+						answerSet.setLanguageCode((String) a[14]);
+						answerSet.setScore(ConversionTools.getValue(a[15]));
+					}	
+				}
+				if (lastAnswerSet > 0) parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions, uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+			} finally {
+				results.close();
+			}
+		
 		}
 		
 		if (!sync)
@@ -553,24 +465,27 @@ public class XlsExportCreator extends ExportCreator {
 				    os.closeArchiveEntry();
 				}
 				
-				for (String questionUID: uploadedFilesByQuestionUID.keySet())
+				for (String code: uploadedFilesByCodeAndQuestionUID.keySet())
 				{
-					for (File file: uploadedFilesByQuestionUID.get(questionUID))
-			    	{
-						java.io.File f = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
-						
-						if (!f.exists())
-						{
-							f = new java.io.File(exportService.getFileDir() + file.getUid());							
-						}
-			    		
-						if (f.exists())
-						{
-				    		os.putArchiveEntry(new ZipArchiveEntry(questionUID + "/" + file.getUid() + "_" + file.getName()));
-						    IOUtils.copy(new FileInputStream(f), os);
-						    os.closeArchiveEntry();	
-						}
-			    	}
+					for (String questionNiceName: uploadedFilesByCodeAndQuestionUID.get(code).keySet())
+					{
+						for (File file: uploadedFilesByCodeAndQuestionUID.get(code).get(questionNiceName))
+				    	{
+							java.io.File f = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
+							
+							if (!f.exists())
+							{
+								f = new java.io.File(exportService.getFileDir() + file.getUid());							
+							}
+				    		
+							if (f.exists())
+							{
+					    		os.putArchiveEntry(new ZipArchiveEntry(code + "/" + questionNiceName + "/" + file.getName()));
+							    IOUtils.copy(new FileInputStream(f), os);
+							    os.closeArchiveEntry();	
+							}
+				    	}
+					}
 				}
 			
 		    } finally {
@@ -599,7 +514,7 @@ public class XlsExportCreator extends ExportCreator {
 	private Row row;
 	
 	CellStyle dateCellStyle = null;
-	private void parseAnswerSet(AnswerSet answerSet, Publication publication, ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export, List<Question> questions, Map<String, List<File>> uploadedFilesByQuestionUID) throws IOException
+	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication, ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export, List<Question> questions, Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID, Map<String, String> uploadQuestionNicenames) throws IOException
 	{				
 		CreationHelper createHelper = wb.getCreationHelper();
 				
@@ -609,11 +524,9 @@ public class XlsExportCreator extends ExportCreator {
 			fileCounter++;
 			wb.write(outputStream);
 			outputStream.close();
-			
 			wb.close();
-		 	safeName = WorkbookUtil.createSafeSheetName("Content");
-		 	columnIndexInsertHeader = 0;
-			
+			safeName = WorkbookUtil.createSafeSheetName("Content");
+			columnIndexInsertHeader = 0;
 			String ext = FilenameUtils.getExtension(exportFilePath);
 			
 			outputStream = new FileOutputStream(exportFilePath.replace( "." + ext, "_" + fileCounter + "." + ext));
@@ -639,12 +552,14 @@ public class XlsExportCreator extends ExportCreator {
 		lastSheet = 0;
 		columnIndex = 0;
 		List<Row> addedRows = new ArrayList<>();
+		
+		int answerrowcounter = 2; //the first item is the answerset code, the second one the id
 	
 		for (Question question : questions) {
 			if (publication != null || filter.exported(question.getId().toString()))
 			if (publication == null || publication.isAllQuestions() || publication.isSelected(question.getId()))
 			{
-				if (!(question instanceof Text || question instanceof Image || question instanceof Download || question instanceof Confirmation))
+				if (!(question instanceof Text || question instanceof Image || question instanceof Download || question instanceof Confirmation|| question instanceof Ruler))
 				{	
 					if (question instanceof Matrix) {
 						Matrix matrix = (Matrix)question;
@@ -652,17 +567,22 @@ public class XlsExportCreator extends ExportCreator {
 							checkColumnsParseAnswerSet();						
 							
 							Cell cell = row.createCell(columnIndex++ % 254);
-							List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(), matrixQuestion.getUniqueId());
-			
-							StringBuilder cellValue = new StringBuilder();
-							for (Answer answer : answers) {
-								cellValue.append((cellValue.length() > 0) ? ";" : "").append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
-								if (export != null && export.getShowShortnames())
-								{
-									cellValue.append(" ").append(form.getAnswerShortname(answer));
+							
+							if (answerSet == null)
+							{
+								cell.setCellValue(answerrow.get(answerrowcounter++));
+							} else {
+								List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(), matrixQuestion.getUniqueId());			
+								StringBuilder cellValue = new StringBuilder();
+								for (Answer answer : answers) {
+									cellValue.append((cellValue.length() > 0) ? ";" : "").append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
+									if (export != null && export.getShowShortnames())
+									{
+										cellValue.append(" ").append(form.getAnswerShortname(answer));
+									}
 								}
+								cell.setCellValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
 							}
-							cell.setCellValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
 						}
 					} else if (question instanceof RatingQuestion) {
 						RatingQuestion rating = (RatingQuestion)question;
@@ -670,27 +590,36 @@ public class XlsExportCreator extends ExportCreator {
 							checkColumnsParseAnswerSet();						
 							
 							Cell cell = row.createCell(columnIndex++ % 254);
-							List<Answer> answers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
-			
-							StringBuilder cellValue = new StringBuilder();
-							if (answers.size() > 0) {
-								cellValue.append((cellValue.length() > 0) ? ";" : "").append(ConversionTools.removeHTMLNoEscape(answers.get(0).getValue()));
+							
+							if (answerSet == null)
+							{
+								cell.setCellValue(answerrow.get(answerrowcounter++));
+							} else {
+								List<Answer> answers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+				
+								StringBuilder cellValue = new StringBuilder();
+								if (answers.size() > 0) {
+									cellValue.append((cellValue.length() > 0) ? ";" : "").append(ConversionTools.removeHTMLNoEscape(answers.get(0).getValue()));
+								}
+								cell.setCellValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
 							}
-							cell.setCellValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
 						}
 					} else if (question instanceof Table) {
 						Table table = (Table)question;
 						
 						for (int tableRow = 1; tableRow < table.getAllRows(); tableRow++) {
 							for (int tableCol = 1; tableCol < table.getAllColumns(); tableCol++) {
-								String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);
-								
-								if (answer == null) answer = "";
-								
-								checkColumnsParseAnswerSet();	
 								
 								Cell cell = row.createCell(columnIndex++ % 254);
-								cell.setCellValue(ConversionTools.removeHTMLNoEscape(answer));
+								if (answerSet == null)
+								{
+									cell.setCellValue(answerrow.get(answerrowcounter++));
+								} else {									
+									String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);									
+									if (answer == null) answer = "";									
+									checkColumnsParseAnswerSet();	
+									cell.setCellValue(ConversionTools.removeHTMLNoEscape(answer));
+								}
 							}
 						}
 					} else if (question instanceof Upload) {						
@@ -699,27 +628,73 @@ public class XlsExportCreator extends ExportCreator {
 							checkColumnsParseAnswerSet();
 							
 							Cell cell = row.createCell(columnIndex++ % 254);
-							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
-							
 							StringBuilder cellValue = new StringBuilder();
 							String linkValue = "";
-							for (Answer answer : answers) {
-								
-								if (filesByAnswer.containsKey(answer.getId()))
-								{								
-									for (File file: filesByAnswer.get(answer.getId()))
+							
+							if (answerSet == null)
+							{
+								String sfiles = answerrow.get(answerrowcounter++);
+								if (sfiles != null && sfiles.length() > 0)
+								{
+									String[] files = sfiles.split(";");
+									for (String sfile : files)
 									{
-										if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId()))
+										if (sfile.length() > 0)
 										{
-											uploadedFilesByQuestionUID.put(question.getUniqueId(), new ArrayList<>());
+											String[] data = sfile.split("\\|");
+											File file = new File();
+											file.setUid(data[0]);
+											file.setName(data[1]);
+											
+											if (!uploadedFilesByContributionIDAndQuestionUID.containsKey(answerrow.get(0)))
+											{
+												uploadedFilesByContributionIDAndQuestionUID.put(answerrow.get(0), new HashMap<String, List<File>>());
+											}
+											if (!uploadQuestionNicenames.containsKey(question.getUniqueId()))
+											{
+												uploadQuestionNicenames.put(question.getUniqueId(), "Upload_" + (uploadQuestionNicenames.size() + 1));
+											}
+											if (!uploadedFilesByContributionIDAndQuestionUID.get(answerrow.get(0)).containsKey(uploadQuestionNicenames.get(question.getUniqueId())))
+											{
+												uploadedFilesByContributionIDAndQuestionUID.get(answerrow.get(0)).put(uploadQuestionNicenames.get(question.getUniqueId()), new ArrayList<File>());
+											}
+											uploadedFilesByContributionIDAndQuestionUID.get(answerrow.get(0)).get(uploadQuestionNicenames.get(question.getUniqueId())).add(file);
+											
+											cellValue.append((cellValue.length() > 0) ? ";" : "").append(file.getName());
+											linkValue = answerrow.get(0) + "/" + uploadQuestionNicenames.get(question.getUniqueId());
 										}
-										uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
-										
-										cellValue.append((cellValue.length() > 0) ? ";" : "").append(file.getName());
-										linkValue = question.getUniqueId();
 									}
 								}
+							} else {							
+								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+								for (Answer answer : answers) {
+									
+									if (filesByAnswer.containsKey(answer.getId()))
+									{								
+										for (File file: filesByAnswer.get(answer.getId()))
+										{
+											
+											if (!uploadedFilesByContributionIDAndQuestionUID.containsKey(answerSet.getUniqueCode()))
+											{
+												uploadedFilesByContributionIDAndQuestionUID.put(answerSet.getUniqueCode(), new HashMap<String, List<File>>());
+											}
+											if (!uploadQuestionNicenames.containsKey(question.getUniqueId()))
+											{
+												uploadQuestionNicenames.put(question.getUniqueId(), "Upload_" + (uploadQuestionNicenames.size() + 1));
+											}
+											if (!uploadedFilesByContributionIDAndQuestionUID.get(answerSet.getUniqueCode()).containsKey(uploadQuestionNicenames.get(question.getUniqueId())))
+											{
+												uploadedFilesByContributionIDAndQuestionUID.get(answerSet.getUniqueCode()).put(uploadQuestionNicenames.get(question.getUniqueId()), new ArrayList<File>());
+											}
+											uploadedFilesByContributionIDAndQuestionUID.get(answerSet.getUniqueCode()).get(uploadQuestionNicenames.get(question.getUniqueId())).add(file);
+											
+											cellValue.append((cellValue.length() > 0) ? ";" : "").append(file.getName());
+											linkValue = answerSet.getUniqueCode() + "/" + uploadQuestionNicenames.get(question.getUniqueId());
+										}
+									}
+								}								
 							}
+							
 							cell.setCellValue(cellValue.toString());
 							Hyperlink link = createHelper.createHyperlink(Hyperlink.LINK_FILE);
 							link.setAddress(linkValue);
@@ -730,97 +705,132 @@ public class XlsExportCreator extends ExportCreator {
 						checkColumnsParseAnswerSet();	
 						
 						Cell cell = row.createCell(columnIndex++ % 254);
-						List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 						
-						StringBuilder cellValue = new StringBuilder();
-						boolean first = true;
-						for (Answer answer : answers) {
+						if (answerSet == null)
+						{
+							cell.setCellValue(answerrow.get(answerrowcounter++));
+						} else {						
+							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 							
-							if (answer.getValue() != null && answer.getValue().length() > 0)
-							{
-								int index = Integer.parseInt(answer.getValue());
-								if (!first) cellValue.append(", ");
-								try {
-									cellValue.append(((GalleryQuestion) question).getFiles().get(index).getName());
-									first = false;
-								} catch (Exception e)
+							StringBuilder cellValue = new StringBuilder();
+							boolean first = true;
+							for (Answer answer : answers) {
+								
+								if (answer.getValue() != null && answer.getValue().length() > 0)
 								{
-									logger.error(e.getLocalizedMessage(), e);
-								}								
+									int index = Integer.parseInt(answer.getValue());
+									if (!first) cellValue.append(", ");
+									try {
+										cellValue.append(((GalleryQuestion) question).getFiles().get(index).getName());
+										first = false;
+									} catch (Exception e)
+									{
+										logger.error(e.getLocalizedMessage(), e);
+									}								
+								}
 							}
+							cell.setCellValue(cellValue.toString());
 						}
-						cell.setCellValue(cellValue.toString());
 					} else if (question instanceof NumberQuestion && (export == null || !export.getShowShortnames())) {
 						
 						checkColumnsParseAnswerSet();	
 						
 						Cell cell = row.createCell(columnIndex++ % 254);
-						List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
-						
-						double cellValue = 0.0;
-						
-						if (answers.size() > 0)
+						if (answerSet == null)
 						{
-							cellValue = Double.parseDouble(answers.get(0).getValue());
-							cell.setCellValue(cellValue);
-						}						
+							String v = answerrow.get(answerrowcounter++);
+							if (v != null && v.length() > 0)
+							{
+								double cellValue = Double.parseDouble(v);
+								cell.setCellValue(cellValue);
+							}
+						} else {
+							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());							
+							double cellValue = 0.0;							
+							if (answers.size() > 0)
+							{
+								cellValue = Double.parseDouble(answers.get(0).getValue());
+								cell.setCellValue(cellValue);
+							}
+						}
 					} else if (question instanceof DateQuestion && (export == null || !export.getShowShortnames())) {
 						
 						checkColumnsParseAnswerSet();	
 						
 						Cell cell = row.createCell(columnIndex++ % 254);
-						List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 						
-						Date cellValue = null;
-						
-						if (answers.size() > 0)
+						if (answerSet == null)
 						{
-							cellValue = ConversionTools.getDate(answers.get(0).getValue());
-							if (cellValue!= null)
+							String v = answerrow.get(answerrowcounter++);
+							if (v != null && v.length() > 0)
 							{
-								cell.setCellValue(cellValue);
-								cell.setCellStyle(dateCellStyle);
-							} else {
-								logger.info("empty value for question " + question.getId() + " in answer " + answerSet.getId());
-							}						
-						}			
+								Date cellValue = ConversionTools.getDate(v);
+								if (cellValue!= null)
+								{
+									cell.setCellValue(cellValue);
+									cell.setCellStyle(dateCellStyle);
+								}	
+							}
+						} else {						
+							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+							
+							Date cellValue = null;
+							
+							if (answers.size() > 0)
+							{
+								cellValue = ConversionTools.getDate(answers.get(0).getValue());
+								if (cellValue!= null)
+								{
+									cell.setCellValue(cellValue);
+									cell.setCellStyle(dateCellStyle);
+								} else {
+									logger.info("empty value for question " + question.getId() + " in answer " + answerSet.getId());
+								}						
+							}
+						}
 					} else {
 						
 						checkColumnsParseAnswerSet();	
 						
 						Cell cell = row.createCell(columnIndex++ % 254);
-						List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
-		
-						StringBuilder cellValue = new StringBuilder();
-						for (Answer answer : answers) {
-							
-							if (question instanceof FreeTextQuestion)
-							{
-								cellValue.append((cellValue.length() > 0) ? ";" : "").append(form.getAnswerTitle(answer));
-							} else {							
-								cellValue.append((cellValue.length() > 0) ? ";" : "").append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
-							}
-							
-							if (export != null && export.getShowShortnames())
-							{
-								cellValue.append(" ").append(form.getAnswerShortname(answer));
-							}
-						}
-						int additionalRows = 0;
-						while (cellValue != null && cellValue.length() > 32767)
+						
+						if (answerSet == null)
 						{
-							String shortCellValue = cellValue.substring(0, 32767);
-							cell.setCellValue(shortCellValue);
-							additionalRows +=1;
-							if (addedRows.size() < additionalRows)
-							{
-								Row addedrow = sheet.createRow(rowIndex++);
-								addedRows.add(addedrow);
+							cell.setCellValue(answerrow.get(answerrowcounter++));
+						} else {						
+							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+			
+							StringBuilder cellValue = new StringBuilder();
+							for (Answer answer : answers) {
+								
+								if (question instanceof FreeTextQuestion)
+								{
+									cellValue.append((cellValue.length() > 0) ? ";" : "").append(form.getAnswerTitle(answer));
+								} else {							
+									cellValue.append((cellValue.length() > 0) ? ";" : "").append(ConversionTools.removeHTMLNoEscape(form.getAnswerTitle(answer)));
+								}
+								
+								if (export != null && export.getShowShortnames())
+								{
+									cellValue.append(" ").append(form.getAnswerShortname(answer));
+								}
 							}
-							cell = addedRows.get(additionalRows-1).createCell(columnIndex-1 % 254);
-							cellValue = new StringBuilder(cellValue.substring(32767));
+							int additionalRows = 0;
+							while (cellValue != null && cellValue.length() > 32767)
+							{
+								String shortCellValue = cellValue.substring(0, 32767);
+								cell.setCellValue(shortCellValue);
+								additionalRows +=1;
+								if (addedRows.size() < additionalRows)
+								{
+									Row addedrow = sheet.createRow(rowIndex++);
+									addedRows.add(addedrow);
+								}
+								cell = addedRows.get(additionalRows-1).createCell(columnIndex-1 % 254);
+								cellValue = new StringBuilder(cellValue.substring(32767));
+							}
+							cell.setCellValue(cellValue.toString());
 						}
-						cell.setCellValue(cellValue.toString());
 					}
 				}
 			}
@@ -831,10 +841,15 @@ public class XlsExportCreator extends ExportCreator {
 			{
 				checkColumnsParseAnswerSet();	
 				
-				Cell cell = row.createCell(columnIndex++ % 254);				
-				if (answerSet.getSurvey().getSecurity().contains("anonymous"))
+				Cell cell = row.createCell(columnIndex++ % 254);
+				
+				if (form.getSurvey().getSecurity().contains("anonymous"))
 				{
 					cell.setCellValue("Anonymous");
+					answerrowcounter++;
+				} else if (answerSet == null)
+				{
+					cell.setCellValue(answerrow.get(answerrowcounter++));
 				} else {
 					cell.setCellValue(answerSet.getInvitationId() != null ? answerSet.getInvitationId() : "");
 				}
@@ -844,9 +859,14 @@ public class XlsExportCreator extends ExportCreator {
 				checkColumnsParseAnswerSet();	
 				
 				Cell cell = row.createCell(columnIndex++ % 254);
-				if (answerSet.getSurvey().getSecurity().contains("anonymous"))
+				
+				if (form.getSurvey().getSecurity().contains("anonymous"))
 				{
 					cell.setCellValue("Anonymous");
+					answerrowcounter++;
+				} else if (answerSet == null)
+				{
+					cell.setCellValue(answerrow.get(answerrowcounter++));
 				} else {
 					cell.setCellValue(answerSet.getUniqueCode() != null ? answerSet.getUniqueCode() : "");
 				}
@@ -856,22 +876,40 @@ public class XlsExportCreator extends ExportCreator {
 				checkColumnsParseAnswerSet();
 				
 				Cell cell = row.createCell(columnIndex++ % 254);
-				if (answerSet.getSurvey().getSecurity().contains("anonymous"))
+				if (form.getSurvey().getSecurity().contains("anonymous"))
 				{
 					cell.setCellValue("Anonymous");
+					answerrowcounter++;
+				} else if (answerSet == null)
+				{
+					cell.setCellValue(answerrow.get(answerrowcounter++));
 				} else {
 					cell.setCellValue(answerSet.getResponderEmail() != null ? answerSet.getResponderEmail() : "");
-				}
+				}				
 			}
 			if (filter.exported("created"))
 			{
 				checkColumnsParseAnswerSet();
 				
 				Cell cell = row.createCell(columnIndex++ % 254);
-				if (answerSet.getDate() != null)
+				if (answerSet == null)
 				{
-					cell.setCellValue(answerSet.getDate());
-					cell.setCellStyle(dateCellStyle);
+					String v = answerrow.get(answerrowcounter++);
+					if (v != null && v.length() > 0)
+					{
+						Date cellValue = ConversionTools.getDate(v);
+						if (cellValue!= null)
+						{
+							cell.setCellValue(cellValue);
+							cell.setCellStyle(dateCellStyle);
+						}	
+					}
+				} else {
+					if (answerSet.getDate() != null)
+					{
+						cell.setCellValue(answerSet.getDate());
+						cell.setCellStyle(dateCellStyle);
+					}
 				}
 			}
 			if (filter.exported("updated"))
@@ -879,10 +917,24 @@ public class XlsExportCreator extends ExportCreator {
 				checkColumnsParseAnswerSet();
 				
 				Cell cell = row.createCell(columnIndex++ % 254);
-				if (answerSet.getUpdateDate() != null)
+				if (answerSet == null)
 				{
-					cell.setCellValue(answerSet.getUpdateDate());
-					cell.setCellStyle(dateCellStyle);
+					String v = answerrow.get(answerrowcounter++);
+					if (v != null && v.length() > 0)
+					{
+						Date cellValue = ConversionTools.getDate(v);
+						if (cellValue!= null)
+						{
+							cell.setCellValue(cellValue);
+							cell.setCellStyle(dateCellStyle);
+						}	
+					}
+				} else {
+					if (answerSet.getUpdateDate() != null)
+					{
+						cell.setCellValue(answerSet.getUpdateDate());
+						cell.setCellStyle(dateCellStyle);
+					}
 				}
 			}
 			if (filter.exported("languages"))
@@ -890,7 +942,12 @@ public class XlsExportCreator extends ExportCreator {
 				checkColumnsParseAnswerSet();
 				
 				Cell cell = row.createCell(columnIndex++ % 254);
-				cell.setCellValue(answerSet.getLanguageCode() != null ? answerSet.getLanguageCode() : "");
+				if (answerSet == null)
+				{
+					cell.setCellValue(answerrow.get(answerrowcounter++));
+				} else {
+					cell.setCellValue(answerSet.getLanguageCode() != null ? answerSet.getLanguageCode() : "");
+				}
 			}
 		}
 		
@@ -899,7 +956,18 @@ public class XlsExportCreator extends ExportCreator {
 			checkColumnsParseAnswerSet();
 			
 			Cell cell = row.createCell(columnIndex++ % 254);
-			cell.setCellValue(answerSet.getScore() != null ? answerSet.getScore() : 0);
+			if (answerSet == null)
+			{
+				String v = answerrow.get(answerrowcounter++);
+				if (v != null && v.length() > 0)
+				{
+					cell.setCellValue(Integer.parseInt(v));
+				} else {
+					cell.setCellValue(0);
+				}
+			} else {
+				cell.setCellValue(answerSet.getScore() != null ? answerSet.getScore() : 0);
+			}
 		}
 		
 	}
@@ -913,8 +981,8 @@ public class XlsExportCreator extends ExportCreator {
 		sheet.setColumnWidth(1, 7000);
 		
 	    Statistics statistics = form.getStatistics();
-    	Survey survey = surveyService.getSurvey(form.getSurvey().getId(), false, true);
-    	
+    	Survey survey = surveyService.getSurveyInOriginalLanguage(form.getSurvey().getId(), form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
+		
     	ResultFilter filter = export.getResultFilter().copy();
     	
     	if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked())
@@ -1405,35 +1473,6 @@ public class XlsExportCreator extends ExportCreator {
 	}
 	
 	DecimalFormat df = new DecimalFormat("#.##");
-	private void CreateChartAnswerRow(Sheet sheet, String title, int rowIndex, double percent) {
-		Row row = sheet.createRow(rowIndex);					
-		Cell cell = row.createCell(0);
-		cell.setCellValue(title);			
-		cell = row.createCell(1);
-		cell.setCellValue(" ");
-		cell = row.createCell(2);
-		cell.setCellValue(df.format(percent) + "%");
-	}		
-	
-	private void CreateChartShape(HSSFPatriarch patriarch, double percent, int rowIndex) {
-		try
-		{
-			int dx2 = (int) ((percent * 1023) / 100);
-			if (dx2 > -1 && dx2 < 1024)
-			{
-				HSSFClientAnchor a = new HSSFClientAnchor( 0, 50, dx2, 205, (short) 1, rowIndex, (short) 1, rowIndex );
-				HSSFSimpleShape s = patriarch.createSimpleShape(a);
-				s.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
-				s.setLineStyleColor(10,10,10);
-				s.setFillColor(66,200,255);
-				s.setLineWidth(HSSFShape.LINEWIDTH_ONE_PT);
-				s.setLineStyle(HSSFShape.LINESTYLE_SOLID);
-			}
-		} catch (Exception e)
-		{
-			logger.error(e.getLocalizedMessage(), e);
-		}
-	}
 	
 	@Override
 	void ExportAddressBook() throws Exception {

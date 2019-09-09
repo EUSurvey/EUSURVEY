@@ -12,8 +12,6 @@ import com.ec.survey.service.SessionService;
 import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.exception.TooManyFiltersException;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,7 +43,7 @@ public class ContributionManagementController extends BasicController {
 	protected PaginationMapper paginationMapper;    
 	
 	@RequestMapping(value = "/contributionsearch", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView contributionsearch(HttpServletRequest request, Model model) throws TooManyFiltersException {
+	public ModelAndView contributionsearch(HttpServletRequest request, Model model) throws Exception {
 		ModelAndView result = new ModelAndView("administration/contributionsearch");
 		if (request.getParameter("keepfilter") != null)
 		{
@@ -63,8 +61,8 @@ public class ContributionManagementController extends BasicController {
 			paging.moveTo(newPage);
 			            
 			SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
-			List<AnswerSet> answerSets = answerService.getAnswers(-1, filter, sqlPagination, true, false);
-			
+			List<AnswerSet> answerSets = answerService.getAnswers(null, filter, sqlPagination, true, false, false);
+						
 			paging.setItems(answerSets);
 			
 			result = new ModelAndView("administration/contributionsearch", "paging", paging);
@@ -78,7 +76,7 @@ public class ContributionManagementController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/contributionsearch", method = {RequestMethod.POST})
-	public ModelAndView contributionsearchPOST(HttpServletRequest request, Model model) throws TooManyFiltersException {
+	public ModelAndView contributionsearchPOST(HttpServletRequest request, Model model) throws Exception {
 		
 		ResultFilter filter = new ResultFilter();		
 		filter.setSurveyUid(request.getParameter("surveyUid"));
@@ -101,7 +99,7 @@ public class ContributionManagementController extends BasicController {
 		paging.moveTo(newPage);
 		
 		SqlPagination sqlPagination = new SqlPagination(paging.getCurrentPage(), paging.getItemsPerPage());
-		List<AnswerSet> answerSets = answerService.getAnswers(-1, filter, sqlPagination, true, false);
+		List<AnswerSet> answerSets = answerService.getAnswers(null, filter, sqlPagination, true, false, false);
 		
 		paging.setItems(answerSets);
 		
@@ -127,7 +125,7 @@ public class ContributionManagementController extends BasicController {
 			if (filter == null) return null;
 			
 			SqlPagination sqlPagination = new SqlPagination(Integer.parseInt(page), Integer.parseInt(rows));
-			List<AnswerSet> answerSets = answerService.getAnswers(-1, filter, sqlPagination, true, false);
+			List<AnswerSet> answerSets = answerService.getAnswers(null, filter, sqlPagination, true, false, false);
 			List<ContributionSearchResult> result = new ArrayList<>();
 			for (AnswerSet answerSet: answerSets)
 			{

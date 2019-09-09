@@ -395,7 +395,7 @@
 				<tr class="hideimport hidecopy">
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Title" /></td>
 					<td>
-						<textarea class="tinymcealign required xhtml freetext max2000" id="new-survey-title"></textarea>
+						<textarea class="tinymcealign2 required xhtml freetext max2000" id="new-survey-title"></textarea>
 					</td>
 				</tr>
 				<tr class="hideimport">

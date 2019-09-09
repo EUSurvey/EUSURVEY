@@ -52,9 +52,46 @@
 				<a class="btn btn-info aSpaced" onclick="$('#ask-email-dialog').modal('show');"><spring:message code="label.SendLinkAsEmail" /></a>
 				<a id="bookmarkme" class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><spring:message code="label.SaveToBookMark" /></a>
 				<a id="copyme"class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><spring:message code="label.CopyToClipboard" /></a>
+				<c:if test="${downloadContribution}">
+					<br /><br />
+					<h2><spring:message code="question.needcopydraft" /></h2>
+					<a onclick="showExportDialogAndFocusEmail()" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></a> 
+				</c:if>
 			</div>
+		</div>
+	</div>
 	
-				
+	<div class="modal fade" id="ask-export-dialog" data-backdrop="static">	
+		<div class="modal-dialog">
+	    <div class="modal-content">
+		<div class="modal-header">
+			<b><spring:message code="label.Info" /></b>
+		</div>
+		<div class="modal-body">
+			<p>
+				<spring:message code="question.EmailForPDF" />
+			</p>
+			
+			<input type="text" maxlength="255" name="email" id="email" value="${USER.email}" />
+			<span id="ask-export-dialog-error" class="validation-error hideme">
+				<spring:message code="message.ProvideEmail" />
+			</span>
+			<div class="captcha" style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">						
+				<c:if test="${captchaBypass !=true}">
+				<%@ include file="captcha.jsp" %>					
+				</c:if>
+	       	</div>
+	       	<span id="ask-export-dialog-error-captcha" class="validation-error hideme">       		
+	       		<c:if test="${captchaBypass !=true}">
+	       			<spring:message code="message.captchawrongnew" />
+	       		</c:if>
+	       	</span>
+		</div>
+		<div class="modal-footer">
+			<a class="btn btn-info" onclick="startExport()"><spring:message code="label.OK" /></a>	
+			<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+		</div>
+		</div>
 		</div>
 	</div>
 	
@@ -126,6 +163,70 @@
 	
 	<script type="text/javascript">
 	
+	function startExport()
+	{
+		$("#ask-export-dialog").find(".validation-error").hide();
+		$("#ask-export-dialog").find(".validation-error-keep").hide();
+		
+		var mail = $("#email").val();
+		if (mail.trim().length == 0 || !validateEmail(mail))
+		{
+			$("#ask-export-dialog-error").show();
+			return;
+		};	
+				
+		<c:choose>
+			<c:when test="${!captchaBypass}">
+				var challenge = getChallenge();
+			    var uresponse = getResponse();
+			    
+			    if (uresponse.trim().length == 0)
+			    {
+			    	$("#runner-captcha-empty-error").show();
+			    	return;
+			    }
+			
+				$.ajax({
+					type:'GET',
+					  url: "${contextpath}/runner/createdraftanswerpdf/${uniqueCode}",
+					  data: {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse},
+					  cache: false,
+					  success: function( data ) {
+						  
+						  if (data == "success") {
+								$('#ask-export-dialog').modal('hide');
+								showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+						  	} else if (data == "errorcaptcha") {
+						  		$("#runner-captcha-error").show();
+						  		reloadCaptcha();
+							} else {
+								showError(message_PublicationExportFailed);
+								reloadCaptcha();
+							};
+					}
+				});							
+			</c:when>
+			<c:otherwise>			
+				$.ajax({				
+					type:'GET',
+					  url: "${contextpath}/runner/createdraftanswerpdf/${uniqueCode}",
+					  data: {email : mail, recaptcha_challenge_field : '', 'g-recaptcha-response' : ''},
+					  cache: false,
+					  success: function( data ) {
+						  
+						  if (data == "success") {
+								$('#ask-export-dialog').modal('hide');
+								showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+							} else {
+								showError(message_PublicationExportFailed);
+								reloadCaptcha();
+							};
+					}
+				});							
+			</c:otherwise>
+		</c:choose>
+	}
+	
 	$(document).ready(function(){
 		
 		var bookMarkEnabled = false;
@@ -165,18 +266,25 @@
 		{
 			
 			$("#ask-email-dialog").find(".validation-error").hide();
+			$("#ask-email-dialog").find(".validation-error-keep").hide();
 			
-			var mail = $("#email").val();
+			var mail = $("#ask-email-dialog").find("#email").val();
 			var linkDraft = $("#copyme").attr("href");
 			
 			var challenge = getChallenge();
-		    var uresponse = getResponse();
+		    var uresponse = getResponse($("#ask-email-dialog"));
 			
 			if (mail.trim().length == 0 || !validateEmail(mail))
 			{
 				$("#ask-email-dialog-error").show();
 				return;
 			}	
+			
+			if (uresponse.trim().length == 0)
+		    {
+				$("#ask-email-dialog").find("#runner-captcha-empty-error").show();
+		    	return;
+		    }
 			
 			var id = '${surveyID}';
 
@@ -194,7 +302,7 @@
 					}
 					else if(data == "errorcaptcha")
 					{
-						$("#ask-email-dialog-error-captcha").show();
+						$("#ask-email-dialog").find("#runner-captcha-error").show();
 						reloadCaptcha();
 					}
 					else {

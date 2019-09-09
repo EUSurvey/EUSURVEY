@@ -32,7 +32,7 @@
 							<tr>
 								<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Title" /></td>
 								<td>
-									<form:textarea class="tinymcealign required xhtml" id="edit-survey-title" path="survey.title"></form:textarea>
+									<form:textarea class="tinymcealign2 required xhtml" id="edit-survey-title" path="survey.title"></form:textarea>
 								</td>
 							</tr>
 							<tr>
@@ -143,6 +143,10 @@
 												<div style="margin-left: 20px">
 													<form:radiobutton path="survey.ecasMode" id="ecas-mode-all" name="ecas-mode" value="all" /><spring:message code="label.All" /><br />
 													<form:radiobutton path="survey.ecasMode" id="ecas-mode-internal" name="ecas-mode" value="internal" /><spring:message code="label.InternalStaffOnly" />
+												</div>
+												<div style="margin-left: 20px; margin-top: 10px;">
+													<spring:message code="label.ContributionsPerUser" />: 
+													<form:input htmlEscape="false" path="survey.allowedContributionsPerUser" type="text" class="spinner required number min1 integer" maxlength="10" style="width: 50px" />
 												</div>									
 											</div>
 										</c:when>
@@ -179,16 +183,18 @@
 									</c:choose>										
 								</td>
 							</tr>
-							<tr>
-								<td class="table-label">
-									<spring:message code="label.Visibility" />
-									<div class="help"><spring:message code="label.AdvertiseYourFormA" />&nbsp;<spring:message code="label.AdvertiseYourFormB" /> <a data-toggle="tooltip" title="<spring:message code="label.LearnMore" />" target="_blank" href="${contextpath}/home/helpauthors#_Toc7-5"><img src="${contextpath}/resources/images/icons/24/help_bubble.png" alt="Help" style="margin-left:10px; margin-right:10px;"></a></div>
-								</td>
-								<td>
-									<form:radiobutton onclick="checkCaptcha()" class="required check" path="survey.listForm" value="true"/><spring:message code="label.Public" />&#160;
-									<form:radiobutton onclick="checkCaptcha()" class="required check" path="survey.listForm" value="false"/><spring:message code="label.Private" />										
-								</td>
-							</tr>
+							<c:if test="${enablepublicsurveys}">
+								<tr>
+									<td class="table-label">
+										<spring:message code="label.Visibility" />
+										<div class="help"><spring:message code="label.AdvertiseYourFormA" />&nbsp;<spring:message code="label.AdvertiseYourFormB" /> <a data-toggle="tooltip" title="<spring:message code="label.LearnMore" />" target="_blank" href="${contextpath}/home/helpauthors#_Toc7-5"><img src="${contextpath}/resources/images/icons/24/help_bubble.png" alt="Help" style="margin-left:10px; margin-right:10px;"></a></div>
+									</td>
+									<td>
+										<form:radiobutton onclick="checkCaptcha()" class="required check" path="survey.listForm" value="true"/><spring:message code="label.Public" />&#160;
+										<form:radiobutton onclick="checkCaptcha()" class="required check" path="survey.listForm" value="false"/><spring:message code="label.Private" />										
+									</td>
+								</tr>
+							</c:if>
 							<tr>
 								<td class="table-label">
 									<spring:message code="label.Captcha" />

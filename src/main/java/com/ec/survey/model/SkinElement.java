@@ -128,7 +128,9 @@ public class SkinElement implements java.io.Serializable {
 		
 		if (this.name.equalsIgnoreCase(".sectiontitle"))
 		{
-			if (color != null && color.length() > 0) s.append("border-color: #").append(color).append("; \n");
+			if (color != null && color.length() > 0) s.append("border-color: ");
+			if (!color.startsWith("#"))s.append("#");
+			s.append(color).append("; \n");
 		}	
 				
 		if (backgroundColor != null && backgroundColor.length() > 0)

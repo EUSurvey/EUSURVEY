@@ -118,7 +118,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 						user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
 						user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
 						
-						if (!type.equalsIgnoreCase("n")) //  ldapService.init(username, user))
+						if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c")) 
 						{
 							user.getRoles().add(ecRole);
 						} else {
@@ -127,11 +127,13 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 						
 						administrationService.createUser(user);
 					} else {
+						String oldEmail = user.getEmail();
+						
 						user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
 						user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
 						user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
 										
-						if (!type.equalsIgnoreCase("n")) //ldapService.init(username, user))
+						if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c")) 
 						{
 							if (ecRole != null)
 							{
@@ -152,6 +154,22 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 									administrationService.updateUser(user);
 								}
 							}
+						}
+						
+						if (!oldEmail.equalsIgnoreCase(user.getEmail()))
+						{
+							if (user.getOtherEmail() == null)
+							{
+								user.setOtherEmail(oldEmail);
+							} else {
+								if (!user.getOtherEmail().endsWith(";"))
+								{
+									user.setOtherEmail(user.getOtherEmail() + ";" + oldEmail);
+								} else {
+									user.setOtherEmail(user.getOtherEmail() + oldEmail);
+								}
+							}
+							administrationService.updateUser(user);
 						}
 					}
 					

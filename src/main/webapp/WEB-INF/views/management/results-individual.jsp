@@ -140,8 +140,8 @@
 																</c:forEach>
 															</c:forEach>
 														</c:if>
-							 							<c:if test="${answers.size() < 1}">&#160;</c:if>													</c:when>
-												
+							 							<c:if test="${answers.size() < 1}">&#160;</c:if>													
+							 						</c:when>												
 													<c:otherwise>
 														<c:if test="${answers.size() > 1}">
 															<c:forEach items="${answers}" var="answer">					

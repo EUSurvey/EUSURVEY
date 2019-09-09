@@ -130,7 +130,7 @@
 			{
 				var ids = "ids=";
 				$(".increation").each(function(){
-					ids += $(this).attr("data-id") + "|";
+					ids += $(this).attr("data-id") + ";";
 				});				
 				
 				var request = $.ajax({
@@ -182,7 +182,7 @@
 			{
 				var ids = "surveyUid=${form.survey.uniqueId}&ids=";
 				$(".inrunningmails").each(function(){
-					ids += $(this).attr("data-id") + "|";
+					ids += $(this).attr("data-id") + ";";
 				});				
 				
 				var request = $.ajax({
@@ -659,12 +659,6 @@
 	
 	<input type="hidden" id="readonlytree" value='${readonly != null ? "true" : "false" }' />
 	
-	<div class="fixedtitleform"">
-		<div class="fixedtitleinner">	
-			<h1><spring:message code="label.Participants" /></h1>		
-		</div>
-	</div>
-	
 	<div id="action-bar" class="container action-bar">
 		<div class="row">
 			<div class="col-md-12" style="text-align:center">
@@ -682,7 +676,7 @@
 	
 	<div class="fullpageform" style="margin-top:0px">
 	
-		<table id="participantstable" class="table table-bordered table-styled" style="width: auto; margin-left: auto; margin-right: auto;">
+		<table id="participantstable" class="table table-bordered table-styled" style="width: auto; margin-top: 40px; margin-left: auto; margin-right: auto;">
 			<thead>
 				<tr>
 					<th><spring:message code="label.Name" /></th>

@@ -69,6 +69,16 @@ public class ValidCodesService extends BasicService {
 			query.executeUpdate();
 		}
 	}
+	
+	@Transactional
+	public void invalidate(String uniqueCode)
+	{
+		Session session = sessionFactory.getCurrentSession();	
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MONTH, -2);
+		Query query = session.createQuery("UPDATE ValidCode SET created = :created WHERE code = :code").setString("code", uniqueCode).setTimestamp("created", cal.getTime());
+		query.executeUpdate();		
+	}
 
 	@Transactional
 	public void removeOldCodes() {

@@ -130,13 +130,7 @@
 	<%@ include file="../menu.jsp" %>
 	<%@ include file="formmenu.jsp" %>	
 	
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner">
-			<h1><spring:message code="label.Test" /></h1>		
-		</div>
-	</div>
-
-	<div class="fullpageform">				
+	<div class="fullpageform100">				
 		
 		<div style="margin-top: 0px;">
 		

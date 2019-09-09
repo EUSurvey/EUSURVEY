@@ -123,7 +123,15 @@
 					</div>
 				</c:if>
 				
+				<c:if test="${element.getType() == 'Ruler'}">
+					<hr style="border-top: ${element.height}px ${element.style} ${element.color}" />
+				</c:if>
+				
 				<c:if test="${element.getType().endsWith('Question')}">
+					<c:if test="${!element.getOptional()}">
+						<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 3px;">*</span>
+					</c:if>
+				
 					<div class="questiontitle">${form.getQuestionTitle(element)}</div>
 					<c:choose>
 						<c:when test="${element.getType() == 'FreeTextQuestion' && element.getMinCharacters() != null && element.getMinCharacters() > 0 && element.getMaxCharacters() != null && element.getMaxCharacters() > 0}">
@@ -264,6 +272,9 @@
 												<c:set var="entity" value="${element.getChildElementsOrdered().get(element.columns + r - 2)}" />
 											
 												<c:if test="${entity.getType() == 'Text'}">
+													<c:if test="${!entity.getOptional()}">
+														<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 3px;">*</span>
+													</c:if>
 													<div>${form.getQuestionTitle(entity)}</div>
 												</c:if>
 												
@@ -342,7 +353,7 @@
 											<td style="background-color: #eee; width: ${element.getWidth(c-1)}">
 										</c:when>
 										<c:when test="${r == 1 || c == 1}">
-											<td style="background-color: #eee;">
+											<td style="background-color: #eee; padding-left: 10px;">
 										</c:when>
 										<c:otherwise>
 											<td>
@@ -356,6 +367,9 @@
 											</c:when>																
 											<c:when test="${c == 1}">
 												<c:set var="entity" value="${element.childElements.get(element.columns + r - 2)}" />
+												<c:if test="${!entity.getOptional()}">
+													<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 3px;">*</span>
+												</c:if>
 												${form.getQuestionTitle(entity)}
 											</c:when>																
 											<c:otherwise>

@@ -18,6 +18,9 @@
 					<a class="logolink" href="<c:url value="/home/welcome"/>" style="float: left; padding-top:3px;"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" style="margin-top: -3px;" alt="EUSurvey"/></a>&#160;&#160;&#160;&#160;
 				
 					<c:choose>
+						<c:when test="${!enablepublicsurveys}">
+						
+						</c:when>
 						<c:when test="${form != null && form.getResources() != null && runnermode == true}">
 							<a href="<c:url value="/home/publicsurveys"/>">${form.getMessage("header.AllPublicSurveys")}</a>
 						</c:when>
@@ -34,16 +37,16 @@
 						<c:when test="${form != null && form.getResources() != null && runnermode == true}">
 							<c:choose>
 								<c:when test="${passwordauthenticated != null }">
-									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>">${form.getMessage("label.Login")}</a> |
+									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>">${form.getMessage("label.DoLogin")}</a> |
 								</c:when>
 								<c:when test='${pageContext.request.getParameter("pw") != null || pw != null}'>
-									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>">${form.getMessage("label.Login")}</a> |
+									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>">${form.getMessage("label.DoLogin")}</a> |
 								</c:when>
 								<c:when test="${USER != null}">
 									<span style="font-size: 13px; font-weight: normal;">${form.getMessage("label.Hello")}<b>&nbsp;<esapi:encodeForHTML>${USER.givenNameOrLogin}</esapi:encodeForHTML>&nbsp;<esapi:encodeForHTML>${fn:toUpperCase(USER.surName)}</esapi:encodeForHTML></b>&#160;&#160;(<a id="logoutBtnFromHeader"  onclick="logout()" class="visiblelink">${form.getMessage("label.logout")}</a>)</span>&#160;|
 								</c:when>
 								<c:otherwise>
-									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>">${form.getMessage("label.Login")}</a> |
+									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>">${form.getMessage("label.DoLogin")}</a> |
 								</c:otherwise>
 							</c:choose>
 					
@@ -54,9 +57,8 @@
 		  						</a>
 								<ul id="dropDownHelpHeader" class="dropdown-menu" aria-labelledby="dropdownMenu1">
 									<li><a id="linkHelpAbout" href="<c:url value="/home/about"/>">${form.getMessage("label.About" )}</a></li>
-									<li><a id="linkHelpSupport" href="<c:url value="/home/support"/>">${form.getMessage("label.Support" )}</a></li>
+									<li><a id="linkHelpSupport" href="<c:url value="/home/documentation"/>">${form.getMessage("label.Support" )}</a></li>
 									<li><a id="linkHelpDownload" href="<c:url value="/home/download"/>">${form.getMessage("label.Download" )}</a></li>
-									<li><a id="linkHelpDocumention" href="<c:url value="/home/documentation"/>">${form.getMessage("label.Documentation" )}</a></li>
 								</ul>
 							</div>
 		 					
@@ -109,7 +111,7 @@
 									<span style="font-size: 13px; font-weight: normal;"><spring:message code="label.Hello" /><b>&nbsp;<esapi:encodeForHTML>${USER.givenNameOrLogin}</esapi:encodeForHTML>&nbsp;<esapi:encodeForHTML>${fn:toUpperCase(USER.surName)}</esapi:encodeForHTML></b>&#160;&#160;(<a id="logoutBtnFromHeader" onclick="logout()"  class="visiblelink"><spring:message code="label.logout" /></a>)</span>&#160;|
 								</c:when>
 								<c:otherwise>
-									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>"><spring:message code="label.Login"></spring:message></a> |
+									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>"><spring:message code="label.DoLogin"></spring:message></a> |
 								</c:otherwise>
 							</c:choose>
 							
@@ -121,9 +123,8 @@
 								<ul id="dropDownHelpHeader" class="dropdown-menu dropdown-menu-header" aria-labelledby="dropdownMenu1">
 									
 										<li><a id="linkHelpAbout" href="<c:url value="/home/about"/>"><spring:message code="label.About" /></a></li>
-										<li><a id="linkHelpSupport" href="<c:url value="/home/support"/>"><spring:message code="label.Support" /></a></li>
+										<li><a id="linkHelpSupport" href="<c:url value="/home/documentation"/>"><spring:message code="label.Support" /></a></li>
 										<li><a id="linkHelpDownload" href="<c:url value="/home/download"/>"><spring:message code="label.Download" /></a></li>
-										<li><a id="linkHelpDocumention" href="<c:url value="/home/documentation"/>"><spring:message code="label.Documentation" /></a></li>
 									
 								</ul>
 							</div>
@@ -145,6 +146,7 @@
 						 			<li><a href="?language=en">English</a></li>
 						 			<li><a href="?language=es">Español</a></li>
 						 			<li><a href="?language=fr">Français</a></li>
+						 			<li><a href="?language=ga">Gaeilge</a></li>
 						 			<li><a href="?language=hr">Hrvatski jezik</a></li> 
 						 			<li><a href="?language=it">Italiano</a></li>
 						 			<li><a href="?language=lv">Latviešu valoda</a></li> 
@@ -174,7 +176,7 @@
 				
 			<c:if test="${serverEnv != null}">
 				<c:if test="${fn:length(serverEnv)> 0}">
-					<img src="${contextpath}/resources/images/ribbon_<c:out value="${serverEnv}"/>.png" alt="environment ribbon" style="position:absolute;" width="80px"/>
+					<img src="${contextpath}/resources/images/ribbon_<c:out value="${serverEnv}"/>.png" alt="environment ribbon" style="position:absolute; pointer-events: none;" width="80px"/>
 				</c:if>
 			</c:if>	
 		</div>

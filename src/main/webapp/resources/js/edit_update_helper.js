@@ -11,16 +11,16 @@ function toggleMandatory(checkbox)
 	
 function setMandatoryInner(element, checked, checkbox)
 	{
-	var titleprefix = checked ? "<span class='mandatory'>*</span>" : "<span class='optional'>*</span>";
+	var titleprefix = ""; //checked ? "<span class='mandatory'>*</span>" : "<span class='optional'>*</span>";
 	
 	if ($(_elementProperties.selectedelement).hasClass("matrix-header") || $(_elementProperties.selectedelement).hasClass("table-header"))
 	{
 		var id = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
 		element = _elements[id];
 
-		if ($(_elementProperties.selectedelement).closest("tr").index() == 0)
+		if ($(_elementProperties.selectedelement).hasClass("table-header") && $(_elementProperties.selectedelement).closest("tr").index() == 0)
 		{
-			//a matrix/table answer
+			//a table answer
 		} else {
 			if ($(_elementProperties.selectedelement).hasClass("matrix-header"))
 			{
@@ -150,7 +150,7 @@ function updateMatrixSize(element, size, noundo)
 		$(table).attr("style","width: auto; max-width: auto");
 	}
 	
-	$(table).find("tr").first().find("td").each(function(index){
+	$(table).find("tr").first().find("th").each(function(index){
 		if ($(this).find(".ui-resizable-handle").length > 0)
 		$(this).resizable( "destroy" );								
 	});
@@ -158,11 +158,11 @@ function updateMatrixSize(element, size, noundo)
 	if (type == 2)
 	{
 		var widths = $(_elementProperties.selectedelement).find("input[name^='widths']").first().val();
-		$(table).find("tr").first().find("td").each(function(index){
+		$(table).find("tr").first().find("th").each(function(index){
 			$(this).css("width", getWidth(widths, 0));
 		});
 		
-		$(table).find("tr").first().find("td").each(function(index){
+		$(table).find("tr").first().find("th").each(function(index){
 			var cell = this;
 			$(this).resizable({
 				handles: "e",
@@ -366,7 +366,7 @@ function removeVisibility(triggerid, selectedquestionid)
 		var parentid = $("input[data-cellid='" + triggerid + "']").parent().closest(".survey-element").attr("data-id");
 		var parent = _elements[parentid];		
 		var answerindex = $(trigger).index() - 1;
-		var questionindex = $(trigger).closest("tr").index() - 1;
+		var questionindex = $(trigger).closest("tr").index();
 		var index = answerindex + (questionindex * (parent.columns()-1));
 		
 		while (parent.dependentElementsStrings().length <= index)
@@ -397,6 +397,15 @@ function removeVisibility(triggerid, selectedquestionid)
 		if ($(selectedquestionelement).attr("data-triggers").indexOf(triggerid) > -1)
 		{
 			$(selectedquestionelement).attr("data-triggers",$(selectedquestionelement).attr("data-triggers").replace(triggerid, "").replace(";;",";"));
+		}
+	} else if ($(selectedquestionelement).hasClass("matrix-header"))
+	{
+		if ($(selectedquestionelement).parent().attr("data-triggers"))
+		{
+			if ($(selectedquestionelement).parent().attr("data-triggers").indexOf(triggerid) > -1)
+			{
+				$(selectedquestionelement).parent().attr("data-triggers",$(selectedquestionelement).parent().attr("data-triggers").replace(triggerid, "").replace(";;",";"));
+			}
 		}
 	}
 	
@@ -566,7 +575,7 @@ function updateText(selectedelement, text, fromundo)
 		selectedelement = $(_elementProperties.selectedelement).closest(".survey-element");
 		selectedid = parentid;
 		
-		if ($(_elementProperties.selectedelement).closest("tr").index() == 0)
+		if ($(_elementProperties.selectedelement).closest("tr").index() == 0 && !$(_elementProperties.selectedelement).closest("tr").hasClass("matrix-question"))
 		{
 			//a matrix answer
 			var index = $(_elementProperties.selectedelement).index() - 1;
@@ -579,15 +588,13 @@ function updateText(selectedelement, text, fromundo)
 			if ($(_elementProperties.selectedelement).hasClass("matrix-header"))
 			{
 				var matrixquestion = parent.getChild(id); // parent.questionsOrdered()[index];
-				var prefix = parent.optional() && matrixquestion.optional() ? "<span class='optional'>*</span>" : "<span class='mandatory'>*</span>";
 				oldtext = matrixquestion.originalTitle();
-				matrixquestion.title(prefix + text);
+				matrixquestion.title(text);
 				matrixquestion.originalTitle(text);
 			} else {
 				var tablequestion = parent.questions()[index];
-				var prefix = parent.optional() && tablequestion.optional() ? "<span class='optional'>*</span>" : "<span class='mandatory'>*</span>";
 				oldtext = parent.questions()[index].originalTitle();
-				tablequestion.title(prefix + text);
+				tablequestion.title(text);
 				tablequestion.originalTitle(text);
 			}
 		}

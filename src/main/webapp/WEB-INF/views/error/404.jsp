@@ -11,15 +11,22 @@
 <body id="error404" style="text-align: center;">
 
 	<%@ include file="../header.jsp" %>
-
-	<div class='${responsive != null ? "responsivepage" : "page"}' style='margin-top: 40px;'>
-
-		<div class="pageheader">
-			<h1><spring:message code="label.PageNotFound" /></h1>
-		</div>
 	
-		<spring:message code="error.404" /><br /><br />
-		<spring:message code="support.text" />
+	<div class='${responsive != null ? "responsivepage" : "page"}' style='padding: 20px; margin-top: 80px; margin-bottom: 100px; max-width: 600px; margin-left: auto; margin-right: auto'>
+		
+		<div class="hidden-xs" style="float: left; height: 200px;">
+			<span class="glyphicon glyphicon-alert" style="font-size: 100px; color: #FF9800; margin-right: 60px; margin-top: 10px"></span>
+		</div>
+		<div style="text-align: left;">
+			<h1 style="margin-bottom: 20px;">
+				<div class="visible-xs" style="float: left">
+					<span class="glyphicon glyphicon-alert" style="font-size: 30px; color: #FF9800; margin-right: 10px; "></span>
+				</div>
+				<spring:message code="label.PageNotFound" />
+			</h1>
+			<spring:message code="support.new404" arguments="${contextpath}/home/support?error=1" />
+		</div>
+		
 	</div>
 
 	<%@ include file="../footer.jsp" %>		

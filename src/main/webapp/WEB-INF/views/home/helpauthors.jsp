@@ -122,6 +122,7 @@
 				<li><a class="anchorlink" href="#_Toc0-10">Which browsers are supported by EUSurvey?</a></li>
 				<li><a class="anchorlink" href="#_Toc0-11">EUSurvey disclaimer (for non-EU users only)</a></li>
 				<li><a class="anchorlink" href="#_Toc0-12">Can my participants answer my survey from a mobile device?</a></li>
+				<li><a class="anchorlink" href="#_Toc0-13">Is there a minimum screen size?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc1">Login and registration</a>
@@ -197,7 +198,9 @@
 				<li><a class="anchorlink" href="#_Toc7-7">Can I link directly to a translation of my survey?</a></li>
 				<li><a class="anchorlink" href="#_Toc7-3">How do I make my survey publish itself while I am on holiday?</a></li>
 				<li><a class="anchorlink" href="#_Toc7-4">Can I receive a reminder of when my survey will end?</a></li>
-				<li><a class="anchorlink" href="#_Toc7-5">How do I advertise my survey on the list of public surveys on the EUSurvey website?</a></li>
+				<c:if test="${enablepublicsurveys}">
+					<li><a class="anchorlink" href="#_Toc7-5">How do I advertise my survey on the list of public surveys on the EUSurvey website?</a></li>
+				</c:if>
 				<li><a class="anchorlink" href="#_Toc7-6">For EU staff: What are the official requirements for launching an open public consultation ("Your Voice in Europe" website)?</a></li>
 			</ul>
 		</li>
@@ -211,6 +214,7 @@
 				<li><a class="anchorlink" href="#_Toc8-6">How do I adjust the default escape message? </a></li>
 				<li><a class="anchorlink" href="#_Toc8-7">Archiving feature</a></li>
 				<li><a class="anchorlink" href="#_Toc8-8">How do I give other users access to my survey?</a></li>
+				<li><a class="anchorlink" href="#_Toc8-9">What are Activity logs?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc9">Analysing, exporting and publishing results</a>
@@ -225,6 +229,7 @@
 				<li><a class="anchorlink" href="#_Toc9-8">I cannot unzip my exported files</a></li>
 				<li><a class="anchorlink" href="#_Toc9-9">Published results - protection of personal information uploaded by participants</a></li>
 				<li><a class="anchorlink" href="#_Toc9-10">How do I design a survey to publish the results with or without personal information?</a></li>
+				<li><a class="anchorlink" href="#_Toc9-11">Why are my results not up-to-date?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc10">Design and layout</a>
@@ -327,6 +332,10 @@
 <i>The European Commission is not responsible for the content of questionnaires created using the EUSurvey service - it remains the sole responsibility of the form creator and manager. The use of EUSurvey service does not imply a recommendation or endorsement, by the European Commission, of the views expressed within them.</i></p>
 <h2><a class="anchor" name="_Toc0-12"></a>Can my participants answer my survey from a mobile device?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Yes, EUSurvey features a responsive design for the published survey. This means, the design of the questionnaire will adapt to the resolution of the device used to enter your survey. This will allow your participants to conveniently contribute to your survey from a mobile device (mobile phone or tablet PC).</p>
+
+<h2><a class="anchor" name="_Toc0-13"></a>Is there a minimum screen size?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>The online questionnaires are fully responsive and adapt to the size of your device, allowing to fill in the questionnaire with any screen size.
+<br />For creating and managing surveys, we recommend to use a minimum resolution of 1680x1050 pixels for a good user experience.</p>
 
 <h1><a class="anchor" name="_Toc1"></a>Login and registration</h1>
 <h2><a class="anchor" name="_Toc1-1"></a>I have an EU Login account. Do I have to register separately for EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
@@ -557,12 +566,14 @@
 <h2><a class="anchor" name="_Toc7-4"></a>Can I receive a reminder of when my survey will end?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>EUSurvey can send you an email reminder when your survey is about to end. This way you can prepare the next steps (e.g. organizing resources for result analysis).</p>
 <p>To enable this option, open the survey and go to the "Properties" page. Select "Advanced Settings", click on the "Edit" button and enable "End Notification", specifying how long in advance you expect an email and whether all other Form Managers should get an email too. Click on "Save".</p>
+<c:if test="${enablepublicsurveys}">
 <h2><a class="anchor" name="_Toc7-5"></a>How do I advertise my survey on the list of public surveys on the EUSurvey website?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>You can publish a link to your survey on EUSurvey's <a href="https://ec.europa.eu${contextpath}/home/publicsurveys" target="_blank">"list of all public surveys"</a>.</p>
 <p>Open your survey and go to the "Properties" page. Select "Security Settings" and click on the "Edit" Button. Under "Public" select "Yes", then "Save".</p>
 <p><b>Please note</b> that a publication of your survey on EUSurvey's list of public surveys requires the validation of the EUSurvey administrative team. When you click on "Publish" in the Overview page, or if pending changes are applied, the system will automatically send an email to EUSurvey's administrative team.</p>
 <p>As soon as the right to publish has been granted, you will receive a confirmation message and your survey will be available in the list of public surveys.</p>
 <p>For all surveys published on EUSurvey's public list of surveys, respondents have to solve a CAPTCHA challenge before submitting a contribution. This CAPTCHA is set automatically.</p>  
+</c:if>
 <h2><a class="anchor" name="_Toc7-6"></a>For EU staff: What are the official requirements for launching an open public consultation ("Your Voice in Europe" website)?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Please carefully follow <a href="https://circabc.europa.eu/sd/d/fc02d2ac-d94f-42ed-b866-b3429e0d717b/Survey_publication_your_voice_in_europe_NEW.pdf" target="_blank">the procedure</a> from SG for launching an open public consultation on the <a href="http://ec.europa.eu/yourvoice/consultations/index_en.htm" target="_blank">Your Voice in Europe</a> website.</p>
 
@@ -611,6 +622,11 @@
 	</ul>
 <p>If you set all 3 circles to "Green", the privileged user will have full rights permission to your survey.</p>
 
+<h2><a class="anchor" name="_Toc8-9"></a>What are Activity logs?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>
+Activity logs monitor and log the activity on your survey. This way, you can check which user applied which change to your survey and at what time. You can also export the activity logs into several file formats such as xls, csv and ods. Enter the activity log of your survey by clicking on the "Activity" link, next to "Properties". If the activity logs are empty, it may be that they are deactivated system-wide. Find <a href="${contextpath}/resources/documents/ActivityLogEvents.xlsx">here</a> a list of the logged events.
+</p>
+
 <h1><a class="anchor" name="_Toc9"></a>Analysing, exporting and publishing results</h1>
 <h2><a class="anchor" name="_Toc9-1"></a>Where can I find the contributions submitted by my participants?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Open your survey in EUSurvey (also see "<a href="#_Toc2-5">How do I open an existing survey for editing etc.?</a>") and go to the "Results" page. Initially, you'll see the full content of all submitted contributions in a table. You can view the results in 2 different ways:</p>
@@ -642,6 +658,9 @@
 <p>For data protection rules, the form manager has to actively make the choice to publish files uploaded to a contribution by the participant along with the other results. To do so, tick the "Uploaded elements" check box in the corresponding section on the "Properties" page. Please note that this check box will only appear if your survey contains an "uploaded element".</p>
 <h2><a class="anchor" name="_Toc9-10"></a>How do I design a survey to publish the results with or without personal information?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>	
 <p>If you want to let your participants choose, whether their personal information will be published along with their answers, follow <a href="https://circabc.europa.eu/sd/d/e68ff760-226f-40e9-b7cb-d3dcdd04bfb1/How_to_publish_survey_results_anonymously.pdf" target="_blank">these instructions</a> to build the survey to fit these requirements.</p>	
+<h2><a class="anchor" name="_Toc9-11"></a>Why are my results not up-to-date?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>	
+<p>A new database has been introduced which shall improve EUSurvey's performance when querying your survey's results. However, this can lead to some delays until the latest data is displayed on the Results page of your survey. This delay should not be more than 12 hours.</p>
+<p>If the displayed data is older than 12 hours, please contact EUSurvey <a href="https://ec.europa.eu/eusurvey/home/support">support</a>.</p>
 	
 <h1><a class="anchor" name="_Toc10"></a>Design and layout</h1>
 <h2><a class="anchor" name="_Toc10-1"></a>How do I change the general look and feel of my survey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>

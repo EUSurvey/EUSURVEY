@@ -116,9 +116,10 @@ function DashboardViewModel()
 	
 	this.loadContributions = function(index)
 	{
+		var model = this;
+		model.contributions(null);
 		var i = index;
 		if (i < 0) i = this.surveyIndex();
-		var model = this;
 		var request = $.ajax({
 			  url: contextpath + "/dashboard/contributions",
 			  data: {survey: i, sort: $("#contributionsorderselector").val(), span: $("#contributionsspanselector").val()},
@@ -136,6 +137,7 @@ function DashboardViewModel()
 	this.loadSurveyStates = function()
 	{
 		var model = this;
+		model.surveyStates(null);
 		var request = $.ajax({
 			  url: contextpath + "/dashboard/surveystates",
 			  dataType: "json",
@@ -156,7 +158,8 @@ function DashboardViewModel()
 	this.loadSurveys = function()
 	{
 		var model = this;
-		
+		model.surveys(null);
+		model.archives(null);
 		var params = "page=" +  model.surveysPage();
 		
 		if (model.sort().length > 0)
@@ -285,10 +288,36 @@ function DashboardViewModel()
 						  model.surveys(data);
 						  model.updateSurveys();
 						  model.lastSurveysReached(data.length < 10);
+						  model.loadAdvancedData(data);
 					  }
 				  }
 				});
 		}
+	}
+	
+	this.loadAdvancedData = function()
+	{
+		var model = this; 
+		var ids = "";
+		for (var i = 0; i < model.surveys().length; i++)
+		{
+			if (ids.length > 0) ids += ";";
+			ids += model.surveys()[i].uniqueId;
+		}
+		var request = $.ajax({
+			  url: contextpath + "/dashboard/surveysadvanced",
+			  data: "ids=" + ids,
+			  dataType: "json",
+			  cache: false,
+			  success: function(data)
+			  {
+				  for (var i = 0; i < model.surveys().length; i++)
+				  {
+					  $('#numberinvitations' + model.surveys()[i].uniqueId).html(data[i][0]);
+					  $('#numberdrafts' + model.surveys()[i].uniqueId).html(data[i][1]);
+				  }
+			  }
+			});		
 	}
 	
 	this.loadEndDates = function()
@@ -309,7 +338,7 @@ function DashboardViewModel()
 	this.loadPersonalContributions = function(index)
 	{
 		var model = this;
-		
+		model.personalContributions(null);
 		var params = "page=" +  model.contributionsPage();
 		
 		if (this.lastEditFilterFrom().length > 0)
@@ -366,7 +395,7 @@ function DashboardViewModel()
 	this.loadPersonalDrafts = function(index)
 	{
 		var model = this;
-		
+		model.personalDrafts(null);
 		var params = "page=" +  model.draftsPage();
 		
 		if (this.lastEditDraftFilterFrom().length > 0)
@@ -422,7 +451,7 @@ function DashboardViewModel()
 	this.loadPersonalInvitations = function(index)
 	{
 		var model = this;
-		
+		model.personalInvitations(null);
 		var params = "page=" +  model.invitationsPage();
 		
 		var persinvitationsurvey = $("#persinvitationsurvey").val().trim();
@@ -1009,11 +1038,17 @@ $(function() {
 	});
 	
 	ko.applyBindings(_dashboard);	
-	_dashboard.loadMeta();
-	_dashboard.loadContributions(0);
-	_dashboard.loadSurveyStates();
-	_dashboard.loadSurveys();
-	_dashboard.loadEndDates();
+	
+	if ($("#surveysarea").length == 0)
+	{
+		_dashboard.switchToInvitations();
+	} else {	
+		_dashboard.loadMeta();
+		_dashboard.loadContributions(0);
+		_dashboard.loadSurveyStates();
+		_dashboard.loadSurveys();
+		_dashboard.loadEndDates();
+	}
 	applyEvents();
 	
 	 $(window).scroll(function() {$(".overlaymenu").hide();});

@@ -45,7 +45,11 @@ public class SkinService extends BasicService {
 	@Transactional(readOnly = true)
 	public Skin get( Integer id ) {
 		Session session = sessionFactory.getCurrentSession();
-		return (Skin) session.get(Skin.class, id);
+		
+		Skin skin = (Skin) session.get(Skin.class, id);
+		if (skin != null) skin.createMissingElements();
+		
+		return skin;
 	}
 	
 	@Transactional

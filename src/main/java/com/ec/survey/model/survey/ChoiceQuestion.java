@@ -6,6 +6,8 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+
+import java.text.Collator;
 import java.util.*;
 
 /**
@@ -60,10 +62,12 @@ public abstract class ChoiceQuestion extends Question {
 		
 		if (order != null && order == 1)
 		{
-			Map<String, PossibleAnswer> answers = new TreeMap<>();
+		    final Collator instance = Collator.getInstance();
+			
+			Map<String, PossibleAnswer> answers = new TreeMap<>(instance);
 			for (PossibleAnswer answer: possibleAnswers)
 			{
-				answers.put(answer.getStrippedTitle(), answer);
+				answers.put(answer.getStrippedTitleNoEscape(), answer);
 			}
 			orderedPossibleAnswers = sortByColumn(new ArrayList<>(Arrays.asList(answers.values().toArray(new PossibleAnswer[0]))));
 		} else if (order != null && order == 2)

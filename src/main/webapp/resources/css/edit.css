@@ -185,6 +185,10 @@ textarea {
 	cursor: pointer;
 }
 
+.padright10 {
+	padding-right: 10px;
+}
+
 #properties .glyphicon-pencil, #properties .glyphicon-tag {
 	color: #004f98;
 	cursor: pointer;
@@ -318,7 +322,7 @@ textarea {
  	background-color: #FFF1D6;
 }
 
-.toolboxitem.textitem, .toolboxitem.imageitem {
+.toolboxitem.textitem, .toolboxitem.imageitem, .toolboxitem.ruleritem {
  	background-color: #FCECED; 
 }
 

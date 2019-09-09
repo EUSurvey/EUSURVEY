@@ -24,9 +24,16 @@ body {
 
 #header .languages {
 	margin-top: 28px;
-	margin-left: 400px;
+	margin-left: 200px;
 	font-size: 16px;
 	font-weight: bold;
+}
+
+@media only screen and (min-width:768px)/* FONT-SIZE RULES ONLY FOR DESKTOP */
+{
+	#header .languages {
+		margin-left: 400px;
+	}
 }
 
 #header .languages a, #runner-content a, .footer a {
@@ -57,6 +64,50 @@ body {
 	margin-top: 2px;
 }
 
+.site-switcher {
+	list-style-type: none;
+	padding: 0;
+	margin-top: -10px;
+}
+
+.site-switcher li {
+	display: inline-block;
+    float: left;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.site-switcher li a {
+	padding: .5em 1.667em;
+	font-weight: 700;
+	font-size: 16px;
+}
+
+.skipdiv {
+	text-align: left;
+}
+
+.skipdiv a {
+	position: absolute !important;
+	margin-left: 10px;
+	margin-top: 10px;
+    clip: rect(1px 1px 1px 1px);
+    overflow: hidden;
+    height: 1px;
+}
+
+.skipdiv a:focus, .skipdiv a:active {
+	clip: auto;
+	height: auto;
+	width: auto;
+	z-index: 1;
+	padding: 8px;
+    background-color: #006fb4;
+    color: #fff;
+    outline: 4px solid #ffd617;
+    outline-offset: 0;
+}
+	
 .footer {
 	color: #404040;
 }
@@ -84,6 +135,7 @@ body {
 
 #pathinner {
 	width: 1300px; 
+	max-width: 90%;
 	margin-left: auto; 
 	margin-right: auto;
 	padding-top: 20px;
@@ -134,7 +186,7 @@ body {
 	margin-bottom: 0px !important;
 }
 
-.answertext, .questiontitle, matrixheadertitle, .tabletable td {
+.answertext, .questiontitle, matrixheadertitle, .tabletable td, .tabletable th {
 	color: #000;
 	font-size: 18px;
 }		
@@ -230,6 +282,7 @@ body {
     position: relative;
 	color: #fff;
 	width: 750px;
+	max-width: 100%;
     margin-left: auto;
     margin-right: auto;
 }

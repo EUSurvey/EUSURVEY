@@ -6,10 +6,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -115,9 +117,16 @@ public class ETranslationService {
       String targetTranslationPath, String textToTranslate, String username) {
 
     try {
-      DefaultHttpClient client = new DefaultHttpClient();
-      client.getCredentialsProvider().setCredentials(AuthScope.ANY, new
-          UsernamePasswordCredentials(this.username, this.password));
+      CredentialsProvider provider = new BasicCredentialsProvider();
+      UsernamePasswordCredentials credentials
+       = new UsernamePasswordCredentials(this.username, this.password);
+      provider.setCredentials(AuthScope.ANY, credentials);
+      
+      HttpClient client = HttpClientBuilder.create()
+    		  .setDefaultCredentialsProvider(provider)
+    		  .disableRedirectHandling()
+    		  .build();
+    
       HttpPost post = new HttpPost(this.url);
       post.setHeader("Accept", "application/json");
       post.setHeader("Content-type", "application/json");
@@ -131,7 +140,7 @@ public class ETranslationService {
         logger.info("url" + this.url);
       }
       post.setEntity(new StringEntity(json, "UTF-8"));
-      HttpClientParams.setRedirecting(post.getParams(), false);
+     
       HttpResponse response = client.execute(post);
       if (logger.isInfoEnabled()) {
         logger.info("response status line " + response.getStatusLine().toString());

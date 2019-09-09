@@ -42,7 +42,7 @@ public class ActivityController extends BasicController {
 		Form form;
 		User user = sessionService.getCurrentUser(request);
 	
-		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true);
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
 		form = new Form(resources);
 		form.setSurvey(survey);
 		

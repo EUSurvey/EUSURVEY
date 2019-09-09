@@ -785,24 +785,20 @@ function initModals(item)
 	
 	function goToFirstValidationError(form)
 	{
-		if ($(".single-page").length > 0)
+		var p = $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first().closest(".single-page").attr("id");	
+		if(!(typeof p === "undefined"))
 		{
-		
-			var p = $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first().closest(".single-page").attr("id");	
-			if(!(typeof p === "undefined"))
-			{
-				page = parseInt(p.substring(4));
-				$(".single-page").hide();		
-				$("#page" + page).show();
-				checkPages();
-			}
-			
-			$('html, body').animate({
-		         scrollTop: $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first().parent().offset().top - 200
-		     }, 2000);
-
-			 $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first().parent().find("input").first().focus();
+			page = parseInt(p.substring(4));
+			$(".single-page").hide();		
+			$("#page" + page).show();
+			checkPages();
 		}
+		
+		$('html, body').animate({
+	         scrollTop: $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first().parent().offset().top - 200
+	     }, 2000);
+
+		 $(form).find(".validation-error, .validation-error-server, .validation-error-keep").first().parent().find("input").first().focus();
 	}
 	
 	var validationinfo = "";
@@ -825,14 +821,13 @@ function initModals(item)
 			if (result == false)
 			{
 				var div = document.createElement("div");
-				$(div).attr("id","exceptionlogdiv").addClass("validation-error").css("color","#999");
+				$(div).attr("id","exceptionlogdiv").addClass("validation-error").attr("aria-live", "polite").css("color","#999");
 				$(div).append(varErrorCheckValidation).append("<br />");
-				$(div).append(varErrorCheckValidation2).append("<br />");
-				$(div).append("<span style='color: #bbb; font-style: italic'>" + validationinfo + "</span>");
-				$("#btnSubmit").parent().append(div); //"<div id='exceptionlogdiv' class='validation-error' style='color: #777'>" + varErrorCheckValidation + ":&nbsp;" + validationinfo + "</div>");
-				//goToFirstValidationError(form);
+				//$(div).append(varErrorCheckValidation2).append("<br />");
+				//$(div).append("<span style='color: #bbb; font-style: italic'>" + validationinfo + "</span>");
+				$("#btnSubmit").parent().append(div); 
 			} else if ($(".g-recaptcha.unset").length > 0)	{
-				$('#runner-captcha-error').show();
+				$('#runner-captcha-empty-error').show();
 			} else {
 				
 				saveCookies();
@@ -922,7 +917,7 @@ function initModals(item)
 			}			
 			
 			//if survey has multi-tab mode enabled and parent section is not visible
-			if ($("#page-tabs").is(":visible"))
+			if ($("#multipaging").length > 0 && $("#multipaging").val() == "true")
 			{
 				var section = $(this).closest("fieldset").siblings("fieldset").find(".sectionitem").last();
 				if (section.length > 0)
@@ -952,7 +947,7 @@ function initModals(item)
 				if (!valid)
 				{
 					validationinfo += $(this).closest(".survey-element").attr("id") + " (R) ";
-					$(this).parent().append("<div class='validation-error'>" + requiredText + "</div>");
+					$(this).parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					result = false;
 				}
 			} else if ($(this).hasClass("file-uploader"))
@@ -960,7 +955,7 @@ function initModals(item)
 				if ($(this).parent().find(".uploaded-files").find("div").length == 0)
 				{
 					validationinfo += $(this).closest(".survey-element").attr("id") + " (R) ";
-					$(this).after("<div class='validation-error'>" + requiredText + "</div>");
+					$(this).after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					result = false;
 				}
 			} else if ($(this).attr("type") == "radio")
@@ -978,15 +973,33 @@ function initModals(item)
 					if (typeof $("input[name='" + $(this).attr("name") + "']:checked").val() == 'undefined' && $(row).find(".validation-error").length == 0)
 					{
 						validationinfo += $(this).attr("name") + " (R) ";
-						$(row).find("td").first().append("<div class='validation-error'>" + requiredText + "</div>");
+						$(row).find("th").first().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 						result = false;
 					};
 					
-				} else {				
+				} else {
+					
+					if ($(this).closest(".matrix-question").length > 0)
+					{
+						//in mobile view of matrix element
+						if ($(this).closest(".matrix-question").hasClass("untriggered"))
+						{
+							return;
+						}
+					}
+						
 					if (typeof $("input[name='" + $(this).attr("name") + "']:checked").val() == 'undefined' && $(this).closest(".answer-columns").find(".validation-error").length == 0)
 					{
 						validationinfo += $(this).attr("name") + " (R) ";
-						$("input[name='" + $(this).attr("name") + "']:last").closest(".answer-columns").append("<div class='validation-error'>" + requiredText + "</div>");
+						if ($("input[name='" + $(this).attr("name") + "']:last").closest(".answer-columns").length > 0)
+						{
+							$("input[name='" + $(this).attr("name") + "']:last").closest(".answer-columns").append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
+						} else {
+							if ($("input[name='" + $(this).attr("name") + "']:last").parent().find(".validation-error").length == 0)
+							{
+								$("input[name='" + $(this).attr("name") + "']:last").parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
+							}
+						}
 						result = false;
 					};
 				};
@@ -995,7 +1008,7 @@ function initModals(item)
 				if ($(this).find(":selected").length == 0 || $(this).find(":selected").val().length == 0)
 				{
 					validationinfo += $(this).attr("name") + " (R) ";
-					$(this).parent().append("<div class='validation-error'>" + requiredText + "</div>");
+					$(this).parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					result = false;
 				}
 			} else if ($(this).attr("type") == "checkbox")
@@ -1013,7 +1026,7 @@ function initModals(item)
 					if (typeof $("input[name='" + $(this).attr("name") + "']:checked").val() == 'undefined' && $(row).find(".validation-error").length == 0)
 					{
 						validationinfo += $(this).attr("name") + " (R) ";
-						$(row).find("td").first().append("<div class='validation-error'>" + requiredText + "</div>");
+						$(row).find("td").first().append("<div class='validation-error'aria-live='polite'>" + requiredText + "</div>");
 						result = false;
 					};
 				} else if ($(this).closest(".gallery-div").length > 0)
@@ -1021,7 +1034,7 @@ function initModals(item)
 					if (typeof $("input[name='" + $(this).attr("name") + "']:checked").val() == 'undefined' && $(this).closest(".gallery-div").find(".validation-error").length == 0)
 					{
 						validationinfo += $(this).attr("name") + " (R) ";
-						$(this).closest(".gallery-div").append("<div class='validation-error'>" + requiredText + "</div>");
+						$(this).closest(".gallery-div").append("<div class='validation-error'aria-live='polite'>" + requiredText + "</div>");
 						result = false;
 					};					
 				} else {
@@ -1030,7 +1043,7 @@ function initModals(item)
 						if (typeof $("input[name='" + $(this).attr("name") + "']:checked").val() == 'undefined' && $(this).closest(".answer-columns").find(".validation-error").length == 0)
 						{
 							validationinfo += $(this).attr("name") + " (R) ";
-							$("input[name='" + $(this).attr("name") + "']:last").closest(".answer-columns").append("<div class='validation-error'>" + requiredText + "</div>");
+							$("input[name='" + $(this).attr("name") + "']:last").closest(".answer-columns").append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 							result = false;
 						};	
 					} else {
@@ -1040,9 +1053,9 @@ function initModals(item)
 							
 							if ($(this).attr("name") == "radio-new-survey-audience")
 							{
-								$("input[name='" + $(this).attr("name") + "']:last").parent().parent().append("<div class='validation-error'>" + requiredText + "</div>");
+								$("input[name='" + $(this).attr("name") + "']:last").parent().parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 							} else {							
-								$("input[name='" + $(this).attr("name") + "']:last").parent().append("<div class='validation-error'>" + requiredText + "</div>");
+								$("input[name='" + $(this).attr("name") + "']:last").parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 							}
 							result = false;
 						};
@@ -1056,7 +1069,7 @@ function initModals(item)
 				if (value == 0)
 				{
 					validationinfo += $(this).attr("name") + " (R) ";
-					$(this).after("<div class='validation-error'>" + requiredText + "</div>");
+					$(this).after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					result = false;
 				};
 			} else if ($(this).hasClass("single-choice"))
@@ -1066,7 +1079,7 @@ function initModals(item)
 				if (value == 0)
 				{
 					validationinfo += $(this).attr("name") + " (R) ";
-					$(this).after("<div class='validation-error'>" + requiredText + "</div>");
+					$(this).after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					result = false;
 				};
 			} else if ($(this).hasClass("date") || $(this).hasClass("datepicker"))
@@ -1076,46 +1089,58 @@ function initModals(item)
 					validationinfo += $(this).attr("name") + " (R) ";
 					if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
 					{
-						$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error'>" + requiredText + "</div>");
+						$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					} else if ($(this).parent().is("td")) {
-						$(this).parent().append("<div class='validation-error'>" + requiredText + "</div>");						
+						$(this).parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");						
 					} else {
-						$(this).parent().parent().append("<div class='validation-error'>" + requiredText + "</div>");						
+						$(this).parent().parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");						
 					}
 					result = false;
-				};
-				
+				};				
 			} else if ($(this).closest(".tabletable").length > 0) {
 				if ($(this).val().length == 0)
 				{
 					validationinfo += $(this).attr("name") + " (R) ";
 					if ($(this).closest(".tabletable").parent().find(".validation-error").length == 0)
-					$(this).closest(".tabletable").after("<div class='validation-error'>" + requiredText + "</div>");
+					$(this).closest(".tabletable").after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					result = false;
 				}
 			} else if ($(this).hasClass("tinymce")) {
 				if ($(this).val().length == 0)
 				{
 					validationinfo += $(this).attr("name") + " (R) ";
-					$(this).after("<div class='validation-error'>" + requiredText + "</div>");
+					$(this).after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					result = false;
 				}
 			} else {			
 				if ($(this).val().trim().length == 0 && !$(this).hasClass("comparable-second"))
 				{
 					validationinfo += $(this).attr("name") + " (R) ";
-					if ($(this).attr("name") == "number-new-tokens")
+					if ($(this).attr("name") == "survey.allowedContributionsPerUser")
 					{
-						$(this).parent().append("<div class='validation-error'>" + requiredText + "</div>");
-					} else if ($(this).hasClass("email") && ($(this).attr("id") != "add-user-email")) {
-						$(this).parent().after("<div class='validation-error'>" + requiredText + "</div>");
+						$(this).parent().parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
+					} else if ($(this).attr("name") == "number-new-tokens")
+					{
+						$(this).parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
+					} else if ($(this).hasClass("email") && ($(this).attr("id") != "add-user-email") && ($(this).attr("id") != "supportemail")) {
+						$(this).parent().after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					} else {
-						$(this).after("<div class='validation-error'>" + requiredText + "</div>");
+						$(this).after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					}
 					
 					result = false;
 				};
 			};
+		});
+		
+		$(parent).find(".hp").each(function(){
+			if ($(this).val().length > 0)
+		 	{
+		 		validationinfo +=  "honeypot ";
+		 		$(this).after("<div class='validation-error'>" + honeypotError + "</div>");
+		 		$("#btnSubmit").parent().append("<div id='exceptionlogdiv' class='validation-error'>Text '" + $(this).val() + "' in honeypot element found. Please remove it.</div>");
+		 		result = false;
+		 	}                      
 		});
 		
 		$(parent).find(".interdependent").each(function(){
@@ -1132,7 +1157,7 @@ function initModals(item)
 				if (s.indexOf(value) != -1)
 				{
 					validationinfo += $(this).attr("name") + " (InterDependent) ";
-					$(this).after("<div class='validation-error'>" + interdependentText + "</div>");
+					$(this).after("<div class='validation-error' aria-live='polite'>" + interdependentText + "</div>");
 					result = false;
 				} else {
 					s = s + value;
@@ -1159,7 +1184,7 @@ function initModals(item)
 				if (value != second)
 				{
 					validationinfo += $(this).attr("name") + " (COMP) ";
-					$(this).parent().find(".comparable-second").after("<div class='validation-error'>" + nomatchText + "</div>");
+					$(this).parent().find(".comparable-second").after("<div class='validation-error' aria-live='polite'>" + nomatchText + "</div>");
 					//$(this).focus();
 					result = false;
 				};
@@ -1184,7 +1209,7 @@ function initModals(item)
 		    	if ($(this).parent().find(".validation-error").length == 0)
 				{
 		    		validationinfo += $(this).attr("name") + " (REGEX) ";
-					$(this).after("<div class='validation-error'>" + noRegExmatchText + "</div>");
+					$(this).after("<div class='validation-error' aria-live='polite'>" + noRegExmatchText + "</div>");
 					$(this).focus();
 					result = false;
 				};
@@ -1210,7 +1235,7 @@ function initModals(item)
 		    	if ($(this).parent().find(".validation-error").length == 0)
 				{
 		    		validationinfo += $(this).attr("name") + " (InvalidUUID) ";
-		    		$(this).after("<div class='validation-error'>" + invalidCaseId + "</div>");
+		    		$(this).after("<div class='validation-error' aria-live='polite'>" + invalidCaseId + "</div>");
 					result = false;
 				};
 		    } 			
@@ -1231,13 +1256,13 @@ function initModals(item)
 			//we do this to remove blanks before and after the email address
 			$(this).val(value);
 			
-			if ($(this).attr("id") != "add-user-email")
+			if ($(this).attr("id") != "add-user-email" && $(this).attr("id") != "supportemail")
 			{
 			    if( !validateEmail(value)) {
 			    	if ($(this).parent().parent().find(".validation-error").length == 0)
 					{
 			    		validationinfo += $(this).attr("name") + " (EMAIL) ";
-			    		$(this).parent().after("<div class='validation-error'>" + invalidEmail + "</div>");
+			    		$(this).parent().after("<div class='validation-error' aria-live='polite'>" + invalidEmail + "</div>");
 						result = false;
 					};
 			    } else {
@@ -1246,7 +1271,8 @@ function initModals(item)
 			} else {
 				if( !validateEmail(value)) {			
 					validationinfo += $(this).attr("name") + " (EMAIL) ";
-					$(this).after("<div class='validation-error'>" + invalidEmail + "</div>");					
+					$(this).after("<div class='validation-error' aria-live='polite'>" + invalidEmail + "</div>");		
+					result = false;
 				}
 			}
 			
@@ -1273,9 +1299,9 @@ function initModals(item)
 				validationinfo += $(this).attr("name") + " (DATE) ";
 				if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
 				{
-					$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error'>" + invalidDate + "</div>");
+					$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + invalidDate + "</div>");
 				} else {
-					$(this).parent().after("<div class='validation-error'>" + invalidDate + "</div>");						
+					$(this).parent().after("<div class='validation-error' aria-live='polite'>" + invalidDate + "</div>");						
 				}
 				result = false;
 			}
@@ -1295,9 +1321,9 @@ function initModals(item)
 				 			validationinfo += $(this).attr("name") + " (MinDate) ";
 				 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
 							{
-								$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error'>" + valuetoosmall + "</div>");
+								$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");
 							} else {
-								$(this).parent().after("<div class='validation-error'>" + valuetoosmall + "</div>");						
+								$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");						
 							}
 				 			result = false;
 				 		};
@@ -1311,9 +1337,9 @@ function initModals(item)
 				 			validationinfo += $(this).attr("name") + " (MaxDate) ";
 				 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
 							{
-								$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error'>" + valuetoolarge + "</div>");
+								$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");
 							} else {
-								$(this).parent().after("<div class='validation-error'>" + valuetoolarge + "</div>");						
+								$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");						
 							}
 				 			result = false;
 				 		};
@@ -1346,7 +1372,7 @@ function initModals(item)
 				if ($(this).parent().find(".validation-error").length == 0)
 				{
 					validationinfo += $(this).attr("name") + " (XHTML) ";
-					$(this).after("<div class='validation-error'>" + invalidXHTML + "</div>");
+					$(this).after("<div class='validation-error' aria-live='polite'>" + invalidXHTML + "</div>");
 		    		
 					$(this).focus();
 					result = false;
@@ -1370,7 +1396,7 @@ function initModals(item)
 		    	if ($(this).parent().find(".validation-error").length == 0)
 				{
 		    		validationinfo += $(this).attr("name") + " (URL) ";
-		    		$(this).after("<div class='validation-error'>" + invalidURL + "</div>");
+		    		$(this).after("<div class='validation-error' aria-live='polite'>" + invalidURL + "</div>");
 					$(this).focus();
 					result = false;
 				};
@@ -1393,7 +1419,7 @@ function initModals(item)
 		    	if ($(this).parent().find(".validation-error").length == 0)
 				{
 		    		validationinfo += $(this).attr("name") + " (URL) ";
-		    		$(this).after("<span style='margin-left: 10px' class='validation-error'>" + invalidURL + "</span>");
+		    		$(this).after("<span style='margin-left: 10px' class='validation-error' aria-live='polite'>" + invalidURL + "</span>");
 					$(this).focus();
 					result = false;
 				};
@@ -1408,11 +1434,11 @@ function initModals(item)
 			 var reg = /^[a-zA-Z0-9-_]+$/;
 			 if ($(this).parent().find(".validation-error").length == 0)
 			    if( !reg.test( value ) ) {
-			    	$(this).after("<div class='validation-error'>" + shortnameText + "</div>");
+			    	$(this).after("<div class='validation-error' aria-live='polite'>" + shortnameText + "</div>");
 					$(this).focus();
 					result = false;
 			    } else if( value.indexOf("__") > -1 ) {
-			    	$(this).after("<div class='validation-error'>" + shortnameText2 + "</div>");
+			    	$(this).after("<div class='validation-error' aria-live='polite'>" + shortnameText2 + "</div>");
 					$(this).focus();
 					result = false;
 			    } ;
@@ -1425,11 +1451,11 @@ function initModals(item)
 			 var reg = /^[a-zA-Z0-9-_]+$/;
 			 if ($(this).parent().find(".validation-error").length == 0)
 			    if( !reg.test( value ) ) {
-			    	$(this).after("<div class='validation-error'>" + shortnameText + "</div>");
+			    	$(this).after("<div class='validation-error' aria-live='polite'>" + shortnameText + "</div>");
 					$(this).focus();
 					result = false;
 			    } else if( value.indexOf("__") > -1 ) {
-			    	$(this).after("<div class='validation-error'>" + shortnameText2 + "</div>");
+			    	$(this).after("<div class='validation-error' aria-live='polite'>" + shortnameText2 + "</div>");
 					$(this).focus();
 					result = false;
 			    } ;
@@ -1446,7 +1472,7 @@ function initModals(item)
 			var classes = $(this).attr('class').split(" ");
 			var value = $(this).val();
 			if (utf8.moreThan3Bytes(value)) {
-				$(this).after("<div class='validation-error'>" + invalidCharacter + "</div>");
+				$(this).after("<div class='validation-error' aria-live='polite'>" + invalidCharacter + "</div>");
 	 			result = false;
 			}
 			
@@ -1461,7 +1487,7 @@ function initModals(item)
 					 		if (value.length < parseInt(min) && value.length > 0)
 					 		{
 					 			validationinfo += $(this).attr("name") + " (MinFT) ";
-					 			$(this).after("<div class='validation-error'>" + textnotlongenoughText + "</div>");
+					 			$(this).after("<div class='validation-error' aria-live='polite'>" + textnotlongenoughText + "</div>");
 					 			result = false;
 					 		};
 					 	} else if (strStartsWith(classes[i], 'max'))
@@ -1473,9 +1499,9 @@ function initModals(item)
 					 			validationinfo += $(this).attr("name") + " (MaxFT) ";
 					 			if (max == "5000")
 					 			{
-					 				$(this).after("<div class='validation-error'>" + texttoolong5000Text + "</div>");
+					 				$(this).after("<div class='validation-error' aria-live='polite'>" + texttoolong5000Text + "</div>");
 						 		} else {
-					 				$(this).after("<div class='validation-error'>" + texttoolongText + "</div>");
+					 				$(this).after("<div class='validation-error' aria-live='polite'>" + texttoolongText + "</div>");
 						 		}
 					 			
 					 			result = false;
@@ -1508,7 +1534,7 @@ function initModals(item)
 			if(!correct)
 			{
 				validationinfo += $(this).attr("name") + " (InvChar) ";
-				$(this).closest(".dataTable").after("<div class='validation-error'>" + invalidCharacter + "</div>");
+				$(this).closest(".dataTable").after("<div class='validation-error' aria-live='polite'>" + invalidCharacter + "</div>");
 			}
 
 		});
@@ -1542,7 +1568,7 @@ function initModals(item)
 				 		if (numAnsweredQuestions > 0 && numAnsweredQuestions < parseInt(min))
 				 		{
 				 			validationinfo += $(this).closest(".survey-element").attr("id") + " (MinMatrixRow) ";
-				 			$(this).after("<div class='validation-error'>" + notenoughrowsanswerederror + "</div>");
+				 			$(this).after("<div class='validation-error' aria-live='polite'>" + notenoughrowsanswerederror + "</div>");
 				 			result = false;
 				 		};
 				 	} else if (strStartsWith(classes[i], 'maxrows'))
@@ -1552,7 +1578,7 @@ function initModals(item)
 				 		if (numAnsweredQuestions > parseInt(max))
 				 		{
 				 			validationinfo += $(this).closest(".survey-element").attr("id") + " (MaxMatrixRow) ";
-				 			$(this).after("<div class='validation-error'>" + toomanyrowsanswerederror + "</div>");
+				 			$(this).after("<div class='validation-error' aria-live='polite'>" + toomanyrowsanswerederror + "</div>");
 				 			result = false;
 				 		};
 				 	};
@@ -1586,7 +1612,7 @@ function initModals(item)
 				 		if (numAnsweredQuestions > 0 && numAnsweredQuestions < parseInt(min))
 				 		{
 				 			validationinfo += $(this).closest(".survey-element").attr("id") + " (MinMatrixRow) ";
-				 			$(this).after("<div class='validation-error'>" + notenoughrowsanswerederror + "</div>");
+				 			$(this).after("<div class='validation-error' aria-live='polite'>" + notenoughrowsanswerederror + "</div>");
 				 			result = false;
 				 		};
 				 	} else if (strStartsWith(classes[i], 'maxrows'))
@@ -1596,7 +1622,7 @@ function initModals(item)
 				 		if (numAnsweredQuestions > parseInt(max))
 				 		{
 				 			validationinfo += $(this).closest(".survey-element").attr("id") + " (MaxMatrixRow) ";
-				 			$(this).after("<div class='validation-error'>" + toomanyrowsanswerederror + "</div>");
+				 			$(this).after("<div class='validation-error' aria-live='polite'>" + toomanyrowsanswerederror + "</div>");
 				 			result = false;
 				 		};
 				 	};
@@ -1622,7 +1648,7 @@ function initModals(item)
 			 		if (value > parseFloat(max))
 			 		{
 			 			validationinfo += $(this).attr("name") + " (MaxSelection) ";
-			 			$(this).closest(".gallery-table").after("<div class='validation-error'>" + toomanyanswers + "</div>");
+			 			$(this).closest(".gallery-table").after("<div class='validation-error' aria-live='polite'>" + toomanyanswers + "</div>");
 			 			result = false;
 			 		}
 			 	};
@@ -1648,7 +1674,7 @@ function initModals(item)
 			if (isNaN(value) || !$.isNumeric($(this).val()) || !isFinite($(this).val()) || ($(this).hasClass("integer") && $(this).val().indexOf(".") > -1))
 			{
 				validationinfo += $(this).attr("name") + " (InvalidNumber) ";
-				$(target).after("<div class='validation-error'>" + invalidnumberText + "</div>");
+				$(target).after("<div class='validation-error' aria-live='polite'>" + invalidnumberText + "</div>");
 	 			result = false;
 			} else {
 			
@@ -1659,7 +1685,7 @@ function initModals(item)
 				 		if (value < parseFloat(min))
 				 		{
 				 			validationinfo += $(this).attr("name") + " (MinNumber) ";
-				 			$(target).after("<div class='validation-error'>" + valuetoosmall + "</div>");
+				 			$(target).after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");
 				 			result = false;
 				 		}
 				 	} else if (strStartsWith(classes[i], 'max'))
@@ -1668,7 +1694,7 @@ function initModals(item)
 				 		if (value > parseFloat(max))
 				 		{
 				 			validationinfo += $(this).attr("name") + " (MaxNumber) ";
-				 			$(target).after("<div class='validation-error'>" + valuetoolarge + "</div>");
+				 			$(target).after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");
 				 			result = false;
 				 		}
 				 	} else if (strStartsWith(classes[i], 'prec'))
@@ -1721,7 +1747,7 @@ function initModals(item)
 			 		if (value > 0 && value < parseInt(min))
 			 		{
 			 			validationinfo += $(this).closest(".survey-element").attr("id") + " (MinListbox) ";
-			 			$(this).after("<div class='validation-error'>" + notenoughanswers + "</div>");
+			 			$(this).after("<div class='validation-error' aria-live='polite'>" + notenoughanswers + "</div>");
 			 			result = false;
 			 		}
 			 	} else if (strStartsWith(classes[i], 'max'))
@@ -1730,7 +1756,7 @@ function initModals(item)
 			 		if (value != 0 && value > parseInt(max))
 			 		{
 			 			validationinfo += $(this).closest(".survey-element").attr("id") + " (MaxListbox) ";
-			 			$(this).after("<div class='validation-error'>" + toomanyanswers + "</div>");
+			 			$(this).after("<div class='validation-error' aria-live='polite'>" + toomanyanswers + "</div>");
 			 			result = false;
 			 		}
 			 	}			 	
@@ -1757,7 +1783,7 @@ function initModals(item)
 				 		if (value != 0 && value < parseFloat(min))
 				 		{
 				 			validationinfo += $(this).closest(".survey-element").attr("id") + " (MinAnswerCols) ";
-				 			$(this).after("<div class='validation-error'>" + notenoughanswers + "</div>");
+				 			$(this).after("<div class='validation-error' aria-live='polite'>" + notenoughanswers + "</div>");
 				 			result = false;
 				 		}
 				 	} else if (strStartsWith(classes[i], 'max'))
@@ -1766,7 +1792,7 @@ function initModals(item)
 				 		if (value != 0 && value > parseFloat(max))
 				 		{
 				 			validationinfo += $(this).closest(".survey-element").attr("id") + " (MaxAnswerCols) ";
-				 			$(this).after("<div class='validation-error'>" + toomanyanswers + "</div>");
+				 			$(this).after("<div class='validation-error' aria-live='polite'>" + toomanyanswers + "</div>");
 				 			result = false;
 				 		}
 				 	}			 	

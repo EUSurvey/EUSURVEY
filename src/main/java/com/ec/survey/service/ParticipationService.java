@@ -6,6 +6,7 @@ import com.ec.survey.model.ParticipationGroupType;
 import com.ec.survey.model.ParticipationGroupsForAttendee;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.administration.EcasUser;
+import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.GuestListCreator;
@@ -52,6 +53,15 @@ public class ParticipationService extends BasicService {
 			}
 		}
 		
+		return result;
+	}
+	
+	@Transactional
+	public List<ParticipationGroup> getAll(int id) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("FROM ParticipationGroup g WHERE g.surveyId = :id").setInteger("id", id);
+		@SuppressWarnings("unchecked")
+		List<ParticipationGroup> result = query.list();
 		return result;
 	}
 
@@ -316,7 +326,7 @@ public class ParticipationService extends BasicService {
 		return invitations;
 	}
 
-	public List<Invitation> getInvitations(String email, SqlPagination paging, String survey, String surveystatus, Date expiryStart, Date expiryEnd, Date startInv, Date endInv) {
+	public List<Invitation> getInvitations(User user, SqlPagination paging, String survey, String surveystatus, Date expiryStart, Date expiryEnd, Date startInv, Date endInv) {
 		Session session = sessionFactory.getCurrentSession();
 		
 		String where = "";
@@ -356,8 +366,21 @@ public class ParticipationService extends BasicService {
 		sql.append(" UNION SELECT i.INVITATION_ID, i.ATTENDEE_INVITED FROM INVITATIONS i JOIN PARTICIPANTS p ON p.PARTICIPATION_ID = i.PARTICIPATIONGROUP_ID JOIN ECASUSERS a ON i.ATTENDEE_ID = a.USER_ID JOIN SURVEYS s ON s.SURVEY_ID = p.PARTICIPATION_SURVEY_ID  WHERE ");
 		sql.append(where).append("p.PARTICIPATION_TYPE = 2 AND a.USER_EMAIL = :email AND i.ATTENDEE_ANSWERS = 0 ) AS d ORDER BY d.ATTENDEE_INVITED DESC");
 		
-		SQLQuery query = session.createSQLQuery(sql.toString());
-		query.setString("email", email).setFirstResult(paging.getFirstResult()).setMaxResults(paging.getMaxResult());
+		SQLQuery query = null;
+		
+		if (user.getOtherEmail() != null && user.getOtherEmail().length() > 0)
+		{
+			List<String> allemails = user.getAllEmailAddresses();
+			String ssql = sql.toString();
+			ssql = ssql.replaceAll("= :email", "IN (:emails)");
+			query = session.createSQLQuery(ssql);
+			query.setParameterList("emails", allemails);
+		} else {
+			query = session.createSQLQuery(sql.toString());
+			query.setString("email", user.getEmail());
+		}	
+		
+		query.setFirstResult(paging.getFirstResult()).setMaxResults(paging.getMaxResult());
 		
 		if (survey != null)
 		{

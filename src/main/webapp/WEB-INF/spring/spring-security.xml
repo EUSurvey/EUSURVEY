@@ -5,13 +5,13 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
      	 http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
    		http://www.springframework.org/schema/security 
-   		http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+   		http://www.springframework.org/schema/security/spring-security-4.2.xsd">
 
 	<!-- This is where we configure Spring-Security -->
 	<security:http auto-config="false" use-expressions="true"
 		entry-point-ref="authenticationEntryPoint">
 		
-		<security:access-denied-handler error-page="/auth/denied"/>
+		<security:access-denied-handler error-page="/errors/403.html"/>
 		
 		<!-- <security:form-login login-page="/auth/login"
 					username-parameter="j_username" 
@@ -31,6 +31,7 @@
 		<security:intercept-url pattern="/captcha.html"	access="permitAll" />
 		<security:intercept-url pattern="/editcontribution/**"	access="permitAll" />
 		<security:intercept-url pattern="/preparecontribution/**"	access="permitAll" />
+		<security:intercept-url pattern="/preparedraft/**"	access="permitAll" />
 		<security:intercept-url pattern="/preparequizresults/**"	access="permitAll" />
 		<security:intercept-url pattern="/graphics/**"	access="permitAll" />
 		<security:intercept-url pattern="/printcontribution/**"	access="permitAll" />

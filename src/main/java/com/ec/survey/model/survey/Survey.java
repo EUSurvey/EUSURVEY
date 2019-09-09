@@ -136,6 +136,7 @@ public class Survey implements java.io.Serializable {
 	private boolean fullFormManagementRights = true;
 	private boolean formManagementRights = true;
 	private boolean accessResultsRights = true;
+	private Integer allowedContributionsPerUser = 1;
 	private boolean canCreateSurveys = true;
 	
 	@Id
@@ -904,18 +905,24 @@ public class Survey implements java.io.Serializable {
 			if (element instanceof Question) {
 				result.put(element.getUniqueId(), element);
 			}
-			if (element instanceof Matrix)
+			if (element instanceof MatrixOrTable)
 			{
-				Matrix matrix = (Matrix)element;
+				MatrixOrTable matrix = (MatrixOrTable)element;
 				for (Element child : matrix.getChildElements()) {
 					if (!(child instanceof EmptyElement))
 					result.put(child.getUniqueId(), child);
 				}
 			}
+			if (element instanceof RatingQuestion)
+			{
+				RatingQuestion rating = (RatingQuestion) element;
+				for (Element child : rating.getChildElements()) {
+					result.put(child.getUniqueId(), child);
+				}
+			}
 		}
 		return result;
-	}
-	
+	}	
 	
 	@Transient
 	public Map<Integer, Element> getMatrixMap() {
@@ -1060,6 +1067,19 @@ public class Survey implements java.io.Serializable {
 		for (Question question : getQuestions() ) {
 			if (!question.getOptional()) {
 				return true;
+			}
+			
+			if (question instanceof Matrix)
+			{
+				for (Element matrixquestion : ((Matrix)question).getQuestions())
+				{
+					if (matrixquestion instanceof Question) {
+						if (!((Question)matrixquestion).getOptional())
+						{
+							return true;
+						}
+					}
+				}
 			}
 		}
 		return false;
@@ -1232,6 +1252,14 @@ public class Survey implements java.io.Serializable {
 		this.quizResultsMessage = quizResultsMessage;
 	}
 	
+	@Column(name = "ALLOWEDCONTRIBUTIONS")
+	public Integer getAllowedContributionsPerUser() {
+		return allowedContributionsPerUser != null ? allowedContributionsPerUser : 1;
+	}
+	public void setAllowedContributionsPerUser(Integer allowedContributionsPerUser) {
+		this.allowedContributionsPerUser = allowedContributionsPerUser;
+	}
+	
 	@Transient
 	public String serialize(boolean elementOrderOnly) {
 		StringBuilder result = new StringBuilder();
@@ -1366,6 +1394,7 @@ public class Survey implements java.io.Serializable {
 		copy.showPDFOnUnavailabilityPage = showPDFOnUnavailabilityPage;
 		copy.showDocsOnUnavailabilityPage = showDocsOnUnavailabilityPage;
 		copy.isOPC = isOPC;
+		copy.setAllowedContributionsPerUser(allowedContributionsPerUser);
 		
 		if (copyNumberOfAnswerSets)
 		{
@@ -1783,6 +1812,17 @@ public class Survey implements java.io.Serializable {
 	}
 	
 	@Transient
+	public Map<String, String> getIDsByUniqueID() {
+		Map<String, String> result = new HashMap<>();
+		
+		for (Element element : getElementsRecursive(true)) {
+			result.put(element.getUniqueId(), element.getId().toString());
+		}
+		
+		return result;
+	}
+	
+	@Transient
 	public boolean isMissingElementsChecked() {
 		return missingElementsChecked;
 	}
@@ -2063,6 +2103,7 @@ public class Survey implements java.io.Serializable {
 	public void setAccessResultsRights(boolean accessResultsRights) {
 		this.accessResultsRights = accessResultsRights;
 	}
+								
 	
 	@Transient
 	public boolean isCanCreateSurveys() {

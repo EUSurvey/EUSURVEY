@@ -112,7 +112,6 @@
 	font-weight: normal;
 	margin-bottom: 2px;
 	margin-top: 2px;
-	margin-left:3px;
 }
 
 .questiontitle td {
@@ -128,9 +127,7 @@
 }
 
 .text {
-	font-size: 14px;
-	margin-left: 10px;
-    text-indent: -7px;
+	font-size: 14px;	
 }
 
 .text ol, .text ul {
@@ -189,14 +186,18 @@
 }
 
 .matrix {}
-.matrixtable td {padding: 5px; padding-left: 10px; padding-right: 10px; border: 1px solid #bbb; min-width: 10px; width: auto;}
+.matrixtable td, .matrixtable th {padding: 5px; padding-left: 10px; padding-right: 10px; border: 1px solid #bbb; min-width: 10px; width: auto;}
 .matrix-cell {text-align: center;}
 
 .tabletable {
 	max-width: 95%;
 }
 
-.tabletable td {border: 1px solid #bbb; padding: 0 4px 0 4px; font-size: 13px; word-wrap: break-word; }
+.tabletable td, .tabletable th {border: 1px solid #bbb; padding: 0 4px 0 4px; word-wrap: break-word; }
+
+.table-header {
+	background-color: #eee;
+}
 
 .table-label {
 	font-weight: bold;

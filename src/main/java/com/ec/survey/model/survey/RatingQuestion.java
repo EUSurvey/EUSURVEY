@@ -12,6 +12,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -58,10 +59,12 @@ public class RatingQuestion extends Question {
 		this.iconType = iconType;
 	}
 	
+	@SuppressWarnings("deprecation")
 	@OneToMany(targetEntity=Element.class, cascade = CascadeType.ALL)  
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "position asc")
-	@JoinColumn(nullable=true)
+	@JoinColumn(nullable=true, foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT))
+	@org.hibernate.annotations.ForeignKey(name = "none")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	public List<Element> getChildElements() {
 		return childElements;

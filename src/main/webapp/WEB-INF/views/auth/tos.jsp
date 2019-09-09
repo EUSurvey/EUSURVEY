@@ -64,6 +64,10 @@
 				$("#tos_FR").show();
 				$("#tos_DE").hide();
     		</c:if>
+    		
+    		<c:if test="${readonly != null && page == 2}">
+    			nextPage();
+    		</c:if>
     	});
 
 		function checkAnswer() {
@@ -129,14 +133,28 @@
 
 
 			<div id="tos_EN">
-				<c:if test="${readonly == null}">
+				
 					<h1 class="tospage1">EUSurvey - Privacy Statement</h1>
 					<h1 class="tospage2">EUSurvey - Terms of Service</h1>
-				</c:if>
 
 				<c:choose>
 					<c:when test="${oss}">
 						<%@ include file="tos_language/tos.oss_en.jsp"%>
+						
+						<br />
+						<br />
+						<div style="text-align: center">
+							<input type="checkbox" class="check" name="accepted"
+								id="acceptedEN" value="true" /><span class="mandatory">*</span>
+							I accept the Terms of Service
+							<div class="validation-error hideme" id="mustacceptEN">You
+								have to accept the Terms of Service to be able to use EUSurvey</div>
+							<br />
+							<br /> <input type="submit" class="btn btn-primary"
+								value="Submit" id="submitAcceptTosEN" /> <a
+								onclick="logout()"
+								class="btn btn-default" style="margin-left: 50px">Cancel</a>
+						</div>
 					</c:when>
 					<c:otherwise>
 						<div class="tospage1">
@@ -155,8 +173,9 @@
 									<br />
 									<br />
 								</div>						
+							
+								<a class="btn btn-primary" onclick="nextPage()">next page</a>
 							</c:if>
-							<a class="btn btn-primary" onclick="nextPage()">next page</a>
 						</div>
 						<div class="tospage2">
 							<%@ include file="tos_language/tos2_en.jsp"%>
@@ -186,18 +205,31 @@
 			</div>
 
 			<div id="tos_DE" style="display: none;">
-				<c:if test="${readonly == null}">
-					<h1 class="tospage1">EUSurvey Datenschutzerklärung</h1>
-					<h1 class="tospage2">Nutzungsbedingungen</h1>
-				</c:if>
-
+				<h1 class="tospage1">EUSurvey Datenschutzerklärung</h1>
+				<h1 class="tospage2">Nutzungsbedingungen</h1>
+			
 				<c:choose>
 					<c:when test="${oss}">
-						<%@ include file="tos_language/tos.oss_de.jsp"%>
+						<%@ include file="tos_language/tos.oss_de.jsp"%>						
+						<br />
+						<br />
+						<div style="text-align: center">
+							<input type="checkbox" class="check" name="accepted"
+								id="acceptedDE" value="true" /><span class="mandatory">*</span>
+							Ich stimme den Nutzungsbedingungen zu
+							<div class="validation-error hideme" id="mustacceptDE">Sie
+								müssen die Nutzungsbedingungen akzeptieren, um EUSurvey benutzen
+								zu können.</div>
+							<br />
+							<br /> <input type="submit" class="btn btn-primary"
+								value="Abschicken" id="submitAcceptTosEN" /> <a
+								onclick="logout()"
+								class="btn btn-default" style="margin-left: 50px">Abbrechen</a>
+						</div>
 					</c:when>
 					<c:otherwise>
 						<div class="tospage1">
-							<%@ include file="tos_language/tos_de.jsp"%>
+							<%@ include file="tos_language/tos_de.jsp"%>							
 						</div>
 						<div class="tospage1" style="text-align: center">
 							<c:if test="${readonly == null}">
@@ -213,11 +245,12 @@
 									<br />
 									<br />
 								</div>	
+							
+								<a class="btn btn-primary" onclick="nextPage()">nächste Seite</a>
 							</c:if>
-							<a class="btn btn-primary" onclick="nextPage()">nächste Seite</a>
 						</div>
 						<div class="tospage2">
-							<%@ include file="tos_language/tos2_en.jsp"%>
+							<%@ include file="tos_language/tos2_de.jsp"%>
 						</div>
 					</c:otherwise>
 				</c:choose>
@@ -244,13 +277,26 @@
 			</div>
 
 			<div id="tos_FR" style="display: none;">
-				<c:if test="${readonly == null}">
-					<h1 class="tospage1">EUSurvey déclaration de confidentialité</h1>
-					<h1 class="tospage2">Conditions de service</h1>
-				</c:if>
+				<h1 class="tospage1">EUSurvey déclaration de confidentialité</h1>
+				<h1 class="tospage2">Conditions de service</h1>
 				<c:choose>
 					<c:when test="${oss}">
 						<%@ include file="tos_language/tos.oss_fr.jsp"%>
+						<br />
+						<br />
+						<div style="text-align: center">
+							<input type="checkbox" class="check" name="accepted"
+								id="acceptedFR" value="true" /><span class="mandatory">*</span>
+							J'accepte les conditions d'utilisation
+							<div class="validation-error hideme" id="mustacceptFR">Pour
+								utiliser EUSurvey, vous devez accepter les conditions
+								d'utilisation.</div>
+							<br />
+							<br /> <input type="submit" class="btn btn-primary"
+								value="Soumettre" id="submitAcceptTosFR" /> <a
+								onclick="logout()"
+								class="btn btn-default" style="margin-left: 50px">Annuler</a>
+						</div>
 					</c:when>
 					<c:otherwise>
 						<div class="tospage1">
@@ -269,8 +315,9 @@
 									<br />
 									<br />
 								</div>	
-							</c:if>
-							<a class="btn btn-primary" onclick="nextPage()">page suivante</a>
+								
+								<a class="btn btn-primary" onclick="nextPage()">page suivante</a>
+							</c:if>							
 						</div>
 						<div class="tospage2">
 							<%@ include file="tos_language/tos2_en.jsp"%>

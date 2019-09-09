@@ -65,7 +65,7 @@ public class QuizExecutor implements Runnable {
 				InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
 								
-				mailService.SendHtmlMail(email, from, from, "Copy of your PDF quiz results", text, server, Integer.parseInt(smtpPort.trim()), file, file2, null);
+				mailService.SendHtmlMail(email, from, from, "Copy of your PDF quiz results", text, server, Integer.parseInt(smtpPort.trim()), file, file2, null, false);
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

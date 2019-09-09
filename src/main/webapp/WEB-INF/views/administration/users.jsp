@@ -91,6 +91,7 @@
 							 $("#firstname").val($('#add-user-firstname').val());
 							 $("#lastname").val($('#add-user-lastname').val());
 							 $("#email").val($('#add-user-email').val());
+							 $("#otheremail").val($('#other-user-email').val());
 							 $("#comment").val($('#add-user-comment').val());
 							 $("#language").val($('#add-user-language').val());
 								
@@ -156,6 +157,7 @@
 			 $("#update-firstname").val($('#add-user-firstname').val());
 			 $("#update-lastname").val($('#add-user-lastname').val());
 			 $("#update-email").val($('#add-user-email').val());
+			 $("#update-otheremail").val($('#other-user-email').val());
 			 $("#update-comment").val($('#add-user-comment').val());
 			 $("#update-language").val($('#add-user-language').val());
 				
@@ -184,12 +186,13 @@
 		function showAddDialog()
 		{
 			$('#add-user-login').val("");
-			$('#add-user-login').removeAttr("readonly");
+			$('#add-user-login').removeAttr("readonly").removeAttr("disabled");
 			$('#add-user-password').val("");
 			$('#add-user-password').addClass("required");
 			$('#add-user-firstname').val("");
 			$('#add-user-lastname').val("");
 			$('#add-user-email').val("");
+			$('#other-user-email').val("");
 			$('#add-user-comment').val("");
 			$('#add-user-language').find("option").removeAttr("selected");
 			$('#add-user-language').find("option[value='EN']").attr("selected","selected");
@@ -203,20 +206,44 @@
 			$('#add-user-dialog').modal();
 		}
 		
-		function showEditDialog(id, login, email, comment, language, type, roles, first, last)
+		function showEditDialog(id, login, email, otheremail, comment, language, type, roles, first, last, readwrite)
 		{
 			selectedId = id;
 			
 			$('#add-user-login').val(login);
-			$('#add-user-login').attr("readonly","readonly");
+			$('#add-user-login').attr("readonly", true).attr("disabled", true);
 			$('#add-user-password').val("#######");
 			$('#add-user-password').removeClass("required");
 			$('#add-user-firstname').val(first);
 			$('#add-user-lastname').val(last);
 			$('#add-user-email').val(email);
+			$('#other-user-email').val(otheremail);
 			$('#add-user-comment').val(comment);
 			$('#add-user-language').find("option").removeAttr("selected");
 			$('#add-user-language').find("option[value='" + language + "']").prop("selected","selected");
+			
+			if (readwrite)
+			{
+				$('#add-user-password').removeAttr('readonly').removeAttr('disabled');
+				$('#add-user-email').removeAttr('readonly').removeAttr('disabled');
+				$('#add-user-comment').removeAttr('readonly').removeAttr('disabled');
+				$('#add-user-firstname').removeAttr('readonly').removeAttr('disabled');
+				$('#add-user-lastname').removeAttr('readonly').removeAttr('disabled');
+				$('#add-user-language').removeAttr('readonly').removeAttr('disabled');
+				$('.role').each(function(){
+					$(this).removeAttr('disabled');					
+				});
+			} else {
+				$('#add-user-password').attr('readonly', true).attr('disabled', true);
+				$('#add-user-email').attr('readonly', true).attr('disabled', true);
+				$('#add-user-comment').attr('readonly', true).attr('disabled', true);
+				$('#add-user-firstname').attr('readonly', true).attr('disabled', true);
+				$('#add-user-lastname').attr('readonly', true).attr('disabled', true);
+				$('#add-user-language').attr('readonly', true).attr('disabled', true);
+				$('.role').each(function(){
+					$(this).attr('disabled', true);					
+				});
+			}
 			
 			$('.role').each(function(){
 				if (roles.indexOf($(this).val()+";") > -1)
@@ -251,7 +278,7 @@
 			var request = $.ajax({
 				type: "POST",
 	          	 url: "${contextpath}/administration/saveUserConfiguration",
-				  data: {name : $("#user-name").is(":checked"), email: $("#user-email").is(":checked"), ulang: $("#user-language").is(":checked"), roles: $("#user-roles").is(":checked"), comment: $("#user-comment").is(":checked")},
+				  data: {name : $("#user-name").is(":checked"), email: $("#user-email").is(":checked"), otherEmail: $("#user-otheremail").is(":checked"), ulang: $("#user-language").is(":checked"), roles: $("#user-roles").is(":checked"), comment: $("#user-comment").is(":checked")},
 				  dataType: "json",
 				  cache: false,
 				  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},					
@@ -285,7 +312,7 @@
 					$($(this).find("th")[1]).hide();
 					$($(this).find("td")[1]).hide();
 				}
-				if ($("#user-language").is(":checked"))
+				if ($("#user-otheremail").is(":checked"))
 				{
 					$($(this).find("th")[2]).show();
 					$($(this).find("td")[2]).show();
@@ -293,7 +320,7 @@
 					$($(this).find("th")[2]).hide();
 					$($(this).find("td")[2]).hide();
 				}
-				if ($("#user-roles").is(":checked"))
+				if ($("#user-language").is(":checked"))
 				{
 					$($(this).find("th")[3]).show();
 					$($(this).find("td")[3]).show();
@@ -301,13 +328,21 @@
 					$($(this).find("th")[3]).hide();
 					$($(this).find("td")[3]).hide();
 				}
-				if ($("#user-comment").is(":checked"))
+				if ($("#user-roles").is(":checked"))
 				{
 					$($(this).find("th")[4]).show();
 					$($(this).find("td")[4]).show();
 				} else {
 					$($(this).find("th")[4]).hide();
 					$($(this).find("td")[4]).hide();
+				}
+				if ($("#user-comment").is(":checked"))
+				{
+					$($(this).find("th")[5]).show();
+					$($(this).find("td")[5]).show();
+				} else {
+					$($(this).find("th")[5]).hide();
+					$($(this).find("td")[5]).hide();
 				}
 			});
 			
@@ -331,19 +366,26 @@
 			
 			if ($($("#usertable").find("tr").find("th")[2] ).is(":visible"))
 			{
+				$("#user-otheremail").prop("checked","checked");
+			} else {
+				$("#user-otheremail").removeAttr("checked");
+			}
+			
+			if ($($("#usertable").find("tr").find("th")[3] ).is(":visible"))
+			{
 				$("#user-language").prop("checked","checked");
 			} else {
 				$("#user-language").removeAttr("checked");
 			}
 			
-			if ($($("#usertable").find("tr").find("th")[3] ).is(":visible"))
+			if ($($("#usertable").find("tr").find("th")[4] ).is(":visible"))
 			{
 				$("#user-roles").prop("checked","checked");
 			} else {
 				$("#user-roles").removeAttr("checked");
 			}
 			
-			if ($($("#usertable").find("tr").find("th")[4] ).is(":visible"))
+			if ($($("#usertable").find("tr").find("th")[5] ).is(":visible"))
 			{
 				$("#user-comment").prop("checked","checked");
 			} else {
@@ -376,7 +418,6 @@
 	
 		<div class="fixedtitleform">
 			<div class="fixedtitleinner">
-				<h1><spring:message code="label.Users" /></h1>	
 				<c:set var="pagingElementName" value="User" />
 			</div>
 		</div>
@@ -417,6 +458,7 @@
 									</div>	 
 									<spring:message code="label.Email" />
 								</th>				
+								<th class="hideme"><spring:message code="label.OtherEmail" /></th>
 								<th style="width: 120px;"><spring:message code="label.Language" /></th>
 								<th class="hideme"><spring:message code="label.Roles" /></th>
 								<th class="hideme"><spring:message code="label.Comment" /></th>
@@ -429,6 +471,7 @@
 								<th class="filtercell">
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.email}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" style="margin:0px;" name="email" />
 								</th>
+								<th class="filtercell hideme">&#160;</th>
 								<th class="filtercell smallfiltercell">
 									<div class="btn-group">
 									  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
@@ -475,7 +518,7 @@
 								<th class="filtercell hideme">
 									<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.comment}</esapi:encodeForHTMLAttribute>' type="text" class="small-form-control" maxlength="100" style="margin:0px;" name="comment" />
 								</th>
-								<th >&#160;</th>
+								<th>&#160;</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -492,6 +535,7 @@
 									</c:choose>
 								</td>
 								<td><esapi:encodeForHTML>${user.email}</esapi:encodeForHTML></td>
+								<td class="hideme"><esapi:encodeForHTML>${user.otherEmail}</esapi:encodeForHTML></td>
 								<td><esapi:encodeForHTML>${user.language}</esapi:encodeForHTML></td>
 								<td class="hideme">
 									<c:forEach items="${user.roles}" var="role">
@@ -500,14 +544,7 @@
 								</td>
 								<td class="hideme"><esapi:encodeForHTML>${user.comment}</esapi:encodeForHTML></td>
 								<td style="min-width: 90px;">
-									<c:choose>
-										<c:when test="${user.type == 'SYSTEM'}">
-											<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" onclick='showEditDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}","${user.email}","${user.comment}","${user.language}","${user.type}","${user.getRolesAsString()}","${user.getGivenName()}","${user.getSurName()}"</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-pencil"></span></a>
-										</c:when>
-										<c:otherwise>
-											<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton disabled" ><span class="glyphicon glyphicon-pencil"></span></a>
-										</c:otherwise>
-									</c:choose>
+									<a data-toggle="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" onclick='showEditDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}","${user.email}","${user.otherEmail}","${user.comment}","${user.language}","${user.type}","${user.getRolesAsString()}","${user.getGivenName()}","${user.getSurName()}", ${user.type == 'SYSTEM'}</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-pencil"></span></a>
 									<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton" onclick='showDeleteDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}"</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-remove icon-red"></span></a>
 								</td>
 							</tr>
@@ -561,6 +598,7 @@
 		<input type="hidden" name="add-login" id="login" value="" />
 		<input type="hidden" name="add-password" id="password" value="" />	
 		<input type="hidden" name="add-email" id="email" value="" />
+		<input type="hidden" name="add-other-email" id="otheremail" value="" />
 		<input type="hidden" name="add-firstname" id="firstname" value="" />
 		<input type="hidden" name="add-lastname" id="lastname" value="" />
 		<input type="hidden" name="add-comment" id="comment" value="" />
@@ -572,6 +610,7 @@
 		<input type="hidden" name="update-id" id="update-id" value="" />
 		<input type="hidden" name="update-password" id="update-password" value="" />	
 		<input type="hidden" name="update-email" id="update-email" value="" />
+		<input type="hidden" name="update-other-email" id="update-otheremail" value="" />
 		<input type="hidden" name="update-firstname" id="update-firstname" value="" />
 		<input type="hidden" name="update-lastname" id="update-lastname" value="" />
 		<input type="hidden" name="update-comment" id="update-comment" value="" />
@@ -592,47 +631,52 @@
 			<span id="add-user-dialog-header2" class="hideme"><spring:message code="label.EditUserSettings" /></span>
 		</div>
 		<div class="modal-body">
-			<div style="float: right;padding: 10px;">
-				<label for="add-user-firstname"><spring:message code="label.FirstName" /></label><br />
-				<input tabindex="6" class="required" type="text" maxlength="255" id="add-user-firstname" style="width:220px;" /><br />
-				<label for="add-user-lastname"><spring:message code="label.LastName" /></label><br />
-				<input tabindex="7" class="required" type="text" maxlength="255" id="add-user-lastname" style="width:220px;" />
-				<div class="alert alert-warning" style="margin-top: 10px">
-					<label><spring:message code="label.Roles" /></label><br />
-					<c:forEach items="${ExistingRoles}" var="role">
-						<input tabindex="8" class="role" type="radio" name="add-user-role" id="add-user-role${role.id}" value="${role.id}" />&nbsp;<esapi:encodeForHTML>${role.name}</esapi:encodeForHTML><br />
-					</c:forEach>
+			<div class="row">
+				<div class="col-md-6">
+					<label for="add-user-login"><spring:message code="label.Login" /></label><br />
+					<input tabindex="1" class="form-control required" type="text" maxlength="255" id="add-user-login" /><br />
+					<label for="add-user-password"><spring:message code="label.Password" /></label><br />
+					<input tabindex="2" class="form-control required" type="password" maxlength="16" autocomplete="off" id="add-user-password" /><br />
+					<label for="add-user-email"><spring:message code="label.Email" /></label><br />
+					<input tabindex="3" class="form-control required email" type="text" maxlength="255" id="add-user-email" /><br />
+					<label for="old-user-email"><spring:message code="label.OtherEmail" /><span style="color: #999; margin-left: 10px"><spring:message code="info.OtherEmail" /></span></label><br />
+					<textarea tabindex="4" class="form-control"  maxlength="255" id="other-user-email"></textarea><br />
+					<label for="add-user-comment"><spring:message code="label.Comment" /></label><br />
+					<textarea class="form-control" tabindex="5" id="add-user-comment" maxlength="255"></textarea><br />
 				</div>
-			</div>
-			<div style="padding: 10px;">
-				<label for="add-user-login"><spring:message code="label.Login" /></label><br />
-				<input tabindex="1" class="required" type="text" maxlength="255" id="add-user-login" style="width:220px;" /><br />
-				<label for="add-user-password"><spring:message code="label.Password" /></label><br />
-				<input tabindex="2" class="required" type="password" maxlength="16" autocomplete="off" id="add-user-password" style="width:220px;" /><br />
-				<label for="add-user-email"><spring:message code="label.Email" /></label><br />
-				<input tabindex="3" class="required email" type="text" maxlength="255" id="add-user-email" style="width:220px;" /><br />
-				<label for="add-user-comment"><spring:message code="label.Comment" /></label><br />
-				<textarea tabindex="4" id="add-user-comment" maxlength="255" style="width:220px;"></textarea><br />
-				<label for="add-user-language"><spring:message code="label.Language" /></label><br />
-				<select tabindex="5" class="required" id="add-user-language">
-					<c:forEach items="${languages}" var="language">				
-						<c:if test="${language.official}">
-							<c:choose>
-								<c:when test="${language.code.equalsIgnoreCase('EN')}">
-									<option selected="selected" value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
-								</c:when>
-								<c:otherwise>
-									<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
-								</c:otherwise>
-							</c:choose>
-						</c:if>
-					</c:forEach>
-				</select>
+				<div class="col-md-6">
+			
+					<label for="add-user-firstname"><spring:message code="label.FirstName" /></label><br />
+					<input tabindex="6" class="form-control required" type="text" maxlength="255" id="add-user-firstname"/><br />
+					<label for="add-user-lastname"><spring:message code="label.LastName" /></label><br />
+					<input tabindex="7" class="form-control required" type="text" maxlength="255" id="add-user-lastname" />
+					<div class="alert alert-warning" style="margin-top: 10px">
+						<label><spring:message code="label.Roles" /></label><br />
+						<c:forEach items="${ExistingRoles}" var="role">
+							<input tabindex="8" class="role required" type="radio" name="add-user-role" id="add-user-role${role.id}" value="${role.id}" />&nbsp;<esapi:encodeForHTML>${role.name}</esapi:encodeForHTML><br />
+						</c:forEach>
+					</div>
+					<label for="add-user-language"><spring:message code="label.Language" /></label><br />
+					<select tabindex="9" class="form-control required" id="add-user-language">
+						<c:forEach items="${languages}" var="language">				
+							<c:if test="${language.official}">
+								<c:choose>
+									<c:when test="${language.code.equalsIgnoreCase('EN')}">
+										<option selected="selected" value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
+									</c:when>
+									<c:otherwise>
+										<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
+									</c:otherwise>
+								</c:choose>
+							</c:if>
+						</c:forEach>
+					</select>
+				</div>				
 			</div>
 		</div>
 		<div class="modal-footer">
 			<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a tabindex="9" id="add-user-button"  onclick="createUser();" class="btn btn-info"><spring:message code="label.OK" /></a>	
+			<a tabindex="9" id="add-user-button" onclick="createUser();" class="btn btn-info"><spring:message code="label.OK" /></a>	
 			<a tabindex="10" onblur="$('#add-user-login').focus()" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 		</div>
 		</div>
@@ -665,6 +709,7 @@
 				<div class="well">
 					<input <c:if test="${usersConfiguration.showName}">checked="checked"</c:if> type="checkbox" class="check" id="user-name" name="user-name" value="true" /><span><spring:message code="label.Login" /></span><br />
 					<input <c:if test="${usersConfiguration.showEmail}">checked="checked"</c:if> type="checkbox" class="check" id="user-email" name="user-email" value="true" /><span><spring:message code="label.Email" /></span><br />
+					<input <c:if test="${usersConfiguration.showOtherEmail}">checked="checked"</c:if> type="checkbox" class="check" id="user-otheremail" name="user-email" value="true" /><span><spring:message code="label.OtherEmail" /></span><br />
 					<input <c:if test="${usersConfiguration.showLanguage}">checked="checked"</c:if> type="checkbox" class="check" id="user-language" name="user-language" value="true" /><span><spring:message code="label.Language" /></span><br />
 					<input <c:if test="${usersConfiguration.showRoles}">checked="checked"</c:if> type="checkbox" class="check" id="user-roles" name="user-roles" value="true" /><span><spring:message code="label.Roles" /></span><br />
 					<input <c:if test="${usersConfiguration.showComment}">checked="checked"</c:if> type="checkbox" class="check" id="user-comment" name="user-comment" value="true" /><span><spring:message code="label.Comment" /></span>

@@ -155,7 +155,7 @@
 	
 	<div class="fixedtitleform">
 		<div class="fixedtitleinner">
-			<h1><spring:message code="label.Files" /></h1>
+			
 		</div>
 	</div>
 		
@@ -249,10 +249,10 @@
 							<td>
 								<c:choose>
 									<c:when test="${file.fileUid != null && file.fileUid.length() > 0}">
-										<a href="${contextpath}/files/${filter.surveyUid}/<esapi:encodeForURL>${file.fileUid}</esapi:encodeForURL>" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Download"/>" class='iconbutton'><span class="glyphicon glyphicon-arrow-down"></span></a>
+										<a href="${contextpath}/files/${filter.surveyUid}/<esapi:encodeForURL>${file.fileUid}</esapi:encodeForURL>?fromfmc=true" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Download"/>" class='iconbutton'><span class="glyphicon glyphicon-arrow-down"></span></a>
 									</c:when>
 									<c:otherwise>
-										<a href="files/get?path=<esapi:encodeForURL>${file.filePath}</esapi:encodeForURL>" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Download"/>" class='iconbutton'><span class="glyphicon glyphicon-arrow-down"></span></a>
+										<a href="files/get?path=<esapi:encodeForURL>${file.filePath}</esapi:encodeForURL>&fromfmc=true" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Download"/>" class='iconbutton'><span class="glyphicon glyphicon-arrow-down"></span></a>
 									</c:otherwise>									
 								</c:choose>
 							

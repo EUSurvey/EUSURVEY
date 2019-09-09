@@ -9,15 +9,6 @@ import org.springframework.stereotype.Service;
 @Service("pdfExportCreator")
 @Scope("prototype")
 public class PdfExportCreator extends ExportCreator {
-
-	@Override
-	void ExportCharts() throws Exception {
-		File file = pdfService.createChartsPDF(form.getSurvey(), export.getId().toString());
-		FileInputStream fis = new FileInputStream(file);
-		IOUtils.copy(fis, outputStream);
-		fis.close();
-		file.delete();
-	}
 	
 	@Override
 	void ExportContent(boolean sync) throws Exception {

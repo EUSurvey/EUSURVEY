@@ -186,7 +186,7 @@ public class SurveyHelper {
 						answer.setQuestionUniqueId(q.getUniqueId());
 						answer.setValue(user.getGivenName());
 						
-						answerSet.clearAnswers(q);						
+						answerSet.clearAnswers(q);	
 						answerSet.addAnswer(answer);
 					} else if (q.getShortname().equalsIgnoreCase("surname"))
 					{
@@ -196,7 +196,7 @@ public class SurveyHelper {
 						answer.setQuestionUniqueId(q.getUniqueId());
 						answer.setValue(user.getSurName());
 						
-						answerSet.clearAnswers(q);
+						answerSet.clearAnswers(q);	
 						answerSet.addAnswer(answer);
 					} else if (q.getShortname().equalsIgnoreCase("email"))
 					{
@@ -463,7 +463,7 @@ public class SurveyHelper {
 					
 					if (!(element instanceof Matrix) && !(element instanceof RatingQuestion) && !question.getOptional() && answers.size() == 0)
 					{						
-						if (parent == null || !invisibleElements.contains(parent.getUniqueId()))
+						if (parentElement == null || !invisibleElements.contains(parentElement.getUniqueId()))
 						{
 							result.put(element, resources.getMessage("validation.required", null, "This field is required.", locale));
 						}						
@@ -761,9 +761,13 @@ public class SurveyHelper {
 		for (Answer answer: parsedAnswerSet.getAnswers())
 		{
 			answer.setAnswerSet(answerSet);
-			if (answer.getValue().equalsIgnoreCase("********") && passwordValues.containsKey(answer.getQuestionUniqueId()))
-			{
-				answer.setValue(passwordValues.get(answer.getQuestionUniqueId()));
+			try {
+				if (answer.getValue() != null && answer.getValue().equalsIgnoreCase("********") && passwordValues.containsKey(answer.getQuestionUniqueId()))
+				{
+					answer.setValue(passwordValues.get(answer.getQuestionUniqueId()));
+				}
+			} catch (Exception e) {
+				logger.error(e.getLocalizedMessage(), e);
 			}
 			answerSet.getAnswers().add(answer);
 			
@@ -1080,7 +1084,71 @@ public class SurveyHelper {
 		return image;
 	}
 	
-	private static GalleryQuestion getGallery(Map<String, String[]> parameterMap, Element currentElement, Survey survey, String id, FileService fileService, ServletContext servletContext, boolean log220) throws InvalidXHTMLException
+	private static Ruler getRuler(Map<String, String[]> parameterMap, Element currentElement, Survey survey, String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException
+	{
+		Ruler ruler;
+		String oldValues = "";
+    	String newValues = "";
+		
+		if (currentElement == null)
+		{
+			ruler = new Ruler(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
+		} else {
+			ruler = (Ruler)currentElement;
+		}
+		
+		String title = getString(parameterMap, "text", id, servletContext);
+    	if (log220 && !ruler.getTitle().equals(title))
+    	{
+    		oldValues += " title: " + ruler.getTitle();
+    		newValues += " title: " + title;
+    	}
+    	ruler.setTitle(title);
+
+    	String shortname = getString(parameterMap, "shortname", id, servletContext);
+    	if (log220 && ruler.getShortname() != null && !ruler.getShortname().equals(shortname))
+    	{
+    		oldValues += " shortname: " + ruler.getShortname();
+    		newValues += " shortname: " + shortname;
+    	}
+    	ruler.setShortname(shortname);
+    	
+    	ruler.setOptional(true);
+    	
+    	String color = getString(parameterMap, "color", id, servletContext);
+    	if (log220 && !ruler.getColor().equals(color))
+    	{
+    		oldValues += " color: " + ruler.getColor();
+    		newValues += " color: " + color;
+    	}
+    	ruler.setColor(color);
+    	
+    	int height = getInteger(parameterMap, "height", id);
+    	if (log220 && !ruler.getHeight().equals(height))
+    	{
+    		oldValues += " height: " + ruler.getHeight();
+    		newValues += " height: " + height;
+    	}
+    	ruler.setHeight(height);
+    	
+    	String style = getString(parameterMap, "style", id, servletContext);
+    	if (log220 && !Tools.isEqual(ruler.getStyle(),style))
+    	{
+    		oldValues += " style: " + ruler.getStyle();
+    		newValues += " style: " + style;
+    	}
+    	ruler.setStyle(style); 
+    	
+		if (log220 && oldValues.length() > 0)
+		{
+			String[] oldnew = {oldValues, newValues};
+			ruler.getActivitiesToLog().put(220, oldnew);
+		}
+		
+		return ruler;
+	}
+	
+	private static GalleryQuestion getGallery(Map<String, String[]> parameterMap, Element currentElement, Survey survey, String id, FileService fileService, ServletContext servletContext, boolean log220, Map<String, Integer> fileIDsByUID) throws InvalidXHTMLException
 	{
 		GalleryQuestion gallery;
 		String oldValues = "";
@@ -1167,14 +1235,7 @@ public class SurveyHelper {
     	
     	StringBuilder oldFiles = new StringBuilder();
     	StringBuilder newFiles = new StringBuilder();
-    	Map<String, Integer> fileIDsByUID = new HashMap<>();
-    	
-		for (File file : gallery.getFiles())
-		{
-			fileIDsByUID.put(file.getUid(), file.getId());
-			oldFiles.append(file.getName()).append("(").append(file.getComment()).append("),");
-		}
-    	
+    	    	
 		gallery.getFiles().clear();
 		
 		int count = getInteger(parameterMap, "count", id);
@@ -3116,9 +3177,12 @@ public class SurveyHelper {
          } else if (type.equalsIgnoreCase("image"))
          {
          	element = getImage(parameterMap, currentElement, survey, id, servletContext, log220 && currentElement != null);      
+         } else if (type.equalsIgnoreCase("ruler"))
+         {
+         	element = getRuler(parameterMap, currentElement, survey, id, servletContext, log220 && currentElement != null);      
          } else if (type.equalsIgnoreCase("gallery"))
          {
-         	element = getGallery(parameterMap, currentElement, survey, id, fileService, servletContext, log220 && currentElement != null);      
+         	element = getGallery(parameterMap, currentElement, survey, id, fileService, servletContext, log220 && currentElement != null, fileIDsByUID);      
          } else if (type.equalsIgnoreCase("upload"))
          {
          	element = getUpload(parameterMap, currentElement, survey, id, servletContext, log220 && currentElement != null);     
@@ -3806,7 +3870,7 @@ public class SurveyHelper {
 						question.setHelp("");
 					}
 					
-					if (question.getScoringItems() != null)
+					if (survey.getIsQuiz() && question.getScoring() != 0 && question.getScoringItems() != null)
 					{
 						for (ScoringItem scoringItem: question.getScoringItems())
 						{
@@ -3889,7 +3953,7 @@ public class SurveyHelper {
                 if (bf!=null) {
     				boolean isTable = element instanceof Table;
     				
-                	float w=(float)0.0;
+                	float w= 0.0f;
                 	boolean done = false;
                 	double wtext;
                 	double wimage;
@@ -3960,7 +4024,7 @@ public class SurveyHelper {
 	                	{
 	                		Element child = lst.get(i);
 	                		if (child.getUniqueId() != null || child.getId().toString() != null) {
-	                			String str= child.getStrippedTitleNoEscape();
+	                			String str= child.getStrippedTitleNoEscape2();
 	                			str= getLongestWord(str);
 	                			wtext = 0;
 	                			if (str!=null) {
@@ -3985,11 +4049,11 @@ public class SurveyHelper {
 	                	{
 	                		Element child = lst.get(i);
 	                		if (child.getUniqueId() != null || child.getId().toString() != null) {
-	                			String str= child.getStrippedTitleNoEscape();
+	                			String str= child.getStrippedTitleNoEscape2();
 	                			str= getLongestWord(str);
 	                			double cw = 0;
 	                			if (str!=null) {
-						          cw = bf.getWidthPoint(str, 10) + (float)(2 * 9.0)/*matrixtable.td.padding-left + matrixtable.td.padding-right*/ + (float)1.0 /*border*//*cf. [runner.jsp] */; // FIXME: Remove hardcoding constants from runner.jsp
+						          cw = bf.getWidthPoint(str, 10) + (float)(2 * 9.0)/*matrixtable.td.padding-left + matrixtable.td.padding-right*/ + 1.0f /*border*//*cf. [runner.jsp] */; // FIXME: Remove hardcoding constants from runner.jsp
 	                			}
 						          if (!isTable)
 						          {

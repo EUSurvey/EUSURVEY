@@ -11,8 +11,10 @@
 	
 	<link href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
   	<link href="${contextpath}/resources/css/edit.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
-  	
-  	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/spectrum.js?version=<%@include file="../version.txt" %>"></script>
+	<link href="${contextpath}/resources/css/spectrum.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+	<script type="text/javascript" src="${contextpath}/resources/js/moment.js?version=<%@include file="../version.txt" %>"></script>
+	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
   	<script type="text/javascript" src="${contextpath}/resources/js/jquery.textarea-expander.js?version=<%@include file="../version.txt" %>"></script>
   	<script type="text/javascript" src="${contextpath}/resources/js/edit.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/edit_actions.js?version=<%@include file="../version.txt" %>"></script>
@@ -47,7 +49,7 @@
 	
 	<div id="actions" class="actions">
 		<div style="float: left; margin-left: 10px; padding-right: 10px; border-right: 1px solid #ccc;">
-			<button id="save-button" data-bind="attr: {class: 'btn btn-default btn-info' + (SaveEnabled() ? '' : ' disabled')}" onclick="_actions.UnsavedChangesConfirmed(true); saveForm(false);"><spring:message code="label.Save" /></button>
+			<button id="save-button" data-bind="attr: {class: 'btn btn-default btn-info' + (SaveEnabled() && AllElementsLoaded() ? '' : ' disabled')}" onclick="_actions.UnsavedChangesConfirmed(true); saveForm(false);"><spring:message code="label.Save" /></button>
 			<a id="cancel-button" onclick="return checkChanges(this)" href="${contextpath}/${form.survey.shortname}/management/test" class="btn btn-default"><spring:message code="label.Cancel" /></a>
 		</div>
 		
@@ -61,6 +63,8 @@
 		</div>
 		
 		<div class="actionbuttons" style="float: right; margin-top: 0px; margin-left: 20px;">
+			<span data-toggle="tooltip" title="<spring:message code="info.DeactivateLocalStorageShort" />" id="backupButton" data-bind="click: toggleBackupEnabled, attr: {class: 'glyphicon glyphicon-save switchbutton' + (BackupEnabled() ? ' selected' : '')}"></span>
+			
 			<span data-toggle="tooltip" title="<spring:message code="label.VisualizeVisibility" />" id="dependenciesButton" data-bind="click: toggleDependencies, attr: {class: 'glyphicon glyphicon-eye-open switchbutton' + (DependenciesEnabled() ? ' selected' : '')}"></span>
 			<span data-toggle="tooltip" title="<spring:message code="label.ShowNavigation" />" id="shownavigationbutton" data-bind="click: toggleNavigationPane, attr: {class: 'glyphicon glyphicon-list-alt switchbutton' + (NavigationPaneEnabled() ? ' selected' : '')}"></span>
 			<span data-toggle="tooltip" title="<spring:message code="label.ShowToolbox" />" id="showtoolboxbutton" data-bind="click: toggleToolboxPane, attr: {class: 'glyphicon glyphicon-wrench switchbutton' + (ToolboxPaneEnabled() ? ' selected' : '')}"></span>
@@ -74,7 +78,7 @@
 		<div class="actionbuttons" style="padding-right: 8px; border-right: 1px solid #ccc;">
 			<span data-toggle="tooltip" title="<spring:message code="label.Copy" />" id="copyElementButton" data-bind="click: copySelectedElement, attr: {class: 'glyphicon glyphicon-copy' + (CopyEnabled() ? '' : ' disabled')}"></span>
 			<span data-toggle="tooltip" title="<spring:message code="label.Cut" />" id="cutElementButton" data-bind="click: cutSelectedElement, attr: {class: 'glyphicon glyphicon-scissors' + (CutEnabled() ? '' : ' disabled')}"></span>
-				<span data-toggle="tooltip" title="<spring:message code="label.pasteAfter" />" id="pasteButton" data-bind="click: pasteElementAfter, attr: {class: 'glyphicon glyphicon-paste' + ((PasteEnabled() && !ChildSelected() && ElementSelected()) ? '' : ' disabled')}"></span>
+			<span data-toggle="tooltip" title="<spring:message code="label.pasteAfter" />" id="pasteButton" data-bind="click: pasteElementAfter, attr: {class: 'glyphicon glyphicon-paste' + ((PasteEnabled() && !ChildSelected() && ElementSelected()) ? '' : ' disabled')}"></span>
 		</div>
 		<div class="actionbuttons" style="padding-right: 10px; border-right: 1px solid #ccc;">
 			<span data-toggle="tooltip" title="<spring:message code="label.MoveDown" />" id="moveDownButton" data-bind="click: moveElementDown, attr: {class: 'glyphicon glyphicon-triangle-bottom' + (MoveDownEnabled() ? '' : ' disabled')}"></span>
@@ -197,6 +201,7 @@
 					<ul>
 						<li id="drag_text" class="toolboxitem textitem draggable"><span class="glyphicon glyphicon-font"></span> <spring:message code="form.Text" /></li>
 						<li class="toolboxitem imageitem draggable"><span class="glyphicon glyphicon-picture"></span> <spring:message code="form.Image" /></li>
+						<li class="toolboxitem ruleritem draggable"><span class="glyphicon glyphicon-minus"></span> <spring:message code="form.Line" /></li>
 					</ul>
 				</div>
 			</div>
@@ -348,6 +353,21 @@
 		 </div>
 	 </div>
 	 
+	 <div class="modal" id="askRestoreDialog" data-backdrop="static">
+		<div class="modal-dialog">
+		    <div class="modal-content">
+			  <div class="modal-body">
+			 	 <spring:message code="question.askRestoreSurvey" />
+			  </div>
+			  <div class="modal-footer">
+				<a class="btn btn-info" onclick="_actions.restore(); $('#askRestoreDialog').modal('hide')"><spring:message code="label.Yes" /></a>
+				<a class="btn btn-default" onclick="$('#askRestoreDialog').modal('hide')"><spring:message code="label.No" /></a>		
+				<a class="btn btn-default" onclick="_actions.deleteBackup(); $('#askRestoreDialog').modal('hide')"><spring:message code="label.DeleteLocalBackup" /></a>		
+			  </div>
+			 </div>
+		 </div>
+	 </div>
+	 
 	<script type="text/javascript">
 		var surveyLanguage = "${form.survey.language.code}";
 		var surveyShortname = "${form.survey.shortname}";
@@ -401,6 +421,25 @@
 			}
 
 			window.setTimeout(updateSessionTimeout, 10000);		
+			
+			<c:choose>
+				<c:when test="${saved != null}">
+					showInfo("<spring:message code='message.SurveySaved' />");	
+					
+					//delete backup from local storage
+					_actions.deleteBackup();
+				</c:when>
+				<c:otherwise>
+					//restore backup
+					var survey = $(document.getElementById("survey.id")).val();
+					var name = "SurveyEditorBackup" + survey;   
+					var value = localStorage.getItem(name);
+					if (value != null)
+					{
+						$("#askRestoreDialog").modal("show");
+					}
+				</c:otherwise>
+			</c:choose>
 		});
 		
 		var _elements = {};
@@ -564,6 +603,7 @@
 			if (element.hasClass("dateitem")) return "<spring:message code='form.Date' />";
 			if (element.hasClass("textitem")) return "<spring:message code='form.Text' />";
 			if (element.hasClass("imageitem")) return "<spring:message code='form.Image' />";
+			if (element.hasClass("ruleritem")) return "<spring:message code='form.Line' />";
 			if (element.hasClass("uploaditem")) return "<spring:message code='form.FileUpload' />";
 			if (element.hasClass("downloaditem")) return "<spring:message code='form.FileDownload' />";
 			if (element.hasClass("emailitem")) return "<spring:message code='label.Email' />";
@@ -590,6 +630,7 @@
 			if (element.hasClass("dateitem")) return "idTypedateitem";
 			if (element.hasClass("textitem")) return "idTypetextitem";
 			if (element.hasClass("imageitem")) return "idTypeimageitem";
+			if (element.hasClass("ruleritem")) return "idTyperuleritem";
 			if (element.hasClass("uploaditem")) return "idTypeuploaditem";
 			if (element.hasClass("downloaditem")) return "idTypedownloaditem";
 			if (element.hasClass("emailitem")) return "idTypeemailitem";
@@ -724,8 +765,8 @@
 	 		strings["visibleIfMatrixVisible"] = "<spring:message code="label.visibleIfMatrixVisible" />";
 	 		strings["visibleIfMatrixOrTriggered"] = "<spring:message code="label.visibleIfMatrixOrTriggered" />";
 	 		strings["checkVisibilities"] = "<spring:message code="info.checkVisibilities" />";
-	 		strings["invalidMatrixChildren"] = "<spring:message code="validation.invalidMatrixChildren" />";
-	 		strings["invalidTableChildren"] = "<spring:message code="validation.invalidTableChildren" />";
+	 		strings["invalidMatrixChildren"] = "<spring:message code="validation.invalidMatrixChildren1" />";
+	 		strings["invalidTableChildren"] = "<spring:message code="validation.invalidTableChildren1" />";
 	 		strings["invalidMatrixRows"] = "<spring:message code="error.invalidMatrixRows" />";
 	 		strings["Scoring"] = "<spring:message code="label.Scoring" />";
 	 		strings["Answers"] = "<spring:message code="label.Answers" />";
@@ -763,6 +804,12 @@
 	 		strings["RatingQuestions"] = "<spring:message code="validation.RatingQuestions" />";
 	 		strings["Questions"] = "<spring:message code="label.Questions" />";
 	 		strings["Remove"] = "<spring:message code="label.Remove" />";
+	 		strings["solid"] = "<spring:message code="html.solid" />";
+	 		strings["dashed"] = "<spring:message code="html.dashed" />";
+	 		strings["dotted"] = "<spring:message code="html.dotted" />";
+	 		strings["Height"] = "<spring:message code="label.Height" />";
+	 		strings["Color"] = "<spring:message code="html.Color" />";
+	 		strings["duplicateattributename"] = "<spring:message code="validation.duplicateattributename" />";
 	 		return strings[label];
 	 	}
 	</script>

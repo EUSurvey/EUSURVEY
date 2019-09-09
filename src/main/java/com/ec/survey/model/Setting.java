@@ -33,6 +33,11 @@ public class Setting {
 	
 	public final static String ActivityLoggingEnabled = "ActivityLoggingEnabled";
 	public final static String CreateSurveysForExternalsDisabled = "CreateSurveysForExternalsDisabled";	
+	
+	public final static String ReportingMigrationEnabled = "ReportingMigrationEnabled";
+	public final static String ReportingMigrationStart = "ReportingMigrationStart";
+	public final static String ReportingMigrationTime = "ReportingMigrationTime";
+	public final static String ReportingMigrationSurveyToMigrate = "ReportingMigrationSurveyToMigrate";
 		
 	@Id
 	@Column(name = "SETTINGS_ID")

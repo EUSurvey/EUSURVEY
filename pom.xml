@@ -7,21 +7,20 @@
 	<artifactId>eusurvey</artifactId>
 	<name>eusurvey</name>
 	<packaging>war</packaging>
-	<version>1.4.3</version>
+	<version>1.4.4</version>
 	<properties>
 		<java-version>1.8</java-version>
-		<org.springframework-version>4.2.5.RELEASE</org.springframework-version>
+		<org.springframework-version>4.3.20.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.8.8</org.aspectj-version>
 		<org.slf4j-version>1.5.10</org.slf4j-version>
 		<version.number>444</version.number>
 		<svnName>1.1.9</svnName>
-		<camel.version>2.17.1</camel.version>
+		<camel.version>2.22.1</camel.version>
 		<svn.buildNumber.doUpdate>false</svn.buildNumber.doUpdate>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<sonar.version>3.5.0.1254</sonar.version>
 		<jacoco.version>0.7.9</jacoco.version>
-		<environment>oss</environment>
 	</properties>
 	<scm>
 		<connection>scm:git:https://github.com/EUSurvey/EUsurvey.git</connection>
@@ -182,7 +181,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
-			<version>1.10</version>
+			<version>1.18</version>
 		</dependency>
 
 		<dependency>
@@ -230,7 +229,7 @@
 		<dependency>
 			<groupId>net.bull.javamelody</groupId>
 			<artifactId>javamelody-core</artifactId>
-			<version>1.59.0</version>
+			<version>1.74.0</version>
 		</dependency>
 
 		<dependency>
@@ -280,21 +279,21 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-			<version>4.0.3.RELEASE</version>
+			<version>4.2.9.RELEASE</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>4.0.3.RELEASE</version>
+			<version>4.2.9.RELEASE</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>4.0.3.RELEASE</version>
+			<version>4.2.9.RELEASE</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -418,7 +417,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.38</version>
+			<version>5.1.47</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -480,7 +479,7 @@
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
-			<version>2.10.1</version>
+			<version>2.10.6</version>
 		</dependency>
 
 		<!-- Added for ehcache replication used when load balancer is setup -->
@@ -496,11 +495,11 @@
 			<version>1.7</version>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-core</artifactId>
 			<version>2.5.2</version>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -583,13 +582,13 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.7.3</version>
+			<version>2.9.7</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.7.3</version>
+			<version>2.9.7</version>
 		</dependency>
 
 		<dependency>
@@ -631,10 +630,10 @@
 		</dependency>
 	</dependencies>
 	<build>
-
 		<plugins>
 			<plugin>
 				<!-- Updates the build number from <scm> -->
+				<!-- http://www.mojohaus.org/buildnumber-maven-plugin/usage.html -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.3</version>
@@ -801,7 +800,7 @@
 				<version>2.12.4</version>
 				<configuration>
 					<argLine>${surefireArgLine}</argLine>
-					<skip>maven.test.skip</skip>
+					<skip>${maven.test.skip}</skip>
 					<suiteXmlFiles>
 						<suiteXmlFile>./src/test/resources/testng.xml</suiteXmlFile>
 					</suiteXmlFiles>
@@ -821,7 +820,6 @@
 					<update>true</update>
 					<fork>true</fork>
 				</configuration>
-				
 			</plugin>
 		</plugins>
 		<pluginManagement>

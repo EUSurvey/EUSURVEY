@@ -7,12 +7,16 @@ import com.ec.survey.model.*;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.survey.Confirmation;
+import com.ec.survey.model.survey.Download;
+import com.ec.survey.model.survey.Element;
+import com.ec.survey.model.survey.Ruler;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.model.survey.Text;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToTosException;
-import com.ec.survey.exception.TooManyFiltersException;
-
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -94,14 +98,14 @@ public class SessionService extends BasicService {
 
 	public Form getFormOrNull(HttpServletRequest request, String shortname, boolean loadReplies) {
 		try {
-			return getForm(request, shortname, loadReplies);
+			return getForm(request, shortname, loadReplies, false);
 		} catch (Exception ex) {
 			logger.debug(ex);
 		}
 		return null;
 	}
 	
-	public Form getForm(HttpServletRequest request, String shortname, boolean loadReplies) throws Exception {
+	public Form getForm(HttpServletRequest request, String shortname, boolean loadReplies, boolean synchronize) throws Exception {
 		// first check if a survey id was specified as url parameter
 		if (request.getParameter("survey") != null) {
 			String id = request.getParameter("survey");			
@@ -113,7 +117,7 @@ public class SessionService extends BasicService {
 		// then check if a shortname was specified as url parameter
 		if (shortname != null && !shortname.equalsIgnoreCase("noform")) {
 			User user = getCurrentUser(request);
-			Survey survey = surveyService.getSurvey(shortname, true, false, loadReplies, false, null, true);			
+			Survey survey = surveyService.getSurvey(shortname, true, false, loadReplies, false, null, true, synchronize);			
 			if (survey != null) return checkSurvey(survey, user, request);
 			throw new InvalidURLException();
 		}
@@ -124,7 +128,7 @@ public class SessionService extends BasicService {
 		if (request.getParameter("shortname") != null) {
 			String alias = request.getParameter("shortname");			
 			User user = getCurrentUser(request);
-			Survey survey = surveyService.getSurvey(alias, true, false, loadReplies, false, null, true);			
+			Survey survey = surveyService.getSurvey(alias, true, false, loadReplies, false, null, true, synchronize);			
 			if (survey != null) return checkSurvey(survey, user, request);
 			throw new InvalidURLException();
 		}
@@ -134,7 +138,7 @@ public class SessionService extends BasicService {
 	}
 
 	
-	public Form getFormFromSessionInfo(HttpServletRequest request) throws TooManyFiltersException
+	public Form getFormFromSessionInfo(HttpServletRequest request) throws Exception
 	{
 		SessionInfo info = (SessionInfo) request.getSession().getAttribute("sessioninfo");
 		
@@ -366,25 +370,63 @@ public class SessionService extends BasicService {
 	public ResultFilter getLastResultFilter(HttpServletRequest request, int userid, int surveyid) {
 		if (request == null) return null;		
 		
+		ResultFilter filter = null;
+		
 		if (userid > 0 && surveyid > 0)
 		{
-			ResultFilter filter = getResultFilter(userid, surveyid);			
-			if (filter != null) return filter;
-		}		
+			filter = getResultFilter(userid, surveyid);
+		} else {		
+			filter = (ResultFilter) request.getSession().getAttribute("ResultFilter");
+		}
 		
-		return (ResultFilter) request.getSession().getAttribute("ResultFilter");
+		if (filter != null) {
+			if (filter.getDefaultQuestions() != null && filter.getDefaultQuestions())
+			{
+				filter.getVisibleQuestions().clear();
+				filter.getExportedQuestions().clear();
+				
+				Survey survey = surveyService.getSurvey(filter.getSurveyId());
+				
+				for (Element question: survey.getQuestions())
+				{
+					if (!(question instanceof Text) && !(question instanceof Download) && !(question instanceof com.ec.survey.model.survey.Image)  && !(question instanceof Ruler) && !(question instanceof Confirmation)) {
+						if (filter.getVisibleQuestions().size() < 20)
+						{
+							filter.getVisibleQuestions().add(question.getId().toString());
+						}
+						filter.getExportedQuestions().add(question.getId().toString());
+					}
+				}
+			}
+		}
+		
+		return filter;
 	}
 	
-	private ResultFilter getResultFilter(int userid, int surveyid)
+	public ResultFilter getResultFilter(int userid, int surveyid)
 	{
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("FROM ResultFilter r WHERE r.userId = :userid and r.surveyId = :surveyid ORDER BY r.id DESC").setInteger("userid", userid).setInteger("surveyid",surveyid);
 		@SuppressWarnings("unchecked")
 		List<ResultFilter> result = query.list();
 		
-		if (result.size() > 0) return result.get(0);
+		if (result.size() > 0)
+		{
+			Hibernate.initialize(result.get(0).getLanguages());
+			return result.get(0);
+		}
 		
 		return null;
+	}
+	
+	public List<ResultFilter> getAllResultFilter(int surveyid)
+	{
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("FROM ResultFilter r WHERE r.surveyId = :surveyid ORDER BY r.id DESC").setInteger("surveyid",surveyid);
+		@SuppressWarnings("unchecked")
+		List<ResultFilter> result = query.list();
+		
+		return result;
 	}
 	
 	@Transactional
@@ -395,8 +437,12 @@ public class SessionService extends BasicService {
 		if (request.getMethod().equalsIgnoreCase("POST"))
 		{
 			boolean saved = false;
-			
 			int counter = 1;
+			
+			if (request.getParameter("resultsFormMode") != null && request.getParameter("resultsFormMode").equalsIgnoreCase("configure"))
+			{
+				filter.setDefaultQuestions(false);
+			}
 			
 			while(!saved)
 			{
@@ -433,8 +479,7 @@ public class SessionService extends BasicService {
 		}
 		filter.merge(existing);
 		
-		session.merge(filter);
-		
+		session.evict(filter);		
 		session.saveOrUpdate(existing);		
 	}
 	
@@ -496,7 +541,6 @@ public class SessionService extends BasicService {
 		
 		System.setProperty("nonProxyHosts", "localhost");
 		
-		// if the spring.properties file don't contain any value for the property proxy.nonProxyHosts set by default the localhost address 
 		if (StringUtils.isEmpty(proxyNonProxyHosts)){
 			proxyNonProxyHosts="localhost";
 		}

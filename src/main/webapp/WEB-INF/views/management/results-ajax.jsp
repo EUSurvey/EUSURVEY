@@ -4,9 +4,9 @@
 <c:if test="${forPDF == null}">
 	<script type="text/javascript"> 
 		var statisticsrequestid = null;
-	
 		function loadStatisticsAsync(publication)
-			{
+		{
+		
 			$(".ajaxloaderimage").show();
 			$(".loadstatisticsbutton").hide();
 			
@@ -42,6 +42,9 @@
 							  setTimeout(function(){ loadStatisticsAsync(publication); }, 10000);
 							  return;
 						  }
+						  
+						  $(".deactivatedstatexports").hide();
+						  $(".activatedstatexports").show();	
 						  
 						  $(".statRequestedRecords").each(function(){
 							 var id = $(this).attr("data-id");

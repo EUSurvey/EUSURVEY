@@ -1,7 +1,14 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <meta charset="utf-8"></meta>
 <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
-<meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+<c:choose>
+	<c:when test="${ismobile != null}">
+		<meta name="viewport" content="width=device-width, initial-scale = 1.0, maximum-scale=1.0, user-scalable=no" />
+	</c:when>
+	<c:otherwise>
+		<meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+	</c:otherwise>
+</c:choose>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
 <meta http-equiv="Pragma" content="no-cache, no-store"></meta>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"></meta>
@@ -226,6 +233,10 @@
 	var version = versionfootersource.substring(versionfootersource.indexOf("(")+1);
 	version = version.substring(0, version.indexOf(" "));
 	
+	<c:if test="${surveyeditorsaved != null}">
+	 	localStorage.removeItem("SurveyEditorBackup${surveyeditorsaved}");
+	</c:if>
+	
 </script>
 <script type="text/javascript" src="${contextpath}/resources/js/utf8.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/includes.js?version=<%@include file="version.txt" %>"></script>
@@ -350,6 +361,29 @@
 		{ "utility": "piwik", "siteID": 63, "sitePath": ["ec.europa.eu\/eusurvey"] } 
 		</script>
 	</c:when>
+</c:choose>
+
+<c:choose>
+	<c:when test="${runnermode != null && form != null && form.language != null}">
+		<script type="text/javascript" src="${contextpath}/resources/js/jqueryui/i18n/datepicker-${form.language.code.toLowerCase()}.js?version=<%@include file="version.txt" %>"></script>	
+		
+		<script type="text/javascript">
+			$(function() {
+				$( ".datepicker" ).datepicker( "option", $.datepicker.regional[ '${form.language.code.toLowerCase()}' ] );
+				$( ".datepicker" ).datepicker( "option", "dateFormat", "dd/mm/yy");
+			});
+		</script>		
+	</c:when>
+	<c:otherwise>
+		<script type="text/javascript" src="${contextpath}/resources/js/jqueryui/i18n/datepicker-${pageContext.response.locale}.js?version=<%@include file="version.txt" %>"></script>	
+		
+		<script type="text/javascript">
+			$(function() {
+				$( ".datepicker" ).datepicker( "option", $.datepicker.regional[ '${pageContext.response.locale}' ] );
+				$( ".datepicker" ).datepicker( "option", "dateFormat", "dd/mm/yy");
+			});
+		</script>	
+	</c:otherwise>
 </c:choose>
 
 	<!--[if IE 7]>

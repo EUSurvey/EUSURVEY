@@ -59,6 +59,41 @@ public class SchemaService extends BasicService {
 	private DomainUpdater domaintWorker;
 	
 	@Transactional
+	public void step88() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		String existing = settingsService.get(Setting.ReportingMigrationEnabled);
+		if (existing == null)
+		{		
+			Setting s = new Setting();
+			s.setKey(Setting.ReportingMigrationEnabled);
+			s.setValue("false");
+			s.setFormat("true / false");				
+			session.saveOrUpdate(s);
+			
+			s = new Setting();
+			s.setKey(Setting.ReportingMigrationStart);
+			s.setValue("20:00");
+			s.setFormat("HH:mm");			
+			session.saveOrUpdate(s);
+			
+			s = new Setting();
+			s.setKey(Setting.ReportingMigrationTime);
+			s.setValue("60");
+			s.setFormat("runtime in minutes");
+			session.saveOrUpdate(s);
+			
+			s = new Setting();
+			s.setKey(Setting.ReportingMigrationSurveyToMigrate);
+			s.setValue("");
+			s.setFormat("uid of the survey");
+			session.saveOrUpdate(s);
+		}
+		status.setDbversion(88);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
 	public void step87() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();
@@ -799,8 +834,8 @@ public class SchemaService extends BasicService {
 		try {
 			Survey survey = SurveyCreator.createNewSelfRegistrationSurvey(administrationService.getUserForLogin(administrationService.getAdminUser(), false), surveyService.getLanguage("EN"), surveyService.getLanguages());
 			surveyService.add(survey, -1);
-			surveyService.activate(survey, -1, -1, false, -1, false, false);
-			surveyService.publish(survey, false, -1);
+			surveyService.publish(survey, -1, -1, false, -1, false, false);
+			surveyService.activate(survey, false, -1);
 			
 			Session session = sessionFactory.getCurrentSession();
 			Status status = getStatus();

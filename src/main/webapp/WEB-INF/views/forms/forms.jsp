@@ -28,14 +28,14 @@
 		 	padding-right: 30px; 
 		 	margin-bottom: 30px;
 		 	width: 250px; 
-		 	margin-top: 150px;
+		 	margin-top: 50px;
 		 } 
 		
 		 .left-area { 
 			float: left;  
 		 	padding: 20px;  
 		 	width: 700px; 
-		 	margin-top: 130px;
+		 	margin-top: 40px;
 		 } 
 		 
 		 .labelcell {
@@ -142,7 +142,7 @@
 		
 		var newPage = 2;
 		var loadingmore = false;
-                var endReached = false;
+        var endReached = false;
 		function loadMore()
 		{
 			if (loadingmore || endReached) return;
@@ -160,9 +160,10 @@
 				  cache: false,
 				  success: function( list ) {
 				  	if (list.length === 0) {
-                                            endreached = true;
-                                            return;
-                                        }
+                        endreached = true;
+                        $( "#wheel" ).hide();
+                        return;
+                    }
                                   
                                   
 					  for (var i = 0; i < list.length; i++ )
@@ -182,7 +183,7 @@
 							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Quiz" />").css("width","32px").attr("src", contextpath + "/resources/images/icons/64/quiz.png");
 						  } else if (list[i].isOPC)
 						  {							 
-							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Quiz" />").attr("src", contextpath + "/resources/images/icons/24/people.png");
+							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.OPC" />").attr("src", contextpath + "/resources/images/icons/24/people.png");
 						  } else {
 							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.StandardSurvey" />").css("width","32px").attr("src", contextpath + "/resources/images/icons/64/survey.png");
 						  }
@@ -354,33 +355,6 @@
 								
 								 $(td).append("&nbsp;");
 								
-								if( ${USER.formPrivilege > 1})
-								{
-									var a = document.createElement("a");
-									$(a).addClass("actionRowAction");
-									$(a).attr("href", '<c:url value="/'+list[i].shortname+'/management/repairxhtml"/>');
-									$(a).attr("rel", "tooltip").attr("data-toggle","tooltip");
-									$(a).attr("title", '<spring:message code="label.RepairXhtml" />');
-									$(a).attr("onclick", "$('#generic-wait-dialog').modal('show');");
-									
-									$(a).append("<span class='glyphicon glyphicon-wrench'></span>");
-									$(td).append(a);
-									
-									$(td).append("&nbsp;");
-									
-									var a = document.createElement("a");
-									$(a).addClass("actionRowAction");
-									$(a).css("cursor", 'pointer');
-									$(a).attr("rel", "tooltip").attr("data-toggle","tooltip");
-									$(a).attr("title", '<spring:message code="label.ExportWithAnswers" />');
-									$(a).attr("onclick","shortnameForExport = '" + list[i].shortname + "';showExportDialog('Survey','eus')");
-									
-									$(a).append("<span style='color: #da4843' class='glyphicon glyphicon-download-alt'></span>");
-									$(td).append(a);
-									
-									$(td).append("&nbsp;");
-								}
-								
 								if (list[i].numberOfAnswerSetsPublished < 2001 && list[i].state != 'Running')
 								{
 									var a = document.createElement("a");
@@ -497,20 +471,10 @@
 	
 	<form:form modelAttribute="paging" id="load-forms" method="POST" action="${contextpath}/forms" onsubmit="if(validateInput($('#load-forms'))) {$('.tableFloatingHeader').empty(); $('.modal-backdrop').hide(); $('#generic-wait-dialog').modal('show');} else {return false};">
 	
-	<div class="fixedtitle">
-		<div class="fixedtitleinner" style="width:950px">			
-			<h1>
-				<span class="glyphicon glyphicon-comment pagetitleicon"></span>
-				<spring:message code="label.Surveys" />
-			</h1>
-			<div>
-				<div class="hideme">
-					<c:set var="pagingElementName" value="Form" />			
-					<div><%@ include file="../paging.jsp" %></div>	
-				</div>				
-			</div>
-		</div>
-	</div>
+	<div class="hideme">
+		<c:set var="pagingElementName" value="Form" />			
+		<div><%@ include file="../paging.jsp" %></div>	
+	</div>	
 	
 	<div class="fullpagesmall" style="margin-top: 0px; width: 1024px; margin-left: auto; margin-right: auto;">
 		<div>		
@@ -794,10 +758,7 @@
 													</c:otherwise>
 												</c:choose>				
 											</c:if>
-											<c:if test="${USER.formPrivilege > 1}">
-												<a class="actionRowAction" onclick='$("#generic-wait-dialog").modal("show");' href="<c:url value="/${survey.shortname}/management/repairxhtml"/>" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.RepairXhtml" />" ><span class="glyphicon glyphicon-wrench"></</span></a>
-												<a style="cursor: pointer" class="actionRowAction" onclick="shortnameForExport = '${survey.shortname}';showExportDialog('Survey','eus')" rel="tooltip" data-toggle="tooltip" data-toggle="tooltip" title="<spring:message code="label.ExportWithAnswers" />" ><span style="color: #da4843" class="glyphicon glyphicon-download-alt"></</span></a>
-											</c:if>
+
 											<c:choose>
 												<c:when test="${survey.numberOfAnswerSetsPublished < 2001 && survey.state != 'Running' && (survey.fullFormManagementRights)}">
 													<a id="deleteBtnEnabledFromListSurvey" onclick="showDeleteDialog('${survey.id}');"  class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></</span></a>
@@ -821,7 +782,9 @@
 							</c:forEach>
 				
 						</div>
-
+					
+						<img id="wheel" class="hideme" style="margin-left: 50px" src="${contextpath}/resources/images/ajax-loader.gif" />
+	
 					</div>
 
 				</div>			

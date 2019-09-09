@@ -6,28 +6,32 @@ EUSurvey is the official online survey management tool of the European Commissio
 ## Installation requirements
 1. Tomcat 8
 1. Java 8
-1. MySQL 5.6
+1. MySQL 5.7
 1. Maven
 
 ## Quick start
 Extensive installation guidelines may be found [here](https://joinup.ec.europa.eu/sites/default/files/document/2017-08/eusurvey_oss_installation_guide_v1_4_0_1.pdf). We give a summary of installation guidelines here.
 
 ### Database initialization
-1. Create eusurvey schema;
+1. Create eusurvey schemas;
 ``` sql 
-CREATE DATABASE eusurveydb; 
+create database eusurveydb character set utf8 COLLATE utf8_general_ci;
+create database eusurveyreportdb character set utf8 COLLATE utf8_general_ci;
 ```
 
 2. Create a user which will access this schema;
 ``` sql 
 CREATE USER 'eusurveyuser'@'localhost' IDENTIFIED BY 'eusurveyuser'; 
 GRANT ALL PRIVILEGES ON eusurveydb.* TO 'eusurveyuser'@'localhost';
-GRANT EVENT ON eusurveydb.* TO 'eusurveyuser'@'localhost';
+GRANT EVENT ON *.* TO 'eusurveyuser'@'localhost'; 
+
+CREATE USER 'eusurveyruser'@'localhost' IDENTIFIED BY 'eusurveyruser'; 
+GRANT ALL PRIVILEGES ON eusurveyreportdb.* TO 'eusurveyruser'@'localhost';
 ```
 
 3. Set Mysql variables
 ``` sql 
-SET GLOBAL event_scheduler = ON
+SET GLOBAL event_scheduler = ON;
 SET GLOBAL log_bin_trust_function_creators = 1;
 SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;
 ```
@@ -111,3 +115,6 @@ Then, push your changes as explained before to your fork repository to be ready 
 
 8. __Open a pull request from this feature branch to our repository;__
 Finally, from your forked remote repository URL, https://github.com/YourRepository, select the nameOfYourIssue#1 branch and press the "New pull request button". Hence, this will create a pull request to our repository. We will then test your branch, and discuss the pull request together. When accepted, your changes will be inserted into our develop branch by merging your development branch to our develop branch.
+
+
+

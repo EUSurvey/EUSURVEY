@@ -17,11 +17,8 @@
          <li class="modification-date">
              <span>${form.getMessage("label.LastUpdate")}: <span id="versionfootertarget"></span></span>
          </li>
-         <li>
-			<a class="first" href="<c:url value="/home/publicsurveys"/>">${form.getMessage("header.AllPublicSurveys")}</a>
-		</li>
 		<li>
-           <a href="<c:url value="/home/about"/>">${form.getMessage("label.About")}</a>
+           <a class="first" href="<c:url value="/home/about"/>">${form.getMessage("label.About")}</a>
         </li>
         <li>
              <a href="http://ec.europa.eu/geninfo/query/search_en.html">${form.getMessage("label.Search")}</a>
@@ -33,11 +30,14 @@
              <a href="http://ec.europa.eu/geninfo/legal_notices_en.htm">${form.getMessage("label.LegalNotice")}</a>
         </li>
 		<li>
-           <a href="<c:url value="/home/support"/>">${form.getMessage("label.Contact")}</a>
+           <a href="<c:url value="/home/documentation"/>">${form.getMessage("label.Contact")}</a>
 		</li>
 		<c:if test="${showprivacy}">
 			<li>
 			 <a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a>
+			</li>
+			<li>
+				<a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a>
 			</li>
 		</c:if>
 		<li>

@@ -121,12 +121,6 @@
 	<%@ include file="../menu.jsp" %>		
 	<%@ include file="formmenu.jsp" %>			
 	
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner">
-			<h1><spring:message code="label.Overview" /></h1>		
-		</div>
-	</div>
-		
 	<div class="fullpageform">		
 		
 		<div class="surveybox" style="width: 700px; margin-left: auto; margin-right: auto">
@@ -177,7 +171,7 @@
 				<tr>
 					<td class="overview-label" style="vertical-align: top;"><spring:message code="label.PublishedSurveyLink" /></td>
 					<td colspan="2" style="padding-bottom: 20px;">
-						<div class="shortname">
+						<div class="shortname" style="max-width: 500px;">
 							<a id="lnkOverviewAccessSurvey" target="_blank" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}">${serverprefix}runner/<esapi:encodeForHTML>${form.survey.shortname}</esapi:encodeForHTML></a>
 							<a style="font-size: 20px; margin: 10px; position: absolute; margin-top: -2px;" data-toggle="tooltip" title="<spring:message code="label.ShowLinksInAllSurveyLanguages" />" onclick="$('#languageLinkDialog').modal('show');"><span class="glyphicon glyphicon-info-sign"></span></a>
 						</div>
@@ -307,12 +301,7 @@
 								</c:otherwise>
 							</c:choose>				
 						</c:if>
-						
-						<c:if test="${USER.formPrivilege > 1}">
-							<a class="actionRowAction" onclick='$("#generic-wait-dialog").modal("show");' href="<c:url value="/${form.survey.shortname}/management/repairxhtml"/>" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.RepairXhtml" />" ><span class="glyphicon glyphicon-wrench"></span></a>
-							<a class="actionRowAction" onclick="showExportDialog('Survey','eus')"  rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.ExportWithAnswers" />" ><span style="color: #da4843" class="glyphicon glyphicon-download-alt"></span></a>
-						</c:if>
-							
+													
 						<c:choose>
 							<c:when test="${form.survey.numberOfAnswerSetsPublished > 2000}">
 								<a id="notRunningDeleteSurveyButtonOverview" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc;"></span></a>
@@ -512,12 +501,6 @@
 <form:form id="load-forms" method="POST" action="${contextpath}/forms" onsubmit="$('#show-wait-image-delete-survey').modal('show');">
 	<input type="hidden" name="delete" id="delete" value="" />
 </form:form>
-
-<c:if test="${repairedlabels != null}">
-	<script>
-		showInfo('${repairedlabels}' + ' ' + '<spring:message code="info.LabelsRepaired" />');
-	</script>
-</c:if>
 
 </body>
 </html>

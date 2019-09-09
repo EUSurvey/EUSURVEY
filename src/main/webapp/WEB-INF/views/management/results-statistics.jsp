@@ -7,18 +7,16 @@
 		<div id="results-statistics" style="margin-top: 70px">	
 	</c:when>
 	<c:when test="${publication != null}">
-		<div id="results-statistics" class="hidden" style="margin-top: 20px">	
+		<div id="results-statistics" class="hidden" style="margin-top: 50px">	
 	</c:when>
 	<c:otherwise>
 		
-		<div id="results-statistics" class="hidden" style="margin-top: 10px">
-			<c:if test="${paging.items.size() > 0}">
-				<div style="text-align: center; margin-bottom: 10px;">
-					<input onclick="reOrder('.statistics-table',0);" type="radio" class="check" name="statistics-order" checked="checked" value="original" /><spring:message code="label.OriginalOrder" />&nbsp;
-					<input onclick="reOrder('.statistics-table',1);" type="radio" class="check" name="statistics-order" value="alphabetical" /><spring:message code="label.AlphabeticalOrder" />&nbsp;
-					<input onclick="reOrder('.statistics-table',2);" type="radio" class="check" name="statistics-order" value="value" /><spring:message code="label.ValueOrder" />
-				</div>
-			</c:if>
+		<div id="results-statistics" class="hidden" style="margin-top: 10px">			
+			<div style="text-align: center; margin-bottom: 10px;">
+				<input onclick="reOrder('.statistics-table',0);" type="radio" class="check" name="statistics-order" checked="checked" value="original" /><spring:message code="label.OriginalOrder" />&nbsp;
+				<input onclick="reOrder('.statistics-table',1);" type="radio" class="check" name="statistics-order" value="alphabetical" /><spring:message code="label.AlphabeticalOrder" />&nbsp;
+				<input onclick="reOrder('.statistics-table',2);" type="radio" class="check" name="statistics-order" value="value" /><spring:message code="label.ValueOrder" />
+			</div>		
 	
 	</c:otherwise>
 </c:choose>		
@@ -27,7 +25,6 @@
 		<a class="btn btn-default" onclick="loadStatisticsAsync(false);"><spring:message code="label.LoadStatistics" /></a>
 	</div>
 
-	<c:if test="${paging.items.size() > 0}">
 	
 		<div id="scrollareastatistics" class="scrollarea">
 
@@ -351,7 +348,5 @@
 		</c:forEach>
 		
 		</div>	
-		
-	</c:if>
 
 </div>

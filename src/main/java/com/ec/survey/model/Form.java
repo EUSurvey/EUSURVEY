@@ -620,13 +620,13 @@ public class Form {
 				}
 			}
 		}		
-		
-		if (question instanceof Question && !((Question)question).getOptional())
-		{
-			titlePrefix.append("<span class='mandatory'>*</span>");
-		} else {
-			titlePrefix.append("<span class='optional'>*</span>");
-		}
+//		
+//		if (question instanceof Question && !((Question)question).getOptional())
+//		{
+//			titlePrefix.append("<span class='mandatory' aria-label='Mandatory'>*</span>");
+//		} else {
+//			titlePrefix.append("<span class='optional' aria-label='Optional'>*</span>");
+//		}
 		
 		if (survey.getQuestionNumbering() == 0){
 			
@@ -706,13 +706,22 @@ public class Form {
 			}			
 		}
 		
+		String result;
+		
 		if (title.startsWith("<p"))
 		{
 			int index = title.indexOf(">");				
-			return title.substring(0, index+1) + titlePrefix + " " + title.substring(index+1);
+			result = title.substring(0, index+1) + titlePrefix + " " + title.substring(index+1);
 		} else {
-			return titlePrefix + title;
+			result = titlePrefix + title;
 		}
+		
+//		if (question instanceof Confirmation && !forPDF)
+//		{
+//			result += "</label>";
+//		}	
+		
+		return result;
 	}
 	
 	public Statistics getStatistics() {

@@ -58,7 +58,7 @@ public class TranslationController extends BasicController {
 		User u = sessionService.getCurrentUser(request);
 		initMTCheck();
 		Form form;
-		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true);
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);
 		form = new Form(resources);
 		form.setSurvey(survey);
 		if (!sessionService.userIsFormManager(form.getSurvey(), u, request))
@@ -151,7 +151,7 @@ public class TranslationController extends BasicController {
 	@RequestMapping(value = "/replace", method = RequestMethod.POST)
 	public ModelAndView replace(@PathVariable String shortname, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		
 		try {
 			
@@ -197,7 +197,7 @@ public class TranslationController extends BasicController {
 		} catch (Exception e)
 		{
 			logger.error(e.getLocalizedMessage(), e);
-			return new ModelAndView("error/basic");
+			return new ModelAndView("redirect:/errors/500.html");
 		}
 	}
 	@RequestMapping(value = "/deletetranslation", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -517,7 +517,7 @@ public class TranslationController extends BasicController {
 	{
 		Form form;
 		try {
-			form = sessionService.getForm(request, null, false);
+			form = sessionService.getForm(request, null, false, false);
 		} catch (NoFormLoadedException ne)
 		{
 			logger.error(ne.getLocalizedMessage(), ne);
@@ -718,7 +718,7 @@ public class TranslationController extends BasicController {
 	public ModelAndView addtranslations(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		
 		User u = sessionService.getCurrentUser(request);
 		if (u == null || !sessionService.userIsFormAdmin(form.getSurvey(), u, request))
@@ -831,7 +831,7 @@ public class TranslationController extends BasicController {
 
 		Form form;
 		try {
-			form = sessionService.getForm(request, shortname, false);
+			form = sessionService.getForm(request, shortname, false, false);
 		} catch (NoFormLoadedException ne)
 		{
 			logger.error(ne.getLocalizedMessage(), ne);
@@ -1011,7 +1011,7 @@ public class TranslationController extends BasicController {
 				
 				Form form;
 				try {
-					form = sessionService.getForm(request, shortname, false);
+					form = sessionService.getForm(request, shortname, false, false);
 				} catch (NoFormLoadedException ne)
 				{
 					logger.error(ne.getLocalizedMessage(), ne);
@@ -1088,7 +1088,7 @@ public class TranslationController extends BasicController {
 	@RequestMapping(value = "/downloadtranslation", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView downloadtranslation(@PathVariable String shortname, @RequestParam("id") String id, @RequestParam("format") String format, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		
 		Translations translations = null;
 		if (id.equalsIgnoreCase("0"))

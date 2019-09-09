@@ -27,7 +27,7 @@ public class AttendeeService extends BasicService {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<String> getAttendeeEmailsAddresses(int ownerId) {
+	public List<String> getAttendeeEmailsAddresses(int ownerId) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 				
 		HashMap<String, Object> parameters = new HashMap<>();
@@ -60,17 +60,17 @@ public class AttendeeService extends BasicService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<Attendee> getAttendees(int ownerId, Map<String, String> filterValues, int i, int maxValue) {
+	public List<Attendee> getAttendees(int ownerId, Map<String, String> filterValues, int i, int maxValue) throws Exception {
 		return getAttendees(ownerId, filterValues, i, maxValue, sessionFactory, false);
 	}
 	
 	@Transactional(readOnly = true)
-	public List<Attendee> getAttendeesEagerLoad(int ownerId, Map<String, String> filterValues, int i, int maxValue) {
+	public List<Attendee> getAttendeesEagerLoad(int ownerId, Map<String, String> filterValues, int i, int maxValue) throws Exception {
 		return getAttendees(ownerId, filterValues, i, maxValue, sessionFactory, true);
 	}
 	
 	@Transactional(readOnly = true)
-	public List<Attendee> getAttendees(Integer ownerId, Map<String, String> attributeFilter, int page, int rowsPerPage, SessionFactory sessionFactory, boolean eagerLoad) {
+	public List<Attendee> getAttendees(Integer ownerId, Map<String, String> attributeFilter, int page, int rowsPerPage, SessionFactory sessionFactory, boolean eagerLoad) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		
 		HashMap<String, Object> parameters = new HashMap<>();
@@ -125,7 +125,7 @@ public class AttendeeService extends BasicService {
 	}
 	
 	@Transactional
-	public List<Attendee> getAttendeesToWrite(int ownerId, Map<String, String> filterValues)
+	public List<Attendee> getAttendeesToWrite(int ownerId, Map<String, String> filterValues) throws Exception
 	{
 		Session session = sessionFactory.getCurrentSession();
 		
@@ -151,7 +151,7 @@ public class AttendeeService extends BasicService {
 	}
 	
 	@Transactional
-	public int markAttendeesAsDeleted(int ownerId, Map<String, String> filterValues)
+	public int markAttendeesAsDeleted(int ownerId, Map<String, String> filterValues) throws Exception
 	{
 		Session session = sessionFactory.getCurrentSession();
 		
@@ -164,7 +164,7 @@ public class AttendeeService extends BasicService {
 	}
 		
 	@Transactional(readOnly = true)
-	public int getNumberOfAttendees(Integer ownerId, HashMap<String, String> attributeFilter) {
+	public int getNumberOfAttendees(Integer ownerId, HashMap<String, String> attributeFilter) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		
 		HashMap<String, Object> parameters = new HashMap<>();
@@ -764,7 +764,7 @@ public class AttendeeService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public boolean attendeeExists(String email, Integer id) {
+	public boolean attendeeExists(String email, Integer id) throws Exception {
 		Map<String, String> filterValues = new HashMap<>();
 		filterValues.put("email", email);
 				

@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Paging;
 import com.ec.survey.model.ParticipationGroup;
 import com.ec.survey.model.ParticipationGroupsForAttendee;
@@ -68,7 +69,7 @@ public class AddressBookController extends BasicController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView attendees(HttpServletRequest request) throws NotAgreedToTosException {
+	public ModelAndView attendees(HttpServletRequest request) throws Exception {
 		
 		User user = sessionService.getCurrentUser(request);		
 		int ownerId;
@@ -249,7 +250,7 @@ public class AddressBookController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/attendeesjson", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<Attendee> attendeesjson(HttpServletRequest request) throws NotAgreedToTosException {
+	public @ResponseBody List<Attendee> attendeesjson(HttpServletRequest request) throws Exception {
 		String rows = request.getParameter("rows");		
 		int itemsPerPage = Integer.parseInt(rows);
 		
@@ -272,7 +273,7 @@ public class AddressBookController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/attendeeExists", headers="Accept=*/*", method=RequestMethod.GET)
-	public @ResponseBody boolean attendeeExists(HttpServletRequest request, HttpServletResponse response ) throws NotAgreedToTosException {
+	public @ResponseBody boolean attendeeExists(HttpServletRequest request, HttpServletResponse response ) throws Exception {
 		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		String email = parameters.get("email")[0];
 		User user = sessionService.getCurrentUser(request);
@@ -281,7 +282,7 @@ public class AddressBookController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/batchEdit", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView batchEdit(HttpServletRequest request) throws NotAgreedToTosException {
+	public ModelAndView batchEdit(HttpServletRequest request) throws Exception {
 		ModelAndView result = attendees(request);
 		
 		User user = sessionService.getCurrentUser(request);
@@ -888,7 +889,7 @@ public class AddressBookController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/importAttendeesCheck", method = RequestMethod.POST)
-	public ModelAndView importAttendeesCheck(UploadItem uploadItem, BindingResult bindingresult, HttpServletRequest request, HttpServletResponse response, HttpSession session, Locale locale) throws NotAgreedToTosException {
+	public ModelAndView importAttendeesCheck(UploadItem uploadItem, BindingResult bindingresult, HttpServletRequest request, HttpServletResponse response, HttpSession session, Locale locale) throws Exception {
 		User user = sessionService.getCurrentUser(request);
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 		
@@ -996,7 +997,7 @@ public class AddressBookController extends BasicController {
      		} else if (header.trim().equalsIgnoreCase("owner"))
      		{
      			headermappings.put(header, "owner");
-     		} else {          		
+     		} else if (user.getSelectedAttributes() != null) {          		
      			for (AttributeName attributeName : user.getSelectedAttributes()) {
          			if (attributeName.getName().equalsIgnoreCase(header))
          			{
@@ -1026,7 +1027,7 @@ public class AddressBookController extends BasicController {
 	}
 	 
 	 @RequestMapping(value = "/importAttendees2", method = RequestMethod.POST)
-     public ModelAndView import2(UploadItem uploadItem, BindingResult bindingresult, HttpServletRequest request, HttpServletResponse response, HttpSession session, Locale locale) throws NotAgreedToTosException {
+     public ModelAndView import2(UploadItem uploadItem, BindingResult bindingresult, HttpServletRequest request, HttpServletResponse response, HttpSession session, Locale locale) throws Exception {
 		 
 		User user = sessionService.getCurrentUser(request);
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
@@ -1172,7 +1173,7 @@ public class AddressBookController extends BasicController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView attendeesPOST(HttpServletRequest request) throws NotAgreedToTosException {
+	public ModelAndView attendeesPOST(HttpServletRequest request) throws Exception {
 		
 		User user = sessionService.getCurrentUser(request);
 		
@@ -1314,7 +1315,7 @@ public class AddressBookController extends BasicController {
 		
 	@SuppressWarnings("unchecked")
 	@RequestMapping( value = "/editAttendee/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView edit(@PathVariable("id") String id, HttpServletRequest request) throws NotAgreedToTosException {	
+	public ModelAndView edit(@PathVariable("id") String id, HttpServletRequest request) throws Exception {	
 		
 		Attendee attendee = attendeeService.get(Integer.parseInt(id));
 		
@@ -1421,7 +1422,7 @@ public class AddressBookController extends BasicController {
 	}
 	
 	@RequestMapping( value = "/addAttendee", method = RequestMethod.POST)
-	public String add(HttpServletRequest request) throws NotAgreedToTosException {			
+	public String add(HttpServletRequest request) throws Exception {			
 		
 		User user = sessionService.getCurrentUser(request);
 		
@@ -1456,8 +1457,16 @@ public class AddressBookController extends BasicController {
 			} else if (key.equalsIgnoreCase("owner")) {
 				if (user.getGlobalPrivileges().get(GlobalPrivilege.UserManagement) > 1)
 				{
-					User owner = administrationService.getUserForLogin(Tools.escapeHTML(values[0]));
-					if (owner != null) attendee.setOwnerId(owner.getId());
+					if (values[0].length() > 0)
+					{
+						User owner = administrationService.getUserForLogin(Tools.escapeHTML(values[0]));
+						if (owner != null)
+						{
+							attendee.setOwnerId(owner.getId());
+						} else {					
+							throw new MessageException("The user " + values[0] + " does not exist");
+						}
+					}
 				}
 			} else if (key.startsWith("key")) {
 				keysMap.put(key.substring(3), Tools.escapeHTML(values[0]));

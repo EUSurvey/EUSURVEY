@@ -86,6 +86,7 @@
 		 			<option value="?language=en">English</option> 
 		 			<option value="?language=es">Español</option> 
 		 			<option value="?language=fr">Français</option>
+		 			<option value="?language=ga">Gaeilge</option>
 		 			<option value="?language=hr">Hrvatski jezik</option> 
 		 			<option value="?language=it">Italiano</option>
 		 			<option value="?language=lv">Latviešu valoda</option> 
@@ -170,7 +171,7 @@
 				<c:if test="${escapemode == null && !form.survey.isQuiz}">
 					<!-- pdf download -->	
 					<div style="padding-left: 10px; margin-top: 10px;">
-						<button id="download-survey-pdf-link" class="btn btn-default" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}'); return false;">${form.getMessage("label.DownloadPDFversion")}</button>
+						<button data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="btn btn-default" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}'); return false;">${form.getMessage("label.DownloadPDFversion")}</button>
 						<span id="download-survey-pdf-dialog-running" style="display: none">${form.getMessage("info.FileCreation")}</span>
 						<div id="download-survey-pdf-dialog-ready" style="display: none;">${form.getMessage("info.FileCreated")}</div>
 						<div id="download-survey-pdf-dialog-spinner" style="display: none; padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>
@@ -204,6 +205,8 @@
 		</c:if>
 		
 		<c:choose>
+			<c:when test="${!enablepublicsurveys}">						
+			</c:when>
 			<c:when test="${form != null && form.getResources() != null && runnermode == true}">
 				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/publicsurveys"/>">${form.getMessage("header.AllPublicSurveys")}</a></div>
 			</c:when>
@@ -215,14 +218,12 @@
 		<c:choose>
 			<c:when test="${form != null && form.getResources() != null}">
 				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/about"/>">${form.getMessage("label.About")}</a></div>
-				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/support"/>">${form.getMessage("label.Support")}</a></div>
-				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/helpparticipants"/>">${form.getMessage("label.Documentation")}</a></div>
+				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/documentation"/>">${form.getMessage("label.Support")}</a></div>
 				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/download"/>">${form.getMessage("label.Download")}</a></div>
 			</c:when>
 			<c:otherwise>
 				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/about"/>"><spring:message code="label.About" /></a></div>
-				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/support"/>"><spring:message code="label.Support" /></a></div>
-				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/helpparticipants"/>"><spring:message code="label.Documentation" /></a></div>
+				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/documentation"/>"><spring:message code="label.Support" /></a></div>
 				<div style="padding: 5px"><a class="link visiblelink" href="<c:url value="/home/download"/>"><spring:message code="label.Download" /></a></div>
 			</c:otherwise>
 		</c:choose>		

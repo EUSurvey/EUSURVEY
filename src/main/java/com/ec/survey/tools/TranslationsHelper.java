@@ -253,7 +253,7 @@ public class TranslationsHelper {
 					result.add(new KeyValue(element.getUniqueId()+ "help", "H"));
 				}
 				
-				if (question.getScoringItems() != null)
+				if (question.getScoring() > 0 && question.getScoringItems() != null)
 				{
 					for (ScoringItem scoringItem : question.getScoringItems()) {
 						result.add(new KeyValue(scoringItem.getUniqueId()+ Question.FEEDBACK, "F"));
@@ -373,7 +373,7 @@ public class TranslationsHelper {
 				
 				Question question = (Question) element;
 				
-				if (question.getScoringItems() != null)
+				if (question.getScoring() > 0 && question.getScoringItems() != null)
 				{
 					for (ScoringItem scoringItem : question.getScoringItems()) {
 						result.add(new KeyValue(scoringItem.getUniqueId()+ Question.FEEDBACK, resources.getMessage("label.Feedback", null, "Feedback", locale)));

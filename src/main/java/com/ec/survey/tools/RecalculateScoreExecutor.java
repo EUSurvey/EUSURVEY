@@ -74,7 +74,7 @@ public class RecalculateScoreExecutor implements Runnable {
 				{
 					AnswerSet answerSet = (AnswerSet)results.get(0);		
 					int score = QuizHelper.getQuizResult(answerSet, newest).getScore();
-					if (score != answerSet.getScore())
+					if (answerSet.getScore() == null || score != answerSet.getScore())
 					{
 						answerSet.setScore(score);
 						session.save(answerSet);

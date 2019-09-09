@@ -7,14 +7,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.IntrusionException;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 
 import java.security.SecureRandom;
 import java.util.*;
 
 public class Tools {
-	
-	private static Md5PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
 		
 	public static boolean isFileEqual(File o1, File o2)
 	{
@@ -66,6 +63,26 @@ public class Tools {
 		return o1.equals(o2);
 	}
 	
+	public static boolean isInteger(String s) {
+	    return isInteger(s,10);
+	}
+
+	public static boolean isInteger(String s, int radix) {
+	    if(s.isEmpty()) return false;
+	    for(int i = 0; i < s.length(); i++) {
+	        if(i == 0 && s.charAt(i) == '-') {
+	            if(s.length() == 1) return false;
+	            else continue;
+	        }
+	        if(Character.digit(s.charAt(i),radix) < 0) return false;
+	    }
+	    return true;
+	}
+	
+	public static boolean isUUID(String s){
+	    return s.matches("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
+	}
+	
 	public static Date getFollowingDay(Date d)
 	{
 		Calendar cal = Calendar.getInstance();
@@ -79,6 +96,14 @@ public class Tools {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(d);
 		cal.add(Calendar.DATE, -1);
+		return cal.getTime();
+	}
+	
+	public static Date addOneSecond(Date d)
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
+		cal.add(Calendar.SECOND, 1);
 		return cal.getTime();
 	}
 	
@@ -141,7 +166,7 @@ public class Tools {
 	}
 
 	public static String md5hash(String input) {
-		return passwordEncoder.encodePassword(input, null);
+		return DigestUtils.md5Hex(input);
 	}
 	
 	public static boolean isPasswordWeak(String password)

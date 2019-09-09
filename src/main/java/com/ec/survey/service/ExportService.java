@@ -147,9 +147,6 @@ public class ExportService extends BasicService {
 				case Content:
 					activityService.log(308, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
 					break;
-				case Charts:
-					activityService.log(309, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
-					break;
 				case Activity:
 					activityService.log(312, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
 					break;					
@@ -770,6 +767,17 @@ public class ExportService extends BasicService {
 		}
 		
 		logger.info(counter + " old exports deleted");
+	}
+
+	@Transactional(readOnly = true)
+	public Export getExportByResultFilterID(int id) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("FROM Export e WHERE e.resultFilter.id = :id");
+		query.setInteger("id", id);
+		@SuppressWarnings("unchecked")
+		List<Export> exports = query.list();
+		if (exports.size() > 0) return exports.get(0);
+		return null;
 	}	
 	
 }

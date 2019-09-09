@@ -59,7 +59,7 @@
 				checkFilterCell(this, true);
 			});
 		    
-		    $("#attendeestable").stickyTableHeaders({fixedOffset: 147});
+		    $("#attendeestable").stickyTableHeaders({fixedOffset: 137});
 		    
 		    $('.checkAllCheckBox').click(function () {
 		    	if ($(this).is(":checked"))
@@ -162,8 +162,14 @@
 		}
 		
 		var newPage = 2;
+		var loadingmore = false;
+        var endReached = false;
 		function loadMore()
 		{
+			if (loadingmore || endReached) return;
+			
+			loadingmore = true;
+			
 			$( "#wheel" ).show();
 			var s = "page=" + newPage++ + "&rows=50";	
 			
@@ -174,6 +180,12 @@
 				  data: s,
 				  cache: false,
 				  success: function( list ) {
+					  
+					if (list.length === 0) {
+                        endreached = true;
+                        $( "#wheel" ).hide();
+                        return;
+                    }	                        
 				  					  
 					  for (var i = 0; i < list.length; i++ )
 					  {
@@ -246,6 +258,8 @@
 					  
 					  $( "#wheel" ).hide();
 					  $('[data-toggle="tooltip"]').tooltip(); 
+					  
+					  loadingmore = false;
 				}});
 		}
 		
@@ -269,6 +283,28 @@
 			</c:if>		
 		</c:forEach>
 		
+		function executeBulkEdit() {
+			var count = $(".selectedAttendee:checked").length;
+			if (count == 0)
+			{
+				$("#no-selection-dialog").modal("show");
+				return;
+			}
+			
+			$('#operation').val('batchedit'); $('#load-attendees').submit();
+		}
+		
+		function executeBulkDelete() {
+			var count = $(".selectedAttendee:checked").length;
+			if (count == 0)
+			{
+				$("#no-selection-dialog").modal("show");
+				return;
+			}
+			
+			$('#delete-attendees-dialog').modal('show');
+		}
+		
 	</script>
 		
 </head>
@@ -288,66 +324,50 @@
 	
 	<form:form modelAttribute="paging" id="load-attendees" method="POST" action="${contextpath}/addressbook" >		
 		<input type="hidden" id="operation" name="operation" value=""></input>
-		<div class="fixedtitle">
-			<div class="fixedtitleinner">
-				<div style="float: right">		
-					
-								
-					
-				</div>
-				<div style="height: 50px; overflow: visible;">
-					<h1>
-						<span class="glyphicon glyphicon-book pagetitleicon"></span>
-						<spring:message code="label.AddressBook" />
-					</h1>
-				</div>
-										
+		<div class="fixedtitle" style="padding: 0; padding-bottom: 15px;">
+			<div class="fixedtitleinner" style="width: 100%">
 				<spring:message code="label.Contact" var="contact" />
 				<c:set var="pagingElementName" value="${contact}" />			
 				<div class="hideme"><%@ include file="../paging.jsp" %></div>	
-						
+				
+				<div id="action-bar" style="margin-bottom: 15px; max-width: 900px; margin-left: auto; margin-right: auto;">					
+					
+					<div style="float: left; padding-top:5px; margin-left: 10px; padding-right: 10px;">
+						<a data-placement="bottom" class="iconbutton green" data-toggle="tooltip" title="<spring:message code="label.AddContact" />" onclick="showAddAttendeeDialog();" ><span class="glyphicon glyphicon-plus"></span></a>
+						<a data-placement="bottom" class="iconbutton green" data-toggle="tooltip" title="<spring:message code="label.Import" />" onclick="$('#import-attendees-step1-error').hide();$('#import-attendees-step1-dialog').modal();"><span class="glyphicon glyphicon-import"></span></a>
+					</div>
+					
+					<div style="float: left; padding-left: 10px; padding-top:5px; border-left: 1px solid #ddd;">
+						<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="label.BulkEdit" />" onclick="executeBulkEdit()" class="iconbutton"><span class="glyphicon glyphicon-pencil"></span></a>
+						<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="label.Delete" />" onclick="executeBulkDelete()" class="iconbutton"><span class="glyphicon glyphicon-trash"></span></a>
+					</div>
+					
+					<div style="float: left; padding-top:5px; margin-left: 10px; padding-left: 10px; border-left: 1px solid #ddd;">
+						<a data-placement="bottom" class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.ConfigureDisplayedAttributes" />" onclick="$('#configure-attributes-dialog').modal();"><span class="glyphicon glyphicon-wrench"></span></a>
+					</div>
+					
+					<div style="float: left; border-left:1px solid #ddd; padding-left: 10px; margin-left: 10px; height: 30px; padding-top:5px;">
+						<spring:message code="label.NumberOfResults" />: <esapi:encodeForHTML>${paging.numberOfItems}</esapi:encodeForHTML>
+					</div>
+					
+					<div style="float: left; padding-top:-5px; margin-left: 10px; padding-left: 10px;">
+						<a onclick="$('#load-attendees').submit()" class="btn btn-info"><spring:message code="label.Search" /></a>
+						<a onclick="$('#show-wait-image').modal('show');" href="<c:url value="/addressbook?clear=true"/>" class="btn btn-default"><spring:message code="label.ResetFilter" /></a>
+					</div>
+											
+					<div style="float: right; text-align: right">
+						<span style="padding: 0px 10px;"><spring:message code="label.Export" />:</span>
+						<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportcsv" />" onclick="showExportDialog('AddressBook', 'csv')" ><img src="${contextpath}/resources/images/file_extension_csv_small.png" /></a>
+						<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('AddressBook', 'xls')" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
+						<a data-placement="bottom" style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('AddressBook', 'ods')" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
+					</div>				
+				</div>				
 			</div>
 		</div>
-			
-		<div id="action-bar" class="container action-bar">
-			<div class="row">
-				<div class="col-md-3">
-					<select id="selectOperation" class="small-form-control" style="margin-left: 10px; width: auto; display: inline;">
-						<option value="1"><spring:message code="label.BulkEdit" /></option>
-						<option value="2"><spring:message code="label.Delete" /></option>
-					</select>
-					<a id="gobutton" data-toggle="tooltip" disabled="disabled" title="<spring:message code="label.OK" />"  onclick="startOperation();" class="btn btn-default"><spring:message code="label.OK" /></a>
-				</div>
-				<div class="col-md-6" style="text-align:center">
-					<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-info" value="<spring:message code="label.Search" />"/>
-					<a onclick="$('#show-wait-image').modal('show');" rel="tooltip" title="<spring:message code="label.ResetFilter" />" href="<c:url value="/addressbook?clear=true"/>" class="btn btn-default"><spring:message code="label.Reset" /></a>
-					<spring:message code="label.NumberOfResults" />: <esapi:encodeForHTML>${paging.numberOfItems}</esapi:encodeForHTML>
-				</div>
-				<div class="col-md-3" style="text-align:right">
-					<div class="btn-group">
-					  <button id="more_actions_dropdown_button" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					    <spring:message code="label.MoreActions" />&nbsp;&nbsp;<span class="caret"></span>
-					  </button>
-					  <ul class="dropdown-menu">
-					  	<li><a data-toggle="tooltip" title="<spring:message code="label.AddContact" />" onclick="showAddAttendeeDialog();" ><spring:message code="label.AddContact" /></a></li>
-						<li><a data-toggle="tooltip" title="<spring:message code="label.Import" />" onclick="$('#import-attendees-step1-error').hide();$('#import-attendees-step1-dialog').modal();"><spring:message code="label.Import" /></a></li>
-						<li role="separator" class="divider"></li>
-					    <li><a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.ConfigureDisplayedAttributes" />" onclick="$('#configure-attributes-dialog').modal();"><spring:message code="label.Configure" />&nbsp;&nbsp;<span class="glyphicon glyphicon-wrench"></span></a></li>
-					    <li role="separator" class="divider"></li>
-					    <li><span style="padding: 0px 20px;"><spring:message code="label.Export" />:</span>
-							<a style="padding: 0px; display: inline;" data-toggle="tooltip" title="<spring:message code="tooltip.Exportcsv" />" onclick="showExportDialog('AddressBook', 'csv')" ><img src="${contextpath}/resources/images/file_extension_csv_small.png" /></a>
-							<a style="padding: 0px; display: inline;"  data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('AddressBook', 'xls')" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
-							<a style="padding: 0px; display: inline;"  data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('AddressBook', 'ods')" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
-						</li>
-					  </ul>
-					</div>
-				</div>
-			</div>
-		</div>	
 	
-		<div class="fullpage" style="margin-top:0px;">
+		<div class="fullpage" style="margin-top:137px;">
 			
-			<table id="attendeestable" class="table table-bordered table-striped table-styled" style="max-width: none; width: auto; margin-left: auto; margin-right: auto; min-width: 600px;">
+			<table id="attendeestable" class="table table-bordered table-striped table-styled <c:if test="${paging.items.size() == 0}">hideme</c:if>" style="max-width: none; width: auto; margin-left: auto; margin-right: auto; min-width: 600px;">
 				<thead>
 					<tr>
 						<th style="text-align: center;"><input style="margin-bottom: 4px;" value="true" type="checkbox" class="checkAllCheckBox" name="checkAllCheckBox" /></th>
@@ -431,9 +451,13 @@
 				</tbody>
 			</table>
 			
-			<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging.items.size() == 0}">style="display:block;"</c:if>>
+			<div style="text-align: center">
+				<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
+			</div>
+			
+			<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging.items.size() == 0}">style="display:block; margin-top:250px;"</c:if>>
 				<p>
-					<spring:message code="label.NoDataAddressBookText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
+					<spring:message code="label.NoDataAddressBookText"/>
 				<p>
 			</div>
 			

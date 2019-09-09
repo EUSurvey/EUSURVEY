@@ -224,7 +224,10 @@ public class LdapService extends BasicService {
                 	prefix += "." + tabDep[i];
                 	groups.add(prefix);
                 }
-            } else if (Objects.equals(employeeType, "g") || Objects.equals(employeeType, "n")) {
+                
+            } else if (Objects.equals(employeeType, "f") || Objects.equals(employeeType, "x") || Objects.equals(employeeType, "i")) {
+                //internal                
+            } else {
             	groups.add("external");
             }
            
@@ -263,14 +266,14 @@ public class LdapService extends BasicService {
 			// searching through the Ldap server
 			if(StringUtils.isEmpty(ldapMappingUserDepartmentNumber)){
 				String message = String.format(
-						"The propertey %s from the spring.properties file MUST have a value",
+						"The property %s from the spring.properties file MUST have a value",
 						"ldap.mapping.user.departmentNumber");
 				throw new Exception(message);				
 			}
 			
 			if (StringUtils.isEmpty(ldapMappingUserO)){
 				String message = String.format(
-						"The propertey %s from the spring.properties file MUST have a value",
+						"The property %s from the spring.properties file MUST have a value",
 						"ldap.mapping.user.o");
 				throw new Exception(message);				
 			}				
@@ -282,7 +285,7 @@ public class LdapService extends BasicService {
 					
 				if(!ldapMappingDomainO.startsWith(LDAP_CONSTANT_PREFIX)){
 					String message = String.format(
-							"The propertey %s from the spring.properties file MUST be a constant (staring with '%s' value)",
+							"The property %s from the spring.properties file MUST be a constant (staring with '%s' value)",
 							"ldap.mapping.domain.o",  ldapMappingDomainO);
 					throw new Exception(message);						
 				}else{					

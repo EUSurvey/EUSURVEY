@@ -65,6 +65,9 @@ public abstract class ExportCreator implements Runnable {
 	@Resource(name = "fileService")
 	protected FileService fileService;
 	
+	@Resource(name = "reportingService")
+	protected ReportingService reportingService;
+	
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${sender}") String sender;
@@ -108,7 +111,6 @@ public abstract class ExportCreator implements Runnable {
 	void init()
 	{}
 
-	abstract void ExportCharts() throws Exception;
 	abstract void ExportContent(boolean sync) throws Exception;
 	abstract void ExportStatistics() throws Exception;
 	abstract void ExportStatisticsQuiz() throws Exception;	
@@ -206,7 +208,6 @@ public abstract class ExportCreator implements Runnable {
 	private void innerRunBasic(boolean sync, Export export) throws Exception
 	{
 		switch (export.getType()) {
-			case Charts: initAnswers(true); ExportCharts(); break;
 			case Content: /*initAnswers(false);*/ ExportContent(sync); break;
 			case Statistics: initAnswers(true); ExportStatistics(); break;
 			case StatisticsQuiz: initAnswers(true); ExportStatisticsQuiz(); break;

@@ -133,7 +133,7 @@ public class WebServiceController extends BasicController {
 		Survey survey;
 		
 		try {
-			survey = surveyService.getSurveyByShortname(alias, draft, null, request, false, false, true);
+			survey = surveyService.getSurveyByShortname(alias, draft, null, request, false, false, true, false);
 		} catch (InvalidURLException e) {
 			survey = null;
 		}
@@ -745,7 +745,7 @@ public class WebServiceController extends BasicController {
 	//complete
 	
 	private @ResponseBody String createResults(@PathVariable String login, @PathVariable String pass, @PathVariable String formid, @PathVariable String showids, @PathVariable String start, @PathVariable String end, HttpServletRequest request, HttpServletResponse response, Locale locale) {	
-		return createResults(login, pass, formid, showids, start, end, request, response, locale, 0, "N");
+		return createResults(login, pass, formid, showids, start, end, request, response, locale, 0, "N", "");
 	}
 	
 	@RequestMapping(value = "/prepareResults/{formid}/{showids}/{start}/{end}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
@@ -765,7 +765,7 @@ public class WebServiceController extends BasicController {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null)
 		{
-			return createResults(credentials.getKey(), credentials.getValue(), formid, showids, start, end, request, response, locale, 0, type);
+			return createResults(credentials.getKey(), credentials.getValue(), formid, showids, start, end, request, response, locale, 0, type, "");
 		}		
 		return "";
 	}
@@ -790,7 +790,7 @@ public class WebServiceController extends BasicController {
 	//only start date
 	
 	private @ResponseBody String createResultsXMLStart(@PathVariable String login, @PathVariable String pass, @PathVariable String formid, @PathVariable String showids, @PathVariable String start, HttpServletRequest request, HttpServletResponse response, Locale locale) {	
-		return createResults(login, pass, formid, showids, start, "0", request, response, locale, 1, "N");
+		return createResults(login, pass, formid, showids, start, "0", request, response, locale, 1, "N", "");
 	}
 	
 	@RequestMapping(value = "/prepareResultsXML/{formid}/{showids}/{start}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
@@ -806,7 +806,7 @@ public class WebServiceController extends BasicController {
 	//complete
 	
 	private @ResponseBody String createResultsXML(@PathVariable String login, @PathVariable String pass, @PathVariable String formid, @PathVariable String showids, @PathVariable String start, @PathVariable String end, HttpServletRequest request, HttpServletResponse response, Locale locale) {	
-		return createResults(login, pass, formid, showids, start, end, request, response, locale, 1, "N");
+		return createResults(login, pass, formid, showids, start, end, request, response, locale, 1, "N", "");
 	}		
 	
 	@RequestMapping(value = "/prepareResultsXML/{formid}/{showids}/{start}/{end}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
@@ -826,7 +826,7 @@ public class WebServiceController extends BasicController {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null)
 		{
-			return createResults(credentials.getKey(), credentials.getValue(), formid, showids, start, end, request, response, locale, 1, type);
+			return createResults(credentials.getKey(), credentials.getValue(), formid, showids, start, end, request, response, locale, 1, type, "");
 		}		
 		return "";
 	}
@@ -836,7 +836,7 @@ public class WebServiceController extends BasicController {
 	// no dates
 	
 	private @ResponseBody String createResultsPDFNoDates(@PathVariable String login, @PathVariable String pass, @PathVariable String formid, HttpServletRequest request, HttpServletResponse response, Locale locale) {	
-		return createResults(login, pass, formid, "false", "0", "0", request, response, locale, 2, "N");
+		return createResults(login, pass, formid, "false", "0", "0", request, response, locale, 2, "N", "");
 	}
 	
 	@RequestMapping(value = "/prepareResultsPDF/{formid}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
@@ -852,7 +852,7 @@ public class WebServiceController extends BasicController {
 	// only start date
 	
 	private @ResponseBody String createResultsPDFNoStart(@PathVariable String login, @PathVariable String pass, @PathVariable String formid, @PathVariable String start, HttpServletRequest request, HttpServletResponse response, Locale locale) {	
-		return createResults(login, pass, formid, "false", start, "0", request, response, locale, 2, "N");
+		return createResults(login, pass, formid, "false", start, "0", request, response, locale, 2, "N", "");
 	}
 	
 	@RequestMapping(value = "/prepareResultsPDF/{formid}/{start}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
@@ -868,7 +868,7 @@ public class WebServiceController extends BasicController {
 	// complete
 	
 	private @ResponseBody String createResultsPDF(@PathVariable String login, @PathVariable String pass, @PathVariable String formid, @PathVariable String start, @PathVariable String end, HttpServletRequest request, HttpServletResponse response, Locale locale) {	
-		return createResults(login, pass, formid, "false", start, end, request, response, locale, 2, "N");
+		return createResults(login, pass, formid, "false", start, end, request, response, locale, 2, "N", "");
 	}
 	
 	@RequestMapping(value = "/prepareResultsPDF/{formid}/{start}/{end}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
@@ -888,20 +888,49 @@ public class WebServiceController extends BasicController {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null)
 		{
-			return createResults(credentials.getKey(), credentials.getValue(), formid, "false", start, end, request, response, locale, 2, type);
+			return createResults(credentials.getKey(), credentials.getValue(), formid, "false", start, end, request, response, locale, 2, type, "");
 		}		
 		return "";
 	}
+	
+///////createAllResults///////////
 		
-	private @ResponseBody String createResults(String login, String pass, String formid, String showids, String start, String end, HttpServletRequest request, HttpServletResponse response, Locale locale, int type, String contributionType) {	
+	private @ResponseBody String createAllResults(@PathVariable String login, @PathVariable String pass, @PathVariable String formid, @PathVariable String start, @PathVariable String end, @PathVariable String type, @PathVariable String xml, @PathVariable String pdf, @PathVariable String uploaded, HttpServletRequest request, HttpServletResponse response, Locale locale) {	
+		String filetypes = "";
+		if (xml != null && xml.equalsIgnoreCase("true"))
+		{
+			filetypes += "x";
+		}
+		if (pdf != null && pdf.equalsIgnoreCase("true"))
+		{
+			filetypes += "p";
+		}
+		if (uploaded != null && uploaded.equalsIgnoreCase("true"))
+		{
+			filetypes += "u";
+		}
+		return createResults(login, pass, formid, "false", start, end, request, response, locale, 3, "N", filetypes);
+	}
+	
+	@RequestMapping(value = "/prepareAllResults/{formid}/{start}/{end}/{type}/{xml}/{pdf}/{uploaded}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
+	public @ResponseBody String prepareAllResults(@PathVariable String formid, @PathVariable String start, @PathVariable String end, @PathVariable String type, @PathVariable String xml, @PathVariable String pdf, @PathVariable String uploaded, HttpServletRequest request, HttpServletResponse response, Locale locale) {	
+		KeyValue credentials = getLoginAndPassword(request, response);
+		if (credentials != null)
+		{
+			return createAllResults(credentials.getKey(), credentials.getValue(), formid, start, end, type, xml, pdf, uploaded, request, response, locale);
+		}		
+		return "";
+	}
+			
+	private @ResponseBody String createResults(String login, String pass, String formid, String showids, String start, String end, HttpServletRequest request, HttpServletResponse response, Locale locale, int type, String contributionType, String filetypes) {	
 
 		try {
 		
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = surveyService.getSurvey(formid, true, false, false, false, null, true);
-			Survey publishedsurvey = surveyService.getSurvey(formid, false, false, false, false, null, true);
+			Survey survey = surveyService.getSurvey(formid, true, false, false, false, null, true, false);
+			Survey publishedsurvey = surveyService.getSurvey(formid, false, false, false, false, null, true, false);
 			
 			if (survey == null || publishedsurvey == null || survey.getArchived())
 			{
@@ -940,6 +969,7 @@ public class WebServiceController extends BasicController {
 			task.setSurveyId(publishedsurvey.getId());
 			task.setSurveyUid(publishedsurvey.getUniqueId());
 			task.setExportType(type);
+			task.setFileTypes(filetypes);
 			task.setContributionType(contributionType);			
 			
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ENGLISH);
@@ -960,7 +990,8 @@ public class WebServiceController extends BasicController {
 				try {
 					Date enddate = df.parse(end);
 					//the end filter was implemented for the ui and always adds one day,so we have to patch the date
-					task.setEnd(Tools.getPreviousDay(enddate));
+					//we also add one second so that 23:59:59 also includes the timespan between that and 0:00 of the next day
+					task.setEnd(Tools.addOneSecond(Tools.getPreviousDay(enddate)));
 				} catch (Exception pe)
 				{
 					logger.error(pe.getLocalizedMessage(), pe);
@@ -1029,8 +1060,8 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = surveyService.getSurvey(formid, true, false, false, false, null, true);
-			Survey publishedsurvey = surveyService.getSurvey(formid, false, false, false, false, null, true);
+			Survey survey = surveyService.getSurvey(formid, true, false, false, false, null, true, false);
+			Survey publishedsurvey = surveyService.getSurvey(formid, false, false, false, false, null, true, false);
 			
 			if (survey == null || publishedsurvey == null || survey.getArchived())
 			{
@@ -1404,7 +1435,7 @@ public class WebServiceController extends BasicController {
 			{
 				response.setStatus(200);				
 				
-				Survey published = surveyService.getSurvey(survey.getShortname(), false, false, false, false, null, true);
+				Survey published = surveyService.getSurvey(survey.getShortname(), false, false, false, false, null, true, false);
 				
 				if (published != null)
 				{
@@ -1414,10 +1445,10 @@ public class WebServiceController extends BasicController {
 						logger.error(e.getLocalizedMessage(), e);
 					}
 				} else {
-					surveyService.activate(survey, -1, -1, true, user.getId(), false, false);
+					surveyService.publish(survey, -1, -1, true, user.getId(), false, false);
 				}
 				
-				surveyService.publish(survey, true, user.getId());
+				surveyService.activate(survey, true, user.getId());
 				webserviceService.increaseServiceRequest(user.getId());	
 				return "1";
 			} else if (startdate != null && enddate != null)
@@ -1438,7 +1469,7 @@ public class WebServiceController extends BasicController {
 					{
 						if (!survey.getIsPublished())
 						{
-							surveyService.activate(survey, -1, -1, false, user.getId(), false, false);
+							surveyService.publish(survey, -1, -1, false, user.getId(), false, false);
 						}
 						survey.setIsActive(true);
 						survey.setIsPublished(true);
@@ -1659,7 +1690,7 @@ public class WebServiceController extends BasicController {
 			Survey survey = getSurvey(alias, user, request, response, true);
 			if (survey == null) return "";
 			
-			surveyService.delete(survey.getId(), false, user.getId());
+			surveyService.delete(survey.getId(), false, false);
 			webserviceService.increaseServiceRequest(user.getId());						
 			response.setStatus(200);
 			return "1";
@@ -1695,7 +1726,7 @@ public class WebServiceController extends BasicController {
 			Survey survey = getSurvey(alias, user, request, response, true);
 			if (survey == null) return "";
 			
-			Survey published = surveyService.getSurvey(alias, false, false, false, false, null, true);
+			Survey published = surveyService.getSurvey(alias, false, false, false, false, null, true, false);
 			java.io.File file = null;
 			if (published != null)
 			{

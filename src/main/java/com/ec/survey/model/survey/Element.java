@@ -157,6 +157,17 @@ public abstract class Element implements java.io.Serializable {
 	}
 	
 	@Transient
+	public String getStrippedTitleNoEscape2()
+	{
+		if (title != null && title.length() > 0)
+		{
+			return ConversionTools.removeHTMLNoEscape(title).replace("\"", "'");
+		}
+		
+		return "";
+	}
+	
+	@Transient
 	public String getStrippedTitleAtMost100()
 	{
 		String strippedTitle = getStrippedTitle();

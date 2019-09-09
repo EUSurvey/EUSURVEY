@@ -481,7 +481,16 @@
 				<table>					
 					<tr>
 						<td style="padding-right: 10px; padding-top: 5px; vertical-align: top"><spring:message code="label.ReplyTo" /></td>
-						<td id="txtSenderFromInvitation" style="vertical-align: top; padding-bottom: 5px"><input type="text" onchange="$('#savetextbutton').removeAttr('disabled');validateInput($(this).parent());" class="email small-form-control" maxlength="255"  value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" id="senderAddress" name="senderAddress" /></td>
+						<td id="txtSenderFromInvitation" style="vertical-align: top; padding-bottom: 5px">
+							<c:choose>
+								<c:when test='${USER.ECPrivilege == 0 && USER.type == "ECAS"}'>
+									<input type="text" class="email small-form-control disabled" style="background-color: rgb(235, 235, 228);" maxlength="255"  value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" disabled="disabled" id="senderAddress" name="senderAddress" />
+								</c:when>
+								<c:otherwise>
+									<input type="text" onchange="$('#savetextbutton').removeAttr('disabled');validateInput($(this).parent());" class="email small-form-control" maxlength="255"  value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" id="senderAddress" name="senderAddress" />
+								</c:otherwise>
+							</c:choose>
+						</td>
 					</tr>
 					<tr>
 						<td style="padding-right: 10px; padding-top: 5px; vertical-align: top"><spring:message code="label.Subject" /></td>

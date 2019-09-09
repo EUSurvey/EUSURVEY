@@ -42,6 +42,10 @@
                 box-shadow: inset 0 0 !important;
                 -webkit-box-shadow: inset 0 0 !important;
             }   
+            
+            tr, .quizanswer, .quizquestion, img, .quizsectionresults {
+            	page-break-inside: avoid;
+            }
         </c:if>
 	</style>
 	

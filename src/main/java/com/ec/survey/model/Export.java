@@ -192,11 +192,6 @@ public class Export implements java.io.Serializable {
 	}
 	
 	@Transient
-	public boolean isTypeCharts() {
-		return type == ExportType.Charts;
-	}
-	
-	@Transient
 	public boolean isTypeTokens() {
 		return type == ExportType.Tokens;
 	}

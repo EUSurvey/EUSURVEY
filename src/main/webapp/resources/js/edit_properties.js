@@ -463,7 +463,7 @@ var ElementProperties = function() {
 		 	 		                                
 					getTextPropertiesRow("Text", text, true);
 					
-					if ($(e).closest("tr").index() > 0)
+					if ($(e).closest("thead").length == 0)
 					{
 						getCheckPropertiesRow("Mandatory", $("input[name^='optional" + id + "']").val() == 'false');
 						getVisibilityRow(false);
@@ -488,7 +488,7 @@ var ElementProperties = function() {
 				getCheckPropertiesRow("Mandatory", rows == mandatoryrows);
 				getActionRow("Columns", "<span class='glyphicon glyphicon-plus'></span>", "addColumn(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeColumn(false)");
 				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)");
-				
+			
 				getChoosePropertiesRow("Size", "fitToContent,fitToPage,manualColumnWidth", false, true, parseInt($(e).find("input[name^='tabletype']").val()));
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
 				
@@ -557,6 +557,12 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Size", $(e).find("input[name^='scale']").first().val(), false, "%");
 				getTextPropertiesRow("DescriptiveText", $(e).find("textarea[name^='text']").first().text(), false);
 				getTextPropertiesRow("LongDescription", $(e).find("input[name^='longdesc']").first().val(), false);
+				getVisibilityRow(false);
+			} else if ($(e).hasClass("ruleritem"))
+			{
+				getChoosePropertiesRow("Style", "solid,dashed,dotted", false, true, $(e).find("input[name^='style']").first().val());		
+				getChoosePropertiesRow("Height", "1,2,3,4,5,6,7,8,9,10", false, false, $(e).find("input[name^='height']").val());
+				getChooseColor("Color", $(e).find("input[name^='color']").val());
 				getVisibilityRow(false);
 			} else if ($(e).hasClass("uploaditem"))
 			{
@@ -684,11 +690,27 @@ var ElementProperties = function() {
 				_actions.DeleteEnabled(false);
 			}
 		} else {
+			_actions.MoveUpEnabled(true);
+			_actions.MoveDownEnabled(true);
+			
 			var childselected = false;
 			var hidevisibility = false;
 			var galleryselected = false;
 			var locked = false;
+			var firstselected = false;
+			var lastselected = false;
+			var numelements = $("#content").find("li").length;
 			$("#content").find(".selectedquestion").each(function(){
+				
+				if ($(this).index() == 0)
+				{
+					firstselected = true;
+				}
+				if ($(this).index() == numelements - 1)
+				{
+					lastselected = true;
+				}				
+				
 				if ($(this).hasClass("matrix-header") || $(this).hasClass("table-header") || $(this).hasClass("answertext"))
 				{
 					childselected = true;
@@ -740,7 +762,16 @@ var ElementProperties = function() {
 				_actions.CutEnabled(false);
 				_actions.MoveUpEnabled(false);
 				_actions.MoveDownEnabled(false);
-			}			
+			}
+			
+			if (firstselected)
+			{
+				_actions.MoveUpEnabled(false);
+			}
+			if (lastselected)
+			{
+				_actions.MoveDownEnabled(false);
+			}
 			
 			if (!hidevisibility)
 			getVisibilityRow(true);

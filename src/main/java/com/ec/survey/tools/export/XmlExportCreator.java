@@ -3,6 +3,7 @@ package com.ec.survey.tools.export;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Export;
+import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.AdministrationService;
@@ -27,6 +28,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
@@ -47,16 +49,13 @@ public class XmlExportCreator extends ExportCreator {
 	private Date exportedNow = null;
 
 	@Override
-	void ExportCharts() throws Exception {}
-
-	@Override
 	@Transactional
 	public void ExportContent(boolean sync) throws Exception {
-		ExportContent(sync, export);
+		ExportContent(sync, export, false);
 	}
 		
 	@Transactional
-	public void ExportContent(boolean sync, Export export) throws Exception {
+	public void ExportContent(boolean sync, Export export, boolean fromWebService) throws Exception {
 		exportedUniqueCodes.clear();
 		XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, "UTF-8");
 		
@@ -83,6 +82,8 @@ public class XmlExportCreator extends ExportCreator {
 			session.evict(export.getSurvey());
 		}
 		
+		form.setSurvey(surveyService.initializeAndMergeSurvey(form.getSurvey()));
+		
 		if (form.getSurvey().getTranslations() == null)
 		{
 			List<String> translations = translationService.getTranslationLanguagesForSurvey(form.getSurvey().getId());
@@ -94,7 +95,6 @@ public class XmlExportCreator extends ExportCreator {
 			writer.writeAttribute("lang", lang);			
 			
 			Survey survey = surveyService.getSurvey(form.getSurvey().getId(), lang);
-			//session.evict(survey);
 			
 			List<Element> questionslist = survey.getQuestionsAndSections();
 			questionlists.put(lang, questionslist);
@@ -295,89 +295,166 @@ public class XmlExportCreator extends ExportCreator {
 			ECASUserLoginsByEmail = administrationService.getECASUserLoginsByEmail();
 		};		
 	
-		String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN (" + answerService.getSql(null, form.getSurvey().getId(), export == null ? null : export.getResultFilter(), values, false, true)+ ") ORDER BY ans.ANSWER_SET_ID";
+		ResultFilter origFilter = answerService.initialize(export.getResultFilter());	
+		ResultFilter filterWithMeta = export == null ? null : origFilter.copy();
 		
-		SQLQuery query = session.createSQLQuery(sql);
-		
-		query.setReadOnly(true);
+		if (filterWithMeta != null)
+		{			
+			filterWithMeta.getVisibleQuestions().clear();
+			filterWithMeta.getVisibleQuestions().addAll(filterWithMeta.getExportedQuestions());
+			
+			if (filterWithMeta.getVisibleQuestions().size() == 0)
+			{
+				//initially add all questions
+				for (Element question: form.getSurvey().getQuestionsAndSections())
+				{
+					//filter.getVisibleQuestions().add(question.getId().toString());
+					filterWithMeta.getVisibleQuestions().add(question.getId().toString());
+				}
 				
-		for (String attrib : values.keySet()) {
-			Object value = values.get(attrib);
-			if (value instanceof String)
+				if (!filterWithMeta.getVisibleQuestions().contains("invitation"))
+				{
+					filterWithMeta.getVisibleQuestions().add("invitation");
+				}
+		    	if (!filterWithMeta.getVisibleQuestions().contains("user"))
+				{
+		    		filterWithMeta.getVisibleQuestions().add("user");
+				}		    	
+				if (!filterWithMeta.getVisibleQuestions().contains("created"))
+				{
+					filterWithMeta.getVisibleQuestions().add("created");
+				}			
+				if (!filterWithMeta.getVisibleQuestions().contains("updated"))
+				{
+					filterWithMeta.getVisibleQuestions().add("updated");
+				}
+				if (!filterWithMeta.getVisibleQuestions().contains("languages"))
+				{
+					filterWithMeta.getVisibleQuestions().add("languages");
+				}
+			    if (!form.getSurvey().getIsQuiz())
+			    {
+			    	filterWithMeta.getVisibleQuestions().add("score");
+			    }
+			}
+		}	
+		
+		if (!filterWithMeta.getVisibleQuestions().contains("languages"))
+		{
+			filterWithMeta.getVisibleQuestions().add("languages");
+		}
+		if (!filterWithMeta.getVisibleQuestions().contains("score"))
+		{
+			filterWithMeta.getVisibleQuestions().add("score");
+		}
+		
+		if (fromWebService)
+		{
+			if (!filterWithMeta.getVisibleQuestions().contains("case"))
 			{
-				query.setString(attrib, (String)values.get(attrib));
-			} else if (value instanceof Integer)
-			{
-				query.setInteger(attrib, (Integer)values.get(attrib));
-			}  else if (value instanceof Date)
-			{
-				query.setTimestamp(attrib, (Date)values.get(attrib));
+				filterWithMeta.getVisibleQuestions().add("case");
 			}
 		}
 		
-		query.setFetchSize(Integer.MIN_VALUE);
-		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
-		
-		int lastAnswerSet = 0;
-		AnswerSet answerSet = new AnswerSet();
-		answerSet.setSurvey(form.getSurvey());
-		
-		writer.writeStartElement("Answers");
+		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false, true, true, true);
 		
 		Map<String, List<File>> uploadedFilesByQuestionUID = new HashMap<>();
 		
-		String list = "";
+		writer.writeStartElement("Answers");
 		
-		while (results.next()) 
+		if (answersets != null)
 		{
-			Object[] a = results.get();
-			Answer answer = new Answer();
-			answer.setAnswerSetId(ConversionTools.getValue(a[0]));
-			answer.setQuestionId(ConversionTools.getValue(a[1]));
-			answer.setQuestionUniqueId((String) a[2]);
-			answer.setValue((String) a[3]);
-			answer.setColumn(ConversionTools.getValue(a[4]));
-			answer.setId(ConversionTools.getValue(a[5]));
-			answer.setRow(ConversionTools.getValue(a[6]));
-			answer.setPossibleAnswerId(ConversionTools.getValue(a[7]));
-			answer.setPossibleAnswerUniqueId((String) a[8]);
-			
-			exportedQuestionsByAnswerId.put(answer.getId(), answer.getQuestionUniqueId());
-			
-			if (lastAnswerSet == answer.getAnswerSetId())
+			for (List<String> row : answersets)
 			{
-				answerSet.addAnswer(answer);
-			} else {
-				if (lastAnswerSet > 0)
+				String lang = row.get(row.size() - 2);
+				List<Element> questions = form.getSurvey().getQuestionsAndSections();
+				if (questionlists.containsKey(lang))
 				{
-					parseAnswerSet(writer, questionlists.get(answerSet.getLanguageCode()), answerSet, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), ECASUserLoginsByEmail);
+					questions = questionlists.get(lang);
 				}
-				
-				answerSet = new AnswerSet();
-				answerSet.setSurvey(form.getSurvey());
-				answerSet.setId(answer.getAnswerSetId());
-				lastAnswerSet = answer.getAnswerSetId();
-				answerSet.getAnswers().add(answer);
-				answerSet.setUniqueCode((String) a[9]);
-				answerSet.setDate((Date) a[10]);
-				answerSet.setUpdateDate((Date) a[11]);
-				answerSet.setInvitationId((String) a[12]);
-				answerSet.setResponderEmail((String) a[13]);
-				answerSet.setLanguageCode((String) a[14]);
-				Integer ilist = ConversionTools.getValue(a[15]);
-				list = ilist.toString();
-				
-				if (answerSet.getLanguageCode() == null || !questionlists.containsKey(answerSet.getLanguageCode()))
+				parseAnswerSet(form.getSurvey(), writer, questions, null, row, row.get(1), filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail);
+			}
+		} else {
+		
+			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN (" + answerService.getSql(null, form.getSurvey().getId(), export == null ? null : export.getResultFilter(), values, false, true)+ ") ORDER BY ans.ANSWER_SET_ID";
+			
+			SQLQuery query = session.createSQLQuery(sql);
+			
+			query.setReadOnly(true);
+					
+			for (String attrib : values.keySet()) {
+				Object value = values.get(attrib);
+				if (value instanceof String)
 				{
-					answerSet.setLanguageCode(questionlists.keySet().toArray()[0].toString());
+					query.setString(attrib, (String)values.get(attrib));
+				} else if (value instanceof Integer)
+				{
+					query.setInteger(attrib, (Integer)values.get(attrib));
+				}  else if (value instanceof Date)
+				{
+					query.setTimestamp(attrib, (Date)values.get(attrib));
 				}
+			}
+			
+			query.setFetchSize(Integer.MIN_VALUE);
+			ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
+			
+			int lastAnswerSet = 0;
+			AnswerSet answerSet = new AnswerSet();
+			answerSet.setSurvey(form.getSurvey());
+			
+			String list = "";
+			
+			while (results.next()) 
+			{
+				Object[] a = results.get();
+				Answer answer = new Answer();
+				answer.setAnswerSetId(ConversionTools.getValue(a[0]));
+				answer.setQuestionId(ConversionTools.getValue(a[1]));
+				answer.setQuestionUniqueId((String) a[2]);
+				answer.setValue((String) a[3]);
+				answer.setColumn(ConversionTools.getValue(a[4]));
+				answer.setId(ConversionTools.getValue(a[5]));
+				answer.setRow(ConversionTools.getValue(a[6]));
+				answer.setPossibleAnswerId(ConversionTools.getValue(a[7]));
+				answer.setPossibleAnswerUniqueId((String) a[8]);
 				
-				answerSet.setScore(ConversionTools.getValue(a[16]));
+				exportedQuestionsByAnswerId.put(answer.getId(), answer.getQuestionUniqueId());
 				
-			}	
-		}
-		if (lastAnswerSet > 0) parseAnswerSet(writer, questionlists.get(answerSet.getLanguageCode()), answerSet, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), ECASUserLoginsByEmail);
-		results.close();
+				if (lastAnswerSet == answer.getAnswerSetId())
+				{
+					answerSet.addAnswer(answer);
+				} else {
+					if (lastAnswerSet > 0)
+					{
+						parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()), answerSet, null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail);
+					}
+					
+					answerSet = new AnswerSet();
+					answerSet.setSurvey(form.getSurvey());
+					answerSet.setId(answer.getAnswerSetId());
+					lastAnswerSet = answer.getAnswerSetId();
+					answerSet.getAnswers().add(answer);
+					answerSet.setUniqueCode((String) a[9]);
+					answerSet.setDate((Date) a[10]);
+					answerSet.setUpdateDate((Date) a[11]);
+					answerSet.setInvitationId((String) a[12]);
+					answerSet.setResponderEmail((String) a[13]);
+					answerSet.setLanguageCode((String) a[14]);
+					Integer ilist = ConversionTools.getValue(a[15]);
+					list = ilist.toString();
+					
+					if (answerSet.getLanguageCode() == null || !questionlists.containsKey(answerSet.getLanguageCode()))
+					{
+						answerSet.setLanguageCode(questionlists.keySet().toArray()[0].toString());
+					}
+					
+					answerSet.setScore(ConversionTools.getValue(a[16]));					
+				}	
+			}
+			if (lastAnswerSet > 0) parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()), answerSet, null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail);
+			results.close();	
+		}		
 		
 		writer.writeEndElement(); //Answers
 		writer.writeEndElement(); //Results
@@ -467,129 +544,206 @@ public class XmlExportCreator extends ExportCreator {
 		results.close();
 	}
 	
-	void parseAnswerSet(XMLStreamWriter writer, List<Element> questions, AnswerSet answerSet, String list, Map<Integer, List<File>> filesByAnswer, Map<String, List<File>> uploadedFilesByQuestionUID, boolean meta, Map<String, String> ECASUserLoginsByEmail) throws XMLStreamException
+	void parseAnswerSet(Survey survey, XMLStreamWriter writer, List<Element> questions, AnswerSet answerSet, List<String> row, String list, Map<Integer, List<File>> filesByAnswer, Map<String, List<File>> uploadedFilesByQuestionUID, boolean meta, ResultFilter filter, Map<String, String> ECASUserLoginsByEmail) throws XMLStreamException
 	{
-		exportedUniqueCodes.put(answerSet.getId(), answerSet.getUniqueCode());
-		
 		writer.writeStartElement("AnswerSet");
 		
-		if (answerSet.getSurvey().getSecurity().contains("anonymous"))
+		if (survey.getSecurity().contains("anonymous"))
 		{
-			//as.setAttribute("id", "Anonymous");
 			writer.writeAttribute("id", "Anonymous");
+		} else if (answerSet == null) {
+			writer.writeAttribute("id", row.get(0));
+			exportedUniqueCodes.put(Integer.parseInt(row.get(1)), row.get(0));
 		} else {
-			writer.writeAttribute("id", answerSet.getUniqueCode());
+			if (filter == null || filter.exported("case")) writer.writeAttribute("id", answerSet.getUniqueCode());
+			exportedUniqueCodes.put(answerSet.getId(), answerSet.getUniqueCode());
 		}
 		
-		writer.writeAttribute("create", df.format(answerSet.getDate()));
+		if (meta || filter == null || filter.exported("created")) writer.writeAttribute("create", answerSet == null ? row.get(row.size() - 4) : df.format(answerSet.getDate()));
 		writer.writeAttribute("list", list);
-		writer.writeAttribute("last", df.format(answerSet.getUpdateDate()));
-		writer.writeAttribute("lang", answerSet.getLanguageCode());
+		if (meta || filter == null || filter.exported("updated")) writer.writeAttribute("last", answerSet == null ? row.get(row.size() - 3) : df.format(answerSet.getUpdateDate()));
+		if (meta || filter == null || filter.exported("languages")) writer.writeAttribute("lang", answerSet == null ? row.get(row.size() - 2) : answerSet.getLanguageCode());
 		
-		if (meta)
+		if (meta || filter == null || filter.exported("user")) writer.writeAttribute("user",  answerSet == null ? row.get(row.size() - 5) : answerSet.getResponderEmail() != null ? answerSet.getResponderEmail() : "" );
+		if (meta || filter == null || filter.exported("invitation")) writer.writeAttribute("invitation", answerSet == null ? row.get(row.size() - 6) : answerSet.getInvitationId()  != null ? answerSet.getInvitationId() : "");
+		if (survey.getIsOPC()  && (meta || filter == null || filter.exported("user")))
 		{
-			writer.writeAttribute("user", answerSet.getResponderEmail() != null ? answerSet.getResponderEmail() : "" );
-			writer.writeAttribute("invitation", answerSet.getInvitationId()  != null ? answerSet.getInvitationId() : "");
-			if (answerSet.getSurvey().getIsOPC() && answerSet.getResponderEmail() != null && answerSet.getResponderEmail().contains("@"))
+			String suser = answerSet == null ? row.get(row.size() - 5) : answerSet.getResponderEmail();
+			if (suser != null && suser.contains("@") && ECASUserLoginsByEmail != null && ECASUserLoginsByEmail.containsKey(suser))
 			{
-				try {
-					if (ECASUserLoginsByEmail != null && ECASUserLoginsByEmail.containsKey(answerSet.getResponderEmail()))
-					{
-						writer.writeAttribute("userlogin", ECASUserLoginsByEmail.get(answerSet.getResponderEmail()) );
-					}
-				} catch (Exception e) {
-					logger.error(e.getLocalizedMessage(), e);
-				}
-			}
+				writer.writeAttribute("userlogin", ECASUserLoginsByEmail.get(suser) );
+			} 
 		}
 		
-		if (answerSet.getSurvey().getIsQuiz())
+		if (survey.getIsQuiz())
 		{
-			writer.writeAttribute("totalscore", answerSet.getScore() != null ? answerSet.getScore().toString() : "0");
+			writer.writeAttribute("totalscore", answerSet == null ? (row.get(row.size()-1) != null ? row.get(row.size()-1) : "0") : (answerSet.getScore() != null ? answerSet.getScore().toString() : "0"));
 		}
 
+		int answerrowcounter = 2;
 		for (Element question : questions) {
-			
-			if (question instanceof Matrix) {
-				Matrix matrix = (Matrix)question;
-				for(Element matrixQuestion: matrix.getQuestions()) {
-					List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(), matrixQuestion.getUniqueId());
-	
-					for (Answer answer : answers) {
-						writer.writeStartElement("Answer");
-						writer.writeAttribute("aid", answer.getPossibleAnswerUniqueId() != null ? answer.getPossibleAnswerUniqueId() : "");
-						writer.writeAttribute("qid", matrixQuestion.getUniqueId());
-						writer.writeEndElement(); //Answer
-					}
-				}
-			} else if (question instanceof RatingQuestion) {
-				RatingQuestion rating = (RatingQuestion)question;
-				for(Element childQuestion: rating.getQuestions()) {
-					List<Answer> answers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
-	
-					if (answers.size() > 0) {
-						writer.writeStartElement("Answer");
-						writer.writeAttribute("qid", childQuestion.getUniqueId());
-						
-						writer.writeCharacters(answers.get(0).getValue());
-						
-						writer.writeEndElement(); //Answer
-					}
-				}
-			} else if (question instanceof Table) {
-				Table table = (Table)question;
-				
-				for (int tableRow = 1; tableRow < table.getRows(); tableRow++) {
-					for (int tableCol = 1; tableCol < table.getColumns(); tableCol++) {
-						String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);
-						
-						Element tq = table.getQuestions().get(tableRow-1);
-						Element ta = table.getAnswers().get(tableCol-1);
-												
-						writer.writeStartElement("Answer");
-						writer.writeAttribute("qid", tq.getUniqueId());
-						writer.writeAttribute("aid", ta.getUniqueId());
-						
-						if (answer != null && answer.length() > 0)
-						{
-							writer.writeCharacters(answer);
-						}
-						writer.writeEndElement(); //Answer
-					}
-				}
-			} else if (question instanceof Question) {
-				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
-
-				for (Answer answer : answers) {
-					writer.writeStartElement("Answer");
-					
-					writer.writeAttribute("qid", question.getUniqueId());
-										
-					if (question instanceof ChoiceQuestion)
-					{
-						writer.writeAttribute("aid", answer.getPossibleAnswerUniqueId() != null ? answer.getPossibleAnswerUniqueId() : "");
-					} else if (question instanceof Upload)
-					{
-						StringBuilder text = new StringBuilder();
-						if (filesByAnswer.containsKey(answer.getId()))
-						{								
-							for (File file: filesByAnswer.get(answer.getId()))
+			if (filter == null || filter.exported(question.getId().toString()))
+			{
+				if (!(question instanceof Text || question instanceof Image || question instanceof Download || question instanceof Confirmation || question instanceof Ruler)) 
+				{
+					if (question instanceof Matrix) {
+						Matrix matrix = (Matrix)question;
+						for(Element matrixQuestion: matrix.getQuestions()) {
+							if (answerSet == null)
 							{
-								if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId()))
-								{
-									uploadedFilesByQuestionUID.put(question.getUniqueId(), new ArrayList<>());
+								String sanswers = row.get(answerrowcounter++);
+								String[] answers = sanswers.split(";");
+								for (String answer : answers) {
+									if (answer.length() > 0) {
+										writer.writeStartElement("Answer");
+										writer.writeAttribute("aid", answer);
+										writer.writeAttribute("qid", matrixQuestion.getUniqueId());
+										writer.writeEndElement(); //Answer
+									}
 								}
-								uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
-								
-								text.append((text.length() > 0) ? ";" : "").append(file.getName());
+							} else {
+								List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(), matrixQuestion.getUniqueId());
+				
+								for (Answer answer : answers) {
+									writer.writeStartElement("Answer");
+									writer.writeAttribute("aid", answer.getPossibleAnswerUniqueId() != null ? answer.getPossibleAnswerUniqueId() : "");
+									writer.writeAttribute("qid", matrixQuestion.getUniqueId());
+									writer.writeEndElement(); //Answer
+								}
 							}
 						}
-						writer.writeCharacters(text.toString());
-					} else {
-						writer.writeCharacters(form.getAnswerTitleStripInvalidXML(answer));
+					} else if (question instanceof RatingQuestion) {
+						RatingQuestion rating = (RatingQuestion)question;
+						for(Element childQuestion: rating.getQuestions()) {
+							if (answerSet == null)
+							{
+								writer.writeStartElement("Answer");
+								writer.writeAttribute("qid", childQuestion.getUniqueId());						
+								writer.writeCharacters(row.get(answerrowcounter++));						
+								writer.writeEndElement(); //Answer
+							} else {
+								List<Answer> answers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+			
+								if (answers.size() > 0) {
+									writer.writeStartElement("Answer");
+									writer.writeAttribute("qid", childQuestion.getUniqueId());						
+									writer.writeCharacters(answers.get(0).getValue());						
+									writer.writeEndElement(); //Answer
+								}
+							}
+						}
+					} else if (question instanceof Table) {
+						Table table = (Table)question;
+						
+						for (int tableRow = 1; tableRow < table.getRows(); tableRow++) {
+							for (int tableCol = 1; tableCol < table.getColumns(); tableCol++) {
+								Element tq = table.getQuestions().get(tableRow-1);
+								Element ta = table.getAnswers().get(tableCol-1);
+														
+								writer.writeStartElement("Answer");
+								writer.writeAttribute("qid", tq.getUniqueId());
+								writer.writeAttribute("aid", ta.getUniqueId());
+								
+								if (answerSet == null)
+								{
+									writer.writeCharacters(row.get(answerrowcounter++));						
+								} else {
+									String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);
+									if (answer != null && answer.length() > 0)
+									{
+										writer.writeCharacters(answer);
+									}							
+								}
+								
+								writer.writeEndElement(); //Answer
+							}
+						}
+					} else if (question instanceof Text) {	
+						//ignore					
+					} else if (question instanceof Question) {				
+						if (answerSet == null)
+						{
+							if (row.size() <= answerrowcounter)
+							{
+								logger.error("no data for question " + question.getId() + " found");
+							} else {
+							
+								String sanswers = row.get(answerrowcounter++);
+								String[] answers = sanswers.split(";");
+								for (String answer : answers)
+								{
+									if (answer.length() > 0) {
+										writer.writeStartElement("Answer");						
+										writer.writeAttribute("qid", question.getUniqueId());
+										if (question instanceof ChoiceQuestion)
+										{
+											writer.writeAttribute("aid", answer);
+										} else if (question instanceof Upload)
+										{
+											StringBuilder text = new StringBuilder();
+											File file;
+											try {
+												
+												if (answer.contains("|"))
+												{
+													answer = answer.substring(0, answer.indexOf("|"));
+												}
+												
+												file = fileService.get(answer);
+												if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId()))
+												{
+													uploadedFilesByQuestionUID.put(question.getUniqueId(), new ArrayList<>());
+												}
+												uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
+												
+												text.append((text.length() > 0) ? ";" : "").append(file.getName());
+											} catch (FileNotFoundException e) {
+												logger.error(e.getLocalizedMessage(), e);
+											}
+											
+											writer.writeCharacters(text.toString());
+										} else {
+											writer.writeCharacters(ConversionTools.removeInvalidHtmlEntities(answer));
+										}
+										
+										writer.writeEndElement(); //Answer
+									}
+								}
+							}
+						} else {
+							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+							for (Answer answer : answers) {
+								writer.writeStartElement("Answer");						
+								writer.writeAttribute("qid", question.getUniqueId());
+													
+								if (question instanceof ChoiceQuestion)
+								{
+									writer.writeAttribute("aid", answer.getPossibleAnswerUniqueId() != null ? answer.getPossibleAnswerUniqueId() : "");
+								} else if (question instanceof Upload)
+								{
+									StringBuilder text = new StringBuilder();
+									if (filesByAnswer.containsKey(answer.getId()))
+									{								
+										for (File file: filesByAnswer.get(answer.getId()))
+										{
+											if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId()))
+											{
+												uploadedFilesByQuestionUID.put(question.getUniqueId(), new ArrayList<>());
+											}
+											uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
+											
+											text.append((text.length() > 0) ? ";" : "").append(file.getName());
+										}
+									}
+									writer.writeCharacters(text.toString());
+								} else {
+									writer.writeCharacters(form.getAnswerTitleStripInvalidXML(answer));
+								}
+								
+								writer.writeEndElement(); //Answer
+							}
+						}
 					}
-					
-					writer.writeEndElement(); //Answer
 				}
 			}
 		}

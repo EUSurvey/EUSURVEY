@@ -27,7 +27,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.ExportCache;
 import com.ec.survey.model.Form;
 import com.ec.survey.model.ResultFilter;
@@ -199,9 +198,9 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 					
 			    	Form form = new Form(resources);
 			    	
-			    	List<AnswerSet> answerSets = answerService.getAllAnswers(survey.getId(), filter);
+			    	//List<AnswerSet> answerSets = answerService.getAllAnswers(survey.getId(), filter);
 			    	
-					form.setAnswerSets(answerSets);	    		    	
+					//form.setAnswerSets(answerSets);	    		    	
 			    	form.setSurvey(survey);
 			    	form.setPublicationMode(true);
 			    	
@@ -219,7 +218,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 						f.setName(filename);
 					}
 					
-					fileService.add(f);
+					fileService.addNewTransaction(f);
 					
 					java.io.File target = fileService.getSurveyExportFile(survey.getUniqueId(), uid);
 					java.io.File zipped = new java.io.File(target.getPath() + ".zip");

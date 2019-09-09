@@ -107,8 +107,7 @@
 
 	<%@ include file="../header.jsp" %>
 	<%@ include file="../menu.jsp" %>
-	<%@ include file="adminmenu.jsp" %>	
-	
+	<%@ include file="adminmenu.jsp" %>		
 	
 	<!--  set here hidden values coming from the -->
 		<c:choose>
@@ -124,11 +123,9 @@
 
 		<div class="fixedtitleform">
 			<div class="fixedtitleinner">
-				<h1><spring:message code="label.PublicSurveyManagement" /></h1>
-				
 				<div id="action-bar" class="container">
 					<div class="row">
-						<div class="col-md-12" style="text-align:center">
+						<div class="col-md-12" style="text-align:center; padding-top: 20px;">
 							<a onclick="$('#resultsForm').submit()" rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info"><spring:message code="label.Search" /></a>
 							<a onclick="resetSearch()" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
 						</div>

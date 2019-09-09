@@ -47,6 +47,10 @@
 	
 	<script type="text/javascript">
 		$(function() {	
+			
+			loadMore();
+			individualsMoveTo("first", null);
+			
 			$(".hidden").removeClass("hidden");		
 			
 			$(".filtercell").each(function(){
@@ -97,13 +101,21 @@
 		
 		function showResults()
 		{
-			<c:if test="${paging.items.size() > 0}">	
+		
 			$("#scrollarea").show();
 			$("#results-table").css("min-height", "400px");
-			</c:if>
+		
 			$(".contentonly").show();
 			$(".tab-pane-x").show();
 			$("#scrollareaheader").css("overflow-x", "hidden");
+			
+
+			if ($('#scrollarea').hasScrollBar())
+			{
+				$("#scrollareaheader").css("overflow-y","scroll");
+			} else {
+				$("#scrollareaheader").css("overflow-y","auto");
+			}
 		}
 		
 		function hideResults()
@@ -120,6 +132,13 @@
 					$(".tab-pane-x").hide();
 				</c:otherwise>
 			</c:choose>
+			
+			if ($('#scrollarea').hasScrollBar())
+			{
+				$("#scrollareaheader").css("overflow-y","scroll");
+			} else {
+				$("#scrollareaheader").css("overflow-y","auto");
+			}
 		}
 		
 		function showError(text)
@@ -229,6 +248,9 @@
 		var exporttype = "individuals";
 		function startExport()
 		{
+			$("#ask-export-dialog").find(".validation-error").hide();
+			$("#ask-export-dialog").find(".validation-error-keep").hide();
+			
 			var mail = $("#email").val();
 			if (mail.trim().length == 0 || !validateEmail(mail))
 			{
@@ -241,6 +263,12 @@
 			<c:choose>
 				<c:when test="${!captchaBypass}">			
 		   		 var uresponse = getResponse();
+		   		 
+		   		if (uresponse.trim().length == 0)
+			    {
+			    	$("#runner-captcha-empty-error").show();
+			    	return;
+			    }
 		   		</c:when>
 		   		<c:otherwise>
 		   		var uresponse = '';
@@ -294,7 +322,6 @@
 			{
 				url = "${contextpath}/publication/exportfiles/${form.survey.id}";
 				data = {email : mail, recaptcha_challenge_field : challenge, 'g-recaptcha-response' : uresponse, 'question' : exporttype.substring(5)};
-				
 			}
 			
 			if (url != null)
@@ -309,7 +336,7 @@
 							  	$('#ask-export-dialog').modal('hide');
 								showPublicationExportSuccessMessage();
 						  } else if (data == "errorcaptcha") {
-							 	showBasicError('<spring:message code="message.captchawrongnew" />');
+							  $("#runner-captcha-error").show();
 							} else {
 								showPublicationExportFailureMessage();
 							};
@@ -393,20 +420,18 @@
 							<div class="contentonly" style="text-align: center; position: fixed; top: 130px; padding: 10px; width: 100%; height: 46px; left:0px; background-color: #fff; z-index: 1010">
 								<div style="width: 850px; margin-left: auto; margin-right: auto">
 									<div style="text-align: right; height: 36px; float: right; width: 200px;">
-										<b><spring:message code="label.Export" /></b>
-										<c:choose>
-											<c:when test="${paging.items.size() == 0}">
-												<a style="cursor: not-allowed" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />"><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-												<a style="cursor: not-allowed" data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />"><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-											</c:when>
-											<c:otherwise>
-												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('resultsxls');" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
-												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('resultsods');" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
-											</c:otherwise>
-										</c:choose>
+										<b><spring:message code="label.Export" /></b>										
+										<span class="deactivatedexports">
+											<a style="cursor: not-allowed" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />"><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+											<a style="cursor: not-allowed" data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />"><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+										</span>
+										<span class="activatedexports" style="display: none">
+											<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('resultsxls');" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
+											<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('resultsods');" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
+										</span>										
 							  		</div>
 									<div style="text-align: center; margin-left: 200px">
-										<input type="submit" class="btn btn-default" value="<spring:message code="label.Refresh" />" />
+										<input type="submit" class="btn btn-default" value="<spring:message code="label.Search" />" />
 										<a class="btn btn-default" href="${contextpath}/publication/${form.survey.shortname}"><spring:message code="label.Reset" /></a>
 									</div>
 								</div>
@@ -416,9 +441,7 @@
 				  		<%@ include file="../management/results-content.jsp" %>	
 				  	</div>
 				  	<div class="tab-pane <c:if test="${selectedtab == 2}">active</c:if>" id="individual">
-			  			<c:if test="${paging.items.size() > 0}">
-					  		<%@ include file="../management/results-individual.jsp" %>					  		
-			  			</c:if>
+			  			<%@ include file="../management/results-individual.jsp" %>					  		
 			  			<c:if test="${paging.items.size() == 0 && !publication.isShowSearch()}">
 							<div style="min-width: 400px; font-size: 20px; text-align: center; padding: 10px; color: #36B500;"><spring:message code="message.NoResults" /></div>
 						</c:if>
@@ -426,33 +449,25 @@
 				 </c:if>
 				 <c:if test="${publication.showStatistics}">
 				 	 <div class="tab-pane <c:if test="${selectedtab == 3}">active</c:if>" id="statistics">							
-				 		<c:if test="${paging.items.size() > 0}">			  	
-				  		  	<div style="text-align: center; position: fixed; top: 130px; padding: 10px; width: 100%; left:0px; background-color: #fff;">
-				  		  		<b><spring:message code="label.Export" /></b>
-								
-								<c:choose>
-									<c:when test="${paging.items.size() == 0 || form.getSurvey().hasNoQuestionsForStatistics()}">
-										<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
-										<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-										<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-										<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportdoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
-										<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
-									</c:when>
-									<c:otherwise>
-										<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" onclick="showExportDialog('statspdf')" ><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>
-						  				<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('statsxls')" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
-										<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('statsods')" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
-						  				<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportdoc" />" onclick="showExportDialog('statsdoc')" ><img src="${contextpath}/resources/images/file_extension_doc_small.png" /></a>
-										<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" onclick="showExportDialog('statsodt')"><img src="${contextpath}/resources/images/file_extension_odt_small.png" /></a>
-					  				</c:otherwise>
-								</c:choose>
-																
-							</div>
-					  		<%@ include file="../management/results-statistics.jsp" %>									  		  		
-			  			</c:if>
-			  			<c:if test="${paging.items.size() == 0 && !publication.isShowSearch()}">
-							<div style="min-width: 400px; font-size: 20px; text-align: center; padding: 10px; color: #36B500;"><spring:message code="message.NoResults" /></div>
-						</c:if>  	
+			 		  	<div style="text-align: center; position: fixed; top: 130px; padding: 10px; width: 100%; left:0px; background-color: #fff;">
+			  		  		<b><spring:message code="label.Export" /></b>
+							
+							<span class="deactivatedstatexports">
+								<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+								<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+								<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+								<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportdoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
+								<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
+							</span>
+							<span class="activatedstatexports">
+								<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" onclick="showExportDialog('statspdf')" ><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>
+				  				<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('statsxls')" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
+								<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('statsods')" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
+				  				<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportdoc" />" onclick="showExportDialog('statsdoc')" ><img src="${contextpath}/resources/images/file_extension_doc_small.png" /></a>
+								<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" onclick="showExportDialog('statsodt')"><img src="${contextpath}/resources/images/file_extension_odt_small.png" /></a>
+			  				</span>
+						</div>
+				  		<%@ include file="../management/results-statistics.jsp" %>									  		  		
 				  	</div>
 				  	
 				  	<c:if test="${form.survey.isQuiz}">
@@ -472,10 +487,7 @@
 																	
 								</div>
 						  		<%@ include file="../management/results-statistics-quiz.jsp" %>									  		  		
-				  			</c:if>
-				  			<c:if test="${paging.items.size() == 0 && !publication.isShowSearch()}">
-								<div style="min-width: 400px; font-size: 20px; text-align: center; padding: 10px; color: #36B500;"><spring:message code="message.NoResults" /></div>
-							</c:if>  	
+				  			</c:if>	
 					  	</div>
 				  	
 				  	</c:if>

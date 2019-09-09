@@ -58,7 +58,7 @@ var NavigationModel = function () {
     		} else if ($(e).hasClass("matrix-header"))
     		{
     			ni.title = getLimitedText($(e).find("textarea[name^=text]").first().text());
-    		} else if ($(e).hasClass("imageitem") || $(e).hasClass("textitem"))
+    		} else if ($(e).hasClass("imageitem") || $(e).hasClass("textitem") || $(e).hasClass("ruleritem"))
     		{
     			ni.title = getLimitedText($(e).find("textarea[name^=text]").first().text());
     		} else {

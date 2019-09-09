@@ -12,8 +12,6 @@ import com.ec.survey.service.SessionService;
 import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.tools.NotAgreedToTosException;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -65,7 +63,7 @@ public class SurveyController extends BasicController {
 			if (allowed)
 			{
 				try {
-					Form form = sessionService.getForm(request, null, false);
+					Form form = sessionService.getForm(request, null, false, false);
 					
 					if (form != null && form.getSurvey() != null && form.getSurvey().getUniqueId().equals(survey.getUniqueId()))
 					{
@@ -121,6 +119,9 @@ public class SurveyController extends BasicController {
     		if (origin != null && origin.equalsIgnoreCase("dashboard"))
     		{
     			return new ModelAndView("redirect:/dashboard?deleted=" + shortname);
+    		} else if (origin != null && origin.equalsIgnoreCase("surveysearch"))
+    		{
+    			return new ModelAndView("redirect:/administration/surveysearch?normaldeleted=" + shortname);
     		}
     	}
     	
@@ -134,7 +135,7 @@ public class SurveyController extends BasicController {
 	}	
 	
 	@RequestMapping(value = "/surveysjson", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<Survey> surveysjson(HttpServletRequest request) throws NotAgreedToTosException {	
+	public @ResponseBody List<Survey> surveysjson(HttpServletRequest request) throws Exception {	
 		
 		String rows = request.getParameter("rows");		
 		int itemsPerPage = Integer.parseInt(rows);
@@ -158,7 +159,7 @@ public class SurveyController extends BasicController {
 		String shortname = request.getParameter("name");	
 		String id = request.getParameter("id");	
 		
-		Survey existingSurvey = surveyService.getSurvey(shortname, true, false, false, false, null, true);
+		Survey existingSurvey = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
 		
 		if (existingSurvey != null)
 		{

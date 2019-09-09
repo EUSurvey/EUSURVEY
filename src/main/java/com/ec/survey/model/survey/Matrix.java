@@ -8,6 +8,8 @@ import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
+
+import java.text.Collator;
 import java.util.*;
 
 /**
@@ -237,7 +239,7 @@ public class Matrix extends MatrixOrTable {
 		
 		if (!Objects.equals(order, matrix.order)) return true;
 		
-		if (isInterdependent != matrix.isInterdependent) return true;
+		if (!isInterdependent.equals(matrix.isInterdependent)) return true;
 		
 		return false;
 	}
@@ -287,7 +289,8 @@ public class Matrix extends MatrixOrTable {
 		
 		if (order != null && order == 1)
 		{
-			Map<String, Element> elements = new TreeMap<>();
+			final Collator instance = Collator.getInstance();
+			Map<String, Element> elements = new TreeMap<>(instance);
 			for (Element element: getQuestions())
 			{
 				if (elements.containsKey(element.getTitle()))
@@ -345,5 +348,13 @@ public class Matrix extends MatrixOrTable {
 	}
 	public void setForeditor(boolean foreditor) {
 		this.foreditor = foreditor;
+	}
+
+	public Element getChildByUniqueId(String uid) {
+		for (Element child : getChildElements())
+		{
+			if (child.getUniqueId().equals(uid)) return child;
+		}
+		return null;
 	}
 }

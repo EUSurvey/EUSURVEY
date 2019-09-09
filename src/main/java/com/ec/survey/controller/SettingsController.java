@@ -103,6 +103,7 @@ public class SettingsController extends BasicController {
 		user.setPassword(Tools.hash(newPassword + user.getPasswordSalt()));
 		
 		administrationService.updateUser(user);
+		sessionService.setCurrentUser(request, user);
 		
 		model.addAttribute("message", resources.getMessage("info.PasswordChanged", null, "The password has been changed", locale));
 		return "settings/myAccount";		

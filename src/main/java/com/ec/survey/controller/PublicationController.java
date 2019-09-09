@@ -56,7 +56,7 @@ public class PublicationController extends BasicController  {
 
 		try {
 		
-			Survey survey = surveyService.getSurveyByShortname(shortname, false, null, request, false, true, true);  //getSurvey(shortname, false, false, false, false, null, true);
+			Survey survey = surveyService.getSurveyByShortname(shortname, false, null, request, false, true, true, false);  //getSurvey(shortname, false, false, false, false, null, true);
 			String lang = request.getParameter("surveylanguage");
 			
 			ResultFilter userFilter = new ResultFilter();
@@ -140,9 +140,9 @@ public class PublicationController extends BasicController  {
 					
 					List<AnswerSet> answerSets = new ArrayList<>();
 					
-                    SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
-				    answerSets = answerService.getAnswers(survey.getId(), userFilter, sqlPagination, false, false);
-				    
+                    //SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
+                    //answerSets = answerService.getAnswers(survey, userFilter, sqlPagination, false, false, true);
+				    				    
 				    if (lang != null) {
 						survey = SurveyHelper.createTranslatedSurvey(survey.getId(), lang, surveyService, translationService, true);
 					}
@@ -205,7 +205,7 @@ public class PublicationController extends BasicController  {
 		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);		
 		
 		String publicationpassword = parameters.get("publicationpassword")[0];
-		Survey survey = surveyService.getSurveyByShortname(shortname, false, null, request, false, true, true);
+		Survey survey = surveyService.getSurveyByShortname(shortname, false, null, request, false, true, true, false);
 		
 		if (survey != null)
 		{				
@@ -256,7 +256,7 @@ public class PublicationController extends BasicController  {
 					if (userFilter != null) filter = userFilter;
 					
                     SqlPagination sqlPagination = new SqlPagination(Integer.parseInt(counter)+1, 1);
-					List<AnswerSet> answerSets = answerService.getAnswers(survey.getId(), filter, sqlPagination, false, false);
+                    List<AnswerSet> answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, false, true);
 					
 					Map<String, String> result = new HashMap<>();
 					

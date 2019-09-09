@@ -136,8 +136,17 @@ function update(input)
 		case "Name":
 			var text = $(input).val();
 			var oldtext = element.attributeName();
-			element.attributeName(text);
-			_undoProcessor.addUndoStep(["Name", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			
+			if (text != oldtext)
+			{
+				if (!checkUniqueAttributeName(input))
+				{
+					return;
+				}
+				
+				element.attributeName(text);
+				_undoProcessor.addUndoStep(["Name", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			}
 			break;
 		case "Order":
 			var text = $(input).val();
@@ -162,6 +171,11 @@ function update(input)
 				}
 				_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 				checkInputStates();
+			} else if ($(_elementProperties.selectedelement).hasClass("ruleritem")) {
+				var text = $(input).val();
+				var oldtext = element.style();
+				element.style(text);
+				_undoProcessor.addUndoStep(["Style", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			} else {
 				var text = $(input).val();
 				var oldtext;
@@ -269,7 +283,7 @@ function update(input)
 					//nothing to do
 				} else if (element.min() != v)
 				{
-					element.min(text);
+					element.min(text.length == 0 ? null : text);
 					element.minString(text);
 					_undoProcessor.addUndoStep(["Values", id, $(_elementProperties.selectedelement).index(), oldtext, text, $(input).attr("data-type")]);	
 				}
@@ -280,7 +294,7 @@ function update(input)
 					//nothing to do
 				} else if (element.max() != v)
 				{
-					element.max(text);
+					element.max(text.length == 0 ? null : text);
 					element.maxString(text);
 					_undoProcessor.addUndoStep(["Values", id, $(_elementProperties.selectedelement).index(), oldtext, text, $(input).attr("data-type")]);	
 				}				
@@ -345,6 +359,34 @@ function update(input)
 				}
 				_undoProcessor.addUndoStep(["NumberOfAnsweredRows", id, $(_elementProperties.selectedelement).index(), oldvalue, v, $(input).attr("data-type")]);
 			}
+			
+			//also update "other" element
+			if ($(input).attr("data-to"))
+			{
+				text = $("#" + $(input).attr("data-to")).val();
+				oldvalue = oldvalue = element.maxRows();
+			} else {
+				text = $("#" + $(input).attr("data-from")).val();
+				oldvalue = element.minRows();
+			}
+			
+			if (text.length == 0) text = 0;
+			v = parseInt(text);
+			var othertype;
+			if (v != oldvalue)
+			{
+				if ($(input).attr("data-type") == "min")
+				{
+					element.maxRows(v);
+					othertype = "max";
+				} else if ($(input).attr("data-type") == "max")
+				{
+					element.minRows(v);
+					othertype = "min";
+				}
+				_undoProcessor.addUndoStep(["NumberOfAnsweredRows", id, $(_elementProperties.selectedelement).index(), oldvalue, v, othertype]);
+			}			
+			
 			break;
 		case "Align":
 			var text = $(input).val();
@@ -767,6 +809,18 @@ function update(input)
 				_undoProcessor.addUndoStep(["NumIcons", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			}
 			break;
+		case "Color":
+			var text = $(input).val();
+			var oldtext = element.color();
+			element.color(text);
+			_undoProcessor.addUndoStep(["Color", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			break;
+		case "Height":
+			var text = $(input).val();
+			var oldtext = element.height();
+			element.height(text);
+			_undoProcessor.addUndoStep(["Height", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			break;
 		default:
 			throw label + " not implemented"; 
 	}	
@@ -977,7 +1031,16 @@ function save(span)
 			break;
 		default:		
 			_elementProperties.selectedid = $(span).closest("tr").find("textarea").first().attr("id");
-			var text = tinyMCE.get(_elementProperties.selectedid).getContent();
+			var text = tinyMCE.get(_elementProperties.selectedid).getContent({format: 'raw'});
+			
+			var doc = new DOMParser().parseFromString(text, 'text/html');
+			text = new XMLSerializer().serializeToString(doc);
+			
+			//var titleMatch = new RegExp("<body>([^]*)<\/body>","im");
+			//text = text.match(titleMatch)[1];
+			
+			/<body>([^]*)<\/body>/im.exec(text);
+			text = RegExp.$1;
 			
 			switch(label) {
 				case  "Text":
@@ -1086,9 +1149,11 @@ function updateColumns(element, columns)
 function updateRows(element, rows)
 {
 	var questions = [];
+	var allmandatory = true;
 	for (var i = 0; i < element.questions().length; i++)
 	{
 		questions[element.questions()[i].originalTitle()] = element.questions()[i];
+		if (element.questions()[i].optional()) allmandatory = false;
 	}
 
 	element.questions.removeAll();
@@ -1098,7 +1163,7 @@ function updateRows(element, rows)
 		{
 			element.questions.push(questions[rows[i]]);
 		} else {
-			var newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, "<span class=\"optional\">*</span>" + rows[i], rows[i], false, "", element.questions().length);
+			var newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, "<span class=\"" + (allmandatory ? "mandatory" : "optional") + "\">*</span>" + rows[i], rows[i], false, "", element.questions().length);
 			element.questions.push(newelement);
 		}
 	}

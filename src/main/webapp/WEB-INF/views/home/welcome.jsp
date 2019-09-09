@@ -16,19 +16,7 @@
 	</style>
 	
 	<script type="text/javascript">
-	
-		function requestLink()
-		{
-			if ($("#email").val() == null || $("#email").val() == '' || $("#login").val() == null || $("#login").val() == '' || !validateEmail($("#email").val()) )
-			{
-				$("#errorMessage").show();
-				return;
-			}
-			
-			$("#forgotPasswordForm").submit();
-		}
-
-	
+		
 		function logoutECAS()
 		{
 			$('#ecas-dialog').modal('hide');
@@ -53,6 +41,7 @@
 			var caseid = $("#caseid").val();
 			
 			$('#download-contribution-dialog').find(".validation-error").hide();
+			$('#download-contribution-dialog').find(".validation-error-keep").hide();
 			
 			if (caseid.trim().length == 0)
 			{
@@ -65,6 +54,12 @@
 
 				var challenge = getChallenge($('#download-contribution-dialog'));
 			    var uresponse = getResponse($('#download-contribution-dialog'));
+			    
+			    if (uresponse.trim().length == 0)
+			    {
+			    	$("#runner-captcha-empty-error").show();
+			    	return;
+			    }
 			   			    
 			    var csrftoken = $("meta[name='_csrf']").attr("content");
 				var csrfheader = $("meta[name='_csrf_header']").attr("content");
@@ -80,7 +75,7 @@
 								$('#download-contribution-dialog').modal('hide');
 								showInfo(message_PublicationExportSuccess2.replace('{0}', val));
 						  	} else if (data == "errorcaptcha") {
-						  		$("#download-contribution-dialog-error-captcha").show();
+						  		$("#runner-captcha-error").show();
 						  		reloadCaptcha();
 						  	} else if (data == "errorcaseid") {
 						  		$("#download-contribution-dialog-caseid-error").show();
@@ -166,11 +161,11 @@
 											<c:choose>
 												<c:when test="${showecas != null}">
 													<a id="loginEcasLinkFromWelcome" class="bigLinkBoxHighlighted"  onclick="$(this).closest('form').submit()">
-														<spring:message code="label.Login" />
+														<spring:message code="label.DoLogin" />
 													</a>
 												</c:when>
 												<c:otherwise>
-													<a id="loginInternalLinkFromWelcome" class="bigLinkBoxHighlighted" href="<c:url value="/auth/login"/>"><spring:message code="label.Login" /></a>												
+													<a id="loginInternalLinkFromWelcome" class="bigLinkBoxHighlighted" href="<c:url value="/auth/login"/>"><spring:message code="label.DoLogin" /></a>												
 												</c:otherwise>
 											</c:choose>
 										</td>
@@ -285,42 +280,6 @@
 			$("#ecas-dialog").modal('show');
 		</script>
 	</c:if>
-
-	<c:if test="${draftAlreadySubmitted == 'true'}">
-		<!--  Sometimes the access to a draft is denied if the contribution is already submitted. Instead, this message is shown. -->		
-		<div class="modal" id="draftalreadysubmitted-dialog" data-backdrop="static">
-		  <div class="modal-dialog modal-sm">
-    	  <div class="modal-content">
-		  <div class="modal-header"><spring:message code="message.AccessDenied" /></div>
-		  <div class="modal-body">	
-		  	<spring:message code="error.DraftAlreadySubmitted" />
-		  </div>
-		  <div class="modal-footer">
-			<button class="btn btn-info" data-dismiss="modal"><spring:message code="label.Cancel" /></button>			
-		  </div>
-		  </div>
-		  </div>
-		</div>
-		
-		<script type="text/javascript">
-			$("#draftalreadysubmitted-dialog").modal('show');
-			var countDownCounter = 12;
-			function countDownAndClose () {
-				if (countDownCounter>0) {
-					var span = document.getElementById('redirectSeconds');
-					while( span.firstChild ) {
-					    span.removeChild( span.firstChild );
-					}
-					span.appendChild( document.createTextNode(countDownCounter.toString()) );
-					countDownCounter -= 1;
-					window.setTimeout("countDownAndClose()", 1000);
-				} else {
-	 				$("#draftalreadysubmitted-dialog").modal('hide');
-				}
-			};
-			countDownAndClose();
-		</script>
-	</c:if>
 	
 	<div class="modal" id="download-contribution-dialog" data-backdrop="static">
 		<div class="modal-dialog">
@@ -331,7 +290,6 @@
 			</div>
 			<div class="modal-body">
 				<spring:message code="label.EnterContributionId" />
-				<div class="help"><spring:message code="info.contributionId" /></div>
 				<input type="text" maxlength="255" name="caseid" id="caseid" /><br />
 				<span id="download-contribution-dialog-caseid-error" class="validation-error hideme">
 					<spring:message code="validation.invalidContributionId" />
@@ -363,43 +321,6 @@
 		</div>
 		</div>
 	</div>
-		
-	<!-- <div class="modal" id="forgot-password-dialog" data-backdrop="static">
-		<div class="modal-dialog">
-    	<div class="modal-content">
-		<form:form id="forgotPasswordForm" action="${contextpath}/auth/forgotPassword" method="post" style="margin: 0px;" >			
-			<c:choose>
-				<c:when test="${oss !=false && casoss !=null}">
-			<div class="modal-body">
-						<spring:message code="message.forgot.oss.password" /><br />
-					</div>
-					<div class="modal-footer">
-						<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.OK" /></a>			
-					</div>						  						  	
-				</c:when>				
-				<c:otherwise>
-
-					<div class="modal-body">
-				<spring:message code="label.PleaseEnterYourLogin" /><br />
-				<input id="login" type="text" name="login" maxlength="255" /><br /><br />
-				<spring:message code="label.PleaseEnterYourEmail" /><br />
-				<input id="email" type="text" name="email" maxlength="255" class="email" /><br />
-				<span id="errorMessage" style="color: #f00; display: none;"><spring:message code="error.PleaseEnterYourNameAndEmail" /></span>
-				<div style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">
-					<%@ include file="../captcha.jsp" %>	
-	        	</div>				
-			</div>
-			<div class="modal-footer">
-				<a  onclick="requestLink();" class="btn btn-default"><spring:message code="label.OK" /></a>
-				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
-			</div>	
-				</c:otherwise>
-			</c:choose>
-			
-		</form:form>
-		</div>
-		</div>
-	</div> -->
 	
 	<%@ include file="../footer.jsp" %>	
 	<%@ include file="../generic-messages.jsp" %>

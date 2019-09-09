@@ -19,8 +19,7 @@
 		 	padding-right: 30px; 
 		 	margin-bottom: 30px;
 		 	width: 220px; 
-		 } 
-		
+		 } 		
 		
 		 .left-area { 
 		 	float: left;  
@@ -29,8 +28,7 @@
 		 	padding: 20px;  
 		 	width: 580px; 
 		 	 </c:if>
-		 }
-		
+		 }		
 		 
 		 .surveytitle {
 		 	font-weight: bold; 
@@ -372,8 +370,10 @@
 				</div>
 				
 				<div style="clear: both"></div>
+				<img id="wheel" class="hideme" style="margin-left: 50px" src="${contextpath}/resources/images/ajax-loader.gif" />
+	
 			</div>
-		
+			
 		</form:form>
 	</div>
 

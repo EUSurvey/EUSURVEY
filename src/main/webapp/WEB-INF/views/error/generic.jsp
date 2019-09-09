@@ -14,7 +14,7 @@
 					 $(".headerlink, .header a").each(function(){
 						 if (!$(this).hasClass("messageicon") && $(this).attr("id") != 'logoutBtnFromHeader'  && !$(this).hasClass("skipScriptAnchor"))
 						 {
-							if ($(this).attr("href").indexOf("?") == -1)
+							if ($(this).attr("href") && $(this).attr("href").indexOf("?") == -1)
 							{
 							 $(this).attr("target","_blank").attr("href", $(this).attr("href") + "/runner");
 							}
@@ -28,6 +28,7 @@
 			function startExport()
 			{
 				$("#ask-export-dialog").find(".validation-error").hide();
+				$("#ask-export-dialog").find(".validation-error-keep").hide();
 				
 				var mail = $("#email").val();
 				if (mail.trim().length == 0 || !validateEmail(mail))
@@ -38,6 +39,12 @@
 				
 				var challenge = getChallenge();
 			    var uresponse = getResponse();
+			    
+			    if (uresponse.trim().length == 0)
+			    {
+			    	$("#runner-captcha-empty-error").show();
+			    	return;
+			    }
 			
 				$.ajax({
 					type:'GET',
@@ -50,7 +57,7 @@
 								$('#ask-export-dialog').modal('hide');
 								showInfo(message_PublicationExportSuccess);
 						  	} else if (data == "errorcaptcha") {
-						  		$("#ask-export-dialog-error-captcha").show();
+						  		$("#runner-captcha-error").show();
 						  		reloadCaptcha();
 							} else {
 								showExportFailureMessage();

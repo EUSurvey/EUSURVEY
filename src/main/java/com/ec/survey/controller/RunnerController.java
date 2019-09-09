@@ -12,7 +12,6 @@ import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
-
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.owasp.esapi.ESAPI;
@@ -212,7 +211,7 @@ public class RunnerController extends BasicController {
 				if (survey == null) {
 					survey = surveyService.getSurvey(participationGroup.getSurveyId(), false, true);
 					// this is the base/draft survey, but we need the active one
-					survey = surveyService.getSurvey(survey.getShortname(), false, true, false, false, null, true);
+					survey = surveyService.getSurvey(survey.getShortname(), false, true, false, false, null, true, true);
 				}
 
 				if (survey != null) {
@@ -261,7 +260,7 @@ public class RunnerController extends BasicController {
 					}
 
 					ModelAndView model = new ModelAndView("runner/runner", "form", f);
-					
+					surveyService.initializeSkin(f.getSurvey());
 					model.addObject("submit", !readonlyMode);
 					model.addObject("runnermode", true);
 					model.addObject("invitation", invitation.getId());
@@ -370,15 +369,15 @@ public class RunnerController extends BasicController {
 	@RequestMapping(value = "/{shortname}/{token}", method = RequestMethod.POST)
 	public ModelAndView runnerTokenPost(@PathVariable String shortname, @PathVariable String token, HttpServletRequest request, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException {
 
-		Survey survey = surveyService.getSurveyByShortname(shortname, false, null, request, true, true, true);  //(shortname, false, true, false, false, null, true);
+		Survey survey = surveyService.getSurveyByShortname(shortname, false, null, request, true, true, true, true);  //(shortname, false, true, false, false, null, true);
 		
 		if (survey == null)
 		{
-			survey = surveyService.getSurvey(shortname, false, true, false, false, null, true);
+			survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, true);
 		}
 		
 		if (survey == null) {
-			Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true);
+			Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
 			if (draft != null && !draft.getIsDeleted() && !draft.getArchived()) {
 
 				return getEscapePageModel(draft, request, device);
@@ -422,7 +421,7 @@ public class RunnerController extends BasicController {
 			if (survey == null) {
 				survey = surveyService.getSurvey(participationGroup.getSurveyId(), false, true);
 				// this is the base/draft survey, but we need the active one
-				survey = surveyService.getSurvey(survey.getShortname(), false, true, false, false, null, true);
+				survey = surveyService.getSurvey(survey.getShortname(), false, true, false, false, null, true, true);
 			}
 
 			Attendee attendee = attendeeService.get(invitation.getAttendeeId());
@@ -455,7 +454,7 @@ public class RunnerController extends BasicController {
 			}
 
 			if (!Tools.validUniqueCode(uniqueCode)) {
-				return new ModelAndView("error/basic");
+				return new ModelAndView("redirect:/errors/500.html");
 			}
 			
 
@@ -482,7 +481,7 @@ public class RunnerController extends BasicController {
 				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());				
 				
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
-				
+				surveyService.initializeSkin(f.getSurvey());
 				model.addObject("submit", true);
 				model.addObject("runnermode", true);
 				model.addObject("uniqueCode", uniqueCode);
@@ -502,7 +501,7 @@ public class RunnerController extends BasicController {
 				}
 				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
-				
+				surveyService.initializeSkin(f.getSurvey());
 				model.addObject("submit", true);
 				model.addObject("runnermode", true);
 				model.addObject("uniqueCode", uniqueCode);
@@ -523,6 +522,7 @@ public class RunnerController extends BasicController {
 				f.setValidation(validation);
 
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
+				surveyService.initializeSkin(f.getSurvey());
 				model.addObject("submit", true);
 				model.addObject("uniqueCode", uniqueCode);
 				model.addObject("message", resources.getMessage("error.CheckValidation", null, "Please check for validation errors.", locale));
@@ -540,6 +540,7 @@ public class RunnerController extends BasicController {
 					Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()), survey.getLanguage(), resources, contextpath);
 					f.getAnswerSets().add(answerSet);
 					ModelAndView model = new ModelAndView("runner/runner", "form", f);
+					surveyService.initializeSkin(f.getSurvey());
 					model.addObject("submit", true);
 					model.addObject("uniqueCode", uniqueCode);
 					model.addObject("wrongcaptcha", "true");
@@ -594,6 +595,7 @@ public class RunnerController extends BasicController {
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()), survey.getLanguage(), resources, contextpath);
 				f.getAnswerSets().add(answerSet);
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
+				surveyService.initializeSkin(f.getSurvey());
 				model.addObject("submit", true);
 				model.addObject("uniqueCode", uniqueCode);
 				model.addObject("invitation", invitation.getId());
@@ -657,7 +659,7 @@ public class RunnerController extends BasicController {
 		Survey survey = null;
 		
 		try {
-			survey = surveyService.getSurveyByShortname(shortname, false, null, request, true, true, true);
+			survey = surveyService.getSurveyByShortname(shortname, false, null, request, true, true, true, true);
 		} catch (InvalidURLException iue)
 		{
 			//ignore
@@ -665,11 +667,11 @@ public class RunnerController extends BasicController {
 		
 		if (survey == null)
 		{
-			survey = surveyService.getSurvey(shortname, false, true, false, false, null, true);
+			survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, true);
 		}
 		
 		if (survey == null) {
-			Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true);
+			Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
 			if (draft != null && !draft.getIsDeleted() && !draft.getArchived()) {
 
 				return getEscapePageModel(draft, request, device);
@@ -723,6 +725,7 @@ public class RunnerController extends BasicController {
 			SurveyHelper.calcTableWidths(f.getSurvey(), surveyService, f);
 
 			ModelAndView model = new ModelAndView("runner/runner", "form", f);
+			surveyService.initializeSkin(f.getSurvey());
 			model.addObject("action", "pdf");
 			model.addObject("forpdf", "true");
 			f.setForPDF(true);
@@ -734,7 +737,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@RequestMapping(value = "/{uidorshortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException {
+	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException {
 
 		ModelAndView modelReturn= new ModelAndView();
 		boolean internalUsersOnly = false;
@@ -748,7 +751,17 @@ public class RunnerController extends BasicController {
 			modelReturn.setViewName("redirect:/runner/" + uidorshortname);
 			return modelReturn;
 		}
+		
+		boolean isDraft = request.getParameter("draft") != null && request.getParameter("draft").equalsIgnoreCase("true");
+		
 		String lang = request.getParameter("surveylanguage");
+		
+		if (lang == null && !isDraft)
+		{
+			Survey draft = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true, true);
+			lang = draft.getLanguage().getCode();
+		}
+		
 		String p = request.getParameter("readonly");
 		if (p != null && p.equalsIgnoreCase("true"))
 		{
@@ -767,16 +780,15 @@ public class RunnerController extends BasicController {
 			}
 		}
 		
-		boolean isDraft = request.getParameter("draft") != null && request.getParameter("draft").equalsIgnoreCase("true");
-		Survey survey = surveyService.getSurvey(uidorshortname, isDraft, true, false, false, null, true);
+		Survey survey = surveyService.getSurvey(uidorshortname, isDraft, true, false, false, lang, true, true);
 		
 		if (survey == null && readonlyMode)
 		{
-			survey = surveyService.getSurvey(uidorshortname, isDraft, false, false, false, null, true);
+			survey = surveyService.getSurvey(uidorshortname, isDraft, false, false, false, lang, true, true);
 		}
 		
 		if (survey == null && !isDraft) {
-			Survey draft = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true);
+			Survey draft = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true, true);
 			if (draft != null && !draft.getIsDeleted() && !draft.getArchived()) {
 				return getEscapePageModel(draft, request, device);
 			} else {
@@ -801,13 +813,24 @@ public class RunnerController extends BasicController {
 						if (readonlyMode || (user != null && user.getType().equalsIgnoreCase(User.ECAS) && ecasauthenticated))
 						{
 							//if the user already submitted, show error page
-							if (answerService.userAnsweredSurvey(survey, user))
+							int contributionsCount = answerService.userContributionsToSurvey(survey, user);
+							if (contributionsCount > 0)
 							{
-								request.getSession().removeAttribute("ECASSURVEY");
-								modelReturn.setViewName("error/generic");
-								modelReturn.addObject("runnermode", true);
-								modelReturn.addObject("message", resources.getMessage("error.UserAlreadySubmitted", null, "This account has already been used to submit a contribution. Multiple submission is prohibited.", locale));
-								return modelReturn;
+								if (survey.getAllowedContributionsPerUser() == 1 || survey.getAllowedContributionsPerUser() <= contributionsCount)
+								{								
+									request.getSession().removeAttribute("ECASSURVEY");
+									modelReturn.setViewName("error/generic");
+									modelReturn.addObject("runnermode", true);
+									
+									if (survey.getAllowedContributionsPerUser() == 1)
+									{
+										modelReturn.addObject("message", resources.getMessage("error.UserAlreadySubmitted", null, "This account has already been used to submit a contribution. Multiple submission is prohibited.", locale));
+									} else {
+										modelReturn.addObject("message", resources.getMessage("error.UserAlreadySubmitted2", null, "You have submitted the maximum number of contributions this survey allows. Further contributions are not allowed.", locale));
+									}
+									
+									return modelReturn;
+								}
 							}
 							
 							if (readonlyMode || (survey.getEcasMode() != null && survey.getEcasMode().equalsIgnoreCase("all")))
@@ -930,7 +953,7 @@ public class RunnerController extends BasicController {
 		}
 	}
 
-	private ModelAndView loadSurvey(Survey survey, HttpServletRequest request, HttpServletResponse response, Locale locale, String action, boolean passwordauthenticated, Device device, boolean readonlyMode) {
+	private ModelAndView loadSurvey(Survey survey, HttpServletRequest request, HttpServletResponse response, Locale locale, String action, boolean passwordauthenticated, Device device, boolean readonlyMode) throws ForbiddenURLException {
 		if (survey != null) {
 			String draftid = request.getParameter("draftid");
 
@@ -939,6 +962,8 @@ public class RunnerController extends BasicController {
 					Draft draft = answerService.getDraft(draftid);
 					ModelAndView err = testDraftAlreadySubmitted(survey, draft, locale);
 					if (err != null) return err;
+				} catch (ForbiddenURLException fe) {
+					throw fe;
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
@@ -975,7 +1000,8 @@ public class RunnerController extends BasicController {
 			}
 
 			ModelAndView model = new ModelAndView("runner/runner", "form", f);
-
+			surveyService.initializeSkin(f.getSurvey());
+			
 			model.addObject("submit", !readonlyMode);
 			model.addObject("action", action);
 			model.addObject("runnermode", true);
@@ -1048,17 +1074,15 @@ public class RunnerController extends BasicController {
 			
 			java.io.File file = new java.io.File(validFileName);
 			
-			if (file.delete()) {
+			if (file.exists() && file.delete()) {
 				String files = getFiles(file.getParentFile());
 				return "{\"success\": true, \"files\": [" + files + "]}";
 			} else {
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				logger.error("deleting" + validFileName + " not possible!");
 				return "{\"success\": false}";
 			}
-
+		} catch (org.owasp.esapi.errors.ValidationException vex) {
+			return "{\"success\": false}";	
 		} catch (Exception ex) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			logger.error(ex.getMessage());
 		}
 
@@ -1069,7 +1093,7 @@ public class RunnerController extends BasicController {
 		Validator validator = ESAPI.validator();
 		String folderPath = fileService.getSurveyUploadsFolder(surveyUID, false) + "/" + uniqueCode + "/" + id ;
 		String canonicalPath = new File(folderPath).getCanonicalPath(); 
-		boolean validDirectoryPath = validator.isValidDirectoryPath("check dircetory path in RunnerController.delete method", canonicalPath, fileService.getSurveyUploadsFolder(surveyUID, false), false);
+		boolean validDirectoryPath = validator.isValidDirectoryPath("check directory path in RunnerController.delete method", canonicalPath, fileService.getSurveyUploadsFolder(surveyUID, false), false);
 		if (!validDirectoryPath) {
 			throw new  ValidationException("Invalid folder path: " + folderPath,"Invalid folder path: " + folderPath );
 		}
@@ -1090,12 +1114,22 @@ public class RunnerController extends BasicController {
 			writer = response.getWriter();
 		} catch (IOException ex) {
 			logger.error(ex.getLocalizedMessage(), ex);
-		}
-
+		}	
+		
 		String filename;
+		java.io.File tempFile = null;
 
 		try {
-
+			if (!Tools.isUUID(uniqueCode))
+			{
+				throw new Exception("invalid unique code");
+			}
+			
+			if (!Tools.isInteger(id))
+			{
+				throw new Exception("invalid id");
+			}
+			
 			if (request instanceof DefaultMultipartHttpServletRequest) {
 				DefaultMultipartHttpServletRequest r = (DefaultMultipartHttpServletRequest) request;
 				filename = r.getFile("qqfile").getOriginalFilename();
@@ -1130,24 +1164,67 @@ public class RunnerController extends BasicController {
 			{
 				Survey survey = surveyService.getSurveyForQuestion(element.getUniqueId());
 				surveyuid = survey.getUniqueId();
-			}			
-						
+			}
+			
+			tempFile = fileService.getLocalTemporaryFile();
+			fos = new FileOutputStream(tempFile);
+			IOUtils.copy(is, fos);
+			fos.close();
+			
 			java.io.File folder = fileService.getSurveyUploadsFolder(surveyuid, false);							
 			java.io.File directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, id));		
-			directory.mkdirs();
-
-			if (!wrongextension)
-			{			
-				java.io.File file = new java.io.File(directory.getPath() + "/" + filename);
-	
-				fos = new FileOutputStream(file);
-				IOUtils.copy(is, fos);
-			}
-
-			String files = getFiles(directory);
-			response.setStatus(HttpServletResponse.SC_OK);
 			
-			writer.print("{\"success\": true, \"files\": [" + files + "], \"wrongextension\": " + wrongextension + "}");
+			//we try 3 times to create the folders
+			boolean error = false;
+			if (!directory.exists() && !directory.mkdirs())
+			{
+				if (!directory.exists() && !directory.mkdirs())
+				{
+					if (!directory.exists() && !directory.mkdirs())
+					{
+						response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+						writer.print("{\"success\": false}");
+						logger.error("not possible to create folder: " + directory.getPath());
+						error = true;
+					}
+				}
+			}
+			
+			if (!error)
+			{
+				if (!wrongextension)
+				{			
+					java.io.File file = new java.io.File(directory.getPath() + "/" + filename);
+					
+					int counter = 0;
+					
+					while (!error)
+					{
+						try {
+							org.apache.commons.io.FileUtils.copyFile(tempFile, file);
+							break;
+						} catch (IOException e) {
+							counter++;
+							if (counter > 4) {
+								response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+								writer.print("{\"success\": false}");
+								logger.error("not possible to copy file to: " + file.getPath());
+								error = true;
+							} else {
+								logger.error("not possible to copy file to: " + file.getPath() + " - attempt " + counter);
+							}
+						}
+					}
+				}
+				
+				if (!error)
+				{
+					String files = getFiles(directory);
+					response.setStatus(HttpServletResponse.SC_OK);
+					
+					writer.print("{\"success\": true, \"files\": [" + files + "], \"wrongextension\": " + wrongextension + "}");
+				}
+			}
 		} catch (Exception ex) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			writer.print("{\"success\": false}");
@@ -1158,11 +1235,15 @@ public class RunnerController extends BasicController {
 				is.close();
 			} catch (IOException ignored) {
 			}
+			
+			if (tempFile != null)
+			{
+				tempFile.delete();
+			}
 		}
 
 		writer.flush();
 		writer.close();
-
 	}
 
 	private String getFiles(java.io.File directory) {
@@ -1195,7 +1276,7 @@ public class RunnerController extends BasicController {
 				return err;
 
 			if (!Tools.validUniqueCode(uniqueCode)) {
-				return new ModelAndView("error/basic");
+				return new ModelAndView("redirect:/errors/500.html");
 			}
 			
 			String uid = UUID.randomUUID().toString();
@@ -1360,7 +1441,7 @@ public class RunnerController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 
-		return new ModelAndView("error/basic");
+		return new ModelAndView("redirect:/errors/500.html");
 	}
 	
 	@RequestMapping(value = "/draftinfo/{draftid}", method = RequestMethod.GET)
@@ -1378,29 +1459,7 @@ public class RunnerController extends BasicController {
 		String invitationId = draft.getAnswerSet().getInvitationId();
 		String uniqueCode = draft.getAnswerSet().getUniqueCode();
 		String lang = draft.getAnswerSet().getLanguageCode();
-		String url = "";
-		if (invitationId != null && invitationId.trim().length() > 0) {
-			// the draft comes from an invitation
-			Invitation invitation = attendeeService.getInvitationByUniqueId(invitationId);
-			ParticipationGroup group = participationService.get(invitation.getParticipationGroupId());
-
-			if (group.getType() == ParticipationGroupType.Token) {
-				url = serverPrefix + "runner/" + survey.getUniqueId() + "/" + invitation.getUniqueId();
-			} else {
-				url = serverPrefix + "runner/invited/" + invitation.getParticipationGroupId() + "/" + invitation.getUniqueId();
-			}
-
-		} else if (mode.equalsIgnoreCase("test")) {
-			url = serverPrefix + survey.getShortname() + "/management/test?draftid=" + draftid;
-		} else if (mode.equalsIgnoreCase("runner")) {
-			User user = sessionService.getCurrentUser(request, false);
-			if (survey.getEcasSecurity() && user != null)
-			{
-				url = serverPrefix + "runner/" + survey.getUniqueId();
-			} else {
-				url = serverPrefix + "runner/" + survey.getUniqueId() + "?draftid=" + draftid;
-			}
-		}
+		String url = answerService.getDraftURL(draft.getAnswerSet(), draftid, sessionService.getCurrentUser(request, false));
 		
 		ModelAndView result = new ModelAndView("thanksdraftrunner", "url", url);
 		
@@ -1415,6 +1474,8 @@ public class RunnerController extends BasicController {
 		result.addObject("isdraftinfopage",true);
 		result.addObject("surveyTitle", survey.cleanTitle());
 		result.addObject("surveyID", survey.getId());
+		result.addObject("uniqueCode", uniqueCode); 
+		result.addObject("downloadContribution", survey.getDownloadContribution());
 		
 		if (invitationId != null && invitationId.trim().length() > 0)
 		{
@@ -1438,8 +1499,8 @@ public class RunnerController extends BasicController {
 
 			if (request.getParameter("redirectFromCheckPassword") != null && request.getParameter("redirectFromCheckPassword").equalsIgnoreCase("true") && request.getParameter("password") != null
 					&& request.getParameter("shortname") != null) {
-				Survey survey = surveyService.getSurvey(uidorshortname, false, true, false, false, null, true);
-				Survey draftsurvey = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true);
+				Survey survey = surveyService.getSurvey(uidorshortname, false, true, false, false, null, true, true);
+				Survey draftsurvey = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true, false);
 				String password = request.getParameter("password");
 
 				if (survey != null) {
@@ -1489,13 +1550,13 @@ public class RunnerController extends BasicController {
 					}
 				}
 
-				return new ModelAndView("error/basic");
+				return new ModelAndView("redirect:/errors/500.html");
 			}
 
 			if (request.getParameter("survey.id") == null)
 			{
 				logger.error("survey id parameter missing in processSubmit for survey " + uidorshortname);
-				return new ModelAndView("error/basic");
+				return new ModelAndView("redirect:/errors/500.html");
 			}
 			
 			Survey origsurvey = surveyService.getSurvey(Integer.parseInt(request.getParameter("survey.id")), false, true);
@@ -1510,7 +1571,7 @@ public class RunnerController extends BasicController {
 			} else{
 				//check if uniqueCode is valid
 				if (!Tools.validUniqueCode(uniqueCode)) {
-					return new ModelAndView("error/basic");
+					return new ModelAndView("redirect:/errors/500.html");
 				}
 			}			
 
@@ -1546,7 +1607,7 @@ public class RunnerController extends BasicController {
 				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());				
 				
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
-				
+				surveyService.initializeSkin(f.getSurvey());
 				model.addObject("submit", true);
 				model.addObject("runnermode", true);
 				model.addObject("uniqueCode", uniqueCode);
@@ -1565,7 +1626,7 @@ public class RunnerController extends BasicController {
 				}
 				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
-				
+				surveyService.initializeSkin(f.getSurvey());
 				model.addObject("submit", true);
 				model.addObject("runnermode", true);
 				model.addObject("uniqueCode", uniqueCode);
@@ -1579,6 +1640,30 @@ public class RunnerController extends BasicController {
 				if (user != null)
 				{
 					answerSet.setResponderEmail(user.getEmail());
+					
+					if (user.getType().equalsIgnoreCase(User.ECAS))
+					{
+						//if the user already submitted, show error page
+						int contributionsCount = answerService.userContributionsToSurvey(origsurvey, user);
+						if (contributionsCount > 0)
+						{
+							if (origsurvey.getAllowedContributionsPerUser() == 1 || origsurvey.getAllowedContributionsPerUser() <= contributionsCount)
+							{								
+								request.getSession().removeAttribute("ECASSURVEY");
+								ModelAndView modelReturn = new ModelAndView("error/generic");
+								modelReturn.addObject("runnermode", true);
+								
+								if (origsurvey.getAllowedContributionsPerUser() == 1)
+								{
+									modelReturn.addObject("message", resources.getMessage("error.UserAlreadySubmitted", null, "This account has already been used to submit a contribution. Multiple submission is prohibited.", locale));
+								} else {
+									modelReturn.addObject("message", resources.getMessage("error.UserAlreadySubmitted2", null, "You have submitted the maximum number of contributions this survey allows. Further contributions are not allowed.", locale));
+								}
+								
+								return modelReturn;
+							}
+						}
+					}
 				}
 			}
 			
@@ -1596,7 +1681,7 @@ public class RunnerController extends BasicController {
 				SurveyHelper.recreateUploadedFiles(answerSet, fileDir, survey, fileService);
 				
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
-				
+				surveyService.initializeSkin(f.getSurvey());
 				model.addObject("submit", true);
 				model.addObject("runnermode", true);
 				model.addObject("uniqueCode", uniqueCode);
@@ -1614,7 +1699,7 @@ public class RunnerController extends BasicController {
 					Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()), survey.getLanguage(), resources, contextpath);
 					f.getAnswerSets().add(answerSet);
 					ModelAndView model = new ModelAndView("runner/runner", "form", f);
-		
+					surveyService.initializeSkin(f.getSurvey());
 					model.addObject("submit", true);
 					model.addObject("runnermode", true);
 					model.addObject("uniqueCode", uniqueCode);
@@ -1635,7 +1720,7 @@ public class RunnerController extends BasicController {
 				validation.put((Element) ie.getElement(), resources.getMessage("error.InvalidEmail", null, "The email address is not valid", locale));
 				f.setValidation(validation);
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
-							
+				surveyService.initializeSkin(f.getSurvey());			
 				model.addObject("submit", true);
 				model.addObject("runnermode", true);
 				model.addObject("uniqueCode", uniqueCode);
@@ -1650,7 +1735,7 @@ public class RunnerController extends BasicController {
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()), survey.getLanguage(), resources, contextpath);
 				f.getAnswerSets().add(answerSet);
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
-			
+				surveyService.initializeSkin(f.getSurvey());
 				model.addObject("submit", true);
 				model.addObject("uniqueCode", uniqueCode);
 				model.addObject("message", resources.getMessage("error.LoginExists", null, "This login already exists. Please choose a unique login.", locale));
@@ -1673,7 +1758,7 @@ public class RunnerController extends BasicController {
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()), survey.getLanguage(), resources, contextpath);
 				f.getAnswerSets().add(answerSet);
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
-			
+				surveyService.initializeSkin(f.getSurvey());
 				model.addObject("submit", true);
 				model.addObject("runnermode", true);
 				model.addObject("uniqueCode", uniqueCode);
@@ -1682,7 +1767,7 @@ public class RunnerController extends BasicController {
 				return model;
 			}
 
-			validCodesService.delete(uniqueCode);
+			validCodesService.invalidate(uniqueCode);
 			
 			if (origsurvey.getSecurity().startsWith("secured")) {				
 				if (origsurvey.getEcasSecurity() && origsurvey.getConfirmationPageLink())
@@ -1753,7 +1838,7 @@ public class RunnerController extends BasicController {
 			return model;
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return new ModelAndView("error/basic");
+			return new ModelAndView("redirect:/errors/500.html");
 		}
 	}
 	
@@ -1772,6 +1857,30 @@ public class RunnerController extends BasicController {
 				String email = parameters.get("email")[0];
 				
 				return pdfService.createAnswerPDF(code, email);
+			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return "error";
+		}
+
+		return "success";
+	}
+	
+	@RequestMapping(value = "/createdraftanswerpdf/{code}", headers = "Accept=*/*", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody String createdraftanswerpdf(@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			
+			if (!checkCaptcha(request))
+			{
+				return "errorcaptcha";
+			}
+			
+			Draft draft = answerService.getDraftByAnswerUID(code);
+			if (draft != null) {
+				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+				String email = parameters.get("email")[0];
+				
+				return pdfService.createDraftAnswerPDF(code, email);
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
@@ -1850,7 +1959,7 @@ public class RunnerController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/elements/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException {
 		String ids = request.getParameter("ids");
 		
 		if (ids == null) return null;
@@ -1863,7 +1972,16 @@ public class RunnerController extends BasicController {
 		if (survey == null) return null;
 		
 		boolean foreditor = request.getParameter("foreditor") != null && request.getParameter("foreditor").equalsIgnoreCase("true");
+		boolean hasGlobalAdminRights = false;
 		
+		if (foreditor) {
+             User user = sessionService.getCurrentUser(request, false);
+             if (user != null)
+             {
+            	 hasGlobalAdminRights = user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2;
+	         }
+		}
+				
 		Form form = new Form();
 		form.setSurvey(survey);
 		
@@ -1931,6 +2049,11 @@ public class RunnerController extends BasicController {
 		
 		for (Element element : result)
 		{
+			if (foreditor && hasGlobalAdminRights)
+			{
+				element.setLocked(false);
+			}
+			
 			if (element instanceof Matrix)
 			{
 				Matrix m = (Matrix)element;

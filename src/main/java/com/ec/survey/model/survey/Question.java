@@ -196,7 +196,7 @@ public abstract class Question extends Element {
 				return true;
 			}
 			
-			if (scoringItems != null || question.scoringItems != null)
+			if (scoring > 0 && (scoringItems != null || question.scoringItems != null))
 			{
 				if (scoringItems != null && question.scoringItems == null)
 				{
@@ -222,6 +222,8 @@ public abstract class Question extends Element {
 			
 			if (!(Objects.equals(getOptional(), question.getOptional()))) return true;			
 			if (!(Objects.equals(getReadonly(), question.getReadonly()))) return true;
+			
+			if (!(Objects.equals(getAttributeName(), question.getAttributeName()))) return true;
 			
 		} else {
 			return true;

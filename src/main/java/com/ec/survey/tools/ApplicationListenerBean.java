@@ -45,7 +45,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 	            boolean showEcas=false;
 	            showEcas =( homeController.isShowEcas() || homeController.isCasOss());
 	            
-	            initializeDatabase(administrationService, surveyService, schemaService, skinService, homeController.servletContext, homeController.fileDir, homeController.serverPrefix, homeController.createStressData != null && homeController.createStressData.equalsIgnoreCase("1"), showEcas, homeController.sender, fileService);
+	            initializeDatabase(administrationService, surveyService, schemaService, skinService, homeController.servletContext, homeController.fileDir, homeController.serverPrefix, homeController.createStressData != null && homeController.createStressData.equalsIgnoreCase("1"), showEcas, homeController.sender, fileService, homeController.createStressData != null && homeController.createStressData.equalsIgnoreCase("2"));
 	            logger.debug("checking database state finished");
 	            
 	            logger.debug("restarting stopped webservice tasks..");
@@ -58,7 +58,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
         }		
 	}
 	
-	public static void initializeDatabase(AdministrationService administrationService, SurveyService surveyService, SchemaService schemaService, SkinService skinService, ServletContext servletContext, String fileDir, String host, boolean createStressTestData, boolean showecas, String sender, FileService fileService)
+	public static void initializeDatabase(AdministrationService administrationService, SurveyService surveyService, SchemaService schemaService, SkinService skinService, ServletContext servletContext, String fileDir, String host, boolean createStressTestData, boolean showecas, String sender, FileService fileService, boolean createNewStressTestData)
 	{
 	    java.io.File folder = new java.io.File(fileDir);
         if (!folder.exists()) folder.mkdirs();
@@ -68,7 +68,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			logger.info("InitializeDatabase No Roles create basic rule with showecas " + showecas);
 			RolesCreator.createBasicRoles(administrationService, showecas);
 			try {
-				UsersCreator.createDefaultUsers(administrationService, createStressTestData, sender);
+				UsersCreator.createDefaultUsers(administrationService, createStressTestData || createNewStressTestData, sender);
 			} catch (Exception e1) {
 				logger.error(e1);
 			}
@@ -92,17 +92,23 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 				
 				Language objLang = surveyService.getLanguage("EN");
 				
+				updateSchema(schemaService, servletContext);
+				
 				if (createStressTestData)
 				{
-					User analyst = administrationService.getUserForLogin("analyst", false);
+					User analyst = administrationService.getUserForLogin(administrationService.getStressUser(), false);
 					SurveyCreator.createStressTestSurvey(analyst, objLang, servletContext, fileDir, surveyService, fileService);
+				}
+				
+				if (createStressTestData || createNewStressTestData)
+				{
+					User analyst = administrationService.getUserForLogin(administrationService.getStressUser(), false);
+					SurveyCreator.createStressTestSurveys(analyst, objLang, servletContext, fileDir, surveyService, fileService);
 				}
 				
 				Survey survey = SurveyCreator.createDemoSkinSurvey(admin, objLang);
 				surveyService.add(survey, -1);
-				surveyService.activate(survey, -1, -1, false, -1, false, false);
-				
-				updateSchema(schemaService, servletContext);				
+				surveyService.publish(survey, -1, -1, false, -1, false, false);
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage(), e);
 			}
@@ -670,6 +676,13 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			schemaService.step87();
 			status = schemaService.getStatus();
 		}
+		
+		if (status.getDbversion() < 88)
+		{
+			logger.info("starting upgrade step 88");
+			schemaService.step88();
+			status = schemaService.getStatus();
+		}
 	}
 
 	public static Survey createSurvey(int answerCount, User user, Language objLang, SurveyService surveyService, AnswerService answerService, String fileDir, boolean init, MessageSource resources, Locale locale, Integer questions, boolean archivesurvey, ArchiveService archiveService, BeanFactory context,TaskExecutor taskExecutor, FileService fileService) throws Exception {
@@ -711,7 +724,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			export.prepare();
 			taskExecutor.execute(export);
 		} else {
-			surveyService.activate(survey, -1, -1, false, user.getId(), false, false);			
+			surveyService.publish(survey, -1, -1, false, user.getId(), false, false);			
 			createDummyAnswers(survey.getShortname(), answerCount, user, fileDir, answerService, surveyService, false, resources, locale, fileService);
 		}
 		
@@ -720,7 +733,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 	
 	public static void createDummyAnswers(String shortname, int answerCount, User user, String fileDir, AnswerService answerService, SurveyService surveyService, boolean validate, MessageSource resources, Locale locale, FileService fileService) throws Exception
 	{
-		Survey psurvey = surveyService.getSurvey(shortname, false, false, false, true, null, true);
+		Survey psurvey = surveyService.getSurvey(shortname, false, false, false, true, null, true, false);
 		for (int j = 0; j < answerCount; j++) {
 			AnswerSet answerSet = SurveyCreator.createDummyAnswerSet(psurvey, user);		
 			

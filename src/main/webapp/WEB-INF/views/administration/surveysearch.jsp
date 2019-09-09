@@ -133,7 +133,7 @@
 			if (endreached) return;
 			
 			$( "#wheel" ).show();
-			var s = "page=" + infinitePage++ + "&rows=10";	
+			var s = "page=" + infinitePage++ + "&rows=50";	
 			
 			var mode = $("input[name=surveys]:checked").val();
 			if (mode == 'archived')
@@ -177,7 +177,7 @@
 				infinitePage--;
 				endreached = true;
 				$("#load-more-div").hide();
-				
+				$( "#wheel" ).hide();
 				if ($('#surveyTableDivTableBody').find("tr").length == 0)
 				{
 				  $("#tbllist-empty").show();
@@ -225,6 +225,23 @@
 				td = document.createElement("td");				
 				$(td).append(list[i].numberOfDrafts);		
 				$(row).append(td);
+				
+				td = document.createElement("td");	
+				var a = document.createElement("a");				
+				$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.ExportWithAnswers" />").attr("onclick","showExportDialog('Survey','eus','" + list[i].shortname + "')").html('<span class="glyphicon glyphicon-download-alt"></span>');
+				$(td).append(a);
+				
+				a = document.createElement("a");
+				$(a).addClass("iconbutton").attr("href", "${contextpath}/" + list[i].shortname + "/management/repairxhtml?from=surveysearch").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.RepairXhtml" />").attr("onclick","$('#generic-wait-dialog').modal('show');").html('<span class="glyphicon glyphicon-wrench"></span>');
+				$(td).append(a);
+				
+				a = document.createElement("a");
+				$(a).attr("data-state", list[i].state);
+				$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Delete" />").attr("onclick","showDeleteDialog('" + list[i].id + "');").html('<span class="glyphicon glyphicon-remove"></span>');
+
+				$(td).append(a);
+				
+				$(row).append(td);
 								
 				$('#surveyTableDivTableBody').first().append(row);
 			  }
@@ -235,6 +252,42 @@
 			  $('[data-toggle="tooltip"]').tooltip();
 		}
 		
+		var exportShortname;
+		function showExportDialog(type, format, shortname)
+		{
+			exportType = type;
+			exportFormat = format;
+			exportShortname = shortname;
+			$('#export-name').val("");
+			$('#export-name-dialog').find(".validation-error").hide();
+			$('#export-name-dialog-type').text(format.toUpperCase());
+			$('#export-name-dialog').modal();	
+			$('#export-name-dialog').find("input").first().focus();
+		}
+		
+		function startExport(name)
+		{
+			// check again for new exports
+			window.checkExport = true;
+			
+			$.ajax({
+	           type: "POST",
+	           url: "${contextpath}/exports/start/" + exportType + "/" + exportFormat,
+	           data: {exportName: name, showShortnames: false, allAnswers: false, group: "", shortname: exportShortname},
+	           beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+	           success: function(data)	           {
+	        	   if (data == "success") {
+	        		   	showExportSuccessMessage();
+					} else {
+						showExportFailureMessage();
+					}
+					$('#deletionMessage').addClass('hidden');
+	           }
+	         });			
+			
+			return false;
+		}
+		
 		function refreshArchives( list, textStatus, xhr ) {
 			
 			if (list.length == 0)
@@ -242,7 +295,7 @@
 				infinitePage--;
 				endreached = true;
 				$("#load-more-div").hide();
-								  
+				
 				if ($('#surveyTableDivTableBody').find("tr").length == 0)
 				{
 				  $("#tbllist-empty").show();
@@ -385,7 +438,7 @@
 		
 		
 		var changeownersurveyuid = "";
-		var changeownerid = 0;
+		var changeownerid = null;
 		function changeOwner(uid, title, owner)
 		{
 			changeownersurveyuid = uid;
@@ -404,7 +457,7 @@
 		
 		function saveNewOwner()
 		{
-			if (changeownerid == 0)
+			if (changeownerid == null)
 			{
 				$("#changeownererror").show();
 			} else {
@@ -476,7 +529,12 @@
 					  }
 					  
 					  $(body).find("tr").click(function() {
-						  changeownerid = $(this).attr("data-id");
+						  if ($(this).attr("data-id"))
+						  {
+							  changeownerid = $(this).attr("data-id");
+						  } else {
+							  changeownerid = $(this).attr("id");
+						  }
 						  $("#changeownererror").hide();
 						  $("#search-results").find(".success").removeClass("success");
 						  $(this).addClass("success");
@@ -530,9 +588,8 @@
 	
 	<div class="fixedtitleform">
 		<div class="fixedtitleinner">
-			<h1><spring:message code="label.SurveySearch" /></h1>		
-		
-			<div id="action-bar" class="container action-bar" style="margin-top: 0px">
+							
+			<div id="action-bar" class="container action-bar" style="margin-top: 20px">
 				<div class="row">
 					<div class="col-md-12" style="text-align:center">
 						<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
@@ -595,6 +652,7 @@
 							<th><spring:message code="label.Published" /></th>
 							<th><spring:message code="label.NumberOfResults" /></th>
 							<th><spring:message code="label.NumberOfDrafts" /></th>
+							<th><spring:message code="label.Actions" /></th>
 						</tr>
 						<tr class="table-styled-filter archivedonly hideme">
 							<th class="filtercell">
@@ -868,10 +926,15 @@
 							</th>
 							<th>&nbsp;</th>
 							<th>&nbsp;</th>
+							<th>&nbsp;</th>
 						</tr>					
 						</thead>
 						<tbody id="surveyTableDivTableBody"></tbody>
 					</table>
+					
+					<div style="text-align: center">
+						<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
+					</div>
 					
 					<div id="tbllist-empty" class="noDataPlaceHolder">
 						<p>
@@ -1073,5 +1136,22 @@
 		</div>
 	</div>
 	
+	<c:if test="${repairedlabels != null}">
+		<script>
+			showInfo('${repairedlabels}' + ' ' + '<spring:message code="info.LabelsRepaired" />');
+		</script>
+	</c:if>
+	
+	<c:if test="${deletedShortname != null}">
+		<script type="text/javascript">
+			var t = '<spring:message code="message.SurveyDeleted" />';
+			showInfo(t.replace(/X/g, '${deletedShortname}'));
+		</script>
+	</c:if>
+	
+	<form:form id="load-forms" method="POST" action="${contextpath}/forms" onsubmit="$('#show-wait-image-delete-survey').modal('show');">
+		<input type="hidden" name="delete" id="delete" value="" />
+		<input type="hidden" name="origin" id="origin" value="surveysearch" />
+	</form:form>
 </body>
 </html>

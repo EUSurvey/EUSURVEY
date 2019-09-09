@@ -99,7 +99,7 @@ public class SkinController extends BasicController {
 	@RequestMapping(value = "/skin/new", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String newSkin(Locale locale, Model model, HttpServletRequest request) throws NotAgreedToTosException {	
 		
-		Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true);
+		Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true, false);
 		Form form = new Form(resources);
 		form.setSurvey(demoSurvey);
 		
@@ -114,7 +114,7 @@ public class SkinController extends BasicController {
 	public ModelAndView editSkin(@PathVariable String id, Locale locale, HttpServletRequest request) throws NotAgreedToTosException {	
 		
 		User user = sessionService.getCurrentUser(request);
-		Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true);
+		Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true, false);
 		Form form = new Form(resources);
 		form.setSurvey(demoSurvey);
 		
@@ -128,7 +128,7 @@ public class SkinController extends BasicController {
 			return model;
 		}
 		
-		return new ModelAndView("error/basic");		
+		return new ModelAndView("redirect:/errors/500.html");
 	}
 	
 	@RequestMapping(value = "/skin/delete/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -147,19 +147,19 @@ public class SkinController extends BasicController {
 				return new ModelAndView("redirect:/settings/skin?used=true");
 			} catch (Exception e)
 			{
-				return new ModelAndView("error/basic");		
+				return new ModelAndView("redirect:/errors/500.html");	
 			}
 			return new ModelAndView("redirect:/settings/skin");
 		}
 		
-		return new ModelAndView("error/basic");		
+		return new ModelAndView("redirect:/errors/500.html");
 	}
 	
 	@RequestMapping(value = "/skin/copy/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView copySkin(@PathVariable String id, Locale locale, HttpServletRequest request) throws NotAgreedToTosException {	
 		
 		User user = sessionService.getCurrentUser(request);
-		Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true);
+		Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true, false);
 		Form form = new Form(resources);
 		form.setSurvey(demoSurvey);
 		
@@ -181,7 +181,7 @@ public class SkinController extends BasicController {
 			return model;
 		}
 		
-		return new ModelAndView("error/basic");		
+		return new ModelAndView("redirect:/errors/500.html");
 	}
 	
 	@RequestMapping(value = "/skin/save", method = RequestMethod.POST)
@@ -224,7 +224,7 @@ public class SkinController extends BasicController {
 			{
 				if (skinService.nameAlreadyExists(skin.getName(), user.getId()))
 				{
-					Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true);
+					Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true, false);
 					Form form = new Form(resources);
 					form.setSurvey(demoSurvey);
 					ModelAndView model = new ModelAndView("settings/skin");
@@ -241,7 +241,7 @@ public class SkinController extends BasicController {
 		
 		if (skin.getName().trim().length() == 0)
 		{
-			Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true);
+			Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true, false);
 			Form form = new Form(resources);
 			form.setSurvey(demoSurvey);
 			ModelAndView model = new ModelAndView("settings/skin");

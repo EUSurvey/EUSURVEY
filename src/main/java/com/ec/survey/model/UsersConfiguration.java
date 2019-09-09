@@ -21,6 +21,7 @@ public class UsersConfiguration implements java.io.Serializable {
 	private int userId;
 	private boolean showName = true;
 	private boolean showEmail = true;
+	private boolean showOtherEmail = false;
 	private boolean showLanguage = true;
 	private boolean showRoles = false;
 	private boolean showComment = false;
@@ -57,6 +58,14 @@ public class UsersConfiguration implements java.io.Serializable {
 	}
 	public void setShowEmail(boolean showEmail) {
 		this.showEmail = showEmail;
+	}
+	
+	@Column(name = "UC_OTHEREMAIL")
+	public boolean isShowOtherEmail() {
+		return showOtherEmail;
+	}
+	public void setShowOtherEmail(Boolean showOtherEmail) {
+		this.showOtherEmail = showOtherEmail != null ? showOtherEmail : false;
 	}
 	
 	@Column(name = "UC_LANG")

@@ -74,7 +74,15 @@
 		</c:when>
 		<c:otherwise>
 			<spring:message code="message.about.paragraph.two" htmlEscape="false"></spring:message>
-			<spring:message code="message.about.paragraph.three" htmlEscape="false"></spring:message>
+			
+			<c:choose>
+					<c:when test="${enablepublicsurveys}">
+						<spring:message code="message.about.paragraph.three" htmlEscape="false"></spring:message>
+					</c:when>
+					<c:otherwise>
+						<spring:message code="message.about.paragraph.threeB" htmlEscape="false"></spring:message>
+					</c:otherwise>
+			</c:choose>
 		</c:otherwise>
 	</c:choose>
 

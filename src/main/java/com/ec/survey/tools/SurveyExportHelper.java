@@ -30,13 +30,230 @@ import java.util.zip.ZipException;
 public class SurveyExportHelper {
 
 	private static final Logger logger = Logger.getLogger(SurveyExportHelper.class);
+	
+	private static void addSurveyData(Survey survey, ArchiveOutputStream os, Session session, FileService fileService, SessionService sessionService, String fileDir, List<String> writtenFiles) throws Exception {
+		 //create logo / download files
+	    if (survey.getLogo() != null)
+	    {
+	    	File logo = survey.getLogo();
+	    	
+	    	java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), logo.getUid());
+	    	if (!source.exists())
+	    	{
+	    		source = new java.io.File(fileDir + logo.getUid());
+	    		if (source.exists())
+				{
+					fileService.LogOldFileSystemUse(fileDir + logo.getUid());
+				}
+	    	}
+	    	
+	    	if (source.exists())
+	    	{
+		    	os.putArchiveEntry(new ZipArchiveEntry(logo.getUid() + ".fil"));
+		    	FileInputStream fis = null;
+		    	try {
+		    		fis = new FileInputStream(source);
+		    		IOUtils.copy(fis, os);
+		    	}
+		    	finally {
+		    		if (fis != null)
+		    		{
+		    			fis.close();
+		    		}
+		    	}
+			    os.closeArchiveEntry();
+			    writtenFiles.add(logo.getUid() + ".fil");
+	    	}
+	    }
+	    for (com.ec.survey.model.survey.Element question : survey.getElementsRecursive()) {
+			if (question instanceof Download)
+			{
+				for (File file: ((Download)question).getFiles())
+				{
+					java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
+			    	if (!source.exists())
+			    	{
+			    		source = new java.io.File(fileDir + file.getUid());
+			    		if (source.exists())
+						{
+							fileService.LogOldFileSystemUse(fileDir + file.getUid());
+						}
+			    	}
+					
+			    	if (source.exists())
+			    	{
+				    	os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
+				    	FileInputStream fis = null;
+				    	try {
+				    		fis = new FileInputStream(source);
+				    		IOUtils.copy(fis, os);
+				    	}
+				    	finally {
+				    		if (fis != null)
+				    		{
+				    			fis.close();
+				    		}
+				    	}
+					    os.closeArchiveEntry();
+					    writtenFiles.add(file.getUid() + ".fil");
+			    	}
+				}
+			} else if (question instanceof Confirmation)
+			{
+				for (File file: ((Confirmation)question).getFiles())
+				{
+					java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
+			    	if (!source.exists())
+			    	{
+			    		source = new java.io.File(fileDir + file.getUid());
+			    		if (source.exists())
+						{
+							fileService.LogOldFileSystemUse(fileDir + file.getUid());
+						}
+			    	}
+					if (source.exists())
+			    	{
+				    	os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
+				    	FileInputStream fis = null;
+				    	try {
+				    		fis = new FileInputStream(source);
+				    		IOUtils.copy(fis, os);
+				    	}
+				    	finally {
+				    		if (fis != null)
+				    		{
+				    			fis.close();
+				    		}
+				    	}
+					    os.closeArchiveEntry();
+					    writtenFiles.add(file.getUid() + ".fil");
+			    	}
+				}
+			} else if (question instanceof Image)
+			{
+				Image image = (Image)question;
+				
+				if (image.getUrl() != null && !image.getUrl().contains(sessionService.getContextPath() + "/resources/"))
+				{
+					String fileUID = image.getUrl().substring( image.getUrl().lastIndexOf("/")+1);
+					File f = fileService.get(fileUID);
+					if (f != null)
+					{
+						os.putArchiveEntry(new ZipArchiveEntry(fileUID + ".file"));
+						    IOUtils.copy(new FileInputStream(getFileForObject(f, session, fileService)), os);
+					    os.closeArchiveEntry();
+					    writtenFiles.add(fileUID + ".file");
+					}
+					
+					java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), fileUID);
+			    	if (!source.exists())
+			    	{
+			    		source = new java.io.File(fileDir + fileUID);
+			    		if (source.exists())
+						{
+							fileService.LogOldFileSystemUse(fileDir + fileUID);
+						}
+			    	}
+					if (source.exists())
+			    	{
+				    	os.putArchiveEntry(new ZipArchiveEntry(fileUID + ".fil"));
+				    	FileInputStream fis = null;
+				    	try {
+				    		fis = new FileInputStream(source);
+				    		IOUtils.copy(fis, os);
+				    	}
+				    	finally {
+				    		if (fis != null)
+				    		{
+				    			fis.close();
+				    		}
+				    	}
+					    os.closeArchiveEntry();
+					    writtenFiles.add(fileUID + ".fil");
+			    	}
+				}
+			} else if (question instanceof GalleryQuestion)
+			{
+				GalleryQuestion gallery = (GalleryQuestion)question;
+				for (File file: gallery.getFiles())
+				{
+					java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
+			    	if (!source.exists())
+			    	{
+			    		source = new java.io.File(fileDir + file.getUid());
+			    		if (source.exists())
+						{
+							fileService.LogOldFileSystemUse(fileDir + file.getUid());
+						}
+			    	}
+					if (source.exists())
+			    	{
+				    	os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
+				    	FileInputStream fis = null;
+				    	try {
+				    		fis = new FileInputStream(source);
+				    		IOUtils.copy(fis, os);
+				    	}
+				    	finally {
+				    		if (fis != null)
+				    		{
+				    			fis.close();
+				    		}
+				    	}
+				    	
+					    os.closeArchiveEntry();
+					    writtenFiles.add(file.getUid() + ".fil");
+			    	}
+				}
+			}
+		}
+	    for (String url :  survey.getBackgroundDocuments().values()) {
+			String uid = url.substring(url.lastIndexOf("/")+1);
+			
+			File fi = fileService.get(uid);
+			if (fi != null)
+			{
+				os.putArchiveEntry(new ZipArchiveEntry(uid + ".file"));
+				    IOUtils.copy(new FileInputStream(getFileForObject(fi, session, fileService)), os);
+			    os.closeArchiveEntry();
+			    writtenFiles.add(uid + ".file");
+			}
+			
+			java.io.File f = fileService.getSurveyFile(survey.getUniqueId(), uid);
+	    	if (!f.exists())
+	    	{
+	    		f = new java.io.File(fileDir + uid);
+	    		if (f.exists())
+				{
+					fileService.LogOldFileSystemUse(fileDir + uid);
+				}
+	    	}
+			if (f.exists())
+			{
+				os.putArchiveEntry(new ZipArchiveEntry(uid + ".fil"));
+				FileInputStream fis = null;
+		    	try {
+		    		fis = new FileInputStream(f);
+		    		IOUtils.copy(fis, os);
+		    	}
+		    	finally {
+		    		if (fis != null)
+		    		{
+		    			fis.close();
+		    		}
+		    	}
+			    os.closeArchiveEntry();
+			    writtenFiles.add(uid + ".fil");
+			}
+		}		   
+	}
 		
 	public static java.io.File exportSurvey(String shortname, SurveyService surveyService, boolean answers, TranslationService translationService, AnswerService answerService, String fileDir, SessionService sessionService, FileService fileService, Session session) {
 		
 		try {
 			
-			Survey survey = surveyService.getSurvey(shortname,true,false,false,true, null, true);
-			Survey activeSurvey = surveyService.getSurvey(survey.getShortname(), false, false, true, true, null, true);
+			Survey survey = surveyService.getSurvey(shortname,true,false,false,true, null, true, false);
+			Survey activeSurvey = surveyService.getSurvey(survey.getShortname(), false, false, true, true, null, true, false);
 			
 			java.io.File temp = fileService.createTempFile("export" + UUID.randomUUID().toString(), ".zip"); 
 			final OutputStream out = new FileOutputStream(temp);
@@ -48,12 +265,16 @@ public class SurveyExportHelper {
 			os.putArchiveEntry(new ZipArchiveEntry("survey.eus"));
 		    IOUtils.copy(new FileInputStream(getFileForObject(survey, session, fileService)), os);
 		    os.closeArchiveEntry();
+
+		    addSurveyData(survey, os, session, fileService, sessionService, fileDir, writtenFiles);		   
 		    
 		    if (activeSurvey != null)
 		    {
-				os.putArchiveEntry(new ZipArchiveEntry("survey-active.eus"));
+		    	os.putArchiveEntry(new ZipArchiveEntry("survey-active.eus"));
 			    IOUtils.copy(new FileInputStream(getFileForObject(activeSurvey, session, fileService)), os);
 			    os.closeArchiveEntry();
+			    
+			    addSurveyData(activeSurvey, os, session, fileService, sessionService, fileDir, writtenFiles);
 			    
 			    if (answers)
 			    {
@@ -67,400 +288,11 @@ public class SurveyExportHelper {
 							os.putArchiveEntry(new ZipArchiveEntry("survey-active-" + id + ".eus"));
 						    IOUtils.copy(new FileInputStream(getFileForObject(s, session, fileService)), os);
 						    os.closeArchiveEntry();
+						    
+						    addSurveyData(s, os, session, fileService, sessionService, fileDir, writtenFiles);
 						}
 					}
 			    }
-		    }
-		    
-		    //create logo / download files
-		    if (survey.getLogo() != null)
-		    {
-		    	File logo = survey.getLogo();
-		    	
-		    	java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), logo.getUid());
-		    	if (!source.exists())
-		    	{
-		    		source = new java.io.File(fileDir + logo.getUid());
-		    		if (source.exists())
-					{
-						fileService.LogOldFileSystemUse(fileDir + logo.getUid());
-					}
-		    	}
-		    	
-		    	if (source.exists())
-		    	{
-			    	os.putArchiveEntry(new ZipArchiveEntry(logo.getUid() + ".fil"));
-			    	FileInputStream fis = null;
-			    	try {
-			    		fis = new FileInputStream(source);
-			    		IOUtils.copy(fis, os);
-			    	}
-			    	finally {
-			    		if (fis != null)
-			    		{
-			    			fis.close();
-			    		}
-			    	}
-				    os.closeArchiveEntry();
-				    writtenFiles.add(logo.getUid() + ".fil");
-		    	}
-		    }
-		    for (com.ec.survey.model.survey.Element question : survey.getElementsRecursive()) {
-				if (question instanceof Download)
-				{
-					for (File file: ((Download)question).getFiles())
-					{
-						java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
-				    	if (!source.exists())
-				    	{
-				    		source = new java.io.File(fileDir + file.getUid());
-				    		if (source.exists())
-							{
-								fileService.LogOldFileSystemUse(fileDir + file.getUid());
-							}
-				    	}
-						
-				    	if (source.exists())
-				    	{
-					    	os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
-					    	FileInputStream fis = null;
-					    	try {
-					    		fis = new FileInputStream(source);
-					    		IOUtils.copy(fis, os);
-					    	}
-					    	finally {
-					    		if (fis != null)
-					    		{
-					    			fis.close();
-					    		}
-					    	}
-						    os.closeArchiveEntry();
-						    writtenFiles.add(file.getUid() + ".fil");
-				    	}
-					}
-				} else if (question instanceof Confirmation)
-				{
-					for (File file: ((Confirmation)question).getFiles())
-					{
-						java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
-				    	if (!source.exists())
-				    	{
-				    		source = new java.io.File(fileDir + file.getUid());
-				    		if (source.exists())
-							{
-								fileService.LogOldFileSystemUse(fileDir + file.getUid());
-							}
-				    	}
-						if (source.exists())
-				    	{
-					    	os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
-					    	FileInputStream fis = null;
-					    	try {
-					    		fis = new FileInputStream(source);
-					    		IOUtils.copy(fis, os);
-					    	}
-					    	finally {
-					    		if (fis != null)
-					    		{
-					    			fis.close();
-					    		}
-					    	}
-						    os.closeArchiveEntry();
-						    writtenFiles.add(file.getUid() + ".fil");
-				    	}
-					}
-				} else if (question instanceof Image)
-				{
-					Image image = (Image)question;
-					
-					if (image.getUrl() != null && !image.getUrl().contains(sessionService.getContextPath() + "/resources/"))
-					{
-						String fileUID = image.getUrl().substring( image.getUrl().lastIndexOf("/")+1);
-						File f = fileService.get(fileUID);
-						if (f != null)
-						{
-							os.putArchiveEntry(new ZipArchiveEntry(fileUID + ".file"));
-						    IOUtils.copy(new FileInputStream(getFileForObject(f, session, fileService)), os);
-						    os.closeArchiveEntry();
-						    writtenFiles.add(fileUID + ".file");
-						}
-						
-						java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), fileUID);
-				    	if (!source.exists())
-				    	{
-				    		source = new java.io.File(fileDir + fileUID);
-				    		if (source.exists())
-							{
-								fileService.LogOldFileSystemUse(fileDir + fileUID);
-							}
-				    	}
-						if (source.exists())
-				    	{
-					    	os.putArchiveEntry(new ZipArchiveEntry(fileUID + ".fil"));
-					    	FileInputStream fis = null;
-					    	try {
-					    		fis = new FileInputStream(source);
-					    		IOUtils.copy(fis, os);
-					    	}
-					    	finally {
-					    		if (fis != null)
-					    		{
-					    			fis.close();
-					    		}
-					    	}
-						    os.closeArchiveEntry();
-						    writtenFiles.add(fileUID + ".fil");
-				    	}
-					}
-				} else if (question instanceof GalleryQuestion)
-				{
-					GalleryQuestion gallery = (GalleryQuestion)question;
-					for (File file: gallery.getFiles())
-					{
-						java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
-				    	if (!source.exists())
-				    	{
-				    		source = new java.io.File(fileDir + file.getUid());
-				    		if (source.exists())
-							{
-								fileService.LogOldFileSystemUse(fileDir + file.getUid());
-							}
-				    	}
-						if (source.exists())
-				    	{
-					    	os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
-					    	FileInputStream fis = null;
-					    	try {
-					    		fis = new FileInputStream(source);
-					    		IOUtils.copy(fis, os);
-					    	}
-					    	finally {
-					    		if (fis != null)
-					    		{
-					    			fis.close();
-					    		}
-					    	}
-					    	
-						    os.closeArchiveEntry();
-						    writtenFiles.add(file.getUid() + ".fil");
-				    	}
-					}
-				}
-			}
-		    for (String url :  survey.getBackgroundDocuments().values()) {
-				String uid = url.substring(url.lastIndexOf("/")+1);
-				
-				File fi = fileService.get(uid);
-				if (fi != null)
-				{
-					os.putArchiveEntry(new ZipArchiveEntry(uid + ".file"));
-				    IOUtils.copy(new FileInputStream(getFileForObject(fi, session, fileService)), os);
-				    os.closeArchiveEntry();
-				    writtenFiles.add(uid + ".file");
-				}
-				
-				java.io.File f = fileService.getSurveyFile(survey.getUniqueId(), uid);
-		    	if (!f.exists())
-		    	{
-		    		f = new java.io.File(fileDir + uid);
-		    		if (f.exists())
-					{
-						fileService.LogOldFileSystemUse(fileDir + uid);
-					}
-		    	}
-				if (f.exists())
-				{
-					os.putArchiveEntry(new ZipArchiveEntry(uid + ".fil"));
-					FileInputStream fis = null;
-			    	try {
-			    		fis = new FileInputStream(f);
-			    		IOUtils.copy(fis, os);
-			    	}
-			    	finally {
-			    		if (fis != null)
-			    		{
-			    			fis.close();
-			    		}
-			    	}
-				    os.closeArchiveEntry();
-				    writtenFiles.add(uid + ".fil");
-				}
-			}		   
-		    
-		    if (activeSurvey != null)
-		    {
-		    	//create logo / download files
-			    if (activeSurvey.getLogo() != null)
-			    {
-			    	File logo = activeSurvey.getLogo();
-			    	java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), logo.getUid());
-			    	if (!source.exists())
-			    	{
-			    		source = new java.io.File(fileDir + logo.getUid());
-			    		if (source.exists())
-						{
-							fileService.LogOldFileSystemUse(fileDir + logo.getUid());
-						}
-			    	}
-			    	
-			    	if (source.exists() && !writtenFiles.contains(logo.getUid() + ".fil"))
-			    	{
-			    		os.putArchiveEntry(new ZipArchiveEntry(logo.getUid() + ".fil"));
-			    		FileInputStream fis = null;
-				    	try {
-				    		fis = new FileInputStream(source);
-				    		IOUtils.copy(fis, os);
-				    	}
-				    	finally {
-				    		if (fis != null)
-				    		{
-				    			fis.close();
-				    		}
-				    	}
-			    		os.closeArchiveEntry();
-			    		writtenFiles.add(logo.getUid() + ".fil");
-			    	}
-			    }
-			    for (com.ec.survey.model.survey.Element question : activeSurvey.getElementsRecursive()) {
-					if (question instanceof Download)
-					{
-						for (File file: ((Download)question).getFiles())
-						{
-							java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
-					    	if (!source.exists())
-					    	{
-					    		source = new java.io.File(fileDir + file.getUid());
-					    		if (source.exists())
-								{
-									fileService.LogOldFileSystemUse(fileDir + file.getUid());
-								}
-					    	}
-							if (source.exists() && !writtenFiles.contains(file.getUid() + ".fil"))
-					    	{
-								os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
-								FileInputStream fis = null;
-						    	try {
-						    		fis = new FileInputStream(source);
-						    		IOUtils.copy(fis, os);
-						    	}
-						    	finally {
-						    		if (fis != null)
-						    		{
-						    			fis.close();
-						    		}
-						    	}
-						    	os.closeArchiveEntry();
-						    	 writtenFiles.add(file.getUid() + ".fil");
-					    	}
-						}
-					} else if (question instanceof Confirmation)
-					{
-						for (File file: ((Confirmation)question).getFiles())
-						{
-							java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
-					    	if (!source.exists())
-					    	{
-					    		source = new java.io.File(fileDir + file.getUid());
-					    		if (source.exists())
-								{
-									fileService.LogOldFileSystemUse(fileDir + file.getUid());
-								}
-					    	}
-							if (source.exists() && !writtenFiles.contains(file.getUid() + ".fil"))
-					    	{
-						    	os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
-						    	FileInputStream fis = null;
-						    	try {
-						    		fis = new FileInputStream(source);
-						    		IOUtils.copy(fis, os);
-						    	}
-						    	finally {
-						    		if (fis != null)
-						    		{
-						    			fis.close();
-						    		}
-						    	}
-							    os.closeArchiveEntry();
-							    writtenFiles.add(file.getUid() + ".fil");
-					    	}
-						}
-					} else if (question instanceof Image)
-					{
-						Image image = (Image)question;
-						
-						if (image.getUrl() != null && !image.getUrl().contains(sessionService.getContextPath() + "/resources/"))
-						{
-							String fileUID = image.getUrl().substring( image.getUrl().lastIndexOf("/")+1);
-							File f = fileService.get(fileUID);
-							if (f != null && !writtenFiles.contains(fileUID + ".file"))
-							{
-								os.putArchiveEntry(new ZipArchiveEntry(fileUID + ".file"));
-							    IOUtils.copy(new FileInputStream(getFileForObject(f, session, fileService)), os);
-							    os.closeArchiveEntry();
-							    writtenFiles.add(fileUID + ".file");
-							}
-							
-							java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), fileUID);
-					    	if (!source.exists())
-					    	{
-					    		source = new java.io.File(fileDir + fileUID);
-					    		if (source.exists())
-								{
-									fileService.LogOldFileSystemUse(fileDir + fileUID);
-								}
-					    	}
-							if (source.exists() && !writtenFiles.contains(fileUID + ".fil"))
-					    	{
-						    	os.putArchiveEntry(new ZipArchiveEntry(fileUID + ".fil"));
-						    	FileInputStream fis = null;
-						    	try {
-						    		fis = new FileInputStream(source);
-						    		IOUtils.copy(fis, os);
-						    	}
-						    	finally {
-						    		if (fis != null)
-						    		{
-						    			fis.close();
-						    		}
-						    	}
-							    os.closeArchiveEntry();
-							    writtenFiles.add(fileUID + ".fil");
-					    	}
-						}
-					} else if (question instanceof GalleryQuestion)
-					{
-						GalleryQuestion gallery = (GalleryQuestion)question;
-						for (File file: gallery.getFiles())
-						{
-							java.io.File source = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
-					    	if (!source.exists())
-					    	{
-					    		source = new java.io.File(fileDir + file.getUid());
-					    		if (source.exists())
-								{
-									fileService.LogOldFileSystemUse(fileDir + file.getUid());
-								}
-					    	}
-							if (source.exists() && !writtenFiles.contains(file.getUid() + ".fil"))
-					    	{
-						    	os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
-						    	FileInputStream fis = null;
-						    	try {
-						    		fis = new FileInputStream(source);
-						    		IOUtils.copy(fis, os);
-						    	}
-						    	finally {
-						    		if (fis != null)
-						    		{
-						    			fis.close();
-						    		}
-						    	}
-							    os.closeArchiveEntry();
-							    writtenFiles.add(file.getUid() + ".fil");
-					    	}
-						}
-					}
-				}
 		    }
 						
 			//create translations file
@@ -475,6 +307,21 @@ public class SurveyExportHelper {
 			 	os.putArchiveEntry(new ZipArchiveEntry("translations-active.eus"));
 			    IOUtils.copy(new FileInputStream(getFileForObject(translations, session, fileService)), os);
 			    os.closeArchiveEntry();
+			    
+			    if (answers)
+			    {
+			    	//also all historical survey versions
+			    	List<Integer> allsurveys = surveyService.getAllSurveyVersions(activeSurvey.getId());
+			    	for (Integer id : allsurveys) {
+						if (!id.equals(survey.getId()) && !id.equals(activeSurvey.getId()))
+						{
+							translations = translationService.getTranslationsForSurvey(id, true);
+						 	os.putArchiveEntry(new ZipArchiveEntry("translations-active-" + id + ".eus"));
+						    IOUtils.copy(new FileInputStream(getFileForObject(translations, session, fileService)), os);
+						    os.closeArchiveEntry();
+						}
+			    	}
+			    }			    
 		    }
 			
 		    //create answers file
@@ -543,7 +390,7 @@ public class SurveyExportHelper {
 			    		counter++;
 			    		answerSets = null;
 						SqlPagination sqlPagination = new SqlPagination(counter, 100);
-			    		answerSets = answerService.getAnswers(activeSurvey.getId(), null, sqlPagination, false, true);
+						answerSets = answerService.getAnswers(activeSurvey, null, sqlPagination, false, true, false);			    		
 			    		if (answerSets.size() == 0)
 			    		{
 			    			stop = true;
@@ -725,6 +572,11 @@ public class SurveyExportHelper {
 				} else if (name.equalsIgnoreCase("translations-active.eus"))
 				{
 					result.setActiveTranslations((List<Translations>)  getObject(zipFile, zipEntry, fileService));
+				} else if (name.startsWith("translations-active-"))
+				{
+					int oldid = Integer.parseInt(name.replace("translations-active-", "").replace(".eus", ""));
+					List<Translations> oldTranslations = (List<Translations>) getObject(zipFile, zipEntry, fileService);
+					result.getOldTranslations().put(oldid, oldTranslations);
 				} else if (name.equalsIgnoreCase("answers.eus"))
 				{
 	        		result.setAnswerSets((List<AnswerSet>) getObject(zipFile, zipEntry, fileService));
@@ -850,6 +702,8 @@ public class SurveyExportHelper {
 		Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
 		
 		File logo = null;
+		String logouid = null;
+		String logoname = "";
 		
         while (entries.hasMoreElements()) {
         	 ZipArchiveEntry zipEntry = entries.nextElement();
@@ -863,22 +717,26 @@ public class SurveyExportHelper {
             	 importIPMTranslationXML(zipFile.getInputStream(zipEntry), result, servletContext);
              } else {
             	 //must be the logo
-            	 String uid = UUID.randomUUID().toString();
-            	 java.io.File target = fileService.getSurveyFile(result.getSurvey().getUniqueId(), uid);
+            	 logouid = UUID.randomUUID().toString();
+            	 java.io.File target = fileService.createTempFile(logouid, null);
             	 FileOutputStream fos = new FileOutputStream(target);
-                 IOUtils.copy(zipFile.getInputStream(zipEntry), fos);
-                 logo = new File();
-                 logo.setUid(uid);
-                 logo.setName(name);
-     	       
-     	         fileService.add(logo);    	        
+            	 IOUtils.copy(zipFile.getInputStream(zipEntry), fos);
+            	 logoname = name; 	        
              }                          
         }
         
         result.getSurvey().setContact(email);
         
-        if (logo != null && result.getSurvey() != null)
+        if (logouid != null && result.getSurvey() != null)
         {
+        	 java.io.File target = fileService.getSurveyFile(result.getSurvey().getUniqueId(), logouid);
+        	 FileOutputStream fos = new FileOutputStream(target);
+             IOUtils.copy(new FileInputStream(fileService.createTempFile(logouid, null)), fos);
+             logo = new File();
+             logo.setUid(logouid);
+             logo.setName(logoname);
+ 	       
+ 	         fileService.add(logo);  
 	         result.getSurvey().setLogo(logo);
         }
         

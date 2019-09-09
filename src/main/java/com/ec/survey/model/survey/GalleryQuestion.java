@@ -68,7 +68,10 @@ public class GalleryQuestion extends Question {
 		this.numbering = numbering != null ? numbering : false;
 	}
 	
-	@ManyToMany(targetEntity=File.class, cascade = CascadeType.ALL  )  
+	@SuppressWarnings("deprecation")
+	@ManyToMany(targetEntity=File.class, cascade = CascadeType.ALL  ) 
+	@JoinTable(foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT))
+	@org.hibernate.annotations.ForeignKey(name = "none")
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "position asc")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

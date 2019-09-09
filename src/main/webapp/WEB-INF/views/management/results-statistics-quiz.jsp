@@ -17,8 +17,6 @@
 	<div id="loadstatisticsbutton" class="hideme" style="text-align: center">
 		<a class="btn btn-default" onclick="loadStatisticsAsync(false);"><spring:message code="label.LoadStatistics" /></a>
 	</div>
-
-	<c:if test="${paging.items.size() > 0}">
 	
 		<div id="scrollareastatisticsquiz" class="scrollarea">
 		<div style="width: 700px; margin-left: auto; margin-right: auto">
@@ -116,7 +114,7 @@
 								<tr>
 									<th><spring:message code="form.Question" /></th>
 									<th>&nbsp;</th>
-									<th><spring:message code="label.Correct" /></th>
+									<th><spring:message code="label.MaxScores" /></th>
 									<th><spring:message code="label.Ratio" /></th>
 								</tr>						
 						</c:if>
@@ -127,7 +125,7 @@
 								<tr>
 									<th><spring:message code="form.Question" /></th>
 									<th>&nbsp;</th>
-									<th><spring:message code="label.Correct" /></th>
+									<th><spring:message code="label.MaxScores" /></th>
 									<th><spring:message code="label.Ratio" /></th>
 								</tr>
 						</c:if>
@@ -164,5 +162,4 @@
 						
 			</div>
 		</div>			
-	</c:if>
 </div>

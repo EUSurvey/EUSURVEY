@@ -3,6 +3,7 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.AnswerSet;
+import com.ec.survey.model.Draft;
 import com.ec.survey.model.Form;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
@@ -78,7 +79,7 @@ public class ContributionController extends BasicController {
 				return answerSet;
 			}
 			
-			Survey draft = surveyService.getSurvey(answerSet.getSurvey().getShortname(), true, false, false, false, null, true);
+			Survey draft = surveyService.getSurvey(answerSet.getSurvey().getShortname(), true, false, false, false, null, true, false);
 			
 			if (draft == null) draft = surveyService.getSurveyByUniqueId(answerSet.getSurvey().getUniqueId(), false, true);
 			
@@ -128,8 +129,20 @@ public class ContributionController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/preparecontribution/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView showforpdf(@PathVariable String code, Locale locale, HttpServletRequest request) throws Exception {	
-		ModelAndView result = editContribution(code, locale, request, false, false, true);
+	public ModelAndView preparecontribution(@PathVariable String code, Locale locale, HttpServletRequest request) throws Exception {	
+		ModelAndView result = editContribution(code, locale, request, false, false, true, false);
+		
+		Form f = (Form)result.getModel().get("form");
+		SurveyHelper.calcTableWidths(f.getSurvey(), surveyService, f);
+		f.setForPDF(true);
+		result.addObject("forpdf", "true");
+		result.addObject("submit", "false");	
+		return result;
+	}
+	
+	@RequestMapping(value = "/preparedraft/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView preparedraft(@PathVariable String code, Locale locale, HttpServletRequest request) throws Exception {	
+		ModelAndView result = editContribution(code, locale, request, false, false, true, true);
 		
 		Form f = (Form)result.getModel().get("form");
 		SurveyHelper.calcTableWidths(f.getSurvey(), surveyService, f);
@@ -142,7 +155,7 @@ public class ContributionController extends BasicController {
 	@RequestMapping(value = "/preparepublishedcontribution/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView showforpublishedpdf(@PathVariable String id, Locale locale, HttpServletRequest request) throws Exception {	
 		AnswerSet answerSet = answerService.get(Integer.parseInt(id));
-		ModelAndView result = editContribution(answerSet.getUniqueCode(), locale, request, false, false, true);
+		ModelAndView result = editContribution(answerSet.getUniqueCode(), locale, request, false, false, true, false);
 		result.addObject("forpdf", "true");
 		result.addObject("submit", "false");
 		
@@ -155,16 +168,27 @@ public class ContributionController extends BasicController {
 	
 	@RequestMapping(value = "/editcontribution/{code}/back", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView editcontributionfrombackoffice(@PathVariable String code, Locale locale, HttpServletRequest request) throws Exception {		
-		return editContribution(code, locale, request, true, true, false);
+		return editContribution(code, locale, request, true, true, false, false);
 	}
 	
 	@RequestMapping(value = "/editcontribution/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView editcontribution(@PathVariable String code, Locale locale, HttpServletRequest request) throws Exception {		
-		return editContribution(code, locale, request, false, true, false);
+		return editContribution(code, locale, request, false, true, false, false);
 	}
 	
-	private ModelAndView editContribution(String code, Locale locale, HttpServletRequest request, boolean fromBackOffice, boolean useNewestSurvey, boolean forpdf) throws Exception {	
-		AnswerSet answerSet = getAnswerSet(code, request);		
+	private ModelAndView editContribution(String code, Locale locale, HttpServletRequest request, boolean fromBackOffice, boolean useNewestSurvey, boolean forpdf, boolean isdraft) throws Exception {	
+		
+		AnswerSet answerSet;
+		String draftid = "";
+		if (isdraft)
+		{
+			Draft draft = answerService.getDraft(code);
+			answerSet = draft.getAnswerSet();
+			draftid = draft.getUniqueId();
+		} else {
+			answerSet = getAnswerSet(code, request);	
+		}
+
 		Set<String> invisibleElements = new HashSet<>();
 		if (answerSet != null)
 		{
@@ -182,7 +206,7 @@ public class ContributionController extends BasicController {
 				}
 			}				
 			
-			if (request.getRequestURI().contains("preparecontribution") || request.getRequestURI().contains("preparepublishedcontribution"))
+			if (request.getRequestURI().contains("preparecontribution") || request.getRequestURI().contains("preparepublishedcontribution") || request.getRequestURI().contains("preparedraft"))
 			{
 				//ignore authorization for PDF export
 			} else if (u == null && !draft.getIsActive())
@@ -247,7 +271,8 @@ public class ContributionController extends BasicController {
 			model.addObject("submit", true);
 			model.addObject("answerSet", answerSet.getId());
 			model.addObject("invisibleElements", invisibleElements);
-			model.addObject("submittedDate", ConversionTools.getFullString(answerSet.getDate()));
+			java.util.Date submittedDate = answerSet.getUpdateDate() != null ? answerSet.getUpdateDate() : answerSet.getDate();
+			model.addObject("submittedDate", ConversionTools.getFullString(submittedDate));
 			model.addObject("invitationToken", answerSet.getInvitationId());
 			
 			if (!fromBackOffice)
@@ -258,11 +283,15 @@ public class ContributionController extends BasicController {
 			if (request.getParameter("mode") != null && request.getParameter("mode").equalsIgnoreCase("dialog"))
 			{
 				model.addObject("dialogmode", true);
-			}
-					
+			}					
 					
 			// this code will be used as an identifier (for uploaded files etc)
 			model.addObject("uniqueCode", answerSet.getUniqueCode()); 
+			
+			if (isdraft) {
+				model.addObject("draftid", draftid);
+			}
+			
 			//recreate uploaded files
 			SurveyHelper.recreateUploadedFiles(answerSet, fileDir, translated, fileService);
 			
@@ -326,6 +355,7 @@ public class ContributionController extends BasicController {
 						Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true), survey.getLanguage(), resources,contextpath);
 						f.getAnswerSets().add(oldAnswerSet);
 						ModelAndView model = new ModelAndView("runner/runner", "form", f);
+						surveyService.initializeSkin(f.getSurvey());
 						model.addObject("submit", true);
 						model.addObject("runnermode", true);
 						model.addObject("uniqueCode", uniqueCode);
@@ -387,7 +417,7 @@ public class ContributionController extends BasicController {
 		
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return new ModelAndView("error/basic");
+			return new ModelAndView("redirect:/errors/500.html");
 		}
 	}
 	
@@ -425,7 +455,8 @@ public class ContributionController extends BasicController {
 					ModelAndView model = new ModelAndView("contributions/print", "form", f);
 					model.addObject("answerSet", answerSet.getId());
 					model.addObject("code", code);
-					model.addObject("submittedDate", ConversionTools.getFullString(answerSet.getDate()));
+					java.util.Date submittedDate = answerSet.getUpdateDate() != null ? answerSet.getUpdateDate() : answerSet.getDate();
+					model.addObject("submittedDate", ConversionTools.getFullString(submittedDate));
 					model.addObject("print", true);
 					model.addObject("serverprefix", serverPrefix);
 					model.addObject("invisibleElements", invisibleElements);
@@ -437,7 +468,7 @@ public class ContributionController extends BasicController {
 			}
 		}
 
-		return new ModelAndView("error/basic");
+		return new ModelAndView("redirect:/errors/500.html");
 
 	}
 	

@@ -94,8 +94,14 @@
 							</div>
 						</c:if>
 						
+						<c:if test="${element.getType() == 'Ruler'}">
+							<hr style="border-top: ${element.height}px ${element.style} ${element.color}" />
+						</c:if>
+						
 						<c:if test="${element.getType().endsWith('Question')}">
-							
+							<c:if test="${!element.getOptional()}">
+								<span class="mandatory" style="position: absolute; margin-left: 17px; margin-top: 2px;">*</span>
+							</c:if>
 							<label for="input${element.id}"><div class="questiontitle">${form.getQuestionTitle(element)}</div></label>
 							<c:choose>
 								<c:when test="${element.getType() == 'FreeTextQuestion' && element.getMinCharacters() != null && element.getMinCharacters() > 0 && element.getMaxCharacters() != null && element.getMaxCharacters() > 0}">
@@ -271,6 +277,9 @@
 															<c:set var="entity" value="${element.getChildElementsOrdered().get(element.columns + r - 2)}" />
 														
 															<c:if test="${entity.getType() == 'Text'}">
+																<c:if test="${!entity.getOptional()}">
+																	<span class="mandatory" style="position: absolute; margin-left: 53px; margin-top: 2px;">*</span>
+																</c:if>
 																<div>${form.getQuestionTitle(entity)}</div>
 															</c:if>
 															
@@ -345,7 +354,7 @@
 															<td style="background-color: #eee; width: ${element.getWidth(c-1)}">
 														</c:when>
 														<c:when test="${r == 1 || c == 1}">
-															<td style="background-color: #eee">
+															<td style="background-color: #eee; padding-left: 10px">
 														</c:when>
 														<c:otherwise>
 															<td style="padding: 2px">
@@ -353,7 +362,13 @@
 													</c:choose>
 														<c:choose>
 															<c:when test="${r == 1}"><c:set var="entity" value="${element.childElements.get(c-1)}" />${entity.title}</c:when>																
-															<c:when test="${c == 1}"><c:set var="entity" value="${element.childElements.get(element.columns + r - 2)}" />${form.getQuestionTitle(entity)}</c:when>																
+															<c:when test="${c == 1}">
+																<c:set var="entity" value="${element.childElements.get(element.columns + r - 2)}" />
+																<c:if test="${!entity.getOptional()}">
+																	<span class="mandatory" style="position: absolute; margin-left: 49px; margin-top: 3px;">*</span>
+																</c:if>
+																${form.getQuestionTitle(entity)}
+															</c:when>																
 															<c:otherwise>
 																<c:set var="answer" value="${element.childElements.get(c-1)}" />
 																<c:set var="question" value="${element.childElements.get(element.columns + r - 2)}" />

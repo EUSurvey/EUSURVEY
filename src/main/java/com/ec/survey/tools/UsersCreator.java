@@ -2,11 +2,14 @@ package com.ec.survey.tools;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.service.AdministrationService;
 
 public class UsersCreator {
+	private static final Logger logger = Logger.getLogger(UsersCreator.class);
 	
 	public static void createDefaultUsers(AdministrationService administrationService, boolean createStressTestData, String sender) throws Exception {		
 		
@@ -31,6 +34,7 @@ public class UsersCreator {
 		user.setType(User.SYSTEM);
 		user.getRoles().add(adminRole);
 		administrationService.createUser(user);	
+		logger.warn("Created a default admin user");
 		
 		//this one is used for edit skin, so please do not remove it!
 		user = new User();
@@ -44,6 +48,7 @@ public class UsersCreator {
 		user.getRoles().add(applicantRole);
 		user.setType(User.SYSTEM);		
 		administrationService.createUser(user);	
+		logger.warn("Created a default dummy user");
 		
 		if (createStressTestData)
 		{
@@ -57,7 +62,8 @@ public class UsersCreator {
 			user.setPassword(Tools.hash(administrationService.getStressPassword() + user.getPasswordSalt()));
 			user.getRoles().add(managerRole);
 			user.setType(User.SYSTEM);		
-			administrationService.createUser(user);	
+			administrationService.createUser(user);
+			logger.warn("Created a default stress test user");
 		}
 	}		
 

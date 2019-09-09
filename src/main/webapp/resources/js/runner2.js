@@ -1,6 +1,6 @@
 function getElementViewModel(element)
 {
-	if (element.hasOwnProperty("isViewModel"))
+	if (element.hasOwnProperty("isViewModel") && element.isViewModel)
 	{
 		return element;
 	}
@@ -15,6 +15,8 @@ function getElementViewModel(element)
 			return newTextViewModel(element);
 		case 'Image':
 			return newImageViewModel(element);
+		case 'Ruler':
+			return newRulerViewModel(element);
 		case 'FreeTextQuestion':
 			return newFreeTextViewModel(element);
 		case 'RegExQuestion':
@@ -48,7 +50,7 @@ function addElement(element, foreditor, forskin)
 {
 	var id;
 	var uniqueId;
-	if (element.hasOwnProperty("isViewModel"))
+	if (element.hasOwnProperty("isViewModel") && element.isViewModel)
 	{
 		id = element.id()
 		uniqueId = element.uniqueId();
@@ -60,6 +62,16 @@ function addElement(element, foreditor, forskin)
 	$(container).removeClass("emptyelement").empty();
 	
 	addElementToContainer(element, container, foreditor, forskin);
+	
+	if ($(container).hasClass("matrixitem"))
+	{
+		$(container).find(".matrix-question.untriggered").each(function(){
+			if (isTriggered(this, true))
+			{
+				$(this).removeClass("untriggered").show();
+			}
+		});
+	}
 	
 	var validation = getValidationMessageByQuestion(uniqueId);
 	if (validation.length > 0)
@@ -108,6 +120,11 @@ function addElementToContainer(element, container, foreditor, forskin)
 	{
 		$(container).addClass("imageitem");
 		var s = $("#image-template").clone().attr("id","");
+		$(container).append(s);
+	} else if (viewModel.type == 'Ruler')
+	{
+		$(container).addClass("ruleritem");
+		var s = $("#ruler-template").clone().attr("id","");
 		$(container).append(s);
 	} else if (viewModel.type == 'FreeTextQuestion' || viewModel.type == 'RegExQuestion')
 	{
@@ -221,7 +238,7 @@ function addElementToContainer(element, container, foreditor, forskin)
 		
 		if (foreditor && viewModel.tableType() == 2)
 		{
-			$(matrix).find("tr").first().find("td").each(function(index){	
+			$(matrix).find("tr").first().find("th").each(function(index){	
 				var cell = this;
 				$(this).resizable({
 					handles: "e",
@@ -238,7 +255,7 @@ function addElementToContainer(element, container, foreditor, forskin)
 		var table = this;
 		if (foreditor && viewModel.tableType() == 2)
 		{
-			$(table).find("tr").first().find("td").each(function(index){
+			$(table).find("tr").first().find("th").each(function(index){
 				var cell = this;
 				$(this).resizable({
 					handles: "e",

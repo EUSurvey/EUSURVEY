@@ -69,5 +69,54 @@
  <!-- Declare a transaction manager-->
  <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager"
           p:sessionFactory-ref="sessionFactory" />
+          
+ <bean name="sessionFactoryReporting" id="sessionFactoryReporting" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+   p:packagesToScan="com.ec.survey.servicereporting">
+   
+ 	<property name="dataSource" ref="dataSource2" /> 
+	<property name="hibernateProperties"> 
+		<props> 
+		 		<prop key="hibernate.connection.driver_class">net.bull.javamelody.JdbcDriver</prop>
+   				<prop key="hibernate.connection.driver">com.mysql.jdbc.Driver</prop>
+  				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.connection.url">${app.jdbc.urlReporting}</prop>
+				<prop key="hibernate.connection.username">${app.jdbc.usernameReporting}</prop>
+				<prop key="hibernate.connection.password">${app.jdbc.passwordReporting}</prop>
+				<prop key="hibernate.connection.provider_class">org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.ehcache.SingletonEhCacheProvider</prop>
+				<prop key="hibernate.cache.use_query_cache">false</prop>
+				<prop key="hibernate.cache.use_structured_entries">true</prop>
+				<prop key="hibernate.cache.provider_configuration_file_resource_path">/ehcache.xml</prop>
+	    		<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.jdbc.batch_size">50</prop>
+			    <prop key="hibernate.hbm2ddl.auto">none</prop>
+			    <prop key="hibernate.query.substitutions">true 1, false 0</prop>
+			    <prop key="hibernate.connection.useUnicode">true</prop> 
+			    <prop key="hibernate.query.factory_class">org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory</prop>
+			    <prop key="hibernate.c3p0.initialPoolSize">10</prop>
+				<prop key="hibernate.c3p0.minPoolSize">10</prop> 
+				<prop key="hibernate.c3p0.maxPoolSize">20</prop> 
+				<prop key="hibernate.c3p0.testConnectionOnCheckout">true</prop>
+				<prop key="hibernate.c3p0.statementCacheNumDeferredCloseThreads">1</prop>
+			    <prop key="hibernate.c3p0.timeout">300</prop>
+			    <prop key="hibernate.c3p0.idle_test_period">100</prop>
+				<prop key="hibernate.jdbc.factory_class">net.bull.javamelody.HibernateBatcherFactory</prop>
+			    <prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
+			    <prop key="hibernate.c3p0.preferredTestQuery">${hibernate.c3p0.preferredTestQuery}</prop> 
+		</props> 
+	</property> 
+</bean>
+    
+<bean id="dataSource2" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<property name="driverClassName" value="${app.jdbc.driverClassNameReporting}" />
+	<property name="url" value="${app.jdbc.urlReporting}" />
+	<property name="username" value="${app.jdbc.usernameReporting}" />
+	<property name="password" value="${app.jdbc.usernameReporting}" />
+</bean>
+
+ <bean id="transactionManagerReporting" class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+         p:sessionFactory-ref="sessionFactoryReporting" />
  
 </beans>

@@ -163,7 +163,10 @@ function singleClick(r) {
 
 function propagateChange()
 {
-	$("#btnSaveDraft").removeClass("btn-default disabled").addClass("btn-info").removeAttr("disabled");
+	if (!$("#btnSaveDraft").hasClass('disabled'))
+	{
+		$("#btnSaveDraft").removeClass("btn-default").addClass("btn-info");
+	}
 }
 
 var downloadsurveypdflang;
@@ -254,7 +257,7 @@ function createUploader(instance)
 	    	
 	    	if (responseJSON.wrongextension)
 	    	{
-	    		 $(instance).closest(".survey-element").append("<div class='validation-error'>" + getWrongExtensionMessage(fileName) + "</div>");
+	    		 $(instance).closest(".survey-element").append("<div class='validation-error' aria-live='polite'>" + getWrongExtensionMessage(fileName) + "</div>");
 	    	}
 		},
 		onError: function() {
@@ -262,7 +265,7 @@ function createUploader(instance)
 		},
 		showMessage: function(message){
 			message = message.replace("1.0MB", "1 MB");
-		    $(instance).closest(".survey-element").append("<div class='validation-error'>" + message + "</div>");
+		    $(instance).closest(".survey-element").append("<div class='validation-error' aria-live='polite'>" + message + "</div>");
 		},
 		onUpload: function(id, fileName, xhr){
 			$(instance).closest(".survey-element").find(".validation-error").remove();			
@@ -564,7 +567,9 @@ function deleteFile(id, uniqueCode, fileName, button) {
 			if (data.success) {
 				updateFileList($(button).parent().parent().siblings(
 						".file-uploader").first(), data);
-		  }
+			} else {
+				showRunnerError("Not possible to delete file");
+			}
 	  }
 	});
 

@@ -9,6 +9,8 @@ import com.ec.survey.service.MailService;
 import com.ec.survey.service.SessionService;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
+
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +34,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -69,36 +72,24 @@ public class LoginLogoutController extends BasicController {
 	
 	@RequestMapping(value = "/auth/login/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String getLoginPageRunnerMode(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) {
-		logger.debug("LoginLogoutController".toUpperCase() + " START GETLOGINPAGERUNNERMODE");
 		return "redirect:/auth/login";
 	}
 	
 	@RequestMapping(value = "/auth/login", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String getLoginPage(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException {
-		logger.debug("LoginLogoutController".toUpperCase() + " START GETLOGINPAGE");
-		
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		
 		//if user is already logged in, redirect to the welcome page instead
 		User user = sessionService.getCurrentUser(request);
-		if (user !=null){
-			logger.debug("LOGIN USER HAS BEEN CALLED WITH RESULT " + user.getLogin());	
-		}else{
-			logger.debug("LOGIN USER HAS BEEN CALLED WITH RESULT NO USER ");
-		}
 		
 		if (user != null) return "redirect:/dashboard";
 
-		logger.debug("LOGIN USER HAS BEEN CALLED USER IS NULL CHECK IF SOME ERRPOR");
 		if (error) {
-			logger.error("LOGIN USER HAS BEEN CALLED USER IS NULL CHECK ERROR EXIST");
 			// Assign an error message
 			model.put("error", resources.getMessage("error.CredentialsInvalid", null, "You have entered an invalid login or password!", locale));		
 		}
 		
-		logger.debug("LOGIN USER SET ECASURL AND SERVICEURL");
-
 		model.put("ecasurl", ecashost);
 		model.put("serviceurl", host + "auth/ecaslogin");
 
@@ -106,13 +97,11 @@ public class LoginLogoutController extends BasicController {
 		
 		request.getSession().removeAttribute("ticket");
 		
-		logger.debug("LOGIN USER RETURN auth/login URL");
 		return "auth/login";
 	}
 	
 	@RequestMapping(value = "/auth/ecaslogin", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public void ecaslogin(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, HttpServletResponse response, ModelMap model) throws ServletException, IOException {
-		logger.debug("LoginLogoutController".toUpperCase() + " START ECASLOGIN");
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		String ticket = request.getParameter("ticket");
@@ -194,7 +183,7 @@ public class LoginLogoutController extends BasicController {
 			administrationService.updateUser(user);
 			sessionService.setCurrentUser(request, user);
 			logger.debug("getToSPage is OSS by pass and go to home page");
-			return new ModelAndView("redirect:/noform/management/home", "user", user);
+			return new ModelAndView("redirect:/dashboard");
 		}
 	}
 	
@@ -256,7 +245,7 @@ public class LoginLogoutController extends BasicController {
 				
 				//check captcha
 				if (!checkCaptcha(request)){
-		        	model.put("error", resources.getMessage("message.captchawrongnew", null, "The CAPTCHA code is not correct!", locale));
+		        	model.put("captchaerror", resources.getMessage("message.captchawrongnew", null, "The CAPTCHA code is not correct!", locale));
 		        	model.put("mode", "forgotPassword");
 					return "auth/login";
 		        }
@@ -267,7 +256,11 @@ public class LoginLogoutController extends BasicController {
 				//send the code by email
 				String body = resources.getMessage("mail.Dear", null, "Dear", locale) + " " + user.getLogin() + "<br />" + resources.getMessage("mail.PasswordRequest", null, "A password reset request has been made for this email address. Please click the link below to change your password. The link will be valid for 24 hours.", locale) + "<br /><br />" ;
 				body += "<a href='" + host + "auth/reset/" + code.getCode() + "'>" + host + "auth/reset/" + code.getCode() + "</a>";
-				mailService.SendHtmlMail(code.getEmail(), sender, sender, resources.getMessage("mail.PasswordResetRequest", null, "Password Reset Request", locale), body, smtpServer, Integer.parseInt(smtpPort), null);
+				
+				InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);		
+								
+				mailService.SendHtmlMail(code.getEmail(), sender, sender, resources.getMessage("mail.PasswordResetRequest", null, "Password Reset Request", locale), text, smtpServer, Integer.parseInt(smtpPort), null);
 			} catch (Exception e) {
 				model.put("error", errorMessage);
 				return "auth/login";

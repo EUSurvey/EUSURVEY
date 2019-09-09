@@ -121,7 +121,7 @@
 				<li><a class="anchorlink" href="#_Toc0-10">Welche Browser unterstützt EUSurvey?</a></li>
 				<li><a class="anchorlink" href="#_Toc0-11">EUSurvey-Haftungsausschluss (nur f&uuml;r externe Nutzer)</a></li>
 				<li><a class="anchorlink" href="#_Toc0-12">K&ouml;nnen meine Teilnehmer mobile Endger&auml;te nutzen um meine Umfrage zu beantworten?</a></li>
-				
+				<li><a class="anchorlink" href="#_Toc0-13">Gibt es eine minimale Bildschirmgröße?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc1">Anmelden und Registrieren</a>
@@ -197,7 +197,9 @@
 				<li><a class="anchorlink" href="#_Toc7-7">Kann ich einen direkten Link zu einer Übersetzung meiner Umfrage angeben?</a></li>
 				<li><a class="anchorlink" href="#_Toc7-3">Wie kann ich veranlassen, dass meine Umfrage von selbst ver&ouml;ffentlicht wird, wenn ich im Urlaub bin?</a></li>
 				<li><a class="anchorlink" href="#_Toc7-4">Kann ich eine Erinnerung erhalten, bevor meine Umfrage endet?</a></li>
+				<c:if test="${enablepublicsurveys}">
 				<li><a class="anchorlink" href="#_Toc7-5">Wie setze ich meine Umfrage auf die Liste der &ouml;ffentlichen Umfragen in EUSurvey?</a></li>
+				</c:if>
 				<li><a class="anchorlink" href="#_Toc7-6">F&uuml;r Mitarbeiter der EU: Was muss ich beachten, wenn ich eine &ouml;ffentlich zug&auml;ngliche, offene Umfrage ver&ouml;ffentlichen m&ouml;chte (&bdquo;Ihre Stimme in Europa&ldquo; Webseite)?</a></li>
 			</ul>
 		</li>
@@ -211,6 +213,7 @@
 				<li><a class="anchorlink" href="#_Toc8-6">Wie passe ich die Standard-Abbruchmeldung an? </a></li>
 				<li><a class="anchorlink" href="#_Toc8-7">Archivierung</a></li>
 				<li><a class="anchorlink" href="#_Toc8-8">Wie erhalten andere Nutzer Zugang zu meiner Umfrage?</a></li>
+				<li><a class="anchorlink" href="#_Toc8-9">Was sind Aktivitätsprotokolle?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc9">Ergebnisse analysieren, exportieren und ver&ouml;ffentlichen</a>
@@ -225,6 +228,7 @@
 				<li><a class="anchorlink" href="#_Toc9-8">Meine Exportdateien lassen sich nicht entpacken</a></li>
 				<li><a class="anchorlink" href="#_Toc9-9">Ver&ouml;ffentlichte Ergebnisse - von Teilnehmern hochgeladene Dokumente, die personenbezogene Daten enthalten</a></li>
 				<li><a class="anchorlink" href="#_Toc9-10">Wie kann ich meine Umfrage gestalten, um die Ergebnisse mit oder ohne personenbezogene Daten zu ver&ouml;ffentlichen?</a></li>
+				<li><a class="anchorlink" href="#_Toc9-11">Warum sind meine Ergebnisse nicht aktuell?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc10">Design und Layout</a>
@@ -328,6 +332,11 @@
 <i>Die Europ&auml;ische Kommission haftet nicht f&uuml;r den Inhalt der unter Nutzung des Dienstes EUSurvey verfassten Frageb&ouml;gen. Die Verantwortung daf&uuml;r liegt allein beim Ersteller des Formulars und Ausrichter der Umfrage. Die Nutzung des Dienstes EUSurvey impliziert keine Empfehlung oder Billigung der in den damit erstellten Umfragen zum Ausdruck gebrachten Ansichten durch die Europ&auml;ische Kommission.</i></p>
 <h2><a class="anchor" name="_Toc0-12"></a>K&ouml;nnen meine Teilnehmer mobile Endger&auml;te nutzen um meine Umfrage zu beantworten?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Ja, EUSurvey stellt ein sog. &bdquo;Responsive Webdesign&ldquo; f&uuml;r ver&ouml;ffentlichte Umfragen zur Verf&uuml;gung. Dies bedeutet, dass Inhalts- und Navigationselemente sowie auch der strukturelle Aufbau einer Webseite sich der Bildschirmaufl&ouml;sung des mobilen Endger&auml;tes anpassen. EUSurvey bietet dadurch Ihren Teilnehmern eine gleichbleibende Benutzerfreundlichkeit auf dem Computer-Desktop, Tablet und Smartphone.</p>
+
+<h2><a class="anchor" name="_Toc0-13"></a>Gibt es eine minimale Bildschirmgröße?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>Die Online-Fragebögen sind vollständig  responsiv und passen sich der Größe Ihres Geräts an, so dass Sie den Fragebogen mit beliebiger Bildschirmgröße ausfüllen können.
+<br />
+Für die Erstellung und Verwaltung von Umfragen empfehlen wir eine Mindestauflösung von 1680x1050 Pixel.</p>
 
 <h1><a class="anchor" name="_Toc1"></a>Anmelden und Registrieren</h1>
 <h2><a class="anchor" name="_Toc1-1"></a>Ich habe ein EU Login-Konto. Muss ich mich für EUSurvey separat registrieren?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
@@ -559,12 +568,14 @@
 <h2><a class="anchor" name="_Toc7-4"></a>Kann ich eine Erinnerung erhalten, bevor meine Umfrage endet?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>EUSurvey kann Ihnen per E-Mail eine Erinnerung schicken, kurz bevor Ihre Umfrage endet. So k&ouml;nnen Sie die n&auml;chsten Schritte vorbereiten (z. B. die Ressourcen für die Analyse der Ergebnisse organisieren).</p>
 <p>Um diese Option zu aktivieren, &ouml;ffnen Sie die Umfrage und gehen Sie zur Seite &bdquo;Eigenschaften&ldquo;. W&auml;hlen Sie &bdquo;Erweiterte Einstellungen&ldquo; aus, klicken Sie auf die Schaltfl&auml;che &bdquo;Bearbeiten&ldquo; und aktivieren Sie &bdquo;Benachrichtigung über bevorstehendes Ende&ldquo;. Geben Sie dabei an, mit wie viel Vorlauf Sie diese E-Mail erwarten und ob alle anderen Fragebogen-Verwalter ebenfalls eine E-Mail erhalten sollen. Klicken Sie auf &bdquo;Speichern&ldquo;.</p>
+<c:if test="${enablepublicsurveys}">
 <h2><a class="anchor" name="_Toc7-5"></a>Wie setze ich meine Umfrage auf die Liste der &ouml;ffentlichen Umfragen in EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Sie k&ouml;nnen einen Link auf Ihre Umfrage in der <a href="http://ec.europa.eu${contextpath}/home/publicsurveys" target="_blank">Liste der &ouml;ffentlichen Umfragen in EUSurvey</a> ver&ouml;ffentlichen.</p>
 <p>&Ouml;ffnen Sie Ihre Umfrage und gehen Sie zur Seite &bdquo;Eigenschaften&ldquo;. W&auml;hlen Sie &bdquo;Sicherheitseinstellungen&ldquo; aus und klicken Sie auf die Schaltfl&auml;che &bdquo;Bearbeiten&ldquo;. W&auml;hlen Sie unter &bdquo;&Ouml;ffentlich&ldquo; &bdquo;Ja&ldquo; und klicken Sie auf &bdquo;Speichern&ldquo;.</p>
 <p><b>Bitte beachten Sie,</b> dass eine Ver&ouml;ffentlichung Ihrer Umfrage in der EUSurvey Liste der &ouml;ffentlichen Umfragen der Validierung durch das EUSurvey-Team bedarf. Wenn Sie auf der Seite &bdquo;Übersicht&ldquo; auf &bdquo;Ver&ouml;ffentlichen&ldquo; oder &bdquo;&Auml;nderungen anwenden&ldquo; klicken, sendet EUSurvey automatisch eine E-Mail an das EUSurvey-Team.</p>
 <p>Sobald Ihre Umfrage validiert wurde, erhalten Sie eine Best&auml;tigungsnachricht und Ihre Umfrage ist in der Liste der &ouml;ffentlichen Umfragen verf&uuml;gbar.</p>
 <p>Bei allen Umfragen, die in der Liste der &ouml;ffentlichen Umfragen in EUSurvey ver&ouml;ffentlicht werden, werden die Teilnehmer aufgefordert, eine Sicherheitsfrage (CAPTCHA) zu beantworten, bevor Sie einen Beitrag absenden. Diese Funktion wird automatisch aktiviert sobald Ihre Umfrage in der Liste erscheint.</p>
+</c:if>
 <h2><a class="anchor" name="_Toc7-6"></a>F&uuml;r Mitarbeiter der EU: Was muss ich beachten, wenn ich eine &ouml;ffentlich zug&auml;ngliche, offene Umfrage ver&ouml;ffentlichen m&ouml;chte (&bdquo;Ihre Stimme in Europa&ldquo; Webseite)?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Bitte befolgen Sie sorgf&auml;ltig <a href ="https://circabc.europa.eu/sd/d/fc02d2ac-d94f-42ed-b866-b3429e0d717b/Survey_publication_your_voice_in_europe_NEW.pdf" target="_blank">das Verfahren f&uuml;r die Ver&ouml;ffentlichung</a> von &ouml;ffentlich zug&auml;nglichen, offenen Umfragen auf den vom Generalsekretariat unterhaltenen Seiten von <a href="http://ec.europa.eu/yourvoice/consultations/index_en.htm" target="_blank">&bdquo;Ihre Stimme in Europa&ldquo;</a>.</p>
 
@@ -613,6 +624,11 @@
 	</ul>
 <p>Stellen Sie alle drei Optionen auf Gr&uuml;n um, haben bevorrechtigte Nutzer in vollem Umfang Zugang zu Ihrer Umfrage.</p>
 
+<h2><a class="anchor" name="_Toc8-9"></a>Was sind Aktivitätsprotokolle?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>
+Aktivitätsprotokolle überwachen und protokollieren die Aktivität in Ihrer Umfrage. Auf diese Weise können Sie überprüfen, welcher Benutzer zu welchem Zeitpunkt welche Änderung an Ihrer Umfrage vorgenommen hat. Sie können die Aktivitätsprotokolle auch in verschiedene Dateiformate wie xls, csv und ods exportieren. Um zum Aktivitätsprotokoll Ihrer Umfrage zu gelangen, klicken Sie auf den Link "Aktivität" neben "Eigenschaften". Wenn die Aktivitätsprotokolle leer sind, kann es sein, dass sie systemweit deaktiviert sind. <a href="${contextpath}/resources/documents/ActivityLogEvents.xlsx">Hier</a> finden Sie eine Liste der protokollierten Ereignisse.
+</p>
+
 <h1><a class="anchor" name="_Toc9"></a>Ergebnisse analysieren, exportieren und ver&ouml;ffentlichen</h1>
 <h2><a class="anchor" name="_Toc9-1"></a>Wo finde ich die von meinen Teilnehmern eingereichten Beitr&auml;ge?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Öffnen Sie Ihre Umfrage in EUSurvey (siehe auch &bdquo;<a href="#_Toc2-5">Wie &ouml;ffne ich eine vorhandene Umfrage zur Bearbeitung usw.?</a>) und gehen Sie zur Seite &bdquo;Ergebnisse&ldquo;. Zun&auml;chst wird der vollst&auml;ndige Inhalt aller eingereichten Beitr&auml;ge in einer Tabelle angezeigt. Sie k&ouml;nnen sich die Ergebnisse auf zweierlei Art und Weise anzeigen lassen:</p>
@@ -645,6 +661,9 @@
 <p>Bitte beachten Sie, dass dieses Dialogfenster nur erscheint, wenn Ihre Umfrage ein hochgeladenes Element enth&auml;lt.</p>
 <h2><a class="anchor" name="_Toc9-10"></a>Wie kann ich meine Umfrage gestalten, um die Ergebnisse mit oder ohne personenbezogene Daten zu ver&ouml;ffentlichen?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Wenn Sie Ihre Teilnehmer w&auml;hlen lassen m&ouml;chten, ob ihre personenbezogenen Daten mit ihren Antworten ver&ouml;ffentlicht werden sollen oder nicht, erstellen Sie Ihren Fragebogen bitte nach der in <a href="https://circabc.europa.eu/sd/d/e68ff760-226f-40e9-b7cb-d3dcdd04bfb1/How_to_publish_survey_results_anonymously.pdf" target="_blank">diesem Dokument</a> genannten Vorgehensweise.</p>
+<h2><a class="anchor" name="_Toc9-11"></a>Warum sind meine Ergebnisse nicht aktuell?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>Es wurde eine neue Datenbank eingeführt, die die Leistung von EUSurvey bei der Abfrage der Ergebnisse Ihrer Umfrage verbessern soll. Dies kann jedoch zu Verzögerungen  führen, bis die neuesten Daten auf der Ergebnisseite Ihrer Umfrage angezeigt werden. Diese Verzögerung sollte nicht mehr als 12 Stunden betragen.</p>
+<p>Sollten die angezeigten Daten älter als 12 Stunden sein, wenden Sie sich bitte an den <a href="https://ec.europa.eu/eusurvey/home/support">Support</a> von EUSurvey.</p>
 
 <h1><a class="anchor" name="_Toc10"></a>Design und Layout</h1>
 <h2><a class="anchor" name="_Toc10-1"></a>Wie &auml;ndere ich das allgemeine Erscheinungsbild meiner Umfrage?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>

@@ -40,19 +40,55 @@
     <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
    	</c:if>	
 	
-	<c:if test="${form.survey.skin != null && !form.wcagCompliance}">
- 		<style type="text/css">
-
- 			<c:choose>
- 				<c:when test="${forpdf != null}">
- 					 ${form.survey.skin.getCss(true)}
- 				</c:when>
- 				<c:otherwise>
- 					 ${form.survey.skin.getCss(false)}
- 				</c:otherwise>
- 			</c:choose>
- 		</style>
- 	</c:if>
+	<c:choose>
+		<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("Official EC Skin")}'>
+			<style type="text/css">
+			
+					body {
+	 					background-color: #fff !important;
+	 				}
+	 				.page {
+	 					margin-top:0px;
+	 				}
+	 				#header {
+	 					font-size: 12px;
+	 				}
+	 				.layout-footer {
+	 					font-size: 12px;
+	 				}
+	 				#services {
+	 					position: relative !important;
+	 					width: auto;
+	 					display: inline;
+	 				}
+	 				.language-selector {
+	 					width: auto;
+	 					height : auto;
+	 					padding: 0px !important;
+	 					top: 0px !important;
+	 					position: relative !important;
+	 					display: inline;
+	 				}
+ 			</style>
+		
+			<link href="${contextpath}/resources/css/ec.css" rel="stylesheet" type="text/css"></link>
+		</c:when>
+		<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("New Official EC Skin")}'>
+			<link href="${contextpath}/resources/css/ecnew.css" rel="stylesheet" type="text/css"></link>
+		</c:when>
+		<c:when test="${form.survey.skin != null && !form.wcagCompliance && ismobile == null}">
+			<style type="text/css">
+				<c:choose>
+	 				<c:when test="${forpdf != null}">
+	 					 ${form.survey.skin.getCss(true)}
+	 				</c:when>
+	 				<c:otherwise>
+	 					 ${form.survey.skin.getCss(false)}
+	 				</c:otherwise>
+	 			</c:choose>
+			</style>
+		</c:when>
+	</c:choose>
  	
  	<c:if test="${runnermode != null && forpdf==null}">
 		<script type="text/javascript">
@@ -176,7 +212,7 @@
 		padding-right: 0;
 	}
 
-      .matrixtable td { padding: 4pt; padding-left: 9pt; padding-right: 9pt; border: 1pt solid #bbb; }
+      .matrixtable td, .matrixtable th { padding: 4pt; padding-left: 9pt; padding-right: 9pt; border: 1pt solid #bbb; }
       .matrixtable { margin-left: 18pt; }			
       
     	.tabletable {
@@ -215,21 +251,36 @@
 </head>
 <body class="${forpdf == null ? 'grey-background' : ''}" style="text-align: center;">
 	<c:set var="mode" value="editcontribution" />
-		
-	<c:if test="${forpdf == null}">
-		<a style="color: #fff" href="#surveystart">${form.getMessage("label.SkipToMain")}</a>
+	
+	<c:if test="${forpdf == null && form.wcagCompliance}">
+		<div style="margin-top: 40px;">
+			<a style="color: #000" href="#page0">${form.getMessage("label.SkipToMain")}</a>
+		</div>		
 	</c:if>
 	
-	<c:choose>
-		<c:when test="${forpdf != null}"></c:when>
-		<c:when test="${USER != null && runnermode == null}">
-			<%@ include file="../header.jsp" %>
-			<%@ include file="../menu.jsp" %>	
-		</c:when>
-		<c:otherwise>
-			<%@ include file="../header.jsp" %>	
-		</c:otherwise>
-	</c:choose>	
+	<c:if test="${forpdf == null}">
+		<c:choose>
+			<c:when test="${responsive != null}">
+				<%@ include file="../headerresponsive.jsp" %>	 
+			</c:when>
+			<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("Official EC Skin")}'>
+				<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto; border: 1px solid #000">
+				<%@ include file="../headerec.jsp" %>	 
+			</c:when>
+			<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("New Official EC Skin")}'>
+				<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto;">
+				<%@ include file="../headerecnew.jsp" %>	 
+			</c:when>
+			<c:when test="${USER != null && runnermode == null}">
+				<%@ include file="../header.jsp" %>
+				<%@ include file="../menu.jsp" %>	
+			</c:when>
+			<c:otherwise>
+				<%@ include file="../header.jsp" %>	 
+			</c:otherwise>
+		</c:choose>
+	</c:if>
+	
 	 
 		<c:if test="${USER != null && runnermode == null}">							
 			<%@ include file="../management/formmenu.jsp" %>
@@ -238,7 +289,14 @@
 		<c:if test="${forpdf != null}">
 			<c:if test='${!form.survey.security.equals("openanonymous") && !form.survey.security.equals("securedanonymous")}'>
 				<div style="color:#666; text-align: left;">
-					<spring:message code="label.ContributionId" />: <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML><br/>
+					<c:choose>
+						<c:when test="${draftid != null}">
+							<spring:message code="label.DraftID" />: <esapi:encodeForHTML>${draftid}</esapi:encodeForHTML><br/>
+						</c:when>
+						<c:otherwise>
+							<spring:message code="label.ContributionId" />: <esapi:encodeForHTML>${uniqueCode}</esapi:encodeForHTML><br/>	
+						</c:otherwise>
+					</c:choose>
 					<spring:message code="label.Date" />: <esapi:encodeForHTML>${submittedDate}</esapi:encodeForHTML><br/>
 					<hr/>
 				</div>
@@ -289,12 +347,25 @@
 				<hr style="margin-top: 15px;" />
 			</c:if>
 		</div>			
-		</c:if>
-		
+	</c:if>
 	
-
-	<c:if test="${forpdf == null }">				
-		<%@ include file="../footerNoLanguages.jsp" %>
+	<c:if test="${forpdf == null }">
+		<c:choose>
+			<c:when test="${responsive != null}">
+				<%@ include file="../footerresponsive.jsp" %>	 
+			</c:when>
+			<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("Official EC Skin")}'>
+				<%@ include file="../footerNoLanguagesEC.jsp" %>
+				</div> 
+			</c:when>
+			<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("New Official EC Skin")}'>
+				</div>  
+				<%@ include file="../footerNoLanguagesECnew.jsp" %>
+			</c:when>
+			<c:otherwise>
+				<%@ include file="../footerNoLanguages.jsp" %> 
+			</c:otherwise>
+		</c:choose>
 		
 		<c:if test="${message != null}">
 			<script type="text/javascript">
@@ -303,7 +374,5 @@
 		</c:if>
 	</c:if>
 	
-	
-
 </body>
 </html>

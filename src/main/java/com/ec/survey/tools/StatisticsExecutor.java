@@ -81,7 +81,7 @@ public class StatisticsExecutor implements Runnable {
 		try {
 			
 			String cacheType = "statexport" + type + format;
-			survey = surveyService.getSurvey(survey.getShortname(), false, false, false, true, null, true);
+			survey = surveyService.getSurvey(survey.getShortname(), false, false, false, true, null, true, false);
 			ExportCache c = fileService.getCachedExport(survey.getId(), hash, cacheType);
 			if (c != null)
 			{
@@ -101,7 +101,7 @@ public class StatisticsExecutor implements Runnable {
 				String uid = UUID.randomUUID().toString();
 				
 				final Form form = new Form(resources);
-				survey = surveyService.getSurvey(survey.getShortname(), false, false, false, false, null, true);
+				survey = surveyService.getSurvey(survey.getShortname(), false, false, false, false, null, true, false);
 
 				Export export = new Export();
 				export.setDate(new Date());

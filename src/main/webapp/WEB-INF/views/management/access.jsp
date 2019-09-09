@@ -15,8 +15,11 @@
 	    .dep-tree-child { margin-left: 30px;}
 
 		#search-results td, th {
-	    	cursor: pointer;
 	    	white-space:nowrap;
+		}
+		
+		#search-results td {
+	    	cursor: pointer;
 		}
 		
 		.draghandle.dragged
@@ -51,10 +54,10 @@
 			$("tr:not(.readonly)").each(function(){
 				
 				$(this).find(".roleBulletGrey").hover(function(){
-					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_grey_hover.png");
+					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_gray_hover.png");
 				},
 				function(){
-					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_grey.png");
+					$(this).attr("src", "${contextpath}/resources/images/bullet_ball_glass_gray.png");
 				});
 				
 				$(this).find(".roleBulletGreen").hover(function(){
@@ -109,15 +112,9 @@
 		<input type="hidden" name="id" id="remove-id" value="" />
 	</form:form>
 	
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner">
-			<h1><spring:message code="label.Privileges" /></h1>		
-		</div>
-	</div>
-	
 	<div id="action-bar" class="container action-bar">
 		<div class="row">
-			<div class="col-md-8 col-md-offset-4" style="text-align:right">
+			<div class="col-md-12" style="text-align: center">
 				<c:choose>
 					<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">
 						<a  id="btnAddUserFromAccess" class="btn btn-default" onclick="showAddUserDialog()"><spring:message code="label.AddUser" /></a>

@@ -81,7 +81,7 @@ public class PDFController extends BasicController {
 			
 			if (survey.getIsDraft())
 			{
-				Survey published = surveyService.getSurvey(survey.getUniqueId(), false, false, false, false, survey.getLanguage().getCode(), true);
+				Survey published = surveyService.getSurvey(survey.getUniqueId(), false, false, false, false, survey.getLanguage().getCode(), true, false);
 			
 				if (published == null)
 				{

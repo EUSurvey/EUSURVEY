@@ -16,7 +16,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import com.ec.survey.model.administration.User;
 import com.ec.survey.service.SessionService;
 import com.ec.survey.tools.TestDataGenerator;
@@ -49,7 +48,7 @@ public class TestDataController extends BasicController {
 			return "error/info";
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error/basic";
+			return "redirect:/errors/500.html";
 		}
 	}
 	
@@ -64,7 +63,7 @@ public class TestDataController extends BasicController {
 			return "error/info";
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error/basic";
+			return "redirect:/errors/500.html";
 		}
 	}
 	
@@ -80,7 +79,7 @@ public class TestDataController extends BasicController {
 			return "error/info";
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error/basic";
+			return "redirect:/errors/500.html";
 		}
 	}
 	
@@ -97,7 +96,7 @@ public class TestDataController extends BasicController {
 			return "error/info";
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error/basic";
+			return "redirect:/errors/500.html";
 		}
 	}
 	
@@ -114,7 +113,7 @@ public class TestDataController extends BasicController {
 			return "error/info";
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error/basic";
+			return "redirect:/errors/500.html";
 		}
 	}
 	
@@ -139,7 +138,7 @@ public class TestDataController extends BasicController {
 			return "error/info";
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error/basic";
+			return "redirect:/errors/500.html";
 		}
 	}
 	
@@ -155,7 +154,7 @@ public class TestDataController extends BasicController {
 			return "error/info";
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error/basic";
+			return "redirect:/errors/500.html";
 		}
 	}
 	
@@ -171,7 +170,7 @@ public class TestDataController extends BasicController {
 			return "error/info";
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error/basic";
+			return "redirect:/errors/500.html";
 		}
 	}
 	

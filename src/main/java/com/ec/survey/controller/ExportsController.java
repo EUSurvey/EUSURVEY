@@ -94,10 +94,11 @@ public class ExportsController extends BasicController {
 			{
 				boolean active = (Boolean) request.getSession().getAttribute("results-source-active");		
 				Survey survey = form.getSurvey();
-				survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true);
+				survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true, false);
 				export.setSurvey(survey);
 				export.setShowShortnames(showShortnames != null && showShortnames.equalsIgnoreCase("true"));
-				ResultFilter filter = new ResultFilter();
+				ResultFilter filter = answerService.initialize(sessionService.getLastResultFilter(request)).copy();
+				filter.getVisibleQuestions().clear();
 				filter.getVisibleQuestions().add(uid);
 				export.setResultFilter(filter);			
 				form.setSurvey(survey);	
@@ -109,12 +110,14 @@ public class ExportsController extends BasicController {
 					return "notallowed";
 				}
 				
-				Survey survey = form.getSurvey();
+				Survey survey = null; //form.getSurvey();
 				
 				String shortname = request.getParameter("shortname");
 				if (shortname != null && shortname.length() > 0)
 				{
-					survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, false, true);
+					survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, false, true, false);
+				} else {
+					survey = form.getSurvey();
 				}
 				
 				export.setSurvey(survey);
@@ -123,10 +126,13 @@ public class ExportsController extends BasicController {
 			} else {				
 				boolean active = (Boolean) request.getSession().getAttribute("results-source-active");		
 				Survey survey = form.getSurvey();
-				survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true);
+				survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true, false);
 				export.setSurvey(survey);
 				export.setShowShortnames(showShortnames != null && showShortnames.equalsIgnoreCase("true"));
-				export.setResultFilter(sessionService.getLastResultFilter(request).copy());			
+				
+				ResultFilter origFilter = answerService.initialize(sessionService.getLastResultFilter(request));
+				
+				export.setResultFilter(origFilter.copy());			
 				form.setSurvey(survey);				
 			}			
 		

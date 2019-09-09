@@ -118,7 +118,7 @@
 					}
 				} else if ($("#edit-prop-tabs-2").is(":visible"))
 				{
-					tabs = $("#edit-prop-tabs-2");	
+					tabs = $("#edit-prop-tabs-2");
 				} else if ($("#edit-prop-tabs-3").is(":visible"))
 				{
 					tabs = $("#edit-prop-tabs-3");
@@ -279,12 +279,6 @@
 	<%@ include file="../menu.jsp" %>
 	<%@ include file="formmenu.jsp" %>
 	
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner">
-			<h1><spring:message code="label.Properties" /></h1>		
-		</div>
-	</div>
-	
 	<div id="action-bar" class="container action-bar">
 		<div class="row">
 			<div class="col-md-12" style="text-align:center">
@@ -313,7 +307,7 @@
 					<li><a style="padding: 5px;" id="tablink6" onclick="activate(this);" href="#prop-tabs-6" data-toggle="tab"><spring:message code="label.PublishResults" /></a></li>
 					<li><a style="padding: 5px;" id="tablink4" onclick="activate(this);" href="#prop-tabs-4" data-toggle="tab"><spring:message code="label.SpecialPages" /></a></li>
 					<li><a style="padding: 5px;" id="tablink7" onclick="activate(this);" href="#prop-tabs-7" data-toggle="tab"><spring:message code="label.Quiz" /></a></li>
-					<c:if test="${enableopc && USER.getGlobalPrivilegeValue('ECAccess') > 0}">
+					<c:if test="${enableopc && USER.getGlobalPrivilegeValue('ECAccess') > 0 && form.survey.isOPC != null && form.survey.isOPC}">
 						<li><a style="padding: 5px;" id="tablink8" onclick="activate(this);" href="#prop-tabs-8" data-toggle="tab"><spring:message code="label.OPC" /></a></li>
 					</c:if>
 				</ul>
@@ -378,6 +372,9 @@
 													&nbsp;(<spring:message code="label.InternalStaffOnly" />)
 													</c:otherwise>
 												</c:choose>
+												<c:if test="${form.survey.allowedContributionsPerUser > 1}">
+													(${form.survey.allowedContributionsPerUser}&nbsp;<spring:message code="label.ContributionsPerUser" />)
+												</c:if>
 											</c:if>
 										</c:otherwise>
 									</c:choose>									
@@ -398,22 +395,24 @@
 									</c:choose>
 								</td>
 							</tr>
-							<tr>
-								<td class="table-label">
-									<spring:message code="label.Visibility" />
-									<div class="help"><spring:message code="label.AdvertiseYourFormA" />&nbsp;<spring:message code="label.AdvertiseYourFormB" /> <a data-toggle="tooltip" title="<spring:message code="label.LearnMore" />" target="_blank" href="${contextpath}/home/helpauthors#_Toc7-5"><img src="${contextpath}/resources/images/icons/24/help_bubble.png" alt="Help" style="margin-left:10px; margin-right:10px;"></a></div>
-								</td>
-								<td>
-									<c:choose>
-										<c:when test="${form.survey.listForm}">
-											<spring:message code="label.Public" />
-										</c:when>
-										<c:otherwise>
-											<spring:message code="label.Private" />
-										</c:otherwise>
-									</c:choose>									
-								</td>
-							</tr>							
+								<c:if test="${enablepublicsurveys}">
+								<tr>
+									<td class="table-label">
+										<spring:message code="label.Visibility" />
+										<div class="help"><spring:message code="label.AdvertiseYourFormA" />&nbsp;<spring:message code="label.AdvertiseYourFormB" /> <a data-toggle="tooltip" title="<spring:message code="label.LearnMore" />" target="_blank" href="${contextpath}/home/helpauthors#_Toc7-5"><img src="${contextpath}/resources/images/icons/24/help_bubble.png" alt="Help" style="margin-left:10px; margin-right:10px;"></a></div>
+									</td>
+									<td>
+										<c:choose>
+											<c:when test="${form.survey.listForm}">
+												<spring:message code="label.Public" />
+											</c:when>
+											<c:otherwise>
+												<spring:message code="label.Private" />
+											</c:otherwise>
+										</c:choose>									
+									</td>
+								</tr>		
+							</c:if>					
 							<tr>
 								<td class="table-label"><spring:message code="label.Captcha" /></td>
 								<td>

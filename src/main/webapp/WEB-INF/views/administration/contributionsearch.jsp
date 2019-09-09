@@ -106,9 +106,12 @@
 		}
 		
 		var endreached = false;
+		var inloading = false;
 		function loadMore()
 		{
-			if (endreached) return;
+			if (endreached || inloading) return;
+			
+			inloading = true;
 			
 			$( "#wheel" ).show();
 			var s = "page=" + infinitePage++ + "&rows=10";	
@@ -131,6 +134,8 @@
 			{
 				infinitePage--;
 				endreached = true;
+				inloading = false;
+			    $("#wheel").hide();
 				$("#load-more-div").hide();
 				return;
 			}
@@ -159,14 +164,15 @@
 				td = document.createElement("td");		
 				
 				if (list[i].draft && list[i].invitationId != null && list[i].invitationId.length > 0) {
-					$(td).append('<a target="_blank" href="${contextpath}/runner/' + list[i].surveyUID + '/' + list[i].invitationId + '">' + list[i].draftId  + '</a>');											
-				} else if (list[i].isDraft) {
-				
-					$(td).append('<a target="_blank" href="${contextpath}/runner/' + list[i].surveyUID + '?draftid=' + list[i].draftId + '">' + list[i].draftId  + '</a>');									
+					$(td).append('<a target="_blank" href="${contextpath}/runner/' + list[i].surveyUID + '/' + list[i].invitationId + '">' + list[i].draftId  + '</a>');
+					$(td).append('<div style="float: right"><a data-toggle="tooltip" title="<spring:message code="tooltip.readonlypreview" />" target="_blank" href="${contextpath}/runner/' + list[i].surveyUID + '/' + list[i].invitationId + '?readonly=true"><span class="glyphicon glyphicon-eye-open"></span></a></div>');
+				} else if (list[i].draft) {				
+					$(td).append('<a target="_blank" href="${contextpath}/runner/' + list[i].surveyUID + '?draftid=' + list[i].draftId + '">' + list[i].draftId  + '</a>');	
+					$(td).append('<div style="float: right"><a data-toggle="tooltip" title="<spring:message code="tooltip.readonlypreview" />" target="_blank" href="${contextpath}/runner/' + list[i].surveyUID + '?draftid=' + list[i].draftId + '&readonly=true"><span class="glyphicon glyphicon-eye-open"></span></a></div>');
 				} else {
 					$(td).append(list[i].draftId);									
 				}				
-				
+								
 				$(row).append(td);
 				
 				td = document.createElement("td");	
@@ -202,7 +208,7 @@
 				
 				if (!list[i].draft)
 				{
-					$(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton" onclick="resetContribution(' + list[i].uniqueCode + ', this)" ><span class="glyphicon glyphicon-refresh"></span></a>');
+					$(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton" onclick="resetContribution(\x27' + list[i].uniqueCode + '\x27, this)" ><span class="glyphicon glyphicon-refresh"></span></a>');
 				} else {
 					$(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton disabled"><span class="glyphicon glyphicon-refresh"></span></a>');
 				}
@@ -211,14 +217,14 @@
 				
 				if (!list[i].draft)
 				{
-					$(td).attr("data-toggle","tooltip").attr("title", "<spring:message code="tooltip.Downloadpdf" />").find("a").first().attr("onclick","downloadAnswerPDF('" + list[i].uniqueCode + "')");
+					$(td).find("a").first().attr("data-toggle","tooltip").attr("title", "<spring:message code="tooltip.Downloadpdf" />").attr("onclick","downloadAnswerPDF('" + list[i].uniqueCode + "')");
 				}				
 				
 				$(row).append(td);
 				
 				$('#resultTableDivTableBody').first().append(row);
 			  }
-			  
+			 inloading = false;
 			  $( "#wheel" ).hide();
 			  $('[data-toggle="tooltip"]').tooltip();
 		}
@@ -242,15 +248,13 @@
 	<%@ include file="../menu.jsp" %>
 	<%@ include file="adminmenu.jsp" %>	
 	
-	<form:form id="contributionsearchForm" action="contributionsearch" method="post" class="noautosubmitonclearfilter">
+	<form:form id="contributionsearchForm" action="contributionsearch" method="post" class="noautosubmitonclearfilter" onsubmit="$('#generic-wait-dialog').modal('show');">
 	
 	<div class="fixedtitleform">
-		<div class="fixedtitleinner" style="padding-bottom: 10px;">
-			<h1><spring:message code="label.ContributionManagement" /></h1>
-			
+		<div class="fixedtitleinner" style="padding-bottom: 35px;">
 			<div id="action-bar" class="container">
 				<div class="row">
-					<div class="col-md-12" style="text-align:center">
+					<div class="col-md-12" style="text-align:center; margin-top: 20px;">
 						<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
 						<a  onclick="resetSearch()" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
 					</div>
@@ -405,6 +409,9 @@
 						</c:if>
 						</tbody>
 					</table>
+					<div style="text-align: center">
+						<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
+					</div>
 					<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging == null }">style="display:block;"</c:if>>
 						<p>
 							<spring:message code="label.NoDataContributionText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>

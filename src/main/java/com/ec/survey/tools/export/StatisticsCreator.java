@@ -7,6 +7,7 @@ import com.ec.survey.model.Statistics;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.quiz.QuizResult;
 import com.ec.survey.service.AnswerService;
+import com.ec.survey.service.ReportingService;
 import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizHelper;
@@ -31,6 +32,9 @@ public class StatisticsCreator implements Runnable {
 	
 	@Resource(name = "sessionFactory")
 	protected SessionFactory sessionFactory;
+	
+	@Resource(name = "reportingService")
+	protected ReportingService reportingService;
 	
 	protected static final Logger logger = Logger.getLogger(StatisticsCreator.class);
 	
@@ -66,7 +70,7 @@ public class StatisticsCreator implements Runnable {
 	}
 		
 	@Transactional
-	public Statistics runSync() throws TooManyFiltersException {
+	public Statistics runSync() throws Exception {
 		
 		Statistics statistics = new Statistics();
 		statistics.setSurveyId(survey.getId());
@@ -152,6 +156,8 @@ public class StatisticsCreator implements Runnable {
 			int totalScore = 0;
 			int counter = 0;
 			
+			Map<String, Integer> questionMaximumScores = new HashMap<String, Integer>();
+			
 			List<AnswerSet> allanswers = answerService.getAllAnswers(survey.getId(), filter);
 			for (AnswerSet answerSet : allanswers) {
 				QuizResult quizResult = QuizHelper.getQuizResult(answerSet, survey);
@@ -163,6 +169,11 @@ public class StatisticsCreator implements Runnable {
 				
 				for (Question question : quizquestions)
 				{
+					if (!questionMaximumScores.containsKey(question.getUniqueId()))
+					{
+						questionMaximumScores.put(question.getUniqueId(), quizResult.getQuestionMaximumScore(question.getUniqueId()));
+					}
+					
 					int score = quizResult.getQuestionScore(question.getUniqueId());
 					if (score > 0)
 					{
@@ -192,7 +203,7 @@ public class StatisticsCreator implements Runnable {
 					
 					if (!statistics.getMeanSectionScore().containsKey(sectionUid))
 					{
-						statistics.getMeanSectionScore().put(sectionUid, 0d);
+						statistics.getMeanSectionScore().put(sectionUid, 0.0d);
 					}
 					
 					statistics.getMeanSectionScore().put(sectionUid, statistics.getMeanSectionScore().get(sectionUid) + score);
@@ -222,7 +233,7 @@ public class StatisticsCreator implements Runnable {
 			
 			for (Question question : quizquestions)
 			{
-				addStatistics4Quiz(survey, question, statistics, scorePoints);
+				addStatistics4Quiz(survey, question, statistics, scorePoints, questionMaximumScores);
 			}
 		}
 		
@@ -309,6 +320,72 @@ public class StatisticsCreator implements Runnable {
 			}
 		}
 		
+		if (reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft()))
+		{
+			try {
+				for (Question q: survey.getQuestions())
+				{
+					if (q instanceof ChoiceQuestion)
+					{
+						ChoiceQuestion choice = (ChoiceQuestion)q;
+						for (PossibleAnswer a: choice.getAllPossibleAnswers())            
+						{	
+							int count = reportingService.getCount(survey, choice.getUniqueId(), a.getUniqueId(), false);
+							map.put(a.getId(), count);
+						}
+						int count = reportingService.getCount(survey, choice.getUniqueId(), null, false);
+						map.put(q.getId(), count);
+					} else if (q instanceof GalleryQuestion)
+					{
+						GalleryQuestion g = (GalleryQuestion)q;
+						if (!mapGallery.containsKey(g.getId()))
+						{
+							mapGallery.put(g.getId(), new HashMap<>());
+						}
+						for (int i = 0; i < g.getFiles().size(); i++)
+						{
+							int count = reportingService.getCount(survey, g.getUniqueId(), Integer.toString(i), false);
+		                    mapGallery.get(g.getId()).put(i, count);
+						}
+						int count = reportingService.getCount(survey, g.getUniqueId(), null, false);
+						map.put(q.getId(), count);
+					} else if (q instanceof Matrix)
+					{
+						Matrix matrix = (Matrix)q;
+						for (Element matrixQuestion: matrix.getQuestions())
+						{
+							for (Element matrixAnswer: matrix.getAnswers())
+							{
+								if (!mapMatrix.containsKey(matrixQuestion.getId())) mapMatrix.put(matrixQuestion.getId(), new HashMap<>());
+								int count = reportingService.getCount(survey, matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId(), false);
+								mapMatrix.get(matrixQuestion.getId()).put(matrixAnswer.getId(), count);
+							}
+							int count = reportingService.getCount(survey, matrixQuestion.getUniqueId(), null, false);
+	 						map.put(matrixQuestion.getId(), count);
+						}
+					} else if (q instanceof RatingQuestion)
+					{
+						RatingQuestion rating = (RatingQuestion)q;
+						for (Element childQuestion: rating.getQuestions())
+						{
+							for (int i = 1; i <= rating.getNumIcons(); i++)
+							{
+								if (!mapRatingQuestion.containsKey(childQuestion.getId())) mapRatingQuestion.put(childQuestion.getId(), new HashMap<>());
+								int count = reportingService.getCount(survey, childQuestion.getUniqueId(), Integer.toString(i), true);
+								mapRatingQuestion.get(childQuestion.getId()).put(i, count);
+							}
+							int count = reportingService.getCount(survey, childQuestion.getUniqueId(), null, false);
+							map.put(childQuestion.getId(), count);
+						}
+					}
+				}
+				
+				return reportingService.getCount(survey);
+			} catch (Exception e) {
+				logger.info(e.getLocalizedMessage(), e);
+			}
+		} 
+		
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();		
 		HashMap<Integer, String> uniqueIdsById = SurveyService.getUniqueIdsById(survey);
@@ -316,8 +393,7 @@ public class StatisticsCreator implements Runnable {
 		String where =  answerService.getSql(null, survey.getId(), filter, values, false, true);
 		String sql = "select a.PA_ID, a.PA_UID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN (" + where + ")"  ;
 		
-		SQLQuery query = session.createSQLQuery(sql);
-		
+		SQLQuery query = session.createSQLQuery(sql);		
 		query.setReadOnly(true);
 		
 		for (String attrib : values.keySet()) {
@@ -336,7 +412,7 @@ public class StatisticsCreator implements Runnable {
 		
 		query.setFetchSize(Integer.MIN_VALUE);
 		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
-				
+		
 		Map<String, Integer> counts = new HashMap<>();
 		Map<String, Integer> countsUID = new HashMap<>();
 		Map<String, Integer> matrixcounts = new HashMap<>();
@@ -488,7 +564,7 @@ public class StatisticsCreator implements Runnable {
 			
 		}
 		results.close();
-		
+	
 		for (Question q: survey.getQuestions())
 		{
 			if (q instanceof ChoiceQuestion)
@@ -557,7 +633,7 @@ public class StatisticsCreator implements Runnable {
 			}
 		}
 		
-		return resultSets.size();
+		return resultSets.size();		
 	}
 	
 	private int addStatistics4Matrix(Survey survey, Element answer, Element question, Statistics statistics, HashMap<Integer, HashMap<Integer, Integer>> numberOfAnswersMapMatrix, HashMap<Integer, Integer> numberOfAnswersMap)
@@ -661,16 +737,20 @@ public class StatisticsCreator implements Runnable {
 		statistics.getTotalsPercent().put(question.getId().toString(), percent);
 	}
 	
-	private void addStatistics4Quiz(Survey survey, Question question, Statistics statistics, Map<Integer, Map<Integer, Integer>> scorePoints)
+	private void addStatistics4Quiz(Survey survey, Question question, Statistics statistics, Map<Integer, Map<Integer, Integer>> scorePoints, Map<String, Integer> questionMaximumScores)
 	{	
 		int total = survey.getNumberOfAnswerSets();
 		int correct = 0;
+		int maxScore = questionMaximumScores.get(question.getUniqueId());
 		
 		if (scorePoints.containsKey(question.getId()))
 		{
 			for (int score : scorePoints.get(question.getId()).keySet())
 			{
-				correct += scorePoints.get(question.getId()).get(score);
+				if (score == maxScore)
+				{
+					correct += scorePoints.get(question.getId()).get(score);
+				}
 			}
 		}
 		

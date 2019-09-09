@@ -65,7 +65,10 @@ public class SurveySearchController extends BasicController {
 	@RequestMapping(value = "/administration/surveysearch", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView surveysearch(HttpServletRequest request, Model model, Locale locale) {
 		ModelAndView result = new ModelAndView("administration/surveysearch");
-		result.addObject("filter", new SurveyFilter());
+		
+		SurveyFilter sfilter = new SurveyFilter();
+		
+		
 		result.addObject("archivedfilter", new ArchiveFilter());
     	
     	if (request.getParameter("deleted") != null)
@@ -78,6 +81,28 @@ public class SurveySearchController extends BasicController {
     	} else {
         	result.addObject("deletedfilter", new DeletedSurveysFilter());
     	}
+    	
+    	if (request.getParameter("normaldeleted") != null)
+    	{
+    		String shortname = request.getParameter("normaldeleted");
+			result.addObject("deletedShortname", shortname);
+			sfilter = (SurveyFilter) request.getSession().getAttribute("surveysearchfilter");
+			result.addObject("mode", "existing");
+    	}
+    	
+    	if (request.getParameter("repairedlabels") != null)
+		{
+			try {
+				int repaired = Integer.parseInt(request.getParameter("repairedlabels"));
+				result.addObject("repairedlabels", repaired);
+				sfilter = (SurveyFilter) request.getSession().getAttribute("surveysearchfilter");
+				result.addObject("mode", "existing");
+			} catch (Exception e){
+				//ignore
+			}
+		}
+    	
+    	result.addObject("filter", sfilter);
     	
     	List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
 		result.addObject("domains", domains);
@@ -175,7 +200,7 @@ public class SurveySearchController extends BasicController {
 	
 	
 	@RequestMapping(value = "/administration/archivedsurveysjson", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<Archive> archivedsurveysjson(HttpServletRequest request) {
+	public @ResponseBody List<Archive> archivedsurveysjson(HttpServletRequest request) throws Exception {
 		
 		int itemsPerPage = -1;
 		int page = -1;
@@ -201,7 +226,7 @@ public class SurveySearchController extends BasicController {
 	
 	
 	@RequestMapping(value = "/administration/deletedsurveysjson", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<Survey> deletedsurveysjson(HttpServletRequest request) {
+	public @ResponseBody List<Survey> deletedsurveysjson(HttpServletRequest request) throws Exception {
 		
 		int itemsPerPage = -1;
 		int page = -1;
@@ -258,7 +283,11 @@ public class SurveySearchController extends BasicController {
 		
 		if (ownerid != null && ownerid.length() > 0 && surveyuid != null && surveyuid.length() > 0)
 		{
-			return surveyService.changeOwner(surveyuid, Integer.parseInt(ownerid), u.getId());
+			try {
+				return surveyService.changeOwner(surveyuid, ownerid, u.getId());
+			} catch (Exception e) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
 		}
 		
 		return false;
@@ -620,7 +649,7 @@ public class SurveySearchController extends BasicController {
 			}
 		}
 	
-		surveyService.delete(survey.getId(), true, u.getId());
+		surveyService.delete(survey.getId(), true, true);
 		
 		return new ModelAndView("redirect:/administration/surveysearch?deleted=true");
 	}	

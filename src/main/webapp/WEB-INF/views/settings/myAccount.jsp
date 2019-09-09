@@ -23,9 +23,7 @@
 
 	<div class="fixedtitleform">
 		<div class="fixedtitleinner" style="width:880px">
-			<h1><spring:message code="label.MyAccount" /></h1>
-			
-			<div style="margin-top: 0; text-align: center">				
+			<div style="margin-top: 20px; text-align: center">				
 				<c:if test='${!USER.type.equalsIgnoreCase("ECAS")}'>
 					<a onclick="$('.validation-error').empty(); $('#change-password-dialog').modal('show');" class="btn btn-default"><spring:message code="label.ChangePassword" /></a>			
 					<a onclick="$('.validation-error').empty(); $('#change-email-dialog').modal('show');" class="btn btn-default"><spring:message code="label.ChangeEmailAddress" /></a>

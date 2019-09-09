@@ -10,8 +10,21 @@
 </head>
 <body style="text-align: center;">
 	<%@ include file="../header.jsp" %>	
-	<div style="margin-top: 120px; margin-bottom: 120px;">
-		<div class="alert alert-danger"><spring:message code="error.unexpected" /></div>
-	</div>	
+	
+	<div class='${responsive != null ? "responsivepage" : "page"}' style='padding: 20px; margin-top: 80px; margin-bottom: 100px; max-width: 600px; margin-left: auto; margin-right: auto'>
+		<div class="hidden-xs" style="float: left; height: 200px;">
+			<span class="glyphicon glyphicon-alert" style="font-size: 100px; color: #bd281d; margin-right: 60px; margin-top: 10px"></span>
+		</div>
+		<div style="text-align: left;">
+			<h1 style="margin-bottom: 20px;">
+				<div class="visible-xs" style="float: left">
+					<span class="glyphicon glyphicon-alert" style="font-size: 30px; color: #bd281d; margin-right: 10px; "></span>
+				</div>
+				<spring:message code="label.Error" />
+			</h1>
+			<spring:message code="support.new500" arguments="${contextpath}/home/support?error=1" />
+		</div>
+	</div>
+	
 	<%@ include file="../footer.jsp" %>
 </body>

@@ -206,15 +206,9 @@
 	<%@ include file="../menu.jsp" %>
 	<%@ include file="formmenu.jsp" %>
 	
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner">
-			<h1><spring:message code="label.Translations" /></h1>		
-		</div>
-	</div>
-	
 	<input type="hidden" id="surveylanguage" value="${form.survey.language.code}" />
 
-	<div class="fullpageform">
+	<div class="fullpageform100">
 		
 		<div id="action-bar" class="container action-bar">
 			<div class="row">

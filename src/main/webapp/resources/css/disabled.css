@@ -105,10 +105,10 @@ a.btn-info {
 }
 
 #runner-content .matrix {}
-#runner-content .matrixtable td {padding: 5px; padding-left: 10px; padding-right: 10px; border: 1px solid #bbb; min-width: 10px; width: auto;}
+#runner-content .matrixtable td, #runner-content .matrixtable th {padding: 5px; padding-left: 10px; padding-right: 10px; border: 1px solid #bbb; min-width: 10px; width: auto;}
 #runner-content .matrix-cell {text-align: center;}
 
-#runner-content .tabletable td {border: 1px solid #bbb; padding: 0 4px 0 4px; min-width: 50px; font-size: 16px;}
+#runner-content .tabletable td, #runner-content .tabletable th {border: 1px solid #bbb; padding: 0 4px 0 4px; min-width: 50px; font-size: 16px;}
 
 #runner-content .table-label {
 	font-weight: bold;

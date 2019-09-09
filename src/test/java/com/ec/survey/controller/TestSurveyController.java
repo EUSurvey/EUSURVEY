@@ -8,7 +8,6 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.SessionService;
 import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.mapping.PaginationMapper;
-import com.ec.survey.tools.NotAgreedToTosException;
 import org.hamcrest.Matchers;
 import org.hamcrest.collection.IsIterableContainingInAnyOrder;
 import org.junit.Assert;
@@ -53,7 +52,7 @@ public class TestSurveyController extends AbstractTestNGSpringContextTests {
 	
   @SuppressWarnings("deprecation")
 @Test
-  public void testGetSurvey() throws NotAgreedToTosException {
+  public void testGetSurvey() throws Exception {
 	 
 	  Survey s1 = new Survey();
 	  s1.setTitle("title 1");

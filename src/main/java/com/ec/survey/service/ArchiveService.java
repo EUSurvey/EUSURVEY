@@ -199,9 +199,9 @@ public class ArchiveService extends BasicService {
 				Survey existing = null;
 				if (alias != null && alias.length() > 0)
 				{
-					existing = surveyService.getSurvey(alias, true, false, false, false, null, true);
+					existing = surveyService.getSurvey(alias, true, false, false, false, null, true, false);
 	            } else {
-					existing = surveyService.getSurvey(result.getSurvey().getShortname(), true, false, false, false, null, true);
+					existing = surveyService.getSurvey(result.getSurvey().getShortname(), true, false, false, false, null, true, false);
 				}
             	            	
             	if (existing != null)
@@ -238,7 +238,7 @@ public class ArchiveService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Archive> getAllArchives(ArchiveFilter filter, int page, int rowsPerPage, boolean includingErrors) {
+	public List<Archive> getAllArchives(ArchiveFilter filter, int page, int rowsPerPage, boolean includingErrors) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 				
 		String hql = "FROM Archive a WHERE a.error IS NULL";

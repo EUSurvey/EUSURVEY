@@ -11,6 +11,7 @@
 	<script type="text/javascript">		  			
 		function hidecaptchaerror() {
 			$('#runner-captcha-error').hide();
+			$('#runner-captcha-empty-error').hide();
 			$(".g-recaptcha.unset").removeClass("unset");
 		}
 		

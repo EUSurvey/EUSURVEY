@@ -7,18 +7,32 @@
 <html>
 <head>
 	<!-- login version -->
-	<title>EUSurvey - <spring:message code="label.Login" /></title>
+	<title>EUSurvey - <spring:message code="label.DoLogin" /></title>
 	<%@ include file="../includes.jsp" %>
 	
 	<script type="text/javascript"> 
 	
 		function requestLink()
 		{
+			$("#forgotPasswordForm").find(".validation-error").hide();
+			$("#forgotPasswordForm").find(".validation-error-keep").hide();			
+			
 			if ($("#email").val() == null || $("#email").val() == '' || $("#login").val() == null || $("#login").val() == '' || !validateEmail($("#email").val()) )
 			{
 				$("#errorMessage").show();
 				return;
 			}
+			
+			<c:if test="${!captchaBypass}">
+				var challenge = getChallenge();
+			    var uresponse = getResponse();
+			    
+			    if (uresponse.trim().length == 0)
+			    {
+			    	$("#runner-captcha-empty-error").show();
+			    	return;
+			    }
+			</c:if>
 			
 			$("#forgotPasswordForm").submit();
 		}
@@ -160,7 +174,7 @@
 						    </div>				
 						</p>
 						<div style="margin-top: 30px;">
-							<input id="sysLoginFormSubmitButton" class="btn btn-default" type="submit" value="<spring:message code="label.Login" />"/>
+							<input id="sysLoginFormSubmitButton" class="btn btn-default" type="submit" value="<spring:message code="label.DoLogin" />"/>
 							&nbsp;
 							<a id="sysCancel" class="btn btn-default" type="button" ><spring:message code="label.Cancel" /></a>
 							&#160;&#160;<spring:message code="label.or" />&#160;&#160;<a class="visiblelink disabled" href="${contextpath}/runner/NewSelfRegistrationSurvey"><spring:message code="label.Register" /></a>
@@ -183,17 +197,17 @@
 		<form:form id="forgotPasswordForm" action="${contextpath}/auth/forgotPassword" method="post" style="margin: 0px;" >
 			<div class="modal-body">
 				<spring:message code="label.PleaseEnterYourLogin" /><br />
-				<input id="login" type="text" name="login" maxlength="255" /><br /><br />
+				<input id="login" type="text" name="login" maxlength="255"  class="form-control"/><br /><br />
 				<spring:message code="label.PleaseEnterYourEmail" /><br />
-				<input id="email" type="text" name="email" maxlength="255" class="email" /><br />
+				<input id="email" type="text" name="email" maxlength="255" class="form-control email" /><br />
 				<span id="errorMessage" style="color: #f00; display: none;"><spring:message code="error.PleaseEnterYourNameAndEmail" /></span>
 				<div style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">
 					<%@ include file="../captcha.jsp" %>	
 	        	</div>				
 			</div>
 			<div class="modal-footer">
-				<a  onclick="requestLink();" class="btn btn-info"><spring:message code="label.OK" /></a>
-				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
+				<a onclick="requestLink();" class="btn btn-info"><spring:message code="label.OK" /></a>
+				<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 			</div>	
 		</form:form>
 		</div>

@@ -1,13 +1,12 @@
 package com.ec.survey.model.survey;
 
+import com.ec.survey.tools.Tools;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
-
-import com.ec.survey.tools.Tools;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -230,7 +229,7 @@ public abstract class MatrixOrTable extends Question {
 				MatrixOrTable matrix = (MatrixOrTable)element;
 				if (!(getRows() == matrix.getRows())) return true;
 				if (!(getColumns() == matrix.getColumns())) return true;				
-				if (!(getTableType() == matrix.getTableType())) return true;
+				if (!(Objects.equals(getTableType(), matrix.getTableType()))) return true;
 				
 				//only check column widths when size is set to "manual columns width"
 				if (getTableType() == 2)

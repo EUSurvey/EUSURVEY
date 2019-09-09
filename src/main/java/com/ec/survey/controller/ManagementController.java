@@ -12,6 +12,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SurveyException;
+import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.*;
 import org.apache.commons.io.FileUtils;
@@ -58,7 +59,8 @@ public class ManagementController extends BasicController {
 	public @Value("${opc.users}") String opcusers;
 	public @Value("${opc.department:@null}") String opcdepartments;
 	public @Value("${opc.template}") String opctemplatesurvey;
-	
+	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
+
 	@InitBinder
 	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(ConversionTools.DateFormat);
@@ -117,9 +119,15 @@ public class ManagementController extends BasicController {
 	public ModelAndView repairxhtml(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 			
 		int repairedlabels = surveyService.repairXHTML(form.getSurvey().getId());
+		
+		String from = request.getParameter("from");
+		if (from != null && from.equals("surveysearch"))
+		{
+			return new ModelAndView("redirect:/administration/surveysearch?repairedlabels=" + repairedlabels);	
+		}
 
 		return new ModelAndView("redirect:/" + shortname + "/management/overview?repairedlabels=" + repairedlabels);
 	}
@@ -158,7 +166,7 @@ public class ManagementController extends BasicController {
 	@RequestMapping(value = "/clearchanges", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView clearchanges(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		User u = sessionService.getCurrentUser(request);
 		if (!u.getId().equals(form.getSurvey().getOwner().getId()))
 		{
@@ -183,7 +191,7 @@ public class ManagementController extends BasicController {
 		User user = sessionService.getCurrentUser(request);
 		
 		Form form;
-		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true);
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
 			
 		survey.setNumberOfAnswerSetsPublished(surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId()));
 		
@@ -224,7 +232,7 @@ public class ManagementController extends BasicController {
 		if (survey.getIsPublished())
 		{
 			try {
-				surveyService.getSurveyByShortname(shortname, false, user, request, false, true, true);
+				surveyService.getSurveyByShortname(shortname, false, user, request, false, true, true, false);
 			} catch (InvalidURLException e) {			
 				//repair wrong "isPublished" flags in the database
 				survey.setIsPublished(false);
@@ -288,7 +296,7 @@ public class ManagementController extends BasicController {
 	public ModelAndView exportSurvey(@PathVariable String answers, @PathVariable String shortname, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		try {
 			
-			Form form = sessionService.getForm(request, shortname, false);
+			Form form = sessionService.getForm(request, shortname, false, false);
 			Survey survey = form.getSurvey();
 			
 			String delete = request.getParameter("delete");
@@ -387,7 +395,7 @@ public class ManagementController extends BasicController {
         String filename = null;
         
         try {
-        	User u = sessionService.getCurrentUser(request);      
+        	User u = sessionService.getCurrentUser(request);        	
         	
         	if (u == null || u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 0)
     		{
@@ -431,7 +439,7 @@ public class ManagementController extends BasicController {
 	        
             if (result != null && result.getSurvey() != null)
             {
-            	Survey existing = surveyService.getSurvey(result.getSurvey().getShortname(), true, false, false, false, null, true);
+            	Survey existing = surveyService.getSurvey(result.getSurvey().getShortname(), true, false, false, false, null, true, false);
             	
             	if (existing != null)
             	{
@@ -478,7 +486,7 @@ public class ManagementController extends BasicController {
 	@RequestMapping(value = "/activate", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView activate(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		
 		User u = sessionService.getCurrentUser(request);
 		if (!u.getId().equals(form.getSurvey().getOwner().getId()))
@@ -492,7 +500,7 @@ public class ManagementController extends BasicController {
 			}
 		}
 				
-		Survey published = surveyService.getSurvey(form.getSurvey().getShortname(), false, false, false, false, null, true);
+		Survey published = surveyService.getSurvey(form.getSurvey().getShortname(), false, false, false, false, null, true, false);
 		
 		if (published != null)
 		{
@@ -502,11 +510,11 @@ public class ManagementController extends BasicController {
 				logger.error(e.getLocalizedMessage(), e);
 			}
 		} else {
-			surveyService.activate(form.getSurvey(), -1, -1, true, u.getId(), false, false);
+			surveyService.publish(form.getSurvey(), -1, -1, true, u.getId(), false, false);
 		}
 	
 		try {
-			surveyService.publish(form.getSurvey(), true, u.getId());
+			surveyService.activate(form.getSurvey(), true, u.getId());
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
@@ -519,7 +527,7 @@ public class ManagementController extends BasicController {
 	@RequestMapping(value = "/publish", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView publish(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		
 		if (!form.getSurvey().getIsActive())
 		{
@@ -535,7 +543,7 @@ public class ManagementController extends BasicController {
 				}
 			}
 			
-			surveyService.publish(form.getSurvey(), true, u.getId());
+			surveyService.activate(form.getSurvey(), true, u.getId());
 			activityService.log(105, "unpublished", "published", u.getId(), form.getSurvey().getUniqueId());
 		}
 		ModelAndView result = overview(shortname, request, locale);
@@ -549,7 +557,7 @@ public class ManagementController extends BasicController {
 	@RequestMapping(value = "/unpublish", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView unpublish(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		
 		User u = sessionService.getCurrentUser(request);
 		if (!u.getId().equals(form.getSurvey().getOwner().getId()))
@@ -571,7 +579,7 @@ public class ManagementController extends BasicController {
 	@RequestMapping(value = "/applyChanges", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView applyChanges(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 	
 		try {
 			
@@ -608,7 +616,7 @@ public class ManagementController extends BasicController {
 		Form form;
 		User user = sessionService.getCurrentUser(request);
 	
-		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true);
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
 					
 		List<String> completed = new ArrayList<>();
 		List<Translations> translations = translationService.getTranslationsForSurvey(survey.getId(), false, true, false);
@@ -739,7 +747,7 @@ public class ManagementController extends BasicController {
 		}
 		
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		Survey survey = form.getSurvey();
 		
 		User u = sessionService.getCurrentUser(request);
@@ -820,7 +828,7 @@ public class ManagementController extends BasicController {
 		}
 		
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		Survey survey = form.getSurvey();
 		
 		User u = sessionService.getCurrentUser(request);
@@ -982,7 +990,7 @@ public class ManagementController extends BasicController {
     			//we have to delete it here
     			if (ex instanceof SurveyException)
     			{
-    				surveyService.delete(((SurveyException) ex).getSurveyID(), true, u.getId());
+    				surveyService.delete(((SurveyException) ex).getSurveyID(), true, false);
     			}
     			
     			return model;
@@ -1038,7 +1046,7 @@ public class ManagementController extends BasicController {
 				String newShortName = Tools.escapeHTML(parameterMap.get("shortname")[0]);
 				
 				// check if shortname already exists
-				Survey existingSurvey = surveyService.getSurvey(newShortName, true, false, false, false, null, true);
+				Survey existingSurvey = surveyService.getSurvey(newShortName, true, false, false, false, null, true, false);
 				if (existingSurvey != null) {
 					
 					String message = resources.getMessage("message.ShortnameAlreadyExists", null, "A survey with this shortname already exists.", locale);
@@ -1121,8 +1129,7 @@ public class ManagementController extends BasicController {
 		} else {
 			//Case 3: new (empty) survey
 			return updateSurvey(new Form(resources), request, true, locale);
-		}
-		
+		}		
 	}
 	
 	private ModelAndView updateSurvey(Form form, HttpServletRequest request, boolean creation, Locale locale) throws Exception
@@ -1166,7 +1173,7 @@ public class ManagementController extends BasicController {
 			}
 					
 			// check if shortname already exists
-			Survey existingSurvey = surveyService.getSurvey(uploadedSurvey.getShortname(), true, false, false, false, null, true);
+			Survey existingSurvey = surveyService.getSurvey(uploadedSurvey.getShortname(), true, false, false, false, null, true, false);
 			if (existingSurvey != null && !existingSurvey.getIsDeleted()) {
 				
 				String message = resources.getMessage("message.ShortnameAlreadyExists", null, "A survey with this shortname already exists.", locale);
@@ -1221,7 +1228,7 @@ public class ManagementController extends BasicController {
 			}
 			
 			// check if shortname already exists
-			Survey existingSurvey = surveyService.getSurvey(uploadedSurvey.getShortname(), true, false, false, false, null, true);
+			Survey existingSurvey = surveyService.getSurvey(uploadedSurvey.getShortname(), true, false, false, false, null, true, false);
 			if (existingSurvey != null && !existingSurvey.getId().equals(uploadedSurvey.getId())) {
 				
 				String message = resources.getMessage("message.ShortnameAlreadyExists", null, "A survey with this shortname already exists.", locale);
@@ -1459,16 +1466,16 @@ public class ManagementController extends BasicController {
 				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0)
 				{
 					Survey template = surveyService.getSurveyByUniqueId(opctemplatesurvey, false, true);								
-					template.copyElements(survey, surveyService, true);					
+					template.copyElements(survey, surveyService, true);
 					
 					//recreate unique ids
 					for (Element elem: survey.getElementsRecursive(true))
 					{
 						String newUniqueId = UUID.randomUUID().toString();
 						elem.setUniqueId(newUniqueId);
-					}
-				}		
+				}				
 			}			
+		}	
 		}	
 		
 		if (!creation)
@@ -1561,6 +1568,8 @@ public class ManagementController extends BasicController {
 			}
 			
 			survey.setValidatedPerPage(uploadedSurvey.getValidatedPerPage());
+			
+			survey.setAllowedContributionsPerUser(uploadedSurvey.getAllowedContributionsPerUser());
 			
 			if (!Objects.equals(uploadedSurvey.getWcagCompliance(), survey.getWcagCompliance()))
 			{				
@@ -2139,7 +2148,7 @@ public class ManagementController extends BasicController {
 					{
 						if (!survey.getIsPublished())
 						{
-							surveyService.activate(survey, -1, -1, false, u.getId(), false, false);
+							surveyService.publish(survey, -1, -1, false, u.getId(), false, false);
 						}
 						survey.setIsActive(true);
 						survey.setIsPublished(true);
@@ -2154,7 +2163,7 @@ public class ManagementController extends BasicController {
 			}					
 			
 			//propagate security settings, advanced settings and publish results changes
-			Survey publishedSurvey = surveyService.getSurvey(originalShortname, false, false, false, false, null, false);
+			Survey publishedSurvey = surveyService.getSurvey(originalShortname, false, false, false, false, null, false, false);
 			if (publishedSurvey != null)
 			{				
 				publishedSurvey.setShortname(survey.getShortname());
@@ -2170,6 +2179,7 @@ public class ManagementController extends BasicController {
 				
 				publishedSurvey.setEcasSecurity(survey.getEcasSecurity());
 				publishedSurvey.setEcasMode(survey.getEcasMode());
+				publishedSurvey.setAllowedContributionsPerUser(survey.getAllowedContributionsPerUser());
 				
 				publishedSurvey.setAutomaticPublishing(survey.getAutomaticPublishing());
 				publishedSurvey.setStart(survey.getStart());
@@ -2228,7 +2238,7 @@ public class ManagementController extends BasicController {
 			activitiesToLog.put(202, emptyOldNew);
 			activityService.log(activitiesToLog, u.getId(), survey.getUniqueId());
 			
-			if (sendListFormMail)
+			if (sendListFormMail && enablepublicsurveys.equalsIgnoreCase("true"))
 			{
 				surveyService.sendListFormMail(survey);
 			}
@@ -2274,7 +2284,7 @@ public class ManagementController extends BasicController {
 	@RequestMapping(value = "/edit", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView edit(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, true);
 		form.setResources(resources);
 		
 		User u = sessionService.getCurrentUser(request);
@@ -2310,7 +2320,7 @@ public class ManagementController extends BasicController {
 	@RequestMapping(value = "/edit", method = RequestMethod.POST)
 	public ModelAndView editSave(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		
 		User u = sessionService.getCurrentUser(request);
 		if (!u.getId().equals(form.getSurvey().getOwner().getId()))
@@ -2327,6 +2337,8 @@ public class ManagementController extends BasicController {
 		Survey survey = editSave(form.getSurvey(), request);
 		answerService.deleteStatisticsForSurvey(survey.getId());
 		
+		reportingService.addToDo(ToDo.CHANGEDDRAFTSURVEY, survey.getUniqueId(), null);
+		
 		u = administrationService.setLastEditedSurvey(u, survey.getId());
 		sessionService.setCurrentUser(request, u);
 		
@@ -2340,6 +2352,7 @@ public class ManagementController extends BasicController {
 				editorredirect = editorredirect.substring(1);
 				editorredirect = editorredirect.substring(editorredirect.indexOf("/")+1);
 			}
+			request.getSession().setAttribute("surveyeditorsaved", survey.getId());
 			return new ModelAndView("redirect:/" + editorredirect);
 		}
 		return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit?saved=true");	
@@ -2350,7 +2363,7 @@ public class ManagementController extends BasicController {
 		
 		Form form;
 		try {
-			form = sessionService.getForm(request, shortname, false);
+			form = sessionService.getForm(request, shortname, false, false);
 			
 			Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 			
@@ -2413,7 +2426,7 @@ public class ManagementController extends BasicController {
 	        	is = request.getInputStream();
 	        }
                         
-	        Form form = sessionService.getForm(request, null, false);	        
+	        Form form = sessionService.getForm(request, null, false, false);	        
 	        User u = sessionService.getCurrentUser(request);
 	        sessionService.upgradePrivileges(form.getSurvey(), u, request);
 	        
@@ -2494,7 +2507,7 @@ public class ManagementController extends BasicController {
 		try {
 			writer = response.getWriter();
 			
-			Form form = sessionService.getForm(request, null, false);
+			Form form = sessionService.getForm(request, null, false, false);
 			
 			User u = sessionService.getCurrentUser(request);
 			if (!u.getId().equals(form.getSurvey().getOwner().getId()))
@@ -2579,7 +2592,7 @@ public class ManagementController extends BasicController {
 	@RequestMapping(value = "/test", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView test(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		User u = sessionService.getCurrentUser(request);
-		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, true, true, true);
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, true, true, true, false);
 		
 		sessionService.upgradePrivileges(survey, u, request);
 
@@ -2872,7 +2885,7 @@ public class ManagementController extends BasicController {
 		Survey survey = null;
 		User u = sessionService.getCurrentUser(request);
 		
-		survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true);		
+		survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);		
 		sessionService.upgradePrivileges(survey, u, request);
 		if (!u.getId().equals(survey.getOwner().getId()))
 		{
@@ -2944,17 +2957,17 @@ public class ManagementController extends BasicController {
 				
 		if (active)
 		{	
-			survey = surveyService.getSurvey(uid, false, false, false, false, languagecode, true);
+			survey = surveyService.getSurvey(uid, false, false, false, false, languagecode, true, true);
 			
 			if (survey == null)
 			{
-				survey = surveyService.getSurvey(shortname, false, false, false, false, languagecode, true);
+				survey = surveyService.getSurvey(shortname, false, false, false, false, languagecode, true, true);
 			}	
 			
 			if (survey == null)
 			{
 				active = false;
-				survey = surveyService.getSurvey(shortname, true, false, false, false, null, true);
+				survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
 			} else if (request != null && !u.getId().equals(survey.getOwner().getId()))
 			{
 				if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2)
@@ -2963,13 +2976,13 @@ public class ManagementController extends BasicController {
 					{
 						active = false;
 						allanswers = false;
-						survey = surveyService.getSurvey(shortname, true, false, false, false, null, true);
+						survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
 					}
 				}
 			}
 			
 		} else {
-			survey = surveyService.getSurvey(shortname, true, false, false, false, null, true);
+			survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
 		}	
 				
 		ResultFilter filter = u != null ? sessionService.getLastResultFilter(request, u.getId(), survey.getId()) : null;
@@ -3058,7 +3071,7 @@ public class ManagementController extends BasicController {
 						filter.getVisibleQuestions().add(key.substring(8));
 					} else if (key.startsWith("exportselected"))
 					{
-						filter.getExportedQuestions().add(key.substring(14));
+						filter.addExportedQuestion(key.substring(14));
 					} else if (key.equalsIgnoreCase("sort")) {
 						String sorting = parameters.get(key)[0].trim();
 						if (sorting.equalsIgnoreCase("scoreDesc"))
@@ -3175,17 +3188,15 @@ public class ManagementController extends BasicController {
 		
 		List<AnswerSet> answerSets = new ArrayList<>();
 		
-		SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
-		answerSets = answerService.getAnswers(survey.getId(), filter, sqlPagination, false, false);
-		
 		if (active && allanswers)
 	    {
+			if (!survey.isMissingElementsChecked())
 	    	surveyService.CheckAndRecreateMissingElements(survey, filter);
 	    } else {
 	    	survey.clearMissingData();
 	    }
 	    
-		Form form = new Form(resources); //survey, translationService.getTranslationsForSurvey(survey.getId(), false), survey.getLanguage(), false);
+		Form form = new Form(resources);
 		form.setSurvey(survey);
 		
 		List<Translations> lTrans = translationService.getTranslationsForSurvey(survey.getId(), true);
@@ -3204,14 +3215,16 @@ public class ManagementController extends BasicController {
 		result.addObject("paging", paging);		
 		result.addObject("active", active);
 		result.addObject("allanswers", allanswers);
-		result.addObject("filter", filter);
 		result.addObject("filtered", filtered);
 		
 		if (forPDF)
 		{
 			Statistics statistics = answerService.getStatistics(survey, filter, false, active && allanswers, false);			
 			result.addObject("statistics", statistics);
+			filter.setVisibleQuestions(filter.getExportedQuestions());
 		}
+	
+		result.addObject("filter", filter);
 		
 		if (request != null) 
 		{
@@ -3291,16 +3304,17 @@ public class ManagementController extends BasicController {
 			
 			Form form = (Form) request.getSession().getAttribute("resultsform");
 			
-			String publicationmode = request.getParameter("publicationmode");
+			String ppublicationmode = request.getParameter("publicationmode");
+			boolean publicationmode = ppublicationmode != null && ppublicationmode.equalsIgnoreCase("true");
 			
 			boolean showuploadedfiles = true;
 			
-			if (publicationmode != null && publicationmode.equalsIgnoreCase("true"))
+			if (publicationmode)
 			{
 				filter = null;
 				ResultFilter userFilter = (ResultFilter) request.getSession().getAttribute("lastPublishedFilter" + shortname);
 				if (userFilter != null) filter = userFilter;
-				Survey survey = surveyService.getSurvey(shortname, false, false, false, false, null, true);
+				Survey survey = surveyService.getSurvey(shortname, false, false, false, false, null, true, true);
 				form = new Form(resources);
 				form.setSurvey(survey);
 				
@@ -3326,16 +3340,45 @@ public class ManagementController extends BasicController {
 			List<AnswerSet> answerSets = new ArrayList<>();
 			
 			SqlPagination sqlPagination = new SqlPagination(Integer.parseInt(page), itemsPerPage);
-			answerSets = answerService.getAnswers(filter.getSurveyId(), filter, sqlPagination, false, false);
+			
+			Survey survey = surveyService.getSurvey(filter.getSurveyId());
+			
+			boolean active = publicationmode || (boolean) request.getSession().getAttribute("results-source-active");
+			boolean allanswers = !publicationmode && (boolean) request.getSession().getAttribute("results-source-allanswers");
+			
+			List<String> result = new ArrayList<>();
+			
+			if (active && allanswers)
+		    {
+		    	surveyService.CheckAndRecreateMissingElements(survey, filter);
+		    } else {
+		    	survey.clearMissingData();
+		    }			
+			
+			boolean addlinks = isOwner || user == null || user.getFormPrivilege() > 1 || user.getLocalPrivilegeValue("AccessResults") > 1 || (form.getSurvey().getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0);
+			filter = answerService.initialize(filter);
+			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks, false, showuploadedfiles, false);
+			if (answersets != null)
+			{
+				Date updateDate = reportingService.getLastUpdate(survey);
+				result.add(updateDate == null ? "" :ConversionTools.getFullString(updateDate));
+				for (List<String> row : answersets)
+				{
+					result.addAll(row);
+				}
+				return result;
+			}			
+			
+			answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, false, active && !allanswers);
 		    
-		    boolean surveyExists = form.getSurvey() != null;
+		    boolean surveyExists = survey != null;
 		    
 		    if (!surveyExists)
 		    {
 		    	logger.error("Survey not set: " + request.getRequestURL());		    	
 		    }
 		    
-		    Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true);
+		    Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
 		    if (user != null)
 		    {
 		    	sessionService.upgradePrivileges(draft, user, request);
@@ -3345,12 +3388,12 @@ public class ManagementController extends BasicController {
 		    for (String id : filter.getVisibleQuestions())
 		    {
 		    	try {
-		    		Element el = form.getSurvey().getElementsById().get(Integer.parseInt(id));
+		    		Element el = survey.getElementsById().get(Integer.parseInt(id));
 		    		if (el instanceof Matrix)
 		    		{
 		    			visibleQuestions.add(el);
                         visibleQuestions.addAll(((Matrix) el).getQuestions());
-		    		} else if (!(el instanceof Text) && !(el instanceof Download) && !(el instanceof com.ec.survey.model.survey.Image)) {
+		    		} else if (!(el instanceof Text) && !(el instanceof Download) && !(el instanceof com.ec.survey.model.survey.Image)  && !(el instanceof Ruler) && !(el instanceof Confirmation)) {
 		    			visibleQuestions.add(el);
 		    		}
 		    	} catch (Exception e) {
@@ -3358,14 +3401,15 @@ public class ManagementController extends BasicController {
 		    	}
 		    }
 		    
-		    List<String> result = new ArrayList<>();
+		    result.add("");
 		    
 		    for (AnswerSet answerSet : answerSets) {
 		    	result.add(answerSet.getUniqueCode());
+		    	result.add(answerSet.getId().toString());
 		    	
-		    	for (Element question : form.getSurvey().getQuestions())
+		    	for (Element question : survey.getQuestions())
 		    	{
-		    		if (visibleQuestions.contains(question))
+		    		if (visibleQuestions.contains(question) || survey.getMissingElements().contains(question))
 		    		{
 			    		if (question instanceof Matrix)
 		    			{
@@ -3422,9 +3466,9 @@ public class ManagementController extends BasicController {
 					    		{
 		    						for (File file : answer.getFiles())
 		    						{
-		    							if (isOwner || user == null || user.getFormPrivilege() > 1 || user.getLocalPrivilegeValue("AccessResults") > 1 || (form.getSurvey().getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0))
+		    							if (isOwner || user == null || user.getFormPrivilege() > 1 || user.getLocalPrivilegeValue("AccessResults") > 1 || (survey.getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0))
 		    							{
-		    								s.append("<a target='blank' href='").append(contextpath).append("/files/").append(form.getSurvey().getUniqueId()).append("/").append(file.getUid()).append("'>").append(file.getName()).append("</a><br />");
+		    								s.append("<a target='blank' href='").append(contextpath).append("/files/").append(survey.getUniqueId()).append("/").append(file.getUid()).append("'>").append(file.getName()).append("</a><br />");
 		    							} else {
 		    								s.append(file.getName()).append("<br />");
 		    							}
@@ -3447,6 +3491,8 @@ public class ManagementController extends BasicController {
 			    					}
 				    				result.add(s.toString());
 			    				}
+			    		} else if (question instanceof com.ec.survey.model.survey.Image || question instanceof Text  || question instanceof Ruler) {
+			    			//these elements are not displayed
 		    			} else {
 		    				StringBuilder s = new StringBuilder();
 		    				for (Answer answer : answerSet.getAnswers(question.getId(), question.getUniqueId()))
@@ -3495,9 +3541,9 @@ public class ManagementController extends BasicController {
 					result.add(answerSet.getLanguageCode());
 				}
 				
-				if (form.getSurvey().getIsQuiz())
+				if (survey.getIsQuiz())
 				{
-					result.add(answerSet.getScore().toString());
+					result.add(answerSet.getScore() != null ? answerSet.getScore().toString() : "");
 				}
 			}
 		    
@@ -3535,7 +3581,7 @@ public class ManagementController extends BasicController {
 				if (filter == null || filter.getSurveyId() == 0)
 				{
 					//can only happen in case of published results
-					survey = surveyService.getSurvey(shortname, false, true, false, false, null, true);
+					survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, false);
 					if (survey != null && survey.getPublication() != null && survey.getIsActive() && survey.getPublication().isActive())
 					{
 						filter = survey.getPublication().getFilter();
@@ -3663,12 +3709,13 @@ public class ManagementController extends BasicController {
 		
 		if (export == null || export.getState() != ExportState.Pending || !export.getSurvey().getId().equals(Integer.parseInt(id))) return null;
 		
-		Survey survey = surveyService.getSurvey(Integer.parseInt(id), false, true);
+		Survey s = surveyService.getSurvey(Integer.parseInt(id), false, true);
+		
+		Survey survey = surveyService.getSurveyInOriginalLanguage(s.getId(), s.getShortname(), s.getUniqueId());		
 						
 		surveyService.initializeSurvey(survey);
 		
 		ResultFilter filter = export.getResultFilter().copy();
-		filter.setVisibleQuestions(filter.getExportedQuestions());
 		
 		if (filter.getLanguages() != null && filter.getLanguages().size() == 0)
 		{
@@ -3738,7 +3785,7 @@ public class ManagementController extends BasicController {
 		User u = sessionService.getCurrentUser(request);
 		
 		Form form;
-		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true);
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);
 		form = new Form(resources);
 		form.setSurvey(survey);
 		
@@ -3766,7 +3813,7 @@ public class ManagementController extends BasicController {
 					}
 				}
 			}
-		}
+		}		
 		
 		if (survey.getIsOPC() && opcdepartments != null && opcdepartments.length() > 0)
 		{
@@ -3794,7 +3841,7 @@ public class ManagementController extends BasicController {
 			if (survey.getIsOPC() && access.getDepartment() != null && lstopcdepartments != null && lstopcdepartments.contains(access.getDepartment()))
 			{
 				access.setReadonly(true);
-			}
+		}
 		}
 		
 		ModelAndView result = new ModelAndView("management/access", "accesses", accesses);
@@ -3812,7 +3859,7 @@ public class ManagementController extends BasicController {
 		
 		if (access != null)
 		{
-			Form form = sessionService.getForm(request, shortname, false);		
+			Form form = sessionService.getForm(request, shortname, false, false);		
 			User u = sessionService.getCurrentUser(request);
 			if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request))
 			{		
@@ -3857,7 +3904,7 @@ public class ManagementController extends BasicController {
 		User user = null;
 		Form form;
 		boolean isEcasUser = ecas != null && ecas.equalsIgnoreCase("true");
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		
 		User u = sessionService.getCurrentUser(request);
 		if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request))
@@ -3926,7 +3973,7 @@ public class ManagementController extends BasicController {
 	public ModelAndView addGroup(@PathVariable String shortname, @RequestParam("groupname") String groupname, HttpServletRequest request, Locale locale) throws Exception {
 
 		Form form;
-		form = sessionService.getForm(request, shortname, false);
+		form = sessionService.getForm(request, shortname, false, false);
 		
 		User u = sessionService.getCurrentUser(request);
 		if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request))
@@ -3988,7 +4035,7 @@ public class ManagementController extends BasicController {
 		
 		if (access != null)
 		{
-			Form form = sessionService.getForm(request, shortname, false);		
+			Form form = sessionService.getForm(request, shortname, false, false);		
 			User u = sessionService.getCurrentUser(request);
 			if (!sessionService.userIsFormAdmin(form.getSurvey(), u, request))
 			{		
@@ -4018,7 +4065,7 @@ public class ManagementController extends BasicController {
 		try {
 			Form form;
 			try {
-				form = sessionService.getForm(request, shortname, false);
+				form = sessionService.getForm(request, shortname, false, false);
 			} catch (NoFormLoadedException ne)
 			{
 				logger.error(ne.getLocalizedMessage(), ne);
@@ -4109,7 +4156,7 @@ public class ManagementController extends BasicController {
 	
 	@RequestMapping(value = "/pendingChangesForPublishing", headers="Accept=*/*", method=RequestMethod.GET)
 	public @ResponseBody boolean pendingChangesForPublishing(@PathVariable String shortname, HttpServletRequest request, HttpServletResponse response ) {
-		Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true);
+		Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
 		Map<Element, Integer> changes = surveyService.getPendingChanges(draft);
 		return !changes.isEmpty();
 	}

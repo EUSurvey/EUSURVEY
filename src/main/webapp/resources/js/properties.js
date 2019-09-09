@@ -1,6 +1,9 @@
 $(function() {	
 	$("#form-menu-tab").addClass("active");
 	$("#properties-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
+
+	$("#survey\\.allowedContributionsPerUser").spinner({ decimals:0, min:1, start:"", allowNull: true });
+
 	checkSecurity();
 	checkEcasSecurity();
 	$("#save-form").on("submit", function(){				
@@ -78,6 +81,7 @@ $(function() {
 	{
 		addDocRow();
 	};	
+	
 });
 
 function checkCaptcha()
@@ -341,6 +345,10 @@ function checkAutomaticPublishing()
 		
 		$("#survey\\.start").datepicker( "option", "disabled", true ); 	
 	}
+	
+
+	$("#survey\\.start").datepicker('option', 'dateFormat', "dd/mm/yy");
+	$("#survey\\.end").datepicker('option', 'dateFormat', "dd/mm/yy");
 }
 
 
@@ -427,24 +435,12 @@ function checkSecurity()
 
 	if ($(i).prop("checked"))
 	{	
-		$("#edit-prop-tabs-2").find("input[type='password']").prop('disabled','disabled');
-		$("#survey\\.listForm1")[0].disabled = false;
-		$("#survey\\.listForm2")[0].disabled = false;		
-		$("#survey\\.listForm1")[0].disabled = false;
-		$("#survey\\.listForm2")[0].disabled = false;
-		
+		$("#edit-prop-tabs-2").find("input[type='password']").prop('disabled','disabled');	
 		$("#ecas-mode-all").prop('disabled','disabled');
 		$("#ecas-mode-internal").prop('disabled','disabled');
 		$("#enableecas").prop('disabled','disabled');
 	} else {
-		$("#edit-prop-tabs-2").find("input[type='password']").removeAttr('disabled');
-		$("#survey\\.listForm2").prop("checked", "checked");
-		$("#survey\\.listForm1")[0].disabled = true;
-		$("#survey\\.listForm2")[0].disabled = true;
-		$("#survey\\.listForm2").prop("checked", "checked");
-		$("#survey\\.listForm1")[0].disabled = true;
-		$("#survey\\.listForm2")[0].disabled = true;
-		
+		$("#edit-prop-tabs-2").find("input[type='password']").removeAttr('disabled');		
 		$("#enableecas").removeAttr('disabled');
 	}
 }
@@ -463,9 +459,14 @@ function checkEcasSecurity()
 			$("#ecas-mode-all").prop("checked","checked");
 		}
 		
+		$("#survey\\.allowedContributionsPerUser").removeAttr('disabled');
+		$("#survey\\.allowedContributionsPerUser").spinner( "option", "disabled", false);
+		
 	} else {
 		$("#ecas-mode-all").prop('disabled','disabled');
 		$("#ecas-mode-internal").prop('disabled','disabled');
+		$("#survey\\.allowedContributionsPerUser").prop('disabled','disabled');
+		$("#survey\\.allowedContributionsPerUser").spinner( "option", "disabled", true);
 	}
 }
 

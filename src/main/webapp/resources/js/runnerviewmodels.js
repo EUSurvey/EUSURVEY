@@ -3,17 +3,6 @@ function getNiceHelp(help)
 	if (help == null || help.trim().length == 0) return "";
 
 	return addIconToHelp(help);	
-//	
-//	if (help.trim().length < 200)
-//	{
-//		return addIconToHelp(help);
-//	}
-//	
-//	var div = document.createElement("div");
-//	$(div).append("<div class='fullcontent hideme'>" + addIconToHelp(help) + "<a class='lessbutton' onclick='switchNiceHelp(this);'>" + labelless + "</a></div>");
-//	$(div).append("<div class='shortcontent'>" + addIconToHelp(help.substring(0,190)) + "<a class='morebutton' onclick='switchNiceHelp(this);'>" + labelmore + "</a></div>&nbsp;");
-//	
-//	return $(div).html();
 }
 
 function addIconToHelp(help)
@@ -29,8 +18,8 @@ function addIconToHelp(help)
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)
 {
 	var viewModel = [];
-	viewModel.uid =  ko.observable(uid);
-	viewModel.name = ko.observable(name);
+	viewModel.uid =  ko.observable(uid == "null" ? "" : uid);
+	viewModel.name = ko.observable(name == "null" ? "" : name);
 	viewModel.comment = ko.observable(comment == "null" ? "" : comment);
 	viewModel.longdesc = ko.observable(longdesc == "null" ? "" : longdesc);
 	viewModel.cleanComment = ko.observable(cleanComment);
@@ -61,7 +50,6 @@ function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)
 		    }
 		 });
 		
-	    //copy.uid(getNewId());
 	    copy.originalId = this.uid();
 	    
 	    return copy;
@@ -77,6 +65,7 @@ function newFilesViewModel(files)
 	if (files != null)
 	for (var i = 0; i < files.length; i++)
 	{
+		if (files[i].name != null)
 		viewModel.push(newFileViewModel(files[i].uid, files[i].name, files[i].comment, files[i].longdesc, files[i].cleanComment, files[i].width));
 	}
 	
@@ -257,7 +246,7 @@ function newScoringViewModel(element)
 
 function newBasicViewModel(element)
 {
-	var viewModel = [];
+	var viewModel = {};
 	
 	viewModel.isViewModel = true;
 	
@@ -523,6 +512,17 @@ function newImageViewModel(element)
 	return viewModel;
 }
 
+function newRulerViewModel(element)
+{
+	var viewModel = newBasicViewModel(element)
+	viewModel.height = ko.observable(element.height);
+	viewModel.style = ko.observable(element.style);	
+	viewModel.color = ko.observable(element.color);	
+	viewModel.optional = true;	
+
+	return viewModel;
+}
+
 function newChoiceViewModel(element)
 {
 	var viewModel = newBasicViewModel(element)
@@ -633,6 +633,13 @@ function newChoiceViewModel(element)
 }
 
 function sortFunction(a, b) {
+	try {
+		return Intl.Collator().compare(a,b);
+	} catch (e) {
+		//ignore
+	}
+	
+	//fallback
     if (a[0] === b[0]) {
         return 0;
     }

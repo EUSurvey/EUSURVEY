@@ -65,7 +65,7 @@
 		
 		$(function(){
 		   loadMore();
-		   $("#tbllist-exports").stickyTableHeaders({fixedOffset: 195});
+		   $("#tbllist-exports").stickyTableHeaders({fixedOffset: 145});
 		   $(window).trigger('resize.stickyTableHeaders');
 		});
 		
@@ -133,7 +133,9 @@
 		
 		function deleteSelectedExports() {
 			$('input[type="checkbox"]:checked').filter(":visible").each( function() {
-				deleteExport(this.id);
+				if (this.id != "checkAllCheckBox") {
+					deleteExport(this.id);
+				}
 			});			
 			showInfo("<spring:message code="message.ExportsDeletedSuccessfully" />");
 		}
@@ -351,13 +353,8 @@
 	<%@ include file="../header.jsp" %>
 	<%@ include file="../menu.jsp" %>
 
-	<div class="fixedtitle" style="padding-bottom: 12px">
+	<div class="fixedtitle" style="padding-bottom: 26px">
 		<div class="fixedtitleinner">
-			<h1>
-				<span class="glyphicon glyphicon-export pagetitleicon"></span>
-				<spring:message code="label.Exports" />
-			</h1>
-		
 			<div style="float: left">
 				<select class="form-control" id="operationselector" style="display: inline; width: auto;">
 					<option value="recreate"><spring:message code="label.RecreateSelected" /></option>
@@ -372,7 +369,7 @@
 		</div>
 	</div>	
 
-	<div class="fullpage" style="margin-top:195px;">
+	<div class="fullpage" style="margin-top:145px;">
 
 		<form:form id="load-exports" method="POST" action="${contextpath}/exports/list">
 			<input type="hidden" name="sortKey" id="sortkey" value='<esapi:encodeForHTMLAttribute>${sortKey}</esapi:encodeForHTMLAttribute>' />
@@ -416,6 +413,9 @@
 				</tbody>
 			</table>
 			
+			<div style="text-align: center">
+				<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
+			</div>
 			<div id="tbllist-empty" class="noDataPlaceHolder">
 				<p>
 					<spring:message code="label.NoDataExportText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>

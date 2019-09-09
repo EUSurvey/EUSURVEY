@@ -609,6 +609,23 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 	_elementProperties.propertyRows.push(row);
 }
 
+function getChooseColor(label, value)
+{
+	var row = new PropertyRow();
+	row.Type("first");
+	row.ContentType("color");
+	row.Label(label);
+	row.LabelTitle(getPropertyLabel(label));
+	row.Value(value);
+
+	var id = "id" + idcounter++;
+	_elementProperties.propertyRows.push(row);
+	
+	$(".spectrum").spectrum({
+		preferredFormat: "hex"
+	});
+}
+
 function getCheckPropertiesRow(label, value)
 {
 	var row = new PropertyRow();
@@ -651,7 +668,10 @@ function createDatePickerForEditor(instance, othervalue)
 			
 			if ($(this).attr("data-to"))
 			{
-				$("#" + $(this).attr("data-to")).datepicker( "option", "minDate", dateText );
+				var myDate = $(this).datepicker('getDate'); 
+	            myDate.setDate(myDate.getDate()+1); 
+				
+				$("#" + $(this).attr("data-to")).datepicker( "option", "minDate", myDate );
 				
 				$("#" + $(this).attr("data-to")).removeClass (function (index, css) {
 				    return (css.match (/(^|\s)min\S+/g) || []).join(' ');
@@ -660,7 +680,10 @@ function createDatePickerForEditor(instance, othervalue)
 				$("#" + $(this).attr("data-to")).addClass("min" + dateText.replace(/\//g,""));						
 			} else if ($(this).attr("data-from"))
 			{
-				$("#" + $(this).attr("data-from")).datepicker( "option", "maxDate", dateText );
+				var myDate = $(this).datepicker('getDate'); 
+	            myDate.setDate(myDate.getDate()-1); 
+				
+				$("#" + $(this).attr("data-from")).datepicker( "option", "maxDate", myDate );
 				
 				$("#" + $(this).attr("data-from")).removeClass (function (index, css) {
 				    return (css.match (/(^|\s)max\S+/g) || []).join(' ');
@@ -1373,17 +1396,41 @@ function addRow(noundo)
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var element = _elements[id];
+	var allmandatory = true;
 	var text;
 	
 	if (element.type == "Matrix")
 	{
-		text = "Question " + (element.questionsOrdered().length + 1);
-		
+		text = "Question " + (element.questionsOrdered().length + 1);	
+		for (var i = 0; i < element.questionsOrdered().length; i++)
+		{
+			if (element.questionsOrdered()[i].optional())
+			{
+				allmandatory = false;
+				break;
+			}
+		}
 	} else if (element.type == "RatingQuestion")
 	{
 		text = "Question " + (element.childElements().length + 1);
+		for (var i = 0; i < element.childElements().length; i++)
+		{
+			if (element.childElements()[i].optional())
+			{
+				allmandatory = false;
+				break;
+			}
+		}
 	} else {
 		text = (element.questions().length + 1) + "";
+		for (var i = 0; i < element.questions().length; i++)
+		{
+			if (element.questions()[i].optional())
+			{
+				allmandatory = false;
+				break;
+			}
+		}
 	}	
 	
 	var newelemen;
@@ -1391,8 +1438,10 @@ function addRow(noundo)
 	{
 		newelement = newBasicViewModel(getBasicElement("Text", false, text, null, false));
 		element.childElements.push(newelement);
+		
+		$(_elementProperties.selectedelement).find("a.ratingitem").removeAttr("onclick");
 	} else {
-		newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, "<span class=\"optional\">*</span>" + text, text, false, "", element.questions().length);
+		newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, text, text, false, "", element.questions().length);
 		element.questions.push(newelement);
 	}
 	
@@ -1684,7 +1733,7 @@ function edit(span)
 		var tr = $(span).closest("tr").next();
 		_elementProperties.selectedid = $(tr).find("textarea").first().attr("id");	
 		$(tr).show();
-		originaltext = tinyMCE.get(_elementProperties.selectedid).getContent();
+		originaltext = tinyMCE.get(_elementProperties.selectedid).getContent({format : 'html'});
 	}
 }
 

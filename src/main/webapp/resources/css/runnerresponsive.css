@@ -32,6 +32,7 @@
 	background-color: #fff;
 	max-width: 100%;
 	width: 100%;
+	padding: 5px;
 }
 
 .linkstitle {
@@ -155,14 +156,14 @@
 }
 
 .matrix {}
-.matrixtable td {padding: 5px; padding-left: 10px; padding-right: 10px; border: 1px solid #bbb; min-width: 10px; width: auto;}
+.matrixtable td, .matrixtable th {padding: 5px; padding-left: 10px; padding-right: 10px; border: 1px solid #bbb; min-width: 10px; width: auto;}
 .matrix-cell {text-align: center;}
 
 .tabletable {
 	max-width: 5000px;
 }
 
-.tabletable td {border: 1px solid #bbb; padding: 0 4px 0 4px; font-size: 13px; }
+.tabletable td, .tabletable th {border: 1px solid #bbb; padding: 0 4px 0 4px; font-size: 13px; }
 
 .tabletable input[type="text"] {
 	width: 100%;
@@ -242,7 +243,7 @@ textarea.freetext {
 }
 
 .date {
-	width: 130px;
+	width: 130px !important;
 }
 
 .tabletable textarea {
@@ -377,4 +378,18 @@ legend {
 
 .ratingitem img {
 	width: 40px;
+}
+
+.ecl-footer__column2 {
+	padding-bottom: 10px !important;
+	padding-top: 5px !important;
+}
+
+.ecl-footer__column {
+	padding-bottom: 10px !important;
+	padding-top: 5px !important;
+}
+
+.ecl-footer__title {
+	margin-bottom: 0px !important;
 }

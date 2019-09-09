@@ -28,18 +28,37 @@ public class Skin implements java.io.Serializable {
 	
 	public Skin()
 	{
-		//create items
-		elements.add(new SkinElement(".answertext"));
-		elements.add(new SkinElement(".info-box"));
-		elements.add(new SkinElement(".link"));
-		elements.add(new SkinElement(".linkstitle"));
-		elements.add(new SkinElement(".questionhelp"));
-		elements.add(new SkinElement(".questiontitle"));
-		elements.add(new SkinElement(".matrix-header"));
-		elements.add(new SkinElement(".sectiontitle"));	
-		elements.add(new SkinElement(".surveytitle"));	
-		elements.add(new SkinElement(".right-area"));
-		elements.add(new SkinElement(".text"));
+		createMissingElements();
+	}
+	
+	public void createMissingElements() {
+		List<String> allElements = new ArrayList<String>();
+		allElements.add(".answertext");
+		allElements.add(".info-box");
+		allElements.add(".link");
+		allElements.add(".linkstitle");
+		allElements.add(".questionhelp");
+		allElements.add(".questiontitle");
+		allElements.add(".matrix-header");
+		allElements.add(".table-header");
+		allElements.add(".sectiontitle");	
+		allElements.add(".surveytitle");	
+		allElements.add(".right-area");
+		allElements.add(".text");		
+		
+		List<String> existingElements = new ArrayList<String>();
+		for (SkinElement element : elements)
+		{
+			existingElements.add(element.getName());
+		}
+		
+		for (String element : allElements)
+		{
+			if (!existingElements.contains(element))
+			{
+				elements.add(new SkinElement(element));
+			}
+		}
 	}
 		
 	@Id
@@ -184,6 +203,7 @@ public class Skin implements java.io.Serializable {
 				if (name.equals(".questionhelp")) return "A6A6A6";
 				return "333333";
 			case "background-color":
+				if (name.equals(".right-area")) return "ffffff";
 				return "transparent";
 			case "font-family":
 				return "sans-serif";
@@ -225,6 +245,5 @@ public class Skin implements java.io.Serializable {
 			return false;
 		return true;
 	}
-	
 
 }

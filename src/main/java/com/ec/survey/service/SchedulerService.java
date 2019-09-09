@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.service.ReportingService.ToDoItem;
 import com.ec.survey.tools.DeleteDraftsUpdater;
 import com.ec.survey.tools.DeleteInvalidStatisticsWorker;
 import com.ec.survey.tools.DeleteSurveyUpdater;
@@ -399,6 +401,103 @@ public class SchedulerService extends BasicService {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 	 }
+	
+	@Scheduled(fixedDelay=600000) //every 10 minutes
+	public void migrateReportingSchedule() {	
+		if(!isHost2ExecuteTask())
+			return;
+		
+		try {
+			String enabled = settingsService.get(Setting.ReportingMigrationEnabled);
+			if (!enabled.equalsIgnoreCase("true"))
+			{
+				return;
+			}
+			
+			String start = settingsService.get(Setting.ReportingMigrationStart);
+			String time = settingsService.get(Setting.ReportingMigrationTime);
+			
+			if (start == null || start.length() == 0 || time == null || time.length() == 0) return;
+			
+			String hours = start.substring(0, start.indexOf(":"));
+			String minutes = start.substring(start.indexOf(":")+1);
+			Date currentDate = new Date();
+			
+			Calendar c = Calendar.getInstance();
+			c.setTime(currentDate);
+			c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hours));
+			c.set(Calendar.MINUTE, Integer.parseInt(minutes));
+			c.set(Calendar.SECOND, 0);
+			
+			Date startDate = c.getTime();
+			
+			c.add(Calendar.MINUTE, Integer.parseInt(time));
+			Date endDate = c.getTime();
+			
+			if (currentDate.after(startDate) && currentDate.before(endDate))
+			{
+				logger.info("Start reporting migration");
+				
+				List<String> surveyUIDs = surveyService.getAllSurveyUIDs(false);
+				for (String uid : surveyUIDs)
+				{
+					try {
+						if (!reportingService.OLAPTableExists(uid, true))
+						{
+							reportingService.createOLAPTable(uid, true, false);
+						} else {
+							reportingService.updateOLAPTable(uid, true, false);
+						}
+						if (!reportingService.OLAPTableExists(uid, false))
+						{
+							reportingService.createOLAPTable(uid, false, true);
+						} else {
+							reportingService.updateOLAPTable(uid, false, true);
+						}
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+						logger.error("last query: " + ReportingService.lastQuery);
+					}
+					
+					if ((new Date()).after(endDate))
+					{
+						break;
+					}
+				}				
+				
+				logger.info("Finished reporting migration");
+			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+	}
+	
+	@Scheduled(fixedDelay=1200000) //every 20 minutes
+	public void doToDosSchedule() throws Exception {
+		
+		if (!isReportingDatabaseEnabled()) return;
+		
+		if(!isHost2ExecuteTask())
+			return;
+		
+		List<ToDoItem> todos = reportingService.getToDos();
+		
+		if (todos.size() > 0)
+		{
+			logger.info("Start executing " + todos.size() + " todos");
+			
+			for (ToDoItem todo : todos) {
+				try {
+					reportingService.executeToDo(todo);
+					reportingService.removeToDo(todo, true);
+				} catch (Exception e) {
+					logger.error(e.getLocalizedMessage(), e);
+				}
+			}
+
+			logger.info("Finished executing " + todos.size() + " todos");
+		}		
+	}
 	
 	@Scheduled(cron="0 0 * * * *") //every hour
 	public void doHourlySchedule() {	

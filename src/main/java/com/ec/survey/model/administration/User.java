@@ -27,6 +27,7 @@ public class User implements java.io.Serializable {
 	private String passwordSalt;
 	private String email;
 	private String emailToValidate;
+	private String otherEmail;
 	private String comment;
 	private String language = "EN";
 	private String defaultPivotLanguage = "EN";
@@ -69,6 +70,7 @@ public class User implements java.io.Serializable {
 		localPrivileges.put(LocalPrivilege.ManageInvitations, 0);	
 		
 		roles = new ArrayList<>();
+		selectedAttributes = new ArrayList<AttributeName>();
 	}
 	
 	@Id
@@ -129,6 +131,14 @@ public class User implements java.io.Serializable {
 		this.comment = comment;
 	}
 	
+	@Column(name = "USER_OTHEREMAIL")
+	public String getOtherEmail() {
+		return otherEmail;
+	}
+	public void setOtherEmail(String otherEmail) {
+		this.otherEmail = otherEmail;
+	}
+
 	@Column(name = "USER_LANGUAGE")
 	public String getLanguage() {
 		return language;
@@ -432,4 +442,25 @@ public class User implements java.io.Serializable {
 	public void setCanCreateSurveys(boolean canCreateSurveys) {
 		this.canCreateSurveys = canCreateSurveys;
 	}
+
+	@Transient
+	public List<String> getAllEmailAddresses() {
+		List<String> result = new ArrayList<String>();
+		result.add(email);
+		
+		if (otherEmail != null && otherEmail.length() > 0)
+		{
+			String[] emails = otherEmail.split(";");
+			for (int i = 0; i < emails.length; i++)
+			{
+				if (emails[i].length() > 0)
+				{
+					result.add(emails[i]);
+				}
+			}
+		}
+		
+		return result;
+	}
+
 }

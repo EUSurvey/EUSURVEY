@@ -13,7 +13,7 @@
 </div>
 
 <div class="layout-footer" style="margin-top: 10px;">
-	<div style="width: 1206px; margin-left: auto; margin-right: auto">
+	<div style="width: 1206px; max-width: 100%; margin-left: auto; margin-right: auto">
 		<div class="container-fluid">
 			<div class="row">
 	        	<div class="col-md-4 ecl-footer__column2" style="padding-left: 15px; padding-top: 8px;">
@@ -31,9 +31,6 @@
 	            </div>
 	            <div class="col-md-4 ecl-footer__column2">
 	                <ul class="footer-items ecl-footer__menu ecl-list--inline">
-	                	<li>
-							<a class="ecl-footer__menu-item" href="<c:url value="/home/publicsurveys"/>">${form.getMessage("header.AllPublicSurveys")}</a>
-						</li>
 	                	<li class="ecl-footer__menu-item">
 				           <a href="<c:url value="/home/about"/>">${form.getMessage("label.About")}</a>
 				        </li>
@@ -51,7 +48,7 @@
  </div>
  
 <div class="ecl-footer__site-corporate" style="">
-	<div style="width: 1206px; margin-left: auto; margin-right: auto">
+	<div style="width: 1206px; max-width: 100%;margin-left: auto; margin-right: auto">
 		<div class="container-fluid">
 	  		<div class="row">
 	        	<div class="col-md-4 ecl-footer__column">
@@ -97,7 +94,7 @@
 
 
 <div class="bottom-footer-items">
-	<div style="width: 1206px; margin-left: auto; margin-right: auto; text-align: left;">
+	<div style="width: 1206px; max-width: 100%; margin-left: auto; margin-right: auto; text-align: left;">
 		<ul style="padding: 0px;">
 			<li>
 		        <a href="http://ec.europa.eu/info/about-commissions-new-web-presence_en">About the Commission's new web presence</a>
@@ -112,11 +109,14 @@
 		     	<a href="http://ec.europa.eu/geninfo/legal_notices_en.htm">${form.getMessage("label.LegalNotice")}</a>
 		    </li>
 			<li>
-		       <a href="<c:url value="/home/support"/>">${form.getMessage("label.Contact")}</a>
+		       <a href="<c:url value="/home/documentation"/>">${form.getMessage("label.Contact")}</a>
 			</li>
 			<c:if test="${showprivacy}">
 				<li>
 					<a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a>
+				</li>
+				<li>
+					<a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a>
 				</li>
 			</c:if>
 		</ul>

@@ -174,7 +174,7 @@
 	
 	<div class="fixedtitleform">
 		<div class="fixedtitleinner">
-			<h1><spring:message code="label.System" /></h1>		
+				
 		</div>
 	</div>
 		

@@ -3,6 +3,15 @@ var UndoProcessor = function() {
 	this.redostack = [];
 	this.positions = [];
 	
+	this.clear = function()
+	{
+		this.undostack = [];
+		this.redostack = [];
+		this.positions = [];
+		_actions.UndoEnabled(false);
+		_actions.RedoEnabled(false);
+	}
+	
 	this.addUndoStep = function(data)
 	{
 		this.undostack.push(data);
@@ -336,6 +345,8 @@ var UndoProcessor = function() {
 				if (element.type == "Matrix")
 				{
 					element.isSingleChoice(step[3] == "SingleChoice");
+				} else if (element.type == "Ruler") {				
+					element.style(step[3]);
 				} else {
 					if (step[3] == "RadioButton")
 					{
@@ -630,6 +641,12 @@ var UndoProcessor = function() {
 				var button = $("tr[data-uid='" + step[2] + "']").find("a").first();
 				moveGalleryFile(step[2], button, !step[3], true);
 				break;
+			case "Color":
+				element.color(step[3]);
+				break;
+			case "Height":
+				element.height(step[3]);
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -829,6 +846,8 @@ var UndoProcessor = function() {
 				if (element.type == "Matrix")
 				{
 					element.isSingleChoice(step[4] == "SingleChoice");
+				} else if (element.type == "Ruler") {				
+					element.style(step[4]);
 				} else {
 					if (step[4] == "RadioButton")
 					{
@@ -1100,6 +1119,12 @@ var UndoProcessor = function() {
 			case "FileMoved":
 				var button = $("tr[data-uid='" + step[2] + "']").find("a").first();
 				moveGalleryFile(step[2], button, step[3], true);
+				break;
+			case "Color":
+				element.color(step[4]);
+				break;
+			case "Height":
+				element.height(step[4]);
 				break;
 		}
 		

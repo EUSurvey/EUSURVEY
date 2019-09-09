@@ -39,13 +39,13 @@ public class TranslationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Translations translations = getTranslations(surveyId, language);
 		if (translations != null){
-			int id = translations.getId();
+//			int id = translations.getId();
 			
 			//sometimes there are translation entries left that are not deleted
 			//this removes the foreign key to the TRANSLATIONS table
-			Query query = session.createSQLQuery("UPDATE TRANSLATION SET TRANS_ID = NULL WHERE TRANS_ID = :id");
-			query.setParameter("id", id);
-			query.executeUpdate();
+//			Query query = session.createSQLQuery("UPDATE TRANSLATION SET TRANS_ID = NULL WHERE TRANS_ID = :id");
+//			query.setParameter("id", id);
+//			query.executeUpdate();
 			
 			session.delete(translations);
 		}		
@@ -55,6 +55,13 @@ public class TranslationService extends BasicService {
 	public void add(Translations translation) {
 		Session session = sessionFactory.getCurrentSession();
 		session.save(translation);
+	}
+	
+	@Transactional
+	public void add(Translations translation, boolean evict) {
+		Session session = sessionFactory.getCurrentSession();
+		session.save(translation);
+		if (evict) session.evict(translation);
 	}
 	
 	public List<Translations> getTranslationsForSurvey(int surveyId, boolean checkComplete, boolean loadTranslationTitles)
@@ -80,7 +87,7 @@ public class TranslationService extends BasicService {
 			session.setReadOnly(survey, true);
 		}
 		
-		Query query = session.createQuery("SELECT t.id FROM Translations t WHERE t.surveyId = :surveyId ORDER BY t.language asc").setCacheable(true);
+		Query query = session.createQuery("SELECT t.id FROM Translations t WHERE t.surveyId = :surveyId ORDER BY t.language asc");
 		query.setParameter("surveyId", surveyId);
 
 		// Retrieve all
@@ -91,26 +98,31 @@ public class TranslationService extends BasicService {
 			
 			Translations translations = (Translations) session.get(Translations.class, id);
 			
-			if (useEagerLoading)
+			if (translations != null)
 			{
-				Hibernate.initialize(translations.getTranslations());
-			}
-			
-			if (loadTranslationTitles && translations.getTranslationsByKey().containsKey("TITLE"))
-			{
-				translations.setTitle(translations.getTranslationsByKey().get("TITLE").getLabel());
-			}
-			
-			if (checkComplete)
-			{
-				translations.setComplete(TranslationsHelper.isComplete(translations, survey));
-			}
-			
-			if (translations.getLanguage().getCode().equalsIgnoreCase(survey.getLanguage().getCode()))
-			{
-				result.add(0, translations);
-			} else {			
-				result.add(translations);
+				if (useEagerLoading)
+				{
+					Hibernate.initialize(translations.getTranslations());
+				}
+				
+				if (loadTranslationTitles && translations.getTranslationsByKey().containsKey("TITLE"))
+				{
+					translations.setTitle(translations.getTranslationsByKey().get("TITLE").getLabel());
+				}
+				
+				if (checkComplete)
+				{
+					translations.setComplete(TranslationsHelper.isComplete(translations, survey));
+				}
+				
+				if (translations.getLanguage().getCode().equalsIgnoreCase(survey.getLanguage().getCode()))
+				{
+					result.add(0, translations);
+				} else {			
+					result.add(translations);
+				}
+			} else {
+				logger.error("no Translations item with id " + id + " found!");
 			}
 		}
 		

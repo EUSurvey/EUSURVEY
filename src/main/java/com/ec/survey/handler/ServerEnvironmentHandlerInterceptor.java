@@ -44,6 +44,9 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	public static final String APPLICATION_OPC = "enableopc";
 	public @Value("${ui.enableopc}") String enableopc;
 	
+	public static final String APPLICATION_PUBLICSURVEYS = "enablepublicsurveys";
+	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
+	
 	public static final String APPLICATION_OSS = "oss";
 	public @Value("${oss}") String oss;
 	
@@ -54,8 +57,9 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	public @Value("${show.privacy}") String showPrivacy;
 	
 	private @Value("${monitoring.recipient}") String monitoringEmail;
+	private @Value("${enablereportingdatabase}") String enablereportingdatabase;
 
-	protected @Value("${contextpath}") String contextpath;	
+	private @Value("${contextpath}") String contextpath;	
 	
 	@Resource(name="settingsService")
 	private SettingsService settingsService;
@@ -90,6 +94,8 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_KEY, captchakey);
             modelAndView.getModelMap().addAttribute(APPLICATION_ARCHIVING, enablearchiving != null && enablearchiving.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_OPC, enableopc != null && enableopc.equalsIgnoreCase("true"));
+            modelAndView.getModelMap().addAttribute(APPLICATION_PUBLICSURVEYS, enablepublicsurveys != null && enablepublicsurveys.equalsIgnoreCase("true"));
+                        
             modelAndView.getModelMap().addAttribute(APPLICATION_FILEMANAGEMENT, enablefilemanagement != null && enablefilemanagement.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_OSS, oss != null && oss.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_PIWIK, piwik != null && piwik.equalsIgnoreCase("true"));
@@ -97,6 +103,7 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             
             modelAndView.getModelMap().addAttribute("contextpath", contextpath);
             modelAndView.getModelMap().addAttribute("monitoringEmail", monitoringEmail);
+            modelAndView.getModelMap().addAttribute("enablereportingdatabase", enablereportingdatabase);
             
             Device device = DeviceUtils.getCurrentDevice(request);
             if (!request.getRequestURI().endsWith("management/edit"))
@@ -118,16 +125,21 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             modelAndView.getModelMap().addAttribute("captcha", captcha);
             
             String uisessiontimeout = settingsService.get("uisessiontimeout");
-            modelAndView.getModelMap().addAttribute("uisessiontimeout", uisessiontimeout);
-            
-            modelAndView.getModelMap().addAttribute("languages", surveyService.getLanguages());
-            
+            modelAndView.getModelMap().addAttribute("uisessiontimeout", uisessiontimeout);            
+            modelAndView.getModelMap().addAttribute("languages", surveyService.getLanguages());            
             modelAndView.getModelMap().addAttribute("origin", request.getRequestURI());
             
             if (request.getParameter("imported") != null && request.getParameter("imported").length() > 0)
         	{
             	modelAndView.getModelMap().addAttribute("imported",request.getParameter("imported"));
         	}
+            
+            Object id = request.getSession().getAttribute("surveyeditorsaved");
+            if (id != null)
+            {
+            	 modelAndView.getModelMap().addAttribute("surveyeditorsaved", id);
+            	 request.getSession().removeAttribute("surveyeditorsaved");
+            }
 		}
     }	
 	

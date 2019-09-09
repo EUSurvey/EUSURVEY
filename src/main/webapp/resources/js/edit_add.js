@@ -126,6 +126,13 @@ function getNewElement(item)
 		element.url = contextpath + "/resources/images/photo_scenery.png";
 		element.filename = "";
 		updateComplexityScore("addSimpleItem");
+	} else if (item.hasClass("ruleritem"))
+	{
+		element = getBasicElement("Ruler", false, "Ruler", item.attr("id"), false);
+		element.color = "#004F98";
+		element.style = "solid";
+		element.height = 1;
+		updateComplexityScore("addSimpleItem");
 	} else if (item.hasClass("uploaditem"))
 	{
 		element = getBasicElement("Upload", true, "Please upload your file", item.attr("id"), true);
@@ -259,10 +266,10 @@ function addNewElement(item, element)
 		item.find(".questiontitle").prepend("<input disabled='disabled' type='checkbox' />")
 	}
 	
-	if (!element.optional)
-	{
-		item.find(".questiontitle").prepend("<span class='mandatory'>*</span>")
-	}
+//	if (!element.optional)
+//	{
+//		item.find(".questiontitle").prepend("<span class='mandatory'>*</span>")
+//	}
 	
 	addElementHandler(item);
 	checkContent();
@@ -382,10 +389,6 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		{
 			element.optional = false;
 		} else {
-			if (addoptionalplaceholder)
-			{
-				element.title = "<span class='optional'>*</span>" + element.title;
-			}
 			element.optional = true;
 		}
 		element.isAttribute = true;

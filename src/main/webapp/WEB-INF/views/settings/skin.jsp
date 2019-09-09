@@ -275,6 +275,7 @@
 											<c:when test="${element.name == '.questiontitle'}"><spring:message code="skin.QuestionText" /></c:when>
 											<c:when test="${element.name == '.answertext'}"><spring:message code="skin.AnswerText" /></c:when>
 											<c:when test="${element.name == '.matrix-header'}"><spring:message code="skin.MatrixHeader" /></c:when>
+											<c:when test="${element.name == '.table-header'}"><spring:message code="skin.TableHeader" /></c:when>
 											<c:when test="${element.name == '.questionhelp'}"><spring:message code="skin.QuestionHelp" /></c:when>
 											<c:when test="${element.name == '.info-box'}"><spring:message code="skin.InfoBox" /></c:when>
 											<c:when test="${element.name == '.linkstitle'}"><spring:message code="skin.MetaInformationTitles" /></c:when>
@@ -352,7 +353,7 @@
 					
 					<div style="clear: both"></div>
 							
-					<div class="runner-content" style="margin: 0px; margin-left: auto; margin-right: auto; margin-top: 10px; padding: 0px; height: 640px; max-height: 640px; overflow: auto;">
+					<div class="runner-content" style="position: absolute; margin: 0px; margin-left: auto; margin-right: auto; margin-top: 10px; padding: 0px; height: 640px; max-height: 640px; overflow: auto;">
 						<c:set var="mode" value="skin" />
 						<%@ include file="../runner/runnercontentinner.jsp" %>	
 					</div>

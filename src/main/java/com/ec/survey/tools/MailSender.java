@@ -16,6 +16,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ec.survey.service.MailService;
+
 @Service("mailSender")
 @Scope("prototype")
 public class MailSender implements Runnable {
@@ -35,9 +37,15 @@ public class MailSender implements Runnable {
 	private File attachment;
 	private File attachment2;
 	private String info;
+	private boolean deletefiles;
 	
-	public void init(String to, String from, String subject, String reply, String body, File attachment, File attachment2, String info)
+	public void init(String to, String from, String subject, String reply, String body, File attachment, File attachment2, String info, boolean deletefiles) throws Exception
 	{
+		if (to == null || to.trim().length() == 0 || !MailService.isValidEmailAddress(to))
+		{
+			throw new Exception("Invalid email address");
+		}
+		
 		this.to = to;
 		this.from = from;
 		this.subject = subject;
@@ -46,6 +54,7 @@ public class MailSender implements Runnable {
 		this.attachment = attachment;
 		this.attachment2 = attachment2;
 		this.info = info;
+		this.deletefiles = deletefiles;
 	}
 	
 	@Override
@@ -92,6 +101,20 @@ public class MailSender implements Runnable {
 			
 			sender.send(message);
 			logger.info("mail sent to " + to + " at " + DateFormat.getInstance().format(new Date()) + (info != null ? " " + info : ""));
+			
+			if (deletefiles)
+			{
+				if (attachment != null && attachment.exists())
+				{
+					attachment.delete();
+				}
+				
+				if (attachment2 != null && attachment2.exists())
+				{
+					attachment2.delete();
+				}
+			}			
+			
 		} catch (MessagingException e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}

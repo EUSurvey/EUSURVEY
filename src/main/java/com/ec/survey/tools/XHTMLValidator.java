@@ -96,7 +96,7 @@ public class XHTMLValidator {
 			builder.reset();
 			return true;
 		} catch (Exception e1) {
-			logger.error(e1.getLocalizedMessage(), e1);
+			logger.info(e1.getLocalizedMessage(), e1);
 		}
 		
 		return false;

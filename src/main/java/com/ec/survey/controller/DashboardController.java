@@ -282,7 +282,7 @@ public class DashboardController extends BasicController {
 			}
 			
 			SqlPagination paging = new SqlPagination(page, 10);
-			List<Survey> result = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, true);
+			List<Survey> result = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, false);
 			
 			surveyService.generateAccessInformation(result, u);
 			
@@ -294,6 +294,35 @@ public class DashboardController extends BasicController {
 
 		return null;
 	}
+	
+	@RequestMapping(value = "/dashboard/surveysadvanced", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody List<List<Integer>> surveysadvanced(HttpServletRequest request, HttpServletResponse response, Locale locale, Model model) {
+		try {
+			List<List<Integer>> results = new ArrayList<List<Integer>>();
+			String suids = request.getParameter("ids");
+			if (suids != null && suids.length() > 0)
+			{
+				String[] uids = suids.split(";");
+				for (String uid : uids)
+				{
+					List<Integer> result = new ArrayList<Integer>();
+					
+					result.add(participationService.getNumberOfInvitations(uid));
+					result.add(answerService.getNumberOfDrafts(uid));
+					
+					results.add(result);
+				}
+				
+				return results;
+			}
+		} catch (Exception ex) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            logger.error(ex.getMessage(), ex);
+        }
+
+		return null;
+	}
+			
 	
 	@RequestMapping(value = "/dashboard/archives", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody List<Archive> archives(HttpServletRequest request, HttpServletResponse response, Locale locale, Model model) {
@@ -374,7 +403,17 @@ public class DashboardController extends BasicController {
 			List<Object[]> contributions = new ArrayList<Object[]>();
 			
 			ResultFilter filter = new ResultFilter();
-			filter.setUser(sessionService.getCurrentUser(request).getEmail());
+			
+			User user = sessionService.getCurrentUser(request);
+			
+			if (user.getOtherEmail() != null && user.getOtherEmail().length() > 0)
+			{
+				List<String> allemails = user.getAllEmailAddresses();
+				filter.setUser(String.join(";",allemails));
+			} else {
+				filter.setUser(user.getEmail());
+			}
+			
 			filter.setSortKey("date");		
 			filter.setSortOrder("DESC");
 			filter.setStatus("Submitted");
@@ -436,11 +475,11 @@ public class DashboardController extends BasicController {
 			
 			SqlPagination paging = new SqlPagination(page, 10);
 			
-			List<AnswerSet> answerSets = answerService.getAnswers(-1, filter, paging, false, false);
+			List<AnswerSet> answerSets = answerService.getAnswers(null, filter, paging, false, false, false);
 			
 			for (AnswerSet answerSet : answerSets)
 			{
-				Object[] answer = new Object[8];
+				Object[] answer = new Object[9];
 				answer[0] = answerSet.getId();
 				answer[1] = answerSet.getUniqueCode();
 				answer[2] = answerSet.getNiceUpdateDate();
@@ -449,6 +488,7 @@ public class DashboardController extends BasicController {
 				answer[5] = answerSet.getSurvey().getEndString();
 				answer[6] = answerSet.getSurvey().getChangeContribution() && answerSet.getSurvey().getIsActive();
 				answer[7] = answerSet.getSurvey().getPublication().isShowContent() || answerSet.getSurvey().getPublication().isShowStatistics();
+				answer[8] = answerSet.getSurvey().getDownloadContribution();
 				
 				contributions.add(answer);
 			}			
@@ -469,7 +509,16 @@ public class DashboardController extends BasicController {
 			List<Object[]> drafts = new ArrayList<Object[]>();
 			
 			ResultFilter filter = new ResultFilter();
-			filter.setUser(sessionService.getCurrentUser(request).getEmail());
+			
+			User user = sessionService.getCurrentUser(request);
+			
+			if (user.getOtherEmail() != null && user.getOtherEmail().length() > 0)
+			{
+				List<String> allemails = user.getAllEmailAddresses();
+				filter.setUser(String.join(";",allemails));
+			} else {
+				filter.setUser(user.getEmail());
+			}
 			filter.setSortKey("date");		
 			filter.setSortOrder("DESC");
 			
@@ -606,12 +655,12 @@ public class DashboardController extends BasicController {
 			
 			SqlPagination paging = new SqlPagination(page, 10);
 			
-			List<Invitation> lstInvitations = participationService.getInvitations(sessionService.getCurrentUser(request).getEmail(), paging, survey, surveystatus, start, end, startInv, endInv);
+			List<Invitation> lstInvitations = participationService.getInvitations(sessionService.getCurrentUser(request), paging, survey, surveystatus, start, end, startInv, endInv);
 			
 			for (Invitation invitation : lstInvitations)
 			{
 				ParticipationGroup group = participationService.get(invitation.getParticipationGroupId());
-				Survey s = surveyService.getSurvey(group.getSurveyUid(), true, false, false, false, null, true);
+				Survey s = surveyService.getSurvey(group.getSurveyUid(), true, false, false, false, null, true, false);
 								
 				Object[] answer = new Object[8];
 				answer[0] = ConversionTools.getFullStringSmall(invitation.getInvited());

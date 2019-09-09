@@ -21,18 +21,10 @@
 	</c:choose>	
 
 	<div style="margin-top: 20px">
-		<c:choose>
-			<c:when test="${!oss}">
-				<a  target="_blank"  href="https://circabc.europa.eu/sd/a/2e8fd5cf-4095-4413-9aa4-d46bf706aafc/EUSurvey_Quick_Start_Guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/flash_on.png');"><spring:message code="label.Userguide" /> (pdf)</a> |
-			</c:when>
-			<c:otherwise>
-				<a  target="_blank"  href="${contextpath}/resources/documents/eusurvey_oss_quickstart_guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.Userguide" /> (pdf)</a> |				
-			</c:otherwise>
-		</c:choose>
-		
-		<a href="<c:url value="/home/support"/>"><spring:message code="label.Support" /></a> 
+		<a href="<c:url value="/home/documentation"/>"><spring:message code="label.Support" /></a> 
 		<c:if test="${showprivacy}">
 			| <a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a>
+			| <a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a>
 		</c:if>	
 	</div>
 	

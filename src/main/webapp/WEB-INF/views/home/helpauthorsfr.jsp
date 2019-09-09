@@ -120,6 +120,7 @@
 				<li><a class="anchorlink" href="#_Toc0-10">Avec quels navigateurs l'application EUSurvey est-elle compatible?</a></li>
 				<li><a class="anchorlink" href="#_Toc0-11">EUSurvey: clause de non-responsabilit&eacute; (pour les utilisateurs non membres des institutions de l'UE)</a></li>
 				<li><a class="anchorlink" href="#_Toc0-12">Mes participants peuvent-ils r&eacute;pondre &agrave; mon questionnaire &agrave; partir d'un appareil mobile?</a></li>
+				<li><a class="anchorlink" href="#_Toc0-13">Y a-t-il une taille minimale d'écran?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc1">Connexion et enregistrement</a>
@@ -195,7 +196,9 @@
 				<li><a class="anchorlink" href="#_Toc7-7">Puis-je envoyer un lien direct vers une traduction de mon enqu&ecirc;te?</a></li>
 				<li><a class="anchorlink" href="#_Toc7-3">Comment programmer la publication d'une enqu&ecirc;te pendant un cong&eacute;?</a></li>
 				<li><a class="anchorlink" href="#_Toc7-4">Est-il possible de programmer un rappel de la date de fin de l'enqu&ecirc;te?</a></li>
+				<c:if test="${enablepublicsurveys}">
 				<li><a class="anchorlink" href="#_Toc7-5">Comment afficher une enqu&ecirc;te dans la liste des enqu&ecirc;tes publiques dans EUSurvey?</a></li>
+				</c:if>
 				<li><a class="anchorlink" href="#_Toc7-6">Pour le personnel des institutions europ&eacute;ennes: quelles sont les exigences officielles pour le lancement d'une consultation publique ouverte (site web &laquo;Votre point de vue sur l'Europe&raquo;)?</a></li>
 			</ul>
 		</li>
@@ -209,6 +212,7 @@
 				<li><a class="anchorlink" href="#_Toc8-6">Comment personnaliser le message de sortie par d&eacute;faut? </a></li>
 				<li><a class="anchorlink" href="#_Toc8-7">Fonctionnalit&eacute; d'archivage</a></li>
 				<li><a class="anchorlink" href="#_Toc8-8">Comment donner acc&egrave;s &agrave; mon enqu&ecirc;te &agrave; d'autres utilisateurs?</a></li>
+				<li><a class="anchorlink" href="#_Toc8-9">Que sont les journaux d'activité ?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc9">Analyse, exportation et publication des r&eacute;sultats</a>
@@ -223,6 +227,7 @@
 				<li><a class="anchorlink" href="#_Toc9-8">Je ne parviens pas à décompresser mes fichiers exportés</a></li>
 				<li><a class="anchorlink" href="#_Toc9-9">Les r&eacute;sultats publi&eacute;s - protection des donn&eacute;es &agrave; caract&egrave;re personnel, charg&eacute;es par les participants</a></li>
 				<li><a class="anchorlink" href="#_Toc9-10">Comment concevoir une enqu&ecirc;te afin de publier les r&eacute;sultats avec ou sans donn&eacute;es personnelles?</a></li>
+				<li><a class="anchorlink" href="#_Toc9-11">Pourquoi mes résultats ne sont-ils pas à jour?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc10">Styles et mise en pages</a>
@@ -324,6 +329,9 @@
 <i>La Commission europ&eacute;enne ne saurait &ecirc;tre tenue responsable du contenu des questionnaires cr&eacute;&eacute;s au moyen du service EUSurvey; celui-ci rel&egrave;ve de la responsabilit&eacute; exclusive du cr&eacute;ateur et du gestionnaire de ces questionnaires. L'utilisation du service EUSurvey n'entra&icirc;ne aucunement l'approbation ou la recommandation, par la Commission europ&eacute;enne, des points de vue exprim&eacute;s dans les questionnaires.</i></p> 
 <h2><a class="anchor" name="_Toc0-12"></a>Mes participants peuvent-ils r&eacute;pondre &agrave; mon questionnaire &agrave; partir d'un appareil mobile?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Oui, EUSurvey est con&ccedil;u pour des sites web adaptatifs. Cela signifie que la page sera adapt&eacute;e &agrave; la r&eacute;solution de l'&eacute;cran utilis&eacute;. Ceci permettra &agrave; vos participants de r&eacute;pondre &agrave; partir d'un appareil mobile (t&eacute;l&eacute;phone portable ou tablette PC).</p>
+
+<h2><a class="anchor" name="_Toc0-13"></a>Y a-t-il une taille minimale d'écran?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>Les questionnaires en ligne sont entièrement réactifs et s'adaptent à la taille de votre appareil, ceci vous permet de compléter le questionnaire avec n'importe quelle taille d'écran.<br />Pour la création et la gestion de vos enquêtes, nous recommandons d'utiliser une résolution minimale de 1680x1050 pixels pour une bonne expérience utilisateur.</p>
 
 <h1><a class="anchor" name="_Toc1"></a>Connexion et enregistrement</h1>
 <h2><a class="anchor" name="_Toc1-1"></a>Je dispose d'un compte EU Login. Dois-je m'enregistrer s&eacute;par&eacute;ment pour EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
@@ -553,11 +561,13 @@
 <h2><a class="anchor" name="_Toc7-4"></a>Est-il possible de programmer un rappel de la date de fin de l'enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>EUSurvey peut vous envoyer un courrier &eacute;lectronique pour vous rappeler que l'enqu&ecirc;te est sur le point de se terminer. Vous pourrez ainsi pr&eacute;parer les &eacute;tapes suivantes (organiser les ressources n&eacute;cessaires &agrave; l'analyse des r&eacute;sultats, par ex.).</p>
 <p>Pour activer cette fonction, ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo;. Cliquez sur &laquo;Param&egrave;tres avanc&eacute;s&raquo;, puis sur le bouton &laquo;Modifier&raquo;. Cochez l'option &laquo;Notification de fin&raquo;, indiquez &agrave; quel moment vous souhaitez recevoir le courrier de rappel et pr&eacute;cisez si tous les autres gestionnaires de formulaires doivent &eacute;galement recevoir ce message. Cliquez enfin sur &laquo;Enregistrer&raquo;.</p>
+<c:if test="${enablepublicsurveys}">
 <h2><a class="anchor" name="_Toc7-5"></a>Comment afficher une enqu&ecirc;te dans la liste des enqu&ecirc;tes publiques dans EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Vous pouvez publier un lien vers votre enqu&ecirc;te dans la &laquo;<a href="http://ec.europa.eu${contextpath}/home/publicsurveys" target="_blank">liste des enqu&ecirc;tes publiques</a>&raquo; d'EUSurvey.</p>
 <p>Ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo;. S&eacute;lectionnez &laquo;Param&egrave;tres de s&eacute;curit&eacute;&raquo; et cliquez sur le bouton &laquo;Modifier&raquo;. Sous la rubrique &laquo;Public&raquo;, s&eacute;lectionnez &laquo;Oui&raquo; et cliquez sur le bouton &laquo;Enregistrer&raquo;.</p>
 <p><b>N.B.:</b> l'ajout de votre enqu&ecirc;te &agrave; la liste des enqu&ecirc;tes publiques d'EUSurvey doit &ecirc;tre valid&eacute; par l'&eacute;quipe administrative d'EUSurvey. Celle-ci reçoit automatiquement un email du syst&egrave;me quand, sur la page &laquo;Aperçu&raquo;, vous cliquez sur &laquo;Publier&raquo; ou si vous appliquez des changements. Une fois l'autorisation accord&eacute;e, vous recevez un message de confirmation et votre enqu&ecirc;te est disponible dans la liste des enqu&ecirc;tes publiques.</p>
 <p>Pour toute enqu&ecirc;te affich&eacute;e dans la liste publique d'EUSurvey, les participants doivent r&eacute;soudre un CAPTCHA avant de soumettre leur contribution. Ce CAPTCHA est cr&eacute;&eacute; automatiquement.</p>
+</c:if>
 <h2><a class="anchor" name="_Toc7-6"></a>Pour le personnel des institutions européennes: quelles sont les exigences officielles pour le lancement d'une consultation publique ouverte (site web &laquo;Votre point de vue sur l'Europe&raquo;)?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Veuillez suivre pas &agrave; pas <a href="https://circabc.europa.eu/sd/d/fc02d2ac-d94f-42ed-b866-b3429e0d717b/Survey_publication_your_voice_in_europe_NEW.pdf" target="_blank">la proc&eacute;dure du Secr&eacute;tariat G&eacute;n&eacute;ral</a> pour publier une consultation publique ouverte sur le site <a href="http://ec.europa.eu/yourvoice/consultations/index_en.htm" target="_blank">&laquo;Votre point de vue sur l'Europe&raquo;</a>.</p>
 
@@ -606,6 +616,10 @@
 	</ul>
 <p>Si vous s&eacute;lectionnez la couleur verte pour les trois cercles, l'utilisateur disposera de tous les droits pour votre enqu&ecirc;te.</p>
 
+<h2><a class="anchor" name="_Toc8-9"></a>Que sont les journaux d'activité ?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>
+Les journaux d'activité surveillent et enregistrent l'activité sur votre enquête. De cette façon, vous pouvez vérifier quel utilisateur a appliqué quelle modification à votre enquête et à quel moment. Vous pouvez également exporter les journaux d'activités dans plusieurs formats de fichiers tels que xls, csv et ods. Entrez le journal d'activité de votre enquête en cliquant sur le lien "Activité", à côté de "Propriétés". Si les journaux d'activités sont vides, il se peut qu'ils soient désactivés à l'échelle du système. Vous trouverez <a href="${contextpath}/resources/documents/ActivityLogEvents.xlsx">ici</a> une liste des événements enregistrés.
+</p>
 
 <h1><a class="anchor" name="_Toc9"></a>Analyse, exportation et publication des r&eacute;sultats</h1>
 <h2><a class="anchor" name="_Toc9-1"></a>Où trouver les contributions reçues des participants?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
@@ -639,6 +653,9 @@
 <p>Veuillez noter que cette option apparait uniquement si le questionnaire contient des fichiers chargés.</p>
 <h2><a class="anchor" name="_Toc9-10"></a>Comment concevoir une enqu&ecirc;te afin de publier les r&eacute;sultats avec ou sans donn&eacute;es personnelles?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Si vous voulez donner le choix &agrave; vos participants de publier ou non leurs donn&eacute;es personnelles avec leurs r&eacute;ponses, suivez <a href="https://circabc.europa.eu/sd/d/e68ff760-226f-40e9-b7cb-d3dcdd04bfb1/How_to_publish_survey_results_anonymously.pdf" target="_blank">ces instructions</a>.</p>
+<h2><a class="anchor" name="_Toc9-11"></a>Pourquoi mes résultats ne sont-ils pas à jour?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>Une nouvelle base de données a été introduite pour améliorer les performances d'EUSurvey lors de l'interrogation des résultats de votre enquête. Toutefois, cela peut entraîner des retards jusqu'à ce que les données les plus récentes apparaissent sur la page de résultats de votre enquête. Ce délai ne doit pas dépasser 12 heures.</p>
+<p>Si les données affichées ont plus de 12 heures, veuillez contacter <a href="https://ec.europa.eu/eusurvey/home/support">l'assistance</a> EUSurvey.</p>
 
 <h1><a class="anchor" name="_Toc10"></a>Styles et mise en pages</h1>
 <h2><a class="anchor" name="_Toc10-1"></a>Comment modifier l'apparence d'une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>

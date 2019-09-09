@@ -32,7 +32,7 @@ public class ShutdownListener implements ServletContextListener {
 		logger.info("Context destroyed.");
 		try {
 			AbandonedConnectionCleanupThread.shutdown();
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 		}
 		deregisterJdbcDrivers();
 	}

@@ -417,7 +417,7 @@ public class ActivityService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public int getNumberActivities(ActivityFilter filter) {
+	public int getNumberActivities(ActivityFilter filter) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		
 		Map<String, Object> params = new HashMap<>();

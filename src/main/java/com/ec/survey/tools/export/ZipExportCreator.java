@@ -3,12 +3,14 @@ package com.ec.survey.tools.export;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -23,29 +25,39 @@ public class ZipExportCreator extends ExportCreator {
 	protected @Value("${export.fileDir}") String fileDir;
 	
 	@Override
-	void ExportCharts() throws Exception {}
-	
-	@Override
 	void ExportContent(boolean sync) throws Exception {
 		java.io.File temp = fileService.createTempFile("export" + UUID.randomUUID().toString(), ".zip");
 		final OutputStream out = new FileOutputStream(temp);
 		final ArchiveOutputStream os = new ArchiveStreamFactory().createArchiveOutputStream("zip", out);
-			
+	
+		List<File> uploadedfiles = answerService.getAllUploadedFiles(form.getSurvey().getId(), export.getResultFilter(), 1, Integer.MAX_VALUE);
+				
 		for (String uid : export.getResultFilter().getVisibleQuestions())
 		{
 			List<String[]> files = answerService.getFilesForQuestion(uid, form.getSurvey().getIsDraft());
-						
+			List<String> fileuids = new ArrayList<String>();
 			for (Object[] item : files)
 			{				
-				File f = fileService.get(item[1].toString());
-				java.io.File source = fileService.getSurveyFile(form.getSurvey().getUniqueId(), f.getUid());		
-		    	
-		    	if (source.exists())
-		    	{
-			    	os.putArchiveEntry(new ZipArchiveEntry(item[0].toString() + "_" + item[1].toString() + "_" + item[2].toString()));
-			    	IOUtils.copy(new FileInputStream(source), os);
-				    os.closeArchiveEntry();
-		    	}				
+				fileuids.add(item[1].toString());
+			}			
+									
+			for (File f : uploadedfiles)
+			{				
+				if (fileuids.contains(f.getUid()))
+				{
+					java.io.File source = fileService.getSurveyFile(form.getSurvey().getUniqueId(), f.getUid());		
+			    	
+			    	if (source.exists())
+			    	{
+			    		String name = f.getName();
+			    		String ext = FilenameUtils.getExtension(name);
+			    		name = FilenameUtils.getBaseName(name);		    				
+			    		
+				    	os.putArchiveEntry(new ZipArchiveEntry(name + "_" + f.getUid() + "." + ext));
+				    	IOUtils.copy(new FileInputStream(source), os);
+					    os.closeArchiveEntry();
+			    	}
+				}
 			}
 		}
 		

@@ -2,6 +2,7 @@ package com.ec.survey.controller;
 
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Archive;
+import com.ec.survey.model.Draft;
 import com.ec.survey.model.Export;
 import com.ec.survey.model.Form;
 import com.ec.survey.model.StatisticsRequest;
@@ -70,6 +71,35 @@ public class WorkerController extends BasicController {
 					export.init(answerSet, email, sender, smtpServer, smtpPort, serverPrefix);
 				} else {
 					export.init( answerService.get(code));
+				}
+		
+				taskExecutor.execute(export);
+				return "OK";
+			} else {
+				return "INVALID DATA";
+			}
+						
+		} catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage(), e);
+			return e.getLocalizedMessage();
+		}
+	}
+	
+	@RequestMapping(value = "createdraftanswerpdf/{code}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
+	public @ResponseBody String createdraftanswerpdf(@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {	
+		
+		try {
+			Draft draft = answerService.getDraftByAnswerUID(code);
+			String email = request.getParameter("email");
+			if (draft != null) {
+				AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
+								
+				if (email != null)
+				{
+					export.init(draft.getAnswerSet(), email, sender, smtpServer, smtpPort, serverPrefix);
+				} else {
+					export.init(draft.getAnswerSet());
 				}
 		
 				taskExecutor.execute(export);
@@ -157,7 +187,7 @@ public class WorkerController extends BasicController {
 				return "archive with that id not found";
 			}
 			
-			Survey survey = surveyService.getSurvey(archive.getSurveyUID(), true, false, false, false, null, false);
+			Survey survey = surveyService.getSurvey(archive.getSurveyUID(), true, false, false, false, null, false, false);
 			User u = administrationService.getUser(archive.getUserId());
 			ArchiveExecutor export = (ArchiveExecutor) context.getBean("archiveExecutor"); 
 			export.init(archive, survey, u);

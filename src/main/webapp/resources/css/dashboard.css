@@ -7,6 +7,19 @@
 	margin-bottom: 20px;
 }
 
+.widgetheaderhide {
+	position: absolute;
+	top: 0;
+	left: 0px;
+	right: 0px;
+	margin-top: 1px;
+	margin-left: 16px;
+	margin-right: 16px;
+	height: 30px;
+	background-color: #2450771f;
+	z-index: 10000;
+}
+
 .widgettitle {
 	background-color: #245077;
 	color: #fff;

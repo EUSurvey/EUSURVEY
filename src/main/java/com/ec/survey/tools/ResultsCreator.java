@@ -47,7 +47,7 @@ import com.lowagie.text.pdf.PdfReader;
 public class ResultsCreator implements Runnable, BeanFactoryAware {
 
 	protected static final Logger logger = Logger.getLogger(ResultsCreator.class);
-
+	
 	@Resource(name = "fileService")
 	protected FileService fileService;
 	
@@ -172,7 +172,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	    	{
 	    		xmlExportCreator.SimulateExportContent(false, export);
 	    	} else {
-	    		xmlExportCreator.ExportContent(false, export);
+	    		xmlExportCreator.ExportContent(false, export, true);
 	    	}
 	    	
 	    	Map<Integer, String> uniqueCodesById = xmlExportCreator.getExportedUniqueCodes();
@@ -184,94 +184,107 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	    		t.setEmpty(true);
 	    	}     	
 	    	
-	    	//results_[type]-<alias>[_<start-date>][_to_<end-date>].zip
-	    	String zipFileName = "results";
-	    	if (t.getExportType() != null)
-	    	{
-		    	if (t.getExportType().equals(1))
+		    	//results_[type]-<alias>[_<start-date>][_to_<end-date>].zip
+		    	String zipFileName = "results";
+		    	if (t.getExportType() != null)
 		    	{
-		    		zipFileName += "_xml";
-		    	} else if (t.getExportType().equals(2))
-		    	{
-		    		zipFileName += "_pdf";
+			    	if (t.getExportType().equals(1))
+			    	{
+			    		zipFileName += "_xml";
+			    	} else if (t.getExportType().equals(2))
+			    	{
+			    		zipFileName += "_pdf";
+			    	}
+			    	zipFileName += "-" + survey.getShortname();
+			    	if (t.getStart() != null)
+			    	{
+			    		zipFileName += "_" + ConversionTools.getFullString4Webservice(t.getStart());
+			    	}
+			    	if (t.getEnd() != null)
+			    	{
+			    		zipFileName += "_" + ConversionTools.getFullString4Webservice(t.getEnd());
+			    	} else {
+			    		zipFileName += "_" + ConversionTools.getFullString4Webservice(xmlExportCreator.getExportedNow());
+			    	}
 		    	}
-		    	zipFileName += "-" + survey.getShortname();
-		    	if (t.getStart() != null)
-		    	{
-		    		zipFileName += "_" + ConversionTools.getFullString4Webservice(t.getStart());
-		    	}
-		    	if (t.getEnd() != null)
-		    	{
-		    		zipFileName += "_" + ConversionTools.getFullString4Webservice(t.getEnd());
-		    	} else {
-		    		zipFileName += "_" + ConversionTools.getFullString4Webservice(xmlExportCreator.getExportedNow());
-		    	}
-	    	}
-	    	zipFileName += ".zip";
-	    	
-	    	String uid2 = UUID.randomUUID().toString();	
-			
-			java.io.File temp = fileService.getSurveyExportFile(survey.getUniqueId(), uid2); 
-			final OutputStream out = new FileOutputStream(temp);
-			final ArchiveOutputStream os = new ArchiveStreamFactory().createArchiveOutputStream("zip", out);		
-			
-	    	File f = new File();
-	    	f.setUid(uid2);
-			f.setName(zipFileName);
-	    
-	    	if (t.getExportType() == null || t.getExportType().equals(0) || t.getExportType().equals(1))
-	    	{
-				os.putArchiveEntry(new ZipArchiveEntry("result.xml"));
-				IOUtils.copy(new FileInputStream(new java.io.File(fileDir + uid)), os);
-				os.closeArchiveEntry();
-		    }
-			
-			int invalidCounter = 0;
-			
-			for (Integer answerSetId : uniqueCodesById.keySet()) {
+		    	zipFileName += ".zip";
+		    	
+		    	String uid2 = UUID.randomUUID().toString();	
 				
-				String uniqueCode = uniqueCodesById.get(answerSetId);
+				java.io.File temp = fileService.getSurveyExportFile(survey.getUniqueId(), uid2); 
+				final OutputStream out = new FileOutputStream(temp);
+				final ArchiveOutputStream os = new ArchiveStreamFactory().createArchiveOutputStream("zip", out);		
 				
-				//this counter should stop creation of PDFs when there is an obvious problem
-				if (t.getExportType() == null || t.getExportType().equals(0) || t.getExportType().equals(2))
+		    	File f = new File();
+		    	f.setUid(uid2);
+				f.setName(zipFileName);
+		    
+		    	if (t.getExportType() == null || t.getExportType().equals(0) || t.getExportType().equals(1) || (t.getExportType().equals(3) && t.getFileTypes() != null && t.getFileTypes().contains("x")))
 		    	{
-					if (invalidCounter < 3)
-					{
-						java.io.File answerPDF = pdfService.createAnswerPDF(answerSetId, uniqueCodesById.get(answerSetId), survey.getUniqueId());
-						if (answerPDF != null)
+					os.putArchiveEntry(new ZipArchiveEntry("result.xml"));
+					IOUtils.copy(new FileInputStream(new java.io.File(fileDir + uid)), os);
+					os.closeArchiveEntry();
+			    }
+				
+				int invalidCounter = 0;
+				
+				for (Integer answerSetId : uniqueCodesById.keySet()) {
+					
+					String uniqueCode = uniqueCodesById.get(answerSetId);
+					
+					//this counter should stop creation of PDFs when there is an obvious problem
+					if (t.getExportType() == null || t.getExportType().equals(0) || t.getExportType().equals(2) || (t.getExportType().equals(3) && t.getFileTypes() != null && t.getFileTypes().contains("p")))
+			    	{
+						if (invalidCounter < 3)
 						{
-							//check validity of file
-							PdfReader ReadInputPDF;
-						
-							try {
-								ReadInputPDF = new PdfReader(answerPDF.getPath());
-						        if (ReadInputPDF.getInfo().containsKey("Subject"))
-						        {
-						        	String subject = ReadInputPDF.getInfo().get("Subject").toString();
-						        	if (!subject.contains(uniqueCodesById.get(answerSetId)))
-						        	{
-						        		//possibly an invalid pdf -> recreate
-						        		answerPDF.delete();
-						        		answerPDF = pdfService.createAnswerPDF(answerSetId, uniqueCodesById.get(answerSetId), survey.getUniqueId());
-						        	}
-						        } else {
-						        	//older file without meta info -> recreate
-						        	answerPDF.delete();
-						        	answerPDF = pdfService.createAnswerPDF(answerSetId, uniqueCodesById.get(answerSetId), survey.getUniqueId());
-						        }
-						        ReadInputPDF.close();
-							} catch (Exception e)
-							{
-								//file seems to be corrupt -> recreate
-					        	answerPDF.delete();
-					        	answerPDF = pdfService.createAnswerPDF(answerSetId, uniqueCodesById.get(answerSetId), survey.getUniqueId());
-							}
-						
+							java.io.File answerPDF = pdfService.createAnswerPDF(answerSetId, uniqueCodesById.get(answerSetId), survey.getUniqueId(), false);
 							if (answerPDF != null)
 							{
-								os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/" + uniqueCode + ".pdf"));
-								IOUtils.copy(new FileInputStream(answerPDF), os);
-								os.closeArchiveEntry();
+								//check validity of file
+								PdfReader ReadInputPDF;
+							
+								try {
+									ReadInputPDF = new PdfReader(answerPDF.getPath());
+							        if (ReadInputPDF.getInfo().containsKey("Subject"))
+							        {
+							        	String subject = ReadInputPDF.getInfo().get("Subject").toString();
+							        	if (!subject.contains(uniqueCodesById.get(answerSetId)))
+							        	{
+							        		//possibly an invalid pdf -> recreate
+							        		answerPDF.delete();
+							        		answerPDF = pdfService.createAnswerPDF(answerSetId, uniqueCodesById.get(answerSetId), survey.getUniqueId(), false);
+							        	}
+							        } else {
+							        	//older file without meta info -> recreate
+							        	answerPDF.delete();
+							        	answerPDF = pdfService.createAnswerPDF(answerSetId, uniqueCodesById.get(answerSetId), survey.getUniqueId(), false);
+							        }
+							        ReadInputPDF.close();
+								} catch (Exception e)
+								{
+									//file seems to be corrupt -> recreate
+						        	answerPDF.delete();
+						        	answerPDF = pdfService.createAnswerPDF(answerSetId, uniqueCodesById.get(answerSetId), survey.getUniqueId(), false);
+								}
+							
+								if (answerPDF != null)
+								{
+									os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/" + uniqueCode + ".pdf"));
+									IOUtils.copy(new FileInputStream(answerPDF), os);
+									os.closeArchiveEntry();
+								} else {
+									os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/" + uniqueCode + ".error.txt"));
+									os.write("The PDF file could not be generated".getBytes());
+									os.closeArchiveEntry();
+									invalidCounter++;
+									
+									if (invalidCounter == 3)
+									{
+										os.putArchiveEntry(new ZipArchiveEntry("error.txt"));
+										os.write("The PDF creation was stopped as the files could not be generated".getBytes());
+										os.closeArchiveEntry();
+									}
+								}
 							} else {
 								os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/" + uniqueCode + ".error.txt"));
 								os.write("The PDF file could not be generated".getBytes());
@@ -285,60 +298,49 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 									os.closeArchiveEntry();
 								}
 							}
-						} else {
-							os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/" + uniqueCode + ".error.txt"));
-							os.write("The PDF file could not be generated".getBytes());
-							os.closeArchiveEntry();
-							invalidCounter++;
-							
-							if (invalidCounter == 3)
-							{
-								os.putArchiveEntry(new ZipArchiveEntry("error.txt"));
-								os.write("The PDF creation was stopped as the files could not be generated".getBytes());
-								os.closeArchiveEntry();
-							}
 						}
+			    	}
+					
+					if (!t.getExportType().equals(3) || (t.getFileTypes() != null && t.getFileTypes().contains("u")))
+					{
+						List<File> uploadedFiles = answerService.getUploadedFilesForAnswerset(answerSetId);
+						for (File file: uploadedFiles)
+				    	{
+				    		java.io.File fup = fileService.getSurveyFile(survey.getUniqueId(),  file.getUid());
+				    		
+				    		if (!fup.exists())
+				    		{
+				    			fup = new java.io.File(fileDir + file.getUid());
+				    			if (fup.exists())
+				    			{
+				    				fileService.LogOldFileSystemUse(fileDir + file.getUid());
+				    			}
+				    		}		
+				    		
+				    		String folder = file.getUid();
+				    		if (file.getAnswerId() != null)
+				    		{
+				    			if (questionIdsByAnswerId.containsKey(file.getAnswerId()))
+				    			{
+				    				String questionUniqueId = questionIdsByAnswerId.get(file.getAnswerId());
+				    				if (questionsByUniqueId.containsKey(questionUniqueId))
+				    				{
+				    					folder = questionsByUniqueId.get(questionUniqueId).getShortname();
+				    				}
+				    			}
+				    		}
+				    		
+				    		os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/Uploaded Files/" + folder + "/" + file.getName()));
+						    IOUtils.copy(new FileInputStream(fup), os);
+						    os.closeArchiveEntry();			    	
+				    	}
 					}
-		    	}
-				
-				List<File> uploadedFiles = answerService.getUploadedFilesForAnswerset(answerSetId);
-				
-				for (File file: uploadedFiles)
-		    	{
-		    		java.io.File fup = fileService.getSurveyFile(survey.getUniqueId(),  file.getUid());
-		    		
-		    		if (!fup.exists())
-		    		{
-		    			fup = new java.io.File(fileDir + file.getUid());
-		    			if (fup.exists())
-		    			{
-		    				fileService.LogOldFileSystemUse(fileDir + file.getUid());
-		    			}
-		    		}		
-		    		
-		    		String folder = file.getUid();
-		    		if (file.getAnswerId() != null)
-		    		{
-		    			if (questionIdsByAnswerId.containsKey(file.getAnswerId()))
-		    			{
-		    				String questionUniqueId = questionIdsByAnswerId.get(file.getAnswerId());
-		    				if (questionsByUniqueId.containsKey(questionUniqueId))
-		    				{
-		    					folder = questionsByUniqueId.get(questionUniqueId).getShortname();
-		    				}
-		    			}
-		    		}
-		    		
-		    		os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/Uploaded Files/" + folder + "/" + file.getName()));
-				    IOUtils.copy(new FileInputStream(fup), os);
-				    os.closeArchiveEntry();			    	
-		    	}
-			}
-	    	
-			os.close();
-		    fileService.add(f);
-		    t.setResult(uid2);
-	    	
+				}
+		    	
+				os.close();
+			    fileService.add(f);
+			    t.setResult(uid2);
+			
 			t.setDone(true);
 			webserviceService.save(t);
 			

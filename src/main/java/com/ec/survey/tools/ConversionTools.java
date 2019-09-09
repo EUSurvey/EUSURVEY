@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,24 +58,54 @@ public class ConversionTools {
 	public static Date getDate(String input)
 	{
 		if (input == null) return null;
+		Date result = null;
 		try
 		{
 			if (input.length() == 19)
 			{
 				SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeFormatSQL);
-				return dateFormat.parse(input);
+				result = dateFormat.parse(input);
 			} else if (input.length() == 8)
 			{
 				SimpleDateFormat dateFormat = new SimpleDateFormat(SmallDateFormat);
-				return dateFormat.parse(input);
-			} else {
+				result = dateFormat.parse(input);
+			} else if (input.length() == 10) {
 				SimpleDateFormat dateFormat = new SimpleDateFormat(DateFormat);
-				return dateFormat.parse(input);
+				
+				if (input.contains("-"))
+				{
+					dateFormat = new SimpleDateFormat(IPMDateFormat); 
+				}
+				
+				result = dateFormat.parse(input);
 			}
 		} catch (Exception e)
 		{
 			return null;
 		}
+		
+		if (result != null)
+		{
+			//remove invalid dates that are not allowed by MySQL
+			
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, 9999);
+			cal.set(Calendar.MONTH, Calendar.DECEMBER);
+			cal.set(Calendar.DAY_OF_MONTH, 1);			
+			Date max = cal.getTime();			
+					
+			cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, 1000);
+			cal.set(Calendar.MONTH, Calendar.JANUARY);
+			cal.set(Calendar.DAY_OF_MONTH, 1);	
+			Date min =cal.getTime();
+			
+			if (result.after(max) || result.before(min)) {
+				return null;
+			}
+		}
+		
+		return result;
 	}
 	
 	public static Date getDate(String input, String format)

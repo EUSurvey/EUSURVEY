@@ -218,7 +218,7 @@ function removeElementScore(element)
 	{
 		updateComplexityScore("removeSection");
 	}
-	else if($(element).hasClass("textitem") || $(element).hasClass("imageitem") || $(element).hasClass("downloaditem") || $(element).hasClass("confirmationitem") || $(element).hasClass("ratingitem"))
+	else if($(element).hasClass("textitem") || $(element).hasClass("imageitem") || $(element).hasClass("ruleritem") || $(element).hasClass("downloaditem") || $(element).hasClass("confirmationitem") || $(element).hasClass("ratingitem"))
 	{
 		updateComplexityScore("removeSimpleItem");
 	}
@@ -344,7 +344,7 @@ function scanSurveyComplexity()
 		{
 			updateComplexityScore("addSectionItem");
 		}
-		else if($(this).hasClass("textitem") || $(this).hasClass("imageitem") || $(this).hasClass("downloaditem") || $(this).hasClass("confirmationitem") || $(this).hasClass("ratingitem"))
+		else if($(this).hasClass("textitem") || $(this).hasClass("imageitem") || $(this).hasClass("ruleritem")  || $(this).hasClass("downloaditem") || $(this).hasClass("confirmationitem") || $(this).hasClass("ratingitem"))
 		{
 			updateComplexityScore("addSimpleItem");
 		}

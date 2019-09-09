@@ -122,11 +122,7 @@
 	<%@ include file="../menu.jsp" %>
 	<%@ include file="adminmenu.jsp" %>	
 	
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner">
-			<h1><spring:message code="label.Roles" /></h1>		
-		</div>
-	</div>
+	
 	<div id="action-bar" class="container action-bar">
 		<div class="row">
 			<div class="col-md-12" style="text-align:center">

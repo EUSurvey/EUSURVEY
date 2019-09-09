@@ -12,7 +12,8 @@
 	<input type="hidden" id="newlangpost" name="newlangpost" value="false" />
 	<input type="hidden" id="newcss" name="newcss" value="" />
 	<input type="hidden" id="newviewpost" name="newviewpost" value="false" />
-	<input type="hidden" id="wcagMode" name="wcagMode" value="${form.wcagCompliance}" />				
+	<input type="hidden" id="wcagMode" name="wcagMode" value="${form.wcagCompliance}" />	
+	<input type="hidden" id="multipaging" value="${form.survey.multiPaging}" />			
 		<c:choose>
 				<c:when test="${publication != null}">
 					<div style="width: 220px; max-width: 220px">
@@ -24,6 +25,11 @@
 						<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" style="max-width: 1300px;" />
 					</div>
 				</c:when>
+				<c:when test="${form.survey.logo != null && responsive != null}">
+					<div style="max-width: 100%">
+						<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" style="max-width: 100%;" />
+					</div>
+				</c:when>
 			</c:choose>						
 				
 				<div class="left-area">				
@@ -33,7 +39,7 @@
 					</div>
 					
 					<c:choose>
-						<c:when test="${mode == 'editcontribution'}">
+						<c:when test="${mode == 'editcontribution' }">
 							<input style="display: none" class="check" type="checkbox" id="saveLocalBackup" onchange="checkLocalBackup()" /> 
 						</c:when>
 						<c:otherwise>
@@ -83,7 +89,7 @@
 											<li data-id="${page[0].id}" id="tab${rowCounter.index}" class="pagebutton">
 										</c:otherwise>
 									</c:choose>
- 										<a style="cursor:pointer;" onclick="selectPage(${rowCounter.index});" >
+ 										<a href="#page${rowCounter.index}" style="cursor:pointer;" onclick="selectPage(${rowCounter.index});" >
  											<c:choose>
  												<c:when test="${page[0].getType() == 'Section' && page[0].tabTitle != null && page[0].tabTitle.length() > 0}">
  													${page[0].tabTitle}
@@ -158,6 +164,11 @@
 						</div>						
 						
 					</c:forEach>
+					
+					<div class="hpdiv">
+						<label for="hp-7fk9s82jShfgak">${form.getMessage("info.leaveempty")}</label>
+						<textarea id="hp-7fk9s82jShfgak" name="hp-7fk9s82jShfgak" class="hp" autocomplete="false"></textarea>
+ 					</div>
 					
 					<c:if test="${form.survey.captcha}">
 						<%@ include file="../captcha.jsp" %>					
@@ -302,7 +313,7 @@
 						
 						<c:if test="${!form.survey.isQuiz}">
 							<div>
-								<a id="download-survey-pdf-link" class="link visiblelink" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
+								<a data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="link visiblelink" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
 								<span id="download-survey-pdf-dialog-running" class="hideme">${form.getMessage("info.FileCreation")}</span>
 								<span id="download-survey-pdf-dialog-ready" class="hideme">${form.getMessage("info.FileCreated")}</span>
 								<div id="download-survey-pdf-dialog-spinner" class="hideme" style="padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>

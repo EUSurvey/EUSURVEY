@@ -19,6 +19,7 @@ var Actions = function() {
 	this.DeleteEnabled = ko.observable(false);
 	this.SaveEnabled = ko.observable(false);
 	this.UnsavedChangesConfirmed = ko.observable(false);
+	this.BackupEnabled = ko.observable(true);
 	
 	this.AllElementsLoaded = ko.observable(false);
 	
@@ -26,6 +27,10 @@ var Actions = function() {
     this.cutElements = [];
     this.deletedElements = [];
     this.deletedModels = [];
+    
+    this.toggleBackupEnabled= function () {
+        this.BackupEnabled(!this.BackupEnabled());
+	};
 	
 	this.toggleDependencies = function () {
         this.DependenciesEnabled(!this.DependenciesEnabled());
@@ -449,42 +454,51 @@ var Actions = function() {
     
     this.moveElementDown = function()
     {
-    	var current = $(_elementProperties.selectedelement);
-    	var oldindex = $(_elementProperties.selectedelement).index();
     	if (!this.MoveDownEnabled()) return;
-		current.next().after(current);
+    	$($("#content").find(".selectedquestion").get().reverse()).each(function(){  
+    	
+	    	var current =  $(this); // $(_elementProperties.selectedelement);
+	    	var oldindex = $(this).index();
+	
+			current.next().after(current);
+			
+			if (checkDependenciesAfterMove(current))
+			{
+				_undoProcessor.addUndoStep(["MOVE", $(this).attr("id"), oldindex, $(this).index()]);
+		    	moveItemInNavigation(oldindex, $(this).index());
+		    	
+		    	_actions.MoveUpEnabled(true);
+		    	if ($(current).is(':last-child')) _actions.MoveDownEnabled(false);
+			} else {
+				$('#invalid-dependency-dialog').modal('show');
+				current.prev().before(current);
+			}
 		
-		if (checkDependenciesAfterMove(current))
-		{
-			_undoProcessor.addUndoStep(["MOVE", $(_elementProperties.selectedelement).attr("id"), oldindex, $(_elementProperties.selectedelement).index()]);
-	    	moveItemInNavigation(oldindex, $(_elementProperties.selectedelement).index());
-	    	
-	    	_actions.MoveUpEnabled(current.index() > 0);
-			_actions.MoveDownEnabled(!$(current).is(':last-child'));
-		} else {
-			$('#invalid-dependency-dialog').modal('show');
-			current.prev().before(current);
-		}
+    	});
     }
     
     this.moveElementUp = function()
     {
-    	var current = $(_elementProperties.selectedelement);
-    	var oldindex = $(_elementProperties.selectedelement).index();
     	if (!this.MoveUpEnabled()) return;
+    	$("#content").find(".selectedquestion").each(function(){    	
     	
-		current.prev().before(current);
-		if (checkDependenciesAfterMove(current))
-		{
-			_undoProcessor.addUndoStep(["MOVE", $(_elementProperties.selectedelement).attr("id"), oldindex, $(_elementProperties.selectedelement).index()]);
-			moveItemInNavigation(oldindex, $(_elementProperties.selectedelement).index());
+	    	var current = $(this); // $(_elementProperties.selectedelement);
+	    	var oldindex = $(this).index();	    	
 	    	
-	    	_actions.MoveUpEnabled(current.index() > 0);
-			_actions.MoveDownEnabled(!$(current).is(':last-child'));
-		} else {
-			$('#invalid-dependency-dialog').modal('show');
-			current.next().after(current);
-		}
+			current.prev().before(current);
+			if (checkDependenciesAfterMove(current))
+			{
+				_undoProcessor.addUndoStep(["MOVE", $(this).attr("id"), oldindex, $(this).index()]);
+				moveItemInNavigation(oldindex, $(this).index());
+		    	
+				if (current.index() == 0) _actions.MoveUpEnabled(false);
+				_actions.MoveDownEnabled(true);
+			} else {
+				$('#invalid-dependency-dialog').modal('show');
+				current.next().after(current);
+			}
+		
+    	});
     }
     
     this.deleteElement = function()
@@ -695,6 +709,70 @@ var Actions = function() {
     	checkContent();
     	updateDependenciesView();
     }
+    
+    this.backup = function(){
+    	if (!is_local_storage_enabled() || !this.BackupEnabled()) {
+    		return;
+    	}
+    	
+    	var survey = $(document.getElementById("survey.id")).val();
+    	var name = "SurveyEditorBackup" + survey; 	
+    	
+    	var value = ko.toJSON(_elements);
+    	
+    	try {
+			localStorage.setItem(name, value);
+		} catch(e) {
+		    if(e.name == "NS_ERROR_FILE_CORRUPTED") {
+		    	showRunnerError("Sorry, it looks like your browser storage has been corrupted. Please clear your storage by going to Tools -> Clear Recent History -> Cookies and set time range to 'Everything'. This will remove the corrupted browser storage across all sites.");
+		    }
+		}	
+    }
+    
+    this.deleteBackup = function() {
+    	var survey = $(document.getElementById("survey.id")).val();
+    	var name = "SurveyEditorBackup" + survey;
+    	var value = localStorage.removeItem(name);
+    }
+    
+    this.restore = function(){
+    	if (!is_local_storage_enabled() || !this.BackupEnabled()) {
+    		return;
+    	}
+    	
+    	var survey = $(document.getElementById("survey.id")).val();
+    	var name = "SurveyEditorBackup" + survey;
+    	
+    	var value = localStorage.getItem(name);
+    	
+    	_elements = JSON.parse(value);
+    	
+    	$("#content").find(".survey-element").each(function(){
+    		ko.cleanNode($(this)[0]);
+    	})
+    	
+    	$("#content").empty();
+    	
+    	for (var elementid in _elements) {
+    	    if (_elements.hasOwnProperty(elementid)) {
+    	    	var emptyelement = document.createElement("li");
+    	    	$(emptyelement).addClass("emptyelement").attr("id", elementid).attr("data-id", elementid);
+    	    	$("#content").append(emptyelement);
+    	    	
+    	    	var element = _elements[elementid];
+    	    	element.isViewModel = false;
+    	    	var model = getElementViewModel(element);
+    	    	var item = addElement(element, true, false);
+				addElementHandler(item);
+    	    }
+    	}
+    	
+    	_undoProcessor.clear();
+    	_elementProperties.deselectAll();
+    	_actions.SaveEnabled(true);
+    	
+    	checkContent();
+    }
 }
 
 var _actions = new Actions();
@@ -719,6 +797,10 @@ $(function() {
 		if (localStorage.getItem("dependenciesButton") == "false")
 		{
 			_actions.toggleDependencies();
+		}
+		if (localStorage.getItem("backupButton") == "false")
+		{
+			_actions.toggleBackupEnabled();
 		}
 		if (localStorage.getItem("multiselectButton") == "true")
 		{

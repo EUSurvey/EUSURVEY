@@ -29,7 +29,7 @@ public class UtilsController extends BasicController {
 		countryList.put("BE", resources.getMessage("label.country.Belgium", null, locale));
 		countryList.put("BG", resources.getMessage("label.country.Bulgaria", null, locale));
 		countryList.put("CY", resources.getMessage("label.country.Cyprus", null, locale));
-		countryList.put("CZ", resources.getMessage("label.country.CzechRepublic", null, locale));
+		countryList.put("CZ", resources.getMessage("label.un.Czechia", null, locale));
 		countryList.put("DE", resources.getMessage("label.country.Germany", null, locale));
 		countryList.put("DK", resources.getMessage("label.country.Denmark", null, locale));
 		countryList.put("EE", resources.getMessage("label.country.Estonia", null, locale));
@@ -143,7 +143,7 @@ public class UtilsController extends BasicController {
 		countryList.put("Croatia", resources.getMessage("label.un.Croatia", null, locale));
 		countryList.put("Cuba", resources.getMessage("label.un.Cuba", null, locale));
 		countryList.put("Cyprus", resources.getMessage("label.un.Cyprus", null, locale));
-		countryList.put("CzechRepublic", resources.getMessage("label.un.CzechRepublic", null, locale));
+		countryList.put("Czechia", resources.getMessage("label.un.Czechia", null, locale));
 		countryList.put("NorthKorea", resources.getMessage("label.un.NorthKorea", null, locale));
 		countryList.put("DemocraticRepublicoftheCongo", resources.getMessage("label.un.DemocraticRepublicoftheCongo", null, locale));
 		countryList.put("Denmark", resources.getMessage("label.un.Denmark", null, locale));
@@ -263,7 +263,7 @@ public class UtilsController extends BasicController {
 		countryList.put("SriLanka", resources.getMessage("label.un.SriLanka", null, locale));
 		countryList.put("Sudan", resources.getMessage("label.un.Sudan", null, locale));
 		countryList.put("Suriname", resources.getMessage("label.un.Suriname", null, locale));
-		countryList.put("Swaziland", resources.getMessage("label.un.Swaziland", null, locale));
+		countryList.put("Eswatini", resources.getMessage("label.un.Eswatini", null, locale));
 		countryList.put("Sweden", resources.getMessage("label.un.Sweden", null, locale));
 		countryList.put("Switzerland", resources.getMessage("label.un.Switzerland", null, locale));
 		countryList.put("SyrianArabRepublic", resources.getMessage("label.un.SyrianArabRepublic", null, locale));

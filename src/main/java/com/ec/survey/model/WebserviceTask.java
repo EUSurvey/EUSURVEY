@@ -26,6 +26,7 @@ public class WebserviceTask {
 	private boolean addMeta;
 	private Integer exportType;
 	private String contributionType;
+	private String fileTypes;
 	
 	private Date created;
 	private Date started;
@@ -190,6 +191,14 @@ public class WebserviceTask {
 	}
 	public void setExportType(Integer exportType) {
 		this.exportType = exportType;
+	}
+	
+	@Column(name = "WST_FILETYPES")
+	public String getFileTypes() {
+		return fileTypes;
+	}
+	public void setFileTypes(String fileTypes) {
+		this.fileTypes = fileTypes;
 	}
 	
 	@Column(name = "WST_CONTRIBTYPE")

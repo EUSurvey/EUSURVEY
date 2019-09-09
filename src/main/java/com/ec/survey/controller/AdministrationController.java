@@ -5,15 +5,21 @@ import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
+import com.ec.survey.service.ReportingService.ToDoItem;
+import com.ec.survey.tools.CreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.FileUpdater;
 import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.RecreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.Tools;
+import com.ec.survey.tools.UpdateAllOLAPTablesExecutor;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,6 +62,9 @@ public class AdministrationController extends BasicController {
 	
 	@Resource(name = "fileWorker")
 	private FileUpdater fileWorker;
+	
+	@Resource(name = "taskExecutor")
+	private TaskExecutor taskExecutor;
 	
 	@RequestMapping(value = "/checkPasswordNotWeak", method = RequestMethod.POST)
 	public @ResponseBody String checkPasswordNotWeak(HttpServletRequest request, Locale locale) {	
@@ -118,6 +127,7 @@ public class AdministrationController extends BasicController {
 		
 		String name = Tools.escapeHTML(request.getParameter("name"));
 		String email = Tools.escapeHTML(request.getParameter("email"));
+		String otherEmail = Tools.escapeHTML(request.getParameter("otherEmail"));
 		String language = Tools.escapeHTML(request.getParameter("ulang"));
 		
 		if (language != null && (language.length() != 4 || !StringUtils.isAlphanumeric(language)))
@@ -130,6 +140,7 @@ public class AdministrationController extends BasicController {
 		
 		usersConfiguration.setShowName(name != null && name.equalsIgnoreCase("true"));
 		usersConfiguration.setShowEmail(email != null && email.equalsIgnoreCase("true"));
+		usersConfiguration.setShowOtherEmail(otherEmail != null && otherEmail.equalsIgnoreCase("true"));
 		usersConfiguration.setShowLanguage(language != null && language.equalsIgnoreCase("true"));
 		usersConfiguration.setShowRoles(roles != null && roles.equalsIgnoreCase("true"));
 		usersConfiguration.setShowComment(comment != null && comment.equalsIgnoreCase("true"));
@@ -155,7 +166,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForSurvey/{survey}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView migrateFileSystemForSurvey(@PathVariable String survey, HttpServletRequest request) throws InvalidURLException, IOException, TooManyFiltersException {
+	public ModelAndView migrateFileSystemForSurvey(@PathVariable String survey, HttpServletRequest request) throws Exception {
 		long tStart = System.currentTimeMillis();
 		Survey draft = surveyService.getSurveyByUniqueIdToWrite(survey);		
 		if (draft == null) throw new InvalidURLException();
@@ -184,7 +195,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForUsers", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView migrateFileSystemForUsers(HttpServletRequest request) throws InvalidURLException, IOException {
+	public ModelAndView migrateFileSystemForUsers(HttpServletRequest request) throws Exception {
 		long tStart = System.currentTimeMillis();
 		
 		fileService.migrateAllUserFiles();
@@ -197,7 +208,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForArchives", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView migrateFileSystemForArchives(HttpServletRequest request) throws InvalidURLException, IOException {
+	public ModelAndView migrateFileSystemForArchives(HttpServletRequest request) throws Exception {
 		long tStart = System.currentTimeMillis();
 		
 		fileService.migrateAllArchiveFiles();
@@ -287,7 +298,145 @@ public class AdministrationController extends BasicController {
 	    	logger.error(e.getLocalizedMessage(), e);
 	    	messages.add(resources.getMessage("error.ProblemDuringImport", null, "There was a problem during the import process.", locale));		
 	    }
-	 	return new ModelAndView("administration/languages", "messages", messages);
+	 	return new ModelAndView("administration/languages", "messages", messages);		
+	}
+	
+	@RequestMapping(value = "/reporting", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView reporting(HttpServletRequest request) {
+		ModelAndView result = new ModelAndView("administration/reporting");
+		result.addObject("totaltodos", reportingService.getNumberOfToDos());
+		result.addObject("totaltables", reportingService.getNumberOfTables());
 		
+		int drafts = surveyService.getNumberOfSurveys(true);
+		int published = surveyService.getNumberOfSurveys(false);
+		
+		result.addObject("totaldraftsurveys", drafts - published);
+		result.addObject("totalpublishedsurveys", published);		
+		
+		String enabled = settingsService.get(Setting.ReportingMigrationEnabled);
+		result.addObject("enabled", enabled != null && enabled.equalsIgnoreCase("true"));
+		
+		String start = settingsService.get(Setting.ReportingMigrationStart);
+		result.addObject("start", start);
+		
+		String time = settingsService.get(Setting.ReportingMigrationTime);
+		result.addObject("time", time);
+		
+		String survey = settingsService.get(Setting.ReportingMigrationSurveyToMigrate);
+		if (survey.length() == 0)
+		{
+			survey = "-";
+		}
+		result.addObject("survey", survey);
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/reporting", method = {RequestMethod.POST})
+	public ModelAndView reportingPOST(HttpServletRequest request) {
+		String enabled = Tools.escapeHTML(request.getParameter("enabled"));
+		String start = Tools.escapeHTML(request.getParameter("start"));
+		String time = Tools.escapeHTML(request.getParameter("time"));
+		
+		settingsService.update(Setting.ReportingMigrationEnabled, enabled != null && enabled.equalsIgnoreCase("true") ? "true" : "false");
+		settingsService.update(Setting.ReportingMigrationStart, start);
+		settingsService.update(Setting.ReportingMigrationTime, time);
+		
+		return new ModelAndView("redirect:/administration/reporting");
+	}
+	
+	@RequestMapping(value = "/todosjson", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody List<ToDoItem> exportsjson(HttpServletRequest request) throws NotAgreedToTosException {	
+		
+		int itemsPerPage = -1;
+		int page = -1;
+				
+		if(request.getParameter("rows") != null && request.getParameter("page") != null)
+		{
+			String itemsPerPageValue = request.getParameter("rows");		
+			itemsPerPage = Integer.parseInt(itemsPerPageValue);
+			
+			String pageValue = request.getParameter("page");		
+			page = Integer.parseInt(pageValue);
+		}
+		
+		List<ToDoItem> items = null;
+		
+		items = reportingService.getToDos(page, itemsPerPage);
+		return items;
+	}
+	
+	@RequestMapping(value = "/executeToDo/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody String executeToDo(@PathVariable String id) {
+		try {
+			int ID = Integer.parseInt(id);
+			ToDoItem todo = reportingService.getToDo(ID);
+			reportingService.executeToDo(todo);
+			reportingService.removeToDo(todo, false);
+			return "{\"success\": true}";
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return "{\"success\": false}";
+	}
+	
+	@RequestMapping(value = "/deleteToDo/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody String deleteToDo(@PathVariable String id) {
+		try {
+			int ID = Integer.parseInt(id);
+			ToDoItem todo = reportingService.getToDo(ID);
+			reportingService.removeToDo(todo, true);
+			return "{\"success\": true}";
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return "{\"success\": false}";
+	}
+	
+	@RequestMapping(value = "/recreateAllOLAPTables", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public  @ResponseBody String recreateAllOLAPTables(HttpServletRequest request) throws Exception {
+		
+		RecreateAllOLAPTablesExecutor executor = (RecreateAllOLAPTablesExecutor) context.getBean("recreateAllOLAPTablesExecutor");
+		taskExecutor.execute(executor);
+		
+		return "started";	
+	}
+	
+	@RequestMapping(value = "/createAllOLAPTables", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody String createAllOLAPTables(HttpServletRequest request) throws TooManyFiltersException, IOException {
+		CreateAllOLAPTablesExecutor executor = (CreateAllOLAPTablesExecutor) context.getBean("createAllOLAPTablesExecutor");
+		taskExecutor.execute(executor);
+		
+		return "started";
+	}
+	
+	@RequestMapping(value = "/createOLAPTable/{shortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public  @ResponseBody String createOLAPTable(@PathVariable String shortname, HttpServletRequest request) throws Exception {
+		try {
+			reportingService.createOLAPTable(shortname, true, true);
+			return "executed";
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return "error";
+	}
+	
+	@RequestMapping(value = "/updateAllOLAPTables", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody String updateAllOLAPTables(HttpServletRequest request) throws TooManyFiltersException, IOException {
+		UpdateAllOLAPTablesExecutor executor = (UpdateAllOLAPTablesExecutor) context.getBean("updateAllOLAPTablesExecutor");
+		taskExecutor.execute(executor);
+		
+		return "started";		
+	}
+	
+	@RequestMapping(value = "/updateOLAPTable/{shortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public  @ResponseBody String updateOLAPTable(@PathVariable String shortname, HttpServletRequest request) throws Exception {
+		try {
+			reportingService.updateOLAPTable(shortname, true, true);
+			return "executed";
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return "error";
 	}
 }

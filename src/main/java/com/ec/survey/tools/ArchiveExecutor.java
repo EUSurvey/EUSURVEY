@@ -72,20 +72,18 @@ public class ArchiveExecutor implements Runnable {
 	
 	@Autowired
 	protected MessageSource resources;	
-		
-	private Archive archive;
-	private Survey survey;
 
-	private User user;
-	
 	private static final Logger logger = Logger.getLogger(ArchiveExecutor.class);
 	
+	private Archive archive;
+	private Survey survey;
+	private User user;
 	private Export export = new Export();
 	private Export exportstats = new Export();
 	private Export exportstatspdf = new Export();
 	private Survey published = null;
-	private Form form = null;
-
+	private Form form = null;	
+	private java.io.File target = null;	
 	
 	public void init(Archive archive, Survey survey, User user)
 	{
@@ -97,7 +95,7 @@ public class ArchiveExecutor implements Runnable {
 	@Transactional
 	public void prepare()
 	{
-		published = surveyService.getSurvey(survey.getShortname(), false, false, false, true, survey.getLanguage().getCode(), true);
+		published = surveyService.getSurvey(survey.getShortname(), false, false, false, true, survey.getLanguage().getCode(), true, false);
 		
 		if (published != null) 
 		{
@@ -204,14 +202,18 @@ public class ArchiveExecutor implements Runnable {
 		
 		logger.info("deleting survey " + survey.getShortname());
 		
-		surveyService.deleteNoTransaction(survey.getId(), false);
+		//make sure the archive exists before finally deleting the survey
+		if (target.exists())
+		{
+			surveyService.deleteNoTransaction(survey.getId(), false, true);
+		} else {
+			throw new Exception("archive file not found, abort archiving");
+		}
 		
 		archive.setFinished(true);
 		
 		archiveService.update(archive);
 	}
-	
-	private java.io.File target = null;	
 	
 	public void handleException(Exception e)
 	{

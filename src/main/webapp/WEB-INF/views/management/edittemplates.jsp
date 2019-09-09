@@ -57,6 +57,12 @@
 			</td>
 		<!-- /ko -->
 
+		<!--  ko if: ContentType() == 'color' -->
+			<td class="propertycontent">
+				<input class="spectrum" data-bind="value: Value(), attr: {id: 'idProperty' + Label()}" type='text' onchange='update(this)' />
+			</td>
+		<!-- /ko -->
+
 		<!--  ko if: ContentType() == 'number' -->
 			<td class="propertycontent">
 				<input class="spinner" type="text" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id}" />

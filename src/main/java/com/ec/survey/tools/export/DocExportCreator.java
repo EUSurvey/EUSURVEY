@@ -42,11 +42,6 @@ public class DocExportCreator extends ExportCreator {
 	}
 
 	@Override
-	void ExportCharts() throws Exception {
-		throw new Exception("Not implemented");		
-	}
-
-	@Override
 	void ExportContent(boolean sync) throws Exception {
 		throw new Exception("Not implemented");
 	}
@@ -60,8 +55,8 @@ public class DocExportCreator extends ExportCreator {
         DecimalFormat df = new DecimalFormat("#.##");
         
         Statistics statistics = form.getStatistics();
-    	Survey survey = surveyService.getSurvey(form.getSurvey().getId(), false, true);
-    	
+        Survey survey = surveyService.getSurveyInOriginalLanguage(form.getSurvey().getId(), form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
+		    	
     	if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked())
 		{
 			surveyService.CheckAndRecreateMissingElements(survey,  export.getResultFilter());

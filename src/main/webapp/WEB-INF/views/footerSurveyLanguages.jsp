@@ -16,8 +16,7 @@
 		</div>
 		
 		<div style="float:right; width: 300px; text-align: right">
-			<a target="_blank" href="https://circabc.europa.eu/sd/a/2e8fd5cf-4095-4413-9aa4-d46bf706aafc/EUSurvey_Quick_Start_Guide.pdf">${form.getMessage("label.Userguide")} (pdf)</a> |
-			<a href="<c:url value="/home/support"/>">${form.getMessage("label.Support")}</a>
+			<a href="<c:url value="/home/documentation"/>">${form.getMessage("label.Support")}</a>
 		</div>
 		
 		<div style="clear: both"></div>

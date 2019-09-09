@@ -116,7 +116,7 @@
 							</div>						
 						</p>
 						<div style="margin-top: 30px;">
-							<input class="btn btn-default" type="submit" id="btnLogin2SecureSurvey" value="<spring:message code="label.Login" />"/>
+							<input class="btn btn-default" type="submit" id="btnLogin2SecureSurvey" value="<spring:message code="label.DoLogin" />"/>
 						</div>
 			 		</fieldset>
 				</form:form>

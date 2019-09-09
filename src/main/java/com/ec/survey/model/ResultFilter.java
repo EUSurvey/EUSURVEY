@@ -48,6 +48,7 @@ public class ResultFilter implements java.io.Serializable {
 	private Boolean createdOrUpdated = false;
 	private Boolean onlyReallyUpdated = false;
 	private Boolean noTestAnswers = false;
+	private Boolean defaultQuestions = true;
 	
 	public void clearResultFilter() {
 		invitation = null;
@@ -237,6 +238,15 @@ public class ResultFilter implements java.io.Serializable {
 	}
 	
 	@Transient
+	public void addExportedQuestion(String question)
+	{
+		if (!this.exportedQuestions.contains(question))
+		{
+			this.exportedQuestions.add(question);
+		}
+	}
+	
+	@Transient
 	public boolean contains(String questionId, String value)
 	{
 		return (filterValues.containsKey(questionId) && filterValues.get(questionId).contains(value));
@@ -420,6 +430,8 @@ public class ResultFilter implements java.io.Serializable {
 		copy.status = status;
 		copy.surveyEndDateFrom = surveyEndDateFrom;
 		copy.surveyEndDateTo = surveyEndDateTo;
+		
+		copy.defaultQuestions = defaultQuestions;
 
 		return copy;
 	}
@@ -485,6 +497,14 @@ public class ResultFilter implements java.io.Serializable {
 	}
 	public void setDraftId(String draftId) {
 		this.draftId = draftId;
+	}
+
+	@Column(name = "RESFILTER_DEFAULT")
+	public Boolean getDefaultQuestions() {
+		return defaultQuestions;
+	}
+	public void setDefaultQuestions(Boolean defaultQuestions) {
+		this.defaultQuestions = defaultQuestions;
 	}
 
 }

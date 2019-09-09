@@ -33,7 +33,7 @@ public class FtpClient {
 
 	public String getFile(FtpEndPoint ftpEndPoint) {
 		
-		return this.consumerTemplate.receiveBody(ftpEndPoint.toCamelConsumerString(), String.class);
+		return this.consumerTemplate.receiveBody(ftpEndPoint.toCamelConsumerString(), 10000, String.class);
 	}
 
 	public String getFtpSourceURL() {

@@ -63,9 +63,8 @@
 	
 	<div class="fixedtitleform">
 		<div class="fixedtitleinner" style="width:880px">
-			<h1><spring:message code="label.Shares" /></h1>		
 			
-			<div id="action-bar" class="container action-bar" style="margin-top: 0; width: 880px">
+			<div id="action-bar" class="container action-bar" style="margin-top: 10px; width: 880px">
 				<div class="row">
 					<div class="col-md-12" style="text-align:center">
 						<a onclick="$('#add-share-name').val(''); $('#add-share-dialog1').modal('show')"  class="btn btn-default"><spring:message code="label.CreateNewShare" /></a>
@@ -112,13 +111,13 @@
 									<td>
 										<c:choose>
 											<c:when test="${!share.readonly}">
-												<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="btn btn-default btn-xs" rel="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
+												<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="iconbutton" rel="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
 											</c:when>
 											<c:otherwise>
-												<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="btn btn-default btn-xs" rel="tooltip" title="<spring:message code="label.Show" />"><i class="glyphicon glyphicon-info-sign"></i></a>
+												<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="iconbutton" rel="tooltip" title="<spring:message code="label.Show" />"><i class="glyphicon glyphicon-info-sign"></i></a>
 											</c:otherwise>
 										</c:choose>
-										<a data-toggle="tooltip" onclick="showDeleteDialog('${share.id}');" class="btn btn-default btn-xs" rel="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></span></a>
+										<a data-toggle="tooltip" onclick="showDeleteDialog('${share.id}');" class="iconbutton" rel="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></span></a>
 									</td>
 								</tr>						
 							</c:forEach>						
@@ -161,10 +160,10 @@
 									<td>
 										<c:choose>
 											<c:when test="${!share.readonly}">
-												<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="btn btn-default btn-xs" rel="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
+												<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="iconbutton" rel="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
 											</c:when>
 											<c:otherwise>
-												<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="btn btn-default btn-xs" rel="tooltip" title="<spring:message code="label.Show" />"><i class="glyphicon glyphicon-info-sign"></i></a>
+												<a data-toggle="tooltip" href="<c:url value="/settings/shareEdit/${share.id}" />" class="iconbutton" rel="tooltip" title="<spring:message code="label.Show" />"><i class="glyphicon glyphicon-info-sign"></i></a>
 											</c:otherwise>
 										</c:choose>
 									</td>

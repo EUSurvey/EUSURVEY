@@ -57,7 +57,7 @@ public class SurveyUpdater implements Runnable {
 			List<Survey> surveys = surveyService.getSurveysToStart();
 			for (Survey survey: surveys)
 			{				
-				Survey published = surveyService.getSurvey(survey.getShortname(), false, false, false, true, null, true);
+				Survey published = surveyService.getSurvey(survey.getShortname(), false, false, false, true, null, true, false);
 				
 				if (published != null)
 				{
@@ -67,11 +67,11 @@ public class SurveyUpdater implements Runnable {
 						logger.error(e.getLocalizedMessage(), e);
 					}
 				} else {
-					surveyService.activate(survey, -1, -1, false, -1, false, true);
+					surveyService.publish(survey, -1, -1, false, -1, false, true);
 				}
 			
 				try {
-					surveyService.publish(survey, false, -1);
+					surveyService.activate(survey, false, -1);
 					activityService.log(106, "unpublished", "published", -1, survey.getUniqueId());
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);

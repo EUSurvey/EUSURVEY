@@ -9,7 +9,6 @@ import com.ec.survey.tools.CleanupWorker;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.MutableInteger;
 import com.ec.survey.tools.RecreateWorker;
-import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.tools.export.FileExportCreator;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
@@ -48,7 +47,7 @@ public class FileService extends BasicService {
 	
 	public static String[] filetypes = { "results", "statistics", "charts", "tokens", "contacts", "activities", "uploaded file", "download", "image", "logo", "background document", "survey", "contribution" };
 	public static String[] fileextensions = { "PDF", "XLS", "ODS", "DOC", "ODT", "XML", "CSV", "JPG", "PNG", "ZIP", "OTHER" };
-		
+	
 	public void LogOldFileSystemUse(String path)
 	{
 		logger.info("OLD FILESYSTEM ACCESS: " + path);
@@ -201,7 +200,7 @@ public class FileService extends BasicService {
 		return result;
 	}
 	
-	public List<FileResult> getFiles2(FileFilter filter) throws IOException, TooManyFiltersException
+	public List<FileResult> getFiles2(FileFilter filter) throws Exception
 	{
 		final List<FileResult> result = new ArrayList<>();
 		final MutableInteger counter = new MutableInteger(0);
@@ -291,7 +290,7 @@ public class FileService extends BasicService {
 		return result;
 	}
 	
-	public List<FileResult> getFiles(FileFilter inputfilter) throws IOException, TooManyFiltersException
+	public List<FileResult> getFiles(FileFilter inputfilter) throws Exception
 	{
 		final List<FileResult> result = new ArrayList<>();
 		
@@ -527,7 +526,7 @@ public class FileService extends BasicService {
 		return true;
 	}
 	
-	private List<FileResult> getFilesForSurvey(FileFilter filter, int page, int itemsperpage, Path archivedir) throws IOException, TooManyFiltersException
+	private List<FileResult> getFilesForSurvey(FileFilter filter, int page, int itemsperpage, Path archivedir) throws Exception
 	{
 		List<Integer> ids = surveyService.getAllSurveyVersions(filter.getSurveyShortname(), filter.getSurveyUid());
 		Map<String, FileResult> result = new HashMap<>();
@@ -899,6 +898,22 @@ public class FileService extends BasicService {
 			} else {
 				fileResult.setError("unknown contribution id");
 			}
+		} else 		
+			if (name.startsWith("draft") && name.endsWith(".pdf"))
+			{
+				fileResult.setFileName(name);
+				fileResult.setFileExtension("PDF");
+				fileResult.setFileType("draft");
+				String draftid = name.substring(5).replace(".pdf", "");
+				Draft draft = answerService.getDraft(draftid);
+				//AnswerSet answerSet = answerService.get(caseid);
+				if (draft != null)
+				{
+					fileResult.setSurveyUid(draft.getAnswerSet().getSurvey().getUniqueId());
+					fileResult.setSurveyShortname(draft.getAnswerSet().getSurvey().getShortname());	
+				} else {
+					fileResult.setError("unknown draft id");
+				}
 		} else if (name.startsWith("survey") && name.endsWith(".pdf")) {
 			fileResult.setFileName(name);
 			fileResult.setFileExtension("PDF");
@@ -960,9 +975,6 @@ public class FileService extends BasicService {
 						case AddressBook:
 							fileResult.setFileType("contacts");
 							break;
-						case Charts:
-							fileResult.setFileType("charts");
-							break;
 						case Statistics:
 							fileResult.setFileType("statistics");
 							break;
@@ -1021,7 +1033,7 @@ public class FileService extends BasicService {
 				fileResult.setFileExtension(f.getName().substring(f.getName().lastIndexOf('.')+1).toUpperCase());
 				fileResult.setFileUid(f.getUid());
 				
-				String[] surveyData = surveyService.getSurveyForFile(f, contextpath);
+				String[] surveyData = surveyService.getSurveyForFile(f, contextpath, null);
 				if (surveyData != null)
 				{
 					fileResult.setSurveyShortname(surveyData[1]);
@@ -1044,7 +1056,7 @@ public class FileService extends BasicService {
 		getPool().execute(c);		
 	}
 
-	public Set<java.io.File> getFilesForSurveys(List<Integer> surveyIDs, boolean onlySurveyFiles) throws TooManyFiltersException
+	public Set<java.io.File> getFilesForSurveys(List<Integer> surveyIDs, boolean onlySurveyFiles) throws Exception
 	{
 		Set<java.io.File> result = new HashSet<>();
 		
@@ -1231,7 +1243,7 @@ public class FileService extends BasicService {
 		return result;
 	}
 	
-	public int deleteFilesForSurveys(List<Integer> surveyIDs) throws TooManyFiltersException
+	public int deleteFilesForSurveys(List<Integer> surveyIDs) throws Exception
 	{
 		int deletecounter = 0;
 		
@@ -1247,7 +1259,7 @@ public class FileService extends BasicService {
 		return deletecounter;
 	}
 	
-	public int deleteFilesForArchivedSurveys() throws TooManyFiltersException {
+	public int deleteFilesForArchivedSurveys() throws Exception {
 		
 		logger.info("starting deleteFilesForArchivedSurveys: " + ConversionTools.getFullString(new Date()));
 		
@@ -1432,7 +1444,7 @@ public class FileService extends BasicService {
 		getPool().execute(c);
 	}
 
-	public int deleteAll(FileFilter filter, String[] files, User user) throws IOException, TooManyFiltersException {
+	public int deleteAll(FileFilter filter, String[] files, User user) throws Exception {
 		int counter = 0;
 	
 		if (files == null)
@@ -1476,9 +1488,19 @@ public class FileService extends BasicService {
 			{
 				AnswerSet answerSet = answerService.get(uid);
 				if (answerSet != null)
-				pdfService.createAnswerPDF(null, uid, answerSet.getSurvey().getUniqueId());
+				pdfService.createAnswerPDF(null, uid, answerSet.getSurvey().getUniqueId(), answerSet.getIsDraft());
 				return true;
 			}
+		} else if (name.startsWith("draft") && name.endsWith(".pdf"))
+			{
+				String uid = name.substring(5).replace(".pdf", "");
+				if (file.delete())
+				{
+					Draft draft = answerService.getDraft(uid);
+					if (draft != null)
+					pdfService.createAnswerPDF(null, uid, draft.getAnswerSet().getSurvey().getUniqueId(), draft.getAnswerSet().getIsDraft());
+					return true;
+				}
 		} else if (name.startsWith("survey") && name.endsWith(".pdf")) {
 			String language = name.substring(name.length()-6, name.length()-4);
 			String id = name.substring(6);
@@ -1515,7 +1537,7 @@ public class FileService extends BasicService {
 			
 			if (fs.size() == 1)
 			{
-				String[] surveydata = surveyService.getSurveyForFile(fs.get(0), contextpath);
+				String[] surveydata = surveyService.getSurveyForFile(fs.get(0), contextpath, surveyuid);
 				if (surveydata == null)
 				{
 					delete(fs.get(0));
@@ -1541,7 +1563,7 @@ public class FileService extends BasicService {
 		}
 	}
 
-	public Map<String, String> getMissingFiles(String uniqueId) throws IOException, TooManyFiltersException {
+	public Map<String, String> getMissingFiles(String uniqueId) throws Exception {
 		final Path archivedir = Paths.get(archiveFileDir);
 				
 		Map<String, String> result = new HashMap<>();
@@ -1657,7 +1679,23 @@ public class FileService extends BasicService {
 	public java.io.File getSurveyPDFFile(String surveyUID, Integer surveyID, String lang)
 	{
 		java.io.File folder = fileService.getSurveyExportsFolder(surveyUID);							
-		return new java.io.File(String.format("%s/survey%s%s.pdf", folder.getPath(), surveyID, lang));	
+		return new java.io.File(String.format("%s/survey%s%s.pdf", folder.getPath(), surveyID, lang));
+	}
+	
+	public java.io.File getLocalTemporaryFile() throws IOException
+	{
+		return java.io.File.createTempFile("temp", "");
+	}
+	
+	public java.io.File getTemporaryFile()
+	{
+		return getTemporaryFile(UUID.randomUUID().toString());
+	}
+	
+	public java.io.File getTemporaryFile(String uid)
+	{
+		java.io.File folder = fileService.getUsersFolder(0, true);
+		return new java.io.File(String.format("%s/%s", folder.getPath(), uid));	
 	}
 	
 	public java.io.File getUsersFolder(int userId)
@@ -1711,7 +1749,7 @@ public class FileService extends BasicService {
 	}
 	
 	@Transactional
-	public void migrateAllSurveyFiles(Survey survey) throws IOException, TooManyFiltersException
+	public void migrateAllSurveyFiles(Survey survey) throws Exception
 	{
 		migrateSurveyFiles(survey);
 		
@@ -1725,7 +1763,7 @@ public class FileService extends BasicService {
 	}
 
 	@Transactional
-	public void migrateSurveyFiles(Survey survey) throws IOException, TooManyFiltersException
+	public void migrateSurveyFiles(Survey survey) throws Exception
 	{
 		Session session = sessionFactory.getCurrentSession();
 		survey = (Survey) session.merge(survey);
@@ -1855,7 +1893,7 @@ public class FileService extends BasicService {
 	}
 	
 	@Transactional
-	public void migrateAllUserFiles() throws IOException
+	public void migrateAllUserFiles() throws Exception
 	{
 		List<Integer> userids = administrationService.getAllUserIDs();
 		
@@ -1889,7 +1927,7 @@ public class FileService extends BasicService {
 	}
 	
 	@Transactional
-	public void migrateAllArchiveFiles() throws IOException
+	public void migrateAllArchiveFiles() throws Exception
 	{
 		List<Archive> archives = archiveService.getAllArchives(new ArchiveFilter(), 0, Integer.MAX_VALUE, true);
 		
@@ -1963,7 +2001,7 @@ public class FileService extends BasicService {
 		    	{					    	
 	    			java.io.File candidate = p.toFile();
 	    			
-	    			if (candidate.getName().startsWith("answer") && candidate.getName().endsWith(".pdf"))
+	    			if ((candidate.getName().startsWith("answer") || candidate.getName().startsWith("draft")) && candidate.getName().endsWith(".pdf"))
 	    			{		    			
 		    			Date modified = new Date(candidate.lastModified());
 						if (modified.before(before))
@@ -1978,8 +2016,7 @@ public class FileService extends BasicService {
 								}
 							}
 						}							
-					}						
-	    			    		
+					}	    			    		
 		    	}
 		        return FileVisitResult.CONTINUE;
 		    }
@@ -1996,35 +2033,85 @@ public class FileService extends BasicService {
 	}
 
 	public int deleteOldTemporaryFolders(Date before) throws IOException {
-		List<String> surveyUIDs = surveyService.getAllSurveyUIDs();
+		List<String> surveyUIDs = surveyService.getAllSurveyUIDs(false);
 		int deletecounter = 0;
 				
 		for (String surveyUID : surveyUIDs)
 		{
-			java.io.File folder = getSurveyUploadsFolder(surveyUID, false);
-			if (folder.exists())
+			if (surveyUID != null && surveyUID.length() > 0)
 			{
-				java.io.File[] fList = folder.listFiles();
-				for (java.io.File file : fList) {
-			       if (file.isDirectory()) {
-			    	   Date modified = new Date(file.lastModified());
-			    	   if (modified.before(before))
-			    	   {
-			    		   try {
-			    			   FileUtils.deleteDirectory(file);
-			    			   deletecounter++;
-			    		   } catch (Exception e)
-			    		   {
-			    			   logger.error("not possible to delete folder " + file.getAbsolutePath());
-			    		   }
-			    	   }					
-			       }
-			    }			
+				java.io.File folder = getSurveyUploadsFolder(surveyUID, false);
+				if (folder.exists())
+				{
+					java.io.File[] fList = folder.listFiles();
+					for (java.io.File file : fList) {
+				       if (file.isDirectory()) {
+				    	   Date modified = new Date(file.lastModified());
+				    	   if (modified.before(before))
+				    	   {
+				    		   try {
+				    			   FileUtils.deleteDirectory(file);
+				    			   deletecounter++;
+				    		   } catch (Exception e)
+				    		   {
+				    			   logger.error("not possible to delete folder " + file.getAbsolutePath());
+				    		   }
+				    	   }					
+				       }
+				    }			
+				}
 			}
 		}
 		
 		return deletecounter;
 	}
+
+	public int deleteOldSurveyPDFs(String surveyUID, int id) throws IOException {
+		java.io.File folder = getSurveyExportsFolder(surveyUID);
+		Path dir = folder.toPath();
+		final MutableInteger deletecounter = new MutableInteger(0);
+			
+		Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {				
+			@Override
+			public FileVisitResult preVisitDirectory(Path file, BasicFileAttributes attrs) throws IOException
+			{
+				if (file.equals(dir))
+	    		{
+	    			return FileVisitResult.CONTINUE;
+				}
+				return FileVisitResult.SKIP_SUBTREE;
+			}
+			
+		    @Override
+		    public FileVisitResult visitFile(Path p, BasicFileAttributes attrs) throws IOException {					    	
+		    	if (!Files.isDirectory(p))
+		    	{					    	
+	    			java.io.File candidate = p.toFile();
+	    			
+	    			if (candidate.getName().startsWith("survey" + id) && candidate.getName().endsWith(".pdf"))
+	    			{		    			
+		    			
+						if (candidate.delete())
+						{
+							deletecounter.setValue(deletecounter.getValue()+1);
+						} else {
+							logger.error("not possible to delete file " + candidate.getAbsolutePath());
+						}						
+					}	    			    		
+		    	}
+		        return FileVisitResult.CONTINUE;
+		    }
+
+		    @Override
+		    public FileVisitResult visitFileFailed(Path file, IOException exc)
+		            throws IOException {
+		        // Skip folders that can't be traversed
+		        return FileVisitResult.CONTINUE;
+		    }
+		});
+			
+		return deletecounter.getValue();
+	}	
 	
 	public java.io.File getTempFolder() {
 		java.io.File folder = new java.io.File(usersDir +  "temp");
@@ -2032,8 +2119,8 @@ public class FileService extends BasicService {
 		return folder;
 	}
 
-	public java.io.File createTempFile(String filename, Object object) {
-		java.io.File result = new java.io.File(getTempFolder().getAbsolutePath() +  "/" + filename);
+	public java.io.File createTempFile(String filename, String suffix) {
+		java.io.File result = new java.io.File(getTempFolder().getAbsolutePath() +  "/" + filename + (suffix != null ? suffix : ""));
 		return result;
 	}
 	

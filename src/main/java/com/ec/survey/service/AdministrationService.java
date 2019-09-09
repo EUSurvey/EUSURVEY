@@ -5,18 +5,21 @@ import com.ec.survey.model.administration.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.LoginAlreadyExistsException;
 import com.ec.survey.tools.Tools;
+
+import org.apache.commons.io.IOUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import java.io.InputStream;
 import java.util.*;
 import org.springframework.util.StringUtils;
 
@@ -36,14 +39,12 @@ public class AdministrationService extends BasicService {
 	private @Value("${admin.password}") String adminpassword;
 	private @Value("${stress.user}") String stressuser;
 	private @Value("${stress.password}") String stresspassword;	
-	
+
 	private @Value("${smtpserver}") String smtpServer;	
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${sender}") String sender;	
 	private @Value("${server.prefix}") String host;
 	
-	private Md5PasswordEncoder oldPasswordEncoder = new Md5PasswordEncoder();
-
 	public String getAdminUser()
 	{
 		return adminuser;
@@ -125,7 +126,7 @@ public class AdministrationService extends BasicService {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<User> getUsers(UserFilter filter, SqlPagination sqlPagination) {
+	public List<User> getUsers(UserFilter filter, SqlPagination sqlPagination) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		
 		HashMap<String, Object> parameters = new HashMap<>();
@@ -173,7 +174,10 @@ public class AdministrationService extends BasicService {
 	public boolean checkUserPassword(User user, String rawPassword)
 	{
 		logger.debug("CHECKUSERPASSWORD CALLED " +user.getPassword() +" " + rawPassword);
-		if (oldPasswordEncoder.isPasswordValid(user.getPassword(), rawPassword, null)) {
+		
+		String md5hash = Tools.md5hash(rawPassword);
+		
+		if (user.getPassword().equals(md5hash)) {
 			//replace md5 hash by salted SHA-512 hash
 			Session session = sessionFactory.getCurrentSession();			
 			user.setPasswordSalt(Tools.newSalt());
@@ -317,7 +321,7 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional(readOnly = false)
-	public void sendValidationEmail(User user) {
+	public void sendValidationEmail(User user) throws NumberFormatException, Exception {
 		Session session = sessionFactory.getCurrentSession();
 				
 		user.setValidationCode(UUID.randomUUID().toString());
@@ -343,7 +347,10 @@ public class AdministrationService extends BasicService {
 			
 			String body = "Dear " + user.getLogin() + ",<br /><br />Please confirm your email change by clicking the link below: <br /><br /> <a href=\"" + link + "\">" + link + "</a>";
 			
-			mailService.SendHtmlMail(user.getEmailToValidate(), sender, sender, "EUSurvey Confirmation", body, smtpServer, Integer.parseInt(smtpPort), null);
+			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+			String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);			
+			
+			mailService.SendHtmlMail(user.getEmailToValidate(), sender, sender, "EUSurvey Confirmation", text, smtpServer, Integer.parseInt(smtpPort), null);
 			} catch (Exception ex) {
 				logger.error(ex.getLocalizedMessage(), ex);
 				return false;
@@ -374,6 +381,19 @@ public class AdministrationService extends BasicService {
 		
 		if (user != null && user.getValidationCode() != null && user.getValidationCode().equalsIgnoreCase(code) && user.getEmailToValidate() != null)
 		{
+			String oldEmail = user.getEmail();
+			if (user.getOtherEmail() == null)
+			{
+				user.setOtherEmail(oldEmail);
+			} else {
+				if (!user.getOtherEmail().endsWith(";"))
+				{
+					user.setOtherEmail(user.getOtherEmail() + ";" + oldEmail);
+				} else {
+					user.setOtherEmail(user.getOtherEmail() + oldEmail);
+				}
+			}
+			
 			user.setEmail(user.getEmailToValidate());
 			user.setEmailToValidate(null);
 			user.setValidationCode(null);
@@ -600,7 +620,7 @@ public class AdministrationService extends BasicService {
 	}
 	
 	@Transactional(readOnly = false, propagation=Propagation.REQUIRES_NEW)
-	public void createDummySurAccess() {
+	public void createDummySurAccess() throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 	
 		User user = getUser(8);

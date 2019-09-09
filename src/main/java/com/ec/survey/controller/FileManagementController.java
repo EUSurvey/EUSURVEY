@@ -10,9 +10,6 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.ConversionTools;
-import com.ec.survey.tools.NotAgreedToTosException;
-import com.ec.survey.exception.TooManyFiltersException;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -75,7 +71,7 @@ public class FileManagementController extends BasicController {
 	}
 	
 	@RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView files(HttpServletRequest request, Model model, Locale locale) throws InvalidURLException, IOException, TooManyFiltersException, NotAgreedToTosException, ForbiddenURLException {
+	public ModelAndView files(HttpServletRequest request, Model model, Locale locale) throws Exception {
 		ModelAndView result = new ModelAndView("administration/filemanagement");
 		addStatistics(result);
 		
@@ -147,7 +143,7 @@ public class FileManagementController extends BasicController {
 	}
 	
 	@RequestMapping(method = {RequestMethod.POST})
-	public ModelAndView filesPOST(HttpServletRequest request, Model model, Locale locale) throws NotAgreedToTosException, ForbiddenURLException, IOException, InvalidURLException, TooManyFiltersException {	
+	public ModelAndView filesPOST(HttpServletRequest request, Model model, Locale locale) throws Exception {	
 		
 		if (enablefilemanagement == null || !enablefilemanagement.equalsIgnoreCase("true"))
 		{
@@ -234,7 +230,7 @@ public class FileManagementController extends BasicController {
 			if (alias != null && alias.length() > 0)
 			{
 				try {
-					Survey survey = surveyService.getSurveyByShortname(alias, true, user, request, false, false, false);
+					Survey survey = surveyService.getSurveyByShortname(alias, true, user, request, false, false, false, false);
 					if (survey != null) uid = survey.getUniqueId();
 					inputFilter.setSurveyUid(uid);
 				} catch (InvalidURLException ie) {

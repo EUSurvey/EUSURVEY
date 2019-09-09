@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 public class EusExportCreator extends ExportCreator {
 	
 	@Override
-	void ExportCharts() throws Exception {}
-	
-	@Override
 	void ExportContent(boolean sync) throws Exception {
 		java.io.File zip = surveyService.exportSurvey(form.getSurvey().getShortname(), surveyService, true);
 		IOUtils.copy(new FileInputStream(zip), outputStream);

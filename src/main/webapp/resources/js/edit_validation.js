@@ -597,6 +597,32 @@ function checkPositive(input)
 	return true;
 }
 
+function checkUniqueAttributeName(input)
+{
+	var text = $(input).val();
+	removeValidationMarkup();
+	var result = true;
+	if (strip_tags(text).trim().length > 0)
+	{
+		$("input[name^='nameattribute']").each(function(){
+			var name = $(this).val();
+			if (name == text) {
+				addValidationInfo(input, "duplicateattributename");
+				result = false;
+				return;
+			} else if (name.toLowerCase() == text.toLowerCase()) {
+				if (name.toLowerCase() == "name" || name.toLowerCase() == "email") {
+					addValidationInfo(input, "duplicateattributename");
+					result = false;
+					return;
+				}
+			}
+		})
+	}
+	
+	return result;
+}
+
 function checkMinMax(input, hasInputError, globalmax, showrulehint)
 {
 	removeValidationMarkup();

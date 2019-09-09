@@ -26,6 +26,7 @@ public class ImportResult {
 	private Map<String, List<String>> originalMatrixDependencies = new HashMap<>();
 	private Map<Integer, List<Integer>> additionalElements = new HashMap<>();
 	private Map<Integer, Survey> oldSurveys = new HashMap<>();
+	private Map<Integer, List<Translations>> oldTranslations = new HashMap<>();
 	
 	public Survey getSurvey() {
 		return survey;
@@ -117,5 +118,11 @@ public class ImportResult {
 	public void setOriginalMatrixDependencies(Map<String, List<String>> originalMatrixDependencies) {
 		this.originalMatrixDependencies = originalMatrixDependencies;
 	}
+	public Map<Integer, List<Translations>> getOldTranslations() {
+		return oldTranslations;
+	}
+	public void setOldTranslations(Map<Integer, List<Translations>> oldTranslations) {
+		this.oldTranslations = oldTranslations;
+	}	
 
 }

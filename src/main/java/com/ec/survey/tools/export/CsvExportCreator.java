@@ -20,9 +20,6 @@ import java.util.List;
 public class CsvExportCreator extends ExportCreator {
 
 	@Override
-	void ExportCharts() throws Exception {}
-
-	@Override
 	void ExportContent(boolean sync) throws Exception {}
 	
 	@Override

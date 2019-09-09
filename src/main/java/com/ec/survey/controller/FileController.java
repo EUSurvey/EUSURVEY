@@ -183,8 +183,13 @@ public class FileController extends BasicController {
 						java.io.File zip = new java.io.File(f.getPath() + ".zip");
 						if (zip.exists())
 						{
-							f = zip;
-							zipped = true;
+							//not if coming from the file management console
+							String fromfmc = request.getParameter("fromfmc");
+							if (fromfmc == null)
+							{
+								f = zip;
+								zipped = true;
+							}
 						}
 					}
 				}

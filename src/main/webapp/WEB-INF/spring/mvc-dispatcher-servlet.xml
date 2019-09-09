@@ -228,15 +228,9 @@
 		<property name="exceptionMappings">
 			<map>
 				<entry key="org.springframework.web.multipart.MaxUploadSizeExceededException" value="error/max-size" />
-<!-- 				<entry key="DataAccessException" value="data-error"/> -->
 			</map>
 		</property>
-<!-- 		<property name="defaultErrorView" value="error/basic" /> -->
 	</bean>
-	
-	<tx:annotation-driven transaction-manager="transactionManager" /> 
-	
-	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" />
  
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/views/" />
@@ -251,26 +245,26 @@
 	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 	  <property name="corePoolSize" value="10" />
 	  <property name="maxPoolSize" value="10" />
-	  <property name="queueCapacity" value="25" />
+	  <property name="queueCapacity" value="10000" />
 	  <property name="waitForTasksToCompleteOnShutdown" value="true" />
 	</bean>
 	
 	<bean id="taskExecutorLong" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 	  <property name="corePoolSize" value="1" />
-	  <property name="maxPoolSize" value="1" />
-	  <property name="queueCapacity" value="25" />
+	  <property name="maxPoolSize" value="5" />
+	  <property name="queueCapacity" value="10000" />
 	  <property name="waitForTasksToCompleteOnShutdown" value="true" />
 	</bean>
 	
 	<bean id="taskExecutorLongRestore" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 	  <property name="corePoolSize" value="1" />
 	  <property name="maxPoolSize" value="1" />
-	  <property name="queueCapacity" value="25" />
+	  <property name="queueCapacity" value="10000" />
 	  <property name="waitForTasksToCompleteOnShutdown" value="true" />
 	</bean>
 	
-	<bean id="springDataSourceBeanPostProcessor" class="net.bull.javamelody.SpringDataSourceBeanPostProcessor">
- 	</bean>
+	<!-- <bean id="springDataSourceBeanPostProcessor" class="net.bull.javamelody.SpringDataSourceBeanPostProcessor">
+ 	</bean> -->
  	
  	<bean id="eventListenerBean" class="com.ec.survey.tools.ApplicationListenerBean" />
  

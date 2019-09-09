@@ -23,13 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.NoFormLoadedException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.AnswerSet;
@@ -47,6 +47,7 @@ import com.ec.survey.service.FileService;
 import com.ec.survey.service.LdapDBService;
 import com.ec.survey.service.LdapService;
 import com.ec.survey.service.ParticipationService;
+import com.ec.survey.service.ReportingService;
 import com.ec.survey.service.SessionService;
 import com.ec.survey.service.SettingsService;
 import com.ec.survey.service.SkinService;
@@ -121,6 +122,9 @@ public class BasicController implements BeanFactoryAware {
 	
 	@Resource(name="settingsService")
 	protected SettingsService settingsService;	
+	
+	@Resource(name = "reportingService")
+	protected ReportingService reportingService;
 	
 	public @Value("${captcha.secret}") String captchasecret;
 	public @Value("${ui.enableresponsive}") String enableresponsive;	
@@ -205,7 +209,6 @@ public class BasicController implements BeanFactoryAware {
 	
 	@ExceptionHandler(NotAgreedToTosException.class) 
     public ModelAndView handleNotAgreedToTosException(Exception e, HttpServletRequest request) {
-		logger.info(e.getLocalizedMessage(), e);
 		ModelAndView model = new ModelAndView("redirect:/auth/tos");
 		model.addObject("contextpath", contextpath);
 		return model;
@@ -242,6 +245,15 @@ public class BasicController implements BeanFactoryAware {
 		return model;
     }
 	
+	@ExceptionHandler(MessageException.class) 
+    public ModelAndView handleMessageException(Exception e, Locale locale, HttpServletRequest request) {
+		logger.error(e.getMessage(), e);
+		ModelAndView model = new ModelAndView("error/generic");
+		model.addObject("message", e.getMessage());
+		model.addObject("contextpath", contextpath);
+		return model;
+    }
+	
 	@ExceptionHandler({java.net.SocketException.class, ClientAbortException.class}) 
     public void handleClientAbortException(Exception e, Locale locale, HttpServletRequest request) {
 		logger.info(e.getLocalizedMessage(), e);
@@ -253,16 +265,9 @@ public class BasicController implements BeanFactoryAware {
 		if (e instanceof IllegalArgumentException)
 		{
 			logger.error("caused by URL: " + request.getRequestURL().toString() + "?" + request.getQueryString());
-		}
-		
-		ModelAndView model;
-		
-		if (e instanceof BadCredentialsException){
-			model = new ModelAndView("redirect:/errors/500.html");
-		}else{
-			model = new ModelAndView("error/basic", "message", "");	
-		}
-		
+		}		
+		ModelAndView model;		
+		model = new ModelAndView("redirect:/errors/500.html");		
 		model.addObject("contextpath", contextpath);
 		return model;
     }
@@ -360,14 +365,12 @@ public class BasicController implements BeanFactoryAware {
 		return model;
 	}
 	
-	protected ModelAndView testDraftAlreadySubmittedByUniqueCode(Survey survey, String uniqueAnswerSet, Locale locale) {
+	protected ModelAndView testDraftAlreadySubmittedByUniqueCode(Survey survey, String uniqueAnswerSet, Locale locale) throws ForbiddenURLException {
 		if (surveyService.answerSetExists(uniqueAnswerSet,false))
 		{
 			if (survey != null) {
-				// draft was submitted + do not change contribution => show home page
-				ModelAndView model = basicwelcome(locale);
-				model.addObject("draftAlreadySubmitted", "true");
-				return model;
+				// draft was submitted + do not change contribution => show error page
+				throw new ForbiddenURLException();
 			}
 			
 			ModelAndView model = new ModelAndView("error/generic");
@@ -377,7 +380,7 @@ public class BasicController implements BeanFactoryAware {
 		return null;		
 	}
 
-	protected ModelAndView testDraftAlreadySubmitted(Survey survey, Draft draft, Locale locale) {
+	protected ModelAndView testDraftAlreadySubmitted(Survey survey, Draft draft, Locale locale) throws ForbiddenURLException {
 		if (draft!=null)
 		{
 			String uniqueAnswerSet = draft.getAnswerSet().getUniqueCode();

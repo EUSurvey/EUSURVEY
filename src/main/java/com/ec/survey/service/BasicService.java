@@ -73,7 +73,10 @@ public class BasicService implements BeanFactoryAware {
 	protected SettingsService settingsService;
 	
 	@Resource(name="archiveService")
-	protected ArchiveService archiveService;	
+	protected ArchiveService archiveService;
+		
+	@Resource(name = "reportingService")
+	protected ReportingService reportingService;
 	
 	@Autowired
 	protected MessageSource resources;
@@ -98,6 +101,8 @@ public class BasicService implements BeanFactoryAware {
 	protected @Value("${oss}") String oss;
 	protected @Autowired ServletContext servletContext;
 	
+	protected @Value("${enablereportingdatabase}") String enablereportingdatabase;
+	
 	private ExecutorService pool;
 	private ExecutorService pdfpool;
 	private ExecutorService answerpool;	
@@ -110,6 +115,11 @@ public class BasicService implements BeanFactoryAware {
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		context = beanFactory;		
+	}
+	
+	protected boolean isReportingDatabaseEnabled()
+	{
+		return enablereportingdatabase != null && enablereportingdatabase.equalsIgnoreCase("true");
 	}
 	
 	private LinkedBlockingQueue< Runnable> taskQueue = new LinkedBlockingQueue<>();

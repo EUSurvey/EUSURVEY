@@ -6,7 +6,7 @@
 	<form:form action="${contextpath}/addressbook/batchEdit" name="frm"
 		id="batch-edit-form" method="post" style="margin: 0px;">
 		<div class="modal-header">
-			<b><spring:message code="label.Edit" />&nbsp;<span id="batch-attendee-dialog-num"></span> <spring:message code="label.SelectedContacts" /></b>
+			<b><spring:message code="label.EditSelectedContacts" /></b>
 		</div>
 		<div class="modal-body">
 
@@ -170,3 +170,16 @@
 	</div>
 	</div>
 </div>
+
+	<div class="modal" id="no-selection-dialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+		<div class="modal-body">
+			<spring:message code="message.NoElementSelected" />						
+		</div>
+		<div class="modal-footer">
+			<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>		
+		</div>
+		</div>
+		</div>
+	</div>	

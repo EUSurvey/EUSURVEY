@@ -6,6 +6,8 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.FileService;
 import com.ec.survey.service.MailService;
 import com.ec.survey.service.PDFService;
+
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,8 @@ public class IndividualsExecutor implements Runnable {
 	
 	@Resource(name="mailService")
 	private MailService mailService;
+	
+	protected static final Logger logger = Logger.getLogger(IndividualsExecutor.class);
 	
 	private Survey survey;
 	private ResultFilter filter;
@@ -60,7 +64,11 @@ public class IndividualsExecutor implements Runnable {
 		
 		String body = "Your export of the individual results of survey " + survey.getShortname() + " has finished.<br /><br />You can download it here: <a href=\"" + link + "\">IndividualResults.zip</a>";
 
-		mailService.SendHtmlMail(email, from, from, "Export finished", body, server, Integer.parseInt(smtpPort), null);
+		try {
+			mailService.SendHtmlMail(email, from, from, "Export finished", body, server, Integer.parseInt(smtpPort), null);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
 	}
 	
 }

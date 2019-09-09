@@ -4,9 +4,9 @@ import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
- import com.ec.survey.service.mapping.PaginationMapper;
+import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.AnswerExecutor;
-import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizExecutor;
 import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.Ucs2Utf8;
@@ -20,16 +20,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller("homeController")
@@ -39,6 +45,10 @@ public class HomeController extends BasicController {
 	public @Value("${stresstests.createdata}") String createStressData;	
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
+	private @Value("${server.prefix}") String host;
+	
+	private @Value("${support.recipient}") String supportEmail;
+	private @Value("${support.recipientinternal}") String supportEmailInternal;
 
 	@Autowired
 	protected PaginationMapper paginationMapper;    
@@ -49,9 +59,12 @@ public class HomeController extends BasicController {
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
 	
+	@Resource(name="mailService")
+	private MailService mailService;
+	
 	@RequestMapping(value = "/home/about", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String about(Locale locale, ModelMap model) {
-		model.put("continueWithoutJavascript", true);
+		model.put("continueWithoutJavascript", true);		
 		model.put("oss", super.isOss());		
 		return "home/about";
 	}
@@ -95,19 +108,188 @@ public class HomeController extends BasicController {
 		return "home/documentation";
 	}
 	
+	private String getBrowserInformation(HttpServletRequest request, Locale locale)
+	{
+		StringBuilder result = new StringBuilder();
+		
+		if (request.getParameter("error") != null)
+		{
+			String url = (String) request.getSession().getAttribute("lastErrorURL");
+			if (url != null)
+			{
+				result.append("URL: ").append(url).append("\n");
+			}
+			Integer code = (Integer) request.getSession().getAttribute("lastErrorCode");
+			if (code != null)
+			{
+				result.append("HTTP Code: ").append(code).append("\n");
+			}
+			Date time = (Date) request.getSession().getAttribute("lastErrorTime");
+			if (time != null)
+			{
+				result.append("Error time: ").append(time).append("\n");
+			}
+		}
+		result.append("Bowser: ").append(request.getHeader("User-Agent")).append("\n");
+		result.append("Language: ").append(locale.getLanguage()).append("\n");
+		return result.toString();
+	}
+	
 	@RequestMapping(value = "/home/support", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String support(Locale locale, ModelMap model) {
+	public String support(HttpServletRequest request, Locale locale, ModelMap model) {
 		model.put("continueWithoutJavascript", true);
+		model.put("additionalinfo", getBrowserInformation(request, locale));
+		
+		if (request.getParameter("error") != null)
+		{
+			model.put("fromerrorpage", true);
+		}
+		
 		model.addAttribute("oss",super.isOss());
 		return "home/support";
 	}
 	
 	@RequestMapping(value = "/home/support/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String supportRunner(Locale locale, Model model) {
+	public String supportRunner(HttpServletRequest request, Locale locale, Model model) {
 		model.addAttribute("continueWithoutJavascript", true);
 		model.addAttribute("runnermode", true);
+		model.addAttribute("additionalinfo", getBrowserInformation(request, locale));
 		model.addAttribute("oss",super.isOss());
 		return "home/support";
+	}
+	
+	@RequestMapping(value = "/home/support", method = {RequestMethod.POST})
+	public String supportPOST(HttpServletRequest request, Locale locale, ModelMap model) throws NumberFormatException, Exception {
+		
+		if (!checkCaptcha(request))
+		{
+			model.put("wrongcaptcha", true);
+			return "home/support";
+		}		
+		
+		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true);
+		String name = ConversionTools.removeHTML(request.getParameter("name"), true);
+		String email = ConversionTools.removeHTML(request.getParameter("email"), true);
+		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true);
+		String message = ConversionTools.removeHTML(request.getParameter("message"), true);
+		String additionalinfo  = request.getParameter("additionalinfo");
+		String[] uploadedfiles = request.getParameterValues("uploadedfile");				
+		
+		StringBuilder body = new StringBuilder();
+		body.append("Dear helpdesk team,<br />please open a ticket and assign it to DIGIT EUSURVEY SUPPORT.<br />Thank you in advance<br/><hr /><br />");
+		body.append("Affected user: ").append(name).append("<br />");
+		body.append("Email address: ").append(email).append("<br />");
+		body.append("Reason: ").append(reason).append("<br /><br />");
+		body.append("Subject: ").append(subject).append("<br /><br />");
+		body.append("Message text:<br />").append(message).append("<br /><br />");
+		if (additionalinfo != null)
+		{
+			body.append(ConversionTools.escape(additionalinfo).replace("\n", "<br />"));
+		}
+		
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);		
+		
+		java.io.File attachment1 = null;
+		java.io.File attachment2 = null;
+		if (uploadedfiles != null)
+		{
+			if (uploadedfiles.length > 0)
+			{
+				attachment1 = fileService.getTemporaryFile(uploadedfiles[0]);
+				if (uploadedfiles.length > 1)
+				{
+					attachment2 = fileService.getTemporaryFile(uploadedfiles[1]);
+				}
+			}
+		}
+		
+		if (email.toLowerCase().endsWith("ec.europa.eu"))
+		{
+			mailService.SendHtmlMail(supportEmailInternal, sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort), attachment1, attachment2, null, true);
+		} else {
+			mailService.SendHtmlMail(supportEmail, sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort), attachment1, attachment2, null, true);
+		}
+		
+		model.put("messagesent", true);
+		model.put("additionalinfo", getBrowserInformation(request, locale));
+		return "home/support";
+	}
+	
+	@RequestMapping(value = "/home/support/deletefile", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody String deletefile(HttpServletRequest request, HttpServletResponse response) {
+		
+		try {
+			String uid = request.getParameter("uid");	
+			
+			java.io.File file = fileService.getTemporaryFile(uid);
+			
+			if (file.exists() && file.delete())
+			{
+				return "{\"success\": true}";
+			}			
+					
+		} catch (Exception ex) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            logger.error(ex.getMessage(), ex);
+        }
+
+		return "{\"success\": false}";
+	}	
+	
+	@RequestMapping(value = "/home/support/uploadfile", method = RequestMethod.POST)
+	public void uploadFile(HttpServletRequest request, HttpServletResponse response) {
+
+		PrintWriter writer = null;
+        InputStream is = null;
+        FileOutputStream fos = null;
+
+        try {
+            writer = response.getWriter();
+        } catch (IOException ex) {
+            logger.error(ex.getLocalizedMessage(), ex);
+        }
+
+        String filename;
+        boolean error = false;
+        
+        try {
+        
+	        if (request instanceof DefaultMultipartHttpServletRequest)
+	        {
+	        	DefaultMultipartHttpServletRequest r = (DefaultMultipartHttpServletRequest)request;        	
+	        	filename = com.ec.survey.tools.FileUtils.cleanFilename(java.net.URLDecoder.decode(r.getFile("qqfile").getOriginalFilename(), "UTF-8"));        	
+	        	is = r.getFile("qqfile").getInputStream();        	
+	        } else {
+	        	filename = com.ec.survey.tools.FileUtils.cleanFilename(java.net.URLDecoder.decode(request.getHeader("X-File-Name"), "UTF-8"));
+	        	is = request.getInputStream();
+	        }
+        	
+	        if (!error)
+	        {
+	        	java.io.File file = fileService.getTemporaryFile();          
+	        	String uid = file.getName();
+	        			
+	            fos = new FileOutputStream(file);
+	            IOUtils.copy(is, fos);
+	                                  
+            	response.setStatus(HttpServletResponse.SC_OK);
+            	writer.print("{\"success\": true, \"id\": '" + uid + "', \"uid\": '" + uid + "', \"longdesc\": '', \"comment\": '', \"width\": '', \"name\": '" + filename + "'}");
+	        }
+        } catch (Exception ex) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            writer.print("{\"success\": false}");
+            logger.error(ex.getMessage(), ex);
+        } finally {
+            try {
+                fos.close();
+                is.close();
+            } catch (IOException ignored) {
+            }
+        }
+
+        writer.flush();
+        writer.close();
 	}
 	
 	@RequestMapping(value = "/home/helpparticipants", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -207,16 +389,27 @@ public class HomeController extends BasicController {
 	
 	@RequestMapping(value = "/home/privacystatement", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String privacystatement(HttpServletRequest request, Locale locale, Model model) {
-		return privacystatementinternal(request, locale, model);
+		return privacystatementinternal(request, locale, model, 1);
 	}
 	
 	@RequestMapping(value = "/home/privacystatement/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String privacystatementrunner(HttpServletRequest request, Locale locale, Model model) {
 		model.addAttribute("runnermode", true);		
-		return privacystatementinternal(request, locale, model);
+		return privacystatementinternal(request, locale, model, 1);
 	}
 	
-	private String privacystatementinternal(HttpServletRequest request, Locale locale, Model model) {
+	@RequestMapping(value = "/home/tos", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String tos(HttpServletRequest request, Locale locale, Model model) {
+		return privacystatementinternal(request, locale, model, 2);
+	}
+	
+	@RequestMapping(value = "/home/tos/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String tosrunner(HttpServletRequest request, Locale locale, Model model) {
+		model.addAttribute("runnermode", true);		
+		return privacystatementinternal(request, locale, model, 2);
+	}
+	
+	private String privacystatementinternal(HttpServletRequest request, Locale locale, Model model, int page) {
 		if (request.getParameter("language") != null)
 		{
 			String lang = request.getParameter("language");
@@ -243,6 +436,7 @@ public class HomeController extends BasicController {
 		model.addAttribute("readonly", true);
 		model.addAttribute("user",request.getSession().getAttribute("USER"));
 		model.addAttribute("oss",super.isOss());
+		model.addAttribute("page", page);
 		return "auth/tos";
 	}
 	
@@ -273,7 +467,7 @@ public class HomeController extends BasicController {
 		return basicwelcome(locale);
 	}
 	
-	@RequestMapping(value = "/home/editcontribution ")
+	@RequestMapping(value = "/home/editcontribution")
 	public String editcontribution (HttpServletRequest request, Locale locale, Model model) {	
 		model.addAttribute("lang", locale.getLanguage());
 		model.addAttribute("runnermode", true);
@@ -293,7 +487,7 @@ public class HomeController extends BasicController {
 		return cal.after(cal2);
 	}	
 	
-	@RequestMapping(value = "/home/editcontribution ", method = RequestMethod.POST)
+	@RequestMapping(value = "/home/editcontribution", method = RequestMethod.POST)
 	public ModelAndView editcontributionPost(HttpServletRequest request, Locale locale) {		
 		try {
 			
@@ -461,12 +655,12 @@ public class HomeController extends BasicController {
 		
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return new ModelAndView("error/basic");
+			return new ModelAndView("redirect:/errors/500.html");
 		}
 	}
 	
 	@RequestMapping(value = "/home/publicsurveys/runner")
-	public ModelAndView publicsurveysrunner(HttpServletRequest request) throws NotAgreedToTosException {	
+	public ModelAndView publicsurveysrunner(HttpServletRequest request) throws Exception {	
 		ModelAndView result = publicsurveys(request);
 			result.addObject("runnermode", true);
 		return result;
@@ -474,7 +668,7 @@ public class HomeController extends BasicController {
 	
 	@RequestMapping(value = "/home/publicsurveys")
 
-	public ModelAndView publicsurveys(HttpServletRequest request) throws NotAgreedToTosException {	
+	public ModelAndView publicsurveys(HttpServletRequest request) throws Exception {	
 		
 		SurveyFilter filter = sessionService.getSurveyFilter(request, false);
 		filter.setUser(null);		
@@ -527,7 +721,7 @@ public class HomeController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/home/publicsurveysjson", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<Survey> publicsurveysjson(HttpServletRequest request) {	
+	public @ResponseBody List<Survey> publicsurveysjson(HttpServletRequest request) throws Exception {	
 		
 		int itemsPerPage = 10;
 		int newPage = 1;

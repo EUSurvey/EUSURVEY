@@ -46,12 +46,15 @@
 		
 		.cellcreated, .cellupdated {
 			min-width: 260px !important;
-		}		
+		}
 	
 	</style>
 	
 	<script type="text/javascript"> 
 		$(function() {
+			
+			loadMore();
+			
 			<c:if test="${active eq true}">	
 				<c:choose>
 					<c:when test="${allanswers eq true}">
@@ -145,25 +148,20 @@
 			
 			initCheckAll();
 			$('[data-toggle="tooltip"]').tooltip(); 
+
 		});
 		
 		function checkAndShowMultiDeleteDialog()
 		{
-			<c:choose>
-				<c:when test="${paging.items.size() == 0}">
-					$('#noResultsToDeleteDialog').modal('show');
-				</c:when>
-				<c:otherwise>
-				
-					var selected = $("input.checkDelete:checked").length;
-					if (selected > 0)
-					{
-						$("#agreedelete").prop('checked', false);
-						$('#deleteContributionConfirm').addClass('disabled');
-						$('#confirmDeleteMultipleDialog').modal('show')
-					}
-				</c:otherwise>
-			</c:choose>
+			var selected = $("input.checkDelete:checked").length;
+			if (selected > 0)
+			{
+				$("#agreedelete").prop('checked', false);
+				$('#deleteContributionConfirm').addClass('disabled');
+				$('#confirmDeleteMultipleDialog').modal('show')
+			} else {
+				$('#noResultsToDeleteDialog').modal('show');
+			}
 		}
 		
 		function initCheckAll()
@@ -214,14 +212,38 @@
 			adaptScrollArea();
 		}
 		
+		function switchAssignedValues()
+		{
+			if ($("#show-assigned-values").is(":checked"))
+			{
+				$("#show-assigned-values").removeAttr("checked");
+			} else {
+				$("#show-assigned-values").prop("checked","checked");
+			}
+			checkAssignedValues();
+		}
+		
 		function checkAssignedValues()
 		{
 			if ($("#show-assigned-values").is(":checked"))
 			{
 				$(".assignedValue").show();
+				$("#show-assigned-values-icon").removeClass("disabled");
 			} else {
 				$(".assignedValue").hide();
+				$("#show-assigned-values-icon").addClass("disabled");
 			}
+		}
+		
+		function switchDeleteCheckboxes()
+		{
+			if ($("#show-delete-checkboxes").is(":checked"))
+			{
+				$("#show-delete-checkboxes").removeAttr("checked");
+			} else {
+				$("#show-delete-checkboxes").prop("checked","checked");
+			}
+			checkDeleteBoxes();
 		}
 		
 		function checkDeleteBoxes()
@@ -229,9 +251,14 @@
 			if ($("#show-delete-checkboxes").is(":checked") && $('#results-table-link').hasClass("btn-info"))
 			{
 				$(".checkDelete").removeClass("hiddenTableCell");
+				$("#btnDeleteSelected").show();
+				checkDeleteButtonEnabled();
+				$("#show-delete-checkboxes-icon").removeClass("disabled");
 			} else {
 				$(".checkDelete").addClass("hiddenTableCell");
 				$("#contentstable").css("width","auto");
+				$("#btnDeleteSelected").hide();
+				$("#show-delete-checkboxes-icon").addClass("disabled");
 			}
 			
 			synchronizeTableSizes();
@@ -316,13 +343,20 @@
 					$("#statistics-quiz-export-buttons").addClass('hidden');
 					
 					$("#search-buttons").show();				
+					$("#scrollarea").show();
 					
-					<c:if test="${paging.items.size() > 0}">
-						$("#scrollarea").show();
-					</c:if>
-					
-					$("#scrollareaheader").css("overflow-x", "hidden");
+					if ($('#tbllist-empty').is(":hidden"))
+					{
+						$("#scrollareaheader").css("overflow-x", "hidden");
+					}					
 					$("#scrollareaheader").scrollLeft($("#scrollarea").scrollLeft());
+					
+					if ($('#scrollarea').hasScrollBar())
+					{
+						$("#scrollareaheader").css("overflow-y","scroll");
+					} else {
+						$("#scrollareaheader").css("overflow-y","auto");
+					}
 					  
 					resetSliderPositions($("#contentstable"));
 					break;
@@ -345,6 +379,7 @@
 					$("#scrollarea").hide();
 					
 					$("#scrollareaheader").css("overflow-x", "auto");
+					$("#scrollareaheader").css("overflow-y","auto");
 					break;
 				case 'statistics-quiz':
 					$("#results-table-link").removeClass("btn-info").addClass("btn-default");
@@ -365,6 +400,7 @@
 					$("#scrollarea").hide();
 					
 					$("#scrollareaheader").css("overflow-x", "auto");
+					$("#scrollareaheader").css("overflow-y","auto");
 					break;
 			}
 			
@@ -637,12 +673,9 @@
 		<input type="hidden" name="operation" id="operation" />
 		<input type="hidden" name="sort" id="sort" />
 		
-		<div class="fixedtitleform">
-			<div class="fixedtitleinner">
-				<h1><spring:message code="label.Results" /></h1>
-			</div>
-		
-			<div class="well small-well" style="vertical-align: middle; margin-left: auto; margin-right: auto">		
+		<div class="fixedtitleform" style="padding-left: 10px; padding-right: 10px; padding-bottom:7px; border-bottom: 0px solid #ddd;">
+					
+			<div style="width: 1100px; vertical-align: middle; margin-left: auto; margin-right: auto; margin-top: 10px;">		
 				<div style="float: left; margin-top: 0px; margin-bottom: 0px;">		
 					<a id="results-table-link" class="btn btn-xs btn-info" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
 					<a id="results-statistics-link" class="btn btn-default btn-xs" onclick="switchTo('statistics');"><img src="${contextpath}/resources/images/icons/24/percentage.png" /></a>
@@ -651,7 +684,7 @@
 					</c:if>
 				</div>
 				
-				<div style="float: left; margin-top: 0px; margin-left: 20px;">
+				<div style="float: left; margin-top: 0px; margin-right: 20px;">
 					<b><spring:message code="label.Source" /></b>
 					<select onchange="$('#resultsForm').submit();" name="results-source" id="results-source" style="width: auto; margin-bottom: 0px">
 						<c:choose>
@@ -677,63 +710,75 @@
 							</c:otherwise>
 						</c:choose>
 					</select>
-				</div>
-				
-				<div style="float: left; margin-top: 0px; margin-left: 20px;">
-					<input onclick="checkAssignedValues()" name="show-assigned-values" type="checkbox" class="check" id="show-assigned-values" /><spring:message code="label.ShowAssignedValues" />
-				</div>
-				<div id="show-delete-checkboxes-div" style="float: left; margin-top: 0px; margin-left: 10px;">
-					<c:choose>
-						<c:when test="${showdeletecheckboxes == true}">
-							<input onclick="checkDeleteBoxes()" checked="checked" value="true" name="show-delete-checkboxes" type="checkbox" class="check" id="show-delete-checkboxes" /><spring:message code="label.ShowDeleteCheckboxes" />
-						</c:when>
-						<c:otherwise>
-							<input onclick="checkDeleteBoxes()" value="true" name="show-delete-checkboxes" type="checkbox" class="check" id="show-delete-checkboxes" /><spring:message code="label.ShowDeleteCheckboxes" />
-						</c:otherwise>
-					</c:choose>
-				</div>
-								
-				<div id="content-export-buttons" style="min-width: 200px; margin-top: 2px; float: right; text-align: center" class="">
-					<b><spring:message code="label.Export" /></b>
 					
-					<c:choose>
-						<c:when test="${paging.items.size() == 0}">
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportContentLinkxls"  ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportContentLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxml" />" style="cursor: not-allowed" id="startExportContentLinkxml" ><img src="${contextpath}/resources/images/file_extension_xml_small_grey.png" /></a>
-							<c:if test="${!allanswers}">
-		 						<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportContentLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a> 
-							</c:if>
-						</c:when>
-						<c:otherwise>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportContentLinkxls"   onclick="showExportDialog('Content', 'xls')"><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportContentLinkods"  onclick="showExportDialog('Content', 'ods')"><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxml" />" id="startExportContentLinkxml"  onclick="showExportDialog('Content', 'xml')"><img src="${contextpath}/resources/images/file_extension_xml_small.png" /></a>
-							<c:if test="${!allanswers}">
-		 						<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportContentLinkpdf"  onclick="showExportDialog('Content', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a> 
-							</c:if>
-						</c:otherwise>
-					</c:choose>
+					<a onclick="$(this).closest('form').submit()" class="btn btn-info" style="margin-left: 30px"><spring:message code="label.Search" /></a>
+					<a id="resetbutton" onclick="$('#show-wait-image').modal('show');" class="btn btn-default" href="${contextpath}/${sessioninfo.shortname}/management/results?reset=true"><spring:message code="label.ResetFilter" /></a>
 					
+					<a style="margin-left: 30px" data-placement="bottom" data-toggle="tooltip" title="<spring:message code="label.Configure" />" class="iconbutton" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><span class="glyphicon glyphicon-wrench"></span></a>
+					<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton disabled hideme" style="margin: 0px" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-trash"></span></a>
+
+					<input onclick="checkAssignedValues()" name="show-assigned-values" type="checkbox" class="hideme" id="show-assigned-values" />
+					<a id="show-assigned-values-icon" onclick="switchAssignedValues()" class="switchiconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ShowAssignedValues" />" data-placement="bottom"><span class="glyphicon glyphicon-tags"></span></a>
+					<span id="show-delete-checkboxes-div" style="margin-top: 10px;">
+						<c:choose>
+							<c:when test="${showdeletecheckboxes == true}">
+								<input onclick="checkDeleteBoxes()" checked="checked" value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
+								<a id="show-delete-checkboxes-icon" onclick="switchDeleteCheckboxes()" class="switchiconbutton" data-toggle="tooltip" title="<spring:message code="label.ShowDeleteCheckboxes" />" data-placement="bottom"><span class="glyphicon glyphicon-check"></span></a>
+							</c:when>
+							<c:otherwise>
+								<input onclick="checkDeleteBoxes()" value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
+								<a id="show-delete-checkboxes-icon" onclick="switchDeleteCheckboxes()" class="switchiconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ShowDeleteCheckboxes" />" data-placement="bottom"><span class="glyphicon glyphicon-check"></span></a>
+							</c:otherwise>
+						</c:choose>
+					</span>			
+				</div>
+					
+				<div id="content-export-buttons" style="min-width: 200px; margin-top: 2px; float: right; text-align: center">
+					<b><spring:message code="label.Export" /></b>					
+						<span class="deactivatedexports">
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportContentLinkxls"  ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportContentLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxml" />" style="cursor: not-allowed" id="startExportContentLinkxml" ><img src="${contextpath}/resources/images/file_extension_xml_small_grey.png" /></a>
+							<c:if test="${!allanswers}">
+		 						<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportContentLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a> 
+							</c:if>
+						</span>
+						<span class="activatedexports hideme">
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportContentLinkxls" onclick="showExportDialog('Content', 'xls')"><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportContentLinkods" onclick="showExportDialog('Content', 'ods')"><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxml" />" id="startExportContentLinkxml" onclick="showExportDialog('Content', 'xml')"><img src="${contextpath}/resources/images/file_extension_xml_small.png" /></a>
+							<c:if test="${!allanswers}">
+		 						<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportContentLinkpdf" onclick="showExportDialog('Content', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a> 
+							</c:if>
+						</span>
 				</div>
 				
 				<div id="statistics-export-buttons" style="min-width: 200px; margin-top: 2px; float: right; text-align: center" class="hidden">
 					<b><spring:message code="label.Export" /></b>
 					
 					<c:choose>
-						<c:when test="${paging.items.size() == 0 || form.getSurvey().hasNoQuestionsForStatistics()}">
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
+						<c:when test="${form.getSurvey().hasNoQuestionsForStatistics()}">
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
 						</c:when>
 						<c:otherwise>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportStatisticsLinkpdf"  onclick="showExportDialog('Statistics', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>				
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportStatisticsLinkxls"  onclick="showExportDialog('Statistics', 'xls')"><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportStatisticsLinkods"  onclick="showExportDialog('Statistics', 'ods')"><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" id="startExportStatisticsLinkdoc"  onclick="showExportDialog('Statistics', 'doc')"><img src="${contextpath}/resources/images/file_extension_doc_small.png" /></a>
-							<a data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" id="startExportStatisticsLinkodt"  onclick="showExportDialog('Statistics', 'odt')"><img src="${contextpath}/resources/images/file_extension_odt_small.png" /></a>
+							<span class="deactivatedexports">
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
+							</span>
+							<span class="activatedexports hideme">
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportStatisticsLinkpdf"  onclick="showExportDialog('Statistics', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>				
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportStatisticsLinkxls"  onclick="showExportDialog('Statistics', 'xls')"><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportStatisticsLinkods"  onclick="showExportDialog('Statistics', 'ods')"><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" id="startExportStatisticsLinkdoc"  onclick="showExportDialog('Statistics', 'doc')"><img src="${contextpath}/resources/images/file_extension_doc_small.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" id="startExportStatisticsLinkodt"  onclick="showExportDialog('Statistics', 'odt')"><img src="${contextpath}/resources/images/file_extension_odt_small.png" /></a>
+							</span>
 						</c:otherwise>
 					</c:choose>
 					
@@ -744,10 +789,10 @@
 					
 					<c:choose>
 						<c:when test="${paging.items.size() == 0}">
-							<a style="cursor: not-allowed" id="startExportQuizStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportQuizStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
 						</c:when>
 						<c:otherwise>
-							<a id="startExportQuizStatisticsLinkpdf"  onclick="showExportDialog('StatisticsQuiz', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>				
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportQuizStatisticsLinkpdf"  onclick="showExportDialog('StatisticsQuiz', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>				
 						</c:otherwise>
 					</c:choose>
 					
@@ -757,18 +802,9 @@
 			</div>
 			
 			<div style="clear: both"></div>
-		</div>
+		</div>			
 		
-		<div id="search-buttons" class="fixedtitlebuttons">
-			<input type="submit" class="btn btn-default" value="<spring:message code="label.Search" />" />
-			<a id="resetbutton" onclick="$('#show-wait-image').modal('show');" class="btn btn-default" href="${contextpath}/${sessioninfo.shortname}/management/results?reset=true"><spring:message code="label.Reset" /></a>
-			<div style="margin-left: 750px; margin-top: -35px;">
-				<a class="btn btn-default checkDelete disabled" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><spring:message code="label.Delete" /></a>
-				<a class="btn btn-default" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><spring:message code="label.Configure" /></a>
-			</div>
-		</div>
-		
-		<div class="fullpageform" style="margin-top: 230px; margin-bottom: 0px;">
+		<div class="fullpageform" style="margin-top: 170px; margin-bottom: 0px;">
 			<div>			
 				<input type="hidden" id="message" name="message" />
 				<input type="hidden" id="resultType" name="resultType" />
@@ -801,6 +837,7 @@
 		</div>
 		<div class="modal-body">
 			<div style="max-height: 600px; overflow: auto;">
+			
 			<table class="table-bordered table-striped table-styled" id="tblConfigurationFromResult">	
 				<thead>
 					<tr>
@@ -811,7 +848,7 @@
 				<thead>
 				<tbody>
 					<c:forEach items="${questions}" var="question">
-						<c:if test="${question.getType() != 'Image' && question.getType() != 'Text' && question.getType() != 'Confirmation' && !(question.getType() == 'GalleryQuestion' && !question.selection) }">
+						<c:if test="${question.getType() != 'Image' && question.getType() != 'Text' && question.getType() != 'Confirmation'  && question.getType() != 'Ruler' && !(question.getType() == 'GalleryQuestion' && !question.selection) }">
 							<tr>
 								<td style="vertical-align: top; text-align: center"><input name="selected${question.id}" <c:if test="${filter.visible(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="${question.id}" /></td>
 								<td style="vertical-align: top; text-align: center"><input name="exportselected${question.id}" <c:if test="${filter.exported(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exported${question.id}" /></td>
@@ -864,8 +901,8 @@
 			</div>
 		</div>
 		<div class="modal-footer">
-			<a  id="btnOkFromConfigurationResult" onclick="$('#resultsFormMode').val('configure'); $('#configure-columns-dialog').modal('hide'); $('#resultsForm').submit();" class="btn btn-info" ><spring:message code="label.OK" /></a>		
-			<a  class="btn btn-default" onclick="resetSelections($('#tblConfigurationFromResult'))" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
+			<a id="btnOkFromConfigurationResult" onclick="$('#resultsFormMode').val('configure'); $('#configure-columns-dialog').modal('hide'); $('#resultsForm').submit();" class="btn btn-info" ><spring:message code="label.OK" /></a>		
+			<a class="btn btn-default" onclick="resetSelections($('#tblConfigurationFromResult'))" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>
 		</div>

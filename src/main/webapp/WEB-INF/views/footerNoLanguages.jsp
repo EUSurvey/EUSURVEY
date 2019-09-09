@@ -15,9 +15,10 @@
 		
 		<div style="float:right; margin-left: 10px; ">
 			<a target="_blank" href="<c:url value="/home/helpparticipants"/>">${form.getMessage("label.FAQ")}</a> |
-			<a class="headerlink"  href="<c:url value="/home/support"/>">${form.getMessage("label.Support")}</a>
+			<a class="headerlink"  href="<c:url value="/home/documentation"/>">${form.getMessage("label.Support")}</a> 
 			<c:if test="${showprivacy}">
 				| <a href="<c:url value="/home/privacystatement"/>"><spring:message code="label.PrivacyStatement.bis" /></a>
+				| <a href="<c:url value="/home/tos"/>"><spring:message code="label.TermsOfService" /></a>
 			</c:if> 
 		</div>
 	</c:otherwise>

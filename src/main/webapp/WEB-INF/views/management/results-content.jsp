@@ -7,15 +7,19 @@
 		<div id="results-table" style="margin-top: 60px; min-height: 400px;">		
 	</c:when>
 	<c:otherwise>
-		<div id="results-table" style="margin-top: 200px;">		
+		<div id="results-table" style="margin-top: 100px;">		
 	</c:otherwise>
-</c:choose>		
-	<div id="ResultFilterLimit" style="color: #777; text-align: center;">
+</c:choose>
+	<c:if test="${publication == null || publication.isShowSearch()}">
+	<div id="ResultFilterLimit" style="color: #777; text-align: center; margin-bottom: 10px;">
 		<span class="glyphicon glyphicon-info-sign"></span>
 		<spring:message code="info.ResultFilterLimit" />
 	</div>
+	</c:if>
+	
+	<span id="lastupdate"></span>
 
-	<div id="scrollareaheader">				
+	<div id="scrollareaheader" style="overflow-x: auto">				
 		<table id="contentstable" class="table table-bordered table-striped table-styled">
 			<c:set var="count" value="0" scope="page" />
 			<thead style="background-position: initial initial; background-repeat: initial initial;">
@@ -28,7 +32,7 @@
 						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
 							<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
 								<c:choose>
-									<c:when test="${question.getType() == 'Image' || question.getType() == 'Text' || question.getType() == 'Download' || question.getType() == 'Confirmation'}"></c:when>
+									<c:when test="${question.getType() == 'Image' || question.getType() == 'Text' || question.getType() == 'Download' || question.getType() == 'Confirmation' || question.getType() == 'Ruler'}"></c:when>
 									<c:when test="${question.getType() == 'GalleryQuestion' && !question.selection}"></c:when>
 									<c:when test="${question.getType() == 'Matrix'}">
 										<c:forEach items="${question.getQuestions()}" var="matrixquestion">
@@ -89,13 +93,13 @@
 					<tr class="table-styled-filter">
 						<c:if test="${publication == null}">
 							<th class="checkDelete">&nbsp;</th>
-							<th style="width: 150px; text-align: right">&nbsp;</th>
+							<th>&nbsp;</th>
 						</c:if>
 						<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
 							<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
 								<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
 									<c:choose>
-										<c:when test="${question.getType() == 'Image' || question.getType() == 'Text' || question.getType() == 'Download' || question.getType() == 'Confirmation'}"></c:when>
+										<c:when test="${question.getType() == 'Image' || question.getType() == 'Text' || question.getType() == 'Download' || question.getType() == 'Confirmation' || question.getType() == 'Ruler'}"></c:when>
 										<c:when test="${question.getType() == 'GalleryQuestion' && !question.selection}"></c:when>
 										<c:when test="${question.getType() == 'Matrix'}">
 											<c:forEach items="${question.questions}" var="matrixQuestion">
@@ -395,242 +399,22 @@
 			</table>
 		</div>
 		<div id="scrollarea" class="scrollarea">
+			<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging.items.size() == 0}">style="display:block;"</c:if>>
+				<p>
+					<spring:message code="label.NoDataContributionText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
+				<p>
+			</div>	
 		<table id="contentstable2" class="table table-bordered table-striped">
 		<tbody id="contentstablebody">
-			<c:forEach items="${paging.items}" var="answerSet">
-				<tr name="${answerSet.uniqueCode}">				
-					<c:if test="${publication == null}">		
-						<td class="checkDelete" style="min-width: 13px">
-							<input name="delete${answerSet.uniqueCode}" class="check checkDelete" type="checkbox" onclick="checkDelete(this)" />
-						</td>			
-						<td>						
-							<c:choose>
-								<c:when test="${sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1}">
-									<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton" onclick="showDeleteContributionDialog('${answerSet.uniqueCode}')" ><span class="glyphicon glyphicon-remove"></span></a>											
-									<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" target="_blank" href="<c:url value='/editcontribution/'/>${answerSet.uniqueCode}?mode=dialog" ><span class="glyphicon glyphicon-pencil"></span></a>
-									<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Print" />" class="iconbutton" target="_blank" href="<c:url value='/printcontribution'/>?code=${answerSet.uniqueCode}" ><span class="glyphicon glyphicon-print"></span></a>
-									<c:if test="${!allanswers}">
-										<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DownloadPDF" />" class="iconbutton" onclick="downloadAnswerPDF('${answerSet.uniqueCode}')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png"></a>
-									</c:if>
-								</c:when>
-								<c:otherwise>
-									<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton disabled"><span class="glyphicon glyphicon-remove"></span></a>											
-									<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton disabled"><span class="glyphicon glyphicon-pencil"></span></a>
-									<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Print" />" class="iconbutton" target="_blank" href="<c:url value='/printcontribution'/>?code=${answerSet.uniqueCode}" ><span class="glyphicon glyphicon-print"></span></i></a>
-									<c:if test="${!allanswers}">
-										<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DownloadPDF" />" class="iconbutton" onclick="downloadAnswerPDF('${answerSet.uniqueCode}')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png"></a>
-									</c:if>
-								</c:otherwise>
-							</c:choose>							
-						</td>
-					</c:if>		
-					<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
-						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
-							<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
-								<c:choose>
-									<c:when test="${question.getType() == 'Image' || question.getType() == 'Text' || question.getType() == 'Download' || question.getType() == 'Confirmation'}"></c:when>
-									<c:when test="${question.getType() == 'GalleryQuestion' && !question.selection}"></c:when>
-									<c:when test="${question.getType() == 'Matrix'}">
-										<c:forEach items="${question.questions}" var="matrixQuestion">										
-											<c:choose>
-												<c:when test="${matrixQuestion == null}">
-													<td <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>><div class="answercell">&#160;</div></td>
-												</c:when>
-												<c:otherwise>
-													<c:set var="answers" value="${answerSet.getAnswers(matrixQuestion.id, matrixQuestion.uniqueId)}" />
-											
-													<c:if test="${answers.size() > 0}">
-														<td <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-															<div class="answercell">
-																<c:forEach items="${answers}" var="answer" varStatus="rowCounter">	
-																	<c:if test="${rowCounter.index > 0}"> - </c:if>				
-																	${form.getAnswerTitle(answer)}
-																	<span class="assignedValue hideme"><esapi:encodeForHTML>${form.getAnswerShortname(answer)}</esapi:encodeForHTML></span>
-																</c:forEach>
-															</div>
-														</td>
-						 							</c:if>
-													<c:if test="${answers.size() < 1}">
-														<td <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>><div class="answercell">&#160;</div></td>
-													</c:if>
-												</c:otherwise>
-											</c:choose>										
-											
-										</c:forEach>										
-									</c:when>
-									<c:when test="${question.getType() == 'RatingQuestion'}">
-										<c:forEach items="${question.questions}" var="childQuestion">										
-											<c:choose>
-												<c:when test="${childQuestion == null}">
-													<td <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>><div class="answercell">&#160;</div></td>
-												</c:when>
-												<c:otherwise>
-													<c:set var="answers" value="${answerSet.getAnswers(childQuestion.id, childQuestion.uniqueId)}" />
-											
-													<c:if test="${answers.size() > 0}">
-														<td <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-															<div class="answercell">
-																${answers.get(0).getValue()}
-															</div>
-														</td>
-						 							</c:if>
-													<c:if test="${answers.size() < 1}">
-														<td <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>><div class="answercell">&#160;</div></td>
-													</c:if>
-												</c:otherwise>
-											</c:choose>										
-											
-										</c:forEach>										
-									</c:when>
-									<c:otherwise>
-										<c:choose>
-											<c:when test="${question.getType() == 'Table'}">											
-												<c:forEach var="r" begin="1" end="${question.allRows-1}"> 
-													<c:forEach var="c" begin="1" end="${question.allColumns-1}"> 																
-														<td class="cell${question.childElements[question.columns + r - 1].id}-${question.childElements[c].id}" <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-															<div class="answercell">
-																<esapi:encodeForHTML>${answerSet.getTableAnswer(question, r, c, false)}</esapi:encodeForHTML>
-															</div>																								
-														</td>																
-													</c:forEach>													
-												</c:forEach>
-											</c:when>
-											
-											<c:when test="${question.getType() == 'GalleryQuestion'}">
-												<c:set var="answers" value="${answerSet.getAnswers(question.id, question.uniqueId)}" />
-												<td class="cell${question.id}" <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-													<div class="answercell">												
-														<c:forEach items="${question.files}" var="file" varStatus="counter">
-															<c:forEach items="${answers}" var="answer">	
-																<c:if test="${answer.value == counter.index.toString()}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML><br />				
-																</c:if>
-															</c:forEach>
-														</c:forEach>
-													</div>
-												</td>									
-											</c:when>
-											
-											<c:otherwise>
-												<c:set var="answers" value="${answerSet.getAnswers(question.id, question.uniqueId)}" />
-										
-												<c:choose>
-													<c:when test="${question.getType() == 'Upload'}">
-														<c:if test="${publication == null || publication.getShowUploadedDocuments()}">
-															<c:if test="${answers.size() > 0}">
-																<td class="cell${question.id}" <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-																	<div class="answercell" style="overflow: auto">
-																		<c:forEach items="${answers}" var="answer">	
-																			<c:forEach items="${answer.files}" var="file">		
-																				<c:choose>
-																					<c:when test="${sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1 || (form.survey.isDraft && USER.getLocalPrivilegeValue('AccessDraft') > 0)}">
-																						<a target="blank" href="${contextpath}/files/${form.survey.uniqueId}/${file.uid}"><esapi:encodeForHTML>${file.name}</esapi:encodeForHTML></a><br />
-																					</c:when>
-																					<c:otherwise>
-																						<esapi:encodeForHTML>${file.name}</esapi:encodeForHTML><br />
-																					</c:otherwise>
-																				</c:choose>
-																			</c:forEach>
-																		</c:forEach>
-																	</div>
-																</td>
-															</c:if>
-															<c:if test="${answers.size() < 1}">
-																<td class="cell${question.id}" <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>><div class="answercell">&#160;</div></td>
-															</c:if>
-							 							</c:if>							 							
-													</c:when>
-													<c:when test="${question.getType() == 'SingleChoiceQuestion' || question.getType() == 'MultipleChoiceQuestion'}">
-														<c:if test="${answers.size() > 1}">
-															<td class="cell${question.id}" <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-																<div class="answercell">
-																	<c:forEach items="${answers}" var="answer">			
-																		${form.getAnswerTitle(answer)}
-																		<span class="assignedValue hideme"><esapi:encodeForHTML>${form.getAnswerShortname(answer)}</esapi:encodeForHTML></span><br />
-																	</c:forEach>
-																</div>
-															</td>
-							 							</c:if>
-														<c:if test="${answers.size() == 1}">
-															<td class="cell${question.id}" <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-																<div class="answercell">
-																	${form.getAnswerTitle(answers.get(0))}
-																	<span class="assignedValue hideme"><esapi:encodeForHTML>${form.getAnswerShortname(answers.get(0))}</esapi:encodeForHTML></span>
-																</div>
-															</td>
-														</c:if>
-							 							<c:if test="${answers.size() < 1}">
-															<td class="cell${question.id}" <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>><div class="answercell">&#160;</div></td>
-														</c:if>
-													</c:when>
-													<c:otherwise>
-														<c:if test="${answers.size() > 1}">
-															<td class="cell${question.id}" <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-																<div class="answercell">
-																	<c:forEach items="${answers}" var="answer">			
-																		<esapi:encodeForHTML>${form.getAnswerTitle(answer)}</esapi:encodeForHTML>
-																		<span class="assignedValue hideme"><esapi:encodeForHTML>${form.getAnswerShortname(answer)}</esapi:encodeForHTML></span><br />
-																	</c:forEach>
-																</div>
-															</td>
-							 							</c:if>
-														<c:if test="${answers.size() == 1}">
-															<td class="cell${question.id}" <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-																<div class="answercell">
-																	<esapi:encodeForHTML>${form.getAnswerTitle(answers.get(0))}</esapi:encodeForHTML>
-																	<span class="assignedValue hideme"><esapi:encodeForHTML>${form.getAnswerShortname(answers.get(0))}</esapi:encodeForHTML></span>
-																</div>
-															</td>
-														</c:if>
-							 							<c:if test="${answers.size() < 1}">
-															<td class="cell${question.id}" <c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>><div class="answercell">&#160;</div></td>
-														</c:if>
-													</c:otherwise>									
-												</c:choose>
-											</c:otherwise>
-										</c:choose>
-									</c:otherwise>
-								</c:choose>			
-							</c:if>		
-						</c:if>
-					</c:forEach>
-					
-					<c:if test="${publication == null}">
-						<c:choose>
-							<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
-								<c:if test='${filter.visible("invitation") == true}'><td class="cellinvitation"><div class="answercell"><spring:message code="label.Anonymous" /></div></td></c:if>
-								<c:if test='${filter.visible("case") == true}'><td class="cellcase"><div class="answercell"><spring:message code="label.Anonymous" /></div></td></c:if>
-								<c:if test='${filter.visible("user") == true}'><td class="celluser"><div class="answercell"><spring:message code="label.Anonymous" /></div></td></c:if>
-							</c:when>
-							<c:otherwise>
-								<c:if test='${filter.visible("invitation") == true}'><td class="cellinvitation"><div class="answercell"><esapi:encodeForHTML>${answerSet.invitationId}</esapi:encodeForHTML></div></td></c:if>
-								<c:if test='${filter.visible("case") == true}'><td class="cellcase"><div class="answercell"><esapi:encodeForHTML>${answerSet.uniqueCode}</esapi:encodeForHTML></div></td></c:if>
-								<c:if test='${filter.visible("user") == true}'><td class="celluser"><div class="answercell"><esapi:encodeForHTML>${answerSet.responderEmail}</esapi:encodeForHTML></div></td></c:if>
-							</c:otherwise>
-						</c:choose>
-					
-										
-						<c:if test='${filter.visible("created") == true}'><td class="cellcreated"><div class="answercell"><esapi:encodeForHTML><spring:eval expression="answerSet.date" /></esapi:encodeForHTML></div></td></c:if>
-						<c:if test='${filter.visible("updated") == true}'><td class="cellupdated"><div class="answercell"><esapi:encodeForHTML><spring:eval expression="answerSet.updateDate" /></esapi:encodeForHTML></div></td></c:if>
-						<c:if test='${filter.visible("languages") == true}'><td class="celllanguages"><div class="answercell"><esapi:encodeForHTML>${answerSet.languageCode}</esapi:encodeForHTML></div></td></c:if>
-						
-					</c:if>
-					
-					<c:if test="${form.getSurvey().isQuiz}">
-						<td class="cellscore"><div class="answercell">${answerSet.score}</div></td>
-					</c:if>		
-				</tr>
-			</c:forEach>
+			
 		</tbody>
 	</table>
 	</div>
-
-
-	<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging.items.size() == 0}">style="display:block;"</c:if>>
-		<p>
-			<spring:message code="label.NoDataContributionText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
-		<p>
-	</div>	
-	
+			
+	<div id="wheel" class="hideme" style="text-align: center">
+		<img  style="margin-top: 10px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+	</div>
+		
 	<c:if test="${pagingTable ne false}">
 		<div class="RowsPerPage hideme">
 			<span><spring:message code="label.RowsPerPage" />&#160;</span>
@@ -764,23 +548,14 @@ var closeOverlayDivsEnabled = false;
 				    }
 				});
 			 
-			 adaptScrollArea();
+			adaptScrollArea();
 			 
-			<c:if test="${paging.items.size() == 0}">
-				$("#scrollarea").hide();
-				$("#scrollareaheader").css("overflow-x","auto");
+			if ($('#scrollarea').hasScrollBar())
+			{
+				$("#scrollareaheader").css("overflow-y","scroll");
+			} else {
 				$("#scrollareaheader").css("overflow-y","auto");
-			</c:if>
-			
-			<c:if test="${paging.items.size() > 0}">
-				if ($('#scrollarea').hasScrollBar())
-				{
-					$("#scrollareaheader").css("overflow-y","scroll");
-				} else {
-					$("#scrollareaheader").css("overflow-y","auto");
-				}
-			</c:if>
-			
+			}
 			makeResizable($("#contentstable"));
 			
 			//call it this way due to a bug in IE
@@ -918,22 +693,22 @@ var closeOverlayDivsEnabled = false;
 		{	
 			if (localStorage != null)
 			{
-			$('#contentstable').css("width", localStorage.getItem("ResultsTableWidth"));
-			$('#contentstable TR:first').each(function() 
-				{
-					$(this).find('TH').each(function(index){
-						var width = localStorage.getItem("ResultsColumnWidth" + index);
-						if (typeof width != 'undefined' && width != null)
-						{
-							var newWidthNoPadding = parseInt(width.replace("px", "")) - 16;
-							$(this).css('width', width);
-							$(this).find(".answercell").css('width',newWidthNoPadding + "px");
-							$(this).find(".headertitle").css('width',newWidthNoPadding + "px");
-						}						
-					});				
-				});	
- 			synchronizeTableSizes();
-		}
+				$('#contentstable').css("width", localStorage.getItem("ResultsTableWidth"));
+				$('#contentstable TR:first').each(function() 
+					{
+						$(this).find('TH').each(function(index){
+							var width = localStorage.getItem("ResultsColumnWidth" + index);
+							if (typeof width != 'undefined' && width != null)
+							{
+								var newWidthNoPadding = parseInt(width.replace("px", "")) - 16;
+								$(this).css('width', width);
+								$(this).find(".answercell").css('width',newWidthNoPadding + "px");
+								$(this).find(".headertitle").css('width',newWidthNoPadding + "px");
+							}						
+						});				
+					});	
+	 			synchronizeTableSizes();
+			}
 		}
 
 		function makeResizable(table)
@@ -974,18 +749,24 @@ var closeOverlayDivsEnabled = false;
 		function adaptScrollArea()
 		{
 			<c:choose>
-				<c:when test="${publication != null}">
+				<c:when test="${publication != null && publication.isShowSearch()}">
 				var height = $( window ).height() - 530;
+				var statheight = $( window ).height() - 580;
+				</c:when>
+				<c:when test="${publication != null}">
+				var height = $( window ).height() - 420;
+				var statheight = $( window ).height() - 320;
 				</c:when>
 				<c:otherwise>
 				var height = $( window ).height() - 430;
+				var statheight = $( window ).height() - 480;
 				</c:otherwise>
 			</c:choose>			
 			
 			 if (height < 200) height = 200;
 			 $('#scrollarea').css("height", height);
 			 
-			 $('#scrollareastatistics').css("height", height-50);
+			 $('#scrollareastatistics').css("height", statheight);
 			 $('#scrollareastatisticsquiz').css("height", height-50);
 			 $('#scrollareacharts').css("height", height-50);
 			 
@@ -1041,7 +822,7 @@ var closeOverlayDivsEnabled = false;
 			return null;
 		}
 		
-		var newPage = 6;
+		var newPage = 1;
 		var endreached = false;
 		var inloading = false;
 		function loadMore()
@@ -1054,14 +835,17 @@ var closeOverlayDivsEnabled = false;
 			inloading = true;
 			
 			$( "#wheel" ).show();
-			var s = "page=" + newPage++ + "&rows=10";	
+			
+			var rows = 40;
+			
+			var s = "page=" + newPage++ + "&rows=" + rows;	
 			
 			<c:if test="${publication != null}">
 				s = s + "&publicationmode=true";			
 			</c:if>
 			
 			var answers = null;
-						
+			
 			$.ajax({
 				type:'GET',
 				  url: "${contextpath}/${form.survey.shortname}/management/resultsJSON",
@@ -1070,15 +854,30 @@ var closeOverlayDivsEnabled = false;
 				  cache: false,
 				  success: function( list ) {
 				  
-					  if (list.length == 0)
+					  if (list.length <= 1)
 					  {
 						  endreached = true;
+						  inloading = false;
+						  $( "#wheel" ).hide();	
 						  return;
 					  }
 					  
+					  $("#tbllist-empty").hide();
+					  $("#scrollareaheader").css("overflow-x", "hidden");
+					  
+					  $(".deactivatedexports").hide();
+					  $(".activatedexports").show();					  
+					  
 					  var trm = null;
 					  
-					  var i = 0;
+					  if (list[0].length > 0)
+					  {
+						  $("#lastupdate").html('<spring:message code="info.lastResultsUpdate" />' + list[0] + ' <a class="iconbutton" target="_blank" href="${contextpath}/home/helpauthors#_Toc9-11"><span class="glyphicon glyphicon-info-sign"></span></a>');
+					  } else {
+						  $("#lastupdate").html("");
+					  }
+					  
+					  var i = 1;
 					  
 					  while (i < list.length)
 					  {
@@ -1097,6 +896,10 @@ var closeOverlayDivsEnabled = false;
 							 	if ($("#show-delete-checkboxes").is(":checked"))
 								{
 									//visible
+									if ($("#check-all-delete").is(":checked"))
+									{
+										$(inp).attr("checked", "checked");
+									}
 								} else {
 									$(td).addClass("hiddenTableCell");
 								}
@@ -1104,7 +907,7 @@ var closeOverlayDivsEnabled = false;
 								td = document.createElement("td");
 								var a = document.createElement("a");
 								$(a).attr("data-toggle", "tooltip").attr("rel","tooltip").attr("title",'<spring:message code="label.Delete" />').addClass("iconbutton").attr("onclick","showDeleteContributionDialog('" + list[i] + "')").append('<span class="glyphicon glyphicon-remove"></span>');
-								$(td).append(a);
+								$(td).css("max-width","150px").append(a);
 								$(td).append("&nbsp;");
 								a = document.createElement("a");
 								$(a).attr("data-toggle", "tooltip").attr("rel","tooltip").attr("title",'<spring:message code="label.Edit" />').addClass("iconbutton").attr("target", "_blank").attr("href","<c:url value='/editcontribution/'/>" + list[i] + "?mode=dialog").append('<span class="glyphicon glyphicon-pencil"></span>');
@@ -1135,6 +938,10 @@ var closeOverlayDivsEnabled = false;
 							 	if ($("#show-delete-checkboxes").is(":checked"))
 								{
 									$(td).show();
+									if ($("#check-all-delete").is(":checked"))
+									{
+										$(inp).attr("checked", "checked");
+									}
 								} else {
 									$(td).hide();
 								}
@@ -1159,20 +966,21 @@ var closeOverlayDivsEnabled = false;
 							</c:when>
 						</c:choose>
 						
-						i++;
+						i++; //0 is unique code
+						i++; //1 is id
 						
 						<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
 						
 							<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
 								<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
-									<c:if test="${question.getType() != 'Image' && question.getType() != 'Text' && question.getType() != 'Download'}">
+									<c:if test="${question.getType() != 'Image' && question.getType() != 'Text' && question.getType() != 'Download' && question.getType() != 'Ruler' && question.getType() != 'Confirmation'}">
 										<c:choose>
-											<c:when test="${question.getType() == 'Matrix'}">												
+											<c:when test="${question.getType() == 'Matrix'}">
 												<c:forEach items="${question.questions}" var="matrixQuestion">
 												
 													var td = document.createElement("td");
 													var div = document.createElement("div");
-													$(div).addClass("answercell");
+													$(div).addClass("answercell maxtrixcell");
 													$(div).append(list[i++]);
 													$(td).append(div);
 													$(tr).append(td);
@@ -1180,19 +988,19 @@ var closeOverlayDivsEnabled = false;
 												</c:forEach>	
 											</c:when>
 											
-											<c:when test="${question.getType() == 'Table'}">												
-												<c:forEach var="r" begin="1" end="${question.rows-1}"> 
-													<c:forEach var="c" begin="1" end="${question.columns-1}"> 
+											<c:when test="${question.getType() == 'Table'}">
+												<c:forEach var="r" begin="1" end="${question.allRows-1}"> 
+													<c:forEach var="c" begin="1" end="${question.allColumns-1}"> 
 													
 														var td = document.createElement("td");
 														var div = document.createElement("div");
-														$(div).addClass("answercell");
+														$(div).addClass("answercell tablecell");
 														$(div).append(list[i++]);
 														$(td).append(div);
 														$(tr).append(td);
 														
 													</c:forEach>													
-												</c:forEach>																		
+												</c:forEach>
 											</c:when>
 											
 											<c:when test="${question.getType() == 'GalleryQuestion' && question.selection}">
@@ -1203,11 +1011,10 @@ var closeOverlayDivsEnabled = false;
 												$(div).append(list[i++]);
 												$(td).append(div);
 												$(tr).append(td);											
-											</c:when>											
-										
+											</c:when>
+											
 											<c:when test="${question.getType() == 'Upload'}">
 												<c:if test="${publication == null || publication.getShowUploadedDocuments()}">
-												
 													var td = document.createElement("td");
 													$(td).addClass("cell${question.id}");															
 													var div = document.createElement("div");
@@ -1250,7 +1057,7 @@ var closeOverlayDivsEnabled = false;
 							</c:if>
 						</c:forEach>
 					
-						<c:if test="${publication == null}">						
+						<c:if test="${publication == null}">
 							<c:choose>
 								<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
 									<c:if test='${filter.visible("invitation") == true}'>$(tr).append('<td class="cellinvitation"><div class="answercell"><spring:message code="label.Anonymous" /></div></td>');i++;</c:if>
@@ -1278,6 +1085,15 @@ var closeOverlayDivsEnabled = false;
 					  
 					  inloading = false;
 					  $( "#wheel" ).hide();		
+					  
+					  if ($('#scrollarea').hasScrollBar())
+						{
+							$("#scrollareaheader").css("overflow-y","scroll");
+						} else {
+							$("#scrollareaheader").css("overflow-y","auto");
+						}
+					  
+					  synchronizeTableSizes();
 					  
 					  $('[data-toggle="tooltip"]').tooltip({
 						    trigger : 'hover'

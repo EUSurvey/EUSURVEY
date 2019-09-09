@@ -110,9 +110,6 @@ public class AnswerSet implements java.io.Serializable {
 	}
 	public void setIsDraft(boolean isDraft) {
 		this.isDraft = isDraft;
-		for (Answer answer : answers) {
-			answer.setIsDraft(isDraft);
-		}
 	}
 	
 	@OneToMany(targetEntity=Answer.class, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "answerSet" )  

@@ -108,13 +108,7 @@
 	<%@ include file="../menu.jsp" %>
 	<%@ include file="formmenu.jsp" %>
 	
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner">
-			<h1><spring:message code="label.Activity" /></h1>		
-		</div>
-	</div>
-	
-	<div class="fullpageform">
+	<div class="fullpageform100">
 
 		<form:form modelAttribute="paging" id="resultsForm" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/activity" style="margin-top: 0px; margin-bottom: 0px;" onsubmit="$('#show-wait-image').modal('show');">
 			<input type="hidden" id="resultsFormMode" name="resultsFormMode" value="" />
