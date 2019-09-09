@@ -30,8 +30,5 @@ jobs:
   include:
   - stage: Tests
     script:
-    - mvn clean test -Denvironment=oss
+    - mvn clean package -Denvironment=oss
     - sonar-scanner
-  - stage: Deployment
-    script:
-    - mvn clean install -Dmaven.test.skip=true -Denvironment=oss
