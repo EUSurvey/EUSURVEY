@@ -27,7 +27,7 @@ jobs:
   include:
   - stage: Tests
     script:
-    - mvn clean test
+    - mvn clean test -Denvironment=oss
     - sonar-scanner
   - stage: Deployment
     script:
