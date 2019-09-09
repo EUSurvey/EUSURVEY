@@ -23,6 +23,7 @@ before_install:
 - mysql -e "SET GLOBAL event_scheduler = ON;"
 - mysql -e "SET GLOBAL log_bin_trust_function_creators = 1;"
 - mysql -e "SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;"
+install: true
 jobs:
   include:
   - stage: Tests
