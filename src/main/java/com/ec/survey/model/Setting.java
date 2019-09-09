@@ -38,6 +38,13 @@ public class Setting {
 	public final static String ReportingMigrationStart = "ReportingMigrationStart";
 	public final static String ReportingMigrationTime = "ReportingMigrationTime";
 	public final static String ReportingMigrationSurveyToMigrate = "ReportingMigrationSurveyToMigrate";
+	
+	public final static String WeakAuthenticationDisabled = "WeakAuthenticationDisabled";
+	public final static String MaxReports = "MaxReports";
+	public final static String ReportText = "ReportText";
+	public final static String ReportRecipients = "ReportRecipients";
+	
+	
 		
 	@Id
 	@Column(name = "SETTINGS_ID")

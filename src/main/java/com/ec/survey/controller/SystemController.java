@@ -6,10 +6,14 @@ import com.ec.survey.model.Setting;
 import com.ec.survey.model.administration.ComplexityParameters;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.service.MailService;
 import com.ec.survey.service.SessionService;
 import com.ec.survey.service.SettingsService;
 import com.ec.survey.service.SystemService;
 import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.Tools;
+import com.ec.survey.tools.WeakAuthenticationException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +44,7 @@ public class SystemController extends BasicController {
 	private SettingsService settingsService;	
 	
 	@RequestMapping(value = "/message", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody Message getSystemMessage(HttpServletRequest request) throws NotAgreedToTosException {
+	public @ResponseBody Message getSystemMessage(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
 		User user = sessionService.getCurrentUser(request); 
 		Message message;
 		
@@ -79,7 +83,7 @@ public class SystemController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/deletemessage", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody String deleteMessage(HttpServletRequest request) throws NotAgreedToTosException
+	public @ResponseBody String deleteMessage(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException
 	{
 		User user = sessionService.getCurrentUser(request); 
 		String sid = request.getParameter("id");
@@ -94,16 +98,16 @@ public class SystemController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/messages/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView getSystemMessagesRunner(HttpServletRequest request) throws NotAgreedToTosException {
+	public ModelAndView getSystemMessagesRunner(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
 		return getSystemMessages(request, true);
 	}
 	
 	@RequestMapping(value = "/messages", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView getSystemMessages(HttpServletRequest request) throws NotAgreedToTosException {
+	public ModelAndView getSystemMessages(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
 		return getSystemMessages(request, false);
 	}
 	
-	private ModelAndView getSystemMessages(HttpServletRequest request, boolean runnermode) throws NotAgreedToTosException {
+	private ModelAndView getSystemMessages(HttpServletRequest request, boolean runnermode) throws NotAgreedToTosException, WeakAuthenticationException {
 		Message message = systemService.getMessage();
 		
 		User user = sessionService.getCurrentUser(request);
@@ -146,8 +150,56 @@ public class SystemController extends BasicController {
 			complexityParameterList.put(cp.getKey(), settingsService.get(cp.getKey()));
 		}
 		m.addObject("complexityParameters", complexityParameterList);
+
+		m.addObject("reportMaxNumber", settingsService.get(Setting.MaxReports));
+		m.addObject("reportMessageText", settingsService.get(Setting.ReportText));
+		m.addObject("reportRecipients", settingsService.get(Setting.ReportRecipients));
 		
 		return m;
+	}
+	
+	@RequestMapping(value ="/configureReports", method = RequestMethod.POST)
+	public ModelAndView configureReports( HttpServletRequest request, Locale locale) throws Exception {	
+		String number = request.getParameter("maxNumber");
+		
+		if (number == null || !Tools.isInteger(number))
+		{
+			throw new Exception("Invalid number");
+		}
+		
+		String text = request.getParameter("messageText"); 
+		
+		if (text == null || text.length() == 0)
+		{
+			throw new Exception("text must not be empty");
+		}
+		
+		String[] emails = request.getParameterValues("messageEmail");
+		String recipients = "";
+		if (emails != null)
+		{
+			for (String email : emails) {
+				if (email.trim().length() > 0)
+				{
+					if (!MailService.isValidEmailAddress(email))
+					{
+						throw new Exception("invalid email address:" + email);
+					}					
+					
+					if (recipients.length() > 0)
+					{
+						recipients += ";";
+					}
+					recipients += email;
+				}
+			}
+		}
+		
+		settingsService.update(Setting.MaxReports, number);
+		settingsService.update(Setting.ReportText, text);
+		settingsService.update(Setting.ReportRecipients, recipients);
+		
+		return new ModelAndView("redirect:/administration/system");
 	}
 	
 	@RequestMapping(value ="/configureLogging", method = RequestMethod.POST)

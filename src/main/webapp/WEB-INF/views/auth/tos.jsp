@@ -320,7 +320,7 @@
 							</c:if>							
 						</div>
 						<div class="tospage2">
-							<%@ include file="tos_language/tos2_en.jsp"%>
+							<%@ include file="tos_language/tos2_fr.jsp"%>
 						</div>
 					</c:otherwise>
 				</c:choose>

@@ -43,6 +43,14 @@
 				showInfo('<spring:message code="info.SurveyFinallyDeleted" />');
 			</c:if>
 			
+			<c:if test="${frozen != null}">
+				showInfo('<spring:message code="info.SurveyFrozen" />');
+			</c:if>
+			
+			<c:if test="${unfrozen != null}">
+				showInfo('<spring:message code="info.SurveyUnfrozen" />');
+			</c:if>
+			
 			$('.filtercell').find("input").keyup(function(e){
 			    if(e.keyCode == 13){
 			    	$("#resultsForm").submit();
@@ -82,15 +90,35 @@
 				$(".existingonly").hide();
 				$(".deletedonly").hide();
 				$(".archivedonly").show();
+				$(".reportedonly").hide();
+				$(".frozenonly").hide();
 			} else if (mode == 'deleted')
 			{
 				$(".existingonly").hide();
 				$(".archivedonly").hide();
 				$(".deletedonly").show();
+				$(".reportedonly").hide();
+				$(".frozenonly").hide();
+			} else if (mode == 'reported')
+			{
+				$(".existingonly").hide();
+				$(".archivedonly").hide();
+				$(".deletedonly").hide();
+				$(".reportedonly").show();
+				$(".frozenonly").hide();
+			} else if (mode == 'frozen')
+			{
+				$(".existingonly").hide();
+				$(".archivedonly").hide();
+				$(".deletedonly").hide();
+				$(".reportedonly").hide();
+				$(".frozenonly").show();
 			} else {
 				$(".archivedonly").hide();
 				$(".deletedonly").hide();
-				$(".existingonly").show();				
+				$(".existingonly").show();
+				$(".reportedonly").hide();
+				$(".frozenonly").hide();
 			}
 			
 			if (cleartable)
@@ -155,6 +183,26 @@
 					data: s,
 					cache: false,
 					success: refreshDeleted
+					});
+			} else if (mode == 'reported')
+			{
+				$.ajax({
+					type:'GET',
+					url: "${contextpath}/administration/reportedsurveysjson",
+					dataType: 'json',
+					data: s,
+					cache: false,
+					success: refreshReported
+					});
+			} else if (mode == 'frozen')
+			{
+				$.ajax({
+					type:'GET',
+					url: "${contextpath}/administration/frozensurveysjson",
+					dataType: 'json',
+					data: s,
+					cache: false,
+					success: refreshFrozen
 					});
 			} else {
 				$.ajax({
@@ -238,7 +286,16 @@
 				a = document.createElement("a");
 				$(a).attr("data-state", list[i].state);
 				$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Delete" />").attr("onclick","showDeleteDialog('" + list[i].id + "');").html('<span class="glyphicon glyphicon-remove"></span>');
-
+				$(td).append(a);
+				
+				a = document.createElement("a");
+				
+				if (list[i].isFrozen) {
+					$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Unfreeze" />").attr("onclick","unfreezeSurvey('" + list[i].id + "');").html('<span class="glyphicon glyphicon-ban-circle lightred"></span>');
+				} else {				
+					$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Freeze" />").attr("onclick","showFreezeDialog('" + list[i].id + "', '" + list[i].shortname + "', '${serverprefix}" + list[i].shortname + "/management/overview', '" + list[i].titleSort + "');").html('<span class="glyphicon glyphicon-ban-circle"></span>');
+				}
+				
 				$(td).append(a);
 				
 				$(row).append(td);
@@ -436,6 +493,136 @@
 			  $( "#wheel" ).hide();
 		}
 		
+		function refreshReported( list, textStatus, xhr ) {
+			
+			if (list.length == 0)
+			{
+				infinitePage--;
+				endreached = true;
+				$("#load-more-div").hide();
+				
+				if ($('#surveyTableDivTableBody').find("tr").length == 0)
+				{
+				  $("#tbllist-empty").show();
+				}
+			}
+			for (var i = 0; i < list.length; i++ )
+			  {
+				var row = document.createElement("tr");
+				
+				var td = document.createElement("td");				
+				$(td).append(list[i].uniqueId);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].shortname);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(strip_tags(list[i].title));		
+				$(row).append(td);
+								
+				td = document.createElement("td");				
+				$(td).append(list[i].owner.name);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].niceFirstPublished);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].nicePublished);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].numberOfAnswerSetsPublished);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].numberOfDrafts);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].numberOfReports);		
+				$(row).append(td);
+				
+				$('#surveyTableDivTableBody').first().append(row);
+			  }
+			  
+			  $(window).trigger('resize.stickyTableHeaders');
+			  $( "#wheel" ).hide();
+		}
+		
+		function refreshFrozen( list, textStatus, xhr ) {
+			
+			if (list.length == 0)
+			{
+				infinitePage--;
+				endreached = true;
+				$("#load-more-div").hide();
+				
+				if ($('#surveyTableDivTableBody').find("tr").length == 0)
+				{
+				  $("#tbllist-empty").show();
+				}
+			}
+			for (var i = 0; i < list.length; i++ )
+			  {
+				var row = document.createElement("tr");
+				
+				var td = document.createElement("td");				
+				$(td).append(list[i].uniqueId);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].shortname);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(strip_tags(list[i].title));		
+				$(row).append(td);
+								
+				td = document.createElement("td");				
+				$(td).append(list[i].owner.name);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].niceFirstPublished);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].nicePublished);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].numberOfAnswerSetsPublished);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].numberOfDrafts);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].numberOfReports);		
+				$(row).append(td);
+				
+				td = document.createElement("td");		
+				var a = document.createElement("a");				
+				if (list[i].isFrozen) {
+					$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Unfreeze" />").attr("onclick","unfreezeSurvey('" + list[i].id + "');").html('<span class="glyphicon glyphicon-ban-circle lightred"></span>');
+				} else {				
+					$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.Freeze" />").attr("onclick","showFreezeDialog('" + list[i].id + "', '" + list[i].shortname + "', '${serverprefix}" + list[i].shortname + "/management/overview', '" + list[i].titleSort + "');").html('<span class="glyphicon glyphicon-ban-circle"></span>');
+				}				
+				$(td).append(a);
+				
+				$(row).append(td);
+				
+				$('#surveyTableDivTableBody').first().append(row);
+			  }
+			  
+			  $(window).trigger('resize.stickyTableHeaders');
+			  $( "#wheel" ).hide();
+		}
 		
 		var changeownersurveyuid = "";
 		var changeownerid = null;
@@ -599,16 +786,36 @@
 								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
 								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" checked="checked" /><spring:message code="label.ArchivedSurveys" />
 								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
 							</c:when>
 							<c:when test='${mode == "deleted" }'>
 								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
 								<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
 								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" checked="checked" /><spring:message code="label.DeletedSurveys" />
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
+							</c:when>
+							<c:when test='${mode == "reported" }'>
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
+								<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" checked="checked" /><spring:message code="label.ReportedSurveys" />
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
+							</c:when>
+							<c:when test='${mode == "frozen" }'>
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
+								<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" checked="checked" /><spring:message code="label.FrozenSurveys" />
 							</c:when>
 							<c:otherwise>
 								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" checked="checked" /><spring:message code="label.ExistingSurveys" />
 								<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
 								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
+								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
 							</c:otherwise>
 						</c:choose>
 					</div>
@@ -652,6 +859,29 @@
 							<th><spring:message code="label.Published" /></th>
 							<th><spring:message code="label.NumberOfResults" /></th>
 							<th><spring:message code="label.NumberOfDrafts" /></th>
+							<th><spring:message code="label.Actions" /></th>
+						</tr>
+						<tr class="reportedonly">
+							<th><spring:message code="label.Survey" /> UID</th>
+							<th><spring:message code="label.Alias" /></th>
+							<th><spring:message code="label.Title" /></th>
+							<th><spring:message code="label.Owner" /></th>
+							<th><spring:message code="label.FirstPublished" /></th>
+							<th><spring:message code="label.Published" /></th>
+							<th><spring:message code="label.NumberOfResults" /></th>
+							<th><spring:message code="label.NumberOfDrafts" /></th>
+							<th><spring:message code="label.NumberOfReports" /></th>
+						</tr>
+						<tr class="frozenonly">
+							<th><spring:message code="label.Survey" /> UID</th>
+							<th><spring:message code="label.Alias" /></th>
+							<th><spring:message code="label.Title" /></th>
+							<th><spring:message code="label.Owner" /></th>
+							<th><spring:message code="label.FirstPublished" /></th>
+							<th><spring:message code="label.Published" /></th>
+							<th><spring:message code="label.NumberOfResults" /></th>
+							<th><spring:message code="label.NumberOfDrafts" /></th>
+							<th><spring:message code="label.NumberOfReports" /></th>
 							<th><spring:message code="label.Actions" /></th>
 						</tr>
 						<tr class="table-styled-filter archivedonly hideme">
@@ -927,7 +1157,196 @@
 							<th>&nbsp;</th>
 							<th>&nbsp;</th>
 							<th>&nbsp;</th>
-						</tr>					
+						</tr>
+						<tr class="table-styled-filter reportedonly">
+							<th class="filtercell">
+								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.uid}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reporteduid" />
+							</th>
+							<th class="filtercell">
+								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reportedshortname" />
+							</th>
+							<th class="filtercell">
+								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reportedtitle" />
+							</th>
+							<th class="filtercell">
+								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reportedowner" />
+							</th>
+							<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
+								<div class="btn-toolbar" style="margin: 0px; text-align: center">
+									<div class="datefilter" style="float: left">
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									     <c:choose>
+									     	<c:when test="${reportedfilter.firstPublishedFrom != null}">
+									     		<spring:eval expression="filter.firstPublishedFrom" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.from" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									  <div class="overlaymenu hideme">
+									    	<input type="hidden" name="reportedfirstPublishedFrom" class="hiddendate" value="<spring:eval expression="reportedfilter.firstPublishedFrom" />" />
+									    	<div id="metafilterreportedfirstpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+									   </div>
+									</div>
+									<div class="datefilter" style="float: left">	
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									  	<c:choose>
+									     	<c:when test="${reportedfilter.firstPublishedTo != null}">
+									     		<spring:eval expression="filter.firstPublishedTo" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.To" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									 <div class="overlaymenu hideme">
+									    	<input type="hidden" name="reportedfirstPublishedTo" class="hiddendate" value="<spring:eval expression="reportedfilter.firstPublishedTo" />" />
+									    	<div id="metafilterreportedfirstpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+									    </div>
+									</div>	
+								</div>	
+							</th>
+							<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
+								<div class="btn-toolbar" style="margin: 0px; text-align: center">
+									<div class="datefilter" style="float: left">
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									     <c:choose>
+									     	<c:when test="${reportedfilter.publishedFrom != null}">
+									     		<spring:eval expression="reportedfilter.publishedFrom" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.from" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									  <div class="overlaymenu hideme">
+									    	<input type="hidden" name="reportedpublishedFrom" class="hiddendate" value="<spring:eval expression="reportedfilter.publishedFrom" />" />
+									    	<div id="metafilterreportedpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+									   </div>
+									</div>
+									<div class="datefilter" style="float: left">	
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									  	<c:choose>
+									     	<c:when test="${reportedfilter.publishedTo != null}">
+									     		<spring:eval expression="filter.publishedTo" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.To" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									 <div class="overlaymenu hideme">
+									    	<input type="hidden" name="reportedpublishedTo" class="hiddendate" value="<spring:eval expression="reportedfilter.publishedTo" />" />
+									    	<div id="metafilterreportedpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+									    </div>
+									</div>	
+								</div>	
+							</th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+						</tr>
+						
+						<tr class="table-styled-filter frozenonly">
+							<th class="filtercell">
+								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.uid}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozenuid" />
+							</th>
+							<th class="filtercell">
+								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozenshortname" />
+							</th>
+							<th class="filtercell">
+								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozentitle" />
+							</th>
+							<th class="filtercell">
+								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozenowner" />
+							</th>
+							<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
+								<div class="btn-toolbar" style="margin: 0px; text-align: center">
+									<div class="datefilter" style="float: left">
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									     <c:choose>
+									     	<c:when test="${frozenfilter.firstPublishedFrom != null}">
+									     		<spring:eval expression="filter.firstPublishedFrom" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.from" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									  <div class="overlaymenu hideme">
+									    	<input type="hidden" name="frozenfirstPublishedFrom" class="hiddendate" value="<spring:eval expression="frozenfilter.firstPublishedFrom" />" />
+									    	<div id="metafilterfrozenfirstpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+									   </div>
+									</div>
+									<div class="datefilter" style="float: left">	
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									  	<c:choose>
+									     	<c:when test="${frozenfilter.firstPublishedTo != null}">
+									     		<spring:eval expression="filter.firstPublishedTo" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.To" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									 <div class="overlaymenu hideme">
+									    	<input type="hidden" name="frozenfirstPublishedTo" class="hiddendate" value="<spring:eval expression="frozenfilter.firstPublishedTo" />" />
+									    	<div id="metafilterfrozenfirstpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+									    </div>
+									</div>	
+								</div>	
+							</th>
+							<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
+								<div class="btn-toolbar" style="margin: 0px; text-align: center">
+									<div class="datefilter" style="float: left">
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									     <c:choose>
+									     	<c:when test="${frozenfilter.publishedFrom != null}">
+									     		<spring:eval expression="frozenfilter.publishedFrom" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.from" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									  <div class="overlaymenu hideme">
+									    	<input type="hidden" name="frozenpublishedFrom" class="hiddendate" value="<spring:eval expression="frozenfilter.publishedFrom" />" />
+									    	<div id="metafilterfrozenpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+									   </div>
+									</div>
+									<div class="datefilter" style="float: left">	
+									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+									  	<c:choose>
+									     	<c:when test="${frozenfilter.publishedTo != null}">
+									     		<spring:eval expression="filter.publishedTo" />
+									     	</c:when>
+									     	<c:otherwise>
+									     		<spring:message code="label.To" />
+									     	</c:otherwise>
+									     </c:choose>
+									    <span class="caret"></span>
+									  </a>
+									 <div class="overlaymenu hideme">
+									    	<input type="hidden" name="frozenpublishedTo" class="hiddendate" value="<spring:eval expression="frozenfilter.publishedTo" />" />
+									    	<div id="metafilterfrozenpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+									    </div>
+									</div>	
+								</div>	
+							</th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+						</tr>	
+										
 						</thead>
 						<tbody id="surveyTableDivTableBody"></tbody>
 					</table>

@@ -11,6 +11,8 @@ import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
+import com.ec.survey.tools.WeakAuthenticationException;
+
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,7 +52,9 @@ public class SettingsController extends BasicController {
 	@Autowired private LocaleResolver localeResolver;
 	
 	@RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String root(Locale locale, Model model) {	
+	public String root(HttpServletRequest request, Locale locale, Model model) throws NotAgreedToTosException, WeakAuthenticationException {	
+		//check user (e.g. weak authentication)
+		sessionService.getCurrentUser(request);
 		model.addAttribute("languages", surveyService.getLanguages());
     	return "settings/skin";
 	}	
@@ -62,7 +66,7 @@ public class SettingsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-	public String changePassword(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException{
+	public String changePassword(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		
 		String oldPassword = request.getParameter("oldpassword");
 		String newPassword = request.getParameter("newpassword");
@@ -110,7 +114,7 @@ public class SettingsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/changeEmail", method = RequestMethod.POST)
-	public String changeEmail(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException{
+	public String changeEmail(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		
 		String password = request.getParameter("password");
 		String email = request.getParameter("newemail");
@@ -162,7 +166,7 @@ public class SettingsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/changeLanguage", method = RequestMethod.POST)
-	public String changeLanguage(HttpServletRequest request, HttpServletResponse response, ModelMap model, Locale locale) throws NotAgreedToTosException{
+	public String changeLanguage(HttpServletRequest request, HttpServletResponse response, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		String lang = request.getParameter("change-lang");
 			
 		User user = sessionService.getCurrentUser(request);
@@ -179,7 +183,7 @@ public class SettingsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/changePivotLanguage", method = RequestMethod.POST)
-	public String changePivotLanguage(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException{
+	public String changePivotLanguage(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		String lang = request.getParameter("change-lang");
 			
 		User user = sessionService.getCurrentUser(request);
@@ -194,7 +198,7 @@ public class SettingsController extends BasicController {
 	}
 			
 	@RequestMapping(value = "/shares")
-	public ModelAndView shares(HttpServletRequest request, Locale locale) throws NotAgreedToTosException{
+	public ModelAndView shares(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		User user = sessionService.getCurrentUser(request);
 		
 		String delete = request.getParameter("delete");
@@ -230,7 +234,7 @@ public class SettingsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/shareEdit/{pid}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView shareEdit(@PathVariable String pid, HttpServletRequest request, Locale locale) throws NotAgreedToTosException{
+	public ModelAndView shareEdit(@PathVariable String pid, HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		int id = Integer.parseInt(pid);		
 		User user = sessionService.getCurrentUser(request);
 		Share share = attendeeService.getShare(id);
@@ -280,7 +284,7 @@ public class SettingsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/createStaticShare", method = RequestMethod.POST)
-	public ModelAndView createShares(HttpServletRequest request, Locale locale) throws NotAgreedToTosException{
+	public ModelAndView createShares(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		
 		User user = sessionService.getCurrentUser(request);
 		

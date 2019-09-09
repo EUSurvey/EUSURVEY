@@ -56,6 +56,9 @@ public class ActivityService extends BasicService {
 						activity.setLogID(logId);
 						activity.setOldValue(oldnew[counter++]);
 						activity.setNewValue(oldnew[counter++]);
+						
+						checkValueSizes(activity);
+						
 						activity.setUserId(userId);
 						activity.setSurveyUID(surveyUID);
 						session.save(activity);
@@ -89,6 +92,9 @@ public class ActivityService extends BasicService {
 							activity.setLogID(activityCode);
 							activity.setOldValue(code + " " + key + ": " + oldValue);
 							activity.setNewValue(code + " " + key + ": " + newValue);
+							
+							checkValueSizes(activity);
+							
 							activity.setUserId(userId);
 							activity.setSurveyUID(surveyUID);
 							session.save(activity);
@@ -105,6 +111,9 @@ public class ActivityService extends BasicService {
 						activity.setLogID(activityCode);
 						activity.setOldValue(code + " " + key + ":");
 						activity.setNewValue(code + " " + key + ": " + info.get(key));
+						
+						checkValueSizes(activity);
+						
 						activity.setUserId(userId);
 						activity.setSurveyUID(surveyUID);
 						session.save(activity);
@@ -146,6 +155,9 @@ public class ActivityService extends BasicService {
 			activity.setLogID(activityCode);
 			activity.setOldValue(oldValue);
 			activity.setNewValue(newValue);
+			
+			checkValueSizes(activity);
+			
 			activity.setUserId(userId);
 			activity.setSurveyUID(surveyUID);
 			activity.setType(type);
@@ -163,15 +175,30 @@ public class ActivityService extends BasicService {
 					activity.setLogID(activityCode);
 					activity.setOldValue(oldValue);
 					activity.setNewValue(newValue);
+					
+					checkValueSizes(activity);
+					
 					activity.setUserId(userId);
 					activity.setSurveyUID(surveyUID);
 					activity.setType(type);
 					session.save(activity);
 				}
 			}
+		}		
+	}
+	
+	private void checkValueSizes(Activity activity)
+	{
+		if (activity.getOldValue() != null && activity.getOldValue().length() > 65000)
+		{
+			activity.setOldValue(activity.getOldValue().substring(0, 65000) + "...");
 		}
 		
-	}	
+		if (activity.getNewValue() != null && activity.getNewValue().length() > 65000)
+		{
+			activity.setNewValue(activity.getNewValue().substring(0, 65000) + "...");
+		}
+	}
 	
 	@Transactional(readOnly = false, propagation=Propagation.REQUIRES_NEW)
 	public void log(int activityCode, String oldValue, String newValue, int userId, String surveyUID)

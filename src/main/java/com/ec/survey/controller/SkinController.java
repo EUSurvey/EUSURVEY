@@ -12,6 +12,8 @@ import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Ucs2Utf8;
+import com.ec.survey.tools.WeakAuthenticationException;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Controller;
@@ -51,7 +53,7 @@ public class SkinController extends BasicController {
 	private SessionFactory sessionFactory;
 		
 	@RequestMapping(value = "/skin", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView skins(HttpServletRequest request, Locale locale) throws NotAgreedToTosException{
+	public ModelAndView skins(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		User user = sessionService.getCurrentUser(request);
 		
 		List<Skin> skins = null;
@@ -97,7 +99,7 @@ public class SkinController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/skin/new", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String newSkin(Locale locale, Model model, HttpServletRequest request) throws NotAgreedToTosException {	
+	public String newSkin(Locale locale, Model model, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {	
 		
 		Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true, false);
 		Form form = new Form(resources);
@@ -111,7 +113,7 @@ public class SkinController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/skin/edit/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView editSkin(@PathVariable String id, Locale locale, HttpServletRequest request) throws NotAgreedToTosException {	
+	public ModelAndView editSkin(@PathVariable String id, Locale locale, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {	
 		
 		User user = sessionService.getCurrentUser(request);
 		Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true, false);
@@ -132,7 +134,7 @@ public class SkinController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/skin/delete/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView deleteSkin(@PathVariable String id, Locale locale, HttpServletRequest request) throws NotAgreedToTosException {	
+	public ModelAndView deleteSkin(@PathVariable String id, Locale locale, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {	
 		
 		User user = sessionService.getCurrentUser(request);
 		
@@ -156,7 +158,7 @@ public class SkinController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/skin/copy/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView copySkin(@PathVariable String id, Locale locale, HttpServletRequest request) throws NotAgreedToTosException {	
+	public ModelAndView copySkin(@PathVariable String id, Locale locale, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {	
 		
 		User user = sessionService.getCurrentUser(request);
 		Survey demoSurvey = surveyService.getSurvey("SkinDemo", true, false, false, false, null, true, false);
@@ -185,7 +187,7 @@ public class SkinController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/skin/save", method = RequestMethod.POST)
-	public ModelAndView saveSkin(@ModelAttribute Skin skin, BindingResult bindingresult, HttpServletRequest request, Locale locale) throws NotAgreedToTosException {	
+	public ModelAndView saveSkin(@ModelAttribute Skin skin, BindingResult bindingresult, HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {	
 		
 		User user = sessionService.getCurrentUser(request);
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
@@ -261,7 +263,7 @@ public class SkinController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/skin/download/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView download(@PathVariable String id, Locale locale, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException {	
+	public ModelAndView download(@PathVariable String id, Locale locale, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException, WeakAuthenticationException {	
 		
 		User user = sessionService.getCurrentUser(request);
 		int skinId = Integer.parseInt(id);
@@ -293,7 +295,7 @@ public class SkinController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/skin/upload")
-	public void upload(Locale locale, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException {	
+	public void upload(Locale locale, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException, WeakAuthenticationException {	
 		User user = sessionService.getCurrentUser(request);
 		
 		String error = resources.getMessage("error.FileImportFailed", null, "The file could not be imported.", locale);

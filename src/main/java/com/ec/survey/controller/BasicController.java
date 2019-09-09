@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ec.survey.exception.ForbiddenURLException;
+import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.NoFormLoadedException;
@@ -58,6 +59,7 @@ import com.ec.survey.tools.ArchiveExecutor;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.InvalidXHTMLException;
 import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.WeakAuthenticationException;
 import com.octo.captcha.service.CaptchaServiceException;
 import com.octo.captcha.service.multitype.MultiTypeCaptchaService;
 
@@ -190,11 +192,29 @@ public class BasicController implements BeanFactoryAware {
 		return bypassCaptcha !=null && bypassCaptcha.equalsIgnoreCase("true");
 	}
 	
+	@ExceptionHandler(com.ec.survey.tools.Bad2faCredentialsException.class) 
+    public ModelAndView handleBad2faCredentialsException(Exception e, HttpServletRequest request) {
+		logger.info(e.getLocalizedMessage(), e);
+		ModelAndView model =  new ModelAndView("redirect:/errors/2fa.html");
+		model.addObject("contextpath", contextpath);
+		return model;
+    }
+	
 	@ExceptionHandler(InvalidURLException.class) 
     public ModelAndView handleInvalidURLException(Exception e, HttpServletRequest request) {
 		logger.info(e.getLocalizedMessage(), e);
 		ModelAndView model =  new ModelAndView("redirect:/errors/404.html");
 		model.addObject("is404", true);
+		model.addObject("contextpath", contextpath);
+		return model;
+    }
+	
+	@ExceptionHandler(FrozenSurveyException.class) 
+    public ModelAndView handleFrozenSurveyException(Exception e, HttpServletRequest request, Locale locale) {
+		logger.error(e.getLocalizedMessage(), e);
+		ModelAndView model = new ModelAndView("error/generic");
+		String message = resources.getMessage("error.FrozenSurvey", null, "This survey has been blocked due to an infringement to our policy. We are sorry for the inconvenience this may cause. Please try again later.", locale);
+		model.addObject("message", message);
 		model.addObject("contextpath", contextpath);
 		return model;
     }
@@ -210,6 +230,16 @@ public class BasicController implements BeanFactoryAware {
 	@ExceptionHandler(NotAgreedToTosException.class) 
     public ModelAndView handleNotAgreedToTosException(Exception e, HttpServletRequest request) {
 		ModelAndView model = new ModelAndView("redirect:/auth/tos");
+		model.addObject("contextpath", contextpath);
+		return model;
+    }
+	
+	@ExceptionHandler(WeakAuthenticationException.class) 
+    public ModelAndView handleWeakAuthenticationException(Exception e, HttpServletRequest request, Locale locale) {
+		logger.error(e.getLocalizedMessage(), e);
+		ModelAndView model = new ModelAndView("error/generic");
+		String message = resources.getMessage("error.WeakAuthentication", null, "Please log in using two factor authentication in order to access the system.", locale);
+		model.addObject("message", message);
 		model.addObject("contextpath", contextpath);
 		return model;
     }

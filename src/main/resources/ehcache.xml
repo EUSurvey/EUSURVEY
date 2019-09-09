@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache>
-
 <diskStore path="java.io.tmpdir"/>
  <defaultCache eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
         overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"

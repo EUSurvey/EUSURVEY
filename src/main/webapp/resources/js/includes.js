@@ -1890,6 +1890,47 @@ function initModals(item)
 		$('#delete-survey-dialog').modal();
 	}
 	
+	var selectedFreezeId = '';
+	function showFreezeDialog(id, alias, url, title)
+	{
+		selectedFreezeId = id;
+		$('#freezeAlias').text(alias);
+		
+		var link = "<a href='" + url + "'>" + url + "</a>";
+		
+		$('#freezeLink').text(url);
+		$('#freezeTitle').text(title);
+		var text = $('#freeze-default-text').html();
+		var surveydata = alias + "<br />" + link + "<br />" + title;
+		text = text.replace("[SURVEYDATA]", surveydata);
+		$('#freezeEmailText').text(text);
+		$('#freeze-survey-dialog').modal();
+	}
+	
+	function freezeSurvey()
+	{
+		if (!$('#freezeCheck').is(":checked"))
+		{
+			$('#freezeCheckError').show();
+			return;
+		} else {
+			$('#freezeCheckError').hide();
+		}
+		
+		$("#freezeSurveyId").val(selectedFreezeId);
+		$('#freeze-survey-dialog').modal("hide");
+		$('#show-wait-image').modal('show');
+		//$("#load-forms").attr("onsubmit","$('.tableFloatingHeader').empty(); $('.modal-backdrop').hide();");
+		$("#freeze-form").submit();
+	}
+	
+	function unfreezeSurvey(id)
+	{
+		$("#unfreezeSurveyId").val(id);
+		$('#show-wait-image').modal('show');
+		$("#unfreeze-form").submit();
+	}
+	
 	function deleteSurvey()
 	{
 		$("#delete").val(selectedId);

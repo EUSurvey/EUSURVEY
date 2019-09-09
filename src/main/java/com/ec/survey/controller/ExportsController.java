@@ -13,6 +13,7 @@ import com.ec.survey.service.SessionService;
 import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
+import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.apache.maven.surefire.shade.org.apache.maven.shared.utils.StringUtils;
 import org.apache.poi.util.IOUtils;
@@ -225,7 +226,7 @@ public class ExportsController extends BasicController {
 	
 
 	@RequestMapping(value = "/list")
-	public ModelAndView root(HttpServletRequest request) throws NotAgreedToTosException {
+	public ModelAndView root(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
 		sessionService.getCurrentUser(request);
 		
 		//default
@@ -251,7 +252,7 @@ public class ExportsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/exportsjson", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<Export> exportsjson(HttpServletRequest request) throws NotAgreedToTosException {	
+	public @ResponseBody List<Export> exportsjson(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {	
 		
 		int itemsPerPage = -1;
 		int page = -1;
@@ -396,7 +397,7 @@ public class ExportsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/recreate/{exportId}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView recreateExport(@PathVariable int exportId, HttpServletRequest request, Locale locale) throws NotAgreedToTosException {
+	public ModelAndView recreateExport(@PathVariable int exportId, HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {
 		Export export = exportService.getExport(exportId, true);		
 		if (export == null || !(sessionService.checkUser(export.getUserId(), request) || sessionService.getCurrentUser(request).getGlobalPrivileges().get(GlobalPrivilege.FormManagement).equals(2))) {
 			return new ModelAndView("error/generic", "message", "Access denied");
@@ -406,7 +407,7 @@ public class ExportsController extends BasicController {
 	}
 
 	@RequestMapping(value = "/recreateMany/{exportIdList}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView recreateExport(@PathVariable String exportIdList, HttpServletRequest request, Locale locale) throws NotAgreedToTosException {
+	public ModelAndView recreateExport(@PathVariable String exportIdList, HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {
 		String[] exportIds = exportIdList.split("-");
 		List<Export> exports = new ArrayList<>();
 		

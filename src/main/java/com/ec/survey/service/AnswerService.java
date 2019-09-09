@@ -17,6 +17,7 @@ import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.InvalidEmailException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
+import com.ec.survey.tools.WeakAuthenticationException;
 import com.ec.survey.tools.export.StatisticsCreator;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -1736,11 +1737,11 @@ public class AnswerService extends BasicService {
 		return result;
 	}
 
-	public String getDraftForEcasLogin(Survey survey, HttpServletRequest request) throws NotAgreedToTosException {
+	public String getDraftForEcasLogin(Survey survey, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
 		Session session = sessionFactory.getCurrentSession();
 		String sql = "SELECT d.DRAFT_UID FROM DRAFTS d JOIN ANSWERS_SET a ON d.answerSet_ANSWER_SET_ID = a.ANSWER_SET_ID WHERE (a.RESPONDER_EMAIL = :email or a.RESPONDER_EMAIL = :email2) AND a.SURVEY_ID IN (:ids)";
 		SQLQuery query = session.createSQLQuery(sql);
-		User user = sessionService.getCurrentUser(request, false);
+		User user = sessionService.getCurrentUser(request, false, false);
 
 		if (user == null)
 			return null;

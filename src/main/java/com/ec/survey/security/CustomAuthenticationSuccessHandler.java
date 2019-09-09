@@ -50,12 +50,18 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 		User user = null;
 		try {
 			boolean ecas = false;
+			boolean weakAuthentication = false;
 			for (GrantedAuthority auth: securityContext.getAuthentication().getAuthorities())
 			{
 				if (auth.getAuthority().equalsIgnoreCase("ROLE_ECAS_USER"))
 				{
 					ecas = true;
 				}
+				
+				if (auth.getAuthority().equalsIgnoreCase("ROLE_WEAK_AUTHENTICATION"))
+				{
+					weakAuthentication = true;
+				}				
 				
 				if (auth.getAuthority().startsWith("ROLE_ECAS_SURVEY_"))
 				{
@@ -93,6 +99,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 			}
 			
 			request.getSession().setAttribute("USER", user);
+			request.getSession().setAttribute("WEAKAUTHENTICATION", weakAuthentication);
 		    localeResolver.setLocale(request, response, new Locale(user.getLanguage()));		        
 			
 		} catch (Exception e) {

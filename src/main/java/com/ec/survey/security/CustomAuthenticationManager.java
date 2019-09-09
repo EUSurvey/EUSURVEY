@@ -6,6 +6,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.LdapService;
 import com.ec.survey.service.SessionService;
+import com.ec.survey.tools.Bad2faCredentialsException;
 import com.ec.survey.tools.BadSurveyCredentialsException;
 import com.ec.survey.tools.EcasHelper;
 import com.ec.survey.tools.Tools;
@@ -72,126 +73,146 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			
 			logger.debug("authenticate".toUpperCase() +" GET THE TICKET TO CHECK VALUE " + ValidationURL +" THE TICKET IS " + ticket);
 			
-			try{
+			boolean weakAuthentication = false;
+    		sessionService.initializeProxy();
+    		logger.debug("authenticate".toUpperCase() +" PROXY INITIALZED");
+    		String xmlValidationAnswer = EcasHelper.getSourceContents(ValidationURL);
+    		logger.info("authenticate".toUpperCase() +" GET THE SOURCE CONTENT " + xmlValidationAnswer);
+    		if (xmlValidationAnswer.contains("<cas:authenticationSuccess>")) {
+    			String username = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user");
+    			String type = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:employeeType");	    				    			
+				String strength = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:strength");    				
 				
-	    		sessionService.initializeProxy();
-	    		logger.debug("authenticate".toUpperCase() +" PROXY INITIALZED");
-	    		String xmlValidationAnswer = EcasHelper.getSourceContents(ValidationURL);
-	    		logger.info("authenticate".toUpperCase() +" GET THE SOURCE CONTENT " + xmlValidationAnswer);
-	    		if (xmlValidationAnswer.contains("<cas:authenticationSuccess>")) {
-	    			String username = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user");
-	    			String type = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:employeeType");
-					
-					if (auth.getName() != null && auth.getName().startsWith("oldLogin:"))
+				if (auth.getName() != null && auth.getName().startsWith("oldLogin:"))
+				{
+					String oldlogin = auth.getName().substring(9);
+					if (!oldlogin.equals(username))
 					{
-						String oldlogin = auth.getName().substring(9);
-						if (!oldlogin.equals(username))
-						{
-							logger.warn("replacing user " + oldlogin + " by user " + username);
-						}
+						logger.warn("replacing user " + oldlogin + " by user " + username);
 					}
+				}
+				
+				try {					
+					logger.debug("authenticate".toUpperCase() +" START TO GET USER INFORMATION FROM DB FOR USERNAME " + username);
+					user = administrationService.getUserForLogin(username, true);
+				} catch (Exception e)
+		    	{
+					//if an ecas user logs in for the first time there is no db entry for him yes
+		    	}
+				
+				logger.debug("authenticate".toUpperCase() +" Get All Roles From AdminService");
+				List<Role> Roles = administrationService.getAllRoles();
+				Role ecRole = null;
+				Role intRole = null;
+				for (Role role : Roles) {
+					if (role.getName().equalsIgnoreCase("Form Manager (EC)")) ecRole = role;
+					if (role.getName().equalsIgnoreCase("Form Manager")) intRole = role;
+				}	
+				
+				if (user == null)
+				{	
+					user = new User();
+					user.setLogin(username);
+					user.setType(User.ECAS);	
+					user.setLanguage("EN");
+					user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
+					user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
+					user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
 					
-					try {					
-						logger.debug("authenticate".toUpperCase() +" START TO GET USER INFORMATION FROM DB FOR USERNAME " + username);
-						user = administrationService.getUserForLogin(username, true);
-					} catch (Exception e)
-			    	{
-						//if an ecas user logs in for the first time there is no db entry for him yes
-			    	}
-					
-					logger.debug("authenticate".toUpperCase() +" Get All Roles From AdminService");
-					List<Role> Roles = administrationService.getAllRoles();
-					Role ecRole = null;
-					Role intRole = null;
-					for (Role role : Roles) {
-						if (role.getName().equalsIgnoreCase("Form Manager (EC)")) ecRole = role;
-						if (role.getName().equalsIgnoreCase("Form Manager")) intRole = role;
-					}	
-					
-					if (user == null)
-					{	
-						user = new User();
-						user.setLogin(username);
-						user.setType(User.ECAS);	
-						user.setLanguage("EN");
-						user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
-						user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
-						user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
-						
-						if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c")) 
-						{
-							user.getRoles().add(ecRole);
-						} else {
-							user.getRoles().add(intRole);							
-						}
-						
-						administrationService.createUser(user);
+					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c")) 
+					{
+						user.getRoles().add(ecRole);
 					} else {
-						String oldEmail = user.getEmail();
+						if (strength.equalsIgnoreCase("PASSWORD") || strength.equalsIgnoreCase("STRONG"))
+	    				{
+	    					weakAuthentication = true;
+	    					if (!surveyLoginMode)
+	    					{
+		    					throw new Bad2faCredentialsException("Ecas user does not use two factor authentication!");
+		    				}
+						}						
 						
-						user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
-						user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
-						user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
-										
-						if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c")) 
-						{
-							if (ecRole != null)
-							{
-								if (user.getRoles().size() != 1 || !Objects.equals(user.getRoles().get(0).getId(), ecRole.getId()))
-								{
-									user.getRoles().clear();
-									user.getRoles().add(ecRole);
-									administrationService.updateUser(user);
-								}
-							}
-						} else {
-							if (intRole != null)
-							{
-								if (user.getRoles().size() != 1 || !Objects.equals(user.getRoles().get(0).getId(), intRole.getId()))
-								{
-									user.getRoles().clear();
-									user.getRoles().add(intRole);
-									administrationService.updateUser(user);
-								}
-							}
-						}
-						
-						if (!oldEmail.equalsIgnoreCase(user.getEmail()))
-						{
-							if (user.getOtherEmail() == null)
-							{
-								user.setOtherEmail(oldEmail);
-							} else {
-								if (!user.getOtherEmail().endsWith(";"))
-								{
-									user.setOtherEmail(user.getOtherEmail() + ";" + oldEmail);
-								} else {
-									user.setOtherEmail(user.getOtherEmail() + oldEmail);
-								}
-							}
-							administrationService.updateUser(user);
-						}
+						user.getRoles().add(intRole);							
 					}
 					
-					Collection<GrantedAuthority> authorities = getAuthorities(user, true);
+					try {
+						administrationService.createUser(user);
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+						throw new BadCredentialsException("Ecas user cannot be created!");
+					}
+				} else {
+					String oldEmail = user.getEmail();
 					
-					if (surveyLoginMode)
+					user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
+					user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
+					user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
+									
+					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c")) 
 					{
-						authorities.add(new SimpleGrantedAuthority("ROLE_ECAS_SURVEY_" + survey));
+						if (ecRole != null)
+						{
+							if (user.getRoles().size() != 1 || !Objects.equals(user.getRoles().get(0).getId(), ecRole.getId()))
+							{
+								user.getRoles().clear();
+								user.getRoles().add(ecRole);
+								administrationService.updateUser(user);
+							}
+						}
+					} else {
+						if (intRole != null)
+						{
+							if (strength.equalsIgnoreCase("PASSWORD") || strength.equalsIgnoreCase("STRONG"))
+		    				{
+		    					weakAuthentication = true;
+		    					if (!surveyLoginMode)
+		    					{
+			    					throw new Bad2faCredentialsException("Ecas user does not use two factor authentication!");
+			    				}
+							}
+							
+							if (user.getRoles().size() != 1 || !Objects.equals(user.getRoles().get(0).getId(), intRole.getId()))
+							{
+								user.getRoles().clear();
+								user.getRoles().add(intRole);
+								administrationService.updateUser(user);
+							}
+						}
 					}
 					
-					return new UsernamePasswordAuthenticationToken(
-							username, 
-							"", 
-							authorities);
+					if (!oldEmail.equalsIgnoreCase(user.getEmail()))
+					{
+						if (user.getOtherEmail() == null)
+						{
+							user.setOtherEmail(oldEmail);
+						} else {
+							if (!user.getOtherEmail().endsWith(";"))
+							{
+								user.setOtherEmail(user.getOtherEmail() + ";" + oldEmail);
+							} else {
+								user.setOtherEmail(user.getOtherEmail() + oldEmail);
+							}
+						}
+						administrationService.updateUser(user);
+					}
+				}
+				
+				Collection<GrantedAuthority> authorities = getAuthorities(user, true, weakAuthentication);
+				
+				if (surveyLoginMode)
+				{
+					authorities.add(new SimpleGrantedAuthority("ROLE_ECAS_SURVEY_" + survey));
+				}
+				
+				return new UsernamePasswordAuthenticationToken(
+						username, 
+						"", 
+						authorities);
 				
 				} else{
 					logger.error("cas:authenticationSuccess NOT FOUND IN XMLVALIDATION");
 				} 
-	    	} catch (Exception e)
-	    	{
-	    		logger.error("error on getValidation "+e.getLocalizedMessage(), e);
-	    	}
+	    	
 	    	
 	    	logger.error("Ecas user cannot be validated!");
 	    	
@@ -239,7 +260,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 		return new UsernamePasswordAuthenticationToken(
 				auth.getName(), 
 				auth.getCredentials(), 
-				getAuthorities(user, false));
+				getAuthorities(user, false, false));
 	}
 
 	/**
@@ -249,8 +270,13 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 	 * @param ecas
      * @return
      */
-	public Collection<GrantedAuthority> getAuthorities(User user, boolean ecas) {
+	public Collection<GrantedAuthority> getAuthorities(User user, boolean ecas, boolean weakAuthentication) {
 		List<GrantedAuthority> authList = new ArrayList<>();
+		
+		if (weakAuthentication)
+		{
+			authList.add(new SimpleGrantedAuthority("ROLE_WEAK_AUTHENTICATION"));
+		}
 
 		authList.add(new SimpleGrantedAuthority("ROLE_USER"));
 		

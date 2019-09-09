@@ -19,6 +19,8 @@ import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizHelper;
 import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.Tools;
+import com.ec.survey.tools.WeakAuthenticationException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,7 +59,7 @@ public class ContributionController extends BasicController {
 	private @Value("${export.fileDir}") String fileDir;	
 	private @Value("${server.prefix}") String serverPrefix;
 	
-	public AnswerSet getAnswerSet(String code, HttpServletRequest request) throws NotAgreedToTosException
+	public AnswerSet getAnswerSet(String code, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException
 	{
 		AnswerSet answerSet = null;
 		User user = sessionService.getCurrentUser(request);

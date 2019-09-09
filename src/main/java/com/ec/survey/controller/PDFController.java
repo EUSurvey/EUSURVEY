@@ -14,6 +14,7 @@ import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.SurveyExecutor;
 import com.ec.survey.tools.Tools;
+import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang.StringUtils;
@@ -328,7 +329,7 @@ public class PDFController extends BasicController {
 	}
 		
 	@RequestMapping(value = "/answer/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView answer(@PathVariable String code, HttpServletRequest request, Locale locale, HttpServletResponse response) throws InvalidURLException, NotAgreedToTosException, ForbiddenURLException {
+	public ModelAndView answer(@PathVariable String code, HttpServletRequest request, Locale locale, HttpServletResponse response) throws InvalidURLException, NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException {
 		User user = sessionService.getCurrentUser(request);
 		
 		if (user == null)

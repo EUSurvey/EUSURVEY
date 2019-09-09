@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
@@ -626,7 +627,7 @@ public class HomeController extends BasicController {
 		
 			Survey survey = surveyService.getSurvey(Integer.parseInt(request.getParameter("survey.id")), false, true);
 				
-			User user = sessionService.getCurrentUser(request, false);
+			User user = sessionService.getCurrentUser(request, false, false);
 			AnswerSet answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, fileDir, uniqueCode, oldAnswerSet, oldAnswerSet.getLanguageCode(), user, fileService);
 			
 			saveAnswerSet(answerSet, fileDir, null, -1);
@@ -753,7 +754,7 @@ public class HomeController extends BasicController {
 		SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lastPublicSurveyFilter");
 
 		SqlPagination sqlPagination = new SqlPagination(newPage, itemsPerPage);
-		return surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false);
+		return surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, false);
 	}
 	
 	@RequestMapping(value = "/validate/{id}/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -809,6 +810,84 @@ public class HomeController extends BasicController {
 
 		logger.error("HomeController.notifyError called for the translation with request ID " + requestId);
 		machineTranslationService.saveErrorResponse(requestId,targetLanguage,errorCode,errorMessage);
+	}
+	
+	@RequestMapping(value = "/home/reportAbuse", method = RequestMethod.GET)
+	public String reportAbuse (HttpServletRequest request, Locale locale, Model model) throws InvalidURLException {	
+		model.addAttribute("lang", locale.getLanguage());
+		model.addAttribute("runnermode", true);
+		
+		String surveyid = request.getParameter("survey");
+		if (surveyid == null || surveyid.trim().length() == 0)
+		{
+			throw new InvalidURLException();
+		}
+		
+		try {
+			int id = Integer.parseInt(surveyid);
+			
+			Survey survey = surveyService.getSurvey(id);
+			
+			if (survey == null)
+			{
+				throw new InvalidURLException();
+			}
+			
+			model.addAttribute("AbuseSurvey", survey.getUniqueId());
+			model.addAttribute("AbuseType", "");
+			model.addAttribute("AbuseText", "");
+			model.addAttribute("AbuseEmail", "");
+			
+		} catch (NumberFormatException e)
+		{
+			throw new InvalidURLException();
+		}
+		
+		return "home/reportabuse";
+	}
+	
+	@RequestMapping(value = "home/reportAbuse", method = RequestMethod.POST)
+	public ModelAndView reportAbusePOST(HttpServletRequest request, Locale locale, HttpServletResponse response) throws NumberFormatException, Exception {
+		ModelAndView model = new ModelAndView("home/reportabuse");
+		
+		String uid = request.getParameter("abuseSurvey");
+		String type = request.getParameter("abuseType");
+		String text = request.getParameter("abuseText");
+		String email = request.getParameter("abuseEmail");
+		
+		Survey survey = surveyService.getSurveyByUniqueId(uid, false, true);
+		
+		if (survey == null)
+		{
+			throw new InvalidURLException();
+		}
+		
+		if (!checkCaptcha(request)) {			
+			model.addObject("wrongcaptcha", true);
+			model.addObject("contextpath", contextpath);
+			
+			model.addObject("AbuseSurvey", uid);
+			model.addObject("AbuseType", type);
+			model.addObject("AbuseText", text);
+			model.addObject("AbuseEmail", email);
+			
+			return model;
+		}		
+	
+		logger.info("HomeController.reportAbuse called with abuseType " + type);
+		
+		surveyService.reportAbuse(survey, type, text, email);
+		
+		model = new ModelAndView("error/info");
+		String message = resources.getMessage("info.ReportAbuseSent", null, "The abuse has been reported to the team in charge of the service.", locale);
+		
+		model.addObject("message", message);
+		model.addObject("contextpath", contextpath);
+		
+		String link = serverPrefix + "runner/" + survey.getShortname();
+		model.addObject("SurveyLink", link);
+		
+		return model;
 	}
 	
 }

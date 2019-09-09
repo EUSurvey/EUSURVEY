@@ -152,6 +152,8 @@
 			$( "#wheel" ).show();
 			var s = "page=" + newPage++ + "&rows=10";	
 			
+			var reportText = '<spring:message code="warning.ReportedSurvey" arguments="[X]" />'
+			
 			$.ajax({
 				type:'GET',
 				  url: "${contextpath}/forms/surveysjson",
@@ -172,6 +174,13 @@
 						  
 						  $(div).addClass("surveybox");
 						  
+						  if (list[i].numberOfReports > 0)
+						  {
+							  var divReport = document.createElement("div");
+							  $(divReport).addClass("surveywarning").html(reportText.replace("[X]", list[i].numberOfReports));
+							  $(div).append(divReport);
+						  }
+						  						  
 						  var divHeader = document.createElement("div");
 						  $(divHeader).addClass("surveyItemHeader");
 						  
@@ -627,6 +636,12 @@
 							<c:forEach items="${paging.items}" var="survey">
 							
 							<div class="surveybox">
+							
+								<c:if test="${survey.numberOfReports > 0 }">
+									<div class="surveywarning">
+										<spring:message code="warning.ReportedSurvey" arguments="${survey.numberOfReports}" />
+									</div>
+								</c:if>
 							
 								<div class="typeicon">
 									<c:choose>

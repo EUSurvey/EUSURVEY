@@ -127,6 +127,12 @@
 		
 			<div id="originaltitle" class="hideme">${form.survey.title}</div>
 			
+			<c:if test="${form.survey.numberOfReports > 0 }">
+				<div class="surveywarning">
+					<spring:message code="warning.ReportedSurvey" arguments="${form.survey.numberOfReports}" />
+				</div>
+			</c:if>
+			
 			<div class="typeicon">
 				<c:choose>
 					<c:when test="${form.survey.isQuiz}">

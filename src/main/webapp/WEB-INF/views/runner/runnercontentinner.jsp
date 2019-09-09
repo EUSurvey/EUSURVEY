@@ -339,7 +339,10 @@
 	 								<spring:eval expression="form.answerSets[0].updateDate" />
 		 						</div>							
 							</c:if>
-						</c:if>
+						</c:if>						
+						
+						<br /><br />
+						<a target="_blank" href="${contextpath}/home/reportAbuse?survey=${form.survey.id}" class="link visiblelink">${form.getMessage("label.ReportAbuseLink")}</a>						
 					</div>												
 				</div>
 			</c:if>

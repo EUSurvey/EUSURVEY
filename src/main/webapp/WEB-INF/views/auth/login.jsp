@@ -106,7 +106,7 @@
 	 	
 		 	<c:if test="${showecas != null}">
 		 	
-				<div id="ecasPanel" style="text-align: center; width: 400px; margin-left:auto; margin-right:auto; ">
+				<div id="ecasPanel" style="">
 					
 					<c:if test="${casoss !=null}">					
 						<h3 style="color:rgb(0, 79, 152);">						
@@ -114,38 +114,79 @@
 						</h3>
 					</c:if>					
 					
-					<div id="ecasPanelContent" class="well" style="padding:51px 51px 51px 51px; margin-bottom:0px;">
+					<div id="ecasPanelContent" class="well" style="max-width: 420px; padding:30px; padding-bottom: 5px; margin-bottom:0px; float: left;">
+						<form:form action="${ecasurl}" style="margin-bottom: 25px">
+							<div style="height: 150px;">
+								<input type="hidden" name="service" value="<esapi:encodeForHTMLAttribute>${serviceurl}</esapi:encodeForHTMLAttribute>"/>
+								<input type="hidden" name="acceptStrength" value="PASSWORD_SMS" />
+								
+									<c:choose>
+										<c:when test="${casoss !=null}">
+										<img src="${contextpath}/resources/images/cas_logo.png" alt="cas logo" />
+										</c:when>
+										<c:otherwise>
+											<span style="font-size: 25px; color: #45A0BC;"><spring:message code="login.externalTitle" /></span>
+										</c:otherwise>
+									</c:choose>
+									
+								<br /><br />
+								<c:choose>
+									<c:when test="${casoss !=null}">
+										<spring:message code="label.CASInfo" /> 			
+									</c:when>
+									<c:otherwise>
+										<div style="text-align: left">
+											<spring:message code="login.externalInfo" />
+										</div>		
+									</c:otherwise>
+								</c:choose>
+							</div>
+							<a class="btn btn-info" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>
+						</form:form>
+					</div>
+					
+					<div style="float: left; width: 80px; padding-top: 120px; text-align: center"><spring:message code="label.or" /></div>
+					
+					<div id="ecasPanelContent2" class="well" style="max-width: 420px; padding:30px; margin-bottom:0px; float: right">
 						<form:form action="${ecasurl}">
 							<input type="hidden" name="service" value="<esapi:encodeForHTMLAttribute>${serviceurl}</esapi:encodeForHTMLAttribute>"/>
-							
-							<a  onclick="$(this).closest('form').submit()">
+							<div style="height: 150px;">
 								<c:choose>
 									<c:when test="${casoss !=null}">
 									<img src="${contextpath}/resources/images/cas_logo.png" alt="cas logo" />
 									</c:when>
 									<c:otherwise>
-										<span style="font-size: 25px"><spring:message code="login.useEULoginTitle" /></span>
-										<!-- <img src="${contextpath}/resources/images/logo_ecas.png" alt="ecas logo" /> -->
+										<span style="font-size: 25px; color: #45A0BC;"><spring:message code="login.internalTitle" /></span>
 									</c:otherwise>
 								</c:choose>
 								
-							</a><br /><br />
-							<c:choose>
-								<c:when test="${casoss !=null}">
-									<spring:message code="label.CASInfo" /> 			
-								</c:when>
-								<c:otherwise>
-							<spring:message code="label.ECASInfo" />			
-								</c:otherwise>
-							</c:choose>
-							
+								<br /><br />
+								<c:choose>
+									<c:when test="${casoss !=null}">
+										<spring:message code="label.CASInfo" /> 			
+									</c:when>
+									<c:otherwise>
+										<div style="text-align: left">									
+											<spring:message code="login.internalInfo" />
+										</div>		
+									</c:otherwise>
+								</c:choose>
+							</div>
+							<a class="btn btn-info" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>
 						</form:form>
 					</div>
 				</div>
-
-				<div style="padding: 30px; font-size:120%;"><spring:message code="label.or" /></div>
 				
-				<div id="systemPanel" style=" width: 400px; margin-left:auto; margin-right:auto; ">
+				<div style="clear: both"></div>
+				
+				<div style="text-align: left; margin-top: 20px; font-size: 90%">
+					<spring:message code="label.NoEULoginAccount" />&nbsp;<a target="_blank" href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi"><spring:message code="label.CreateEULoginAccountNow" /></a><br />
+					<spring:message code="label.LearnEULogin" arguments="https://webgate.ec.europa.eu/cas/help.html" /><br />
+					<spring:message code="label.RegisterMobile" arguments="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi" /><br />
+					<spring:message code="label.AddMobile" arguments="https://webgate.ec.europa.eu/cas/eim/external/restricted/manageMyMobilePhoneNumbers.cgi" />
+				</div>
+				
+				<div id="systemPanel" style="text-align: right; margin-top: 40px;">
 					<div id="systemPanelContent"  style=" margin-bottom: 50px;" >			
 						<a  id="sysLaunch"><spring:message code="label.LoginSystem" /></a>
 					</div>	

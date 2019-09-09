@@ -76,7 +76,7 @@ function DashboardViewModel()
 	{
 		var oldmode = this.surveysMode();
 		this.surveysMode(m);
-		if (m != oldmode && (oldmode == 'archived' || m == 'archived'))
+		if (m != oldmode)
 		{
 			this.surveysPage(1)
 			this.loadSurveys();
@@ -217,33 +217,30 @@ function DashboardViewModel()
 					  }
 				  }
 				});
-		} else {
+		} else {			
 			
-			if (model.surveysMode() == 'simple' || model.surveysMode() == 'advanced')
+			var title = $("#title").val().trim();
+			if (title.length > 0)
 			{
-				var title = $("#title").val().trim();
-				if (title.length > 0)
-				{
-					params = params + "&title=" + title;
-				}
-				var owner = $("#owner").val().trim();
-				if (owner.length > 0)
-				{
-					params = params + "&owner=" + owner;
-				}
-				var language = $("#language").val().trim();
-				if (language.length > 0)
-				{
-					params = params + "&slanguage=" + language;
-				}
-				var shortname = $("#shortname").val().trim();
-				if (shortname.length > 0)
-				{
-					params = params + "&shortname=" + shortname;
-				}
+				params = params + "&title=" + title;
 			}
+			var owner = $("#owner").val().trim();
+			if (owner.length > 0)
+			{
+				params = params + "&owner=" + owner;
+			}
+			var language = $("#language").val().trim();
+			if (language.length > 0)
+			{
+				params = params + "&slanguage=" + language;
+			}
+			var shortname = $("#shortname").val().trim();
+			if (shortname.length > 0)
+			{
+				params = params + "&shortname=" + shortname;
+			}			
 			
-			if (model.surveysMode() == 'advanced')
+			if (model.surveysMode() != 'simple')
 			{
 				var status = $("#status").val().trim();
 				if (status.length > 0)
@@ -271,6 +268,16 @@ function DashboardViewModel()
 				{
 					params = params + "&endto=" + this.surveyFilterEndTo();
 				}
+			}
+			
+			if (model.surveysMode() == 'reported')
+			{
+				params = params + "&reported=true";
+			}
+			
+			if (model.surveysMode() == 'frozen')
+			{
+				params = params + "&frozen=true";
 			}
 					
 			var request = $.ajax({

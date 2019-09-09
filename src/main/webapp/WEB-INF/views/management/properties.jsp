@@ -111,6 +111,7 @@
 					}
 					
 					var title = $("#edit-survey-title").text().length;
+					
 					if (title > 2000)
 					{
 						$("#edit-survey-title").parent().append("<div class='validation-error'>" + texttoolongText + "</div>");

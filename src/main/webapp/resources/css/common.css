@@ -684,6 +684,10 @@ h2 {
 	color: #800;
 }
 
+.lightred {
+	color: #f00;
+}
+
 .black {
 	color: #000 !important;
 }
@@ -1618,6 +1622,12 @@ table.formsSurveyItem
 .surveyItemHeader
 {
 	padding:10px;
+}
+
+.surveywarning {
+	padding: 10px;
+	color: #fff;
+	background-color: #D9534F;
 }
 
 td.publishedCell

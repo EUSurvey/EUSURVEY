@@ -67,7 +67,7 @@ public class TestSurveyController extends AbstractTestNGSpringContextTests {
 	 // Setup all expected values that has to be test with the result of this action to perform 
 	 Mockito.when(sessionService.getCurrentUser(Mockito.any(HttpServletRequest.class))).thenReturn(usr);
 	 Mockito.when(sessionService.getSurveyFilter(Mockito.any(HttpServletRequest.class), Mockito.anyBoolean())).thenReturn(svf);
-	 Mockito.when(surveySvc.getSurveysIncludingTranslationLanguages(Mockito.any(SurveyFilter.class), Mockito.any(SqlPagination.class), false)).thenReturn(Collections.singletonList(s1));
+	 Mockito.when(surveySvc.getSurveysIncludingTranslationLanguages(Mockito.any(SurveyFilter.class), Mockito.any(SqlPagination.class), false, false)).thenReturn(Collections.singletonList(s1));
 	 Mockito.when(paginationMapper.toSqlPagination(Mockito.any(Paging.class))).thenReturn(new SqlPagination(1,1));
 	 try {
 		 	// perform the action  

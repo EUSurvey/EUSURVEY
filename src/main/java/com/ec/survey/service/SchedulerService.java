@@ -32,6 +32,7 @@ import com.ec.survey.tools.EcasUserDeactivator;
 import com.ec.survey.tools.EcasUserUpdater;
 import com.ec.survey.tools.ExportUpdater;
 import com.ec.survey.tools.FileUpdater;
+import com.ec.survey.tools.SendReportedSurveysWorker;
 import com.ec.survey.tools.SurveyUpdater;
 import com.ec.survey.tools.ValidCodesRemover;
 
@@ -71,6 +72,9 @@ public class SchedulerService extends BasicService {
 	
 	@Resource(name = "deleteInvalidStatisticsWorker")
 	private DeleteInvalidStatisticsWorker deleteInvalidStatisticsWorker;
+	
+	@Resource(name = "sendReportedSurveysWorker")
+	private SendReportedSurveysWorker sendReportedSurveysWorker;
 	
 	@Resource(name = "surveyWorker")
 	private SurveyUpdater surveyWorker;
@@ -525,6 +529,7 @@ public class SchedulerService extends BasicService {
 		deleteDraftsWorker.run();
 		deleteTemporaryFoldersWorker.run();
 		deleteInvalidStatisticsWorker.run();
+		sendReportedSurveysWorker.run();
 		
 		logger.debug("End nightly schedule");
 	 }

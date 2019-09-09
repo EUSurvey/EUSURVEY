@@ -442,7 +442,7 @@ public class User implements java.io.Serializable {
 	public void setCanCreateSurveys(boolean canCreateSurveys) {
 		this.canCreateSurveys = canCreateSurveys;
 	}
-
+	
 	@Transient
 	public List<String> getAllEmailAddresses() {
 		List<String> result = new ArrayList<String>();

@@ -92,7 +92,7 @@ public class SurveyController extends BasicController {
 		paging.moveTo(newPage);
 		
         SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
-		List<Survey> surveys = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false);
+		List<Survey> surveys = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, true);
 		
 		surveyService.generateAccessInformation(surveys, user);
 		
@@ -146,7 +146,7 @@ public class SurveyController extends BasicController {
 		SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lastSurveyFilter");
 
         SqlPagination sqlPagination = new SqlPagination(newPage, itemsPerPage);
-        List<Survey> result = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false);
+        List<Survey> result = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, true);
         
         surveyService.generateAccessInformation(result, sessionService.getCurrentUser(request));
         
