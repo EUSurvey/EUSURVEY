@@ -135,6 +135,8 @@ public class BasicController implements BeanFactoryAware {
 	public @Value("${ecashost}") String ecashost;	
 	public @Value("${sender}") String sender;
 	public @Value("${captcha.bypass:@null}") String bypassCaptcha;
+	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
+	
 	//OCAS
 	public @Value("${casoss}") String cassOss;
 	protected @Value("${contextpath}") String contextpath;	
@@ -196,6 +198,14 @@ public class BasicController implements BeanFactoryAware {
     public ModelAndView handleBad2faCredentialsException(Exception e, HttpServletRequest request) {
 		logger.info(e.getLocalizedMessage(), e);
 		ModelAndView model =  new ModelAndView("redirect:/errors/2fa.html");
+		model.addObject("contextpath", contextpath);
+		return model;
+    }
+	
+	@ExceptionHandler(com.ec.survey.tools.FrozenCredentialsException.class) 
+    public ModelAndView handleFrozenCredentialsException(Exception e, HttpServletRequest request) {
+		logger.info(e.getLocalizedMessage(), e);
+		ModelAndView model =  new ModelAndView("redirect:/errors/frozen.html");
 		model.addObject("contextpath", contextpath);
 		return model;
     }

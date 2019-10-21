@@ -1894,14 +1894,12 @@ function initModals(item)
 	function showFreezeDialog(id, alias, url, title)
 	{
 		selectedFreezeId = id;
-		$('#freezeAlias').text(alias);
 		
-		var link = "<a href='" + url + "'>" + url + "</a>";
+		var link = "<a href='" + url + "'>" + alias + "</a>";
 		
-		$('#freezeLink').text(url);
 		$('#freezeTitle').text(title);
 		var text = $('#freeze-default-text').html();
-		var surveydata = alias + "<br />" + link + "<br />" + title;
+		var surveydata = "<table><tr><td>Alias:</td><td>" + link + "</td></tr><tr><td>Survey name:&nbsp;&nbsp;</td><td>" + title + "</td></tr></table>";
 		text = text.replace("[SURVEYDATA]", surveydata);
 		$('#freezeEmailText').text(text);
 		$('#freeze-survey-dialog').modal();

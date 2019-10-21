@@ -140,6 +140,7 @@ public class Survey implements java.io.Serializable {
 	private boolean accessResultsRights = true;
 	private Integer allowedContributionsPerUser = 1;
 	private boolean canCreateSurveys = true;
+	private Integer trustScore;
 	
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1278,6 +1279,14 @@ public class Survey implements java.io.Serializable {
 		this.allowedContributionsPerUser = allowedContributionsPerUser;
 	}
 	
+	@Column(name = "TRUSTSCORE")
+	public Integer getTrustScore() {
+		return trustScore;
+	}
+	public void setTrustScore(Integer trustScore) {
+		this.trustScore = trustScore;
+	}
+	
 	@Transient
 	public String serialize(boolean elementOrderOnly) {
 		StringBuilder result = new StringBuilder();
@@ -2128,6 +2137,5 @@ public class Survey implements java.io.Serializable {
 	}
 	public void setCanCreateSurveys(boolean canCreateSurveys) {
 		this.canCreateSurveys = canCreateSurveys;
-	}
-							
+	}							
 }

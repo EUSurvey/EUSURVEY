@@ -534,7 +534,8 @@
 	</div>
 	
 	<div id="freeze-default-text" style="display: none">
-		Your survey has been frozen due to infringement of our policy.<br />
+		Dear Sir or Madam,<br /><br />
+		Your survey has been frozen due to infringement of our policy.<br /><br />
 		[SURVEYDATA]
 		<br /><br />
 		Please refer to the EUSurvey <a href="${serverprefix}/home/tos">Terms of Service</a> or contact the EUSurvey <a href="${serverprefix}/home/support">Support Team</a> for more information.
@@ -555,15 +556,7 @@
 					<div class="modal-body">
 						<spring:message code="info.freeze" />:<br />
 						<table style="margin-top: 10px; margin-bottom: 10px">
-							<tr>
-								<td style="font-weight: bold; padding-right: 10px; vertical-align: top;"><spring:message code="label.Alias" />:</td>
-								<td><span id="freezeAlias"></span></td>
-							</tr>
-							<tr>
-								<td style="font-weight: bold; padding-right: 10px; vertical-align: top;"><spring:message code="label.Link" />:</td>
-								<td><span id="freezeLink" style="word-break: break-word;"></span></td>
-							</tr>
-			 				<tr> 
+							<tr> 
 			 					<td style="font-weight: bold; padding-right: 10px; vertical-align: top;"><spring:message code="label.Title" />:</td> 
 			 					<td><span id="freezeTitle"></span></td> 
 			 				</tr> 

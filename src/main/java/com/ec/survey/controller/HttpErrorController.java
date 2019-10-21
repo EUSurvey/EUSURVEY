@@ -57,6 +57,12 @@ public class HttpErrorController extends BasicController {
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public ModelAndView handle2fa(HttpServletRequest request){
 		return new ModelAndView("error/2fa","error","exception" );
+	}
+	
+	@RequestMapping(value = "/frozen.html")
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	public ModelAndView handlefrozen(HttpServletRequest request){
+		return new ModelAndView("error/frozen","error","exception" );
 	}	
 		
 }

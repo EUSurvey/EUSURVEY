@@ -59,6 +59,48 @@ public class SchemaService extends BasicService {
 	private DomainUpdater domaintWorker;
 	
 	@Transactional
+	public void step93() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		
+		settingsService.add(Setting.TrustValueCreatorInternal, "500", "int");
+		settingsService.add(Setting.TrustValuePastSurveys, "500", "int");
+		settingsService.add(Setting.TrustValuePrivilegedUser, "100", "int");
+		settingsService.add(Setting.TrustValueNbContributions, "50", "int");
+		settingsService.add(Setting.TrustValueMinimumPassMark, "100", "int");
+		
+		status.setDbversion(93);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void step92() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		
+		String text = "<p>Please be informed that the following user [LOGIN] having the email address: [EMAIL] has been banned from EUSurvey.</p><p>For more information please contact the EUSurvey team.</p>";
+		settingsService.add(Setting.FreezeUserTextAdminBan, text, "text");
+		
+		text = "<p>Please be informed that the following user [LOGIN] having the email address: [EMAIL] has been unbanned from EUSurvey.</p><p>For more information please contact the EUSurvey team.</p>";
+		settingsService.add(Setting.FreezeUserTextAdminUnban, text, "text");
+		
+		text = "<p>Dear Sir or Madam,</p><p>You have been banned from EUSurvey application due to infrigiment to our policy.</p><p>Reason: to specify</p><p>Please refer to our <a href=\"https://ec.europa.eu/eusurvey/home/tos\">Terms of Service</a> for more information.</p> <p>Kind regards,<br />The EUSurvey Team</p>";
+		settingsService.add(Setting.FreezeUserTextBan, text, "text");
+		
+		text = "<p>Dear Sir or Madam,</p><p>You have just been unbanned and got back your access to the EUSurvey application. You can now connect to EUSurvey</p> <p>Kind regards,<br />The EUSurvey Team</p>";
+		settingsService.add(Setting.FreezeUserTextUnban, text, "text");
+			
+		Setting s = new Setting();
+		s.setKey(Setting.BannedUserRecipients);
+		s.setValue("");
+		s.setFormat("email addresses separated by ;");				
+		session.saveOrUpdate(s);		
+		
+		status.setDbversion(92);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
 	public void step91() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();

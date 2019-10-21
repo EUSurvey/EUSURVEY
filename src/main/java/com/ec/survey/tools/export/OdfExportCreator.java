@@ -314,13 +314,21 @@ public class OdfExportCreator extends ExportCreator {
 	
 		HashMap<String, Object> parameters = new HashMap<>();
 		
-		if (publication != null && publication.isAllQuestions())
+		if (publication != null)
 		{
-			for (Element question: survey.getQuestions())
+			if ( publication.isAllQuestions())
 			{
-				filter.getExportedQuestions().add(question.getId().toString());
-			}			
-		}
+				for (Element question: survey.getQuestions())
+				{
+					filter.getExportedQuestions().add(question.getId().toString());
+				}
+			} else {
+				for (String question: filter.getVisibleQuestions())
+				{
+					filter.getExportedQuestions().add(question);
+				}
+			}
+		}	
 		
 		filter.setVisibleQuestions(filter.getExportedQuestions());
 		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true, publication == null || publication.getShowUploadedDocuments(), false);

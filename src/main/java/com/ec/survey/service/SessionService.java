@@ -523,6 +523,9 @@ public class SessionService extends BasicService {
 		
     	filter.setLanguages(request.getParameterValues("languages"));
     	
+    	filter.setBanned(request.getParameter("banned") != null && request.getParameter("banned").equalsIgnoreCase("true"));
+    	filter.setUnbanned(request.getParameter("unbanned") != null && request.getParameter("unbanned").equalsIgnoreCase("true"));
+		    	
     	String roles[] = request.getParameterValues("roles");
 		if (roles != null && roles.length > 0)
 		{

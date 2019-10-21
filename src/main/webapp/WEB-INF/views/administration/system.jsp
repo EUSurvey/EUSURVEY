@@ -16,6 +16,10 @@
 		#reportEmails td {
 			padding-bottom: 10px;
 		}
+		
+		#configure-trustindicator-dialog input[type=text] {
+			width: 150px;
+		}
 	</style>
 	
 	<script type="text/javascript">
@@ -165,6 +169,37 @@
 			$('#configure-report-dialog').modal('hide');
 		}
 		
+		function showBanUserConfiguration() {
+			$('.validation-error').remove();
+			$('#configure-banuser-dialog').modal('show');
+		}
+		
+		function saveBanUserConfiguration()
+		{
+			$('.validation-error').remove();			
+			validateInputAndSubmit($('#configure-banuser-form'));	
+		}
+		
+		function cancelBanUserConfiguration()
+		{
+			$('#configure-banuser-dialog').modal('hide');
+		}
+		
+		function addBanUserRow(email)
+		{
+			var tr = document.createElement("tr");
+			var td = document.createElement("td");
+			$(td).css("padding-right", "10px").text('<spring:message code="label.Email" />');
+			$(tr).append(td);
+			td = document.createElement("td");			
+			var outerdiv = document.createElement("div");
+			$(outerdiv).addClass("input-group").append('<div class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></div>');
+			$(outerdiv).append('<input class="form-control" name="messageEmail" type="text" maxlength="255" style="width: 200px;" value="' + email + '" />');
+			$(td).append(outerdiv);
+			$(tr).append(td);
+			$('#banUserEmails').find('tr:last').before(tr);
+		}
+		
 		function checkLogging()
 		{
 			if ($("#enabled").is(":checked"))
@@ -190,6 +225,22 @@
 			$('#reportEmails').find('tr:last').before(tr);
 		}
 		
+		function showTrustIndicatorConfiguration() {
+			$('.validation-error').remove();
+			$('#configure-trustindicator-dialog').modal('show');
+		}
+		
+		function saveTrustIndicatorConfiguration()
+		{
+			$('.validation-error').remove();			
+			validateInputAndSubmit($('#configure-trustindicator-form'));	
+		}
+		
+		function cancelTrustIndicatorConfiguration()
+		{
+			$('#configure-trustindicator-dialog').modal('hide');
+		}
+		
 		$(function() {
 			$("#administration-menu-tab").addClass("active");
 			$("#system-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
@@ -205,7 +256,16 @@
 				addReportRow(res[i]);
 			}
 			
-			 addReportRow("");
+			addReportRow("");
+			 
+			recipients = '${bannedUserRecipients}';
+			var res = recipients.split(";");
+			for (var i = 0; i < res.length; i++)
+			{
+				addBanUserRow(res[i]);
+			}
+			
+			addBanUserRow("");
 		});	
 		
 	
@@ -300,6 +360,32 @@
 							<c:choose>
 								<c:when test="${USER.getGlobalPrivilegeValue('SystemManagement') > 1}">
 									<a class="btn btn-default" onclick="showReportConfiguration()"><spring:message code="label.Configure" /></a>
+								</c:when>
+								<c:otherwise>
+									<a class="btn disabled btn-default"><spring:message code="label.Configure" /></a>
+								</c:otherwise>
+							</c:choose>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-top: 20px;"><span style="font-size: large"><spring:message code="label.BanUserMessage" /></span></td>
+						<td style="padding-top: 20px;">
+							<c:choose>
+								<c:when test="${USER.getGlobalPrivilegeValue('SystemManagement') > 1}">
+									<a class="btn btn-default" onclick="showBanUserConfiguration()"><spring:message code="label.Configure" /></a>
+								</c:when>
+								<c:otherwise>
+									<a class="btn disabled btn-default"><spring:message code="label.Configure" /></a>
+								</c:otherwise>
+							</c:choose>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-top: 20px;"><span style="font-size: large"><spring:message code="label.TrustIndicator" /></span></td>
+						<td style="padding-top: 20px;">
+							<c:choose>
+								<c:when test="${USER.getGlobalPrivilegeValue('SystemManagement') > 1}">
+									<a class="btn btn-default" onclick="showTrustIndicatorConfiguration()"><spring:message code="label.Configure" /></a>
 								</c:when>
 								<c:otherwise>
 									<a class="btn disabled btn-default"><spring:message code="label.Configure" /></a>
@@ -668,6 +754,126 @@
 			</div>
 			<div style="padding-left: 65px">
 				<a onclick="saveReportConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+			</div>			
+		</div>
+		</div>
+		</div>
+	</div>
+	
+	<div class="modal" id="configure-banuser-dialog" data-backdrop="static">
+		<div class="modal-dialog" style="width: 1080px;">
+    	<div class="modal-content">
+		<div class="modal-header">
+			<b><spring:message code="label.ConfigureBanUserMessage" /></b>
+		</div>
+		<div class="modal-body">
+			<form:form id="configure-banuser-form" method="POST" action="${contextpath}/administration/system/configureBanUsers" style="height: auto; margin: 0px; padding: 0px;">			
+				<table>
+					<tr>
+						<td>
+							<b><spring:message code="label.MessageBanningUser" />:</b><br />
+							<div class="messagetextdiv" style="margin-bottom: 15px;">
+								<textarea id="banUserMessageText" name="banUserMessageText" class="tinymcemessage required freetext max5000"><esapi:encodeForHTML>${banUserMessageText}</esapi:encodeForHTML></textarea>
+							</div>
+							
+							<b><spring:message code="label.MessageUnbanningUser" />:</b><br />
+							<div class="messagetextdiv" style="margin-bottom: 15px;">
+								<textarea id="unbanUserMessageText" name="unbanUserMessageText" class="tinymcemessage required freetext max5000"><esapi:encodeForHTML>${unbanUserMessageText}</esapi:encodeForHTML></textarea>
+							</div>
+							
+							<b><spring:message code="label.ListOfRecipients" />:</b><br />
+							
+							<table id="banUserEmails" style="margin-top: 10px;">
+								<tr>
+									<td colspan="2" style="text-align: right">
+										<a onclick="addBanUserRow('')" class="btn btn-default" style="margin-top: 10px; margin-left: 200px"><spring:message code="label.Add" /></a>
+									</td>
+								</tr>
+							</table> 
+						</td>
+						<td style="padding-left: 20px; vertical-align: top;">
+							<b><spring:message code="label.MessageBannedUser" />:</b><br />
+							<div class="messagetextdiv" style="margin-bottom: 15px;">
+								<textarea id="bannedUserMessageText" name="bannedUserMessageText" class="tinymcemessage required freetext max5000"><esapi:encodeForHTML>${bannedUserMessageText}</esapi:encodeForHTML></textarea>
+							</div>
+							
+							<b><spring:message code="label.MessageUnbannedUser" />:</b><br />
+							<div class="messagetextdiv" style="margin-bottom: 15px;">
+								<textarea id="unbannedUserMessageText" name="unbannedUserMessageText" class="tinymcemessage required freetext max5000"><esapi:encodeForHTML>${unbannedUserMessageText}</esapi:encodeForHTML></textarea>
+							</div>
+						</td>
+					</tr>
+				 </table>
+			</form:form>
+		</div>
+		<div class="modal-footer">
+			<div style="float: right">
+				<a onclick="cancelBanUserConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
+			</div>
+			<div style="padding-left: 65px">
+				<a onclick="saveBanUserConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+			</div>			
+		</div>
+		</div>
+		</div>
+	</div>
+	
+	<div class="modal" id="configure-trustindicator-dialog" data-backdrop="static">
+		<div class="modal-dialog" style="width: 500px;">
+    	<div class="modal-content">
+		<div class="modal-header">
+			<b><spring:message code="label.TrustIndicatorParameters" /></b>
+		</div>
+		<div class="modal-body">
+			<form:form id="configure-trustindicator-form" method="POST" action="${contextpath}/administration/system/configureTrustIndicator" style="height: auto; margin: 0px; padding: 0px;">			
+				<table>
+					<tr>
+						<td>
+							<b><spring:message code="label.TrustCreatorInternal" />:</b><br />
+							<div class="messagetextdiv" style="margin-bottom: 15px;">
+								<input type="text" id="trustIndicatorCreatorInternal" name="trustIndicatorCreatorInternal" class="form-control required number" value="${trustIndicatorCreatorInternal}" />
+							</div>
+						</td>
+						<td style="padding-left: 100px;">
+							<b><spring:message code="label.TrustMinimumPassMark" />:</b><br />
+							<div class="messagetextdiv" style="margin-bottom: 15px;">
+								<input type="text" id="trustIndicatorMinimumPassMark" name="trustIndicatorMinimumPassMark" class="form-control required number" value="${trustIndicatorMinimumPassMark}" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<b><spring:message code="label.TrustPastSurveys" />:</b><br />
+							<div class="messagetextdiv" style="margin-bottom: 15px;">
+								<input type="text" id="trustIndicatorPastSurveys" name="trustIndicatorPastSurveys" class="form-control required number" value="${trustIndicatorPastSurveys}" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<b><spring:message code="label.TrustPrivilegedUser" />:</b><br />
+							<div class="messagetextdiv" style="margin-bottom: 15px;">
+								<input type="text" id="trustIndicatorPrivilegedUser" name="trustIndicatorPrivilegedUser" class="form-control required number" value="${trustIndicatorPrivilegedUser}" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<b><spring:message code="label.TrustNbContributions" />:</b><br />
+							<div class="messagetextdiv" style="margin-bottom: 15px;">
+								<input type="text" id="trustIndicatorNbContributions" name="trustIndicatorNbContributions" class="form-control required number" value="${trustIndicatorNbContributions}" />
+							</div>
+						</td>
+					</tr>
+				 </table>
+			</form:form>
+		</div>
+		<div class="modal-footer">
+			<div style="float: right">
+				<a onclick="cancelTrustIndicatorConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
+			</div>
+			<div style="padding-left: 65px">
+				<a onclick="saveTrustIndicatorConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
 			</div>			
 		</div>
 		</div>

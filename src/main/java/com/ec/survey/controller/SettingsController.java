@@ -60,8 +60,30 @@ public class SettingsController extends BasicController {
 	}	
 	
 	@RequestMapping(value = "/myAccount", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String myAccount(ModelMap model){
+	public String myAccount(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		model.addAttribute("languages", surveyService.getLanguages());
+		
+		String message = request.getParameter("message");
+		if (message != null)
+		{
+			switch(message)
+			{
+				case "password":
+					model.addAttribute("message", resources.getMessage("info.PasswordChanged", null, "The password has been changed", locale));
+					break;
+				case "email":
+					model.addAttribute("message", resources.getMessage("message.NewEmailAddressSend", null, "The email address will be changed after confirmation", locale));
+					break;
+				case "language":
+					User user = sessionService.getCurrentUser(request);
+					model.addAttribute("message", resources.getMessage("message.LanguageChanged", null, "The language has been changed", new Locale(user.getLanguage())));
+					break;
+				case "pivot":
+					model.addAttribute("message", resources.getMessage("message.LanguageChanged", null, "The language has been changed", locale));
+					break;
+			}
+		}
+		
 		return "settings/myAccount";
 	}
 	
@@ -107,10 +129,9 @@ public class SettingsController extends BasicController {
 		user.setPassword(Tools.hash(newPassword + user.getPasswordSalt()));
 		
 		administrationService.updateUser(user);
-		sessionService.setCurrentUser(request, user);
+		sessionService.setCurrentUser(request, user);		
 		
-		model.addAttribute("message", resources.getMessage("info.PasswordChanged", null, "The password has been changed", locale));
-		return "settings/myAccount";		
+		return "redirect:/settings/myAccount?message=password";		
 	}
 	
 	@RequestMapping(value = "/changeEmail", method = RequestMethod.POST)
@@ -161,8 +182,7 @@ public class SettingsController extends BasicController {
 			return "settings/myAccount";
 		}
 		
-		model.addAttribute("message", resources.getMessage("message.NewEmailAddressSend", null, "The email address will be changed after confirmation", locale));
-		return "settings/myAccount";		
+		return "redirect:/settings/myAccount?message=email";	
 	}
 	
 	@RequestMapping(value = "/changeLanguage", method = RequestMethod.POST)
@@ -177,9 +197,8 @@ public class SettingsController extends BasicController {
 		sessionService.setCurrentUser(request, user);
 		
 		localeResolver.setLocale(request, response, new Locale(user.getLanguage()));
-		model.addAttribute("languages", surveyService.getLanguages());
-		model.addAttribute("message", resources.getMessage("message.LanguageChanged", null, "The language has been changed", new Locale(user.getLanguage())));
-		return "settings/myAccount";
+	
+		return "redirect:/settings/myAccount?message=language";
 	}
 	
 	@RequestMapping(value = "/changePivotLanguage", method = RequestMethod.POST)
@@ -192,9 +211,7 @@ public class SettingsController extends BasicController {
 		administrationService.updateUser(user);
 		
 		sessionService.setCurrentUser(request, user);
-		model.addAttribute("languages", surveyService.getLanguages());
-		model.addAttribute("message", resources.getMessage("message.LanguageChanged", null, "The language has been changed", locale));
-		return "settings/myAccount";
+		return "redirect:/settings/myAccount?message=pivot";
 	}
 			
 	@RequestMapping(value = "/shares")

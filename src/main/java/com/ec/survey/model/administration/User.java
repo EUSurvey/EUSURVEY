@@ -49,6 +49,7 @@ public class User implements java.io.Serializable {
 	private boolean agreedToToS;
 	private Integer lastEditedSurvey;
 	private boolean canCreateSurveys = true;
+	private boolean isFrozen = false;
 	
 	public static final String ECAS = "ECAS";
 	public static final String SYSTEM = "SYSTEM";
@@ -288,6 +289,14 @@ public class User implements java.io.Serializable {
 	}
 	public void setLastEditedSurvey(Integer lastEditedSurvey) {
 		this.lastEditedSurvey = lastEditedSurvey;
+	}
+	
+	@Column(name = "USER_FROZEN")
+	public boolean isFrozen() {
+		return isFrozen;
+	}
+	public void setFrozen(Boolean isFrozen) {
+		this.isFrozen = isFrozen != null ? isFrozen : false;
 	}
 	
 	@Transient

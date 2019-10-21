@@ -124,11 +124,10 @@
 				<li><a class="anchorlink" href="#_Toc0-13">Gibt es eine minimale Bildschirmgröße?</a></li>
 			</ul>
 		</li>
-		<li><a class="anchorlink head" href="#_Toc1">Anmelden und Registrieren</a>
+		<li><a class="anchorlink head" href="#_Toc1">Anmeldung und EU Login Registrierung</a>
 			<ul>
-				<li><a class="anchorlink" href="#_Toc1-1">Ich habe ein EU Login-Konto. Muss ich mich für EUSurvey separat registrieren?</a></li>
-				<li><a class="anchorlink" href="#_Toc1-2">Wie registriere ich mich bei EUSurvey?</a></li>
-				<li><a class="anchorlink" href="#_Toc1-3">Wie verbinde ich mich mit EUSurvey?</a></li>
+				<li><a class="anchorlink" href="#_Toc1-1">Ich habe ein EU-Login-Konto. Muss ich mich separat bei EUSurvey registrieren?</a></li>
+				<li><a class="anchorlink" href="#_Toc1-2">Wie verbinde ich mich mit EUSurvey?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc2">Umfrage erstellen</a>
@@ -308,7 +307,9 @@
 <p><b>Hochladen von unterstützenden Dateien</b><br />Sie k&ouml;nnen Ihrer Umfrage Dateien hinzufügen, indem Sie sie mit hochladen. Diese Dateien kann jeder Teilnehmer an Ihrer Umfrage herunterladen.</p>
 
 <h3><a class="anchor" name="_Toc0-5"></a>Fragebogenverwaltung</h3>
+<c:if test="${enablepublicsurveys}">
 <p><b>Ver&ouml;ffentlichung einer Umfrage</b><br /></b>Sie k&ouml;nnen entscheiden, dass Ihre Umfrage automatisch in der <a href="https://ec.europa.eu${contextpath}/home/publicsurveys" target="_blank">Liste der &ouml;ffentlichen Umfragen</a> ver&ouml;ffentlicht wird, die in der EUSurvey-Anwendung der Europ&auml;ischen Kommission zur Verfügung steht. Dadurch erh&auml;lt sie noch mehr Reichweite.</p>
+</c:if>
 <p><b>Zusammenarbeit</b><br />Bei Umfragen, die von mehreren Nutzern verwaltet werden, k&ouml;nnen Sie in EUSurvey spezielle Berechtigungen  für andere Nutzer festlegen, die eine Umfrage testen oder die Ergebnisse analysieren sollen.</p>
 
 <h3><a class="anchor" name="_Toc0-6"></a>Ergebnisverwaltung</h3>
@@ -338,13 +339,19 @@
 <br />
 Für die Erstellung und Verwaltung von Umfragen empfehlen wir eine Mindestauflösung von 1680x1050 Pixel.</p>
 
-<h1><a class="anchor" name="_Toc1"></a>Anmelden und Registrieren</h1>
-<h2><a class="anchor" name="_Toc1-1"></a>Ich habe ein EU Login-Konto. Muss ich mich für EUSurvey separat registrieren?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-<p>NEIN. Verbinden Sie sich mit EUSurvey, indem Sie auf die &bdquo;Login&ldquo;-Schaltfl&auml;che auf der <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">Startseite von EUSurvey</a> klicken.</p>
-<h2><a class="anchor" name="_Toc1-2"></a>Wie registriere ich mich bei EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-<p>Mitarbeiter der EU k&ouml;nnen über Ihr EU Login-Konto auf EUSurvey zugreifen. Andere Nutzer sollten ein EU Login-Konto einrichten.</p>
-<h2><a class="anchor" name="_Toc1-3"></a>Wie verbinde ich mich mit EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-<p>Klicken Sie auf die Schaltfl&auml;che &bdquo;Login&ldquo; auf der <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">Startseite von EUSurvey</a>, um sich gegenüber EU Login zu authentifizieren. Sie werden dann zur EUSurvey-Anwendung weitergeleitet. Besitzen Sie kein EU Login-Konto, lesen Sie bitte &bdquo;<a href="#_Toc1-2">Wie registriere ich mich bei EUSurvey</a>&ldquo;</p>
+<h1><a class="anchor" name="_Toc1"></a>Anmeldung und EU Login Registrierung</h1>
+<h2><a class="anchor" name="_Toc1-1"></a>Ich habe ein EU-Login-Konto. Muss ich mich separat bei EUSurvey registrieren?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>NEIN, eine separate Registrierung bei EUSurvey ist nicht erforderlich. Ein EU-Login-Konto ist ausreichend. Sie können auf EUSurvey zugreifen, indem Sie auf der <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">EUSurvey-Startseite</a> auf die Anmeldeschaltfläche klicken. Sie gelangen auf den Anmeldebildschirm (siehe unten für weitere Details).</p>
+<h2><a class="anchor" name="_Toc1-2"></a>Wie verbinde ich mich mit EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>Bitte klicken Sie auf den Login-Button auf der <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">EUSurvey-Homepage</a>. Sie werden zum EUSurvey-Anmeldebildschirm weitergeleitet.</p>
+<p>Sobald Sie auf dem Anmeldebildschirm angekommen sind, müssen Sie die Option auswählen, die Ihrem persönlichen Fall entspricht:
+	<ul>
+		<li><b>Wenn Sie für eine EU-Institution arbeiten</b>, wählen Sie die zweite Option, um eine Verbindung zur EUSurvey-Anwendung herzustellen. Ihr EU-Login-Benutzername und Ihr Passwort reichen dann aus.</li>
+		<li><b>Wenn Sie nicht für eine EU-Institution arbeiten</b>, wählen Sie die erste Option, um eine Verbindung zur EUSurvey-Anwendung herzustellen. Sie müssen Ihr Mobiltelefon zuvor registriert haben, um die Zwei-Faktor-Authentifizierung zu bestehen.</li>
+	</ul>
+</p>
+<p>Wenn Sie noch kein EU-Login-Anmeldekonto haben, erstellen Sie bitte eines, indem Sie <a href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi">hier</a> klicken.</p>
+<p>Wenn Sie nicht für eine EU-Institution arbeiten, registrieren Sie bitte auch Ihr Mobiltelefon, indem Sie <a href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi">hier</a> klicken.</p>
 
 <h1><a class="anchor" name="_Toc2"></a>Umfrage erstellen</h1>
 <h2><a class="anchor" name="_Toc2-1"></a>Wie erstelle ich eine neue Umfrage?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>

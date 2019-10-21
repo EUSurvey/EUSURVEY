@@ -671,6 +671,11 @@ public class HomeController extends BasicController {
 
 	public ModelAndView publicsurveys(HttpServletRequest request) throws Exception {	
 		
+		if (!enablepublicsurveys.equalsIgnoreCase("true"))
+		{
+			throw new InvalidURLException();
+		}
+		
 		SurveyFilter filter = sessionService.getSurveyFilter(request, false);
 		filter.setUser(null);		
 		String newPage = request.getParameter("newPage");				
@@ -723,6 +728,11 @@ public class HomeController extends BasicController {
 	
 	@RequestMapping(value = "/home/publicsurveysjson", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody List<Survey> publicsurveysjson(HttpServletRequest request) throws Exception {	
+		
+		if (!enablepublicsurveys.equalsIgnoreCase("true"))
+		{
+			throw new InvalidURLException();
+		}
 		
 		int itemsPerPage = 10;
 		int newPage = 1;

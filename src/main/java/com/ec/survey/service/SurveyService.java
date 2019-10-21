@@ -45,9 +45,13 @@ public class SurveyService extends BasicService {
 	private @Value("${sender}") String sender;
 	private @Value("${server.prefix}") String host;
 	public @Value("${opc.notify}") String opcnotify;
+	private @Value("${monitoring.recipient}") String monitoringEmail;
 
 	@Autowired
 	protected SqlQueryService sqlQueryService;
+
+	@Autowired
+	protected LdapService ldapDBService;
 
 	@Transactional(readOnly = true)
 	public int getNumberPublishedAnswersFromMaterializedView(String uid) {
@@ -799,6 +803,87 @@ public class SurveyService extends BasicService {
 			}
 		}
 	}
+	
+	@Transactional
+	private void computeTrustScore(Survey survey) throws Exception
+	{
+		Session session = sessionFactory.getCurrentSession();
+		int score = 0;
+		
+		int trustValueCreatorInternal = Integer.parseInt(settingsService.get(Setting.TrustValueCreatorInternal));
+		int trustValuePastSurveys = Integer.parseInt(settingsService.get(Setting.TrustValuePastSurveys));
+		int trustValuePrivilegedUser = Integer.parseInt(settingsService.get(Setting.TrustValuePrivilegedUser));
+		int trustValueNbContributions = Integer.parseInt(settingsService.get(Setting.TrustValueNbContributions));
+		
+		//Rule 0: if the Form Manager is internal
+		if (!survey.getOwner().isExternal())
+		{
+			score += trustValueCreatorInternal;
+		}
+		
+		//Rule 1: if the Form Manager has published in the past 3 or more surveys:
+		//-	having all reached 10 contributions or more ; and
+		//-	including at least one survey having been published for one month or more
+		
+		SurveyFilter filter = new SurveyFilter();
+		filter.setUser(survey.getOwner());
+		filter.setOwner(survey.getOwner().getLogin());
+		SqlPagination pagination = new SqlPagination(1, 1000);
+		List<Survey> surveys = getSurveysIncludingPublicationDates(filter, pagination);
+		
+		int countSurveysWith10Contributions = 0;
+		boolean found = false;
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.MONTH, -1);
+		Date lastmonth = c.getTime();
+		for (Survey candidate: surveys) {
+			int candidateanswers = answerService.getNumberOfAnswerSetsPublished(candidate.getShortname(), candidate.getUniqueId());
+			if (candidateanswers >= 10)
+			{
+				countSurveysWith10Contributions++;
+			}
+			
+			if (candidate.getFirstPublished() != null && candidate.getFirstPublished().before(lastmonth))
+			{
+				found = true;
+			}
+			
+			if (found && countSurveysWith10Contributions >= 3) {
+				break;
+			}
+		}
+		if (found && countSurveysWith10Contributions >= 3) {
+			score += trustValuePastSurveys;
+		}		
+		
+		//Rule 2: if a privileged user is internal
+		List<Access> accesses = this.getAccesses(survey.getId());
+		for (Access access : accesses) {
+			if (access.getUser() != null && !access.getUser().isExternal())
+			{
+				score += trustValuePrivilegedUser;
+				break;
+			}
+		}
+		
+		int answers = answerService.getNumberOfAnswerSetsPublished(survey.getShortname(), survey.getUniqueId());
+		
+		//Rule 3: when the survey is reaching 10 contributions
+		if (answers >= 10)
+		{
+			score += trustValueNbContributions;
+		}
+		
+		//Rule 4: when the survey is reaching 100 contributions
+		if (answers >= 100)
+		{
+			score += trustValueNbContributions;
+		}
+		
+		survey.setTrustScore(score);
+		session.saveOrUpdate(survey);
+	}
 
 	@Transactional
 	public Survey publish(Survey survey, int pnumberOfAnswerSets, int pnumberOfAnswerSetsPublished, boolean deactivateAutoPublishing, int userId, boolean resetSourceIds, boolean resetSurvey)
@@ -818,6 +903,8 @@ public class SurveyService extends BasicService {
 			published.setAutomaticPublishing(false);
 		}
 		published = update(published, false, true, false, userId);
+		
+		computeTrustScore(survey);
 
 		// copy translations
 		Map<String, String> keys = new HashMap<>();
@@ -988,6 +1075,8 @@ public class SurveyService extends BasicService {
 
 		survey.setIsPublished(true);
 		survey.setIsActive(true);
+		
+		computeTrustScore(survey);
 
 		return published;
 	}
@@ -1168,6 +1257,8 @@ public class SurveyService extends BasicService {
 		survey.setListFormValidated(false);
 		survey.setPublicationRequestedDate(new Date());
 
+		computeTrustScore(survey);
+		
 		// copy result filters
 		List<ResultFilter> filters = sessionService.getAllResultFilter(publishedSurvey.getId());
 		if (filters != null) {
@@ -3714,6 +3805,19 @@ public class SurveyService extends BasicService {
 		List<Survey> result = query.setFirstResult(page * rowsPerPage).setMaxResults(rowsPerPage).list();
 		return result;
 	}
+	
+	public List<Survey> getAllSurveysForUser(User user) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		String hql = "FROM Survey s WHERE s.isDraft = true AND s.owner.id = :userid";
+		Query query = session.createQuery(hql);
+		query.setInteger("userid", user.getId());
+		
+		@SuppressWarnings("unchecked")
+		List<Survey> result = query.list();
+		
+		return result;
+	}
 
 	public Map<Integer, String> getAllPublishedSurveysForUser(User user, String sort) {
 		Session session = sessionFactory.getCurrentSession();
@@ -3922,6 +4026,8 @@ public class SurveyService extends BasicService {
 	public String getSurveyMetaDataXML(Survey survey) {
 		int results = surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId());
 		StringBuilder s = new StringBuilder();
+		User owner = survey.getOwner();
+		EcasHelper.readData(owner, this.ldapDBService);	
 
 		s.append("<?xml version='1.0' encoding='UTF-8' standalone='no' ?>\n");
 		s.append("<Survey id='").append(survey.getId()).append("' alias='").append(survey.getShortname()).append("'>\n");
@@ -3931,6 +4037,10 @@ public class SurveyService extends BasicService {
 		s.append("<Title>").append(survey.getTitle()).append("</Title>\n");
 
 		s.append("<PivotLanguage>").append(survey.getLanguage().getCode().toUpperCase()).append("</PivotLanguage>\n");
+
+		s.append("<Owner>").append(owner.getGivenName()).append(" ").append(owner.getSurName()).append("</Owner>\n");
+		
+		s.append("<OwnerDepartment>").append(owner.getDepartment()).append("</OwnerDepartment>\n");
 
 		s.append("<Contact>").append(survey.getContact()).append("</Contact>\n");
 
@@ -4232,6 +4342,8 @@ public class SurveyService extends BasicService {
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");		
 		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);		
 		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey has been blocked", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+		
+		mailService.SendHtmlMail(monitoringEmail, sender, sender, "Your survey has been blocked", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
 	}
 	
 	@Transactional
@@ -4254,6 +4366,6 @@ public class SurveyService extends BasicService {
 		// send email
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");		
 		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);		
-		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey is now available again", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey is available again", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
 	}
 }

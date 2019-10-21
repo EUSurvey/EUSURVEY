@@ -476,7 +476,7 @@ public class SchedulerService extends BasicService {
 		}
 	}
 	
-	@Scheduled(fixedDelay=1200000) //every 20 minutes
+	@Scheduled(fixedDelay=10000) //wait for 10 seconds between calls
 	public void doToDosSchedule() throws Exception {
 		
 		if (!isReportingDatabaseEnabled()) return;

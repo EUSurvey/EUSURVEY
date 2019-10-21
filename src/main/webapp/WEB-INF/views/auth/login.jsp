@@ -164,12 +164,7 @@
 								<c:choose>
 									<c:when test="${casoss !=null}">
 										<spring:message code="label.CASInfo" /> 			
-									</c:when>
-									<c:otherwise>
-										<div style="text-align: left">									
-											<spring:message code="login.internalInfo" />
-										</div>		
-									</c:otherwise>
+									</c:when>									
 								</c:choose>
 							</div>
 							<a class="btn btn-info" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>

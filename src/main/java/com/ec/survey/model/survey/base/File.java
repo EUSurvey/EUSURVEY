@@ -123,4 +123,10 @@ public class File implements java.io.Serializable {
 	public void setAnswerId(Integer answerId) {
 		this.answerId = answerId;
 	}
+	
+	@Transient
+	public String getNameForExport()
+	{
+		return getName().replace(";", "").replace("|", "");
+	}
 }

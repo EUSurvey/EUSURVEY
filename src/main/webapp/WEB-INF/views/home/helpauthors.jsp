@@ -125,11 +125,10 @@
 				<li><a class="anchorlink" href="#_Toc0-13">Is there a minimum screen size?</a></li>
 			</ul>
 		</li>
-		<li><a class="anchorlink head" href="#_Toc1">Login and registration</a>
+		<li><a class="anchorlink head" href="#_Toc1">Login and EU Login registration</a>
 			<ul>
-				<li><a class="anchorlink" href="#_Toc1-1">I have an EU Login account. Do I have to register separately for EUSurvey?</a></li>
-				<li><a class="anchorlink" href="#_Toc1-2">How do I register for EUSurvey?</a></li>
-				<li><a class="anchorlink" href="#_Toc1-3">How do I connect to EUSurvey?</a></li>
+				<li><a class="anchorlink" href="#_Toc1-1">I have an EU Login account. Do I need to register separately for EUSurvey?</a></li>
+				<li><a class="anchorlink" href="#_Toc1-2">How do I connect to EUSurvey?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc2">Creating a survey</a>
@@ -308,7 +307,9 @@
 <p><b>Uploading supporting files</b><br />You can add files to your survey by uploading them. These files can be downloaded by every participant in your survey.</p>
 
 <h3><a class="anchor" name="_Toc0-5"></a>Form management</h3>
+<c:if test="${enablepublicsurveys}">
 <p><b>Publishing a survey</b><br />You can choose to publish your survey automatically on the <a href="https://ec.europa.eu${contextpath}/home/publicsurveys" target="_blank">list of public surveys</a> available via the European Commission's EUSurvey application, to give it even more exposure.</p>
+</c:if>
 <p><b>Working together</b><br />For surveys that are managed by multiple users, EUSurvey lets you define advanced permissions for other users to test a survey or to analyse the results.</p>
 
 <h3><a class="anchor" name="_Toc0-6"></a>Result management</h3>
@@ -337,13 +338,21 @@
 <p>The online questionnaires are fully responsive and adapt to the size of your device, allowing to fill in the questionnaire with any screen size.
 <br />For creating and managing surveys, we recommend to use a minimum resolution of 1680x1050 pixels for a good user experience.</p>
 
-<h1><a class="anchor" name="_Toc1"></a>Login and registration</h1>
-<h2><a class="anchor" name="_Toc1-1"></a>I have an EU Login account. Do I have to register separately for EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-<p>NO. Please connect to EUSurvey by clicking on the login button on the <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">EUSurvey homepage</a>.</p>
-<h2><a class="anchor" name="_Toc1-2"></a>How do I register for EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-<p>EU staff can access EUSurvey simply by using their own EU Login account. Other users should create an EU Login account.</p>
-<h2><a class="anchor" name="_Toc1-3"></a>How do I connect to EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-<p>Please click on the login button on the <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">EUSurvey homepage</a> to authenticate yourself towards EU Login. You will be redirected to the EUSurvey application. If you don't have an EU Login account, please read "<a href="#_Toc1-2">How do I register for EUSurvey?</a>"?</p>
+<h1><a class="anchor" name="_Toc1"></a>Login and EU Login registration</h1>
+<h2><a class="anchor" name="_Toc1-1"></a>I have an EU Login account. Do I need to register separately for EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>No, there is no need to register separately to EUSurvey. An EU Login account is enough. You can access to EUSurvey by clicking on the login button on the <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">EUSurvey homepage</a>. This takes you to the login screen (see below for more details).</p>
+
+<h2><a class="anchor" name="_Toc1-2"></a>How do I connect to EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>Please click on the login button on the <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">EUSurvey homepage</a>. You will be redirected to the EUSurvey login screen.</p>
+<p>Once you arrived on the login screen, you have to choose the option corresponding to your personal case:</p>
+<p>
+	<ul>
+		<li><b>If you work for an EU institution</b>, choose the second option to connect to the EUSurvey application. Your EU Login username and password will then be sufficient.</li>
+		<li><b>If you don't work for an EU institution</b>, choose the first option to connect to the EUSurvey application. You will need to have previously registered your mobile phone to pass the <a href="https://en.wikipedia.org/wiki/Help:Two-factor_authentication">two-factor authentication</a>.</li>
+	</ul>
+</p>
+<p>If you don't have an EU Login account, please create one by clicking <a href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi">here</a>.</p>
+<p>In case you don't work for an EU institution, please also register your mobile phone by clicking <a href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi">here</a>.</p>
 
 <h1><a class="anchor" name="_Toc2"></a>Creating a survey</h1>
 <h2><a class="anchor" name="_Toc2-1"></a>How do I create a new survey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>

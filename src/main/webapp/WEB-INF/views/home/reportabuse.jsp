@@ -12,33 +12,19 @@
 		function checkReportAbuse()
 		{
 			$('#ReportAbuse-error-noselection').hide();
-			$('#ReportAbuse-error-notext').hide();
-			$('#ReportAbuse-error-noemail').hide();
 			$('#ReportAbuse-error-invalidemail').hide();
 			
 			if (!$("input[name='abuseType']:checked").val()) {
 				$('#ReportAbuse-error-noselection').show();
 				return false;
 		    }
-			
-			if ($("input[name='abuseType']:checked").val() == "others")
+						
+			if ($('#abuseEmail').val().length != 0)
 			{
-				if ($('#abuseText').val().length == 0)
-				{
-					$('#ReportAbuse-error-notext').show();
+				if (!validateEmail($('#abuseEmail').val())) {
+					$('#ReportAbuse-error-invalidemail').show();
 					return false;
 				}
-			}
-			
-			if ($('#abuseEmail').val().length == 0)
-			{
-				$('#ReportAbuse-error-noemail').show();
-				return false;
-			}
-			
-			if (!validateEmail($('#abuseEmail').val())) {
-				$('#ReportAbuse-error-invalidemail').show();
-				return false;
 			}
 			
 			return true;
@@ -67,22 +53,21 @@
 			<div style="padding: 10px;">
 				<input type="hidden" name="abuseSurvey" value="${AbuseSurvey}" />
 			
-				<input type="radio" name="abuseType" class="check" value="fake" onclick="$('#abuseText').hide()" /><spring:message code="info.ReportAbuseFake" /><br />
-				<input type="radio" name="abuseType" class="check" value="propaganda" onclick="$('#abuseText').hide()" /><spring:message code="info.ReportAbusePropaganda" /><br />
-				<input type="radio" name="abuseType" class="check" value="hate" onclick="$('#abuseText').hide()" /><spring:message code="info.ReportAbuseHate" /><br />
-				<input type="radio" name="abuseType" class="check" value="images" onclick="$('#abuseText').hide()" /><spring:message code="info.ReportAbuseImages" /><br />
-				<input type="radio" name="abuseType" class="check" value="promo" onclick="$('#abuseText').hide()" /><spring:message code="info.ReportAbusePromo" /><br />
-				<input type="radio" name="abuseType" class="check" value="others" onclick="$('#abuseText').show()" /><spring:message code="info.ReportAbuseOthers" /><br />
+				<input type="radio" name="abuseType" class="check" value="fake" /><spring:message code="info.ReportAbuseFake" /><br />
+				<input type="radio" name="abuseType" class="check" value="propaganda" /><spring:message code="info.ReportAbusePropaganda" /><br />
+				<input type="radio" name="abuseType" class="check" value="hate" /><spring:message code="info.ReportAbuseHate" /><br />
+				<input type="radio" name="abuseType" class="check" value="images" /><spring:message code="info.ReportAbuseImages" /><br />
+				<input type="radio" name="abuseType" class="check" value="promo" /><spring:message code="info.ReportAbusePromo" /><br />
+				<input type="radio" name="abuseType" class="check" value="others" /><spring:message code="info.ReportAbuseOthers" /><br />
 				
 				<div id="ReportAbuse-error-noselection" class="validation-error hideme"> 
 					<spring:message code="message.NoElementSelected" />
 				</div>
 				
-				<textarea id="abuseText" name="abuseText" maxlength="255" style="display: none;">${AbuseText}</textarea>
-				
-				<div id="ReportAbuse-error-notext" class="validation-error hideme"> 
-					<spring:message code="validation.required" />
-				</div>
+				<br />
+				<label style="margin-top: 20px"><spring:message code="label.specifyissue" /></label><br />
+				<textarea id="abuseText" name="abuseText" maxlength="255">${AbuseText}</textarea>			
+
 				<br />
 				<label style="margin-top: 20px"><spring:message code="label.youremail" /></label><br />
 				
@@ -91,9 +76,6 @@
 					<input class="form-control" id="abuseEmail" name="abuseEmail" type="text" value="${AbuseEmail}" style="max-width: 400px;" />
 				</div>				
 				
-				<div id="ReportAbuse-error-noemail" class="validation-error hideme"> 
-					<spring:message code="validation.required" />
-				</div>
 				<div id="ReportAbuse-error-invalidemail" class="validation-error hideme"> 
 					<spring:message code="error.InvalidEmail" />
 				</div>
@@ -122,10 +104,6 @@
 	<c:if test="${AbuseType != null}">
 		<script>
 			$('input[name=abuseType][value=${AbuseType}]').prop("checked", true);
-			
-			<c:if test='${AbuseType == "others"}'>
-				$('#abuseText').show();
-			</c:if>
 		</script>
 	</c:if>
 

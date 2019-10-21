@@ -9,6 +9,7 @@ import com.ec.survey.service.SessionService;
 import com.ec.survey.tools.Bad2faCredentialsException;
 import com.ec.survey.tools.BadSurveyCredentialsException;
 import com.ec.survey.tools.EcasHelper;
+import com.ec.survey.tools.FrozenCredentialsException;
 import com.ec.survey.tools.Tools;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -204,6 +205,8 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					authorities.add(new SimpleGrantedAuthority("ROLE_ECAS_SURVEY_" + survey));
 				}
 				
+				checkUserNotBanned(user);
+				
 				return new UsernamePasswordAuthenticationToken(
 						username, 
 						"", 
@@ -254,6 +257,8 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			throw new BadCredentialsException("User not validated!");
 		}
 		
+		checkUserNotBanned(user);
+		
 		user.setBadLoginAttempts(0);
 		administrationService.updateUser(user);
 			
@@ -261,6 +266,18 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				auth.getName(), 
 				auth.getCredentials(), 
 				getAuthorities(user, false, false));
+	}
+	
+	private void checkUserNotBanned(User user)
+	{
+		if (user.isFrozen()) {
+			throw new FrozenCredentialsException("User is banned!");
+		}
+		
+		if (!administrationService.checkEmailsNotBanned(user.getAllEmailAddresses()))
+		{
+			throw new FrozenCredentialsException("User is banned!");
+		}
 	}
 
 	/**

@@ -21,21 +21,14 @@
 	<div class='${responsive != null ? "responsivepage" : "page"}' style='padding: 20px; margin-top: 80px; margin-bottom: 100px; max-width: 600px; margin-left: auto; margin-right: auto'>
 	
 		<div class="hidden-xs" style="float: left; height: 200px;">
-			<span class="glyphicon glyphicon-ban-circle" style="font-size: 100px; color: #bd281d; margin-right: 60px; margin-top: 10px"></span>
+			<span class="glyphicon glyphicon-ban-circle" style="font-size: 100px; color: #bd281d; margin-right: 60px; margin-top: 0px"></span>
 		</div>
 		<div style="text-align: left; margin-bottom: 50px;">
 			<div style="float: left" class="visible-xs">
-				<span class="glyphicon glyphicon-ban-circle" style="font-size: 30px; color: #bd281d; margin-right: 10px; "></span>
+				<span class="glyphicon glyphicon-ban-circle" style="font-size: 30px; color: #bd281d; margin-right: 10px; margin-top: 0px"></span>
 			</div>
-			<div style="float: right; width: 400px;">
-				<h1>				
-					<spring:message code="label.InformationLoginError" /> 
-				</h1>
-								
-				<p><spring:message code="info.InformationLoginError" /></p>
-				<p><spring:message code="info.InformationLoginError2" /></p>
-				<br />
-				<a href="<c:url value="/auth/login"/>"><spring:message code="label.BackToLogin" /></a>
+			<div style="float: right; width: 400px; margin-top: 15px;">
+				<p><spring:message code="info.InformationFrozenError" /></p>
 			</div>
 			<div style="clear: both"></div>
 		</div>

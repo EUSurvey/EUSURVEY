@@ -1,6 +1,7 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.model.Paging;
+import com.ec.survey.model.Setting;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.UserFilter;
 import com.ec.survey.model.UsersConfiguration;
@@ -79,7 +80,36 @@ public class UserController extends BasicController {
     	if (usersConfiguration == null) usersConfiguration = new UsersConfiguration();
     	m.addObject("usersConfiguration", usersConfiguration);
     	
-		return m;
+    	m.addObject("freezeusertext", settingsService.get(Setting.FreezeUserTextBan));
+    	m.addObject("unfreezeusertext", settingsService.get(Setting.FreezeUserTextUnban));
+
+    	return m;
+	}
+	
+	@RequestMapping(value = "/banuser", method = RequestMethod.POST)
+	public ModelAndView banuser(@RequestParam("userId") String userId, @RequestParam("emailText") String emailText, HttpServletRequest request, Model model) throws Exception {	
+		
+		if (userId == null || userId.length() == 0 || emailText == null || emailText.length() == 0)
+		{
+			throw new Exception("invalid input data");
+		}
+			
+		administrationService.banUser(userId, emailText);
+		
+		return new ModelAndView("redirect:/administration/users?frozen=1");	
+	}
+	
+	@RequestMapping(value = "/unbanuser", method = RequestMethod.POST)
+	public ModelAndView unbanuser(@RequestParam("userId") String userId, HttpServletRequest request, Model model) throws Exception {	
+		
+		if (userId == null || userId.length() == 0)
+		{
+			throw new Exception("invalid input data");
+		}
+			
+		administrationService.unbanUser(userId);
+		
+		return new ModelAndView("redirect:/administration/users?unfrozen=1");	
 	}
 		
 	@RequestMapping(value = "/createUser", method = RequestMethod.POST)
@@ -100,7 +130,7 @@ public class UserController extends BasicController {
 			if (Tools.isPasswordWeak(password))
 			{
 				model.addAttribute("error", resources.getMessage("error.PasswordWeak", null, "This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$&%...).", locale));
-			} else {			
+			} else {
 				User user = new User();
 				user.setValidated(true);
 				user.setLogin(login);
@@ -114,19 +144,24 @@ public class UserController extends BasicController {
 				user.setLanguage(language);
 				user.setType(User.SYSTEM);
 				
-				if (roles != null && roles.length() > 0)
+				if (!administrationService.checkEmailsNotBanned(user.getAllEmailAddresses()))
 				{
-					String[] ids = roles.split(";");
-					Map<Integer, Role> rolesById = administrationService.getAllRolesAsMap();
-					for (String id : ids) {
-						if (rolesById.containsKey(Integer.parseInt(id)))
-						{
-							user.getRoles().add(rolesById.get(Integer.parseInt(id)));
-						}
-					}				
+					model.addAttribute("error", resources.getMessage("error.EmailBanned", null, "This email adress belongs to a banned user.", locale));
+				} else {
+					if (roles != null && roles.length() > 0)
+					{
+						String[] ids = roles.split(";");
+						Map<Integer, Role> rolesById = administrationService.getAllRolesAsMap();
+						for (String id : ids) {
+							if (rolesById.containsKey(Integer.parseInt(id)))
+							{
+								user.getRoles().add(rolesById.get(Integer.parseInt(id)));
+							}
+						}				
+					}
+					
+					administrationService.createUser(user);
 				}
-				
-				administrationService.createUser(user);
 			}
 		} else {
 			model.addAttribute("error", resources.getMessage("error.LoginExists", null, "This login already exists. Please choose a unique login.", locale));
@@ -201,5 +236,5 @@ public class UserController extends BasicController {
 		}
 		return users(request, model);
 	}
-		
+			
 }

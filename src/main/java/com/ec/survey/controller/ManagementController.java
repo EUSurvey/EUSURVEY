@@ -60,8 +60,7 @@ public class ManagementController extends BasicController {
 	public @Value("${opc.users}") String opcusers;
 	public @Value("${opc.department:@null}") String opcdepartments;
 	public @Value("${opc.template}") String opctemplatesurvey;
-	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
-
+	
 	@InitBinder
 	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(ConversionTools.DateFormat);

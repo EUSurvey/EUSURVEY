@@ -155,7 +155,146 @@ public class SystemController extends BasicController {
 		m.addObject("reportMessageText", settingsService.get(Setting.ReportText));
 		m.addObject("reportRecipients", settingsService.get(Setting.ReportRecipients));
 		
+		m.addObject("banUserMessageText", settingsService.get(Setting.FreezeUserTextAdminBan));
+		m.addObject("unbanUserMessageText", settingsService.get(Setting.FreezeUserTextAdminUnban));
+		m.addObject("bannedUserRecipients", settingsService.get(Setting.BannedUserRecipients));
+		
+		m.addObject("bannedUserMessageText", settingsService.get(Setting.FreezeUserTextBan));
+		m.addObject("unbannedUserMessageText", settingsService.get(Setting.FreezeUserTextUnban));
+		
+		m.addObject("trustIndicatorCreatorInternal", settingsService.get(Setting.TrustValueCreatorInternal));
+		m.addObject("trustIndicatorMinimumPassMark", settingsService.get(Setting.TrustValueMinimumPassMark));
+		m.addObject("trustIndicatorPastSurveys", settingsService.get(Setting.TrustValuePastSurveys));
+		m.addObject("trustIndicatorPrivilegedUser", settingsService.get(Setting.TrustValuePrivilegedUser));
+		m.addObject("trustIndicatorNbContributions", settingsService.get(Setting.TrustValueNbContributions));
+		
 		return m;
+	}
+	
+	@RequestMapping(value ="/configureBanUsers", method = RequestMethod.POST)
+	public ModelAndView configureBanUsers( HttpServletRequest request, Locale locale) throws Exception {
+		String banUserMessageText = request.getParameter("banUserMessageText");
+		
+		if (banUserMessageText == null || banUserMessageText.length() == 0)
+		{
+			throw new Exception("banUserMessageText must not be empty");
+		}
+		
+		String unbanUserMessageText = request.getParameter("unbanUserMessageText");
+		
+		if (unbanUserMessageText == null || unbanUserMessageText.length() == 0)
+		{
+			throw new Exception("unbanUserMessageText must not be empty");
+		}
+		
+		String bannedUserMessageText = request.getParameter("bannedUserMessageText");
+		
+		if (bannedUserMessageText == null || bannedUserMessageText.length() == 0)
+		{
+			throw new Exception("bannedUserMessageText must not be empty");
+		}
+		
+		String unbannedUserMessageText = request.getParameter("unbannedUserMessageText");
+		
+		if (unbannedUserMessageText == null || unbannedUserMessageText.length() == 0)
+		{
+			throw new Exception("unbannedUserMessageText must not be empty");
+		}
+		
+		String[] emails = request.getParameterValues("messageEmail");
+		String recipients = "";
+		if (emails != null)
+		{
+			for (String email : emails) {
+				if (email.trim().length() > 0)
+				{
+					if (!MailService.isValidEmailAddress(email))
+					{
+						throw new Exception("invalid email address:" + email);
+					}					
+					
+					if (recipients.length() > 0)
+					{
+						recipients += ";";
+					}
+					recipients += email;
+				}
+			}
+		}
+		
+		settingsService.update(Setting.BannedUserRecipients, recipients);
+		settingsService.update(Setting.FreezeUserTextAdminBan, banUserMessageText);
+		settingsService.update(Setting.FreezeUserTextAdminUnban, unbanUserMessageText);
+		settingsService.update(Setting.FreezeUserTextBan, bannedUserMessageText);
+		settingsService.update(Setting.FreezeUserTextUnban, unbannedUserMessageText);
+		
+		return new ModelAndView("redirect:/administration/system");
+	}
+	
+	@RequestMapping(value ="/configureTrustIndicator", method = RequestMethod.POST)
+	public ModelAndView configureTrustIndicator( HttpServletRequest request, Locale locale) throws Exception {
+		String trustIndicatorCreatorInternal = request.getParameter("trustIndicatorCreatorInternal");
+		
+		if (trustIndicatorCreatorInternal == null || trustIndicatorCreatorInternal.length() == 0)
+		{
+			throw new Exception("trustIndicatorCreatorInternal must not be empty");
+		}
+		if (!Tools.isInteger(trustIndicatorCreatorInternal))
+		{
+			throw new Exception("trustIndicatorCreatorInternal must be an integer");
+		}		
+		
+		String trustIndicatorMinimumPassMark = request.getParameter("trustIndicatorMinimumPassMark");
+		
+		if (trustIndicatorMinimumPassMark == null || trustIndicatorMinimumPassMark.length() == 0)
+		{
+			throw new Exception("trustIndicatorMinimumPassMark must not be empty");
+		}
+		if (!Tools.isInteger(trustIndicatorMinimumPassMark))
+		{
+			throw new Exception("trustIndicatorMinimumPassMark must be an integer");
+		}
+		
+		String trustIndicatorPastSurveys = request.getParameter("trustIndicatorPastSurveys");
+		
+		if (trustIndicatorPastSurveys == null || trustIndicatorPastSurveys.length() == 0)
+		{
+			throw new Exception("trustIndicatorPastSurveys must not be empty");
+		}
+		if (!Tools.isInteger(trustIndicatorPastSurveys))
+		{
+			throw new Exception("trustIndicatorPastSurveys must be an integer");
+		}
+		
+		String trustIndicatorPrivilegedUser = request.getParameter("trustIndicatorPrivilegedUser");
+		
+		if (trustIndicatorPrivilegedUser == null || trustIndicatorPrivilegedUser.length() == 0)
+		{
+			throw new Exception("trustIndicatorPrivilegedUser must not be empty");
+		}
+		if (!Tools.isInteger(trustIndicatorPrivilegedUser))
+		{
+			throw new Exception("trustIndicatorPrivilegedUser must be an integer");
+		}
+		
+		String trustIndicatorNbContributions = request.getParameter("trustIndicatorNbContributions");
+		
+		if (trustIndicatorNbContributions == null || trustIndicatorNbContributions.length() == 0)
+		{
+			throw new Exception("trustIndicatorNbContributions must not be empty");
+		}
+		if (!Tools.isInteger(trustIndicatorNbContributions))
+		{
+			throw new Exception("trustIndicatorNbContributions must be an integer");
+		}
+				
+		settingsService.update(Setting.TrustValueCreatorInternal, trustIndicatorCreatorInternal);
+		settingsService.update(Setting.TrustValuePastSurveys, trustIndicatorPastSurveys);
+		settingsService.update(Setting.TrustValuePrivilegedUser, trustIndicatorPrivilegedUser);
+		settingsService.update(Setting.TrustValueMinimumPassMark, trustIndicatorMinimumPassMark);
+		settingsService.update(Setting.TrustValueNbContributions, trustIndicatorNbContributions);
+		
+		return new ModelAndView("redirect:/administration/system");
 	}
 	
 	@RequestMapping(value ="/configureReports", method = RequestMethod.POST)

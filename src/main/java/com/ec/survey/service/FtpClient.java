@@ -19,7 +19,6 @@ import java.io.IOException;
 @Service("ftpClient")
 public class FtpClient {
 	protected static final Logger logger = Logger.getLogger(FtpClient.class);
-	
 	private final ProducerTemplate producerTemplate;
 	private final ConsumerTemplate consumerTemplate;
 	private @Value("${mt.fileDir}") String fileDir;

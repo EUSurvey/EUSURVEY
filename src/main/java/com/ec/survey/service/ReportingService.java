@@ -634,11 +634,11 @@ public class ReportingService {
 									{
 										if (addlinks)
 										{
-											v += "<a target='blank' href='" + contextpath + "/files/" + survey.getUniqueId() + "/" + file.getUid() + "'>" + file.getName() + "</a><br />";
+											v += "<a target='blank' href='" + contextpath + "/files/" + survey.getUniqueId() + "/" + file.getUid() + "'>" + file.getNameForExport() + "</a><br />";
 										} else if (forexport) {
-											v += file.getUid() + "|" + file.getName() + ";";
+											v += file.getUid() + "|" + file.getNameForExport() + ";";
 										} else {
-											v += file.getName() + "<br />";
+											v += file.getNameForExport() + "<br />";
 										}
 									}							
 								}						
@@ -738,7 +738,7 @@ public class ReportingService {
 			
 			while (OLAPTableExists(uid + "_" + counter, true))
 			{
-				query = sessionReporting.createSQLQuery("DROP TABLE IF EXISTS T" + uid.replace("-", "") + "_" + counter);
+				query = sessionReporting.createSQLQuery("DROP TABLE IF EXISTS TD" + uid.replace("-", "") + "_" + counter);
 				query.executeUpdate();
 				counter++;
 			}
