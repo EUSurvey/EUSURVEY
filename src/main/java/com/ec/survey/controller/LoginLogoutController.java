@@ -9,6 +9,7 @@ import com.ec.survey.service.MailService;
 import com.ec.survey.service.SessionService;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
+import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,7 @@ public class LoginLogoutController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/auth/login", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String getLoginPage(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException {
+	public String getLoginPage(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		
@@ -138,13 +139,15 @@ public class LoginLogoutController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/auth/logout", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView getLogoutPage(HttpServletRequest request) {
+	public ModelAndView getLogoutPage(HttpServletRequest request) throws WeakAuthenticationException {
 		ModelAndView result = new ModelAndView("home/welcome");
 		result.addObject("page", "welcome");
 		User user = null;
 		try {
 			user = sessionService.getCurrentUser(request);
 		} catch (NotAgreedToTosException e) {
+			//ignore
+		} catch (WeakAuthenticationException e) {
 			//ignore
 		}
 		

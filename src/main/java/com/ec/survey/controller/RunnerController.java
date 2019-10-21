@@ -1,6 +1,7 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.exception.ForbiddenURLException;
+import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.SmtpServerNotConfiguredException;
 import com.ec.survey.model.*;
@@ -118,7 +119,7 @@ public class RunnerController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/invited/{group}/{unique}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView invited(@PathVariable String group, @PathVariable String unique, HttpServletRequest request, Locale locale, Integer draftSurveyId, Device device) {
+	public ModelAndView invited(@PathVariable String group, @PathVariable String unique, HttpServletRequest request, Locale locale, Integer draftSurveyId, Device device) throws WeakAuthenticationException {
 
 		boolean readonlyMode = false;
 		String p = request.getParameter("readonly");
@@ -230,8 +231,13 @@ public class RunnerController extends BasicController {
 						if (draftSurvey.getIsDeleted() || draftSurvey.getArchived()) {
 							throw new InvalidURLException();
 						}
-
+						
                         if (!readonlyMode) return getEscapePageModel(draftSurvey, request, device);
+					}
+					
+					if (draftSurvey.getIsFrozen())
+					{
+						throw new FrozenSurveyException();
 					}
 
 					Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true), survey.getLanguage(), resources, contextpath);
@@ -367,7 +373,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@RequestMapping(value = "/{shortname}/{token}", method = RequestMethod.POST)
-	public ModelAndView runnerTokenPost(@PathVariable String shortname, @PathVariable String token, HttpServletRequest request, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException {
+	public ModelAndView runnerTokenPost(@PathVariable String shortname, @PathVariable String token, HttpServletRequest request, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException, FrozenSurveyException {
 
 		Survey survey = surveyService.getSurveyByShortname(shortname, false, null, request, true, true, true, true);  //(shortname, false, true, false, false, null, true);
 		
@@ -385,6 +391,11 @@ public class RunnerController extends BasicController {
 			} else {
 				throw new InvalidURLException();
 			}
+		}
+		
+		if (survey.getIsFrozen())
+		{
+			throw new FrozenSurveyException();
 		}
 		
 		try {
@@ -458,7 +469,7 @@ public class RunnerController extends BasicController {
 			}
 			
 
-			User user = sessionService.getCurrentUser(request, false);
+			User user = sessionService.getCurrentUser(request, false, false);
 			AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, fileDir, uniqueCode, false, lang, user, fileService);
 
 			if (survey != null) {
@@ -737,7 +748,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@RequestMapping(value = "/{uidorshortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException {
+	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException, WeakAuthenticationException, FrozenSurveyException {
 
 		ModelAndView modelReturn= new ModelAndView();
 		boolean internalUsersOnly = false;
@@ -806,7 +817,7 @@ public class RunnerController extends BasicController {
 				{
 					try {
 						
-						User user = sessionService.getCurrentUser(request, false);
+						User user = sessionService.getCurrentUser(request, false, false);
 						
 						boolean ecasauthenticated = request.getSession().getAttribute("ECASSURVEY") != null && request.getSession().getAttribute("ECASSURVEY").toString().startsWith(uidorshortname);
 						
@@ -953,7 +964,7 @@ public class RunnerController extends BasicController {
 		}
 	}
 
-	private ModelAndView loadSurvey(Survey survey, HttpServletRequest request, HttpServletResponse response, Locale locale, String action, boolean passwordauthenticated, Device device, boolean readonlyMode) throws ForbiddenURLException {
+	private ModelAndView loadSurvey(Survey survey, HttpServletRequest request, HttpServletResponse response, Locale locale, String action, boolean passwordauthenticated, Device device, boolean readonlyMode) throws ForbiddenURLException, WeakAuthenticationException {
 		if (survey != null) {
 			String draftid = request.getParameter("draftid");
 
@@ -1290,7 +1301,7 @@ public class RunnerController extends BasicController {
 			
 			if (!mode.equalsIgnoreCase("preview"))
 			{
-				User user = sessionService.getCurrentUser(request, false);
+				User user = sessionService.getCurrentUser(request, false, false);
 				
 				String draftid = request.getParameter("draftid");
 				Draft draft = null;
@@ -1401,7 +1412,7 @@ public class RunnerController extends BasicController {
 			} else if (mode.equalsIgnoreCase("test")) {
 				url = serverPrefix + survey.getShortname() + "/management/test?draftid=" + uid;
 			} else if (mode.equalsIgnoreCase("runner")) {
-				User user = sessionService.getCurrentUser(request, false);
+				User user = sessionService.getCurrentUser(request, false, false);
 				if (survey.getEcasSecurity() && user != null)
 				{
 					url = serverPrefix + "runner/" + survey.getUniqueId();
@@ -1459,7 +1470,7 @@ public class RunnerController extends BasicController {
 		String invitationId = draft.getAnswerSet().getInvitationId();
 		String uniqueCode = draft.getAnswerSet().getUniqueCode();
 		String lang = draft.getAnswerSet().getLanguageCode();
-		String url = answerService.getDraftURL(draft.getAnswerSet(), draftid, sessionService.getCurrentUser(request, false));
+		String url = answerService.getDraftURL(draft.getAnswerSet(), draftid, sessionService.getCurrentUser(request, false, false));
 		
 		ModelAndView result = new ModelAndView("thanksdraftrunner", "url", url);
 		
@@ -1587,7 +1598,7 @@ public class RunnerController extends BasicController {
 			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(origsurvey, uniqueCode, locale);
 			if (err != null) return err;
 
-			User user = sessionService.getCurrentUser(request, false);
+			User user = sessionService.getCurrentUser(request, false, false);
 			AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, origsurvey, fileDir, uniqueCode, false, lang, user, fileService);
 			
 			String newlang = request.getParameter("newlang");
@@ -1959,7 +1970,7 @@ public class RunnerController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/elements/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException {
+	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException, WeakAuthenticationException {
 		String ids = request.getParameter("ids");
 		
 		if (ids == null) return null;
@@ -1975,7 +1986,7 @@ public class RunnerController extends BasicController {
 		boolean hasGlobalAdminRights = false;
 		
 		if (foreditor) {
-             User user = sessionService.getCurrentUser(request, false);
+             User user = sessionService.getCurrentUser(request, false, false);
              if (user != null)
              {
             	 hasGlobalAdminRights = user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2;

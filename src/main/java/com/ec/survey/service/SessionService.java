@@ -15,6 +15,8 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.Text;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.WeakAuthenticationException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -57,22 +59,30 @@ public class SessionService extends BasicService {
 	private @Value("${pdfserver.prefix}") String pdfServerPrefix;
 	private @Value("${proxy.nonProxyHosts}") String proxyNonProxyHosts;
 
-	public User getCurrentUser(HttpServletRequest request) throws NotAgreedToTosException {
-		return getCurrentUser(request, true);
+	public User getCurrentUser(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
+		return getCurrentUser(request, true, true);
 	}
 	
-	public User getCurrentUser(HttpServletRequest request, boolean checkTOS) throws NotAgreedToTosException {
+	public User getCurrentUser(HttpServletRequest request, boolean checkTOS, boolean checkWeakAuthentication) throws NotAgreedToTosException, WeakAuthenticationException {
 		if (request == null) return null;
 		
 		User user = (User) request.getSession().getAttribute("USER");
+		Boolean weakAuthentication = (Boolean) request.getSession().getAttribute("WEAKAUTHENTICATION");
 		
 		if (user != null)
 		{
 			Session session = sessionFactory.getCurrentSession();
 			user = (User) session.merge(user);
 			
+			String weakAuthenticationDisabled = settingsService.get(Setting.WeakAuthenticationDisabled);
+			
+			if (weakAuthenticationDisabled.equalsIgnoreCase("true") && checkWeakAuthentication && user.getType().equalsIgnoreCase(User.ECAS) && user.isExternal() && weakAuthentication)
+			{
+				throw new WeakAuthenticationException();
+			}
+			
 			String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
-			if (disabled.equalsIgnoreCase("true") && user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) == 0)
+			if (disabled.equalsIgnoreCase("true") && user.isExternal())
     		{
     			user.setCanCreateSurveys(false);
     		}
@@ -294,7 +304,7 @@ public class SessionService extends BasicService {
 		request.getSession().setAttribute("sessioninfo", new SessionInfo(survey.getId(), user.getId(), survey.getOwner().getId(), survey.getLanguage().getCode(),survey.getShortname()));
 	}
 
-	public SurveyFilter getSurveyFilter(HttpServletRequest request, boolean forms) throws NotAgreedToTosException {
+	public SurveyFilter getSurveyFilter(HttpServletRequest request, boolean forms) throws NotAgreedToTosException, WeakAuthenticationException {
 		SurveyFilter filter = new SurveyFilter();
 		
 		filter.setUser(getCurrentUser(request));
@@ -513,6 +523,9 @@ public class SessionService extends BasicService {
 		
     	filter.setLanguages(request.getParameterValues("languages"));
     	
+    	filter.setBanned(request.getParameter("banned") != null && request.getParameter("banned").equalsIgnoreCase("true"));
+    	filter.setUnbanned(request.getParameter("unbanned") != null && request.getParameter("unbanned").equalsIgnoreCase("true"));
+		    	
     	String roles[] = request.getParameterValues("roles");
 		if (roles != null && roles.length > 0)
 		{

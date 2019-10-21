@@ -12,6 +12,7 @@ import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.RecreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.UpdateAllOLAPTablesExecutor;
+import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -116,7 +117,7 @@ public class AdministrationController extends BasicController {
 	}
 		
 	@RequestMapping(value = "/saveUserConfiguration", method = {RequestMethod.POST})
-	public @ResponseBody String saveUserConfiguration(HttpServletRequest request) throws NotAgreedToTosException {
+	public @ResponseBody String saveUserConfiguration(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
 		int userId = sessionService.getCurrentUser(request).getId();
 		UsersConfiguration usersConfiguration = administrationService.getUsersConfiguration(userId);
 		

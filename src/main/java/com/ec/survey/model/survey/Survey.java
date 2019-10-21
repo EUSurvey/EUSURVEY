@@ -91,6 +91,7 @@ public class Survey implements java.io.Serializable {
 	private int numberOfDrafts;
 	private int numberOfInvitations;
 	private int numberOfAnswerSetsPublished;
+	private int numberOfReports;
 	private int compulsoryStyle;
 	private boolean isActive;      // true if the survey is accessible on the web, isActive is valid for draft and survey objects 
 	private boolean isDraft;
@@ -121,6 +122,7 @@ public class Survey implements java.io.Serializable {
 	private boolean wcagCompliance;
 	private boolean isArchived;
 	private Boolean isDeleted;
+	private Boolean isFrozen;
 	private boolean ecasSecurity;
 	private String ecasMode;
 	private Boolean logoInInfo;
@@ -138,6 +140,7 @@ public class Survey implements java.io.Serializable {
 	private boolean accessResultsRights = true;
 	private Integer allowedContributionsPerUser = 1;
 	private boolean canCreateSurveys = true;
+	private Integer trustScore;
 	
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1126,6 +1129,14 @@ public class Survey implements java.io.Serializable {
 		this.numberOfAnswerSetsPublished = numberOfAnswerSetsPublished;
 	}
 	
+	@Transient
+	public int getNumberOfReports() {
+		return numberOfReports;
+	}
+	public void setNumberOfReports(int numberOfReports) {
+		this.numberOfReports = numberOfReports;
+	}
+	
 	//this property is not used anymore but has to stay because of backward compatibility
 	@Column(name = "COMPULSORYSTYLE")
 	public Integer getCompulsoryStyle() {
@@ -1152,6 +1163,14 @@ public class Survey implements java.io.Serializable {
 	}
 	public void setIsDeleted(Boolean isDeleted) {
 		this.isDeleted = isDeleted != null ? isDeleted : false;
+	}
+	
+	@Column(name = "FROZEN")
+	public Boolean getIsFrozen() {
+		return isFrozen != null ? isFrozen : false;
+	}
+	public void setIsFrozen(Boolean isFrozen) {
+		this.isFrozen = isFrozen != null ? isFrozen : false;
 	}
 	
 	@Column(name = "ECASSEC")
@@ -1258,6 +1277,14 @@ public class Survey implements java.io.Serializable {
 	}
 	public void setAllowedContributionsPerUser(Integer allowedContributionsPerUser) {
 		this.allowedContributionsPerUser = allowedContributionsPerUser;
+	}
+	
+	@Column(name = "TRUSTSCORE")
+	public Integer getTrustScore() {
+		return trustScore;
+	}
+	public void setTrustScore(Integer trustScore) {
+		this.trustScore = trustScore;
 	}
 	
 	@Transient
@@ -2104,13 +2131,11 @@ public class Survey implements java.io.Serializable {
 		this.accessResultsRights = accessResultsRights;
 	}
 								
-	
 	@Transient
 	public boolean isCanCreateSurveys() {
 		return canCreateSurveys;
 	}
 	public void setCanCreateSurveys(boolean canCreateSurveys) {
 		this.canCreateSurveys = canCreateSurveys;
-	}
-							
+	}							
 }

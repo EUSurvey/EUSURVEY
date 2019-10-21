@@ -59,6 +59,118 @@ public class SchemaService extends BasicService {
 	private DomainUpdater domaintWorker;
 	
 	@Transactional
+	public void step93() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		
+		settingsService.add(Setting.TrustValueCreatorInternal, "500", "int");
+		settingsService.add(Setting.TrustValuePastSurveys, "500", "int");
+		settingsService.add(Setting.TrustValuePrivilegedUser, "100", "int");
+		settingsService.add(Setting.TrustValueNbContributions, "50", "int");
+		settingsService.add(Setting.TrustValueMinimumPassMark, "100", "int");
+		
+		status.setDbversion(93);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void step92() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		
+		String text = "<p>Please be informed that the following user [LOGIN] having the email address: [EMAIL] has been banned from EUSurvey.</p><p>For more information please contact the EUSurvey team.</p>";
+		settingsService.add(Setting.FreezeUserTextAdminBan, text, "text");
+		
+		text = "<p>Please be informed that the following user [LOGIN] having the email address: [EMAIL] has been unbanned from EUSurvey.</p><p>For more information please contact the EUSurvey team.</p>";
+		settingsService.add(Setting.FreezeUserTextAdminUnban, text, "text");
+		
+		text = "<p>Dear Sir or Madam,</p><p>You have been banned from EUSurvey application due to infrigiment to our policy.</p><p>Reason: to specify</p><p>Please refer to our <a href=\"https://ec.europa.eu/eusurvey/home/tos\">Terms of Service</a> for more information.</p> <p>Kind regards,<br />The EUSurvey Team</p>";
+		settingsService.add(Setting.FreezeUserTextBan, text, "text");
+		
+		text = "<p>Dear Sir or Madam,</p><p>You have just been unbanned and got back your access to the EUSurvey application. You can now connect to EUSurvey</p> <p>Kind regards,<br />The EUSurvey Team</p>";
+		settingsService.add(Setting.FreezeUserTextUnban, text, "text");
+			
+		Setting s = new Setting();
+		s.setKey(Setting.BannedUserRecipients);
+		s.setValue("");
+		s.setFormat("email addresses separated by ;");				
+		session.saveOrUpdate(s);		
+		
+		status.setDbversion(92);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void step91() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		
+		SQLQuery query = session.createSQLQuery("ALTER TABLE SETTINGS MODIFY SETTINGS.SETTINGS_VALUE TEXT");
+		query.executeUpdate();
+		
+		String newReportText = "<p>The following survey:<br />" + 
+				"<table>" + 
+				"<tr><td>Published survey link:</td><td>[LINK]</td></tr>" + 
+				"<tr><td>Alias:</td><td>[ALIAS]</td></tr>" + 
+				"<tr><td>Title:</td><td>[TITLE]</td></tr>" + 
+				"</table>" + 
+				"has been reported as infringing our policy by [EMAIL] at [DATE].</p>" + 
+				"<p>The reason provided is the following: [TYPE].</p>" + 
+				"<p>So far, it has been reported [COUNT] time(s).</p>";
+		
+		settingsService.update(Setting.ReportText, newReportText);
+		
+		status.setDbversion(91);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void step90() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		String existing = settingsService.get(Setting.MaxReports);
+		if (existing == null)
+		{		
+			Setting s = new Setting();
+			s.setKey(Setting.MaxReports);
+			s.setValue("5");
+			s.setFormat("int");				
+			session.saveOrUpdate(s);
+			
+			s = new Setting();
+			s.setKey(Setting.ReportText);
+			s.setValue("Survey [ALIAS] <br /> [TITLE] has been reported as infringing our policy by [EMAIL] at [DATE]. The reason provided is the following: [TYPE].<br />So far, it has been reported [COUNT] time(s).");
+			s.setFormat("text");				
+			session.saveOrUpdate(s);
+			
+			s = new Setting();
+			s.setKey(Setting.ReportRecipients);
+			s.setValue("");
+			s.setFormat("email addresses separated by ;");				
+			session.saveOrUpdate(s);
+		}
+		status.setDbversion(90);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void step89() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+		String existing = settingsService.get(Setting.WeakAuthenticationDisabled);
+		if (existing == null)
+		{		
+			Setting s = new Setting();
+			s.setKey(Setting.WeakAuthenticationDisabled);
+			s.setValue("true");
+			s.setFormat("true / false");				
+			session.saveOrUpdate(s);
+		}
+		status.setDbversion(89);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
 	public void step88() {
 		Session session = sessionFactory.getCurrentSession();
 		Status status = getStatus();

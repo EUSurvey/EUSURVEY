@@ -1,5 +1,6 @@
 package com.ec.survey.tools;
 
+import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.*;
@@ -4158,13 +4159,18 @@ public class SurveyHelper {
         }
     }
 	
-	public static boolean isDeactivatedOrEndDateExceeded(Survey survey, SurveyService surveyService) {
+	public static boolean isDeactivatedOrEndDateExceeded(Survey survey, SurveyService surveyService) throws FrozenSurveyException {
 		boolean bln = false;
 		
 		if (!survey.getIsDraft())
 		{
 			Survey draft = surveyService.getSurveyByUniqueId(survey.getUniqueId(), false, true);
 			if (!draft.getIsActive()) return true;
+			
+			if (draft.getIsFrozen())
+			{
+				throw new FrozenSurveyException();
+			}
 		}
 
 		if (survey.getEnd() != null && survey.getAutomaticPublishing()) {

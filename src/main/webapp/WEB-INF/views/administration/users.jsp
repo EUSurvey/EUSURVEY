@@ -185,8 +185,19 @@
 		
 		function showAddDialog()
 		{
-			$('#add-user-login').val("");
 			$('#add-user-login').removeAttr("readonly").removeAttr("disabled");
+			$('#add-user-password').removeAttr('readonly').removeAttr('disabled');
+			$('#add-user-email').removeAttr('readonly').removeAttr('disabled');
+			$('#other-user-email').removeAttr('readonly').removeAttr('disabled');
+			$('#add-user-comment').removeAttr('readonly').removeAttr('disabled');
+			$('#add-user-firstname').removeAttr('readonly').removeAttr('disabled');
+			$('#add-user-lastname').removeAttr('readonly').removeAttr('disabled');
+			$('#add-user-language').removeAttr('readonly').removeAttr('disabled');
+			$('.role').each(function(){
+				$(this).removeAttr('disabled');					
+			});			
+			
+			$('#add-user-login').val("");
 			$('#add-user-password').val("");
 			$('#add-user-password').addClass("required");
 			$('#add-user-firstname').val("");
@@ -199,14 +210,16 @@
 			
 			$('.role').removeAttr("checked");
 			
-			$('add-user-button').attr("onclick","createUser()");
+			$('add-user-button').show().attr("onclick","createUser()");
 			
 			$('#add-user-dialog-header1').show();
 			$('#add-user-dialog-header2').hide();
+			$('#banneduserinfo').hide();
+			$('#add-user-button').show();
 			$('#add-user-dialog').modal();
 		}
 		
-		function showEditDialog(id, login, email, otheremail, comment, language, type, roles, first, last, readwrite)
+		function showEditDialog(id, login, email, otheremail, comment, language, type, roles, first, last, readwrite, banned)
 		{
 			selectedId = id;
 			
@@ -222,10 +235,11 @@
 			$('#add-user-language').find("option").removeAttr("selected");
 			$('#add-user-language').find("option[value='" + language + "']").prop("selected","selected");
 			
-			if (readwrite)
+			if (readwrite && !banned)
 			{
 				$('#add-user-password').removeAttr('readonly').removeAttr('disabled');
 				$('#add-user-email').removeAttr('readonly').removeAttr('disabled');
+				$('#other-user-email').removeAttr('readonly').removeAttr('disabled');
 				$('#add-user-comment').removeAttr('readonly').removeAttr('disabled');
 				$('#add-user-firstname').removeAttr('readonly').removeAttr('disabled');
 				$('#add-user-lastname').removeAttr('readonly').removeAttr('disabled');
@@ -236,6 +250,7 @@
 			} else {
 				$('#add-user-password').attr('readonly', true).attr('disabled', true);
 				$('#add-user-email').attr('readonly', true).attr('disabled', true);
+				$('#other-user-email').attr('readonly', true).attr('disabled', true);
 				$('#add-user-comment').attr('readonly', true).attr('disabled', true);
 				$('#add-user-firstname').attr('readonly', true).attr('disabled', true);
 				$('#add-user-lastname').attr('readonly', true).attr('disabled', true);
@@ -257,6 +272,15 @@
 			$('#add-user-button').attr("onclick","updateUser(" + id + ")");
 			
 			$('#add-user-dialog-header2').show();
+			
+			if (banned) {
+				$('#banneduserinfo').show();
+				$('#add-user-button').hide();
+			} else {
+				$('#banneduserinfo').hide();
+				$('#add-user-button').show();
+			}
+			
 			$('#add-user-dialog-header1').hide();
 			$('#add-user-dialog').modal();
 		}
@@ -320,7 +344,7 @@
 					$($(this).find("th")[2]).hide();
 					$($(this).find("td")[2]).hide();
 				}
-				if ($("#user-language").is(":checked"))
+				if ($("#user-banned").is(":checked"))
 				{
 					$($(this).find("th")[3]).show();
 					$($(this).find("td")[3]).show();
@@ -328,7 +352,7 @@
 					$($(this).find("th")[3]).hide();
 					$($(this).find("td")[3]).hide();
 				}
-				if ($("#user-roles").is(":checked"))
+				if ($("#user-language").is(":checked"))
 				{
 					$($(this).find("th")[4]).show();
 					$($(this).find("td")[4]).show();
@@ -336,13 +360,21 @@
 					$($(this).find("th")[4]).hide();
 					$($(this).find("td")[4]).hide();
 				}
-				if ($("#user-comment").is(":checked"))
+				if ($("#user-roles").is(":checked"))
 				{
 					$($(this).find("th")[5]).show();
 					$($(this).find("td")[5]).show();
 				} else {
 					$($(this).find("th")[5]).hide();
 					$($(this).find("td")[5]).hide();
+				}
+				if ($("#user-comment").is(":checked"))
+				{
+					$($(this).find("th")[6]).show();
+					$($(this).find("td")[6]).show();
+				} else {
+					$($(this).find("th")[6]).hide();
+					$($(this).find("td")[6]).hide();
 				}
 			});
 			
@@ -373,19 +405,26 @@
 			
 			if ($($("#usertable").find("tr").find("th")[3] ).is(":visible"))
 			{
+				$("#user-banned").prop("checked","checked");
+			} else {
+				$("#user-banned").removeAttr("checked");
+			}
+			
+			if ($($("#usertable").find("tr").find("th")[4] ).is(":visible"))
+			{
 				$("#user-language").prop("checked","checked");
 			} else {
 				$("#user-language").removeAttr("checked");
 			}
 			
-			if ($($("#usertable").find("tr").find("th")[4] ).is(":visible"))
+			if ($($("#usertable").find("tr").find("th")[5] ).is(":visible"))
 			{
 				$("#user-roles").prop("checked","checked");
 			} else {
 				$("#user-roles").removeAttr("checked");
 			}
 			
-			if ($($("#usertable").find("tr").find("th")[5] ).is(":visible"))
+			if ($($("#usertable").find("tr").find("th")[6] ).is(":visible"))
 			{
 				$("#user-comment").prop("checked","checked");
 			} else {
@@ -393,6 +432,41 @@
 			}					
 			
 			$("#configure-dialog").modal('hide');
+		}
+		
+		var selectedFreezeUserId = '';
+		function showFreezeUserDialog(id, name, email)
+		{
+			selectedFreezeUserId = id;
+						
+			var text = $('#freezeuserdefaulttext').html();
+			text = text.replace("[LOGIN]", name).replace("[EMAIL]", email);
+			
+			$('#freezeUserText').text(text);
+			$('#freeze-user-dialog').modal();
+		}
+		
+		function freezeUser()
+		{
+			if (!$('#freezeUserCheck').is(":checked"))
+			{
+				$('#freezeUserCheckError').show();
+				return;
+			} else {
+				$('#freezeUserCheckError').hide();
+			}
+			
+			$("#freezeUserId").val(selectedFreezeUserId);
+			$('#freeze-user-dialog').modal("hide");
+			$('#show-wait-image').modal('show');
+			$("#freeze-user-form").submit();
+		}
+		
+		function unfreezeUser(id)
+		{
+			$("#unfreezeUserId").val(id);
+			$('#show-wait-image').modal('show');
+			$("#unfreeze-user-form").submit();
 		}
 	</script>
 	
@@ -459,10 +533,11 @@
 									<spring:message code="label.Email" />
 								</th>				
 								<th class="hideme"><spring:message code="label.OtherEmail" /></th>
+								<th style="width: 120px;"><spring:message code="label.BanUnban" /></th>
 								<th style="width: 120px;"><spring:message code="label.Language" /></th>
 								<th class="hideme"><spring:message code="label.Roles" /></th>
 								<th class="hideme"><spring:message code="label.Comment" /></th>
-								<th style="width: 65px;"><spring:message code="label.Actions" /></th>
+								<th style="width: 110px;"><spring:message code="label.Actions" /></th>
 							</tr>
 							<tr class="table-styled-filter">
 								<th class="filtercell">
@@ -472,6 +547,23 @@
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.email}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" style="margin:0px;" name="email" />
 								</th>
 								<th class="filtercell hideme">&#160;</th>
+								<th class="filtercell smallfiltercell">
+									<div class="btn-group">
+									  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+									    <spring:message code="label.AllValues" />
+									    <span style="margin-right: 10px" class="caret"></span>
+									  </a>
+									  <ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">			
+								  		<li style="text-align: right;">
+										    <a style="display: inline"  onclick="$('#load-users').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
+										</li>	
+									  </ul>
+									  <ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">
+									  	<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="banned" type="checkbox" class="check" style="width: auto !important;" data-code="banned" value="true" <c:if test="${filter.banned}">checked="checked"</c:if> /><spring:message code="label.Banned" /></li>
+									  	<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="unbanned" type="checkbox" class="check" style="width: auto !important;" data-code="unbanned" value="true" <c:if test="${filter.unbanned}">checked="checked"</c:if> /><spring:message code="label.Unbanned" /></li>
+									  </ul>
+									</div>
+								</th>
 								<th class="filtercell smallfiltercell">
 									<div class="btn-group">
 									  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
@@ -536,6 +628,16 @@
 								</td>
 								<td><esapi:encodeForHTML>${user.email}</esapi:encodeForHTML></td>
 								<td class="hideme"><esapi:encodeForHTML>${user.otherEmail}</esapi:encodeForHTML></td>
+								<td>
+									<c:choose>
+										<c:when test="${user.frozen}">
+											<spring:message code="label.Banned" />
+										</c:when>
+										<c:otherwise>
+											<spring:message code="label.Unbanned" />
+										</c:otherwise>
+									</c:choose>
+								</td>
 								<td><esapi:encodeForHTML>${user.language}</esapi:encodeForHTML></td>
 								<td class="hideme">
 									<c:forEach items="${user.roles}" var="role">
@@ -543,9 +645,19 @@
 									</c:forEach>	
 								</td>
 								<td class="hideme"><esapi:encodeForHTML>${user.comment}</esapi:encodeForHTML></td>
-								<td style="min-width: 90px;">
-									<a data-toggle="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" onclick='showEditDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}","${user.email}","${user.otherEmail}","${user.comment}","${user.language}","${user.type}","${user.getRolesAsString()}","${user.getGivenName()}","${user.getSurName()}", ${user.type == 'SYSTEM'}</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-pencil"></span></a>
+								<td style="min-width: 110px;">
+									<a data-toggle="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" onclick='showEditDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}","${user.email}","${user.otherEmail}","${user.comment}","${user.language}","${user.type}","${user.getRolesAsString()}","${user.getGivenName()}","${user.getSurName()}", ${user.type == 'SYSTEM'}, ${user.frozen}</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-pencil"></span></a>
 									<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton" onclick='showDeleteDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}"</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-remove icon-red"></span></a>
+																		
+									<c:choose>
+										<c:when test="${user.frozen}">
+											<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.UnbanUser" />" onclick="unfreezeUser(${user.id});"><span class="glyphicon glyphicon-ban-circle lightred"></span></a>
+										</c:when>
+										<c:otherwise>			
+											<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.BanUser" />" onclick="showFreezeUserDialog(${user.id}, '${user.name}', '${user.email}');"><span class="glyphicon glyphicon-ban-circle"></span></a>
+										</c:otherwise>
+									</c:choose>								
+									
 								</td>
 							</tr>
 						</c:forEach>
@@ -631,6 +743,8 @@
 			<span id="add-user-dialog-header2" class="hideme"><spring:message code="label.EditUserSettings" /></span>
 		</div>
 		<div class="modal-body">
+			<div id="banneduserinfo" class="lightred" style="margin-bottom: 10px; display: none;"><spring:message code="label.Banned" /></div>
+
 			<div class="row">
 				<div class="col-md-6">
 					<label for="add-user-login"><spring:message code="label.Login" /></label><br />
@@ -710,6 +824,7 @@
 					<input <c:if test="${usersConfiguration.showName}">checked="checked"</c:if> type="checkbox" class="check" id="user-name" name="user-name" value="true" /><span><spring:message code="label.Login" /></span><br />
 					<input <c:if test="${usersConfiguration.showEmail}">checked="checked"</c:if> type="checkbox" class="check" id="user-email" name="user-email" value="true" /><span><spring:message code="label.Email" /></span><br />
 					<input <c:if test="${usersConfiguration.showOtherEmail}">checked="checked"</c:if> type="checkbox" class="check" id="user-otheremail" name="user-email" value="true" /><span><spring:message code="label.OtherEmail" /></span><br />
+					<input <c:if test="${usersConfiguration.showBanned}">checked="checked"</c:if> type="checkbox" class="check" id="user-banned" name="user-banned" value="true" /><span><spring:message code="label.Banned" /></span><br />
 					<input <c:if test="${usersConfiguration.showLanguage}">checked="checked"</c:if> type="checkbox" class="check" id="user-language" name="user-language" value="true" /><span><spring:message code="label.Language" /></span><br />
 					<input <c:if test="${usersConfiguration.showRoles}">checked="checked"</c:if> type="checkbox" class="check" id="user-roles" name="user-roles" value="true" /><span><spring:message code="label.Roles" /></span><br />
 					<input <c:if test="${usersConfiguration.showComment}">checked="checked"</c:if> type="checkbox" class="check" id="user-comment" name="user-comment" value="true" /><span><spring:message code="label.Comment" /></span>
@@ -736,6 +851,37 @@
     		</div>
     	</div>
 	</div>
+	
+	<div class="modal" id="freeze-user-dialog" data-backdrop="static">
+		<div class="modal-dialog">
+	   		<div class="modal-content">
+	   			<form:form id="freeze-user-form" method="POST" action="${contextpath}/administration/users/banuser">
+	   				<input type="hidden" id="freezeUserId" name="userId" />
+			   		<div class="modal-header">
+			   			<spring:message code="label.BanUser" />
+			   		</div>
+					<div class="modal-body">
+						<textarea id="freezeUserText" name="emailText" class="tinymce" style="height: 200px">
+							
+						</textarea><br />
+						<input type="checkbox" class="check" id="freezeUserCheck" /> <spring:message code="label.confirmfreezeuser" />
+						<div id="freezeUserCheckError" style="color: #f00; display: none"><spring:message code="error.activateCheckbox" /></div>
+					</div>
+					<div class="modal-footer">
+						<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+						<a id="freezeUserYesBtn"  onclick="freezeUser();" class="btn btn-info"><spring:message code="label.BanUser" /></a>
+						<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
+					</div>
+				</form:form>
+			</div>
+		</div>
+	</div>
+	
+	<form:form class="hidden" id="unfreeze-user-form" method="POST" action="${contextpath}/administration/users/unbanuser">
+  		<input type="hidden" id="unfreezeUserId" name="userId" />
+	</form:form>
+	
+	<div id="freezeuserdefaulttext" class="hidden">${freezeusertext}</div>
 
 	<%@ include file="../footer.jsp" %>	
 

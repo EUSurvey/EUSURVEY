@@ -964,7 +964,7 @@
 			<table data-bind="attr: {'data-widths':widths(), 'id':id(), 'data-readonly': readonly, 'style': tableType() == 1 ? 'width: 900px' : 'width: auto; max-width: auto'}" class="tabletable">	
 				<tbody>
 					<tr style="background-color: #eee;">
-						<th class="table-header" data-bind="attr: {'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">&nbsp;</th>
+						<th class="" data-bind="attr: {'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">&nbsp;</th>
 						<!-- ko foreach: answers -->
 						<th class="table-header" scope="col" data-bind="attr: {'id' : id(), 'data-id' : id(), 'data-shortname' : shortname, 'data-uid' : uniqueId(), 'style': $parent.tableType() != 2 ? '' : 'width: ' + getWidth($parent.widths(), $index()+1)}">
 							<span data-bind="html: title"></span>

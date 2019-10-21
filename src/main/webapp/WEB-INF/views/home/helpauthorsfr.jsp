@@ -123,11 +123,10 @@
 				<li><a class="anchorlink" href="#_Toc0-13">Y a-t-il une taille minimale d'écran?</a></li>
 			</ul>
 		</li>
-		<li><a class="anchorlink head" href="#_Toc1">Connexion et enregistrement</a>
+		<li><a class="anchorlink head" href="#_Toc1">Connexion et inscription à l'EU Login</a>
 			<ul>
-				<li><a class="anchorlink" href="#_Toc1-1">Je dispose d'un compte EU Login. Dois-je m'enregistrer s&eacute;par&eacute;ment pour EUSurvey?</a></li>
-				<li><a class="anchorlink" href="#_Toc1-2">Comment s'enregistrer dans EUSurvey?</a></li>
-				<li><a class="anchorlink" href="#_Toc1-3">Comment se connecter &agrave; EUSurvey?</a></li>
+				<li><a class="anchorlink" href="#_Toc1-1">J'ai un compte EU Login. Dois-je aussi créer un compte EUSurvey?</a></li>
+				<li><a class="anchorlink" href="#_Toc1-2">Comment puis-je me connecter à EUSurvey?</a></li>
 			</ul>
 		</li>
 		<li><a class="anchorlink head" href="#_Toc2">Cr&eacute;ation d'une enqu&ecirc;te</a>
@@ -306,7 +305,9 @@
 <p><b>Ajout de fichiers compl&eacute;mentaires</b><br />Vous pouvez ajouter des fichiers &agrave; votre questionnaire en les envoyant sur le serveur. Tous les participants pourront alors t&eacute;l&eacute;charger ces fichiers.</p>
 
 <h3><a class="anchor" name="_Toc0-5"></a>Gestion des formulaires</h3>
+<c:if test="${enablepublicsurveys}">
 <p><b>Publication d'une enqu&ecirc;te</b><br />Pour accroître la visibilit&eacute; de votre enqu&ecirc;te, vous pouvez la faire publier automatiquement dans la <a href="https://ec.europa.eu${contextpath}/home/publicsurveys" target="_blank">liste des enqu&ecirc;tes publiques</a> accessibles par l'application EUSurvey de la Commission europ&eacute;enne.</p>
+</c:if>
 <p><b>Travailler ensemble</b><br />Pour les enqu&ecirc;tes g&eacute;r&eacute;es par plusieurs utilisateurs, EUSurvey permet de d&eacute;finir des droits avanc&eacute;s pour d'autres utilisateurs, afin de tester une enqu&ecirc;te ou d'analyser des r&eacute;sultats.</p>
 
 <h3><a class="anchor" name="_Toc0-6"></a>Exploitation des r&eacute;sultats</h3>
@@ -333,13 +334,19 @@
 <h2><a class="anchor" name="_Toc0-13"></a>Y a-t-il une taille minimale d'écran?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Les questionnaires en ligne sont entièrement réactifs et s'adaptent à la taille de votre appareil, ceci vous permet de compléter le questionnaire avec n'importe quelle taille d'écran.<br />Pour la création et la gestion de vos enquêtes, nous recommandons d'utiliser une résolution minimale de 1680x1050 pixels pour une bonne expérience utilisateur.</p>
 
-<h1><a class="anchor" name="_Toc1"></a>Connexion et enregistrement</h1>
-<h2><a class="anchor" name="_Toc1-1"></a>Je dispose d'un compte EU Login. Dois-je m'enregistrer s&eacute;par&eacute;ment pour EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-<p>NON. Connectez-vous en cliquant sur le bouton &laquo;Identifiant&raquo; de la <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">page d'accueil d'EUSurvey</a>.</p>
-<h2><a class="anchor" name="_Toc1-2"></a>Comment s'enregistrer dans EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-<p>Les membres du personnel des institutions europ&eacute;ennes peuvent acc&eacute;der &agrave; EUSurvey au moyen de leur compte EU Login. Les autres utilisateurs sont invit&eacute;s &agrave; cr&eacute;er un compte EU Login.</p>
-<h2><a class="anchor" name="_Toc1-3"></a>Comment se connecter &agrave; EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-<p>Cliquez sur le bouton &laquo;Identifiant&raquo; de la <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">page d'accueil d'EUSurvey</a> pour vous authentifier aupr&egrave;s d'EU Login. Vous serez redirig&eacute; vers l'application EUSurvey. Si vous n'avez pas encore de compte EU Login, veuillez vous r&eacute;f&eacute;rer &agrave; &laquo;<a href="#_Toc1-2">Comment s'enregistrer dans EUSurvey</a>&raquo;?</p>
+<h1><a class="anchor" name="_Toc1"></a>Connexion et inscription à l'EU Login</h1>
+<h2><a class="anchor" name="_Toc1-1"></a>J'ai un compte EU Login. Dois-je aussi créer un compte EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>Non, il n'est pas nécessaire de s'enregistrer séparément dans EUSurvey. Un compte EULogin suffit. Vous pouvez accéder à EUSurvey en cliquant sur le bouton 'Login' sur la <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">page d'accueil</a> d'EUSurvey. Vous accédez alors à l'écran de connexion (voir ci-dessous pour plus de détails).</p>
+<h2><a class="anchor" name="_Toc1-2"></a>Comment puis-je me connecter à EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
+<p>Veuillez cliquer sur le bouton 'Login' sur la  <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">page d'accueil</a> d'EUSurvey. Vous serez alors redirigé vers l'écran de connexion à EUSurvey.</p>
+<p>Une fois arrivé sur l'écran de connexion, vous devez choisir l'option correspondant à votre cas personnel :
+	<ul>
+		<li><b>Si vous travaillez pour une institution européenne</b>, choisissez la deuxième option pour vous connecter à l'application EUSurvey. Votre nom d'utilisateur et votre mot de passe EULogin seront alors suffisants.</li>
+		<li><b>Si vous ne travaillez pas pour une institution européenne</b>, choisissez la première option pour vous connecter à l'application EUSurvey. Vous devrez avoir préalablement enregistré votre téléphone mobile pour passer l'authentification à deux facteurs.</li>
+	</ul>
+</p>
+<p>Si vous n'avez pas de compte EULogin, veuillez en créer un en cliquant <a href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi">ici</a>.</p>
+<p>Si vous ne travaillez pas pour une institution européenne, veuillez également enregistrer votre téléphone portable en cliquant <a href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi">ici</a>.</p>
 
 <h1><a class="anchor" name="_Toc2"></a>Cr&eacute;ation d'une enqu&ecirc;te</h1>
 <h2><a class="anchor" name="_Toc2-1"></a>Comment cr&eacute;er une nouvelle enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
@@ -583,7 +590,7 @@
 <h2><a class="anchor" name="_Toc8-4"></a>Comment modifier l'adresse de contact d'une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>Le message de confirmation s'affiche apr&egrave;s que les participants soumettent leur contribution. Pour modifier le message par d&eacute;faut, ouvrez l'enqu&ecirc;te, allez &agrave; l'&eacute;diteur et cliquez sur le bouton &laquo;Modifier la page de confirmation&raquo;. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aperçu&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
 <h2><a class="anchor" name="_Toc8-5"></a>Comment personnaliser le message de confirmation par d&eacute;faut?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-<p>La page de sortie contient le message que verront les participants si votre enqu&ecirc;te n'est pas accessible. Pour modifier le message par d&eacute;faut, ouvrez l'enqu&ecirc;te, allez &agrave; l'&eacute;diteur et cliquez sur le bouton &laquo;Modifier la page de sortie&raquo;. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aperçu&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
+<p>Le message de confirmation est le message que verront les participants après avoir soumis leur contribution. Pour modifier le message par défaut, ouvrez l'enquête, allez à « Propriétés », ensuite allez à « Pages Spéciales » et cliquez sur le bouton « Modifier ». Si vous avez déjà publié votre enquête, n'oubliez pas d'ouvrir la page « Aperçu » et de cliquer sur « Afficher les modifications en attente », puis sur «Appliquer les modifications».</p>
 <h2><a class="anchor" name="_Toc8-6"></a>Comment personnaliser le message de sortie par d&eacute;faut? <a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 <p>La page de sortie contient le message que verront les participants si votre enqu&ecirc;te n'est pas accessible. Pour modifier le message par d&eacute;faut, ouvrez l'enqu&ecirc;te, allez &agrave; l'&eacute;diteur et cliquez sur le bouton &laquo;Modifier la page de sortie&raquo;. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aperçu&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
 <h2><a class="anchor" name="_Toc8-7"></a>Fonctionnalit&eacute; d'archivage<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>

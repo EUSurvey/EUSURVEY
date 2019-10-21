@@ -141,19 +141,19 @@
 		
 		<c:choose>
 			<c:when test="${!oss}">
-				<a id="docQuickStartGuide" target="_blank" class="boxlink hidden-xs" href="https://circabc.europa.eu/sd/a/2e8fd5cf-4095-4413-9aa4-d46bf706aafc/EUSurvey_Quick_Start_Guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/flash_on.png');">EUSurvey - <spring:message code="label.QuickstartGuide" /></a>
+				<a id="docQuickStartGuide" target="_blank" class="boxlink" href="https://circabc.europa.eu/sd/a/2e8fd5cf-4095-4413-9aa4-d46bf706aafc/EUSurvey_Quick_Start_Guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/flash_on.png');">EUSurvey - <spring:message code="label.QuickstartGuide" /></a>
 			</c:when>
 			<c:otherwise>
-				<a id="docQuickStartGuide" target="_blank" class="boxlink hidden-xs" href="${contextpath}/resources/documents/eusurvey_oss_quickstart_guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.QuickstartGuide" /></a>				
+				<a id="docQuickStartGuide" target="_blank" class="boxlink" href="${contextpath}/resources/documents/eusurvey_oss_quickstart_guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.QuickstartGuide" /></a>				
 			</c:otherwise>
 		</c:choose>
 		
 		<c:choose>
 			<c:when test="${!oss}">
-				<a id="docBestPractices" target="_blank" class="boxlink hidden-xs" href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.BestPractices" /></a>
+				<a id="docBestPractices" target="_blank" class="boxlink" href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.BestPractices" /></a>
 			</c:when>
 			<c:otherwise>
-				<a id="docBestPractices" target="_blank" class="boxlink hidden-xs" href="${contextpath}/resources/documents/eusurvey_oss_best_practices.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.BestPractices" /></a>				
+				<a id="docBestPractices" target="_blank" class="boxlink" href="${contextpath}/resources/documents/eusurvey_oss_best_practices.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.BestPractices" /></a>				
 			</c:otherwise>
 		</c:choose>
 			
@@ -161,10 +161,10 @@
 		
 		<c:choose>
 			<c:when test="${!oss}">
-				<a id="docTutorial" class="boxlink hidden-xs" href="https://ec.europa.eu${contextpath}/runner/TutorialEUSurvey" style="background-image:url('${contextpath}/resources/images/icons/64/externalLink.png');"><spring:message code="label.Tutorial" /></a>
+				<a id="docTutorial" class="boxlink" href="https://ec.europa.eu${contextpath}/runner/TutorialEUSurvey" style="background-image:url('${contextpath}/resources/images/icons/64/externalLink.png');"><spring:message code="label.Tutorial" /></a>
 			</c:when>
 			<c:otherwise>
-				<a id="docTutorial" class="boxlink hidden-xs" href="https://ec.europa.eu${contextpath}/runner/TutorialEUSurveyOSS" style="background-image:url('${contextpath}/resources/images/icons/64/externalLink.png');"><spring:message code="label.Tutorial" /></a>				
+				<a id="docTutorial" class="boxlink" href="https://ec.europa.eu${contextpath}/runner/TutorialEUSurveyOSS" style="background-image:url('${contextpath}/resources/images/icons/64/externalLink.png');"><spring:message code="label.Tutorial" /></a>				
 			</c:otherwise>
 		</c:choose>
 				
@@ -174,14 +174,14 @@
 
 		<a id="docQuizGuideEN" class="boxlink" target="_blank" href="${contextpath}/resources/documents/Quiz_Guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/flash_on.png');"><spring:message code="label.QuizDocumentation" /></a>
 				
-		<a id="docLimits" onclick="$('.uselimits').show()" class="boxlink hidden-xs" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.usabilityLimits" /></a>
+		<a id="docLimits" onclick="$('.uselimits').show()" class="boxlink" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.usabilityLimits" /></a>
 		
-		<div class="pageheader hidden-xs uselimits hideme">
+		<div class="pageheader uselimits hideme">
 			<br /><br />
 			<h1><spring:message code="label.usabilityLimits" /></h1>
 		</div>
 	
-		<table class="niceTable hidden-xs uselimits hideme">
+		<table class="niceTable uselimits hideme">
 			<thead>
 				<tr class="headerGrey">
 					<th style="background-color:#FFF;"></th>

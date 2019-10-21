@@ -4,6 +4,8 @@ public class UserFilter {
 	private String login;
 	private String email;
 	private String comment;
+	private Boolean banned;
+	private Boolean unbanned;
 	private Boolean ECAS;
 	private Boolean system;
 	private Boolean ECASaccess;
@@ -114,5 +116,18 @@ public class UserFilter {
 	}
 	public void setNoECaccess(Boolean noECaccess) {
 		NoECaccess = noECaccess;
+	}
+	
+	public Boolean getBanned() {
+		return banned;
+	}
+	public void setBanned(Boolean banned) {
+		this.banned = banned;
+	}
+	public Boolean getUnbanned() {
+		return this.unbanned;
+	}
+	public void setUnbanned(Boolean unbanned) {
+		this.unbanned = unbanned;
 	}
 }

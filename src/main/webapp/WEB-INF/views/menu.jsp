@@ -533,6 +533,53 @@
 		</div>
 	</div>
 	
+	<div id="freeze-default-text" style="display: none">
+		Dear Sir or Madam,<br /><br />
+		Your survey has been frozen due to infringement of our policy.<br /><br />
+		[SURVEYDATA]
+		<br /><br />
+		Please refer to the EUSurvey <a href="${serverprefix}/home/tos">Terms of Service</a> or contact the EUSurvey <a href="${serverprefix}/home/support">Support Team</a> for more information.
+	</div>
+	
+	<form:form id="unfreeze-form" class="hidden" method="POST" action="${contextpath}/administration/unfreezesurvey">
+		<input type="hidden" id="unfreezeSurveyId" name="surveyId" />
+	</form:form>
+	
+	<div class="modal" id="freeze-survey-dialog" data-backdrop="static">
+		<div class="modal-dialog">
+	   		<div class="modal-content">
+	   			<form:form id="freeze-form" method="POST" action="${contextpath}/administration/freezesurvey">
+	   				<input type="hidden" id="freezeSurveyId" name="surveyId" />
+			   		<div class="modal-header">
+			   			<spring:message code="label.FreezeSurvey" />
+			   		</div>
+					<div class="modal-body">
+						<spring:message code="info.freeze" />:<br />
+						<table style="margin-top: 10px; margin-bottom: 10px">
+							<tr> 
+			 					<td style="font-weight: bold; padding-right: 10px; vertical-align: top;"><spring:message code="label.Title" />:</td> 
+			 					<td><span id="freezeTitle"></span></td> 
+			 				</tr> 
+						</table>
+									
+						<textarea id="freezeEmailText" name="emailText" class="tinymce" style="height: 200px">
+							
+						</textarea><br />
+						<input type="checkbox" class="check" id="freezeCheck" /> <spring:message code="label.confirmfreeze" />
+						<div id="freezeCheckError" style="color: #f00; display: none"><spring:message code="error.activateCheckbox" /></div>
+						<br /><br />
+						<span style="color: #f00;"><spring:message code="info.freezeemail" /></span>
+					</div>
+					<div class="modal-footer">
+						<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+						<a id="freezeSurveyYesBtn"  onclick="freezeSurvey();" class="btn btn-info"><spring:message code="label.FreezeSurvey" /></a>
+						<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
+					</div>
+				</form:form>
+			</div>
+		</div>
+	</div>
+	
 	<c:if test="${missingFiles != null}">
 	
 		<div class="modal" id="missingFilesDuringArchivingDialog" data-backdrop="static">

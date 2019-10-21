@@ -25,6 +25,7 @@ public class UsersConfiguration implements java.io.Serializable {
 	private boolean showLanguage = true;
 	private boolean showRoles = false;
 	private boolean showComment = false;
+	private boolean showBanned = true;
 	
 	@Id
 	@Column(name = "UC_ID")
@@ -90,6 +91,14 @@ public class UsersConfiguration implements java.io.Serializable {
 	}
 	public void setShowComment(boolean showComment) {
 		this.showComment = showComment;
+	}
+	
+	@Column(name = "UC_BANNED")
+	public boolean getShowBanned() {
+		return showBanned;
+	}
+	public void setShowBanned(Boolean showBanned) {
+		this.showBanned = showBanned != null ? showBanned : true;
 	}
 	
 }

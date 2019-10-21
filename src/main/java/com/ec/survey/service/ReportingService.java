@@ -115,7 +115,7 @@ public class ReportingService {
 		}
 	}
 	
-	private String getWhereClause(ResultFilter filter, Map<String, Object> values, Survey survey) throws TooManyFiltersException
+	public String getWhereClause(ResultFilter filter, Map<String, Object> values, Survey survey) throws TooManyFiltersException
 	{
 		String where = "";
 		Map<String, Element> elementsByUniqueID = survey.getQuestionMapByUniqueId();
@@ -582,7 +582,7 @@ public class ReportingService {
 										{
 											v += answerid;
 										} else {
-											v += answer.getStrippedTitle();
+											v += answer.getTitle();
 										}
 									}							
 								}						
@@ -601,7 +601,7 @@ public class ReportingService {
 										{
 											v += answerid;
 										} else {
-											v += answer.getStrippedTitle();
+											v += answer.getTitle();
 										}
 									}							
 								}						
@@ -634,11 +634,11 @@ public class ReportingService {
 									{
 										if (addlinks)
 										{
-											v += "<a target='blank' href='" + contextpath + "/files/" + survey.getUniqueId() + "/" + file.getUid() + "'>" + file.getName() + "</a><br />";
+											v += "<a target='blank' href='" + contextpath + "/files/" + survey.getUniqueId() + "/" + file.getUid() + "'>" + file.getNameForExport() + "</a><br />";
 										} else if (forexport) {
-											v += file.getUid() + "|" + file.getName() + ";";
+											v += file.getUid() + "|" + file.getNameForExport() + ";";
 										} else {
-											v += file.getName() + "<br />";
+											v += file.getNameForExport() + "<br />";
 										}
 									}							
 								}						
@@ -738,7 +738,7 @@ public class ReportingService {
 			
 			while (OLAPTableExists(uid + "_" + counter, true))
 			{
-				query = sessionReporting.createSQLQuery("DROP TABLE IF EXISTS T" + uid.replace("-", "") + "_" + counter);
+				query = sessionReporting.createSQLQuery("DROP TABLE IF EXISTS TD" + uid.replace("-", "") + "_" + counter);
 				query.executeUpdate();
 				counter++;
 			}
@@ -1331,16 +1331,42 @@ public class ReportingService {
 	}
 
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getCount(Survey survey) {
+	public int getCount(Survey survey, String where, Map<String, Object> values) {
 		if (!isReportingDatabaseEnabled()) return -1;
 		
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		SQLQuery query = sessionReporting.createSQLQuery("SELECT COUNT(*) FROM " + GetOLAPTableName(survey));
+		
+		String sql = "SELECT COUNT(*) FROM " + GetOLAPTableName(survey);
+		
+		if (where != null)
+		{
+			sql += where;
+		}
+		
+		SQLQuery query = sessionReporting.createSQLQuery(sql);
+		
+		if (where != null)
+		{
+			for (String attrib : values.keySet()) {
+				Object value = values.get(attrib);
+				if (value instanceof String)
+				{
+					query.setString(attrib, (String)values.get(attrib));
+				} else if (value instanceof Integer)
+				{
+					query.setInteger(attrib, (Integer)values.get(attrib));
+				}  else if (value instanceof Date)
+				{
+					query.setTimestamp(attrib, (Date)values.get(attrib));
+				}
+			}
+		}
+		
 		return ConversionTools.getValue(query.uniqueResult());
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getCount(Survey survey, String quid, String auid, boolean noPrefixSearch) {
+	public int getCount(Survey survey, String quid, String auid, boolean noPrefixSearch, String where, Map<String, Object> values) {
 		if (!isReportingDatabaseEnabled()) return -1;
 		
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
@@ -1354,7 +1380,30 @@ public class ReportingService {
 			sql += " LIKE '%" + auid + "%'";
 		}
 		
+		if (where != null)
+		{
+			sql += " AND QANSWERSETID IN (SELECT QANSWERSETID FROM " + GetOLAPTableName(survey) + " " + where + ")";
+		}
+		
 		SQLQuery query = sessionReporting.createSQLQuery(sql);
+		
+		if (where != null)
+		{
+			for (String attrib : values.keySet()) {
+				Object value = values.get(attrib);
+				if (value instanceof String)
+				{
+					query.setString(attrib, (String)values.get(attrib));
+				} else if (value instanceof Integer)
+				{
+					query.setInteger(attrib, (Integer)values.get(attrib));
+				}  else if (value instanceof Date)
+				{
+					query.setTimestamp(attrib, (Date)values.get(attrib));
+				}
+			}
+		}		
+		
 		return ConversionTools.getValue(query.uniqueResult());
 	}	
 	

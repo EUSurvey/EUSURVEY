@@ -18,6 +18,7 @@ import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.RestoreExecutor;
+import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,10 +65,8 @@ public class SurveySearchController extends BasicController {
 	
 	@RequestMapping(value = "/administration/surveysearch", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView surveysearch(HttpServletRequest request, Model model, Locale locale) {
-		ModelAndView result = new ModelAndView("administration/surveysearch");
-		
-		SurveyFilter sfilter = new SurveyFilter();
-		
+		ModelAndView result = new ModelAndView("administration/surveysearch");		
+		SurveyFilter sfilter = new SurveyFilter();		
 		
 		result.addObject("archivedfilter", new ArchiveFilter());
     	
@@ -80,6 +79,28 @@ public class SurveySearchController extends BasicController {
         	result.addObject("mode", "deleted");
     	} else {
         	result.addObject("deletedfilter", new DeletedSurveysFilter());
+    	}
+    	
+    	if (request.getParameter("reported") != null)
+    	{
+    		result.addObject("reported", true);
+    		SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lstreportedfilter");
+    		if (filter == null) filter = new SurveyFilter();
+        	result.addObject("reportedfilter", filter);
+        	result.addObject("mode", "reported");
+    	} else {
+        	result.addObject("reportedfilter", new SurveyFilter());
+    	}
+    	
+    	if (request.getParameter("frozen") != null)
+    	{
+    		result.addObject("frozen", true);
+    		SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lstfrozenfilter");
+    		if (filter == null) filter = new SurveyFilter();
+        	result.addObject("frozenfilter", filter);
+        	result.addObject("mode", "frozen");
+    	} else {
+        	result.addObject("frozenfilter", new SurveyFilter());
     	}
     	
     	if (request.getParameter("normaldeleted") != null)
@@ -102,6 +123,28 @@ public class SurveySearchController extends BasicController {
 			}
 		}
     	
+    	if (request.getParameter("frozen") != null)
+		{
+			try {
+				result.addObject("frozen", true);
+				sfilter = (SurveyFilter) request.getSession().getAttribute("surveysearchfilter");
+				result.addObject("mode", "existing");
+			} catch (Exception e){
+				//ignore
+			}
+		}
+    	
+    	if (request.getParameter("unfrozen") != null)
+		{
+			try {
+				result.addObject("unfrozen", true);
+				sfilter = (SurveyFilter) request.getSession().getAttribute("surveysearchfilter");
+				result.addObject("mode", "existing");
+			} catch (Exception e){
+				//ignore
+			}
+		}
+    	
     	result.addObject("filter", sfilter);
     	
     	List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
@@ -111,11 +154,13 @@ public class SurveySearchController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/administration/surveysearch", method = {RequestMethod.POST})
-	public ModelAndView surveysearchPOST(HttpServletRequest request, Model model, Locale locale) throws NotAgreedToTosException {	
+	public ModelAndView surveysearchPOST(HttpServletRequest request, Model model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {	
 		
 		String mode = request.getParameter("surveys");
 		
 		SurveyFilter filter = new SurveyFilter();	
+		SurveyFilter reportedFilter = new SurveyFilter();
+		SurveyFilter frozenFilter = new SurveyFilter();	
 		ArchiveFilter archivedFilter = new ArchiveFilter();	
 		DeletedSurveysFilter deletedSurveysFilter = new DeletedSurveysFilter();	
 		
@@ -141,6 +186,30 @@ public class SurveySearchController extends BasicController {
 			deletedSurveysFilter.setDeletedTo(ConversionTools.getDate(request.getParameter("deleteddeletedTo")));
 			
 			request.getSession().setAttribute("lstdeletedfilter", deletedSurveysFilter);
+		} else if (mode.equalsIgnoreCase("reported"))
+		{ 
+			reportedFilter.setUser(sessionService.getCurrentUser(request));
+			reportedFilter.setShortname(request.getParameter("reportedshortname"));
+			reportedFilter.setUid(request.getParameter("reporteduid"));
+			reportedFilter.setTitle(request.getParameter("reportedtitle"));
+			reportedFilter.setOwner(request.getParameter("reportedowner"));
+			reportedFilter.setPublishedFrom(ConversionTools.getDate(request.getParameter("reportedpublishedFrom")));
+			reportedFilter.setPublishedTo(ConversionTools.getDate(request.getParameter("reportedpublishedTo")));
+			reportedFilter.setFirstPublishedFrom(ConversionTools.getDate(request.getParameter("reportedfirstPublishedFrom")));
+			reportedFilter.setFirstPublishedTo(ConversionTools.getDate(request.getParameter("reportedfirstPublishedTo")));					
+	    	request.getSession().setAttribute("lstreportedfilter", reportedFilter);
+		} else if (mode.equalsIgnoreCase("frozen"))
+		{ 
+			frozenFilter.setUser(sessionService.getCurrentUser(request));
+			frozenFilter.setShortname(request.getParameter("frozenshortname"));
+			frozenFilter.setUid(request.getParameter("frozenuid"));
+			frozenFilter.setTitle(request.getParameter("frozentitle"));
+			frozenFilter.setOwner(request.getParameter("frozenowner"));
+			frozenFilter.setPublishedFrom(ConversionTools.getDate(request.getParameter("frozenpublishedFrom")));
+			frozenFilter.setPublishedTo(ConversionTools.getDate(request.getParameter("frozenpublishedTo")));
+			frozenFilter.setFirstPublishedFrom(ConversionTools.getDate(request.getParameter("frozenfirstPublishedFrom")));
+			frozenFilter.setFirstPublishedTo(ConversionTools.getDate(request.getParameter("frozenfirstPublishedTo")));					
+	    	request.getSession().setAttribute("lstfrozenfilter", frozenFilter);
 		} else {
 			filter.setUser(sessionService.getCurrentUser(request));
 			filter.setShortname(request.getParameter("shortname"));
@@ -159,12 +228,43 @@ public class SurveySearchController extends BasicController {
     	result.addObject("filter", filter);  
     	result.addObject("archivedfilter", archivedFilter);
     	result.addObject("deletedfilter", deletedSurveysFilter);
+    	result.addObject("reportedfilter", reportedFilter);
+    	result.addObject("frozenfilter", frozenFilter);
     	
     	List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
 		result.addObject("domains", domains);
     	
     	return result;
 	}
+	
+	@RequestMapping(value = "/administration/freezesurvey", method = {RequestMethod.POST})
+	public ModelAndView freezesurvey(HttpServletRequest request, Model model, Locale locale) throws Exception {
+		String surveyId = request.getParameter("surveyId");
+		String emailText = request.getParameter("emailText");
+		
+		if (surveyId == null || surveyId.length() == 0 || emailText == null || emailText.length() == 0)
+		{
+			throw new Exception("invalid parameters");
+		}
+		
+		surveyService.freeze(surveyId, emailText);
+		
+		return new ModelAndView("redirect:/administration/surveysearch?frozen=1");		
+	}
+	
+	@RequestMapping(value = "/administration/unfreezesurvey", method = {RequestMethod.POST})
+	public ModelAndView unfreezesurvey(HttpServletRequest request, Model model, Locale locale) throws Exception {
+		String surveyId = request.getParameter("surveyId");
+	
+		if (surveyId == null || surveyId.length() == 0)
+		{
+			throw new Exception("invalid parameters");
+		}
+		
+		surveyService.unfreeze(surveyId);
+		
+		return new ModelAndView("redirect:/administration/surveysearch?unfrozen=1");		
+	}	
 	
 	@RequestMapping(value = "/administration/surveysearchJSON", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody List<Survey> resultsJSON(HttpServletRequest request) {
@@ -269,8 +369,76 @@ public class SurveySearchController extends BasicController {
 		return surveys;
 	}
 	
+	@RequestMapping(value = "/administration/reportedsurveysjson", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody List<Survey> reportedsurveysjson(HttpServletRequest request) throws Exception {
+		try {
+			
+			String rows = request.getParameter("rows");			
+			if (rows == null) return null;			
+			String page = request.getParameter("page");			
+			if (page == null) return null;
+					
+			SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lstreportedfilter");
+			if (filter == null) return null;
+			
+			filter.setSurveys("REPORTED");
+			
+            SqlPagination sqlPagination = new SqlPagination(Integer.parseInt(page), Integer.parseInt(rows));            
+			List<Survey> surveys = surveyService.getSurveysIncludingPublicationDates(filter, sqlPagination);
+			
+			for (Survey survey: surveys)
+			{
+				survey.setTitle(survey.cleanTitle());
+				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
+				survey.setNumberOfReports(surveyService.getAbuseReportsForSurvey(survey.getUniqueId()));
+			}
+			
+			return surveys;
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage(), e);
+		}
+		
+		return null;
+	}
+	
+	@RequestMapping(value = "/administration/frozensurveysjson", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody List<Survey> frozensurveysjson(HttpServletRequest request) throws Exception {
+		try {
+			
+			String rows = request.getParameter("rows");			
+			if (rows == null) return null;			
+			String page = request.getParameter("page");			
+			if (page == null) return null;
+					
+			SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lstfrozenfilter");
+			if (filter == null) return null;
+			
+			filter.setSurveys("FROZEN");
+			
+            SqlPagination sqlPagination = new SqlPagination(Integer.parseInt(page), Integer.parseInt(rows));            
+			List<Survey> surveys = surveyService.getSurveysIncludingPublicationDates(filter, sqlPagination);
+			
+			for (Survey survey: surveys)
+			{
+				survey.setTitle(survey.cleanTitle());
+				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
+				survey.setNumberOfReports(surveyService.getAbuseReportsForSurvey(survey.getUniqueId()));
+			}
+			
+			return surveys;
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage(), e);
+		}
+		
+		return null;
+	}
+	
 	@RequestMapping(value = "/administration/changeowner", method = {RequestMethod.POST})
-	public @ResponseBody boolean changeowner(HttpServletRequest request, Model model, Locale locale) throws NotAgreedToTosException {	
+	public @ResponseBody boolean changeowner(HttpServletRequest request, Model model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {	
 		User u = sessionService.getCurrentUser(request);
 		
 		if (u.getGlobalPrivileges().get(GlobalPrivilege.SystemManagement) < 2)

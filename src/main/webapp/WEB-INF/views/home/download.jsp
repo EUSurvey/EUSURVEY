@@ -48,12 +48,12 @@
 			<spring:message code="message.download.oss.paragraph.one" />
 		</c:when>
 		<c:otherwise>
-			<spring:message code="message.download.paragraph.one" />
+			<spring:message code="message.download.paragraph.one.new" />
 		</c:otherwise>
 	</c:choose>
 
-	<a target="_blank" href="https://joinup.ec.europa.eu/software${contextpath}/home">https://joinup.ec.europa.eu/software${contextpath}/home</a>
-
+	<div style="margin-bottom: 30px">
+		<a target="_blank" href="https://github.com/EUSurvey/EUSURVEY/tree/develop">https://github.com/EUSurvey/EUSURVEY/tree/develop</a>
 	</div>
 
 	<%@ include file="../footer.jsp" %>

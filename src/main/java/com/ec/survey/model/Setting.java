@@ -38,7 +38,24 @@ public class Setting {
 	public final static String ReportingMigrationStart = "ReportingMigrationStart";
 	public final static String ReportingMigrationTime = "ReportingMigrationTime";
 	public final static String ReportingMigrationSurveyToMigrate = "ReportingMigrationSurveyToMigrate";
-		
+	
+	public final static String WeakAuthenticationDisabled = "WeakAuthenticationDisabled";
+	public final static String MaxReports = "MaxReports";
+	public final static String ReportText = "ReportText";
+	public final static String ReportRecipients = "ReportRecipients";
+	
+	public final static String FreezeUserTextAdminBan = "FreezeUserTextAdminBan";
+	public final static String FreezeUserTextAdminUnban = "FreezeUserTextAdminUnban";	
+	public final static String FreezeUserTextBan = "FreezeUserTextBan";
+	public final static String FreezeUserTextUnban = "FreezeUserTextUnban";
+	public final static String BannedUserRecipients = "BannedUserRecipients";
+	
+	public final static String TrustValueCreatorInternal = "TrustValueCreatorInternal";
+	public final static String TrustValuePastSurveys = "TrustValuePastSurveys";
+	public final static String TrustValuePrivilegedUser = "TrustValuePrivilegedUser";
+	public final static String TrustValueNbContributions = "TrustValueNbContributions";
+	public final static String TrustValueMinimumPassMark = "TrustValueMinimumPassMark";
+	
 	@Id
 	@Column(name = "SETTINGS_ID")
 	@GeneratedValue

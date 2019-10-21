@@ -152,22 +152,13 @@
 				<div id="loginPlaceHolder" style="margin-bottom:80px">
 					<form:form id="welcomeEcasLoginForm" action="${ecasurl}" style="margin: 0px">
 						<input type="hidden" name="service" value="${serviceurl}"/>
-						
+						<input type="hidden" name="acceptStrength" value="PASSWORD_SMS" />
 						<div id="loginAnchor" style="max-width:400px; text-align: center; float:left; margin-left:100px">
 							<table id="loginLinkTable">
 								<tbody>
 									<tr>
-										<td>
-											<c:choose>
-												<c:when test="${showecas != null}">
-													<a id="loginEcasLinkFromWelcome" class="bigLinkBoxHighlighted"  onclick="$(this).closest('form').submit()">
-														<spring:message code="label.DoLogin" />
-													</a>
-												</c:when>
-												<c:otherwise>
-													<a id="loginInternalLinkFromWelcome" class="bigLinkBoxHighlighted" href="<c:url value="/auth/login"/>"><spring:message code="label.DoLogin" /></a>												
-												</c:otherwise>
-											</c:choose>
+										<td>										
+											<a id="loginInternalLinkFromWelcome" class="bigLinkBoxHighlighted" href="<c:url value="/auth/login"/>"><spring:message code="label.DoLogin" /></a>												
 										</td>
 									</tr>
 									<tr >

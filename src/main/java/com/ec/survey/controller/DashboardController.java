@@ -68,6 +68,8 @@ public class DashboardController extends BasicController {
 			archiveService.delete(archive);
 		}		
 		
+		//check user (e.g. weak authentication)
+		sessionService.getCurrentUser(request);
 		ModelAndView result = new ModelAndView("dashboard");
 		
 		if (request.getParameter("archived") != null)
@@ -80,6 +82,12 @@ public class DashboardController extends BasicController {
 		{
 			String shortname = request.getParameter("deleted");
 			result.addObject("deleted", shortname);
+		}
+		
+		if (request.getParameter("frozen") != null)
+		{
+			String shortname = request.getParameter("frozen");
+			result.addObject("frozen", shortname);
 		}
 		
 		result.addObject("filter", new ArchiveFilter());
@@ -281,8 +289,18 @@ public class DashboardController extends BasicController {
 				filter.setSortOrder(request.getParameter("asc") != null && request.getParameter("asc").equalsIgnoreCase("true") ? "ASC" : "DESC");				
 			}
 			
+			if (request.getParameter("reported") != null)
+			{
+				filter.setSurveys("REPORTED");
+			}
+			
+			if (request.getParameter("frozen") != null)
+			{
+				filter.setSurveys("FROZEN");
+			}
+			
 			SqlPagination paging = new SqlPagination(page, 10);
-			List<Survey> result = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, false);
+			List<Survey> result = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, false, false);
 			
 			surveyService.generateAccessInformation(result, u);
 			

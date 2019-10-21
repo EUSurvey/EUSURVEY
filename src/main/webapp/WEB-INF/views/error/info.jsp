@@ -21,6 +21,9 @@
 	
 	<div style="margin-top: 120px; margin-bottom: 120px;">
 		<div class="alert alert-success"><esapi:encodeForHTML>${message}</esapi:encodeForHTML></div>
+		<c:if test="${SurveyLink != null}">
+			<a class="btn btn-info" href="${SurveyLink}"><spring:message code="label.BackToSurvey" /></a>
+		</c:if>
 	</div>
 	
 	<%@ include file="../footer.jsp" %>

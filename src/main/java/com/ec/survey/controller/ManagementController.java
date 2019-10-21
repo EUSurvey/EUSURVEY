@@ -1,6 +1,7 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.exception.ForbiddenURLException;
+import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.NoFormLoadedException;
 import com.ec.survey.model.*;
@@ -59,8 +60,7 @@ public class ManagementController extends BasicController {
 	public @Value("${opc.users}") String opcusers;
 	public @Value("${opc.department:@null}") String opcdepartments;
 	public @Value("${opc.template}") String opctemplatesurvey;
-	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
-
+	
 	@InitBinder
 	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(ConversionTools.DateFormat);
@@ -194,6 +194,7 @@ public class ManagementController extends BasicController {
 		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
 			
 		survey.setNumberOfAnswerSetsPublished(surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId()));
+		survey.setNumberOfReports(surveyService.getAbuseReportsForSurvey(survey.getUniqueId()));
 		
 		form = new Form(resources);
 				
@@ -341,7 +342,7 @@ public class ManagementController extends BasicController {
 							paging.moveTo("1");
 							
 							SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
-							List<Survey> surveys = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false);
+							List<Survey> surveys = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, false);
 							paging.setItems(surveys);
 							
 							result = new ModelAndView("forms/forms", "paging", paging);
@@ -2593,6 +2594,11 @@ public class ManagementController extends BasicController {
 	public ModelAndView test(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		User u = sessionService.getCurrentUser(request);
 		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, true, true, true, false);
+		
+		if (survey.getIsFrozen())
+		{
+			throw new FrozenSurveyException();
+		}
 		
 		sessionService.upgradePrivileges(survey, u, request);
 
