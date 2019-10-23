@@ -50,6 +50,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 		User user = null;
 		try {
 			boolean ecas = false;
+			boolean ecassurvey = false;
 			boolean weakAuthentication = false;
 			for (GrantedAuthority auth: securityContext.getAuthentication().getAuthorities())
 			{
@@ -66,6 +67,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 				if (auth.getAuthority().startsWith("ROLE_ECAS_SURVEY_"))
 				{
 					request.getSession().setAttribute("ECASSURVEY", auth.getAuthority().substring(17));
+					ecassurvey = true;
 				}
 			}
 			
@@ -83,7 +85,12 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 					user = new User();
 					user.setLogin(securityContext.getAuthentication().getName());
 					user.setLanguage("EN");
-					user.setType(User.ECAS);				
+					user.setType(User.ECAS);
+					
+					if (ecassurvey)
+					{
+						user.setTemporary(true);
+					}
 				}
 				
 				String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);

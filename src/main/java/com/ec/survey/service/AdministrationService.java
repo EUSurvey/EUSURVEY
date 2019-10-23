@@ -703,5 +703,11 @@ public class AdministrationService extends BasicService {
 
 		return count == 0;
 	}
+	
+	@Transactional
+ 	public void evict(User user) {
+ 	Session session = sessionFactory.getCurrentSession();
+ 		session.evict(user);
+	}
 
 }
