@@ -50,6 +50,7 @@ public class User implements java.io.Serializable {
 	private Integer lastEditedSurvey;
 	private boolean canCreateSurveys = true;
 	private boolean isFrozen = false;
+	private boolean temporary;
 	
 	public static final String ECAS = "ECAS";
 	public static final String SYSTEM = "SYSTEM";
@@ -471,5 +472,13 @@ public class User implements java.io.Serializable {
 		
 		return result;
 	}
+	
+	@Transient
+ 	public boolean isTemporary() {
+		return temporary;
+	}
+ 	public void setTemporary(boolean temporary) {
+ 		this.temporary = temporary;
+ 	}
 
 }

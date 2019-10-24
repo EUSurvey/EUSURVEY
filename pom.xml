@@ -677,7 +677,7 @@
 									<format property="touch.time" pattern="dd/MM/yyyy HH:mm" />
 								</tstamp>
 								<property name="version.footer.build"
-									value="${scmBranch}.${buildNumber} (${touch.time})" />
+									value="v${version} ${buildNumber} (${touch.time})" />
 								<scriptdef name="updatescmbranch"
 									language="javascript">
 									<![CDATA[
