@@ -617,7 +617,7 @@ public class XlsExportCreator extends ExportCreator {
 						
 						for (int tableRow = 1; tableRow < table.getAllRows(); tableRow++) {
 							for (int tableCol = 1; tableCol < table.getAllColumns(); tableCol++) {
-								
+								checkColumnsParseAnswerSet();	
 								Cell cell = row.createCell(columnIndex++ % 255);
 								if (answerSet == null)
 								{
@@ -625,7 +625,6 @@ public class XlsExportCreator extends ExportCreator {
 								} else {									
 									String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);									
 									if (answer == null) answer = "";									
-									checkColumnsParseAnswerSet();	
 									cell.setCellValue(ConversionTools.removeHTMLNoEscape(answer));
 								}
 							}
