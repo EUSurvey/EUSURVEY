@@ -137,10 +137,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					}
 					
 					try {
-						if (!surveyLoginMode)
-						{
-							administrationService.createUser(user);
-						}
+						administrationService.createUser(user);
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
 						throw new BadCredentialsException("Ecas user cannot be created!");

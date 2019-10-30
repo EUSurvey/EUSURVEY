@@ -72,13 +72,7 @@ public class SessionService extends BasicService {
 		if (user != null)
 		{
 			Session session = sessionFactory.getCurrentSession();
-			
-			if (user.isTemporary())
-            {
-                    session.evict(user);
-            } else {                        
-                    user = (User) session.merge(user);
-            }
+			user = (User) session.merge(user);
 			
 			String weakAuthenticationDisabled = settingsService.get(Setting.WeakAuthenticationDisabled);
 			
