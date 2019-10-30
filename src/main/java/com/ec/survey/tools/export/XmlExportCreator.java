@@ -105,6 +105,7 @@ public class XmlExportCreator extends ExportCreator {
 					
 					writer.writeStartElement("MatrixTitle");
 					writer.writeAttribute("id", question.getUniqueId());
+					writer.writeAttribute("type", getNiceType(question));
 									
 					if (export != null && export.getShowShortnames())
 					{
@@ -117,6 +118,7 @@ public class XmlExportCreator extends ExportCreator {
 					for(Element matrixQuestion: matrix.getQuestions()) {
 						writer.writeStartElement("MatrixQuestion");
 						writer.writeAttribute("id", matrixQuestion.getUniqueId());
+						writer.writeAttribute("type", (matrix.getIsSingleChoice() ? "Single Choice" : "Multiple Choice") + " Matrix Question: ");
 						
 						if (export != null && export.getShowShortnames())
 						{
@@ -130,14 +132,34 @@ public class XmlExportCreator extends ExportCreator {
 					for(Element matrixAnswer: matrix.getAnswers()) {
 						writer.writeStartElement("MatrixAnswer");
 						writer.writeAttribute("id", matrixAnswer.getUniqueId());
+						writer.writeAttribute("type", "Matrix Answer");
 						
 						if (export != null && export.getShowShortnames())
 						{
 							writer.writeAttribute("bid", matrixAnswer.getShortname());
 						}
 						
+						for (DependencyItem dep: matrix.getDependentElements())
+						{
+							if (dep != null && dep.getPosition() == (matrixAnswer.getPosition() - 1))
+							{
+								String dependentElements = "";
+								for (Element element: dep.getDependentElements())
+								{
+									if (dependentElements.length() > 0)
+									{
+										dependentElements += ";";
+									}
+									dependentElements += element.getUniqueId();
+								}
+								if (dependentElements.length() > 0)
+								{
+									writer.writeAttribute("dependenElements", dependentElements);
+								}
+							}
+						}
+												
 						writer.writeCharacters(matrixAnswer.getTitle());
-						
 						writer.writeEndElement(); //MatrixAnswer
 					}
 				} else if (question instanceof Table) {	
@@ -145,6 +167,7 @@ public class XmlExportCreator extends ExportCreator {
 					
 					writer.writeStartElement("TableTitle");
 					writer.writeAttribute("id", question.getUniqueId());
+					writer.writeAttribute("type", getNiceType(question));
 									
 					if (export != null && export.getShowShortnames())
 					{
@@ -157,6 +180,7 @@ public class XmlExportCreator extends ExportCreator {
 					for(Element tableQuestion: table.getQuestions()) {
 						writer.writeStartElement("TableQuestion");
 						writer.writeAttribute("id", tableQuestion.getUniqueId());
+						writer.writeAttribute("type", "Table Question");
 						
 						if (export != null && export.getShowShortnames())
 						{
@@ -170,6 +194,7 @@ public class XmlExportCreator extends ExportCreator {
 					for(Element tableAnswer: table.getAnswers()) {	
 						writer.writeStartElement("TableAnswer");
 						writer.writeAttribute("id", tableAnswer.getUniqueId());
+						writer.writeAttribute("type", "Table Answer");
 						
 						if (export != null && export.getShowShortnames())
 						{
@@ -183,6 +208,7 @@ public class XmlExportCreator extends ExportCreator {
 				} else if (question instanceof Text) {	
 					writer.writeStartElement("Text");
 					writer.writeAttribute("id", question.getUniqueId());
+					writer.writeAttribute("type", getNiceType(question));
 									
 					if (export != null && export.getShowShortnames())
 					{
@@ -195,6 +221,7 @@ public class XmlExportCreator extends ExportCreator {
 				} else if (question instanceof Image) {	
 					writer.writeStartElement("Image");
 					writer.writeAttribute("id", question.getUniqueId());
+					writer.writeAttribute("type", getNiceType(question));
 									
 					if (export != null && export.getShowShortnames())
 					{
@@ -207,6 +234,7 @@ public class XmlExportCreator extends ExportCreator {
 				} else if (question instanceof Section) {	
 					writer.writeStartElement("Section");
 					writer.writeAttribute("id", question.getUniqueId());
+					writer.writeAttribute("type", getNiceType(question));
 									
 					if (export != null && export.getShowShortnames())
 					{
@@ -219,11 +247,7 @@ public class XmlExportCreator extends ExportCreator {
 				} else {			
 					writer.writeStartElement("Question");
 					writer.writeAttribute("id", question.getUniqueId());
-									
-					if (export != null && export.getShowShortnames())
-					{
-						writer.writeAttribute("bid", question.getShortname());
-					}
+					writer.writeAttribute("type", getNiceType(question));
 					
 					writer.writeCharacters(question.getTitle());
 					
@@ -237,11 +261,26 @@ public class XmlExportCreator extends ExportCreator {
 						{
 							writer.writeStartElement("Answer");
 							writer.writeAttribute("id", answer.getUniqueId());
+							writer.writeAttribute("type", getNiceType(question));
 											
 							if (export != null && export.getShowShortnames())
 							{
 								writer.writeAttribute("bid", answer.getShortname());
 							}
+														
+							String dependentElements = "";
+							for (Element element: answer.getDependentElements().getDependentElements())
+							{
+								if (dependentElements.length() > 0)
+								{
+									dependentElements += ";";
+								}
+								dependentElements += element.getUniqueId();
+							}
+							if (dependentElements.length() > 0)
+							{
+								writer.writeAttribute("dependentElements", dependentElements);
+							}							
 							
 							writer.writeCharacters(answer.getTitle());
 							
@@ -492,7 +531,70 @@ public class XmlExportCreator extends ExportCreator {
 			 if (export != null) export.setZipped(false);
 		}
 	}
-	
+
+	private String getNiceType(Element question) {
+		if (question instanceof Section)
+		{
+			return "Section";
+		} else if (question instanceof FreeTextQuestion)
+		{
+			return "Free Text";
+		} else if (question instanceof MultipleChoiceQuestion)
+		{
+			return "Multiple Choice";
+		} else if (question instanceof SingleChoiceQuestion)
+		{
+			return "Single Choice";
+		} else if (question instanceof PossibleAnswer)
+		{
+			return "Choice Answer";
+		} else if (question instanceof NumberQuestion)
+		{
+			return "Number";
+		} else if (question instanceof DateQuestion)
+		{
+			return "Date";
+		} else if (question instanceof Matrix)
+		{
+			return "Matrix";
+		} else if (question instanceof Table)
+		{
+			return "Table";
+		} else if (question instanceof Text)
+		{
+			return "Text";
+		} else if (question instanceof Image)
+		{
+			return "Image";
+		} else if (question instanceof Ruler)
+		{
+			return "Line";
+		} else if (question instanceof Upload)
+		{
+			return "File Upload";
+		} else if (question instanceof Download)
+		{
+			return "File Download";
+		} else if (question instanceof EmailQuestion)
+		{
+			return "E-mail";
+		} else if (question instanceof RegExQuestion)
+		{
+			return "Regular Expression";
+		} else if (question instanceof GalleryQuestion)
+		{
+			return "Gallery";
+		} else if (question instanceof Confirmation)
+		{
+			return "Confirmation";
+		} else if (question instanceof RatingQuestion)
+		{
+			return "Rating";
+		}		
+		
+		return question.getType();
+	}
+
 	@Transactional
 	public void SimulateExportContent(boolean sync, Export export) throws TooManyFiltersException {
 		exportedUniqueCodes.clear();
