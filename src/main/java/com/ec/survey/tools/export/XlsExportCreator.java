@@ -804,11 +804,15 @@ public class XlsExportCreator extends ExportCreator {
 						
 						if (answerSet == null)
 						{
-							if (question instanceof FreeTextQuestion)
-							{
-								cell.setCellValue(answerrow.get(answerrowcounter++));
-							} else {
-								cell.setCellValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+							String v = answerrow.get(answerrowcounter++);
+							
+							if (v != null) {
+								if (question instanceof FreeTextQuestion)
+								{
+									cell.setCellValue(v);
+								} else {
+									cell.setCellValue(ConversionTools.removeHTMLNoEscape(v));
+								}
 							}
 						} else {						
 							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
