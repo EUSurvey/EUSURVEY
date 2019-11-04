@@ -578,7 +578,11 @@ public class XlsExportCreator extends ExportCreator {
 							
 							if (answerSet == null)
 							{
-								cell.setCellValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+								String v = answerrow.get(answerrowcounter++);
+								
+								if (v != null) {
+									cell.setCellValue(ConversionTools.removeHTMLNoEscape(v));
+								}
 							} else {
 								List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(), matrixQuestion.getUniqueId());			
 								StringBuilder cellValue = new StringBuilder();
@@ -601,7 +605,11 @@ public class XlsExportCreator extends ExportCreator {
 							
 							if (answerSet == null)
 							{
-								cell.setCellValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+								String v = answerrow.get(answerrowcounter++);
+								
+								if (v != null) {
+									cell.setCellValue(ConversionTools.removeHTMLNoEscape(v));
+								}
 							} else {
 								List<Answer> answers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
 				
@@ -621,7 +629,11 @@ public class XlsExportCreator extends ExportCreator {
 								Cell cell = row.createCell(columnIndex++ % 255);
 								if (answerSet == null)
 								{
-									cell.setCellValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+									String v = answerrow.get(answerrowcounter++);
+									
+									if (v != null) {
+										cell.setCellValue(ConversionTools.removeHTMLNoEscape(v));
+									}
 								} else {									
 									String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);									
 									if (answer == null) answer = "";									
@@ -715,7 +727,11 @@ public class XlsExportCreator extends ExportCreator {
 						
 						if (answerSet == null)
 						{
-							cell.setCellValue(answerrow.get(answerrowcounter++));
+							String v = answerrow.get(answerrowcounter++);
+							
+							if (v != null) {
+								cell.setCellValue(v);
+							}
 						} else {						
 							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 							
