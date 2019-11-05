@@ -82,7 +82,13 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 				
 				if (user == null)
 				{
-					user = new User();
+					if (securityContext.getAuthentication().getDetails() != null && securityContext.getAuthentication().getDetails() instanceof User)
+					{
+						user = (User)securityContext.getAuthentication().getDetails();
+					} else {
+						user = new User();
+					}
+					
 					user.setLogin(securityContext.getAuthentication().getName());
 					user.setLanguage("EN");
 					user.setType(User.ECAS);
