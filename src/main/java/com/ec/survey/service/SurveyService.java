@@ -1714,7 +1714,7 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<Language> getLanguages() {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Language l order by l.englishName asc");
+		Query query = session.createQuery("FROM Language l order by l.code asc");
 		@SuppressWarnings("unchecked")
 		List<Language> languages = query.list();
 		return languages;
