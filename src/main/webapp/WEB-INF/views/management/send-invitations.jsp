@@ -207,7 +207,7 @@
 			$(".validation-error").remove();
 			
 			var sender = $("#senderAddress").val();
-			if (sender.length > 0)
+			if (sender != null && sender.length > 0)
 			{
 				 if( !validateEmail(sender)) {
 			    	if ($("#senderAddress").parent().find(".validation-error").length == 0)
@@ -478,20 +478,15 @@
 				
 				</div>
 				
-				<table>					
-					<tr>
-						<td style="padding-right: 10px; padding-top: 5px; vertical-align: top"><spring:message code="label.ReplyTo" /></td>
-						<td id="txtSenderFromInvitation" style="vertical-align: top; padding-bottom: 5px">
-							<c:choose>
-								<c:when test='${USER.ECPrivilege == 0 && USER.type == "ECAS"}'>
-									<input type="text" class="email small-form-control disabled" style="background-color: rgb(235, 235, 228);" maxlength="255"  value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" disabled="disabled" id="senderAddress" name="senderAddress" />
-								</c:when>
-								<c:otherwise>
-									<input type="text" onchange="$('#savetextbutton').removeAttr('disabled');validateInput($(this).parent());" class="email small-form-control" maxlength="255"  value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" id="senderAddress" name="senderAddress" />
-								</c:otherwise>
-							</c:choose>
-						</td>
-					</tr>
+				<table>
+					<c:if test='${!(USER.ECPrivilege == 0 && USER.type == "ECAS")}'>		
+						<tr>
+							<td style="padding-right: 10px; padding-top: 5px; vertical-align: top"><spring:message code="label.ReplyTo" /></td>
+							<td id="txtSenderFromInvitation" style="vertical-align: top; padding-bottom: 5px">
+								<input type="text" onchange="$('#savetextbutton').removeAttr('disabled');validateInput($(this).parent());" class="email small-form-control" maxlength="255"  value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" id="senderAddress" name="senderAddress" />
+							</td>
+						</tr>
+					</c:if>
 					<tr>
 						<td style="padding-right: 10px; padding-top: 5px; vertical-align: top"><spring:message code="label.Subject" /></td>
 						<td  style="vertical-align: top; padding-bottom: 5px"><input onchange="$('#savetextbutton').removeAttr('disabled')" id="txtSubjectFromInvitation" class="required small-form-control" type="text" maxlength="255" name="senderSubject" value="<esapi:encodeForHTMLAttribute>${senderSubject}</esapi:encodeForHTMLAttribute>" /></td>
@@ -658,10 +653,12 @@
 		  				<td><b><spring:message code="label.To" />:</b></td>
 		  				<td><span id="preview-to" style="margin-left: 10px"></span></td>
 		  			</tr>
-		  			<tr>
-		  				<td><b><spring:message code="label.ReplyTo" />:</b></td>
-		  				<td><span id="preview-replyto" style="margin-left: 10px"></span></td>
-		  			</tr>
+		  			<c:if test='${!(USER.ECPrivilege == 0 && USER.type == "ECAS")}'>
+			  			<tr>
+			  				<td><b><spring:message code="label.ReplyTo" />:</b></td>
+			  				<td><span id="preview-replyto" style="margin-left: 10px"></span></td>
+			  			</tr>
+		  			</c:if>
 		  			<tr>
 		  				<td><b><spring:message code="label.Subject" />:</b></td>
 		  				<td><span id="preview-subject" style="margin-left: 10px"></span></td>
