@@ -203,17 +203,21 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				
 				Collection<GrantedAuthority> authorities = getAuthorities(user, true, weakAuthentication);
 				
+				checkUserNotBanned(user);
+				
 				if (surveyLoginMode)
 				{
 					authorities.add(new SimpleGrantedAuthority("ROLE_ECAS_SURVEY_" + survey));
 				}
 				
-				checkUserNotBanned(user);
-				
-				return new UsernamePasswordAuthenticationToken(
+				UsernamePasswordAuthenticationToken t = new UsernamePasswordAuthenticationToken(
 						username, 
 						"", 
 						authorities);
+				
+				t.setDetails(user);
+				
+				return t;
 				
 				} else{
 					logger.error("cas:authenticationSuccess NOT FOUND IN XMLVALIDATION");
