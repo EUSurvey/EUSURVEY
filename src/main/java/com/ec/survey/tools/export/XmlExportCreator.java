@@ -138,30 +138,47 @@ public class XmlExportCreator extends ExportCreator {
 						{
 							writer.writeAttribute("bid", matrixAnswer.getShortname());
 						}
-						
-						for (DependencyItem dep: matrix.getDependentElements())
-						{
-							if (dep != null && dep.getPosition() == (matrixAnswer.getPosition() - 1))
-							{
-								String dependentElements = "";
-								for (Element element: dep.getDependentElements())
-								{
-									if (dependentElements.length() > 0)
-									{
-										dependentElements += ";";
-									}
-									dependentElements += element.getUniqueId();
-								}
-								if (dependentElements.length() > 0)
-								{
-									writer.writeAttribute("dependenElements", dependentElements);
-								}
-							}
-						}
-												
+																		
 						writer.writeCharacters(matrixAnswer.getTitle());
 						writer.writeEndElement(); //MatrixAnswer
 					}
+					
+					int position = 0;
+					for(Element matrixQuestion: matrix.getQuestions()) {
+						for(Element matrixAnswer: matrix.getAnswers()) {
+							writer.writeStartElement("MatrixCell");
+							
+							writer.writeAttribute("qid", matrixQuestion.getUniqueId());
+							writer.writeAttribute("aid", matrixAnswer.getUniqueId());
+							
+							String dependentElements = "";
+							
+							for (DependencyItem dep: matrix.getDependentElements())
+							{
+								if (dep != null && dep.getPosition() == position)
+								{
+									for (Element element: dep.getDependentElements())
+									{
+										if (dependentElements.length() > 0)
+										{
+											dependentElements += ";";
+										}
+										dependentElements += element.getUniqueId();
+									}
+								}
+							}
+							
+							if (dependentElements.length() > 0)
+							{
+								writer.writeAttribute("dependenElements", dependentElements);
+							}
+							
+							writer.writeEndElement(); //MatrixCell
+
+							position++;
+						}
+					}
+					
 				} else if (question instanceof Table) {	
 					Table table = (Table)question;
 					
@@ -261,7 +278,7 @@ public class XmlExportCreator extends ExportCreator {
 						{
 							writer.writeStartElement("Answer");
 							writer.writeAttribute("id", answer.getUniqueId());
-							writer.writeAttribute("type", getNiceType(question));
+							writer.writeAttribute("type", getNiceType(answer));
 											
 							if (export != null && export.getShowShortnames())
 							{
@@ -293,6 +310,7 @@ public class XmlExportCreator extends ExportCreator {
 						for(Element childQuestion: rating.getQuestions()) {
 							writer.writeStartElement("RatingQuestion");
 							writer.writeAttribute("id", childQuestion.getUniqueId());
+							writer.writeAttribute("type", getNiceType(rating));
 							
 							if (export != null && export.getShowShortnames())
 							{
