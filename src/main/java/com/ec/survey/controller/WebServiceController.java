@@ -128,7 +128,7 @@ public class WebServiceController extends BasicController {
 		return null;
 	}
 	
-	private Survey getSurvey(String alias, User user, HttpServletRequest request, HttpServletResponse response, boolean draft)
+	private Survey getSurvey(String alias, User user, HttpServletRequest request, HttpServletResponse response, boolean draft, boolean readonly)
 	{
 		Survey survey;
 		
@@ -153,9 +153,16 @@ public class WebServiceController extends BasicController {
 			} else 
 			{
 				Access access = surveyService.getAccess(survey.getId(), user.getId());
-				if (!(access == null || !access.hasAnyPrivileges() || access.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2))
+				
+				if (access != null && access.hasAnyPrivileges())
 				{
-					isAllowed = true;
+					if (readonly && access.getLocalPrivileges().get(LocalPrivilege.FormManagement) > 0)
+					{
+						isAllowed = true;
+					} else if (access.getLocalPrivileges().get(LocalPrivilege.FormManagement) > 1)
+					{
+						isAllowed = true;
+					}
 				}
 			}
 			
@@ -208,7 +215,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 			
-			Survey survey = getSurvey(shortname, user, request, response, true);
+			Survey survey = getSurvey(shortname, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			if (!active.equalsIgnoreCase("true") && !active.equalsIgnoreCase("false"))
@@ -1136,7 +1143,7 @@ public class WebServiceController extends BasicController {
 		User user = getUser(request, response, false);
 		if (user == null) return "";
 		
-		Survey survey = getSurvey(shortname, user, request, response, true);
+		Survey survey = getSurvey(shortname, user, request, response, true, false);
 		if (survey == null) return "";
 		
 		String token = null;
@@ -1394,7 +1401,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ENGLISH);
@@ -1519,7 +1526,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			if (!(survey.getIsPublished() && survey.getIsActive()))
@@ -1552,7 +1559,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, true);
 			if (survey == null) return "";
 
 			switch (type) {
@@ -1599,7 +1606,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 						
 			if (!archiveSurvey(survey, user))
@@ -1687,7 +1694,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			surveyService.delete(survey.getId(), false, false);
@@ -1723,7 +1730,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 			
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			Survey published = surveyService.getSurvey(alias, false, false, false, false, null, true, false);
@@ -1792,7 +1799,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			String newTitle = getBody(request, response);
@@ -1837,7 +1844,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			String newContact = getBody(request, response);
@@ -1877,7 +1884,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			String label = request.getHeader("label");
@@ -1938,7 +1945,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			String label = request.getHeader("label");
@@ -1995,7 +2002,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			String label = request.getHeader("label");
@@ -2042,7 +2049,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			String label = request.getHeader("label");
@@ -2087,7 +2094,7 @@ public class WebServiceController extends BasicController {
 			User user = getUser(request, response, true);
 			if (user == null) return "";
 	
-			Survey survey = getSurvey(alias, user, request, response, true);
+			Survey survey = getSurvey(alias, user, request, response, true, false);
 			if (survey == null) return "";
 			
 			surveyService.applyChanges(survey, false, user.getId(), false);
