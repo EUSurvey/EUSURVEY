@@ -819,11 +819,6 @@ public class RunnerController extends BasicController {
 						
 						User user = sessionService.getCurrentUser(request, false, false);
 						
-						if (user != null && user.isTemporary())
-						{
-							administrationService.evict(user);
-						}
-						
 						boolean ecasauthenticated = request.getSession().getAttribute("ECASSURVEY") != null && request.getSession().getAttribute("ECASSURVEY").toString().startsWith(uidorshortname);
 						
 						if (readonlyMode || (user != null && user.getType().equalsIgnoreCase(User.ECAS) && ecasauthenticated))

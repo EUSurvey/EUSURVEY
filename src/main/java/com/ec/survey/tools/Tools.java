@@ -166,7 +166,7 @@ public class Tools {
 	}
 
 	public static String md5hash(String input) {
-		return input != null && input.length() > 0 ? DigestUtils.md5Hex(input) : null;
+		return DigestUtils.md5Hex(input);
 	}
 	
 	public static boolean isPasswordWeak(String password)
