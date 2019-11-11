@@ -2052,6 +2052,8 @@ public class ManagementController extends BasicController {
 							{
 								a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);
 								first = false;
+							} else {
+								a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 1);
 							}
 							
 							surveyService.saveAccess(a);
