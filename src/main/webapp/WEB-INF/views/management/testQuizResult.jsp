@@ -42,19 +42,20 @@
 		
 </head>
 <body id="bodyManagementTest">
-
-	<%@ include file="../header.jsp" %>
-	<%@ include file="../menu.jsp" %>
-	<%@ include file="formmenu.jsp" %>	
-	<%@ include file="../generic-messages.jsp" %>
-	
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner">
-			<h1><spring:message code="label.Test" /></h1>		
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>
+		<%@ include file="../menu.jsp" %>
+		<%@ include file="formmenu.jsp" %>	
+		<%@ include file="../generic-messages.jsp" %>
+		
+		<div class="fixedtitleform">
+			<div class="fixedtitleinner">
+				<h1><spring:message code="label.Test" /></h1>		
+			</div>
 		</div>
+		
+		<%@ include file="../runner/quizResultInner.jsp" %>	
 	</div>
-	
-	<%@ include file="../runner/quizResultInner.jsp" %>	
 
 	<%@ include file="../footer.jsp" %>	
 	

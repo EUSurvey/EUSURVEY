@@ -9,17 +9,17 @@
 	<%@ include file="../includes.jsp" %>
 </head>
 <body id="error404" style="text-align: center;">
-
-	<%@ include file="../header.jsp" %>	
-
-	<div class='${responsive != null ? "responsivepage" : "page"}' style='margin-top: 40px;'>
-		<div class="pageheader">
-			<h1><spring:message code="label.PageNotFound" /></h1>
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>	
+	
+		<div class='${responsive != null ? "responsivepage" : "page"}' style='padding-top: 40px;'>
+			<div class="pageheader">
+				<h1><spring:message code="label.PageNotFound" /></h1>
+			</div>
+		
+			<spring:message code="error.405" /><br /><br />
+			<spring:message code="support.text" />
 		</div>
-	
-		<spring:message code="error.405" /><br /><br />
-		<spring:message code="support.text" />
 	</div>
-	
 	<%@ include file="../footer.jsp" %>
 </body>

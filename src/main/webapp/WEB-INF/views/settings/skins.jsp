@@ -64,101 +64,101 @@
 	</script>
 </head>
 <body>
-
-	<%@ include file="../header.jsp" %>
-	<%@ include file="../menu.jsp" %>
-	<%@ include file="settingsmenu.jsp" %>	
-		
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner" style="width:880px">
-			<div id="action-bar" class="container action-bar" style="margin-top: 10px; width: 880px">
-				<div class="row">
-					<div class="col-md-12" style="text-align:center">	
-						<a href="<c:url value="/settings/skin/new"/>" class="btn btn-default"><spring:message code="label.CreateNewSkin" /></a>
-						<div id="file-uploader-skin" style="margin-top: 10px; display: inline-block;"></div>
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>
+		<%@ include file="../menu.jsp" %>
+		<%@ include file="settingsmenu.jsp" %>	
+			
+		<div class="fixedtitleform">
+			<div class="fixedtitleinner" style="width:880px">
+				<div id="action-bar" class="container action-bar" style="margin-top: 10px; width: 880px">
+					<div class="row">
+						<div class="col-md-12" style="text-align:center">	
+							<a href="<c:url value="/settings/skin/new"/>" class="btn btn-default"><spring:message code="label.CreateNewSkin" /></a>
+							<div id="file-uploader-skin" style="margin-top: 10px; display: inline-block;"></div>
+						</div>
 					</div>
-				</div>
-			</div>	
-		</div>
-	</div>
-	
-	<div class="page880" style="margin-bottom: 0px; min-height: 200px; margin-top:220px">
-	
-		<div style="margin-left: auto; margin-right: auto; width: 630px;">					
-			<table class="table table-striped table-bordered table-styled" cellpadding="0" cellspacing="0">
-				<thead>
-					<tr>
-						<th><spring:message code="label.Name" /></th>
-						<th><spring:message code="label.Owner" /></th>
-						<th><spring:message code="label.Public" /></th>
-						<th style="width: 80px;"><spring:message code="label.Actions" /></th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach items="${skins}" var="skin">
-						<c:choose>
-							<c:when test="${skin.isPublic}"><tr style="background-color: #D6FFDA;"></c:when>
-							<c:otherwise><tr></c:otherwise>
-						</c:choose>
-						
-							<td><esapi:encodeForHTML>${skin.name}</esapi:encodeForHTML></td>
-							<td><esapi:encodeForHTML>${skin.owner.name}</esapi:encodeForHTML></td>
-							<td>
-								<c:choose>
-								   <c:when test="${skin.isPublic}"><spring:message code="label.Yes" /></c:when>
-								   <c:otherwise><spring:message code="label.No" /></c:otherwise>
-								</c:choose>
-							</td>
-							<td style="width: 150px; text-align: center">
-								<c:choose>
-								   <c:when test="${skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
-								  	 	<a data-toggle="tooltip" href="${contextpath}/settings/skin/edit/${skin.id}" class="iconbutton" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
-								   </c:when>
-								   <c:otherwise>
-										<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
-								   </c:otherwise>
-								</c:choose>
-								
-								<c:choose>
-								   <c:when test="${skin.isPublic || skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
-										<a data-toggle="tooltip" href="${contextpath}/settings/skin/download/${skin.id}" class="iconbutton" title="<spring:message code="label.Download" />"><span class="glyphicon glyphicon-download"></span></a>
-									</c:when>
-								   <c:otherwise>
-										<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Download" />"><span class="glyphicon glyphicon-download"></span></a>
-									</c:otherwise>
-								</c:choose>		
-																
-								<c:choose>
-								   <c:when test="${skin.isPublic || skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
-										<a data-toggle="tooltip" href="${contextpath}/settings/skin/copy/${skin.id}" class="iconbutton" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-share"></span></a>
-									</c:when>
-								   <c:otherwise>
-										<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-share"></span></a>
-									</c:otherwise>
-								</c:choose>								
-								
-								<c:choose>
-								   <c:when test="${skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
-										<a data-toggle="tooltip" onclick="showDeleteDialog('${skin.id}');"  class="iconbutton" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove icon-red"></span></a>
-									</c:when>
-								   <c:otherwise>
-										<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove icon-red"></span></a>
-									</c:otherwise>
-								</c:choose>
-							</td>
-						</tr>
-					</c:forEach>
-				</tbody>
-				
-			</table>
-	
+				</div>	
+			</div>
 		</div>
 		
-		<div style="clear: both"></div>
-	</div>
-
-
-<%@ include file="../footer.jsp" %>	
+		<div class="page880" style="padding-bottom: 0px; min-height: 200px; padding-top:220px">
+		
+			<div style="margin-left: auto; margin-right: auto; width: 630px;">					
+				<table class="table table-striped table-bordered table-styled" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<th><spring:message code="label.Name" /></th>
+							<th><spring:message code="label.Owner" /></th>
+							<th><spring:message code="label.Public" /></th>
+							<th style="width: 80px;"><spring:message code="label.Actions" /></th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:forEach items="${skins}" var="skin">
+							<c:choose>
+								<c:when test="${skin.isPublic}"><tr style="background-color: #D6FFDA;"></c:when>
+								<c:otherwise><tr></c:otherwise>
+							</c:choose>
+							
+								<td><esapi:encodeForHTML>${skin.name}</esapi:encodeForHTML></td>
+								<td><esapi:encodeForHTML>${skin.owner.name}</esapi:encodeForHTML></td>
+								<td>
+									<c:choose>
+									   <c:when test="${skin.isPublic}"><spring:message code="label.Yes" /></c:when>
+									   <c:otherwise><spring:message code="label.No" /></c:otherwise>
+									</c:choose>
+								</td>
+								<td style="width: 150px; text-align: center">
+									<c:choose>
+									   <c:when test="${skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
+									  	 	<a data-toggle="tooltip" href="${contextpath}/settings/skin/edit/${skin.id}" class="iconbutton" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
+									   </c:when>
+									   <c:otherwise>
+											<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
+									   </c:otherwise>
+									</c:choose>
+									
+									<c:choose>
+									   <c:when test="${skin.isPublic || skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
+											<a data-toggle="tooltip" href="${contextpath}/settings/skin/download/${skin.id}" class="iconbutton" title="<spring:message code="label.Download" />"><span class="glyphicon glyphicon-download"></span></a>
+										</c:when>
+									   <c:otherwise>
+											<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Download" />"><span class="glyphicon glyphicon-download"></span></a>
+										</c:otherwise>
+									</c:choose>		
+																	
+									<c:choose>
+									   <c:when test="${skin.isPublic || skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
+											<a data-toggle="tooltip" href="${contextpath}/settings/skin/copy/${skin.id}" class="iconbutton" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-share"></span></a>
+										</c:when>
+									   <c:otherwise>
+											<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-share"></span></a>
+										</c:otherwise>
+									</c:choose>								
+									
+									<c:choose>
+									   <c:when test="${skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
+											<a data-toggle="tooltip" onclick="showDeleteDialog('${skin.id}');"  class="iconbutton" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove icon-red"></span></a>
+										</c:when>
+									   <c:otherwise>
+											<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove icon-red"></span></a>
+										</c:otherwise>
+									</c:choose>
+								</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+					
+				</table>
+		
+			</div>
+			
+			<div style="clear: both"></div>
+		</div>
+	</div>	
+	
+	<%@ include file="../footer.jsp" %>	
 
 	<c:if test="${message != null}">
 		<script type="text/javascript">

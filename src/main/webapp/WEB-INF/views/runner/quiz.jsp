@@ -25,11 +25,10 @@
 
 </head>
 <body>
-
-	<%@ include file="../header.jsp" %>	 
-	
-	<%@ include file="../runner/quizinner.jsp" %>
-
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>	
+		<%@ include file="../runner/quizinner.jsp" %>
+	</div>
 	<%@ include file="../footerNoLanguages.jsp" %>
 	
 	<c:if test="${message != null}">

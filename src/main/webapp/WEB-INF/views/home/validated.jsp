@@ -7,22 +7,23 @@
 	<%@ include file="../includes.jsp" %>	
 </head>
 <body>
-
-	<%@ include file="../header.jsp" %>	
-
-	<div class="page">
-		<div class="pageheader">
-			<h1><spring:message code="label.RegistrationComplete" /></h1>
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>	
+	
+		<div class="page">
+			<div class="pageheader">
+				<h1><spring:message code="label.RegistrationComplete" /></h1>
+			</div>
+			
+			<spring:message code="registration.AccountReady" />
+			<br /><br />
+			
+			<a class="btn btn-default" href="<c:url value="/auth/login"/>"><spring:message code="label.GoToLogin" /></a>
+			
 		</div>
-		
-		<spring:message code="registration.AccountReady" />
-		<br /><br />
-		
-		<a class="btn btn-default" href="<c:url value="/auth/login"/>"><spring:message code="label.GoToLogin" /></a>
-		
 	</div>
-
-<%@ include file="../footer.jsp" %>	
+	
+	<%@ include file="../footer.jsp" %>	
 
 </body>
 </html>
