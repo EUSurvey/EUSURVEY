@@ -123,22 +123,23 @@
 		
 </head>
 <body id="bodyManagementTest">
-
-	<a href="#surveystart">${form.getMessage("label.SkipToMain")}</a>
-
-	<%@ include file="../header.jsp" %>
-	<%@ include file="../menu.jsp" %>
-	<%@ include file="formmenu.jsp" %>	
+	<div class="page-wrap">
+		<a href="#surveystart">${form.getMessage("label.SkipToMain")}</a>
 	
-	<div class="fullpageform100">				
+		<%@ include file="../header.jsp" %>
+		<%@ include file="../menu.jsp" %>
+		<%@ include file="formmenu.jsp" %>	
 		
-		<div style="margin-top: 0px;">
-		
-		<c:set var="mode" value="test" />
-		<%@ include file="../runner/runnercontent.jsp" %>	
-		
-		</div>	
-		
+		<div class="fullpageform100">				
+			
+			<div style="margin-top: 0px;">
+			
+			<c:set var="mode" value="test" />
+			<%@ include file="../runner/runnercontent.jsp" %>	
+			
+			</div>	
+			
+		</div>
 	</div>
 
 	<%@ include file="../footer.jsp" %>	

@@ -10,25 +10,25 @@
 	<%@ include file="../includes.jsp" %>	
 </head>
 <body>
-
-	<%@ include file="../header.jsp" %>
-	<c:if test="${USER != null && runnermode == null}">
-		<%@ include file="../menu.jsp" %>
-	</c:if>
-	
-	<div class="fixedtitle">
-		<div class="fixedtitleinner">
-			<h1><spring:message code="label.SystemMessage" /></h1>		
-		</div>
-	</div>
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>
+		<c:if test="${USER != null && runnermode == null}">
+			<%@ include file="../menu.jsp" %>
+		</c:if>
 		
-	<div class="page880" style="margin-bottom: 0px; margin-top: 160px; min-height: 500px; text-align: center">	
-		<div class="alert <esapi:encodeForHTMLAttribute>${message.css}</esapi:encodeForHTMLAttribute>" style="padding: 10px;>
-			<img src="${contextpath}/resources/images/<esapi:encodeForHTMLAttribute>${message.icon}</esapi:encodeForHTMLAttribute>" alt="system message icon" />
-			<div style="margin-left: 20px;" id="system-message-box-content">${message.text}</div></div>
+		<div class="fixedtitle">
+			<div class="fixedtitleinner">
+				<h1><spring:message code="label.SystemMessage" /></h1>		
+			</div>
+		</div>
+			
+		<div class="page880" style="margin-bottom: 0px; padding-top: 160px; min-height: 500px; text-align: center">	
+			<div class="alert <esapi:encodeForHTMLAttribute>${message.css}</esapi:encodeForHTMLAttribute>" style="padding: 10px;>
+				<img src="${contextpath}/resources/images/<esapi:encodeForHTMLAttribute>${message.icon}</esapi:encodeForHTMLAttribute>" alt="system message icon" />
+				<div style="margin-left: 20px;" id="system-message-box-content">${message.text}</div></div>
+			</div>
 		</div>
 	</div>
-
 	<%@ include file="../footer.jsp" %>	
 
 </body>

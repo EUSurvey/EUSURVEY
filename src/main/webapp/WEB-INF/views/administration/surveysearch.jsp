@@ -766,606 +766,607 @@
 		
 </head>
 <body>
-
-	<%@ include file="../header.jsp" %>
-	<%@ include file="../menu.jsp" %>
-	<%@ include file="adminmenu.jsp" %>	
-	
-	<form:form id="resultsForm" action="surveysearch" method="post" class="noautosubmitonclearfilter">
-	
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner">
-							
-			<div id="action-bar" class="container action-bar" style="margin-top: 20px">
-				<div class="row">
-					<div class="col-md-12" style="text-align:center">
-						<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
-						<a href="surveysearch" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
-						<c:choose>
-							<c:when test='${mode == "archived" && enablearchiving}'>
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" checked="checked" /><spring:message code="label.ArchivedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
-							</c:when>
-							<c:when test='${mode == "deleted" }'>
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
-								<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" checked="checked" /><spring:message code="label.DeletedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
-							</c:when>
-							<c:when test='${mode == "reported" }'>
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
-								<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" checked="checked" /><spring:message code="label.ReportedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
-							</c:when>
-							<c:when test='${mode == "frozen" }'>
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
-								<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" checked="checked" /><spring:message code="label.FrozenSurveys" />
-							</c:when>
-							<c:otherwise>
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" checked="checked" /><spring:message code="label.ExistingSurveys" />
-								<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
-								<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
-							</c:otherwise>
-						</c:choose>
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>
+		<%@ include file="../menu.jsp" %>
+		<%@ include file="adminmenu.jsp" %>	
+		
+		<form:form id="resultsForm" action="surveysearch" method="post" class="noautosubmitonclearfilter">
+		
+		<div class="fixedtitleform">
+			<div class="fixedtitleinner">
+								
+				<div id="action-bar" class="container action-bar" style="margin-top: 20px">
+					<div class="row">
+						<div class="col-md-12" style="text-align:center">
+							<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
+							<a href="surveysearch" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
+							<c:choose>
+								<c:when test='${mode == "archived" && enablearchiving}'>
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" checked="checked" /><spring:message code="label.ArchivedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
+								</c:when>
+								<c:when test='${mode == "deleted" }'>
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
+									<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" checked="checked" /><spring:message code="label.DeletedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
+								</c:when>
+								<c:when test='${mode == "reported" }'>
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
+									<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" checked="checked" /><spring:message code="label.ReportedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
+								</c:when>
+								<c:when test='${mode == "frozen" }'>
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
+									<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" checked="checked" /><spring:message code="label.FrozenSurveys" />
+								</c:when>
+								<c:otherwise>
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" checked="checked" /><spring:message code="label.ExistingSurveys" />
+									<c:if test="${enablearchiving}"><input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="archived" onclick="switchMode(true)" /><spring:message code="label.ArchivedSurveys" /></c:if>
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="deleted" onclick="switchMode(true)" /><spring:message code="label.DeletedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="reported" onclick="switchMode(true)" /><spring:message code="label.ReportedSurveys" />
+									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="frozen" onclick="switchMode(true)" /><spring:message code="label.FrozenSurveys" />
+								</c:otherwise>
+							</c:choose>
+						</div>
 					</div>
 				</div>
+			
+			</div>
+		</div>			
+			
+			<div class="fullpageadmin">			
+					<div id="surveyTableDiv" style="min-height: 400px; padding-top: 208px;">
+						<table id="surveyTableDivTable" class="table table-bordered table-styled" style="width: auto; margin-left: auto; margin-right: auto;">
+							<thead style="border-top: 1px solid #ddd;">
+							<tr class="archivedonly hideme">
+								<th><spring:message code="label.Alias" /></th>
+								<th><spring:message code="label.Title" /></th>
+								<th><spring:message code="label.Created" /></th>
+								<th><spring:message code="label.Owner" /></th>
+								<th><spring:message code="label.Replies" /></th>
+								<th><spring:message code="label.Archived" /></th>
+								<th>PDF</th>
+								<th><spring:message code="label.Results" /></th>
+								<th><spring:message code="label.Statistics" /></th>
+								<th><spring:message code="label.Actions" /></th>
+							</tr>
+							<tr class="deletedonly hideme">
+								<th><spring:message code="label.Alias" /></th>
+								<th><spring:message code="label.Title" /></th>
+								<th><spring:message code="label.Created" /></th>
+								<th><spring:message code="label.Owner" /></th>
+								<th><spring:message code="label.Replies" /></th>
+								<th><spring:message code="label.Deleted" /></th>
+								<th><spring:message code="label.Actions" /></th>
+							</tr>
+							<tr class="existingonly">
+								<th><spring:message code="label.Survey" /> UID</th>
+								<th><spring:message code="label.Alias" /></th>
+								<th><spring:message code="label.Title" /></th>
+								<th><spring:message code="label.Owner" /></th>
+								<th><spring:message code="label.FirstPublished" /></th>
+								<th><spring:message code="label.Published" /></th>
+								<th><spring:message code="label.NumberOfResults" /></th>
+								<th><spring:message code="label.NumberOfDrafts" /></th>
+								<th><spring:message code="label.Actions" /></th>
+							</tr>
+							<tr class="reportedonly">
+								<th><spring:message code="label.Survey" /> UID</th>
+								<th><spring:message code="label.Alias" /></th>
+								<th><spring:message code="label.Title" /></th>
+								<th><spring:message code="label.Owner" /></th>
+								<th><spring:message code="label.FirstPublished" /></th>
+								<th><spring:message code="label.Published" /></th>
+								<th><spring:message code="label.NumberOfResults" /></th>
+								<th><spring:message code="label.NumberOfDrafts" /></th>
+								<th><spring:message code="label.NumberOfReports" /></th>
+							</tr>
+							<tr class="frozenonly">
+								<th><spring:message code="label.Survey" /> UID</th>
+								<th><spring:message code="label.Alias" /></th>
+								<th><spring:message code="label.Title" /></th>
+								<th><spring:message code="label.Owner" /></th>
+								<th><spring:message code="label.FirstPublished" /></th>
+								<th><spring:message code="label.Published" /></th>
+								<th><spring:message code="label.NumberOfResults" /></th>
+								<th><spring:message code="label.NumberOfDrafts" /></th>
+								<th><spring:message code="label.NumberOfReports" /></th>
+								<th><spring:message code="label.Actions" /></th>
+							</tr>
+							<tr class="table-styled-filter archivedonly hideme">
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${archivedfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="archiveshortname" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${archivedfilter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="archivetitle" />
+								</th>
+								<th class="filtercell cellcreated">
+									<div class="btn-toolbar" style="margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+								  		<a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										     <c:choose>
+										     	<c:when test="${archivedfilter.createdFrom != null}">
+										     		<spring:eval expression="archivedfilter.createdFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										  <div class="overlaymenu hideme">
+										    	<input type="hidden" name="archivecreatedFrom" class="hiddendate" value="<spring:eval expression="archivedfilter.createdFrom" />" />
+										    	<div id="metafiltercreatedfromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>
+										<div class="datefilter" style="float: left">	
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${archivedfilter.createdTo != null}">
+										     		<spring:eval expression="archivedfilter.createdTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										 <div class="overlaymenu hideme">
+										    	<input type="hidden" name="archivecreatedTo" class="hiddendate" value="<spring:eval expression="archivedfilter.createdTo" />" />
+										    	<div id="metafiltercreatedtodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>	
+									</div>	
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${archivedfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="archiveowner" />
+								</th>
+								<th>&nbsp;</th>
+								<th class="filtercell cellarchived">
+									<div class="btn-toolbar" style="margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										     <c:choose>
+										     	<c:when test="${archivedfilter.archivedFrom != null}">
+										     		<spring:eval expression="archivedfilter.archivedFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										  <div class="overlaymenu hideme">
+										    	<input type="hidden" name="archivearchivedFrom" class="hiddendate" value="<spring:eval expression="archivedfilter.archivedFrom" />" />
+										    	<div id="metafilterarchivedfromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>
+										<div class="datefilter" style="float: left">	
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${archivedfilter.archivedTo != null}">
+										     		<spring:eval expression="archivedfilter.archivedTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										 <div class="overlaymenu hideme">
+										    	<input type="hidden" name="archivearchivedTo" class="hiddendate" value="<spring:eval expression="archivedfilter.archivedTo" />" />
+										    	<div id="metafilterarchivedtodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>	
+									</div>	
+								</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+							</tr>
+							<tr class="table-styled-filter deletedonly hideme">
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${deletedfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="deletedshortname" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${deletedfilter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="deletedtitle" />
+								</th>
+								<th class="filtercell cellcreated">
+									<div class="btn-toolbar" style="margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										     <c:choose>
+										     	<c:when test="${deletedfilter.createdFrom != null}">
+										     		<spring:eval expression="deletedfilter.createdFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										  <div class="overlaymenu hideme">
+										    	<input type="hidden" name="deletedcreatedFrom" class="hiddendate" value="<spring:eval expression="deletedfilter.createdFrom" />" />
+										    	<div id="metafilterdeletedcreatedfromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>
+										<div class="datefilter" style="float: left">	
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${deletedfilter.createdTo != null}">
+										     		<spring:eval expression="deletedfilter.createdTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										 <div class="overlaymenu hideme">
+										    	<input type="hidden" name="deletedcreatedTo" class="hiddendate" value="<spring:eval expression="deletedfilter.createdTo" />" />
+										    	<div id="metafilterdeletedcreatedtodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>	
+									</div>	
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${deletedfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="deletedowner" />
+								</th>
+								<th>&nbsp;</th>
+								<th class="filtercell celldeleted">
+									<div class="btn-toolbar" style="margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										     <c:choose>
+										     	<c:when test="${deletedfilter.deletedFrom != null}">
+										     		<spring:eval expression="deletedfilter.deletedFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										  <div class="overlaymenu hideme">
+										    	<input type="hidden" name="deleteddeletedFrom" class="hiddendate" value="<spring:eval expression="deletedfilter.deletedFrom" />" />
+										    	<div id="metafilterdeletedfromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>
+										<div class="datefilter" style="float: left">	
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${deletedfilter.deletedTo != null}">
+										     		<spring:eval expression="deletedfilter.deletedTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										 <div class="overlaymenu hideme">
+										    	<input type="hidden" name="deleteddeletedTo" class="hiddendate" value="<spring:eval expression="deletedfilter.deletedTo" />" />
+										    	<div id="metafilterdeletedtodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>	
+									</div>	
+								</th>
+								<th>&nbsp;</th>
+							</tr>
+							<tr class="table-styled-filter existingonly">
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.uid}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="uid" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="shortname" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="title" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="owner" />
+								</th>
+								<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
+									<div class="btn-toolbar" style="margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										     <c:choose>
+										     	<c:when test="${filter.firstPublishedFrom != null}">
+										     		<spring:eval expression="filter.firstPublishedFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										  <div class="overlaymenu hideme">
+										    	<input type="hidden" name="firstPublishedFrom" class="hiddendate" value="<spring:eval expression="filter.firstPublishedFrom" />" />
+										    	<div id="metafilterfirstpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>
+										<div class="datefilter" style="float: left">	
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${filter.firstPublishedTo != null}">
+										     		<spring:eval expression="filter.firstPublishedTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										 <div class="overlaymenu hideme">
+										    	<input type="hidden" name="firstPublishedTo" class="hiddendate" value="<spring:eval expression="filter.firstPublishedTo" />" />
+										    	<div id="metafilterfirstpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>	
+									</div>	
+								</th>
+								<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
+									<div class="btn-toolbar" style="margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										     <c:choose>
+										     	<c:when test="${filter.publishedFrom != null}">
+										     		<spring:eval expression="filter.publishedFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										  <div class="overlaymenu hideme">
+										    	<input type="hidden" name="publishedFrom" class="hiddendate" value="<spring:eval expression="filter.publishedFrom" />" />
+										    	<div id="metafilterpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>
+										<div class="datefilter" style="float: left">	
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${filter.publishedTo != null}">
+										     		<spring:eval expression="filter.publishedTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										 <div class="overlaymenu hideme">
+										    	<input type="hidden" name="publishedTo" class="hiddendate" value="<spring:eval expression="filter.publishedTo" />" />
+										    	<div id="metafilterpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>	
+									</div>	
+								</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+							</tr>
+							<tr class="table-styled-filter reportedonly">
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.uid}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reporteduid" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reportedshortname" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reportedtitle" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reportedowner" />
+								</th>
+								<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
+									<div class="btn-toolbar" style="margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										     <c:choose>
+										     	<c:when test="${reportedfilter.firstPublishedFrom != null}">
+										     		<spring:eval expression="filter.firstPublishedFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										  <div class="overlaymenu hideme">
+										    	<input type="hidden" name="reportedfirstPublishedFrom" class="hiddendate" value="<spring:eval expression="reportedfilter.firstPublishedFrom" />" />
+										    	<div id="metafilterreportedfirstpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>
+										<div class="datefilter" style="float: left">	
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${reportedfilter.firstPublishedTo != null}">
+										     		<spring:eval expression="filter.firstPublishedTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										 <div class="overlaymenu hideme">
+										    	<input type="hidden" name="reportedfirstPublishedTo" class="hiddendate" value="<spring:eval expression="reportedfilter.firstPublishedTo" />" />
+										    	<div id="metafilterreportedfirstpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>	
+									</div>	
+								</th>
+								<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
+									<div class="btn-toolbar" style="margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										     <c:choose>
+										     	<c:when test="${reportedfilter.publishedFrom != null}">
+										     		<spring:eval expression="reportedfilter.publishedFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										  <div class="overlaymenu hideme">
+										    	<input type="hidden" name="reportedpublishedFrom" class="hiddendate" value="<spring:eval expression="reportedfilter.publishedFrom" />" />
+										    	<div id="metafilterreportedpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>
+										<div class="datefilter" style="float: left">	
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${reportedfilter.publishedTo != null}">
+										     		<spring:eval expression="filter.publishedTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										 <div class="overlaymenu hideme">
+										    	<input type="hidden" name="reportedpublishedTo" class="hiddendate" value="<spring:eval expression="reportedfilter.publishedTo" />" />
+										    	<div id="metafilterreportedpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>	
+									</div>	
+								</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+							</tr>
+							
+							<tr class="table-styled-filter frozenonly">
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.uid}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozenuid" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozenshortname" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozentitle" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozenowner" />
+								</th>
+								<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
+									<div class="btn-toolbar" style="margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										     <c:choose>
+										     	<c:when test="${frozenfilter.firstPublishedFrom != null}">
+										     		<spring:eval expression="filter.firstPublishedFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										  <div class="overlaymenu hideme">
+										    	<input type="hidden" name="frozenfirstPublishedFrom" class="hiddendate" value="<spring:eval expression="frozenfilter.firstPublishedFrom" />" />
+										    	<div id="metafilterfrozenfirstpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>
+										<div class="datefilter" style="float: left">	
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${frozenfilter.firstPublishedTo != null}">
+										     		<spring:eval expression="filter.firstPublishedTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										 <div class="overlaymenu hideme">
+										    	<input type="hidden" name="frozenfirstPublishedTo" class="hiddendate" value="<spring:eval expression="frozenfilter.firstPublishedTo" />" />
+										    	<div id="metafilterfrozenfirstpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>	
+									</div>	
+								</th>
+								<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
+									<div class="btn-toolbar" style="margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										     <c:choose>
+										     	<c:when test="${frozenfilter.publishedFrom != null}">
+										     		<spring:eval expression="frozenfilter.publishedFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										  <div class="overlaymenu hideme">
+										    	<input type="hidden" name="frozenpublishedFrom" class="hiddendate" value="<spring:eval expression="frozenfilter.publishedFrom" />" />
+										    	<div id="metafilterfrozenpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>
+										<div class="datefilter" style="float: left">	
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${frozenfilter.publishedTo != null}">
+										     		<spring:eval expression="filter.publishedTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										 <div class="overlaymenu hideme">
+										    	<input type="hidden" name="frozenpublishedTo" class="hiddendate" value="<spring:eval expression="frozenfilter.publishedTo" />" />
+										    	<div id="metafilterfrozenpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>	
+									</div>	
+								</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+							</tr>	
+											
+							</thead>
+							<tbody id="surveyTableDivTableBody"></tbody>
+						</table>
+						
+						<div style="text-align: center">
+							<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
+						</div>
+						
+						<div id="tbllist-empty" class="noDataPlaceHolder">
+							<p>
+								<spring:message code="label.NoDataSearchSurveyText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
+							<p>
+						</div>					
+					</div>
+					
+				<div style="clear: both"></div>
 			</div>
 		
-		</div>
-	</div>			
-		
-		<div class="fullpageadmin">			
-				<div id="surveyTableDiv" style="min-height: 400px; margin-top: 208px;">
-					<table id="surveyTableDivTable" class="table table-bordered table-styled" style="width: auto; margin-left: auto; margin-right: auto;">
-						<thead style="border-top: 1px solid #ddd;">
-						<tr class="archivedonly hideme">
-							<th><spring:message code="label.Alias" /></th>
-							<th><spring:message code="label.Title" /></th>
-							<th><spring:message code="label.Created" /></th>
-							<th><spring:message code="label.Owner" /></th>
-							<th><spring:message code="label.Replies" /></th>
-							<th><spring:message code="label.Archived" /></th>
-							<th>PDF</th>
-							<th><spring:message code="label.Results" /></th>
-							<th><spring:message code="label.Statistics" /></th>
-							<th><spring:message code="label.Actions" /></th>
-						</tr>
-						<tr class="deletedonly hideme">
-							<th><spring:message code="label.Alias" /></th>
-							<th><spring:message code="label.Title" /></th>
-							<th><spring:message code="label.Created" /></th>
-							<th><spring:message code="label.Owner" /></th>
-							<th><spring:message code="label.Replies" /></th>
-							<th><spring:message code="label.Deleted" /></th>
-							<th><spring:message code="label.Actions" /></th>
-						</tr>
-						<tr class="existingonly">
-							<th><spring:message code="label.Survey" /> UID</th>
-							<th><spring:message code="label.Alias" /></th>
-							<th><spring:message code="label.Title" /></th>
-							<th><spring:message code="label.Owner" /></th>
-							<th><spring:message code="label.FirstPublished" /></th>
-							<th><spring:message code="label.Published" /></th>
-							<th><spring:message code="label.NumberOfResults" /></th>
-							<th><spring:message code="label.NumberOfDrafts" /></th>
-							<th><spring:message code="label.Actions" /></th>
-						</tr>
-						<tr class="reportedonly">
-							<th><spring:message code="label.Survey" /> UID</th>
-							<th><spring:message code="label.Alias" /></th>
-							<th><spring:message code="label.Title" /></th>
-							<th><spring:message code="label.Owner" /></th>
-							<th><spring:message code="label.FirstPublished" /></th>
-							<th><spring:message code="label.Published" /></th>
-							<th><spring:message code="label.NumberOfResults" /></th>
-							<th><spring:message code="label.NumberOfDrafts" /></th>
-							<th><spring:message code="label.NumberOfReports" /></th>
-						</tr>
-						<tr class="frozenonly">
-							<th><spring:message code="label.Survey" /> UID</th>
-							<th><spring:message code="label.Alias" /></th>
-							<th><spring:message code="label.Title" /></th>
-							<th><spring:message code="label.Owner" /></th>
-							<th><spring:message code="label.FirstPublished" /></th>
-							<th><spring:message code="label.Published" /></th>
-							<th><spring:message code="label.NumberOfResults" /></th>
-							<th><spring:message code="label.NumberOfDrafts" /></th>
-							<th><spring:message code="label.NumberOfReports" /></th>
-							<th><spring:message code="label.Actions" /></th>
-						</tr>
-						<tr class="table-styled-filter archivedonly hideme">
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${archivedfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="archiveshortname" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${archivedfilter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="archivetitle" />
-							</th>
-							<th class="filtercell cellcreated">
-								<div class="btn-toolbar" style="margin: 0px; text-align: center">
-									<div class="datefilter" style="float: left">
-							  		<a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									     <c:choose>
-									     	<c:when test="${archivedfilter.createdFrom != null}">
-									     		<spring:eval expression="archivedfilter.createdFrom" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.from" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									  <div class="overlaymenu hideme">
-									    	<input type="hidden" name="archivecreatedFrom" class="hiddendate" value="<spring:eval expression="archivedfilter.createdFrom" />" />
-									    	<div id="metafiltercreatedfromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									   </div>
-									</div>
-									<div class="datefilter" style="float: left">	
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									  	<c:choose>
-									     	<c:when test="${archivedfilter.createdTo != null}">
-									     		<spring:eval expression="archivedfilter.createdTo" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.To" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									 <div class="overlaymenu hideme">
-									    	<input type="hidden" name="archivecreatedTo" class="hiddendate" value="<spring:eval expression="archivedfilter.createdTo" />" />
-									    	<div id="metafiltercreatedtodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									    </div>
-									</div>	
-								</div>	
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${archivedfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="archiveowner" />
-							</th>
-							<th>&nbsp;</th>
-							<th class="filtercell cellarchived">
-								<div class="btn-toolbar" style="margin: 0px; text-align: center">
-									<div class="datefilter" style="float: left">
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									     <c:choose>
-									     	<c:when test="${archivedfilter.archivedFrom != null}">
-									     		<spring:eval expression="archivedfilter.archivedFrom" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.from" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									  <div class="overlaymenu hideme">
-									    	<input type="hidden" name="archivearchivedFrom" class="hiddendate" value="<spring:eval expression="archivedfilter.archivedFrom" />" />
-									    	<div id="metafilterarchivedfromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									   </div>
-									</div>
-									<div class="datefilter" style="float: left">	
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									  	<c:choose>
-									     	<c:when test="${archivedfilter.archivedTo != null}">
-									     		<spring:eval expression="archivedfilter.archivedTo" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.To" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									 <div class="overlaymenu hideme">
-									    	<input type="hidden" name="archivearchivedTo" class="hiddendate" value="<spring:eval expression="archivedfilter.archivedTo" />" />
-									    	<div id="metafilterarchivedtodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									    </div>
-									</div>	
-								</div>	
-							</th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-						</tr>
-						<tr class="table-styled-filter deletedonly hideme">
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${deletedfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="deletedshortname" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${deletedfilter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="deletedtitle" />
-							</th>
-							<th class="filtercell cellcreated">
-								<div class="btn-toolbar" style="margin: 0px; text-align: center">
-									<div class="datefilter" style="float: left">
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									     <c:choose>
-									     	<c:when test="${deletedfilter.createdFrom != null}">
-									     		<spring:eval expression="deletedfilter.createdFrom" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.from" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									  <div class="overlaymenu hideme">
-									    	<input type="hidden" name="deletedcreatedFrom" class="hiddendate" value="<spring:eval expression="deletedfilter.createdFrom" />" />
-									    	<div id="metafilterdeletedcreatedfromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									   </div>
-									</div>
-									<div class="datefilter" style="float: left">	
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									  	<c:choose>
-									     	<c:when test="${deletedfilter.createdTo != null}">
-									     		<spring:eval expression="deletedfilter.createdTo" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.To" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									 <div class="overlaymenu hideme">
-									    	<input type="hidden" name="deletedcreatedTo" class="hiddendate" value="<spring:eval expression="deletedfilter.createdTo" />" />
-									    	<div id="metafilterdeletedcreatedtodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									    </div>
-									</div>	
-								</div>	
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${deletedfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="deletedowner" />
-							</th>
-							<th>&nbsp;</th>
-							<th class="filtercell celldeleted">
-								<div class="btn-toolbar" style="margin: 0px; text-align: center">
-									<div class="datefilter" style="float: left">
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									     <c:choose>
-									     	<c:when test="${deletedfilter.deletedFrom != null}">
-									     		<spring:eval expression="deletedfilter.deletedFrom" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.from" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									  <div class="overlaymenu hideme">
-									    	<input type="hidden" name="deleteddeletedFrom" class="hiddendate" value="<spring:eval expression="deletedfilter.deletedFrom" />" />
-									    	<div id="metafilterdeletedfromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									   </div>
-									</div>
-									<div class="datefilter" style="float: left">	
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									  	<c:choose>
-									     	<c:when test="${deletedfilter.deletedTo != null}">
-									     		<spring:eval expression="deletedfilter.deletedTo" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.To" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									 <div class="overlaymenu hideme">
-									    	<input type="hidden" name="deleteddeletedTo" class="hiddendate" value="<spring:eval expression="deletedfilter.deletedTo" />" />
-									    	<div id="metafilterdeletedtodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									    </div>
-									</div>	
-								</div>	
-							</th>
-							<th>&nbsp;</th>
-						</tr>
-						<tr class="table-styled-filter existingonly">
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.uid}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="uid" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="shortname" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="title" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="owner" />
-							</th>
-							<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
-								<div class="btn-toolbar" style="margin: 0px; text-align: center">
-									<div class="datefilter" style="float: left">
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									     <c:choose>
-									     	<c:when test="${filter.firstPublishedFrom != null}">
-									     		<spring:eval expression="filter.firstPublishedFrom" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.from" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									  <div class="overlaymenu hideme">
-									    	<input type="hidden" name="firstPublishedFrom" class="hiddendate" value="<spring:eval expression="filter.firstPublishedFrom" />" />
-									    	<div id="metafilterfirstpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									   </div>
-									</div>
-									<div class="datefilter" style="float: left">	
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									  	<c:choose>
-									     	<c:when test="${filter.firstPublishedTo != null}">
-									     		<spring:eval expression="filter.firstPublishedTo" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.To" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									 <div class="overlaymenu hideme">
-									    	<input type="hidden" name="firstPublishedTo" class="hiddendate" value="<spring:eval expression="filter.firstPublishedTo" />" />
-									    	<div id="metafilterfirstpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									    </div>
-									</div>	
-								</div>	
-							</th>
-							<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
-								<div class="btn-toolbar" style="margin: 0px; text-align: center">
-									<div class="datefilter" style="float: left">
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									     <c:choose>
-									     	<c:when test="${filter.publishedFrom != null}">
-									     		<spring:eval expression="filter.publishedFrom" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.from" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									  <div class="overlaymenu hideme">
-									    	<input type="hidden" name="publishedFrom" class="hiddendate" value="<spring:eval expression="filter.publishedFrom" />" />
-									    	<div id="metafilterpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									   </div>
-									</div>
-									<div class="datefilter" style="float: left">	
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									  	<c:choose>
-									     	<c:when test="${filter.publishedTo != null}">
-									     		<spring:eval expression="filter.publishedTo" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.To" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									 <div class="overlaymenu hideme">
-									    	<input type="hidden" name="publishedTo" class="hiddendate" value="<spring:eval expression="filter.publishedTo" />" />
-									    	<div id="metafilterpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									    </div>
-									</div>	
-								</div>	
-							</th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-						</tr>
-						<tr class="table-styled-filter reportedonly">
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.uid}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reporteduid" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reportedshortname" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reportedtitle" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${reportedfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="reportedowner" />
-							</th>
-							<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
-								<div class="btn-toolbar" style="margin: 0px; text-align: center">
-									<div class="datefilter" style="float: left">
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									     <c:choose>
-									     	<c:when test="${reportedfilter.firstPublishedFrom != null}">
-									     		<spring:eval expression="filter.firstPublishedFrom" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.from" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									  <div class="overlaymenu hideme">
-									    	<input type="hidden" name="reportedfirstPublishedFrom" class="hiddendate" value="<spring:eval expression="reportedfilter.firstPublishedFrom" />" />
-									    	<div id="metafilterreportedfirstpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									   </div>
-									</div>
-									<div class="datefilter" style="float: left">	
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									  	<c:choose>
-									     	<c:when test="${reportedfilter.firstPublishedTo != null}">
-									     		<spring:eval expression="filter.firstPublishedTo" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.To" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									 <div class="overlaymenu hideme">
-									    	<input type="hidden" name="reportedfirstPublishedTo" class="hiddendate" value="<spring:eval expression="reportedfilter.firstPublishedTo" />" />
-									    	<div id="metafilterreportedfirstpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									    </div>
-									</div>	
-								</div>	
-							</th>
-							<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
-								<div class="btn-toolbar" style="margin: 0px; text-align: center">
-									<div class="datefilter" style="float: left">
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									     <c:choose>
-									     	<c:when test="${reportedfilter.publishedFrom != null}">
-									     		<spring:eval expression="reportedfilter.publishedFrom" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.from" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									  <div class="overlaymenu hideme">
-									    	<input type="hidden" name="reportedpublishedFrom" class="hiddendate" value="<spring:eval expression="reportedfilter.publishedFrom" />" />
-									    	<div id="metafilterreportedpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									   </div>
-									</div>
-									<div class="datefilter" style="float: left">	
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									  	<c:choose>
-									     	<c:when test="${reportedfilter.publishedTo != null}">
-									     		<spring:eval expression="filter.publishedTo" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.To" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									 <div class="overlaymenu hideme">
-									    	<input type="hidden" name="reportedpublishedTo" class="hiddendate" value="<spring:eval expression="reportedfilter.publishedTo" />" />
-									    	<div id="metafilterreportedpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									    </div>
-									</div>	
-								</div>	
-							</th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-						</tr>
-						
-						<tr class="table-styled-filter frozenonly">
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.uid}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozenuid" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozenshortname" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.title}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozentitle" />
-							</th>
-							<th class="filtercell">
-								<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${frozenfilter.owner}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="frozenowner" />
-							</th>
-							<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
-								<div class="btn-toolbar" style="margin: 0px; text-align: center">
-									<div class="datefilter" style="float: left">
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									     <c:choose>
-									     	<c:when test="${frozenfilter.firstPublishedFrom != null}">
-									     		<spring:eval expression="filter.firstPublishedFrom" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.from" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									  <div class="overlaymenu hideme">
-									    	<input type="hidden" name="frozenfirstPublishedFrom" class="hiddendate" value="<spring:eval expression="frozenfilter.firstPublishedFrom" />" />
-									    	<div id="metafilterfrozenfirstpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									   </div>
-									</div>
-									<div class="datefilter" style="float: left">	
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									  	<c:choose>
-									     	<c:when test="${frozenfilter.firstPublishedTo != null}">
-									     		<spring:eval expression="filter.firstPublishedTo" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.To" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									 <div class="overlaymenu hideme">
-									    	<input type="hidden" name="frozenfirstPublishedTo" class="hiddendate" value="<spring:eval expression="frozenfilter.firstPublishedTo" />" />
-									    	<div id="metafilterfrozenfirstpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									    </div>
-									</div>	
-								</div>	
-							</th>
-							<th class="filtercell" style="min-width: 160px !important; max-width: 300px;">
-								<div class="btn-toolbar" style="margin: 0px; text-align: center">
-									<div class="datefilter" style="float: left">
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									     <c:choose>
-									     	<c:when test="${frozenfilter.publishedFrom != null}">
-									     		<spring:eval expression="frozenfilter.publishedFrom" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.from" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									  <div class="overlaymenu hideme">
-									    	<input type="hidden" name="frozenpublishedFrom" class="hiddendate" value="<spring:eval expression="frozenfilter.publishedFrom" />" />
-									    	<div id="metafilterfrozenpublishedfrom" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									   </div>
-									</div>
-									<div class="datefilter" style="float: left">	
-									  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-									  	<c:choose>
-									     	<c:when test="${frozenfilter.publishedTo != null}">
-									     		<spring:eval expression="filter.publishedTo" />
-									     	</c:when>
-									     	<c:otherwise>
-									     		<spring:message code="label.To" />
-									     	</c:otherwise>
-									     </c:choose>
-									    <span class="caret"></span>
-									  </a>
-									 <div class="overlaymenu hideme">
-									    	<input type="hidden" name="frozenpublishedTo" class="hiddendate" value="<spring:eval expression="frozenfilter.publishedTo" />" />
-									    	<div id="metafilterfrozenpublishedto" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-									    </div>
-									</div>	
-								</div>	
-							</th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-							<th>&nbsp;</th>
-						</tr>	
-										
-						</thead>
-						<tbody id="surveyTableDivTableBody"></tbody>
-					</table>
-					
-					<div style="text-align: center">
-						<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
-					</div>
-					
-					<div id="tbllist-empty" class="noDataPlaceHolder">
-						<p>
-							<spring:message code="label.NoDataSearchSurveyText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
-						<p>
-					</div>					
-				</div>
-				
-			<div style="clear: both"></div>
-		</div>
-	
-	</form:form>
+		</form:form>
+	</div>
 		
 	<%@ include file="../footer.jsp" %>	
 	
