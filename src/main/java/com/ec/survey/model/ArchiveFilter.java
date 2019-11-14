@@ -11,6 +11,7 @@ import com.ec.survey.tools.ConversionTools;
 
 public class ArchiveFilter {
 	
+	private String uniqueId;
 	private String title;
 	private String alias;
 	private String owner;
@@ -22,6 +23,13 @@ public class ArchiveFilter {
 	private String sortKey = "";
 	private String sortOrder = "DESC";
 	private int userId = -1;
+	
+	public String getUniqueId() {
+		return uniqueId;
+	}
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
 
 	public String getTitle() {
 		return title;

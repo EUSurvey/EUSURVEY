@@ -363,6 +363,10 @@
 				var row = document.createElement("tr");
 				
 				var td = document.createElement("td");				
+				$(td).append(list[i].surveyUID);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
 				$(td).append(list[i].surveyShortname);		
 				$(row).append(td);
 				
@@ -452,6 +456,14 @@
 				var row = document.createElement("tr");
 				
 				var td = document.createElement("td");				
+				$(td).append(list[i].id);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
+				$(td).append(list[i].uniqueId);		
+				$(row).append(td);
+				
+				td = document.createElement("td");				
 				$(td).append(list[i].shortname);		
 				$(row).append(td);
 				
@@ -776,7 +788,7 @@
 		<div class="fixedtitleform">
 			<div class="fixedtitleinner">
 								
-				<div id="action-bar" class="container action-bar" style="margin-top: 20px">
+				<div id="action-bar" class="container action-bar" style="padding-top: 20px">
 					<div class="row">
 						<div class="col-md-12" style="text-align:center">
 							<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
@@ -830,6 +842,7 @@
 						<table id="surveyTableDivTable" class="table table-bordered table-styled" style="width: auto; margin-left: auto; margin-right: auto;">
 							<thead style="border-top: 1px solid #ddd;">
 							<tr class="archivedonly hideme">
+								<th><spring:message code="label.Survey" /> UID</th>
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
 								<th><spring:message code="label.Created" /></th>
@@ -842,6 +855,8 @@
 								<th><spring:message code="label.Actions" /></th>
 							</tr>
 							<tr class="deletedonly hideme">
+								<th><spring:message code="label.Survey" /> ID</th>
+								<th><spring:message code="label.Survey" /> UID</th>
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
 								<th><spring:message code="label.Created" /></th>
@@ -885,6 +900,9 @@
 								<th><spring:message code="label.Actions" /></th>
 							</tr>
 							<tr class="table-styled-filter archivedonly hideme">
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='${archivedfilter.uniqueId}' type="text" maxlength="255" style="margin:0px;" name="archiveuid" />
+								</th>
 								<th class="filtercell">
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${archivedfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="archiveshortname" />
 								</th>
@@ -977,6 +995,12 @@
 								<th>&nbsp;</th>
 							</tr>
 							<tr class="table-styled-filter deletedonly hideme">
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='${deletedfilter.id}' type="text" maxlength="255" style="margin:0px;" name="deletedid" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='${deletedfilter.uniqueId}' type="text" maxlength="255" style="margin:0px;" name="deleteduid" />
+								</th>
 								<th class="filtercell">
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${deletedfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="deletedshortname" />
 								</th>
