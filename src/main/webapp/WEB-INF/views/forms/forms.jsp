@@ -485,7 +485,7 @@
 			<div><%@ include file="../paging.jsp" %></div>	
 		</div>	
 		
-		<div class="fullpagesmall" style="padding-top: 0px; width: 1024px; margin-left: auto; margin-right: auto;">
+		<div class="fullpagesmall" style="padding-top: 25px; width: 1024px; margin-left: auto; margin-right: auto;">
 			<div>		
 				<input type="hidden" name="delete" id="delete" value="" />
 				<input type="hidden" name="clearFilter" id="clearFilter" value="false" />
