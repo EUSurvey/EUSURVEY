@@ -349,125 +349,124 @@
 		
 </head>
 <body>
-	<div class="page-wrap">
-		<%@ include file="../header.jsp" %>
-		<%@ include file="../menu.jsp" %>
-	
-		<div class="fixedtitle" style="padding-bottom: 26px">
-			<div class="fixedtitleinner">
-				<div style="float: left">
-					<select class="form-control" id="operationselector" style="display: inline; width: auto;">
-						<option value="recreate"><spring:message code="label.RecreateSelected" /></option>
-						<option value="delete"><spring:message code="label.RemoveSelected" /></option>
-					</select>
-					<a class="btn btn-default" style="margin-bottom: 3px" rel="tooltipp" title="<spring:message code="label.OK" />"  onclick="startOperation();"><spring:message code="label.OK" /></a>
-				</div>
-			
-				<div style="text-align: center; padding-top: 5px;">
-					<spring:message code="info.ExportsDeletedAutomatically1" />
-				</div>	
+
+	<%@ include file="../header.jsp" %>
+	<%@ include file="../menu.jsp" %>
+
+	<div class="fixedtitle" style="padding-bottom: 26px">
+		<div class="fixedtitleinner">
+			<div style="float: left">
+				<select class="form-control" id="operationselector" style="display: inline; width: auto;">
+					<option value="recreate"><spring:message code="label.RecreateSelected" /></option>
+					<option value="delete"><spring:message code="label.RemoveSelected" /></option>
+				</select>
+				<a class="btn btn-default" style="margin-bottom: 3px" rel="tooltipp" title="<spring:message code="label.OK" />"  onclick="startOperation();"><spring:message code="label.OK" /></a>
 			</div>
-		</div>	
-	
-		<div class="fullpage" style="padding-top:145px;">
-	
-			<form:form id="load-exports" method="POST" action="${contextpath}/exports/list">
-				<input type="hidden" name="sortKey" id="sortkey" value='<esapi:encodeForHTMLAttribute>${sortKey}</esapi:encodeForHTMLAttribute>' />
-				<input type="hidden" name="sortOrder" id="sortorder" value='<esapi:encodeForHTMLAttribute>${sortOrder}</esapi:encodeForHTMLAttribute>' />
-			
-				<table id="tbllist-exports" class="table table-bordered table-styled" style="width: 1024px; margin-left: auto; margin-right: auto;">
-					<thead style="background-color: white; border-top: 1px solid #eee;">
-						<tr>
-							<th style="text-align: center;"><input type="checkbox" id="checkAllCheckBox"/></th>
-							<th style="max-width: 250px">
-								<div style="float: right">
-									<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sort('form',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sort('form',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-								</div>	 
-								<spring:message code="label.Source" />
-							</th>
-							<th style="min-width: 130px">
-								<div style="float: right">
-									<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sort('name',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sort('name',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-								</div>	 
-								<spring:message code="label.Name" />
-							</th>
-							<th style="text-align: center;"><spring:message code="label.Type" /></th>
-							<th style="min-width: 120px">
-								<div style="float: right">
-									<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sort('date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sort('date',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-								</div>	 
-								<spring:message code="label.Date" />
-							</th>
-							<th style="text-align: center;"><spring:message code="label.Update" /></th>
-							<th style="text-align: center;"><spring:message code="label.Result" /></th>
-							<th><spring:message code="label.Actions" /></th>
-						</tr>
-						
-					</thead>
-					<tbody>
-						<tr id="export-loading">
-							<td colspan="8"  style="text-align: center">
-								<img src="${contextpath}/resources/images/ajax-loader.gif" />
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				
-				<div style="text-align: center">
-					<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
-				</div>
-				<div id="tbllist-empty" class="noDataPlaceHolder">
-					<p>
-						<spring:message code="label.NoDataExportText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
-					<p>
-				</div>
-				
-			</form:form>
+		
+			<div style="text-align: center; padding-top: 5px;">
+				<spring:message code="info.ExportsDeletedAutomatically1" />
+			</div>	
 		</div>
+	</div>	
+
+	<div class="fullpage" style="margin-top:145px;">
+
+		<form:form id="load-exports" method="POST" action="${contextpath}/exports/list">
+			<input type="hidden" name="sortKey" id="sortkey" value='<esapi:encodeForHTMLAttribute>${sortKey}</esapi:encodeForHTMLAttribute>' />
+			<input type="hidden" name="sortOrder" id="sortorder" value='<esapi:encodeForHTMLAttribute>${sortOrder}</esapi:encodeForHTMLAttribute>' />
 		
-		<div class="modal" id="delete-export-dialog" data-backdrop="static">
-			<div class="modal-dialog modal-sm">
-	    	<div class="modal-content">
-			<div class="modal-body">
-				<spring:message code="question.DeleteExport" />
+			<table id="tbllist-exports" class="table table-bordered table-styled" style="width: 1024px; margin-left: auto; margin-right: auto;">
+				<thead style="background-color: white; border-top: 1px solid #eee;">
+					<tr>
+						<th style="text-align: center;"><input type="checkbox" id="checkAllCheckBox"/></th>
+						<th style="max-width: 250px">
+							<div style="float: right">
+								<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sort('form',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sort('form',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+							</div>	 
+							<spring:message code="label.Source" />
+						</th>
+						<th style="min-width: 130px">
+							<div style="float: right">
+								<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sort('name',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sort('name',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+							</div>	 
+							<spring:message code="label.Name" />
+						</th>
+						<th style="text-align: center;"><spring:message code="label.Type" /></th>
+						<th style="min-width: 120px">
+							<div style="float: right">
+								<a data-toggle="tooltip" title="<spring:message code="label.SortAscending" />" onclick="sort('date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" title="<spring:message code="label.SortDescending" />" onclick="sort('date',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+							</div>	 
+							<spring:message code="label.Date" />
+						</th>
+						<th style="text-align: center;"><spring:message code="label.Update" /></th>
+						<th style="text-align: center;"><spring:message code="label.Result" /></th>
+						<th><spring:message code="label.Actions" /></th>
+					</tr>
+					
+				</thead>
+				<tbody>
+					<tr id="export-loading">
+						<td colspan="8"  style="text-align: center">
+							<img src="${contextpath}/resources/images/ajax-loader.gif" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<div style="text-align: center">
+				<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
 			</div>
-			<div class="modal-footer">
-				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a id="deleteExportConfirm" onclick="deleteOneExport()"  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>	
-				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>											
+			<div id="tbllist-empty" class="noDataPlaceHolder">
+				<p>
+					<spring:message code="label.NoDataExportText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
+				<p>
 			</div>
-			</div>
-			</div>
-		</div>
-		
-		<div class="modal" id="delete-exports-dialog" data-backdrop="static">
-			<div class="modal-dialog modal-sm">
-	    	<div class="modal-content">
-			<div class="modal-body">
-				<spring:message code="question.DeleteSelectedExports" />						
-			</div>
-			<div class="modal-footer">
-				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a id="deleteExportsConfirm" onclick="deleteSelectedExports()"  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>		
-				<a  class="btn btn-default" data-dismiss="modal" onclick="$('#operationselector').val('recreate');"><spring:message code="label.No" /></a>			
-			</div>
-			</div>
-			</div>
-		</div>				
-		
-		<div class="modal" id="no-selection-dialog" data-backdrop="static">
-			<div class="modal-dialog modal-sm">
-	    	<div class="modal-content">
-			<div class="modal-body">
-				<spring:message code="message.NoElementSelected" />						
-			</div>
-			<div class="modal-footer">
-				<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>		
-			</div>
-			</div>
-			</div>
-		</div>	
+			
+		</form:form>
 	</div>
+	
+	<div class="modal" id="delete-export-dialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+		<div class="modal-body">
+			<spring:message code="question.DeleteExport" />
+		</div>
+		<div class="modal-footer">
+			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+			<a id="deleteExportConfirm" onclick="deleteOneExport()"  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>	
+			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>											
+		</div>
+		</div>
+		</div>
+	</div>
+	
+	<div class="modal" id="delete-exports-dialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+		<div class="modal-body">
+			<spring:message code="question.DeleteSelectedExports" />						
+		</div>
+		<div class="modal-footer">
+			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+			<a id="deleteExportsConfirm" onclick="deleteSelectedExports()"  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>		
+			<a  class="btn btn-default" data-dismiss="modal" onclick="$('#operationselector').val('recreate');"><spring:message code="label.No" /></a>			
+		</div>
+		</div>
+		</div>
+	</div>				
+	
+	<div class="modal" id="no-selection-dialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+		<div class="modal-body">
+			<spring:message code="message.NoElementSelected" />						
+		</div>
+		<div class="modal-footer">
+			<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>		
+		</div>
+		</div>
+		</div>
+	</div>	
 
 	<%@ include file="../footer.jsp" %>	
 

@@ -243,187 +243,187 @@
 		
 </head>
 <body>
-	<div class="page-wrap">
-		<%@ include file="../header.jsp" %>
-		<%@ include file="../menu.jsp" %>
-		<%@ include file="adminmenu.jsp" %>	
-		
-		<form:form id="contributionsearchForm" action="contributionsearch" method="post" class="noautosubmitonclearfilter" onsubmit="$('#generic-wait-dialog').modal('show');">
-		
-			<div class="fixedtitleform">
-				<div class="fixedtitleinner" style="padding-bottom: 35px;">
-					<div id="action-bar" class="container">
-						<div class="row">
-							<div class="col-md-12" style="text-align:center; margin-top: 20px;">
-								<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
-								<a  onclick="resetSearch()" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
-							</div>
-						</div>
+
+	<%@ include file="../header.jsp" %>
+	<%@ include file="../menu.jsp" %>
+	<%@ include file="adminmenu.jsp" %>	
+	
+	<form:form id="contributionsearchForm" action="contributionsearch" method="post" class="noautosubmitonclearfilter" onsubmit="$('#generic-wait-dialog').modal('show');">
+	
+	<div class="fixedtitleform">
+		<div class="fixedtitleinner" style="padding-bottom: 35px;">
+			<div id="action-bar" class="container">
+				<div class="row">
+					<div class="col-md-12" style="text-align:center; margin-top: 20px;">
+						<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
+						<a  onclick="resetSearch()" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
 					</div>
 				</div>
 			</div>
-			
-			<div class="page1024" style="width: 1300px; margin-bottom: 0px;overflow-x: visible;">
-				
-					<div id="resultTableDiv" style="min-height: 400px; padding-top: 200px">
-						<table id="resultTableDivTable" class="table table-bordered table-styled">
-							<thead style="border-top: 1px solid #ddd;">
-								<tr>
-									<th><spring:message code="label.Survey" /> UID</th>
-									<th><spring:message code="label.Survey" />&nbsp;<spring:message code="label.Alias" /></th>
-									<th><spring:message code="label.Survey" />&nbsp;<spring:message code="label.Title" /></th>
-									<th><spring:message code="label.Draft" />&nbsp;<spring:message code="label.ID" /></th>
-									<th><spring:message code="label.Contribution" />&nbsp;<spring:message code="label.ID" /></th>
-									<th><spring:message code="label.LastUpdate" /></th>
-									<th style="min-width: 140px"><spring:message code="label.Actions" /></th>
-								</tr>
-								<tr class="table-styled-filter">
-									<th class="filtercell">
-										<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.surveyUid}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="surveyUid" />
-									</th>
-									<th class="filtercell">
-										<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.surveyShortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="surveyShortname" />
-									</th>
-									<th class="filtercell">
-										<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.surveyTitle}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="surveyTitle" />
-									</th>
-									<th class="filtercell">
-										<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.draftId}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="draftId" />
-									</th>
-									<th class="filtercell">
-										<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.caseId}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="caseId" />
-									</th>
-									<th class="filtercell" style="min-width: 260px !important; max-width: 300px;">
-										<div class="btn-toolbar" style="min-width: 150px; margin: 0px; text-align: center">
-											<div class="datefilter" style="float: left">
-											  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-											  	<c:choose>
-											     	<c:when test="${filter.updatedFrom != null}">
-											     		<spring:eval expression="filter.updatedFrom" />
-											     	</c:when>
-											     	<c:otherwise>
-											     		<spring:message code="label.from" />
-											     	</c:otherwise>
-											     </c:choose>
-											    <span class="caret"></span>
-											  </a>
-											   <div class="overlaymenu hideme">
-											    	<input type="hidden" name="metafilterupdatefrom" class="hiddendate" value="<spring:eval expression="filter.updatedFrom" />" />
-											    	<div id="metafilterupdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-											    </div>
-											</div>		
-											<div class="datefilter" style="float: left">
-											  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-											  	<c:choose>
-											     	<c:when test="${filter.updatedTo != null}">
-											     		<spring:eval expression="filter.updatedTo" />
-											     	</c:when>
-											     	<c:otherwise>
-											     		<spring:message code="label.To" />
-											     	</c:otherwise>
-											     </c:choose>
-											    <span class="caret"></span>
-											  </a>
-											   <div class="overlaymenu hideme">
-											    	<input type="hidden" name="metafilterupdateto" class="hiddendate" value="<spring:eval expression="filter.updatedTo" />" />
-											    	<div id="metafilterupdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-											   </div>
-											</div>	
-										</div>				
-									</th>						
-									<th>&nbsp;</th>							
-								</tr>					
-							</thead>
-							<tbody id="resultTableDivTableBody">
-							<c:if test="${paging != null}">
-								<c:forEach items="${paging.items}" var="answerSet">
-									<c:choose>
-										<c:when test="${answerSet.invitationId != null && answerSet.invitationId.length() > 0}">
-											<tr class="invitation" data-invitationId="${answerSet.invitationId}">
-										</c:when>
-										<c:otherwise>
-											<tr>
-										</c:otherwise>
-									</c:choose>
-									
-										<td>${answerSet.survey.uniqueId}</td>
-										<td><a href='${contextpath}/${answerSet.survey.shortname}/management/overview' target='_blank'>${answerSet.survey.shortname}</a></td>
-										<td>${answerSet.survey.cleanTitle()}</td>
-										<td>
-											<c:choose>
-												<c:when test="${(answerSet.isDraft) && answerSet.invitationId != null && answerSet.invitationId.length() > 0}">
-													<a target="_blank" href="${contextpath}/runner/${answerSet.survey.uniqueId}/${answerSet.invitationId}">${answerSet.draftId}</a>											
-													<div style="float: right">
-														<a data-toggle="tooltip" title="<spring:message code="tooltip.readonlypreview" />" target="_blank" href="${contextpath}/runner/${answerSet.survey.uniqueId}/${answerSet.invitationId}?readonly=true"><span class="glyphicon glyphicon-eye-open"></span></a>
-													</div>	
-												</c:when>
-												<c:when test="${answerSet.isDraft}">
-													<a target="_blank" href="${contextpath}/runner/${answerSet.survey.uniqueId}?draftid=${answerSet.draftId}">${answerSet.draftId}</a>
-													<div style="float: right">
-														<a data-toggle="tooltip" title="<spring:message code="tooltip.readonlypreview" />" target="_blank" href="${contextpath}/runner/${answerSet.survey.uniqueId}?draftid=${answerSet.draftId}&readonly=true"><span class="glyphicon glyphicon-eye-open"></span></a>
-													</div>								
-												</c:when>
-												<c:otherwise>
-													${answerSet.draftId}										
-												</c:otherwise>
-											</c:choose>
-										</td>
-										<td>
-											<c:if test="${!answerSet.isDraft}">
-												${answerSet.uniqueCode}
-											</c:if>						
-										</td>
-										<td>
-											<spring:eval expression="answerSet.updateDate" />	
-										</td>
-										<td>
-											<c:choose>
-												<c:when test="${answerSet.isDraft}">
-													<img style="cursor: not-allowed" data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" src="${contextpath}/resources/images/file_extension_pdf_small_grey.png">
-												</c:when>
-												<c:otherwise>
-													<a style="pading-bottom: 10px;" data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" onclick="downloadAnswerPDF('${answerSet.uniqueCode}')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png"></a>
-												</c:otherwise>
-											</c:choose>
-											
-											<c:choose>
-												<c:when test="${!answerSet.isDraft && answerSet.uniqueCode.length() > 0}">
-													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" target="_blank" href="<c:url value='/editcontribution/'/>${answerSet.uniqueCode}?mode=dialog" ><span class="glyphicon glyphicon-pencil"></span></a>
-												</c:when>
-												<c:otherwise>
-													<a style="cursor: not-allowed" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton disabled" ><span class="glyphicon glyphicon-pencil"></span></a>
-												</c:otherwise>
-											</c:choose>
-											
-											<c:choose>
-												<c:when test="${!answerSet.isDraft}">
-													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton" onclick="resetContribution('${answerSet.uniqueCode}', this)" ><span class="glyphicon glyphicon-refresh"></span></a>
-												</c:when>
-												<c:otherwise>
-													<a style="cursor: not-allowed !important" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton disabled"><span class="glyphicon glyphicon-refresh"></span></a>
-												</c:otherwise>
-											</c:choose>
-										</td>									
-									</tr>
-								</c:forEach>
-							</c:if>
-							</tbody>
-						</table>
-						<div style="text-align: center">
-							<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
-						</div>
-						<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging == null }">style="display:block;"</c:if>>
-							<p>
-								<spring:message code="label.NoDataContributionText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
-							<p>
-						</div>					
-					</div>
-					
-				<div style="clear: both"></div>
-			</div>
-		
-		</form:form>
+		</div>
 	</div>
+		
+		<div class="page1024" style="width: 1300px; margin-bottom: 0px;overflow-x: visible;">
+			
+				<div id="resultTableDiv" style="min-height: 400px; margin-top: 200px">
+					<table id="resultTableDivTable" class="table table-bordered table-styled">
+						<thead style="border-top: 1px solid #ddd;">
+							<tr>
+								<th><spring:message code="label.Survey" /> UID</th>
+								<th><spring:message code="label.Survey" />&nbsp;<spring:message code="label.Alias" /></th>
+								<th><spring:message code="label.Survey" />&nbsp;<spring:message code="label.Title" /></th>
+								<th><spring:message code="label.Draft" />&nbsp;<spring:message code="label.ID" /></th>
+								<th><spring:message code="label.Contribution" />&nbsp;<spring:message code="label.ID" /></th>
+								<th><spring:message code="label.LastUpdate" /></th>
+								<th style="min-width: 140px"><spring:message code="label.Actions" /></th>
+							</tr>
+							<tr class="table-styled-filter">
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.surveyUid}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="surveyUid" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.surveyShortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="surveyShortname" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.surveyTitle}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="surveyTitle" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.draftId}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="draftId" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.caseId}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="caseId" />
+								</th>
+								<th class="filtercell" style="min-width: 260px !important; max-width: 300px;">
+									<div class="btn-toolbar" style="min-width: 150px; margin: 0px; text-align: center">
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${filter.updatedFrom != null}">
+										     		<spring:eval expression="filter.updatedFrom" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.from" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										   <div class="overlaymenu hideme">
+										    	<input type="hidden" name="metafilterupdatefrom" class="hiddendate" value="<spring:eval expression="filter.updatedFrom" />" />
+										    	<div id="metafilterupdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    </div>
+										</div>		
+										<div class="datefilter" style="float: left">
+										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+										  	<c:choose>
+										     	<c:when test="${filter.updatedTo != null}">
+										     		<spring:eval expression="filter.updatedTo" />
+										     	</c:when>
+										     	<c:otherwise>
+										     		<spring:message code="label.To" />
+										     	</c:otherwise>
+										     </c:choose>
+										    <span class="caret"></span>
+										  </a>
+										   <div class="overlaymenu hideme">
+										    	<input type="hidden" name="metafilterupdateto" class="hiddendate" value="<spring:eval expression="filter.updatedTo" />" />
+										    	<div id="metafilterupdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										   </div>
+										</div>	
+									</div>				
+								</th>						
+								<th>&nbsp;</th>							
+							</tr>					
+						</thead>
+						<tbody id="resultTableDivTableBody">
+						<c:if test="${paging != null}">
+							<c:forEach items="${paging.items}" var="answerSet">
+								<c:choose>
+									<c:when test="${answerSet.invitationId != null && answerSet.invitationId.length() > 0}">
+										<tr class="invitation" data-invitationId="${answerSet.invitationId}">
+									</c:when>
+									<c:otherwise>
+										<tr>
+									</c:otherwise>
+								</c:choose>
+								
+									<td>${answerSet.survey.uniqueId}</td>
+									<td><a href='${contextpath}/${answerSet.survey.shortname}/management/overview' target='_blank'>${answerSet.survey.shortname}</a></td>
+									<td>${answerSet.survey.cleanTitle()}</td>
+									<td>
+										<c:choose>
+											<c:when test="${(answerSet.isDraft) && answerSet.invitationId != null && answerSet.invitationId.length() > 0}">
+												<a target="_blank" href="${contextpath}/runner/${answerSet.survey.uniqueId}/${answerSet.invitationId}">${answerSet.draftId}</a>											
+												<div style="float: right">
+													<a data-toggle="tooltip" title="<spring:message code="tooltip.readonlypreview" />" target="_blank" href="${contextpath}/runner/${answerSet.survey.uniqueId}/${answerSet.invitationId}?readonly=true"><span class="glyphicon glyphicon-eye-open"></span></a>
+												</div>	
+											</c:when>
+											<c:when test="${answerSet.isDraft}">
+												<a target="_blank" href="${contextpath}/runner/${answerSet.survey.uniqueId}?draftid=${answerSet.draftId}">${answerSet.draftId}</a>
+												<div style="float: right">
+													<a data-toggle="tooltip" title="<spring:message code="tooltip.readonlypreview" />" target="_blank" href="${contextpath}/runner/${answerSet.survey.uniqueId}?draftid=${answerSet.draftId}&readonly=true"><span class="glyphicon glyphicon-eye-open"></span></a>
+												</div>								
+											</c:when>
+											<c:otherwise>
+												${answerSet.draftId}										
+											</c:otherwise>
+										</c:choose>
+									</td>
+									<td>
+										<c:if test="${!answerSet.isDraft}">
+											${answerSet.uniqueCode}
+										</c:if>						
+									</td>
+									<td>
+										<spring:eval expression="answerSet.updateDate" />	
+									</td>
+									<td>
+										<c:choose>
+											<c:when test="${answerSet.isDraft}">
+												<img style="cursor: not-allowed" data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" src="${contextpath}/resources/images/file_extension_pdf_small_grey.png">
+											</c:when>
+											<c:otherwise>
+												<a style="pading-bottom: 10px;" data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" onclick="downloadAnswerPDF('${answerSet.uniqueCode}')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png"></a>
+											</c:otherwise>
+										</c:choose>
+										
+										<c:choose>
+											<c:when test="${!answerSet.isDraft && answerSet.uniqueCode.length() > 0}">
+												<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" target="_blank" href="<c:url value='/editcontribution/'/>${answerSet.uniqueCode}?mode=dialog" ><span class="glyphicon glyphicon-pencil"></span></a>
+											</c:when>
+											<c:otherwise>
+												<a style="cursor: not-allowed" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton disabled" ><span class="glyphicon glyphicon-pencil"></span></a>
+											</c:otherwise>
+										</c:choose>
+										
+										<c:choose>
+											<c:when test="${!answerSet.isDraft}">
+												<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton" onclick="resetContribution('${answerSet.uniqueCode}', this)" ><span class="glyphicon glyphicon-refresh"></span></a>
+											</c:when>
+											<c:otherwise>
+												<a style="cursor: not-allowed !important" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton disabled"><span class="glyphicon glyphicon-refresh"></span></a>
+											</c:otherwise>
+										</c:choose>
+									</td>									
+								</tr>
+							</c:forEach>
+						</c:if>
+						</tbody>
+					</table>
+					<div style="text-align: center">
+						<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
+					</div>
+					<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging == null }">style="display:block;"</c:if>>
+						<p>
+							<spring:message code="label.NoDataContributionText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
+						<p>
+					</div>					
+				</div>
+				
+			<div style="clear: both"></div>
+		</div>
+	
+	</form:form>
+		
 	<%@ include file="../footer.jsp" %>	
 	
 </body>

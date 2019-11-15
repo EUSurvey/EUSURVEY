@@ -669,7 +669,7 @@
 	<%@ include file="../menu.jsp" %>
 	<%@ include file="formmenu.jsp" %>	
 	
-	<form:form modelAttribute="paging" id="resultsForm" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/results" style="padding-top: 20px; padding-bottom: 0px;">
+	<form:form modelAttribute="paging" id="resultsForm" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/results" style="margin-top: 20px; margin-bottom: 0px;">
 		<input type="hidden" name="operation" id="operation" />
 		<input type="hidden" name="sort" id="sort" />
 		
@@ -804,7 +804,7 @@
 			<div style="clear: both"></div>
 		</div>			
 		
-		<div class="fullpageform" style="padding-top: 170px; padding-bottom: 0px;">
+		<div class="fullpageform" style="margin-top: 170px; margin-bottom: 0px;">
 			<div>			
 				<input type="hidden" id="message" name="message" />
 				<input type="hidden" id="resultType" name="resultType" />

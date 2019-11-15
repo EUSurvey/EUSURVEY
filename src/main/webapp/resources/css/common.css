@@ -8,28 +8,6 @@ body {
 	color: #333;
 }
 
-html, body {
-  height: 100%;
-}
-
-.page-wrap {
-	min-height: 100%;
-	/* equal to footer height */
-	margin-bottom: -212px; 
-	padding-bottom: 75px;
-	max-width: 100%;
-	overflow-x: auto;
-}
-
-.page-wrap:after {
-	content: "";
-	display: block;
-}
-
-.footer-bottom, .page-wrap:after {
-	height: 212px; 
-}
-
 .hpdiv {
 	height: 1px;
 	padding-top: 2px;
@@ -340,39 +318,6 @@ select {
 	margin-bottom: 9px;
 }
 
-.footer-bottom {        
-	color: #fff;
-	text-align: left;
-	padding: 0;
-	height: 212px;
-	margin-bottom: 0px !important;
-}
-	
-.footer-bottom .row {
-    padding-top: 15px;
-    padding-bottom: 20px;
-    margin: 0px;
-}
-	
-.footer-bottom a {
-    color: #fff !important;
-}
-
-.footer2 {
-	background-color: #012d56;
-	height: 71px;
-	color: #ccc;
-}
-
-.footer2 a {
-	color: #ccc !important;
-}
-	
-.footerlabel {
-    font-size: 17px;
-    margin-bottom: 10px;
-}
-
 .footer-content {
 	width: 880px;
 	margin-left: auto;
@@ -443,7 +388,7 @@ select {
 	width: 1200px;
 	min-width: 1200px;
 	overflow-x: auto;
-	padding-top: 10px;
+	margin-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
@@ -455,7 +400,7 @@ select {
 	width: 1024px;
 	min-width: 1024px;
 	overflow-x: auto;
-	padding-top: 10px;
+	margin-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
@@ -467,7 +412,7 @@ select {
 	width: 850px;
 	min-width: 850px;
 	overflow-x: auto;
-	padding-top: 10px;
+	margin-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
@@ -479,7 +424,7 @@ select {
 	width: 880px;
 	min-width: 880px;
 	overflow-x: auto;
-	padding-top: 10px;
+	margin-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
@@ -488,7 +433,7 @@ select {
 }
 
 .fullpageadmin {
-	padding-top: 10px;
+	margin-top: 10px;
 	padding-left: 0px;
 	padding-right: 0px;
 }
@@ -497,32 +442,32 @@ select {
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: left;
-	padding-bottom: 50px;
- 	padding-top: 180px; 
+	margin-bottom: 50px;
+ 	margin-top: 180px; 
 }
 
 .fullpagesmall {
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: left;
-	padding-bottom: 50px;
- 	padding-top: 90px; 
+	margin-bottom: 50px;
+ 	margin-top: 90px; 
 }
 
 .fullpageform {
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: left;
-	padding-bottom: 50px;
- 	padding-top: 180px; 
+	margin-bottom: 50px;
+ 	margin-top: 180px; 
 }
 
 .fullpageform100 {
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: left;
-	padding-bottom: 50px;
- 	padding-top: 100px; 
+	margin-bottom: 50px;
+ 	margin-top: 100px; 
 }
 
 .fixedtitle {
@@ -1748,8 +1693,8 @@ table.table-styled > thead > tr.table-styled-filter
 
 .action-bar
 {
-	padding-bottom:5px;
-	padding-top: 130px;
+	margin-bottom:15px;
+	margin-top: 160px;
 }
 
 .no-margin-top

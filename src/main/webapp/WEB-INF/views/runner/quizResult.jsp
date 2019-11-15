@@ -57,16 +57,16 @@
 		
 </head>
 <body>
-	<div class="page-wrap">
-		<c:if test="${forpdf == null}">
-			<%@ include file="../header.jsp" %>	
-		</c:if>
-		
-		<%@ include file="../runner/quizResultInner.jsp" %>	
-	</div>
 
 	<c:if test="${forpdf == null}">
-		<%@ include file="../footerNoLanguages.jsp" %>		
+		<%@ include file="../header.jsp" %>	
+	</c:if>
+	
+	<%@ include file="../runner/quizResultInner.jsp" %>	
+
+	<c:if test="${forpdf == null}">
+		<%@ include file="../footerNoLanguages.jsp" %>
+		
 		<%@ include file="../generic-messages.jsp" %>
 		
 		<c:if test="${message != null}">

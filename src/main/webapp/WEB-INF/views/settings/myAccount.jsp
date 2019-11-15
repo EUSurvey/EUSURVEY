@@ -16,57 +16,57 @@
 	</script>
 </head>
 <body>
-	<div class="page-wrap">
-		<%@ include file="../header.jsp" %>
-		<%@ include file="../menu.jsp" %>
-		<%@ include file="settingsmenu.jsp" %>	
-	
-		<div class="fixedtitleform">
-			<div class="fixedtitleinner" style="width:880px">
-				<div style="margin-top: 20px; text-align: center">				
-					<c:if test='${!USER.type.equalsIgnoreCase("ECAS")}'>
-						<a onclick="$('.validation-error').empty(); $('#change-password-dialog').modal('show');" class="btn btn-default"><spring:message code="label.ChangePassword" /></a>			
-						<a onclick="$('.validation-error').empty(); $('#change-email-dialog').modal('show');" class="btn btn-default"><spring:message code="label.ChangeEmailAddress" /></a>
-					</c:if>
-					<a onclick="$('.validation-error').empty(); $('#change-lang-dialog').modal('show');" class="btn btn-default"><spring:message code="label.ChangeLanguage" /></a>
-					<a onclick="$('.validation-error').empty(); $('#change-pivot-lang-dialog').modal('show');" class="btn btn-default"><spring:message code="label.ChangeDefaultPivotLanguage" /></a>
-				</div>	
-						
-			</div>
-		</div>
-		
-		<div class="page880" style="padding-bottom: 0px; padding-top: 210px;">
+
+	<%@ include file="../header.jsp" %>
+	<%@ include file="../menu.jsp" %>
+	<%@ include file="settingsmenu.jsp" %>	
+
+	<div class="fixedtitleform">
+		<div class="fixedtitleinner" style="width:880px">
+			<div style="margin-top: 20px; text-align: center">				
+				<c:if test='${!USER.type.equalsIgnoreCase("ECAS")}'>
+					<a onclick="$('.validation-error').empty(); $('#change-password-dialog').modal('show');" class="btn btn-default"><spring:message code="label.ChangePassword" /></a>			
+					<a onclick="$('.validation-error').empty(); $('#change-email-dialog').modal('show');" class="btn btn-default"><spring:message code="label.ChangeEmailAddress" /></a>
+				</c:if>
+				<a onclick="$('.validation-error').empty(); $('#change-lang-dialog').modal('show');" class="btn btn-default"><spring:message code="label.ChangeLanguage" /></a>
+				<a onclick="$('.validation-error').empty(); $('#change-pivot-lang-dialog').modal('show');" class="btn btn-default"><spring:message code="label.ChangeDefaultPivotLanguage" /></a>
+			</div>	
 					
-			<div style="margin-left: auto; margin-right: auto; width: 630px; margin-bottom: 20px;">		
-			
-				<table class="table table-striped table-bordered">
-					<tr>
-						<td><spring:message code="label.Name" /></td>
-						<td><esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML></td>
-					</tr>
-					<tr>
-						<td><spring:message code="label.Email" /></td>
-						<td><esapi:encodeForHTML>${USER.email}</esapi:encodeForHTML></td>
-					</tr>
-					<tr>
-						<td><spring:message code="label.Password" /></td>
-						<td>*******</td>
-					</tr>
-					<tr>
-						<td><spring:message code="label.Language" /></td>
-						<td><esapi:encodeForHTML>${USER.language}</esapi:encodeForHTML></td>
-					</tr>
-					<tr>
-						<td><spring:message code="label.DefaultPivotLanguage" /></td>
-						<td><esapi:encodeForHTML>${USER.defaultPivotLanguage}</esapi:encodeForHTML></td>
-					</tr>
-				</table>		
-			</div>
-				
 		</div>
 	</div>
+	
+	<div class="page880" style="margin-bottom: 0px; margin-top: 210px;">
+				
+		<div style="margin-left: auto; margin-right: auto; width: 630px; margin-bottom: 20px;">		
+		
+			<table class="table table-striped table-bordered">
+				<tr>
+					<td><spring:message code="label.Name" /></td>
+					<td><esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML></td>
+				</tr>
+				<tr>
+					<td><spring:message code="label.Email" /></td>
+					<td><esapi:encodeForHTML>${USER.email}</esapi:encodeForHTML></td>
+				</tr>
+				<tr>
+					<td><spring:message code="label.Password" /></td>
+					<td>*******</td>
+				</tr>
+				<tr>
+					<td><spring:message code="label.Language" /></td>
+					<td><esapi:encodeForHTML>${USER.language}</esapi:encodeForHTML></td>
+				</tr>
+				<tr>
+					<td><spring:message code="label.DefaultPivotLanguage" /></td>
+					<td><esapi:encodeForHTML>${USER.defaultPivotLanguage}</esapi:encodeForHTML></td>
+				</tr>
+			</table>		
+		</div>
+			
+	</div>
 
-	<%@ include file="../footer.jsp" %>	
+
+<%@ include file="../footer.jsp" %>	
 
 	<div class="modal" id="change-password-dialog" data-backdrop="static" style="">
 		<div class="modal-dialog modal-sm">

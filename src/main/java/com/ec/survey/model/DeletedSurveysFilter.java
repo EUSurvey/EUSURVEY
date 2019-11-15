@@ -11,8 +11,6 @@ import com.ec.survey.tools.ConversionTools;
 
 public class DeletedSurveysFilter {
 	
-	private String id;
-	private String uniqueId;
 	private String title;
 	private String alias;
 	private String owner;
@@ -22,20 +20,6 @@ public class DeletedSurveysFilter {
 	private Date deletedTo;	
 	private Boolean finished;
 
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public String getUniqueId() {
-		return uniqueId;
-	}
-	public void setUniqueId(String uniqueId) {
-		this.uniqueId = uniqueId;
-	}
-	
 	public String getTitle() {
 		return title;
 	}

@@ -250,12 +250,6 @@ public class ArchiveService extends BasicService {
 	
 		Map<String, Object> params = new HashMap<>();
 		
-		if (filter.getUniqueId() != null  && filter.getUniqueId().trim().length() > 0)
-		{
-			hql += " AND a.surveyUID = :uid";
-			params.put("uid", filter.getUniqueId());
-		}
-		
 		if (filter.getUserId() > 0)
 		{
 			hql += " AND a.userId = :userid";

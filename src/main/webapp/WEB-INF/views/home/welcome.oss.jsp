@@ -75,176 +75,175 @@
 	
 </head>
 <body>
-	<div class="page-wrap">
-		<%@ include file="../header.jsp" %>
+
+	<%@ include file="../header.jsp" %>
+
+	<c:choose>
+		<c:when test="${USER != null && runnermode == null}">
+			<%@ include file="../menu.jsp" %>	
+		</c:when>
+	</c:choose>	
+
+	<div class="page" style="padding-top: 60px;">
 	
-		<c:choose>
-			<c:when test="${USER != null && runnermode == null}">
-				<%@ include file="../menu.jsp" %>	
-			</c:when>
-		</c:choose>	
-	
-		<div class="page" style="padding-top: 60px;">
-		
-			<div id="logoPlaceHolder" style="width:700px; margin-left:auto;margin-right:auto;">
-				<img src="${contextpath}/resources/images/logo_Eusurvey.png" alt="EUSurvey logo" style="width:480px;" />
-				<h2 style="color:#004F98; position:relative; top:-75px; margin-left:255px;"><spring:message code="home.create" /></h2>
-			</div>
-			
-			<div id="loginPlaceHolder" style="margin-bottom:80px">
-				<form id="welcomeOssLoginForm" action="${ecasurl}" style="margin: 0px">
-					<input type="hidden" name="service" value="${serviceurl}"/>
-					
-					<div id="loginAnchor" style="max-width:400px; text-align: center; float:left; margin-left:100px">
-						<table id="loginLinkTable">
-							<tbody>
-								<tr>
-									<td>
-											<a id="loginInternalLinkFromWelcome" class="bigLinkBoxHighlighted" href="<c:url value="/auth/login"/>"><spring:message code="label.DoLogin" /></a>
-									</td>
-								</tr>
-								<tr >
-									<td id="selfRegLinkFromWelcome" style="padding-top:40px; text-align:left;">
-										<c:choose>
-											<c:when test="${USER != null}">
-												<a id="linkSelfRegA" style="" target="_blank" href="<c:url value="/runner/NewSelfRegistrationSurvey"/>"><spring:message code="label.Register" /></a>
-											</c:when>
-											<c:otherwise>
-												<a id="linkSelfRegA" style="" href="<c:url value="/runner/NewSelfRegistrationSurvey"/>"><spring:message code="label.Register" /></a>
-											</c:otherwise>
-										</c:choose>
-									</td>
-								<tr>
-							</tbody>
-						</table>
-					</div>
-					
-					<div style="text-align: center;  float: right; margin-right: 100px; margin-top: -10px;">
-						<span style="color:#004F98; font-size:12pt; margin-left:95px; margin-right:20px; font-weight:bold;">
-							<a href="<c:url value="/home/editcontribution"/>"><spring:message code="label.EditContribution" /><img style="margin-left: 5px" src="${contextpath}/resources/images/icons/24/link.png" alt="link" width="16px"/></a></span>
-						<br /><br />
-						<span style="color:#004F98; font-size:12pt; margin-left:95px; margin-right:20px; font-weight:bold;">
-							<a  onclick="$('#download-contribution-dialog').modal('show');"><spring:message code="label.DownloadContribution" /><img style="margin-left: 5px" src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="<spring:message code="label.DownloadContribution" />" width="16px"/></a></span>
-					</div>
-	
-				</form>
-			</div>
-			
-			<div id="firstSeparator" class="largeSeparator" style="display:inline-block; margin-top:30px;"></div>
-			
-			<div id="elearningPlaceHolder" style="text-align:center">
-				<a class="elearningWelcomeLink" href="${contextpath}/resources/documents/elearning/story.html" target="_blank"><spring:message code="label.elearningTitle" arguments="EUSurvey"></spring:message></a>
-			</div>
-			
-			<div class="largeSeparator"></div>
-			
-			<div id="welcomeContent">
-				<h1 style="text-align:center; margin-bottom:35px;"><spring:message code="home.create2" /></h1>
-				<img src="${contextpath}/resources/images/icons/128/review-128-blue.png" alt="icon review" style="float:left; width:100px; margin-left:100px;margin-top:30px;"/>	
-				<p style="text-align:right; padding-top:25px; line-height:30px; float:right; clear:right;">
-					<spring:message code="home.create2bis" />
-				</p>
-				
-				<img src="${contextpath}/resources/images/icons/128/searching-128-blue.png" alt="icon review" style="width:100px; margin-right:100px;margin-top:30px; float:right; clear:right;"/>	
-				<p style="padding-top:45px; line-height:30px; float:left; clear:left;">
-					<span style="font-weight:bold; font-size:110%;"><spring:message code="info.welcome1" />&nbsp;<a href="<c:url value="/home/editcontribution"/>"><spring:message code="info.welcome3" />&nbsp;<img src="${contextpath}/resources/images/icons/24/link.png" alt="link" style="width: 18px;"/></a>.</span>
-					<br />
-					<spring:message code="info.welcome2" />
-				</p>
-				
-				<img src="${contextpath}/resources/images/icons/128/earth-128-blue.png" alt="icon review" style="float:left; width:100px; margin-left:100px;margin-top:30px; clear:left;"/>	
-				<p style="text-align:right; padding-top:45px; line-height:30px; width:350px; float:right; clear:right;">
-					<spring:message code="info.welcome4new" />
-				</p>
-				
-				<br style="clear:both"/><br/><br/>
-					
-					<a href="?language=bg">?????????</a>&#160; 
-		 			<a href="?language=cs">Ce�tina</a>&#160; 
-		 			<a href="?language=da">Dansk</a>&#160; 
-		 			<a href="?language=de">Deutsch</a>&#160; 
-		 			<a href="?language=et">Eesti keel</a>&#160; 
-		 			<a href="?language=el">????????</a>&#160; 
-		 			<a href="?language=en">English</a>&#160; 
-		 			<a href="?language=es">Espa�ol</a>&#160; 
-		 			<a href="?language=fr">Fran�ais</a>&#160; 
-		 			<a href="?language=hr">Hrvatski jezik</a>&#160; 
-		 			<a href="?language=it">Italiano</a>&#160; 
-		 			<a href="?language=lv">Latvie�u valoda</a>&#160; 
-		 			<a href="?language=lt">Lietuviu kalba</a>&#160; 
-		 			<a href="?language=hu">Magyar</a>&#160; 
-		 			<a href="?language=mt">Malti</a>&#160; 
-		 			<a href="?language=nl">Nederlands</a>&#160; 
-		 			<a href="?language=pl">Polski</a>&#160; 
-		 			<a href="?language=pt">Portugu�s</a>&#160; 
-		 			<a href="?language=ro">Rom�na</a>&#160; 
-		 			<a href="?language=sk">Slovencina</a>&#160; 
-		 			<a href="?language=sl">Sloven�cina</a>&#160; 
-		 			<a href="?language=fi">Suomi</a>&#160; 
-		 			<a href="?language=sv">Svenska</a>&#160;
-					
-			</div>
-			
-			<br style="clear:both"/><br />
-			
-			<div class="largeSeparator"></div>	
+		<div id="logoPlaceHolder" style="width:700px; margin-left:auto;margin-right:auto;">
+			<img src="${contextpath}/resources/images/logo_Eusurvey.png" alt="EUSurvey logo" style="width:480px;" />
+			<h2 style="color:#004F98; position:relative; top:-75px; margin-left:255px;"><spring:message code="home.create" /></h2>
 		</div>
 		
-		<div class="modal" id="forgot-password-dialog" data-backdrop="static" style="width: 400px; margin-left: -200px;">
-			<form id="forgotPasswordForm" action="${contextpath}/auth/forgotPassword" method="post" style="margin: 0px;" >
-				<div class="modal-body">
-					<spring:message code="label.PleaseEnterYourLogin" /><br />
-					<input id="login" type="text" name="login" maxlength="255" /><br /><br />
-					<spring:message code="label.PleaseEnterYourEmail" /><br />
-					<input id="email" type="text" name="email" maxlength="255" class="email" /><br />
-					<span id="errorMessage" style="color: #f00; display: none;"><spring:message code="error.PleaseEnterYourNameAndEmail" /></span>
-					<div style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">
-					<%@ include file="../captcha.jsp" %>			
-		        	</div>
+		<div id="loginPlaceHolder" style="margin-bottom:80px">
+			<form id="welcomeOssLoginForm" action="${ecasurl}" style="margin: 0px">
+				<input type="hidden" name="service" value="${serviceurl}"/>
+				
+				<div id="loginAnchor" style="max-width:400px; text-align: center; float:left; margin-left:100px">
+					<table id="loginLinkTable">
+						<tbody>
+							<tr>
+								<td>
+										<a id="loginInternalLinkFromWelcome" class="bigLinkBoxHighlighted" href="<c:url value="/auth/login"/>"><spring:message code="label.DoLogin" /></a>
+								</td>
+							</tr>
+							<tr >
+								<td id="selfRegLinkFromWelcome" style="padding-top:40px; text-align:left;">
+									<c:choose>
+										<c:when test="${USER != null}">
+											<a id="linkSelfRegA" style="" target="_blank" href="<c:url value="/runner/NewSelfRegistrationSurvey"/>"><spring:message code="label.Register" /></a>
+										</c:when>
+										<c:otherwise>
+											<a id="linkSelfRegA" style="" href="<c:url value="/runner/NewSelfRegistrationSurvey"/>"><spring:message code="label.Register" /></a>
+										</c:otherwise>
+									</c:choose>
+								</td>
+							<tr>
+						</tbody>
+					</table>
 				</div>
-				<div class="modal-footer" style="height:32px;">
-					<a  onclick="requestLink();" class="btn btn-info"><spring:message code="label.OK" /></a>
-					<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
-				</div>	
+				
+				<div style="text-align: center;  float: right; margin-right: 100px; margin-top: -10px;">
+					<span style="color:#004F98; font-size:12pt; margin-left:95px; margin-right:20px; font-weight:bold;">
+						<a href="<c:url value="/home/editcontribution"/>"><spring:message code="label.EditContribution" /><img style="margin-left: 5px" src="${contextpath}/resources/images/icons/24/link.png" alt="link" width="16px"/></a></span>
+					<br /><br />
+					<span style="color:#004F98; font-size:12pt; margin-left:95px; margin-right:20px; font-weight:bold;">
+						<a  onclick="$('#download-contribution-dialog').modal('show');"><spring:message code="label.DownloadContribution" /><img style="margin-left: 5px" src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="<spring:message code="label.DownloadContribution" />" width="16px"/></a></span>
+				</div>
+
 			</form>
 		</div>
 		
-		<div class="modal" id="download-contribution-dialog" data-backdrop="static">
-			<form:form action="${contextpath}/home/downloadcontribution" method="post" style="margin: 0px;">
-				<div class="modal-header">
-					<b><spring:message code="label.DownloadContribution" /></b>
-				</div>
-				<div class="modal-body">
-					<spring:message code="label.EnterContributionId" />
-					<input type="text" maxlength="255" name="caseid" id="caseid" />
-					<span id="download-contribution-dialog-caseid-error" class="validation-error hideme">
-						<spring:message code="validation.invalidContributionId" />
-					</span>
-					<br />
-					
-					<spring:message code="question.EmailForPDF" />
-					<input type="text" maxlength="255" name="email" id="email" />
-					<span id="download-contribution-dialog-error" class="validation-error hideme">
-						<spring:message code="message.ProvideEmail" />
-					</span>
-					
-					<div class="captcha" style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">
-					<%@ include file="../captcha.jsp" %>		
-			       	</div>
-			       	<span id="download-contribution-dialog-error-captcha" class="validation-error hideme">
-			       		<spring:message code="message.captchawrongnew" />
-			       	</span>
-					
-				</div>
-				<div class="modal-footer" style="height:32px;">
-					<a  onclick="checkEmail()" class="btn btn-info"><spring:message code="label.OK" /></a>
-					<a  class="btn btn-default" onclick="$('#download-contribution-dialog').modal('hide');"><spring:message code="label.Cancel" /></a>
-				</div>
-			</form:form>
-		</div>
-	</div>
+		<div id="firstSeparator" class="largeSeparator" style="display:inline-block; margin-top:30px;"></div>
 		
-	<%@ include file="../footer.jsp" %>	
+		<div id="elearningPlaceHolder" style="text-align:center">
+			<a class="elearningWelcomeLink" href="${contextpath}/resources/documents/elearning/story.html" target="_blank"><spring:message code="label.elearningTitle" arguments="EUSurvey"></spring:message></a>
+		</div>
+		
+		<div class="largeSeparator"></div>
+		
+		<div id="welcomeContent">
+			<h1 style="text-align:center; margin-bottom:35px;"><spring:message code="home.create2" /></h1>
+			<img src="${contextpath}/resources/images/icons/128/review-128-blue.png" alt="icon review" style="float:left; width:100px; margin-left:100px;margin-top:30px;"/>	
+			<p style="text-align:right; padding-top:25px; line-height:30px; float:right; clear:right;">
+				<spring:message code="home.create2bis" />
+			</p>
+			
+			<img src="${contextpath}/resources/images/icons/128/searching-128-blue.png" alt="icon review" style="width:100px; margin-right:100px;margin-top:30px; float:right; clear:right;"/>	
+			<p style="padding-top:45px; line-height:30px; float:left; clear:left;">
+				<span style="font-weight:bold; font-size:110%;"><spring:message code="info.welcome1" />&nbsp;<a href="<c:url value="/home/editcontribution"/>"><spring:message code="info.welcome3" />&nbsp;<img src="${contextpath}/resources/images/icons/24/link.png" alt="link" style="width: 18px;"/></a>.</span>
+				<br />
+				<spring:message code="info.welcome2" />
+			</p>
+			
+			<img src="${contextpath}/resources/images/icons/128/earth-128-blue.png" alt="icon review" style="float:left; width:100px; margin-left:100px;margin-top:30px; clear:left;"/>	
+			<p style="text-align:right; padding-top:45px; line-height:30px; width:350px; float:right; clear:right;">
+				<spring:message code="info.welcome4new" />
+			</p>
+			
+			<br style="clear:both"/><br/><br/>
+				
+				<a href="?language=bg">?????????</a>&#160; 
+	 			<a href="?language=cs">Ce�tina</a>&#160; 
+	 			<a href="?language=da">Dansk</a>&#160; 
+	 			<a href="?language=de">Deutsch</a>&#160; 
+	 			<a href="?language=et">Eesti keel</a>&#160; 
+	 			<a href="?language=el">????????</a>&#160; 
+	 			<a href="?language=en">English</a>&#160; 
+	 			<a href="?language=es">Espa�ol</a>&#160; 
+	 			<a href="?language=fr">Fran�ais</a>&#160; 
+	 			<a href="?language=hr">Hrvatski jezik</a>&#160; 
+	 			<a href="?language=it">Italiano</a>&#160; 
+	 			<a href="?language=lv">Latvie�u valoda</a>&#160; 
+	 			<a href="?language=lt">Lietuviu kalba</a>&#160; 
+	 			<a href="?language=hu">Magyar</a>&#160; 
+	 			<a href="?language=mt">Malti</a>&#160; 
+	 			<a href="?language=nl">Nederlands</a>&#160; 
+	 			<a href="?language=pl">Polski</a>&#160; 
+	 			<a href="?language=pt">Portugu�s</a>&#160; 
+	 			<a href="?language=ro">Rom�na</a>&#160; 
+	 			<a href="?language=sk">Slovencina</a>&#160; 
+	 			<a href="?language=sl">Sloven�cina</a>&#160; 
+	 			<a href="?language=fi">Suomi</a>&#160; 
+	 			<a href="?language=sv">Svenska</a>&#160;
+				
+		</div>
+		
+		<br style="clear:both"/><br />
+		
+		<div class="largeSeparator"></div>	
+	</div>
+	
+	<div class="modal" id="forgot-password-dialog" data-backdrop="static" style="width: 400px; margin-left: -200px;">
+		<form id="forgotPasswordForm" action="${contextpath}/auth/forgotPassword" method="post" style="margin: 0px;" >
+			<div class="modal-body">
+				<spring:message code="label.PleaseEnterYourLogin" /><br />
+				<input id="login" type="text" name="login" maxlength="255" /><br /><br />
+				<spring:message code="label.PleaseEnterYourEmail" /><br />
+				<input id="email" type="text" name="email" maxlength="255" class="email" /><br />
+				<span id="errorMessage" style="color: #f00; display: none;"><spring:message code="error.PleaseEnterYourNameAndEmail" /></span>
+				<div style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">
+				<%@ include file="../captcha.jsp" %>			
+	        	</div>
+			</div>
+			<div class="modal-footer" style="height:32px;">
+				<a  onclick="requestLink();" class="btn btn-info"><spring:message code="label.OK" /></a>
+				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
+			</div>	
+		</form>
+	</div>
+	
+	<div class="modal" id="download-contribution-dialog" data-backdrop="static">
+		<form:form action="${contextpath}/home/downloadcontribution" method="post" style="margin: 0px;">
+			<div class="modal-header">
+				<b><spring:message code="label.DownloadContribution" /></b>
+			</div>
+			<div class="modal-body">
+				<spring:message code="label.EnterContributionId" />
+				<input type="text" maxlength="255" name="caseid" id="caseid" />
+				<span id="download-contribution-dialog-caseid-error" class="validation-error hideme">
+					<spring:message code="validation.invalidContributionId" />
+				</span>
+				<br />
+				
+				<spring:message code="question.EmailForPDF" />
+				<input type="text" maxlength="255" name="email" id="email" />
+				<span id="download-contribution-dialog-error" class="validation-error hideme">
+					<spring:message code="message.ProvideEmail" />
+				</span>
+				
+				<div class="captcha" style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">
+				<%@ include file="../captcha.jsp" %>		
+		       	</div>
+		       	<span id="download-contribution-dialog-error-captcha" class="validation-error hideme">
+		       		<spring:message code="message.captchawrongnew" />
+		       	</span>
+				
+			</div>
+			<div class="modal-footer" style="height:32px;">
+				<a  onclick="checkEmail()" class="btn btn-info"><spring:message code="label.OK" /></a>
+				<a  class="btn btn-default" onclick="$('#download-contribution-dialog').modal('hide');"><spring:message code="label.Cancel" /></a>
+			</div>
+		</form:form>
+	</div>
+	
+<%@ include file="../footer.jsp" %>	
 
 </body>
 </html>

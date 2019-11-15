@@ -810,10 +810,6 @@ public class SurveyService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		int score = 0;
 		
-		//skip computing if setting does not exist
-		String check = settingsService.get(Setting.TrustValueCreatorInternal);
-		if (check == null) return;
-				
 		int trustValueCreatorInternal = Integer.parseInt(settingsService.get(Setting.TrustValueCreatorInternal));
 		int trustValuePastSurveys = Integer.parseInt(settingsService.get(Setting.TrustValuePastSurveys));
 		int trustValuePrivilegedUser = Integer.parseInt(settingsService.get(Setting.TrustValuePrivilegedUser));
@@ -1718,7 +1714,7 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<Language> getLanguages() {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Language l order by l.code asc");
+		Query query = session.createQuery("FROM Language l order by l.englishName asc");
 		@SuppressWarnings("unchecked")
 		List<Language> languages = query.list();
 		return languages;
@@ -3758,16 +3754,6 @@ public class SurveyService extends BasicService {
 		String sql = "FROM Survey s WHERE s.isDraft = true AND s.isDeleted = true";
 
 		Map<String, Object> params = new HashMap<>();
-		
-		if (filter.getId() != null && filter.getId().trim().length() > 0) {
-			sql += " AND s.id = :id";
-			params.put("id", Integer.parseInt(filter.getId()));
-		}
-		
-		if (filter.getUniqueId() != null && filter.getUniqueId().trim().length() > 0) {
-			sql += " AND s.uniqueId LIKE :uniqueId";
-			params.put("uniqueId", filter.getUniqueId());
-		}
 
 		if (filter.getShortname() != null && filter.getShortname().trim().length() > 0) {
 			sql += " AND s.shortname LIKE :shortname";

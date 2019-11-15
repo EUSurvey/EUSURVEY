@@ -40,54 +40,53 @@
 		
 </head>
 <body>
-	 <div class="page-wrap">
+
 	<%@ include file="../header.jsp" %>	
 	
-		<div class="page" style="padding-top: 40px">
-				<div class="pageheader">
-				<h1><spring:message code="login.title" /></h1>
-			</div>
-		 	
-		 	<div id="sysLoginForm"  class="login" style="width:90%; margin-left:auto; margin-right:auto; padding:20px 0px 20px 50px; ">
-				<h3><spring:message code="login.useSystemTitle" /></h3>
-		
-				 	<form:form id="loginForm" action="../j_spring_security_check" method="post" >
-				 		<fieldset>		
-				 			<img src="${contextpath}/resources/images/folder-eusurvey.png" style="float:right; margin-right:75px; width:136px;" alt="login logo">	 				 	
-				 			<p>
-								<label for="username"><spring:message code="label.UserName" /></label>
-								<div class="controls">
-									<div class="input-prepend">
-										<span class="add-on"><i class="icon-user"></i></span><input class="span2" id="username" name="username" type="text" maxlength="255" autocomplete="off" style="width: 300px;" />
-									</div>
-								</div>
-							</p>
-							<p>
-								<label for="password"><spring:message code="label.Password" /></label>
-								<div class="controls">
-									<div class="input-prepend">
-										<span class="add-on"><i class="icon-lock"></i></span><input class="span2" id="password" name="password" type="password" maxlength="255" autocomplete="off" style="width: 300px;" />
-									</div>
-								</div>						
-							</p>
-							<div style="margin-top: 30px;">
-								<input class="btn btn-default" type="submit" value="<spring:message code="label.DoLogin" />"/>
-								&nbsp;
-								<a id="sysCancel" class="btn btn-default" type="button" >Cancel</a>
-								&#160;&#160;<spring:message code="label.or" />&#160;&#160;<a class="visiblelink disabled" href="${contextpath}/runner/NewSelfRegistrationSurvey"><spring:message code="label.Register" /></a>
-								
-								<br />
-								<div style="margin-left: 200px"><a class="redlink"  onclick="$('#forgot-password-dialog').modal('show');"><spring:message code="label.ForgotYourPassword" /></a></div>
-							</div>
-				 		</fieldset>
-					</form:form>			
-		
-				</div>	
-			
+	<div class="page" style="margin-top: 40px">
+ 		<div class="pageheader">
+			<h1><spring:message code="login.title" /></h1>
 		</div>
+	 	
+	 	<div id="sysLoginForm"  class="login" style="width:90%; margin-left:auto; margin-right:auto; padding:20px 0px 20px 50px; ">
+			<h3><spring:message code="login.useSystemTitle" /></h3>
+
+			 	<form:form id="loginForm" action="../j_spring_security_check" method="post" >
+			 		<fieldset>		
+			 			<img src="${contextpath}/resources/images/folder-eusurvey.png" style="float:right; margin-right:75px; width:136px;" alt="login logo">	 				 	
+			 			<p>
+							<label for="username"><spring:message code="label.UserName" /></label>
+							<div class="controls">
+								<div class="input-prepend">
+									<span class="add-on"><i class="icon-user"></i></span><input class="span2" id="username" name="username" type="text" maxlength="255" autocomplete="off" style="width: 300px;" />
+								</div>
+							</div>
+						</p>
+						<p>
+							<label for="password"><spring:message code="label.Password" /></label>
+							<div class="controls">
+								<div class="input-prepend">
+									<span class="add-on"><i class="icon-lock"></i></span><input class="span2" id="password" name="password" type="password" maxlength="255" autocomplete="off" style="width: 300px;" />
+								</div>
+							</div>						
+						</p>
+						<div style="margin-top: 30px;">
+							<input class="btn btn-default" type="submit" value="<spring:message code="label.DoLogin" />"/>
+							&nbsp;
+							<a id="sysCancel" class="btn btn-default" type="button" >Cancel</a>
+							&#160;&#160;<spring:message code="label.or" />&#160;&#160;<a class="visiblelink disabled" href="${contextpath}/runner/NewSelfRegistrationSurvey"><spring:message code="label.Register" /></a>
+							
+							<br />
+							<div style="margin-left: 200px"><a class="redlink"  onclick="$('#forgot-password-dialog').modal('show');"><spring:message code="label.ForgotYourPassword" /></a></div>
+						</div>
+			 		</fieldset>
+				</form:form>			
+
+			</div>	
 		
-		<div style="clear: both"></div>
 	</div>
+	
+	<div style="clear: both"></div>
 	
 	<%@ include file="../footer.jsp" %>
 	

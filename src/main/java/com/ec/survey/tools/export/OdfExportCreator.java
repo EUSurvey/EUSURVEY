@@ -503,12 +503,8 @@ public class OdfExportCreator extends ExportCreator {
 							
 							if (answerSet == null)
 							{
-								String v = answerrow.get(answerrowcounter++);
-								if (v != null && v.length() > 0)
-								{
-									cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
-									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
-								}								
+								cell.setStringValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter)));
+								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
 							} else {
 								List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(), matrixQuestion.getUniqueId());
 				
@@ -532,12 +528,8 @@ public class OdfExportCreator extends ExportCreator {
 							cell = sheet.getCellByPosition(columnIndex++, rowIndex);
 							if (answerSet == null)
 							{
-								String v = answerrow.get(answerrowcounter++);
-								if (v != null && v.length() > 0)
-								{
-									cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
-									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
-								}
+								cell.setStringValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter)));
+								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
 							} else {
 								List<Answer> answers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
 				
@@ -630,12 +622,8 @@ public class OdfExportCreator extends ExportCreator {
 								cell = sheet.getCellByPosition(columnIndex++, rowIndex);
 								if (answerSet == null)
 								{
-									String v = answerrow.get(answerrowcounter++);
-									if (v != null && v.length() > 0)
-									{
-										cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
-										cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
-									}
+									cell.setStringValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter)));
+									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
 								} else {
 									String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);
 									if (answer == null) answer = "";
@@ -650,13 +638,8 @@ public class OdfExportCreator extends ExportCreator {
 						cell = sheet.getCellByPosition(columnIndex++, rowIndex);
 						if (answerSet == null)
 						{
-							String v = answerrow.get(answerrowcounter++);
-							if (v != null && v.length() > 0)
-							{
-								cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
-								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
-							}
-							
+							cell.setStringValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter)));
+							cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
 						} else {
 							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 							
@@ -735,13 +718,8 @@ public class OdfExportCreator extends ExportCreator {
 						cell = sheet.getCellByPosition(columnIndex++, rowIndex);
 						if (answerSet == null)
 						{
-							String v = answerrow.get(answerrowcounter++);
-							if (v != null && v.length() > 0)
-							{
-								cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
-								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
-							}
-							
+							cell.setStringValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter)));
+							cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
 						} else {
 							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 			

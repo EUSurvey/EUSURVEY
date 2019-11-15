@@ -712,16 +712,13 @@ public class XmlExportCreator extends ExportCreator {
 							if (answerSet == null)
 							{
 								String sanswers = row.get(answerrowcounter++);
-								if (sanswers != null)
-								{
-									String[] answers = sanswers.split(";");
-									for (String answer : answers) {
-										if (answer.length() > 0) {
-											writer.writeStartElement("Answer");
-											writer.writeAttribute("aid", answer);
-											writer.writeAttribute("qid", matrixQuestion.getUniqueId());
-											writer.writeEndElement(); //Answer
-										}
+								String[] answers = sanswers.split(";");
+								for (String answer : answers) {
+									if (answer.length() > 0) {
+										writer.writeStartElement("Answer");
+										writer.writeAttribute("aid", answer);
+										writer.writeAttribute("qid", matrixQuestion.getUniqueId());
+										writer.writeEndElement(); //Answer
 									}
 								}
 							} else {
@@ -740,14 +737,10 @@ public class XmlExportCreator extends ExportCreator {
 						for(Element childQuestion: rating.getQuestions()) {
 							if (answerSet == null)
 							{
-								String sanswers = row.get(answerrowcounter++);
-								if (sanswers != null)
-								{
-									writer.writeStartElement("Answer");
-									writer.writeAttribute("qid", childQuestion.getUniqueId());						
-									writer.writeCharacters(sanswers);						
-									writer.writeEndElement(); //Answer
-								}
+								writer.writeStartElement("Answer");
+								writer.writeAttribute("qid", childQuestion.getUniqueId());						
+								writer.writeCharacters(row.get(answerrowcounter++));						
+								writer.writeEndElement(); //Answer
 							} else {
 								List<Answer> answers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
 			
@@ -773,11 +766,7 @@ public class XmlExportCreator extends ExportCreator {
 								
 								if (answerSet == null)
 								{
-									String sanswers = row.get(answerrowcounter++);
-									if (sanswers != null)
-									{
-										writer.writeCharacters(sanswers);						
-									}
+									writer.writeCharacters(row.get(answerrowcounter++));						
 								} else {
 									String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);
 									if (answer != null && answer.length() > 0)
@@ -800,46 +789,44 @@ public class XmlExportCreator extends ExportCreator {
 							} else {
 							
 								String sanswers = row.get(answerrowcounter++);
-								if (sanswers != null) {
-									String[] answers = sanswers.split(";");
-									for (String answer : answers)
-									{
-										if (answer.length() > 0) {
-											writer.writeStartElement("Answer");						
-											writer.writeAttribute("qid", question.getUniqueId());
-											if (question instanceof ChoiceQuestion)
-											{
-												writer.writeAttribute("aid", answer);
-											} else if (question instanceof Upload)
-											{
-												StringBuilder text = new StringBuilder();
-												File file;
-												try {
-													
-													if (answer.contains("|"))
-													{
-														answer = answer.substring(0, answer.indexOf("|"));
-													}
-													
-													file = fileService.get(answer);
-													if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId()))
-													{
-														uploadedFilesByQuestionUID.put(question.getUniqueId(), new ArrayList<>());
-													}
-													uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
-													
-													text.append((text.length() > 0) ? ";" : "").append(file.getName());
-												} catch (FileNotFoundException e) {
-													logger.error(e.getLocalizedMessage(), e);
+								String[] answers = sanswers.split(";");
+								for (String answer : answers)
+								{
+									if (answer.length() > 0) {
+										writer.writeStartElement("Answer");						
+										writer.writeAttribute("qid", question.getUniqueId());
+										if (question instanceof ChoiceQuestion)
+										{
+											writer.writeAttribute("aid", answer);
+										} else if (question instanceof Upload)
+										{
+											StringBuilder text = new StringBuilder();
+											File file;
+											try {
+												
+												if (answer.contains("|"))
+												{
+													answer = answer.substring(0, answer.indexOf("|"));
 												}
 												
-												writer.writeCharacters(text.toString());
-											} else {
-												writer.writeCharacters(ConversionTools.removeInvalidHtmlEntities(answer));
+												file = fileService.get(answer);
+												if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId()))
+												{
+													uploadedFilesByQuestionUID.put(question.getUniqueId(), new ArrayList<>());
+												}
+												uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
+												
+												text.append((text.length() > 0) ? ";" : "").append(file.getName());
+											} catch (FileNotFoundException e) {
+												logger.error(e.getLocalizedMessage(), e);
 											}
 											
-											writer.writeEndElement(); //Answer
+											writer.writeCharacters(text.toString());
+										} else {
+											writer.writeCharacters(ConversionTools.removeInvalidHtmlEntities(answer));
 										}
+										
+										writer.writeEndElement(); //Answer
 									}
 								}
 							}
