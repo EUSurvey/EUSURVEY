@@ -652,69 +652,69 @@
 		
 </head>
 <body>
-
-	<%@ include file="../header.jsp" %>
-	<%@ include file="../menu.jsp" %>
-	<%@ include file="formmenu.jsp" %>
-	
-	<input type="hidden" id="readonlytree" value='${readonly != null ? "true" : "false" }' />
-	
-	<div id="action-bar" class="container action-bar">
-		<div class="row">
-			<div class="col-md-12" style="text-align:center">
-				<c:choose>
-					<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
-						<a id="btnCreateGuestListFromParticpant" onclick="createNewGuestlist()" class="btn btn-default"><spring:message code="label.CreateNewGuestlist" /></a>
-					</c:when>
-					<c:otherwise>
-						<a class="btn disabled btn-default"><spring:message code="label.CreateNewGuestlist" /></a>
-					</c:otherwise>
-				</c:choose>
-			</div>
-		</div>
-	</div>	
-	
-	<div class="fullpageform" style="margin-top:0px">
-	
-		<table id="participantstable" class="table table-bordered table-styled" style="width: auto; margin-top: 40px; margin-left: auto; margin-right: auto;">
-			<thead>
-				<tr>
-					<th><spring:message code="label.Name" /></th>
-					<th><spring:message code="label.Type" /></th>
-					<th style="text-align: center;"><spring:message code="label.Participants" /></th>
-					<th style="text-align: center;"><spring:message code="label.Invited" /></th>
-					<th style="text-align: center;"><spring:message code="label.Created" /></th>
-					<th><spring:message code="label.Actions" /></th>
-				</tr>
-			</thead>
-			<tbody></tbody>
-		</table>	
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>
+		<%@ include file="../menu.jsp" %>
+		<%@ include file="formmenu.jsp" %>
 		
-		<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${participants.size() == 0}">style="display:block;"</c:if>>
-			<p>
-				<spring:message code="label.NoDataParticipantText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
-			<p>
+		<input type="hidden" id="readonlytree" value='${readonly != null ? "true" : "false" }' />
+		
+		<div id="action-bar" class="container action-bar">
+			<div class="row">
+				<div class="col-md-12" style="text-align:center">
+					<c:choose>
+						<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
+							<a id="btnCreateGuestListFromParticpant" onclick="createNewGuestlist()" class="btn btn-default"><spring:message code="label.CreateNewGuestlist" /></a>
+						</c:when>
+						<c:otherwise>
+							<a class="btn disabled btn-default"><spring:message code="label.CreateNewGuestlist" /></a>
+						</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
 		</div>	
 		
+		<div class="fullpageform" style="padding-top:0px">
+		
+			<table id="participantstable" class="table table-bordered table-styled" style="width: auto; margin-top: 40px; margin-left: auto; margin-right: auto;">
+				<thead>
+					<tr>
+						<th><spring:message code="label.Name" /></th>
+						<th><spring:message code="label.Type" /></th>
+						<th style="text-align: center;"><spring:message code="label.Participants" /></th>
+						<th style="text-align: center;"><spring:message code="label.Invited" /></th>
+						<th style="text-align: center;"><spring:message code="label.Created" /></th>
+						<th><spring:message code="label.Actions" /></th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>	
+			
+			<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${participants.size() == 0}">style="display:block;"</c:if>>
+				<p>
+					<spring:message code="label.NoDataParticipantText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
+				<p>
+			</div>	
+			
+		</div>
+		
+		<form:form id="saveForm" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/participants">
+		
+		</form:form>
+		
+		<form:form id="saveFormStatic" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/participantsStatic">
+		
+		</form:form>
 	</div>
-	
-	<form:form id="saveForm" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/participants">
-	
-	</form:form>
-	
-	<form:form id="saveFormStatic" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/participantsStatic">
-	
-	</form:form>
 
-
-<%@ include file="../footer.jsp" %>	
-
-<%@ include file="add-participants-step1.jsp" %>
-<%@ include file="add-participants-step2-dynamic.jsp" %>
-<%@ include file="add-participants-step2-static.jsp" %>
-<%@ include file="add-participants-step2-departments.jsp" %>
-<%@ include file="add-participants-step2-token.jsp" %>
-<%@ include file="../addressbook/configure.jsp" %>
+	<%@ include file="../footer.jsp" %>	
+	
+	<%@ include file="add-participants-step1.jsp" %>
+	<%@ include file="add-participants-step2-dynamic.jsp" %>
+	<%@ include file="add-participants-step2-static.jsp" %>
+	<%@ include file="add-participants-step2-departments.jsp" %>
+	<%@ include file="add-participants-step2-token.jsp" %>
+	<%@ include file="../addressbook/configure.jsp" %>
 
 	<div class="modal" id="delete-list-dialog" data-backdrop="static">
 		<div class="modal-dialog modal-sm">

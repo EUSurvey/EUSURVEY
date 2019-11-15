@@ -116,219 +116,220 @@
 		 
 </head>
 <body id="bodyOverview">
-
-	<%@ include file="../header.jsp" %>
-	<%@ include file="../menu.jsp" %>		
-	<%@ include file="formmenu.jsp" %>			
-	
-	<div class="fullpageform">		
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>
+		<%@ include file="../menu.jsp" %>		
+		<%@ include file="formmenu.jsp" %>			
 		
-		<div class="surveybox" style="width: 700px; margin-left: auto; margin-right: auto">
-		
-			<div id="originaltitle" class="hideme">${form.survey.title}</div>
+		<div class="fullpageform">		
 			
-			<c:if test="${form.survey.numberOfReports > 0 }">
-				<div class="surveywarning">
-					<spring:message code="warning.ReportedSurvey" arguments="${form.survey.numberOfReports}" />
-				</div>
-			</c:if>
+			<div class="surveybox" style="width: 700px; margin-left: auto; margin-right: auto">
 			
-			<div class="typeicon">
-				<c:choose>
-					<c:when test="${form.survey.isQuiz}">
-						<img data-toggle="tooltip" title="<spring:message code="label.Quiz" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/quiz.png" />
-					</c:when>
-					<c:when test="${form.survey.isOPC}">
-						<img data-toggle="tooltip" title="<spring:message code="label.OPC" />" src="${contextpath}/resources/images/icons/24/people.png" />
-					</c:when>
-					<c:otherwise>
-						<img data-toggle="tooltip" title="<spring:message code="label.StandardSurvey" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/survey.png" />
-					</c:otherwise>
-				</c:choose>
-			</div>
-			
-			<div class="surveyItemHeader">
-				<div style="float: right; margin-left: 20px;">
+				<div id="originaltitle" class="hideme">${form.survey.title}</div>
+				
+				<c:if test="${form.survey.numberOfReports > 0 }">
+					<div class="surveywarning">
+						<spring:message code="warning.ReportedSurvey" arguments="${form.survey.numberOfReports}" />
+					</div>
+				</c:if>
+				
+				<div class="typeicon">
 					<c:choose>
-						<c:when test='${form.survey.isActive && form.survey.isPublished}'>
-							<div class="publishedsurveytag"><div class="arrow-left"></div><spring:message code="label.Published" /></div>
+						<c:when test="${form.survey.isQuiz}">
+							<img data-toggle="tooltip" title="<spring:message code="label.Quiz" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/quiz.png" />
+						</c:when>
+						<c:when test="${form.survey.isOPC}">
+							<img data-toggle="tooltip" title="<spring:message code="label.OPC" />" src="${contextpath}/resources/images/icons/24/people.png" />
 						</c:when>
 						<c:otherwise>
-							<div class="unpublishedsurveytag"><div class="arrow-left"></div><spring:message code="label.Unpublished" /></div>
+							<img data-toggle="tooltip" title="<spring:message code="label.StandardSurvey" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/survey.png" />
 						</c:otherwise>
 					</c:choose>
-					<c:choose>
-						<c:when test='${form.survey.hasPendingChanges}'>
-							<div class="pendingchangessurveytag"><div class="arrow-left"></div><spring:message code="label.PendingChanges" /></div>
-						</c:when>
-						<c:otherwise>
-						</c:otherwise>
-					</c:choose>
-				</div>		
-		
-				<div class="surveytitle" style="overflow: hidden; font-weight: bold; font-size: 200%; line-height: normal; margin-bottom: 10px;">${form.survey.mediumCleanTitle()}</div>
-		
-				<div style="max-width: 400px;" class="shortname">
-					<esapi:encodeForHTML>${form.survey.shortname}</esapi:encodeForHTML>
 				</div>
-			</div>
-						
-			<table style="width:100%; margin-top: 20px;" class="overviewtable">		
-				<tr>
-					<td class="overview-label" style="vertical-align: top;"><spring:message code="label.PublishedSurveyLink" /></td>
-					<td colspan="2" style="padding-bottom: 20px;">
-						<div class="shortname" style="max-width: 500px;">
-							<a id="lnkOverviewAccessSurvey" target="_blank" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}">${serverprefix}runner/<esapi:encodeForHTML>${form.survey.shortname}</esapi:encodeForHTML></a>
-							<a style="font-size: 20px; margin: 10px; position: absolute; margin-top: -2px;" data-toggle="tooltip" title="<spring:message code="label.ShowLinksInAllSurveyLanguages" />" onclick="$('#languageLinkDialog').modal('show');"><span class="glyphicon glyphicon-info-sign"></span></a>
-						</div>
-					</td>
-				</tr>	
-				<tr>
-					<td class="overview-label" style="vertical-align: top;"><spring:message code="label.Owner" /></td>
-					<td>
-						${form.survey.owner.getFirstLastName()}
-					</td>
-					<td rowspan="5" style="vertical-align: top; text-align: right;">
+				
+				<div class="surveyItemHeader">
+					<div style="float: right; margin-left: 20px;">
 						<c:choose>
-							<c:when test="${form.survey.isPublished && form.survey.isActive && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-								<a id="btnOverviewUnpublish" onclick="checkUnpublish();" class="btn btn-info"><spring:message code="label.Unpublish" /></a>
-							</c:when>
-							<c:when test="${form.survey.isPublished && form.survey.isActive}">
-								<a class="btn disabled btn-default"><spring:message code="label.Unpublish" /></a>
-							</c:when>
-							<c:when test="${form.survey.isPublished && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-								<a id="btnOverviewPublish" onclick="checkPublish()" class="btn btn-info"><spring:message code="label.Publish" /></a>
-							</c:when>
-							<c:when test="${form.survey.isPublished}">
-								<a class="btn disabled btn-default"><spring:message code="label.Publish" /></a>
-							</c:when>
-							<c:when test="${(sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-								<a id="btnOverviewPublish" onclick="checkActivate();" class="btn btn-info"><spring:message code="label.Publish" /></a>
+							<c:when test='${form.survey.isActive && form.survey.isPublished}'>
+								<div class="publishedsurveytag"><div class="arrow-left"></div><spring:message code="label.Published" /></div>
 							</c:when>
 							<c:otherwise>
-								<a id="btnOverviewPublish" class="btn btn-info disabled"><spring:message code="label.Publish" /></a>
+								<div class="unpublishedsurveytag"><div class="arrow-left"></div><spring:message code="label.Unpublished" /></div>
 							</c:otherwise>
 						</c:choose>
-						<br /><br />
 						<c:choose>
-							<c:when test="${form.survey.isPublished && form.survey.hasPendingChanges && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-								<a id="btnOverviewApplyEnabled" onclick="$('#pending-changes-dialog').modal('show');" class="btn btn-default btn-info"><spring:message code="label.ShowPendingChanges" /></a>
+							<c:when test='${form.survey.hasPendingChanges}'>
+								<div class="pendingchangessurveytag"><div class="arrow-left"></div><spring:message code="label.PendingChanges" /></div>
 							</c:when>
 							<c:otherwise>
-								<button id="btnOverviewApplyDisabled" class="btn btn-default disabled"><spring:message code="label.ShowPendingChanges" /></button>
 							</c:otherwise>
 						</c:choose>
-					</td>
-				</tr>
-				<tr>
-					<td class="overview-label"><spring:message code="label.StartsOn" /></td>
-					<td>
-						<c:choose>
-							<c:when test="${form.survey.automaticPublishing && form.survey.start != null}">${form.survey.startString}</c:when>
-							<c:otherwise><spring:message code="label.Unset" /></c:otherwise>
-						</c:choose>
-						&nbsp;
-						<c:choose>
-							<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
-								<a href="properties?tab=5&editelem=autopub" class="visiblelink" title="<spring:message code="label.EditSettings" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
-							</c:when>
-							<c:otherwise>
-								<a class="visiblelinkdisabled"><spring:message code="label.EditSettings" /></a>								
-							</c:otherwise>
-						</c:choose>		
-					</td>
-				</tr>
-				<tr>
-					<td class="overview-label"><spring:message code="label.EndsOn" /></td>
-					<td>
-						<c:choose>
-							<c:when test="${form.survey.automaticPublishing && form.survey.end != null}">${form.survey.endString}</c:when>
-							<c:otherwise><spring:message code="label.Unset" /></c:otherwise>
-						</c:choose>
-					</td>
-				</tr>
-				<tr>
-					<td class="overview-label"><spring:message code="label.Answers" /></td>
-					<td><esapi:encodeForHTML>${form.survey.numberOfAnswerSetsPublished}</esapi:encodeForHTML></td>
-				</tr>
-				<tr>
-					<td class="overview-label"><spring:message code="label.Results" /></td>
-					<td>
-						<c:choose>
-							<c:when test="${form.survey.publication.showContent || form.survey.publication.showCharts || form.survey.publication.showStatistics}">
-								<a class="visiblelink" target="_blank" href="${serverprefix}publication/${form.survey.shortname}"><spring:message code="label.Published" /></a>
-							</c:when>
-							<c:otherwise>
-								<spring:message code="label.Unpublished" />
-							</c:otherwise>
-						</c:choose>
-						&nbsp;
-						<c:choose>
-							<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
-								<a href="properties?tab=6&editelem=showContent" class="visiblelink" title="<spring:message code="label.EditResultPublication" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
-							</c:when>
-							<c:otherwise>
-								<a class="visiblelinkdisabled"><spring:message code="label.EditResultPublication" /></a>								
-							</c:otherwise>
-						</c:choose>		
-					</td>					
-				</tr>
-				<tr>
-					<td colspan="4" class="surveyactions" style="padding-top: 30px;">
-						<c:choose>
-							<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
-								<a id="btnEditSurvey" class="actionRowAction" href="<c:url value="/${form.survey.shortname}/management/edit"/>" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
-							</c:when>
-							<c:otherwise>
-								<a rel="tooltip" data-toggle="tooltip" class="disabled actionRowAction" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil" style="color: #ccc"></span></a>
-							</c:otherwise>
-						</c:choose>	
-						
-						<c:choose>
-							<c:when test="${USER.canCreateSurveys}">
-								<a class="actionRowAction" onclick="copySurvey('${form.survey.id}', $('#originaltitle').html(), '${form.survey.language.code}', '${form.survey.security}', '${form.survey.isQuiz}')" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
-							</c:when>
-							<c:otherwise>
-								<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy disabled"></span></a>
-							</c:otherwise>
-						</c:choose>
-						<a class="actionRowAction" href="<c:url value="/${form.survey.shortname}/management/exportSurvey/false/${form.survey.shortname}"/>" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></span></a>
-								
-						<c:if test="${enablearchiving}">
+					</div>		
+			
+					<div class="surveytitle" style="overflow: hidden; font-weight: bold; font-size: 200%; line-height: normal; margin-bottom: 10px;">${form.survey.mediumCleanTitle()}</div>
+			
+					<div style="max-width: 400px;" class="shortname">
+						<esapi:encodeForHTML>${form.survey.shortname}</esapi:encodeForHTML>
+					</div>
+				</div>
+							
+				<table style="width:100%; margin-top: 20px;" class="overviewtable">		
+					<tr>
+						<td class="overview-label" style="vertical-align: top;"><spring:message code="label.PublishedSurveyLink" /></td>
+						<td colspan="2" style="padding-bottom: 20px;">
+							<div class="shortname" style="max-width: 500px;">
+								<a id="lnkOverviewAccessSurvey" target="_blank" rel="noopener noreferrer" class="visiblelink" href="${serverprefix}runner/${form.survey.shortname}">${serverprefix}runner/<esapi:encodeForHTML>${form.survey.shortname}</esapi:encodeForHTML></a>
+								<a style="font-size: 20px; margin: 10px; position: absolute; margin-top: -2px;" data-toggle="tooltip" title="<spring:message code="label.ShowLinksInAllSurveyLanguages" />" onclick="$('#languageLinkDialog').modal('show');"><span class="glyphicon glyphicon-info-sign"></span></a>
+							</div>
+						</td>
+					</tr>	
+					<tr>
+						<td class="overview-label" style="vertical-align: top;"><spring:message code="label.Owner" /></td>
+						<td>
+							${form.survey.owner.getFirstLastName()}
+						</td>
+						<td rowspan="5" style="vertical-align: top; text-align: right;">
 							<c:choose>
-								<c:when test="${form.survey.numberOfAnswerSetsPublished < 2001 && form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-									<a id="btnArchiveSurvey" class="actionRowAction"  onclick="showArchiveDialog('${form.survey.shortname}','${form.survey.id}', false)" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import"></span></a>
+								<c:when test="${form.survey.isPublished && form.survey.isActive && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+									<a id="btnOverviewUnpublish" onclick="checkUnpublish();" class="btn btn-info"><spring:message code="label.Unpublish" /></a>
 								</c:when>
-								<c:when test="${!form.survey.fullFormManagementRights}">
-									<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
+								<c:when test="${form.survey.isPublished && form.survey.isActive}">
+									<a class="btn disabled btn-default"><spring:message code="label.Unpublish" /></a>
+								</c:when>
+								<c:when test="${form.survey.isPublished && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+									<a id="btnOverviewPublish" onclick="checkPublish()" class="btn btn-info"><spring:message code="label.Publish" /></a>
+								</c:when>
+								<c:when test="${form.survey.isPublished}">
+									<a class="btn disabled btn-default"><spring:message code="label.Publish" /></a>
+								</c:when>
+								<c:when test="${(sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+									<a id="btnOverviewPublish" onclick="checkActivate();" class="btn btn-info"><spring:message code="label.Publish" /></a>
 								</c:when>
 								<c:otherwise>
-									<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.ArchiveDisabled" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
+									<a id="btnOverviewPublish" class="btn btn-info disabled"><spring:message code="label.Publish" /></a>
 								</c:otherwise>
-							</c:choose>				
-						</c:if>
-													
-						<c:choose>
-							<c:when test="${form.survey.numberOfAnswerSetsPublished > 2000}">
-								<a id="notRunningDeleteSurveyButtonOverview" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc;"></span></a>
-							</c:when>
-							<c:when test="${form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-								<a class="actionRowAction" id="deleteSurveyButtonOverview" onclick="showDeleteDialog('${form.survey.id}');" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />" ><span class="glyphicon glyphicon-remove"></span></a>
-							</c:when>
-							<c:when test="${form.survey.state != 'Running'}">
-								<a id="notRunningDeleteSurveyButtonOverview" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc;"></span></a>
-							</c:when>
-							<c:otherwise>
-								<a id="cannotDeleteSurveyButtonOverview" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="info.CannotDeleteRunningSurvey" />"><span class="glyphicon glyphicon-remove" style="color: #ccc;"></span></a>
-							</c:otherwise>
-						</c:choose>	
-					</td>
-				</tr>
-
-			</table>
-			
-		</div>		
-			
+							</c:choose>
+							<br /><br />
+							<c:choose>
+								<c:when test="${form.survey.isPublished && form.survey.hasPendingChanges && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+									<a id="btnOverviewApplyEnabled" onclick="$('#pending-changes-dialog').modal('show');" class="btn btn-default btn-info"><spring:message code="label.ShowPendingChanges" /></a>
+								</c:when>
+								<c:otherwise>
+									<button id="btnOverviewApplyDisabled" class="btn btn-default disabled"><spring:message code="label.ShowPendingChanges" /></button>
+								</c:otherwise>
+							</c:choose>
+						</td>
+					</tr>
+					<tr>
+						<td class="overview-label"><spring:message code="label.StartsOn" /></td>
+						<td>
+							<c:choose>
+								<c:when test="${form.survey.automaticPublishing && form.survey.start != null}">${form.survey.startString}</c:when>
+								<c:otherwise><spring:message code="label.Unset" /></c:otherwise>
+							</c:choose>
+							&nbsp;
+							<c:choose>
+								<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+									<a href="properties?tab=5&editelem=autopub" class="visiblelink" title="<spring:message code="label.EditSettings" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
+								</c:when>
+								<c:otherwise>
+									<a class="visiblelinkdisabled"><spring:message code="label.EditSettings" /></a>								
+								</c:otherwise>
+							</c:choose>		
+						</td>
+					</tr>
+					<tr>
+						<td class="overview-label"><spring:message code="label.EndsOn" /></td>
+						<td>
+							<c:choose>
+								<c:when test="${form.survey.automaticPublishing && form.survey.end != null}">${form.survey.endString}</c:when>
+								<c:otherwise><spring:message code="label.Unset" /></c:otherwise>
+							</c:choose>
+						</td>
+					</tr>
+					<tr>
+						<td class="overview-label"><spring:message code="label.Answers" /></td>
+						<td><esapi:encodeForHTML>${form.survey.numberOfAnswerSetsPublished}</esapi:encodeForHTML></td>
+					</tr>
+					<tr>
+						<td class="overview-label"><spring:message code="label.Results" /></td>
+						<td>
+							<c:choose>
+								<c:when test="${form.survey.publication.showContent || form.survey.publication.showCharts || form.survey.publication.showStatistics}">
+									<a class="visiblelink" target="_blank" href="${serverprefix}publication/${form.survey.shortname}"><spring:message code="label.Published" /></a>
+								</c:when>
+								<c:otherwise>
+									<spring:message code="label.Unpublished" />
+								</c:otherwise>
+							</c:choose>
+							&nbsp;
+							<c:choose>
+								<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+									<a href="properties?tab=6&editelem=showContent" class="visiblelink" title="<spring:message code="label.EditResultPublication" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
+								</c:when>
+								<c:otherwise>
+									<a class="visiblelinkdisabled"><spring:message code="label.EditResultPublication" /></a>								
+								</c:otherwise>
+							</c:choose>		
+						</td>					
+					</tr>
+					<tr>
+						<td colspan="4" class="surveyactions" style="padding-top: 30px;">
+							<c:choose>
+								<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+									<a id="btnEditSurvey" class="actionRowAction" href="<c:url value="/${form.survey.shortname}/management/edit"/>" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
+								</c:when>
+								<c:otherwise>
+									<a rel="tooltip" data-toggle="tooltip" class="disabled actionRowAction" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil" style="color: #ccc"></span></a>
+								</c:otherwise>
+							</c:choose>	
+							
+							<c:choose>
+								<c:when test="${USER.canCreateSurveys}">
+									<a class="actionRowAction" onclick="copySurvey('${form.survey.id}', $('#originaltitle').html(), '${form.survey.language.code}', '${form.survey.security}', '${form.survey.isQuiz}')" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
+								</c:when>
+								<c:otherwise>
+									<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy disabled"></span></a>
+								</c:otherwise>
+							</c:choose>
+							<a class="actionRowAction" href="<c:url value="/${form.survey.shortname}/management/exportSurvey/false/${form.survey.shortname}"/>" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></span></a>
+									
+							<c:if test="${enablearchiving}">
+								<c:choose>
+									<c:when test="${form.survey.numberOfAnswerSetsPublished < 2001 && form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+										<a id="btnArchiveSurvey" class="actionRowAction"  onclick="showArchiveDialog('${form.survey.shortname}','${form.survey.id}', false)" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import"></span></a>
+									</c:when>
+									<c:when test="${!form.survey.fullFormManagementRights}">
+										<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
+									</c:when>
+									<c:otherwise>
+										<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.ArchiveDisabled" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
+									</c:otherwise>
+								</c:choose>				
+							</c:if>
+														
+							<c:choose>
+								<c:when test="${form.survey.numberOfAnswerSetsPublished > 2000}">
+									<a id="notRunningDeleteSurveyButtonOverview" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc;"></span></a>
+								</c:when>
+								<c:when test="${form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+									<a class="actionRowAction" id="deleteSurveyButtonOverview" onclick="showDeleteDialog('${form.survey.id}');" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />" ><span class="glyphicon glyphicon-remove"></span></a>
+								</c:when>
+								<c:when test="${form.survey.state != 'Running'}">
+									<a id="notRunningDeleteSurveyButtonOverview" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc;"></span></a>
+								</c:when>
+								<c:otherwise>
+									<a id="cannotDeleteSurveyButtonOverview" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="info.CannotDeleteRunningSurvey" />"><span class="glyphicon glyphicon-remove" style="color: #ccc;"></span></a>
+								</c:otherwise>
+							</c:choose>	
+						</td>
+					</tr>
+	
+				</table>
+				
+			</div>		
+				
+		</div>
 	</div>
 
 <%@ include file="../footer.jsp" %>	

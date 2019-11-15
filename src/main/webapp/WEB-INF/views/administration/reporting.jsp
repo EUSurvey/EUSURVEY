@@ -254,85 +254,86 @@
 	</script>		
 </head>
 <body>
-
-	<%@ include file="../header.jsp" %>
-	<%@ include file="../menu.jsp" %>
-	<%@ include file="adminmenu.jsp" %>	
-	
-	<div class="fixedtitleform">
-		<div class="fixedtitleinner" style="padding-bottom: 35px;">
-			<div id="action-bar">
-				<div class="row">
-					<div class="col-md-12" style="text-align:center; margin-top: 20px;">
-						<c:if test="${USER.getGlobalPrivilegeValue('SystemManagement') > 1}">
-							<a onclick="$('#recreateDialog').modal('show')" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="recreate all tables" class="btn btn-default">recreateAllOLAPTables</a>
-							<a onclick="$('#createDialog').modal('show')" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="create all tables" class="btn btn-default">createAllOLAPTables</a>
-							<a onclick="$('#updateDialog').modal('show')" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="update all tables" class="btn btn-default">updateAllOLAPTables</a><br /><br />
-							<input class="form-control" placeholder="uid or shortname" style="display: inline-block; margin-top: 2px;" type="text" id="uid" />
-							<a onclick="createOLAPTable();" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="create table" class="btn btn-default" style="margin-left: 10px; margin-top: -2px;">createOLAPTable</a>
-							<a onclick="updateOLAPTable();" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="update table" class="btn btn-default" style="margin-top: -2px;">updateOLAPTable</a>
-							<br /><br />
-						</c:if>
-							
-						<form:form id="form" method="POST" action="reporting" style="margin-bottom: 10px">
-							<spring:message code="label.MigrationEnabled"/>:
-							<c:choose>
-								<c:when test="${enabled}">
-									<input class="check" type="checkbox" value="true" checked="checked" name="enabled" />
-								</c:when>
-								<c:otherwise>
-									<input class="check" type="checkbox" value="true" name="enabled" />
-								</c:otherwise>
-							</c:choose>&nbsp;&nbsp;&nbsp;
-							<spring:message code="label.Start"/>:
-							<input type="text" name="start" class="form-control" placeholder="hh:mm" value="${start}" style="display: inline-block; margin-top: 2px; width: 70px" />
-							&nbsp;&nbsp;&nbsp;
-							<spring:message code="label.Time"/>:
-							<input type="text" name="time" class="form-control" placeholder="min" value="${time}" style="display: inline-block; margin-top: 2px; width: 50px" />
-							&nbsp;&nbsp;&nbsp;
-							<input type="submit" class="btn btn-default" style="margin-top: -3px;" value="<spring:message code="label.Apply"/>" />
-							&nbsp;&nbsp;&nbsp;
-							<spring:message code="label.CurrentSurvey"/>: ${survey}
-						</form:form>
-													
-						<b># <spring:message code="label.TODOs"/></b>: <span style="margin-right: 10px">${totaltodos}</span>
-						<b># <spring:message code="label.Tables"/> (<spring:message code="label.existing"/>)</b>: <span style="margin-right: 10px">${totaltables}</span>
-						<b># <spring:message code="label.Tables"/> (<spring:message code="label.expected"/>)</b>: <span style="margin-right: 10px">${totalpublishedsurveys + totalpublishedsurveys + totaldraftsurveys}</span>
-						<b># <spring:message code="label.Surveys"/> (<spring:message code="label.neverpublished"/>)</b>: <span>${totaldraftsurveys}</span>
-						<b># <spring:message code="label.Surveys"/> (<spring:message code="label.others"/>)</b>: <span> ${totalpublishedsurveys}</span>
-					</div>					
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>
+		<%@ include file="../menu.jsp" %>
+		<%@ include file="adminmenu.jsp" %>	
+		
+		<div class="fixedtitleform">
+			<div class="fixedtitleinner" style="padding-bottom: 35px;">
+				<div id="action-bar">
+					<div class="row">
+						<div class="col-md-12" style="text-align:center; margin-top: 20px;">
+							<c:if test="${USER.getGlobalPrivilegeValue('SystemManagement') > 1}">
+								<a onclick="$('#recreateDialog').modal('show')" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="recreate all tables" class="btn btn-default">recreateAllOLAPTables</a>
+								<a onclick="$('#createDialog').modal('show')" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="create all tables" class="btn btn-default">createAllOLAPTables</a>
+								<a onclick="$('#updateDialog').modal('show')" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="update all tables" class="btn btn-default">updateAllOLAPTables</a><br /><br />
+								<input class="form-control" placeholder="uid or shortname" style="display: inline-block; margin-top: 2px;" type="text" id="uid" />
+								<a onclick="createOLAPTable();" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="create table" class="btn btn-default" style="margin-left: 10px; margin-top: -2px;">createOLAPTable</a>
+								<a onclick="updateOLAPTable();" data-toggle="tooltip" data-placement="bottom" rel=tooltip" title="update table" class="btn btn-default" style="margin-top: -2px;">updateOLAPTable</a>
+								<br /><br />
+							</c:if>
+								
+							<form:form id="form" method="POST" action="reporting" style="margin-bottom: 10px">
+								<spring:message code="label.MigrationEnabled"/>:
+								<c:choose>
+									<c:when test="${enabled}">
+										<input class="check" type="checkbox" value="true" checked="checked" name="enabled" />
+									</c:when>
+									<c:otherwise>
+										<input class="check" type="checkbox" value="true" name="enabled" />
+									</c:otherwise>
+								</c:choose>&nbsp;&nbsp;&nbsp;
+								<spring:message code="label.Start"/>:
+								<input type="text" name="start" class="form-control" placeholder="hh:mm" value="${start}" style="display: inline-block; margin-top: 2px; width: 70px" />
+								&nbsp;&nbsp;&nbsp;
+								<spring:message code="label.Time"/>:
+								<input type="text" name="time" class="form-control" placeholder="min" value="${time}" style="display: inline-block; margin-top: 2px; width: 50px" />
+								&nbsp;&nbsp;&nbsp;
+								<input type="submit" class="btn btn-default" style="margin-top: -3px;" value="<spring:message code="label.Apply"/>" />
+								&nbsp;&nbsp;&nbsp;
+								<spring:message code="label.CurrentSurvey"/>: ${survey}
+							</form:form>
+														
+							<b># <spring:message code="label.TODOs"/></b>: <span style="margin-right: 10px">${totaltodos}</span>
+							<b># <spring:message code="label.Tables"/> (<spring:message code="label.existing"/>)</b>: <span style="margin-right: 10px">${totaltables}</span>
+							<b># <spring:message code="label.Tables"/> (<spring:message code="label.expected"/>)</b>: <span style="margin-right: 10px">${totalpublishedsurveys + totalpublishedsurveys + totaldraftsurveys}</span>
+							<b># <spring:message code="label.Surveys"/> (<spring:message code="label.neverpublished"/>)</b>: <span>${totaldraftsurveys}</span>
+							<b># <spring:message code="label.Surveys"/> (<spring:message code="label.others"/>)</b>: <span> ${totalpublishedsurveys}</span>
+						</div>					
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	
-	<div class="page1024" style="width: 1200px; margin-bottom: 0px;overflow-x: visible;">
-		<table id="tbllist-todos" class="table table-bordered table-styled" style="width: 1024px; margin-left: auto; margin-right: auto; margin-top: 350px;">
-			<thead style="background-color: white; border-top: 1px solid #eee;">
-				<tr>
-					<th>ID</th>
-					<th>Type</th>
-					<th>UID</th>
-					<th>Code</th>
-					<th><spring:message code="label.Actions" /></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr id="todos-loading">
-					<td colspan="8"  style="text-align: center">
-						<img src="${contextpath}/resources/images/ajax-loader.gif" />
-					</td>
-				</tr>
-			</tbody>
-		</table>
 		
-		<div style="text-align: center">
-			<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
-		</div>
-		<div id="tbllist-empty" class="noDataPlaceHolder">
-			<p>
-				<spring:message code="label.NoData"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
-			<p>
+		<div class="page1024" style="width: 1200px; padding-bottom: 0px;overflow-x: visible;">
+			<table id="tbllist-todos" class="table table-bordered table-styled" style="width: 1024px; margin-left: auto; margin-right: auto; margin-top: 350px;">
+				<thead style="background-color: white; border-top: 1px solid #eee;">
+					<tr>
+						<th>ID</th>
+						<th>Type</th>
+						<th>UID</th>
+						<th>Code</th>
+						<th><spring:message code="label.Actions" /></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="todos-loading">
+						<td colspan="8"  style="text-align: center">
+							<img src="${contextpath}/resources/images/ajax-loader.gif" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<div style="text-align: center">
+				<img id="wheel" class="hideme" src="${contextpath}/resources/images/ajax-loader.gif" />
+			</div>
+			<div id="tbllist-empty" class="noDataPlaceHolder">
+				<p>
+					<spring:message code="label.NoData"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
+				<p>
+			</div>
 		</div>
 	</div>
 	

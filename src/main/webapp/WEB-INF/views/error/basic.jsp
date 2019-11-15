@@ -9,15 +9,17 @@
 	<%@ include file="../includes.jsp" %>
 </head>
 <body style="text-align: center;">
-	<%@ include file="../header.jsp" %>	
-	<c:choose>
-		<c:when test="${USER != null }">			
-			<%@ include file="../menu.jsp" %>	
-		</c:when>
-	</c:choose>	
-	
-	<div style="margin-top: 120px; margin-bottom: 120px;">
-		<div class="alert alert-danger"><spring:message code="error.unexpected" /></div>
+	<div class="page-wrap">
+		<%@ include file="../header.jsp" %>	
+		<c:choose>
+			<c:when test="${USER != null }">			
+				<%@ include file="../menu.jsp" %>	
+			</c:when>
+		</c:choose>	
+		
+		<div style="padding-top: 120px; padding-bottom: 120px;">
+			<div class="alert alert-danger"><spring:message code="error.unexpected" /></div>
+		</div>
 	</div>
 	
 	<%@ include file="../footer.jsp" %>

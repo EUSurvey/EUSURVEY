@@ -393,3 +393,7 @@ legend {
 .ecl-footer__title {
 	margin-bottom: 0px !important;
 }
+
+.mobile-matrix td div {
+	display: inline;
+}

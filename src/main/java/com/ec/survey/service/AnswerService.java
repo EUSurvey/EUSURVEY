@@ -350,10 +350,9 @@ public class AnswerService extends BasicService {
 
 		if (useDraftSurveysTable)
 			joinSurveys += " JOIN SURVEYS d ON d.SURVEY_UID = s.SURVEY_UID AND d.ISDRAFT = 1";
-
-		sql = "SELECT MIN(ans.ANSWER_SET_ID) FROM ANSWERS_SET ans " + joinSurveys + " WHERE " + where.toString()
-				+ " GROUP BY ans.UNIQUECODE HAVING min(ans.ISDRAFT) = 1 AND max(ans.ISDRAFT) = 1 ORDER BY ans.ANSWER_SET_UPDATE DESC";
-
+		
+		sql = "SELECT ans.ANSWER_SET_ID FROM ANSWERS_SET ans " + joinSurveys + " WHERE " + where.toString() + " AND  ans.ISDRAFT = 1 AND ans.UNIQUECODE NOT IN (SELECT ans.UNIQUECODE FROM ANSWERS_SET ans WHERE " + where.toString() + " AND ans.ISDRAFT = 0) ORDER BY ans.ANSWER_SET_UPDATE DESC";
+		
 		if (filter.getUser().indexOf(";") > 0) {
 			parameters.put("emails", filter.getUser().trim().split(";"));
 		} else {
@@ -1654,8 +1653,9 @@ public class AnswerService extends BasicService {
 		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(id);
 		if (allVersions.size() == 0)
 			return 0;
-		String query = "SELECT COUNT(*) FROM ( SELECT * FROM ANSWERS_SET ans WHERE ans.SURVEY_ID IN (" + StringUtils.collectionToCommaDelimitedString(allVersions)
-				+ ") GROUP BY ans.UNIQUECODE HAVING MIN(ans.ISDRAFT) = 1	) as dummy";
+		
+		String query = "SELECT count(*) FROM ANSWERS_SET ans WHERE ans.SURVEY_ID IN (" + StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans.ISDRAFT = 1 AND ans.UNIQUECODE NOT IN (SELECT UNIQUECODE FROM ANSWERS_SET WHERE SURVEY_ID IN (" + StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans.ISDRAFT = 0)";
+		
 		Query q = session.createSQLQuery(query);
 		return ConversionTools.getValue(q.uniqueResult());
 	}
@@ -1666,8 +1666,9 @@ public class AnswerService extends BasicService {
 		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(uid);
 		if (allVersions.size() == 0)
 			return 0;
-		String query = "SELECT COUNT(*) FROM ( SELECT * FROM ANSWERS_SET ans WHERE ans.SURVEY_ID IN (" + StringUtils.collectionToCommaDelimitedString(allVersions)
-				+ ") GROUP BY ans.UNIQUECODE HAVING MIN(ans.ISDRAFT) = 1	) as dummy";
+		
+		String query = "SELECT count(*) FROM ANSWERS_SET ans WHERE ans.SURVEY_ID IN (" + StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans.ISDRAFT = 1 AND ans.UNIQUECODE NOT IN (SELECT UNIQUECODE FROM ANSWERS_SET WHERE SURVEY_ID IN (" + StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans.ISDRAFT = 0)";
+		
 		Query q = session.createSQLQuery(query);
 		return ConversionTools.getValue(q.uniqueResult());
 	}
@@ -1845,7 +1846,8 @@ public class AnswerService extends BasicService {
 
 		result[1] = ConversionTools.getValue(query.uniqueResult());
 
-		sql = "SELECT COUNT(*) FROM (SELECT COUNT(*) FROM ANSWERS_SET ans WHERE ans.RESPONDER_EMAIL IN (:emails) GROUP BY ans.UNIQUECODE HAVING min(ans.ISDRAFT) = 1 AND max(ans.ISDRAFT) = 1) as x";
+		sql = "SELECT COUNT(*) FROM (SELECT 1 FROM ANSWERS_SET ans WHERE ans.RESPONDER_EMAIL IN (:emails) AND ans.ISDRAFT = 1 AND NOT ans.UNIQUECODE IN (SELECT ans.UNIQUECODE FROM ANSWERS_SET ans WHERE ans.RESPONDER_EMAIL IN (:emails) AND ans.ISDRAFT = 0  )) as x";
+		
 		query = session.createSQLQuery(sql);
 		query.setParameterList("emails", allemails);
 
