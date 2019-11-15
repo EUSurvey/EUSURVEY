@@ -1513,7 +1513,7 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
-	public void executeToDo(ToDoItem todo, boolean removeSimilar) throws Exception
+	public void executeToDo(ToDoItem todo) throws Exception
 	{
 		switch (todo.Type){
 			case NEWSURVEY:
@@ -1549,8 +1549,6 @@ public class ReportingService {
 				removeFromOLAPTable(todo.UID, todo.Code, false);
 				break;
 		}
-		
-		removeToDo(todo, removeSimilar);
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")

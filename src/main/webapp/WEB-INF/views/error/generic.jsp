@@ -70,57 +70,56 @@
 		</script>
 </head>
 <body style="text-align: center;">
-	<div class="page-wrap">
-		<%@ include file="../header.jsp" %>		
+
+	<%@ include file="../header.jsp" %>		
+	
+	<c:choose>
+		<c:when test="${USER != null && noMenu == null && runnermode == null}">			
+			<%@ include file="../menu.jsp" %>	
+		</c:when>
+	</c:choose>	
+	
+	<c:choose>
+		<c:when test="${responsive != null}">
+			<div style="margin-top: 80px; margin-bottom: 120px;">
+		</c:when>
+		<c:otherwise>
+			<div style="margin-top: 120px; margin-bottom: 120px;">
+		</c:otherwise>
+	</c:choose>	
+	
+		<div id="errorMsgFromGeneric" class="alert alert-danger"><esapi:encodeForHTML>${message}</esapi:encodeForHTML></div>
 		
-		<c:choose>
-			<c:when test="${USER != null && noMenu == null && runnermode == null}">			
-				<%@ include file="../menu.jsp" %>	
-			</c:when>
-		</c:choose>	
+		<c:if test="${messageComplement != null}">
+			<span style="color: #777;border-top: 1px solid #CCC;padding: 7px 15px 5px;">
+				<esapi:encodeForHTML>${messageComplement}</esapi:encodeForHTML>
+			</span>
+		</c:if>
 		
-		<c:choose>
-			<c:when test="${responsive != null}">
-				<div style="padding-top: 80px; padding-bottom: 120px;">
-			</c:when>
-			<c:otherwise>
-				<div style="padding-top: 120px; padding-bottom: 120px;">
-			</c:otherwise>
-		</c:choose>	
+		<br /><br />
 		
-			<div id="errorMsgFromGeneric" class="alert alert-danger"><esapi:encodeForHTML>${message}</esapi:encodeForHTML></div>
-			
-			<c:if test="${messageComplement != null}">
-				<span style="color: #777;border-top: 1px solid #CCC;padding: 7px 15px 5px;">
-					<esapi:encodeForHTML>${messageComplement}</esapi:encodeForHTML>
-				</span>
-			</c:if>
-			
-			<br /><br />
-			
-			<c:if test="${caseidforpdfdownload != null}">			
-				<c:choose>
-					<c:when test="${responsive != null}">
-						<a style="text-decoration: none" onclick="showExportDialogAndFocusEmail()" class="btn btn-lg btn-default"><spring:message code="label.Download" /> PDF</a>		
-					</c:when>
-					<c:otherwise>
-						<a onclick="showExportDialogAndFocusEmail()" class="btn btn-default"><spring:message code="label.Download" /> PDF</a>
-					</c:otherwise>	
-				</c:choose>
-			</c:if>
-			
-			<c:if test="${caseidforchangecontribution != null}">			
-				<c:choose>
-					<c:when test="${responsive != null}">
-						<a style="text-decoration: none" href="${contextpath}/editcontribution/${caseidforchangecontribution}" class="btn btn-lg btn-default"><spring:message code="label.EditContribution" /></a>		
-					</c:when>
-					<c:otherwise>
-						<a href="${contextpath}/editcontribution/${caseidforchangecontribution}" class="btn btn-default"><spring:message code="label.EditContribution" /></a>
-					</c:otherwise>	
-				</c:choose>
-			</c:if>		
-			
-		</div>
+		<c:if test="${caseidforpdfdownload != null}">			
+			<c:choose>
+				<c:when test="${responsive != null}">
+					<a style="text-decoration: none" onclick="showExportDialogAndFocusEmail()" class="btn btn-lg btn-default"><spring:message code="label.Download" /> PDF</a>		
+				</c:when>
+				<c:otherwise>
+					<a onclick="showExportDialogAndFocusEmail()" class="btn btn-default"><spring:message code="label.Download" /> PDF</a>
+				</c:otherwise>	
+			</c:choose>
+		</c:if>
+		
+		<c:if test="${caseidforchangecontribution != null}">			
+			<c:choose>
+				<c:when test="${responsive != null}">
+					<a style="text-decoration: none" href="${contextpath}/editcontribution/${caseidforchangecontribution}" class="btn btn-lg btn-default"><spring:message code="label.EditContribution" /></a>		
+				</c:when>
+				<c:otherwise>
+					<a href="${contextpath}/editcontribution/${caseidforchangecontribution}" class="btn btn-default"><spring:message code="label.EditContribution" /></a>
+				</c:otherwise>	
+			</c:choose>
+		</c:if>		
+		
 	</div>
 	
 	<%@ include file="../footer.jsp" %>		

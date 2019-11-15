@@ -474,342 +474,341 @@
 		
 </head>
 <body>
-	 <div class="page-wrap">
-		<%@ include file="../header.jsp" %>		
-		<%@ include file="../menu.jsp" %>	
-		
-		<form:form modelAttribute="paging" id="load-forms" method="POST" action="${contextpath}/forms" onsubmit="if(validateInput($('#load-forms'))) {$('.tableFloatingHeader').empty(); $('.modal-backdrop').hide(); $('#generic-wait-dialog').modal('show');} else {return false};">
-		
-		<div class="hideme">
-			<c:set var="pagingElementName" value="Form" />			
-			<div><%@ include file="../paging.jsp" %></div>	
-		</div>	
-		
-		<div class="fullpagesmall" style="padding-top: 25px; width: 1024px; margin-left: auto; margin-right: auto;">
-			<div>		
-				<input type="hidden" name="delete" id="delete" value="" />
-				<input type="hidden" name="clearFilter" id="clearFilter" value="false" />
-				<input type="hidden" name="sortkey" id="sortkey" value="${filter.sortKey}" />
-				<input type="hidden" name="sortorder" id="sortorder" value="${filter.sortOrder}" />
-						
-				<div style="margin-top: 10px;">			
+
+	<%@ include file="../header.jsp" %>		
+	<%@ include file="../menu.jsp" %>	
+	
+	<form:form modelAttribute="paging" id="load-forms" method="POST" action="${contextpath}/forms" onsubmit="if(validateInput($('#load-forms'))) {$('.tableFloatingHeader').empty(); $('.modal-backdrop').hide(); $('#generic-wait-dialog').modal('show');} else {return false};">
+	
+	<div class="hideme">
+		<c:set var="pagingElementName" value="Form" />			
+		<div><%@ include file="../paging.jsp" %></div>	
+	</div>	
+	
+	<div class="fullpagesmall" style="margin-top: 0px; width: 1024px; margin-left: auto; margin-right: auto;">
+		<div>		
+			<input type="hidden" name="delete" id="delete" value="" />
+			<input type="hidden" name="clearFilter" id="clearFilter" value="false" />
+			<input type="hidden" name="sortkey" id="sortkey" value="${filter.sortKey}" />
+			<input type="hidden" name="sortorder" id="sortorder" value="${filter.sortOrder}" />
 					
-						<div class="right-area">
-						
-							<div style="font-size: 20px; font-weight: bold; margin-bottom: 10px;"><spring:message code="label.SearchCriteria" /></div>
-						
-							<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-info" value="<spring:message code="label.Search" />" />
-							<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a><br /><br />
-						
-							<h4><spring:message code="label.Status" />:</h4>
-						
-							<ul class="multiple-choice" style="margin-left: 0px;">
-								<c:choose>
-									<c:when test='${filter.status.contains("Unpublished")}'>
-										<li class="selected-choice possible-answer">
-											<a onclick="selectMultipleChoiceAnswer(this);" >
-												<span class="answertext"><spring:message code="label.Unpublished" /></span>
-											</a>
-			 								<input checked="checked" value="Unpublished" style="display: none" type="checkbox" name="statusUnpublished" readonly="readonly" />
-										</li>	
-									</c:when>
-									<c:otherwise>															
-										<li class="possible-answer">
-											<a onclick="selectMultipleChoiceAnswer(this);" >
-												<span class="answertext"><spring:message code="label.Unpublished" /></span>
-											</a>
-			 								<input value="Unpublished" style="display: none" type="checkbox" name="statusUnpublished" readonly="readonly" />
-										</li>		
-									</c:otherwise>														
-								</c:choose>			
-								<c:choose>
-									<c:when test='${filter.status.contains("Published")}'>
-										<li class="selected-choice possible-answer">
-											<a onclick="selectMultipleChoiceAnswer(this);" >
-												<span class="answertext"><spring:message code="label.Published" /></span>
-											</a>
-			 								<input checked="checked" value="Published" style="display: none" type="checkbox" name="statusPublished" readonly="readonly" />
-										</li>	
-									</c:when>
-									<c:otherwise>															
-										<li class="possible-answer">
-											<a onclick="selectMultipleChoiceAnswer(this);" >
-												<span class="answertext"><spring:message code="label.Published" /></span>
-											</a>
-			 								<input value="Published" style="display: none" type="checkbox" name="statusPublished" readonly="readonly" />
-										</li>		
-									</c:otherwise>														
-								</c:choose>																						
-							</ul>							
-									
-							<h4 style="margin-top: 20px;"><spring:message code="publicSurveys.order" />:</h4>
-							
-							<spring:message code="label.UniqueIdentifier" />
-							<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('surveyname',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('surveyname',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
-							
-							<spring:message code="label.CreationDate" />
-							<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('survey_created',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('survey_created',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
-							
-							<spring:message code="label.ExpiryDate" />
-							<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('survey_end_date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('survey_end_date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
-						
-							<spring:message code="label.NumberOfReplies" />
-							<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('replies',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
-											
-							<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.SearchSurveys" /></h4>
-							
-							<label class="bold"><spring:message code="label.Keywords" /></label>
-							<input id="txtKeywordSearch" class="form-control" name="keywords" type="text" maxlength="100" style="width:150px; margin-top: 7px; display:inline;" value='<esapi:encodeForHTMLAttribute>${filter.keywords}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-default" style="margin-bottom: 3px;" value="OK" id="btnSearchSurveys"/>
-							
-							<br /><label class="bold"><spring:message code="label.Languages" /></label><br />
-							
-							<c:forEach items="${languages}" var="language">
-								<c:if test="${language.official}">	
-									<input name="languages" type="checkbox" class="check" data-code="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>" value="<esapi:encodeForHTMLAttribute>${language.id}</esapi:encodeForHTMLAttribute>" <c:if test="${filter.containsLanguage(language.id)}">checked="checked"</c:if> /><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML><br />
-								</c:if>
-							</c:forEach>
-		
-							<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.ByDate" /></h4>
-							
-							<a id="date-options-a" style="cursor:pointer" onclick="showHideDateOptions();"><spring:message code="label.ShowDateOptions" /></a>
-							<div id="date-options-div" style="display: none">
-								<label class="bold"><spring:message code="label.CreationDate" /></label>
+			<div style="margin-top: 10px;">			
+				
+					<div class="right-area">
+					
+						<div style="font-size: 20px; font-weight: bold; margin-bottom: 10px;"><spring:message code="label.SearchCriteria" /></div>
+					
+						<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-info" value="<spring:message code="label.Search" />" />
+						<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a><br /><br />
+					
+						<h4><spring:message code="label.Status" />:</h4>
+					
+						<ul class="multiple-choice" style="margin-left: 0px;">
+							<c:choose>
+								<c:when test='${filter.status.contains("Unpublished")}'>
+									<li class="selected-choice possible-answer">
+										<a onclick="selectMultipleChoiceAnswer(this);" >
+											<span class="answertext"><spring:message code="label.Unpublished" /></span>
+										</a>
+		 								<input checked="checked" value="Unpublished" style="display: none" type="checkbox" name="statusUnpublished" readonly="readonly" />
+									</li>	
+								</c:when>
+								<c:otherwise>															
+									<li class="possible-answer">
+										<a onclick="selectMultipleChoiceAnswer(this);" >
+											<span class="answertext"><spring:message code="label.Unpublished" /></span>
+										</a>
+		 								<input value="Unpublished" style="display: none" type="checkbox" name="statusUnpublished" readonly="readonly" />
+									</li>		
+								</c:otherwise>														
+							</c:choose>			
+							<c:choose>
+								<c:when test='${filter.status.contains("Published")}'>
+									<li class="selected-choice possible-answer">
+										<a onclick="selectMultipleChoiceAnswer(this);" >
+											<span class="answertext"><spring:message code="label.Published" /></span>
+										</a>
+		 								<input checked="checked" value="Published" style="display: none" type="checkbox" name="statusPublished" readonly="readonly" />
+									</li>	
+								</c:when>
+								<c:otherwise>															
+									<li class="possible-answer">
+										<a onclick="selectMultipleChoiceAnswer(this);" >
+											<span class="answertext"><spring:message code="label.Published" /></span>
+										</a>
+		 								<input value="Published" style="display: none" type="checkbox" name="statusPublished" readonly="readonly" />
+									</li>		
+								</c:otherwise>														
+							</c:choose>																						
+						</ul>							
 								
-								<div class="input-group">
-							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="generatedFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.generatedFrom" />" style="width: 105px" />
-							    </div>							
-								<div class="input-group">
-							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="generatedTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.generatedTo" />" style="width: 105px" />
-							    </div>
-								
-								<label class="bold"><spring:message code="label.StartDate" /></label>
-								<div class="input-group">
-							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="startFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.startFrom" />" style="width: 105px" />
-							    </div>							
-								<div class="input-group">
-							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="startTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.startTo" />" style="width: 105px" />
-							    </div>
-								<label class="bold"><spring:message code="label.ExpiryDate" /></label>
-								<div class="input-group">
-							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="endFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.endFrom" />" style="width: 105px" />
-							    </div>
-								<div class="input-group">
-							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
-							      	<input class="form-control datepicker date" name="endTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.endTo" />" style="width: 105px" />
-							    </div>								
-							</div>
-							
-							<c:if test="${survey.owner.id == USER.id || USER.formPrivilege > 1}">
-								<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.ByOwner" /></h4>
-								<input class="form-control" name="owner" type="text" maxlength="255" style="width:150px; margin-top: 9px; display:inline" value='<esapi:encodeForHTMLAttribute>${filter.owner}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" style="margin-bottom: 3px" type="submit" class="btn btn-default" value="OK" />
+						<h4 style="margin-top: 20px;"><spring:message code="publicSurveys.order" />:</h4>
+						
+						<spring:message code="label.UniqueIdentifier" />
+						<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('surveyname',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('surveyname',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
+						
+						<spring:message code="label.CreationDate" />
+						<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('survey_created',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('survey_created',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
+						
+						<spring:message code="label.ExpiryDate" />
+						<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('survey_end_date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('survey_end_date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
+					
+						<spring:message code="label.NumberOfReplies" />
+						<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('replies',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
+										
+						<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.SearchSurveys" /></h4>
+						
+						<label class="bold"><spring:message code="label.Keywords" /></label>
+						<input id="txtKeywordSearch" class="form-control" name="keywords" type="text" maxlength="100" style="width:150px; margin-top: 7px; display:inline;" value='<esapi:encodeForHTMLAttribute>${filter.keywords}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-default" style="margin-bottom: 3px;" value="OK" id="btnSearchSurveys"/>
+						
+						<br /><label class="bold"><spring:message code="label.Languages" /></label><br />
+						
+						<c:forEach items="${languages}" var="language">
+							<c:if test="${language.official}">	
+								<input name="languages" type="checkbox" class="check" data-code="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>" value="<esapi:encodeForHTMLAttribute>${language.id}</esapi:encodeForHTMLAttribute>" <c:if test="${filter.containsLanguage(language.id)}">checked="checked"</c:if> /><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML><br />
 							</c:if>
+						</c:forEach>
+	
+						<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.ByDate" /></h4>
+						
+						<a id="date-options-a" style="cursor:pointer" onclick="showHideDateOptions();"><spring:message code="label.ShowDateOptions" /></a>
+						<div id="date-options-div" style="display: none">
+							<label class="bold"><spring:message code="label.CreationDate" /></label>
 							
-							<br /><br />
-							<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-info" value="<spring:message code="label.Search" />" />
-							<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a><br /><br />
+							<div class="input-group">
+						    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
+						      	<input class="form-control datepicker date" name="generatedFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.generatedFrom" />" style="width: 105px" />
+						    </div>							
+							<div class="input-group">
+						    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
+						      	<input class="form-control datepicker date" name="generatedTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.generatedTo" />" style="width: 105px" />
+						    </div>
 							
-							<div class="hideme">
-								<span><spring:message code="label.RowsPerPage" />&#160;</span>
-							    <form:select onchange="moveTo('${paging.currentPage}')" path="itemsPerPage" id="itemsPerPage" style="width:70px; margin-top: 0px;" class="middle">
-									<form:options items="${paging.itemsPerPageOptions}" />
-								</form:select>		
-							</div>
+							<label class="bold"><spring:message code="label.StartDate" /></label>
+							<div class="input-group">
+						    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
+						      	<input class="form-control datepicker date" name="startFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.startFrom" />" style="width: 105px" />
+						    </div>							
+							<div class="input-group">
+						    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
+						      	<input class="form-control datepicker date" name="startTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.startTo" />" style="width: 105px" />
+						    </div>
+							<label class="bold"><spring:message code="label.ExpiryDate" /></label>
+							<div class="input-group">
+						    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
+						      	<input class="form-control datepicker date" name="endFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.endFrom" />" style="width: 105px" />
+						    </div>
+							<div class="input-group">
+						    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
+						      	<input class="form-control datepicker date" name="endTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.endTo" />" style="width: 105px" />
+						    </div>								
 						</div>
-							
-						<div class="left-area">
 						
-							<c:if test="${paging.items.size() == 0}">
-								<div id="tbllist-empty" class="noDataPlaceHolder" style="display:block;">
-									<p>
-										<spring:message code="label.NoDataSearchSurveyText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
-									<p>
+						<c:if test="${survey.owner.id == USER.id || USER.formPrivilege > 1}">
+							<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.ByOwner" /></h4>
+							<input class="form-control" name="owner" type="text" maxlength="255" style="width:150px; margin-top: 9px; display:inline" value='<esapi:encodeForHTMLAttribute>${filter.owner}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" style="margin-bottom: 3px" type="submit" class="btn btn-default" value="OK" />
+						</c:if>
+						
+						<br /><br />
+						<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-info" value="<spring:message code="label.Search" />" />
+						<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a><br /><br />
+						
+						<div class="hideme">
+							<span><spring:message code="label.RowsPerPage" />&#160;</span>
+						    <form:select onchange="moveTo('${paging.currentPage}')" path="itemsPerPage" id="itemsPerPage" style="width:70px; margin-top: 0px;" class="middle">
+								<form:options items="${paging.itemsPerPageOptions}" />
+							</form:select>		
+						</div>
+					</div>
+						
+					<div class="left-area">
+					
+						<c:if test="${paging.items.size() == 0}">
+							<div id="tbllist-empty" class="noDataPlaceHolder" style="display:block;">
+								<p>
+									<spring:message code="label.NoDataSearchSurveyText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
+								<p>
+							</div>
+						</c:if>
+						
+						<div id="results"> 
+					
+							<c:forEach items="${paging.items}" var="survey">
+							
+							<div class="surveybox">
+							
+								<c:if test="${survey.numberOfReports > 0 }">
+									<div class="surveywarning">
+										<spring:message code="warning.ReportedSurvey" arguments="${survey.numberOfReports}" />
+									</div>
+								</c:if>
+							
+								<div class="typeicon">
+									<c:choose>
+										<c:when test="${survey.isQuiz}">
+											<img data-toggle="tooltip" title="<spring:message code="label.Quiz" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/quiz.png" />
+										</c:when>
+										<c:when test="${survey.isOPC}">
+											<img data-toggle="tooltip" title="<spring:message code="label.OPC" />" src="${contextpath}/resources/images/icons/24/people.png" />
+										</c:when>
+										<c:otherwise>
+											<img data-toggle="tooltip" title="<spring:message code="label.StandardSurvey" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/survey.png" />
+										</c:otherwise>
+									</c:choose>
 								</div>
-							</c:if>
-							
-							<div id="results"> 
-						
-								<c:forEach items="${paging.items}" var="survey">
-								
-								<div class="surveybox">
-								
-									<c:if test="${survey.numberOfReports > 0 }">
-										<div class="surveywarning">
-											<spring:message code="warning.ReportedSurvey" arguments="${survey.numberOfReports}" />
-										</div>
-									</c:if>
-								
-									<div class="typeicon">
+																
+								<div class="surveyItemHeader">
+									<div style="float: right; margin-left: 20px;">
 										<c:choose>
-											<c:when test="${survey.isQuiz}">
-												<img data-toggle="tooltip" title="<spring:message code="label.Quiz" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/quiz.png" />
+											<c:when test='${survey.isActive && survey.isPublished}'>
+												<div class="publishedsurveytag">
+													<div class="arrow-left"></div>
+													<spring:message code="label.Published" />
+												</div>
 											</c:when>
-											<c:when test="${survey.isOPC}">
-												<img data-toggle="tooltip" title="<spring:message code="label.OPC" />" src="${contextpath}/resources/images/icons/24/people.png" />
-											</c:when>
-											<c:otherwise>
-												<img data-toggle="tooltip" title="<spring:message code="label.StandardSurvey" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/survey.png" />
+											<c:otherwise>												
+												<div class="unpublishedsurveytag">
+													<div class="arrow-left"></div>
+													<spring:message code="label.Unpublished" />
+												</div>
 											</c:otherwise>
 										</c:choose>
-									</div>
-																	
-									<div class="surveyItemHeader">
-										<div style="float: right; margin-left: 20px;">
+										<c:choose>
+											<c:when test='${survey.isPublished && survey.hasPendingChanges}'>
+												<div class="pendingchangessurveytag">
+													<div class="arrow-left"></div>
+													<spring:message code="label.PendingChanges" />
+												</div>
+											</c:when>
+											<c:otherwise>
+											</c:otherwise>
+										</c:choose>
+									</div>				
+									<div class="surveytitle">${survey.mediumCleanTitle()}<span class="completetitle hideme">${survey.cleanTitle()}</span></div>
+									<div class="originalsurveytitle hideme">${survey.title}</div>
+									<div class="shortname"><esapi:encodeForHTML>${survey.shortname}</esapi:encodeForHTML></div>
+								</div>
+								<br />
+								<table class="formsSurveyItem">
+									<tr>
+										<td class="labelcell"><spring:message code="label.Created" /></td>
+										<td><spring:eval expression="survey.created" /></td>
+										<td class="labelcell"><spring:message code="label.Owner" /></td>
+										<td><spring:eval expression="survey.owner.name" /></td>
+									</tr>
+									<tr>
+										<td class="labelcell"><spring:message code="label.StartDate" /></td>
+										<td>
 											<c:choose>
-												<c:when test='${survey.isActive && survey.isPublished}'>
-													<div class="publishedsurveytag">
-														<div class="arrow-left"></div>
-														<spring:message code="label.Published" />
-													</div>
-												</c:when>
-												<c:otherwise>												
-													<div class="unpublishedsurveytag">
-														<div class="arrow-left"></div>
-														<spring:message code="label.Unpublished" />
-													</div>
-												</c:otherwise>
-											</c:choose>
-											<c:choose>
-												<c:when test='${survey.isPublished && survey.hasPendingChanges}'>
-													<div class="pendingchangessurveytag">
-														<div class="arrow-left"></div>
-														<spring:message code="label.PendingChanges" />
-													</div>
+												<c:when test="${!survey.automaticPublishing || survey.start == null}">
+													<spring:message code="label.NotSpecified" />
 												</c:when>
 												<c:otherwise>
+													<spring:eval expression="survey.start" />
+												</c:otherwise>
+											</c:choose>												
+										</td>								
+										<td class="labelcell"><spring:message code="label.ExpiryDate" /></td>
+										<td>
+											<c:choose>
+												<c:when test="${!survey.automaticPublishing || survey.end == null}">
+													<spring:message code="label.NotSpecified" />
+												</c:when>
+												<c:otherwise>
+													<spring:eval expression="survey.end" />
+												</c:otherwise>
+											</c:choose>									
+										</td>
+									</tr>
+									<tr>
+										<td class="labelcell"><spring:message code="label.Replies" /></td>
+										<td><esapi:encodeForHTML>${survey.numberOfAnswerSetsPublished}</esapi:encodeForHTML></td>									
+										<td class="labelcell"><spring:message code="label.Translations" /></td>
+										<td>
+											<c:forEach items="${survey.translations}" var="language">
+												<c:choose>
+													<c:when test="${survey.language.code == language}">
+														<div data-toggle="tooltip" title="<spring:message code="label.PivotLanguage" />" class="language pivotlanguage"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></div>
+													</c:when>
+													<c:when test="${survey.completeTranslations != null && survey.containsCompleteTranslations(language)}">
+														<div data-toggle="tooltip" title="<spring:message code="label.Available" />" class="language"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></div>
+													</c:when>
+													<c:otherwise>
+														<div data-toggle="tooltip" title="<spring:message code="label.NotYetAvailable" />" class="language languageUnpublished"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></div>
+													</c:otherwise>
+												</c:choose>											
+											</c:forEach>		
+										</td>
+									</tr>
+									<tr>
+										<td colspan="5" class="separatorCell"></td>
+									</tr>
+									
+									<c:if test="${survey.owner.id == USER.id || USER.formPrivilege > 0}">
+									<tr>
+										<td colspan="5"class="surveyactions">
+											<a class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Open" />" id="lnk${survey.shortname}" href="<c:url value="/${survey.shortname}/management/overview" />"><span class="glyphicon glyphicon-folder-open"></</span></a>
+										
+											<c:choose>
+												<c:when test="${survey.formManagementRights && survey.canCreateSurveys}">
+													<a onclick="copySurvey('${survey.id}', $(this).closest('.surveybox').find('.originalsurveytitle').html(), '${survey.language.code}', '${survey.security}', '${survey.isQuiz}')" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></</span></a>
+													<a href="<c:url value="/noform/management/exportSurvey/false/${survey.shortname}"/>" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></</span></a>
+												</c:when>
+												<c:otherwise>
+													<a class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy disabled"></</span></a>
+													<a class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt disabled"></</span></a>
 												</c:otherwise>
 											</c:choose>
-										</div>				
-										<div class="surveytitle">${survey.mediumCleanTitle()}<span class="completetitle hideme">${survey.cleanTitle()}</span></div>
-										<div class="originalsurveytitle hideme">${survey.title}</div>
-										<div class="shortname"><esapi:encodeForHTML>${survey.shortname}</esapi:encodeForHTML></div>
-									</div>
-									<br />
-									<table class="formsSurveyItem">
-										<tr>
-											<td class="labelcell"><spring:message code="label.Created" /></td>
-											<td><spring:eval expression="survey.created" /></td>
-											<td class="labelcell"><spring:message code="label.Owner" /></td>
-											<td><spring:eval expression="survey.owner.name" /></td>
-										</tr>
-										<tr>
-											<td class="labelcell"><spring:message code="label.StartDate" /></td>
-											<td>
-												<c:choose>
-													<c:when test="${!survey.automaticPublishing || survey.start == null}">
-														<spring:message code="label.NotSpecified" />
-													</c:when>
-													<c:otherwise>
-														<spring:eval expression="survey.start" />
-													</c:otherwise>
-												</c:choose>												
-											</td>								
-											<td class="labelcell"><spring:message code="label.ExpiryDate" /></td>
-											<td>
-												<c:choose>
-													<c:when test="${!survey.automaticPublishing || survey.end == null}">
-														<spring:message code="label.NotSpecified" />
-													</c:when>
-													<c:otherwise>
-														<spring:eval expression="survey.end" />
-													</c:otherwise>
-												</c:choose>									
-											</td>
-										</tr>
-										<tr>
-											<td class="labelcell"><spring:message code="label.Replies" /></td>
-											<td><esapi:encodeForHTML>${survey.numberOfAnswerSetsPublished}</esapi:encodeForHTML></td>									
-											<td class="labelcell"><spring:message code="label.Translations" /></td>
-											<td>
-												<c:forEach items="${survey.translations}" var="language">
-													<c:choose>
-														<c:when test="${survey.language.code == language}">
-															<div data-toggle="tooltip" title="<spring:message code="label.PivotLanguage" />" class="language pivotlanguage"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></div>
-														</c:when>
-														<c:when test="${survey.completeTranslations != null && survey.containsCompleteTranslations(language)}">
-															<div data-toggle="tooltip" title="<spring:message code="label.Available" />" class="language"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></div>
-														</c:when>
-														<c:otherwise>
-															<div data-toggle="tooltip" title="<spring:message code="label.NotYetAvailable" />" class="language languageUnpublished"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></div>
-														</c:otherwise>
-													</c:choose>											
-												</c:forEach>		
-											</td>
-										</tr>
-										<tr>
-											<td colspan="5" class="separatorCell"></td>
-										</tr>
-										
-										<c:if test="${survey.owner.id == USER.id || USER.formPrivilege > 0}">
-										<tr>
-											<td colspan="5"class="surveyactions">
-												<a class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Open" />" id="lnk${survey.shortname}" href="<c:url value="/${survey.shortname}/management/overview" />"><span class="glyphicon glyphicon-folder-open"></</span></a>
 											
+											<c:if test="${enablearchiving}">
 												<c:choose>
-													<c:when test="${survey.formManagementRights && survey.canCreateSurveys}">
-														<a onclick="copySurvey('${survey.id}', $(this).closest('.surveybox').find('.originalsurveytitle').html(), '${survey.language.code}', '${survey.security}', '${survey.isQuiz}')" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></</span></a>
-														<a href="<c:url value="/noform/management/exportSurvey/false/${survey.shortname}"/>" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></</span></a>
-													</c:when>
-													<c:otherwise>
-														<a class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy disabled"></</span></a>
-														<a class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt disabled"></</span></a>
-													</c:otherwise>
-												</c:choose>
-												
-												<c:if test="${enablearchiving}">
-													<c:choose>
-														<c:when test="${survey.numberOfAnswerSetsPublished < 2001 && survey.state != 'Running' && (survey.owner.id.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-															<a id="btnArchiveSurvey" class="actionRowAction"  onclick="showArchiveDialog('${survey.shortname}','${survey.id}', true)" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import"></</span></a>
-														</c:when>
-														<c:when test="${!survey.fullFormManagementRights}">
-															<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></</span></a>
-														</c:when>
-														<c:otherwise>
-															<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.ArchiveDisabled" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></</span></a>
-														</c:otherwise>
-													</c:choose>				
-												</c:if>
-	
-												<c:choose>
-													<c:when test="${survey.numberOfAnswerSetsPublished < 2001 && survey.state != 'Running' && (survey.fullFormManagementRights)}">
-														<a id="deleteBtnEnabledFromListSurvey" onclick="showDeleteDialog('${survey.id}');"  class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></</span></a>
+													<c:when test="${survey.numberOfAnswerSetsPublished < 2001 && survey.state != 'Running' && (survey.owner.id.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+														<a id="btnArchiveSurvey" class="actionRowAction"  onclick="showArchiveDialog('${survey.shortname}','${survey.id}', true)" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import"></</span></a>
 													</c:when>
 													<c:when test="${!survey.fullFormManagementRights}">
-														<a id="deleteBtnDisabledFromListSurvey" class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc"></</span></a>
+														<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></</span></a>
 													</c:when>
 													<c:otherwise>
-														<a id="deleteBtnDisabledFromListSurvey" class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="info.CannotDeleteRunningSurvey" />"><span class="glyphicon glyphicon-remove" style="color: #ccc"></</span></a>
+														<a id="btnArchiveSurvey" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.ArchiveDisabled" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></</span></a>
 													</c:otherwise>
-												</c:choose>
-								
-											</td>
-										</tr>
-										</c:if>	
-										
-									</table>	
-	
-								</div>					
-								
-								</c:forEach>
-					
-							</div>
-						
-							<img id="wheel" class="hideme" style="margin-left: 50px" src="${contextpath}/resources/images/ajax-loader.gif" />
-		
+												</c:choose>				
+											</c:if>
+
+											<c:choose>
+												<c:when test="${survey.numberOfAnswerSetsPublished < 2001 && survey.state != 'Running' && (survey.fullFormManagementRights)}">
+													<a id="deleteBtnEnabledFromListSurvey" onclick="showDeleteDialog('${survey.id}');"  class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></</span></a>
+												</c:when>
+												<c:when test="${!survey.fullFormManagementRights}">
+													<a id="deleteBtnDisabledFromListSurvey" class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc"></</span></a>
+												</c:when>
+												<c:otherwise>
+													<a id="deleteBtnDisabledFromListSurvey" class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="info.CannotDeleteRunningSurvey" />"><span class="glyphicon glyphicon-remove" style="color: #ccc"></</span></a>
+												</c:otherwise>
+											</c:choose>
+							
+										</td>
+									</tr>
+									</c:if>	
+									
+								</table>	
+
+							</div>					
+							
+							</c:forEach>
+				
 						</div>
+					
+						<img id="wheel" class="hideme" style="margin-left: 50px" src="${contextpath}/resources/images/ajax-loader.gif" />
 	
-					</div>			
-				</div>
-		</div>
-		
-		<div style="clear: both"> </div>
-	
-		</form:form>
+					</div>
+
+				</div>			
+			</div>
 	</div>
+	
+	<div style="clear: both"> </div>
+
+	</form:form>
 
 	<%@ include file="../footer.jsp" %>	
 	<%@ include file="../import-survey-dialog.jsp" %>	

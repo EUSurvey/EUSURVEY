@@ -23,24 +23,22 @@
 	</c:if>
 </head>
 <body>
-	<div class="page-wrap">
-		<c:choose>
-			<c:when test='${responsive == null && form.survey.skin != null && form.survey.skin.name.equals("New Official EC Skin")}'>
-				<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto;">
-				<%@ include file="headerecnew.jsp" %>	 
-			</c:when>
-			<c:when test='${responsive == null && form.survey.skin != null && form.survey.skin.name.equals("ECA Skin")}'>
-				<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto;">
-				<%@ include file="headerECAnew.jsp" %>	 
-			</c:when>
-			<c:otherwise>
-				<%@ include file="header.jsp" %>	 
-			</c:otherwise>
-		</c:choose>
-	
-		<div class="fullpage">
-			<%@ include file="thanksinner.jsp" %>
-		</div>
+	<c:choose>
+		<c:when test='${responsive == null && form.survey.skin != null && form.survey.skin.name.equals("New Official EC Skin")}'>
+			<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto;">
+			<%@ include file="headerecnew.jsp" %>	 
+		</c:when>
+		<c:when test='${responsive == null && form.survey.skin != null && form.survey.skin.name.equals("ECA Skin")}'>
+			<div id="top-page" style="width: 1302px; margin-left: auto; margin-right: auto;">
+			<%@ include file="headerECAnew.jsp" %>	 
+		</c:when>
+		<c:otherwise>
+			<%@ include file="header.jsp" %>	 
+		</c:otherwise>
+	</c:choose>
+
+	<div class="fullpage">
+		<%@ include file="thanksinner.jsp" %>
 	</div>
 	
 	<c:choose>

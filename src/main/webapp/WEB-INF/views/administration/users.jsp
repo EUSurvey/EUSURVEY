@@ -483,406 +483,405 @@
 		
 </head>
 <body>
-	<div class="page-wrap">
-		<%@ include file="../header.jsp" %>
-		<%@ include file="../menu.jsp" %>
-		<%@ include file="adminmenu.jsp" %>	
+
+	<%@ include file="../header.jsp" %>
+	<%@ include file="../menu.jsp" %>
+	<%@ include file="adminmenu.jsp" %>	
+	
+	<form:form modelAttribute="paging" id="load-users" method="POST" action="${contextpath}/administration/users" class="noautosubmitonclearfilter" style="margin-top: 0px;" onsubmit="$('.tableFloatingHeader').empty();$('.modal-backdrop').hide();$('#show-wait-image').modal('show');">
+	
+		<div class="fixedtitleform">
+			<div class="fixedtitleinner">
+				<c:set var="pagingElementName" value="User" />
+			</div>
+		</div>
 		
-		<form:form modelAttribute="paging" id="load-users" method="POST" action="${contextpath}/administration/users" class="noautosubmitonclearfilter" style="margin-top: 0px;" onsubmit="$('.tableFloatingHeader').empty();$('.modal-backdrop').hide();$('#show-wait-image').modal('show');">
+		<div class="page1200" style="margin-left: auto; margin-right: auto; margin-bottom: 0px; overflow-x: visible;">
 		
-			<div class="fixedtitleform">
-				<div class="fixedtitleinner">
-					<c:set var="pagingElementName" value="User" />
+			<div class="action-bar">
+				<div style="float: left;">
+					<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
+					<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a>
+					<a rel="tooltip" title="<spring:message code="label.Configure" />" onclick="$('#configure-dialog').modal('show')" class="btn btn-default"><i class="icon icon-wrench"></i> <spring:message code="label.Configure" /></a>
+				</div>
+				<div style="text-align:center">
+					<a rel="tooltip" title="<spring:message code="label.AddUser" />" class="btn btn-info" onclick="showAddDialog();"><spring:message code="label.AddUser" /></a>
 				</div>
 			</div>
+					
+			<div id="userTableDiv">	
 			
-			<div class="page1200" style="margin-left: auto; margin-right: auto; padding-bottom: 0px; overflow-x: visible;">
+				<input type="hidden" name="clearFilter" id="clearFilter" value="false" />
+				<input type="hidden" name="sortkey" id="sortkey" value='<esapi:encodeForHTMLAttribute>${filter.sortKey}</esapi:encodeForHTMLAttribute>' />
+				<input type="hidden" name="sortorder" id="sortorder" value='<esapi:encodeForHTMLAttribute>${filter.sortOrder}</esapi:encodeForHTMLAttribute>' />
 			
-				<div class="action-bar">
-					<div style="float: left;">
-						<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
-						<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a>
-						<a rel="tooltip" title="<spring:message code="label.Configure" />" onclick="$('#configure-dialog').modal('show')" class="btn btn-default"><i class="icon icon-wrench"></i> <spring:message code="label.Configure" /></a>
-					</div>
-					<div style="text-align:center">
-						<a rel="tooltip" title="<spring:message code="label.AddUser" />" class="btn btn-info" onclick="showAddDialog();"><spring:message code="label.AddUser" /></a>
-					</div>
-				</div>
-						
-				<div id="userTableDiv">	
-				
-					<input type="hidden" name="clearFilter" id="clearFilter" value="false" />
-					<input type="hidden" name="sortkey" id="sortkey" value='<esapi:encodeForHTMLAttribute>${filter.sortKey}</esapi:encodeForHTMLAttribute>' />
-					<input type="hidden" name="sortorder" id="sortorder" value='<esapi:encodeForHTMLAttribute>${filter.sortOrder}</esapi:encodeForHTMLAttribute>' />
-				
-					<div>
-				
-						<table id="usertable" class="table table-bordered table-styled" style="z-index:4000;">
-							<thead>
-								<tr>
-									<th>
-										<div style="float: right">
-											<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('login',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('login',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-										</div>	 
-										<spring:message code="label.Login" />
-									</th>
-									<th>
-										<div style="float: right">
-											<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('email',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('email',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-										</div>	 
-										<spring:message code="label.Email" />
-									</th>				
-									<th class="hideme"><spring:message code="label.OtherEmail" /></th>
-									<th style="width: 120px;"><spring:message code="label.BanUnban" /></th>
-									<th style="width: 120px;"><spring:message code="label.Language" /></th>
-									<th class="hideme"><spring:message code="label.Roles" /></th>
-									<th class="hideme"><spring:message code="label.Comment" /></th>
-									<th style="width: 110px;"><spring:message code="label.Actions" /></th>
-								</tr>
-								<tr class="table-styled-filter">
-									<th class="filtercell">
-										<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.login}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" style="margin:0px;" name="login" />
-									</th>
-									<th class="filtercell">
-										<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.email}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" style="margin:0px;" name="email" />
-									</th>
-									<th class="filtercell hideme">&#160;</th>
-									<th class="filtercell smallfiltercell">
-										<div class="btn-group">
-										  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
-										    <spring:message code="label.AllValues" />
-										    <span style="margin-right: 10px" class="caret"></span>
-										  </a>
-										  <ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">			
-									  		<li style="text-align: right;">
-											    <a style="display: inline"  onclick="$('#load-users').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
-											</li>	
-										  </ul>
-										  <ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">
-										  	<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="banned" type="checkbox" class="check" style="width: auto !important;" data-code="banned" value="true" <c:if test="${filter.banned}">checked="checked"</c:if> /><spring:message code="label.Banned" /></li>
-										  	<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="unbanned" type="checkbox" class="check" style="width: auto !important;" data-code="unbanned" value="true" <c:if test="${filter.unbanned}">checked="checked"</c:if> /><spring:message code="label.Unbanned" /></li>
-										  </ul>
-										</div>
-									</th>
-									<th class="filtercell smallfiltercell">
-										<div class="btn-group">
-										  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
-										    <spring:message code="label.AllValues" />
-										    <span style="margin-right: 10px" class="caret"></span>
-										  </a>
-										  <ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">			
-									  		<li style="text-align: right;">
-											    <a style="display: inline"  onclick="$('#load-users').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
-											</li>	
-										  </ul>
-										  <ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">			
-										  	<c:forEach items="${languages}" var="language">			
-										  		<li>	
-													<c:if test="${language.official}">				
-														<input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="languages" type="checkbox" class="check" style="width: auto !important;" data-code="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>" value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>" <c:if test="${filter.containsLanguage(language.code)}">checked="checked"</c:if> /><esapi:encodeForHTML>${language.code} - <spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML>
-													</c:if>
-												</li>
-											</c:forEach> 				
-										  </ul>
-										</div>
-									</th>
-									<th class="filtercell smallfiltercell hideme">
-										<div class="btn-group">
-										  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
-										    <spring:message code="label.AllValues" />
-										    <span style="margin-right: 10px" class="caret"></span>
-										  </a>
-										  
-										  <ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">			
-									  		<li style="text-align: right;">
-											    <a style="display: inline"  onclick="$('#load-users').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
-											</li>	
-										  </ul>
-										  <ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">						  
-										  	<c:forEach items="${ExistingRoles}" var="role">			
-										  		<li>	
-													<input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="roles" type="checkbox" class="check" style="width: auto !important;" value="<esapi:encodeForHTMLAttribute>${role.id}</esapi:encodeForHTMLAttribute>" <c:if test="${filter.containsRole(role.id)}">checked="checked"</c:if> /><esapi:encodeForHTMLAttribute>${role.name}</esapi:encodeForHTMLAttribute>
-												</li>
-											</c:forEach> 
-										  </ul>
-										</div>
-									</th> 
-									<th class="filtercell hideme">
-										<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.comment}</esapi:encodeForHTMLAttribute>' type="text" class="small-form-control" maxlength="100" style="margin:0px;" name="comment" />
-									</th>
-									<th>&#160;</th>
-								</tr>
-							</thead>
-							<tbody>
-							<c:forEach items="${paging.items}" var="user">
-								<tr>
-									<td>
-										<c:choose>
-											<c:when test="${user.type == 'SYSTEM'}">
-												<esapi:encodeForHTML>${user.name}</esapi:encodeForHTML>
-											</c:when>
-											<c:otherwise>
-												<esapi:encodeForHTML>${user.name}</esapi:encodeForHTML>&#160(<spring:message code="label.EULogin" />)
-											</c:otherwise>
-										</c:choose>
-									</td>
-									<td><esapi:encodeForHTML>${user.email}</esapi:encodeForHTML></td>
-									<td class="hideme"><esapi:encodeForHTML>${user.otherEmail}</esapi:encodeForHTML></td>
-									<td>
-										<c:choose>
-											<c:when test="${user.frozen}">
-												<spring:message code="label.Banned" />
-											</c:when>
-											<c:otherwise>
-												<spring:message code="label.Unbanned" />
-											</c:otherwise>
-										</c:choose>
-									</td>
-									<td><esapi:encodeForHTML>${user.language}</esapi:encodeForHTML></td>
-									<td class="hideme">
-										<c:forEach items="${user.roles}" var="role">
-											<esapi:encodeForHTML>${role.name}</esapi:encodeForHTML>				
-										</c:forEach>	
-									</td>
-									<td class="hideme"><esapi:encodeForHTML>${user.comment}</esapi:encodeForHTML></td>
-									<td style="min-width: 110px;">
-										<a data-toggle="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" onclick='showEditDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}","${user.email}","${user.otherEmail}","${user.comment}","${user.language}","${user.type}","${user.getRolesAsString()}","${user.getGivenName()}","${user.getSurName()}", ${user.type == 'SYSTEM'}, ${user.frozen}</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-pencil"></span></a>
-										<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton" onclick='showDeleteDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}"</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-remove icon-red"></span></a>
-																			
-										<c:choose>
-											<c:when test="${user.frozen}">
-												<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.UnbanUser" />" onclick="unfreezeUser(${user.id});"><span class="glyphicon glyphicon-ban-circle lightred"></span></a>
-											</c:when>
-											<c:otherwise>			
-												<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.BanUser" />" onclick="showFreezeUserDialog(${user.id}, '${user.name}', '${user.email}');"><span class="glyphicon glyphicon-ban-circle"></span></a>
-											</c:otherwise>
-										</c:choose>								
-										
-									</td>
-								</tr>
-							</c:forEach>
-							<c:if test="${paging.items == null || paging.items.size() == 0}">
-								<tr>
-									<td colspan="6"><spring:message code="label.NoUsersToDisplay"/></td>
-								</tr>
-							</c:if>
-				
-							</tbody>
-						
-						</table>
-						
-						<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging.items.size() == 0 }">style="display:block;"</c:if>>
-							<p>
-								<spring:message code="label.NoDataUserText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
-							</p>
-						</div>	
-						
-						<c:if test="${paging.items != null && paging.items.size() > 0}">
-							<%@ include file="../paging.jsp" %>	
-						
-							<c:if test="${pagingTable ne false}">
-								<div class="RowsPerPage">
-									<span><spring:message code="label.RowsPerPage" />&#160;</span>
-								    <form:select onchange="moveTo('${paging.currentPage}')" path="itemsPerPage" id="itemsPerPage" style="width:70px; margin-top: 0px;" class="middle small-form-control">
-										<form:options items="${paging.itemsPerPageOptions}" />
-									</form:select>
-								</div>
-							</c:if>		
+				<div>
+			
+					<table id="usertable" class="table table-bordered table-styled" style="z-index:4000;">
+						<thead>
+							<tr>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('login',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('login',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>	 
+									<spring:message code="label.Login" />
+								</th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('email',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('email',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>	 
+									<spring:message code="label.Email" />
+								</th>				
+								<th class="hideme"><spring:message code="label.OtherEmail" /></th>
+								<th style="width: 120px;"><spring:message code="label.BanUnban" /></th>
+								<th style="width: 120px;"><spring:message code="label.Language" /></th>
+								<th class="hideme"><spring:message code="label.Roles" /></th>
+								<th class="hideme"><spring:message code="label.Comment" /></th>
+								<th style="width: 110px;"><spring:message code="label.Actions" /></th>
+							</tr>
+							<tr class="table-styled-filter">
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.login}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" style="margin:0px;" name="login" />
+								</th>
+								<th class="filtercell">
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.email}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" style="margin:0px;" name="email" />
+								</th>
+								<th class="filtercell hideme">&#160;</th>
+								<th class="filtercell smallfiltercell">
+									<div class="btn-group">
+									  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+									    <spring:message code="label.AllValues" />
+									    <span style="margin-right: 10px" class="caret"></span>
+									  </a>
+									  <ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">			
+								  		<li style="text-align: right;">
+										    <a style="display: inline"  onclick="$('#load-users').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
+										</li>	
+									  </ul>
+									  <ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">
+									  	<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="banned" type="checkbox" class="check" style="width: auto !important;" data-code="banned" value="true" <c:if test="${filter.banned}">checked="checked"</c:if> /><spring:message code="label.Banned" /></li>
+									  	<li><input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="unbanned" type="checkbox" class="check" style="width: auto !important;" data-code="unbanned" value="true" <c:if test="${filter.unbanned}">checked="checked"</c:if> /><spring:message code="label.Unbanned" /></li>
+									  </ul>
+									</div>
+								</th>
+								<th class="filtercell smallfiltercell">
+									<div class="btn-group">
+									  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+									    <spring:message code="label.AllValues" />
+									    <span style="margin-right: 10px" class="caret"></span>
+									  </a>
+									  <ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">			
+								  		<li style="text-align: right;">
+										    <a style="display: inline"  onclick="$('#load-users').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
+										</li>	
+									  </ul>
+									  <ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">			
+									  	<c:forEach items="${languages}" var="language">			
+									  		<li>	
+												<c:if test="${language.official}">				
+													<input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="languages" type="checkbox" class="check" style="width: auto !important;" data-code="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>" value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>" <c:if test="${filter.containsLanguage(language.code)}">checked="checked"</c:if> /><esapi:encodeForHTML>${language.code} - <spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML>
+												</c:if>
+											</li>
+										</c:forEach> 				
+									  </ul>
+									</div>
+								</th>
+								<th class="filtercell smallfiltercell hideme">
+									<div class="btn-group">
+									  <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" >
+									    <spring:message code="label.AllValues" />
+									    <span style="margin-right: 10px" class="caret"></span>
+									  </a>
+									  
+									  <ul class="dropdown-menu" style="padding: 10px; padding-bottom: 20px;">			
+								  		<li style="text-align: right;">
+										    <a style="display: inline"  onclick="$('#load-users').submit();" class="btn btn-default btn-xs" rel="tooltip" title="update"><spring:message code="label.OK" /></a>
+										</li>	
+									  </ul>
+									  <ul class="dropdown-menu" style="padding: 10px; margin-top: 42px;">						  
+									  	<c:forEach items="${ExistingRoles}" var="role">			
+									  		<li>	
+												<input onclick="checkFilterCell($(this).closest('.filtercell'), false)" name="roles" type="checkbox" class="check" style="width: auto !important;" value="<esapi:encodeForHTMLAttribute>${role.id}</esapi:encodeForHTMLAttribute>" <c:if test="${filter.containsRole(role.id)}">checked="checked"</c:if> /><esapi:encodeForHTMLAttribute>${role.name}</esapi:encodeForHTMLAttribute>
+											</li>
+										</c:forEach> 
+									  </ul>
+									</div>
+								</th> 
+								<th class="filtercell hideme">
+									<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.comment}</esapi:encodeForHTMLAttribute>' type="text" class="small-form-control" maxlength="100" style="margin:0px;" name="comment" />
+								</th>
+								<th>&#160;</th>
+							</tr>
+						</thead>
+						<tbody>
+						<c:forEach items="${paging.items}" var="user">
+							<tr>
+								<td>
+									<c:choose>
+										<c:when test="${user.type == 'SYSTEM'}">
+											<esapi:encodeForHTML>${user.name}</esapi:encodeForHTML>
+										</c:when>
+										<c:otherwise>
+											<esapi:encodeForHTML>${user.name}</esapi:encodeForHTML>&#160(<spring:message code="label.EULogin" />)
+										</c:otherwise>
+									</c:choose>
+								</td>
+								<td><esapi:encodeForHTML>${user.email}</esapi:encodeForHTML></td>
+								<td class="hideme"><esapi:encodeForHTML>${user.otherEmail}</esapi:encodeForHTML></td>
+								<td>
+									<c:choose>
+										<c:when test="${user.frozen}">
+											<spring:message code="label.Banned" />
+										</c:when>
+										<c:otherwise>
+											<spring:message code="label.Unbanned" />
+										</c:otherwise>
+									</c:choose>
+								</td>
+								<td><esapi:encodeForHTML>${user.language}</esapi:encodeForHTML></td>
+								<td class="hideme">
+									<c:forEach items="${user.roles}" var="role">
+										<esapi:encodeForHTML>${role.name}</esapi:encodeForHTML>				
+									</c:forEach>	
+								</td>
+								<td class="hideme"><esapi:encodeForHTML>${user.comment}</esapi:encodeForHTML></td>
+								<td style="min-width: 110px;">
+									<a data-toggle="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" onclick='showEditDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}","${user.email}","${user.otherEmail}","${user.comment}","${user.language}","${user.type}","${user.getRolesAsString()}","${user.getGivenName()}","${user.getSurName()}", ${user.type == 'SYSTEM'}, ${user.frozen}</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-pencil"></span></a>
+									<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton" onclick='showDeleteDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}"</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-remove icon-red"></span></a>
+																		
+									<c:choose>
+										<c:when test="${user.frozen}">
+											<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.UnbanUser" />" onclick="unfreezeUser(${user.id});"><span class="glyphicon glyphicon-ban-circle lightred"></span></a>
+										</c:when>
+										<c:otherwise>			
+											<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.BanUser" />" onclick="showFreezeUserDialog(${user.id}, '${user.name}', '${user.email}');"><span class="glyphicon glyphicon-ban-circle"></span></a>
+										</c:otherwise>
+									</c:choose>								
+									
+								</td>
+							</tr>
+						</c:forEach>
+						<c:if test="${paging.items == null || paging.items.size() == 0}">
+							<tr>
+								<td colspan="6"><spring:message code="label.NoUsersToDisplay"/></td>
+							</tr>
 						</c:if>
-					</div>		
-				</div>
-				
-				<div style="clear: both"></div>
-				
-				<div style="margin-left: auto; margin-right: auto; width: 300px; text-align: center" class="hideme">
-					<input type="submit" class="btn btn-default" value="Search"/>
-					<a onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a>	
-					<a class="btn btn-default" onclick="showAddDialog();"><spring:message code="label.AddUser" /></a>
-				</div>
-				
+			
+						</tbody>
+					
+					</table>
+					
+					<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${paging.items.size() == 0 }">style="display:block;"</c:if>>
+						<p>
+							<spring:message code="label.NoDataUserText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
+						<p>
+					</div>	
+					
+					<c:if test="${paging.items != null && paging.items.size() > 0}">
+						<%@ include file="../paging.jsp" %>	
+					
+						<c:if test="${pagingTable ne false}">
+							<div class="RowsPerPage">
+								<span><spring:message code="label.RowsPerPage" />&#160;</span>
+							    <form:select onchange="moveTo('${paging.currentPage}')" path="itemsPerPage" id="itemsPerPage" style="width:70px; margin-top: 0px;" class="middle small-form-control">
+									<form:options items="${paging.itemsPerPageOptions}" />
+								</form:select>
+							</div		
+						</c:if>		
+					</c:if>
+				</div>		
 			</div>
 			
 			<div style="clear: both"></div>
 			
-		</form:form>
-				
-		<form:form id="create-user" method="POST" action="${contextpath}/administration/users/createUser" class="hideme">
-			<input type="hidden" name="add-login" id="login" value="" />
-			<input type="hidden" name="add-password" id="password" value="" />	
-			<input type="hidden" name="add-email" id="email" value="" />
-			<input type="hidden" name="add-other-email" id="otheremail" value="" />
-			<input type="hidden" name="add-firstname" id="firstname" value="" />
-			<input type="hidden" name="add-lastname" id="lastname" value="" />
-			<input type="hidden" name="add-comment" id="comment" value="" />
-			<input type="hidden" name="add-language" id="language" value="" />
-			<input type="hidden" name="add-roles" id="roles" value="" />
-		</form:form>
-		
-		<form:form id="update-user" method="POST" action="${contextpath}/administration/users/updateUser" class="hideme">
-			<input type="hidden" name="update-id" id="update-id" value="" />
-			<input type="hidden" name="update-password" id="update-password" value="" />	
-			<input type="hidden" name="update-email" id="update-email" value="" />
-			<input type="hidden" name="update-other-email" id="update-otheremail" value="" />
-			<input type="hidden" name="update-firstname" id="update-firstname" value="" />
-			<input type="hidden" name="update-lastname" id="update-lastname" value="" />
-			<input type="hidden" name="update-comment" id="update-comment" value="" />
-			<input type="hidden" name="update-language" id="update-language" value="" />
-			<input type="hidden" name="update-roles" id="update-roles" value="" />
-			<input type="hidden" name="newPage" value="${paging.currentPage}" />
-		</form:form>
-		
-		<form:form id="delete-user" method="POST" action="${contextpath}/administration/users/deleteUser" class="hideme">
-			<input type="hidden" name="id" id="delete-id" value="" />
-		</form:form>
-	
-		<div class="modal" id="add-user-dialog" data-backdrop="static" style="">
-			<div class="modal-dialog">
-	    	<div class="modal-content">
-			<div class="modal-header">
-				<span id="add-user-dialog-header1"><spring:message code="label.AddUser" /></span>
-				<span id="add-user-dialog-header2" class="hideme"><spring:message code="label.EditUserSettings" /></span>
+			<div style="margin-left: auto; margin-right: auto; width: 300px; text-align: center" class="hideme">
+				<input type="submit" class="btn btn-default" value="Search"/>
+				<a onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a>	
+				<a class="btn btn-default" onclick="showAddDialog();"><spring:message code="label.AddUser" /></a>
 			</div>
-			<div class="modal-body">
-				<div id="banneduserinfo" class="lightred" style="margin-bottom: 10px; display: none;"><spring:message code="label.Banned" /></div>
+			
+		</div>
+		
+		<div style="clear: both"></div>
+		
+	</form:form>
+			
+	<form:form id="create-user" method="POST" action="${contextpath}/administration/users/createUser" class="hideme">
+		<input type="hidden" name="add-login" id="login" value="" />
+		<input type="hidden" name="add-password" id="password" value="" />	
+		<input type="hidden" name="add-email" id="email" value="" />
+		<input type="hidden" name="add-other-email" id="otheremail" value="" />
+		<input type="hidden" name="add-firstname" id="firstname" value="" />
+		<input type="hidden" name="add-lastname" id="lastname" value="" />
+		<input type="hidden" name="add-comment" id="comment" value="" />
+		<input type="hidden" name="add-language" id="language" value="" />
+		<input type="hidden" name="add-roles" id="roles" value="" />
+	</form:form>
 	
-				<div class="row">
-					<div class="col-md-6">
-						<label for="add-user-login"><spring:message code="label.Login" /></label><br />
-						<input tabindex="1" class="form-control required" type="text" maxlength="255" id="add-user-login" /><br />
-						<label for="add-user-password"><spring:message code="label.Password" /></label><br />
-						<input tabindex="2" class="form-control required" type="password" maxlength="16" autocomplete="off" id="add-user-password" /><br />
-						<label for="add-user-email"><spring:message code="label.Email" /></label><br />
-						<input tabindex="3" class="form-control required email" type="text" maxlength="255" id="add-user-email" /><br />
-						<label for="old-user-email"><spring:message code="label.OtherEmail" /><span style="color: #999; margin-left: 10px"><spring:message code="info.OtherEmail" /></span></label><br />
-						<textarea tabindex="4" class="form-control"  maxlength="255" id="other-user-email"></textarea><br />
-						<label for="add-user-comment"><spring:message code="label.Comment" /></label><br />
-						<textarea class="form-control" tabindex="5" id="add-user-comment" maxlength="255"></textarea><br />
+	<form:form id="update-user" method="POST" action="${contextpath}/administration/users/updateUser" class="hideme">
+		<input type="hidden" name="update-id" id="update-id" value="" />
+		<input type="hidden" name="update-password" id="update-password" value="" />	
+		<input type="hidden" name="update-email" id="update-email" value="" />
+		<input type="hidden" name="update-other-email" id="update-otheremail" value="" />
+		<input type="hidden" name="update-firstname" id="update-firstname" value="" />
+		<input type="hidden" name="update-lastname" id="update-lastname" value="" />
+		<input type="hidden" name="update-comment" id="update-comment" value="" />
+		<input type="hidden" name="update-language" id="update-language" value="" />
+		<input type="hidden" name="update-roles" id="update-roles" value="" />
+		<input type="hidden" name="newPage" value="${paging.currentPage}" />
+	</form:form>
+	
+	<form:form id="delete-user" method="POST" action="${contextpath}/administration/users/deleteUser" class="hideme">
+		<input type="hidden" name="id" id="delete-id" value="" />
+	</form:form>
+
+	<div class="modal" id="add-user-dialog" data-backdrop="static" style="">
+		<div class="modal-dialog">
+    	<div class="modal-content">
+		<div class="modal-header">
+			<span id="add-user-dialog-header1"><spring:message code="label.AddUser" /></span>
+			<span id="add-user-dialog-header2" class="hideme"><spring:message code="label.EditUserSettings" /></span>
+		</div>
+		<div class="modal-body">
+			<div id="banneduserinfo" class="lightred" style="margin-bottom: 10px; display: none;"><spring:message code="label.Banned" /></div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<label for="add-user-login"><spring:message code="label.Login" /></label><br />
+					<input tabindex="1" class="form-control required" type="text" maxlength="255" id="add-user-login" /><br />
+					<label for="add-user-password"><spring:message code="label.Password" /></label><br />
+					<input tabindex="2" class="form-control required" type="password" maxlength="16" autocomplete="off" id="add-user-password" /><br />
+					<label for="add-user-email"><spring:message code="label.Email" /></label><br />
+					<input tabindex="3" class="form-control required email" type="text" maxlength="255" id="add-user-email" /><br />
+					<label for="old-user-email"><spring:message code="label.OtherEmail" /><span style="color: #999; margin-left: 10px"><spring:message code="info.OtherEmail" /></span></label><br />
+					<textarea tabindex="4" class="form-control"  maxlength="255" id="other-user-email"></textarea><br />
+					<label for="add-user-comment"><spring:message code="label.Comment" /></label><br />
+					<textarea class="form-control" tabindex="5" id="add-user-comment" maxlength="255"></textarea><br />
+				</div>
+				<div class="col-md-6">
+			
+					<label for="add-user-firstname"><spring:message code="label.FirstName" /></label><br />
+					<input tabindex="6" class="form-control required" type="text" maxlength="255" id="add-user-firstname"/><br />
+					<label for="add-user-lastname"><spring:message code="label.LastName" /></label><br />
+					<input tabindex="7" class="form-control required" type="text" maxlength="255" id="add-user-lastname" />
+					<div class="alert alert-warning" style="margin-top: 10px">
+						<label><spring:message code="label.Roles" /></label><br />
+						<c:forEach items="${ExistingRoles}" var="role">
+							<input tabindex="8" class="role required" type="radio" name="add-user-role" id="add-user-role${role.id}" value="${role.id}" />&nbsp;<esapi:encodeForHTML>${role.name}</esapi:encodeForHTML><br />
+						</c:forEach>
 					</div>
-					<div class="col-md-6">
-				
-						<label for="add-user-firstname"><spring:message code="label.FirstName" /></label><br />
-						<input tabindex="6" class="form-control required" type="text" maxlength="255" id="add-user-firstname"/><br />
-						<label for="add-user-lastname"><spring:message code="label.LastName" /></label><br />
-						<input tabindex="7" class="form-control required" type="text" maxlength="255" id="add-user-lastname" />
-						<div class="alert alert-warning" style="margin-top: 10px">
-							<label><spring:message code="label.Roles" /></label><br />
-							<c:forEach items="${ExistingRoles}" var="role">
-								<input tabindex="8" class="role required" type="radio" name="add-user-role" id="add-user-role${role.id}" value="${role.id}" />&nbsp;<esapi:encodeForHTML>${role.name}</esapi:encodeForHTML><br />
-							</c:forEach>
-						</div>
-						<label for="add-user-language"><spring:message code="label.Language" /></label><br />
-						<select tabindex="9" class="form-control required" id="add-user-language">
-							<c:forEach items="${languages}" var="language">				
-								<c:if test="${language.official}">
-									<c:choose>
-										<c:when test="${language.code.equalsIgnoreCase('EN')}">
-											<option selected="selected" value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
-										</c:when>
-										<c:otherwise>
-											<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
-										</c:otherwise>
-									</c:choose>
-								</c:if>
-							</c:forEach>
-						</select>
-					</div>				
-				</div>
-			</div>
-			<div class="modal-footer">
-				<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a tabindex="9" id="add-user-button" onclick="createUser();" class="btn btn-info"><spring:message code="label.OK" /></a>	
-				<a tabindex="10" onblur="$('#add-user-login').focus()" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
-			</div>
-			</div>
+					<label for="add-user-language"><spring:message code="label.Language" /></label><br />
+					<select tabindex="9" class="form-control required" id="add-user-language">
+						<c:forEach items="${languages}" var="language">				
+							<c:if test="${language.official}">
+								<c:choose>
+									<c:when test="${language.code.equalsIgnoreCase('EN')}">
+										<option selected="selected" value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
+									</c:when>
+									<c:otherwise>
+										<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
+									</c:otherwise>
+								</c:choose>
+							</c:if>
+						</c:forEach>
+					</select>
+				</div>				
 			</div>
 		</div>
-		
-		<div class="modal" id="delete-user-dialog" data-backdrop="static">
-			<div class="modal-dialog">
-	    	<div class="modal-content">
-			<div class="modal-body">
-				<spring:message code="question.DeleteUser" />
-			</div>
-			<div class="modal-footer">
-				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>			
-				<a  onclick="deleteUser();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>		
-			</div>
-			</div>
-			</div>
+		<div class="modal-footer">
+			<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+			<a tabindex="9" id="add-user-button" onclick="createUser();" class="btn btn-info"><spring:message code="label.OK" /></a>	
+			<a tabindex="10" onblur="$('#add-user-login').focus()" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 		</div>
-	
-		<div class="modal" id="configure-dialog" data-backdrop="static">
-			<form:form id="configure-attributes-form" method="POST" action="${contextpath}/addressbook/configureAttributes" style="height: auto; margin: 0px; padding: 0px;">			
-				<div class="modal-dialog">
-	    		<div class="modal-content">
-				<div class="modal-header">
-					<b><spring:message code="label.Configure" /></b>
-				</div>
-				<div class="modal-body" style="height: 470px; max-height: 470px;">				
-					<div class="well">
-						<input <c:if test="${usersConfiguration.showName}">checked="checked"</c:if> type="checkbox" class="check" id="user-name" name="user-name" value="true" /><span><spring:message code="label.Login" /></span><br />
-						<input <c:if test="${usersConfiguration.showEmail}">checked="checked"</c:if> type="checkbox" class="check" id="user-email" name="user-email" value="true" /><span><spring:message code="label.Email" /></span><br />
-						<input <c:if test="${usersConfiguration.showOtherEmail}">checked="checked"</c:if> type="checkbox" class="check" id="user-otheremail" name="user-email" value="true" /><span><spring:message code="label.OtherEmail" /></span><br />
-						<input <c:if test="${usersConfiguration.showBanned}">checked="checked"</c:if> type="checkbox" class="check" id="user-banned" name="user-banned" value="true" /><span><spring:message code="label.Banned" /></span><br />
-						<input <c:if test="${usersConfiguration.showLanguage}">checked="checked"</c:if> type="checkbox" class="check" id="user-language" name="user-language" value="true" /><span><spring:message code="label.Language" /></span><br />
-						<input <c:if test="${usersConfiguration.showRoles}">checked="checked"</c:if> type="checkbox" class="check" id="user-roles" name="user-roles" value="true" /><span><spring:message code="label.Roles" /></span><br />
-						<input <c:if test="${usersConfiguration.showComment}">checked="checked"</c:if> type="checkbox" class="check" id="user-comment" name="user-comment" value="true" /><span><spring:message code="label.Comment" /></span>
-					</div>				
-				</div>
-				<div class="modal-footer">
-					<a onclick="saveConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
-					<a onclick="cancelConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
-				</div>
-				</div>
-				</div>
-			</form:form>
 		</div>
-		
-		<div class="modal" id="userreferenceserrordialog">
-			<div class="modal-dialog">
-	    		<div class="modal-content">
-	    			<div class="modal-body">
-	    				<spring:message code="info.userreferenceserror" />
-	    			</div>
-	    			<div class="modal-footer">
-	    				<a onclick="$('#userreferenceserrordialog').modal('hide');" class="btn btn-info"><spring:message code="label.OK" /></a>
-	    			</div>
-	    		</div>
-	    	</div>
 		</div>
-		
-		<div class="modal" id="freeze-user-dialog" data-backdrop="static">
-			<div class="modal-dialog">
-		   		<div class="modal-content">
-		   			<form:form id="freeze-user-form" method="POST" action="${contextpath}/administration/users/banuser">
-		   				<input type="hidden" id="freezeUserId" name="userId" />
-				   		<div class="modal-header">
-				   			<spring:message code="label.BanUser" />
-				   		</div>
-						<div class="modal-body">
-							<textarea id="freezeUserText" name="emailText" class="tinymce" style="height: 200px">
-								
-							</textarea><br />
-							<input type="checkbox" class="check" id="freezeUserCheck" /> <spring:message code="label.confirmfreezeuser" />
-							<div id="freezeUserCheckError" style="color: #f00; display: none"><spring:message code="error.activateCheckbox" /></div>
-						</div>
-						<div class="modal-footer">
-							<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-							<a id="freezeUserYesBtn"  onclick="freezeUser();" class="btn btn-info"><spring:message code="label.BanUser" /></a>
-							<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
-						</div>
-					</form:form>
-				</div>
-			</div>
-		</div>
-		
-		<form:form class="hidden" id="unfreeze-user-form" method="POST" action="${contextpath}/administration/users/unbanuser">
-	  		<input type="hidden" id="unfreezeUserId" name="userId" />
-		</form:form>
-		
-		<div id="freezeuserdefaulttext" class="hidden">${freezeusertext}</div>
 	</div>
+	
+	<div class="modal" id="delete-user-dialog" data-backdrop="static">
+		<div class="modal-dialog">
+    	<div class="modal-content">
+		<div class="modal-body">
+			<spring:message code="question.DeleteUser" />
+		</div>
+		<div class="modal-footer">
+			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>			
+			<a  onclick="deleteUser();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>		
+		</div>
+		</div>
+		</div>
+	</div>
+
+	<div class="modal" id="configure-dialog" data-backdrop="static">
+		<form:form id="configure-attributes-form" method="POST" action="${contextpath}/addressbook/configureAttributes" style="height: auto; margin: 0px; padding: 0px;">			
+			<div class="modal-dialog">
+    		<div class="modal-content">
+			<div class="modal-header">
+				<b><spring:message code="label.Configure" /></b>
+			</div>
+			<div class="modal-body" style="height: 470px; max-height: 470px;">				
+				<div class="well">
+					<input <c:if test="${usersConfiguration.showName}">checked="checked"</c:if> type="checkbox" class="check" id="user-name" name="user-name" value="true" /><span><spring:message code="label.Login" /></span><br />
+					<input <c:if test="${usersConfiguration.showEmail}">checked="checked"</c:if> type="checkbox" class="check" id="user-email" name="user-email" value="true" /><span><spring:message code="label.Email" /></span><br />
+					<input <c:if test="${usersConfiguration.showOtherEmail}">checked="checked"</c:if> type="checkbox" class="check" id="user-otheremail" name="user-email" value="true" /><span><spring:message code="label.OtherEmail" /></span><br />
+					<input <c:if test="${usersConfiguration.showBanned}">checked="checked"</c:if> type="checkbox" class="check" id="user-banned" name="user-banned" value="true" /><span><spring:message code="label.Banned" /></span><br />
+					<input <c:if test="${usersConfiguration.showLanguage}">checked="checked"</c:if> type="checkbox" class="check" id="user-language" name="user-language" value="true" /><span><spring:message code="label.Language" /></span><br />
+					<input <c:if test="${usersConfiguration.showRoles}">checked="checked"</c:if> type="checkbox" class="check" id="user-roles" name="user-roles" value="true" /><span><spring:message code="label.Roles" /></span><br />
+					<input <c:if test="${usersConfiguration.showComment}">checked="checked"</c:if> type="checkbox" class="check" id="user-comment" name="user-comment" value="true" /><span><spring:message code="label.Comment" /></span>
+				</div>				
+			</div>
+			<div class="modal-footer">
+				<a onclick="saveConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+				<a onclick="cancelConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
+			</div>
+			</div>
+			</div>
+		</form:form>
+	</div>
+	
+	<div class="modal" id="userreferenceserrordialog">
+		<div class="modal-dialog">
+    		<div class="modal-content">
+    			<div class="modal-body">
+    				<spring:message code="info.userreferenceserror" />
+    			</div>
+    			<div class="modal-footer">
+    				<a onclick="$('#userreferenceserrordialog').modal('hide');" class="btn btn-info"><spring:message code="label.OK" /></a>
+    			</div>
+    		</div>
+    	</div>
+	</div>
+	
+	<div class="modal" id="freeze-user-dialog" data-backdrop="static">
+		<div class="modal-dialog">
+	   		<div class="modal-content">
+	   			<form:form id="freeze-user-form" method="POST" action="${contextpath}/administration/users/banuser">
+	   				<input type="hidden" id="freezeUserId" name="userId" />
+			   		<div class="modal-header">
+			   			<spring:message code="label.BanUser" />
+			   		</div>
+					<div class="modal-body">
+						<textarea id="freezeUserText" name="emailText" class="tinymce" style="height: 200px">
+							
+						</textarea><br />
+						<input type="checkbox" class="check" id="freezeUserCheck" /> <spring:message code="label.confirmfreezeuser" />
+						<div id="freezeUserCheckError" style="color: #f00; display: none"><spring:message code="error.activateCheckbox" /></div>
+					</div>
+					<div class="modal-footer">
+						<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+						<a id="freezeUserYesBtn"  onclick="freezeUser();" class="btn btn-info"><spring:message code="label.BanUser" /></a>
+						<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
+					</div>
+				</form:form>
+			</div>
+		</div>
+	</div>
+	
+	<form:form class="hidden" id="unfreeze-user-form" method="POST" action="${contextpath}/administration/users/unbanuser">
+  		<input type="hidden" id="unfreezeUserId" name="userId" />
+	</form:form>
+	
+	<div id="freezeuserdefaulttext" class="hidden">${freezeusertext}</div>
 
 	<%@ include file="../footer.jsp" %>	
 
