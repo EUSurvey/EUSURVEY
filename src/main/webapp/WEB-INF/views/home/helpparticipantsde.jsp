@@ -132,7 +132,7 @@
 					</ul>
 				</li>
 				
-				<li><a class="anchorlink head" href="#_Toc369865016a">Ein Problem mit einer Umfrage melden</a></li>
+					<li><a class="anchorlink head" href="#_Toc369865016a">Missbrauch melden</a></li>
 								
 				<li><a class="anchorlink head" href="#_Toc369865017">Nach dem Beitrag</a>
 					<ul>
@@ -186,8 +186,8 @@
 		<h2><a class="anchor" name="_Toc369865016"></a>Warum verschwindet die von mir gewählte Antwort auf eine Matrix-Auswahlfrage?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 		<p>Bei Matrix-Fragen kann eingestellt sein, dass Sie jede Antwort nur ein einziges Mal auswählen können. So lässt sich eine Rangordnung der Antworten erzwingen.</p>
 		
-		<h1><a class="anchor" name="_Toc369865016a"></a>Ein Problem mit einer Umfrage melden<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h1>
-		<p>Wenn eine Umfrage illegale Inhalte enthält oder die Rechte anderer verletzt (einschließlich geistiger Eigentumsrechte, Wettbewerbsrecht und allgemeines Recht), verwenden Sie bitte den Link "Problem mit dieser Umfrage melden" auf der rechten Seite.</p>
+			<h1><a class="anchor" name="_Toc369865016a"></a>Missbrauch melden<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h1>
+			<p>Wenn eine Umfrage illegale Inhalte enthält oder die Rechte anderer verletzt (einschließlich geistiger Eigentumsrechte, Wettbewerbsrecht und allgemeines Recht), verwenden Sie bitte den Link "Missbrauch melden" auf der rechten Seite.</p>
 		<p>Weitere Informationen hierzu finden Sie in den <a href="${contextpath}/home/tos">EUSurvey-Nutzungsbedingungen</a>.</p>
 			
 		<h1><a class="anchor" name="_Toc369865017"></a>Nach dem Beitrag</h1>
