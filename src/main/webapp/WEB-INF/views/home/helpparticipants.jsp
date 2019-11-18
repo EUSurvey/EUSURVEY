@@ -128,7 +128,7 @@
 						</ul>
 					</li>
 					
-					<li><a class="anchorlink head" href="#_Toc369865016a">Report an issue with a survey</a></li>
+					<li><a class="anchorlink head" href="#_Toc369865016a">Report Abuse</a></li>
 					
 					<li><a class="anchorlink head" href="#_Toc369865017">After contributing</a>
 						<ul>
@@ -179,8 +179,8 @@
 			<h2><a class="anchor" name="_Toc369865016"></a>Why does my selected answer disappear when answering a matrix question?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 			<p>This is a possible feature of the matrix question where you can only select each possible answer once. It can be used to ensure a &quot;ranking&quot; on given answers.</p>
 					
-			<h1><a class="anchor" name="_Toc369865016a"></a>Report an issue with a survey<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h1>
-			<p>If a survey contains illegal content or violate the rights of others (including intellectual property rights, competition law and general law), please use the ‘Report an issue with this survey’ link on the right-side pane.</p>
+			<h1><a class="anchor" name="_Toc369865016a"></a>Report Abuse<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h1>
+			<p>If a survey contains illegal content or violate the rights of others (including intellectual property rights, competition law and general law), please use the ‘Report Abuse’ link on the right-side pane.</p>
 			<p>Please refers to the EUSurvey <a href="${contextpath}/home/tos">Terms of Service</a> for more information on this matter.</p>
 			
 			<h1><a class="anchor" name="_Toc369865017"></a>After contributing</h1>
