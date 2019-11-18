@@ -133,7 +133,7 @@
 						</ul>
 					</li>
 					
-					<li><a class="anchorlink head" href="#_Toc369865016a">Signaler un problème sur une enquête</a></li>
+					<li><a class="anchorlink head" href="#_Toc369865016a">Signaler un abus</a></li>
 									
 					<li><a class="anchorlink head" href="#_Toc369865017">Après avoir soumis mes réponses</a>
 						<ul>
@@ -190,8 +190,8 @@
 			
 			<p>Ce type de questions peut être paramétré pour ne permettre de sélectionner qu'une seule réponse à la fois. Cette fonctionnalité permet notamment un «classement» des réponses.</p>
 			
-			<h1><a class="anchor" name="_Toc369865016a"></a>Signaler un problème sur une enquête<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h1>
-			<p>Si une enquête contient un contenu illégal ou viole les droits d'autrui (y compris les droits de propriété intellectuelle, le droit de la concurrence et le droit général), veuillez utiliser le lien : "Signaler un problème avec cette enquête" dans la partie droite de l’écran.</p>
+			<h1><a class="anchor" name="_Toc369865016a"></a>Signaler un abus<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h1>
+			<p>Si une enquête contient un contenu illégal ou viole les droits d'autrui (y compris les droits de propriété intellectuelle, le droit de la concurrence et le droit général), veuillez utiliser le lien : "Signaler un abus" dans la partie droite de l’écran.</p>
 			<p>Veuillez-vous référer aux  <a href="${contextpath}/home/tos">conditions d’utilisation</a> pour plus d'informations à ce sujet.</p>
 			
 			<h1><a class="anchor" name="_Toc369865017"></a>Après avoir soumis mes réponses</h1>
