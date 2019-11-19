@@ -266,6 +266,11 @@ public class XmlExportCreator extends ExportCreator {
 					writer.writeAttribute("id", question.getUniqueId());
 					writer.writeAttribute("type", getNiceType(question));
 					
+					if (export != null && export.getShowShortnames())
+					{
+						writer.writeAttribute("bid", question.getShortname());
+					}
+					
 					writer.writeCharacters(question.getTitle());
 					
 					writer.writeEndElement(); //Question
