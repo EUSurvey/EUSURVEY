@@ -35,6 +35,14 @@ public class SurveyFilter implements Serializable  {
 	private String sortKey = "survey_created";
 	private String sortOrder = "DESC";
 	private String surveys = "existing";
+	private String surveyType = "all";
+	private String userDepartment;
+	private Boolean deleted = null;
+	private Date deletedFrom;
+	private Date deletedTo;
+	private Integer reported = null;
+	private Integer minContributions = null;
+	private Boolean frozen = null;
 	
 	public User getUser() {
 		return user;
@@ -215,5 +223,63 @@ public class SurveyFilter implements Serializable  {
 	}
 	public void setSurveys(String surveys) {
 		this.surveys = surveys;
+	}
+	
+	public String getType() {
+		return surveyType;
+	}
+	public void setType(String surveyType) {
+		this.surveyType = surveyType;
+	}
+	
+	public String getUserDepartment() {
+		return userDepartment;
+	}
+	public void setUserDepartment(String userDepartment) {
+		this.userDepartment = userDepartment;
+	}
+	
+	public Boolean getDeleted() {
+		return deleted;
+	}
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	@DateTimeFormat(pattern="dd/MM/yyyy")
+	public Date getDeletedFrom() {
+		return deletedFrom;
+	}
+	public void setDeletedFrom(Date deletedFrom) {
+		this.deletedFrom = deletedFrom;
+	}
+	
+	@DateTimeFormat(pattern="dd/MM/yyyy")
+	public Date getDeletedTo() {
+		return deletedTo;
+	}
+	public void setDeletedTo(Date deletedTo) {
+		this.deletedTo = deletedTo;
+	}
+	
+	public Integer getReported() {
+		return reported;
+	}
+	public void setReported(Integer reported) {
+		this.reported = reported;
+	}
+	
+	public Integer getMinContributions() {
+		return minContributions;
+	}
+	public void setMinContributions(Integer minContributions) {
+		this.minContributions = minContributions;
+	}
+	
+	public Boolean getFrozen() {
+		return frozen;
+	}
+	public void setFrozen(Boolean frozen) {
+		this.frozen = frozen;
 	}
 }

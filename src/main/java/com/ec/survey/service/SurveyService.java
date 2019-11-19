@@ -230,6 +230,22 @@ public class SurveyService extends BasicService {
 			sql.append(" AND s.SURVEYSECURITY like :access");
 			oQueryParameters.put("access", filter.getAccess());
 		}
+		
+		if (filter.getType() != null && filter.getType().length() > 0 && !filter.getType().equalsIgnoreCase("all")) {
+			
+			switch (filter.getType())
+			{
+				case "quiz":
+					sql.append(" AND s.QUIZ = 1");
+					break;
+				case "standard":
+					sql.append(" AND s.QUIZ = 0 AND s.OPC = 0");
+					break;
+				case "brp":
+					sql.append(" AND s.OPC = 1");
+					break;
+			}
+		}	
 
 		if (filter.getStatus() != null) {
 			boolean unpublished = filter.getStatus().contains("Unpublished");
@@ -253,6 +269,16 @@ public class SurveyService extends BasicService {
 			sql.append(" AND s.SURVEY_CREATED <= :generatedTo");
 			oQueryParameters.put("generatedTo", Tools.getFollowingDay(filter.getGeneratedTo()));
 		}
+		
+		if (filter.getDeletedFrom() != null) {
+			sql.append(" AND s.SURVEY_DELETED >= :deletedFrom");
+			oQueryParameters.put("deletedFrom", filter.getDeletedFrom());
+		}
+
+		if (filter.getDeletedTo() != null) {
+			sql.append(" AND s.SURVEY_DELETED <= :deletedTo");
+			oQueryParameters.put("deletedTo", Tools.getFollowingDay(filter.getDeletedTo()));
+		}		
 
 		if (filter.getStartFrom() != null) {
 			sql.append(" AND s.SURVEY_START_DATE >= :startFrom");
@@ -355,6 +381,11 @@ public class SurveyService extends BasicService {
 			sql.append(" AND (s.FROZEN = 1)");
 		}
 
+		if (filter.getMinContributions() != null) {
+			sql.append(" AND (replies > :replies)");
+			oQueryParameters.put("replies", filter.getMinContributions());
+		}
+		
 		if (loadpublicationdates) {
 			sql.append(" GROUP BY s.SURVEY_UID");
 
@@ -4367,5 +4398,71 @@ public class SurveyService extends BasicService {
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");		
 		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);		
 		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey is available again", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+	}
+
+	public String getMySurveysXML(SurveyFilter filter, ArchiveFilter archiveFilter) throws Exception {
+		StringBuilder s = new StringBuilder();
+		
+		s.append("<?xml version='1.0' encoding='UTF-8' standalone='no' ?>\n");
+		s.append("<Surveys user='").append(filter.getUser().getLogin()).append("'>\n");
+		
+		if (archiveFilter != null)
+		{		
+			List<Archive> archives = archiveService.getAllArchives(archiveFilter, 1, 10000, true);
+			for (Archive archive : archives) {
+				s.append("<Survey uid='").append(archive.getSurveyUID()).append("' alias='").append(archive.getSurveyShortname()).append("'>\n");
+				s.append("<title>").append(ConversionTools.removeHTML(archive.getSurveyTitle())).append("</title>\n");
+				s.append("</survey>\n");
+			}
+		}
+				
+		SqlPagination pagination = new SqlPagination(1, 10000);		
+		
+		String sql = "SELECT s.SURVEY_UID, s.SURVEYNAME, s.TITLE, s.OWNER, npa.PUBLISHEDANSWERS as replies FROM SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID where ";
+
+		if (archiveFilter != null) {
+			sql += "(s.ARCHIVED = 1)";
+		} else if (filter.getDeleted() != null && filter.getDeleted()) {
+			sql += "(s.DELETED = "+ (filter.getDeleted() ? "1":"0") + ")";
+		} else if (filter.getFrozen() != null ) {
+			sql += "(s.FROZEN "+ (filter.getDeleted() ? " > 0":" < 1") + ")";
+		} else {
+			sql += "(s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)";
+		}
+
+		HashMap<String, Object> parameters = new HashMap<>();
+		sql += getSql(filter, parameters, true);
+
+		List<Survey> surveys = new ArrayList<>();
+		for (Object[] row : loadSurveysfromDatabase(sql, parameters, pagination)) {
+			Survey survey = new Survey();
+			survey.setUniqueId((String) row[0]);
+			survey.setShortname((String) row[1]);
+			survey.setTitle((String) row[2]);
+			
+			int ownerId = ConversionTools.getValue(row[3]);
+			User owner = administrationService.getUser(ownerId);
+			survey.setOwner(owner);
+			surveys.add(survey);
+		}
+		
+		for (Survey survey: surveys) {
+			if (filter.getUserDepartment() != null && filter.getUserDepartment().length() > 1)
+			{
+				List<String> departments = ldapDBService.getUserLDAPGroups(survey.getOwner().getLogin());
+				if (!departments.contains(filter.getUserDepartment()))
+				{
+					continue;
+				}
+			}	
+			
+			s.append("<Survey uid='").append(survey.getUniqueId()).append("' alias='").append(survey.getShortname()).append("'>\n");
+			s.append("<title>").append(ConversionTools.removeHTML(survey.getTitle())).append("</title>\n");
+			s.append("</survey>\n");
+		}
+		
+		s.append("</surveys>");
+
+		return s.toString();
 	}
 }
