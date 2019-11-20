@@ -40,7 +40,7 @@ public class SurveyFilter implements Serializable  {
 	private Boolean deleted = null;
 	private Date deletedFrom;
 	private Date deletedTo;
-	private Integer reported = null;
+	private Integer minReported = null;
 	private Integer minContributions = null;
 	private Boolean frozen = null;
 	
@@ -262,11 +262,11 @@ public class SurveyFilter implements Serializable  {
 		this.deletedTo = deletedTo;
 	}
 	
-	public Integer getReported() {
-		return reported;
+	public Integer getMinReported() {
+		return minReported;
 	}
-	public void setReported(Integer reported) {
-		this.reported = reported;
+	public void setMinReported(Integer minReported) {
+		this.minReported = minReported;
 	}
 	
 	public Integer getMinContributions() {

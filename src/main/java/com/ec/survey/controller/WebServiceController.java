@@ -16,11 +16,13 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -2180,38 +2182,23 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/getMySurveys/{surveyType}/{published}/{department}/{creator}/{privileged}/{firstPublicationFrom}/{firstPublicationTo}/{createdFrom}/{createdTo}/{endFrom}/{endTo}/{archived}/{archivedFrom}/{archivedTo}/{deleted}/{deletedFrom}/{deletedTo}/{frozen}/{reported}/{minContributions}", method = {
-			RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody String getMySurveys(@PathVariable String surveyType, @PathVariable String published,
-			@PathVariable String department, @PathVariable String creator, @PathVariable String privileged,
-			@PathVariable String firstPublicationFrom, @PathVariable String firstPublicationTo,
-			@PathVariable String createdFrom, @PathVariable String createdTo, @PathVariable String endFrom,
-			@PathVariable String endTo, @PathVariable String archived, @PathVariable String archivedFrom,
-			@PathVariable String archivedTo, @PathVariable String deleted, @PathVariable String deletedFrom,
-			@PathVariable String deletedTo, @PathVariable String frozen, @PathVariable String reported,
-			@PathVariable String minContributions, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/getMySurveys", method = {
+			RequestMethod.GET, RequestMethod.HEAD }, produces = MediaType.APPLICATION_XML_VALUE)
+	public @ResponseBody String getMySurveys(@RequestParam(required = false, value="surveyType") String surveyType, @RequestParam(required = false, value="published") String published,
+			@RequestParam(required = false, value="department") String department, @RequestParam(required = false, value="creator") String creator, @RequestParam(required = false, value="privileged") String privileged,
+			@RequestParam(required = false, value="firstPublicationFrom") String firstPublicationFrom, @RequestParam(required = false, value="firstPublicationTo") String firstPublicationTo,
+			@RequestParam(required = false, value="createdFrom") String createdFrom, @RequestParam(required = false, value="createdTo") String createdTo, @RequestParam(required = false, value="endFrom") String endFrom,
+			@RequestParam(required = false, value="endTo") String endTo, @RequestParam(required = false, value="archived") String archived, @RequestParam(required = false, value="archivedFrom") String archivedFrom,
+			@RequestParam(required = false, value="archivedTo") String archivedTo, @RequestParam(required = false, value="deleted") String deleted, @RequestParam(required = false, value="deletedFrom") String deletedFrom,
+			@RequestParam(required = false, value="deletedTo") String deletedTo, @RequestParam(required = false, value="frozen") String frozen, @RequestParam(required = false, value="minReported") String minReported,
+			@RequestParam(required = false, value="minContributions") String minContributions,@RequestParam(required = false, value="title") String title, HttpServletRequest request, HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
-			return getMySurveys(credentials.getKey(), credentials.getValue(), surveyType, published, department,
+			return getMySurveysXml(surveyType, published, department,
 					creator, privileged, firstPublicationFrom, firstPublicationTo, createdFrom, createdTo, endFrom,
-					endTo, archived, archivedFrom, archivedTo, deleted, deletedFrom, deletedTo, frozen, reported,
-					minContributions, request, response);
+					endTo, archived, archivedFrom, archivedTo, deleted, deletedFrom, deletedTo, frozen, minReported,
+					minContributions, title, request, response);
 		}
-		response.setContentType("application/xml");
-		return "";
-	}
-	
-	@RequestMapping(value = "/getMySurveys/{surveyType}", method = {
-			RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody String getMySurveys(@PathVariable String surveyType, HttpServletRequest request, HttpServletResponse response) {
-		KeyValue credentials = getLoginAndPassword(request, response);
-		if (credentials != null) {
-			return getMySurveys(credentials.getKey(), credentials.getValue(), surveyType, null, null,
-					null, null, null, null, null, null, null,
-					null, null, null, null, null, null, null, null, null,
-					null, request, response);
-		}
-		response.setContentType("application/xml");
 		return "";
 	}
 
@@ -2241,15 +2228,11 @@ public class WebServiceController extends BasicController {
 		return null;
 	}
 
-	private String getMySurveys(@PathVariable String login, @PathVariable String pass, @PathVariable String surveyType,
-			@PathVariable String published, @PathVariable String department, @PathVariable String creator,
-			@PathVariable String privileged, @PathVariable String firstPublicationFrom,
-			@PathVariable String firstPublicationTo, @PathVariable String createdFrom, @PathVariable String createdTo,
-			@PathVariable String endFrom, @PathVariable String endTo, @PathVariable String archived,
-			@PathVariable String archivedFrom, @PathVariable String archivedTo, @PathVariable String deleted,
-			@PathVariable String deletedFrom, @PathVariable String deletedTo, @PathVariable String frozen,
-			@PathVariable String reported, @PathVariable String minContributions, HttpServletRequest request,
-			HttpServletResponse response) {
+	private String getMySurveysXml(String surveyType, String published, String department, String creator,
+			String privileged, String firstPublicationFrom, String firstPublicationTo, String createdFrom,
+			String createdTo, String endFrom, String endTo, String archived, String archivedFrom, String archivedTo,
+			String deleted, String deletedFrom, String deletedTo, String frozen, String minReported,
+			String minContributions, String title, HttpServletRequest request, HttpServletResponse response) {
 
 		User user = getUser(request, response, true);
 		if (user == null)
@@ -2284,7 +2267,7 @@ public class WebServiceController extends BasicController {
 			return "";
 		}
 		
-		if (reported != null && !Tools.isInteger(reported)) {
+		if (minReported != null && !Tools.isInteger(minReported)) {
 			response.setStatus(412);
 			return "";
 		}
@@ -2305,6 +2288,7 @@ public class WebServiceController extends BasicController {
 			filter.setUser(user);		
 			filter.setUserDepartment(department);
 			filter.setType(surveyType);
+			filter.setTitle(title);
 
 			if (creator != null && creator.equalsIgnoreCase("1") && (privileged == null || privileged.equalsIgnoreCase("0")))
 			{
@@ -2334,6 +2318,9 @@ public class WebServiceController extends BasicController {
 				
 				archiveFilter.setCreatedFrom(getDate(createdFrom));
 				archiveFilter.setCreatedTo(getDate(createdTo));
+				
+				archiveFilter.setTitle(title);
+				archiveFilter.setOwner(user.getLogin());
 			}
 			
 			if (deleted != null)
@@ -2351,23 +2338,18 @@ public class WebServiceController extends BasicController {
 				filter.setFrozen(frozen.equalsIgnoreCase("1"));
 			}
 			
-			if (reported != null && !reported.equalsIgnoreCase("0"))
+			if (minReported != null && !minReported.equalsIgnoreCase("0"))
 			{
-				filter.setReported(Integer.parseInt(reported));
+				filter.setMinReported(Integer.parseInt(minReported));
 			}
 			
 			if (minContributions != null && !minContributions.equalsIgnoreCase("0")) {
 				filter.setMinContributions(Integer.parseInt(minContributions));
 			}
 			
+			response.setContentType("text/xml");			
 			return surveyService.getMySurveysXML(filter, archiveFilter);
 						
-//			return surveyService.getMySurveysXML(user, surveyType, published.equalsIgnoreCase("1"), department,
-//					creator.equalsIgnoreCase("1"), privileged.equalsIgnoreCase("1"), getDate(firstPublicationFrom),
-//					getDate(firstPublicationTo), getDate(createdFrom), getDate(createdTo), getDate(endFrom),
-//					getDate(endTo), archived.equalsIgnoreCase("1"), getDate(archivedFrom), getDate(archivedTo),
-//					deleted.equalsIgnoreCase("1"), getDate(deletedFrom), getDate(deletedTo),
-//					frozen.equalsIgnoreCase("1"), reported.equalsIgnoreCase("1"), Integer.parseInt(minContributions));
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			response.setStatus(500);

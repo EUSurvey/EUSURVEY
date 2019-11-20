@@ -377,12 +377,18 @@ public class SurveyService extends BasicService {
 			sql.append(" AND (s.SURVEY_UID IN (SELECT DISTINCT SURABUSE_SURVEY FROM SURABUSE))");
 		}
 		
-		if (filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("FROZEN")) {
+		if (filter.getMinReported() != null && filter.getMinReported() > 0)
+		{
+			sql.append(" AND (abu.abuses >= :abuses)");
+			oQueryParameters.put("abuses", filter.getMinReported());
+		}
+		
+		if ((filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("FROZEN")) || filter.getFrozen() != null && filter.getFrozen()) {
 			sql.append(" AND (s.FROZEN = 1)");
 		}
 
 		if (filter.getMinContributions() != null) {
-			sql.append(" AND (replies > :replies)");
+			sql.append(" AND (npa.PUBLISHEDANSWERS > :replies)");
 			oQueryParameters.put("replies", filter.getMinContributions());
 		}
 		
@@ -4411,14 +4417,23 @@ public class SurveyService extends BasicService {
 			List<Archive> archives = archiveService.getAllArchives(archiveFilter, 1, 10000, true);
 			for (Archive archive : archives) {
 				s.append("<Survey uid='").append(archive.getSurveyUID()).append("' alias='").append(archive.getSurveyShortname()).append("'>\n");
-				s.append("<title>").append(ConversionTools.removeHTML(archive.getSurveyTitle())).append("</title>\n");
-				s.append("</survey>\n");
+				s.append("<Title>").append(ConversionTools.removeHTML(archive.getSurveyTitle())).append("</Title>\n");
+				s.append("</Survey>\n");
 			}
 		}
 				
 		SqlPagination pagination = new SqlPagination(1, 10000);		
 		
-		String sql = "SELECT s.SURVEY_UID, s.SURVEYNAME, s.TITLE, s.OWNER, npa.PUBLISHEDANSWERS as replies FROM SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID where ";
+		String sql = "SELECT s.SURVEY_UID, s.SURVEYNAME, s.TITLE, s.OWNER, npa.PUBLISHEDANSWERS as replies ";
+				
+		sql += "FROM SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID ";
+		
+		if (filter.getMinReported() != null && filter.getMinReported() > 0)
+		{
+			sql += " LEFT JOIN ( SELECT SURABUSE_SURVEY, count(SURABUSE_ID) as abuses FROM SURABUSE GROUP BY SURABUSE_SURVEY) abu ON abu.SURABUSE_SURVEY = s.SURVEY_UID ";			
+		}
+		
+		sql += "where ";
 
 		if (archiveFilter != null) {
 			sql += "(s.ARCHIVED = 1)";
@@ -4457,11 +4472,11 @@ public class SurveyService extends BasicService {
 			}	
 			
 			s.append("<Survey uid='").append(survey.getUniqueId()).append("' alias='").append(survey.getShortname()).append("'>\n");
-			s.append("<title>").append(ConversionTools.removeHTML(survey.getTitle())).append("</title>\n");
-			s.append("</survey>\n");
+			s.append("<Title>").append(ConversionTools.removeHTML(survey.getTitle())).append("</Title>\n");
+			s.append("</Survey>\n");
 		}
 		
-		s.append("</surveys>");
+		s.append("</Surveys>");
 
 		return s.toString();
 	}
