@@ -368,5 +368,20 @@ public abstract class Element implements java.io.Serializable {
 	public void setDummy(boolean isDummy) {
 		this.isDummy = isDummy;
 	}
-
+		
+	@Transient
+	public boolean IsUsedInResults()
+	{
+		if (this instanceof Ruler || this instanceof Confirmation || this instanceof Image || this instanceof Download || this instanceof Text)
+		{
+			return false;
+		}
+		
+		if (this instanceof GalleryQuestion && !((GalleryQuestion)this).getSelection())
+		{
+			return false;
+		}
+		
+		return true;
+	}
 }

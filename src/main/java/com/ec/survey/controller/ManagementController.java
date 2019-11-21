@@ -3149,18 +3149,15 @@ public class ManagementController extends BasicController {
 			int counter = 0;
 			for (Element question: survey.getQuestions())
 			{
-				if (!(question instanceof Download || question instanceof com.ec.survey.model.survey.Image || question instanceof Text || question instanceof Confirmation))
+				if (question.IsUsedInResults())
 				{
-					if (!(question instanceof GalleryQuestion && !((GalleryQuestion)question).getSelection()))
+					if (counter < 20)
 					{
-						if (counter < 20)
-						{
-							filter.getVisibleQuestions().add(question.getId().toString());
-						} else {
-							break;
-						}
-						counter++;
+						filter.getVisibleQuestions().add(question.getId().toString());
+					} else {
+						break;
 					}
+					counter++;
 				}
 			}
 		}
@@ -3169,12 +3166,9 @@ public class ManagementController extends BasicController {
 			//preselect ALL
 			for (Element question: survey.getQuestionsAndSections())
 			{
-				if (!(question instanceof Download || question instanceof com.ec.survey.model.survey.Image || question instanceof Text || question instanceof Confirmation))
+				if (question.IsUsedInResults())
 				{
-					if (!(question instanceof GalleryQuestion && !((GalleryQuestion)question).getSelection()))
-					{
-						filter.getExportedQuestions().add(question.getId().toString());
-					}
+					filter.getExportedQuestions().add(question.getId().toString());
 				}
 			}
 		}
@@ -3402,7 +3396,7 @@ public class ManagementController extends BasicController {
 		    		{
 		    			visibleQuestions.add(el);
                         visibleQuestions.addAll(((Matrix) el).getQuestions());
-		    		} else if (!(el instanceof Text) && !(el instanceof Download) && !(el instanceof com.ec.survey.model.survey.Image)  && !(el instanceof Ruler) && !(el instanceof Confirmation)) {
+		    		} else if (el.IsUsedInResults()) {
 		    			visibleQuestions.add(el);
 		    		}
 		    	} catch (Exception e) {
