@@ -2203,19 +2203,17 @@ public class WebServiceController extends BasicController {
 	}
 
 	private boolean is0or1(String input) {
-		return input == null || input.trim().equals("0") || input.trim().equals(1);
+		return input == null || input.trim().equals("0") || input.trim().equals("1");
 	}
 
 	private static boolean is0orDate(String input) {		
-		if (input == null) return true;
-		
-		if (!input.equalsIgnoreCase("0")) {
-			try {
-				dfStandard.parse(input);
-				return true;
-			} catch (Exception pe) {
-				// ignore
-			}
+		if (input == null || input.equalsIgnoreCase("0")) return true;
+
+		try {
+			dfStandard.parse(input);
+			return true;
+		} catch (Exception pe) {
+			// ignore
 		}
 
 		return false;

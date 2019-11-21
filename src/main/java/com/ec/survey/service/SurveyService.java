@@ -4440,7 +4440,7 @@ public class SurveyService extends BasicService {
 		} else if (filter.getDeleted() != null && filter.getDeleted()) {
 			sql += "(s.DELETED = "+ (filter.getDeleted() ? "1":"0") + ")";
 		} else if (filter.getFrozen() != null ) {
-			sql += "(s.FROZEN "+ (filter.getDeleted() ? " > 0":" < 1") + ")";
+			sql += "(s.FROZEN "+ (filter.getFrozen() ? " > 0":" < 1") + ")";
 		} else {
 			sql += "(s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)";
 		}
