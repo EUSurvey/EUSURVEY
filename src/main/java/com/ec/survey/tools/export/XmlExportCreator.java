@@ -709,7 +709,7 @@ public class XmlExportCreator extends ExportCreator {
 		for (Element question : questions) {
 			if (filter == null || filter.exported(question.getId().toString()))
 			{
-				if (!(question instanceof Text || question instanceof Image || question instanceof Download || question instanceof Confirmation || question instanceof Ruler)) 
+				if (question.IsUsedInResults()) 
 				{
 					if (question instanceof Matrix) {
 						Matrix matrix = (Matrix)question;

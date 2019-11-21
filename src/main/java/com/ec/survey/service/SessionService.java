@@ -399,7 +399,7 @@ public class SessionService extends BasicService {
 				
 				for (Element question: survey.getQuestions())
 				{
-					if (!(question instanceof Text) && !(question instanceof Download) && !(question instanceof com.ec.survey.model.survey.Image)  && !(question instanceof Ruler) && !(question instanceof Confirmation)) {
+					if (question.IsUsedInResults()) {
 						if (filter.getVisibleQuestions().size() < 20)
 						{
 							filter.getVisibleQuestions().add(question.getId().toString());

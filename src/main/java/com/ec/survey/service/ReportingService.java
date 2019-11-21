@@ -457,7 +457,7 @@ public class ReportingService {
 	    			{
 	    				visibleQuestions.put(question.getUniqueId(), question);	  
 	    			}
-    			} else if (!(question instanceof Text) && !(question instanceof Download) && !(question instanceof com.ec.survey.model.survey.Image) && !(question instanceof Ruler)) {
+    			} else if (question.IsUsedInResults()) {
 	    			visibleQuestions.put(question.getUniqueId(), question);	    		
 	    		}
     		}

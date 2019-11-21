@@ -86,7 +86,7 @@ public class XlsExportCreator extends ExportCreator {
 			if (publication != null || filter.exported(question.getId().toString()))
 			if (publication == null || publication.isAllQuestions() || publication.isSelected(question.getId()))
 			{
-				if (!(question instanceof Text || question instanceof Image || question instanceof Download || question instanceof Confirmation|| question instanceof Ruler))
+				if (question.IsUsedInResults())
 				{					
 					if (question instanceof Matrix) {
 						Matrix matrix = (Matrix)question;
@@ -577,7 +577,7 @@ public class XlsExportCreator extends ExportCreator {
 			if (publication != null || filter.exported(question.getId().toString()))
 			if (publication == null || publication.isAllQuestions() || publication.isSelected(question.getId()))
 			{
-				if (!(question instanceof Text || question instanceof Image || question instanceof Download || question instanceof Confirmation|| question instanceof Ruler))
+				if (question.IsUsedInResults())
 				{	
 					if (question instanceof Matrix) {
 						Matrix matrix = (Matrix)question;
