@@ -3,6 +3,7 @@ package com.ec.survey.tools;
 import com.ec.survey.model.ParticipationGroup;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.attendees.Attendee;
+import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.service.AttendeeService;
 import com.ec.survey.service.ParticipationService;
 import org.apache.log4j.Logger;
@@ -111,6 +112,15 @@ public class GuestListCreator implements Runnable {
 			} else if (type == 3)
 			{
 				try {
+					List<Invitation> existingInvitations = attendeeService.getInvitationsForParticipationGroup(g.getId());
+			 	 	for (Invitation invitation : existingInvitations)
+			 	 	{
+			 	 		if (tokens.contains(invitation.getUniqueId()))
+			 	 		{
+			 	 			tokens.remove(invitation.getUniqueId());
+			 	 		}
+			 	 	}
+										
 					attendeeService.addTokens(tokens, g.getId());
 				} catch (GenericJDBCException e)
 				{
