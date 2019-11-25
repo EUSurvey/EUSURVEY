@@ -2,7 +2,7 @@ package com.ec.survey.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
@@ -34,7 +34,7 @@ public class TestSurveyControllerRefactored extends AbstractTransactionalTestNGS
 
 	@Test
 	public void myFirstTest() throws Exception {
-		this.mockMvc.perform(get("/home/about")).andDo(print()).andExpect(forwardedUrl("/WEB-INF/views/home/about.jsp"));
+		this.mockMvc.perform(get("/home/about")).andDo(print()).andExpect(status().is3xxRedirection());
 	}
 
 }
