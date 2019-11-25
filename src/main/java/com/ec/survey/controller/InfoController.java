@@ -1,5 +1,7 @@
 package com.ec.survey.controller;
 
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
@@ -15,5 +17,9 @@ public class InfoController extends BasicController {
 	public ModelAndView maintenance(HttpServletRequest request){
 		return new ModelAndView("info/maintenance");
 	}
-		
+	
+	@RequestMapping(value = "/version", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView version(HttpServletRequest request, Locale locale) { 
+		return new ModelAndView("error/version");
+	}
 }

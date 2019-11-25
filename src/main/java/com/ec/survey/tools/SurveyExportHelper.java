@@ -23,6 +23,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.beans.XMLDecoder;
 import java.io.*;
+import java.net.ConnectException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipException;
@@ -248,7 +251,7 @@ public class SurveyExportHelper {
 		}		   
 	}
 		
-	public static java.io.File exportSurvey(String shortname, SurveyService surveyService, boolean answers, TranslationService translationService, AnswerService answerService, String fileDir, SessionService sessionService, FileService fileService, Session session) {
+	public static java.io.File exportSurvey(String shortname, SurveyService surveyService, boolean answers, TranslationService translationService, AnswerService answerService, String fileDir, SessionService sessionService, FileService fileService, Session session, String host) {
 		
 		try {
 			
@@ -260,6 +263,34 @@ public class SurveyExportHelper {
 			final ArchiveOutputStream os = new ArchiveStreamFactory().createArchiveOutputStream("zip", out);
 		
 			List<String> writtenFiles = new ArrayList<>();
+			
+			 try {
+				URL workerurl = new URL(host + "info/version");
+				String eusurveyversion = "unknown";
+				
+				try {                   
+					URLConnection wc = workerurl.openConnection();
+					BufferedReader in = new BufferedReader(new InputStreamReader(wc.getInputStream()));
+					String inputLine;
+					StringBuilder result = new StringBuilder();
+					while ((inputLine = in.readLine()) != null) result.append(inputLine);
+						in.close();
+					eusurveyversion = result.toString();
+				} catch (ConnectException e) {
+					logger.error(e.getLocalizedMessage(), e);
+				}                               
+				
+				int version = surveyService.getDBVersion();
+				java.io.File f = fileService.getTemporaryFile();
+				FileWriter writer = new FileWriter(f);
+				writer.write("exported with EUSurvey version " + eusurveyversion + " DB version " + version + " at " + new Date());
+				writer.close();
+				os.putArchiveEntry(new ZipArchiveEntry("info.txt"));
+				IOUtils.copy(new FileInputStream(f), os);
+				os.closeArchiveEntry();
+			} catch (Exception e) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
 			
 			//create file containing the survey object
 			os.putArchiveEntry(new ZipArchiveEntry("survey.eus"));
