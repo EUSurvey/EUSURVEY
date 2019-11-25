@@ -847,6 +847,10 @@ public class SurveyService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		int score = 0;
 		
+		//skip computing if setting does not exist
+		String check = settingsService.get(Setting.TrustValueCreatorInternal);
+		if (check == null) return;
+		
 		int trustValueCreatorInternal = Integer.parseInt(settingsService.get(Setting.TrustValueCreatorInternal));
 		int trustValuePastSurveys = Integer.parseInt(settingsService.get(Setting.TrustValuePastSurveys));
 		int trustValuePrivilegedUser = Integer.parseInt(settingsService.get(Setting.TrustValuePrivilegedUser));
