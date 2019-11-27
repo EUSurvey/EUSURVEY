@@ -3803,7 +3803,7 @@ public class SurveyService extends BasicService {
 		
 		if (filter.getUniqueId() != null && filter.getUniqueId().trim().length() > 0) {
 			sql += " AND s.uniqueId LIKE :uniqueId";
-			params.put("uniqueId", filter.getUniqueId());
+			params.put("uniqueId", "%" + filter.getUniqueId() + "%");
 		}
 
 		if (filter.getShortname() != null && filter.getShortname().trim().length() > 0) {
