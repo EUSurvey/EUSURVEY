@@ -252,8 +252,8 @@ public class ArchiveService extends BasicService {
 		
 		if (filter.getUniqueId() != null  && filter.getUniqueId().trim().length() > 0)
 		{
-			hql += " AND a.surveyUID = :uid";
-			params.put("uid", filter.getUniqueId());
+			hql += " AND a.surveyUID LIKE :uid";
+			params.put("uid", "%" + filter.getUniqueId() + "%");
 		}
 		
 		if (filter.getUserId() > 0)
