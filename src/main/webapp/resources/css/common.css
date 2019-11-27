@@ -1796,3 +1796,7 @@ a {
 .filestable {
 	word-break: break-all;	
 }
+
+#cookie-consent-banner {
+	z-index: 999999;
+}
