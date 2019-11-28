@@ -716,8 +716,6 @@ function DashboardViewModel()
 				    xAxes: [{
 				    	type: "time",
 						time: {
-							unit: 'day',
-					        unitStepSize: 1,
 					        displayFormats: {
 					           'day': 'MM-DD'
 					        }
