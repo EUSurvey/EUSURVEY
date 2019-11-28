@@ -174,15 +174,43 @@ public class HomeController extends BasicController {
 		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true);
 		String message = ConversionTools.removeHTML(request.getParameter("message"), true);
 		String additionalinfo  = request.getParameter("additionalinfo");
+		String additionalsurveyinfotitle = request.getParameter("additionalsurveyinfotitle");
+		String additionalsurveyinfoalias = request.getParameter("additionalsurveyinfoalias");
 		String[] uploadedfiles = request.getParameterValues("uploadedfile");				
 		
 		StringBuilder body = new StringBuilder();
 		body.append("Dear helpdesk team,<br />please open a ticket and assign it to DIGIT EUSURVEY SUPPORT.<br />Thank you in advance<br/><hr /><br />");
-		body.append("Affected user: ").append(name).append("<br />");
-		body.append("Email address: ").append(email).append("<br />");
-		body.append("Reason: ").append(reason).append("<br /><br />");
-		body.append("Subject: ").append(subject).append("<br /><br />");
-		body.append("Message text:<br />").append(message).append("<br /><br />");
+		
+		body.append("<table>");
+		
+		body.append("<tr><td>Affected user:</td><td>").append(name).append("</td></tr>");
+		body.append("<tr><td>Email address:</td><td>").append(email).append("</td></tr>");
+		
+		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		
+		boolean additioninfo = false;
+		if (additionalsurveyinfotitle != null && additionalsurveyinfotitle.length() > 0) {
+			body.append("<tr><td>Survey Title:</td><td>").append(additionalsurveyinfotitle).append("</td></tr>");
+			additioninfo = true;
+		}		
+		if (additionalsurveyinfoalias != null && additionalsurveyinfoalias.length() > 0) {
+			
+			String link = host + "runner/" + additionalsurveyinfoalias;			
+			
+			body.append("<tr><td>Survey Alias:</td><td><a href='").append(link).append("'>").append(additionalsurveyinfoalias).append("</a></td></tr>");
+			additioninfo = true;
+		}
+		if (additioninfo)
+		{
+			body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		}
+		
+		body.append("<tr><td>Reason:</td><td>").append(reason).append("</td></tr>");
+		body.append("<tr><td>Subject:</td><td>").append(subject).append("</td></tr>");
+		
+		body.append("</table>");		
+		
+		body.append("<br />Message text:<br />").append(message).append("<br /><br />");
 		if (additionalinfo != null)
 		{
 			body.append(ConversionTools.escape(additionalinfo).replace("\n", "<br />"));

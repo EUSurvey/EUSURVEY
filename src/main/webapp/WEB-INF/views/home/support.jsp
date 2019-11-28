@@ -32,8 +32,10 @@
 			if ($("#erroroption").is(":selected"))
 			{
 				$("#additionalinfodiv").show();
+				$("#additionalsurveyinfodiv").show();
 			} else {
 				$("#additionalinfodiv").hide();
+				$("#additionalsurveyinfodiv").hide();
 			}
 		}
 	
@@ -193,6 +195,14 @@
 							</c:otherwise>				
 						</c:choose>
 					</select><br /><br />
+					
+					<div id="additionalsurveyinfodiv">
+						<p><spring:message code="support.additionalsurveyinfo" />:</p>
+						<label><spring:message code="skin.SurveyTitle" /></label><br />
+						<textarea class="form-control" rows="3" style="width: 400px" name="additionalsurveyinfotitle" id="additionalsurveyinfotitle" ></textarea><br />
+						<label><spring:message code="label.SurveyAlias" /></label><br />
+						<input type="text" class="form-control" name="additionalsurveyinfoalias" /><br /><br />
+					</div>
 					
 					<label><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
 					<input type="text" class="form-control required" name="name" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
