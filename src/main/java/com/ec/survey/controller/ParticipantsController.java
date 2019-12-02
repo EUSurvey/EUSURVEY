@@ -218,39 +218,80 @@ public class ParticipantsController extends BasicController {
 		
 		if (accessPrivilege < 1)
 		{		
-			throw new ForbiddenURLException();	
+			throw new ForbiddenURLException();		
 		}
 		
-	Map<Integer, Invitation> invitationsByAttendee = attendeeService.getInvitationsByAttendeeForParticipationGroup(g.getId());
+		Integer newPage =  ConversionTools.getInt(request.getParameter("newPage"), 1);		
+		Integer itemsPerPage = ConversionTools.getInt(request.getParameter("itemsPerPage"), 10);	
+		boolean all = request.getParameter("all") != null && request.getParameter("all").equals("true");
 		
-		for (Attendee attendee : g.getAttendees()) {
-			if (invitationsByAttendee.containsKey(attendee.getId()))
-			{
-				Invitation invitation = invitationsByAttendee.get(attendee.getId());
-				attendee.setInvited(invitation.getInvited());
-				attendee.setReminded(invitation.getReminded());
-				attendee.setAnswers(invitation.getAnswers());
-			}
+		if (all) {
+			itemsPerPage = Integer.MAX_VALUE;
+			newPage = 1;
 		}
 		
-		for (EcasUser ecasUser : g.getEcasUsers()) {
-			if (invitationsByAttendee.containsKey(ecasUser.getId()))
-			{
-				Invitation invitation = invitationsByAttendee.get(ecasUser.getId());
-				ecasUser.setInvited(invitation.getInvited());
-				ecasUser.setReminded(invitation.getReminded());
-				ecasUser.setAnswers(invitation.getAnswers());
-			}
-		}
+		Map<Integer, Invitation> invitationsByAttendee = attendeeService.getInvitationsByAttendeeForParticipationGroup(g.getId());
 		
+		int first = (newPage-1) * itemsPerPage;
+		int counter = 0;
 		if (g.getType() == ParticipationGroupType.Static)
 		{
-			return g.getAttendees();
+			List<Attendee> result = new ArrayList<Attendee>();
+			
+			for (Attendee attendee : g.getAttendees()) {
+				if (counter < first)
+				{
+					counter++;
+				} else {
+					if (invitationsByAttendee.containsKey(attendee.getId()))
+					{
+						Invitation invitation = invitationsByAttendee.get(attendee.getId());
+						attendee.setInvited(invitation.getInvited());
+						attendee.setReminded(invitation.getReminded());
+						attendee.setAnswers(invitation.getAnswers());
+					}
+					result.add(attendee);
+					if (result.size() == itemsPerPage) break;
+				}
+			}
+			
+			return result;
 		} else if (g.getType() == ParticipationGroupType.ECMembers)
 		{
+			List<EcasUser> result = new ArrayList<EcasUser>();
+			
+			for (EcasUser ecasUser : g.getEcasUsers()) {
+				if (counter < first)
+				{
+					counter++;
+				} else {
+					if (invitationsByAttendee.containsKey(ecasUser.getId()))
+					{
+						Invitation invitation = invitationsByAttendee.get(ecasUser.getId());
+						ecasUser.setInvited(invitation.getInvited());
+						ecasUser.setReminded(invitation.getReminded());
+						ecasUser.setAnswers(invitation.getAnswers());
+					}
+					result.add(ecasUser);
+					if (result.size() == itemsPerPage) break;
+				}
+			}
+			
 			return g.getEcasUsers();
 		} else {
-			return attendeeService.getInvitationsForParticipationGroup(g.getId());
+			List<Invitation> result = new ArrayList<Invitation>();
+			for (Invitation i : attendeeService.getInvitationsForParticipationGroup(g.getId()))
+			{
+				if (counter < first)
+				{
+					counter++;
+				} else {
+					result.add(i);
+					if (result.size() == itemsPerPage) break;
+				}
+			}
+			
+			return result;
 		}
 	}
 	

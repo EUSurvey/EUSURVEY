@@ -284,8 +284,8 @@
 					</div>
 					<div class="col-md-5" style="text-align: center">
 						<ul class="progressbar">
-							<li class="pb2" data-bind="attr: {class: Step() == 1 ? 'active pb2' : 'pb2'}"><spring:message code="label.SelectParticipants" /></li>
-							<li class="pb2" data-bind="attr: {class: Step() == 2 ? 'active pb2' : 'pb2'}"><spring:message code="label.EditMessage" /></li>
+							<li class="pb2" data-bind="attr: {class: Step() == 1 ? 'active pb2' : 'pb2'}"><span data-bind="attr: {style: Step() > 1 ? 'color: #43ff43' : ''}" class="glyphicon glyphicon-ok"></span><spring:message code="label.SelectParticipants" /></li>
+							<li class="pb2" data-bind="attr: {class: Step() == 2 ? 'active pb2' : 'pb2'}"><span data-bind="attr: {style: Step() > 2 ? 'color: #43ff43' : ''}" class="glyphicon glyphicon-ok"></span><spring:message code="label.EditMessage" /></li>
 							<li class="pb2" data-bind="attr: {class: Step() == 3 ? 'active pb2' : 'pb2'}"><spring:message code="label.SendEmails" /></li>
 						</ul>
 					</div>

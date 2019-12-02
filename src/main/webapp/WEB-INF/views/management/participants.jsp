@@ -13,8 +13,8 @@
 	<link href="${contextpath}/resources/css/progressbar.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	
 	<script>
-	var surveyuid = '${form.survey.uniqueId}';
-	var attributeIDs = new Array();
+		var surveyuid = '${form.survey.uniqueId}';
+		var attributeIDs = new Array();
 		var attributeNames = new Array();
 		
 		<c:forEach items="${attributeNames}" var="attributeName" varStatus="rowCounter">
@@ -61,7 +61,7 @@
 			margin-bottom: 4px; 
 			display: inline-block;
 		}
-			
+		
 		.checkcell {
 			max-width: 30px !important;
 			width: 30px !important;
@@ -72,7 +72,7 @@
 		.ptable {
 			table-layout: fixed;
 			margin-bottom: 0px;
-			min-height: 480px;
+			min-height: 500px;
 		}
 		
 		.ptable tr{height:1px;}
@@ -88,7 +88,7 @@
 		.ptable .filtertools {
 			margin-top: -60px !important;
     		padding-bottom: 10px !important;
-		}			
+		}
 		  
 		  #wait-dialog {
 		  	position: fixed;
@@ -133,6 +133,10 @@
 		  
 		  tr.error {
 		  	background-color: #FFD6DA;
+		  }
+		  
+		  .fixedtitleform {
+			top: 0;
 		  }
     </style>
     
@@ -182,7 +186,7 @@
 			
 			<div class="fullpageform" style="padding-top: 40px">
 			
-				<table id="participantstable" class="table table-bordered table-styled" style="width: auto; margin-left: auto; margin-right: auto;" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+				<table id="participantstable" class="table table-bordered table-styled table-striped" style="width: auto; margin-left: auto; margin-right: auto;" data-bind="visible: DataLoaded() && Guestlists().length > 0">
 					<thead>
 						<tr>
 							<th><spring:message code="label.Name" /></th>
@@ -231,10 +235,10 @@
 										<!-- ko if: sendEnabled() -->
 											<a id="btnSendEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/sendInvitations" />/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
 										<!-- /ko -->
-										<!-- ko if: !sendEnabled() -->
+										<!-- ko if: !sendEnabled() && type() != 'Token' -->
 											<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
 										<!-- /ko -->
-										<!-- ko if: exportEnabled() -->
+										<!-- ko if: exportEnabled() && type() == 'Token' -->
 											<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 											<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
 										<!-- /ko -->
@@ -258,14 +262,16 @@
 										<!-- ko if: activateEnabled() -->
 											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
 										<!-- /ko -->
+										<!-- ko if: type() != 'Token' -->
 										<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+										<!-- /ko -->
 										<!-- ko if: editEnabled() -->
 											<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
 										<!-- /ko -->
 										<!-- ko if: !editEnabled() -->
 											<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
 										<!-- /ko -->
-										<!-- ko if: exportEnabled() -->
+										<!-- ko if: exportEnabled() && type() == 'Token' -->
 											<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
 											<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
 										<!-- /ko -->
@@ -284,8 +290,11 @@
 										<!-- ko if: activateEnabled() -->
 											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
 										<!-- /ko -->
-										<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>									
+										<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>		
+										<!-- ko if: type() != 'Token' -->			
 										<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+										<!-- /ko -->
+
 										<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
 										<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
 									<!-- /ko -->
@@ -329,37 +338,42 @@
 		</div>
 		
 		<div id="details" data-bind="visible: Page() == 2">
-			<div id="action-bar" class="container action-bar" style="max-width: 900px; margin-left: auto; margin-right: auto" data-bind="visible: DataLoaded() && Guestlists().length > 0">
-				<div class="row">
-					<div class="col-md-4" style="text-align: left">
-						<a onclick="_participants.Page(1)"><spring:message code="label.Participants" /></a> > <spring:message code="label.ViewGuestList" />
-					</div>
-					<div class="col-md-4" style="text-align: center">
-						<spring:message code="label.GuestListEntries" /> <span style="margin-left: 10px;" data-bind="text: selectedGroup() != null ? selectedGroup().children() : ''"></span>
-					</div>
-					<div class="col-md-4" style="text-align: right">
-						<!-- ko if: selectedGroup() != null && selectedGroup().exportEnabled() -->
-							<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: selectedGroup().exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
-							<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: selectedGroup().exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
-						<!-- /ko -->
+			<div class="fixedtitleform">
+				<div class="fixedtitleinner">
+					<div id="action-bar" class="container action-bar" style="max-width: 900px; margin-left: auto; margin-right: auto" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+						<div class="row">
+							<div class="col-md-4" style="text-align: left">
+								<a onclick="_participants.Page(1)"><spring:message code="label.Participants" /></a> > <spring:message code="label.ViewGuestList" />
+							</div>
+							<div class="col-md-4" style="text-align: center">
+								<spring:message code="label.GuestListEntries" /> <span style="margin-left: 10px;" data-bind="text: selectedGroup() != null ? selectedGroup().children() : ''"></span>
+							</div>
+							<div class="col-md-4" style="text-align: right">
+								<!-- ko if: selectedGroup() != null && selectedGroup().exportEnabled() -->
+									<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: selectedGroup().exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+									<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: selectedGroup().exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
+								<!-- /ko -->
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>	
+			</div>
 			
-			<div class="fullpageform" style="padding-top: 40px">
+			<div class="fullpageform" style="padding-top: 160px">
 			
-				<table id="participantstable" class="table table-bordered table-styled" style="width: auto; margin-left: auto; margin-right: auto;" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+				<table id="participantdetailstable" class="table table-bordered table-styled table-striped" style="max-width: none; width: auto; margin-left: auto; margin-right: auto;" data-bind="visible: DataLoaded() && Guestlists().length > 0">
 					<thead>
 						<tr>
 							<!-- ko if: selectedGroup() != null && (selectedGroup().type() == 'Static' || selectedGroup().type() == 'ECMembers') -->
-									<th><spring:message code="label.Name" /></th>
-									<th><spring:message code="label.Email" /></th>
-									<th><spring:message code="label.InvitationDate" /></th>
-									<th><spring:message code="label.ReminderDate" /></th>
+									<th style="width: 150px"><spring:message code="label.Name" /></th>
+									<th style="width: 150px"><spring:message code="label.Email" /></th>
+									<th style="width: 150px"><spring:message code="label.InvitationDate" /></th>
+									<th style="width: 150px"><spring:message code="label.ReminderDate" /></th>
+									<th style="width: 150px"><spring:message code="label.Answers" /></th>
 							<!-- /ko -->
 							<!-- ko if: selectedGroup() != null && (selectedGroup().type() == 'Token') -->
-									<th><spring:message code="label.Token" /></th>
-							<!-- /ko -->
+									<th style="width: 150px"><spring:message code="label.Token" /></th>
+							<!-- /ko -->							
 						</tr>
 					</thead>
 					
@@ -370,6 +384,7 @@
 								<td data-bind="text: email"></td>
 								<td data-bind="text: niceInvited"></td>
 								<td data-bind="text: niceReminded"></td>
+								<td data-bind="text: answers"></td>
 							</tr>
 						</tbody>
 						<!-- /ko -->
@@ -380,6 +395,7 @@
 								<td data-bind="text: email"></td>
 								<td data-bind="text: niceInvited"></td>
 								<td data-bind="text: niceReminded"></td>
+								<td data-bind="text: answers"></td>
 							</tr>
 						</tbody>
 						<!-- /ko -->
@@ -403,7 +419,7 @@
 				<c:when test="${numberOfAttendees == 0}">
 					<div style="padding-top: 160px; text-align: center">
 						<b><spring:message code="info.NoContacts" /></b><br /><br />
-						<a href="${contextpath}/addressbook" class="btn btn-default"><span class="glyphicon glyphicon-book"></span><spring:message code="label.CreateNewContactGuestlist" /></a>
+						<a href="${contextpath}/addressbook" class="btn btn-default"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.CreateContacts" /></a>
 					</div>
 				</c:when>
 				<c:otherwise>
@@ -421,7 +437,7 @@
 							</div>
 							<div class="col-md-4" style="text-align: center">
 								<ul class="progressbar">
-									<li data-bind="attr: {class: Step() == 1 ? 'active' : ''}"><spring:message code="label.SelectContacts" /></li>
+									<li data-bind="attr: {class: Step() == 1 ? 'active' : ''}"><span data-bind="attr: {style: Step() == 2 ? 'color: #43ff43' : ''}" class="glyphicon glyphicon-ok"></span><spring:message code="label.SelectContacts" /></li>
 									<li data-bind="attr: {class: Step() == 2 ? 'active' : ''}"><spring:message code="label.SaveGuestlist" /></li>
 								</ul>
 							</div>
@@ -442,7 +458,7 @@
 											</div>
 										</div>
 										<div id="contactshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
-											<table class="table table-bordered table-styled ptable" style="overflow-y: hidden">
+											<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden">
 												<thead>
 													<tr>
 														<th class="checkcell"><input id="checkallcontacts" type="checkbox" onclick="_participants.checkAll($(this).is(':checked'))" /></th>
@@ -470,7 +486,7 @@
 											</table>
 										</div>
 										<div id="contactsdiv" style="max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;"> 
-											<table id="contacts" class="table table-bordered table-styled ptable">
+											<table id="contacts" class="table table-bordered table-styled table-striped ptable">
 												<!-- ko if: Attendees().length == 0 -->
 												<tbody>
 													<tr>
@@ -493,9 +509,9 @@
 											</table>
 										</div>
 									</div>
-									<div class="col-md-2x" style="text-align: center; margin-top: 75px;">
+									<div class="col-md-2x" style="text-align: center; margin-top: 55px;">
 										<a class="iconbutton" onclick="$('#configure-attributes-dialog').modal();" data-toggle="tooltip" title="<spring:message code="label.ConfigureTables" />"><span class="glyphicon glyphicon-wrench"></span></a><br />
-										<div style="margin-top: 80px;">
+										<div style="margin-top: 230px;">
 											<a data-bind="click: moveContacts" class="iconbutton" data-toggle="tooltip" style="font-size: 20px;" title="<spring:message code="label.AddToGuestlist" />"><span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right" style="margin-left: -9px;"></span></a>
 										</div>
 									</div>
@@ -507,7 +523,7 @@
 											</div>	
 										</div>
 										<div id="selectedcontactshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
-											<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+											<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden; min-height: 500px;">
 												<thead>
 													<tr>
 														<th class="checkcell"><input id="checkallselectedcontacts" type="checkbox" onclick="_participants.selectedGroup().checkAll($(this).is(':checked'))" /></th>
@@ -535,7 +551,7 @@
 											</table>
 										</div>
 										<div id="selectedcontactsdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
-											<table class="table table-bordered table-styled ptable">											
+											<table class="table table-bordered table-styled table-striped ptable">											
 												<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
 												<tbody>
 													<tr>
@@ -568,9 +584,12 @@
 								</div>							
 							</div>
 						
-							<div style="text-align: center; margin-top: 30px;">
+							<div style="text-align: center; margin-top: 30px; width: 800px; margin-left: auto; margin-right: auto;">
+								<div style="float: left; width: 200px; height: 20px; text-align: left;"></div>
+								<div style="float: right; width: 200px; text-align: right;">
+									<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+								</div>
 								<a class="btn btn-primary" onclick="_participants.Step(2)"><spring:message code="label.NextStep" /></a>	
-								<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
 							</div>
 						</div>
 						
@@ -586,7 +605,7 @@
 								</div>	
 							</div>
 							<div id="selectedcontactshead2" style="max-width: 900px; overflow-y: scroll; overflow-x: hidden;">
-								<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+								<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden; min-height: 500px;">
 									<thead>
 										<tr>
 											<th><spring:message code="label.Name" /></th>
@@ -599,7 +618,7 @@
 								</table>
 							</div>
 							<div id="selectedcontactsdiv2" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 900px; overflow-x: auto; overflow-y: scroll;">
-								<table class="table table-bordered table-styled ptable">											
+								<table class="table table-bordered table-styled table-striped ptable">											
 									<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
 									<tbody>
 										<tr>
@@ -621,13 +640,16 @@
 									<!-- /ko -->									
 								</table>
 							</div>
-						
-							<div style="text-align: center">
-								<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
+							
+							<div style="text-align: center; margin-top: 30px; width: 800px; margin-left: auto; margin-right: auto;">
+								<div style="float: left; width: 200px; text-align: left;">
+									<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
+								</div>
+								<div style="float: right; width: 200px; text-align: right;">
+									<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+								</div>
 								<a class="btn btn-primary" onclick="_participants.Save()"><spring:message code="label.SaveGuestlist" /></a>	
-								<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
-							</div>
-						
+							</div>						
 						</div>
 						
 					</div>
@@ -650,7 +672,7 @@
 					</div>
 					<div class="col-md-4" style="text-align: center">
 						<ul class="progressbar">
-							<li data-bind="attr: {class: Step() == 1 ? 'active' : ''}"><spring:message code="label.SelectContacts" /></li>
+							<li data-bind="attr: {class: Step() == 1 ? 'active' : ''}"><span data-bind="attr: {style: Step() == 2 ? 'color: #43ff43' : ''}" class="glyphicon glyphicon-ok"></span><spring:message code="label.SelectContacts" /></li>
 							<li data-bind="attr: {class: Step() == 2 ? 'active' : ''}"><spring:message code="label.SaveGuestlist" /></li>
 						</ul>
 					</div>
@@ -681,7 +703,7 @@
 								</div>
 							</div>
 							<div id="eccontactshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
-								<table class="table table-bordered table-styled ptable" style="overflow-y: hidden">
+								<table class="table table-bordered table-striped table-styled ptable" style="overflow-y: hidden">
 									<thead>
 										<tr>
 											<th class="checkcell"><input id="checkalleccontacts" type="checkbox" onclick="_participants.checkAll($(this).is(':checked'))" /></th>
@@ -705,7 +727,7 @@
 								</table>
 							</div>
 							<div id="eccontactsdiv" style="max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;"> 
-								<table id="eccontacts" class="table table-bordered table-styled ptable">
+								<table id="eccontacts" class="table table-bordered table-styled table-striped ptable">
 									<!-- ko if: Users().length == 0 -->
 									<tbody>
 										<tr>
@@ -727,7 +749,7 @@
 							</div>
 						</div>
 						<div class="col-md-2x" style="text-align: center; margin-top: 75px;">
-							<div style="margin-top: 80px;">
+							<div style="margin-top: 230px;">
 								<a data-bind="click: moveECContacts" class="iconbutton" data-toggle="tooltip" style="font-size: 20px;" title="<spring:message code="label.AddToGuestlist" />"><span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right" style="margin-left: -9px;"></span></a>
 							</div>
 						</div>
@@ -739,7 +761,7 @@
 								</div>	
 							</div>
 							<div id="selectedeccontactshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
-								<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+								<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden; min-height: 500px;">
 									<thead>
 										<tr>
 											<th class="checkcell"><input id="checkallselectedeccontacts" type="checkbox" onclick="_participants.selectedGroup().checkAll($(this).is(':checked'))" /></th>
@@ -763,7 +785,7 @@
 								</table>
 							</div>
 							<div id="selectedeccontactsdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
-								<table class="table table-bordered table-styled ptable">											
+								<table class="table table-bordered table-styled table-striped ptable">											
 									<!-- ko if: selectedGroup() != null && selectedGroup().users().length == 0 -->
 									<tbody>
 										<tr>
@@ -793,10 +815,13 @@
 						</div>
 					</div>							
 				</div>
-			
-				<div style="text-align: center; margin-top: 30px;">
+				
+				<div data-bind="visible: Step() == 1" style="text-align: center; margin-top: 30px; width: 800px; margin-left: auto; margin-right: auto;">
+					<div style="float: left; width: 200px; height: 20px; text-align: left;"></div>
+					<div style="float: right; width: 200px; text-align: right;">
+						<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+					</div>
 					<a class="btn btn-primary" onclick="_participants.Step(2)"><spring:message code="label.NextStep" /></a>	
-					<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
 				</div>
 			</div>
 			
@@ -812,7 +837,7 @@
 					</div>	
 				</div>
 				<div id="selectedcontactshead2" style="max-width: 900px; overflow-y: scroll; overflow-x: hidden;">
-					<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+					<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden; min-height: 500px;">
 						<thead>
 							<tr>
 								<th><spring:message code="label.Name" /></th>
@@ -823,7 +848,7 @@
 					</table>
 				</div>
 				<div id="selectedcontactsdiv2" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 900px; overflow-x: auto; overflow-y: scroll;">
-					<table class="table table-bordered table-styled ptable">											
+					<table class="table table-bordered table-styled table-striped ptable">											
 						<!-- ko if: selectedGroup() != null && selectedGroup().users().length == 0 -->
 						<tbody>
 							<tr>
@@ -843,13 +868,16 @@
 						<!-- /ko -->									
 					</table>
 				</div>
-			
-				<div style="text-align: center">
-					<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
+				
+				<div style="text-align: center; margin-top: 30px; width: 800px; margin-left: auto; margin-right: auto;">
+					<div style="float: left; width: 200px; text-align: left;">
+						<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
+					</div>
+					<div style="float: right; width: 200px; text-align: right;">
+						<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+					</div>
 					<a class="btn btn-primary" onclick="_participants.Save()"><spring:message code="label.SaveGuestlist" /></a>	
-					<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
-				</div>
-			
+				</div>			
 			</div>
 		</div>
 		
@@ -868,7 +896,7 @@
 					</div>
 					<div class="col-md-4" style="text-align: center">
 						<ul class="progressbar">
-							<li data-bind="attr: {class: Step() == 1 ? 'active' : ''}"><spring:message code="label.CreateTokens" /></li>
+							<li data-bind="attr: {class: Step() == 1 ? 'active' : ''}"><span data-bind="attr: {style: Step() == 2 ? 'color: #43ff43' : ''}" class="glyphicon glyphicon-ok"></span><spring:message code="label.CreateTokens" /></li>
 							<li data-bind="attr: {class: Step() == 2 ? 'active' : ''}"><spring:message code="label.SaveGuestlist" /></li>
 						</ul>
 					</div>
@@ -897,7 +925,7 @@
 								</div>	
 							</div>
 							<div id="selectedtokenshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
-								<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+								<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden; min-height: 500px;">
 									<thead>
 										<tr>
 											<th class="checkcell"><input id="checkallselectedtokens" type="checkbox" onclick="_participants.selectedGroup().checkAll($(this).is(':checked'))" /></th>
@@ -908,7 +936,7 @@
 								</table>
 							</div>
 							<div id="selectedtokenssdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
-								<table class="table table-bordered table-styled ptable">											
+								<table class="table table-bordered table-styled table-striped ptable">											
 									<!-- ko if: selectedGroup() != null && selectedGroup().tokens().length == 0 -->
 									<tbody>
 										<tr>
@@ -931,15 +959,25 @@
 							<!-- ko if: selectedGroup() != null -->
 							<a class="iconbutton" style="margin-left: 20px;" data-bind="click: selectedGroup().removeSelected"><span class="glyphicon glyphicon-trash"></span></a>
 							<spring:message code="label.RemoveTokensFromGuestList" /><br />
+														
+							<!-- ko if: selectedGroup().id() != 0 -->
+							<a class="iconbutton" style="margin-left: 20px;" data-bind="click: selectedGroup().activateSelected"><span class="glyphicon glyphicon-play"></span></a>
+							<spring:message code="label.ActivateSelectedTokens" /><br />
+							
 							<a class="iconbutton" style="margin-left: 20px;" data-bind="click: selectedGroup().deactivateSelected"><span class="glyphicon glyphicon-stop"></span></a>
 							<spring:message code="label.DeactivateSelectedTokens" /><br />
 							<!-- /ko -->	
+
+							<!-- /ko -->
 						</div>
-					</div>							
-			
-					<div style="text-align: center; margin-top: 30px;">
+					</div>
+					
+					<div style="text-align: center; margin-top: 30px; width: 660px; margin-left: auto; margin-right: auto;">
+						<div style="float: left; width: 200px; height: 20px; text-align: left;"></div>
+						<div style="float: right; width: 200px; text-align: right;">
+							<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+						</div>
 						<a class="btn btn-primary" onclick="_participants.Step(2)"><spring:message code="label.NextStep" /></a>	
-						<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
 					</div>
 			    </div>
 			
@@ -955,7 +993,7 @@
 						</div>	
 					</div>
 					<div id="selectedtokenshead2" style="max-width: 900px; overflow-y: scroll; overflow-x: hidden;">
-						<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+						<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden; min-height: 500px;">
 							<thead>
 								<tr>
 									<th><spring:message code="label.Token" /></th>
@@ -965,7 +1003,7 @@
 						</table>
 					</div>
 					<div id="selectedtokensdiv2" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 900px; overflow-x: auto; overflow-y: scroll;">
-						<table class="table table-bordered table-styled ptable">											
+						<table class="table table-bordered table-styled table-striped ptable">											
 							<!-- ko if: selectedGroup() != null && selectedGroup().tokens().length == 0 -->
 							<tbody>
 								<tr>
@@ -983,15 +1021,17 @@
 							</tbody>
 							<!-- /ko -->									
 						</table>
-					</div>
-				
-					<div style="text-align: center">
+					</div>	
+				</div>
+				<div data-bind="visible: Step() == 2"style="text-align: center; margin-top: 30px; width: 660px; margin-left: auto; margin-right: auto;">
+					<div style="float: left; width: 200px; text-align: left;">
 						<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
-						<a class="btn btn-primary" onclick="_participants.Save()"><spring:message code="label.SaveGuestlist" /></a>	
+					</div>
+					<div style="float: right; width: 200px; text-align: right;">
 						<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
 					</div>
-				
-				</div>
+					<a class="btn btn-primary" onclick="_participants.Save()"><spring:message code="label.SaveGuestlist" /></a>	
+				</div>	
 			</div>
 		</div>
 	</div>

@@ -98,12 +98,12 @@ var Guestlist = function() {
 		_participants.selectedGroup(this);
 		_participants.Page(2);
 		$('#details').find('[data-toggle="tooltip"]').tooltip();
-		this.loadChildren();
+		this.loadChildren(true, false);
 	}
 	
 	this.edit = function() {
 		_participants.selectedGroup(this);
-		this.loadChildren();
+		this.loadChildren(true, true);
 		
 		switch(self.type())
 		{
@@ -124,19 +124,39 @@ var Guestlist = function() {
 		_participants.loadAttendees(true);
 	}
 	
-	this.loadChildren = function() {
+	var currentChildrenPage = 1;
+	var endChildrenReached = false;
+	this.loadChildren = function(first, all) {
 		var model = this;
 		
-		model.attendees.removeAll();
-		model.users.removeAll();
-		model.tokens.removeAll();
+		if (first)
+		{
+			currentChildrenPage = 1;
+			model.attendees.removeAll();
+			model.users.removeAll();
+			model.tokens.removeAll();
+			endChildrenReached = false;
+		} else {
+			if (endChildrenReached) return;			
+			currentChildrenPage++;
+		}
+				
+		var s = "newPage=" + currentChildrenPage + "&itemsPerPage=" + 50;
+		if (all) s += "&all=true";
 				
 		$.ajax({
 			type:'GET',
 			url: contextpath + "/noform/management/children?id=" + model.id(),
+			data: s,
 			dataType: 'json',
 			cache: false,
-			success: function( items ) {			  
+			success: function( items ) {	
+				
+				if (items.length < 50)
+				{
+					endChildrenReached = true;
+				}
+				
 				for (var i = 0; i < items.length; i++ )
 				{
 				  if (self.type() == 'Static') {
@@ -156,11 +176,23 @@ var Guestlist = function() {
 					  self.users.push(user);
 				  }
 				}
+				$("#participantdetailstable").stickyTableHeaders({fixedOffset: 160});
 			}, error: function() {
 				  showGenericError();
 			}
 		});		
 	}
+	
+	this.activateSelected = function()
+	{
+		for (var i = 0; i < self.tokens().length; i++)
+		{
+			if (self.tokens()[i].selected())
+			{
+				self.tokens()[i].deactivated(false);				
+			}
+		}
+	}	
 	
 	this.deactivateSelected = function()
 	{
@@ -542,7 +574,7 @@ var Participants = function() {
 			  {			 
 				  if (result == "ok")
 				  {
-					model.GuestLists.remove( function (item) { return item.id() == model.groupToDelete(); } )
+					model.Guestlists.remove( function (item) { return item.id() == model.groupToDelete(); } )
 					showSuccess(p_deleted);
 				  } else {
 					showError(result);
@@ -669,6 +701,7 @@ var Participants = function() {
 	}
 	
 	this.Save = function() {
+		
 		if (self.selectedGroup().type() == "Static")
 		{
 			if (!validateInput($('#create-step-2-contacts')))
@@ -746,9 +779,9 @@ $(function() {
 		$('#selectedcontactshead2').scrollLeft($("#selectedcontactsdiv2").scrollLeft());
 	});
 	
-	var $col = $("#eccontactsdiv");
-	$col.scroll(function(){
-		if ($col.innerHeight() >= $col.prop('scrollHeight') - $col.scrollTop())
+	var $eccol = $("#eccontactsdiv");
+	$eccol.scroll(function(){
+		if ($eccol.innerHeight() >= $eccol.prop('scrollHeight') - $eccol.scrollTop())
 			_participants.loadUsers(false); 
 		
 		$('#eccontactshead').scrollLeft($("#eccontactsdiv").scrollLeft());
@@ -759,7 +792,21 @@ $(function() {
 	});
 	
 	$("#numtokens").spinner({ decimals:0, min:1, start:"", allowNull: true });
+	
+	 $(window).scroll(function() {
+		    if ($(window).scrollTop() <= $(document).height() - $(window).height() && $(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
+		    	loadMore();
+		  }
+		 });
 });
+
+function loadMore()
+{
+	if ($("#details").is(":visible"))
+	{
+		_participants.selectedGroup().loadChildren(false, false);
+	}
+}
 
 function checkReturn(event, box)
 {

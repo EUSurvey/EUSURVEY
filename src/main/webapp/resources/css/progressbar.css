@@ -1,6 +1,13 @@
  .progressbar {
       counter-reset: step;
   }
+  
+  .progressbar .glyphicon-ok {
+  	display: block;
+  	margin-top: -38px;
+  	margin-bottom: 26px;
+  }
+  
  .progressbar li {
      list-style-type: none;
      width: 50%;
