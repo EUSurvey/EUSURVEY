@@ -11,828 +11,1093 @@
 	<link href="${contextpath}/resources/css/management.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/simpletree.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	
-	<script type="text/javascript" src="${contextpath}/resources/js/jquery.stickytableheaders.js?version=<%@include file="../version.txt" %>"></script>
-	<script type="text/javascript" src="${contextpath}/resources/js/configure.js?version=<%@include file="../version.txt" %>"></script>
-	<script type="text/javascript" src="${contextpath}/resources/js/participants.js?version=<%@include file="../version.txt" %>"></script>
-	
-	<style type="text/css">
-		.highlighted {
-			background-color: #FF9900;
-		}
-		
-		.department {
-			-moz-user-select: none;
-			-webkit-user-select: none;
-			user-select: none;
-		}
-		
-	    #sortable { list-style-type: none; margin: 0; padding: 0; width: 190px; }
-	    #sortable li { margin: 0 0px 0px 0px; padding: 0.4em; padding-left: 1.5em; height: 33px; }
-	    #sortable li span:not(.glyphicon) { margin-left: -1.3em; }
-	    
-	    .dep-tree { list-style-type: none; margin: 0; padding: 0; }
-	    .dep-tree-child { margin-left: 30px;}
-	    
-	    #participantsstatic td, #participantsstatic th, #participantsstaticheader th {
-	    	padding: 1px !important;
-	    	text-align: left;
-	    	width: 150px;
-	    	border: 1px solid #ddd;
-	    	word-wrap: break-word;
-	    }
-	    
-	    #selectedparticipantsstatic td, #selectedparticipantsstatic th {
-	    	padding: 1px !important;
-	    	text-align: left;
-	    	border: 1px solid #ddd;
-	    }
-	    
-	    .filtercell {
-	    	text-align: left;
-	    }
-	    
-	    [class^="icon-"], [class*=" icon-"] {
-			width: 16px;
-		}
-		
-		.filtertools {
-			float: right;
-		}
-		
-		.dep-tree .check {
-			margin-right: 5px !important;
-		}
-	
-    </style>
-	
-	<script type="text/javascript">	
-	
-		window.setTimeout("checkFinishedGuestlists()", 10000);
-	
+	<script>
+		var attributeIDs = new Array();
 		var attributeNames = new Array();
 		
 		<c:forEach items="${attributeNames}" var="attributeName" varStatus="rowCounter">
-			attributeNames.push("${attributeName.id}");				
+			attributeIDs.push(${attributeName.id});		
+			attributeNames.push("${attributeName.name}");	
 		</c:forEach>
-		
-		var selectedDepartments = new Array();
-		
-		<c:if test="${selectedParticipationGroup != null && selectedParticipationGroup.departments != null}">		
-			<c:forEach items="${selectedParticipationGroup.departments}" var="department" varStatus="rowCounter">
-				selectedDepartments.push("${department}");		
-			</c:forEach>
-		</c:if>
-		var selectedDomain = "${defaultDomain}";   //"cec.eusurvey.int";  //eu.europa.ec
-		<c:if test="${selectedParticipationGroup != null && selectedParticipationGroup.domainCode != null}">
-			selectedDomain = "${selectedParticipationGroup.domainCode}";
-		</c:if>
-		
-		var selectedgroup = null;
-		function showExportDialog(type, format, group)
-		{
-			selectedgroup = group;
-			exportType = type;
-			exportFormat = format;
-			$('#export-name').val("");
-			$('#export-name-dialog').find(".validation-error").hide();
-			$('#export-name-dialog-type').text(format.toUpperCase());
-			$('#export-name-dialog').modal();	
-			$('#export-name-dialog').find("input").first().focus();
-		}
-		
-		function startExport(name)
-		{
-			// check again for new exports
-			window.checkExport = true;
-			
-			$.ajax({
-				type:'POST',
-				  url: '${contextpath}/exports/start/' + exportType + "/" + exportFormat,
-				  data: {exportName: name, showShortnames: false, allAnswers: false, group: selectedgroup},
-				  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
-				  cache: false,
-				  success: function( data ) {						  
-					  if (data == "success") {
-							showExportSuccessMessage();
-						} else {
-							showExportFailureMessage()
-						}
-						$('#deletionMessage').addClass('hidden');
-				}
-			});	
-						
-			return false;
-		}
-			
-		function checkFinishedGuestlists()
-		{
-			if ($(".increation").length > 0)
-			{
-				var ids = "ids=";
-				$(".increation").each(function(){
-					ids += $(this).attr("data-id") + ";";
-				});				
-				
-				var request = $.ajax({
-					 url: "${contextpath}/${sessioninfo.shortname}/management/participants/finishedguestlists",
-				  data: ids,
-				  dataType: "json",
-				  cache: false,
-				  success: function(list)
-				  {
-					  for (var i = 0; i < list.length; i++ )
-					  {
-						 var id = list[i].substring(0, list[i].indexOf("|"));
-						 var participants = list[i].substring(list[i].indexOf("|")+1);
-						 
-						 var row = $(".increation[data-id='" + id + "']");
-						 $(row).css("background-color","#D6FFDA");
-						 $(row).find("[data-class='deactivatebutton']").removeAttr("onclick").removeClass("disabled");
-						 $(row).find("[data-class='sendbutton']").removeAttr("onclick").removeClass("disabled").attr('href','${contextpath}/${sessioninfo.shortname}/management/sendInvitations/' + id);
-						 $(row).find("[data-class='editbutton']").removeAttr("onclick").removeClass("disabled").attr('href','${contextpath}/${sessioninfo.shortname}/management/participantsEdit?id=' + id);
-						 
-						 if (participants == "error2")
-						 {
-							 showError("<spring:message code="error.MaxTokenNumberExceeded" />");
-						 } else if (participants == "error1")
-						 {
-							 showError("<spring:message code="error.ProblemDuringSave" />");
-						 } else {
-							 $(row).find("[data-class='participants']").text(participants);
-							 
-							 if ($(row).attr("data-type") == "Token")
-							 {
-								 $(row).find("[data-class='invited']").text(participants);
-							 }
-							 
-						 };
-						
-					  };
-				  },
-				  error: function(jqXHR, textStatus, errorThrown)
-				  {
-					  alert(textStatus);
-				  }
-				});
-				
-				window.setTimeout("checkFinishedGuestlists()", 60000);
-			};
-			
-			if ($(".inrunningmails").length > 0)
-			{
-				var ids = "surveyUid=${form.survey.uniqueId}&ids=";
-				$(".inrunningmails").each(function(){
-					ids += $(this).attr("data-id") + ";";
-				});				
-				
-				var request = $.ajax({
-					 url: "${contextpath}/${sessioninfo.shortname}/management/participants/finishedguestlistsmail",
-				  data: ids,
-				  dataType: "json",
-				  cache: false,
-				  success: function(list)
-				  {
-					  for (var i = 0; i < list.length; i++ )
-					  {
-						 var id = list[i].key;
-						 var count = list[i].value;
-						 
-						 var row = $(".inrunningmails[data-id='" + id + "']");
-						 $(row).css("background-color","#D6FFDA");
-						 
-						 $(row).find("[data-class='invited']").html(count);
-						 
-					  };
-				  },
-				  error: function(jqXHR, textStatus, errorThrown)
-				  {
-					  alert(textStatus);
-				  }
-				});
-				
-				window.setTimeout("checkFinishedGuestlists()", 60000);
-			};	
-		}
-		
-		var groupToDelete = null;
-		function deleteList()
-		{
-			$('#delete-list-dialog').modal('hide');
-			$('#hider').show();
-			window.location = '<c:url value="/${sessioninfo.shortname}/management/participantsDelete" />?id=' + groupToDelete;
-		}
-		
-		function createNewGuestlist()
-		{
-			$('#add-participants-name').val('');
-			$('#token-table').find('tbody').empty();
-			$('#add-participants-dialog2-token-groupname').val('');
-			$('#add-participants-dialog2-token-groupid').val('');
-			$('#add-participants-dialog2-token-edit-form').empty();
-			$('#add-participants-dialog1').modal();
-		}
-		
-		var newPage = 1;
-		function loadMoreTokens(t)
-		{
-			$( "#add-participants-dialog2-token-busy" ).show();
-			var s = "page=" + newPage++ + "&rows=20&group=" + $("#selectedParticipationGroup").val();	
-			
-			if (t != null) s = s + "&token=" + t;
-			
-			$(".dialog-wait-image").show();
-			
-			$.ajax({
-				type:'GET',
-				  url: "${contextpath}/${sessioninfo.shortname}/management/tokensjson",
-				  dataType: 'json',
-				  data: s,
-				  cache: false,
-				  error: function() {
-					  $(".dialog-wait-image").hide();
-				  },
-				  success: function( list ) {
-					  
-					  if (list.length < 20)
-					  {
-						$('#loadmoretokensbutton').hide();  
-					  } else {
-						$('#loadmoretokensbutton').show();  
-					  }
-				  
-					  for (var i = 0; i < list.length; i++ )
-					  {
-						 var active = list[i].substring(0,1) == 1;
-						 var token = list[i].substring(1);						  
-						  
-						 addTokenRow(active, token, false);							
-					  }
-					  
-					  $(window).trigger('resize.stickyTableHeaders');
-					  
-					  $(".dialog-wait-image").hide();
-					  $( "#add-participants-dialog2-token-busy" ).hide();				  
-				}});
-		}
-		
-		function addTokenRow(active, token, unsaved)
-		{			
-			var tr = document.createElement("tr");
-			 
-			 if (!active)
-			 {
-				 $(tr).css("background-color","#faa");
-			 }
-			 
-			 $(tr).attr("id","row" + token);
-			 
-			 var td = document.createElement("td");
-			 $(td).text(token);
-			 
-			 var input = document.createElement("input");
-			 $(input).attr("type","hidden").attr("id", "token" + token).addClass("tokenrow");
-			 
-			 if (!unsaved)
-			 {
-				 $(input).attr("name", "token" + token)
-			 } else {
-				 $(input).attr("name", "newtoken" + token).val(token);
-			 }
-			 			 
-			 $(td).append(input);
-			
-			 $(tr).append(td);
-			 
-			 <c:if test="${readonly == null}">
-			 
-				 td = document.createElement("td");
-				 
-				 var a = document.createElement("a");
-				 
-				 $(a).attr("data-toggle","tooltip").attr("title", "<spring:message code="label.Remove" />").addClass("iconbutton").append('<span class="glyphicon glyphicon-remove"></span>');
-				 
-				 if (!unsaved)
-				 {
-					 $(a).attr("onclick","deleteToken('" + token + "','${selectedParticipationGroup.id}')");
-				 } else {
-					 $(a).attr("onclick","$(this).parent().parent().remove()");
-				 }
-				
-				 $(td).append(a);
-				 $(a).tooltip(); 
-				 
-				 a = document.createElement("a");
-				 $(a).attr("id", "activate" + token);
-				 
-				 if (!unsaved)
-				 {
-					 if (active)
-					 {						 
-					 	$(a).attr("data-toggle","tooltip").attr("title", "<spring:message code="label.Deactivate" />").addClass("iconbutton").append('<span class="glyphicon glyphicon-stop"></span>').attr("onclick","deactivateToken('" + token + "','${selectedParticipationGroup.id}')");
-					 } else {
-						$(a).attr("data-toggle","tooltip").attr("title", "<spring:message code="label.Activate" />").addClass("iconbutton").append('<span class="glyphicon glyphicon-play"></span>').attr("onclick","reactivateToken('" + token + "','${selectedParticipationGroup.id}')");
-					 }
-				 }			
-				 	
-				 $(td).append(a);
-				 $(a).tooltip(); 
-				
-				 $(tr).append(td);
-			 
-			 </c:if>
-			 
-			 $("#token-table").find("tbody").append(tr);	
-		}
-		
-		function addTokens()
-		{
-			var tokens = $("#number-new-tokens").val();
-			
-			var result = validateInput($("#add-participants-dialog2-token-form"));
-			
-			if (result == false)
-			{
-				return;
-			}
-			
-			var s = "tokens=" + tokens;
-			
-			$(".dialog-wait-image").show();
-			
-			$.ajax({
-				type:'GET',
-				  url: "${contextpath}/${sessioninfo.shortname}/management/participants/createTokens",
-				  dataType: 'json',
-				  data: s,
-				  cache: false,
-				  success: function( list ) {
-					  
-					  for (var i = 0; i < list.length; i++ )
-					  {
-					  	addTokenRow(true, list[i], true);
-					  }
-					  
-					  $(".dialog-wait-image").hide();
-				  }
-			});
-		}
-		
-		function cancelEditTokens()
-		{
-			$(".tokenrow").remove();
-			$("#add-participants-dialog2-token").modal("hide");		
-		}
-		
-		function saveEditTokens()
-		{
-			$('#add-participants-dialog2-token-edit-form').submit();
-		}
-		
-		function searchToken(reset)
-		{
-			$("#token-table").find("tbody").empty();
-
-			newPage = 1;
-			
-			if (reset)
-			{
-				$("#add-participants-dialog2-search-token").val('');
-				loadMoreTokens();
-			} else {
-				loadMoreTokens($("#add-participants-dialog2-search-token").val().trim());
-			}			
-		}
-		
-		function deleteToken(token,id)
-		{			
-			$("#token" + token).val("delete");
-			$("#row" + token).hide();
-		}
-		
-		function deactivateToken(token,id)
-		{			
-			$("#token" + token).val("deactivate");
-			$("#row" + token).css("background-color","rgb(255, 170, 170);");
-			
-			var a = $("#activate" + token);
-			$(a).attr("data-toggle","tooltip").attr("data-original-title", "<spring:message code="label.Activate" />").empty();
-			$(a).append('<i class="glyphicon glyphicon-play"></i>').attr("onclick","reactivateToken('" + token + "','${selectedParticipationGroup.id}')");
-		}
-		
-		function reactivateToken(token,id)
-		{			
-			$("#token" + token).val("activate");
-			$("#row" + token).css("background-color","");
-			
-			var a = $("#activate" + token);
-			$(a).attr("data-toggle","tooltip").attr("data-original-title", "<spring:message code="label.Deactivate" />").empty();
-			$(a).append('<span class="glyphicon glyphicon-stop"></span>').attr("onclick","deactivateToken('" + token + "','${selectedParticipationGroup.id}')");
-		}
-		
-		var infinitePage = 0;
-		
-		function loadMoreGroups()
-		{
-			$( "#wheel" ).show();
-			var s = "page=" + infinitePage++ + "&rows=50";	
-			
-			$.ajax({
-				type:'GET',
-				url: "<c:url value="/${sessioninfo.shortname}/management/participantsjson" />",
-				dataType: 'json',
-				data: s,
-				cache: false,
-				success: refreshGroups
-				});
-		}
-		
-		$(function(){
-			$("#participantstable").stickyTableHeaders();
-			loadMoreGroups();
-			$('[data-toggle="tooltip"]').tooltip(); 
-		});
-		
-		$(window).scroll(function() {
-		    if ($(window).scrollTop() <= $(document).height() - $(window).height() && $(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
-		    	loadMoreGroups();
-		  }
-		 });
-		
-		function refreshGroups( list, textStatus, xhr ) {
-			
-			if (list.length == 0)
-			{
-				infinitePage--;
-				$("#load-more-div").hide();
-			}
-			refreshGroupsBasic( list, textStatus, xhr );
-		}
-			
-		function refreshGroupsBasic( list, textStatus, xhr ) {
-			
-			for (var i = 0; i < list.length; i++ )
-			  {
-				var row = document.createElement("tr");
-				
-				if (list[i].inCreation)
-				{
-					$(row).css('background-color','#FFE0BF').addClass("increation").attr("data-id",list[i].id);
-				} else if (list[i].runningMails)
-				{
-					$(row).css('background-color','#D1EBFF').addClass("runningmails").attr("data-id",list[i].id);
-				} else if (list[i].error != null)
-				{
-					$(row).css('background-color','#FFD6DA');
-				} else if (list[i].active)
-				{
-					$(row).css('background-color','#D6FFDA');
-				}
-			
-				var td = document.createElement("td");	
-				$(td).html(list[i].name);
-				$(row).append(td);
-				
-				var td = document.createElement("td");	
-				$(td).html(list[i].type);
-				$(row).append(td);
-				
-				var td = document.createElement("td");	
-				$(td).attr("data-class","participants");
-				if (list[i].type == 'ECMembers')
-				{
-					$(td).html(list[i].children);
-				} else if (list[i].type == 'Token')
-				{
-					$(td).html(list[i].all);
-				} else {
-					$(td).html(list[i].children);
-				}			
-				$(row).append(td);
-				
-				var td = document.createElement("td");
-				$(td).attr("data-class","invited");
-				$(td).html(list[i].invited);
-				$(row).append(td);
-				
-				var td = document.createElement("td");
-				if (list[i].created != null)
-				{
-					$(td).html(list[i].formattedDate);
-				}
-				$(row).append(td);
-				
-				td = document.createElement("td");
-				<c:choose>
-					<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
-					
-						var a = document.createElement("a");
-						if (list[i].inCreation)
-						{
-							$(a).attr("id","btnDeactivateFromParticipant").attr("data-class","deactivatebutton").attr("href","<c:url value="/${sessioninfo.shortname}/management/participantsDeactivate" />?id=" + list[i].id).attr("onclick","return false;").addClass("iconbutton disabled").attr("data-toggle","tooltip").attr("title","<spring:message code="label.Deactivate" />").html("<span class='glyphicon glyphicon-stop'></span>");
-							$(td).append(a);
-							a = document.createElement("a");
-							$(a).attr("id","btnDeleteDisabledFromParticipant").addClass("iconbutton disabled").attr("data-toggle","tooltip").attr("title","<spring:message code="label.Remove" />").html("<span class='glyphicon glyphicon-remove'></span>");
-							$(td).append(a);
-						} else if (list[i].active) 
-						{
-							$(a).attr("id","btnDeactivateFromParticipant").attr("href","<c:url value="/${sessioninfo.shortname}/management/participantsDeactivate" />?id=" + list[i].id).addClass("iconbutton").attr("data-toggle","tooltip").attr("title","<spring:message code="label.Deactivate" />").html("<span class='glyphicon glyphicon-stop'></span>");
-							$(td).append(a);
-							a = document.createElement("a");
-							$(a).attr("id","btnDeleteDisabledFromParticipant").addClass("iconbutton disabled").attr("data-toggle","tooltip").attr("title","<spring:message code="label.Remove" />").html("<span class='glyphicon glyphicon-remove'></span>");
-							$(td).append(a);
-						} else {
-							$(a).attr("id","btnActivateFromParticipant").attr("href","<c:url value="/${sessioninfo.shortname}/management/participantsActivate" />?id=" + list[i].id).attr("onclick","$('#hider').show();return true;").addClass("iconbutton").attr("data-toggle","tooltip").attr("title","<spring:message code="label.Activate" />").html("<span class='glyphicon glyphicon-play'></span>");
-							$(td).append(a);
-							a = document.createElement("a");
-							$(a).attr("id","btnDeleteEnabledFromParticipant").attr("onclick","groupToDelete = '" + list[i].id +"'; $('#delete-list-dialog').modal('show');").addClass("iconbutton").attr("data-toggle","tooltip").attr("title","<spring:message code="label.Remove" />").html("<span class='glyphicon glyphicon-remove'></span>");
-							$(td).append(a);
-						}
-						
-						a = document.createElement("a");
-						if (list[i].inCreation && list[i].type != 'Token')
-						{					
-							$(a).attr("id","btnSendDisabledFromParticipant").attr("data-class","sendbutton").attr("onclick","return false;").addClass("iconbutton disabled").attr("data-toggle","tooltip").attr("title","<spring:message code="label.SendInvitations" />").html("<span class='glyphicon glyphicon-envelope'></span>");
-						} else if (list[i].children > 0 && list[i].active)
-						{
-							$(a).attr("id","btnSendEnabledFromParticipant").attr("href","<c:url value="/${sessioninfo.shortname}/management/sendInvitations" />/" + list[i].id).addClass("iconbutton").attr("data-toggle","tooltip").attr("title","<spring:message code="label.SendInvitations" />").html("<span class='glyphicon glyphicon-envelope'></span>");
-						} else if (list[i].children > 0 && list[i].active)
-						{
-							$(a).attr("id","btnSendEnabledFromParticipant").attr("href","<c:url value="/${sessioninfo.shortname}/management/sendInvitations" />/" + list[i].id).addClass("iconbutton").attr("data-toggle","tooltip").attr("title","<spring:message code="label.SendInvitations" />").html("<span class='glyphicon glyphicon-envelope'></span>");
-						} else {
-							$(a).attr("id","btnSendDisabledFromParticipant").addClass("iconbutton disabled").attr("data-toggle","tooltip").attr("title","<spring:message code="label.SendInvitations" />").html("<span class='glyphicon glyphicon-envelope'></span>");
-						}
-						$(td).append(a);
-	
-						a = document.createElement("a");
-						if (list[i].inCreation)
-						{
-							$(a).attr("id","btnEditDisabledFromParticipant").attr("data-class","editbutton").addClass("iconbutton disabled").attr("data-toggle","tooltip").attr("title","<spring:message code="label.Edit" />").html("<span class='glyphicon glyphicon-pencil'></span>");
-						} else {
-							$(a).attr("id","btnEditEnabledFromParticipant").attr("href","<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=" + list[i].id).addClass("iconbutton").attr("data-toggle","tooltip").attr("title","<spring:message code="label.Edit" />").html("<span class='glyphicon glyphicon-pencil'></span>");
-						}
-						$(td).append(a);
-						
-						if (list[i].type != 'Token' || list[i].type != 'Static')
-						{
-							a = document.createElement("a");
-							$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxls" />").attr("id","startExportTokensxls").addClass("iconbutton").attr("href","#").attr("onclick","showExportDialog('Tokens', 'xls', '" + list[i].id + "')").html("<img src='${contextpath}/resources/images/file_extension_xls_small.png' />");
-							$(td).append(a);
-							a = document.createElement("a");
-							$(a).attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadods" />").attr("id","startExportTokensods").addClass("iconbutton").attr("href","#").attr("onclick","showExportDialog('Tokens', 'ods', '" + list[i].id + "')").html("<img src='${contextpath}/resources/images/file_extension_ods_small.png' />");
-							$(td).append(a);
-						}
-					</c:when>
-					
-					<c:when test="${USER.getLocalPrivilegeValue('ManageInvitations') > 0}">
-						if (list[i].active) 
-						{
-							$(td).append('<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>');
-							$(td).append('<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>');
-						} else {
-							$(td).append('<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>');
-							$(td).append('<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>');
-						}
-						
-						var a = document.createElement("a");
-						$(a).attr("id","btnSendDisabledFromParticipant").addClass("iconbutton disabled").attr("data-toggle","tooltip").attr("title","<spring:message code="label.SendInvitations" />").html("<span class='glyphicon glyphicon-envelope'></span>");
-						$(td).append(a);
-	
-						a = document.createElement("a");
-						if (list[i].inCreation)
-						{
-							$(a).attr("id","btnEditDisabledFromParticipant").attr("data-class","editbutton").addClass("iconbutton disabled").attr("data-toggle","tooltip").attr("title","<spring:message code="label.Edit" />").html("<span class='glyphicon glyphicon-pencil'></span>");
-						} else {
-							$(a).attr("id","btnEditEnabledFromParticipant").attr("href","<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=" + list[i].id).addClass("iconbutton").attr("data-toggle","tooltip").attr("title","<spring:message code="label.Edit" />").html("<span class='glyphicon glyphicon-pencil'></span>");
-						}
-						$(td).append(a);
-						
-						if (list[i].type != 'Token' || list[i].type != 'Static')
-						{
-							a = document.createElement("a");
-							$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadxls" />").attr("id","startExportTokensxls").attr("href","#").attr("onclick","showExportDialog('Tokens', 'xls', '" + list[i].id + "')").html("<img src='${contextpath}/resources/images/file_extension_xls_small.png' />");
-							$(td).append(a);
-							a = document.createElement("a");
-							$(a).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "<spring:message code="tooltip.Downloadods" />").attr("id","startExportTokensods").attr("href","#").attr("onclick","showExportDialog('Tokens', 'ods', '" + list[i].id + "')").html("<img src='${contextpath}/resources/images/file_extension_ods_small.png' />");
-							$(td).append(a);
-						}
-			
-					</c:when>
-					
-					<c:otherwise>						
-						if (list[i].active) 
-						{
-							$(td).append('<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>');
-							$(td).append('<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>');
-						} else {
-							$(td).append('<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>');
-							$(td).append('<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>');
-						}						
-						
-						$(td).append('<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class="glyphicon glyphicon-envelope"></span></a>');
-						$(td).append('<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>');
-					</c:otherwise>
-				</c:choose>	
-				$(row).append(td);				
-
-				$('#participantstable tbody').append(row);
-			  }
-			
-			if($('#participantstable tbody tr').size()==0)
-			{
-				$('#tbllist-empty').show();
-			}
-			  
-			  $( "#wheel" ).hide();
-			  $( "#groups-loading" ).hide();
-			  $('[data-toggle="tooltip"]').tooltip();
-		}		
-		
-	
 	</script>
+	
+	<script type="text/javascript" src="${contextpath}/resources/js/jquery.stickytableheaders.js?version=<%@include file="../version.txt" %>"></script>
+	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/participants.js?version=<%@include file="../version.txt" %>"></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/configure.js?version=<%@include file="../version.txt" %>"></script>
+	
+	<style type="text/css">
+		.createlist {
+			width: 200px;
+			height: 150px;
+			padding: 20px;
+			white-space: normal;
+			font-weight: bold;
+			margin-top: 30px;
+		}
 		
+		.createlist .info {
+			font-weight: normal;
+			font-size: 12px;
+		}
+		
+		.createlist .glyphicon {
+			font-size: 40px;
+			color: #000;
+		}
+		
+		.stepseparator {
+			margin: 0px; 
+			padding: 0px; 
+			border-color: #777;
+			width: 20px; 
+			margin-left: -4px; 
+			margin-right: -4px;
+			margin-bottom: 4px; 
+			display: inline-block;
+		}
+		
+		.tabletitle {
+			background-color: #245077;
+    		color: #FFF;
+    		padding: 10px;
+    		border: 1px solid #ddd;
+    		margin-right: 1px;
+    		font-weight: bold;
+    		margin-bottom: -1px;
+		}
+		
+		.tabletitle .info {
+			font-weight: normal;
+			font-size: 12px;
+		}
+		
+		.checkcell {
+			max-width: 30px !important;
+			width: 30px !important;
+			min-width: 30px !important;
+			text-align: center;
+		}
+		
+		.ptable {
+			table-layout: fixed;
+			margin-bottom: 0px;
+			min-height: 480px;
+		}
+		
+		.ptable tr{height:1px;}
+		.ptable tr:last-child{height:auto;}
+		
+		.ptable th, .ptable td {
+			width: 150px;
+			max-width: 150px;
+			min-width: 150px;		
+		}
+		
+		.ptable .filtertools {
+			margin-top: -60px !important;
+    		padding-bottom: 10px !important;
+		}
+		
+		 .progressbar {
+		      counter-reset: step;
+		  }
+		  .progressbar li {
+		      list-style-type: none;
+		      width: 50%;
+		      float: left;
+		      font-size: 12px;
+		      position: relative;
+		      text-align: center;
+		      text-transform: uppercase;
+		      color: #7d7d7d;
+		  }
+		  .progressbar li:before {
+		      width: 40px;
+		      height: 40px;
+		      content: counter(step);
+		      counter-increment: step;
+		      line-height: 30px;
+		      border: 2px solid #7d7d7d;
+		      display: block;
+		      text-align: center;
+		      vertical-align: middle;
+		      margin: 0 auto 10px auto;
+		      border-radius: 50%;
+		      background-color: #7d7d7d;
+		  }
+		  .progressbar li:after {
+		      width: 100%;
+		      height: 2px;
+		      content: '';
+		      position: absolute;
+		      background-color: #7d7d7d;
+		      top: 19px;
+		      left: -50%;
+		      z-index: -1;
+		  }
+		  .progressbar li:first-child:after {
+		      content: none;
+		  }
+		  .progressbar li.active {
+		      color: #245077;;
+		  }
+		  .progressbar li.active:before {
+		      border-color: #245077;;
+		      background-color: #245077;;
+		  }
+		  .progressbar li.active + li:after {
+		      background-color: #7d7d7d;
+		  }
+		  
+		  #wait-dialog {
+		  	position: fixed;
+		  	left: 0;
+		  	right: 0;
+		  	top: 110px;
+		  	bottom: 0;
+		  	background-color: #cccccce6;
+		  	text-align: center;
+		  	vertical-align: middle;
+		  	padding-top: 300px;
+		  	z-index: 100000;
+		  }
+		  
+		  #wait-dialog-inner {
+		  	width: 150px; 
+		  	height: 150px; 
+		  	background-color: #fff; 
+		  	margin-left: auto; 
+		  	margin-right: auto; 
+		  	padding: 55px;
+		  	border-radius: 10px;
+		  }
+		  
+		  .col-md-5x {
+		  	float: left;
+		  	width: 48%;
+		  }
+		  
+		  .col-md-2x {
+		  	float: left;
+		  	width: 4%;
+		  }
+    </style>
+    
+    <script>
+    	$(function() {	
+	    <c:choose>
+			<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
+				_participants.Access(2);
+			</c:when>
+			<c:when test="${USER.getLocalPrivilegeValue('ManageInvitations') > 0}">
+				_participants.Access(1);
+			</c:when>
+			<c:otherwise>		
+				_participants.Access(0);
+			</c:otherwise>
+		</c:choose>	
+    	});
+	</script>
 </head>
 <body>
 	<div class="page-wrap">
 		<%@ include file="../header.jsp" %>
 		<%@ include file="../menu.jsp" %>
 		<%@ include file="formmenu.jsp" %>
+				
+		<div id="wait-dialog" data-bind="visible: ShowWait()">
+			<div id="wait-dialog-inner">
+				<img class="center" src="${contextpath}/resources/images/ajax-loader.gif" />
+			</div>												
+		</div>				
 		
-		<input type="hidden" id="readonlytree" value='${readonly != null ? "true" : "false" }' />
-		
-		<div id="action-bar" class="container action-bar">
-			<div class="row">
-				<div class="col-md-12" style="text-align:center">
-					<c:choose>
-						<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
-							<a id="btnCreateGuestListFromParticpant" onclick="createNewGuestlist()" class="btn btn-default"><spring:message code="label.CreateNewGuestlist" /></a>
-						</c:when>
-						<c:otherwise>
-							<a class="btn disabled btn-default"><spring:message code="label.CreateNewGuestlist" /></a>
-						</c:otherwise>
-					</c:choose>
+		<div id="participants" data-bind="visible: Page() == 1">		
+			<div id="action-bar" class="container action-bar" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+				<div class="row">
+					<div class="col-md-12" style="text-align:center">
+						<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
+							
+						<span style="margin-right: 20px"><spring:message code="label.CreateNew" /></span>
+						<a onclick="_participants.newContactList()" class="btn btn-success"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.ContactList" /></a>
+						<a onclick="_participants.newEUList()" class="btn btn-success"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.EUList" /></a>
+						<a onclick="_participants.newTokenList()" class="btn btn-success"><span class="glyphicon glyphicon-barcode"></span> <spring:message code="label.TokenList" /></a>
+							
+						</c:if>
+					</div>
 				</div>
-			</div>
-		</div>	
-		
-		<div class="fullpageform" style="padding-top:0px">
-		
-			<table id="participantstable" class="table table-bordered table-styled" style="width: auto; margin-top: 40px; margin-left: auto; margin-right: auto;">
-				<thead>
-					<tr>
-						<th><spring:message code="label.Name" /></th>
-						<th><spring:message code="label.Type" /></th>
-						<th style="text-align: center;"><spring:message code="label.Participants" /></th>
-						<th style="text-align: center;"><spring:message code="label.Invited" /></th>
-						<th style="text-align: center;"><spring:message code="label.Created" /></th>
-						<th><spring:message code="label.Actions" /></th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>	
-			
-			<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${participants.size() == 0}">style="display:block;"</c:if>>
-				<p>
-					<spring:message code="label.NoDataParticipantText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
-				<p>
 			</div>	
 			
+			<div class="fullpageform" style="padding-top: 40px">
+			
+				<table id="participantstable" class="table table-bordered table-styled" style="width: auto; margin-left: auto; margin-right: auto;" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+					<thead>
+						<tr>
+							<th><spring:message code="label.Name" /></th>
+							<th><spring:message code="label.Type" /></th>
+							<th style="text-align: center;"><spring:message code="label.Created" /></th>
+							<th style="text-align: center;"><spring:message code="label.Participants" /></th>
+							<th style="text-align: center;"><spring:message code="label.Invited" /></th>						
+							<th><spring:message code="label.Actions" /></th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- ko foreach: Guestlists() -->
+							<tr>
+								<td data-bind="text: name"></td>
+								<td>
+									<!-- ko if: type() == 'Static' -->
+										<spring:message code="label.ContactList" />
+									<!-- /ko -->
+									<!-- ko if: type() == 'Token' -->
+										<spring:message code="label.TokenList" />
+									<!-- /ko -->
+									<!-- ko if: type() == 'ECMembers' -->
+										<spring:message code="label.EUList" />
+									<!-- /ko -->
+								</td>
+								<td data-bind="text: created"></td>
+								<td data-bind="text: children"></td>
+								<td data-bind="text: invited"></td>
+								<td>
+									<!-- ko if: $parent.Access() == 2 -->
+										<!-- ko if: activateEnabled() -->
+											<a id="btnActivateFromParticipant" class="iconbutton" data-bind="click: activate" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class='glyphicon glyphicon-play'></span></a>
+										<!-- /ko -->
+										<!-- ko if: deactivateEnabled() -->
+											<a id="btnDeactivateFromParticipant" class="iconbutton" data-bind="click: deactivate" data-class="deactivatebutton" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
+										<!-- /ko -->
+										<!-- ko if: !activateEnabled() && !deactivateEnabled() -->
+											<a id="btnDeactivateFromParticipant" class="iconbutton disabled" data-class="deactivatebutton" onclick="return false;" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
+										<!-- /ko -->
+											<!-- ko if: editEnabled() -->
+											<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: edit"><span class='glyphicon glyphicon-pencil'></span></a>
+										<!-- /ko -->
+										<!-- ko if: !editEnabled() -->
+											<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
+										<!-- /ko -->
+										<!-- ko if: sendEnabled() -->
+											<a id="btnSendEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/sendInvitations" />/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
+										<!-- /ko -->
+										<!-- ko if: !sendEnabled() -->
+											<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+										<!-- /ko -->
+										<!-- ko if: exportEnabled() -->
+											<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+											<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
+										<!-- /ko -->
+										<!-- ko if: detailsEnabled() -->
+											<a class="iconbutton" data-toggle="tooltip" data-bind="click: showDetails" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<!-- /ko -->
+										<!-- ko if: !detailsEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<!-- /ko -->	
+										<!-- ko if: deleteEnabled() -->
+											<a id="btnDeleteEnabledFromParticipant" data-bind="click: deleteList" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>										
+										<!-- /ko -->
+										<!-- ko if: !deleteEnabled() -->
+											<a id="btnDeleteDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>
+										<!-- /ko -->
+									<!-- /ko -->
+									<!-- ko if: $parent.Access() == 1 -->
+										<!-- ko if: !activateEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>
+										<!-- /ko -->
+										<!-- ko if: activateEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
+										<!-- /ko -->
+										<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+										<!-- ko if: editEnabled() -->
+											<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
+										<!-- /ko -->
+										<!-- ko if: !editEnabled() -->
+											<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
+										<!-- /ko -->
+										<!-- ko if: exportEnabled() -->
+											<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+											<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
+										<!-- /ko -->
+										<!-- ko if: detailsEnabled() -->
+											<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<!-- /ko -->
+										<!-- ko if: !detailsEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<!-- /ko -->										
+										<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
+									<!-- /ko -->
+									<!-- ko if: $parent.Access() == 0 -->
+										<!-- ko if: !activateEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>
+										<!-- /ko -->
+										<!-- ko if: activateEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
+										<!-- /ko -->
+										<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>									
+										<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+										<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
+									<!-- /ko -->
+								</td>
+							</tr>					
+						<!-- /ko -->					
+					</tbody>
+				</table>	
+				
+				<div style="text-align: center; margin-top: 140px;" data-bind="visible: DataLoaded() && Guestlists().length == 0">
+					<h1 style="margin-bottom: 20px;"><spring:message code="message.noguestlistyet" /></h1>
+					
+					<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
+						<spring:message code="label.createguestlist" /><br />
+						
+						<a onclick="_participants.newContactList()" class="btn btn-success createlist">
+							<span class="glyphicon glyphicon-book"></span><br />
+							<spring:message code="label.ContactList" /><br /><br />
+							<span class="info"><spring:message code="info.ContactList" /></span>
+						</a>
+						
+						<a onclick="_participants.newEUList()" class="btn btn-success createlist">
+							<span class="glyphicon glyphicon-user"></span><br />
+							<spring:message code="label.EUList" /><br /><br />
+							<span class="info"><spring:message code="info.EUList" /></span>
+						</a>
+						
+						<a onclick="_participants.newTokenList()" class="btn btn-success createlist">
+							<span class="glyphicon glyphicon-barcode"></span><br />
+							<spring:message code="label.TokenList" /><br /><br />
+							<span class="info"><spring:message code="info.TokenList" /></span>
+						</a>						
+					</c:if>
+				</div>
+				
+				<div style="text-align: center" data-bind="visible: !DataLoaded()">
+					<img src="${contextpath}/resources/images/ajax-loader.gif" />
+				</div>
+				
+			</div>			
 		</div>
 		
-		<form:form id="saveForm" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/participants">
+		<div id="details" data-bind="visible: Page() == 2">
+			<div id="action-bar" class="container action-bar" style="max-width: 900px; margin-left: auto; margin-right: auto" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+				<div class="row">
+					<div class="col-md-4" style="text-align: left">
+						<a onclick="_participants.Page(1)"><spring:message code="label.Participants" /></a> > <spring:message code="label.ViewGuestList" />
+					</div>
+					<div class="col-md-4" style="text-align: center">
+						<spring:message code="label.GuestListEntries" /> <span style="margin-left: 10px;" data-bind="text: selectedGroup() != null ? selectedGroup().children() : ''"></span>
+					</div>
+					<div class="col-md-4" style="text-align: right">
+						<!-- ko if: selectedGroup() != null && selectedGroup().exportEnabled() -->
+							<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: selectedGroup().exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+							<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: selectedGroup().exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
+						<!-- /ko -->
+					</div>
+				</div>
+			</div>	
+			
+			<div class="fullpageform" style="padding-top: 40px">
+			
+				<table id="participantstable" class="table table-bordered table-styled" style="width: auto; margin-left: auto; margin-right: auto;" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+					<thead>
+						<tr>
+							<!-- ko if: selectedGroup() != null && (selectedGroup().type() == 'Static' || selectedGroup().type() == 'ECMembers') -->
+									<th><spring:message code="label.Name" /></th>
+									<th><spring:message code="label.Email" /></th>
+									<th><spring:message code="label.InvitationDate" /></th>
+									<th><spring:message code="label.ReminderDate" /></th>
+							<!-- /ko -->
+							<!-- ko if: selectedGroup() != null && (selectedGroup().type() == 'Token') -->
+									<th><spring:message code="label.Token" /></th>
+							<!-- /ko -->
+						</tr>
+					</thead>
+					
+						<!-- ko if: selectedGroup() != null && selectedGroup().type() == 'Static' -->
+						<tbody data-bind="foreach: selectedGroup().attendees()">
+							<tr>
+								<td data-bind="text: name"></td>
+								<td data-bind="text: email"></td>
+								<td data-bind="text: niceInvited"></td>
+								<td data-bind="text: niceReminded"></td>
+							</tr>
+						</tbody>
+						<!-- /ko -->
+						<!-- ko if: selectedGroup() != null && selectedGroup().type() == 'ECMembers' -->
+						<tbody data-bind="foreach: selectedGroup().users()">
+							<tr>
+								<td data-bind="text: name"></td>
+								<td data-bind="text: email"></td>
+								<td data-bind="text: niceInvited"></td>
+								<td data-bind="text: niceReminded"></td>
+							</tr>
+						</tbody>
+						<!-- /ko -->
+						<!-- ko if: selectedGroup() != null && selectedGroup().type() == 'Token' -->
+						<tbody data-bind="foreach: selectedGroup().tokens()">
+							<tr>
+								<td data-bind="text: uniqueId"></td>
+							</tr>
+						</tbody>
+						<!-- /ko -->
+				</table>			
+				
+				<div style="text-align: center">
+					<a class="btn btn-primary" onclick="_participants.Page(1)"><spring:message code="label.Back" /></a>	
+				</div>
+			</div>
+		</div>
 		
-		</form:form>
+		<div id="newcontactlist" data-bind="visible: Page() == 3">		
+			<c:choose>
+				<c:when test="${numberOfAttendees == 0}">
+					<div style="padding-top: 160px; text-align: center">
+						<b><spring:message code="info.NoContacts" /></b><br /><br />
+						<a href="${contextpath}/addressbook" class="btn btn-default"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.CreateNewContactGuestlist" /></a>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<div id="action-bar" class="container action-bar" style="width: 100%;">
+						<div class="row">
+							<div class="col-md-4" style="text-align: left">
+								<a onclick="_participants.Page(1)"><spring:message code="label.Participants" /></a> <span class="glyphicon glyphicon-menu-right" style="font-size: 90%"></span> 
+								<!-- ko if: selectedGroup() != null && selectedGroup().id() == 0 -->
+								<spring:message code="label.CreateNewContactGuestlist" />
+								<!-- /ko -->
+								
+								<!-- ko if: selectedGroup() != null && selectedGroup().id() > 0 -->
+								<spring:message code="label.EditGuestlist" />
+								<!-- /ko -->
+							</div>
+							<div class="col-md-4" style="text-align: center">
+								<ul class="progressbar">
+									<li data-bind="attr: {class: Step() == 1 ? 'active' : ''}"><spring:message code="label.SelectContacts" /></li>
+									<li data-bind="attr: {class: Step() == 2 ? 'active' : ''}"><spring:message code="label.SaveGuestlist" /></li>
+								</ul>
+							</div>
+							<div class="col-md-4" style="text-align: right">
+							</div>
+						</div>
+					</div>	
+				
+					<div class="fullpageform" style="padding-top: 40px">
+						<div data-bind="visible: Step() == 1">						
+							<div>
+								<div class="row">
+									<div class="col-md-5x">										
+										<div class="tabletitle">
+											<spring:message code="label.AddressBookContacts" />
+											<div class="info">
+												<spring:message code="info.SelectContacts" />
+											</div>
+										</div>
+										<div id="contactshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
+											<table class="table table-bordered table-styled ptable" style="overflow-y: hidden">
+												<thead>
+													<tr>
+														<th class="checkcell"><input id="checkallcontacts" type="checkbox" onclick="_participants.checkAll($(this).is(':checked'))" /></th>
+														<th><spring:message code="label.Name" /></th>
+														<th><spring:message code="label.Email" /></th>
+														<!-- ko foreach: attributeNames() -->
+															<th class="attribute" data-bind="text: name, attr: {'data-id': id}"></th>
+														<!-- /ko -->
+													</tr>
+													<tr class="table-styled-filter">
+														<th class="checkcell">&nbsp;</th>
+														<th class="filtercell">
+															<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="namefilter" />
+														</th>
+														<th class="filtercell">
+															<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="emailfilter" />
+														</th>												
+														<!-- ko foreach: attributeNames() -->
+															<th class="filtercell">
+																<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" data-bind="attr: {id: id}" class="attributefilter" type="text" maxlength="255" style="margin:0px;" />
+															</th>
+														<!-- /ko -->
+													</tr>
+												</thead>
+											</table>
+										</div>
+										<div id="contactsdiv" style="max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;"> 
+											<table id="contacts" class="table table-bordered table-styled ptable">
+												<!-- ko if: Attendees().length == 0 -->
+												<tbody>
+													<tr>
+														<td style="padding-top: 100px; text-align: center;" data-bind="attr: {colspan: attributeNames().length + 3}"><spring:message code="label.NoData" /></td>
+													</tr>
+												</tbody>
+												<!-- /ko -->
+												<!-- ko if: Attendees().length > 0 -->
+												<tbody data-bind="foreach: Attendees">
+													<tr>
+														<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckall()'}" /></td>
+														<td data-bind="text: name"></td>
+														<td data-bind="text: email"></td>
+														<!-- ko foreach: $parent.attributeNames() -->
+															<td data-bind="text: $parents[1].getAttributeValue($parent, $data.name())"></td>
+														<!-- /ko -->
+													</tr>
+												</tbody>
+												<!-- /ko -->						
+											</table>
+										</div>
+									</div>
+									<div class="col-md-2x" style="text-align: center; margin-top: 75px;">
+										<a class="iconbutton" onclick="$('#configure-attributes-dialog').modal();" data-toggle="tooltip" title="<spring:message code="label.ConfigureTables" />"><span class="glyphicon glyphicon-wrench"></span></a><br />
+										<div style="margin-top: 80px;">
+											<a data-bind="click: moveContacts" class="iconbutton" data-toggle="tooltip" style="font-size: 20px;" title="<spring:message code="label.AddToGuestlist" />"><span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right" style="margin-left: -9px;"></span></a>
+										</div>
+									</div>
+									<div class="col-md-5x">
+										<div class="tabletitle">
+											<spring:message code="label.GuestList" />
+											<div class="info">
+												<spring:message code="info.CollectContacts" />
+											</div>	
+										</div>
+										<div id="selectedcontactshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
+											<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+												<thead>
+													<tr>
+														<th class="checkcell"><input id="checkallselectedcontacts" type="checkbox" onclick="_participants.selectedGroup().checkAll($(this).is(':checked'))" /></th>
+														<th><spring:message code="label.Name" /></th>
+														<th><spring:message code="label.Email" /></th>
+														<!-- ko foreach: attributeNames() -->
+															<th class="attribute" data-bind="text: name, attr: {'data-id': id}"></th>
+														<!-- /ko -->
+													</tr>
+													<tr class="table-styled-filter">
+														<th class="checkcell">&nbsp;</th>
+														<th class="filtercell">
+															<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="255" style="margin:0px;" id="selectednamefilter" />
+														</th>
+														<th class="filtercell">
+															<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="255" style="margin:0px;" id="selectedemailfilter" />
+														</th>												
+														<!-- ko foreach: attributeNames() -->
+															<th class="filtercell">
+																<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), false)" class="selectedattributefilter" type="text" maxlength="255" style="margin:0px;" data-bind="attr: {id: id}" />
+															</th>
+														<!-- /ko -->
+													</tr>
+												</thead>
+											</table>
+										</div>
+										<div id="selectedcontactsdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
+											<table class="table table-bordered table-styled ptable">											
+												<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
+												<tbody>
+													<tr>
+														<td style="padding-top: 100px; text-align: center;" data-bind="attr: {colspan: attributeNames().length + 3}"><spring:message code="label.NoContactsSelected" /></td>
+													</tr>
+												</tbody>
+												<!-- /ko -->
+												
+												<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length > 0 -->
+												<tbody data-bind="foreach: selectedGroup().attendees">
+													<tr>
+														<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckallselected()'}" /></td>
+														<td data-bind="text: name"></td>
+														<td data-bind="text: email"></td>
+														<!-- ko foreach: $parent.attributeNames() -->
+															<td data-bind="text: $parents[1].getAttributeValue($parent, $data.name())"></td>
+														<!-- /ko -->
+													</tr>													
+												</tbody>
+												<!-- /ko -->									
+											</table>
+										</div>
+										<!-- ko if: selectedGroup() != null -->
+										<a class="iconbutton" style="margin-left: 20px;" data-bind="click: selectedGroup().removeSelected"><span class="glyphicon glyphicon-trash"></span></a>
+										<spring:message code="label.RemoveFromGuestList" /><br />
+										<!-- /ko -->	
+									</div>
+								</div>							
+							</div>
+						
+							<div style="text-align: center; margin-top: 30px;">
+								<a class="btn btn-primary" onclick="_participants.Step(2)"><spring:message code="label.NextStep" /></a>	
+								<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+							</div>
+						</div>
+						
+						<div id="create-step-2" data-bind="visible: Step() == 2" style="max-width: 900px; margin-left: auto; margin-right: auto;" >
+							<!-- ko if: selectedGroup() != null -->
+							<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.NameYourGuestList" />
+							<input type="textbox" style="width: 400px" class="form-control required" data-bind="value: selectedGroup().name" />
+							<!-- /ko -->
+							<div class="tabletitle" style="margin-top: 20px;">
+								<spring:message code="label.GuestList" />
+								<div class="info">
+									<spring:message code="info.CurrentGuestlistEntries" />: <span data-bind="text: selectedGroup() != null ? selectedGroup().attendees().length : '0'"></span>
+								</div>	
+							</div>
+							<div id="selectedcontactshead2" style="max-width: 900px; overflow-y: scroll; overflow-x: hidden;">
+								<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+									<thead>
+										<tr>
+											<th><spring:message code="label.Name" /></th>
+											<th><spring:message code="label.Email" /></th>
+											<!-- ko foreach: attributeNames() -->
+												<th class="attribute" data-bind="text: name, attr: {'data-id': id}"></th>
+											<!-- /ko -->
+										</tr>
+									</thead>
+								</table>
+							</div>
+							<div id="selectedcontactsdiv2" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 900px; overflow-x: auto; overflow-y: scroll;">
+								<table class="table table-bordered table-styled ptable">											
+									<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
+									<tbody>
+										<tr>
+											<td style="padding-top: 100px; text-align: center;" data-bind="attr: {colspan: attributeNames().length + 2}"><spring:message code="label.NoContactsSelected" /></td>
+										</tr>
+									</tbody>
+									<!-- /ko -->
+									
+									<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length > 0 -->
+									<tbody data-bind="foreach: selectedGroup().attendees">
+										<tr>
+											<td data-bind="text: name"></td>
+											<td data-bind="text: email"></td>
+											<!-- ko foreach: $parent.attributeNames() -->
+												<td data-bind="text: $parents[1].getAttributeValue($parent, $data.name())"></td>
+											<!-- /ko -->
+										</tr>													
+									</tbody>
+									<!-- /ko -->									
+								</table>
+							</div>
+						
+							<div style="text-align: center">
+								<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
+								<a class="btn btn-primary" onclick="_participants.Save()"><spring:message code="label.SaveGuestlist" /></a>	
+								<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+							</div>
+						
+						</div>
+						
+					</div>
+				</c:otherwise>
+			</c:choose>
+		</div>
 		
-		<form:form id="saveFormStatic" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/participantsStatic">
+		<div id="neweclist" data-bind="visible: Page() == 4">
+			<div id="action-bar" class="container action-bar" style="width: 100%;">
+				<div class="row">
+					<div class="col-md-4" style="text-align: left">
+						<a onclick="_participants.Page(1)"><spring:message code="label.Participants" /></a> <span class="glyphicon glyphicon-menu-right" style="font-size: 90%"></span> 
+						<!-- ko if: selectedGroup() != null && selectedGroup().id() == 0 -->
+						<spring:message code="label.CreateNewEUGuestlist" />
+						<!-- /ko -->
+						
+						<!-- ko if: selectedGroup() != null && selectedGroup().id() > 0 -->
+						<spring:message code="label.EditGuestlist" />
+						<!-- /ko -->
+					</div>
+					<div class="col-md-4" style="text-align: center">
+						<ul class="progressbar">
+							<li data-bind="attr: {class: Step() == 1 ? 'active' : ''}"><spring:message code="label.SelectContacts" /></li>
+							<li data-bind="attr: {class: Step() == 2 ? 'active' : ''}"><spring:message code="label.SaveGuestlist" /></li>
+						</ul>
+					</div>
+					<div class="col-md-4" style="text-align: right">
+					</div>
+				</div>
+			</div>	
 		
-		</form:form>
+			<div class="fullpageform" style="padding-top: 40px">
+				<div data-bind="visible: Step() == 1">						
+					<div class="row">
+						<div class="col-md-5x">	
+							<spring:message code="label.Domain" /><br />
+							<select id="domain" data-bind="value: Domain" class="small-form-control" style="width: 450px; margin-bottom: 20px;" >
+								<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
+									<option value="${domain.key}">${domain.value} </option>	
+								</c:forEach>
+							</select>	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-5x">										
+							<div class="tabletitle">
+								<spring:message code="label.Contacts" />
+								<div class="info">
+									<spring:message code="info.SelectContacts" />
+								</div>
+							</div>
+							<div id="eccontactshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
+								<table class="table table-bordered table-styled ptable" style="overflow-y: hidden">
+									<thead>
+										<tr>
+											<th class="checkcell"><input id="checkalleccontacts" type="checkbox" onclick="_participants.checkAll($(this).is(':checked'))" /></th>
+											<th><spring:message code="label.Name" /></th>
+											<th><spring:message code="label.Email" /></th>
+											<th><spring:message code="label.Department" /></th>
+										</tr>
+										<tr class="table-styled-filter">
+											<th class="checkcell">&nbsp;</th>
+											<th class="filtercell">
+												<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="ecnamefilter" />
+											</th>
+											<th class="filtercell">
+												<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="ecemailfilter" />
+											</th>												
+											<th class="filtercell">
+												<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="ecdepartmentfilter" />
+											</th>	
+										</tr>
+									</thead>
+								</table>
+							</div>
+							<div id="eccontactsdiv" style="max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;"> 
+								<table id="eccontacts" class="table table-bordered table-styled ptable">
+									<!-- ko if: Users().length == 0 -->
+									<tbody>
+										<tr>
+											<td style="padding-top: 100px; text-align: center;" data-bind="attr: {colspan: 4}"><spring:message code="label.NoData" /></td>
+										</tr>
+									</tbody>
+									<!-- /ko -->
+									<!-- ko if: Users().length > 0 -->
+									<tbody data-bind="foreach: Users">
+										<tr>
+											<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckall()'}" /></td>
+											<td data-bind="text: name"></td>
+											<td data-bind="text: email"></td>
+											<td data-bind="text: department"></td>
+										</tr>
+									</tbody>
+									<!-- /ko -->						
+								</table>
+							</div>
+						</div>
+						<div class="col-md-2x" style="text-align: center; margin-top: 75px;">
+							<div style="margin-top: 80px;">
+								<a data-bind="click: moveECContacts" class="iconbutton" data-toggle="tooltip" style="font-size: 20px;" title="<spring:message code="label.AddToGuestlist" />"><span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right" style="margin-left: -9px;"></span></a>
+							</div>
+						</div>
+						<div class="col-md-5x">
+							<div class="tabletitle">
+								<spring:message code="label.GuestList" />
+								<div class="info">
+									<spring:message code="info.CollectContacts" />
+								</div>	
+							</div>
+							<div id="selectedeccontactshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
+								<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+									<thead>
+										<tr>
+											<th class="checkcell"><input id="checkallselectedeccontacts" type="checkbox" onclick="_participants.selectedGroup().checkAll($(this).is(':checked'))" /></th>
+											<th><spring:message code="label.Name" /></th>
+											<th><spring:message code="label.Email" /></th>
+											<th><spring:message code="label.Department" /></th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+							<div id="selectedeccontactsdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
+								<table class="table table-bordered table-styled ptable">											
+									<!-- ko if: selectedGroup() != null && selectedGroup().users().length == 0 -->
+									<tbody>
+										<tr>
+											<td style="padding-top: 100px; text-align: center;" colspan="4"><spring:message code="label.NoContactsSelected" /></td>
+										</tr>
+									</tbody>
+									<!-- /ko -->
+									
+									<!-- ko if: selectedGroup() != null && selectedGroup().users().length > 0 -->
+									<tbody data-bind="foreach: selectedGroup().users">
+										<tr>
+											<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckallselectedec()'}" /></td>
+											<td data-bind="text: name"></td>
+											<td data-bind="text: email"></td>
+											<td data-bind="text: department"></td>
+										</tr>													
+									</tbody>
+									<!-- /ko -->									
+								</table>
+							</div>
+							<!-- ko if: selectedGroup() != null -->
+							<a class="iconbutton" style="margin-left: 20px;" data-bind="click: selectedGroup().removeSelected"><span class="glyphicon glyphicon-trash"></span></a>
+							<spring:message code="label.RemoveFromGuestList" /><br />
+							<!-- /ko -->	
+						</div>
+					</div>							
+				</div>
+			
+				<div style="text-align: center; margin-top: 30px;">
+					<a class="btn btn-primary" onclick="_participants.Step(2)"><spring:message code="label.NextStep" /></a>	
+					<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+				</div>
+			</div>
+			
+			<div id="create-step-2" data-bind="visible: Step() == 2" style="max-width: 900px; margin-left: auto; margin-right: auto;" >
+				<!-- ko if: selectedGroup() != null -->
+				<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.NameYourGuestList" />
+				<input type="textbox" style="width: 400px" class="form-control required" data-bind="value: selectedGroup().name" />
+				<!-- /ko -->
+				<div class="tabletitle" style="margin-top: 20px;">
+					<spring:message code="label.GuestList" />
+					<div class="info">
+						<spring:message code="info.CurrentGuestlistEntries" />: <span data-bind="text: selectedGroup() != null ? selectedGroup().attendees().length : '0'"></span>
+					</div>	
+				</div>
+				<div id="selectedcontactshead2" style="max-width: 900px; overflow-y: scroll; overflow-x: hidden;">
+					<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+						<thead>
+							<tr>
+								<th><spring:message code="label.Name" /></th>
+								<th><spring:message code="label.Email" /></th>
+								<!-- ko foreach: attributeNames() -->
+									<th class="attribute" data-bind="text: name, attr: {'data-id': id}"></th>
+								<!-- /ko -->
+							</tr>
+						</thead>
+					</table>
+				</div>
+				<div id="selectedcontactsdiv2" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 900px; overflow-x: auto; overflow-y: scroll;">
+					<table class="table table-bordered table-styled ptable">											
+						<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
+						<tbody>
+							<tr>
+								<td style="padding-top: 100px; text-align: center;" data-bind="attr: {colspan: attributeNames().length + 2}"><spring:message code="label.NoContactsSelected" /></td>
+							</tr>
+						</tbody>
+						<!-- /ko -->
+						
+						<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length > 0 -->
+						<tbody data-bind="foreach: selectedGroup().attendees">
+							<tr>
+								<td data-bind="text: name"></td>
+								<td data-bind="text: email"></td>
+								<!-- ko foreach: $parent.attributeNames() -->
+									<td data-bind="text: $parents[1].getAttributeValue($parent, $data.name())"></td>
+								<!-- /ko -->
+							</tr>													
+						</tbody>
+						<!-- /ko -->									
+					</table>
+				</div>
+			
+				<div style="text-align: center">
+					<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
+					<a class="btn btn-primary" onclick="_participants.Save()"><spring:message code="label.SaveGuestlist" /></a>	
+					<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+				</div>
+			
+			</div>
+		</div>
+		
+		<div id="newtokenlist" data-bind="visible: Page() == 5">
+			<div id="action-bar" class="container action-bar" style="width: 100%;">
+				<div class="row">
+					<div class="col-md-4" style="text-align: left">
+						<a onclick="_participants.Page(1)"><spring:message code="label.Participants" /></a> <span class="glyphicon glyphicon-menu-right" style="font-size: 90%"></span> 
+						<!-- ko if: selectedGroup() != null && selectedGroup().id() == 0 -->
+						<spring:message code="label.CreateNewTokenGuestlist" />
+						<!-- /ko -->
+						
+						<!-- ko if: selectedGroup() != null && selectedGroup().id() > 0 -->
+						<spring:message code="label.EditGuestlist" />
+						<!-- /ko -->
+					</div>
+					<div class="col-md-4" style="text-align: center">
+						<ul class="progressbar">
+							<li data-bind="attr: {class: Step() == 1 ? 'active' : ''}"><spring:message code="label.CreateTokens" /></li>
+							<li data-bind="attr: {class: Step() == 2 ? 'active' : ''}"><spring:message code="label.SaveGuestlist" /></li>
+						</ul>
+					</div>
+					<div class="col-md-4" style="text-align: right">
+					</div>
+				</div>
+			</div>	
+		
+			<div class="fullpageform" style="padding-top: 40px; width: 700px; margin-left: auto; margin-right: auto;">
+				<div data-bind="visible: Step() == 1">						
+					<div class="row">
+						<div class="col-md-12">	
+							<spring:message code="label.AddTokens" />:
+							<input type="text" id="numtokens" value="10" class="form-control" style="margin: 0; width: 80px" />
+							<!-- ko if: selectedGroup() != null -->
+							<a class="iconbutton" data-bind="click: selectedGroup().addTokens" data-toggle="tooltip" title="<spring:message code="label.Add" />"><span class="glyphicon glyphicon-plus"></span></a>
+							<!-- /ko -->
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="tabletitle" style="margin-top: 20px">
+								<spring:message code="label.GuestList" />
+								<div class="info">
+									<spring:message code="info.AddTokens" />
+								</div>	
+							</div>
+							<div id="selectedtokenshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
+								<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+									<thead>
+										<tr>
+											<th class="checkcell"><input id="checkallselectedtokens" type="checkbox" onclick="_participants.selectedGroup().checkAll($(this).is(':checked'))" /></th>
+											<th><spring:message code="label.Token" /></th>
+											<th><spring:message code="label.Active" /></th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+							<div id="selectedtokenssdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
+								<table class="table table-bordered table-styled ptable">											
+									<!-- ko if: selectedGroup() != null && selectedGroup().tokens().length == 0 -->
+									<tbody>
+										<tr>
+											<td style="padding-top: 100px; text-align: center;" colspan="4"><spring:message code="label.NoData" /></td>
+										</tr>
+									</tbody>
+									<!-- /ko -->
+									
+									<!-- ko if: selectedGroup() != null && selectedGroup().tokens().length > 0 -->
+									<tbody data-bind="foreach: selectedGroup().tokens">
+										<tr>
+											<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckallselectedtokens()'}" /></td>
+											<td data-bind="text: uniqueId"></td>
+											<td data-bind="text: deactivated() ? '0' : '1', attr: {id: 'active' + $data.uniqueId}"></td>
+										</tr>													
+									</tbody>
+									<!-- /ko -->									
+								</table>
+							</div>
+							<!-- ko if: selectedGroup() != null -->
+							<a class="iconbutton" style="margin-left: 20px;" data-bind="click: selectedGroup().removeSelected"><span class="glyphicon glyphicon-trash"></span></a>
+							<spring:message code="label.RemoveTokensFromGuestList" /><br />
+							<a class="iconbutton" style="margin-left: 20px;" data-bind="click: selectedGroup().deactivateSelected"><span class="glyphicon glyphicon-stop"></span></a>
+							<spring:message code="label.DeactivateSelectedTokens" /><br />
+							<!-- /ko -->	
+						</div>
+					</div>							
+			
+					<div style="text-align: center; margin-top: 30px;">
+						<a class="btn btn-primary" onclick="_participants.Step(2)"><spring:message code="label.NextStep" /></a>	
+						<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+					</div>
+			    </div>
+			
+				<div id="create-step-2" data-bind="visible: Step() == 2" style="max-width: 900px; margin-left: auto; margin-right: auto;" >
+					<!-- ko if: selectedGroup() != null -->
+					<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.NameYourGuestList" />
+					<input type="textbox" style="width: 400px" class="form-control required" data-bind="value: selectedGroup().name" />
+					<!-- /ko -->
+					<div class="tabletitle" style="margin-top: 20px;">
+						<spring:message code="label.GuestList" />
+						<div class="info">
+							<spring:message code="info.CurrentGuestlistEntries" />: <span data-bind="text: selectedGroup() != null ? selectedGroup().tokens().length : '0'"></span>
+						</div>	
+					</div>
+					<div id="selectedtokenshead2" style="max-width: 900px; overflow-y: scroll; overflow-x: hidden;">
+						<table class="table table-bordered table-styled ptable" style="overflow-y: hidden; min-height: 500px;">
+							<thead>
+								<tr>
+									<th><spring:message code="label.Token" /></th>
+									<th><spring:message code="label.Active" /></th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+					<div id="selectedtokensdiv2" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 900px; overflow-x: auto; overflow-y: scroll;">
+						<table class="table table-bordered table-styled ptable">											
+							<!-- ko if: selectedGroup() != null && selectedGroup().tokens().length == 0 -->
+							<tbody>
+								<tr>
+									<td style="padding-top: 100px; text-align: center;" colspan="2"><spring:message code="label.NoData" /></td>
+								</tr>
+							</tbody>
+							<!-- /ko -->
+							
+							<!-- ko if: selectedGroup() != null && selectedGroup().tokens().length > 0 -->
+							<tbody data-bind="foreach: selectedGroup().tokens">
+								<tr>
+									<td data-bind="text: uniqueId"></td>
+									<td data-bind="text: deactivated() ? '0' : '1'"></td>
+								</tr>													
+							</tbody>
+							<!-- /ko -->									
+						</table>
+					</div>
+				
+					<div style="text-align: center">
+						<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
+						<a class="btn btn-primary" onclick="_participants.Save()"><spring:message code="label.SaveGuestlist" /></a>	
+						<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
+					</div>
+				
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<%@ include file="../footer.jsp" %>	
-	
-	<%@ include file="add-participants-step1.jsp" %>
-	<%@ include file="add-participants-step2-dynamic.jsp" %>
-	<%@ include file="add-participants-step2-static.jsp" %>
-	<%@ include file="add-participants-step2-departments.jsp" %>
-	<%@ include file="add-participants-step2-token.jsp" %>
 	<%@ include file="../addressbook/configure.jsp" %>
-
+	
+	<script type="text/javascript">
+		var p_activated = '<spring:message code="message.ParticipantsGroupActivatedSuccessfully" />';
+		var p_deactivated = '<spring:message code="message.ParticipantsGroupDeactivatedSuccessfully" />';
+		var p_deleted = '<spring:message code="message.ParticipantsGroupDeletedSuccessfully" />';
+		var p_operations = '<spring:message code="message.OperationsExecutedSuccessfully" />';
+		var p_guestlistcreated = '<spring:message code="info.GuestListCreated" />';
+		var p_mailsstarted = '<spring:message code="info.MailsStarted" />';
+	</script>
+	
+	<c:if test="${action != null}">
+		<c:choose>
+			<c:when test='${action == "activated"}'>
+				<script type="text/javascript"> 
+					showSuccess(p_activated);
+				</script>
+			</c:when>
+			<c:when test='${action == "deactivated"}'>
+				<script type="text/javascript"> 
+					showSuccess(p_deactivated);
+				</script>
+			</c:when>
+			<c:when test='${action == "deleted"}'>
+				<script type="text/javascript"> 
+					showSuccess(p_deleted);
+				</script>
+			</c:when>
+			<c:when test='${action == "operations"}'>
+				<script type="text/javascript"> 
+					showSuccess(p_operations);
+				</script>
+			</c:when>
+			<c:when test='${action == "guestlistcreated"}'>
+				<script type="text/javascript"> 
+					showSuccess(p_guestlistcreated);
+				</script>
+			</c:when>
+			<c:when test='${action == "mailsstarted"}'>
+				<script type="text/javascript"> 
+					showInfo(p_mailsstarted);
+				</script>
+			</c:when>	
+		</c:choose>
+	</c:if>
+	<c:if test="${error != null && error == 'namemissing'}">
+		<script type="text/javascript"> 
+			showError('<spring:message code="error.ParticipantsGroupNameMissing" />');
+		</script>
+	</c:if>
+	
 	<div class="modal" id="delete-list-dialog" data-backdrop="static">
 		<div class="modal-dialog modal-sm">
     	<div class="modal-content">
 		<div class="modal-body">
-			<spring:message code="question.DeleteGuestList" />
+			<b><spring:message code="question.DeleteGuestList" /></b><br /><br />
+			<spring:message code="label.GuestListToDelete" /><span style="margin-left: 10px" id="guestlisttobedeleted"></span>
 		</div>
 		<div class="modal-footer">
 			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="btnDeleteFromParticipant"  onclick="deleteList();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>
+			<a id="btnDeleteFromParticipant"  onclick="_participants.deleteGuestList();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
 			<a id="btnCancelDeleteFromParticipant"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>					
 		</div>
 		</div>
 		</div>
 	</div>
-	
-	<div id="hider" class="hideme" style="background-color: #000; opacity:0.7; filter:alpha(opacity=70); width:100%; height:100%; position: absolute; left: 0px; top: 0px; z-index: 3000;">
-		<img style="position: fixed; top: 50%; left: 50%; margin-top: -16px; margin-left: -16px;" src="${contextpath}/resources/images/ajax-loader2.gif" />
-	</div>
-	
-<c:if test="${action != null}">
-	<c:choose>
-		<c:when test='${action == "activated"}'>
-			<script type="text/javascript"> 
-				showInfo('<spring:message code="message.ParticipantsGroupActivatedSuccessfully" />');
-			</script>
-		</c:when>
-		<c:when test='${action == "deactivated"}'>
-			<script type="text/javascript"> 
-				showInfo('<spring:message code="message.ParticipantsGroupDeactivatedSuccessfully" />');
-			</script>
-		</c:when>
-		<c:when test='${action == "deleted"}'>
-			<script type="text/javascript"> 
-				showInfo('<spring:message code="message.ParticipantsGroupDeletedSuccessfully" />');
-			</script>
-		</c:when>
-		<c:when test='${action == "operations"}'>
-			<script type="text/javascript"> 
-				showInfo('<spring:message code="message.OperationsExecutedSuccessfully" />');
-			</script>
-		</c:when>
-		<c:when test='${action == "guestlistcreated"}'>
-			<script type="text/javascript"> 
-				showInfo('<spring:message code="info.GuestListCreated" />');
-			</script>
-		</c:when>
-		<c:when test='${action == "mailsstarted"}'>
-			<script type="text/javascript"> 
-				showInfo('<spring:message code="info.MailsStarted" />');
-			</script>
-		</c:when>	
-	</c:choose>
-</c:if>
-<c:if test="${error != null}">
-	<c:choose>
-		<c:when test='${error == "namemissing"}'>
-			<script type="text/javascript"> 
-				showError('<spring:message code="error.ParticipantsGroupNameMissing" />');
-			</script>
-		</c:when>
-	</c:choose>
-</c:if>
-
-<c:if test="${selectedParticipationGroup != null}">
-
-	<input type="hidden" id="selectedParticipationGroup" value="${selectedParticipationGroup.id}" />
-	
-	<script type="text/javascript"> 
-	
-	$("#add-participants-name").val('${selectedParticipationGroup.name}');
-	$("#add-participants-type").val('${selectedParticipationGroup.type}');
-	
-	var type = '${selectedParticipationGroup.type}';
-	var error = '${grouperror}';
-	
-	if (type == 'Static')
-	{
-		$("#add-participants-type").val("static");	
-		searchStatic();
-		$("#add-participants-dialog2-static").modal();		
-	}
-	
-	if (type == 'Dynamic')
-	{
-		$("#add-participants-type").val("dynamic");	
-		search();
-		$("#add-participants-dialog2-dynamic").modal();		
-	}
-	
-	if (type == 'ECMembers')
-	{
-		$("#add-participants-type").val("departments");	
-		
-		//open tree to show selected nodes
-		openParents();
-		
-		$("#add-participants-dialog2-departments").modal();		
-	}
-	
-	if (type == 'Token')
-	{
-		//$("#add-participants-type option[value='tokens']").attr("selected","true");
-		$("#add-participants-type").val("tokens");	
-		loadMoreTokens();
-		$("#add-participants-dialog2-token").modal();		
-	}
-	
-	if (error == '1')
-	{
-		showError('<spring:message code="error.InvalidTokenNumber" />');
-	} else if (error == '2')
-	{
-		showError("<spring:message code="error.MaxTokenNumberExceeded" />");
-	}
-	
-	</script>
-</c:if>
 
 </body>
 </html>

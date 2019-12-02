@@ -623,6 +623,11 @@ function initModals(item)
 			}		
 		}
 		
+		if ($(cell).closest('.ptable').length > 0)
+		{
+			$(cell).find(".black").removeClass("black");
+		}
+		
 		$('[data-toggle="tooltip"]').tooltip(); 
 		
 		var original;
@@ -724,14 +729,15 @@ function initModals(item)
 		$(cell).find(".activityselect").val("");
 		
 		checkFilterCell(cell, true);
+		$(cell).css("background-color", "");
 		
 		if ($("#contributionsearchForm").length > 0 || $(".noautosubmitonclearfilter").length > 0){
 			//we do not automatically submit due to performance reasons			
 			return;
 		}
 		
-		if ($(cell).closest("#participantsstaticheader").length > 0){
-			searchStatic(true, true);
+		if ($(cell).closest("#contactshead").length > 0){
+			_participants.loadAttendees(true); 
 		} else if ($(link).closest('form').length == 0 && $("#resultsForm").length > 0){
 			$("#resultsForm").submit();	
 		} else if ($(link).closest('form').length == 0 && $("#publishsurveysform").length > 0){

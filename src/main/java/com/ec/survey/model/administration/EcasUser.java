@@ -173,6 +173,12 @@ public class EcasUser {
 	}
 	
 	@Transient
+	public String getNiceReminded()
+	{
+		return ConversionTools.getString(reminded);
+	}
+	
+	@Transient
 	@DateTimeFormat(pattern="dd/MM/yyyy")
 	public Date getInvited()
 	{
@@ -181,6 +187,12 @@ public class EcasUser {
 	public void setInvited(Date invited)
 	{
 		this.invited = invited;
+	}
+	
+	@Transient
+	public String getNiceInvited()
+	{
+		return ConversionTools.getString(invited);
 	}
 
 	@Transient
