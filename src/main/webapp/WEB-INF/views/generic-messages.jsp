@@ -63,11 +63,21 @@
 		window.setTimeout("hideGenericInfos()", 10000);
 	}
 	
+	function showSuccess(text)
+	{
+		showInfo(text);
+	}
+	
 	function showError(text)
 	{
 		$("#generic-error-box-text").html(text);
 		$("#generic-error-box").show();
 		window.setTimeout("hideGenericInfos()", 10000);
+	}
+	
+	function showGenericError()
+	{
+		showError('<spring:message code="error.OperationFailed" />');
 	}
 	
 	function hideGenericInfos()

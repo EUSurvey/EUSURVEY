@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 @Service("guestListCreator")
 @Scope("prototype")
@@ -36,14 +35,14 @@ public class GuestListCreator implements Runnable {
 	protected SessionFactory sessionFactory;	 
 		
 	private int groupId;
-	private List<String> departments;
+	private List<Integer> userIDs;
 	private List<String> tokens;
 	private List<Integer> attendeeIDs;
 	private int type;
 	
-	public void initDepartments(int groupId, List<String> departments) {
+	public void initUsers(int groupId, List<Integer> userIDs) {
 		this.groupId = groupId;
-		this.departments = departments;
+		this.userIDs = userIDs;
 		type = 1;
 	}
 	
@@ -80,22 +79,13 @@ public class GuestListCreator implements Runnable {
 			
 			if (type == 1)
 			{
-				g.setDepartments(new TreeSet<>(departments));
+				List<EcasUser> users = new ArrayList<EcasUser>(); //participationService.getUsersForParticipationGroup(g);
 				
-				try {
-					participationService.save(g);
-					session.flush();
-				} catch (Exception e)
+				for (int id : userIDs)
 				{
-					g.setDepartments(new TreeSet<>());
-					logger.error(e.getLocalizedMessage(), e);
-					g.setError("1");
-					g.setInCreation(false);
-					participationService.save(g);
-					return;
+					EcasUser user = (EcasUser) session.get(EcasUser.class, id);
+					users.add(user);
 				}
-				
-				List<EcasUser> users = participationService.getUsersForParticipationGroup(g);
 				g.setEcasUsers(users);
 
 			

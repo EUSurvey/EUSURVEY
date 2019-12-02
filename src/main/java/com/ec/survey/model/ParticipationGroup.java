@@ -15,7 +15,6 @@ import javax.persistence.Table;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "PARTICIPANTS")
@@ -39,7 +38,7 @@ public class ParticipationGroup {
 	private ParticipationGroupType type;
 	private AttendeeFilter attendeeFilter;
 	private boolean active;
-	private Set<String> departments;
+	//private Set<String> departments;
 	private boolean inCreation;
 	private boolean runningMails;
 	private String error;
@@ -231,15 +230,15 @@ public class ParticipationGroup {
 		this.templateSubject = templateSubject;
 	}
 	
-	@ElementCollection
-	@CollectionTable(name="GROUPDEPARTMENTS", joinColumns= @JoinColumn(name="gd_id"))
-	@Column(name = "DEPS")
-	public Set<String> getDepartments() {
-		return departments;
-	}
-	public void setDepartments(Set<String> departments) {
-		this.departments = departments;
-	}
+//	@ElementCollection
+//	@CollectionTable(name="GROUPDEPARTMENTS", joinColumns= @JoinColumn(name="gd_id"))
+//	@Column(name = "DEPS")
+//	public Set<String> getDepartments() {
+//		return departments;
+//	}
+//	public void setDepartments(Set<String> departments) {
+//		this.departments = departments;
+//	}
 
 	@Column(name = "INCREATION", columnDefinition = "boolean default false", nullable = false)
 	public boolean isInCreation() {

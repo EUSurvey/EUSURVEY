@@ -1,0 +1,75 @@
+ .progressbar {
+      counter-reset: step;
+  }
+  
+  .progressbar .glyphicon-ok {
+  	display: block;
+  	margin-top: -38px;
+  	margin-bottom: 26px;
+  }
+  
+ .progressbar li {
+     list-style-type: none;
+     width: 50%;
+     float: left;
+     font-size: 12px;
+     position: relative;
+     text-align: center;
+     text-transform: uppercase;
+     color: #7d7d7d;
+ } 
+ .progressbar li.pb2 {
+ 	 width: 33%;
+ } 
+ .progressbar li:before {
+     width: 40px;
+     height: 40px;
+     content: counter(step);
+     counter-increment: step;
+     line-height: 30px;
+     border: 2px solid #7d7d7d;
+     display: block;
+     text-align: center;
+     vertical-align: middle;
+     margin: 0 auto 10px auto;
+     border-radius: 50%;
+     background-color: #7d7d7d;
+ }
+ .progressbar li:after {
+     width: 100%;
+     height: 2px;
+     content: '';
+     position: absolute;
+     background-color: #7d7d7d;
+     top: 19px;
+     left: -50%;
+     z-index: -1;
+ }
+ .progressbar li:first-child:after {
+     content: none;
+ }
+ .progressbar li.active {
+     color: #245077;;
+ }
+ .progressbar li.active:before {
+     border-color: #245077;;
+     background-color: #245077;;
+ }
+ .progressbar li.active + li:after {
+     background-color: #7d7d7d;
+ }  
+  		
+.tabletitle {
+	background-color: #245077;
+  		color: #FFF;
+  		padding: 10px;
+  		border: 1px solid #ddd;
+  		margin-right: 1px;
+  		font-weight: bold;
+  		margin-bottom: -1px;
+}
+
+.tabletitle .info {
+	font-weight: normal;
+	font-size: 12px;
+}

@@ -18,8 +18,8 @@ import org.apache.commons.lang.StringUtils;
 import org.owasp.esapi.errors.IntrusionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -61,23 +61,18 @@ public class ParticipantsController extends BasicController {
 	@Resource(name = "ldapDBService")
 	private LdapDBService ldapDBService;
 	
-	
-	@RequestMapping(value = "/participantsDelete", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String participantsDelete(HttpServletRequest request) throws Exception {
-		String id = request.getParameter("id");
-		ParticipationGroup g = participationService.get(Integer.parseInt(id));
-		
-		Survey survey = surveyService.getSurveyByUniqueId(g.getSurveyUid(), false, true);		
-		if (survey == null)
-		{
-			survey = surveyService.getSurvey(g.getSurveyId(), false, true);
-		}
-		
+	@RequestMapping(value = "/participants", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView participants(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		User u = sessionService.getCurrentUser(request);
-		sessionService.upgradePrivileges(survey, u, request);
 		
+		Form form;
+		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);
+		form = new Form(resources);
+		form.setSurvey(survey);
+				
+		sessionService.upgradePrivileges(form.getSurvey(), u, request);
 		int accessPrivilege = 0;
-		if (survey.getOwner().getId().equals(u.getId())) {
+		if (form.getSurvey().getOwner().getId().equals(u.getId())) {
 			accessPrivilege = 2;
 		} else if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
 			accessPrivilege = 2;
@@ -85,58 +80,122 @@ public class ParticipantsController extends BasicController {
 			accessPrivilege = u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations);
 		}
 		
-		if (accessPrivilege < 2)
+		if (accessPrivilege < 1)
 		{		
-			return null;		
+			throw new ForbiddenURLException();		
 		}
+
+		int owner = u.getId();
 		
-		if (g.getActive()) return "redirect:/" +  survey.getShortname() + "/management/participants";
+		ModelAndView result = new ModelAndView("management/participants", "form", form);	
 		
-		participationService.delete(g);
-		activityService.log(502, g.getId().toString(), null, u.getId(), survey.getUniqueId(), g.getNiceType());
-				
-		return "redirect:/" + survey.getShortname() + "/management/participants?action=deleted";
+		String name = request.getParameter("name");
+		String email = request.getParameter("email");
+		HashMap<String, String> filter = new HashMap<>();
+		if (name != null) filter.put("name", name);
+		if (email != null) filter.put("email", email);
+		
+		if (u.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) == 2)
+		{
+			owner = 0;
+		}
+		int numberOfAttendees = attendeeService.getNumberOfAttendees(owner, filter);
+		result.addObject("numberOfAttendees", numberOfAttendees);
+    	result.addObject("attributeNames", u.getSelectedAttributes());
+    	result.addObject("filter", filter);
+    	result.addObject("allAttributeNames", attendeeService.getAllAttributes(owner));
+    	if (request.getParameter("action") != null)
+    	{
+    		result.addObject("action", request.getParameter("action"));
+    	}
+    	
+    	if (request.getParameter("error") != null)
+    	{
+    		result.addObject("error", request.getParameter("error"));
+    	}
+		
+		List<KeyValue> domains = ldapDBService.getDomains(false, false, resources, locale);
+		result.addObject("domains", domains);
+		
+		return result;
+	}	
+	
+	@RequestMapping(value = "/participantsDelete", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody String participantsDelete(HttpServletRequest request, Locale locale) throws Exception {
+		return participantsOperation(request, "delete", locale);
 	}
 		
 	@RequestMapping(value = "/participantsActivate", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String participantsActive(HttpServletRequest request) throws Exception {
-		String id = request.getParameter("id");
-		
-		ParticipationGroup g = participationService.get(Integer.parseInt(id));
-				
-		Survey survey = surveyService.getSurveyByUniqueId(g.getSurveyUid(), false, true);		
-		if (survey == null)
-		{
-			survey = surveyService.getSurvey(g.getSurveyId(), false, true);
-		}
-		
-		User u = sessionService.getCurrentUser(request);
-		sessionService.upgradePrivileges(survey, u, request);
-		int accessPrivilege = 0;
-		if (survey.getOwner().getId().equals(u.getId())) {
-			accessPrivilege = 2;
-		} else if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
-			accessPrivilege = 2;
-		} else {
-			accessPrivilege = u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations);
-		}
-		
-		if (accessPrivilege < 2)
-		{		
-			return null;		
-		}
-		
-		g.setActive(true);
-		participationService.update(g);
-		activityService.log(504, null, g.getId().toString(), u.getId(), survey.getUniqueId(), g.getNiceType());
-		return "redirect:/" + survey.getShortname() + "/management/participants?action=activated";
+	public @ResponseBody String participantsActivate(HttpServletRequest request, Locale locale) {		
+		return participantsOperation(request, "activate", locale);
 	}
 	
-	@RequestMapping(value = "/participantsEdit", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView participantsEdit(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	@RequestMapping(value = "/participantsDeactivate", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody String participantsDeactive(HttpServletRequest request, Locale locale) {
+		return participantsOperation(request, "deactivate", locale);
+	}
+	
+	private String participantsOperation(HttpServletRequest request, String operation, Locale locale)
+	{
+		try {
+			String id = request.getParameter("id");
+			ParticipationGroup g = participationService.get(Integer.parseInt(id), true);
+					
+			Survey survey = surveyService.getSurveyByUniqueId(g.getSurveyUid(), false, true);		
+			if (survey == null)
+			{
+				survey = surveyService.getSurvey(g.getSurveyId(), false, true);
+			}
+			
+			User u = sessionService.getCurrentUser(request);
+			sessionService.upgradePrivileges(survey, u, request);
+			
+			int accessPrivilege = 0;
+			if (survey.getOwner().getId().equals(u.getId())) {
+				accessPrivilege = 2;
+			} else if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
+				accessPrivilege = 2;
+			} else {
+				accessPrivilege = u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations);
+			}
+			
+			if (accessPrivilege < 2)
+			{		
+				throw new ForbiddenURLException();		
+			}
+			
+			switch (operation)
+			{
+				case "activate":
+					g.setActive(true);
+					participationService.update(g);
+					activityService.log(504, null, g.getId().toString(), u.getId(), survey.getUniqueId(), g.getNiceType());
+					break;
+				case "deactivate":
+					g.setActive(false);
+					participationService.update(g);
+					activityService.log(503, null, g.getId().toString(), u.getId(), survey.getUniqueId(), g.getNiceType());
+					break;
+				case "delete":
+					participationService.delete(g);
+					activityService.log(502, g.getId().toString(), null, u.getId(), survey.getUniqueId(), g.getNiceType());
+					break;
+				default:
+					throw new InvalidURLException();
+			}					
+			
+			return "ok";
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return resources.getMessage("error.OperationFailed", null, "There was a problem during execution of the operation. The error was logged. Please contact support if the problem occurs again.", locale);
+		}
+	}
+		
+	@SuppressWarnings({ "rawtypes" })
+	@RequestMapping(value = "/children", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody List children(@PathVariable String shortname, HttpServletRequest request) throws Exception {	
 		String id = request.getParameter("id");
-		String error = request.getParameter("error");
-				
+		
 		ParticipationGroup g = participationService.get(Integer.parseInt(id));
 		
 		User u = sessionService.getCurrentUser(request);
@@ -162,23 +221,175 @@ public class ParticipantsController extends BasicController {
 			throw new ForbiddenURLException();		
 		}
 		
-		boolean readonly = accessPrivilege < 2;
+		Integer newPage =  ConversionTools.getInt(request.getParameter("newPage"), 1);		
+		Integer itemsPerPage = ConversionTools.getInt(request.getParameter("itemsPerPage"), 10);	
+		boolean all = request.getParameter("all") != null && request.getParameter("all").equals("true");
 		
-		ModelAndView result = participants(shortname, request, locale);
-		
-		if (g.getDepartments() != null && g.getDepartments().size() > 1)
-		{
-			g.setDepartments(new TreeSet<>(g.getDepartments()));
+		if (all) {
+			itemsPerPage = Integer.MAX_VALUE;
+			newPage = 1;
 		}
 		
-		result.addObject("selectedParticipationGroup", g);
-		result.addObject("grouperror", error);
-		if (readonly)
-		{
-			result.addObject("readonly", readonly);
-		}
+		Map<Integer, Invitation> invitationsByAttendee = attendeeService.getInvitationsByAttendeeForParticipationGroup(g.getId());
 		
-		return result;
+		int first = (newPage-1) * itemsPerPage;
+		int counter = 0;
+		if (g.getType() == ParticipationGroupType.Static)
+		{
+			List<Attendee> result = new ArrayList<Attendee>();
+			
+			for (Attendee attendee : g.getAttendees()) {
+				if (counter < first)
+				{
+					counter++;
+				} else {
+					if (invitationsByAttendee.containsKey(attendee.getId()))
+					{
+						Invitation invitation = invitationsByAttendee.get(attendee.getId());
+						attendee.setInvited(invitation.getInvited());
+						attendee.setReminded(invitation.getReminded());
+						attendee.setAnswers(invitation.getAnswers());
+					}
+					result.add(attendee);
+					if (result.size() == itemsPerPage) break;
+				}
+			}
+			
+			return result;
+		} else if (g.getType() == ParticipationGroupType.ECMembers)
+		{
+			List<EcasUser> result = new ArrayList<EcasUser>();
+			
+			for (EcasUser ecasUser : g.getEcasUsers()) {
+				if (counter < first)
+				{
+					counter++;
+				} else {
+					if (invitationsByAttendee.containsKey(ecasUser.getId()))
+					{
+						Invitation invitation = invitationsByAttendee.get(ecasUser.getId());
+						ecasUser.setInvited(invitation.getInvited());
+						ecasUser.setReminded(invitation.getReminded());
+						ecasUser.setAnswers(invitation.getAnswers());
+					}
+					result.add(ecasUser);
+					if (result.size() == itemsPerPage) break;
+				}
+			}
+			
+			return g.getEcasUsers();
+		} else {
+			List<Invitation> result = new ArrayList<Invitation>();
+			for (Invitation i : attendeeService.getInvitationsForParticipationGroup(g.getId()))
+			{
+				if (counter < first)
+				{
+					counter++;
+				} else {
+					result.add(i);
+					if (result.size() == itemsPerPage) break;
+				}
+			}
+			
+			return result;
+		}
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping(value = "/saveguestlist", method = {RequestMethod.POST})
+	public @ResponseBody String saveguestlist(@RequestBody LinkedHashMap json, HttpServletRequest request, Locale locale)
+	{
+		try {
+			User user = sessionService.getCurrentUser(request);
+			Form form = sessionService.getFormFromSessionInfo(request);
+			ParticipationGroup g = new ParticipationGroup(form.getSurvey().getUniqueId());
+			
+			sessionService.upgradePrivileges(form.getSurvey(), user, request);
+			int accessPrivilege = 0;
+			if (form.getSurvey().getOwner().getId().equals(user.getId())) {
+				accessPrivilege = 2;
+			} else if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
+				accessPrivilege = 2;
+			} else {
+				accessPrivilege = user.getLocalPrivileges().get(LocalPrivilege.ManageInvitations);
+			}
+			
+			if (accessPrivilege < 2)
+			{		
+				throw new ForbiddenURLException();		
+			}
+			
+			int id = json.get("id") != null && json.get("id").toString().length() > 0 ? (int) json.get("id") : 0;
+			
+			if (id > 0)
+			{
+				g = participationService.get(id);
+			} else {
+				g.setActive(true);			
+				g.setSurveyId(form.getSurvey().getId());
+			}
+
+			g.setName(json.get("name").toString());
+			g.setType(ParticipationGroupType.valueOf(json.get("type").toString()));
+			
+			List<Integer> attendeeIDs = null;
+			List<Integer> userIDs = null;
+			List<String> tokens = null;
+			if (g.getType() == ParticipationGroupType.Static)
+			{			
+				ArrayList<LinkedHashMap> attendees = (ArrayList) json.get("attendees");				
+				attendeeIDs = new ArrayList<Integer>();				
+					
+				for (int i = 0; i < attendees.size(); i++)
+				{
+					LinkedHashMap attendee = (LinkedHashMap) attendees.get(i);
+					attendeeIDs.add((int) attendee.get("id"));
+				}
+			
+			} else if (g.getType() == ParticipationGroupType.Token)
+			{
+				ArrayList<LinkedHashMap> invitations = (ArrayList) json.get("tokens");	
+				tokens = new ArrayList<String>();
+				for (int i = 0; i < invitations.size(); i++)
+				{
+					LinkedHashMap token = (LinkedHashMap) invitations.get(i);
+					tokens.add(token.get("uniqueId").toString());
+				}
+			} else if (g.getType() == ParticipationGroupType.ECMembers) {
+				ArrayList<LinkedHashMap> users = (ArrayList) json.get("users");				
+				userIDs = new ArrayList<Integer>();				
+				for (int i = 0; i < users.size(); i++)
+				{
+					LinkedHashMap ecasuser = (LinkedHashMap) users.get(i);
+					userIDs.add((int) ecasuser.get("id"));
+				}
+			}
+			g.setOwnerId(user.getId());			
+			g.setInCreation(true);
+			
+			participationService.save(g);
+			if (g.getType() == ParticipationGroupType.Static)
+			{
+				participationService.addParticipantsToGuestListAsync(g.getId(), attendeeIDs);			
+			} else if (g.getType() == ParticipationGroupType.Token) {
+				participationService.addTokensToGuestListAsync(g.getId(), tokens);
+			} else if (g.getType() == ParticipationGroupType.ECMembers) {
+				participationService.addUsersToGuestListAsync(g.getId(), userIDs);
+			}
+
+			if (id > 0)
+			{
+				activityService.log(505, null, g.getId().toString(), user.getId(), form.getSurvey().getUniqueId(), g.getNiceType());
+			} else{
+				activityService.log(501, null, g.getId().toString(), user.getId(), form.getSurvey().getUniqueId(), g.getNiceType());
+			}
+			
+			return "success";
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}		
+		
+		return resources.getMessage("error.OperationFailed", null, "There was a problem during execution of the operation. The error was logged. Please contact support if the problem occurs again.", locale);
 	}
 	
 	@RequestMapping(value = "/participants/finishedguestlists", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -316,40 +527,6 @@ public class ParticipantsController extends BasicController {
 		}
 
 		return participationService.getTokens(newPage, itemsPerPage, id, true);
-	}
-	
-	@RequestMapping(value = "/participantsDeactivate", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String participantsDeactive(HttpServletRequest request) throws Exception {
-		String id = request.getParameter("id");
-		
-		ParticipationGroup g = participationService.get(Integer.parseInt(id), true);
-		
-		Survey survey = surveyService.getSurveyByUniqueId(g.getSurveyUid(), false, true);		
-		if (survey == null)
-		{
-			survey = surveyService.getSurvey(g.getSurveyId(), false, true);
-		}
-		User u = sessionService.getCurrentUser(request);
-		
-		sessionService.upgradePrivileges(survey, u, request);
-		int accessPrivilege = 0;
-		if (survey.getOwner().getId().equals(u.getId())) {
-			accessPrivilege = 2;
-		} else if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
-			accessPrivilege = 2;
-		} else {
-			accessPrivilege = u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations);
-		}
-		
-		if (accessPrivilege < 2)
-		{		
-			throw new ForbiddenURLException();		
-		}
-		
-		g.setActive(false);
-		participationService.update(g);
-		activityService.log(503, null, g.getId().toString(), u.getId(), survey.getUniqueId(), g.getNiceType());
-		return "redirect:/" + survey.getShortname() + "/management/participants?action=deactivated";
 	}
 	
 	@RequestMapping(value = "/sendInvitations/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -511,26 +688,11 @@ public class ParticipantsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/participantsjson", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<ParticipationGroup> participantsjson(@PathVariable String shortname, HttpServletRequest request) throws Exception {	
-		
-		int itemsPerPage = 10;
-		int page = 1;
-		
-		if(request.getParameter("rows") != null && request.getParameter("page") != null)
-		{
-			String itemsPerPageValue = request.getParameter("rows");		
-			itemsPerPage = Integer.parseInt(itemsPerPageValue);
-			
-			String pageValue = request.getParameter("page");		
-			page = Integer.parseInt(pageValue);
-		}
-		
+	public @ResponseBody List<ParticipationGroup> participantsjson(@PathVariable String shortname, HttpServletRequest request) throws Exception {		
+
 		User user = sessionService.getCurrentUser(request);
 		
-		Form form;
-		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
-		form = new Form(resources);
-		form.setSurvey(survey);
+		Form form = sessionService.getFormFromSessionInfo(request);
 		
 		sessionService.upgradePrivileges(form.getSurvey(), user, request);
 		int accessPrivilege = 0;
@@ -547,7 +709,7 @@ public class ParticipantsController extends BasicController {
 			throw new ForbiddenURLException();		
 		}
 	
-		List<ParticipationGroup> participationGroups = participationService.getAll(form.getSurvey().getUniqueId(), true, page, itemsPerPage);
+		List<ParticipationGroup> participationGroups = participationService.getAll(form.getSurvey().getUniqueId(), true, 0, Integer.MAX_VALUE);
 		for (ParticipationGroup group : participationGroups)
 		{
 			if (group.getType() == ParticipationGroupType.ECMembers)
@@ -557,107 +719,14 @@ public class ParticipantsController extends BasicController {
 			} else if (group.getType() == ParticipationGroupType.Static)
 			{
 				group.setChildren(group.getAttendees().size());
-				group.setAttendees(null);
+				group.setAttendees(null);			
+			} else {
+				group.setChildren(group.getAll());
 			}
 		}
 		
 		return participationGroups;
-	}
-	
-
-	@RequestMapping(value = "/participants", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView participants(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
-		User u = sessionService.getCurrentUser(request);
-		
-		Form form;
-		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, true, true, false);
-		form = new Form(resources);
-		form.setSurvey(survey);
-				
-		sessionService.upgradePrivileges(form.getSurvey(), u, request);
-		int accessPrivilege = 0;
-		if (form.getSurvey().getOwner().getId().equals(u.getId())) {
-			accessPrivilege = 2;
-		} else if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
-			accessPrivilege = 2;
-		} else {
-			accessPrivilege = u.getLocalPrivileges().get(LocalPrivilege.ManageInvitations);
-		}
-		
-		if (accessPrivilege < 1)
-		{		
-			throw new ForbiddenURLException();		
-		}
-
-		int owner = u.getId();
-		
-		ModelAndView result = new ModelAndView("management/participants", "form", form);
-		
-		String name = request.getParameter("name");
-		String email = request.getParameter("email");
-		String newPage = request.getParameter("newPage");		
-		newPage = newPage == null ? "1" : newPage;
-		HashMap<String, String> filter = new HashMap<>();
-		if (name != null) filter.put("name", name);
-		if (email != null) filter.put("email", email);
-		
-		if (u.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) == 2)
-		{
-			owner = 0;
-		}
-		
-		Integer itemsPerPage = ConversionTools.getInt(request.getParameter("itemsPerPage"), 10);	
-		Paging<Attendee> paging = new Paging<>();
-		paging.setItemsPerPage(itemsPerPage);
-		int numberOfAttendees = attendeeService.getNumberOfAttendees(owner, filter);
-		paging.setNumberOfItems(numberOfAttendees);
-		paging.moveTo(newPage);
-		
-		List<Attendee> attendees = attendeeService.getAttendees(owner, new HashMap<>(), paging.getCurrentPage(), paging.getItemsPerPage());
-		paging.setItems(attendees);
-
-    	result.addObject("attributeNames", u.getSelectedAttributes());
-    	result.addObject("filter", filter);
-    	result.addObject("paging", paging);
-    	
-    	result.addObject("allAttributeNames", attendeeService.getAllAttributes(owner));
-    	
-    	if (request.getParameter("action") != null)
-    	{
-    		result.addObject("action", request.getParameter("action"));
-    	}
-    	
-    	if (request.getParameter("error") != null)
-    	{
-    		result.addObject("error", request.getParameter("error"));
-    	}
-		
-		List<KeyValue> domains = ldapDBService.getDomains(false, false, resources, locale);
-		result.addObject("domains", domains);
-		
-		boolean ownerSelected = false;
-		if (u.getSelectedAttributes() != null)
-		{
-	    	for (AttributeName aname : u.getSelectedAttributes())
-	    	{
-	    		if (aname.getName().equals("Owner"))
-	    		{
-	    			ownerSelected = true;
-	    			break;
-	    		}
-	    	}
-		}
-    	result.addObject("ownerSelected",ownerSelected);
-		
-    	
-    	// add the default domian selection
-    	if(StringUtils.isEmpty(defaultDomain))
-    		defaultDomain="eu.europa.ec";
-    	result.addObject("defaultDomain",defaultDomain);
-		
-		return result;
-	}
-	
+	}	
 	
 	@RequestMapping(value = "/participantsJSONAll", headers="Accept=*/*", method=RequestMethod.GET)
 	public @ResponseBody Paging<Attendee> participantsSearchAll(HttpServletRequest request, HttpServletResponse response ) throws Exception {
@@ -669,19 +738,50 @@ public class ParticipantsController extends BasicController {
 		return participantsSearch(request, response, false);
 	}
 	
-	@RequestMapping(value = "/topDepartmentsJSON", headers="Accept=*/*", method=RequestMethod.GET)
-	public @ResponseBody List<KeyValue> topDepartments(HttpServletRequest request, HttpServletResponse response ) throws InvalidURLException {
+	@RequestMapping(value = "/usersJSON", headers="Accept=*/*", method=RequestMethod.GET)
+	public @ResponseBody Paging<EcasUser> usersJSON(HttpServletRequest request, HttpServletResponse response ) throws Exception {
+		User user = sessionService.getCurrentUser(request);
+		Form form = sessionService.getFormFromSessionInfo(request);		
 		
-		if (!isAjax(request))
-		{
-			throw new InvalidURLException();
+		sessionService.upgradePrivileges(form.getSurvey(), user, request);
+		int accessPrivilege = 0;
+		if (form.getSurvey().getOwner().getId().equals(user.getId())) {
+			accessPrivilege = 2;
+		} else if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
+			accessPrivilege = 2;
+		} else {
+			accessPrivilege = user.getLocalPrivileges().get(LocalPrivilege.ManageInvitations);
 		}
 		
-		String domain = request.getParameter("domain");
-		if (domain == null) {
-			domain = "eu.europa.ec";
+		if (accessPrivilege < 1)
+		{		
+			throw new ForbiddenURLException();		
 		}
-		return ldapService.getTopDepartments(domain);		
+		
+		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		String name = "";
+		if (parameters.containsKey("name")) name = parameters.get("name")[0];
+		String email = "";
+		if (parameters.containsKey("email")) email = parameters.get("email")[0];
+		String department = "";
+		if (parameters.containsKey("department")) department = parameters.get("department")[0];
+		String domain = "";
+		if (parameters.containsKey("domain")) domain = parameters.get("domain")[0];
+		
+		String newPage = request.getParameter("newPage");		
+		newPage = newPage == null ? "1" : newPage;
+		Integer itemsPerPage = ConversionTools.getInt(request.getParameter("itemsPerPage"), 100);	
+		
+		if (domain.length() == 0) return null;
+		
+		Paging<EcasUser> paging = new Paging<>();
+		paging.setItemsPerPage(itemsPerPage);
+		paging.setCurrentPage(Integer.parseInt(newPage));
+		
+		List<EcasUser> users = ldapDBService.getECASUsers(name, department, email, domain, Integer.parseInt(newPage), itemsPerPage);
+		paging.setItems(users);
+		
+		return paging;
 	}
 	
 	@RequestMapping(value = "/departmentsJSON", headers="Accept=*/*", method=RequestMethod.GET)
@@ -967,332 +1067,20 @@ public class ParticipantsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/participants/createTokens", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<String> participantsCreateTokensPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) {
+	public @ResponseBody List<Invitation> createTokens(@PathVariable String shortname, HttpServletRequest request, Locale locale) {
 		String strtokens = request.getParameter("tokens");		
 		int tokens = Integer.parseInt(strtokens);
 		
-		List<String> newtokens = new ArrayList<>();
+		List<Invitation> newtokens = new ArrayList<>();
 		
 		for (int i = 0; i < tokens; i++) {
         	String token = UUID.randomUUID().toString();
-        	newtokens.add(token);
+        	Invitation inv = new Invitation();
+        	inv.setUniqueId(token);
+        	
+        	newtokens.add(inv);
 		}
 		
 		return newtokens;
 	}
-	
-	@RequestMapping(value = "/participants/saveTokens", method = RequestMethod.POST)
-	public ModelAndView saveTokensPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
-		Form form;
-		try {
-			
-			String idSurvey = request.getParameter("survey");
-			logger.info("saveTokensPOST GET THE SURVEY ID " + idSurvey +" SHORTNAME " + shortname);
-			
-			//Survey survey4Token= surveyService.getSurveyForParticipant(shortname);
-			
-			StopWatch st= new StopWatch();
-			st.setKeepTaskList(true);
-			
-			st.start();
-			form = sessionService.getForm(request, shortname, false, false);			
-			st.stop();
-			logger.info("SaveToken with FORM TOOK " + st.getTotalTimeMillis() );
-			
-		} catch (NoFormLoadedException ne)
-		{
-			logger.error(ne);
-			ModelAndView model = new ModelAndView("error/generic");
-			String message = resources.getMessage("error.NoFormLoaded", null, "You have to load a survey before you can use this page!", locale);
-			model.addObject("message", message);
-			return model;
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-			throw new ForbiddenURLException();
-		}
-		User user = sessionService.getCurrentUser(request);
-		
-		sessionService.upgradePrivileges(form.getSurvey(), user, request);
-		int accessPrivilege = 0;
-		if (form.getSurvey().getOwner().getId().equals(user.getId())) {
-			accessPrivilege = 2;
-		} else if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
-			accessPrivilege = 2;
-		} else {
-			accessPrivilege = user.getLocalPrivileges().get(LocalPrivilege.ManageInvitations);
-		}
-		
-		if (accessPrivilege < 2)
-		{		
-			throw new ForbiddenURLException();		
-		}
-			
-		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-		
-		String groupid = "";
-		if (parameters.containsKey("groupid")) groupid = parameters.get("groupid")[0];	
-		String groupname = "";
-		if (parameters.containsKey("groupname")) groupname = Tools.escapeHTML(parameters.get("groupname")[0]);	
-		
-		ParticipationGroup g = new ParticipationGroup(form.getSurvey().getUniqueId());
-		
-		if (groupid.length() > 0)
-		{
-			int id = Integer.parseInt(groupid);
-			g = participationService.get(id);
-		} else {
-			g.setActive(true);			
-			g.setSurveyId(form.getSurvey().getId());
-			g.setOwnerId(user.getId());
-		}
-		
-		g.setName(groupname);
-		g.setType(ParticipationGroupType.Token);
-		
-		Map<String, String> operations = new HashMap<>();
-		List<String> tokens = new ArrayList<>();
-		for (String key : parameters.keySet())
-		{
-			String v = parameters.get(key)[0];
-			
-			if (v != null && v.trim().length() > 0)
-			{				
-				if (key.startsWith("newtoken"))
-				{
-					String token = parameters.get(key)[0];
-					tokens.add(token);
-				} else if (key.startsWith("token"))
-				{
-					String token = key.substring(5);
-					String value = parameters.get(key)[0];
-					
-					if (value != null && value.length() > 0)
-					{
-						operations.put(token, value);
-					}
-				}
-			}
-		}	
-		
-		if (operations.size() == 0)
-		{
-			g.setInCreation(true);
-		}
-		
-		participationService.save(g);
-	
-		if (operations.size() > 0)
-		{
-			attendeeService.executeOperations(operations, g.getId());
-			return new ModelAndView("redirect:/" +  shortname + "/management/participants?action=operations");
-		}
-		
-		participationService.addTokensToGuestListAsync(g.getId(), tokens);
-		
-		ModelAndView result = new ModelAndView("redirect:/" + shortname + "/management/participants");
-		result.addObject("action", "guestlistcreated");
-		
-		if (groupid.length() > 0)
-		{
-			activityService.log(505, null, g.getId().toString(), user.getId(), form.getSurvey().getUniqueId(), g.getNiceType());
-		} else {
-			activityService.log(501, null, g.getId().toString(), user.getId(), form.getSurvey().getUniqueId(), g.getNiceType());
-		}
-		
-		return result;
-	}
-	
-	@RequestMapping(value = "/participantsStatic", method = RequestMethod.POST)
-	public ModelAndView participantsStaticPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
-		Form form;
-		try {
-			form = sessionService.getForm(request, shortname, false, false);
-		} catch (NoFormLoadedException ne)
-		{
-			logger.error(ne);
-			ModelAndView model = new ModelAndView("error/generic");
-			String message = resources.getMessage("error.NoFormLoaded", null, "You have to load a survey before you can use this page!", locale);
-			model.addObject("message", message);
-			return model;
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-			throw new ForbiddenURLException();
-		}
-		
-		User user = sessionService.getCurrentUser(request);
-		
-		sessionService.upgradePrivileges(form.getSurvey(), user, request);
-		int accessPrivilege = 0;
-		if (form.getSurvey().getOwner().getId().equals(user.getId())) {
-			accessPrivilege = 2;
-		} else if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
-			accessPrivilege = 2;
-		} else {
-			accessPrivilege = user.getLocalPrivileges().get(LocalPrivilege.ManageInvitations);
-		}
-		
-		if (accessPrivilege < 2)
-		{		
-			throw new ForbiddenURLException();		
-		}
-		
-		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-		
-		if (!parameters.containsKey("groupName"))
-		{
-			ModelAndView result = new ModelAndView("redirect:/" + shortname + "/management/participants?error=namemissing");
-			return result;
-		}
-	
-		String groupName =  parameters.get("groupName")[0];
-		
-		parameters.remove("groupName");
-		parameters.remove("groupOwner");
-		parameters.remove("groupType");
-			
-		List<Integer> attendeeIDs = new ArrayList<>();
-		
-		for (String key : parameters.keySet())
-		{
-			if (key.startsWith("att"))
-			{
-				int intKey = Integer.parseInt(key.substring(3));				
-				attendeeIDs.add(intKey);
-			}
-		}
-	
-		ParticipationGroup g = new ParticipationGroup(form.getSurvey().getUniqueId());
-		
-		if (parameters.containsKey("id"))
-		{
-			int id = Integer.parseInt(parameters.get("id")[0]);
-			g = participationService.get(id);
-		} else {
-			g.setActive(true);			
-			g.setSurveyId(form.getSurvey().getId());
-		}
-	
-		g.setName(groupName);		
-		g.setType(ParticipationGroupType.Static);
-		
-		g.setOwnerId(user.getId());
-		
-		g.setInCreation(true);
-		
-		participationService.save(g);
-			
-		participationService.addParticipantsToGuestListAsync(g.getId(), attendeeIDs);
-		
-		ModelAndView result = new ModelAndView("redirect:/" + shortname + "/management/participants");
-		
-		result.addObject("action", "guestlistcreated");
-		
-		if (parameters.containsKey("id"))
-		{
-			activityService.log(505, null, g.getId().toString(), user.getId(), form.getSurvey().getUniqueId(), g.getNiceType());
-		} else{
-			activityService.log(501, null, g.getId().toString(), user.getId(), form.getSurvey().getUniqueId(), g.getNiceType());
-		}
-		
-		return result;
-	}
-	
-	@RequestMapping(value = "/participantsDepartments", method = RequestMethod.POST)
-	public ModelAndView participantsDepartmentsPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
-		Form form;
-		try {
-			form = sessionService.getForm(request, shortname, false, false);
-		} catch (NoFormLoadedException ne)
-		{
-			logger.error(ne);
-			ModelAndView model = new ModelAndView("error/generic");
-			String message = resources.getMessage("error.NoFormLoaded", null, "You have to load a survey before you can use this page!", locale);
-			model.addObject("message", message);
-			return model;
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-			throw new ForbiddenURLException();
-		}
-		User user = sessionService.getCurrentUser(request);
-		sessionService.upgradePrivileges(form.getSurvey(), user, request);
-		int accessPrivilege = 0;
-		if (form.getSurvey().getOwner().getId().equals(user.getId())) {
-			accessPrivilege = 2;
-		} else if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) {
-			accessPrivilege = 2;
-		} else {
-			accessPrivilege = user.getLocalPrivileges().get(LocalPrivilege.ManageInvitations);
-		}
-		
-		if (accessPrivilege < 2)
-		{		
-			throw new ForbiddenURLException();		
-		}
-		
-		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-				
-		String groupName =  Tools.escapeHTML(parameters.get("groupName")[0]);
-		logger.debug("START CREATE GUEST LIST ROM LDAP- GROUP NAME " + groupName);
-		
-		parameters.remove("groupName");
-		parameters.remove("groupOwner");
-		parameters.remove("groupType");
-			
-		List<String> departments = new ArrayList<>();
-		
-		for (String key : parameters.keySet())
-		{
-			if (key.startsWith("node"))
-			{
-				String department = key.substring(4);
-				departments.add(department);
-			} else if (key.startsWith("rootnode"))
-			{
-				departments.add(key);
-			}
-		}
-	
-		logger.debug("START CREATE GUEST LIST ROM LDAP- GROUP NAME GET DEPARTMENTS " + departments.size());
-		ParticipationGroup g = new ParticipationGroup(form.getSurvey().getUniqueId());
-		logger.debug("START CREATE GUEST LIST ROM LDAP- GROUP NAME PARTICPANTGROUP TRY TO CREATE " );
-		if (parameters.containsKey("id"))
-		{
-			int id = Integer.parseInt(parameters.get("id")[0]);
-			g = participationService.get(id);
-		} else {
-			g.setActive(true);			
-			g.setSurveyId(form.getSurvey().getId());
-		}
-		
-		if (parameters.containsKey("domain"))
-		{
-			g.setDomainCode( parameters.get("domain")[0]);
-		}
-		
-		g.setInCreation(true);
-		
-		g.setName(groupName);		
-		g.setType(ParticipationGroupType.ECMembers);
-		
-		g.setOwnerId(user.getId());
-		
-		participationService.save(g);
-		logger.debug("START CREATE GUEST LIST ROM LDAP- PARTICIPANTGROUP CREATED ");			
-		
-		participationService.addParticipantsToGuestListAsync(g.getId(), departments);
-		
-		ModelAndView result = new ModelAndView("redirect:/" + shortname + "/management/participants");
-		
-		result.addObject("action", "guestlistcreated");
-		
-		if (parameters.containsKey("id"))
-		{
-			activityService.log(505, null, g.getId().toString(), user.getId(), form.getSurvey().getUniqueId(), g.getNiceType());
-		} else {
-			activityService.log(501, null, g.getId().toString(), user.getId(), form.getSurvey().getUniqueId(), g.getNiceType());
-		}
-		
-		return result;
-	}
-
 }

@@ -548,6 +548,16 @@ public class AttendeeService extends BasicService {
 	}
 	
 	@Transactional(readOnly = true)
+	public List<Invitation> getInvitationsForParticipationGroup(Integer participationGroupId) {
+		Session session = sessionFactory.getCurrentSession();	
+		Query query = session.createQuery("SELECT i FROM Invitation i WHERE i.participationGroupId = :participationGroupId");
+		@SuppressWarnings("unchecked")
+		List<Invitation> invitations = query.setInteger("participationGroupId", participationGroupId).list();	
+		
+		return invitations;
+	}
+	
+	@Transactional(readOnly = true)
 	public Invitation getInvitationForParticipationGroupAndAttendee(Integer participationGroupId, Integer attendeeId) {
 		Session session = sessionFactory.getCurrentSession();	
 		Query query = session.createQuery("SELECT i FROM Invitation i WHERE i.participationGroupId = :participationGroupId and i.attendeeId = :attendeeId");
@@ -803,19 +813,4 @@ public class AttendeeService extends BasicService {
 		
 		add(attendees);
 	}
-
-  /**
-   * Returns a list of invitations for a given participation group.
-   */
-  @Transactional(readOnly = true)
-  public List<Invitation> getInvitationsForParticipationGroup(Integer participationGroupId) {
-    Session session = sessionFactory.getCurrentSession();
-    Query query = session.createQuery(
-        "SELECT i FROM Invitation i WHERE i.participationGroupId = :participationGroupId");
-    @SuppressWarnings("unchecked")
-    List<Invitation> invitations =
-        query.setInteger("participationGroupId", participationGroupId).list();
-
-    return invitations;
-  }
 }
