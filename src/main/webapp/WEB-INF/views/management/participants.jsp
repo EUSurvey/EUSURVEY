@@ -10,15 +10,20 @@
 	
 	<link href="${contextpath}/resources/css/management.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/simpletree.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
+	<link href="${contextpath}/resources/css/progressbar.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	
 	<script>
-		var attributeIDs = new Array();
+	var surveyuid = '${form.survey.uniqueId}';
+	var attributeIDs = new Array();
 		var attributeNames = new Array();
 		
 		<c:forEach items="${attributeNames}" var="attributeName" varStatus="rowCounter">
 			attributeIDs.push(${attributeName.id});		
 			attributeNames.push("${attributeName.name}");	
 		</c:forEach>
+		
+		var errorMaxTokenNumberExceeded = "<spring:message code="error.MaxTokenNumberExceeded" />";
+		var errorProblemDuringSave = "<spring:message code="error.ProblemDuringSave" />";
 	</script>
 	
 	<script type="text/javascript" src="${contextpath}/resources/js/jquery.stickytableheaders.js?version=<%@include file="../version.txt" %>"></script>
@@ -56,22 +61,7 @@
 			margin-bottom: 4px; 
 			display: inline-block;
 		}
-		
-		.tabletitle {
-			background-color: #245077;
-    		color: #FFF;
-    		padding: 10px;
-    		border: 1px solid #ddd;
-    		margin-right: 1px;
-    		font-weight: bold;
-    		margin-bottom: -1px;
-		}
-		
-		.tabletitle .info {
-			font-weight: normal;
-			font-size: 12px;
-		}
-		
+			
 		.checkcell {
 			max-width: 30px !important;
 			width: 30px !important;
@@ -98,58 +88,7 @@
 		.ptable .filtertools {
 			margin-top: -60px !important;
     		padding-bottom: 10px !important;
-		}
-		
-		 .progressbar {
-		      counter-reset: step;
-		  }
-		  .progressbar li {
-		      list-style-type: none;
-		      width: 50%;
-		      float: left;
-		      font-size: 12px;
-		      position: relative;
-		      text-align: center;
-		      text-transform: uppercase;
-		      color: #7d7d7d;
-		  }
-		  .progressbar li:before {
-		      width: 40px;
-		      height: 40px;
-		      content: counter(step);
-		      counter-increment: step;
-		      line-height: 30px;
-		      border: 2px solid #7d7d7d;
-		      display: block;
-		      text-align: center;
-		      vertical-align: middle;
-		      margin: 0 auto 10px auto;
-		      border-radius: 50%;
-		      background-color: #7d7d7d;
-		  }
-		  .progressbar li:after {
-		      width: 100%;
-		      height: 2px;
-		      content: '';
-		      position: absolute;
-		      background-color: #7d7d7d;
-		      top: 19px;
-		      left: -50%;
-		      z-index: -1;
-		  }
-		  .progressbar li:first-child:after {
-		      content: none;
-		  }
-		  .progressbar li.active {
-		      color: #245077;;
-		  }
-		  .progressbar li.active:before {
-		      border-color: #245077;;
-		      background-color: #245077;;
-		  }
-		  .progressbar li.active + li:after {
-		      background-color: #7d7d7d;
-		  }
+		}			
 		  
 		  #wait-dialog {
 		  	position: fixed;
@@ -182,6 +121,18 @@
 		  .col-md-2x {
 		  	float: left;
 		  	width: 4%;
+		  }
+		  
+		  .increation {
+		  	background-color: #FFE0BF;
+		  }
+		  
+		  .runningmails {
+		  	background-color: #D1EBFF;
+		  }
+		  
+		  tr.error {
+		  	background-color: #FFD6DA;
 		  }
     </style>
     
@@ -244,7 +195,7 @@
 					</thead>
 					<tbody>
 						<!-- ko foreach: Guestlists() -->
-							<tr>
+							<tr data-bind="attr: {'data-id': id(), class: inCreation() ? 'increation' : (runningMails() ? 'runningmails' : (error() ? 'error' : ''))}">
 								<td data-bind="text: name"></td>
 								<td>
 									<!-- ko if: type() == 'Static' -->
@@ -259,7 +210,7 @@
 								</td>
 								<td data-bind="text: created"></td>
 								<td data-bind="text: children"></td>
-								<td data-bind="text: invited"></td>
+								<td data-bind="text: type() == 'Token' ? children : invited"></td>
 								<td>
 									<!-- ko if: $parent.Access() == 2 -->
 										<!-- ko if: activateEnabled() -->
@@ -623,7 +574,7 @@
 							</div>
 						</div>
 						
-						<div id="create-step-2" data-bind="visible: Step() == 2" style="max-width: 900px; margin-left: auto; margin-right: auto;" >
+						<div id="create-step-2-contacts" data-bind="visible: Step() == 2" style="max-width: 900px; margin-left: auto; margin-right: auto;" >
 							<!-- ko if: selectedGroup() != null -->
 							<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.NameYourGuestList" />
 							<input type="textbox" style="width: 400px" class="form-control required" data-bind="value: selectedGroup().name" />
@@ -849,7 +800,7 @@
 				</div>
 			</div>
 			
-			<div id="create-step-2" data-bind="visible: Step() == 2" style="max-width: 900px; margin-left: auto; margin-right: auto;" >
+			<div id="create-step-2-ec" data-bind="visible: Step() == 2" style="max-width: 900px; margin-left: auto; margin-right: auto;" >
 				<!-- ko if: selectedGroup() != null -->
 				<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.NameYourGuestList" />
 				<input type="textbox" style="width: 400px" class="form-control required" data-bind="value: selectedGroup().name" />
@@ -992,7 +943,7 @@
 					</div>
 			    </div>
 			
-				<div id="create-step-2" data-bind="visible: Step() == 2" style="max-width: 900px; margin-left: auto; margin-right: auto;" >
+				<div id="create-step-2-tokens" data-bind="visible: Step() == 2" style="max-width: 900px; margin-left: auto; margin-right: auto;" >
 					<!-- ko if: selectedGroup() != null -->
 					<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.NameYourGuestList" />
 					<input type="textbox" style="width: 400px" class="form-control required" data-bind="value: selectedGroup().name" />

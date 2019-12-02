@@ -10,6 +10,15 @@
 	<%@ include file="../includes.jsp" %>
 	
 	<link href="${contextpath}/resources/css/management.css" rel="stylesheet" type="text/css" />
+	<link href="${contextpath}/resources/css/progressbar.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
+	
+	<style type="text/css">
+		#dialog-step2 label {
+			font-weight: bold !important;
+			margin-top: 10px;
+		}
+	</style>
+	
 	<script type="text/javascript" src="${contextpath}/resources/js/sendinvitations.js?version=<%@include file="../version.txt" %>"></script>
 	
 	<script type="text/javascript"> 
@@ -137,7 +146,17 @@
 			});
 		}
 		
-		function step2(validate)
+		function step1()
+		{
+			_sendInvitationsPage.Step(1);
+		}
+		
+		function step2()
+		{
+			_sendInvitationsPage.Step(2);
+		}
+
+		function step3(validate)
 		{
 			if (validate)
 			{
@@ -147,17 +166,13 @@
 					return;
 				}
 				
-				if (!validateInput($('#dialog-step1')))
+				if (!validateInput($('#dialog-step2')))
 				{
 					return;
 				}
 			}
 			$("#ask-save-dialog").modal('hide');
-			_sendInvitationsPage.Step(2);
-		}
-
-		function step3()
-		{
+			
 			var selected = $("tbody").find("input[type='checkbox']:checked").length;
 			$('#preview-selectedcontacts').text(selected)
 			
@@ -256,130 +271,43 @@
 		  </div>
 		</div>	
 		
-		<form:form style="padding-top: 140px" id="sendinvitations" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/sendInvitations">
+		<form:form id="sendinvitations" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/sendInvitations">
 		
 			<input type="hidden" id="selectedAttendee" name="selectedAttendee" value="" />
 			<input type="hidden" id="participationGroup" name="participationGroup" value="${participationGroup.id}" />	
-		
+			
+			<div id="action-bar" class="container action-bar" style="width: 100%;">
+				<div class="row">
+					<div class="col-md-3" style="text-align: left">
+						<a onclick="_participants.Page(1)"><spring:message code="label.Participants" /></a> <span class="glyphicon glyphicon-menu-right" style="font-size: 90%"></span> 
+						<spring:message code="label.SendInvitations" />
+					</div>
+					<div class="col-md-5" style="text-align: center">
+						<ul class="progressbar">
+							<li class="pb2" data-bind="attr: {class: Step() == 1 ? 'active pb2' : 'pb2'}"><spring:message code="label.SelectParticipants" /></li>
+							<li class="pb2" data-bind="attr: {class: Step() == 2 ? 'active pb2' : 'pb2'}"><spring:message code="label.EditMessage" /></li>
+							<li class="pb2" data-bind="attr: {class: Step() == 3 ? 'active pb2' : 'pb2'}"><spring:message code="label.SendEmails" /></li>
+						</ul>
+					</div>
+					<div class="col-md-3" style="text-align: left">
+					
+					</div>
+				</div>
+			</div>	
+			
 			<div id="dialog-step1" data-bind="visible: Step() == 1">
-			  		<spring:message code="label.SendInvitations" /> - <spring:message code="label.Step1" />: <spring:message code="label.EmailText" />
-			  	
-			  		<div style="padding: 8px; border: 2px solid #ddd; background-color: #efefef; margin-bottom: 10px;">
-			  				
-					<table style="margin-bottom: 5px; width: 100%;">
-						<tr>
-							<td style="padding-bottom: 5px; vertical-align: top">
-				  				<spring:message code="label.Style" /><br />
-				  				<select onchange="$('#savetextbutton').removeAttr('disabled')" id="mailtemplate" name="mailtemplate" class="small-form-control" style="width: 270px">
-									<option value="eusurvey" selected="selected">EUSurvey</option>
-									<c:if test="${USER.getGlobalPrivilegeValue('ECAccess') > 0}">
-										<option value="ecofficial"><spring:message code="label.ECofficial" /></option>
-									</c:if>
-									<option value="plaintext"><spring:message code="label.Notemplate" /></option>
-								</select>
-			  				</td>
-			  			
-							<td style="vertical-align: top; padding-left: 10px;">
-								<spring:message code="label.Text" /><br />
-								<select onchange="loadTemplate()" id="mailtext" name="mailtext" class="small-form-control" style="width: 270px">
-									<option value="0" selected="selected">Default</option>
-									<c:if test="${usertexts != null}">
-										<c:forEach items="${usertexts}" var="text">
-											<option value="${text.id}">${text.name}</option>
-										</c:forEach>
-									</c:if>
-								</select>
-								<div style="margin-top: 5px">
-									<button id="savetextbutton" disabled="disabled" onclick="$('#savetextdialog').modal('show'); return false;" class="btn btn-default"><spring:message code="label.SaveText" /></button>
-									<button id="deletetextbutton" disabled="disabled" onclick="showDeleteDialog(); return false;" class="btn btn-default"><spring:message code="label.DeleteText" /></button>
-								</div>		
-							</td>		  	
-						</tr>
-					</table>
-					
-					</div>
-					
-					<table>					
-						<tr>
-							<td style="padding-right: 10px; padding-top: 5px; vertical-align: top"><spring:message code="label.ReplyTo" /></td>
-							<td id="txtSenderFromInvitation" style="vertical-align: top; padding-bottom: 5px">
-								<c:choose>
-									<c:when test='${USER.ECPrivilege == 0 && USER.type == "ECAS"}'>
-										<input type="text" class="email small-form-control disabled" style="background-color: rgb(235, 235, 228);" maxlength="255"  value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" disabled="disabled" />
-									</c:when>
-									<c:otherwise>
-										<input type="text" onchange="$('#savetextbutton').removeAttr('disabled');validateInput($(this).parent());" class="email small-form-control" maxlength="255"  value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" id="senderAddress" name="senderAddress" />
-									</c:otherwise>
-								</c:choose>
-							</td>
-						</tr>
-						<tr>
-							<td style="padding-right: 10px; padding-top: 5px; vertical-align: top"><spring:message code="label.Subject" /></td>
-							<td  style="vertical-align: top; padding-bottom: 5px"><input onchange="$('#savetextbutton').removeAttr('disabled')" id="txtSubjectFromInvitation" class="required small-form-control" type="text" maxlength="255" name="senderSubject" value="<esapi:encodeForHTMLAttribute>${senderSubject}</esapi:encodeForHTMLAttribute>" /></td>
-						</tr>
-					</table>
-					
-					<textarea id="text1default" style="display:none">
-						Dear {Name},<br /><br />				
-						I would like to invite you to the survey '<b>${form.survey.cleanTitle()}</b>' which will be available at this url:
-					</textarea>
-					
-					<textarea id="text2default" style="display:none">
-						Best regards,<br />			
-						<esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML>
-					</textarea>
-					
-					<textarea class="tinymce freetext max5000" name="text1" id="text1" onchange="$('#savetextbutton').removeAttr('disabled')">
-						<c:choose>
-							<c:when test="${participationGroup.template1 != null}">
-								${participationGroup.template1}
-							</c:when>
-							<c:otherwise>
-								Dear {Name},<br /><br />				
-								I would like to invite you to the survey '<b>${form.survey.cleanTitle()}</b>' which will be available at this url:
-							</c:otherwise>
-						</c:choose>			
-					</textarea>
-					<br />
-					
-					<span id="url">
-						<c:choose>
-							<c:when test="${form.survey.security.equalsIgnoreCase('openanonymous')}">
-								{host}/runner/${form.survey.uniqueId}
-							</c:when>
-							<c:otherwise>
-								{host}/runner/invited/${participationGroup.id}/{UniqueAccessLink}
-							</c:otherwise>
-						</c:choose>
-					</span>
-									
-					<br /><br />
-					<textarea class="tinymce freetext max5000" name="text2" id="text2" onchange="$('#savetextbutton').removeAttr('disabled')">
-						<c:choose>
-							<c:when test="${participationGroup.template2 != null}">
-								${participationGroup.template2}
-							</c:when>
-							<c:otherwise>
-								Best regards,<br />			
-								<esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML>
-							</c:otherwise>
-						</c:choose>					
-					</textarea>
-					
-					<div style="float: right">
-						<a id="btnCancelFromSendInvitationStep1" href="<c:url value="/${sessioninfo.shortname}/management/participants" />" class="btn btn-default"><spring:message code="label.Cancel" /></a>
-					</div>
-					<a id="btnNextFromSendInvitationStep1"  onclick="step2(true)" class="btn btn-primary"><spring:message code="label.Next" /></a>						
-			</div>
-
-			<div id="dialog-step2" data-bind="visible: Step() == 2">
-			  	<div style="max-height: 550px; height: 550px; overflow: auto;">
-			  		<spring:message code="label.SendInvitations" /> - <spring:message code="label.Step2" />: <spring:message code="label.Contacts" />
-			  	
+				<div class="fullpageform" style="padding-top: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
+			  		
 					<input id="checkAllUnInvited" type="checkbox" checked="checked" onchange="checkUninvited();" /> <spring:message code="label.SelectUninvitedContacts" /><br />
 					<input id="checkAllUnAnswered" type="checkbox" onchange="checkUnanswered();" /> <spring:message code="label.SelectInvited" />
 					
-					<table id="tblInvitedFromSendInvitation" class="table table-bordered table-styled" style="margin-top: 10px; width: auto;">
+					<div class="tabletitle" style="margin-top: 20px;">
+						${participationGroup.name}
+						<div class="info">
+							<spring:message code="info.SelectParticipants" />
+						</div>
+					</div>
+					<table id="tblInvitedFromSendInvitation" class="table table-bordered table-styled">
 						<thead>
 							<tr>
 								<th><input id="checkAll" type="checkbox" checked="checked" onchange="check();" /></th>
@@ -388,7 +316,6 @@
 								<th><spring:message code="label.InvitationDate" /></th>
 								<th><spring:message code="label.ReminderDate" /></th>
 								<th><spring:message code="label.Answers" /></th>
-								<!-- <th>&#160;</th> -->
 							</tr>
 						</thead>
 						<tbody>					
@@ -451,45 +378,154 @@
 					<div style="float: right">
 						<a id="btnCancelFromSendInvitationStep2" href="<c:url value="/${sessioninfo.shortname}/management/participants" />" class="btn btn-default"><spring:message code="label.Cancel" /></a>
 					</div>
-					<div style="float: left">
-						<a id="btnPreviousFromSendInvitationStep2" onclick="_sendInvitationsPage.Step(1);" class="btn btn-default"><spring:message code="label.Previous" /></a>
-					</div>				
-					<a id="btnNextFromSendInvitationStep2" onclick="step3()" class="btn btn-primary"><spring:message code="label.Next" /></a>
+					<div style="text-align: center">
+						<a id="btnNextFromSendInvitationStep2" onclick="step2()" class="btn btn-primary"><spring:message code="label.Next" /></a>
+					</div>
 				</div>
 			</div>	
+		
+			<div id="dialog-step2" data-bind="visible: Step() == 2">		
+				<div class="fullpageform" style="padding-top: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
+			
+			  		<div style="float: right; padding: 8px; border: 2px solid #ddd; background-color: #efefef;">
+		  				<spring:message code="label.SelectMailDesign" /><br />
+		  				<select onchange="$('#savetextbutton').removeAttr('disabled')" id="mailtemplate" name="mailtemplate" class="small-form-control" style="width: 150px">
+							<option value="eusurvey" selected="selected">EUSurvey</option>
+							<c:if test="${USER.getGlobalPrivilegeValue('ECAccess') > 0}">
+								<option value="ecofficial"><spring:message code="label.ECofficial" /></option>
+							</c:if>
+							<option value="plaintext"><spring:message code="label.Notemplate" /></option>
+						</select><br /><br />
+			  				
+			  			<spring:message code="label.UseMailTemplate" /><br />
+						<select onchange="loadTemplate()" id="mailtext" name="mailtext" class="small-form-control" style="width: 150px">
+							<option value="0" selected="selected">Default</option>
+							<c:if test="${usertexts != null}">
+								<c:forEach items="${usertexts}" var="text">
+									<option value="${text.id}">${text.name}</option>
+								</c:forEach>
+							</c:if>
+						</select>
+						<div style="margin-top: 5px">
+							<button id="savetextbutton" disabled="disabled" onclick="$('#savetextdialog').modal('show'); return false;" class="btn btn-default"  style="margin-top: 10px"><spring:message code="label.SaveAsTemplate" /></button><br />
+							<button id="deletetextbutton" disabled="disabled" onclick="showDeleteDialog(); return false;" class="btn btn-default" style="margin-top: 5px"><spring:message code="label.DeleteTemplate" /></button>
+						</div>
+					</div>
+					
+					<div style="float: left; margin-bottom: 20px;">					
+						<label><spring:message code="label.ReplyTo" /></label><br />
+						<c:choose>
+							<c:when test='${USER.ECPrivilege == 0 && USER.type == "ECAS"}'>
+								<input type="text" class="email form-control disabled" style="background-color: rgb(235, 235, 228);" maxlength="255"  value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" disabled="disabled" />
+							</c:when>
+							<c:otherwise>
+								<input type="text" onchange="$('#savetextbutton').removeAttr('disabled');validateInput($(this).parent());" class="email form-control" maxlength="255"  value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" id="senderAddress" name="senderAddress" />
+							</c:otherwise>
+						</c:choose>
+						<br />
+						<label><spring:message code="label.Subject" /></label><br />
+						<input onchange="$('#savetextbutton').removeAttr('disabled')" id="txtSubjectFromInvitation" class="required form-control" type="text" maxlength="255" name="senderSubject" value="<esapi:encodeForHTMLAttribute>${senderSubject}</esapi:encodeForHTMLAttribute>" />
+						<br />
+						<textarea id="text1default" style="display:none">
+							Dear {Name},<br /><br />				
+							I would like to invite you to the survey '<b>${form.survey.cleanTitle()}</b>' which will be available at this url:
+						</textarea>
+						
+						<textarea id="text2default" style="display:none">
+							Best regards,<br />			
+							<esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML>
+						</textarea>
+						
+						<label><spring:message code="label.MessageText" /></label><br />
+						<textarea class="tinymce freetext max5000 full" name="text1" id="text1" onchange="$('#savetextbutton').removeAttr('disabled')">
+							<c:choose>
+								<c:when test="${participationGroup.template1 != null}">
+									${participationGroup.template1}
+								</c:when>
+								<c:otherwise>
+									Dear {Name},<br /><br />				
+									I would like to invite you to the survey '<b>${form.survey.cleanTitle()}</b>' which will be available at this url:
+								</c:otherwise>
+							</c:choose>			
+						</textarea>
+						<br />
+						
+						<span id="url">
+							<c:choose>
+								<c:when test="${form.survey.security.equalsIgnoreCase('openanonymous')}">
+									{host}/runner/${form.survey.uniqueId}
+								</c:when>
+								<c:otherwise>
+									{host}/runner/invited/${participationGroup.id}/{UniqueAccessLink}
+								</c:otherwise>
+							</c:choose>
+						</span>
+										
+						<br /><br />
+						<label><spring:message code="label.Signature" /></label><br />
+						<textarea class="tinymce freetext max5000 full" name="text2" id="text2" onchange="$('#savetextbutton').removeAttr('disabled')">
+							<c:choose>
+								<c:when test="${participationGroup.template2 != null}">
+									${participationGroup.template2}
+								</c:when>
+								<c:otherwise>
+									Best regards,<br />			
+									<esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML>
+								</c:otherwise>
+							</c:choose>					
+						</textarea>
+					
+					</div>
+					
+					<div style="clear: both"></div>
+					<div style="float: left">
+						<a onclick="step1()" class="btn btn-default"><spring:message code="label.Previous" /></a>
+					</div>					
+					<div style="float: right">
+						<a id="btnCancelFromSendInvitationStep1" href="<c:url value="/${sessioninfo.shortname}/management/participants" />" class="btn btn-default"><spring:message code="label.Cancel" /></a>
+					</div>
+					<div style="text-align: center">
+						<a id="btnNextFromSendInvitationStep1"  onclick="step3(true)" class="btn btn-primary"><spring:message code="label.Next" /></a>
+					</div>
+				</div>						
+			</div>
 			
 			<div id="dialog-step3" data-bind="visible: Step() == 3">
-			  	<div style="max-height: 550px; height: 550px">
-			  	 	<spring:message code="label.SendInvitations" /> - <spring:message code="label.Step3" />: <spring:message code="label.Preview" />
-			  		<table>
-			  			<tr>
-			  				<td><b><spring:message code="label.To" />:</b></td>
-			  				<td><span id="preview-to" style="margin-left: 10px"></span></td>
-			  			</tr>
-			  			<tr>
-			  				<td><b><spring:message code="label.ReplyTo" />:</b></td>
-			  				<td><span id="preview-replyto" style="margin-left: 10px"></span></td>
-			  			</tr>
-			  			<tr>
-			  				<td><b><spring:message code="label.Subject" />:</b></td>
-			  				<td><span id="preview-subject" style="margin-left: 10px"></span></td>
-			  			</tr>
-			  		</table>
-			  		<div id="preview" style="border: 1px solid #ccc; padding: 5px; margin-bottom: 10px; margin-top: 10px; background-color: #eee; height: 370px; overflow: auto"></div>
-					<a data-toggle="tooltip" title="<spring:message code="label.GoToPreviousMail" />" onclick="previousContact()" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-left"></span></a>
-					<spring:message code="label.Contact" />&nbsp;
-					<select id="preview-current" style="width: auto; margin: 0px;" onchange="loadPreview(parseInt(this.value)-1);"></select>&nbsp;
-					<spring:message code="label.of" />&nbsp;
-					<span id="preview-selectedcontacts">${attendees.size()}</span>
-					<a data-toggle="tooltip" title="<spring:message code="label.GoToNextMail" />" onclick="nextContact()" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-right"></span></a>
-				
-					<div style="float: left">
-						<a id="btnPreviousFromSendInvitationStep3"  onclick="step2(false)" class="btn btn-default"><spring:message code="label.Previous" /></a>
+			  	<div class="fullpageform" style="padding-top: 40px; max-width: 800px; margin-left: auto; margin-right: auto;">
+			  		<div style="border: 1px solid #333; padding: 20px; border-radius: 5px; margin-bottom: 5px;">
+				  		<table>
+				  			<tr>
+				  				<td><b><spring:message code="label.To" />:</b></td>
+				  				<td><span id="preview-to" style="margin-left: 10px"></span></td>
+				  			</tr>
+				  			<tr>
+				  				<td><b><spring:message code="label.ReplyTo" />:</b></td>
+				  				<td><span id="preview-replyto" style="margin-left: 10px"></span></td>
+				  			</tr>
+				  			<tr>
+				  				<td><b><spring:message code="label.Subject" />:</b></td>
+				  				<td><span id="preview-subject" style="margin-left: 10px"></span></td>
+				  			</tr>
+				  		</table>
+				  		<div id="preview" style="border: 1px solid #ccc; padding: 5px; margin-bottom: 10px; margin-top: 10px; background-color: #eee; height: 370px; overflow: auto"></div>
 					</div>
-					<div style="float: right">
-						<a id="btnCancelFromSendInvitationStep2" href="<c:url value="/${sessioninfo.shortname}/management/participants" />" class="btn btn-default"><spring:message code="label.Cancel" /></a>
-					</div>				
-					<a id="btnSendFromSendInvitation"  data-dismiss="modal" onclick="checkAndSubmit();" class="btn btn-primary"><spring:message code="label.SendEmails" /></a>
+					<div style="text-align: center">
+						<a data-toggle="tooltip" title="<spring:message code="label.GoToPreviousMail" />" onclick="previousContact()" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-left"></span></a>
+						<spring:message code="label.Email" />&nbsp;
+						<select id="preview-current" style="width: auto; margin: 0px;" onchange="loadPreview(parseInt(this.value)-1);"></select>&nbsp;
+						<spring:message code="label.of" />&nbsp;
+						<span id="preview-selectedcontacts">${attendees.size()}</span>
+						<a data-toggle="tooltip" title="<spring:message code="label.GoToNextMail" />" onclick="nextContact()" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-right"></span></a>
+					</div>
+					<div style="text-align: center; margin-top: 20px;">
+						<div style="float: left">
+							<a id="btnPreviousFromSendInvitationStep3"  onclick="step2(false)" class="btn btn-default"><spring:message code="label.Previous" /></a>
+						</div>
+						<div style="float: right">
+							<a id="btnCancelFromSendInvitationStep2" href="<c:url value="/${sessioninfo.shortname}/management/participants" />" class="btn btn-default"><spring:message code="label.Cancel" /></a>
+						</div>				
+						<a id="btnSendFromSendInvitation"  data-dismiss="modal" onclick="checkAndSubmit();" class="btn btn-primary"><spring:message code="label.SendEmails" /></a>
+					</div>
 				</div>
 			</div>	
 		</form:form>
@@ -497,17 +533,18 @@
 		<div data-backdrop="static" class="modal" id="savetextdialog" tabindex="-1" role="dialog">
 			<div class="modal-dialog">
 	   		<div class="modal-content">
-			<div class="modal-header"><spring:message code="label.SaveText" /></div>
+			<div class="modal-header"><spring:message code="label.SaveAsTemplate" /></div>
 		  	<div class="modal-body">
-		  		<span class='mandatory'>*</span>
-		  		<spring:message code="info.SaveText" /><br />	  		
-		  		<input type="text" id="savetextdialoginput" />
+		  		<spring:message code="info.SaveMailTemplate" /><br /><br />
+		  		 
+				<span class='mandatory'>*</span><spring:message code="label.TemplateName" />
+		  		<input type="text" class="form-control" id="savetextdialoginput" />
 		  	</div>
 			<div class="modal-footer">
 				<div style="float: right">
 					<a onclick="$('#savetextdialog').modal('hide');" class="btn btn-default"><spring:message code="label.Cancel" /></a>
 				</div>				
-				<a onclick="saveTemplate();" class="btn btn-primary"><spring:message code="label.OK" /></a>
+				<a onclick="saveTemplate();" class="btn btn-primary"><spring:message code="label.SaveTemplate" /></a>
 			</div>
 			</div>
 			</div>
@@ -540,7 +577,7 @@
 		  	</div>
 			<div class="modal-footer">
 				<a onclick="$('#ask-save-dialog').modal('hide');$('#savetextdialog').modal('show')" class="btn btn-primary"><spring:message code="label.Yes" /></a>
-				<a onclick="step2(false);" class="btn btn-default" id="btnNotSaveMailText"><spring:message code="label.No" /></a>
+				<a onclick="step3(false);" class="btn btn-default" id="btnNotSaveMailText"><spring:message code="label.No" /></a>
 				<a onclick="$('#ask-save-dialog').modal('hide');" class="btn btn-default"><spring:message code="label.Cancel" /></a>
 			</div>
 			</div>

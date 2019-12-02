@@ -7,6 +7,8 @@ var Guestlist = function() {
 	this.children = ko.observable(0);
 	this.invited = ko.observable(0);
 	this.inCreation = ko.observable(false);
+	this.runningMails = ko.observable(false);
+	this.error = ko.observable(false);
 	this.active = ko.observable(false);
 	this.attendees = ko.observableArray();
 	this.tokens = ko.observableArray();
@@ -153,7 +155,7 @@ var Guestlist = function() {
 					  user["hidden"] = ko.observable(false);
 					  self.users.push(user);
 				  }
-				}			  
+				}
 			}, error: function() {
 				  showGenericError();
 			}
@@ -366,6 +368,8 @@ var Participants = function() {
 					  g.children(result[i].children);
 					  g.invited(result[i].invited)
 					  g.inCreation(result[i].inCreation);
+					  g.runningMails(result[i].runningMails);
+					  g.error(result[i].error);
 					  g.active(result[i].active);
 					  
 					  model.Guestlists.push(g);
@@ -373,10 +377,22 @@ var Participants = function() {
 				  };
 				  
 				  model.DataLoaded(true);
+				  window.setTimeout("checkFinishedGuestlists()", 10000);
 			  }, error: function() {
 				  showGenericError();
 			  }
 			});
+	}
+	
+	this.getChildByID = function(id) {
+		for (var i = 0; i < self.Guestlists().length; i++)
+		{
+			if (self.Guestlists()[i].id() == id)
+			{
+				return self.Guestlists()[i];
+			}
+		}
+		return null;
 	}
 	
 	var currentPage = 1;
@@ -653,9 +669,24 @@ var Participants = function() {
 	}
 	
 	this.Save = function() {
-		if (!validateInput($('#create-step-2')))
+		if (self.selectedGroup().type() == "Static")
 		{
-			return;
+			if (!validateInput($('#create-step-2-contacts')))
+			{
+				return;
+			}
+		} else if (self.selectedGroup().type() == "Token")
+		{
+			if (!validateInput($('#create-step-2-tokens')))
+			{
+				return;
+			}
+		} else
+		{
+			if (!validateInput($('#create-step-2-ec')))
+			{
+				return;
+			}
 		}
 		
 		self.ShowWait(true);
@@ -846,4 +877,87 @@ function uncheckallselected() {
 	$('#checkallselectedcontacts').removeAttr('checked');
 	$('#checkallselectedeccontacts').removeAttr('checked');	
 	$('#checkallselectedtokens').removeAttr('checked');	
+}
+
+function checkFinishedGuestlists()
+{
+	if ($(".increation").length > 0)
+	{
+		var ids = "ids=";
+		$(".increation").each(function(){
+			ids += $(this).attr("data-id") + ";";
+		});				
+		
+		var request = $.ajax({
+		  type:'GET',
+		  dataType: 'json',
+		  url: contextpath + "/noform/management/finishedguestlists?" + ids,
+		  cache: false,
+		  success: function(list)
+		  {
+			  for (var i = 0; i < list.length; i++ )
+			  {
+				 var id = list[i].substring(0, list[i].indexOf("|"));
+				 var participants = list[i].substring(list[i].indexOf("|")+1);
+				 
+				 var guestlist = _participants.getChildByID(id);
+				 if (guestlist != null)
+				 {
+					 guestlist.inCreation(false);
+					 guestlist.children(participants);
+				 }
+				
+				 if (participants == "error2")
+				 {
+					 showError(errorMaxTokenNumberExceeded);
+				 } else if (participants == "error1")
+				 {
+					 showError(errorProblemDuringSave);
+				 }				
+			  };
+		  },
+		  error: function(jqXHR, textStatus, errorThrown)
+		  {
+			  alert(textStatus);
+		  }
+		});
+		
+		window.setTimeout("checkFinishedGuestlists()", 60000);
+	};
+	
+	if ($(".inrunningmails").length > 0)
+	{
+		var ids = "surveyUid=" + surveyuid + "&ids=";
+		$(".inrunningmails").each(function(){
+			ids += $(this).attr("data-id") + ";";
+		});				
+		
+		var request = $.ajax({
+			 url: contextpath + "/noform/management/participants/finishedguestlistsmail",
+		  data: ids,
+		  dataType: "json",
+		  cache: false,
+		  success: function(list)
+		  {
+			  for (var i = 0; i < list.length; i++ )
+			  {
+				 var id = list[i].key;
+				 var count = list[i].value;
+				 
+				 var guestlist = _participants.getChildByID(id);
+				 if (guestlist != null)
+				 {
+					 guestlist.runningMails(false);
+					 guestlist.invited(count);
+				 }			 
+			  };
+		  },
+		  error: function(jqXHR, textStatus, errorThrown)
+		  {
+			  alert(textStatus);
+		  }
+		});
+		
+		window.setTimeout("checkFinishedGuestlists()", 60000);
+	};	
 }
