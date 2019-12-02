@@ -70,6 +70,11 @@
 		window.setTimeout("hideGenericInfos()", 10000);
 	}
 	
+	function showGenericError()
+	{
+		_messages.addErrorMessage('<spring:message code="error.OperationFailed" />');
+	}
+	
 	function hideGenericInfos()
 	{
 		$("#generic-info-box").hide(400);

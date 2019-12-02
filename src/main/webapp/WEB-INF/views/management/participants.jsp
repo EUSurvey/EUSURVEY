@@ -91,7 +91,8 @@
 		.ptable th, .ptable td {
 			width: 150px;
 			max-width: 150px;
-			min-width: 150px;		
+			min-width: 150px;
+			word-wrap: break-word;	
 		}
 		
 		.ptable .filtertools {
@@ -222,7 +223,7 @@
 						<a onclick="_participants.newContactList()" class="btn btn-success"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.ContactList" /></a>
 						<a onclick="_participants.newEUList()" class="btn btn-success"><span class="glyphicon glyphicon-user"></span> <spring:message code="label.EUList" /></a>
 						<a onclick="_participants.newTokenList()" class="btn btn-success"><span class="glyphicon glyphicon-barcode"></span> <spring:message code="label.TokenList" /></a>
-							
+						
 						</c:if>
 					</div>
 				</div>
@@ -451,7 +452,7 @@
 				<c:when test="${numberOfAttendees == 0}">
 					<div style="padding-top: 160px; text-align: center">
 						<b><spring:message code="info.NoContacts" /></b><br /><br />
-						<a href="${contextpath}/addressbook" class="btn btn-default"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.CreateNewContactGuestlist" /></a>
+						<a href="${contextpath}/addressbook" class="btn btn-default"><span class="glyphicon glyphicon-book"></span><spring:message code="label.CreateNewContactGuestlist" /></a>
 					</div>
 				</c:when>
 				<c:otherwise>
@@ -533,7 +534,7 @@
 														<td data-bind="text: name"></td>
 														<td data-bind="text: email"></td>
 														<!-- ko foreach: $parent.attributeNames() -->
-															<td data-bind="text: $parents[1].getAttributeValue($parent, $data.name())"></td>
+															<td data-bind="text: $data.name() == 'Owner' ? $parent.owner : $parents[1].getAttributeValue($parent, $data.name())"></td>
 														<!-- /ko -->
 													</tr>
 												</tbody>
@@ -568,14 +569,14 @@
 													<tr class="table-styled-filter">
 														<th class="checkcell">&nbsp;</th>
 														<th class="filtercell">
-															<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="255" style="margin:0px;" id="selectednamefilter" />
+															<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="selectednamefilter" />
 														</th>
 														<th class="filtercell">
-															<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), false)" type="text" maxlength="255" style="margin:0px;" id="selectedemailfilter" />
+															<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="selectedemailfilter" />
 														</th>												
 														<!-- ko foreach: attributeNames() -->
 															<th class="filtercell">
-																<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), false)" class="selectedattributefilter" type="text" maxlength="255" style="margin:0px;" data-bind="attr: {id: id}" />
+																<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" class="selectedattributefilter" type="text" maxlength="255" style="margin:0px;" data-bind="attr: {id: id, 'data-name': name}" />
 															</th>
 														<!-- /ko -->
 													</tr>
@@ -594,14 +595,16 @@
 												
 												<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length > 0 -->
 												<tbody data-bind="foreach: selectedGroup().attendees">
+													<!-- ko if: hidden() == false -->
 													<tr>
 														<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckallselected()'}" /></td>
 														<td data-bind="text: name"></td>
 														<td data-bind="text: email"></td>
 														<!-- ko foreach: $parent.attributeNames() -->
-															<td data-bind="text: $parents[1].getAttributeValue($parent, $data.name())"></td>
+															<td data-bind="text: $data.name() == 'Owner' ? $parent.owner : $parents[1].getAttributeValue($parent, $data.name())"></td>
 														<!-- /ko -->
-													</tr>													
+													</tr>
+													<!-- /ko -->												
 												</tbody>
 												<!-- /ko -->									
 											</table>
@@ -709,8 +712,9 @@
 				<div data-bind="visible: Step() == 1">						
 					<div class="row">
 						<div class="col-md-5x">	
-							<spring:message code="label.Domain" /><br />
-							<select id="domain" data-bind="value: Domain" class="small-form-control" style="width: 450px; margin-bottom: 20px;" >
+							<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.Domain" /><br />
+							<select id="domain" data-bind="value: Domain" onchange="_participants.loadUsers(true)" class="small-form-control" style="width: 450px; margin-bottom: 20px;" >
+								<option></option>
 								<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
 									<option value="${domain.key}">${domain.value} </option>	
 								</c:forEach>
@@ -762,9 +766,9 @@
 									<tbody data-bind="foreach: Users">
 										<tr>
 											<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckall()'}" /></td>
-											<td data-bind="text: name"></td>
+											<td data-bind="text: givenName + ' ' + surname"></td>
 											<td data-bind="text: email"></td>
-											<td data-bind="text: department"></td>
+											<td data-bind="text: departmentNumber"></td>
 										</tr>
 									</tbody>
 									<!-- /ko -->						
@@ -792,6 +796,18 @@
 											<th><spring:message code="label.Email" /></th>
 											<th><spring:message code="label.Department" /></th>
 										</tr>
+										<tr class="table-styled-filter">
+											<th class="checkcell">&nbsp;</th>
+											<th class="filtercell">
+												<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="selectedecnamefilter" />
+											</th>
+											<th class="filtercell">
+												<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="selectedecemailfilter" />
+											</th>												
+											<th class="filtercell">
+												<input onkeyup="checkReturn(event, this); checkFilterCell($(this).closest('.filtercell'), true)" type="text" maxlength="255" style="margin:0px;" id="selectedecdepartmentfilter" />
+											</th>
+										</tr>
 									</thead>
 								</table>
 							</div>
@@ -807,12 +823,14 @@
 									
 									<!-- ko if: selectedGroup() != null && selectedGroup().users().length > 0 -->
 									<tbody data-bind="foreach: selectedGroup().users">
+										<!-- ko if: hidden() == false -->
 										<tr>
-											<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckallselectedec()'}" /></td>
-											<td data-bind="text: name"></td>
+											<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckallselected()'}" /></td>
+											<td data-bind="text: givenName + ' ' + surname"></td>
 											<td data-bind="text: email"></td>
-											<td data-bind="text: department"></td>
-										</tr>													
+											<td data-bind="text: departmentNumber"></td>
+										</tr>
+										<!-- /ko -->												
 									</tbody>
 									<!-- /ko -->									
 								</table>
@@ -839,7 +857,7 @@
 				<div class="tabletitle" style="margin-top: 20px;">
 					<spring:message code="label.GuestList" />
 					<div class="info">
-						<spring:message code="info.CurrentGuestlistEntries" />: <span data-bind="text: selectedGroup() != null ? selectedGroup().attendees().length : '0'"></span>
+						<spring:message code="info.CurrentGuestlistEntries" />: <span data-bind="text: selectedGroup() != null ? selectedGroup().users().length : '0'"></span>
 					</div>	
 				</div>
 				<div id="selectedcontactshead2" style="max-width: 900px; overflow-y: scroll; overflow-x: hidden;">
@@ -848,31 +866,27 @@
 							<tr>
 								<th><spring:message code="label.Name" /></th>
 								<th><spring:message code="label.Email" /></th>
-								<!-- ko foreach: attributeNames() -->
-									<th class="attribute" data-bind="text: name, attr: {'data-id': id}"></th>
-								<!-- /ko -->
+								<th><spring:message code="label.Department" /></th>
 							</tr>
 						</thead>
 					</table>
 				</div>
 				<div id="selectedcontactsdiv2" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 900px; overflow-x: auto; overflow-y: scroll;">
 					<table class="table table-bordered table-styled ptable">											
-						<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
+						<!-- ko if: selectedGroup() != null && selectedGroup().users().length == 0 -->
 						<tbody>
 							<tr>
-								<td style="padding-top: 100px; text-align: center;" data-bind="attr: {colspan: attributeNames().length + 2}"><spring:message code="label.NoContactsSelected" /></td>
+								<td style="padding-top: 100px; text-align: center;" colspan="3"><spring:message code="label.NoData" /></td>
 							</tr>
 						</tbody>
 						<!-- /ko -->
 						
-						<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length > 0 -->
-						<tbody data-bind="foreach: selectedGroup().attendees">
+						<!-- ko if: selectedGroup() != null && selectedGroup().users().length > 0 -->
+						<tbody data-bind="foreach: selectedGroup().users">
 							<tr>
-								<td data-bind="text: name"></td>
+								<td data-bind="text: givenName + ' ' + surname"></td>
 								<td data-bind="text: email"></td>
-								<!-- ko foreach: $parent.attributeNames() -->
-									<td data-bind="text: $parents[1].getAttributeValue($parent, $data.name())"></td>
-								<!-- /ko -->
+								<td data-bind="text: departmentNumber"></td>
 							</tr>													
 						</tbody>
 						<!-- /ko -->									
@@ -955,7 +969,7 @@
 									<!-- ko if: selectedGroup() != null && selectedGroup().tokens().length > 0 -->
 									<tbody data-bind="foreach: selectedGroup().tokens">
 										<tr>
-											<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckallselectedtokens()'}" /></td>
+											<td class="checkcell"><input type="checkbox" class="checkcontact" data-bind="checked: selected, attr: {'data-id': id, onclick: 'uncheckallselected()'}" /></td>
 											<td data-bind="text: uniqueId"></td>
 											<td data-bind="text: deactivated() ? '0' : '1', attr: {id: 'active' + $data.uniqueId}"></td>
 										</tr>													

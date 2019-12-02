@@ -5,7 +5,6 @@ import com.ec.survey.model.ParticipationGroup;
 import com.ec.survey.model.ParticipationGroupType;
 import com.ec.survey.model.ParticipationGroupsForAttendee;
 import com.ec.survey.model.SqlPagination;
-import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.tools.ConversionTools;
@@ -85,40 +84,40 @@ public class ParticipationService extends BasicService {
 		return (ParticipationGroup) session.get(ParticipationGroup.class, id);
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
-	public List<EcasUser> getUsersForParticipationGroup(ParticipationGroup participationGroup)
-	{
-		if (participationGroup.getDepartments().size() == 0)
-		{
-			return new ArrayList<>();
-		}		
-		
-		Session session = sessionFactory.getCurrentSession();
-		// add filter on email to be sure to take only user with a non empty email
-		StringBuilder hql = new StringBuilder("SELECT DISTINCT u FROM EcasUser u INNER JOIN u.userLDAPGroups g WHERE u.email<>'' and u.organisation = :organisation and u.departmentNumber > '' and u.deactivated is false and (g LIKE :name0");
-
-		
-		for (int i = 1; i < participationGroup.getDepartments().size(); i++)
-		{
-			hql.append(" OR g LIKE :name").append(i);
-		}
-		
-		hql.append(")");
-		
-		Query query = session.createQuery(hql.toString());
-		
-		
-		int j = 0;
-		for (String group : participationGroup.getDepartments()) {
-			query.setString("name" + j, group);
-			j++;
-		}
-		query.setString("organisation", participationGroup.getDomainCode());
-		
-		logger.debug("getUsersForParticipationGroup GET THE SQL " + query.getQueryString());
-		return query.list();
-	}
+//	@SuppressWarnings("unchecked")
+//	@Transactional(readOnly = true)
+//	public List<EcasUser> getUsersForParticipationGroup(ParticipationGroup participationGroup)
+//	{
+//		if (participationGroup.getDepartments().size() == 0)
+//		{
+//			return new ArrayList<>();
+//		}		
+//		
+//		Session session = sessionFactory.getCurrentSession();
+//		// add filter on email to be sure to take only user with a non empty email
+//		StringBuilder hql = new StringBuilder("SELECT DISTINCT u FROM EcasUser u INNER JOIN u.userLDAPGroups g WHERE u.email<>'' and u.organisation = :organisation and u.departmentNumber > '' and u.deactivated is false and (g LIKE :name0");
+//
+//		
+//		for (int i = 1; i < participationGroup.getDepartments().size(); i++)
+//		{
+//			hql.append(" OR g LIKE :name").append(i);
+//		}
+//		
+//		hql.append(")");
+//		
+//		Query query = session.createQuery(hql.toString());
+//		
+//		
+//		int j = 0;
+//		for (String group : participationGroup.getDepartments()) {
+//			query.setString("name" + j, group);
+//			j++;
+//		}
+//		query.setString("organisation", participationGroup.getDomainCode());
+//		
+//		logger.debug("getUsersForParticipationGroup GET THE SQL " + query.getQueryString());
+//		return query.list();
+//	}
 	
 	@Transactional
 	public void update(ParticipationGroup participationGroup) {
@@ -210,10 +209,10 @@ public class ParticipationService extends BasicService {
 		return ConversionTools.getValue(query.uniqueResult());
 	}
 	
-	public void addParticipantsToGuestListAsync(int id, List<String> departments)
+	public void addUsersToGuestListAsync(Integer id, List<Integer> userIDs)
 	{
 		GuestListCreator c = (GuestListCreator) context.getBean("guestListCreator");
-		c.initDepartments(id, departments);
+		c.initUsers(id, userIDs);
 		getPool().execute(c);
 	}
 	

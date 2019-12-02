@@ -738,6 +738,12 @@ function initModals(item)
 		
 		if ($(cell).closest("#contactshead").length > 0){
 			_participants.loadAttendees(true); 
+		} else if ($(cell).closest("#selectedcontactshead").length > 0){
+			_participants.selectedGroup().filterContacts(); 
+		} else if ($(cell).closest("#selectedeccontactshead").length > 0){
+			_participants.selectedGroup().filterUsers(); 			
+		} else if ($(cell).closest("#eccontactshead").length > 0){
+			_participants.loadUsers(true); 
 		} else if ($(link).closest('form').length == 0 && $("#resultsForm").length > 0){
 			$("#resultsForm").submit();	
 		} else if ($(link).closest('form').length == 0 && $("#publishsurveysform").length > 0){

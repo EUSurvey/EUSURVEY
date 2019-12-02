@@ -80,6 +80,8 @@ var Guestlist = function() {
 				  } else {
 					showError(result);
 				  }
+			  }, error: function() {
+				  showGenericError();
 			  }
 			});
 	}
@@ -138,6 +140,7 @@ var Guestlist = function() {
 				  if (self.type() == 'Static') {
 					  var attendee = items[i];
 					  attendee["selected"] = ko.observable(false);
+					  attendee["hidden"] = ko.observable(false);
 					  self.attendees.push(attendee);
 				  } else if (self.type() == 'Token') {
 					  var token = items[i];
@@ -145,9 +148,14 @@ var Guestlist = function() {
 					  token["deactivated"] = ko.observable(token["deactivated"]);
 					  self.tokens.push(token);
 				  } else {
-					  self.users.push(items[i]);
+					  var user = items[i];
+					  user["selected"] = ko.observable(false);
+					  user["hidden"] = ko.observable(false);
+					  self.users.push(user);
 				  }
 				}			  
+			}, error: function() {
+				  showGenericError();
 			}
 		});		
 	}
@@ -229,8 +237,84 @@ var Guestlist = function() {
 					  token["deactivated"] = ko.observable(false);
 				  	  self.tokens.push(token);
 				  }
+			  }, error: function() {
+				  showGenericError();
 			  }
 		});
+	}
+	
+	this.filterContacts = function() {
+		var namefilter = $('#selectednamefilter').val();
+		var emailfilter = $('#selectedemailfilter').val();
+		for (var i = 0; i < self.attendees().length; i++)
+		{
+			var hidden = false;
+			
+			if (namefilter.length > 0 && self.attendees()[i].name.indexOf(namefilter) == -1)
+			{
+				hidden = true;
+			}
+			
+			if (!hidden && emailfilter.length > 0 && self.attendees()[i].email.indexOf(emailfilter) == -1)
+			{
+				hidden = true;
+			}
+			
+			if (!hidden)
+			{
+				$('input.selectedattributefilter').each(function(){
+					var filter = $(this).val();
+					if (filter.length > 0)
+					{
+						var attributename = $(this).attr("data-name");
+						
+						if (attributename == "Owner")
+						{
+							if (self.attendees()[i].owner.indexOf(filter) == -1)
+							{
+								hidden = true;
+							}
+						} else {						
+							var value = _participants.getAttributeValue(self.attendees()[i], attributename);
+							if (value.indexOf(filter) == -1)
+							{
+								hidden = true;
+								return;
+							}
+						}
+					}
+				});
+			}
+			
+			self.attendees()[i].hidden(hidden);
+		}
+	}
+	
+	this.filterUsers = function() {
+		var namefilter = $('#selectedecnamefilter').val();
+		var emailfilter = $('#selectedecemailfilter').val();
+		var departmentfilter = $('#selectedecdepartmentfilter').val();
+		for (var i = 0; i < self.users().length; i++)
+		{
+			var hidden = false;
+			
+			if (namefilter.length > 0 && self.users()[i].name.indexOf(namefilter) == -1)
+			{
+				hidden = true;
+			}
+			
+			if (!hidden && emailfilter.length > 0 && self.users()[i].email.indexOf(emailfilter) == -1)
+			{
+				hidden = true;
+			}
+			
+			if (!hidden && departmentfilter.length > 0 && self.users()[i].departmentNumber.indexOf(departmentfilter) == -1)
+			{
+				hidden = true;
+			}
+			
+			self.users()[i].hidden(hidden);
+		}
 	}
 }
 
@@ -289,6 +373,8 @@ var Participants = function() {
 				  };
 				  
 				  model.DataLoaded(true);
+			  }, error: function() {
+				  showGenericError();
 			  }
 			});
 	}
@@ -327,22 +413,43 @@ var Participants = function() {
 					  attendee["selected"] = ko.observable($('#checkallcontacts').is(":checked"));
 					  model.Attendees.push(attendee);
 				  };
+			  }, error: function() {
+				  showGenericError();
 			  }
 			});
 	}
 	
+	var usersEndReached = false;
 	this.loadUsers = function(first) {
 		var model = this;
 		
+		if (model.Page() == 1)
+		{
+			return;
+		}
+		
+		if ($("#domain").val().length == 0)
+		{
+			return;
+		}
+		
+		model.ShowWait(true);
+		
 		if (first)
 		{
+			usersEndReached = false;
 			currentPage = 1;
 			model.Users.removeAll();
 		} else {
+			if (usersEndReached)
+			{
+				return;
+			}
+			
 			currentPage++;
 		}
 		
-		var s = "name=" + $("#ecnamefilter").val() + "&email=" + $("#ecemailfilter").val() + "&department=" + $("#ecdepartmentfilter").val() + "&newPage=" + currentPage + "&itemsPerPage=" + 20;
+		var s = "name=" + $("#ecnamefilter").val()+ "&domain=" + $("#domain").val() + "&email=" + $("#ecemailfilter").val() + "&department=" + $("#ecdepartmentfilter").val() + "&newPage=" + currentPage + "&itemsPerPage=" + 100;
 		
 		var request = $.ajax({
 			  url: contextpath + "/noform/management/usersJSON",
@@ -350,13 +457,21 @@ var Participants = function() {
 			  dataType: 'json',
 			  cache: false,
 			  success: function(paging)
-			  {			 
+			  {	
+				  if (paging.items.length == 0)
+				  {
+					  usersEndReached = true;
+				  }
 				  for (var i = 0; i < paging.items.length; i++ )
 				  {	
 					  var user = paging.items[i];
 					  user["selected"] = ko.observable($('#checkalleccontacts').is(":checked"));
 					  model.Users.push(user);
 				  };
+				  
+				  model.ShowWait(false);
+			  }, error: function() {
+				  showGenericError();
 			  }
 			});
 	}
@@ -416,6 +531,8 @@ var Participants = function() {
 				  } else {
 					showError(result);
 				  }
+			  }, error: function() {
+				  showGenericError();
 			  }
 			});
 	}
@@ -469,6 +586,8 @@ var Participants = function() {
 					  {	
 						  selectedattendees[selectedattendees.length] = paging.items[i];
 					  };
+				  }, error: function() {
+					  showGenericError();
 				  }
 				});
 		} else {
@@ -498,6 +617,7 @@ var Participants = function() {
 			{
 				var copy = JSON.parse(JSON.stringify(selectedattendees[i]));
 				copy["selected"] = ko.observable(false);
+				copy["hidden"] = ko.observable(false);
 				this.selectedGroup().attendees.push(copy);
 			}			
 		}
@@ -505,9 +625,7 @@ var Participants = function() {
 		self.ShowWait(false);
 	}
 	
-	this.moveECContacts = function(){
-		self.ShowWait(true);
-		
+	this.moveECContacts = function(){		
 		for (var i = 0; i < this.Users().length; i++)
 		{
 			if (this.Users()[i].selected())
@@ -527,6 +645,7 @@ var Participants = function() {
 				{
 					var copy = JSON.parse(JSON.stringify(this.Users()[i]));
 					copy["selected"] = ko.observable(false);
+					copy["hidden"] = ko.observable(false);
 					this.selectedGroup().users.push(copy);
 				}			
 			}
@@ -560,7 +679,9 @@ var Participants = function() {
 						showExport(data);
 					}
 					self.ShowWait(false);
-			}
+			}, error: function() {
+				  showGenericError();
+			  }
 		});	
 	}
 }
@@ -613,7 +734,23 @@ function checkReturn(event, box)
 {
 	var keycode = (event.keyCode ? event.keyCode : event.which);
     if (keycode == '13') {
-        _participants.loadAttendees(true);
+    	if (_participants.Page() == 3)
+    	{
+    		if ($(box).closest('#selectedcontactshead').length > 0)
+    		{
+    			_participants.selectedGroup().filterContacts();
+    		} else {
+    			_participants.loadAttendees(true);
+    		}
+    	} else if (_participants.Page() == 4)
+    	{    		
+    		if ($(box).closest('#selectedeccontactshead').length > 0)
+    		{
+    			_participants.selectedGroup().filterUsers();
+    		} else {
+    			_participants.loadUsers(true);
+    		}
+    	}
     }
 }
 
@@ -650,7 +787,9 @@ function startExport(name)
 					showExportFailureMessage();
 				}
 				$('#deletionMessage').addClass('hidden');
-		}
+		}, error: function() {
+			  showGenericError();
+		  }
 	});	
 				
 	return false;
@@ -676,7 +815,7 @@ function saveConfiguration()
 		  dataType: 'json',
 		  cache: false,
 		  success: function( list ) {
-			 _participants.attributeNames.removeAll();	
+			_participants.attributeNames.removeAll();	
 			for (var i = 0; i < list.length; i++ )
 			{
 				var attname = new AttributeName();
@@ -688,7 +827,10 @@ function saveConfiguration()
 			$("#contacts").stickyTableHeaders({ scrollableArea: $("#contactsdiv")[0], "fixedOffset": 0});
 			$('#configure-attributes-dialog').modal("hide");
 			$("#add-wait-animation2").hide();
-		}});
+		  }, error: function() {
+			  showGenericError();
+		  }
+		});
 }
 
 function cancelConfigure()
@@ -701,9 +843,7 @@ function uncheckall() {
 }
 
 function uncheckallselected() {
-	$('#checkallselectedcontacts').removeAttr('checked');	
-}
-
-function uncheckallselectedtokens () {
+	$('#checkallselectedcontacts').removeAttr('checked');
+	$('#checkallselectedeccontacts').removeAttr('checked');	
 	$('#checkallselectedtokens').removeAttr('checked');	
 }

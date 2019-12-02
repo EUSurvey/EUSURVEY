@@ -154,10 +154,10 @@ public class LdapDBService extends BasicService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<EcasUser> getECASUsers(String name, String department, String email) {
+	public List<EcasUser> getECASUsers(String name, String department, String email, String domain, int page, int rowsPerPage) {
 		Session session = sessionFactory.getCurrentSession();
 		
-		String hql = "FROM EcasUser as u join u.userLDAPGroups as groups WHERE (u.deactivated IS NULL OR u.deactivated = false)";
+		String hql = "SELECT DISTINCT u FROM EcasUser as u WHERE (u.deactivated IS NULL OR u.deactivated = false)";
 				
 		if (name != null && name.length() > 0)
 		{
@@ -171,15 +171,15 @@ public class LdapDBService extends BasicService {
 		
 		if (department != null && department.length() > 0 && !department.equalsIgnoreCase("undefined"))
 		{
-			hql += " AND groups.GRPS LIKE :department";			
+			hql += " AND u.departmentNumber LIKE :department";			
 		}
 		
-//		if (type != null && type.length() > 0 )
-//		{
-//			sql += " AND u.USER_ORGANISATION= :organisation AND u.USER_EMPLOYEETYPE != 'g'"; 			
-//		}
+		if (domain != null && domain.length() > 0)
+		{
+			hql += " AND u.organisation LIKE :domain";	
+		}
 			
-		hql += " ORDER BY u.USER_ECMONIKER ASC";
+		hql += " ORDER BY u.id ASC";
 		
 		Query query = session.createQuery(hql);
 		if (name != null && name.length() > 0)
@@ -194,14 +194,13 @@ public class LdapDBService extends BasicService {
 		{
 			query.setString("department", "%" + department + "%");
 		}
-//		if (type != null && type.length() > 0 )
-//		{
-//			query.setString("organisation", type);
-//		} 
-		
+		if (domain != null && domain.length() > 0)
+		{
+			query.setString("domain", domain);
+		}
 	
 		@SuppressWarnings("unchecked")
-		List<EcasUser> res = query.list(); //.setMaxResults(100).list();
+		List<EcasUser> res = query.setFirstResult((page - 1)*rowsPerPage).setMaxResults(rowsPerPage).list();
 				
 		return res;
 	}
