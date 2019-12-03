@@ -486,7 +486,7 @@
 											</table>
 										</div>
 										<div id="contactsdiv" style="max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;"> 
-											<table id="contacts" class="table table-bordered table-styled table-striped ptable">
+											<table style="height: 500px" id="contacts" class="table table-bordered table-styled table-striped ptable">
 												<!-- ko if: Attendees().length == 0 -->
 												<tbody>
 													<tr>
@@ -551,7 +551,7 @@
 											</table>
 										</div>
 										<div id="selectedcontactsdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
-											<table class="table table-bordered table-styled table-striped ptable">											
+											<table style="height: 500px" class="table table-bordered table-styled table-striped ptable">											
 												<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
 												<tbody>
 													<tr>
@@ -618,7 +618,7 @@
 								</table>
 							</div>
 							<div id="selectedcontactsdiv2" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 900px; overflow-x: auto; overflow-y: scroll;">
-								<table class="table table-bordered table-styled table-striped ptable">											
+								<table style="height: 500px" class="table table-bordered table-styled table-striped ptable">											
 									<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
 									<tbody>
 										<tr>
@@ -727,7 +727,7 @@
 								</table>
 							</div>
 							<div id="eccontactsdiv" style="max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;"> 
-								<table id="eccontacts" class="table table-bordered table-styled table-striped ptable">
+								<table id="eccontacts" style="height: 500px" class="table table-bordered table-styled table-striped ptable">
 									<!-- ko if: Users().length == 0 -->
 									<tbody>
 										<tr>
@@ -785,7 +785,7 @@
 								</table>
 							</div>
 							<div id="selectedeccontactsdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
-								<table class="table table-bordered table-styled table-striped ptable">											
+								<table style="height: 500px;" class="table table-bordered table-styled table-striped ptable">											
 									<!-- ko if: selectedGroup() != null && selectedGroup().users().length == 0 -->
 									<tbody>
 										<tr>
@@ -848,7 +848,7 @@
 					</table>
 				</div>
 				<div id="selectedcontactsdiv2" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 900px; overflow-x: auto; overflow-y: scroll;">
-					<table class="table table-bordered table-styled table-striped ptable">											
+					<table style="height: 500px;" class="table table-bordered table-styled table-striped ptable">											
 						<!-- ko if: selectedGroup() != null && selectedGroup().users().length == 0 -->
 						<tbody>
 							<tr>
@@ -936,7 +936,7 @@
 								</table>
 							</div>
 							<div id="selectedtokenssdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
-								<table class="table table-bordered table-styled table-striped ptable">											
+								<table style="height: 500px" class="table table-bordered table-styled table-striped ptable">											
 									<!-- ko if: selectedGroup() != null && selectedGroup().tokens().length == 0 -->
 									<tbody>
 										<tr>

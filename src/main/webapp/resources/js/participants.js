@@ -938,7 +938,7 @@ function checkFinishedGuestlists()
 		var request = $.ajax({
 		  type:'GET',
 		  dataType: 'json',
-		  url: contextpath + "/noform/management/finishedguestlists?" + ids,
+		  url: contextpath + "/noform/management/participants/finishedguestlists?" + ids,
 		  cache: false,
 		  success: function(list)
 		  {
