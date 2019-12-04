@@ -3343,8 +3343,8 @@ public class ManagementController extends BasicController {
 			
 			SqlPagination sqlPagination = new SqlPagination(Integer.parseInt(page), itemsPerPage);
 			
-			Survey survey = surveyService.getSurvey(filter.getSurveyId());
-			SurveyHelper.synchronizeSurvey(survey, survey.getLanguage().getCode(), translationService, survey.getLanguage(), true);	
+			Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
+			Survey survey = surveyService.getSurvey(filter.getSurveyId(), draft.getLanguage().getCode());
 			
 			boolean active = publicationmode || (boolean) request.getSession().getAttribute("results-source-active");
 			boolean allanswers = !publicationmode && (boolean) request.getSession().getAttribute("results-source-allanswers");
@@ -3381,7 +3381,7 @@ public class ManagementController extends BasicController {
 		    	logger.error("Survey not set: " + request.getRequestURL());		    	
 		    }
 		    
-		    Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
+		   
 		    if (user != null)
 		    {
 		    	sessionService.upgradePrivileges(draft, user, request);
