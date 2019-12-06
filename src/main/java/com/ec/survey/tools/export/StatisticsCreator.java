@@ -376,7 +376,7 @@ public class StatisticsCreator implements Runnable {
 							for (int i = 1; i <= rating.getNumIcons(); i++)
 							{
 								if (!mapRatingQuestion.containsKey(childQuestion.getId())) mapRatingQuestion.put(childQuestion.getId(), new HashMap<>());
-								int count = reportingService.getCount(survey, childQuestion.getUniqueId(), Integer.toString(i), true, where, values);
+								int count = reportingService.getCount(survey, childQuestion.getUniqueId(), Integer.toString(i) + "/", true, where, values);
 								mapRatingQuestion.get(childQuestion.getId()).put(i, count);
 							}
 							int count = reportingService.getCount(survey, childQuestion.getUniqueId(), null, false, where, values);
