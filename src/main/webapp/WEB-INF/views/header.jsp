@@ -15,7 +15,14 @@
 		<div class="header">	
 			<div class="header-content-full">
 				<div style="float: left; line-height: 20px;">
-					<a class="logolink" href="<c:url value="/home/welcome"/>" style="float: left; padding-top:3px;"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" style="margin-top: -3px;" alt="EUSurvey"/></a>&#160;&#160;&#160;&#160;
+					<c:choose>
+						<c:when test="${USER != null}">
+							<a class="logolink" href="<c:url value="/dashboard"/>" style="float: left; padding-top:3px;"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" style="margin-top: -3px;" alt="EUSurvey"/></a>&#160;&#160;&#160;&#160;
+						</c:when>
+						<c:otherwise>
+							<a class="logolink" href="<c:url value="/home/welcome"/>" style="float: left; padding-top:3px;"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" style="margin-top: -3px;" alt="EUSurvey"/></a>&#160;&#160;&#160;&#160;
+						</c:otherwise>
+					</c:choose>
 				
 					<c:choose>
 						<c:when test="${!enablepublicsurveys}">

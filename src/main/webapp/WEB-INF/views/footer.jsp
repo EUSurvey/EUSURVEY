@@ -13,7 +13,15 @@
 			<div class="row" style="background-color: #245077">
 				<div style="max-width: 1200px; margin-left: auto; margin-right: auto">
 					<div class="col-md-8">
-						<a class="logolink" href="<c:url value="/home/welcome"/>"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" alt="EUSurvey"/></a>
+						<c:choose>
+							<c:when test="${USER != null}">
+								<a class="logolink" href="<c:url value="/dashboard"/>"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" alt="EUSurvey"/></a>
+							</c:when>
+							<c:otherwise>
+								<a class="logolink" href="<c:url value="/home/welcome"/>"><img src="${contextpath}/resources/images/logo_Eusurvey-small-white.png" alt="EUSurvey"/></a>
+							</c:otherwise>
+						</c:choose>
+						
 						<br /><br />
 						<i>
 						<c:choose>
