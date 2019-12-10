@@ -574,7 +574,7 @@ public class XlsExportCreator extends ExportCreator {
 						for(Element matrixQuestion: matrix.getQuestions()) {
 							checkColumnsParseAnswerSet();						
 							
-							Cell cell = row.createCell(columnIndex++ % 255);
+							Cell cell = row.createCell(columnIndex++ % 254);
 							
 							if (answerSet == null)
 							{
@@ -597,7 +597,7 @@ public class XlsExportCreator extends ExportCreator {
 						for(Element childQuestion: rating.getQuestions()) {
 							checkColumnsParseAnswerSet();						
 							
-							Cell cell = row.createCell(columnIndex++ % 255);
+							Cell cell = row.createCell(columnIndex++ % 254);
 							
 							if (answerSet == null)
 							{
@@ -618,7 +618,7 @@ public class XlsExportCreator extends ExportCreator {
 						for (int tableRow = 1; tableRow < table.getAllRows(); tableRow++) {
 							for (int tableCol = 1; tableCol < table.getAllColumns(); tableCol++) {
 								checkColumnsParseAnswerSet();	
-								Cell cell = row.createCell(columnIndex++ % 255);
+								Cell cell = row.createCell(columnIndex++ % 254);
 								if (answerSet == null)
 								{
 									cell.setCellValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
@@ -634,7 +634,7 @@ public class XlsExportCreator extends ExportCreator {
 						{
 							checkColumnsParseAnswerSet();
 							
-							Cell cell = row.createCell(columnIndex++ % 255);
+							Cell cell = row.createCell(columnIndex++ % 254);
 							StringBuilder cellValue = new StringBuilder();
 							String linkValue = "";
 							
@@ -711,7 +711,7 @@ public class XlsExportCreator extends ExportCreator {
 						
 						checkColumnsParseAnswerSet();	
 						
-						Cell cell = row.createCell(columnIndex++ % 255);
+						Cell cell = row.createCell(columnIndex++ % 254);
 						
 						if (answerSet == null)
 						{
@@ -742,7 +742,7 @@ public class XlsExportCreator extends ExportCreator {
 						
 						checkColumnsParseAnswerSet();	
 						
-						Cell cell = row.createCell(columnIndex++ % 255);
+						Cell cell = row.createCell(columnIndex++ % 254);
 						if (answerSet == null)
 						{
 							String v = answerrow.get(answerrowcounter++);
@@ -764,7 +764,7 @@ public class XlsExportCreator extends ExportCreator {
 						
 						checkColumnsParseAnswerSet();	
 						
-						Cell cell = row.createCell(columnIndex++ % 255);
+						Cell cell = row.createCell(columnIndex++ % 254);
 						
 						if (answerSet == null)
 						{
@@ -799,7 +799,7 @@ public class XlsExportCreator extends ExportCreator {
 						
 						checkColumnsParseAnswerSet();	
 						
-						Cell cell = row.createCell(columnIndex++ % 255);
+						Cell cell = row.createCell(columnIndex++ % 254);
 						
 						if (answerSet == null)
 						{
@@ -857,7 +857,7 @@ public class XlsExportCreator extends ExportCreator {
 			{
 				checkColumnsParseAnswerSet();	
 				
-				Cell cell = row.createCell(columnIndex++ % 255);
+				Cell cell = row.createCell(columnIndex++ % 254);
 				
 				if (form.getSurvey().getSecurity().contains("anonymous"))
 				{
@@ -874,7 +874,7 @@ public class XlsExportCreator extends ExportCreator {
 			{
 				checkColumnsParseAnswerSet();	
 				
-				Cell cell = row.createCell(columnIndex++ % 255);
+				Cell cell = row.createCell(columnIndex++ % 254);
 				
 				if (form.getSurvey().getSecurity().contains("anonymous"))
 				{
@@ -891,7 +891,7 @@ public class XlsExportCreator extends ExportCreator {
 			{
 				checkColumnsParseAnswerSet();
 				
-				Cell cell = row.createCell(columnIndex++ % 255);
+				Cell cell = row.createCell(columnIndex++ % 254);
 				if (form.getSurvey().getSecurity().contains("anonymous"))
 				{
 					cell.setCellValue("Anonymous");
@@ -907,7 +907,7 @@ public class XlsExportCreator extends ExportCreator {
 			{
 				checkColumnsParseAnswerSet();
 				
-				Cell cell = row.createCell(columnIndex++ % 255);
+				Cell cell = row.createCell(columnIndex++ % 254);
 				if (answerSet == null)
 				{
 					String v = answerrow.get(answerrowcounter++);
@@ -932,7 +932,7 @@ public class XlsExportCreator extends ExportCreator {
 			{
 				checkColumnsParseAnswerSet();
 				
-				Cell cell = row.createCell(columnIndex++ % 255);
+				Cell cell = row.createCell(columnIndex++ % 254);
 				if (answerSet == null)
 				{
 					String v = answerrow.get(answerrowcounter++);
@@ -957,7 +957,7 @@ public class XlsExportCreator extends ExportCreator {
 			{
 				checkColumnsParseAnswerSet();
 				
-				Cell cell = row.createCell(columnIndex++ % 255);
+				Cell cell = row.createCell(columnIndex++ % 254);
 				if (answerSet == null)
 				{
 					cell.setCellValue(answerrow.get(answerrowcounter++));
@@ -971,7 +971,7 @@ public class XlsExportCreator extends ExportCreator {
 		{
 			checkColumnsParseAnswerSet();
 			
-			Cell cell = row.createCell(columnIndex++ % 255);
+			Cell cell = row.createCell(columnIndex++ % 254);
 			if (answerSet == null)
 			{
 				String v = answerrow.get(answerrowcounter++);
