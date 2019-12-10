@@ -794,44 +794,47 @@ public class XmlExportCreator extends ExportCreator {
 							} else {
 							
 								String sanswers = row.get(answerrowcounter++);
-								String[] answers = sanswers.split(";");
-								for (String answer : answers)
-								{
-									if (answer.length() > 0) {
-										writer.writeStartElement("Answer");						
-										writer.writeAttribute("qid", question.getUniqueId());
-										if (question instanceof ChoiceQuestion)
-										{
-											writer.writeAttribute("aid", answer);
-										} else if (question instanceof Upload)
-										{
-											StringBuilder text = new StringBuilder();
-											File file;
-											try {
-												
-												if (answer.contains("|"))
-												{
-													answer = answer.substring(0, answer.indexOf("|"));
+								
+								if (sanswers != null) {								
+									String[] answers = sanswers.split(";");
+									for (String answer : answers)
+									{
+										if (answer.length() > 0) {
+											writer.writeStartElement("Answer");						
+											writer.writeAttribute("qid", question.getUniqueId());
+											if (question instanceof ChoiceQuestion)
+											{
+												writer.writeAttribute("aid", answer);
+											} else if (question instanceof Upload)
+											{
+												StringBuilder text = new StringBuilder();
+												File file;
+												try {
+													
+													if (answer.contains("|"))
+													{
+														answer = answer.substring(0, answer.indexOf("|"));
+													}
+													
+													file = fileService.get(answer);
+													if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId()))
+													{
+														uploadedFilesByQuestionUID.put(question.getUniqueId(), new ArrayList<>());
+													}
+													uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
+													
+													text.append((text.length() > 0) ? ";" : "").append(file.getName());
+												} catch (FileNotFoundException e) {
+													logger.error(e.getLocalizedMessage(), e);
 												}
 												
-												file = fileService.get(answer);
-												if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId()))
-												{
-													uploadedFilesByQuestionUID.put(question.getUniqueId(), new ArrayList<>());
-												}
-												uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
-												
-												text.append((text.length() > 0) ? ";" : "").append(file.getName());
-											} catch (FileNotFoundException e) {
-												logger.error(e.getLocalizedMessage(), e);
+												writer.writeCharacters(text.toString());
+											} else {
+												writer.writeCharacters(ConversionTools.removeInvalidHtmlEntities(answer));
 											}
 											
-											writer.writeCharacters(text.toString());
-										} else {
-											writer.writeCharacters(ConversionTools.removeInvalidHtmlEntities(answer));
+											writer.writeEndElement(); //Answer
 										}
-										
-										writer.writeEndElement(); //Answer
 									}
 								}
 							}
