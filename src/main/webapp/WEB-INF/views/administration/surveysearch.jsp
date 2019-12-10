@@ -147,7 +147,7 @@
 			$("#confirm-finaldelete-dialog").modal("show");
 		}
 		
-		var infinitePage = 0;
+		var infinitePage = 1;
 			
 		$(window).scroll(function() {
 			    if ($(window).scrollTop() <= $(document).height() - $(window).height() && $(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
@@ -791,8 +791,13 @@
 				<div id="action-bar" class="container action-bar" style="padding-top: 20px">
 					<div class="row">
 						<div class="col-md-12" style="text-align:center">
-							<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
-							<a href="surveysearch" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
+							<spring:message code="label.Search" var="labelSearch"/>
+							<input rel="tooltip" title="${labelSearch}" class="btn btn-info" type="submit" value="${labelSearch}" />
+
+							<spring:message code="label.ResetFilter" var="labelResetFilter" />
+							<spring:message code="label.Reset" var="labelReset"/>
+							<a href="surveysearch" rel="tooltip" title="${labelResetFilter}" class="btn btn-default">${labelReset}</a>
+
 							<c:choose>
 								<c:when test='${mode == "archived" && enablearchiving}'>
 									<input type="radio" style="margin-left: 10px; margin-right: 5px;" name="surveys" value="existing" onclick="switchMode(true)" /><spring:message code="label.ExistingSurveys" />
