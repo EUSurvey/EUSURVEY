@@ -342,7 +342,7 @@
 						</c:if>						
 						
 						<br /><br />
-						<a target="_blank" href="${contextpath}/home/reportAbuse?survey=${form.survey.id}" class="link visiblelink">${form.getMessage("label.ReportAbuseLink")}</a>						
+						<a data-toggle="tooltip" title="${form.getMessage("tooltip.ReportAbuseLink")}" target="_blank" href="${contextpath}/home/reportAbuse?survey=${form.survey.id}" class="link visiblelink">${form.getMessage("label.ReportAbuseLink")}</a>						
 					</div>												
 				</div>
 			</c:if>
