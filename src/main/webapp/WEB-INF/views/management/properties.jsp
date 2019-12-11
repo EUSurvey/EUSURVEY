@@ -135,7 +135,7 @@
 						var enddate =  parseDateTime($("#survey\\.end").val(),$("#endHour").val());
 						if (startdate >= enddate)
 						{
-							$("#survey\\.end").parent().append("<div class='validation-error'>" + invalidStartEnd + "</div>");
+							$("#survey\\.end").parent().parent().append("<div class='validation-error'>" + invalidStartEnd + "</div>");
 							return;
 						};					
 						<c:if test="${!form.survey.isActive}">
