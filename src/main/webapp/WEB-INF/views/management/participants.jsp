@@ -367,12 +367,18 @@
 							<!-- ko if: selectedGroup() != null && (selectedGroup().type() == 'Static' || selectedGroup().type() == 'ECMembers') -->
 									<th style="width: 150px"><spring:message code="label.Name" /></th>
 									<th style="width: 150px"><spring:message code="label.Email" /></th>
-									<th style="width: 150px"><spring:message code="label.InvitationDate" /></th>
-									<th style="width: 150px"><spring:message code="label.ReminderDate" /></th>
-									<th style="width: 150px"><spring:message code="label.Answers" /></th>
+									 <c:if test="${!form.survey.isAnonymous()}">
+										<th style="width: 150px"><spring:message code="label.InvitationDate" /></th>
+										<th style="width: 150px"><spring:message code="label.ReminderDate" /></th>
+										<th style="width: 150px"><spring:message code="label.Answers" /></th>
+									</c:if>
 							<!-- /ko -->
 							<!-- ko if: selectedGroup() != null && (selectedGroup().type() == 'Token') -->
 									<th style="width: 150px"><spring:message code="label.Token" /></th>
+									<c:if test="${!form.survey.isAnonymous()}">
+ 										<th style="width: 150px"><spring:message code="label.Answers" /></th>
+ 									</c:if>
+ 									<th style="width: 150px"><spring:message code="label.CreationDate" /></th>
 							<!-- /ko -->							
 						</tr>
 					</thead>
@@ -382,9 +388,11 @@
 							<tr>
 								<td data-bind="text: name"></td>
 								<td data-bind="text: email"></td>
-								<td data-bind="text: niceInvited"></td>
-								<td data-bind="text: niceReminded"></td>
-								<td data-bind="text: answers"></td>
+								<c:if test="${!form.survey.isAnonymous()}">
+									<td data-bind="text: niceInvited"></td>
+									<td data-bind="text: niceReminded"></td>
+									<td data-bind="text: answers"></td>
+								</c:if>
 							</tr>
 						</tbody>
 						<!-- /ko -->
@@ -393,9 +401,11 @@
 							<tr>
 								<td data-bind="text: name"></td>
 								<td data-bind="text: email"></td>
-								<td data-bind="text: niceInvited"></td>
-								<td data-bind="text: niceReminded"></td>
-								<td data-bind="text: answers"></td>
+								<c:if test="${!form.survey.isAnonymous()}">
+									<td data-bind="text: niceInvited"></td>
+									<td data-bind="text: niceReminded"></td>
+									<td data-bind="text: answers"></td>
+								</c:if>
 							</tr>
 						</tbody>
 						<!-- /ko -->
@@ -403,6 +413,10 @@
 						<tbody data-bind="foreach: selectedGroup().tokens()">
 							<tr>
 								<td data-bind="text: uniqueId"></td>
+								<c:if test="${!form.survey.isAnonymous()}">
+								 	<td data-bind="text: answers"></td>
+								</c:if>
+								<td data-bind="text: niceInvited"></td>
 							</tr>
 						</tbody>
 						<!-- /ko -->

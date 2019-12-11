@@ -176,7 +176,7 @@ public class Attendee {
 	@Transient
 	public String getNiceReminded()
 	{
-		return ConversionTools.getString(reminded);
+		return ConversionTools.getFullString(reminded);
 	}
 	
 	@Transient
@@ -193,7 +193,7 @@ public class Attendee {
 	@Transient
 	public String getNiceInvited()
 	{
-		return ConversionTools.getString(invited);
+		return ConversionTools.getFullString(invited);
 	}
 
 	@Transient
