@@ -134,8 +134,8 @@
 												<c:forEach var="c" begin="1" end="${question.allColumns-1}"> 																
 													<th class="filtercell cell${question.id}-${r}-${c}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
 														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id.toString().concat("-").concat(r.toString()).concat("-").concat(c.toString()), question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text"  style="margin:0px;" name='filter${question.id}-${r}-${c}|${question.uniqueId}' />
-														<a data-toggle="tooltip" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign black"></span></a>
-													</th>										
+												          <a class="filterinfo" data-toggle="tooltip" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign black"></span></a>
+			                                        </th>										
 												</c:forEach>													
 											</c:forEach>
 										</c:when>
@@ -229,8 +229,8 @@
 													</c:when>
 													<c:otherwise>
 														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100"  style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
-														<a  data-toggle="tooltip" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign black"></span></a>
-													</c:otherwise>
+												         <a class="filterinfo" data-toggle="tooltip" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign black"></span></a>
+                                                   	</c:otherwise>
 												</c:choose>
 											</th>
 										</c:otherwise>

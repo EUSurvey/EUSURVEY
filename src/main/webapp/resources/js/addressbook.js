@@ -258,7 +258,7 @@ function addRow(edit)
 		  $(this).parent().parent().remove();
 		});
 	var i =  document.createElement("span");
-	$(i).addClass("glyphicon glyphicon-remove icon-red");
+	$(i).addClass("glyphicon glyphicon-remove");
 	$(a).append(i);
 	td =  document.createElement("td");
 	$(td).append(a);
@@ -1009,7 +1009,7 @@ function createAttributeSelector(targetTable)
 		  $(this).parent().parent().remove();
 		});
 	var i =  $('<span></span>');
-	$(i).addClass("icon-red glyphicon glyphicon-remove");
+	$(i).addClass("glyphicon glyphicon-remove");
 	$(a).append($(i));	
 	$(newCell).append($(a));
 

@@ -239,10 +239,10 @@
 						 if (!list[i].readonly)
 						 {
 							 $(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.EditContact" />" href="${contextpath}/addressbook/editAttendee/' + list[i].id + '" class="iconbutton"><span class="glyphicon glyphicon-pencil"></span></a>');
-							 $(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DeleteContact" />" onclick="showDeleteDialog(' + list[i].id + ');" class="iconbutton"><span class="glyphicon glyphicon-remove icon-red"></a>');
+							 $(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DeleteContact" />" onclick="showDeleteDialog(' + list[i].id + ');" class="iconbutton"><span class="glyphicon glyphicon-remove"></a>');
 						 } else {
 							 $(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.EditContact" />" class="iconbutton disabled"><span class="glyphicon glyphicon-pencil"></span></i></a>');
-							 $(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DeleteContact" />" class="iconbutton disabled"><span class="glyphicon glyphicon-remove icon-red"></span></a>');
+							 $(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DeleteContact" />" class="iconbutton disabled"><span class="glyphicon glyphicon-remove"></span></a>');
 						 }
 						 $(tr).append(td);
 						 
@@ -440,7 +440,7 @@
 										</c:when>
 										<c:otherwise>
 											<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.EditContact" />" href="<c:url value="/addressbook/editAttendee/${attendee.id}" />" class="iconbutton"><span class="glyphicon glyphicon-pencil"></span></a>
-											<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DeleteContact" />"onclick="showDeleteDialog(${attendee.id});" class="iconbutton"><span class="glyphicon glyphicon-remove icon-red"></a>
+											<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.DeleteContact" />"onclick="showDeleteDialog(${attendee.id});" class="iconbutton"><span class="glyphicon glyphicon-remove"></a>
 										</c:otherwise>
 									</c:choose>						
 								</td>
@@ -655,7 +655,7 @@
 									<tr>
 										<td><esapi:encodeForHTML>${attribute.attributeName.name}</esapi:encodeForHTML><input type="hidden" class="existingkey" value="<esapi:encodeForHTMLAttribute>${attribute.attributeName.name}</esapi:encodeForHTMLAttribute>" /></td>
 										<td><input type="text" class="form-control" maxlength="500" name="attribute<esapi:encodeForHTMLAttribute>${attribute.attributeName.id}</esapi:encodeForHTMLAttribute>" value="<esapi:encodeForHTMLAttribute>${attribute.value}</esapi:encodeForHTMLAttribute>" style="width: 250px;" /></td>
-										<td><a data-toggle="tooltip" title="<spring:message code="label.RemoveAttribute" />" onclick="$(this).parent().parent().remove();" class="iconbutton" style="margin-bottom: 9px;"><span class="glyphicon glyphicon-remove icon-red"></a></td>
+										<td><a data-toggle="tooltip" title="<spring:message code="label.RemoveAttribute" />" onclick="$(this).parent().parent().remove();" class="iconbutton" style="margin-bottom: 9px;"><span class="glyphicon glyphicon-remove"></a></td>
 									</tr>
 								</c:forEach>				
 							</table>

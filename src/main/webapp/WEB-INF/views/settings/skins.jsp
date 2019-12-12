@@ -139,10 +139,10 @@
 									
 									<c:choose>
 									   <c:when test="${skin.owner.id == USER.id || USER.getGlobalPrivilegeValue('FormManagement') == 2}">
-											<a data-toggle="tooltip" onclick="showDeleteDialog('${skin.id}');"  class="iconbutton" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove icon-red"></span></a>
+											<a data-toggle="tooltip" onclick="showDeleteDialog('${skin.id}');"  class="iconbutton" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></span></a>
 										</c:when>
 									   <c:otherwise>
-											<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove icon-red"></span></a>
+											<a data-toggle="tooltip" class="iconbutton disabled" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></span></a>
 										</c:otherwise>
 									</c:choose>
 								</td>

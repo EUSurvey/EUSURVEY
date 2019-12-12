@@ -233,7 +233,7 @@
 							</td>
 							<c:if test="${USER.getGlobalPrivilegeValue('RightManagement') > 1}">
 								<td style="vertical-align: middle">
-									<a data-toggle="tooltip" title="<spring:message code="label.DeleteRole" />" class="iconbutton" onclick="showDeleteDialog(${role.id},'<esapi:encodeForHTMLAttribute>${role.name}</esapi:encodeForHTMLAttribute>');"><span class="glyphicon glyphicon-remove icon-red"></span></a>
+									<a data-toggle="tooltip" title="<spring:message code="label.DeleteRole" />" class="iconbutton" onclick="showDeleteDialog(${role.id},'<esapi:encodeForHTMLAttribute>${role.name}</esapi:encodeForHTMLAttribute>');"><span class="glyphicon glyphicon-remove"></span></a>
 								</td>
 							</c:if>
 						</tr>

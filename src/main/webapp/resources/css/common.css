@@ -574,10 +574,6 @@ select {
 	min-width: 150px;
 }
 
-.filtercell input:not([type=checkbox]) {
-	width: 100px !important;
-}
-
 .smallfiltercell {
 	min-width: 160px !important;
 }
@@ -1287,7 +1283,6 @@ legend {
 	padding: 6px 12px;
 	font-size: 14px;
 	border: 1px solid transparent;
-    border-radius: 4px;
     color: #333;
     background-color: #fff;
     border-color: #ccc;
@@ -1699,7 +1694,7 @@ td.publishedCell img
 
 table.table-styled > thead > tr
 {
-	background-color: #0088cc;
+	background-color: #245077;
 	color: #FFF;
 }
 
@@ -1710,8 +1705,24 @@ table.table-styled > thead .glyphicon
 
 table.table-styled > thead > tr.table-styled-filter
 {
-	background-color: #6bc3ef;
-	color:#555;
+	background-color: #eee;
+ 	color:#333;
+}
+
+table.table-styled > thead > tr.table-styled-filter th {
+	padding: 5px;
+}
+ 		
+table.table-styled input[type=text], table.table-styled select {
+	margin: 0;
+ 	height: 34px;
+ 	background-color: #ddd;
+}
+	
+table.table-styled input[type=text] {
+	width: 100%;
+ 	padding-left: 5px;
+ 	border: 1px solid rgb(169, 169, 169);
 }
 
 .separatorCell
