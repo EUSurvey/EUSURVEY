@@ -647,7 +647,7 @@
 									<td class="hideme"><esapi:encodeForHTML>${user.comment}</esapi:encodeForHTML></td>
 									<td style="min-width: 110px;">
 										<a data-toggle="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" onclick='showEditDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}","${user.email}","${user.otherEmail}","${user.comment}","${user.language}","${user.type}","${user.getRolesAsString()}","${user.getGivenName()}","${user.getSurName()}", ${user.type == 'SYSTEM'}, ${user.frozen}</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-pencil"></span></a>
-										<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton" onclick='showDeleteDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}"</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-remove icon-red"></span></a>
+										<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton" onclick='showDeleteDialog(<esapi:encodeForHTMLAttribute>${user.id},"${user.name}"</esapi:encodeForHTMLAttribute>);'><span class="glyphicon glyphicon-remove"></span></a>
 																			
 										<c:choose>
 											<c:when test="${user.frozen}">
