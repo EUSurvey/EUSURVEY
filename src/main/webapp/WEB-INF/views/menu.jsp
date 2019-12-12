@@ -252,15 +252,11 @@
 	
 	function importCopySurvey(login, email)
 	{
-		$('#new-survey-shortname').val(getNewSurveyId(login));
 		$('#create-survey-uuid').val(uuid);
 		$('#create-survey-original').val("");
 		$('#new-survey-title').val(title);
 		$('#new-survey-security-open').attr('checked','checked');
-		$("#new-survey-table").find(".hideimport").hide();
-		$("#new-survey-table").find(".hidecopy").hide();
-		
-		$('#show-import-copy-dialog').modal('hide');
+		$("#add-survey-dialog").find(".hideimport").hide();		
 		$('#add-survey-dialog').find("th").first().text("<spring:message code="label.Import" />");
 		$('#add-survey-dialog').find("#importbtn").show();
 		$('#add-survey-dialog').find("#createbtn").hide();
@@ -284,7 +280,6 @@
 		$("#new-survey-table").find(".hideimport").show();
 		$("#new-survey-table").find(".hidecopy").hide();
 		
-		$('#show-import-copy-dialog').modal('hide');
 		$('#add-survey-dialog').find("th").first().text("<spring:message code="label.Copy" />");
 		$('#add-survey-dialog').find("#importbtn").hide();
 		$('#add-survey-dialog').find("#createbtn").show();
@@ -322,8 +317,9 @@
 		$('#new-survey-language').val("${USER.defaultPivotLanguage}");
 		$('#new-survey-contact').val("${USER.email}");
 		$('#new-survey-contact-label').val("");
-		$("#new-survey-table").find(".hideimport").show();
-		$("#new-survey-table").find(".hidecopy").show();
+		$("#add-survey-dialog").find(".hideimport").show();
+		$("#add-survey-dialog").find(".hidecopy").show();
+		$("#add-survey-dialog").find(".hidecreate").hide();		
 		$('#add-survey-dialog').find("th").first().text("<spring:message code="label.New" />");
 		$('#add-survey-dialog').find("#importbtn").hide();
 		$('#add-survey-dialog').find("#createbtn").show();
@@ -357,7 +353,8 @@
 	<div class="modal-dialog modal-lg">
     <div class="modal-content">
 	<div class="modal-header">
-		<spring:message code="label.NewSurvey" />
+		<span class="hidecopy hidecreate"><spring:message code="label.ImportSurvey" /></span>
+		<span class="hideimport"><spring:message code="label.NewSurvey" /></span>		
 	</div>
 	<div class="modal-body" style="padding: 10px;">
 		<table class="table table-striped table-bordered" id="new-survey-table">
@@ -392,7 +389,7 @@
 						<div id="new-survey-shortname-exists" class="hideme alert-danger"><spring:message code="message.ShortnameAlreadyExists" /></div>
 					</td>
 				</tr>
-				<tr class="hideimport hidecopy">
+				<tr class="hidecopy">
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Title" /></td>
 					<td>
 						<textarea class="tinymcealign2 required xhtml freetext max2000" id="new-survey-title"></textarea>
@@ -488,21 +485,6 @@
 	<input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute>${origin}</esapi:encodeForHTMLAttribute>" />
 </form:form>
 
-	<div class="modal" id="show-import-copy-dialog" data-backdrop="static">
-		<div class="modal-dialog">
-    	<div class="modal-content">
-		<div class="modal-body">
-			<spring:message code="question.ImportCopySurvey" />
-		</div>
-		<div class="modal-footer">
-			<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="btnOkCopyFromMenu"  onclick="importCopySurvey('<esapi:encodeForHTMLAttribute>${USER.login}</esapi:encodeForHTMLAttribute>', '<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>');" class="btn btn-info"><spring:message code="label.OK" /></a>
-			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
-		</div>
-		</div>
-		</div>
-	</div>
-	
 	<div class="modal" id="delete-survey-dialog" data-backdrop="static">
 		<div class="modal-dialog">
    		<div class="modal-content">
