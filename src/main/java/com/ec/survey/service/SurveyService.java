@@ -2064,7 +2064,7 @@ public class SurveyService extends BasicService {
 		}
 
 		if (translations != null) {
-			copyTranslations(translations, survey, oldToNewUniqueIds, result, false);
+			copyTranslations(translations, survey, oldToNewUniqueIds, result, true);
 		}
 
 		if (answerSets != null && answerSets.size() > 0) {

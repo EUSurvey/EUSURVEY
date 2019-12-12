@@ -438,28 +438,23 @@ public class ManagementController extends BasicController {
 	        	request.getSession().setAttribute("IMPORTORIGIN", "EUSURVEY");
 	        }
 	        
+	        String contact = u.getEmail();
+	        String login = u.getLogin();
+  		  	String lang = result.getSurvey().getLanguage().getCode();
+	        
             if (result != null && result.getSurvey() != null)
             {
             	Survey existing = surveyService.getSurvey(result.getSurvey().getShortname(), true, false, false, false, null, true, false);
-            	
+            	response.setStatus(HttpServletResponse.SC_OK);                
             	if (existing != null)
             	{
-            		  response.setStatus(HttpServletResponse.SC_OK);
-            		  String message = resources.getMessage("message.SurveyAlreadyExists", null, "This survey already exists", locale);
-            		  String contact = result.getSurvey().getContact();
-            		  String contactLabel = result.getSurvey().getContactLabel();
-            		  String lang = result.getSurvey().getLanguage().getCode();
-            		  writer.print("{\"success\": false, \"exists\": true, \"uuid\": \"" + uuid + "\", \"title\": \"" + result.getSurvey().getShortname() + "\", \"message\": \"" + message + "\", \"contact\": \"" + contact + "\", \"contactLabel\": \"" + contactLabel + "\", \"language\": \"" + lang + "\"}");
-            		  
-            		  java.io.File target = fileService.getUsersFile(u.getId(), "import" + uuid);
-            		  FileUtils.copyFile(file, target);            		  
-            	} else {
-            	
-            		surveyService.importSurvey(result, sessionService.getCurrentUser(request), false);
-	            	response.setStatus(HttpServletResponse.SC_OK);	                   
-	                writer.print("{\"success\": true, \"exists\": false, \"id\": \"" + result.getSurvey().getShortname() + "\"}");                
-            	}
-            		
+            		writer.print("{\"success\": true, \"exists\": true, \"uuid\": \"" + uuid + "\", \"shortname\": \"" + result.getSurvey().getShortname() + "\", \"title\": \"" + result.getSurvey().getTitle() + "\", \"contact\": \"" + contact + "\", \"login\": \"" + login + "\", \"language\": \"" + lang + "\"}");
+            	} else {            	
+	            	writer.print("{\"success\": true, \"exists\": false, \"uuid\": \"" + uuid + "\", \"shortname\": \"" + result.getSurvey().getShortname() + "\", \"title\": \"" + result.getSurvey().getTitle() + "\", \"contact\": \"" + contact + "\", \"login\": \"" + login + "\", \"language\": \"" + lang + "\"}");
+	            }
+
+    		  java.io.File target = fileService.getUsersFile(u.getId(), "import" + uuid);
+    		  FileUtils.copyFile(file, target);
             } else {
             	response.setStatus(HttpServletResponse.SC_OK);
             	String message = resources.getMessage("message.FileCouldNotBeImported", null, "The file could not be imported.", locale);
@@ -937,6 +932,7 @@ public class ManagementController extends BasicController {
 		        }
 		 
 	            result.getSurvey().setShortname(Tools.escapeHTML(parameters.get("shortname")[0]));
+	            result.getSurvey().setTitle(Tools.filterHTML(parameters.get("title")[0]));
 	            Language objLang = surveyService.getLanguage(Tools.escapeHTML(parameters.get("surveylanguage")[0]));
 				if (objLang == null)
 				{
@@ -951,6 +947,7 @@ public class ManagementController extends BasicController {
 	            if (result.getActiveSurvey() != null)
 	            {
 	            	result.getActiveSurvey().setShortname(Tools.escapeHTML(parameters.get("shortname")[0]));
+	            	result.getActiveSurvey().setTitle(Tools.filterHTML(parameters.get("title")[0]));
 	 	            result.getActiveSurvey().setLanguage(objLang);
 	 	            result.getActiveSurvey().setListForm(request.getParameter("listform") != null && request.getParameter("listform").equalsIgnoreCase("true"));
 	 	            result.getActiveSurvey().setContact(Tools.escapeHTML(parameters.get("contact")[0]));
@@ -960,7 +957,7 @@ public class ManagementController extends BasicController {
 	            
 	            if (result != null && result.getSurvey() != null)
 	            {
-	            	int id = surveyService.importSurvey(result, sessionService.getCurrentUser(request), false);
+	            	int id = surveyService.importSurvey(result, sessionService.getCurrentUser(request), true);
 	            	activityService.log(102, null, Integer.toString(id), u.getId(), result.getSurvey().getUniqueId());
 	            	if (!file.delete())
 	            	{

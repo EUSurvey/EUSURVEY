@@ -17,40 +17,41 @@ $(function() {
 		    onComplete: function(id, fileName, responseJSON)
 			{	
 		    	if (responseJSON.success)
-		    	{
-		    		surveyID = responseJSON.id;
-		    		$("#import-survey-dialog").modal("hide");
-		    		$("#import-survey-dialog-2").modal("show");
-		    	} else {
+		    	{		    	
+		    		uuid = responseJSON.uuid;
+		    		title = responseJSON.title;
+		    		var shortname = responseJSON.shortname;
+		    		contact = responseJSON.contact;
 		    		
-		    		if (responseJSON.exists)
+		    		if (!responseJSON.exists)
 		    		{
-		    			uuid = responseJSON.uuid;
-		    			title = responseJSON.title;
-		    			contact = responseJSON.contact;
-		    			contactlabel = responseJSON.contactLabel;
-		    			$("#new-survey-contact").val(contact);
-		    			$("#new-survey-contact-label").val(contactlabel);
-		    			if (contact != null && contact.indexOf("@") > 0)
-		    			{
-		    				$("#new-survey-contact-type").val("email");
-		    			} else {
-		    				$("#new-survey-contact-type").val("url");
-		    			}
-		    			checkNewSurveyContactType();
-		    			$("#new-survey-language").val(responseJSON.language);
-		    			$("#import-survey-dialog").modal("hide");
-			    		$("#show-import-copy-dialog").modal("show");
+		    			$('#new-survey-shortname').val(shortname);
 		    		} else {
-		    			$("#import-survey-dialog").modal("hide");
-		    			if (responseJSON.message == null || responseJSON.message.length == 0)
-		    			{
-		    				showMessage("Import not possible.");
-		    			} else {
-		    				showMessage(responseJSON.message);
-				    	}
+		    			$('#new-survey-shortname').val("");
 		    		}
-		    	}	    	
+		    		
+		    		$('#new-survey-title').val(title);
+		    		$("#new-survey-contact").val(contact);
+	    			$("#new-survey-contact-label").val("");
+	    			if (contact != null && contact.indexOf("@") > 0)
+	    			{
+	    				$("#new-survey-contact-type").val("email");
+	    			} else {
+	    				$("#new-survey-contact-type").val("url");
+	    			}
+	    			checkNewSurveyContactType();
+	    			$("#new-survey-language").val(responseJSON.language);
+	    			$("#import-survey-dialog").modal("hide");
+	    			importCopySurvey(responseJSON.login, contact);
+		    	} else {
+	    			$("#import-survey-dialog").modal("hide");
+	    			if (responseJSON.message == null || responseJSON.message.length == 0)
+	    			{
+	    				showInfo("Import not possible.");
+	    			} else {
+	    				showInfo(responseJSON.message);
+			    	}		    		
+		    	}
 			},
 			showMessage: function(message){
 				$(element).append("<div class='validation-error'>" + message + "</div>");
