@@ -416,6 +416,48 @@ var Participants = function() {
 			});
 	}
 	
+	this.ContactGuestlists =  ko.computed(function()
+	{
+		var result = [];
+		for (var i = 0; i < self.Guestlists().length; i++)
+		{
+			if (self.Guestlists()[i].type() == "Static")
+			{
+				result[result.length] = self.Guestlists()[i];
+			}
+		}
+		
+		return result;
+	});
+	
+	this.TokenGuestlists =  ko.computed(function()
+	{
+		var result = [];
+		for (var i = 0; i < self.Guestlists().length; i++)
+		{
+			if (self.Guestlists()[i].type() == "Token")
+			{
+				result[result.length] = self.Guestlists()[i];
+			}
+		}
+		
+		return result;
+	});
+	
+	this.ECGuestlists =  ko.computed(function()
+	{
+		var result = [];
+		for (var i = 0; i < self.Guestlists().length; i++)
+		{
+			if (self.Guestlists()[i].type() == "ECMembers")
+			{
+				result[result.length] = self.Guestlists()[i];
+			}
+		}
+		
+		return result;
+	});
+	
 	this.getChildByID = function(id) {
 		for (var i = 0; i < self.Guestlists().length; i++)
 		{
