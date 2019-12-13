@@ -352,7 +352,7 @@ public class ParticipationService extends BasicService {
 		
 		if (survey != null)
 		{
-			query.setString("survey", survey);
+			query.setString("survey", "%" + survey + "%");
 		}
 		if (expiryStart != null)
 		{
