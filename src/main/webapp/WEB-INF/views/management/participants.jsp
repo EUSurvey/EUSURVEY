@@ -138,6 +138,17 @@
 		  .fixedtitleform {
 			top: 0;
 		  }
+		  
+		  .participantstable {
+		  	width: 800px;
+		  	margin-left: auto;
+		  	margin-right: auto;
+		  	margin-bottom: 30px;
+		  }
+		  
+		  #participantstablecontacts, #participantstabletokens, #participantstableec {		  	
+		  	table-layout: fixed;
+		  }
     </style>
     
     <script>
@@ -186,32 +197,24 @@
 			
 			<div class="fullpageform" style="padding-top: 40px">
 			
-				<table id="participantstable" class="table table-bordered table-styled table-striped" style="width: auto; margin-left: auto; margin-right: auto;" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+					<div class="participantstable" data-bind="visible: ContactGuestlists().length > 0">
+			
+					<h2><spring:message code="label.ContactList" /></h2>
+					
+					<table id="participantstablecontacts" class="table table-bordered table-styled table-striped" data-bind="visible: DataLoaded() && Guestlists().length > 0">
 					<thead>
 						<tr>
-							<th><spring:message code="label.Name" /></th>
-							<th><spring:message code="label.Type" /></th>
-							<th style="text-align: center;"><spring:message code="label.Created" /></th>
-							<th style="text-align: center;"><spring:message code="label.Participants" /></th>
-							<th style="text-align: center;"><spring:message code="label.Invited" /></th>						
-							<th><spring:message code="label.Actions" /></th>
+							<th style="width: 17%"><spring:message code="label.Name" /></th>
+							<th style="width: 20%"><spring:message code="label.Created" /></th>
+							<th style="width: 17%"><spring:message code="label.Participants" /></th>
+							<th style="width: 17%"><spring:message code="label.Invited" /></th>						
+							<th style="width: 29%"><spring:message code="label.Actions" /></th>
 						</tr>
 					</thead>
 					<tbody>
-						<!-- ko foreach: Guestlists() -->
+						<!-- ko foreach: ContactGuestlists() -->
 							<tr data-bind="attr: {'data-id': id(), class: inCreation() ? 'increation' : (runningMails() ? 'runningmails' : (error() ? 'error' : ''))}">
 								<td data-bind="text: name"></td>
-								<td>
-									<!-- ko if: type() == 'Static' -->
-										<spring:message code="label.ContactList" />
-									<!-- /ko -->
-									<!-- ko if: type() == 'Token' -->
-										<spring:message code="label.TokenList" />
-									<!-- /ko -->
-									<!-- ko if: type() == 'ECMembers' -->
-										<spring:message code="label.EUList" />
-									<!-- /ko -->
-								</td>
 								<td data-bind="text: created"></td>
 								<td data-bind="text: children"></td>
 								<td data-bind="text: type() == 'Token' ? children : invited"></td>
@@ -302,7 +305,230 @@
 							</tr>					
 						<!-- /ko -->					
 					</tbody>
-				</table>	
+				</table>
+			</div>
+			
+			<div class="participantstable" data-bind="visible: TokenGuestlists().length > 0">
+				<h2><spring:message code="label.TokenList" /></h2>
+				
+				<table id="participantstabletokens" class="table table-bordered table-styled table-striped" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+					<thead>
+						<tr>
+							<th style="width: 17%"><spring:message code="label.Name" /></th>
+							<th style="width: 20%"><spring:message code="label.Created" /></th>
+							<th style="width: 17%"><spring:message code="label.Participants" /></th>
+							<th style="width: 17%"><spring:message code="label.Invited" /></th>						
+							<th style="width: 29%"><spring:message code="label.Actions" /></th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- ko foreach: TokenGuestlists() -->
+							<tr data-bind="attr: {'data-id': id(), class: inCreation() ? 'increation' : (runningMails() ? 'runningmails' : (error() ? 'error' : ''))}">
+								<td data-bind="text: name"></td>								
+								<td data-bind="text: created"></td>
+								<td data-bind="text: children"></td>
+								<td data-bind="text: type() == 'Token' ? children : invited"></td>
+								<td>
+									<!-- ko if: $parent.Access() == 2 -->
+										<!-- ko if: activateEnabled() -->
+											<a id="btnActivateFromParticipant" class="iconbutton" data-bind="click: activate" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class='glyphicon glyphicon-play'></span></a>
+										<!-- /ko -->
+										<!-- ko if: deactivateEnabled() -->
+											<a id="btnDeactivateFromParticipant" class="iconbutton" data-bind="click: deactivate" data-class="deactivatebutton" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
+										<!-- /ko -->
+										<!-- ko if: !activateEnabled() && !deactivateEnabled() -->
+											<a id="btnDeactivateFromParticipant" class="iconbutton disabled" data-class="deactivatebutton" onclick="return false;" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
+										<!-- /ko -->
+											<!-- ko if: editEnabled() -->
+											<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: edit"><span class='glyphicon glyphicon-pencil'></span></a>
+										<!-- /ko -->
+										<!-- ko if: !editEnabled() -->
+											<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
+										<!-- /ko -->
+										<!-- ko if: sendEnabled() -->
+											<a id="btnSendEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/sendInvitations" />/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
+										<!-- /ko -->
+										<!-- ko if: !sendEnabled() && type() != 'Token' -->
+											<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+										<!-- /ko -->
+										<!-- ko if: exportEnabled() && type() == 'Token' -->
+											<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+											<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
+										<!-- /ko -->
+										<!-- ko if: detailsEnabled() -->
+											<a class="iconbutton" data-toggle="tooltip" data-bind="click: showDetails" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<!-- /ko -->
+										<!-- ko if: !detailsEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<!-- /ko -->	
+										<!-- ko if: deleteEnabled() -->
+											<a id="btnDeleteEnabledFromParticipant" data-bind="click: deleteList" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>										
+										<!-- /ko -->
+										<!-- ko if: !deleteEnabled() -->
+											<a id="btnDeleteDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>
+										<!-- /ko -->
+									<!-- /ko -->
+									<!-- ko if: $parent.Access() == 1 -->
+										<!-- ko if: !activateEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>
+										<!-- /ko -->
+										<!-- ko if: activateEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
+										<!-- /ko -->
+										<!-- ko if: type() != 'Token' -->
+										<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+										<!-- /ko -->
+										<!-- ko if: editEnabled() -->
+											<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
+										<!-- /ko -->
+										<!-- ko if: !editEnabled() -->
+											<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
+										<!-- /ko -->
+										<!-- ko if: exportEnabled() && type() == 'Token' -->
+											<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+											<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
+										<!-- /ko -->
+										<!-- ko if: detailsEnabled() -->
+											<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<!-- /ko -->
+										<!-- ko if: !detailsEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<!-- /ko -->										
+										<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
+									<!-- /ko -->
+									<!-- ko if: $parent.Access() == 0 -->
+										<!-- ko if: !activateEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>
+										<!-- /ko -->
+										<!-- ko if: activateEnabled() -->
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
+										<!-- /ko -->
+										<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>		
+										<!-- ko if: type() != 'Token' -->			
+										<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+										<!-- /ko -->
+
+										<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+										<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
+									<!-- /ko -->
+								</td>
+							</tr>					
+						<!-- /ko -->					
+					</tbody>
+				</table>
+				
+				</div>
+				
+				<div class="participantstable" data-bind="visible: ECGuestlists().length > 0">
+				
+					<h2><spring:message code="label.EUList" /></h2>
+				
+					<table id="participantstableec" class="table table-bordered table-styled table-striped" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+						<thead>
+							<tr>
+								<th style="width: 17%"><spring:message code="label.Name" /></th>
+								<th style="width: 20%"><spring:message code="label.Created" /></th>
+								<th style="width: 17%"><spring:message code="label.Participants" /></th>
+								<th style="width: 17%"><spring:message code="label.Invited" /></th>						
+								<th style="width: 29%"><spring:message code="label.Actions" /></th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- ko foreach: ECGuestlists() -->
+								<tr data-bind="attr: {'data-id': id(), class: inCreation() ? 'increation' : (runningMails() ? 'runningmails' : (error() ? 'error' : ''))}">
+									<td data-bind="text: name"></td>
+									<td data-bind="text: created"></td>
+									<td data-bind="text: children"></td>
+									<td data-bind="text: type() == 'Token' ? children : invited"></td>
+									<td>
+										<!-- ko if: $parent.Access() == 2 -->
+											<!-- ko if: activateEnabled() -->
+												<a id="btnActivateFromParticipant" class="iconbutton" data-bind="click: activate" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class='glyphicon glyphicon-play'></span></a>
+											<!-- /ko -->
+											<!-- ko if: deactivateEnabled() -->
+												<a id="btnDeactivateFromParticipant" class="iconbutton" data-bind="click: deactivate" data-class="deactivatebutton" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
+											<!-- /ko -->
+											<!-- ko if: !activateEnabled() && !deactivateEnabled() -->
+												<a id="btnDeactivateFromParticipant" class="iconbutton disabled" data-class="deactivatebutton" onclick="return false;" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
+											<!-- /ko -->
+												<!-- ko if: editEnabled() -->
+												<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: edit"><span class='glyphicon glyphicon-pencil'></span></a>
+											<!-- /ko -->
+											<!-- ko if: !editEnabled() -->
+												<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
+											<!-- /ko -->
+											<!-- ko if: sendEnabled() -->
+												<a id="btnSendEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/sendInvitations" />/' + id()}"><span class='glyphicon glyphicon-envelope'></span></a>
+											<!-- /ko -->
+											<!-- ko if: !sendEnabled() && type() != 'Token' -->
+												<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+											<!-- /ko -->
+											<!-- ko if: exportEnabled() && type() == 'Token' -->
+												<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+												<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
+											<!-- /ko -->
+											<!-- ko if: detailsEnabled() -->
+												<a class="iconbutton" data-toggle="tooltip" data-bind="click: showDetails" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+											<!-- /ko -->
+											<!-- ko if: !detailsEnabled() -->
+												<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+											<!-- /ko -->	
+											<!-- ko if: deleteEnabled() -->
+												<a id="btnDeleteEnabledFromParticipant" data-bind="click: deleteList" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>										
+											<!-- /ko -->
+											<!-- ko if: !deleteEnabled() -->
+												<a id="btnDeleteDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class='glyphicon glyphicon-remove'></span></a>
+											<!-- /ko -->
+										<!-- /ko -->
+										<!-- ko if: $parent.Access() == 1 -->
+											<!-- ko if: !activateEnabled() -->
+												<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>
+											<!-- /ko -->
+											<!-- ko if: activateEnabled() -->
+												<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
+											<!-- /ko -->
+											<!-- ko if: type() != 'Token' -->
+											<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+											<!-- /ko -->
+											<!-- ko if: editEnabled() -->
+												<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="attr: {href: '<c:url value="/${sessioninfo.shortname}/management/participantsEdit" />?id=' + id()}"><span class='glyphicon glyphicon-pencil'></span></a>
+											<!-- /ko -->
+											<!-- ko if: !editEnabled() -->
+												<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>
+											<!-- /ko -->
+											<!-- ko if: exportEnabled() && type() == 'Token' -->
+												<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+												<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
+											<!-- /ko -->
+											<!-- ko if: detailsEnabled() -->
+												<a class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+											<!-- /ko -->
+											<!-- ko if: !detailsEnabled() -->
+												<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+											<!-- /ko -->										
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
+										<!-- /ko -->
+										<!-- ko if: $parent.Access() == 0 -->
+											<!-- ko if: !activateEnabled() -->
+												<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class="glyphicon glyphicon-stop"></span></a>
+											<!-- /ko -->
+											<!-- ko if: activateEnabled() -->
+												<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Activate" />"><span class="glyphicon glyphicon-play"></span></a>
+											<!-- /ko -->
+											<a id="btnEditDisabledFromParticipant" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span class='glyphicon glyphicon-pencil'></span></a>		
+											<!-- ko if: type() != 'Token' -->			
+											<a id="btnSendDisabledFromParticipant" data-class="sendbutton" class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.SendInvitations" />"><span class='glyphicon glyphicon-envelope'></span></a>
+											<!-- /ko -->
+	
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ViewDetails" />"><span class="glyphicon glyphicon-info-sign"></span></a>
+											<a class="iconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.Remove" />"><span class="glyphicon glyphicon-remove"></span></a>
+										<!-- /ko -->
+									</td>
+								</tr>					
+							<!-- /ko -->					
+						</tbody>
+					</table>
+				</div>
 				
 				<div style="text-align: center; margin-top: 140px;" data-bind="visible: DataLoaded() && Guestlists().length == 0">
 					<h1 style="margin-bottom: 20px;"><spring:message code="message.noguestlistyet" /></h1>
