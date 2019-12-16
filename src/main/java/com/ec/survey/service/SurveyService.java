@@ -3094,7 +3094,7 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<Integer> getAllPublishedSurveyVersions(int surveyId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createSQLQuery("SELECT s1.SURVEY_ID FROM SURVEYS s1 JOIN SURVEYS s2 ON s1.SURVEY_UID = s2.SURVEY_UID WHERE s2.SURVEY_ID = :id AND s1.ISDRAFT=0").setInteger("id",
+		Query query = session.createSQLQuery("SELECT s1.SURVEY_ID FROM SURVEYS s1 JOIN SURVEYS s2 ON s1.SURVEY_UID = s2.SURVEY_UID WHERE s2.SURVEY_ID = :id AND s1.ISDRAFT=0 ORDER BY s1.SURVEY_ID ASC").setInteger("id",
 				surveyId);
 
 		@SuppressWarnings("rawtypes")
@@ -3112,7 +3112,7 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<Integer> getAllPublishedSurveyVersions(String surveyUid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createSQLQuery("SELECT SURVEY_ID FROM SURVEYS WHERE SURVEY_UID = :uid AND ISDRAFT=0").setString("uid", surveyUid);
+		Query query = session.createSQLQuery("SELECT SURVEY_ID FROM SURVEYS WHERE SURVEY_UID = :uid AND ISDRAFT=0 ORDER BY SURVEY_ID ASC").setString("uid", surveyUid);
 
 		@SuppressWarnings("rawtypes")
 		List res = query.list();

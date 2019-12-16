@@ -117,6 +117,7 @@
 														<option value="week" selected="selected"><spring:message code="label.LastWeek" /></option>
 														<option value="month"><spring:message code="label.LastMonth" /></option>
 														<option value="all"><spring:message code="label.AllContributions" /></option>
+														<option value="total"><spring:message code="label.SincePublication" /></option>
 													</select>
 												</div>
 												

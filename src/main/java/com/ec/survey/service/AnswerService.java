@@ -1777,6 +1777,16 @@ public class AnswerService extends BasicService {
 		} else {
 			cal.add(Calendar.YEAR, -20);
 		}
+		
+		Date firstDay = cal.getTime();
+		
+		if (span.equalsIgnoreCase("total"))
+		{
+			Survey firstPublished = allVersions.size() > 0 ? surveyService.getSurvey(allVersions.get(0), true) : null;
+			if (firstPublished != null) {
+				firstDay = firstPublished.getCreated();
+			}
+		}
 
 		String sql = "SELECT DATE(ANSWER_SET_DATE), count(*) FROM ANSWERS_SET WHERE SURVEY_ID IN (" + StringUtils.collectionToCommaDelimitedString(allVersions)
 				+ ") AND ISDRAFT = 0 AND ANSWER_SET_DATE > :start GROUP BY DATE(ANSWER_SET_DATE) ORDER BY DATE(ANSWER_SET_DATE)";
@@ -1801,8 +1811,7 @@ public class AnswerService extends BasicService {
 			}
 		}
 
-		if (span.equalsIgnoreCase("week") || span.equalsIgnoreCase("month")) {
-			Date firstDay = cal.getTime();
+		if (span.equalsIgnoreCase("week") || span.equalsIgnoreCase("month") || span.equalsIgnoreCase("total")) {			
 			Date lastDay = DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH);
 
 			if (first == null || first.after(firstDay)) {
