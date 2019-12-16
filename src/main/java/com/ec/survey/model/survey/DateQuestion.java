@@ -2,6 +2,8 @@ package com.ec.survey.model.survey;
 
 
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.Tools;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.owasp.esapi.errors.IntrusionException;
@@ -73,12 +75,12 @@ public class DateQuestion extends Question {
 		
 		if (min != null)
 		{
-			css += " min" + ConversionTools.getString(min).replace("/", "");
+			css += " min" + Tools.formatDate(min, ConversionTools.DateFormat).replace("/", "");
 		}
 		
 		if (max != null)
 		{
-			css += " max" + ConversionTools.getString(max).replace("/", "");
+			css += " max" + Tools.formatDate(max, ConversionTools.DateFormat).replace("/", "");
 		}
 		
 		return css;
@@ -101,13 +103,13 @@ public class DateQuestion extends Question {
 	@Transient 
 	public String getMinString()
 	{
-		return ConversionTools.getString(min);
+		return Tools.formatDate(min, ConversionTools.DateFormat);
 	}
 	
 	@Transient 
 	public String getMaxString()
 	{
-		return ConversionTools.getString(max);
+		return Tools.formatDate(max, ConversionTools.DateFormat);
 	}
 	
 }

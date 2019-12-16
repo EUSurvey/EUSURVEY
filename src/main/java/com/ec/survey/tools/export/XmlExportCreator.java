@@ -8,6 +8,7 @@ import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.AdministrationService;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.Tools;
 import com.ec.survey.exception.TooManyFiltersException;
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -31,8 +32,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service("xmlExportCreator")
@@ -45,7 +44,6 @@ public class XmlExportCreator extends ExportCreator {
 	private Map<Integer, String> exportedUniqueCodes = new HashMap<>();
 	private Map<Integer, String> exportedQuestionsByAnswerId = new HashMap<>();
 	
-	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ENGLISH);
 	private Date exportedNow = null;
 
 	@Override
@@ -65,7 +63,7 @@ public class XmlExportCreator extends ExportCreator {
 		
 		exportedNow = new Date();
 		
-		writer.writeAttribute("create", df.format(exportedNow));
+		writer.writeAttribute("create", Tools.formatDate(exportedNow, "yyyy-MM-dd_HH-mm-ss"));
 		
 		writer.writeStartElement("Survey");
 		
@@ -684,9 +682,9 @@ public class XmlExportCreator extends ExportCreator {
 			exportedUniqueCodes.put(answerSet.getId(), answerSet.getUniqueCode());
 		}
 		
-		if (meta || filter == null || filter.exported("created")) writer.writeAttribute("create", answerSet == null ? row.get(row.size() - 4) : df.format(answerSet.getDate()));
+		if (meta || filter == null || filter.exported("created")) writer.writeAttribute("create", answerSet == null ? row.get(row.size() - 4) : Tools.formatDate(answerSet.getDate(), "yyyy-MM-dd_HH-mm-ss"));
 		writer.writeAttribute("list", list);
-		if (meta || filter == null || filter.exported("updated")) writer.writeAttribute("last", answerSet == null ? row.get(row.size() - 3) : df.format(answerSet.getUpdateDate()));
+		if (meta || filter == null || filter.exported("updated")) writer.writeAttribute("last", answerSet == null ? row.get(row.size() - 3) : Tools.formatDate(answerSet.getUpdateDate(), "yyyy-MM-dd_HH-mm-ss"));
 		if (meta || filter == null || filter.exported("languages")) writer.writeAttribute("lang", answerSet == null ? row.get(row.size() - 2) : answerSet.getLanguageCode());
 		
 		if (meta || filter == null || filter.exported("user")) writer.writeAttribute("user",  answerSet == null ? row.get(row.size() - 5) : answerSet.getResponderEmail() != null ? answerSet.getResponderEmail() : "" );

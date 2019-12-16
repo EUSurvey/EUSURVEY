@@ -1,6 +1,5 @@
 package com.ec.survey.model;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,6 +13,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.Tools;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -63,12 +64,12 @@ public class Archive implements java.io.Serializable {
 	
 	@Transient
 	public String getFormattedArchived() {
-		return new SimpleDateFormat(ConversionTools.DateTimeFormat).format(archived);
+		return Tools.formatDate(archived, ConversionTools.DateTimeFormat);
 	}
 	
 	@Transient
 	public String getFormattedCreated() {
-		return new SimpleDateFormat(ConversionTools.DateTimeFormat).format(created);
+		return Tools.formatDate(created, ConversionTools.DateTimeFormat);
 	}
 		
 	@Temporal(TemporalType.TIMESTAMP)

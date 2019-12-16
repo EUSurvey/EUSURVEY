@@ -294,7 +294,7 @@ public class Survey implements java.io.Serializable {
 	}
 	public void setCreated(Date created) {
 		this.created = created;
-		this.createdString = ConversionTools.getString(created);
+		this.createdString = Tools.formatDate(created, ConversionTools.DateFormat);
 	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -310,7 +310,7 @@ public class Survey implements java.io.Serializable {
 	@Transient
 	public String getNicePublished()
 	{
-		return published != null ? ConversionTools.getString(published) : "";
+		return published != null ? Tools.formatDate(published, ConversionTools.DateFormat) : "";
 	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -326,7 +326,7 @@ public class Survey implements java.io.Serializable {
 	@Transient
 	public String getNiceFirstPublished()
 	{
-		return firstPublished != null ? ConversionTools.getString(firstPublished) : "";
+		return firstPublished != null ? Tools.formatDate(firstPublished, ConversionTools.DateFormat) : "";
 	}
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -369,7 +369,7 @@ public class Survey implements java.io.Serializable {
 	}
 	public void setDeleted(Date deleted) {
 		this.deleted = deleted;
-		this.deletedString = ConversionTools.getString(deleted);
+		this.deletedString = Tools.formatDate(deleted, ConversionTools.DateFormat);
 	}
 
 	@ManyToOne  

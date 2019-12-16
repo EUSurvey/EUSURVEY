@@ -9,6 +9,11 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.IntrusionException;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.*;
 
 public class Tools {
@@ -252,5 +257,27 @@ public class Tools {
 	public static String repairXML(String input) {
 		if (input == null || input.length() == 0) return input;
 		return input.replace("–", "-");
+	}
+
+	public static Date parseDateString(String dateString, String pattern) {
+		DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern(pattern)
+				.parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+	            .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+	            .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+	            .toFormatter(); 
+				
+	    LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
+	    Date date = Date.from(dateTime.atZone(ZoneId.of("CET")).toInstant());
+		return date;
+	}
+
+	public static String formatDate(Date date, String pattern) {
+		
+		if (date == null) return null;
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.of("CET")).toLocalDateTime();
+		String formatDateTime = localDateTime.format(formatter);
+		return formatDateTime;
 	}
 }

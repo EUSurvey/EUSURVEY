@@ -873,7 +873,7 @@ public class AddressBookController extends BasicController {
 				// test if a date!
 				if (HSSFDateUtil.isCellDateFormatted(sheet.getRow(row).getCell(cell))) {
 					Date date = HSSFDateUtil.getJavaDate(d);
-					result = ConversionTools.getString(date);
+					result = Tools.formatDate(date, ConversionTools.DateFormat);
 				} else {
 					result = "" + ((int)d);
 				}
