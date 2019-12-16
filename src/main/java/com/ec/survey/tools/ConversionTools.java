@@ -13,7 +13,6 @@ import org.springframework.web.util.HtmlUtils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -63,21 +62,17 @@ public class ConversionTools {
 		{
 			if (input.length() == 19)
 			{
-				SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeFormatSQL);
-				result = dateFormat.parse(input);
+				result = Tools.parseDateString(input, DateTimeFormatSQL);
 			} else if (input.length() == 8)
 			{
-				SimpleDateFormat dateFormat = new SimpleDateFormat(SmallDateFormat);
-				result = dateFormat.parse(input);
+				result = Tools.parseDateString(input, SmallDateFormat);
 			} else if (input.length() == 10) {
-				SimpleDateFormat dateFormat = new SimpleDateFormat(DateFormat);
-				
 				if (input.contains("-"))
 				{
-					dateFormat = new SimpleDateFormat(IPMDateFormat); 
+					result = Tools.parseDateString(input, IPMDateFormat);
+				} else {
+					result = Tools.parseDateString(input, DateFormat);
 				}
-				
-				result = dateFormat.parse(input);
 			}
 		} catch (Exception e)
 		{
@@ -107,64 +102,12 @@ public class ConversionTools {
 		
 		return result;
 	}
-	
-	public static Date getDate(String input, String format)
-	{
-		if (input == null) return null;
-		if (input.length() != format.length()) return null;
-		try
-		{
-			SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-			return dateFormat.parse(input);
-		} catch (Exception e)
-		{
-			return null;
-		}
-	}
-	
-	public static Date getIPMDate(String input)
-	{
-		if (input == null) return null;
-		try
-		{
-			SimpleDateFormat dateFormat = new SimpleDateFormat(IPMDateFormat);
-			return dateFormat.parse(input);
-		} catch (Exception e)
-		{
-			return null;
-		}
-	}
-
-	public static String getString(Date input) {
-		if (input == null) return null;
-		try
-		{
-			SimpleDateFormat dateFormat = new SimpleDateFormat(DateFormat);
-			return dateFormat.format(input);
-		} catch (Exception e)
-		{
-			return null;
-		}
-	}
-	
-	public static String getTimeString(Date input) {
-		if (input == null) return null;
-		try
-		{
-			SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-			return dateFormat.format(input);
-		} catch (Exception e)
-		{
-			return null;
-		}
-	}
-	
+		
 	public static String getFullString(Date input) {
 		if (input == null) return null;
 		try
 		{
-			SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeFormat);
-			return dateFormat.format(input);
+			return Tools.formatDate(input, DateTimeFormat);
 		} catch (Exception e)
 		{
 			return null;
@@ -175,8 +118,7 @@ public class ConversionTools {
 		if (input == null) return null;
 		try
 		{
-			SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeFormatWebservice);
-			return dateFormat.format(input);
+			return Tools.formatDate(input, DateTimeFormatWebservice);
 		} catch (Exception e)
 		{
 			return null;
@@ -187,8 +129,7 @@ public class ConversionTools {
 		if (input == null) return null;
 		try
 		{
-			SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeFormatSmall);
-			return dateFormat.format(input);
+			return Tools.formatDate(input, DateTimeFormatSmall);
 		} catch (Exception e)
 		{
 			return null;

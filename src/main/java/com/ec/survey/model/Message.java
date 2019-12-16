@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.Tools;
 
 @Entity
 @Table(name = "MESSAGES")
@@ -121,7 +122,7 @@ public class Message{
 	{
 		if (autoDeactivate != null)
 		{
-			return ConversionTools.getString(autoDeactivate);
+			return Tools.formatDate(autoDeactivate, ConversionTools.DateFormat);
 		}
 		return "";
 	}
@@ -131,7 +132,7 @@ public class Message{
 	{
 		if (autoDeactivate != null)
 		{
-			String result = ConversionTools.getTimeString(autoDeactivate).substring(0,2);
+			String result = Tools.formatDate(autoDeactivate, "HH:mm").substring(0,2);
 			if (result.startsWith("0")) result = result.substring(1,2);
 			return result;
 		}

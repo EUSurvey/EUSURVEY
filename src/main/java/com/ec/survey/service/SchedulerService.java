@@ -3,8 +3,6 @@ package com.ec.survey.service;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -34,6 +32,7 @@ import com.ec.survey.tools.ExportUpdater;
 import com.ec.survey.tools.FileUpdater;
 import com.ec.survey.tools.SendReportedSurveysWorker;
 import com.ec.survey.tools.SurveyUpdater;
+import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.ValidCodesRemover;
 
 @Service
@@ -270,9 +269,7 @@ public class SchedulerService extends BasicService {
 				String time = settingsService.get(Setting.LDAPsync2Time);
 				
 				Date lastSyncDate = schemaService.getLastLDAPSynchronization2Date();
-				DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			
-				Date startDate = df.parse(start);
+				Date startDate = Tools.parseDateString(start,"dd/MM/yyyy HH:mm:ss");
 				Date currentDate = new Date();
 				
 				//check if global start date is over
@@ -349,9 +346,8 @@ public class SchedulerService extends BasicService {
 				String time = settingsService.get(Setting.LDAPsyncTime);
 				
 				Date lastSyncDate = schemaService.getLastLDAPSynchronizationDate();
-				DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			
-				Date startDate = df.parse(start);
+				
+				Date startDate = Tools.parseDateString(start, "dd/MM/yyyy HH:mm:ss");
 				Date currentDate = new Date();
 				
 				//check if global start date is over

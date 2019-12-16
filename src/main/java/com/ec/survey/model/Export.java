@@ -2,12 +2,13 @@ package com.ec.survey.model;
 
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.Tools;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -218,7 +219,7 @@ public class Export implements java.io.Serializable {
 	
 	@Transient
 	public String getFormattedDate() {
-		return new SimpleDateFormat(ConversionTools.DateTimeFormat).format(date);
+		return Tools.formatDate(date, ConversionTools.DateTimeFormat);
 	}
 	
 	@OneToOne(cascade = CascadeType.ALL)

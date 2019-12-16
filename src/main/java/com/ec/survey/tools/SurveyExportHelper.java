@@ -26,7 +26,6 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipException;
 
@@ -889,13 +888,12 @@ public class SurveyExportHelper {
 			    }
 		    }
 		    
-		    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		    if (SurveyProperties.getElementsByTagName("StartDate").getLength() > 0)
 		    {
 		    	String start = SurveyProperties.getElementsByTagName("StartDate").item(0).getTextContent();
 		    	if (start != null && start.length() > 0)
 		    	{
-		    		Date startDate = formatter.parse(start);
+		    		Date startDate = Tools.parseDateString(start, "yyyy-MM-dd");
 		    		survey.setStart(startDate);
 		    	}
 		    }
@@ -904,7 +902,7 @@ public class SurveyExportHelper {
 		    	String end = SurveyProperties.getElementsByTagName("EndDate").item(0).getTextContent();
 		    	if (end != null && end.length() > 0)
 		    	{
-		    		Date endDate = formatter.parse(end);
+		    		Date endDate = Tools.parseDateString(end, "yyyy-MM-dd");
 		    		Calendar cal = Calendar.getInstance();
 		    		cal.setTime(endDate);
 		    		cal.set(Calendar.HOUR_OF_DAY, 23);
@@ -1435,12 +1433,12 @@ public class SurveyExportHelper {
 			org.w3c.dom.Element DateElement = (Element) questionElement.getElementsByTagName("Date").item(0);
 			if (DateElement.getAttribute("StartPeriod").length() > 0)
 			{
-				Date min = ConversionTools.getIPMDate(DateElement.getAttribute("StartPeriod"));
+				Date min = Tools.parseDateString(DateElement.getAttribute("StartPeriod"), ConversionTools.IPMDateFormat);
 				((DateQuestion)question).setMin(min);
 			}			
 			if (DateElement.getAttribute("EndPeriod").length() > 0)
 			{
-				Date max = ConversionTools.getIPMDate(DateElement.getAttribute("EndPeriod"));
+				Date max = Tools.parseDateString(DateElement.getAttribute("EndPeriod"), ConversionTools.IPMDateFormat);
 				((DateQuestion)question).setMax(max);
 			}
 		} else if (questionElement.getElementsByTagName("Integer").getLength() > 0)

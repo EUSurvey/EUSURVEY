@@ -199,9 +199,9 @@ public class PDFController extends BasicController {
 			name = "Content-Disposition";
 			if (survey.getIsDraft())
 			{
-				value =  "attachment;filename=" + survey.getShortname() + "_" + ConversionTools.getString(new Date()) + "_" + language + "_draft.pdf";
+				value =  "attachment;filename=" + survey.getShortname() + "_" + Tools.formatDate(new Date(), ConversionTools.DateFormat) + "_" + language + "_draft.pdf";
 			} else {			
-				value = "attachment;filename=" + survey.getShortname() + "_" + ConversionTools.getString(survey.getUpdated()) + "_" + language + ".pdf";
+				value = "attachment;filename=" + survey.getShortname() + "_" + Tools.formatDate(survey.getUpdated(), ConversionTools.DateFormat) + "_" + language + ".pdf";
 			}
 			
 			HTTPUtilities httpUtilities = ESAPI.httpUtilities();

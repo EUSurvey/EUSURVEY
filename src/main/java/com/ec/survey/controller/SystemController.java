@@ -24,9 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -381,8 +379,7 @@ public class SystemController extends BasicController {
 			
 			if (autodeactivate != null && autodeactivate.length() > 0)
 			{
-				 DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-				 Date result =  df.parse(autodeactivate); 
+				 Date result =  Tools.parseDateString(autodeactivate, "dd/MM/yyyy"); 
 				 if (autodeactivatetime != null && autodeactivatetime.length() > 0)
 				 {
 					 int hours = Integer.parseInt(autodeactivatetime);
@@ -403,7 +400,7 @@ public class SystemController extends BasicController {
 			ModelAndView m =  new ModelAndView("administration/system", "message", message);
 			m.addObject("error", resources.getMessage("validation.invalidNumber", null, "This value is not a valid number", locale));
 			return m;
-		} catch (ParseException e) {
+		} catch (DateTimeParseException e) {
 			ModelAndView m =  new ModelAndView("administration/system", "message", message);
 			m.addObject("error", resources.getMessage("validation.invalidDate", null, "This value is not a valid date", locale));
 			return m;

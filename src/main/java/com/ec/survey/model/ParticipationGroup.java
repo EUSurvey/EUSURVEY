@@ -4,6 +4,8 @@ import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.AttendeeFilter;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.Tools;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,7 +14,6 @@ import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -285,7 +286,7 @@ public class ParticipationGroup {
 	@Transient
 	public String getFormattedDate() {
 		if (created == null) return "";
-		return new SimpleDateFormat(ConversionTools.DateTimeFormat).format(created);
+		return Tools.formatDate(created, ConversionTools.DateTimeFormat);
 	}
 
 	@Transient
