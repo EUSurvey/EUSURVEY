@@ -9,6 +9,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.IntrusionException;
 
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -276,7 +277,16 @@ public class Tools {
 		if (date == null) return null;
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-		LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.of("CET")).toLocalDateTime();
+		
+		Instant instant;
+		if (date instanceof java.sql.Date)
+		{
+			instant = Instant.ofEpochMilli(date.getTime());
+		} else {
+			instant = date.toInstant();
+		}
+		
+		LocalDateTime localDateTime = instant.atZone(ZoneId.of("CET")).toLocalDateTime();
 		String formatDateTime = localDateTime.format(formatter);
 		return formatDateTime;
 	}
