@@ -540,7 +540,26 @@
 										</li>		
 									</c:otherwise>														
 								</c:choose>																						
-							</ul>							
+							</ul>
+							
+							<h4 style="margin-top: 20px;"><spring:message code="label.Surveys" />:</h4>     
+ 							<c:choose>
+								<c:when test='${filter.selector == "all" || filter.selector == "my"}'>
+ 									<input class="check" checked="checked" value="own" type="checkbox" name="surveysOwn"/> <spring:message code="label.Own" />
+								</c:when>
+								<c:otherwise>                                                                                                                   
+									<input class="check" value="own" type="checkbox" name="surveysOwn"/> <spring:message code="label.Own" />
+								</c:otherwise>                                                                                                          
+							</c:choose>                     
+							<br />
+							<c:choose>
+								<c:when test='${filter.selector == "all" || filter.selector == "shared"}'>
+									<input class="check" checked="checked" value="shared" type="checkbox" name="surveysShared" /> <spring:message code="label.Shared" />
+								</c:when>
+								<c:otherwise>                                                                                                                   
+									<input class="check" value="shared" type="checkbox" name="surveysShared" /> <spring:message code="label.Shared" />      
+								</c:otherwise>                                                                                                          
+							</c:choose>					
 									
 							<h4 style="margin-top: 20px;"><spring:message code="publicSurveys.order" />:</h4>
 							

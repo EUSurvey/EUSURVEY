@@ -329,6 +329,10 @@ public class SessionService extends BasicService {
 			boolean filterDraft = request.getParameter("statusDraft") != null && request.getParameter("statusDraft").equalsIgnoreCase("Draft");
 			boolean filterUnpublished = request.getParameter("statusUnpublished") != null && request.getParameter("statusUnpublished").equalsIgnoreCase("Unpublished");
 			boolean filterPublished = request.getParameter("statusPublished") != null && request.getParameter("statusPublished").equalsIgnoreCase("Published");
+			
+			boolean filterOwn = request.getParameter("surveysOwn") != null && request.getParameter("surveysOwn").equalsIgnoreCase("own");
+		 	boolean filterShared = request.getParameter("surveysShared") != null && request.getParameter("surveysShared").equalsIgnoreCase("shared");
+			
 			String status = "";
 			if (filterDraft) status += "Draft;";
 			if (filterUnpublished) status += "Unpublished;";
@@ -336,7 +340,20 @@ public class SessionService extends BasicService {
 			filter.setStatus(status);
 	    	filter.setKeywords(request.getParameter("keywords"));    	
 	    	filter.setLanguages(request.getParameterValues("languages"));
-	    	filter.setOwner(request.getParameter("owner"));
+	    	filter.setOwner(request.getParameter("owner"));	    	
+	    	
+	    	if (filterOwn && filterShared)
+	    	{
+	    		filter.setSelector("all");
+	    	} else if (filterOwn)
+	    	{
+	    		filter.setSelector("my");
+	    	} else if (filterShared)
+	    	{
+	    		filter.setSelector("shared");
+	    	} else {
+	    		filter.setSelector("all");
+	    	}
 	    	
 	    	if (request.getParameter("sortkey") == null)
 	    	{
