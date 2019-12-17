@@ -416,7 +416,11 @@ public class Survey implements java.io.Serializable {
 
 	public void setDeleted(Date deleted) {
 		this.deleted = deleted;
+<<<<<<< HEAD
 		this.deletedString = Tools.formatDate(deleted, ConversionTools.DateFormat);
+=======
+		this.deletedString = ConversionTools.getString(deleted);
+>>>>>>> 30c3aa4171dc2521b6f05e72179bc54fd224ef07
 	}
 
 	@ManyToOne
