@@ -711,6 +711,28 @@
 								</tr>
 								<tr>
 									<td class="table-label">
+										<spring:message code="label.UseMaxNumberContribution" />
+									</td>
+									<td>
+										<c:choose>
+											<c:when test="${form.survey.isUseMaxNumberContribution != null && form.survey.isUseMaxNumberContribution && form.survey.maxNumberContribution != null}">
+												<esapi:encodeForHTML>${form.survey.maxNumberContribution}</esapi:encodeForHTML>
+											</c:when>
+											<c:otherwise>
+												<spring:message code="label.No" />
+											</c:otherwise>
+										</c:choose>			
+									</td>
+								</tr>
+								<tr>
+									<td style="padding-left: 50px;">
+										<spring:message code="label.MaxNumberContributionText" />
+										<a style="margin-left:2px;" data-toggle="tooltip" data-placement="top" title="<spring:message code="info.UseMaxNumberContribution" />"><span class="glyphicon glyphicon-question-sign black"></span></a>
+									</td>
+									<td><esapi:encodeForHTML>${form.survey.maxNumberContributionText}</esapi:encodeForHTML></td>
+								</tr>
+								<tr>
+									<td class="table-label">
 										<spring:message code="label.EndNotification" />
 										<div class="help"><spring:message code="info.EndNotification" /></div>
 									</td>
