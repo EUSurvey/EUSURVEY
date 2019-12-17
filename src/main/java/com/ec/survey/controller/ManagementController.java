@@ -240,9 +240,9 @@ public class ManagementController extends BasicController {
 			}
 		}
 		
-		ModelAndView result =  new ModelAndView("management/overview", "form", form);
-		result.addObject("serverprefix", serverPrefix);
-		result.addObject("isPublished", form.getSurvey().getIsPublished());
+		ModelAndView overviewPage =  new ModelAndView("management/overview", "form", form);
+		overviewPage.addObject("serverprefix", serverPrefix);
+		overviewPage.addObject("isPublished", form.getSurvey().getIsPublished());
 		
 		List<Element> newElements = new ArrayList<>();
 		List<Element> changedElements = new ArrayList<>();
@@ -276,21 +276,21 @@ public class ManagementController extends BasicController {
 			}
 		}
 		
-		result.addObject("newElements", newElements);
-		result.addObject("changedElements", changedElements);
-		result.addObject("deletedElements", deletedElements);
+		overviewPage.addObject("newElements", newElements);
+		overviewPage.addObject("changedElements", changedElements);
+		overviewPage.addObject("deletedElements", deletedElements);
 		
 		if (request.getParameter("repairedlabels") != null)
 		{
 			try {
 				int repaired = Integer.parseInt(request.getParameter("repairedlabels"));
-				result.addObject("repairedlabels", repaired);
+				overviewPage.addObject("repairedlabels", repaired);
 			} catch (Exception e){
 				//ignore
 			}
 		}
 		
-		return result;
+		return overviewPage;
 	}	
 	
 	@RequestMapping(value = "/exportSurvey/{answers}/{shortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -813,6 +813,7 @@ public class ManagementController extends BasicController {
   		return new ModelAndView("redirect:/" + survey.getShortname() + "/management/edit");        
 	}
 	
+	//Can this be removed? it is not called in jsp's
 	@RequestMapping(value = "/saveEscapepage", method = RequestMethod.POST)
 	public ModelAndView saveEscapepage(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		
@@ -1413,6 +1414,9 @@ public class ManagementController extends BasicController {
 		if (!Tools.isEqual(survey.getIsQuiz(),uploadedSurvey.getIsQuiz())) hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowTotalScore(),uploadedSurvey.getShowTotalScore())) hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowQuizIcons(),uploadedSurvey.getShowQuizIcons())) hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getIsUseMaxNumberContribution(),uploadedSurvey.getIsUseMaxNumberContribution())) hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getMaxNumberContributionText(),uploadedSurvey.getMaxNumberContributionText())) hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getMaxNumberContribution(),uploadedSurvey.getMaxNumberContribution())) hasPendingChanges = true;
 		
 		if (!uploadedSurvey.getShowTotalScore())
 		{
@@ -1698,6 +1702,9 @@ public class ManagementController extends BasicController {
 			survey.setRegistrationForm(uploadedSurvey.getRegistrationForm());
 			survey.setConfirmationPage(Tools.filterHTML(uploadedSurvey.getConfirmationPage()));
 			survey.setEscapePage(Tools.filterHTML(uploadedSurvey.getEscapePage()));
+			survey.setIsUseMaxNumberContribution(uploadedSurvey.getIsUseMaxNumberContribution());
+			survey.setMaxNumberContributionText(Tools.filterHTML(uploadedSurvey.getMaxNumberContributionText()));
+			survey.setMaxNumberContribution(uploadedSurvey.getMaxNumberContribution());
 			
 			if (uploadedSurvey.getCaptcha() != survey.getCaptcha())
 			{				

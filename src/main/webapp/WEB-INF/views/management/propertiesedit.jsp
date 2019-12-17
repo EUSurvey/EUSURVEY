@@ -507,6 +507,42 @@
 								</td>
 							</tr>
 							<tr>
+								<td class="table-label"><span class="mandatory">*</span><spring:message code="label.UseMaxNumberContribution" /></td>
+								<td>
+									<c:choose>
+										<c:when test="${form.survey.isUseMaxNumberContribution != null && form.survey.isUseMaxNumberContribution && form.survey.maxNumberContribution}">
+											<input type="radio" class="check" name="survey.isUseMaxNumberContribution" onclick="addMaxContributionDisplayer()" value="true" checked ><spring:message code="label.Yes" />&#160;
+											<input type="radio" class="check" name="survey.isUseMaxNumberContribution" onclick="removeMaxContributionDisplayer()" value="false"/><spring:message code="label.No" />
+											<br>
+											<div id="maxNumberContributionDisplayer">
+												Maximum number of contributions<br>
+												<input id='maxContributionInput' type='number' name='survey.maxNumberContribution' min='0' max='2147483647' value="<esapi:encodeForHTMLAttribute>${form.survey.maxNumberContribution}</esapi:encodeForHTMLAttribute>">
+											</div>
+										</c:when>
+										<c:otherwise>
+											<input type="radio" class="check" name="survey.isUseMaxNumberContribution" onclick="addMaxContributionDisplayer()" value="true"/><spring:message code="label.Yes" />&#160;
+											<input type="radio" class="check" name="survey.isUseMaxNumberContribution" onclick="removeMaxContributionDisplayer()" value="false" checked/><spring:message code="label.No" />
+											<br>
+											<div id="maxNumberContributionDisplayer" class="hideme">
+												Maximum number of contributions<br>
+												<input id='maxContributionInput' type='number' name='survey.maxNumberContribution' min='0' max='2147483647' value="<esapi:encodeForHTMLAttribute>${form.survey.maxNumberContribution}</esapi:encodeForHTMLAttribute>">
+											</div>		
+										</c:otherwise>
+									</c:choose>
+									<div id="maxNumberContributionContainer">
+										
+										<br>
+										
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="table-label"><span class="mandatory">*</span><spring:message code="label.MaxNumberContributionText" /></td>
+								<td>
+									<form:textarea maxlength="250" class="tinymcealign2 required xhtml" id="edit-survey-max-result-page" path="survey.maxNumberContributionText"></form:textarea>
+								</td>
+							</tr>
+							<tr>
 								<td class="table-label">
 									<spring:message code="label.EndNotification" />
 									<div class="help"><spring:message code="info.EndNotification" /></div>

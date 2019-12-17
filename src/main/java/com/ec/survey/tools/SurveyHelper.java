@@ -4183,4 +4183,11 @@ public class SurveyHelper {
 		return bln;
 	}
 
+	public static boolean isMaxContributionReached(Survey survey, AnswerService answerService) throws FrozenSurveyException {
+		if (survey.getIsUseMaxNumberContribution()) {
+			return survey.getMaxNumberContribution() <= answerService.getNumberOfAnswerSetsPublished(null, survey.getUniqueId());
+		}
+		return false;
+	}
+
 }
