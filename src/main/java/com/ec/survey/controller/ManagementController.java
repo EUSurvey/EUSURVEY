@@ -1269,7 +1269,12 @@ public class ManagementController extends BasicController {
 		if (uploadedSurvey.getContact() == null || uploadedSurvey.getContact().trim().length() == 0) {
 			String message = resources.getMessage("validation.nocontact", null, "Please specify a contact.", locale);
 			return new ModelAndView("error/generic", "message", message);
-		}		
+		}
+		
+		if (uploadedSurvey.getLanguage() == null)
+	 	{
+	 		uploadedSurvey.setLanguage(surveyService.getLanguage(request.getParameter("survey.language")));
+	 	}
 		
 		if (uploadedSurvey.getLanguage() == null || uploadedSurvey.getLanguage().getCode().trim().length() == 0) {
 			String message = resources.getMessage("validation.nolanguage", null, "Please specify a language.", locale);
