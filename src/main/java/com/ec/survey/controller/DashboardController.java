@@ -403,7 +403,7 @@ public class DashboardController extends BasicController {
 				filter.setSortOrder(request.getParameter("asc") != null && request.getParameter("asc").equalsIgnoreCase("true") ? "ASC" : "DESC");				
 			}
 							
-			List<Archive> archives = archiveService.getAllArchives(filter, page-1, 10, true);
+			List<Archive> archives = archiveService.getAllArchives(filter, page, 10, true);
 			
 			return archives;				
 		} catch (Exception ex) {
