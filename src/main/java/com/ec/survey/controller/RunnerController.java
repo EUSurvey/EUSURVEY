@@ -1584,7 +1584,6 @@ public class RunnerController extends BasicController {
 
 					}
 				}
-
 				return new ModelAndView("redirect:/errors/500.html");
 			}
 
@@ -1592,6 +1591,11 @@ public class RunnerController extends BasicController {
 			{
 				logger.error("survey id parameter missing in processSubmit for survey " + uidorshortname);
 				return new ModelAndView("redirect:/errors/500.html");
+			}
+
+			Survey lastestPublishedSurvey = surveyService.getSurvey(uidorshortname, false, true, false, false, null, true, true);
+			if (SurveyHelper.isMaxContributionReached(lastestPublishedSurvey, answerService)) {
+				return getMaxAnswersReachedPageModel(lastestPublishedSurvey, request, device);
 			}
 			
 			Survey origsurvey = surveyService.getSurvey(Integer.parseInt(request.getParameter("survey.id")), false, true);
@@ -1612,10 +1616,6 @@ public class RunnerController extends BasicController {
 
 			if (SurveyHelper.isDeactivatedOrEndDateExceeded(origsurvey, surveyService)) {
 				return getEscapePageModel(origsurvey, request, device);
-			}
-
-			if (SurveyHelper.isMaxContributionReached(origsurvey, answerService)) {
-				return getMaxAnswersReachedPageModel(origsurvey, request, device);
 			}
 
 			String lang = locale.getLanguage();

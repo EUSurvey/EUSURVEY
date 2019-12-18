@@ -171,9 +171,9 @@ public class Survey implements java.io.Serializable {
 	private Integer allowedContributionsPerUser = 1;
 	private boolean canCreateSurveys = true;
 	private Integer trustScore;
-	private Boolean isUseMaxNumberContribution;
+	private Boolean isUseMaxNumberContribution = false;
 	private String maxNumberContributionText = MAXNUMBEROFRESULTSTEXT;
-	private Integer maxNumberContribution = 0;
+	private Long maxNumberContribution = 0L;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -2136,12 +2136,12 @@ public class Survey implements java.io.Serializable {
 		return isUseMaxNumberContribution;
 	}
 
-	@Column(name = "ISUSEMAXNUMBERCONTRIBUTION", nullable = false)
+	@Column(name = "ISUSEMAXNUMBERCONTRIBUTION")
 	public void setIsUseMaxNumberContribution(Boolean useMaxNumberContribution) {
 		this.isUseMaxNumberContribution = useMaxNumberContribution;
 	}
 
-	@Column(name = "MAXNUMBERCONTRIBUTIONTEXT", nullable = false, length = 250)
+	@Column(name = "MAXNUMBERCONTRIBUTIONTEXT", length = 250)
 	public String getMaxNumberContributionText() {
 		return maxNumberContributionText;
 	}
@@ -2151,11 +2151,11 @@ public class Survey implements java.io.Serializable {
 	}
 
 	@Column(name = "MAXNUMBERCONTRIBUTION")
-	public Integer getMaxNumberContribution() {
-		return maxNumberContribution != null ? maxNumberContribution : 0;
+	public Long getMaxNumberContribution() {
+		return maxNumberContribution != null ? maxNumberContribution : 0L;
 	}
 
-	public void setMaxNumberContribution(Integer maxNumberContribution) {
+	public void setMaxNumberContribution(Long maxNumberContribution) {
 		this.maxNumberContribution = maxNumberContribution;
 	}
 }

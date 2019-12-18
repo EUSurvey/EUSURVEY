@@ -510,13 +510,13 @@
 								<td class="table-label"><span class="mandatory">*</span><spring:message code="label.UseMaxNumberContribution" /></td>
 								<td>
 									<c:choose>
-										<c:when test="${form.survey.isUseMaxNumberContribution != null && form.survey.isUseMaxNumberContribution && form.survey.maxNumberContribution}">
+										<c:when test="${form.survey.isUseMaxNumberContribution != null && form.survey.isUseMaxNumberContribution && form.survey.maxNumberContribution!=null}">
 											<input type="radio" class="check" name="survey.isUseMaxNumberContribution" onclick="addMaxContributionDisplayer()" value="true" checked ><spring:message code="label.Yes" />&#160;
 											<input type="radio" class="check" name="survey.isUseMaxNumberContribution" onclick="removeMaxContributionDisplayer()" value="false"/><spring:message code="label.No" />
 											<br>
 											<div id="maxNumberContributionDisplayer">
 												Maximum number of contributions<br>
-												<input id='maxContributionInput' type='number' name='survey.maxNumberContribution' min='0' max='2147483647' value="<esapi:encodeForHTMLAttribute>${form.survey.maxNumberContribution}</esapi:encodeForHTMLAttribute>">
+												<input id='maxContributionInput' type='number' name='survey.maxNumberContribution' min='0' value="<esapi:encodeForHTMLAttribute>${form.survey.maxNumberContribution}</esapi:encodeForHTMLAttribute>">
 											</div>
 										</c:when>
 										<c:otherwise>
@@ -525,15 +525,10 @@
 											<br>
 											<div id="maxNumberContributionDisplayer" class="hideme">
 												Maximum number of contributions<br>
-												<input id='maxContributionInput' type='number' name='survey.maxNumberContribution' min='0' max='2147483647' value="<esapi:encodeForHTMLAttribute>${form.survey.maxNumberContribution}</esapi:encodeForHTMLAttribute>">
+												<input id='maxContributionInput' type='number' name='survey.maxNumberContribution' min='0' value="<esapi:encodeForHTMLAttribute>${form.survey.maxNumberContribution}</esapi:encodeForHTMLAttribute>">
 											</div>		
 										</c:otherwise>
 									</c:choose>
-									<div id="maxNumberContributionContainer">
-										
-										<br>
-										
-									</div>
 								</td>
 							</tr>
 							<tr>
