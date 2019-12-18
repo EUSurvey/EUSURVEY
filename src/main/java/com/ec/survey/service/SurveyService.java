@@ -2212,6 +2212,8 @@ public class SurveyService extends BasicService {
 					if (newTitle && trOriginal.getKey().equalsIgnoreCase("TITLE")) {
 						if (trOriginal.getLanguage().equalsIgnoreCase(survey.getLanguage().getCode())) {
 							tr.setLabel(survey.getTitle());
+						} else {
+							tr.setLabel(trOriginal.getLabel());
 						}
 					} else {
 						tr.setLabel(trOriginal.getLabel());
@@ -3853,7 +3855,7 @@ public class SurveyService extends BasicService {
 		sqlQueryService.setParameters(query, params);
 
 		@SuppressWarnings("unchecked")
-		List<Survey> result = query.setFirstResult(page * rowsPerPage).setMaxResults(rowsPerPage).list();
+		List<Survey> result = query.setFirstResult((page-1) * rowsPerPage).setMaxResults(rowsPerPage).list();
 		return result;
 	}
 	
@@ -3976,12 +3978,12 @@ public class SurveyService extends BasicService {
 			result[4] = archived ? "true" : "false";
 
 		} else {
-			// this means that the user has no "exiting" survey. Check if there is an
+			// this means that the user has no "existing" survey. Check if there is an
 			// archived one
 
 			ArchiveFilter filter = new ArchiveFilter();
 			filter.setUserId(user.getId());
-			List<Archive> archives = archiveService.getAllArchives(filter, 0, 1, true);
+			List<Archive> archives = archiveService.getAllArchives(filter, 1, 1, true);
 
 			if (archives.size() > 0) {
 				result[5] = "true";
