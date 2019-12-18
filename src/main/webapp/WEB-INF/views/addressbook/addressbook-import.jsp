@@ -5,7 +5,8 @@
 <div class="modal" id="import-attendees-step1-dialog" data-backdrop="static">
 	<div class="modal-dialog">
     <div class="modal-content">
-	<form:form action="${contextpath}/addressbook/importAttendees?${_csrf.parameterName}=${_csrf.token}" modelAttribute="uploadItem" name="frm" id="import-attendees-form" method="post" enctype="multipart/form-data" style="margin: 0px;">
+	<form:form action="${contextpath}/addressbook?${_csrf.parameterName}=${_csrf.token}" modelAttribute="uploadItem" name="frm" id="import-attendees-form" method="post" enctype="multipart/form-data" style="margin: 0px;">
+		<input type="hidden" name="target" value="importAttendees" />
 		<div class="modal-header">
 			<b><spring:message code="label.ImportContactsStep1" /></b>
 		</div>
@@ -112,7 +113,8 @@
 	<div class="modal" id="import-attendees-step3-dialog" data-backdrop="static">
 		<div class="modal-dialog">
     	<div class="modal-content">
-		<form:form action="${contextpath}/addressbook/${target}" name="frm" id="import-attendees-step3-form" method="post" style="margin: 0px;">
+		<form:form action="${contextpath}/addressbook" name="frm" id="import-attendees-step3-form" method="post" style="margin: 0px;">
+			<input type="hidden" name="target" id="import-attendees-step3-form-target" value="${target}" />
 		
 			<div class="modal-header">
 				<b><spring:message code="label.ImportContactsStep3" /></b>

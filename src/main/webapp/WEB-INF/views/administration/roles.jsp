@@ -249,11 +249,13 @@
 			<input type="hidden" name="value" id="value" value="" />	
 		</form:form>
 		
-		<form:form id="add-form" method="POST" action="createRole">
+		<form:form id="add-form" method="POST" action="roles">
+			<input type="hidden" name="target" value="createRole" />
 			<input type="hidden" name="name" id="name" value="" />
 		</form:form>
 		
-		<form:form id="delete-form" method="POST" action="deleteRole">
+		<form:form id="delete-form" method="POST" action="roles">
+			<input type="hidden" name="target" value="deleteRole" />
 			<input type="hidden" name="id" id="delete-id" value="" />
 		</form:form>
 	

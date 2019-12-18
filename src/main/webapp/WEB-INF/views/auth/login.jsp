@@ -231,22 +231,23 @@
 	<div class="modal" id="forgot-password-dialog" data-backdrop="static">
 		<div class="modal-dialog">
     	<div class="modal-content">
-		<form:form id="forgotPasswordForm" action="${contextpath}/auth/forgotPassword" method="post" style="margin: 0px;" >
-			<div class="modal-body">
-				<spring:message code="label.PleaseEnterYourLogin" /><br />
-				<input id="login" type="text" name="login" maxlength="255"  class="form-control"/><br /><br />
-				<spring:message code="label.PleaseEnterYourEmail" /><br />
-				<input id="email" type="text" name="email" maxlength="255" class="form-control email" /><br />
-				<span id="errorMessage" style="color: #f00; display: none;"><spring:message code="error.PleaseEnterYourNameAndEmail" /></span>
-				<div style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">
-					<%@ include file="../captcha.jsp" %>	
-	        	</div>				
-			</div>
-			<div class="modal-footer">
-				<a onclick="requestLink();" class="btn btn-info"><spring:message code="label.OK" /></a>
-				<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
-			</div>	
-		</form:form>
+			<form:form id="forgotPasswordForm" action="${contextpath}/auth/login" method="post" style="margin: 0px;" >
+				<input type="hidden" name="target" value="forgotPassword" />
+				<div class="modal-body">
+					<spring:message code="label.PleaseEnterYourLogin" /><br />
+					<input id="login" type="text" name="login" maxlength="255"  class="form-control"/><br /><br />
+					<spring:message code="label.PleaseEnterYourEmail" /><br />
+					<input id="email" type="text" name="email" maxlength="255" class="form-control email" /><br />
+					<span id="errorMessage" style="color: #f00; display: none;"><spring:message code="error.PleaseEnterYourNameAndEmail" /></span>
+					<div style="margin-left: 0px; margin-bottom: 20px; margin-top: 20px;">
+						<%@ include file="../captcha.jsp" %>	
+		        	</div>				
+				</div>
+				<div class="modal-footer">
+					<a onclick="requestLink();" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
+				</div>	
+			</form:form>
 		</div>
 		</div>
 	</div>

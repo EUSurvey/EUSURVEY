@@ -87,7 +87,31 @@ public class SettingsController extends BasicController {
 		return "settings/myAccount";
 	}
 	
-	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+	@RequestMapping(value = "/myAccount", method = {RequestMethod.POST})
+	public String myAccountPOST(HttpServletRequest request, HttpServletResponse response, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+		
+		String target = request.getParameter("target");
+		if (target != null)
+		{
+			if (target.equals("changePassword"))
+			{
+				return changePassword(request, model, locale);
+			} else if (target.equals("changeEmail"))
+			{
+				return changeEmail(request, model, locale);
+			} else if (target.equals("changeLanguage"))
+			{
+				return changeLanguage(request, response, model, locale);
+			} else if (target.equals("changePivotLanguage"))
+			{
+				return changePivotLanguage(request, model, locale);
+			} 
+		}		
+		
+		model.addAttribute("languages", surveyService.getLanguages());
+		return "settings/myAccount";
+	}
+	
 	public String changePassword(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		
 		String oldPassword = request.getParameter("oldpassword");
@@ -134,7 +158,6 @@ public class SettingsController extends BasicController {
 		return "redirect:/settings/myAccount?message=password";		
 	}
 	
-	@RequestMapping(value = "/changeEmail", method = RequestMethod.POST)
 	public String changeEmail(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		
 		String password = request.getParameter("password");
@@ -185,7 +208,6 @@ public class SettingsController extends BasicController {
 		return "redirect:/settings/myAccount?message=email";	
 	}
 	
-	@RequestMapping(value = "/changeLanguage", method = RequestMethod.POST)
 	public String changeLanguage(HttpServletRequest request, HttpServletResponse response, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		String lang = request.getParameter("change-lang");
 			
@@ -201,7 +223,6 @@ public class SettingsController extends BasicController {
 		return "redirect:/settings/myAccount?message=language";
 	}
 	
-	@RequestMapping(value = "/changePivotLanguage", method = RequestMethod.POST)
 	public String changePivotLanguage(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		String lang = request.getParameter("change-lang");
 			
@@ -214,7 +235,6 @@ public class SettingsController extends BasicController {
 		return "redirect:/settings/myAccount?message=pivot";
 	}
 			
-	@RequestMapping(value = "/shares")
 	public ModelAndView shares(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		User user = sessionService.getCurrentUser(request);
 		
@@ -248,6 +268,18 @@ public class SettingsController extends BasicController {
     	result.addObject("allAttributeNames", attendeeService.getAllAttributes(ownerId));
 		
  		return result;
+	}
+	
+	@RequestMapping(value = "/shares", method = {RequestMethod.POST})
+	public ModelAndView sharesPOST(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+		
+		String target = request.getParameter("target");
+		if (target != null && target.equals("createStaticShare"))
+		{
+			return createStaticShare(request, locale);
+		}
+		
+		return shares(request, locale);
 	}
 	
 	@RequestMapping(value = "/shareEdit/{pid}", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -300,9 +332,8 @@ public class SettingsController extends BasicController {
 		return user != null;
 	}
 	
-	@RequestMapping(value = "/createStaticShare", method = RequestMethod.POST)
-	public ModelAndView createShares(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
-		
+	public ModelAndView createStaticShare(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+	
 		User user = sessionService.getCurrentUser(request);
 		
 		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);

@@ -69,7 +69,6 @@ public class LoginLogoutController extends BasicController {
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${server.prefix}") String host;
 	private @Value("${ecashost}") String ecashost;
-	private @Value("${ecaslogout}") String ecaslogout;
 	
 	@RequestMapping(value = "/auth/login/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String getLoginPageRunnerMode(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) {
@@ -98,6 +97,22 @@ public class LoginLogoutController extends BasicController {
 		
 		request.getSession().removeAttribute("ticket");
 		
+		if (request.getParameter("passwordsaved") != null)
+		{
+			model.put("info", resources.getMessage("message.PasswordSaved", null, "Your password has been saved! You can log in now.", locale));
+		}
+		
+		return "auth/login";
+	}
+	
+	@RequestMapping(value = "/auth/login", method = {RequestMethod.POST})
+	public String postLoginPage(ModelMap model, HttpServletRequest request, Locale locale) {
+		String target = request.getParameter("target");
+		
+		if (target != null && target.equals("forgotPassword"))
+		{
+			return forgotPassword(request.getParameter("email"), request.getParameter("login"), model, locale, request);
+		}	
 		return "auth/login";
 	}
 	
@@ -140,8 +155,7 @@ public class LoginLogoutController extends BasicController {
 	
 	@RequestMapping(value = "/auth/logout", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView getLogoutPage(HttpServletRequest request) throws WeakAuthenticationException {
-		ModelAndView result = new ModelAndView("home/welcome");
-		result.addObject("page", "welcome");
+		
 		User user = null;
 		try {
 			user = sessionService.getCurrentUser(request);
@@ -151,24 +165,18 @@ public class LoginLogoutController extends BasicController {
 			//ignore
 		}
 		
-		if (user != null && user.getType().equalsIgnoreCase(User.ECAS))
-		{
-			result.addObject("ECASLOGOUT", ecaslogout);
-		}
 		request.getSession().invalidate();
 		
-		if (isShowEcas()) result.addObject("showecas", true);
-		if (isCasOss()) result.addObject("casoss", true);
+		if (user != null && user.getType().equalsIgnoreCase(User.ECAS))
+		{
+			return new ModelAndView("redirect:/home/welcome?ecaslogout");	
+		}
 		
-		result.addObject("ecasurl", ecashost);
-		result.addObject("serviceurl", host + "auth/ecaslogin");
-		
-		return result;
+		return new ModelAndView("redirect:/home/welcome");
 	}
 
 	@RequestMapping(value = "/auth/denied")
 	public String getDeniedPage() {
-		logger.debug("Received request to show denied page");
 		return "auth/deniedpage";
 	}
 	
@@ -179,13 +187,11 @@ public class LoginLogoutController extends BasicController {
 			Map<String, Object> model = new HashMap<String,Object>();
 			model.put("user", user);
 			model.put("oss", super.isOss());
-			logger.debug("getToSPage not go to tos");
 			return new ModelAndView("auth/tos", model);
 		} else {
 			user.setAgreedToToS(true);
 			administrationService.updateUser(user);
 			sessionService.setCurrentUser(request, user);
-			logger.debug("getToSPage is OSS by pass and go to home page");
 			return new ModelAndView("redirect:/dashboard");
 		}
 	}
@@ -193,15 +199,11 @@ public class LoginLogoutController extends BasicController {
 	@RequestMapping(value = "/auth/tos", method = RequestMethod.POST)
 	public String getToSPagePost(HttpServletRequest request, HttpServletResponse response) {
 		
-		logger.debug("getToSPagePost".toUpperCase() +" Start Post TOS page" );
 		User user = (User) request.getSession().getAttribute("USER");
-		logger.debug("getToSPagePost".toUpperCase() +" Start Post TOS page for user "+ user.getId().toString() + " Login "+ user.getLogin());
 		
 		String userid = request.getParameter("user");
 		String accepted = request.getParameter("accepted");
 
-		logger.debug("getToSPagePost".toUpperCase() +" Start Post TOS page userid "+ userid +" accepted " + accepted );
-		
 		if (userid != null && userid.equals(user.getId().toString()) && accepted != null && accepted.equalsIgnoreCase("true"))
 		{
 			logger.debug("getToSPagePost".toUpperCase() +" Start UPDATE THE USER ON THE DB " + user.getLogin());
@@ -215,17 +217,13 @@ public class LoginLogoutController extends BasicController {
 			if (savedRequest != null) {
 				 targetUrl = savedRequest.getRedirectUrl();
 			}
-			logger.debug("getToSPagePost".toUpperCase() +" Start Post TOS page REDIRECT TO " + targetUrl);
 			return "redirect:" + targetUrl;
 		}
 		
-		logger.debug("getToSPagePost".toUpperCase() +" Start Post TOS page REDIRECT TO auth/tos");
 		return "redirect:/auth/tos";
 	}
 	
-	@RequestMapping(value = "/auth/forgotPassword", method = RequestMethod.POST)
-	public String forgotPassword(@RequestParam(value="email", required=true) String email, @RequestParam(value="login", required=true) String login, ModelMap model, Locale locale, HttpServletRequest request) {
-		logger.debug("Received request for sending forgot password mail");
+	public String forgotPassword(String email, String login, ModelMap model, Locale locale, HttpServletRequest request) {
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		String errorMessage = resources.getMessage("error.LoginEmailInvalid", null, "You did not provide a valid login and a valid email address!", locale);
@@ -305,7 +303,7 @@ public class LoginLogoutController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		
-		return "auth/login";
+		return "redirect:/auth/login";
 	}
 	
 	private boolean checkValid(OneTimePasswordResetCode codeItem)
@@ -357,9 +355,8 @@ public class LoginLogoutController extends BasicController {
 			user.setPassword(Tools.hash(password + user.getPasswordSalt()));
 			
 			administrationService.updateUser(user);
-			model.put("info", resources.getMessage("message.PasswordSaved", null, "Your password has been saved! You can log in now.", locale));
-			return "auth/login";
-			
+			return "redirect:/auth/login?passwordsaved";
+
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			model.put("error", resources.getMessage("error.ResetNotPossible", null, "Reset not possible!", locale));

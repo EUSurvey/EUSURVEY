@@ -536,7 +536,7 @@ function step1()
 
 function step2()
 {
-	$("#import-attendees-step3-form").attr("action", contextpath + "/addressbook/importAttendeesCheck");
+	$("#import-attendees-step3-form-target").val("importAttendeesCheck");
 	$("#import-attendees-step3-dialog").modal("hide");	
 	$("#import-attendees-step2-dialog").modal();	
 }

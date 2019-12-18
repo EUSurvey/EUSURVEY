@@ -160,11 +160,9 @@ public class ManagementController extends BasicController {
 		}
 
 		return new ModelAndView("error/info", "message", message);
-	}
+	}	
 	
-	
-	@RequestMapping(value = "/clearchanges", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView clearchanges(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView clearchanges(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		User u = sessionService.getCurrentUser(request);
@@ -183,7 +181,7 @@ public class ManagementController extends BasicController {
 		
 		activityService.log(108,"n/a","n/a",u.getId(), newSurvey.getUniqueId());
 
-		return new ModelAndView("redirect:/" + newSurvey.getShortname() + "/management/overview");
+		return overview(shortname, request, locale);
 	}
 
 	@RequestMapping(value = "/overview", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -291,6 +289,28 @@ public class ManagementController extends BasicController {
 		}
 		
 		return result;
+	}	
+	
+	@RequestMapping(value = "/overview", method = {RequestMethod.POST})
+	public ModelAndView overviewPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+		String target = request.getParameter("target");
+		
+		if (target != null)
+		{
+			if (target.equals("publish")) {
+				return publish(shortname, request, locale);
+			} else if (target.equals("unpublish")) {
+				return unpublish(shortname, request, locale);
+			} else if (target.equals("activate")) {
+				return activate(shortname, request, locale);
+			}  else if (target.equals("applyChanges")) {
+				return applyChanges(shortname, request, locale);
+			}else if (target.equals("clearchanges")) {
+				return clearchanges(shortname, request, locale);
+			}
+		}
+		
+		return overview(shortname, request, locale);
 	}	
 	
 	@RequestMapping(value = "/exportSurvey/{answers}/{shortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -479,8 +499,7 @@ public class ManagementController extends BasicController {
         writer.close();
 	}
 	
-	@RequestMapping(value = "/activate", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView activate(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView activate(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		
@@ -520,8 +539,7 @@ public class ManagementController extends BasicController {
 		return overview(shortname, request, locale);
 	}
 	
-	@RequestMapping(value = "/publish", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView publish(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView publish(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		
@@ -550,8 +568,7 @@ public class ManagementController extends BasicController {
 		
 	}
 	
-	@RequestMapping(value = "/unpublish", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView unpublish(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView unpublish(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		
@@ -572,8 +589,7 @@ public class ManagementController extends BasicController {
 		return overview(shortname, request, locale);
 	}
 	
-	@RequestMapping(value = "/applyChanges", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView applyChanges(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView applyChanges(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 	
@@ -725,167 +741,6 @@ public class ManagementController extends BasicController {
 		}
 		
 		return result;
-	}
-	
-	@RequestMapping(value = "/saveConfirmationpage", method = RequestMethod.POST)
-	public ModelAndView saveConfirmationpage(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
-		
-		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-		
-		String isLink = parameters.get("survey.confirmationPageLink")[0];
-		String text = Tools.filterHTML(parameters.get("survey.confirmationPage")[0]);
-		String link = Tools.escapeHTML(parameters.get("survey.confirmationLink")[0]);
-		String language = Tools.escapeHTML(parameters.get("edit.language")[0]);
-		
-		if (text != null && !XHTMLValidator.validate(text, servletContext, null))
-		{
-			throw new InvalidXHTMLException(text, text);
-		}
-		
-		Form form;
-		form = sessionService.getForm(request, shortname, false, false);
-		Survey survey = form.getSurvey();
-		
-		User u = sessionService.getCurrentUser(request);
-		if (!u.getId().equals(form.getSurvey().getOwner().getId()))
-		{
-			if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2)
-			{
-				if (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2)
-				{
-					throw new ForbiddenURLException();
-				}
-			}
-		}
-		
-		String oldContent = !survey.getConfirmationPageLink() ? survey.getConfirmationPage() : survey.getConfirmationLink();
-		
-		survey.setConfirmationLink(link);
-		survey.setConfirmationPageLink(isLink.equalsIgnoreCase("true"));		
-		if (survey.getLanguage().getCode().equalsIgnoreCase(language))
-		{
-			survey.setConfirmationPage(text);
-		}
-		survey.setHasPendingChanges(true);
-		survey = surveyService.update(survey, true);
-		
-		activityService.log(225, oldContent, !survey.getConfirmationPageLink() ? survey.getConfirmationPage() : survey.getConfirmationLink(), u.getId(), survey.getUniqueId());
-		
-		Translations translations = translationService.getTranslations(survey.getId(), language);
-		if (translations != null)
-		{
-			Map<String,String> oldInfos = translations.getInfo();
-			
-			boolean changed = false;
-			Translation translation = translations.getTranslationsByKey().get(Survey.CONFIRMATIONPAGE);
-			if (translation != null)
-			{
-				translation.setLabel(text);
-				changed = true;
-			} else {
-				translation = new Translation(Survey.CONFIRMATIONPAGE, text, language, survey.getId(),translations);
-				translations.getTranslations().add(translation);
-				changed = true;
-			}
-			translation = translations.getTranslationsByKey().get(Survey.CONFIRMATIONLINK);
-			if (translation != null)
-			{
-				translation.setLabel(link);
-				changed = true;
-			} else {
-				translation = new Translation(Survey.CONFIRMATIONLINK, link, language, survey.getId(),translations);
-				translations.getTranslations().add(translation);
-				changed = true;
-			}
-			
-			if (changed)
-			{
-				translationService.save(translations);
-				activityService.logTranslations(227, translations.getLanguage().getCode(), oldInfos, translations.getInfo(), sessionService.getCurrentUser(request).getId(), survey.getUniqueId());
-			}
-		}
-						
-  		return new ModelAndView("redirect:/" + survey.getShortname() + "/management/edit");        
-	}
-	
-	@RequestMapping(value = "/saveEscapepage", method = RequestMethod.POST)
-	public ModelAndView saveEscapepage(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
-		
-		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-		
-		String isLink = Tools.escapeHTML(parameters.get("survey.escapePageLink")[0]);
-		String text = Tools.filterHTML(parameters.get("survey.escapePage")[0]);
-		String link = Tools.escapeHTML(parameters.get("survey.escapeLink")[0]);
-		String language = Tools.escapeHTML(parameters.get("edit.language")[0]);
-		
-		if (text != null && !XHTMLValidator.validate(text, servletContext, null))
-		{
-			throw new InvalidXHTMLException(text, text);
-		}
-		
-		Form form;
-		form = sessionService.getForm(request, shortname, false, false);
-		Survey survey = form.getSurvey();
-		
-		User u = sessionService.getCurrentUser(request);
-		if (!u.getId().equals(form.getSurvey().getOwner().getId()))
-		{
-			if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2)
-			{
-				if (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2)
-				{
-					throw new ForbiddenURLException();
-				}
-			}
-		}
-		
-		String oldContent = !survey.getConfirmationPageLink() ? survey.getConfirmationPage() : survey.getConfirmationLink();
-		
-		survey.setEscapeLink(link);
-		if (survey.getLanguage().getCode().equalsIgnoreCase(language))
-		{
-			survey.setEscapePage(text);
-		}
-		survey.setEscapePageLink(isLink.equalsIgnoreCase("true"));	
-		surveyService.update(survey, true);
-		
-		activityService.log(226, oldContent, !survey.getEscapePageLink() ? survey.getEscapePage() : survey.getEscapeLink(), u.getId(), survey.getUniqueId());
-				
-		Translations translations = translationService.getTranslations(survey.getId(), language);
-		if (translations != null)
-		{
-			Map<String,String> oldInfos = translations.getInfo();
-			
-			boolean changed = false;
-			Translation translation = translations.getTranslationsByKey().get(Survey.ESCAPEPAGE);
-			if (translation != null)
-			{
-				translation.setLabel(text);
-				changed = true;
-			} else {
-				translation = new Translation(Survey.ESCAPEPAGE, text, language, survey.getId(),translations);
-				translations.getTranslations().add(translation);
-				changed = true;
-			}
-			translation = translations.getTranslationsByKey().get(Survey.ESCAPELINK);
-			if (translation != null)
-			{
-				translation.setLabel(link);
-				changed = true;
-			} else {
-				translation = new Translation(Survey.ESCAPELINK, link, language, survey.getId(),translations);
-				translations.getTranslations().add(translation);
-				changed = true;
-			}
-			
-			if (changed)
-			{
-				translationService.save(translations);
-				activityService.logTranslations(227, translations.getLanguage().getCode(), oldInfos, translations.getInfo(), sessionService.getCurrentUser(request).getId(), survey.getUniqueId());
-			}
-		}
-						
-  		return new ModelAndView("redirect:/" + shortname + "/management/edit");        
 	}
 
 	@RequestMapping(value = "/properties", method = RequestMethod.POST)
@@ -2323,7 +2178,7 @@ public class ManagementController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/edit", method = RequestMethod.POST)
-	public ModelAndView editSave(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView editPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		
@@ -3859,7 +3714,24 @@ public class ManagementController extends BasicController {
 	}
 
 	@RequestMapping(value = "/access", method = RequestMethod.POST)
-	public ModelAndView updatePrivilege(@PathVariable String shortname, @RequestParam("id") String id, @RequestParam("privilege") String privilege, @RequestParam("value") String value, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView accessPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+		
+		String target = request.getParameter("target");
+		if (target != null)
+		{
+			if (target.equals("addUser")) {
+				return addUser(shortname, request.getParameter("login"), request.getParameter("ecas"), request, locale);
+			} else if (target.equals("removeUser")) {
+				return removeUser(shortname, request.getParameter("id"), request, locale);
+			} else if (target.equals("addGroup")) {
+				return addGroup(shortname, request.getParameter("groupname"), request, locale);
+			} 
+		}
+		
+		String id = request.getParameter("id");
+		String privilege = request.getParameter("privilege");
+		String value = request.getParameter("value");
+		
 		Access access = surveyService.getAccess(Integer.parseInt(id));
 		
 		if (access != null)
@@ -3903,8 +3775,7 @@ public class ManagementController extends BasicController {
 		}		
 	}
 
-	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
-	public ModelAndView addUser(@PathVariable String shortname, @RequestParam("login") String login, @RequestParam("ecas") String ecas, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView addUser(String shortname, String login, String ecas, HttpServletRequest request, Locale locale) throws Exception {
 
 		User user = null;
 		Form form;
@@ -3974,8 +3845,7 @@ public class ManagementController extends BasicController {
 		return access(shortname, request, locale);
 	}
 	
-	@RequestMapping(value = "/addGroup", method = RequestMethod.POST)
-	public ModelAndView addGroup(@PathVariable String shortname, @RequestParam("groupname") String groupname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView addGroup(String shortname, String groupname, HttpServletRequest request, Locale locale) throws Exception {
 
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
@@ -4033,9 +3903,7 @@ public class ManagementController extends BasicController {
 		return access(shortname, request, locale);
 	}
 
-
-	@RequestMapping(value = "/removeUser", method = RequestMethod.POST)
-	public ModelAndView removeUser(@PathVariable String shortname, @RequestParam("id") String id, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView removeUser(String shortname, String id, HttpServletRequest request, Locale locale) throws Exception {
 		Access access = surveyService.getAccess(Integer.parseInt(id));
 		
 		if (access != null)
@@ -4146,11 +4014,6 @@ public class ManagementController extends BasicController {
 		}
 		
 		return null;
-	}
-	
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String save(@ModelAttribute Survey s, Model model) {
-		return "dashboard";
 	}
 	
 	@RequestMapping(value = "/closeCurrentForm", method = RequestMethod.GET)

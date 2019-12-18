@@ -99,16 +99,19 @@
 			<input type="hidden" name="value" id="update-form-value" value="" />	
 		</form:form>
 		
-		<form:form style="display: none" id="add-form" method="POST" action="addUser">
+		<form:form style="display: none" id="add-form" method="POST" action="access">
+			<input type="hidden" name="target" value="addUser" />
 			<input type="hidden" name="login" id="add-form-login" value="" />
 			<input type="hidden" name="ecas" id="add-form-ecas" value="" />
 		</form:form>
 		
-		<form:form style="display: none" id="add-form-group" method="POST" action="addGroup">
+		<form:form style="display: none" id="add-form-group" method="POST" action="access">
+			<input type="hidden" name="target" value="addGroup" />
 			<input type="hidden" name="groupname" id="add-form-group-name" value="" />
 		</form:form>
 		
-		<form:form style="display: none" id="remove-form" method="POST" action="removeUser">
+		<form:form style="display: none" id="remove-form" method="POST" action="access">
+			<input type="hidden" name="target" value="removeUser" />
 			<input type="hidden" name="id" id="remove-id" value="" />
 		</form:form>
 		

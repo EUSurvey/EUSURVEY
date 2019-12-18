@@ -706,7 +706,8 @@
 			
 		</form:form>
 				
-		<form:form id="create-user" method="POST" action="${contextpath}/administration/users/createUser" class="hideme">
+		<form:form id="create-user" method="POST" class="hideme">
+			<input type="hidden" name="target" value="createUser" />
 			<input type="hidden" name="add-login" id="login" value="" />
 			<input type="hidden" name="add-password" id="password" value="" />	
 			<input type="hidden" name="add-email" id="email" value="" />
@@ -718,7 +719,8 @@
 			<input type="hidden" name="add-roles" id="roles" value="" />
 		</form:form>
 		
-		<form:form id="update-user" method="POST" action="${contextpath}/administration/users/updateUser" class="hideme">
+		<form:form id="update-user" method="POST" class="hideme">
+			<input type="hidden" name="target" value="updateUser" />
 			<input type="hidden" name="update-id" id="update-id" value="" />
 			<input type="hidden" name="update-password" id="update-password" value="" />	
 			<input type="hidden" name="update-email" id="update-email" value="" />
@@ -731,7 +733,8 @@
 			<input type="hidden" name="newPage" value="${paging.currentPage}" />
 		</form:form>
 		
-		<form:form id="delete-user" method="POST" action="${contextpath}/administration/users/deleteUser" class="hideme">
+		<form:form id="delete-user" method="POST" class="hideme">
+			<input type="hidden" name="target" value="deleteUser" />
 			<input type="hidden" name="id" id="delete-id" value="" />
 		</form:form>
 	

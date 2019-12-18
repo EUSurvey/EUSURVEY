@@ -75,8 +75,9 @@
 		<div class="modal-body">
 			<div style="padding: 10px;">
 			
-				<form:form id="change-password-form" action="changePassword" method="POST">
-				
+				<form:form id="change-password-form" action="myAccount" method="POST">
+					<input type="hidden" name="target" value="changePassword" />
+			
 					<label for="change-password-old-password"><spring:message code="label.OldPassword" /></label><br />
 					<input maxlength="255" name="oldpassword" class="required" type="password" autocomplete="off" id="change-password-old-password" style="width:220px;" /><br /><br />
 					
@@ -108,7 +109,8 @@
 		<div class="modal-body">
 			<div style="padding: 10px;">
 			
-				<form:form id="change-email-form" action="changeEmail" method="POST">
+				<form:form id="change-email-form" action="myAccount" method="POST">
+					<input type="hidden" name="target" value="changeEmail" />
 				
 					<label for="change-email-password"><spring:message code="label.Password" /></label><br />
 					<input name="password" autocomplete="off" class="required" type="password" id="change-email-password" style="width:220px;" /><br /><br />
@@ -142,7 +144,8 @@
 		<div class="modal-body">
 			<div style="padding: 10px;">
 			
-				<form:form id="change-lang-form" action="changeLanguage" method="POST">
+				<form:form id="change-lang-form" action="myAccount" method="POST">
+					<input type="hidden" name="target" value="changeLanguage" />
 					
 					<label for="change-lang"><spring:message code="label.Language" /></label>
 					<select name="change-lang">
@@ -183,8 +186,9 @@
 		<div class="modal-body">
 			<div style="padding: 10px;">
 			
-				<form:form id="change-pivot-lang-form" action="changePivotLanguage" method="POST">
-					
+				<form:form id="change-pivot-lang-form" action="myAccount" method="POST">
+					<input type="hidden" name="target" value="changePivotLanguage" />
+				
 					<label for="change-lang"><spring:message code="label.Language" /></label>
 					<select name="change-lang">
 						<c:forEach items="${languages}" var="language">				
