@@ -1618,6 +1618,10 @@ public class RunnerController extends BasicController {
 				return getEscapePageModel(origsurvey, request, device);
 			}
 
+			if (SurveyHelper.isMaxContributionReached(origsurvey, answerService)) {
+				return getMaxAnswersReachedPageModel(origsurvey, request, device);
+			}
+
 			String lang = locale.getLanguage();
 			if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
 				lang = request.getParameter("language.code");

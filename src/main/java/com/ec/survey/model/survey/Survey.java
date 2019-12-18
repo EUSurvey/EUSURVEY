@@ -351,8 +351,7 @@ public class Survey implements java.io.Serializable {
 	}
 
 	@Transient
-	public String getNicePublished()
-	{
+	public String getNicePublished() {
 		return published != null ? Tools.formatDate(published, ConversionTools.DateFormat) : "";
 	}
 
