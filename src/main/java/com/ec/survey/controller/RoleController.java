@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -43,8 +44,23 @@ public class RoleController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/roles", method = RequestMethod.POST)
-	public ModelAndView rolesPost(@RequestParam("id") String id, @RequestParam("privilege") String privilege, @RequestParam("value") String value, Model model) {	
-				
+	public ModelAndView rolesPost(HttpServletRequest request,  Locale locale) {	
+		
+		String target = request.getParameter("target");
+		if (target != null) {
+			if (target.equals("createRole"))
+			{
+				return createRole(request.getParameter("name"), locale);
+			} else if (target.equals("deleteRole"))
+			{
+				return deleteRole(request.getParameter("id"), locale);
+			}
+		}
+		
+		String id = request.getParameter("id");
+		String privilege= request.getParameter("privilege");
+		String value= request.getParameter("value");
+					
 		Role role = administrationService.getRole(Integer.parseInt(id));
 		role.getGlobalPrivileges().put(GlobalPrivilege.valueOf(privilege), Integer.parseInt(value));
 		administrationService.updateRole(role);
@@ -56,9 +72,9 @@ public class RoleController extends BasicController {
   	return m;
 	}
 	
-	@RequestMapping(value = "/createRole", method = RequestMethod.POST)
-	public ModelAndView createRole(@RequestParam("name") String name, Model model, Locale locale) {	
-				
+	public ModelAndView createRole(@RequestParam("name") String name, Locale locale) {	
+		ModelAndView m =  new ModelAndView("administration/roles");    	
+			
 		List<Role> roles = administrationService.getAllRoles();
 		boolean valid = true;
 		for (Role role : roles) {
@@ -71,8 +87,7 @@ public class RoleController extends BasicController {
 		
 		if (name.trim().length() == 0)
 		{
-			model.addAttribute("error", resources.getMessage("validation.required", null, "This field is required", locale));
-			
+			m.addObject("error", resources.getMessage("validation.required", null, "This field is required", locale));					
 		} else {
 			if (valid)
 			{
@@ -80,28 +95,28 @@ public class RoleController extends BasicController {
 				role.setName(name);
 				administrationService.createRole(role);
 			} else {
-				model.addAttribute("error", resources.getMessage("error.UniqueName", null, "This name already exists. Please choose a unique name.", locale));
+				m.addObject("error", resources.getMessage("error.UniqueName", null, "This name already exists. Please choose a unique name.", locale));
 			}
 		}
 		
 		roles = administrationService.getAllRoles();   	
-    	ModelAndView m =  new ModelAndView("administration/roles", "roles", roles);
+		m.addObject("roles", roles);
     	if (isShowEcas()) m.addObject("showecas", true);
     	if (isCasOss()) m.addObject("casoss", true);
  		return m;
 	}
 	
-	@RequestMapping(value = "/deleteRole", method = RequestMethod.POST)
-	public ModelAndView deleteRole(@RequestParam("id") String id, Model model, Locale locale) {	
-		try {
+	public ModelAndView deleteRole(@RequestParam("id") String id, Locale locale) {	
+    	ModelAndView m =  new ModelAndView("administration/roles");
+   		try {
 			administrationService.deleteRole(Integer.parseInt(id));
 		} catch (DataIntegrityViolationException e)
 		{
-			model.addAttribute("error", resources.getMessage("error.CannotDeleteRole", null, "You cannot delete a role when there are users with that role.", locale));
+			m.addObject("error", resources.getMessage("error.CannotDeleteRole", null, "You cannot delete a role when there are users with that role.", locale));
 		}
 		
 		List<Role> roles = administrationService.getAllRoles();   	
-    	ModelAndView m =  new ModelAndView("administration/roles", "roles", roles);
+		m.addObject("roles", roles);
     	if (isShowEcas()) m.addObject("showecas", true);
     	if (isCasOss()) m.addObject("casoss", true);
  		return m;

@@ -192,7 +192,7 @@ public class TranslationController extends BasicController {
 				surveyService.makeDirty(form.getSurvey().getId());
 			}
 			
-			return translations(shortname, request, locale);
+			return new ModelAndView("redirect:/" + shortname + "/management/translations");
 			
 		} catch (Exception e)
 		{

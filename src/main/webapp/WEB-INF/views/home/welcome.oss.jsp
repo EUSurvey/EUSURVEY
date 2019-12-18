@@ -191,7 +191,8 @@
 		</div>
 		
 		<div class="modal" id="forgot-password-dialog" data-backdrop="static" style="width: 400px; margin-left: -200px;">
-			<form id="forgotPasswordForm" action="${contextpath}/auth/forgotPassword" method="post" style="margin: 0px;" >
+			<form id="forgotPasswordForm" action="${contextpath}/auth/login" method="post" style="margin: 0px;" >
+				<input type="hidden" name="target" value="forgotPassword" />
 				<div class="modal-body">
 					<spring:message code="label.PleaseEnterYourLogin" /><br />
 					<input id="login" type="text" name="login" maxlength="255" /><br /><br />

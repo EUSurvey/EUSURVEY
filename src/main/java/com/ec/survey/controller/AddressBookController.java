@@ -31,8 +31,6 @@ import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -42,7 +40,6 @@ import org.supercsv.prefs.CsvPreference;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.*;
 
@@ -281,40 +278,6 @@ public class AddressBookController extends BasicController {
 		return attendeeService.attendeeExists(email, user.getId());
 	}
 	
-	@RequestMapping(value = "/batchEdit", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView batchEdit(HttpServletRequest request) throws Exception {
-		ModelAndView result = attendees(request);
-		
-		User user = sessionService.getCurrentUser(request);
-		
-		int ownerId;
-		Map<Integer, List<String>> attributeValues = new HashMap<>();
-		if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) == 2)
-    	{
-			ownerId = -1;
-    	} else {
-    		ownerId = user.getId();    	
-    		attributeValues = attendeeService.getAllAttributeValues(user);
-    	}
-		@SuppressWarnings("unchecked")
-		HashMap<String, String> filter = (HashMap<String, String>) request.getSession().getAttribute("attendees-filter");
-		List<Attendee> attendees = attendeeService.getAttendees(ownerId, filter, 1, Integer.MAX_VALUE);
-		result.addObject("batchAttendees", attendees);
-		
-		List<String> names = new ArrayList<>();
-		List<String> emails = new ArrayList<>();
-		for (Attendee attendee : attendees) {
-			if (!names.contains(attendee.getName())) names.add(attendee.getName());
-			if (!emails.contains(attendee.getEmail())) emails.add(attendee.getEmail());
-		}
-		
-		result.addObject("names", names);
-		result.addObject("emails", emails);		
-		result.addObject("attributeValues", attributeValues);
-		
-		return result;
-	}
-	
 	@RequestMapping(value = "/batchEdit", method = RequestMethod.POST)
 	public ModelAndView batchEditPOST(HttpServletRequest request, Locale locale) throws IntrusionException, NotAgreedToTosException, WeakAuthenticationException {
 		User user = sessionService.getCurrentUser(request);		
@@ -496,16 +459,7 @@ public class AddressBookController extends BasicController {
 	}
 		
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/importAttendees", method = RequestMethod.POST)
-     public ModelAndView import1(UploadItem uploadItem, BindingResult bindingresult, HttpServletRequest request, HttpServletResponse response, HttpSession session, Locale locale) {
-         if (bindingresult.hasErrors()) {
-                 for (ObjectError error : bindingresult.getAllErrors()) {
-                	 logger.error("Error: " + error.getCode() + " - " + error.getDefaultMessage());
-                     
-                 }
-                 return null;
-         }
-         
+	public ModelAndView importAttendees(HttpServletRequest request, Locale locale) {         
          ModelAndView result = null;
 
          String[] fileheaders = null;
@@ -888,8 +842,7 @@ public class AddressBookController extends BasicController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/importAttendeesCheck", method = RequestMethod.POST)
-	public ModelAndView importAttendeesCheck(UploadItem uploadItem, BindingResult bindingresult, HttpServletRequest request, HttpServletResponse response, HttpSession session, Locale locale) throws Exception {
+	public ModelAndView importAttendeesCheck(HttpServletRequest request, Locale locale) throws Exception {
 		User user = sessionService.getCurrentUser(request);
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 		
@@ -1026,9 +979,7 @@ public class AddressBookController extends BasicController {
      	return result;
 	}
 	 
-	 @RequestMapping(value = "/importAttendees2", method = RequestMethod.POST)
-     public ModelAndView import2(UploadItem uploadItem, BindingResult bindingresult, HttpServletRequest request, HttpServletResponse response, HttpSession session, Locale locale) throws Exception {
-		 
+	public ModelAndView importAttendees2(HttpServletRequest request, Locale locale) throws Exception {	 
 		User user = sessionService.getCurrentUser(request);
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 		
@@ -1173,7 +1124,22 @@ public class AddressBookController extends BasicController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView attendeesPOST(HttpServletRequest request) throws Exception {
+	public ModelAndView attendeesPOST(HttpServletRequest request, Locale locale) throws Exception {
+		
+		String target = request.getParameter("target");
+		if (target != null)
+		{
+			if (target.equals("importAttendeesCheck"))
+			{
+				return importAttendeesCheck(request, locale);
+			} else if (target.equals("importAttendees2"))
+			{
+				return importAttendees2(request, locale);
+			}else if (target.equals("importAttendees"))
+			{
+				return importAttendees(request, locale);
+			}
+		}		
 		
 		User user = sessionService.getCurrentUser(request);
 		

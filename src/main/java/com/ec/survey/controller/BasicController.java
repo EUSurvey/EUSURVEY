@@ -130,7 +130,7 @@ public class BasicController implements BeanFactoryAware {
 	
 	public @Value("${captcha.secret}") String captchasecret;
 	public @Value("${ui.enableresponsive}") String enableresponsive;	
-	
+	private @Value("${ecaslogout}") String ecaslogout;
 	public @Value("${showecas}") String showecas;	
 	public @Value("${ecashost}") String ecashost;	
 	public @Value("${sender}") String sender;
@@ -392,7 +392,7 @@ public class BasicController implements BeanFactoryAware {
 		return null;
 	}	
 	
-	public ModelAndView basicwelcome(Locale locale) {	
+	public ModelAndView basicwelcome(HttpServletRequest request, Locale locale) {	
 		ModelAndView model = new ModelAndView("home/welcome");
 		model.addObject("page", "welcome");
 		model.addObject("ecasurl", ecashost);
@@ -401,6 +401,11 @@ public class BasicController implements BeanFactoryAware {
 		if (isShowEcas()) model.addObject("showecas", true);
 		// CASOSS
 		if (isCasOss()) model.addObject("casoss", true);
+		
+		if (request.getParameter("ecaslogout") != null)
+		{
+			model.addObject("ECASLOGOUT", ecaslogout);
+		}
 		
 		return model;
 	}

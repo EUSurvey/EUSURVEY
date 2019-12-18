@@ -68,7 +68,8 @@
 		function showApplyChangesWaitDialog()
 		{
 			$("#apply-changes-wait-dialog").modal("show");
-			document.location = "<c:url value="/${form.survey.shortname}/management/applyChanges"/>";
+			$("#overviewform-target").val("applyChanges");
+			$("#overviewform").submit();
 		}
 		
 		function checkPublish()
@@ -76,10 +77,11 @@
 			<c:choose>
 				<c:when test="${!form.survey.automaticPublishing}">
 					$("#generic-wait-dialog").modal("show");
-					window.location = '<c:url value="/${form.survey.shortname}/management/publish"/>';
+					$("#overviewform-target").val("publish");
+					$("#overviewform").submit();
 				</c:when>
 				<c:otherwise>
-					$('#confirmationTarget').attr('href', '<c:url value="/${form.survey.shortname}/management/publish"/>');
+					$("#overviewform-target").val("publish");
 					$('#publishConfirmationDialog').modal("show");
 				</c:otherwise>
 			</c:choose>	
@@ -90,10 +92,11 @@
 			<c:choose>
 				<c:when test="${!form.survey.automaticPublishing}">
 					$("#generic-wait-dialog").modal("show");
-					window.location = '<c:url value="/${form.survey.shortname}/management/unpublish"/>';
+					$("#overviewform-target").val("unpublish");
+					$("#overviewform").submit();
 				</c:when>
 				<c:otherwise>
-					$('#confirmationTarget').attr('href', '<c:url value="/${form.survey.shortname}/management/unpublish"/>');
+					$("#overviewform-target").val("unpublish");
 					$('#publishConfirmationDialog').modal("show");
 				</c:otherwise>
 			</c:choose>	
@@ -104,10 +107,11 @@
 			<c:choose>
 				<c:when test="${!form.survey.automaticPublishing}">
 					$("#generic-wait-dialog").modal("show");
-					window.location = '<c:url value="/${form.survey.shortname}/management/activate"/>';
+					$("#overviewform-target").val("activate");
+					$("#overviewform").submit();
 				</c:when>
 				<c:otherwise>
-					$('#confirmationTarget').attr('href', '<c:url value="/${form.survey.shortname}/management/activate"/>');
+					$("#overviewform-target").val("activate");
 					$('#publishConfirmationDialog').modal("show");
 				</c:otherwise>
 			</c:choose>
@@ -332,6 +336,10 @@
 		</div>
 	</div>
 
+	<form:form id="overviewform" method="POST">
+		<input type="hidden" name="target" id="overviewform-target" value="" />
+	</form:form>
+
 <%@ include file="../footer.jsp" %>	
 
 <div class="modal" id="languageLinkDialog" data-backdrop="static">
@@ -443,7 +451,7 @@
 	 	<spring:message code="question.PendingChanges" />
 	</div>
 	<div class="modal-footer">
-		<a id="btnConfirmClearChangesFromOverview" onclick="$('#confirm-clear-changes-dialog').modal('hide');$('#clear-changes-wait-dialog').modal('show');" href="<c:url value="/${form.survey.shortname}/management/clearchanges"/>" class="btn btn-info"><spring:message code="label.Yes" /></a>	
+		<a id="btnConfirmClearChangesFromOverview" onclick="$('#confirm-clear-changes-dialog').modal('hide');$('#clear-changes-wait-dialog').modal('show');$('#overviewform-target').val('clearchanges');$('#overviewform').submit();" class="btn btn-primary"><spring:message code="label.Yes" /></a>	
 		<a id="btnCancelClearChangesFromOverview"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>	
 	</div>
 	</div>
@@ -461,7 +469,7 @@
 		<div class="divDialogElements"><spring:message code="message.ManualIntervention" /></div>
 	</div>
 	<div class="modal-footer">
-		<a id="confirmationTarget"  class="btn btn-info" ><spring:message code="label.Proceed" /></a>
+		<a id="confirmationTarget" onclick="$('#overviewform').submit();"  class="btn btn-primary" ><spring:message code="label.Proceed" /></a>
 		<a  class="btn btn-default" onclick="$(this).closest('.modal').modal('hide');"><spring:message code="label.Cancel" /></a>
 	</div>
 	</div>

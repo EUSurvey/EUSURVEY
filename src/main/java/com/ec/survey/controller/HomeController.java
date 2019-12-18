@@ -2,14 +2,12 @@ package com.ec.survey.controller;
 
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
-import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.AnswerExecutor;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizExecutor;
-import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.Ucs2Utf8;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -470,19 +468,19 @@ public class HomeController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/home/welcome", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView welcome(Locale locale) {	
-		return basicwelcome(locale);
+	public ModelAndView welcome(HttpServletRequest request, Locale locale) {	
+		return basicwelcome(request, locale);
 	}
 	
 	@RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView home(HttpServletRequest request, Locale locale) {
 		request.getSession().setAttribute("serverprefix",serverPrefix);
-		return basicwelcome(locale);
+		return basicwelcome(request, locale);
 	}
 	
 	@RequestMapping(value = "/home/welcome/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView welcomerunner(Locale locale) {	
-		return basicwelcome(locale);
+	public ModelAndView welcomerunner(HttpServletRequest request, Locale locale) {	
+		return basicwelcome(request, locale);
 	}
 	
 	@RequestMapping(value = "/home/editcontribution")
@@ -626,57 +624,6 @@ public class HomeController extends BasicController {
 		return "success";
 	}
 	
-	@RequestMapping(value = "home/runner", method = RequestMethod.POST)
-	public ModelAndView processSubmit(HttpServletRequest request, Locale locale) {
-
-		try {
-			
-			//get answerset
-			String answerSetIdString = request.getParameter("IdAnswerSet");
-			String uniqueCode = request.getParameter("uniqueCode");
-			
-			AnswerSet oldAnswerSet = answerService.get(Integer.parseInt(answerSetIdString));
-			
-			if (oldAnswerSet == null || !oldAnswerSet.getUniqueCode().equals(uniqueCode))
-			{
-				return new ModelAndView("error/generic", "message", resources.getMessage("message.dataProblem", null, "There was a problem with the submitted data.", locale));
-			}
-		
-			Survey survey = surveyService.getSurvey(Integer.parseInt(request.getParameter("survey.id")), false, true);
-				
-			User user = sessionService.getCurrentUser(request, false, false);
-			AnswerSet answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, fileDir, uniqueCode, oldAnswerSet, oldAnswerSet.getLanguageCode(), user, fileService);
-			
-			saveAnswerSet(answerSet, fileDir, null, -1);
-					
-			ModelAndView result = new ModelAndView("thanks", "uniqueCode", oldAnswerSet.getUniqueCode());
-			
-			if (survey.getIsOPC())
-			{
-				result.addObject("opcredirection", survey.getFinalConfirmationLink(opcredirect, oldAnswerSet.getLanguageCode()));
-			}
-			
-			if (!survey.isAnonymous() && answerSet.getResponderEmail() != null)
-			{
-				result.addObject("participantsemail", answerSet.getResponderEmail());
-			}
-			
-			result.addObject("isthankspage",true);
-			result.addObject("runnermode", true);
-			result.addObject(new Form(resources, surveyService.getLanguage(oldAnswerSet.getLanguageCode()),contextpath));
-			result.addObject("text", survey.getConfirmationPage());			
-			if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink() && survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
-				result.addObject("redirect", survey.getFinalConfirmationLink(oldAnswerSet.getLanguageCode()));
-			}
-			result.addObject("surveyprefix", survey.getId() + ".");
-			return result;
-		
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-			return new ModelAndView("redirect:/errors/500.html");
-		}
-	}
-	
 	@RequestMapping(value = "/home/publicsurveys/runner")
 	public ModelAndView publicsurveysrunner(HttpServletRequest request) throws Exception {	
 		ModelAndView result = publicsurveys(request);
@@ -785,7 +732,7 @@ public class HomeController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/validate/{id}/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String dashboard(@PathVariable String id, @PathVariable String code, Locale locale, Model model) {
+	public String validate(@PathVariable String id, @PathVariable String code, Locale locale, Model model) {
 		
 		try {
 			if (administrationService.validateUser(Integer.parseInt(id), code))

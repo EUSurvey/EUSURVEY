@@ -153,10 +153,8 @@ public class AdministrationController extends BasicController {
 	
 	@RequestMapping(value = "/synchronizeLDAP", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView synchronizeLDAP(HttpServletRequest request) {
-		logger.error("START SYNC LDAP ACTIVITY");
 		ldapService.reloadDepartments();
 		ldapService.reloadEcasUser();
-		logger.error("END SYNC LDAP ACTIVITY");
 		return new ModelAndView("error/info", "message", "synchronization started");
 	}
 	

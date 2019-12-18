@@ -181,7 +181,8 @@
 		
 		<div style="clear: both; margin-bottom: 30px;"></div>
 		
-		<form:form id="saveFormStatic" method="POST" action="${contextpath}/settings/createStaticShare">
+		<form:form id="saveFormStatic" method="POST" action="${contextpath}/settings/shares">
+			<input type="hidden" name="target" value="createStaticShare" />
 			<c:if test="${shareToEdit != null}">
 				<input type="hidden" name="shareToEdit" value="${shareToEdit.id}" />
 			</c:if>
