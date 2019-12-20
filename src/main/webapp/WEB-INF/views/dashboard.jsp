@@ -22,6 +22,7 @@
 		var labelunpublished = "<spring:message code='label.Unpublished' />";
 		var labelopen = "<spring:message code='form.Open' />";
 		var labelsecured = "<spring:message code='form.Secured' />";
+		var userid = ${USER.id};
 		
 		function clearDashboardFilterCellContent(link)
 		{
@@ -155,7 +156,7 @@
 										<div class="widgettitle" style="padding-bottom: 7px;">
 											<div id="surveys">
 												<div style="float: right">
-													<select id="surveystatesselector" class="dashboardselect" onchange="_dashboard.loadSurveyStates()">
+													<select id="surveystatesselector" class="dashboardselect" onchange="_dashboard.loadSurveyStates(0)">
 														<option value="all" selected="selected"><spring:message code="label.AllSurveys" /></option>
 														<option value="my"><spring:message code="label.Own" /></option>
 														<option value="shared"><spring:message code="label.Shared" /></option>
@@ -469,7 +470,7 @@
 													</select>
 												</th>
 												<th style="min-width: 200px;">
-													<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys();"><spring:message code="label.Search" /></a>
+													<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys(0);"><spring:message code="label.Search" /></a>
 													<a class="btn btn-default" onclick="_dashboard.resetSurveys();"><spring:message code="label.Reset" /></a>
 												</th>
 												
@@ -547,7 +548,7 @@
 													<th></th>
 													<th></th>
 													<th style="min-width: 150px;">
-														<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys();"><spring:message code="label.Search" /></a>
+														<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys(0);"><spring:message code="label.Search" /></a>
 														<a class="btn btn-default" onclick="_dashboard.resetSurveys();"><spring:message code="label.Reset" /></a>
 													</th>									
 												<!-- /ko -->
@@ -941,7 +942,7 @@
 												</div>	
 											</th>
 											<th style="min-width: 150px;">
-												<a class="btn btn-default" onclick="_dashboard.contributionsPage(1); _dashboard.loadPersonalContributions();"><spring:message code="label.Search" /></a>
+												<a class="btn btn-default" onclick="_dashboard.contributionsPage(1); _dashboard.loadPersonalContributions(0);"><spring:message code="label.Search" /></a>
 												<a class="btn btn-default" onclick="_dashboard.resetContributions();"><spring:message code="label.Reset" /></a>
 											</th>
 										</tr>
@@ -1080,7 +1081,7 @@
 												</div>	
 											</th>
 											<th style="min-width: 150px;">
-												<a class="btn btn-default" onclick="_dashboard.draftsPage(1); _dashboard.loadPersonalDrafts();"><spring:message code="label.Search" /></a>
+												<a class="btn btn-default" onclick="_dashboard.draftsPage(1); _dashboard.loadPersonalDrafts(0);"><spring:message code="label.Search" /></a>
 												<a class="btn btn-default" onclick="_dashboard.resetDrafts();"><spring:message code="label.Reset" /></a>
 											</th>
 										</tr>
