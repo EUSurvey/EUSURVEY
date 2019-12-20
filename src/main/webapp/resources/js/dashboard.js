@@ -1,5 +1,6 @@
 function DashboardViewModel()
 {
+	this.self = this;
 	this.mode = ko.observable("surveys");
 	this.surveysMode = ko.observable("simple");
 	this.lastEditedSurveyShortname = ko.observable(null);
@@ -55,21 +56,23 @@ function DashboardViewModel()
 	this.switchToSurveys = function()
 	{
 		this.mode("surveys");
+		writeToLocalstorage("DASHBOARDMode", "surveys");
 	}
 	
 	this.switchToInvitations = function()
 	{
 		if (!this.invitationDataLoaded)
 		{
-			_dashboard.loadPersonalContributions();
-			_dashboard.loadPersonalDrafts();
-			_dashboard.loadPersonalInvitations();
+			_dashboard.loadPersonalContributions(-2);
+			_dashboard.loadPersonalDrafts(-2);
+			_dashboard.loadPersonalInvitations(-2);
 			_dashboard.loadContributionStates();
 			
 			this.invitationDataLoaded = true;
 		}		
 		
 		this.mode("invitations");
+		writeToLocalstorage("DASHBOARDMode", "invitations");
 	}
 	
 	this.switchSurveyMode = function(m)
@@ -79,7 +82,7 @@ function DashboardViewModel()
 		if (m != oldmode)
 		{
 			this.surveysPage(1)
-			this.loadSurveys();
+			this.loadSurveys(0);
 		}
 			
 		$(".datepicker").datepicker( "destroy" );
@@ -88,7 +91,8 @@ function DashboardViewModel()
 			createDatePicker(this);						
 		});
 			
-		applyEvents();		
+		applyEvents();
+		writeToLocalstorage("DASHBOARDSurveyMode", m);
 	}
 	
 	this.loadMeta = function()
@@ -108,7 +112,7 @@ function DashboardViewModel()
 				  if (data[5] == "true")
 				  {
 					model.surveysMode('archived');
-					model.loadSurveys();
+					model.loadSurveys(-2);
 				  }
 			  }
 			});
@@ -118,15 +122,39 @@ function DashboardViewModel()
 	{
 		var model = this;
 		model.contributions(null);
+		var survey = 0;
 		var i = index;
-		if (i < 0) i = this.surveyIndex();
+		if (i == -1) i = this.surveyIndex();
+		
+		if (i == -2) {
+			var surveyid = readFromLocalstorage("DASHBOARDContributionsSurvey");
+			if (surveyid != null && surveyid.length > 0)
+			{
+				survey = surveyid;
+			}
+			
+			var s = readFromLocalstorage("DASHBOARDContributionsOrder");
+			if (s != null && s.length > 0)
+			{
+				$("#contributionsorderselector").val(s);
+			}
+			
+			s = readFromLocalstorage("DASHBOARDContributionsSpan");
+			if (s != null && s.length > 0)
+			{
+				$("#contributionsspanselector").val(s);
+			}
+			
+			i = 0;
+		}
 		var request = $.ajax({
 			  url: contextpath + "/dashboard/contributions",
-			  data: {survey: i, sort: $("#contributionsorderselector").val(), span: $("#contributionsspanselector").val()},
+			  data: {survey: i, surveyid: survey, sort: $("#contributionsorderselector").val(), span: $("#contributionsspanselector").val()},
 			  dataType: "json",
 			  cache: false,
 			  success: function(data)
 			  {			 
+				  model.surveyIndex(data.surveyIndex);
 				  model.contributions(data);
 				  model.surveyContributionStates(data.contributionStates);
 				  model.updateContributions();				  
@@ -134,8 +162,19 @@ function DashboardViewModel()
 			});
 	}
 	
-	this.loadSurveyStates = function()
+	this.loadSurveyStates = function(index)
 	{
+		if (index == -2)
+		{
+			var s = readFromLocalstorage("DASHBOARDSurveyStateSelector");
+			if (s != null && s.length > 0)
+			{
+				$("#surveystatesselector").val(s);
+			}
+		} else {
+			writeToLocalstorage("DASHBOARDSurveyStateSelector", $("#surveystatesselector").val());
+		}
+		
 		var model = this;
 		model.surveyStates(null);
 		var request = $.ajax({
@@ -155,8 +194,89 @@ function DashboardViewModel()
 			});
 	}
 	
-	this.loadSurveys = function()
+	this.loadSurveys = function(index)
 	{
+		if (index == -2)
+		{
+			var s = readFromLocalstorage("DASHBOARDSurveyMode");
+			if (s != null && s.length > 0)
+			{
+				this.surveysMode(s);
+				if (s == "archived")
+				{
+					$("#surveytypeselector"),val(m);
+				}
+			}
+				
+			s = readFromLocalstorage("DASHBOARDSurveysAlias");
+			if (s != null && s.length > 0) $("#shortname").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysTitle");
+			if (s != null && s.length > 0) $("#title").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysOwner");
+			if (s != null && s.length > 0) $("#owner").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysStatus");
+			if (s != null && s.length > 0) $("#status").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysSecurity");
+			if (s != null && s.length > 0) $("#security").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysLanguage");
+			if (s != null && s.length > 0) $("#language").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysStartFrom");
+			if (s != null && s.length > 0) this.surveyFilterStartFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysStartTo");
+			if (s != null && s.length > 0) this.surveyFilterStartTo(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysEndFrom");
+			if (s != null && s.length > 0) this.surveyFilterEndFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysEndTo");
+			if (s != null && s.length > 0) this.surveyFilterEndTo(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysArchiveAlias");
+			if (s != null && s.length > 0) $("#archiveshortname").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysArchiveTitle");
+			if (s != null && s.length > 0) $("#archivetitle").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysArchivedCreatedFrom");
+			if (s != null && s.length > 0) this.archivedFilterCreatedFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysArchivedCreatedTo");
+			if (s != null && s.length > 0) this.archivedFilterCreatedTo(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysArchivedArchivedFrom");
+			if (s != null && s.length > 0) this.archivedFilterArchivedFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDSurveysArchivedArchivedTo");
+			if (s != null && s.length > 0) this.archivedFilterArchivedTo(s);
+			
+		} else {
+			writeToLocalstorage("DASHBOARDSurveysAlias", $("#shortname").val());
+			writeToLocalstorage("DASHBOARDSurveysTitle", $("#title").val());
+			writeToLocalstorage("DASHBOARDSurveysOwner", $("#owner").val());
+			writeToLocalstorage("DASHBOARDSurveysStatus", $("#status").val());
+			writeToLocalstorage("DASHBOARDSurveysSecurity", $("#security").val());
+			writeToLocalstorage("DASHBOARDSurveysLanguage", $("#language").val());
+			
+			writeToLocalstorage("DASHBOARDSurveysStartFrom",  this.surveyFilterStartFrom());
+			writeToLocalstorage("DASHBOARDSurveysStartTo",  this.surveyFilterStartTo());
+			writeToLocalstorage("DASHBOARDSurveysEndFrom",  this.surveyFilterEndFrom());
+			writeToLocalstorage("DASHBOARDSurveysEndTo",  this.surveyFilterEndTo());
+			
+			writeToLocalstorage("DASHBOARDSurveysArchiveAlias", $("#archiveshortname").val());
+			writeToLocalstorage("DASHBOARDSurveysArchiveTitle", $("#archivetitle").val());
+			writeToLocalstorage("DASHBOARDSurveysArchivedCreatedFrom",  this.archivedFilterCreatedFrom());
+			writeToLocalstorage("DASHBOARDSurveysArchivedCreatedTo",  this.archivedFilterCreatedTo());
+			writeToLocalstorage("DASHBOARDSurveysArchivedArchivedFrom",  this.archivedFilterArchivedFrom());
+			writeToLocalstorage("DASHBOARDSurveysArchivedArchivedTo",  this.archivedFilterArchivedTo());
+		}
+		
 		var model = this;
 		model.surveys(null);
 		model.archives(null);
@@ -344,6 +464,34 @@ function DashboardViewModel()
 	
 	this.loadPersonalContributions = function(index)
 	{
+		if (index == -2)
+		{
+			var s = readFromLocalstorage("DASHBOARDMyLatestContributionsFrom");
+			if (s != null && s.length > 0) this.lastEditFilterFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDMyLatestContributionsTo");
+			if (s != null && s.length > 0) this.lastEditFilterTo(s);
+			
+			s = readFromLocalstorage("DASHBOARDMyLatestContributionsSurvey");
+			if (s != null && s.length > 0) $("#persconsurvey").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDMyLatestContributionsSurveyStatus");
+			if (s != null && s.length > 0) $("#persconsurveystatus").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDMyLatestContributionsEndFrom");
+			if (s != null && s.length > 0) this.contributionFilterEndFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDMyLatestContributionsEndTo");
+			if (s != null && s.length > 0) this.contributionFilterEndTo(s);
+		} else {
+			writeToLocalstorage("DASHBOARDMyLatestContributionsFrom", this.lastEditFilterFrom());
+			writeToLocalstorage("DASHBOARDMyLatestContributionsTo", this.lastEditFilterTo());
+			writeToLocalstorage("DASHBOARDMyLatestContributionsSurvey", $("#persconsurvey").val());
+			writeToLocalstorage("DASHBOARDMyLatestContributionsSurveyStatus", $("#persconsurveystatus").val());
+			writeToLocalstorage("DASHBOARDMyLatestContributionsEndFrom", this.contributionFilterEndFrom());
+			writeToLocalstorage("DASHBOARDMyLatestContributionsEndTo", this.contributionFilterEndTo());
+		}
+		
 		var model = this;
 		model.personalContributions(null);
 		var params = "page=" +  model.contributionsPage();
@@ -401,6 +549,34 @@ function DashboardViewModel()
 	
 	this.loadPersonalDrafts = function(index)
 	{
+		if (index == -2)
+		{
+			var s = readFromLocalstorage("DASHBOARDMyDraftsFrom");
+			if (s != null && s.length > 0) this.lastEditDraftFilterFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDMyDraftsTo");
+			if (s != null && s.length > 0) this.lastEditDraftFilterTo(s);
+			
+			s = readFromLocalstorage("DASHBOARDMyDraftsSurvey");
+			if (s != null && s.length > 0) $("#persdraftsurvey").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDMyDraftsSurveyStatus");
+			if (s != null && s.length > 0) $("#persdraftsurveystatus").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDMyDraftsEndFrom");
+			if (s != null && s.length > 0) this.draftFilterEndFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDMyDraftsEndTo");
+			if (s != null && s.length > 0) this.draftFilterEndTo(s);
+		} else {
+			writeToLocalstorage("DASHBOARDMyDraftsFrom", this.lastEditDraftFilterFrom());
+			writeToLocalstorage("DASHBOARDMyDraftsTo", this.lastEditDraftFilterTo());
+			writeToLocalstorage("DASHBOARDMyDraftsSurvey", $("#persdraftsurvey").val());
+			writeToLocalstorage("DASHBOARDMyDraftsSurveyStatus", $("#persdraftsurveystatus").val());
+			writeToLocalstorage("DASHBOARDMyDraftsEndFrom", this.draftFilterEndFrom());
+			writeToLocalstorage("DASHBOARDMyDraftsEndTo", this.draftFilterEndTo());
+		}
+		
 		var model = this;
 		model.personalDrafts(null);
 		var params = "page=" +  model.draftsPage();
@@ -457,6 +633,34 @@ function DashboardViewModel()
 	
 	this.loadPersonalInvitations = function(index)
 	{
+		if (index == -2)
+		{
+			var s = readFromLocalstorage("DASHBOARDOpenInvitationsInvitedFrom");
+			if (s != null && s.length > 0) this.invitationFilterDateFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDOpenInvitationsInvitedTo");
+			if (s != null && s.length > 0) this.invitationFilterDateTo(s);
+			
+			s = readFromLocalstorage("DASHBOARDOpenInvitationsSurvey");
+			if (s != null && s.length > 0) $("#persinvitationsurvey").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDOpenInvitationsSurveyStatus");
+			if (s != null && s.length > 0) $("#persinvitationsurveystatus").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDOpenInvitationsEndFrom");
+			if (s != null && s.length > 0) this.invitationFilterEndFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDOpenInvitationsEndTo");
+			if (s != null && s.length > 0) this.invitationFilterEndTo(s);
+		} else {
+			writeToLocalstorage("DASHBOARDOpenInvitationsInvitedFrom", this.invitationFilterDateFrom());
+			writeToLocalstorage("DASHBOARDOpenInvitationsInvitedTo", this.invitationFilterDateTo());
+			writeToLocalstorage("DASHBOARDOpenInvitationsSurvey", $("#persinvitationsurvey").val());
+			writeToLocalstorage("DASHBOARDOpenInvitationsSurveyStatus", $("#persinvitationsurveystatus").val());
+			writeToLocalstorage("DASHBOARDOpenInvitationsEndFrom", this.invitationFilterEndFrom());
+			writeToLocalstorage("DASHBOARDOpenInvitationsEndTo", this.invitationFilterEndTo());
+		}
+		
 		var model = this;
 		model.personalInvitations(null);
 		var params = "page=" +  model.invitationsPage();
@@ -531,7 +735,7 @@ function DashboardViewModel()
 	this.firstSurveyPage = function()
 	{
 		this.surveysPage(1);
-		this.loadSurveys();
+		this.loadSurveys(0);
 	}
 	
 	this.previousSurveyPage = function()
@@ -539,7 +743,7 @@ function DashboardViewModel()
 		if (this.surveysPage() > 1)
 		{
 			this.surveysPage(this.surveysPage()-1);
-			this.loadSurveys();
+			this.loadSurveys(0);
 		}
 	}
 	
@@ -548,7 +752,7 @@ function DashboardViewModel()
 		if (!this.lastSurveysReached())
 		{
 			this.surveysPage(this.surveysPage()+1);
-			this.loadSurveys();
+			this.loadSurveys(0);
 		}
 	}
 	
@@ -573,7 +777,7 @@ function DashboardViewModel()
 	this.firstContributionsPage = function()
 	{
 		this.contributionsPage(1);
-		this.loadPersonalContributions();
+		this.loadPersonalContributions(0);
 	}
 	
 	this.previousContributionsPage = function()
@@ -581,7 +785,7 @@ function DashboardViewModel()
 		if (this.contributionsPage() > 1)
 		{
 			this.contributionsPage(this.contributionsPage()-1);
-			this.loadPersonalContributions();
+			this.loadPersonalContributions(0);
 		}
 	}
 	
@@ -590,14 +794,14 @@ function DashboardViewModel()
 		if (!this.lastContributionsReached())
 		{
 			this.contributionsPage(this.contributionsPage()+1);
-			this.loadPersonalContributions();
+			this.loadPersonalContributions(0);
 		}
 	}
 	
 	this.firstInvitationsPage = function()
 	{
 		this.invitationsPage(1);
-		this.loadPersonalInvitations();
+		this.loadPersonalInvitations(0);
 	}
 	
 	this.previousInvitationsPage = function()
@@ -605,7 +809,7 @@ function DashboardViewModel()
 		if (this.invitationsPage() > 1)
 		{
 			this.invitationsPage(this.invitationsPage()-1);
-			this.loadPersonalInvitations();
+			this.loadPersonalInvitations(0);
 		}
 	}
 	
@@ -614,14 +818,14 @@ function DashboardViewModel()
 		if (!this.lastInvitationsReached())
 		{
 			this.invitationsPage(this.invitationsPage()+1);
-			this.loadPersonalInvitations();
+			this.loadPersonalInvitations(0);
 		}
 	}
 	
 	this.firstDraftsPage = function()
 	{
 		this.draftsPage(1);
-		this.loadPersonalDrafts();
+		this.loadPersonalDrafts(0);
 	}
 	
 	this.previousDraftsPage = function()
@@ -629,7 +833,7 @@ function DashboardViewModel()
 		if (this.draftsPage() > 1)
 		{
 			this.draftsPage(this.draftsPage()-1);
-			this.loadPersonalDrafts();
+			this.loadPersonalDrafts(0);
 		}
 	}
 	
@@ -638,31 +842,7 @@ function DashboardViewModel()
 		if (!this.lastDraftsReached())
 		{
 			this.draftsPage(this.draftsPage()+1);
-			this.loadPersonalDrafts();
-		}
-	}
-	
-	this.firstInvitationsPage = function()
-	{
-		this.invitationsPage(1);
-		this.loadPersonalInvitations();
-	}
-	
-	this.previouInvitationsPage = function()
-	{
-		if (this.invitationsPage() > 1)
-		{
-			this.invitationsPage(this.invitationsPage()-1);
-			this.loadPersonalInvitations();
-		}
-	}
-	
-	this.nextInvitationsPage = function()
-	{
-		if (!this.lastInvitationsReached())
-		{
-			this.invitationsPage(this.invitationsPage()+1);
-			this.loadPersonalInvitations();
+			this.loadPersonalDrafts(0);
 		}
 	}
 	
@@ -680,12 +860,10 @@ function DashboardViewModel()
 			points[points.length] = point;
 		}
 
-		var s = "Surveys: ";
-		for (var i = 0; i < this.contributions().surveyIds.length; i++)
-		{
-			s += this.contributions().surveyIds[i];
-		}
-		
+		writeToLocalstorage("DASHBOARDContributionsSurvey", this.contributions().surveyId);
+		writeToLocalstorage("DASHBOARDContributionsSpan", $("#contributionsspanselector").val());
+		writeToLocalstorage("DASHBOARDContributionsOrder", $("#contributionsorderselector").val());
+
 		var a = document.createElement("a");
 		$(a).attr("href", contextpath + "/" + this.contributions().surveyTitle + "/management/overview").css("color","#fff");
 		$(a).html(this.contributions().surveyTitle);
@@ -977,9 +1155,9 @@ function DashboardViewModel()
 	{
 		if (this.mode() == "surveys")
 		{
-			this.loadSurveys();
+			this.loadSurveys(0);
 		} else {
-			this.loadPersonalContributions();
+			this.loadPersonalContributions(0);
 		}
 	}
 	
@@ -1017,7 +1195,7 @@ function DashboardViewModel()
 		this.lastEditDraftFilterTo("");		
 		this.draftFilterEndFrom("");
 		this.draftFilterEndTo("");
-		_dashboard.draftsPage(1); _dashboard.loadPersonalDrafts();
+		_dashboard.draftsPage(1); _dashboard.loadPersonalDrafts(0);
 	}
 	
 	this.resetInvitations = function()
@@ -1029,7 +1207,7 @@ function DashboardViewModel()
 		this.invitationFilterEndFrom("");
 		this.invitationFilterEndTo("");
 	
-		_dashboard.invitationsPage(1); _dashboard.loadPersonalInvitations();
+		_dashboard.invitationsPage(1); _dashboard.loadPersonalInvitations(0);
 	}
 }
 
@@ -1048,10 +1226,19 @@ $(function() {
 	{
 		_dashboard.switchToInvitations();
 	} else {	
+		var s = readFromLocalstorage("DASHBOARDMode");
+		if (s != null && s.length > 0)
+		{
+			_dashboard.mode(s);
+			if (s == "invitations") {
+				_dashboard.switchToInvitations();
+			}
+		}
+		
 		_dashboard.loadMeta();
-		_dashboard.loadContributions(0);
-		_dashboard.loadSurveyStates();
-		_dashboard.loadSurveys();
+		_dashboard.loadContributions(-2);
+		_dashboard.loadSurveyStates(-2);
+		_dashboard.loadSurveys(-2);
 		_dashboard.loadEndDates();
 	}
 	applyEvents();
@@ -1161,5 +1348,24 @@ function applyDateFilter(id, value)
 			break;
 	}
 	$(".overlaymenu").hide();
+}
+
+function writeToLocalstorage(name,value) {	
+	if (value != null && typeof value != "undefined"
+			&& (typeof value != "string" || value.length > 0)) {
+		try {
+			localStorage.setItem(name + userid, value);
+		} catch(e) {
+		    if(e.name == "NS_ERROR_FILE_CORRUPTED") {
+		    	showError("Sorry, it looks like your browser storage has been corrupted. Please clear your storage by going to Tools -> Clear Recent History -> Cookies and set time range to 'Everything'. This will remove the corrupted browser storage across all sites.");
+		    }
+		}		
+	 } else {
+		 localStorage.removeItem(name + userid);
+	 }
+}
+
+function readFromLocalstorage(name) {
+	return localStorage.getItem(name + userid);
 }
 				

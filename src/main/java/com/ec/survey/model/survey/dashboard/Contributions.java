@@ -17,6 +17,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 public class Contributions {
 	
 	private int surveyId;
+	private int surveyIndex;
 	private String surveyTitle;
 	private Map<Date, Integer> answersPerDay = new TreeMap<Date, Integer>();
 	private Map<Integer, String> surveys;
@@ -27,6 +28,13 @@ public class Contributions {
 	}
 	public void setSurveyId(int surveyId) {
 		this.surveyId = surveyId;
+	}
+	
+	public int getSurveyIndex() {
+		return surveyIndex;
+	}
+	public void setSurveyIndex(int surveyIndex) {
+		this.surveyIndex = surveyIndex;
 	}
 	
 	public String getSurveyTitle() {
