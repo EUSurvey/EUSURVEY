@@ -64,7 +64,7 @@
 		<div class="fixedtitleform">
 			<div class="fixedtitleinner" style="width:880px">
 				
-				<div id="action-bar" class="container action-bar" style="margin-top: 10px; width: 880px">
+				<div id="action-bar" class="container action-bar" style="padding-top: 10px; width: 880px">
 					<div class="row">
 						<div class="col-md-12" style="text-align:center">
 							<a onclick="$('#add-share-name').val(''); $('#add-share-dialog1').modal('show')"  class="btn btn-default"><spring:message code="label.CreateNewShare" /></a>

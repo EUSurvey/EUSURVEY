@@ -235,6 +235,7 @@ public class SettingsController extends BasicController {
 		return "redirect:/settings/myAccount?message=pivot";
 	}
 			
+	@RequestMapping(value = "/shares", method = {RequestMethod.GET})
 	public ModelAndView shares(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
 		User user = sessionService.getCurrentUser(request);
 		
