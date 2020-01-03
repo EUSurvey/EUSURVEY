@@ -72,8 +72,7 @@ table {
 }
 
 .iconbutton.disabled {
-	color: #ccc;	
-	cursor: not-allowed;
+	color: #ccc;
 }
 
 .iconbutton.disabled .glyphicon, .switchiconbutton.disabled .glyphicon {
@@ -1660,10 +1659,6 @@ img.titleImage
 	margin-right:6px;
 }
 
-.actionRowAction.disabled {
-	cursor: not-allowed;
-}
-
 table.formsSurveyItem
 {
 	width:100%;
@@ -1861,4 +1856,8 @@ a {
 
 .filestable {
 	word-break: break-all;	
+}
+
+input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="radio"].disabled, input[type="checkbox"].disabled, fieldset[disabled] input[type="radio"], fieldset[disabled] input[type="checkbox"] {
+	cursor: default !important;
 }

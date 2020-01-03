@@ -736,11 +736,11 @@
 				<div id="content-export-buttons" style="min-width: 200px; margin-top: 2px; float: right; text-align: center">
 					<b><spring:message code="label.Export" /></b>					
 						<span class="deactivatedexports">
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportContentLinkxls"  ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportContentLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxml" />" style="cursor: not-allowed" id="startExportContentLinkxml" ><img src="${contextpath}/resources/images/file_extension_xml_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportContentLinkxls"  ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportContentLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxml" />" id="startExportContentLinkxml" ><img src="${contextpath}/resources/images/file_extension_xml_small_grey.png" /></a>
 							<c:if test="${!allanswers}">
-		 						<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportContentLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a> 
+		 						<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportContentLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a> 
 							</c:if>
 						</span>
 						<span class="activatedexports hideme">
@@ -758,19 +758,19 @@
 					
 					<c:choose>
 						<c:when test="${form.getSurvey().hasNoQuestionsForStatistics()}">
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
 						</c:when>
 						<c:otherwise>
 							<span class="deactivatedexports">
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
 							</span>
 							<span class="activatedexports hideme">
 								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportStatisticsLinkpdf"  onclick="showExportDialog('Statistics', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>				
@@ -789,7 +789,7 @@
 					
 					<c:choose>
 						<c:when test="${paging.items.size() == 0}">
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportQuizStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportQuizStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
 						</c:when>
 						<c:otherwise>
 							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportQuizStatisticsLinkpdf"  onclick="showExportDialog('StatisticsQuiz', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>				
