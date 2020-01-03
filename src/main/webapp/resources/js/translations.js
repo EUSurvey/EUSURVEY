@@ -423,6 +423,8 @@ function switchActive(id, input)
 	            	showInfo(simpleResult.result);
 	            	
 	            	$(input).find(".glyphicon-pause").removeClass("glyphicon-pause").addClass("glyphicon-play");
+	            	$(input).attr("data-original-title", $(input).attr("data-activetitle")).tooltip();
+	            	
 	            	$(input).closest("tr").find(".label-success").hide();
 	            	$(input).closest("tr").find(".label-warning").not(".requested").show();
 	            	$(input).attr("title", labelPublish);
@@ -445,6 +447,8 @@ function switchActive(id, input)
 	            	showInfo(simpleResult.result);
 	            	
 	            	$(input).find(".glyphicon-play").removeClass("glyphicon-play").addClass("glyphicon-pause");
+	            	$(input).attr("data-original-title", $(input).attr("data-inactivetitle"));
+	            	
 	            	$(input).closest("tr").find(".label-success").show();
 	            	$(input).closest("tr").find(".label-warning").hide();
 	            	$(input).attr("title", labelUnpublish);
