@@ -191,6 +191,7 @@
 					    	
 					    	<button type="submit" onclick="$('#mode').val('surveys')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.Search" /></button>
 					    	<button type="submit" onclick="$('#mode').val('surveysbulkdownload')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.DownloadSelectedFiles" /></button>
+				    		<button type="submit" onclick="$('#mode').val('surveysreset')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.Reset" /></button>
 				    	</div>
 				    	<div style="float: left; margin-left: 20px; margin-top: 10px;">
 				    		<input type="checkbox" name="surveyexports" value="true" class="check" <c:if test="${filter.systemExports}">checked="checked"</c:if> /> <spring:message code="label.Exports" /><br />
@@ -208,6 +209,7 @@
 					    	
 					    	<button type="submit" onclick="$('#mode').val('archive')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.Search" /></button>
 					    	<button type="submit" onclick="$('#mode').val('archivebulkdownload')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.DownloadSelectedFiles" /></button>
+				    		<button type="submit" onclick="$('#mode').val('archivereset')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.Reset" /></button>
 				    	</div>
 				    	<div style="clear: both"></div>
 				    </div>			    
@@ -218,6 +220,7 @@
 					    	<span id="invaliduserid" style="display: none; color: #f00"><spring:message code="validation.invalidNumber" /><br /></span>
 					    	<a onclick="submitUserSearch()" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.Search" /></a>
 					    	<button type="submit" onclick="$('#mode').val('usersbulkdownload')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.DownloadSelectedFiles" /></button>
+				    		<button type="submit" onclick="$('#mode').val('usersreset')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.Reset" /></button>
 				    	</div>
 				    	<div style="clear: both"></div>
 				    </div>

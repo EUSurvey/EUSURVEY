@@ -161,6 +161,8 @@ public class FileManagementController extends BasicController {
 		String alias = request.getParameter("surveyalias");
 		String mode = request.getParameter("mode");
 		
+		String newPage = request.getParameter("newPage");
+		
 		boolean exports = request.getParameter("surveyexports") != null && request.getParameter("surveyexports").equalsIgnoreCase("true");
 		boolean files = request.getParameter("surveyfiles") != null && request.getParameter("surveyfiles").equalsIgnoreCase("true");
 		boolean temp = request.getParameter("surveytemp") != null && request.getParameter("surveytemp").equalsIgnoreCase("true");
@@ -214,9 +216,13 @@ public class FileManagementController extends BasicController {
 				fileService.startExport(inputFilter, checkall ? null : files2export, user);
 				result.addObject("info", resources.getMessage("info.DownloadStarted", null, "Exported", locale));
 			}
-		}
+		} else if (mode.endsWith("reset")) {
+	 		mode = mode.replace("reset", "");
+	 	 	request.getSession().removeAttribute("lastfilefilter");
+	 	 	request.getSession().setAttribute("lastfilemode", mode);
+	 	 	return files(request, model, locale);
+        }
 		
-		String newPage = request.getParameter("newPage");
 		int page = newPage == null || newPage.length() == 0 || newPage.equalsIgnoreCase("first") ? 1 : Integer.parseInt(newPage);
 		
 		inputFilter.setPage(page);
