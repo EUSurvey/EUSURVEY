@@ -500,12 +500,12 @@
 			
 				<div class="action-bar">
 					<div style="float: left;">
-						<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
+						<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-primary" type="submit" value="<spring:message code="label.Search" />" />
 						<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a>
 						<a rel="tooltip" title="<spring:message code="label.Configure" />" onclick="$('#configure-dialog').modal('show')" class="btn btn-default"><i class="icon icon-wrench"></i> <spring:message code="label.Configure" /></a>
 					</div>
 					<div style="text-align:center">
-						<a rel="tooltip" title="<spring:message code="label.AddUser" />" class="btn btn-info" onclick="showAddDialog();"><spring:message code="label.AddUser" /></a>
+						<a rel="tooltip" title="<spring:message code="label.AddUser" />" class="btn btn-primary" onclick="showAddDialog();"><spring:message code="label.AddUser" /></a>
 					</div>
 				</div>
 						
@@ -793,7 +793,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a tabindex="9" id="add-user-button" onclick="createUser();" class="btn btn-info"><spring:message code="label.OK" /></a>	
+				<a tabindex="9" id="add-user-button" onclick="createUser();" class="btn btn-primary"><spring:message code="label.OK" /></a>	
 				<a tabindex="10" onblur="$('#add-user-login').focus()" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 			</div>
 			</div>
@@ -809,7 +809,7 @@
 			<div class="modal-footer">
 				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>			
-				<a  onclick="deleteUser();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>		
+				<a  onclick="deleteUser();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>		
 			</div>
 			</div>
 			</div>
@@ -834,7 +834,7 @@
 					</div>				
 				</div>
 				<div class="modal-footer">
-					<a onclick="saveConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+					<a onclick="saveConfiguration();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 					<a onclick="cancelConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
 				</div>
 				</div>
@@ -849,7 +849,7 @@
 	    				<spring:message code="info.userreferenceserror" />
 	    			</div>
 	    			<div class="modal-footer">
-	    				<a onclick="$('#userreferenceserrordialog').modal('hide');" class="btn btn-info"><spring:message code="label.OK" /></a>
+	    				<a onclick="$('#userreferenceserrordialog').modal('hide');" class="btn btn-primary"><spring:message code="label.OK" /></a>
 	    			</div>
 	    		</div>
 	    	</div>
@@ -872,7 +872,7 @@
 						</div>
 						<div class="modal-footer">
 							<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-							<a id="freezeUserYesBtn"  onclick="freezeUser();" class="btn btn-info"><spring:message code="label.BanUser" /></a>
+							<a id="freezeUserYesBtn"  onclick="freezeUser();" class="btn btn-primary"><spring:message code="label.BanUser" /></a>
 							<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 						</div>
 					</form:form>

@@ -404,7 +404,7 @@
 						  <div class="modal-header">${form.getMessage("label.Confirmation")}</div>
 						  <div class="modal-body" data-bind="html: confirmationtext"></div>
 						  <div class="modal-footer">
-							<a style="cursor: pointer" class="btn btn-info" onclick="$(this).closest('.confirmation-dialog').modal('hide');">${form.getMessage("label.Cancel")}</a>		
+							<a style="cursor: pointer" class="btn btn-primary" onclick="$(this).closest('.confirmation-dialog').modal('hide');">${form.getMessage("label.Cancel")}</a>		
 						  </div>
 					  </div>
 				  </div>
@@ -779,7 +779,7 @@
 				  </div>
 				  <div class="modal-footer">
 				  	<a class="btn btn-default" onclick="openPreviousImage($(this).closest('.modal'))"><span class="glyphicon glyphicon-chevron-left"></span></a>
-					<a class="btn btn-info" onclick="$(this).closest('.modal').modal('hide');">${form.getMessage("label.Close")}</a>			
+					<a class="btn btn-primary" onclick="$(this).closest('.modal').modal('hide');">${form.getMessage("label.Close")}</a>			
 				  	<a class="btn btn-default" onclick="openNextImage($(this).closest('.modal'))"><span class="glyphicon glyphicon-chevron-right"></span></a>
 				  </div>
 				 </div>

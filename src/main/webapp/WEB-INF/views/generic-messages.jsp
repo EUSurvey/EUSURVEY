@@ -31,7 +31,7 @@
 		<span id="generic-show-messages-dialog-text"></span>
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" data-dismiss="modal">OK</a>				
+		<a  class="btn btn-primary" data-dismiss="modal">OK</a>				
 	</div>
 	</div>
 	</div>
@@ -47,7 +47,7 @@
 		
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>				
+		<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>				
 	</div>
 	</div>
 	</div>	

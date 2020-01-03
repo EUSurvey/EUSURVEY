@@ -98,7 +98,7 @@
 			       	
 				</div>
 			
-				<button style="margin-left: 30px; margin-bottom: 50px;" type="submit" onclick="return checkReportAbuse()" class="btn btn-info"><spring:message code="label.Report" /></button>
+				<button style="margin-left: 30px; margin-bottom: 50px;" type="submit" onclick="return checkReportAbuse()" class="btn btn-primary"><spring:message code="label.Report" /></button>
 			</form:form>					
 		</div>
 		

@@ -426,7 +426,7 @@
 			
 				td = document.createElement("td");
 				var a = document.createElement("a");
-				$(a).addClass("btn btn-info").attr("onclick","confirmRestore(" + list[i].id + ", '" +  list[i].surveyShortname + "')").html("<spring:message code="label.Restore" />");
+				$(a).addClass("btn btn-primary").attr("onclick","confirmRestore(" + list[i].id + ", '" +  list[i].surveyShortname + "')").html("<spring:message code="label.Restore" />");
 				$(td).append(a);
 				$(row).append(td);	
 				
@@ -489,7 +489,7 @@
 				
 				td = document.createElement("td");
 				var a = document.createElement("a");
-				$(a).addClass("btn btn-info").attr("onclick","confirmRestore(" + list[i].id + ", '" +  list[i].shortname + "')").html("<spring:message code="label.Restore" />");
+				$(a).addClass("btn btn-primary").attr("onclick","confirmRestore(" + list[i].id + ", '" +  list[i].shortname + "')").html("<spring:message code="label.Restore" />");
 				$(td).append(a);
 				
 				a = document.createElement("a");
@@ -792,7 +792,7 @@
 					<div class="row">
 						<div class="col-md-12" style="text-align:center">
 							<spring:message code="label.Search" var="labelSearch"/>
-							<input rel="tooltip" title="${labelSearch}" class="btn btn-info" type="submit" value="${labelSearch}" />
+							<input rel="tooltip" title="${labelSearch}" class="btn btn-primary" type="submit" value="${labelSearch}" />
 
 							<spring:message code="label.ResetFilter" var="labelResetFilter" />
 							<spring:message code="label.Reset" var="labelReset"/>
@@ -1524,7 +1524,7 @@
 				<div id="changeownererror" class="validation-error"><spring:message code="error.nouserselected" /></div>
 			</div>
 			<div class="modal-footer">
-				<a onclick="saveNewOwner();" class="btn btn-info"><spring:message code="label.OK" /></a>
+				<a onclick="saveNewOwner();" class="btn btn-primary"><spring:message code="label.OK" /></a>
 				<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>				
 			</div>
 			</div>
@@ -1541,7 +1541,7 @@
 			<spring:message code="question.Restore" />
 		</div>
 		<div class="modal-footer">
-			<a id="confirm-restore-dialog-target"  onclick="checkAliasExistsForRestore(false); return false;" class="btn btn-info"><spring:message code="label.OK" /></a>
+			<a id="confirm-restore-dialog-target"  onclick="checkAliasExistsForRestore(false); return false;" class="btn btn-primary"><spring:message code="label.OK" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>				
 		</div>
 		</div>
@@ -1558,7 +1558,7 @@
 			<spring:message code="question.FinalDelete" />
 		</div>
 		<div class="modal-footer">
-			<a id="confirm-finaldelete-dialog-target" class="btn btn-info"><spring:message code="label.OK" /></a>
+			<a id="confirm-finaldelete-dialog-target" class="btn btn-primary"><spring:message code="label.OK" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>				
 		</div>
 		</div>
@@ -1578,7 +1578,7 @@
 			<spring:message code="message.MeaningfulShortname2" />
 		</div>
 		<div class="modal-footer">
-			<a  onclick="checkAliasExistsForRestore(true)" class="btn btn-info"><spring:message code="label.OK" /></a>
+			<a  onclick="checkAliasExistsForRestore(true)" class="btn btn-primary"><spring:message code="label.OK" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>				
 		</div>
 		</div>

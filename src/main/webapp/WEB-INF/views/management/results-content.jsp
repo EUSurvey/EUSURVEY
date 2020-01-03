@@ -111,7 +111,7 @@
 														  </a>
 														  
 														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-info"><spring:message code="label.ApplyFilter" /></a>
+														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
 														  	 <c:forEach items="${question.answers}" var="possibleanswer" varStatus="status">
 																<div>
 																	<c:choose>
@@ -149,7 +149,7 @@
 														  </a>
 														  
 														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;" onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-info"><spring:message code="label.ApplyFilter" /></a>
+														  	<a style="margin-bottom: 5px;" onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
 														  	 <c:forEach begin="1" end="${question.numIcons}" varStatus="loop">
 																<div>
 																	<c:choose>
@@ -181,7 +181,7 @@
 														  </a>
 														  
 														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-info"><spring:message code="label.ApplyFilter" /></a>
+														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
 														  	 <c:forEach items="${question.files}" var="file" varStatus="status">
 														    	<div>
 															    	<c:choose>
@@ -210,7 +210,7 @@
 														  </a>
 														  
 														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-info"><spring:message code="label.ApplyFilter" /></a>
+														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
 														  	 <c:forEach items="${question.allPossibleAnswers}" var="possibleanswer" varStatus="status">
 														    	<div>
 															    	<c:choose>
@@ -368,7 +368,7 @@
 										  </a>
 										  
 										  <div class="overlaymenu hideme">
-										  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-info"><spring:message code="label.ApplyFilter" /></a>
+										  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
 										  	 <c:forEach items="${form.getLanguages()}" var="lang" varStatus="status">
 												<div>													
 													<c:choose>

@@ -28,7 +28,7 @@
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>	
 		<img id="add-wait-animation2-static" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-		<a  onclick="checkRecipientAndSubmit();" class="btn btn-info"><spring:message code="label.Save" /></a>
+		<a  onclick="checkRecipientAndSubmit();" class="btn btn-primary"><spring:message code="label.Save" /></a>
 	</div>	
 	</div>
 	</div>

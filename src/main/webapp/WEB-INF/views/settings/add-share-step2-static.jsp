@@ -123,7 +123,7 @@
 			
 		<img id="add-wait-animation2-static" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
 			
-		<a  onclick="step3();" class="btn btn-info"><spring:message code="label.Next" /></a>
+		<a  onclick="step3();" class="btn btn-primary"><spring:message code="label.Next" /></a>
 				
 	</div>
 	</div>

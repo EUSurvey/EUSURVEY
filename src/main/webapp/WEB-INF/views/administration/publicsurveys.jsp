@@ -126,7 +126,7 @@
 				<div id="action-bar" class="container">
 					<div class="row">
 						<div class="col-md-12" style="text-align:center; padding-top: 20px;">
-							<a onclick="$('#resultsForm').submit()" rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info"><spring:message code="label.Search" /></a>
+							<a onclick="$('#resultsForm').submit()" rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-primary"><spring:message code="label.Search" /></a>
 							<a onclick="resetSearch()" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
 						</div>
 					</div>
@@ -249,7 +249,7 @@
 			      </div>
 			      <div class="modal-footer">
 			        <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></button>
-			        <button onclick="$('.validation-error').remove(); return validateInput($('#editorform'))" type="submit" class="btn btn-info"><spring:message code="label.Send" /></button>
+			        <button onclick="$('.validation-error').remove(); return validateInput($('#editorform'))" type="submit" class="btn btn-primary"><spring:message code="label.Send" /></button>
 			      </div>
 			     </div>
 			     </div>

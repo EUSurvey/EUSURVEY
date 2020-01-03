@@ -34,7 +34,7 @@
 			<div style="right: 10px; position: absolute;">
 				<a  class="btn btn-default" onclick="cancelAttendeesImport()"><spring:message code="label.Cancel" /></a>
 			</div>
-			<a onclick="checkFile();" class="btn btn-info"><spring:message code="label.Next" /></a>					
+			<a onclick="checkFile();" class="btn btn-primary"><spring:message code="label.Next" /></a>					
 		</div>
 	</form:form>
 	</div>
@@ -104,7 +104,7 @@
 			<div style="float: right">
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 			</div>		
-			<a onclick="step3();" class="btn btn-info"><spring:message code="label.Next" /></a>		
+			<a onclick="step3();" class="btn btn-primary"><spring:message code="label.Next" /></a>		
 		</div>
 		</div>
 		</div>
@@ -173,7 +173,7 @@
 				<div style="float: right">
 					<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 				</div>		
-				<input type="submit" class="btn btn-info" value="<spring:message code="label.Save" />" />		
+				<input type="submit" class="btn btn-primary" value="<spring:message code="label.Save" />" />		
 			</div>
 		
 		</form:form>

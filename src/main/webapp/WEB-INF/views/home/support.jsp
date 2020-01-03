@@ -241,7 +241,7 @@
 			       	</span>
 			       	
 			       	<div style="text-align: center; margin: 50px;">
-			       		<a class="btn btn-info" onclick="checkAndSubmit()"><spring:message code="label.Submit" /></a>
+			       		<a class="btn btn-primary" onclick="checkAndSubmit()"><spring:message code="label.Submit" /></a>
 			       	</div>
 			    </form:form>
 		    </c:otherwise>

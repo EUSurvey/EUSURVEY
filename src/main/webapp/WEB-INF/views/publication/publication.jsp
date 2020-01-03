@@ -522,7 +522,7 @@
 		   <div id="ask-export-dialog-all-captcha-error" class="alert-danger hideme"><spring:message code="message.captchawrongnew" /></div>
 		</div>
 		<div class="modal-footer">
-			<a  class="btn btn-info" onclick="startExport()"><spring:message code="label.OK" /></a>	
+			<a  class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>				
 		</div>
 		</div>

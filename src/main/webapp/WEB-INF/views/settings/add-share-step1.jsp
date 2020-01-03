@@ -27,7 +27,7 @@
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 			
-		<a  onclick="step2();" class="btn btn-info"><spring:message code="label.Next" /></a>			
+		<a  onclick="step2();" class="btn btn-primary"><spring:message code="label.Next" /></a>			
 	</div>
 	</div>
 	</div>

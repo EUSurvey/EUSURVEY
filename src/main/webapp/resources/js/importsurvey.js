@@ -63,7 +63,7 @@ $(function() {
 	});
 	$(".qq-upload-button").attr('id','btnUploadSurvey');
 	$("#btnUploadSurvey>input[name='file']").attr('id','txtUploadSurvey');
-	$(".qq-upload-button").addClass("btn btn-default btn-info").removeClass("qq-upload-button");	
+	$(".qq-upload-button").addClass("btn btn-default btn-primary").removeClass("qq-upload-button");	
 	$(".qq-upload-drop-area").css("margin-left", "-1000px");
 			
 });			

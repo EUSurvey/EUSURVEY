@@ -368,7 +368,7 @@
 					<spring:message code="info.SessionTimeout" />
 				</div>
 				<div class="modal-footer">
-					<a onclick="$('#sessiontimeoutdialog').modal('hide')" target="_blank" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a onclick="$('#sessiontimeoutdialog').modal('hide')" target="_blank" class="btn btn-primary"><spring:message code="label.OK" /></a>
 				</div>
 			</div>
 		</div>
@@ -384,7 +384,7 @@
 					<spring:message code="info.NetworkProblems" />
 				</div>
 				<div class="modal-footer">
-					<a onclick="$('#networkproblemsdialog').modal('hide')" target="_blank" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a onclick="$('#networkproblemsdialog').modal('hide')" target="_blank" class="btn btn-primary"><spring:message code="label.OK" /></a>
 				</div>
 			</div>
 		</div>

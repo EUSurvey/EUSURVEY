@@ -498,7 +498,7 @@
 						
 							<div style="font-size: 20px; font-weight: bold; margin-bottom: 10px;"><spring:message code="label.SearchCriteria" /></div>
 						
-							<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-info" value="<spring:message code="label.Search" />" />
+							<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-primary" value="<spring:message code="label.Search" />" />
 							<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a><br /><br />
 						
 							<h4><spring:message code="label.Status" />:</h4>
@@ -629,7 +629,7 @@
 							</c:if>
 							
 							<br /><br />
-							<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-info" value="<spring:message code="label.Search" />" />
+							<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-primary" value="<spring:message code="label.Search" />" />
 							<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a><br /><br />
 							
 							<div class="hideme">

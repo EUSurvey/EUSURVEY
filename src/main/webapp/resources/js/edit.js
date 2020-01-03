@@ -120,7 +120,7 @@ $(document).keydown(function(event){
     
     if(event.which=="27")
     {
-    	$(".btn-info1").each(function(){
+    	$(".btn-primary1").each(function(){
     		var id = $(this).closest("td").find("textarea").last().attr("id");
     		var ed = tinyMCE.get(id);
     		if (ed != null) ed.execCommand('mceFullScreen');

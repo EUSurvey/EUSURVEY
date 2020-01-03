@@ -14,7 +14,7 @@
 		<div class="divDialogElements"><spring:message code="message.StartDatePastNow" /></div>
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" onclick="publishConfirmationOkClicked();"><spring:message code="label.OK" /></a>
+		<a  class="btn btn-primary" onclick="publishConfirmationOkClicked();"><spring:message code="label.OK" /></a>
 		<a  class="btn btn-default" onclick="publishConfirmationClose();"><spring:message code="label.Cancel" /></a>
 	</div>
 	</div>
@@ -32,7 +32,7 @@
 		<div class="divDialogElements"><spring:message code="message.StartDateFutureNow" /></div>
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" onclick="publishConfirmationOkClicked();"><spring:message code="label.Proceed" /></a>
+		<a  class="btn btn-primary" onclick="publishConfirmationOkClicked();"><spring:message code="label.Proceed" /></a>
 		<a  class="btn btn-default" onclick="publishConfirmationClose();"><spring:message code="label.Cancel" /></a>
 	</div>
 	</div>
@@ -50,7 +50,7 @@
 		<div class="divDialogElements"><spring:message code="message.StartDateFutureSoon" /></div>
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" onclick="publishConfirmationOkClicked();"><spring:message code="label.Proceed" /></a>
+		<a  class="btn btn-primary" onclick="publishConfirmationOkClicked();"><spring:message code="label.Proceed" /></a>
 		<a  class="btn btn-default" onclick="publishConfirmationClose();"><spring:message code="label.Cancel" /></a>
 	</div>
 	</div>
@@ -68,7 +68,7 @@
 		<div class="divDialogElements"><spring:message code="message.EndDatePast" /></div>
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" onclick="publishConfirmationOkClicked();"><spring:message code="label.Proceed" /></a>
+		<a  class="btn btn-primary" onclick="publishConfirmationOkClicked();"><spring:message code="label.Proceed" /></a>
 		<a  class="btn btn-default" onclick="publishConfirmationClose();"><spring:message code="label.Cancel" /></a>
 	</div>
 	</div>
@@ -82,7 +82,7 @@
 		<div class="divDialogElements"><spring:message code="question.AutoRegFormElements" /></div>
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" onclick="checkPropertiesAndSubmit(true, false);"><spring:message code="label.OK" /></a>
+		<a  class="btn btn-primary" onclick="checkPropertiesAndSubmit(true, false);"><spring:message code="label.OK" /></a>
 		<a  class="btn btn-default" onclick="$('#confirmregformdialog').modal('hide');$('#edit-properties-dialog').modal('show');"><spring:message code="label.Cancel" /></a>
 	</div>
 	</div>
@@ -96,7 +96,7 @@
 		<div class="divDialogElements"><spring:message code="question.PublishResults" /></div>
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" onclick="checkPropertiesAndSubmit(false, true);"><spring:message code="label.OK" /></a>
+		<a  class="btn btn-primary" onclick="checkPropertiesAndSubmit(false, true);"><spring:message code="label.OK" /></a>
 		<a  class="btn btn-default" onclick="$('#confirmpublicationdialog').modal('hide');$('#edit-properties-dialog').modal('show');"><spring:message code="label.Cancel" /></a>
 	</div>
 	</div>
