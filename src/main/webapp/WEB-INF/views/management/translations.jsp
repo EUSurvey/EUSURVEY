@@ -330,8 +330,8 @@
 												<c:when test="${translation.active && translation.complete}">
 													<c:choose>
 														<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">
-															<a class='iconbutton' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Unpublish" />" onclick="switchActive(${translation.id}, this)"><span class="glyphicon glyphicon-pause"></span></a>
-														</c:when>
+													           <a class='iconbutton' data-toggle="tooltip" rel="tooltip" data-activetitle="<spring:message code="label.Publish" />" data-inactivetitle="<spring:message code="label.Unpublish" />" title="<spring:message code="label.Unpublish" />" onclick="switchActive(${translation.id}, this)"><span class="glyphicon glyphicon-pause"></span></a>
+                                                       	</c:when>
 														<c:otherwise>
 															<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Unpublish" />"><span class="glyphicon glyphicon-pause"></span></a>
 														</c:otherwise>
@@ -340,15 +340,15 @@
 												<c:when test="${translation.complete}">
 													<c:choose>
 														<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">
-															<a class='iconbutton' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Publish" />" onclick="switchActive(${translation.id}, this)"><span class="glyphicon glyphicon-play"></span></a>
+															<a class='iconbutton' data-toggle="tooltip" rel="tooltip" data-activetitle="<spring:message code="label.Publish" />" data-inactivetitle="<spring:message code="label.Unpublish" />" title="<spring:message code="label.Publish" />" onclick="switchActive(${translation.id}, this)"><span class="glyphicon glyphicon-play"></span></a>
 														</c:when>
 														<c:otherwise>
-															<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Unpublish" />"><span class="glyphicon glyphicon-play"></span></a>
+															<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Publish" />"><span class="glyphicon glyphicon-play"></span></a>
 														</c:otherwise>
 													</c:choose>										
 					 							</c:when>
 												<c:otherwise>
-													<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Unpublish" />"><span class="glyphicon glyphicon-play"></span></a>
+													<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Publish" />"><span class="glyphicon glyphicon-play"></span></a>
 												</c:otherwise>
 											</c:choose>											
 											
