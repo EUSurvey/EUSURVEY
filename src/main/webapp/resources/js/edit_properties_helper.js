@@ -825,7 +825,7 @@ function getActionRow(label, l1, action, l2, action2)
 	
 		row = new PropertyRow();
 		row.Type("PossibleAnswerShortnames");
-		var rowcontent = "<div class='editvaluesbuttons'><button id='idBtnSaveShortName' class='btn btn-default btn-info btn-sm' onclick='save(this)'>" + getPropertyLabel("Apply") + "</button> <button id='idBtnCancelShortName' class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'>" + getPropertyLabel("Cancel") + "</button></div>"
+		var rowcontent = "<div class='editvaluesbuttons'><button id='idBtnSaveShortName' class='btn btn-default btn-primary btn-sm' onclick='save(this)'>" + getPropertyLabel("Apply") + "</button> <button id='idBtnCancelShortName' class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'>" + getPropertyLabel("Cancel") + "</button></div>"
 		row.Content(rowcontent);
 		_elementProperties.propertyRows.push(row);
 	}
@@ -1688,7 +1688,7 @@ function edit(span)
 			var td = document.createElement("td");
 			$(td).attr("colspan","2").append("<b>" + getPropertyLabel("PleaseSelectTriggers") + "<b><br />");
 			$(td).append(div);
-			$(td).append('<div style="text-align: right"><button id="btnSaveVisibility" class="btn btn-default btn-info btn-sm" onclick="save(this)">' + getPropertyLabel("Apply") + '</button> <button class="btn btn-default btn-sm" onclick="cancel(this)">' + getPropertyLabel("Cancel") + '</button></div>');
+			$(td).append('<div style="text-align: right"><button id="btnSaveVisibility" class="btn btn-default btn-primary btn-sm" onclick="save(this)">' + getPropertyLabel("Apply") + '</button> <button class="btn btn-default btn-sm" onclick="cancel(this)">' + getPropertyLabel("Cancel") + '</button></div>');
 			$(tr).append(td);
 			$(_elementProperties.selectedproperty).after(tr);
 		}

@@ -255,7 +255,7 @@
 					<div id="action-bar" class="container">
 						<div class="row">
 							<div class="col-md-12" style="text-align:center; margin-top: 20px;">
-								<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
+								<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-primary" type="submit" value="<spring:message code="label.Search" />" />
 								<a  onclick="resetSearch()" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
 							</div>
 						</div>

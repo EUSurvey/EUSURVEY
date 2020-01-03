@@ -261,7 +261,7 @@
 			  	</c:choose>			  	
 			  </div>
 			  <div class="modal-footer">
-			    <a id="btnLogoutEcasFromWelcome" href="${ECASLOGOUT}" target="_blank" class="btn btn-info" onclick="$('#ecas-dialog').modal('hide');"><spring:message code="label.Yes" /></a>			
+			    <a id="btnLogoutEcasFromWelcome" href="${ECASLOGOUT}" target="_blank" class="btn btn-primary" onclick="$('#ecas-dialog').modal('hide');"><spring:message code="label.Yes" /></a>			
 				<button id="btnNotLogoutEcasFromWelcome" class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></button>			
 			  </div>
 			  </div>
@@ -306,7 +306,7 @@
 					
 				</div>
 				<div class="modal-footer">
-					<a  onclick="checkEmail()" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a  onclick="checkEmail()" class="btn btn-primary"><spring:message code="label.OK" /></a>
 					<a  class="btn btn-default" onclick="$('#download-contribution-dialog').modal('hide');"><spring:message code="label.Cancel" /></a>
 				</div>
 			</form:form>

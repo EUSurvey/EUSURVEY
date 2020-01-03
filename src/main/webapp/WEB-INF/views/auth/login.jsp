@@ -141,7 +141,7 @@
 										</c:otherwise>
 									</c:choose>
 								</div>
-								<a class="btn btn-info" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>
+								<a class="btn btn-primary" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>
 							</form:form>
 						</div>
 						
@@ -167,7 +167,7 @@
 										</c:when>									
 									</c:choose>
 								</div>
-								<a class="btn btn-info" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>
+								<a class="btn btn-primary" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>
 							</form:form>
 						</div>
 					</div>
@@ -244,7 +244,7 @@
 		        	</div>				
 				</div>
 				<div class="modal-footer">
-					<a onclick="requestLink();" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a onclick="requestLink();" class="btn btn-primary"><spring:message code="label.OK" /></a>
 					<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 				</div>	
 			</form:form>

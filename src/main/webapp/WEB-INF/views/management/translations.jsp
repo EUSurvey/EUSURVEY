@@ -239,7 +239,7 @@
 					<div class="col-md-8" style="text-align:right">
 						<c:choose>
 						<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">				
-							<a id="addBtnFromTranslation" onclick="$('#add-translation-dialog-error').hide();$('#add-translation-dialog').modal('show');" class="btn btn-info"><spring:message code="label.AddNewTranslation" /></a>
+							<a id="addBtnFromTranslation" onclick="$('#add-translation-dialog-error').hide();$('#add-translation-dialog').modal('show');" class="btn btn-primary"><spring:message code="label.AddNewTranslation" /></a>
 							<a id="uploadBtnFromTranslation" onclick="$('#file-uploader-message').empty();$('#file-uploader-message-language').hide();$('.qq-upload-list').empty();$('#langupdate').val('other');$('#langupdate')[0].selectedIndex=0;$('#otherlangupdate').show();$('#upload-translation-dialog').modal('show');" class="btn btn-default"><spring:message code="label.UploadExistingTranslation" /></a>
 						</c:when>
 						<c:otherwise>				

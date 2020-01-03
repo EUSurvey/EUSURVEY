@@ -18,11 +18,11 @@
 			
 			<c:if test="${oncepublished != null && form.survey.showPDFOnUnavailabilityPage}">
 				<div style="text-align: center; margin-top: 40px;">
-					<a data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="btn btn-info" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
+					<a data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="btn btn-primary" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
 					<span id="download-survey-pdf-dialog-running" class="hideme">${form.getMessage("info.FileCreation")}</span>
 					<span id="download-survey-pdf-dialog-ready" class="hideme">${form.getMessage("info.FileCreated")}</span>
 					<div id="download-survey-pdf-dialog-spinner" class="hideme" style="padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>
-					<br /><a style="white-space: nowrap; overflow-x: visible; display: none; margin-top: 10px" id="download-survey-pdf-dialog-result" target="_blank" class="btn btn-info" href="<c:url value="/pdf/pubsurvey/${form.survey.id}?lang=${form.language.code}&unique=${uniqueCode}"/>">${form.getMessage("label.Download")}</a>
+					<br /><a style="white-space: nowrap; overflow-x: visible; display: none; margin-top: 10px" id="download-survey-pdf-dialog-result" target="_blank" class="btn btn-primary" href="<c:url value="/pdf/pubsurvey/${form.survey.id}?lang=${form.language.code}&unique=${uniqueCode}"/>">${form.getMessage("label.Download")}</a>
 					<div id="download-survey-pdf-dialog-error" class="hideme">${form.getMessage("error.OperationFailed")}</div>
 				</div>
 			</c:if>

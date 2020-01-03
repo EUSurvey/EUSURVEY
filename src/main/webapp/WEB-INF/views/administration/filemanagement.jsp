@@ -311,7 +311,7 @@
 					<div id="confirmdeletefiledialogpathnice"></div>
 				</div>
 				<div class="modal-footer">
-					<input type="submit" class="btn btn-info" value="<spring:message code="label.Yes" />"/>		
+					<input type="submit" class="btn btn-primary" value="<spring:message code="label.Yes" />"/>		
 					<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>		
 				</div>
 				</div>

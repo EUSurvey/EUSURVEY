@@ -208,7 +208,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a  onclick="deleteShare();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>
+			<a  onclick="deleteShare();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>						
 		</div>
 		</div>

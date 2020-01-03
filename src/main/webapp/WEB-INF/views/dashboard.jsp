@@ -64,7 +64,7 @@
 				
 					<c:if test="${USER.formPrivilege > 0 && USER.canCreateSurveys}">
 						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived'">
-							<a class="btn btn-info" onclick="showCreateSurveyDialog();"><spring:message code="label.CreateFirstSurvey" /></a>
+							<a class="btn btn-primary" onclick="showCreateSurveyDialog();"><spring:message code="label.CreateFirstSurvey" /></a>
 						</div>
 					</c:if>
 							
@@ -666,7 +666,7 @@
 													</td>
 													<td>
 														<!-- ko if: finished && error == null -->
-														<a class="btn btn-info" data-bind="click: function(data, event) { confirmRestore(id, surveyShortname); }"><spring:message code="label.Restore" /></a>
+														<a class="btn btn-primary" data-bind="click: function(data, event) { confirmRestore(id, surveyShortname); }"><spring:message code="label.Restore" /></a>
 														<!-- /ko -->
 													</td>
 												</tr>
@@ -820,7 +820,7 @@
 											<td data-bind="html: $data[2] ? '<spring:message code="label.Published" />' : '<spring:message code="label.Unpublished" />'"></td>
 											<td data-bind="html: $data[3]"></td>
 											<td>
-												<a target="_blank" class="btn btn-info" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Open" />" data-bind="attr: {'href' : $data[4]}"><spring:message code="label.Open" /></a>
+												<a target="_blank" class="btn btn-primary" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Open" />" data-bind="attr: {'href' : $data[4]}"><spring:message code="label.Open" /></a>
 											</td>
 										</tr>									
 										<!-- /ko -->
@@ -1093,7 +1093,7 @@
 											<td data-bind="html: $data[4] ? '<spring:message code="label.Published" />' : '<spring:message code="label.Unpublished" />'"></td>
 											<td data-bind="html: $data[5]"></td>
 											<td>
-												<a target="_blank" class="btn btn-info" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.OpenDraft" />" data-bind="attr: {'href' : $data[6]}"><spring:message code="label.OpenDraft" /></a>
+												<a target="_blank" class="btn btn-primary" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.OpenDraft" />" data-bind="attr: {'href' : $data[6]}"><spring:message code="label.OpenDraft" /></a>
 											</td>
 										</tr>									
 										<!-- /ko -->
@@ -1139,7 +1139,7 @@
 				<div class="modal-footer">
 					<a id="confirm-restore-dialog-target" 
 						onclick="checkAliasExistsForRestore(false); return false;"
-						class="btn btn-info"><spring:message code="label.OK" /></a> <a
+						class="btn btn-primary"><spring:message code="label.OK" /></a> <a
 						 class="btn btn-default" data-dismiss="modal"><spring:message
 							code="label.Cancel" /></a>
 				</div>
@@ -1162,7 +1162,7 @@
 				</div>
 				<div class="modal-footer">
 					<a  onclick="checkAliasExistsForRestore(true)"
-						class="btn btn-info"><spring:message code="label.OK" /></a> <a
+						class="btn btn-primary"><spring:message code="label.OK" /></a> <a
 						 class="btn btn-default" data-dismiss="modal"><spring:message
 							code="label.Cancel" /></a>
 				</div>
@@ -1208,7 +1208,7 @@
 	       	</span>
 		</div>
 		<div class="modal-footer">
-			<a  class="btn btn-info" onclick="startExport()"><spring:message code="label.OK" /></a>	
+			<a  class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 		</div>
 		</div>

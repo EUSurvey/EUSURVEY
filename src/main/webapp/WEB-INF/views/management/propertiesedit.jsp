@@ -778,7 +778,7 @@
 	  	
 	  </div>
 	  <div class="modal-footer">
-	 	<a id="properties-save-button" onclick="checkPropertiesAndSubmit(false, false);"  class="btn btn-info"><spring:message code="label.Save" /></a>
+	 	<a id="properties-save-button" onclick="checkPropertiesAndSubmit(false, false);"  class="btn btn-primary"><spring:message code="label.Save" /></a>
 	 	<a id="properties-cancel-button"  class="btn btn-default" onclick="cancelDialog()"><spring:message code="label.Cancel" /></a>		 			
 	  </div>
 	</div>

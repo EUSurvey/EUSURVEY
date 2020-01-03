@@ -88,7 +88,7 @@
 				</table>
 			</c:if>
 			
-			<a class="btn btn-info" href="?startQuiz=true&surveylanguage=${form.language.code}"><spring:message code="label.Start" /></a>
+			<a class="btn btn-primary" href="?startQuiz=true&surveylanguage=${form.language.code}"><spring:message code="label.Start" /></a>
 		</div>
 		
 		<div style="clear: both"></div>

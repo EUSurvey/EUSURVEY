@@ -66,7 +66,7 @@
 					<spring:message code="info.useDesktopPC" />
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-info" data-dismiss="modal"><spring:message code="label.Close" /></a>
+					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close" /></a>
 				</div>
 			</div>
 		</div>
@@ -97,7 +97,7 @@
 		<div id="download-answer-pdf-dialog-error"><spring:message code="error.OperationFailed" /></div>
 	</div>
 	<div class="modal-footer">
-		<a onclick="$('#download-answer-pdf-dialog').modal('hide')" id="download-answer-pdf-dialog-result" target="_blank" class="btn btn-info"><spring:message code="label.Download" /></a>
+		<a onclick="$('#download-answer-pdf-dialog').modal('hide')" id="download-answer-pdf-dialog-result" target="_blank" class="btn btn-primary"><spring:message code="label.Download" /></a>
 		<a onclick="$('body').scrollTop($('#download-answer-pdf-dialog').attr('data-scrolltop'))" rel="tooltip" title="<spring:message code="label.Cancel" />" data-dismiss="modal" class="btn btn-default"><spring:message code="label.Cancel" /></a>			
 	</div>
 	</div>
@@ -461,8 +461,8 @@
 	</div>
 	<div class="modal-footer">
 		<img alt="wait animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-		<a id="createbtn"  onclick="createNewSurvey();" class="btn btn-info"><spring:message code="label.Create" /></a>
-		<a id="importbtn"  onclick="createNewSurvey();" class="btn btn-info hideme"><spring:message code="label.Import" /></a>
+		<a id="createbtn"  onclick="createNewSurvey();" class="btn btn-primary"><spring:message code="label.Create" /></a>
+		<a id="importbtn"  onclick="createNewSurvey();" class="btn btn-primary hideme"><spring:message code="label.Import" /></a>
 		<a  onclick="resetValidationErrors($('#new-survey-table'))" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 	</div>	
 	</div>
@@ -493,7 +493,7 @@
 		</div>
 		<div class="modal-footer">
 			<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="deleteSurveyYesBtn"  onclick="deleteSurvey();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>
+			<a id="deleteSurveyYesBtn"  onclick="deleteSurvey();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>
@@ -508,7 +508,7 @@
 		</div>
 		<div class="modal-footer">
 			<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="archiveSurveyYesBtn" onclick="$('#archive-survey-dialog').modal('hide');$('#generic-wait-dialog').modal('show');"  class="btn btn-info"><spring:message code="label.Yes" /></a>
+			<a id="archiveSurveyYesBtn" onclick="$('#archive-survey-dialog').modal('hide');$('#generic-wait-dialog').modal('show');"  class="btn btn-primary"><spring:message code="label.Yes" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>
@@ -554,7 +554,7 @@
 					</div>
 					<div class="modal-footer">
 						<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-						<a id="freezeSurveyYesBtn"  onclick="freezeSurvey();" class="btn btn-info"><spring:message code="label.FreezeSurvey" /></a>
+						<a id="freezeSurveyYesBtn"  onclick="freezeSurvey();" class="btn btn-primary"><spring:message code="label.FreezeSurvey" /></a>
 						<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 					</div>
 				</form:form>
@@ -585,7 +585,7 @@
 			 	</table>
 			</div>
 			<div class="modal-footer">
-				<a id="acceptMissingFilesButton"  class="btn btn-info"><spring:message code="label.Archive" /></a>
+				<a id="acceptMissingFilesButton"  class="btn btn-primary"><spring:message code="label.Archive" /></a>
 				<a  class="btn btn-default" onclick="$(this).closest('.modal').modal('hide');"><spring:message code="label.Cancel" /></a>
 			</div>
 			</div>

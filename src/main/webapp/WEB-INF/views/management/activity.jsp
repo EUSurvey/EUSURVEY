@@ -118,7 +118,7 @@
 						<div class="col-md-3">
 						</div>
 						<div class="col-md-4">
-							<input type="submit" class="btn btn-info" value="<spring:message code="label.Search" />" />
+							<input type="submit" class="btn btn-primary" value="<spring:message code="label.Search" />" />
 							<a onclick="$('#show-wait-image').modal('show');" class="btn btn-default" href="${contextpath}/${sessioninfo.shortname}/management/activity?reset=true"><spring:message code="label.Reset" /></a>
 						</div>
 						<div class="col-md-5">
@@ -404,7 +404,7 @@
 					
 					</div>
 					<div class="modal-footer">
-						<a  id="btnOkFromConfigurationResult" onclick="$('#resultsFormMode').val('configure'); $('#configure-columns-dialog').modal('hide'); $('#resultsForm').submit();" class="btn btn-info" ><spring:message code="label.OK" /></a>		
+						<a  id="btnOkFromConfigurationResult" onclick="$('#resultsFormMode').val('configure'); $('#configure-columns-dialog').modal('hide'); $('#resultsForm').submit();" class="btn btn-primary" ><spring:message code="label.OK" /></a>		
 						<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 					</div>	
 					</div>

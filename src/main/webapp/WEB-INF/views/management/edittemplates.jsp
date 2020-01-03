@@ -186,7 +186,7 @@
 		<td colspan='2'>
 			<textarea data-bind="html: TinyMCEContent(), attr: {id: TinyMCEId()}"></textarea>
 			<div class='edittextbuttons'>
-				<button data-bind="attr: {id: 'idBtnSave' + Label()}" class='btn btn-default btn-info btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
+				<button data-bind="attr: {id: 'idBtnSave' + Label()}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
 				<button data-bind="attr: {id: 'idBtnCancel' + Label()}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
 			</div>
 		</td>
@@ -197,7 +197,7 @@
 	<tr class="propertyrow hideme">
 		<td class="propertycontent" colspan='2'>
 			<table class="table table-bordered propertiessubtable"></table>
-			<div class='editvaluesbuttons'><button id='idBtnSaveShortName' class='btn btn-default btn-info btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button> <button id='idBtnCancelShortName' class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button></div>
+			<div class='editvaluesbuttons'><button id='idBtnSaveShortName' class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button> <button id='idBtnCancelShortName' class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button></div>
 		</td>
 	</tr>		
 </script>
@@ -301,7 +301,7 @@
 		<td colspan='2' style="border-bottom: 0px;">
 			<textarea data-bind="html: scoring.feedback(), attr: {id: 'feedback' + id()}"></textarea>
 			<div class='edittextbuttons'>
-				<button data-bind="attr: {id: 'idBtnSaveFeedback'}" class='btn btn-default btn-info btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
+				<button data-bind="attr: {id: 'idBtnSaveFeedback'}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
 				<button data-bind="attr: {id: 'idBtnCancelFeedback'}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
 			</div>
 		</td>

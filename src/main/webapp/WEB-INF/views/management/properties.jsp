@@ -285,7 +285,7 @@
 				<div class="col-md-12" style="text-align:center">
 					<c:choose>
 						<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">
-							<input id="btnEditPropertiesEnabled" type="button" onclick="editProperties();" class="btn btn-info" value="<spring:message code="label.Edit" />" />
+							<input id="btnEditPropertiesEnabled" type="button" onclick="editProperties();" class="btn btn-primary" value="<spring:message code="label.Edit" />" />
 						</c:when>
 						<c:otherwise>
 							<input type="button" id="btnEditPropertiesDisabled" class="btn disabled btn-default" value="<spring:message code="label.Edit" />" />

@@ -165,7 +165,7 @@ function propagateChange()
 {
 	if (!$("#btnSaveDraft").hasClass('disabled'))
 	{
-		$("#btnSaveDraft").removeClass("btn-default").addClass("btn-info");
+		$("#btnSaveDraft").removeClass("btn-default").addClass("btn-primary");
 	}
 }
 

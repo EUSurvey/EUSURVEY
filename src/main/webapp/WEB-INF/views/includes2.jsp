@@ -15,7 +15,7 @@
 		</div>
 		<div class="modal-footer">
 			<img alt="wait animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="okStartExportButton"  onclick="checkAndStartExport($('#export-name').val());"  class="btn btn-info"><spring:message code="label.OK" /></a>	
+			<a id="okStartExportButton"  onclick="checkAndStartExport($('#export-name').val());"  class="btn btn-primary"><spring:message code="label.OK" /></a>	
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>

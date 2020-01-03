@@ -32,7 +32,7 @@
 		<p><spring:message code="question.FormImported" /></p>
 	  </div>
 	  <div class="modal-footer">
-	  	<a onclick="goToSurvey();" id="import-survey-dialog-2-yes" class="btn btn-info"><spring:message code="label.Yes" /></a>	
+	  	<a onclick="goToSurvey();" id="import-survey-dialog-2-yes" class="btn btn-primary"><spring:message code="label.Yes" /></a>	
 	  	<a onclick="$('#import-survey-dialog-2').modal('hide'); reloadSurveys();" id="import-survey-dialog-2-no" class="btn btn-default"><spring:message code="label.No" /></a>	
 	  </div>
 	  </div>
