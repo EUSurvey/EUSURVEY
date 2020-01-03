@@ -379,7 +379,7 @@
 										<td>
 											<c:choose>
 												<c:when test="${answerSet.isDraft}">
-													<img style="cursor: not-allowed" data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" src="${contextpath}/resources/images/file_extension_pdf_small_grey.png">
+													<img data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" src="${contextpath}/resources/images/file_extension_pdf_small_grey.png">
 												</c:when>
 												<c:otherwise>
 													<a style="pading-bottom: 10px;" data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" onclick="downloadAnswerPDF('${answerSet.uniqueCode}')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png"></a>
@@ -391,7 +391,7 @@
 													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" target="_blank" href="<c:url value='/editcontribution/'/>${answerSet.uniqueCode}?mode=dialog" ><span class="glyphicon glyphicon-pencil"></span></a>
 												</c:when>
 												<c:otherwise>
-													<a style="cursor: not-allowed" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton disabled" ><span class="glyphicon glyphicon-pencil"></span></a>
+													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton disabled" ><span class="glyphicon glyphicon-pencil"></span></a>
 												</c:otherwise>
 											</c:choose>
 											
@@ -400,7 +400,7 @@
 													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton" onclick="resetContribution('${answerSet.uniqueCode}', this)" ><span class="glyphicon glyphicon-refresh"></span></a>
 												</c:when>
 												<c:otherwise>
-													<a style="cursor: not-allowed !important" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton disabled"><span class="glyphicon glyphicon-refresh"></span></a>
+													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton disabled"><span class="glyphicon glyphicon-refresh"></span></a>
 												</c:otherwise>
 											</c:choose>
 										</td>									

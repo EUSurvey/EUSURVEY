@@ -31,20 +31,8 @@ body {
 	padding-bottom: 100px;	 
 }
 
-.disabled {
-	cursor: not-allowed;	
-}
-
 textarea {
 	resize: none;
-}
-
-#content .qq-uploader input {
-	cursor: not-allowed !important;
-}
-
-#content .visiblelink {
-	cursor: not-allowed !important;
 }
 
 .gallery-table {
@@ -267,7 +255,6 @@ textarea {
 
 .glyphicon.disabled {
 	color: #999;
-	cursor: not-allowed;
 }
 
 .toolboxheader {
@@ -552,10 +539,6 @@ td.table-header {
 
 .minmaxtable .datepicker {
 	width: 100px !important;
-}
-
-.survey-element a {
-	cursor: not-allowed;
 }
 
 .survey-element-hovered:not(.selectedquestion) {
