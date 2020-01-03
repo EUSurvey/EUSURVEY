@@ -210,7 +210,7 @@
 	
 		<div class="fullpageform100">
 			
-			<div id="action-bar" class="container action-bar">
+			<div id="action-bar" class="container action-bar" style="padding-top: 20px;">
 				<div class="row">
 					<div class="col-md-4">
 						<c:choose>
