@@ -57,6 +57,10 @@
 			});
 			
 			$('[data-toggle="tooltip"]').tooltip();
+			
+			<c:if test="${filter.status != null}">
+		 		$("#contributiontype").val("${filter.status}");
+		 	</c:if>
 		});
 		
 		var infinitePage = 6;
@@ -255,6 +259,13 @@
 					<div id="action-bar" class="container">
 						<div class="row">
 							<div class="col-md-12" style="text-align:center; margin-top: 20px;">
+								<div style="float: left">
+									<select name="contributiontype" id="contributiontype" class="form-control" style="width: auto">
+										<option value="All"><spring:message code="label.DraftsAndSubmittedContributions" /></option>
+ 		                                <option value="Drafts"><spring:message code="label.DraftContributionsOnly" /></option>
+ 	                                    <option value="Submitted"><spring:message code="label.SubmittedContributionsOnly" /></option>                                                   
+ 	                                </select>
+ 	                            </div>
 								<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-primary" type="submit" value="<spring:message code="label.Search" />" />
 								<a  onclick="resetSearch()" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
 							</div>
