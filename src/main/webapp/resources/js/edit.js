@@ -1,5 +1,6 @@
 var elemcounter = 1;
 var originalindex = -1;
+var draggedelements = null;
 $(function() {
 	$(".sortable").sortable({
 		placeholder: "draggable-active",
@@ -7,7 +8,12 @@ $(function() {
 		handle: "div",
 		start: function(e, ui) {
 			originalindex = $(ui.item).index();
-			$(".draggable-active").append("<div class='droppable-text'>" + getPropertyLabel("dropelementhere") + "</div>");			
+			$(".draggable-active").append("<div class='droppable-text'>" + getPropertyLabel("dropelementhere") + "</div>");
+			
+			if ($(".selectedquestion").length > 1)
+			{
+				draggedelements = $("#content").find(".selectedquestion");
+			}			
 		},
 		stop: function(event, ui) {
 			
@@ -29,6 +35,33 @@ $(function() {
 					_elementProperties.showProperties(ui.item, null, false);
 					_undoProcessor.addUndoStep(["MOVE", $(ui.item).attr("id"), originalindex, $(ui.item).index()]);
 					moveItemInNavigation(originalindex, $(ui.item).index());
+					
+					if (draggedelements != null)
+					{
+						var found = false;
+					 	var lastitem = $(ui.item);
+					 	draggedelements.each(function(i){
+					 		var id = $(this).attr("id");
+					 		originalindex = $(this).index();
+					 		if (id != $(ui.item).attr("id"))
+					 		{
+					 			if (!found)
+					 			{
+					 				//above item
+					 				$(this).insertBefore($(ui.item));
+					 			} else {
+					 				//below item
+					 				$(this).insertAfter(lastitem);
+					 				lastitem = $(this);
+					 				_undoProcessor.addUndoStep(["MOVE", $(this).attr("id"), originalindex, $(this).index()]);
+					 			}
+					 		} else {
+					 			found = true;
+					 		}
+					 	});
+					 		                                                
+					 	createNavigation(false);
+					 }
 				} else {
 					$('#invalid-dependency-dialog').modal('show');
 					$( "#content" ).sortable( "cancel" );
