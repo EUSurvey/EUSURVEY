@@ -1,5 +1,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+
+	<div class="modal" id="askSectionVisibilityDialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-body">      
+					<spring:message code="question.ApplyVisibilityToChildren" />
+				</div>
+				<div class="modal-footer">
+					<a  class="btn btn-primary" onclick="$('#askSectionVisibilityDialog').modal('hide');updateVisibility(selectedspan, false, false, true);"><spring:message code="label.Yes" /></a>
+					<a  class="btn btn-default" onclick="$('#askSectionVisibilityDialog').modal('hide');updateVisibility(selectedspan, false, false, false);"><spring:message code="label.No" /></a>                
+				</div>
+			</div>
+		</div>
+	</div>
 	
 	<div class="modal" id="invalid-regform-dialog" data-backdrop="static">
 	<div class="modal-dialog modal-sm">

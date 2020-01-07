@@ -1533,7 +1533,7 @@ function showHideVisibilityElements(span)
 function resetVisibility(button)
 {
 	_elementProperties.selectedproperty = $(button).closest("tr");
-	updateVisibility(button, true);
+	updateVisibility(button, true, false, false);
 }
 
 function resetFeedback(button)
