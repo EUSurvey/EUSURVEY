@@ -19,6 +19,7 @@
 		}
 	</style>
 	
+	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/sendinvitations.js?version=<%@include file="../version.txt" %>"></script>
 	
 	<script type="text/javascript"> 
