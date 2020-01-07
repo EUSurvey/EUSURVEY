@@ -853,7 +853,8 @@ function updateFeedback(span, reset)
 	if (!reset)	$(span).closest("tr").hide();
 }
 
-function updateVisibility(span, reset)
+var selectedspan;
+function updateVisibility(span, reset, ask, dialogresult)
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var triggers = document.createElement("div");
@@ -870,6 +871,31 @@ function updateVisibility(span, reset)
 	var values = "";
 	var selectedquestions = "";
 	var oldtext = $(_elementProperties.selectedproperty).attr("data-oldvalues");
+	
+	var isSection = $(_elementProperties.selectedelement).hasClass("sectionitem");
+	var includechildren = false;
+	if (isSection && ask && $("#content")) {
+		selectedspan = span;
+		$("#askSectionVisibilityDialog").modal("show");
+		return;
+	}
+        
+	if (isSection && !ask && dialogresult) {
+		var level = parseInt($(_elementProperties.selectedelement).find(".sectiontitle").first().attr("data-level"));
+   
+		$(_elementProperties.selectedelement).nextAll().each(function(){
+			if ($(this).hasClass("sectionitem"))
+			{
+				var level2 = parseInt($(this).find(".sectiontitle").first().attr("data-level"));
+				if (level2 <= level)
+				{
+					return false;
+				}
+			}
+	 
+			$(this).addClass("selectedquestion");
+		});
+	}
 	
 	if (!reset)
 	{
@@ -960,7 +986,7 @@ function save(span)
 	
 	switch (label) {
 		case "Visibility":
-			updateVisibility(span, false);
+			updateVisibility(span, false, true, false);
 			break;
 		case "EDITVALUES":
 			var oldvalues = [];
