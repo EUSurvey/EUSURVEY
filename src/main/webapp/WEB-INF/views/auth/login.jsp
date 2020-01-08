@@ -73,7 +73,7 @@
 			
 			if(window.location.href.indexOf("sessionexpired")>-1)
 			{
-				showBasicError('<spring:message code="error.Session" />');
+				showError('<spring:message code="error.Session" />');
 			}
 			
 			<c:if test='${mode != null && mode.equalsIgnoreCase("forgotPassword")}'>
@@ -227,6 +227,7 @@
 	</div>
 	
 	<%@ include file="../footer.jsp" %>
+	<%@ include file="../generic-messages.jsp" %>
 	
 	<div class="modal" id="forgot-password-dialog" data-backdrop="static">
 		<div class="modal-dialog">
@@ -255,14 +256,14 @@
 	<c:if test="${error != null}">
 		<script type="text/javascript">
 			switchPanels();
-			showBasicError('<esapi:encodeForHTML>${error}</esapi:encodeForHTML>');
+			showError('<esapi:encodeForHTML>${error}</esapi:encodeForHTML>');
 		</script>
  	</c:if>
  	
  	<c:if test="${info != null}">
  		<script type="text/javascript">
  			switchPanels();
-			showBasicInfo('<esapi:encodeForHTML>${info}</esapi:encodeForHTML>');
+			showInfo('<esapi:encodeForHTML>${info}</esapi:encodeForHTML>');
 		</script>
  	</c:if>
 

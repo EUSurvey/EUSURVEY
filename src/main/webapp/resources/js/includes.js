@@ -2116,37 +2116,15 @@ function initModals(item)
 		return result;
 	}
 	
-	function showBasicInfo(text)
-	{
-		$("#basic-info-box-text").html(text);
-		$("#basic-info-box").show();
-		window.setTimeout("hideBasicInfos()", 5000);
-	}
-	
-	function showBasicError(text)
-	{
-		$("#basic-error-box-text").html(text);
-		$("#basic-error-box").show();
-		window.setTimeout("hideBasicInfos()", 5000);
-	}
-	
-	function hideBasicInfos()
-	{
-		$("#basic-info-box").hide(400);
-		$("#basic-error-box").hide(400);
-	}
-	
 	function sanitize(str)
 	{
 		var d = document.createElement('div');
 		d.appendChild(document.createTextNode(str));
-		return d.innerHTML;
-		
+		return d.innerHTML;		
 	}
 	
 	var originalMargin = 0;
-	var originalTop = 0;
-	
+	var originalTop = 0;	
 	
 	//check if scrollbars required
 	var isWindowScrolling = function() {

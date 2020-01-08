@@ -38,7 +38,7 @@
 				messages.push('${message}');
 			</c:forEach>
 		
-			showMessages(messages);
+			showGenericMessages(messages);
 		</script>
 	</c:if>
 

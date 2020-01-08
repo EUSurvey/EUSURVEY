@@ -14,29 +14,6 @@ function switchNiceHelp(a)
 	}
 }
 
-function showRunnerInfo(text) {
-	$("#generic-info-box-text-runner").html(text);
-	$("#generic-info-box-runner").show();
-	window.setTimeout("hideGenericRunnerInfos()", 5000);
-}
-
-function showRunnerError(text) {
-	$("#generic-error-box-text-runner").html(text);
-	$("#generic-error-box-runner").show();
-	window.setTimeout("hideGenericRunnerInfos()", 5000);
-}
-
-function showRunnerWarning(text) {
-	$("#generic-warning-box-text").html(text);
-	$("#generic-warning-box").show();
-	$("#warningmessagebutton").show();
-}
-
-function hideGenericRunnerInfos() {
-	$("#generic-info-box-runner").hide(400);
-	$("#generic-error-box-runner").hide(400);
-}
-
 var myWidth = 0;
 var myHeight = 0;
 
@@ -261,7 +238,7 @@ function createUploader(instance)
 	    	}
 		},
 		onError: function() {
-			showRunnerError(messageuploadnoconnection);
+			showError(messageuploadnoconnection);
 		},
 		showMessage: function(message){
 			message = message.replace("1.0MB", "1 MB");
@@ -1563,7 +1540,7 @@ function createCookie(name,value,days) {
 			localStorage.setItem(name, value);
 		} catch(e) {
 		    if(e.name == "NS_ERROR_FILE_CORRUPTED") {
-		    	showRunnerError("Sorry, it looks like your browser storage has been corrupted. Please clear your storage by going to Tools -> Clear Recent History -> Cookies and set time range to 'Everything'. This will remove the corrupted browser storage across all sites.");
+		    	showError("Sorry, it looks like your browser storage has been corrupted. Please clear your storage by going to Tools -> Clear Recent History -> Cookies and set time range to 'Everything'. This will remove the corrupted browser storage across all sites.");
 		    }
 		}		
 	 }

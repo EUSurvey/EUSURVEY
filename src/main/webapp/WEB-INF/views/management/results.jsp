@@ -87,7 +87,7 @@
 			checkDeleteBoxes();
 		
 			<c:if test="${message == 'success'}">
-				showInfo('<spring:message code="message.ContributionDeleted" />');
+				showSuccess('<spring:message code="message.ContributionDeleted" />');
 			</c:if>
 		
 			<c:if test="${message == 'failure'}">
@@ -99,7 +99,7 @@
 			</c:if>
 				
 			<c:if test="${deletedAnswers != null}">
-				showInfo('${deletedAnswers}&nbsp;<spring:message code="message.ContributionDeleted" />');
+				showSuccess('${deletedAnswers}&nbsp;<spring:message code="message.ContributionDeleted" />');
 			</c:if>
 			
 			$("#form-menu-tab").addClass("active");

@@ -850,7 +850,7 @@
 	<c:if test="${deleted != null}">
 		<script type="text/javascript">
 			var t = '<spring:message code="message.SurveyDeleted" />';
-			showInfo(t.replace(/X/g, '${deletedShortname}'));
+			showSuccess(t.replace(/X/g, '${deletedShortname}'));
 		</script>
 	</c:if>
 

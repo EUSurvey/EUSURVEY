@@ -91,7 +91,7 @@
 						function doesConnectionExist() {
 				  		    if ($(".g-recaptcha").first().find("div").length == 0)
 				  		    {
-				  		    	showRunnerWarning('${form.getMessage("error.InternetConnection")}<br /><span style="color: #f00">${form.getMessage("error.InternetConnectionCaptcha")}</span>');
+				  		  		showError('${form.getMessage("error.InternetConnection")}<br /><span style="color: #f00">${form.getMessage("error.InternetConnectionCaptcha")}</span>');
 				  		  	}
 				  		}				  		
 				  		$(function() {		
@@ -106,8 +106,8 @@
 	  			<script type="text/javascript">
 					$(function() {	
 						$("#runner-captcha-error").show();
-	  					showRunnerError('${form.getMessage("error.captcha")}');
-	  				});
+						showError('${form.getMessage("error.captcha")}');
+		  			});
 	  			</script>	  		
 	  		</c:if>
 	  		

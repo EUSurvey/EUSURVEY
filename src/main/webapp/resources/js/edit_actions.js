@@ -724,7 +724,7 @@ var Actions = function() {
 			localStorage.setItem(name, value);
 		} catch(e) {
 		    if(e.name == "NS_ERROR_FILE_CORRUPTED") {
-		    	showRunnerError("Sorry, it looks like your browser storage has been corrupted. Please clear your storage by going to Tools -> Clear Recent History -> Cookies and set time range to 'Everything'. This will remove the corrupted browser storage across all sites.");
+		    	showError("Sorry, it looks like your browser storage has been corrupted. Please clear your storage by going to Tools -> Clear Recent History -> Cookies and set time range to 'Everything'. This will remove the corrupted browser storage across all sites.");
 		    }
 		}	
     }

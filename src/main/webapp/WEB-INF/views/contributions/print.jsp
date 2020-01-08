@@ -624,11 +624,5 @@
 		</div>						
 	</div>
 	
-	<c:if test="${message != null}">
-		<script type="text/javascript">
-			showMessage('${message}');
-		</script>
-	</c:if>
-	
 </body>
 </html>

@@ -809,7 +809,7 @@
 							if (data != "OK") {								
 								showError(data);								
 							} else {
-								showInfo('<spring:message code="info.GuestListsUpdated" />')
+								showSuccess('<spring:message code="info.GuestListsUpdated" />')
 							}
 						}
 					});	
@@ -818,22 +818,22 @@
 		</c:when>
 		<c:when test="${editedAttendeesBatch != null}">
 			<script type="text/javascript">
-				showInfo('<spring:message code="message.ContactsUpdatedBatch" />');
+				showSuccess('<spring:message code="message.ContactsUpdatedBatch" />');
 			</script>
 		</c:when>
 		<c:when test="${editedAttendees != null && deletedcontacts != null}">
 			<script type="text/javascript">
-				showInfo('<spring:message code="message.ContactsDeleted" />');
+				showSuccess('<spring:message code="message.ContactsDeleted" />');
 			</script>
 		</c:when>
 		<c:when test="${editedAttendees != null}">
 			<script type="text/javascript">
-				showInfo('<spring:message code="message.ContactsUpdated" />');
+				showSuccess('<spring:message code="message.ContactsUpdated" />');
 			</script>
 		</c:when>
 		<c:when test="${deletedAttendeesBatch != null}">
 			<script type="text/javascript">
-				showInfo('<spring:message code="message.ContactsDeletedBatch" />');
+				showSuccess('<spring:message code="message.ContactsDeletedBatch" />');
 			</script>
 		</c:when>
 	</c:choose>
