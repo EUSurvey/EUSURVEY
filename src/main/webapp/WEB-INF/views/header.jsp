@@ -39,6 +39,13 @@
 				</div>
 					
 				<div style="float: right; line-height: 22px;">		
+				
+					<span id="messages-button" onclick="$('#messages-log-div').show()">
+						<!-- ko if: messages().length > 0 || systemMessages.length > 0 -->
+						<span class="glyphicon glyphicon-bell" style="font-size: 17px;"></span>
+						<span class="badge" style="background-color: #f00; margin-left: -10px; margin-top: -3px; z-index: 100;" data-bind="visible: totalMessages() > 0, text: totalMessages"></span>
+						<!-- /ko -->
+					</span>	
 					
 					<c:choose>
 						<c:when test="${form != null && form.getResources() != null && runnermode == true}">

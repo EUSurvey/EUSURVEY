@@ -424,7 +424,7 @@
 			
 			<c:choose>
 				<c:when test="${saved != null}">
-					showInfo("<spring:message code='message.SurveySaved' />");	
+					showSuccess("<spring:message code='message.SurveySaved' />");	
 					
 					//delete backup from local storage
 					_actions.deleteBackup();

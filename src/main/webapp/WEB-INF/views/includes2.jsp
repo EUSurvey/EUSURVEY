@@ -32,17 +32,7 @@
 		</div>
 		</div>
 	</div>
-	
-	<div id="basic-info-box" class="alert alert-success hideme" style="position: fixed; top: 5px; right:5px; padding: 10px; z-index: 10002">
-		<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-		<div id="basic-info-box-text"></div>
-	</div>
-	
-	<div id="basic-error-box" class="alert alert-danger hideme" style="position: fixed; top: 5px; right:5px; padding: 10px; z-index: 10002">
-		<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-		<div id="basic-error-box-text"></div>
-	</div>
-	
+		
 	<form:form id="logoutform" action="${contextpath}/j_spring_security_logout" method="post">
     </form:form>
 	

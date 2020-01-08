@@ -73,7 +73,7 @@
 					  success: function( data ) {						  
 						  if (data == "success") {
 								$('#download-contribution-dialog').modal('hide');
-								showInfo(message_PublicationExportSuccess2.replace('{0}', val));
+								showSuccess(message_PublicationExportSuccess2.replace('{0}', val));
 						  	} else if (data == "errorcaptcha") {
 						  		$("#runner-captcha-error").show();
 						  		reloadCaptcha();
@@ -107,6 +107,9 @@
 			<c:when test="${USER != null && runnermode == null && responsive == null}">
 				<%@ include file="../menu.jsp" %>	
 			</c:when>
+			<c:otherwise>
+				<%@ include file="../generic-messages.jsp" %>
+			</c:otherwise>
 		</c:choose>
 		
 		<c:choose>
@@ -316,6 +319,5 @@
 	</div>
 	
 	<%@ include file="../footer.jsp" %>	
-	<%@ include file="../generic-messages.jsp" %>
 </body>
 </html>

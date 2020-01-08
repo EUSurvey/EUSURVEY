@@ -1220,7 +1220,7 @@ $(function() {
 		trigger : 'hover'
 	});
 	
-	ko.applyBindings(_dashboard);	
+	ko.applyBindings(_dashboard, $('#dashboarddiv')[0]);	
 	
 	if ($("#surveysarea").length == 0)
 	{

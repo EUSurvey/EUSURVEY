@@ -325,6 +325,8 @@
 			</c:otherwise>
 		</c:choose>
 		
+		<%@ include file="../generic-messages.jsp" %>
+		
 		<script type="text/javascript">
 		
 			$(document).ready(function(){
@@ -344,7 +346,7 @@
 		
 		<c:if test="${message != null}">
 			<script type="text/javascript">
-				showRunnerError('<esapi:encodeForHTML>${message}</esapi:encodeForHTML>');
+				showError('<esapi:encodeForHTML>${message}</esapi:encodeForHTML>');
 			</script>
 		</c:if>
 	

@@ -40,6 +40,7 @@
 	
 		<div class="fullpage">
 			<%@ include file="thanksinner.jsp" %>
+			<%@ include file="generic-messages.jsp" %>
 		</div>
 	</div>
 	

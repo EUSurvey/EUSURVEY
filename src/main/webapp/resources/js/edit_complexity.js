@@ -194,10 +194,10 @@ function updateComplexityScore(type)
 		$("#complexityImageLevel").attr("src", contextpath + "/resources/images/complexity-indicator-critic.png").attr("title", criticLevel).attr("data-original-title", criticLevel);;
 		$("#complexity-message-box").show();
 		
-		if($("#generic-info-box").css("display") == "block")
-		{
-			$("#generic-info-box").css("top", "65px");
-		}		
+//		if($("#generic-info-box").css("display") == "block")
+//		{
+//			$("#generic-info-box").css("top", "65px");
+//		}		
 	}
 	
 }

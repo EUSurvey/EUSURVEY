@@ -55,7 +55,7 @@
 						  
 						  if (data == "success") {
 								$('#ask-export-dialog').modal('hide');
-								showInfo(message_PublicationExportSuccess);
+								showSuccess(message_PublicationExportSuccess);
 						  	} else if (data == "errorcaptcha") {
 						  		$("#runner-captcha-error").show();
 						  		reloadCaptcha();

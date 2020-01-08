@@ -116,7 +116,7 @@
 			$(".qq-upload-drop-area").css("margin-left", "-1000px");
 			
 			<c:if test="${messagesent != null}">
-				showInfo('<spring:message code="support.messagesent" />')
+				showSuccess('<spring:message code="support.messagesent" />')
 			</c:if>
 			
 		});

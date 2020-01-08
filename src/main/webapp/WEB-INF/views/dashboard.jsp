@@ -13,7 +13,6 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/moment.js?version=<%@include file="version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/vis.min.js?version=<%@include file="version.txt" %>"></script>
-	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="version.txt" %>'></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/dashboard.js?version=<%@include file="version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/dashboard-add.js?version=<%@include file="version.txt" %>"></script>	
 	
@@ -48,6 +47,8 @@
 	<div class="page-wrap">
 		<%@ include file="header.jsp"%>
 		<%@ include file="menu.jsp"%>
+		<div id="dashboarddiv">
+		
 			<div class="formmenu">
 				<c:if test="${USER.formPrivilege > 0}">
 					<div id="surveys-button" data-bind="attr: {class: mode() == 'surveys' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToSurveys"><spring:message code="label.ManagedSurveys" /></a></div>
@@ -55,8 +56,7 @@
 				<div id="invitations-button" data-bind="attr: {class: mode() == 'invitations' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToInvitations"><spring:message code="label.PersonalInvitations" /></a></div>
 			</div>		
 	
-		<div class="fullpage">
-			<div class="">
+			<div class="fullpage">			
 			
 				<c:if test="${USER.formPrivilege > 0}">
 			
@@ -1172,13 +1172,13 @@
 
 	<c:if test="${archived != null}">
 		<script type="text/javascript">
-			showInfo("<spring:message code="info.archived" arguments="${archived}" />")
+			showSuccess("<spring:message code="info.archived" arguments="${archived}" />")
 		</script>
 	</c:if>
 	
 	<c:if test="${deleted != null}">
 		<script type="text/javascript">
-			showInfo("<spring:message code="info.SurveyFinallyDeleted" />")
+			showSuccess("<spring:message code="info.SurveyFinallyDeleted" />")
 		</script>
 	</c:if>
 	
@@ -1247,7 +1247,7 @@
 							  
 							  if (data == "success") {
 									$('#ask-export-dialog').modal('hide');
-									showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+									showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 							  	} else if (data == "errorcaptcha") {
 							  		$("#ask-export-dialog-error-captcha").show();
 							  		reloadCaptcha();
@@ -1268,7 +1268,7 @@
 							  
 							  if (data == "success") {
 									$('#ask-export-dialog').modal('hide');
-									showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+									showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 								} else {
 									showError(message_PublicationExportFailed);
 									reloadCaptcha();

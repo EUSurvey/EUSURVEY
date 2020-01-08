@@ -438,7 +438,7 @@
 								  
 								  if (data == "success") {
 										$('#ask-export-dialog').modal('hide');
-										showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+										showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 								  	} else if (data == "errorcaptcha") {
 								  		$("#ask-export-dialog-error-captcha").show();
 								  		reloadCaptcha();
@@ -459,7 +459,7 @@
 								  
 								  if (data == "success") {
 										$('#ask-export-dialog').modal('hide');
-										showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+										showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 									} else {
 										showError(message_PublicationExportFailed);
 										reloadCaptcha();

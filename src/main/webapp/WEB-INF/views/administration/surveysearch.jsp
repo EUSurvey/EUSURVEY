@@ -40,15 +40,15 @@
 			</c:if>
 			
 			<c:if test="${deleted != null}">
-				showInfo('<spring:message code="info.SurveyFinallyDeleted" />');
+				showSuccess('<spring:message code="info.SurveyFinallyDeleted" />');
 			</c:if>
 			
 			<c:if test="${frozen != null}">
-				showInfo('<spring:message code="info.SurveyFrozen" />');
+				showSuccess('<spring:message code="info.SurveyFrozen" />');
 			</c:if>
 			
 			<c:if test="${unfrozen != null}">
-				showInfo('<spring:message code="info.SurveyUnfrozen" />');
+				showSuccess('<spring:message code="info.SurveyUnfrozen" />');
 			</c:if>
 			
 			$('.filtercell').find("input").keyup(function(e){
@@ -672,7 +672,7 @@
 					  success: function( ok ) {
 					  	if (ok)
 					  	{
-					  		showInfo('<spring:message code="info.OwnerChanged" />');
+					  		showSuccess('<spring:message code="info.OwnerChanged" />');
 					  	} else {
 					  		showError('<spring:message code="error.OperationFailed" />');
 					  	}						

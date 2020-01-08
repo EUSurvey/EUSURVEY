@@ -90,6 +90,7 @@
 	</div>
 	
 	<%@ include file="../footer.jsp" %>
+	<%@ include file="../generic-messages.jsp" %>
 	
 	<div class="modal" id="forgot-password-dialog" data-backdrop="static" style="width: 400px; margin-left: -200px;">
 		<form:form id="forgotPasswordForm" action="${contextpath}/auth/login" method="post" style="margin: 0px;" >
@@ -113,13 +114,13 @@
 	
 	<c:if test="${error != null}">
 		<script type="text/javascript">
-			showBasicError('<esapi:encodeForHTML>${error}</esapi:encodeForHTML>');
+			showError('<esapi:encodeForHTML>${error}</esapi:encodeForHTML>');
 		</script>
  	</c:if>
  	
  	<c:if test="${info != null}">
  		<script type="text/javascript">
-			showBasicInfo('<esapi:encodeForHTML>${info}</esapi:encodeForHTML>');
+			showInfo('<esapi:encodeForHTML>${info}</esapi:encodeForHTML>');
 		</script>
  	</c:if>
 	

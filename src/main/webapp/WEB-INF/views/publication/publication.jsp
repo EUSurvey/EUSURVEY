@@ -100,8 +100,7 @@
 		});
 		
 		function showResults()
-		{
-		
+		{		
 			$("#scrollarea").show();
 			$("#results-table").css("min-height", "400px");
 		
@@ -139,18 +138,6 @@
 			} else {
 				$("#scrollareaheader").css("overflow-y","auto");
 			}
-		}
-		
-		function showError(text)
-		{
-			$("#generic-error-box-text").html(text);
-			$("#generic-error-box").show();
-			window.setTimeout("hideGenericInfos()", 5000);
-		}
-
-		function hideGenericInfos()
-		{
-			$("#generic-error-box").hide(400);
 		}
 			
 		var currentIndividual = 0;
@@ -539,12 +526,6 @@
 			</c:if>
 		</script>
 	</c:if>
-	
-	<div id="generic-error-box" class="alert alert-danger hideme" style="position: fixed; top: 5px; right: 5px; padding: 5px; z-index: 10001;">
-		<div style="float: left;"><img src="${contextpath}/resources/images/warning.png" id="system-message-box-icon" alt="system message icon"></div>
-		<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-		<div class="generic-box-text" id="generic-error-box-text"></div>
-	</div>
 	
 </body>
 </html>

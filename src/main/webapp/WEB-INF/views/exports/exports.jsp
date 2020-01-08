@@ -101,11 +101,11 @@
 				  success: function(data)
 				  {
 					  if (data == "success") {
-							showInfo("<spring:message code="message.ExportsDeletedSuccessfully" />");
-							$('#Row' + id).hide();
-						} else {
-							showError('<spring:message code="message.ExportsDeleteFailed" />');
-						}
+						showSuccess("<spring:message code="message.ExportsDeletedSuccessfully" />");
+						$('#Row' + id).hide();
+					} else {
+						showError('<spring:message code="message.ExportsDeleteFailed" />');
+					}
 				  }
 				});
 			
@@ -137,7 +137,7 @@
 					deleteExport(this.id);
 				}
 			});			
-			showInfo("<spring:message code="message.ExportsDeletedSuccessfully" />");
+			showSuccess("<spring:message code="message.ExportsDeletedSuccessfully" />");
 		}
 		
 		function recreateSelectedExports() {

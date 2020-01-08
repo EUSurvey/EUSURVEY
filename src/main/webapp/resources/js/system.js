@@ -82,35 +82,37 @@ function checkSystemMessages()
 			  			  
 			  if (usermessage)
 			  {
-				  $("#btnDeleteUserMessage").show();
+//				  $("#btnDeleteUserMessage").show();
 				  usermessageid = message.id;
 			  } else {
-				  $("#btnDeleteUserMessage").hide();
+//				  $("#btnDeleteUserMessage").hide();
 			  }
 			  
-			  $("#system-message-box").addClass(message.css);
-			  $("#system-message-box-icon").attr("src", contextpath + "/resources/images/" + message.icon);
-			  $("#system-message-box-content").html(message.text);
-			  
+//			  $("#system-message-box").addClass(message.css);
+//			  $("#system-message-box-icon").attr("src", contextpath + "/resources/images/" + message.icon);
+//			  $("#system-message-box-content").html(message.text);
+//			  			  
 			  if (usermessage || retrievedmessageversion != lastshownmessageversion)
 			  {
-				  $("#system-message-box").show();
+				  showSystemMessage(message);
+				  lastshownmessageversion = retrievedmessageversion;
+//				  $("#system-message-box").show();
 				  messagedisplaydate = new Date();
 				  if (message.time > 0)
 				  {
 					  window.setTimeout("hideSystemMessage()", (message.time - alreadydoneseconds) * 1000);
 				  }		
-				  
-				  $(".user-info").css("top", ($("#system-message-box").outerHeight() + 25) + "px");
+//				  
+//				  $(".user-info").css("top", ($("#system-message-box").outerHeight() + 25) + "px");
 			  } else {
-				  $(".user-info").css("top", "5px");
+//				  $(".user-info").css("top", "5px");
 			  }
 			  
-			  $("#systemmessagebutton").show();
-		  } else {
-			  $("#systemmessagebutton").hide();
+//			  $("#systemmessagebutton").show();
+//		  } else {
+//			  $("#systemmessagebutton").hide();
 		  }
-		  
+		  		  
 		  window.setTimeout("checkSystemMessages()", 60000);
 	  }
 	});
