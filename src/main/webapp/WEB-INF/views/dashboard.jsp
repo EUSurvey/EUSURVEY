@@ -13,7 +13,6 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/moment.js?version=<%@include file="version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/vis.min.js?version=<%@include file="version.txt" %>"></script>
-	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="version.txt" %>'></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/dashboard.js?version=<%@include file="version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/dashboard-add.js?version=<%@include file="version.txt" %>"></script>	
 	
@@ -22,6 +21,7 @@
 		var labelunpublished = "<spring:message code='label.Unpublished' />";
 		var labelopen = "<spring:message code='form.Open' />";
 		var labelsecured = "<spring:message code='form.Secured' />";
+		var userid = ${USER.id};
 		
 		function clearDashboardFilterCellContent(link)
 		{
@@ -47,6 +47,8 @@
 	<div class="page-wrap">
 		<%@ include file="header.jsp"%>
 		<%@ include file="menu.jsp"%>
+		<div id="dashboarddiv">
+		
 			<div class="formmenu">
 				<c:if test="${USER.formPrivilege > 0}">
 					<div id="surveys-button" data-bind="attr: {class: mode() == 'surveys' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToSurveys"><spring:message code="label.ManagedSurveys" /></a></div>
@@ -54,8 +56,7 @@
 				<div id="invitations-button" data-bind="attr: {class: mode() == 'invitations' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToInvitations"><spring:message code="label.PersonalInvitations" /></a></div>
 			</div>		
 	
-		<div class="fullpage">
-			<div class="">
+			<div class="fullpage">			
 			
 				<c:if test="${USER.formPrivilege > 0}">
 			
@@ -63,7 +64,7 @@
 				
 					<c:if test="${USER.formPrivilege > 0 && USER.canCreateSurveys}">
 						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived'">
-							<a class="btn btn-info" onclick="showCreateSurveyDialog();"><spring:message code="label.CreateFirstSurvey" /></a>
+							<a class="btn btn-primary" onclick="showCreateSurveyDialog();"><spring:message code="label.CreateFirstSurvey" /></a>
 						</div>
 					</c:if>
 							
@@ -155,7 +156,7 @@
 										<div class="widgettitle" style="padding-bottom: 7px;">
 											<div id="surveys">
 												<div style="float: right">
-													<select id="surveystatesselector" class="dashboardselect" onchange="_dashboard.loadSurveyStates()">
+													<select id="surveystatesselector" class="dashboardselect" onchange="_dashboard.loadSurveyStates(0)">
 														<option value="all" selected="selected"><spring:message code="label.AllSurveys" /></option>
 														<option value="my"><spring:message code="label.Own" /></option>
 														<option value="shared"><spring:message code="label.Shared" /></option>
@@ -469,7 +470,7 @@
 													</select>
 												</th>
 												<th style="min-width: 200px;">
-													<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys();"><spring:message code="label.Search" /></a>
+													<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys(0);"><spring:message code="label.Search" /></a>
 													<a class="btn btn-default" onclick="_dashboard.resetSurveys();"><spring:message code="label.Reset" /></a>
 												</th>
 												
@@ -547,7 +548,7 @@
 													<th></th>
 													<th></th>
 													<th style="min-width: 150px;">
-														<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys();"><spring:message code="label.Search" /></a>
+														<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys(0);"><spring:message code="label.Search" /></a>
 														<a class="btn btn-default" onclick="_dashboard.resetSurveys();"><spring:message code="label.Reset" /></a>
 													</th>									
 												<!-- /ko -->
@@ -665,7 +666,7 @@
 													</td>
 													<td>
 														<!-- ko if: finished && error == null -->
-														<a class="btn btn-info" data-bind="click: function(data, event) { confirmRestore(id, surveyShortname); }"><spring:message code="label.Restore" /></a>
+														<a class="btn btn-primary" data-bind="click: function(data, event) { confirmRestore(id, surveyShortname); }"><spring:message code="label.Restore" /></a>
 														<!-- /ko -->
 													</td>
 												</tr>
@@ -819,7 +820,7 @@
 											<td data-bind="html: $data[2] ? '<spring:message code="label.Published" />' : '<spring:message code="label.Unpublished" />'"></td>
 											<td data-bind="html: $data[3]"></td>
 											<td>
-												<a target="_blank" class="btn btn-info" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Open" />" data-bind="attr: {'href' : $data[4]}"><spring:message code="label.Open" /></a>
+												<a target="_blank" class="btn btn-primary" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Open" />" data-bind="attr: {'href' : $data[4]}"><spring:message code="label.Open" /></a>
 											</td>
 										</tr>									
 										<!-- /ko -->
@@ -941,7 +942,7 @@
 												</div>	
 											</th>
 											<th style="min-width: 150px;">
-												<a class="btn btn-default" onclick="_dashboard.contributionsPage(1); _dashboard.loadPersonalContributions();"><spring:message code="label.Search" /></a>
+												<a class="btn btn-default" onclick="_dashboard.contributionsPage(1); _dashboard.loadPersonalContributions(0);"><spring:message code="label.Search" /></a>
 												<a class="btn btn-default" onclick="_dashboard.resetContributions();"><spring:message code="label.Reset" /></a>
 											</th>
 										</tr>
@@ -1080,7 +1081,7 @@
 												</div>	
 											</th>
 											<th style="min-width: 150px;">
-												<a class="btn btn-default" onclick="_dashboard.draftsPage(1); _dashboard.loadPersonalDrafts();"><spring:message code="label.Search" /></a>
+												<a class="btn btn-default" onclick="_dashboard.draftsPage(1); _dashboard.loadPersonalDrafts(0);"><spring:message code="label.Search" /></a>
 												<a class="btn btn-default" onclick="_dashboard.resetDrafts();"><spring:message code="label.Reset" /></a>
 											</th>
 										</tr>
@@ -1092,7 +1093,7 @@
 											<td data-bind="html: $data[4] ? '<spring:message code="label.Published" />' : '<spring:message code="label.Unpublished" />'"></td>
 											<td data-bind="html: $data[5]"></td>
 											<td>
-												<a target="_blank" class="btn btn-info" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.OpenDraft" />" data-bind="attr: {'href' : $data[6]}"><spring:message code="label.OpenDraft" /></a>
+												<a target="_blank" class="btn btn-primary" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.OpenDraft" />" data-bind="attr: {'href' : $data[6]}"><spring:message code="label.OpenDraft" /></a>
 											</td>
 										</tr>									
 										<!-- /ko -->
@@ -1138,7 +1139,7 @@
 				<div class="modal-footer">
 					<a id="confirm-restore-dialog-target" 
 						onclick="checkAliasExistsForRestore(false); return false;"
-						class="btn btn-info"><spring:message code="label.OK" /></a> <a
+						class="btn btn-primary"><spring:message code="label.OK" /></a> <a
 						 class="btn btn-default" data-dismiss="modal"><spring:message
 							code="label.Cancel" /></a>
 				</div>
@@ -1161,7 +1162,7 @@
 				</div>
 				<div class="modal-footer">
 					<a  onclick="checkAliasExistsForRestore(true)"
-						class="btn btn-info"><spring:message code="label.OK" /></a> <a
+						class="btn btn-primary"><spring:message code="label.OK" /></a> <a
 						 class="btn btn-default" data-dismiss="modal"><spring:message
 							code="label.Cancel" /></a>
 				</div>
@@ -1171,13 +1172,13 @@
 
 	<c:if test="${archived != null}">
 		<script type="text/javascript">
-			showInfo("<spring:message code="info.archived" arguments="${archived}" />")
+			showSuccess("<spring:message code="info.archived" arguments="${archived}" />")
 		</script>
 	</c:if>
 	
 	<c:if test="${deleted != null}">
 		<script type="text/javascript">
-			showInfo("<spring:message code="info.SurveyFinallyDeleted" />")
+			showSuccess("<spring:message code="info.SurveyFinallyDeleted" />")
 		</script>
 	</c:if>
 	
@@ -1207,7 +1208,7 @@
 	       	</span>
 		</div>
 		<div class="modal-footer">
-			<a  class="btn btn-info" onclick="startExport()"><spring:message code="label.OK" /></a>	
+			<a  class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 		</div>
 		</div>
@@ -1246,7 +1247,7 @@
 							  
 							  if (data == "success") {
 									$('#ask-export-dialog').modal('hide');
-									showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+									showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 							  	} else if (data == "errorcaptcha") {
 							  		$("#ask-export-dialog-error-captcha").show();
 							  		reloadCaptcha();
@@ -1267,7 +1268,7 @@
 							  
 							  if (data == "success") {
 									$('#ask-export-dialog').modal('hide');
-									showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+									showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 								} else {
 									showError(message_PublicationExportFailed);
 									reloadCaptcha();

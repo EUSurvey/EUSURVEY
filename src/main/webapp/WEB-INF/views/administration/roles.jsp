@@ -126,7 +126,7 @@
 			<div class="row">
 				<div class="col-md-12" style="text-align:center">
 					<c:if test="${USER.getGlobalPrivilegeValue('RightManagement') > 1}">
-						<a rel="tooltip" title="<spring:message code="label.AddRole" />" class="btn btn-info" onclick="$('#add-role-dialog').modal();"><spring:message code="label.AddRole" /></a>
+						<a rel="tooltip" title="<spring:message code="label.AddRole" />" class="btn btn-primary" onclick="$('#add-role-dialog').modal();"><spring:message code="label.AddRole" /></a>
 					</c:if>
 				</div>
 			</div>
@@ -286,7 +286,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="wait-animation" class="hideme" style="margin-right:120px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			  	<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
+			  	<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 			</div>	
 			</div>
 			</div>
@@ -301,7 +301,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a onclick="createRole($('#add-role-name').val());" class="btn btn-info"><spring:message code="label.OK" /></a>		
+				<a onclick="createRole($('#add-role-name').val());" class="btn btn-primary"><spring:message code="label.OK" /></a>		
 				<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 			</div>
 			</div>
@@ -317,7 +317,7 @@
 			<div class="modal-footer">
 				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>			
-				<a  onclick="deleteRole();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>		
+				<a  onclick="deleteRole();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>		
 			</div>
 			</div>
 			</div>

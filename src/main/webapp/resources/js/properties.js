@@ -532,7 +532,7 @@ function editProperties()
 	    } else {
 		  $("#publish-results-error").show();
 		  $("#properties-save-button").hide();
-		  $("#properties-cancel-button").addClass("btn-info");
+		  $("#properties-cancel-button").addClass("btn-primary");
 	    }		
 	
 	}

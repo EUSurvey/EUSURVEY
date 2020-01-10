@@ -100,8 +100,7 @@
 		});
 		
 		function showResults()
-		{
-		
+		{		
 			$("#scrollarea").show();
 			$("#results-table").css("min-height", "400px");
 		
@@ -139,18 +138,6 @@
 			} else {
 				$("#scrollareaheader").css("overflow-y","auto");
 			}
-		}
-		
-		function showError(text)
-		{
-			$("#generic-error-box-text").html(text);
-			$("#generic-error-box").show();
-			window.setTimeout("hideGenericInfos()", 5000);
-		}
-
-		function hideGenericInfos()
-		{
-			$("#generic-error-box").hide(400);
 		}
 			
 		var currentIndividual = 0;
@@ -422,8 +409,8 @@
 										<div style="text-align: right; height: 36px; float: right; width: 200px;">
 											<b><spring:message code="label.Export" /></b>										
 											<span class="deactivatedexports">
-												<a style="cursor: not-allowed" data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />"><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-												<a style="cursor: not-allowed" data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />"><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />"><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />"><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
 											</span>
 											<span class="activatedexports" style="display: none">
 												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('resultsxls');" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
@@ -453,11 +440,11 @@
 				  		  		<b><spring:message code="label.Export" /></b>
 								
 								<span class="deactivatedstatexports">
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportdoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
-									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
+									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportdoc" />" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
+									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportodt" />" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
 								</span>
 								<span class="activatedstatexports">
 									<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" onclick="showExportDialog('statspdf')" ><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>
@@ -478,7 +465,7 @@
 										
 										<c:choose>
 											<c:when test="${paging.items.size() == 0 || form.getSurvey().hasNoQuestionsForStatistics()}">
-												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
 											</c:when>
 											<c:otherwise>
 												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportpdf" />" onclick="showExportDialog('statsquizpdf')" ><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>
@@ -522,7 +509,7 @@
 		   <div id="ask-export-dialog-all-captcha-error" class="alert-danger hideme"><spring:message code="message.captchawrongnew" /></div>
 		</div>
 		<div class="modal-footer">
-			<a  class="btn btn-info" onclick="startExport()"><spring:message code="label.OK" /></a>	
+			<a  class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>				
 		</div>
 		</div>
@@ -539,12 +526,6 @@
 			</c:if>
 		</script>
 	</c:if>
-	
-	<div id="generic-error-box" class="alert alert-danger hideme" style="position: fixed; top: 5px; right: 5px; padding: 5px; z-index: 10001;">
-		<div style="float: left;"><img src="${contextpath}/resources/images/warning.png" id="system-message-box-icon" alt="system message icon"></div>
-		<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-		<div class="generic-box-text" id="generic-error-box-text"></div>
-	</div>
 	
 </body>
 </html>

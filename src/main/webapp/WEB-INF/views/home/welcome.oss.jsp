@@ -204,7 +204,7 @@
 		        	</div>
 				</div>
 				<div class="modal-footer" style="height:32px;">
-					<a  onclick="requestLink();" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a  onclick="requestLink();" class="btn btn-primary"><spring:message code="label.OK" /></a>
 					<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 				</div>	
 			</form>
@@ -238,7 +238,7 @@
 					
 				</div>
 				<div class="modal-footer" style="height:32px;">
-					<a  onclick="checkEmail()" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a  onclick="checkEmail()" class="btn btn-primary"><spring:message code="label.OK" /></a>
 					<a  class="btn btn-default" onclick="$('#download-contribution-dialog').modal('hide');"><spring:message code="label.Cancel" /></a>
 				</div>
 			</form:form>

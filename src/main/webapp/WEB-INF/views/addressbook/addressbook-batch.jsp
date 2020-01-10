@@ -130,7 +130,7 @@
 				id="import-attendees-step1-error"><spring:message
 					code="message.SelectFile" /></span>
 			<a id="batch-update-button"  onclick="checkOwnerAndSubmit()"
-				class="btn btn-info"><spring:message code="label.Update" /></a> <a
+				class="btn btn-primary"><spring:message code="label.Update" /></a> <a
 				 class="btn btn-default" data-dismiss="modal"><spring:message
 					code="label.Cancel" /></a> <a id="batch-next-button" 
 				class="btn btn-default" onclick="batchStep2()"><spring:message
@@ -163,7 +163,7 @@
 	<div class="modal-footer">
 		<a 
 			onclick="addAttributeValue($('#new-attribute-value').val());"
-			class="btn btn-info"><spring:message code="label.Set" /></a> <a
+			class="btn btn-primary"><spring:message code="label.Set" /></a> <a
 			 class="btn btn-default" onclick="cancelAddAttributeValue()"><spring:message
 				code="label.Cancel" /></a>
 	</div>
@@ -178,7 +178,7 @@
 			<spring:message code="message.NoElementSelected" />						
 		</div>
 		<div class="modal-footer">
-			<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>		
+			<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>		
 		</div>
 		</div>
 		</div>

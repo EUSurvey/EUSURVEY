@@ -48,7 +48,7 @@
 		${form.getMessage("question.logout")}
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info btn-default" onclick="logout()">${form.getMessage("label.Yes")}</a>	
+		<a  class="btn btn-primary btn-default" onclick="logout()">${form.getMessage("label.Yes")}</a>	
 		<a  class="btn btn-default" data-dismiss="modal">${form.getMessage("label.No")}</a>		
 	</div>
 	</div>
@@ -117,15 +117,15 @@
 	<div class="modal-footer">
 		<c:choose>
 			<c:when test="${responsive != null}">
-				<a style="text-decoration: none"  class="btn btn-info btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
+				<a style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
 				<a style="text-decoration: none"  class="btn btn-default btn-lg" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
 			</c:when>
 			<c:when test="${runnermode == true}">
-				<a  class="btn btn-info" onclick="startExport()">${form.getMessage("label.OK")}</a>	
+				<a  class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>	
 				<a  class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
 			</c:when>
 			<c:otherwise>
-				<a  class="btn btn-info" onclick="startExport()"><spring:message code="label.OK" /></a>	
+				<a  class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 			</c:otherwise>	
 		</c:choose>				
@@ -133,8 +133,6 @@
 	</div>
 	</div>
 </div>
-
-<%@ include file="generic-messages.jsp" %>
 
 <script type="text/javascript">
 	function startExport()
@@ -169,7 +167,7 @@
 						  
 						  if (data == "success") {
 								$('#ask-export-dialog').modal('hide');
-								showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+								showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 						  	} else if (data == "errorcaptcha") {
 						  		$("#runner-captcha-error").show();
 						  		reloadCaptcha();
@@ -190,7 +188,7 @@
 						  
 						  if (data == "success") {
 								$('#ask-export-dialog').modal('hide');
-								showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+								showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 							} else {
 								showError(message_PublicationExportFailed);
 								reloadCaptcha();

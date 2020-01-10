@@ -64,7 +64,7 @@
 		<div class="fixedtitleform">
 			<div class="fixedtitleinner" style="width:880px">
 				
-				<div id="action-bar" class="container action-bar" style="margin-top: 10px; width: 880px">
+				<div id="action-bar" class="container action-bar" style="padding-top: 10px; width: 880px">
 					<div class="row">
 						<div class="col-md-12" style="text-align:center">
 							<a onclick="$('#add-share-name').val(''); $('#add-share-dialog1').modal('show')"  class="btn btn-default"><spring:message code="label.CreateNewShare" /></a>
@@ -208,7 +208,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a  onclick="deleteShare();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>
+			<a  onclick="deleteShare();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>						
 		</div>
 		</div>
@@ -229,7 +229,7 @@
 	
 	<c:if test="${message != null}">
 		<script type="text/javascript">
-			showMessage('${message}');
+			showInfo('${message}');
 		</script>
 	</c:if>
 

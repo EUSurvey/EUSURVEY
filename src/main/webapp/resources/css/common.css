@@ -12,6 +12,116 @@ html, body {
   height: 100%;
 }
 
+#messages-log-div {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 20001;
+}
+
+#messages-log-header {
+	 background-color: #2196f3;
+	 color: #fff;
+	 padding: 10px;
+	 font-size: 20px;
+	 border-top-left-radius: 5px;
+	 border-top-right-radius: 5px;
+}
+
+#messages-log {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5px;
+	background-color: #fff;
+	border: 1px solid #aaa;
+	border-radius: 5px;
+	text-align: left;
+}
+
+#messages-log .log-message {
+	border-bottom: 1px solid #ddd;
+	padding: 10px;
+}
+
+#messages-log .log-message td {
+	padding: 10px;
+	vertical-align: top;
+}
+
+#messages-box-div {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 20000;
+}
+
+#messages-box {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5px;
+	text-align: left;
+}
+
+.message-system-header {
+	margin-top: -10px;
+	margin-left: -10px;
+	margin-right: -10px;
+	margin-bottom: 10px;
+	background-color: #eee;
+	padding: 5px;
+	padding-left: 10px;
+	color: #333;
+}
+
+.message-success-header {
+	margin-top: -10px;
+	margin-left: -10px;
+	margin-right: -10px;
+	margin-bottom: 10px;
+	background-color: #4caf50;
+	padding: 5px;
+	padding-left: 10px;
+	color: #fff;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.message-info-header {
+	margin-top: -10px;
+	margin-left: -10px;
+	margin-right: -10px;
+	margin-bottom: 10px;
+	background-color: #337ab7;
+	padding: 5px;
+	padding-left: 10px;
+	color: #fff;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.message-error-header {
+	margin-top: -10px;
+	margin-left: -10px;
+	margin-right: -10px;
+	margin-bottom: 10px;
+	background-color: #c11c1c;
+	padding: 5px;
+	padding-left: 10px;
+	color: #fff;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.message {
+	background-color: #eee;
+	padding: 10px;
+	border: 1px solid #aaa;
+	border-radius: 5px;
+	margin-top: 5px;
+}
+
 .page-wrap {
 	min-height: 100%;
 	/* equal to footer height */
@@ -72,8 +182,7 @@ table {
 }
 
 .iconbutton.disabled {
-	color: #ccc;	
-	cursor: not-allowed;
+	color: #ccc;
 }
 
 .iconbutton.disabled .glyphicon, .switchiconbutton.disabled .glyphicon {
@@ -1660,10 +1769,6 @@ img.titleImage
 	margin-right:6px;
 }
 
-.actionRowAction.disabled {
-	cursor: not-allowed;
-}
-
 table.formsSurveyItem
 {
 	width:100%;
@@ -1861,4 +1966,8 @@ a {
 
 .filestable {
 	word-break: break-all;	
+}
+
+input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="radio"].disabled, input[type="checkbox"].disabled, fieldset[disabled] input[type="radio"], fieldset[disabled] input[type="checkbox"] {
+	cursor: default !important;
 }

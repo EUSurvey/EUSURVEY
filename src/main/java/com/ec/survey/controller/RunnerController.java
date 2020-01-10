@@ -1053,20 +1053,27 @@ public class RunnerController extends BasicController {
 			if (draftid != null && draftid.trim().length() > 0) {
 				try {
 					Draft draft = answerService.getDraft(draftid);
-					f.getAnswerSets().add(draft.getAnswerSet());
-					f.setWcagCompliance(draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 					
-					SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), fileDir, survey, fileService);
-					uniqueCode = draft.getAnswerSet().getUniqueCode();
-					model.addObject("draftid", draftid);
-
-					if (lang == null)
+					if (draft == null)
 					{
-						lang = draft.getAnswerSet().getLanguageCode();
-						Survey translated = SurveyHelper.createTranslatedSurvey(f.getSurvey().getId(), lang, surveyService, translationService, true);
-						f.setSurvey(translated);
-						f.setLanguage(surveyService.getLanguage(lang));
+						model.addObject("message", resources.getMessage("error.DraftIDInvalid", null, "The given draft ID is not valid!", locale));
+				 	} else {                                        
+				 	 	f.getAnswerSets().add(draft.getAnswerSet());
+				 	 	f.setWcagCompliance(draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
+				 	 		                                                
+				 	 	SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), fileDir, survey, fileService);
+				 	 	uniqueCode = draft.getAnswerSet().getUniqueCode();
+				 	 	model.addObject("draftid", draftid);
+				 	 		        
+				 	 	if (lang == null)
+				 	 	{
+				 	 		lang = draft.getAnswerSet().getLanguageCode();
+				 	 		Survey translated = SurveyHelper.createTranslatedSurvey(f.getSurvey().getId(), lang, surveyService, translationService, true);
+				 	 		f.setSurvey(translated);
+				 	 		f.setLanguage(surveyService.getLanguage(lang));
+				 	 	}
 					}
+					
 					validCodesService.revalidate(uniqueCode, survey);
 					
 					Set<String> invisibleElements = new HashSet<>();

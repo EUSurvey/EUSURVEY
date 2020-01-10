@@ -15,7 +15,7 @@
 		</div>
 		<div class="modal-footer">
 			<img alt="wait animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="okStartExportButton"  onclick="checkAndStartExport($('#export-name').val());"  class="btn btn-info"><spring:message code="label.OK" /></a>	
+			<a id="okStartExportButton"  onclick="checkAndStartExport($('#export-name').val());"  class="btn btn-primary"><spring:message code="label.OK" /></a>	
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>
@@ -32,17 +32,7 @@
 		</div>
 		</div>
 	</div>
-	
-	<div id="basic-info-box" class="alert alert-success hideme" style="position: fixed; top: 5px; right:5px; padding: 10px; z-index: 10002">
-		<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-		<div id="basic-info-box-text"></div>
-	</div>
-	
-	<div id="basic-error-box" class="alert alert-danger hideme" style="position: fixed; top: 5px; right:5px; padding: 10px; z-index: 10002">
-		<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-		<div id="basic-error-box-text"></div>
-	</div>
-	
+		
 	<form:form id="logoutform" action="${contextpath}/j_spring_security_logout" method="post">
     </form:form>
 	

@@ -12,16 +12,105 @@
 	</div>
 </div>
 
-<div id="generic-info-box" class="alert message-success-right hideme">
-	<div style="float: right; margin-left: 10px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-	<div style="float: left; margin: 5px; margin-top: 5px; margin-right: 10px"><img src="${contextpath}/resources/images/check.png" id="system-message-box-icon" alt="system message icon"></div>
-	<div style="margin-left: 10px; padding-top: 3px; padding-bottom: 5px;"class="generic-box-text" id="generic-info-box-text"></div>
+<div id="messages-box-div">
+	<div id="messages-box">
+		<!-- ko foreach: systemMessages -->
+			<!-- ko if: Hidden() == false -->
+			<div class="message" style="display: none">
+				<div class="message-system-header">
+					<div style="float: left; margin-right: 20px;">
+						<img style="height: 20px" data-bind="attr: {src: '${contextpath}/resources/images/' + Icon() }" />
+					</div>
+					<div style="float: right"><span data-bind="click: removeMessage" class="glyphicon glyphicon-remove"></span></div>
+					<div style="clear: both"></div>
+				</div>
+				<div data-bind="html: Content"></div>
+			</div>
+			<!-- /ko -->
+		<!-- /ko -->
+	
+		<!-- ko foreach: messages -->
+			<!-- ko if: Hidden() == false -->
+			<div class="message" style="display: none">
+				<!-- ko if: Type() == 'success' -->
+				<div class="message-success-header">
+					<div style="float: left"><span class="glyphicon glyphicon-ok"></span></div>
+					<div style="float: right"><span data-bind="click: removeMessage" class="glyphicon glyphicon-remove"></span></div>
+					<div style="clear: both"></div>
+				</div>
+				<!-- /ko -->
+				<!-- ko if: Type() == 'info' -->
+				<div class="message-info-header">
+					<div style="float: left"><span class="glyphicon glyphicon-info-sign"></span></div>
+					<div style="float: right"><span data-bind="click: removeMessage" class="glyphicon glyphicon-remove"></span></div>
+					<div style="clear: both"></div>
+				</div>
+				<!-- /ko -->
+				<!-- ko if: Type() == 'error' -->
+				<div class="message-error-header">
+					<div style="float: left"><span class="glyphicon glyphicon-exclamation-sign"></span></div>
+					<div style="float: right"><span data-bind="click: removeMessage" class="glyphicon glyphicon-remove"></span></div>
+					<div style="clear: both"></div>
+				</div>
+				<!-- /ko -->
+				<div data-bind="html: Content"></div>
+			</div>
+			<!-- /ko -->
+		<!-- /ko -->
+	</div>
 </div>
 
-<div id="generic-error-box" class="alert alert-danger hideme" style="display: none; position: fixed; top: 5px; right: 5px; padding: 5px; z-index: 10001;">
-	<div style="float: left;"><img src="${contextpath}/resources/images/warning.png" id="system-message-box-icon" alt="system message icon"></div>
-	<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-	<div class="generic-box-text" id="generic-error-box-text"></div>
+<div id="messages-log-div" style="display: none" >
+	<div id="messages-log">
+		<div id="messages-log-header">
+			<div style="float: left"><spring:message code="label.Notifications" /></div>
+			<div style="float: right"><span data-bind="click: allRead" class="glyphicon glyphicon-remove"></span></div>
+			<div style="clear: both"></div>
+		</div>
+		
+		<div style="max-height: 500px; overflow-y: auto">
+		
+			<div data-bind="foreach: systemMessages">
+				<div class="log-message">
+					<div style="float: left; margin-right: 20px;">
+						<img style="height: 14px" data-bind="attr: {src: '${contextpath}/resources/images/' + Icon() }" />
+					</div>
+					<div data-bind="html: Content"></div>
+				</div>
+			</div>
+	
+			<table class="table" style="margin-bottom: 0px">
+				<tbody>
+				<!-- ko foreach: messages -->
+			
+				<!-- ko if: Deleted() == false -->
+				
+				<tr class="log-message">
+					<td style="width: 30px; padding-right: 0px;">
+						<!-- ko if: Type() == 'success' -->
+						<span style="color: #4caf50" class="glyphicon glyphicon-ok"></span>
+						<!-- /ko -->
+						<!-- ko if: Type() == 'info' -->
+						<span style="color: #337ab7" class="glyphicon glyphicon-info-sign"></span>
+						<!-- /ko -->
+						<!-- ko if: Type() == 'error' -->
+						<span style="color: #c11c1c" class="glyphicon glyphicon-exclamation-sign"></span>
+						<!-- /ko -->
+					</td>
+					<td data-bind="html: Content"></td>
+					<td style="width: 40px;">
+						<span data-bind="click: deleteMessage" class="glyphicon glyphicon-remove"></span>
+					</td>
+				</tr>
+				
+				<!-- /ko -->
+				
+				<!-- /ko -->
+				</tbody>
+			</table>
+		
+		</div>
+	</div>
 </div>
 	
 <div class="modal" id="generic-show-messages-dialog" data-backdrop="static">
@@ -31,7 +120,7 @@
 		<span id="generic-show-messages-dialog-text"></span>
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" data-dismiss="modal">OK</a>				
+		<a  class="btn btn-primary" data-dismiss="modal">OK</a>				
 	</div>
 	</div>
 	</div>
@@ -47,7 +136,7 @@
 		
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>				
+		<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>				
 	</div>
 	</div>
 	</div>	
@@ -56,35 +145,184 @@
 
 <script type="text/javascript">
 	
+	var Message = function() {
+		this.Type = ko.observable("");
+		this.Content = ko.observable("");
+		this.Hidden = ko.observable(false);
+		this.Deleted = ko.observable(false);
+		this.Read = ko.observable(false);
+		this.Icon = ko.observable("");
+		
+		this.removeMessage = function () {
+			this.Hidden(true);
+			if (this.Type() == "system")
+			{
+				deleteUserMessage();
+			}
+			_messages.saveToLocalStorage();
+		}
+		
+		this.deleteMessage = function() {
+			this.Deleted(true);
+			_messages.saveToLocalStorage();
+		}
+	}
+	
+	var Messages = function() {
+		var self = this;
+		this.messages = ko.observableArray();
+		this.systemMessages = ko.observableArray();
+		
+		this.totalMessages = ko.computed(function(){
+			var counter = 0;
+			for (var i = 0; i < self.messages().length; i++)
+			{
+				if (!self.messages()[i].Read()) counter++;
+			}
+			for (var i = 0; i < self.systemMessages().length; i++)
+			{
+				if (!self.systemMessages()[i].Read()) counter++;
+			}
+		   return counter;
+		});
+		
+		this.allRead = function() {
+			for (var i = 0; i < self.messages().length; i++)
+			{
+				self.messages()[i].Read(true);
+			}
+			for (var i = 0; i < self.systemMessages().length; i++)
+			{
+				self.systemMessages()[i].Read(true);
+			}
+			$('#messages-log-div').hide();
+			self.saveToLocalStorage();
+		}
+		
+		this.showAll = function() {
+			for (var i = 0; i < this.messages().length; i++)
+			{
+				this.messages()[i].Hidden(false);
+			}
+			window.setTimeout("showMessages()", 100);
+		}
+		
+		this.hideSystemMessages = function() {
+			for (var i = 0; i < this.systemMessages().length; i++)
+			{
+				this.systemMessages()[i].Hidden(true);
+			}
+		}
+		
+		this.addMessage = function(message, fromLoad)
+		{
+			this.messages.splice(0, 0, message);
+			
+			window.setTimeout("showMessages()", 100);
+			window.setTimeout(function() {
+			    message.removeMessage();
+			}, 5000)
+			
+			if (!fromLoad)
+			{
+				self.saveToLocalStorage();
+			}
+		}
+		
+		this.saveToLocalStorage = function() {
+			try
+			{
+				localStorage.setItem("messagelog", ko.toJSON(this.messages()));
+			} catch (e) {};
+		}
+		
+		this.addSuccessMessage = function (text) {
+			var message = new Message();
+			message.Type("success");
+			message.Content(text);
+			self.addMessage(message, false);
+		}
+		
+		this.addInfoMessage = function (text) {
+			var message = new Message();
+			message.Type("info");
+			message.Content(text);
+			self.addMessage(message, false);
+		}
+		
+		this.addErrorMessage = function (text) {
+			var message = new Message();
+			message.Type("error");
+			message.Content(text);
+			self.addMessage(message, false);
+		}
+		
+		this.addSystemMessage = function (m)
+		{
+			var message = new Message();
+			message.Type("system");
+			message.Content(m.text);
+			message.Icon(m.icon)
+			this.systemMessages.splice(0, 0, message);
+			
+			window.setTimeout("showMessages()", 100);
+		}
+		
+		try
+		{
+			var messagelog = localStorage.getItem("messagelog");
+			var parsed = JSON.parse(messagelog);
+			for (var i = 0; i < parsed.length; i++)
+			{
+				var message = new Message();
+				message.Type(parsed[i].Type);
+				message.Content(parsed[i].Content);
+				message.Deleted(parsed[i].Deleted);
+				message.Read(parsed[i].Read);
+				message.Hidden(parsed[i].Hidden);
+				self.addMessage(message, true);
+			}
+		} catch (e) {};
+	}
+	
+	var _messages = new Messages();
+	
+	$(function() {
+		ko.applyBindings(_messages, $("#messages-box")[0]);
+		ko.applyBindings(_messages, $("#messages-log")[0]);
+		ko.applyBindings(_messages, $("#messages-button")[0]);
+	});
+	
 	function showInfo(text)
 	{
-		$("#generic-info-box-text").html(text);
-		$("#generic-info-box").show();
-		window.setTimeout("hideGenericInfos()", 10000);
+		_messages.addInfoMessage(text);
 	}
 	
 	function showSuccess(text)
 	{
-		showInfo(text);
+		_messages.addSuccessMessage(text);
 	}
 	
 	function showError(text)
 	{
-		$("#generic-error-box-text").html(text);
-		$("#generic-error-box").show();
-		window.setTimeout("hideGenericInfos()", 10000);
+		_messages.addErrorMessage(text);
 	}
 	
-	function showGenericError()
+	function showSystemMessage(message)
 	{
-		showError('<spring:message code="error.OperationFailed" />');
+		_messages.addSystemMessage(message);
+	}
+		
+	function showMessages() {
+		$('.message:hidden').slideDown("slow");
 	}
 	
-	function hideGenericInfos()
-	{
-		$("#generic-info-box").hide(400);
-		$("#generic-error-box").hide(400);
-	}	
+	function hideMessages() {
+		for (var i = 0; i < _messages.messages().length; i++)
+		{
+			_messages.messages()[i].Hidden(true);
+		}
+	}
 	
 	function showExportDialogAndFocusEmail()
 	{

@@ -16,6 +16,7 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -81,6 +82,22 @@ public class XmlExportCreator extends ExportCreator {
 		}
 		
 		form.setSurvey(surveyService.initializeAndMergeSurvey(form.getSurvey()));
+		
+		if (export != null && export.isAllAnswers() && !form.getSurvey().isMissingElementsChecked())
+	 	{
+	 		surveyService.CheckAndRecreateMissingElements(form.getSurvey(), export.getResultFilter());
+	 	 	Hibernate.initialize(form.getSurvey().getMissingElements());
+	 	 	for (Element e : form.getSurvey().getMissingElements())
+	 	 	{
+	 	 		if (e instanceof ChoiceQuestion)
+	 	 		{
+	 	 			Hibernate.initialize(((ChoiceQuestion)e).getPossibleAnswers());
+	 	 		} else if (e instanceof GalleryQuestion)
+	 	 		{
+	 	 			Hibernate.initialize(((GalleryQuestion)e).getFiles());
+	 	 		}
+	 	 	}
+	 	}
 		
 		if (form.getSurvey().getTranslations() == null)
 		{

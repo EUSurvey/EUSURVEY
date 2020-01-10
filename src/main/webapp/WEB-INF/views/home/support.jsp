@@ -116,7 +116,7 @@
 			$(".qq-upload-drop-area").css("margin-left", "-1000px");
 			
 			<c:if test="${messagesent != null}">
-				showInfo('<spring:message code="support.messagesent" />')
+				showSuccess('<spring:message code="support.messagesent" />')
 			</c:if>
 			
 		});
@@ -241,7 +241,7 @@
 			       	</span>
 			       	
 			       	<div style="text-align: center; margin: 50px;">
-			       		<a class="btn btn-info" onclick="checkAndSubmit()"><spring:message code="label.Submit" /></a>
+			       		<a class="btn btn-primary" onclick="checkAndSubmit()"><spring:message code="label.Submit" /></a>
 			       	</div>
 			    </form:form>
 		    </c:otherwise>

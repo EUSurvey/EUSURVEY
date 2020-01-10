@@ -49,7 +49,7 @@
 				
 					<br/><br/>
 				
-					<a class="btn btn-info aSpaced" onclick="$('#ask-email-dialog').modal('show');"><spring:message code="label.SendLinkAsEmail" /></a>
+					<a class="btn btn-primary aSpaced" onclick="$('#ask-email-dialog').modal('show');"><spring:message code="label.SendLinkAsEmail" /></a>
 					<a id="bookmarkme" class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><spring:message code="label.SaveToBookMark" /></a>
 					<a id="copyme"class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><spring:message code="label.CopyToClipboard" /></a>
 					<c:if test="${downloadContribution}">
@@ -88,7 +88,7 @@
 		       	</span>
 			</div>
 			<div class="modal-footer">
-				<a class="btn btn-info" onclick="startExport()"><spring:message code="label.OK" /></a>	
+				<a class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
 				<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 			</div>
 			</div>
@@ -133,11 +133,11 @@
 			<div class="modal-footer">
 				<c:choose>
 					<c:when test="${runnermode == true}">
-						<a  class="btn btn-info" onclick="sendMailLink()">${form.getMessage("label.OK")}</a>	
+						<a  class="btn btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</a>	
 						<a  class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
 					</c:when>
 					<c:otherwise>
-						<a  class="btn btn-info"" onclick="sendMailLink()"><spring:message code="label.OK" /></a>	
+						<a  class="btn btn-primary"" onclick="sendMailLink()"><spring:message code="label.OK" /></a>	
 						<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 					</c:otherwise>	
 				</c:choose>				
@@ -195,7 +195,7 @@
 							  
 							  if (data == "success") {
 									$('#ask-export-dialog').modal('hide');
-									showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+									showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 							  	} else if (data == "errorcaptcha") {
 							  		$("#runner-captcha-error").show();
 							  		reloadCaptcha();
@@ -216,7 +216,7 @@
 							  
 							  if (data == "success") {
 									$('#ask-export-dialog').modal('hide');
-									showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+									showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 								} else {
 									showError(message_PublicationExportFailed);
 									reloadCaptcha();

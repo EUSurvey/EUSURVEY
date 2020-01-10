@@ -351,7 +351,7 @@
 						</div>
 						
 						<div style="float: left; padding-top:-5px; margin-left: 10px; padding-left: 10px;">
-							<a onclick="$('#load-attendees').submit()" class="btn btn-info"><spring:message code="label.Search" /></a>
+							<a onclick="$('#load-attendees').submit()" class="btn btn-primary"><spring:message code="label.Search" /></a>
 							<a onclick="$('#show-wait-image').modal('show');" href="<c:url value="/addressbook?clear=true"/>" class="btn btn-default"><spring:message code="label.ResetFilter" /></a>
 						</div>
 												
@@ -492,7 +492,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a  onclick="deleteAttendee();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>	
+				<a  onclick="deleteAttendee();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>	
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>		
 			</div>
 			</div>
@@ -507,7 +507,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a  onclick="$('#delete-attendees-dialog').modal('hide');$('#operation').val('delete');$('#load-attendees').submit();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>
+				<a  onclick="$('#delete-attendees-dialog').modal('hide');$('#operation').val('delete');$('#load-attendees').submit();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 			</div>
 			</div>
@@ -522,7 +522,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a  onclick="addAttendeeExistsYes();" class="btn btn-info"><spring:message code="label.Yes" /></a>	
+				<a  onclick="addAttendeeExistsYes();" class="btn btn-primary"><spring:message code="label.Yes" /></a>	
 				<a  onclick="addAttendeeExistsNo();" class="btn btn-default" ><spring:message code="label.No" /></a>			
 			</div>
 			</div>
@@ -596,7 +596,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a onclick="addAttendee();" class="btn btn-info"><spring:message code="label.Save" /></a>	
+				<a onclick="addAttendee();" class="btn btn-primary"><spring:message code="label.Save" /></a>	
 				<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 			</div>
 			</div>
@@ -677,7 +677,7 @@
 					<span id="edit-attendee-error-email" class="hideme" style="color: #f00; margin-right: 20px;">
 						<spring:message code="message.ProvideEmail" />
 					</span>
-					<a onclick="editAttendee();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+					<a onclick="editAttendee();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 					<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 				</div>
 				</div>
@@ -696,7 +696,7 @@
 				<span style="color: #f00; margin-left: 10px;" id="new-attribute-error"></span>
 			</div>
 			<div class="modal-footer">
-				<a  onclick="addAttribute($('#new-attribute-name').val());" class="btn btn-info"><spring:message code="label.Create" /></a>
+				<a  onclick="addAttribute($('#new-attribute-name').val());" class="btn btn-primary"><spring:message code="label.Create" /></a>
 				<a  onclick="cancelAddAttributeDialog()" class="btn btn-default"><spring:message code="label.Cancel" /></a>			
 			</div>	
 			</div>
@@ -729,7 +729,7 @@
 							</c:if>
 						</div>
 						<div class="modal-footer">
-							<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>				
+							<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>				
 						</div>
 						</div>
 						</div>
@@ -788,7 +788,7 @@
 							<a  onclick="updateGuestlists(false)" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Delete" /></a>				
 						</c:otherwise>
 					</c:choose>				
-					<a  class="btn btn-default btn-info" data-dismiss="modal"><spring:message code="label.Close" /></a>
+					<a  class="btn btn-default btn-primary" data-dismiss="modal"><spring:message code="label.Close" /></a>
 				</div>
 				</div>
 				</div>
@@ -809,7 +809,7 @@
 							if (data != "OK") {								
 								showError(data);								
 							} else {
-								showInfo('<spring:message code="info.GuestListsUpdated" />')
+								showSuccess('<spring:message code="info.GuestListsUpdated" />')
 							}
 						}
 					});	
@@ -818,22 +818,22 @@
 		</c:when>
 		<c:when test="${editedAttendeesBatch != null}">
 			<script type="text/javascript">
-				showInfo('<spring:message code="message.ContactsUpdatedBatch" />');
+				showSuccess('<spring:message code="message.ContactsUpdatedBatch" />');
 			</script>
 		</c:when>
 		<c:when test="${editedAttendees != null && deletedcontacts != null}">
 			<script type="text/javascript">
-				showInfo('<spring:message code="message.ContactsDeleted" />');
+				showSuccess('<spring:message code="message.ContactsDeleted" />');
 			</script>
 		</c:when>
 		<c:when test="${editedAttendees != null}">
 			<script type="text/javascript">
-				showInfo('<spring:message code="message.ContactsUpdated" />');
+				showSuccess('<spring:message code="message.ContactsUpdated" />');
 			</script>
 		</c:when>
 		<c:when test="${deletedAttendeesBatch != null}">
 			<script type="text/javascript">
-				showInfo('<spring:message code="message.ContactsDeletedBatch" />');
+				showSuccess('<spring:message code="message.ContactsDeletedBatch" />');
 			</script>
 		</c:when>
 	</c:choose>

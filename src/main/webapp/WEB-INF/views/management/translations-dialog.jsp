@@ -32,7 +32,7 @@
 					<div class="validation-error hideme" id="add-translation-dialog-error"><spring:message code="error.selectlanguagetoadd" /></div>
 				</div>
 				<div class="modal-footer">						
-					<input onclick="return checkAddLanguage()" type="submit" class="btn btn-info" value="<spring:message code="label.OK" />" />	
+					<input onclick="return checkAddLanguage()" type="submit" class="btn btn-primary" value="<spring:message code="label.OK" />" />	
 					<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 				</div>
 			</div>
@@ -52,7 +52,7 @@
 	</div>
 	<div class="modal-footer">
 				
-		<a onclick="searchAndReplace();" class="btn btn-info"><spring:message code="label.OK" /></a>
+		<a onclick="searchAndReplace();" class="btn btn-primary"><spring:message code="label.OK" /></a>
 		<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 	</div>
 	</div>
@@ -83,7 +83,7 @@
 		</div>
 		<div class="modal-footer">
 			<a onclick="searchAndReplaceBack();" class="btn btn-default"><spring:message code="label.Back" /></a>	
-			<input class="btn btn-info" type="submit" value="<spring:message code="label.Save" />" />	
+			<input class="btn btn-primary" type="submit" value="<spring:message code="label.Save" />" />	
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 		</div>
 	</form:form>
@@ -127,7 +127,7 @@
 			
 		</div>
 		<div class="modal-footer">
-			<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
+			<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 		</div>
 	</form:form>
 	</div>
@@ -161,7 +161,7 @@
 
 		  </div>
 		  <div class="modal-footer">
-		  		<input id="btnSaveFromEditTranslationDialog" type="submit" class="btn btn-info" value="<spring:message code="label.Save" />" />
+		  		<input id="btnSaveFromEditTranslationDialog" type="submit" class="btn btn-primary" value="<spring:message code="label.Save" />" />
 		  		<a id="btnCancelFromEditTranslationDialog"  class="btn btn-default" onclick="selectedElement = null;" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		  				
 		  </div>	  
 	  </form:form>
@@ -178,7 +178,7 @@
 	  	<spring:message code="question.ReplaceTranslation" /> 	
 	  </div>
 	  <div class="modal-footer">
-	  	<a  class="btn btn-info" onclick="showImportPopup(results);"><spring:message code="label.Replace" /></a>
+	  	<a  class="btn btn-primary" onclick="showImportPopup(results);"><spring:message code="label.Replace" /></a>
 		<a  class="btn btn-default" onclick="results = null;" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 	  </div>	  
 	</div>
@@ -197,7 +197,7 @@
   		<div id="ask-invalid-keys"></div> 
 	  </div>
 	  <div class="modal-footer">
-	  	<a  class="btn btn-info" onclick="continueImport(results);"><spring:message code="label.Continue" /></a>
+	  	<a  class="btn btn-primary" onclick="continueImport(results);"><spring:message code="label.Continue" /></a>
 	  	<a  class="btn btn-default" onclick="results = null;" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 	  </div>
 	 </div>
@@ -225,7 +225,7 @@
 			</table>			
 		</div>
 		<div class="modal-footer">
-			<a id="btnOkFrmEditCellTranslationDialog" onclick="saveLabel();" class="btn btn-info"><spring:message code="label.OK" /></a>	
+			<a id="btnOkFrmEditCellTranslationDialog" onclick="saveLabel();" class="btn btn-primary"><spring:message code="label.OK" /></a>	
 			<a id="btnCancelFrmEditCellTranslationDialog" onclick='cancelCellEdit()' class="btn btn-default"><spring:message code="label.Cancel" /></a>
 		</div>
 	</form:form>
@@ -242,7 +242,7 @@
 		
 		</div>
 		<div class="modal-footer">
-			<input type="submit" class="btn btn-info" value="<spring:message code="label.Save" />" />
+			<input type="submit" class="btn btn-primary" value="<spring:message code="label.Save" />" />
 			<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 		</div>
 	</form:form>
@@ -257,7 +257,7 @@
 		<spring:message code="info.SelectOneCompleteTranslation" />
 	</div>
 	<div class="modal-footer">
-		<a class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>			
+		<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>			
 	</div>
 	</div>
 	</div>
@@ -270,7 +270,7 @@
 		<spring:message code="info.SelectOneCompleteTranslationAndOneOrMoreTranslation" />
 	</div>
 	<div class="modal-footer">
-		<a class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>			
+		<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>			
 	</div>
 	</div>
 	</div>
@@ -283,7 +283,7 @@
 		<spring:message code="info.SelectOneTranslation" />
 	</div>
 	<div class="modal-footer">
-		<a class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>			
+		<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>			
 	</div>
 	</div>
 	</div>
@@ -296,7 +296,7 @@
 		<spring:message code="info.KeepOneCompleteTranslation" />
 	</div>
 	<div class="modal-footer">
-		<a class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>			
+		<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>			
 	</div>
 	</div>
 	</div>
@@ -309,7 +309,7 @@
 		<spring:message code="info.KeepPivotTranslation" />
 	</div>
 	<div class="modal-footer">
-		<a class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>			
+		<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>			
 	</div>
 	</div>
 	</div>
@@ -322,7 +322,7 @@
 	  	<spring:message code="question.DeleteTranslation" /> 	
 	  </div>
 	  <div class="modal-footer">
-	  	<a  class="btn btn-info" onclick="deleteTranslation();"><spring:message code="label.OK" /></a>
+	  	<a  class="btn btn-primary" onclick="deleteTranslation();"><spring:message code="label.OK" /></a>
 		<a  class="btn btn-default" onclick="results = null;" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 	  </div>
 	 </div>
@@ -336,7 +336,7 @@
 	  	<spring:message code="question.DeleteTranslations" /> 	
 	  </div>
 	  <div class="modal-footer">
-	  	<a  class="btn btn-info" onclick="deleteTranslations();"><spring:message code="label.OK" /></a>
+	  	<a  class="btn btn-primary" onclick="deleteTranslations();"><spring:message code="label.OK" /></a>
 		<a  class="btn btn-default" onclick="results = null;" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 	  </div>
 	 </div>
@@ -350,7 +350,7 @@
 	  	<spring:message code="question.RequestTranslations" /> 	
 	  </div>
 	  <div class="modal-footer">
-	  	<a  class="btn btn-info" onclick="translateTranslations();"><spring:message code="label.OK" /></a>
+	  	<a  class="btn btn-primary" onclick="translateTranslations();"><spring:message code="label.OK" /></a>
 		<a  class="btn btn-default" onclick="results = null;" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 	  </div>
 	 </div>
@@ -374,7 +374,7 @@
 		</select>	 	
 	  </div>
 	  <div class="modal-footer">
-	  	<a  class="btn btn-info" onclick="translateTranslation();"><spring:message code="label.RequestTranslation" /></a>
+	  	<a  class="btn btn-primary" onclick="translateTranslation();"><spring:message code="label.RequestTranslation" /></a>
 		<a  class="btn btn-default" onclick="results = null;" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 	  </div>
 	</div>
@@ -394,7 +394,7 @@
 	  	<a  class="btn btn-default" onclick="cancelTranslation();"><spring:message code="label.CancelTranslation" /></a>
 	  </div>
 	  <div class="modal-footer">
-		<a  class="btn btn-info" onclick="results = null;" data-dismiss="modal"><spring:message code="label.Close" /></a>	
+		<a  class="btn btn-primary" onclick="results = null;" data-dismiss="modal"><spring:message code="label.Close" /></a>	
 	  </div>
 	</div>
 	</div>

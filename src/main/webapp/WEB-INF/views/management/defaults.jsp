@@ -167,7 +167,7 @@
 		</div>
 	</div>
 	<div class="modal-footer">
-		<a id="btnOkFromEditTextDialog" onclick="updateTextElement();"  class="btn btn-info"><spring:message code="label.OK" /></a>
+		<a id="btnOkFromEditTextDialog" onclick="updateTextElement();"  class="btn btn-primary"><spring:message code="label.OK" /></a>
 		<a  class="btn btn-default" onclick="cancelTextElement()"><spring:message code="label.Cancel" /></a>
 	 </div>
 	 </div>

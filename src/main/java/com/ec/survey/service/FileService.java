@@ -1930,7 +1930,7 @@ public class FileService extends BasicService {
 	@Transactional
 	public void migrateAllArchiveFiles() throws Exception
 	{
-		List<Archive> archives = archiveService.getAllArchives(new ArchiveFilter(), 0, Integer.MAX_VALUE, true);
+		List<Archive> archives = archiveService.getAllArchives(new ArchiveFilter(), 1, Integer.MAX_VALUE, true);
 		
 		for (Archive archive : archives)
 		{

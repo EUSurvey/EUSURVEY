@@ -339,7 +339,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="wait-animation" class="hideme" style="margin-right:120px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-		  	<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
+		  	<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 		</div>
 		</div>
 		</div>
@@ -466,7 +466,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="btnOkAddUserFromAccess"  onclick="addUser();" class="btn btn-info"><spring:message code="label.OK" /></a>		
+			<a id="btnOkAddUserFromAccess"  onclick="addUser();" class="btn btn-primary"><spring:message code="label.OK" /></a>		
 			<a id="btnCancelAdddUserFromAccess"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 		</div>
 		</div>
@@ -499,7 +499,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="btnOkAddDptFromAccess"  onclick="addGroup();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>
+			<a id="btnOkAddDptFromAccess"  onclick="addGroup();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>
 			<a id="btnCancelAdddDptFromAccess"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>				
 		</div>
 		</div>
@@ -514,7 +514,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="remove-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a  id="btnOkDeleteFromAccess" onclick="removeUser();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>
+			<a  id="btnOkDeleteFromAccess" onclick="removeUser();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
 			<a  id="btnCancelDeleteFromAccess" class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>			
 		</div>
 		</div>
@@ -529,7 +529,7 @@
 			<spring:message code="question.ManageInvitations4Externals" />
 		</div>
 		<div class="modal-footer">
-			<a  onclick="updatePrivilege2();" class="btn btn-info"><spring:message code="label.Yes" /></a>
+			<a  onclick="updatePrivilege2();" class="btn btn-primary"><spring:message code="label.Yes" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>			
 		</div>
 		</div>
@@ -538,7 +538,7 @@
 	
 	<c:if test="${message != null}">
 		<script type="text/javascript">
-			showMessage('${message}');
+			showInfo('${message}');
 		</script>
 	</c:if>
 	

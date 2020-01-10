@@ -435,7 +435,7 @@
 										  	${element.confirmationtext}
 										  </div>
 										  <div class="modal-footer">
-											<a style="cursor: pointer" class="btn btn-info" onclick="$('#confirmation-dialog${element.id}').modal('hide');"><spring:message code="label.Close" /></a>		
+											<a style="cursor: pointer" class="btn btn-primary" onclick="$('#confirmation-dialog${element.id}').modal('hide');"><spring:message code="label.Close" /></a>		
 										  </div>
 										  </div>
 										  </div>

@@ -325,6 +325,8 @@
 			</c:otherwise>
 		</c:choose>
 		
+		<%@ include file="../generic-messages.jsp" %>
+		
 		<script type="text/javascript">
 		
 			$(document).ready(function(){
@@ -344,7 +346,7 @@
 		
 		<c:if test="${message != null}">
 			<script type="text/javascript">
-				showRunnerError('<esapi:encodeForHTML>${message}</esapi:encodeForHTML>');
+				showError('<esapi:encodeForHTML>${message}</esapi:encodeForHTML>');
 			</script>
 		</c:if>
 	
@@ -368,7 +370,7 @@
 					<spring:message code="info.SessionTimeout" />
 				</div>
 				<div class="modal-footer">
-					<a onclick="$('#sessiontimeoutdialog').modal('hide')" target="_blank" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a onclick="$('#sessiontimeoutdialog').modal('hide')" target="_blank" class="btn btn-primary"><spring:message code="label.OK" /></a>
 				</div>
 			</div>
 		</div>
@@ -384,7 +386,7 @@
 					<spring:message code="info.NetworkProblems" />
 				</div>
 				<div class="modal-footer">
-					<a onclick="$('#networkproblemsdialog').modal('hide')" target="_blank" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a onclick="$('#networkproblemsdialog').modal('hide')" target="_blank" class="btn btn-primary"><spring:message code="label.OK" /></a>
 				</div>
 			</div>
 		</div>

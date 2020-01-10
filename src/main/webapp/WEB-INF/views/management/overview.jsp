@@ -195,28 +195,28 @@
 						<td rowspan="5" style="vertical-align: top; text-align: right;">
 							<c:choose>
 								<c:when test="${form.survey.isPublished && form.survey.isActive && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-									<a id="btnOverviewUnpublish" onclick="checkUnpublish();" class="btn btn-info"><spring:message code="label.Unpublish" /></a>
+									<a id="btnOverviewUnpublish" onclick="checkUnpublish();" class="btn btn-primary"><spring:message code="label.Unpublish" /></a>
 								</c:when>
 								<c:when test="${form.survey.isPublished && form.survey.isActive}">
 									<a class="btn disabled btn-default"><spring:message code="label.Unpublish" /></a>
 								</c:when>
 								<c:when test="${form.survey.isPublished && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-									<a id="btnOverviewPublish" onclick="checkPublish()" class="btn btn-info"><spring:message code="label.Publish" /></a>
+									<a id="btnOverviewPublish" onclick="checkPublish()" class="btn btn-primary"><spring:message code="label.Publish" /></a>
 								</c:when>
 								<c:when test="${form.survey.isPublished}">
 									<a class="btn disabled btn-default"><spring:message code="label.Publish" /></a>
 								</c:when>
 								<c:when test="${(sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-									<a id="btnOverviewPublish" onclick="checkActivate();" class="btn btn-info"><spring:message code="label.Publish" /></a>
+									<a id="btnOverviewPublish" onclick="checkActivate();" class="btn btn-primary"><spring:message code="label.Publish" /></a>
 								</c:when>
 								<c:otherwise>
-									<a id="btnOverviewPublish" class="btn btn-info disabled"><spring:message code="label.Publish" /></a>
+									<a id="btnOverviewPublish" class="btn btn-primary disabled"><spring:message code="label.Publish" /></a>
 								</c:otherwise>
 							</c:choose>
 							<br /><br />
 							<c:choose>
 								<c:when test="${form.survey.isPublished && form.survey.hasPendingChanges && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
-									<a id="btnOverviewApplyEnabled" onclick="$('#pending-changes-dialog').modal('show');" class="btn btn-default btn-info"><spring:message code="label.ShowPendingChanges" /></a>
+									<a id="btnOverviewApplyEnabled" onclick="$('#pending-changes-dialog').modal('show');" class="btn btn-default btn-primary"><spring:message code="label.ShowPendingChanges" /></a>
 								</c:when>
 								<c:otherwise>
 									<button id="btnOverviewApplyDisabled" class="btn btn-default disabled"><spring:message code="label.ShowPendingChanges" /></button>
@@ -436,7 +436,7 @@
 		<c:if test="${isPublished && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
 			<a id="btnClearPendingFromOverview"  class="btn btn-default" onclick="$('#pending-changes-dialog').modal('hide');$('#confirm-clear-changes-dialog').modal('show');"><spring:message code="label.UndoChanges" /></a>	
 		</c:if>
-		<a  id ="btnApplyChangesFromOverview" class="btn btn-default btn-info" onclick="checkShowApplyChangesWaitDialog();"><spring:message code="label.ApplyChanges" /></a>
+		<a  id ="btnApplyChangesFromOverview" class="btn btn-default btn-primary" onclick="checkShowApplyChangesWaitDialog();"><spring:message code="label.ApplyChanges" /></a>
 		<a  id ="btnCancelChangesFromOverview" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
 	</div>
 	</div>
@@ -506,7 +506,7 @@
 	 	<spring:message code="question.CheckApplyChanges" />
 	</div>
 	<div class="modal-footer">
-		<a  class="btn btn-info" onclick="showApplyChangesWaitDialog();" ><spring:message code="label.Yes" /></a>
+		<a  class="btn btn-primary" onclick="showApplyChangesWaitDialog();" ><spring:message code="label.Yes" /></a>
 		<a  class="btn btn-default" onclick="$(this).closest('.modal').modal('hide');"><spring:message code="label.No" /></a>
 	</div>
 	</div>

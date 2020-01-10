@@ -49,7 +49,7 @@
 	
 	<div id="actions" class="actions">
 		<div style="float: left; margin-left: 10px; padding-right: 10px; border-right: 1px solid #ccc;">
-			<button id="save-button" data-bind="attr: {class: 'btn btn-default btn-info' + (SaveEnabled() && AllElementsLoaded() ? '' : ' disabled')}" onclick="_actions.UnsavedChangesConfirmed(true); saveForm(false);"><spring:message code="label.Save" /></button>
+			<button id="save-button" data-bind="attr: {class: 'btn btn-default btn-primary' + (SaveEnabled() && AllElementsLoaded() ? '' : ' disabled')}" onclick="_actions.UnsavedChangesConfirmed(true); saveForm(false);"><spring:message code="label.Save" /></button>
 			<a id="cancel-button" onclick="return checkChanges(this)" href="${contextpath}/${form.survey.shortname}/management/test" class="btn btn-default"><spring:message code="label.Cancel" /></a>
 		</div>
 		
@@ -347,7 +347,7 @@
 				<a id="docEditorGuideDE" target="_blank" href="${contextpath}/resources/documents/Quiz_Guide_DE.pdf" style="display: none;">Quiz Documentation</a>
 			  </div>
 			  <div class="modal-footer">
-				<a class="btn btn-info" onclick="disableNewQuizDialog()"><spring:message code="label.GotIt" /></a>		
+				<a class="btn btn-primary" onclick="disableNewQuizDialog()"><spring:message code="label.GotIt" /></a>		
 			  </div>
 			 </div>
 		 </div>
@@ -360,7 +360,7 @@
 			 	 <spring:message code="question.askRestoreSurvey" />
 			  </div>
 			  <div class="modal-footer">
-				<a class="btn btn-info" onclick="_actions.restore(); $('#askRestoreDialog').modal('hide')"><spring:message code="label.Yes" /></a>
+				<a class="btn btn-primary" onclick="_actions.restore(); $('#askRestoreDialog').modal('hide')"><spring:message code="label.Yes" /></a>
 				<a class="btn btn-default" onclick="$('#askRestoreDialog').modal('hide')"><spring:message code="label.No" /></a>		
 				<a class="btn btn-default" onclick="_actions.deleteBackup(); $('#askRestoreDialog').modal('hide')"><spring:message code="label.DeleteLocalBackup" /></a>		
 			  </div>
@@ -424,7 +424,7 @@
 			
 			<c:choose>
 				<c:when test="${saved != null}">
-					showInfo("<spring:message code='message.SurveySaved' />");	
+					showSuccess("<spring:message code='message.SurveySaved' />");	
 					
 					//delete backup from local storage
 					_actions.deleteBackup();

@@ -101,11 +101,11 @@
 				  success: function(data)
 				  {
 					  if (data == "success") {
-							showInfo("<spring:message code="message.ExportsDeletedSuccessfully" />");
-							$('#Row' + id).hide();
-						} else {
-							showError('<spring:message code="message.ExportsDeleteFailed" />');
-						}
+						showSuccess("<spring:message code="message.ExportsDeletedSuccessfully" />");
+						$('#Row' + id).hide();
+					} else {
+						showError('<spring:message code="message.ExportsDeleteFailed" />');
+					}
 				  }
 				});
 			
@@ -137,7 +137,7 @@
 					deleteExport(this.id);
 				}
 			});			
-			showInfo("<spring:message code="message.ExportsDeletedSuccessfully" />");
+			showSuccess("<spring:message code="message.ExportsDeletedSuccessfully" />");
 		}
 		
 		function recreateSelectedExports() {
@@ -433,7 +433,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a id="deleteExportConfirm" onclick="deleteOneExport()"  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>	
+				<a id="deleteExportConfirm" onclick="deleteOneExport()"  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>	
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>											
 			</div>
 			</div>
@@ -448,7 +448,7 @@
 			</div>
 			<div class="modal-footer">
 				<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-				<a id="deleteExportsConfirm" onclick="deleteSelectedExports()"  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>		
+				<a id="deleteExportsConfirm" onclick="deleteSelectedExports()"  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>		
 				<a  class="btn btn-default" data-dismiss="modal" onclick="$('#operationselector').val('recreate');"><spring:message code="label.No" /></a>			
 			</div>
 			</div>
@@ -462,7 +462,7 @@
 				<spring:message code="message.NoElementSelected" />						
 			</div>
 			<div class="modal-footer">
-				<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>		
+				<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>		
 			</div>
 			</div>
 			</div>

@@ -109,7 +109,7 @@
 						</ul>
 					</div>
 					<div class="modal-footer">
-						<a class="btn btn-info" data-dismiss="modal">
+						<a class="btn btn-primary" data-dismiss="modal">
 							<spring:message code="label.Close" /></a>
 					</div>
 				</div>

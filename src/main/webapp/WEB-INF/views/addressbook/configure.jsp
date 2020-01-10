@@ -74,7 +74,7 @@
 			
 		</div>
 		<div class="modal-footer"">
-			<a onclick="saveConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+			<a onclick="saveConfiguration();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 			<a onclick="cancelConfigure();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
 		</div>	
 	</form:form>

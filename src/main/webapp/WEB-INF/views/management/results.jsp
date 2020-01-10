@@ -87,7 +87,7 @@
 			checkDeleteBoxes();
 		
 			<c:if test="${message == 'success'}">
-				showInfo('<spring:message code="message.ContributionDeleted" />');
+				showSuccess('<spring:message code="message.ContributionDeleted" />');
 			</c:if>
 		
 			<c:if test="${message == 'failure'}">
@@ -99,7 +99,7 @@
 			</c:if>
 				
 			<c:if test="${deletedAnswers != null}">
-				showInfo('${deletedAnswers}&nbsp;<spring:message code="message.ContributionDeleted" />');
+				showSuccess('${deletedAnswers}&nbsp;<spring:message code="message.ContributionDeleted" />');
 			</c:if>
 			
 			$("#form-menu-tab").addClass("active");
@@ -248,7 +248,7 @@
 		
 		function checkDeleteBoxes()
 		{
-			if ($("#show-delete-checkboxes").is(":checked") && $('#results-table-link').hasClass("btn-info"))
+			if ($("#show-delete-checkboxes").is(":checked") && $('#results-table-link').hasClass("btn-primary"))
 			{
 				$(".checkDelete").removeClass("hiddenTableCell");
 				$("#btnDeleteSelected").show();
@@ -326,9 +326,9 @@
 			switch(resultType)
 			{
 				case 'content':
-					$("#results-table-link").addClass("btn-info");
-					$("#results-statistics-quiz-link").removeClass("btn-info").addClass("btn-default");
-					$("#results-statistics-link").removeClass("btn-info").addClass("btn-default");
+					$("#results-table-link").addClass("btn-primary");
+					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
 					
 					$("#results-table").find("tbody").removeClass('hidden');
 					$("#results-table").find(".RowsPerPage").removeClass('hidden');
@@ -361,9 +361,9 @@
 					resetSliderPositions($("#contentstable"));
 					break;
 				case 'statistics':
-					$("#results-table-link").removeClass("btn-info").addClass("btn-default");
-					$("#results-statistics-quiz-link").removeClass("btn-info").addClass("btn-default");
-					$("#results-statistics-link").addClass("btn-info");
+					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-link").addClass("btn-primary");
 					
 					$("#results-table").find(".RowsPerPage").addClass('hidden');
 					$("#pager").addClass('hidden');
@@ -382,9 +382,9 @@
 					$("#scrollareaheader").css("overflow-y","auto");
 					break;
 				case 'statistics-quiz':
-					$("#results-table-link").removeClass("btn-info").addClass("btn-default");
-					$("#results-statistics-link").removeClass("btn-info").addClass("btn-default");
-					$("#results-statistics-quiz-link").addClass("btn-info");
+					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-quiz-link").addClass("btn-primary");
 					
 					$("#results-table").find(".RowsPerPage").addClass('hidden');
 					$("#pager").addClass('hidden');
@@ -677,7 +677,7 @@
 					
 			<div style="width: 1100px; vertical-align: middle; margin-left: auto; margin-right: auto; margin-top: 10px;">		
 				<div style="float: left; margin-top: 0px; margin-bottom: 0px;">		
-					<a id="results-table-link" class="btn btn-xs btn-info" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
+					<a id="results-table-link" class="btn btn-xs btn-primary" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
 					<a id="results-statistics-link" class="btn btn-default btn-xs" onclick="switchTo('statistics');"><img src="${contextpath}/resources/images/icons/24/percentage.png" /></a>
 					<c:if test="${form.survey.isQuiz}">
 						<a id="results-statistics-quiz-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
@@ -711,7 +711,7 @@
 						</c:choose>
 					</select>
 					
-					<a onclick="$(this).closest('form').submit()" class="btn btn-info" style="margin-left: 30px"><spring:message code="label.Search" /></a>
+					<a onclick="$(this).closest('form').submit()" class="btn btn-primary" style="margin-left: 30px"><spring:message code="label.Search" /></a>
 					<a id="resetbutton" onclick="$('#show-wait-image').modal('show');" class="btn btn-default" href="${contextpath}/${sessioninfo.shortname}/management/results?reset=true"><spring:message code="label.ResetFilter" /></a>
 					
 					<a style="margin-left: 30px" data-placement="bottom" data-toggle="tooltip" title="<spring:message code="label.Configure" />" class="iconbutton" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><span class="glyphicon glyphicon-wrench"></span></a>
@@ -736,11 +736,11 @@
 				<div id="content-export-buttons" style="min-width: 200px; margin-top: 2px; float: right; text-align: center">
 					<b><spring:message code="label.Export" /></b>					
 						<span class="deactivatedexports">
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportContentLinkxls"  ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportContentLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxml" />" style="cursor: not-allowed" id="startExportContentLinkxml" ><img src="${contextpath}/resources/images/file_extension_xml_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportContentLinkxls"  ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportContentLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxml" />" id="startExportContentLinkxml" ><img src="${contextpath}/resources/images/file_extension_xml_small_grey.png" /></a>
 							<c:if test="${!allanswers}">
-		 						<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportContentLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a> 
+		 						<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportContentLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a> 
 							</c:if>
 						</span>
 						<span class="activatedexports hideme">
@@ -758,19 +758,19 @@
 					
 					<c:choose>
 						<c:when test="${form.getSurvey().hasNoQuestionsForStatistics()}">
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
 						</c:when>
 						<c:otherwise>
 							<span class="deactivatedexports">
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
+								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
 							</span>
 							<span class="activatedexports hideme">
 								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportStatisticsLinkpdf"  onclick="showExportDialog('Statistics', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>				
@@ -789,7 +789,7 @@
 					
 					<c:choose>
 						<c:when test="${paging.items.size() == 0}">
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportQuizStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
+							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportQuizStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
 						</c:when>
 						<c:otherwise>
 							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportQuizStatisticsLinkpdf"  onclick="showExportDialog('StatisticsQuiz', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>				
@@ -901,7 +901,7 @@
 			</div>
 		</div>
 		<div class="modal-footer">
-			<a id="btnOkFromConfigurationResult" onclick="$('#resultsFormMode').val('configure'); $('#configure-columns-dialog').modal('hide'); $('#resultsForm').submit();" class="btn btn-info" ><spring:message code="label.OK" /></a>		
+			<a id="btnOkFromConfigurationResult" onclick="$('#resultsFormMode').val('configure'); $('#configure-columns-dialog').modal('hide'); $('#resultsForm').submit();" class="btn btn-primary" ><spring:message code="label.OK" /></a>		
 			<a class="btn btn-default" onclick="resetSelections($('#tblConfigurationFromResult'))" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>
@@ -916,7 +916,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="deleteSingleContributionConfirm" onclick="deleteContribution()"  class="btn btn-info"><spring:message code="label.Yes" /></a>
+			<a id="deleteSingleContributionConfirm" onclick="deleteContribution()"  class="btn btn-primary"><spring:message code="label.Yes" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>					
 		</div>
 		</div>
@@ -937,7 +937,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="deleteContributionConfirm" onclick="submitDeleteMultiple()"  class="btn disabled btn-info"><spring:message code="label.Yes" /></a>
+			<a id="deleteContributionConfirm" onclick="submitDeleteMultiple()"  class="btn disabled btn-primary"><spring:message code="label.Yes" /></a>
 			<a id="deleteContributionCancel"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>					
 		</div>
 		</div>
@@ -951,7 +951,7 @@
 			<spring:message code="info.NoContributionsToDelete" />
 		</div>
 		<div class="modal-footer">
-			<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
+			<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 		</div>
 		</div>
 		</div>

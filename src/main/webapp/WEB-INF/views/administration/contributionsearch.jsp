@@ -57,6 +57,10 @@
 			});
 			
 			$('[data-toggle="tooltip"]').tooltip();
+			
+			<c:if test="${filter.status != null}">
+		 		$("#contributiontype").val("${filter.status}");
+		 	</c:if>
 		});
 		
 		var infinitePage = 6;
@@ -255,7 +259,14 @@
 					<div id="action-bar" class="container">
 						<div class="row">
 							<div class="col-md-12" style="text-align:center; margin-top: 20px;">
-								<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-info" type="submit" value="<spring:message code="label.Search" />" />
+								<div style="float: left">
+									<select name="contributiontype" id="contributiontype" class="form-control" style="width: auto">
+										<option value="All"><spring:message code="label.DraftsAndSubmittedContributions" /></option>
+ 		                                <option value="Drafts"><spring:message code="label.DraftContributionsOnly" /></option>
+ 	                                    <option value="Submitted"><spring:message code="label.SubmittedContributionsOnly" /></option>                                                   
+ 	                                </select>
+ 	                            </div>
+								<input rel="tooltip" title="<spring:message code="label.Search" />" class="btn btn-primary" type="submit" value="<spring:message code="label.Search" />" />
 								<a  onclick="resetSearch()" rel="tooltip" title="<spring:message code="label.ResetFilter" />" class="btn btn-default"><spring:message code="label.Reset" /></a>
 							</div>
 						</div>
@@ -379,7 +390,7 @@
 										<td>
 											<c:choose>
 												<c:when test="${answerSet.isDraft}">
-													<img style="cursor: not-allowed" data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" src="${contextpath}/resources/images/file_extension_pdf_small_grey.png">
+													<img data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" src="${contextpath}/resources/images/file_extension_pdf_small_grey.png">
 												</c:when>
 												<c:otherwise>
 													<a style="pading-bottom: 10px;" data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" onclick="downloadAnswerPDF('${answerSet.uniqueCode}')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png"></a>
@@ -391,7 +402,7 @@
 													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton" target="_blank" href="<c:url value='/editcontribution/'/>${answerSet.uniqueCode}?mode=dialog" ><span class="glyphicon glyphicon-pencil"></span></a>
 												</c:when>
 												<c:otherwise>
-													<a style="cursor: not-allowed" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton disabled" ><span class="glyphicon glyphicon-pencil"></span></a>
+													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />" class="iconbutton disabled" ><span class="glyphicon glyphicon-pencil"></span></a>
 												</c:otherwise>
 											</c:choose>
 											
@@ -400,7 +411,7 @@
 													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton" onclick="resetContribution('${answerSet.uniqueCode}', this)" ><span class="glyphicon glyphicon-refresh"></span></a>
 												</c:when>
 												<c:otherwise>
-													<a style="cursor: not-allowed !important" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton disabled"><span class="glyphicon glyphicon-refresh"></span></a>
+													<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.MakeDraftAgain" />" class="iconbutton disabled"><span class="glyphicon glyphicon-refresh"></span></a>
 												</c:otherwise>
 											</c:choose>
 										</td>									

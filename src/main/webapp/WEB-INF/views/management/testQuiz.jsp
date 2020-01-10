@@ -51,7 +51,7 @@
 	
 	<c:if test="${message != null}">
 		<script type="text/javascript">
-			showRunnerError('${message}');
+			showError('${message}');
 		</script>
 	</c:if>
 

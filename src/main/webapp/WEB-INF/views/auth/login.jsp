@@ -73,7 +73,7 @@
 			
 			if(window.location.href.indexOf("sessionexpired")>-1)
 			{
-				showBasicError('<spring:message code="error.Session" />');
+				showError('<spring:message code="error.Session" />');
 			}
 			
 			<c:if test='${mode != null && mode.equalsIgnoreCase("forgotPassword")}'>
@@ -141,7 +141,7 @@
 										</c:otherwise>
 									</c:choose>
 								</div>
-								<a class="btn btn-info" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>
+								<a class="btn btn-primary" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>
 							</form:form>
 						</div>
 						
@@ -167,7 +167,7 @@
 										</c:when>									
 									</c:choose>
 								</div>
-								<a class="btn btn-info" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>
+								<a class="btn btn-primary" onclick="$(this).closest('form').submit()"><spring:message code="label.Connect" /></a>
 							</form:form>
 						</div>
 					</div>
@@ -227,6 +227,7 @@
 	</div>
 	
 	<%@ include file="../footer.jsp" %>
+	<%@ include file="../generic-messages.jsp" %>
 	
 	<div class="modal" id="forgot-password-dialog" data-backdrop="static">
 		<div class="modal-dialog">
@@ -244,7 +245,7 @@
 		        	</div>				
 				</div>
 				<div class="modal-footer">
-					<a onclick="requestLink();" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a onclick="requestLink();" class="btn btn-primary"><spring:message code="label.OK" /></a>
 					<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 				</div>	
 			</form:form>
@@ -255,14 +256,14 @@
 	<c:if test="${error != null}">
 		<script type="text/javascript">
 			switchPanels();
-			showBasicError('<esapi:encodeForHTML>${error}</esapi:encodeForHTML>');
+			showError('<esapi:encodeForHTML>${error}</esapi:encodeForHTML>');
 		</script>
  	</c:if>
  	
  	<c:if test="${info != null}">
  		<script type="text/javascript">
  			switchPanels();
-			showBasicInfo('<esapi:encodeForHTML>${info}</esapi:encodeForHTML>');
+			showInfo('<esapi:encodeForHTML>${info}</esapi:encodeForHTML>');
 		</script>
  	</c:if>
 

@@ -87,7 +87,8 @@ public class ContributionManagementController extends BasicController {
 		filter.setNoTestAnswers(true);
 		filter.setUpdatedFrom(ConversionTools.getDate(request.getParameter("metafilterupdatefrom").trim()));
 		filter.setUpdatedTo(ConversionTools.getDate(request.getParameter("metafilterupdateto").trim()));
-					
+		filter.setStatus(request.getParameter("contributiontype"));
+		
 		String newPage = request.getParameter("newPage");
 		newPage = newPage == null ? "1" : newPage;
 		Integer itemsPerPage = 50;

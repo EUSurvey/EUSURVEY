@@ -447,7 +447,7 @@
 					<a onclick="cancelActivityConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
 				</div>
 				<div style="padding-left: 65px">
-					<a onclick="saveActivityConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+					<a onclick="saveActivityConfiguration();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 				</div>			
 			</div>
 			</div>
@@ -570,7 +570,7 @@
 					<a onclick="cancelComplexityConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
 				</div>
 				<div style="padding-left: 65px">
-					<a onclick="saveComplexityConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+					<a onclick="saveComplexityConfiguration();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 				</div>			
 			</div>
 			</div>
@@ -711,7 +711,7 @@
 					<a onclick="cancelConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
 				</div>
 				<div style="padding-left: 65px">
-					<a onclick="saveConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+					<a onclick="saveConfiguration();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 				</div>			
 			</div>
 			</div>
@@ -753,7 +753,7 @@
 					<a onclick="cancelReportConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
 				</div>
 				<div style="padding-left: 65px">
-					<a onclick="saveReportConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+					<a onclick="saveReportConfiguration();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 				</div>			
 			</div>
 			</div>
@@ -811,7 +811,7 @@
 					<a onclick="cancelBanUserConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
 				</div>
 				<div style="padding-left: 65px">
-					<a onclick="saveBanUserConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+					<a onclick="saveBanUserConfiguration();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 				</div>			
 			</div>
 			</div>
@@ -873,7 +873,7 @@
 					<a onclick="cancelTrustIndicatorConfiguration();"  class="btn btn-default"><spring:message code="label.Cancel" /></a>
 				</div>
 				<div style="padding-left: 65px">
-					<a onclick="saveTrustIndicatorConfiguration();" class="btn btn-info"><spring:message code="label.Save" /></a>		
+					<a onclick="saveTrustIndicatorConfiguration();" class="btn btn-primary"><spring:message code="label.Save" /></a>		
 				</div>			
 			</div>
 			</div>

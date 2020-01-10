@@ -1,5 +1,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+
+	<div class="modal" id="askSectionVisibilityDialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-body">      
+					<spring:message code="question.ApplyVisibilityToChildren" />
+				</div>
+				<div class="modal-footer">
+					<a  class="btn btn-primary" onclick="$('#askSectionVisibilityDialog').modal('hide');updateVisibility(selectedspan, false, false, true);"><spring:message code="label.Yes" /></a>
+					<a  class="btn btn-default" onclick="$('#askSectionVisibilityDialog').modal('hide');updateVisibility(selectedspan, false, false, false);"><spring:message code="label.No" /></a>                
+				</div>
+			</div>
+		</div>
+	</div>
 	
 	<div class="modal" id="invalid-regform-dialog" data-backdrop="static">
 	<div class="modal-dialog modal-sm">
@@ -8,7 +22,7 @@
 	  	<spring:message code="message.InvalidRegform" />
 	  </div>
 	  <div class="modal-footer">
-		<a  class="btn btn-info" onclick="$('#invalid-regform-dialog').modal('hide');internalSave(internalClose)"><spring:message code="label.Yes" /></a>
+		<a  class="btn btn-primary" onclick="$('#invalid-regform-dialog').modal('hide');internalSave(internalClose)"><spring:message code="label.Yes" /></a>
 		<a  class="btn btn-default" onclick="$('#invalid-regform-dialog').modal('hide');"><spring:message code="label.No" /></a>		
 	  </div>
 	 </div>
@@ -24,7 +38,7 @@
 		  	<div id="confirm-delete-dialog-body"></div>
 		  </div>
 		  <div class="modal-footer">
-			<a id="btnConfirmDeleteElementFromEdit" class="btn btn-info" onclick="_actions.deleteElement2(false);"><spring:message code="label.OK" /></a>		
+			<a id="btnConfirmDeleteElementFromEdit" class="btn btn-primary" onclick="_actions.deleteElement2(false);"><spring:message code="label.OK" /></a>		
 			<a id="btnCancelDeleteElementFromEdit" class="btn btn-default" onclick="$('#confirm-delete-dialog').modal('hide');"><spring:message code="label.Cancel" /></a>			
 		  </div>
 		 </div>
@@ -40,7 +54,7 @@
 		  		<div id="confirm-delete-multiple-dialog-body"></div>
 		  </div>
 		  <div class="modal-footer">
-			<a  id="btnConfirmDeleteMultiElementFromEdit" class="btn btn-info" onclick="_actions.deleteElement2(false);"><spring:message code="label.OK" /></a>		
+			<a  id="btnConfirmDeleteMultiElementFromEdit" class="btn btn-primary" onclick="_actions.deleteElement2(false);"><spring:message code="label.OK" /></a>		
 				<a id="btnCancelDeleteElementFromEdit"  class="btn btn-default" onclick="$('#confirm-delete-multiple-dialog').modal('hide');"><spring:message code="label.Cancel" /></a>			
 		  </div>
 		 </div>
@@ -54,7 +68,7 @@
 	        <spring:message code="question.SaveChanges" />
 	      </div>
 	      <div class="modal-footer">
-	      	<a onclick="_actions.UnsavedChangesConfirmed(true); $('#checkChangesDialog').modal('hide'); saveForm(false);" id="checkChangesDialogSaveButton" class="btn btn-default btn-info"><spring:message code="label.Save" /></a>
+	      	<a onclick="_actions.UnsavedChangesConfirmed(true); $('#checkChangesDialog').modal('hide'); saveForm(false);" id="checkChangesDialogSaveButton" class="btn btn-default btn-primary"><spring:message code="label.Save" /></a>
 	        <a onclick="_actions.UnsavedChangesConfirmed(true); return true;" id="checkChangesDialogDontSaveButton" href="${contextpath}/${form.survey.shortname}/management/test" class="btn btn-default"><spring:message code="label.DontSave" /></a>
 	        <button onclick="$('#editorredirect').val('');" type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></button>
 	      </div>
@@ -69,7 +83,7 @@
 		  	<spring:message code="message.InvalidDependencyNew" />
 		  </div>
 		  <div class="modal-footer">
-			<a  class="btn btn-info" onclick="$('#invalid-dependency-dialog').modal('hide');"><spring:message code="label.OK" /></a>			
+			<a  class="btn btn-primary" onclick="$('#invalid-dependency-dialog').modal('hide');"><spring:message code="label.OK" /></a>			
 		  </div>
 		</div>
 		</div>
@@ -93,7 +107,7 @@
 		  	<spring:message code="question.MoveSectionWithContent" />
 		  </div>
 		  <div class="modal-footer">
-				<a  class="btn btn-info" onclick="_actions.cutSection(true);"><spring:message code="label.Yes" /></a>		
+				<a  class="btn btn-primary" onclick="_actions.cutSection(true);"><spring:message code="label.Yes" /></a>		
 				<a  class="btn btn-default" onclick="_actions.cutSection(false);"><spring:message code="label.No" /></a>			
 		  </div>
 		</div>
@@ -107,7 +121,7 @@
 		  	<spring:message code="question.CopySectionWithContent" />
 		  </div>
 		  <div class="modal-footer">
-				<a  class="btn btn-info" onclick="_actions.copySection(true);"><spring:message code="label.Yes" /></a>		
+				<a  class="btn btn-primary" onclick="_actions.copySection(true);"><spring:message code="label.Yes" /></a>		
 				<a  class="btn btn-default" onclick="_actions.copySection(false);"><spring:message code="label.No" /></a>			
 		  </div>
 		</div>

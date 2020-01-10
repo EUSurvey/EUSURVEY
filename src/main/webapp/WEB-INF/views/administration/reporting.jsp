@@ -347,7 +347,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a onclick="recreateAllOLAPTables();" class="btn btn-info"><spring:message code="label.Yes" /></a>	
+			<a onclick="recreateAllOLAPTables();" class="btn btn-primary"><spring:message code="label.Yes" /></a>	
 			<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>											
 		</div>
 		</div>
@@ -362,7 +362,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a onclick="createAllOLAPTables();" class="btn btn-info"><spring:message code="label.Yes" /></a>	
+			<a onclick="createAllOLAPTables();" class="btn btn-primary"><spring:message code="label.Yes" /></a>	
 			<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>											
 		</div>
 		</div>
@@ -377,7 +377,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a onclick="updateAllOLAPTables();" class="btn btn-info"><spring:message code="label.Yes" /></a>	
+			<a onclick="updateAllOLAPTables();" class="btn btn-primary"><spring:message code="label.Yes" /></a>	
 			<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>											
 		</div>
 		</div>

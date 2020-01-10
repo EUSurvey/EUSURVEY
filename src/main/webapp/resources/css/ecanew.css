@@ -365,13 +365,13 @@ body {
 	bottom: 0;
 }
 
-.btn-info {
+.btn-primary {
 	background-color: #444444;
 	border-color: #444444;
 	color: #fff !important;
 }
 
-.btn-info:hover, .btn-info:active, .btn-info:visited, .btn-info:focus, .btn-info:link {
+.btn-primary:hover, .btn-primary:active, .btn-primary:visited, .btn-primary:focus, .btn-primary:link {
 	background-color: #444444 !important;
 	border-color: #555555;
 }

@@ -2212,6 +2212,8 @@ public class SurveyService extends BasicService {
 					if (newTitle && trOriginal.getKey().equalsIgnoreCase("TITLE")) {
 						if (trOriginal.getLanguage().equalsIgnoreCase(survey.getLanguage().getCode())) {
 							tr.setLabel(survey.getTitle());
+						} else {
+							tr.setLabel(trOriginal.getLabel());
 						}
 					} else {
 						tr.setLabel(trOriginal.getLabel());
@@ -3862,7 +3864,7 @@ public class SurveyService extends BasicService {
 		sqlQueryService.setParameters(query, params);
 
 		@SuppressWarnings("unchecked")
-		List<Survey> result = query.setFirstResult(page * rowsPerPage).setMaxResults(rowsPerPage).list();
+		List<Survey> result = query.setFirstResult((page-1) * rowsPerPage).setMaxResults(rowsPerPage).list();
 		return result;
 	}
 	
@@ -3879,7 +3881,7 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public Map<Integer, String> getAllPublishedSurveysForUser(User user, String sort) {
+	public LinkedHashMap<Integer, String> getAllPublishedSurveysForUser(User user, String sort) {
 		Session session = sessionFactory.getCurrentSession();
 
 		String sql = "SELECT s.SURVEY_ID, s.SURVEYNAME, npa.PUBLISHEDANSWERS as replies from SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID where s.ISDRAFT = 1 and s.ACTIVE = 1 and (s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))) and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) ORDER BY ";
@@ -3896,7 +3898,7 @@ public class SurveyService extends BasicService {
 		query.setInteger("userid", user.getId());
 		query.setString("login", user.getLogin());
 
-		Map<Integer, String> result = new LinkedHashMap<Integer, String>();
+		LinkedHashMap<Integer, String> result = new LinkedHashMap<Integer, String>();
 
 		@SuppressWarnings("rawtypes")
 		List res = query.list();
@@ -3985,12 +3987,12 @@ public class SurveyService extends BasicService {
 			result[4] = archived ? "true" : "false";
 
 		} else {
-			// this means that the user has no "exiting" survey. Check if there is an
+			// this means that the user has no "existing" survey. Check if there is an
 			// archived one
 
 			ArchiveFilter filter = new ArchiveFilter();
 			filter.setUserId(user.getId());
-			List<Archive> archives = archiveService.getAllArchives(filter, 0, 1, true);
+			List<Archive> archives = archiveService.getAllArchives(filter, 1, 1, true);
 
 			if (archives.size() > 0) {
 				result[5] = "true";

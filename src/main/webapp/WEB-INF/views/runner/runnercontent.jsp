@@ -81,7 +81,7 @@
 					<spring:message code="error.holf" />
 				</div>
 				<div class="modal-footer">
-					<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.OK" /></a>				
+					<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>				
 				</div>
 				</div>
 				</div>	
@@ -90,22 +90,4 @@
 				$("#holf").modal("show");
 			</script>
 		</c:if>		
-	</div>
-	
-	<div id="generic-warning-box" class="alert alert-danger hideme" style="position: fixed; top: 5px; right:5px; padding: 10px; z-index: 10002">
-		<div style="float: left;"><img alt="warning icon" src="${contextpath}/resources/images/warning.png" /></div>
-		<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-		<div class="generic-box-text" id="generic-warning-box-text"></div>
-	</div>	
-	
-	<div id="generic-error-box-runner" class="alert alert-danger hideme" style="position: fixed; top: 5px; right: 5px; padding: 5px; z-index: 10001;">
-		<div style="float: left;"><img src="${contextpath}/resources/images/warning.png" id="system-message-box-icon" alt="system message icon"></div>
-		<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-		<div class="generic-box-text" id="generic-error-box-text-runner"></div>
-	</div>
-	
-	<div id="generic-info-box-runner" class="alert alert-success hideme" style="position: fixed; top: 5px; right:5px; padding: 10px; z-index: 10002">
-		<div style="float: left;"><img src="${contextpath}/resources/images/check.png" id="system-message-box-icon" alt="system message icon"></div>
-		<div style="float: right; margin-left: 5px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-		<div class="generic-box-text" id="generic-info-box-text-runner"></div>
 	</div>

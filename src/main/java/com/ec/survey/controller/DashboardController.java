@@ -105,7 +105,7 @@ public class DashboardController extends BasicController {
 			String sort = request.getParameter("sort");
 			String span = request.getParameter("span");
 					
-			Map<Integer, String> surveys = surveyService.getAllPublishedSurveysForUser(u, sort);	
+			LinkedHashMap<Integer, String> surveys = surveyService.getAllPublishedSurveysForUser(u, sort);	
 			contributions.setSurveys(surveys);
 			
 			int index = 0;
@@ -113,7 +113,25 @@ public class DashboardController extends BasicController {
 			{
 				index = Integer.parseInt(request.getParameter("survey"));				
 			}
-						
+			
+			if (request.getParameter("surveyid") != null)
+			{
+				int surveyid = Integer.parseInt(request.getParameter("surveyid"));
+				if (surveyid > 0)
+				{
+					Integer[] surveyids = new Integer[0];
+					surveyids = surveys.keySet().toArray(surveyids);
+					for (int i = 0; i < surveyids.length; i++)
+					{
+						if (surveyids[i] == surveyid)
+						{
+							index = i;
+							break;
+						}
+					}
+				}
+			}
+			
 			if (surveys.size() > 0)
 			{			
 				contributions.setSurveyId((int) surveys.keySet().toArray()[index]);
@@ -126,6 +144,7 @@ public class DashboardController extends BasicController {
 				int[] cs = answerService.getAnswerStatistics(contributions.getSurveyId());
 				
 				contributions.setContributionStates(cs);
+				contributions.setSurveyIndex(index);				
 			}
 			
 			return contributions;					
@@ -403,7 +422,7 @@ public class DashboardController extends BasicController {
 				filter.setSortOrder(request.getParameter("asc") != null && request.getParameter("asc").equalsIgnoreCase("true") ? "ASC" : "DESC");				
 			}
 							
-			List<Archive> archives = archiveService.getAllArchives(filter, page-1, 10, true);
+			List<Archive> archives = archiveService.getAllArchives(filter, page, 10, true);
 			
 			return archives;				
 		} catch (Exception ex) {

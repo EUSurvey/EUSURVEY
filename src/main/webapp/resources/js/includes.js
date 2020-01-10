@@ -28,7 +28,7 @@ function closeFullScreen(button, apply)
 	
 	if (apply)
 	{
-		var btn = $(buttons).find(".btn-info").first();			
+		var btn = $(buttons).find(".btn-primary").first();			
 		save(btn[0]);
 	} else {
 		var btn = $(buttons).find(".btn-default").first();	
@@ -66,11 +66,11 @@ $(function() {
 	});
 	
 	$(document).bind("keydown", "Ctrl+return",function(){
-		if ($('.modal:visible .modal-footer .btn-info').length > 0)
+		if ($('.modal:visible .modal-footer .btn-primary').length > 0)
 		{
-			$('.modal:visible .modal-footer .btn-info').click();			
+			$('.modal:visible .modal-footer .btn-primary').click();			
 		} else {
-			$('.modal:visible .modal-body .btn-info').first().click();
+			$('.modal:visible .modal-body .btn-primary').first().click();
 		}
 	
 	});
@@ -2116,37 +2116,15 @@ function initModals(item)
 		return result;
 	}
 	
-	function showBasicInfo(text)
-	{
-		$("#basic-info-box-text").html(text);
-		$("#basic-info-box").show();
-		window.setTimeout("hideBasicInfos()", 5000);
-	}
-	
-	function showBasicError(text)
-	{
-		$("#basic-error-box-text").html(text);
-		$("#basic-error-box").show();
-		window.setTimeout("hideBasicInfos()", 5000);
-	}
-	
-	function hideBasicInfos()
-	{
-		$("#basic-info-box").hide(400);
-		$("#basic-error-box").hide(400);
-	}
-	
 	function sanitize(str)
 	{
 		var d = document.createElement('div');
 		d.appendChild(document.createTextNode(str));
-		return d.innerHTML;
-		
+		return d.innerHTML;		
 	}
 	
 	var originalMargin = 0;
-	var originalTop = 0;
-	
+	var originalTop = 0;	
 	
 	//check if scrollbars required
 	var isWindowScrolling = function() {
