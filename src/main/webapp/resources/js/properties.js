@@ -311,6 +311,14 @@ function publishConfirmationOkClicked()
 	validateInputAndSubmit($('#save-form'));
 }
 
+function addMaxContributionDisplayer() {
+	$('#maxNumberContributionDisplayer').removeClass('hideme');
+}
+
+function removeMaxContributionDisplayer() {
+	$('#maxNumberContributionDisplayer').addClass('hideme');
+}
+
 function checkAutomaticPublishing()
 {
 	if ($("#autopub").is(":checked"))

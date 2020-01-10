@@ -234,6 +234,10 @@ public class RunnerController extends BasicController {
 						
                         if (!readonlyMode) return getEscapePageModel(draftSurvey, request, device);
 					}
+
+					if (SurveyHelper.isMaxContributionReached(survey, answerService)) {
+						return getMaxAnswersReachedPageModel(survey, request, device);
+					}
 					
 					if (draftSurvey.getIsFrozen())
 					{
@@ -457,6 +461,10 @@ public class RunnerController extends BasicController {
 
 			if (SurveyHelper.isDeactivatedOrEndDateExceeded(survey, surveyService)) {
 				return getEscapePageModel(survey, request, device);
+			}
+
+			if (SurveyHelper.isMaxContributionReached(survey, answerService)) {
+				return getMaxAnswersReachedPageModel(survey, request, device);
 			}
 
 			String lang = locale.getLanguage();
@@ -812,11 +820,14 @@ public class RunnerController extends BasicController {
 				if (!readonlyMode) return getEscapePageModel(survey, request, device);
 			}
 
+			if (SurveyHelper.isMaxContributionReached(survey, answerService)) {
+				return getMaxAnswersReachedPageModel(survey, request, device);
+			}
+
 			if (survey.getSecurity().startsWith("secured")) {
 				if (survey.getEcasSecurity())
 				{
 					try {
-						
 						User user = sessionService.getCurrentUser(request, false, false);
 						
 						boolean ecasauthenticated = request.getSession().getAttribute("ECASSURVEY") != null && request.getSession().getAttribute("ECASSURVEY").toString().startsWith(uidorshortname);
@@ -912,8 +923,8 @@ public class RunnerController extends BasicController {
 		return loadSurvey(survey, request, response, locale, uidorshortname, false, device, readonlyMode);
 	}
 
-	private ModelAndView getEscapePageModel(Survey survey, HttpServletRequest request, Device device) {
-		if (survey.getEscapePageLink() != null && survey.getEscapePageLink() && survey.getEscapeLink() != null && survey.getEscapeLink().length() > 0) {
+	private ModelAndView getEscapePageModel(Survey survey, HttpServletRequest request, Device device, Boolean escapeOrMaxReachedAnswers) {
+		if (escapeOrMaxReachedAnswers && survey.getEscapePageLink() != null && survey.getEscapePageLink() && survey.getEscapeLink() != null && survey.getEscapeLink().length() > 0) {
 			return new ModelAndView("redirect:" + survey.getEscapeLink());
 		} else {
 			ModelAndView model;
@@ -949,7 +960,12 @@ public class RunnerController extends BasicController {
 				f.setWcagCompliance(false);
 			}
 			
-			model.addObject("text", survey.getEscapePage());
+			if (escapeOrMaxReachedAnswers) {
+				model.addObject("text", survey.getEscapePage());
+			} else {
+				model.addObject("text", survey.getMaxNumberContributionText());
+			}
+			
 			model.addObject("form", f);
 			model.addObject("runnermode", true);
 			model.addObject("escapemode", true);
@@ -962,6 +978,14 @@ public class RunnerController extends BasicController {
 			
 			return model;
 		}
+	}
+
+	private ModelAndView getEscapePageModel(Survey survey, HttpServletRequest request, Device device) {
+		return this.getEscapePageModel(survey, request, device, true);
+	}
+
+	private ModelAndView getMaxAnswersReachedPageModel(Survey survey, HttpServletRequest request, Device device) {
+		return this.getEscapePageModel(survey, request, device, false);
 	}
 
 	private ModelAndView loadSurvey(Survey survey, HttpServletRequest request, HttpServletResponse response, Locale locale, String action, boolean passwordauthenticated, Device device, boolean readonlyMode) throws ForbiddenURLException, WeakAuthenticationException {
@@ -1567,7 +1591,6 @@ public class RunnerController extends BasicController {
 
 					}
 				}
-
 				return new ModelAndView("redirect:/errors/500.html");
 			}
 
@@ -1575,6 +1598,11 @@ public class RunnerController extends BasicController {
 			{
 				logger.error("survey id parameter missing in processSubmit for survey " + uidorshortname);
 				return new ModelAndView("redirect:/errors/500.html");
+			}
+
+			Survey lastestPublishedSurvey = surveyService.getSurvey(uidorshortname, false, true, false, false, null, true, true);
+			if (SurveyHelper.isMaxContributionReached(lastestPublishedSurvey, answerService)) {
+				return getMaxAnswersReachedPageModel(lastestPublishedSurvey, request, device);
 			}
 			
 			Survey origsurvey = surveyService.getSurvey(Integer.parseInt(request.getParameter("survey.id")), false, true);
@@ -1595,6 +1623,10 @@ public class RunnerController extends BasicController {
 
 			if (SurveyHelper.isDeactivatedOrEndDateExceeded(origsurvey, surveyService)) {
 				return getEscapePageModel(origsurvey, request, device);
+			}
+
+			if (SurveyHelper.isMaxContributionReached(origsurvey, answerService)) {
+				return getMaxAnswersReachedPageModel(origsurvey, request, device);
 			}
 
 			String lang = locale.getLanguage();

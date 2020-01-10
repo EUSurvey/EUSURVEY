@@ -2597,6 +2597,15 @@ public class SurveyService extends BasicService {
 			if (!Tools.isEqual(draft.getShowQuizIcons(), published.getShowQuizIcons()))
 				hasPendingChanges = true;
 
+			if (!Tools.isEqual(draft.getIsUseMaxNumberContribution(),published.getIsUseMaxNumberContribution()))
+				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draft.getMaxNumberContributionText(),published.getMaxNumberContributionText()))
+				hasPendingChanges = true;
+
+			if (!Tools.isEqual(draft.getMaxNumberContribution(),published.getMaxNumberContribution()))
+				hasPendingChanges = true;
+
 			if (!hasPendingChanges)
 				for (String key : draft.getUsefulLinks().keySet()) {
 					if (!published.getUsefulLinks().containsKey(key) || !published.getUsefulLinks().get(key).equals(draft.getUsefulLinks().get(key))) {
