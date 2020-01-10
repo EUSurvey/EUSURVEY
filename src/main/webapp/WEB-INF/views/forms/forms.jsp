@@ -500,47 +500,6 @@
 						
 							<input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-primary" value="<spring:message code="label.Search" />" />
 							<a rel="tooltip" title="<spring:message code="label.ResetFilter" />" onclick="resetSearch()" class="btn btn-default"><spring:message code="label.Reset" /></a><br /><br />
-						
-							<h4><spring:message code="label.Status" />:</h4>
-						
-							<ul class="multiple-choice" style="margin-left: 0px;">
-								<c:choose>
-									<c:when test='${filter.status.contains("Unpublished")}'>
-										<li class="selected-choice possible-answer">
-											<a onclick="selectMultipleChoiceAnswer(this);" >
-												<span class="answertext"><spring:message code="label.Unpublished" /></span>
-											</a>
-			 								<input checked="checked" value="Unpublished" style="display: none" type="checkbox" name="statusUnpublished" readonly="readonly" />
-										</li>	
-									</c:when>
-									<c:otherwise>															
-										<li class="possible-answer">
-											<a onclick="selectMultipleChoiceAnswer(this);" >
-												<span class="answertext"><spring:message code="label.Unpublished" /></span>
-											</a>
-			 								<input value="Unpublished" style="display: none" type="checkbox" name="statusUnpublished" readonly="readonly" />
-										</li>		
-									</c:otherwise>														
-								</c:choose>			
-								<c:choose>
-									<c:when test='${filter.status.contains("Published")}'>
-										<li class="selected-choice possible-answer">
-											<a onclick="selectMultipleChoiceAnswer(this);" >
-												<span class="answertext"><spring:message code="label.Published" /></span>
-											</a>
-			 								<input checked="checked" value="Published" style="display: none" type="checkbox" name="statusPublished" readonly="readonly" />
-										</li>	
-									</c:when>
-									<c:otherwise>															
-										<li class="possible-answer">
-											<a onclick="selectMultipleChoiceAnswer(this);" >
-												<span class="answertext"><spring:message code="label.Published" /></span>
-											</a>
-			 								<input value="Published" style="display: none" type="checkbox" name="statusPublished" readonly="readonly" />
-										</li>		
-									</c:otherwise>														
-								</c:choose>																						
-							</ul>
 							
 							<h4 style="margin-top: 20px;"><spring:message code="label.Surveys" />:</h4>     
  							<c:choose>
@@ -575,21 +534,31 @@
 							<spring:message code="label.NumberOfReplies" />
 							<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('replies',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
 											
-							<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.SearchSurveys" /></h4>
-							
-							<label class="bold"><spring:message code="label.Keywords" /></label>
+							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Title" /> / <spring:message code="label.Alias" /></h4>
 							<input id="txtKeywordSearch" class="form-control" name="keywords" type="text" maxlength="100" style="width:150px; margin-top: 7px; display:inline;" value='<esapi:encodeForHTMLAttribute>${filter.keywords}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-default" style="margin-bottom: 3px;" value="OK" id="btnSearchSurveys"/>
 							
-							<br /><label class="bold"><spring:message code="label.Languages" /></label><br />
-							
-							<c:forEach items="${languages}" var="language">
-								<c:if test="${language.official}">	
-									<input name="languages" type="checkbox" class="check" data-code="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>" value="<esapi:encodeForHTMLAttribute>${language.id}</esapi:encodeForHTMLAttribute>" <c:if test="${filter.containsLanguage(language.id)}">checked="checked"</c:if> /><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML><br />
-								</c:if>
-							</c:forEach>
+							<h4 style="margin-top: 20px;"><spring:message code="label.Status" />:</h4>					
+					
+							<c:choose>
+								<c:when test='${filter.status.contains("Unpublished")}'>
+									<input class="check" checked="checked" value="Unpublished" type="checkbox" name="statusUnpublished"/> <spring:message code="label.Unpublished" />
+								</c:when>
+								<c:otherwise>															
+									<input class="check" value="Unpublished" type="checkbox" name="statusUnpublished"/> <spring:message code="label.Unpublished" />
+								</c:otherwise>														
+							</c:choose>			
+							<br />
+							<c:choose>
+								<c:when test='${filter.status.contains("Published")}'>
+									<input class="check" checked="checked" value="Published" type="checkbox" name="statusPublished" /> <spring:message code="label.Published" />
+								</c:when>
+								<c:otherwise>															
+									<input class="check" value="Published" type="checkbox" name="statusPublished" /> <spring:message code="label.Published" />	
+								</c:otherwise>														
+							</c:choose>			
 		
-							<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.ByDate" /></h4>
-							
+							<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.Date" /></h4>
+								
 							<a id="date-options-a" style="cursor:pointer" onclick="showHideDateOptions();"><spring:message code="label.ShowDateOptions" /></a>
 							<div id="date-options-div" style="display: none">
 								<label class="bold"><spring:message code="label.CreationDate" /></label>
@@ -623,8 +592,16 @@
 							    </div>								
 							</div>
 							
+							<h4 style="margin-top: 20px;"><spring:message code="label.Languages" /></h4>
+						
+							<c:forEach items="${languages}" var="language">
+								<c:if test="${language.official}">	
+									<input name="languages" type="checkbox" class="check" data-code="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>" value="<esapi:encodeForHTMLAttribute>${language.id}</esapi:encodeForHTMLAttribute>" <c:if test="${filter.containsLanguage(language.id)}">checked="checked"</c:if> /><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML><br />
+								</c:if>
+							</c:forEach>
+							
 							<c:if test="${survey.owner.id == USER.id || USER.formPrivilege > 1}">
-								<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.ByOwner" /></h4>
+								<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Owner" /></h4>
 								<input class="form-control" name="owner" type="text" maxlength="255" style="width:150px; margin-top: 9px; display:inline" value='<esapi:encodeForHTMLAttribute>${filter.owner}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" style="margin-bottom: 3px" type="submit" class="btn btn-default" value="OK" />
 							</c:if>
 							
