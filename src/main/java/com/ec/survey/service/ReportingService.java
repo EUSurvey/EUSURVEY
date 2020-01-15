@@ -414,7 +414,7 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<List<String>> getAnswerSets(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs) throws Exception {
+	public List<List<String>> getAnswerSets(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat) throws Exception {
 		if (!isReportingDatabaseEnabled()) return null;		
 		
 		Session session = sessionFactoryReporting.getCurrentSession();
@@ -508,7 +508,12 @@ public class ReportingService {
 	    		//automatically selected
 	    	} else if (question.equals("CREATED") || question.equals("UPDATED"))
 	    	{
-	    		sql += ", DATE_FORMAT(Q" + question.replace("-", "") + ", \"%Y-%m-%d %H\\:%i\\:%s\")";
+	    		if (useXmlDateFormat)
+	    		{
+	    			sql += ", DATE_FORMAT(Q" + question.replace("-", "") + ", \"%Y-%m-%d_%H-%i-%s\")";
+	    		} else {
+	    			sql += ", DATE_FORMAT(Q" + question.replace("-", "") + ", \"%Y-%m-%d %H\\:%i\\:%s\")";
+	    		}
 	    	} else {
 	    		sql += ", Q" + question.replace("-", "");
 	    	}

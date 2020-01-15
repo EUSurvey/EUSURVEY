@@ -3360,7 +3360,7 @@ public class ManagementController extends BasicController {
 			
 			boolean addlinks = isOwner || user == null || user.getFormPrivilege() > 1 || user.getLocalPrivilegeValue("AccessResults") > 1 || (form.getSurvey().getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0);
 			filter = answerService.initialize(filter);
-			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks, false, showuploadedfiles, false);
+			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks, false, showuploadedfiles, false, false);
 			if (answersets != null)
 			{
 				Date updateDate = reportingService.getLastUpdate(survey);

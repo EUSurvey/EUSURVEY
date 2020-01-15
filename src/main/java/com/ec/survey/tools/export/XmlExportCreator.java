@@ -418,7 +418,7 @@ public class XmlExportCreator extends ExportCreator {
 			}
 		}
 		
-		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false, true, true, true);
+		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false, true, true, true, true);
 		
 		Map<String, List<File>> uploadedFilesByQuestionUID = new HashMap<>();
 		
