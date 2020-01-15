@@ -330,7 +330,7 @@ public class OdfExportCreator extends ExportCreator {
 		}	
 		
 		filter.setVisibleQuestions(filter.getExportedQuestions());
-		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true, publication == null || publication.getShowUploadedDocuments(), false);
+		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true, publication == null || publication.getShowUploadedDocuments(), false, false);
 		
 		if (answersets != null)
 		{

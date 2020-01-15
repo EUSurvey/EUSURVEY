@@ -340,7 +340,7 @@ public class XlsExportCreator extends ExportCreator {
 			filter.getVisibleQuestions().add(question);
 		}
 	
-		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true, publication == null || publication.getShowUploadedDocuments(), false);
+		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true, publication == null || publication.getShowUploadedDocuments(), false, false);
 		List<Question> questions = form.getSurvey().getQuestions();
 		
 		if (answersets != null)
