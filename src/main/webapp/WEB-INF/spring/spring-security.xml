@@ -49,6 +49,7 @@
 		<security:intercept-url pattern="/home/**"	access="permitAll" />
 		<security:intercept-url pattern="/validate/**"	access="permitAll" />
 		<security:intercept-url pattern="/validateNewEmail/**"	access="permitAll" />		
+		<security:intercept-url pattern="/deleteaccount/**" access="permitAll" />
 		<security:intercept-url pattern="/runner/**"	access="permitAll" />
 		<security:intercept-url pattern="/runner2/**"	access="permitAll" />
 		<security:intercept-url pattern="/publication/**"	access="permitAll" />
@@ -78,6 +79,7 @@
 		<security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/*/management/*" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/*/management/**" access="hasRole('ROLE_USER')" />
+		<security:intercept-url pattern="/settings/**" access="hasRole('ROLE_USER')" />
 		<security:intercept-url pattern="/utils/**" access="permitAll" />
 
 		<security:logout invalidate-session="false" success-handler-ref="myLogoutSuccessHandler"
