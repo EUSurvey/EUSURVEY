@@ -50,6 +50,10 @@ public class User implements java.io.Serializable {
 	private Integer lastEditedSurvey;
 	private boolean canCreateSurveys = true;
 	private boolean isFrozen = false;
+	private boolean deleted;
+	private boolean deleteRequested;
+	private String deleteCode;
+	private Date deleteDate;
 	
 	public static final String ECAS = "ECAS";
 	public static final String SYSTEM = "SYSTEM";
@@ -281,6 +285,38 @@ public class User implements java.io.Serializable {
 	}
 	public void setAgreedToToS(boolean agreedToToS) {
 		this.agreedToToS = agreedToToS;
+	}
+	
+	@Column(name = "USER_DELETED")
+	public Boolean isDeleted() {
+		return deleted;
+	}
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted != null ? deleted : false;
+	}
+	
+	@Column(name = "USER_DELREQ")
+	public Boolean isDeleteRequested() {
+		return deleteRequested;
+	}
+	public void setDeleteRequested(Boolean deleteRequested) {
+		this.deleteRequested = deleteRequested != null ? deleteRequested : false;
+	}
+
+	@Column(name = "USER_DELDATE")
+	public Date getDeleteDate() {
+		return deleteDate;
+	}
+	public void setDeleteDate(Date deleteDate) {
+		this.deleteDate = deleteDate;
+	}
+
+	@Column(name = "USER_DELCODE")
+	public String getDeleteCode() {
+		return deleteCode;
+	}
+	public void setDeleteCode(String deleteCode) {
+		this.deleteCode = deleteCode;
 	}
 	
 	@Column(name = "USER_LAST_SURVEY")

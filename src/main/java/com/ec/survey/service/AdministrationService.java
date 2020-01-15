@@ -9,6 +9,7 @@ import com.ec.survey.tools.Tools;
 
 import org.apache.commons.io.IOUtils;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,6 +184,79 @@ public class AdministrationService extends BasicService {
 		}
 
 		return false;
+	}
+	
+	@Transactional
+	public String setUserDeleteRequested(int id) throws NumberFormatException, Exception {
+		Session session = sessionFactory.getCurrentSession();
+		User user = (User) session.get(User.class, id);
+		String login = user.getLogin();
+		String code = UUID.randomUUID().toString();
+		
+		String url = host + "deleteaccount/" + user.getId() + "/" + code;
+		
+		StringBuilder body = new StringBuilder();
+		body.append("Dear ").append(user.getName()).append(",<br /><br />Please confirm the deletion of your account by clicking the following link:<br /><br/>");
+		body.append("<a href='").append(url).append("'>").append(url).append("</a><br /><br />");
+		body.append("This link will remain valid for three days. If the deletion is not finalised in this time, your account will remain active.");
+		body.append("<br /><br /><div style='text-align: center; border-top: 1px solid #999; border-bottom: 1px solid #999; padding: 10px; margin-top: 20px; margin-bottom: 10px; color: #999'>Please do not reply to this email</div>");
+		
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body.toString()).replace("[HOST]",host);
+		
+		mailService.SendHtmlMail(user.getEmail(), sender, sender, "Please confirm the deletion of your EUSurvey account", text, smtpServer, Integer.parseInt(smtpPort), null, null, null, false);
+
+		user.setDeleteCode(code);
+		user.setDeleteDate(new Date());
+		user.setDeleteRequested(true);		
+		session.update(user);
+		return login;
+	}
+	
+	@Transactional
+	public void confirmUserDeleteRequest(int id, String code) throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+		User user = (User) session.get(User.class, id);
+		
+		if (user == null)
+		{
+			throw new Exception("User unknown");
+		}
+		
+		if (!user.getDeleteCode().equals(code))
+		{
+			throw new Exception("Wrong code");
+		}
+		
+		Calendar cal = Calendar.getInstance();  
+		cal.setTime(new Date());  
+		cal.add(Calendar.DAY_OF_YEAR, -3);  
+		Date threedaysago = cal.getTime(); 
+		
+		if (user.getDeleteDate().before(threedaysago))
+		{
+			throw new Exception("Request too old");
+		}
+		
+		user.setDeleted(true);		
+		session.update(user);
+	}
+	
+	@Transactional
+	public List<Integer> getUserAccountsForDeletion() {
+		Session session = sessionFactory.getCurrentSession();
+		SQLQuery query = session.createSQLQuery("SELECT USER_ID FROM USERS WHERE USER_DELETED = 1 AND USER_DELDATE < NOW() - INTERVAL 7 DAY");
+		
+		@SuppressWarnings("rawtypes")
+		List users = query.list();
+		List<Integer> result = new ArrayList<>();
+		
+		for (Object o: users)
+		{
+			result.add(ConversionTools.getValue(o));
+		}
+		
+		return result;
 	}
 
 	@Transactional

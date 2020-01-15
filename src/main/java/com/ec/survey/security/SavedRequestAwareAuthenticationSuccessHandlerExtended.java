@@ -40,6 +40,12 @@ public class SavedRequestAwareAuthenticationSuccessHandlerExtended extends Simpl
 	            getRedirectStrategy().sendRedirect(request, response, "/auth/tos");
 	 	        return;
 	        }
+	        
+	        if (user.isDeleted())
+	        {
+	        	getRedirectStrategy().sendRedirect(request, response, "/auth/deleted");
+	 	        return;
+	        }
 
 	        if (savedRequest == null) {
 	            super.onAuthenticationSuccess(request, response, authentication);

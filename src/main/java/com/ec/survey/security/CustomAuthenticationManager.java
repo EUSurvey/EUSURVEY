@@ -48,7 +48,6 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			throws AuthenticationException {
 
 		User user = null;
-		logger.debug("CustomAuthenticationManager start authenticate name " + auth.getName() );
 		boolean surveyLoginMode = auth.getName() != null && auth.getName().startsWith("surveyloginmode");
 		
 		if (surveyLoginMode || (auth.getName() == null || auth.getName().length() == 0 || auth.getName().startsWith("oldLogin:")) && (((String)auth.getCredentials()).startsWith("ECAS_ST") || ((String)auth.getCredentials()).startsWith("ST")))
@@ -72,11 +71,8 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				ValidationURL = ecasvalidationhost + "/laxValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
 			}
 			
-			logger.debug("authenticate".toUpperCase() +" GET THE TICKET TO CHECK VALUE " + ValidationURL +" THE TICKET IS " + ticket);
-			
 			boolean weakAuthentication = false;
     		sessionService.initializeProxy();
-    		logger.debug("authenticate".toUpperCase() +" PROXY INITIALZED");
     		String xmlValidationAnswer = EcasHelper.getSourceContents(ValidationURL);
     		logger.info("authenticate".toUpperCase() +" GET THE SOURCE CONTENT " + xmlValidationAnswer);
     		if (xmlValidationAnswer.contains("<cas:authenticationSuccess>")) {
@@ -94,14 +90,12 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				}
 				
 				try {					
-					logger.debug("authenticate".toUpperCase() +" START TO GET USER INFORMATION FROM DB FOR USERNAME " + username);
 					user = administrationService.getUserForLogin(username, true);
 				} catch (Exception e)
 		    	{
 					//if an ecas user logs in for the first time there is no db entry for him yes
 		    	}
 				
-				logger.debug("authenticate".toUpperCase() +" Get All Roles From AdminService");
 				List<Role> Roles = administrationService.getAllRoles();
 				Role ecRole = null;
 				Role intRole = null;
@@ -260,6 +254,12 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			logger.error("User not validated!");
 			throw new BadCredentialsException("User not validated!");
 		}
+		
+//		if (user.isDeleted())
+//		{
+//			logger.info("Login with deleted user account!");
+//			throw new BadCredentialsException("User does not exists!");
+//		}
 		
 		checkUserNotBanned(user);
 		

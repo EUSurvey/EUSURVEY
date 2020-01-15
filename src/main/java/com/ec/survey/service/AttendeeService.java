@@ -813,4 +813,21 @@ public class AttendeeService extends BasicService {
 		
 		add(attendees);
 	}
+	
+	@Transactional
+	public List<Integer> getAttendeesForUser(int userid) {
+		Session session = sessionFactory.getCurrentSession();
+		SQLQuery query = session.createSQLQuery("SELECT ATTENDEE_ID FROM ATTENDEE WHERE OWNER_ID = :id");
+		
+		@SuppressWarnings("rawtypes")
+		List attendees = query.setInteger("id", userid).list();
+		List<Integer> result = new ArrayList<>();
+		
+		for (Object o: attendees)
+		{
+			result.add(ConversionTools.getValue(o));
+		}
+		
+		return result;
+	}
 }

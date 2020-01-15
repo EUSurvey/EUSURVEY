@@ -468,6 +468,31 @@
 			$('#show-wait-image').modal('show');
 			$("#unfreeze-user-form").submit();
 		}
+		
+		function undoDelete(id, row)
+		{
+			var request = $.ajax({
+				type: "POST",
+	          	 url: "${contextpath}/administration/users/undoDelete",
+				  data: {id : id},
+				  cache: false,
+				  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},					
+				  success: function(data)
+				  {			 
+					  if (data == "OK") {
+						  $(row).css("background-color", "");
+						  $(row).find("td").first().find("span").remove();
+					  } else {
+						  showError(data);
+					  }
+				  },
+				  error: function(jqXHR, textStatus, errorThrown)
+				  {
+					  alert(textStatus);
+				  }
+				});
+			
+		}
 	</script>
 	
 	<style>
@@ -615,7 +640,14 @@
 							</thead>
 							<tbody>
 							<c:forEach items="${paging.items}" var="user">
-								<tr>
+								<c:choose>
+									<c:when test="${user.isDeleted()}">
+										<tr style="background-color: #ffc0c0">
+									</c:when>
+									<c:otherwise>
+										<tr>
+									</c:otherwise>
+								</c:choose>
 									<td>
 										<c:choose>
 											<c:when test="${user.type == 'SYSTEM'}">
@@ -625,6 +657,9 @@
 												<esapi:encodeForHTML>${user.name}</esapi:encodeForHTML>&#160(<spring:message code="label.EULogin" />)
 											</c:otherwise>
 										</c:choose>
+										<c:if test="${user.isDeleted()}">
+											<span>(<spring:message code="label.Deleted" />) <a onclick="undoDelete('${user.id}', $(this).closest('tr'))"><spring:message code="label.Cancel" /></a></span>
+										</c:if>
 									</td>
 									<td><esapi:encodeForHTML>${user.email}</esapi:encodeForHTML></td>
 									<td class="hideme"><esapi:encodeForHTML>${user.otherEmail}</esapi:encodeForHTML></td>

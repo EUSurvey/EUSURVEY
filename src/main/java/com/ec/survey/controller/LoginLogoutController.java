@@ -223,6 +223,12 @@ public class LoginLogoutController extends BasicController {
 		return "redirect:/auth/tos";
 	}
 	
+	@RequestMapping(value = "/auth/deleted")
+	public ModelAndView deleted(HttpServletRequest request) {
+		request.getSession().invalidate();
+		return new ModelAndView("auth/deleted");
+	}
+	
 	public String forgotPassword(String email, String login, ModelMap model, Locale locale, HttpServletRequest request) {
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);

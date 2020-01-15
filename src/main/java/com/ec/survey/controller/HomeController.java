@@ -746,6 +746,35 @@ public class HomeController extends BasicController {
 		return "error/validation";
 	}
 	
+	@RequestMapping(value = "/deleteaccount/{id}/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String deleteaccount(HttpServletRequest request, @PathVariable String id, @PathVariable String code, Locale locale, Model model)  {	
+		
+		try {
+			administrationService.confirmUserDeleteRequest(Integer.parseInt(id), code);
+			model.addAttribute("message", resources.getMessage("message.AccountDeleted", null, "Your account has been deleted!", locale));
+			return "error/info";
+		} catch (NumberFormatException nfe) {
+			model.addAttribute("message", resources.getMessage("error.UserNotFound", null, "User not found.", locale));
+		} catch (Exception e) {
+			switch (e.getMessage()) {
+			case "User unknown":
+				model.addAttribute("message", resources.getMessage("error.UserNotFound", null, "User not found.", locale));
+				break;
+			case "Wrong code":
+				model.addAttribute("message", resources.getMessage("error.WrongCode", null, "The code is wrong.", locale));
+				break;
+			case "Request too old":
+				model.addAttribute("message", resources.getMessage("error.DeleteCodeOutdated", null, "You did not confirm the account deletion during the corresponding time span.", locale));
+				break;
+			default:
+				logger.error(e.getLocalizedMessage(), e);
+				break;
+			}
+		}
+	
+		return "error/generic";
+	}
+	
 	@RequestMapping(value = "/validateNewEmail/{id}/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String validateNewEmail(HttpServletRequest request, @PathVariable String id, @PathVariable String code, Locale locale, Model model) {	
 		try {

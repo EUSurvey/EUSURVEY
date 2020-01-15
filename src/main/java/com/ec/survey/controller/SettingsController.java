@@ -88,7 +88,7 @@ public class SettingsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/myAccount", method = {RequestMethod.POST})
-	public String myAccountPOST(HttpServletRequest request, HttpServletResponse response, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+	public String myAccountPOST(HttpServletRequest request, HttpServletResponse response, ModelMap model, Locale locale) throws NumberFormatException, Exception {
 		
 		String target = request.getParameter("target");
 		if (target != null)
@@ -105,6 +105,15 @@ public class SettingsController extends BasicController {
 			} else if (target.equals("changePivotLanguage"))
 			{
 				return changePivotLanguage(request, model, locale);
+			} else if (target.equals("deleteAccount"))
+			{
+				User u = sessionService.getCurrentUser(request);
+				administrationService.setUserDeleteRequested(u.getId());
+				request.getSession().invalidate();
+				sessionService.setCurrentUser(request, null);
+
+				model.addAttribute("message", resources.getMessage("message.validateDelete", null, "The deletion of your account has been started. You will receive a confirmation mail containing a link. Click on the link to confirm the deletion of your account.", locale));
+				return "error/info";	
 			} 
 		}		
 		
