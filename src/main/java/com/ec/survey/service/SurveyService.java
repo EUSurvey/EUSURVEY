@@ -148,6 +148,24 @@ public class SurveyService extends BasicService {
 		}
 		return surveys;
 	}
+	
+	@Transactional
+	public List<Integer> getSurveysWithPrivilegesForUser(int userid)
+	{
+		Session session = sessionFactory.getCurrentSession();
+		SQLQuery query = session.createSQLQuery("Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :id");
+		
+		@SuppressWarnings("rawtypes")
+		List surveys = query.setInteger("id", userid).list();
+		List<Integer> result = new ArrayList<>();
+		
+		for (Object o: surveys)
+		{
+			result.add(ConversionTools.getValue(o));
+		}
+		
+		return result;
+	}
 
 	private List<String> getCompletedTranslations(Survey survey) {
 		return translationService.getTranslationsForSurvey(survey.getId(), false).stream().filter(Translations::getActive).map(t -> t.getLanguage().getCode()).collect(toList());
@@ -4504,5 +4522,22 @@ public class SurveyService extends BasicService {
 		s.append("</Surveys>");
 
 		return s.toString();
+	}
+	
+	@Transactional
+	public List<Integer> getSurveysForUser(int userid) {
+		Session session = sessionFactory.getCurrentSession();
+		SQLQuery query = session.createSQLQuery("SELECT SURVEY_ID FROM SURVEYS WHERE OWNER = :id AND ISDRAFT = 1");
+		
+		@SuppressWarnings("rawtypes")
+		List surveys = query.setInteger("id", userid).list();
+		List<Integer> result = new ArrayList<>();
+		
+		for (Object o: surveys)
+		{
+			result.add(ConversionTools.getValue(o));
+		}
+		
+		return result;
 	}
 }

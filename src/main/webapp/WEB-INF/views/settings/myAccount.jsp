@@ -41,8 +41,7 @@
 			border-left: 0px !important;
 			
 			padding-bottom: 15px !important;
-		}
-	
+		}	
 	</style>
 </head>
 <body>
@@ -60,13 +59,13 @@
 				
 		<div style="margin-left: auto; margin-right: auto; width: 700px; margin-bottom: 20px;">		
 		
-			<table class="table table-bordered table-striped" style="width: 700px; margin-bottom: 50px;">
+			<table class="table table-bordered table-striped" style="width: 700px; margin-bottom: 20px;">
 				<tr>
-					<td style="width: 200px;"><label><spring:message code="label.Name" /></label></td>
+					<td style="width: 200px;"><label><b><spring:message code="label.Name" /></b></label></td>
 					<td style="width: 500px;"><esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML></td>
 				</tr>
 				<tr>
-					<td><label><spring:message code="label.Email" /></label></td>
+					<td><label><b><spring:message code="label.Email" /></b></label></td>
 					<td id="change-email-dialog">
 						<span><esapi:encodeForHTML>${USER.email}</esapi:encodeForHTML></span>
 						<div style="float: right">
@@ -95,7 +94,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><label><spring:message code="label.Password" /></label></td>
+					<td><label><b><spring:message code="label.Password" /></b></label></td>
 					<td id="change-password-dialog">
 						<span original">*******</span>
 						<div style="float: right">
@@ -122,7 +121,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><label><spring:message code="label.Language" /></label></td>
+					<td><label><b><spring:message code="label.Language" /></b></label></td>
 					<td id="change-lang-dialog">
 						<span><esapi:encodeForHTML>${USER.language}</esapi:encodeForHTML></span>
 						<div style="float: right">
@@ -157,7 +156,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><label><spring:message code="label.DefaultPivotLanguage" /></label></td>
+					<td><label><b><spring:message code="label.DefaultPivotLanguage" /></b></label></td>
 					<td id="change-pivotlang-dialog">
 						<span><esapi:encodeForHTML>${USER.defaultPivotLanguage}</esapi:encodeForHTML></span>
 						<div style="float: right">
@@ -190,11 +189,34 @@
 						</form:form>
 					</td>
 				</tr>
-			</table>		
+			</table>
+			<div style="text-align: center; margin-bottom: 50px">
+				<a class="btn btn-default" onclick="$('#deleteAccountDialog').modal('show')"><spring:message code="label.DeleteAccount" /></a>
+			</div>
 		</div>
 
 	</div>
 	</div>
+	
+	<div class="modal" id="deleteAccountDialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+    	<div class="modal-content">
+    	<div class="modal-header"><spring:message code="label.Warning" /></div>
+		<div class="modal-body">
+			<spring:message code="question.DeleteAccount" />
+		</div>
+		<div class="modal-footer">
+			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+			<form:form action="myAccount" method="POST">
+				<input type="hidden" name="target" value="deleteAccount" />
+				<input type="submit" class="btn btn-default" value="<spring:message code="label.DeleteAccount" />" />
+				<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
+			</form:form>
+		</div>
+		</div>
+		</div>
+	</div>
+	
 	<%@ include file="../footer.jsp" %>		
 	
 	<c:if test="${message != null}">

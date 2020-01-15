@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -274,6 +275,25 @@ public class UserController extends BasicController {
 			model.addAttribute("error", resources.getMessage("error.DeletionFailed", null, "Deletion failed", locale));
 		}
 		return users(request, model);
+	}
+	
+	@RequestMapping(value = "/undoDelete", method = {RequestMethod.POST})
+	public @ResponseBody String undoDelete(HttpServletRequest request) {
+		String sid = request.getParameter("id");
+		if (sid == null || sid.length() == 0) return "invalid id";
+				
+		try {
+			int id = Integer.parseInt(sid);
+			User user = administrationService.getUser(id);
+			if (user == null) return "invalid id";
+			
+			user.setDeleted(false);
+			administrationService.updateUser(user);
+			return "OK";
+			
+		} catch (NumberFormatException e) {
+			return "invalid id";
+		}
 	}
 			
 }

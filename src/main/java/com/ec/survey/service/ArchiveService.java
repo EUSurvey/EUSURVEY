@@ -382,4 +382,14 @@ public class ArchiveService extends BasicService {
 		return result;
 	}
 	
+	@Transactional
+	public List<Archive> getArchivesForUser(int userid) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("FROM Archive a WHERE a.userId = :userId").setInteger("userId", userid);
+	
+		@SuppressWarnings("unchecked")
+		List<Archive> result = query.list();		
+			
+		return result;
+	}
 }

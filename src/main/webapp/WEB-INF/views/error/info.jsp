@@ -20,7 +20,7 @@
 		</c:choose>	
 		
 		<div style="padding-top: 120px; padding-bottom: 120px;">
-			<div class="alert alert-success"><esapi:encodeForHTML>${message}</esapi:encodeForHTML></div>
+			<div class="alert alert-success">${message}</div>
 			<c:if test="${SurveyLink != null}">
 				<a class="btn btn-primary" href="${SurveyLink}"><spring:message code="label.BackToSurvey" /></a>
 			</c:if>
