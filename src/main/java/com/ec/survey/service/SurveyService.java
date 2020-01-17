@@ -1135,7 +1135,7 @@ public class SurveyService extends BasicService {
 		survey.setIsPublished(true);
 		survey.setIsActive(true);
 		
-		computeTrustScore(survey);
+		computeTrustScore(ob);
 
 		return published;
 	}
