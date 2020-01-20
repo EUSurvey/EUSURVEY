@@ -395,39 +395,6 @@
 						<textarea class="tinymcealign2 required xhtml freetext max2000" id="new-survey-title"></textarea>
 					</td>
 				</tr>
-				<tr class="hideimport">
-					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Security" /></td>
-					<td>
-						<input class="required check" type="radio" name="new-survey-security" id="new-survey-security-open" value="open" /><spring:message code="form.Open" />&#160;
-						<input class="required check" style="margin-left: 20px;" type="radio" name="new-survey-security" id="new-survey-security-secured" value="secured" /><spring:message code="form.Secured" />&#160;
-					</td>
-				</tr>
-				<tr class="hideme">
-					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Privacy" /></td>
-					<td>
-						<input checked="checked" class="required check" type="radio" name="new-survey-privacy" id="new-survey-privacy-secured" value="" /><spring:message code="form.Privacy.Identified" />&#160;
-						<input class="required check" type="radio" name="new-survey-privacy" id="new-survey-privacy-anonymous" value="anonymous" /><spring:message code="form.Privacy.Anonymous" />
-					</td>
-				</tr>
-				<tr class="hideimport hidecopy">
-					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.PivotLanguage" /></td>
-					<td>
-						<select class="required form-control" style="width: 300px" name="new-survey-language" id="new-survey-language">						
-							<c:forEach items="${languages}" var="language">				
-								<c:if test="${language.official}">		
-									<c:choose>
-										<c:when test="${language.code.equalsIgnoreCase('en')}">
-											<option selected="selected" value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
-										</c:when>
-										<c:otherwise>
-											<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
-										</c:otherwise>
-									</c:choose>
-								</c:if>
-							</c:forEach>
-						</select>				
-					</td>
-				</tr>
 				<tr>
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Contact" /></td>
 					<td>
@@ -446,6 +413,39 @@
 						<div style="color: #777; margin-top: 10px;"><spring:message code="message.InsertEmail" /></div>
 					</td>
 				</tr>	
+				<tr class="hideimport">
+					<td class="table-label"><spring:message code="label.Security" /></td>
+					<td>
+						<input class="required check" type="radio" name="new-survey-security" id="new-survey-security-open" value="open" /><spring:message code="form.Open" />&#160;
+						<input class="required check" style="margin-left: 20px;" type="radio" name="new-survey-security" id="new-survey-security-secured" value="secured" /><spring:message code="form.Secured" />&#160;
+					</td>
+				</tr>
+				<tr class="hideme">
+					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Privacy" /></td>
+					<td>
+						<input checked="checked" class="required check" type="radio" name="new-survey-privacy" id="new-survey-privacy-secured" value="" /><spring:message code="form.Privacy.Identified" />&#160;
+						<input class="required check" type="radio" name="new-survey-privacy" id="new-survey-privacy-anonymous" value="anonymous" /><spring:message code="form.Privacy.Anonymous" />
+					</td>
+				</tr>
+				<tr class="hideimport hidecopy">
+					<td class="table-label"><spring:message code="label.Language" /></td>
+					<td>
+						<select class="required form-control" style="width: 300px" name="new-survey-language" id="new-survey-language">						
+							<c:forEach items="${languages}" var="language">				
+								<c:if test="${language.official}">		
+									<c:choose>
+										<c:when test="${language.code.equalsIgnoreCase('en')}">
+											<option selected="selected" value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
+										</c:when>
+										<c:otherwise>
+											<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
+										</c:otherwise>
+									</c:choose>
+								</c:if>
+							</c:forEach>
+						</select>				
+					</td>
+				</tr>
 				<tr>
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Confirmation" /></td>
 					<td>
