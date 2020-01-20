@@ -125,7 +125,7 @@ html, body {
 .page-wrap {
 	min-height: 100%;
 	/* equal to footer height */
-	margin-bottom: -212px; 
+	margin-bottom: -173px; 
 	padding-bottom: 75px;
 	max-width: 100%;
 	overflow-x: auto;
@@ -137,7 +137,7 @@ html, body {
 }
 
 .footer-bottom, .page-wrap:after {
-	height: 212px; 
+	height: 173px; 
 }
 
 .hpdiv {
@@ -453,7 +453,7 @@ select {
 	color: #fff;
 	text-align: left;
 	padding: 0;
-	height: 212px;
+	height: 173px;
 	margin-bottom: 0px !important;
 }
 	
@@ -467,14 +467,22 @@ select {
     color: #fff !important;
 }
 
+.fundedDiv {
+	font-style: italic;
+}
+
+.fundedDiv a {
+	text-decoration: underline !important;
+}
+
 .footer2 {
 	background-color: #012d56;
 	height: 71px;
-	color: #ccc;
+	color: #fff;
 }
 
 .footer2 a {
-	color: #ccc !important;
+	color: #fff !important;
 }
 	
 .footerlabel {
