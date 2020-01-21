@@ -511,8 +511,8 @@
 						</c:if>
 						
 						<c:if test="${element.getType() == 'DateQuestion'}">
-							<div style="word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px; margin-left: 20px;">${form.getValue(element)}</div>											
-						</c:if>
+							<div style="width: 206px; word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px; margin-left: 20px;">${form.getValue(element)}</div>                                                                                    
+                        </c:if>
 							
 						<c:if test="${element.getType() == 'MultipleChoiceQuestion'}">
 							<div class="answer-columns">
