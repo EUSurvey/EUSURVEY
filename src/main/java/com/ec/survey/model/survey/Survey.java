@@ -2132,29 +2132,32 @@ public class Survey implements java.io.Serializable {
 	}
 
 	public Boolean getIsUseMaxNumberContribution() {
-		return isUseMaxNumberContribution;
+		return this.isUseMaxNumberContribution != null ? this.isUseMaxNumberContribution : false;
 	}
 
 	@Column(name = "ISUSEMAXNUMBERCONTRIBUTION")
 	public void setIsUseMaxNumberContribution(Boolean useMaxNumberContribution) {
-		this.isUseMaxNumberContribution = useMaxNumberContribution;
+		this.isUseMaxNumberContribution = useMaxNumberContribution != null ? useMaxNumberContribution : false;
 	}
 
-	@Column(name = "MAXNUMBERCONTRIBUTIONTEXT", length = 250)
+	@Column(name = "MAXNUMBERCONTRIBUTIONTEXT", length = 255)
 	public String getMaxNumberContributionText() {
-		return maxNumberContributionText;
+		return this.maxNumberContributionText != null ? this.maxNumberContributionText : MAXNUMBEROFRESULTSTEXT;
 	}
 
 	public void setMaxNumberContributionText(String maxNumberContributionText) {
-		this.maxNumberContributionText = maxNumberContributionText;
+		this.maxNumberContributionText = maxNumberContributionText != null ? Tools.filterHTML(maxNumberContributionText)
+				: MAXNUMBEROFRESULTSTEXT;
 	}
 
 	@Column(name = "MAXNUMBERCONTRIBUTION")
 	public Long getMaxNumberContribution() {
-		return maxNumberContribution != null ? maxNumberContribution : 0L;
+		return this.maxNumberContribution != null ? this.maxNumberContribution : 0L;
 	}
 
 	public void setMaxNumberContribution(Long maxNumberContribution) {
-		this.maxNumberContribution = maxNumberContribution;
+		this.maxNumberContribution = maxNumberContribution != null && maxNumberContribution >= 0L
+				? maxNumberContribution
+				: 0L;
 	}
 }

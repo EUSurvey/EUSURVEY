@@ -534,7 +534,7 @@
 							<tr>
 								<td class="table-label"><span class="mandatory">*</span><spring:message code="label.MaxNumberContributionText" /></td>
 								<td>
-									<form:textarea maxlength="250" class="tinymcealign2 required xhtml" id="edit-survey-max-result-page" path="survey.maxNumberContributionText"></form:textarea>
+									<form:textarea maxlength="255" class="tinymcealign2 required xhtml max255" id="edit-survey-max-result-page" path="survey.maxNumberContributionText"></form:textarea>
 								</td>
 							</tr>
 							<tr>
