@@ -128,6 +128,15 @@
 					tabs = $("#edit-prop-tabs-4");
 				} else if ($("#edit-prop-tabs-5").is(":visible"))
 				{
+					var maxNumberContributionEnteredText = $("#edit-survey-max-result-page").text().length;
+					console.log(maxNumberContributionEnteredText);
+					if (maxNumberContributionEnteredText > 255)
+					{
+						console.log('yes!');
+						$("#edit-survey-max-result-page").parent().append("<div class='validation-error'>" + texttoolongText + "</div>");
+						return;
+					}
+
 					tabs = $("#edit-prop-tabs-5");
 					if ($("#survey\\.start").val().length > 0 && $("#survey\\.end").val().length > 0)
 					{
