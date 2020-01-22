@@ -877,7 +877,9 @@ public class RunnerController extends BasicController {
 
 				if (uniqueCode == null || !validCodesService.CheckValid(uniqueCode, survey.getUniqueId())) {
 					modelReturn.setViewName("runner/surveyLogin");
-					modelReturn.addObject("shortname", uidorshortname);		
+					modelReturn.addObject("shortname", uidorshortname);
+					modelReturn.addObject("surveyname", survey.cleanTitle());
+					//modelReturn.addObject("contact", survey.getOwner().getEmail());
 					
 					if (lang != null && lang.length() > 0)
 					{
@@ -1586,6 +1588,8 @@ public class RunnerController extends BasicController {
 						}
 						
 						model.addObject("shortname", uidorshortname);
+						model.addObject("surveyname", survey.cleanTitle());
+						//model.addObject("contact", survey.getOwner().getEmail());
 						model.addObject("error", resources.getMessage("error.PasswordInvalid", null, "You did not provide a valid password!", locale));
 						return model;
 

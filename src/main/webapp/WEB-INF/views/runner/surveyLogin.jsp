@@ -11,18 +11,25 @@
 	
 	<style type="text/css">
 		.authenticationdiv {
-			background-color: #eee;
-			margin-top: 10px;
-			margin-bottom: 10px;
-			margin-left: auto;
-			margin-right: auto;
-			padding: 20px;
-			width: 100%;
-			max-width: 400px;
+			width: 220px; margin-left: auto; margin-right: auto;
 		}
 				
 		input[type=password] {
 			width: 100%;
+		}
+		
+		hr {
+			width: 220px;
+    		display: inline-block;
+    		margin-bottom: 3px;
+    		margin-right: 5px;
+    		margin-left: 5px;
+    		border-color: #999;
+		}
+		
+		.btn-primary {
+			width: 220px;
+			margin-bottom: 5px;
 		}
 		
 	</style>
@@ -33,8 +40,8 @@
 	
 		<div class='${responsive != null ? "responsivepage" : "page"}' style='padding-top: 40px;'>
 	
-	 		<div class="pageheader">
-				<h1><spring:message code="label.Authentication" /></h1>
+	 		<div style="font-size: 30px; text-align: center;">
+				${surveyname}
 			</div>
 			
 			<c:if test="${error != null}">
@@ -49,53 +56,37 @@
 			 	</div>
 		 	</c:if> 
 			
-			<div style="text-align: center">
-				<c:choose>
-					<c:when test="${ecassecurity != null}">
-						<spring:message code="message.SurveyAuthentication" />
-					</c:when>
-					<c:otherwise>
-						<spring:message code="message.SurveyPassword" />
-					</c:otherwise>
-				</c:choose>
-			</div>
-			
 			<br /><br />
 			
 			<c:if test="${ecassecurity != null}">
-				<div id="ecasPanel" class="authenticationdiv" style="text-align: center;">
+				<div id="ecasPanel" class="authenticationdiv" style="margin-bottom: 20px;">
 					<div id="ecasPanelContent">
 						<form:form action="${ecasurl}">
-							<input type="hidden" name="service" value="${serviceurl}"/>
+							<input type="hidden" name="service" value="${serviceurl}"/>							
 							
-							<a  onclick="$(this).closest('form').submit()">
-								<c:choose>
-									<c:when test="${casoss !=null}">
-									<img src="${contextpath}/resources/images/cas_logo.png" alt="cas logo" />
-									</c:when>
-									<c:otherwise>
-										<span style="font-size: 25px"><spring:message code="login.useEULoginTitle" /></span>
-									</c:otherwise>
-								</c:choose>
-								
-							</a><br /><br />
 							<c:choose>
 								<c:when test="${casoss !=null}">
-									<spring:message code="label.CASInfo" /> 			
+									<a onclick="$(this).closest('form').submit()">
+										<img src="${contextpath}/resources/images/cas_logo.png" alt="cas logo" />
+									</a>
 								</c:when>
 								<c:otherwise>
-							<spring:message code="label.ECASInfo" />			
+									<a class="btn btn-primary" onclick="$(this).closest('form').submit()">
+										<spring:message code="login.AccessViaEULogin" />
+									</a><br />
+									<a target="_blank" href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi"><spring:message code="label.Register" /></a>
 								</c:otherwise>
-							</c:choose>
-							
+							</c:choose>								
 						</form:form>
 					</div>
 				</div>		
 			</c:if>
 			
 			<c:if test="${ecassecurity != null && hidepassword == null}">
-				<div style="text-align: center">
-					<spring:message code="label.or" />
+				<div style="text-align: center; color: #999; margin-bottom: 25px;">
+					<hr />
+					<spring:message code="label.OR" />
+					<hr />
 				</div>
 			</c:if>
 			
@@ -106,25 +97,28 @@
 				 			<input type="hidden" name="redirectFromCheckPassword" value="true" />
 							<input type="hidden" name="shortname" value="<esapi:encodeForHTMLAttribute>${shortname}</esapi:encodeForHTMLAttribute>" />
 							<input type="hidden" name="draftid" value="<esapi:encodeForHTMLAttribute>${draftid}</esapi:encodeForHTMLAttribute>" />
-						
-							<p>
-								<label for="j_password"><spring:message code="label.Password" /></label>
-								<div class="controls">
-									<div class="input-prepend">
-										<span class="add-on"><i class="icon-lock"></i></span><input class="span2" id="j_password" name="password" autocomplete="off" type="password" />
-									</div>
-								</div>						
-							</p>
-							<div style="margin-top: 30px;">
-								<input class="btn btn-default" type="submit" id="btnLogin2SecureSurvey" value="<spring:message code="label.DoLogin" />"/>
+												
+							<div class="form-group">
+								<label class="control-label" for="j_password"><spring:message code="label.Password" /></label>
+								<div class="input-group">
+									<span class="input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
+		   							<input class="form-control" id="j_password" name="password" autocomplete="off" type="password" />
+		 						</div>
+							</div>
+							
+							<div style="margin-top: 10px;">
+								<input class="btn btn-primary" type="submit" id="btnLogin2SecureSurvey" value="<spring:message code="label.Access" />"/>
 							</div>
 				 		</fieldset>
 					</form:form>
 				</div>
 			</c:if>
 			
-			<br /><br />
-			
+			<c:if test="${contact != null}">
+				<div style="margin-top: 40px; margin-bottom: 20px; text-align: center">
+					<a href="mailto:${contact}"><spring:message code="label.ContactSurveyOwner" /></a>
+				</div>
+			</c:if>		
 		</div>
 	</div>
 
