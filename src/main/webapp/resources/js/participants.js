@@ -533,6 +533,7 @@ var Participants = function() {
 		} else {
 			if (usersEndReached)
 			{
+				model.ShowWait(false);
 				return;
 			}
 			
