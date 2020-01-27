@@ -124,6 +124,21 @@ function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsSt
 	viewModel.title = ko.observable(title);
 	viewModel.scoring = newScoringViewModel(scoring);
 	
+	viewModel.titleForDisplayMode = function(displayMode)
+	{
+		switch (displayMode)
+		{
+			case 0:
+				return this.title();
+			case 1:
+				return this.shortname();
+			case 2:
+				return this.shortname() + " - " + this.title();
+			case 3:
+				return this.title() + " (" + this.shortname() + ")";
+		}
+	}
+	
 	return viewModel;
 }
 
@@ -527,6 +542,8 @@ function newChoiceViewModel(element)
 {
 	var viewModel = newBasicViewModel(element)
 
+	viewModel.subType = ko.observable(element.subType);
+	viewModel.displayMode = ko.observable(element.displayMode);
 	viewModel.possibleAnswers = newPossibleAnswersViewModel(element.possibleAnswers);
 	viewModel.css = element.css;
 	viewModel.optional = ko.observable(element.optional);

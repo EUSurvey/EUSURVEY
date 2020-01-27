@@ -148,6 +148,17 @@ function update(input)
 				_undoProcessor.addUndoStep(["Name", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			}
 			break;
+		case "Display":
+			var text = $(input).val();
+			var oldtext = element.displayMode();
+			var display = 0;
+			if (text == "ISOOnly") display = 1;
+			if (text == "ISO+Country") display = 2;
+			if (text == "Country+ISO") display = 3;
+			element.displayMode(display);
+			_undoProcessor.addUndoStep(["DisplayMode", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
+			break;
 		case "Order":
 			var text = $(input).val();
 			var oldtext = element.order();

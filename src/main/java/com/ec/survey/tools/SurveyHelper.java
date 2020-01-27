@@ -2404,6 +2404,22 @@ public class SurveyHelper {
     	}
 		singlechoice.setPoints(points);
 		
+		String subType = getString(parameterMap, "subType", id, servletContext);
+    	if (log220 && !singlechoice.getSubType().equals(subType))
+    	{
+    		oldValues += " subType: " + singlechoice.getSubType();
+    		newValues += " subType: " + subType;
+    	}
+    	singlechoice.setSubType(subType);
+    	
+    	Integer displayMode = getInteger(parameterMap, "displayMode", id, 1);
+		if (log220 && !displayMode.equals(singlechoice.getDisplayMode()))
+    	{
+    		oldValues += " displayMode: " + singlechoice.getDisplayMode();
+    		newValues += " displayMode: " + displayMode;
+    	}
+		singlechoice.setDisplayMode(displayMode);
+		
 		StringBuilder oldAnswers = new StringBuilder();
 		StringBuilder newAnswers = new StringBuilder();
 		if (log220)
@@ -2656,6 +2672,22 @@ public class SurveyHelper {
     		newValues += " noNegativeScore: " + noNegativeScore;
     	}
     	multiplechoice.setNoNegativeScore(noNegativeScore);
+    	
+    	String subType = getString(parameterMap, "subType", id, servletContext);
+    	if (log220 && !multiplechoice.getSubType().equals(subType))
+    	{
+    		oldValues += " subType: " + multiplechoice.getSubType();
+    		newValues += " subType: " + subType;
+    	}
+    	multiplechoice.setSubType(subType);
+    	
+    	Integer displayMode = getInteger(parameterMap, "displayMode", id, 1);
+		if (log220 && !displayMode.equals(multiplechoice.getDisplayMode()))
+    	{
+    		oldValues += " displayMode: " + multiplechoice.getDisplayMode();
+    		newValues += " displayMode: " + displayMode;
+    	}
+		multiplechoice.setDisplayMode(displayMode);
 		
 		StringBuilder oldAnswers = new StringBuilder();
 		StringBuilder newAnswers = new StringBuilder();

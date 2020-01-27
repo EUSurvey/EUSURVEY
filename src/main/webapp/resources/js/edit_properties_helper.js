@@ -526,7 +526,7 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 	var rowcontent = "";
 	var options = content.split(",");
 	var name = getNewId();
-	if (label == "Style" || label == "Order")
+	if (label == "Style" || label == "Order" || label == "Display")
 	{
 		row.ContentType("radio");
 		row.Content(options);

@@ -139,6 +139,8 @@ public abstract class Question extends Element {
 		copy.setPoints(points);
 		copy.setScoring(scoring);
 		copy.setLocked(getLocked());
+		copy.setSubType(getSubType());
+		copy.setDisplayMode(getDisplayMode());
 		
 		if (scoringItems != null)
 		{

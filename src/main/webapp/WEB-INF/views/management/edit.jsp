@@ -810,6 +810,13 @@
 	 		strings["Height"] = "<spring:message code="label.Height" />";
 	 		strings["Color"] = "<spring:message code="html.Color" />";
 	 		strings["duplicateattributename"] = "<spring:message code="validation.duplicateattributename" />";
+	 		
+	 		strings["Display"] = "<spring:message code="label.Display" />";
+	 		strings["CountryOnly"] = "<spring:message code="label.CountryOnly" />";
+	 		strings["Country+ISO"] = "<spring:message code="label.Country+ISO" />";
+	 		strings["ISO+Country"] = "<spring:message code="label.ISO+Country" />";
+	 		strings["ISOOnly"] = "<spring:message code="label.ISOOnly" />";	 		
+	 	
 	 		return strings[label];
 	 	}
 	</script>

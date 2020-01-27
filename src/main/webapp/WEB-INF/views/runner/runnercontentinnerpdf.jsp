@@ -590,7 +590,7 @@
 											<div style="float: right"><i class="icon icon-chevron-down"></i></div>
 											<c:forEach items="${element.orderedPossibleAnswers}" var="possibleanswer">												
 												<c:if test="${form.getValues(element).contains(possibleanswer.id.toString()) || form.getValues(element).contains(possibleanswer.uniqueId)}">
-													${possibleanswer.title}
+													${possibleanswer.titleForDisplayMode(element.displayMode)}
 												</c:if>																																
 											</c:forEach>			
 										</div>
@@ -618,7 +618,7 @@
 													</td>
 													<td style="padding-right: 15px; vertical-align: top">
 														<label for="${possibleanswer.id}">
-															<div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.title}</div>
+															<div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.titleForDisplayMode(element.displayMode)}</div>
 														</label>
 													</td>					
 													<c:if test="${status.count % element.numColumns == 0 && status.count < element.possibleAnswers.size()}">

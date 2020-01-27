@@ -75,6 +75,26 @@ public class PossibleAnswer extends Element {
 	}
 	
 	@Transient
+	public String getTitleForDisplayMode(Integer displayMode)
+	{
+		if (displayMode != null)
+		{
+			switch (displayMode)
+			{
+				case 0:
+					return this.getTitle();
+				case 1:
+					return this.getShortname();
+				case 2:
+					return this.getShortname() + " - " + this.getTitle();
+				case 3:
+					return this.getTitle() + " (" + this.getShortname() + ")";
+			}
+		}
+		return this.getTitle();
+	}
+	
+	@Transient
 	public String getDependentElementsUIDString()
 	{
 		List<String> list = new ArrayList<>();
