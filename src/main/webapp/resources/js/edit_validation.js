@@ -1,13 +1,14 @@
-function removeValidationMarkup()
+function removeValidationMarkup(row)
 {
-	$(_elementProperties.selectedproperty).find(".validationinfobutton").tooltip('hide');
-	$(_elementProperties.selectedproperty).find(".validationinfobutton").remove();
-	$(_elementProperties.selectedproperty).closest(".invalidinput").removeClass("invalidinput");
-	$(_elementProperties.selectedproperty).find(".validationhintbutton").tooltip('hide');
-	$(_elementProperties.selectedproperty).find(".validationhintbutton").remove();
-	$(_elementProperties.selectedproperty).closest("inputhint").removeClass("inputhint");
-	$(_elementProperties.selectedproperty).closest(".firstpropertyrow").find(".validationinfobutton").remove();
-	$(_elementProperties.selectedproperty).closest(".firstpropertyrow").find(".validationinfobutton").remove();
+	if (row == null) row = $(_elementProperties.selectedproperty);
+	row.find(".validationinfobutton").tooltip('hide');
+	row.find(".validationinfobutton").remove();
+	row.closest(".invalidinput").removeClass("invalidinput");
+	row.find(".validationhintbutton").tooltip('hide');
+	row.find(".validationhintbutton").remove();
+	row.closest("inputhint").removeClass("inputhint");
+	row.closest(".firstpropertyrow").find(".validationinfobutton").remove();
+	row.closest(".firstpropertyrow").find(".validationinfobutton").remove();
 }
 
 function checkMinMaxDate(input, hasInputError, showrulehint)
@@ -274,6 +275,15 @@ function checkRows(rows)
 		});
 		return false;
 	}
+	
+	var id = $(_elementProperties.selectedelement).attr("data-id");
+	var element = _elements[id];
+	if (element.minRows() != null && element.minRows() > rows.length)
+	{
+		addValidationInfo($("#btnRemoveRows"), "checkNumberOfRows");
+		return false;
+	}
+	
 	return true;
 }
 
@@ -471,7 +481,7 @@ function checkPossibleAnswers(lines)
 	if (count < 2)
 	{
 		$(_elementProperties.selectedproperty).closest("tr").addClass("invalidinput");					
-		var label = getPropertyLabel("TableAnswers2");					
+		var label = getPropertyLabel("TableAnswers");					
 		var b = document.createElement("a");
 		$(b).addClass("validationinfobutton").attr("data-toggle","tooltip").attr("data-placement","right").attr("title", label).html('<span class="glyphicon glyphicon-question-sign"></span>');
 		$(_elementProperties.selectedproperty).find(".propertylabel").first().append(b);	
@@ -479,6 +489,14 @@ function checkPossibleAnswers(lines)
 		    trigger : 'hover'
 		});
 		return false;
+	}
+	
+	var id = $(_elementProperties.selectedelement).attr("data-id");
+	var element = _elements[id];
+	if (element.minChoices() != null && element.minChoices() > count)
+	{
+		addValidationInfo($("#btnRemovePossibleAnswers"), "checkNumberOfChoices");
+		return;
 	}
 	
 	return true;

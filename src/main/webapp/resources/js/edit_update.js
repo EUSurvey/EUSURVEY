@@ -338,6 +338,7 @@ function update(input)
 				{
 					element.minChoices(v);
 					_undoProcessor.addUndoStep(["NumberOfChoices", id, $(_elementProperties.selectedelement).index(), oldtext, text, "min"]);
+					removeValidationMarkup($("#btnRemovePossibleAnswers").closest("tr"));
 				}
 			} else if ($(input).attr("data-type") == "max")
 			{
@@ -364,6 +365,7 @@ function update(input)
 				if ($(input).attr("data-type") == "min")
 				{
 					element.minRows(v);
+					removeValidationMarkup($("#btnRemoveRows").closest("tr"));								
 				} else if ($(input).attr("data-type") == "max")
 				{
 					element.maxRows(v);
