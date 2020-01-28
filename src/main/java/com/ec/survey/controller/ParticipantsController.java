@@ -603,6 +603,57 @@ public class ParticipantsController extends BasicController {
 		return result;
 	}
 	
+	private List<EcasUser> getInvalidEcasUsers(int participationGroupId, String selectedAttendee, HttpServletRequest request)
+	{
+		List<EcasUser> result = new ArrayList<>();
+		
+		ParticipationGroup participationGroup = participationService.get(participationGroupId);
+		if (participationGroup.getType() == ParticipationGroupType.ECMembers)
+		{
+			if (selectedAttendee != null && selectedAttendee.trim().length() > 0)
+			{
+				//one participant
+				EcasUser ecasUser = participationGroup.getEcasUser(Integer.parseInt(selectedAttendee));
+				
+				if (!MailService.isNotEmptyAndValidEmailAddress(ecasUser.getEmail()))
+				{
+					//first try to get it from LDAP
+					ecasUser.setEmail(ldapService.getEmail(ecasUser.getName()));
+					
+					//if not found, send error message to the user in order to remove the participant
+					if (!MailService.isNotEmptyAndValidEmailAddress(ecasUser.getEmail()))
+					{
+						result.add(ecasUser);
+					}
+				}
+			} else {
+				//several participants
+				for (String key : Ucs2Utf8.requestToHashMap(request).keySet())
+				{
+					if (key.startsWith("attendee"))
+					{
+						int intKey = Integer.parseInt(key.substring(8));											
+						EcasUser ecasUser = participationGroup.getEcasUser(intKey); 
+						
+						if (!MailService.isNotEmptyAndValidEmailAddress(ecasUser.getEmail()))
+						{
+							//first try to get it from LDAP
+							ecasUser.setEmail(ldapService.getEmail(ecasUser.getName()));
+							
+							//if not found, send error message to the user in order to remove the participant
+							if (!MailService.isNotEmptyAndValidEmailAddress(ecasUser.getEmail()))
+							{
+								result.add(ecasUser);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return result;
+	}
+	
 	@RequestMapping(value = "/sendInvitations", method = RequestMethod.POST)
 	public ModelAndView sendInvitationsPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
@@ -660,6 +711,18 @@ public class ParticipantsController extends BasicController {
 		if (senderAddress == null || senderAddress.trim().length() == 0) senderAddress = user.getEmail();		
 		if (senderAddress == null || senderAddress.trim().length() == 0) senderAddress = sender;
 		
+		//in case of ec guest lists, first check validity of all email addresses
+		int participationGroupId = Integer.parseInt(participationGroupIdString);
+		List<EcasUser> invalidEcasUsers = getInvalidEcasUsers(participationGroupId, selectedAttendee, request);
+		if (!invalidEcasUsers.isEmpty())
+		{
+			ModelAndView model = new ModelAndView("error/generic");
+			String[] args = { invalidEcasUsers.get(0).getName() };
+			String message = resources.getMessage("error.InvalidEmailForParticipant", args, "The email address of participant {0} is invalid. Please remove that participant before sending the invitations.", locale);
+			model.addObject("message", message);
+			return model;
+		}
+		
 		MailTask task = new MailTask();
 		task.setLocale(locale.getLanguage());
 		task.setSelectedAttendee(selectedAttendee);
@@ -671,7 +734,7 @@ public class ParticipantsController extends BasicController {
 		task.setText2(text2);
 		task.setMailtemplate(mailtemplate);
 		task.setUserId(user.getId());
-		task.setParticipationGroupId(Integer.parseInt(participationGroupIdString));
+		task.setParticipationGroupId(participationGroupId);
 		task.setParameters(Ucs2Utf8.requestToHashMap(request));
 		
 		mailService.start(task);

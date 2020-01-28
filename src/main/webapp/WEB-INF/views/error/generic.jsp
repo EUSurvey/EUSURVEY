@@ -77,6 +77,9 @@
 			<c:when test="${USER != null && noMenu == null && runnermode == null}">			
 				<%@ include file="../menu.jsp" %>	
 			</c:when>
+			<c:otherwise>
+				<%@ include file="../generic-messages.jsp" %>
+			</c:otherwise>
 		</c:choose>	
 		
 		<c:choose>
@@ -174,5 +177,3 @@
 	</div>
 	</div>
 </div>
-
-<%@ include file="../generic-messages.jsp" %>
