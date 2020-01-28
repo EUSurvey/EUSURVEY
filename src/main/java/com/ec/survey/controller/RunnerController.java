@@ -1899,13 +1899,16 @@ public class RunnerController extends BasicController {
 	@RequestMapping(value = "/createanswerpdf/{code}", headers = "Accept=*/*", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String createanswerpdf(@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
 		try {
+			AnswerSet answerSet = answerService.get(code);			
 			
-			if (!checkCaptcha(request))
+			if (answerSet == null || !answerSet.getSurvey().getCaptcha())
 			{
-				return "errorcaptcha";
-			}
-						
-			AnswerSet answerSet = answerService.get(code);
+				if (!checkCaptcha(request))
+				{
+					return "errorcaptcha";
+				}
+			}						
+			
 			if (answerSet != null) {
 				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get("email")[0];
