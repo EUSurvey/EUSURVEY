@@ -2714,7 +2714,12 @@ public class ManagementController extends BasicController {
 		result.addObject("isthankspage",true);
 		result.addObject("runnermode", true);
 		result.addObject("text", survey.getConfirmationPage());
-		result.addObject(new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()), translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()),contextpath));
+		
+		Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()), translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()),contextpath);
+		form.setSurvey(survey);	
+		
+		result.addObject(form);
+		
 		if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink() && survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
 			result.addObject("redirect", survey.getFinalConfirmationLink(lang));
 		}
