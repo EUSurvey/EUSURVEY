@@ -810,6 +810,8 @@
 	 		strings["Height"] = "<spring:message code="label.Height" />";
 	 		strings["Color"] = "<spring:message code="html.Color" />";
 	 		strings["duplicateattributename"] = "<spring:message code="validation.duplicateattributename" />";
+	 		strings["checkNumberOfChoices"] = "<spring:message code="validation.checkNumberOfChoices" />";
+	 		strings["checkNumberOfRows"] = "<spring:message code="validation.checkNumberOfRows" />";
 	 		return strings[label];
 	 	}
 	</script>

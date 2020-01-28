@@ -1322,6 +1322,16 @@ function removePossibleAnswer()
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var element = _elements[id];
 	
+	_elementProperties.selectedproperty = $("#btnRemovePossibleAnswers").closest("tr");
+	removeValidationMarkup();
+	
+	var numPossibleAnswers = element.possibleAnswers().length;
+	if (element.minChoices() != null && element.minChoices() >= numPossibleAnswers)
+	{
+		addValidationInfo($("#btnRemovePossibleAnswers"), "checkNumberOfChoices");
+		return;
+	}
+		
 	var answer = element.possibleAnswers.pop();
 	
 	if (isQuiz)
@@ -1461,6 +1471,15 @@ function removeRow(noundo)
 	{	
 		if (element.questions().length > 1)
 		{
+			removeValidationMarkup($("#btnRemoveRows").closest("tr"));
+			
+			var numRows = element.questions().length;
+			if (element.minRows() != null && element.minRows() >= numRows)
+			{
+				addValidationInfo($("#btnRemoveRows"), "checkNumberOfRows");
+				return;
+			}
+			
 			row = element.questions.pop();
 			
 			//update dependencies
