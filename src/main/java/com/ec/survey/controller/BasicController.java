@@ -151,7 +151,7 @@ public class BasicController implements BeanFactoryAware {
 	public String serverPrefix;	
 	
 	protected @Value("${export.tempFileDir}") String tempFileDir;
-	protected @Value("${export.fileDir}") String fileDir;
+	public @Value("${export.fileDir}") String fileDir;
 	protected @Value("${isworkerserver}") String isworkerserver;
 	protected @Value("${useworkerserver}") String useworkerserver;
 	protected @Value("${workerserverurl}") String workerserverurl;	

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.jmimemagic.Magic;
 
 import org.apache.catalina.connector.ClientAbortException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,8 +36,6 @@ public class FileController extends BasicController {
 	
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
-	
-	private @Value("${export.fileDir}") String fileDir;
 	
 	@RequestMapping(value = "/{uid}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView file(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response) throws ForbiddenURLException, InvalidURLException {

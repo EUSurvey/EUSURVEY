@@ -40,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Controller("homeController")
 public class HomeController extends BasicController {
 	
-	public @Value("${export.fileDir}") String fileDir;	
 	public @Value("${stresstests.createdata}") String createStressData;	
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;

@@ -54,9 +54,7 @@ public class ContributionController extends BasicController {
 	@Resource(name="sessionService")
 	private SessionService sessionService;	
 	
-	private @Value("${server.prefix}") String host;
-	
-	private @Value("${export.fileDir}") String fileDir;	
+	private @Value("${server.prefix}") String host;	
 	private @Value("${server.prefix}") String serverPrefix;
 	
 	public AnswerSet getAnswerSet(String code, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException
