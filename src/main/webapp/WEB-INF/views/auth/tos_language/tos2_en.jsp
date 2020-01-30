@@ -1,6 +1,6 @@
 <ol class="priv">
 	<li>
-		<h4>Last updated on: 22nd May 2019</h4>
+		<h4>Version 1, last updated on: 22/10/2019</h4>
 	</li>
 	<li>
 		<h4>Forewords:</h4>

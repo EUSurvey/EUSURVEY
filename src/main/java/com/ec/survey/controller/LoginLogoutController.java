@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -206,8 +207,9 @@ public class LoginLogoutController extends BasicController {
 
 		if (userid != null && userid.equals(user.getId().toString()) && accepted != null && accepted.equalsIgnoreCase("true"))
 		{
-			logger.debug("getToSPagePost".toUpperCase() +" Start UPDATE THE USER ON THE DB " + user.getLogin());
 			user.setAgreedToToS(true);
+			user.setAgreedToToSDate(new Date());
+			user.setAgreedToToSVersion(Tools.getCurrentToSVersion());
 			administrationService.updateUser(user);
 			sessionService.setCurrentUser(request, user);
 			
