@@ -219,8 +219,10 @@ function getNewElement(item)
 			url = "/utils/unCountries";
 			element.useRadioButtons = false;
 			element.subType = "unCountries";
+			element.displayMode = 2;
 		} else {
 			element.subType = "euCountries";
+			element.displayMode = 2;
 		}
 		
 		$.ajax({type: "GET",
