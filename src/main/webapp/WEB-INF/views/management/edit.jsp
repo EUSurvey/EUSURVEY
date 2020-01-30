@@ -820,7 +820,7 @@
 	 		strings["ISOOnly"] = "<spring:message code="label.ISOOnly" />";	 		
 	 	
 	 		
-	 		strings["Display"] = "<spring:message code="label.Display" />";
+	 		strings["Display"] = "<spring:message code="label.Display" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.Display" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["CountryOnly"] = "<spring:message code="label.CountryOnly" />";
 	 		strings["Country+ISO"] = "<spring:message code="label.Country+ISO" />";
 	 		strings["ISO+Country"] = "<spring:message code="label.ISO+Country" />";
