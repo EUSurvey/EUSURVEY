@@ -18,6 +18,8 @@ import java.time.temporal.ChronoField;
 import java.util.*;
 
 public class Tools {
+	
+	private static final String CURRENT_TOS_VERSION = "1";
 		
 	public static boolean isFileEqual(File o1, File o2)
 	{
@@ -289,5 +291,10 @@ public class Tools {
 		LocalDateTime localDateTime = instant.atZone(ZoneId.of("CET")).toLocalDateTime();
 		String formatDateTime = localDateTime.format(formatter);
 		return formatDateTime;
+	}
+	
+	public static String getCurrentToSVersion()
+	{
+		return CURRENT_TOS_VERSION;
 	}
 }

@@ -47,6 +47,8 @@ public class User implements java.io.Serializable {
 	private List<String> departments = new ArrayList<>();
 	private int badLoginAttempts = 0;
 	private boolean agreedToToS;
+	private Date agreedToToSDate;
+	private String agreedToToSVersion;
 	private Integer lastEditedSurvey;
 	private boolean canCreateSurveys = true;
 	private boolean isFrozen = false;
@@ -285,6 +287,22 @@ public class User implements java.io.Serializable {
 	}
 	public void setAgreedToToS(boolean agreedToToS) {
 		this.agreedToToS = agreedToToS;
+	}
+	
+	@Column(name = "USER_TOSDATE")
+	public Date getAgreedToToSDate() {
+		return agreedToToSDate;
+	}
+	public void setAgreedToToSDate(Date agreedToToSDate) {
+		this.agreedToToSDate = agreedToToSDate;
+	}
+
+	@Column(name = "USER_TOSVERSION")
+	public String getAgreedToToSVersion() {
+		return agreedToToSVersion;
+	}
+	public void setAgreedToToSVersion(String agreedToToSVersion) {
+		this.agreedToToSVersion = agreedToToSVersion;
 	}
 	
 	@Column(name = "USER_DELETED")
