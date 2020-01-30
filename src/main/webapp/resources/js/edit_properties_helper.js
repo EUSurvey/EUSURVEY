@@ -1520,7 +1520,7 @@ function cancel(button)
 		if ($(button).closest("tr").find("textarea").length > 0)
 		{
 			var selectedid = $(button).closest("tr").find("textarea").first().attr("id");
-			tinyMCE.get(selectedid).setContent(originaltext, {format : 'raw'});
+			tinyMCE.get(selectedid).setContent(originaltext, {format : 'xhtml'});
 		}
 	}
 
@@ -1716,7 +1716,7 @@ function edit(span)
 		var s = getColumnsText(true);
 		
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
-		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'raw'});
+		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'xhtml'});
 		originaltext = s;
 		$(span).closest("tr").next().show();
 	} else if (label == "Rows")
@@ -1724,7 +1724,7 @@ function edit(span)
 		var s = getRowsText(true);
 		
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
-		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'raw'});
+		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'xhtml'});
 		originaltext = s;
 		$(span).closest("tr").next().show();
 	} else if (label == "Questions")
@@ -1732,7 +1732,7 @@ function edit(span)
 		var s = getQuestionsText(true);
 		
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
-		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'raw'});
+		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'xhtml'});
 		originaltext = s;
 		$(span).closest("tr").next().show();
 	} else if (label == "PossibleAnswers")
@@ -1740,7 +1740,7 @@ function edit(span)
 		var s = getCombinedAnswerText(true);
 		
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
-		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'raw'});
+		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'xhtml'});
 		originaltext = s;
 		$(span).closest("tr").next().show();
 	} else if (label == "feedback")

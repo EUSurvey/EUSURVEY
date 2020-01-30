@@ -1070,7 +1070,7 @@ function save(span)
 			break;
 		default:		
 			_elementProperties.selectedid = $(span).closest("tr").find("textarea").first().attr("id");
-			var text = tinyMCE.get(_elementProperties.selectedid).getContent({format: 'raw'});
+			var text = tinyMCE.get(_elementProperties.selectedid).getContent({format: 'xhtml'});
 			
 			var doc = new DOMParser().parseFromString(text, 'text/html');
 			text = new XMLSerializer().serializeToString(doc);
