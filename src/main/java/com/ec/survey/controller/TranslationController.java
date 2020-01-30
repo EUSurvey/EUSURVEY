@@ -410,8 +410,13 @@ public class TranslationController extends BasicController {
 			throw new ForbiddenURLException();			
 		}
 		
-		boolean translateTranlations = machineTranslationService.translateTranlations(ids, user,isUseECMT());
-					
+		boolean translateTranlations;
+		try {		
+			translateTranlations = machineTranslationService.translateTranlations(ids, user,isUseECMT());
+		} catch (Exception e) {
+			translateTranlations = false;
+		}
+		
 		PrintWriter writer = null;
 		try {
             writer = response.getWriter();
@@ -804,9 +809,20 @@ public class TranslationController extends BasicController {
 						ids[0] = sourceTranslationsId.toString();
 						ids[1] = newTranslation.getId().toString();
 						User user = sessionService.getCurrentUser(request);
-						if (machineTranslationService.translateTranlations(ids, user,isUseECMT()))
-						{
-							activityService.log(228, null, language.getCode(), sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
+						try {
+							if (machineTranslationService.translateTranlations(ids, user,isUseECMT()))
+							{
+								activityService.log(228, null, language.getCode(), sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
+							} else {
+								ModelAndView result = translations(shortname, request, locale);
+								String message = resources.getMessage("error.UnsupportedLanguage", null, "This language is not supported.", locale);
+								result.addObject("message", message);
+								return result;
+							}
+						} catch (Exception e) {
+							ModelAndView result = translations(shortname, request, locale);
+							result.addObject("message", e.getMessage());
+							return result;
 						}
 					}
 				}

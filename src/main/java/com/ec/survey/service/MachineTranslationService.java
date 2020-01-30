@@ -131,7 +131,7 @@ public class MachineTranslationService extends BasicService {
 		response.setErrMsg(errorMessage);
 		addResponse(response);
 	}
-	public boolean translateTranlations(String[] ids, User user, boolean useECMT) {
+	public boolean translateTranlations(String[] ids, User user, boolean useECMT) throws Exception {
 		boolean result = true ;
 		
 		Integer sourceTranslationsId = null;
@@ -189,7 +189,7 @@ public class MachineTranslationService extends BasicService {
 		return result;
 	}
 
-	private void translateTranlationsWithMicrosoft(Integer sourceTranslationsId, String targetLanguage, User user, List<Integer> targetIDs) {
+	private void translateTranlationsWithMicrosoft(Integer sourceTranslationsId, String targetLanguage, User user, List<Integer> targetIDs) throws Exception {
 		Translations sourceTranslations = translationService.getTranslations(sourceTranslationsId);
 
 		List<Translation> translationsList = sourceTranslations.getTranslations();
@@ -235,7 +235,7 @@ public class MachineTranslationService extends BasicService {
 		
 	}
 
-	private void translateTranlations(Integer sourceTranslationsId, String targetLanguage, User user, List<Integer> targetIDs) {
+	private void translateTranlations(Integer sourceTranslationsId, String targetLanguage, User user, List<Integer> targetIDs) throws Exception {
 
 		Translations sourceTranslations = translationService.getTranslations(sourceTranslationsId);
 		

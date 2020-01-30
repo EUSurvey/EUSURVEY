@@ -23,10 +23,8 @@ public class MicrosoftTranslationService extends BasicService {
 		Translate.setClientId(clientID);
 		Translate.setClientSecret(clientSecret);
 	}
-
-	private static final String[] EMPTY_ARRAY = new String[0];
-
-	public String[] translate(String[] sourceTexts, String sourceLanguage, String targetLangauge) {
+	
+	public String[] translate(String[] sourceTexts, String sourceLanguage, String targetLangauge) throws Exception {
 		sessionService.initializeProxy();
 
 		// not all supported languages are available Language enum
@@ -38,26 +36,12 @@ public class MicrosoftTranslationService extends BasicService {
 		Language source = Language.fromString(sourceLanguage.toLowerCase());
 		Language target = Language.fromString(targetLangauge.toLowerCase());
 		if (source == null || target == null) {
-			logger.error("Not supported languages " + sourceLanguage + " or " + targetLangauge);
-			return EMPTY_ARRAY;
+			throw new Exception("Not supported languages " + sourceLanguage + " or " + targetLangauge);
 		}
 		try {
 			return Translate.execute(sourceTexts, source, target);
 		} catch (Exception e) {
-			logger.error("Error during translation source lang " + sourceLanguage + " target lang " + targetLangauge + " text to translate " + Arrays.toString(sourceTexts), e);
-			logger.error("Error during bulk translation try one by one");
-			String currentText = "";
-			String[] result = new String[sourceTexts.length];
-			// try one by one
-			for (int i = 0; i < sourceTexts.length; i++) {
-				currentText = sourceTexts[i];
-				try {
-					result[i] = Translate.execute(currentText, source, target);
-				} catch (Exception ex) {
-					logger.error("Error during translation source lang " + sourceLanguage + " target lang " + targetLangauge + " text to translate " + currentText, ex);
-				}
-			}
-			return result;
+			throw new Exception("Error during translation source lang " + sourceLanguage + " target lang " + targetLangauge + " text to translate " + Arrays.toString(sourceTexts), e);
 		}
 
 	}
