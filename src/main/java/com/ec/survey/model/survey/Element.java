@@ -39,6 +39,8 @@ public abstract class Element implements java.io.Serializable {
 	private boolean hasPDFWidth=false;
 	private float PDFWidth=-1;
 	private Boolean locked;
+	private String subType = "";
+	private Integer displayMode;
 	
 	private Map<Integer, String[]> activitiesToLog = new HashMap<>();
 	
@@ -107,6 +109,22 @@ public abstract class Element implements java.io.Serializable {
 	}
 	public void setLocked(Boolean locked) {
 		this.locked = locked != null ? locked : false;
+	}
+	
+	@Column(name = "SUBTYPE")
+	public String getSubType() {
+		return subType;
+	}
+	public void setSubType(String subType) {
+		this.subType = subType != null ? subType : "";
+	}
+	
+	@Column(name = "DISPLAYMODE")
+	public Integer getDisplayMode() {
+		return displayMode;
+	}
+	public void setDisplayMode(Integer displayMode) {
+		this.displayMode = displayMode != null ? displayMode : 0;
 	}
 	
 	@Transient

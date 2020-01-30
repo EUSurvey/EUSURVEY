@@ -342,6 +342,13 @@ var ElementProperties = function() {
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))");
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false');
 				getChoosePropertiesRow("Style", "RadioButton,SelectBox", false, false, $(e).find("input[name^='choicetype']").val() == 'radio' ? "RadioButton" : "SelectBox");
+				
+				var subType = $(e).find("input[name^='subType']").val()
+				if (subType === "euCountries" || subType === "unCountries")
+				{
+					getChoosePropertiesRow("Display", "CountryOnly,ISOOnly,ISO+Country,Country+ISO", false, false, parseInt($(e).find("input[name^='displayMode']").val()));
+				}	 		
+			
 				getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
 				getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		

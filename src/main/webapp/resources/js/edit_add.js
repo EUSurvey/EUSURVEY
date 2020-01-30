@@ -218,7 +218,11 @@ function getNewElement(item)
 		{
 			url = "/utils/unCountries";
 			element.useRadioButtons = false;
+			element.subType = "unCountries";
+			element.displayMode = 2;
 		} else {
+			element.subType = "euCountries";
+			element.displayMode = 2;
 		}
 		
 		$.ajax({type: "GET",
@@ -228,7 +232,9 @@ function getNewElement(item)
 		    success :function(result)
 		    {
 		    	$.each(result, function(key, data){
-		    		element.possibleAnswers[element.possibleAnswers.length] = getBasicElement("PossibleAnswer", false, data, null, false);
+		    		var newpa = getBasicElement("PossibleAnswer", false, data, null, false);
+		    		newpa.shortname = key;
+		    		element.possibleAnswers[element.possibleAnswers.length] = newpa;
 		    	});		   
 		    }
 		 });		
@@ -372,7 +378,9 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 			"uniqueId" : getNewId(),
 			"id" : getNewId(),
 			"css" : "",
-			"isDependentMatrixQuestion" : false
+			"isDependentMatrixQuestion" : false,
+			"subType" : "",
+			"displayMode" : 0
 		}
 	
 	element.originalTitle = title;

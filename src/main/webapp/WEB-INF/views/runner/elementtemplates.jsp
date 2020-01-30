@@ -105,7 +105,7 @@
 					<td style="padding-right: 15px; vertical-align: top">
 						<label data-bind="attr: {'for': id}">
 							<!-- ko ifnot: id() == 'dummy' -->
-							<div class="answertext" data-bind="html: title, attr: {'data-id' : id()}"></div>
+							<div class="answertext" data-bind="html: titleForDisplayMode($parents[1].displayMode()), attr: {'data-id' : id()}"></div>
 							<!-- /ko -->	
 						</label>
 					</td>					
@@ -118,7 +118,7 @@
 			<!-- ko ifnot: useRadioButtons -->
 			<div class="answer-column">		
 				<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice'}"  onchange="validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange();">
-					<option data-bind="html: strip_tags(title()), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
+					<option data-bind="html: strip_tags(titleForDisplayMode($parents[0].displayMode())), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
 				</select>
 				<span data-bind="if: readonly"><input data-bind="value: getPAByQuestion3(uniqueId()), attr: {'name':'answer'+id}" type="hidden" /></span>	
 				<!-- ko if: foreditor -->
@@ -159,6 +159,9 @@
 		
 				<input type="hidden" data-bind="value: scoring, attr: {'name': 'scoring' + id()}" />
 				<input type="hidden" data-bind="value: points, attr: {'name': 'points' + id()}" />
+				
+				<input type="hidden" data-bind="value: subType, attr: {'name': 'subType' + id()}" />
+				<input type="hidden" data-bind="value: displayMode, attr: {'name': 'displayMode' + id()}" />
 			<!-- /ko -->		
 		</div>
 	</div>
@@ -274,6 +277,8 @@
 				<input type="hidden" data-bind="value: points, attr: {'name': 'points' + id()}" />
 				<input type="hidden" data-bind="value: noNegativeScore, attr: {'name': 'noNegativeScore' + id()}" />
 		
+				<input type="hidden" data-bind="value: subType, attr: {'name': 'subType' + id()}" />
+				<input type="hidden" data-bind="value: displayMode, attr: {'name': 'displayMode' + id()}" />
 			<!-- /ko -->
 		</div>
 	</div>
