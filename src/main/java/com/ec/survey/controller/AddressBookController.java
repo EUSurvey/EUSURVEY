@@ -28,7 +28,6 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -47,22 +46,8 @@ import java.util.*;
 @RequestMapping("/addressbook")
 public class AddressBookController extends BasicController {
 	
-	@Resource(name="attendeeService")
-	private AttendeeService attendeeService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;
-	
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
 	@Resource(name="mailService")
 	private MailService mailService;
-	
-	@Resource(name="participationService")
-	private ParticipationService participationService;
-	
-	private @Value("${export.fileDir}") String fileDir;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})

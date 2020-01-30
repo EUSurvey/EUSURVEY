@@ -54,7 +54,6 @@ public class WorkerController extends BasicController {
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${sender}") String sender;
 	private @Value("${server.prefix}") String serverPrefix;
-	private @Value("${export.fileDir}") String fileDir;
 	private @Value("${webservice.maxrequestsperday}") String maxrequestsperday;		
 
 	@RequestMapping(value = "createanswerpdf/{code}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")

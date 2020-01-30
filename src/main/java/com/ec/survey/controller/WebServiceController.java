@@ -39,34 +39,15 @@ import java.util.*;
 @RequestMapping("/webservice")
 public class WebServiceController extends BasicController {
 
-	@Resource(name = "surveyService")
-	private SurveyService surveyService;
-
-	@Resource(name = "answerService")
-	private AnswerService answerService;
-
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-
-	@Resource(name = "participationService")
-	private ParticipationService participationService;
-
 	@Resource(name = "webserviceService")
 	private WebserviceService webserviceService;
-
-	@Resource(name = "fileService")
-	private FileService fileService;
 
 	@Resource(name = "pdfService")
 	private PDFService pdfService;
 
-	@Resource(name = "attendeeService")
-	private AttendeeService attendeeService;
-
 	@Resource(name = "xmlExportCreator")
 	private XmlExportCreator xmlExportCreator;
 
-	private @Value("${export.fileDir}") String fileDir;
 	private @Value("${webservice.maxrequestsperday}") String maxrequestsperday;
 
 	private static String StandardDateString = "yyyy-MM-dd_HH-mm-ss";

@@ -45,18 +45,6 @@ public class RunnerController extends BasicController {
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
 
-	@Resource(name = "attendeeService")
-	private AttendeeService attendeeService;
-
-	@Resource(name = "participationService")
-	private ParticipationService participationService;
-
-	@Resource(name = "translationService")
-	private TranslationService translationService;
-	
-	@Resource(name = "answerService")
-	private AnswerService answerService;
-
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
 	
@@ -66,7 +54,6 @@ public class RunnerController extends BasicController {
 	@Resource(name="pdfService")
 	private PDFService pdfService;
 
-	private @Value("${export.fileDir}") String fileDir;
 	private @Value("${server.prefix}") String serverPrefix;
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;

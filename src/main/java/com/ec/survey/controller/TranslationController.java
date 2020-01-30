@@ -29,18 +29,6 @@ import java.util.*;
 @RequestMapping("/{shortname}/management")
 public class TranslationController extends BasicController {
 		
-	@Resource(name = "surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name = "activityService")
-	private ActivityService activityService;
-
-	@Resource(name = "sessionService")
-	private SessionService sessionService;
-	
-	@Resource(name = "translationService")
-	private TranslationService translationService;
-	
 	@Resource(name="machineTranslationService")
 	MachineTranslationService machineTranslationService;
 		

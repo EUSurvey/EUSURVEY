@@ -31,7 +31,6 @@ public class TestDataController extends BasicController {
 	@Resource(name = "testDataGenerator")
 	protected TestDataGenerator testDataGenerator;	
 	
-	private @Value("${export.fileDir}") String fileDir;
 	private @Value("${sender}") String sender;
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
