@@ -1212,7 +1212,7 @@ public class AnswerService extends BasicService {
 
 			if (!answerSet.getIsDraft() && answerSet.getInvitationId() != null && answerSet.getInvitationId().length() > 0) {
 				Invitation invitation = attendeeService.getInvitationByUniqueId(answerSet.getInvitationId());
-				if (invitation.getAnswers() > 0) {
+				if (invitation != null && invitation.getAnswers() > 0) {
 					invitation.setAnswers(invitation.getAnswers() - 1);
 					attendeeService.update(invitation);
 				}
