@@ -1306,11 +1306,25 @@ public class ReportingService {
 		StringBuilder query = new StringBuilder();
 		
 		if (OLAPTableExists(uid, !publishedSurvey))
-		{		
-			query.append("DELETE FROM ");
+		{
+			//get the answerset id first
+			query.append("SELECT QANSWERSETID FROM ");
 			query.append(GetOLAPTableName(publishedSurvey, uid));
 			query.append(" WHERE QCONTRIBUTIONID = '");
 			query.append(code).append("'");
+			SQLQuery selectQuery = sessionReporting.createSQLQuery(query.toString());
+			Object result = selectQuery.uniqueResult();
+			if (result == null)
+			{
+				return;
+			}
+			int answerSetId = ConversionTools.getValue(result);
+			query = new StringBuilder();
+			
+			query.append("DELETE FROM ");
+			query.append(GetOLAPTableName(publishedSurvey, uid));
+			query.append(" WHERE QANSWERSETID = ");
+			query.append(answerSetId);
 			
 			SQLQuery deleteQuery = sessionReporting.createSQLQuery(query.toString());
 			deleteQuery.executeUpdate();
@@ -1322,8 +1336,8 @@ public class ReportingService {
 				query = new StringBuilder();
 				query.append("DELETE FROM ");
 				query.append(GetOLAPTableName(publishedSurvey, uid) + "_" + counter);
-				query.append(" WHERE QCONTRIBUTIONID = '");
-				query.append(code).append("'");
+				query.append(" WHERE QANSWERSETID = ");
+				query.append(answerSetId);
 				
 				deleteQuery = sessionReporting.createSQLQuery(query.toString());
 				deleteQuery.executeUpdate();
