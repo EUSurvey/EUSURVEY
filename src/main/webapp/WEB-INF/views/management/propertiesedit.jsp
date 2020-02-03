@@ -598,7 +598,7 @@
 										<c:forEach var="link" items="${form.survey.getAdvancedUsefulLinks()}" varStatus="rowCounter">
 											<tr class="usefullink">
 												<td>
-													<input class="xhtml" type="text" maxlength="255" name="linklabel${rowCounter.index}" value="<esapi:encodeForHTMLAttribute>${link.key}</esapi:encodeForHTMLAttribute>" />
+													<input class="xhtml freetext max250" type="text" maxlength="250" name="linklabel${rowCounter.index}" value="<esapi:encodeForHTMLAttribute>${link.key}</esapi:encodeForHTMLAttribute>" />
 												</td>
 												<td>
 													<input type="text" class="targeturl" maxlength="255" name="linkurl${rowCounter.index}" value="<esapi:encodeForHTMLAttribute>${link.value}</esapi:encodeForHTMLAttribute>" />
@@ -627,7 +627,7 @@
 										<c:forEach var="link" items="${form.survey.getBackgroundDocumentsAlphabetical()}" varStatus="rowCounter">
 											<tr>
 												<td>
-													<input class="xhtml" type="text" maxlength="255" name="doclabel${rowCounter.index}" value="<esapi:encodeForHTMLAttribute>${link.key}</esapi:encodeForHTMLAttribute>" />
+													<input class="xhtml freetext max235" type="text" maxlength="235" name="doclabel${rowCounter.index}" value="<esapi:encodeForHTMLAttribute>${link.key}</esapi:encodeForHTMLAttribute>" />
 												</td>
 												<td>
 													<div style="word-wrap: break-word; max-width: 200px;">
