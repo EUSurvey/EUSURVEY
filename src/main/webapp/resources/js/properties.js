@@ -151,7 +151,7 @@ function addLinksRow()
 	var td = document.createElement("td");
 	var input = document.createElement("input");
 	
-	$(input).attr("type","text").attr("maxlength","255").addClass("xhtml").attr("name","linklabel" + ($("#usefullinkstable").find("tr").length-1));
+	$(input).attr("type","text").attr("maxlength","250").addClass("xhtml freetext max250").attr("name","linklabel" + ($("#usefullinkstable").find("tr").length-1));
 	$(td).append(input);
 	$(tr).append(td);
 	
@@ -175,7 +175,7 @@ function addDocRow()
 	var td = document.createElement("td");
 	var input = document.createElement("input");
 	
-	$(input).attr("type","text").addClass("xhtml").attr("maxlength","255").attr("name","doclabel" + ($("#backgrounddocumentstable").find("tr").length-1));
+	$(input).attr("type","text").addClass("xhtml freetext max235").attr("maxlength","235").attr("name","doclabel" + ($("#backgrounddocumentstable").find("tr").length-1));
 	$(td).append(input);
 	$(tr).append(td);
 	
