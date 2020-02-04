@@ -52,8 +52,7 @@ public class UtilsController extends BasicController {
 		countryList.put("SE", resources.getMessage("label.country.Sweden", null, locale));
 		countryList.put("SI", resources.getMessage("label.country.Slovenia", null, locale));
 		countryList.put("SK", resources.getMessage("label.country.SlovakRepublic", null, locale));
-		countryList.put("UK", resources.getMessage("label.country.UnitedKingdom", null, locale));
-		
+				
 		countryList = Tools.sortByComparator(countryList);
 		return countryList;
 	}
