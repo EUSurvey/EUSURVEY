@@ -192,7 +192,7 @@ function getNewElement(item)
 		element.childElements = [getBasicElement("Text", false, "Question 1", null, false), getBasicElement("Text", false, "Question 2", null, false)];
 		
 		updateComplexityScore("addSimpleQuestion");	
-	} else if (item.hasClass("countriesitem") || item.hasClass("languagesitem") || item.hasClass("dgsitem") || item.hasClass("unsitem")) {
+	} else if (item.hasClass("countriesitem") || item.hasClass("languagesitem") || item.hasClass("dgsitem") || item.hasClass("unsitem") || item.hasClass("agenciesitem")) {
 		item.addClass("singlechoiceitem");
 		
 		element = getBasicElement("SingleChoiceQuestion", true, "Single Choice Question", item.attr("id"), true);
@@ -214,6 +214,9 @@ function getNewElement(item)
 		} else if (item.hasClass("dgsitem"))
 		{
 			url = "/utils/euDGs";
+		} else if (item.hasClass("agenciesitem"))
+		{
+			url = "/utils/euAgencies";
 		} else if (item.hasClass("unsitem"))
 		{
 			url = "/utils/unCountries";

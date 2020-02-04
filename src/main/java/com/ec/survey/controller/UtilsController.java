@@ -361,6 +361,53 @@ public class UtilsController extends BasicController {
 		return dgList;
 	}
 	
+	@RequestMapping(value = "/euAgencies", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public @ResponseBody Map<String, String> getListOfAgencies(HttpServletRequest request) {
+		Locale locale = new Locale(request.getParameter("lang"));
+		
+		Map<String, String> agenciesList = new HashMap<>();
+
+		agenciesList.put("CoopEnergyReg", resources.getMessage("label.agency.CoopEnergyReg", null, locale));
+		agenciesList.put("SupBEREC", resources.getMessage("label.agency.SupBEREC", null, locale));
+		agenciesList.put("EPPaEPF", resources.getMessage("label.agency.EPPaEPF", null, locale));
+		agenciesList.put("CPVO", resources.getMessage("label.agency.CPVO", null, locale));
+		agenciesList.put("EJ", resources.getMessage("label.agency.EJ", null, locale));
+		agenciesList.put("SHW", resources.getMessage("label.agency.SHW", null, locale));
+		agenciesList.put("ASO", resources.getMessage("label.agency.ASO", null, locale));
+		agenciesList.put("BA", resources.getMessage("label.agency.BA", null, locale));
+		agenciesList.put("BCG", resources.getMessage("label.agency.BCG", null, locale));
+		agenciesList.put("DPC", resources.getMessage("label.agency.DPC", null, locale));
+		agenciesList.put("DVT", resources.getMessage("label.agency.DVT", null, locale));
+		agenciesList.put("CA", resources.getMessage("label.agency.CA", null, locale));
+		agenciesList.put("DPV", resources.getMessage("label.agency.DPV", null, locale));
+		agenciesList.put("EA", resources.getMessage("label.agency.EA", null, locale));
+		agenciesList.put("FC", resources.getMessage("label.agency.FC", null, locale));
+		agenciesList.put("FS", resources.getMessage("label.agency.FS", null, locale));
+		agenciesList.put("FILWC", resources.getMessage("label.agency.FILWC", null, locale));
+		agenciesList.put("GNSS", resources.getMessage("label.agency.GNSS", null, locale));
+		agenciesList.put("IGE", resources.getMessage("label.agency.IGE", null, locale));
+		agenciesList.put("IOPA", resources.getMessage("label.agency.IOPA", null, locale));
+		agenciesList.put("MSA", resources.getMessage("label.agency.MSA", null, locale));
+		agenciesList.put("MA", resources.getMessage("label.agency.MA", null, locale));
+		agenciesList.put("MCDDA", resources.getMessage("label.agency.MCDDA", null, locale));
+		agenciesList.put("PPO", resources.getMessage("label.agency.PPO", null, locale));
+		agenciesList.put("SMA", resources.getMessage("label.agency.SMA", null, locale));
+		agenciesList.put("TF", resources.getMessage("label.agency.TF", null, locale));
+		agenciesList.put("FR", resources.getMessage("label.agency.FR", null, locale));
+		agenciesList.put("LEC", resources.getMessage("label.agency.LEC", null, locale));
+		agenciesList.put("LET", resources.getMessage("label.agency.LET", null, locale));
+		agenciesList.put("NIS", resources.getMessage("label.agency.NIS", null, locale));
+		agenciesList.put("R", resources.getMessage("label.agency.R", null, locale));
+		agenciesList.put("OMIT", resources.getMessage("label.agency.OMIT", null, locale));
+		agenciesList.put("ASA", resources.getMessage("label.agency.ASA", null, locale));
+		agenciesList.put("IPO", resources.getMessage("label.agency.IPO", null, locale));
+		agenciesList.put("SRB", resources.getMessage("label.agency.SRB", null, locale));
+		agenciesList.put("TC", resources.getMessage("label.agency.TC", null, locale));		
+		
+		agenciesList = Tools.sortByComparator(agenciesList);
+		return agenciesList;
+	}
+	
 	@RequestMapping(value = "/config/{key}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String getConfigValue(@PathVariable String key, HttpServletRequest request) {
 		String result = "";		
