@@ -225,6 +225,7 @@
 				<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapsePredefined" aria-expanded="true"><spring:message code="label.Predefined" /></a></div>
 				<div id="collapsePredefined" class="accordion-body collapse in">
 					<ul>
+						<li class="toolboxitem agenciesitem draggable"><span class="glyphicon glyphicon-star"></span> <spring:message code="form.predefined.euagencies" /></li>
 						<li class="toolboxitem countriesitem draggable"><span class="glyphicon glyphicon-globe"></span> <spring:message code="form.predefined.eucountries" /></li>
 						<li class="toolboxitem languagesitem draggable"><span class="glyphicon glyphicon-flag"></span> <spring:message code="form.predefined.eulanguages" /></li>
                                                 <c:if test="${!oss}">
