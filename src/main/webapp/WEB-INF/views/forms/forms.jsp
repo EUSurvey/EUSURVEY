@@ -69,6 +69,7 @@
 		var uuid = null;
 		var title = null;
 		var contact = null;
+		var contacttype = null;
 	
 		$(function() {					
 			$("#forms-menu-tab").addClass("active");

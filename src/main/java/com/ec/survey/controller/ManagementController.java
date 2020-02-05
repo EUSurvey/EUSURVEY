@@ -796,6 +796,7 @@ public class ManagementController extends BasicController {
 				result.getSurvey().setLanguage(objLang);
 				result.getSurvey().setListForm(request.getParameter("listform") != null && request.getParameter("listform").equalsIgnoreCase("true"));
 				result.getSurvey().setContact( Tools.escapeHTML(parameters.get("contact")[0]));
+				result.getSurvey().setContactType( Tools.escapeHTML(parameters.get("contacttype")[0]));
 				result.getSurvey().setContactLabel( Tools.escapeHTML(parameters.get("contactlabel")[0]));
 				result.getSurvey().setAudience( Tools.escapeHTML(parameters.get("audience")[0]));
 				
@@ -806,6 +807,7 @@ public class ManagementController extends BasicController {
 	 	            result.getActiveSurvey().setLanguage(objLang);
 	 	            result.getActiveSurvey().setListForm(request.getParameter("listform") != null && request.getParameter("listform").equalsIgnoreCase("true"));
 	 	            result.getActiveSurvey().setContact(Tools.escapeHTML(parameters.get("contact")[0]));
+	 	            result.getActiveSurvey().setContactType( Tools.escapeHTML(parameters.get("contacttype")[0]));
 	 	            result.getActiveSurvey().setContactLabel( Tools.escapeHTML(parameters.get("contactlabel")[0]));
 	 	            result.getActiveSurvey().setAudience( Tools.escapeHTML(parameters.get("audience")[0]));
 				}
@@ -942,6 +944,7 @@ public class ManagementController extends BasicController {
 					copy.setListForm(request.getParameter("listform") != null && request.getParameter("listform").equalsIgnoreCase("true"));
 					copy.setSecurity(Tools.escapeHTML(parameterMap.get("security")[0]));
 					copy.setContact(Tools.escapeHTML(parameterMap.get("contact")[0]));
+					copy.setContactType( Tools.escapeHTML(parameterMap.get("contacttype")[0]));
 					copy.setContactLabel( Tools.escapeHTML(parameterMap.get("contactlabel")[0]));
 					copy.setAudience( Tools.escapeHTML(parameterMap.get("audience")[0]));
 					
@@ -1014,6 +1017,7 @@ public class ManagementController extends BasicController {
 			uploadedSurvey.setListForm(request.getParameter("listform") != null && request.getParameter("listform").equalsIgnoreCase("true"));
 			uploadedSurvey.setSecurity(Tools.escapeHTML(parameterMap.get("security")[0]));
 			uploadedSurvey.setContact(Tools.escapeHTML(parameterMap.get("contact")[0]));
+			uploadedSurvey.setContactType(Tools.escapeHTML(parameterMap.get("contacttype")[0]));
 			uploadedSurvey.setContactLabel(Tools.escapeHTML(parameterMap.get("contactlabel")[0]));
 			uploadedSurvey.setAudience(Tools.escapeHTML(parameterMap.get("audience")[0]));
 			uploadedSurvey.setIsQuiz(request.getParameter("quiz") != null && request.getParameter("quiz").equalsIgnoreCase("true"));
@@ -1301,6 +1305,7 @@ public class ManagementController extends BasicController {
 		
 		survey.setListForm(uploadedSurvey.getListForm());
 		survey.setContact(Tools.escapeHTML(uploadedSurvey.getContact()));
+		survey.setContactType(Tools.escapeHTML(uploadedSurvey.getContactType()));
 		survey.setContactLabel(Tools.escapeHTML(uploadedSurvey.getContactLabel()));
 		survey.setIsQuiz(uploadedSurvey.getIsQuiz());
 		survey.setIsOPC(uploadedSurvey.getIsOPC());

@@ -741,6 +741,24 @@ public class RunnerController extends BasicController {
 
 		return null;
 	}
+	
+	@RequestMapping(value = "/contact/{uidorshortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView contact(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException {
+
+		Survey survey = surveyService.getSurvey(uidorshortname, true, true, false, false, null, true, true);
+
+		if (survey == null || !survey.getContactType().equalsIgnoreCase("form"))
+		{
+			throw new InvalidURLException();
+		}
+		
+		Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true), survey.getLanguage(), resources, contextpath);
+		
+		ModelAndView modelReturn= new ModelAndView("runner/contact", "form", f);
+		modelReturn.addObject("survey", survey);
+		
+		return modelReturn;
+	}
 
 	@RequestMapping(value = "/{uidorshortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException, WeakAuthenticationException, FrozenSurveyException {

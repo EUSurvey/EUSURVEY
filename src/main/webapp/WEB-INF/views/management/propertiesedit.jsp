@@ -56,12 +56,28 @@
 								<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Contact" /></td>
 								<td>
 									<c:choose>
-										<c:when test='${form.survey.contact.contains("@")}'>
+										<c:when test='${form.survey.contactType.contains("form")}'>
 											<div style="float:left; text-align: right;">
-												<select onchange="checkPropertiesSurveyContactType()" id="survey-contact-type" style="width: 120px;">
-													<option value="email" selected="selected"><spring:message code="label.Email" /></option>
-													<option value="url"><spring:message code="label.Webpage" /></option>								
-												</select><br />
+												<form:select path="survey.contactType" id="survey-contact-type" style="width: 140px;">
+													<form:option value="form" selected="selected"><spring:message code="label.ContactForm" /></form:option>
+													<form:option value="email"><spring:message code="label.Email" /></form:option>
+													<form:option value="url"><spring:message code="label.Webpage" /></form:option>	
+												</form:select>
+												<br />
+												<div id="survey-contact-label-label" style="display:none; font-weight: bold; margin-top: 5px;"><spring:message code="label.Label" /></div>
+											</div>
+											<div style="float:left; margin-left: 10px">
+												<form:input htmlEscape="false" path="survey.contact" class="required email" type="text" maxlength="255" /><br />
+												<form:input htmlEscape="false" path="survey.contactLabel" type="text" style="display: none" maxlength="255" />
+											</div>
+										</c:when>
+										<c:when test='${form.survey.contactType.contains("email")}'>
+											<div style="float:left; text-align: right;">
+												<form:select path="survey.contactType" id="survey-contact-type" style="width: 140px;">
+													<form:option value="form"><spring:message code="label.ContactForm" /></form:option>
+													<form:option value="email" selected="selected"><spring:message code="label.Email" /></form:option>
+													<form:option value="url"><spring:message code="label.Webpage" /></form:option>	
+												</form:select><br />
 												<div id="survey-contact-label-label" style="display:none; font-weight: bold; margin-top: 5px;"><spring:message code="label.Label" /></div>
 											</div>
 											<div style="float:left; margin-left: 10px">
@@ -71,10 +87,11 @@
 										</c:when>
 										<c:otherwise>
 											<div style="float:left; text-align: right;">
-												<select onchange="checkPropertiesSurveyContactType()" id="survey-contact-type" style="width: 120px;">
-													<option value="email"><spring:message code="label.Email" /></option>
-													<option value="url" selected="selected"><spring:message code="label.Webpage" /></option>								
-												</select><br />
+												<form:select path="survey.contactType" id="survey-contact-type" style="width: 140px;">
+													<form:option value="form"><spring:message code="label.ContactForm" /></form:option>
+													<form:option value="email"><spring:message code="label.Email" /></form:option>
+													<form:option value="url" selected="selected"><spring:message code="label.Webpage" /></form:option>	
+												</form:select><br />
 												<div id="survey-contact-label-label" style="font-weight: bold; margin-top: 5px;"><spring:message code="label.Label" /></div>
 											</div>
 											<div style="float:left; margin-left: 10px">

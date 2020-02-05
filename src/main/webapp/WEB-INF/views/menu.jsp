@@ -166,7 +166,12 @@
 	
 	function checkNewSurveyContactType()
 	{
-		if ($("#new-survey-contact-type").val() == "email")
+		if ($("#new-survey-contact-type").val() == "form")
+		{
+			$("#new-survey-contact").addClass("email");
+			$("#new-survey-contact-label").hide();
+			$("#new-survey-contact-label-label").hide();
+		} else if ($("#new-survey-contact-type").val() == "email")
 		{
 			$("#new-survey-contact").addClass("email");
 			$("#new-survey-contact-label").hide();
@@ -399,8 +404,9 @@
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Contact" /></td>
 					<td>
 						<div style="float:left; text-align: right;">
-							<select onchange="checkNewSurveyContactType()" class="form-control" id="new-survey-contact-type" style="width: 120px;">
-								<option value="email" selected="selected"><spring:message code="label.Email" /></option>
+							<select onchange="checkNewSurveyContactType()" class="form-control" id="new-survey-contact-type" style="width: 140px;">
+								<option value="form" selected="selected"><spring:message code="label.ContactForm" /></option>
+								<option value="email"><spring:message code="label.Email" /></option>
 								<option value="url"><spring:message code="label.Webpage" /></option>								
 							</select>
 							<div id="new-survey-contact-label-label" style="display:none; font-weight: bold; margin-top: 10px;"><spring:message code="label.Label" /></div>
@@ -481,6 +487,7 @@
 	<input type="hidden" name="quiz" id="create-survey-quiz" value="" />
 	<input type="hidden" name="opc" id="create-survey-opc" value="" />
 	<input type="hidden" name="contact" id="create-survey-contact" value="" />
+	<input type="hidden" name="contacttype" id="create-survey-contact-type" value="" />
 	<input type="hidden" name="contactlabel" id="create-survey-contact-label" value="" />
 	<input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute>${origin}</esapi:encodeForHTMLAttribute>" />
 </form:form>

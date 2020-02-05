@@ -298,7 +298,11 @@
 							<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Contact")}</div>
 							
 							<c:choose>
-								<c:when test="${form.survey.contact.contains('@')}">
+								<c:when test="${form.survey.contactType.equals('form')}">
+									
+									<a target="_blank" class="link" href="${contextpath}/runner/contact/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
+								</c:when>
+								<c:when test="${form.survey.contactType.equals('mail')}">
 									<i class="icon icon-envelope" style="vertical-align: middle"></i>
 									<a class="link" href="mailto:<esapi:encodeForHTMLAttribute>${form.survey.contact}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${form.survey.contact}</esapi:encodeForHTML></a>
 								</c:when>

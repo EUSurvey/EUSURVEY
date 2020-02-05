@@ -2062,9 +2062,10 @@ function initModals(item)
 			$("#create-survey-opc").val("true");
 		} else {
 			$("#create-survey-opc").val("false");
-		}		
+		}	
 		
 		$("#create-survey-contact").val($("#new-survey-contact").val());
+		$("#create-survey-contact-type").val($("#new-survey-contact-type").val());
 		$("#create-survey-contact-label").val($("#new-survey-contact-label").val());
 		
 		if (!checkShortname($("#new-survey-shortname").val()))

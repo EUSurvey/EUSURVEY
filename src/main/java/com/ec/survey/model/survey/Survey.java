@@ -101,6 +101,7 @@ public class Survey implements java.io.Serializable {
 	private boolean listFormValidated;
 	private Date publicationRequestedDate;
 	private String contact;
+	private String contactType;
 	private String contactLabel;
 	private String security;
 	private Date created;
@@ -696,6 +697,25 @@ public class Survey implements java.io.Serializable {
 
 	public void setContact(String contact) {
 		this.contact = contact;
+	}
+	
+	@Column(name = "CONTACTTYPE")
+	public String getContactType() {
+		if (contactType == null)
+		{
+			if (contact != null && contact.contains("@"))
+			{
+				return "email";
+			}
+			
+			return "url";
+		}
+		
+		return contactType;
+	}
+
+	public void setContactType(String contactType) {	
+		this.contactType = contactType;
 	}
 
 	@Column(name = "CONTACTLABEL")
@@ -1432,6 +1452,7 @@ public class Survey implements java.io.Serializable {
 			boolean keepuid, String newshortname, String newuid) throws Exception {
 		Survey copy = new Survey();
 		copy.contact = contact;
+		copy.contactType = contactType;
 		copy.contactLabel = contactLabel;
 		copy.audience = audience;
 		copy.automaticPublishing = automaticPublishing;
@@ -2160,4 +2181,5 @@ public class Survey implements java.io.Serializable {
 				? maxNumberContribution
 				: 0L;
 	}
+
 }

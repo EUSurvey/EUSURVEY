@@ -22,6 +22,7 @@ $(function() {
 		    		title = responseJSON.title;
 		    		var shortname = responseJSON.shortname;
 		    		contact = responseJSON.contact;
+		    		contacttype = responseJSON.contacttype;
 		    		
 		    		if (!responseJSON.exists)
 		    		{
@@ -32,13 +33,9 @@ $(function() {
 		    		
 		    		$('#new-survey-title').val(title);
 		    		$("#new-survey-contact").val(contact);
+		    		$("#new-survey-contact-type").val("form");
 	    			$("#new-survey-contact-label").val("");
-	    			if (contact != null && contact.indexOf("@") > 0)
-	    			{
-	    				$("#new-survey-contact-type").val("email");
-	    			} else {
-	    				$("#new-survey-contact-type").val("url");
-	    			}
+	    			
 	    			checkNewSurveyContactType();
 	    			$("#new-survey-language").val(responseJSON.language);
 	    			$("#import-survey-dialog").modal("hide");
