@@ -66,7 +66,7 @@
     		</c:if>
     		
     		<c:if test="${readonly != null && page == 2}">
-    			nextPage();
+    			nextPage(true);
     		</c:if>
     	});
 
@@ -80,11 +80,11 @@
 			}
 		}
 		
-		function nextPage()
+		function nextPage(force)
 		{
 			<c:if test="${readonly == null}">
 			if ($("#tos_EN").is(":visible")) {
-				if ($('#acceptedPSEN').is(':checked')) { $('#mustacceptPSEN').hide(); } else { $('#mustacceptPSEN').show(); return false };
+				if ($('#acceptedPSEN').is(':checked') || force) { $('#mustacceptPSEN').hide(); } else { $('#mustacceptPSEN').show(); return false };
 			} else if ($("#tos_DE").is(":visible")) {
 				if ($('#acceptedPSDE').is(':checked')) { $('#mustacceptPSDE').hide(); } else { $('#mustacceptPSDE').show(); return false };
 			} else if ($("#tos_FR").is(":visible")) {
@@ -163,7 +163,7 @@
 							</div>
 							<div class="tospage1" style="text-align: center">
 								<c:if test="${readonly == null}">
-									<br />
+									<!-- <br />
 									<br />
 									<div style="text-align: center">
 										<input type="checkbox" class="check" name="acceptedPSEN"
@@ -173,9 +173,11 @@
 											have to accept the privacy statement to be able to use EUSurvey</div>
 										<br />
 										<br />
-									</div>						
+									</div>-->				
 								
-									<a class="btn btn-primary" onclick="nextPage()">next page</a>
+									<a class="btn btn-primary" onclick="nextPage(true)">I accept</a>
+									&nbsp;
+									<a class="btn btn-default" onclick="logout()">I do not accept</a>
 								</c:if>
 							</div>
 							<div class="tospage2">
@@ -247,7 +249,7 @@
 										<br />
 									</div>	
 								
-									<a class="btn btn-primary" onclick="nextPage()">nächste Seite</a>
+									<a class="btn btn-primary" onclick="nextPage(false)">nächste Seite</a>
 								</c:if>
 							</div>
 							<div class="tospage2">
@@ -317,7 +319,7 @@
 										<br />
 									</div>	
 									
-									<a class="btn btn-primary" onclick="nextPage()">page suivante</a>
+									<a class="btn btn-primary" onclick="nextPage(false)">page suivante</a>
 								</c:if>							
 							</div>
 							<div class="tospage2">

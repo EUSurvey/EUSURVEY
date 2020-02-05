@@ -179,3 +179,9 @@
 		</p>
 	</li>
 </ol>
+
+<div style="text-align: center; margin-top: 30px;">
+<h2>We value your privacy</h2>
+<p style="text-align: left; max-width: 500px; margin-left: auto; margin-right: auto;">Please click on the "I accept" button below in order to indicate that you have read the privacy statement and provide your consent for the processing of your personal data.<p>
+<p style="text-align: left; max-width: 500px; margin-left: auto; margin-right: auto;">If you disagree with our privacy statement, please click on the "I do not accept" button.</p>
+</div>
