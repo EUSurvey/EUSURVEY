@@ -671,8 +671,8 @@ function newSingleChoiceViewModel(element)
 	
 	viewModel.single = true;
 	viewModel.useRadioButtons = ko.observable(element.useRadioButtons);	
-	viewModel.minChoices = 0;
-	viewModel.maxChoices = 0;
+	viewModel.minChoices = ko.observable(0);
+	viewModel.maxChoices = ko.observable(0);
 	viewModel.choiceType = ko.observable(element.useRadioButtons ? "radio" : "select");
 	
 	return viewModel;
