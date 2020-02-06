@@ -468,9 +468,9 @@ public class ManagementController extends BasicController {
             	response.setStatus(HttpServletResponse.SC_OK);                
             	if (existing != null)
             	{
-            		writer.print("{\"success\": true, \"exists\": true, \"uuid\": \"" + uuid + "\", \"shortname\": \"" + result.getSurvey().getShortname() + "\", \"title\": \"" + result.getSurvey().getTitle() + "\", \"contact\": \"" + contact + "\", \"login\": \"" + login + "\", \"language\": \"" + lang + "\"}");
+            		writer.print("{\"success\": true, \"exists\": true, \"uuid\": \"" + uuid + "\", \"shortname\": \"" + result.getSurvey().getShortname() + "\", \"title\": \"" + Tools.encodeForJSON(result.getSurvey().getTitle()) + "\", \"contact\": \"" + contact + "\", \"login\": \"" + login + "\", \"language\": \"" + lang + "\"}");
             	} else {            	
-	            	writer.print("{\"success\": true, \"exists\": false, \"uuid\": \"" + uuid + "\", \"shortname\": \"" + result.getSurvey().getShortname() + "\", \"title\": \"" + result.getSurvey().getTitle() + "\", \"contact\": \"" + contact + "\", \"login\": \"" + login + "\", \"language\": \"" + lang + "\"}");
+	            	writer.print("{\"success\": true, \"exists\": false, \"uuid\": \"" + uuid + "\", \"shortname\": \"" + result.getSurvey().getShortname() + "\", \"title\": \"" + Tools.encodeForJSON(result.getSurvey().getTitle()) + "\", \"contact\": \"" + contact + "\", \"login\": \"" + login + "\", \"language\": \"" + lang + "\"}");
 	            }
 
     		  java.io.File target = fileService.getUsersFile(u.getId(), "import" + uuid);
