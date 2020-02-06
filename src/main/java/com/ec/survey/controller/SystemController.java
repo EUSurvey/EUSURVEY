@@ -45,7 +45,7 @@ public class SystemController extends BasicController {
 	
 	@RequestMapping(value = "/message", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody Message getSystemMessage(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
-		User user = sessionService.getCurrentUser(request); 
+		User user = sessionService.getCurrentUser(request, false, false); 
 		Message message;
 		
 		if (user != null && user.getGlobalPrivileges().get(GlobalPrivilege.SystemManagement) > 0)

@@ -430,7 +430,7 @@ public class AnswerService extends BasicService {
 			}
 
 			if (loadDraftIds && answerSet.getIsDraft() && checkDraftSubmitted) {
-				if (surveyService.answerSetExists(answerSet.getUniqueCode(), false)) {
+				if (surveyService.answerSetExists(answerSet.getUniqueCode(), false, false)) {
 					answerSet.setIsDraft(false);
 				}
 			}

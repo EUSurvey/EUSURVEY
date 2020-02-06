@@ -2759,16 +2759,25 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public boolean answerSetExists(String uniqueCode, boolean isDraft) {
+	public boolean answerSetExists(String uniqueCode, boolean isDraft, boolean addErrorIfExists) {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "select ANSWER_SET_ID FROM ANSWERS_SET WHERE UNIQUECODE = :uid and ISDRAFT = :draft";
+		String sql = "select ANSWER_SET_ID, ANSWER_SET_DATE FROM ANSWERS_SET WHERE UNIQUECODE = :uid and ISDRAFT = :draft";
 		SQLQuery query = session.createSQLQuery(sql);
 		query.setString("uid", uniqueCode);
 		query.setBoolean("draft", isDraft);
 
 		@SuppressWarnings("rawtypes")
 		List list = query.list();
-		return list.size() > 0;
+		
+		if (addErrorIfExists && !list.isEmpty())
+		{
+			for (Object o : list) {
+				Object[] a = (Object[]) o;
+				logger.error("Existing answer set for this unique code found: " + uniqueCode + "; id: " + ConversionTools.getValue(a[0]) + "; created: " + a[1]);
+			}
+		}
+		
+		return !list.isEmpty();
 	}
 
 	@Transactional(readOnly = true)
