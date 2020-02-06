@@ -411,7 +411,7 @@ public class BasicController implements BeanFactoryAware {
 	}
 	
 	protected ModelAndView testDraftAlreadySubmittedByUniqueCode(Survey survey, String uniqueAnswerSet, Locale locale) throws ForbiddenURLException {
-		if (surveyService.answerSetExists(uniqueAnswerSet, false))
+		if (surveyService.answerSetExists(uniqueAnswerSet, false, true))
 		{		
 			ModelAndView model = new ModelAndView("error/generic");
 			model.addObject("message", resources.getMessage("error.AnswerAlreadySubmitted", null, "This answer was already submitted.", locale));
