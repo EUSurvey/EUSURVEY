@@ -181,6 +181,50 @@ public class LoginLogoutController extends BasicController {
 		return "auth/deniedpage";
 	}
 	
+	@RequestMapping(value = "/auth/ps")
+	public ModelAndView getPSPage(HttpServletRequest request) {
+		User user = (User) request.getSession().getAttribute("USER");
+		if (super.isShowPrivacy()) {
+			Map<String, Object> model = new HashMap<String,Object>();
+			model.put("user", user);
+			model.put("oss", super.isOss());
+			return new ModelAndView("auth/ps", model);
+		} else {
+			user.setAgreedToPS(true);
+			administrationService.updateUser(user);
+			sessionService.setCurrentUser(request, user);
+			return new ModelAndView("redirect:/dashboard");
+		}
+	}
+	
+	@RequestMapping(value = "/auth/ps", method = RequestMethod.POST)
+	public String getPSPagePost(HttpServletRequest request, HttpServletResponse response) {
+		
+		User user = (User) request.getSession().getAttribute("USER");
+		
+		String userid = request.getParameter("user");
+		String accepted = request.getParameter("accepted");
+
+		if (userid != null && userid.equals(user.getId().toString()) && accepted != null && accepted.equalsIgnoreCase("true"))
+		{
+			user.setAgreedToPS(true);
+			user.setAgreedToPSDate(new Date());
+			user.setAgreedToPSVersion(Tools.getCurrentToSVersion());
+			administrationService.updateUser(user);
+			sessionService.setCurrentUser(request, user);
+			
+			RequestCache requestCache = new HttpSessionRequestCache();
+			SavedRequest savedRequest = requestCache.getRequest(request, response);
+			String targetUrl = "/dashboard";
+			if (savedRequest != null) {
+				 targetUrl = savedRequest.getRedirectUrl();
+			}
+			return "redirect:" + targetUrl;
+		}
+		
+		return "redirect:/auth/ps";
+	}
+	
 	@RequestMapping(value = "/auth/tos")
 	public ModelAndView getToSPage(HttpServletRequest request) {
 		User user = (User) request.getSession().getAttribute("USER");

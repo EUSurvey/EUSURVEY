@@ -20,6 +20,7 @@ import java.util.*;
 public class Tools {
 	
 	private static final String CURRENT_TOS_VERSION = "1";
+	private static final String CURRENT_PS_VERSION = "1";
 		
 	public static boolean isFileEqual(File o1, File o2)
 	{
@@ -296,5 +297,10 @@ public class Tools {
 	public static String getCurrentToSVersion()
 	{
 		return CURRENT_TOS_VERSION;
+	}
+	
+	public static String getCurrentPSVersion()
+	{
+		return CURRENT_PS_VERSION;
 	}
 }

@@ -49,6 +49,9 @@ public class User implements java.io.Serializable {
 	private boolean agreedToToS;
 	private Date agreedToToSDate;
 	private String agreedToToSVersion;
+	private boolean agreedToPS;
+	private Date agreedToPSDate;
+	private String agreedToPSVersion;
 	private Integer lastEditedSurvey;
 	private boolean canCreateSurveys = true;
 	private boolean isFrozen = false;
@@ -303,6 +306,30 @@ public class User implements java.io.Serializable {
 	}
 	public void setAgreedToToSVersion(String agreedToToSVersion) {
 		this.agreedToToSVersion = agreedToToSVersion;
+	}	
+
+	@Column(name = "USER_PS")
+	public boolean isAgreedToPS() {
+		return agreedToPS;
+	}
+	public void setAgreedToPS(Boolean agreedToPS) {
+		this.agreedToPS = agreedToPS != null ? agreedToPS : false;
+	}
+
+	@Column(name = "USER_PSDATE")
+	public Date getAgreedToPSDate() {
+		return agreedToPSDate;
+	}
+	public void setAgreedToPSDate(Date agreedToPSDate) {
+		this.agreedToPSDate = agreedToPSDate;
+	}
+
+	@Column(name = "USER_PSVERSION")
+	public String getAgreedToPSVersion() {
+		return agreedToPSVersion;
+	}
+	public void setAgreedToPSVersion(String agreedToPSVersion) {
+		this.agreedToPSVersion = agreedToPSVersion;
 	}
 	
 	@Column(name = "USER_DELETED")
