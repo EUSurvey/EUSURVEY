@@ -5,6 +5,7 @@ import com.ec.survey.model.survey.base.File;
 import edu.vt.middleware.password.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.simple.JSONObject;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.IntrusionException;
 
@@ -298,9 +299,14 @@ public class Tools {
 	{
 		return CURRENT_TOS_VERSION;
 	}
+
 	
 	public static String getCurrentPSVersion()
 	{
 		return CURRENT_PS_VERSION;
+  }
+
+	public static String encodeForJSON(String title) {
+		return JSONObject.escape(title);
 	}
 }

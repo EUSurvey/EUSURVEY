@@ -235,11 +235,24 @@ public class RunnerController extends BasicController {
 						
 						if (f.translationIsValid(lang))
 						{
+							List<Translations> translations = translationService.getTranslationsForSurvey(survey.getId(), true);
+							for (Translations trans : translations) {
+								if (trans.getLanguage().getCode().equalsIgnoreCase(lang))
+								{
+									if (!trans.getComplete() || !trans.getActive())
+									{
+										ModelAndView modelReturn = new ModelAndView("redirect:/runner/invited/" + group + "/" + unique);
+										return modelReturn;
+									}
+								}
+							}
+							
 							Survey translated = SurveyHelper.createTranslatedSurvey(f.getSurvey().getId(), lang, surveyService, translationService, true);
 							f.setSurvey(translated);
 							f.setLanguage(surveyService.getLanguage(lang));
 						} else {
-							lang = null;
+							ModelAndView modelReturn = new ModelAndView("redirect:/runner/invited/" + group + "/" + unique);
+							return modelReturn;
 						}
 					}
 					
@@ -761,7 +774,7 @@ public class RunnerController extends BasicController {
 		if (lang == null && !isDraft)
 		{
 			Survey draft = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true, true);
-			lang = draft.getLanguage().getCode();
+			lang = draft.getLanguage().getCode();		
 		}
 		
 		String p = request.getParameter("readonly");
@@ -777,7 +790,7 @@ public class RunnerController extends BasicController {
 				}
 			}
 		}
-		
+			
 		Survey survey = surveyService.getSurvey(uidorshortname, isDraft, true, false, false, lang, true, true);
 		
 		if (survey == null && readonlyMode)
@@ -797,6 +810,22 @@ public class RunnerController extends BasicController {
 		if (survey != null) {
 			if (SurveyHelper.isDeactivatedOrEndDateExceeded(survey, surveyService)) {
 				if (!readonlyMode) return getEscapePageModel(survey, request, device);
+			}
+			
+			String urllang = request.getParameter("surveylanguage");
+			if (urllang != null)
+			{
+				List<Translations> translations = translationService.getTranslationsForSurvey(survey.getId(), true);
+				for (Translations trans : translations) {
+					if (trans.getLanguage().getCode().equalsIgnoreCase(urllang))
+					{
+						if (!trans.getComplete() || !trans.getActive())
+						{
+							modelReturn.setViewName("redirect:/runner/" + uidorshortname);
+							return modelReturn;
+						}
+					}
+				}
 			}
 
 			if (SurveyHelper.isMaxContributionReached(survey, answerService)) {
