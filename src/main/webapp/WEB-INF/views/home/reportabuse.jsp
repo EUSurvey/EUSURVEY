@@ -7,6 +7,7 @@
 <head>
 	<title>EUSurvey - <spring:message code="contribution.edit" /></title>	
 	<%@ include file="../includes.jsp" %>
+	<%@ include file="../generic-messages.jsp" %>
 	
 	<script>
 		function checkReportAbuse()
