@@ -35,6 +35,13 @@ public class SavedRequestAwareAuthenticationSuccessHandlerExtended extends Simpl
 	        }
 	        
 	        User user = (User) request.getSession().getAttribute("USER");
+	        
+	        if (!user.isAgreedToPS())
+	        {
+	            getRedirectStrategy().sendRedirect(request, response, "/auth/ps");
+	 	        return;
+	        }
+	        
 	        if (!user.isAgreedToToS())
 	        {
 	            getRedirectStrategy().sendRedirect(request, response, "/auth/tos");

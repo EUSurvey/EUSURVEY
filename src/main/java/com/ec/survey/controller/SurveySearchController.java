@@ -11,11 +11,9 @@ import com.ec.survey.model.SurveyFilter;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.AdministrationService;
-import com.ec.survey.service.SessionService;
-import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.RestoreExecutor;
 import com.ec.survey.tools.WeakAuthenticationException;
@@ -29,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,15 +47,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
 public class SurveySearchController extends BasicController {
-	
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;
     
     @Autowired
 	protected PaginationMapper paginationMapper;    
@@ -154,7 +142,7 @@ public class SurveySearchController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/administration/surveysearch", method = {RequestMethod.POST})
-	public ModelAndView surveysearchPOST(HttpServletRequest request, Model model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {	
+	public ModelAndView surveysearchPOST(HttpServletRequest request, Model model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {	
 		
 		String mode = request.getParameter("surveys");
 		
@@ -441,7 +429,7 @@ public class SurveySearchController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/administration/changeowner", method = {RequestMethod.POST})
-	public @ResponseBody boolean changeowner(HttpServletRequest request, Model model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {	
+	public @ResponseBody boolean changeowner(HttpServletRequest request, Model model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {	
 		User u = sessionService.getCurrentUser(request);
 		
 		if (u.getGlobalPrivileges().get(GlobalPrivilege.SystemManagement) < 2)

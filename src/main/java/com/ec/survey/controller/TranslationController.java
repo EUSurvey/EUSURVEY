@@ -386,7 +386,7 @@ public class TranslationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/translatetranslations", method = RequestMethod.GET)
-	public void translateTranslations(HttpServletRequest request, Locale locale, HttpServletResponse response) throws NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException {
+	public void translateTranslations(HttpServletRequest request, Locale locale, HttpServletResponse response) throws NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException, NotAgreedToPsException {
 		String idsString = request.getParameter("translationIds");
 		String[] ids = idsString.split("\\|");
 		User user = sessionService.getCurrentUser(request);
@@ -447,7 +447,7 @@ public class TranslationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/activatetranslation", method = RequestMethod.POST)
-	public @ResponseBody SimpleResult activatetranslations(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {
+	public @ResponseBody SimpleResult activatetranslations(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		String id = request.getParameter("id");
 		SimpleResult result = new SimpleResult();
 		
@@ -477,7 +477,7 @@ public class TranslationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/deactivatetranslation", method = RequestMethod.POST)
-	public @ResponseBody SimpleResult deactivatetranslations(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {
+	public @ResponseBody SimpleResult deactivatetranslations(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		String id = request.getParameter("id");
 		SimpleResult result = new SimpleResult();
 		
@@ -828,7 +828,7 @@ public class TranslationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/importtranslation", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String importtranslation(@PathVariable String shortname, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException, NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException {
+	public @ResponseBody String importtranslation(@PathVariable String shortname, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException, NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException, NotAgreedToPsException {
 		ImportTranslationResult result = new ImportTranslationResult();
 		
 		ObjectMapper mapper = new ObjectMapper();

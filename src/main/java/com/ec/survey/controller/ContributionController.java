@@ -10,11 +10,8 @@ import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.AnswerService;
-import com.ec.survey.service.SessionService;
-import com.ec.survey.service.SurveyService;
-import com.ec.survey.service.TranslationService;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizHelper;
 import com.ec.survey.tools.SurveyHelper;
@@ -30,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -42,22 +38,9 @@ import java.util.Set;
 @Controller
 public class ContributionController extends BasicController {
 	
-	@Resource(name = "answerService")
-	private AnswerService answerService;
-	
-	@Resource(name = "surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name = "translationService")
-	private TranslationService translationService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;	
-	
 	private @Value("${server.prefix}") String host;	
-	private @Value("${server.prefix}") String serverPrefix;
 	
-	public AnswerSet getAnswerSet(String code, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException
+	public AnswerSet getAnswerSet(String code, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException
 	{
 		AnswerSet answerSet = null;
 		User user = sessionService.getCurrentUser(request);

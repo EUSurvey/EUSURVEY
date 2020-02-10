@@ -27,6 +27,11 @@
 	list-style-type: disc !important;
 }
 
+body {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -106,8 +111,7 @@
 				<div style="float: right; font-size: 125%">
 					[<a id="switchEN">EN</a>] [<a id="switchFR">FR</a>] [<a
 						id="switchDE">DE</a>]
-				</div>
-	
+				</div>	
 	
 				<div id="tos_EN">
 					<h1 class="tospage2">EUSurvey - Terms of Service</h1>

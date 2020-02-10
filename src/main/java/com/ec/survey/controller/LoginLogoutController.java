@@ -4,9 +4,8 @@ import com.ec.survey.model.OneTimePasswordResetCode;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.security.CustomAuthenticationManager;
 import com.ec.survey.security.CustomAuthenticationSuccessHandler;
-import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.MailService;
-import com.ec.survey.service.SessionService;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
@@ -48,12 +47,6 @@ import java.util.Map;
 @Controller
 @EnableWebSecurity
 public class LoginLogoutController extends BasicController {
-
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;
 	
 	@Resource(name="mailService")
 	private MailService mailService;
@@ -69,7 +62,6 @@ public class LoginLogoutController extends BasicController {
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${server.prefix}") String host;
-	private @Value("${ecashost}") String ecashost;
 	
 	@RequestMapping(value = "/auth/login/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String getLoginPageRunnerMode(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) {
@@ -77,7 +69,7 @@ public class LoginLogoutController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/auth/login", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String getLoginPage(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {
+	public String getLoginPage(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		
@@ -162,6 +154,8 @@ public class LoginLogoutController extends BasicController {
 			user = sessionService.getCurrentUser(request);
 		} catch (NotAgreedToTosException e) {
 			//ignore
+		} catch (NotAgreedToPsException e) {
+			//ignore
 		} catch (WeakAuthenticationException e) {
 			//ignore
 		}
@@ -203,9 +197,8 @@ public class LoginLogoutController extends BasicController {
 		User user = (User) request.getSession().getAttribute("USER");
 		
 		String userid = request.getParameter("user");
-		String accepted = request.getParameter("accepted");
 
-		if (userid != null && userid.equals(user.getId().toString()) && accepted != null && accepted.equalsIgnoreCase("true"))
+		if (userid != null && userid.equals(user.getId().toString()))
 		{
 			user.setAgreedToPS(true);
 			user.setAgreedToPSDate(new Date());

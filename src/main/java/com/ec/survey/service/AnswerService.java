@@ -15,6 +15,7 @@ import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.InvalidEmailException;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
@@ -42,17 +43,8 @@ import java.util.Map.Entry;
 @Service("answerService")
 public class AnswerService extends BasicService {
 
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-
 	@Resource(name = "attendeeService")
 	private AttendeeService attendeeService;
-
-	@Resource(name = "exportService")
-	private ExportService exportService;
-
-	@Resource(name = "mailService")
-	private MailService mailService;
 
 	@Autowired
 	private SqlQueryService sqlQueryService;
@@ -1738,7 +1730,7 @@ public class AnswerService extends BasicService {
 		return result;
 	}
 
-	public String getDraftForEcasLogin(Survey survey, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
+	public String getDraftForEcasLogin(Survey survey, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		Session session = sessionFactory.getCurrentSession();
 		String sql = "SELECT d.DRAFT_UID FROM DRAFTS d JOIN ANSWERS_SET a ON d.answerSet_ANSWER_SET_ID = a.ANSWER_SET_ID WHERE (a.RESPONDER_EMAIL = :email or a.RESPONDER_EMAIL = :email2) AND a.SURVEY_ID IN (:ids)";
 		SQLQuery query = session.createSQLQuery(sql);

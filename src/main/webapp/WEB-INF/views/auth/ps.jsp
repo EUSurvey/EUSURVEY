@@ -27,8 +27,9 @@
 	list-style-type: disc !important;
 }
 
-.tospage2 {
-	display: none;
+body {
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 </style>

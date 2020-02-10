@@ -54,10 +54,8 @@ public class RunnerController extends BasicController {
 	@Resource(name="pdfService")
 	private PDFService pdfService;
 
-	private @Value("${server.prefix}") String serverPrefix;
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
-	private @Value("${sender}") String sender;
 	
 	@RequestMapping(value = "/checksession", method = RequestMethod.POST)
 	public @ResponseBody String checkSession() {
@@ -106,21 +104,19 @@ public class RunnerController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/invited/{group}/{unique}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView invited(@PathVariable String group, @PathVariable String unique, HttpServletRequest request, Locale locale, Integer draftSurveyId, Device device) throws WeakAuthenticationException {
+	public ModelAndView invited(@PathVariable String group, @PathVariable String unique, HttpServletRequest request, Locale locale, Integer draftSurveyId, Device device) throws WeakAuthenticationException, NotAgreedToPsException, NotAgreedToTosException {
 
 		boolean readonlyMode = false;
 		String p = request.getParameter("readonly");
 		if (p != null && p.equalsIgnoreCase("true"))
 		{
 			if (unique != null && unique.length() > 0)
-			{
-				try {
-					User user = sessionService.getCurrentUser(request);
-					if (user != null && user.getFormPrivilege() > 1)
-					{
-						readonlyMode = true;
-					}
-				} catch (NotAgreedToTosException e) {}
+			{				
+				User user = sessionService.getCurrentUser(request, false, true);
+				if (user != null && user.getFormPrivilege() > 1)
+				{
+					readonlyMode = true;
+				}				
 			}
 		}
 		
@@ -743,7 +739,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@RequestMapping(value = "/{uidorshortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException, WeakAuthenticationException, FrozenSurveyException {
+	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException, WeakAuthenticationException, FrozenSurveyException, NotAgreedToTosException, NotAgreedToPsException {
 
 		ModelAndView modelReturn= new ModelAndView();
 		boolean internalUsersOnly = false;
@@ -774,14 +770,10 @@ public class RunnerController extends BasicController {
 			p = request.getParameter("draftid");
 			if (p != null && p.length() > 0)
 			{
-				try {
-					User user = sessionService.getCurrentUser(request);
-					if (user != null && user.getFormPrivilege() > 1)
-					{
-						readonlyMode = true;
-					}
-				} catch (NotAgreedToTosException e) {
-					
+				User user = sessionService.getCurrentUser(request, false, true);
+				if (user != null && user.getFormPrivilege() > 1)
+				{
+					readonlyMode = true;
 				}
 			}
 		}
@@ -996,7 +988,9 @@ public class RunnerController extends BasicController {
 					draftid = answerService.getDraftForEcasLogin(survey, request);
 				} catch (NotAgreedToTosException e) {
 					// ignore
-				}
+				} catch (NotAgreedToPsException e) {
+				// ignore
+			}
 			}
 			
 			Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()), survey.getLanguage(), resources, contextpath);
@@ -2003,7 +1997,7 @@ public class RunnerController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/elements/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException, WeakAuthenticationException {
+	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		String ids = request.getParameter("ids");
 		
 		if (ids == null) return null;

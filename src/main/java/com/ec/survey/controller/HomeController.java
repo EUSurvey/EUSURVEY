@@ -415,27 +415,27 @@ public class HomeController extends BasicController {
 	
 	@RequestMapping(value = "/home/privacystatement", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String privacystatement(HttpServletRequest request, Locale locale, Model model) {
-		return privacystatementinternal(request, locale, model, 1);
+		return privacystatementinternal(request, locale, model, false);
 	}
 	
 	@RequestMapping(value = "/home/privacystatement/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String privacystatementrunner(HttpServletRequest request, Locale locale, Model model) {
 		model.addAttribute("runnermode", true);		
-		return privacystatementinternal(request, locale, model, 1);
+		return privacystatementinternal(request, locale, model, false);
 	}
 	
 	@RequestMapping(value = "/home/tos", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String tos(HttpServletRequest request, Locale locale, Model model) {
-		return privacystatementinternal(request, locale, model, 2);
+		return privacystatementinternal(request, locale, model, true);
 	}
 	
 	@RequestMapping(value = "/home/tos/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String tosrunner(HttpServletRequest request, Locale locale, Model model) {
 		model.addAttribute("runnermode", true);		
-		return privacystatementinternal(request, locale, model, 2);
+		return privacystatementinternal(request, locale, model, true);
 	}
 	
-	private String privacystatementinternal(HttpServletRequest request, Locale locale, Model model, int page) {
+	private String privacystatementinternal(HttpServletRequest request, Locale locale, Model model, boolean tos) {
 		if (request.getParameter("language") != null)
 		{
 			String lang = request.getParameter("language");
@@ -462,8 +462,13 @@ public class HomeController extends BasicController {
 		model.addAttribute("readonly", true);
 		model.addAttribute("user",request.getSession().getAttribute("USER"));
 		model.addAttribute("oss",super.isOss());
-		model.addAttribute("page", page);
-		return "auth/tos";
+		
+		if (tos)
+		{
+			return "auth/tos";
+		} else {
+			return "auth/ps";
+		}		
 	}
 	
 	@RequestMapping(value = "/home/welcome", method = {RequestMethod.GET, RequestMethod.HEAD})

@@ -264,7 +264,7 @@ public class AddressBookController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/batchEdit", method = RequestMethod.POST)
-	public ModelAndView batchEditPOST(HttpServletRequest request, Locale locale) throws IntrusionException, NotAgreedToTosException, WeakAuthenticationException {
+	public ModelAndView batchEditPOST(HttpServletRequest request, Locale locale) throws IntrusionException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		User user = sessionService.getCurrentUser(request);		
 		boolean userChanged = false;
 		
@@ -1300,7 +1300,7 @@ public class AddressBookController extends BasicController {
 	}
 	
 	@RequestMapping( value = "/configureAttributes", method = RequestMethod.POST)
-	public String configureAttributes(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {		
+	public String configureAttributes(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {		
 		User user = sessionService.getCurrentUser(request);
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 		
@@ -1340,7 +1340,7 @@ public class AddressBookController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/configureAttributesJSON", headers="Accept=*/*", method=RequestMethod.GET)
-	public @ResponseBody List<AttributeName> configureAttributesJSON(HttpServletRequest request, HttpServletResponse response ) throws NotAgreedToTosException, WeakAuthenticationException {
+	public @ResponseBody List<AttributeName> configureAttributesJSON(HttpServletRequest request, HttpServletResponse response ) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		User user = sessionService.getCurrentUser(request);
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 		
