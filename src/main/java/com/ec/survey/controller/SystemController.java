@@ -7,9 +7,7 @@ import com.ec.survey.model.administration.ComplexityParameters;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.service.MailService;
-import com.ec.survey.service.SessionService;
-import com.ec.survey.service.SettingsService;
-import com.ec.survey.service.SystemService;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -32,18 +29,12 @@ import java.util.Map.Entry;
 @RequestMapping("/administration/system")
 public class SystemController extends BasicController {
 	
-	@Resource(name="systemService")
-	private SystemService systemService;	
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;	
-	
-	@Resource(name="settingsService")
-	private SettingsService settingsService;	
-	
 	@RequestMapping(value = "/message", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody Message getSystemMessage(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
+
+	public @ResponseBody Message getSystemMessage(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+	
 		User user = sessionService.getCurrentUser(request, false, false); 
+
 		Message message;
 		
 		if (user != null && user.getGlobalPrivileges().get(GlobalPrivilege.SystemManagement) > 0)
@@ -81,7 +72,7 @@ public class SystemController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/deletemessage", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody String deleteMessage(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException
+	public @ResponseBody String deleteMessage(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException
 	{
 		User user = sessionService.getCurrentUser(request); 
 		String sid = request.getParameter("id");
@@ -96,16 +87,16 @@ public class SystemController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/messages/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView getSystemMessagesRunner(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
+	public ModelAndView getSystemMessagesRunner(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		return getSystemMessages(request, true);
 	}
 	
 	@RequestMapping(value = "/messages", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView getSystemMessages(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
+	public ModelAndView getSystemMessages(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		return getSystemMessages(request, false);
 	}
 	
-	private ModelAndView getSystemMessages(HttpServletRequest request, boolean runnermode) throws NotAgreedToTosException, WeakAuthenticationException {
+	private ModelAndView getSystemMessages(HttpServletRequest request, boolean runnermode) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		Message message = systemService.getMessage();
 		
 		User user = sessionService.getCurrentUser(request);

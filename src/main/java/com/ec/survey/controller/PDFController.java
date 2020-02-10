@@ -11,6 +11,7 @@ import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.SurveyExecutor;
 import com.ec.survey.tools.Tools;
@@ -21,7 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.util.IOUtils;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,28 +43,11 @@ import java.util.Locale;
 @RequestMapping("/pdf")
 public class PDFController extends BasicController {
 	
-	@Resource(name = "surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name = "answerService")
-	private AnswerService answerService;
-	
 	@Resource(name="pdfService")
 	private PDFService pdfService;
 	
-	@Resource(name="attendeeService")
-	private AttendeeService attendeeService;
-	
-	@Resource(name="participationService")
-	private ParticipationService participationService;
-	
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
-	
-	@Resource(name = "sessionService")
-	private SessionService sessionService;
-	
-	private @Value("${export.tempFileDir}") String tempFileDir;
 	
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
@@ -329,7 +312,7 @@ public class PDFController extends BasicController {
 	}
 		
 	@RequestMapping(value = "/answer/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView answer(@PathVariable String code, HttpServletRequest request, Locale locale, HttpServletResponse response) throws InvalidURLException, NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException {
+	public ModelAndView answer(@PathVariable String code, HttpServletRequest request, Locale locale, HttpServletResponse response) throws InvalidURLException, NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException, NotAgreedToPsException {
 		User user = sessionService.getCurrentUser(request);
 		
 		if (user == null)

@@ -59,6 +59,7 @@ import com.ec.survey.tools.ArchiveExecutor;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.InvalidXHTMLException;
 import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.WeakAuthenticationException;
 import com.octo.captcha.service.CaptchaServiceException;
 import com.octo.captcha.service.multitype.MultiTypeCaptchaService;
@@ -240,6 +241,13 @@ public class BasicController implements BeanFactoryAware {
 	@ExceptionHandler(NotAgreedToTosException.class) 
     public ModelAndView handleNotAgreedToTosException(Exception e, HttpServletRequest request) {
 		ModelAndView model = new ModelAndView("redirect:/auth/tos");
+		model.addObject("contextpath", contextpath);
+		return model;
+    }
+	
+	@ExceptionHandler(NotAgreedToPsException.class) 
+    public ModelAndView handleNotAgreedToPsException(Exception e, HttpServletRequest request) {
+		ModelAndView model = new ModelAndView("redirect:/auth/ps");
 		model.addObject("contextpath", contextpath);
 		return model;
     }

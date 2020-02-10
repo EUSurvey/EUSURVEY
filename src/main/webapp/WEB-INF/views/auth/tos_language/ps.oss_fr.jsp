@@ -1,0 +1,1 @@
+<h2>Veuillez entrer ici votre déclaration de confidentialité .</h2>

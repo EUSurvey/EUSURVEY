@@ -4,9 +4,8 @@ import com.ec.survey.model.OneTimePasswordResetCode;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.security.CustomAuthenticationManager;
 import com.ec.survey.security.CustomAuthenticationSuccessHandler;
-import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.MailService;
-import com.ec.survey.service.SessionService;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
@@ -48,12 +47,6 @@ import java.util.Map;
 @Controller
 @EnableWebSecurity
 public class LoginLogoutController extends BasicController {
-
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;
 	
 	@Resource(name="mailService")
 	private MailService mailService;
@@ -69,7 +62,6 @@ public class LoginLogoutController extends BasicController {
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${server.prefix}") String host;
-	private @Value("${ecashost}") String ecashost;
 	
 	@RequestMapping(value = "/auth/login/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String getLoginPageRunnerMode(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) {
@@ -77,7 +69,7 @@ public class LoginLogoutController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/auth/login", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String getLoginPage(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {
+	public String getLoginPage(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		
@@ -162,6 +154,8 @@ public class LoginLogoutController extends BasicController {
 			user = sessionService.getCurrentUser(request);
 		} catch (NotAgreedToTosException e) {
 			//ignore
+		} catch (NotAgreedToPsException e) {
+			//ignore
 		} catch (WeakAuthenticationException e) {
 			//ignore
 		}
@@ -179,6 +173,49 @@ public class LoginLogoutController extends BasicController {
 	@RequestMapping(value = "/auth/denied")
 	public String getDeniedPage() {
 		return "auth/deniedpage";
+	}
+	
+	@RequestMapping(value = "/auth/ps")
+	public ModelAndView getPSPage(HttpServletRequest request) {
+		User user = (User) request.getSession().getAttribute("USER");
+		if (super.isShowPrivacy()) {
+			Map<String, Object> model = new HashMap<String,Object>();
+			model.put("user", user);
+			model.put("oss", super.isOss());
+			return new ModelAndView("auth/ps", model);
+		} else {
+			user.setAgreedToPS(true);
+			administrationService.updateUser(user);
+			sessionService.setCurrentUser(request, user);
+			return new ModelAndView("redirect:/dashboard");
+		}
+	}
+	
+	@RequestMapping(value = "/auth/ps", method = RequestMethod.POST)
+	public String getPSPagePost(HttpServletRequest request, HttpServletResponse response) {
+		
+		User user = (User) request.getSession().getAttribute("USER");
+		
+		String userid = request.getParameter("user");
+
+		if (userid != null && userid.equals(user.getId().toString()))
+		{
+			user.setAgreedToPS(true);
+			user.setAgreedToPSDate(new Date());
+			user.setAgreedToPSVersion(Tools.getCurrentToSVersion());
+			administrationService.updateUser(user);
+			sessionService.setCurrentUser(request, user);
+			
+			RequestCache requestCache = new HttpSessionRequestCache();
+			SavedRequest savedRequest = requestCache.getRequest(request, response);
+			String targetUrl = "/dashboard";
+			if (savedRequest != null) {
+				 targetUrl = savedRequest.getRedirectUrl();
+			}
+			return "redirect:" + targetUrl;
+		}
+		
+		return "redirect:/auth/ps";
 	}
 	
 	@RequestMapping(value = "/auth/tos")
