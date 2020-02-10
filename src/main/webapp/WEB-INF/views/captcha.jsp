@@ -31,7 +31,10 @@
 			<c:choose>
 				<c:when test='${captcha == "internal"}'>
 					$(".internalcaptcha").find("img").each(function(){
-						$(this).attr("src", $(this).attr("src"));
+						var oldSrc = $(this).attr("src");
+						oldSrc = oldSrc.slice(0, oldSrc.indexOf("?"));
+						let newSrc = oldSrc + "?" + new Date().getTime().toString();
+						$(this).attr("src", newSrc);
 					});
 					$("#j_captcha_response").val("");
 				</c:when>

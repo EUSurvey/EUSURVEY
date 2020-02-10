@@ -23,7 +23,7 @@
 			<c:choose>
 				<c:when test='${captcha == "internal"}'>
 					<div class="internalcaptcha">
-						 <img src="<c:url value="/captcha.html"/>"/><br />
+						 <img id="captchaImage" src="<c:url value="/captcha.html?1"/>"/><br />
 						 
 						 <c:choose>
 							<c:when test="${form != null}">
