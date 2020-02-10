@@ -46,7 +46,6 @@
 		<%@ include file="../header.jsp" %>
 		<%@ include file="../menu.jsp" %>
 		<%@ include file="formmenu.jsp" %>	
-		<%@ include file="../generic-messages.jsp" %>
 		
 		<div class="fixedtitleform">
 			<div class="fixedtitleinner">
