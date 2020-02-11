@@ -262,6 +262,9 @@ public class OdfExportCreator extends ExportCreator {
 				if (e instanceof ChoiceQuestion)
 				{
 					Hibernate.initialize(((ChoiceQuestion)e).getPossibleAnswers());
+				} else if (e instanceof GalleryQuestion)
+				{
+					Hibernate.initialize(((GalleryQuestion)e).getFiles());
 				}
 			}
 		}
@@ -311,7 +314,11 @@ public class OdfExportCreator extends ExportCreator {
 		
 		if (export != null) session.evict(export);
 		session.evict(survey);
-	
+		session.evict(filter);
+		if (publication != null) {
+			session.evict(publication);
+		}
+		
 		HashMap<String, Object> parameters = new HashMap<>();
 		
 		if (publication != null)
