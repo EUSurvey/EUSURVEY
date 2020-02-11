@@ -828,16 +828,20 @@ public class RunnerController extends BasicController {
 			String urllang = request.getParameter("surveylanguage");
 			if (urllang != null)
 			{
+				boolean validTranslationFound = false;
 				List<Translations> translations = translationService.getTranslationsForSurvey(survey.getId(), true);
 				for (Translations trans : translations) {
-					if (trans.getLanguage().getCode().equalsIgnoreCase(urllang))
+					if (trans.getLanguage().getCode().equalsIgnoreCase(urllang) && trans.getComplete() && trans.getActive())
 					{
-						if (!trans.getComplete() || !trans.getActive())
-						{
-							modelReturn.setViewName("redirect:/runner/" + uidorshortname);
-							return modelReturn;
-						}
+						validTranslationFound = true;
+						break;
 					}
+				}
+				
+				if (!validTranslationFound)
+				{
+					modelReturn.setViewName("redirect:/runner/" + uidorshortname);
+					return modelReturn;
 				}
 			}
 
