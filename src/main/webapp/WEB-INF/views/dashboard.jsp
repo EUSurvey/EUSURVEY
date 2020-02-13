@@ -412,11 +412,11 @@
 														</div>
 														<div class="datefilter" style="float: left">	
 														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														  	<span data-bind="html: surveyFilterStartTo().length > 0 ? surveyFilterStartTo() : '<spring:message code="label.To" />'"></span>
+														  	<span data-bind="html: surveyFilterStartTo().length > 0 ? surveyFilterStartTo() : '<spring:message code="label.to" />'"></span>
 														  	&nbsp;<span class="caret"></span>
 														  </a>
 														 <div class="overlaymenu hideme">
-														 		<spring:message code="label.To" /> 
+														 		<spring:message code="label.to" /> 
 														    	<input type="hidden" name="metafilterstartdateto" class="hiddendate" data-bind="value: surveyFilterStartTo" />
 														    	<div id="metafilterstartdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 														    </div>
@@ -445,11 +445,11 @@
 														</div>
 														<div class="datefilter" style="float: left">	
 														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														  	<span data-bind="html: surveyFilterEndTo().length > 0 ? surveyFilterEndTo() : '<spring:message code="label.To" />'"></span>
+														  	<span data-bind="html: surveyFilterEndTo().length > 0 ? surveyFilterEndTo() : '<spring:message code="label.to" />'"></span>
 														  	&nbsp;<span class="caret"></span>
 														  </a>
 														 <div class="overlaymenu hideme">
-														 		<spring:message code="label.To" />
+														 		<spring:message code="label.to" />
 														    	<input type="hidden" name="metafilterenddateto" class="hiddendate" data-bind="value: surveyFilterEndTo" />
 														    	<div id="metafilterenddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 														    </div>
@@ -500,11 +500,11 @@
 															</div>
 															<div class="datefilter" style="float: left">	
 															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-															  	 <span data-bind="html: archivedFilterCreatedTo().length > 0 ? archivedFilterCreatedTo() : '<spring:message code="label.To" />'"></span>&nbsp;
+															  	 <span data-bind="html: archivedFilterCreatedTo().length > 0 ? archivedFilterCreatedTo() : '<spring:message code="label.to" />'"></span>&nbsp;
 															    <span class="caret"></span>
 															  </a>
 															 <div class="overlaymenu hideme">
-															 		<spring:message code="label.To" /> 
+															 		<spring:message code="label.to" /> 
 															    	<input type="hidden" name="metafiltercreateddateto" class="hiddendate" data-bind="value: archivedFilterCreatedTo" />
 															    	<div id="metafiltercreateddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 															    </div>
@@ -532,11 +532,11 @@
 															</div>
 															<div class="datefilter" style="float: left">	
 															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-															  	 <span data-bind="html: archivedFilterArchivedTo().length > 0 ? archivedFilterArchivedTo() : '<spring:message code="label.To" />'"></span>&nbsp;
+															  	 <span data-bind="html: archivedFilterArchivedTo().length > 0 ? archivedFilterArchivedTo() : '<spring:message code="label.to" />'"></span>&nbsp;
 															    <span class="caret"></span>
 															  </a>
 															 <div class="overlaymenu hideme">
-															 		<spring:message code="label.To" /> 
+															 		<spring:message code="label.to" /> 
 															    	<input type="hidden" name="metafilterarchiveddateto" class="hiddendate" data-bind="value: archivedFilterArchivedTo" />
 															    	<div id="metafilterarchiveddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 															    </div>
@@ -685,7 +685,7 @@
 											<a data-toggle="tooltip" title="<spring:message code="label.GoToPreviousPage" />" data-bind="click: previousSurveyPage, attr: {style: surveysPage() > 1 ? '' : 'color: #ccc'}"><span class="glyphicon glyphicon-chevron-left"></span></a>
 											
 											<span data-bind="html: (surveysPage() - 1) * 10 + 1"></span>&nbsp;
-											<spring:message code="label.To" />&nbsp;
+											<spring:message code="label.to" />&nbsp;
 											<span data-bind="html: (surveysPage() - 1) * 10 + (surveysMode() == 'archived' ? (archives() == null ? 0 : archives().length) : (surveys() == null ? 0 : surveys().length))"></span>
 											
 											<a data-toggle="tooltip" title="<spring:message code="label.GoToNextPage" />" data-bind="click: nextSurveyPage, attr: {style: lastSurveysReached() ? 'color: #ccc' : ''}"><span class="glyphicon glyphicon-chevron-right"></span></a>
@@ -756,11 +756,11 @@
 													</div>
 													<div class="datefilter" style="float: left">	
 													  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-													  	<span data-bind="html: invitationFilterDateTo().length > 0 ? invitationFilterDateTo() : '<spring:message code="label.To" />'"></span>
+													  	<span data-bind="html: invitationFilterDateTo().length > 0 ? invitationFilterDateTo() : '<spring:message code="label.to" />'"></span>
 													  	&nbsp;<span class="caret"></span>
 													  </a>
 													 <div class="overlaymenu hideme">
-													 		<spring:message code="label.To" />
+													 		<spring:message code="label.to" />
 													    	<input type="hidden" name="metafilterinvitationdateto" class="hiddendate" data-bind="value: invitationFilterDateTo" />
 													    	<div id="metafilterinvitationdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 													    </div>
@@ -796,11 +796,11 @@
 													</div>
 													<div class="datefilter" style="float: left">	
 													  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-													  	<span data-bind="html: invitationFilterEndTo().length > 0 ? invitationFilterEndTo() : '<spring:message code="label.To" />'"></span>
+													  	<span data-bind="html: invitationFilterEndTo().length > 0 ? invitationFilterEndTo() : '<spring:message code="label.to" />'"></span>
 													  	&nbsp;<span class="caret"></span>
 													  </a>
 													 <div class="overlaymenu hideme">
-													 		<spring:message code="label.To" />
+													 		<spring:message code="label.to" />
 													    	<input type="hidden" name="metafilterinvitationenddateto" class="hiddendate" data-bind="value: invitationFilterEndTo" />
 													    	<div id="metafilterinvitationenddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 													    </div>
@@ -838,7 +838,7 @@
 										<a data-bind="click: previousInvitationsPage, attr: {style: invitationsPage() > 1 ? '' : 'color: #ccc'}"><span class="glyphicon glyphicon-chevron-left"></span></a>
 										
 										<span data-bind="html: (invitationsPage() - 1) * 10 + 1"></span>&nbsp;
-										<spring:message code="label.To" />&nbsp;
+										<spring:message code="label.to" />&nbsp;
 										<span data-bind="html: (invitationsPage() ) * 10"></span>
 										
 										<a data-bind="click: nextInvitationsPage, attr: {style: lastInvitationsReached() ? 'color: #ccc' : ''}"><span class="glyphicon glyphicon-chevron-right"></span></a>
@@ -890,11 +890,11 @@
 													</div>
 													<div class="datefilter" style="float: left">	
 													  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-													  	<span data-bind="html: lastEditFilterTo().length > 0 ? lastEditFilterTo() : '<spring:message code="label.To" />'"></span>
+													  	<span data-bind="html: lastEditFilterTo().length > 0 ? lastEditFilterTo() : '<spring:message code="label.to" />'"></span>
 													  	&nbsp;<span class="caret"></span>
 													  </a>
 													 <div class="overlaymenu hideme">
-													 		<spring:message code="label.To" />
+													 		<spring:message code="label.to" />
 													    	<input type="hidden" name="metafilterlasteditdateto" class="hiddendate" data-bind="value: lastEditFilterTo" />
 													    	<div id="metafilterlasteditdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 													    </div>
@@ -930,11 +930,11 @@
 													</div>
 													<div class="datefilter" style="float: left">	
 													  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-													  	<span data-bind="html: contributionFilterEndTo().length > 0 ? contributionFilterEndTo() : '<spring:message code="label.To" />'"></span>
+													  	<span data-bind="html: contributionFilterEndTo().length > 0 ? contributionFilterEndTo() : '<spring:message code="label.to" />'"></span>
 													  	&nbsp;<span class="caret"></span>
 													  </a>
 													 <div class="overlaymenu hideme">
-													 		<spring:message code="label.To" />
+													 		<spring:message code="label.to" />
 													    	<input type="hidden" name="metafiltercontributionenddateto" class="hiddendate" data-bind="value: contributionFilterEndTo" />
 													    	<div id="metafiltercontributionenddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 													    </div>
@@ -978,7 +978,7 @@
 										<a data-bind="click: previousContributionsPage, attr: {style: contributionsPage() > 1 ? '' : 'color: #ccc'}"><span class="glyphicon glyphicon-chevron-left"></span></a>
 										
 										<span data-bind="html: (contributionsPage() - 1) * 10 + 1"></span>&nbsp;
-										<spring:message code="label.To" />&nbsp;
+										<spring:message code="label.to" />&nbsp;
 										<span data-bind="html: (contributionsPage() ) * 10"></span>
 										
 										<a data-bind="click: nextContributionsPage, attr: {style: lastContributionsReached() ? 'color: #ccc' : ''}"><span class="glyphicon glyphicon-chevron-right"></span></a>
@@ -1029,11 +1029,11 @@
 													</div>
 													<div class="datefilter" style="float: left">	
 													  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-													  	<span data-bind="html: lastEditDraftFilterTo().length > 0 ? lastEditDraftFilterTo() : '<spring:message code="label.To" />'"></span>
+													  	<span data-bind="html: lastEditDraftFilterTo().length > 0 ? lastEditDraftFilterTo() : '<spring:message code="label.to" />'"></span>
 													  	&nbsp;<span class="caret"></span>
 													  </a>
 													 <div class="overlaymenu hideme">
-													 		<spring:message code="label.To" />
+													 		<spring:message code="label.to" />
 													    	<input type="hidden" name="metafilterlasteditdraftdateto" class="hiddendate" data-bind="value: lastEditFilterTo" />
 													    	<div id="metafilterlasteditdraftdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 													    </div>
@@ -1069,11 +1069,11 @@
 													</div>
 													<div class="datefilter" style="float: left">	
 													  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-													  	<span data-bind="html: draftFilterEndTo().length > 0 ? draftFilterEndTo() : '<spring:message code="label.To" />'"></span>
+													  	<span data-bind="html: draftFilterEndTo().length > 0 ? draftFilterEndTo() : '<spring:message code="label.to" />'"></span>
 													  	&nbsp;<span class="caret"></span>
 													  </a>
 													 <div class="overlaymenu hideme">
-													 		<spring:message code="label.To" />
+													 		<spring:message code="label.to" />
 													    	<input type="hidden" name="metafilterdraftenddateto" class="hiddendate" data-bind="value: draftFilterEndTo" />
 													    	<div id="metafilterdraftenddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 													    </div>
@@ -1111,7 +1111,7 @@
 										<a data-bind="click: previousDraftsPage, attr: {style: draftsPage() > 1 ? '' : 'color: #ccc'}"><span class="glyphicon glyphicon-chevron-left"></span></a>
 										
 										<span data-bind="html: (draftsPage() - 1) * 10 + 1"></span>&nbsp;
-										<spring:message code="label.To" />&nbsp;
+										<spring:message code="label.to" />&nbsp;
 										<span data-bind="html: (draftsPage() ) * 10"></span>
 										
 										<a data-bind="click: nextDraftsPage, attr: {style: lastDraftsReached() ? 'color: #ccc' : ''}"><span class="glyphicon glyphicon-chevron-right"></span></a>
