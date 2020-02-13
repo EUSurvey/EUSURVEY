@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -65,4 +67,19 @@ public class HttpErrorController extends BasicController {
 		return new ModelAndView("error/frozen","error","exception" );
 	}	
 		
+	@RequestMapping(value = "/request-rejected")
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ModelAndView handleRequestRejected(
+	        @RequestAttribute("javax.servlet.error.exception") RequestRejectedException ex,
+	        @RequestAttribute("javax.servlet.error.request_uri") String uri, HttpServletRequest request) {
+				
+	    String msg = ex.getMessage();
+
+	    logger.error(String.format("Request with URI [%s] rejected. %s", uri, msg));
+
+	    request.getSession().setAttribute("lastErrorCode", 403);
+		request.getSession().setAttribute("lastErrorTime", new Date());
+		request.getSession().setAttribute("lastErrorURL", request.getAttribute("javax.servlet.error.request_uri"));
+		return new ModelAndView("error/403","error", 403);
+	}
 }
