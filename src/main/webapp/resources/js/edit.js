@@ -983,17 +983,7 @@ function getQuestionTitle(question, dep)
 	
 	var shortname = $(question).find("input[name^='shortname']").first().val();
 	var optional = $(question).find("input[name^='optional']").length == 0 || $(question).find("input[name^='optional']").first().val() == "true";
-	
-//	if (!$(question).hasClass("imageitem"))
-//	{						
-//		if (!optional)
-//		{
-//			titleprefix += "<span class=\"mandatory\">*</span>";
-//		} else {
-//			titleprefix += "<span class=\"optional\">*</span>";
-//		}
-//	}		
-	
+		
 	if ($('#questionNumbering').val() == 0){
 		if (title.indexOf("<p") == 0)
 		{
@@ -1017,7 +1007,7 @@ function getQuestionTitle(question, dep)
 			}
 			first = false;
 		} else {
-			if (!$(this).hasClass("textitem") && !$(this).hasClass("imageitem") && !$(this).hasClass("ruleritem"))
+			if (!$(this).hasClass("textitem") && !$(this).hasClass("imageitem") && !$(this).hasClass("ruleritem") && !$(this).hasClass("confirmationitem"))
 			{
 				counter++;
 				var qid = $(this).attr("id");
@@ -1031,52 +1021,27 @@ function getQuestionTitle(question, dep)
 						if (result.length > 0) result += ".";
 					}
 					
-					if (!$(question).hasClass("textitem") && !$(question).hasClass("imageitem") && !$(question).hasClass("ruleritem") && !dep)
+					switch (parseInt($('#questionNumbering').val()))
 					{
-						switch (parseInt($('#questionNumbering').val()))
-						{
-							case 1:
-								titleprefix += "<span class='numbering'>" + result + counter + "</span>";
-								break;
-							case 2:
-								titleprefix += "<span class='numbering'>" + result +  getSmallLetter(counter) + "</span>";
-								break;
-							case 3:
-								titleprefix += "<span class='numbering'>" + result +  getBigLetter(counter) + "</span>";
-								break;
-							case 4:
-								titleprefix += "<span class='numbering'>" + result + counter + "</span>";
-								break;
-							case 5:
-								titleprefix += "<span class='numbering'>" + result +  getSmallLetter(counter) + "</span>";
-								break;
-							case 6:
-								titleprefix += "<span class='numbering'>" + result +  getBigLetter(counter) + "</span>";
-								break;
-						}			
-					} else {							
-						switch (parseInt($('#questionNumbering').val()))
-						{
-							case 1:
-								titleprefix += result + counter;		
-								break;
-							case 2:
-								titleprefix += result + getSmallLetter(counter);
-								break;
-							case 3:
-								titleprefix += result +  getBigLetter(counter);
-								break;
-							case 4:
-								titleprefix += result + counter;		
-								break;
-							case 5:
-								titleprefix += result + getSmallLetter(counter)
-								break;
-							case 6:
-								titleprefix += result +  getBigLetter(counter);
-								break;
-						}		
-					}
+						case 1:
+							titleprefix += "<span class='numbering'>" + result + counter + "</span>";
+							break;
+						case 2:
+							titleprefix += "<span class='numbering'>" + result +  getSmallLetter(counter) + "</span>";
+							break;
+						case 3:
+							titleprefix += "<span class='numbering'>" + result +  getBigLetter(counter) + "</span>";
+							break;
+						case 4:
+							titleprefix += "<span class='numbering'>" + result + counter + "</span>";
+							break;
+						case 5:
+							titleprefix += "<span class='numbering'>" + result +  getSmallLetter(counter) + "</span>";
+							break;
+						case 6:
+							titleprefix += "<span class='numbering'>" + result +  getBigLetter(counter) + "</span>";
+							break;
+					}					
 				}			
 			}
 		}				
