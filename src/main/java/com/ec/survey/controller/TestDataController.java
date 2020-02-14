@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -7,6 +8,7 @@ import java.util.concurrent.ThreadFactory;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
 import com.ec.survey.model.administration.User;
 import com.ec.survey.service.SessionService;
 import com.ec.survey.tools.TestDataGenerator;
@@ -171,6 +175,14 @@ public class TestDataController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 			return "redirect:/errors/500.html";
 		}
+	}
+	
+	@RequestMapping(value = "/debug", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView debug(HttpServletRequest request, HttpServletResponse response) throws Exception {			
+		response.getOutputStream().flush();
+		response.getOutputStream().close();
+		
+		throw new Exception("Error");
 	}
 	
 

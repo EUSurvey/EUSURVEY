@@ -12,6 +12,7 @@ import java.util.Locale;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.StringUtils;
@@ -308,12 +309,19 @@ public class BasicController implements BeanFactoryAware {
     }
 	
 	@ExceptionHandler(Exception.class) 
-    public ModelAndView handleException(Exception e, Locale locale, HttpServletRequest request) {
+    public ModelAndView handleException(Exception e, Locale locale, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		logger.error(e.getLocalizedMessage(), e);
 		if (e instanceof IllegalArgumentException)
 		{
 			logger.error("caused by URL: " + request.getRequestURL().toString() + "?" + request.getQueryString());
 		}		
+		
+		if (!response.getOutputStream().isReady())
+		{
+			logger.error("Exception thrown after outputstream was closed, caused by URL: " + request.getRequestURL().toString() + "?" + request.getQueryString());
+			return null;
+		}
+		
 		ModelAndView model;		
 		model = new ModelAndView("redirect:/errors/500.html");		
 		model.addObject("contextpath", contextpath);
