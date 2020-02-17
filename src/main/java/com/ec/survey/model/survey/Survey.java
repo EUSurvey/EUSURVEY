@@ -1246,7 +1246,7 @@ public class Survey implements java.io.Serializable {
 	}
 
 	public void setEcasMode(String ecasMode) {
-		this.ecasMode = ecasMode;
+		this.ecasMode = ecasMode != null && ecasMode.length() > 0 ? ecasMode : "all";
 	}
 
 	@Column(name = "LOGOPOS")
