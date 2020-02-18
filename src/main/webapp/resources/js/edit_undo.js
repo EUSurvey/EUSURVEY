@@ -312,6 +312,7 @@ var UndoProcessor = function() {
 				break;
 			case "Level":
 				element.level(step[3]);
+				updateTitles();
 				break;
 			case "Mandatory":
 				var checked = step[3] == "true";
@@ -820,6 +821,7 @@ var UndoProcessor = function() {
 				break;
 			case "Level":
 				element.level(step[4]);
+				updateTitles();
 				break;
 			case "Mandatory":
 				var checked = step[4] == "true";
