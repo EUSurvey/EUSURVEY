@@ -41,6 +41,7 @@ function update(input)
 			var oldtext = element.level(); 
 			element.level(parseInt(text));
 			_undoProcessor.addUndoStep(["Level", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			updateTitles();
 			break;
 		case "Mandatory":
 			toggleMandatory(input);
