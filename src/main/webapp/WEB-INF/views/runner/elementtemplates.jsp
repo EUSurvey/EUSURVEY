@@ -65,7 +65,7 @@
 
 	<div id="single-choice-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<div class='questionhelp' data-bind="html: niceHelp"></div>
@@ -168,7 +168,7 @@
 		
 	<div id="multiple-choice-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
@@ -285,7 +285,7 @@
 	
 	<div id="password-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<div class='questionhelp' data-bind="html: niceHelp"></div>
@@ -324,7 +324,7 @@
 	
 	<div id="freetext-template">	
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 	
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
@@ -397,7 +397,7 @@
 	
 	<div id="confirmation-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<div class='questionhelp' data-bind="html: niceHelp"></div>
 		<label class='questiontitle confirmationelement' data-bind='html: title'></label>
@@ -469,7 +469,7 @@
 				<tr class="ratingquestion" data-bind="attr: {'data-id': id}">
 					<td>
 						<!-- ko if: optional() == false -->
-							<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+							<span class="mandatory">*</span>
 						<!-- /ko -->
 						<div data-bind="html: title"></div>						
 					</td>
@@ -498,7 +498,7 @@
 	
 	<div id="number-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
@@ -549,7 +549,7 @@
 	
 	<div id="email-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<div class='questionhelp' data-bind="html: niceHelp"></div>
@@ -572,7 +572,7 @@
 	
 	<div id="date-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
@@ -630,7 +630,7 @@
 	
 	<div id="upload-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<div class="questionhelp" data-bind="html: niceHelp"></div>	
@@ -690,7 +690,7 @@
 	
 	<div id="gallery-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
@@ -814,7 +814,7 @@
 		<!-- /ko -->		
 	
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
@@ -943,7 +943,7 @@
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
 		<!-- /ko -->
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<div class="questionhelp" data-bind="html: niceHelp"></div>	
