@@ -2856,8 +2856,13 @@ public class SurveyService extends BasicService {
 		for (Element element : surveyelements) {
 			surveyelementsbyuid.put(element.getUniqueId(), element);
 		}
-
-		List<Object> res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
+		
+		List<Object> res = reportingService.GetAllQuestionsAndPossibleAnswers(survey);
+		
+		if (res == null)
+		{
+			res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
+		}
 
 		for (Object o : res) {
 			Object[] a = (Object[]) o;

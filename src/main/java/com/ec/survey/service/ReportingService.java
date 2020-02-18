@@ -13,9 +13,12 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -1687,5 +1690,46 @@ public class ReportingService {
 		query.setString("name", GetOLAPTableName(survey));
 		
 		return  (Date) query.uniqueResult();
+	}
+
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public List<Object> GetAllQuestionsAndPossibleAnswers(Survey survey) {
+		if (!isReportingDatabaseEnabled()) return null;
+		
+		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
+		
+		String sql = "SELECT * FROM " + GetOLAPTableName(survey);	
+		
+		Query query=sessionReporting.createSQLQuery(sql);
+		query.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+		List<Map<String,Object>> aliasToValueMapList=query.list();
+		
+		List<Object> result = new ArrayList<Object>();
+		
+		for (Map<String,Object> entry : aliasToValueMapList)
+		{
+			for (String question : entry.keySet())
+			{
+				String compactUID = question.substring(1);
+				
+				if (compactUID.length() == 32)
+				{
+					String questionUID = compactUID.replaceFirst( 
+				        "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5" 
+					    );
+				
+					Object[] o = new Object[2];
+					o[0] = questionUID;
+					
+					Object v = entry.get(question);
+					
+					o[1] = (v instanceof String && ((String)v).length() == 36) ? v : "";
+					
+					result.add(o);		
+				}
+			}
+		}		
+		
+		return result;
 	}
 }
