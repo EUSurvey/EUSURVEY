@@ -881,7 +881,7 @@
 	
 	<c:if test="${added != null}">
 		<script type="text/javascript">
-			showInfo('<spring:message code="label.Contact" />&nbsp;<esapi:encodeForHTML>${addedContact.name}</esapi:encodeForHTML>&nbsp;<spring:message code="message.AttendeeAdded" />');
+			showInfo('<spring:message code="label.Contact" />&nbsp;<spring:message code="message.AttendeeAdded" />');
 		</script>
 	</c:if>
 
