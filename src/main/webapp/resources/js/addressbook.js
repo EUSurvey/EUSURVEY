@@ -784,8 +784,10 @@ function checkOwnerAndSubmit()
 			  data: "login=" + owner,
 			  dataType: 'json',
 			  cache: false,
+			  error: function() {
+				showError(usersTooOftenAddressBook);
+			  },
 			  success: function( exists ) {
-				  
 				  if (exists == true)
 				  {
 					  ok = true;

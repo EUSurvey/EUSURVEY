@@ -441,6 +441,9 @@
 				  data: "login=" + recipient,
 				  dataType: 'json',
 				  cache: false,
+				  error: function() {
+					showError(usersTooOftenShares);
+				  },
 				  success: function( exists ) {
 					  
 					  if (exists == true)
