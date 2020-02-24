@@ -1327,7 +1327,7 @@ public class AddressBookController extends BasicController {
     	} else {
 			ownerId = user.getId();  
 			if (attendee.getOwnerId() != ownerId) {
-				if (!attendeeService.getAccessibleAttendees(ownerId, null).contains(ownerId)) {
+				if (!attendeeService.getAccessibleAttendees(ownerId, null).contains(attendee.getId())) {
 					throw new ForbiddenURLException();
 				}
 			}		
