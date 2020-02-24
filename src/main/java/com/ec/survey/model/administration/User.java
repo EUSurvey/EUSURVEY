@@ -46,6 +46,8 @@ public class User implements java.io.Serializable {
 	private Date validationCodeGeneration;
 	private List<String> departments = new ArrayList<>();
 	private int badLoginAttempts = 0;
+	private int userExistsAttempts = 0;
+	private Date userExistsAttemptDate;
 	private boolean agreedToToS;
 	private Date agreedToToSDate;
 	private String agreedToToSVersion;
@@ -279,6 +281,22 @@ public class User implements java.io.Serializable {
 	}
 	public void setBadLoginAttempts(Integer badLoginAttempts) {
 		this.badLoginAttempts = badLoginAttempts != null ? badLoginAttempts : 0;
+	}
+
+	@Column(name = "USER_EXISTS_ATTEMPS") 
+	public int getUserExistsAttempts() {
+		return this.userExistsAttempts;
+	}
+	public void setUserExistsAttempts(Integer userExistsAttempts) {
+		this.userExistsAttempts = userExistsAttempts != null ? userExistsAttempts : 0;
+	}
+
+	@Column(name = "USER_EXISTS_ATTEMPT_DATE")
+	public Date getUserExistsAttemptDate() {
+		return userExistsAttemptDate;
+	}	
+	public void setUserExistsAttemptDate(Date userExistsAttemptDate) {
+		this.userExistsAttemptDate = userExistsAttemptDate;
 	}
 	
 	@Column(name = "USER_TOS")

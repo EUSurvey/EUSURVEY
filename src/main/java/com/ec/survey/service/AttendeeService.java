@@ -175,22 +175,38 @@ public class AttendeeService extends BasicService {
 		
 		return ConversionTools.getValue(query.uniqueResult());		
 	}
+
+	@Transactional(readOnly = true)
+	@SuppressWarnings("unchecked")
+	public List<Integer> getAccessibleAttendees(Integer ownerId, HashMap<String,String> attributeFilter) throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+		
+		HashMap<String, Object> parameters = new HashMap<>();
+		String sql = getSql(session, ownerId, attributeFilter, parameters, false);
+		
+		SQLQuery query = session.createSQLQuery("SELECT a.ATTENDEE_ID " + sql);
+		sqlQueryService.setParameters(query, parameters);
+
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
+		return res;
+	}
 	
-	private String getSql(Session session, Integer ownerId, Map<String, String> hashMap, HashMap<String, Object> oQueryParameters, boolean onlywritableshares) {
+	private String getSql(Session session, Integer ownerId, Map<String, String> attributeFilter, HashMap<String, Object> oQueryParameters, boolean onlywritableshares) {
 		
 		StringBuilder sql = new StringBuilder("FROM ATTENDEE a");
 		
-		if (hashMap != null && hashMap.size() > 0)
+		if (attributeFilter != null && attributeFilter.size() > 0)
 		{
-			for (String key : hashMap.keySet())
+			for (String key : attributeFilter.keySet())
 			{
-				if (!key.equalsIgnoreCase("name") && !key.equalsIgnoreCase("email") && !key.equalsIgnoreCase("owner") && !key.equalsIgnoreCase("_csrf") && !key.startsWith("visibleAttendee") && hashMap.get(key) != null && hashMap.get(key).trim().length() > 0)
+				if (!key.equalsIgnoreCase("name") && !key.equalsIgnoreCase("email") && !key.equalsIgnoreCase("owner") && !key.equalsIgnoreCase("_csrf") && !key.startsWith("visibleAttendee") && attributeFilter.get(key) != null && attributeFilter.get(key).trim().length() > 0)
 				{
 					sql.append(" LEFT OUTER JOIN ATTRIBUTE at ON at.ATTE_ID = a.ATTENDEE_ID ");
 					break;
 				}					
 			}
-			if (hashMap.containsKey("owner") && hashMap.get("owner") != null && hashMap.get("owner").length() > 0)
+			if (attributeFilter.containsKey("owner") && attributeFilter.get("owner") != null && attributeFilter.get("owner").length() > 0)
 			{
 				sql.append(" JOIN USERS u ON u.USER_ID = a.OWNER_ID ");
 			}
@@ -212,15 +228,15 @@ public class AttendeeService extends BasicService {
 		
 		sql.append(" AND a.ATTENDEE_HIDDEN IS NULL");
 		
-		if (hashMap != null && hashMap.size() > 0)
+		if (attributeFilter != null && attributeFilter.size() > 0)
 		{
 			int counter = 0;
-			for (String key : hashMap.keySet())
+			for (String key : attributeFilter.keySet())
 			{
 				if (!key.equalsIgnoreCase("name") && !key.equalsIgnoreCase("email") && !key.equalsIgnoreCase("owner"))
 				try {
 					int intKey = Integer.parseInt(key);
-					String value = hashMap.get(key).trim();
+					String value = attributeFilter.get(key).trim();
 					
 					if (value.length() > 0)
 					{
@@ -234,22 +250,22 @@ public class AttendeeService extends BasicService {
 				}			
 			}
 		
-			if (hashMap.containsKey("name") && hashMap.get("name") != null && hashMap.get("name").length() > 0)
+			if (attributeFilter.containsKey("name") && attributeFilter.get("name") != null && attributeFilter.get("name").length() > 0)
 			{
 				sql.append(" AND a.ATTENDEE_NAME like :name");
-				oQueryParameters.put("name", "%" + hashMap.get("name") + "%");
+				oQueryParameters.put("name", "%" + attributeFilter.get("name") + "%");
 			}
 			
-			if (hashMap.containsKey("email") && hashMap.get("email") != null && hashMap.get("email").length() > 0)
+			if (attributeFilter.containsKey("email") && attributeFilter.get("email") != null && attributeFilter.get("email").length() > 0)
 			{
 				sql.append(" AND a.ATTENDEE_EMAIL like :email");
-				oQueryParameters.put("email", "%" + hashMap.get("email") + "%");
+				oQueryParameters.put("email", "%" + attributeFilter.get("email") + "%");
 			}
 			
-			if (hashMap.containsKey("owner") && hashMap.get("owner") != null && hashMap.get("owner").length() > 0)
+			if (attributeFilter.containsKey("owner") && attributeFilter.get("owner") != null && attributeFilter.get("owner").length() > 0)
 			{
 				sql.append(" AND (u.USER_DISPLAYNAME like :owner OR u.USER_LOGIN like :owner)");
-				oQueryParameters.put("owner", "%" + hashMap.get("owner") + "%");
+				oQueryParameters.put("owner", "%" + attributeFilter.get("owner") + "%");
 			}
 		}
 		

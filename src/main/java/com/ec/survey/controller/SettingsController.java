@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -311,19 +313,42 @@ public class SettingsController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/userExists", headers="Accept=*/*", method=RequestMethod.GET)
-	public @ResponseBody boolean userExists(HttpServletRequest request, HttpServletResponse response ) {
+	public @ResponseBody boolean userExists(HttpServletRequest request, HttpServletResponse response )
+			throws NotAgreedToTosException, WeakAuthenticationException, ForbiddenURLException, NotAgreedToPsException {
 		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-		
-		String login = parameters.get("login")[0];
-		
-		User user;
-		try {
-			user = administrationService.getUserForLogin(login);			
-		} catch (Exception e) {
-			return false;
+		User userInRequest = sessionService.getCurrentUser(request);
+		User user = administrationService.getUser(userInRequest.getId());
+		Date now = new Date();
+		Date lastAttemptMoment = new Date();
+		if (user.getUserExistsAttemptDate() != null) {
+			lastAttemptMoment = user.getUserExistsAttemptDate();
+		} else {
+			user.setUserExistsAttemptDate(now);
 		}
 		
-		return user != null;
+		long lastAttemptMomentPlusOneHourLong = lastAttemptMoment.getTime() + 1000L * 60L * 60L;
+		Date lastAttemptMomentPlusOneHour = new Date(lastAttemptMomentPlusOneHourLong);
+		int numberOfAttemptsInOneHour = user.getUserExistsAttempts();
+		if (now.after(lastAttemptMomentPlusOneHour)) {
+			// reinit
+			numberOfAttemptsInOneHour = 1;
+			user.setUserExistsAttempts(numberOfAttemptsInOneHour);
+			user.setUserExistsAttemptDate(now);
+		} else {
+			// adding
+			numberOfAttemptsInOneHour += 1;
+			user.setUserExistsAttempts(numberOfAttemptsInOneHour);
+			if (numberOfAttemptsInOneHour > 30) {
+				throw new ForbiddenURLException();
+				// not saving the user since this would overload the Users table
+			}
+		}
+		administrationService.updateUser(user);
+		sessionService.setCurrentUser(request, user);	
+	
+		String login = parameters.get("login")[0];
+		User searchedUser = administrationService.getUserForLogin(login);	
+		return searchedUser != null;
 	}
 	
 	public ModelAndView createStaticShare(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException{

@@ -89,29 +89,31 @@
 							</c:if>
 
 							<c:forEach items="${attributeNames}" var="attributeName">
-								<tr>
-									<td><esapi:encodeForHTML>${attributeName.name}</esapi:encodeForHTML><input type="hidden" class="existingbatchkey" value="<esapi:encodeForHTMLAttribute>${attributeName.name}</esapi:encodeForHTMLAttribute>" /></td>
-									<td style="width: 250px;"><select class="form-control" onchange="checkAttributeSelection(this)"
-										name="attribute<esapi:encodeForHTMLAttribute>${attributeName.id}</esapi:encodeForHTMLAttribute>">
-											<option value="0" selected="selected">
-												<spring:message code="label.KeepValue" />
-											</option>
-											<option value="-1">
-												<spring:message code="label.ClearValue" />
-											</option>
-											<option value="-2">
-												<spring:message code="label.NewValue" />
-											</option>
+								<c:if test="${attributeName.name != 'Owner'}">
+									<tr>
+										<td><esapi:encodeForHTML>${attributeName.name}</esapi:encodeForHTML><input type="hidden" class="existingbatchkey" value="<esapi:encodeForHTMLAttribute>${attributeName.name}</esapi:encodeForHTMLAttribute>" /></td>
+										<td style="width: 250px;"><select class="form-control" onchange="checkAttributeSelection(this)"
+											name="attribute<esapi:encodeForHTMLAttribute>${attributeName.id}</esapi:encodeForHTMLAttribute>">
+												<option value="0" selected="selected">
+													<spring:message code="label.KeepValue" />
+												</option>
+												<option value="-1">
+													<spring:message code="label.ClearValue" />
+												</option>
+												<option value="-2">
+													<spring:message code="label.NewValue" />
+												</option>
 
-											<c:if test="${attributeValues.get(attributeName.id).size() > 0}">
-												<option disabled="disabled">&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</option>
-											</c:if>
+												<c:if test="${attributeValues.get(attributeName.id).size() > 0}">
+													<option disabled="disabled">&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;</option>
+												</c:if>
 
-											<c:forEach items="${attributeValues.get(attributeName.id)}" var="value">
-												<option><esapi:encodeForHTML>${value}</esapi:encodeForHTML></option>
-											</c:forEach>
-									</select></td>
-								</tr>
+												<c:forEach items="${attributeValues.get(attributeName.id)}" var="value">
+													<option><esapi:encodeForHTML>${value}</esapi:encodeForHTML></option>
+												</c:forEach>
+										</select></td>
+									</tr>
+								</c:if>
 							</c:forEach>
 
 						</tbody>

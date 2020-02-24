@@ -13,6 +13,7 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/shares.js?version=<%@include file="../version.txt" %>"></script>	
 	
 	<script type="text/javascript">
+		var usersTooOftenShares = '<spring:message code="error.UsersTooOftenShares" />';
 		$(function() {					
 			$("#settings-menu-tab").addClass("active");
 			$("#shares-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");

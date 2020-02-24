@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Paging;
 import com.ec.survey.model.ParticipationGroup;
@@ -52,7 +53,6 @@ public class AddressBookController extends BasicController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView attendees(HttpServletRequest request) throws Exception {
-		
 		User user = sessionService.getCurrentUser(request);		
 		int ownerId;
 		if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) == 2)
@@ -114,9 +114,7 @@ public class AddressBookController extends BasicController {
     	
     	if (request.getParameter("added") != null)
     	{
-    		Attendee addedContact = attendeeService.get(Integer.parseInt(request.getParameter("added")));
     		result.addObject("added", true);
-    		result.addObject("addedContact", addedContact);
     	} else if (request.getParameter("edited") != null && request.getParameter("edited").length() > 0)
 		{
 			if (!request.getParameter("edited").equalsIgnoreCase("batch"))
@@ -1267,12 +1265,9 @@ public class AddressBookController extends BasicController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping( value = "/editAttendee/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView edit(@PathVariable("id") String id, HttpServletRequest request) throws Exception {	
-		
 		Attendee attendee = attendeeService.get(Integer.parseInt(id));
-		
 		Paging<Attendee> paging = (Paging<Attendee>) request.getSession().getAttribute("attendees-paging");
 		HashMap<String, String> filter = (HashMap<String, String>) request.getSession().getAttribute("attendees-filter");
-		
 		User user = sessionService.getCurrentUser(request);
 		
 		int ownerId;
@@ -1281,8 +1276,13 @@ public class AddressBookController extends BasicController {
     	{
 			ownerId = -1;
     	} else {
-    		ownerId = user.getId();    		
-    	}
+			ownerId = user.getId();  
+			if (attendee.getOwnerId() != ownerId) {
+				if (!attendeeService.getAccessibleAttendees(ownerId, null).contains(attendee.getId())) {
+					throw new ForbiddenURLException();
+				}
+			}		
+		}
 		
 		paging.setItems(attendeeService.getAttendees(ownerId, filter, paging.getCurrentPage(), paging.getItemsPerPage()));		
  						
