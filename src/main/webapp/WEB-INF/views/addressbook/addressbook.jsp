@@ -16,6 +16,7 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/configure.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/jquery.stickytableheaders.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/fileuploader.js?version=<%@include file="../version.txt" %>"></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/menu.js?version=<%@include file="../version.txt" %>"></script>
 		
 	<style>
 	    #sortable { list-style-type: none; margin: 0; padding: 0; width: 190px; }
@@ -35,6 +36,7 @@
 	
 	<script type="text/javascript"> 
 		var labelRemoveAttribute = '<spring:message code="label.RemoveAttribute" />';
+		var usersTooOftenAddressBook = '<spring:message code="error.UsersTooOftenAddressBook" />';
 	
 		$(function() {					
 			$("#addressbook-menu-tab").addClass("active");
@@ -881,7 +883,7 @@
 	
 	<c:if test="${added != null}">
 		<script type="text/javascript">
-			showInfo('<spring:message code="label.Contact" />&nbsp;<esapi:encodeForHTML>${addedContact.name}</esapi:encodeForHTML>&nbsp;<spring:message code="message.AttendeeAdded" />');
+			showInfo('<spring:message code="label.Contact" />&nbsp;<spring:message code="message.AttendeeAdded" />');
 		</script>
 	</c:if>
 

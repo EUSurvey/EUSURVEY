@@ -775,17 +775,21 @@ function checkOwnerAndSubmit()
 			  ok = false;
 		}
 	}
-	
+
 	if (owner != null && owner.trim().length > 0)
 	{				
 		$.ajax({
 			type:'GET',
+			  async: false,
 			  url: contextpath + "/settings/userExists",
 			  data: "login=" + owner,
 			  dataType: 'json',
 			  cache: false,
+			  error: function() {
+				ok = false;
+				showError(usersTooOftenAddressBook);
+			  },
 			  success: function( exists ) {
-				  
 				  if (exists == true)
 				  {
 					  ok = true;
