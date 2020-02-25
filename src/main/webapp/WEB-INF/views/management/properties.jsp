@@ -33,8 +33,8 @@
 					</div>
 						
 					<div style="width: auto;">			
-						 <nav class="navbar navbar-default" id="navbar-example" style="width: fit-content; max-height: 39px;">	
-						    <ul class="nav nav-tabs scrolltabs" role="tablist" style="width: fit-content;">
+						 <nav class="navbar navbar-default" id="navbar-example" style="width: 785px;">	
+						    <ul class="nav nav-tabs scrolltabs" role="tablist">
 						      <li class="active"><a href="#basic"><spring:message code="label.Basic" /></a></li>
 						      <li><a href="#advanced"><spring:message code="label.Advanced" /></a></li>
 						      <li><a href="#security"><spring:message code="label.Security" /></a></li>
