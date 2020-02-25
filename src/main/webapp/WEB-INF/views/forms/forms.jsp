@@ -504,19 +504,19 @@
 							<h4 style="margin-top: 20px;"><spring:message code="label.Surveys" />:</h4>     
  							<c:choose>
 								<c:when test='${filter.selector == "all" || filter.selector == "my"}'>
- 									<input class="check" checked="checked" value="own" type="checkbox" name="surveysOwn"/> <spring:message code="label.Own" />
+ 									<input class="check" checked="checked" value="own" type="checkbox" name="surveysOwn"/> <spring:message code="label.MySurveys" />
 								</c:when>
 								<c:otherwise>                                                                                                                   
-									<input class="check" value="own" type="checkbox" name="surveysOwn"/> <spring:message code="label.Own" />
+									<input class="check" value="own" type="checkbox" name="surveysOwn"/> <spring:message code="label.MySurveys" />
 								</c:otherwise>                                                                                                          
 							</c:choose>                     
 							<br />
 							<c:choose>
 								<c:when test='${filter.selector == "all" || filter.selector == "shared"}'>
-									<input class="check" checked="checked" value="shared" type="checkbox" name="surveysShared" /> <spring:message code="label.Shared" />
+									<input class="check" checked="checked" value="shared" type="checkbox" name="surveysShared" /> <spring:message code="label.SharedWithMe" />
 								</c:when>
 								<c:otherwise>                                                                                                                   
-									<input class="check" value="shared" type="checkbox" name="surveysShared" /> <spring:message code="label.Shared" />      
+									<input class="check" value="shared" type="checkbox" name="surveysShared" /> <spring:message code="label.SharedWithMe" />      
 								</c:otherwise>                                                                                                          
 							</c:choose>					
 									
@@ -557,12 +557,11 @@
 								</c:otherwise>														
 							</c:choose>			
 		
-							<h4 style="margin-top: 20px; margin-bottom: 10px"><spring:message code="label.Date" /></h4>
+							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Date" /></h4>
 								
 							<a id="date-options-a" style="cursor:pointer" onclick="showHideDateOptions();"><spring:message code="label.ShowDateOptions" /></a>
-							<div id="date-options-div" style="display: none">
-								<label class="bold"><spring:message code="label.CreationDate" /></label>
-								
+							<div id="date-options-div" style="display: none; margin-top: 5px;">
+								<label class="bold"><spring:message code="label.CreationDate" /></label>								
 								<div class="input-group">
 							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
 							      	<input class="form-control datepicker date" name="generatedFrom" placeholder="<spring:message code="label.from" />" type="text" maxlength="10" value="<spring:eval expression="filter.generatedFrom" />" style="width: 105px" />
@@ -570,7 +569,7 @@
 								<div class="input-group">
 							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
 							      	<input class="form-control datepicker date" name="generatedTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.generatedTo" />" style="width: 105px" />
-							    </div>
+							    </div><br />
 								
 								<label class="bold"><spring:message code="label.StartDate" /></label>
 								<div class="input-group">
@@ -580,7 +579,8 @@
 								<div class="input-group">
 							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
 							      	<input class="form-control datepicker date" name="startTo" placeholder="<spring:message code="label.To" />" type="text" maxlength="10" value="<spring:eval expression="filter.startTo" />" style="width: 105px" />
-							    </div>
+							    </div><br />
+							    
 								<label class="bold"><spring:message code="label.ExpiryDate" /></label>
 								<div class="input-group">
 							    	<div class="input-group-addon" onclick="$(this).parent().find('.datepicker').datepicker('show');"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
