@@ -185,7 +185,7 @@
 }
 
 .validation-error {
-	color: #f00; font-weight: bold; position: absolute;
+	color: #f00; position: absolute;
 }
 
 select,

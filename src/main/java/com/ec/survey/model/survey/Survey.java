@@ -2142,7 +2142,7 @@ public class Survey implements java.io.Serializable {
 
 	@Column(name = "MAXNUMBERCONTRIBUTIONTEXT", length = 255)
 	public String getMaxNumberContributionText() {
-		return this.maxNumberContributionText != null ? this.maxNumberContributionText : MAXNUMBEROFRESULTSTEXT;
+		return this.maxNumberContributionText != null && this.maxNumberContributionText.length() > 0 ? this.maxNumberContributionText : MAXNUMBEROFRESULTSTEXT;
 	}
 
 	public void setMaxNumberContributionText(String maxNumberContributionText) {
