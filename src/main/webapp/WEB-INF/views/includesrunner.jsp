@@ -85,6 +85,7 @@
 			var nomatchText =  "${form.getMessage("validation.nomatch")}";
 			var shortnameText = "${form.getMessage("validation.name2")}";
 			var shortnameText2 = "${form.getMessage("validation.shortname2")}";
+			var shortnameText3 = "${form.getMessage("validation.shortname3")}";
 			var textnotlongenoughText = "${form.getMessage("validation.textNotLongEnough")}";
 			var texttoolongText = "${form.getMessage("validation.textTooLong")}";
 			var texttoolong5000Text = "${form.getMessage("validation.textTooLong5000")}";
@@ -160,6 +161,7 @@
 			var nomatchText =  "<spring:message code='validation.nomatch' />";
 			var shortnameText = "<spring:message code='validation.name2' />";
 			var shortnameText2 = "<spring:message code='validation.shortname2' />";
+			var shortnameText3 = "<spring:message code='validation.shortname3' />";
 			var textnotlongenoughText = "<spring:message code='validation.textNotLongEnough' />";
 			var texttoolongText = "<spring:message code='validation.textTooLong' />";
 			var texttoolong5000Text = "<spring:message code='validation.textTooLong5000' />";

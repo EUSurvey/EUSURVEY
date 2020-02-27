@@ -150,7 +150,7 @@
 				if ($("#edit-survey-shortname").parent().find(".validation-error").length == 0)
 				{
 					if( !reg.test( value ) ) {
-				    	$("#edit-survey-shortname").after("<div class='validation-error'>" + shortnameText + "</div>");
+				    	$("#edit-survey-shortname").after("<div class='validation-error'>" + shortnameText3 + "</div>");
 						return;
 				    } else if( value.indexOf("__") > -1 ) {
 				    	$("#edit-survey-shortname").after("<div class='validation-error'>" + shortnameText2 + "</div>");
@@ -238,6 +238,13 @@
 				if (invalid) return;
 				
 				var result = validateInput(tabs);
+				
+				if (result == false)
+				{
+					return;
+				}
+				
+				result = validateInput($("#maxContributionInput").parent());
 				
 				if (result == false)
 				{
@@ -385,7 +392,7 @@
 		}
 		
 		.table-bordered {
-			background-color: #f5f4f4;
+			background-color: #e6e6e6;
 		}
 		
 		.actions {
@@ -400,6 +407,7 @@
 		    padding: 4px;
 		    text-align: center;
 		    z-index: 999;
+		    font-size: 90%;
 		}
 		
 		.navbar-default {
@@ -423,6 +431,11 @@
 			padding-right: 0px;
 		}
 		
+		.nav > li > a {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+		
 		.navbar-default .nav-tabs > li.active > a, .navbar-default .nav-tabs > li.active > a:hover, .navbar-default .nav-tabs > li.active > a:focus {
 			background-color: #e7e7e7 !important;
 			color: #555;
@@ -434,7 +447,7 @@
 			border-color: transparent !important;
 			border-bottom-left-radius: 4px;
  			border-bottom-right-radius: 4px;
-			padding-top: 5px;
+			padding-top: 9px;
 			color: #777;
 			background-color: transparent !important;
 		}

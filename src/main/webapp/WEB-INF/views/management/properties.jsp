@@ -33,7 +33,7 @@
 					</div>
 						
 					<div style="width: auto;">			
-						 <nav class="navbar navbar-default" id="navbar-example" style="width: 785px;">	
+						 <nav class="navbar navbar-default" id="navbar-example" style="width: 730px;">	
 						    <ul class="nav nav-tabs scrolltabs" role="tablist">
 						      <li class="active"><a href="#basic"><spring:message code="label.Basic" /></a></li>
 						      <li><a href="#advanced"><spring:message code="label.Advanced" /></a></li>
@@ -62,8 +62,8 @@
 								<form:input id="edit-survey-shortname" type="text" maxlength="255" class="form-control required freetext max255" path="survey.shortname" />
 							</div>
 							<div style="clear: both"></div>
-							<div class="help" style="display: none">
-								<span><spring:message code="message.MeaningfulShortname" />&nbsp;<spring:message code="message.MeaningfulShortname2" /></span>	
+							<div class="help" style="display: none; margin-top: 10px;">
+								<span><spring:message code="message.MeaningfulShortnameNew" /></span>	
 							</div>
 						</td>
 					</tr>
@@ -83,7 +83,7 @@
 					<tr>
 						<td>
 							<div style="float: left">
-								<span class="mandatory">*</span><spring:message code="label.PivotLanguage" />
+								<span class="mandatory">*</span><spring:message code="label.MainLanguage" />
 							</div>
 							<div style="float: right">
 								<form:select path="survey.language" class="form-control required" style="width: auto;">
@@ -256,7 +256,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr class="subelement noborder" data-bind="visible: endNotifications">
+					<tr class="subelement noborder" data-bind="visible: endNotifications() && automaticPublishing()">
 						<td>
 							<div style="float: right; text-align: right">
 								<div class="form-inline" style="margin-bottom: 5px;">
@@ -303,8 +303,10 @@
 							<div style="float: left; max-width: 500px;">						
 								<spring:message code="label.MaxNumberContributions" />
 							</div>
-							<div style="float: right; text-align: right">	
-								<input id='maxContributionInput' class="form-control" type='number' name='survey.maxNumberContribution' min='0' value="<esapi:encodeForHTMLAttribute>${form.survey.maxNumberContribution}</esapi:encodeForHTMLAttribute>">
+							<div style="float: right; text-align: right">
+								<div>
+									<input id='maxContributionInput' class="form-control number max1000000000" type='number' name='survey.maxNumberContribution' min='0' max='1000000000' value="<esapi:encodeForHTMLAttribute>${form.survey.maxNumberContribution}</esapi:encodeForHTMLAttribute>">
+								</div>
 							</div>
 						</td>
 					</tr>
@@ -463,7 +465,7 @@
 						</tr>
 						<c:choose>
 							<c:when test="${USER.getGlobalPrivilegeValue('ECAccess') > 0}">
-								<tr class="subelement" data-bind="visible: secured, attr:{class: ecasSecurity() ? 'nobottomborder' : ''}">
+								<tr class="subelement" data-bind="visible: secured, attr:{class: ecasSecurity() ? 'nobottomborder subelement' : 'subelement'}">
 									<td>
 										<div style="float: left">
 											<spring:message code="label.SecureWithEULogin" />
@@ -560,7 +562,7 @@
 							<div style="float: left">
 								<spring:message code="label.Captcha" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-								<div class="help hideme"><spring:message code="info.Captcha" /><br /><spring:message code="label.CaptchaForPublicOpen" /></div>
+								<div class="help hideme"><spring:message code="info.CaptchaNew" /></div>
 							</div>						
 							<div style="float: right">		
 								<div class="onoffswitch">
@@ -1089,7 +1091,7 @@
 			<div id="opc">				
 				<label><spring:message code="label.OPC" /></label>
 				<table class="table table-bordered">
-					<tr style="background-color: rgb(249, 249, 249)">
+					<tr>
 						<td>
 							<div style="float: left"><spring:message code="label.EnableOPC" /></div>
 							<div style="float: right">
