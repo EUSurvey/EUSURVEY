@@ -675,9 +675,9 @@
 					<tr>
 						<td>
 							<div style="float: left">
-								<spring:message code="label.WCAGCompliance" />
+								<spring:message code="label.AccessibilityMode" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-								<div class="help hideme"><spring:message code="help.WCAGCompliance" /></div>
+								<div class="help hideme"><spring:message code="help.AccessibilityMode" /></div>
 							</div>
 							<div style="float: right">							
 								<div class="onoffswitch">
@@ -826,7 +826,7 @@
 							<div style="float: left">
 								<spring:message code="label.QuestionsToPublish" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
-								<div class="help hideme"><spring:message code="info.QuestionsToPublish" /></div>
+								<div class="help hideme"><spring:message code="info.QuestionsToPublishNew" /></div>
 							</div>
 							<div style="float: right;  min-width: 150px;">	
 								<form:radiobutton data-bind="click: function() {selectedQuestions(false); return true;}" path="survey.publication.allQuestions" value="true" id="questionsToPublishAll" class="check" name="questionsToPublish" /><spring:message code="label.AllQuestions" /><br />
@@ -861,7 +861,7 @@
 							<div style="float: left">
 								<spring:message code="label.Contributions" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
-								<div class="help hideme"><spring:message code="info.Contributions" /></div>	
+								<div class="help hideme"><spring:message code="info.ContributionsNew" /></div>	
 							</div>
 							<div style="float: right; min-width: 150px;">
 								<form:radiobutton data-bind="click: function() {selectedContributions(false); return true;}" path="survey.publication.allContributions" value="true" onclick="checkSelections()" id="contributionsToPublishAll" class="check" name="contributionsToPublish" /><spring:message code="label.AllContributions" /><br />
@@ -909,10 +909,14 @@
 				<table class="table table-bordered">
 					<tr>
 						<td>
-							<div style="float: left"><span class="mandatory">*</span><spring:message code="label.ConfirmationPage" /></div>
+							<div style="float: left">
+								<span class="mandatory">*</span><spring:message code="label.ConfirmationPage" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.ConfirmationPage" /></div>	
+							</div>
 							<div style="float: right; text-align: right;">
-								<form:radiobutton onclick="_properties.useConfLink(false)" class="check" path="survey.confirmationPageLink" value="false"/><spring:message code="label.UseText" />&#160;
-								<form:radiobutton onclick="_properties.useConfLink(true)" id="conflink"  class="check" path="survey.confirmationPageLink" value="true"/><spring:message code="label.UseLink" />
+								<form:radiobutton onclick="_properties.useConfLink(false)" class="check" path="survey.confirmationPageLink" value="false"/><spring:message code="label.Text" />&#160;
+								<form:radiobutton onclick="_properties.useConfLink(true)" id="conflink"  class="check" path="survey.confirmationPageLink" value="true"/><spring:message code="label.Link" />
 								<br />
 								<div data-bind="visible: !useConfLink()">
 									<div class="preview">${form.survey.confirmationPage} <a class="iconbutton" onclick="$('#tinymceconfpage').show();$(this).closest('.preview').hide()"><span class="glyphicon glyphicon-pencil"></span></a></div>
@@ -928,10 +932,14 @@
 					</tr>
 					<tr>
 						<td>
-							<div style="float: left"><span class="mandatory">*</span><spring:message code="label.UnavailabilityPage" /></div>
+							<div style="float: left">
+								<span class="mandatory">*</span><spring:message code="label.UnavailabilityPage" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.UnavailabilityPage" /></div>	
+							</div>
 							<div style="float: right; text-align: right; max-width: 500px;">
-								<form:radiobutton onclick="_properties.useEscapeLink(false)" class="check" path="survey.escapePageLink" value="false"/><spring:message code="label.UseText" />&#160;
-								<form:radiobutton onclick="_properties.useEscapeLink(true)"  id="esclink" class="check" path="survey.escapePageLink" value="true"/><spring:message code="label.UseLink" />
+								<form:radiobutton onclick="_properties.useEscapeLink(false)" class="check" path="survey.escapePageLink" value="false"/><spring:message code="label.Text" />&#160;
+								<form:radiobutton onclick="_properties.useEscapeLink(true)"  id="esclink" class="check" path="survey.escapePageLink" value="true"/><spring:message code="label.Link" />
 								<br />
 								<div data-bind="visible: !useEscapeLink()">
 									<div class="preview">${form.survey.escapePage} <a class="iconbutton" onclick="$('#tinymceescapepage').show();$(this).closest('.preview').hide()"><span class="glyphicon glyphicon-pencil"></span></a></div>
@@ -947,7 +955,11 @@
 					</tr>							
 					<tr>
 						<td>
-							<div style="float: left"><spring:message code="label.ShowPDFOnUnavailabilityPage" /></div>
+							<div style="float: left">
+								<spring:message code="label.ShowPDFOnUnavailabilityPage" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.ShowPDFOnUnavailabilityPage" /></div>	
+							</div>
 							<div style="float: right">
  								<div class="onoffswitch">
 									<form:checkbox path="survey.ShowPDFOnUnavailabilityPage" class="onoffswitch-checkbox" id="myonoffswitchpdfavail" />
@@ -961,7 +973,11 @@
 					</tr>
 					<tr>
 						<td>
-							<div style="float: left"><spring:message code="label.ShowDocsOnUnavailabilityPage" /></div>
+							<div style="float: left">
+								<spring:message code="label.ShowDocsOnUnavailabilityPage" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.ShowDocsOnUnavailabilityPage" /></div>	
+							</div>
 							<div style="float: right">
 								<div class="onoffswitch">
 									<form:checkbox path="survey.ShowDocsOnUnavailabilityPage" class="onoffswitch-checkbox" id="myonoffswitchdocavail" />
@@ -1058,14 +1074,18 @@
 							
 							<div style="clear: both"></div>
 							<div class="help" id="showtotalscorehelp" style="display: none">
-								<spring:message code="info.ShowTotalScore" />
+								<spring:message code="info.ShowTotalScoreNew" />
 							</div>		
 						</td>
 					</tr>
 					
 					<tr class="subelement" data-bind="visible: quiz">
 						<td>
-							<div style="float: left"><spring:message code="label.WelcomeMessage" /></div>
+							<div style="float: left">
+								<spring:message code="label.WelcomeMessage" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.WelcomeMessage" /></div>	
+							</div>
 							<div style="float: right">
 								<div class="preview">${form.survey.quizWelcomeMessage} <a class="iconbutton" onclick="$('#tinymcewelcome').show();$(this).closest('.preview').hide()" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil"></span></a></div>
 								<div id="tinymcewelcome" style="display: none">
@@ -1076,7 +1096,11 @@
 					</tr>
 					<tr class="subelement" data-bind="visible: quiz">
 						<td>
-							<div style="float: left"><spring:message code="label.ResultsMessage" /></div>
+							<div style="float: left">
+								<spring:message code="label.ResultsMessage" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.ResultsMessage" /></div>	
+							</div>
 							<div style="float: right">
 								<div class="preview">${form.survey.quizResultsMessage} <a class="iconbutton" onclick="$('#tinymceresult').show();$(this).closest('.preview').hide()" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil"></span></a></div>
 								<div id="tinymceresult" style="display: none">
