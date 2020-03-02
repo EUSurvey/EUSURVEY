@@ -1482,6 +1482,12 @@ public class ManagementController extends BasicController {
 				uploadedSurvey.setEnd(cal.getTime());
 			}
 			
+			String notification = request.getParameter("notification");
+			if (notification == null)
+			{
+				uploadedSurvey.setNotificationValue(null);
+			}
+			
 			if (uploadedSurvey.getNotificationValue() == null && survey.getNotificationValue() != null)
 			{
 				String[] oldnew = {"enabled" , "disabled"};
