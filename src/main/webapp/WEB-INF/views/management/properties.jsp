@@ -285,6 +285,8 @@
 						<td>
 							<div style="float: left; max-width: 500px;">
 								<spring:message code="label.UseMaxNumberContribution" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.MaxNumberContributions" /></div>
 							</div>
 							<div style="float: right; text-align: right">										
 								<div class="onoffswitch">
@@ -587,6 +589,8 @@
 						<td>
 							<div style="float: left">
 								<spring:message code="label.AllowSaveAsDraft" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.AllowSaveAsDraft" /></div>
 							</div>						
 							<div style="float: right">							
 								<div class="onoffswitch">
@@ -603,7 +607,9 @@
 					<tr>
 						<td>
 							<div style="float: left">
-								<spring:message code="label.AllowChangeContribution" />
+								<spring:message code="label.AllowChangeContributionNew" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.AllowChangeContribution" /></div>
 							</div>						
 							<div style="float: right">							
 								<div class="onoffswitch">
@@ -619,7 +625,9 @@
 					<tr>
 						<td>
 							<div style="float: left">
-								<spring:message code="label.AllowDownloadContributionPDF" />	
+								<spring:message code="label.AllowDownloadContributionPDF" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.AllowDownloadContributionPDF" /></div>
 							</div>						
 							<div style="float: right">
 								<div class="onoffswitch">
@@ -643,7 +651,7 @@
 							<div style="float: left">
 								<spring:message code="label.MultiPaging" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-								<div class="help hideme"><spring:message code="label.ShowInSeparatePage" /></div>	
+								<div class="help hideme"><spring:message code="info.MultiPaging" /></div>	
 							</div>						
 							<div style="float: right">
 								<div class="onoffswitch">
