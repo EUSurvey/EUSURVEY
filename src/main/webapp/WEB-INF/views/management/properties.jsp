@@ -1120,7 +1120,7 @@
 				</table>
 			</div>
 			
-			<div id="opc">				
+			<div id="opc" data-bind="visible: opc">				
 				<label><spring:message code="label.OPC" /></label>
 				<table class="table table-bordered">
 					<tr>

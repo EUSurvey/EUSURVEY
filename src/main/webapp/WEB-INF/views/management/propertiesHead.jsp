@@ -22,6 +22,7 @@
 			this.useConfLink =  ko.observable(${form.survey.confirmationPageLink});
 			this.useEscapeLink =  ko.observable(${form.survey.escapePageLink});
 			this.quiz = ko.observable(${form.survey.isQuiz});
+			this.opc = ko.observable(${form.survey.isOPC});
 			this.multiPaging = ko.observable(${form.survey.multiPaging});
 			this.isUseMaxNumberContribution = ko.observable(${form.survey.isUseMaxNumberContribution});
 			
