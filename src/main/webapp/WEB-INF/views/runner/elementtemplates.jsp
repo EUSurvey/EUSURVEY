@@ -471,9 +471,27 @@
 						<!-- ko if: optional() == false -->
 							<span class="mandatory">*</span>
 						<!-- /ko -->
-						<div data-bind="html: title"></div>						
+						<div data-bind="html: title"></div>					
+						<!-- ko if: $parents[0].ismobile || $parents[0].istablet -->
+							<input data-bind="value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
+			
+							<div data-bind="foreach: new Array($parent.numIcons())">
+								<a class="ratingitem" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
+									<!-- ko if: $parents[1].iconType() == 0 -->
+								    <img src="${contextpath}/resources/images/star_grey.png" data-bind='title: $index()+1' />
+								    <!-- /ko -->
+								    <!-- ko if: $parents[1].iconType() == 1 -->
+								    <img src="${contextpath}/resources/images/nav_plain_grey.png" data-bind='title: $index()+1' />
+								    <!-- /ko -->
+								    <!-- ko if: $parents[1].iconType() == 2 -->
+								    <img src="${contextpath}/resources/images/heart_grey.png" data-bind='title: $index()+1' />
+								    <!-- /ko -->
+							    </a>
+							</div>
+						<!-- /ko -->
 					</td>
-					<td>
+					<!-- ko if: !$parents[0].ismobile && !$parents[0].istablet -->
+					<td>				
 						<input data-bind="value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 		
 						<div data-bind="foreach: new Array($parent.numIcons())">
@@ -490,6 +508,7 @@
 						    </a>
 						</div>
 					</td>
+					<!-- /ko -->
 				</tr>
 			</tbody>
 		</table>						
