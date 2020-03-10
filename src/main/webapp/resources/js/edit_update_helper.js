@@ -313,7 +313,7 @@ function addVisibility(triggerid, selectedquestionid)
 			parent.dependentElementsStrings()[index](old + selectedquestionid + ";");
 		}
 	} else {
-		//add id to "dependenelements" field		
+		//add id to "dependentelements" field		
 		var parentid = $("input[data-id='" + triggerid + "'][name^='dependencies']").closest(".survey-element").attr("data-id");
 		var parent = _elements[parentid];
 		var child = parent.getChild(triggerid);
@@ -380,7 +380,7 @@ function removeVisibility(triggerid, selectedquestionid)
 			parent.dependentElementsStrings()[index](old.replace(selectedquestionid + ";",""));
 		}
 	} else {
-		//add id to "dependenelements" field
+		//add id to "dependentelements" field
 		var parentid = $("input[data-id='" + triggerid + "'][name^='dependencies']").closest(".survey-element").attr("data-id");
 		var parent = _elements[parentid];
 		var child = parent.getChild(triggerid);

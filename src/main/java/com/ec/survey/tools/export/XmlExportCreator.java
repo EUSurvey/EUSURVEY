@@ -185,7 +185,7 @@ public class XmlExportCreator extends ExportCreator {
 							
 							if (dependentElements.length() > 0)
 							{
-								writer.writeAttribute("dependenElements", dependentElements);
+								writer.writeAttribute("dependentElements", dependentElements);
 							}
 							
 							writer.writeEndElement(); //MatrixCell

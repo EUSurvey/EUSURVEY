@@ -960,7 +960,7 @@ function updateVisibility(span, reset, ask, dialogresult)
 	
 	for (var i = 0; i < oldtriggers.length; i++)
 	{
-		//remove from "dependenelements" field
+		//remove from "dependentelements" field
 		$("#content").find(".selectedquestion").each(function(){
 			var myid = $(this).attr("id");
 			selectedquestions = selectedquestions + myid + ";";
