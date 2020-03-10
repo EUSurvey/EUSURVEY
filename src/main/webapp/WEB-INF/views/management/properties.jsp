@@ -315,7 +315,7 @@
 					<tr class="subelement" data-bind="visible: isUseMaxNumberContribution">
 						<td>
 							<div style="float: left; max-width: 500px;">
-								<span class="mandatory">*</span><spring:message code="label.MaxNumberContributionText" />
+								<spring:message code="label.MaxNumberContributionText" />
 							</div>
 							<div style="float: right; text-align: right">
 								<div class="preview">${form.survey.maxNumberContributionText} <a class="iconbutton" onclick="$('#tinymcelimit').show();$(this).closest('.preview').hide()" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil"></span></a></div>
