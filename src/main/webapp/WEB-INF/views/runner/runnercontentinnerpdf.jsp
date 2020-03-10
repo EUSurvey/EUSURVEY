@@ -505,7 +505,7 @@
 						<c:if test="${element.getType() == 'NumberQuestion'}">								
 							<div>
 								<div style="float: left; width: 206px; word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px; margin-left: 20px;"><esapi:encodeForHTML>${form.getValue(element)}</esapi:encodeForHTML></div>						
-								<div style="float: left" class="unit-text"><esapi:encodeForHTML>${element.unit}</esapi:encodeForHTML></div>	
+								<div style="float: left" class="unit-text">${element.unit}</div>	
 								<div style="clear: both"></div>		
 							</div>	
 						</c:if>
