@@ -378,6 +378,11 @@
 		    background-color: #fff; color: #999999;
 		    text-align: right;
 		}
+		
+		.disabled .onoffswitch-inner:after {
+			background-color: #ccc;
+		}
+		
 		.onoffswitch-switch {
 		    display: block; width: 15px; margin: -5px;
 		    background: #FFFFFF;

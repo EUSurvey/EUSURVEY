@@ -546,7 +546,6 @@
 							<div style="float: right">					
 								<div class="onoffswitch">
 									<c:choose>
-
 										<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
 											<input type="checkbox" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
 										</c:when>
@@ -577,15 +576,20 @@
 										<c:when test='${form.survey.isOPC}'>
 											<input type="checkbox" disabled="disabled" class="onoffswitch-checkbox" id="myonoffswitchcaptcha" />									
 											<form:hidden path="survey.captcha"/>
+											<label class="onoffswitch-label disabled" for="myonoffswitchcaptcha">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
 										</c:when>
 										<c:otherwise>
 											<form:checkbox path="survey.captcha" class="onoffswitch-checkbox" id="myonoffswitchcaptcha" />
+											<label class="onoffswitch-label" for="myonoffswitchcaptcha">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
 										</c:otherwise>
 									</c:choose>	
-									 <label class="onoffswitch-label" for="myonoffswitchcaptcha">
-								        <span class="onoffswitch-inner"></span>
-								        <span class="onoffswitch-switch"></span>
-								    </label>
+									 
 								</div>
 							</div>
 						</td>
@@ -1016,15 +1020,20 @@
 									<c:choose>
 										<c:when test="${form.survey.isOPC}">
 											<form:checkbox path="survey.isQuiz" disabled="disabled" class="onoffswitch-checkbox" id="myonoffswitchquiz" />
+											<label class="onoffswitch-label disabled" for="myonoffswitchquiz">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
 										</c:when>
 										<c:otherwise>
 											<form:checkbox path="survey.isQuiz" onclick="_properties.quiz(!_properties.quiz())" class="onoffswitch-checkbox" id="myonoffswitchquiz" />
+											<label class="onoffswitch-label" for="myonoffswitchquiz">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
 										</c:otherwise>
 									</c:choose>									
-									 <label class="onoffswitch-label" for="myonoffswitchquiz">
-								        <span class="onoffswitch-inner"></span>
-								        <span class="onoffswitch-switch"></span>
-								    </label>
+									 
 								</div>
 							</div>
 						</td>
