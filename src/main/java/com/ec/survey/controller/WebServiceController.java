@@ -932,8 +932,8 @@ public class WebServiceController extends BasicController {
 			if (user == null)
 				return "";
 
-			Survey survey = surveyService.getSurvey(formid, true, false, false, false, null, true, false);
-			Survey publishedsurvey = surveyService.getSurvey(formid, false, false, false, false, null, true, false);
+			Survey survey = surveyService.getSurvey(formid, true, false, false, false, null, true, true, false, false);
+			Survey publishedsurvey = survey == null ? null : surveyService.getSurvey(survey.getUniqueId(), false, false, false, false, null, true, false);
 
 			if (survey == null || publishedsurvey == null || survey.getArchived()) {
 				response.setStatus(412);
