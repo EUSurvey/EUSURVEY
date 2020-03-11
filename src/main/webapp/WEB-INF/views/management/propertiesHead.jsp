@@ -367,10 +367,15 @@
 		    padding-left: 10px;
 		    background-color: #337AB7; color: #FFFFFF;
 		}
+		
+		.disabled .onoffswitch-inner:before {
+			background-color: #ccc;
+		}
+		
 		.onoffswitch-inner:after {
 		    content: "";
 		    padding-right: 10px;
-		    background-color: #EEEEEE; color: #999999;
+		    background-color: #fff; color: #999999;
 		    text-align: right;
 		}
 		.onoffswitch-switch {

@@ -477,15 +477,20 @@
 												<c:choose>
 													<c:when test='${form.survey.isOPC}'>	
 														<input disabled="disabled" checked="checked" type="checkbox" name="survey.ecasSecurity" class="onoffswitch-checkbox" id="myonoffswitchecas" />
+														<label class="onoffswitch-label disabled" for="myonoffswitchecas">
+													        <span class="onoffswitch-inner"></span>
+													        <span class="onoffswitch-switch"></span>
+													    </label>
 													</c:when>
 													<c:otherwise>
 														<input data-bind="checked: ecasSecurity" type="checkbox" name="survey.ecasSecurity" class="onoffswitch-checkbox" id="myonoffswitchecas" />
+														<label class="onoffswitch-label" for="myonoffswitchecas">
+													        <span class="onoffswitch-inner"></span>
+													        <span class="onoffswitch-switch"></span>
+													    </label>
 													</c:otherwise>
 												</c:choose>
-												 <label class="onoffswitch-label" for="myonoffswitchecas">
-											        <span class="onoffswitch-inner"></span>
-											        <span class="onoffswitch-switch"></span>
-											    </label>
+												 
 											</div>
 										</div>
 									</td>
