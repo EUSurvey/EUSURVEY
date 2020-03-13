@@ -330,7 +330,7 @@
 							<div style="float: left; max-width: 500px;">
 								<spring:message code="label.CreateContacts" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-								<div class="help hideme"><spring:message code="info.NoContactsCreated" /></div>
+								<div class="help hideme"><spring:message code="info.ContactsCreated" /></div>
 							</div>	
 							<div style="float: right; text-align: right">
 								<div class="onoffswitch">
@@ -347,6 +347,8 @@
 						<td>
 							<div style="float: left">
 								<spring:message code="label.UsefulLinks" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.UsefulLinks" /></div>				
 							</div>
 						
 							<div style="float: right">
@@ -382,6 +384,8 @@
 						<td>
 							<div style="float: left">
 								<spring:message code="label.BackgroundDocuments" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.BackgroundDocuments" /></div>
 							</div>
 							<div style="float: right">
 								<table data-bind="visible: showBackgroundDocs" class="table table-bordered" id="backgrounddocumentstable" style="width: 500px">
@@ -436,7 +440,7 @@
 								</div>
 							</div>
 							<div style="clear: both"></div>
-							<div class="help hideme"><spring:message code="info.SecureYourSurvey" /></div>
+							<div class="help hideme"><spring:message code="info.SecureYourSurveyNew" /></div>
 						</td>
 					</tr>
 					<tr class="subelement" data-bind="visible: secured">
