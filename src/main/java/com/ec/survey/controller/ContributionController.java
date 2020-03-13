@@ -10,6 +10,7 @@ import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.service.ValidCodesService;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -39,6 +41,9 @@ import java.util.Set;
 public class ContributionController extends BasicController {
 	
 	private @Value("${server.prefix}") String host;	
+	
+	@Resource(name = "validCodesService")
+	private ValidCodesService validCodesService;
 	
 	public AnswerSet getAnswerSet(String code, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException
 	{
@@ -274,6 +279,8 @@ public class ContributionController extends BasicController {
 			if (isdraft) {
 				model.addObject("draftid", draftid);
 			}
+			
+			validCodesService.revalidate(answerSet.getUniqueCode(), newestSurvey);
 			
 			//recreate uploaded files
 			SurveyHelper.recreateUploadedFiles(answerSet, fileDir, translated, fileService);
