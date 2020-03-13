@@ -1019,7 +1019,7 @@
 								<div class="onoffswitch">
 									<c:choose>
 										<c:when test="${form.survey.isOPC}">
-											<form:checkbox path="survey.isQuiz" disabled="disabled" class="onoffswitch-checkbox" id="myonoffswitchquiz" />
+											<input type="radio" disabled="disabled" name="survey.isQuiz" class="onoffswitch-checkbox" id="myonoffswitchquiz" />
 											<label class="onoffswitch-label disabled" for="myonoffswitchquiz">
 										        <span class="onoffswitch-inner"></span>
 										        <span class="onoffswitch-switch"></span>
