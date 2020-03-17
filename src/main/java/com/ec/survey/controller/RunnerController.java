@@ -774,7 +774,10 @@ public class RunnerController extends BasicController {
 		if (lang == null && !isDraft)
 		{
 			Survey draft = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true, true);
-			lang = draft.getLanguage().getCode();		
+			if (draft != null)
+			{
+				lang = draft.getLanguage().getCode();
+			}
 		}
 		
 		String p = request.getParameter("readonly");
