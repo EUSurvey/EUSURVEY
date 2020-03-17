@@ -3917,7 +3917,7 @@ public class SurveyService extends BasicService {
 	public LinkedHashMap<Integer, String> getAllPublishedSurveysForUser(User user, String sort) {
 		Session session = sessionFactory.getCurrentSession();
 
-		String sql = "SELECT s.SURVEY_ID, s.SURVEYNAME, npa.PUBLISHEDANSWERS as replies from SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID where s.ISDRAFT = 1 and s.ACTIVE = 1 and (s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))) and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) ORDER BY ";
+		String sql = "SELECT s.SURVEY_ID, s.SURVEYNAME from SURVEYS s where s.ISDRAFT = 1 and s.ACTIVE = 1 and (s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))) and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) ORDER BY ";
 
 		if (sort.equalsIgnoreCase("created")) {
 			sql += "s.SURVEY_CREATED DESC";
@@ -3946,7 +3946,7 @@ public class SurveyService extends BasicService {
 
 	public List<String> getAllPublishedSurveysUIDsForUser(User user, boolean escapeforsql, boolean includearchived) {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT DISTINCT s.SURVEY_UID from SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID where s.ISDRAFT = 1 and (s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))) and (s.DELETED = 0 or s.DELETED is null)";
+		String sql = "SELECT DISTINCT s.SURVEY_UID from SURVEYS s where s.ISDRAFT = 1 and (s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))) and (s.DELETED = 0 or s.DELETED is null)";
 
 		if (!includearchived) {
 			sql += " and (s.ARCHIVED = 0 or s.ARCHIVED is null)";
