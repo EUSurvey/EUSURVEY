@@ -1792,6 +1792,7 @@ public class SurveyService extends BasicService {
 
 		if (result.size() == 0) {
 			logger.error("ivalid language code: " + code);
+			return null;
 		}
 
 		return (Language) result.get(0);
