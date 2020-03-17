@@ -103,12 +103,24 @@
 			height:64px;
 			line-height:64px;
 			margin-top:10px;			
-			background-color:#aadb1c;
-			color: #333;
+			background-color:#245077;
+			color: #fff;
 			font-weight:bold;
 			padding-left: 70px;
 			background-repeat:no-repeat;
 			background-size:64px;
+		}
+		
+		.boxlink .glyphicon {
+			color: #fff;
+		    margin-left: -63px;
+		    font-size: 49px;
+		    margin-right: 14px;
+		    vertical-align: middle;
+		}
+		
+		.boxlink:hover  {
+			color: #fff;
 		}
 	
 	</style>
@@ -135,28 +147,8 @@
 				<h1><spring:message code="label.Support" /></h1>
 			</div>
 		
-			<a id="docHelpParticipant" class="boxlink" href="${contextpath}/home/helpparticipants" style="background-image:url('${contextpath}/resources/images/icons/64/doc_11.png');"><spring:message code="label.FAQsParticipants" /></a>
-			<a id="docHelpAuthor" class="boxlink" href="${contextpath}/home/helpauthors" style="background-image:url('${contextpath}/resources/images/icons/64/pencil.png');"><spring:message code="label.FAQsAuthors" /></a>
-			
-			<c:choose>
-				<c:when test="${!oss}">
-					<a id="docQuickStartGuide" target="_blank" class="boxlink" href="https://circabc.europa.eu/sd/a/2e8fd5cf-4095-4413-9aa4-d46bf706aafc/EUSurvey_Quick_Start_Guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/flash_on.png');">EUSurvey - <spring:message code="label.QuickstartGuide" /></a>
-				</c:when>
-				<c:otherwise>
-					<a id="docQuickStartGuide" target="_blank" class="boxlink" href="${contextpath}/resources/documents/eusurvey_oss_quickstart_guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.QuickstartGuide" /></a>				
-				</c:otherwise>
-			</c:choose>
-			
-			<c:choose>
-				<c:when test="${!oss}">
-					<a id="docBestPractices" target="_blank" class="boxlink" href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.BestPractices" /></a>
-				</c:when>
-				<c:otherwise>
-					<a id="docBestPractices" target="_blank" class="boxlink" href="${contextpath}/resources/documents/eusurvey_oss_best_practices.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.BestPractices" /></a>				
-				</c:otherwise>
-			</c:choose>
-				
-			<%-- <a id="docBestPractices" target="_blank" class="boxlink" href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.BestPractices" /></a> --%>
+			<a id="docHelpParticipant" class="boxlink" href="${contextpath}/home/helpparticipants"><span class="glyphicon glyphicon-question-sign"></span><spring:message code="label.FAQsParticipantsNew" /></a>
+			<a id="docHelpAuthor" class="boxlink" href="${contextpath}/home/helpauthors"><span class="glyphicon glyphicon-question-sign"></span><spring:message code="label.FAQsAuthorsNew" /></a>
 			
 			<c:choose>
 				<c:when test="${!oss}">
@@ -166,12 +158,30 @@
 					<a id="docTutorial" class="boxlink" href="https://ec.europa.eu${contextpath}/runner/TutorialEUSurveyOSS" style="background-image:url('${contextpath}/resources/images/icons/64/externalLink.png');"><spring:message code="label.Tutorial" /></a>				
 				</c:otherwise>
 			</c:choose>
+			
+			<c:choose>
+				<c:when test="${!oss}">
+					<a id="docQuickStartGuide" target="_blank" class="boxlink" href="https://circabc.europa.eu/sd/a/2e8fd5cf-4095-4413-9aa4-d46bf706aafc/EUSurvey_Quick_Start_Guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/flash_on.png');"><spring:message code="label.QuickstartGuide" /></a>
+				</c:when>
+				<c:otherwise>
+					<a id="docQuickStartGuide" target="_blank" class="boxlink" href="${contextpath}/resources/documents/eusurvey_oss_quickstart_guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.QuickstartGuide" /></a>				
+				</c:otherwise>
+			</c:choose>
 					
 			<a id="docEditorGuideEN" class="boxlink" target="_blank" href="${contextpath}/resources/documents/Editor_Guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/flash_on.png');"><spring:message code="label.EditorDocumentation" /></a>
 			<a id="docEditorGuideFR" class="boxlink" target="_blank" href="${contextpath}/resources/documents/Editor_Guide_FR.pdf" style="display: none; background-image:url('${contextpath}/resources/images/icons/64/flash_on.png');"><spring:message code="label.EditorDocumentation" /></a>
 			<a id="docEditorGuideDE" class="boxlink" target="_blank" href="${contextpath}/resources/documents/Editor_Guide_DE.pdf" style="display: none; background-image:url('${contextpath}/resources/images/icons/64/flash_on.png');"><spring:message code="label.EditorDocumentation" /></a>
 	
 			<a id="docQuizGuideEN" class="boxlink" target="_blank" href="${contextpath}/resources/documents/Quiz_Guide.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/flash_on.png');"><spring:message code="label.QuizDocumentation" /></a>
+					
+			<c:choose>
+				<c:when test="${!oss}">
+					<a id="docBestPractices" target="_blank" class="boxlink" href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.BestPractices" /></a>
+				</c:when>
+				<c:otherwise>
+					<a id="docBestPractices" target="_blank" class="boxlink" href="${contextpath}/resources/documents/eusurvey_oss_best_practices.pdf" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.BestPractices" /></a>				
+				</c:otherwise>
+			</c:choose>
 					
 			<a id="docLimits" onclick="$('.uselimits').show()" class="boxlink" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.usabilityLimits" /></a>
 			
