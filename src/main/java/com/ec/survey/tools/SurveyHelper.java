@@ -3467,7 +3467,14 @@ public class SurveyHelper {
 	            
 	            	element.setOldId(id);
 	            	element.setPosition(i);        		
-	        		if (currentElement == null) survey.getElements().add(i, element);       
+	        		if (currentElement == null) {
+	        			if (i <= survey.getElements().size())
+	        			{
+	        				survey.getElements().add(i, element);
+	        			} else {
+	        				survey.getElements().add(element);
+	        			}
+	        		}
 	            }
             }
         }
