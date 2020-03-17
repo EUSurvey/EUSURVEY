@@ -413,7 +413,7 @@ public class SchedulerService extends BasicService {
 		
 		try {
 			String enabled = settingsService.get(Setting.ReportingMigrationEnabled);
-			if (!enabled.equalsIgnoreCase("true"))
+			if (enabled == null || !enabled.equalsIgnoreCase("true"))
 			{
 				return;
 			}
