@@ -1980,6 +1980,7 @@ public class AnswerService extends BasicService {
 			return filter;
 		}
 		Session session = sessionFactory.getCurrentSession();
+		session.evict(filter);
 		filter = (ResultFilter) session.merge(filter);
 		Hibernate.initialize(filter.getFilterValues());
 		Hibernate.initialize(filter.getExportedQuestions());
