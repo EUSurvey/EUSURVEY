@@ -33,7 +33,7 @@ public class DeleteSurveyUpdater implements Runnable {
 			for (Integer id : surveys) {
 				lastId = id;
 				try {
-					surveyService.delete(id, true, false);
+					surveyService.delete(id, true, true);
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 					systemService.sendAdminErrorMessage("Error during deletion of Survey " + lastId + " " + e.getLocalizedMessage());
