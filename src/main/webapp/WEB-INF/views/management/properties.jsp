@@ -513,7 +513,8 @@
 												</c:when>
 												<c:otherwise>
 													<form:radiobutton path="survey.ecasMode" id="ecas-mode-all" name="ecas-mode" value="all" class="check" /><spring:message code="label.All" /><br />
-													<form:radiobutton path="survey.ecasMode" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.InternalStaffOnly" /><br />
+													<form:radiobutton path="survey.ecasMode" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
+													<!--<form:radiobutton path="survey.ecasMode" id="ecas-mode-external" name="ecas-mode" value="external" class="check" /><spring:message code="label.NonEuropeanInstitutionsStaff" /><br />-->
 												</c:otherwise>
 											</c:choose>													
 										</div>
