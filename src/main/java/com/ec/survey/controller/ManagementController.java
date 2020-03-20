@@ -1773,7 +1773,10 @@ public class ManagementController extends BasicController {
 				activitiesToLog.put(313, oldnew);
 			}
 			
-			survey.getPublication().setPassword(uploadedSurvey.getPublication().getPassword());			
+			if (uploadedSurvey.getPublication().getPassword() != null && !uploadedSurvey.getPublication().getPassword().equalsIgnoreCase("********"))
+			{
+				survey.getPublication().setPassword(uploadedSurvey.getPublication().getPassword());
+			}
 			survey.getPublication().setShowContent(uploadedSurvey.getPublication().isShowContent());			
 			survey.getPublication().setShowUploadedDocuments(uploadedSurvey.getPublication().getShowUploadedDocuments());
 			

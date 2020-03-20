@@ -916,9 +916,18 @@
 						<td>
 							<div style="float: left"><spring:message code="label.Password" /></div>
 							<div style="float: right">
-								<form:password class="form-control" maxlength="255" autocomplete="off" value="********" path="survey.publication.password" style="margin: 0px;" onchange="$('#clearpublicationpassword').val($(this).val())" />
-								<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpublicationpassword" readonly="readonly" disabled="disabled" value="${form.survey.publication.password}" />
-								<input class="check" type="checkbox" onclick="checkShowPublicationPassword(this)" /><spring:message code="label.ShowPassword" />
+								<c:choose>
+									<c:when test="${form.survey.publication.password != null && form.survey.publication.password.length() > 0}">
+										<form:password class="form-control" maxlength="255" autocomplete="off" value="********" path="survey.publication.password" style="margin: 0px;" onchange="$('#clearpublicationpassword').val($(this).val())" />
+										<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpublicationpassword" readonly="readonly" disabled="disabled" value="${form.survey.publication.password}" />
+										<input class="check" type="checkbox" onclick="checkShowPublicationPassword(this)" /><spring:message code="label.ShowPassword" />
+									</c:when>
+									<c:otherwise>
+										<form:password class="form-control" maxlength="255" autocomplete="off" path="survey.publication.password" style="margin: 0px;" onchange="$('#clearpublicationpassword').val($(this).val())" />
+										<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpublicationpassword" readonly="readonly" disabled="disabled" />
+										<input class="check" type="checkbox" onclick="checkShowPublicationPassword(this)" /><spring:message code="label.ShowPassword" />
+									</c:otherwise>
+								</c:choose>
 							</div>								
 						</td>
 					</tr>
