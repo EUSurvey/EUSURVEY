@@ -1905,58 +1905,8 @@ public class ManagementController extends BasicController {
 			sessionService.updateSessionInfo(survey, u, request);
 			activityService.log(101, null, form.getSurvey().getId().toString(), u.getId(), survey.getUniqueId());
 			
-			if (survey.getIsOPC() && opcusers != null && opcusers.length() > 0)
-			{
-				String[] users = opcusers.split(";");
-				boolean first = true;
-				for (String user : users) {
-					if (user.length() > 0)
-					{
-						User opcuser = administrationService.getUserForLogin(user);
-						if (opcuser != null)
-						{
-							Access a = new Access();
-							a.setUser(opcuser);
-							a.setSurvey(survey);
-							a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
-							
-							if (first)
-							{
-								a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);
-								first = false;
-							} else {
-								a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 1);
-							}
-							
-							surveyService.saveAccess(a);
-						}
-					}
-				}
-			}			
-			
-			if (survey.getIsOPC() && opcdepartments != null && opcdepartments.length() > 0)
-			{
-				String[] departments = opcdepartments.split(";");
-				for (String department : departments) {
-					if (department.length() > 0)
-					{
-						String[] opcdepartment = ldapDBService.getDepartments(null, department, false, false);
-						
-						if (opcdepartment != null && opcdepartment.length > 0)
-						{
-							Access a = new Access();
-							a.setDepartment(department);
-							a.setSurvey(survey);
-							a.getLocalPrivileges().put(LocalPrivilege.AccessDraft, 2);
-							a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
-							a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);//						
-							
-							surveyService.saveAccess(a);
-						}
-					}
-				}
-			}
-			
+			surveyService.setBrpAccess(survey);
+									
 			return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit");
 		} else {
 			if (languageChanged)

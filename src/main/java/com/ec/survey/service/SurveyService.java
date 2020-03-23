@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import java.io.IOException;
@@ -46,12 +47,17 @@ public class SurveyService extends BasicService {
 	private @Value("${server.prefix}") String host;
 	public @Value("${opc.notify}") String opcnotify;
 	private @Value("${monitoring.recipient}") String monitoringEmail;
+	private @Value("${opc.users}") String opcusers;
+	private @Value("${opc.department:@null}") String opcdepartments;
 
 	@Autowired
 	protected SqlQueryService sqlQueryService;
 
-	@Autowired
-	protected LdapService ldapDBService;
+	@Resource(name = "ldapService")
+	protected LdapService ldapService;
+	
+	@Resource(name = "ldapDBService")
+	protected LdapDBService ldapDBService;
 
 	@Transactional(readOnly = true)
 	public int getNumberPublishedAnswersFromMaterializedView(String uid) {
@@ -1981,8 +1987,70 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
+	public void setBrpAccess(Survey survey)
+	{
+		if (survey.getIsOPC() && opcusers != null && opcusers.length() > 0)
+		{
+			String[] users = opcusers.split(";");
+			boolean first = true;
+			for (String user : users) {
+				if (user.length() > 0)
+				{
+					User opcuser = administrationService.getUserForLogin(user);
+					if (opcuser != null)
+					{
+						Access a = new Access();
+						a.setUser(opcuser);
+						a.setSurvey(survey);
+						a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
+						
+						if (first)
+						{
+							a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);
+							first = false;
+						} else {
+							a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 1);
+						}
+						
+						surveyService.saveAccess(a);
+					}
+				}
+			}
+		}	
+		
+		if (survey.getIsOPC() && opcdepartments != null && opcdepartments.length() > 0)
+		{
+			String[] departments = opcdepartments.split(";");
+			for (String department : departments) {
+				if (department.length() > 0)
+				{
+					String[] opcdepartment = ldapDBService.getDepartments(null, department, false, false);
+					
+					if (opcdepartment != null && opcdepartment.length > 0)
+					{
+						Access a = new Access();
+						a.setDepartment(department);
+						a.setSurvey(survey);
+						a.getLocalPrivileges().put(LocalPrivilege.AccessDraft, 2);
+						a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
+						a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);//						
+						
+						surveyService.saveAccess(a);
+					}
+				}
+			}
+		}
+	}
+	
+	@Transactional
 	public int importSurvey(ImportResult result, User user, boolean isRestore) throws Exception {
 		Survey copy = result.getSurvey().copy(this, user, fileDir, false, -1, -1, false, false, true, null, null);
+		
+		if (isRestore && copy.getIsOPC())
+		{
+			setBrpAccess(copy);
+		}
+		
 		Survey copyActive = null;
 		try {
 			Map<String, String> missingfiles = new HashMap<>();
@@ -4122,7 +4190,7 @@ public class SurveyService extends BasicService {
 		int results = surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId());
 		StringBuilder s = new StringBuilder();
 		User owner = survey.getOwner();
-		EcasHelper.readData(owner, this.ldapDBService);	
+		EcasHelper.readData(owner, this.ldapService);	
 
 		s.append("<?xml version='1.0' encoding='UTF-8' standalone='no' ?>\n");
 		s.append("<Survey id='").append(survey.getId()).append("' alias='").append(survey.getShortname()).append("'>\n");
@@ -4522,7 +4590,7 @@ public class SurveyService extends BasicService {
 		for (Survey survey: surveys) {
 			if (filter.getUserDepartment() != null && filter.getUserDepartment().length() > 1)
 			{
-				List<String> departments = ldapDBService.getUserLDAPGroups(survey.getOwner().getLogin());
+				List<String> departments = ldapService.getUserLDAPGroups(survey.getOwner().getLogin());
 				if (!departments.contains(filter.getUserDepartment()))
 				{
 					continue;
