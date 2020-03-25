@@ -119,8 +119,9 @@
 		    vertical-align: middle;
 		}
 		
-		.boxlink:hover  {
+		.boxlink:hover, .boxlink:link, .boxlink:visited, .boxlink:active {
 			color: #fff;
+			text-decoration: none;
 		}
 	
 	</style>
