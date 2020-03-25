@@ -1481,12 +1481,18 @@ public class ManagementController extends BasicController {
 				cal.add(Calendar.HOUR_OF_DAY, form.getEndHour());
 				uploadedSurvey.setEnd(cal.getTime());
 			}
-			
-			String notification = request.getParameter("notification");
-			if (notification == null)
+					
+			if (uploadedSurvey.getNotificationValue() != null && uploadedSurvey.getNotificationValue().equals("-1"))
 			{
 				uploadedSurvey.setNotificationValue(null);
+				uploadedSurvey.setNotificationUnit(null);
 			}
+			
+			if (uploadedSurvey.getNotificationUnit() != null && uploadedSurvey.getNotificationUnit().equals("-1"))
+			{
+				uploadedSurvey.setNotificationValue(null);
+				uploadedSurvey.setNotificationUnit(null);
+			}	
 			
 			if (uploadedSurvey.getNotificationValue() == null && survey.getNotificationValue() != null)
 			{
@@ -1503,6 +1509,9 @@ public class ManagementController extends BasicController {
 				String[] oldnew = {survey.getNotificationValue() != null ? survey.getNotificationValue()  + " " + survey.getNiceNotificationUnit() : "", uploadedSurvey.getNotificationValue() + " " + uploadedSurvey.getNiceNotificationUnit()};
 				activitiesToLog.put(111, oldnew);
 			}
+			
+			//the feature to limit the notification to the form owner has been removed
+			uploadedSurvey.setNotifyAll(true);
 			
 			if (uploadedSurvey.getNotifyAll() != survey.getNotifyAll())
 			{				
