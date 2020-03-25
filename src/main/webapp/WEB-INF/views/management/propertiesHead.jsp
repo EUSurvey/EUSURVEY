@@ -11,7 +11,7 @@
 			this.self = this;
 			this.contactType = ko.observable("${form.survey.contact.contains("@") ? "email" : "url"}");
 			this.automaticPublishing = ko.observable(${form.survey.automaticPublishing});
-			this.endNotifications = ko.observable(${form.survey.notificationValue != null && form.survey.notificationValue.length() > 0});
+			this.endNotifications = ko.observable(${form.survey.notificationValue != null && form.survey.notificationValue != -1 && form.survey.notificationValue.length() > 0});
 			this.showUsefulLinks =  ko.observable(${form.survey.getAdvancedUsefulLinks().size() > 0});
 			this.showBackgroundDocs = ko.observable(${form.survey.getBackgroundDocumentsAlphabetical().size() > 0});
 			this.secured = ko.observable(${!(form.survey.security.equals("open") || form.survey.security.equals("openanonymous"))});
@@ -483,11 +483,15 @@
 			padding-left: 20px !important;
 		}
 		
+		.subsubelement td:first-child {
+			padding-left: 40px !important;
+		}
+		
 		.subelement p {
 			margin: 0;
 		}
 		
-		.subelement.noborder td {
+		.subelement.noborder td, .subsubelement.noborder td {
 			border: 0px solid #f5f4f4 !important;
 			border-top: 1px solid #f5f4f4 !important;
 		}

@@ -243,25 +243,22 @@
 					<tr data-bind="visible: automaticPublishing, attr:{class: endNotifications() ? 'subelement nobottomborder' : 'subelement'}">
 						<td>
 							<div style="float: left">
-								<spring:message code="label.NotifyMe" />
+								<spring:message code="label.Reminder" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>								
 							</div>
 							<div style="float: right; text-align: right">															
-								<div class="onoffswitch">
+								<!-- <div class="onoffswitch">
 									<input type="checkbox" data-bind="checked: endNotifications" name="notification" class="onoffswitch-checkbox" id="myonoffswitchnotification">
 									 <label class="onoffswitch-label" for="myonoffswitchnotification">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
-								</div>
-							</div>
-						</td>
-					</tr>
-					<tr class="subelement noborder" data-bind="visible: endNotifications() && automaticPublishing()">
-						<td>
-							<div style="float: right; text-align: right">
+								</div> -->
+								
 								<div class="form-inline" style="margin-bottom: 5px;">
 									 <div class="form-group">
 										<form:select class="form-control" path="survey.notificationValue" style="width: auto;">
+											<form:option value="-1"><spring:message code="label.none" /></form:option>
 											<c:forEach var="i" begin="1" end="30">
 												<form:option value="${i}"><c:out value="${i}"/></form:option>
 											</c:forEach>
@@ -269,18 +266,29 @@
 									</div>
 									 <div class="form-group">
 										<form:select class="form-control" path="survey.notificationUnit" style="width: auto;">
+											<form:option value="-1"><spring:message code="label.none" /></form:option>
 											<form:option value="0"><spring:message code="label.hours" /></form:option>
 											<form:option value="1"><spring:message code="label.days" /></form:option>
 											<form:option value="2"><spring:message code="label.weeks" /></form:option>
 											<form:option value="3"><spring:message code="label.months" /></form:option>
 										</form:select>
 									</div>
+									<spring:message code="label.before" />
 								</div>	
-								<form:radiobutton class="check" path="survey.notifyAll" value="true"/><spring:message code="label.AllFormManagers" />&#160;
-								<form:radiobutton class="check" path="survey.notifyAll" value="false"/><spring:message code="label.FormCreatorOnly" />	
+								<!--<form:radiobutton class="check" path="survey.notifyAll" value="true"/><spring:message code="label.AllFormManagers" />&#160;
+								<form:radiobutton class="check" path="survey.notifyAll" value="false"/><spring:message code="label.FormCreatorOnly" />-->
+							</div>
+							<div style="clear: both"></div>
+							<div class="help hideme"><spring:message code="info.Reminder" /></div>
+						</td>
+					</tr>
+					<!-- <tr class="subelement noborder" data-bind="visible: endNotifications() && automaticPublishing()">
+						<td>
+							<div style="float: right; text-align: right">
+								
 							</div>		
 						</td>
-					</tr>	
+					</tr> -->
 					<tr>
 						<td>
 							<div style="float: left; max-width: 500px;">
@@ -499,7 +507,7 @@
 										</div>
 									</td>
 								</tr>
-								<tr class="subelement noborder" data-bind="visible: ecasSecurity">
+								<tr class="subsubelement noborder" data-bind="visible: secured() && ecasSecurity()">
 									<td>
 										<div style="float: left">
 											<spring:message code="label.Users" />
@@ -507,20 +515,20 @@
 										<div style="float: right">
 											<c:choose>
 												<c:when test='${form.survey.isOPC}'>
-													<input type="radio" disabled="disabled" checked="checked" name="ecas-mode" class="check" /><spring:message code="label.All" /><br />
-													<input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.InternalStaffOnly" />
+													<input type="radio" disabled="disabled" checked="checked" name="ecas-mode" class="check" /><spring:message code="label.everybody" /><br />
+													<input type="radio" disabled="disabled" name="ecas-mode" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" />
 													<form:hidden path="survey.ecasMode" name="ecas-mode" />
 												</c:when>
 												<c:otherwise>
-													<form:radiobutton path="survey.ecasMode" id="ecas-mode-all" name="ecas-mode" value="all" class="check" /><spring:message code="label.All" /><br />
-													<form:radiobutton path="survey.ecasMode" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.InternalStaffOnly" /><br />
+													<form:radiobutton path="survey.ecasMode" id="ecas-mode-all" name="ecas-mode" value="all" class="check" /><spring:message code="label.everybody" /><br />
+													<form:radiobutton path="survey.ecasMode" id="ecas-mode-internal" name="ecas-mode" value="internal" class="check" /><spring:message code="label.EuropeanInstitutionsStaff" /><br />
 												</c:otherwise>
 											</c:choose>													
 										</div>
 									</td>
 								</tr>
 								<c:if test='${!form.survey.isOPC}'>
-									<tr class="subelement noborder" data-bind="visible: ecasSecurity">
+									<tr class="subsubelement noborder" data-bind="visible: secured() && ecasSecurity()">
 										<td>
 											<div style="float: left">
 												<spring:message code="label.ContributionsPerUser" />
@@ -680,7 +688,7 @@
 					<tr class="subelement noborder" data-bind="visible: multiPaging">
 						<td>
 							<div style="float: left">
-								<spring:message code="label.ValidatedInputPerPage" />
+								<spring:message code="label.ValidatedInputPerPageNew" />
 							</div>
 							<div style="float: right">							
 								<div class="onoffswitch">
