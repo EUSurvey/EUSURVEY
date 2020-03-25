@@ -760,15 +760,19 @@
 						<td>
 							<div style="float: left">
 								<spring:message code="label.Skin" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>								
 							</div>
 							<div style="float: right">
-								<select name="newskin" class="form-control" style="width: 300px">
+								<select name="newskin" class="form-control" style="width: auto; display: inline-block">
 									<option></option>
 									<c:forEach items="${skins}" var="skin">
 										<option value="${skin.id}" <c:if test="${form.survey.skin.id == skin.id}">selected="selected"</c:if>><esapi:encodeForHTML>${skin.name}</esapi:encodeForHTML></option>										
 									</c:forEach>
 								</select>
-							</div>										
+								<a href="${contextpath}/settings/skin" class="btn btn-default" style="margin-top: -2px;"><spring:message code="label.Manage" /></a>
+							</div>
+							<div style="clear: both"></div>
+							<div class="help hideme"><spring:message code="help.Skin" /></div>							
 						</td>
 					</tr>	
 					<tr>
