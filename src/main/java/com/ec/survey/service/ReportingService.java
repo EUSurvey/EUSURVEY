@@ -1698,6 +1698,11 @@ public class ReportingService {
 		
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
+		if (!OLAPTableExists(survey.getUniqueId(), survey.getIsDraft()))
+		{
+			return null;
+		}
+		
 		String sql = "SELECT * FROM " + GetOLAPTableName(survey);	
 		
 		Query query=sessionReporting.createSQLQuery(sql);
