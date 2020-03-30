@@ -79,6 +79,29 @@ public class Skin implements java.io.Serializable {
 		this.name = name;
 	}
 	
+	@Transient 
+	public String getDisplayName()
+	{
+		if (getOwner().getLogin().equalsIgnoreCase("admin"))
+		{
+			switch (getName())
+			{
+				case "EUSurveyNew.css":
+					return "EUSurvey";
+				case "New Official EC Skin":
+					return "EC Official";
+				case "ECA Skin":
+					return "ECA Official";
+				case "EUSurvey.css":
+					return "EUSurvey (obsolete)";
+				case "Official EC Skin":
+					return "EC Official (obsolete)";
+			}	
+		}
+		
+		return getName();
+	}
+	
 	@Transient
 	public String getCss(boolean forPDF) {
 		StringBuilder s = new StringBuilder();

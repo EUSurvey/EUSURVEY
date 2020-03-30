@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("skinService")
@@ -16,7 +17,7 @@ public class SkinService extends BasicService {
 	public List<Skin> getAll(int userId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("FROM Skin s WHERE s.isPublic = true OR s.owner.id = :userId").setInteger("userId", userId);
-		return query.list();
+		return orderSkins(query.list());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -24,7 +25,7 @@ public class SkinService extends BasicService {
 	public List<Skin> getAllButEC(int userId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("FROM Skin s WHERE (s.isPublic = true OR s.owner.id = :userId) AND NOT s.name LIKE 'Official EC Skin' AND NOT s.name LIKE 'New Official EC Skin' ").setInteger("userId", userId);
-		return query.list();
+		return orderSkins(query.list());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -32,7 +33,51 @@ public class SkinService extends BasicService {
 	public List<Skin> getAll() {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("FROM Skin");
-		return query.list();
+		return orderSkins(query.list());
+	}
+	
+	private List<Skin> orderSkins(List<Skin> skins)
+	{
+		List<Skin> result = new ArrayList<Skin>();
+		
+		Skin[] defaultSkins = new Skin[5];
+		
+		for (Skin skin: skins)
+		{
+			if (skin.getOwner().getLogin().equalsIgnoreCase("admin"))
+			{
+				switch (skin.getName())
+				{
+					case "EUSurveyNew.css":
+						defaultSkins[0] = skin;
+						break;
+					case "New Official EC Skin":
+						defaultSkins[1] = skin;
+						break;
+					case "ECA Skin":
+						defaultSkins[2] = skin;
+						break;
+					case "EUSurvey.css":
+						defaultSkins[3] = skin;
+						break;
+					case "Official EC Skin":
+						defaultSkins[4] = skin;
+						break;
+					default:
+						result.add(skin);
+						break;
+				}
+			} else {
+				result.add(skin);
+			}		
+		}
+		
+		for (int i = 0; i < 5; i++)
+		{
+			result.add(i, defaultSkins[i]);
+		}		
+		
+		return result;
 	}
 	
 	@Transactional(readOnly = true)
