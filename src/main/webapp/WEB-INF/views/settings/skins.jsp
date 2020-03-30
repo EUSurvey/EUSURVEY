@@ -101,7 +101,7 @@
 								<c:otherwise><tr></c:otherwise>
 							</c:choose>
 							
-								<td><esapi:encodeForHTML>${skin.name}</esapi:encodeForHTML></td>
+								<td><esapi:encodeForHTML>${skin.displayName}</esapi:encodeForHTML></td>
 								<td><esapi:encodeForHTML>${skin.owner.name}</esapi:encodeForHTML></td>
 								<td>
 									<c:choose>

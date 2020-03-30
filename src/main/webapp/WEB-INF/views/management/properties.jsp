@@ -774,7 +774,7 @@
 								<select name="newskin" class="form-control" style="width: auto; display: inline-block">
 									<option></option>
 									<c:forEach items="${skins}" var="skin">
-										<option value="${skin.id}" <c:if test="${form.survey.skin.id == skin.id}">selected="selected"</c:if>><esapi:encodeForHTML>${skin.name}</esapi:encodeForHTML></option>										
+										<option value="${skin.id}" <c:if test="${form.survey.skin.id == skin.id}">selected="selected"</c:if>><esapi:encodeForHTML>${skin.displayName}</esapi:encodeForHTML></option>										
 									</c:forEach>
 								</select>
 								<a href="${contextpath}/settings/skin" class="btn btn-default" style="margin-top: -2px;"><spring:message code="label.Manage" /></a>
