@@ -314,96 +314,91 @@ public class ManagementController extends BasicController {
 	}	
 	
 	@RequestMapping(value = "/exportSurvey/{answers}/{shortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView exportSurvey(@PathVariable String answers, @PathVariable String shortname, HttpServletRequest request, HttpServletResponse response, Locale locale) {
-		try {
+	public ModelAndView exportSurvey(@PathVariable String answers, @PathVariable String shortname, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 			
-			Form form = sessionService.getForm(request, shortname, false, false);
-			Survey survey = form.getSurvey();
-			
-			String delete = request.getParameter("delete");
-			if (delete == null) delete = "false";
-			
-			User u = sessionService.getCurrentUser(request);
-			if (!u.getId().equals(survey.getOwner().getId()))
-			{
-				if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2)
-				{
-					if (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1)
-					{
-						return null;
-					}
-					if (answers != null && answers.equalsIgnoreCase("true"))
-					{
-						if (!delete.equalsIgnoreCase("true")) return null;
-					}
-				}
-			}
-			
-			boolean acceptMissingFiles = request.getParameter("acceptMissingFiles") != null && request.getParameter("acceptMissingFiles").equalsIgnoreCase("true");
-			boolean fromforms = request.getParameter("fromforms") != null && request.getParameter("fromforms").equalsIgnoreCase("true");
-						
-			if (answers != null && answers.equalsIgnoreCase("true") && delete.equalsIgnoreCase("true"))
-			{
-				if (!acceptMissingFiles)
-				{
-					//check for missing files
-					Map<String, String> missingFiles = fileService.getMissingFiles(survey.getUniqueId());
-					if (missingFiles.size() > 0)
-					{
-						ModelAndView result = new ModelAndView("management/overview", "form", form);
-						
-						if (fromforms)
-						{
-							SurveyFilter filter = sessionService.getSurveyFilter(request, true);
-							Paging<Survey> paging = new Paging<>();
-							paging.setItemsPerPage(10);
-							int numberOfSurveys = 0; 
-							paging.setNumberOfItems(numberOfSurveys);
-							paging.moveTo("1");
-							
-							SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
-							List<Survey> surveys = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, false);
-							paging.setItems(surveys);
-							
-							result = new ModelAndView("forms/forms", "paging", paging);
-					    	result.addObject("filter", filter);
-					    	
-					    	if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null || filter.getStartFrom() != null || filter.getStartTo() != null || filter.getEndFrom() != null || filter.getEndTo() != null)
-					    	{
-					    		result.addObject("showDates", true);
-					    	}
-						}
-						
-						result.addObject("missingFilesSurvey", survey.getShortname());
-						result.addObject("missingFiles", missingFiles);
-						return result;
-					}
-				}
-				
-				if (!archiveSurvey(survey, u))
-				{
-					return null;
-				}
-				
-				request.getSession().removeAttribute("sessioninfo");
-				
-				return new ModelAndView("redirect:/dashboard?archived=" + shortname);
-			}
-			
-			java.io.File zip = surveyService.exportSurvey(shortname, surveyService, answers != null && answers.equalsIgnoreCase("true"));
-				
-			response.setContentLength((int) zip.length());
-			response.setHeader("Content-Disposition","attachment; filename=\"" + shortname + ".eus\"");
-			try {
-				FileCopyUtils.copy(new FileInputStream(zip), response.getOutputStream());
-			} catch (IOException e) {
-				logger.error(e.getLocalizedMessage(), e);
-			}		
-			
-		} catch (Exception e1) {
-			logger.error(e1.getLocalizedMessage(), e1);
-		}			
+		Form form = sessionService.getForm(request, shortname, false, false);
+		Survey survey = form.getSurvey();
 		
+		String delete = request.getParameter("delete");
+		if (delete == null) delete = "false";
+		
+		User u = sessionService.getCurrentUser(request);
+		if (!u.getId().equals(survey.getOwner().getId()))
+		{
+			if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2)
+			{
+				if (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1)
+				{
+					throw new ForbiddenURLException();
+				}
+				if (answers != null && answers.equalsIgnoreCase("true"))
+				{
+					throw new ForbiddenURLException();
+				}
+			}
+		}
+		
+		boolean acceptMissingFiles = request.getParameter("acceptMissingFiles") != null && request.getParameter("acceptMissingFiles").equalsIgnoreCase("true");
+		boolean fromforms = request.getParameter("fromforms") != null && request.getParameter("fromforms").equalsIgnoreCase("true");
+					
+		if (answers != null && answers.equalsIgnoreCase("true") && delete.equalsIgnoreCase("true"))
+		{
+			if (!acceptMissingFiles)
+			{
+				//check for missing files
+				Map<String, String> missingFiles = fileService.getMissingFiles(survey.getUniqueId());
+				if (missingFiles.size() > 0)
+				{
+					ModelAndView result = new ModelAndView("management/overview", "form", form);
+					
+					if (fromforms)
+					{
+						SurveyFilter filter = sessionService.getSurveyFilter(request, true);
+						Paging<Survey> paging = new Paging<>();
+						paging.setItemsPerPage(10);
+						int numberOfSurveys = 0; 
+						paging.setNumberOfItems(numberOfSurveys);
+						paging.moveTo("1");
+						
+						SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
+						List<Survey> surveys = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, false);
+						paging.setItems(surveys);
+						
+						result = new ModelAndView("forms/forms", "paging", paging);
+				    	result.addObject("filter", filter);
+				    	
+				    	if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null || filter.getStartFrom() != null || filter.getStartTo() != null || filter.getEndFrom() != null || filter.getEndTo() != null)
+				    	{
+				    		result.addObject("showDates", true);
+				    	}
+					}
+					
+					result.addObject("missingFilesSurvey", survey.getShortname());
+					result.addObject("missingFiles", missingFiles);
+					return result;
+				}
+			}
+			
+			if (!archiveSurvey(survey, u))
+			{
+				throw new Exception("archiving failed!");
+			}
+			
+			request.getSession().removeAttribute("sessioninfo");
+			
+			return new ModelAndView("redirect:/dashboard?archived=" + shortname);
+		}
+		
+		java.io.File zip = surveyService.exportSurvey(shortname, surveyService, answers != null && answers.equalsIgnoreCase("true"));
+			
+		response.setContentLength((int) zip.length());
+		response.setHeader("Content-Disposition","attachment; filename=\"" + shortname + ".eus\"");
+		try {
+			FileCopyUtils.copy(new FileInputStream(zip), response.getOutputStream());
+		} catch (IOException e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}		
+				
 		return null;
 	}
 	
