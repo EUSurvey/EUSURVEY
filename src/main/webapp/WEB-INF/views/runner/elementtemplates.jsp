@@ -719,7 +719,7 @@
 						<td data-bind="attr: {'data-uid':uid()}" style="vertical-align: top">
 							<div class="galleryinfo">
 								<span data-bind="if: $parents[1].selection()">																			
-									<input data-bind="value: $parentContext.$index() * $parents[1].columns() + $index(), checked: getValueByQuestion($parents[1].uniqueId()).indexOf(($parentContext.$index() * $parents[1].columns() + $index()).toString()) > -1, attr: {'onclick': $parents[1].readonly() ? 'return false;':'propagateChange();', 'data-id': $parents[1].id() + ($parentContext.$index() * $parents[1].columns() + $index()), 'data-shortname': $parents[1].shortname(), 'class': $parents[1].css() + ' selection', 'name':'answer'+$parents[1].id()}" type="checkbox" />
+									<input data-bind="value: $parentContext.$index() * $parents[1].columns() + $index(), checked: getValueByQuestion($parents[1].uniqueId()).indexOf(($parentContext.$index() * $parents[1].columns() + $index()).toString()) > -1, attr: {'onclick': $parents[1].readonly() ? 'return false;':'propagateChange();', 'data-shortname': $parents[1].shortname(), 'class': $parents[1].css() + ' selection', 'name':'answer'+$parents[1].id()}" type="checkbox" />
 								</span>
 								<!-- ko if: $parents[1].numbering() -->
 								<span data-bind='html: ($parentContext.$index() * $parents[1].columns() + $index()+1) + "."'></span>
