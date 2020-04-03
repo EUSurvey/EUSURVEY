@@ -493,9 +493,12 @@ function initModals(item)
 						$(this).addClass("disabled");
 					}
 				});
+				
+				$('#ResultFilterLimit').show();
 			} else {
 				$(row).find("input").removeAttr("disabled");
 				$(row).find("a").removeClass("disabled");
+				$('#ResultFilterLimit').hide();
 			}
 		}
 	}
