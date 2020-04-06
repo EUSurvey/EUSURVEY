@@ -824,25 +824,15 @@
 				<table class="table table-bordered">
 					<tr>
 						<td>
-							<div style="float: left"><spring:message code="label.Publish" /></div>
-							<div style="float: right;">		
-								<div class="onoffswitch">
-									<input type="checkbox" data-bind="checked: publishResults" class="onoffswitch-checkbox" id="myonoffswitchpublishresults" />
-									 <label class="onoffswitch-label" for="myonoffswitchpublishresults">
-								        <span class="onoffswitch-inner"></span>
-								        <span class="onoffswitch-switch"></span>
-								    </label>
-								</div>
+							<div style="float: left">
+								<spring:message code="label.Publish" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.Publish" /></div>	
 							</div>
-						</td>
-					</tr>
-					<tr class="subelement" data-bind="visible: publishResults">
-						<td>
-							<div style="float: left"><spring:message code="label.Features" /></div>
 							<div style="float: right; min-width: 150px;">	
-								<form:checkbox id="showContent" path="survey.publication.showContent" class="check" /><spring:message code="label.Answers" /><br />
+								<form:checkbox id="showContent" path="survey.publication.showContent" class="check" /><spring:message code="label.Contributions" /><br />
 								<form:checkbox id="showStatistics" path="survey.publication.showStatistics" class="check" /><spring:message code="label.Statistics" /><br />
-								<form:checkbox path="survey.publication.showSearch" class="check" /><spring:message code="label.Search" /><br />
+								<form:checkbox path="survey.publication.showSearch" class="check hidden" /><!--<spring:message code="label.Search" /><br />-->
 								<c:choose>
 									<c:when test="${!form.survey.hasUploadElement}">
 										<form:checkbox path="survey.publication.showUploadedDocuments" class="check hideme" />										
@@ -854,7 +844,7 @@
 							</div>
 						</td> 
 					</tr>
-					<tr class="subelement" data-bind="visible: publishResults, attr:{class: selectedQuestions() ? 'subelement nobottomborder' : 'subelement'}">
+					<tr data-bind="attr:{class: selectedQuestions() ? 'nobottomborder' : ''}">
 						<td>
 							<div style="float: left">
 								<spring:message code="label.QuestionsToPublish" />
@@ -867,7 +857,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr class="subelement noborder" data-bind="visible: selectedQuestions">
+					<tr class="noborder" data-bind="visible: selectedQuestions">
 						<td>
 							<div style="float: right; max-width: 600px;">	
 								<div id="questionsToPublishDiv" class="well scrollablediv">
@@ -889,7 +879,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr class="subelement" data-bind="visible: publishResults, attr:{class: selectedContributions() ? 'subelement nobottomborder' : 'subelement'}">
+					<tr data-bind="attr:{class: selectedContributions() ? 'nobottomborder' : ''}">
 						<td>
 							<div style="float: left">
 								<spring:message code="label.Contributions" />
@@ -902,7 +892,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr class="subelement noborder" data-bind="visible: selectedContributions">
+					<tr class="noborder" data-bind="visible: selectedContributions">
 						<td>
 							<div style="float: right; max-width: 600px;">	
 								<div class="scrollablediv" id="contributionsToPublishDiv">
@@ -924,7 +914,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr class="subelement" data-bind="visible: publishResults">
+					<tr>
 						<td>
 							<div style="float: left"><spring:message code="label.Password" /></div>
 							<div style="float: right">
