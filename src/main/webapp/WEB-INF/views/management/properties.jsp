@@ -552,17 +552,17 @@
 					<tr>
 						<td>
 							<div style="float: left">
-								<spring:message code="form.Privacy.Identified" />
+								<spring:message code="label.AnonymousSurveyMode" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 							</div>						
 							<div style="float: right">					
 								<div class="onoffswitch">
 									<c:choose>
 										<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
-											<input type="checkbox" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
+											<input type="checkbox" checked="checked" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
 										</c:when>
 										<c:otherwise>
-											<input type="checkbox" checked="checked" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
+											<input type="checkbox" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
 										</c:otherwise>
 									</c:choose>		
 									 <label class="onoffswitch-label" for="myonoffswitchprivacy">
@@ -572,7 +572,7 @@
 								</div>									
 							</div>
 							<div style="clear: both"></div>
-							<div class="help hideme"><spring:message code="info.Privacy" /></div>
+							<div class="help hideme"><spring:message code="info.AnonymousSurveyMode" /></div>
 						</td>
 					</tr>
 					<tr>
@@ -1198,7 +1198,7 @@
 			if ($('#myonoffswitchsecured').is(":checked")) {
 				sec = "secured";
 			}				
-			if (!$('#myonoffswitchprivacy').is(":checked")) {
+			if ($('#myonoffswitchprivacy').is(":checked")) {
 				sec += "anonymous";
 			}				
 			$("#survey-security").val(sec);
