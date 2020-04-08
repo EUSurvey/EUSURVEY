@@ -1266,7 +1266,9 @@ public class ManagementController extends BasicController {
 		if (!Tools.isEqual(survey.getShowTotalScore(),uploadedSurvey.getShowTotalScore())) hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowQuizIcons(),uploadedSurvey.getShowQuizIcons())) hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getIsUseMaxNumberContribution(),uploadedSurvey.getIsUseMaxNumberContribution())) hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getIsUseMaxNumberContributionLink(),uploadedSurvey.getIsUseMaxNumberContributionLink())) hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getMaxNumberContributionText(),uploadedSurvey.getMaxNumberContributionText())) hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getMaxNumberContributionLink(),uploadedSurvey.getMaxNumberContributionLink())) hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getMaxNumberContribution(),uploadedSurvey.getMaxNumberContribution())) hasPendingChanges = true;
 		
 		if (!uploadedSurvey.getShowTotalScore())
@@ -1569,7 +1571,9 @@ public class ManagementController extends BasicController {
 			survey.setConfirmationPage(Tools.filterHTML(uploadedSurvey.getConfirmationPage()));
 			survey.setEscapePage(Tools.filterHTML(uploadedSurvey.getEscapePage()));
 			survey.setIsUseMaxNumberContribution(uploadedSurvey.getIsUseMaxNumberContribution());
+			survey.setIsUseMaxNumberContributionLink(uploadedSurvey.getIsUseMaxNumberContributionLink());
 			survey.setMaxNumberContributionText(Tools.filterHTML(uploadedSurvey.getMaxNumberContributionText()));
+			survey.setMaxNumberContributionLink(Tools.filterHTML(uploadedSurvey.getMaxNumberContributionLink()));
 			survey.setMaxNumberContribution(uploadedSurvey.getMaxNumberContribution());
 			
 			if (uploadedSurvey.getCaptcha() != survey.getCaptcha())
