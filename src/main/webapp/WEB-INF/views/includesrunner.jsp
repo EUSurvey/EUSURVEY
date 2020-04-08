@@ -61,7 +61,7 @@
 <meta itemprop="image" content="${contextpath}/resources/images/favicon5.ico" />
 <link rel="shortcut icon" href="${contextpath}/resources/images/favicon5.ico" type="image/x-icon"></link>
 
-<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="version.txt" %>'></script>
+<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="version.txt" %>'></script>
 <script type="text/javascript" src="${contextpath}/resources/js/jquery-1.12.3.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/jquery-ui.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/spin.min.js?version=<%@include file="version.txt" %>"></script>
