@@ -73,7 +73,7 @@ public class Survey implements java.io.Serializable {
 	public final static String ESCAPETEXT = "This survey has not yet been published or has already been unpublished in the meantime.";
 	public final static String RESULTSMESSAGETEXT = "Thank you for your contribution";
 
-	public final static String MAXNUMBEROFRESULTSTEXT = "This survey has been closed due to the maximum number of contributions reached";
+	public final static String MAXNUMBEROFRESULTSTEXT = "This survey has been closed due to the maximum number of contributions reached.";
 
 	private Integer id;
 	private String uniqueId;
@@ -174,6 +174,8 @@ public class Survey implements java.io.Serializable {
 	private Boolean isUseMaxNumberContribution = false;
 	private String maxNumberContributionText = MAXNUMBEROFRESULTSTEXT;
 	private Long maxNumberContribution = 0L;
+	private Boolean isUseMaxNumberContributionLink = false;
+	private String maxNumberContributionLink = "";
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1491,8 +1493,10 @@ public class Survey implements java.io.Serializable {
 		copy.isOPC = isOPC;
 		copy.setAllowedContributionsPerUser(allowedContributionsPerUser);
 		copy.setIsUseMaxNumberContribution(isUseMaxNumberContribution);
+		copy.setIsUseMaxNumberContributionLink(isUseMaxNumberContributionLink);
 		copy.setMaxNumberContribution(maxNumberContribution);
 		copy.setMaxNumberContributionText(Tools.filterHTML(maxNumberContributionText));
+		copy.setMaxNumberContributionLink(Tools.filterHTML(maxNumberContributionLink));
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -2140,6 +2144,15 @@ public class Survey implements java.io.Serializable {
 		this.isUseMaxNumberContribution = useMaxNumberContribution != null ? useMaxNumberContribution : false;
 	}
 
+	@Column(name = "ISUSEMAXNUMBERCONTRIBUTIONLINK")
+	public Boolean getIsUseMaxNumberContributionLink() {
+		return this.isUseMaxNumberContributionLink != null ? this.isUseMaxNumberContributionLink : false;
+	}
+
+	public void setIsUseMaxNumberContributionLink(Boolean useMaxNumberContributionLink) {
+		this.isUseMaxNumberContributionLink = useMaxNumberContributionLink != null ? useMaxNumberContributionLink : false;
+	}
+
 	@Column(name = "MAXNUMBERCONTRIBUTIONTEXT", length = 255)
 	public String getMaxNumberContributionText() {
 		return this.maxNumberContributionText != null && this.maxNumberContributionText.length() > 0 ? this.maxNumberContributionText : MAXNUMBEROFRESULTSTEXT;
@@ -2148,6 +2161,16 @@ public class Survey implements java.io.Serializable {
 	public void setMaxNumberContributionText(String maxNumberContributionText) {
 		this.maxNumberContributionText = maxNumberContributionText != null ? Tools.filterHTML(maxNumberContributionText)
 				: MAXNUMBEROFRESULTSTEXT;
+	}
+	
+	@Column(name = "MAXNUMBERCONTRIBUTIONLINK", length = 255)
+	public String getMaxNumberContributionLink() {
+		return this.maxNumberContributionLink != null && this.maxNumberContributionLink.length() > 0 ? this.maxNumberContributionLink : "";
+	}
+
+	public void setMaxNumberContributionLink(String maxNumberContributionLink) {
+		this.maxNumberContributionLink = maxNumberContributionLink != null ? Tools.filterHTML(maxNumberContributionLink)
+				: "";
 	}
 
 	@Column(name = "MAXNUMBERCONTRIBUTION")

@@ -14,7 +14,7 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/spectrum.js?version=<%@include file="../version.txt" %>"></script>
 	<link href="${contextpath}/resources/css/spectrum.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 	<script type="text/javascript" src="${contextpath}/resources/js/moment.js?version=<%@include file="../version.txt" %>"></script>
-	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
+	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="../version.txt" %>'></script>
   	<script type="text/javascript" src="${contextpath}/resources/js/jquery.textarea-expander.js?version=<%@include file="../version.txt" %>"></script>
   	<script type="text/javascript" src="${contextpath}/resources/js/edit.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/edit_actions.js?version=<%@include file="../version.txt" %>"></script>
@@ -129,8 +129,7 @@
 					
 					</div>
 				<!-- /ko -->
-				
-				<!-- /ko -->				
+		
 			</div>
 			<!-- /ko -->	
 		</div>

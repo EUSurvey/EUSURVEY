@@ -2687,9 +2687,15 @@ public class SurveyService extends BasicService {
 			if (!Tools.isEqual(draft.getIsUseMaxNumberContribution(),published.getIsUseMaxNumberContribution()))
 				hasPendingChanges = true;
 			
+			if (!Tools.isEqual(draft.getIsUseMaxNumberContributionLink(),published.getIsUseMaxNumberContributionLink()))
+				hasPendingChanges = true;
+			
 			if (!Tools.isEqual(draft.getMaxNumberContributionText(),published.getMaxNumberContributionText()))
 				hasPendingChanges = true;
 
+			if (!Tools.isEqual(draft.getMaxNumberContributionLink(),published.getMaxNumberContributionLink()))
+				hasPendingChanges = true;
+			
 			if (!Tools.isEqual(draft.getMaxNumberContribution(),published.getMaxNumberContribution()))
 				hasPendingChanges = true;
 

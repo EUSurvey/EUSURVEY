@@ -25,6 +25,7 @@
 			this.opc = ko.observable(${form.survey.isOPC});
 			this.multiPaging = ko.observable(${form.survey.multiPaging});
 			this.isUseMaxNumberContribution = ko.observable(${form.survey.isUseMaxNumberContribution});
+			this.isUseMaxNumberContributionLink = ko.observable(${form.survey.isUseMaxNumberContributionLink});
 			
 			this.addLinksRow = function()
 			{

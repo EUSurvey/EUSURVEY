@@ -980,6 +980,11 @@ public class RunnerController extends BasicController {
 			if (escapeOrMaxReachedAnswers) {
 				model.addObject("text", survey.getEscapePage());
 			} else {
+				
+				if (survey.getIsUseMaxNumberContributionLink() && survey.getMaxNumberContributionLink() != null && survey.getMaxNumberContributionLink().length() > 0) {
+					return new ModelAndView("redirect:" + survey.getMaxNumberContributionLink());
+				} 
+				
 				model.addObject("text", survey.getMaxNumberContributionText());
 			}
 			

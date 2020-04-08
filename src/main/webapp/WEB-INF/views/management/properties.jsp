@@ -10,7 +10,7 @@
 	<%@ include file="../includes.jsp" %>	
 	<link href="${contextpath}/resources/css/fileuploader.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="${contextpath}/resources/js/fileuploader.js?version=<%@include file="../version.txt" %>"></script>
-	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
+	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="../version.txt" %>'></script>
 	
 	<jsp:include page="propertiesHead.jsp" />
 </head>
@@ -324,11 +324,22 @@
 						<td>
 							<div style="float: left; max-width: 500px;">
 								<spring:message code="label.MaxNumberContributionText" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.MaxNumberContributionText" /></div>
 							</div>
 							<div style="float: right; text-align: right">
-								<div class="preview">${form.survey.maxNumberContributionText} <a class="iconbutton" onclick="$('#tinymcelimit').show();$(this).closest('.preview').hide()" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil"></span></a></div>
-								<div id="tinymcelimit" style="display: none">
-									<form:textarea maxlength="255" class="tinymcealign required xhtml max255" id="edit-survey-max-result-page" path="survey.maxNumberContributionText"></form:textarea>
+								<form:radiobutton data-bind="click: function() {isUseMaxNumberContributionLink(false); return true;}" class="check" path="survey.isUseMaxNumberContributionLink" value="false"/><spring:message code="label.Text" />&nbsp;		
+								<form:radiobutton data-bind="click: function() {isUseMaxNumberContributionLink(true); return true;}" class="check" path="survey.isUseMaxNumberContributionLink" value="true"/><spring:message code="label.Link" />
+				
+								<div data-bind="hidden: isUseMaxNumberContributionLink">						
+									<div class="preview">${form.survey.maxNumberContributionText} <a class="iconbutton" onclick="$('#tinymcelimit').show();$(this).closest('.preview').hide()" style="margin-left: 10px;"><span class="glyphicon glyphicon-pencil"></span></a></div>
+									<div id="tinymcelimit" style="display: none">
+										<form:textarea maxlength="255" class="tinymcealign required xhtml max255" id="edit-survey-max-result-page" path="survey.maxNumberContributionText"></form:textarea>
+									</div>
+								</div>	
+								
+								<div data-bind="visible: isUseMaxNumberContributionLink">
+									<form:input htmlEscape="false" path="survey.maxNumberContributionLink" type="text" class="form-control" style="display: inline-block" />
 								</div>
 							</div>
 						</td>
