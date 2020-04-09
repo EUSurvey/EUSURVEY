@@ -11,8 +11,8 @@
 	</c:otherwise>
 </c:choose>
 	<c:if test="${publication == null || publication.isShowSearch()}">
-		<div id="ResultFilterLimit" style="color: #f00; font-size:90%; text-align: center; margin-bottom: 10px;">
-			<span class="glyphicon glyphicon-info-sign" style="font-size: 125%"></span>
+		<div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
+			<span class="glyphicon glyphicon-info-sign" style="font-size: 125%; vertical-align: top;"></span>
 			<spring:message code="info.ResultFilterLimit" />
 		</div>
 	</c:if>
