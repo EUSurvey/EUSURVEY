@@ -2759,6 +2759,9 @@ public class ManagementController extends BasicController {
 		
 		if (request != null && request.getParameter("results-source") != null) active = request.getParameter("results-source").equalsIgnoreCase("active");
 		
+		boolean showAssignedValues = false;
+		if (request != null && request.getParameter("dialog-show-assigned-values") != null) showAssignedValues = request.getParameter("dialog-show-assigned-values").equalsIgnoreCase("true");
+		
 		boolean allanswers = request != null && request.getParameter("results-source") != null && request.getParameter("results-source").equalsIgnoreCase("allanswers");
 		
 		if (pallanswers) allanswers = true;
@@ -2935,6 +2938,7 @@ public class ManagementController extends BasicController {
 		{
 			request.getSession().setAttribute("results-source-active", active);
 			request.getSession().setAttribute("results-source-allanswers", allanswers);
+			request.getSession().setAttribute("resultsShowAssignedValues", showAssignedValues);
 		}
 		
 		if (multidelete)
@@ -3077,12 +3081,12 @@ public class ManagementController extends BasicController {
 				result.addObject("deletedAnswers", deletedAnswers.size());
 			}
 			
-			if (request.getParameter("show-delete-checkboxes") != null && request.getParameter("show-delete-checkboxes").equalsIgnoreCase("true"))
-			{
-				result.addObject("showdeletecheckboxes", true);
-			} else {
-				result.addObject("showdeletecheckboxes", false);
-			}
+//			if (request.getParameter("show-delete-checkboxes") != null && request.getParameter("show-delete-checkboxes").equalsIgnoreCase("true"))
+//			{
+//				result.addObject("showdeletecheckboxes", true);
+//			} else {
+//				result.addObject("showdeletecheckboxes", false);
+//			}
 		}
 		
 		String resultType = null;

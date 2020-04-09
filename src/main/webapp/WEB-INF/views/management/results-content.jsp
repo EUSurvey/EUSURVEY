@@ -7,14 +7,14 @@
 		<div id="results-table" style="margin-top: 60px; min-height: 400px;">		
 	</c:when>
 	<c:otherwise>
-		<div id="results-table" style="margin-top: 100px;">		
+		<div id="results-table" style="margin-top: 0px;">		
 	</c:otherwise>
 </c:choose>
 	<c:if test="${publication == null || publication.isShowSearch()}">
-	<div id="ResultFilterLimit" style="color: #777; text-align: center; margin-bottom: 10px;">
-		<span class="glyphicon glyphicon-info-sign"></span>
-		<spring:message code="info.ResultFilterLimit" />
-	</div>
+		<div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
+			<span class="glyphicon glyphicon-info-sign" style="font-size: 125%; vertical-align: top;"></span>
+			<spring:message code="info.ResultFilterLimit" />
+		</div>
 	</c:if>
 	
 	<span id="lastupdate"></span>
@@ -25,7 +25,7 @@
 			<thead style="background-position: initial initial; background-repeat: initial initial;">
 				<tr>
 					<c:if test="${publication == null}">
-						<th class="checkDelete"><input name="check-all-delete" id="check-all-delete" class="check" type="checkbox" onclick="checkAllDelete()" /></th>
+						<th class="checkDelete">&nbsp;</th>
 						<th class="topaligned" style="width: 150px"><div style="width: 133px"><spring:message code="label.Actions" /></div></th>
 					</c:if>
 					<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
@@ -92,8 +92,10 @@
 				<c:if test="${publication == null || publication.isShowSearch()}">
 					<tr class="table-styled-filter">
 						<c:if test="${publication == null}">
-							<th class="checkDelete">&nbsp;</th>
-							<th>&nbsp;</th>
+							<th class="checkDelete"><input name="check-all-delete" id="check-all-delete" class="check checkDelete" style="margin-bottom: 8px !important;" type="checkbox" onclick="checkAllDelete()" /></th>
+							<th>
+								<a data-toggle="tooltip" title="<spring:message code="label.DeleteAll" />" class="iconbutton disabled" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-remove"></span></a>
+							</th>
 						</c:if>
 						<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
 							<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
