@@ -51,7 +51,7 @@ public class SurveyUpdater implements Runnable {
 	@Override
 	public void run() {
 		try {
-			logger.debug("SurveyUpdater started");
+			logger.info("SurveyUpdater started");
 			
 			//publish
 			List<Survey> surveys = surveyService.getSurveysToStart();
@@ -76,7 +76,9 @@ public class SurveyUpdater implements Runnable {
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}				
-			}			
+			}
+			
+			logger.info("Starting completed, starting notifications");
 			
 			//notify
 			try {
@@ -135,6 +137,8 @@ public class SurveyUpdater implements Runnable {
 			{
 				logger.error(e.getLocalizedMessage(), e);
 			}
+			
+			logger.info("Notifications completed, starting unpublishing");
 			
 			//unpublish
 			surveys = surveyService.getSurveysToStop();

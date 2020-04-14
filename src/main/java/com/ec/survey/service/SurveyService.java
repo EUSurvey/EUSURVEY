@@ -2574,11 +2574,11 @@ public class SurveyService extends BasicService {
 				"FROM Survey s WHERE s.isDraft = true AND s.notified = false AND s.automaticPublishing = true AND s.end != null AND s.notificationValue != null AND s.notificationUnit != null AND s.isActive = true");
 		@SuppressWarnings("unchecked")
 		List<Survey> surveys = query.list();
-		List<Survey> result = new ArrayList<>();
 
 		Calendar today = Calendar.getInstance();
 		today.setTime(new Date());
 
+		List<Survey> result = new ArrayList<>();
 		for (Survey survey : surveys) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(survey.getEnd());
@@ -2604,6 +2604,7 @@ public class SurveyService extends BasicService {
 
 			// check if it is time to notify
 			if (today.after(cal)) {
+				logger.info("found survey to notify: " + survey.getUniqueId() + " ending at " + survey.getEnd() + " " + survey.getNotificationValue() + " " + survey.getNotificationUnit());
 				result.add(survey);
 			}
 		}
