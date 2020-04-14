@@ -3,6 +3,11 @@ body {
 	background-color: #fff;
 }
 
+.myleft { text-align:left; } 
+.mycenter { text-align:center; } 
+.myright { text-align:right; } 
+.myfull { text-align:justify; }
+
 .survey-element {
 	margin: 5px; 
 	margin-top: 25px;

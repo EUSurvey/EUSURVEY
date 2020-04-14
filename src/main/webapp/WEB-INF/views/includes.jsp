@@ -83,7 +83,7 @@
 			   anchor_top: false,
 			   anchor_bottom: false,
 			   branding: false,
-			   valid_classes: 'y',
+			   valid_classes: 'mycenter myleft myright myfull',
 			   invalid_elements : 'html,head,body'
 
 		};
@@ -262,9 +262,8 @@
 		   anchor_top: false,
 		   anchor_bottom: false,
 		   branding: false,
-		   valid_classes: 'y',
+		   valid_classes: 'mycenter myleft myright myfull',
 		   invalid_elements : 'html,head,body'
-
 		};
 	
 	var myConfigSetting2 = {
