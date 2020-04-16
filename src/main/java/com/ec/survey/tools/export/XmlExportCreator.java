@@ -795,8 +795,17 @@ public class XmlExportCreator extends ExportCreator {
 							
 								String sanswers = row.get(answerrowcounter++);
 								
-								if (sanswers != null) {								
-									String[] answers = sanswers.split(";");
+								if (sanswers != null) {
+									
+									String[] answers;
+									if (question instanceof FreeTextQuestion)
+									{
+										answers = new String[1];
+										answers[0] = sanswers;
+									} else {
+										answers = sanswers.split(";");
+									}
+									
 									for (String answer : answers)
 									{
 										if (answer.length() > 0) {
