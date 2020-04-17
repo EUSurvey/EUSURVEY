@@ -14,7 +14,7 @@
 	
 	<jsp:include page="propertiesHead.jsp" />
 </head>
-<body data-spy="scroll" data-target="#navbar-example" data-offset="300" >
+<body data-spy="scroll" data-target="#navbar-example" data-offset="400" >
 <div class="page-wrap">
 
 	<jsp:include page="../header.jsp" />
@@ -41,15 +41,14 @@
 						      <li><a href="#appearance"><spring:message code="label.Appearance" /></a></li>
 						      <li><a href="#publishresults"><spring:message code="label.PublishResults" /></a></li>
 						      <li><a href="#specialpages"><spring:message code="label.SpecialPages" /></a></li>
-						      <li><a href="#quiz"><spring:message code="label.Quiz" /></a></li>
-						      <li><a href="#opc">BRP</a></li>
+						      <li><a href="#type"><spring:message code="label.Type" /></a></li>						      
 						    </ul>			
 						</nav>				
 					</div>
 				</div>
 			</div>
 	
-			<div id="basic">
+			<div id="basic" class="propertiesbox">
 				<label><spring:message code="label.Basic" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -124,7 +123,7 @@
 				</table>
 			</div>
 			
-			<div id="advanced">
+			<div id="advanced" class="propertiesbox">
 				<label><spring:message code="label.Advanced" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -440,7 +439,7 @@
 				</table>
 			</div>		
 			
-			<div id="security">
+			<div id="security" class="propertiesbox">
 				<label><spring:message code="label.Security" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -675,7 +674,7 @@
 				</table>
 			</div>
 			
-			<div id="appearance">
+			<div id="appearance" class="propertiesbox">
 				<label><spring:message code="label.Appearance" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -830,7 +829,7 @@
 				</table>
 			</div>
 			
-			<div id="publishresults">
+			<div id="publishresults" class="propertiesbox">
 				<label><spring:message code="label.PublishResults" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -947,7 +946,7 @@
 				</table>
 			</div>
 			
-			<div id="specialpages">
+			<div id="specialpages" class="propertiesbox">
 				<label><spring:message code="label.SpecialPages" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -1035,9 +1034,23 @@
 				</table>
 			</div>
 			
-			<div id="quiz">
-				<label><spring:message code="label.Quiz" /></label>
+			<div id="type" class="propertiesbox" style="min-height: 300px">
+				<label><spring:message code="label.Type" /></label>
 				<table class="table table-bordered">
+					<tr data-bind="visible: opc">
+						<td>
+							<div style="float: left"><spring:message code="label.EnableOPC" /></div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.isOPC" class="onoffswitch-checkbox" id="myonoffswitchopc" />
+									 <label class="onoffswitch-label" for="myonoffswitchopc">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</div>
+						</td>
+					</tr>
 					<tr>
 						<td>
 							<div style="float: left"><spring:message code="label.EnableQuiz" /></div>
@@ -1157,28 +1170,8 @@
 							</div>
 						</td> 
 					</tr>
-				</table>
-			</div>
-			
-			<div id="opc" data-bind="visible: opc">				
-				<label><spring:message code="label.OPC" /></label>
-				<table class="table table-bordered">
-					<tr>
-						<td>
-							<div style="float: left"><spring:message code="label.EnableOPC" /></div>
-							<div style="float: right">
-								<div class="onoffswitch">
-									<form:checkbox path="survey.isOPC" class="onoffswitch-checkbox" id="myonoffswitchopc" />
-									 <label class="onoffswitch-label" for="myonoffswitchopc">
-								        <span class="onoffswitch-inner"></span>
-								        <span class="onoffswitch-switch"></span>
-								    </label>
-								</div>
-							</div>
-						</td>
-					</tr>
-				</table>
-			</div>
+				</table>	
+			</div>			
 			
 		</form:form>
 	</div>
