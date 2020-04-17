@@ -219,6 +219,7 @@ public class ConversionTools {
 	
 	public static String removeHTMLNoEscape(String htmlString)
 	{
+		if (htmlString == null) return "";
 		return Jsoup.parse(htmlString).text().trim();
 	}
 	
