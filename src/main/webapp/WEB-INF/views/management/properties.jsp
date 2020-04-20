@@ -14,14 +14,14 @@
 	
 	<jsp:include page="propertiesHead.jsp" />
 </head>
-<body data-spy="scroll" data-target="#navbar-example" data-offset="300" >
+<body data-spy="scroll" data-target="#navbar-example" data-offset="400">
 <div class="page-wrap">
 
 	<jsp:include page="../header.jsp" />
 	<jsp:include page="../menu.jsp" />
 	<jsp:include page="formmenu.jsp" />
 	
-	<div id="propertiespage" class="fullpageform" style="padding-top:190px; padding-bottom: 50px;">		
+	<div id="propertiespage" class="fullpageform" style="padding-top:190px;">		
 		<form:form id="save-form" style="width: 730px; margin-left: auto; margin-right: auto;" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/properties?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data" modelAttribute="form">
 			<form:hidden path="survey.id" />
 			<input type="hidden" id="survey-security" name="survey.security" value="" />
@@ -41,15 +41,15 @@
 						      <li><a href="#appearance"><spring:message code="label.Appearance" /></a></li>
 						      <li><a href="#publishresults"><spring:message code="label.PublishResults" /></a></li>
 						      <li><a href="#specialpages"><spring:message code="label.SpecialPages" /></a></li>
-						      <li><a href="#quiz"><spring:message code="label.Quiz" /></a></li>
-						      <li><a href="#opc">BRP</a></li>
+						      <li><a href="#type"><spring:message code="label.Type" /></a></li>						      
 						    </ul>			
 						</nav>				
 					</div>
 				</div>
 			</div>
 	
-			<div id="basic">
+			<div class="propertiesbox">
+				<a class="anchor" id="basic"></a>
 				<label><spring:message code="label.Basic" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -124,7 +124,8 @@
 				</table>
 			</div>
 			
-			<div id="advanced">
+			<div class="propertiesbox">
+				<a class="anchor" id="advanced"></a>
 				<label><spring:message code="label.Advanced" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -440,7 +441,8 @@
 				</table>
 			</div>		
 			
-			<div id="security">
+			<div class="propertiesbox">
+				<a class="anchor" id="security"></a>
 				<label><spring:message code="label.Security" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -675,7 +677,8 @@
 				</table>
 			</div>
 			
-			<div id="appearance">
+			<div class="propertiesbox">
+				<a class="anchor" id="appearance"></a>
 				<label><spring:message code="label.Appearance" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -830,7 +833,8 @@
 				</table>
 			</div>
 			
-			<div id="publishresults">
+			<div class="propertiesbox">
+				<a class="anchor" id="publishresults"></a>
 				<label><spring:message code="label.PublishResults" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -947,7 +951,8 @@
 				</table>
 			</div>
 			
-			<div id="specialpages">
+			<div class="propertiesbox">
+				<a class="anchor" id="specialpages"></a>
 				<label><spring:message code="label.SpecialPages" /></label>
 				<table class="table table-bordered">
 					<tr>
@@ -1035,9 +1040,24 @@
 				</table>
 			</div>
 			
-			<div id="quiz">
-				<label><spring:message code="label.Quiz" /></label>
+			<div class="propertiesbox" style="min-height: 500px">
+				<a class="anchor" id="type"></a>
+				<label><spring:message code="label.Type" /></label>
 				<table class="table table-bordered">
+					<tr data-bind="visible: opc">
+						<td>
+							<div style="float: left"><spring:message code="label.EnableOPC" /></div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.isOPC" class="onoffswitch-checkbox" id="myonoffswitchopc" />
+									 <label class="onoffswitch-label" for="myonoffswitchopc">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</div>
+						</td>
+					</tr>
 					<tr>
 						<td>
 							<div style="float: left"><spring:message code="label.EnableQuiz" /></div>
@@ -1157,28 +1177,8 @@
 							</div>
 						</td> 
 					</tr>
-				</table>
-			</div>
-			
-			<div id="opc" data-bind="visible: opc">				
-				<label><spring:message code="label.OPC" /></label>
-				<table class="table table-bordered">
-					<tr>
-						<td>
-							<div style="float: left"><spring:message code="label.EnableOPC" /></div>
-							<div style="float: right">
-								<div class="onoffswitch">
-									<form:checkbox path="survey.isOPC" class="onoffswitch-checkbox" id="myonoffswitchopc" />
-									 <label class="onoffswitch-label" for="myonoffswitchopc">
-								        <span class="onoffswitch-inner"></span>
-								        <span class="onoffswitch-switch"></span>
-								    </label>
-								</div>
-							</div>
-						</td>
-					</tr>
-				</table>
-			</div>
+				</table>	
+			</div>			
 			
 		</form:form>
 	</div>

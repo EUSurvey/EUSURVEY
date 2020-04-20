@@ -510,5 +510,12 @@
 			font-weight: bold !important;
 		}
 		
+		.propertiesbox .anchor {
+			display: block;
+		    position: relative;
+		    top: 120px;
+		    visibility: hidden;
+		}
+		
 	</style>
 
