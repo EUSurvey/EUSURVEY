@@ -542,7 +542,7 @@ function initModals(item)
 			
 			if ($(cell).find(".btn-toolbar").length > 0)
 			{
-				$(cell).find(".btn-toolbar").first().prepend("<div class='filtertools' style='text-align: right; margin-top: 9px;'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
+				$(cell).find(".btn-toolbar").first().prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 				
 				$(cell).find(".datefilter").each(function(){
 					if ($(this).find(".hiddendate").length > 0 && $(this).find(".hiddendate").val().length > 0)
@@ -551,7 +551,7 @@ function initModals(item)
 					}						
 				});
 			} else if ($(cell).find(".dropdown-menu").length > 0) {
-				$(cell).prepend("<div class='filtertools' style='text-align: right; margin-top: 9px;'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
+				$(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 				
 				var counter = 0;
 				var first = allValues;
@@ -578,7 +578,7 @@ function initModals(item)
 				$(cell).find(".dropdown-toggle").html(first + "&nbsp;<span class='caret'></span>");		
 				$(cell).attr("title",all).attr("rel","tooltip");
 			} else if ($(cell).find(".overlaymenu").length > 0) {
-				$(cell).prepend("<div class='filtertools' style='text-align: right; margin-top: 9px;'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
+				$(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 								
 				var counter = 0;
 				var first = allValues;
@@ -608,13 +608,13 @@ function initModals(item)
 				//checkNoBreaks();
 				
 			} else {
-                $(cell).prepend("<div class='filtertools' style='text-align: right; margin-top: 9px;'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
+                $(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
             }
 		} else if ($(cell).find(".activityselect").length > 0) {
 			if ($(cell).find(".activityselect").first().val().length > 0)
 			{
 				if (background) $(cell).css("background-color","#FFE93A");
-	            $(cell).prepend("<div class='filtertools' style='text-align: right; margin-top: 9px;'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
+	            $(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 	        }
 		} else {
 			$(cell).find(".filtertools").remove();

@@ -40,8 +40,25 @@
 			overflow-y: scroll;
 		}
 		
+		.filtercell {
+			position: relative;
+		}
+		
+		.filterinfo {
+			position: absolute;
+			right: 5px;
+    		top: -30px;
+		}
+		
+		.white {
+			color: #fff !important;
+		}
+		
 	    .filtertools {
-			float: right;
+			position: absolute;
+			right: 12px;
+    		top: 18px;
+    		margin-top: 0;
 		}
 		
 		.cellcreated, .cellupdated {
@@ -60,6 +77,11 @@
 		
 		table.table-styled > thead > tr.table-styled-filter th {
 		    padding: 8px;
+		}
+		
+		.glyphicon-question-sign, .glyphicon-info-sign {
+			font-size: 22px;
+			vertical-align: bottom;
 		}
 	
 	</style>
@@ -730,7 +752,7 @@
 		
 		<div class="fixedtitleform" style="padding-left: 10px; padding-right: 10px; padding-bottom:7px; border-bottom: 0px solid #ddd;">
 					
-			<div style="width: 1100px; vertical-align: middle; margin-left: auto; margin-right: auto; margin-top: 10px;">		
+			<div style="vertical-align: middle; margin-left: auto; margin-right: auto; margin-top: 10px;">		
 				<div style="float: left; margin-top: 0px; margin-bottom: 0px;">		
 					<a id="results-table-link" class="btn btn-xs btn-primary" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
 					<a id="results-statistics-link" class="btn btn-default btn-xs" onclick="switchTo('statistics');"><img src="${contextpath}/resources/images/icons/24/percentage.png" /></a>
@@ -769,7 +791,7 @@
 					<!-- <a onclick="$(this).closest('form').submit()" class="btn btn-primary" style="margin-left: 30px"><spring:message code="label.Search" /></a>
 					<a id="resetbutton" onclick="$('#show-wait-image').modal('show');" class="btn btn-default" href="${contextpath}/${sessioninfo.shortname}/management/results?reset=true"><spring:message code="label.ResetFilter" /></a> -->
 				</div>
-				<div style="margin-top: 2px; float: right;">
+				<div style="margin-top: 2px; margin-right: 10px; float: right;">
 					<a class="btn btn-default" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><spring:message code="label.Settings" /></a>
 					
 					<c:choose>
