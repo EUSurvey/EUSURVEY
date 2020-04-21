@@ -12,7 +12,7 @@
 </c:choose>
 	<c:if test="${publication == null || publication.isShowSearch()}">
 		<div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
-			<span class="glyphicon glyphicon-info-sign" style="font-size: 125%; vertical-align: top;"></span>
+			<span class="glyphicon glyphicon-info-sign"></span>
 			<spring:message code="info.ResultFilterLimit" />
 		</div>
 	</c:if>
@@ -136,7 +136,7 @@
 												<c:forEach var="c" begin="1" end="${question.allColumns-1}"> 																
 													<th class="filtercell cell${question.id}-${r}-${c}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
 														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id.toString().concat("-").concat(r.toString()).concat("-").concat(c.toString()), question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text"  style="margin:0px;" name='filter${question.id}-${r}-${c}|${question.uniqueId}' />
-												          <a class="filterinfo" data-toggle="tooltip" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign black"></span></a>
+												          <a class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign white"></span></a>
 			                                        </th>										
 												</c:forEach>													
 											</c:forEach>
@@ -231,7 +231,7 @@
 													</c:when>
 													<c:otherwise>
 														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100"  style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
-												         <a class="filterinfo" data-toggle="tooltip" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign black"></span></a>
+												         <a class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign white"></span></a>
                                                    	</c:otherwise>
 												</c:choose>
 											</th>
@@ -534,6 +534,13 @@ var closeOverlayDivsEnabled = false;
 				    checkFilterCell($(this).closest('.filtercell'), false);
 					checkNoBreaks();
 				    event.stopPropagation();
+				});
+			 
+			 $('.filtercell input[type=text]').keypress(function(event){
+				    var keycode = (event.keyCode ? event.keyCode : event.which);
+				    if(keycode == '13'){
+				    	$('#resultsForm').submit();
+				    }
 				});
 			 
 			 $(".overlaymenu").bind('wheel mousewheel', function (e, delta) {

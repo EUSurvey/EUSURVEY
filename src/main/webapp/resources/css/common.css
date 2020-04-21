@@ -1488,8 +1488,9 @@ legend {
 
 #contentstable .headertitle {
 	width: 150px;
-	height: 100px;
+	/*height: 100px;*/
 	overflow: hidden;
+	padding-bottom: 10px;
 }
 
 #scrollarea {
@@ -1969,4 +1970,9 @@ a {
 
 input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="radio"].disabled, input[type="checkbox"].disabled, fieldset[disabled] input[type="radio"], fieldset[disabled] input[type="checkbox"] {
 	cursor: default !important;
+}
+
+.filtertools {
+	text-align: right;
+	margin-top: 9px;
 }
