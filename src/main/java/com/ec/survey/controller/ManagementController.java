@@ -2010,6 +2010,12 @@ public class ManagementController extends BasicController {
 				publishedSurvey.setDownloadContribution(survey.getDownloadContribution());
 				publishedSurvey.setPassword(survey.getPassword());
 				
+				publishedSurvey.setMaxNumberContribution(survey.getMaxNumberContribution());
+				publishedSurvey.setMaxNumberContributionLink(survey.getMaxNumberContributionLink());
+				publishedSurvey.setMaxNumberContributionText(survey.getMaxNumberContributionText());
+				publishedSurvey.setIsUseMaxNumberContribution(survey.getIsUseMaxNumberContribution());
+				publishedSurvey.setIsUseMaxNumberContributionLink(survey.getIsUseMaxNumberContributionLink());
+				
 				publishedSurvey.setEcasSecurity(survey.getEcasSecurity());
 				publishedSurvey.setEcasMode(survey.getEcasMode());
 				publishedSurvey.setAllowedContributionsPerUser(survey.getAllowedContributionsPerUser());
