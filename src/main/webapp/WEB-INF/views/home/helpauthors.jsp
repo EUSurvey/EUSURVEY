@@ -476,10 +476,10 @@
 	<p>Keep in mind that the target group of participants can display the survey easily if the font you used is installed in their browser. UTF-8 is the most common encoding for the HTML pages.<br>On the other hand, choosing not-supported fonts may affect the rendering of PDF export.</p>
 	<p>We recommend using the <b>supported character sets</b> listed below:</p>
 		<ul>
-			<li>Freesans <a href="https://circabc.europa.eu/d/a/workspace/SpacesStore/602784e1-bb06-4b0d-a474-eae77dbe2d11/EUSurvey-SupportedCharacterSet(freesans).txt" target="_blank">(https://circabc.europa.eu/d/a/workspace/SpacesStore/602784e1-bb06-4b0d-a474-eae77dbe2d11/EUSurvey-SupportedCharacterSet(freesans).txt)</a></li>
-			<li>Freemono <a href="https://circabc.europa.eu/d/a/workspace/SpacesStore/dfc640e9-56ac-4d25-8361-4b07dbbd0579/EUSurvey-SupportedCharacterSet(freemono).txt" target="_blank">(https://circabc.europa.eu/d/a/workspace/SpacesStore/dfc640e9-56ac-4d25-8361-4b07dbbd0579/EUSurvey-SupportedCharacterSet(freemono).txt)</a></li>
-			<li>Freeserif <a href="https://circabc.europa.eu/d/a/workspace/SpacesStore/5b98b11a-f306-4d97-aab3-ec1c7a24965f/EUSurvey-SupportedCharacterSet(freeserif).txt" target="_blank">(https://circabc.europa.eu/d/a/workspace/SpacesStore/5b98b11a-f306-4d97-aab3-ec1c7a24965f/EUSurvey-SupportedCharacterSet(freeserif).txt)</a></li>
-			<li>Commonly supported character-set <a href="https://circabc.europa.eu/d/a/workspace/SpacesStore/621396c0-92d3-49a3-acd0-546b0c1a170b/EUSurvey-SupportedCharacterSet(common).txt" target="_blank">(https://circabc.europa.eu/d/a/workspace/SpacesStore/621396c0-92d3-49a3-acd0-546b0c1a170b/EUSurvey-SupportedCharacterSet(common).txt)</a></li>
+			<li>Freesans <a href="https://circabc.europa.eu/sd/a/36f72861-fc6e-4fe1-87d6-0a8e1c6fa161/EUSurvey-SupportedCharacterSet(freesans).txt" target="_blank">(https://circabc.europa.eu/sd/a/36f72861-fc6e-4fe1-87d6-0a8e1c6fa161/EUSurvey-SupportedCharacterSet(freesans).txt)</a></li>
+			<li>Freemono <a href="https://circabc.europa.eu/sd/a/55ce0f35-b3cc-4712-80bf-af42800a278f/EUSurvey-SupportedCharacterSet(freemono).txt" target="_blank">(https://circabc.europa.eu/sd/a/55ce0f35-b3cc-4712-80bf-af42800a278f/EUSurvey-SupportedCharacterSet(freemono).txt)</a></li>
+			<li>Freeserif <a href="https://circabc.europa.eu/sd/a/29cd78bb-9eeb-40b1-a22f-b54700750537/EUSurvey-SupportedCharacterSet(freeserif).txt" target="_blank">(https://circabc.europa.eu/sd/a/29cd78bb-9eeb-40b1-a22f-b54700750537/EUSurvey-SupportedCharacterSet(freeserif).txt)</a></li>
+			<li>Commonly supported character-set <a href="https://circabc.europa.eu/sd/a/1eb30efd-e2d8-4c3b-9f55-533bb903f7d0/EUSurvey-SupportedCharacterSet(common).txt" target="_blank">(https://circabc.europa.eu/sd/a/1eb30efd-e2d8-4c3b-9f55-533bb903f7d0/EUSurvey-SupportedCharacterSet(common).txt)</a></li>
 		</ul>
 	<p><b>"Freesans" is the default font used</b></p>
 	<p>In case of doubt, run a PDF export of your final survey to check if your survey is rendered correctly in PDF. Beware however that some contributions may not to be rendered correctly in PDF. Your participants, indeed, are free to choose any font among those which are supported by the application. Even though the application is unable not render the characters they have used, these are saved correctly on the EUSurvey's database. Thus they can be exported from the results page.</p>
@@ -540,14 +540,14 @@
 	<p>EUSurvey can provide automatic translations of your questionnaire by using a <b>Machine Translation (MT)</b>. The application uses the MT@EC service, provided by the European Commission.</p>
 	<p>From the "Translations" page, there are several ways to request machine translations:</p>
 		<ul>
-			<li>When adding a new translation, tick the checkbox "Request Translation" (for a translation of your survey's pivot language)</li>
-			<li>Click the "Request Translation" button in the "Action" column (for a translation of your survey's pivot language)</li>
-			<li>Select all languages you want to be translated (including at least one complete translation). Then select ""Request Translation" from the select box below your translations and click "Go".</li>
+			<li>When adding a new translation, tick the checkbox "Request Machine Translation" (for a translation of your survey's pivot language)</li>
+			<li>Click the "Request Translations" button in the "Action" column (for a translation of your survey's pivot language)</li>
+			<li>Select all languages you want to be translated (including at least one complete translation). Then select ""Request Translations" from the select box below your translations and click "Ok".</li>
 		</ul>
 	<p>The status of the translations will change to "Requested", until they are finished. To see when the status has changed, check the "Translations" page.</p>
 	<p>Machine translations will behave like other translations you added manually, i.e. they will not be published automatically, and adding new elements to your survey will make them incomplete (to complete them, you'll have to request a new translation).</p>
 	<p><i>We cannot guarantee the quality of the resulting text or the delivery time for translations.</i></p>
-	<p><a href="https://mtatec.ec.testa.eu/mtatec/html/help_en.htm" target="_blank">Machine translation - Help</a> (EU staff only).</p>
+	<p><a href="https://webgate.ec.europa.eu/etranslation/help.html" target="_blank">Machine translation - Help</a> (EU staff only).</p>
 	<h2><a class="anchor" name="_Toc6-5"></a>Instructions for EU staff<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
 	<p>You are encouraged to contact DGT before you finalise your survey. Its Editing unit (email: DGT-EDIT) will check that your survey is clearly drafted and presented. For more info, see <a href="https://myintracomm.ec.europa.eu/serv/en/dgt/Pages/index.aspx" target="_blank">DGT's MyIntraComm pages</a>.</p>
 	<p>You can also get your survey translated into the official EU languages by DGT. First export it as an XML file and send it via Poetry with the requester code of the DG concerned. It should be a maximum of 15 000 characters, excl. spaces (Word count).</p>
