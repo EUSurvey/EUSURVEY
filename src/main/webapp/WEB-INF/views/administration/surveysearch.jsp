@@ -786,7 +786,7 @@
 		<form:form id="resultsForm" action="surveysearch" method="post" class="noautosubmitonclearfilter">
 		
 		<div class="fixedtitleform">
-			<div class="fixedtitleinner">
+			<div class="fixedtitleinner" style="height: 100px">
 								
 				<div id="action-bar" class="container action-bar" style="padding-top: 20px">
 					<div class="row">

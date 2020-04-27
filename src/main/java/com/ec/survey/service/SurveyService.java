@@ -10,6 +10,7 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.tools.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.plexus.util.FileUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -4371,6 +4372,25 @@ public class SurveyService extends BasicService {
 		String sql = "SELECT COUNT(DISTINCT SURVEY_UID) FROM SURVEYS WHERE ISDRAFT = " + (draftSurveys ? "1" : "0");
 		Query query = session.createSQLQuery(sql);
 		return ConversionTools.getValue(query.uniqueResult());
+	}
+	
+	@Transactional(readOnly = true)
+	public Pair<Date, Date> getFirstLastPublishDate(String surveyuid) {
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "SELECT MIN(SURVEY_CREATED), MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = :uid";
+		Query query = session.createSQLQuery(sql);
+		query.setString("uid", surveyuid);
+		
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
+		
+		for (Object o : res) {
+			Object[] a = (Object[]) o;
+			
+			return Pair.of((Date)a[0],(Date)a[1]);
+		}
+		
+		return null;
 	}
 
 	@Transactional
