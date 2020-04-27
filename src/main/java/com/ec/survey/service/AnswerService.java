@@ -1754,9 +1754,15 @@ public class AnswerService extends BasicService {
 
 		@SuppressWarnings("unchecked")
 		List<String> result = query.list();
-
-		if (result.size() > 0)
-			return result.get(0);
+		
+		for (String draftuid : result) {
+			Draft draft = getDraft(draftuid);			
+			
+			if (draft != null && !surveyService.answerSetExists(draft.getAnswerSet().getUniqueCode(), false, false))
+			{	
+				return draftuid;
+			}
+		}		
 
 		return null;
 	}
