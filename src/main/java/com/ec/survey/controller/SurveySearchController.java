@@ -39,10 +39,12 @@ import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.catalina.connector.ClientAbortException;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
@@ -277,6 +279,9 @@ public class SurveySearchController extends BasicController {
 			{
 				survey.setTitle(survey.cleanTitle());
 				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
+				Pair<Date, Date> dates = surveyService.getFirstLastPublishDate(survey.getUniqueId());
+				survey.setFirstPublished(dates.getLeft());
+				survey.setPublished(dates.getRight());
 			}
 			
 			return surveys;
@@ -382,6 +387,9 @@ public class SurveySearchController extends BasicController {
 				survey.setTitle(survey.cleanTitle());
 				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
 				survey.setNumberOfReports(surveyService.getAbuseReportsForSurvey(survey.getUniqueId()));
+				Pair<Date, Date> dates = surveyService.getFirstLastPublishDate(survey.getUniqueId());
+				survey.setFirstPublished(dates.getLeft());
+				survey.setPublished(dates.getRight());
 			}
 			
 			return surveys;
@@ -416,6 +424,9 @@ public class SurveySearchController extends BasicController {
 				survey.setTitle(survey.cleanTitle());
 				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
 				survey.setNumberOfReports(surveyService.getAbuseReportsForSurvey(survey.getUniqueId()));
+				Pair<Date, Date> dates = surveyService.getFirstLastPublishDate(survey.getUniqueId());
+				survey.setFirstPublished(dates.getLeft());
+				survey.setPublished(dates.getRight());
 			}
 			
 			return surveys;
