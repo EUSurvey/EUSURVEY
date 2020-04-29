@@ -65,8 +65,8 @@ public abstract class ExportCreator implements Runnable {
 	@Resource(name = "fileService")
 	protected FileService fileService;
 	
-	@Resource(name = "reportingService")
-	protected ReportingService reportingService;
+	@Resource(name = "reportingServiceProxy")
+	protected ReportingServiceProxy reportingService;
 	
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
