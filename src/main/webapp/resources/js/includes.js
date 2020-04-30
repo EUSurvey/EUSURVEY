@@ -1041,7 +1041,7 @@ function initModals(item)
 					if (typeof $("input[name='" + $(this).attr("name") + "']:checked").val() == 'undefined' && $(row).find(".validation-error").length == 0)
 					{
 						validationinfo += $(this).attr("name") + " (R) ";
-						$(row).find("td").first().append("<div class='validation-error'aria-live='polite'>" + requiredText + "</div>");
+						$(row).find("th").first().append("<div class='validation-error'aria-live='polite'>" + requiredText + "</div>");
 						result = false;
 					};
 				} else if ($(this).closest(".gallery-div").length > 0)
