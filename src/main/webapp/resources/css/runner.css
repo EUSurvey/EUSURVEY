@@ -228,6 +228,11 @@
 	color: #f00; position: absolute;
 }
 
+.matrix-header .validation-error {
+	position: relative;
+}
+
+
 select,
 textarea,
 input[type="text"],
