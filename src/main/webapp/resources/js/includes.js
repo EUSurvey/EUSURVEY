@@ -497,7 +497,7 @@ function initModals(item)
 				$('#ResultFilterLimit').show();
 			} else {
 				$(row).find("input").removeAttr("disabled");
-				$(row).find("a").removeClass("disabled");
+				$(row).find("a:not(#btnDeleteSelected)").removeClass("disabled");
 				$('#ResultFilterLimit').hide();
 			}
 		}

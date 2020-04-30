@@ -180,6 +180,11 @@
 		
 		function checkAndShowMultiDeleteDialog()
 		{
+			if ($('#btnDeleteSelected').hasClass('disabled'))
+			{
+				return;	
+			}
+			
 			var selected = $("input.checkDelete:checked").length;
 			if (selected > 0)
 			{
