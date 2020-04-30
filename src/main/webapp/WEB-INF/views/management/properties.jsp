@@ -1049,7 +1049,7 @@
 							<div style="float: left"><spring:message code="label.EnableOPC" /></div>
 							<div style="float: right">
 								<div class="onoffswitch">
-									<form:checkbox path="survey.isOPC" class="onoffswitch-checkbox" id="myonoffswitchopc" />
+									<form:checkbox onchange="if ($('#myonoffswitchopc').prop('checked') == false) {$('#BRPConfirmationDialog').modal('show')}" path="survey.isOPC" class="onoffswitch-checkbox" id="myonoffswitchopc" />
 									 <label class="onoffswitch-label" for="myonoffswitchopc">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
@@ -1058,7 +1058,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr>
+					<tr  data-bind="visible: !opc()">
 						<td>
 							<div style="float: left"><spring:message code="label.EnableQuiz" /></div>
 							<div style="float: right">
