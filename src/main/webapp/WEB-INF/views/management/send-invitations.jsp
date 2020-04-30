@@ -433,7 +433,7 @@
 						
 						<textarea id="text2default" style="display:none">
 							Note that this is a unique personal link.<br />
-							<b>Please do not share it.</b><br /><br /><br /><br />
+							<b>Please do not share it.</b><br /><br />
 							Best regards,<br />			
 							<esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML>
 						</textarea>
@@ -472,7 +472,7 @@
 								</c:when>
 								<c:otherwise>
 									Note that this is a unique personal link.<br />
-									<b>Please do not share it.</b><br /><br /><br /><br />
+									<b>Please do not share it.</b><br /><br />
 									Best regards,<br />			
 									<esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML>
 								</c:otherwise>
