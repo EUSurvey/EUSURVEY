@@ -84,6 +84,11 @@
 			} else {
 				checkPages();
 				readCookies();
+				
+				<c:if test="${form.validation != null && form.validation.size() > 0}">
+					goToFirstValidationError($("form"));
+				</c:if>
+								
 				$("#btnSubmit").removeClass("hidden");
 				$("#btnSaveDraft").removeClass("hidden");
 				$("#btnSaveDraftMobile").removeClass("hidden");
@@ -347,14 +352,6 @@
 		<c:if test="${message != null}">
 			<script type="text/javascript">
 				showError('<esapi:encodeForHTML>${message}</esapi:encodeForHTML>');
-			</script>
-		</c:if>
-	
-		<c:if test="${form.validation != null && form.validation.size() > 0}">
-			<script type="text/javascript">
-			$(function() {
-				goToFirstValidationError($("form"));
-			});
 			</script>
 		</c:if>
 	
