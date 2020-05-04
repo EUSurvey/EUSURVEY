@@ -934,7 +934,7 @@ function initModals(item)
 			//if survey has multi-tab mode enabled and parent section is not visible
 			if ($("#multipaging").length > 0 && $("#multipaging").val() == "true")
 			{
-				var section = $(this).closest("fieldset").siblings("fieldset").find(".sectionitem").last();
+				var section = $(this).closest("fieldset").prevAll("fieldset").find(".sectionitem").last();
 				if (section.length > 0)
 				{
 					if (section.hasClass("untriggered"))
