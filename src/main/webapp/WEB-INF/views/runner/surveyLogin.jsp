@@ -116,7 +116,7 @@
 			
 			<c:if test="${contact != null}">
 				<div style="margin-top: 40px; margin-bottom: 20px; text-align: center">
-					<a href="mailto:${contact}"><spring:message code="label.ContactSurveyOwner" /></a>
+					<a href="${contextpath}/runner/contactform/${shortname}"><spring:message code="label.ContactSurveyOwner" /></a>
 				</div>
 			</c:if>		
 		</div>

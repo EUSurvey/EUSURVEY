@@ -24,6 +24,7 @@ import org.springframework.mobile.device.Device;
 import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -750,6 +751,101 @@ public class RunnerController extends BasicController {
 
 		return null;
 	}
+	
+	@RequestMapping(value = "/contactform/{uidorshortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView contactform(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException {
+		Survey survey = surveyService.getSurvey(uidorshortname, false, true, false, false, null, true, true);
+		
+		if (survey == null)
+		{
+			survey = surveyService.getSurvey(uidorshortname, true, true, false, false, null, true, true);
+		}
+		
+		if (survey == null || !survey.getContact().startsWith("form:"))
+		{
+			throw new InvalidURLException();
+		}
+		
+		return new ModelAndView("runner/contactForm", "survey", survey);
+	}
+	
+	@RequestMapping(value = "/contactform/{uidorshortname}", method = {RequestMethod.POST})
+	public String contactformPOST(@PathVariable String uidorshortname, HttpServletRequest request, ModelMap model) throws NumberFormatException, Exception {
+		Survey survey = surveyService.getSurvey(uidorshortname, false, true, false, false, null, true, true);
+		
+		if (survey == null)
+		{
+			survey = surveyService.getSurvey(uidorshortname, true, true, false, false, null, true, true);
+		}
+		
+		if (survey == null || !survey.getContact().startsWith("form:"))
+		{
+			throw new InvalidURLException();
+		}
+		
+		if (!checkCaptcha(request))
+		{
+			model.put("wrongcaptcha", true);
+			return "runner/contactForm";
+		}		
+		
+		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true);
+		String name = ConversionTools.removeHTML(request.getParameter("name"), true);
+		String email = ConversionTools.removeHTML(request.getParameter("email"), true);
+		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true);
+		String message = ConversionTools.removeHTML(request.getParameter("message"), true);
+		String[] uploadedfiles = request.getParameterValues("uploadedfile");				
+		
+		StringBuilder body = new StringBuilder();
+		body.append("You have received a message from the Contact Form for the survey below<br/><hr /><br />");
+		
+		body.append("<table>");
+		
+		String link = serverPrefix + "runner/" + survey.getShortname();		
+		
+		body.append("<tr><td>Published survey link:</td><td><a href='").append(link).append("'>").append(link).append("</a></td></tr>");
+		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		
+		body.append("<tr><td>Alias:</td><td>").append(survey.getShortname()).append("</td></tr>");
+		body.append("<tr><td>Name:</td><td>").append(survey.cleanTitle()).append("</td></tr>");
+		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		body.append("<tr><td colspan='2'><hr /></td></tr>");
+		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		
+		body.append("<tr><td>Contact Reason:</td><td>").append(reason).append("</td></tr>");
+		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		
+		body.append("<tr><td>Name:</td><td>").append(name).append("</td></tr>");
+		body.append("<tr><td>Email address:</td><td>").append(email).append("</td></tr>");
+		body.append("<tr><td>Subject:</td><td>").append(subject).append("</td></tr>");
+		
+		body.append("</table>");		
+		
+		body.append("<br />Message text:<br />").append(message).append("<br /><br />");		
+		
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", serverPrefix);		
+		
+		java.io.File attachment1 = null;
+		java.io.File attachment2 = null;
+		if (uploadedfiles != null)
+		{
+			if (uploadedfiles.length > 0)
+			{
+				attachment1 = fileService.getTemporaryFile(uploadedfiles[0]);
+				if (uploadedfiles.length > 1)
+				{
+					attachment2 = fileService.getTemporaryFile(uploadedfiles[1]);
+				}
+			}
+		}
+		
+		String owneremail = survey.getContact().replace("form:", "");
+		mailService.SendHtmlMail(owneremail, sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort), attachment1, attachment2, null, true);
+				
+		model.put("messagesent", true);
+		return "runner/contactForm";
+	}
 
 	@RequestMapping(value = "/{uidorshortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException, WeakAuthenticationException, FrozenSurveyException, NotAgreedToTosException, NotAgreedToPsException {
@@ -894,7 +990,11 @@ public class RunnerController extends BasicController {
 					modelReturn.setViewName("runner/surveyLogin");
 					modelReturn.addObject("shortname", uidorshortname);
 					modelReturn.addObject("surveyname", survey.cleanTitle());
-					//modelReturn.addObject("contact", survey.getOwner().getEmail());
+					
+					if (survey.getContact().startsWith("form:"))
+					{
+						modelReturn.addObject("contact", true);
+					}
 					
 					if (lang != null && lang.length() > 0)
 					{
@@ -1611,7 +1711,12 @@ public class RunnerController extends BasicController {
 						
 						model.addObject("shortname", uidorshortname);
 						model.addObject("surveyname", survey.cleanTitle());
-						//model.addObject("contact", survey.getOwner().getEmail());
+						
+						if (survey.getContact().startsWith("form:"))
+						{
+							model.addObject("contact", true);
+						}
+					
 						model.addObject("error", resources.getMessage("error.PasswordInvalid", null, "You did not provide a valid password!", locale));
 						return model;
 

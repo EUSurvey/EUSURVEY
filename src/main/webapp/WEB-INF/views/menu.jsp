@@ -166,7 +166,7 @@
 	
 	function checkNewSurveyContactType()
 	{
-		if ($("#new-survey-contact-type").val() == "email")
+		if ($("#new-survey-contact-type").val() != "url")
 		{
 			$("#new-survey-contact").addClass("email");
 			$("#new-survey-contact-label").hide();
@@ -315,6 +315,7 @@
 		$('#new-survey-security-open').attr('checked','checked');
 		$("#new-survey-quiz-no").prop("checked", "checked");
 		$('#new-survey-language').val("${USER.defaultPivotLanguage}");
+		$('#new-survey-contact-type').val("form");
 		$('#new-survey-contact').val("${USER.email}");
 		$('#new-survey-contact-label').val("");
 		$("#add-survey-dialog").find(".hideimport").show();
@@ -399,8 +400,9 @@
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Contact" /></td>
 					<td>
 						<div style="float:left; text-align: right;">
-							<select onchange="checkNewSurveyContactType()" class="form-control" id="new-survey-contact-type" style="width: 120px;">
-								<option value="email" selected="selected"><spring:message code="label.Email" /></option>
+							<select onchange="checkNewSurveyContactType()" class="form-control" id="new-survey-contact-type" style="width: auto;">
+								<option value="form" selected="selected"><spring:message code="label.ContactForm" /></option>
+								<option value="email"><spring:message code="label.Email" /></option>
 								<option value="url"><spring:message code="label.Webpage" /></option>								
 							</select>
 							<div id="new-survey-contact-label-label" style="display:none; font-weight: bold; margin-top: 10px;"><spring:message code="label.Label" /></div>
@@ -461,8 +463,8 @@
 	</div>
 	<div class="modal-footer">
 		<img alt="wait animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-		<a id="createbtn"  onclick="createNewSurvey();" class="btn btn-primary"><spring:message code="label.Create" /></a>
-		<a id="importbtn"  onclick="createNewSurvey();" class="btn btn-primary hideme"><spring:message code="label.Import" /></a>
+		<a id="createbtn" onclick="createNewSurvey();" class="btn btn-primary"><spring:message code="label.Create" /></a>
+		<a id="importbtn" onclick="createNewSurvey();" class="btn btn-primary hideme"><spring:message code="label.Import" /></a>
 		<a  onclick="resetValidationErrors($('#new-survey-table'))" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 	</div>	
 	</div>
