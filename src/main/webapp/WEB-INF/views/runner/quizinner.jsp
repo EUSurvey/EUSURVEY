@@ -39,6 +39,9 @@
 						<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Contact")}</div>
 						
 						<c:choose>
+							<c:when test="${form.survey.contact.startsWith('form:')}">
+								<a class="link visibleLink" href="${contextpath}/runner/contactform/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
+							</c:when>
 							<c:when test="${form.survey.contact.contains('@')}">
 								<i class="icon icon-envelope" style="vertical-align: middle"></i>
 								<a class="link" href="mailto:<esapi:encodeForHTMLAttribute>${form.survey.contact}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${form.survey.contact}</esapi:encodeForHTML></a>

@@ -9,7 +9,18 @@
 		function PropertiesViewModel()
 		{
 			this.self = this;
-			this.contactType = ko.observable("${form.survey.contact.contains("@") ? "email" : "url"}");
+			
+			var contact = "${form.survey.contact}";
+			if (contact.indexOf("form:") > -1)
+			{
+				this.contactType = ko.observable("form");
+			} else if (contact.indexOf("@") > -1)
+			{
+				this.contactType = ko.observable("email");
+			} else {
+				this.contactType = ko.observable("url");
+			}
+			
 			this.automaticPublishing = ko.observable(${form.survey.automaticPublishing});
 			this.endNotifications = ko.observable(${form.survey.notificationValue != null && form.survey.notificationValue != -1 && form.survey.notificationValue.length() > 0});
 			this.showUsefulLinks =  ko.observable(${form.survey.getAdvancedUsefulLinks().size() > 0});
@@ -234,8 +245,7 @@
 						}
 						labels[labels.length] = label;
 					}
-				});					
-				
+				});				
 				
 				if (invalid) return;
 				
@@ -282,6 +292,11 @@
 				
 			} catch (e)	{
 
+			}
+			
+			if ($("#survey-contact-type").val() == "form")
+			{
+				$("#survey\\.contact").val("form:" + $("#survey\\.contact").val());
 			}
 			
 			unsavedChanges=false;			

@@ -31,9 +31,12 @@ $(function() {
 		    		}
 		    		
 		    		$('#new-survey-title').val(title);
-		    		$("#new-survey-contact").val(contact);
+		    		$("#new-survey-contact").val(contact.replace("form:", ""));
 	    			$("#new-survey-contact-label").val("");
-	    			if (contact != null && contact.indexOf("@") > 0)
+	    			if (contact != null && contact.indexOf("form:") >= 0)
+	    			{
+	    				$("#new-survey-contact-type").val("form");
+	    			} else if (contact != null && contact.indexOf("@") > 0)
 	    			{
 	    				$("#new-survey-contact-type").val("email");
 	    			} else {

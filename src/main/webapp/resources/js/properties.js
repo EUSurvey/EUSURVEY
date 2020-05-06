@@ -26,7 +26,7 @@ $(function() {
 	});		
 	checkSelections();	
 	checkNotification();
-	
+
 	var uploader = new qq.FileUploader({
 	    element: $("#file-uploader-logo")[0],
 	    action: contextpath + '/${sessioninfo.shortname}/management/uploadimage',
@@ -250,7 +250,7 @@ function deleteFile(url)
 
 function checkPropertiesSurveyContactType()
 {
-	if ($("#survey-contact-type").val() == "email")
+	if ($("#survey-contact-type").val() != "url")
 	{
 		$("#survey\\.contact").addClass("email");
 		$("#survey\\.contact").removeClass("url");

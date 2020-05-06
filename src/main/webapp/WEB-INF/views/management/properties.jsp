@@ -108,7 +108,8 @@
 							</div>
 							<div style="float: right">
 								<div style="float:left; text-align: right;">
-									<select class="form-control" data-bind="value: contactType" id="survey-contact-type" style="width: 120px;">
+									<select class="form-control" data-bind="value: contactType" id="survey-contact-type" style="width: auto;">
+										<option value="form"><spring:message code="label.ContactForm" /></option>
 										<option value="email"><spring:message code="label.Email" /></option>
 										<option value="url"><spring:message code="label.Webpage" /></option>								
 									</select><br />
@@ -1261,6 +1262,8 @@
 		});
 		
 		$(".datepicker").datepicker('option', 'dateFormat', "dd/mm/yy");
+		
+		$("#survey\\.contact").val($("#survey\\.contact").val().replace("form:", ""));		
 	});	
 	</script>
 	

@@ -336,6 +336,9 @@
 					<div class="linkstitle" style="margin-bottom: 5px;"><spring:message code="label.Contact" /></div>
 					
 					<c:choose>
+						<c:when test="${form.survey.contact.startsWith('form:')}">
+							<a class="link visibleLink" href="${contextpath}/runner/contactform/${form.survey.shortname}"><spring:message code="label.ContactForm" /></a>
+						</c:when>
 						<c:when test="${form.survey.contact.contains('@')}">
 							<i class="icon icon-envelope" style="vertical-align: middle"></i>
 							<esapi:encodeForHTML>${form.survey.contact}</esapi:encodeForHTML>
