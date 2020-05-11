@@ -299,7 +299,7 @@
 							
 							<c:choose>
 								<c:when test="${form.survey.contact.startsWith('form:')}">
-									<a class="link visibleLink" href="${contextpath}/runner/contactform/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
+									<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
 								</c:when>
 								<c:when test="${form.survey.contact.contains('@')}">
 									<i class="icon icon-envelope" style="vertical-align: middle"></i>
