@@ -105,6 +105,7 @@
 						<td>
 							<div style="float: left">
 								<span class="mandatory">*</span><spring:message code="label.Contact" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 							</div>
 							<div style="float: right">
 								<div style="float:left; text-align: right;">
@@ -118,7 +119,11 @@
 								<div style="float:left; margin-left: 10px">
 									<form:input htmlEscape="false" path="survey.contact" class="form-control required email" type="text" maxlength="255" style="width: 300px;" /><br />
 									<form:input data-bind="visible: contactType() == 'url'" htmlEscape="false" path="survey.contactLabel" type="text" class="form-control" style="width: 300px" maxlength="255"  />
-								</div>
+								</div>								
+							</div>
+							<div style="clear: both"></div>
+							<div class="help" style="display: none;">
+								<span><spring:message code="message.Contact" /></span>	
 							</div>
 						</td>
 					</tr>			

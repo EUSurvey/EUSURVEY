@@ -168,11 +168,13 @@
 	{
 		if ($("#new-survey-contact-type").val() != "url")
 		{
+			$("#new-survey-contact").removeClass("url");	
 			$("#new-survey-contact").addClass("email");
 			$("#new-survey-contact-label").hide();
 			$("#new-survey-contact-label-label").hide();
 		} else {
 			$("#new-survey-contact").removeClass("email");	
+			$("#new-survey-contact").addClass("url");
 			$("#new-survey-contact-label").show();
 			$("#new-survey-contact-label-label").show();
 			$("#new-survey-contact-label").parent().find(".validation-error").remove();
@@ -412,7 +414,7 @@
 							<input type="text" class="form-control" style="display:none; margin-top: 10px;" id="new-survey-contact-label" />
 						</div>
 						<div style="clear: both;"></div>
-						<div style="color: #777; margin-top: 10px;"><spring:message code="message.InsertEmail" /></div>
+						<div style="color: #777; margin-top: 10px;"><spring:message code="message.Contact" /></div>
 					</td>
 				</tr>	
 				<tr class="hideimport">

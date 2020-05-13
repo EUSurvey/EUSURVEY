@@ -290,6 +290,24 @@
 					}
 				</c:if>		
 				
+				if ($("#survey-contact-type").val() == "url") {
+					$("#survey\\.contact").removeClass("email").addClass("url");
+					result = validateInput($("#survey\\.contact").parent());
+					
+					if (result == false)
+					{
+						return;
+					}
+				} else {
+					$("#survey\\.contact").removeClass("url").addClass("email");
+					result = validateInput($("#survey\\.contact").parent());
+					
+					if (result == false)
+					{
+						return;
+					}
+				}
+				
 			} catch (e)	{
 
 			}
