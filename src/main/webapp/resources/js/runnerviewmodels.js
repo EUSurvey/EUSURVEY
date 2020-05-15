@@ -933,6 +933,8 @@ function newMatrixViewModel(element)
 	viewModel.answers = newMatrixItemsViewModel(element.answers);
 	viewModel.questions = newMatrixItemsViewModel(element.questions);
 	viewModel.dependentElementsStrings = ko.observableArray();
+	viewModel.firstCellText = ko.observable(element.firstCellText);
+	
 	for (var i = 0; i < element.dependentElementsStrings.length; i++)
 	{
 		viewModel.dependentElementsStrings.push(ko.observable(element.dependentElementsStrings[i]));
@@ -1035,6 +1037,7 @@ function newTableViewModel(element)
 	viewModel.widths = ko.observable(element.widths);
 	viewModel.answers = newMatrixItemsViewModel(element.answers);
 	viewModel.questions = newMatrixItemsViewModel(element.questions);
+	viewModel.firstCellText = ko.observable(element.firstCellText);
 	
 	viewModel.getChild = function(id)
 	{

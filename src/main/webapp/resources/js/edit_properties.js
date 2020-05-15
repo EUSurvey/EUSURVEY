@@ -465,19 +465,28 @@ var ElementProperties = function() {
 					$("#lockedElementInfo").show();
 				} else {
 					var id = $(e).attr("data-id");
-		 	 		var text = $("textarea[name^='text" + id + "']").first().text();
-		 	 		var shortname = $("input[name^='shortname" + id + "']").first().val();
-		 	 		                                
-					getTextPropertiesRow("Text", text, true);
+					var text = $("textarea[name^='text" + id + "']").first().text();
 					
-					if ($(e).closest("thead").length == 0)
+					if ($(e).hasClass("firstCell"))
 					{
-						getCheckPropertiesRow("Mandatory", $("input[name^='optional" + id + "']").val() == 'false');
-						getVisibilityRow(false);
-					}
+						text =  $("textarea[name^='firstCellText" + id + "']").first().text();
+						getTextPropertiesRow("Text", text, true);
+					} else {
+		 	 		
+			 	 		var shortname = $("input[name^='shortname" + id + "']").first().val();
+			 	 		                                
+						getTextPropertiesRow("Text", text, true);
+						
+						if ($(e).closest("thead").length == 0)
+						{
+							getCheckPropertiesRow("Mandatory", $("input[name^='optional" + id + "']").val() == 'false');
+							getVisibilityRow(false);
+						}
+						
+						getAdvancedPropertiesRow();
+						getTextPropertiesRow("Identifier", shortname, false);
 					
-					getAdvancedPropertiesRow();
-					getTextPropertiesRow("Identifier", shortname, false);
+					}
 					
 					_actions.ChildSelected(true);
 					
@@ -513,20 +522,27 @@ var ElementProperties = function() {
 					$("#lockedElementInfo").show();
 				} else {
 					var text = $(e).html();
-					if ($(e).find("textarea").length > 0)
+					
+					if ($(e).hasClass("firstCell"))
 					{
-						text = $(e).find("textarea").first().text();
+						text =  $("textarea[name^='firstCellText" + id + "']").first().text();
+						getTextPropertiesRow("Text", text, true);
+					} else {					
+						if ($(e).find("textarea").length > 0)
+						{
+							text = $(e).find("textarea").first().text();
+						}
+						
+						getTextPropertiesRow("Text", text, true);
+						
+						if ($(e).closest("tr").index() > 0)
+						{
+							getCheckPropertiesRow("Mandatory", $(e).attr("data-optional") == 'false');
+						}
+						
+						getAdvancedPropertiesRow();
+						getTextPropertiesRow("Identifier", $(e).attr("data-shortname"), false);
 					}
-					
-					getTextPropertiesRow("Text", text, true);
-					
-					if ($(e).closest("tr").index() > 0)
-					{
-						getCheckPropertiesRow("Mandatory", $(e).attr("data-optional") == 'false');
-					}
-					
-					getAdvancedPropertiesRow();
-					getTextPropertiesRow("Identifier", $(e).attr("data-shortname"), false);
 					
 					_actions.ChildSelected(true);
 					

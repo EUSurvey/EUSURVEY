@@ -2814,6 +2814,14 @@ public class SurveyHelper {
     		newValues += " title: " + title;
     	}
     	matrix.setTitle(title);
+    	
+    	String firstCellText = getString(parameterMap, "firstCellText", id, servletContext);
+    	if (log220 && !matrix.getFirstCellText().equals(firstCellText))
+    	{
+    		oldValues += " title: " + matrix.getFirstCellText();
+    		newValues += " title: " + firstCellText;
+    	}
+    	matrix.setFirstCellText(firstCellText);
 
     	String help = getString(parameterMap, "help", id, servletContext);
     	if (log220 && matrix.getHelp() != null && !matrix.getHelp().equals(help))
@@ -3047,6 +3055,14 @@ public class SurveyHelper {
     		newValues += " title: " + title;
     	}
     	table.setTitle(title);
+    	
+    	String firstCellText = getString(parameterMap, "firstCellText", id, servletContext);
+    	if (log220 && !table.getFirstCellText().equals(firstCellText))
+    	{
+    		oldValues += " title: " + table.getFirstCellText();
+    		newValues += " title: " + firstCellText;
+    	}
+    	table.setFirstCellText(firstCellText);
 
     	String help = getString(parameterMap, "help", id, servletContext);
     	if (log220 && table.getHelp() != null && !table.getHelp().equals(help))
