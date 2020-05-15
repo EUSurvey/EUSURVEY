@@ -246,9 +246,6 @@
 											<c:forEach var="c" begin="1" end="${element.columns}">
 											
 												<c:choose>
-													<c:when test="${r == 1 && c == 1}">
-														<td>		
-													</c:when>
 													<c:when test="${r > 1 && c > 1}">
 														<td class="matrix-cell">		
 													</c:when>
@@ -261,6 +258,9 @@
 												</c:choose>
 												
 													<c:choose>
+														<c:when test="${r == 1 && c == 1}">
+															<div>${element.firstCellText}</div>
+														</c:when>
 														<c:when test="${r == 1}">
 															<c:set var="entity" value="${element.childElements.get(c-1)}" />
 																												
@@ -361,6 +361,9 @@
 														</c:otherwise>
 													</c:choose>
 														<c:choose>
+															<c:when test="${r == 1 && c == 1}">
+																<div>${element.firstCellText}</div>
+															</c:when>
 															<c:when test="${r == 1}"><c:set var="entity" value="${element.childElements.get(c-1)}" />${entity.title}</c:when>																
 															<c:when test="${c == 1}">
 																<c:set var="entity" value="${element.childElements.get(element.columns + r - 2)}" />

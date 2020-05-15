@@ -579,9 +579,15 @@ function updateText(selectedelement, text, fromundo)
 		{
 			//a matrix answer
 			var index = $(_elementProperties.selectedelement).index() - 1;
-			oldtext = parent.answers()[index].originalTitle();
-			parent.answers()[index].title(text);
-			parent.answers()[index].originalTitle(text);
+			
+			if (index == -1) {
+				oldtext = parent.firstCellText();
+				parent.firstCellText(text);
+			} else {			
+				oldtext = parent.answers()[index].originalTitle();
+				parent.answers()[index].title(text);
+				parent.answers()[index].originalTitle(text);
+			}
 		} else {
 			//a matrix question
 			var index = $(_elementProperties.selectedelement).closest("tr").index() - 1;

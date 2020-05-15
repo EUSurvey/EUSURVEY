@@ -1,6 +1,7 @@
 package com.ec.survey.model.survey;
 
 import com.ec.survey.tools.Tools;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -32,6 +33,7 @@ public abstract class MatrixOrTable extends Question {
 	protected int columns;
 	protected String widths;	
 	protected Integer tableType = 0;
+	protected String firstCellText;
 	
 	@Transient
 	public abstract int getRows();
@@ -79,6 +81,15 @@ public abstract class MatrixOrTable extends Question {
 	}
 	public void setWidths(String widths) {
 		this.widths = widths;
+	}
+	
+	@Lob
+	@Column(name = "FIRSTCELLTEXT", length = 40000)
+	public String getFirstCellText() {
+		return firstCellText != null && firstCellText.length() > 0 ? firstCellText : " ";
+	}	
+	public void setFirstCellText(String firstCellText) {
+		this.firstCellText = firstCellText;
 	}
 	
 	@Transient
@@ -204,6 +215,7 @@ public abstract class MatrixOrTable extends Question {
 		baseCopy(matrixOrTable);
 		matrixOrTable.setColumns(columns);
 		matrixOrTable.setRows(rows);
+		matrixOrTable.setFirstCellText(firstCellText);
 	
 		for (Element element : childElements) {
 			Element c = element.copy(fileDir);
@@ -236,6 +248,8 @@ public abstract class MatrixOrTable extends Question {
 				{
 					if (!Tools.isEqual(getWidths(), matrix.getWidths())) return true;
 				}
+				
+				if (getFirstCellText() != null && !getFirstCellText().equals(matrix.getFirstCellText())) return true;
 				
 			} else {
 				return true;
