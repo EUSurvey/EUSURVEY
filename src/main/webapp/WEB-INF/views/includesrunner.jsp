@@ -283,14 +283,7 @@
 		
 	function countChar(input)
 	 {	
-		 var cs = $(input).val().length;
-
-		 var newLines = $(input).val().match(/(\r\n|\n|\r)/g);
- 		 var addition = 0;
-         if (newLines != null) {
-            addition = newLines.length;
-         }
-         cs = cs + addition;
+		 var cs = getCharacterCount(input);
 		 
 		 var classes = $(input).attr('class').split(" ");
 		 var min = 0;
@@ -307,42 +300,21 @@
 		 	};	 	
 		 };
 		 
-		 var s = "";
+		 $(input).closest(".survey-element").find(".charactercounter").text(cs);
 		 
-		 <c:choose>
-			<c:when test="${form != null && form.getResources() != null}">
-				if (cs < min)
-				 {
-					s = '(${form.getMessage("limits.CharactersExpected", "[num]")})';
-					s = s.replace("[num]", min-cs);
-				 } else if (cs <= max && max > 0)
-			 	 {
-					 s = '(${form.getMessage("limits.CharactersLeft", "[num]")})';
-					 s = s.replace("[num]", max-cs);
-			 	 } else if (cs > max && max > 0)
-			 	 {
-			 		s = '(${form.getMessage("limits.CharactersExceeded", "[num]")})';
-					s = s.replace("[num]", cs-max);
-			 	 }
-			</c:when>
-			<c:otherwise>		 
-				 if (cs < min)
-				 {
-					s = '(<spring:message code="limits.CharactersExpected" arguments="[num]" />)';
-					s = s.replace("[num]", min-cs);
-				 } else if (cs <= max && max > 0)
-			 	 {
-					 s = '(<spring:message code="limits.CharactersLeft" arguments="[num]" />)';
-					 s = s.replace("[num]", max-cs);
-			 	 } else if (cs > max && max > 0)
-			 	 {
-			 		s = '(<spring:message code="limits.CharactersExceeded" arguments="[num]" />)';
-					s = s.replace("[num]", cs-max);
-			 	 }
-			</c:otherwise>
-		</c:choose>
+		 if (max > 0 && max - cs < 5)
+		 {
+			 $(input).closest(".survey-element").find(".glyphicon-alert").show();
+		 } else {
+			 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
+		 }
 		 
-		 $(input).closest(".survey-element").find(".charactercounter").text(s);	 
+		 if (max > 0 && max - cs < 0)
+		 {
+			 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#f00");
+		 } else {
+			 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
+		 }
 	 }
 	
 	//]]>

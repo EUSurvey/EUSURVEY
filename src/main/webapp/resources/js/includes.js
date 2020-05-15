@@ -899,6 +899,18 @@ function initModals(item)
 		} else {
 			goToFirstValidationError(form);
 		}
+	}	
+	
+	function getCharacterCount(input)
+	{
+		 var cs = $(input).val().length;
+
+		 var newLines = $(input).val().match(/(\r\n|\n|\r)/g);
+ 		 var addition = 0;
+         if (newLines != null) {
+            addition = newLines.length;
+         }
+         return cs + addition;
 	}
 	
 	function validateInput(parent)
@@ -1486,6 +1498,7 @@ function initModals(item)
 			
 			var classes = $(this).attr('class').split(" ");
 			var value = $(this).val();
+			var count = getCharacterCount(this);
 			if (utf8.moreThan3Bytes(value)) {
 				$(this).after("<div class='validation-error' aria-live='polite'>" + invalidCharacter + "</div>");
 	 			result = false;
@@ -1499,7 +1512,7 @@ function initModals(item)
 					 	if (strStartsWith(classes[i], 'min'))
 					 	{
 					 		var min = classes[i].substring(3);
-					 		if (value.length < parseInt(min) && value.length > 0)
+					 		if (count < parseInt(min) && count > 0)
 					 		{
 					 			validationinfo += $(this).attr("name") + " (MinFT) ";
 					 			$(this).after("<div class='validation-error' aria-live='polite'>" + textnotlongenoughText + "</div>");
@@ -1509,7 +1522,7 @@ function initModals(item)
 					 	{
 					 		var max = classes[i].substring(3);
 					 		
-					 		if (value.length > parseInt(max))
+					 		if (count > parseInt(max))
 					 		{
 					 			validationinfo += $(this).attr("name") + " (MaxFT) ";
 					 			if (max == "5000")
