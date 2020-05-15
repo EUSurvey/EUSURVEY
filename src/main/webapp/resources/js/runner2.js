@@ -336,18 +336,6 @@ function addElementToContainer(element, container, foreditor, forskin)
 	
 	initModals($(container).find(".modal-dialog").first());
 	
-	$(container).find(".freetext").each(function(){
-		countChar(this);
-		
-		$(this).bind('paste', function(event) {
-	        var _this = this;
-	        // Short pause to wait for paste to complete
-	        setTimeout( function() {
-	        	countChar(_this);
-	        }, 100);
-	    });
-	});
-	
 	$(container).find(".expand").TextAreaExpander();
 	
 	$(container).find("input, textarea, select").change(function() {
@@ -393,6 +381,18 @@ function addElementToContainer(element, container, foreditor, forskin)
 		
 	if (!foreditor && !forskin)
 	readCookiesForParent($(container));
+	
+	$(container).find(".freetext").each(function(){
+		countChar(this);
+		
+		$(this).bind('paste', function(event) {
+	        var _this = this;
+	        // Short pause to wait for paste to complete
+	        setTimeout( function() {
+	        	countChar(_this);
+	        }, 100);
+	    });
+	});
 	
 	return viewModel;
 }

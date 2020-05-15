@@ -385,6 +385,10 @@
 	
 		<!-- ko if: maxCharacters() > 0 -->	
 			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'maxlength':maxCharacters(), 'data-rows':numRows(), 'rows':numRows()}"  onkeyup="countChar(this);propagateChange();" onblur="validateInput($(this).parent(),true)"></textarea>
+			<div class="charactercounterdiv" style="max-width: 645px; text-align: right; color: #777; margin-left: 20px;">
+				<span class="glyphicon glyphicon-alert" style="display: none; margin-right: 5px;" data-toggle="tooltip" title='${form.getMessage("info.charactercounter")}'></span>
+				<span class="charactercounter">0</span> / <span data-bind="text: maxCharacters()"></span>
+			</div>
 		<!-- /ko -->
 		<!-- ko if: maxCharacters() == 0 -->	
 			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows()}" onkeyup="countChar(this);propagateChange();" onblur="validateInput($(this).parent(),true)"></textarea>
