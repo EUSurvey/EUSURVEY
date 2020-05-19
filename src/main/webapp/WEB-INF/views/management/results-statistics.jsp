@@ -26,7 +26,7 @@
 	</div>
 
 	
-		<div id="scrollareastatistics" class="scrollarea">
+		<div id="scrollareastatistics" class="scrollarea" style="height: auto">
 
 		<c:forEach items="${form.getSurvey().getQuestionsAndSections()}" var="question">
 			<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
