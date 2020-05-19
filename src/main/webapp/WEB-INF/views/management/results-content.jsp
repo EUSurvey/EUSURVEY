@@ -775,9 +775,8 @@ var closeOverlayDivsEnabled = false;
 			 if (height < 200) height = 200;
 			 $('#scrollarea').css("height", height);
 			 
-			 $('#scrollareastatistics').css("height", statheight);
-			 $('#scrollareastatisticsquiz').css("height", height-50);
-			 $('#scrollareacharts').css("height", height-50);
+			 //$('#scrollareastatistics').css("height", statheight);
+			 //$('#scrollareastatisticsquiz').css("height", height-50);
 			 
 			 $('#contentstable2').css("min-height", height-20);
 			 $('#contentstable2').css("height", height-20);
