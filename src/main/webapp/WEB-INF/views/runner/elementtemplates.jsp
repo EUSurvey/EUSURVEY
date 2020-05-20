@@ -290,7 +290,7 @@
 			<input data-bind="enable: !readonly(), attr: {'id': 'answer' + id() + '2', 'data-id':id() + '2', 'name' : 'secondanswer' + id(), 'class': 'comparable-second ' + css()}" onfocus="clearStars(this);" autocomplete="off" type="password"></input>	
 		<!-- /ko -->
 		<!-- ko if: foreditor -->
-			<input type="hidden" data-bind="value: 'freetext', attr: {'name': 'type' + id()}" />	
+			<input type="hidden" data-bind="value: type == 'RegExQuestion' ? 'regex' : 'freetext', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
