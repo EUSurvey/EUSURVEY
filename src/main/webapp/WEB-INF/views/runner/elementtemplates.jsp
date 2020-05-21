@@ -295,7 +295,7 @@
 			<input data-bind="enable: !readonly(), attr: {'id': 'answer' + id() + '2', 'data-id':id() + '2', 'name' : 'secondanswer' + id(), 'class': 'comparable-second ' + css()}" onfocus="clearStars(this);" autocomplete="off" type="password"></input>	
 		<!-- /ko -->
 		<!-- ko if: foreditor -->
-			<input type="hidden" data-bind="value: 'freetext', attr: {'name': 'type' + id()}" />	
+			<input type="hidden" data-bind="value: type == 'RegExQuestion' ? 'regex' : 'freetext', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
@@ -884,13 +884,8 @@
 		<!-- /ko -->
 		
 		<!-- ko if: !ismobile && !istablet  -->
-		<div data-bind="attr: {'style': istablet ? 'position: relative; max-width: 100%; overflow-x: hidden' : 'width: 100%'}">
-		
-			<!-- ko if: istablet -->			
-				<button class="btn btn-default scrolltableleft" onclick="scrollTable(this,false);return false;"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
-				<button class="btn btn-default scrolltableright" onclick="scrollTable(this,true);return false;"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>				
-			<!-- /ko -->
-		
+		<div style="width: 100%">
+			
 			<!-- ko if: foreditor -->
 			<div class="hiddenmatrixquestions hideme">
 				<!-- ko foreach: questions() -->
@@ -914,7 +909,12 @@
 			<table data-bind="attr: {'class':'matrixtable ' + css(), 'style': tableType() == 1 ? 'width: 900px' : 'width: auto; max-width: auto'}">			
 				<thead>
 					<tr>
-						<th data-bind="attr: {'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">&nbsp;</th>
+						<th class="matrix-header firstCell" data-bind="attr: {'data-id': id(), 'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">
+							<!-- ko if: foreditor -->
+							<textarea style="display: none" data-bind="text: firstCellText, attr: {'name': 'firstCellText' + id()}"></textarea>
+							<!-- /ko -->
+							<span class="matrixheadertitle" data-bind="html: firstCellText"></span>
+						</th>
 						<!-- ko foreach: answers -->
 						<th class="matrix-header" scope="col" data-bind="attr: {'id' : id(), 'data-id': id(), 'style': $parent.tableType() != 2 ? '' : 'width: ' + getWidth($parent.widths(), $index()+1)}">
 							<!-- ko if: $parent.foreditor -->
@@ -989,12 +989,17 @@
 		<!-- /ko -->
 		
 		<!-- ko if: !ismobile && !istablet -->
-		<div data-bind="attr: {'style': istablet ? 'position: relative; max-width: 100%; overflow-x: hidden' : 'width: 100%'}">
+		<div style="width: 100%">
 
 			<table data-bind="attr: {'data-widths':widths(), 'id':id(), 'data-readonly': readonly, 'style': tableType() == 1 ? 'width: 900px' : 'width: auto; max-width: auto'}" class="tabletable">	
 				<tbody>
 					<tr style="background-color: #eee;">
-						<th class="" data-bind="attr: {'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">&nbsp;</th>
+						<th class="table-header firstCell" data-bind="attr: {'data-id': id(), 'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">
+							<!-- ko if: foreditor -->
+							<textarea style="display: none" data-bind="text: firstCellText, attr: {'name': 'firstCellText' + id()}"></textarea>
+							<!-- /ko -->
+							<span class="matrixheadertitle" data-bind="html: firstCellText"></span>
+						</th>
 						<!-- ko foreach: answers -->
 						<th class="table-header" scope="col" data-bind="attr: {'id' : id(), 'data-id' : id(), 'data-shortname' : shortname, 'data-uid' : uniqueId(), 'style': $parent.tableType() != 2 ? '' : 'width: ' + getWidth($parent.widths(), $index()+1)}">
 							<span data-bind="html: title"></span>
