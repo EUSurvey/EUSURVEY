@@ -158,30 +158,29 @@
 				</p>
 				
 				<br style="clear:both"/><br/><br/>
-					
-					<a href="?language=bg">?????????</a>&#160; 
-		 			<a href="?language=cs">Ce�tina</a>&#160; 
-		 			<a href="?language=da">Dansk</a>&#160; 
-		 			<a href="?language=de">Deutsch</a>&#160; 
-		 			<a href="?language=et">Eesti keel</a>&#160; 
-		 			<a href="?language=el">????????</a>&#160; 
-		 			<a href="?language=en">English</a>&#160; 
-		 			<a href="?language=es">Espa�ol</a>&#160; 
-		 			<a href="?language=fr">Fran�ais</a>&#160; 
-		 			<a href="?language=hr">Hrvatski jezik</a>&#160; 
-		 			<a href="?language=it">Italiano</a>&#160; 
-		 			<a href="?language=lv">Latvie�u valoda</a>&#160; 
-		 			<a href="?language=lt">Lietuviu kalba</a>&#160; 
-		 			<a href="?language=hu">Magyar</a>&#160; 
-		 			<a href="?language=mt">Malti</a>&#160; 
-		 			<a href="?language=nl">Nederlands</a>&#160; 
-		 			<a href="?language=pl">Polski</a>&#160; 
-		 			<a href="?language=pt">Portugu�s</a>&#160; 
-		 			<a href="?language=ro">Rom�na</a>&#160; 
-		 			<a href="?language=sk">Slovencina</a>&#160; 
-		 			<a href="?language=sl">Sloven�cina</a>&#160; 
-		 			<a href="?language=fi">Suomi</a>&#160; 
-		 			<a href="?language=sv">Svenska</a>&#160;
+				<a href="?language=bg">Български</a>&#160; 
+				<a href="?language=cs">Čeština</a>&#160; 
+				<a href="?language=da">Dansk</a>&#160; 
+				<a href="?language=de">Deutsch</a>&#160; 
+				<a href="?language=et">Eesti keel</a>&#160; 
+				<a href="?language=el">Ελληνικά</a>&#160; 
+				<a href="?language=en">English</a>&#160; 
+				<a href="?language=es">Español</a>&#160; 
+				<a href="?language=fr">Français</a>&#160; 
+				<a href="?language=hr">Hrvatski jezik</a>&#160; 
+				<a href="?language=it">Italiano</a>&#160; 
+				<a href="?language=lv">Latviešu valoda</a>&#160; 
+				<a href="?language=lt">Lietuvių kalba</a>&#160; 
+				<a href="?language=hu">Magyar</a>&#160; 
+				<a href="?language=mt">Malti</a>&#160; 
+				<a href="?language=nl">Nederlands</a>&#160; 
+				<a href="?language=pl">Polski</a>&#160; 
+				<a href="?language=pt">Português</a>&#160; 
+				<a href="?language=ro">Română</a>&#160; 
+				<a href="?language=sk">Slovenčina</a>&#160; 
+				<a href="?language=sl">Slovenščina</a>&#160; 
+				<a href="?language=fi">Suomi</a>&#160; 
+				<a href="?language=sv">Svenska</a>&#160;
 					
 			</div>
 			
