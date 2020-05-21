@@ -13,7 +13,7 @@ addons:
   sonarcloud:
     organization: eusurvey
     token:
-      secure: "$SONAR_TOKEN"
+      secure: "bsF///3gbvdKSPfaSWxQRQ9ryKjN1efhxgVDdxfbdWtstPGs4/lYd/adNDJCmGtbbH/4i7SgOb6Ileq9Fay/Q13BPJPKSt/TmBRCPNvWOkRdRbyRx3NE1S32Bq+4BDaPBXed+Ox85gs8bcPRG41YxrkpmcW4Q4M7zFfZCiJa5MiB9q01vBoff9K5dht0iVYXdvlONSwTDCilwaVxYtIBvPAZjiFiR2yF2jLFh9TK6zAQyq/hms2IhgSblRyQVHhSjNjJTD5I3DQxZnex/ZyBO7HQFOzx3arMkO28P3q+0GErsP82WBpME0cWIkNweNXI0NcNrhMF43LBO8l30ewmp855J/vAdrM3gnbotlVkEpIvZLByjToJtYGjoMLq7FzKhP1v2wxro88D37f9LV5r5vOaMD6PsHbIori7hHIhwVKBwVMKg1DDxAITDknx1Aao0cAGtTZ+7tAtI67hOpMAxbCrAyP7XkvomIo3c8zsozvsuMaZl3cW3iTu26kvtlgDLiV7IZVTvtvZgvnILEofiKn1D8OuiGbiV27CFZo0nVEnfk4MmTSEuAWfGIq9RyDXecm6O7+Ua+zvbG4R+bhtRbvYRCSCGhvIBGx+UOxk+FeZeuK4AxLV1aU/j4C1b2Qis5Od+toOAKv+tZ3pfSfTM5zlw9wb+YfuuGu/kye7L6k="
 before_install:
 - mysql -e "CREATE DATABASE eusurveydb;"
 - mysql -e "CREATE DATABASE eusurveyreportdb;"
