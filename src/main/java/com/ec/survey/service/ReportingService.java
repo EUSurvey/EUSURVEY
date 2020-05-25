@@ -10,18 +10,6 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
@@ -30,7 +18,6 @@ import com.ec.survey.model.Setting;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.survey.ChoiceQuestion;
 import com.ec.survey.model.survey.DateQuestion;
-import com.ec.survey.model.survey.Download;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.EmailQuestion;
 import com.ec.survey.model.survey.FreeTextQuestion;
@@ -40,21 +27,31 @@ import com.ec.survey.model.survey.MultipleChoiceQuestion;
 import com.ec.survey.model.survey.NumberQuestion;
 import com.ec.survey.model.survey.RatingQuestion;
 import com.ec.survey.model.survey.RegExQuestion;
-import com.ec.survey.model.survey.Ruler;
 import com.ec.survey.model.survey.SingleChoiceQuestion;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.Table;
-import com.ec.survey.model.survey.Text;
 import com.ec.survey.model.survey.Upload;
 import com.ec.survey.model.survey.base.File;
-import com.ec.survey.service.AnswerService;
-import com.ec.survey.service.SqlQueryService;
-import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.exception.SQLGrammarException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 @Service("reportingService")
 public class ReportingService {
+
+	protected static final int MAX_COLUMN_NUMBER_IN_OLAP_TABLE = 1000;
 	
 	protected static final Logger logger = Logger.getLogger(ReportingService.class);
 
@@ -519,11 +516,11 @@ public class ReportingService {
 	    	}
 	    }
 	    
-	    sql += " FROM " + GetOLAPTableName(survey);
+	    sql += " FROM " + getOLAPTableName(survey);
 	    
 	    if (isSecondTableUsed(survey))
 		{
-			sql += ", " + GetOLAPTableName(survey) + "_1";
+			sql += ", " + getOLAPTableName(survey) + "_1";
 		}		
 		
 		if (where.length() > 10)
@@ -676,11 +673,11 @@ public class ReportingService {
 		Map<String, Object> values = new HashMap<String, Object>();
 		String where = getWhereClause(filter, values, survey);
 		
-		String sql = "SELECT QANSWERSETID FROM " + GetOLAPTableName(survey);
+		String sql = "SELECT QANSWERSETID FROM " + getOLAPTableName(survey);
 		
 		if (isSecondTableUsed(survey))
 		{
-			sql += ", " + GetOLAPTableName(survey) + "_1";
+			sql += ", " + getOLAPTableName(survey) + "_1";
 		}		
 		
 		if (where.length() > 10)
@@ -700,7 +697,37 @@ public class ReportingService {
 			return null;
 		}		
 	}
-	
+
+	public boolean OLAPTableExists(Survey survey) {
+		return this.OLAPTableExists(survey, null);
+	}
+
+	@Transactional(transactionManager = "transactionManagerReporting")
+	public boolean OLAPTableExists(Survey survey, Integer counter) {
+		if (survey == null) {
+			throw new IllegalArgumentException("survey is not null");
+		}
+		if (counter != null && counter < 1) {
+			throw new IllegalArgumentException("counter starts at 1");
+		}
+
+		if (!isReportingDatabaseEnabled()) {
+			return false;
+		} 
+		try {
+			Session sessionReporting = sessionFactoryReporting.getCurrentSession();
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT 1 FROM ");
+			sql.append(this.getOLAPTableName(survey, counter));
+			sql.append(" LIMIT 1");
+			SQLQuery queryreporting = sessionReporting.createSQLQuery(sql.toString());
+			queryreporting.uniqueResult();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	@Transactional(transactionManager = "transactionManagerReporting")
 	public boolean OLAPTableExists(String uid, boolean draft) {
 		if (!isReportingDatabaseEnabled()) return false;
@@ -778,7 +805,180 @@ public class ReportingService {
 			}
 		}
 	}
-	
+
+	private Map<String, String> getColumnNamesAndTypes(Survey survey) {
+		if (survey == null) {
+			throw new IllegalArgumentException("survey is not null");
+		}
+		Map<String, String> columnNamesToType = new LinkedHashMap<String, String>();
+
+		// meta info
+		columnNamesToType.put("ANSWERSETID", "INT NOT NULL PRIMARY KEY");
+		columnNamesToType.put("INVITATIONID", "TEXT");
+		columnNamesToType.put("CONTRIBUTIONID", "TEXT");
+		columnNamesToType.put("USER", "TEXT");
+		columnNamesToType.put("CREATED", "DATETIME");
+		columnNamesToType.put("UPDATED", "DATETIME");
+		columnNamesToType.put("LANGUAGE", "VARCHAR(2)");
+		columnNamesToType.put("SCORE", "INT");
+
+		for (Element question : survey.getQuestions()) {
+			if (question instanceof FreeTextQuestion) {
+				columnNamesToType.put(question.getUniqueId(), "TEXT");
+			} else if (question instanceof EmailQuestion || question instanceof RegExQuestion) {
+				columnNamesToType.put(question.getUniqueId(), "TEXT");
+			} else if (question instanceof NumberQuestion) {
+				columnNamesToType.put(question.getUniqueId(), "DOUBLE");
+			} else if (question instanceof DateQuestion) {
+				columnNamesToType.put(question.getUniqueId(), "DATE");
+			} else if (question instanceof SingleChoiceQuestion) {
+				columnNamesToType.put(question.getUniqueId(), "TEXT");
+			} else if (question instanceof MultipleChoiceQuestion) {
+				columnNamesToType.put(question.getUniqueId(), "TEXT");
+			} else if (question instanceof Matrix) {
+				Matrix matrix = (Matrix) question;
+				for (Element child : matrix.getQuestions()) {
+					columnNamesToType.put(child.getUniqueId(), "TEXT");
+				}
+			} else if (question instanceof Table) {
+				Table table = (Table) question;
+				for (Element child : table.getQuestions()) {
+					for (Element answer : table.getAnswers()) {
+						columnNamesToType.put(Tools.md5hash(child.getUniqueId() + answer.getUniqueId()), "TEXT");
+					}
+				}
+			} else if (question instanceof Upload) {
+				columnNamesToType.put(question.getUniqueId(), "TEXT");
+			} else if (question instanceof GalleryQuestion) {
+				GalleryQuestion gallery = (GalleryQuestion) question;
+
+				if (gallery.getSelection())
+					columnNamesToType.put(question.getUniqueId(), "TEXT");
+			} else if (question instanceof RatingQuestion) {
+				RatingQuestion rating = (RatingQuestion) question;
+
+				for (Element child : rating.getChildElements()) {
+					columnNamesToType.put(child.getUniqueId(), "TEXT");
+				}
+			}
+		}
+		return columnNamesToType;
+	}
+
+	private boolean validateOLAPTable(Survey survey, Integer counter) throws Exception {
+		if (!isReportingDatabaseEnabled()) return false;
+
+		logger.info("starting reporting table validation for survey UID" + survey.getUniqueId()
+		+ (survey.getIsDraft() ? " (draft)" : ""));
+
+		if (!this.OLAPTableExists(survey, counter)) {
+			logger.info("/!\\ OLAP table doesnt exist for " + survey.getUniqueId()
+			+ (survey.getIsDraft() ? " (draft)" : "")
+			+ (counter == null ? "" : " counter = " + counter));
+			return false;
+		}
+
+		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
+		Map<String, String> expectedColumnNamesToType = this.getColumnNamesAndTypes(survey);
+		// SELECT COLUMN_NAME, DATA_TYPE FROM information_schema.COLUMNS WHERE TABLE_NAME = 
+		// 'te8b255c4a738405083105036263c654a_1'
+		// AND COLUMN_NAME in ('QINVITATIONID', 'QCONTRIBUTIONID')
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT COLUMN_NAME, DATA_TYPE");
+		sql.append(" FROM information_schema.COLUMNS");
+		sql.append(" WHERE TABLE_NAME = :tableName");
+		sql.append(" AND COLUMN_NAME in (");
+
+		for (String columnName : expectedColumnNamesToType.keySet()) {
+			sql.append("\'Q");
+			sql.append(columnName.replace("-", ""));
+			sql.append("\'");
+			sql.append(",");
+		}
+		String sqlString = sql.substring(0, sql.length() - 1) + ")";
+		SQLQuery queryReporting = sessionReporting.createSQLQuery(sqlString);
+		queryReporting.setString("tableName", getOLAPTableName(survey, counter));
+
+		List<Object[]> actualColumnNamesAndType = (List<Object[]>) queryReporting.list();
+		Map<String, String> actualColumnNameToType = new HashMap<>();
+		for (Object[] columnNameAndType: actualColumnNamesAndType) {
+			String cName = (String) columnNameAndType[0];
+			String cType = (String) columnNameAndType[1];
+			actualColumnNameToType.put(cName, cType);
+		}
+
+		for (String expectedColumName : expectedColumnNamesToType.keySet()) {
+			String realExpectedColumnName = "Q" + expectedColumName.replace("-", "");
+			String expectedColumnType = expectedColumnNamesToType.get(expectedColumName);
+			// Verifying column name
+			if (!actualColumnNameToType.containsKey(realExpectedColumnName)){
+				logger.info("/!\\ OLAP table is missing the column " + realExpectedColumnName 
+				+ " for " + survey.getUniqueId()
+				+ (survey.getIsDraft() ? " (draft)" : "")
+				+ (counter == null ? "" : " counter = " + counter));
+				return false;
+			}
+			String actualColumnType = actualColumnNameToType.get(realExpectedColumnName);
+			// Verifying column type
+			// expected = varchar(2) actual = varchar
+			if (!expectedColumnType.startsWith(actualColumnType)) {
+				logger.info("/!\\ OLAP table column " + realExpectedColumnName 
+				+ " has the wrong type " + actualColumnType
+				+ " (should be " + expectedColumnType + ")"
+				+ " for " + survey.getUniqueId()
+				+ (survey.getIsDraft() ? " (draft)" : "")
+				+ (counter == null ? "" : " counter = " + counter));
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private boolean validateOLAPTable(Survey survey) throws Exception {
+		if (!isReportingDatabaseEnabled()) return false;
+		return this.validateOLAPTable(survey, null);
+	}
+
+	private boolean validateOLAPTables(Survey survey) throws Exception {
+		if (!isReportingDatabaseEnabled()) return false;
+
+		if (survey == null) {
+			throw new IllegalArgumentException("survey is not null");
+		}
+
+		Map<String, String> columnNamesToType = this.getColumnNamesAndTypes(survey);
+		int expectedAdditionalNumberOfTables = (columnNamesToType.keySet().size() % MAX_COLUMN_NUMBER_IN_OLAP_TABLE) - 1;
+
+		if (!this.validateOLAPTable(survey)) {
+			return false;
+		}
+
+		for (int counter = 1; counter <= expectedAdditionalNumberOfTables; counter++) {
+			if (!this.validateOLAPTable(survey, counter)) {
+				return false;
+			}
+		}
+
+		return false;
+	}
+
+
+	private boolean validateOLAPTables(String surveyUID, boolean isDraft) throws Exception {
+		if (!isReportingDatabaseEnabled()) return false;
+
+		if (surveyUID == null || surveyUID.isEmpty()) {
+			throw new IllegalArgumentException("surveyUID is not null and not empty");
+		}
+		
+		logger.info("starting reporting table validation for survey UID" + surveyUID
+				+ (isDraft ? " (draft)" : ""));
+
+		Survey survey = surveyService.getSurveyWithMissingElements(surveyUID, isDraft, false, false, false, null, true, false);
+		return this.validateOLAPTables(survey);
+	}
+
+
 	private void createOLAPTable(Survey survey) throws Exception
 	{		
 		if (survey == null) return;
@@ -786,64 +986,7 @@ public class ReportingService {
 		logger.info("starting creating reporting table creation for " + survey.getShortname() + (survey.getIsDraft() ? " (draft)" : ""));	
 		settingsService.update(Setting.ReportingMigrationSurveyToMigrate, survey.getShortname() + (survey.getIsDraft() ? " (draft)" : ""));
 		
-		Map<String, String> columns = new LinkedHashMap<String, String>();		
-		
-		//meta info
-		columns.put("ANSWERSETID", "INT NOT NULL PRIMARY KEY");
-		columns.put("INVITATIONID", "TEXT");
-		columns.put("CONTRIBUTIONID", "TEXT");
-		columns.put("USER", "TEXT");
-		columns.put("CREATED", "DATETIME");	
-		columns.put("UPDATED", "DATETIME");	
-		columns.put("LANGUAGE", "VARCHAR(2)");	
-		columns.put("SCORE", "INT");
-				
-		for (Element question : survey.getQuestions())
-		{
-			if (question instanceof FreeTextQuestion)
-			{
-				columns.put(question.getUniqueId(), "TEXT");
-			} else if (question instanceof EmailQuestion || question instanceof RegExQuestion) {
-				columns.put(question.getUniqueId(), "TEXT");
-			} else if (question instanceof NumberQuestion) {
-				columns.put(question.getUniqueId(), "DOUBLE");	
-			} else if (question instanceof DateQuestion) {
-				columns.put(question.getUniqueId(), "DATE");	
-			} else if (question instanceof SingleChoiceQuestion) {
-				columns.put(question.getUniqueId(), "TEXT");	
-			} else if (question instanceof MultipleChoiceQuestion) {
-				columns.put(question.getUniqueId(), "TEXT");	
-			} else if (question instanceof Matrix) {
-				Matrix matrix = (Matrix) question;
-				for (Element child : matrix.getQuestions())
-				{
-					columns.put(child.getUniqueId(), "TEXT");
-				}
-			} else if (question instanceof Table) {
-				Table table = (Table) question;
-				for (Element child : table.getQuestions())
-				{
-					for (Element answer : table.getAnswers())
-					{
-						columns.put(Tools.md5hash(child.getUniqueId() + answer.getUniqueId()), "TEXT");
-					}
-				}
-			} else if (question instanceof Upload) {
-				columns.put(question.getUniqueId(), "TEXT");
-			} else if (question instanceof GalleryQuestion) {
-				GalleryQuestion gallery = (GalleryQuestion) question;
-				
-				if (gallery.getSelection())
-				columns.put(question.getUniqueId(), "TEXT");
-			} else if (question instanceof RatingQuestion) {
-				RatingQuestion rating = (RatingQuestion)question;
-				
-				for (Element child : rating.getChildElements())
-				{
-					columns.put(child.getUniqueId(), "TEXT");	
-				}
-			}
-		}
+		Map<String,String> columns = this.getColumnNamesAndTypes(survey);
 				
 		if (columns.size() >= 1000)
 		{
@@ -852,7 +995,7 @@ public class ReportingService {
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("CREATE TABLE ").append(GetOLAPTableName(survey)).append(" (");
+		sql.append("CREATE TABLE ").append(getOLAPTableName(survey)).append(" (");
 		
 		boolean first = true;
 		int counter = 0;
@@ -933,13 +1076,21 @@ public class ReportingService {
 			}
 		}
 	}
+
+	private String getOLAPTableName(Survey survey, Integer counter) {
+		String tableName = this.getOLAPTableName(survey);
+		if (counter != null) {
+			tableName = tableName + "_" + counter;
+		}
+		return tableName;
+	}
 	
-	private String GetOLAPTableName(Survey survey)
+	private String getOLAPTableName(Survey survey)
 	{
-		return GetOLAPTableName(!survey.getIsDraft(), survey.getUniqueId());
+		return getOLAPTableName(!survey.getIsDraft(), survey.getUniqueId());
 	}
 		
-	private String GetOLAPTableName(boolean publishedSurvey, String uid) {
+	private String getOLAPTableName(boolean publishedSurvey, String uid) {
 		if (!publishedSurvey)
 		{ 
 			return "TD" + uid.replace("-", "");
@@ -950,7 +1101,7 @@ public class ReportingService {
 	
 	private void updateOLAPTable(Survey survey) throws Exception {		
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		SQLQuery queryreporting = sessionReporting.createSQLQuery("SELECT MAX(QUPDATED) FROM " + GetOLAPTableName(survey));
+		SQLQuery queryreporting = sessionReporting.createSQLQuery("SELECT MAX(QUPDATED) FROM " + getOLAPTableName(survey));
 		Date lastReportDate = (Date) queryreporting.uniqueResult();
 		Date lastAnswerDate = survey.getIsDraft() ? answerService.getNewestTestAnswerDate(survey.getId()) : answerService.getNewestAnswerDate(survey.getId());
 		
@@ -1198,7 +1349,7 @@ public class ReportingService {
 		if (!create)
 		{
 			row.append("DELETE FROM ");
-			row.append(GetOLAPTableName(survey));
+			row.append(getOLAPTableName(survey));
 			row.append(" WHERE QANSWERSETID = ");
 			row.append(answerSet.getId());
 			
@@ -1209,7 +1360,7 @@ public class ReportingService {
 			if (columns.size() > 1000)
 			{
 				row.append("DELETE FROM ");
-				row.append(GetOLAPTableName(survey));
+				row.append(getOLAPTableName(survey));
 				row.append("_1 WHERE QANSWERSETID = ");
 				row.append(answerSet.getId());
 				
@@ -1243,7 +1394,7 @@ public class ReportingService {
 			
 			if (counter > 1000) {
 				row.append("INSERT INTO ");
-				row.append(GetOLAPTableName(survey));
+				row.append(getOLAPTableName(survey));
 				if (tablecounter > 0)
 				{
 					row.append("_");
@@ -1274,7 +1425,7 @@ public class ReportingService {
 		
 		if (counter > 0) {
 			row.append("INSERT INTO ");
-			row.append(GetOLAPTableName(survey));
+			row.append(getOLAPTableName(survey));
 			
 			if (tablecounter > 0)
 			{
@@ -1311,7 +1462,7 @@ public class ReportingService {
 		if (OLAPTableExists(uid, !publishedSurvey))
 		{		
 			query.append("DELETE FROM ");
-			query.append(GetOLAPTableName(publishedSurvey, uid));
+			query.append(getOLAPTableName(publishedSurvey, uid));
 			query.append(" WHERE QCONTRIBUTIONID = '");
 			query.append(code).append("'");
 			
@@ -1324,7 +1475,7 @@ public class ReportingService {
 			{
 				query = new StringBuilder();
 				query.append("DELETE FROM ");
-				query.append(GetOLAPTableName(publishedSurvey, uid) + "_" + counter);
+				query.append(getOLAPTableName(publishedSurvey, uid) + "_" + counter);
 				query.append(" WHERE QCONTRIBUTIONID = '");
 				query.append(code).append("'");
 				
@@ -1341,7 +1492,7 @@ public class ReportingService {
 		
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
-		String sql = "SELECT COUNT(*) FROM " + GetOLAPTableName(survey);
+		String sql = "SELECT COUNT(*) FROM " + getOLAPTableName(survey);
 		
 		if (where != null)
 		{
@@ -1376,7 +1527,7 @@ public class ReportingService {
 		
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
-		String sql = "SELECT COUNT(*) FROM " + GetOLAPTableName(survey) + " WHERE Q" + quid.replace("-", "");
+		String sql = "SELECT COUNT(*) FROM " + getOLAPTableName(survey) + " WHERE Q" + quid.replace("-", "");
 		if (auid == null) {
 			sql += " IS NOT NULL";
 		} else if (noPrefixSearch) {
@@ -1387,7 +1538,7 @@ public class ReportingService {
 		
 		if (where != null)
 		{
-			sql += " AND QANSWERSETID IN (SELECT QANSWERSETID FROM " + GetOLAPTableName(survey) + " " + where + ")";
+			sql += " AND QANSWERSETID IN (SELECT QANSWERSETID FROM " + getOLAPTableName(survey) + " " + where + ")";
 		}
 		
 		SQLQuery query = sessionReporting.createSQLQuery(sql);
@@ -1520,18 +1671,54 @@ public class ReportingService {
 	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
 	public void executeToDo(ToDoItem todo) throws Exception
 	{
-		switch (todo.Type){
+		switch (todo.Type) {
 			case NEWSURVEY:
 				createOLAPTable(todo.UID, false, true);
 				break;
 			case NEWCONTRIBUTION:
-				updateOLAPTable(todo.UID, false, true);
+				try {
+					updateOLAPTable(todo.UID, false, true);
+				} catch (SQLGrammarException e) {
+					if (this.validateOLAPTables(todo.UID, false)) {
+						throw e;
+					} else {
+						deleteOLAPTable(todo.UID, false, true);
+						createOLAPTable(todo.UID, false, true);
+
+						// retry
+						updateOLAPTable(todo.UID, false, true);
+					}
+				}
 				break;
 			case CHANGEDCONTRIBUTION:
-				updateOLAPTable(todo.UID, false, true);
+				try {
+					updateOLAPTable(todo.UID, false, true);
+				} catch (SQLGrammarException e) {
+					if (this.validateOLAPTables(todo.UID, false)) {
+						throw e;
+					} else {
+						deleteOLAPTable(todo.UID, false, true);
+						createOLAPTable(todo.UID, false, true);
+
+						// retry
+						updateOLAPTable(todo.UID, false, true);
+					}
+				}
 				break;
 			case DELETEDCONTRIBUTION:
-				removeFromOLAPTable(todo.UID, todo.Code, true);
+				try {
+					removeFromOLAPTable(todo.UID, todo.Code, true);
+				} catch (SQLGrammarException e) {
+					if (this.validateOLAPTables(todo.UID, false)) {
+						throw e;
+					} else {
+						deleteOLAPTable(todo.UID, false, true);
+						createOLAPTable(todo.UID, false, true);
+
+						// retry
+						removeFromOLAPTable(todo.UID, todo.Code, true);
+					}
+				}
 				break;
 			case CHANGEDSURVEY:
 				deleteOLAPTable(todo.UID, false, true);
@@ -1545,15 +1732,51 @@ public class ReportingService {
 				createOLAPTable(todo.UID, true, false);
 				break;
 			case NEWTESTCONTRIBUTION:
-				updateOLAPTable(todo.UID, true, false);
+				try {
+					updateOLAPTable(todo.UID, true, false);
+				} catch (SQLGrammarException e) {
+					if (this.validateOLAPTables(todo.UID, true)) {
+						throw e;
+					} else {
+						deleteOLAPTable(todo.UID, true, false);
+						createOLAPTable(todo.UID, true, false);
+
+						// retry
+						updateOLAPTable(todo.UID, true, false);
+					}
+				}
 				break;
 			case CHANGEDTESTCONTRIBUTION:
-				updateOLAPTable(todo.UID, true, false);
+				try {
+					updateOLAPTable(todo.UID, true, false);
+				} catch (SQLGrammarException e) {
+					if (this.validateOLAPTables(todo.UID, true)) {
+						throw e;
+					} else {
+						deleteOLAPTable(todo.UID, true, false);
+						createOLAPTable(todo.UID, true, false);
+
+						// retry
+						updateOLAPTable(todo.UID, true, false);
+					}
+				}
 				break;
 			case DELETEDTESTCONTRIBUTION:
-				removeFromOLAPTable(todo.UID, todo.Code, false);
+				try {
+					removeFromOLAPTable(todo.UID, todo.Code, false);
+				} catch (SQLGrammarException e) {
+					if (this.validateOLAPTables(todo.UID, true)) {
+						throw e;
+					} else {
+						deleteOLAPTable(todo.UID, false, true);
+						createOLAPTable(todo.UID, false, true);
+
+						// retry
+						removeFromOLAPTable(todo.UID, todo.Code, false);
+					}
+				}
 				break;
-		}
+			}
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
@@ -1671,7 +1894,7 @@ public class ReportingService {
 		if (result == 0) return null;
 		
 		query = sessionReporting.createSQLQuery("SELECT UPDATE_TIME FROM information_schema.TABLES WHERE TABLE_NAME = :name");
-		query.setString("name", GetOLAPTableName(survey));
+		query.setString("name", getOLAPTableName(survey));
 		
 		return  (Date) query.uniqueResult();
 	}
