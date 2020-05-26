@@ -107,13 +107,8 @@ function checkAndSubmit()
 	$('#myModalCheck').modal('show');
 }
 
-function loadPreview(c)
+function replacePlaceholders(s, currentcontactrow)
 {
-	$('#preview-current').val(c+1);
-	
-	var currentcontactrow = $($("tbody").find("input[type='checkbox']:checked")[c]).closest("tr");
-	var s = $("#text1").html() + "<br /><br />" + $("#url").html() + "<br /><br />" + $("#text2").html();
-	
 	var res = s.match(/{.*?}/g);
 	
 	for (var i = 0; i < res.length; i++)
@@ -139,10 +134,26 @@ function loadPreview(c)
 		}
 	}
 	
+	return s;
+}
+
+function loadPreview(c)
+{
+	$('#preview-current').val(c+1);
+	
+	var currentcontactrow = $($("tbody").find("input[type='checkbox']:checked")[c]).closest("tr");
+	var s = $("#text1").html() + "<br /><br />" + $("#url").html() + "<br /><br />" + $("#text2").html();
+	
+	s = replacePlaceholders(s, currentcontactrow);
+	
 	$("#preview").html(s)
 	$("#preview-to").html($(currentcontactrow).find("[data-class='email']").text())
 	$("#preview-replyto").html($('#senderAddress').val());
-	$("#preview-subject").html($('#txtSubjectFromInvitation').val());
+	
+	s = $('#txtSubjectFromInvitation').val();
+	s = replacePlaceholders(s, currentcontactrow);
+	
+	$("#preview-subject").html(s);
 }
 
 function previousContact()
