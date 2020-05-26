@@ -17,6 +17,11 @@
 			font-weight: bold !important;
 			margin-top: 10px;
 		}
+		
+		.glyphicon-info-sign {
+			color: #aaa;
+			margin-left: 5px;
+		}
 	</style>
 	
 	<script type="text/javascript" src="${contextpath}/resources/js/sendinvitations.js?version=<%@include file="../version.txt" %>"></script>
@@ -423,7 +428,10 @@
 							</c:otherwise>
 						</c:choose>
 						<br />
-						<label><spring:message code="label.Subject" /></label><br />
+						<label><spring:message code="label.Subject" /> <a onclick="$('#subjecthelp').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a></label>
+						<div id="subjecthelp" class="help hideme">
+							<spring:message code="help.Subject" />
+						</div><br />
 						<input onchange="$('#savetextbutton').removeAttr('disabled')" id="txtSubjectFromInvitation" class="required form-control" type="text" maxlength="255" name="senderSubject" value="<esapi:encodeForHTMLAttribute>${senderSubject}</esapi:encodeForHTMLAttribute>" />
 						<br />
 						<textarea id="text1default" style="display:none">
@@ -438,7 +446,10 @@
 							<esapi:encodeForHTML>${USER.name}</esapi:encodeForHTML>
 						</textarea>
 						
-						<label><spring:message code="label.MessageText" /></label><br />
+						<label><spring:message code="label.MessageText" /> <a onclick="$('#messagehelp').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a></label>
+						<div id="messagehelp" class="help hideme">
+							<spring:message code="help.Message" />
+						</div><br />
 						<textarea class="tinymce freetext max5000 full" name="text1" id="text1" onchange="$('#savetextbutton').removeAttr('disabled')">
 							<c:choose>
 								<c:when test="${participationGroup.template1 != null}">
