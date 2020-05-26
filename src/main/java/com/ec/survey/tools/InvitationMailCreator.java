@@ -192,12 +192,12 @@ public class InvitationMailCreator implements Runnable {
 		String middleText = host + "runner/invited/" + participationGroup.getId() + "/" + invitation.getUniqueId();
 			
 		String body = text1 + "<br /><br /><a href='"  + middleText + "'>" + middleText + "</a><br /><br />" + text2;
-		body = body.replace("{Name}", ecasUser.getDisplayName());
-		
-		body = insertDisclaimer(survey, body);
-		
+		body = body.replace("{Name}", ecasUser.getDisplayName());		
+		body = insertDisclaimer(survey, body);		
 		body += "<br/><br/><span style=\"font-size: 9pt; color: #999\">This message was sent by " + sendername + " using EUSurvey's invitation service</span>";
 		
+		subject = subject.replace("{Name}", ecasUser.getDisplayName());
+				
 		String text = getMailTemplate(mailtemplate).replace("[CONTENT]", body).replace("[HOST]", host);
 		
 		mailService.SendHtmlMail(ecasUser.getEmail(), senderAddress, reply, subject, text, smtpServer, Integer.parseInt(smtpPort), invitation.getUniqueId());
@@ -254,11 +254,12 @@ public class InvitationMailCreator implements Runnable {
 		String middleText = host + "runner/invited/" + participationGroup.getId() + "/" + invitation.getUniqueId();
 		
 		String body = text1 + "<br /><br /><a href='"  + middleText + "'>" + middleText + "</a><br /><br />" + text2;
-		body = body.replace("{Name}", attendee.getName());		
 		body = replaceAttributePlaceholders(body, attendee);		
 		body = insertDisclaimer(survey, body);		
 		body += "<br/><br/><span style=\"font-size: 9pt; color: #999\">This message was sent by " + sendername + " using EUSurvey's invitation service</span>";
-				
+		
+		subject = replaceAttributePlaceholders(subject, attendee);
+		
 		String text = getMailTemplate(mailtemplate).replace("[CONTENT]", body).replace("[HOST]", host);
 				
 		mailService.SendHtmlMail(attendee.getEmail(), senderAddress, reply, subject, text, smtpServer, Integer.parseInt(smtpPort), null);
