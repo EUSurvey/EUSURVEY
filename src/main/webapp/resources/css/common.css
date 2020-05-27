@@ -125,7 +125,7 @@ html, body {
 .page-wrap {
 	min-height: 100%;
 	/* equal to footer height */
-	margin-bottom: -212px; 
+	margin-bottom: -198px; 
 	padding-bottom: 75px;
 	max-width: 100%;
 	overflow-x: auto;
