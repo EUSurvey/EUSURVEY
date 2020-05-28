@@ -250,7 +250,10 @@
 	</div>
 
 	<%@ include file="../footer.jsp" %>
-	<%@ include file="../generic-messages.jsp" %>
+	
+	<c:if test="${USER == null || runnermode != null || responsive != null}">
+		<%@ include file="../generic-messages.jsp" %>
+	</c:if>
 </body>
 
 </html>
