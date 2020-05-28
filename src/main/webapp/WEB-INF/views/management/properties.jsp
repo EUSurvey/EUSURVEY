@@ -844,6 +844,12 @@
 				<label><spring:message code="label.PublishResults" /></label>
 				<table class="table table-bordered">
 					<tr>
+						<td style="padding-bottom: 20px">
+							<spring:message code="label.PublishingURLnew" />: 
+							<a class="visiblelink" target="_blank" href="${serverprefix}publication/${form.survey.shortname}">${serverprefix}publication/${form.survey.shortname}</a>						
+						</td>
+					</tr>
+					<tr>
 						<td>
 							<div style="float: left">
 								<spring:message code="label.Publish" />
