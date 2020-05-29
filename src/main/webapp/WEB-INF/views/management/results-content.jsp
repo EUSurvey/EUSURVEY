@@ -92,7 +92,7 @@
 				<c:if test="${publication == null || publication.isShowSearch()}">
 					<tr class="table-styled-filter">
 						<c:if test="${publication == null}">
-							<th class="checkDelete"><input name="check-all-delete" id="check-all-delete" class="check checkDelete" style="margin-bottom: 8px !important;" type="checkbox" onclick="checkAllDelete()" /></th>
+							<th class="checkDelete"><span data-toggle="tooltip" data-trigger="hover" data-original-title="<spring:message code="label.SelectAll" />"><input name="check-all-delete" id="check-all-delete" class="check checkDelete" style="margin-bottom: 8px !important;" type="checkbox" onclick="checkAllDelete()" /></span></th>
 							<th>
 								<a data-toggle="tooltip" title="<spring:message code="label.DeleteAll" />" class="iconbutton disabled" disabled="disabled" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-remove"></span></a>
 							</th>
