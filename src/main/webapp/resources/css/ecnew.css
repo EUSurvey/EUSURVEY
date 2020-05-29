@@ -449,3 +449,14 @@ body {
 #escapeMessageId, #divThanksInner {
 	font-size: 20px;
 }
+
+.ratingitem:hover, .ratingitem:active, .ratingitem:visited {
+	text-decoration: none;
+}
+
+.ratingtable td {border: 1px solid #bbb; padding: 5px 10px 5px 10px; font-size: 16px; word-wrap: break-word; }
+
+.ratingitem img {
+	width: 24px;
+	margin-bottom: 4px;
+}
