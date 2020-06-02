@@ -48,8 +48,10 @@
 	<script type="text/javascript">
 		$(function() {	
 			
-			loadMore();
-			individualsMoveTo("first", null);
+			<c:if test="${publication.showContent}">
+				loadMore();
+				individualsMoveTo("first", null);
+			</c:if>
 			
 			$(".hidden").removeClass("hidden");		
 			
