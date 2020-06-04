@@ -2208,7 +2208,7 @@ public class SchemaService extends BasicService {
 	@Transactional
 	public boolean tableExists(String tableName) {
 		Session session = sessionFactory.getCurrentSession();
-		String queryString = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '" + tableName + "';";
+		String queryString = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '" + tableName + "' AND TABLE_SCHEMA = database();";
 		SQLQuery query = session.createSQLQuery(queryString);
 		return !query.list().isEmpty();
 	}

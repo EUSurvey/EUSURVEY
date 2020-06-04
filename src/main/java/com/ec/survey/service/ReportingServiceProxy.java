@@ -126,4 +126,25 @@ public class ReportingServiceProxy {
 		if (!isReportingDatabaseEnabled()) return null;
 		return reportingService.GetAllQuestionsAndPossibleAnswersInternal(survey);
 	}	
+
+	public boolean validateOLAPTable(Survey survey) throws Exception {
+		if (!isReportingDatabaseEnabled()) return false;
+		return reportingService.validateOLAPTableInternal(survey);
+	}
+
+	public boolean validateOLAPTable(Survey survey, Integer counter) throws Exception {
+		if (!isReportingDatabaseEnabled()) return false;
+		return reportingService.validateOLAPTableInternal(survey, counter);
+	}
+
+	public boolean validateOLAPTables(Survey survey) throws Exception {
+		if (!isReportingDatabaseEnabled()) return false;
+		return reportingService.validateOLAPTablesInternal(survey);
+	}
+
+	public boolean validateOLAPTables(String surveyUID, boolean isDraft) throws Exception {
+		if (!isReportingDatabaseEnabled()) return false;
+		return reportingService.validateOLAPTablesInternal(surveyUID, isDraft);
+	}
+
 }
