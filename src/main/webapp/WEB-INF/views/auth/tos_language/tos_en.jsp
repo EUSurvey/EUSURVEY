@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -138,11 +139,7 @@ Controller using the    <a href="https://ec.europa.eu/eusurvey/home/support">con
 <p>
     To be identified by the system, the user needs a couple login / password,
     which is managed by the EULogin
-    <a
-        href="file:///C:/Users/clam/Downloads/ESURVEY-6615/2020-02-11%20EUSurvey%20Privacy%20Statement%20ERRATUM%20(English).docx#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     service. For further information on how EULogin is processing your personal
@@ -161,10 +158,10 @@ Controller using the    <a href="https://ec.europa.eu/eusurvey/home/support">con
     ‘Settings’ tab:
 </p>
 <p>
-    § Full name (first name and last name)
+    • Full name (first name and last name)
 </p>
 <p>
-    § Email address
+    • Email address
 </p>
 <p>
     Full name and Email address are data retrieved by an automatic process from
@@ -208,16 +205,14 @@ Controller using the    <a href="https://ec.europa.eu/eusurvey/home/support">con
 <h2>
     <a name="_Toc30690371">4.1 EU staff member (internal user)</a>
 </h2>
-<h2>
-    <a name="_Toc30690372">
+<p>
         As long as you are an EU staff member, your user account remains active
         and your personal data is therefore retained. However, you can, at any
         time, ask the EUSurvey team to terminate your account if you no longer
         wish to use the service. In this case, your user account, all
         associated data and all surveys and results will be permanently
         deleted.
-    </a>
-</h2>
+</p>
 <h2>
     4.2 EUSurvey external user
 </h2>
@@ -278,11 +273,11 @@ Controller using the    <a href="https://ec.europa.eu/eusurvey/home/support">con
     This includes:
 </p>
 <p>
-    § The Commission EUSurvey team for purposes of system support and
+    • The Commission EUSurvey team for purposes of system support and
     maintenance.
 </p>
 <p>
-    § The infrastructure administrators.
+    • The infrastructure administrators.
 </p>
 <p>
     The information we collect will not be given to any third party, except to
@@ -355,11 +350,7 @@ You have the possibility to contact the EUSurvey support team, using the    <a h
     </a>
 </h2>
 <p>
-    You may also contact the Commission’s Data Protection Officer (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ) with regard to issues related to the processing of your personal data
+    You may also contact the Commission’s Data Protection Officer (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) with regard to issues related to the processing of your personal data
     under Regulation (EU) 2018/1725.
 </p>
 <h2>
@@ -369,7 +360,7 @@ You have the possibility to contact the EUSurvey support team, using the    <a h
 </h2>
 <p>
     You have the right to have recourse (i.e. you can lodge a complaint) to the
-European Data Protection Supervisor (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) if you
+European Data Protection Supervisor (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) if you
     consider that your rights under Regulation (EU) 2018/1725 have been
     infringed as a result of the processing of your personal data by the Data
     Controller.
@@ -397,22 +388,24 @@ European Data Protection Supervisor (    <a href="mailto:edps@edps.europa.eu">ed
     </a>
     .
 </p>
-<h1>
+<p>
     This specific processing operation has been included in the DPO’s public
     register with the following Record reference: DPR-EC-01488
-</h1>
-<h2>
-    We value your privacy
-</h2>
-<p>
-    Please click on the "I accept" button below in order to indicate that you
-    have read the privacy statement and provide your consent for the processing
-    of your personal data.
 </p>
-<p>
-    If you disagree with our privacy statement, please click on the "I do not
-    accept" button.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    We value your privacy
+	</h2>
+	<p>
+	    Please click on the "I accept" button below in order to indicate that you
+	    have read the privacy statement and provide your consent for the processing
+	    of your personal data.
+	</p>
+	<p>
+	    If you disagree with our privacy statement, please click on the "I do not
+	    accept" button.
+	</p>
+</c:if>
 
 <div>
     <br clear="all"/>

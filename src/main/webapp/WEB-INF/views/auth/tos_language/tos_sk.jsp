@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -146,11 +147,7 @@
 <p>
     Na to, aby systém identifikoval používateľa, potrebuje kombináciu
     prihlasovacieho mena a hesla, ktoré spravuje služba EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.864/DIGIT-2020-00012-00-00-SK-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     . Ďalšie informácie o tom, ako služba EULogin spracúva vaše osobné údaje,
@@ -168,10 +165,10 @@
     Nastavenia:
 </p>
 <p>
-    § celé meno (krstné meno a priezvisko),
+    • celé meno (krstné meno a priezvisko),
 </p>
 <p>
-    § e-mailová adresa.
+    • e-mailová adresa.
 </p>
 <p>
     Celé meno a e-mailová adresa sú údaje získané automatickým procesom zo
@@ -216,15 +213,13 @@
 <h2>
     <a name="_Toc34400163">4.1. Zamestnanec EÚ (interný používateľ)</a>
 </h2>
-<h2>
-    <a name="_Toc34400164">
+<p>
         Ak ste zamestnancom EÚ, váš používateľský účet zostáva aktívny a vaše
         osobné údaje sa preto uchovávajú. Ak však túto službu už nechcete
         využívať, môžete kedykoľvek požiadať tím EUSurvey, aby váš účet
         odstránil. V tomto prípade sa váš používateľský účet, všetky súvisiace
         údaje a všetky prieskumy a výsledky natrvalo vymažú.
-    </a>
-</h2>
+    </p>
 <h2>
     <a name="_Toc34400165">4.2. Externý používateľ EUSurvey</a>
 </h2>
@@ -283,11 +278,11 @@ Nepoužívané účty externých používateľov sa navyše mažú po    <strong
     Sem patria:
 </p>
 <p>
-    § členovia tímu Komisie zodpovedného za EUSurvey na účely systémovej
+    • členovia tímu Komisie zodpovedného za EUSurvey na účely systémovej
     podpory a údržby,
 </p>
 <p>
-    § správcovia infraštruktúry.
+    • správcovia infraštruktúry.
 </p>
 <p>
     Informácie, ktoré zbierame, nebudú poskytnuté žiadnej tretej strane.
@@ -368,11 +363,7 @@ Nepoužívané účty externých používateľov sa navyše mažú po    <strong
 <p>
     V otázkach týkajúcich sa spracúvania vašich osobných údajov podľa
     nariadenia (EÚ) 2018/1725 sa môžete obrátiť na úradníka Komisie pre ochranu
-    údajov (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ).
+    údajov (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>).
 </p>
 <h2>
     <a name="_Toc34400172">
@@ -383,7 +374,7 @@ Nepoužívané účty externých používateľov sa navyše mažú po    <strong
     Ak sa domnievate, že v dôsledku spracovania vašich osobných údajov
     prevádzkovateľom došlo k porušeniu vašich práv podľa nariadenia (EÚ)
     2018/1725, máte právo obrátiť sa (t. j. podať sťažnosť) na európskeho
-dozorného úradníka pre ochranu údajov (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>).
+dozorného úradníka pre ochranu údajov (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>).
 </p>
 <p>
     Európsky dozorný úradník pre ochranu údajov pôsobí ako nezávislý orgán
@@ -406,25 +397,25 @@ dozorného úradníka pre ochranu údajov (    <a href="mailto:edps@edps.europa.
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34400174">
+<p>
         Táto konkrétna spracovateľská operácia bola zahrnutá do verejného
         registra úradníka pre ochranu údajov pod referenčnou značkou:
         DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34400175">Vážime si vaše súkromie</a>
-</h2>
-<p>
-    Kliknite na tlačidlo „Súhlasím“, aby ste potvrdili, že ste si prečítali
-    vyhlásenie o ochrane osobných údajov a že poskytujete súhlas so spracovaním
-    svojich osobných údajov.
 </p>
-<p>
-    Ak nesúhlasíte s naším vyhlásením o ochrane osobných údajov, kliknite na
-    tlačidlo „Nesúhlasím“.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34400175">Vážime si vaše súkromie</a>
+	</h2>
+	<p>
+	    Kliknite na tlačidlo „Súhlasím“, aby ste potvrdili, že ste si prečítali
+	    vyhlásenie o ochrane osobných údajov a že poskytujete súhlas so spracovaním
+	    svojich osobných údajov.
+	</p>
+	<p>
+	    Ak nesúhlasíte s naším vyhlásením o ochrane osobných údajov, kliknite na
+	    tlačidlo „Nesúhlasím“.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

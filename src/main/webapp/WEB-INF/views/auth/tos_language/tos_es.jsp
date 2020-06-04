@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -151,11 +152,7 @@
 <p>
     Para su identificación por el sistema, el usuario necesita un nombre de
     usuario y una contraseña, que son gestionados por el servicio EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.221/DIGIT-2020-00012-00-00-ES-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     . Para más información sobre cómo EULogin trata sus datos personales,
@@ -173,10 +170,10 @@
     personales:
 </p>
 <p>
-    § Nombre y apellidos
+    • Nombre y apellidos
 </p>
 <p>
-    § Dirección de correo electrónico
+    • Dirección de correo electrónico
 </p>
 <p>
     El nombre y la dirección de correo electrónico son datos que se extraen
@@ -222,16 +219,14 @@
 <h2>
     <a name="_Toc34123306">4.1 Personal de la UE (usuario interno)</a>
 </h2>
-<h2>
-    <a name="_Toc34123307">
+<p>
         Las cuentas de los miembros del personal de la UE están activas y, por
         tanto, se conservan sus datos personales. Sin embargo, el afectado
         puede, en todo momento, pedir al equipo de EUSurvey que cierre su
         cuenta si ya no desea utilizar el servicio. En este caso, la cuenta de
         usuario, todos los datos asociados y todas las encuestas y resultados
         se eliminarán definitivamente.
-    </a>
-</h2>
+</p>
 <h2>
     <a name="_Toc34123308">4.2 Usuario externo de EUSurvey</a>
 </h2>
@@ -293,11 +288,11 @@
     acceso a sus datos personales; por ejemplo:
 </p>
 <p>
-    § el equipo EUSurvey de la Comisión para tareas de apoyo y mantenimiento
+    • el equipo EUSurvey de la Comisión para tareas de apoyo y mantenimiento
     del sistema
 </p>
 <p>
-    § los administradores de la infraestructura
+    • los administradores de la infraestructura
 </p>
 <p>
     La información que recopilamos no se facilitará a ningún tercero, salvo en
@@ -387,11 +382,7 @@
     </a>
 </h2>
 <p>
-    Puede ponerse en contacto con el delegado de protección de datos (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ) en relación con el tratamiento de sus datos personales con arreglo al
+    Puede ponerse en contacto con el delegado de protección de datos (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) en relación con el tratamiento de sus datos personales con arreglo al
     Reglamento (UE) 2018/1725.
 </p>
 <h2>
@@ -401,7 +392,7 @@
 </h2>
 <p>
     Si considera que, con motivo del tratamiento de sus datos personales por el
-responsable del tratamiento de datos (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>), se han
+responsable del tratamiento de datos (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>), se han
     infringido los derechos que le asisten con arreglo al Reglamento (UE)
     2018/1725, tiene derecho a recurrir (esto es, a presentar una denuncia)
     ante el Supervisor Europeo de Protección de Datos.
@@ -426,25 +417,25 @@ responsable del tratamiento de datos (    <a href="mailto:edps@edps.europa.eu">e
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34123317">
+<p>
         La presente operación de tratamiento se ha incluido en el registro
         público del delegado de protección de datos con la siguiente referencia
         de registro: DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34123318">Valoramos su privacidad</a>
-</h2>
-<p>
-    Pulse el botón «Acepto» para indicar que ha leído la declaración de
-    confidencialidad y dar su consentimiento para el tratamiento de sus datos
-    personales.
 </p>
-<p>
-    Si no está de acuerdo con nuestra declaración de confidencialidad, pulse el
-    botón «No acepto».
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34123318">Valoramos su privacidad</a>
+	</h2>
+	<p>
+	    Pulse el botón «Acepto» para indicar que ha leído la declaración de
+	    confidencialidad y dar su consentimiento para el tratamiento de sus datos
+	    personales.
+	</p>
+	<p>
+	    Si no está de acuerdo con nuestra declaración de confidencialidad, pulse el
+	    botón «No acepto».
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

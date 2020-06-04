@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -147,11 +148,7 @@
 <p>
     Para ser identificado pelo sistema, o utilizador necessita de um nome de
     utilizador / senha, gerido pelo serviço EU Login
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.416/DIGIT-2020-00012-00-00-PT-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     . Para mais informações sobre o tratamento dos seus dados pessoais pelo EU
@@ -169,10 +166,10 @@
     separador «Parâmetros»:
 </p>
 <p>
-    § Nome completo (nome próprio e apelido)
+    • Nome completo (nome próprio e apelido)
 </p>
 <p>
-    § Endereço eletrónico
+    • Endereço eletrónico
 </p>
 <p>
     O nome completo e o endereço de correio eletrónico são dados extraídos,
@@ -292,11 +289,11 @@ as medidas em matéria de proteção de dados, a preferência «    <em>do not t
     Este inclui:
 </p>
 <p>
-    § A equipa EUSurvey da Comissão para efeitos de apoio e manutenção do
+    • A equipa EUSurvey da Comissão para efeitos de apoio e manutenção do
     sistema.
 </p>
 <p>
-    § Os administradores da infraestrutura.
+    • Os administradores da infraestrutura.
 </p>
 <p>
     As informações que recolhemos não serão comunicadas a terceiros, exceto na
@@ -381,11 +378,7 @@ as medidas em matéria de proteção de dados, a preferência «    <em>do not t
     8.2. Responsável pela proteção de dados (RPD) da Comissão
 </p>
 <p>
-    Pode ainda contactar o responsável pela proteção de dados da Comissão (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ) no que respeita às questões relacionadas com o tratamento dos seus dados
+    Pode ainda contactar o responsável pela proteção de dados da Comissão (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) no que respeita às questões relacionadas com o tratamento dos seus dados
     pessoais ao abrigo do Regulamento (UE) 2018/1725.
 </p>
 <p>
@@ -393,7 +386,7 @@ as medidas em matéria de proteção de dados, a preferência «    <em>do not t
 </p>
 <p>
     Tem o direito de recurso (isto é, pode apresentar uma reclamação) à
-Autoridade Europeia para a Proteção de Dados (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>), caso
+Autoridade Europeia para a Proteção de Dados (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>), caso
     considere que os seus direitos ao abrigo do Regulamento (UE) 2018/1725
     foram infringidos em resultado do tratamento dos seus dados pessoais pelo
     responsável pelo tratamento.
@@ -421,18 +414,20 @@ Autoridade Europeia para a Proteção de Dados (    <a href="mailto:edps@edps.eu
     Esta operação de tratamento específica foi incluída no registo público do
     RPD, com a seguinte referência documental: DPR-EC-01488.1
 </p>
-<p>
-    Valorizamos a sua privacidade
-</p>
-<p>
-    Clique no botão «Aceito» para indicar que leu a declaração de
-    confidencialidade e dá o seu consentimento para o tratamento dos seus dados
-    pessoais.
-</p>
-<p>
-    Se discordar da nossa declaração de confidencialidade, clique no botão «Não
-    aceito».
-</p>
+<c:if test="${readonly == null}">
+	<p>
+	    Valorizamos a sua privacidade
+	</p>
+	<p>
+	    Clique no botão «Aceito» para indicar que leu a declaração de
+	    confidencialidade e dá o seu consentimento para o tratamento dos seus dados
+	    pessoais.
+	</p>
+	<p>
+	    Se discordar da nossa declaração de confidencialidade, clique no botão «Não
+	    aceito».
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

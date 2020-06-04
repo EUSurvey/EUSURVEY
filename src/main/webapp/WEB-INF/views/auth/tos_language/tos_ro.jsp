@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -163,11 +164,7 @@
     Pentru a fi identificat de sistem, utilizatorul necesită un cuplu de date
     format din nume de utilizator și parolă, care sunt gestionate de serviciul
     Eulogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.462/DIGIT-2020-00012-00-00-RO-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     . Pentru mai multe informații cu privire la modul în care EULogin vă
@@ -185,10 +182,10 @@
     rubrica „Setări”:
 </p>
 <p>
-    § Numele complet (prenumele și numele)
+    • Numele complet (prenumele și numele)
 </p>
 <p>
-    § Adresa de e-mail
+    • Adresa de e-mail
 </p>
 <p>
     Numele complet și adresa de e-mail sunt date obținute printr-un proces
@@ -237,8 +234,7 @@
         4.1 Membru al personalului UE (utilizator intern)
     </a>
 </h2>
-<h2>
-    <a name="_Toc34307450">
+<p>
         Atâta timp cât sunteți membru al personalului UE, contul dumneavoastră
         de utilizator rămâne activ și, prin urmare, datele dumneavoastră cu
         caracter personal sunt păstrate. Totuși, puteți solicita în orice
@@ -246,8 +242,7 @@
         utilizați serviciul respectiv. În acest caz, contul dumneavoastră de
         utilizator, toate datele asociate și toate sondajele și rezultatele vor
         fi eliminate definitiv.
-    </a>
-</h2>
+    </p>
 <h2>
     <a name="_Toc34307451">4.2 Utilizator extern al EUSurvey</a>
 </h2>
@@ -313,11 +308,11 @@
     El include:
 </p>
 <p>
-    § Echipa EUSurvey a Comisiei, în scopuri de funcționare și întreținere a
+    • Echipa EUSurvey a Comisiei, în scopuri de funcționare și întreținere a
     sistemului.
 </p>
 <p>
-    § Administratorii infrastructurii.
+    • Administratorii infrastructurii.
 </p>
 <p>
     Informațiile pe care le colectăm nu vor fi comunicate niciunei părți terțe,
@@ -410,11 +405,7 @@
     </a>
 </h2>
 <p>
-    Îl puteți contacta și pe responsabilul cu protecția datelor (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ) din cadrul Comisiei pentru orice aspect legat de prelucrarea datelor
+    Îl puteți contacta și pe responsabilul cu protecția datelor (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) din cadrul Comisiei pentru orice aspect legat de prelucrarea datelor
     dumneavoastră cu caracter personal în temeiul Regulamentului (UE)
     2018/1725.
 </p>
@@ -425,7 +416,7 @@
 </h2>
 <p>
     Aveți dreptul de a face recurs (și anume, puteți depune o plângere) la
-Autoritatea Europeană pentru Protecția Datelor (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) dacă
+Autoritatea Europeană pentru Protecția Datelor (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) dacă
     considerați că drepturile dumneavoastră în temeiul Regulamentului (UE)
     2018/1725 au fost încălcate ca urmare a prelucrării datelor dumneavoastră
     cu caracter personal de către operatorul de date.
@@ -453,26 +444,26 @@ Autoritatea Europeană pentru Protecția Datelor (    <a href="mailto:edps@edps.
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34307460">
+<p>
         Această operațiune specifică de prelucrare a fost inclusă în registrul
         public al RPD cu numărul de referință următor: DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34307461">
-        Respectăm confidențialitatea datelor dumneavoastră
-    </a>
-</h2>
-<p>
-    Clicați pe butonul „Accept” de mai jos pentru a indica faptul că ați citit
-    declarația de confidențialitate și că sunteți de acord cu prelucrarea
-    datelor dumneavoastră cu caracter personal.
 </p>
-<p>
-    În cazul în care nu sunteți de acord cu declarația de confidențialitate,
-    clicați pe butonul „Nu accept”.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34307461">
+	        Respectăm confidențialitatea datelor dumneavoastră
+	    </a>
+	</h2>
+	<p>
+	    Clicați pe butonul „Accept” de mai jos pentru a indica faptul că ați citit
+	    declarația de confidențialitate și că sunteți de acord cu prelucrarea
+	    datelor dumneavoastră cu caracter personal.
+	</p>
+	<p>
+	    În cazul în care nu sunteți de acord cu declarația de confidențialitate,
+	    clicați pe butonul „Nu accept”.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -142,11 +143,7 @@
 <p>
     För att identifieras av systemet behöver du ett användarnamn och ett
     lösenord, som hanteras via verktyget EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.750/DIGIT-2020-00012-00-00-SV-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     . För mer information om hur EULogin behandlar personuppgifter kan du gå in
@@ -167,10 +164,10 @@
     Inställningar, nämligen
 </p>
 <p>
-    § fullständigt namn (för- och efternamn), och
+    • fullständigt namn (för- och efternamn), och
 </p>
 <p>
-    § mejladress.
+    • mejladress.
 </p>
 <p>
     Ditt fullständiga namn och din mejladress hämtas automatiskt från EULogin
@@ -210,19 +207,15 @@
     uppfylla syftet med enkäten.
 </p>
 <h2>
-    <a name="_Toc34407292"></a>
     <a name="_Toc30690371">4.1 EU-anställda (interna användare)</a>
 </h2>
-<h2>
-    <a name="_Toc30690372"></a>
-    <a name="_Toc34407293">
+<p>
         Så länge du är EU-anställd förblir ditt konto aktivt och därmed sparas
         dina personuppgifter. Du kan dock när som helst be EUSurvey-ansvariga
         att avsluta kontot om du inte längre vill använda verktyget. Om så är
         fallet raderas ditt användarkonto, alla tillhörande uppgifter och alla
         enkäter och resultat permanent.
-    </a>
-</h2>
+    </p>
 <h2>
     <a name="_Toc34407294">4.2 Extern användare av EUSurvey</a>
 </h2>
@@ -278,11 +271,11 @@ En extern användares konto kommer att raderas efter    <strong>två års</stron
     Detta innefattar
 </p>
 <p>
-    § kommissionens EUSurvey-ansvariga i syften som rör systemsupport och
+    • kommissionens EUSurvey-ansvariga i syften som rör systemsupport och
     underhåll,
 </p>
 <p>
-    § administratörerna av infrastruktur.
+    • administratörerna av infrastruktur.
 </p>
 <p>
     Vi lämnar inte ut några uppgifter till utomstående, utom i den mån och i de
@@ -362,11 +355,7 @@ En extern användares konto kommer att raderas efter    <strong>två års</stron
     <a name="_Toc30690378">8.2 Kommissionens dataskyddsombud</a>
 </h2>
 <p>
-    Mejla kommissionens dataskyddsombud (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    )om du har frågor om hur dina personuppgifter behandlas enligt förordning
+    Mejla kommissionens dataskyddsombud (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) om du har frågor om hur dina personuppgifter behandlas enligt förordning
     (EU) 2018/1725.
 </p>
 <h2>
@@ -376,7 +365,7 @@ En extern användares konto kommer att raderas efter    <strong>två års</stron
 <p>
     Om du anser att dina rättigheter enligt förordning (EU) 2018/1725 har
     kränkts till följd av behandlingen av dina personuppgifter kan du klaga hos
-Europeiska datatillsynsmannen (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>).
+Europeiska datatillsynsmannen (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>).
 </p>
 <p>
     Europeiska datatillsynsmannen agerar som en oberoende tillsynsmyndighet och
@@ -397,22 +386,22 @@ Europeiska datatillsynsmannen (    <a href="mailto:edps@edps.europa.eu">edps@edp
         http://ec.europa.eu/dpo-register
     </a>
 </p>
-<h1>
-    <a name="_Toc34407303">
+<p>
         Den behandling av personuppgifter som avses här har registrerats hos
         dataskyddsombudet med följande referens: DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34407304">Vi värnar om din integritet</a>
-</h2>
-<p>
-    Tryck på ”Godkänn” nedan för att ange att du har läst meddelandet och
-    godkänner behandlingen av dina personuppgifter.
 </p>
-<p>
-    Om du inte vill godkänna meddelandet trycker du på ”Godkänn inte”.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34407304">Vi värnar om din integritet</a>
+	</h2>
+	<p>
+	    Tryck på ”Godkänn” nedan för att ange att du har läst meddelandet och
+	    godkänner behandlingen av dina personuppgifter.
+	</p>
+	<p>
+	    Om du inte vill godkänna meddelandet trycker du på ”Godkänn inte”.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

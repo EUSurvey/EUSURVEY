@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -136,11 +137,7 @@ valdytoją užpildydamas    <a href="https://ec.europa.eu/eusurvey/home/support"
 <p>
     Tam, kad sistema atpažintų naudotoją, jam reikia prisijungimo vardo ir
     slaptažodžio. Jiems tvarkyti naudojama „EU Login“
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.331/DIGIT-2020-00012-00-00-LT-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     paslauga. Daugiau informacijos apie tai, kaip „EU Login“ tvarko jūsų asmens
@@ -158,10 +155,10 @@ valdytoją užpildydamas    <a href="https://ec.europa.eu/eusurvey/home/support"
     kortelę „Nustatymai“:
 </p>
 <p>
-    § asmenvardis (vardas ir pavardė);
+    • asmenvardis (vardas ir pavardė);
 </p>
 <p>
-    § e. pašto adresas.
+    • e. pašto adresas.
 </p>
 <p>
     Asmenvardis ir e. pašto adresas yra duomenys, gaunami automatiškai iš
@@ -206,13 +203,13 @@ valdytoją užpildydamas    <a href="https://ec.europa.eu/eusurvey/home/support"
 <h2>
     4.1. ES institucijų darbuotojas (vidaus naudotojas)
 </h2>
-<h2>
+<p>
     Kol dirbate ES institucijose, jūsų naudotojo paskyra yra aktyvi, todėl jūsų
     asmens duomenys saugomi. Tačiau jei nebenorite naudotis paslauga, galite
     bet kada paprašyti „EUSurvey“ komandos ištrinti jūsų paskyrą. Tokiu atveju
     jūsų naudotojo paskyra, visi susiję duomenys ir visos apklausos bei
     rezultatai bus visam laikui ištrinti.
-</h2>
+</p>
 <h2>
     4.2. „EUSurvey“ išorės naudotojas
 </h2>
@@ -266,10 +263,10 @@ Be to, nenaudojamos išorės naudotojų paskyros ištrinamos, jei    <strong>2 m
     tvarkantys darbuotojai:
 </p>
 <p>
-    § Komisijos „EUSurvey“ komanda – sistemos palaikymo ir priežiūros tikslais;
+    • Komisijos „EUSurvey“ komanda – sistemos palaikymo ir priežiūros tikslais;
 </p>
 <p>
-    § infrastruktūros administratoriai.
+    • infrastruktūros administratoriai.
 </p>
 <p>
     Mūsų renkama informacija nebus teikiama jokiai trečiajai šaliai, išskyrus
@@ -339,11 +336,7 @@ visam laikui, susisiekite su „EUSurvey“ paramos grupe naudodamasis    <a hre
 </h2>
 <p>
     Jei turite klausimų dėl jūsų asmens duomenų tvarkymo pagal Reglamentą (ES)
-    2018/1725, galite kreiptis ir į Komisijos duomenų apsaugos pareigūną (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ).
+    2018/1725, galite kreiptis ir į Komisijos duomenų apsaugos pareigūną (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>).
 </p>
 <h2>
     8.3. Europos duomenų apsaugos priežiūros pareigūnas
@@ -351,7 +344,7 @@ visam laikui, susisiekite su „EUSurvey“ paramos grupe naudodamasis    <a hre
 <p>
     Jei manote, kad duomenų valdytojui tvarkant jūsų asmens duomenis buvo
     pažeistos Reglamente (ES) 2018/1725 nustatytos jūsų teisės, turite teisę
-kreiptis į Europos duomenų apsaugos priežiūros pareigūną (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) ir jam
+kreiptis į Europos duomenų apsaugos priežiūros pareigūną (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) ir jam
     pateikti skundą.
 </p>
 <p>
@@ -372,23 +365,23 @@ kreiptis į Europos duomenų apsaugos priežiūros pareigūną (    <a href="mai
     .
 </p>
 <p>
-    <strong>
         Ši konkreti duomenų tvarkymo operacija įtraukta į viešą duomenų
         apsaugos pareigūno registrą registracijos numeriu DPR-EC-01488.1.
-    </strong>
 </p>
-<h2>
-    Branginame jūsų privatumą
-</h2>
-<p>
-    Norėdamas nurodyti, kad perskaitėte pareiškimą apie privatumo apsaugą ir
-    sutinkate, kad jūsų asmens duomenys būtų tvarkomi, spustelėkite žemiau
-    esantį mygtuką „Priimu“.
-</p>
-<p>
-    Jei nesutinkate su mūsų pareiškimu apie privatumo apsaugą, spustelėkite
-    mygtuką „Nepriimu“.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    Branginame jūsų privatumą
+	</h2>
+	<p>
+	    Norėdamas nurodyti, kad perskaitėte pareiškimą apie privatumo apsaugą ir
+	    sutinkate, kad jūsų asmens duomenys būtų tvarkomi, spustelėkite žemiau
+	    esantį mygtuką „Priimu“.
+	</p>
+	<p>
+	    Jei nesutinkate su mūsų pareiškimu apie privatumo apsaugą, spustelėkite
+	    mygtuką „Nepriimu“.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

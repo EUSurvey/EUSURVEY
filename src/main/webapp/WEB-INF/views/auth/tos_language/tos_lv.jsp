@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -137,11 +138,7 @@ datu pārzini ar šīs    <a href="https://ec.europa.eu/eusurvey/home/support">v
 <p>
     Lai sistēma spētu lietotāju identificēt, tam nepieciešams pāris
     “pieteikumvārds / parole”; tos pārvalda pakalpojums <em>EULogin</em>
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.368/DIGIT-2020-00012-00-00-LV-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
 . Papildu informācijai par to, kā jūsu persondatus apstrādā    <em>EULogin</em>, lūdzam skatīt
@@ -159,10 +156,10 @@ datu pārzini ar šīs    <a href="https://ec.europa.eu/eusurvey/home/support">v
     “Iestatījumi” (<em>Settings</em>):
 </p>
 <p>
-    § Pilns vārds (vārds un uzvārds)
+    • Pilns vārds (vārds un uzvārds)
 </p>
 <p>
-    § E-pasta adrese
+    • E-pasta adrese
 </p>
 <p>
     Pilns vārds un e-pasta adrese ir dati, kas no <em>EULogin</em> un Eiropas
@@ -205,13 +202,13 @@ efektīvas ir Eiropas Komisijas tīmekļvietnes. Tīmekļa serverī instalētais
 <h2>
     4.1. ES darbinieks (iekšējs lietotājs)
 </h2>
-<h2>
+<p>
     Kamēr vien esat ES darbinieks, jums ir aktīvs lietotāja konts un tātad jūsu
     persondati tiek saglabāti. Tomēr, ja pakalpojumu <em>EUSurvey</em> vairs
     nevēlaties izmantot, jebkurā laikā varat darbiniekiem lūgt jūsu kontu
     dzēst. Šajā gadījumā jūsu lietotāja konts, visi ar to saistītie dati un
     visi apsekojumi un rezultāti tiks neatgriezeniski dzēsti.
-</h2>
+</p>
 <h2>
     4.2. <em>EUSurvey</em> ārējais lietotājs
 </h2>
@@ -270,10 +267,10 @@ Tāpēc jūsu persondati ir piekļūstami darbiniekiem, kas pārvalda lietotni  
     To vidū ir:
 </p>
 <p>
-    § Komisijas <em>EUSurvey</em> sistēmas atbalsta un uzturēšanas komanda.
+    • Komisijas <em>EUSurvey</em> sistēmas atbalsta un uzturēšanas komanda.
 </p>
 <p>
-    § Infrastruktūras administratori.
+    • Infrastruktūras administratori.
 </p>
 <p>
     Informācija, ko mēs vācam, netiks izpausta nevienai trešai personai,
@@ -346,11 +343,7 @@ grupu, izmantojot šo    <a href="https://ec.europa.eu/eusurvey/home/support">ve
 <p>
     Par jautājumiem, kas saistīti ar jūsu persondatu apstrādi atbilstīgi
     Regulai (ES) 2018/1725, varat sazināties arī ar Komisijas datu aizsardzības
-    speciālistu:(
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ).
+    speciālistu: (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>).
 </p>
 <h2>
     8.3. Eiropas Datu aizsardzības uzraudzītājs (<em>EDPS</em>)
@@ -359,7 +352,7 @@ grupu, izmantojot šo    <a href="https://ec.europa.eu/eusurvey/home/support">ve
     Ja uzskatāt, ka datu pārziņa īstenotas jūsu persondatu apstrādes dēļ ir
     pārkāptas jūsu tiesības, kas noteiktas Regulā (ES) 2018/1725, jums ir
     tiesības vērsties pie Eiropas Datu aizsardzības uzraudzītāja, proti,
-iesniegt sūdzību, rakstot uz adresi    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>.
+iesniegt sūdzību, rakstot uz adresi <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>.
 </p>
 <p>
     Eiropas Datu aizsardzības uzraudzītājs rīkojas kā neatkarīga uzraudzības
@@ -379,24 +372,24 @@ iesniegt sūdzību, rakstot uz adresi    <a href="mailto:edps@edps.europa.eu">ed
     </a>
     .
 </p>
-<h2>
-    <a name="_Toc34390217">
+<p>
         Šī konkrētā apstrādes darbība <em>DPO</em> publiskajā reģistrā ir
         iekļauta ar šādu atsauci: DPR-EC-01488.1
-    </a>
-</h2>
-<h2>
-    Mēs augstu vērtējam jūsu privātumu
-</h2>
-<p>
-    Lai norādītu, ka esat izlasījis/izlasījusi šo paziņojumu par privātumu un
-    piekrītat savu persondatu apstrādei, lūdzam noklikšķināt uz pogas “Es
-    pieņemu”.
 </p>
-<p>
-    Ja mūsu paziņojumam par privātumu nepiekrītat, lūdzam noklikšķināt uz pogas
-    “Es nepieņemu”.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    Mēs augstu vērtējam jūsu privātumu
+	</h2>
+	<p>
+	    Lai norādītu, ka esat izlasījis/izlasījusi šo paziņojumu par privātumu un
+	    piekrītat savu persondatu apstrādei, lūdzam noklikšķināt uz pogas “Es
+	    pieņemu”.
+	</p>
+	<p>
+	    Ja mūsu paziņojumam par privātumu nepiekrītat, lūdzam noklikšķināt uz pogas
+	    “Es nepieņemu”.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

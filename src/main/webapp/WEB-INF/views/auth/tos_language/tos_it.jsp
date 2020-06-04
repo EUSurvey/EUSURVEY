@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -144,11 +145,7 @@ del trattamento con l'apposito    <a href="https://ec.europa.eu/eusurvey/home/su
 <p>
     Per essere identificato dal sistema l'utente ha bisogno di una coppia
     login/password che è gestita dal sevizio EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.673/DIGIT-2020-00012-00-00-IT-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     . Per maggiori informazioni su come EULogin tratta i suoi dati personali,
@@ -166,10 +163,10 @@ del trattamento con l'apposito    <a href="https://ec.europa.eu/eusurvey/home/su
     scheda "Impostazioni":
 </p>
 <p>
-    § Nome completo (nome e cognome)
+    • Nome completo (nome e cognome)
 </p>
 <p>
-    § Indirizzo email
+    • Indirizzo email
 </p>
 <p>
     Il nome completo e l'indirizzo email sono dati estratti automaticamente da
@@ -214,14 +211,14 @@ del trattamento con l'apposito    <a href="https://ec.europa.eu/eusurvey/home/su
 <h2>
     4.1 Personale UE (utente interno)
 </h2>
-<h2>
+<p>
     Se è membro del personale UE, il suo account resta attivo e i suoi dati
     personali sono di conseguenza conservati. Di fatto però, se non intende più
     avvalersi di EUSurvey può in qualsiasi momento chiedere ai gestori del
     servizio di chiudere il suo account. In tal caso saranno definitivamente
     cancellati il suo account, tutti i dati associati, tutte le indagini e
     relativi risultati.
-</h2>
+</p>
 <h2>
     4.2 Utente esterno EUSurvey
 </h2>
@@ -284,10 +281,10 @@ del trattamento con l'apposito    <a href="https://ec.europa.eu/eusurvey/home/su
     In particolare hanno accesso:
 </p>
 <p>
-    § i gestori EUSurvey della Commissione per supporto sistema e manutenzione;
+    • i gestori EUSurvey della Commissione per supporto sistema e manutenzione;
 </p>
 <p>
-    § gli amministratori.
+    • gli amministratori.
 </p>
 <p>
     Le informazioni raccolte non vengono trasmesse a terzi se non in virtù di
@@ -400,26 +397,23 @@ l'apposito    <a href="https://ec.europa.eu/eusurvey/home/support">modulo di con
     .
 </p>
 <p>
-    <a name="_Toc34656608">
-        <strong>
             Questo specifico trattamento è stato inserito nel registro pubblico
             del responsabile della protezione dei dati con il seguente numero
             di registro: DPR-EC-01488.1
-        </strong>
-    </a>
-    <strong></strong>
 </p>
-<h2>
-    Abbiamo a cuore la sua privacy
-</h2>
-<p>
-    Clicchi sul pulsante "Accetto" qui sotto per indicare che ha letto
-    l'informativa sulla privacy e acconsente al trattamento dei suoi dati
-    personali.
-</p>
-<p>
-    Se non concorda con l'informativa, clicchi sul pulsante "Non accetto".
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    Abbiamo a cuore la sua privacy
+	</h2>
+	<p>
+	    Clicchi sul pulsante "Accetto" qui sotto per indicare che ha letto
+	    l'informativa sulla privacy e acconsente al trattamento dei suoi dati
+	    personali.
+	</p>
+	<p>
+	    Se non concorda con l'informativa, clicchi sul pulsante "Non accetto".
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

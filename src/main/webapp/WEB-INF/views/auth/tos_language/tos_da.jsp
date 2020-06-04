@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 	
@@ -148,10 +149,8 @@ kontakte den dataansvarlige via    <a href="https://ec.europa.eu/eusurvey/home/s
 <p>
     For at blive identificeret af systemet har brugeren brug for et login og
     tilhørende password, som administreres af EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.698/DIGIT-2020-00012-00-00-DA-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
+   <a
+        href="#ftn1"
     >
         [1]
     </a>
@@ -170,10 +169,10 @@ kontakte den dataansvarlige via    <a href="https://ec.europa.eu/eusurvey/home/s
     fanen "Indstillinger":
 </p>
 <p>
-    § Fulde navn (fornavn og efternavn)
+    • Fulde navn (fornavn og efternavn)
 </p>
 <p>
-    § E-mailadresse
+    • E-mailadresse
 </p>
 <p>
     Det fulde navn og e-mailadressen hentes automatisk fra EULogin og
@@ -217,15 +216,13 @@ kontakte den dataansvarlige via    <a href="https://ec.europa.eu/eusurvey/home/s
 <h2>
     <a name="_Toc34666013">4.1 EU-ansat (intern bruger)</a>
 </h2>
-<h2>
-    <a name="_Toc34666014">
+<p>
         Så længe du er ansat i EU, forbliver din brugerkonto aktiv, og dine
         personoplysninger bibeholdes derfor. Du kan dog til enhver tid bede
         EUSurvey-teamet om at lukke din konto, hvis du ikke længere ønsker at
         bruge tjenesten. I dette tilfælde vil din brugerkonto, alle tilknyttede
         data og alle undersøgelser og resultater blive slettet permanent.
-    </a>
-</h2>
+</p>
 <h2>
     <a name="_Toc34666015">4.2 Ekstern EUSurvey-bruger</a>
 </h2>
@@ -287,11 +284,11 @@ kontakte den dataansvarlige via    <a href="https://ec.europa.eu/eusurvey/home/s
     Det drejer sig om:
 </p>
 <p>
-    § Kommissionens EUSurvey-team med henblik på systemsupport og
+    • Kommissionens EUSurvey-team med henblik på systemsupport og
     -vedligeholdelse.
 </p>
 <p>
-    § Infrastrukturforvalterne.
+    • Infrastrukturforvalterne.
 </p>
 <p>
     De oplysninger, vi indsamler, videregives kun til tredjemand i det omfang
@@ -363,11 +360,7 @@ Du har mulighed for at kontakte EUSurveys supportteam i ved hjælp af    <a href
     <a name="_Toc34666021">8.2. Kommissionens databeskyttelsesrådgiver</a>
 </h2>
 <p>
-    Du kan også kontakte Kommissionens databeskyttelsesrådgiver (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ) med hensyn til spørgsmål vedrørende behandlingen af dine
+    Du kan også kontakte Kommissionens databeskyttelsesrådgiver (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) med hensyn til spørgsmål vedrørende behandlingen af dine
     personoplysninger i henhold til forordning (EU) 2018/1725.
 </p>
 <h2>
@@ -377,7 +370,7 @@ Du har mulighed for at kontakte EUSurveys supportteam i ved hjælp af    <a href
 </h2>
 <p>
     Du har ret til at gøre indsigelse (dvs. du kan indbringe en klage) over for
-Den Europæiske Tilsynsførende for Databeskyttelse (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) , hvis du
+Den Europæiske Tilsynsførende for Databeskyttelse (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>), hvis du
     mener, at dine rettigheder i henhold til forordning (EU) 2018/1725 er
     blevet overtrådt som følge af den dataansvarliges behandling af dine
     personoplysninger.
@@ -403,25 +396,25 @@ Den Europæiske Tilsynsførende for Databeskyttelse (    <a href="mailto:edps@ed
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34666024">
+<p>
         Behandlingen af dine personoplysninger er opført i
         databeskyttelsesrådgiverens fortegnelse under følgende referencenummer:
         DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34666025">Vi respekterer dit privatliv</a>
-</h2>
-<p>
-    Klik på knappen "Jeg accepterer" nedenfor for at angive, at du har læst
-    databeskyttelseserklæringen og giver dit samtykke til, at dine
-    personoplysninger behandles.
 </p>
-<p>
-    Hvis du er uenig i vores databeskyttelseserklæring, skal du klikke på
-    knappen "Jeg accepterer ikke".
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34666025">Vi respekterer dit privatliv</a>
+	</h2>
+	<p>
+	    Klik på knappen "Jeg accepterer" nedenfor for at angive, at du har læst
+	    databeskyttelseserklæringen og giver dit samtykke til, at dine
+	    personoplysninger behandles.
+	</p>
+	<p>
+	    Hvis du er uenig i vores databeskyttelseserklæring, skal du klikke på
+	    knappen "Jeg accepterer ikke".
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>
