@@ -460,3 +460,7 @@ body {
 	width: 24px;
 	margin-bottom: 4px;
 }
+
+.check {
+    margin-bottom: 6px !important;
+}
