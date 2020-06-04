@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -144,11 +145,7 @@
 <p>
     Da bi ga sustav identificirao, korisnik mora imati korisničko ime i
     lozinku, kojima se upravlja putem usluge EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.407/DIGIT-2020-00012-00-00-HR-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+   <a href="#ftn1">
         [1]
     </a>
     . Više informacija o tome kako EULogin obrađuje vaše osobne podatke možete
@@ -166,10 +163,10 @@
     „Postavke”:
 </p>
 <p>
-    § Puno ime (ime i prezime)
+    • Puno ime (ime i prezime)
 </p>
 <p>
-    § e-adresa
+    • e-adresa
 </p>
 <p>
     Puno ime i e-adresa podaci su koji se automatski dohvaćaju iz EULogina i
@@ -214,16 +211,14 @@
         4.1. Zaposlenik institucija EU-a (unutarnji korisnik)
     </a>
 </h2>
-<h2>
-    <a name="_Toc34663901">
+<p>
         Dokle god ste zaposlenik institucija EU-a, vaš korisnički račun ostaje
         aktivan i vaši osobni podaci ostaju u sustavu. Međutim, ako više ne
         želite koristiti uslugu EUSurvey, od tima EUSurvey u svakom trenutku
         možete zatražiti da ugasi vaš račun. U tom slučaju, vaš korisnički
         račun, svi s njim povezani podaci i sve ankete i rezultati bit će
         zauvijek izbrisani.
-    </a>
-</h2>
+    <p>
 <h2>
     <a name="_Toc34663902">4.2. Vanjski korisnik usluge EUSurvey</a>
 </h2>
@@ -281,13 +276,13 @@
     To uključuje:
 </p>
 <p>
-    § Komisijin tim za EU Survey, koji im pristupa za potrebe tehničke podrške
+    • Komisijin tim za EU Survey, koji im pristupa za potrebe tehničke podrške
     i održavanja sustava, i
     <br/>
     <br/>
 </p>
 <p>
-    § administratore infrastrukture.
+    • administratore infrastrukture.
 </p>
 <p>
     Predložak: Informacije koje prikupljamo neće se prosljeđivati trećim
@@ -370,11 +365,7 @@
 </h2>
 <p>
     Za pitanja povezana s obradom vaših osobnih podataka na temelju Uredbe (EU)
-    2018/1725 možete se obratiti službeniku za zaštitu podataka (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ).
+    2018/1725 možete se obratiti službeniku za zaštitu podataka (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>).
 </p>
 <h2>
     <a name="_Toc34663909">8.3. Europski nadzornik za zaštitu podataka</a>
@@ -406,23 +397,23 @@
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34663911">
+<p>
         Ovaj postupak obrade upisan je u javni registar službenika za zaštitu
         podataka pod sljedećim brojem: DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34663912">Vaša privatnost nam je važna</a>
-</h2>
-<p>
-    Da biste potvrdili da ste pročitali izjavu o zaštiti osobnih podataka i da
-    dopuštate obradu vaših osobnih podataka, kliknite na gumb „Prihvaćam”.
 </p>
-<p>
-    Ako se ne slažete s našom izjavom o zaštiti osobnih podataka, kliknite na
-    gumb „Ne prihvaćam”.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34663912">Vaša privatnost nam je važna</a>
+	</h2>
+	<p>
+	    Da biste potvrdili da ste pročitali izjavu o zaštiti osobnih podataka i da
+	    dopuštate obradu vaših osobnih podataka, kliknite na gumb „Prihvaćam”.
+	</p>
+	<p>
+	    Ako se ne slažete s našom izjavom o zaštiti osobnih podataka, kliknite na
+	    gumb „Ne prihvaćam”.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

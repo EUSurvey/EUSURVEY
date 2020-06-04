@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -150,11 +151,7 @@
 <p>
     A rendszer által történő azonosításhoz a felhasználónak felhasználónévre és
     jelszóra van szüksége, amelyet az EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.659/DIGIT-2020-00012-00-00-HU-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     szolgáltatás kezel. Az EULogin által végzett személyesadat-kezelés módjára
@@ -173,10 +170,10 @@
     alkalmazásban:
 </p>
 <p>
-    § Teljes név (vezetéknév és utónév)
+    • Teljes név (vezetéknév és utónév)
 </p>
 <p>
-    § E-mail-cím
+    • E-mail-cím
 </p>
 <p>
     A teljes név és az e-mail-cím automatikusan lekérdezhető az EULogin
@@ -224,16 +221,14 @@
 <h2>
     <a name="_Toc30690371">4.1. Uniós alkalmazottak (belső felhasználók)</a>
 </h2>
-<h2>
-    <a name="_Toc30690372">
+<p>
         Felhasználói fiókja mindaddig aktív marad, és személyes adatait
         megőrizzük, amíg Ön uniós alkalmazott. Ugyanakkor bármikor kérheti az
         EUSurvey csoportot, hogy szüntesse meg fiókját, ha már nem kívánja
         igénybe venni a szolgáltatást. Ebben az esetben a felhasználói fiókját,
         a kapcsolódó adatokat, valamint az összes felmérést és eredményt
         véglegesen töröljük.
-    </a>
-</h2>
+    </p>
 <h2>
     4.2. Az EUSurvey külső felhasználói
 </h2>
@@ -297,11 +292,11 @@
     Ez az alábbiakat foglalja magában:
 </p>
 <p>
-    § A Bizottság EUSurvey csoportja rendszertámogatás és -karbantartás
+    • A Bizottság EUSurvey csoportja rendszertámogatás és -karbantartás
     céljából.
 </p>
 <p>
-    § Az infrastruktúra üzemeltetői.
+    • Az infrastruktúra üzemeltetői.
 </p>
 <p>
     Az általunk összegyűjtött információkat nem adjuk át semmilyen harmadik
@@ -428,23 +423,23 @@ következő e-mail-címen:    <a href="mailto:edps@edps.europa.eu">edps@edps.eur
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34401414">
+<p>
         Ez a konkrét adatkezelési művelet a következő hivatkozási számmal
         szerepel az adatvédelmi tisztviselő nyilvántartásában: DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    Személyes adatainak védelme fontos számunkra
-</h2>
-<p>
-    Kérjük, az alábbi „Elfogadom” gombra kattintva jelezze, hogy elolvasta az
-    adatvédelmi nyilatkozatot, és hozzájárul személyes adatainak kezeléséhez.
 </p>
-<p>
-    Ha nem ért egyet adatvédelmi nyilatkozatunkkal, kérjük, kattintson a „Nem
-    fogadom el” gombra.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    Személyes adatainak védelme fontos számunkra
+	</h2>
+	<p>
+	    Kérjük, az alábbi „Elfogadom” gombra kattintva jelezze, hogy elolvasta az
+	    adatvédelmi nyilatkozatot, és hozzájárul személyes adatainak kezeléséhez.
+	</p>
+	<p>
+	    Ha nem ért egyet adatvédelmi nyilatkozatunkkal, kérjük, kattintson a „Nem
+	    fogadom el” gombra.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

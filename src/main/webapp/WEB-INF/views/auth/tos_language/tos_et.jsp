@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -134,9 +135,7 @@ töötlejaga    <a href="https://ec.europa.eu/eusurvey/home/support">kasutajatoe
     Kasutaja tuvastamiseks süsteemis on kasutajal vaja kasutajanime/salasõna,
     mida haldab EULogini
     <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.228/DIGIT-2020-00012-00-00-ET-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
+        href="#ftn1"
     >
         [1]
     </a>
@@ -155,10 +154,10 @@ töötlejaga    <a href="https://ec.europa.eu/eusurvey/home/support">kasutajatoe
     kaudu:
 </p>
 <p>
-    § Täisnimi (ees- ja perekonnanimi)
+    • Täisnimi (ees- ja perekonnanimi)
 </p>
 <p>
-    § E-posti aadress
+    • E-posti aadress
 </p>
 <p>
     Täisnimi ja e-posti aadress on andmed, mis saadakse automaatselt EULoginist
@@ -202,13 +201,13 @@ töötlejaga    <a href="https://ec.europa.eu/eusurvey/home/support">kasutajatoe
 <h2>
     4.1 ELi töötaja (sisekasutaja)
 </h2>
-<h2>
+<p>
     Teie kasutajakonto jääb aktiivseks ja Teie isikuandmeid säilitatakse seni,
     kuni olete ELi töötaja. Kui Te aga ei soovi enam teenust kasutada, võite
     igal ajal paluda EUSurvey meeskonnal oma konto sulgeda. Sel juhul
     kustutatakse Teie kasutajakonto, kõik seonduvad andmed ning kõik küsitlused
     ja tulemused jäädavalt.
-</h2>
+</p>
 <h2>
     4.2 EUSurvey väliskasutaja
 </h2>
@@ -262,10 +261,10 @@ töötlejaga    <a href="https://ec.europa.eu/eusurvey/home/support">kasutajatoe
     Nende töötajate hulgas on
 </p>
 <p>
-    § komisjoni EUSurvey meeskond süsteemitoe ja -hoolduse pakkumiseks ning
+    • komisjoni EUSurvey meeskond süsteemitoe ja -hoolduse pakkumiseks ning
 </p>
 <p>
-    § taristuadministraatorid.
+    • taristuadministraatorid.
 </p>
 <p>
     Kogutud andmeid ei edastata kolmandatele isikutele. Kui seda siiski
@@ -336,17 +335,13 @@ kustutada, saate võtta ühendust EUSurvey kasutajatoega    <a href="https://ec.
 </h2>
 <p>
     Kui Teil on oma isikuandmete määruse (EL) 2018/1725 kohase töötlemise kohta
-    küsimusi, võite ühendust võtta ka andmekaitseametnikuga (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ).
+    küsimusi, võite ühendust võtta ka andmekaitseametnikuga (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>).
 </p>
 <h2>
     8.3. Euroopa Andmekaitseinspektor
 </h2>
 <p>
-Teil on õigus esitada kaebus Euroopa Andmekaitseinspektorile (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>), kui leiate,
+Teil on õigus esitada kaebus Euroopa Andmekaitseinspektorile (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>), kui leiate,
     et vastutav töötleja on Teie isikuandmete töötlemisel rikkunud Teie õigusi,
     mis tulenevad määrusest (EL) 2018/1725.
 </p>
@@ -370,22 +365,24 @@ Teil on õigus esitada kaebus Euroopa Andmekaitseinspektorile (    <a href="mail
     </a>
     .
 </p>
-<h1>
+<p>
     See konkreetne töötlemistoiming on kantud komisjoni andmekaitseametniku
     avalikku registrisse järgmise registriviite all: DPR-EC-01488.1
-</h1>
-<h2>
-    Peame eraelu puutumatust oluliseks
-</h2>
-<p>
-    Klõpsake alloleval nupul „Nõustun“, millega näitate, et olete isikuandmete
-    kaitse avaldusega tutvunud ja annate nõusoleku oma isikuandmete
-    töötlemiseks.
 </p>
-<p>
-    Kui Te isikuandmete kaitse avaldusega ei nõustu, klõpsake nupul „Ei
-    nõustu“.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    Peame eraelu puutumatust oluliseks
+	</h2>
+	<p>
+	    Klõpsake alloleval nupul „Nõustun“, millega näitate, et olete isikuandmete
+	    kaitse avaldusega tutvunud ja annate nõusoleku oma isikuandmete
+	    töötlemiseks.
+	</p>
+	<p>
+	    Kui Te isikuandmete kaitse avaldusega ei nõustu, klõpsake nupul „Ei
+	    nõustu“.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

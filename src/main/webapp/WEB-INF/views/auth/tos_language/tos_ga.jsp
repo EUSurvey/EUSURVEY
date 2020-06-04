@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -150,11 +151,7 @@ theagmháil a dhéanamh leis an Rialaitheoir Sonraí tríd an bh    <a href="htt
     Chun go n-aithneoidh an córas é, ní mór don úsáideoir an cúpla ainm logála
     isteach/pasfhocal a bheith aige, a bhíonn á bhainistiú ag an tseirbhís
     EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.697/DIGIT-2020-00012-00-00-GA-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+   <a href="#ftn1">
         [1]
     </a>
     . Chun tuilleadh faisnéise a fháil faoin gcaoi a bpróiseálann EULogin do
@@ -172,10 +169,10 @@ theagmháil a dhéanamh leis an Rialaitheoir Sonraí tríd an bh    <a href="htt
     gcluaisín ‘Socruithe’:
 </p>
 <p>
-    § Ainm iomlán (céadainm agus sloinne)
+    • Ainm iomlán (céadainm agus sloinne)
 </p>
 <p>
-    § Seoladh ríomhphoist
+    • Seoladh ríomhphoist
 </p>
 <p>
     Is sonraí iad an t-ainm iomlán agus an seoladh ríomhphoist a fhaightear go
@@ -224,8 +221,7 @@ theagmháil a dhéanamh leis an Rialaitheoir Sonraí tríd an bh    <a href="htt
         4.1 Ball foirne de chuid an Aontais Eorpaigh (úsáideoir inmheánach)
     </a>
 </h2>
-<h2>
-    <a name="_Toc34668590">
+<p>
         A fhad is gur ball foirne de chuid an Aontais thú, tá do chuntas
         úsáideora fós gníomhach agus, dá bhrí sin, coinnítear do shonraí
         pearsanta. Is féidir leat, áfach, tráth ar bith, a iarraidh ar
@@ -233,8 +229,7 @@ theagmháil a dhéanamh leis an Rialaitheoir Sonraí tríd an bh    <a href="htt
         úsáid a thuilleadh. Sa chás sin, scriosfar go buan do chuntas
         úsáideora, na sonraí gaolmhara uile agus na suirbhéanna agus na torthaí
         uile.
-    </a>
-</h2>
+</p>
 <h2>
     <a name="_Toc34668591">4.2 Úsáideoir seachtrach EUSurvey</a>
 </h2>
@@ -296,11 +291,11 @@ theagmháil a dhéanamh leis an Rialaitheoir Sonraí tríd an bh    <a href="htt
     Ar an bhfoireann sin tá:
 </p>
 <p>
-    § Foireann EUSurvey an Choimisiúin chun críoch tacaíochta agus cothabhála
+    • Foireann EUSurvey an Choimisiúin chun críoch tacaíochta agus cothabhála
     córais.
 </p>
 <p>
-    § Riarthóirí an bhonneagair.
+    • Riarthóirí an bhonneagair.
 </p>
 <p>
     Ní thabharfar an t-eolas a bhailímid d’aon tríú páirtí, seachas a mhéid is
@@ -380,11 +375,7 @@ an bh    <a href="https://ec.europa.eu/eusurvey/home/support">foirm theagmhála<
 </h2>
 <p>
     Féadfaidh tú freisin dul i dteagmháil le hOifigeach Cosanta Sonraí an
-    Choimisiúin (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ) maidir le ceisteanna a bhaineann le próiseáil do shonraí pearsanta faoi
+    Choimisiúin (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) maidir le ceisteanna a bhaineann le próiseáil do shonraí pearsanta faoi
     Rialachán (AE) 2018/1725.
 </p>
 <h2>
@@ -392,7 +383,7 @@ an bh    <a href="https://ec.europa.eu/eusurvey/home/support">foirm theagmhála<
 </h2>
 <p>
     Tá sé de cheart agat dul ar iontaoibh an Mhaoirseora Eorpaigh ar Chosaint
-Sonraí (i.e. gearán a dhéanamh leis) (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) má mheasann
+Sonraí (i.e. gearán a dhéanamh leis) (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) má mheasann
     tú gur sáraíodh do chearta faoi Rialachán (AE) Uimh. 2018/1725 mar thoradh
     ar phróiseáil do shonraí pearsanta ag an Rialaitheoir Sonraí.
 </p>
@@ -417,25 +408,25 @@ Sonraí (i.e. gearán a dhéanamh leis) (    <a href="mailto:edps@edps.europa.eu
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34668600">
+<p>
         Tá an oibríocht phróiseála shonrach sin curtha le clár poiblí an
         Oifigigh Cosanta Sonraí agus an tagairt taifid seo a leanas ag gabháil
         léi: DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34668601">Tá do phríobháideachas tábhachtach dúinn</a>
-</h2>
-<p>
-    Cliceáil ar an gcnaipe “I accept” thíos chun a léiriú go bhfuil an ráiteas
-    príobháideachais léite agat agus chun do thoiliú a thabhairt do shonraí
-    pearsanta a phróiseáil.
 </p>
-<p>
-    Mura n-aontaíonn tú leis an ráiteas príobháideachais, cliceáil ar an
-    gcnaipe “I do not accept”.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34668601">Tá do phríobháideachas tábhachtach dúinn</a>
+	</h2>
+	<p>
+	    Cliceáil ar an gcnaipe “I accept” thíos chun a léiriú go bhfuil an ráiteas
+	    príobháideachais léite agat agus chun do thoiliú a thabhairt do shonraí
+	    pearsanta a phróiseáil.
+	</p>
+	<p>
+	    Mura n-aontaíonn tú leis an ráiteas príobháideachais, cliceáil ar an
+	    gcnaipe “I do not accept”.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

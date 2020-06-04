@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -151,11 +152,7 @@
 <p>
     Da bi sistem identificiral uporabnika, mora ta imeti uporabniško ime in
     geslo, ki ju upravlja storitev EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.405/DIGIT-2020-00012-00-00-SL-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     . Več informacij o tem, kako storitev EULogin obdeluje vaše osebne podatke,
@@ -175,10 +172,10 @@
     „Nastavitve“:
 </p>
 <p>
-    § polno ime (ime in priimek),
+    • polno ime (ime in priimek),
 </p>
 <p>
-    § e-naslov.
+    • e-naslov.
 </p>
 <p>
     Polno ime in elektronski naslov sta podatka, ki se s samodejnim postopkom
@@ -224,16 +221,13 @@
         4.1 Uslužbenec institucije EU (notranji uporabnik)
     </a>
 </h2>
-<h2>
-    <a name="_Toc30690372"></a>
-    <a name="_Toc34635346">
+<p>
         Dokler ste uslužbenec institucije EU, vaš uporabniški račun ostane
         aktiven in vaši osebni podatki se torej shranjujejo. Vendar lahko ekipo
         EUSurvey kadar koli prosite, naj zapre vaš račun, če ne želite več
         uporabljati storitve. V tem primeru bodo vaš uporabniški račun, vsi z
         njim povezani podatki ter vse ankete in rezultati trajno izbrisani.
-    </a>
-</h2>
+    </p>
 <h2>
     <a name="_Toc34635347">4.2 Zunanji uporabnik aplikacije EUSurvey</a>
 </h2>
@@ -290,11 +284,11 @@ Poleg tega se računi zunanjih uporabnikov, ki jih ti ne uporabljajo, po    <str
     Med člani tega osebja so:
 </p>
 <p>
-    § ekipa aplikacije EUSurvey pri Komisiji za sistemsko podporo in
+    • ekipa aplikacije EUSurvey pri Komisiji za sistemsko podporo in
     vzdrževanje;
 </p>
 <p>
-    § skrbniki infrastrukture.
+    • skrbniki infrastrukture.
 </p>
 <p>
     Zbrane informacije se ne bodo posredovale tretjim osebam, razen v obsegu in
@@ -383,11 +377,7 @@ Poleg tega se računi zunanjih uporabnikov, ki jih ti ne uporabljajo, po    <str
 <p>
     Za vprašanja v zvezi z obdelavo svojih osebnih podatkov v skladu z Uredbo
     (EU) 2018/1725 se lahko obrnete tudi na pooblaščeno osebo za varstvo
-    podatkov pri Komisiji (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ).
+    podatkov pri Komisiji (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>).
 </p>
 <h2>
     <a name="_Toc34635354"></a>
@@ -396,7 +386,7 @@ Poleg tega se računi zunanjih uporabnikov, ki jih ti ne uporabljajo, po    <str
 <p>
     Če menite, da je upravljavec podatkov z obdelavo vaših osebnih podatkov
     kršil vaše pravice iz Uredbe (EU) 2018/1725, lahko vložite pritožbo pri
-Evropskem nadzorniku za varstvo podatkov (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>).
+Evropskem nadzorniku za varstvo podatkov (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>).
 </p>
 <p>
     Evropski nadzornik za varstvo podatkov je neodvisen nadzorni organ.
@@ -421,24 +411,24 @@ Evropskem nadzorniku za varstvo podatkov (    <a href="mailto:edps@edps.europa.e
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34635356">
+<p>
         Ta postopek obdelave podatkov se v javnem registru pooblaščene osebe za
         varstvo podatkov vodi pod referenčno oznako: DPR-EC-01488.1.
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34635357">Cenimo vašo zasebnost</a>
-</h2>
-<p>
-    Kliknite spodnji gumb „Sprejmem“, da potrdite, da ste prebrali izjavo o
-    varstvu osebnih podatkov in da soglašate z obdelavo svojih osebnih
-    podatkov.
 </p>
-<p>
-    Če se ne strinjate z našo izjavo o varstvu osebnih podatkov, kliknite „Ne
-    sprejmem“.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34635357">Cenimo vašo zasebnost</a>
+	</h2>
+	<p>
+	    Kliknite spodnji gumb „Sprejmem“, da potrdite, da ste prebrali izjavo o
+	    varstvu osebnih podatkov in da soglašate z obdelavo svojih osebnih
+	    podatkov.
+	</p>
+	<p>
+	    Če se ne strinjate z našo izjavo o varstvu osebnih podatkov, kliknite „Ne
+	    sprejmem“.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

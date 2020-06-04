@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -138,11 +139,7 @@
 <p>
     Jotta järjestelmä voi tunnistaa käyttäjän, tämä tarvitsee
     käyttäjätunnuksen/salasanan, jota EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.150/DIGIT-2020-00012-00-00-FI-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     -palvelu hallinnoi. Lisätietoja siitä, miten EULogin käsittelee
@@ -160,10 +157,10 @@
     ”Asetukset”:
 </p>
 <p>
-    § Täydellinen nimi (etunimi ja sukunimi)
+    • Täydellinen nimi (etunimi ja sukunimi)
 </p>
 <p>
-    § Sähköpostiosoite
+    • Sähköpostiosoite
 </p>
 <p>
     Täydellinen nimi ja sähköpostiosoite ovat haettavissa automaattisesti
@@ -206,16 +203,14 @@
 <h2>
     <a name="_Toc33778327">4.1 EU:n henkilöstön jäsen (sisäinen käyttäjä)</a>
 </h2>
-<h2>
-    <a name="_Toc33778328">
+<p>
         Niin kauan kuin henkilö kuuluu EU:n henkilöstöön hänen käyttäjätilinsä
         säilyy aktiivisena ja hänen henkilötietonsa säilytetään.
         EUSurvey-tukitiimiä voi kuitenkin milloin tahansa pyytää lakkauttamaan
         tilin, jos palvelua ei enää haluta käyttää. Tällöin käyttäjätili,
         kaikki siihen liittyvät tiedot sekä kaikki kyselyt ja tulokset
         poistetaan pysyvästi.
-    </a>
-</h2>
+</p>
 <h2>
     <a name="_Toc33778329">4.2 Ulkopuolinen EUSurvey-käyttäjä</a>
 </h2>
@@ -274,10 +269,10 @@
     Tähän henkilöstöön kuuluvat seuraavat:
 </p>
 <p>
-    § komission EUSurvey-tukitiimi järjestelmän tukea ja ylläpitoa varten
+    • komission EUSurvey-tukitiimi järjestelmän tukea ja ylläpitoa varten
 </p>
 <p>
-    § infrastruktuurin hallinnoijat.
+    • infrastruktuurin hallinnoijat.
 </p>
 <p>
     Kerättyjä tietoja ei luovuteta kolmansille osapuolille, paitsi lain
@@ -358,18 +353,14 @@
     <a name="_Toc33778335">8.2. Komission tietosuojavastaava</a>
 </h2>
 <p>
-    Rekisteröity voi lisäksi ottaa yhteyttä komission tietosuojavastaavaan (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ) asioissa, jotka liittyvät asetuksen (EU) 2018/1725 mukaiseen
+    Rekisteröity voi lisäksi ottaa yhteyttä komission tietosuojavastaavaan (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) asioissa, jotka liittyvät asetuksen (EU) 2018/1725 mukaiseen
     henkilötietojen käsittelyyn.
 </p>
 <h2>
     <a name="_Toc33778336">8.3. Euroopan tietosuojavaltuutettu (EDPS)</a>
 </h2>
 <p>
-Rekisteröidyllä on oikeus kääntyä Euroopan tietosuojavaltuutetun puoleen (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) ja tehdä
+Rekisteröidyllä on oikeus kääntyä Euroopan tietosuojavaltuutetun puoleen (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) ja tehdä
     kantelu, jos hän katsoo, että rekisterinpitäjän suorittama henkilötietojen
     käsittely on johtanut asetuksen (EU) 2018/1725 mukaisten oikeuksien
     loukkaamiseen.
@@ -394,24 +385,24 @@ Rekisteröidyllä on oikeus kääntyä Euroopan tietosuojavaltuutetun puoleen ( 
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc33778338">
+<p>
         Tämä nimenomainen käsittelytoimi on kirjattu tietosuojavastaavan
         julkiseen rekisteriin seuraavalla viitteellä: DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc33778339">Pidämme yksityisyyden suojaa arvossa</a>
-</h2>
-<p>
-    Napsauta alla olevaa ”Hyväksyn” -painiketta ilmoittaaksesi, että olet
-    lukenut tietosuojaselosteen ja annat suostumuksesi henkilötietojen
-    käsittelyyn.
 </p>
-<p>
-    Jos olet eri mieltä tietosuojaselosteesta, napsauta painiketta ”En
-    hyväksy”.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc33778339">Pidämme yksityisyyden suojaa arvossa</a>
+	</h2>
+	<p>
+	    Napsauta alla olevaa ”Hyväksyn” -painiketta ilmoittaaksesi, että olet
+	    lukenut tietosuojaselosteen ja annat suostumuksesi henkilötietojen
+	    käsittelyyn.
+	</p>
+	<p>
+	    Jos olet eri mieltä tietosuojaselosteesta, napsauta painiketta ”En
+	    hyväksy”.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

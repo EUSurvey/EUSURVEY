@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -161,11 +162,7 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
 <p>
     Pour être identifié par le système, l’utilisateur a besoin d’un nom
     d’utilisateur et d’un mot de passe, gérés par le service EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.299/DIGIT-2020-00012-00-00-FR-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     . Pour en savoir plus sur la manière dont EULogin traite vos données à
@@ -183,10 +180,10 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
     l’application EUSurvey sous l’onglet «Paramètres»:
 </p>
 <p>
-    § Nom complet (prénom et nom)
+    • Nom complet (prénom et nom)
 </p>
 <p>
-    § Adresse électronique
+    • Adresse électronique
 </p>
 <p>
     Le nom complet et l’adresse électronique sont des données extraites, par un
@@ -237,8 +234,7 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
         4.1 Membre du personnel de l'UE (utilisateur interne)
     </a>
 </h2>
-<h2>
-    <a name="_Toc34402661">
+<p>
         Tant que vous êtes un membre du personnel de l’UE, votre compte
         utilisateur reste actif et vos données à caractère personnel sont donc
         conservées. Vous pouvez toutefois demander, à tout moment, à l’équipe
@@ -246,8 +242,7 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
         service. Dans ce cas, votre compte utilisateur, toutes les données
         associées et toutes les enquêtes et leurs résultats seront
         définitivement supprimés.
-    </a>
-</h2>
+</p>
 <h2>
     <a name="_Toc34402662">4.2 Utilisateur externe d’EUSurvey</a>
 </h2>
@@ -314,11 +309,11 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
     Le personnel concerné est le suivant:
 </p>
 <p>
-    § L’équipe EUSurvey de la Commission pour les besoins de l’assistance et de
+    • L’équipe EUSurvey de la Commission pour les besoins de l’assistance et de
     la maintenance du système.
 </p>
 <p>
-    § Les administrateurs de l’infrastructure.
+    • Les administrateurs de l’infrastructure.
 </p>
 <p>
     Les informations que nous recueillons ne seront pas communiquées à des
@@ -409,11 +404,7 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
 </h2>
 <p>
     Vous pouvez également prendre contact avec le délégué à la protection des
-    données de la Commission (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ) au sujet des questions relatives au traitement dont font l’objet vos
+    données de la Commission (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) au sujet des questions relatives au traitement dont font l’objet vos
     données à caractère personnel en vertu du règlement (UE) 2018/1725.
 </p>
 <h2>
@@ -451,25 +442,25 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34402671">
+<p>
         L’opération de traitement spécifique dont il est question dans la
         présente déclaration a été consignée dans le registre public du DPD
         sous la référence suivante: DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34402672">Nous respectons votre vie privée</a>
-</h2>
-<p>
-    Veuillez cliquer sur le bouton «J’accepte» ci-dessous pour indiquer que
-    vous avez lu la présente déclaration de confidentialité et consentez au
-    traitement de vos données à caractère personnel.
 </p>
-<p>
-    Si vous n’êtes pas d’accord avec notre déclaration de confidentialité,
-    veuillez cliquer sur le bouton «Je refuse».
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34402672">Nous respectons votre vie privée</a>
+	</h2>
+	<p>
+	    Veuillez cliquer sur le bouton «J’accepte» ci-dessous pour indiquer que
+	    vous avez lu la présente déclaration de confidentialité et consentez au
+	    traitement de vos données à caractère personnel.
+	</p>
+	<p>
+	    Si vous n’êtes pas d’accord avec notre déclaration de confidentialité,
+	    veuillez cliquer sur le bouton «Je refuse».
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <p align="center">
@@ -156,9 +157,7 @@
     Um vom System identifiziert werden zu können, benötigen die Benutzer einen
     Benutzernamen und ein Passwort, die vom EU Login
     <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.878/DIGIT-2020-00012-00-00-DE-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
+        href="#ftn1"
     >
         [1]
     </a>
@@ -177,10 +176,10 @@
     Reiter „Einstellungen“ zugänglich:
 </p>
 <p>
-    § Vollständiger Name (Vor- und Nachname)
+    • Vollständiger Name (Vor- und Nachname)
 </p>
 <p>
-    § E-Mail-Adresse
+    • E-Mail-Adresse
 </p>
 <p>
     Der vollständige Name und die E-Mail-Adresse werden automatisch aus EU
@@ -228,8 +227,7 @@
 <h2>
     <a name="_Toc34387591">4.1 EU-Bedienstete (interne Benutzer)</a>
 </h2>
-<h2>
-    <a name="_Toc34387592">
+<p>
         Solange Sie EU-Bedienstete/EU-Bediensteter sind, bleibt Ihr
         Benutzerkonto aktiv und Ihre personenbezogenen Daten werden somit
         gespeichert. Sie können jedoch jederzeit das EUSurvey-Team dazu
@@ -237,8 +235,7 @@
         nutzen möchten. In diesem Fall werden Ihr Benutzerkonto, alle
         zugehörigen Daten sowie alle Umfragen und Ergebnisse dauerhaft
         gelöscht.
-    </a>
-</h2>
+</p>
 <h2>
     <a name="_Toc34387593">4.2 Externe EUSurvey-Benutzer</a>
 </h2>
@@ -303,11 +300,11 @@
     Dazu gehören:
 </p>
 <p>
-    § das EUSurvey-Team der Kommission für die Zwecke der Systemunterstützung
+    • das EUSurvey-Team der Kommission für die Zwecke der Systemunterstützung
     und ‑wartung.
 </p>
 <p>
-    § die Infrastrukturverwalter.
+    • die Infrastrukturverwalter.
 </p>
 <p>
     Die Kommission gibt von ihr erhobene Daten nicht an Dritte weiter, sofern
@@ -390,11 +387,7 @@ Sie können sich mithilfe des    <a href="https://ec.europa.eu/eusurvey/home/sup
 <p>
     Bei Fragen im Zusammenhang mit der Verarbeitung Ihrer personenbezogenen
     Daten gemäß der Verordnung (EU) 2018/1725 können Sie sich an den
-    Datenschutzbeauftragten der Kommission (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ) wenden.
+    Datenschutzbeauftragten der Kommission (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) wenden.
 </p>
 <h2>
     <a name="_Toc34387600">8.3 Europäischer Datenschutzbeauftragter (EDSB)</a>
@@ -403,7 +396,7 @@ Sie können sich mithilfe des    <a href="https://ec.europa.eu/eusurvey/home/sup
     Wenn Sie der Auffassung sind, dass Ihre Rechte gemäß der Verordnung (EU)
     2018/1725 bei der Verarbeitung Ihrer personenbezogenen Daten durch den
     Datenverantwortlichen nicht gewahrt wurden, können Sie beim Europäischen
-Datenschutzbeauftragten (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) Beschwerde
+Datenschutzbeauftragten (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) Beschwerde
     einreichen.
 </p>
 <p>
@@ -428,25 +421,25 @@ Datenschutzbeauftragten (    <a href="mailto:edps@edps.europa.eu">edps@edps.euro
         https://ec.europa.eu/info/about-european-commission/service-standards-and-principles/transparency/data-processing-register_de
     </a>
 </p>
-<h1>
-    <a name="_Toc34387602">
+<p>
         Dieser Verarbeitungsvorgang wurde unter folgender Nummer in das
         öffentliche Register des Datenschutzbeauftragten aufgenommen:
         DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34387603">Wir respektieren Ihre Privatsphäre</a>
-</h2>
-<p>
-    Bitte klicken Sie unten auf die Schaltfläche „Ich stimme zu“, um zu zeigen,
-    dass Sie die Datenschutzerklärung gelesen haben und Ihre Zustimmung zur
-    Verarbeitung Ihrer personenbezogenen Daten geben.
 </p>
-<p>
-    Wenn Sie mit unserer Datenschutzerklärung nicht einverstanden sind, klicken
-    Sie bitte auf die Schaltfläche „Ich stimme nicht zu“.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34387603">Wir respektieren Ihre Privatsphäre</a>
+	</h2>
+	<p>
+	    Bitte klicken Sie unten auf die Schaltfläche „Ich stimme zu“, um zu zeigen,
+	    dass Sie die Datenschutzerklärung gelesen haben und Ihre Zustimmung zur
+	    Verarbeitung Ihrer personenbezogenen Daten geben.
+	</p>
+	<p>
+	    Wenn Sie mit unserer Datenschutzerklärung nicht einverstanden sind, klicken
+	    Sie bitte auf die Schaltfläche „Ich stimme nicht zu“.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

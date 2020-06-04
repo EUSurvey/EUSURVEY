@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -146,11 +147,7 @@
 <p>
     Aby użytkownik mógł być rozpoznany przez system, potrzebuje nazwy
     użytkownika i hasła, którymi zarządza serwis EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.768/DIGIT-2020-00012-00-00-PL-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     . Więcej informacji na temat przetwarzania danych osobowych przez system
@@ -168,10 +165,10 @@
     „Ustawienia”:
 </p>
 <p>
-    § Imię i nazwisko
+    • Imię i nazwisko
 </p>
 <p>
-    § Adres e-mail
+    • Adres e-mail
 </p>
 <p>
     Dane takie jak imię i nazwisko oraz adres e-mail są pobierane automatycznie
@@ -281,10 +278,10 @@ Konta użytkowników zewnętrznych nieużywane przez okres    <strong>2 lat</str
     Do tej grupy pracowników należą:
 </p>
 <p>
-    § zespół EUSurvey w Komisji do celów obsługi i utrzymania systemu
+    • zespół EUSurvey w Komisji do celów obsługi i utrzymania systemu
 </p>
 <p>
-    § administratorzy infrastruktury.
+    • administratorzy infrastruktury.
 </p>
 <p>
     Informacje, które gromadzimy, nie zostaną przekazane żadnej osobie
@@ -377,18 +374,14 @@ Konta użytkowników zewnętrznych nieużywane przez okres    <strong>2 lat</str
 <p>
     W odniesieniu do kwestii związanych z przetwarzaniem danych osobowych na
     podstawie rozporządzenia (UE) 2018/1725 można również kontaktować się z
-    inspektorem ochrony danych Komisji Europejskiej (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ).
+    inspektorem ochrony danych Komisji Europejskiej (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>).
 </p>
 <h2>
     <a name="_Toc34651446">8.3. Europejski Inspektor Ochrony Danych (EIOD)</a>
 </h2>
 <p>
     Użytkownicy mają również prawo do odwołania się (wniesienia skargi) do
-Europejskiego Inspektora Ochrony Danych (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>), jeżeli
+Europejskiego Inspektora Ochrony Danych (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>), jeżeli
     uważają, że ich prawa wynikające z rozporządzenia (UE) 2018/1725 zostały
     naruszone w wyniku przetwarzania danych przez administratora danych.
 </p>
@@ -411,25 +404,25 @@ Europejskiego Inspektora Ochrony Danych (    <a href="mailto:edps@edps.europa.eu
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34651448">
+<p>
         Ta konkretna operacja przetwarzania została wpisana do rejestru
         publicznego inspektora ochrony danych pod następującym numerem:
         DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34651449">Cenimy Twoją prywatność</a>
-</h2>
-<p>
-    Kliknij na przycisk „Akceptuję” poniżej, aby wskazać, że zapoznałeś(-aś)
-    się z oświadczeniem o ochronie prywatności i wyrazić zgodę na przetwarzanie
-    danych osobowych.
 </p>
-<p>
-    Jeśli nie zgadzasz się z naszym oświadczeniem o ochronie prywatności,
-    kliknij na przycisk „Nie akceptuję”.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34651449">Cenimy Twoją prywatność</a>
+	</h2>
+	<p>
+	    Kliknij na przycisk „Akceptuję” poniżej, aby wskazać, że zapoznałeś(-aś)
+	    się z oświadczeniem o ochronie prywatności i wyrazić zgodę na przetwarzanie
+	    danych osobowych.
+	</p>
+	<p>
+	    Jeśli nie zgadzasz się z naszym oświadczeniem o ochronie prywatności,
+	    kliknij na przycisk „Nie akceptuję”.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

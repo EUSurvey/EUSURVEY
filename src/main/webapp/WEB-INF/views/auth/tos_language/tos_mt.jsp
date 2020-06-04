@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -153,11 +154,7 @@ taħt jiġifieri din id-dikjarazzjoni ta’ privatezza tispjega kif id-    <em>d
 <p>
     Biex jiġi identifikat mis-sistema, l-utent jeħtieġ login/password, li hija
     ġestita mis-servizz tal-EU Login
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.253/DIGIT-2020-00012-00-00-MT-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
 . Għal aktar informazzjoni dwar kif l-EULogin qed jipproċessa d-    <em>data</em> personali tiegħek, jekk jogħġbok irreferi għad-
@@ -174,10 +171,10 @@ taħt jiġifieri din id-dikjarazzjoni ta’ privatezza tispjega kif id-    <em>d
     taħt it-tab ‘Settings’:
 </p>
 <p>
-    § Isem sħiħ (isem u kunjom)
+    • Isem sħiħ (isem u kunjom)
 </p>
 <p>
-    § Indirizz elettroniku
+    • Indirizz elettroniku
 </p>
 <p>
     L-isem sħiħ u l-indirizz tal-email huma <em>data</em> miġbura bi proċess
@@ -225,16 +222,14 @@ taħt jiġifieri din id-dikjarazzjoni ta’ privatezza tispjega kif id-    <em>d
 <h2>
     <a name="_Toc34143912">4.1 Membru tal-persunal tal-UE (utent intern)</a>
 </h2>
-<h2>
-    <a name="_Toc34143913">
+<p>
         Sakemm inti membru tal-persunal tal-UE, il-kont tal-utent tiegħek
         jibqa’ attiv u għalhekk tinżamm id-<em>data</em> personali tiegħek.
         Madankollu, tista’, fi kwalunkwe ħin, titlob lit-tim ta’ EUSurvey itemm
         il-kont tiegħek jekk ma tkunx tixtieq aktar tuża s-servizz. F’dan
         il-każ, il-kont tal-utent tiegħek, id-<em>data</em> assoċjata kollha u
         l-istħarriġ u r-riżultati kollha se jitħassru b’mod permanenti.
-    </a>
-</h2>
+    </p>
 <h2>
     <a name="_Toc34143914">4.2 Utent estern ta’ EUSurvey</a>
 </h2>
@@ -299,11 +294,11 @@ Il-miżuri organizzattivi jinkludu r-restrizzjoni tal-aċċess għad-    <em>dat
     Dan jinkludi:
 </p>
 <p>
-    § It-tim ta’ EUSurvey tal-Kummissjoni għal skopijiet ta’ appoġġ u
+    • It-tim ta’ EUSurvey tal-Kummissjoni għal skopijiet ta’ appoġġ u
     manutenzjoni tas-sistema.
 </p>
 <p>
-    § L-amministraturi tal-infrastruttura.
+    • L-amministraturi tal-infrastruttura.
 </p>
 <p>
     L-informazzjoni li niġbru ma tingħata lil ebda parti terza, ħlief jekk sa
@@ -394,11 +389,7 @@ personali tiegħek, inti liberu tikkuntattja lill-Kontrollur tad-    <em>Data</e
 <p>
     Fil-każ ta’ kwistjonijiet marbuta mal-ipproċessar tad-<em>data</em>
     personali tiegħek skont ir-Regolament (UE) 2018/1725, tista’ tikkuntattja
-    wkoll lill-Uffiċjal tal-Protezzjoni tad-<em>Data</em> tal-Kummissjoni (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ).
+    wkoll lill-Uffiċjal tal-Protezzjoni tad-<em>Data</em> tal-Kummissjoni (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>).
 </p>
 <h2>
     <a name="_Toc34143921">
@@ -407,7 +398,7 @@ personali tiegħek, inti liberu tikkuntattja lill-Kontrollur tad-    <em>Data</e
 </h2>
 <p>
     Għandek id-dritt tirrikorri (jiġifieri tista’ tressaq ilment) għand
-il-Kontrollur Ewropew għall-Protezzjoni tad-<em>Data</em> (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) jekk
+il-Kontrollur Ewropew għall-Protezzjoni tad-<em>Data</em> (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) jekk
     jidhirlek li d-drittijiet tiegħek skont ir-Regolament (UE) 2018/1725
     inkisru minħabba l-ipproċessar tad-<em>data</em> personali mill-Kontrollur
     tad-<em>Data</em>.
@@ -433,24 +424,24 @@ jippubblika r-reġistru tal-attivitajiet kollha ta’ pproċessar tad-    <em>da
     </a>
     .
 </p>
-<h1>
-    <a name="_Toc34143923">
+<p>
         Din l-attività ta’ pproċessar speċifika ddaħħlet fir-reġistru pubbliku
         tal-UPD bir-Referenza tar-Reġistru li ġejja: DPR-EC-01488.1
-    </a>
-</h1>
-<h2>
-    <a name="_Toc34143924">Nagħtu valur il-privatezza tiegħek</a>
-</h2>
-<p>
-    Jekk jogħġbok ikklikkja fuq il-buttuna “Naċċetta” hawn taħt biex tindika li
-    qrajt l-istqarrija ta’ privatezza u agħti l-kunsens tiegħek
-    għall-ipproċessar tad-<em>data</em> personali tiegħek.
 </p>
-<p>
-    Jekk ma taqbilx mad-dikjarazzjoni ta’ privatezza tagħna, jekk jogħġbok
-    ikklikkja fuq il-buttuna “Jien ma naċċettax”.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    <a name="_Toc34143924">Nagħtu valur il-privatezza tiegħek</a>
+	</h2>
+	<p>
+	    Jekk jogħġbok ikklikkja fuq il-buttuna “Naċċetta” hawn taħt biex tindika li
+	    qrajt l-istqarrija ta’ privatezza u agħti l-kunsens tiegħek
+	    għall-ipproċessar tad-<em>data</em> personali tiegħek.
+	</p>
+	<p>
+	    Jekk ma taqbilx mad-dikjarazzjoni ta’ privatezza tagħna, jekk jogħġbok
+	    ikklikkja fuq il-buttuna “Jien ma naċċettax”.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>

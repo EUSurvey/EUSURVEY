@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -150,11 +151,7 @@
 <p>
     Om door het systeem te worden geïdentificeerd, heeft de gebruiker een login
     met bijbehorend wachtwoord nodig dat door de EULogin
-    <a
-        href="file:///C:/Users/clam/AppData/Local/Temp/Rar$DIa0.079/DIGIT-2020-00012-00-00-NL-TRA-00.DOCX#_ftn1"
-        name="_ftnref1"
-        title=""
-    >
+    <a href="#ftn1">
         [1]
     </a>
     -dienst wordt beheerd. Voor verdere informatie over de manier waarop
@@ -172,10 +169,10 @@
     via de tab “Instellingen”:
 </p>
 <p>
-    § Volledige naam (voornaam en achternaam)
+    • Volledige naam (voornaam en achternaam)
 </p>
 <p>
-    § E-mailadres
+    • E-mailadres
 </p>
 <p>
     De volledige naam en het e-mailadres zijn gegevens die worden opgevraagd
@@ -222,14 +219,14 @@
 <h2>
     4.1. EU-personeelslid (interne gebruiker)
 </h2>
-<h2>
+<p>
     Zolang u EU-personeelslid bent, blijft uw gebruikersaccount actief en
     blijven uw persoonsgegevens bijgevolg opgeslagen. U kunt echter op elk
     ogenblik EUSurvey verzoeken uw account stop te zetten indien u van de
     dienst geen verder gebruik wenst te maken. In dat geval worden uw
     gebruikersaccount, alle bijbehorende gegevens en alle enquêtes en
     resultaten permanent gewist.
-</h2>
+</p>
 <h2>
     4.2. Externe gebruiker van EUSurvey
 </h2>
@@ -292,11 +289,11 @@ Daarnaast worden alle externe gebruikersaccounts die gedurende    <strong>twee j
     Het gaat hierbij onder meer om:
 </p>
 <p>
-    § Het EUSurvey-team van de Commissie, met het oog op ondersteuning en
+    • Het EUSurvey-team van de Commissie, met het oog op ondersteuning en
     onderhoud van het systeem.
 </p>
 <p>
-    § De beheerders van de infrastructuur.
+    • De beheerders van de infrastructuur.
 </p>
 <p>
     Wij geven geen verzamelde gegevens door aan een derde partij, tenzij en
@@ -384,11 +381,7 @@ Daarnaast worden alle externe gebruikersaccounts die gedurende    <strong>twee j
 </h2>
 <p>
     U kunt ook contact opnemen met de functionaris voor gegevensbescherming van
-    de Commissie (
-    <a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">
-        DATA-PROTECTION-OFFICER@ec.europa.eu
-    </a>
-    ) in verband met kwesties betreffende de verwerking van uw persoonsgegevens
+    de Commissie (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) in verband met kwesties betreffende de verwerking van uw persoonsgegevens
     in het kader van Verordening (EU) 2018/1725.
 </p>
 <h2>
@@ -396,7 +389,7 @@ Daarnaast worden alle externe gebruikersaccounts die gedurende    <strong>twee j
 </h2>
 <p>
     U heeft het recht bezwaar te maken (d.w.z. u kunt een klacht indienen) bij
-de Europese Toezichthouder voor gegevensbescherming (    <a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) indien u van
+de Europese Toezichthouder voor gegevensbescherming (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) indien u van
     mening bent dat uw rechten uit hoofde van Verordening (EU) 2018/1725 door
     de verwerking van uw persoonsgegevens door de verwerkingsverantwoordelijke
     zijn geschonden.
@@ -423,23 +416,23 @@ de Europese Toezichthouder voor gegevensbescherming (    <a href="mailto:edps@ed
     .
 </p>
 <p>
-    <strong>
         Deze specifieke verwerking is opgenomen in het openbare register van de
         DPO met de volgende referentie: DPR-EC-01488.1
-    </strong>
 </p>
-<h2>
-    Uw privacy is van belang voor ons
-</h2>
-<p>
-    Klik op de knop “I accept” hieronder om aan te geven dat u de
-    privacyverklaring heeft gelezen en toestemming geeft voor de verwerking van
-    uw persoonsgegevens.
-</p>
-<p>
-    Indien u het niet eens bent met de privacyverklaring, klik dan op de knop
-    “I do not accept”.
-</p>
+<c:if test="${readonly == null}">
+	<h2>
+	    Uw privacy is van belang voor ons
+	</h2>
+	<p>
+	    Klik op de knop “I accept” hieronder om aan te geven dat u de
+	    privacyverklaring heeft gelezen en toestemming geeft voor de verwerking van
+	    uw persoonsgegevens.
+	</p>
+	<p>
+	    Indien u het niet eens bent met de privacyverklaring, klik dan op de knop
+	    “I do not accept”.
+	</p>
+</c:if>
 <div>
     <br clear="all"/>
     <hr align="left" size="1" width="33%"/>
