@@ -937,7 +937,8 @@ public class ReportingService {
 		}
 
 		Map<String, String> columnNamesToType = this.getColumnNamesAndTypes(survey);
-		int expectedAdditionalNumberOfTables = (columnNamesToType.keySet().size() / MAX_COLUMN_NUMBER_IN_OLAP_TABLE) - 1;
+		double expectedAdditionalNumberOfTablesD = (columnNamesToType.keySet().size() / MAX_COLUMN_NUMBER_IN_OLAP_TABLE) - 1;
+		int expectedAdditionalNumberOfTables = (int) Math.ceil(expectedAdditionalNumberOfTablesD);
 
 		if (!this.validateOLAPTableInternal(survey)) {
 			return false;
