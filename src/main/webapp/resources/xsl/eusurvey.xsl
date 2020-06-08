@@ -187,6 +187,18 @@
 					</table>
 				</xsl:when>
 				
+				<xsl:when test="@type = 'RatingQuestion'">
+					<table cellspacing="0" cellpadding="0">
+						<tbody>					
+							<xsl:for-each select="Children/Element">
+								<tr>
+									<td><xsl:apply-templates select="Label"/></td>
+									<td style="font-size: 30px">☆☆☆☆☆</td>
+								</tr>
+							</xsl:for-each>
+						</tbody>
+					</table>
+				</xsl:when>
 				
 			</xsl:choose>
 
