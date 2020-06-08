@@ -10,7 +10,7 @@
 		$(function() {					
 			clearAllCookies('${surveyprefix}');
 			<c:if test="${redirect != null}">
-				window.location = "${redirect}";
+				setTimeout(function(){ window.location = "${redirect}"; }, 10000);				
 			</c:if>		
 		});			
 	</script>

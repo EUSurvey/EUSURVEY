@@ -14,6 +14,18 @@
 		</c:otherwise>
 	</c:choose>
 	
+	<c:if test="${redirect != null}">
+		<br /><br />
+		<c:choose>
+			<c:when test="${runnermode == true}">
+				${form.getMessage("info.redirect")}
+			</c:when>
+			<c:otherwise>
+				<spring:message code="info.redirect" />
+			</c:otherwise>
+		</c:choose>
+	</c:if>
+	
 	<c:if test="${opcredirection != null}">
 		<br /><br />
 		<a class="btn btn-primary" href="${opcredirection}"><spring:message code="label.ConsultationPage" /></a>
