@@ -551,10 +551,13 @@
 										<td>
 											<div style="float: left">
 												<spring:message code="label.ContributionsPerUser" />
+												<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+												<div class="help hideme"><spring:message code="info.ContributionsPerUser" /></div>
 											</div>
 											<div style="float: right">
 												<form:input htmlEscape="false" path="survey.allowedContributionsPerUser" type="text" class="form-control spinner required number min1 integer" maxlength="10" style="width: 50px" />
 											</div>
+											<div style="clear: both"></div>																						
 										</td>
 									</tr>
 								</c:if>
