@@ -415,9 +415,9 @@ Autoridade Europeia para a Proteção de Dados (<a href="mailto:edps@edps.europa
     RPD, com a seguinte referência documental: DPR-EC-01488.1
 </p>
 <c:if test="${readonly == null}">
-	<p>
+	<h2 style="font-weight: bold">
 	    Valorizamos a sua privacidade
-	</p>
+	</h2>
 	<p>
 	    Clique no botão «Aceito» para indicar que leu a declaração de
 	    confidencialidade e dá o seu consentimento para o tratamento dos seus dados
@@ -429,8 +429,6 @@ Autoridade Europeia para a Proteção de Dados (<a href="mailto:edps@edps.europa
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

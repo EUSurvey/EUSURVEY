@@ -393,7 +393,7 @@ European Data Protection Supervisor (<a href="mailto:edps@edps.europa.eu">edps@e
     register with the following Record reference: DPR-EC-01488
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    We value your privacy
 	</h2>
 	<p>
@@ -408,8 +408,6 @@ European Data Protection Supervisor (<a href="mailto:edps@edps.europa.eu">edps@e
 </c:if>
 
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

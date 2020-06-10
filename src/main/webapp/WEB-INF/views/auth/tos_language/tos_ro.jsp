@@ -449,10 +449,8 @@ Autoritatea Europeană pentru Protecția Datelor (<a href="mailto:edps@edps.euro
         public al RPD cu numărul de referință următor: DPR-EC-01488.1
 </p>
 <c:if test="${readonly == null}">
-	<h2>
-	    <a name="_Toc34307461">
+	<h2 style="font-weight: bold">
 	        Respectăm confidențialitatea datelor dumneavoastră
-	    </a>
 	</h2>
 	<p>
 	    Clicați pe butonul „Accept” de mai jos pentru a indica faptul că ați citit
@@ -465,8 +463,6 @@ Autoritatea Europeană pentru Protecția Datelor (<a href="mailto:edps@edps.euro
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

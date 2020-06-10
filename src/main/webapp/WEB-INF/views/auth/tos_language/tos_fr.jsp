@@ -448,7 +448,7 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
         sous la référence suivante: DPR-EC-01488.1
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    <a name="_Toc34402672">Nous respectons votre vie privée</a>
 	</h2>
 	<p>
@@ -462,8 +462,6 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

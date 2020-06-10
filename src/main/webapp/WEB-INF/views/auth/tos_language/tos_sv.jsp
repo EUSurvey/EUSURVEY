@@ -391,7 +391,7 @@ Europeiska datatillsynsmannen (<a href="mailto:edps@edps.europa.eu">edps@edps.eu
         dataskyddsombudet med följande referens: DPR-EC-01488.1
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    <a name="_Toc34407304">Vi värnar om din integritet</a>
 	</h2>
 	<p>
@@ -403,8 +403,6 @@ Europeiska datatillsynsmannen (<a href="mailto:edps@edps.europa.eu">edps@edps.eu
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

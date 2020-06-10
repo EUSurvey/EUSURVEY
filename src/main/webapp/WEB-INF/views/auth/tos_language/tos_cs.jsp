@@ -400,7 +400,7 @@ právo podat stížnost u evropského inspektora ochrany údajů (<a href="mailt
         DPR-EC-01488.1
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    <a name="_Toc34645292">Jsme si vědomi hodnoty vašeho soukromí</a>
 	</h2>
 	<p>
@@ -414,8 +414,6 @@ právo podat stížnost u evropského inspektora ochrany údajů (<a href="mailt
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

@@ -418,7 +418,7 @@
         на ДЛЗД под следния референтен номер: DPR-EC-01488.1
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    Ние ценим неприкосновеността на личния Ви живот
 	</h2>
 	<p>
@@ -432,8 +432,6 @@
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]
