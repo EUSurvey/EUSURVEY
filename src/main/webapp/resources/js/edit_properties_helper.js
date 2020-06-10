@@ -1653,15 +1653,17 @@ function edit(span)
 					
 					var questionid = "-1";
 					
-					$(answers).each(function(){
-						var answerid = $(this).find("input[name^='shortname']").attr("name").substring(9);
-						var answershortname = $(this).find("input[name^='shortname']").val();
-						
-						if (triggers.indexOf(questionid + "|" + answerid) > -1)
-						{
-							$(div).append("<input type='checkbox' checked='checked' style='margin-left: 10px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
-						} else {
-							$(div).append("<input type='checkbox' style='margin-left: 10px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+					$(answers).each(function(){						
+						if ($(this).find("input[name^='shortname']").length > 0) {						
+							var answerid = $(this).find("input[name^='shortname']").attr("name").substring(9);
+							var answershortname = $(this).find("input[name^='shortname']").val();
+							
+							if (triggers.indexOf(questionid + "|" + answerid) > -1)
+							{
+								$(div).append("<input type='checkbox' checked='checked' style='margin-left: 10px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+							} else {
+								$(div).append("<input type='checkbox' style='margin-left: 10px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+							}
 						}
 					});
 					
@@ -1673,15 +1675,17 @@ function edit(span)
 						$(div).append("<div class='visibilityquestion' style='margin-left: 10px;'>" + strip_tags(text) + "</div>");
 						
 						$(answers).each(function(){
-							var answerid = $(this).find("input[name^='shortname']").attr("name").substring(9);
-							var answershortname = $(this).find("input[name^='shortname']").val();
-							
-							if (triggers.indexOf(questionid + "|" + answerid) > -1)
-							{
-								$(div).append("<input type='checkbox' checked='checked' style='margin-left: 15px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
-								oldvalues = oldvalues + questionid + "|" + answerid + ";";
-							} else {
-								$(div).append("<input type='checkbox' style='margin-left: 15px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+							if ($(this).find("input[name^='shortname']").length > 0) {	
+								var answerid = $(this).find("input[name^='shortname']").attr("name").substring(9);
+								var answershortname = $(this).find("input[name^='shortname']").val();
+								
+								if (triggers.indexOf(questionid + "|" + answerid) > -1)
+								{
+									$(div).append("<input type='checkbox' checked='checked' style='margin-left: 15px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+									oldvalues = oldvalues + questionid + "|" + answerid + ";";
+								} else {
+									$(div).append("<input type='checkbox' style='margin-left: 15px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+								}
 							}
 						});
 					});
