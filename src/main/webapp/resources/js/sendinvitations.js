@@ -111,6 +111,11 @@ function replacePlaceholders(s, currentcontactrow)
 {
 	var res = s.match(/{.*?}/g);
 	
+	if (res == null)
+	{
+		return s;
+	}
+	
 	for (var i = 0; i < res.length; i++)
 	{
 		var placeholder = res[i];
