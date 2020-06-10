@@ -416,7 +416,7 @@ Evropskem nadzorniku za varstvo podatkov (<a href="mailto:edps@edps.europa.eu">e
         varstvo podatkov vodi pod referenčno oznako: DPR-EC-01488.1.
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    <a name="_Toc34635357">Cenimo vašo zasebnost</a>
 	</h2>
 	<p>
@@ -430,8 +430,6 @@ Evropskem nadzorniku za varstvo podatkov (<a href="mailto:edps@edps.europa.eu">e
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

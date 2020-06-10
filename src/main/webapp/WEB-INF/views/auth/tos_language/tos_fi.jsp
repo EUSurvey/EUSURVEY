@@ -390,7 +390,7 @@ Rekisteröidyllä on oikeus kääntyä Euroopan tietosuojavaltuutetun puoleen (<
         julkiseen rekisteriin seuraavalla viitteellä: DPR-EC-01488.1
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    <a name="_Toc33778339">Pidämme yksityisyyden suojaa arvossa</a>
 	</h2>
 	<p>
@@ -404,8 +404,6 @@ Rekisteröidyllä on oikeus kääntyä Euroopan tietosuojavaltuutetun puoleen (<
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

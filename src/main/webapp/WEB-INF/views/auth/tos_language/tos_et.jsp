@@ -370,7 +370,7 @@ Teil on õigus esitada kaebus Euroopa Andmekaitseinspektorile (<a href="mailto:e
     avalikku registrisse järgmise registriviite all: DPR-EC-01488.1
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    Peame eraelu puutumatust oluliseks
 	</h2>
 	<p>
@@ -384,8 +384,6 @@ Teil on õigus esitada kaebus Euroopa Andmekaitseinspektorile (<a href="mailto:e
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

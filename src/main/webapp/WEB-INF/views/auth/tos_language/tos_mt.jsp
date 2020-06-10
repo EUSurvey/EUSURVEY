@@ -429,7 +429,7 @@ jippubblika r-reġistru tal-attivitajiet kollha ta’ pproċessar tad-    <em>da
         tal-UPD bir-Referenza tar-Reġistru li ġejja: DPR-EC-01488.1
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    <a name="_Toc34143924">Nagħtu valur il-privatezza tiegħek</a>
 	</h2>
 	<p>
@@ -443,8 +443,6 @@ jippubblika r-reġistru tal-attivitajiet kollha ta’ pproċessar tad-    <em>da
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

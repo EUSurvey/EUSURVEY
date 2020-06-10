@@ -369,7 +369,7 @@ kreiptis į Europos duomenų apsaugos priežiūros pareigūną (<a href="mailto:
         apsaugos pareigūno registrą registracijos numeriu DPR-EC-01488.1.
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    Branginame jūsų privatumą
 	</h2>
 	<p>
@@ -383,8 +383,6 @@ kreiptis į Europos duomenų apsaugos priežiūros pareigūną (<a href="mailto:
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]

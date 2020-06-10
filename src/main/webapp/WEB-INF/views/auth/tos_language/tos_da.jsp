@@ -402,7 +402,7 @@ Den Europæiske Tilsynsførende for Databeskyttelse (<a href="mailto:edps@edps.e
         DPR-EC-01488.1
 </p>
 <c:if test="${readonly == null}">
-	<h2>
+	<h2 style="font-weight: bold">
 	    <a name="_Toc34666025">Vi respekterer dit privatliv</a>
 	</h2>
 	<p>
@@ -416,8 +416,6 @@ Den Europæiske Tilsynsførende for Databeskyttelse (<a href="mailto:edps@edps.e
 	</p>
 </c:if>
 <div>
-    <br clear="all"/>
-    <hr align="left" size="1" width="33%"/>
     <div id="ftn1">
         <p>
             [1]
