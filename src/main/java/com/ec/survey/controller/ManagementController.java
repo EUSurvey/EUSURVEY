@@ -2585,7 +2585,6 @@ public class ManagementController extends BasicController {
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			
 			model.addObject("submit", true);
-			model.addObject("runnermode", true);
 			model.addObject("uniqueCode", uniqueCode);
 			model.addObject("invisibleElements", invisibleElements);
 			
@@ -2603,7 +2602,6 @@ public class ManagementController extends BasicController {
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			
 			model.addObject("submit", true);
-			model.addObject("runnermode", true);
 			model.addObject("uniqueCode", uniqueCode);
 			model.addObject("invisibleElements", invisibleElements);
 			
