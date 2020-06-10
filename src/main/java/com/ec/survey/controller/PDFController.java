@@ -121,7 +121,7 @@ public class PDFController extends BasicController {
 					}
 					
 					//check password secured surveys
-					if (!validCodesService.CheckValid(uniquecode, survey.getUniqueId())) {
+					if (!validCodesService.checkValid(uniquecode, survey.getUniqueId())) {
 						//check invitation based security					
 						Invitation invitation = attendeeService.getInvitationByUniqueId(uniquecode);
 						if (invitation == null || (invitation.getDeactivated() != null && invitation.getDeactivated()))
