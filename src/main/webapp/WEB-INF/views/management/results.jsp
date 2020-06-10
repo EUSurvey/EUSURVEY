@@ -850,7 +850,8 @@
 							</c:when>
 							<c:otherwise>
 								<span class="deactivatedexports">
-									<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	</span>
+									<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+								</span>
 								<span class="activatedexports hideme">
 									<a class="btn btn-default" onclick="showExportDialog('Statistics')"><spring:message code="label.Export" /></a>
 								</span>
@@ -859,14 +860,12 @@
 					</span>
 					
 					<span id="statistics-quiz-export-buttons" class="hidden">
-						<c:choose>
-							<c:when test="${paging.items.size() == 0}">
-								<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	</span>
-							</c:when>
-							<c:otherwise>
-								<a class="btn btn-default" onclick="showExportDialog('StatisticsQuiz')"><spring:message code="label.Export" /></a>
-							</c:otherwise>
-						</c:choose>					
+						<span class="deactivatedexports">
+							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	
+						</span>
+						<span class="activatedexports hideme">
+							<a class="btn btn-default" onclick="showExportDialog('StatisticsQuiz')"><spring:message code="label.Export" /></a>
+						</span>		
 					</span>
 				</div>	
 				
