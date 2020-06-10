@@ -1684,12 +1684,6 @@ public class SurveyService extends BasicService {
 
 			session.delete(group);
 		}
-
-		// remove dependencies (this is only needed for older surveys that have zombie
-		// dependencies
-		SQLQuery query = session.createSQLQuery("DELETE FROM POSSIBLEANSWER_ELEMENT where dependentElements_ID in (SELECT elements_ID from SURVEYS_ELEMENTS WHERE SURVEYS_SURVEY_ID = :id)");
-		query.setInteger("id", id);
-		query.executeUpdate();
 	}
 
 	@Transactional
