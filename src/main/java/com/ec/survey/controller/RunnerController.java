@@ -986,7 +986,7 @@ public class RunnerController extends BasicController {
 				
 				String uniqueCode = (String) request.getSession().getAttribute("uniqueCode");
 
-				if (uniqueCode == null || !validCodesService.CheckValid(uniqueCode, survey.getUniqueId())) {
+				if (uniqueCode == null || !validCodesService.checkValid(uniqueCode, survey.getUniqueId())) {
 					modelReturn.setViewName("runner/surveyLogin");
 					modelReturn.addObject("shortname", uidorshortname);
 					modelReturn.addObject("surveyname", survey.cleanTitle());
@@ -1131,7 +1131,7 @@ public class RunnerController extends BasicController {
 					// ignore
 				} catch (NotAgreedToPsException e) {
 				// ignore
-			}
+				}
 			}
 			
 			Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()), survey.getLanguage(), resources, contextpath);
@@ -1189,21 +1189,19 @@ public class RunnerController extends BasicController {
 				 	 	uniqueCode = draft.getAnswerSet().getUniqueCode();
 				 	 	model.addObject("draftid", draftid);
 				 	 		        
-				 	 	if (lang == null)
-				 	 	{
-				 	 		lang = draft.getAnswerSet().getLanguageCode();
-				 	 		Survey translated = SurveyHelper.createTranslatedSurvey(f.getSurvey().getId(), lang, surveyService, translationService, true);
-				 	 		f.setSurvey(translated);
-				 	 		f.setLanguage(surveyService.getLanguage(lang));
-				 	 	}
-					}
-					
-					validCodesService.revalidate(uniqueCode, survey);
-					
-					Set<String> invisibleElements = new HashSet<>();
-					SurveyHelper.validateAnswerSet(draft.getAnswerSet(), answerService, invisibleElements, resources, locale, null, null, true, null, fileService);
-					model.addObject("invisibleElements", invisibleElements);
-					
+				 	 	if (lang == null) {
+							lang = draft.getAnswerSet().getLanguageCode();
+							Survey translated = SurveyHelper.createTranslatedSurvey(f.getSurvey().getId(), lang,
+									surveyService, translationService, true);
+							f.setSurvey(translated);
+							f.setLanguage(surveyService.getLanguage(lang));
+						}
+						validCodesService.revalidate(uniqueCode, survey);
+						Set<String> invisibleElements = new HashSet<>();
+						SurveyHelper.validateAnswerSet(draft.getAnswerSet(), answerService, invisibleElements,
+								resources, locale, null, null, true, null, fileService);
+						model.addObject("invisibleElements", invisibleElements);
+					 }
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
@@ -1740,7 +1738,7 @@ public class RunnerController extends BasicController {
 			String uniqueCode = request.getParameter("uniqueCode");
 
 			if (origsurvey.getSecurity().startsWith("secured")) {
-				if (!validCodesService.CheckValid(uniqueCode, origsurvey.getUniqueId())) {
+				if (!validCodesService.checkValid(uniqueCode, origsurvey.getUniqueId())) {
 					ModelAndView model = new ModelAndView("error/generic");
 					model.addObject("message", resources.getMessage("error.NoInvitation", null, "You are not authorized to submit to this survey without a proper invitation.", locale));
 					return model;

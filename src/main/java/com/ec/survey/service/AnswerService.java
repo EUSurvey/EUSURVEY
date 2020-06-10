@@ -49,6 +49,9 @@ public class AnswerService extends BasicService {
 	@Autowired
 	private SqlQueryService sqlQueryService;
 
+	@Resource(name = "validCodesService")
+	private ValidCodesService validCodesService;
+
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void internalSaveAnswerSet(AnswerSet answerSet, String fileDir, String draftid, boolean invalidateExportsAndStatistics, boolean createAttendees) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
@@ -1610,14 +1613,15 @@ public class AnswerService extends BasicService {
 			if (list.size() == 0) {
 				// there is no draft
 				Draft draft = new Draft();
-				draft.setUniqueId(UUID.randomUUID().toString());
+				String uniqueCode = UUID.randomUUID().toString();
+				draft.setUniqueId(uniqueCode);
 				answerSet.setIsDraft(true);
 				draft.setAnswerSet(answerSet);
-
 				session.saveOrUpdate(draft);
+
+				reportingService.addToDo(ToDo.DELETEDCONTRIBUTION, answerSet.getSurvey().getUniqueId(), answerSet.getUniqueCode());
 				return draft.getUniqueId();
 			} else {
-
 				Draft draft = list.get(0);
 
 				if (draft != null) {
@@ -1631,6 +1635,7 @@ public class AnswerService extends BasicService {
 					draft.setAnswerSet(answerSet);
 
 					session.saveOrUpdate(draft);
+					reportingService.addToDo(ToDo.DELETEDCONTRIBUTION, answerSet.getSurvey().getUniqueId(), answerSet.getUniqueCode());
 					return uid;
 				}
 			}
