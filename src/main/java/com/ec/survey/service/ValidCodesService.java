@@ -45,7 +45,7 @@ public class ValidCodesService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public boolean CheckValid(String uniqueCode, String surveyUid) {
+	public boolean checkValid(String uniqueCode, String surveyUid) {
 		Session session = sessionFactory.getCurrentSession();
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);
@@ -63,11 +63,12 @@ public class ValidCodesService extends BasicService {
 		
 		if (numcodes == 0)
 		{
-			add(uniqueCode, survey);	
+			this.add(uniqueCode, survey);	
 		} else {	
 			query = session.createQuery("UPDATE ValidCode SET created = :created WHERE code = :code").setString("code", uniqueCode).setTimestamp("created", new Date());
 			query.executeUpdate();
 		}
+		session.flush();
 	}
 	
 	@Transactional
