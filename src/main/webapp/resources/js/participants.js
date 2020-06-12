@@ -234,6 +234,20 @@ var Guestlist = function() {
 		{
 			self.tokens.remove(todelete[i]);
 		}
+		
+		todelete = [];
+		for (var i = 0; i < self.users().length; i++)
+		{
+			if (self.users()[i].selected())
+			{
+				todelete[todelete.length] = self.users()[i];
+			}
+		}
+		
+		for (var i = 0; i < todelete.length; i++)
+		{
+			self.users.remove(todelete[i]);
+		}
 	}	
 	
 	this.checkAll = function(checked)
@@ -332,7 +346,7 @@ var Guestlist = function() {
 		{
 			var hidden = false;
 			
-			if (namefilter.length > 0 && self.users()[i].name.indexOf(namefilter) == -1)
+			if (namefilter.length > 0 && self.users()[i].displayName.indexOf(namefilter) == -1)
 			{
 				hidden = true;
 			}
