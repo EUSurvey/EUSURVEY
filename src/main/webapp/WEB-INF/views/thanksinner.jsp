@@ -36,19 +36,18 @@
 	
 	<br /><br />
 	
-	<c:choose>
-		<c:when test="${responsive != null}">
-			<a style="text-decoration: none" id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-lg btn-default">${form.getMessage("label.Print")}</a>
-		</c:when>
-		<c:when test="${runnermode == true}">
-			<a id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-default">${form.getMessage("label.Print")}</a>
-		</c:when>
-		<c:otherwise>
-			<a id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-default"><spring:message code="label.Print" /></a>
-		</c:otherwise>	
-	</c:choose>
-	
 	<c:if test="${form.survey.downloadContribution}">
+		<c:choose>
+			<c:when test="${responsive != null}">
+				<a style="text-decoration: none" id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-lg btn-default">${form.getMessage("label.Print")}</a>
+			</c:when>
+			<c:when test="${runnermode == true}">
+				<a id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-default">${form.getMessage("label.Print")}</a>
+			</c:when>
+			<c:otherwise>
+				<a id="printButtonThanksInner" target="_blank" href="<c:url value="/printcontribution?code=${uniqueCode}"/>" class="btn btn-default"><spring:message code="label.Print" /></a>
+			</c:otherwise>	
+		</c:choose>
 		<c:choose>
 			<c:when test="${responsive != null}">
 				<a style="text-decoration: none" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail()" class="btn btn-lg btn-default">${form.getMessage("label.GetPDF")}</a>		
