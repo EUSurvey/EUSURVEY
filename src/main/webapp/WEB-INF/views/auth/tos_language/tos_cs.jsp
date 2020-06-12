@@ -11,7 +11,7 @@
     a provádění průzkumů.
 </p>
 <p align="center">
-    Verze 1.0, 11. února 2020
+    Verze 1.0, 2020/06/10
 </p>
 <p>
     <strong>Operace zpracování údajů: </strong>

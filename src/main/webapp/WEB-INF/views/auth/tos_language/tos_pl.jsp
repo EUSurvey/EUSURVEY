@@ -11,7 +11,7 @@
     EUSurvey do tworzenia i przetwarzania ankiet.
 </p>
 <p align="center">
-    Wersja 1.0 z 11 lutego 2020 r.
+    Wersja 1.0 2020/06/10.
 </p>
 <p>
     <strong>Przetwarzanie danych osobowych: </strong>

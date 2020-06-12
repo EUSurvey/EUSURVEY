@@ -11,7 +11,7 @@
     când utilizați EUSurvey pentru a crea și a gestiona sondaje.
 </p>
 <p align="center">
-    Versiunea 1.0, 11 februarie 2020
+    Versiunea 1.0, 2020/06/10
 </p>
 <p>
     <strong>Operațiune de prelucrare: </strong>

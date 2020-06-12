@@ -11,7 +11,7 @@
     para crear y gestionar encuestas.
 </p>
 <p align="center">
-    Versión 1.0, 11 de febrero de 2020
+    Versión 1.0, 2020/06/10
 </p>
 <p>
     <strong>Operación de tratamiento: </strong>

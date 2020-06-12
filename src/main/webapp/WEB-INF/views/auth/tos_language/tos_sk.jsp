@@ -11,7 +11,7 @@
     vytváranie a správu prieskumov.
 </p>
 <p align="center">
-    Verzia 1.0, 11. februára 2020
+    Verzia 1.0, 2020/06/10
 </p>
 <p>
     <strong>Spracovateľská operácia: </strong>

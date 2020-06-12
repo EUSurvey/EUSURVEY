@@ -11,7 +11,7 @@
     EUSurvey biex toħloq u timmaniġġja stħarriġ.
 </p>
 <p align="center">
-    Verżjoni 1.0, 11<sup>ax</sup> ta’ Frar 2020
+    Verżjoni 1.0, 2020/06/10
 </p>
 <p>
     <strong>Attività ta’ pproċessar: </strong>

@@ -11,7 +11,7 @@
     hallinnointiin.
 </p>
 <p align="center">
-    Versio 1.0, 11. helmikuuta 2020
+    Versio 1.0, 2020/06/10
 </p>
 <p>
     <strong>Käsittelytoimi: </strong>

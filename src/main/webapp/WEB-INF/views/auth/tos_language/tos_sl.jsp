@@ -11,7 +11,7 @@
     in upravljanje anket.
 </p>
 <p align="center">
-    Različica 1.0, 11. februar 2020
+    Različica 1.0, 2020/06/10
 </p>
 <p>
     <strong>Postopek obdelave podatkov: </strong>

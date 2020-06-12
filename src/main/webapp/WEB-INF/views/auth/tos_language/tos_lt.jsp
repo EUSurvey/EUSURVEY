@@ -11,7 +11,7 @@
     rengimo ir administravimo tikslais.
 </p>
 <p align="center">
-    1.0 versija, 2020 m. vasario mėn. 11 d.
+    1.0 versija, 2020/06/10
 </p>
 <p>
     <strong>Duomenų tvarkymo operacija – </strong>

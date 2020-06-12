@@ -11,7 +11,7 @@
     haldamiseks.
 </p>
 <p align="center">
-    Versioon 1.0, 11. veebruar 2020
+    Versioon 1.0, 2020/06/10
 </p>
 <p>
     <strong>Töötlemistoiming: </strong>

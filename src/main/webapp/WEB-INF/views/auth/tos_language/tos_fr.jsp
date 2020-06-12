@@ -11,7 +11,7 @@
     vous utilisez EUSurvey pour créer et gérer des enquêtes.
 </p>
 <p align="center">
-    Version 1.0, 11 février 2020
+    Version 1.0, 2020/06/10
 </p>
 <p>
     <strong>Opération de traitement: </strong>

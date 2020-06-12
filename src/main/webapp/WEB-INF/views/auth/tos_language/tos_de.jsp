@@ -10,7 +10,7 @@
     Erstellung und Verwaltung von Umfragen.
 </p>
 <p align="center">
-    Version 1.0, 11. Februar 2020
+    Version 1.0, 2020/06/10
 </p>
 <p>
     <strong>Verarbeitungsvorgang: </strong>

@@ -11,7 +11,7 @@
     opstellen en beheren van enquêtes.
 </p>
 <p align="center">
-    Version 1.0, 11 februari 2020
+    Version 1.0, 2020/06/10
 </p>
 <p>
     <strong>Gegevensverwerking: </strong>

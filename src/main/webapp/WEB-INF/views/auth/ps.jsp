@@ -23,6 +23,7 @@ body {
 	font-size: 110% !important;
 	margin-top: 30px !important;
 	color: #000;
+	font-weight: bold;
 }
 
 #tos h2 {

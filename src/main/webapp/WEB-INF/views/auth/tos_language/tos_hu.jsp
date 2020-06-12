@@ -11,7 +11,7 @@
     kezelésére történő használata esetén.
 </p>
 <p align="center">
-    1.0 verzió, 2020. február 11.
+    1.0 verzió, 2020/06/10
 </p>
 <p>
     <strong>Adatkezelési művelet: </strong>
