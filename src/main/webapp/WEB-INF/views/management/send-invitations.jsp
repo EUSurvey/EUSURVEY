@@ -178,7 +178,7 @@
 			}
 			$("#ask-save-dialog").modal('hide');
 			
-			var selected = $("tbody").find("input[type='checkbox']:checked").length;
+			var selected = $("#tblInvitedFromSendInvitation tbody").find("input[type='checkbox']:checked").length;
 			$('#preview-selectedcontacts').text(selected)
 			
 			$('#preview-current').empty();
