@@ -2737,59 +2737,56 @@ public class SurveyService extends BasicService {
 					result.put(new PropertiesElement(true), 1);
 			}
 
-			boolean hasPendingTranslationChanges = false;
 			List<Translations> draftTranslations = translationService.getActiveTranslationsForSurvey(draft.getId());
 			List<Translations> publishedTranslations = translationService.getActiveTranslationsForSurvey(published.getId());
 
 			Translations currentTranslations = TranslationsHelper.getTranslations(draft, false);
 			Map<String, Translation> currentKeys = currentTranslations.getTranslationsByKey();
 
-//			if (draftTranslations.size() != publishedTranslations.size()) {
-//				hasPendingTranslationChanges = true;
-//			} else {
-				Map<String, Translations> publishedTranslationsByLanguageCode = new HashMap<>();
-				for (Translations trans : publishedTranslations) {
-					publishedTranslationsByLanguageCode.put(trans.getLanguage().getCode(), trans);
-				}
-
-				for (Translations trans : draftTranslations) {
-					if (!publishedTranslationsByLanguageCode.containsKey(trans.getLanguage().getCode())) {
-						hasPendingTranslationChanges = true;
-						break;
-					}
-					Translations pub = publishedTranslationsByLanguageCode.get(trans.getLanguage().getCode());
-
-					Map<String, String> publishedTranslationsMap = pub.getTranslationsMap();
-					for (Translation t : trans.getFilteredTranslations()) {
-						if (!publishedTranslationsMap.containsKey(t.getKey()) || !publishedTranslationsMap.get(t.getKey()).equals(t.getLabel())) {
-							if (t.getLabel() != null && t.getLabel().trim().length() > 0) {
-								if (currentKeys.containsKey(t.getKey()) && !t.getKey().startsWith("ESCAPE")) {
-									hasPendingTranslationChanges = true;
-									break;
-								}
-							}
-						}
-					}
-					
-					Map<String, String> draftTranslationsMap = trans.getTranslationsMap();
-					for (String key : publishedTranslationsMap.keySet())
-					{
-						if (!draftTranslationsMap.containsKey(key))
-						{
-							hasPendingTranslationChanges = true;
-							break;
-						}
-					}
-
-				}
-//			}
-
-			if (hasPendingTranslationChanges)
+			if (checkTranslations(draftTranslations, publishedTranslations, currentKeys) || checkTranslations(publishedTranslations, draftTranslations, currentKeys))
+			{
 				result.put(new TranslationsElement(), 1);
-
+			}
 		}
 
 		return result;
+	}
+	
+	private boolean checkTranslations(List<Translations> first, List<Translations> second, Map<String, Translation> currentKeys)
+	{
+		Map<String, Translations> secondTranslationsByLanguageCode = new HashMap<>();
+		for (Translations trans : second) {
+			secondTranslationsByLanguageCode.put(trans.getLanguage().getCode(), trans);
+		}
+
+		for (Translations trans : first) {
+			if (!secondTranslationsByLanguageCode.containsKey(trans.getLanguage().getCode())) {
+				return true;
+			}
+			Translations pub = secondTranslationsByLanguageCode.get(trans.getLanguage().getCode());
+
+			Map<String, String> secondTranslationsMap = pub.getTranslationsMap();
+			for (Translation t : trans.getFilteredTranslations()) {
+				if (!secondTranslationsMap.containsKey(t.getKey()) || !secondTranslationsMap.get(t.getKey()).equals(t.getLabel())) {
+					if (t.getLabel() != null && t.getLabel().trim().length() > 0) {
+						if (currentKeys.containsKey(t.getKey()) && !t.getKey().startsWith("ESCAPE")) {
+							return true;
+						}
+					}
+				}
+			}
+			
+			Map<String, String> draftTranslationsMap = trans.getTranslationsMap();
+			for (String key : secondTranslationsMap.keySet())
+			{
+				if (!draftTranslationsMap.containsKey(key))
+				{
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	@Transactional(readOnly = true)
