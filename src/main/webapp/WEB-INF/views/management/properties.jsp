@@ -668,9 +668,9 @@
 					<tr>
 						<td>
 							<div style="float: left">
-								<spring:message code="label.AllowDownloadContributionPDF" />
+								<spring:message code="label.AllowDownloadContributionPDFnew" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-								<div class="help hideme"><spring:message code="info.AllowDownloadContributionPDF" /></div>
+								<div class="help hideme"><spring:message code="info.AllowDownloadContributionPDFnew" /></div>
 							</div>						
 							<div style="float: right">
 								<div class="onoffswitch">
