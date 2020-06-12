@@ -11,7 +11,7 @@
     EUSurvey para criar e gerir inquéritos.
 </p>
 <p align="center">
-    Versão 1.0, 11 de fevereiro de 2020
+    Versão 1.0, 2020/06/10
 </p>
 <p>
     <strong>Tratamento de dados: </strong>

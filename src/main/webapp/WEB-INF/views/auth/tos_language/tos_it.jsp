@@ -10,7 +10,7 @@
     dati personali nel creare e gestire indagini EUSurvey.
 </p>
 <p align="center">
-    Versione 1.0, 11 febbraio 2020
+    Versione 1.0, 2020/06/10
 </p>
 <p>
     <strong>Trattamento: </strong>

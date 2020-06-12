@@ -11,7 +11,7 @@
     managing surveys.
 </p>
 <p align="center">
-    Version 1.0, 11<sup>th</sup> February 2020
+    Version 1.0, 2020/06/10
 </p>
 <p>
     <strong>Processing operation: </strong>

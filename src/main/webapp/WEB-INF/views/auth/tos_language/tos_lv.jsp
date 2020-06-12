@@ -11,7 +11,7 @@
     persondati.
 </p>
 <p align="center">
-    1.0. versija, 2020. gada 11. februāris
+    1.0. versija, 2020/06/10
 </p>
 <p>
     <strong>Apstrādes darbība: </strong>

@@ -11,7 +11,7 @@
     izradu anketa i upravljanje njima.
 </p>
 <p align="center">
-    Verzija 1.0, 11. veljače 2020.
+    Verzija 1.0, 2020/06/10
 </p>
 <p>
     <strong>Postupak obrade: </strong>

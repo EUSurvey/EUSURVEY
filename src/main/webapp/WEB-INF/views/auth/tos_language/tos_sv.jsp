@@ -10,7 +10,7 @@
     för att skapa och hantera enkäter.
 </p>
 <p align="center">
-    Version 1.0, den 11 februari 2020
+    Version 1.0, 2020/06/10
 </p>
 <p>
     <strong>Behandling: </strong>

@@ -11,7 +11,7 @@
     chruthú agus a bhainistiú.
 </p>
 <p align="center">
-    Leagan 1.0, 11 Feabhra 2020
+    Leagan 1.0, 2020/06/10
 </p>
 <p>
     <strong>An oibríocht phróiseála: </strong>
