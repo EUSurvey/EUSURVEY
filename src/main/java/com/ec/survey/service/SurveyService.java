@@ -281,7 +281,7 @@ public class SurveyService extends BasicService {
 			} else if (published) {
 				sql.append(" AND s.ISPUBLISHED = 1 AND s.ACTIVE = 1");
 			} else if (unpublished) {
-				sql.append(" AND NOT(s.ISPUBLISHED = 1 AND s.ACTIVE = 1)");
+				sql.append(" AND s.ACTIVE = 0");
 			}
 		}
 
