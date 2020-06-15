@@ -1397,26 +1397,28 @@ public class ManagementController extends BasicController {
 		}
 		
 		if (!creation)
-		{	  
-			if (uploadedSurvey.getPassword() != null && !uploadedSurvey.getPassword().equalsIgnoreCase("********"))
-			{
-				if ( !uploadedSurvey.getPassword().equals(survey.getPassword()))
-				{				
-					String[] oldnew = {survey.getPassword(), uploadedSurvey.getPassword()};
-					activitiesToLog.put(115, oldnew);		
+		{	
+			if (!survey.getIsOPC()) {
+				if (uploadedSurvey.getPassword() != null && !uploadedSurvey.getPassword().equalsIgnoreCase("********"))
+				{
+					if ( !uploadedSurvey.getPassword().equals(survey.getPassword()))
+					{				
+						String[] oldnew = {survey.getPassword(), uploadedSurvey.getPassword()};
+						activitiesToLog.put(115, oldnew);		
+					}
+					
+					survey.setPassword(uploadedSurvey.getPassword());
 				}
 				
-				survey.setPassword(uploadedSurvey.getPassword());
-			}
-			
-			if (!Objects.equals(uploadedSurvey.getEcasSecurity(), survey.getEcasSecurity()))
-			{
-				survey.setEcasSecurity(uploadedSurvey.getEcasSecurity());
-			}
-			
-			if (!Objects.equals(uploadedSurvey.getEcasMode(), survey.getEcasMode()))
-			{
-				survey.setEcasMode(uploadedSurvey.getEcasMode());
+				if (!Objects.equals(uploadedSurvey.getEcasSecurity(), survey.getEcasSecurity()))
+				{
+					survey.setEcasSecurity(uploadedSurvey.getEcasSecurity());
+				}
+				
+				if (!Objects.equals(uploadedSurvey.getEcasMode(), survey.getEcasMode()))
+				{
+					survey.setEcasMode(uploadedSurvey.getEcasMode());
+				}
 			}
 			
 			if (uploadedSurvey.getValidatedPerPage() != survey.getValidatedPerPage())

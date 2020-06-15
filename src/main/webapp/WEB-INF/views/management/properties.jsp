@@ -459,11 +459,22 @@
 							</div>
 							<div style="float: right">
 								<div class="onoffswitch">
-									<input data-bind="checked: secured" type="checkbox" name="radio-new-survey-security" class="onoffswitch-checkbox" id="myonoffswitchsecured">
-									 <label class="onoffswitch-label" for="myonoffswitchsecured">
-								        <span class="onoffswitch-inner"></span>
-								        <span class="onoffswitch-switch"></span>
-								    </label>
+									<c:choose>
+										<c:when test='${form.survey.isOPC}'>
+											<input data-bind="checked: secured" type="checkbox" disabled name="radio-new-survey-security" class="onoffswitch-checkbox" id="myonoffswitchsecured">
+											<label class="onoffswitch-label disabled" for="myonoffswitchsecured">
+												<span class="onoffswitch-inner"></span>
+								    			<span class="onoffswitch-switch"></span>
+								    		</label>
+										</c:when>
+										<c:otherwise>
+											<input data-bind="checked: secured" type="checkbox" name="radio-new-survey-security" class="onoffswitch-checkbox" id="myonoffswitchsecured">
+											<label class="onoffswitch-label" for="myonoffswitchsecured">
+												<span class="onoffswitch-inner"></span>
+								    			<span class="onoffswitch-switch"></span>
+								    		</label>
+										</c:otherwise>
+									</c:choose>
 								</div>
 							</div>
 							<div style="clear: both"></div>
