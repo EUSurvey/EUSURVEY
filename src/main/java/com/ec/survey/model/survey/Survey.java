@@ -120,11 +120,9 @@ public class Survey implements java.io.Serializable {
 	private int numberOfAnswerSetsPublished;
 	private int numberOfReports;
 	private int compulsoryStyle;
-	private boolean isActive; // true if the survey is accessible on the web, isActive is valid for draft and
-								// survey objects
+	private boolean isActive; // = is currently published
 	private boolean isDraft;
-	private boolean isPublished; // true if there is a draft and a survey object, isPublished is only available
-									// in the draft object
+	private boolean isPublished; // = was published at least once
 	private boolean hasPendingChanges;
 	private boolean validatedPerPage;
 	private Boolean saveAsDraft;

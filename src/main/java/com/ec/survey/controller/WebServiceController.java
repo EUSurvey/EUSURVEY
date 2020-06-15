@@ -2280,7 +2280,7 @@ public class WebServiceController extends BasicController {
 			
 			if (published != null)
 			{
-				filter.setStatus(published.equalsIgnoreCase("1") ? "Published;" : "Unpublished");
+				filter.setStatus(published.equalsIgnoreCase("1") ? "Published;" : "Unpublished;");
 			}
 			
 			if (archived != null && archived.equalsIgnoreCase("1")) {
