@@ -27,7 +27,7 @@
 	<c:if test="${forpdf==null}">
 		<script type="text/javascript" src="${contextpath}/resources/js/runner2.js?version=<%@include file="../version.txt" %>"></script>
 		<script type="text/javascript" src="${contextpath}/resources/js/runnerviewmodels.js?version=<%@include file="../version.txt" %>"></script>
-	    <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
+	    <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="../version.txt" %>'></script>
    	</c:if>		
    
     <script type="text/javascript">
@@ -84,6 +84,11 @@
 			} else {
 				checkPages();
 				readCookies();
+				
+				<c:if test="${form.validation != null && form.validation.size() > 0}">
+					goToFirstValidationError($("form"));
+				</c:if>
+								
 				$("#btnSubmit").removeClass("hidden");
 				$("#btnSaveDraft").removeClass("hidden");
 				$("#btnSaveDraftMobile").removeClass("hidden");
@@ -323,6 +328,8 @@
 			</c:otherwise>
 		</c:choose>
 		
+		<%@ include file="../generic-messages.jsp" %>
+		
 		<script type="text/javascript">
 		
 			$(document).ready(function(){
@@ -342,15 +349,7 @@
 		
 		<c:if test="${message != null}">
 			<script type="text/javascript">
-				showRunnerError('<esapi:encodeForHTML>${message}</esapi:encodeForHTML>');
-			</script>
-		</c:if>
-	
-		<c:if test="${form.validation != null && form.validation.size() > 0}">
-			<script type="text/javascript">
-			$(function() {
-				goToFirstValidationError($("form"));
-			});
+				showError('<esapi:encodeForHTML>${message}</esapi:encodeForHTML>');
 			</script>
 		</c:if>
 	
@@ -366,7 +365,7 @@
 					<spring:message code="info.SessionTimeout" />
 				</div>
 				<div class="modal-footer">
-					<a onclick="$('#sessiontimeoutdialog').modal('hide')" target="_blank" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a onclick="$('#sessiontimeoutdialog').modal('hide')" target="_blank" class="btn btn-primary"><spring:message code="label.OK" /></a>
 				</div>
 			</div>
 		</div>
@@ -382,7 +381,7 @@
 					<spring:message code="info.NetworkProblems" />
 				</div>
 				<div class="modal-footer">
-					<a onclick="$('#networkproblemsdialog').modal('hide')" target="_blank" class="btn btn-info"><spring:message code="label.OK" /></a>
+					<a onclick="$('#networkproblemsdialog').modal('hide')" target="_blank" class="btn btn-primary"><spring:message code="label.OK" /></a>
 				</div>
 			</div>
 		</div>

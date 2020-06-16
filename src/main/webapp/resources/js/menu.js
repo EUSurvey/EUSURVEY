@@ -1,10 +1,4 @@
-function showMessage(text)
-{
-	$("#generic-show-messages-dialog-text").html(text);
-	$("#generic-show-messages-dialog").modal('show');
-}
-
-function showMessages(messages)
+function showGenericMessages(messages)
 {
 	var body = $("#generic-show-multiple-messages-dialog").find(".modal-body").first();
 	$(body).empty();
@@ -17,33 +11,19 @@ function showMessages(messages)
 	$("#generic-show-multiple-messages-dialog").modal('show');
 }
 
-function showInfo(text)
-{
-	$("#generic-info-box-text").html(text);
-	$("#generic-info-box").show();
-	window.setTimeout("hideGenericInfos()", 10000);
-}
-
 function showExportSuccessMessage()
 {
-	showInfo(message_Export1 + '&nbsp;<a class="visiblelink" href="' + contextpath + '/exports/list">' + label_ExportPage + '</a>');
+	showSuccess(message_Export1 + '&nbsp;<a class="visiblelink" href="' + contextpath + '/exports/list">' + label_ExportPage + '</a>');
 }
 
 function showPublicationExportSuccessMessage()
 {
-	showInfo(message_PublicationExportSuccess);
+	showSuccess(message_PublicationExportSuccess);
 }
 
 function showPublicationExportSuccessMessage2(mail)
 {
-	showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
-}
-
-function showError(text)
-{
-	$("#generic-error-box-text").html(text);
-	$("#generic-error-box").show();
-	window.setTimeout("hideGenericInfos()", 10000);
+	showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 }
 
 function showExportFailureMessage()
@@ -54,12 +34,6 @@ function showExportFailureMessage()
 function showPublicationExportFailureMessage()
 {
 	showError(message_PublicationExportFailed);
-}
-
-function hideGenericInfos()
-{
-	$("#generic-info-box").hide(400);
-	$("#generic-error-box").hide(400);
 }
 
 function hideExports()

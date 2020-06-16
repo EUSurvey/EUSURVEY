@@ -10,6 +10,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.WeakAuthenticationException;
 
@@ -17,10 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,20 +31,8 @@ import java.util.List;
 @Service("sessionService")
 public class SessionService extends BasicService {
 	
-	@Resource(name = "translationService")
-	private TranslationService translationService;
-	
 	@Resource(name = "ldapService")
 	private LdapService ldapService;
-	
-	@Resource(name = "sessionFactory")
-	private SessionFactory sessionFactory;
-	
-	@Resource(name = "activityService")
-	private ActivityService activityService;
-	
-	@Autowired
-	protected MessageSource resources;	
 	
 	private @Value("${proxy.host}") String proxyHost;
 	private @Value("${proxy.port}") String proxyPort;
@@ -55,11 +41,11 @@ public class SessionService extends BasicService {
 	private @Value("${pdfserver.prefix}") String pdfServerPrefix;
 	private @Value("${proxy.nonProxyHosts}") String proxyNonProxyHosts;
 
-	public User getCurrentUser(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
+	public User getCurrentUser(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		return getCurrentUser(request, true, true);
 	}
 	
-	public User getCurrentUser(HttpServletRequest request, boolean checkTOS, boolean checkWeakAuthentication) throws NotAgreedToTosException, WeakAuthenticationException {
+	public User getCurrentUser(HttpServletRequest request, boolean checkTOS, boolean checkWeakAuthentication) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		if (request == null) return null;
 		
 		User user = (User) request.getSession().getAttribute("USER");
@@ -82,6 +68,11 @@ public class SessionService extends BasicService {
     		{
     			user.setCanCreateSurveys(false);
     		}
+		}
+		
+		if (checkTOS && user != null && !user.isAgreedToPS())
+		{
+			throw new NotAgreedToPsException();
 		}
 		
 		if (checkTOS && user != null && !user.isAgreedToToS())
@@ -300,7 +291,7 @@ public class SessionService extends BasicService {
 		request.getSession().setAttribute("sessioninfo", new SessionInfo(survey.getId(), user.getId(), survey.getOwner().getId(), survey.getLanguage().getCode(),survey.getShortname()));
 	}
 
-	public SurveyFilter getSurveyFilter(HttpServletRequest request, boolean forms) throws NotAgreedToTosException, WeakAuthenticationException {
+	public SurveyFilter getSurveyFilter(HttpServletRequest request, boolean forms) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		SurveyFilter filter = new SurveyFilter();
 		
 		filter.setUser(getCurrentUser(request));
@@ -325,6 +316,10 @@ public class SessionService extends BasicService {
 			boolean filterDraft = request.getParameter("statusDraft") != null && request.getParameter("statusDraft").equalsIgnoreCase("Draft");
 			boolean filterUnpublished = request.getParameter("statusUnpublished") != null && request.getParameter("statusUnpublished").equalsIgnoreCase("Unpublished");
 			boolean filterPublished = request.getParameter("statusPublished") != null && request.getParameter("statusPublished").equalsIgnoreCase("Published");
+			
+			boolean filterOwn = request.getParameter("surveysOwn") != null && request.getParameter("surveysOwn").equalsIgnoreCase("own");
+		 	boolean filterShared = request.getParameter("surveysShared") != null && request.getParameter("surveysShared").equalsIgnoreCase("shared");
+			
 			String status = "";
 			if (filterDraft) status += "Draft;";
 			if (filterUnpublished) status += "Unpublished;";
@@ -332,7 +327,20 @@ public class SessionService extends BasicService {
 			filter.setStatus(status);
 	    	filter.setKeywords(request.getParameter("keywords"));    	
 	    	filter.setLanguages(request.getParameterValues("languages"));
-	    	filter.setOwner(request.getParameter("owner"));
+	    	filter.setOwner(request.getParameter("owner"));	    	
+	    	
+	    	if (filterOwn && filterShared)
+	    	{
+	    		filter.setSelector("all");
+	    	} else if (filterOwn)
+	    	{
+	    		filter.setSelector("my");
+	    	} else if (filterShared)
+	    	{
+	    		filter.setSelector("shared");
+	    	} else {
+	    		filter.setSelector("all");
+	    	}
 	    	
 	    	if (request.getParameter("sortkey") == null)
 	    	{

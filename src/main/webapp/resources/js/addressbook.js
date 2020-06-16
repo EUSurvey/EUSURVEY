@@ -258,7 +258,7 @@ function addRow(edit)
 		  $(this).parent().parent().remove();
 		});
 	var i =  document.createElement("span");
-	$(i).addClass("glyphicon glyphicon-remove icon-red");
+	$(i).addClass("glyphicon glyphicon-remove");
 	$(a).append(i);
 	td =  document.createElement("td");
 	$(td).append(a);
@@ -536,7 +536,7 @@ function step1()
 
 function step2()
 {
-	$("#import-attendees-step3-form").attr("action", contextpath + "/addressbook/importAttendeesCheck");
+	$("#import-attendees-step3-form-target").val("importAttendeesCheck");
 	$("#import-attendees-step3-dialog").modal("hide");	
 	$("#import-attendees-step2-dialog").modal();	
 }
@@ -1013,7 +1013,7 @@ function createAttributeSelector(targetTable)
 		  $(this).parent().parent().remove();
 		});
 	var i =  $('<span></span>');
-	$(i).addClass("icon-red glyphicon glyphicon-remove");
+	$(i).addClass("glyphicon glyphicon-remove");
 	$(a).append($(i));	
 	$(newCell).append($(a));
 

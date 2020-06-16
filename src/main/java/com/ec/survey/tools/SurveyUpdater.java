@@ -51,7 +51,7 @@ public class SurveyUpdater implements Runnable {
 	@Override
 	public void run() {
 		try {
-			logger.debug("SurveyUpdater started");
+			logger.info("SurveyUpdater started");
 			
 			//publish
 			List<Survey> surveys = surveyService.getSurveysToStart();
@@ -76,7 +76,9 @@ public class SurveyUpdater implements Runnable {
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}				
-			}			
+			}
+			
+			logger.info("Starting completed, starting notifications");
 			
 			//notify
 			try {
@@ -107,7 +109,7 @@ public class SurveyUpdater implements Runnable {
 					{
 						if (user != null && user.getEmail() != null && user.getEmail().trim().length() > 0)
 						{
-							String body = "Dear " + user.getFirstLastName() + ",<br /><br />Your survey '<b>" + survey.cleanTitle() + "</b>' will end on the " + ConversionTools.getString(survey.getEnd()) + " at " + ConversionTools.getTimeString(survey.getEnd()) + ".<br />";
+							String body = "Dear " + user.getFirstLastName() + ",<br /><br />Your survey '<b>" + survey.cleanTitle() + "</b>' will end on the " + Tools.formatDate(survey.getEnd(), ConversionTools.DateFormat) + " at " + Tools.formatDate(survey.getEnd(), "HH:mm") + ".<br />";
 							body += "At this time your survey will automatically be unpublished. <br />";
 							body += "To open your form managing area directly, please follow this link:<br />";
 							body += "<a href='[HOST]" + survey.getShortname() + "/management/overview'>[HOST]" + survey.getShortname() + "/management/overview</a><br /><br />";
@@ -135,6 +137,8 @@ public class SurveyUpdater implements Runnable {
 			{
 				logger.error(e.getLocalizedMessage(), e);
 			}
+			
+			logger.info("Notifications completed, starting unpublishing");
 			
 			//unpublish
 			surveys = surveyService.getSurveysToStop();

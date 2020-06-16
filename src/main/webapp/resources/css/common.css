@@ -8,6 +8,138 @@ body {
 	color: #333;
 }
 
+html, body {
+  height: 100%;
+}
+
+#messages-log-div {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 20001;
+}
+
+#messages-log-header {
+	 background-color: #2196f3;
+	 color: #fff;
+	 padding: 10px;
+	 font-size: 20px;
+	 border-top-left-radius: 5px;
+	 border-top-right-radius: 5px;
+}
+
+#messages-log {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5px;
+	background-color: #fff;
+	border: 1px solid #aaa;
+	border-radius: 5px;
+	text-align: left;
+}
+
+#messages-log .log-message {
+	border-bottom: 1px solid #ddd;
+	padding: 10px;
+}
+
+#messages-log .log-message td {
+	padding: 10px;
+	vertical-align: top;
+}
+
+#messages-box-div {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 20000;
+}
+
+#messages-box {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5px;
+	text-align: left;
+}
+
+.message-system-header {
+	margin-top: -10px;
+	margin-left: -10px;
+	margin-right: -10px;
+	margin-bottom: 10px;
+	background-color: #eee;
+	padding: 5px;
+	padding-left: 10px;
+	color: #333;
+}
+
+.message-success-header {
+	margin-top: -10px;
+	margin-left: -10px;
+	margin-right: -10px;
+	margin-bottom: 10px;
+	background-color: #4caf50;
+	padding: 5px;
+	padding-left: 10px;
+	color: #fff;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.message-info-header {
+	margin-top: -10px;
+	margin-left: -10px;
+	margin-right: -10px;
+	margin-bottom: 10px;
+	background-color: #337ab7;
+	padding: 5px;
+	padding-left: 10px;
+	color: #fff;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.message-error-header {
+	margin-top: -10px;
+	margin-left: -10px;
+	margin-right: -10px;
+	margin-bottom: 10px;
+	background-color: #c11c1c;
+	padding: 5px;
+	padding-left: 10px;
+	color: #fff;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.message {
+	background-color: #eee;
+	padding: 10px;
+	border: 1px solid #aaa;
+	border-radius: 5px;
+	margin-top: 5px;
+}
+
+.page-wrap {
+	min-height: 100%;
+	/* equal to footer height */
+	margin-bottom: -198px; 
+	padding-bottom: 75px;
+	max-width: 100%;
+	overflow-x: auto;
+}
+
+.page-wrap:after {
+	content: "";
+	display: block;
+}
+
+.footer-bottom, .page-wrap:after {
+	height: 212px; 
+}
+
 .hpdiv {
 	height: 1px;
 	padding-top: 2px;
@@ -50,8 +182,7 @@ table {
 }
 
 .iconbutton.disabled {
-	color: #ccc;	
-	cursor: not-allowed;
+	color: #ccc;
 }
 
 .iconbutton.disabled .glyphicon, .switchiconbutton.disabled .glyphicon {
@@ -318,6 +449,39 @@ select {
 	margin-bottom: 9px;
 }
 
+.footer-bottom {        
+	color: #fff;
+	text-align: left;
+	padding: 0;
+	height: 212px;
+	margin-bottom: 0px !important;
+}
+	
+.footer-bottom .row {
+    padding-top: 15px;
+    padding-bottom: 20px;
+    margin: 0px;
+}
+	
+.footer-bottom a {
+    color: #fff !important;
+}
+
+.footer2 {
+	background-color: #012d56;
+	height: 71px;
+	color: #ccc;
+}
+
+.footer2 a {
+	color: #ccc !important;
+}
+	
+.footerlabel {
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+
 .footer-content {
 	width: 880px;
 	margin-left: auto;
@@ -388,7 +552,7 @@ select {
 	width: 1200px;
 	min-width: 1200px;
 	overflow-x: auto;
-	margin-top: 10px;
+	padding-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
@@ -400,7 +564,7 @@ select {
 	width: 1024px;
 	min-width: 1024px;
 	overflow-x: auto;
-	margin-top: 10px;
+	padding-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
@@ -412,7 +576,7 @@ select {
 	width: 850px;
 	min-width: 850px;
 	overflow-x: auto;
-	margin-top: 10px;
+	padding-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
@@ -424,7 +588,7 @@ select {
 	width: 880px;
 	min-width: 880px;
 	overflow-x: auto;
-	margin-top: 10px;
+	padding-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
@@ -433,7 +597,7 @@ select {
 }
 
 .fullpageadmin {
-	margin-top: 10px;
+	padding-top: 10px;
 	padding-left: 0px;
 	padding-right: 0px;
 }
@@ -442,32 +606,32 @@ select {
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: left;
-	margin-bottom: 50px;
- 	margin-top: 180px; 
+	padding-bottom: 50px;
+ 	padding-top: 180px; 
 }
 
 .fullpagesmall {
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: left;
-	margin-bottom: 50px;
- 	margin-top: 90px; 
+	padding-bottom: 50px;
+ 	padding-top: 90px; 
 }
 
 .fullpageform {
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: left;
-	margin-bottom: 50px;
- 	margin-top: 180px; 
+	padding-bottom: 50px;
+ 	padding-top: 180px; 
 }
 
 .fullpageform100 {
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: left;
-	margin-bottom: 50px;
- 	margin-top: 100px; 
+	padding-bottom: 50px;
+ 	padding-top: 100px; 
 }
 
 .fixedtitle {
@@ -517,10 +681,6 @@ select {
 .filtercell {
 	max-width: 150px;
 	min-width: 150px;
-}
-
-.filtercell input:not([type=checkbox]) {
-	width: 100px !important;
 }
 
 .smallfiltercell {
@@ -718,7 +878,6 @@ label, .overview-label {
 	font-size: 13px;
 	font-weight: bold;
 	height: 20px;
-	line-height: 20px;
 }
 
 fieldset {
@@ -1043,11 +1202,11 @@ legend {
 }
 
 .validation-error {
-	color: #f00; font-weight: bold; font-size: 13px;
+	color: #f00; font-size: 13px;
 }
 
 .validation-error-keep {
-	color: #f00; font-weight: bold; font-size: 13px;
+	color: #f00; font-size: 13px;
 }
 
 .emailvalidation {
@@ -1232,7 +1391,6 @@ legend {
 	padding: 6px 12px;
 	font-size: 14px;
 	border: 1px solid transparent;
-    border-radius: 4px;
     color: #333;
     background-color: #fff;
     border-color: #ccc;
@@ -1330,8 +1488,9 @@ legend {
 
 #contentstable .headertitle {
 	width: 150px;
-	height: 100px;
+	/*height: 100px;*/
 	overflow: hidden;
+	padding-bottom: 10px;
 }
 
 #scrollarea {
@@ -1610,10 +1769,6 @@ img.titleImage
 	margin-right:6px;
 }
 
-.actionRowAction.disabled {
-	cursor: not-allowed;
-}
-
 table.formsSurveyItem
 {
 	width:100%;
@@ -1644,7 +1799,7 @@ td.publishedCell img
 
 table.table-styled > thead > tr
 {
-	background-color: #0088cc;
+	background-color: #245077;
 	color: #FFF;
 }
 
@@ -1655,8 +1810,24 @@ table.table-styled > thead .glyphicon
 
 table.table-styled > thead > tr.table-styled-filter
 {
-	background-color: #6bc3ef;
-	color:#555;
+	background-color: #eee;
+ 	color:#333;
+}
+
+table.table-styled > thead > tr.table-styled-filter th {
+	padding: 5px;
+}
+ 		
+table.table-styled input[type=text], table.table-styled select {
+	margin: 0;
+ 	height: 34px;
+ 	background-color: #ddd;
+}
+	
+table.table-styled input[type=text] {
+	width: 100%;
+ 	padding-left: 5px;
+ 	border: 1px solid rgb(169, 169, 169);
 }
 
 .separatorCell
@@ -1693,8 +1864,8 @@ table.table-styled > thead > tr.table-styled-filter
 
 .action-bar
 {
-	margin-bottom:15px;
-	margin-top: 160px;
+	padding-bottom:5px;
+	padding-top: 130px;
 }
 
 .no-margin-top
@@ -1797,6 +1968,11 @@ a {
 	word-break: break-all;	
 }
 
-#cookie-consent-banner {
-	z-index: 999999;
+input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="radio"].disabled, input[type="checkbox"].disabled, fieldset[disabled] input[type="radio"], fieldset[disabled] input[type="checkbox"] {
+	cursor: default !important;
+}
+
+.filtertools {
+	text-align: right;
+	margin-top: 9px;
 }

@@ -42,7 +42,7 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/runner.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/runner2.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/runnerviewmodels.js?version=<%@include file="../version.txt" %>"></script>
-    <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
+    <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="../version.txt" %>'></script>
 	
 	<script type="text/javascript"> 
 		$(function() {					
@@ -145,7 +145,7 @@
 	
 	<c:if test="${message != null}">
 		<script type="text/javascript">
-			showRunnerError('${message}');
+			showError('${message}');
 		</script>
 	</c:if>
 

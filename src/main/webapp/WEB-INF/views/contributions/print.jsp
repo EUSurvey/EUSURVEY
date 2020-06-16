@@ -256,6 +256,10 @@
 									</c:choose>
 									
 										<c:choose>
+											<c:when test="${r == 1 && c == 1}">
+												<div>${element.firstCellText}</div>
+											</c:when>										
+										
 											<c:when test="${r == 1}">
 												<c:set var="entity" value="${element.childElements.get(c-1)}" />
 																									
@@ -361,6 +365,9 @@
 									</c:choose>
 								
 										<c:choose>
+											<c:when test="${r == 1 && c == 1}">
+												<div>${element.firstCellText}</div>
+											</c:when>
 											<c:when test="${r == 1}">
 												<c:set var="entity" value="${element.childElements.get(c-1)}" />
 												${entity.title}
@@ -605,6 +612,9 @@
 				<div class="linkstitle" style="margin-bottom: 5px;"><spring:message code="label.Contact" /></div>
 				
 				<c:choose>
+					<c:when test="${form.survey.contact.startsWith('form:')}">
+						<a class="link visibleLink" href="${contextpath}/runner/contactform/${form.survey.shortname}"><spring:message code="label.ContactForm" /></a>
+					</c:when>
 					<c:when test="${form.survey.contact.contains('@')}">
 						<i class="icon icon-envelope" style="vertical-align: middle"></i>
 						<esapi:encodeForHTML>${form.survey.contact}</esapi:encodeForHTML>
@@ -623,12 +633,6 @@
 			</c:if>
 		</div>						
 	</div>
-	
-	<c:if test="${message != null}">
-		<script type="text/javascript">
-			showMessage('${message}');
-		</script>
-	</c:if>
 	
 </body>
 </html>

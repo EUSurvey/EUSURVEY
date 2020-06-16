@@ -225,8 +225,13 @@
 }
 
 .validation-error {
-	color: #f00; font-weight: bold;
+	color: #f00; position: absolute;
 }
+
+.matrix-header .validation-error {
+	position: relative;
+}
+
 
 select,
 textarea,

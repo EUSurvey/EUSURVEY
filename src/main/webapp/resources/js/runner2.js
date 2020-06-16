@@ -79,7 +79,37 @@ function addElement(element, foreditor, forskin)
 		$(container).append('<div style="color: #f00" class="validation-error-server">' + validation + '</div>');
 	}
 	
+	if (!foreditor)
+	{       
+ 		checkTriggersAfterLoad(container);
+ 	 		                
+ 	 	//dependent matrix rows
+ 	 	$(container).find(".matrix-question.untriggered").each(function(){
+ 	 		checkTriggersAfterLoad(this);
+ 	 	});     
+ 	 }
+	
 	return container;
+}
+
+function checkTriggersAfterLoad(container)
+{
+	var dtriggers = $(container).attr("data-triggers");
+	if (typeof dtriggers !== typeof undefined && dtriggers !== false && dtriggers.length > 0) {
+		var triggers = dtriggers.split(";")
+		for (var i = 0; i < triggers.length; i++) {
+			if (triggers[i].length > 0)
+			{
+				if (triggers[i].indexOf("|") > -1) {
+					//matrix cell
+					checkDependenciesAsync($("[data-cellid='" + triggers[i] + "']")[0]);
+				} else {
+					//radio/checkbox/listbox/selectbox
+					checkDependenciesAsync($("#" + triggers[i])[0]);
+				}
+			}
+		}
+	}
 }
 
 function addElementToContainer(element, container, foreditor, forskin)
@@ -306,18 +336,6 @@ function addElementToContainer(element, container, foreditor, forskin)
 	
 	initModals($(container).find(".modal-dialog").first());
 	
-	$(container).find(".freetext").each(function(){
-		countChar(this);
-		
-		$(this).bind('paste', function(event) {
-	        var _this = this;
-	        // Short pause to wait for paste to complete
-	        setTimeout( function() {
-	        	countChar(_this);
-	        }, 100);
-	    });
-	});
-	
 	$(container).find(".expand").TextAreaExpander();
 	
 	$(container).find("input, textarea, select").change(function() {
@@ -363,6 +381,18 @@ function addElementToContainer(element, container, foreditor, forskin)
 		
 	if (!foreditor && !forskin)
 	readCookiesForParent($(container));
+	
+	$(container).find(".freetext").each(function(){
+		countChar(this);
+		
+		$(this).bind('paste', function(event) {
+	        var _this = this;
+	        // Short pause to wait for paste to complete
+	        setTimeout( function() {
+	        	countChar(_this);
+	        }, 100);
+	    });
+	});
 	
 	return viewModel;
 }

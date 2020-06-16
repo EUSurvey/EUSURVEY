@@ -312,6 +312,7 @@ var UndoProcessor = function() {
 				break;
 			case "Level":
 				element.level(step[3]);
+				updateTitles();
 				break;
 			case "Mandatory":
 				var checked = step[3] == "true";
@@ -367,6 +368,13 @@ var UndoProcessor = function() {
 					}
 					updateChoice();
 				}
+				break;
+			case "Display":
+				var display = 0;
+				if (step[3] == "1") display = 1;
+				if (step[3] == "2") display = 2;		
+				if (step[3] == "3") display = 3;		
+				element.displayMode(display);
 				break;
 			case "Order":
 				var order = 0;
@@ -813,6 +821,7 @@ var UndoProcessor = function() {
 				break;
 			case "Level":
 				element.level(step[4]);
+				updateTitles();
 				break;
 			case "Mandatory":
 				var checked = step[4] == "true";
@@ -868,6 +877,13 @@ var UndoProcessor = function() {
 					}
 					updateChoice();
 				}
+				break;
+			case "Display":
+				var display = 0;
+				if (step[4] == "1") display = 1;
+				if (step[4] == "2") display = 2;		
+				if (step[4] == "3") display = 3;		
+				element.displayMode(display);
 				break;
 			case "Order":
 				var order = 0;

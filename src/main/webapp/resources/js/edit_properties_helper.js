@@ -526,7 +526,7 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 	var rowcontent = "";
 	var options = content.split(",");
 	var name = getNewId();
-	if (label == "Style" || label == "Order")
+	if (label == "Style" || label == "Order" || label == "Display")
 	{
 		row.ContentType("radio");
 		row.Content(options);
@@ -825,7 +825,7 @@ function getActionRow(label, l1, action, l2, action2)
 	
 		row = new PropertyRow();
 		row.Type("PossibleAnswerShortnames");
-		var rowcontent = "<div class='editvaluesbuttons'><button id='idBtnSaveShortName' class='btn btn-default btn-info btn-sm' onclick='save(this)'>" + getPropertyLabel("Apply") + "</button> <button id='idBtnCancelShortName' class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'>" + getPropertyLabel("Cancel") + "</button></div>"
+		var rowcontent = "<div class='editvaluesbuttons'><button id='idBtnSaveShortName' class='btn btn-default btn-primary btn-sm' onclick='save(this)'>" + getPropertyLabel("Apply") + "</button> <button id='idBtnCancelShortName' class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'>" + getPropertyLabel("Cancel") + "</button></div>"
 		row.Content(rowcontent);
 		_elementProperties.propertyRows.push(row);
 	}
@@ -1322,6 +1322,16 @@ function removePossibleAnswer()
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var element = _elements[id];
 	
+	_elementProperties.selectedproperty = $("#btnRemovePossibleAnswers").closest("tr");
+	removeValidationMarkup();
+	
+	var numPossibleAnswers = element.possibleAnswers().length;
+	if (element.minChoices() != null && element.minChoices() >= numPossibleAnswers)
+	{
+		addValidationInfo($("#btnRemovePossibleAnswers"), "checkNumberOfChoices");
+		return;
+	}
+		
 	var answer = element.possibleAnswers.pop();
 	
 	if (isQuiz)
@@ -1461,6 +1471,15 @@ function removeRow(noundo)
 	{	
 		if (element.questions().length > 1)
 		{
+			removeValidationMarkup($("#btnRemoveRows").closest("tr"));
+			
+			var numRows = element.questions().length;
+			if (element.minRows() != null && element.minRows() >= numRows)
+			{
+				addValidationInfo($("#btnRemoveRows"), "checkNumberOfRows");
+				return;
+			}
+			
 			row = element.questions.pop();
 			
 			//update dependencies
@@ -1501,7 +1520,7 @@ function cancel(button)
 		if ($(button).closest("tr").find("textarea").length > 0)
 		{
 			var selectedid = $(button).closest("tr").find("textarea").first().attr("id");
-			tinyMCE.get(selectedid).setContent(originaltext, {format : 'raw'});
+			tinyMCE.get(selectedid).setContent(originaltext, {format : 'xhtml'});
 		}
 	}
 
@@ -1533,7 +1552,7 @@ function showHideVisibilityElements(span)
 function resetVisibility(button)
 {
 	_elementProperties.selectedproperty = $(button).closest("tr");
-	updateVisibility(button, true);
+	updateVisibility(button, true, false, false);
 }
 
 function resetFeedback(button)
@@ -1634,15 +1653,17 @@ function edit(span)
 					
 					var questionid = "-1";
 					
-					$(answers).each(function(){
-						var answerid = $(this).find("input[name^='shortname']").attr("name").substring(9);
-						var answershortname = $(this).find("input[name^='shortname']").val();
-						
-						if (triggers.indexOf(questionid + "|" + answerid) > -1)
-						{
-							$(div).append("<input type='checkbox' checked='checked' style='margin-left: 10px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
-						} else {
-							$(div).append("<input type='checkbox' style='margin-left: 10px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+					$(answers).each(function(){						
+						if ($(this).find("input[name^='shortname']").length > 0) {						
+							var answerid = $(this).find("input[name^='shortname']").attr("name").substring(9);
+							var answershortname = $(this).find("input[name^='shortname']").val();
+							
+							if (triggers.indexOf(questionid + "|" + answerid) > -1)
+							{
+								$(div).append("<input type='checkbox' checked='checked' style='margin-left: 10px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+							} else {
+								$(div).append("<input type='checkbox' style='margin-left: 10px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+							}
 						}
 					});
 					
@@ -1654,15 +1675,17 @@ function edit(span)
 						$(div).append("<div class='visibilityquestion' style='margin-left: 10px;'>" + strip_tags(text) + "</div>");
 						
 						$(answers).each(function(){
-							var answerid = $(this).find("input[name^='shortname']").attr("name").substring(9);
-							var answershortname = $(this).find("input[name^='shortname']").val();
-							
-							if (triggers.indexOf(questionid + "|" + answerid) > -1)
-							{
-								$(div).append("<input type='checkbox' checked='checked' style='margin-left: 15px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
-								oldvalues = oldvalues + questionid + "|" + answerid + ";";
-							} else {
-								$(div).append("<input type='checkbox' style='margin-left: 15px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+							if ($(this).find("input[name^='shortname']").length > 0) {	
+								var answerid = $(this).find("input[name^='shortname']").attr("name").substring(9);
+								var answershortname = $(this).find("input[name^='shortname']").val();
+								
+								if (triggers.indexOf(questionid + "|" + answerid) > -1)
+								{
+									$(div).append("<input type='checkbox' checked='checked' style='margin-left: 15px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+									oldvalues = oldvalues + questionid + "|" + answerid + ";";
+								} else {
+									$(div).append("<input type='checkbox' style='margin-left: 15px' value='" + questionid + "|" + answerid + "' /> <span>"  + strip_tags($(this).find("textarea[name^='text']").first().text()) + " (" + answershortname + ")" + "</span><br />");
+								}
 							}
 						});
 					});
@@ -1688,7 +1711,7 @@ function edit(span)
 			var td = document.createElement("td");
 			$(td).attr("colspan","2").append("<b>" + getPropertyLabel("PleaseSelectTriggers") + "<b><br />");
 			$(td).append(div);
-			$(td).append('<div style="text-align: right"><button id="btnSaveVisibility" class="btn btn-default btn-info btn-sm" onclick="save(this)">' + getPropertyLabel("Apply") + '</button> <button class="btn btn-default btn-sm" onclick="cancel(this)">' + getPropertyLabel("Cancel") + '</button></div>');
+			$(td).append('<div style="text-align: right"><button id="btnSaveVisibility" class="btn btn-default btn-primary btn-sm" onclick="save(this)">' + getPropertyLabel("Apply") + '</button> <button class="btn btn-default btn-sm" onclick="cancel(this)">' + getPropertyLabel("Cancel") + '</button></div>');
 			$(tr).append(td);
 			$(_elementProperties.selectedproperty).after(tr);
 		}
@@ -1697,7 +1720,7 @@ function edit(span)
 		var s = getColumnsText(true);
 		
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
-		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'raw'});
+		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'xhtml'});
 		originaltext = s;
 		$(span).closest("tr").next().show();
 	} else if (label == "Rows")
@@ -1705,7 +1728,7 @@ function edit(span)
 		var s = getRowsText(true);
 		
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
-		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'raw'});
+		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'xhtml'});
 		originaltext = s;
 		$(span).closest("tr").next().show();
 	} else if (label == "Questions")
@@ -1713,7 +1736,7 @@ function edit(span)
 		var s = getQuestionsText(true);
 		
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
-		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'raw'});
+		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'xhtml'});
 		originaltext = s;
 		$(span).closest("tr").next().show();
 	} else if (label == "PossibleAnswers")
@@ -1721,7 +1744,7 @@ function edit(span)
 		var s = getCombinedAnswerText(true);
 		
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
-		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'raw'});
+		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'xhtml'});
 		originaltext = s;
 		$(span).closest("tr").next().show();
 	} else if (label == "feedback")

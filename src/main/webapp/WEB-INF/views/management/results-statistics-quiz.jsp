@@ -18,7 +18,7 @@
 		<a class="btn btn-default" onclick="loadStatisticsAsync(false);"><spring:message code="label.LoadStatistics" /></a>
 	</div>
 	
-		<div id="scrollareastatisticsquiz" class="scrollarea">
+		<div id="scrollareastatisticsquiz" class="scrollarea"  style="height: auto">
 		<div style="width: 700px; margin-left: auto; margin-right: auto">
 			<h1><spring:message code="label.TotalScores" /></h1>
 			<table style="margin-bottom: 20px;">

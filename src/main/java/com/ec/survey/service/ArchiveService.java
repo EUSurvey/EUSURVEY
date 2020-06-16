@@ -250,6 +250,12 @@ public class ArchiveService extends BasicService {
 	
 		Map<String, Object> params = new HashMap<>();
 		
+		if (filter.getUniqueId() != null  && filter.getUniqueId().trim().length() > 0)
+		{
+			hql += " AND a.surveyUID LIKE :uid";
+			params.put("uid", "%" + filter.getUniqueId() + "%");
+		}
+		
 		if (filter.getUserId() > 0)
 		{
 			hql += " AND a.userId = :userid";
@@ -320,7 +326,7 @@ public class ArchiveService extends BasicService {
 		sqlQueryService.setParameters(query, params);
 		
 		@SuppressWarnings("unchecked")
-		List<Archive> result = query.setFirstResult(page * rowsPerPage).setMaxResults(rowsPerPage).list();
+		List<Archive> result = query.setFirstResult((page - 1) * rowsPerPage).setMaxResults(rowsPerPage).list();
 		return result;
 	}
 
@@ -376,4 +382,14 @@ public class ArchiveService extends BasicService {
 		return result;
 	}
 	
+	@Transactional
+	public List<Archive> getArchivesForUser(int userid) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("FROM Archive a WHERE a.userId = :userId").setInteger("userId", userid);
+	
+		@SuppressWarnings("unchecked")
+		List<Archive> result = query.list();		
+			
+		return result;
+	}
 }

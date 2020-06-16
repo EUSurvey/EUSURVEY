@@ -20,8 +20,6 @@ import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service("ldapService")
@@ -469,12 +467,10 @@ public class LdapService extends BasicService {
 
 			String searchString = "(objectClass=*)";
 			
-			DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-			
 			// set timestamp criteria only if such a field has been set in property file
 			if (lastLDAPSynchronizationDate != null && isAttributeEligible(ldapMappingUserModifyTimstamp))
 			{
-				searchString = "(modifyTimestamp>=" + df.format(lastLDAPSynchronizationDate) + ".0Z)";
+				searchString = "(modifyTimestamp>=" + Tools.formatDate(lastLDAPSynchronizationDate, "yyyyMMddHHmmss") + ".0Z)";
 			}
 
 			try{
@@ -522,7 +518,7 @@ public class LdapService extends BasicService {
 					Date modified = new Date();
 					if (set_att.get(ldapMappingUserModifyTimstamp) != null) {
 						modifyTimestamp = (String)set_att.get(ldapMappingUserModifyTimstamp).get();
-						modified = df.parse(modifyTimestamp.replace("Z", ""));
+						modified = Tools.parseDateString(modifyTimestamp.replace("Z", ""), "yyyyMMddHHmmss");
 					}					
 									
 					boolean deactivated = false;

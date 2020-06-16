@@ -8,6 +8,7 @@ import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.quiz.QuizResult;
 import com.ec.survey.service.AnswerService;
 import com.ec.survey.service.ReportingService;
+import com.ec.survey.service.ReportingServiceProxy;
 import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizHelper;
@@ -33,8 +34,8 @@ public class StatisticsCreator implements Runnable {
 	@Resource(name = "sessionFactory")
 	protected SessionFactory sessionFactory;
 	
-	@Resource(name = "reportingService")
-	protected ReportingService reportingService;
+	@Resource(name = "reportingServiceProxy")
+	protected ReportingServiceProxy reportingService;
 	
 	protected static final Logger logger = Logger.getLogger(StatisticsCreator.class);
 	
@@ -325,7 +326,7 @@ public class StatisticsCreator implements Runnable {
 		{
 			
 			Map<String, Object> values = new HashMap<String, Object>();
-			String where = reportingService.getWhereClause(filter, values, survey);
+			String where = ReportingService.getWhereClause(filter, values, survey);
 			
 			try {
 				for (Question q: survey.getQuestions())
@@ -376,7 +377,7 @@ public class StatisticsCreator implements Runnable {
 							for (int i = 1; i <= rating.getNumIcons(); i++)
 							{
 								if (!mapRatingQuestion.containsKey(childQuestion.getId())) mapRatingQuestion.put(childQuestion.getId(), new HashMap<>());
-								int count = reportingService.getCount(survey, childQuestion.getUniqueId(), Integer.toString(i), true, where, values);
+								int count = reportingService.getCount(survey, childQuestion.getUniqueId(), Integer.toString(i) + "/", true, where, values);
 								mapRatingQuestion.get(childQuestion.getId()).put(i, count);
 							}
 							int count = reportingService.getCount(survey, childQuestion.getUniqueId(), null, false, where, values);

@@ -4,10 +4,10 @@ import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.*;
 import com.ec.survey.service.ReportingService.ToDoItem;
 import com.ec.survey.tools.CreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.FileUpdater;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.RecreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.Tools;
@@ -45,21 +45,6 @@ import java.util.Locale;
 @Controller
 @RequestMapping("/administration")
 public class AdministrationController extends BasicController {
-	
-	@Resource(name="surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;
-	
-	@Resource(name="archiveService")
-	private ArchiveService archiveService;
-	
-	@Resource(name="ldapService")
-	private LdapService ldapService;
 	
 	@Resource(name = "fileWorker")
 	private FileUpdater fileWorker;
@@ -117,7 +102,7 @@ public class AdministrationController extends BasicController {
 	}
 		
 	@RequestMapping(value = "/saveUserConfiguration", method = {RequestMethod.POST})
-	public @ResponseBody String saveUserConfiguration(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
+	public @ResponseBody String saveUserConfiguration(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		int userId = sessionService.getCurrentUser(request).getId();
 		UsersConfiguration usersConfiguration = administrationService.getUsersConfiguration(userId);
 		
@@ -153,10 +138,8 @@ public class AdministrationController extends BasicController {
 	
 	@RequestMapping(value = "/synchronizeLDAP", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView synchronizeLDAP(HttpServletRequest request) {
-		logger.error("START SYNC LDAP ACTIVITY");
 		ldapService.reloadDepartments();
 		ldapService.reloadEcasUser();
-		logger.error("END SYNC LDAP ACTIVITY");
 		return new ModelAndView("error/info", "message", "synchronization started");
 	}
 	

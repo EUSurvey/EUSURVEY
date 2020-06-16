@@ -39,6 +39,9 @@
 						<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Contact")}</div>
 						
 						<c:choose>
+							<c:when test="${form.survey.contact.startsWith('form:')}">
+								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
+							</c:when>
 							<c:when test="${form.survey.contact.contains('@')}">
 								<i class="icon icon-envelope" style="vertical-align: middle"></i>
 								<a class="link" href="mailto:<esapi:encodeForHTMLAttribute>${form.survey.contact}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${form.survey.contact}</esapi:encodeForHTML></a>
@@ -88,7 +91,7 @@
 				</table>
 			</c:if>
 			
-			<a class="btn btn-info" href="?startQuiz=true&surveylanguage=${form.language.code}"><spring:message code="label.Start" /></a>
+			<a class="btn btn-primary" href="?startQuiz=true&surveylanguage=${form.language.code}"><spring:message code="label.Start" /></a>
 		</div>
 		
 		<div style="clear: both"></div>

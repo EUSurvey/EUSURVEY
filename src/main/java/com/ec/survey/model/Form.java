@@ -620,13 +620,6 @@ public class Form {
 				}
 			}
 		}		
-//		
-//		if (question instanceof Question && !((Question)question).getOptional())
-//		{
-//			titlePrefix.append("<span class='mandatory' aria-label='Mandatory'>*</span>");
-//		} else {
-//			titlePrefix.append("<span class='optional' aria-label='Optional'>*</span>");
-//		}
 		
 		if (survey.getQuestionNumbering() == 0){
 			
@@ -655,7 +648,7 @@ public class Form {
 			
 			if (element instanceof Question)
 			{
-				if (!(element instanceof Text) && !(element instanceof Image))
+				if (!(element instanceof Text) && !(element instanceof Image) && !(element instanceof Confirmation))
 				{
 					counter++;
 					Question q = (Question)element;
@@ -667,40 +660,22 @@ public class Form {
 						{
 							result = getSectionNumbering(lastSection);
 							if (result.length() > 0) result += ".";
-						}
+						}						
 						
-						if (!(question instanceof Text) && !(question instanceof Image))
+						switch (survey.getQuestionNumbering())
 						{
-							switch (survey.getQuestionNumbering())
-							{
-								case 1:
-								case 4:
-									titlePrefix.append("<span class='numbering'>").append(result).append(counter).append("</span>");
-									break;
-								case 2:
-								case 5:
-									titlePrefix.append("<span class='numbering'>").append(result).append(Numbering.getSmallLetter(counter)).append("</span>");
-									break;
-								case 3:
-								case 6:
-									titlePrefix.append("<span class='numbering'>").append(result).append(Numbering.getBigLetter(counter)).append("</span>");
-							}		
-						} else {
-							switch (survey.getQuestionNumbering())
-							{
-								case 1:
-								case 4:
-									titlePrefix.append(result).append(counter);
-									break;
-								case 2:
-								case 5:
-									titlePrefix.append(result).append(Numbering.getSmallLetter(counter));
-									break;
-								case 3:
-								case 6:
-									titlePrefix.append(result).append(Numbering.getBigLetter(counter));
-							}	
-						}
+							case 1:
+							case 4:
+								titlePrefix.append("<span class='numbering'>").append(result).append(counter).append("</span>");
+								break;
+							case 2:
+							case 5:
+								titlePrefix.append("<span class='numbering'>").append(result).append(Numbering.getSmallLetter(counter)).append("</span>");
+								break;
+							case 3:
+							case 6:
+								titlePrefix.append("<span class='numbering'>").append(result).append(Numbering.getBigLetter(counter)).append("</span>");
+						}							
 					}	
 				}
 			}			
@@ -715,11 +690,6 @@ public class Form {
 		} else {
 			result = titlePrefix + title;
 		}
-		
-//		if (question instanceof Confirmation && !forPDF)
-//		{
-//			result += "</label>";
-//		}	
 		
 		return result;
 	}

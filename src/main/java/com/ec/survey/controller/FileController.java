@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.jmimemagic.Magic;
 
 import org.apache.catalina.connector.ClientAbortException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +24,7 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.FileService;
 import com.ec.survey.exception.ForbiddenURLException;
+import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.service.SessionService;
 
 @Controller
@@ -37,10 +37,8 @@ public class FileController extends BasicController {
 	@Resource(name = "sessionService")
 	private SessionService sessionService;
 	
-	private @Value("${export.fileDir}") String fileDir;
-	
 	@RequestMapping(value = "/{uid}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView file(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response) throws ForbiddenURLException {
+	public ModelAndView file(@PathVariable String uid, HttpServletRequest request, HttpServletResponse response) throws ForbiddenURLException, InvalidURLException {
 				
 		if (uid != null && uid.length() > 0)
 		{
@@ -51,7 +49,7 @@ public class FileController extends BasicController {
 					file = fileService.get(uid);
 				} catch (FileNotFoundException fnf)
 				{
-					return null;
+					throw new InvalidURLException();
 				}
 				
 				java.io.File f = new java.io.File(fileDir + file.getUid());
@@ -126,6 +124,8 @@ public class FileController extends BasicController {
 					}
 				}
 				
+			} catch (InvalidURLException iv) {
+				throw iv;
 			} catch (ForbiddenURLException fe1) {
 				throw fe1;
 			} catch (Exception e1) {
@@ -133,8 +133,7 @@ public class FileController extends BasicController {
 			}			
 			
 		}
-		
-		return null;
+		throw new InvalidURLException();
 	}
 	
 	@RequestMapping(value = "/withcomment/{uid}", method = {RequestMethod.GET, RequestMethod.HEAD})

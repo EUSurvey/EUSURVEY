@@ -73,10 +73,9 @@ public class ExportService extends BasicService {
 	
 	@Transactional(readOnly = false)
 	public void markFinished(Export export) {
-		Session session = sessionFactory.getCurrentSession();
 		export.setValid(true);
 		export.setState(ExportState.Finished);
-		session.saveOrUpdate(export);
+		this.update(export);
 	}
 
 	@Transactional

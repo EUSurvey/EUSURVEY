@@ -89,9 +89,11 @@
 	<div style="clear: both"></div>
 	
 	<%@ include file="../footer.jsp" %>
+	<%@ include file="../generic-messages.jsp" %>
 	
 	<div class="modal" id="forgot-password-dialog" data-backdrop="static" style="width: 400px; margin-left: -200px;">
-		<form:form id="forgotPasswordForm" action="${contextpath}/auth/forgotPassword" method="post" style="margin: 0px;" >
+		<form:form id="forgotPasswordForm" action="${contextpath}/auth/login" method="post" style="margin: 0px;" >
+			<input type="hidden" name="target" value="forgotPassword" />
 			<div class="modal-body">
 				<spring:message code="label.PleaseEnterYourLogin" /><br />
 				<input id="login" type="text" name="login" maxlength="255" /><br /><br />
@@ -103,7 +105,7 @@
 	        	</div>
 			</div>
 			<div class="modal-footer" style="height:32px;">
-				<a  onclick="requestLink();" class="btn btn-info"><spring:message code="label.OK" /></a>
+				<a  onclick="requestLink();" class="btn btn-primary"><spring:message code="label.OK" /></a>
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 			</div>	
 		</form:form>
@@ -111,13 +113,13 @@
 	
 	<c:if test="${error != null}">
 		<script type="text/javascript">
-			showBasicError('<esapi:encodeForHTML>${error}</esapi:encodeForHTML>');
+			showError('<esapi:encodeForHTML>${error}</esapi:encodeForHTML>');
 		</script>
  	</c:if>
  	
  	<c:if test="${info != null}">
  		<script type="text/javascript">
-			showBasicInfo('<esapi:encodeForHTML>${info}</esapi:encodeForHTML>');
+			showInfo('<esapi:encodeForHTML>${info}</esapi:encodeForHTML>');
 		</script>
  	</c:if>
 	

@@ -5,7 +5,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.format.annotation.DateTimeFormat;
-
+import com.ec.survey.tools.ConversionTools;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -174,6 +174,12 @@ public class Attendee {
 	}
 	
 	@Transient
+	public String getNiceReminded()
+	{
+		return ConversionTools.getFullString(reminded);
+	}
+	
+	@Transient
 	@DateTimeFormat(pattern="dd/MM/yyyy")
 	public Date getInvited()
 	{
@@ -182,6 +188,12 @@ public class Attendee {
 	public void setInvited(Date invited)
 	{
 		this.invited = invited;
+	}
+	
+	@Transient
+	public String getNiceInvited()
+	{
+		return ConversionTools.getFullString(invited);
 	}
 
 	@Transient

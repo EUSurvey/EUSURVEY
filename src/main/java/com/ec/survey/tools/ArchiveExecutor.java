@@ -93,8 +93,20 @@ public class ArchiveExecutor implements Runnable {
 	}
 	
 	@Transactional
-	public void prepare()
+	public boolean prepare()
 	{
+		if (survey == null)
+		{
+			logger.error("survey is null");
+			return false;
+		}
+		
+		if (survey.getLanguage() == null)
+		{
+			logger.error("survey.language is null");
+			return false;
+		}
+		
 		published = surveyService.getSurvey(survey.getShortname(), false, false, false, true, survey.getLanguage().getCode(), true, false);
 		
 		if (published != null) 
@@ -146,6 +158,8 @@ public class ArchiveExecutor implements Runnable {
 		}
 		
 		surveyService.markAsArchived(survey.getUniqueId());
+		
+		return true;
 	}
 
 	public void createArchive() throws Exception

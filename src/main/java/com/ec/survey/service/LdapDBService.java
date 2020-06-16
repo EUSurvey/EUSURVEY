@@ -154,66 +154,37 @@ public class LdapDBService extends BasicService {
 	}
 	
 	@Transactional(readOnly = true)
-	public String[] getECASLogins(String name, String department, String type, String first, String last, String email, String order) {
+	public List<EcasUser> getECASUsers(String name, String department, String email, String domain, int page, int rowsPerPage) {
 		Session session = sessionFactory.getCurrentSession();
 		
-		String sql = "SELECT u.USER_LOGIN, u.USER_ECMONIKER, u.USER_ORGANISATION, u.USER_DEPARTMENT, u.USER_GN, u.USER_SN, u.USER_EMAIL FROM ECASUSERS u WHERE (u.USER_DEACTIVATED IS NULL OR u.USER_DEACTIVATED = false)";
+		String hql = "SELECT DISTINCT u FROM EcasUser as u WHERE (u.deactivated IS NULL OR u.deactivated = false)";
 				
 		if (name != null && name.length() > 0)
 		{
-			sql += " AND u.USER_ECMONIKER LIKE :name";			
-		}
-		
-		if (first != null && first.length() > 0)
-		{
-			sql += " AND u.USER_GN LIKE :first";			
-		}
-		
-		if (last != null && last.length() > 0)
-		{
-			sql += " AND u.USER_SN LIKE :last";			
+			hql += " AND CONCAT(u.givenName,' ', u.surname) LIKE :name";			
 		}
 		
 		if (email != null && email.length() > 0)
 		{
-			sql += " AND u.USER_EMAIL LIKE :email";			
+			hql += " AND u.email LIKE :email";			
 		}
 		
 		if (department != null && department.length() > 0 && !department.equalsIgnoreCase("undefined"))
 		{
-			sql += " AND u.USER_ID IN (SELECT eg_id FROM ECASGROUPS WHERE GRPS LIKE :department)";			
+			hql += " AND u.departmentNumber LIKE :department";			
 		}
 		
-		if (type != null && type.length() > 0 )
+		if (domain != null && domain.length() > 0)
 		{
-			sql += " AND u.USER_ORGANISATION= :organisation AND u.USER_EMPLOYEETYPE != 'g'"; 			
+			hql += " AND u.organisation LIKE :domain";	
 		}
+			
+		hql += " ORDER BY u.id ASC";
 		
-		if (order.equalsIgnoreCase("first"))
-		{
-			sql +=  " ORDER BY u.USER_GN ASC";
-		} else if (order.equalsIgnoreCase("last"))
-		{
-			sql +=  " ORDER BY u.USER_SN ASC";
-		} else if (order.equalsIgnoreCase("department"))
-		{
-			sql +=  " ORDER BY u.USER_DEPARTMENT ASC";
-		} else {		
-			sql +=  " ORDER BY u.USER_ECMONIKER ASC";
-		}
-		
-		Query query = session.createSQLQuery(sql);
+		Query query = session.createQuery(hql);
 		if (name != null && name.length() > 0)
 		{
 			query.setString("name", "%" + name + "%");
-		}
-		if (first != null && first.length() > 0)
-		{
-			query.setString("first", "%" + first + "%");
-		}
-		if (last != null && last.length() > 0)
-		{
-			query.setString("last", "%" + last + "%");
 		}
 		if (email != null && email.length() > 0)
 		{
@@ -223,41 +194,15 @@ public class LdapDBService extends BasicService {
 		{
 			query.setString("department", "%" + department + "%");
 		}
-		if (type != null && type.length() > 0 )
+		if (domain != null && domain.length() > 0)
 		{
-			query.setString("organisation", type);
-		} 
-		
-		@SuppressWarnings("rawtypes")
-		List res = query.setMaxResults(100).list();
-			
-		List<String> result = new ArrayList<>();
-	
-		for (Object o: res)
-		{
-			Object[] a = (Object[]) o;
-			String login = (String)a[0];
-			String displayName = (String)a[1];
-			String organisation = (String)a[2];
-			String group = (String) a[3];
-			String fname = (String) a[4];
-			String lname = (String) a[5];
-			
-			if (displayName == null || displayName.length() == 0) displayName = login;
-			
-			if (organisation.equalsIgnoreCase("external"))
-			{
-				displayName += " (EXT)";				
-			} else {
-				displayName += " (" +  organisation.replace("eu.europa.", "").toUpperCase() + ")"   ;	
-			}
-			
-			if (group == null || group.equals("null")) group = "";
-			
-			result.add("<tr id='" + login + "'><td>" + displayName + "</td><td>" + fname + "</td><td>" + lname + "</td><td>" + group + "</td></tr>");			
+			query.setString("domain", domain);
 		}
-		
-		return result.toArray(new String[result.size()]);
+	
+		@SuppressWarnings("unchecked")
+		List<EcasUser> res = query.setFirstResult((page - 1)*rowsPerPage).setMaxResults(rowsPerPage).list();
+				
+		return res;
 	}
 
 	@Transactional(readOnly = true)

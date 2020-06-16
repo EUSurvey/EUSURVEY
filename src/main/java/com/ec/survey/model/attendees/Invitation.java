@@ -11,10 +11,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.ec.survey.tools.ConversionTools;
 
 @Entity
 @Table(name = "INVITATIONS")
@@ -101,6 +104,12 @@ public class Invitation {
 	{
 		this.invited = invited;
 	}
+	
+	@Transient
+ 	public String getNiceInvited()
+ 	{
+ 		return ConversionTools.getFullString(invited);
+ 	}
 	
 	@Column(name = "ATTENDEE_REMINDED")
 	@Temporal(TemporalType.TIMESTAMP)

@@ -2,14 +2,12 @@ package com.ec.survey.controller;
 
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
-import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.AnswerExecutor;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizExecutor;
-import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.Ucs2Utf8;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Controller("homeController")
 public class HomeController extends BasicController {
 	
-	public @Value("${export.fileDir}") String fileDir;	
 	public @Value("${stresstests.createdata}") String createStressData;	
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
@@ -174,15 +171,43 @@ public class HomeController extends BasicController {
 		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true);
 		String message = ConversionTools.removeHTML(request.getParameter("message"), true);
 		String additionalinfo  = request.getParameter("additionalinfo");
+		String additionalsurveyinfotitle = request.getParameter("additionalsurveyinfotitle");
+		String additionalsurveyinfoalias = request.getParameter("additionalsurveyinfoalias");
 		String[] uploadedfiles = request.getParameterValues("uploadedfile");				
 		
 		StringBuilder body = new StringBuilder();
 		body.append("Dear helpdesk team,<br />please open a ticket and assign it to DIGIT EUSURVEY SUPPORT.<br />Thank you in advance<br/><hr /><br />");
-		body.append("Affected user: ").append(name).append("<br />");
-		body.append("Email address: ").append(email).append("<br />");
-		body.append("Reason: ").append(reason).append("<br /><br />");
-		body.append("Subject: ").append(subject).append("<br /><br />");
-		body.append("Message text:<br />").append(message).append("<br /><br />");
+		
+		body.append("<table>");
+		
+		body.append("<tr><td>Affected user:</td><td>").append(name).append("</td></tr>");
+		body.append("<tr><td>Email address:</td><td>").append(email).append("</td></tr>");
+		
+		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		
+		boolean additioninfo = false;
+		if (additionalsurveyinfotitle != null && additionalsurveyinfotitle.length() > 0) {
+			body.append("<tr><td>Survey Title:</td><td>").append(additionalsurveyinfotitle).append("</td></tr>");
+			additioninfo = true;
+		}		
+		if (additionalsurveyinfoalias != null && additionalsurveyinfoalias.length() > 0) {
+			
+			String link = host + "runner/" + additionalsurveyinfoalias;			
+			
+			body.append("<tr><td>Survey Alias:</td><td><a href='").append(link).append("'>").append(additionalsurveyinfoalias).append("</a></td></tr>");
+			additioninfo = true;
+		}
+		if (additioninfo)
+		{
+			body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		}
+		
+		body.append("<tr><td>Reason:</td><td>").append(reason).append("</td></tr>");
+		body.append("<tr><td>Subject:</td><td>").append(subject).append("</td></tr>");
+		
+		body.append("</table>");		
+		
+		body.append("<br />Message text:<br />").append(message).append("<br /><br />");
 		if (additionalinfo != null)
 		{
 			body.append(ConversionTools.escape(additionalinfo).replace("\n", "<br />"));
@@ -390,27 +415,27 @@ public class HomeController extends BasicController {
 	
 	@RequestMapping(value = "/home/privacystatement", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String privacystatement(HttpServletRequest request, Locale locale, Model model) {
-		return privacystatementinternal(request, locale, model, 1);
+		return privacystatementinternal(request, locale, model, false);
 	}
 	
 	@RequestMapping(value = "/home/privacystatement/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String privacystatementrunner(HttpServletRequest request, Locale locale, Model model) {
 		model.addAttribute("runnermode", true);		
-		return privacystatementinternal(request, locale, model, 1);
+		return privacystatementinternal(request, locale, model, false);
 	}
 	
 	@RequestMapping(value = "/home/tos", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String tos(HttpServletRequest request, Locale locale, Model model) {
-		return privacystatementinternal(request, locale, model, 2);
+		return privacystatementinternal(request, locale, model, true);
 	}
 	
 	@RequestMapping(value = "/home/tos/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String tosrunner(HttpServletRequest request, Locale locale, Model model) {
 		model.addAttribute("runnermode", true);		
-		return privacystatementinternal(request, locale, model, 2);
+		return privacystatementinternal(request, locale, model, true);
 	}
 	
-	private String privacystatementinternal(HttpServletRequest request, Locale locale, Model model, int page) {
+	private String privacystatementinternal(HttpServletRequest request, Locale locale, Model model, boolean tos) {
 		if (request.getParameter("language") != null)
 		{
 			String lang = request.getParameter("language");
@@ -437,8 +462,13 @@ public class HomeController extends BasicController {
 		model.addAttribute("readonly", true);
 		model.addAttribute("user",request.getSession().getAttribute("USER"));
 		model.addAttribute("oss",super.isOss());
-		model.addAttribute("page", page);
-		return "auth/tos";
+		
+		if (tos)
+		{
+			return "auth/tos";
+		} else {
+			return "auth/ps";
+		}		
 	}
 	
 	@RequestMapping(value = "/home/faw/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -453,19 +483,19 @@ public class HomeController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/home/welcome", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView welcome(Locale locale) {	
-		return basicwelcome(locale);
+	public ModelAndView welcome(HttpServletRequest request, Locale locale) {	
+		return basicwelcome(request, locale);
 	}
 	
 	@RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView home(HttpServletRequest request, Locale locale) {
 		request.getSession().setAttribute("serverprefix",serverPrefix);
-		return basicwelcome(locale);
+		return basicwelcome(request, locale);
 	}
 	
 	@RequestMapping(value = "/home/welcome/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView welcomerunner(Locale locale) {	
-		return basicwelcome(locale);
+	public ModelAndView welcomerunner(HttpServletRequest request, Locale locale) {	
+		return basicwelcome(request, locale);
 	}
 	
 	@RequestMapping(value = "/home/editcontribution")
@@ -609,57 +639,6 @@ public class HomeController extends BasicController {
 		return "success";
 	}
 	
-	@RequestMapping(value = "home/runner", method = RequestMethod.POST)
-	public ModelAndView processSubmit(HttpServletRequest request, Locale locale) {
-
-		try {
-			
-			//get answerset
-			String answerSetIdString = request.getParameter("IdAnswerSet");
-			String uniqueCode = request.getParameter("uniqueCode");
-			
-			AnswerSet oldAnswerSet = answerService.get(Integer.parseInt(answerSetIdString));
-			
-			if (oldAnswerSet == null || !oldAnswerSet.getUniqueCode().equals(uniqueCode))
-			{
-				return new ModelAndView("error/generic", "message", resources.getMessage("message.dataProblem", null, "There was a problem with the submitted data.", locale));
-			}
-		
-			Survey survey = surveyService.getSurvey(Integer.parseInt(request.getParameter("survey.id")), false, true);
-				
-			User user = sessionService.getCurrentUser(request, false, false);
-			AnswerSet answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, fileDir, uniqueCode, oldAnswerSet, oldAnswerSet.getLanguageCode(), user, fileService);
-			
-			saveAnswerSet(answerSet, fileDir, null, -1);
-					
-			ModelAndView result = new ModelAndView("thanks", "uniqueCode", oldAnswerSet.getUniqueCode());
-			
-			if (survey.getIsOPC())
-			{
-				result.addObject("opcredirection", survey.getFinalConfirmationLink(opcredirect, oldAnswerSet.getLanguageCode()));
-			}
-			
-			if (!survey.isAnonymous() && answerSet.getResponderEmail() != null)
-			{
-				result.addObject("participantsemail", answerSet.getResponderEmail());
-			}
-			
-			result.addObject("isthankspage",true);
-			result.addObject("runnermode", true);
-			result.addObject(new Form(resources, surveyService.getLanguage(oldAnswerSet.getLanguageCode()),contextpath));
-			result.addObject("text", survey.getConfirmationPage());			
-			if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink() && survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
-				result.addObject("redirect", survey.getFinalConfirmationLink(oldAnswerSet.getLanguageCode()));
-			}
-			result.addObject("surveyprefix", survey.getId() + ".");
-			return result;
-		
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-			return new ModelAndView("redirect:/errors/500.html");
-		}
-	}
-	
 	@RequestMapping(value = "/home/publicsurveys/runner")
 	public ModelAndView publicsurveysrunner(HttpServletRequest request) throws Exception {	
 		ModelAndView result = publicsurveys(request);
@@ -768,7 +747,7 @@ public class HomeController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/validate/{id}/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String dashboard(@PathVariable String id, @PathVariable String code, Locale locale, Model model) {
+	public String validate(@PathVariable String id, @PathVariable String code, Locale locale, Model model) {
 		
 		try {
 			if (administrationService.validateUser(Integer.parseInt(id), code))
@@ -780,6 +759,35 @@ public class HomeController extends BasicController {
 		}
 		
 		return "error/validation";
+	}
+	
+	@RequestMapping(value = "/deleteaccount/{id}/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String deleteaccount(HttpServletRequest request, @PathVariable String id, @PathVariable String code, Locale locale, Model model)  {	
+		
+		try {
+			administrationService.confirmUserDeleteRequest(Integer.parseInt(id), code);
+			model.addAttribute("message", resources.getMessage("message.AccountDeleted", null, "Your account has been deleted!", locale));
+			return "error/info";
+		} catch (NumberFormatException nfe) {
+			model.addAttribute("message", resources.getMessage("error.UserNotFound", null, "User not found.", locale));
+		} catch (Exception e) {
+			switch (e.getMessage()) {
+			case "User unknown":
+				model.addAttribute("message", resources.getMessage("error.UserNotFound", null, "User not found.", locale));
+				break;
+			case "Wrong code":
+				model.addAttribute("message", resources.getMessage("error.WrongCode", null, "The code is wrong.", locale));
+				break;
+			case "Request too old":
+				model.addAttribute("message", resources.getMessage("error.DeleteCodeOutdated", null, "You did not confirm the account deletion during the corresponding time span.", locale));
+				break;
+			default:
+				logger.error(e.getLocalizedMessage(), e);
+				break;
+			}
+		}
+	
+		return "error/generic";
 	}
 	
 	@RequestMapping(value = "/validateNewEmail/{id}/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})

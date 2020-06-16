@@ -9,7 +9,6 @@ import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
-import com.ec.survey.model.survey.Image;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SqlQueryService;
 import com.ec.survey.tools.ConversionTools;
@@ -1873,16 +1872,24 @@ public class OdfExportCreator extends ExportCreator {
 			int rowIndex = 0;
 			
 			cell = sheet.getCellByPosition(0, rowIndex);		
-			cell.setStringValue("TokenList ID");
+			cell.setStringValue("GuestList  ID");
 			cell = sheet.getCellByPosition(1, rowIndex++);		
 			cell.setStringValue(export.getParticipationGroup().toString());
 			
 			cell = sheet.getCellByPosition(0, rowIndex);
-			cell.setStringValue("UNIQUE CODE");
-			cell = sheet.getCellByPosition(1, rowIndex);
 			cell.setStringValue("NAME");
-			cell = sheet.getCellByPosition(2, rowIndex);
+			cell = sheet.getCellByPosition(1, rowIndex);
 			cell.setStringValue("EMAIL");
+			
+			if (!export.getSurvey().isAnonymous())
+			{
+				cell = sheet.getCellByPosition(2, rowIndex);
+			 	cell.setStringValue("INVITATION DATE");
+			 	cell = sheet.getCellByPosition(3, rowIndex);
+			 	cell.setStringValue("REMINDER DATE");
+			 	cell = sheet.getCellByPosition(4, rowIndex);
+			 	cell.setStringValue("ANSWERS");
+			}
 			
 			if (participationGroup.getType() == ParticipationGroupType.Static)
 			{
@@ -1898,11 +1905,27 @@ public class OdfExportCreator extends ExportCreator {
 					}				
 					
 					cell = sheet.getCellByPosition(0, rowIndex);
-					cell.setStringValue(invitation.getUniqueId());
-					cell = sheet.getCellByPosition(1, rowIndex);
 					cell.setStringValue(attendee.getName());
-					cell = sheet.getCellByPosition(2, rowIndex);
+					cell = sheet.getCellByPosition(1, rowIndex);
 					cell.setStringValue(attendee.getEmail());
+					
+					if (!export.getSurvey().isAnonymous())
+					{
+						cell = sheet.getCellByPosition(2, rowIndex);
+		                                                                                
+					 	Calendar c = Calendar.getInstance();
+					 	c.setTime(invitation.getInvited());
+					 	cell.setDateTimeValue(c);
+					 		                                        
+					 	cell = sheet.getCellByPosition(3, rowIndex);
+					 	if (invitation.getReminded() != null) {
+					 		c.setTime(invitation.getReminded());
+					 		cell.setDateTimeValue(c);
+						}
+					 		                                        
+					 	cell = sheet.getCellByPosition(4, rowIndex);
+					 	cell.setStringValue(invitation.getAnswers().toString());
+					}
 				}
 			} else {
 				for (EcasUser attendee : participationGroup.getEcasUsers())
@@ -1917,19 +1940,34 @@ public class OdfExportCreator extends ExportCreator {
 					}				
 					
 					cell = sheet.getCellByPosition(0, rowIndex);
-					cell.setStringValue(invitation.getUniqueId());
-					cell = sheet.getCellByPosition(1, rowIndex);
 					cell.setStringValue(attendee.getName());
-					cell = sheet.getCellByPosition(2, rowIndex);
+					cell = sheet.getCellByPosition(1, rowIndex);
 					cell.setStringValue(attendee.getEmail());
+					
+					if (!export.getSurvey().isAnonymous())
+					{
+						cell = sheet.getCellByPosition(2, rowIndex);
+					 		                                                                                
+					 	Calendar c = Calendar.getInstance();
+					 	c.setTime(invitation.getInvited());
+					 	cell.setDateTimeValue(c);
+					 		                                        
+					 	cell = sheet.getCellByPosition(3, rowIndex);
+					 	if (invitation.getReminded() != null) {
+					 		c.setTime(invitation.getReminded());
+					 		cell.setDateTimeValue(c);
+						}
+					 		                                        
+					 	cell = sheet.getCellByPosition(4, rowIndex);
+					 	cell.setStringValue(invitation.getAnswers().toString());
+					}
 				}
 			}
 			
 		} else {
 		
-			List<String> tokens = participationService.getTokens(1, Integer.MAX_VALUE, export.getParticipationGroup(), false);
-			Map<String, Date> datesForTokens = participationService.getDatesForTokens(export.getParticipationGroup());
-			
+			List<Invitation> invitations = attendeeService.getInvitationsForParticipationGroup(export.getParticipationGroup());
+		
 			int rowIndex = 0;
 		    
 		    cell = sheet.getCellByPosition(0, rowIndex);		
@@ -1951,20 +1989,39 @@ public class OdfExportCreator extends ExportCreator {
 			
 			cell = sheet.getCellByPosition(0, rowIndex);
 			cell.setStringValue("Token");
-			cell = sheet.getCellByPosition(1, rowIndex);
-			cell.setStringValue("Used");
+			
+			if (!export.getSurvey().isAnonymous())
+			{
+			
+				cell = sheet.getCellByPosition(1, rowIndex);
+				cell.setStringValue("Answers");
+			}
+			
+			cell = sheet.getCellByPosition(2, rowIndex);
+			cell.setStringValue("Creation date");
 
 			rowIndex++;
 			
-			for (String token: tokens)
+			for (Invitation invitation: invitations)
 			{
 				cell = sheet.getCellByPosition(0, rowIndex);
-				cell.setStringValue(token);
+				cell.setStringValue(invitation.getUniqueId());
 				
-				if (datesForTokens.containsKey(token))
+				if (!export.getSurvey().isAnonymous())
 				{
 					cell = sheet.getCellByPosition(1, rowIndex);
-					cell.setStringValue(ConversionTools.getFullString(datesForTokens.get(token)));
+					cell.setStringValue(invitation.getAnswers().toString());
+				 		                                        
+				 	cell = sheet.getCellByPosition(2, rowIndex);
+				 	Calendar c = Calendar.getInstance();
+				 	c.setTime(invitation.getInvited());
+				 	cell.setDateTimeValue(c);
+				 		                                
+				 } else {
+				 	cell = sheet.getCellByPosition(1, rowIndex);
+				 	Calendar c = Calendar.getInstance();
+				 	c.setTime(invitation.getInvited());
+				 	cell.setDateTimeValue(c);
 				}
 				
 				rowIndex++;

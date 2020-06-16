@@ -1,173 +1,474 @@
-<h2>D�claration relative � la protection de la vie priv�e</h2>
-<ol class="priv">
-	<li>
-		<h4>I. Introduction</h4>
-		<p>
-			EUSurvey est une application d�velopp�e par la Commission europ�enne.
-			� ce titre, elle est attach�e au respect de la vie priv�e. La
-			politique en mati�re de protection des personnes physiques � l'�gard
-			du traitement des donn�es � caract�re personnel par les institutions
-			de l'UE se fonde sur le r�glement (EU) n� 2018/1725 du Parlement
-			europ�en et du Conseil du 23 octobre 2018.
-		</p>
-		<p>Certaines pages d'EUSurvey peuvent contenir des liens vers
-			d'autres sites web. EUSurvey n'est pas responsable des politiques ou
-			pratiques de sites tiers en mati�re de protection de la vie priv�e.</p>
-	</li>
-	<li>
-		<h4>II. � quelles fins recueillons-nous, traitons-nous et
-			conservons-nous vos donn�es?</h4>
-		<p>Nous recueillons et traitons vos donn�es � caract�re personnel:</p>
-		<ul>
-			<li>pour vous permettre d'�laborer des consultations publiques,
-				enqu�tes, questionnaires ou formulaires d'inscription;</li>
-			<li>pour vous permettre de participer � une consultation
-				publique ou de r�pondre � tout autre type de questionnaire;</li>
-			<li>pour vous permettre de participer volontairement au suivi
-				d'une enqu�te;</li>
-			<li>pour r�soudre les incidents que vous pourriez rencontrer en
-				utilisant EUSurvey.</li>
-		</ul>
-		<p>Les donn�es � caract�re personnel recueillies sont trait�es
-			conform�ment aux dispositions du r�glement susmentionn�. Les t�ches
-			li�es � EUSurvey sont effectu�es dans l'int�r�t g�n�ral. Aucune des
-			op�rations de traitement de donn�es � caract�re personnel relevant de
-			l'article 27 relatif au �contr�le pr�alable par le CEPD� n'est
-			applicable.</p>
-	</li>
-	<li>
-		<h4>III. Qui est le responsable du traitement de vos donn�es?</h4>
-		<p>Vos donn�es sont trait�es sous la responsabilit� du chef de
-			l'unit� DIGIT.D.1, direction g�n�rale de l'informatique (DIGIT) de la
-			Commission europ�enne.</p>
-		<p>Le coordinateur de la protection des donn�es de la DG DIGIT
-			veille � ce que les dispositions du r�glement susmentionn� soient
-			appliqu�es au sein de cette direction g�n�rale.</p>
-		<p>
-			Le <a href="https://secure.edps.europa.eu/EDPSWEB/edps/EDPS"
-				target="_blank">contr�leur europ�en de la protection des donn�es
-				(CEPD)</a> agit en tant qu'autorit� de contr�le ind�pendante. Le CEPD
-			s'assure que l'ensemble des institutions et organes de l'Union
-			europ�enne respectent le droit des citoyens au respect de la vie
-			priv�e lors du traitement de leurs donn�es � caract�re personnel.
-		</p>
-	</li>
-	<li>
-		<h4>IV. Quelles sont les donn�es � caract�re personnel que nous
-			recueillons?</h4>
-		<p>Cette d�claration ne porte que sur la dimension de service
-			d'EUSurvey. EUSurvey traite les donn�es � caract�re personnel
-			uniquement aux fins qui ont motiv� leur transmission.</p>
-		<h5>Identit�:</h5>
-		<p>Les propri�taires de l'enqu�te (c'est-�-dire les personnes qui
-			ont l'intention d'�laborer et d'utiliser un questionnaire) doivent
-			s'enregistrer dans EU Login (le service d'authentification de la
-			Commission europ�enne). Pour en savoir plus, veuillez lire la
-			d�claration d'EU Login relative � la protection de la vie priv�e.</p>
-		<p>
-			EUSurvey stocke les login EU Login et les adresses �lectroniques des
-			propri�taires de l'enqu�te tels qu'ils sont extraits d'EU Login et de
-			la base centrale sur les utilisateurs de la Commission europ�enne,
-			qui est stock�e dans le centre de donn�es de la Commission
-			europ�enne. Ce centre de donn�es est tenu de se conformer au r�glement (EU) n� 2018/1725.
-		</p>
-		<h5>Autres donn�es � caract�re personnel:</h5>
-		<p>Outre les informations personnelles trait�es par le service
-			d'EUSurvey, d'autres donn�es � caract�re personnel sont utilis�es
-			dans les questionnaires, par exemple dans les r�ponses � une enqu�te.
-			Pour en savoir plus, veuillez lire la d�claration relative � la
-			protection de la vie priv�e sp�cifique au questionnaire.</p>
-		<p>L'adresse de l'utilisateur peut �tre stock�e � la demande du
-			propri�taire de l'enqu�te. Dans ce cas, elle ne sera utilis�e que
-			pour les besoins de cette enqu�te. Elle est stock�e par EUSurvey et
-			n'est pas destin�e � �tre transmise aux propri�taires de l'enqu�te.</p>
-		<h5>Cookies et sauvegarde locale:</h5>
-		<p>Le syst�me</p>
-		<ul>
-			<li>utilise des t�moins de session (�cookies�) afin d'assurer la
-				communication entre le client et le serveur. Le navigateur de
-				l'utilisateur doit donc �tre configur� pour les accepter. Les
-				cookies disparaissent une fois la session termin�e;</li>
-			<li>enregistre une copie de sauvegarde locale de la contribution
-				d'un participant � une enqu�te. Ce fichier peut servir en cas
-				d'indisponibilit� du serveur lorsque l'utilisateur envoie sa
-				contribution, ou si son ordinateur s'�teint accidentellement, par
-				exemple.<br /> Il contient le num�ro des questions et les
-				brouillons des r�ponses. Une fois la contribution � l'enqu�te
-				envoy�e au serveur, ou apr�s sauvegarde d'un brouillon sur celui-ci,
-				ces donn�es locales sont supprim�es. Cette fonction peut �tre
-				d�sactiv�e en d�cochant la case situ�e au-dessus de l'enqu�te (ce
-				qui peut �tre utile si le participant utilise un ordinateur public).
-			</li>
-		</ul>
-	</li>
-	<li>
-		<h4>V. � qui vos donn�es sont-elles communiqu�es?</h4>
-		<p>Seul le personnel charg� du traitement de vos donn�es et ayant
-			un lien avec EUSurvey a acc�s � vos donn�es. Il s'agit notamment de
-			l'�quipe d'EUSurvey (voir les coordonn�es au point IX), des
-			propri�taires de l'enqu�te et de toute personne ayant obtenu l'acc�s
-			aux questionnaires.</p>
-		<p>Vos donn�es peuvent �tre publi�es au moyen du module de
-			publication d'EUSurvey ou par l'interm�diaire d'un autre site web
-			(pour en savoir plus, veuillez lire la d�claration relative � la
-			protection de la vie priv�e sp�cifique au questionnaire).</p>
-		<p>L'�quipe d'EUSurvey ne transmet aucune donn�e � des tiers ne
-			faisant pas partie de ces destinataires ou ne relevant pas du cadre
-			juridique indiqu�, sans pr�judice de leur �ventuelle transmission aux
-			organes charg�s d'une mission d'inspection en application du droit de
-			l'UE, tels que l'OLAF ou un juge d'instruction.</p>
-		<p>EUSurvey ne divulgue pas de donn�es � caract�re personnel � des
-			tiers � des fins de marketing direct.</p>
-	</li>
-	<li>
-		<h4>VI. Combien de temps vos donn�es sont-elles conserv�es?</h4>
-		<p>Les donn�es � caract�re personnel des participants seront
-			conserv�es dans la base de donn�es jusqu'� l'analyse compl�te des
-			r�sultats du questionnaire ou jusqu'� ce que les propri�taires de
-			l'enqu�te aient demand� leur suppression.</p>
-		<p>Les cookies disparaissent une fois la session termin�e.</p>
-	</li>
-	<li>
-		<h4>VII. Comment consulter vos donn�es, en v�rifier l'exactitude
-			et, au besoin, les corriger?</h4>
-		<p>Vous pouvez prendre contact avec l'�quipe d'appui d'EUSurvey.
-			Si elle n'est pas en mesure de r�pondre � votre demande, elle la
-			transmettra au propri�taire de l'enqu�te concern�.</p>
-		<p>
-			Adresse �lectronique:<br />
-			<a href="mailto:DIGIT-EUSURVEY-SUPPORT@ec.europa.eu" target="_blank">DIGIT-EUSURVEY-SUPPORT@ec.europa.eu</a>
-		</p>
-	</li>
-	<li>
-		<h4>VIII. � qui adresser des questions ou des plaintes?</h4>
-		<p>Si vous avez des inqui�tudes au sujet du traitement de vos
-			donn�es personnelles dans EUSurvey, n'h�sitez pas � prendre contact
-			avec le chef de l'unit� DIGIT.D.1:</p>
-		<p>
-			Adresse �lectronique:<br />
-			<a href="mailto:DIGIT-D1@ec.europa.eu" target="_blank">DIGIT-D1@ec.europa.eu</a>
-		</p>
-	</li>
-	<li>
-		<h4>IX. Recours</h4>
-		<p>En cas de litige, les plaintes peuvent �tre adress�es</p>
-		<ul>
-			<li>au <a
-				href="http://ec.europa.eu/dataprotectionofficer/index_en.htm"
-				target="_blank">d�l�gu� � la protection des donn�es de la
-					Commission europ�enne:</a><br />
-			<br />Adresse �lectronique:<br />
-			<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu" target="_blank">DATA-PROTECTION-OFFICER@ec.europa.eu</a></li>
-			<br />
-			<br />
-			<li>au <a href="https://secure.edps.europa.eu/EDPSWEB/edps/EDPS"
-				target="_blank">Contr�leur europ�en de la protection des
-					donn�es:</a><br />
-			<br />Contact:<br />
-			<a
-				href="https://edps.europa.eu/data-protection/our-role-supervisor/complaints_fr"
-				target="_blank">https://edps.europa.eu/data-protection/our-role-supervisor/complaints_fr</a></li>
-		</ul>
-	</li>
-</ol>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<p align="center">
+    <strong>PROTECTION DE VOS DONNÉES À CARACTÈRE PERSONNEL</strong>
+</p>
+<p align="center">
+    La présente déclaration de confidentialité fournit des informations sur le
+    traitement et la protection de vos données à caractère personnel lorsque
+    vous utilisez EUSurvey pour créer et gérer des enquêtes.
+</p>
+<p align="center">
+    Version 1.0, 2020/06/10
+</p>
+<p>
+    <strong>Opération de traitement: </strong>
+    EUSurvey
+</p>
+<p>
+    <strong>Responsable du traitement des données:</strong>
+    La Commission européenne (ou la «Commission»).
+</p>
+<p>
+    <strong>Référence d'enregistrement:</strong>
+    DPR-EC-01488
+</p>
+
+<p align="center">
+    <strong>Introduction</strong>
+    <strong></strong>
+</p>
+<p>
+    La Commission européenne (ci-après la «Commission») s’engage à protéger vos
+    données à caractère personnel et à respecter votre vie privée. Elle
+    recueille et traite des données à caractère personnel conformément au
+    <a
+        href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32018R1725"
+    >
+        règlement (UE) 2018/1725
+    </a>
+    du Parlement européen et du Conseil du 23 octobre 2018 relatif à la
+    protection des personnes physiques à l’égard du traitement des données à
+    caractère personnel par les institutions, organes et organismes de l’Union
+et à la libre circulation de ces données [abrogeant le règlement (CE) n    <sup>o</sup> 45/2001].
+</p>
+<p>
+    La présente déclaration de confidentialité explique les raisons du
+    traitement de vos données à caractère personnel, la façon dont toutes les
+    données à caractère personnel fournies sont recueillies, traitées et
+    protégées, l’usage qui en est fait et les droits que vous pouvez exercer
+    les concernant. Elle contient également les coordonnées du responsable du
+    traitement des données auprès duquel vous pouvez exercer vos droits, du
+    délégué à la protection des données et du contrôleur européen de la
+    protection des données.
+</p>
+<p>
+    Les informations relatives aux opérations de traitement menées par la
+    Commission en lien avec l’application EUSurvey sont présentées ci-dessous.
+    La présente déclaration de confidentialité explique la façon dont vos
+    données à caractère personnel sont traitées lorsque vous vous inscrivez en
+    tant qu’utilisateur d’EUSurvey et que vous utilisez ce service pour créer
+    des enquêtes. Elle ne couvre pas les aspects relatifs à la protection des
+    données dans le cadre de l’enquête que vous créez. Si des données à
+    caractère personnel sont recueillies et traitées dans le cadre de l’enquête
+    elle-même, celle-ci devra contenir une déclaration de confidentialité
+    spécifique.
+    <br clear="all"/>
+    <strong></strong>
+</p>
+<h1>
+    <a name="_Toc34402651">
+        1. POURQUOI ET COMMENT TRAITONS-NOUS VOS DONNÉES À CARACTÈRE PERSONNEL?
+    </a>
+</h1>
+<h2>
+    <a name="_Toc34402652">
+        1.1 Données à caractère personnel recueillies à des fins de gestion des
+        utilisateurs
+    </a>
+</h2>
+<p>
+    Finalité des opérations de traitement: la Commission, via l’application
+    EUSurvey, recueille et utilise vos données à caractère personnel afin de
+    vous permettre, en tant qu’utilisateur, de vous connecter à EUSurvey et
+    d’utiliser ce service pour créer et publier des questionnaires en ligne.
+    Vos coordonnées (adresse électronique, prénom et nom) peuvent aussi être
+    utilisées pour vous contacter à des fins d’assistance et de gestion de la
+    qualité.
+</p>
+<p>
+    Vos données à caractère personnel ne seront pas utilisées à des fins de
+    prise de décision automatisée, ni de profilage.
+</p>
+<h2>
+    <a name="_Toc34402653">
+        1.2 Données à caractère personnel recueillies dans le cadre des
+        enquêtes en ligne
+    </a>
+</h2>
+<p>
+    Veuillez noter que la Commission n’est pas responsable des politiques de
+    confidentialité ou des pratiques en matière de protection de la vie privée
+    mises en œuvre par les particuliers ou les organisations qui utilisent
+    l’application et le service EUSurvey pour créer et publier une enquête.
+    Toutes les données à caractère personnel recueillies dans le cadre d’une
+    telle enquête seront traitées par le propriétaire de l’enquête ou son
+    organisation et sous sa responsabilité.
+</p>
+<p>
+    <strong>
+        Les particuliers et les organisations qui utilisent EUSurvey pour
+        réaliser une enquête ont l’obligation légale d’élaborer et de publier
+        leur propre déclaration de confidentialité lorsqu’ils recueillent des
+        données à caractère personnel.
+    </strong>
+</p>
+<h1>
+    <a name="_Toc34402654">
+        2. SUR QUELLE(S) BASE(S) JURIDIQUE(S) TRAITONS-NOUS VOS DONNÉES À
+        CARACTÈRE PERSONNEL?
+    </a>
+</h1>
+<p>
+    Nous traitons vos données à caractère personnel car:
+</p>
+<p>
+    <em>
+        «la personne concernée a consenti au traitement de ses données à
+        caractère personnel pour une ou plusieurs finalités spécifiques.»
+    </em>
+    <em></em>
+</p>
+<p>
+    Vous avez donné/donnerez le consentement susmentionné en acceptant la
+    présente déclaration de confidentialité. Avant de pouvoir vous connecter à
+    l’application et utiliser le service, vous devez accepter la présente
+    déclaration de confidentialité.
+</p>
+<p>
+    Vous pouvez exercer votre droit de retirer votre consentement en prenant
+    contact avec le responsable du traitement des données au moyen du
+    <a href="https://ec.europa.eu/eusurvey/home/support?language=fr">
+        formulaire de contact
+    </a>
+    .
+</p>
+<h1>
+    <a name="_Toc34402655">
+        3. QUELLES SONT LES DONNÉES À CARACTÈRE PERSONNEL QUE NOUS RECUEILLONS
+        ET TRAITONS?
+    </a>
+</h1>
+<p>
+    Afin de fournir le service EUSurvey, par l’intermédiaire des opérations de
+    traitement, la Commission recueille les catégories de données à caractère
+    personnel suivantes:
+</p>
+<h2>
+    <a name="_Toc34402656">3.1 Identifiants</a>
+</h2>
+<p>
+    Pour être identifié par le système, l’utilisateur a besoin d’un nom
+    d’utilisateur et d’un mot de passe, gérés par le service EULogin
+    <a href="#ftn1">
+        [1]
+    </a>
+    . Pour en savoir plus sur la manière dont EULogin traite vos données à
+    caractère personnel, veuillez consulter la
+    <a href="https://webgate.ec.europa.eu/cas/privacyStatement.html">
+        déclaration de confidentialité d’EULogin
+    </a>
+    .
+</p>
+<h2>
+    <a name="_Toc34402657">3.2 Données d'utilisateur</a>
+</h2>
+<p>
+    Certaines données à caractère personnel sont accessibles depuis
+    l’application EUSurvey sous l’onglet «Paramètres»:
+</p>
+<p>
+    • Nom complet (prénom et nom)
+</p>
+<p>
+    • Adresse électronique
+</p>
+<p>
+    Le nom complet et l’adresse électronique sont des données extraites, par un
+    procédé automatique, d’EULogin et de la base centrale sur les utilisateurs
+    de la Commission européenne, qui est stockée dans le centre de données de
+    la Commission européenne. Ce centre de données doit respecter le règlement
+    (UE) 2018/1725 ainsi que toute décision de la Commission en matière de
+    sécurité et toute disposition arrêtée par la direction générale de la
+    sécurité et des ressources humaines pour ce type de serveurs et de
+    services.
+</p>
+<h2>
+    <a name="_Toc34402658">3.3 Europa Analytics</a>
+</h2>
+<p>
+    <a href="https://ec.europa.eu/info/privacy-policy/europa-analytics_fr">
+        Europa Analytics
+    </a>
+    est le service de la Commission qui surveille et évalue l’efficacité des
+    sites web de la Commission sur le site Europa. Europa Analytics repose sur
+    la plateforme d'analyse «Matomo», un logiciel libre, et est installé sur un
+    serveur web. Tant les infrastructures que les logiciels de ce service sont
+    sous le contrôle total de la Commission et respectent la législation de
+    l’UE en vigueur en matière de protection des données.
+</p>
+<p>
+    EUSurvey utilise Europa Analytics pour établir des statistiques relatives
+    au trafic et les analyser. Pour en savoir plus sur les mesures relatives à
+    la protection des données et sur la préférence «Do Not Track», notamment,
+    veuillez consulter le site web
+    <a href="https://ec.europa.eu/info/privacy-policy/europa-analytics_fr">
+        Europa Analytics
+    </a>
+    .
+</p>
+<h1>
+    <a name="_Toc34402659">
+        4. COMBIEN DE TEMPS VOS DONNÉES À CARACTÈRE PERSONNEL SONT-ELLES
+        CONSERVÉES?
+    </a>
+</h1>
+<p>
+    La Commission ne conserve vos données à caractère personnel que le temps
+    nécessaire pour atteindre la finalité de l’enquête.
+</p>
+<h2>
+    <a name="_Toc34402660">
+        4.1 Membre du personnel de l'UE (utilisateur interne)
+    </a>
+</h2>
+<p>
+        Tant que vous êtes un membre du personnel de l’UE, votre compte
+        utilisateur reste actif et vos données à caractère personnel sont donc
+        conservées. Vous pouvez toutefois demander, à tout moment, à l’équipe
+        EUSurvey de fermer votre compte si vous ne souhaitez plus utiliser le
+        service. Dans ce cas, votre compte utilisateur, toutes les données
+        associées et toutes les enquêtes et leurs résultats seront
+        définitivement supprimés.
+</p>
+<h2>
+    <a name="_Toc34402662">4.2 Utilisateur externe d’EUSurvey</a>
+</h2>
+<p>
+    En tant qu’utilisateur externe, vous pouvez demander, à tout moment, à
+    l’équipe EUSurvey de fermer votre compte si vous ne souhaitez plus utiliser
+    le service. Le compte correspondant, toutes les données associées et toutes
+    les enquêtes et leurs résultats seront définitivement supprimés.
+</p>
+<p>
+    Par ailleurs, les comptes d’utilisateurs externes non utilisés sont
+    supprimés après une période d’inactivité de <strong>2 ans</strong>.
+</p>
+<h1>
+    <a name="_Toc34402663">
+        5. COMMENT PROTÉGEONS-NOUS ET SAUVEGARDONS-NOUS VOS DONNÉES À CARACTÈRE
+        PERSONNEL?
+    </a>
+</h1>
+<p>
+    Toutes les données à caractère personnel sont stockées sur les serveurs du
+    centre de données de la Commission. Toutes les opérations de traitement
+    sont effectuées conformément à la décision (UE, Euratom) 2017/46 de la
+    Commission du 10 janvier 2017 sur la sécurité des systèmes d’information et
+    de communication au sein de la Commission européenne.
+</p>
+<p>
+    En vue de protéger vos données à caractère personnel, la Commission a pris
+    un certain nombre de mesures techniques et organisationnelles. Les mesures
+    techniques incluent des actions appropriées visant à assurer la sécurité en
+    ligne et à parer aux risques de perte de données, de modification des
+    données ou d’accès non autorisé, en tenant compte du risque posé par le
+    traitement et la nature des données à caractère personnel traitées. Les
+    mesures organisationnelles prévoient la limitation de l’accès aux données à
+    caractère personnel aux seules personnes autorisées ayant un intérêt
+    légitime à les connaître aux fins de ces opérations de traitement.
+</p>
+<p>
+    Nous mettons tout en œuvre pour garantir la sécurité de vos données à
+    caractère personnel, mais n’oubliez pas que, sur l’internet, aucune méthode
+    de transmission ou de stockage électronique n'est parfaitement sécurisée.
+    Bien que nous nous efforcions de protéger vos données à caractère personnel
+    en prenant des mesures adaptées, nous ne pouvons pas garantir leur sécurité
+    absolue.
+</p>
+<h1>
+    <a name="_Toc34402664">
+        6. QUI A ACCÈS À VOS DONNÉES À CARACTÈRE PERSONNEL ET À QUI SONT-ELLES
+        COMMUNIQUÉES?
+    </a>
+</h1>
+<p>
+    L’accès à vos données à caractère personnel est accordé au personnel de la
+    Commission chargé d’effectuer les opérations de traitement et au personnel
+    habilité conformément au principe du «besoin d’en connaître». Ces membres
+    du personnel respectent les conventions réglementaires et, le cas échéant,
+    des règles de confidentialité supplémentaires.
+</p>
+<p>
+    Par conséquent, le personnel chargé de gérer l’application EUSurvey a accès
+    à vos données à caractère personnel.
+</p>
+<p>
+    Le personnel concerné est le suivant:
+</p>
+<p>
+    • L’équipe EUSurvey de la Commission pour les besoins de l’assistance et de
+    la maintenance du système.
+</p>
+<p>
+    • Les administrateurs de l’infrastructure.
+</p>
+<p>
+    Les informations que nous recueillons ne seront pas communiquées à des
+    tiers, sauf dans la mesure et aux fins éventuellement exigées par la loi.
+</p>
+<p>
+    La Commission ne divulguera pas de données à caractère personnel à des
+    tiers à des fins de marketing direct. En d’autres termes, la Commission
+    n’utilisera pas vos données à caractère personnel pour vous envoyer des
+    bulletins d’information ni des informations commerciales ou
+    promotionnelles. Il se peut toutefois qu’elle utilise votre adresse
+    électronique pour vous faire part d’informations ou de mises à jour
+    concernant EUSurvey.
+</p>
+<h1>
+    <a name="_Toc34402665">7. QUELS SONT VOS DROITS ET COMMENT LES EXERCER?</a>
+</h1>
+<p>
+    Vous avez des droits spécifiques en qualité de «personne concernée» au
+    titre du chapitre III (articles 14 à 25) du règlement (UE) 2018/1725, en
+    particulier le droit de consulter et de rectifier vos données à caractère
+    personnel si elles sont inexactes ou incomplètes. Le cas échéant, vous avez
+    le droit d’effacer vos données à caractère personnel, de restreindre le
+    traitement de ces données ou de vous y opposer, ainsi que le droit à leur
+    portabilité.
+</p>
+<p>
+    Vous pouvez exercer vos droits en prenant contact avec le responsable du
+    traitement des données ou, en cas de litige, avec le délégué à la
+    protection des données.
+</p>
+<p>
+    Veuillez noter que votre prénom, votre nom et votre adresse électronique
+    sont extraits d’EULogin et ne peuvent être modifiés que dans cette
+    application. EUSurvey est mis à jour automatiquement selon les données
+    contenues dans EULogin. Lors de votre première connexion, votre compte est
+    automatiquement créé à partir des données extraites de la base de données
+    EULogin. Vos autres données à caractère personnel peuvent être modifiées
+    dans l’
+    <a href="https://ec.europa.eu/eusurvey/settings/myAccount">
+        onglet «Paramètres» d’EUSurvey
+    </a>
+    . Si cela n’est pas possible, vous pouvez nous contacter au moyen du
+    <a href="https://ec.europa.eu/eusurvey/home/support?language=fr">
+        formulaire de contact
+    </a>
+    .
+</p>
+<p>
+    La présente déclaration de confidentialité restera applicable, sauf pour ce
+    qui est des modifications futures de ses dispositions, qui entreront en
+    vigueur immédiatement après leur publication sur l’application EUSurvey et
+    leur acceptation par l’utilisateur. En cas de modification de la présente
+    déclaration de confidentialité, nous vous en informerons en publiant un
+    message d’acceptation visible immédiatement après votre connexion à
+    l’application EUSurvey. Vous serez invité(e) à lire et à accepter la
+    nouvelle déclaration de confidentialité.
+</p>
+<h1>
+    <a name="_Toc34402666">8. INFORMATIONS DE CONTACT</a>
+</h1>
+<h2>
+    <a name="_Toc34402667">8.1. Le responsable du traitement des données</a>
+</h2>
+<p>
+    Si vous souhaitez exercer vos droits en vertu du règlement (UE) 2018/1725,
+    si vous avez des commentaires, des questions ou des préoccupations à
+    formuler, ou si vous souhaitez porter plainte concernant la collecte et
+    l’utilisation de vos données à caractère personnel, n’hésitez pas à prendre
+    contact avec le responsable du traitement des données au moyen du
+    <a href="https://ec.europa.eu/eusurvey/home/support?language=fr">
+        formulaire de contact
+    </a>
+    .
+</p>
+<p>
+    Au cas où vous n’auriez plus besoin d’utiliser le service EUSurvey, vous
+    pouvez prendre contact avec l’équipe d’assistance au moyen du
+    <a href="https://ec.europa.eu/eusurvey/home/support?language=fr">
+        formulaire de contact
+    </a>
+    et lui demander de supprimer définitivement votre compte.
+</p>
+<h2>
+    <a name="_Toc34402668">
+        8.2. Le délégué à la protection des données (DPD) de la Commission
+    </a>
+</h2>
+<p>
+    Vous pouvez également prendre contact avec le délégué à la protection des
+    données de la Commission (<a href="mailto:DATA-PROTECTION-OFFICER@ec.europa.eu">DATA-PROTECTION-OFFICER@ec.europa.eu</a>) au sujet des questions relatives au traitement dont font l’objet vos
+    données à caractère personnel en vertu du règlement (UE) 2018/1725.
+</p>
+<h2>
+    <a name="_Toc34402669">
+        8.3. Le contrôleur européen de la protection des données (CEPD)
+    </a>
+</h2>
+<p>
+    Vous avez le droit de saisir le contrôleur européen de la protection des
+    données (<a href="mailto:edps@edps.europa.eu">edps@edps.europa.eu</a>) pour
+    déposer une plainte si vous estimez que les droits dont vous jouissez en
+    vertu du règlement (UE) 2018/1725 ont été enfreints à la suite du
+    traitement de vos données à caractère personnel effectué par le responsable
+    de ce traitement.
+</p>
+<p>
+    Le contrôleur européen de la protection des données agit en tant
+    qu’autorité de contrôle indépendante. Le CEPD s'assure que l'ensemble des
+    institutions et organes de l’Union européenne respectent le droit des
+    citoyens à la protection de leur vie privée lors du traitement de données à
+    caractère personnel.
+</p>
+<h2>
+</h2>
+<h2>
+    <a name="_Toc34402670">9. OÙ TROUVER DES INFORMATIONS PLUS DÉTAILLÉES?</a>
+</h2>
+<p>
+    Le délégué à la protection des données (DPD) de la Commission publie le
+    registre de toutes les opérations de traitement de données à caractère
+    personnel de la Commission qui sont documentées et qui lui sont notifiées.
+    Ce registre se trouve à l’adresse suivante:
+    <a href="http://ec.europa.eu/dpo-register">
+        http://ec.europa.eu/dpo-register
+    </a>
+    .
+</p>
+<p>
+        L’opération de traitement spécifique dont il est question dans la
+        présente déclaration a été consignée dans le registre public du DPD
+        sous la référence suivante: DPR-EC-01488.1
+</p>
+<c:if test="${readonly == null}">
+	<h2 style="font-weight: bold">
+	    <a name="_Toc34402672">Nous respectons votre vie privée</a>
+	</h2>
+	<p>
+	    Veuillez cliquer sur le bouton «J’accepte» ci-dessous pour indiquer que
+	    vous avez lu la présente déclaration de confidentialité et consentez au
+	    traitement de vos données à caractère personnel.
+	</p>
+	<p>
+	    Si vous n’êtes pas d’accord avec notre déclaration de confidentialité,
+	    veuillez cliquer sur le bouton «Je refuse».
+	</p>
+</c:if>
+<div>
+    <div id="ftn1">
+        <p>
+            [1]
+
+            EULogin est le service d’authentification des institutions
+            européennes basé sur la technologie SSO («Single-Sign On» -
+            authentification unique).
+        </p>
+    </div>
+</div>

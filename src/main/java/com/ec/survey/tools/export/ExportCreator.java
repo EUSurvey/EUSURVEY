@@ -65,8 +65,8 @@ public abstract class ExportCreator implements Runnable {
 	@Resource(name = "fileService")
 	protected FileService fileService;
 	
-	@Resource(name = "reportingService")
-	protected ReportingService reportingService;
+	@Resource(name = "reportingServiceProxy")
+	protected ReportingServiceProxy reportingService;
 	
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
@@ -123,12 +123,12 @@ public abstract class ExportCreator implements Runnable {
 		form.setStatistics(answerService.getStatistics(export.getSurvey(), export.getResultFilter(), true, export.isAllAnswers(), false));
 	}
 	
-	@Transactional(readOnly = true)
+	@Transactional
 	public void run() {
 		runBasic(true);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public void runSync() {
 		runBasic(true);
 	}
@@ -204,7 +204,7 @@ public abstract class ExportCreator implements Runnable {
 		exportService.update(export);
 	}
 	
-	@Transactional(readOnly = true)
+	@Transactional
 	private void innerRunBasic(boolean sync, Export export) throws Exception
 	{
 		switch (export.getType()) {

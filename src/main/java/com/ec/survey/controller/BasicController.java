@@ -12,6 +12,7 @@ import java.util.Locale;
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +49,7 @@ import com.ec.survey.service.FileService;
 import com.ec.survey.service.LdapDBService;
 import com.ec.survey.service.LdapService;
 import com.ec.survey.service.ParticipationService;
-import com.ec.survey.service.ReportingService;
+import com.ec.survey.service.ReportingServiceProxy;
 import com.ec.survey.service.SessionService;
 import com.ec.survey.service.SettingsService;
 import com.ec.survey.service.SkinService;
@@ -59,6 +60,7 @@ import com.ec.survey.tools.ArchiveExecutor;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.InvalidXHTMLException;
 import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.WeakAuthenticationException;
 import com.octo.captcha.service.CaptchaServiceException;
 import com.octo.captcha.service.multitype.MultiTypeCaptchaService;
@@ -125,12 +127,12 @@ public class BasicController implements BeanFactoryAware {
 	@Resource(name="settingsService")
 	protected SettingsService settingsService;	
 	
-	@Resource(name = "reportingService")
-	protected ReportingService reportingService;
+	@Resource(name = "reportingServiceProxy")
+	protected ReportingServiceProxy reportingService;
 	
 	public @Value("${captcha.secret}") String captchasecret;
 	public @Value("${ui.enableresponsive}") String enableresponsive;	
-	
+	private @Value("${ecaslogout}") String ecaslogout;
 	public @Value("${showecas}") String showecas;	
 	public @Value("${ecashost}") String ecashost;	
 	public @Value("${sender}") String sender;
@@ -151,7 +153,7 @@ public class BasicController implements BeanFactoryAware {
 	public String serverPrefix;	
 	
 	protected @Value("${export.tempFileDir}") String tempFileDir;
-	protected @Value("${export.fileDir}") String fileDir;
+	public @Value("${export.fileDir}") String fileDir;
 	protected @Value("${isworkerserver}") String isworkerserver;
 	protected @Value("${useworkerserver}") String useworkerserver;
 	protected @Value("${workerserverurl}") String workerserverurl;	
@@ -244,6 +246,13 @@ public class BasicController implements BeanFactoryAware {
 		return model;
     }
 	
+	@ExceptionHandler(NotAgreedToPsException.class) 
+    public ModelAndView handleNotAgreedToPsException(Exception e, HttpServletRequest request) {
+		ModelAndView model = new ModelAndView("redirect:/auth/ps");
+		model.addObject("contextpath", contextpath);
+		return model;
+    }
+	
 	@ExceptionHandler(WeakAuthenticationException.class) 
     public ModelAndView handleWeakAuthenticationException(Exception e, HttpServletRequest request, Locale locale) {
 		logger.error(e.getLocalizedMessage(), e);
@@ -300,12 +309,19 @@ public class BasicController implements BeanFactoryAware {
     }
 	
 	@ExceptionHandler(Exception.class) 
-    public ModelAndView handleException(Exception e, Locale locale, HttpServletRequest request) {
+    public ModelAndView handleException(Exception e, Locale locale, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		logger.error(e.getLocalizedMessage(), e);
 		if (e instanceof IllegalArgumentException)
 		{
 			logger.error("caused by URL: " + request.getRequestURL().toString() + "?" + request.getQueryString());
 		}		
+		
+		if (!response.getOutputStream().isReady())
+		{
+			logger.error("Exception thrown after outputstream was closed, caused by URL: " + request.getRequestURL().toString() + "?" + request.getQueryString());
+			return null;
+		}
+		
 		ModelAndView model;		
 		model = new ModelAndView("redirect:/errors/500.html");		
 		model.addObject("contextpath", contextpath);
@@ -392,7 +408,7 @@ public class BasicController implements BeanFactoryAware {
 		return null;
 	}	
 	
-	public ModelAndView basicwelcome(Locale locale) {	
+	public ModelAndView basicwelcome(HttpServletRequest request, Locale locale) {	
 		ModelAndView model = new ModelAndView("home/welcome");
 		model.addObject("page", "welcome");
 		model.addObject("ecasurl", ecashost);
@@ -401,6 +417,11 @@ public class BasicController implements BeanFactoryAware {
 		if (isShowEcas()) model.addObject("showecas", true);
 		// CASOSS
 		if (isCasOss()) model.addObject("casoss", true);
+		
+		if (request.getParameter("ecaslogout") != null)
+		{
+			model.addObject("ECASLOGOUT", ecaslogout);
+		}
 		
 		return model;
 	}

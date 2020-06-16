@@ -7,14 +7,14 @@
 		<div id="results-table" style="margin-top: 60px; min-height: 400px;">		
 	</c:when>
 	<c:otherwise>
-		<div id="results-table" style="margin-top: 100px;">		
+		<div id="results-table" style="margin-top: 0px;">		
 	</c:otherwise>
 </c:choose>
 	<c:if test="${publication == null || publication.isShowSearch()}">
-	<div id="ResultFilterLimit" style="color: #777; text-align: center; margin-bottom: 10px;">
-		<span class="glyphicon glyphicon-info-sign"></span>
-		<spring:message code="info.ResultFilterLimit" />
-	</div>
+		<div id="ResultFilterLimit" style="font-size:90%; text-align: center; margin-bottom: 10px;">
+			<span class="glyphicon glyphicon-info-sign"></span>
+			<spring:message code="info.ResultFilterLimit" />
+		</div>
 	</c:if>
 	
 	<span id="lastupdate"></span>
@@ -25,7 +25,7 @@
 			<thead style="background-position: initial initial; background-repeat: initial initial;">
 				<tr>
 					<c:if test="${publication == null}">
-						<th class="checkDelete"><input name="check-all-delete" id="check-all-delete" class="check" type="checkbox" onclick="checkAllDelete()" /></th>
+						<th class="checkDelete">&nbsp;</th>
 						<th class="topaligned" style="width: 150px"><div style="width: 133px"><spring:message code="label.Actions" /></div></th>
 					</c:if>
 					<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
@@ -92,8 +92,10 @@
 				<c:if test="${publication == null || publication.isShowSearch()}">
 					<tr class="table-styled-filter">
 						<c:if test="${publication == null}">
-							<th class="checkDelete">&nbsp;</th>
-							<th>&nbsp;</th>
+							<th class="checkDelete"><span data-toggle="tooltip" data-trigger="hover" data-original-title="<spring:message code="label.SelectAll" />"><input name="check-all-delete" id="check-all-delete" class="check checkDelete" style="margin-bottom: 8px !important;" type="checkbox" onclick="checkAllDelete()" /></span></th>
+							<th>
+								<a data-toggle="tooltip" title="<spring:message code="label.DeleteAll" />" class="iconbutton disabled" disabled="disabled" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-remove"></span></a>
+							</th>
 						</c:if>
 						<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
 							<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
@@ -111,7 +113,7 @@
 														  </a>
 														  
 														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-info"><spring:message code="label.ApplyFilter" /></a>
+														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
 														  	 <c:forEach items="${question.answers}" var="possibleanswer" varStatus="status">
 																<div>
 																	<c:choose>
@@ -134,8 +136,8 @@
 												<c:forEach var="c" begin="1" end="${question.allColumns-1}"> 																
 													<th class="filtercell cell${question.id}-${r}-${c}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
 														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id.toString().concat("-").concat(r.toString()).concat("-").concat(c.toString()), question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text"  style="margin:0px;" name='filter${question.id}-${r}-${c}|${question.uniqueId}' />
-														<a data-toggle="tooltip" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign black"></span></a>
-													</th>										
+												          <a class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign white"></span></a>
+			                                        </th>										
 												</c:forEach>													
 											</c:forEach>
 										</c:when>
@@ -149,7 +151,7 @@
 														  </a>
 														  
 														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;" onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-info"><spring:message code="label.ApplyFilter" /></a>
+														  	<a style="margin-bottom: 5px;" onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
 														  	 <c:forEach begin="1" end="${question.numIcons}" varStatus="loop">
 																<div>
 																	<c:choose>
@@ -181,7 +183,7 @@
 														  </a>
 														  
 														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-info"><spring:message code="label.ApplyFilter" /></a>
+														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
 														  	 <c:forEach items="${question.files}" var="file" varStatus="status">
 														    	<div>
 															    	<c:choose>
@@ -210,7 +212,7 @@
 														  </a>
 														  
 														  <div class="overlaymenu hideme maxH">
-														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-info"><spring:message code="label.ApplyFilter" /></a>
+														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
 														  	 <c:forEach items="${question.allPossibleAnswers}" var="possibleanswer" varStatus="status">
 														    	<div>
 															    	<c:choose>
@@ -229,8 +231,8 @@
 													</c:when>
 													<c:otherwise>
 														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100"  style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
-														<a  data-toggle="tooltip" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign black"></span></a>
-													</c:otherwise>
+												         <a class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign white"></span></a>
+                                                   	</c:otherwise>
 												</c:choose>
 											</th>
 										</c:otherwise>
@@ -368,7 +370,7 @@
 										  </a>
 										  
 										  <div class="overlaymenu hideme">
-										  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-info"><spring:message code="label.ApplyFilter" /></a>
+										  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a>
 										  	 <c:forEach items="${form.getLanguages()}" var="lang" varStatus="status">
 												<div>													
 													<c:choose>
@@ -532,6 +534,13 @@ var closeOverlayDivsEnabled = false;
 				    checkFilterCell($(this).closest('.filtercell'), false);
 					checkNoBreaks();
 				    event.stopPropagation();
+				});
+			 
+			 $('.filtercell input[type=text]').keypress(function(event){
+				    var keycode = (event.keyCode ? event.keyCode : event.which);
+				    if(keycode == '13'){
+				    	$('#resultsForm').submit();
+				    }
 				});
 			 
 			 $(".overlaymenu").bind('wheel mousewheel', function (e, delta) {
@@ -766,9 +775,8 @@ var closeOverlayDivsEnabled = false;
 			 if (height < 200) height = 200;
 			 $('#scrollarea').css("height", height);
 			 
-			 $('#scrollareastatistics').css("height", statheight);
-			 $('#scrollareastatisticsquiz').css("height", height-50);
-			 $('#scrollareacharts').css("height", height-50);
+			 //$('#scrollareastatistics').css("height", statheight);
+			 //$('#scrollareastatisticsquiz').css("height", height-50);
 			 
 			 $('#contentstable2').css("min-height", height-20);
 			 $('#contentstable2').css("height", height-20);

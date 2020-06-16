@@ -297,13 +297,13 @@ body {
 	bottom: 0;
 }
 
-.btn-info {
+.btn-primary {
 	background-color: #004494;
 	border-color: #004494;
 	color: #fff !important;
 }
 
-.btn-info:hover, .btn-info:active, .btn-info:visited, .btn-info:focus, .btn-info:link {
+.btn-primary:hover, .btn-primary:active, .btn-primary:visited, .btn-primary:focus, .btn-primary:link {
 	background-color: #004494 !important;
 }
 
@@ -459,4 +459,8 @@ body {
 .ratingitem img {
 	width: 24px;
 	margin-bottom: 4px;
+}
+
+.check {
+    margin-bottom: 6px !important;
 }

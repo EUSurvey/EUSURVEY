@@ -507,6 +507,37 @@
 								</td>
 							</tr>
 							<tr>
+								<td class="table-label"><span class="mandatory">*</span><spring:message code="label.UseMaxNumberContribution" /></td>
+								<td>
+									<c:choose>
+										<c:when test="${form.survey.isUseMaxNumberContribution != null && form.survey.isUseMaxNumberContribution && form.survey.maxNumberContribution!=null}">
+											<input type="radio" class="check" name="survey.isUseMaxNumberContribution" onclick="addMaxContributionDisplayer()" value="true" checked ><spring:message code="label.Yes" />&#160;
+											<input type="radio" class="check" name="survey.isUseMaxNumberContribution" onclick="removeMaxContributionDisplayer()" value="false"/><spring:message code="label.No" />
+											<br>
+											<div id="maxNumberContributionDisplayer">
+												Maximum number of contributions<br>
+												<input id='maxContributionInput' type='number' name='survey.maxNumberContribution' min='0' value="<esapi:encodeForHTMLAttribute>${form.survey.maxNumberContribution}</esapi:encodeForHTMLAttribute>">
+											</div>
+										</c:when>
+										<c:otherwise>
+											<input type="radio" class="check" name="survey.isUseMaxNumberContribution" onclick="addMaxContributionDisplayer()" value="true"/><spring:message code="label.Yes" />&#160;
+											<input type="radio" class="check" name="survey.isUseMaxNumberContribution" onclick="removeMaxContributionDisplayer()" value="false" checked/><spring:message code="label.No" />
+											<br>
+											<div id="maxNumberContributionDisplayer" class="hideme">
+												Maximum number of contributions<br>
+												<input id='maxContributionInput' type='number' name='survey.maxNumberContribution' min='0' value="<esapi:encodeForHTMLAttribute>${form.survey.maxNumberContribution}</esapi:encodeForHTMLAttribute>">
+											</div>		
+										</c:otherwise>
+									</c:choose>
+								</td>
+							</tr>
+							<tr>
+								<td class="table-label"><span class="mandatory">*</span><spring:message code="label.MaxNumberContributionText" /></td>
+								<td>
+									<form:textarea maxlength="255" class="tinymcealign2 required xhtml max255" id="edit-survey-max-result-page" path="survey.maxNumberContributionText"></form:textarea>
+								</td>
+							</tr>
+							<tr>
 								<td class="table-label">
 									<spring:message code="label.EndNotification" />
 									<div class="help"><spring:message code="info.EndNotification" /></div>
@@ -567,7 +598,7 @@
 										<c:forEach var="link" items="${form.survey.getAdvancedUsefulLinks()}" varStatus="rowCounter">
 											<tr class="usefullink">
 												<td>
-													<input class="xhtml" type="text" maxlength="255" name="linklabel${rowCounter.index}" value="<esapi:encodeForHTMLAttribute>${link.key}</esapi:encodeForHTMLAttribute>" />
+													<input class="xhtml freetext max250" type="text" maxlength="250" name="linklabel${rowCounter.index}" value="<esapi:encodeForHTMLAttribute>${link.key}</esapi:encodeForHTMLAttribute>" />
 												</td>
 												<td>
 													<input type="text" class="targeturl" maxlength="255" name="linkurl${rowCounter.index}" value="<esapi:encodeForHTMLAttribute>${link.value}</esapi:encodeForHTMLAttribute>" />
@@ -596,7 +627,7 @@
 										<c:forEach var="link" items="${form.survey.getBackgroundDocumentsAlphabetical()}" varStatus="rowCounter">
 											<tr>
 												<td>
-													<input class="xhtml" type="text" maxlength="255" name="doclabel${rowCounter.index}" value="<esapi:encodeForHTMLAttribute>${link.key}</esapi:encodeForHTMLAttribute>" />
+													<input class="xhtml freetext max235" type="text" maxlength="235" name="doclabel${rowCounter.index}" value="<esapi:encodeForHTMLAttribute>${link.key}</esapi:encodeForHTMLAttribute>" />
 												</td>
 												<td>
 													<div style="word-wrap: break-word; max-width: 200px;">
@@ -778,7 +809,7 @@
 	  	
 	  </div>
 	  <div class="modal-footer">
-	 	<a id="properties-save-button" onclick="checkPropertiesAndSubmit(false, false);"  class="btn btn-info"><spring:message code="label.Save" /></a>
+	 	<a id="properties-save-button" onclick="checkPropertiesAndSubmit(false, false);"  class="btn btn-primary"><spring:message code="label.Save" /></a>
 	 	<a id="properties-cancel-button"  class="btn btn-default" onclick="cancelDialog()"><spring:message code="label.Cancel" /></a>		 			
 	  </div>
 	</div>

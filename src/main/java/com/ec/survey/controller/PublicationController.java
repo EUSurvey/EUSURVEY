@@ -5,9 +5,6 @@ import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
-import com.ec.survey.service.AnswerService;
-import com.ec.survey.service.SurveyService;
-import com.ec.survey.service.TranslationService;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,15 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequestMapping("/publication")
 public class PublicationController extends BasicController  {
 	
-	@Resource(name="surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name = "translationService")
-	private TranslationService translationService;
-	
-	@Resource(name = "answerService")
-	private AnswerService answerService;
-	
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
 	
@@ -48,7 +36,6 @@ public class PublicationController extends BasicController  {
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${sender}") String sender;
-	private @Value("${export.fileDir}") String fileDir;
 	private @Value("${stresstests.createdata}") String createStressData;
 	
 	@RequestMapping(value = "/{shortname}")

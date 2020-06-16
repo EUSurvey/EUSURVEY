@@ -49,9 +49,18 @@ public class User implements java.io.Serializable {
 	private int userExistsAttempts = 0;
 	private Date userExistsAttemptDate;
 	private boolean agreedToToS;
+	private Date agreedToToSDate;
+	private String agreedToToSVersion;
+	private boolean agreedToPS;
+	private Date agreedToPSDate;
+	private String agreedToPSVersion;
 	private Integer lastEditedSurvey;
 	private boolean canCreateSurveys = true;
 	private boolean isFrozen = false;
+	private boolean deleted;
+	private boolean deleteRequested;
+	private String deleteCode;
+	private Date deleteDate;
 	
 	public static final String ECAS = "ECAS";
 	public static final String SYSTEM = "SYSTEM";
@@ -299,6 +308,78 @@ public class User implements java.io.Serializable {
 	}
 	public void setAgreedToToS(boolean agreedToToS) {
 		this.agreedToToS = agreedToToS;
+	}
+	
+	@Column(name = "USER_TOSDATE")
+	public Date getAgreedToToSDate() {
+		return agreedToToSDate;
+	}
+	public void setAgreedToToSDate(Date agreedToToSDate) {
+		this.agreedToToSDate = agreedToToSDate;
+	}
+
+	@Column(name = "USER_TOSVERSION")
+	public String getAgreedToToSVersion() {
+		return agreedToToSVersion;
+	}
+	public void setAgreedToToSVersion(String agreedToToSVersion) {
+		this.agreedToToSVersion = agreedToToSVersion;
+	}	
+
+	@Column(name = "USER_PS")
+	public boolean isAgreedToPS() {
+		return agreedToPS;
+	}
+	public void setAgreedToPS(Boolean agreedToPS) {
+		this.agreedToPS = agreedToPS != null ? agreedToPS : false;
+	}
+
+	@Column(name = "USER_PSDATE")
+	public Date getAgreedToPSDate() {
+		return agreedToPSDate;
+	}
+	public void setAgreedToPSDate(Date agreedToPSDate) {
+		this.agreedToPSDate = agreedToPSDate;
+	}
+
+	@Column(name = "USER_PSVERSION")
+	public String getAgreedToPSVersion() {
+		return agreedToPSVersion;
+	}
+	public void setAgreedToPSVersion(String agreedToPSVersion) {
+		this.agreedToPSVersion = agreedToPSVersion;
+	}
+	
+	@Column(name = "USER_DELETED")
+	public Boolean isDeleted() {
+		return deleted;
+	}
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted != null ? deleted : false;
+	}
+	
+	@Column(name = "USER_DELREQ")
+	public Boolean isDeleteRequested() {
+		return deleteRequested;
+	}
+	public void setDeleteRequested(Boolean deleteRequested) {
+		this.deleteRequested = deleteRequested != null ? deleteRequested : false;
+	}
+
+	@Column(name = "USER_DELDATE")
+	public Date getDeleteDate() {
+		return deleteDate;
+	}
+	public void setDeleteDate(Date deleteDate) {
+		this.deleteDate = deleteDate;
+	}
+
+	@Column(name = "USER_DELCODE")
+	public String getDeleteCode() {
+		return deleteCode;
+	}
+	public void setDeleteCode(String deleteCode) {
+		this.deleteCode = deleteCode;
 	}
 	
 	@Column(name = "USER_LAST_SURVEY")

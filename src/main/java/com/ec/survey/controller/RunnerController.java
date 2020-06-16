@@ -24,6 +24,7 @@ import org.springframework.mobile.device.Device;
 import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,18 +46,6 @@ public class RunnerController extends BasicController {
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
 
-	@Resource(name = "attendeeService")
-	private AttendeeService attendeeService;
-
-	@Resource(name = "participationService")
-	private ParticipationService participationService;
-
-	@Resource(name = "translationService")
-	private TranslationService translationService;
-	
-	@Resource(name = "answerService")
-	private AnswerService answerService;
-
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
 	
@@ -66,11 +55,8 @@ public class RunnerController extends BasicController {
 	@Resource(name="pdfService")
 	private PDFService pdfService;
 
-	private @Value("${export.fileDir}") String fileDir;
-	private @Value("${server.prefix}") String serverPrefix;
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
-	private @Value("${sender}") String sender;
 	
 	@RequestMapping(value = "/checksession", method = RequestMethod.POST)
 	public @ResponseBody String checkSession() {
@@ -119,21 +105,19 @@ public class RunnerController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/invited/{group}/{unique}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView invited(@PathVariable String group, @PathVariable String unique, HttpServletRequest request, Locale locale, Integer draftSurveyId, Device device) throws WeakAuthenticationException {
+	public ModelAndView invited(@PathVariable String group, @PathVariable String unique, HttpServletRequest request, Locale locale, Integer draftSurveyId, Device device) throws WeakAuthenticationException, NotAgreedToPsException, NotAgreedToTosException {
 
 		boolean readonlyMode = false;
 		String p = request.getParameter("readonly");
 		if (p != null && p.equalsIgnoreCase("true"))
 		{
 			if (unique != null && unique.length() > 0)
-			{
-				try {
-					User user = sessionService.getCurrentUser(request);
-					if (user != null && user.getFormPrivilege() > 1)
-					{
-						readonlyMode = true;
-					}
-				} catch (NotAgreedToTosException e) {}
+			{				
+				User user = sessionService.getCurrentUser(request, false, true);
+				if (user != null && user.getFormPrivilege() > 1)
+				{
+					readonlyMode = true;
+				}				
 			}
 		}
 		
@@ -233,6 +217,10 @@ public class RunnerController extends BasicController {
 						}
 						
                         if (!readonlyMode) return getEscapePageModel(draftSurvey, request, device);
+					}
+
+					if (SurveyHelper.isMaxContributionReached(survey, answerService)) {
+						return getMaxAnswersReachedPageModel(survey, request, device);
 					}
 					
 					if (draftSurvey.getIsFrozen())
@@ -470,6 +458,10 @@ public class RunnerController extends BasicController {
 
 			if (SurveyHelper.isDeactivatedOrEndDateExceeded(survey, surveyService)) {
 				return getEscapePageModel(survey, request, device);
+			}
+
+			if (SurveyHelper.isMaxContributionReached(survey, answerService)) {
+				return getMaxAnswersReachedPageModel(survey, request, device);
 			}
 
 			String lang = locale.getLanguage();
@@ -759,9 +751,104 @@ public class RunnerController extends BasicController {
 
 		return null;
 	}
+	
+	@RequestMapping(value = "/contactform/{uidorshortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView contactform(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException {
+		Survey survey = surveyService.getSurvey(uidorshortname, false, true, false, false, null, true, true);
+		
+		if (survey == null)
+		{
+			survey = surveyService.getSurvey(uidorshortname, true, true, false, false, null, true, true);
+		}
+		
+		if (survey == null || !survey.getContact().startsWith("form:"))
+		{
+			throw new InvalidURLException();
+		}
+		
+		return new ModelAndView("runner/contactForm", "survey", survey);
+	}
+	
+	@RequestMapping(value = "/contactform/{uidorshortname}", method = {RequestMethod.POST})
+	public String contactformPOST(@PathVariable String uidorshortname, HttpServletRequest request, ModelMap model) throws NumberFormatException, Exception {
+		Survey survey = surveyService.getSurvey(uidorshortname, false, true, false, false, null, true, true);
+		
+		if (survey == null)
+		{
+			survey = surveyService.getSurvey(uidorshortname, true, true, false, false, null, true, true);
+		}
+		
+		if (survey == null || !survey.getContact().startsWith("form:"))
+		{
+			throw new InvalidURLException();
+		}
+		
+		if (!checkCaptcha(request))
+		{
+			model.put("wrongcaptcha", true);
+			return "runner/contactForm";
+		}		
+		
+		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true);
+		String name = ConversionTools.removeHTML(request.getParameter("name"), true);
+		String email = ConversionTools.removeHTML(request.getParameter("email"), true);
+		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true);
+		String message = ConversionTools.removeHTML(request.getParameter("message"), true);
+		String[] uploadedfiles = request.getParameterValues("uploadedfile");				
+		
+		StringBuilder body = new StringBuilder();
+		body.append("You have received a message from the Contact Form for the survey below<br/><hr /><br />");
+		
+		body.append("<table>");
+		
+		String link = serverPrefix + "runner/" + survey.getShortname();		
+		
+		body.append("<tr><td>Published survey link:</td><td><a href='").append(link).append("'>").append(link).append("</a></td></tr>");
+		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		
+		body.append("<tr><td>Alias:</td><td>").append(survey.getShortname()).append("</td></tr>");
+		body.append("<tr><td>Name:</td><td>").append(survey.cleanTitle()).append("</td></tr>");
+		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		body.append("<tr><td colspan='2'><hr /></td></tr>");
+		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		
+		body.append("<tr><td>Contact Reason:</td><td>").append(reason).append("</td></tr>");
+		body.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		
+		body.append("<tr><td>Name:</td><td>").append(name).append("</td></tr>");
+		body.append("<tr><td>Email address:</td><td>").append(email).append("</td></tr>");
+		body.append("<tr><td>Subject:</td><td>").append(subject).append("</td></tr>");
+		
+		body.append("</table>");		
+		
+		body.append("<br />Message text:<br />").append(message).append("<br /><br />");		
+		
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", serverPrefix);		
+		
+		java.io.File attachment1 = null;
+		java.io.File attachment2 = null;
+		if (uploadedfiles != null)
+		{
+			if (uploadedfiles.length > 0)
+			{
+				attachment1 = fileService.getTemporaryFile(uploadedfiles[0]);
+				if (uploadedfiles.length > 1)
+				{
+					attachment2 = fileService.getTemporaryFile(uploadedfiles[1]);
+				}
+			}
+		}
+		
+		String owneremail = survey.getContact().replace("form:", "");
+		mailService.SendHtmlMail(owneremail, sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort), attachment1, attachment2, null, true);
+				
+		model.put("messagesent", true);
+		return "runner/contactForm";
+	}
 
 	@RequestMapping(value = "/{uidorshortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException, WeakAuthenticationException, FrozenSurveyException {
+	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request, HttpServletResponse response, Locale locale, Device device) throws InvalidURLException, ForbiddenURLException, WeakAuthenticationException, FrozenSurveyException, NotAgreedToTosException, NotAgreedToPsException {
 
 		ModelAndView modelReturn= new ModelAndView();
 		boolean internalUsersOnly = false;
@@ -783,7 +870,10 @@ public class RunnerController extends BasicController {
 		if (lang == null && !isDraft)
 		{
 			Survey draft = surveyService.getSurvey(uidorshortname, true, false, false, false, null, true, true);
-			lang = draft.getLanguage().getCode();		
+			if (draft != null)
+			{
+				lang = draft.getLanguage().getCode();
+			}
 		}
 		
 		String p = request.getParameter("readonly");
@@ -792,14 +882,10 @@ public class RunnerController extends BasicController {
 			p = request.getParameter("draftid");
 			if (p != null && p.length() > 0)
 			{
-				try {
-					User user = sessionService.getCurrentUser(request);
-					if (user != null && user.getFormPrivilege() > 1)
-					{
-						readonlyMode = true;
-					}
-				} catch (NotAgreedToTosException e) {
-					
+				User user = sessionService.getCurrentUser(request, false, true);
+				if (user != null && user.getFormPrivilege() > 1)
+				{
+					readonlyMode = true;
 				}
 			}
 		}
@@ -845,11 +931,14 @@ public class RunnerController extends BasicController {
 				}
 			}
 
+			if (SurveyHelper.isMaxContributionReached(survey, answerService)) {
+				return getMaxAnswersReachedPageModel(survey, request, device);
+			}
+
 			if (survey.getSecurity().startsWith("secured")) {
 				if (survey.getEcasSecurity())
 				{
 					try {
-						
 						User user = sessionService.getCurrentUser(request, false, false);
 						
 						boolean ecasauthenticated = request.getSession().getAttribute("ECASSURVEY") != null && request.getSession().getAttribute("ECASSURVEY").toString().startsWith(uidorshortname);
@@ -897,9 +986,15 @@ public class RunnerController extends BasicController {
 				
 				String uniqueCode = (String) request.getSession().getAttribute("uniqueCode");
 
-				if (uniqueCode == null || !validCodesService.CheckValid(uniqueCode, survey.getUniqueId())) {
+				if (uniqueCode == null || !validCodesService.checkValid(uniqueCode, survey.getUniqueId())) {
 					modelReturn.setViewName("runner/surveyLogin");
-					modelReturn.addObject("shortname", uidorshortname);		
+					modelReturn.addObject("shortname", uidorshortname);
+					modelReturn.addObject("surveyname", survey.cleanTitle());
+					
+					if (survey.getContact().startsWith("form:"))
+					{
+						modelReturn.addObject("contact", true);
+					}
 					
 					if (lang != null && lang.length() > 0)
 					{
@@ -945,8 +1040,8 @@ public class RunnerController extends BasicController {
 		return loadSurvey(survey, request, response, locale, uidorshortname, false, device, readonlyMode);
 	}
 
-	private ModelAndView getEscapePageModel(Survey survey, HttpServletRequest request, Device device) {
-		if (survey.getEscapePageLink() != null && survey.getEscapePageLink() && survey.getEscapeLink() != null && survey.getEscapeLink().length() > 0) {
+	private ModelAndView getEscapePageModel(Survey survey, HttpServletRequest request, Device device, Boolean escapeOrMaxReachedAnswers) {
+		if (escapeOrMaxReachedAnswers && survey.getEscapePageLink() != null && survey.getEscapePageLink() && survey.getEscapeLink() != null && survey.getEscapeLink().length() > 0) {
 			return new ModelAndView("redirect:" + survey.getEscapeLink());
 		} else {
 			ModelAndView model;
@@ -982,7 +1077,17 @@ public class RunnerController extends BasicController {
 				f.setWcagCompliance(false);
 			}
 			
-			model.addObject("text", survey.getEscapePage());
+			if (escapeOrMaxReachedAnswers) {
+				model.addObject("text", survey.getEscapePage());
+			} else {
+				
+				if (survey.getIsUseMaxNumberContributionLink() && survey.getMaxNumberContributionLink() != null && survey.getMaxNumberContributionLink().length() > 0) {
+					return new ModelAndView("redirect:" + survey.getMaxNumberContributionLink());
+				} 
+				
+				model.addObject("text", survey.getMaxNumberContributionText());
+			}
+			
 			model.addObject("form", f);
 			model.addObject("runnermode", true);
 			model.addObject("escapemode", true);
@@ -995,6 +1100,14 @@ public class RunnerController extends BasicController {
 			
 			return model;
 		}
+	}
+
+	private ModelAndView getEscapePageModel(Survey survey, HttpServletRequest request, Device device) {
+		return this.getEscapePageModel(survey, request, device, true);
+	}
+
+	private ModelAndView getMaxAnswersReachedPageModel(Survey survey, HttpServletRequest request, Device device) {
+		return this.getEscapePageModel(survey, request, device, false);
 	}
 
 	private ModelAndView loadSurvey(Survey survey, HttpServletRequest request, HttpServletResponse response, Locale locale, String action, boolean passwordauthenticated, Device device, boolean readonlyMode) throws ForbiddenURLException, WeakAuthenticationException {
@@ -1016,6 +1129,8 @@ public class RunnerController extends BasicController {
 					draftid = answerService.getDraftForEcasLogin(survey, request);					
 				} catch (NotAgreedToTosException e) {
 					// ignore
+				} catch (NotAgreedToPsException e) {
+				// ignore
 				}
 			}
 			
@@ -1062,26 +1177,31 @@ public class RunnerController extends BasicController {
 			if (draftid != null && draftid.trim().length() > 0) {
 				try {
 					Draft draft = answerService.getDraft(draftid);
-					f.getAnswerSets().add(draft.getAnswerSet());
-					f.setWcagCompliance(draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 					
-					SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), fileDir, survey, fileService);
-					uniqueCode = draft.getAnswerSet().getUniqueCode();
-					model.addObject("draftid", draftid);
-
-					if (lang == null)
+					if (draft == null)
 					{
-						lang = draft.getAnswerSet().getLanguageCode();
-						Survey translated = SurveyHelper.createTranslatedSurvey(f.getSurvey().getId(), lang, surveyService, translationService, true);
-						f.setSurvey(translated);
-						f.setLanguage(surveyService.getLanguage(lang));
-					}
-					validCodesService.revalidate(uniqueCode, survey);
-					
-					Set<String> invisibleElements = new HashSet<>();
-					SurveyHelper.validateAnswerSet(draft.getAnswerSet(), answerService, invisibleElements, resources, locale, null, null, true, null, fileService);
-					model.addObject("invisibleElements", invisibleElements);
-					
+						model.addObject("message", resources.getMessage("error.DraftIDInvalid", null, "The given draft ID is not valid!", locale));
+				 	} else {                                        
+				 	 	f.getAnswerSets().add(draft.getAnswerSet());
+				 	 	f.setWcagCompliance(draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
+				 	 		                                                
+				 	 	SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), fileDir, survey, fileService);
+				 	 	uniqueCode = draft.getAnswerSet().getUniqueCode();
+				 	 	model.addObject("draftid", draftid);
+				 	 		        
+				 	 	if (lang == null) {
+							lang = draft.getAnswerSet().getLanguageCode();
+							Survey translated = SurveyHelper.createTranslatedSurvey(f.getSurvey().getId(), lang,
+									surveyService, translationService, true);
+							f.setSurvey(translated);
+							f.setLanguage(surveyService.getLanguage(lang));
+						}
+						validCodesService.revalidate(uniqueCode, survey);
+						Set<String> invisibleElements = new HashSet<>();
+						SurveyHelper.validateAnswerSet(draft.getAnswerSet(), answerService, invisibleElements,
+								resources, locale, null, null, true, null, fileService);
+						model.addObject("invisibleElements", invisibleElements);
+					 }
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
@@ -1588,12 +1708,18 @@ public class RunnerController extends BasicController {
 						}
 						
 						model.addObject("shortname", uidorshortname);
+						model.addObject("surveyname", survey.cleanTitle());
+						
+						if (survey.getContact().startsWith("form:"))
+						{
+							model.addObject("contact", true);
+						}
+					
 						model.addObject("error", resources.getMessage("error.PasswordInvalid", null, "You did not provide a valid password!", locale));
 						return model;
 
 					}
 				}
-
 				return new ModelAndView("redirect:/errors/500.html");
 			}
 
@@ -1602,12 +1728,17 @@ public class RunnerController extends BasicController {
 				logger.error("survey id parameter missing in processSubmit for survey " + uidorshortname);
 				return new ModelAndView("redirect:/errors/500.html");
 			}
+
+			Survey lastestPublishedSurvey = surveyService.getSurvey(uidorshortname, false, true, false, false, null, true, true);
+			if (SurveyHelper.isMaxContributionReached(lastestPublishedSurvey, answerService)) {
+				return getMaxAnswersReachedPageModel(lastestPublishedSurvey, request, device);
+			}
 			
 			Survey origsurvey = surveyService.getSurvey(Integer.parseInt(request.getParameter("survey.id")), false, true);
 			String uniqueCode = request.getParameter("uniqueCode");
 
 			if (origsurvey.getSecurity().startsWith("secured")) {
-				if (!validCodesService.CheckValid(uniqueCode, origsurvey.getUniqueId())) {
+				if (!validCodesService.checkValid(uniqueCode, origsurvey.getUniqueId())) {
 					ModelAndView model = new ModelAndView("error/generic");
 					model.addObject("message", resources.getMessage("error.NoInvitation", null, "You are not authorized to submit to this survey without a proper invitation.", locale));
 					return model;
@@ -1621,6 +1752,10 @@ public class RunnerController extends BasicController {
 
 			if (SurveyHelper.isDeactivatedOrEndDateExceeded(origsurvey, surveyService)) {
 				return getEscapePageModel(origsurvey, request, device);
+			}
+
+			if (SurveyHelper.isMaxContributionReached(origsurvey, answerService)) {
+				return getMaxAnswersReachedPageModel(origsurvey, request, device);
 			}
 
 			String lang = locale.getLanguage();
@@ -1889,13 +2024,16 @@ public class RunnerController extends BasicController {
 	@RequestMapping(value = "/createanswerpdf/{code}", headers = "Accept=*/*", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String createanswerpdf(@PathVariable String code, HttpServletRequest request, HttpServletResponse response) {
 		try {
+			AnswerSet answerSet = answerService.get(code);			
 			
-			if (!checkCaptcha(request))
+			if (answerSet == null || !answerSet.getSurvey().getCaptcha())
 			{
-				return "errorcaptcha";
-			}
-						
-			AnswerSet answerSet = answerService.get(code);
+				if (!checkCaptcha(request))
+				{
+					return "errorcaptcha";
+				}
+			}						
+			
 			if (answerSet != null) {
 				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get("email")[0];
@@ -2003,7 +2141,7 @@ public class RunnerController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/elements/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException, WeakAuthenticationException {
+	public @ResponseBody List<Element> element(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		String ids = request.getParameter("ids");
 		
 		if (ids == null) return null;

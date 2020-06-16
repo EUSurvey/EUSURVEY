@@ -20,6 +20,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -75,7 +76,8 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	@Resource(name = "pdfService")
 	protected PDFService pdfService;	
 	
-	private String fileDir;
+	protected @Value("${export.fileDir}") String fileDir;
+	
 	private int task;
 	
 	public Integer getTask() {
@@ -94,9 +96,9 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 		context = beanFactory;		
 	}
 	
-	public void init(int task, String fileDir, MessageSource resources, Locale locale) {
+	public void init(int task, MessageSource resources, Locale locale) {
 		this.task = task;
-		this.fileDir = fileDir;
+		//this.fileDir = fileDir;
 		this.resources = resources;
 		this.locale = locale;
 	}
@@ -166,7 +168,8 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	    	export.setResultFilter(filter);	 
 	   	
 	    	XmlExportCreator xmlExportCreator = (XmlExportCreator) context.getBean("xmlExportCreator");
-	    	xmlExportCreator.init(0,form, null,fileDir + uid, resources, locale, "", "");
+	    	java.io.File target = fileService.getSurveyExportFile(t.getSurveyUid(), uid);
+	    	xmlExportCreator.init(0,form, null, target.getAbsolutePath(), resources, locale, "", "");
 	    	
 	    	if (t.getExportType() != null && t.getExportType().equals(2))
 	    	{
@@ -222,7 +225,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 		    	if (t.getExportType() == null || t.getExportType().equals(0) || t.getExportType().equals(1) || (t.getExportType().equals(3) && t.getFileTypes() != null && t.getFileTypes().contains("x")))
 		    	{
 					os.putArchiveEntry(new ZipArchiveEntry("result.xml"));
-					IOUtils.copy(new FileInputStream(new java.io.File(fileDir + uid)), os);
+					IOUtils.copy(new FileInputStream(target), os);
 					os.closeArchiveEntry();
 			    }
 				
@@ -306,7 +309,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 						List<File> uploadedFiles = answerService.getUploadedFilesForAnswerset(answerSetId);
 						for (File file: uploadedFiles)
 				    	{
-				    		java.io.File fup = fileService.getSurveyFile(survey.getUniqueId(),  file.getUid());
+				    		java.io.File fup = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
 				    		
 				    		if (!fup.exists())
 				    		{

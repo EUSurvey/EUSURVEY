@@ -1706,6 +1706,12 @@ public class XlsExportCreator extends ExportCreator {
 	@Override
 	void ExportTokens() throws Exception {
 		
+		if (dateCellStyle == null)
+		{
+			dateCellStyle = wb.createCellStyle();
+			dateCellStyle.setDataFormat((short)22);
+		}
+		
 		ParticipationGroup participationGroup = participationService.get(export.getParticipationGroup());
 		
 		String safeName = WorkbookUtil.createSafeSheetName("Tokens");
@@ -1715,20 +1721,27 @@ public class XlsExportCreator extends ExportCreator {
 		{
 			Map<Integer, Invitation> invitations = attendeeService.getInvitationsByAttendeeForParticipationGroup(export.getParticipationGroup());
 						
-			sheet.setColumnWidth(0, 11000);
-		    sheet.setColumnWidth(1, 5000);
-		    sheet.setColumnWidth(1, 5000);
+			sheet.setColumnWidth(0, 5000);
+		    sheet.setColumnWidth(1, 8000);
+		    sheet.setColumnWidth(2, 5000);
+		    sheet.setColumnWidth(3, 5000);
+		    sheet.setColumnWidth(4, 5000);
 		    
 		    int rowIndex = 0;
 			Row row = sheet.createRow(rowIndex++);
-			row.createCell(0).setCellValue("TokenList ID");
+			row.createCell(0).setCellValue("GuestList ID");
 			row.createCell(1).setCellValue(export.getParticipationGroup());
 			
 			row = sheet.createRow(rowIndex++);
-			row.createCell(0).setCellValue("UNIQUE CODE");
-			row.createCell(1).setCellValue("NAME");
-			row.createCell(2).setCellValue("EMAIL");
-			
+			row.createCell(0).setCellValue("NAME");
+			row.createCell(1).setCellValue("EMAIL");
+			if (!export.getSurvey().isAnonymous())
+			{
+				row.createCell(2).setCellValue("INVITATION DATE");
+				row.createCell(3).setCellValue("REMINDER DATE");
+				row.createCell(4).setCellValue("ANSWERS");
+			}
+					
 			if (participationGroup.getType() == ParticipationGroupType.Static)
 			{
 				for (Attendee attendee : participationGroup.getAttendees())
@@ -1742,9 +1755,21 @@ public class XlsExportCreator extends ExportCreator {
 						attendeeService.add(invitation);
 					}				
 					
-					row.createCell(0).setCellValue(invitation.getUniqueId());
-					row.createCell(1).setCellValue(attendee.getName());
-					row.createCell(2).setCellValue(attendee.getEmail());
+					row.createCell(0).setCellValue(attendee.getName());
+					row.createCell(1).setCellValue(attendee.getEmail());
+					if (!export.getSurvey().isAnonymous())
+					{
+						row.createCell(2).setCellValue(invitation.getInvited());
+						if (invitation.getReminded() != null) {
+							row.createCell(3).setCellValue(invitation.getReminded());
+						} else {
+							row.createCell(3);
+						}
+						row.createCell(4).setCellValue(invitation.getAnswers());	
+						
+						row.getCell(2).setCellStyle(dateCellStyle);
+						row.getCell(3).setCellStyle(dateCellStyle);
+					}
 				}
 			} else {
 				for (EcasUser attendee : participationGroup.getEcasUsers())
@@ -1758,15 +1783,26 @@ public class XlsExportCreator extends ExportCreator {
 						attendeeService.add(invitation);
 					}				
 					
-					row.createCell(0).setCellValue(invitation.getUniqueId());
-					row.createCell(1).setCellValue(attendee.getName());
-					row.createCell(2).setCellValue(attendee.getEmail());
+					row.createCell(0).setCellValue(attendee.getName());
+					row.createCell(1).setCellValue(attendee.getEmail());
+					if (!export.getSurvey().isAnonymous())
+					{
+						row.createCell(2).setCellValue(invitation.getInvited());
+						if (invitation.getReminded() != null) {
+							row.createCell(3).setCellValue(invitation.getReminded());
+						} else {
+							row.createCell(3);
+						}
+						row.createCell(4).setCellValue(invitation.getAnswers());
+						
+						row.getCell(2).setCellStyle(dateCellStyle);
+						row.getCell(3).setCellStyle(dateCellStyle);
+					}
 				}
 			}
 		} else {
 		
-			List<String> tokens = participationService.getTokens(1, Integer.MAX_VALUE, export.getParticipationGroup(), false);
-			Map<String, Date> datesForTokens = participationService.getDatesForTokens(export.getParticipationGroup());
+			List<Invitation> invitations = attendeeService.getInvitationsForParticipationGroup(export.getParticipationGroup());
 			
 			sheet.setColumnWidth(0, 11000);
 		    sheet.setColumnWidth(1, 11000);
@@ -1787,17 +1823,29 @@ public class XlsExportCreator extends ExportCreator {
 			rowIndex++;
 			row = sheet.createRow(rowIndex++);
 			row.createCell(0).setCellValue("Token");
-			row.createCell(1).setCellValue("Used");
-			
-			for (String token: tokens)
+			if (!export.getSurvey().isAnonymous())
 			{
-				row = sheet.createRow(rowIndex++);
-				row.createCell(0).setCellValue(token);
-				if (datesForTokens.containsKey(token))
+				row.createCell(1).setCellValue("Answers");
+				row.createCell(2).setCellValue("Creation date");
+			
+				for (Invitation invitation: invitations)
 				{
-					row.createCell(1).setCellValue(ConversionTools.getFullString(datesForTokens.get(token)));
+					row = sheet.createRow(rowIndex++);
+					row.createCell(0).setCellValue(invitation.getUniqueId());
+					row.createCell(1).setCellValue(invitation.getAnswers());
+					row.createCell(2).setCellValue(invitation.getInvited());
+					row.getCell(2).setCellStyle(dateCellStyle);				
+				}	
+			} else {
+				row.createCell(1).setCellValue("Creation date");
+				for (Invitation invitation: invitations)
+				{
+					row = sheet.createRow(rowIndex++);
+					row.createCell(0).setCellValue(invitation.getUniqueId());
+					row.createCell(1).setCellValue(invitation.getInvited());
+				 	row.getCell(1).setCellStyle(dateCellStyle);					
 				}
-			}		
+			}
 		}
 		
 		wb.write(outputStream);		

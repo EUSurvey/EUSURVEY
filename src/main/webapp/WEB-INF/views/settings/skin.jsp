@@ -18,7 +18,7 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/runner.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/runner2.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/runnerviewmodels.js?version=<%@include file="../version.txt" %>"></script>
-    <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
+    <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="../version.txt" %>'></script>
 	
 	<script>
 	
@@ -365,7 +365,7 @@
 				</div>
 				
 				<div style="position: fixed; bottom: 35px; left: 0px; z-index: 1032; width: 100%; height: 60px; text-align: center; padding-top: 15px;">
-					<a onclick="checkAndSubmit(false);" class="btn btn-info"><spring:message code="label.Save" /></a>
+					<a onclick="checkAndSubmit(false);" class="btn btn-primary"><spring:message code="label.Save" /></a>
 					<a class="btn btn-default" onclick="$('#confirm-cancel-dialog').modal('show')"><spring:message code="label.Cancel" /></a> 
 				</div>
 	
@@ -381,7 +381,7 @@
 			<spring:message code="question.CancelWithoutSave" />
 		</div>
 		<div class="modal-footer">
-			<a class="btn btn-info" href="${contextpath}/settings/skin"><spring:message code="label.OK" /></a>
+			<a class="btn btn-primary" href="${contextpath}/settings/skin"><spring:message code="label.OK" /></a>
 			<a  class="btn btn-default" onclick="$('#confirm-cancel-dialog').modal('hide')"><spring:message code="label.Cancel" /></a>			
 		</div>
 		</div>
@@ -398,7 +398,7 @@
 				 	<div id="newname-exists-error" class="validation-error hideme"><spring:message code="error.UniqueName" /></div>
 				</div>
 				<div class="modal-footer">
-					<a onclick="checkAndSubmit(true)" class="btn btn-info"><spring:message code="label.OK" /></a>	
+					<a onclick="checkAndSubmit(true)" class="btn btn-primary"><spring:message code="label.OK" /></a>	
 					<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 				</div>
 			</div>
@@ -407,7 +407,7 @@
 	
 	<c:if test="${message != null}">
 		<script type="text/javascript">
-			showMessage('${message}');
+			showInfo('${message}');
 		</script>
 	</c:if>
 

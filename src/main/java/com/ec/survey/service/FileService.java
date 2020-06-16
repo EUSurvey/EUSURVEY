@@ -9,6 +9,7 @@ import com.ec.survey.tools.CleanupWorker;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.MutableInteger;
 import com.ec.survey.tools.RecreateWorker;
+import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.export.FileExportCreator;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
@@ -485,7 +486,7 @@ public class FileService extends BasicService {
 		
 		if (filter.getCreatedFrom() != null && filter.getCreatedFrom().after(fileResult.getCreated()))
 		{
-			logger.info("file filtered out by creation date: " + ConversionTools.getString(filter.getCreatedFrom()) + " : " + ConversionTools.getString(fileResult.getCreated()));
+			logger.info("file filtered out by creation date: " + Tools.formatDate(filter.getCreatedFrom(), ConversionTools.DateFormat) + " : " + Tools.formatDate(fileResult.getCreated(), ConversionTools.DateFormat));
 			return false;
 		}
 		
@@ -1929,7 +1930,7 @@ public class FileService extends BasicService {
 	@Transactional
 	public void migrateAllArchiveFiles() throws Exception
 	{
-		List<Archive> archives = archiveService.getAllArchives(new ArchiveFilter(), 0, Integer.MAX_VALUE, true);
+		List<Archive> archives = archiveService.getAllArchives(new ArchiveFilter(), 1, Integer.MAX_VALUE, true);
 		
 		for (Archive archive : archives)
 		{

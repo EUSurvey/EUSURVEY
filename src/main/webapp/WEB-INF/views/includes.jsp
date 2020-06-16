@@ -83,7 +83,7 @@
 			   anchor_top: false,
 			   anchor_bottom: false,
 			   branding: false,
-			   valid_classes: 'y',
+			   valid_classes: 'mycenter myleft myright myfull',
 			   invalid_elements : 'html,head,body'
 
 		};
@@ -234,13 +234,13 @@
 		        	  if (e.state)
 		        	  {
 		        		  $("#editorheader").hide();
-		        		  if ($(".btn-info1").length == 0)
+		        		  if ($(".btn-primary1").length == 0)
 		        		  {
-		        		  	$(".mce-i-fullscreen").closest("div").after("<a class='btn btn-info1' onclick='closeFullScreen(this, true);'><spring:message code="label.Apply" /></a><a class='btn btn-default1' onclick='closeFullScreen(this, false);'><spring:message code="label.Cancel" /></a>")
+		        		  	$(".mce-i-fullscreen").closest("div").after("<a class='btn btn-primary1' onclick='closeFullScreen(this, true);'><spring:message code="label.Apply" /></a><a class='btn btn-default1' onclick='closeFullScreen(this, false);'><spring:message code="label.Cancel" /></a>")
 		        		  };
 		        	  } else {
 		        		  $("#editorheader").show();
-		        		  $(".btn-info1").remove();
+		        		  $(".btn-primary1").remove();
 		        		  $(".btn-default1").remove();
 		        	  }
 		          });
@@ -262,9 +262,8 @@
 		   anchor_top: false,
 		   anchor_bottom: false,
 		   branding: false,
-		   valid_classes: 'y',
+		   valid_classes: 'mycenter myleft myright myfull',
 		   invalid_elements : 'html,head,body'
-
 		};
 	
 	var myConfigSetting2 = {
@@ -359,13 +358,13 @@
 		        	  if (e.state)
 		        	  {
 		        		  $("#editorheader").hide();
-		        		  if ($(".btn-info1").length == 0)
+		        		  if ($(".btn-primary1").length == 0)
 		        		  {
-		        		  	$(".mce-i-fullscreen").closest("div").after("<a class='btn btn-info1' onclick='closeFullScreen(this, true);'><spring:message code="label.Apply" /></a><a class='btn btn-default1' onclick='closeFullScreen(this, false);'><spring:message code="label.Cancel" /></a>")
+		        		  	$(".mce-i-fullscreen").closest("div").after("<a class='btn btn-primary1' onclick='closeFullScreen(this, true);'><spring:message code="label.Apply" /></a><a class='btn btn-default1' onclick='closeFullScreen(this, false);'><spring:message code="label.Cancel" /></a>")
 		        		  };
 		        	  } else {
 		        		  $("#editorheader").show();
-		        		  $(".btn-info1").remove();
+		        		  $(".btn-primary1").remove();
 		        		  $(".btn-default1").remove();
 		        	  }
 		          });
@@ -384,7 +383,9 @@
 		};
 	
 	$(document).ready(function(){
-			
+		
+		$(".filtercell").find("input[type=text]").attr("placeholder", "<spring:message code="label.Filter" />");
+		
 		$('textarea.tinymce').each(function(){
 			$(this).tinymce(myConfigSetting2);
 		          });

@@ -5,10 +5,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Share;
-import com.ec.survey.service.AdministrationService;
-import com.ec.survey.service.AttendeeService;
-import com.ec.survey.service.SessionService;
-import com.ec.survey.service.SurveyService;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -39,22 +35,10 @@ import java.util.Locale;
 @RequestMapping("/settings")
 public class SettingsController extends BasicController {
 		
-	@Resource(name = "sessionService")
-	private SessionService sessionService;
-	
-	@Resource(name = "surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="attendeeService")
-	private AttendeeService attendeeService;
-
 	@Autowired private LocaleResolver localeResolver;
 	
 	@RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String root(HttpServletRequest request, Locale locale, Model model) throws NotAgreedToTosException, WeakAuthenticationException {	
+	public String root(HttpServletRequest request, Locale locale, Model model) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {	
 		//check user (e.g. weak authentication)
 		sessionService.getCurrentUser(request);
 		model.addAttribute("languages", surveyService.getLanguages());
@@ -62,7 +46,7 @@ public class SettingsController extends BasicController {
 	}	
 	
 	@RequestMapping(value = "/myAccount", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String myAccount(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+	public String myAccount(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException{
 		model.addAttribute("languages", surveyService.getLanguages());
 		
 		String message = request.getParameter("message");
@@ -89,8 +73,41 @@ public class SettingsController extends BasicController {
 		return "settings/myAccount";
 	}
 	
-	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-	public String changePassword(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+	@RequestMapping(value = "/myAccount", method = {RequestMethod.POST})
+	public String myAccountPOST(HttpServletRequest request, HttpServletResponse response, ModelMap model, Locale locale) throws NumberFormatException, Exception {
+		
+		String target = request.getParameter("target");
+		if (target != null)
+		{
+			if (target.equals("changePassword"))
+			{
+				return changePassword(request, model, locale);
+			} else if (target.equals("changeEmail"))
+			{
+				return changeEmail(request, model, locale);
+			} else if (target.equals("changeLanguage"))
+			{
+				return changeLanguage(request, response, model, locale);
+			} else if (target.equals("changePivotLanguage"))
+			{
+				return changePivotLanguage(request, model, locale);
+			} else if (target.equals("deleteAccount"))
+			{
+				User u = sessionService.getCurrentUser(request);
+				administrationService.setUserDeleteRequested(u.getId());
+				request.getSession().invalidate();
+				sessionService.setCurrentUser(request, null);
+
+				model.addAttribute("message", resources.getMessage("message.validateDelete", null, "The deletion of your account has been started. You will receive a confirmation mail containing a link. Click on the link to confirm the deletion of your account.", locale));
+				return "error/info";	
+			} 
+		}		
+		
+		model.addAttribute("languages", surveyService.getLanguages());
+		return "settings/myAccount";
+	}
+	
+	public String changePassword(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException{
 		
 		String oldPassword = request.getParameter("oldpassword");
 		String newPassword = request.getParameter("newpassword");
@@ -136,8 +153,7 @@ public class SettingsController extends BasicController {
 		return "redirect:/settings/myAccount?message=password";		
 	}
 	
-	@RequestMapping(value = "/changeEmail", method = RequestMethod.POST)
-	public String changeEmail(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+	public String changeEmail(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException{
 		
 		String password = request.getParameter("password");
 		String email = request.getParameter("newemail");
@@ -187,8 +203,7 @@ public class SettingsController extends BasicController {
 		return "redirect:/settings/myAccount?message=email";	
 	}
 	
-	@RequestMapping(value = "/changeLanguage", method = RequestMethod.POST)
-	public String changeLanguage(HttpServletRequest request, HttpServletResponse response, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+	public String changeLanguage(HttpServletRequest request, HttpServletResponse response, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException{
 		String lang = request.getParameter("change-lang");
 			
 		User user = sessionService.getCurrentUser(request);
@@ -203,8 +218,7 @@ public class SettingsController extends BasicController {
 		return "redirect:/settings/myAccount?message=language";
 	}
 	
-	@RequestMapping(value = "/changePivotLanguage", method = RequestMethod.POST)
-	public String changePivotLanguage(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+	public String changePivotLanguage(HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException{
 		String lang = request.getParameter("change-lang");
 			
 		User user = sessionService.getCurrentUser(request);
@@ -216,8 +230,8 @@ public class SettingsController extends BasicController {
 		return "redirect:/settings/myAccount?message=pivot";
 	}
 			
-	@RequestMapping(value = "/shares")
-	public ModelAndView shares(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+	@RequestMapping(value = "/shares", method = {RequestMethod.GET})
+	public ModelAndView shares(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException{
 		User user = sessionService.getCurrentUser(request);
 		
 		String delete = request.getParameter("delete");
@@ -252,8 +266,20 @@ public class SettingsController extends BasicController {
  		return result;
 	}
 	
+	@RequestMapping(value = "/shares", method = {RequestMethod.POST})
+	public ModelAndView sharesPOST(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException{
+		
+		String target = request.getParameter("target");
+		if (target != null && target.equals("createStaticShare"))
+		{
+			return createStaticShare(request, locale);
+		}
+		
+		return shares(request, locale);
+	}
+	
 	@RequestMapping(value = "/shareEdit/{pid}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView shareEdit(@PathVariable String pid, HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
+	public ModelAndView shareEdit(@PathVariable String pid, HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException{
 		int id = Integer.parseInt(pid);		
 		User user = sessionService.getCurrentUser(request);
 		Share share = attendeeService.getShare(id);
@@ -288,7 +314,7 @@ public class SettingsController extends BasicController {
 	
 	@RequestMapping(value = "/userExists", headers="Accept=*/*", method=RequestMethod.GET)
 	public @ResponseBody boolean userExists(HttpServletRequest request, HttpServletResponse response )
-			throws NotAgreedToTosException, WeakAuthenticationException, ForbiddenURLException {
+			throws NotAgreedToTosException, WeakAuthenticationException, ForbiddenURLException, NotAgreedToPsException {
 		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		User userInRequest = sessionService.getCurrentUser(request);
 		User user = administrationService.getUser(userInRequest.getId());
@@ -325,9 +351,8 @@ public class SettingsController extends BasicController {
 		return searchedUser != null;
 	}
 	
-	@RequestMapping(value = "/createStaticShare", method = RequestMethod.POST)
-	public ModelAndView createShares(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException{
-		
+	public ModelAndView createStaticShare(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException{
+	
 		User user = sessionService.getCurrentUser(request);
 		
 		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);

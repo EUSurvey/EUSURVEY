@@ -40,12 +40,48 @@
 			overflow-y: scroll;
 		}
 		
+		.filtercell {
+			position: relative;
+		}
+		
+		.filterinfo {
+			position: absolute;
+			right: 5px;
+    		top: -30px;
+		}
+		
+		.white {
+			color: #fff !important;
+		}
+		
 	    .filtertools {
-			float: right;
+			position: absolute;
+			right: 12px;
+    		top: 18px;
+    		margin-top: 0;
 		}
 		
 		.cellcreated, .cellupdated {
 			min-width: 260px !important;
+		}
+		
+		.check2 {
+			margin-top: -2px !important;
+    		vertical-align: middle;
+		}
+		
+		table.table-styled > thead .glyphicon
+		{
+			 color:#333;
+		}
+		
+		table.table-styled > thead > tr.table-styled-filter th {
+		    padding: 8px;
+		}
+		
+		.glyphicon-question-sign, .glyphicon-info-sign {
+			font-size: 22px;
+			vertical-align: bottom;
 		}
 	
 	</style>
@@ -75,19 +111,10 @@
 				$("#resetbutton").attr("href", $("#resetbutton").attr("href") + "&results-source=draft");
 			</c:if>
 			
-			 <c:choose>
-			 	<c:when test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-					$("#show-delete-checkboxes-div").show();
-				</c:when>
-				<c:otherwise>
-					$("#show-delete-checkboxes-div").hide();
-				</c:otherwise>
-			</c:choose>
-			
-			checkDeleteBoxes();
+			//checkDeleteBoxes();
 		
 			<c:if test="${message == 'success'}">
-				showInfo('<spring:message code="message.ContributionDeleted" />');
+				showSuccess('<spring:message code="message.ContributionDeleted" />');
 			</c:if>
 		
 			<c:if test="${message == 'failure'}">
@@ -99,7 +126,7 @@
 			</c:if>
 				
 			<c:if test="${deletedAnswers != null}">
-				showInfo('${deletedAnswers}&nbsp;<spring:message code="message.ContributionDeleted" />');
+				showSuccess('${deletedAnswers}&nbsp;<spring:message code="message.ContributionDeleted" />');
 			</c:if>
 			
 			$("#form-menu-tab").addClass("active");
@@ -153,6 +180,11 @@
 		
 		function checkAndShowMultiDeleteDialog()
 		{
+			if ($('#btnDeleteSelected').hasClass('disabled'))
+			{
+				return;	
+			}
+			
 			var selected = $("input.checkDelete:checked").length;
 			if (selected > 0)
 			{
@@ -212,16 +244,16 @@
 			adaptScrollArea();
 		}
 		
-		function switchAssignedValues()
-		{
-			if ($("#show-assigned-values").is(":checked"))
-			{
-				$("#show-assigned-values").removeAttr("checked");
-			} else {
-				$("#show-assigned-values").prop("checked","checked");
-			}
-			checkAssignedValues();
-		}
+// 		function switchAssignedValues()
+// 		{
+// 			if ($("#show-assigned-values").is(":checked"))
+// 			{
+// 				$("#show-assigned-values").removeAttr("checked");
+// 			} else {
+// 				$("#show-assigned-values").prop("checked","checked");
+// 			}
+// 			checkAssignedValues();
+// 		}
 		
 		function checkAssignedValues()
 		{
@@ -229,40 +261,42 @@
 			{
 				$(".assignedValue").show();
 				$("#show-assigned-values-icon").removeClass("disabled");
+				$("#dialog-show-assigned-values-true").prop("checked", "checked");
 			} else {
 				$(".assignedValue").hide();
 				$("#show-assigned-values-icon").addClass("disabled");
+				$("#dialog-show-assigned-values-false").prop("checked", "checked");
 			}
 		}
 		
-		function switchDeleteCheckboxes()
-		{
-			if ($("#show-delete-checkboxes").is(":checked"))
-			{
-				$("#show-delete-checkboxes").removeAttr("checked");
-			} else {
-				$("#show-delete-checkboxes").prop("checked","checked");
-			}
-			checkDeleteBoxes();
-		}
+// 		function switchDeleteCheckboxes()
+// 		{
+// 			if ($("#show-delete-checkboxes").is(":checked"))
+// 			{
+// 				$("#show-delete-checkboxes").removeAttr("checked");
+// 			} else {
+// 				$("#show-delete-checkboxes").prop("checked","checked");
+// 			}
+// 			checkDeleteBoxes();
+// 		}
 		
-		function checkDeleteBoxes()
-		{
-			if ($("#show-delete-checkboxes").is(":checked") && $('#results-table-link').hasClass("btn-info"))
-			{
-				$(".checkDelete").removeClass("hiddenTableCell");
-				$("#btnDeleteSelected").show();
-				checkDeleteButtonEnabled();
-				$("#show-delete-checkboxes-icon").removeClass("disabled");
-			} else {
-				$(".checkDelete").addClass("hiddenTableCell");
-				$("#contentstable").css("width","auto");
-				$("#btnDeleteSelected").hide();
-				$("#show-delete-checkboxes-icon").addClass("disabled");
-			}
+// 		function checkDeleteBoxes()
+// 		{
+// 			if ($("#show-delete-checkboxes").is(":checked") && $('#results-table-link').hasClass("btn-primary"))
+// 			{
+// 				$(".checkDelete").removeClass("hiddenTableCell");
+// 				$("#btnDeleteSelected").show();
+// 				checkDeleteButtonEnabled();
+// 				$("#show-delete-checkboxes-icon").removeClass("disabled");
+// 			} else {
+// 				$(".checkDelete").addClass("hiddenTableCell");
+// 				$("#contentstable").css("width","auto");
+// 				$("#btnDeleteSelected").hide();
+// 				$("#show-delete-checkboxes-icon").addClass("disabled");
+// 			}
 			
-			synchronizeTableSizes();
-		}
+// 			synchronizeTableSizes();
+// 		}
 		
 		function checkAllDelete()
 		{
@@ -326,9 +360,9 @@
 			switch(resultType)
 			{
 				case 'content':
-					$("#results-table-link").addClass("btn-info");
-					$("#results-statistics-quiz-link").removeClass("btn-info").addClass("btn-default");
-					$("#results-statistics-link").removeClass("btn-info").addClass("btn-default");
+					$("#results-table-link").addClass("btn-primary");
+					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
 					
 					$("#results-table").find("tbody").removeClass('hidden');
 					$("#results-table").find(".RowsPerPage").removeClass('hidden');
@@ -361,9 +395,9 @@
 					resetSliderPositions($("#contentstable"));
 					break;
 				case 'statistics':
-					$("#results-table-link").removeClass("btn-info").addClass("btn-default");
-					$("#results-statistics-quiz-link").removeClass("btn-info").addClass("btn-default");
-					$("#results-statistics-link").addClass("btn-info");
+					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-link").addClass("btn-primary");
 					
 					$("#results-table").find(".RowsPerPage").addClass('hidden');
 					$("#pager").addClass('hidden');
@@ -382,9 +416,9 @@
 					$("#scrollareaheader").css("overflow-y","auto");
 					break;
 				case 'statistics-quiz':
-					$("#results-table-link").removeClass("btn-info").addClass("btn-default");
-					$("#results-statistics-link").removeClass("btn-info").addClass("btn-default");
-					$("#results-statistics-quiz-link").addClass("btn-info");
+					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-quiz-link").addClass("btn-primary");
 					
 					$("#results-table").find(".RowsPerPage").addClass('hidden');
 					$("#pager").addClass('hidden');
@@ -405,24 +439,72 @@
 			}
 			
 			$('#resultType').val(resultType);
-			checkDeleteBoxes();			
+			//checkDeleteBoxes();			
 		}
 		
 		var exportType;
-		var exportFormat;
+		//var exportFormat;
 		
-		function showExportDialog(type, format)
+		function showExportDialog(type)
 		{
 			exportType = type;
-			exportFormat = format;
-			$('#export-name').val("");
-			$('#export-name-dialog-type').text(format.toUpperCase());
-			$('#export-name-dialog').find(".validation-error").hide();
-			$('#export-name-dialog').modal();	
-			$('#export-name-dialog').find("input").first().focus();
+			$('#exportnt-name').val("");
+			
+			if (type == "Content")
+			{
+				$('#exportnt-format-content').show();
+				$('#exportnt-format-statistics').hide();
+				$('#exportnt-format-statistics-quiz').hide();				
+			} else if (type == "Statistics")
+			{
+				$('#exportnt-format-content').hide();
+				$('#exportnt-format-statistics').show();
+				$('#exportnt-format-statistics-quiz').hide();				
+			} else if (type == "StatisticsQuiz")
+			{
+				$('#exportnt-format-content').hide();
+				$('#exportnt-format-statistics').hide();
+				$('#exportnt-format-statistics-quiz').show();				
+			}
+			
+			$('#export-name-type-dialog').find(".validation-error").hide();
+			$('#export-name-type-dialog').modal();	
+			$('#export-name-type-dialog').find("input").first().focus();
 		}
 		
-		function startExport(name)
+		function checkAndStartExportNT(name, type)
+		 {			 
+			$("#export-name-type-dialog").find(".validation-error").hide();
+			 
+			if (name === null || name.trim().length === 0)
+			{
+	            $("#export-name-type-dialog").find("#validation-error-required").show();
+	            return;
+	        }
+		
+	        var reg = /^[a-zA-Z0-9-_\.]+$/;
+	        if( !reg.test( name ) ) {
+	            $("#export-name-type-dialog").find("#validation-error-exportname").show();
+	            return;		  
+	        };
+	        
+	        var format = "";
+	        if (exportType === "Content")
+	        {
+	        	format = $('#exportnt-format-content').val();
+	        } else if (exportType === "Statistics")
+	        {
+	        	format = $('#exportnt-format-statistics').val();
+	        } else if (exportType === "StatisticsQuiz")
+	        {
+	        	format = $('#exportnt-format-statistics-quiz').val();
+	        }
+			
+	        startExport(name, format);
+	        $("#export-name-type-dialog").modal("hide");	 
+		 }
+		
+		function startExport(name, format)
 		{
 			var showshortnames = $("#show-assigned-values").is(":checked");
 			var allanswers = $("#allAnswers").val();
@@ -431,7 +513,7 @@
 			
 			$.ajax({
 	           type: "POST",
-	           url: "${contextpath}/exports/start/" + exportType + "/" + exportFormat,
+	           url: "${contextpath}/exports/start/" + exportType + "/" + format,
 	           data: {exportName: name, showShortnames: showshortnames, allAnswers: allanswers, group: ""},
 	           beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 	           success: function(data)
@@ -675,9 +757,9 @@
 		
 		<div class="fixedtitleform" style="padding-left: 10px; padding-right: 10px; padding-bottom:7px; border-bottom: 0px solid #ddd;">
 					
-			<div style="width: 1100px; vertical-align: middle; margin-left: auto; margin-right: auto; margin-top: 10px;">		
+			<div style="vertical-align: middle; margin-left: auto; margin-right: auto; margin-top: 10px;">		
 				<div style="float: left; margin-top: 0px; margin-bottom: 0px;">		
-					<a id="results-table-link" class="btn btn-xs btn-info" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
+					<a id="results-table-link" class="btn btn-xs btn-primary" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
 					<a id="results-statistics-link" class="btn btn-default btn-xs" onclick="switchTo('statistics');"><img src="${contextpath}/resources/images/icons/24/percentage.png" /></a>
 					<c:if test="${form.survey.isQuiz}">
 						<a id="results-statistics-quiz-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
@@ -685,8 +767,8 @@
 				</div>
 				
 				<div style="float: left; margin-top: 0px; margin-right: 20px;">
-					<b><spring:message code="label.Source" /></b>
-					<select onchange="$('#resultsForm').submit();" name="results-source" id="results-source" style="width: auto; margin-bottom: 0px">
+					<!-- <b><spring:message code="label.Source" /></b>-->
+					<select onchange="$('#resultsForm').submit();" class="form-control" name="results-source" id="results-source" style="width: auto; margin-bottom: 0px; margin-left: 10px;">
 						<c:choose>
 							<c:when test="${!sessioninfo.owner.equals(USER.id) && USER.formPrivilege < 2 && USER.getLocalPrivilegeValue('AccessResults') < 1}">
 									<option selected="selected" value="draft"><spring:message code="label.TestAnswers" /></option>
@@ -697,8 +779,8 @@
 								<c:choose>
 									<c:when test="${!form.getSurvey().getIsDraft() || form.getSurvey().getIsPublished()}">
 										<option value="draft"><spring:message code="label.TestAnswers" /></option>
-										<option selected="selected" value="active"><spring:message code="label.PublishedSurveyAnswers" /></option>
-										<option value="allanswers"><spring:message code="label.PublishedSurveyAnswersAll" /></option>
+										<option selected="selected" value="active"><spring:message code="label.Contributions" /></option>
+										<option value="allanswers"><spring:message code="label.ContributionsIncludingDeletedQuestions" /></option>
 									</c:when>
 									<c:otherwise>
 										<option selected="selected" value="draft"><spring:message code="label.TestAnswers" /></option>
@@ -711,11 +793,31 @@
 						</c:choose>
 					</select>
 					
-					<a onclick="$(this).closest('form').submit()" class="btn btn-info" style="margin-left: 30px"><spring:message code="label.Search" /></a>
-					<a id="resetbutton" onclick="$('#show-wait-image').modal('show');" class="btn btn-default" href="${contextpath}/${sessioninfo.shortname}/management/results?reset=true"><spring:message code="label.ResetFilter" /></a>
+					<!-- <a onclick="$(this).closest('form').submit()" class="btn btn-primary" style="margin-left: 30px"><spring:message code="label.Search" /></a>
+					<a id="resetbutton" onclick="$('#show-wait-image').modal('show');" class="btn btn-default" href="${contextpath}/${sessioninfo.shortname}/management/results?reset=true"><spring:message code="label.ResetFilter" /></a> -->
+				</div>
+				<div style="margin-top: 2px; margin-right: 10px; float: right;">
+					<a class="btn btn-default" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><spring:message code="label.Settings" /></a>
 					
-					<a style="margin-left: 30px" data-placement="bottom" data-toggle="tooltip" title="<spring:message code="label.Configure" />" class="iconbutton" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><span class="glyphicon glyphicon-wrench"></span></a>
-					<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton disabled hideme" style="margin: 0px" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-trash"></span></a>
+					<c:choose>
+						<c:when test="${resultsShowAssignedValues}">
+							<input type="checkbox" style="display: none" id="show-assigned-values" checked="checked" />
+						</c:when>
+						<c:otherwise>
+							<input type="checkbox" style="display: none" id="show-assigned-values" />
+						</c:otherwise>
+					</c:choose>
+					
+					 <c:choose>
+					 	<c:when test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
+							<input checked="checked" value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
+						</c:when>
+						<c:otherwise>
+							<input value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
+						</c:otherwise>
+					</c:choose>	
+					
+					<!-- <a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton disabled hideme" style="margin: 0px" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-trash"></span></a>
 
 					<input onclick="checkAssignedValues()" name="show-assigned-values" type="checkbox" class="hideme" id="show-assigned-values" />
 					<a id="show-assigned-values-icon" onclick="switchAssignedValues()" class="switchiconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ShowAssignedValues" />" data-placement="bottom"><span class="glyphicon glyphicon-tags"></span></a>
@@ -730,73 +832,42 @@
 								<a id="show-delete-checkboxes-icon" onclick="switchDeleteCheckboxes()" class="switchiconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ShowDeleteCheckboxes" />" data-placement="bottom"><span class="glyphicon glyphicon-check"></span></a>
 							</c:otherwise>
 						</c:choose>
-					</span>			
-				</div>
+					</span>-->					
 					
-				<div id="content-export-buttons" style="min-width: 200px; margin-top: 2px; float: right; text-align: center">
-					<b><spring:message code="label.Export" /></b>					
+					<span id="content-export-buttons">
 						<span class="deactivatedexports">
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportContentLinkxls"  ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportContentLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxml" />" style="cursor: not-allowed" id="startExportContentLinkxml" ><img src="${contextpath}/resources/images/file_extension_xml_small_grey.png" /></a>
-							<c:if test="${!allanswers}">
-		 						<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportContentLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a> 
-							</c:if>
+							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
 						</span>
 						<span class="activatedexports hideme">
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportContentLinkxls" onclick="showExportDialog('Content', 'xls')"><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportContentLinkods" onclick="showExportDialog('Content', 'ods')"><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxml" />" id="startExportContentLinkxml" onclick="showExportDialog('Content', 'xml')"><img src="${contextpath}/resources/images/file_extension_xml_small.png" /></a>
-							<c:if test="${!allanswers}">
-		 						<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportContentLinkpdf" onclick="showExportDialog('Content', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a> 
-							</c:if>
+							<a class="btn btn-default" onclick="showExportDialog('Content')"><spring:message code="label.Export" /></a>
+						</span>					
+					</span>
+					
+					<span id="statistics-export-buttons" class="hidden">
+						<c:choose>
+							<c:when test="${form.getSurvey().hasNoQuestionsForStatistics()}">
+								<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+							</c:when>
+							<c:otherwise>
+								<span class="deactivatedexports">
+									<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>
+								</span>
+								<span class="activatedexports hideme">
+									<a class="btn btn-default" onclick="showExportDialog('Statistics')"><spring:message code="label.Export" /></a>
+								</span>
+							</c:otherwise>
+						</c:choose>					
+					</span>
+					
+					<span id="statistics-quiz-export-buttons" class="hidden">
+						<span class="deactivatedexports">
+							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	
 						</span>
-				</div>
-				
-				<div id="statistics-export-buttons" style="min-width: 200px; margin-top: 2px; float: right; text-align: center" class="hidden">
-					<b><spring:message code="label.Export" /></b>
-					
-					<c:choose>
-						<c:when test="${form.getSurvey().hasNoQuestionsForStatistics()}">
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
-						</c:when>
-						<c:otherwise>
-							<span class="deactivatedexports">
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" style="cursor: not-allowed" id="startExportStatisticsLinkxls" ><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" style="cursor: not-allowed" id="startExportStatisticsLinkods" ><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" style="cursor: not-allowed" id="startExportStatisticsLinkdoc" ><img src="${contextpath}/resources/images/file_extension_doc_small_grey.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" style="cursor: not-allowed" id="startExportStatisticsLinkodt" ><img src="${contextpath}/resources/images/file_extension_odt_small_grey.png" /></a>
-							</span>
-							<span class="activatedexports hideme">
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportStatisticsLinkpdf"  onclick="showExportDialog('Statistics', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>				
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadxls" />" id="startExportStatisticsLinkxls"  onclick="showExportDialog('Statistics', 'xls')"><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadods" />" id="startExportStatisticsLinkods"  onclick="showExportDialog('Statistics', 'ods')"><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloaddoc" />" id="startExportStatisticsLinkdoc"  onclick="showExportDialog('Statistics', 'doc')"><img src="${contextpath}/resources/images/file_extension_doc_small.png" /></a>
-								<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadodt" />" id="startExportStatisticsLinkodt"  onclick="showExportDialog('Statistics', 'odt')"><img src="${contextpath}/resources/images/file_extension_odt_small.png" /></a>
-							</span>
-						</c:otherwise>
-					</c:choose>
-					
-				</div>
-				
-				<div id="statistics-quiz-export-buttons" style="min-width: 200px; margin-top: 2px; float: right; text-align: center" class="hidden">
-					<b><spring:message code="label.Export" /></b>
-					
-					<c:choose>
-						<c:when test="${paging.items.size() == 0}">
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" style="cursor: not-allowed" id="startExportQuizStatisticsLinkpdf" ><img src="${contextpath}/resources/images/file_extension_pdf_small_grey.png" /></a>				
-						</c:when>
-						<c:otherwise>
-							<a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadpdf" />" id="startExportQuizStatisticsLinkpdf"  onclick="showExportDialog('StatisticsQuiz', 'pdf')"><img src="${contextpath}/resources/images/file_extension_pdf_small.png" /></a>				
-						</c:otherwise>
-					</c:choose>
-					
-				</div>			
+						<span class="activatedexports hideme">
+							<a class="btn btn-default" onclick="showExportDialog('StatisticsQuiz')"><spring:message code="label.Export" /></a>
+						</span>		
+					</span>
+				</div>	
 				
 				<div style="clear: both"></div>	
 			</div>
@@ -832,66 +903,87 @@
 		<div class="modal-dialog">
     	<div class="modal-content">
 		<div class="modal-header">
-			<spring:message code="message.SelectResultQuestions" />
-			<div class="help" style="margin-bottom: -15px;"><spring:message code="info.SelectResultQuestions" /></div>
+			<spring:message code="label.Settings" />
 		</div>
 		<div class="modal-body">
-			<div style="max-height: 600px; overflow: auto;">
+			<table class="table table-condensed table-bordered">
+				<tr>
+					<td><spring:message code="label.ShowAssignedValues" /></td>
+					<td style="padding-left: 10px;">
+						<input id="dialog-show-assigned-values-true" value="true" name="dialog-show-assigned-values" type="radio" class="check"><spring:message code="label.Yes" />
+						&nbsp;&nbsp;
+						<input id="dialog-show-assigned-values-false" value="false" name="dialog-show-assigned-values" type="radio" class="check"><spring:message code="label.No" />
+					</td>
+				</tr>
+			</table>
+		
+			<div style="margin-top: 10px; margin-bottom: 10px">
+				<b><spring:message code="message.SelectResultQuestions" /></b>
+				<div class="help"><spring:message code="info.SelectResultQuestions" /></div>
+			</div>
+		
+			<div style="max-height: 500px; overflow: auto;">
 			
-			<table class="table-bordered table-striped table-styled" id="tblConfigurationFromResult">	
+			<table class="table table-bordered table-striped table-styled" id="tblConfigurationFromResult">	
 				<thead>
 					<tr>
-						<th style="padding-left: 5px; min-width: 100px"><input class="check" type="checkbox" id="chkallShow" onclick="checkAllShow()" /><spring:message code="label.Show" /></th>
-						<th style="padding-left: 5px; min-width: 100px"><input class="check" type="checkbox" id="chkallExport" onclick="checkAllExport()" /><spring:message code="label.Export" /></th>
-						<th style="padding-left: 5px; padding-top: 5px"><spring:message code="label.Element" /></th>
+						<th style="min-width: 100px;">
+							<input type="checkbox" class="check2" id="chkallShow" onclick="checkAllShow()" />
+							<spring:message code="label.Show" />
+						</th>
+						<th style="min-width: 100px;">
+							<input type="checkbox" class="check2" id="chkallExport" onclick="checkAllExport()" />
+							<spring:message code="label.Export" />
+						</th>
+						<th><spring:message code="label.Element" /></th>
 					</tr>
 				<thead>
 				<tbody>
 					<c:forEach items="${questions}" var="question">
 						<c:if test="${question.getType() != 'Image' && question.getType() != 'Text' && question.getType() != 'Confirmation'  && question.getType() != 'Ruler' && !(question.getType() == 'GalleryQuestion' && !question.selection) }">
 							<tr>
-								<td style="vertical-align: top; text-align: center"><input name="selected${question.id}" <c:if test="${filter.visible(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="${question.id}" /></td>
-								<td style="vertical-align: top; text-align: center"><input name="exportselected${question.id}" <c:if test="${filter.exported(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exported${question.id}" /></td>
+								<td style="vertical-align: top;"><input name="selected${question.id}" <c:if test="${filter.visible(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="${question.id}" /></td>
+								<td style="vertical-align: top; "><input name="exportselected${question.id}" <c:if test="${filter.exported(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exported${question.id}" /></td>
 								<td>${question.title.length() > 0? question.getStrippedTitleAtMost100() : question.shortname}</td>
 							</tr>
 						</c:if>
 					</c:forEach>
 					
 					<tr>
-						<td style="vertical-align: top; text-align: center"><input name="selectedinvitation" <c:if test='${filter.visible("invitation")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="invitation" /></td>
-						<td style="vertical-align: top; text-align: center"><input name="exportselectedinvitation" <c:if test='${filter.exported("invitation")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedinvitation" /></td>
+						<td style="vertical-align: top;"><input name="selectedinvitation" <c:if test='${filter.visible("invitation")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="invitation" /></td>
+						<td style="vertical-align: top;"><input name="exportselectedinvitation" <c:if test='${filter.exported("invitation")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedinvitation" /></td>
 						<td><spring:message code="label.InvitationNumber" /></td>
 					</tr>
 					<tr>
-						<td style="vertical-align: top; text-align: center"><input name="selectedcase" <c:if test='${filter.visible("case")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="case" /></td>
-						<td style="vertical-align: top; text-align: center"><input name="exportselectedcase" <c:if test='${filter.exported("case")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedcase" /></td>
+						<td style="vertical-align: top;"><input name="selectedcase" <c:if test='${filter.visible("case")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="case" /></td>
+						<td style="vertical-align: top;"><input name="exportselectedcase" <c:if test='${filter.exported("case")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedcase" /></td>
 						<td><spring:message code="label.ContributionId" /></td>
 					</tr>
 					<tr>
-						<td style="vertical-align: top; text-align: center"><input name="selecteduser" <c:if test='${filter.visible("user")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="user" /></td>
-						<td style="vertical-align: top; text-align: center"><input name="exportselecteduser" <c:if test='${filter.exported("user")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exporteduser" /></td>
+						<td style="vertical-align: top;"><input name="selecteduser" <c:if test='${filter.visible("user")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="user" /></td>
+						<td style="vertical-align: top;"><input name="exportselecteduser" <c:if test='${filter.exported("user")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exporteduser" /></td>
 						<td><spring:message code="label.UserName" /></td>
 					</tr>
 					<tr>
-						<td style="vertical-align: top; text-align: center"><input name="selectedcreated" <c:if test='${filter.visible("created")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="created" /></td>
-						<td style="vertical-align: top; text-align: center"><input name="exportselectedcreated" <c:if test='${filter.exported("created")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedcreated" /></td>
+						<td style="vertical-align: top;"><input name="selectedcreated" <c:if test='${filter.visible("created")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="created" /></td>
+						<td style="vertical-align: top;"><input name="exportselectedcreated" <c:if test='${filter.exported("created")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedcreated" /></td>
 						<td><spring:message code="label.CreationDate" /></td>
 					</tr>
 					<tr>
-						<td style="vertical-align: top; text-align: center"><input name="selectedupdated" <c:if test='${filter.visible("updated")}'>checked="checked"</c:if> type="checkbox" class="check" id="updated" /></td>
-						<td style="vertical-align: top; text-align: center"><input name="exportselectedupdated" <c:if test='${filter.exported("updated")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedupdated" /></td>
+						<td style="vertical-align: top;"><input name="selectedupdated" <c:if test='${filter.visible("updated")}'>checked="checked"</c:if> type="checkbox" class="check" id="updated" /></td>
+						<td style="vertical-align: top;"><input name="exportselectedupdated" <c:if test='${filter.exported("updated")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedupdated" /></td>
 						<td><spring:message code="label.LastUpdate" /></td>
 					</tr>
 					<tr>
-						<td style="vertical-align: top; text-align: center"><input name="selectedlanguages" <c:if test='${filter.visible("languages")}'>checked="checked"</c:if> type="checkbox" class="check" id="languages" /></td>
-						<td style="vertical-align: top; text-align: center"><input name="exportselectedlanguages" <c:if test='${filter.exported("languages")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedlanguages" /></td>
+						<td style="vertical-align: top;"><input name="selectedlanguages" <c:if test='${filter.visible("languages")}'>checked="checked"</c:if> type="checkbox" class="check" id="languages" /></td>
+						<td style="vertical-align: top;"><input name="exportselectedlanguages" <c:if test='${filter.exported("languages")}'>checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exportedlanguages" /></td>
 						<td><spring:message code="label.Languages" /></td>
 					</tr>
 						
 					<c:if test="${form.getSurvey().isQuiz}">
 						<tr>
-							<td style="vertical-align: top; text-align: center"><input checked="checked" disabled="disabled" type="checkbox" class="check" /></td>
-							<td style="vertical-align: top; text-align: center"><input checked="checked" disabled="disabled" type="checkbox" class="check" /></td>
+							<td style="vertical-align: top;"><input checked="checked" disabled="disabled" type="checkbox" class="check" /></td>
+							<td style="vertical-align: top;"><input checked="checked" disabled="disabled" type="checkbox" class="check" /></td>
 							<td><spring:message code="label.TotalScore" /></td>
 						</tr>
 					</c:if>
@@ -901,7 +993,7 @@
 			</div>
 		</div>
 		<div class="modal-footer">
-			<a id="btnOkFromConfigurationResult" onclick="$('#resultsFormMode').val('configure'); $('#configure-columns-dialog').modal('hide'); $('#resultsForm').submit();" class="btn btn-info" ><spring:message code="label.OK" /></a>		
+			<a id="btnOkFromConfigurationResult" onclick="$('#resultsFormMode').val('configure'); $('#configure-columns-dialog').modal('hide'); $('#resultsForm').submit();" class="btn btn-primary" ><spring:message code="label.OK" /></a>		
 			<a class="btn btn-default" onclick="resetSelections($('#tblConfigurationFromResult'))" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>
@@ -916,7 +1008,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="deleteSingleContributionConfirm" onclick="deleteContribution()"  class="btn btn-info"><spring:message code="label.Yes" /></a>
+			<a id="deleteSingleContributionConfirm" onclick="deleteContribution()"  class="btn btn-primary"><spring:message code="label.Yes" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>					
 		</div>
 		</div>
@@ -937,7 +1029,7 @@
 		</div>
 		<div class="modal-footer">
 			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="deleteContributionConfirm" onclick="submitDeleteMultiple()"  class="btn disabled btn-info"><spring:message code="label.Yes" /></a>
+			<a id="deleteContributionConfirm" onclick="submitDeleteMultiple()"  class="btn disabled btn-primary"><spring:message code="label.Yes" /></a>
 			<a id="deleteContributionCancel"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>					
 		</div>
 		</div>
@@ -951,11 +1043,75 @@
 			<spring:message code="info.NoContributionsToDelete" />
 		</div>
 		<div class="modal-footer">
-			<a  class="btn btn-info" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
+			<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 		</div>
 		</div>
 		</div>
 	</div>
+	
+	<div class="modal" id="export-name-type-dialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+   		<div class="modal-content">
+		<div class="modal-header" style="font-weight: bold;">
+			<spring:message code="label.Export" />
+		</div>
+		<div class="modal-body" style="padding-left: 10px;">
+			<table>
+				<tr>
+					<td style="vertical-align: top;">
+						<span class="mandatory">*</span>
+					</td>
+					<td style="vertical-align: top;">
+						<label for="exportnt-name" style="display:inline"><spring:message code="label.ExportName2" /></label>
+					</td>
+					<td style="vertical-align: top;">
+						<div style="margin-left: 20px; margin-bottom: 10px;">
+							<input class="form-control" type="text" id="exportnt-name" maxlength="255" style="width:150px;" />
+							<span id="validation-error-required" class="validation-error hideme"><spring:message code="validation.required" /></span>
+							<span id="validation-error-exportname" class="validation-error hideme"><spring:message code="validation.name2" /></span>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<label for="exportnt-name" style="display:inline"><spring:message code="label.Format" /></label>
+					</td>
+					<td>
+						<div style="margin-left: 20px">
+							<select class="form-control" style="width:150px;" id="exportnt-format-content">
+								<option value="xls">XLS</option>
+								<option value="ods">ODS</option>
+								<option value="xml">XML</option>
+								<c:if test="${!allanswers}">
+									<option value="pdf">PDF</option>
+			 					</c:if>
+							</select>
+							<select class="form-control" id="exportnt-format-statistics">
+								<option value="pdf">PDF</option>
+								<option value="xls">XLS</option>
+								<option value="ods">ODS</option>
+								<option value="doc">DOC</option>
+								<option value="odt">ODT</option>
+							</select>
+							<select class="form-control" id="exportnt-format-statistics-quiz">
+								<option value="pdf">PDF</option>
+							</select>
+						</div>			
+					</td>
+				</tr>
+			</table>	
+			
+			
+		</div>
+		<div class="modal-footer">
+			<img alt="wait animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+			<a id="okStartExportButton"  onclick="checkAndStartExportNT($('#exportnt-name').val(), $('#exportnt-format').val());"  class="btn btn-primary"><spring:message code="label.OK" /></a>	
+			<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
+		</div>
+		</div>
+		</div>
+	</div>	
 	
 </body>
 </html>

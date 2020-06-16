@@ -10,11 +10,9 @@ import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.AnswerService;
-import com.ec.survey.service.SessionService;
-import com.ec.survey.service.SurveyService;
-import com.ec.survey.service.TranslationService;
+import com.ec.survey.service.ValidCodesService;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizHelper;
 import com.ec.survey.tools.SurveyHelper;
@@ -42,24 +40,12 @@ import java.util.Set;
 @Controller
 public class ContributionController extends BasicController {
 	
-	@Resource(name = "answerService")
-	private AnswerService answerService;
+	private @Value("${server.prefix}") String host;	
 	
-	@Resource(name = "surveyService")
-	private SurveyService surveyService;
+	@Resource(name = "validCodesService")
+	private ValidCodesService validCodesService;
 	
-	@Resource(name = "translationService")
-	private TranslationService translationService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;	
-	
-	private @Value("${server.prefix}") String host;
-	
-	private @Value("${export.fileDir}") String fileDir;	
-	private @Value("${server.prefix}") String serverPrefix;
-	
-	public AnswerSet getAnswerSet(String code, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException
+	public AnswerSet getAnswerSet(String code, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException
 	{
 		AnswerSet answerSet = null;
 		User user = sessionService.getCurrentUser(request);
@@ -293,6 +279,8 @@ public class ContributionController extends BasicController {
 			if (isdraft) {
 				model.addObject("draftid", draftid);
 			}
+			
+			validCodesService.revalidate(answerSet.getUniqueCode(), newestSurvey);
 			
 			//recreate uploaded files
 			SurveyHelper.recreateUploadedFiles(answerSet, fileDir, translated, fileService);

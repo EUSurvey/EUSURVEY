@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -44,7 +45,7 @@ public class UserController extends BasicController {
     @Autowired
 	protected PaginationMapper paginationMapper;    
 	
-	@RequestMapping
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView users(HttpServletRequest request, Model model) throws Exception {	
 		
 		Paging<User> paging = new Paging<>();
@@ -112,9 +113,39 @@ public class UserController extends BasicController {
 		return new ModelAndView("redirect:/administration/users?unfrozen=1");	
 	}
 		
-	@RequestMapping(value = "/createUser", method = RequestMethod.POST)
-	public ModelAndView createUser(@RequestParam("add-login") String login, @RequestParam("add-email") String email, @RequestParam("add-other-email") String otherEmail, @RequestParam("add-firstname") String firstname, @RequestParam("add-lastname") String lastname, @RequestParam("add-comment") String comment, @RequestParam("add-password") String password, @RequestParam("add-language") String language, @RequestParam("add-roles") String roles, HttpServletRequest request, Model model, Locale locale) throws Exception {	
-				
+	@RequestMapping(method = {RequestMethod.POST})
+	public ModelAndView usersPOST(HttpServletRequest request, Model model, Locale locale) throws Exception {	
+    	
+    	String target = request.getParameter("target");
+    	if (target != null)
+    	{
+    		if (target.equals("createUser"))
+    		{
+    			return createUser(request, model, locale);
+    		} else if (target.equals("updateUser"))
+    		{
+    			return updateUser(request, model, locale);
+    		} else if (target.equals("deleteUser"))
+    		{
+    			return deleteUser(request, model, locale);
+    		}
+    	}
+    	
+    	return users(request, model);
+    }
+
+	public ModelAndView createUser(HttpServletRequest request, Model model, Locale locale) throws Exception {	
+		
+		String login = request.getParameter("add-login");
+		String email = request.getParameter("add-email");
+		String otherEmail = request.getParameter("add-other-email");
+		String firstname = request.getParameter("add-firstname");
+		String lastname = request.getParameter("add-lastname");
+		String comment = request.getParameter("add-comment");
+		String password = request.getParameter("add-password");
+		String language = request.getParameter("add-language");
+		String roles = request.getParameter("add-roles"); 
+						
 		List<User> users = administrationService.getAllUsers();
 		boolean valid = true;
 		for (User user : users) {
@@ -170,8 +201,17 @@ public class UserController extends BasicController {
 		return users(request, model);
 	}
 	
-	@RequestMapping(value = "/updateUser", method = RequestMethod.POST)
-	public ModelAndView updateUser(@RequestParam("update-id") String id, @RequestParam("update-email") String email, @RequestParam("update-other-email") String otherEmail, @RequestParam("update-firstname") String firstname, @RequestParam("update-lastname") String lastname, @RequestParam("update-comment") String comment, @RequestParam("update-password") String password, @RequestParam("update-language") String language, @RequestParam("update-roles") String roles, HttpServletRequest request, Model model, Locale locale) throws Exception {	
+	public ModelAndView updateUser(HttpServletRequest request, Model model, Locale locale) throws Exception {	
+		
+		String id = request.getParameter("update-id");
+		String email = request.getParameter("update-email");
+		String otherEmail = request.getParameter("update-other-email");
+		String firstname = request.getParameter("update-firstname");
+		String lastname = request.getParameter("update-lastname");
+		String comment = request.getParameter("update-comment");
+		String password = request.getParameter("update-password");
+		String language = request.getParameter("update-language");
+		String roles = request.getParameter("update-roles"); 
 		
 		User user = administrationService.getUser(Integer.parseInt(id));
 		
@@ -220,10 +260,10 @@ public class UserController extends BasicController {
 		return users(request, model);
 	}
 	
-	@RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
-	public ModelAndView deleteUser(@RequestParam("id") String id, HttpServletRequest request,  Model model, Locale locale) throws Exception {	
-				
+	public ModelAndView deleteUser(HttpServletRequest request,  Model model, Locale locale) throws Exception {	
+			
 		try {
+			String id = request.getParameter("id");
 			String login = administrationService.deleteUser(Integer.parseInt(id));	
 			model.addAttribute("info", resources.getMessage("info.UserDeleted", new Object[] {login}, "Deletion failed", locale));
 			
@@ -235,6 +275,25 @@ public class UserController extends BasicController {
 			model.addAttribute("error", resources.getMessage("error.DeletionFailed", null, "Deletion failed", locale));
 		}
 		return users(request, model);
+	}
+	
+	@RequestMapping(value = "/undoDelete", method = {RequestMethod.POST})
+	public @ResponseBody String undoDelete(HttpServletRequest request) {
+		String sid = request.getParameter("id");
+		if (sid == null || sid.length() == 0) return "invalid id";
+				
+		try {
+			int id = Integer.parseInt(sid);
+			User user = administrationService.getUser(id);
+			if (user == null) return "invalid id";
+			
+			user.setDeleted(false);
+			administrationService.updateUser(user);
+			return "OK";
+			
+		} catch (NumberFormatException e) {
+			return "invalid id";
+		}
 	}
 			
 }

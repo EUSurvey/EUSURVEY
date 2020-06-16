@@ -79,15 +79,15 @@ public class TaskUpdater implements Runnable, BeanFactoryAware {
 					User u = administrationService.getUser(archive.getUserId());
 					ArchiveExecutor export = (ArchiveExecutor) context.getBean("archiveExecutor"); 
 					export.init(archive, survey, u);
-					export.prepare();
-					
-					//it's not allowed to override existing archive files so we have to delete them first
-					java.io.File target = new java.io.File(archiveFileDir + survey.getUniqueId());
-					if (target.exists())
-					{
-						target.delete();
+					if (export.prepare()) {					
+						//it's not allowed to override existing archive files so we have to delete them first
+						java.io.File target = new java.io.File(archiveFileDir + survey.getUniqueId());
+						if (target.exists())
+						{
+							target.delete();
+						}
+						taskExecutorLong.execute(export);
 					}
-					taskExecutorLong.execute(export);
 				}
 			}
 			

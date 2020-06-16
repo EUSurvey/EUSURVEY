@@ -5,7 +5,8 @@
 <div class="modal" id="import-attendees-step1-dialog" data-backdrop="static">
 	<div class="modal-dialog">
     <div class="modal-content">
-	<form:form action="${contextpath}/addressbook/importAttendees?${_csrf.parameterName}=${_csrf.token}" modelAttribute="uploadItem" name="frm" id="import-attendees-form" method="post" enctype="multipart/form-data" style="margin: 0px;">
+	<form:form action="${contextpath}/addressbook?${_csrf.parameterName}=${_csrf.token}" modelAttribute="uploadItem" name="frm" id="import-attendees-form" method="post" enctype="multipart/form-data" style="margin: 0px;">
+		<input type="hidden" name="target" value="importAttendees" />
 		<div class="modal-header">
 			<b><spring:message code="label.ImportContactsStep1" /></b>
 		</div>
@@ -33,7 +34,7 @@
 			<div style="right: 10px; position: absolute;">
 				<a  class="btn btn-default" onclick="cancelAttendeesImport()"><spring:message code="label.Cancel" /></a>
 			</div>
-			<a onclick="checkFile();" class="btn btn-info"><spring:message code="label.Next" /></a>					
+			<a onclick="checkFile();" class="btn btn-primary"><spring:message code="label.Next" /></a>					
 		</div>
 	</form:form>
 	</div>
@@ -103,7 +104,7 @@
 			<div style="float: right">
 				<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 			</div>		
-			<a onclick="step3();" class="btn btn-info"><spring:message code="label.Next" /></a>		
+			<a onclick="step3();" class="btn btn-primary"><spring:message code="label.Next" /></a>		
 		</div>
 		</div>
 		</div>
@@ -112,7 +113,8 @@
 	<div class="modal" id="import-attendees-step3-dialog" data-backdrop="static">
 		<div class="modal-dialog">
     	<div class="modal-content">
-		<form:form action="${contextpath}/addressbook/${target}" name="frm" id="import-attendees-step3-form" method="post" style="margin: 0px;">
+		<form:form action="${contextpath}/addressbook" name="frm" id="import-attendees-step3-form" method="post" style="margin: 0px;">
+			<input type="hidden" name="target" id="import-attendees-step3-form-target" value="${target}" />
 		
 			<div class="modal-header">
 				<b><spring:message code="label.ImportContactsStep3" /></b>
@@ -171,7 +173,7 @@
 				<div style="float: right">
 					<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 				</div>		
-				<input type="submit" class="btn btn-info" value="<spring:message code="label.Save" />" />		
+				<input type="submit" class="btn btn-primary" value="<spring:message code="label.Save" />" />		
 			</div>
 		
 		</form:form>

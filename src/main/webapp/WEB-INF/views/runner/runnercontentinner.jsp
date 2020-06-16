@@ -179,15 +179,15 @@
 						<input type="button" id="btnPrevious" style="display: none;" value="${form.getMessage("label.Previous")}"  onclick="previousPage();" class="btn btn-default" />
 						<c:choose>
 							<c:when test="${dialogmode != null }">
-								<input type="button" id="btnSubmit" value="${form.getMessage("label.Save")}" onclick="validateInputAndSubmitRunner($('#runnerForm'));" class="btn btn-info" />
+								<input type="button" id="btnSubmit" value="${form.getMessage("label.Save")}" onclick="validateInputAndSubmitRunner($('#runnerForm'));" class="btn btn-primary" />
 								<input type="button" id="btnSubmit2" value="${form.getMessage("label.Close")}" onclick="window.open('', '_self', '');window.close();" class="btn btn-default" />
 							</c:when>
 							<c:otherwise>
-								<input type="button" id="btnSubmit" value="${form.getMessage("label.Submit")}" onclick="validateInputAndSubmitRunner($('#runnerForm'));" class="btn btn-info hidden" />
+								<input type="button" id="btnSubmit" value="${form.getMessage("label.Submit")}" onclick="validateInputAndSubmitRunner($('#runnerForm'));" class="btn btn-primary hidden" />
 							</c:otherwise>
 						</c:choose>
 						
-						<input type="button" id="btnNext" style="display: none;" value="${form.getMessage("label.Next")}"  onclick="nextPage();" class="btn btn-default btn-info" />
+						<input type="button" id="btnNext" style="display: none;" value="${form.getMessage("label.Next")}"  onclick="nextPage();" class="btn btn-default btn-primary" />
 					
 						<c:if test="${responsive != null && mode != 'editcontribution' && dialogmode == null && form.survey.saveAsDraft}">
 							<input type="button" id="btnSaveDraftMobile" value="${form.getMessage("label.SaveAsDraft")}" onclick="saveDraft('${mode}');" class="btn btn-default hidden" style="margin-left: 10px" />
@@ -298,6 +298,9 @@
 							<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Contact")}</div>
 							
 							<c:choose>
+								<c:when test="${form.survey.contact.startsWith('form:')}">
+									<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
+								</c:when>
 								<c:when test="${form.survey.contact.contains('@')}">
 									<i class="icon icon-envelope" style="vertical-align: middle"></i>
 									<a class="link" href="mailto:<esapi:encodeForHTMLAttribute>${form.survey.contact}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${form.survey.contact}</esapi:encodeForHTML></a>
@@ -317,7 +320,7 @@
 								<span id="download-survey-pdf-dialog-running" class="hideme">${form.getMessage("info.FileCreation")}</span>
 								<span id="download-survey-pdf-dialog-ready" class="hideme">${form.getMessage("info.FileCreated")}</span>
 								<div id="download-survey-pdf-dialog-spinner" class="hideme" style="padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>
-								<br /><a style="white-space: nowrap; overflow-x: visible; display: none; margin-top: 10px" id="download-survey-pdf-dialog-result" target="_blank" class="btn btn-info" href="<c:url value="/pdf/survey/${form.survey.id}?lang=${form.language.code}&unique=${uniqueCode}"/>">${form.getMessage("label.Download")}</a>
+								<br /><a style="white-space: nowrap; overflow-x: visible; display: none; margin-top: 10px" id="download-survey-pdf-dialog-result" target="_blank" class="btn btn-primary" href="<c:url value="/pdf/survey/${form.survey.id}?lang=${form.language.code}&unique=${uniqueCode}"/>">${form.getMessage("label.Download")}</a>
 								<div id="download-survey-pdf-dialog-error" class="hideme">${form.getMessage("error.OperationFailed")}</div>
 							</div>
 						</c:if>

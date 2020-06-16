@@ -66,7 +66,7 @@
 					<spring:message code="info.useDesktopPC" />
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-info" data-dismiss="modal"><spring:message code="label.Close" /></a>
+					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close" /></a>
 				</div>
 			</div>
 		</div>
@@ -97,7 +97,7 @@
 		<div id="download-answer-pdf-dialog-error"><spring:message code="error.OperationFailed" /></div>
 	</div>
 	<div class="modal-footer">
-		<a onclick="$('#download-answer-pdf-dialog').modal('hide')" id="download-answer-pdf-dialog-result" target="_blank" class="btn btn-info"><spring:message code="label.Download" /></a>
+		<a onclick="$('#download-answer-pdf-dialog').modal('hide')" id="download-answer-pdf-dialog-result" target="_blank" class="btn btn-primary"><spring:message code="label.Download" /></a>
 		<a onclick="$('body').scrollTop($('#download-answer-pdf-dialog').attr('data-scrolltop'))" rel="tooltip" title="<spring:message code="label.Cancel" />" data-dismiss="modal" class="btn btn-default"><spring:message code="label.Cancel" /></a>			
 	</div>
 	</div>
@@ -166,13 +166,15 @@
 	
 	function checkNewSurveyContactType()
 	{
-		if ($("#new-survey-contact-type").val() == "email")
+		if ($("#new-survey-contact-type").val() != "url")
 		{
+			$("#new-survey-contact").removeClass("url");	
 			$("#new-survey-contact").addClass("email");
 			$("#new-survey-contact-label").hide();
 			$("#new-survey-contact-label-label").hide();
 		} else {
 			$("#new-survey-contact").removeClass("email");	
+			$("#new-survey-contact").addClass("url");
 			$("#new-survey-contact-label").show();
 			$("#new-survey-contact-label-label").show();
 			$("#new-survey-contact-label").parent().find(".validation-error").remove();
@@ -252,15 +254,11 @@
 	
 	function importCopySurvey(login, email)
 	{
-		$('#new-survey-shortname').val(getNewSurveyId(login));
 		$('#create-survey-uuid').val(uuid);
 		$('#create-survey-original').val("");
 		$('#new-survey-title').val(title);
 		$('#new-survey-security-open').attr('checked','checked');
-		$("#new-survey-table").find(".hideimport").hide();
-		$("#new-survey-table").find(".hidecopy").hide();
-		
-		$('#show-import-copy-dialog').modal('hide');
+		$("#add-survey-dialog").find(".hideimport").hide();		
 		$('#add-survey-dialog').find("th").first().text("<spring:message code="label.Import" />");
 		$('#add-survey-dialog').find("#importbtn").show();
 		$('#add-survey-dialog').find("#createbtn").hide();
@@ -284,7 +282,6 @@
 		$("#new-survey-table").find(".hideimport").show();
 		$("#new-survey-table").find(".hidecopy").hide();
 		
-		$('#show-import-copy-dialog').modal('hide');
 		$('#add-survey-dialog').find("th").first().text("<spring:message code="label.Copy" />");
 		$('#add-survey-dialog').find("#importbtn").hide();
 		$('#add-survey-dialog').find("#createbtn").show();
@@ -320,10 +317,12 @@
 		$('#new-survey-security-open').attr('checked','checked');
 		$("#new-survey-quiz-no").prop("checked", "checked");
 		$('#new-survey-language').val("${USER.defaultPivotLanguage}");
+		$('#new-survey-contact-type').val("form");
 		$('#new-survey-contact').val("${USER.email}");
 		$('#new-survey-contact-label').val("");
-		$("#new-survey-table").find(".hideimport").show();
-		$("#new-survey-table").find(".hidecopy").show();
+		$("#add-survey-dialog").find(".hideimport").show();
+		$("#add-survey-dialog").find(".hidecopy").show();
+		$("#add-survey-dialog").find(".hidecreate").hide();		
 		$('#add-survey-dialog').find("th").first().text("<spring:message code="label.New" />");
 		$('#add-survey-dialog').find("#importbtn").hide();
 		$('#add-survey-dialog').find("#createbtn").show();
@@ -357,7 +356,8 @@
 	<div class="modal-dialog modal-lg">
     <div class="modal-content">
 	<div class="modal-header">
-		<spring:message code="label.NewSurvey" />
+		<span class="hidecopy hidecreate"><spring:message code="label.ImportSurvey" /></span>
+		<span class="hideimport"><spring:message code="label.NewSurvey" /></span>		
 	</div>
 	<div class="modal-body" style="padding: 10px;">
 		<table class="table table-striped table-bordered" id="new-survey-table">
@@ -392,14 +392,33 @@
 						<div id="new-survey-shortname-exists" class="hideme alert-danger"><spring:message code="message.ShortnameAlreadyExists" /></div>
 					</td>
 				</tr>
-				<tr class="hideimport hidecopy">
+				<tr class="hidecopy">
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Title" /></td>
 					<td>
 						<textarea class="tinymcealign2 required xhtml freetext max2000" id="new-survey-title"></textarea>
 					</td>
 				</tr>
+				<tr>
+					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Contact" /></td>
+					<td>
+						<div style="float:left; text-align: right;">
+							<select onchange="checkNewSurveyContactType()" class="form-control" id="new-survey-contact-type" style="width: auto;">
+								<option value="form" selected="selected"><spring:message code="label.ContactForm" /></option>
+								<option value="email"><spring:message code="label.Email" /></option>
+								<option value="url"><spring:message code="label.Webpage" /></option>								
+							</select>
+							<div id="new-survey-contact-label-label" style="display:none; font-weight: bold; margin-top: 10px;"><spring:message code="label.Label" /></div>
+						</div>
+						<div style="float:left; margin-left: 10px">
+							<input class="required email form-control" maxlength="255" id="new-survey-contact" value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" type="text" />
+							<input type="text" class="form-control" style="display:none; margin-top: 10px;" id="new-survey-contact-label" />
+						</div>
+						<div style="clear: both;"></div>
+						<div style="color: #777; margin-top: 10px;"><spring:message code="message.Contact" /></div>
+					</td>
+				</tr>	
 				<tr class="hideimport">
-					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Security" /></td>
+					<td class="table-label"><spring:message code="label.Security" /></td>
 					<td>
 						<input class="required check" type="radio" name="new-survey-security" id="new-survey-security-open" value="open" /><spring:message code="form.Open" />&#160;
 						<input class="required check" style="margin-left: 20px;" type="radio" name="new-survey-security" id="new-survey-security-secured" value="secured" /><spring:message code="form.Secured" />&#160;
@@ -413,7 +432,7 @@
 					</td>
 				</tr>
 				<tr class="hideimport hidecopy">
-					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.PivotLanguage" /></td>
+					<td class="table-label"><spring:message code="label.Language" /></td>
 					<td>
 						<select class="required form-control" style="width: 300px" name="new-survey-language" id="new-survey-language">						
 							<c:forEach items="${languages}" var="language">				
@@ -432,24 +451,6 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Contact" /></td>
-					<td>
-						<div style="float:left; text-align: right;">
-							<select onchange="checkNewSurveyContactType()" class="form-control" id="new-survey-contact-type" style="width: 120px;">
-								<option value="email" selected="selected"><spring:message code="label.Email" /></option>
-								<option value="url"><spring:message code="label.Webpage" /></option>								
-							</select>
-							<div id="new-survey-contact-label-label" style="display:none; font-weight: bold; margin-top: 10px;"><spring:message code="label.Label" /></div>
-						</div>
-						<div style="float:left; margin-left: 10px">
-							<input class="required email form-control" maxlength="255" id="new-survey-contact" value="<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>" type="text" />
-							<input type="text" class="form-control" style="display:none; margin-top: 10px;" id="new-survey-contact-label" />
-						</div>
-						<div style="clear: both;"></div>
-						<div style="color: #777; margin-top: 10px;"><spring:message code="message.InsertEmail" /></div>
-					</td>
-				</tr>	
-				<tr>
 					<td class="table-label"><span class="mandatory">*</span><spring:message code="label.Confirmation" /></td>
 					<td>
 						<div style="float: left; height: 50px; margin-right: 10px;">
@@ -464,8 +465,8 @@
 	</div>
 	<div class="modal-footer">
 		<img alt="wait animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-		<a id="createbtn"  onclick="createNewSurvey();" class="btn btn-info"><spring:message code="label.Create" /></a>
-		<a id="importbtn"  onclick="createNewSurvey();" class="btn btn-info hideme"><spring:message code="label.Import" /></a>
+		<a id="createbtn" onclick="createNewSurvey();" class="btn btn-primary"><spring:message code="label.Create" /></a>
+		<a id="importbtn" onclick="createNewSurvey();" class="btn btn-primary hideme"><spring:message code="label.Import" /></a>
 		<a  onclick="resetValidationErrors($('#new-survey-table'))" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
 	</div>	
 	</div>
@@ -488,21 +489,6 @@
 	<input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute>${origin}</esapi:encodeForHTMLAttribute>" />
 </form:form>
 
-	<div class="modal" id="show-import-copy-dialog" data-backdrop="static">
-		<div class="modal-dialog">
-    	<div class="modal-content">
-		<div class="modal-body">
-			<spring:message code="question.ImportCopySurvey" />
-		</div>
-		<div class="modal-footer">
-			<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="btnOkCopyFromMenu"  onclick="importCopySurvey('<esapi:encodeForHTMLAttribute>${USER.login}</esapi:encodeForHTMLAttribute>', '<esapi:encodeForHTMLAttribute>${USER.email}</esapi:encodeForHTMLAttribute>');" class="btn btn-info"><spring:message code="label.OK" /></a>
-			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
-		</div>
-		</div>
-		</div>
-	</div>
-	
 	<div class="modal" id="delete-survey-dialog" data-backdrop="static">
 		<div class="modal-dialog">
    		<div class="modal-content">
@@ -511,7 +497,7 @@
 		</div>
 		<div class="modal-footer">
 			<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="deleteSurveyYesBtn"  onclick="deleteSurvey();" class="btn btn-info" data-dismiss="modal"><spring:message code="label.Yes" /></a>
+			<a id="deleteSurveyYesBtn"  onclick="deleteSurvey();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>
@@ -526,7 +512,7 @@
 		</div>
 		<div class="modal-footer">
 			<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="archiveSurveyYesBtn" onclick="$('#archive-survey-dialog').modal('hide');$('#generic-wait-dialog').modal('show');"  class="btn btn-info"><spring:message code="label.Yes" /></a>
+			<a id="archiveSurveyYesBtn" onclick="$('#archive-survey-dialog').modal('hide');$('#generic-wait-dialog').modal('show');"  class="btn btn-primary"><spring:message code="label.Yes" /></a>
 			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 		</div>
 		</div>
@@ -572,7 +558,7 @@
 					</div>
 					<div class="modal-footer">
 						<img class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-						<a id="freezeSurveyYesBtn"  onclick="freezeSurvey();" class="btn btn-info"><spring:message code="label.FreezeSurvey" /></a>
+						<a id="freezeSurveyYesBtn"  onclick="freezeSurvey();" class="btn btn-primary"><spring:message code="label.FreezeSurvey" /></a>
 						<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>	
 					</div>
 				</form:form>
@@ -603,7 +589,7 @@
 			 	</table>
 			</div>
 			<div class="modal-footer">
-				<a id="acceptMissingFilesButton"  class="btn btn-info"><spring:message code="label.Archive" /></a>
+				<a id="acceptMissingFilesButton"  class="btn btn-primary"><spring:message code="label.Archive" /></a>
 				<a  class="btn btn-default" onclick="$(this).closest('.modal').modal('hide');"><spring:message code="label.Cancel" /></a>
 			</div>
 			</div>

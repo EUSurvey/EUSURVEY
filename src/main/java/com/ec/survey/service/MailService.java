@@ -38,6 +38,10 @@ public class MailService extends BasicService {
 		SendHtmlMail(to, from, reply, subject, body, server, port, null, info);
 	}
 	
+	public static boolean isNotEmptyAndValidEmailAddress(String email) {
+		return email != null && email.trim().length() > 0 && isValidEmailAddress(email.trim());
+	}
+	
 	public static boolean isValidEmailAddress(String email) {
 		boolean result = true;
 		try {

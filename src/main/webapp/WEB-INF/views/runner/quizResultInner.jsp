@@ -274,6 +274,9 @@
 					<td style="padding-right: 10px"><spring:message code="label.Contact" /></td>
 					<td>
 						<c:choose>
+							<c:when test="${form.survey.contact.startsWith('form:')}">
+								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
+							</c:when>
 							<c:when test="${form.survey.contact.contains('@')}">
 								<i class="icon icon-envelope" style="vertical-align: middle"></i>
 								<a class="link" href="mailto:<esapi:encodeForHTMLAttribute>${form.survey.contact}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${form.survey.contact}</esapi:encodeForHTML></a>
@@ -379,15 +382,15 @@
 			<div class="modal-footer">
 				<c:choose>
 					<c:when test="${responsive != null}">
-						<a style="text-decoration: none"  class="btn btn-info btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
+						<a style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
 						<a style="text-decoration: none"  class="btn btn-default btn-lg" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
 					</c:when>
 					<c:when test="${runnermode == true}">
-						<a  class="btn btn-info" onclick="startExport()">${form.getMessage("label.OK")}</a>	
+						<a  class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>	
 						<a  class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
 					</c:when>
 					<c:otherwise>
-						<a  class="btn btn-info" onclick="startExport()"><spring:message code="label.OK" /></a>	
+						<a  class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
 						<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 					</c:otherwise>	
 				</c:choose>				
@@ -438,7 +441,7 @@
 								  
 								  if (data == "success") {
 										$('#ask-export-dialog').modal('hide');
-										showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+										showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 								  	} else if (data == "errorcaptcha") {
 								  		$("#ask-export-dialog-error-captcha").show();
 								  		reloadCaptcha();
@@ -459,7 +462,7 @@
 								  
 								  if (data == "success") {
 										$('#ask-export-dialog').modal('hide');
-										showInfo(message_PublicationExportSuccess2.replace('{0}', mail));
+										showSuccess(message_PublicationExportSuccess2.replace('{0}', mail));
 									} else {
 										showError(message_PublicationExportFailed);
 										reloadCaptcha();

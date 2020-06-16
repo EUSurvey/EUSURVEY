@@ -32,47 +32,26 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
 @RequestMapping("/webservice")
 public class WebServiceController extends BasicController {
 
-	@Resource(name = "surveyService")
-	private SurveyService surveyService;
-
-	@Resource(name = "answerService")
-	private AnswerService answerService;
-
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-
-	@Resource(name = "participationService")
-	private ParticipationService participationService;
-
 	@Resource(name = "webserviceService")
 	private WebserviceService webserviceService;
-
-	@Resource(name = "fileService")
-	private FileService fileService;
 
 	@Resource(name = "pdfService")
 	private PDFService pdfService;
 
-	@Resource(name = "attendeeService")
-	private AttendeeService attendeeService;
-
 	@Resource(name = "xmlExportCreator")
 	private XmlExportCreator xmlExportCreator;
 
-	private @Value("${export.fileDir}") String fileDir;
 	private @Value("${webservice.maxrequestsperday}") String maxrequestsperday;
 
-	private static DateFormat dfStandard = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ENGLISH);
-
+	private static String StandardDateString = "yyyy-MM-dd_HH-mm-ss";
+	
 	private KeyValue getLoginAndPassword(HttpServletRequest request, HttpServletResponse response) {
 		String line = request.getHeader("Authorization");
 		if (line != null && line.startsWith("Basic")) {
@@ -224,8 +203,7 @@ public class WebServiceController extends BasicController {
 			ParticipationGroup group = new ParticipationGroup(survey.getUniqueId());
 			group.setActive(active != null && active.equalsIgnoreCase("true"));
 			group.setOwnerId(user.getId());
-			DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-			group.setName("remote" + df.format(new Date()));
+			group.setName("remote" + Tools.formatDate(new Date(), "MM/dd/yyyy HH:mm:ss"));
 			group.setSurveyId(survey.getId());
 			group.setType(ParticipationGroupType.Token);
 
@@ -954,8 +932,8 @@ public class WebServiceController extends BasicController {
 			if (user == null)
 				return "";
 
-			Survey survey = surveyService.getSurvey(formid, true, false, false, false, null, true, false);
-			Survey publishedsurvey = surveyService.getSurvey(formid, false, false, false, false, null, true, false);
+			Survey survey = surveyService.getSurvey(formid, true, false, false, false, null, true, true, false, false);
+			Survey publishedsurvey = survey == null ? null : surveyService.getSurvey(survey.getUniqueId(), false, false, false, false, null, true, false);
 
 			if (survey == null || publishedsurvey == null || survey.getArchived()) {
 				response.setStatus(412);
@@ -994,11 +972,9 @@ public class WebServiceController extends BasicController {
 			task.setFileTypes(filetypes);
 			task.setContributionType(contributionType);
 
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ENGLISH);
-			df.setLenient(false);
 			if (!start.equalsIgnoreCase("0")) {
 				try {
-					task.setStart(df.parse(start));
+					task.setStart(Tools.parseDateString(start, StandardDateString));
 				} catch (Exception pe) {
 					logger.error(pe.getLocalizedMessage(), pe);
 					response.setStatus(412);
@@ -1007,7 +983,7 @@ public class WebServiceController extends BasicController {
 			}
 			if (!end.equalsIgnoreCase("0")) {
 				try {
-					Date enddate = df.parse(end);
+					Date enddate = Tools.parseDateString(end, StandardDateString);
 					// the end filter was implemented for the ui and always adds one day,so we have
 					// to patch the date
 					// we also add one second so that 23:59:59 also includes the timespan between
@@ -1245,7 +1221,7 @@ public class WebServiceController extends BasicController {
 					} else if (question instanceof DateQuestion) {
 
 						String dateval = values.get(questionalias);
-						Date date = ConversionTools.getDate(dateval, ConversionTools.DateFormat);
+						Date date = Tools.parseDateString(dateval, ConversionTools.DateFormat);
 						if (date == null) {
 							response.setStatus(412);
 							return "";
@@ -1413,12 +1389,10 @@ public class WebServiceController extends BasicController {
 			if (survey == null)
 				return "";
 
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ENGLISH);
-			df.setLenient(false);
 			Date startdate = null;
 			if (start != null) {
 				try {
-					startdate = df.parse(start);
+					startdate = Tools.parseDateString(start, StandardDateString);
 				} catch (Exception pe) {
 					logger.error(pe.getLocalizedMessage(), pe);
 					response.setStatus(412);
@@ -1429,7 +1403,7 @@ public class WebServiceController extends BasicController {
 			Date enddate = null;
 			if (end != null) {
 				try {
-					enddate = df.parse(end);
+					enddate = Tools.parseDateString(end, StandardDateString);
 				} catch (Exception pe) {
 					logger.error(pe.getLocalizedMessage(), pe);
 					response.setStatus(412);
@@ -2210,7 +2184,7 @@ public class WebServiceController extends BasicController {
 		if (input == null || input.equalsIgnoreCase("0")) return true;
 
 		try {
-			dfStandard.parse(input);
+			Tools.parseDateString(input, StandardDateString);
 			return true;
 		} catch (Exception pe) {
 			// ignore
@@ -2221,7 +2195,7 @@ public class WebServiceController extends BasicController {
 
 	private static Date getDate(String input) throws ParseException {
 		if (input != null && !input.equalsIgnoreCase("0")) {
-			return dfStandard.parse(input);
+			return Tools.parseDateString(input, StandardDateString);
 		}
 		return null;
 	}
@@ -2306,7 +2280,7 @@ public class WebServiceController extends BasicController {
 			
 			if (published != null)
 			{
-				filter.setStatus(published.equalsIgnoreCase("1") ? "Published;" : "Unpublished");
+				filter.setStatus(published.equalsIgnoreCase("1") ? "Published;" : "Unpublished;");
 			}
 			
 			if (archived != null && archived.equalsIgnoreCase("1")) {

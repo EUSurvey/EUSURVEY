@@ -60,7 +60,8 @@
 
 <meta itemprop="image" content="${contextpath}/resources/images/favicon5.ico" />
 <link rel="shortcut icon" href="${contextpath}/resources/images/favicon5.ico" type="image/x-icon"></link>
-	
+
+<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="version.txt" %>'></script>
 <script type="text/javascript" src="${contextpath}/resources/js/jquery-1.12.3.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/jquery-ui.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/spin.min.js?version=<%@include file="version.txt" %>"></script>
@@ -85,6 +86,7 @@
 			var nomatchText =  "${form.getMessage("validation.nomatch")}";
 			var shortnameText = "${form.getMessage("validation.name2")}";
 			var shortnameText2 = "${form.getMessage("validation.shortname2")}";
+			var shortnameText3 = "${form.getMessage("validation.shortname3")}";
 			var textnotlongenoughText = "${form.getMessage("validation.textNotLongEnough")}";
 			var texttoolongText = "${form.getMessage("validation.textTooLong")}";
 			var texttoolong5000Text = "${form.getMessage("validation.textTooLong5000")}";
@@ -160,6 +162,7 @@
 			var nomatchText =  "<spring:message code='validation.nomatch' />";
 			var shortnameText = "<spring:message code='validation.name2' />";
 			var shortnameText2 = "<spring:message code='validation.shortname2' />";
+			var shortnameText3 = "<spring:message code='validation.shortname3' />";
 			var textnotlongenoughText = "<spring:message code='validation.textNotLongEnough' />";
 			var texttoolongText = "<spring:message code='validation.textTooLong' />";
 			var texttoolong5000Text = "<spring:message code='validation.textTooLong5000' />";
@@ -281,14 +284,7 @@
 		
 	function countChar(input)
 	 {	
-		 var cs = $(input).val().length;
-
-		 var newLines = $(input).val().match(/(\r\n|\n|\r)/g);
- 		 var addition = 0;
-         if (newLines != null) {
-            addition = newLines.length;
-         }
-         cs = cs + addition;
+		 var cs = getCharacterCount(input);
 		 
 		 var classes = $(input).attr('class').split(" ");
 		 var min = 0;
@@ -305,42 +301,21 @@
 		 	};	 	
 		 };
 		 
-		 var s = "";
+		 $(input).closest(".survey-element").find(".charactercounter").text(cs);
 		 
-		 <c:choose>
-			<c:when test="${form != null && form.getResources() != null}">
-				if (cs < min)
-				 {
-					s = '(${form.getMessage("limits.CharactersExpected", "[num]")})';
-					s = s.replace("[num]", min-cs);
-				 } else if (cs <= max && max > 0)
-			 	 {
-					 s = '(${form.getMessage("limits.CharactersLeft", "[num]")})';
-					 s = s.replace("[num]", max-cs);
-			 	 } else if (cs > max && max > 0)
-			 	 {
-			 		s = '(${form.getMessage("limits.CharactersExceeded", "[num]")})';
-					s = s.replace("[num]", cs-max);
-			 	 }
-			</c:when>
-			<c:otherwise>		 
-				 if (cs < min)
-				 {
-					s = '(<spring:message code="limits.CharactersExpected" arguments="[num]" />)';
-					s = s.replace("[num]", min-cs);
-				 } else if (cs <= max && max > 0)
-			 	 {
-					 s = '(<spring:message code="limits.CharactersLeft" arguments="[num]" />)';
-					 s = s.replace("[num]", max-cs);
-			 	 } else if (cs > max && max > 0)
-			 	 {
-			 		s = '(<spring:message code="limits.CharactersExceeded" arguments="[num]" />)';
-					s = s.replace("[num]", cs-max);
-			 	 }
-			</c:otherwise>
-		</c:choose>
+		 if (max > 0 && max - cs < 5)
+		 {
+			 $(input).closest(".survey-element").find(".glyphicon-alert").show();
+		 } else {
+			 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
+		 }
 		 
-		 $(input).closest(".survey-element").find(".charactercounter").text(s);	 
+		 if (max > 0 && max - cs < 0)
+		 {
+			 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#f00");
+		 } else {
+			 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
+		 }
 	 }
 	
 	//]]>

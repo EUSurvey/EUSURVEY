@@ -14,7 +14,7 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/spectrum.js?version=<%@include file="../version.txt" %>"></script>
 	<link href="${contextpath}/resources/css/spectrum.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 	<script type="text/javascript" src="${contextpath}/resources/js/moment.js?version=<%@include file="../version.txt" %>"></script>
-	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.4.0.js?version=<%@include file="../version.txt" %>'></script>
+	<script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="../version.txt" %>'></script>
   	<script type="text/javascript" src="${contextpath}/resources/js/jquery.textarea-expander.js?version=<%@include file="../version.txt" %>"></script>
   	<script type="text/javascript" src="${contextpath}/resources/js/edit.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/edit_actions.js?version=<%@include file="../version.txt" %>"></script>
@@ -49,7 +49,7 @@
 	
 	<div id="actions" class="actions">
 		<div style="float: left; margin-left: 10px; padding-right: 10px; border-right: 1px solid #ccc;">
-			<button id="save-button" data-bind="attr: {class: 'btn btn-default btn-info' + (SaveEnabled() && AllElementsLoaded() ? '' : ' disabled')}" onclick="_actions.UnsavedChangesConfirmed(true); saveForm(false);"><spring:message code="label.Save" /></button>
+			<button id="save-button" data-bind="attr: {class: 'btn btn-default btn-primary' + (SaveEnabled() && AllElementsLoaded() ? '' : ' disabled')}" onclick="_actions.UnsavedChangesConfirmed(true); saveForm(false);"><spring:message code="label.Save" /></button>
 			<a id="cancel-button" onclick="return checkChanges(this)" href="${contextpath}/${form.survey.shortname}/management/test" class="btn btn-default"><spring:message code="label.Cancel" /></a>
 		</div>
 		
@@ -129,8 +129,7 @@
 					
 					</div>
 				<!-- /ko -->
-				
-				<!-- /ko -->				
+		
 			</div>
 			<!-- /ko -->	
 		</div>
@@ -225,6 +224,7 @@
 				<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapsePredefined" aria-expanded="true"><spring:message code="label.Predefined" /></a></div>
 				<div id="collapsePredefined" class="accordion-body collapse in">
 					<ul>
+						<li class="toolboxitem agenciesitem draggable"><span class="glyphicon glyphicon-star"></span> <spring:message code="form.predefined.euagencies" /></li>
 						<li class="toolboxitem countriesitem draggable"><span class="glyphicon glyphicon-globe"></span> <spring:message code="form.predefined.eucountries" /></li>
 						<li class="toolboxitem languagesitem draggable"><span class="glyphicon glyphicon-flag"></span> <spring:message code="form.predefined.eulanguages" /></li>
                                                 <c:if test="${!oss}">
@@ -347,7 +347,7 @@
 				<a id="docEditorGuideDE" target="_blank" href="${contextpath}/resources/documents/Quiz_Guide_DE.pdf" style="display: none;">Quiz Documentation</a>
 			  </div>
 			  <div class="modal-footer">
-				<a class="btn btn-info" onclick="disableNewQuizDialog()"><spring:message code="label.GotIt" /></a>		
+				<a class="btn btn-primary" onclick="disableNewQuizDialog()"><spring:message code="label.GotIt" /></a>		
 			  </div>
 			 </div>
 		 </div>
@@ -360,7 +360,7 @@
 			 	 <spring:message code="question.askRestoreSurvey" />
 			  </div>
 			  <div class="modal-footer">
-				<a class="btn btn-info" onclick="_actions.restore(); $('#askRestoreDialog').modal('hide')"><spring:message code="label.Yes" /></a>
+				<a class="btn btn-primary" onclick="_actions.restore(); $('#askRestoreDialog').modal('hide')"><spring:message code="label.Yes" /></a>
 				<a class="btn btn-default" onclick="$('#askRestoreDialog').modal('hide')"><spring:message code="label.No" /></a>		
 				<a class="btn btn-default" onclick="_actions.deleteBackup(); $('#askRestoreDialog').modal('hide')"><spring:message code="label.DeleteLocalBackup" /></a>		
 			  </div>
@@ -424,7 +424,7 @@
 			
 			<c:choose>
 				<c:when test="${saved != null}">
-					showInfo("<spring:message code='message.SurveySaved' />");	
+					showSuccess("<spring:message code='message.SurveySaved' />");	
 					
 					//delete backup from local storage
 					_actions.deleteBackup();
@@ -810,6 +810,15 @@
 	 		strings["Height"] = "<spring:message code="label.Height" />";
 	 		strings["Color"] = "<spring:message code="html.Color" />";
 	 		strings["duplicateattributename"] = "<spring:message code="validation.duplicateattributename" />";
+	 		
+	 		strings["Display"] = "<spring:message code="label.Display" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.Display" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
+	 		strings["checkNumberOfChoices"] = "<spring:message code="validation.checkNumberOfChoices" />";
+	 		strings["checkNumberOfRows"] = "<spring:message code="validation.checkNumberOfRows" />";
+	 		strings["CountryOnly"] = "<spring:message code="label.CountryOnly" />";
+	 		strings["Country+ISO"] = "<spring:message code="label.Country+ISO" />";
+	 		strings["ISO+Country"] = "<spring:message code="label.ISO+Country" />";
+	 		strings["ISOOnly"] = "<spring:message code="label.ISOOnly" />";	 		
+
 	 		return strings[label];
 	 	}
 	</script>

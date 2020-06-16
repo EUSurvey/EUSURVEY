@@ -57,7 +57,7 @@
 	
 	<c:if test="${message != null}">
 		<script type="text/javascript">
-			showMessage('${message}');
+			showInfo('${message}');
 		</script>
 	</c:if>
 

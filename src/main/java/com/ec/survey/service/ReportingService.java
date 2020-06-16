@@ -10,6 +10,19 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
@@ -76,13 +89,7 @@ public class ReportingService {
 	@Autowired
 	private SqlQueryService sqlQueryService;
 	
-	protected @Value("${enablereportingdatabase}") String enablereportingdatabase;
 	protected @Value("${contextpath}") String contextpath;	
-	
-	protected boolean isReportingDatabaseEnabled()
-	{
-		return enablereportingdatabase != null && enablereportingdatabase.equalsIgnoreCase("true");
-	}
 	
 	public enum ToDo {
 		NEWSURVEY(0), NEWCONTRIBUTION(1), CHANGEDCONTRIBUTION(2), DELETEDCONTRIBUTION(3), CHANGEDSURVEY(4), DELETEDSURVEY(5), CHANGEDDRAFTSURVEY(6), NEWTESTCONTRIBUTION(7), CHANGEDTESTCONTRIBUTION(8), DELETEDTESTCONTRIBUTION(9);
@@ -112,7 +119,7 @@ public class ReportingService {
 		}
 	}
 	
-	public String getWhereClause(ResultFilter filter, Map<String, Object> values, Survey survey) throws TooManyFiltersException
+	public static String getWhereClause(ResultFilter filter, Map<String, Object> values, Survey survey) throws TooManyFiltersException
 	{
 		String where = "";
 		Map<String, Element> elementsByUniqueID = survey.getQuestionMapByUniqueId();
@@ -411,9 +418,7 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<List<String>> getAnswerSets(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat) throws Exception {
-		if (!isReportingDatabaseEnabled()) return null;		
-		
+	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
 		Map<String, Object> values = new HashMap<String, Object>();
@@ -665,9 +670,7 @@ public class ReportingService {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<Integer> getAnswerSetIDs(Survey survey, ResultFilter filter, SqlPagination sqlPagination) throws Exception {
-		if (!isReportingDatabaseEnabled()) return null;		
-		
+	public List<Integer> getAnswerSetIDsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
 		Map<String, Object> values = new HashMap<String, Object>();
@@ -711,9 +714,6 @@ public class ReportingService {
 			throw new IllegalArgumentException("counter starts at 1");
 		}
 
-		if (!isReportingDatabaseEnabled()) {
-			return false;
-		} 
 		try {
 			Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 			StringBuilder sql = new StringBuilder();
@@ -729,9 +729,7 @@ public class ReportingService {
 	}
 
 	@Transactional(transactionManager = "transactionManagerReporting")
-	public boolean OLAPTableExists(String uid, boolean draft) {
-		if (!isReportingDatabaseEnabled()) return false;
-		
+	public boolean OLAPTableExistsInternal(String uid, boolean draft) {	
 		try {
 			Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 			SQLQuery queryreporting = sessionReporting.createSQLQuery("SELECT 1 FROM  T" + (draft ? "D" : "") + uid.replace("-", "") + " LIMIT 1");
@@ -743,9 +741,7 @@ public class ReportingService {
 	}
 	
 	@Transactional(transactionManager = "transactionManagerReporting")
-	public void deleteOLAPTable(String uid, boolean draftversion, boolean publishedversion) throws Exception {
-		if (!isReportingDatabaseEnabled()) return;
-		
+	public void deleteOLAPTableInternal(String uid, boolean draftversion, boolean publishedversion) throws Exception {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		SQLQuery query;
 		int counter = 1;
@@ -754,7 +750,7 @@ public class ReportingService {
 			query = sessionReporting.createSQLQuery("DROP TABLE IF EXISTS T" + uid.replace("-", ""));
 			query.executeUpdate();
 			
-			while (OLAPTableExists(uid + "_" + counter, false))
+			while (OLAPTableExistsInternal(uid + "_" + counter, false))
 			{
 				query = sessionReporting.createSQLQuery("DROP TABLE IF EXISTS T" + uid.replace("-", "") + "_" + counter);
 				query.executeUpdate();
@@ -768,25 +764,23 @@ public class ReportingService {
 			query = sessionReporting.createSQLQuery("DROP TABLE IF EXISTS TD" + uid.replace("-", ""));
 			query.executeUpdate();
 			
-			while (OLAPTableExists(uid + "_" + counter, true))
+			while (OLAPTableExistsInternal(uid + "_" + counter, true))
 			{
 				query = sessionReporting.createSQLQuery("DROP TABLE IF EXISTS TD" + uid.replace("-", "") + "_" + counter);
 				query.executeUpdate();
 				counter++;
 			}
 		}
-	}	
+	}
 	
 	@Transactional(transactionManager = "transactionManagerReporting")
-	public void createOLAPTable(String shortname, boolean draftversion, boolean publishedversion) throws Exception {
-		if (!isReportingDatabaseEnabled()) return;
-		
+	public void createOLAPTableInternal(String shortname, boolean draftversion, boolean publishedversion) throws Exception {
 		if (publishedversion)
 		{
 			//create published survey table
 			Survey survey = surveyService.getSurveyWithMissingElements(shortname, false, false, false, false, null, true, false);
 			if (survey != null && !survey.getIsDeleted() && !survey.getArchived()) {
-				if (!OLAPTableExists(survey.getUniqueId(), false))
+				if (!OLAPTableExistsInternal(survey.getUniqueId(), false))
 				{
 					createOLAPTable(survey);
 				}
@@ -798,7 +792,7 @@ public class ReportingService {
 			//create draft survey table
 			Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
 			if (draft != null && !draft.getIsDeleted() && !draft.getArchived()) {
-				if (!OLAPTableExists(draft.getUniqueId(), true))
+				if (!OLAPTableExistsInternal(draft.getUniqueId(), true))
 				{
 					createOLAPTable(draft);
 				}
@@ -865,9 +859,7 @@ public class ReportingService {
 		return columnNamesToType;
 	}
 
-	private boolean validateOLAPTable(Survey survey, Integer counter) throws Exception {
-		if (!isReportingDatabaseEnabled()) return false;
-
+	public boolean validateOLAPTableInternal(Survey survey, Integer counter) throws Exception {
 		logger.info("starting reporting table validation for survey UID" + survey.getUniqueId()
 		+ (survey.getIsDraft() ? " (draft)" : ""));
 
@@ -918,7 +910,7 @@ public class ReportingService {
 				+ (counter == null ? "" : " counter = " + counter));
 				return false;
 			}
-			String actualColumnType = actualColumnNameToType.get(realExpectedColumnName);
+			String actualColumnType = (actualColumnNameToType.get(realExpectedColumnName)).toUpperCase();
 			// Verifying column type
 			// expected = varchar(2) actual = varchar
 			if (!expectedColumnType.startsWith(actualColumnType)) {
@@ -935,38 +927,34 @@ public class ReportingService {
 		return true;
 	}
 
-	private boolean validateOLAPTable(Survey survey) throws Exception {
-		if (!isReportingDatabaseEnabled()) return false;
-		return this.validateOLAPTable(survey, null);
+	public boolean validateOLAPTableInternal(Survey survey) throws Exception {
+		return this.validateOLAPTableInternal(survey, null);
 	}
 
-	private boolean validateOLAPTables(Survey survey) throws Exception {
-		if (!isReportingDatabaseEnabled()) return false;
-
+	public boolean validateOLAPTablesInternal(Survey survey) throws Exception {
 		if (survey == null) {
 			throw new IllegalArgumentException("survey is not null");
 		}
 
 		Map<String, String> columnNamesToType = this.getColumnNamesAndTypes(survey);
-		int expectedAdditionalNumberOfTables = (columnNamesToType.keySet().size() % MAX_COLUMN_NUMBER_IN_OLAP_TABLE) - 1;
+		double expectedAdditionalNumberOfTablesD = (columnNamesToType.keySet().size() / MAX_COLUMN_NUMBER_IN_OLAP_TABLE) - 1;
+		int expectedAdditionalNumberOfTables = (int) Math.ceil(expectedAdditionalNumberOfTablesD);
 
-		if (!this.validateOLAPTable(survey)) {
+		if (!this.validateOLAPTableInternal(survey)) {
 			return false;
 		}
 
 		for (int counter = 1; counter <= expectedAdditionalNumberOfTables; counter++) {
-			if (!this.validateOLAPTable(survey, counter)) {
+			if (!this.validateOLAPTableInternal(survey, counter)) {
 				return false;
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 
-	private boolean validateOLAPTables(String surveyUID, boolean isDraft) throws Exception {
-		if (!isReportingDatabaseEnabled()) return false;
-
+	public boolean validateOLAPTablesInternal(String surveyUID, boolean isDraft) throws Exception {
 		if (surveyUID == null || surveyUID.isEmpty()) {
 			throw new IllegalArgumentException("surveyUID is not null and not empty");
 		}
@@ -975,7 +963,7 @@ public class ReportingService {
 				+ (isDraft ? " (draft)" : ""));
 
 		Survey survey = surveyService.getSurveyWithMissingElements(surveyUID, isDraft, false, false, false, null, true, false);
-		return this.validateOLAPTables(survey);
+		return this.validateOLAPTablesInternal(survey);
 	}
 
 
@@ -1015,7 +1003,7 @@ public class ReportingService {
 			if (counter > 1000)
 			{
 				sql.append(" ) ENGINE=MYISAM");
-				execute(sql.toString());
+				executeInternal(sql.toString());
 				sql = new StringBuilder();
 				sql.append("CREATE TABLE T");
 				if (survey.getIsDraft())
@@ -1031,7 +1019,7 @@ public class ReportingService {
 		
 		sql.append(" ) ENGINE=MYISAM");
 		
-		execute(sql.toString());
+		executeInternal(sql.toString());
 		
 		analyseAnswers(survey, null, true);
 			
@@ -1041,17 +1029,15 @@ public class ReportingService {
 	}
 	
 	@Transactional(transactionManager = "transactionManagerReporting")
-	public void updateOLAPTable(String shortname, boolean draftversion, boolean publishedversion) throws Exception {
-		if (!isReportingDatabaseEnabled()) return;
-		
+	public void updateOLAPTableInternal(String shortname, boolean draftversion, boolean publishedversion) throws Exception {
 		if (publishedversion)
 		{
 			Survey survey = surveyService.getSurveyWithMissingElements(shortname, false, false, false, true, null, true, false);
 			if (survey != null && !survey.getIsDeleted() && !survey.getArchived())
 			{
-				if (!OLAPTableExists(survey.getUniqueId(), false))
+				if (!OLAPTableExistsInternal(survey.getUniqueId(), false))
 				{
-					createOLAPTable(survey.getUniqueId(), false, true);
+					createOLAPTableInternal(survey.getUniqueId(), false, true);
 				} else {			
 					updateOLAPTable(survey);
 				}
@@ -1065,9 +1051,9 @@ public class ReportingService {
 			Survey draft = surveyService.getSurvey(shortname, true, false, false, true, null, true, false);
 			if (draft != null && !draft.getIsDeleted() && !draft.getArchived())
 			{
-				if (!OLAPTableExists(draft.getUniqueId(), true))
+				if (!OLAPTableExistsInternal(draft.getUniqueId(), true))
 				{
-					createOLAPTable(draft.getUniqueId(), true, false);
+					createOLAPTableInternal(draft.getUniqueId(), true, false);
 				} else {			
 					updateOLAPTable(draft);
 				}
@@ -1153,8 +1139,7 @@ public class ReportingService {
 		logger.info(results.size() + " new answers copied");
 	}
 		
-	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
-	private void execute(String sql) {
+	private void executeInternal(String sql) {
 		lastQuery = sql;
 		logger.debug(sql);
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
@@ -1452,32 +1437,43 @@ public class ReportingService {
 	
 	public static String lastQuery;
 	
-	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
-	public void removeFromOLAPTable(String uid, String code, boolean publishedSurvey) {
-		if (!isReportingDatabaseEnabled()) return;
-		
+	private void removeFromOLAPTableInternal(String uid, String code, boolean publishedSurvey) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		StringBuilder query = new StringBuilder();
 		
-		if (OLAPTableExists(uid, !publishedSurvey))
-		{		
-			query.append("DELETE FROM ");
+		if (OLAPTableExistsInternal(uid, !publishedSurvey))
+		{
+			//get the answerset id first
+			query.append("SELECT QANSWERSETID FROM ");
 			query.append(getOLAPTableName(publishedSurvey, uid));
 			query.append(" WHERE QCONTRIBUTIONID = '");
 			query.append(code).append("'");
+			SQLQuery selectQuery = sessionReporting.createSQLQuery(query.toString());
+			Object result = selectQuery.uniqueResult();
+			if (result == null)
+			{
+				return;
+			}
+			int answerSetId = ConversionTools.getValue(result);
+			query = new StringBuilder();
+			
+			query.append("DELETE FROM ");
+			query.append(getOLAPTableName(publishedSurvey, uid));
+			query.append(" WHERE QANSWERSETID = ");
+			query.append(answerSetId);
 			
 			SQLQuery deleteQuery = sessionReporting.createSQLQuery(query.toString());
 			deleteQuery.executeUpdate();
 			
 			//also remove from additional tables
 			int counter = 1;
-			while (OLAPTableExists(uid + "_" + counter, !publishedSurvey))
+			while (OLAPTableExistsInternal(uid + "_" + counter, !publishedSurvey))
 			{
 				query = new StringBuilder();
 				query.append("DELETE FROM ");
 				query.append(getOLAPTableName(publishedSurvey, uid) + "_" + counter);
-				query.append(" WHERE QCONTRIBUTIONID = '");
-				query.append(code).append("'");
+				query.append(" WHERE QANSWERSETID = ");
+				query.append(answerSetId);
 				
 				deleteQuery = sessionReporting.createSQLQuery(query.toString());
 				deleteQuery.executeUpdate();
@@ -1487,9 +1483,7 @@ public class ReportingService {
 	}
 
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getCount(Survey survey, String where, Map<String, Object> values) {
-		if (!isReportingDatabaseEnabled()) return -1;
-		
+	public int getCountInternal(Survey survey, String where, Map<String, Object> values) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		String sql = "SELECT COUNT(*) FROM " + getOLAPTableName(survey);
@@ -1522,9 +1516,7 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getCount(Survey survey, String quid, String auid, boolean noPrefixSearch, String where, Map<String, Object> values) {
-		if (!isReportingDatabaseEnabled()) return -1;
-		
+	public int getCountInternal(Survey survey, String quid, String auid, boolean noPrefixSearch, String where, Map<String, Object> values) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		String sql = "SELECT COUNT(*) FROM " + getOLAPTableName(survey) + " WHERE Q" + quid.replace("-", "");
@@ -1569,9 +1561,7 @@ public class ReportingService {
 	}
 
 	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
-	public void addToDo(ToDo todo, String uid, String code) {
-		if (!isReportingDatabaseEnabled()) return;
-		
+	public void addToDoInternal(ToDo todo, String uid, String code) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		//check if TODO table exists
@@ -1612,12 +1602,10 @@ public class ReportingService {
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
-	}	
-
+	}
+	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<ToDoItem> getToDos(int page, int rowsPerPage) {
-		if (!isReportingDatabaseEnabled()) return null;
-		
+	public List<ToDoItem> getToDosInternal(int page, int rowsPerPage) {
 		List<ToDoItem> todos = new ArrayList<ToDoItem>();
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
@@ -1652,8 +1640,7 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public ToDoItem getToDo(int id) {
-		if (!isReportingDatabaseEnabled()) return null;
+	public ToDoItem getToDoInternal(int id) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		SQLQuery query = sessionReporting.createSQLQuery("SELECT ID, TYPE, UID, CODE FROM TODO WHERE ID = :id");
 		@SuppressWarnings("rawtypes")
@@ -1669,125 +1656,91 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
-	public void executeToDo(ToDoItem todo) throws Exception
+	public void executeToDoInternal(ToDoItem todo, boolean removeSimilar) throws Exception
 	{
 		switch (todo.Type) {
 			case NEWSURVEY:
-				createOLAPTable(todo.UID, false, true);
+				createOLAPTableInternal(todo.UID, false, true);
 				break;
 			case NEWCONTRIBUTION:
-				try {
-					updateOLAPTable(todo.UID, false, true);
-				} catch (SQLGrammarException e) {
-					if (this.validateOLAPTables(todo.UID, false)) {
-						throw e;
-					} else {
-						deleteOLAPTable(todo.UID, false, true);
-						createOLAPTable(todo.UID, false, true);
-
-						// retry
-						updateOLAPTable(todo.UID, false, true);
-					}
-				}
-				break;
 			case CHANGEDCONTRIBUTION:
 				try {
-					updateOLAPTable(todo.UID, false, true);
+					updateOLAPTableInternal(todo.UID, false, true);
 				} catch (SQLGrammarException e) {
-					if (this.validateOLAPTables(todo.UID, false)) {
+					if (this.validateOLAPTablesInternal(todo.UID, false)) {
 						throw e;
 					} else {
-						deleteOLAPTable(todo.UID, false, true);
-						createOLAPTable(todo.UID, false, true);
+						deleteOLAPTableInternal(todo.UID, false, true);
+						createOLAPTableInternal(todo.UID, false, true);
 
 						// retry
-						updateOLAPTable(todo.UID, false, true);
+						updateOLAPTableInternal(todo.UID, false, true);
 					}
 				}
 				break;
 			case DELETEDCONTRIBUTION:
 				try {
-					removeFromOLAPTable(todo.UID, todo.Code, true);
+					removeFromOLAPTableInternal(todo.UID, todo.Code, true);
 				} catch (SQLGrammarException e) {
-					if (this.validateOLAPTables(todo.UID, false)) {
+					if (this.validateOLAPTablesInternal(todo.UID, false)) {
 						throw e;
 					} else {
-						deleteOLAPTable(todo.UID, false, true);
-						createOLAPTable(todo.UID, false, true);
+						deleteOLAPTableInternal(todo.UID, false, true);
+						createOLAPTableInternal(todo.UID, false, true);
 
 						// retry
-						removeFromOLAPTable(todo.UID, todo.Code, true);
+						removeFromOLAPTableInternal(todo.UID, todo.Code, true);
 					}
 				}
 				break;
 			case CHANGEDSURVEY:
-				deleteOLAPTable(todo.UID, false, true);
-				createOLAPTable(todo.UID, false, true);
+				deleteOLAPTableInternal(todo.UID, false, true);
+				createOLAPTableInternal(todo.UID, false, true);
 				break;
 			case DELETEDSURVEY:
-				deleteOLAPTable(todo.UID, true, true);
+				deleteOLAPTableInternal(todo.UID, true, true);
 				break;
 			case CHANGEDDRAFTSURVEY:
-				deleteOLAPTable(todo.UID, true, false);
-				createOLAPTable(todo.UID, true, false);
+				deleteOLAPTableInternal(todo.UID, true, false);
+				createOLAPTableInternal(todo.UID, true, false);
 				break;
 			case NEWTESTCONTRIBUTION:
-				try {
-					updateOLAPTable(todo.UID, true, false);
-				} catch (SQLGrammarException e) {
-					if (this.validateOLAPTables(todo.UID, true)) {
-						throw e;
-					} else {
-						deleteOLAPTable(todo.UID, true, false);
-						createOLAPTable(todo.UID, true, false);
-
-						// retry
-						updateOLAPTable(todo.UID, true, false);
-					}
-				}
-				break;
 			case CHANGEDTESTCONTRIBUTION:
 				try {
-					updateOLAPTable(todo.UID, true, false);
+					updateOLAPTableInternal(todo.UID, true, false);
 				} catch (SQLGrammarException e) {
-					if (this.validateOLAPTables(todo.UID, true)) {
+					if (this.validateOLAPTablesInternal(todo.UID, true)) {
 						throw e;
 					} else {
-						deleteOLAPTable(todo.UID, true, false);
-						createOLAPTable(todo.UID, true, false);
+						deleteOLAPTableInternal(todo.UID, true, false);
+						createOLAPTableInternal(todo.UID, true, false);
 
 						// retry
-						updateOLAPTable(todo.UID, true, false);
+						updateOLAPTableInternal(todo.UID, true, false);
 					}
 				}
 				break;
 			case DELETEDTESTCONTRIBUTION:
 				try {
-					removeFromOLAPTable(todo.UID, todo.Code, false);
+					removeFromOLAPTableInternal(todo.UID, todo.Code, false);
 				} catch (SQLGrammarException e) {
-					if (this.validateOLAPTables(todo.UID, true)) {
+					if (this.validateOLAPTablesInternal(todo.UID, true)) {
 						throw e;
 					} else {
-						deleteOLAPTable(todo.UID, false, true);
-						createOLAPTable(todo.UID, false, true);
-
+						deleteOLAPTableInternal(todo.UID, true, false);
+						createOLAPTableInternal(todo.UID, true, false);
 						// retry
-						removeFromOLAPTable(todo.UID, todo.Code, false);
+						removeFromOLAPTableInternal(todo.UID, todo.Code, false);
 					}
 				}
 				break;
-			}
-	}
-	
-	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<ToDoItem> getToDos() {
-		return getToDos(-1,-1);
-	}
-	
-	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getNumberOfToDos() {
-		if (!isReportingDatabaseEnabled()) return 0;
+		}
 		
+		removeToDoInternal(todo, removeSimilar);
+	}
+		
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public int getNumberOfToDosInternal() {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		SQLQuery query = sessionReporting.createSQLQuery("SELECT COUNT(*) FROM TODO");
 		
@@ -1799,10 +1752,8 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getNumberOfTables()
+	public int getNumberOfTablesInternal()
 	{
-		if (!isReportingDatabaseEnabled()) return 0;
-		
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		SQLQuery query = sessionReporting.createSQLQuery("SELECT count(*) AS totalTables FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = database() AND TABLE_NAME != 'todo' AND NOT TABLE_NAME LIKE '%\\_%';");
 		
@@ -1814,20 +1765,7 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
-	public void removeToDo(int id) {
-		if (!isReportingDatabaseEnabled()) return;
-		
-		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		
-		SQLQuery queryremove = sessionReporting.createSQLQuery("DELETE FROM TODO WHERE ID = :id");
-		queryremove.setInteger("id", id);
-		queryremove.executeUpdate();
-	}
-	
-	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
-	public void removeToDo(ToDoItem todo, boolean includesimilar) {
-		if (!isReportingDatabaseEnabled()) return;		
-		
+	public void removeToDoInternal(ToDoItem todo, boolean includesimilar) {
 		if (includesimilar)
 		{
 			Session sessionReporting = sessionFactoryReporting.getCurrentSession();
@@ -1847,14 +1785,11 @@ public class ReportingService {
 		} else {
 			List<ToDoItem> list = new ArrayList<ToDoItem>();
 			list.add(todo);
-			removeToDos(list);
+			removeToDosInternal(list);
 		}
 	}
 	
-	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
-	public void removeToDos(List<ToDoItem> todos) {
-		if (!isReportingDatabaseEnabled()) return;
-		
+	private void removeToDosInternal(List<ToDoItem> todos) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		List<Integer> ids = new ArrayList<Integer>();
@@ -1869,22 +1804,18 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
-	public void removeAllToDos() {
-		if (!isReportingDatabaseEnabled()) return;
-		
+	public void removeAllToDosInternal() {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
-		List<ToDoItem> todos = getToDos(-1,-1);
+		List<ToDoItem> todos = getToDosInternal(-1,-1);
 		if (todos.size() == 0) return;
 		
 		SQLQuery queryremove = sessionReporting.createSQLQuery("DELETE FROM TODO");
 		queryremove.executeUpdate();
 	}
-
-	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public Date getLastUpdate(Survey survey) {
-		if (!isReportingDatabaseEnabled()) return null;
 		
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public Date getLastUpdateInternal(Survey survey) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		SQLQuery query = sessionReporting.createSQLQuery("SELECT COUNT(*) FROM TODO WHERE UID = :uid");
@@ -1893,9 +1824,54 @@ public class ReportingService {
 		
 		if (result == 0) return null;
 		
-		query = sessionReporting.createSQLQuery("SELECT UPDATE_TIME FROM information_schema.TABLES WHERE TABLE_NAME = :name");
+		query = sessionReporting.createSQLQuery("SELECT UPDATE_TIME FROM information_schema.TABLES WHERE TABLE_NAME = :name AND TABLE_SCHEMA = database()");
 		query.setString("name", getOLAPTableName(survey));
 		
 		return  (Date) query.uniqueResult();
+	}
+	
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public List<Object> GetAllQuestionsAndPossibleAnswersInternal(Survey survey) {
+		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
+		
+		if (!OLAPTableExistsInternal(survey.getUniqueId(), survey.getIsDraft()))
+		{
+			return null;
+		}
+		
+		String sql = "SELECT * FROM " + getOLAPTableName(survey);	
+		
+		Query query=sessionReporting.createSQLQuery(sql);
+		query.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+		@SuppressWarnings("unchecked")
+		List<Map<String,Object>> aliasToValueMapList=query.list();
+		
+		List<Object> result = new ArrayList<Object>();
+		
+		for (Map<String,Object> entry : aliasToValueMapList)
+		{
+			for (String question : entry.keySet())
+			{
+				String compactUID = question.substring(1);
+				
+				if (compactUID.length() == 32)
+				{
+					String questionUID = compactUID.replaceFirst( 
+				        "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5" 
+					    );
+				
+					Object[] o = new Object[2];
+					o[0] = questionUID;
+					
+					Object v = entry.get(question);
+					
+					o[1] = (v instanceof String && ((String)v).length() == 36) ? v : "";
+					
+					result.add(o);		
+				}
+			}
+		}		
+		
+		return result;
 	}
 }

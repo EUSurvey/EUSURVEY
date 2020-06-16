@@ -65,7 +65,7 @@
 
 	<div id="single-choice-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<div class='questionhelp' data-bind="html: niceHelp"></div>
@@ -105,7 +105,7 @@
 					<td style="padding-right: 15px; vertical-align: top">
 						<label data-bind="attr: {'for': id}">
 							<!-- ko ifnot: id() == 'dummy' -->
-							<div class="answertext" data-bind="html: title, attr: {'data-id' : id()}"></div>
+							<div class="answertext" data-bind="html: titleForDisplayMode($parents[1].displayMode()), attr: {'data-id' : id()}"></div>
 							<!-- /ko -->	
 						</label>
 					</td>					
@@ -118,9 +118,9 @@
 			<!-- ko ifnot: useRadioButtons -->
 			<div class="answer-column">		
 				<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice'}"  onchange="validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange();">
-					<option data-bind="html: strip_tags(title()), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
+					<option data-bind="html: strip_tags(titleForDisplayMode($parents[0].displayMode())), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
 				</select>
-				<span data-bind="if: readonly"><input data-bind="value: getPAByQuestion3(uniqueId()), attr: {'name':'answer'+id}" type="hidden" /></span>	
+				<span data-bind="if: readonly"><input data-bind="value: getPAByQuestion3(uniqueId()), attr: {'name':'answer'+id()}" type="hidden" /></span>	
 				<!-- ko if: foreditor -->
 					<!-- ko foreach: possibleAnswers() -->
 						<div class="possibleanswerrow hidden">		
@@ -159,13 +159,16 @@
 		
 				<input type="hidden" data-bind="value: scoring, attr: {'name': 'scoring' + id()}" />
 				<input type="hidden" data-bind="value: points, attr: {'name': 'points' + id()}" />
+				
+				<input type="hidden" data-bind="value: subType, attr: {'name': 'subType' + id()}" />
+				<input type="hidden" data-bind="value: displayMode, attr: {'name': 'displayMode' + id()}" />
 			<!-- /ko -->		
 		</div>
 	</div>
 		
 	<div id="multiple-choice-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
@@ -274,13 +277,15 @@
 				<input type="hidden" data-bind="value: points, attr: {'name': 'points' + id()}" />
 				<input type="hidden" data-bind="value: noNegativeScore, attr: {'name': 'noNegativeScore' + id()}" />
 		
+				<input type="hidden" data-bind="value: subType, attr: {'name': 'subType' + id()}" />
+				<input type="hidden" data-bind="value: displayMode, attr: {'name': 'displayMode' + id()}" />
 			<!-- /ko -->
 		</div>
 	</div>
 	
 	<div id="password-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<div class='questionhelp' data-bind="html: niceHelp"></div>
@@ -319,7 +324,7 @@
 	
 	<div id="freetext-template">	
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 	
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
@@ -380,6 +385,10 @@
 	
 		<!-- ko if: maxCharacters() > 0 -->	
 			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'maxlength':maxCharacters(), 'data-rows':numRows(), 'rows':numRows()}"  onkeyup="countChar(this);propagateChange();" onblur="validateInput($(this).parent(),true)"></textarea>
+			<div class="charactercounterdiv" style="max-width: 645px; text-align: right; color: #777; margin-left: 20px;">
+				<span class="glyphicon glyphicon-alert" style="display: none; margin-right: 5px;" data-toggle="tooltip" title='${form.getMessage("info.charactercounter")}'></span>
+				<span class="charactercounter">0</span> / <span data-bind="text: maxCharacters()"></span>
+			</div>
 		<!-- /ko -->
 		<!-- ko if: maxCharacters() == 0 -->	
 			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows()}" onkeyup="countChar(this);propagateChange();" onblur="validateInput($(this).parent(),true)"></textarea>
@@ -392,7 +401,7 @@
 	
 	<div id="confirmation-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<div class='questionhelp' data-bind="html: niceHelp"></div>
 		<label class='questiontitle confirmationelement' data-bind='html: title'></label>
@@ -404,7 +413,7 @@
 						  <div class="modal-header">${form.getMessage("label.Confirmation")}</div>
 						  <div class="modal-body" data-bind="html: confirmationtext"></div>
 						  <div class="modal-footer">
-							<a style="cursor: pointer" class="btn btn-info" onclick="$(this).closest('.confirmation-dialog').modal('hide');">${form.getMessage("label.Cancel")}</a>		
+							<a style="cursor: pointer" class="btn btn-primary" onclick="$(this).closest('.confirmation-dialog').modal('hide');">${form.getMessage("label.Cancel")}</a>		
 						  </div>
 					  </div>
 				  </div>
@@ -464,11 +473,29 @@
 				<tr class="ratingquestion" data-bind="attr: {'data-id': id}">
 					<td>
 						<!-- ko if: optional() == false -->
-							<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+							<span class="mandatory">*</span>
 						<!-- /ko -->
-						<div data-bind="html: title"></div>						
+						<div data-bind="html: title"></div>					
+						<!-- ko if: $parents[0].ismobile || $parents[0].istablet -->
+							<input data-bind="value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
+			
+							<div data-bind="foreach: new Array($parent.numIcons())">
+								<a class="ratingitem" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
+									<!-- ko if: $parents[1].iconType() == 0 -->
+								    <img src="${contextpath}/resources/images/star_grey.png" data-bind='title: $index()+1' />
+								    <!-- /ko -->
+								    <!-- ko if: $parents[1].iconType() == 1 -->
+								    <img src="${contextpath}/resources/images/nav_plain_grey.png" data-bind='title: $index()+1' />
+								    <!-- /ko -->
+								    <!-- ko if: $parents[1].iconType() == 2 -->
+								    <img src="${contextpath}/resources/images/heart_grey.png" data-bind='title: $index()+1' />
+								    <!-- /ko -->
+							    </a>
+							</div>
+						<!-- /ko -->
 					</td>
-					<td>
+					<!-- ko if: !$parents[0].ismobile && !$parents[0].istablet -->
+					<td>				
 						<input data-bind="value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 		
 						<div data-bind="foreach: new Array($parent.numIcons())">
@@ -485,6 +512,7 @@
 						    </a>
 						</div>
 					</td>
+					<!-- /ko -->
 				</tr>
 			</tbody>
 		</table>						
@@ -493,7 +521,7 @@
 	
 	<div id="number-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
@@ -544,7 +572,7 @@
 	
 	<div id="email-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<div class='questionhelp' data-bind="html: niceHelp"></div>
@@ -567,7 +595,7 @@
 	
 	<div id="date-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
@@ -625,7 +653,7 @@
 	
 	<div id="upload-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<div class="questionhelp" data-bind="html: niceHelp"></div>	
@@ -685,7 +713,7 @@
 	
 	<div id="gallery-template">
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
@@ -779,7 +807,7 @@
 				  </div>
 				  <div class="modal-footer">
 				  	<a class="btn btn-default" onclick="openPreviousImage($(this).closest('.modal'))"><span class="glyphicon glyphicon-chevron-left"></span></a>
-					<a class="btn btn-info" onclick="$(this).closest('.modal').modal('hide');">${form.getMessage("label.Close")}</a>			
+					<a class="btn btn-primary" onclick="$(this).closest('.modal').modal('hide');">${form.getMessage("label.Close")}</a>			
 				  	<a class="btn btn-default" onclick="openNextImage($(this).closest('.modal'))"><span class="glyphicon glyphicon-chevron-right"></span></a>
 				  </div>
 				 </div>
@@ -809,7 +837,7 @@
 		<!-- /ko -->		
 	
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
@@ -854,13 +882,8 @@
 		<!-- /ko -->
 		
 		<!-- ko if: !ismobile && !istablet  -->
-		<div data-bind="attr: {'style': istablet ? 'position: relative; max-width: 100%; overflow-x: hidden' : 'width: 100%'}">
-		
-			<!-- ko if: istablet -->			
-				<button class="btn btn-default scrolltableleft" onclick="scrollTable(this,false);return false;"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
-				<button class="btn btn-default scrolltableright" onclick="scrollTable(this,true);return false;"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>				
-			<!-- /ko -->
-		
+		<div style="width: 100%">
+			
 			<!-- ko if: foreditor -->
 			<div class="hiddenmatrixquestions hideme">
 				<!-- ko foreach: questions() -->
@@ -884,7 +907,12 @@
 			<table data-bind="attr: {'class':'matrixtable ' + css(), 'style': tableType() == 1 ? 'width: 900px' : 'width: auto; max-width: auto'}">			
 				<thead>
 					<tr>
-						<th data-bind="attr: {'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">&nbsp;</th>
+						<th class="matrix-header firstCell" data-bind="attr: {'data-id': id(), 'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">
+							<!-- ko if: foreditor -->
+							<textarea style="display: none" data-bind="text: firstCellText, attr: {'name': 'firstCellText' + id()}"></textarea>
+							<!-- /ko -->
+							<span class="matrixheadertitle" data-bind="html: firstCellText"></span>
+						</th>
 						<!-- ko foreach: answers -->
 						<th class="matrix-header" scope="col" data-bind="attr: {'id' : id(), 'data-id': id(), 'style': $parent.tableType() != 2 ? '' : 'width: ' + getWidth($parent.widths(), $index()+1)}">
 							<!-- ko if: $parent.foreditor -->
@@ -936,7 +964,7 @@
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
 		<!-- /ko -->
 		<!-- ko if: optional() == false -->
-			<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 2px;">*</span>
+			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<div class="questionhelp" data-bind="html: niceHelp"></div>	
@@ -959,12 +987,17 @@
 		<!-- /ko -->
 		
 		<!-- ko if: !ismobile && !istablet -->
-		<div data-bind="attr: {'style': istablet ? 'position: relative; max-width: 100%; overflow-x: hidden' : 'width: 100%'}">
+		<div style="width: 100%">
 
 			<table data-bind="attr: {'data-widths':widths(), 'id':id(), 'data-readonly': readonly, 'style': tableType() == 1 ? 'width: 900px' : 'width: auto; max-width: auto'}" class="tabletable">	
 				<tbody>
 					<tr style="background-color: #eee;">
-						<th class="" data-bind="attr: {'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">&nbsp;</th>
+						<th class="table-header firstCell" data-bind="attr: {'data-id': id(), 'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">
+							<!-- ko if: foreditor -->
+							<textarea style="display: none" data-bind="text: firstCellText, attr: {'name': 'firstCellText' + id()}"></textarea>
+							<!-- /ko -->
+							<span class="matrixheadertitle" data-bind="html: firstCellText"></span>
+						</th>
 						<!-- ko foreach: answers -->
 						<th class="table-header" scope="col" data-bind="attr: {'id' : id(), 'data-id' : id(), 'data-shortname' : shortname, 'data-uid' : uniqueId(), 'style': $parent.tableType() != 2 ? '' : 'width: ' + getWidth($parent.widths(), $index()+1)}">
 							<span data-bind="html: title"></span>

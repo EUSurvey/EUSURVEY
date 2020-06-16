@@ -31,20 +31,8 @@ body {
 	padding-bottom: 100px;	 
 }
 
-.disabled {
-	cursor: not-allowed;	
-}
-
 textarea {
 	resize: none;
-}
-
-#content .qq-uploader input {
-	cursor: not-allowed !important;
-}
-
-#content .visiblelink {
-	cursor: not-allowed !important;
 }
 
 .gallery-table {
@@ -267,7 +255,6 @@ textarea {
 
 .glyphicon.disabled {
 	color: #999;
-	cursor: not-allowed;
 }
 
 .toolboxheader {
@@ -330,7 +317,7 @@ textarea {
  	background-color: #F5E2FF; 
 }
 
-.toolboxitem.countriesitem, .toolboxitem.languagesitem, .toolboxitem.dgsitem, .toolboxitem.unsitem {
+.toolboxitem.countriesitem, .toolboxitem.languagesitem, .toolboxitem.dgsitem, .toolboxitem.unsitem, .toolboxitem.agenciesitem {
  	background-color: #F1FAEF; 
 }
 
@@ -554,10 +541,6 @@ td.table-header {
 	width: 100px !important;
 }
 
-.survey-element a {
-	cursor: not-allowed;
-}
-
 .survey-element-hovered:not(.selectedquestion) {
 	background-color: #ffffc6 !important;
 }
@@ -714,7 +697,7 @@ a.accordion-toggle:hover {
 	color: #333 !important;	
 }
 
-.btn-info1 {
+.btn-primary1 {
 	color: #fff !important;
     background-color: #5bc0de !important;
     border: 1px solid #46b8da !important;

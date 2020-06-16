@@ -15,6 +15,7 @@ import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.InvalidEmailException;
+import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
@@ -42,20 +43,14 @@ import java.util.Map.Entry;
 @Service("answerService")
 public class AnswerService extends BasicService {
 
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-
 	@Resource(name = "attendeeService")
 	private AttendeeService attendeeService;
 
-	@Resource(name = "exportService")
-	private ExportService exportService;
-
-	@Resource(name = "mailService")
-	private MailService mailService;
-
 	@Autowired
 	private SqlQueryService sqlQueryService;
+
+	@Resource(name = "validCodesService")
+	private ValidCodesService validCodesService;
 
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void internalSaveAnswerSet(AnswerSet answerSet, String fileDir, String draftid, boolean invalidateExportsAndStatistics, boolean createAttendees) throws Exception {
@@ -1213,7 +1208,7 @@ public class AnswerService extends BasicService {
 
 			if (!answerSet.getIsDraft() && answerSet.getInvitationId() != null && answerSet.getInvitationId().length() > 0) {
 				Invitation invitation = attendeeService.getInvitationByUniqueId(answerSet.getInvitationId());
-				if (invitation.getAnswers() > 0) {
+				if (invitation != null && invitation.getAnswers() > 0) {
 					invitation.setAnswers(invitation.getAnswers() - 1);
 					attendeeService.update(invitation);
 				}
@@ -1619,14 +1614,15 @@ public class AnswerService extends BasicService {
 			if (list.size() == 0) {
 				// there is no draft
 				Draft draft = new Draft();
-				draft.setUniqueId(UUID.randomUUID().toString());
+				String uniqueCode = UUID.randomUUID().toString();
+				draft.setUniqueId(uniqueCode);
 				answerSet.setIsDraft(true);
 				draft.setAnswerSet(answerSet);
-
 				session.saveOrUpdate(draft);
+
+				reportingService.addToDo(ToDo.DELETEDCONTRIBUTION, answerSet.getSurvey().getUniqueId(), answerSet.getUniqueCode());
 				return draft.getUniqueId();
 			} else {
-
 				Draft draft = list.get(0);
 
 				if (draft != null) {
@@ -1640,6 +1636,7 @@ public class AnswerService extends BasicService {
 					draft.setAnswerSet(answerSet);
 
 					session.saveOrUpdate(draft);
+					reportingService.addToDo(ToDo.DELETEDCONTRIBUTION, answerSet.getSurvey().getUniqueId(), answerSet.getUniqueCode());
 					return uid;
 				}
 			}
@@ -1737,7 +1734,7 @@ public class AnswerService extends BasicService {
 		return result;
 	}
 
-	public String getDraftForEcasLogin(Survey survey, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException {
+	public String getDraftForEcasLogin(Survey survey, HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		Session session = sessionFactory.getCurrentSession();
 		String sql = "SELECT d.DRAFT_UID FROM DRAFTS d JOIN ANSWERS_SET a ON d.answerSet_ANSWER_SET_ID = a.ANSWER_SET_ID WHERE (a.RESPONDER_EMAIL = :email or a.RESPONDER_EMAIL = :email2) AND a.SURVEY_ID IN (:ids)";
 		SQLQuery query = session.createSQLQuery(sql);
@@ -1782,6 +1779,16 @@ public class AnswerService extends BasicService {
 		} else {
 			cal.add(Calendar.YEAR, -20);
 		}
+		
+		Date firstDay = cal.getTime();
+		
+		if (span.equalsIgnoreCase("total"))
+		{
+			Survey firstPublished = allVersions.size() > 0 ? surveyService.getSurvey(allVersions.get(0), true) : null;
+			if (firstPublished != null) {
+				firstDay = firstPublished.getCreated();
+			}
+		}
 
 		String sql = "SELECT DATE(ANSWER_SET_DATE), count(*) FROM ANSWERS_SET WHERE SURVEY_ID IN (" + StringUtils.collectionToCommaDelimitedString(allVersions)
 				+ ") AND ISDRAFT = 0 AND ANSWER_SET_DATE > :start GROUP BY DATE(ANSWER_SET_DATE) ORDER BY DATE(ANSWER_SET_DATE)";
@@ -1806,8 +1813,7 @@ public class AnswerService extends BasicService {
 			}
 		}
 
-		if (span.equalsIgnoreCase("week") || span.equalsIgnoreCase("month")) {
-			Date firstDay = cal.getTime();
+		if (span.equalsIgnoreCase("week") || span.equalsIgnoreCase("month") || span.equalsIgnoreCase("total")) {			
 			Date lastDay = DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH);
 
 			if (first == null || first.after(firstDay)) {
@@ -1983,6 +1989,7 @@ public class AnswerService extends BasicService {
 			return filter;
 		}
 		Session session = sessionFactory.getCurrentSession();
+		session.evict(filter);
 		filter = (ResultFilter) session.merge(filter);
 		Hibernate.initialize(filter.getFilterValues());
 		Hibernate.initialize(filter.getExportedQuestions());

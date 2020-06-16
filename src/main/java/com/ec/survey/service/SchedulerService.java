@@ -3,8 +3,6 @@ package com.ec.survey.service;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -26,6 +24,7 @@ import com.ec.survey.tools.DeleteDraftsUpdater;
 import com.ec.survey.tools.DeleteInvalidStatisticsWorker;
 import com.ec.survey.tools.DeleteSurveyUpdater;
 import com.ec.survey.tools.DeleteTemporaryFolderUpdater;
+import com.ec.survey.tools.DeleteUserAccountsWorker;
 import com.ec.survey.tools.DepartmentUpdater;
 import com.ec.survey.tools.DomainUpdater;
 import com.ec.survey.tools.EcasUserDeactivator;
@@ -34,6 +33,7 @@ import com.ec.survey.tools.ExportUpdater;
 import com.ec.survey.tools.FileUpdater;
 import com.ec.survey.tools.SendReportedSurveysWorker;
 import com.ec.survey.tools.SurveyUpdater;
+import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.ValidCodesRemover;
 
 @Service
@@ -73,6 +73,9 @@ public class SchedulerService extends BasicService {
 	@Resource(name = "deleteInvalidStatisticsWorker")
 	private DeleteInvalidStatisticsWorker deleteInvalidStatisticsWorker;
 	
+	@Resource(name = "deleteUserAccountsWorker")
+	private DeleteUserAccountsWorker deleteUserAccountsWorker;
+		
 	@Resource(name = "sendReportedSurveysWorker")
 	private SendReportedSurveysWorker sendReportedSurveysWorker;
 	
@@ -270,9 +273,7 @@ public class SchedulerService extends BasicService {
 				String time = settingsService.get(Setting.LDAPsync2Time);
 				
 				Date lastSyncDate = schemaService.getLastLDAPSynchronization2Date();
-				DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			
-				Date startDate = df.parse(start);
+				Date startDate = Tools.parseDateString(start,"dd/MM/yyyy HH:mm:ss");
 				Date currentDate = new Date();
 				
 				//check if global start date is over
@@ -349,9 +350,8 @@ public class SchedulerService extends BasicService {
 				String time = settingsService.get(Setting.LDAPsyncTime);
 				
 				Date lastSyncDate = schemaService.getLastLDAPSynchronizationDate();
-				DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			
-				Date startDate = df.parse(start);
+				
+				Date startDate = Tools.parseDateString(start, "dd/MM/yyyy HH:mm:ss");
 				Date currentDate = new Date();
 				
 				//check if global start date is over
@@ -413,7 +413,7 @@ public class SchedulerService extends BasicService {
 		
 		try {
 			String enabled = settingsService.get(Setting.ReportingMigrationEnabled);
-			if (!enabled.equalsIgnoreCase("true"))
+			if (enabled == null || !enabled.equalsIgnoreCase("true"))
 			{
 				return;
 			}
@@ -530,6 +530,7 @@ public class SchedulerService extends BasicService {
 		deleteTemporaryFoldersWorker.run();
 		deleteInvalidStatisticsWorker.run();
 		sendReportedSurveysWorker.run();
+		deleteUserAccountsWorker.run();
 		
 		logger.debug("End nightly schedule");
 	 }

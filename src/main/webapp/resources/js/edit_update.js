@@ -41,6 +41,7 @@ function update(input)
 			var oldtext = element.level(); 
 			element.level(parseInt(text));
 			_undoProcessor.addUndoStep(["Level", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			updateTitles();
 			break;
 		case "Mandatory":
 			toggleMandatory(input);
@@ -147,6 +148,17 @@ function update(input)
 				element.attributeName(text);
 				_undoProcessor.addUndoStep(["Name", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			}
+			break;
+		case "Display":
+			var text = $(input).val();
+			var oldtext = element.displayMode();
+			var display = 0;
+			if (text == "ISOOnly") display = 1;
+			if (text == "ISO+Country") display = 2;
+			if (text == "Country+ISO") display = 3;
+			element.displayMode(display);
+			_undoProcessor.addUndoStep(["DisplayMode", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
 			break;
 		case "Order":
 			var text = $(input).val();
@@ -327,6 +339,7 @@ function update(input)
 				{
 					element.minChoices(v);
 					_undoProcessor.addUndoStep(["NumberOfChoices", id, $(_elementProperties.selectedelement).index(), oldtext, text, "min"]);
+					removeValidationMarkup($("#btnRemovePossibleAnswers").closest("tr"));
 				}
 			} else if ($(input).attr("data-type") == "max")
 			{
@@ -353,6 +366,7 @@ function update(input)
 				if ($(input).attr("data-type") == "min")
 				{
 					element.minRows(v);
+					removeValidationMarkup($("#btnRemoveRows").closest("tr"));								
 				} else if ($(input).attr("data-type") == "max")
 				{
 					element.maxRows(v);
@@ -853,7 +867,8 @@ function updateFeedback(span, reset)
 	if (!reset)	$(span).closest("tr").hide();
 }
 
-function updateVisibility(span, reset)
+var selectedspan;
+function updateVisibility(span, reset, ask, dialogresult)
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var triggers = document.createElement("div");
@@ -870,6 +885,31 @@ function updateVisibility(span, reset)
 	var values = "";
 	var selectedquestions = "";
 	var oldtext = $(_elementProperties.selectedproperty).attr("data-oldvalues");
+	
+	var isSection = $(_elementProperties.selectedelement).hasClass("sectionitem");
+	var includechildren = false;
+	if (isSection && ask && $("#content")) {
+		selectedspan = span;
+		$("#askSectionVisibilityDialog").modal("show");
+		return;
+	}
+        
+	if (isSection && !ask && dialogresult) {
+		var level = parseInt($(_elementProperties.selectedelement).find(".sectiontitle").first().attr("data-level"));
+   
+		$(_elementProperties.selectedelement).nextAll().each(function(){
+			if ($(this).hasClass("sectionitem"))
+			{
+				var level2 = parseInt($(this).find(".sectiontitle").first().attr("data-level"));
+				if (level2 <= level)
+				{
+					return false;
+				}
+			}
+	 
+			$(this).addClass("selectedquestion");
+		});
+	}
 	
 	if (!reset)
 	{
@@ -920,7 +960,7 @@ function updateVisibility(span, reset)
 	
 	for (var i = 0; i < oldtriggers.length; i++)
 	{
-		//remove from "dependenelements" field
+		//remove from "dependentelements" field
 		$("#content").find(".selectedquestion").each(function(){
 			var myid = $(this).attr("id");
 			selectedquestions = selectedquestions + myid + ";";
@@ -960,7 +1000,7 @@ function save(span)
 	
 	switch (label) {
 		case "Visibility":
-			updateVisibility(span, false);
+			updateVisibility(span, false, true, false);
 			break;
 		case "EDITVALUES":
 			var oldvalues = [];
@@ -1031,7 +1071,7 @@ function save(span)
 			break;
 		default:		
 			_elementProperties.selectedid = $(span).closest("tr").find("textarea").first().attr("id");
-			var text = tinyMCE.get(_elementProperties.selectedid).getContent({format: 'raw'});
+			var text = tinyMCE.get(_elementProperties.selectedid).getContent({format: 'xhtml'});
 			
 			var doc = new DOMParser().parseFromString(text, 'text/html');
 			text = new XMLSerializer().serializeToString(doc);

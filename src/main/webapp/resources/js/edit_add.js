@@ -192,7 +192,7 @@ function getNewElement(item)
 		element.childElements = [getBasicElement("Text", false, "Question 1", null, false), getBasicElement("Text", false, "Question 2", null, false)];
 		
 		updateComplexityScore("addSimpleQuestion");	
-	} else if (item.hasClass("countriesitem") || item.hasClass("languagesitem") || item.hasClass("dgsitem") || item.hasClass("unsitem")) {
+	} else if (item.hasClass("countriesitem") || item.hasClass("languagesitem") || item.hasClass("dgsitem") || item.hasClass("unsitem") || item.hasClass("agenciesitem")) {
 		item.addClass("singlechoiceitem");
 		
 		element = getBasicElement("SingleChoiceQuestion", true, "Single Choice Question", item.attr("id"), true);
@@ -214,11 +214,18 @@ function getNewElement(item)
 		} else if (item.hasClass("dgsitem"))
 		{
 			url = "/utils/euDGs";
+		} else if (item.hasClass("agenciesitem"))
+		{
+			url = "/utils/euAgencies";
 		} else if (item.hasClass("unsitem"))
 		{
 			url = "/utils/unCountries";
 			element.useRadioButtons = false;
+			element.subType = "unCountries";
+			element.displayMode = 2;
 		} else {
+			element.subType = "euCountries";
+			element.displayMode = 2;
 		}
 		
 		$.ajax({type: "GET",
@@ -228,7 +235,9 @@ function getNewElement(item)
 		    success :function(result)
 		    {
 		    	$.each(result, function(key, data){
-		    		element.possibleAnswers[element.possibleAnswers.length] = getBasicElement("PossibleAnswer", false, data, null, false);
+		    		var newpa = getBasicElement("PossibleAnswer", false, data, null, false);
+		    		newpa.shortname = key;
+		    		element.possibleAnswers[element.possibleAnswers.length] = newpa;
 		    	});		   
 		    }
 		 });		
@@ -372,7 +381,9 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 			"uniqueId" : getNewId(),
 			"id" : getNewId(),
 			"css" : "",
-			"isDependentMatrixQuestion" : false
+			"isDependentMatrixQuestion" : false,
+			"subType" : "",
+			"displayMode" : 0
 		}
 	
 	element.originalTitle = title;

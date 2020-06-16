@@ -238,12 +238,12 @@ public class WebserviceService extends BasicService {
 					break;
 				case CreateResults:
 					ResultsCreator resultsCreator = (ResultsCreator) context.getBean("resultsCreator");
-					resultsCreator.init(task.getId(), fileDir, resources, locale);
+					resultsCreator.init(task.getId(), resources, locale);
 					getPool().execute(resultsCreator);	
 					break;
 				case CreateResult:
 					ResultsCreator resultsCreator2 = (ResultsCreator) context.getBean("resultsCreator");
-					resultsCreator2.init(task.getId(), fileDir, resources, locale);
+					resultsCreator2.init(task.getId(), resources, locale);
 					getPool().execute(resultsCreator2);	
 					break;
 				case DeleteOldExports:
@@ -309,12 +309,12 @@ public class WebserviceService extends BasicService {
 					break;
 				case CreateResults:
 					ResultsCreator resultsCreator = (ResultsCreator) context.getBean("resultsCreator");
-					resultsCreator.init(task.getId(), fileDir, resources, null);
+					resultsCreator.init(task.getId(), resources, null);
 					getPool().execute(resultsCreator);	
 					break;
 				case CreateResult:
 					ResultsCreator resultsCreator2 = (ResultsCreator) context.getBean("resultsCreator");
-					resultsCreator2.init(task.getId(), fileDir, resources, null);
+					resultsCreator2.init(task.getId(), resources, null);
 					getPool().execute(resultsCreator2);
 					break;
 				default:

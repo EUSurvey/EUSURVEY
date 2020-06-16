@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import com.ec.survey.service.ReportingService;
+import com.ec.survey.service.ReportingServiceProxy;
 import com.ec.survey.service.SurveyService;
 
 @Service("recreateAllOLAPTablesExecutor")
@@ -16,8 +17,8 @@ public class RecreateAllOLAPTablesExecutor implements Runnable {
 	@Resource(name="surveyService")
 	private SurveyService surveyService;
 	
-	@Resource(name="reportingService")
-	private ReportingService reportingService;	
+	@Resource(name="reportingServiceProxy")
+	private ReportingServiceProxy reportingService;	
 
 	private static final Logger logger = Logger.getLogger(RecreateAllOLAPTablesExecutor.class);
 	

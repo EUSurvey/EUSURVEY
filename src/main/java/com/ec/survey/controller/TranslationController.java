@@ -29,18 +29,6 @@ import java.util.*;
 @RequestMapping("/{shortname}/management")
 public class TranslationController extends BasicController {
 		
-	@Resource(name = "surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name = "activityService")
-	private ActivityService activityService;
-
-	@Resource(name = "sessionService")
-	private SessionService sessionService;
-	
-	@Resource(name = "translationService")
-	private TranslationService translationService;
-	
 	@Resource(name="machineTranslationService")
 	MachineTranslationService machineTranslationService;
 		
@@ -192,7 +180,7 @@ public class TranslationController extends BasicController {
 				surveyService.makeDirty(form.getSurvey().getId());
 			}
 			
-			return translations(shortname, request, locale);
+			return new ModelAndView("redirect:/" + shortname + "/management/translations");
 			
 		} catch (Exception e)
 		{
@@ -398,7 +386,7 @@ public class TranslationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/translatetranslations", method = RequestMethod.GET)
-	public void translateTranslations(HttpServletRequest request, Locale locale, HttpServletResponse response) throws NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException {
+	public void translateTranslations(HttpServletRequest request, Locale locale, HttpServletResponse response) throws NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException, NotAgreedToPsException {
 		String idsString = request.getParameter("translationIds");
 		String[] ids = idsString.split("\\|");
 		User user = sessionService.getCurrentUser(request);
@@ -410,8 +398,13 @@ public class TranslationController extends BasicController {
 			throw new ForbiddenURLException();			
 		}
 		
-		boolean translateTranlations = machineTranslationService.translateTranlations(ids, user,isUseECMT());
-					
+		boolean translateTranlations;
+		try {		
+			translateTranlations = machineTranslationService.translateTranlations(ids, user,isUseECMT());
+		} catch (Exception e) {
+			translateTranlations = false;
+		}
+		
 		PrintWriter writer = null;
 		try {
             writer = response.getWriter();
@@ -454,7 +447,7 @@ public class TranslationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/activatetranslation", method = RequestMethod.POST)
-	public @ResponseBody SimpleResult activatetranslations(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {
+	public @ResponseBody SimpleResult activatetranslations(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		String id = request.getParameter("id");
 		SimpleResult result = new SimpleResult();
 		
@@ -484,7 +477,7 @@ public class TranslationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/deactivatetranslation", method = RequestMethod.POST)
-	public @ResponseBody SimpleResult deactivatetranslations(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException {
+	public @ResponseBody SimpleResult deactivatetranslations(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		String id = request.getParameter("id");
 		SimpleResult result = new SimpleResult();
 		
@@ -804,9 +797,20 @@ public class TranslationController extends BasicController {
 						ids[0] = sourceTranslationsId.toString();
 						ids[1] = newTranslation.getId().toString();
 						User user = sessionService.getCurrentUser(request);
-						if (machineTranslationService.translateTranlations(ids, user,isUseECMT()))
-						{
-							activityService.log(228, null, language.getCode(), sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
+						try {
+							if (machineTranslationService.translateTranlations(ids, user,isUseECMT()))
+							{
+								activityService.log(228, null, language.getCode(), sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
+							} else {
+								ModelAndView result = translations(shortname, request, locale);
+								String message = resources.getMessage("error.UnsupportedLanguage", null, "This language is not supported.", locale);
+								result.addObject("message", message);
+								return result;
+							}
+						} catch (Exception e) {
+							ModelAndView result = translations(shortname, request, locale);
+							result.addObject("message", e.getMessage());
+							return result;
 						}
 					}
 				}
@@ -824,7 +828,7 @@ public class TranslationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/importtranslation", method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String importtranslation(@PathVariable String shortname, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException, NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException {
+	public @ResponseBody String importtranslation(@PathVariable String shortname, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException, NotAgreedToTosException, ForbiddenURLException, WeakAuthenticationException, NotAgreedToPsException {
 		ImportTranslationResult result = new ImportTranslationResult();
 		
 		ObjectMapper mapper = new ObjectMapper();

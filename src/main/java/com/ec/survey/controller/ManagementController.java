@@ -160,11 +160,9 @@ public class ManagementController extends BasicController {
 		}
 
 		return new ModelAndView("error/info", "message", message);
-	}
+	}	
 	
-	
-	@RequestMapping(value = "/clearchanges", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView clearchanges(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView clearchanges(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		User u = sessionService.getCurrentUser(request);
@@ -183,7 +181,7 @@ public class ManagementController extends BasicController {
 		
 		activityService.log(108,"n/a","n/a",u.getId(), newSurvey.getUniqueId());
 
-		return new ModelAndView("redirect:/" + newSurvey.getShortname() + "/management/overview");
+		return overview(shortname, request, locale);
 	}
 
 	@RequestMapping(value = "/overview", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -240,9 +238,9 @@ public class ManagementController extends BasicController {
 			}
 		}
 		
-		ModelAndView result =  new ModelAndView("management/overview", "form", form);
-		result.addObject("serverprefix", serverPrefix);
-		result.addObject("isPublished", form.getSurvey().getIsPublished());
+		ModelAndView overviewPage =  new ModelAndView("management/overview", "form", form);
+		overviewPage.addObject("serverprefix", serverPrefix);
+		overviewPage.addObject("isPublished", form.getSurvey().getIsPublished());
 		
 		List<Element> newElements = new ArrayList<>();
 		List<Element> changedElements = new ArrayList<>();
@@ -276,114 +274,131 @@ public class ManagementController extends BasicController {
 			}
 		}
 		
-		result.addObject("newElements", newElements);
-		result.addObject("changedElements", changedElements);
-		result.addObject("deletedElements", deletedElements);
+		overviewPage.addObject("newElements", newElements);
+		overviewPage.addObject("changedElements", changedElements);
+		overviewPage.addObject("deletedElements", deletedElements);
 		
 		if (request.getParameter("repairedlabels") != null)
 		{
 			try {
 				int repaired = Integer.parseInt(request.getParameter("repairedlabels"));
-				result.addObject("repairedlabels", repaired);
+				overviewPage.addObject("repairedlabels", repaired);
 			} catch (Exception e){
 				//ignore
 			}
 		}
 		
-		return result;
+		return overviewPage;
+	}	
+	
+	@RequestMapping(value = "/overview", method = {RequestMethod.POST})
+	public ModelAndView overviewPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+		String target = request.getParameter("target");
+		
+		if (target != null)
+		{
+			if (target.equals("publish")) {
+				return publish(shortname, request, locale);
+			} else if (target.equals("unpublish")) {
+				return unpublish(shortname, request, locale);
+			} else if (target.equals("activate")) {
+				return activate(shortname, request, locale);
+			}  else if (target.equals("applyChanges")) {
+				return applyChanges(shortname, request, locale);
+			}else if (target.equals("clearchanges")) {
+				return clearchanges(shortname, request, locale);
+			}
+		}
+		
+		return overview(shortname, request, locale);
 	}	
 	
 	@RequestMapping(value = "/exportSurvey/{answers}/{shortname}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView exportSurvey(@PathVariable String answers, @PathVariable String shortname, HttpServletRequest request, HttpServletResponse response, Locale locale) {
-		try {
+	public ModelAndView exportSurvey(@PathVariable String answers, @PathVariable String shortname, HttpServletRequest request, HttpServletResponse response, Locale locale) throws Exception {
 			
-			Form form = sessionService.getForm(request, shortname, false, false);
-			Survey survey = form.getSurvey();
-			
-			String delete = request.getParameter("delete");
-			if (delete == null) delete = "false";
-			
-			User u = sessionService.getCurrentUser(request);
-			if (!u.getId().equals(survey.getOwner().getId()))
-			{
-				if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2)
-				{
-					if (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1)
-					{
-						return null;
-					}
-					if (answers != null && answers.equalsIgnoreCase("true"))
-					{
-						if (!delete.equalsIgnoreCase("true")) return null;
-					}
-				}
-			}
-			
-			boolean acceptMissingFiles = request.getParameter("acceptMissingFiles") != null && request.getParameter("acceptMissingFiles").equalsIgnoreCase("true");
-			boolean fromforms = request.getParameter("fromforms") != null && request.getParameter("fromforms").equalsIgnoreCase("true");
-						
-			if (answers != null && answers.equalsIgnoreCase("true") && delete.equalsIgnoreCase("true"))
-			{
-				if (!acceptMissingFiles)
-				{
-					//check for missing files
-					Map<String, String> missingFiles = fileService.getMissingFiles(survey.getUniqueId());
-					if (missingFiles.size() > 0)
-					{
-						ModelAndView result = new ModelAndView("management/overview", "form", form);
-						
-						if (fromforms)
-						{
-							SurveyFilter filter = sessionService.getSurveyFilter(request, true);
-							Paging<Survey> paging = new Paging<>();
-							paging.setItemsPerPage(10);
-							int numberOfSurveys = 0; 
-							paging.setNumberOfItems(numberOfSurveys);
-							paging.moveTo("1");
-							
-							SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
-							List<Survey> surveys = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, false);
-							paging.setItems(surveys);
-							
-							result = new ModelAndView("forms/forms", "paging", paging);
-					    	result.addObject("filter", filter);
-					    	
-					    	if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null || filter.getStartFrom() != null || filter.getStartTo() != null || filter.getEndFrom() != null || filter.getEndTo() != null)
-					    	{
-					    		result.addObject("showDates", true);
-					    	}
-						}
-						
-						result.addObject("missingFilesSurvey", survey.getShortname());
-						result.addObject("missingFiles", missingFiles);
-						return result;
-					}
-				}
-				
-				if (!archiveSurvey(survey, u))
-				{
-					return null;
-				}
-				
-				request.getSession().removeAttribute("sessioninfo");
-				
-				return new ModelAndView("redirect:/dashboard?archived=" + shortname);
-			}
-			
-			java.io.File zip = surveyService.exportSurvey(shortname, surveyService, answers != null && answers.equalsIgnoreCase("true"));
-				
-			response.setContentLength((int) zip.length());
-			response.setHeader("Content-Disposition","attachment; filename=\"" + shortname + ".eus\"");
-			try {
-				FileCopyUtils.copy(new FileInputStream(zip), response.getOutputStream());
-			} catch (IOException e) {
-				logger.error(e.getLocalizedMessage(), e);
-			}		
-			
-		} catch (Exception e1) {
-			logger.error(e1.getLocalizedMessage(), e1);
-		}			
+		Form form = sessionService.getForm(request, shortname, false, false);
+		Survey survey = form.getSurvey();
 		
+		String delete = request.getParameter("delete");
+		if (delete == null) delete = "false";
+		
+		User u = sessionService.getCurrentUser(request);
+		if (!u.getId().equals(survey.getOwner().getId()))
+		{
+			if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2)
+			{
+				if (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1)
+				{
+					throw new ForbiddenURLException();
+				}
+				if (answers != null && answers.equalsIgnoreCase("true"))
+				{
+					throw new ForbiddenURLException();
+				}
+			}
+		}
+		
+		boolean acceptMissingFiles = request.getParameter("acceptMissingFiles") != null && request.getParameter("acceptMissingFiles").equalsIgnoreCase("true");
+		boolean fromforms = request.getParameter("fromforms") != null && request.getParameter("fromforms").equalsIgnoreCase("true");
+					
+		if (answers != null && answers.equalsIgnoreCase("true") && delete.equalsIgnoreCase("true"))
+		{
+			if (!acceptMissingFiles)
+			{
+				//check for missing files
+				Map<String, String> missingFiles = fileService.getMissingFiles(survey.getUniqueId());
+				if (missingFiles.size() > 0)
+				{
+					ModelAndView result = new ModelAndView("management/overview", "form", form);
+					
+					if (fromforms)
+					{
+						SurveyFilter filter = sessionService.getSurveyFilter(request, true);
+						Paging<Survey> paging = new Paging<>();
+						paging.setItemsPerPage(10);
+						int numberOfSurveys = 0; 
+						paging.setNumberOfItems(numberOfSurveys);
+						paging.moveTo("1");
+						
+						SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
+						List<Survey> surveys = surveyService.getSurveysIncludingTranslationLanguages(filter, sqlPagination, false, false);
+						paging.setItems(surveys);
+						
+						result = new ModelAndView("forms/forms", "paging", paging);
+				    	result.addObject("filter", filter);
+				    	
+				    	if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null || filter.getStartFrom() != null || filter.getStartTo() != null || filter.getEndFrom() != null || filter.getEndTo() != null)
+				    	{
+				    		result.addObject("showDates", true);
+				    	}
+					}
+					
+					result.addObject("missingFilesSurvey", survey.getShortname());
+					result.addObject("missingFiles", missingFiles);
+					return result;
+				}
+			}
+			
+			if (!archiveSurvey(survey, u))
+			{
+				throw new Exception("archiving failed!");
+			}
+			
+			request.getSession().removeAttribute("sessioninfo");
+			
+			return new ModelAndView("redirect:/dashboard?archived=" + shortname);
+		}
+		
+		java.io.File zip = surveyService.exportSurvey(shortname, surveyService, answers != null && answers.equalsIgnoreCase("true"));
+			
+		response.setContentLength((int) zip.length());
+		response.setHeader("Content-Disposition","attachment; filename=\"" + shortname + ".eus\"");
+		try {
+			FileCopyUtils.copy(new FileInputStream(zip), response.getOutputStream());
+		} catch (IOException e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}		
+				
 		return null;
 	}
 	
@@ -438,28 +453,23 @@ public class ManagementController extends BasicController {
 	        	request.getSession().setAttribute("IMPORTORIGIN", "EUSURVEY");
 	        }
 	        
+	        String contact = u.getEmail();
+	        String login = u.getLogin();
+  		  	String lang = result.getSurvey().getLanguage().getCode();
+	        
             if (result != null && result.getSurvey() != null)
             {
             	Survey existing = surveyService.getSurvey(result.getSurvey().getShortname(), true, false, false, false, null, true, false);
-            	
+            	response.setStatus(HttpServletResponse.SC_OK);                
             	if (existing != null)
             	{
-            		  response.setStatus(HttpServletResponse.SC_OK);
-            		  String message = resources.getMessage("message.SurveyAlreadyExists", null, "This survey already exists", locale);
-            		  String contact = result.getSurvey().getContact();
-            		  String contactLabel = result.getSurvey().getContactLabel();
-            		  String lang = result.getSurvey().getLanguage().getCode();
-            		  writer.print("{\"success\": false, \"exists\": true, \"uuid\": \"" + uuid + "\", \"title\": \"" + result.getSurvey().getShortname() + "\", \"message\": \"" + message + "\", \"contact\": \"" + contact + "\", \"contactLabel\": \"" + contactLabel + "\", \"language\": \"" + lang + "\"}");
-            		  
-            		  java.io.File target = fileService.getUsersFile(u.getId(), "import" + uuid);
-            		  FileUtils.copyFile(file, target);            		  
-            	} else {
-            	
-            		surveyService.importSurvey(result, sessionService.getCurrentUser(request), false);
-	            	response.setStatus(HttpServletResponse.SC_OK);	                   
-	                writer.print("{\"success\": true, \"exists\": false, \"id\": \"" + result.getSurvey().getShortname() + "\"}");                
-            	}
-            		
+            		writer.print("{\"success\": true, \"exists\": true, \"uuid\": \"" + uuid + "\", \"shortname\": \"" + result.getSurvey().getShortname() + "\", \"title\": \"" + Tools.encodeForJSON(result.getSurvey().getTitle()) + "\", \"contact\": \"" + contact + "\", \"login\": \"" + login + "\", \"language\": \"" + lang + "\"}");
+            	} else {            	
+	            	writer.print("{\"success\": true, \"exists\": false, \"uuid\": \"" + uuid + "\", \"shortname\": \"" + result.getSurvey().getShortname() + "\", \"title\": \"" + Tools.encodeForJSON(result.getSurvey().getTitle()) + "\", \"contact\": \"" + contact + "\", \"login\": \"" + login + "\", \"language\": \"" + lang + "\"}");
+	            }
+
+    		  java.io.File target = fileService.getUsersFile(u.getId(), "import" + uuid);
+    		  FileUtils.copyFile(file, target);
             } else {
             	response.setStatus(HttpServletResponse.SC_OK);
             	String message = resources.getMessage("message.FileCouldNotBeImported", null, "The file could not be imported.", locale);
@@ -484,8 +494,7 @@ public class ManagementController extends BasicController {
         writer.close();
 	}
 	
-	@RequestMapping(value = "/activate", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView activate(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView activate(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		
@@ -525,8 +534,7 @@ public class ManagementController extends BasicController {
 		return overview(shortname, request, locale);
 	}
 	
-	@RequestMapping(value = "/publish", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView publish(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView publish(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		
@@ -555,8 +563,7 @@ public class ManagementController extends BasicController {
 		
 	}
 	
-	@RequestMapping(value = "/unpublish", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView unpublish(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView unpublish(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		
@@ -577,8 +584,7 @@ public class ManagementController extends BasicController {
 		return overview(shortname, request, locale);
 	}
 	
-	@RequestMapping(value = "/applyChanges", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView applyChanges(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView applyChanges(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 	
@@ -731,167 +737,6 @@ public class ManagementController extends BasicController {
 		
 		return result;
 	}
-	
-	@RequestMapping(value = "/saveConfirmationpage", method = RequestMethod.POST)
-	public ModelAndView saveConfirmationpage(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
-		
-		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-		
-		String isLink = parameters.get("survey.confirmationPageLink")[0];
-		String text = Tools.filterHTML(parameters.get("survey.confirmationPage")[0]);
-		String link = Tools.escapeHTML(parameters.get("survey.confirmationLink")[0]);
-		String language = Tools.escapeHTML(parameters.get("edit.language")[0]);
-		
-		if (text != null && !XHTMLValidator.validate(text, servletContext, null))
-		{
-			throw new InvalidXHTMLException(text, text);
-		}
-		
-		Form form;
-		form = sessionService.getForm(request, shortname, false, false);
-		Survey survey = form.getSurvey();
-		
-		User u = sessionService.getCurrentUser(request);
-		if (!u.getId().equals(form.getSurvey().getOwner().getId()))
-		{
-			if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2)
-			{
-				if (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2)
-				{
-					throw new ForbiddenURLException();
-				}
-			}
-		}
-		
-		String oldContent = !survey.getConfirmationPageLink() ? survey.getConfirmationPage() : survey.getConfirmationLink();
-		
-		survey.setConfirmationLink(link);
-		survey.setConfirmationPageLink(isLink.equalsIgnoreCase("true"));		
-		if (survey.getLanguage().getCode().equalsIgnoreCase(language))
-		{
-			survey.setConfirmationPage(text);
-		}
-		survey.setHasPendingChanges(true);
-		survey = surveyService.update(survey, true);
-		
-		activityService.log(225, oldContent, !survey.getConfirmationPageLink() ? survey.getConfirmationPage() : survey.getConfirmationLink(), u.getId(), survey.getUniqueId());
-		
-		Translations translations = translationService.getTranslations(survey.getId(), language);
-		if (translations != null)
-		{
-			Map<String,String> oldInfos = translations.getInfo();
-			
-			boolean changed = false;
-			Translation translation = translations.getTranslationsByKey().get(Survey.CONFIRMATIONPAGE);
-			if (translation != null)
-			{
-				translation.setLabel(text);
-				changed = true;
-			} else {
-				translation = new Translation(Survey.CONFIRMATIONPAGE, text, language, survey.getId(),translations);
-				translations.getTranslations().add(translation);
-				changed = true;
-			}
-			translation = translations.getTranslationsByKey().get(Survey.CONFIRMATIONLINK);
-			if (translation != null)
-			{
-				translation.setLabel(link);
-				changed = true;
-			} else {
-				translation = new Translation(Survey.CONFIRMATIONLINK, link, language, survey.getId(),translations);
-				translations.getTranslations().add(translation);
-				changed = true;
-			}
-			
-			if (changed)
-			{
-				translationService.save(translations);
-				activityService.logTranslations(227, translations.getLanguage().getCode(), oldInfos, translations.getInfo(), sessionService.getCurrentUser(request).getId(), survey.getUniqueId());
-			}
-		}
-						
-  		return new ModelAndView("redirect:/" + survey.getShortname() + "/management/edit");        
-	}
-	
-	@RequestMapping(value = "/saveEscapepage", method = RequestMethod.POST)
-	public ModelAndView saveEscapepage(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
-		
-		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-		
-		String isLink = Tools.escapeHTML(parameters.get("survey.escapePageLink")[0]);
-		String text = Tools.filterHTML(parameters.get("survey.escapePage")[0]);
-		String link = Tools.escapeHTML(parameters.get("survey.escapeLink")[0]);
-		String language = Tools.escapeHTML(parameters.get("edit.language")[0]);
-		
-		if (text != null && !XHTMLValidator.validate(text, servletContext, null))
-		{
-			throw new InvalidXHTMLException(text, text);
-		}
-		
-		Form form;
-		form = sessionService.getForm(request, shortname, false, false);
-		Survey survey = form.getSurvey();
-		
-		User u = sessionService.getCurrentUser(request);
-		if (!u.getId().equals(form.getSurvey().getOwner().getId()))
-		{
-			if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2)
-			{
-				if (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2)
-				{
-					throw new ForbiddenURLException();
-				}
-			}
-		}
-		
-		String oldContent = !survey.getConfirmationPageLink() ? survey.getConfirmationPage() : survey.getConfirmationLink();
-		
-		survey.setEscapeLink(link);
-		if (survey.getLanguage().getCode().equalsIgnoreCase(language))
-		{
-			survey.setEscapePage(text);
-		}
-		survey.setEscapePageLink(isLink.equalsIgnoreCase("true"));	
-		surveyService.update(survey, true);
-		
-		activityService.log(226, oldContent, !survey.getEscapePageLink() ? survey.getEscapePage() : survey.getEscapeLink(), u.getId(), survey.getUniqueId());
-				
-		Translations translations = translationService.getTranslations(survey.getId(), language);
-		if (translations != null)
-		{
-			Map<String,String> oldInfos = translations.getInfo();
-			
-			boolean changed = false;
-			Translation translation = translations.getTranslationsByKey().get(Survey.ESCAPEPAGE);
-			if (translation != null)
-			{
-				translation.setLabel(text);
-				changed = true;
-			} else {
-				translation = new Translation(Survey.ESCAPEPAGE, text, language, survey.getId(),translations);
-				translations.getTranslations().add(translation);
-				changed = true;
-			}
-			translation = translations.getTranslationsByKey().get(Survey.ESCAPELINK);
-			if (translation != null)
-			{
-				translation.setLabel(link);
-				changed = true;
-			} else {
-				translation = new Translation(Survey.ESCAPELINK, link, language, survey.getId(),translations);
-				translations.getTranslations().add(translation);
-				changed = true;
-			}
-			
-			if (changed)
-			{
-				translationService.save(translations);
-				activityService.logTranslations(227, translations.getLanguage().getCode(), oldInfos, translations.getInfo(), sessionService.getCurrentUser(request).getId(), survey.getUniqueId());
-			}
-		}
-						
-  		return new ModelAndView("redirect:/" + shortname + "/management/edit");        
-	}
 
 	@RequestMapping(value = "/properties", method = RequestMethod.POST)
 	public ModelAndView propertiesPost(@ModelAttribute Form form, BindingResult bindingresult, HttpServletRequest request, Locale locale) throws Exception {
@@ -937,6 +782,7 @@ public class ManagementController extends BasicController {
 		        }
 		 
 	            result.getSurvey().setShortname(Tools.escapeHTML(parameters.get("shortname")[0]));
+	            result.getSurvey().setTitle(Tools.filterHTML(parameters.get("title")[0]));
 	            Language objLang = surveyService.getLanguage(Tools.escapeHTML(parameters.get("surveylanguage")[0]));
 				if (objLang == null)
 				{
@@ -951,6 +797,7 @@ public class ManagementController extends BasicController {
 	            if (result.getActiveSurvey() != null)
 	            {
 	            	result.getActiveSurvey().setShortname(Tools.escapeHTML(parameters.get("shortname")[0]));
+	            	result.getActiveSurvey().setTitle(Tools.filterHTML(parameters.get("title")[0]));
 	 	            result.getActiveSurvey().setLanguage(objLang);
 	 	            result.getActiveSurvey().setListForm(request.getParameter("listform") != null && request.getParameter("listform").equalsIgnoreCase("true"));
 	 	            result.getActiveSurvey().setContact(Tools.escapeHTML(parameters.get("contact")[0]));
@@ -960,7 +807,7 @@ public class ManagementController extends BasicController {
 	            
 	            if (result != null && result.getSurvey() != null)
 	            {
-	            	int id = surveyService.importSurvey(result, sessionService.getCurrentUser(request), false);
+	            	int id = surveyService.importSurvey(result, sessionService.getCurrentUser(request), true);
 	            	activityService.log(102, null, Integer.toString(id), u.getId(), result.getSurvey().getUniqueId());
 	            	if (!file.delete())
 	            	{
@@ -1272,7 +1119,12 @@ public class ManagementController extends BasicController {
 		if (uploadedSurvey.getContact() == null || uploadedSurvey.getContact().trim().length() == 0) {
 			String message = resources.getMessage("validation.nocontact", null, "Please specify a contact.", locale);
 			return new ModelAndView("error/generic", "message", message);
-		}		
+		}
+		
+		if (uploadedSurvey.getLanguage() == null)
+	 	{
+	 		uploadedSurvey.setLanguage(surveyService.getLanguage(request.getParameter("survey.language")));
+	 	}
 		
 		if (uploadedSurvey.getLanguage() == null || uploadedSurvey.getLanguage().getCode().trim().length() == 0) {
 			String message = resources.getMessage("validation.nolanguage", null, "Please specify a language.", locale);
@@ -1413,6 +1265,11 @@ public class ManagementController extends BasicController {
 		if (!Tools.isEqual(survey.getIsQuiz(),uploadedSurvey.getIsQuiz())) hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowTotalScore(),uploadedSurvey.getShowTotalScore())) hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowQuizIcons(),uploadedSurvey.getShowQuizIcons())) hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getIsUseMaxNumberContribution(),uploadedSurvey.getIsUseMaxNumberContribution())) hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getIsUseMaxNumberContributionLink(),uploadedSurvey.getIsUseMaxNumberContributionLink())) hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getMaxNumberContributionText(),uploadedSurvey.getMaxNumberContributionText())) hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getMaxNumberContributionLink(),uploadedSurvey.getMaxNumberContributionLink())) hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getMaxNumberContribution(),uploadedSurvey.getMaxNumberContribution())) hasPendingChanges = true;
 		
 		if (!uploadedSurvey.getShowTotalScore())
 		{
@@ -1540,26 +1397,28 @@ public class ManagementController extends BasicController {
 		}
 		
 		if (!creation)
-		{	  
-			if (uploadedSurvey.getPassword() != null && !uploadedSurvey.getPassword().equalsIgnoreCase("********"))
-			{
-				if ( !uploadedSurvey.getPassword().equals(survey.getPassword()))
-				{				
-					String[] oldnew = {survey.getPassword(), uploadedSurvey.getPassword()};
-					activitiesToLog.put(115, oldnew);		
+		{	
+			if (!survey.getIsOPC()) {
+				if (uploadedSurvey.getPassword() != null && !uploadedSurvey.getPassword().equalsIgnoreCase("********"))
+				{
+					if ( !uploadedSurvey.getPassword().equals(survey.getPassword()))
+					{				
+						String[] oldnew = {survey.getPassword(), uploadedSurvey.getPassword()};
+						activitiesToLog.put(115, oldnew);		
+					}
+					
+					survey.setPassword(uploadedSurvey.getPassword());
 				}
 				
-				survey.setPassword(uploadedSurvey.getPassword());
-			}
-			
-			if (!Objects.equals(uploadedSurvey.getEcasSecurity(), survey.getEcasSecurity()))
-			{
-				survey.setEcasSecurity(uploadedSurvey.getEcasSecurity());
-			}
-			
-			if (!Objects.equals(uploadedSurvey.getEcasMode(), survey.getEcasMode()))
-			{
-				survey.setEcasMode(uploadedSurvey.getEcasMode());
+				if (!Objects.equals(uploadedSurvey.getEcasSecurity(), survey.getEcasSecurity()))
+				{
+					survey.setEcasSecurity(uploadedSurvey.getEcasSecurity());
+				}
+				
+				if (!Objects.equals(uploadedSurvey.getEcasMode(), survey.getEcasMode()))
+				{
+					survey.setEcasMode(uploadedSurvey.getEcasMode());
+				}
 			}
 			
 			if (uploadedSurvey.getValidatedPerPage() != survey.getValidatedPerPage())
@@ -1621,6 +1480,18 @@ public class ManagementController extends BasicController {
 				cal.add(Calendar.HOUR_OF_DAY, form.getEndHour());
 				uploadedSurvey.setEnd(cal.getTime());
 			}
+					
+			if (uploadedSurvey.getNotificationValue() != null && uploadedSurvey.getNotificationValue().equals("-1"))
+			{
+				uploadedSurvey.setNotificationValue(null);
+				uploadedSurvey.setNotificationUnit(null);
+			}
+			
+			if (uploadedSurvey.getNotificationUnit() != null && uploadedSurvey.getNotificationUnit().equals("-1"))
+			{
+				uploadedSurvey.setNotificationValue(null);
+				uploadedSurvey.setNotificationUnit(null);
+			}	
 			
 			if (uploadedSurvey.getNotificationValue() == null && survey.getNotificationValue() != null)
 			{
@@ -1637,6 +1508,9 @@ public class ManagementController extends BasicController {
 				String[] oldnew = {survey.getNotificationValue() != null ? survey.getNotificationValue()  + " " + survey.getNiceNotificationUnit() : "", uploadedSurvey.getNotificationValue() + " " + uploadedSurvey.getNiceNotificationUnit()};
 				activitiesToLog.put(111, oldnew);
 			}
+			
+			//the feature to limit the notification to the form owner has been removed
+			uploadedSurvey.setNotifyAll(true);
 			
 			if (uploadedSurvey.getNotifyAll() != survey.getNotifyAll())
 			{				
@@ -1698,6 +1572,11 @@ public class ManagementController extends BasicController {
 			survey.setRegistrationForm(uploadedSurvey.getRegistrationForm());
 			survey.setConfirmationPage(Tools.filterHTML(uploadedSurvey.getConfirmationPage()));
 			survey.setEscapePage(Tools.filterHTML(uploadedSurvey.getEscapePage()));
+			survey.setIsUseMaxNumberContribution(uploadedSurvey.getIsUseMaxNumberContribution());
+			survey.setIsUseMaxNumberContributionLink(uploadedSurvey.getIsUseMaxNumberContributionLink());
+			survey.setMaxNumberContributionText(Tools.filterHTML(uploadedSurvey.getMaxNumberContributionText()));
+			survey.setMaxNumberContributionLink(Tools.filterHTML(uploadedSurvey.getMaxNumberContributionLink()));
+			survey.setMaxNumberContribution(uploadedSurvey.getMaxNumberContribution());
 			
 			if (uploadedSurvey.getCaptcha() != survey.getCaptcha())
 			{				
@@ -1904,7 +1783,10 @@ public class ManagementController extends BasicController {
 				activitiesToLog.put(313, oldnew);
 			}
 			
-			survey.getPublication().setPassword(uploadedSurvey.getPublication().getPassword());			
+			if (uploadedSurvey.getPublication().getPassword() != null && !uploadedSurvey.getPublication().getPassword().equalsIgnoreCase("********"))
+			{
+				survey.getPublication().setPassword(uploadedSurvey.getPublication().getPassword());
+			}
 			survey.getPublication().setShowContent(uploadedSurvey.getPublication().isShowContent());			
 			survey.getPublication().setShowUploadedDocuments(uploadedSurvey.getPublication().getShowUploadedDocuments());
 			
@@ -2033,58 +1915,8 @@ public class ManagementController extends BasicController {
 			sessionService.updateSessionInfo(survey, u, request);
 			activityService.log(101, null, form.getSurvey().getId().toString(), u.getId(), survey.getUniqueId());
 			
-			if (survey.getIsOPC() && opcusers != null && opcusers.length() > 0)
-			{
-				String[] users = opcusers.split(";");
-				boolean first = true;
-				for (String user : users) {
-					if (user.length() > 0)
-					{
-						User opcuser = administrationService.getUserForLogin(user);
-						if (opcuser != null)
-						{
-							Access a = new Access();
-							a.setUser(opcuser);
-							a.setSurvey(survey);
-							a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
-							
-							if (first)
-							{
-								a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);
-								first = false;
-							} else {
-								a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 1);
-							}
-							
-							surveyService.saveAccess(a);
-						}
-					}
-				}
-			}			
-			
-			if (survey.getIsOPC() && opcdepartments != null && opcdepartments.length() > 0)
-			{
-				String[] departments = opcdepartments.split(";");
-				for (String department : departments) {
-					if (department.length() > 0)
-					{
-						String[] opcdepartment = ldapDBService.getDepartments(null, department, false, false);
-						
-						if (opcdepartment != null && opcdepartment.length > 0)
-						{
-							Access a = new Access();
-							a.setDepartment(department);
-							a.setSurvey(survey);
-							a.getLocalPrivileges().put(LocalPrivilege.AccessDraft, 2);
-							a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
-							a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);//						
-							
-							surveyService.saveAccess(a);
-						}
-					}
-				}
-			}
-			
+			surveyService.setBrpAccess(survey);
+									
 			return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/edit");
 		} else {
 			if (languageChanged)
@@ -2179,6 +2011,12 @@ public class ManagementController extends BasicController {
 				publishedSurvey.setSaveAsDraft(survey.getSaveAsDraft());
 				publishedSurvey.setDownloadContribution(survey.getDownloadContribution());
 				publishedSurvey.setPassword(survey.getPassword());
+				
+				publishedSurvey.setMaxNumberContribution(survey.getMaxNumberContribution());
+				publishedSurvey.setMaxNumberContributionLink(survey.getMaxNumberContributionLink());
+				publishedSurvey.setMaxNumberContributionText(survey.getMaxNumberContributionText());
+				publishedSurvey.setIsUseMaxNumberContribution(survey.getIsUseMaxNumberContribution());
+				publishedSurvey.setIsUseMaxNumberContributionLink(survey.getIsUseMaxNumberContributionLink());
 				
 				publishedSurvey.setEcasSecurity(survey.getEcasSecurity());
 				publishedSurvey.setEcasMode(survey.getEcasMode());
@@ -2321,7 +2159,7 @@ public class ManagementController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/edit", method = RequestMethod.POST)
-	public ModelAndView editSave(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView editPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 		
@@ -2749,7 +2587,6 @@ public class ManagementController extends BasicController {
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			
 			model.addObject("submit", true);
-			model.addObject("runnermode", true);
 			model.addObject("uniqueCode", uniqueCode);
 			model.addObject("invisibleElements", invisibleElements);
 			
@@ -2767,7 +2604,6 @@ public class ManagementController extends BasicController {
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			
 			model.addObject("submit", true);
-			model.addObject("runnermode", true);
 			model.addObject("uniqueCode", uniqueCode);
 			model.addObject("invisibleElements", invisibleElements);
 			
@@ -2851,7 +2687,12 @@ public class ManagementController extends BasicController {
 		result.addObject("isthankspage",true);
 		result.addObject("runnermode", true);
 		result.addObject("text", survey.getConfirmationPage());
-		result.addObject(new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()), translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()),contextpath));
+		
+		Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()), translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()),contextpath);
+		form.setSurvey(survey);	
+		
+		result.addObject(form);
+		
 		if (survey.getConfirmationPageLink() != null && survey.getConfirmationPageLink() && survey.getConfirmationLink() != null && survey.getConfirmationLink().length() > 0) {
 			result.addObject("redirect", survey.getFinalConfirmationLink(lang));
 		}
@@ -2923,6 +2764,9 @@ public class ManagementController extends BasicController {
 		if (!active) active = survey.getIsPublished();
 		
 		if (request != null && request.getParameter("results-source") != null) active = request.getParameter("results-source").equalsIgnoreCase("active");
+		
+		boolean showAssignedValues = false;
+		if (request != null && request.getParameter("dialog-show-assigned-values") != null) showAssignedValues = request.getParameter("dialog-show-assigned-values").equalsIgnoreCase("true");
 		
 		boolean allanswers = request != null && request.getParameter("results-source") != null && request.getParameter("results-source").equalsIgnoreCase("allanswers");
 		
@@ -3100,6 +2944,7 @@ public class ManagementController extends BasicController {
 		{
 			request.getSession().setAttribute("results-source-active", active);
 			request.getSession().setAttribute("results-source-allanswers", allanswers);
+			request.getSession().setAttribute("resultsShowAssignedValues", showAssignedValues);
 		}
 		
 		if (multidelete)
@@ -3242,12 +3087,12 @@ public class ManagementController extends BasicController {
 				result.addObject("deletedAnswers", deletedAnswers.size());
 			}
 			
-			if (request.getParameter("show-delete-checkboxes") != null && request.getParameter("show-delete-checkboxes").equalsIgnoreCase("true"))
-			{
-				result.addObject("showdeletecheckboxes", true);
-			} else {
-				result.addObject("showdeletecheckboxes", false);
-			}
+//			if (request.getParameter("show-delete-checkboxes") != null && request.getParameter("show-delete-checkboxes").equalsIgnoreCase("true"))
+//			{
+//				result.addObject("showdeletecheckboxes", true);
+//			} else {
+//				result.addObject("showdeletecheckboxes", false);
+//			}
 		}
 		
 		String resultType = null;
@@ -3857,7 +3702,24 @@ public class ManagementController extends BasicController {
 	}
 
 	@RequestMapping(value = "/access", method = RequestMethod.POST)
-	public ModelAndView updatePrivilege(@PathVariable String shortname, @RequestParam("id") String id, @RequestParam("privilege") String privilege, @RequestParam("value") String value, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView accessPOST(@PathVariable String shortname, HttpServletRequest request, Locale locale) throws Exception {
+		
+		String target = request.getParameter("target");
+		if (target != null)
+		{
+			if (target.equals("addUser")) {
+				return addUser(shortname, request.getParameter("login"), request.getParameter("ecas"), request, locale);
+			} else if (target.equals("removeUser")) {
+				return removeUser(shortname, request.getParameter("id"), request, locale);
+			} else if (target.equals("addGroup")) {
+				return addGroup(shortname, request.getParameter("groupname"), request, locale);
+			} 
+		}
+		
+		String id = request.getParameter("id");
+		String privilege = request.getParameter("privilege");
+		String value = request.getParameter("value");
+		
 		Access access = surveyService.getAccess(Integer.parseInt(id));
 		
 		if (access != null)
@@ -3901,8 +3763,7 @@ public class ManagementController extends BasicController {
 		}		
 	}
 
-	@RequestMapping(value = "/addUser", method = RequestMethod.POST)
-	public ModelAndView addUser(@PathVariable String shortname, @RequestParam("login") String login, @RequestParam("ecas") String ecas, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView addUser(String shortname, String login, String ecas, HttpServletRequest request, Locale locale) throws Exception {
 
 		User user = null;
 		Form form;
@@ -3972,8 +3833,7 @@ public class ManagementController extends BasicController {
 		return access(shortname, request, locale);
 	}
 	
-	@RequestMapping(value = "/addGroup", method = RequestMethod.POST)
-	public ModelAndView addGroup(@PathVariable String shortname, @RequestParam("groupname") String groupname, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView addGroup(String shortname, String groupname, HttpServletRequest request, Locale locale) throws Exception {
 
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
@@ -4031,9 +3891,7 @@ public class ManagementController extends BasicController {
 		return access(shortname, request, locale);
 	}
 
-
-	@RequestMapping(value = "/removeUser", method = RequestMethod.POST)
-	public ModelAndView removeUser(@PathVariable String shortname, @RequestParam("id") String id, HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView removeUser(String shortname, String id, HttpServletRequest request, Locale locale) throws Exception {
 		Access access = surveyService.getAccess(Integer.parseInt(id));
 		
 		if (access != null)
@@ -4144,11 +4002,6 @@ public class ManagementController extends BasicController {
 		}
 		
 		return null;
-	}
-	
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String save(@ModelAttribute Survey s, Model model) {
-		return "dashboard";
 	}
 	
 	@RequestMapping(value = "/closeCurrentForm", method = RequestMethod.GET)

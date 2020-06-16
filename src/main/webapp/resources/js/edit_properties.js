@@ -342,6 +342,13 @@ var ElementProperties = function() {
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))");
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false');
 				getChoosePropertiesRow("Style", "RadioButton,SelectBox", false, false, $(e).find("input[name^='choicetype']").val() == 'radio' ? "RadioButton" : "SelectBox");
+				
+				var subType = $(e).find("input[name^='subType']").val()
+				if (subType === "euCountries" || subType === "unCountries")
+				{
+					getChoosePropertiesRow("Display", "CountryOnly,ISOOnly,ISO+Country,Country+ISO", false, false, parseInt($(e).find("input[name^='displayMode']").val()));
+				}	 		
+			
 				getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
 				getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
@@ -458,19 +465,28 @@ var ElementProperties = function() {
 					$("#lockedElementInfo").show();
 				} else {
 					var id = $(e).attr("data-id");
-		 	 		var text = $("textarea[name^='text" + id + "']").first().text();
-		 	 		var shortname = $("input[name^='shortname" + id + "']").first().val();
-		 	 		                                
-					getTextPropertiesRow("Text", text, true);
+					var text = $("textarea[name^='text" + id + "']").first().text();
 					
-					if ($(e).closest("thead").length == 0)
+					if ($(e).hasClass("firstCell"))
 					{
-						getCheckPropertiesRow("Mandatory", $("input[name^='optional" + id + "']").val() == 'false');
-						getVisibilityRow(false);
-					}
+						text =  $("textarea[name^='firstCellText" + id + "']").first().text();
+						getTextPropertiesRow("Text", text, true);
+					} else {
+		 	 		
+			 	 		var shortname = $("input[name^='shortname" + id + "']").first().val();
+			 	 		                                
+						getTextPropertiesRow("Text", text, true);
+						
+						if ($(e).closest("thead").length == 0)
+						{
+							getCheckPropertiesRow("Mandatory", $("input[name^='optional" + id + "']").val() == 'false');
+							getVisibilityRow(false);
+						}
+						
+						getAdvancedPropertiesRow();
+						getTextPropertiesRow("Identifier", shortname, false);
 					
-					getAdvancedPropertiesRow();
-					getTextPropertiesRow("Identifier", shortname, false);
+					}
 					
 					_actions.ChildSelected(true);
 					
@@ -506,20 +522,27 @@ var ElementProperties = function() {
 					$("#lockedElementInfo").show();
 				} else {
 					var text = $(e).html();
-					if ($(e).find("textarea").length > 0)
+					
+					if ($(e).hasClass("firstCell"))
 					{
-						text = $(e).find("textarea").first().text();
+						text =  $("textarea[name^='firstCellText" + id + "']").first().text();
+						getTextPropertiesRow("Text", text, true);
+					} else {					
+						if ($(e).find("textarea").length > 0)
+						{
+							text = $(e).find("textarea").first().text();
+						}
+						
+						getTextPropertiesRow("Text", text, true);
+						
+						if ($(e).closest("tr").index() > 0)
+						{
+							getCheckPropertiesRow("Mandatory", $(e).attr("data-optional") == 'false');
+						}
+						
+						getAdvancedPropertiesRow();
+						getTextPropertiesRow("Identifier", $(e).attr("data-shortname"), false);
 					}
-					
-					getTextPropertiesRow("Text", text, true);
-					
-					if ($(e).closest("tr").index() > 0)
-					{
-						getCheckPropertiesRow("Mandatory", $(e).attr("data-optional") == 'false');
-					}
-					
-					getAdvancedPropertiesRow();
-					getTextPropertiesRow("Identifier", $(e).attr("data-shortname"), false);
 					
 					_actions.ChildSelected(true);
 					

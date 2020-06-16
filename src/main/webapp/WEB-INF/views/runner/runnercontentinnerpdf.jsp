@@ -246,9 +246,6 @@
 											<c:forEach var="c" begin="1" end="${element.columns}">
 											
 												<c:choose>
-													<c:when test="${r == 1 && c == 1}">
-														<td>		
-													</c:when>
 													<c:when test="${r > 1 && c > 1}">
 														<td class="matrix-cell">		
 													</c:when>
@@ -261,6 +258,9 @@
 												</c:choose>
 												
 													<c:choose>
+														<c:when test="${r == 1 && c == 1}">
+															<div>${element.firstCellText}</div>
+														</c:when>
 														<c:when test="${r == 1}">
 															<c:set var="entity" value="${element.childElements.get(c-1)}" />
 																												
@@ -361,6 +361,9 @@
 														</c:otherwise>
 													</c:choose>
 														<c:choose>
+															<c:when test="${r == 1 && c == 1}">
+																<div>${element.firstCellText}</div>
+															</c:when>
 															<c:when test="${r == 1}"><c:set var="entity" value="${element.childElements.get(c-1)}" />${entity.title}</c:when>																
 															<c:when test="${c == 1}">
 																<c:set var="entity" value="${element.childElements.get(element.columns + r - 2)}" />
@@ -435,7 +438,7 @@
 										  	${element.confirmationtext}
 										  </div>
 										  <div class="modal-footer">
-											<a style="cursor: pointer" class="btn btn-info" onclick="$('#confirmation-dialog${element.id}').modal('hide');"><spring:message code="label.Close" /></a>		
+											<a style="cursor: pointer" class="btn btn-primary" onclick="$('#confirmation-dialog${element.id}').modal('hide');"><spring:message code="label.Close" /></a>		
 										  </div>
 										  </div>
 										  </div>
@@ -505,14 +508,14 @@
 						<c:if test="${element.getType() == 'NumberQuestion'}">								
 							<div>
 								<div style="float: left; width: 206px; word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px; margin-left: 20px;"><esapi:encodeForHTML>${form.getValue(element)}</esapi:encodeForHTML></div>						
-								<div style="float: left" class="unit-text"><esapi:encodeForHTML>${element.unit}</esapi:encodeForHTML></div>	
+								<div style="float: left" class="unit-text">${element.unit}</div>	
 								<div style="clear: both"></div>		
 							</div>	
 						</c:if>
 						
 						<c:if test="${element.getType() == 'DateQuestion'}">
-							<div style="word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px; margin-left: 20px;">${form.getValue(element)}</div>											
-						</c:if>
+							<div style="width: 206px; word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px; margin-left: 20px;">${form.getValue(element)}</div>                                                                                    
+                        </c:if>
 							
 						<c:if test="${element.getType() == 'MultipleChoiceQuestion'}">
 							<div class="answer-columns">
@@ -590,7 +593,7 @@
 											<div style="float: right"><i class="icon icon-chevron-down"></i></div>
 											<c:forEach items="${element.orderedPossibleAnswers}" var="possibleanswer">												
 												<c:if test="${form.getValues(element).contains(possibleanswer.id.toString()) || form.getValues(element).contains(possibleanswer.uniqueId)}">
-													${possibleanswer.title}
+													${possibleanswer.getTitleForDisplayMode(element.displayMode)}
 												</c:if>																																
 											</c:forEach>			
 										</div>
@@ -618,7 +621,7 @@
 													</td>
 													<td style="padding-right: 15px; vertical-align: top">
 														<label for="${possibleanswer.id}">
-															<div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.title}</div>
+															<div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.getTitleForDisplayMode(element.displayMode)}</div>
 														</label>
 													</td>					
 													<c:if test="${status.count % element.numColumns == 0 && status.count < element.possibleAnswers.size()}">

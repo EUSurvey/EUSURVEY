@@ -26,7 +26,7 @@ $(function() {
 	});		
 	checkSelections();	
 	checkNotification();
-	
+
 	var uploader = new qq.FileUploader({
 	    element: $("#file-uploader-logo")[0],
 	    action: contextpath + '/${sessioninfo.shortname}/management/uploadimage',
@@ -151,7 +151,7 @@ function addLinksRow()
 	var td = document.createElement("td");
 	var input = document.createElement("input");
 	
-	$(input).attr("type","text").attr("maxlength","255").addClass("xhtml").attr("name","linklabel" + ($("#usefullinkstable").find("tr").length-1));
+	$(input).attr("type","text").attr("maxlength","250").addClass("xhtml freetext max250").attr("name","linklabel" + ($("#usefullinkstable").find("tr").length-1));
 	$(td).append(input);
 	$(tr).append(td);
 	
@@ -175,7 +175,7 @@ function addDocRow()
 	var td = document.createElement("td");
 	var input = document.createElement("input");
 	
-	$(input).attr("type","text").addClass("xhtml").attr("maxlength","255").attr("name","doclabel" + ($("#backgrounddocumentstable").find("tr").length-1));
+	$(input).attr("type","text").addClass("xhtml freetext max235").attr("maxlength","235").attr("name","doclabel" + ($("#backgrounddocumentstable").find("tr").length-1));
 	$(td).append(input);
 	$(tr).append(td);
 	
@@ -250,7 +250,7 @@ function deleteFile(url)
 
 function checkPropertiesSurveyContactType()
 {
-	if ($("#survey-contact-type").val() == "email")
+	if ($("#survey-contact-type").val() != "url")
 	{
 		$("#survey\\.contact").addClass("email");
 		$("#survey\\.contact").removeClass("url");
@@ -309,6 +309,14 @@ function publishConfirmationOkClicked()
 	$('#edit-properties-dialog').modal('show');
 	unsavedChanges=false;
 	validateInputAndSubmit($('#save-form'));
+}
+
+function addMaxContributionDisplayer() {
+	$('#maxNumberContributionDisplayer').removeClass('hideme');
+}
+
+function removeMaxContributionDisplayer() {
+	$('#maxNumberContributionDisplayer').addClass('hideme');
 }
 
 function checkAutomaticPublishing()
@@ -524,7 +532,7 @@ function editProperties()
 	    } else {
 		  $("#publish-results-error").show();
 		  $("#properties-save-button").hide();
-		  $("#properties-cancel-button").addClass("btn-info");
+		  $("#properties-cancel-button").addClass("btn-primary");
 	    }		
 	
 	}

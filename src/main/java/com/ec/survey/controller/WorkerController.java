@@ -54,7 +54,6 @@ public class WorkerController extends BasicController {
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${sender}") String sender;
 	private @Value("${server.prefix}") String serverPrefix;
-	private @Value("${export.fileDir}") String fileDir;
 	private @Value("${webservice.maxrequestsperday}") String maxrequestsperday;		
 
 	@RequestMapping(value = "createanswerpdf/{code}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
@@ -188,6 +187,12 @@ public class WorkerController extends BasicController {
 			}
 			
 			Survey survey = surveyService.getSurvey(archive.getSurveyUID(), true, false, false, false, null, false, false);
+			
+			if (survey == null)
+			{
+				return "survey with that uid not found";
+			}
+			
 			User u = administrationService.getUser(archive.getUserId());
 			ArchiveExecutor export = (ArchiveExecutor) context.getBean("archiveExecutor"); 
 			export.init(archive, survey, u);
