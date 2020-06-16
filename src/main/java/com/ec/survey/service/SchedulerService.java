@@ -492,8 +492,7 @@ public class SchedulerService extends BasicService {
 			
 			for (ToDoItem todo : todos) {
 				try {
-					reportingService.executeToDo(todo);
-					reportingService.removeToDo(todo, true);
+					reportingService.executeToDo(todo, true);
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}

@@ -355,8 +355,7 @@ public class AdministrationController extends BasicController {
 		try {
 			int ID = Integer.parseInt(id);
 			ToDoItem todo = reportingService.getToDo(ID);
-			reportingService.executeToDo(todo);
-			reportingService.removeToDo(todo, false);
+			reportingService.executeToDo(todo, false);
 			return "{\"success\": true}";
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
