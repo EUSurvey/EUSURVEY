@@ -9,18 +9,17 @@
 	<%@ include file="../includes.jsp" %>
 </head>
 <body style="text-align: center;">
-	<div class="page-wrap">
-		<%@ include file="../header.jsp" %>	
+
+	<%@ include file="../header.jsp" %>	
+
+	<c:choose>
+		<c:when test="${USER != null }">
+			<%@ include file="../menu.jsp" %>	
+		</c:when>
+	</c:choose>	
 	
-		<c:choose>
-			<c:when test="${USER != null }">
-				<%@ include file="../menu.jsp" %>	
-			</c:when>
-		</c:choose>	
-		
-		<div style="padding-top: 120px; padding-bottom: 120px;">
-			<span class="alert alert-danger"><spring:message code="error.FileTooLarge" /></span>
-		</div>
+	<div style="margin-top: 120px; margin-bottom: 120px;">
+		<span class="alert alert-danger"><spring:message code="error.FileTooLarge" /></span>
 	</div>
 	
 	<%@ include file="../footer.jsp" %>

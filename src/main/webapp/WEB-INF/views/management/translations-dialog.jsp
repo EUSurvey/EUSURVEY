@@ -13,7 +13,7 @@
 						<option value="other"><spring:message code="label.other" /></option>
 						<c:forEach items="${languages}" var="language">				
 							<c:if test="${language.official}">				
-								<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${language.code} - <spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
+								<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
 							</c:if>
 						</c:forEach>
 					</select>		

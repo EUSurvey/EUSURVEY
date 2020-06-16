@@ -156,7 +156,6 @@ public class SurveySearchController extends BasicController {
 		
 		if (mode.equalsIgnoreCase("archived"))
 		{ 
-			archivedFilter.setUniqueId(request.getParameter("archiveuid"));
 			archivedFilter.setShortname(request.getParameter("archiveshortname"));
 			archivedFilter.setTitle(request.getParameter("archivetitle"));
 			archivedFilter.setOwner(request.getParameter("archiveowner"));
@@ -168,8 +167,6 @@ public class SurveySearchController extends BasicController {
 			request.getSession().setAttribute("lstarchivefilter", archivedFilter);
 		} else if (mode.equalsIgnoreCase("deleted"))
 		{ 
-			deletedSurveysFilter.setId(request.getParameter("deletedid"));
-			deletedSurveysFilter.setUniqueId(request.getParameter("deleteduid"));
 			deletedSurveysFilter.setShortname(request.getParameter("deletedshortname"));
 			deletedSurveysFilter.setTitle(request.getParameter("deletedtitle"));
 			deletedSurveysFilter.setOwner(request.getParameter("deletedowner"));

@@ -875,7 +875,7 @@ public class SurveyService extends BasicService {
 		//skip computing if setting does not exist
 		String check = settingsService.get(Setting.TrustValueCreatorInternal);
 		if (check == null) return;
-				
+		
 		int trustValueCreatorInternal = Integer.parseInt(settingsService.get(Setting.TrustValueCreatorInternal));
 		int trustValuePastSurveys = Integer.parseInt(settingsService.get(Setting.TrustValuePastSurveys));
 		int trustValuePrivilegedUser = Integer.parseInt(settingsService.get(Setting.TrustValuePrivilegedUser));
@@ -1774,7 +1774,7 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<Language> getLanguages() {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Language l order by l.code asc");
+		Query query = session.createQuery("FROM Language l order by l.englishName asc");
 		@SuppressWarnings("unchecked")
 		List<Language> languages = query.list();
 		return languages;

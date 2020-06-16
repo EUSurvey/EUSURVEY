@@ -33,19 +33,18 @@
 		
 </head>
 <body id="bodyManagementTest">
-	<div class="page-wrap">
-		<%@ include file="../header.jsp" %>
-		<%@ include file="../menu.jsp" %>
-		<%@ include file="formmenu.jsp" %>	
-		
-		<div class="fixedtitleform">
-			<div class="fixedtitleinner">
-				<h1><spring:message code="label.Test" /></h1>		
-			</div>
+
+	<%@ include file="../header.jsp" %>
+	<%@ include file="../menu.jsp" %>
+	<%@ include file="formmenu.jsp" %>	
+	
+	<div class="fixedtitleform">
+		<div class="fixedtitleinner">
+			<h1><spring:message code="label.Test" /></h1>		
 		</div>
-		
-		<%@ include file="../runner/quizinner.jsp" %>
 	</div>
+	
+	<%@ include file="../runner/quizinner.jsp" %>
 
 	<%@ include file="../footer.jsp" %>	
 	

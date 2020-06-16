@@ -1126,7 +1126,7 @@ public class RunnerController extends BasicController {
 				}
 			} else if (survey.getEcasSecurity()) {
 				try {
-					draftid = answerService.getDraftForEcasLogin(survey, request);
+					draftid = answerService.getDraftForEcasLogin(survey, request);					
 				} catch (NotAgreedToTosException e) {
 					// ignore
 				} catch (NotAgreedToPsException e) {

@@ -514,7 +514,7 @@ public class OdfExportCreator extends ExportCreator {
 								{
 									cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
 									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
-								}								
+								}
 							} else {
 								List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(), matrixQuestion.getUniqueId());
 				
@@ -662,7 +662,6 @@ public class OdfExportCreator extends ExportCreator {
 								cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
 								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
 							}
-							
 						} else {
 							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 							
@@ -747,7 +746,6 @@ public class OdfExportCreator extends ExportCreator {
 								cell.setStringValue(ConversionTools.removeHTMLNoEscape(v));
 								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(v));
 							}
-							
 						} else {
 							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 			

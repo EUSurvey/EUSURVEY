@@ -197,11 +197,6 @@ public class ConversionTools {
 
 	public static String removeInvalidHtmlEntities(String text) {
 		
-		if (text == null || text.length() == 0)
-		{
-			return "";
-		}
-		
 		text = HtmlUtils.htmlUnescape(text);
 		
 		String xml10pattern = "[^"
