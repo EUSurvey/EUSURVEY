@@ -104,7 +104,7 @@
 		
 </head>
 <body>
-
+	<div class="page-wrap">
 	<%@ include file="../header.jsp" %>
 	<%@ include file="../menu.jsp" %>
 	<%@ include file="adminmenu.jsp" %>		
@@ -134,7 +134,7 @@
 			</div>
 		</div>
 	
-		<div class="page1024" style="margin-bottom: 0px; margin-top: 205px; overflow-x: visible;">
+		<div class="page1024" style="padding-bottom: 0px; padding-top: 205px; overflow-x: visible;">
 		
 			<form:form id="resultsForm" action="publicsurveys" method="post">
 				<div id="surveyTableDiv" style="min-height: 400px;">	
@@ -255,6 +255,7 @@
 			     </div>
 			</div>
 		</form:form>
+	</div>
 		
 	<%@ include file="../footer.jsp" %>	
 

@@ -732,13 +732,16 @@ public class XmlExportCreator extends ExportCreator {
 							if (answerSet == null)
 							{
 								String sanswers = row.get(answerrowcounter++);
-								String[] answers = sanswers.split(";");
-								for (String answer : answers) {
-									if (answer.length() > 0) {
-										writer.writeStartElement("Answer");
-										writer.writeAttribute("aid", answer);
-										writer.writeAttribute("qid", matrixQuestion.getUniqueId());
-										writer.writeEndElement(); //Answer
+								if (sanswers != null)
+								{
+									String[] answers = sanswers.split(";");
+									for (String answer : answers) {
+										if (answer.length() > 0) {
+											writer.writeStartElement("Answer");
+											writer.writeAttribute("aid", answer);
+											writer.writeAttribute("qid", matrixQuestion.getUniqueId());
+											writer.writeEndElement(); //Answer
+										}
 									}
 								}
 							} else {
@@ -757,10 +760,14 @@ public class XmlExportCreator extends ExportCreator {
 						for(Element childQuestion: rating.getQuestions()) {
 							if (answerSet == null)
 							{
-								writer.writeStartElement("Answer");
-								writer.writeAttribute("qid", childQuestion.getUniqueId());						
-								writer.writeCharacters(row.get(answerrowcounter++));						
-								writer.writeEndElement(); //Answer
+								String sanswers = row.get(answerrowcounter++);
+								if (sanswers != null)
+								{
+									writer.writeStartElement("Answer");
+									writer.writeAttribute("qid", childQuestion.getUniqueId());						
+									writer.writeCharacters(sanswers);						
+									writer.writeEndElement(); //Answer
+								}
 							} else {
 								List<Answer> answers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
 			
@@ -786,7 +793,11 @@ public class XmlExportCreator extends ExportCreator {
 								
 								if (answerSet == null)
 								{
-									writer.writeCharacters(row.get(answerrowcounter++));						
+									String sanswers = row.get(answerrowcounter++);
+									if (sanswers != null)
+									{
+										writer.writeCharacters(sanswers);						
+									}
 								} else {
 									String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);
 									if (answer != null && answer.length() > 0)
@@ -809,7 +820,6 @@ public class XmlExportCreator extends ExportCreator {
 							} else {
 							
 								String sanswers = row.get(answerrowcounter++);
-								
 								if (sanswers != null) {
 									
 									String[] answers;

@@ -254,7 +254,7 @@
 	</script>		
 </head>
 <body>
-
+	<div class="page-wrap">
 	<%@ include file="../header.jsp" %>
 	<%@ include file="../menu.jsp" %>
 	<%@ include file="adminmenu.jsp" %>	
@@ -306,7 +306,7 @@
 		</div>
 	</div>
 	
-	<div class="page1024" style="width: 1200px; margin-bottom: 0px;overflow-x: visible;">
+		<div class="page1024" style="width: 1200px; padding-bottom: 0px;overflow-x: visible;">
 		<table id="tbllist-todos" class="table table-bordered table-styled" style="width: 1024px; margin-left: auto; margin-right: auto; margin-top: 350px;">
 			<thead style="background-color: white; border-top: 1px solid #eee;">
 				<tr>
@@ -334,6 +334,7 @@
 				<spring:message code="label.NoData"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
 			<p>
 		</div>
+	</div>
 	</div>
 	
 	<%@ include file="../footer.jsp" %>	

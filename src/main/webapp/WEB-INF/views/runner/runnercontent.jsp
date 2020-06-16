@@ -10,10 +10,10 @@
 			<div class="page" style="width: 1300px;">	
 		</c:when>
 		<c:when test='${form.survey.skin != null && form.survey.skin.name.equals("New Official EC Skin")}'>
-			<div style="margin-top: 175px; max-width: 100%; overflow: hidden;"">	
+			<div style="padding-top: 175px; max-width: 100%; overflow: hidden;"">	
 		</c:when>
 		<c:otherwise>
-			<div style="margin-top: 35px; max-width: 100%; overflow: hidden;"">	
+			<div style="padding-top: 35px; max-width: 100%; overflow: hidden;"">	
 		</c:otherwise>
 	</c:choose>	
 		

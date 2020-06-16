@@ -11,7 +11,7 @@
 	<%@ include file="../includes.jsp" %>
 </head>
 <body>
-
+	<div class="page-wrap">
 	<%@ include file="../header.jsp" %>	
 	
 	<div class="page">
@@ -50,6 +50,7 @@
 		 		</fieldset>
 			</form:form>
 		</div>	
+	</div>
 	</div>
 	
 	<%@ include file="../footer.jsp" %>

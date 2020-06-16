@@ -10,7 +10,7 @@
 	<%@ include file="../includes.jsp" %>
 </head>
 <body style="text-align: center;">
-
+	<div class="page-wrap">
 	<%@ include file="../header.jsp" %>
 	
 	<div class="page">
@@ -51,6 +51,7 @@
 			</form:form>
 		</div>	
 		
+	</div>
 	</div>
 
 	<%@ include file="../footerNoLanguages.jsp" %>

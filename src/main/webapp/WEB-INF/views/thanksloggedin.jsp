@@ -17,13 +17,14 @@
 	</script>
 </head>
 <body>
-
+	<div class="page-wrap">
 	<%@ include file="header.jsp" %>
 	<%@ include file="menu.jsp" %>
 	<%@ include file="management/formmenu.jsp" %>
 	
 	<div class="fullpage">
 		<%@ include file="thanksinner.jsp" %>			
+	</div>
 	</div>
 	
 	<c:choose>

@@ -471,17 +471,6 @@ public class HomeController extends BasicController {
 		}		
 	}
 	
-	@RequestMapping(value = "/home/faw/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String faqrunner(Locale locale, Model model) {
-		model.addAttribute("runnermode", true);
-		return "home/faq";
-	}
-	
-	@RequestMapping(value = "/home/faq", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String faq(Locale locale, Model model) {
-		return "home/faq";
-	}
-	
 	@RequestMapping(value = "/home/welcome", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView welcome(HttpServletRequest request, Locale locale) {	
 		return basicwelcome(request, locale);

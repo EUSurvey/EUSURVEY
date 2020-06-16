@@ -10,6 +10,7 @@
 </head>
 <body>
 
+	<div class="page-wrap">
 	<%@ include file="../header.jsp" %>
 	<%@ include file="../menu.jsp" %>
 
@@ -25,6 +26,7 @@
 				</form:form>
 			</div>		
 		</div>		
+	</div>
 	</div>
 
 	<%@ include file="../footer.jsp" %>	

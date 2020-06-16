@@ -7,7 +7,7 @@
 			<div class="fullpageform">
 		</c:when>
 		<c:when test="${responsive != null}">
-			<div style="margin-top: 40px;">
+			<div style="padding-top: 40px;">
 		</c:when>
 		<c:otherwise>
 			<div>

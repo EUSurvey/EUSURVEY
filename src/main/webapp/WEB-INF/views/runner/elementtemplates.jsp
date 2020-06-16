@@ -862,18 +862,20 @@
 						<!-- /ko -->
 						<div data-bind="html: title" style="font-size: 90%"></div>										
 						<div class="answer-columns" style="margin-top: 5px; font-size: 90%;">
-							<table class="answers-table" data-bind="foreach: $parent.answers">							
-								<tr>
-									<td>
-										<input data-bind="enable: !$parents[1].readonly(), checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id()), attr: {value: id().toString(), 'onclick': $parents[1].readonly() ? 'return false;' : 'checkSingleClick(this); event.stopImmediatePropagation();', 'id': $parent.id().toString() + id().toString(), 'data-id': $parent.id().toString() + id().toString(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'class': $parent.css() + ' trigger', 'name': 'answer' + $parent.id(), 'data-dependencies': $parents[1].dependentElementsStrings()[$index() + ($parentContext.$index() * ($parents[1].columns()-1))], 'data-cellid' : $parent.id() + '|' + id(), type: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', role: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', 'data-dummy': getPAByQuestion2($parent.uniqueId(), uniqueId(), id())}" />
-										<input type="hidden" data-bind="attr: {'name': 'dependencies' + $parents[1].id(), 'value': $parents[1].dependentElementsStrings()[$index() + ($parentContext.$index() * ($parents[1].columns()-1))]}" />	
-									</td>
-									<td>
-										<label data-bind="attr: {for: $parent.id() + id()}">
-											<span class="answertext" data-bind="html: title"></span>
-										</label>																													
-									</td>
-								</tr>														
+							<table class="answers-table mobile-matrix">							
+								<tbody data-bind="foreach: $parent.answers">
+									<tr>
+										<td>
+											<input data-bind="enable: !$parents[1].readonly(), checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id()), attr: {value: id().toString(), 'onclick': $parents[1].readonly() ? 'return false;' : 'checkSingleClick(this); event.stopImmediatePropagation();', 'id': $parent.id().toString() + id().toString(), 'data-id': $parent.id().toString() + id().toString(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'class': $parent.css() + ' trigger', 'name': 'answer' + $parent.id(), 'data-dependencies': $parents[1].dependentElementsStrings()[$index() + ($parentContext.$index() * ($parents[1].columns()-1))], 'data-cellid' : $parent.id() + '|' + id(), type: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', role: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', 'data-dummy': getPAByQuestion2($parent.uniqueId(), uniqueId(), id())}" />
+											<input type="hidden" data-bind="attr: {'name': 'dependencies' + $parents[1].id(), 'value': $parents[1].dependentElementsStrings()[$index() + ($parentContext.$index() * ($parents[1].columns()-1))]}" />	
+										</td>
+										<td>
+											<label data-bind="attr: {for: $parent.id() + id()}">
+												<span class="answertext" data-bind="html: title"></span>
+											</label>																													
+										</td>
+									</tr>
+								</tbody>												
 							</table>
 						</div>
 					</div>

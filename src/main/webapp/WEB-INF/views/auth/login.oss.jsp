@@ -40,10 +40,10 @@
 		
 </head>
 <body>
-
+	 <div class="page-wrap">
 	<%@ include file="../header.jsp" %>	
 	
-	<div class="page" style="margin-top: 40px">
+		<div class="page" style="padding-top: 40px">
  		<div class="pageheader">
 			<h1><spring:message code="login.title" /></h1>
 		</div>
@@ -87,6 +87,7 @@
 	</div>
 	
 	<div style="clear: both"></div>
+	</div>
 	
 	<%@ include file="../footer.jsp" %>
 	<%@ include file="../generic-messages.jsp" %>

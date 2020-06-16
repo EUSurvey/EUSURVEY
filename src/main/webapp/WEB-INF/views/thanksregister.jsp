@@ -18,15 +18,14 @@
 	</script>
 </head>
 <body>
-
+	<div class="page-wrap">
 	<%@ include file="header.jsp" %>	
 
 	<div class="fullpage">
-		
 		<div style="text-align: center; margin: 200px;">		
 			<spring:message code="message.Registered" />		
 		</div>
-			
+		</div>
 	</div>
 
 <%@ include file="footer.jsp" %>	
