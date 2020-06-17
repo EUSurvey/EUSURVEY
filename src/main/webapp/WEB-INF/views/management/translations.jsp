@@ -49,6 +49,7 @@
 		var requestTranslationError = "<spring:message code='error.RequestTranslation' />";
 		var labelPublish = "<spring:message code='label.Publish' />";
 		var labelUnpublish = "<spring:message code='label.Unpublish' />";
+		var languagecodes = ${languagecodes};
 				
 		$(function() {					
 			$("#form-menu-tab").addClass("active");
@@ -180,10 +181,9 @@
 		{
 			if ($("#lang").val() == "other")
 			{
-				$("#otherlang").show();
-				$("#otherlang").find("input").focus();
+				$('#code').removeAttr("disabled").val("").focus();
 			} else {
-				$("#otherlang").hide();
+				$('#code').prop("disabled", "disabled").val($("#lang").val());
 			}
 		}
 		
