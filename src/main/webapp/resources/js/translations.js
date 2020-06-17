@@ -4,10 +4,29 @@ var currentButton;
 
 function checkAddLanguage()
 {
-	if ($("#lang").val() == "other" && $("#code").val().trim().length == 0)
+	$("#unknown-language-error").hide();
+	$("#add-translation-dialog-error").hide();
+	$("#unsupported-language-error").hide();
+	if ($("#lang").val() == "other")
 	{
-		$("#add-translation-dialog-error").show();
-		return false;
+		var code = $("#code").val().trim().toUpperCase();
+		if (code.length == 0)
+		{
+			$("#add-translation-dialog-error").show();
+			return false;
+		} else if (languagecodes.indexOf(code) < 0)
+		{
+			$("#unknown-language-error").show();
+			return false;
+		}
+		
+		if ($('#mtrequestcheck').length > 0 && $('#mtrequestcheck').is(":checked"))
+		{
+			if ($("#lang").find("option[value='" + code + "']").length == 0) {
+				$("#unsupported-language-error").show();
+				return false;
+			}
+		}
 	}
 	return true;
 }

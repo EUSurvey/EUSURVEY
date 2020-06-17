@@ -9,27 +9,37 @@
 	    	<div class="modal-content">
 				<div class="modal-header"><spring:message code="label.AddNewTranslation" /></div>
 				<div class="modal-body">
-					<select id="lang" name="lang" onchange="checkLanguage()">
-						<option value="other"><spring:message code="label.other" /></option>
-						<c:forEach items="${languages}" var="language">				
-							<c:if test="${language.official}">				
-								<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${language.code} - <spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
-							</c:if>
-						</c:forEach>
-					</select>		
-					<div id="otherlang">
-						<spring:message code="label.ProvideLanguageCode" /><br />
-						<input type="text" maxlength="2" name="code" id="code" style="width: 30px;" />
+					<spring:message code="label.SelectLanguageForNewTranslation" /><br /><br />
+					
+					<div style="float: left">
+						<select class="form-control" style="display: inline; width: auto" id="lang" name="lang" onchange="checkLanguage()">
+							<c:forEach items="${languages}" var="language">				
+								<c:if test="${language.official}">				
+									<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${language.code} - <spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
+								</c:if>
+							</c:forEach>
+							<option value="other"><spring:message code="label.Other" /></option>							
+						</select>
+					</div>	
+					
+					<div id="otherlang" style="float: left; margin-left: 10px;">
+						<spring:message code="label.ISOCode" />
+						<input type="text" class="form-control" maxlength="2" name="code" id="code" style="display: inline; width: 60px; margin-left: 5px;" />
 					</div>
+					
+					<div style="clear: both"></div>
+					
+					<div id="unknown-language-error" class="validation-error hideme" style="margin-top: 5px"><spring:message code="error.LanguageCodeNotRecognized" /></div>
+					<div id="add-translation-dialog-error" class="validation-error hideme" style="margin-top: 5px"><spring:message code="error.selectlanguagetoadd" /></div>
+					<div id="unsupported-language-error" class="validation-error hideme" style="margin-top: 5px"><spring:message code="error.LanguageNotSupported" /></div>
 					
 					<c:if test="${isMTAvailable}">					
-					<div id="requestTranslation">
-						<spring:message code="label.RequestLanguageTranslation" />
-						<input type="checkbox" class="check" style="margin-left: 10px;" name="request" id="request" />
-					</div>
-					</c:if>
+						<div id="requestTranslation" style="margin-top: 20px">
+							<input type="checkbox" class="check" name="request" id="mtrequestcheck" />
+							<spring:message code="label.RequestLanguageTranslation" />
+						</div>
+					</c:if>					
 					
-					<div class="validation-error hideme" id="add-translation-dialog-error"><spring:message code="error.selectlanguagetoadd" /></div>
 				</div>
 				<div class="modal-footer">						
 					<input onclick="return checkAddLanguage()" type="submit" class="btn btn-primary" value="<spring:message code="label.OK" />" />	
