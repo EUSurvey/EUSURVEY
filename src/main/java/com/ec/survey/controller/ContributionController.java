@@ -240,6 +240,7 @@ public class ContributionController extends BasicController {
 					answerSet.setSurvey(newestSurvey);
 				}
 			}
+			surveyService.initializeSurvey(newestSurvey);
 			
 			//this is needed to initialize the invisibleElements
 			SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements, resources, locale, null, null, true, null, fileService, forpdf);	
