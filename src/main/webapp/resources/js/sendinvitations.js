@@ -76,7 +76,7 @@ function checkAndSubmit()
 	$(".validation-error").remove();
 	
 	var sender = $("#senderAddress").val();
-	if (sender.length > 0)
+	if (sender != null && sender.length > 0)
 	{
 		 if( !validateEmail(sender)) {
 	    	if ($("#senderAddress").parent().find(".validation-error").length == 0)
