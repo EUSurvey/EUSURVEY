@@ -4156,6 +4156,10 @@ public class SurveyService extends BasicService {
 
 			result[4]++;
 		}
+		
+		List<Archive> archives = archiveService.getArchivesForUser(user.getId());
+		result[2] += archives.size();
+		result[4] += archives.size();
 
 		return result;
 	}
