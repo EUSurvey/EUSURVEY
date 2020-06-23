@@ -4,7 +4,7 @@ import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.ArchiveFilter;
-import com.ec.survey.model.DeletedSurveysFilter;
+//import com.ec.survey.model.DeletedSurveysFilter;
 import com.ec.survey.model.KeyValue;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.SurveyFilter;
@@ -38,13 +38,10 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.catalina.connector.ClientAbortException;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
@@ -63,12 +60,12 @@ public class SurveySearchController extends BasicController {
     	if (request.getParameter("deleted") != null)
     	{
     		result.addObject("deleted", true);
-    		DeletedSurveysFilter filter = (DeletedSurveysFilter) request.getSession().getAttribute("lstdeletedfilter");
-    		if (filter == null) filter = new DeletedSurveysFilter();
+    		SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lstdeletedfilter");
+    		if (filter == null) filter = new SurveyFilter();
         	result.addObject("deletedfilter", filter);
         	result.addObject("mode", "deleted");
     	} else {
-        	result.addObject("deletedfilter", new DeletedSurveysFilter());
+        	result.addObject("deletedfilter", new SurveyFilter());
     	}
     	
     	if (request.getParameter("reported") != null)
@@ -152,8 +149,8 @@ public class SurveySearchController extends BasicController {
 		SurveyFilter reportedFilter = new SurveyFilter();
 		SurveyFilter frozenFilter = new SurveyFilter();	
 		ArchiveFilter archivedFilter = new ArchiveFilter();	
-		DeletedSurveysFilter deletedSurveysFilter = new DeletedSurveysFilter();	
-		
+		SurveyFilter deletedSurveysFilter = new SurveyFilter();	
+
 		if (mode.equalsIgnoreCase("archived"))
 		{ 
 			archivedFilter.setUniqueId(request.getParameter("archiveuid"));
@@ -165,18 +162,29 @@ public class SurveySearchController extends BasicController {
 			archivedFilter.setArchivedFrom(ConversionTools.getDate(request.getParameter("archivearchivedFrom")));
 			archivedFilter.setArchivedTo(ConversionTools.getDate(request.getParameter("archivearchivedTo")));
 			
+			String sortKey = request.getParameter("sortkey");
+			if (sortKey != null && (sortKey.equals("replies") || sortKey.equals("created") || sortKey.equals("archived")))
+			{			
+				archivedFilter.setSortKey(sortKey);
+				archivedFilter.setSortOrder(request.getParameter("sortorder"));
+			}
+			
 			request.getSession().setAttribute("lstarchivefilter", archivedFilter);
 		} else if (mode.equalsIgnoreCase("deleted"))
 		{ 
+			deletedSurveysFilter.setUser(sessionService.getCurrentUser(request));
 			deletedSurveysFilter.setId(request.getParameter("deletedid"));
-			deletedSurveysFilter.setUniqueId(request.getParameter("deleteduid"));
+			deletedSurveysFilter.setUid(request.getParameter("deleteduid"));
 			deletedSurveysFilter.setShortname(request.getParameter("deletedshortname"));
 			deletedSurveysFilter.setTitle(request.getParameter("deletedtitle"));
 			deletedSurveysFilter.setOwner(request.getParameter("deletedowner"));
-			deletedSurveysFilter.setCreatedFrom(ConversionTools.getDate(request.getParameter("deletedcreatedFrom")));
-			deletedSurveysFilter.setCreatedTo(ConversionTools.getDate(request.getParameter("deletedcreatedTo")));
+			deletedSurveysFilter.setGeneratedFrom(ConversionTools.getDate(request.getParameter("deletedcreatedFrom")));
+			deletedSurveysFilter.setGeneratedTo(ConversionTools.getDate(request.getParameter("deletedcreatedTo")));
 			deletedSurveysFilter.setDeletedFrom(ConversionTools.getDate(request.getParameter("deleteddeletedFrom")));
 			deletedSurveysFilter.setDeletedTo(ConversionTools.getDate(request.getParameter("deleteddeletedTo")));
+			
+			deletedSurveysFilter.setSortKey(request.getParameter("sortkey"));
+			deletedSurveysFilter.setSortOrder(request.getParameter("sortorder"));
 			
 			request.getSession().setAttribute("lstdeletedfilter", deletedSurveysFilter);
 		} else if (mode.equalsIgnoreCase("reported"))
@@ -189,7 +197,9 @@ public class SurveySearchController extends BasicController {
 			reportedFilter.setPublishedFrom(ConversionTools.getDate(request.getParameter("reportedpublishedFrom")));
 			reportedFilter.setPublishedTo(ConversionTools.getDate(request.getParameter("reportedpublishedTo")));
 			reportedFilter.setFirstPublishedFrom(ConversionTools.getDate(request.getParameter("reportedfirstPublishedFrom")));
-			reportedFilter.setFirstPublishedTo(ConversionTools.getDate(request.getParameter("reportedfirstPublishedTo")));					
+			reportedFilter.setFirstPublishedTo(ConversionTools.getDate(request.getParameter("reportedfirstPublishedTo")));			
+			reportedFilter.setSortKey(request.getParameter("sortkey"));
+			reportedFilter.setSortOrder(request.getParameter("sortorder"));
 	    	request.getSession().setAttribute("lstreportedfilter", reportedFilter);
 		} else if (mode.equalsIgnoreCase("frozen"))
 		{ 
@@ -201,7 +211,9 @@ public class SurveySearchController extends BasicController {
 			frozenFilter.setPublishedFrom(ConversionTools.getDate(request.getParameter("frozenpublishedFrom")));
 			frozenFilter.setPublishedTo(ConversionTools.getDate(request.getParameter("frozenpublishedTo")));
 			frozenFilter.setFirstPublishedFrom(ConversionTools.getDate(request.getParameter("frozenfirstPublishedFrom")));
-			frozenFilter.setFirstPublishedTo(ConversionTools.getDate(request.getParameter("frozenfirstPublishedTo")));					
+			frozenFilter.setFirstPublishedTo(ConversionTools.getDate(request.getParameter("frozenfirstPublishedTo")));	
+			frozenFilter.setSortKey(request.getParameter("sortkey"));
+			frozenFilter.setSortOrder(request.getParameter("sortorder"));
 	    	request.getSession().setAttribute("lstfrozenfilter", frozenFilter);
 		} else {
 			filter.setUser(sessionService.getCurrentUser(request));
@@ -212,7 +224,9 @@ public class SurveySearchController extends BasicController {
 			filter.setPublishedFrom(ConversionTools.getDate(request.getParameter("publishedFrom")));
 			filter.setPublishedTo(ConversionTools.getDate(request.getParameter("publishedTo")));
 			filter.setFirstPublishedFrom(ConversionTools.getDate(request.getParameter("firstPublishedFrom")));
-			filter.setFirstPublishedTo(ConversionTools.getDate(request.getParameter("firstPublishedTo")));					
+			filter.setFirstPublishedTo(ConversionTools.getDate(request.getParameter("firstPublishedTo")));			
+			filter.setSortKey(request.getParameter("sortkey"));
+	    	filter.setSortOrder(request.getParameter("sortorder"));
 	    	request.getSession().setAttribute("surveysearchfilter", filter);
 		}
 		
@@ -279,9 +293,6 @@ public class SurveySearchController extends BasicController {
 			{
 				survey.setTitle(survey.cleanTitle());
 				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
-				Pair<Date, Date> dates = surveyService.getFirstLastPublishDate(survey.getUniqueId());
-				survey.setFirstPublished(dates.getLeft());
-				survey.setPublished(dates.getRight());
 			}
 			
 			return surveys;
@@ -327,8 +338,8 @@ public class SurveySearchController extends BasicController {
 		int itemsPerPage = -1;
 		int page = -1;
 		
-		DeletedSurveysFilter filter = (DeletedSurveysFilter) request.getSession().getAttribute("lstdeletedfilter");
-		if (filter == null) filter = new DeletedSurveysFilter();
+		SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lstdeletedfilter");
+		if (filter == null) filter = new SurveyFilter();
 		
 		if(request.getParameter("rows") != null && request.getParameter("page") != null)
 		{
@@ -338,29 +349,10 @@ public class SurveySearchController extends BasicController {
 			String pageValue = request.getParameter("page");		
 			page = Integer.parseInt(pageValue);
 		}
-	
-		List<Survey> surveysfromdb = surveyService.getDeletedSurveys(filter, page, itemsPerPage);
-		List<Survey> surveys = new ArrayList<>();
-		for (Survey original: surveysfromdb)
-		{
-			Survey survey = new Survey();
-			survey.setId(original.getId());
-			survey.setUniqueId(original.getUniqueId());
-			survey.setShortname(original.getShortname());
-			survey.setTitle(original.cleanTitle());
-			survey.setCreated(original.getCreated());
-			
-			User user = new User();			
-			user.setId(original.getOwner().getId());
-			user.setLogin(original.getOwner().getLogin());
-			user.setDisplayName(original.getOwner().getDisplayName());
-			survey.setOwner(user);
-			
-			survey.setNumberOfAnswerSetsPublished(original.getNumberOfAnswerSetsPublished());
-			survey.setDeleted(original.getDeleted());
-		
-			surveys.add(survey);
-		}
+
+		SqlPagination sqlPagination = new SqlPagination(page, itemsPerPage); 
+		filter.setSurveys("DELETED");
+		List<Survey> surveys = surveyService.getSurveysIncludingPublicationDates(filter, sqlPagination);
 		
 		return surveys;
 	}
@@ -386,10 +378,6 @@ public class SurveySearchController extends BasicController {
 			{
 				survey.setTitle(survey.cleanTitle());
 				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
-				survey.setNumberOfReports(surveyService.getAbuseReportsForSurvey(survey.getUniqueId()));
-				Pair<Date, Date> dates = surveyService.getFirstLastPublishDate(survey.getUniqueId());
-				survey.setFirstPublished(dates.getLeft());
-				survey.setPublished(dates.getRight());
 			}
 			
 			return surveys;
@@ -423,10 +411,6 @@ public class SurveySearchController extends BasicController {
 			{
 				survey.setTitle(survey.cleanTitle());
 				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
-				survey.setNumberOfReports(surveyService.getAbuseReportsForSurvey(survey.getUniqueId()));
-				Pair<Date, Date> dates = surveyService.getFirstLastPublishDate(survey.getUniqueId());
-				survey.setFirstPublished(dates.getLeft());
-				survey.setPublished(dates.getRight());
 			}
 			
 			return surveys;

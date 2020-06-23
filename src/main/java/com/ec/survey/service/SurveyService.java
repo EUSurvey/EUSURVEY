@@ -10,7 +10,6 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.tools.*;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.plexus.util.FileUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -179,7 +178,7 @@ public class SurveyService extends BasicService {
 	}
 
 	public List<Survey> getSurveysIncludingPublicationDates(SurveyFilter filter, SqlPagination sqlPagination) throws Exception {
-		String sql = "SELECT s.SURVEY_ID, s.SURVEY_UID, s.SURVEYNAME, s.TITLE, s.OWNER, (SELECT USER_LOGIN FROM USERS u WHERE u.USER_ID = s.OWNER) as ownerlogin,(SELECT USER_DISPLAYNAME FROM USERS u WHERE u.USER_ID = s.OWNER) as ownername, npa.PUBLISHEDANSWERS as replies, SUBSTRING(GROUP_CONCAT(s.survey_created),21, 19), SUBSTRING(GROUP_CONCAT(s.survey_created),-19), s.SURVEYSECURITY, s.ACTIVE, s.FROZEN from SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID where ";
+		String sql = "SELECT s.SURVEY_ID, s.SURVEY_UID, s.SURVEYNAME, s.TITLE, s.OWNER, (SELECT USER_LOGIN FROM USERS u WHERE u.USER_ID = s.OWNER) as ownerlogin,(SELECT USER_DISPLAYNAME FROM USERS u WHERE u.USER_ID = s.OWNER) as ownername, npa.PUBLISHEDANSWERS as replies, SUBSTRING(GROUP_CONCAT(s.survey_created),21, 19), SUBSTRING(GROUP_CONCAT(s.survey_created),-19), s.SURVEYSECURITY, s.ACTIVE, s.FROZEN, (SELECT MIN(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as firstPublished, (SELECT MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as published, s.SURVEY_DELETED, s.SURVEY_CREATED, (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported from SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID where ";
 
 		if (filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("ARCHIVED")) {
 			sql += "(s.ARCHIVED = 1)";
@@ -209,13 +208,20 @@ public class SurveyService extends BasicService {
 			user.setDisplayName((String) row[6]);
 			survey.setOwner(user);
 
-			survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[7]));
-			survey.setFirstPublished(ConversionTools.getDate((String) row[9]));
-			survey.setPublished(ConversionTools.getDate((String) row[9]));
+			survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[7]));			
 
 			survey.setSecurity((String) row[10]);
 			survey.setIsActive((Boolean) row[11]);
 			survey.setIsFrozen((Boolean) row[12]);
+			
+			survey.setFirstPublished((Date) row[13]);
+			survey.setPublished((Date) row[14]);
+			
+			survey.setDeleted((Date) row[15]);
+			survey.setCreated((Date) row[16]);
+			
+			survey.setNumberOfReports(ConversionTools.getValue(row[17]));
+			
 			surveys.add(survey);
 		}
 
@@ -470,6 +476,24 @@ public class SurveyService extends BasicService {
 				}
 			} else if (filter.getSortKey().equalsIgnoreCase("created")) {
 				sql.append(" ORDER BY s.SURVEY_CREATED");
+
+				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
+					sql.append(" ").append(filter.getSortOrder().toUpperCase());
+				}
+			} else if (filter.getSortKey().equalsIgnoreCase("firstPublished")) {
+				sql.append(" ORDER BY firstPublished");
+
+				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
+					sql.append(" ").append(filter.getSortOrder().toUpperCase());
+				}
+			} else if (filter.getSortKey().equalsIgnoreCase("published")) {
+				sql.append(" ORDER BY published");
+
+				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
+					sql.append(" ").append(filter.getSortOrder().toUpperCase());
+				}
+			} else if (filter.getSortKey().equalsIgnoreCase("reported")) {
+				sql.append(" ORDER BY reported");
 
 				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
 					sql.append(" ").append(filter.getSortOrder().toUpperCase());
@@ -3897,76 +3921,6 @@ public class SurveyService extends BasicService {
 			session.save(published);
 		}
 	}
-
-	@Transactional(readOnly = true)
-	public List<Survey> getDeletedSurveys(DeletedSurveysFilter filter, int page, int rowsPerPage) throws Exception {
-
-		Session session = sessionFactory.getCurrentSession();
-
-		String sql = "FROM Survey s WHERE s.isDraft = true AND s.isDeleted = true";
-
-		Map<String, Object> params = new HashMap<>();
-		
-		if (filter.getId() != null && filter.getId().trim().length() > 0) {
-			sql += " AND s.id = :id";
-			params.put("id", Integer.parseInt(filter.getId()));
-		}
-		
-		if (filter.getUniqueId() != null && filter.getUniqueId().trim().length() > 0) {
-			sql += " AND s.uniqueId LIKE :uniqueId";
-			params.put("uniqueId", "%" + filter.getUniqueId() + "%");
-		}
-
-		if (filter.getShortname() != null && filter.getShortname().trim().length() > 0) {
-			sql += " AND s.shortname LIKE :shortname";
-			params.put("shortname", "%" + filter.getShortname() + "%");
-		}
-
-		if (filter.getTitle() != null && filter.getTitle().trim().length() > 0) {
-			sql += " AND s.title LIKE :title";
-			params.put("title", "%" + filter.getTitle() + "%");
-		}
-
-		if (filter.getOwner() != null && filter.getOwner().trim().length() > 0) {
-			sql += " AND (s.owner.displayName LIKE :owner OR s.owner.login LIKE :owner)";
-			params.put("owner", "%" + filter.getOwner() + "%");
-		}
-
-		if (filter.getCreatedFrom() != null) {
-			sql += " AND s.created >= :createdFrom";
-			params.put("createdFrom", filter.getCreatedFrom());
-		}
-
-		if (filter.getCreatedTo() != null) {
-			sql += " AND s.created < :createdTo";
-
-			Calendar c = Calendar.getInstance();
-			c.setTime(filter.getCreatedTo());
-			c.add(Calendar.DAY_OF_MONTH, 1);
-			params.put("createdTo", c.getTime());
-		}
-
-		if (filter.getDeletedFrom() != null) {
-			sql += " AND s.deleted >= :deletedFrom";
-			params.put("deletedFrom", filter.getDeletedFrom());
-		}
-
-		if (filter.getDeletedTo() != null) {
-			sql += " AND s.deleted < :deletedTo";
-
-			Calendar c = Calendar.getInstance();
-			c.setTime(filter.getDeletedTo());
-			c.add(Calendar.DAY_OF_MONTH, 1);
-			params.put("deletedTo", c.getTime());
-		}
-
-		Query query = session.createQuery(sql);
-		sqlQueryService.setParameters(query, params);
-
-		@SuppressWarnings("unchecked")
-		List<Survey> result = query.setFirstResult((page-1) * rowsPerPage).setMaxResults(rowsPerPage).list();
-		return result;
-	}
 	
 	public List<Survey> getAllSurveysForUser(User user) {
 		Session session = sessionFactory.getCurrentSession();
@@ -4369,24 +4323,24 @@ public class SurveyService extends BasicService {
 		return ConversionTools.getValue(query.uniqueResult());
 	}
 	
-	@Transactional(readOnly = true)
-	public Pair<Date, Date> getFirstLastPublishDate(String surveyuid) {
-		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT MIN(SURVEY_CREATED), MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = :uid";
-		Query query = session.createSQLQuery(sql);
-		query.setString("uid", surveyuid);
-		
-		@SuppressWarnings("rawtypes")
-		List res = query.list();
-		
-		for (Object o : res) {
-			Object[] a = (Object[]) o;
-			
-			return Pair.of((Date)a[0],(Date)a[1]);
-		}
-		
-		return null;
-	}
+//	@Transactional(readOnly = true)
+//	public Pair<Date, Date> getFirstLastPublishDate(String surveyuid) {
+//		Session session = sessionFactory.getCurrentSession();
+//		String sql = "SELECT MIN(SURVEY_CREATED), MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = :uid";
+//		Query query = session.createSQLQuery(sql);
+//		query.setString("uid", surveyuid);
+//		
+//		@SuppressWarnings("rawtypes")
+//		List res = query.list();
+//		
+//		for (Object o : res) {
+//			Object[] a = (Object[]) o;
+//			
+//			return Pair.of((Date)a[0],(Date)a[1]);
+//		}
+//		
+//		return null;
+//	}
 
 	@Transactional
 	public int getAbuseReportsForSurvey(String surveyuid) {
