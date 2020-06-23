@@ -314,21 +314,16 @@
 										<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">
 											<a id="searchBtnFromTransTable" onclick="showSearchAndReplaceDialog(${translation.id});" class="iconbutton"  data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.SearchAndReplace" />"><span class="glyphicon glyphicon-search"></span></a>
 											<a id="editTranslationBtnFromTransTable" onclick="editSingleTranslation(this)" class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
-											<c:choose>
-												<c:when test="${translation.complete || (translation.requested != null && translation.requested)}">
-													<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.RequestTranslation" />"><span class="glyphicon glyphicon-refresh"></span></a>
-												</c:when>
-												<c:otherwise>
-													<c:choose>
-														<c:when test="${isMTAvailable}">
+											<c:if test="${isMTAvailable}">
+												<c:choose>
+													<c:when test="${translation.complete || (translation.requested != null && translation.requested)}">
+														<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.RequestTranslation" />"><span class="glyphicon glyphicon-refresh"></span></a>
+													</c:when>
+													<c:otherwise>													
 															<a onclick="requestSingleTranslation(this,${translation.id})" class='iconbutton' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.RequestTranslation" />"><span class="glyphicon glyphicon-refresh"></span></a>
-														</c:when>
-														<c:otherwise>
-															<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.RequestTranslation" />"><span class="glyphicon glyphicon-refresh"></span></a>
-														</c:otherwise>																							
-													</c:choose>
-												</c:otherwise>
-											</c:choose>
+													</c:otherwise>
+												</c:choose>
+											</c:if>	
 											
 											<c:choose>
 												<c:when test="${translation.language == form.survey.language}">
