@@ -179,7 +179,14 @@
 		
 		function checkLanguage()
 		{
-			if ($("#lang").val() == "other")
+			$("#unknown-language-error").hide();
+			$("#add-translation-dialog-error").hide();
+			$("#unsupported-language-error").hide();
+			
+			if ($("#lang").val() == "select")
+			{
+				$('#code').prop("disabled", "disabled").val("");
+			} else if ($("#lang").val() == "other")
 			{
 				$('#code').removeAttr("disabled").val("").focus();
 			} else {

@@ -7,6 +7,13 @@ function checkAddLanguage()
 	$("#unknown-language-error").hide();
 	$("#add-translation-dialog-error").hide();
 	$("#unsupported-language-error").hide();
+	
+	if ($("#lang").val() == "select")
+	{
+		$("#add-translation-dialog-error").show();
+		return false;
+	}
+	
 	if ($("#lang").val() == "other")
 	{
 		var code = $("#code").val().trim().toUpperCase();
