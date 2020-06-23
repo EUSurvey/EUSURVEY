@@ -13,6 +13,7 @@
 					
 					<div style="float: left">
 						<select class="form-control" style="display: inline; width: auto" id="lang" name="lang" onchange="checkLanguage()">
+							<option value="select"><spring:message code="label.SelectLanguage" /></option>
 							<c:forEach items="${languages}" var="language">				
 								<c:if test="${language.official}">				
 									<option value="<esapi:encodeForHTMLAttribute>${language.code}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${language.code} - <spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
