@@ -104,8 +104,9 @@ public class DashboardController extends BasicController {
 			
 			String sort = request.getParameter("sort");
 			String span = request.getParameter("span");
+			String type = request.getParameter("type");
 					
-			LinkedHashMap<Integer, String> surveys = surveyService.getAllPublishedSurveysForUser(u, sort);	
+			Map<Integer, String> surveys = surveyService.getAllPublishedSurveysForUser(u, sort, type);	
 			contributions.setSurveys(surveys);
 			
 			int index = 0;
@@ -161,7 +162,8 @@ public class DashboardController extends BasicController {
 		try {
 			
 			User u = sessionService.getCurrentUser(request);
-			String[] surveydata = surveyService.getMetaDataForUser(u);	
+			String type = request.getParameter("type");
+			String[] surveydata = surveyService.getMetaDataForUser(u, type);	
 			return surveydata;					
 		} catch (Exception ex) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -191,7 +193,8 @@ public class DashboardController extends BasicController {
 	public @ResponseBody EndDates enddates(HttpServletRequest request, HttpServletResponse response, Locale locale, Model model) {
 		try {			
 			User u = sessionService.getCurrentUser(request);
-			Map<Date, List<String>> surveyswithenddates = surveyService.getSurveysWithEndDatesForUser(u.getId());	
+			String type = request.getParameter("type");
+			Map<Date, List<String>> surveyswithenddates = surveyService.getSurveysWithEndDatesForUser(u, type);	
 			
 			EndDates result = new EndDates();
 			result.setEndDates(surveyswithenddates);
@@ -316,6 +319,10 @@ public class DashboardController extends BasicController {
 			if (request.getParameter("frozen") != null)
 			{
 				filter.setSurveys("FROZEN");
+			}
+			
+			if (request.getParameter("type") != null) {
+				filter.setSelector(request.getParameter("type"));
 			}
 			
 			SqlPagination paging = new SqlPagination(page, 10);
