@@ -774,6 +774,18 @@
 				$("#add-user-domain-div").css("width", "500px");
 			}
 		}
+		
+		function sort(key, ascending)
+		{
+			$("#sortkey").val(key);
+			if (ascending)
+			{
+				$("#sortorder").val("ASC");
+			} else {
+				$("#sortorder").val("DESC");
+			}
+			$("#resultsForm").submit();
+		}
 	</script>
 		
 </head>
@@ -784,6 +796,10 @@
 		<%@ include file="adminmenu.jsp" %>	
 		
 		<form:form id="resultsForm" action="surveysearch" method="post" class="noautosubmitonclearfilter">
+		
+			<input type="hidden" name="sortkey" id="sortkey" value='<esapi:encodeForHTMLAttribute>${filter.sortKey}</esapi:encodeForHTMLAttribute>' />
+			<input type="hidden" name="sortorder" id="sortorder" value='<esapi:encodeForHTMLAttribute>${filter.sortOrder}</esapi:encodeForHTMLAttribute>' />
+				
 		
 		<div class="fixedtitleform">
 			<div class="fixedtitleinner" style="height: 100px">
@@ -850,10 +866,25 @@
 								<th><spring:message code="label.Survey" /> UID</th>
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
-								<th><spring:message code="label.Created" /></th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('created',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('created',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.Created" />
+								</th>
 								<th><spring:message code="label.Owner" /></th>
-								<th><spring:message code="label.Replies" /></th>
-								<th><spring:message code="label.Archived" /></th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.Replies" />
+								</th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('archived',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('archived',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.Archived" />
+								</th>
 								<th>PDF</th>
 								<th><spring:message code="label.Results" /></th>
 								<th><spring:message code="label.Statistics" /></th>
@@ -864,9 +895,19 @@
 								<th><spring:message code="label.Survey" /> UID</th>
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
-								<th><spring:message code="label.Created" /></th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('created',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('created',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.Created" />
+								</th>
 								<th><spring:message code="label.Owner" /></th>
-								<th><spring:message code="label.Replies" /></th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.Replies" />
+								</th>
 								<th><spring:message code="label.Deleted" /></th>
 								<th><spring:message code="label.Actions" /></th>
 							</tr>
@@ -875,9 +916,24 @@
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
 								<th><spring:message code="label.Owner" /></th>
-								<th><spring:message code="label.FirstPublished" /></th>
-								<th><spring:message code="label.Published" /></th>
-								<th><spring:message code="label.NumberOfResults" /></th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('firstPublished',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('firstPublished',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.FirstPublished" />
+								</th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('published',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('published',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.Published" />
+								</th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.NumberOfResults" />
+								</th>
 								<th><spring:message code="label.NumberOfDrafts" /></th>
 								<th><spring:message code="label.Actions" /></th>
 							</tr>
@@ -886,22 +942,62 @@
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
 								<th><spring:message code="label.Owner" /></th>
-								<th><spring:message code="label.FirstPublished" /></th>
-								<th><spring:message code="label.Published" /></th>
-								<th><spring:message code="label.NumberOfResults" /></th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('firstPublished',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('firstPublished',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.FirstPublished" />
+								</th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('published',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('published',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.Published" />
+								</th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.NumberOfResults" />
+								</th>
 								<th><spring:message code="label.NumberOfDrafts" /></th>
-								<th><spring:message code="label.NumberOfReports" /></th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('reported',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('reported',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.NumberOfReports" />
+								</th>
 							</tr>
 							<tr class="frozenonly">
 								<th><spring:message code="label.Survey" /> UID</th>
 								<th><spring:message code="label.Alias" /></th>
 								<th><spring:message code="label.Title" /></th>
 								<th><spring:message code="label.Owner" /></th>
-								<th><spring:message code="label.FirstPublished" /></th>
-								<th><spring:message code="label.Published" /></th>
-								<th><spring:message code="label.NumberOfResults" /></th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('firstPublished',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('firstPublished',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.FirstPublished" />
+								</th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('published',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('published',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.Published" />
+								</th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.NumberOfResults" />
+								</th>
 								<th><spring:message code="label.NumberOfDrafts" /></th>
-								<th><spring:message code="label.NumberOfReports" /></th>
+								<th>
+									<div style="float: right">
+										<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('reported',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('reported',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+									</div>
+									<spring:message code="label.NumberOfReports" />
+								</th>
 								<th><spring:message code="label.Actions" /></th>
 							</tr>
 							<tr class="table-styled-filter archivedonly hideme">
@@ -1004,7 +1100,7 @@
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='${deletedfilter.id}' type="text" maxlength="255" style="margin:0px;" name="deletedid" />
 								</th>
 								<th class="filtercell">
-									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='${deletedfilter.uniqueId}' type="text" maxlength="255" style="margin:0px;" name="deleteduid" />
+									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='${deletedfilter.uid}' type="text" maxlength="255" style="margin:0px;" name="deleteduid" />
 								</th>
 								<th class="filtercell">
 									<input class="small-form-control" onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${deletedfilter.shortname}</esapi:encodeForHTMLAttribute>' type="text" maxlength="255" style="margin:0px;" name="deletedshortname" />
@@ -1017,8 +1113,8 @@
 										<div class="datefilter" style="float: left">
 										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
 										     <c:choose>
-										     	<c:when test="${deletedfilter.createdFrom != null}">
-										     		<spring:eval expression="deletedfilter.createdFrom" />
+										     	<c:when test="${deletedfilter.generatedFrom != null}">
+										     		<spring:eval expression="deletedfilter.generatedFrom" />
 										     	</c:when>
 										     	<c:otherwise>
 										     		<spring:message code="label.from" />
@@ -1027,15 +1123,15 @@
 										    <span class="caret"></span>
 										  </a>
 										  <div class="overlaymenu hideme">
-										    	<input type="hidden" name="deletedcreatedFrom" class="hiddendate" value="<spring:eval expression="deletedfilter.createdFrom" />" />
+										    	<input type="hidden" name="deletedcreatedFrom" class="hiddendate" value="<spring:eval expression="deletedfilter.generatedFrom" />" />
 										    	<div id="metafilterdeletedcreatedfromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 										   </div>
 										</div>
 										<div class="datefilter" style="float: left">	
 										  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
 										  	<c:choose>
-										     	<c:when test="${deletedfilter.createdTo != null}">
-										     		<spring:eval expression="deletedfilter.createdTo" />
+										     	<c:when test="${deletedfilter.generatedTo != null}">
+										     		<spring:eval expression="deletedfilter.generatedTo" />
 										     	</c:when>
 										     	<c:otherwise>
 										     		<spring:message code="label.To" />
@@ -1044,7 +1140,7 @@
 										    <span class="caret"></span>
 										  </a>
 										 <div class="overlaymenu hideme">
-										    	<input type="hidden" name="deletedcreatedTo" class="hiddendate" value="<spring:eval expression="deletedfilter.createdTo" />" />
+										    	<input type="hidden" name="deletedcreatedTo" class="hiddendate" value="<spring:eval expression="deletedfilter.generatedTo" />" />
 										    	<div id="metafilterdeletedcreatedtodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
 										    </div>
 										</div>	
