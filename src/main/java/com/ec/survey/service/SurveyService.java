@@ -3934,11 +3934,27 @@ public class SurveyService extends BasicService {
 		
 		return result;
 	}
+	
+	private String getOwnerWhere(User user, String type)
+	{
+		String ownerwhere;
 
-	public LinkedHashMap<Integer, String> getAllPublishedSurveysForUser(User user, String sort) {
+		if (type != null && type.equalsIgnoreCase("my")) {
+			ownerwhere = "s.OWNER = :userid";
+		} else if (type != null && type.equalsIgnoreCase("shared")) {
+			ownerwhere = "s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
+		} else {
+			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
+		}
+		
+		return ownerwhere;
+	}
+
+	public Map<Integer, String> getAllPublishedSurveysForUser(User user, String sort, String type) {
 		Session session = sessionFactory.getCurrentSession();
-
-		String sql = "SELECT s.SURVEY_ID, s.SURVEYNAME from SURVEYS s where s.ISDRAFT = 1 and s.ACTIVE = 1 and (s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))) and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) ORDER BY ";
+		
+		String ownerwhere = getOwnerWhere(user, type);
+		String sql = "SELECT s.SURVEY_ID, s.SURVEYNAME from SURVEYS s where s.ISDRAFT = 1 and s.ACTIVE = 1 and (" + ownerwhere + ") and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) ORDER BY ";
 
 		if (sort.equalsIgnoreCase("created")) {
 			sql += "s.SURVEY_CREATED DESC";
@@ -3949,8 +3965,12 @@ public class SurveyService extends BasicService {
 		}
 
 		Query query = session.createSQLQuery(sql);
+	
 		query.setInteger("userid", user.getId());
-		query.setString("login", user.getLogin());
+
+		if (type == null || !type.equalsIgnoreCase("my")) {
+			query.setString("login", user.getLogin());
+		}
 
 		LinkedHashMap<Integer, String> result = new LinkedHashMap<Integer, String>();
 
@@ -3965,9 +3985,12 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public List<String> getAllPublishedSurveysUIDsForUser(User user, boolean escapeforsql, boolean includearchived) {
+	public List<String> getAllPublishedSurveysUIDsForUser(User user, boolean escapeforsql, boolean includearchived, String type) {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT DISTINCT s.SURVEY_UID from SURVEYS s where s.ISDRAFT = 1 and (s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))) and (s.DELETED = 0 or s.DELETED is null)";
+		
+		String ownerwhere = getOwnerWhere(user, type);
+		
+		String sql = "SELECT DISTINCT s.SURVEY_UID from SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere + ") and (s.DELETED = 0 or s.DELETED is null)";
 
 		if (!includearchived) {
 			sql += " and (s.ARCHIVED = 0 or s.ARCHIVED is null)";
@@ -3975,7 +3998,10 @@ public class SurveyService extends BasicService {
 
 		Query query = session.createSQLQuery(sql);
 		query.setInteger("userid", user.getId());
-		query.setString("login", user.getLogin());
+
+		if (type == null || !type.equalsIgnoreCase("my")) {
+			query.setString("login", user.getLogin());
+		}
 
 		List<String> result = new ArrayList<String>();
 
@@ -3993,10 +4019,10 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public String[] getMetaDataForUser(User user) throws Exception {
+	public String[] getMetaDataForUser(User user, String type) throws Exception {
 		String[] result = new String[6];
 
-		List<String> surveyUIDs = getAllPublishedSurveysUIDsForUser(user, true, false);
+		List<String> surveyUIDs = getAllPublishedSurveysUIDsForUser(user, true, false, type);
 
 		if (surveyUIDs.size() > 0) {
 			Session session = sessionFactory.getCurrentSession();
@@ -4066,16 +4092,8 @@ public class SurveyService extends BasicService {
 
 		Session session = sessionFactory.getCurrentSession();
 
-		String ownerwhere;
-
-		if (type != null && type.equalsIgnoreCase("my")) {
-			ownerwhere = "s.OWNER = :userid";
-		} else if (type != null && type.equalsIgnoreCase("shared")) {
-			ownerwhere = "s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
-		} else {
-			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
-		}
-
+		String ownerwhere = getOwnerWhere(user, type);
+		
 		String sql = "SELECT s.SURVEY_ID, s.ACTIVE, s.ISPUBLISHED, s.ARCHIVED, s.HASPENDINGCHANGES from SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere
 				+ ") and (s.DELETED = 0 or s.DELETED is null)";
 
@@ -4118,12 +4136,18 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public Map<Date, List<String>> getSurveysWithEndDatesForUser(Integer userid) {
+	public Map<Date, List<String>> getSurveysWithEndDatesForUser(User user, String type) {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT s.SURVEYNAME, s.SURVEY_END_DATE FROM SURVEYS s where s.ISDRAFT = 1 and s.OWNER = :userid and s.SURVEY_END_DATE is not null and s.SURVEY_END_DATE >= CURDATE() and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) and s.AUTOMATICPUBLISHING = 1";
+				
+		String ownerwhere = getOwnerWhere(user, type);
+		String sql = "SELECT s.SURVEYNAME, s.SURVEY_END_DATE FROM SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere + ") and s.SURVEY_END_DATE is not null and s.SURVEY_END_DATE >= CURDATE() and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) and s.AUTOMATICPUBLISHING = 1";
 
 		Query query = session.createSQLQuery(sql);
-		query.setInteger("userid", userid);
+		query.setInteger("userid", user.getId());
+
+		if (type == null || !type.equalsIgnoreCase("my")) {
+			query.setString("login", user.getLogin());
+		}
 
 		Map<Date, List<String>> result = new TreeMap<Date, List<String>>();
 
