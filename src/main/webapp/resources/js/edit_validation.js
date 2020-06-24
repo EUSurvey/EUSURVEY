@@ -278,7 +278,7 @@ function checkRows(rows)
 	
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var element = _elements[id];
-	if (element.minRows() != null && element.minRows() > rows.length)
+	if (element.type != "Table" && element.minRows() != null && element.minRows() > rows.length)
 	{
 		addValidationInfo($("#btnRemoveRows"), "checkNumberOfRows");
 		return false;
