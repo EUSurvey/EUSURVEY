@@ -816,7 +816,7 @@ public class TranslationController extends BasicController {
 				}
 				activityService.log(221, null, language.getCode(), sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
 				
-				if (isUseECMT() && !language.isOfficial()) {
+				if (translationRequested && isUseECMT() && !language.isOfficial()) {
 					return new ModelAndView("redirect:/" + shortname + "/management/translations?error=RequestTranslation");
 				} else {
 					return new ModelAndView("redirect:/" + shortname + "/management/translations");
