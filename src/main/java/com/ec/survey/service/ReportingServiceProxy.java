@@ -58,6 +58,21 @@ public class ReportingServiceProxy {
 		if (!isReportingDatabaseEnabled()) return;
 		reportingService.updateOLAPTableInternal(shortname, draftversion, publishedversion);
 	}
+
+	public int getCount(boolean isDraft, String surveyUid) {
+		if (!isReportingDatabaseEnabled()) return -1;
+		return reportingService.getCountInternal(isDraft , surveyUid);
+	}
+
+	public int getCount(boolean isDraft, String surveyUid, String where, Map<String, Object> values) {
+		if (!isReportingDatabaseEnabled()) return -1;
+		return reportingService.getCountInternal(isDraft , surveyUid, where, values);
+	}
+
+	public int getCount(Survey survey) {
+		if (!isReportingDatabaseEnabled()) return -1;
+		return reportingService.getCountInternal(survey);
+	}
 	
 	public int getCount(Survey survey, String where, Map<String, Object> values) {
 		if (!isReportingDatabaseEnabled()) return -1;

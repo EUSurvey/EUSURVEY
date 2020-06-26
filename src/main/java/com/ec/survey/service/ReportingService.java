@@ -701,24 +701,27 @@ public class ReportingService {
 		}		
 	}
 
-	public boolean OLAPTableExists(Survey survey) {
-		return this.OLAPTableExists(survey, null);
+	public boolean OLAPTableExistsInternal(Survey survey) {
+		return this.OLAPTableExistsInternal(survey, null);
+	}
+
+	public boolean OLAPTableExistsInternal(boolean isDraft, String surveyUid) {
+		return this.OLAPTableExistsInternal(isDraft, surveyUid, null);
 	}
 
 	@Transactional(transactionManager = "transactionManagerReporting")
-	public boolean OLAPTableExists(Survey survey, Integer counter) {
-		if (survey == null) {
-			throw new IllegalArgumentException("survey is not null");
+	public boolean OLAPTableExistsInternal(boolean isDraft, String surveyUid, Integer counter) {
+		if (surveyUid == null) {
+			throw new IllegalArgumentException("surveyUid is not null");
 		}
 		if (counter != null && counter < 1) {
 			throw new IllegalArgumentException("counter starts at 1");
 		}
-
 		try {
 			Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT 1 FROM ");
-			sql.append(this.getOLAPTableName(survey, counter));
+			sql.append(this.getOLAPTableName(!isDraft, surveyUid, counter));
 			sql.append(" LIMIT 1");
 			SQLQuery queryreporting = sessionReporting.createSQLQuery(sql.toString());
 			queryreporting.uniqueResult();
@@ -726,6 +729,11 @@ public class ReportingService {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	@Transactional(transactionManager = "transactionManagerReporting")
+	public boolean OLAPTableExistsInternal(Survey survey, Integer counter) {
+		return this.OLAPTableExistsInternal(survey.getIsDraft(), survey.getUniqueId(), counter);
 	}
 
 	@Transactional(transactionManager = "transactionManagerReporting")
@@ -863,7 +871,7 @@ public class ReportingService {
 		logger.info("starting reporting table validation for survey UID" + survey.getUniqueId()
 		+ (survey.getIsDraft() ? " (draft)" : ""));
 
-		if (!this.OLAPTableExists(survey, counter)) {
+		if (!this.OLAPTableExistsInternal(survey, counter)) {
 			logger.info("/!\\ OLAP table doesnt exist for " + survey.getUniqueId()
 			+ (survey.getIsDraft() ? " (draft)" : "")
 			+ (counter == null ? "" : " counter = " + counter));
@@ -1077,12 +1085,21 @@ public class ReportingService {
 	}
 		
 	private String getOLAPTableName(boolean publishedSurvey, String uid) {
-		if (!publishedSurvey)
-		{ 
-			return "TD" + uid.replace("-", "");
-		} else {
-			return "T" + uid.replace("-", "");
+		return this.getOLAPTableName(publishedSurvey, uid, null);
+	}
+
+	private String getOLAPTableName(boolean publishedSurvey, String uid, Integer tableCount) {
+		if (uid == null) {
+			throw new IllegalArgumentException("Survey uid is not null");
 		}
+
+		String uidAsInTableName = uid.replace("-", "");
+		String tableName = publishedSurvey ? "T" + uidAsInTableName : "TD" + uidAsInTableName;
+
+		if (tableCount != null) {
+			tableName = tableName + "_" + tableCount;
+		}
+		return tableName;
 	}
 	
 	private void updateOLAPTable(Survey survey) throws Exception {		
@@ -1483,36 +1500,49 @@ public class ReportingService {
 	}
 
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getCountInternal(Survey survey, String where, Map<String, Object> values) {
+	public int getCountInternal(boolean isDraft, String surveyUid) {
+		return this.getCountInternal(isDraft, surveyUid, null, null);
+	}
+
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public int getCountInternal(boolean isDraft, String surveyUid, String where, Map<String, Object> values) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		
-		String sql = "SELECT COUNT(*) FROM " + getOLAPTableName(survey);
-		
-		if (where != null)
-		{
+
+		if (!this.OLAPTableExistsInternal(isDraft, surveyUid)) {
+			return 0;
+		}
+
+		String sql = "SELECT COUNT(*) FROM " + getOLAPTableName(!isDraft, surveyUid);
+		if (where != null) {
 			sql += where;
 		}
-		
+
 		SQLQuery query = sessionReporting.createSQLQuery(sql);
-		
-		if (where != null)
-		{
+
+		if (where != null && values != null && !values.isEmpty()) {
 			for (String attrib : values.keySet()) {
 				Object value = values.get(attrib);
-				if (value instanceof String)
-				{
-					query.setString(attrib, (String)values.get(attrib));
-				} else if (value instanceof Integer)
-				{
-					query.setInteger(attrib, (Integer)values.get(attrib));
-				}  else if (value instanceof Date)
-				{
-					query.setTimestamp(attrib, (Date)values.get(attrib));
+				if (value instanceof String) {
+					query.setString(attrib, (String) values.get(attrib));
+				} else if (value instanceof Integer) {
+					query.setInteger(attrib, (Integer) values.get(attrib));
+				} else if (value instanceof Date) {
+					query.setTimestamp(attrib, (Date) values.get(attrib));
 				}
 			}
 		}
-		
+
 		return ConversionTools.getValue(query.uniqueResult());
+	}
+
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public int getCountInternal(Survey survey) {
+		return this.getCountInternal(survey.getIsDraft(), survey.getUniqueId());
+	}
+
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public int getCountInternal(Survey survey, String where, Map<String, Object> values) {
+		return this.getCountInternal(survey.getIsDraft(), survey.getUniqueId(), where, values);
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
@@ -1874,4 +1904,6 @@ public class ReportingService {
 		
 		return result;
 	}
+
+	
 }
