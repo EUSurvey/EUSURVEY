@@ -138,6 +138,7 @@ public class BasicController implements BeanFactoryAware {
 	public @Value("${sender}") String sender;
 	public @Value("${captcha.bypass:@null}") String bypassCaptcha;
 	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
+	public @Value("${enablereportingdatabase}") String enablereportingdatabase;
 	
 	//OCAS
 	public @Value("${casoss}") String cassOss;
@@ -186,6 +187,10 @@ public class BasicController implements BeanFactoryAware {
 	public boolean isCasOss()
 	{
 		return cassOss != null && cassOss.equalsIgnoreCase("true");
+	}
+
+	public boolean isReportingDatabaseEnabled() {
+		return enablereportingdatabase != null && enablereportingdatabase.equalsIgnoreCase("true");
 	}
 
 	public static boolean isAjax(HttpServletRequest request) {

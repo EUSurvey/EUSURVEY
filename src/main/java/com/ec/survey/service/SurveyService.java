@@ -87,11 +87,37 @@ public class SurveyService extends BasicService {
 
 	@Transactional(readOnly = true)
 	public List<Survey> getSurveys(SurveyFilter filter, SqlPagination sqlPagination) throws Exception {
-		String sql = "SELECT s.SURVEY_ID, s.SURVEY_UID, s.SURVEYNAME, s.TITLE, s.SURVEY_CREATED, s.SURVEY_END_DATE, s.SURVEY_START_DATE, s.ISPUBLISHED, s.LANGUAGE"
-				+ " , npa.PUBLISHEDANSWERS as replies, s.ACTIVE, s.OWNER, s.CONTACT"
-				+ " , (SELECT USER_LOGIN FROM USERS u WHERE u.USER_ID = s.OWNER) as ownerlogin, (SELECT USER_DISPLAYNAME FROM USERS u WHERE u.USER_ID = s.OWNER) as ownername, s.AUTOMATICPUBLISHING, s.CONTACTLABEL, s.SURVEYSECURITY, s.QUIZ, s.OPC, s.HASPENDINGCHANGES"
-				+ " from SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID where s.ISDRAFT = 1 and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)";
+		StringBuilder stringBuilder = new StringBuilder(512);
+		stringBuilder.append("SELECT s.SURVEY_ID"); // 0 
+		stringBuilder.append(" ,s.SURVEY_UID");// 1
+		stringBuilder.append(" ,s.SURVEYNAME");// 2
+		stringBuilder.append(" ,s.TITLE");// 3
+		stringBuilder.append(" ,s.SURVEY_CREATED");// 4
+		stringBuilder.append(" ,s.SURVEY_END_DATE");// 5
+		stringBuilder.append(" ,s.SURVEY_START_DATE");//6
+		stringBuilder.append(" ,s.ISPUBLISHED");// 7
+		stringBuilder.append(" ,s.LANGUAGE");
+		if (!this.isReportingDatabaseEnabled()) {
+			stringBuilder.append(" ,npa.PUBLISHEDANSWERS as replies");
+		} 
+		stringBuilder.append(" ,s.ACTIVE");
+		stringBuilder.append(" ,s.OWNER");
+		stringBuilder.append(" ,s.CONTACT");
+		stringBuilder.append(" ,(SELECT USER_LOGIN FROM USERS u WHERE u.USER_ID = s.OWNER) as ownerlogin");
+		stringBuilder.append(" ,(SELECT USER_DISPLAYNAME FROM USERS u WHERE u.USER_ID = s.OWNER) as ownername");
+		stringBuilder.append(" ,s.AUTOMATICPUBLISHING");
+		stringBuilder.append(" ,s.CONTACTLABEL");
+		stringBuilder.append(" ,s.SURVEYSECURITY");
+		stringBuilder.append(" ,s.QUIZ");
+		stringBuilder.append(" ,s.OPC");
+		stringBuilder.append(" ,s.HASPENDINGCHANGES");
+		stringBuilder.append(" from SURVEYS s");
+		if (!this.isReportingDatabaseEnabled()) {
+			stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
+		} 
+		stringBuilder.append(" where s.ISDRAFT = 1 and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)");
 
+		String sql = stringBuilder.toString();
 		HashMap<String, Object> parameters = new HashMap<>();
 		sql += getSql(filter, parameters, false);
 
@@ -99,35 +125,43 @@ public class SurveyService extends BasicService {
 		Map<Integer, Language> languageMap = getLanguageMap();
 		for (Object[] row : loadSurveysfromDatabase(sql, parameters, sqlPagination)) {
 			Survey survey = new Survey();
+			int rowIndex = 0;
+			survey.setId(ConversionTools.getValue(row[rowIndex++])); //0
 
-			survey.setId(ConversionTools.getValue(row[0]));
-			survey.setUniqueId((String) row[1]);
-			survey.setShortname((String) row[2]);
-			survey.setTitle((String) row[3]);
-			survey.setCreated((Date) row[4]);
-			survey.setEnd((Date) row[5]);
-			survey.setStart((Date) row[6]);
-			survey.setIsPublished((Boolean) row[7]);
-			survey.setLanguage(languageMap.get(ConversionTools.getValue(row[8])));
+			survey.setUniqueId((String) row[rowIndex++]);//1
+			survey.setShortname((String) row[rowIndex++]);//2
+			survey.setTitle((String) row[rowIndex++]);//3
+			survey.setCreated((Date) row[rowIndex++]);//4
+			survey.setEnd((Date) row[rowIndex++]);//5
+			survey.setStart((Date) row[rowIndex++]);//6
+			survey.setIsPublished((Boolean) row[rowIndex++]);//7
+			survey.setLanguage(languageMap.get(ConversionTools.getValue(row[rowIndex++])));//8
 
-			survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[9]));
-			survey.setIsActive((Boolean) row[10]);
+			if (this.isReportingDatabaseEnabled()) {
+				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(
+					false, survey.getUniqueId()));
+			} else {
+				survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[rowIndex++]));//9 
+			}
+			
+			survey.setIsActive((Boolean) row[rowIndex++]);// 9 or 10
 
 			User user = new User();
-			user.setId(ConversionTools.getValue(row[11]));
-			user.setLogin((String) row[13]);
-			user.setDisplayName((String) row[14]);
+			user.setId(ConversionTools.getValue(row[rowIndex++]));// 10 or 11
+			survey.setContact((String) row[rowIndex++]);// 11 or 12
+
+			user.setLogin((String) row[rowIndex++]);// 12 or 13
+			user.setDisplayName((String) row[rowIndex++]);// 13 or 14
 			survey.setOwner(user);
 
-			survey.setContact((String) row[12]);
-			survey.setContactLabel((String) row[16]);
-			survey.setAutomaticPublishing((Boolean) row[15]);
+			survey.setAutomaticPublishing((Boolean) row[rowIndex++]);// 14 or 15
+			survey.setContactLabel((String) row[rowIndex++]);// 15 or 16
 
-			survey.setSecurity((String) row[17]);
-			survey.setIsQuiz((Boolean) row[18]);
-			survey.setIsOPC((Boolean) row[19]);
+			survey.setSecurity((String) row[rowIndex++]);// 16 or 17
+			survey.setIsQuiz((Boolean) row[rowIndex++]);// 17 or 18
+			survey.setIsOPC((Boolean) row[rowIndex++]);// 18 or 19
 
-			survey.setHasPendingChanges((Boolean) row[20]);
+			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 19 or 20
 
 			surveys.add(survey);
 		}
@@ -179,7 +213,32 @@ public class SurveyService extends BasicService {
 	}
 
 	public List<Survey> getSurveysIncludingPublicationDates(SurveyFilter filter, SqlPagination sqlPagination) throws Exception {
-		String sql = "SELECT s.SURVEY_ID, s.SURVEY_UID, s.SURVEYNAME, s.TITLE, s.OWNER, (SELECT USER_LOGIN FROM USERS u WHERE u.USER_ID = s.OWNER) as ownerlogin,(SELECT USER_DISPLAYNAME FROM USERS u WHERE u.USER_ID = s.OWNER) as ownername, npa.PUBLISHEDANSWERS as replies, SUBSTRING(GROUP_CONCAT(s.survey_created),21, 19), SUBSTRING(GROUP_CONCAT(s.survey_created),-19), s.SURVEYSECURITY, s.ACTIVE, s.FROZEN from SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID where ";
+		StringBuilder stringBuilder = new StringBuilder(1024);
+		stringBuilder.append("SELECT s.SURVEY_ID");		//0
+		stringBuilder.append(", s.SURVEY_UID");			//1 
+		stringBuilder.append(", s.SURVEYNAME");			//2
+		stringBuilder.append(", s.TITLE");				//3
+		stringBuilder.append(", s.OWNER");				//4
+		stringBuilder.append(", (SELECT USER_LOGIN FROM USERS u WHERE u.USER_ID = s.OWNER) as ownerlogin");		//5
+		stringBuilder.append(", (SELECT USER_DISPLAYNAME FROM USERS u WHERE u.USER_ID = s.OWNER) as ownername");//6
+		stringBuilder.append(", s.SURVEYSECURITY");//8
+		stringBuilder.append(", s.ACTIVE");//9
+		stringBuilder.append(", s.FROZEN");//10
+		stringBuilder.append(", (SELECT MIN(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as firstPublished");//11
+		stringBuilder.append(", (SELECT MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as published");//12
+		stringBuilder.append(" ,s.ISPUBLISHED");
+		if (!this.isReportingDatabaseEnabled()) {
+			stringBuilder.append(", npa.PUBLISHEDANSWERS as replies");//7
+		}
+		stringBuilder.append(", s.SURVEY_DELETED");//13
+		stringBuilder.append(", s.SURVEY_CREATED");//14
+		stringBuilder.append(", (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported");//15
+		stringBuilder.append(" from SURVEYS s");
+		if (!this.isReportingDatabaseEnabled()) {
+			stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
+		}
+		stringBuilder.append(" where ");
+		String sql = stringBuilder.toString();
 
 		if (filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("ARCHIVED")) {
 			sql += "(s.ARCHIVED = 1)";
@@ -198,24 +257,39 @@ public class SurveyService extends BasicService {
 		List<Survey> surveys = new ArrayList<>();
 		for (Object[] row : loadSurveysfromDatabase(sql, parameters, sqlPagination)) {
 			Survey survey = new Survey();
-			survey.setId(ConversionTools.getValue(row[0]));
-			survey.setUniqueId((String) row[1]);
-			survey.setShortname((String) row[2]);
-			survey.setTitle((String) row[3]);
+			int columnNum = 0;
+			survey.setId(ConversionTools.getValue(row[columnNum++]));
+			survey.setUniqueId((String) row[columnNum++]);
+			survey.setShortname((String) row[columnNum++]);
+			survey.setTitle((String) row[columnNum++]);
 
 			User user = new User();
-			user.setId(ConversionTools.getValue(row[4]));
-			user.setLogin((String) row[5]);
-			user.setDisplayName((String) row[6]);
+			user.setId(ConversionTools.getValue(row[columnNum++]));
+			user.setLogin((String) row[columnNum++]);
+			user.setDisplayName((String) row[columnNum++]);
 			survey.setOwner(user);
 
-			survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[7]));
-			survey.setFirstPublished(ConversionTools.getDate((String) row[9]));
-			survey.setPublished(ConversionTools.getDate((String) row[9]));
+			survey.setSecurity((String) row[columnNum++]);
+			survey.setIsActive((Boolean) row[columnNum++]);
+			survey.setIsFrozen((Boolean) row[columnNum++]);
+			
+			survey.setFirstPublished((Date) row[columnNum++]);
+			survey.setPublished((Date) row[columnNum++]);
 
-			survey.setSecurity((String) row[10]);
-			survey.setIsActive((Boolean) row[11]);
-			survey.setIsFrozen((Boolean) row[12]);
+			survey.setIsPublished((Boolean) row[columnNum++]);
+
+			if (this.isReportingDatabaseEnabled()) {
+				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(
+					false, survey.getUniqueId()));
+			} else {
+				survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[columnNum++]));
+			}
+			
+			survey.setDeleted((Date) row[columnNum++]);
+			survey.setCreated((Date) row[columnNum++]);
+			
+			survey.setNumberOfReports(ConversionTools.getValue(row[columnNum]));
+			
 			surveys.add(survey);
 		}
 
@@ -4190,7 +4264,12 @@ public class SurveyService extends BasicService {
 	}
 
 	public String getSurveyMetaDataXML(Survey survey) {
-		int results = surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId());
+		int results = 0;
+		if (this.isReportingDatabaseEnabled()) {
+			results = reportingService.getCount(false, survey.getUniqueId());
+		} else {
+			results = surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId());
+		}
 		StringBuilder s = new StringBuilder();
 		User owner = survey.getOwner();
 		EcasHelper.readData(owner, this.ldapService);	
