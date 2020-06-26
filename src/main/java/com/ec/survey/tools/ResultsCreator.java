@@ -304,7 +304,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 						}
 			    	}
 					
-					if (!t.getExportType().equals(3) || (t.getFileTypes() != null && t.getFileTypes().contains("u")))
+					if (!(t.getExportType() != null && t.getExportType().equals(3)) || (t.getFileTypes() != null && t.getFileTypes().contains("u")))
 					{
 						List<File> uploadedFiles = answerService.getUploadedFilesForAnswerset(answerSetId);
 						for (File file: uploadedFiles)
