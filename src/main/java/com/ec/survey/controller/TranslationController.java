@@ -90,14 +90,14 @@ public class TranslationController extends BasicController {
 		
 		result.addObject("uploadItem", new UploadItem());
 		
-		StringBuilder autocomplete = new StringBuilder("[");
+		StringBuilder languagecodes = new StringBuilder("[");
 		for (Language language : languages)
 		{
-			autocomplete.append("\"").append(language.getEnglishName()).append(" ").append("(").append(language.getCode()).append(")\",");
+			languagecodes.append("\"").append(language.getCode()).append("\",");
 		}		
-		autocomplete = new StringBuilder(autocomplete.substring(0, autocomplete.length() - 1));
-		autocomplete.append("]");
-		result.addObject("autocomplete", autocomplete.toString());
+		languagecodes = new StringBuilder(languagecodes.substring(0, languagecodes.length() - 1));
+		languagecodes.append("]");
+		result.addObject("languagecodes", languagecodes.toString());
 		result.addObject("completedTranslations",completedTranslations);		
 
 		List<KeyValue> infos = TranslationsHelper.getLongDescriptions(form.getSurvey(), resources, locale);
@@ -816,7 +816,7 @@ public class TranslationController extends BasicController {
 				}
 				activityService.log(221, null, language.getCode(), sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
 				
-				if (isUseECMT() && !language.isOfficial()) {
+				if (translationRequested && isUseECMT() && !language.isOfficial()) {
 					return new ModelAndView("redirect:/" + shortname + "/management/translations?error=RequestTranslation");
 				} else {
 					return new ModelAndView("redirect:/" + shortname + "/management/translations");

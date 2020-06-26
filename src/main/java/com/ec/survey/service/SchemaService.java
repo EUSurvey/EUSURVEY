@@ -57,6 +57,18 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
+	
+	@Transactional
+	public void step94() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		SQLQuery query = session.createSQLQuery("UPDATE LANGUAGES SET LANGUAGE_OFFI = 1 WHERE LANGUAGE_CODE = 'HR'");
+		query.executeUpdate();
+
+		status.setDbversion(94);
+		session.saveOrUpdate(status);
+	}
 
 	@Transactional
 	public void step93() {

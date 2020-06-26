@@ -49,6 +49,7 @@
 		var requestTranslationError = "<spring:message code='error.RequestTranslation' />";
 		var labelPublish = "<spring:message code='label.Publish' />";
 		var labelUnpublish = "<spring:message code='label.Unpublish' />";
+		var languagecodes = ${languagecodes};
 				
 		$(function() {					
 			$("#form-menu-tab").addClass("active");
@@ -178,12 +179,18 @@
 		
 		function checkLanguage()
 		{
-			if ($("#lang").val() == "other")
+			$("#unknown-language-error").hide();
+			$("#add-translation-dialog-error").hide();
+			$("#unsupported-language-error").hide();
+			
+			if ($("#lang").val() == "select")
 			{
-				$("#otherlang").show();
-				$("#otherlang").find("input").focus();
+				$('#code').prop("disabled", "disabled").val("");
+			} else if ($("#lang").val() == "other")
+			{
+				$('#code').removeAttr("disabled").val("").focus();
 			} else {
-				$("#otherlang").hide();
+				$('#code').prop("disabled", "disabled").val($("#lang").val());
 			}
 		}
 		
@@ -307,21 +314,16 @@
 										<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">
 											<a id="searchBtnFromTransTable" onclick="showSearchAndReplaceDialog(${translation.id});" class="iconbutton"  data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.SearchAndReplace" />"><span class="glyphicon glyphicon-search"></span></a>
 											<a id="editTranslationBtnFromTransTable" onclick="editSingleTranslation(this)" class="iconbutton" data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.Edit" />"><span class="glyphicon glyphicon-pencil"></span></a>
-											<c:choose>
-												<c:when test="${translation.complete || (translation.requested != null && translation.requested)}">
-													<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.RequestTranslation" />"><span class="glyphicon glyphicon-refresh"></span></a>
-												</c:when>
-												<c:otherwise>
-													<c:choose>
-														<c:when test="${isMTAvailable}">
+											<c:if test="${isMTAvailable}">
+												<c:choose>
+													<c:when test="${translation.complete || (translation.requested != null && translation.requested)}">
+														<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.RequestTranslation" />"><span class="glyphicon glyphicon-refresh"></span></a>
+													</c:when>
+													<c:otherwise>													
 															<a onclick="requestSingleTranslation(this,${translation.id})" class='iconbutton' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.RequestTranslation" />"><span class="glyphicon glyphicon-refresh"></span></a>
-														</c:when>
-														<c:otherwise>
-															<a class='iconbutton disabled' data-toggle="tooltip" rel="tooltip" title="<spring:message code="label.RequestTranslation" />"><span class="glyphicon glyphicon-refresh"></span></a>
-														</c:otherwise>																							
-													</c:choose>
-												</c:otherwise>
-											</c:choose>
+													</c:otherwise>
+												</c:choose>
+											</c:if>	
 											
 											<c:choose>
 												<c:when test="${translation.language == form.survey.language}">

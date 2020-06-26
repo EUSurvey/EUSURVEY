@@ -73,7 +73,7 @@ public class UtilsController extends BasicController {
 		langList.put("ET", resources.getMessage("label.lang.Estonian", null, locale));
 		langList.put("FI", resources.getMessage("label.lang.Finnish", null, locale));
 		langList.put("FR", resources.getMessage("label.lang.French", null, locale));
-		langList.put("GA", resources.getMessage("label.lang.Gaelic", null, locale));
+		langList.put("GA", resources.getMessage("label.lang.Irish", null, locale));
 		langList.put("HR", resources.getMessage("label.lang.Croatian", null, locale));
 		langList.put("HU", resources.getMessage("label.lang.Hungarian", null, locale));
 		langList.put("IT", resources.getMessage("label.lang.Italian", null, locale));
