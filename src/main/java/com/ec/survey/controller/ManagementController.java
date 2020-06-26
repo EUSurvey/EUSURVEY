@@ -191,7 +191,12 @@ public class ManagementController extends BasicController {
 		Form form;
 		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
 			
-		survey.setNumberOfAnswerSetsPublished(surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId()));
+		if (this.isReportingDatabaseEnabled()) {
+			survey.setNumberOfAnswerSetsPublished(reportingService.getCount(false, survey.getUniqueId()));
+		} else {
+			survey.setNumberOfAnswerSetsPublished(surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId()));
+		}
+		
 		survey.setNumberOfReports(surveyService.getAbuseReportsForSurvey(survey.getUniqueId()));
 		
 		form = new Form(resources);
@@ -3107,9 +3112,13 @@ public class ManagementController extends BasicController {
 		
 		result.addObject("resultType", resultType);	
 		result.addObject("questionswithuploadedfiles", answerService.getQuestionsWithUploadedFiles(survey));
-		if (active)
-		{
-			int answers = surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId());
+		if (active) {
+			int answers = 0;
+			if (this.isReportingDatabaseEnabled()) {
+				answers = reportingService.getCount(false, survey.getUniqueId());
+			} else {
+				answers = surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId());
+			}
 			if (answers > 100000) result.addObject("skipstatistics", true);
 		}
 		

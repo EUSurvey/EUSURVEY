@@ -162,7 +162,12 @@ public class PublicationController extends BasicController  {
 					String selectedtab = request.getParameter("selectedtab");
 					result.addObject("selectedtab", selectedtab == null ? 1 : Integer.parseInt(selectedtab));
 					
-					int answers = surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId());
+					int answers = 0;
+					if (this.isReportingDatabaseEnabled()) {
+						answers = reportingService.getCount(false, survey.getUniqueId());
+					} else {
+						answers = surveyService.getNumberPublishedAnswersFromMaterializedView(survey.getUniqueId());
+					}
 					if (answers > 100000) result.addObject("skipstatistics", true);
 					
 					return result;
