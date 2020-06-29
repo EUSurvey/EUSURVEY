@@ -15,12 +15,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -32,21 +32,6 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/administration/files")
 public class FileManagementController extends BasicController {
-	
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;
-	
-	@Resource(name="fileService")
-	private FileService fileService;
-	
-	@Resource(name="exportService")
-	private ExportService exportService;
 	
 	public @Value("${ui.enablefilemanagement}") String enablefilemanagement;
 	
@@ -142,7 +127,7 @@ public class FileManagementController extends BasicController {
 		return result;
 	}
 	
-	@RequestMapping(method = {RequestMethod.POST})
+	@PostMapping
 	public ModelAndView filesPOST(HttpServletRequest request, Model model, Locale locale) throws Exception {	
 		
 		if (enablefilemanagement == null || !enablefilemanagement.equalsIgnoreCase("true"))
@@ -363,12 +348,9 @@ public class FileManagementController extends BasicController {
 		java.io.File file = new java.io.File(path);
 		
 		try {		
-			if (file.exists())
+			if (file.exists() && fileService.recreate(file, new File(archiveFileDir), locale, resources))
 			{
-				if (fileService.recreate(file, new File(archiveFileDir), locale, resources))
-				{
-					return new ModelAndView("redirect:/administration/files?recreated=1");
-				}
+				return new ModelAndView("redirect:/administration/files?recreated=1");
 			}		
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
@@ -445,7 +427,7 @@ public class FileManagementController extends BasicController {
 		return null;
 	}
 	
-	@RequestMapping(value = "/delete", method = {RequestMethod.POST})
+	@PostMapping(value = "/delete")
 	public ModelAndView delete(HttpServletRequest request, HttpServletResponse response) throws InvalidURLException {
 		
 		if (enablefilemanagement == null || !enablefilemanagement.equalsIgnoreCase("true"))

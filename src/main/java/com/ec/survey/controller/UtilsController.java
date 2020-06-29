@@ -1,7 +1,6 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.tools.Tools;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,6 @@ import java.util.Map;
 @Controller
 @RequestMapping("/utils")
 public class UtilsController extends BasicController {
-	
-	public @Value("${captcha.bypass:@null}") String bypassCaptcha;
 	
 	@RequestMapping(value = "/euCountries", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody Map<String, String> getListOfCountries(HttpServletRequest request) {
@@ -410,12 +407,9 @@ public class UtilsController extends BasicController {
 	@RequestMapping(value = "/config/{key}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String getConfigValue(@PathVariable String key, HttpServletRequest request) {
 		String result = "";		
-		if(key != null)
-		{
-			if(key.equals("captchaBypass"))
-			{				
-				result =  bypassCaptcha;				
-			}
+		if (key != null && key.equals("captchaBypass"))
+		{	
+			result =  bypassCaptcha;				
 		}
 		return result;
 	}

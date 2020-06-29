@@ -7,21 +7,18 @@ import com.ec.survey.model.UserFilter;
 import com.ec.survey.model.UsersConfiguration;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
-import com.ec.survey.service.AdministrationService;
-import com.ec.survey.service.SessionService;
-import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Locale;
@@ -32,15 +29,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 @Controller
 @RequestMapping("/administration/users")
 public class UserController extends BasicController {
-	
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;
     
     @Autowired
 	protected PaginationMapper paginationMapper;    
@@ -51,24 +39,22 @@ public class UserController extends BasicController {
 		Paging<User> paging = new Paging<>();
 		UserFilter filter = new UserFilter();
 		
-		if (request.getMethod().equals("POST"))
+		if (request.getMethod().equals("POST") && !"true".equals(request.getParameter("clearFilter")))
 		{
-			if (!"true".equals(request.getParameter("clearFilter"))) {
-				filter = sessionService.getUserFilter(request);		
-				
-				String newPage = request.getParameter("newPage");
-				newPage = newPage == null ? "1" : newPage;
-				Integer itemsPerPage = ConversionTools.getInt(request.getParameter("itemsPerPage"), 10);
-		    		    	
-				paging.setItemsPerPage(itemsPerPage);
-				int numberOfSurveys = administrationService.getNumberOfUsers(filter);
-				paging.setNumberOfItems(numberOfSurveys);
-				paging.moveTo(newPage);
-				
-                SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
-				List<User> users = administrationService.getUsers(filter, sqlPagination);
-				paging.setItems(users);	
-			}
+			filter = sessionService.getUserFilter(request);		
+			
+			String newPage = request.getParameter("newPage");
+			newPage = newPage == null ? "1" : newPage;
+			Integer itemsPerPage = ConversionTools.getInt(request.getParameter("itemsPerPage"), 10);
+	    		    	
+			paging.setItemsPerPage(itemsPerPage);
+			int numberOfSurveys = administrationService.getNumberOfUsers(filter);
+			paging.setNumberOfItems(numberOfSurveys);
+			paging.moveTo(newPage);
+			
+            SqlPagination sqlPagination = paginationMapper.toSqlPagination(paging);
+			List<User> users = administrationService.getUsers(filter, sqlPagination);
+			paging.setItems(users);	
 		}
     	
     	ModelAndView m =  new ModelAndView("administration/users", "paging", paging);
@@ -87,7 +73,7 @@ public class UserController extends BasicController {
     	return m;
 	}
 	
-	@RequestMapping(value = "/banuser", method = RequestMethod.POST)
+	@PostMapping(value = "/banuser")
 	public ModelAndView banuser(@RequestParam("userId") String userId, @RequestParam("emailText") String emailText, HttpServletRequest request, Model model) throws Exception {	
 		
 		if (userId == null || userId.length() == 0 || emailText == null || emailText.length() == 0)
@@ -100,7 +86,7 @@ public class UserController extends BasicController {
 		return new ModelAndView("redirect:/administration/users?frozen=1");	
 	}
 	
-	@RequestMapping(value = "/unbanuser", method = RequestMethod.POST)
+	@PostMapping(value = "/unbanuser")
 	public ModelAndView unbanuser(@RequestParam("userId") String userId, HttpServletRequest request, Model model) throws Exception {	
 		
 		if (userId == null || userId.length() == 0)
@@ -113,7 +99,7 @@ public class UserController extends BasicController {
 		return new ModelAndView("redirect:/administration/users?unfrozen=1");	
 	}
 		
-	@RequestMapping(method = {RequestMethod.POST})
+	@PostMapping
 	public ModelAndView usersPOST(HttpServletRequest request, Model model, Locale locale) throws Exception {	
     	
     	String target = request.getParameter("target");
@@ -277,7 +263,7 @@ public class UserController extends BasicController {
 		return users(request, model);
 	}
 	
-	@RequestMapping(value = "/undoDelete", method = {RequestMethod.POST})
+	@PostMapping(value = "/undoDelete")
 	public @ResponseBody String undoDelete(HttpServletRequest request) {
 		String sid = request.getParameter("id");
 		if (sid == null || sid.length() == 0) return "invalid id";

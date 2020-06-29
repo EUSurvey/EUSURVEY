@@ -82,9 +82,6 @@ public class SchedulerService extends BasicService {
 	@Resource(name = "surveyWorker")
 	private SurveyUpdater surveyWorker;
 	
-	@Resource(name = "settingsService")
-	private SettingsService settingsService;
-	
 	@Resource(name = "schemaService")
 	private SchemaService schemaService;
 

@@ -18,7 +18,7 @@ import java.io.OutputStream;
 public class GraphicsController extends BasicController {
 
 	@RequestMapping(value = "/pie.png")
-	public void pie(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void pie(HttpServletRequest request, HttpServletResponse response) {
 		
 		String pscore = request.getParameter("v");
 		String pmax = request.getParameter("m");

@@ -34,17 +34,8 @@ import java.util.*;
 @Service("fileService")
 public class FileService extends BasicService {
 	
-	@Resource(name = "archiveService")
-	protected ArchiveService archiveService;
-	
-	@Resource(name = "exportService")
-	protected ExportService exportService;
-	
 	@Resource(name = "pdfService")
 	protected PDFService pdfService;
-	
-	@Resource(name = "translationService")
-	protected TranslationService translationService;
 	
 	public static String[] filetypes = { "results", "statistics", "charts", "tokens", "contacts", "activities", "uploaded file", "download", "image", "logo", "background document", "survey", "contribution" };
 	public static String[] fileextensions = { "PDF", "XLS", "ODS", "DOC", "ODT", "XML", "CSV", "JPG", "PNG", "ZIP", "OTHER" };
@@ -583,6 +574,8 @@ public class FileService extends BasicService {
 								skipexport = true;
 							}
 							break;
+					default:
+						break;
 					}
 					if (!skipexport)
 					{
@@ -985,6 +978,8 @@ public class FileService extends BasicService {
 						case Content:
 							fileResult.setFileType("results");
 							break;
+					default:
+						break;
 					}
 				
 				} else {

@@ -17,16 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 @Service("participationService")
 @Configurable
 public class ParticipationService extends BasicService {
-	
-	@Resource(name = "mailService")
-	protected MailService mailService;
-	
+		
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<ParticipationGroup> getAll(String uid, boolean checkRunningMails, int page, int rowsPerPage) {

@@ -1,7 +1,6 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.exception.InvalidURLException;
-import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
@@ -23,7 +22,9 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,7 +53,7 @@ public class AdministrationController extends BasicController {
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
 	
-	@RequestMapping(value = "/checkPasswordNotWeak", method = RequestMethod.POST)
+	@PostMapping(value = "/checkPasswordNotWeak")
 	public @ResponseBody String checkPasswordNotWeak(HttpServletRequest request, Locale locale) {	
 		String password = request.getParameter("password");
 		if (Tools.isPasswordWeak(password))
@@ -63,7 +64,7 @@ public class AdministrationController extends BasicController {
 		return "";
 	}
 	
-	@RequestMapping(value = "/checkLoginFree", method = RequestMethod.GET)
+	@GetMapping(value = "/checkLoginFree")
 	public @ResponseBody String checkLoginFree(HttpServletRequest request, Locale locale) {	
 		String login = request.getParameter("login");
 		try {
@@ -101,7 +102,7 @@ public class AdministrationController extends BasicController {
 		return password + "#" + mySecondEncryptor.encrypt(input);
 	}
 		
-	@RequestMapping(value = "/saveUserConfiguration", method = {RequestMethod.POST})
+	@PostMapping(value = "/saveUserConfiguration")
 	public @ResponseBody String saveUserConfiguration(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		int userId = sessionService.getCurrentUser(request).getId();
 		UsersConfiguration usersConfiguration = administrationService.getUsersConfiguration(userId);
@@ -218,11 +219,10 @@ public class AdministrationController extends BasicController {
 	
 	@RequestMapping(value = "/languages", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView languages(HttpServletRequest request) {
-		ModelAndView result = new ModelAndView("administration/languages","uploadItem", new UploadItem());
-		return result;
+		return new ModelAndView("administration/languages","uploadItem", new UploadItem());
 	}
 		
-	@RequestMapping(value = "/languages", method = RequestMethod.POST)
+	@PostMapping(value = "/languages")
 	public ModelAndView languagesPost(UploadItem uploadItem, BindingResult bindingresult, HttpServletRequest request, HttpServletResponse response, Locale locale) {	
 		        
 	    List<String> messages = new ArrayList<>();
@@ -316,7 +316,7 @@ public class AdministrationController extends BasicController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/reporting", method = {RequestMethod.POST})
+	@PostMapping(value = "/reporting")
 	public ModelAndView reportingPOST(HttpServletRequest request) {
 		String enabled = Tools.escapeHTML(request.getParameter("enabled"));
 		String start = Tools.escapeHTML(request.getParameter("start"));
@@ -377,7 +377,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/recreateAllOLAPTables", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public  @ResponseBody String recreateAllOLAPTables(HttpServletRequest request) throws Exception {
+	public @ResponseBody String recreateAllOLAPTables(HttpServletRequest request) {
 		
 		RecreateAllOLAPTablesExecutor executor = (RecreateAllOLAPTablesExecutor) context.getBean("recreateAllOLAPTablesExecutor");
 		taskExecutor.execute(executor);
@@ -386,7 +386,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/createAllOLAPTables", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody String createAllOLAPTables(HttpServletRequest request) throws TooManyFiltersException, IOException {
+	public @ResponseBody String createAllOLAPTables(HttpServletRequest request) {
 		CreateAllOLAPTablesExecutor executor = (CreateAllOLAPTablesExecutor) context.getBean("createAllOLAPTablesExecutor");
 		taskExecutor.execute(executor);
 		
@@ -405,7 +405,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/updateAllOLAPTables", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody String updateAllOLAPTables(HttpServletRequest request) throws TooManyFiltersException, IOException {
+	public @ResponseBody String updateAllOLAPTables(HttpServletRequest request) {
 		UpdateAllOLAPTablesExecutor executor = (UpdateAllOLAPTablesExecutor) context.getBean("updateAllOLAPTablesExecutor");
 		taskExecutor.execute(executor);
 		
