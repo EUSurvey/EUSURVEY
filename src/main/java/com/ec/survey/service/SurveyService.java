@@ -111,9 +111,7 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(" ,s.OPC");
 		stringBuilder.append(" ,s.HASPENDINGCHANGES");
 		stringBuilder.append(" from SURVEYS s");
-		if (!this.isReportingDatabaseEnabled()) {
-			stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
-		} 
+		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
 		stringBuilder.append(" where s.ISDRAFT = 1 and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)");
 
 		String sql = stringBuilder.toString();
@@ -233,9 +231,7 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(", s.SURVEY_CREATED");//14
 		stringBuilder.append(", (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported");//15
 		stringBuilder.append(" from SURVEYS s");
-		if (!this.isReportingDatabaseEnabled()) {
-			stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
-		}
+		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
 		stringBuilder.append(" where ");
 		String sql = stringBuilder.toString();
 
@@ -4622,26 +4618,31 @@ public class SurveyService extends BasicService {
 				
 		SqlPagination pagination = new SqlPagination(1, 10000);		
 		
-		String sql = "SELECT s.SURVEY_UID, s.SURVEYNAME, s.TITLE, s.OWNER, npa.PUBLISHEDANSWERS as replies ";
-				
-		sql += "FROM SURVEYS s LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID ";
-		
+		StringBuilder stringBuilder = new StringBuilder(512);
+		stringBuilder.append("SELECT s.SURVEY_UID");
+		stringBuilder.append(" , s.SURVEYNAME");
+		stringBuilder.append(" , s.TITLE");
+		stringBuilder.append(" , s.OWNER");
+		stringBuilder.append(" FROM SURVEYS s");
+		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID ");
+
 		if (filter.getMinReported() != null && filter.getMinReported() > 0)
 		{
-			sql += " LEFT JOIN ( SELECT SURABUSE_SURVEY, count(SURABUSE_ID) as abuses FROM SURABUSE GROUP BY SURABUSE_SURVEY) abu ON abu.SURABUSE_SURVEY = s.SURVEY_UID ";			
+			stringBuilder.append(" LEFT JOIN ( SELECT SURABUSE_SURVEY, count(SURABUSE_ID) as abuses FROM SURABUSE GROUP BY SURABUSE_SURVEY) abu ON abu.SURABUSE_SURVEY = s.SURVEY_UID");	
 		}
 		
-		sql += "where ";
+		stringBuilder.append(" where");
 
 		if (archiveFilter != null) {
-			sql += "(s.ARCHIVED = 1)";
+			stringBuilder.append(" (s.ARCHIVED = 1)");
 		} else if (filter.getDeleted() != null && filter.getDeleted()) {
-			sql += "(s.DELETED = "+ (filter.getDeleted() ? "1":"0") + ")";
+			stringBuilder.append(" (s.DELETED = "+ (filter.getDeleted() ? "1":"0") + ")");
 		} else if (filter.getFrozen() != null ) {
-			sql += "(s.FROZEN "+ (filter.getFrozen() ? " > 0":" < 1") + ")";
+			stringBuilder.append(" (s.FROZEN "+ (filter.getFrozen() ? " > 0":" < 1") + ")");
 		} else {
-			sql += "(s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)";
+			stringBuilder.append(" (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)");
 		}
+		String sql = stringBuilder.toString();
 
 		HashMap<String, Object> parameters = new HashMap<>();
 		sql += getSql(filter, parameters, true);
