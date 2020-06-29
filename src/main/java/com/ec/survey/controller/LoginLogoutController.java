@@ -24,6 +24,7 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -98,7 +99,7 @@ public class LoginLogoutController extends BasicController {
 		return "auth/login";
 	}
 	
-	@RequestMapping(value = "/auth/login", method = {RequestMethod.POST})
+	@PostMapping(value = "/auth/login")
 	public String postLoginPage(ModelMap model, HttpServletRequest request, Locale locale) {
 		String target = request.getParameter("target");
 		
@@ -152,12 +153,8 @@ public class LoginLogoutController extends BasicController {
 		User user = null;
 		try {
 			user = sessionService.getCurrentUser(request);
-		} catch (NotAgreedToTosException e) {
-			//ignore
-		} catch (NotAgreedToPsException e) {
-			//ignore
-		} catch (WeakAuthenticationException e) {
-			//ignore
+		} catch (NotAgreedToTosException | NotAgreedToPsException | WeakAuthenticationException e) {
+			//ignore	
 		}
 		
 		request.getSession().invalidate();
@@ -179,7 +176,7 @@ public class LoginLogoutController extends BasicController {
 	public ModelAndView getPSPage(HttpServletRequest request) {
 		User user = (User) request.getSession().getAttribute("USER");
 		if (super.isShowPrivacy()) {
-			Map<String, Object> model = new HashMap<String,Object>();
+			Map<String, Object> model = new HashMap<>();
 			model.put("user", user);
 			model.put("oss", super.isOss());
 			return new ModelAndView("auth/ps", model);
@@ -191,7 +188,7 @@ public class LoginLogoutController extends BasicController {
 		}
 	}
 	
-	@RequestMapping(value = "/auth/ps", method = RequestMethod.POST)
+	@PostMapping(value = "/auth/ps")
 	public String getPSPagePost(HttpServletRequest request, HttpServletResponse response) {
 		
 		User user = (User) request.getSession().getAttribute("USER");
@@ -222,7 +219,7 @@ public class LoginLogoutController extends BasicController {
 	public ModelAndView getToSPage(HttpServletRequest request) {
 		User user = (User) request.getSession().getAttribute("USER");
 		if (super.isShowPrivacy()) {
-			Map<String, Object> model = new HashMap<String,Object>();
+			Map<String, Object> model = new HashMap<>();
 			model.put("user", user);
 			model.put("oss", super.isOss());
 			return new ModelAndView("auth/tos", model);
@@ -234,7 +231,7 @@ public class LoginLogoutController extends BasicController {
 		}
 	}
 	
-	@RequestMapping(value = "/auth/tos", method = RequestMethod.POST)
+	@PostMapping(value = "/auth/tos")
 	public String getToSPagePost(HttpServletRequest request, HttpServletResponse response) {
 		
 		User user = (User) request.getSession().getAttribute("USER");
@@ -362,7 +359,7 @@ public class LoginLogoutController extends BasicController {
 		return !cal2.before(cal);
 	}
 	
-	@RequestMapping(value = "/auth/resetPost", method = RequestMethod.POST)
+	@PostMapping(value = "/auth/resetPost")
 	public String resetPost (@RequestParam(value="password", required=true) String password, @RequestParam(value="password2", required=true) String password2, @RequestParam(value="code", required=true) String code, ModelMap model, Locale locale) {
 		
 		model.put("code", code);
@@ -406,8 +403,7 @@ public class LoginLogoutController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 			model.put("error", resources.getMessage("error.ResetNotPossible", null, "Reset not possible!", locale));
 			return "auth/reset";
-		}
-		
+		}		
 	}
 
 }

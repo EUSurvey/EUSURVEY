@@ -37,16 +37,12 @@ import java.util.UUID;
 @Configurable
 public class PDFService extends BasicService {
 
-	@Resource(name = "sessionService")
-	private SessionService sessionService;
-
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
 
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
 	private @Value("${sender}") String sender;
-	private @Value("${server.prefix}") String serverPrefix;
 
 	private int max = 15;
 

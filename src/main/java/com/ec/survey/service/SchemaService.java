@@ -31,15 +31,6 @@ import java.util.List;
 @Service("schemaService")
 public class SchemaService extends BasicService {
 
-	@Resource(name = "skinService")
-	private SkinService skinService;
-
-	@Resource(name = "settingsService")
-	private SettingsService settingsService;
-
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-
 	private @Value("${showecas}") String showecas;
 
 	// OCAS

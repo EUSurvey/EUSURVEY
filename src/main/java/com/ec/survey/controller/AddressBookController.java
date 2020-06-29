@@ -27,7 +27,6 @@ import org.odftoolkit.simple.SpreadsheetDocument;
 import org.odftoolkit.simple.table.Row;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Validator;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -42,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 
 @Controller
 @RequestMapping("/addressbook")
@@ -142,7 +142,7 @@ public class AddressBookController extends BasicController {
 			}
 		}
 		
-		if (ids.size() > 0)
+		if (!ids.isEmpty())
 		{						
     		Set<Integer> attendeeIds = new HashSet<>();
     		for (int id: ids)
@@ -161,7 +161,7 @@ public class AddressBookController extends BasicController {
 	    		}
 	    	}
 	    	
-	    	if (groups.size() > 0)
+	    	if (!groups.isEmpty())
 	    	{
 	    		result.addObject("editedParticipationGroups", groups);
 	    		result.addObject("editedParticipationGroupsSize", idcounter.size());
@@ -175,11 +175,11 @@ public class AddressBookController extends BasicController {
     	return result;
 	}
 	
-	@RequestMapping(value = "/updateguestlists", method = RequestMethod.POST)
+	@PostMapping(value = "/updateguestlists")
 	public @ResponseBody String updateguestlists(@RequestParam("ids") String ids, HttpServletRequest request, Locale locale)
 	{
 		try {
-			//replace attendees in guestlists and delete old
+			//replace attendees in guest lists and delete old
 			String[] idsarray = ids.split(",");
 			User user = sessionService.getCurrentUser(request);		
 			for (String id : idsarray) {
@@ -252,7 +252,7 @@ public class AddressBookController extends BasicController {
 		return attendeeService.getAttendees(ownerId, filter, newPage, itemsPerPage);
 	}
 	
-	@RequestMapping(value = "/attendeeExists", headers="Accept=*/*", method=RequestMethod.GET)
+	@GetMapping(value = "/attendeeExists", headers="Accept=*/*")
 	public @ResponseBody boolean attendeeExists(HttpServletRequest request, HttpServletResponse response ) throws Exception {
 		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		String email = parameters.get("email")[0];
@@ -261,8 +261,8 @@ public class AddressBookController extends BasicController {
 		return attendeeService.attendeeExists(email, user.getId());
 	}
 	
-	@RequestMapping(value = "/batchEdit", method = RequestMethod.POST)
-	public ModelAndView batchEditPOST(HttpServletRequest request, Locale locale) throws IntrusionException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+	@PostMapping(value = "/batchEdit")
+	public ModelAndView batchEditPOST(HttpServletRequest request, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		User user = sessionService.getCurrentUser(request);		
 		boolean userChanged = false;
 		
@@ -277,11 +277,11 @@ public class AddressBookController extends BasicController {
 		
 		Map<Integer, String> replacements = new HashMap<>();
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
-		for (String key : parameterMap.keySet()) {
-			if (key.startsWith("attribute"))
+		for (Entry<String, String[]> entry : parameterMap.entrySet()) {
+			if (entry.getKey().startsWith("attribute"))
 			{
-				String attributeId = key.substring(9);
-				String value = Tools.escapeHTML(parameterMap.get(key)[0]);
+				String attributeId = entry.getKey().substring(9);
+				String value = Tools.escapeHTML(entry.getValue()[0]);
 				
 				if (value.equalsIgnoreCase("0"))
 				{
@@ -296,10 +296,10 @@ public class AddressBookController extends BasicController {
 				}
 				
 				replacements.put(Integer.parseInt(attributeId), value);
-			} else if (key.startsWith("newattribute"))
+			} else if (entry.getKey().startsWith("newattribute"))
 			{
-				String attributeId = key.substring(12);
-				String attributeName = Tools.escapeHTML(parameterMap.get(key)[0]);
+				String attributeId = entry.getKey().substring(12);
+				String attributeName = Tools.escapeHTML(entry.getValue()[0]);
 				String value = parameterMap.get("newvalue" + attributeId)[0];
 				
 				AttributeName newAttributeName = new AttributeName();
@@ -311,9 +311,9 @@ public class AddressBookController extends BasicController {
 				userChanged = true;
 				
 				replacements.put(newAttributeName.getId(), value);
-			} else if (key.equals("owner"))
+			} else if (entry.getKey().equals("owner"))
 			{
-				owner = Tools.escapeHTML(parameterMap.get(key)[0]);
+				owner = Tools.escapeHTML(entry.getValue()[0]);
 				if (owner != null && owner.trim().length() > 0)
 				{
 					try {
@@ -322,13 +322,12 @@ public class AddressBookController extends BasicController {
 						return new ModelAndView("error/generic", "message", resources.getMessage("error.OwnerNotValid", null, "The selected owner is not a valid user", locale));
 					}	
 				}
-			} else if (key.equals("name"))
+			} else if (entry.getKey().equals("name"))
 			{
-				String value = Tools.escapeHTML(parameterMap.get(key)[0]);
+				String value = Tools.escapeHTML(entry.getValue()[0]);
 				if (value.equalsIgnoreCase("0"))
 				{
 					//keep value
-					continue;
 				} else if (value.equalsIgnoreCase("-1"))
 				{
 					//clear value
@@ -337,13 +336,12 @@ public class AddressBookController extends BasicController {
 					//override values
 					name = value;
 				}
-			} else if (key.equals("email"))
+			} else if (entry.getKey().equals("email"))
 			{
-				String value = Tools.escapeHTML(parameterMap.get(key)[0]);
+				String value = Tools.escapeHTML(entry.getValue()[0]);
 				if (value.equalsIgnoreCase("0"))
 				{
 					//keep value
-					continue;
 				} else if (value.equalsIgnoreCase("-1"))
 				{
 					//clear value
@@ -368,7 +366,7 @@ public class AddressBookController extends BasicController {
 		return new ModelAndView("redirect:/addressbook?edited=batch");
 	}
 
-	@RequestMapping(value = "/uploadAJAX", method = RequestMethod.POST)
+	@PostMapping(value = "/uploadAJAX")
 	public void upload(HttpServletRequest request, HttpServletResponse response) {
 
 		PrintWriter writer = null;
@@ -432,13 +430,13 @@ public class AddressBookController extends BasicController {
                         is.close();
                     }
 				} catch (IOException ignored) {
+					//ignore
 				}
 			}
 
 			writer.flush();
 			writer.close();
 		}
-
 	}
 		
 	@SuppressWarnings("unchecked")
@@ -755,7 +753,7 @@ public class AddressBookController extends BasicController {
              	request.getSession().setAttribute("hasHeaderRow", hasHeaderRow);
              	request.getSession().setAttribute("imported-rows", rows);
              	
-             	if (messages.size() > 0) 
+             	if (!messages.isEmpty()) 
              	{
              		result.addObject("importmessages", messages);
              	} else {
@@ -836,10 +834,10 @@ public class AddressBookController extends BasicController {
 		
 		//get mappings
 		SortedMap<Integer, String> mappings = new TreeMap<>();
-		for (String key : parameterMap.keySet()) {
-			if (key.startsWith("header"))
+		for (Entry<String, String[]> entry : parameterMap.entrySet()) {
+			if (entry.getKey().startsWith("header"))
 			{
-				mappings.put(Integer.parseInt(key.substring(6)), parameterMap.get(key)[0]);
+				mappings.put(Integer.parseInt(entry.getKey().substring(6)), entry.getValue()[0]);
 			}
 		}
 		
@@ -853,16 +851,14 @@ public class AddressBookController extends BasicController {
 		{			
 			Attendee attendee = new Attendee();
 			
-			for (Integer header: mappings.keySet())
+			for (Entry<Integer, String> entry: mappings.entrySet())
 			{
-				String value = mappings.get(header);
-				
-				if (value.equalsIgnoreCase("name"))
+				if (entry.getValue().equalsIgnoreCase("name"))
 				{
-					attendee.setName(row[header]);
-				} else if (value.equalsIgnoreCase("email"))
+					attendee.setName(row[entry.getKey()]);
+				} else if (entry.getValue().equalsIgnoreCase("email"))
 				{
-					attendee.setEmail(row[header]);
+					attendee.setEmail(row[entry.getKey()]);
 				} 
 			}
 				
@@ -922,27 +918,29 @@ public class AddressBookController extends BasicController {
      	
      	HashMap<String, String> headermappings = new HashMap<>();
      	if (fileheaders != null)
-     	for (String header : fileheaders)
      	{
-     		if (header.trim().equalsIgnoreCase("name"))
-     		{
-     			headermappings.put(header, "name");
-     		} else if (header.trim().equalsIgnoreCase("email"))
-     		{
-     			headermappings.put(header, "email");
-     		} else if (header.trim().equalsIgnoreCase("owner"))
-     		{
-     			headermappings.put(header, "owner");
-     		} else if (user.getSelectedAttributes() != null) {          		
-     			for (AttributeName attributeName : user.getSelectedAttributes()) {
-         			if (attributeName.getName().equalsIgnoreCase(header))
-         			{
-         				headermappings.put(header, attributeName.getName());
-         				break;
-         			}
-				}             		
-     		}
-     	}             	
+	     	for (String header : fileheaders)
+	     	{
+	     		if (header.trim().equalsIgnoreCase("name"))
+	     		{
+	     			headermappings.put(header, "name");
+	     		} else if (header.trim().equalsIgnoreCase("email"))
+	     		{
+	     			headermappings.put(header, "email");
+	     		} else if (header.trim().equalsIgnoreCase("owner"))
+	     		{
+	     			headermappings.put(header, "owner");
+	     		} else if (user.getSelectedAttributes() != null) {          		
+	     			for (AttributeName attributeName : user.getSelectedAttributes()) {
+	         			if (attributeName.getName().equalsIgnoreCase(header))
+	         			{
+	         				headermappings.put(header, attributeName.getName());
+	         				break;
+	         			}
+					}             		
+	     		}
+	     	} 
+     	}
      	result.addObject("headermappings", headermappings);
      	result.addObject("rows", rows);
      	result.addObject("hasHeaderRow", request.getSession().getAttribute("hasHeaderRow"));
@@ -954,7 +952,7 @@ public class AddressBookController extends BasicController {
      	request.getSession().setAttribute("existing", existing);
      	request.getSession().setAttribute("invalidAttendees", invalidAttendees);
      	
-     	if (messages.size() > 0) 
+     	if (!messages.isEmpty()) 
      	{
      		result.addObject("messages", messages);             	
      	} 
@@ -971,8 +969,7 @@ public class AddressBookController extends BasicController {
 		 
 		//get mappings
 		@SuppressWarnings("unchecked")
-		SortedMap<Integer, String> mappings = (SortedMap<Integer, String>) request.getSession().getAttribute("mappings"); //new TreeMap<Integer, String>();
-		
+		SortedMap<Integer, String> mappings = (SortedMap<Integer, String>) request.getSession().getAttribute("mappings");
 		List<Attendee> attendees = new ArrayList<>();
 		List<String> messages = new ArrayList<>();
 		@SuppressWarnings("unchecked")
@@ -988,27 +985,26 @@ public class AddressBookController extends BasicController {
 				Attendee attendee = new Attendee();
 				attendee.setOwnerId(user.getId());
 				
-				for (Integer header: mappings.keySet())
+				for (Entry<Integer, String> entry: mappings.entrySet())
 				{
-					String value = mappings.get(header);
-					
-					if (value.equalsIgnoreCase("name"))
+					if (entry.getValue().equalsIgnoreCase("name"))
 					{
-						attendee.setName(row[header]);
-					} else if (value.equalsIgnoreCase("email"))
+						attendee.setName(row[entry.getKey()]);
+					} else if (entry.getValue().equalsIgnoreCase("email"))
 					{
-						attendee.setEmail(row[header]);
-					} else if (value.equalsIgnoreCase("owner"))
+						attendee.setEmail(row[entry.getKey()]);
+					} else if (entry.getValue().equalsIgnoreCase("owner"))
 					{
+						//ignore
 					} else {
 						Attribute a = new Attribute();
 						
-						AttributeName attributeName = attendeeService.getAttributeName(value, user.getId());
+						AttributeName attributeName = attendeeService.getAttributeName(entry.getValue(), user.getId());
 						
 						if (attributeName == null)
 						{
 							attributeName = new AttributeName();
-							attributeName.setName(value);
+							attributeName.setName(entry.getValue());
 							attributeName.setOwnerId(user.getId());			
 							attendeeService.add(attributeName);
 							user.getSelectedAttributes().add(attributeName);
@@ -1016,7 +1012,7 @@ public class AddressBookController extends BasicController {
 						}	
 						
 						a.setAttributeName(attributeName);
-						a.setValue(row[header]);
+						a.setValue(row[entry.getKey()]);
 						
 						attendee.getAttributes().add(a);
 					}
@@ -1076,24 +1072,23 @@ public class AddressBookController extends BasicController {
      	
      	result.addObject("target", "results");
      	
-     	if (invalidAttendees.size() > 0)
+     	if (!invalidAttendees.isEmpty())
      	{
      		StringBuilder summary = new StringBuilder("<table class='table table-bordered'><tr>");
-     		for (Integer header: mappings.keySet())
+     		for (Entry<Integer, String> entry: mappings.entrySet())
 			{
-				String value = mappings.get(header);
-				summary.append("<th>").append(value).append("</th>");
+				summary.append("<th>").append(entry.getValue()).append("</th>");
 			}     		
      		summary.append("<th>").append(resources.getMessage("label.InvalidAttribute", null, "invalid attribute", locale)).append("</th></tr>");
      		
-     		for (String[] row : invalidAttendees.keySet())
+     		for (Entry<String[], String> entry : invalidAttendees.entrySet())
      		{
      			summary.append("<tr>");
-     			for (String value : row)
+     			for (String value : entry.getKey())
      			{
      				summary.append("<td>").append(value).append("</td>");
      			}     	
-     			summary.append("<td>").append(invalidAttendees.get(row)).append("</td>");
+     			summary.append("<td>").append(entry.getValue()).append("</td>");
      			summary.append("</tr>");
      		}
      		
@@ -1106,7 +1101,7 @@ public class AddressBookController extends BasicController {
 
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
+	@PostMapping
 	public ModelAndView attendeesPOST(HttpServletRequest request, Locale locale) throws Exception {
 		
 		String target = request.getParameter("target");
@@ -1158,13 +1153,13 @@ public class AddressBookController extends BasicController {
 				
 				List<String> visible = new ArrayList<>();
 				List<String> checked = new ArrayList<>();
-				for (String key : parameterMap.keySet()) {
-					if (key.startsWith("visibleAttendee"))
+				for (Entry<String, String[]> entry : parameterMap.entrySet()) {
+					if (entry.getKey().startsWith("visibleAttendee"))
 					{
-						visible.add(parameterMap.get(key)[0]);
-					} else if (key.startsWith("selectedAttendee"))
+						visible.add(entry.getValue()[0]);
+					} else if (entry.getKey().startsWith("selectedAttendee"))
 					{
-						checked.add(parameterMap.get(key)[0]);
+						checked.add(entry.getValue()[0]);
 					}
 				}					
 				
@@ -1178,12 +1173,12 @@ public class AddressBookController extends BasicController {
 					}
 				}
 			} else {			
-				for (String key : parameterMap.keySet()) {
-					if (key.startsWith("selectedAttendee"))
+				for (Map.Entry<String,String[]> entry : parameterMap.entrySet()) {
+					if (entry.getKey().startsWith("selectedAttendee"))
 					{
-						selectedAttendees.add(Integer.parseInt(parameterMap.get(key)[0]));
+						selectedAttendees.add(Integer.parseInt(entry.getValue()[0]));
 					}
-				}			
+				}		
 			}
 			
 			ModelAndView result = attendees(request);
@@ -1219,15 +1214,15 @@ public class AddressBookController extends BasicController {
 		Integer itemsPerPage = ConversionTools.getInt(request.getParameter("itemsPerPage"), 10);		
 		HashMap<String, String> filter = new HashMap<>();
 		
-		for (String key : parameterMap.keySet()) {
-			if (!key.equalsIgnoreCase("newPage") && !key.equalsIgnoreCase("itemsPerPage"))
+		for (Entry<String, String[]> entry : parameterMap.entrySet()) {
+			if (!entry.getKey().equalsIgnoreCase("newPage") && !entry.getKey().equalsIgnoreCase("itemsPerPage"))
 			{
-				if (key.startsWith("visibleAttendee") || key.startsWith("selectedAttendee"))
+				if (entry.getKey().startsWith("visibleAttendee") || entry.getKey().startsWith("selectedAttendee"))
 				{
 					//ignore
 				} else 
 				{
-					filter.put(key, parameterMap.get(key)[0]);
+					filter.put(entry.getKey(), entry.getValue()[0]);
 				}
 			}
 		}		
@@ -1253,7 +1248,7 @@ public class AddressBookController extends BasicController {
     	return result;
 	}	
 	
-	@RequestMapping(value = "/deleteAttendee", method = RequestMethod.POST)
+	@PostMapping(value = "/deleteAttendee")
 	public String delete(@RequestParam("id") String id, HttpServletRequest request) {	
 		Attendee attendee = attendeeService.get(Integer.parseInt(id));
 		attendee.setOriginalId(attendee.getId());
@@ -1277,10 +1272,8 @@ public class AddressBookController extends BasicController {
 			ownerId = -1;
     	} else {
 			ownerId = user.getId();  
-			if (attendee.getOwnerId() != ownerId) {
-				if (!attendeeService.getAccessibleAttendees(ownerId, null).contains(attendee.getId())) {
-					throw new ForbiddenURLException();
-				}
+			if (attendee.getOwnerId() != ownerId && !attendeeService.getAccessibleAttendees(ownerId, null).contains(attendee.getId())) {
+				throw new ForbiddenURLException();
 			}		
 		}
 		
@@ -1299,7 +1292,7 @@ public class AddressBookController extends BasicController {
     	return result;
 	}
 	
-	@RequestMapping( value = "/configureAttributes", method = RequestMethod.POST)
+	@PostMapping( value = "/configureAttributes")
 	public String configureAttributes(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {		
 		User user = sessionService.getCurrentUser(request);
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
@@ -1339,7 +1332,7 @@ public class AddressBookController extends BasicController {
 		}
 	}
 	
-	@RequestMapping(value = "/configureAttributesJSON", headers="Accept=*/*", method=RequestMethod.GET)
+	@GetMapping(value = "/configureAttributesJSON", headers="Accept=*/*")
 	public @ResponseBody List<AttributeName> configureAttributesJSON(HttpServletRequest request, HttpServletResponse response ) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		User user = sessionService.getCurrentUser(request);
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
@@ -1372,7 +1365,7 @@ public class AddressBookController extends BasicController {
 		return user.getSelectedAttributes();
 	}
 	
-	@RequestMapping( value = "/addAttendee", method = RequestMethod.POST)
+	@PostMapping( value = "/addAttendee")
 	public String add(HttpServletRequest request) throws Exception {			
 		
 		User user = sessionService.getCurrentUser(request);
@@ -1398,47 +1391,43 @@ public class AddressBookController extends BasicController {
 		Map<String, String> keysMap = new HashMap<>();
 		Map<String, String> valuesMap = new HashMap<>();
 
-		for (String key : parameterMap.keySet()) {
-			String[] values = parameterMap.get(key);
-
-			if (key.equalsIgnoreCase("name")) {
-				attendee.setName(Tools.escapeHTML(values[0]));
-			} else if (key.equalsIgnoreCase("email")) {
-				attendee.setEmail(Tools.escapeHTML(values[0]));
-			} else if (key.equalsIgnoreCase("owner")) {
-				if (user.getGlobalPrivileges().get(GlobalPrivilege.UserManagement) > 1)
-				{
-					if (values[0].length() > 0)
+		for (Entry<String, String[]> entry : parameterMap.entrySet()) {
+			
+			if (entry.getKey().equalsIgnoreCase("name")) {
+				attendee.setName(Tools.escapeHTML(entry.getValue()[0]));
+			} else if (entry.getKey().equalsIgnoreCase("email")) {
+				attendee.setEmail(Tools.escapeHTML(entry.getValue()[0]));
+			} else if (entry.getKey().equalsIgnoreCase("owner")) {
+				if (user.getGlobalPrivileges().get(GlobalPrivilege.UserManagement) > 1 && entry.getValue()[0].length() > 0)
+				{				
+					User owner = administrationService.getUserForLogin(Tools.escapeHTML(entry.getValue()[0]));
+					if (owner != null)
 					{
-						User owner = administrationService.getUserForLogin(Tools.escapeHTML(values[0]));
-						if (owner != null)
-						{
-							attendee.setOwnerId(owner.getId());
-						} else {					
-							throw new MessageException("The user " + values[0] + " does not exist");
-						}
-					}
+						attendee.setOwnerId(owner.getId());
+					} else {					
+						throw new MessageException("The user " + entry.getValue()[0] + " does not exist");
+					}					
 				}
-			} else if (key.startsWith("key")) {
-				keysMap.put(key.substring(3), Tools.escapeHTML(values[0]));
-			} else if (key.startsWith("value")) {
-				valuesMap.put(key.substring(5), Tools.escapeHTML(values[0]));
-			} else if (key.startsWith("attribute")) {
-				AttributeName attributeName = attendeeService.getAttributeName(Integer.parseInt(key.substring(9)));
+			} else if (entry.getKey().startsWith("key")) {
+				keysMap.put(entry.getKey().substring(3), Tools.escapeHTML(entry.getValue()[0]));
+			} else if (entry.getKey().startsWith("value")) {
+				valuesMap.put(entry.getKey().substring(5), Tools.escapeHTML(entry.getValue()[0]));
+			} else if (entry.getKey().startsWith("attribute")) {
+				AttributeName attributeName = attendeeService.getAttributeName(Integer.parseInt(entry.getKey().substring(9)));
 				Attribute a = new Attribute();
 				a.setAttributeName(attributeName);
-				a.setValue(Tools.escapeHTML(values[0]));
+				a.setValue(Tools.escapeHTML(entry.getValue()[0]));
 				attendee.getAttributes().add(a);
 			}
 		}
 		boolean userChanged = false;
-		for (String key : keysMap.keySet()) {
-			if (keysMap.get(key).trim().length() > 0 && valuesMap.containsKey(key))
+		for (Entry<String, String> entry : keysMap.entrySet()) {
+			if (entry.getValue().trim().length() > 0 && valuesMap.containsKey(entry.getKey()))
 			{
 				AttributeName attributeName = null;
 				
 				try {
-					attributeName = attendeeService.getAttributeName(Integer.parseInt(keysMap.get(key)));
+					attributeName = attendeeService.getAttributeName(Integer.parseInt(entry.getValue()));
 				} catch (NumberFormatException nfe)
 				{
 					attributeName = null;
@@ -1447,7 +1436,7 @@ public class AddressBookController extends BasicController {
 				if (attributeName == null)
 				{
 					attributeName = new AttributeName();
-					attributeName.setName(keysMap.get(key));
+					attributeName.setName(entry.getValue());
 					attributeName.setOwnerId(user.getId());			
 					user.getSelectedAttributes().add(attributeName);
 					userChanged = true;
@@ -1455,7 +1444,7 @@ public class AddressBookController extends BasicController {
 				
 				Attribute a = new Attribute();
 				a.setAttributeName(attributeName);
-				a.setValue(valuesMap.get(key));
+				a.setValue(valuesMap.get(entry.getKey()));
 				attendee.getAttributes().add(a);
 			}
 		}

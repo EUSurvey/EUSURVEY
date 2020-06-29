@@ -148,7 +148,9 @@ public class ExportService extends BasicService {
 					break;
 				case Activity:
 					activityService.log(312, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
-					break;					
+					break;
+			default:
+				break;					
 			}
 			
 			if (immediate)

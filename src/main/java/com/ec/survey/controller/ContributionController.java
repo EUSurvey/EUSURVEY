@@ -22,6 +22,7 @@ import com.ec.survey.tools.WeakAuthenticationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -294,7 +295,7 @@ public class ContributionController extends BasicController {
 		}
 	}	
 	
-	@RequestMapping(value = "/editcontribution/{code}", method = RequestMethod.POST)
+	@PostMapping(value = "/editcontribution/{code}")
 	public ModelAndView processSubmit(@PathVariable String code, HttpServletRequest request, Locale locale) {
 
 		try {
@@ -337,27 +338,25 @@ public class ContributionController extends BasicController {
 					return model;
 				}
 				
-				if (oldAnswerSet.getSurvey().getCaptcha()) {
-					if (!checkCaptcha(request)) {
-						Survey survey = origsurvey;
-						if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
-							survey = surveyService.getSurvey(origsurvey.getId(), oldAnswerSet.getLanguageCode());
-						}
-						Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true), survey.getLanguage(), resources,contextpath);
-						f.getAnswerSets().add(oldAnswerSet);
-						ModelAndView model = new ModelAndView("runner/runner", "form", f);
-						surveyService.initializeSkin(f.getSurvey());
-						model.addObject("submit", true);
-						model.addObject("runnermode", true);
-						model.addObject("uniqueCode", uniqueCode);
-						model.addObject("answerSet", oldAnswerSet.getId());
-						if (dialogmode)
-						{
-							model.addObject("dialogmode", dialogmode);
-						}
-						model.addObject("wrongcaptcha", "true");
-						return model;
+				if (oldAnswerSet.getSurvey().getCaptcha() && !checkCaptcha(request)) {
+					Survey survey = origsurvey;
+					if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
+						survey = surveyService.getSurvey(origsurvey.getId(), oldAnswerSet.getLanguageCode());
 					}
+					Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true), survey.getLanguage(), resources,contextpath);
+					f.getAnswerSets().add(oldAnswerSet);
+					ModelAndView model = new ModelAndView("runner/runner", "form", f);
+					surveyService.initializeSkin(f.getSurvey());
+					model.addObject("submit", true);
+					model.addObject("runnermode", true);
+					model.addObject("uniqueCode", uniqueCode);
+					model.addObject("answerSet", oldAnswerSet.getId());
+					if (dialogmode)
+					{
+						model.addObject("dialogmode", dialogmode);
+					}
+					model.addObject("wrongcaptcha", "true");
+					return model;					
 				}
 
 				saveAnswerSet(oldAnswerSet, fileDir, null, u == null ? -1 : u.getId());
@@ -403,8 +402,7 @@ public class ContributionController extends BasicController {
 				ModelAndView model = new ModelAndView("error/generic");
 				model.addObject("message", resources.getMessage("error.ProblemDuringSave", null, "There was a problem during the save process.", locale));
 				return model;
-			}
-			
+			}			
 		
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
@@ -464,7 +462,7 @@ public class ContributionController extends BasicController {
 	}
 	
 
-	@RequestMapping(value = "/deletecontribution/{code}", method = RequestMethod.POST)
+	@PostMapping(value = "/deletecontribution/{code}")
 	public @ResponseBody String delete(@PathVariable String code, HttpServletRequest request, Locale locale) {	
 		try {
 			AnswerSet answerSet = getAnswerSet(code, request);
@@ -498,9 +496,7 @@ public class ContributionController extends BasicController {
 					
 				response.setHeader("Content-Disposition", "attachment;filename=answer.pdf");
 				renderer.createPDF(response.getOutputStream());
-				response.flushBuffer();				
-			
-				return null;
+				response.flushBuffer();
 			}	
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);			

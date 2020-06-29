@@ -19,12 +19,6 @@ import java.util.*;
 
 @Service("archiveService")
 public class ArchiveService extends BasicService {
-
-	@Resource(name="settingsService")
-	private SettingsService settingsService;
-	
-	@Resource(name="fileService")
-	private FileService fileService;
 	
 	@Resource(name = "taskExecutorLong")
 	protected TaskExecutor taskExecutorLong;
@@ -32,37 +26,6 @@ public class ArchiveService extends BasicService {
 	@Autowired
 	private SqlQueryService sqlQueryService;	
 	
-//	@Transactional(readOnly = true)
-//	public List<Archive> getArchives(Integer userId, int page, int rowsPerPage, ArchiveFilter filter) {
-//		Session session = sessionFactory.getCurrentSession();
-//		
-//		String hql = "FROM Archive a WHERE a.userId = :userId";
-//		
-//		Map<String, Object> params = new HashMap<>();
-//		params.put("userId", userId);
-//		
-//		if (filter.getTitle() != null && filter.getTitle().length() > 0)
-//		{
-//			hql += " AND a.surveyTitle LIKE :title";
-//			params.put("title", "%" + filter.getTitle() + "%");
-//		}
-//		
-//		if (filter.getCreatedFrom() != null)
-//		{
-//			hql += " AND a.created >= :created";
-//			params.put("created", filter.getCreatedFrom());
-//		}
-//		
-//		hql += " ORDER BY a.archived DESC";
-//		
-//		Query query = session.createQuery(hql).setInteger("userId", userId);
-//		sqlQueryService.setParameters(query, params);
-//		
-//		@SuppressWarnings("unchecked")
-//		List<Archive> result = query.setFirstResult((page - 1)*rowsPerPage).setMaxResults(rowsPerPage).list();
-//		return result;
-//	}
-
 	@Transactional(readOnly = false)
 	public void update(Archive archive) {
 		Session session = sessionFactory.getCurrentSession();

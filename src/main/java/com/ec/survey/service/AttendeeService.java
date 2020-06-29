@@ -13,14 +13,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 @Service("attendeeService")
 public class AttendeeService extends BasicService {
-	
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
 	
 	@Autowired
 	private SqlQueryService sqlQueryService;	
