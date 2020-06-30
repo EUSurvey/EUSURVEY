@@ -162,24 +162,14 @@ public class RunnerController extends BasicController {
 				return model;
 			}
 
-			// The access has not yet been activated. Please try again later.
-			if (invitation != null && invitation.getDeactivated() != null && invitation.getDeactivated()) {
-				ModelAndView model = new ModelAndView("error/generic");
-				model.addObject("message", resources.getMessage("error.AccessDeactivated", null, "The access has not yet been activated. Please try again later.", locale));
-				model.addObject("noMenu", true);
-				model.addObject("runnermode", true);
-				return model;
-			}
-			
-			if (invitation != null && participationGroup == null)
-			{
+			if (invitation != null && (invitation.getDeactivated() != null && invitation.getDeactivated() || participationGroup == null)) {
 				ModelAndView model = new ModelAndView("error/generic");
 				model.addObject("message", resources.getMessage("error.AccessDisabled", null, "The access has been disabled.", locale));
 				model.addObject("noMenu", true);
 				model.addObject("runnermode", true);
 				return model;
 			}
-
+	
 			if (invitation != null && (invitation.getDeactivated() == null || !invitation.getDeactivated()) && participationGroup != null
 					&& invitation.getParticipationGroupId().equals(participationGroup.getId())) {
 				if (!participationGroup.getActive()) {

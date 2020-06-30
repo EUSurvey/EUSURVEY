@@ -739,44 +739,6 @@ public class AttendeeService extends BasicService {
 		}
 	}
 
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void executeOperations(Map<String, String> operations, int groupId) throws Exception {
-		
-		Session session = sessionFactory.getCurrentSession();	
-					
-		for (String token : operations.keySet()) {
-			String value = operations.get(token);
-			
-			Invitation invitation = internalGetInvitationByUniqueId(token);
-			
-			if (invitation != null && invitation.getParticipationGroupId().equals(groupId))
-			{
-				switch(value)
-				{
-					case "delete":
-					{
-						session.delete(invitation);	
-						break;
-					}
-					case "deactivate":
-					{
-						invitation.setDeactivated(true);
-						session.update(invitation);
-						break;
-					}
-					case "activate":
-					{
-						invitation.setDeactivated(false);
-						session.update(invitation);	
-						break;
-					}
-				}	
-			} else {
-				throw new Exception("The group id is not correct!");
-			}
-		}
-	}
-
 	@Transactional(readOnly = true)
 	public Map<Integer, String> getNamesForAttributenameIDs(Set<Integer> ids) {
 		Session session = sessionFactory.getCurrentSession();
