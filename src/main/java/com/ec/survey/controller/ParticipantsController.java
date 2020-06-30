@@ -796,11 +796,26 @@ public class ParticipantsController extends BasicController {
 
 		return paging;
 	}
+	
+	@RequestMapping(value = "/topDepartmentsJSON", headers="Accept=*/*", method=RequestMethod.GET)
+	public @ResponseBody List<KeyValue> topDepartments(HttpServletRequest request, HttpServletResponse response ) throws InvalidURLException {
+		
+		if (!isAjax(request))
+		{
+			throw new InvalidURLException();
+		}
+		
+		String domain = request.getParameter("domain");
+		if (domain == null) {
+			domain = "eu.europa.ec";
+		}
+		return ldapService.getTopDepartments(domain);		
+	}
 
 	@GetMapping(value = "/departmentsJSON", headers = "Accept=*/*")
 	public @ResponseBody List<KeyValue> departments(HttpServletRequest request, HttpServletResponse response) {
 		return ldapService.getDepartments(request.getParameter("term"));
-	}
+  }
 
 	@PostMapping(value = "/saveTemplateJSON", headers = "Accept=*/*")
 	public @ResponseBody String saveTemplateJSON(HttpServletRequest request, HttpServletResponse response)
