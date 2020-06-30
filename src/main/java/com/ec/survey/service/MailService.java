@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.io.File;
@@ -17,9 +16,6 @@ import java.util.List;
 
 @Service("mailService")
 public class MailService extends BasicService {
-	
-	@Resource(name="settingsService")
-	private SettingsService settingsService;
 	
 	public void SendHtmlMail(String to, String from, String reply, String subject, String body, String server, int port, File attachment, File attachment2, String info, boolean deleteFiles) throws Exception {
 		MailSender sender = (MailSender) context.getBean("mailSender");

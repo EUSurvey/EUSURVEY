@@ -402,7 +402,7 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		} else {
 			element.optional = true;
 		}
-		element.isAttribute = true;
+		element.isAttribute = false;
 		element.isUnique = false;
 		element.attributeName = element.shortname;
 		element.readonly = false;		

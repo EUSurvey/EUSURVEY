@@ -32,28 +32,14 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/worker")
 public class WorkerController extends BasicController {
 		
-	@Resource(name = "exportService")
-	private ExportService exportService;
-	
-	@Resource(name = "archiveService")
-	private ArchiveService archiveService;
-	
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-	
 	@Resource(name = "webserviceService")
 	private WebserviceService webserviceService;
-	
-	@Resource(name = "taskExecutorLong")
-	private TaskExecutor taskExecutorLong;
-	
+
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
 	
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
-	private @Value("${sender}") String sender;
-	private @Value("${server.prefix}") String serverPrefix;
 	private @Value("${webservice.maxrequestsperday}") String maxrequestsperday;		
 
 	@RequestMapping(value = "createanswerpdf/{code}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")

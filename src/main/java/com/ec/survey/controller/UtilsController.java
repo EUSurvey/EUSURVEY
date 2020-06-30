@@ -1,7 +1,6 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.tools.Tools;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,6 @@ import java.util.Map;
 @Controller
 @RequestMapping("/utils")
 public class UtilsController extends BasicController {
-	
-	public @Value("${captcha.bypass:@null}") String bypassCaptcha;
 	
 	@RequestMapping(value = "/euCountries", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody Map<String, String> getListOfCountries(HttpServletRequest request) {
@@ -73,7 +70,7 @@ public class UtilsController extends BasicController {
 		langList.put("ET", resources.getMessage("label.lang.Estonian", null, locale));
 		langList.put("FI", resources.getMessage("label.lang.Finnish", null, locale));
 		langList.put("FR", resources.getMessage("label.lang.French", null, locale));
-		langList.put("GA", resources.getMessage("label.lang.Gaelic", null, locale));
+		langList.put("GA", resources.getMessage("label.lang.Irish", null, locale));
 		langList.put("HR", resources.getMessage("label.lang.Croatian", null, locale));
 		langList.put("HU", resources.getMessage("label.lang.Hungarian", null, locale));
 		langList.put("IT", resources.getMessage("label.lang.Italian", null, locale));
@@ -410,12 +407,9 @@ public class UtilsController extends BasicController {
 	@RequestMapping(value = "/config/{key}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String getConfigValue(@PathVariable String key, HttpServletRequest request) {
 		String result = "";		
-		if(key != null)
-		{
-			if(key.equals("captchaBypass"))
-			{				
-				result =  bypassCaptcha;				
-			}
+		if (key != null && key.equals("captchaBypass"))
+		{	
+			result =  bypassCaptcha;				
 		}
 		return result;
 	}

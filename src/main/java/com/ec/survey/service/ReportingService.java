@@ -48,18 +48,7 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.SQLGrammarException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Service("reportingService")
 public class ReportingService {

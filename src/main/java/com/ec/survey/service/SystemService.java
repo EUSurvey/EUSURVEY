@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +15,6 @@ import com.ec.survey.model.MessageType;
 @Service("systemService")
 @Configurable
 public class SystemService extends BasicService {
-
-	@Autowired
-	protected MessageSource resources;	
 	
 	@Transactional(readOnly = true)
 	public Message getMessage()

@@ -208,7 +208,7 @@ public abstract class ExportCreator implements Runnable {
 	private void innerRunBasic(boolean sync, Export export) throws Exception
 	{
 		switch (export.getType()) {
-			case Content: /*initAnswers(false);*/ ExportContent(sync); break;
+			case Content: ExportContent(sync); break;
 			case Statistics: initAnswers(true); ExportStatistics(); break;
 			case StatisticsQuiz: initAnswers(true); ExportStatisticsQuiz(); break;
 			case AddressBook: ExportAddressBook(); break;
@@ -216,6 +216,8 @@ public abstract class ExportCreator implements Runnable {
 			case Tokens: ExportTokens(); break;
 			case Files: ExportContent(sync); break;
 			case Survey: ExportContent(sync); break;
+		default:
+			break;
 		}
 	}
 	

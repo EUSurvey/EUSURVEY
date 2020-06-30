@@ -4,10 +4,6 @@ import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.ActivityService;
-import com.ec.survey.service.AdministrationService;
-import com.ec.survey.service.SessionService;
-import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Ucs2Utf8;
 import org.springframework.stereotype.Controller;
@@ -15,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,18 +20,6 @@ import java.util.List;
 @RequestMapping("/{shortname}/management")
 public class ActivityController extends BasicController {
 
-	@Resource(name = "sessionService")
-	private SessionService sessionService;
-	
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name = "surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name = "activityService")
-	private ActivityService activityService;
-	
 	@RequestMapping(value = "/activity")
 	public ModelAndView activity(@PathVariable String shortname, HttpServletRequest request) throws Exception {
 		Form form;
@@ -124,7 +107,7 @@ public class ActivityController extends BasicController {
 			}
 		}
 		
-		if (filter.getVisibleColumns().size() == 0)
+		if (filter.getVisibleColumns().isEmpty())
 		{
 			filter.getVisibleColumns().add("date");
 			filter.getVisibleColumns().add("logid");
@@ -137,7 +120,7 @@ public class ActivityController extends BasicController {
 			filter.getVisibleColumns().add("newvalue");
 		}
 		
-		if (filter.getExportedColumns().size() == 0)
+		if (filter.getExportedColumns().isEmpty())
 		{
 			filter.getExportedColumns().add("date");
 			filter.getExportedColumns().add("user");
@@ -172,8 +155,9 @@ public class ActivityController extends BasicController {
 		List<User> allUsers = new ArrayList<>();
 		for (int id : allUserIds)
 		{
-			if (id > 0)
-			allUsers.add(administrationService.getUser(id));
+			if (id > 0) {
+				allUsers.add(administrationService.getUser(id));
+			}
 		}
 		
 		sessionService.setLastActivityFilter(request, filter);

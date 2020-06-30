@@ -10,7 +10,6 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ReportingService.ToDo;
 import com.ec.survey.tools.*;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.plexus.util.FileUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -540,6 +539,24 @@ public class SurveyService extends BasicService {
 				}
 			} else if (filter.getSortKey().equalsIgnoreCase("created")) {
 				sql.append(" ORDER BY s.SURVEY_CREATED");
+
+				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
+					sql.append(" ").append(filter.getSortOrder().toUpperCase());
+				}
+			} else if (filter.getSortKey().equalsIgnoreCase("firstPublished")) {
+				sql.append(" ORDER BY firstPublished");
+
+				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
+					sql.append(" ").append(filter.getSortOrder().toUpperCase());
+				}
+			} else if (filter.getSortKey().equalsIgnoreCase("published")) {
+				sql.append(" ORDER BY published");
+
+				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
+					sql.append(" ").append(filter.getSortOrder().toUpperCase());
+				}
+			} else if (filter.getSortKey().equalsIgnoreCase("reported")) {
+				sql.append(" ORDER BY reported");
 
 				if (filter.getSortOrder() != null && filter.getSortOrder().length() > 0) {
 					sql.append(" ").append(filter.getSortOrder().toUpperCase());
@@ -3967,76 +3984,6 @@ public class SurveyService extends BasicService {
 			session.save(published);
 		}
 	}
-
-	@Transactional(readOnly = true)
-	public List<Survey> getDeletedSurveys(DeletedSurveysFilter filter, int page, int rowsPerPage) throws Exception {
-
-		Session session = sessionFactory.getCurrentSession();
-
-		String sql = "FROM Survey s WHERE s.isDraft = true AND s.isDeleted = true";
-
-		Map<String, Object> params = new HashMap<>();
-		
-		if (filter.getId() != null && filter.getId().trim().length() > 0) {
-			sql += " AND s.id = :id";
-			params.put("id", Integer.parseInt(filter.getId()));
-		}
-		
-		if (filter.getUniqueId() != null && filter.getUniqueId().trim().length() > 0) {
-			sql += " AND s.uniqueId LIKE :uniqueId";
-			params.put("uniqueId", "%" + filter.getUniqueId() + "%");
-		}
-
-		if (filter.getShortname() != null && filter.getShortname().trim().length() > 0) {
-			sql += " AND s.shortname LIKE :shortname";
-			params.put("shortname", "%" + filter.getShortname() + "%");
-		}
-
-		if (filter.getTitle() != null && filter.getTitle().trim().length() > 0) {
-			sql += " AND s.title LIKE :title";
-			params.put("title", "%" + filter.getTitle() + "%");
-		}
-
-		if (filter.getOwner() != null && filter.getOwner().trim().length() > 0) {
-			sql += " AND (s.owner.displayName LIKE :owner OR s.owner.login LIKE :owner)";
-			params.put("owner", "%" + filter.getOwner() + "%");
-		}
-
-		if (filter.getCreatedFrom() != null) {
-			sql += " AND s.created >= :createdFrom";
-			params.put("createdFrom", filter.getCreatedFrom());
-		}
-
-		if (filter.getCreatedTo() != null) {
-			sql += " AND s.created < :createdTo";
-
-			Calendar c = Calendar.getInstance();
-			c.setTime(filter.getCreatedTo());
-			c.add(Calendar.DAY_OF_MONTH, 1);
-			params.put("createdTo", c.getTime());
-		}
-
-		if (filter.getDeletedFrom() != null) {
-			sql += " AND s.deleted >= :deletedFrom";
-			params.put("deletedFrom", filter.getDeletedFrom());
-		}
-
-		if (filter.getDeletedTo() != null) {
-			sql += " AND s.deleted < :deletedTo";
-
-			Calendar c = Calendar.getInstance();
-			c.setTime(filter.getDeletedTo());
-			c.add(Calendar.DAY_OF_MONTH, 1);
-			params.put("deletedTo", c.getTime());
-		}
-
-		Query query = session.createQuery(sql);
-		sqlQueryService.setParameters(query, params);
-
-		@SuppressWarnings("unchecked")
-		List<Survey> result = query.setFirstResult((page-1) * rowsPerPage).setMaxResults(rowsPerPage).list();
-		return result;
-	}
 	
 	public List<Survey> getAllSurveysForUser(User user) {
 		Session session = sessionFactory.getCurrentSession();
@@ -4050,11 +3997,27 @@ public class SurveyService extends BasicService {
 		
 		return result;
 	}
+	
+	private String getOwnerWhere(User user, String type)
+	{
+		String ownerwhere;
 
-	public LinkedHashMap<Integer, String> getAllPublishedSurveysForUser(User user, String sort) {
+		if (type != null && type.equalsIgnoreCase("my")) {
+			ownerwhere = "s.OWNER = :userid";
+		} else if (type != null && type.equalsIgnoreCase("shared")) {
+			ownerwhere = "s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
+		} else {
+			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
+		}
+		
+		return ownerwhere;
+	}
+
+	public Map<Integer, String> getAllPublishedSurveysForUser(User user, String sort, String type) {
 		Session session = sessionFactory.getCurrentSession();
-
-		String sql = "SELECT s.SURVEY_ID, s.SURVEYNAME from SURVEYS s where s.ISDRAFT = 1 and s.ACTIVE = 1 and (s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))) and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) ORDER BY ";
+		
+		String ownerwhere = getOwnerWhere(user, type);
+		String sql = "SELECT s.SURVEY_ID, s.SURVEYNAME from SURVEYS s where s.ISDRAFT = 1 and s.ACTIVE = 1 and (" + ownerwhere + ") and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) ORDER BY ";
 
 		if (sort.equalsIgnoreCase("created")) {
 			sql += "s.SURVEY_CREATED DESC";
@@ -4065,8 +4028,12 @@ public class SurveyService extends BasicService {
 		}
 
 		Query query = session.createSQLQuery(sql);
+	
 		query.setInteger("userid", user.getId());
-		query.setString("login", user.getLogin());
+
+		if (type == null || !type.equalsIgnoreCase("my")) {
+			query.setString("login", user.getLogin());
+		}
 
 		LinkedHashMap<Integer, String> result = new LinkedHashMap<Integer, String>();
 
@@ -4081,9 +4048,12 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public List<String> getAllPublishedSurveysUIDsForUser(User user, boolean escapeforsql, boolean includearchived) {
+	public List<String> getAllPublishedSurveysUIDsForUser(User user, boolean escapeforsql, boolean includearchived, String type) {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT DISTINCT s.SURVEY_UID from SURVEYS s where s.ISDRAFT = 1 and (s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))) and (s.DELETED = 0 or s.DELETED is null)";
+		
+		String ownerwhere = getOwnerWhere(user, type);
+		
+		String sql = "SELECT DISTINCT s.SURVEY_UID from SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere + ") and (s.DELETED = 0 or s.DELETED is null)";
 
 		if (!includearchived) {
 			sql += " and (s.ARCHIVED = 0 or s.ARCHIVED is null)";
@@ -4091,7 +4061,10 @@ public class SurveyService extends BasicService {
 
 		Query query = session.createSQLQuery(sql);
 		query.setInteger("userid", user.getId());
-		query.setString("login", user.getLogin());
+
+		if (type == null || !type.equalsIgnoreCase("my")) {
+			query.setString("login", user.getLogin());
+		}
 
 		List<String> result = new ArrayList<String>();
 
@@ -4109,10 +4082,10 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public String[] getMetaDataForUser(User user) throws Exception {
+	public String[] getMetaDataForUser(User user, String type) throws Exception {
 		String[] result = new String[6];
 
-		List<String> surveyUIDs = getAllPublishedSurveysUIDsForUser(user, true, false);
+		List<String> surveyUIDs = getAllPublishedSurveysUIDsForUser(user, true, false, type);
 
 		if (surveyUIDs.size() > 0) {
 			Session session = sessionFactory.getCurrentSession();
@@ -4182,16 +4155,8 @@ public class SurveyService extends BasicService {
 
 		Session session = sessionFactory.getCurrentSession();
 
-		String ownerwhere;
-
-		if (type != null && type.equalsIgnoreCase("my")) {
-			ownerwhere = "s.OWNER = :userid";
-		} else if (type != null && type.equalsIgnoreCase("shared")) {
-			ownerwhere = "s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
-		} else {
-			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
-		}
-
+		String ownerwhere = getOwnerWhere(user, type);
+		
 		String sql = "SELECT s.SURVEY_ID, s.ACTIVE, s.ISPUBLISHED, s.ARCHIVED, s.HASPENDINGCHANGES from SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere
 				+ ") and (s.DELETED = 0 or s.DELETED is null)";
 
@@ -4234,12 +4199,18 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public Map<Date, List<String>> getSurveysWithEndDatesForUser(Integer userid) {
+	public Map<Date, List<String>> getSurveysWithEndDatesForUser(User user, String type) {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT s.SURVEYNAME, s.SURVEY_END_DATE FROM SURVEYS s where s.ISDRAFT = 1 and s.OWNER = :userid and s.SURVEY_END_DATE is not null and s.SURVEY_END_DATE >= CURDATE() and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) and s.AUTOMATICPUBLISHING = 1";
+				
+		String ownerwhere = getOwnerWhere(user, type);
+		String sql = "SELECT s.SURVEYNAME, s.SURVEY_END_DATE FROM SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere + ") and s.SURVEY_END_DATE is not null and s.SURVEY_END_DATE >= CURDATE() and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) and s.AUTOMATICPUBLISHING = 1";
 
 		Query query = session.createSQLQuery(sql);
-		query.setInteger("userid", userid);
+		query.setInteger("userid", user.getId());
+
+		if (type == null || !type.equalsIgnoreCase("my")) {
+			query.setString("login", user.getLogin());
+		}
 
 		Map<Date, List<String>> result = new TreeMap<Date, List<String>>();
 
@@ -4444,24 +4415,24 @@ public class SurveyService extends BasicService {
 		return ConversionTools.getValue(query.uniqueResult());
 	}
 	
-	@Transactional(readOnly = true)
-	public Pair<Date, Date> getFirstLastPublishDate(String surveyuid) {
-		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT MIN(SURVEY_CREATED), MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = :uid";
-		Query query = session.createSQLQuery(sql);
-		query.setString("uid", surveyuid);
-		
-		@SuppressWarnings("rawtypes")
-		List res = query.list();
-		
-		for (Object o : res) {
-			Object[] a = (Object[]) o;
-			
-			return Pair.of((Date)a[0],(Date)a[1]);
-		}
-		
-		return null;
-	}
+//	@Transactional(readOnly = true)
+//	public Pair<Date, Date> getFirstLastPublishDate(String surveyuid) {
+//		Session session = sessionFactory.getCurrentSession();
+//		String sql = "SELECT MIN(SURVEY_CREATED), MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = :uid";
+//		Query query = session.createSQLQuery(sql);
+//		query.setString("uid", surveyuid);
+//		
+//		@SuppressWarnings("rawtypes")
+//		List res = query.list();
+//		
+//		for (Object o : res) {
+//			Object[] a = (Object[]) o;
+//			
+//			return Pair.of((Date)a[0],(Date)a[1]);
+//		}
+//		
+//		return null;
+//	}
 
 	@Transactional
 	public int getAbuseReportsForSurvey(String surveyuid) {

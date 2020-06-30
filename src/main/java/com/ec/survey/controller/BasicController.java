@@ -387,11 +387,10 @@ public class BasicController implements BeanFactoryAware {
 			}
 		}
 	
-	public Survey editSave(Survey survey, HttpServletRequest request) throws Exception {
-		boolean saved = false;
+	public Survey editSave(Survey survey, HttpServletRequest request) throws Exception {		
 		int counter = 1;
 				
-		while(!saved)
+		while(true)
 		{
 			try {
 				survey = surveyService.editSave(survey, request);
@@ -410,7 +409,6 @@ public class BasicController implements BeanFactoryAware {
 				Thread.sleep(1000);
 			}
 		}
-		return null;
 	}	
 	
 	public ModelAndView basicwelcome(HttpServletRequest request, Locale locale) {	
@@ -431,7 +429,7 @@ public class BasicController implements BeanFactoryAware {
 		return model;
 	}
 	
-	protected ModelAndView testDraftAlreadySubmittedByUniqueCode(Survey survey, String uniqueAnswerSet, Locale locale) throws ForbiddenURLException {
+	protected ModelAndView testDraftAlreadySubmittedByUniqueCode(Survey survey, String uniqueAnswerSet, Locale locale) {
 		if (surveyService.answerSetExists(uniqueAnswerSet, false, true))
 		{		
 			ModelAndView model = new ModelAndView("error/generic");
@@ -441,7 +439,7 @@ public class BasicController implements BeanFactoryAware {
 		return null;		
 	}
 
-	protected ModelAndView testDraftAlreadySubmitted(Survey survey, Draft draft, Locale locale) throws ForbiddenURLException {
+	protected ModelAndView testDraftAlreadySubmitted(Survey survey, Draft draft, Locale locale) {
 		if (draft!=null)
 		{
 			String uniqueAnswerSet = draft.getAnswerSet().getUniqueCode();
@@ -525,9 +523,11 @@ public class BasicController implements BeanFactoryAware {
 		archive.setUserId(u.getId());
 		StringBuilder langs = new StringBuilder();
 		if (survey.getTranslations() != null)
-		for (String s : survey.getTranslations())
 		{
-			langs.append(s);
+			for (String s : survey.getTranslations())
+			{
+				langs.append(s);
+			}
 		}
 		archive.setLanguages(langs.toString());
 		archiveService.add(archive);
