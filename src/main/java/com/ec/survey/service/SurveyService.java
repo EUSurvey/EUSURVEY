@@ -2845,15 +2845,6 @@ public class SurveyService extends BasicService {
 					}
 				}
 			}
-			
-			Map<String, String> draftTranslationsMap = trans.getTranslationsMap();
-			for (String key : secondTranslationsMap.keySet())
-			{
-				if (!draftTranslationsMap.containsKey(key))
-				{
-					return true;
-				}
-			}
 		}
 		
 		return false;
