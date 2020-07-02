@@ -166,7 +166,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForUser/{user}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView migrateFileSystemForUser(@PathVariable String user, HttpServletRequest request) throws InvalidURLException, IOException {
+	public ModelAndView migrateFileSystemForUser(@PathVariable String user, HttpServletRequest request) throws IOException {
 		int userId = Integer.parseInt(user);	
 		long tStart = System.currentTimeMillis();
 		
@@ -330,7 +330,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/todosjson", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<ToDoItem> exportsjson(HttpServletRequest request) throws NotAgreedToTosException {	
+	public @ResponseBody List<ToDoItem> exportsjson(HttpServletRequest request) {	
 		
 		int itemsPerPage = -1;
 		int page = -1;
@@ -366,8 +366,8 @@ public class AdministrationController extends BasicController {
 	@RequestMapping(value = "/deleteToDo/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String deleteToDo(@PathVariable String id) {
 		try {
-			int ID = Integer.parseInt(id);
-			ToDoItem todo = reportingService.getToDo(ID);
+			int todoId = Integer.parseInt(id);
+			ToDoItem todo = reportingService.getToDo(todoId);
 			reportingService.removeToDo(todo, true);
 			return "{\"success\": true}";
 		} catch (Exception e) {

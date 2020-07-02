@@ -736,7 +736,7 @@ public class ManagementController extends BasicController {
 
 		if (request.getParameter("uuid") != null && request.getParameter("uuid").length() > 0) {
 			// Case 1: import survey
-			HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 			String uuid = request.getParameter("uuid").replace("/", "");
 
 			try {
@@ -2626,7 +2626,7 @@ public class ManagementController extends BasicController {
 		return results(survey, Ucs2Utf8.requestToHashMap(request), request, null, false, null, false, locale);
 	}
 
-	private ModelAndView results(Survey survey, HashMap<String, String[]> parameters, HttpServletRequest request,
+	private ModelAndView results(Survey survey, Map<String, String[]> parameters, HttpServletRequest request,
 			Boolean draft, Boolean pallanswers, ResultFilter resultFilter, boolean forPDF, Locale locale)
 			throws Exception {
 		String shortname = survey.getShortname();

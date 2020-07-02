@@ -1,19 +1,16 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.MessageException;
 import com.memetix.mst.language.Language;
 import com.memetix.mst.translate.Translate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.Arrays;
 
 @Service("microsoftTranslationService")
 public class MicrosoftTranslationService extends BasicService {
-
-	@Resource(name = "sessionService")
-	private SessionService sessionService;
 
 	public @Value("${microsoft.translation.client.id}") String clientID;
 	public @Value("${microsoft.translation.client.secret}") String clientSecret;
@@ -23,7 +20,7 @@ public class MicrosoftTranslationService extends BasicService {
 		Translate.setClientId(clientID);
 		Translate.setClientSecret(clientSecret);
 	}
-	
+
 	public String[] translate(String[] sourceTexts, String sourceLanguage, String targetLangauge) throws Exception {
 		sessionService.initializeProxy();
 
@@ -41,7 +38,8 @@ public class MicrosoftTranslationService extends BasicService {
 		try {
 			return Translate.execute(sourceTexts, source, target);
 		} catch (Exception e) {
-			throw new Exception("Error during translation source lang " + sourceLanguage + " target lang " + targetLangauge + " text to translate " + Arrays.toString(sourceTexts), e);
+			throw new MessageException("Error during translation source lang " + sourceLanguage + " target lang "
+					+ targetLangauge + " text to translate " + Arrays.toString(sourceTexts));
 		}
 
 	}

@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -36,12 +35,6 @@ import java.util.*;
 @Service("exportService")
 @Configurable
 public class ExportService extends BasicService {
-	
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name = "activityService")
-	private ActivityService activityService;
 	
 	private @Value("${export.deleteexportstimeout}") String deleteexportstimeout;
 	private @Value("${smtpserver}") String smtpServer;

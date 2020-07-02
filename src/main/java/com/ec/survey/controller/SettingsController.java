@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/settings")
@@ -322,7 +322,7 @@ public class SettingsController extends BasicController {
 	@GetMapping(value = "/userExists", headers = "Accept=*/*")
 	public @ResponseBody boolean userExists(HttpServletRequest request, HttpServletResponse response)
 			throws NotAgreedToTosException, WeakAuthenticationException, ForbiddenURLException, NotAgreedToPsException {
-		HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		User userInRequest = sessionService.getCurrentUser(request);
 		User user = administrationService.getUser(userInRequest.getId());
 		Date now = new Date();
@@ -363,7 +363,7 @@ public class SettingsController extends BasicController {
 
 		User user = sessionService.getCurrentUser(request);
 
-		HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 
 		String shareName = parameters.get("shareName")[0];
 		String shareMode = parameters.get("shareMode")[0];

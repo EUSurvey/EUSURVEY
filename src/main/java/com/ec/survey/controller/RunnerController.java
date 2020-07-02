@@ -2047,7 +2047,7 @@ public class RunnerController extends BasicController {
 			}
 
 			if (answerSet != null) {
-				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get("email")[0];
 
 				return pdfService.createAnswerPDF(code, email);
@@ -2072,7 +2072,7 @@ public class RunnerController extends BasicController {
 
 			Draft draft = answerService.getDraftByAnswerUID(code);
 			if (draft != null) {
-				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get("email")[0];
 
 				return pdfService.createDraftAnswerPDF(code, email);
@@ -2097,7 +2097,7 @@ public class RunnerController extends BasicController {
 
 			AnswerSet answerSet = answerService.get(code);
 			if (answerSet != null) {
-				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get("email")[0];
 				QuizExecutor export = (QuizExecutor) context.getBean("quizExecutor");
 				export.init(answerSet, email, sender, smtpServer, smtpPort, serverPrefix);
@@ -2118,7 +2118,7 @@ public class RunnerController extends BasicController {
 			return "errorcaptcha";
 		} else {
 
-			HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 			String email = parameters.get("email")[0];
 			String link = parameters.get("link")[0];
 			String id = parameters.get("id")[0];

@@ -40,12 +40,6 @@ public class SchemaService extends BasicService {
 		return cassOss != null && cassOss.equalsIgnoreCase("true");
 	}
 
-	public @Value("${oss}") String oss;
-
-	public boolean isOss() {
-		return oss != null && oss.equalsIgnoreCase("true");
-	}
-
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
 	

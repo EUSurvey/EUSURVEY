@@ -6,6 +6,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Ucs2Utf8;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +14,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/{shortname}/management")
@@ -35,7 +36,7 @@ public class ActivityController extends BasicController {
 			throw new ForbiddenURLException();			
 		}
 		
-		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		Map<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		ActivityFilter filter = sessionService.getLastActivityFilter(request);
 		@SuppressWarnings("unchecked")
 		Paging<Activity> paging = (Paging<Activity>) request.getSession().getAttribute("activity-paging");
