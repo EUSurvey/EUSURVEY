@@ -33,9 +33,10 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -579,7 +580,7 @@ public class HomeController extends BasicController {
 				return "errorcaptcha";
 			}
 			
-			HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 			String code = parameters.get("caseid")[0];
 			
 			AnswerSet answerSet = answerService.get(code);

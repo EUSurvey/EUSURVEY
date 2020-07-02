@@ -765,7 +765,7 @@ public class ParticipantsController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
-		HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		String name = "";
 		if (parameters.containsKey("name"))
 			name = parameters.get("name")[0];
@@ -915,7 +915,7 @@ public class ParticipantsController extends BasicController {
 		User user = sessionService.getCurrentUser(request);
 		int owner = user.getId();
 
-		HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		String name = "";
 		if (parameters.containsKey("name"))
 			name = parameters.get("name")[0];
@@ -1014,7 +1014,7 @@ public class ParticipantsController extends BasicController {
 
 		int owner = user.getId();
 
-		HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		String name = "";
 		if (parameters.containsKey("name"))
 			name = parameters.get("name")[0];

@@ -1,9 +1,9 @@
 package com.ec.survey.controller;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -69,7 +69,7 @@ public class PublicSurveysController extends BasicController {
 	@PostMapping(value = "/accept", headers = "Accept=*/*")
 	public String accept(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 			
 			String id = parameters.get("id")[0];
 			Survey survey = surveyService.getSurvey(Integer.parseInt(id), false);
@@ -102,7 +102,7 @@ public class PublicSurveysController extends BasicController {
 	@PostMapping(value = "/decline", headers = "Accept=*/*")
 	public String decline(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 			
 			String id = parameters.get("id")[0];
 			Survey survey = surveyService.getSurvey(Integer.parseInt(id), false);

@@ -19,7 +19,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -201,7 +204,7 @@ public class WebServiceController extends BasicController {
 			}
 
 			ParticipationGroup group = new ParticipationGroup(survey.getUniqueId());
-			group.setActive(active != null && active.equalsIgnoreCase("true"));
+			group.setActive(active.equalsIgnoreCase("true"));
 			group.setOwnerId(user.getId());
 			group.setName("remote" + Tools.formatDate(new Date(), "MM/dd/yyyy HH:mm:ss"));
 			group.setSurveyId(survey.getId());
@@ -1097,7 +1100,7 @@ public class WebServiceController extends BasicController {
 			task.setSurveyUid(publishedsurvey.getUniqueId());
 			task.setToken(token);
 
-			task.setShowIDs(showids != null && showids.equalsIgnoreCase("true"));
+			task.setShowIDs(showids.equalsIgnoreCase("true"));
 
 			task.setUser(user);
 
@@ -1136,7 +1139,6 @@ public class WebServiceController extends BasicController {
 		String token = null;
 		Map<String, String> values = new HashMap<>();
 
-		// HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		HashMap<String, String[]> parameters = new HashMap<>();
 		@SuppressWarnings("rawtypes")
 		Enumeration en = request.getParameterNames();
@@ -1759,7 +1761,7 @@ public class WebServiceController extends BasicController {
 		return jb.toString();
 	}
 
-	@RequestMapping(value = "/changeSurveyTitle/{alias}", method = { RequestMethod.PATCH }, produces = "text/html")
+	@PatchMapping(value = "/changeSurveyTitle/{alias}", produces = "text/html")
 	public @ResponseBody String changeSurveyTitle(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -1807,7 +1809,7 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/changeContact/{alias}", method = { RequestMethod.PATCH }, produces = "text/html")
+	@PatchMapping(value = "/changeContact/{alias}", produces = "text/html")
 	public @ResponseBody String changeContact(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -1849,7 +1851,7 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/uploadBackgroundDocument/{alias}", method = { RequestMethod.PUT }, produces = "text/html")
+	@PutMapping(value = "/uploadBackgroundDocument/{alias}", produces = "text/html")
 	public @ResponseBody String uploadBackgroundDocument(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -1911,8 +1913,7 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/removeBackgroundDocument/{alias}", method = {
-			RequestMethod.DELETE }, produces = "text/html")
+	@DeleteMapping(value = "/removeBackgroundDocument/{alias}", produces = "text/html")
 	public @ResponseBody String removeBackgroundDocument(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -1968,7 +1969,7 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/addUsefulLink/{alias}", method = { RequestMethod.PUT }, produces = "text/html")
+	@PutMapping(value = "/addUsefulLink/{alias}", produces = "text/html")
 	public @ResponseBody String addUsefulLink(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -2015,7 +2016,7 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/removeUsefulLink/{alias}", method = { RequestMethod.DELETE }, produces = "text/html")
+	@DeleteMapping(value = "/removeUsefulLink/{alias}", produces = "text/html")
 	public @ResponseBody String removeUsefulLink(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);

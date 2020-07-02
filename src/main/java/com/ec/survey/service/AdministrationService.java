@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.*;
 import com.ec.survey.model.survey.Survey;
@@ -22,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.InputStream;
 import java.util.*;
+import java.util.Map.Entry;
+
 import org.springframework.util.StringUtils;
 
 @Service("administrationService")
@@ -134,16 +137,18 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional
-	public void createUser(User user) throws Exception {
+	public void createUser(User user) throws LoginAlreadyExistsException {
 		Session session = sessionFactory.getCurrentSession();
 
 		Query query = session.createQuery("FROM User u where u.login = :login").setString("login", user.getLogin());
 		@SuppressWarnings("unchecked")
 		List<User> list = query.list();
 
-		if (list.size() > 0)
+		if (!list.isEmpty())
+		{
 			throw new LoginAlreadyExistsException();
-
+		}
+		
 		session.save(user);
 	}
 
@@ -207,18 +212,18 @@ public class AdministrationService extends BasicService {
 	}
 	
 	@Transactional
-	public void confirmUserDeleteRequest(int id, String code) throws Exception {
+	public void confirmUserDeleteRequest(int id, String code) throws MessageException {
 		Session session = sessionFactory.getCurrentSession();
 		User user = (User) session.get(User.class, id);
 		
 		if (user == null)
 		{
-			throw new Exception("User unknown");
+			throw new MessageException("User unknown");
 		}
 		
 		if (!user.getDeleteCode().equals(code))
 		{
-			throw new Exception("Wrong code");
+			throw new MessageException("Wrong code");
 		}
 		
 		Calendar cal = Calendar.getInstance();  
@@ -228,7 +233,7 @@ public class AdministrationService extends BasicService {
 		
 		if (user.getDeleteDate().before(threedaysago))
 		{
-			throw new Exception("Request too old");
+			throw new MessageException("Request too old");
 		}
 		
 		user.setDeleted(true);		
@@ -352,10 +357,10 @@ public class AdministrationService extends BasicService {
 
 		logger.debug("getUserForLogin".toUpperCase() + " START CHECK USER QUERY  EXECUTED WITH RESULT SIZE " + list.size());
 
-		if (list.size() == 0)
-			throw new Exception("No user found for login " + login);
+		if (list.isEmpty())
+			throw new MessageException("No user found for login " + login);
 		if (list.size() > 1)
-			throw new Exception("Multiple users found for login " + login);
+			throw new MessageException("Multiple users found for login " + login);
 
 		return list.get(0);
 	}
@@ -373,9 +378,10 @@ public class AdministrationService extends BasicService {
 
 		@SuppressWarnings("unchecked")
 		List<UsersConfiguration> list = query.list();
-		if (list.size() == 0)
+		if (list.isEmpty())
+		{
 			return null;
-
+		}
 		return list.get(0);
 	}
 
@@ -469,17 +475,21 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public OneTimePasswordResetCode getOneTimePasswordResetCode(String code) throws Exception {
+	public OneTimePasswordResetCode getOneTimePasswordResetCode(String code) throws MessageException {
 		Session session = sessionFactory.getCurrentSession();
 
 		Query query = session.createQuery("FROM OneTimePasswordResetCode c where c.code = :code").setString("code", code);
 		@SuppressWarnings("unchecked")
 		List<OneTimePasswordResetCode> list = query.list();
-		if (list.size() == 0)
-			throw new Exception("No item found for code " + code);
+		if (list.isEmpty())
+		{
+			throw new MessageException("No item found for code " + code);
+		}
 		if (list.size() > 1)
-			throw new Exception("Multiple items found for code " + code);
-
+		{
+			throw new MessageException("Multiple items found for code " + code);
+		}
+		
 		return list.get(0);
 	}
 
@@ -525,14 +535,14 @@ public class AdministrationService extends BasicService {
 		HashMap<String, Object> parameters = new HashMap<>();
 		Query query = session.createQuery(getHql(filter, parameters));
 
-		for (String attrib : parameters.keySet()) {
-			Object value = parameters.get(attrib);
+		for (Entry<String, Object> entry : parameters.entrySet()) {
+			Object value = entry.getValue();
 			if (value instanceof String) {
-				query.setString(attrib, (String) parameters.get(attrib));
+				query.setString(entry.getKey(), (String) value);
 			} else if (value instanceof Integer) {
-				query.setInteger(attrib, (Integer) parameters.get(attrib));
+				query.setInteger(entry.getKey(), (Integer) value);
 			} else if (value instanceof Date) {
-				query.setDate(attrib, (Date) parameters.get(attrib));
+				query.setDate(entry.getKey(), (Date) value);
 			}
 		}
 
@@ -700,7 +710,7 @@ public class AdministrationService extends BasicService {
 		User user = getUser(Integer.parseInt(userId));
 
 		if (user == null) {
-			throw new Exception("user does not exist");
+			throw new MessageException("user does not exist");
 		}
 
 		user.setFrozen(true);
@@ -731,7 +741,7 @@ public class AdministrationService extends BasicService {
 		User user = getUser(Integer.parseInt(userId));
 
 		if (user == null) {
-			throw new Exception("user does not exist");
+			throw new MessageException("user does not exist");
 		}
 
 		user.setFrozen(false);

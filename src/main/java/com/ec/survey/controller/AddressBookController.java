@@ -254,7 +254,7 @@ public class AddressBookController extends BasicController {
 	
 	@GetMapping(value = "/attendeeExists", headers="Accept=*/*")
 	public @ResponseBody boolean attendeeExists(HttpServletRequest request, HttpServletResponse response ) throws Exception {
-		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		Map<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		String email = parameters.get("email")[0];
 		User user = sessionService.getCurrentUser(request);
 		

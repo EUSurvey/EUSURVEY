@@ -75,7 +75,7 @@ public class PublicationController extends BasicController {
 					}
 				}
 
-				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 
 				for (String questionId : publicationFilter.getVisibleQuestions()) {
 					userFilter.getVisibleQuestions().add(questionId);
@@ -187,7 +187,7 @@ public class PublicationController extends BasicController {
 	public ModelAndView authenticatePOST(@PathVariable String shortname, HttpServletRequest request, Locale locale)
 			throws InvalidURLException {
 
-		HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 
 		String publicationpassword = parameters.get("publicationpassword")[0];
 		Survey survey = surveyService.getSurveyByShortname(shortname, false, null, request, false, true, true, false);
@@ -210,7 +210,7 @@ public class PublicationController extends BasicController {
 
 	@GetMapping(value = "/individualJSON", headers = "Accept=*/*")
 	public @ResponseBody Map<String, String> individualJSON(HttpServletRequest request, HttpServletResponse response) {
-		HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		String surveyid = "";
 		if (parameters.containsKey("survey"))
 			surveyid = parameters.get("survey")[0];
@@ -447,7 +447,7 @@ public class PublicationController extends BasicController {
 					}
 				}
 
-				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get("email")[0];
 				StatisticsExecutor export = (StatisticsExecutor) context.getBean("statisticsExecutor");
 				export.init(survey, type, format, survey.getPublication().getFilter().getHash(false), email, sender,
@@ -484,7 +484,7 @@ public class PublicationController extends BasicController {
 					return "errorcaptcha";
 				}
 
-				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get("email")[0];
 				ResultFilter filter = survey.getPublication().getFilter();
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
@@ -518,7 +518,7 @@ public class PublicationController extends BasicController {
 					return "errorcaptcha";
 				}
 
-				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get("email")[0];
 				ResultFilter filter = survey.getPublication().getFilter();
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
@@ -553,7 +553,7 @@ public class PublicationController extends BasicController {
 					return "errorcaptcha";
 				}
 
-				HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 
 				String question = parameters.get("question")[0];
 				String email = parameters.get("email")[0];
