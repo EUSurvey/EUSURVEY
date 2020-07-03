@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Draft;
 import com.ec.survey.model.ResultFilter;
@@ -76,11 +77,12 @@ public class PDFService extends BasicService {
 			if (target == null) {
 				target = fileService.getSurveyPDFFile(survey.getUniqueId(), survey.getId(), lang);
 			}
-			if (target.exists() && target.length() > 0)
+			if (target.exists() && target.length() > 0) {
 				return target;
+			}
 			renderer = getRenderer();
 			if (renderer == null) {
-				throw new Exception("Not possible to obtain PDFRenderer from pool");
+				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
 			renderer.createPDF(pdfhost + "runner/preparesurvey/" + survey.getId() + "?lang=" + lang, os);
@@ -112,11 +114,9 @@ public class PDFService extends BasicService {
 			java.io.File target = new java.io.File(String.format("%s/publishedanswer%s.pdf", folder.getPath(), answerSet.getId()));
 
 			if (!target.exists() || target.length() < 1024) {
+				renderer = getRenderer();
 				if (renderer == null) {
-					renderer = getRenderer();
-				}
-				if (renderer == null) {
-					throw new Exception("Not possible to obtain PDFRenderer from pool");
+					throw new MessageException("Not possible to obtain PDFRenderer from pool");
 				}
 				os = new FileOutputStream(target);
 				renderer.createPDF(pdfhost + "preparepublishedcontribution/" + answerSet.getId(), os);
@@ -176,7 +176,7 @@ public class PDFService extends BasicService {
 		AnswerSet answerSet = answerService.get(code);
 		AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
 		if (email != null) {
-			export.init(answerSet, email, sender, smtpServer, smtpPort, serverPrefix);
+			export.init(answerSet, email, sender, serverPrefix);
 		} else {
 			export.init(answerService.get(code));
 		}
@@ -220,7 +220,7 @@ public class PDFService extends BasicService {
 		Draft draft = answerService.getDraftByAnswerUID(code);
 		AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
 		if (email != null) {
-			export.init(draft.getAnswerSet(), email, sender, smtpServer, smtpPort, serverPrefix);
+			export.init(draft.getAnswerSet(), email, sender, serverPrefix);
 		} else {
 			export.init(draft.getAnswerSet());
 		}
@@ -242,12 +242,9 @@ public class PDFService extends BasicService {
 			target = new java.io.File(String.format("%s/%s%s.pdf", folder.getPath(), isDraft ? "draft" : "answer", uniqueCode));
 
 			logger.info("starting PDF creation target is " + target.getAbsolutePath());
+			renderer = getRenderer();
 			if (renderer == null) {
-				logger.debug("starting PDF creation renderer is null try to get one ");
-				renderer = getRenderer();
-			}
-			if (renderer == null) {
-				throw new Exception("Not possible to obtain PDFRenderer from pool");
+				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target, false);
 			logger.debug("starting PDF creation renderer is starting creating PDF ");
@@ -325,7 +322,7 @@ public class PDFService extends BasicService {
 			} else {
 				invalidCounter++;
 				if (invalidCounter >= 3) {
-					throw new Exception("too many invalid PDFs generated");
+					throw new MessageException("too many invalid PDFs generated");
 				}
 			}
 		}
@@ -364,11 +361,9 @@ public class PDFService extends BasicService {
 			java.io.File folder = fileService.getSurveyExportsFolder(survey.getUniqueId());
 			java.io.File target = new java.io.File(String.format("%s/charts%s.pdf", folder.getPath(), UUID.randomUUID().toString()));
 
+			renderer = getRenderer();
 			if (renderer == null) {
-				renderer = getRenderer();
-			}
-			if (renderer == null) {
-				throw new Exception("Not possible to obtain PDFRenderer from pool");
+				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
 			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparecharts/" + survey.getId() + "/" + exportId, os);
@@ -401,11 +396,9 @@ public class PDFService extends BasicService {
 			java.io.File folder = fileService.getSurveyExportsFolder(survey.getUniqueId());
 			java.io.File target = new java.io.File(String.format("%s/charts%s.pdf", folder.getPath(), UUID.randomUUID().toString()));
 
+			renderer = getRenderer();
 			if (renderer == null) {
-				renderer = getRenderer();
-			}
-			if (renderer == null) {
-				throw new Exception("Not possible to obtain PDFRenderer from pool");
+				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
 			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparestatistics/" + survey.getId() + "/" + exportId, os);
@@ -438,11 +431,9 @@ public class PDFService extends BasicService {
 			java.io.File folder = fileService.getSurveyExportsFolder(survey.getUniqueId());
 			java.io.File target = new java.io.File(String.format("%s/statistics%s.pdf", folder.getPath(), UUID.randomUUID().toString()));
 
+			renderer = getRenderer();
 			if (renderer == null) {
-				renderer = getRenderer();
-			}
-			if (renderer == null) {
-				throw new Exception("Not possible to obtain PDFRenderer from pool");
+				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
 			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparestatisticsquiz/" + survey.getId() + "/" + exportId, os);
@@ -474,11 +465,10 @@ public class PDFService extends BasicService {
 			java.io.File folder = fileService.getSurveyExportsFolder(answerSet.getSurvey().getUniqueId());
 			java.io.File target = new java.io.File(String.format("%s/quiz%s.pdf", folder.getPath(), UUID.randomUUID().toString()));
 
+			renderer = getRenderer();
+			
 			if (renderer == null) {
-				renderer = getRenderer();
-			}
-			if (renderer == null) {
-				throw new Exception("Not possible to obtain PDFRenderer from pool");
+				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
 			renderer.createPDF(pdfhost + "preparequizresults/" + answerSet.getUniqueCode(), os);

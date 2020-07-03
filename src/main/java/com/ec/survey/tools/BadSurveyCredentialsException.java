@@ -7,7 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 
 public class BadSurveyCredentialsException extends BadCredentialsException {
 	
-	protected static Logger logger = Logger.getLogger(BadCredentialsException.class);
+	protected static final Logger logger = Logger.getLogger(BadCredentialsException.class);
 	
 	public BadSurveyCredentialsException(String message) {		
 		super(message);

@@ -889,7 +889,7 @@ public class SurveyHelper {
 		Section section;
     	if (currentElement == null)
     	{
-    		section = new Section(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));
+    		section = new Section(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));
     	} else {
     		section = (Section)currentElement;
     	}    
@@ -1006,7 +1006,7 @@ public class SurveyHelper {
 		
 		if (currentElement == null)
 		{
-			image = new Image(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
+			image = new Image(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
 		} else {
 			image = (Image)currentElement;
 		}
@@ -1093,7 +1093,7 @@ public class SurveyHelper {
 		
 		if (currentElement == null)
 		{
-			ruler = new Ruler(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
+			ruler = new Ruler(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
 		} else {
 			ruler = (Ruler)currentElement;
 		}

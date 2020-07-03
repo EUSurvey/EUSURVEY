@@ -57,20 +57,15 @@ public class LdapSearchResult {
 	private String group ;
 	private String fname ;
 	private String lname ;
-	
-	
+		
 	public static class Comparators {
-
-        public static Comparator<LdapSearchResult> FIRST = Comparator.comparing(o -> o.fname);
-        public static Comparator<LdapSearchResult> LAST = Comparator.comparing(o -> o.lname);
-        public static Comparator<LdapSearchResult> GROUP = (o1, o2) -> {
+        public static final Comparator<LdapSearchResult> FIRST = Comparator.comparing(o -> o.fname);
+        public static final Comparator<LdapSearchResult> LAST = Comparator.comparing(o -> o.lname);
+        public static final Comparator<LdapSearchResult> GROUP = (o1, o2) -> {
             Comparator<String> comp = new NullSafeComparator<>(String.CASE_INSENSITIVE_ORDER, false);
             return comp.compare(o1.group,o2.group);
         };
-        public static Comparator<LdapSearchResult> DISPLAYNAME = Comparator.comparing(o -> o.displayName);
-        
-        
-        
+        public static final Comparator<LdapSearchResult> DISPLAYNAME = Comparator.comparing(o -> o.displayName);
     }
 	
 }

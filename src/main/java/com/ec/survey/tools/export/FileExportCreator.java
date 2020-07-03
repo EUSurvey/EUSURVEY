@@ -66,7 +66,9 @@ public class FileExportCreator implements Runnable {
 		{
 			String name2 = fileresult.getFileName();
 			if (!name.equals(name2))
-			name += "_" + name2;
+			{
+				name += "_" + name2;
+			}
 		}
 		return name;
 	}
@@ -121,7 +123,7 @@ public class FileExportCreator implements Runnable {
 			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 			String text = org.apache.commons.io.IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
 			
-			mailService.SendHtmlMail(user.getEmail(), sender, sender, "Files download generated", text, smtpServer, Integer.parseInt(smtpPort), null);
+			mailService.SendHtmlMail(user.getEmail(), sender, sender, "Files download generated", text, null);
 					
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

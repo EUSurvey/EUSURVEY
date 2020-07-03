@@ -19,91 +19,84 @@ import java.util.List;
 public class SavedRequestAwareAuthenticationSuccessHandlerExtended extends SimpleUrlAuthenticationSuccessHandler {
 	protected static final Logger logger = Logger.getLogger(ManagementController.class);
 
-	    private RequestCache requestCache = new HttpSessionRequestCache();
+	private RequestCache requestCache = new HttpSessionRequestCache();
 
-	    @Override
-	    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-	            Authentication authentication) throws ServletException, IOException {
-	        SavedRequest savedRequest = requestCache.getRequest(request, response);
-	        
-	        String survey = request.getParameter("survey");
-	        
-	        if (survey != null)
-	        {
-	        	getRedirectStrategy().sendRedirect(request, response, "/runner/" + survey);
-	        	return;
-	        }
-	        
-	        User user = (User) request.getSession().getAttribute("USER");
-	        
-	        if (!user.isAgreedToPS())
-	        {
-	            getRedirectStrategy().sendRedirect(request, response, "/auth/ps");
-	 	        return;
-	        }
-	        
-	        if (!user.isAgreedToToS())
-	        {
-	            getRedirectStrategy().sendRedirect(request, response, "/auth/tos");
-	 	        return;
-	        }
-	        
-	        if (user.isDeleted())
-	        {
-	        	getRedirectStrategy().sendRedirect(request, response, "/auth/deleted");
-	 	        return;
-	        }
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws ServletException, IOException {
+		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
-	        if (savedRequest == null) {
-	            super.onAuthenticationSuccess(request, response, authentication);
+		String survey = request.getParameter("survey");
 
-	            return;
-	        }
-	        String targetUrlParameter = getTargetUrlParameter();
-	        if (isAlwaysUseDefaultTargetUrl() || (targetUrlParameter != null && StringUtils.hasText(request.getParameter(targetUrlParameter)))) {
-	            requestCache.removeRequest(request, response);
-	            super.onAuthenticationSuccess(request, response, authentication);
+		if (survey != null) {
+			getRedirectStrategy().sendRedirect(request, response, "/runner/" + survey);
+			return;
+		}
 
-	            return;
-	        }
+		User user = (User) request.getSession().getAttribute("USER");
 
-	        clearAuthenticationAttributes(request);
+		if (!user.isAgreedToPS()) {
+			getRedirectStrategy().sendRedirect(request, response, "/auth/ps");
+			return;
+		}
 
-	        // Use the DefaultSavedRequest URL
-	        String targetUrl = savedRequest.getRedirectUrl();	        
-	        
-			if (!savedRequest.getMethod().equalsIgnoreCase("GET") || isAjax(targetUrl, savedRequest))
-			{
-				targetUrl = "/dashboard";
-			}
-			
-			//check if url is valid
-			if (targetUrl.endsWith("addUser"))
-			{
-				targetUrl = "/dashboard";
-			}
-			
-	        getRedirectStrategy().sendRedirect(request, response, targetUrl);
-			
-	    }
-	    
-	    private boolean isAjax(String url, SavedRequest request) {
-	    	if (url != null)
-	    	{
-	    		if (url.contains("checkNew") || url.contains("/messages") || url.contains("/dashboard/") || url.toLowerCase().contains("json") || url.toLowerCase().contains("ajax"))
-	    		{
-	    			return true;
-	    		}
-	    	}
-	    	
-	        List<String> requestedWithHeader = request.getHeaderValues("X-Requested-With");
-	        return requestedWithHeader != null && requestedWithHeader.contains("XMLHttpRequest");
-	    }
+		if (!user.isAgreedToToS()) {
+			getRedirectStrategy().sendRedirect(request, response, "/auth/tos");
+			return;
+		}
 
-	    public void setRequestCache(RequestCache requestCache) {
-	        this.requestCache = requestCache;
-	    }
-	    public RequestCache getRequestCache() {
-	        return requestCache;
-	    }
+		if (user.isDeleted()) {
+			getRedirectStrategy().sendRedirect(request, response, "/auth/deleted");
+			return;
+		}
+
+		if (savedRequest == null) {
+			super.onAuthenticationSuccess(request, response, authentication);
+
+			return;
+		}
+		String targetUrlParameter = getTargetUrlParameter();
+		if (isAlwaysUseDefaultTargetUrl()
+				|| (targetUrlParameter != null && StringUtils.hasText(request.getParameter(targetUrlParameter)))) {
+			requestCache.removeRequest(request, response);
+			super.onAuthenticationSuccess(request, response, authentication);
+
+			return;
+		}
+
+		clearAuthenticationAttributes(request);
+
+		// Use the DefaultSavedRequest URL
+		String targetUrl = savedRequest.getRedirectUrl();
+
+		if (!savedRequest.getMethod().equalsIgnoreCase("GET") || isAjax(targetUrl, savedRequest)) {
+			targetUrl = "/dashboard";
+		}
+
+		// check if url is valid
+		if (targetUrl.endsWith("addUser")) {
+			targetUrl = "/dashboard";
+		}
+
+		getRedirectStrategy().sendRedirect(request, response, targetUrl);
+
+	}
+
+	private boolean isAjax(String url, SavedRequest request) {
+		if (url != null && (url.contains("checkNew") || url.contains("/messages") || url.contains("/dashboard/")
+				|| url.toLowerCase().contains("json") || url.toLowerCase().contains("ajax"))) {
+			return true;
+		}
+
+		List<String> requestedWithHeader = request.getHeaderValues("X-Requested-With");
+		return requestedWithHeader != null && requestedWithHeader.contains("XMLHttpRequest");
+	}
+
+	public void setRequestCache(RequestCache requestCache) {
+		this.requestCache = requestCache;
+	}
+
+	public RequestCache getRequestCache() {
+		return requestCache;
+	}
 }

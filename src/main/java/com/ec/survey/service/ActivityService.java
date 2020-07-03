@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 @Service("activityService")
 public class ActivityService extends BasicService {
@@ -36,8 +37,9 @@ public class ActivityService extends BasicService {
 		String loggingenabled = settingsService.get(Setting.ActivityLoggingEnabled);
 		if (loggingenabled.equalsIgnoreCase("true"))
 		{
-			for (int logId : activitiesToLog.keySet())
+			for (Entry<Integer, String[]> entry : activitiesToLog.entrySet())
 			{
+				int logId = entry.getKey();
 				String[] oldnew = activitiesToLog.get(logId);
 				String enabled = settingsService.get(logId + "ActivityEnabled");
 				
@@ -77,17 +79,17 @@ public class ActivityService extends BasicService {
 				//first changed ones
 				if (oldInfo != null)
 				{
-					for (String key : oldInfo.keySet()) {
-						String oldValue = oldInfo.get(key);
-						String newValue = info.getOrDefault(key, "");
+					for (Entry<String, String> entry : oldInfo.entrySet()) {
+						String oldValue = entry.getValue();
+						String newValue = info.getOrDefault(entry.getKey(), "");
 						
 						if (!oldValue.equalsIgnoreCase(newValue))
 						{
 							Activity activity = new Activity();
 							activity.setDate(new Date());
 							activity.setLogID(activityCode);
-							activity.setOldValue(code + " " + key + ": " + oldValue);
-							activity.setNewValue(code + " " + key + ": " + newValue);
+							activity.setOldValue(code + " " + entry.getKey() + ": " + oldValue);
+							activity.setNewValue(code + " " + entry.getKey() + ": " + newValue);
 							
 							checkValueSizes(activity);
 							
@@ -99,14 +101,14 @@ public class ActivityService extends BasicService {
 				}
 				
 				//then new ones
-				for (String key : info.keySet()) {
-					if (oldInfo == null || !oldInfo.containsKey(key))
+				for (Entry<String, String> entry : info.entrySet()) {
+					if (oldInfo == null || !oldInfo.containsKey(entry.getKey()))
 					{
 						Activity activity = new Activity();
 						activity.setDate(new Date());
 						activity.setLogID(activityCode);
-						activity.setOldValue(code + " " + key + ":");
-						activity.setNewValue(code + " " + key + ": " + info.get(key));
+						activity.setOldValue(code + " " + entry.getKey() + ":");
+						activity.setNewValue(code + " " + entry.getKey() + ": " + entry.getValue());
 						
 						checkValueSizes(activity);
 						
@@ -236,6 +238,8 @@ public class ActivityService extends BasicService {
 				case "Messages":
 					hql += " AND logID > 700 AND logID < 800";
 					break;
+				default:
+					break;
 			}
 		}
 		
@@ -344,6 +348,8 @@ public class ActivityService extends BasicService {
 					hql += " AND (logID > 220 AND logID < 225) OR logID = 227 OR logID = 228"; break;
 				case "UsefulLink":
 					hql += " AND (logID = 203 OR logID = 204)"; break;
+				default:
+					break;
 			}			
 		}
 		
@@ -403,6 +409,8 @@ public class ActivityService extends BasicService {
 					break;
 				case "Submitted":
 					hql += " AND logID = 401"; break;
+				default:
+					break;
 			}
 		}
 		
@@ -463,21 +471,20 @@ public class ActivityService extends BasicService {
 		hql += " ORDER BY id DESC";
 		Query query = session.createQuery(hql).setString("uid", filter.getSurveyUid());
 		
-		for (String key : params.keySet())
+		for (Entry<String, Object> entry : params.entrySet())
 		{
-			Object param = params.get(key);
-			if (param instanceof Integer)
+			if (entry.getValue() instanceof Integer)
 			{
-				query.setInteger(key, (Integer)param);
-			} else if (param instanceof Integer[])
+				query.setInteger(entry.getKey(), (Integer)entry.getValue());
+			} else if (entry.getValue() instanceof Integer[])
 			{
-				query.setParameterList(key, (Integer[])param);
-			} else if (param instanceof String)
+				query.setParameterList(entry.getKey(), (Integer[])entry.getValue());
+			} else if (entry.getValue() instanceof String)
 			{
-				query.setString(key, (String)param);
-			} else if (param instanceof Date)
+				query.setString(entry.getKey(), (String)entry.getValue());
+			} else if (entry.getValue() instanceof Date)
 			{
-				query.setDate(key, (Date)param);
+				query.setDate(entry.getKey(), (Date)entry.getValue());
 			}
 		}
 		

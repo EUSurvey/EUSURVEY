@@ -353,8 +353,8 @@ public class AdministrationController extends BasicController {
 	@RequestMapping(value = "/executeToDo/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String executeToDo(@PathVariable String id) {
 		try {
-			int ID = Integer.parseInt(id);
-			ToDoItem todo = reportingService.getToDo(ID);
+			int todoId = Integer.parseInt(id);
+			ToDoItem todo = reportingService.getToDo(todoId);
 			reportingService.executeToDo(todo, false);
 			return "{\"success\": true}";
 		} catch (Exception e) {

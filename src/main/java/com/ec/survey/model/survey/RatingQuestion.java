@@ -4,7 +4,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.Cacheable;
@@ -36,7 +35,7 @@ public class RatingQuestion extends Question {
 	public RatingQuestion() {}
 	
 	public RatingQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+		super(title, shortname, uid);
 	}
 	
 	private int numIcons = 5;
@@ -104,7 +103,7 @@ public class RatingQuestion extends Question {
 		return false;
 	}
 	
-	public RatingQuestion copy(String fileDir) throws ValidationException, IntrusionException
+	public RatingQuestion copy(String fileDir) throws ValidationException
 	{
 		RatingQuestion copy = new RatingQuestion();
 		baseCopy(copy);
@@ -127,9 +126,10 @@ public class RatingQuestion extends Question {
 		
 		RatingQuestion rating = (RatingQuestion)element;
 
-		if (!(numIcons == rating.numIcons)) return true;
-		if (!(iconType == rating.iconType)) return true;
-	
+		if (numIcons != rating.numIcons || iconType != rating.iconType) {
+			return true;
+		}
+		
 		if (getChildElements().size() != rating.getChildElements().size()) return true;
 		
 		for (int r = 0; r < getChildElements().size(); r++)

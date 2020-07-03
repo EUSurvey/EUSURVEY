@@ -19,7 +19,7 @@ public class DraftIDElement extends Element {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public DraftIDElement(Survey survey, String ptitle, String shortname) {
+	public DraftIDElement(String ptitle, String shortname) {
 		setTitle(ptitle);
 		setShortname(shortname);
 	}

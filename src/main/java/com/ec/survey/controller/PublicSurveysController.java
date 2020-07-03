@@ -88,7 +88,7 @@ public class PublicSurveysController extends BasicController {
 				InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",serverPrefix);
 								
-				mailService.SendHtmlMail(email, sender, replyto, subject, text, smtpServer, Integer.parseInt(smtpPort), null);
+				mailService.SendHtmlMail(email, sender, replyto, subject, text, null);
 			
 				return "redirect:/administration/publicsurveys?done=accept";
 			}
@@ -121,7 +121,7 @@ public class PublicSurveysController extends BasicController {
 				InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",serverPrefix);
 								
-				mailService.SendHtmlMail(email, sender, replyto, subject, text, smtpServer, Integer.parseInt(smtpPort), null);
+				mailService.SendHtmlMail(email, sender, replyto, subject, text, null);
 			
 				return "redirect:/administration/publicsurveys?done=decline";
 			}

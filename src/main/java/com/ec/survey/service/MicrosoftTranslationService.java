@@ -21,7 +21,7 @@ public class MicrosoftTranslationService extends BasicService {
 		Translate.setClientSecret(clientSecret);
 	}
 
-	public String[] translate(String[] sourceTexts, String sourceLanguage, String targetLangauge) throws Exception {
+	public String[] translate(String[] sourceTexts, String sourceLanguage, String targetLangauge) throws MessageException {
 		sessionService.initializeProxy();
 
 		// not all supported languages are available Language enum
@@ -33,7 +33,7 @@ public class MicrosoftTranslationService extends BasicService {
 		Language source = Language.fromString(sourceLanguage.toLowerCase());
 		Language target = Language.fromString(targetLangauge.toLowerCase());
 		if (source == null || target == null) {
-			throw new Exception("Not supported languages " + sourceLanguage + " or " + targetLangauge);
+			throw new MessageException("Not supported languages " + sourceLanguage + " or " + targetLangauge);
 		}
 		try {
 			return Translate.execute(sourceTexts, source, target);

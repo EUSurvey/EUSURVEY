@@ -99,7 +99,7 @@ public class QuizResult implements java.io.Serializable {
 	{
 		if (sectionScores.containsKey(uid))
 		{
-			return Integer.parseInt(sectionScores.get(uid).substring(0, sectionScores.get(uid).indexOf("/")));
+			return Integer.parseInt(sectionScores.get(uid).substring(0, sectionScores.get(uid).indexOf('/')));
 		}
 		return 0;
 	}
@@ -110,7 +110,7 @@ public class QuizResult implements java.io.Serializable {
 		
 		for (String s : sectionScores.values())
 		{
-			String max = s.substring(s.indexOf("/")+1);
+			String max = s.substring(s.indexOf('/')+1);
 			int m = Integer.parseInt(max);
 			if (m > result) result = m;
 		}

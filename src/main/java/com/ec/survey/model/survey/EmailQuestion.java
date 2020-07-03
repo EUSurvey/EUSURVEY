@@ -3,7 +3,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.Cacheable;
@@ -25,7 +24,7 @@ public class EmailQuestion extends Question {
 	public EmailQuestion() {}
 	
 	public EmailQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+		super(title, shortname, uid);
 	}
 	private String answer;
 	
@@ -37,7 +36,7 @@ public class EmailQuestion extends Question {
 		this.answer = answer;
 	}
 	
-	public EmailQuestion copy(String fileDir) throws ValidationException, IntrusionException
+	public EmailQuestion copy(String fileDir) throws ValidationException
 	{
 		EmailQuestion copy = new EmailQuestion();
 		baseCopy(copy);
@@ -47,6 +46,7 @@ public class EmailQuestion extends Question {
 	}
 	
 	@Transient
+	@Override
 	public String getCss()
 	{
 		String css = super.getCss();		

@@ -17,7 +17,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,13 +91,12 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	
 	private BeanFactory context;
 	@Override
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+	public void setBeanFactory(BeanFactory beanFactory) {
 		context = beanFactory;		
 	}
 	
 	public void init(int task, MessageSource resources, Locale locale) {
 		this.task = task;
-		//this.fileDir = fileDir;
 		this.resources = resources;
 		this.locale = locale;
 	}
@@ -115,8 +113,9 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	    	
 	    	Survey survey = null;
 	    	
-	    	if (t.getSurveyUid() != null && t.getSurveyUid().length() > 0)
-	    	survey = surveyService.getSurveyByUniqueId(t.getSurveyUid(), true, false);
+	    	if (t.getSurveyUid() != null && t.getSurveyUid().length() > 0) {
+	    		survey = surveyService.getSurveyByUniqueId(t.getSurveyUid(), true, false);
+	    	}
 	    	
 	    	if (survey == null)
 	    	{

@@ -59,7 +59,7 @@ public class FtpClient {
 			FileUtils.writeStringToFile(temp, fileContent);
 			body = temp;
 		} catch (IOException e) {
-
+			//ignore
 		}
 
 		if (body != null) {

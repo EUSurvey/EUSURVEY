@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Export;
 import com.ec.survey.model.Export.ExportFormat;
 import com.ec.survey.model.Export.ExportState;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.URL;
@@ -55,7 +57,9 @@ public class ExportService extends BasicService {
 		session.saveOrUpdate(export);
 		session.flush();		
 		if (form != null && form.getSurvey() != null)
-		Hibernate.initialize(form.getSurvey().getElementsRecursive(true));
+		{
+			Hibernate.initialize(form.getSurvey().getElementsRecursive(true));
+		}
 		
 		if (export.getActivityFilter() != null)
 		{
@@ -121,7 +125,7 @@ public class ExportService extends BasicService {
 			case pdf: exportCreator = (PdfExportCreator) context.getBean("pdfExportCreator"); break;
 			case zip: exportCreator = (ZipExportCreator) context.getBean("zipExportCreator"); break;
 			case eus: exportCreator = (EusExportCreator) context.getBean("eusExportCreator"); break;
-			default: throw new Exception("Export format not supported");
+			default: throw new MessageException("Export format not supported");
 			}
 			
 			if (user == null)
@@ -294,7 +298,7 @@ public class ExportService extends BasicService {
 			exports = list;
 		} else {
 			
-			if (onlynotnotified) //if (export.isFinished() && !export.isNotified())
+			if (onlynotnotified)
 			{
 				query.setMaxResults(1);
 			}
@@ -430,7 +434,6 @@ public class ExportService extends BasicService {
 		}
 	}
 
-	@Transactional(readOnly = true)
 	void determineValidState(Export export, boolean evict) {
 		try {
 			if (export != null)
@@ -450,12 +453,7 @@ public class ExportService extends BasicService {
 					
 					Date max = (Date)query.uniqueResult();
 					
-					if (max != null && max.after(export.getDate())) {
-						export.setValid(false);
-					} else {
-						export.setValid(true);
-					}
-					
+					export.setValid(!(max != null && max.after(export.getDate())));
 				} else {		
 					Session session = sessionFactory.getCurrentSession();
 					
@@ -622,32 +620,29 @@ public class ExportService extends BasicService {
 					{				
 						int key = Integer.parseInt(skey);
 						
-						if (oldUniqueIdsById.containsKey(key))
+						if (oldUniqueIdsById.containsKey(key) && newIdsByUniqueId.containsKey(oldUniqueIdsById.get(key)))
 						{
-							if (newIdsByUniqueId.containsKey(oldUniqueIdsById.get(key)))
+							Element element = oldSurvey.getElementsById().get(key);
+							
+							//check if value is also key
+							if (element instanceof ChoiceQuestion || element instanceof Text)
 							{
-								Element element = oldSurvey.getElementsById().get(key);
-								
-								//check if value is also key
-								if (element instanceof ChoiceQuestion || element instanceof Text)
+								String value = export.getResultFilter().getFilterValues().get(String.valueOf(key));
+								String[] values = value.split(";");
+								StringBuilder newValues = new StringBuilder();
+								for (String svalId : values)
 								{
-									String value = export.getResultFilter().getFilterValues().get(String.valueOf(key));
-									String[] values = value.split(";");
-									StringBuilder newValues = new StringBuilder();
-									for (String svalId : values)
+									int valId = Integer.parseInt(svalId);
+									
+									if (newValues.length() > 0)
 									{
-										int valId = Integer.parseInt(svalId);
-										
-										if (newValues.length() > 0)
-										{
-											newValues.append(";");
-										}
-										if (oldUniqueIdsById.containsKey(valId) && newIdsByUniqueId.containsKey(oldUniqueIdsById.get(valId)))
-										{
-											newValues.append(newIdsByUniqueId.get(oldUniqueIdsById.get(valId)));
-										} else {
-											newValues.append(valId); // this should not happen but we keep the original id if we cannot find a new one
-										}
+										newValues.append(";");
+									}
+									if (oldUniqueIdsById.containsKey(valId) && newIdsByUniqueId.containsKey(oldUniqueIdsById.get(valId)))
+									{
+										newValues.append(newIdsByUniqueId.get(oldUniqueIdsById.get(valId)));
+									} else {
+										newValues.append(valId); // this should not happen but we keep the original id if we cannot find a new one
 									}
 								}
 							}
@@ -669,7 +664,6 @@ public class ExportService extends BasicService {
 	@Transactional
 	public void applyExportTimeout() {
 		Session session = sessionFactory.getCurrentSession();
-		//Query query = session.createQuery("UPDATE Export e SET e.state = 1 WHERE e.state = 0 AND e.date < :date");
 		Query query = session.createQuery("UPDATE Export e SET e.state = 1 WHERE e.state = 0 AND e.date <= :date");
 		
 		Calendar cal = Calendar.getInstance();
@@ -681,7 +675,7 @@ public class ExportService extends BasicService {
 	}
 
 	@Transactional
-	public void deleteOldExports() throws Exception {
+	public void deleteOldExports() throws IOException {
 		
 		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false"))
 		{
@@ -770,7 +764,7 @@ public class ExportService extends BasicService {
 		query.setInteger("id", id);
 		@SuppressWarnings("unchecked")
 		List<Export> exports = query.list();
-		if (exports.size() > 0) return exports.get(0);
+		if (!exports.isEmpty()) return exports.get(0);
 		return null;
 	}	
 	

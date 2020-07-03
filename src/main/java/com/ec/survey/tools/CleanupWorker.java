@@ -72,7 +72,6 @@ public class CleanupWorker implements Runnable {
 		runBasic(true);
 	}
 	
-	@Transactional(propagation=Propagation.REQUIRED)
 	private void runBasic(boolean sync)
 	{
 		try {
@@ -93,6 +92,8 @@ public class CleanupWorker implements Runnable {
 					case "tempbefore":
 						counter += fileService.deleteTemporaryFiles(tempbefore);
 						break;
+					default:
+						break;
 				}
 			}
 			
@@ -101,7 +102,7 @@ public class CleanupWorker implements Runnable {
 			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 			String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
 					
-			mailService.SendHtmlMail(email, sender, sender, "EUSurvey file cleanup finished", text, smtpServer, Integer.parseInt(smtpPort), null);
+			mailService.SendHtmlMail(email, sender, sender, "EUSurvey file cleanup finished", text, null);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}

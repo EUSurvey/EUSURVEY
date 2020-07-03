@@ -330,7 +330,7 @@ public class PublicationController extends BasicController {
 								result.put(answer.getQuestionUniqueId(), title);
 							}
 						} else if (question instanceof Upload) {
-							if (answer.getFiles() != null && answer.getFiles().size() > 0) {
+							if (answer.getFiles() != null && !answer.getFiles().isEmpty()) {
 								for (File file : answer.getFiles()) {
 									String name = "<a target='blank' href='" + contextpath + "/files/" + file.getUid()
 											+ "'>" + file.getName() + "</a><br />";
@@ -436,8 +436,8 @@ public class PublicationController extends BasicController {
 
 			Survey survey = surveyService.getSurvey(Integer.parseInt(id), false, true);
 
-			if (survey != null && (((type.startsWith("Statistics") && survey.getPublication().isShowStatistics())
-					|| (!type.startsWith("Statistics") && survey.getPublication().isShowContent())))) {
+			if (survey != null && (type.startsWith("Statistics") && survey.getPublication().isShowStatistics())
+					|| (!type.startsWith("Statistics") && survey.getPublication().isShowContent())) {
 				if (survey.getPublication().getPassword() != null
 						&& survey.getPublication().getPassword().length() > 0) {
 					String publicationpassword = (String) request.getSession().getAttribute("publicationpassword");
@@ -451,7 +451,7 @@ public class PublicationController extends BasicController {
 				String email = parameters.get("email")[0];
 				StatisticsExecutor export = (StatisticsExecutor) context.getBean("statisticsExecutor");
 				export.init(survey, type, format, survey.getPublication().getFilter().getHash(false), email, sender,
-						smtpServer, smtpPort, host, locale);
+						host, locale);
 				taskExecutor.execute(export);
 				return "success";
 			} else {
@@ -488,7 +488,7 @@ public class PublicationController extends BasicController {
 				String email = parameters.get("email")[0];
 				ResultFilter filter = survey.getPublication().getFilter();
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
-				resultsExecutor.init(survey, filter, email, sender, smtpServer, smtpPort, host, fileDir, "xls",
+				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "xls",
 						resources, locale, null);
 				taskExecutor.execute(resultsExecutor);
 			}
@@ -522,7 +522,7 @@ public class PublicationController extends BasicController {
 				String email = parameters.get("email")[0];
 				ResultFilter filter = survey.getPublication().getFilter();
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
-				resultsExecutor.init(survey, filter, email, sender, smtpServer, smtpPort, host, fileDir, "ods",
+				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "ods",
 						resources, locale, null);
 				taskExecutor.execute(resultsExecutor);
 			}
@@ -560,7 +560,7 @@ public class PublicationController extends BasicController {
 				ResultFilter filter = survey.getPublication().getFilter();
 
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
-				resultsExecutor.init(survey, filter, email, sender, smtpServer, smtpPort, host, fileDir, "files",
+				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "files",
 						resources, locale, question);
 				taskExecutor.execute(resultsExecutor);
 			}

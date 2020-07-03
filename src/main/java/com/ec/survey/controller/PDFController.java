@@ -76,7 +76,7 @@ public class PDFController extends BasicController {
 				}
 			}
 
-			SendFile(survey, request, response, language, id);
+			SendFile(survey, request, response, language);
 
 		} catch (NumberFormatException ne) {
 			throw new InvalidURLException();
@@ -148,7 +148,7 @@ public class PDFController extends BasicController {
 				}
 			}
 
-			SendFile(survey, request, response, language, id);
+			SendFile(survey, request, response, language);
 
 			return null;
 
@@ -162,13 +162,13 @@ public class PDFController extends BasicController {
 		return null;
 	}
 
-	private void SendFile(Survey survey, HttpServletRequest request, HttpServletResponse response, String language,
-			String id) throws IOException {
+	private void SendFile(Survey survey, HttpServletRequest request, HttpServletResponse response, String language) throws IOException {
 		String lang = request.getParameter("lang");
 		if (lang != null && lang.length() == 2 && StringUtils.isAlpha(lang)) {
 			language = lang;
 		}
-		String name, value;
+		String name;
+		String value;
 		name = "Content-Disposition";
 		if (survey.getIsDraft()) {
 			value = "attachment;filename=" + survey.getShortname() + "_"

@@ -43,19 +43,15 @@ public class AnswerExecutor implements Runnable {
 	private AnswerSet answerSet;
 	private String email;
 	private String from;
-	private String server;
-	private String smtpPort;
 	private String host;
 	
 	private static final Logger logger = Logger.getLogger(AnswerExecutor.class);
 	
-	public void init(AnswerSet answerSet, String email, String from, String server, String smtpPort, String host)
+	public void init(AnswerSet answerSet, String email, String from, String host)
 	{
 		this.answerSet = answerSet;
 		this.email = email;
 		this.from = from;
-		this.server = server;
-		this.smtpPort = smtpPort;
 		this.host = host;
 	}
 	
@@ -99,7 +95,7 @@ public class AnswerExecutor implements Runnable {
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
 								
 				logger.info("finished creation of answer pdf for " + contributionordraft + " " + answerSet.getUniqueCode() + " to be sent to " + email);
-				mailService.SendHtmlMail(email, from, from, "Copy of your PDF " + contributionordraft, text, server, Integer.parseInt(smtpPort.trim()), file, answerSet.getUniqueCode());
+				mailService.SendHtmlMail(email, from, from, "Copy of your PDF " + contributionordraft, text, file, answerSet.getUniqueCode());
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

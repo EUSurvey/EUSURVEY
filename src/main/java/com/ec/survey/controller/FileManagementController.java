@@ -348,7 +348,7 @@ public class FileManagementController extends BasicController {
 		java.io.File file = new java.io.File(path);
 		
 		try {		
-			if (file.exists() && fileService.recreate(file, new File(archiveFileDir), locale, resources))
+			if (file.exists() && fileService.recreate(file, locale, resources))
 			{
 				return new ModelAndView("redirect:/administration/files?recreated=1");
 			}		

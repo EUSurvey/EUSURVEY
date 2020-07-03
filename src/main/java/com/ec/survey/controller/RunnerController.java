@@ -3,6 +3,7 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.exception.InvalidURLException;
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.SmtpServerNotConfiguredException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.EcasUser;
@@ -279,7 +280,7 @@ public class RunnerController extends BasicController {
 						try {
 							Draft draft = answerService.getDraft(draftid);
 
-							ModelAndView err = testDraftAlreadySubmitted(survey, draft, locale);
+							ModelAndView err = testDraftAlreadySubmitted(draft, locale);
 							if (err != null)
 								return err;
 
@@ -312,7 +313,7 @@ public class RunnerController extends BasicController {
 						try {
 							Draft draft = answerService.getDraftForInvitation(invitation.getUniqueId());
 							if (draft != null) {
-								ModelAndView err = testDraftAlreadySubmitted(survey, draft, locale);
+								ModelAndView err = testDraftAlreadySubmitted(draft, locale);
 								if (err != null)
 									return err;
 
@@ -461,7 +462,7 @@ public class RunnerController extends BasicController {
 				return model;
 			}
 
-			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(null, uniqueCode, locale);
+			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 			if (err != null)
 				return err;
 
@@ -849,8 +850,7 @@ public class RunnerController extends BasicController {
 		}
 
 		String owneremail = survey.getContact().replace("form:", "");
-		mailService.SendHtmlMail(owneremail, sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort),
-				attachment1, attachment2, null, true);
+		mailService.SendHtmlMail(owneremail, sender, sender, subject, text, attachment1, attachment2, null, true);
 
 		model.put("messagesent", true);
 		return "runner/contactForm";
@@ -953,27 +953,25 @@ public class RunnerController extends BasicController {
 								|| (user != null && user.getType().equalsIgnoreCase(User.ECAS) && ecasauthenticated)) {
 							// if the user already submitted, show error page
 							int contributionsCount = answerService.userContributionsToSurvey(survey, user);
-							if (contributionsCount > 0) {
-								if (survey.getAllowedContributionsPerUser() == 1
-										|| survey.getAllowedContributionsPerUser() <= contributionsCount) {
-									request.getSession().removeAttribute("ECASSURVEY");
-									modelReturn.setViewName("error/generic");
-									modelReturn.addObject("runnermode", true);
+							if (contributionsCount > 0 && (survey.getAllowedContributionsPerUser() == 1
+									|| survey.getAllowedContributionsPerUser() <= contributionsCount)) {
+								request.getSession().removeAttribute("ECASSURVEY");
+								modelReturn.setViewName("error/generic");
+								modelReturn.addObject("runnermode", true);
 
-									if (survey.getAllowedContributionsPerUser() == 1) {
-										modelReturn.addObject("message", resources.getMessage(
-												"error.UserAlreadySubmitted", null,
-												"This account has already been used to submit a contribution. Multiple submission is prohibited.",
-												locale));
-									} else {
-										modelReturn.addObject("message", resources.getMessage(
-												"error.UserAlreadySubmitted2", null,
-												"You have submitted the maximum number of contributions this survey allows. Further contributions are not allowed.",
-												locale));
-									}
-
-									return modelReturn;
+								if (survey.getAllowedContributionsPerUser() == 1) {
+									modelReturn.addObject("message", resources.getMessage("error.UserAlreadySubmitted",
+											null,
+											"This account has already been used to submit a contribution. Multiple submission is prohibited.",
+											locale));
+								} else {
+									modelReturn.addObject("message", resources.getMessage("error.UserAlreadySubmitted2",
+											null,
+											"You have submitted the maximum number of contributions this survey allows. Further contributions are not allowed.",
+											locale));
 								}
+
+								return modelReturn;
 							}
 
 							if (readonlyMode
@@ -1122,7 +1120,7 @@ public class RunnerController extends BasicController {
 			if (draftid != null) {
 				try {
 					Draft draft = answerService.getDraft(draftid);
-					ModelAndView err = testDraftAlreadySubmitted(survey, draft, locale);
+					ModelAndView err = testDraftAlreadySubmitted(draft, locale);
 					if (err != null)
 						return err;
 				} catch (Exception e) {
@@ -1274,7 +1272,7 @@ public class RunnerController extends BasicController {
 		return folderPath + "/" + fileName;
 	}
 
-	@RequestMapping(value = "/upload/{id}/{uniqueCode}", method = RequestMethod.POST)
+	@PostMapping(value = "/upload/{id}/{uniqueCode}")
 	public void upload(@PathVariable String id, @PathVariable String uniqueCode, HttpServletRequest request,
 			HttpServletResponse response) {
 
@@ -1293,11 +1291,11 @@ public class RunnerController extends BasicController {
 
 		try {
 			if (!Tools.isUUID(uniqueCode)) {
-				throw new Exception("invalid unique code");
+				throw new MessageException("invalid unique code");
 			}
 
 			if (!Tools.isInteger(id)) {
-				throw new Exception("invalid id");
+				throw new MessageException("invalid id");
 			}
 
 			if (request instanceof DefaultMultipartHttpServletRequest) {
@@ -1314,11 +1312,11 @@ public class RunnerController extends BasicController {
 			boolean wrongextension = false;
 
 			Element element = surveyService.getElement(Integer.parseInt(id));
-			if (element != null && element instanceof Upload) {
+			if (element instanceof Upload) {
 				Upload upload = (Upload) element;
 				if (upload.getExtensions() != null && upload.getExtensions().length() > 0) {
 					List<String> extensions = Arrays.asList(upload.getExtensions().split(";"));
-					String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+					String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
 					if (!extensions.contains(extension)) {
 						wrongextension = true;
 					}
@@ -1342,15 +1340,12 @@ public class RunnerController extends BasicController {
 
 			// we try 3 times to create the folders
 			boolean error = false;
-			if (!directory.exists() && !directory.mkdirs()) {
-				if (!directory.exists() && !directory.mkdirs()) {
-					if (!directory.exists() && !directory.mkdirs()) {
-						response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-						writer.print("{\"success\": false}");
-						logger.error("not possible to create folder: " + directory.getPath());
-						error = true;
-					}
-				}
+			if (!directory.exists() && !directory.mkdirs() && !directory.exists() && !directory.mkdirs()
+					&& !directory.exists() && !directory.mkdirs()) {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				writer.print("{\"success\": false}");
+				logger.error("not possible to create folder: " + directory.getPath());
+				error = true;
 			}
 
 			if (!error) {
@@ -1396,6 +1391,7 @@ public class RunnerController extends BasicController {
 					fos.close();
 				is.close();
 			} catch (IOException ignored) {
+				// ignore
 			}
 
 			if (tempFile != null) {
@@ -1433,7 +1429,7 @@ public class RunnerController extends BasicController {
 			Survey survey = surveyService.getSurvey(Integer.parseInt(request.getParameter("survey.id")), false, true);
 			String uniqueCode = request.getParameter("uniqueCode");
 
-			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(survey, uniqueCode, locale);
+			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 			if (err != null)
 				return err;
 
@@ -1534,10 +1530,9 @@ public class RunnerController extends BasicController {
 					}
 
 					draft.getAnswerSet().setInvitationId(invitation.getUniqueId());
-				} else if (survey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null) {
-					if (user != null) {
-						draft.getAnswerSet().setResponderEmail(user.getEmail());
-					}
+				} else if (survey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null
+						&& user != null) {
+					draft.getAnswerSet().setResponderEmail(user.getEmail());
 				}
 
 				try {
@@ -1582,15 +1577,6 @@ public class RunnerController extends BasicController {
 					return new ModelAndView("redirect:" + url + "&holf=1");
 				} else {
 					return new ModelAndView("redirect:" + url + "?holf=1");
-				}
-			}
-
-			if (request.getParameter("passwordauthenticated") != null
-					&& request.getParameter("passwordauthenticated").equalsIgnoreCase("true")) {
-				if (url.contains("?")) {
-					url += "&pw=1";
-				} else {
-					url += "?pw=1";
 				}
 			}
 
@@ -1763,7 +1749,7 @@ public class RunnerController extends BasicController {
 				lang = request.getParameter("language.code");
 			}
 
-			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(origsurvey, uniqueCode, locale);
+			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 			if (err != null)
 				return err;
 
@@ -1962,10 +1948,9 @@ public class RunnerController extends BasicController {
 
 			validCodesService.invalidate(uniqueCode);
 
-			if (origsurvey.getSecurity().startsWith("secured")) {
-				if (origsurvey.getEcasSecurity() && origsurvey.getConfirmationPageLink()) {
-					request.getSession().invalidate();
-				}
+			if (origsurvey.getSecurity().startsWith("secured") && origsurvey.getEcasSecurity()
+					&& origsurvey.getConfirmationPageLink()) {
+				request.getSession().invalidate();
 			}
 
 			if (answerSet.getSurvey().getShortname().equalsIgnoreCase("NewSelfRegistrationSurvey")) {
@@ -2100,7 +2085,7 @@ public class RunnerController extends BasicController {
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 				String email = parameters.get("email")[0];
 				QuizExecutor export = (QuizExecutor) context.getBean("quizExecutor");
-				export.init(answerSet, email, sender, smtpServer, smtpPort, serverPrefix);
+				export.init(answerSet, email, sender, serverPrefix);
 				taskExecutor.execute(export);
 			}
 		} catch (Exception e) {
@@ -2140,8 +2125,7 @@ public class RunnerController extends BasicController {
 						serverPrefix);
 
 				mailService.SendHtmlMail(email, sender, sender,
-						resources.getMessage("message.mail.linkDraftSubject", null, request.getLocale()), text,
-						smtpServer, Integer.parseInt(smtpPort), null);
+						resources.getMessage("message.mail.linkDraftSubject", null, request.getLocale()), text, null);
 			} catch (Exception e) {
 				logger.error("Problem during sending the draft link. To:" + email + " Link:" + link, e);
 				return "error";
@@ -2166,11 +2150,10 @@ public class RunnerController extends BasicController {
 		Survey survey = SurveyHelper.createTranslatedSurvey(Integer.parseInt(id), slang, surveyService,
 				translationService, false);
 
-		if (survey == null)
-		{
+		if (survey == null) {
 			return null;
 		}
-		
+
 		boolean foreditor = request.getParameter("foreditor") != null
 				&& request.getParameter("foreditor").equalsIgnoreCase("true");
 		boolean hasGlobalAdminRights = false;

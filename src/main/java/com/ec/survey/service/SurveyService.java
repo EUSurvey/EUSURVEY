@@ -3497,7 +3497,7 @@ public class SurveyService extends BasicService {
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);
 
-		mailService.SendHtmlMail(publicsurveynotification, sender, sender, "New publication request for the EUSurvey Homepage", text, smtpServer, Integer.parseInt(smtpPort), null);
+		mailService.SendHtmlMail(publicsurveynotification, sender, sender, "New publication request for the EUSurvey Homepage", text, null);
 	}
 
 	public void sendOPCApplyChangesMail(Survey survey, int userId) throws NumberFormatException, Exception {
@@ -3513,8 +3513,7 @@ public class SurveyService extends BasicService {
 			for (String opcuser : users) {
 				if (opcuser.length() > 0) {
 					if (opcuser != null) {
-						mailService.SendHtmlMail(opcuser, sender, sender, "The online version of a published 'BRP Public Consultation' has been changed", text, smtpServer, Integer.parseInt(smtpPort),
-								null);
+						mailService.SendHtmlMail(opcuser, sender, sender, "The online version of a published 'BRP Public Consultation' has been changed", text, null);
 					}
 				}
 			}
@@ -4483,7 +4482,7 @@ public class SurveyService extends BasicService {
 			String[] emails = recipients.split(";");
 			for (String recipient : emails) {
 				if (recipient.trim().length() > 0) {
-					mailService.SendHtmlMail(recipient, sender, sender, "Survey Abuse Reported", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+					mailService.SendHtmlMail(recipient, sender, sender, "Survey Abuse Reported", mailtext, null);
 				}
 			}
 		}
@@ -4539,7 +4538,7 @@ public class SurveyService extends BasicService {
 			
 			for (String recipient : emails) {
 				if (recipient.trim().length() > 0) {
-					mailService.SendHtmlMail(recipient, sender, sender, "Survey Abuse Report Statistics", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+					mailService.SendHtmlMail(recipient, sender, sender, "Survey Abuse Report Statistics", mailtext, null);
 				}
 			}	
 		} catch (Exception e) {
@@ -4563,9 +4562,9 @@ public class SurveyService extends BasicService {
 		// send email
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");		
 		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);		
-		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey has been blocked", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey has been blocked", mailtext, null);
 		
-		mailService.SendHtmlMail(monitoringEmail, sender, sender, "Your survey has been blocked", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+		mailService.SendHtmlMail(monitoringEmail, sender, sender, "Your survey has been blocked", mailtext, null);
 	}
 	
 	@Transactional
@@ -4588,7 +4587,7 @@ public class SurveyService extends BasicService {
 		// send email
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");		
 		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);		
-		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey is available again", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey is available again", mailtext, null);
 	}
 
 	public String getMySurveysXML(SurveyFilter filter, ArchiveFilter archiveFilter) throws Exception {

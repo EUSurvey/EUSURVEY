@@ -25,7 +25,7 @@ public class Attribute {
 	
 	public Attribute(){}
 	
-	public Attribute(Integer ownerId, AttributeName attributeName, String value){
+	public Attribute(AttributeName attributeName, String value){
 		this.attributeName = attributeName;
 		this.value = value;
 	}

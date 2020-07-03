@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,7 +166,7 @@ public class BasicController implements BeanFactoryAware {
 
 	protected BeanFactory context;
 	@Override
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+	public void setBeanFactory(BeanFactory beanFactory) {
 		context = beanFactory;		
 	}
 
@@ -411,7 +410,7 @@ public class BasicController implements BeanFactoryAware {
 		}
 	}	
 	
-	public ModelAndView basicwelcome(HttpServletRequest request, Locale locale) {	
+	public ModelAndView basicwelcome(HttpServletRequest request) {	
 		ModelAndView model = new ModelAndView("home/welcome");
 		model.addObject("page", "welcome");
 		model.addObject("ecasurl", ecashost);
@@ -429,7 +428,7 @@ public class BasicController implements BeanFactoryAware {
 		return model;
 	}
 	
-	protected ModelAndView testDraftAlreadySubmittedByUniqueCode(Survey survey, String uniqueAnswerSet, Locale locale) {
+	protected ModelAndView testDraftAlreadySubmittedByUniqueCode(String uniqueAnswerSet, Locale locale) {
 		if (surveyService.answerSetExists(uniqueAnswerSet, false, true))
 		{		
 			ModelAndView model = new ModelAndView("error/generic");
@@ -439,11 +438,11 @@ public class BasicController implements BeanFactoryAware {
 		return null;		
 	}
 
-	protected ModelAndView testDraftAlreadySubmitted(Survey survey, Draft draft, Locale locale) {
+	protected ModelAndView testDraftAlreadySubmitted(Draft draft, Locale locale) {
 		if (draft!=null)
 		{
 			String uniqueAnswerSet = draft.getAnswerSet().getUniqueCode();
-			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(survey, uniqueAnswerSet, locale);
+			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueAnswerSet, locale);
 			if (err!=null) return err;
 		}
 		return null;

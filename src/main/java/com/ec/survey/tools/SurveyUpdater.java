@@ -120,7 +120,7 @@ public class SurveyUpdater implements Runnable {
 							
 							String subject = "Your survey '" + survey.cleanTitleForMailSubject() + "' will end soon";
 							
-							mailService.SendHtmlMail(user.getEmail(), sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort), null);
+							mailService.SendHtmlMail(user.getEmail(), sender, sender, subject, text, null);
 							usermails.append(user.getEmail()).append(";");
 						} else {
 							logger.error("User " + user.getName() + " has no email address! Writing notification email not possible");
