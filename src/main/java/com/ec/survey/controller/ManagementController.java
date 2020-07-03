@@ -255,6 +255,8 @@ public class ManagementController extends BasicController {
 			case 2:
 				deletedElements.add(entry.getKey());
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -591,7 +593,8 @@ public class ManagementController extends BasicController {
 
 	@RequestMapping(value = "/properties", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView properties(@PathVariable String shortname, HttpServletRequest request, Locale locale)
-			throws Exception {
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, InvalidURLException,
+			ForbiddenURLException {
 		Form form;
 		User user = sessionService.getCurrentUser(request);
 
@@ -627,6 +630,7 @@ public class ManagementController extends BasicController {
 				result.addObject("tab", Integer.parseInt(tab));
 			}
 		} catch (Exception e) {
+			// ignore
 		}
 
 		String editelem = request.getParameter("editelem");
@@ -825,33 +829,29 @@ public class ManagementController extends BasicController {
 			Survey original = surveyService.getSurvey(surveyId, false, true);
 
 			if (original != null) {
-				if (!original.getOwner().getId().equals(u.getId())) {
-					if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-						Access access = surveyService.getAccess(original.getId(), u.getId());
-						if (access == null || !access.hasAnyPrivileges()) {
-						} else {
-							u.setLocalPrivileges(access.getLocalPrivileges());
-						}
+				if (!original.getOwner().getId().equals(u.getId())
+						&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
+					Access access = surveyService.getAccess(original.getId(), u.getId());
+					if (!(access == null || !access.hasAnyPrivileges())) {
+						u.setLocalPrivileges(access.getLocalPrivileges());
+					}
 
-						// check access by ecas group
-						if (u.getType().equalsIgnoreCase("ecas")) {
-							List<String> groups = ldapService.getUserLDAPGroups(u.getLogin());
-							for (String group : groups) {
-								access = surveyService.getGroupAccess(original.getId(), group);
-								if (access != null) {
-									u.upgradePrivileges(access.getLocalPrivileges());
-								}
+					// check access by ecas group
+					if (u.getType().equalsIgnoreCase("ecas")) {
+						List<String> groups = ldapService.getUserLDAPGroups(u.getLogin());
+						for (String group : groups) {
+							access = surveyService.getGroupAccess(original.getId(), group);
+							if (access != null) {
+								u.upgradePrivileges(access.getLocalPrivileges());
 							}
 						}
 					}
 				}
 
-				if (!u.getId().equals(original.getOwner().getId())) {
-					if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-						if (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1) {
-							throw new ForbiddenURLException();
-						}
-					}
+				if (!u.getId().equals(original.getOwner().getId())
+						&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+						&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 1) {
+					throw new ForbiddenURLException();
 				}
 				Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 
@@ -1014,8 +1014,7 @@ public class ManagementController extends BasicController {
 			if (!survey.getOwner().getId().equals(u.getId())
 					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
 				Access access = surveyService.getAccess(survey.getId(), u.getId());
-				if (access == null || !access.hasAnyPrivileges()) {
-				} else {
+				if (!(access == null || !access.hasAnyPrivileges())) {
 					u.setLocalPrivileges(access.getLocalPrivileges());
 				}
 
@@ -1626,7 +1625,7 @@ public class ManagementController extends BasicController {
 					String label = parameterMap.get(entry.getKey().replace("url", "label"))[0];
 
 					if (StringUtils.hasText(url) && !StringUtils.hasText(label)) {
-						String uid = url.substring(url.lastIndexOf("/") + 1);
+						String uid = url.substring(url.lastIndexOf('/') + 1);
 						File f = fileService.get(uid);
 
 						if (f != null) {
@@ -2130,15 +2129,15 @@ public class ManagementController extends BasicController {
 
 	@PostMapping(value = "/upload")
 	public void upload(@PathVariable String shortname, HttpServletRequest request, HttpServletResponse response) {
-		upload(shortname, request, response, false);
+		upload(request, response, false);
 	}
 
 	@PostMapping(value = "/uploadimage")
 	public void uploadImage(@PathVariable String shortname, HttpServletRequest request, HttpServletResponse response) {
-		upload(shortname, request, response, true);
+		upload(request, response, true);
 	}
 
-	private void upload(String shortname, HttpServletRequest request, HttpServletResponse response, boolean isImage) {
+	private void upload(HttpServletRequest request, HttpServletResponse response, boolean isImage) {
 
 		PrintWriter writer = null;
 		InputStream is = null;
@@ -2170,23 +2169,19 @@ public class ManagementController extends BasicController {
 			User u = sessionService.getCurrentUser(request);
 			sessionService.upgradePrivileges(form.getSurvey(), u, request);
 
-			if (!u.getId().equals(form.getSurvey().getOwner().getId())) {
-				if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-					if (u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
-						throw new ForbiddenURLException();
-					}
-				}
+			if (!u.getId().equals(form.getSurvey().getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
+				throw new ForbiddenURLException();
 			}
 
 			String filenamelc = filename.toLowerCase();
 
-			if (isImage) {
-				if (!filenamelc.endsWith("png") && !filenamelc.endsWith("jpg") && !filenamelc.endsWith("gif")
-						&& !filenamelc.endsWith("bmp")) {
-					error = true;
-					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-					writer.print("{\"success\": false}");
-				}
+			if (isImage && !filenamelc.endsWith("png") && !filenamelc.endsWith("jpg") && !filenamelc.endsWith("gif")
+					&& !filenamelc.endsWith("bmp")) {
+				error = true;
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				writer.print("{\"success\": false}");
 			}
 
 			if (!error) {
@@ -2228,6 +2223,7 @@ public class ManagementController extends BasicController {
 				fos.close();
 				is.close();
 			} catch (IOException ignored) {
+				// ignore
 			}
 		}
 
@@ -2350,8 +2346,6 @@ public class ManagementController extends BasicController {
 				form.setSurvey(translated);
 				form.setLanguage(surveyService.getLanguage(lang));
 				sessionService.updateSessionInfo(translated, sessionService.getCurrentUser(request), request);
-			} else {
-				lang = null;
 			}
 		}
 
@@ -2390,7 +2384,7 @@ public class ManagementController extends BasicController {
 				SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), fileDir, form.getSurvey(), fileService);
 				uniqueCode = draft.getAnswerSet().getUniqueCode();
 
-				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(form.getSurvey(), uniqueCode, locale);
+				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 				if (err != null)
 					return err;
 
@@ -2433,7 +2427,7 @@ public class ManagementController extends BasicController {
 
 		String uniqueCode = request.getParameter("uniqueCode");
 
-		ModelAndView err = testDraftAlreadySubmittedByUniqueCode(survey, uniqueCode, locale);
+		ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 		if (err != null)
 			return err;
 
@@ -2623,12 +2617,11 @@ public class ManagementController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
-		return results(survey, Ucs2Utf8.requestToHashMap(request), request, null, false, null, false, locale);
+		return results(survey, Ucs2Utf8.requestToHashMap(request), request, null, false, null, false);
 	}
 
 	private ModelAndView results(Survey survey, Map<String, String[]> parameters, HttpServletRequest request,
-			Boolean draft, Boolean pallanswers, ResultFilter resultFilter, boolean forPDF, Locale locale)
-			throws Exception {
+			Boolean draft, Boolean pallanswers, ResultFilter resultFilter, boolean forPDF) throws Exception {
 		String shortname = survey.getShortname();
 		String languagecode = survey.getLanguage().getCode();
 		String uid = survey.getUniqueId();
@@ -2697,14 +2690,12 @@ public class ManagementController extends BasicController {
 			if (survey == null) {
 				active = false;
 				survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
-			} else if (request != null && !u.getId().equals(survey.getOwner().getId())) {
-				if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-					if (u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
-						active = false;
-						allanswers = false;
-						survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
-					}
-				}
+			} else if (request != null && !u.getId().equals(survey.getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
+				active = false;
+				allanswers = false;
+				survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
 			}
 
 		} else {
@@ -2847,7 +2838,7 @@ public class ManagementController extends BasicController {
 			// preselect first 20 questions
 			int counter = 0;
 			for (Element question : survey.getQuestions()) {
-				if (question.IsUsedInResults()) {
+				if (question.isUsedInResults()) {
 					if (counter < 20) {
 						filter.getVisibleQuestions().add(question.getId().toString());
 					} else {
@@ -2860,7 +2851,7 @@ public class ManagementController extends BasicController {
 		if (filter.getExportedQuestions().isEmpty()) {
 			// preselect ALL
 			for (Element question : survey.getQuestionsAndSections()) {
-				if (question.IsUsedInResults()) {
+				if (question.isUsedInResults()) {
 					filter.getExportedQuestions().add(question.getId().toString());
 				}
 			}
@@ -3026,7 +3017,7 @@ public class ManagementController extends BasicController {
 			boolean isOwner = user != null && form.getSurvey() != null
 					&& Objects.equals(form.getSurvey().getOwner().getId(), user.getId());
 
-			List<AnswerSet> answerSets = new ArrayList<>();
+			List<AnswerSet> answerSets;
 
 			SqlPagination sqlPagination = new SqlPagination(Integer.parseInt(page), itemsPerPage);
 
@@ -3079,7 +3070,7 @@ public class ManagementController extends BasicController {
 					if (el instanceof Matrix) {
 						visibleQuestions.add(el);
 						visibleQuestions.addAll(((Matrix) el).getQuestions());
-					} else if (el.IsUsedInResults()) {
+					} else if (el.isUsedInResults()) {
 						visibleQuestions.add(el);
 					}
 				} catch (Exception e) {
@@ -3323,7 +3314,7 @@ public class ManagementController extends BasicController {
 			surveyService.initializeSurvey(survey);
 
 			ModelAndView results = results(survey, new HashMap<>(), null, survey.getIsDraft(), export.isAllAnswers(),
-					export.getResultFilter(), true, locale);
+					export.getResultFilter(), true);
 
 			Publication publication = new Publication();
 			publication.setAllQuestions(false);
@@ -3381,7 +3372,7 @@ public class ManagementController extends BasicController {
 		}
 
 		ModelAndView results = results(survey, new HashMap<>(), null, survey.getIsDraft(), export.isAllAnswers(),
-				filter, true, locale);
+				filter, true);
 
 		Publication publication = new Publication();
 		publication.setFilter(export.getResultFilter());
@@ -3417,19 +3408,19 @@ public class ManagementController extends BasicController {
 		ResultFilter filter = export.getResultFilter().copy();
 		filter.setVisibleQuestions(filter.getExportedQuestions());
 
-		if (filter.getLanguages() != null && filter.getLanguages().size() == 0) {
+		if (filter.getLanguages() != null && filter.getLanguages().isEmpty()) {
 			filter.setLanguages(null);
 		}
 
 		ModelAndView results = results(survey, new HashMap<>(), null, survey.getIsDraft(), export.isAllAnswers(),
-				filter, true, locale);
+				filter, true);
 
 		Publication publication = new Publication();
 		publication.setFilter(export.getResultFilter());
 
 		publication.getFilter().setVisibleQuestions(publication.getFilter().getExportedQuestions());
 
-		publication.setAllQuestions(publication.getFilter().getVisibleQuestions().size() == 0);
+		publication.setAllQuestions(publication.getFilter().getVisibleQuestions().isEmpty());
 		results.addObject("publication", publication);
 
 		if (export.getShowShortnames() != null && export.getShowShortnames()) {
@@ -3443,7 +3434,8 @@ public class ManagementController extends BasicController {
 
 	@RequestMapping(value = "/access", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView access(@PathVariable String shortname, HttpServletRequest request, Locale locale)
-			throws Exception {
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, InvalidURLException,
+			ForbiddenURLException {
 		User u = sessionService.getCurrentUser(request);
 
 		Form form;
@@ -3461,7 +3453,7 @@ public class ManagementController extends BasicController {
 		List<String> lstopcdepartments = null;
 
 		if (survey.getIsOPC() && opcusers != null && opcusers.length() > 0) {
-			lstopcusers = new ArrayList<User>();
+			lstopcusers = new ArrayList<>();
 			String[] users = opcusers.split(";");
 			for (String user : users) {
 				if (user.length() > 0) {
@@ -3474,7 +3466,7 @@ public class ManagementController extends BasicController {
 		}
 
 		if (survey.getIsOPC() && opcdepartments != null && opcdepartments.length() > 0) {
-			lstopcdepartments = new ArrayList<String>();
+			lstopcdepartments = new ArrayList<>();
 			String[] departments = opcdepartments.split(";");
 			for (String department : departments) {
 				if (department.length() > 0) {
@@ -3587,7 +3579,7 @@ public class ManagementController extends BasicController {
 		try {
 			user = administrationService.getUserForLogin(login, isEcasUser);
 		} catch (Exception e) {
-
+			// ignore
 		}
 
 		if (user == null && isEcasUser) {
@@ -3598,9 +3590,8 @@ public class ManagementController extends BasicController {
 			user.setDepartments(ldapService.getUserLDAPGroups(user.getLogin()));
 			user.setType(User.ECAS);
 
-			List<Role> Roles = administrationService.getAllRoles();
 			Role ecRole = null;
-			for (Role role : Roles) {
+			for (Role role : administrationService.getAllRoles()) {
 				if (role.getName().equalsIgnoreCase("Form Manager (EC)"))
 					ecRole = role;
 			}
@@ -3774,8 +3765,8 @@ public class ManagementController extends BasicController {
 						return result;
 					}
 
-					replaceResults.add(
-							replaced.replace(replace, "<span style='background: #FFEDA8'>" + replace + "</span>"));
+					replaceResults
+							.add(replaced.replace(replace, "<span style='background: #FFEDA8'>" + replace + "</span>"));
 				}
 			}
 

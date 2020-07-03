@@ -16,6 +16,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.service.MailService;
 
 @Service("mailSender")
@@ -39,11 +40,11 @@ public class MailSender implements Runnable {
 	private String info;
 	private boolean deletefiles;
 	
-	public void init(String to, String from, String subject, String reply, String body, File attachment, File attachment2, String info, boolean deletefiles) throws Exception
+	public void init(String to, String from, String subject, String reply, String body, File attachment, File attachment2, String info, boolean deletefiles) throws MessageException
 	{
 		if (to == null || to.trim().length() == 0 || !MailService.isValidEmailAddress(to))
 		{
-			throw new Exception("Invalid email address");
+			throw new MessageException("Invalid email address");
 		}
 		
 		this.to = to;

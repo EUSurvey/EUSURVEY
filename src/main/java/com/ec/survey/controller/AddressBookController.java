@@ -657,11 +657,11 @@ public class AddressBookController extends BasicController {
           	    	
             	    	if (numcolumns <= 0 )
             	    	{
-            	    		throw new Exception ("No columns in ods file: " + file.getPath()); 
+            	    		throw new MessageException ("No columns in ods file: " + file.getPath()); 
             	    	}
             	    	if ((numrows == 1  &&  hasHeaderRow)  ||  numrows <= 0) 
             	    	{
-            	    		throw new Exception ("No rows in ods file " +  file.getPath()); 
+            	    		throw new MessageException ("No rows in ods file " +  file.getPath()); 
             	    	}		
             	    		
         	    		Row row;
@@ -725,28 +725,32 @@ public class AddressBookController extends BasicController {
              	
              	HashMap<String, String> headermappings = new HashMap<>();
              	if (fileheaders != null)
-             	for (String header : fileheaders)
              	{
-             		if (header.trim().equalsIgnoreCase("name"))
-             		{
-             			headermappings.put(header, "name");
-             		} else if (header.trim().equalsIgnoreCase("email"))
-             		{
-             			headermappings.put(header, "email");
-             		} else if (header.trim().equalsIgnoreCase("owner"))
-             		{
-             			headermappings.put(header, "owner");
-             		} else {
-             			if (attributeNames != null)
-             			for (AttributeName attributeName : attributeNames) {
-	             			if (attributeName.getName().equalsIgnoreCase(header))
+	             	for (String header : fileheaders)
+	             	{
+	             		if (header.trim().equalsIgnoreCase("name"))
+	             		{
+	             			headermappings.put(header, "name");
+	             		} else if (header.trim().equalsIgnoreCase("email"))
+	             		{
+	             			headermappings.put(header, "email");
+	             		} else if (header.trim().equalsIgnoreCase("owner"))
+	             		{
+	             			headermappings.put(header, "owner");
+	             		} else {
+	             			if (attributeNames != null)
 	             			{
-	             				headermappings.put(header, attributeName.getName());
-	             				break;
+		             			for (AttributeName attributeName : attributeNames) {
+			             			if (attributeName.getName().equalsIgnoreCase(header))
+			             			{
+			             				headermappings.put(header, attributeName.getName());
+			             				break;
+			             			}
+			    				}   
 	             			}
-	    				}             		
-             		}
-             	}             	
+	             		}
+	             	}
+             	}
              	result.addObject("headermappings", headermappings);
              	result.addObject("rows", rows);
              	result.addObject("hasHeaderRow", hasHeaderRow);
@@ -1366,7 +1370,7 @@ public class AddressBookController extends BasicController {
 	}
 	
 	@PostMapping( value = "/addAttendee")
-	public String add(HttpServletRequest request) throws Exception {			
+	public String add(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, MessageException {			
 		
 		User user = sessionService.getCurrentUser(request);
 		
@@ -1465,7 +1469,6 @@ public class AddressBookController extends BasicController {
 		} else {
 			return "redirect:/addressbook?added=" + attendee.getId();
 		}		
-		
 	}	
 			
 }

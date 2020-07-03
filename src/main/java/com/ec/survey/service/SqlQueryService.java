@@ -7,6 +7,8 @@ import java.util.Map;
 import org.hibernate.Query;
 import org.springframework.stereotype.Service;
 
+import com.ec.survey.exception.MessageException;
+
 @Service
 public class SqlQueryService {
 
@@ -20,29 +22,25 @@ public class SqlQueryService {
 		}
 	}
 
-	private void setParameter(Map<String, Object> parameters, String key, Query query) throws Exception {
-		try {
-			Object parameter = parameters.get(key);
-			if (parameter instanceof String) {
-				query.setString(key, (String) parameter);
-			} else if (parameter instanceof String[]) {
-				query.setParameterList(key, (String[]) parameter);
-			} else if (parameter instanceof Integer) {
-				query.setInteger(key, (Integer) parameter);
-			} else if (parameter instanceof Double) {
-				query.setDouble(key, (Double) parameter);
-			} else if (parameter instanceof Integer[]) {
-				query.setParameterList(key, (Integer[]) parameter);
-			} else if (parameter instanceof Date) {
-				query.setParameter(key,  (Date) parameter);
-			} else if (parameter == null) {
-				query.setParameter(key, null);
-			} else {
-				//this should not happen
-				throw new Exception("unknown parameter type: " + parameter);
-			}
-		} catch (Exception e) {
-			throw e;
+	private void setParameter(Map<String, Object> parameters, String key, Query query) throws MessageException {
+		Object parameter = parameters.get(key);
+		if (parameter instanceof String) {
+			query.setString(key, (String) parameter);
+		} else if (parameter instanceof String[]) {
+			query.setParameterList(key, (String[]) parameter);
+		} else if (parameter instanceof Integer) {
+			query.setInteger(key, (Integer) parameter);
+		} else if (parameter instanceof Double) {
+			query.setDouble(key, (Double) parameter);
+		} else if (parameter instanceof Integer[]) {
+			query.setParameterList(key, (Integer[]) parameter);
+		} else if (parameter instanceof Date) {
+			query.setParameter(key,  (Date) parameter);
+		} else if (parameter == null) {
+			query.setParameter(key, null);
+		} else {
+			//this should not happen
+			throw new MessageException("unknown parameter type: " + parameter);
 		}
 	}
 }

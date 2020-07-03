@@ -49,24 +49,19 @@ public class FileController extends BasicController {
 
 					// check if it is an uploaded file
 					Survey survey = surveyService.getSurveyForUploadedFile(file.getId());
-					if (survey != null) {
-						if (!(survey.getPublication().isShowContent()
-								&& survey.getPublication().getShowUploadedDocuments())) {
-							User user = sessionService.getCurrentUser(request);
-							if (user == null)
-								throw new ForbiddenURLException();
+					if (survey != null && !(survey.getPublication().isShowContent()
+						&& survey.getPublication().getShowUploadedDocuments())) {
+						User user = sessionService.getCurrentUser(request);
+						if (user == null)
+							throw new ForbiddenURLException();
 
-							sessionService.upgradePrivileges(survey, user, request);
-							if (!survey.getOwner().getId().equals(user.getId())) {
-								if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-									if (user.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
-										if (user.getLocalPrivileges().get(LocalPrivilege.AccessDraft) < 1
-												|| !survey.getIsDraft()) {
-											throw new ForbiddenURLException();
-										}
-									}
-								}
-							}
+						sessionService.upgradePrivileges(survey, user, request);
+						if (!survey.getOwner().getId().equals(user.getId())
+								&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+								&& user.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1
+								&& (user.getLocalPrivileges().get(LocalPrivilege.AccessDraft) < 1
+										|| !survey.getIsDraft())) {
+							throw new ForbiddenURLException();
 						}
 					}
 

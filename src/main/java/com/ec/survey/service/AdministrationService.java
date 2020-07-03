@@ -185,7 +185,7 @@ public class AdministrationService extends BasicService {
 	}
 	
 	@Transactional
-	public String setUserDeleteRequested(int id) throws NumberFormatException, Exception {
+	public String setUserDeleteRequested(int id) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		User user = (User) session.get(User.class, id);
 		String login = user.getLogin();
@@ -202,7 +202,7 @@ public class AdministrationService extends BasicService {
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body.toString()).replace("[HOST]",host);
 		
-		mailService.SendHtmlMail(user.getEmail(), sender, sender, "Please confirm the deletion of your EUSurvey account", text, smtpServer, Integer.parseInt(smtpPort), null, null, null, false);
+		mailService.SendHtmlMail(user.getEmail(), sender, sender, "Please confirm the deletion of your EUSurvey account", text, null, null, null, false);
 
 		user.setDeleteCode(code);
 		user.setDeleteDate(new Date());
@@ -307,8 +307,10 @@ public class AdministrationService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<User> list = query.list();
 
-		if (list.size() > 0)
+		if (!list.isEmpty())
+		{
 			return list.get(0);
+		}
 
 		return null;
 	}
@@ -335,7 +337,7 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public User getUserForLogin(String login, boolean ecas) throws Exception {
+	public User getUserForLogin(String login, boolean ecas) throws MessageException {
 
 		logger.debug("getUserForLogin".toUpperCase() + " START CHECK USER " + login + " IS ECAS " + ecas);
 		Session session = sessionFactory.getCurrentSession();
@@ -386,7 +388,7 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional(readOnly = false)
-	public void sendValidationEmail(User user) throws NumberFormatException, Exception {
+	public void sendValidationEmail(User user) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 
 		user.setValidationCode(UUID.randomUUID().toString());
@@ -397,7 +399,7 @@ public class AdministrationService extends BasicService {
 
 		String body = "Dear " + user.getLogin() + ",<br /><br />Please validate your account by clicking the link below: <br /><br /> <a href=\"" + link + "\">" + link + "</a>";
 
-		mailService.SendHtmlMail(user.getEmail(), sender, sender, "EUSurvey Registration", body, smtpServer, Integer.parseInt(smtpPort), null);
+		mailService.SendHtmlMail(user.getEmail(), sender, sender, "EUSurvey Registration", body, null);
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
@@ -415,7 +417,7 @@ public class AdministrationService extends BasicService {
 			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 			String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);
 
-			mailService.SendHtmlMail(user.getEmailToValidate(), sender, sender, "EUSurvey Confirmation", text, smtpServer, Integer.parseInt(smtpPort), null);
+			mailService.SendHtmlMail(user.getEmailToValidate(), sender, sender, "EUSurvey Confirmation", text, null);
 		} catch (Exception ex) {
 			logger.error(ex.getLocalizedMessage(), ex);
 			return false;
@@ -720,7 +722,7 @@ public class AdministrationService extends BasicService {
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 		String mailtemplate = IOUtils.toString(inputStream, "UTF-8");
 		String mailtext = mailtemplate.replace("[CONTENT]", mailText).replace("[HOST]", host);
-		mailService.SendHtmlMail(user.getEmail(), sender, sender, "Your account has been banned", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+		mailService.SendHtmlMail(user.getEmail(), sender, sender, "Your account has been banned", mailtext, null);
 
 		// send email to admins
 		String recipients = settingsService.get(Setting.BannedUserRecipients);
@@ -730,7 +732,7 @@ public class AdministrationService extends BasicService {
 		String[] emails = recipients.split(";");
 		for (String recipient : emails) {
 			if (recipient.trim().length() > 0) {
-				mailService.SendHtmlMail(recipient, sender, sender, "User banned", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+				mailService.SendHtmlMail(recipient, sender, sender, "User banned", mailtext, null);
 			}
 		}
 	}
@@ -754,7 +756,7 @@ public class AdministrationService extends BasicService {
 		String content = settingsService.get(Setting.FreezeUserTextUnban);
 
 		String mailtext = mailtemplate.replace("[CONTENT]", content).replace("[HOST]", host);
-		mailService.SendHtmlMail(user.getEmail(), sender, sender, "Your account has been unbanned", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+		mailService.SendHtmlMail(user.getEmail(), sender, sender, "Your account has been unbanned", mailtext, null);
 
 		// send email to admins
 		String recipients = settingsService.get(Setting.BannedUserRecipients);
@@ -764,7 +766,7 @@ public class AdministrationService extends BasicService {
 		String[] emails = recipients.split(";");
 		for (String recipient : emails) {
 			if (recipient.trim().length() > 0) {
-				mailService.SendHtmlMail(recipient, sender, sender, "User unbanned", mailtext, smtpServer, Integer.parseInt(smtpPort), null);
+				mailService.SendHtmlMail(recipient, sender, sender, "User unbanned", mailtext, null);
 			}
 		}
 	}

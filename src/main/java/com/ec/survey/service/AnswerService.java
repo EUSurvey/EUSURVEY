@@ -79,9 +79,9 @@ public class AnswerService extends BasicService {
 				else if (element.getShortname().equalsIgnoreCase("email")) {
 					emailQuestion = element.getId();
 					emailElement = element;
-				} else if (element.getShortname().equalsIgnoreCase("password"))
+				} else if (element.getShortname().equalsIgnoreCase("password")) {
 					passwordQuestion = element.getId();
-				else if (element.getShortname().equalsIgnoreCase("language")) {
+				} else if (element.getShortname().equalsIgnoreCase("language")) {
 					languageQuestion = element.getId();
 					languageQuestionElement = (SingleChoiceQuestion) element;
 				} else if (element.getShortname().equalsIgnoreCase("firstname")) {
@@ -147,9 +147,9 @@ public class AnswerService extends BasicService {
 							FreeTextQuestion q = (FreeTextQuestion) element;
 							if (q.getIsPassword()) {
 								List<Answer> originalAnswers = draft.getAnswerSet().getAnswers(q.getId());
-								if (originalAnswers.size() > 0) {
+								if (!originalAnswers.isEmpty()) {
 									List<Answer> currentPasswordAnswers = answerSet.getAnswers(q.getId());
-									if (currentPasswordAnswers.size() > 0) {
+									if (!currentPasswordAnswers.isEmpty()) {
 										String currentAnswer = currentPasswordAnswers.get(0).getValue();
 										if (currentAnswer != null && currentAnswer.equalsIgnoreCase("********")) {
 											answerSet.getAnswers(q.getId()).get(0)
@@ -305,7 +305,7 @@ public class AnswerService extends BasicService {
 
 		StringBuilder where = new StringBuilder();
 
-		if (filter.getUser().indexOf(";") > 0) {
+		if (filter.getUser().indexOf(';') > 0) {
 			where.append("ans.RESPONDER_EMAIL IN (:emails)");
 		} else {
 			where.append("(ans.RESPONDER_EMAIL = :email)");
@@ -364,7 +364,7 @@ public class AnswerService extends BasicService {
 				+ " AND  ans.ISDRAFT = 1 AND ans.UNIQUECODE NOT IN (SELECT ans.UNIQUECODE FROM ANSWERS_SET ans WHERE "
 				+ where.toString() + " AND ans.ISDRAFT = 0) ORDER BY ans.ANSWER_SET_UPDATE DESC";
 
-		if (filter.getUser().indexOf(";") > 0) {
+		if (filter.getUser().indexOf(';') > 0) {
 			parameters.put("emails", filter.getUser().trim().split(";"));
 		} else {
 			parameters.put("email", filter.getUser());
@@ -409,10 +409,10 @@ public class AnswerService extends BasicService {
 
 		if (loadDraftIds) {
 			sql = "select max(ans.ANSWER_SET_ID), max(d.DRAFT_UID), min(ans.ISDRAFT) from ANSWERS_SET ans LEFT JOIN ANSWERS_SET ans2 ON ans.UNIQUECODE = ans2.UNIQUECODE LEFT JOIN DRAFTS d ON ans2.ANSWER_SET_ID = d.answerSet_ANSWER_SET_ID LEFT JOIN SURVEYS s ON ans2.SURVEY_ID = s.SURVEY_ID where ans.ANSWER_SET_ID IN ("
-					+ getSql(null, survey == null ? -1 : survey.getId(), filter, parameters, true, true)
+					+ getSql(null, survey == null ? -1 : survey.getId(), filter, parameters, true)
 					+ ") GROUP BY ans.UNIQUECODE ORDER BY ans.ANSWER_SET_DATE ASC";
 		} else {
-			sql = getSql(null, survey == null ? -1 : survey.getId(), filter, parameters, true, true);
+			sql = getSql(null, survey == null ? -1 : survey.getId(), filter, parameters, true);
 		}
 
 		SQLQuery query = session.createSQLQuery(sql);
@@ -443,10 +443,8 @@ public class AnswerService extends BasicService {
 				answerSet.setUniqueCode("");
 			}
 
-			if (loadDraftIds && answerSet.getIsDraft() && checkDraftSubmitted) {
-				if (surveyService.answerSetExists(answerSet.getUniqueCode(), false, false)) {
-					answerSet.setIsDraft(false);
-				}
+			if (loadDraftIds && answerSet.getIsDraft() && checkDraftSubmitted && surveyService.answerSetExists(answerSet.getUniqueCode(), false, false)) {
+				answerSet.setIsDraft(false);
 			}
 
 			if (initFiles) {
@@ -461,14 +459,14 @@ public class AnswerService extends BasicService {
 		return result;
 	}
 
-	public String getSql(String prefix, int surveyId, ResultFilter filter, HashMap<String, Object> values,
-			boolean usesjoin, boolean searchallsurveys) throws TooManyFiltersException {
+	public String getSql(String prefix, int surveyId, ResultFilter filter, Map<String, Object> values,
+			boolean searchallsurveys) throws TooManyFiltersException {
 		if (prefix == null || prefix.length() == 0) {
 			prefix = "SELECT DISTINCT ans.ANSWER_SET_ID";
 		}
 
 		StringBuilder sql = new StringBuilder(prefix + " FROM ANSWERS a1");
-		StringBuilder where = new StringBuilder();
+		StringBuilder where;
 		int joincounter = 0;
 		boolean useSurveysTable = false;
 		boolean useDraftSurveysTable = false;
@@ -569,7 +567,7 @@ public class AnswerService extends BasicService {
 			}
 
 			if (filter.getUser() != null && filter.getUser().length() > 0) {
-				if (filter.getUser().indexOf(";") > 0) {
+				if (filter.getUser().indexOf(';') > 0) {
 					where.append(" AND ans.RESPONDER_EMAIL IN (:emails)");
 					values.put("emails", filter.getUser().trim().split(";"));
 				} else {
@@ -663,14 +661,7 @@ public class AnswerService extends BasicService {
 									where.append(" OR (");
 								}
 
-								String answerPart;
-
-								// if (answer.length() > 2)
-								// {
-								// answerPart = "MATCH(a" + joincounter + ".VALUE) AGAINST (:answer" + i + ")";
-								// } else {
-								answerPart = "a" + joincounter + ".VALUE like :answer" + i;
-								// }
+								String answerPart = "a" + joincounter + ".VALUE like :answer" + i;
 
 								if (answer.contains("|")) {
 									String answerUid = answer.substring(answer.indexOf('|') + 1);
@@ -767,7 +758,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> parameters = new HashMap<>();
 
-		String sql = getSql("select DISTINCT ans.UNIQUECODE", surveyId, filter, parameters, false, true);
+		String sql = getSql("select DISTINCT ans.UNIQUECODE", surveyId, filter, parameters, true);
 
 		SQLQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
@@ -782,7 +773,7 @@ public class AnswerService extends BasicService {
 	public List<String> deleteAnswers(List<String> answerSetsToDelete, int surveyid) {
 		List<String> deletedAnswerSets = new ArrayList<>();
 
-		if (answerSetsToDelete == null || answerSetsToDelete.size() == 0) {
+		if (answerSetsToDelete == null || answerSetsToDelete.isEmpty()) {
 			return deletedAnswerSets;
 		}
 
@@ -833,7 +824,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> parameters = new HashMap<>();
 
-		String sql = getSql("select DISTINCT ans.UNIQUECODE", surveyId, filter, parameters, false, searchallsurveys);
+		String sql = getSql("select DISTINCT ans.UNIQUECODE", surveyId, filter, parameters, searchallsurveys);
 
 		SQLQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
@@ -858,7 +849,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> parameters = new HashMap<>();
 
-		String sql = getSql(null, surveyId, filter, parameters, false, true);
+		String sql = getSql(null, surveyId, filter, parameters, true);
 
 		SQLQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
@@ -880,7 +871,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> parameters = new HashMap<>();
 
-		String answersetsql = getSql(null, surveyId, filter, parameters, false, true);
+		String answersetsql = getSql(null, surveyId, filter, parameters, true);
 		String sql = "select a1.AS_ID, a1.QUESTION_ID, a1.QUESTION_UID, a1.VALUE, a1.ANSWER_COL, a1.ANSWER_ID, a1.ANSWER_ROW, a1.PA_ID, a1.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a1 JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID WHERE ans.ANSWER_SET_ID IN ("
 				+ answersetsql + ")";
 
@@ -934,9 +925,7 @@ public class AnswerService extends BasicService {
 			}
 		}
 
-		List<AnswerSet> answerSets = new ArrayList<>(result.values());
-
-		return answerSets;
+		return new ArrayList<>(result.values());
 	}
 
 	@Transactional(readOnly = true)
@@ -953,7 +942,7 @@ public class AnswerService extends BasicService {
 					+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans.ISDRAFT = FALSE";
 		} else {
 			sql = "SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, af.ANSWERS_ANSWER_ID FROM FILES f JOIN ANSWERS_FILES af ON f.FILE_ID = af.files_FILE_ID JOIN ANSWERS a ON af.ANSWERS_ANSWER_ID = a.ANSWER_ID JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID in ("
-					+ getSql(null, surveyId, filter, parameters, false, true) + ")";
+					+ getSql(null, surveyId, filter, parameters, true) + ")";
 		}
 
 		SQLQuery query = session.createSQLQuery(sql);
@@ -992,7 +981,7 @@ public class AnswerService extends BasicService {
 					+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans.ISDRAFT = FALSE";
 		} else {
 			sql = "SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, af.ANSWERS_ANSWER_ID, ans.UNIQUECODE, a.QUESTION_UID FROM FILES f JOIN ANSWERS_FILES af ON f.FILE_ID = af.files_FILE_ID JOIN ANSWERS a ON af.ANSWERS_ANSWER_ID = a.ANSWER_ID JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID in ("
-					+ getSql(null, surveyId, filter, parameters, false, true) + ")";
+					+ getSql(null, surveyId, filter, parameters, true) + ")";
 		}
 
 		SQLQuery query = session.createSQLQuery(sql);
@@ -1060,64 +1049,9 @@ public class AnswerService extends BasicService {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Transactional
-	List<LiveStatistics> getLiveStatistics(Survey survey) {
-		List<LiveStatistics> statistics = new ArrayList<>();
-		List<Integer> choiceAnswers = new ArrayList<>();
-		List<IntKeyValue> matrixAnswers = new ArrayList<>();
-
-		for (Question q : survey.getQuestions()) {
-			if (q instanceof ChoiceQuestion) {
-				ChoiceQuestion choice = (ChoiceQuestion) q;
-				for (PossibleAnswer a : choice.getPossibleAnswers()) {
-					choiceAnswers.add(a.getId());
-				}
-			} else if (q instanceof Matrix) {
-				Matrix matrix = (Matrix) q;
-				for (Element matrixQuestion : matrix.getQuestions()) {
-					for (Element matrixAnswer : matrix.getAnswers()) {
-						matrixAnswers.add(new IntKeyValue(matrixAnswer.getId(), matrixQuestion.getId()));
-					}
-				}
-			}
-		}
-
-		Session session = sessionFactory.getCurrentSession();
-
-		if (choiceAnswers.size() > 0) {
-			Query query = session.createQuery("FROM LiveStatistics WHERE PAID IN (:choiceAnswers)");
-			query.setParameterList("choiceAnswers", choiceAnswers);
-			List<LiveStatistics> stats = query.list();
-			statistics.addAll(stats);
-		}
-
-		if (matrixAnswers.size() > 0) {
-			List<Integer> matrixAnswersKeys = new ArrayList<>();
-			for (IntKeyValue keyValue : matrixAnswers) {
-				if (!matrixAnswersKeys.contains(keyValue.getKey())) {
-					matrixAnswersKeys.add(keyValue.getKey());
-				}
-			}
-			Query query = session.createQuery("FROM LiveStatistics WHERE PAID IN (:matrixAnswersKeys)");
-			query.setParameterList("matrixAnswersKeys", matrixAnswersKeys);
-			List<LiveStatistics> stats = query.list();
-			for (LiveStatistics candidate : stats) {
-				for (IntKeyValue intKeyValue : matrixAnswers) {
-					if (intKeyValue.getKey().equals(candidate.getPossibleAnswerId())
-							&& intKeyValue.getValue().equals(candidate.getQuestionId())) {
-						statistics.add(candidate);
-					}
-				}
-			}
-		}
-
-		return statistics;
-	}
-
-	@Transactional
-	public void getCompleteAnswers4Statistics(Survey survey, ResultFilter filter, HashMap<Integer, Integer> map,
-			HashMap<Integer, HashMap<Integer, Integer>> mapMatrix) {
+	public void getCompleteAnswers4Statistics(Survey survey, ResultFilter filter, Map<Integer, Integer> map,
+			Map<Integer, Map<Integer, Integer>> mapMatrix) {
 		Session session = sessionFactory.getCurrentSession();
 
 		for (Question q : survey.getQuestions()) {
@@ -1210,7 +1144,7 @@ public class AnswerService extends BasicService {
 
 		String queryString = "";
 
-		queryString = getSql("SELECT count(DISTINCT a1.AS_ID)", survey.getId(), filter, parameters, false, true);
+		queryString = getSql("SELECT count(DISTINCT a1.AS_ID)", survey.getId(), filter, parameters, true);
 
 		SQLQuery query = session.createSQLQuery(queryString);
 		sqlQueryService.setParameters(query, parameters);
@@ -1544,7 +1478,6 @@ public class AnswerService extends BasicService {
 		}
 	}
 
-	@Transactional(readOnly = false)
 	private void internalSaveDraft(Draft draft) {
 		Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(draft);
@@ -1590,11 +1523,10 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public Draft getDraftForInvitation(String uniqueCode) throws Exception {
+	public Draft getDraftForInvitation(String uniqueCode) throws InterruptedException {
 		return internalGetDraftForInviation(uniqueCode);
 	}
 
-	@Transactional(readOnly = true)
 	private Draft internalGetDraftForInviation(String uniqueCode) throws InterruptedException {
 		Session session = sessionFactory.getCurrentSession();
 
@@ -2062,8 +1994,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery(
 				"SELECT max(a.updateDate) FROM AnswerSet a WHERE a.surveyId = " + surveyId + " AND a.isDraft = 0");
-		Date result = (Date) query.uniqueResult();
-		return result;
+		return (Date) query.uniqueResult();
 	}
 
 	@Transactional(readOnly = true)
@@ -2072,8 +2003,7 @@ public class AnswerService extends BasicService {
 		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(surveyId);
 		Query query = session.createQuery("SELECT max(a.updateDate) FROM AnswerSet a WHERE a.surveyId IN ("
 				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND a.isDraft = 0");
-		Date result = (Date) query.uniqueResult();
-		return result;
+		return (Date) query.uniqueResult();
 	}
 
 	@Transactional(readOnly = true)

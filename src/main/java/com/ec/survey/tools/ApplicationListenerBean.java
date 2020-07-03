@@ -4,7 +4,6 @@ import com.ec.survey.controller.HomeController;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
-import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import org.apache.log4j.Logger;
@@ -45,7 +44,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 	            boolean showEcas=false;
 	            showEcas =( homeController.isShowEcas() || homeController.isCasOss());
 	            
-	            initializeDatabase(administrationService, surveyService, schemaService, skinService, homeController.servletContext, homeController.fileDir, homeController.serverPrefix, homeController.createStressData != null && homeController.createStressData.equalsIgnoreCase("1"), showEcas, homeController.sender, fileService, homeController.createStressData != null && homeController.createStressData.equalsIgnoreCase("2"));
+	            initializeDatabase(administrationService, surveyService, schemaService, skinService, homeController.servletContext, homeController.fileDir, homeController.createStressData != null && homeController.createStressData.equalsIgnoreCase("1"), showEcas, homeController.sender, fileService, homeController.createStressData != null && homeController.createStressData.equalsIgnoreCase("2"));
 	            logger.debug("checking database state finished");
 	            
 	            logger.debug("restarting stopped webservice tasks..");
@@ -58,13 +57,13 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
         }		
 	}
 	
-	public static void initializeDatabase(AdministrationService administrationService, SurveyService surveyService, SchemaService schemaService, SkinService skinService, ServletContext servletContext, String fileDir, String host, boolean createStressTestData, boolean showecas, String sender, FileService fileService, boolean createNewStressTestData)
+	public static void initializeDatabase(AdministrationService administrationService, SurveyService surveyService, SchemaService schemaService, SkinService skinService, ServletContext servletContext, String fileDir, boolean createStressTestData, boolean showecas, String sender, FileService fileService, boolean createNewStressTestData)
 	{
 	    java.io.File folder = new java.io.File(fileDir);
         if (!folder.exists()) folder.mkdirs();
 		logger.debug("InitializeDatabase check get all roles");		
 		List<Role> result = administrationService.getAllRoles();
-		if (result.size() == 0) {
+		if (result.isEmpty()) {
 			logger.info("InitializeDatabase No Roles create basic rule with showecas " + showecas);
 			RolesCreator.createBasicRoles(administrationService, showecas);
 			try {
@@ -74,7 +73,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			}
 			
 			List<Language> langs = surveyService.getLanguages();
-			if (langs.size() == 0)
+			if (langs.isEmpty())
 			{
 				langs = SurveyCreator.createBasicLanguages();
 				surveyService.saveLanguages(langs);		
@@ -754,9 +753,11 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			archive.setUserId(user.getId());
 			StringBuilder langs = new StringBuilder();
 			if (survey.getTranslations() != null)
-			for (String s : survey.getTranslations())
 			{
-				langs.append(s);
+				for (String s : survey.getTranslations())
+				{
+					langs.append(s);
+				}
 			}
 			archive.setLanguages(langs.toString());
 			archiveService.add(archive);
@@ -782,8 +783,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			if (validate)
 			{
 				Set<String> invisibleElements = new HashSet<>();
-				@SuppressWarnings("unused")
-				HashMap<Element, String>  validation = SurveyHelper.validateAnswerSet(answerSet,answerService,invisibleElements, resources, locale, null, null, true, null, fileService);
+				SurveyHelper.validateAnswerSet(answerSet,answerService,invisibleElements, resources, locale, null, null, true, null, fileService);
 			}
 			
 			saveAnswerSet(answerSet, fileDir, answerService, null);

@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
@@ -82,14 +81,12 @@ public class RecreateWorker implements Runnable {
 		runBasic(true);
 	}
 	
-	@Transactional(propagation=Propagation.REQUIRED)
 	private void runBasic(boolean sync)
 	{
 		try {
 			int counter = 0;
 			
 			Locale locale = new Locale("en");
-			java.io.File archiveDir = new File(archiveFileDir);
 			
 			if (files == null)
 			{
@@ -97,7 +94,7 @@ public class RecreateWorker implements Runnable {
 				for (FileResult fileresult : fileresults)
 				{
 					java.io.File file = new java.io.File(fileresult.getFilePath());
-					if (file.exists() && fileService.recreate(file, archiveDir, locale, resources))
+					if (file.exists() && fileService.recreate(file, locale, resources))
 					{
 						counter++;
 					}		
@@ -106,7 +103,7 @@ public class RecreateWorker implements Runnable {
 				for (String path : files)
 				{
 					java.io.File file = new java.io.File(path);
-					if (file.exists() && fileService.recreate(file, archiveDir, locale, resources))
+					if (file.exists() && fileService.recreate(file, locale, resources))
 					{
 						counter++;
 					}
@@ -118,7 +115,7 @@ public class RecreateWorker implements Runnable {
 			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 			String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
 					
-			mailService.SendHtmlMail(email, sender, sender, "EUSurvey file recreation finished", text, smtpServer, Integer.parseInt(smtpPort), null);
+			mailService.SendHtmlMail(email, sender, sender, "EUSurvey file recreation finished", text, null);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}

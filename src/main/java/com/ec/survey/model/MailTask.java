@@ -35,9 +35,9 @@ public class MailTask implements java.io.Serializable {
 	private boolean notified;
 	private String mailtemplate;
 	
-	public final static String WAITING = "WAITING";
-	public final static String FINISHED = "FINISHED";
-	public final static String ERROR = "ERROR";
+	public static final String WAITING = "WAITING";
+	public static final String FINISHED = "FINISHED";
+	public static final String ERROR = "ERROR";
 	
 	@Id
 	@Column(name = "MAILTASK_ID")

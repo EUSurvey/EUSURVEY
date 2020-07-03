@@ -3,7 +3,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
@@ -25,7 +24,7 @@ public class RegExQuestion extends Question {
 	public RegExQuestion() {}
 	
 	public RegExQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+		super(title, shortname, uid);
 	}
 
 	private int numRows;
@@ -86,7 +85,7 @@ public class RegExQuestion extends Question {
 		this.answer = answer;
 	}
 	
-	public RegExQuestion copy(String fileDir) throws ValidationException, IntrusionException
+	public RegExQuestion copy(String fileDir) throws ValidationException
 	{
 		RegExQuestion copy = new RegExQuestion();
 		baseCopy(copy);
@@ -100,6 +99,7 @@ public class RegExQuestion extends Question {
 	}
 	
 	@Transient
+	@Override
 	public String getCss()
 	{
 		String css = super.getCss();

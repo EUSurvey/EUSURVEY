@@ -57,23 +57,25 @@ public class SettingsController extends BasicController {
 		String message = request.getParameter("message");
 		if (message != null) {
 			switch (message) {
-			case "password":
-				model.addAttribute("message",
-						resources.getMessage("info.PasswordChanged", null, "The password has been changed", locale));
-				break;
-			case "email":
-				model.addAttribute("message", resources.getMessage("message.NewEmailAddressSend", null,
-						"The email address will be changed after confirmation", locale));
-				break;
-			case "language":
-				User user = sessionService.getCurrentUser(request);
-				model.addAttribute("message", resources.getMessage("message.LanguageChanged", null,
-						"The language has been changed", new Locale(user.getLanguage())));
-				break;
-			case "pivot":
-				model.addAttribute("message",
-						resources.getMessage("message.LanguageChanged", null, "The language has been changed", locale));
-				break;
+				case "password":
+					model.addAttribute("message",
+							resources.getMessage("info.PasswordChanged", null, "The password has been changed", locale));
+					break;
+				case "email":
+					model.addAttribute("message", resources.getMessage("message.NewEmailAddressSend", null,
+							"The email address will be changed after confirmation", locale));
+					break;
+				case "language":
+					User user = sessionService.getCurrentUser(request);
+					model.addAttribute("message", resources.getMessage("message.LanguageChanged", null,
+							"The language has been changed", new Locale(user.getLanguage())));
+					break;
+				case "pivot":
+					model.addAttribute("message",
+							resources.getMessage("message.LanguageChanged", null, "The language has been changed", locale));
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -302,12 +304,11 @@ public class SettingsController extends BasicController {
 
 			if (!share.getOwner().getId().equals(user.getId())
 					&& user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2
-					&& !(share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))) {
-				if (share.getReadonly() || !share.getRecipient().getId().equals(user.getId())) {
-					result.addObject("message", resources.getMessage("error.ShareUnauthorized", null,
-							"You are not authorized to edit this share.", locale));
-					return result;
-				}
+					&& !(share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))
+					&& (share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))) {
+				result.addObject("message", resources.getMessage("error.ShareUnauthorized", null,
+						"You are not authorized to edit this share.", locale));
+				return result;
 			}
 
 			result.addObject("shareToEdit", share);

@@ -103,12 +103,12 @@ public class SurveyCreator {
 		
 		int position = 1;
 		
-		Section section = new Section(survey, "This is a section", "section1", UUID.randomUUID().toString());
+		Section section = new Section("This is a section", "section1", UUID.randomUUID().toString());
 		section.setPosition(position++);
 		section.setLevel(1);
 		survey.getElements().add(section);
 		
-		section = new Section(survey, "This is a sub-section", "section1a", UUID.randomUUID().toString());
+		section = new Section("This is a sub-section", "section1a", UUID.randomUUID().toString());
 		section.setPosition(position++);
 		section.setLevel(2);
 		survey.getElements().add(section);
@@ -140,7 +140,7 @@ public class SurveyCreator {
 		matrix.setColumns(4);
 		matrix.setRows(3);
 		matrix.setIsSingleChoice(true);
-		EmptyElement dummy = new EmptyElement(survey, "empty", "empty");
+		EmptyElement dummy = new EmptyElement("empty", "empty");
 		dummy.setPosition(0);
 		matrix.getChildElements().add(dummy);
 		for (int i = 1; i < 6; i++)
@@ -272,7 +272,7 @@ public class SurveyCreator {
 		matrix.setPosition(counter++);
 		matrix.setRows(3);
 		matrix.setIsSingleChoice(true);
-		EmptyElement dummy = new EmptyElement(survey, "empty", "empty");
+		EmptyElement dummy = new EmptyElement("empty", "empty");
 		dummy.setPosition(0);
 		matrix.getChildElements().add(dummy);
 		for (int i = 1; i < 6; i++)
@@ -299,7 +299,7 @@ public class SurveyCreator {
 		survey.setTitle("Password Test Survey");
 		survey.setLanguage(l);
 		
-		Section s = new Section(survey, "Section", "section", UUID.randomUUID().toString());
+		Section s = new Section("Section", "section", UUID.randomUUID().toString());
 		s.setLevel(1);
 		s.setPosition(1);
 		survey.getElements().add(s);
@@ -324,7 +324,7 @@ public class SurveyCreator {
 		
 		for (int i = 1; i < 5; i++)
 		{
-			Section s = new Section(survey, "Section " + i, "section" + i, UUID.randomUUID().toString());
+			Section s = new Section("Section " + i, "section" + i, UUID.randomUUID().toString());
 			s.setLevel(1);
 			s.setPosition(counter++);
 			survey.getElements().add(s);
@@ -361,21 +361,21 @@ public class SurveyCreator {
 		
 		for (int i = 1; i < 5; i++)
 		{
-			Section s = new Section(survey, "Section " + i, "section" + i, UUID.randomUUID().toString());
+			Section s = new Section("Section " + i, "section" + i, UUID.randomUUID().toString());
 			s.setLevel(1);
 			s.setPosition(counter++);
 			survey.getElements().add(s);
 			
 			for (int j = 1; j < 5; j++)
 			{
-				Section s2 = new Section(survey, "Section " + i + j, "section" + i + j, UUID.randomUUID().toString());
+				Section s2 = new Section("Section " + i + j, "section" + i + j, UUID.randomUUID().toString());
 				s2.setLevel(2);
 				s2.setPosition(counter++);
 				survey.getElements().add(s2);
 				
 				for (int k = 1; k < 5; k++)
 				{
-					Section s3 = new Section(survey, "Section " + i + j + k, "section" + i + j + k, UUID.randomUUID().toString());
+					Section s3 = new Section("Section " + i + j + k, "section" + i + j + k, UUID.randomUUID().toString());
 					s3.setLevel(3);
 					s3.setPosition(counter++);
 					survey.getElements().add(s3);
@@ -418,7 +418,7 @@ public class SurveyCreator {
 		
 		int counter = 1;
 		
-		Section s = new Section(survey, "Section", "section", UUID.randomUUID().toString());
+		Section s = new Section("Section", "section", UUID.randomUUID().toString());
 		s.setLevel(1);
 		s.setPosition(counter++);
 		survey.getElements().add(s);
@@ -566,7 +566,7 @@ public class SurveyCreator {
 		
 		int counter = 1;
 
-		Section h1 = new Section(survey, "General Information", "sectiongeneral", UUID.randomUUID().toString());
+		Section h1 = new Section("General Information", "sectiongeneral", UUID.randomUUID().toString());
 		h1.setPosition(counter++);
 		survey.getElements().add(h1);
 		
@@ -591,7 +591,7 @@ public class SurveyCreator {
 			question2.setPosition(counter++);
 			survey.getElements().add(question2);
 	
-			Section h2 = new Section(survey, "Your comments on the course content", "sectioncomment", UUID.randomUUID().toString());
+			Section h2 = new Section("Your comments on the course content", "sectioncomment", UUID.randomUUID().toString());
 			h2.setPosition(counter++);
 			survey.getElements().add(h2);
 	

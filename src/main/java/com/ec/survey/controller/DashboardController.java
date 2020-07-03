@@ -9,7 +9,6 @@ import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.dashboard.Contributions;
 import com.ec.survey.model.survey.dashboard.EndDates;
-import com.ec.survey.service.*;
 import com.ec.survey.tools.ConversionTools;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -20,16 +19,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Controller
 public class DashboardController extends BasicController {
-
-	@Resource(name = "dashboardService")
-	private DashboardService dashboardService;
 
 	private @Value("${server.prefix}") String host;
 
@@ -163,8 +158,7 @@ public class DashboardController extends BasicController {
 			User u = sessionService.getCurrentUser(request);
 			String type = request.getParameter("type");
 
-			int[] surveydata = surveyService.getSurveyStatisticsForUser(u, type);
-			return surveydata;
+			return surveyService.getSurveyStatisticsForUser(u, type);
 		} catch (Exception ex) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			logger.error(ex.getMessage(), ex);
@@ -384,9 +378,7 @@ public class DashboardController extends BasicController {
 								: "DESC");
 			}
 
-			List<Archive> archives = archiveService.getAllArchives(filter, page, 10, true);
-
-			return archives;
+			return archiveService.getAllArchives(filter, page, 10, true);
 		} catch (Exception ex) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			logger.error(ex.getMessage(), ex);
@@ -400,7 +392,7 @@ public class DashboardController extends BasicController {
 			Locale locale, Model model) {
 		try {
 
-			List<Object[]> contributions = new ArrayList<Object[]>();
+			List<Object[]> contributions = new ArrayList<>();
 
 			ResultFilter filter = new ResultFilter();
 
@@ -589,7 +581,7 @@ public class DashboardController extends BasicController {
 	public @ResponseBody List<Object[]> personalinvitations(HttpServletRequest request, HttpServletResponse response,
 			Locale locale, Model model) {
 		try {
-			List<Object[]> invitations = new ArrayList<Object[]>();
+			List<Object[]> invitations = new ArrayList<>();
 
 			int page = 1;
 			if (request.getParameter("page") != null) {

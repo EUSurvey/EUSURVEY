@@ -30,7 +30,7 @@ public abstract class ChoiceQuestion extends Question {
 	public ChoiceQuestion() {}
 
 	public ChoiceQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+		super(title, shortname, uid);
 	}
 	
 	@Column(name = "CHOICEORDER")
@@ -176,7 +176,7 @@ public abstract class ChoiceQuestion extends Question {
 	@Transient
 	public List<PossibleAnswer> getAllPossibleAnswers() {
 		
-		if (missingPossibleAnswers.size() > 0)
+		if (!missingPossibleAnswers.isEmpty())
 		{
 			List<PossibleAnswer> result = new ArrayList<>();
 			for (PossibleAnswer pa : missingPossibleAnswers)

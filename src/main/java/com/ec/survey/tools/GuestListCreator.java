@@ -69,7 +69,6 @@ public class GuestListCreator implements Runnable {
 		runBasic(true);
 	}
 	
-	@Transactional(propagation=Propagation.REQUIRED)
 	private void runBasic(boolean sync)
 	{
 		Session session = sessionFactory.getCurrentSession();
@@ -79,7 +78,7 @@ public class GuestListCreator implements Runnable {
 			
 			if (type == 1)
 			{
-				List<EcasUser> users = new ArrayList<EcasUser>(); //participationService.getUsersForParticipationGroup(g);
+				List<EcasUser> users = new ArrayList<>();
 				
 				for (int id : userIDs)
 				{

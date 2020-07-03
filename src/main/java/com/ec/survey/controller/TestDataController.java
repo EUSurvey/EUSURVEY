@@ -39,8 +39,8 @@ public class TestDataController extends BasicController {
 			ModelMap model, HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
-			testDataGenerator.init(user, Integer.parseInt(answers), fileDir, sender, smtpServer, smtpPort, email, null,
-					null, false, context, 0, null, 1, 0);
+			testDataGenerator.init(user, Integer.parseInt(answers), fileDir, sender, email, null,
+					null, false, context, 0, 1, 0);
 			getPool().execute(testDataGenerator);
 
 			model.put("message",
@@ -59,8 +59,8 @@ public class TestDataController extends BasicController {
 			@RequestParam("email") String email, Locale locale, ModelMap model, HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
-			testDataGenerator.init(user, Integer.parseInt(answers), fileDir, sender, smtpServer, smtpPort, email,
-					shortname, null, false, context, 0, null, 1, 0);
+			testDataGenerator.init(user, Integer.parseInt(answers), fileDir, sender, email,
+					shortname, null, false, context, 0, 1, 0);
 			getPool().execute(testDataGenerator);
 
 			model.put("message",
@@ -80,8 +80,8 @@ public class TestDataController extends BasicController {
 			@RequestParam("email") String email, Locale locale, ModelMap model, HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
-			testDataGenerator.init(user, Integer.parseInt(answers), fileDir, sender, smtpServer, smtpPort, email, null,
-					Integer.parseInt(questions), false, context, 0, null, 1, 0);
+			testDataGenerator.init(user, Integer.parseInt(answers), fileDir, sender, email, null,
+					Integer.parseInt(questions), false, context, 0, 1, 0);
 			getPool().execute(testDataGenerator);
 
 			model.put("message",
@@ -102,8 +102,8 @@ public class TestDataController extends BasicController {
 			User user = sessionService.getCurrentUser(request);
 
 			// 5000 test surveys are created with #replies(survey(x))=floor(150.000/x -1)
-			testDataGenerator.init(user, 10, fileDir, sender, smtpServer, smtpPort, email, null, null, false, context,
-					0, null, 5000, 0);
+			testDataGenerator.init(user, 10, fileDir, sender, email, null, null, false, context,
+					0, 5000, 0);
 			getPool().execute(testDataGenerator);
 
 			model.put("message", "The generation of 5000 test surveys was started. You will receive an email to "
@@ -122,8 +122,8 @@ public class TestDataController extends BasicController {
 			User user = sessionService.getCurrentUser(request);
 
 			// 1 test surveys is created with 1000000 replys
-			testDataGenerator.init(user, 1000000, fileDir, sender, smtpServer, smtpPort, email, null, null, false,
-					context, 0, null, 1, 0);
+			testDataGenerator.init(user, 1000000, fileDir, sender, email, null, null, false,
+					context, 0, 1, 0);
 			getPool().execute(testDataGenerator);
 
 			model.put("message", "The generation of 1000000 answers was started. You will receive an email to " + email
@@ -143,12 +143,12 @@ public class TestDataController extends BasicController {
 
 			for (int i = 1; i <= 1000; i++) {
 				if (i == 1000) {
-					testDataGenerator.init(user, 1, fileDir, sender, smtpServer, smtpPort, email, null, null, true,
-							context, 0, null, 1, 0);
+					testDataGenerator.init(user, 1, fileDir, sender, email, null, null, true,
+							context, 0, 1, 0);
 					getPool().execute(testDataGenerator);
 				} else {
-					testDataGenerator.init(user, 1, fileDir, sender, smtpServer, smtpPort, null, null, null, true,
-							context, 0, null, 1, 0);
+					testDataGenerator.init(user, 1, fileDir, sender, null, null, null, true,
+							context, 0, 1, 0);
 					getPool().execute(testDataGenerator);
 				}
 			}
@@ -168,8 +168,8 @@ public class TestDataController extends BasicController {
 		try {
 			User user = sessionService.getCurrentUser(request);
 
-			testDataGenerator.init(user, 0, fileDir, sender, smtpServer, smtpPort, email, null, null, true, context,
-					Integer.parseInt(files), type, 1, 0);
+			testDataGenerator.init(user, 0, fileDir, sender, email, null, null, true, context,
+					Integer.parseInt(files), 1, 0);
 			getPool().execute(testDataGenerator);
 
 			model.put("message", "The generation of " + files + " files was started. You will receive an email to "
@@ -187,8 +187,8 @@ public class TestDataController extends BasicController {
 		try {
 			User user = sessionService.getCurrentUser(request);
 
-			testDataGenerator.init(user, 0, fileDir, sender, smtpServer, smtpPort, email, null, null, true, context, 0,
-					null, 0, Integer.parseInt(contacts));
+			testDataGenerator.init(user, 0, fileDir, sender, email, null, null, true, context, 0,
+					0, Integer.parseInt(contacts));
 			getPool().execute(testDataGenerator);
 
 			model.put("message",

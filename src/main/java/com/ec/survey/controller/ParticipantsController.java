@@ -15,7 +15,6 @@ import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
 import org.apache.commons.lang.StringUtils;
-import org.owasp.esapi.errors.IntrusionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -104,7 +103,7 @@ public class ParticipantsController extends BasicController {
 	}
 
 	@RequestMapping(value = "/participantsDelete", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public @ResponseBody String participantsDelete(HttpServletRequest request, Locale locale) throws Exception {
+	public @ResponseBody String participantsDelete(HttpServletRequest request, Locale locale) {
 		return participantsOperation(request, "delete", locale);
 	}
 
@@ -215,7 +214,7 @@ public class ParticipantsController extends BasicController {
 		int first = (newPage - 1) * itemsPerPage;
 		int counter = 0;
 		if (g.getType() == ParticipationGroupType.Static) {
-			List<Attendee> result = new ArrayList<Attendee>();
+			List<Attendee> result = new ArrayList<>();
 
 			for (Attendee attendee : g.getAttendees()) {
 				if (counter < first) {
@@ -797,7 +796,7 @@ public class ParticipantsController extends BasicController {
 		return paging;
 	}
 	
-	@RequestMapping(value = "/topDepartmentsJSON", headers="Accept=*/*", method=RequestMethod.GET)
+	@GetMapping(value = "/topDepartmentsJSON", headers="Accept=*/*")
 	public @ResponseBody List<KeyValue> topDepartments(HttpServletRequest request, HttpServletResponse response ) throws InvalidURLException {
 		
 		if (!isAjax(request))
@@ -818,8 +817,7 @@ public class ParticipantsController extends BasicController {
   }
 
 	@PostMapping(value = "/saveTemplateJSON", headers = "Accept=*/*")
-	public @ResponseBody String saveTemplateJSON(HttpServletRequest request, HttpServletResponse response)
-			throws IntrusionException {
+	public @ResponseBody String saveTemplateJSON(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			String text1 = Tools.filterHTML(Ucs2Utf8.unconvert(request.getParameter("text1")));
 			String text2 = Tools.filterHTML(Ucs2Utf8.unconvert(request.getParameter("text2")));
@@ -856,8 +854,7 @@ public class ParticipantsController extends BasicController {
 	}
 
 	@GetMapping(value = "/loadTemplateJSON", headers = "Accept=*/*")
-	public @ResponseBody InvitationTemplate loadTemplateJSON(HttpServletRequest request, HttpServletResponse response)
-			throws IntrusionException {
+	public @ResponseBody InvitationTemplate loadTemplateJSON(HttpServletRequest request, HttpServletResponse response) {
 		try {
 
 			String id = request.getParameter("id");
@@ -882,8 +879,7 @@ public class ParticipantsController extends BasicController {
 	}
 
 	@GetMapping(value = "/deleteTemplateJSON", headers = "Accept=*/*")
-	public @ResponseBody String deleteTemplateJSON(HttpServletRequest request, HttpServletResponse response)
-			throws IntrusionException {
+	public @ResponseBody String deleteTemplateJSON(HttpServletRequest request, HttpServletResponse response) {
 		try {
 
 			String id = request.getParameter("id");

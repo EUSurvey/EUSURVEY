@@ -7,7 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 
 public class Bad2faCredentialsException extends BadCredentialsException {
 	
-	protected static Logger logger = Logger.getLogger(BadCredentialsException.class);
+	protected static final Logger logger = Logger.getLogger(BadCredentialsException.class);
 	
 	public Bad2faCredentialsException(String message) {		
 		super(message);

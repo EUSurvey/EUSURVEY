@@ -303,7 +303,7 @@ public class LoginLogoutController extends BasicController {
 				InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);		
 								
-				mailService.SendHtmlMail(code.getEmail(), sender, sender, resources.getMessage("mail.PasswordResetRequest", null, "Password Reset Request", locale), text, smtpServer, Integer.parseInt(smtpPort), null);
+				mailService.SendHtmlMail(code.getEmail(), sender, sender, resources.getMessage("mail.PasswordResetRequest", null, "Password Reset Request", locale), text, null);
 			} catch (Exception e) {
 				model.put("error", errorMessage);
 				return "auth/login";

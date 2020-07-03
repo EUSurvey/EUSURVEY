@@ -23,10 +23,7 @@ public class CustomCasAuthenticationManager implements UserDetailsService {
 	private AdministrationService administrationService;
 
 	@Override
-	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-		// TODO Auto-generated method stub
-		
-		
+	public UserDetails loadUserByUsername(String userName) {
 		User usr= getUserFromDb(userName);
 		List<GrantedAuthority> auths = getAuthorities(usr);
 
@@ -37,25 +34,23 @@ public class CustomCasAuthenticationManager implements UserDetailsService {
 	// org.springframework.security.core.userdetails.User
 	private  org.springframework.security.core.userdetails.User buildUserForAuthentication(User user, 
 		List<GrantedAuthority> authorities) {
-		logger.error("in CustomCasAuthenticationManager buildUserForAuthentication");
+		logger.debug("in CustomCasAuthenticationManager buildUserForAuthentication");
 
 		for (GrantedAuthority authority : authorities) {
-			logger.error("in MyUserDetailsService buildUserForAuthentication AUTH SHOW " + authority.getAuthority());
+			logger.debug("in MyUserDetailsService buildUserForAuthentication AUTH SHOW " + authority.getAuthority());
 		}
 		
 		org.springframework.security.core.userdetails.User value;
 		try {
-			logger.error("in MyUserDetailsService buildUserForAuthentication try to create the Spring User");
+			logger.debug("in MyUserDetailsService buildUserForAuthentication try to create the Spring User");
 			value = new org.springframework.security.core.userdetails.User(user.getLogin(),null,true,true,true,true,authorities);	
 		} catch (Exception e) {
 			
 			throw new UsernameNotFoundException("Error when trying to convert EUSuevry user to spring user");
-		}
-		
+		}		
 			
 		return value;
 	}
-
 	
 	private User getUserFromDb(String userName){
 		logger.error("Start getUserFromDb for user coming from ldap authentication " + userName );
@@ -68,9 +63,8 @@ public class CustomCasAuthenticationManager implements UserDetailsService {
 				logger.error("getUserFromDb Error whentrying to get user from Db " + e.getLocalizedMessage() );
 			}
 			
-			List<Role> Roles = administrationService.getAllRoles();
 			Role intRole = null;
-			for (Role role : Roles) {
+			for (Role role : administrationService.getAllRoles()) {
 				if (role.getName().equalsIgnoreCase("Form Manager")) intRole = role;
 			}	
 			
@@ -88,8 +82,7 @@ public class CustomCasAuthenticationManager implements UserDetailsService {
 
 			return user;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getLocalizedMessage(), e);
 			return null;
 		}				
 		

@@ -160,7 +160,7 @@ public class HomeController extends BasicController {
 	}
 	
 	@PostMapping(value = "/home/support")
-	public String supportPOST(HttpServletRequest request, Locale locale, ModelMap model) throws NumberFormatException, Exception {
+	public String supportPOST(HttpServletRequest request, Locale locale, ModelMap model) throws Exception {
 		
 		if (!checkCaptcha(request))
 		{
@@ -232,9 +232,9 @@ public class HomeController extends BasicController {
 		
 		if (email.toLowerCase().endsWith("ec.europa.eu"))
 		{
-			mailService.SendHtmlMail(supportEmailInternal, sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort), attachment1, attachment2, null, true);
+			mailService.SendHtmlMail(supportEmailInternal, sender, sender, subject, text, attachment1, attachment2, null, true);
 		} else {
-			mailService.SendHtmlMail(supportEmail, sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort), attachment1, attachment2, null, true);
+			mailService.SendHtmlMail(supportEmail, sender, sender, subject, text, attachment1, attachment2, null, true);
 		}
 		
 		model.put("messagesent", true);
@@ -468,19 +468,19 @@ public class HomeController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/home/welcome", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView welcome(HttpServletRequest request, Locale locale) {	
-		return basicwelcome(request, locale);
+	public ModelAndView welcome(HttpServletRequest request) {	
+		return basicwelcome(request);
 	}
 	
 	@RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView home(HttpServletRequest request, Locale locale) {
+	public ModelAndView home(HttpServletRequest request) {
 		request.getSession().setAttribute("serverprefix",serverPrefix);
-		return basicwelcome(request, locale);
+		return basicwelcome(request);
 	}
 	
 	@RequestMapping(value = "/home/welcome/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView welcomerunner(HttpServletRequest request, Locale locale) {	
-		return basicwelcome(request, locale);
+	public ModelAndView welcomerunner(HttpServletRequest request) {	
+		return basicwelcome(request);
 	}
 	
 	@RequestMapping(value = "/home/editcontribution")
@@ -603,11 +603,11 @@ public class HomeController extends BasicController {
 				if (answerSet.getSurvey().getIsQuiz())
 				{
 					QuizExecutor export = (QuizExecutor) context.getBean("quizExecutor");
-					export.init(answerSet, email, sender, smtpServer, smtpPort, serverPrefix);
+					export.init(answerSet, email, sender, serverPrefix);
 					taskExecutor.execute(export);
 				} else {				
 					AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
-					export.init(answerSet, email, sender, smtpServer, smtpPort, serverPrefix);
+					export.init(answerSet, email, sender, serverPrefix);
 					taskExecutor.execute(export);
 				}
 			} else {

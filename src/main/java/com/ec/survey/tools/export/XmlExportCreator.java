@@ -408,7 +408,7 @@ public class XmlExportCreator extends ExportCreator {
 
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(),
-							export == null ? null : export.getResultFilter(), values, false, true)
+							export == null ? null : export.getResultFilter(), values, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
 
 			SQLQuery query = session.createSQLQuery(sql);
@@ -584,7 +584,7 @@ public class XmlExportCreator extends ExportCreator {
 		HashMap<String, Object> values = new HashMap<>();
 		String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 				+ answerService.getSql(null, form.getSurvey().getId(), export == null ? null : export.getResultFilter(),
-						values, false, true)
+						values, true)
 				+ ") ORDER BY ans.ANSWER_SET_ID";
 
 		SQLQuery query = session.createSQLQuery(sql);
@@ -666,7 +666,7 @@ public class XmlExportCreator extends ExportCreator {
 		int answerrowcounter = 2;
 		for (Element question : questions) {
 			if (filter == null || filter.exported(question.getId().toString())) {
-				if (question.IsUsedInResults()) {
+				if (question.isUsedInResults()) {
 					if (question instanceof Matrix) {
 						Matrix matrix = (Matrix) question;
 						for (Element matrixQuestion : matrix.getQuestions()) {

@@ -82,7 +82,7 @@ public class XlsExportCreator extends ExportCreator {
 		for (Question question : questions) {
 			if ((publication != null || filter.exported(question.getId().toString()))
 					&& (publication == null || publication.isAllQuestions() || publication.isSelected(question.getId()))
-					&& question.IsUsedInResults()) {
+					&& question.isUsedInResults()) {
 				if (question instanceof Matrix) {
 					Matrix matrix = (Matrix) question;
 					for (Element matrixQuestion : matrix.getQuestions()) {
@@ -328,7 +328,7 @@ public class XlsExportCreator extends ExportCreator {
 		} else {
 
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
-					+ answerService.getSql(null, form.getSurvey().getId(), filter, values, false, true)
+					+ answerService.getSql(null, form.getSurvey().getId(), filter, values, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
 
 			SQLQuery query = session.createSQLQuery(sql);
@@ -544,7 +544,7 @@ public class XlsExportCreator extends ExportCreator {
 		for (Question question : questions) {
 			if ((publication != null || filter.exported(question.getId().toString()))
 					&& (publication == null || publication.isAllQuestions() || publication.isSelected(question.getId()))
-					&& question.IsUsedInResults())
+					&& question.isUsedInResults())
 				if (question instanceof Matrix) {
 					Matrix matrix = (Matrix) question;
 					for (Element matrixQuestion : matrix.getQuestions()) {
