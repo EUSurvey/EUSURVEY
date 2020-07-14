@@ -2618,7 +2618,7 @@ public class SurveyService extends BasicService {
 	@SuppressWarnings("unchecked")
 	public List<Survey> getSurveysToStart() {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Survey s WHERE s.isDraft = true AND s.start <= :start AND s.end > :start AND s.automaticPublishing = true AND s.isActive = false").setTimestamp("start",
+		Query query = session.createQuery("FROM Survey s WHERE s.isDraft = true AND s.start <= :start AND ((s.end is not null AND s.end > :start) OR (s.end is null)) AND s.automaticPublishing = true AND s.isActive = false").setTimestamp("start",
 				new Date());
 		return query.list();
 	}
