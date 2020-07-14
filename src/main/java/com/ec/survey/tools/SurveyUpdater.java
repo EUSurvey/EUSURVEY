@@ -59,8 +59,7 @@ public class SurveyUpdater implements Runnable {
 			{				
 				Survey published = surveyService.getSurvey(survey.getShortname(), false, false, false, true, null, true, false);
 				
-				if (published != null)
-				{
+				if (published != null) {
 					try {
 						surveyService.applyChanges(survey, false, -1, true);
 					} catch (Exception e) {
