@@ -759,7 +759,7 @@ var closeOverlayDivsEnabled = false;
 		{
 			<c:choose>
 				<c:when test="${publication != null && publication.isShowSearch()}">
-				var height = $( window ).height() - 530;
+				var height = $( window ).height() - 640; //530;
 				var statheight = $( window ).height() - 580;
 				</c:when>
 				<c:when test="${publication != null}">
