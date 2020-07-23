@@ -23,7 +23,7 @@ public class FreeTextQuestion extends Question {
 
 	public FreeTextQuestion() {}
 	
-	public FreeTextQuestion(Survey survey, String title, String shortname, String uid) {
+	public FreeTextQuestion(String title, String shortname, String uid) {
 		super(title, shortname, uid);
 	}
 	private int minCharacters;

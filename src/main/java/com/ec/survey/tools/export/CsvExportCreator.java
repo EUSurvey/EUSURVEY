@@ -213,7 +213,6 @@ public class CsvExportCreator extends ExportCreator {
 				if (first)
 				{
 					writefirst(out, "NewValue");
-					first = false;
 				} else {
 					write(out, "NewValue");
 				}
@@ -318,7 +317,6 @@ public class CsvExportCreator extends ExportCreator {
 					if (first)
 					{
 						writefirst(out, activity.getNewValue());
-						first = false;
 					} else {
 						write(out, activity.getNewValue());
 					}

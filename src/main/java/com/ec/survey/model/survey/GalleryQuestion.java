@@ -25,7 +25,7 @@ public class GalleryQuestion extends Question {
 
 	public GalleryQuestion() {}
 	
-	public GalleryQuestion(Survey survey, String title, String shortname, String uid) {
+	public GalleryQuestion(String title, String shortname, String uid) {
 		super(title, shortname, uid);
 	}
 	

@@ -804,7 +804,6 @@ public class OdfExportCreator extends ExportCreator {
 					Calendar c = Calendar.getInstance();
 					c.setTime(answerSet.getDate());
 					cell.setDateTimeValue(c);
-					// cell.setFormatString("dd/MM/yyyy hh:mm:ss");
 				}
 			}
 			if (filter.exported("updated")) {
@@ -1363,11 +1362,9 @@ public class OdfExportCreator extends ExportCreator {
 								(double) statistics.getRequestedRecords().get(possibleAnswer.getId().toString()));
 						row.getCellByIndex(2).setStringValue(Integer
 								.toString(statistics.getRequestedRecords().get(possibleAnswer.getId().toString())));
-						row.getCellByIndex(3).setPercentageValue(percent); // / 100);
+						row.getCellByIndex(3).setPercentageValue(percent);
 						row.getCellByIndex(3).setStringValue(df.format(percent) + "%");
 
-						// row.getCellByIndex(2).setValueType("float");
-						// row.getCellByIndex(3).setValueType("percentage");
 					}
 
 					Row row = table.appendRow();

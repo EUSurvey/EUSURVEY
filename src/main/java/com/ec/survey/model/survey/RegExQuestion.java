@@ -23,7 +23,7 @@ public class RegExQuestion extends Question {
 
 	public RegExQuestion() {}
 	
-	public RegExQuestion(Survey survey, String title, String shortname, String uid) {
+	public RegExQuestion(String title, String shortname, String uid) {
 		super(title, shortname, uid);
 	}
 

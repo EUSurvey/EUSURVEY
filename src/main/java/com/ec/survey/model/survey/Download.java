@@ -26,7 +26,7 @@ public class Download extends Question {
 	
 	private List<File> files = new ArrayList<>();
 	
-	public Download(Survey survey, String text, String shortname, String uid) {
+	public Download(String text, String shortname, String uid) {
 		setTitle(text);
 		setUniqueId(uid);
 		setShortname(shortname);

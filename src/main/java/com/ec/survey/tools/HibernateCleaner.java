@@ -38,7 +38,8 @@ public class HibernateCleaner {
         String property;
         ClassMetadata clazzMetaData;
         Map<Object, Object> visitedObjectsInClass;
-        int index, length;
+        int index;
+        int length;
         
         if (obj == null)
             return (null);

@@ -859,7 +859,7 @@ public class RunnerController extends BasicController {
 	@RequestMapping(value = "/{uidorshortname}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView runner(@PathVariable String uidorshortname, HttpServletRequest request,
 			HttpServletResponse response, Locale locale, Device device)
-			throws InvalidURLException, ForbiddenURLException, WeakAuthenticationException, FrozenSurveyException,
+			throws InvalidURLException, WeakAuthenticationException, FrozenSurveyException,
 			NotAgreedToTosException, NotAgreedToPsException {
 
 		ModelAndView modelReturn = new ModelAndView();
@@ -976,11 +976,10 @@ public class RunnerController extends BasicController {
 
 							if (readonlyMode
 									|| (survey.getEcasMode() != null && survey.getEcasMode().equalsIgnoreCase("all"))) {
-								return loadSurvey(survey, request, locale, uidorshortname, false, device, readonlyMode);
+								return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
 							} else {
 								if (user.getGlobalPrivileges().get(GlobalPrivilege.ECAccess) > 0) {
-									return loadSurvey(survey, request, locale, uidorshortname, false, device,
-											readonlyMode);
+									return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
 								} else {
 									internalUsersOnly = true;
 								}
@@ -1038,7 +1037,7 @@ public class RunnerController extends BasicController {
 			}
 		}
 
-		return loadSurvey(survey, request, locale, uidorshortname, false, device, readonlyMode);
+		return loadSurvey(survey, request, locale, uidorshortname, false, readonlyMode);
 	}
 
 	private ModelAndView getEscapePageModel(Survey survey, HttpServletRequest request, Device device,
@@ -1060,16 +1059,11 @@ public class RunnerController extends BasicController {
 
 			String lang = request.getParameter("surveylanguage");
 
-			if (lang != null) {
-
-				if (f.translationIsValid(lang)) {
-					survey = SurveyHelper.createTranslatedSurvey(f.getSurvey().getId(), lang, surveyService,
-							translationService, true);
-					f.setSurvey(survey);
-					f.setLanguage(surveyService.getLanguage(lang));
-				} else {
-					lang = null;
-				}
+			if (lang != null && f.translationIsValid(lang)) {
+				survey = SurveyHelper.createTranslatedSurvey(f.getSurvey().getId(), lang, surveyService,
+						translationService, true);
+				f.setSurvey(survey);
+				f.setLanguage(surveyService.getLanguage(lang));
 			}
 
 			String wcag = request.getParameter("wcag");
@@ -1113,7 +1107,7 @@ public class RunnerController extends BasicController {
 	}
 
 	private ModelAndView loadSurvey(Survey survey, HttpServletRequest request, Locale locale, String action,
-			boolean passwordauthenticated, Device device, boolean readonlyMode) throws WeakAuthenticationException {
+			boolean passwordauthenticated, boolean readonlyMode) throws WeakAuthenticationException {
 		if (survey != null) {
 			String draftid = request.getParameter("draftid");
 
@@ -1417,7 +1411,7 @@ public class RunnerController extends BasicController {
 		return files.toString();
 	}
 
-	@RequestMapping(value = "/draft/{mode}", method = RequestMethod.POST)
+	@PostMapping(value = "/draft/{mode}")
 	public ModelAndView processDraftSubmit(@PathVariable String mode, HttpServletRequest request, Locale locale,
 			HttpServletResponse response, Device device) {
 		try {
@@ -1589,7 +1583,7 @@ public class RunnerController extends BasicController {
 		return new ModelAndView("redirect:/errors/500.html");
 	}
 
-	@RequestMapping(value = "/draftinfo/{draftid}", method = RequestMethod.GET)
+	@GetMapping(value = "/draftinfo/{draftid}")
 	public ModelAndView DraftSubmit(@PathVariable String draftid, HttpServletRequest request, Locale locale,
 			HttpServletResponse response, Device device) throws Exception {
 
@@ -1656,7 +1650,7 @@ public class RunnerController extends BasicController {
 					if (survey.getPassword() != null && survey.getPassword().trim().length() > 0
 							&& survey.getPassword().equals(password)) {
 						// authenticated
-						return loadSurvey(survey, request, locale, uidorshortname, true, device, false);
+						return loadSurvey(survey, request, locale, uidorshortname, true, false);
 					}
 
 					// check for token

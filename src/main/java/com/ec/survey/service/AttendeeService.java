@@ -496,7 +496,7 @@ public class AttendeeService extends BasicService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void add(Invitation invitation) throws Exception {
+	public void add(Invitation invitation) throws InterruptedException {
 		internalAddInvitation(invitation);
 	}
 
@@ -570,7 +570,7 @@ public class AttendeeService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public Invitation getInvitationByUniqueId(String uniqueId) throws Exception {
+	public Invitation getInvitationByUniqueId(String uniqueId) throws MessageException {
 		return internalGetInvitationByUniqueId(uniqueId);
 	}
 
@@ -702,7 +702,7 @@ public class AttendeeService extends BasicService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void addTokens(List<String> tokens, Integer groupId) throws Exception {
+	public void addTokens(List<String> tokens, Integer groupId) throws InterruptedException {
 		for (String token : tokens) {
 			Invitation invitation = new Invitation(groupId, token);
 
@@ -711,7 +711,7 @@ public class AttendeeService extends BasicService {
 	}
 
 	@Transactional(readOnly = false)
-	public void decreaseInvitationAnswer(String token) throws Exception {
+	public void decreaseInvitationAnswer(String token) throws MessageException {
 		Session session = sessionFactory.getCurrentSession();
 		Invitation invitation = internalGetInvitationByUniqueId(token);
 		if (invitation != null) {
@@ -723,7 +723,7 @@ public class AttendeeService extends BasicService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void executeOperations(Map<String, String> operations, int groupId) throws Exception {
+	public void executeOperations(Map<String, String> operations, int groupId) throws MessageException {
 
 		Session session = sessionFactory.getCurrentSession();
 

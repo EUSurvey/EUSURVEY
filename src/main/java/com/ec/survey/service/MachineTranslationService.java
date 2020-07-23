@@ -173,14 +173,14 @@ public class MachineTranslationService extends BasicService {
 			}
 			else 
 			{
-				translateTranlationsWithMicrosoft(sourceTranslationsId, user,targetIDs);
+				translateTranlationsWithMicrosoft(sourceTranslationsId, targetIDs);
 			}
 			
 		}
 		return result;
 	}
 
-	private void translateTranlationsWithMicrosoft(Integer sourceTranslationsId, User user, List<Integer> targetIDs) throws Exception {
+	private void translateTranlationsWithMicrosoft(Integer sourceTranslationsId, List<Integer> targetIDs) throws Exception {
 		Translations sourceTranslations = translationService.getTranslations(sourceTranslationsId);
 
 		List<Translation> translationsList = sourceTranslations.getTranslations();
