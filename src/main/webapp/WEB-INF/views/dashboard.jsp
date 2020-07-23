@@ -62,13 +62,13 @@
 			
 					<div id="surveysarea" data-bind="visible: mode() == 'surveys'">	
 					
-						<div style="text-align: right; margin-right: 20px; margin-bottom: 20px;">
+						<div style="text-align: left; margin-left: 15px; margin-bottom: 20px;">
 							<span style="margin-right: 10px;"><spring:message code="label.Surveys" />:</span>
 														
-							<select id="surveystatesselector" class="dashboardselect" onchange="_dashboard.reloadSurveyWidgets();">
-								<option value="all"><spring:message code="label.AllSurveys" /></option>
-								<option value="my" selected="selected"><spring:message code="label.Own" /></option>
-								<option value="shared"><spring:message code="label.Shared" /></option>
+							<select id="surveystatesselector" class="form-control" style="display: inline; width: auto;" onchange="_dashboard.reloadSurveyWidgets();">
+								<option value="all"><spring:message code="label.BothOfThem" /></option>
+								<option value="my" selected="selected"><spring:message code="label.MySurveys" /></option>
+								<option value="shared"><spring:message code="label.SharedWithMe" /></option>
 							</select>	
 						</div>	
 				
