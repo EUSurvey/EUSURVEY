@@ -3,6 +3,7 @@ package com.ec.survey.controller;
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.exception.InvalidURLException;
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.NoFormLoadedException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.Export.ExportState;
@@ -369,7 +370,7 @@ public class ManagementController extends BasicController {
 			}
 
 			if (!archiveSurvey(survey, u)) {
-				throw new Exception("archiving failed!");
+				throw new MessageException("archiving failed!");
 			}
 
 			request.getSession().removeAttribute("sessioninfo");
@@ -702,10 +703,8 @@ public class ManagementController extends BasicController {
 
 		result.addObject("validregform", nameFound && emailFound);
 
-		if (form.getSurvey().getSecurity().contains("anonymous") && form.getSurvey().getIsPublished()) {
-			if (answerService.getHasPublishedAnswers(form.getSurvey().getUniqueId())) {
-				result.addObject("haspublishedanswers", "true");
-			}
+		if (form.getSurvey().getSecurity().contains("anonymous") && form.getSurvey().getIsPublished() && answerService.getHasPublishedAnswers(form.getSurvey().getUniqueId())) {
+			result.addObject("haspublishedanswers", "true");
 		}
 
 		return result;
@@ -1140,7 +1139,7 @@ public class ManagementController extends BasicController {
 			}
 
 			if (!emailFound) {
-				EmailQuestion email = new EmailQuestion(survey, "Email", "email", UUID.randomUUID().toString());
+				EmailQuestion email = new EmailQuestion("Email", "email", UUID.randomUUID().toString());
 				email.setOptional(false);
 				email.setPosition(0);
 				email.setHelp("");
@@ -1154,7 +1153,7 @@ public class ManagementController extends BasicController {
 			}
 
 			if (!nameFound) {
-				FreeTextQuestion name = new FreeTextQuestion(survey, "Name", "name", UUID.randomUUID().toString());
+				FreeTextQuestion name = new FreeTextQuestion("Name", "name", UUID.randomUUID().toString());
 				name.setOptional(false);
 				name.setPosition(0);
 				name.setHelp("");
@@ -2086,7 +2085,7 @@ public class ManagementController extends BasicController {
 		if (editorredirect != null && editorredirect.trim().length() > 0) {
 			if (editorredirect.startsWith("/")) {
 				editorredirect = editorredirect.substring(1);
-				editorredirect = editorredirect.substring(editorredirect.indexOf("/") + 1);
+				editorredirect = editorredirect.substring(editorredirect.indexOf('/') + 1);
 			}
 			request.getSession().setAttribute("surveyeditorsaved", survey.getId());
 			return new ModelAndView("redirect:/" + editorredirect);
@@ -2339,14 +2338,12 @@ public class ManagementController extends BasicController {
 
 		String lang = request.getParameter("surveylanguage");
 
-		if (lang != null) {
-			if (form.translationIsValid(lang)) {
-				Survey translated = SurveyHelper.createTranslatedSurvey(form.getSurvey().getId(), lang, surveyService,
-						translationService, true);
-				form.setSurvey(translated);
-				form.setLanguage(surveyService.getLanguage(lang));
-				sessionService.updateSessionInfo(translated, sessionService.getCurrentUser(request), request);
-			}
+		if (lang != null &&form.translationIsValid(lang)) {
+			Survey translated = SurveyHelper.createTranslatedSurvey(form.getSurvey().getId(), lang, surveyService,
+					translationService, true);
+			form.setSurvey(translated);
+			form.setLanguage(surveyService.getLanguage(lang));
+			sessionService.updateSessionInfo(translated, sessionService.getCurrentUser(request), request);
 		}
 
 		String wcag = request.getParameter("wcag");

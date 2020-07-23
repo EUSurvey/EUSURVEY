@@ -912,7 +912,7 @@ public class ReportingService {
 		return true;
 	}
 
-	public boolean validateOLAPTableInternal(Survey survey) throws Exception {
+	public boolean validateOLAPTableInternal(Survey survey) {
 		return this.validateOLAPTableInternal(survey, null);
 	}
 

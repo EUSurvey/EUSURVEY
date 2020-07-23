@@ -20,7 +20,7 @@ public class NumberQuestion extends Question {
 
 	public NumberQuestion() {}
 	
-	public NumberQuestion(Survey survey, String title, String shortname, String uid) {
+	public NumberQuestion(String title, String shortname, String uid) {
 		super(title, shortname, uid);
 	}
 	private int decimalPlaces;

@@ -34,7 +34,7 @@ public class RatingQuestion extends Question {
 
 	public RatingQuestion() {}
 	
-	public RatingQuestion(Survey survey, String title, String shortname, String uid) {
+	public RatingQuestion(String title, String shortname, String uid) {
 		super(title, shortname, uid);
 	}
 	

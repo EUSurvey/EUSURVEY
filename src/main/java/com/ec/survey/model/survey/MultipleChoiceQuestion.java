@@ -2,7 +2,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import com.ec.survey.tools.Tools;
 
@@ -81,7 +80,7 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 		this.noNegativeScore = noNegativeScore != null ? noNegativeScore : false;
 	}
 
-	public MultipleChoiceQuestion copy(String fileDir) throws ValidationException, IntrusionException {
+	public MultipleChoiceQuestion copy(String fileDir) throws ValidationException {
 		MultipleChoiceQuestion copy = new MultipleChoiceQuestion();
 		baseCopy(copy);
 		copy.setOrder(getOrder());

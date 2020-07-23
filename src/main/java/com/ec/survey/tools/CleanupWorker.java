@@ -64,15 +64,15 @@ public class CleanupWorker implements Runnable {
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void run() {
-		runBasic(true);
+		runBasic();
 	}
 
 	@Transactional
 	public void runSync() {
-		runBasic(true);
+		runBasic();
 	}
 	
-	private void runBasic(boolean sync)
+	private void runBasic()
 	{
 		try {
 			int counter = 0;

@@ -34,7 +34,7 @@ public class Confirmation extends Question {
 	private boolean usetext;
 	private Boolean useupload;
 	
-	public Confirmation(Survey survey, String text, String shortname, String uid) {
+	public Confirmation(String text, String shortname, String uid) {
 		setTitle(text);
 		setUniqueId(uid);
 		setShortname(shortname);

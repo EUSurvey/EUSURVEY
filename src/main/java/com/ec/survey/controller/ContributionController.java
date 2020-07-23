@@ -253,7 +253,7 @@ public class ContributionController extends BasicController {
 
 			// this is needed to initialize the invisibleElements
 			SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements, resources, locale, null, null,
-					true, null, fileService, forpdf);
+					true, null, fileService);
 
 			Form f = new Form(newestSurvey, translationService.getTranslationsForSurvey(newestSurvey.getId(), false),
 					newestSurvey.getLanguage(), resources, contextpath);

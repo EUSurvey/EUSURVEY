@@ -104,8 +104,8 @@ public class SchedulerService extends BasicService {
 			
 			if (start == null || start.length() == 0 || time == null || time.length() == 0) return;
 			
-			String hours = start.substring(0, start.indexOf(":"));
-			String minutes = start.substring(start.indexOf(":")+1);
+			String hours = start.substring(0, start.indexOf(':'));
+			String minutes = start.substring(start.indexOf(':')+1);
 			Date currentDate = new Date();
 			
 			Calendar c = Calendar.getInstance();

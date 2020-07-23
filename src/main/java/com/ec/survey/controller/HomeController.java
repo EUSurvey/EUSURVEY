@@ -307,6 +307,7 @@ public class HomeController extends BasicController {
                 fos.close();
                 is.close();
             } catch (IOException ignored) {
+            	//ignore
             }
         }
 

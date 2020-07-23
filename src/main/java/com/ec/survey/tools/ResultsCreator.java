@@ -315,7 +315,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 				    			fup = new java.io.File(fileDir + file.getUid());
 				    			if (fup.exists())
 				    			{
-				    				fileService.LogOldFileSystemUse(fileDir + file.getUid());
+				    				fileService.logOldFileSystemUse(fileDir + file.getUid());
 				    			}
 				    		}		
 				    		

@@ -23,7 +23,7 @@ public class EmailQuestion extends Question {
 
 	public EmailQuestion() {}
 	
-	public EmailQuestion(Survey survey, String title, String shortname, String uid) {
+	public EmailQuestion(String title, String shortname, String uid) {
 		super(title, shortname, uid);
 	}
 	private String answer;

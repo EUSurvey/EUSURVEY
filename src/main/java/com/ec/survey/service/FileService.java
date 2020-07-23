@@ -43,7 +43,7 @@ public class FileService extends BasicService {
 	public static final String[] fileextensions = { "PDF", "XLS", "ODS", "DOC", "ODT", "XML", "CSV", "JPG", "PNG",
 			"ZIP", "OTHER" };
 
-	public void LogOldFileSystemUse(String path) {
+	public void logOldFileSystemUse(String path) {
 		logger.info("OLD FILESYSTEM ACCESS: " + path);
 	}
 
@@ -462,12 +462,8 @@ public class FileService extends BasicService {
 			return false;
 		}
 
-		if (filter.getFilterApplied() != null && (fileResult.getFilterApplied() == null
-				|| !filter.getFilterApplied().equalsIgnoreCase(fileResult.getFilterApplied()))) {
-			return false;
-		}
-
-		return true;
+		return !(filter.getFilterApplied() != null && (fileResult.getFilterApplied() == null
+				|| !filter.getFilterApplied().equalsIgnoreCase(fileResult.getFilterApplied())));
 	}
 
 	private boolean add(FileResult item, Map<String, FileResult> map) {
@@ -1397,7 +1393,7 @@ public class FileService extends BasicService {
 		if (!f.exists()) {
 			f = new java.io.File(fileDir + uid);
 			if (f.exists())
-				fileService.LogOldFileSystemUse(fileDir + uid);
+				fileService.logOldFileSystemUse(fileDir + uid);
 		}
 
 		if (f.exists()) {

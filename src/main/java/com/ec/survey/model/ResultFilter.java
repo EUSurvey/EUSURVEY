@@ -132,9 +132,11 @@ public class ResultFilter implements java.io.Serializable {
 	public boolean containsLanguage(String code)
 	{
 		if (languages != null)
-		for (String c : languages)
 		{
-			if (c.equalsIgnoreCase(code)) return true;
+			for (String c : languages)
+			{
+				if (c.equalsIgnoreCase(code)) return true;
+			}
 		}
 		return false;
 	}

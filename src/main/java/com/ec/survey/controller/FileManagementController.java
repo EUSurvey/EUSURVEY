@@ -373,7 +373,7 @@ public class FileManagementController extends BasicController {
 		
 		if (file.exists())
 		{
-			fileService.LogOldFileSystemUse(fileDir + "files" + uid + ".zip");
+			fileService.logOldFileSystemUse(fileDir + "files" + uid + ".zip");
 			
 			response.setContentLength((int) file.length());
 			response.setHeader("Content-Disposition","attachment; filename=\"" + file.getName() +"\"");
@@ -407,7 +407,7 @@ public class FileManagementController extends BasicController {
 			file = new java.io.File(fileDir + "files" + uid + ".zip");
 			if (file.exists())
 			{
-				fileService.LogOldFileSystemUse(fileDir + "files" + uid + ".zip");
+				fileService.logOldFileSystemUse(fileDir + "files" + uid + ".zip");
 			}
 		}
 		

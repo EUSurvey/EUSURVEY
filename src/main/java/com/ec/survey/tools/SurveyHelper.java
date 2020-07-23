@@ -224,11 +224,6 @@ public class SurveyHelper {
 	
 	public static HashMap<Element, String> validateAnswerSet(AnswerSet answerSet, AnswerService answerService, Set<String> invisibleElements, MessageSource resources, Locale locale, String draftid, HttpServletRequest request, boolean skipDraftCreation, User user, FileService fileService) throws Exception
 	{
-		return validateAnswerSet(answerSet, answerService, invisibleElements, resources, locale, draftid,  request, skipDraftCreation, user, fileService, false);
-	}
-	
-	public static HashMap<Element, String> validateAnswerSet(AnswerSet answerSet, AnswerService answerService, Set<String> invisibleElements, MessageSource resources, Locale locale, String draftid, HttpServletRequest request, boolean skipDraftCreation, User user, FileService fileService, boolean forpdf) throws Exception
-	{
 		HashMap<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
 		HashMap<Element, String> result = new HashMap<>();
 		
@@ -1157,7 +1152,7 @@ public class SurveyHelper {
 		
 		if (currentElement == null)
 		{
-			gallery = new GalleryQuestion(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
+			gallery = new GalleryQuestion(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
 		} else {
 			gallery = (GalleryQuestion)currentElement;
 		}
@@ -1348,7 +1343,7 @@ public class SurveyHelper {
     	
 		if (currentElement == null)
 		{
-			download = new Download(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
+			download = new Download(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
 		} else {
 			download = (Download)currentElement;
 		}
@@ -1438,7 +1433,7 @@ public class SurveyHelper {
     	
 		if (currentElement == null)
 		{
-			confirmation = new Confirmation(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
+			confirmation = new Confirmation(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
 		} else {
 			confirmation = (Confirmation)currentElement;
 		}
@@ -1545,7 +1540,7 @@ public class SurveyHelper {
 		FreeTextQuestion freetext;
 		if (currentElement == null)
 		{
-			freetext = new FreeTextQuestion(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
+			freetext = new FreeTextQuestion(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
 		} else {
 			freetext = (FreeTextQuestion)currentElement;
 		}      
@@ -1686,7 +1681,7 @@ public class SurveyHelper {
 		RegExQuestion regex;
 		if (currentElement == null)
 		{
-			regex = new RegExQuestion(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
+			regex = new RegExQuestion(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
 		} else {
 			regex = (RegExQuestion)currentElement;
 		}      
@@ -1803,7 +1798,7 @@ public class SurveyHelper {
     	String newValues = "";
 		if (currentElement == null)
 		{
-			email = new EmailQuestion(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
+			email = new EmailQuestion(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));           	
 		} else {
 			email = (EmailQuestion)currentElement;
 		}      
@@ -1880,7 +1875,7 @@ public class SurveyHelper {
     	String newValues = "";
 		if (currentElement == null)
 		{
-			number = new NumberQuestion(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));          	
+			number = new NumberQuestion(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));          	
 		} else {
 			number = (NumberQuestion)currentElement;
 		}    
@@ -2125,7 +2120,7 @@ public class SurveyHelper {
 		
 		if (currentElement == null)
 		{
-			rating = new RatingQuestion(survey, getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));          	
+			rating = new RatingQuestion(getString(parameterMap, "text", id, servletContext), getString(parameterMap, "shortname", id, servletContext), getString(parameterMap, "uid", id, servletContext));          	
 		} else {
 			rating = (RatingQuestion)currentElement;
 			

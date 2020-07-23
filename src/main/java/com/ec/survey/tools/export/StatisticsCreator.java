@@ -109,7 +109,7 @@ public class StatisticsCreator implements Runnable {
 									
 				for (Element questionElement : matrix.getQuestions()) {
 					for (Element answerElement : matrix.getAnswers()) {
-						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix, numberOfAnswersMap);
+						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix);
 					}
 					
 					int answered = numberOfAnswersMap.get(questionElement.getId());
@@ -126,7 +126,7 @@ public class StatisticsCreator implements Runnable {
 				for (Element questionElement : rating.getQuestions()) {					
 					for (int i = 1; i <= rating.getNumIcons(); i++)
 					{
-						addStatistics4RatingQuestion(survey, i, questionElement, statistics, numberOfAnswersMapRatingQuestion, numberOfAnswersMap);
+						addStatistics4RatingQuestion(survey, i, questionElement, statistics, numberOfAnswersMapRatingQuestion);
 					}
 					
 					int answered = numberOfAnswersMap.get(questionElement.getId());
@@ -249,7 +249,7 @@ public class StatisticsCreator implements Runnable {
 				for (Element questionElement : rating.getQuestions()) {					
 					for (int i = 1; i <= rating.getNumIcons(); i++)
 					{
-						addStatistics4RatingQuestion(survey, i, questionElement, statistics, numberOfAnswersMapRatingQuestion, numberOfAnswersMap);
+						addStatistics4RatingQuestion(survey, i, questionElement, statistics, numberOfAnswersMapRatingQuestion);
 					}
 					
 					int answered = numberOfAnswersMap.get(questionElement.getId());
@@ -265,18 +265,18 @@ public class StatisticsCreator implements Runnable {
 				
 				for (Element answerElement : matrix.getAnswers()) {
 					for (Element questionElement : matrix.getQuestions()) {
-						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix, numberOfAnswersMap);
+						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix);
 					}
 					for (Element questionElement : matrix.getMissingQuestions()) {
-						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix, numberOfAnswersMap);
+						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix);
 					}
 				}
 				for (Element answerElement : matrix.getMissingAnswers()) {
 					for (Element questionElement : matrix.getQuestions()) {
-						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix, numberOfAnswersMap);
+						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix);
 					}
 					for (Element questionElement : matrix.getMissingQuestions()) {
-						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix, numberOfAnswersMap);
+						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix);
 					}
 				}
 				
@@ -640,7 +640,7 @@ public class StatisticsCreator implements Runnable {
 		return resultSets.size();		
 	}
 	
-	private int addStatistics4Matrix(Survey survey, Element answer, Element question, Statistics statistics, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix, Map<Integer, Integer> numberOfAnswersMap)
+	private int addStatistics4Matrix(Survey survey, Element answer, Element question, Statistics statistics, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix)
 	{			
 		String id = question.getId().toString() + answer.getId().toString();
 		int numberOfAnswers = 0;
@@ -660,7 +660,7 @@ public class StatisticsCreator implements Runnable {
 		return numberOfAnswers;
 	}
 
-	private int addStatistics4RatingQuestion(Survey survey, Integer answer, Element question, Statistics statistics, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion, Map<Integer, Integer> numberOfAnswersMap)
+	private int addStatistics4RatingQuestion(Survey survey, Integer answer, Element question, Statistics statistics, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion)
 	{			
 		String id = question.getId().toString() + answer.toString();
 		int numberOfAnswers = 0;
