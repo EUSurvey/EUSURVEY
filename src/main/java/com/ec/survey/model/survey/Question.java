@@ -22,6 +22,7 @@ import java.util.Objects;
 public abstract class Question extends Element {
 	
 	public static final String FEEDBACK = "FEEDBACK";
+	public static final String FIRSTCELL = "FIRSTCELL";
 	
 	private static final long serialVersionUID = 1L;
 	private String help;

@@ -3941,6 +3941,12 @@ public class SurveyHelper {
 				if (element instanceof MatrixOrTable)
 				{
 					MatrixOrTable matrix = (MatrixOrTable)element;
+										
+					if (translationsByKey.get(matrix.getUniqueId() + MatrixOrTable.FIRSTCELL) != null)
+					{
+						matrix.setFirstCellText(translationsByKey.get(matrix.getUniqueId() + MatrixOrTable.FIRSTCELL).getLabel());
+					}
+					
 					for (Element child: matrix.getChildElements())
 					{
 						if (translationsByKey.get(child.getUniqueId()) != null)

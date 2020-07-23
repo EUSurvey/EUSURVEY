@@ -170,6 +170,11 @@ public class TranslationsHelper {
 				{
 					Matrix matrix = (Matrix)element;
 					
+					if (matrix.getFirstCellText() != null && matrix.getFirstCellText().length() > 0)
+					{
+						translations.getTranslations().add(new Translation(matrix.getUniqueId() + MatrixOrTable.FIRSTCELL, matrix.getFirstCellText() != null ? matrix.getFirstCellText() : "", survey.getLanguage().getCode(), survey.getId(), translations));					
+					}
+					
 					for (Element child : matrix.getChildElements())
 					{
 						if (child instanceof Text && child.getUniqueId() != null)
@@ -182,6 +187,12 @@ public class TranslationsHelper {
 				if (element instanceof Table)
 				{
 					Table table = (Table)element;
+					
+					if (table.getFirstCellText() != null && table.getFirstCellText().length() > 0)
+					{
+						translations.getTranslations().add(new Translation(table.getUniqueId() + MatrixOrTable.FIRSTCELL, table.getFirstCellText() != null ? table.getFirstCellText() : "", survey.getLanguage().getCode(), survey.getId(), translations));					
+					}
+					
 					for (Element child : table.getChildElements())
 					{
 						if (child instanceof Text)
@@ -295,6 +306,8 @@ public class TranslationsHelper {
 			{
 				Matrix matrix = (Matrix)element;
 				
+				result.add(new KeyValue(element.getUniqueId()+ MatrixOrTable.FIRSTCELL, "FC"));
+				
 				for (Element child : matrix.getChildElements())
 				{
 					if (child instanceof Text)
@@ -307,6 +320,9 @@ public class TranslationsHelper {
 			if (element instanceof Table)
 			{
 				Table table = (Table)element;
+				
+				result.add(new KeyValue(element.getUniqueId()+ MatrixOrTable.FIRSTCELL, "FC"));
+				
 				for (Element child : table.getChildElements())
 				{
 					if (child instanceof Text)
@@ -415,6 +431,8 @@ public class TranslationsHelper {
 			{
 				Matrix matrix = (Matrix)element;
 				
+				result.add(new KeyValue(element.getUniqueId() + MatrixOrTable.FIRSTCELL, resources.getMessage("label.MatrixText", null, "Matrix Text", locale)));
+				
 				for (Element child : matrix.getChildElements())
 				{
 					if (child instanceof Text)
@@ -427,6 +445,9 @@ public class TranslationsHelper {
 			if (element instanceof Table)
 			{
 				Table table = (Table)element;
+				
+				result.add(new KeyValue(element.getUniqueId() + MatrixOrTable.FIRSTCELL, resources.getMessage("label.MatrixText", null, "Matrix Text", locale)));
+				
 				for (Element child : table.getChildElements())
 				{
 					if (child instanceof Text)
@@ -599,6 +620,11 @@ public class TranslationsHelper {
 			
 			MatrixOrTable matrix = (MatrixOrTable)element;
 			org.w3c.dom.Element childrenElement = doc.createElement("Children");
+			
+			label =  getLabel(matrix, MatrixOrTable.FIRSTCELL, translationByKey);
+			org.w3c.dom.Element firstCellNode = doc.createElement("FirstCell");				
+			firstCellNode.appendChild(doc.createCDATASection(label));									
+			elementNode.appendChild(firstCellNode);			
 			
 			for (Element child: matrix.getChildElements())
 			{
@@ -992,6 +1018,16 @@ public class TranslationsHelper {
 				if (element instanceof MatrixOrTable)
 				{
 					MatrixOrTable matrix = (MatrixOrTable)element;
+					
+					label = getLabel(matrix, MatrixOrTable.FIRSTCELL, translationsByKey);
+					if (notNullOrEmpty(label))
+					{
+						row = sheet.createRow(rowIndex++);
+						addTextCell(row, 0, element.getUniqueId());		
+						addTextCell(row, 1, descriptions.get(element.getUniqueId() + MatrixOrTable.FIRSTCELL));
+						addTextCell(row, 2, label);
+					}
+										
 					for (Element child: matrix.getChildElements())
 					{
 						if (!(child instanceof EmptyElement))
@@ -1311,6 +1347,18 @@ public class TranslationsHelper {
 				if (element instanceof MatrixOrTable)
 				{
 					MatrixOrTable matrix = (MatrixOrTable)element;
+					
+					label = getLabel(matrix, MatrixOrTable.FIRSTCELL, translationsByKey);
+					if (notNullOrEmpty(label))
+					{
+						cell = sheet.getCellByPosition(0, rowIndex);
+						cell.setStringValue(element.getUniqueId());
+						cell = sheet.getCellByPosition(1, rowIndex);
+						cell.setStringValue(descriptions.get(element.getUniqueId() + MatrixOrTable.FIRSTCELL));	
+						cell = sheet.getCellByPosition(2, rowIndex++);
+						cell.setStringValue(label);
+					}				
+					
 					for (Element child: matrix.getChildElements())
 					{
 						if (!(child instanceof EmptyElement))
@@ -1385,6 +1433,7 @@ public class TranslationsHelper {
 		typeSuffixByShortType.put("CT", "CONFIRMATIONTEXT");
 		typeSuffixByShortType.put("CL", "CONFIRMATIONLABEL");
 		typeSuffixByShortType.put("F", "FEEDBACK");
+		typeSuffixByShortType.put("FC", "FIRSTCELL");
 		
 		return typeSuffixByShortType;
 	}
@@ -1521,6 +1570,13 @@ public class TranslationsHelper {
 				
 				if (type.contains("Matrix") || type.contains("Table"))
 				{
+					
+					if (element.getElementsByTagName("FirstCell").getLength() > 0) {
+						label = getText(element.getElementsByTagName("FirstCell"), "FirstCell");
+						
+						result.getTranslations().add(new Translation(key + MatrixOrTable.FIRSTCELL, label, lang, surveyId, result));
+					}
+					
 					org.w3c.dom.Element children = (org.w3c.dom.Element) element.getElementsByTagName("Children").item(0);
 					
 					for (int j = 0; j < children.getElementsByTagName("Element").getLength(); j++)
@@ -1939,6 +1995,9 @@ public class TranslationsHelper {
 			{
 				Matrix matrix = (Matrix)element;
 				
+				if (translationsByKey.containsKey(element.getId().toString() + MatrixOrTable.FIRSTCELL) && notNullOrEmpty(translationsByKey.get(element.getId().toString() + MatrixOrTable.FIRSTCELL).getLabel())) matrix.setFirstCellText(translationsByKey.get(element.getId().toString() + MatrixOrTable.FIRSTCELL).getLabel());
+				if (translationsByKey.containsKey(element.getUniqueId().toString() + MatrixOrTable.FIRSTCELL) && notNullOrEmpty(translationsByKey.get(element.getUniqueId().toString() + MatrixOrTable.FIRSTCELL).getLabel())) matrix.setFirstCellText(translationsByKey.get(element.getUniqueId().toString() + MatrixOrTable.FIRSTCELL).getLabel());
+								
 				for (Element child : matrix.getChildElements())
 				{
 					if (child instanceof Text)
@@ -1952,6 +2011,10 @@ public class TranslationsHelper {
 			if (element instanceof Table)
 			{
 				Table table = (Table)element;
+				
+				if (translationsByKey.containsKey(element.getId().toString() + MatrixOrTable.FIRSTCELL) && notNullOrEmpty(translationsByKey.get(element.getId().toString() + MatrixOrTable.FIRSTCELL).getLabel())) table.setFirstCellText(translationsByKey.get(element.getId().toString() + MatrixOrTable.FIRSTCELL).getLabel());
+				if (translationsByKey.containsKey(element.getUniqueId().toString() + MatrixOrTable.FIRSTCELL) && notNullOrEmpty(translationsByKey.get(element.getUniqueId().toString() + MatrixOrTable.FIRSTCELL).getLabel())) table.setFirstCellText(translationsByKey.get(element.getUniqueId().toString() + MatrixOrTable.FIRSTCELL).getLabel());
+				
 				for (Element child : table.getChildElements())
 				{
 					if (child instanceof Text)
@@ -2023,9 +2086,17 @@ public class TranslationsHelper {
 	  					}
 					}
 					
-	  				if (element instanceof Matrix)
+	  				if (element instanceof MatrixOrTable)
 	  				{
-	  					Matrix matrix = (Matrix)element;
+	  					MatrixOrTable matrix = (MatrixOrTable)element;
+	  					
+	  					if (matrix.getFirstCellText() != null && matrix.getFirstCellText().length() > 0)
+	  					{
+	  						if (getLabel(matrix, MatrixOrTable.FIRSTCELL,translationMap).length() == 0)
+							{
+								return false;
+							}
+	  					}
 						
 						for (Element child : matrix.getChildElements())
 						{
