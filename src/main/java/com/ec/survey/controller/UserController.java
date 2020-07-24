@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Paging;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.SqlPagination;
@@ -78,7 +79,7 @@ public class UserController extends BasicController {
 		
 		if (userId == null || userId.length() == 0 || emailText == null || emailText.length() == 0)
 		{
-			throw new Exception("invalid input data");
+			throw new MessageException("invalid input data");
 		}
 			
 		administrationService.banUser(userId, emailText);
@@ -91,7 +92,7 @@ public class UserController extends BasicController {
 		
 		if (userId == null || userId.length() == 0)
 		{
-			throw new Exception("invalid input data");
+			throw new MessageException("invalid input data");
 		}
 			
 		administrationService.unbanUser(userId);

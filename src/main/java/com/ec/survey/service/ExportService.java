@@ -574,7 +574,7 @@ public class ExportService extends BasicService {
 				try {				
 				
 					//get mapping of old ids to source ids
-					HashMap<Integer, String> oldUniqueIdsById = SurveyService.getUniqueIdsById(oldSurvey);
+					Map<Integer, String> oldUniqueIdsById = SurveyService.getUniqueIdsById(oldSurvey);
 					
 					//get mapping of source ids to new ids
 					HashMap<String, Integer> newIdsByUniqueId = new HashMap<>();

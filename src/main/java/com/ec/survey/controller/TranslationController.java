@@ -2,6 +2,7 @@ package com.ec.survey.controller;
 
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.NoFormLoadedException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.Map.Entry;
 
 @Controller
 @RequestMapping("/{shortname}/management")
@@ -163,7 +165,7 @@ public class TranslationController extends BasicController {
 					if (translation.getLabel() != null && translation.getLabel().contains(search)) {
 						translation.setLabel(translation.getLabel().replace(search, replace));
 						if (translation.getLabel().length() == 0) {
-							throw new Exception("found empty label after replace!");
+							throw new MessageException("found empty label after replace!");
 						}
 					}
 				}
@@ -306,9 +308,9 @@ public class TranslationController extends BasicController {
 						boolean completeFound = false;
 
 						if (translations.getComplete()) {
-							for (Integer transId : allTranslationsById.keySet()) {
-								if (!transId.equals(translations.getId())
-										&& allTranslationsById.get(transId).getComplete()) {
+							for (Entry<Integer, Translations> entry : allTranslationsById.entrySet()) {
+								if (!entry.getKey().equals(translations.getId())
+										&& entry.getValue().getComplete()) {
 									completeFound = true;
 									break;
 								}
@@ -505,12 +507,10 @@ public class TranslationController extends BasicController {
 			}
 
 			if (!translations.getActive().equals(active)) {
-				if (active) {
-					if (!TranslationsHelper.isComplete(translations, form.getSurvey())) {
-						return resources.getMessage("error.MissingTranslation", null,
-								"The translation is not complete. Please add missing labels before activating.",
-								locale);
-					}
+				if (active && !TranslationsHelper.isComplete(translations, form.getSurvey())) {
+					return resources.getMessage("error.MissingTranslation", null,
+							"The translation is not complete. Please add missing labels before activating.",
+							locale);
 				}
 
 				translations.setActive(active);
@@ -518,7 +518,6 @@ public class TranslationController extends BasicController {
 
 				surveyService.makeDirty(translations.getSurveyId());
 			}
-
 		}
 
 		return "";
@@ -576,10 +575,8 @@ public class TranslationController extends BasicController {
 					if (values.length > 0)
 						label = values[0];
 
-					if (key.equalsIgnoreCase(Survey.CONFIRMATIONLINK) || key.equalsIgnoreCase(Survey.ESCAPELINK)) {
-						if (label.contains("<a")) {
-							label = label.replaceAll("\\<.*?>", "");
-						}
+					if ((key.equalsIgnoreCase(Survey.CONFIRMATIONLINK) || key.equalsIgnoreCase(Survey.ESCAPELINK)) && label.contains("<a")) {
+						label = label.replaceAll("\\<.*?>", "");
 					}
 
 					Translations ts = translationsById.get(translationsId);
@@ -923,6 +920,7 @@ public class TranslationController extends BasicController {
 					inputStream.close();
 				}
 			} catch (IOException ignored) {
+				//ignore
 			}
 		}
 

@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Activity;
 import com.ec.survey.model.Message;
 import com.ec.survey.model.Setting;
@@ -59,10 +60,9 @@ public class SystemController extends BasicController {
 				// participants only
 				if (!runnermode)
 					return null;
-			} else if (message.getType() == 2) {
+			} else if (message.getType() == 2 && !runnermode && user == null) {
 				// participants and form managers
-				if (!runnermode && user == null)
-					return null;
+				return null;
 			}
 
 			request.getSession().setAttribute("lastmessageversion", String.valueOf(message.getVersion()));
@@ -112,11 +112,9 @@ public class SystemController extends BasicController {
 			// form managers only
 			if (user == null)
 				message = new Message();
-		} else if (message.getType() == 1) {
+		} else if (message.getType() == 1 && !runnermode) {
 			// participants only
-			if (!runnermode) {
-				message = new Message();
-			}
+			message = new Message();
 		}
 
 		ModelAndView m = new ModelAndView("administration/messages", "message", message);
@@ -165,29 +163,29 @@ public class SystemController extends BasicController {
 	}
 
 	@PostMapping(value = "/configureBanUsers")
-	public ModelAndView configureBanUsers(HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView configureBanUsers(HttpServletRequest request, Locale locale) throws MessageException {
 		String banUserMessageText = request.getParameter("banUserMessageText");
 
 		if (banUserMessageText == null || banUserMessageText.length() == 0) {
-			throw new Exception("banUserMessageText must not be empty");
+			throw new MessageException("banUserMessageText must not be empty");
 		}
 
 		String unbanUserMessageText = request.getParameter("unbanUserMessageText");
 
 		if (unbanUserMessageText == null || unbanUserMessageText.length() == 0) {
-			throw new Exception("unbanUserMessageText must not be empty");
+			throw new MessageException("unbanUserMessageText must not be empty");
 		}
 
 		String bannedUserMessageText = request.getParameter("bannedUserMessageText");
 
 		if (bannedUserMessageText == null || bannedUserMessageText.length() == 0) {
-			throw new Exception("bannedUserMessageText must not be empty");
+			throw new MessageException("bannedUserMessageText must not be empty");
 		}
 
 		String unbannedUserMessageText = request.getParameter("unbannedUserMessageText");
 
 		if (unbannedUserMessageText == null || unbannedUserMessageText.length() == 0) {
-			throw new Exception("unbannedUserMessageText must not be empty");
+			throw new MessageException("unbannedUserMessageText must not be empty");
 		}
 
 		String[] emails = request.getParameterValues("messageEmail");
@@ -196,7 +194,7 @@ public class SystemController extends BasicController {
 			for (String email : emails) {
 				if (email.trim().length() > 0) {
 					if (!MailService.isValidEmailAddress(email)) {
-						throw new Exception("invalid email address:" + email);
+						throw new MessageException("invalid email address:" + email);
 					}
 
 					if (recipients.length() > 0) {
@@ -217,50 +215,50 @@ public class SystemController extends BasicController {
 	}
 
 	@PostMapping(value = "/configureTrustIndicator")
-	public ModelAndView configureTrustIndicator(HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView configureTrustIndicator(HttpServletRequest request, Locale locale) throws MessageException {
 		String trustIndicatorCreatorInternal = request.getParameter("trustIndicatorCreatorInternal");
 
 		if (trustIndicatorCreatorInternal == null || trustIndicatorCreatorInternal.length() == 0) {
-			throw new Exception("trustIndicatorCreatorInternal must not be empty");
+			throw new MessageException("trustIndicatorCreatorInternal must not be empty");
 		}
 		if (!Tools.isInteger(trustIndicatorCreatorInternal)) {
-			throw new Exception("trustIndicatorCreatorInternal must be an integer");
+			throw new MessageException("trustIndicatorCreatorInternal must be an integer");
 		}
 
 		String trustIndicatorMinimumPassMark = request.getParameter("trustIndicatorMinimumPassMark");
 
 		if (trustIndicatorMinimumPassMark == null || trustIndicatorMinimumPassMark.length() == 0) {
-			throw new Exception("trustIndicatorMinimumPassMark must not be empty");
+			throw new MessageException("trustIndicatorMinimumPassMark must not be empty");
 		}
 		if (!Tools.isInteger(trustIndicatorMinimumPassMark)) {
-			throw new Exception("trustIndicatorMinimumPassMark must be an integer");
+			throw new MessageException("trustIndicatorMinimumPassMark must be an integer");
 		}
 
 		String trustIndicatorPastSurveys = request.getParameter("trustIndicatorPastSurveys");
 
 		if (trustIndicatorPastSurveys == null || trustIndicatorPastSurveys.length() == 0) {
-			throw new Exception("trustIndicatorPastSurveys must not be empty");
+			throw new MessageException("trustIndicatorPastSurveys must not be empty");
 		}
 		if (!Tools.isInteger(trustIndicatorPastSurveys)) {
-			throw new Exception("trustIndicatorPastSurveys must be an integer");
+			throw new MessageException("trustIndicatorPastSurveys must be an integer");
 		}
 
 		String trustIndicatorPrivilegedUser = request.getParameter("trustIndicatorPrivilegedUser");
 
 		if (trustIndicatorPrivilegedUser == null || trustIndicatorPrivilegedUser.length() == 0) {
-			throw new Exception("trustIndicatorPrivilegedUser must not be empty");
+			throw new MessageException("trustIndicatorPrivilegedUser must not be empty");
 		}
 		if (!Tools.isInteger(trustIndicatorPrivilegedUser)) {
-			throw new Exception("trustIndicatorPrivilegedUser must be an integer");
+			throw new MessageException("trustIndicatorPrivilegedUser must be an integer");
 		}
 
 		String trustIndicatorNbContributions = request.getParameter("trustIndicatorNbContributions");
 
 		if (trustIndicatorNbContributions == null || trustIndicatorNbContributions.length() == 0) {
-			throw new Exception("trustIndicatorNbContributions must not be empty");
+			throw new MessageException("trustIndicatorNbContributions must not be empty");
 		}
 		if (!Tools.isInteger(trustIndicatorNbContributions)) {
-			throw new Exception("trustIndicatorNbContributions must be an integer");
+			throw new MessageException("trustIndicatorNbContributions must be an integer");
 		}
 
 		settingsService.update(Setting.TrustValueCreatorInternal, trustIndicatorCreatorInternal);

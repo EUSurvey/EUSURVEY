@@ -26,7 +26,7 @@ public class SystemService extends BasicService {
 		
 		Message result = new Message();
 		
-		if (messages.size() > 0)
+		if (!messages.isEmpty())
 		{
 			result =  messages.get(0);
 						
@@ -54,9 +54,9 @@ public class SystemService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Message> messages = q.list();
 		
-		Message result = new Message();
+		Message result;
 		
-		if (messages.size() > 0)
+		if (!messages.isEmpty())
 		{
 			result =  messages.get(0);
 						
@@ -85,9 +85,9 @@ public class SystemService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Message> messages = q.list();
 		
-		Message result = new Message();
+		Message result;
 		
-		if (messages.size() > 0)
+		if (!messages.isEmpty())
 		{
 			result =  messages.get(0);
 						

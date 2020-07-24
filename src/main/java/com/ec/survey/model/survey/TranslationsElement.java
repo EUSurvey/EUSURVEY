@@ -23,8 +23,7 @@ public class TranslationsElement extends Element {
 	
 	public TranslationsElement copy(String fileDir)
 	{
-		TranslationsElement copy = new TranslationsElement();
-		return copy;
+		return new TranslationsElement();
 	}
 
 	@Override

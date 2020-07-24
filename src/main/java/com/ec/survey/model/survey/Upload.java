@@ -26,7 +26,7 @@ public class Upload extends Question {
 
 	public Upload(){}
 	
-	public Upload(Survey survey, String text, String shortname, String uid) {
+	public Upload(String text, String shortname, String uid) {
 		setTitle(text);
 		setUniqueId(uid);
 		setShortname(shortname);

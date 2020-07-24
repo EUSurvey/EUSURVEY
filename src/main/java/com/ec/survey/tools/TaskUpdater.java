@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +48,7 @@ public class TaskUpdater implements Runnable, BeanFactoryAware {
 	
 	protected BeanFactory context;
 	@Override
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+	public void setBeanFactory(BeanFactory beanFactory) {
 		context = beanFactory;		
 	}
 	

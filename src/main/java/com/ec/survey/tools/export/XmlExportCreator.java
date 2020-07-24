@@ -337,8 +337,7 @@ public class XmlExportCreator extends ExportCreator {
 		if (export.getAddMeta()) {
 			ECASUserLoginsByEmail = administrationService.getECASUserLoginsByEmail();
 		}
-		;
-
+		
 		ResultFilter origFilter = answerService.initialize(export.getResultFilter());
 		ResultFilter filterWithMeta = export == null ? null : origFilter.copy();
 
@@ -346,10 +345,9 @@ public class XmlExportCreator extends ExportCreator {
 			filterWithMeta.getVisibleQuestions().clear();
 			filterWithMeta.getVisibleQuestions().addAll(filterWithMeta.getExportedQuestions());
 
-			if (filterWithMeta.getVisibleQuestions().size() == 0) {
+			if (filterWithMeta.getVisibleQuestions().isEmpty()) {
 				// initially add all questions
 				for (Element question : form.getSurvey().getQuestionsAndSections()) {
-					// filter.getVisibleQuestions().add(question.getId().toString());
 					filterWithMeta.getVisibleQuestions().add(question.getId().toString());
 				}
 
@@ -713,7 +711,7 @@ public class XmlExportCreator extends ExportCreator {
 								List<Answer> answers = answerSet.getAnswers(childQuestion.getId(),
 										childQuestion.getUniqueId());
 
-								if (answers.size() > 0) {
+								if (!answers.isEmpty()) {
 									writer.writeStartElement("Answer");
 									writer.writeAttribute("qid", childQuestion.getUniqueId());
 									writer.writeCharacters(answers.get(0).getValue());
@@ -779,7 +777,7 @@ public class XmlExportCreator extends ExportCreator {
 												try {
 
 													if (answer.contains("|")) {
-														answer = answer.substring(0, answer.indexOf("|"));
+														answer = answer.substring(0, answer.indexOf('|'));
 													}
 
 													file = fileService.get(answer);

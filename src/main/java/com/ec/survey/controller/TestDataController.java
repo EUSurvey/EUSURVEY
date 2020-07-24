@@ -1,5 +1,6 @@
 package com.ec.survey.controller;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.tools.TestDataGenerator;
 
@@ -202,11 +204,11 @@ public class TestDataController extends BasicController {
 	}
 
 	@RequestMapping(value = "/debug", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public ModelAndView debug(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView debug(HttpServletRequest request, HttpServletResponse response) throws MessageException, IOException {
 		response.getOutputStream().flush();
 		response.getOutputStream().close();
 
-		throw new Exception("Error");
+		throw new MessageException("Error");
 	}
 
 	private ExecutorService pool;

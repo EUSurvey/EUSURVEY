@@ -394,7 +394,7 @@ public class StatisticsCreator implements Runnable {
 		
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();		
-		HashMap<Integer, String> uniqueIdsById = SurveyService.getUniqueIdsById(survey);
+		Map<Integer, String> uniqueIdsById = SurveyService.getUniqueIdsById(survey);
 		
 		String where =  answerService.getSql(null, survey.getId(), filter, values, true);
 		
