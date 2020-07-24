@@ -1,6 +1,7 @@
 package com.ec.survey.service;
 
 import com.ec.survey.exception.InvalidURLException;
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
@@ -19,6 +20,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.owasp.esapi.errors.IntrusionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ import javax.xml.parsers.DocumentBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -55,7 +58,7 @@ public class SurveyService extends BasicService {
 
 	@Resource(name = "ldapService")
 	protected LdapService ldapService;
-	
+
 	@Resource(name = "ldapDBService")
 	protected LdapDBService ldapDBService;
 
@@ -66,7 +69,7 @@ public class SurveyService extends BasicService {
 		SQLQuery query = session.createSQLQuery(sql);
 		query.setString("uid", uid);
 		List<?> res = (List<?>) query.list();
-		if (res.size() > 0)
+		if (!res.isEmpty())
 			return ConversionTools.getValue(res.get(0));
 		return 0;
 	}
@@ -76,7 +79,8 @@ public class SurveyService extends BasicService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Object[]> loadSurveysfromDatabase(String sql, HashMap<String, Object> parameters, SqlPagination sqlPagination) throws Exception {
+	private List<Object[]> loadSurveysfromDatabase(String sql, HashMap<String, Object> parameters,
+			SqlPagination sqlPagination) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		SQLQuery query = session.createSQLQuery(sql);
 		sqlQueryService.setParameters(query, parameters);
@@ -87,18 +91,18 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<Survey> getSurveys(SurveyFilter filter, SqlPagination sqlPagination) throws Exception {
 		StringBuilder stringBuilder = new StringBuilder(512);
-		stringBuilder.append("SELECT s.SURVEY_ID"); // 0 
+		stringBuilder.append("SELECT s.SURVEY_ID"); // 0
 		stringBuilder.append(" ,s.SURVEY_UID");// 1
 		stringBuilder.append(" ,s.SURVEYNAME");// 2
 		stringBuilder.append(" ,s.TITLE");// 3
 		stringBuilder.append(" ,s.SURVEY_CREATED");// 4
 		stringBuilder.append(" ,s.SURVEY_END_DATE");// 5
-		stringBuilder.append(" ,s.SURVEY_START_DATE");//6
+		stringBuilder.append(" ,s.SURVEY_START_DATE");// 6
 		stringBuilder.append(" ,s.ISPUBLISHED");// 7
 		stringBuilder.append(" ,s.LANGUAGE");
 		if (!this.isReportingDatabaseEnabled()) {
 			stringBuilder.append(" ,npa.PUBLISHEDANSWERS as replies");
-		} 
+		}
 		stringBuilder.append(" ,s.ACTIVE");
 		stringBuilder.append(" ,s.OWNER");
 		stringBuilder.append(" ,s.CONTACT");
@@ -112,7 +116,8 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(" ,s.HASPENDINGCHANGES");
 		stringBuilder.append(" from SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
-		stringBuilder.append(" where s.ISDRAFT = 1 and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)");
+		stringBuilder.append(
+				" where s.ISDRAFT = 1 and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)");
 
 		String sql = stringBuilder.toString();
 		HashMap<String, Object> parameters = new HashMap<>();
@@ -123,24 +128,23 @@ public class SurveyService extends BasicService {
 		for (Object[] row : loadSurveysfromDatabase(sql, parameters, sqlPagination)) {
 			Survey survey = new Survey();
 			int rowIndex = 0;
-			survey.setId(ConversionTools.getValue(row[rowIndex++])); //0
+			survey.setId(ConversionTools.getValue(row[rowIndex++])); // 0
 
-			survey.setUniqueId((String) row[rowIndex++]);//1
-			survey.setShortname((String) row[rowIndex++]);//2
-			survey.setTitle((String) row[rowIndex++]);//3
-			survey.setCreated((Date) row[rowIndex++]);//4
-			survey.setEnd((Date) row[rowIndex++]);//5
-			survey.setStart((Date) row[rowIndex++]);//6
-			survey.setIsPublished((Boolean) row[rowIndex++]);//7
-			survey.setLanguage(languageMap.get(ConversionTools.getValue(row[rowIndex++])));//8
+			survey.setUniqueId((String) row[rowIndex++]);// 1
+			survey.setShortname((String) row[rowIndex++]);// 2
+			survey.setTitle((String) row[rowIndex++]);// 3
+			survey.setCreated((Date) row[rowIndex++]);// 4
+			survey.setEnd((Date) row[rowIndex++]);// 5
+			survey.setStart((Date) row[rowIndex++]);// 6
+			survey.setIsPublished((Boolean) row[rowIndex++]);// 7
+			survey.setLanguage(languageMap.get(ConversionTools.getValue(row[rowIndex++])));// 8
 
 			if (this.isReportingDatabaseEnabled()) {
-				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(
-					false, survey.getUniqueId()));
+				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(false, survey.getUniqueId()));
 			} else {
-				survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[rowIndex++]));//9 
+				survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[rowIndex++]));// 9
 			}
-			
+
 			survey.setIsActive((Boolean) row[rowIndex++]);// 9 or 10
 
 			User user = new User();
@@ -158,14 +162,15 @@ public class SurveyService extends BasicService {
 			survey.setIsQuiz((Boolean) row[rowIndex++]);// 17 or 18
 			survey.setIsOPC((Boolean) row[rowIndex++]);// 18 or 19
 
-			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 19 or 20
+			survey.setHasPendingChanges((Boolean) row[rowIndex]);// 19 or 20
 
 			surveys.add(survey);
 		}
 		return surveys;
 	}
 
-	public List<Survey> getSurveysIncludingTranslationLanguages(SurveyFilter filter, SqlPagination sqlPagination, boolean addInvitedAndDrafts, boolean addNumberOfReports) throws Exception {
+	public List<Survey> getSurveysIncludingTranslationLanguages(SurveyFilter filter, SqlPagination sqlPagination,
+			boolean addInvitedAndDrafts, boolean addNumberOfReports) throws Exception {
 		List<Survey> surveys = getSurveys(filter, sqlPagination);
 		for (Survey survey : surveys) {
 			survey.setTranslations(translationService.getTranslationLanguagesForSurvey(survey.getId(), false));
@@ -178,58 +183,60 @@ public class SurveyService extends BasicService {
 				survey.setNumberOfInvitations(-1);
 				survey.setNumberOfDrafts(-1);
 			}
-			
-			if (addNumberOfReports)
-			{
+
+			if (addNumberOfReports) {
 				survey.setNumberOfReports(surveyService.getAbuseReportsForSurvey(survey.getUniqueId()));
 			}
 		}
 		return surveys;
 	}
-	
+
 	@Transactional
-	public List<Integer> getSurveysWithPrivilegesForUser(int userid)
-	{
+	public List<Integer> getSurveysWithPrivilegesForUser(int userid) {
 		Session session = sessionFactory.getCurrentSession();
 		SQLQuery query = session.createSQLQuery("Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :id");
-		
+
 		@SuppressWarnings("rawtypes")
 		List surveys = query.setInteger("id", userid).list();
 		List<Integer> result = new ArrayList<>();
-		
-		for (Object o: surveys)
-		{
+
+		for (Object o : surveys) {
 			result.add(ConversionTools.getValue(o));
 		}
-		
+
 		return result;
 	}
 
 	private List<String> getCompletedTranslations(Survey survey) {
-		return translationService.getTranslationsForSurvey(survey.getId(), false).stream().filter(Translations::getActive).map(t -> t.getLanguage().getCode()).collect(toList());
+		return translationService.getTranslationsForSurvey(survey.getId(), false).stream()
+				.filter(Translations::getActive).map(t -> t.getLanguage().getCode()).collect(toList());
 	}
 
-	public List<Survey> getSurveysIncludingPublicationDates(SurveyFilter filter, SqlPagination sqlPagination) throws Exception {
+	public List<Survey> getSurveysIncludingPublicationDates(SurveyFilter filter, SqlPagination sqlPagination)
+			throws Exception {
 		StringBuilder stringBuilder = new StringBuilder(1024);
-		stringBuilder.append("SELECT s.SURVEY_ID");		//0
-		stringBuilder.append(", s.SURVEY_UID");			//1 
-		stringBuilder.append(", s.SURVEYNAME");			//2
-		stringBuilder.append(", s.TITLE");				//3
-		stringBuilder.append(", s.OWNER");				//4
-		stringBuilder.append(", (SELECT USER_LOGIN FROM USERS u WHERE u.USER_ID = s.OWNER) as ownerlogin");		//5
-		stringBuilder.append(", (SELECT USER_DISPLAYNAME FROM USERS u WHERE u.USER_ID = s.OWNER) as ownername");//6
-		stringBuilder.append(", s.SURVEYSECURITY");//8
-		stringBuilder.append(", s.ACTIVE");//9
-		stringBuilder.append(", s.FROZEN");//10
-		stringBuilder.append(", (SELECT MIN(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as firstPublished");//11
-		stringBuilder.append(", (SELECT MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as published");//12
+		stringBuilder.append("SELECT s.SURVEY_ID"); // 0
+		stringBuilder.append(", s.SURVEY_UID"); // 1
+		stringBuilder.append(", s.SURVEYNAME"); // 2
+		stringBuilder.append(", s.TITLE"); // 3
+		stringBuilder.append(", s.OWNER"); // 4
+		stringBuilder.append(", (SELECT USER_LOGIN FROM USERS u WHERE u.USER_ID = s.OWNER) as ownerlogin"); // 5
+		stringBuilder.append(", (SELECT USER_DISPLAYNAME FROM USERS u WHERE u.USER_ID = s.OWNER) as ownername");// 6
+		stringBuilder.append(", s.SURVEYSECURITY");// 8
+		stringBuilder.append(", s.ACTIVE");// 9
+		stringBuilder.append(", s.FROZEN");// 10
+		stringBuilder.append(
+				", (SELECT MIN(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as firstPublished");// 11
+		stringBuilder.append(
+				", (SELECT MAX(SURVEY_CREATED) FROM SURVEYS WHERE ISDRAFT = 0 AND SURVEY_UID = s.SURVEY_UID) as published");// 12
 		stringBuilder.append(" ,s.ISPUBLISHED");
 		if (!this.isReportingDatabaseEnabled()) {
-			stringBuilder.append(", npa.PUBLISHEDANSWERS as replies");//7
+			stringBuilder.append(", npa.PUBLISHEDANSWERS as replies");// 7
 		}
-		stringBuilder.append(", s.SURVEY_DELETED");//13
-		stringBuilder.append(", s.SURVEY_CREATED");//14
-		stringBuilder.append(", (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported");//15
+		stringBuilder.append(", s.SURVEY_DELETED");// 13
+		stringBuilder.append(", s.SURVEY_CREATED");// 14
+		stringBuilder.append(
+				", (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported");// 15
 		stringBuilder.append(" from SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
 		stringBuilder.append(" where ");
@@ -267,24 +274,23 @@ public class SurveyService extends BasicService {
 			survey.setSecurity((String) row[columnNum++]);
 			survey.setIsActive((Boolean) row[columnNum++]);
 			survey.setIsFrozen((Boolean) row[columnNum++]);
-			
+
 			survey.setFirstPublished((Date) row[columnNum++]);
 			survey.setPublished((Date) row[columnNum++]);
 
 			survey.setIsPublished((Boolean) row[columnNum++]);
 
 			if (this.isReportingDatabaseEnabled()) {
-				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(
-					false, survey.getUniqueId()));
+				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(false, survey.getUniqueId()));
 			} else {
 				survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[columnNum++]));
 			}
-			
+
 			survey.setDeleted((Date) row[columnNum++]);
 			survey.setCreated((Date) row[columnNum++]);
-			
+
 			survey.setNumberOfReports(ConversionTools.getValue(row[columnNum]));
-			
+
 			surveys.add(survey);
 		}
 
@@ -324,22 +330,21 @@ public class SurveyService extends BasicService {
 			sql.append(" AND s.SURVEYSECURITY like :access");
 			oQueryParameters.put("access", filter.getAccess());
 		}
-		
+
 		if (filter.getType() != null && filter.getType().length() > 0 && !filter.getType().equalsIgnoreCase("all")) {
-			
-			switch (filter.getType())
-			{
-				case "quiz":
-					sql.append(" AND s.QUIZ = 1");
-					break;
-				case "standard":
-					sql.append(" AND s.QUIZ = 0 AND s.OPC = 0");
-					break;
-				case "brp":
-					sql.append(" AND s.OPC = 1");
-					break;
+
+			switch (filter.getType()) {
+			case "quiz":
+				sql.append(" AND s.QUIZ = 1");
+				break;
+			case "standard":
+				sql.append(" AND s.QUIZ = 0 AND s.OPC = 0");
+				break;
+			case "brp":
+				sql.append(" AND s.OPC = 1");
+				break;
 			}
-		}	
+		}
 
 		if (filter.getStatus() != null) {
 			boolean unpublished = filter.getStatus().contains("Unpublished");
@@ -363,7 +368,7 @@ public class SurveyService extends BasicService {
 			sql.append(" AND s.SURVEY_CREATED <= :generatedTo");
 			oQueryParameters.put("generatedTo", Tools.getFollowingDay(filter.getGeneratedTo()));
 		}
-		
+
 		if (filter.getDeletedFrom() != null) {
 			sql.append(" AND s.SURVEY_DELETED >= :deletedFrom");
 			oQueryParameters.put("deletedFrom", filter.getDeletedFrom());
@@ -372,7 +377,7 @@ public class SurveyService extends BasicService {
 		if (filter.getDeletedTo() != null) {
 			sql.append(" AND s.SURVEY_DELETED <= :deletedTo");
 			oQueryParameters.put("deletedTo", Tools.getFollowingDay(filter.getDeletedTo()));
-		}		
+		}
 
 		if (filter.getStartFrom() != null) {
 			sql.append(" AND s.SURVEY_START_DATE >= :startFrom");
@@ -395,8 +400,10 @@ public class SurveyService extends BasicService {
 		}
 
 		if (filter.getOwner() != null && filter.getOwner().length() > 0 && filter.getUser() != null
-				&& (filter.getUser().getLogin().equals(filter.getOwner()) || filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2)) {
-			sql.append(" AND (s.OWNER in (SELECT USER_ID FROM USERS WHERE USER_LOGIN = :ownername OR USER_DISPLAYNAME = :ownername))");
+				&& (filter.getUser().getLogin().equals(filter.getOwner())
+						|| filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2)) {
+			sql.append(
+					" AND (s.OWNER in (SELECT USER_ID FROM USERS WHERE USER_LOGIN = :ownername OR USER_DISPLAYNAME = :ownername))");
 			oQueryParameters.put("ownername", filter.getOwner());
 		} else if (filter.getUser() == null) {
 			sql.append(
@@ -413,7 +420,8 @@ public class SurveyService extends BasicService {
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 					oQueryParameters.put("login", filter.getUser().getLogin());
 				} else {
-					sql.append(" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
+					sql.append(
+							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 				}
 			} else if (filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
@@ -441,7 +449,8 @@ public class SurveyService extends BasicService {
 						sql.append(" OR");
 					}
 
-					sql.append(" ( s.SURVEYNAME COLLATE UTF8_GENERAL_CI like :").append(w).append(" OR s.TITLE COLLATE UTF8_GENERAL_CI like :").append(w).append(")");
+					sql.append(" ( s.SURVEYNAME COLLATE UTF8_GENERAL_CI like :").append(w)
+							.append(" OR s.TITLE COLLATE UTF8_GENERAL_CI like :").append(w).append(")");
 					oQueryParameters.put(w, "%" + word.trim() + "%");
 				}
 			}
@@ -459,8 +468,9 @@ public class SurveyService extends BasicService {
 						sql.append(" OR");
 					}
 
-					sql.append(" ( s.LANGUAGE = :").append(l).append(" or s.SURVEY_ID in (Select distinct t.SURVEY_ID FROM TRANSLATIONS t WHERE t.SURVEY_ACTIVE = 1 AND t.LANGUAGE = :").append(l)
-							.append("))");
+					sql.append(" ( s.LANGUAGE = :").append(l).append(
+							" or s.SURVEY_ID in (Select distinct t.SURVEY_ID FROM TRANSLATIONS t WHERE t.SURVEY_ACTIVE = 1 AND t.LANGUAGE = :")
+							.append(l).append("))");
 					oQueryParameters.put(l, lang.trim());
 				}
 			}
@@ -470,14 +480,14 @@ public class SurveyService extends BasicService {
 		if (filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("REPORTED")) {
 			sql.append(" AND (s.SURVEY_UID IN (SELECT DISTINCT SURABUSE_SURVEY FROM SURABUSE))");
 		}
-		
-		if (filter.getMinReported() != null && filter.getMinReported() > 0)
-		{
+
+		if (filter.getMinReported() != null && filter.getMinReported() > 0) {
 			sql.append(" AND (abu.abuses >= :abuses)");
 			oQueryParameters.put("abuses", filter.getMinReported());
 		}
-		
-		if ((filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("FROZEN")) || filter.getFrozen() != null && filter.getFrozen()) {
+
+		if ((filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("FROZEN"))
+				|| filter.getFrozen() != null && filter.getFrozen()) {
 			sql.append(" AND (s.FROZEN = 1)");
 		}
 
@@ -485,13 +495,14 @@ public class SurveyService extends BasicService {
 			sql.append(" AND (npa.PUBLISHEDANSWERS > :replies)");
 			oQueryParameters.put("replies", filter.getMinContributions());
 		}
-		
+
 		if (loadpublicationdates) {
 			sql.append(" GROUP BY s.SURVEY_UID");
 
 			boolean having = false;
 			if (filter.getPublishedFrom() != null) {
-				sql.append(" HAVING STR_TO_DATE(SUBSTRING(GROUP_CONCAT(s.survey_created),-19), '%Y-%m-%d') >= :publishedFrom");
+				sql.append(
+						" HAVING STR_TO_DATE(SUBSTRING(GROUP_CONCAT(s.survey_created),-19), '%Y-%m-%d') >= :publishedFrom");
 				having = true;
 				oQueryParameters.put("publishedFrom", filter.getPublishedFrom());
 			}
@@ -514,7 +525,8 @@ public class SurveyService extends BasicService {
 					sql.append(" HAVING ");
 					having = true;
 				}
-				sql.append("STR_TO_DATE(SUBSTRING(GROUP_CONCAT(s.survey_created),21, 19), '%Y-%m-%d') >= :firstPublishedFrom");
+				sql.append(
+						"STR_TO_DATE(SUBSTRING(GROUP_CONCAT(s.survey_created),21, 19), '%Y-%m-%d') >= :firstPublishedFrom");
 				oQueryParameters.put("firstPublishedFrom", filter.getFirstPublishedFrom());
 			}
 
@@ -523,9 +535,9 @@ public class SurveyService extends BasicService {
 					sql.append(" AND ");
 				} else {
 					sql.append(" HAVING ");
-					having = true;
 				}
-				sql.append("STR_TO_DATE(SUBSTRING(GROUP_CONCAT(s.survey_created),21, 19), '%Y-%m-%d') <= :firstPublishedTo");
+				sql.append(
+						"STR_TO_DATE(SUBSTRING(GROUP_CONCAT(s.survey_created),21, 19), '%Y-%m-%d') <= :firstPublishedTo");
 				oQueryParameters.put("firstPublishedTo", filter.getFirstPublishedTo());
 			}
 		}
@@ -612,14 +624,12 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly, boolean synchronizeSurvey, boolean setSurvey) {
+	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly, boolean synchronizeSurvey,
+			boolean setSurvey) {
 		Session session = sessionFactory.getCurrentSession();
 		Survey survey = (Survey) session.get(Survey.class, id);
 
-		if (survey != null && survey.getIsDraft()) {
-			List<String> translations = translationService.getTranslationLanguagesForSurvey(survey.getId());
-			survey.setTranslations(translations);
-		} else if (survey != null && loadTranslations) {
+		if (survey != null && (survey.getIsDraft() || loadTranslations)) {
 			List<String> translations = translationService.getTranslationLanguagesForSurvey(survey.getId());
 			survey.setTranslations(translations);
 		}
@@ -639,14 +649,16 @@ public class SurveyService extends BasicService {
 	@Transactional
 	public Survey getSurveyByUniqueIdToWrite(String uid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("SELECT id FROM Survey s WHERE s.uniqueId = :uid AND s.isDraft = :draft ORDER BY s.id DESC").setString("uid", uid);
+		Query query = session
+				.createQuery(
+						"SELECT id FROM Survey s WHERE s.uniqueId = :uid AND s.isDraft = :draft ORDER BY s.id DESC")
+				.setString("uid", uid);
 		query.setBoolean("draft", true);
 
 		@SuppressWarnings("unchecked")
 		List<Survey> list = query.setReadOnly(true).setMaxResults(1).list();
-		if (list.size() > 0) {
-			Survey survey = getSurvey(ConversionTools.getValue(list.get(0)));
-			return survey;
+		if (!list.isEmpty()) {
+			return getSurvey(ConversionTools.getValue(list.get(0)));
 		}
 		return null;
 	}
@@ -654,12 +666,15 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public Survey getSurveyByUniqueId(String uid, boolean loadTranslations, boolean draft) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("SELECT id FROM Survey s WHERE s.uniqueId = :uid AND s.isDraft = :draft ORDER BY s.id DESC").setString("uid", uid);
+		Query query = session
+				.createQuery(
+						"SELECT id FROM Survey s WHERE s.uniqueId = :uid AND s.isDraft = :draft ORDER BY s.id DESC")
+				.setString("uid", uid);
 		query.setBoolean("draft", draft);
 
 		@SuppressWarnings("unchecked")
 		List<Survey> list = query.setReadOnly(true).setMaxResults(1).list();
-		if (list.size() > 0) {
+		if (!list.isEmpty()) {
 			Survey survey = getSurvey(ConversionTools.getValue(list.get(0)));
 
 			if (survey != null && loadTranslations) {
@@ -757,8 +772,9 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public Survey getSurveyByShortname(String shortname, boolean isDraft, User u, HttpServletRequest request, boolean initElements, boolean checkNotArchived, boolean checkNotDeleted,
-			boolean synchronize) throws InvalidURLException {
+	public Survey getSurveyByShortname(String shortname, boolean isDraft, User u, HttpServletRequest request,
+			boolean initElements, boolean checkNotArchived, boolean checkNotDeleted, boolean synchronize)
+			throws InvalidURLException {
 
 		if (shortname.equals("noform")) {
 			SessionInfo info = (SessionInfo) request.getSession().getAttribute("sessioninfo");
@@ -772,7 +788,8 @@ public class SurveyService extends BasicService {
 			throw new InvalidURLException();
 		}
 
-		Survey survey = surveyService.getSurvey(shortname, isDraft, false, false, false, null, true, checkNotDeleted, true, synchronize);
+		Survey survey = surveyService.getSurvey(shortname, isDraft, false, false, false, null, true, checkNotDeleted,
+				true, synchronize);
 
 		if (survey != null) {
 			List<String> translations = translationService.getTranslationLanguagesForSurvey(survey.getId());
@@ -819,22 +836,26 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public Survey getSurveyWithMissingElements(String uidorshortname, boolean isDraft, boolean checkActive, boolean readReplies, boolean useEagerLoading, String language, boolean readonly,
-			boolean synchronize) {
-		Survey survey = getSurvey(uidorshortname, isDraft, checkActive, readReplies, useEagerLoading, language, readonly, false, false, synchronize);
+	public Survey getSurveyWithMissingElements(String uidorshortname, boolean isDraft, boolean checkActive,
+			boolean readReplies, boolean useEagerLoading, String language, boolean readonly, boolean synchronize) {
+		Survey survey = getSurvey(uidorshortname, isDraft, checkActive, readReplies, useEagerLoading, language,
+				readonly, false, false, synchronize);
 		if (survey != null)
 			CheckAndRecreateMissingElements(survey, null);
 		return survey;
 	}
 
 	@Transactional
-	public Survey getSurvey(String uidorshortname, boolean isDraft, boolean checkActive, boolean readReplies, boolean useEagerLoading, String language, boolean readonly, boolean synchronize) {
-		return getSurvey(uidorshortname, isDraft, checkActive, readReplies, useEagerLoading, language, readonly, false, false, synchronize);
+	public Survey getSurvey(String uidorshortname, boolean isDraft, boolean checkActive, boolean readReplies,
+			boolean useEagerLoading, String language, boolean readonly, boolean synchronize) {
+		return getSurvey(uidorshortname, isDraft, checkActive, readReplies, useEagerLoading, language, readonly, false,
+				false, synchronize);
 	}
 
 	@Transactional
-	public Survey getSurvey(String uidorshortname, boolean isDraft, boolean checkActive, boolean readReplies, boolean useEagerLoading, String language, boolean readonly, boolean checkNotDeleted,
-			boolean shortnamefirst, boolean synchronize) {
+	public Survey getSurvey(String uidorshortname, boolean isDraft, boolean checkActive, boolean readReplies,
+			boolean useEagerLoading, String language, boolean readonly, boolean checkNotDeleted, boolean shortnamefirst,
+			boolean synchronize) {
 		Session session = sessionFactory.getCurrentSession();
 		String sql;
 
@@ -848,15 +869,14 @@ public class SurveyService extends BasicService {
 			sql += " AND (s.isDeleted is null OR s.isDeleted = false)";
 		}
 
-		Query query = session.createQuery(sql).setString("uid", uidorshortname).setBoolean("draft", isDraft).setReadOnly(true);
+		Query query = session.createQuery(sql).setString("uid", uidorshortname).setBoolean("draft", isDraft)
+				.setReadOnly(true);
 
 		int id = ConversionTools.getValue(query.uniqueResult());
 
 		if (id > 0) {
 
 			Survey survey = (Survey) session.get(Survey.class, id);
-			// logger.info("Refreshing survey " + id);
-			// session.refresh(survey);
 
 			if (useEagerLoading) {
 				initializeSurvey(survey);
@@ -866,18 +886,20 @@ public class SurveyService extends BasicService {
 			Hibernate.initialize(survey.getOwner().getRoles());
 
 			if (readReplies) {
-				survey.setNumberOfAnswerSetsPublished(answerService.getNumberOfAnswerSetsPublished(uidorshortname, survey.getUniqueId()));
+				survey.setNumberOfAnswerSetsPublished(
+						answerService.getNumberOfAnswerSetsPublished(uidorshortname, survey.getUniqueId()));
 			}
 
-			if (survey.getIsActive() && survey.getAutomaticPublishing() && survey.getEnd() != null && survey.getEnd().before(new Date())) {
+			if (survey.getIsActive() && survey.getAutomaticPublishing() && survey.getEnd() != null
+					&& survey.getEnd().before(new Date())) {
 				survey.setIsActive(false);
 				session.update(survey);
-			} else if (!survey.getIsActive() && survey.getAutomaticPublishing() && survey.getStart() != null && survey.getStart().before(new Date())) {
-				if (survey.getEnd() == null || survey.getEnd().after(new Date())) {
-					survey.setIsActive(true);
-					survey.setIsPublished(true);
-					session.update(survey);
-				}
+			} else if (!survey.getIsActive() && survey.getAutomaticPublishing() && survey.getStart() != null
+					&& survey.getStart().before(new Date())
+					&& (survey.getEnd() == null || survey.getEnd().after(new Date()))) {
+				survey.setIsActive(true);
+				survey.setIsPublished(true);
+				session.update(survey);
 			}
 
 			if (checkActive && !isDraft) {
@@ -952,94 +974,89 @@ public class SurveyService extends BasicService {
 			}
 		}
 	}
-	
-	@Transactional
-	private void computeTrustScore(Survey survey) throws Exception
-	{
+
+	private void computeTrustScore(Survey survey) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		int score = 0;
-		
-		//skip computing if setting does not exist
+
+		// skip computing if setting does not exist
 		String check = settingsService.get(Setting.TrustValueCreatorInternal);
-		if (check == null) return;
-		
+		if (check == null)
+			return;
+
 		int trustValueCreatorInternal = Integer.parseInt(settingsService.get(Setting.TrustValueCreatorInternal));
 		int trustValuePastSurveys = Integer.parseInt(settingsService.get(Setting.TrustValuePastSurveys));
 		int trustValuePrivilegedUser = Integer.parseInt(settingsService.get(Setting.TrustValuePrivilegedUser));
 		int trustValueNbContributions = Integer.parseInt(settingsService.get(Setting.TrustValueNbContributions));
-		
-		//Rule 0: if the Form Manager is internal
-		if (!survey.getOwner().isExternal())
-		{
+
+		// Rule 0: if the Form Manager is internal
+		if (!survey.getOwner().isExternal()) {
 			score += trustValueCreatorInternal;
 		}
-		
-		//Rule 1: if the Form Manager has published in the past 3 or more surveys:
-		//-	having all reached 10 contributions or more ; and
-		//-	including at least one survey having been published for one month or more
-		
+
+		// Rule 1: if the Form Manager has published in the past 3 or more surveys:
+		// - having all reached 10 contributions or more ; and
+		// - including at least one survey having been published for one month or more
+
 		SurveyFilter filter = new SurveyFilter();
 		filter.setUser(survey.getOwner());
 		filter.setOwner(survey.getOwner().getLogin());
 		SqlPagination pagination = new SqlPagination(1, 1000);
 		List<Survey> surveys = getSurveysIncludingPublicationDates(filter, pagination);
-		
+
 		int countSurveysWith10Contributions = 0;
 		boolean found = false;
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date());
 		c.add(Calendar.MONTH, -1);
 		Date lastmonth = c.getTime();
-		for (Survey candidate: surveys) {
-			int candidateanswers = answerService.getNumberOfAnswerSetsPublished(candidate.getShortname(), candidate.getUniqueId());
-			if (candidateanswers >= 10)
-			{
+		for (Survey candidate : surveys) {
+			int candidateanswers = answerService.getNumberOfAnswerSetsPublished(candidate.getShortname(),
+					candidate.getUniqueId());
+			if (candidateanswers >= 10) {
 				countSurveysWith10Contributions++;
 			}
-			
-			if (candidate.getFirstPublished() != null && candidate.getFirstPublished().before(lastmonth))
-			{
+
+			if (candidate.getFirstPublished() != null && candidate.getFirstPublished().before(lastmonth)) {
 				found = true;
 			}
-			
+
 			if (found && countSurveysWith10Contributions >= 3) {
 				break;
 			}
 		}
 		if (found && countSurveysWith10Contributions >= 3) {
 			score += trustValuePastSurveys;
-		}		
-		
-		//Rule 2: if a privileged user is internal
+		}
+
+		// Rule 2: if a privileged user is internal
 		List<Access> accesses = this.getAccesses(survey.getId());
 		for (Access access : accesses) {
-			if (access.getUser() != null && !access.getUser().isExternal())
-			{
+			if (access.getUser() != null && !access.getUser().isExternal()) {
 				score += trustValuePrivilegedUser;
 				break;
 			}
 		}
-		
+
 		int answers = answerService.getNumberOfAnswerSetsPublished(survey.getShortname(), survey.getUniqueId());
-		
-		//Rule 3: when the survey is reaching 10 contributions
-		if (answers >= 10)
-		{
+
+		// Rule 3: when the survey is reaching 10 contributions
+		if (answers >= 10) {
 			score += trustValueNbContributions;
 		}
-		
-		//Rule 4: when the survey is reaching 100 contributions
-		if (answers >= 100)
-		{
+
+		// Rule 4: when the survey is reaching 100 contributions
+		if (answers >= 100) {
 			score += trustValueNbContributions;
 		}
-		
+
 		survey.setTrustScore(score);
 		session.saveOrUpdate(survey);
 	}
 
 	@Transactional
-	public Survey publish(Survey survey, int pnumberOfAnswerSets, int pnumberOfAnswerSetsPublished, boolean deactivateAutoPublishing, int userId, boolean resetSourceIds, boolean resetSurvey)
+	public Survey publish(Survey survey, int pnumberOfAnswerSets, int pnumberOfAnswerSetsPublished,
+			boolean deactivateAutoPublishing, int userId, boolean resetSourceIds, boolean resetSurvey)
 			throws Exception {
 		// this means to create a copy of the survey and save it as non-draft survey
 		Session session = sessionFactory.getCurrentSession();
@@ -1050,13 +1067,14 @@ public class SurveyService extends BasicService {
 			survey = (Survey) session.merge(survey);
 		}
 
-		Survey published = survey.copy(this, survey.getOwner(), fileDir, true, pnumberOfAnswerSets, pnumberOfAnswerSetsPublished, true, resetSourceIds, true, null, null);
+		Survey published = survey.copy(this, survey.getOwner(), fileDir, true, pnumberOfAnswerSets,
+				pnumberOfAnswerSetsPublished, true, resetSourceIds, true, null, null);
 		published.setIsDraft(false); // this means it is not a draft
 		if (deactivateAutoPublishing) {
 			published.setAutomaticPublishing(false);
 		}
 		published = update(published, false, true, false, userId);
-		
+
 		computeTrustScore(survey);
 
 		// copy translations
@@ -1097,9 +1115,14 @@ public class SurveyService extends BasicService {
 					tc.setLanguage(t.getLanguage());
 					tc.setSurveyId(published.getId());
 					tc.setTranslations(tcopy);
-					if (t.getKey().equalsIgnoreCase(Survey.TITLE) || t.getKey().equalsIgnoreCase(Survey.INTRODUCTION) || t.getKey().equalsIgnoreCase(Survey.ESCAPEPAGE)
-							|| t.getKey().equalsIgnoreCase(Survey.ESCAPELINK) || t.getKey().equalsIgnoreCase(Survey.CONFIRMATIONPAGE) || t.getKey().equalsIgnoreCase(Survey.CONFIRMATIONLINK)
-							|| t.getKey().equalsIgnoreCase(Survey.HELP) || t.getKey().equalsIgnoreCase(Survey.QUIZWELCOMEMESSAGE) || t.getKey().equalsIgnoreCase(Survey.QUIZRESULTSMESSAGE)) {
+					if (t.getKey().equalsIgnoreCase(Survey.TITLE) || t.getKey().equalsIgnoreCase(Survey.INTRODUCTION)
+							|| t.getKey().equalsIgnoreCase(Survey.ESCAPEPAGE)
+							|| t.getKey().equalsIgnoreCase(Survey.ESCAPELINK)
+							|| t.getKey().equalsIgnoreCase(Survey.CONFIRMATIONPAGE)
+							|| t.getKey().equalsIgnoreCase(Survey.CONFIRMATIONLINK)
+							|| t.getKey().equalsIgnoreCase(Survey.HELP)
+							|| t.getKey().equalsIgnoreCase(Survey.QUIZWELCOMEMESSAGE)
+							|| t.getKey().equalsIgnoreCase(Survey.QUIZRESULTSMESSAGE)) {
 						tc.setKey(t.getKey());
 						tcopy.getTranslations().add(tc);
 					} else {
@@ -1228,7 +1251,7 @@ public class SurveyService extends BasicService {
 
 		survey.setIsPublished(true);
 		survey.setIsActive(true);
-		
+
 		computeTrustScore(ob);
 
 		return published;
@@ -1245,14 +1268,15 @@ public class SurveyService extends BasicService {
 		Survey publishedSurvey = this.getSurvey(shortname, false, false, false, false, null, true, false);
 
 		// hibernate: transactional change of local variable
-		Survey newDraft = publish(publishedSurvey, survey.getNumberOfAnswerSets(), survey.getNumberOfAnswerSetsPublished(), false, userId, true, false);
+		Survey newDraft = publish(publishedSurvey, survey.getNumberOfAnswerSets(),
+				survey.getNumberOfAnswerSetsPublished(), false, userId, true, false);
 		newDraft.setCreated(survey.getCreated());
 		newDraft.setIsDraft(true);
 		newDraft.setIsPublished(true);
 		newDraft.setIsActive(active);
 		session.update(newDraft);
 
-		AdaptIDs(survey, newDraft, true, survey.getUniqueIDsByID());
+		AdaptIDs(survey, newDraft, true);
 
 		// delete original
 		deleteSurveyData(survey.getId(), false, false, survey.getUniqueId(), false);
@@ -1301,7 +1325,7 @@ public class SurveyService extends BasicService {
 		session.update(ob);
 	}
 
-	public static HashMap<Integer, String> getUniqueIdsById(Survey publishedSurvey) {
+	public static Map<Integer, String> getUniqueIdsById(Survey publishedSurvey) {
 		HashMap<Integer, String> oldUniqueIdsById = new HashMap<>();
 		for (Element element : publishedSurvey.getElementsRecursive(true)) {
 			oldUniqueIdsById.put(element.getId(), element.getUniqueId());
@@ -1309,7 +1333,7 @@ public class SurveyService extends BasicService {
 		return oldUniqueIdsById;
 	}
 
-	private HashMap<Integer, Integer> getSourceIdsById(Survey publishedSurvey) {
+	private Map<Integer, Integer> getSourceIdsById(Survey publishedSurvey) {
 		HashMap<Integer, Integer> oldSourceIdsById = new HashMap<>();
 		for (Element element : publishedSurvey.getElementsRecursive()) {
 			oldSourceIdsById.put(element.getId(), element.getSourceId());
@@ -1317,7 +1341,7 @@ public class SurveyService extends BasicService {
 		return oldSourceIdsById;
 	}
 
-	private void AdaptIDs(Survey oldSurvey, Survey newSurvey, boolean isDraft, Map<String, String> draftUniqueIDsByID) throws Exception {
+	private void AdaptIDs(Survey oldSurvey, Survey newSurvey, boolean isDraft) {
 		Session session = sessionFactory.getCurrentSession();
 
 		if (isDraft) {
@@ -1341,7 +1365,7 @@ public class SurveyService extends BasicService {
 		}
 	}
 
-	public void updateAnswerUids(int id, String uid, boolean pa) throws Exception {
+	public void updateAnswerUids(int id, String uid, boolean pa) throws InterruptedException {
 		boolean saved = false;
 
 		int counter = 1;
@@ -1364,7 +1388,6 @@ public class SurveyService extends BasicService {
 		}
 	}
 
-	@Transactional
 	private void internalUpdateAnswerUids(int id, String uid, boolean pa) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query;
@@ -1372,14 +1395,16 @@ public class SurveyService extends BasicService {
 		if (pa) {
 			query = session.createSQLQuery("UPDATE ANSWERS SET PA_UID = :uid WHERE PA_UID IS NULL AND PA_ID = :id");
 		} else {
-			query = session.createSQLQuery("UPDATE ANSWERS SET QUESTION_UID = :uid WHERE QUESTION_UID IS NULL AND QUESTION_ID = :id");
+			query = session.createSQLQuery(
+					"UPDATE ANSWERS SET QUESTION_UID = :uid WHERE QUESTION_UID IS NULL AND QUESTION_ID = :id");
 		}
 		query.setInteger("id", id).setString("uid", uid);
 		query.executeUpdate();
 	}
 
 	@Transactional
-	public int applyChanges(Survey survey, boolean deactivateAutoPublishing, int userId, boolean resetSurey) throws Exception {
+	public int applyChanges(Survey survey, boolean deactivateAutoPublishing, int userId, boolean resetSurey)
+			throws Exception {
 		if (resetSurey) {
 			Session session = sessionFactory.getCurrentSession();
 			session.evict(survey);
@@ -1388,8 +1413,6 @@ public class SurveyService extends BasicService {
 		}
 
 		boolean sendListFormMail = survey.isListFormValidated();
-
-		Map<String, String> uniqueIDSByID = survey.getUniqueIDsByID();
 
 		Survey publishedSurvey = getSurvey(survey.getShortname(), false, false, false, true, null, true, false);
 
@@ -1405,13 +1428,13 @@ public class SurveyService extends BasicService {
 		newPublishedSurvey.getPublication().setShowCharts(false);
 		newPublishedSurvey.getPublication().setShowStatistics(false);
 		newPublishedSurvey.getPublication().setShowContent(false);
-		AdaptIDs(publishedSurvey, newPublishedSurvey, false, uniqueIDSByID);
+		AdaptIDs(publishedSurvey, newPublishedSurvey, false);
 		survey.setHasPendingChanges(false);
 		survey.setListFormValidated(false);
 		survey.setPublicationRequestedDate(new Date());
 
 		computeTrustScore(survey);
-		
+
 		// copy result filters
 		List<ResultFilter> filters = sessionService.getAllResultFilter(publishedSurvey.getId());
 		if (filters != null) {
@@ -1424,7 +1447,7 @@ public class SurveyService extends BasicService {
 					if (filter.getDefaultQuestions() == null || !filter.getDefaultQuestions()) {
 						Map<String, String> uidsById = publishedSurvey.getUniqueIDsByID();
 						Map<String, String> idsByUid = newPublishedSurvey.getIDsByUniqueID();
-						Set<String> newids = new HashSet<String>();
+						Set<String> newids = new HashSet<>();
 						for (String sid : filter.getVisibleQuestions()) {
 							String uid = uidsById.get(sid);
 							if (uid != null) {
@@ -1436,7 +1459,7 @@ public class SurveyService extends BasicService {
 						}
 						newFilter.setVisibleQuestions(newids);
 
-						newids = new HashSet<String>();
+						newids = new HashSet<>();
 						for (String sid : filter.getExportedQuestions()) {
 							String uid = uidsById.get(sid);
 							if (uid != null) {
@@ -1451,7 +1474,8 @@ public class SurveyService extends BasicService {
 
 					newFilter.setSurveyId(newPublishedSurvey.getId());
 					if (filter.getUserId() != null) {
-						sessionService.internalSetLastResultFilter(newFilter, filter.getUserId(), newFilter.getSurveyId());
+						sessionService.internalSetLastResultFilter(newFilter, filter.getUserId(),
+								newFilter.getSurveyId());
 					}
 				}
 			}
@@ -1494,7 +1518,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-	public Survey editSave(Survey oldsurvey, HttpServletRequest request) throws Exception {
+	public Survey editSave(Survey oldsurvey, HttpServletRequest request) throws IntrusionException, InvalidXHTMLException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		Session session = sessionFactory.getCurrentSession();
 
 		Map<String, Integer> referencedFiles = oldsurvey.getReferencedFileUIDs(contextpath);
@@ -1532,7 +1556,8 @@ public class SurveyService extends BasicService {
 		oldsurvey = (Survey) session.merge(oldsurvey);
 		session.update(oldsurvey);
 
-		Survey survey = SurveyHelper.parseSurvey(request, this, true, fileService, servletContext, activityService.isEnabled(217), activityService.isEnabled(220), fileIDsByUID);
+		Survey survey = SurveyHelper.parseSurvey(request, this, true, fileService, servletContext,
+				activityService.isEnabled(217), activityService.isEnabled(220), fileIDsByUID);
 
 		Map<Element, Integer> pendingChanges = surveyService.getPendingChanges(survey);
 
@@ -1540,14 +1565,15 @@ public class SurveyService extends BasicService {
 
 		Map<String, Integer> referencedFilesNew = survey.getReferencedFileUIDs(contextpath);
 
-		for (String fileuid : referencedFiles.keySet()) {
-			if (!referencedFilesNew.containsKey(fileuid)) {
-				fileService.delete(referencedFiles.get(fileuid));
-				fileService.deleteIfNotReferenced(fileuid, survey.getUniqueId());
+		for (Entry<String, Integer> entry : referencedFiles.entrySet()) {
+			if (!referencedFilesNew.containsKey(entry.getKey())) {
+				fileService.delete(entry.getValue());
+				fileService.deleteIfNotReferenced(entry.getKey(), survey.getUniqueId());
 			}
 		}
 
-		activityService.log(survey.getActivitiesToLog(), sessionService.getCurrentUser(request).getId(), survey.getUniqueId());
+		activityService.log(survey.getActivitiesToLog(), sessionService.getCurrentUser(request).getId(),
+				survey.getUniqueId());
 
 		survey = getSurvey(survey.getId(), false, false);
 
@@ -1555,7 +1581,8 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-	public Survey update(Survey survey, boolean hasPendingChanges, boolean synchronizeTranslations, boolean mergeFirst, int userId) {
+	public Survey update(Survey survey, boolean hasPendingChanges, boolean synchronizeTranslations, boolean mergeFirst,
+			int userId) {
 		Session session = sessionFactory.getCurrentSession();
 		survey.setHasPendingChanges(hasPendingChanges);
 		survey.setUpdated(new Date());
@@ -1638,7 +1665,8 @@ public class SurveyService extends BasicService {
 		Map<String, String> oldInfo = null;
 		Translations translations = TranslationsHelper.getTranslations(survey, false);
 		if (translations != null) {
-			Translations originalTranslations = translationService.getTranslations(survey.getId(), survey.getLanguage().getCode());
+			Translations originalTranslations = translationService.getTranslations(survey.getId(),
+					survey.getLanguage().getCode());
 			if (originalTranslations != null) {
 				oldInfo = originalTranslations.getInfo();
 				Map<String, Translation> originalTranslationsMap = originalTranslations.getTranslationsByKey();
@@ -1646,7 +1674,8 @@ public class SurveyService extends BasicService {
 				boolean structureChanges = false;
 				for (Translation translation : translations.getTranslations()) {
 					if (!originalTranslationsMap.containsKey(translation.getKey())) {
-						if (!translation.getKey().endsWith("help") && !translation.getKey().endsWith("UNIT") && !translation.getKey().endsWith("TABTITLE")) {
+						if (!translation.getKey().endsWith("help") && !translation.getKey().endsWith("UNIT")
+								&& !translation.getKey().endsWith("TABTITLE")) {
 							structureChanges = true;
 							break;
 						}
@@ -1656,7 +1685,8 @@ public class SurveyService extends BasicService {
 				List<String> deletedElements = new ArrayList<>();
 				for (Translation translation : originalTranslations.getTranslations()) {
 					if (!newTranslationsMap.containsKey(translation.getKey())) {
-						if (!translation.getKey().endsWith("help") && !translation.getKey().endsWith("UNIT") && !translation.getKey().endsWith("TABTITLE")) {
+						if (!translation.getKey().endsWith("help") && !translation.getKey().endsWith("UNIT")
+								&& !translation.getKey().endsWith("TABTITLE")) {
 							if (!deletedElements.contains(translation.getKey())) {
 								deletedElements.add(translation.getKey());
 							}
@@ -1669,7 +1699,8 @@ public class SurveyService extends BasicService {
 				if (structureChanges) {
 					// invalidate all other translations
 					for (Translations invalidTranslations : allTranslations) {
-						if (invalidTranslations.getActive() && !invalidTranslations.getLanguage().getCode().equalsIgnoreCase(survey.getLanguage().getCode())) {
+						if (invalidTranslations.getActive() && !invalidTranslations.getLanguage().getCode()
+								.equalsIgnoreCase(survey.getLanguage().getCode())) {
 							invalidTranslations.setActive(false);
 							translationService.save(invalidTranslations);
 						}
@@ -1679,7 +1710,8 @@ public class SurveyService extends BasicService {
 				for (Translations existingTranslations : allTranslations) {
 					boolean changed = false;
 					for (String key : deletedElements) {
-						if (!existingTranslations.getLanguage().getCode().equalsIgnoreCase(survey.getLanguage().getCode())) {
+						if (!existingTranslations.getLanguage().getCode()
+								.equalsIgnoreCase(survey.getLanguage().getCode())) {
 							changed = changed || existingTranslations.removeTranslationByKey(key);
 						}
 					}
@@ -1693,11 +1725,13 @@ public class SurveyService extends BasicService {
 			translations.setComplete(TranslationsHelper.isComplete(translations, survey));
 			translationService.save(translations);
 
-			activityService.logTranslations(227, translations.getLanguage().getCode(), oldInfo, translations.getInfo(), userId, survey.getUniqueId());
+			activityService.logTranslations(227, translations.getLanguage().getCode(), oldInfo, translations.getInfo(),
+					userId, survey.getUniqueId());
 		}
 	}
 
-	private void deleteSurveyData(int id, boolean deleteAnswers, boolean deleteAccesses, String uid, boolean deleteLogs) {
+	private void deleteSurveyData(int id, boolean deleteAnswers, boolean deleteAccesses, String uid,
+			boolean deleteLogs) {
 		Session session = sessionFactory.getCurrentSession();
 
 		if (deleteAnswers) {
@@ -1706,14 +1740,16 @@ public class SurveyService extends BasicService {
 			@SuppressWarnings("unchecked")
 			List<String> fileuids = query0.setInteger("id", id).list();
 
-			Query query = session.createSQLQuery("DELETE d.* from DRAFTS d INNER JOIN ANSWERS_SET an ON d.answerSet_ANSWER_SET_ID = an.ANSWER_SET_ID where an.SURVEY_ID = :id");
+			Query query = session.createSQLQuery(
+					"DELETE d.* from DRAFTS d INNER JOIN ANSWERS_SET an ON d.answerSet_ANSWER_SET_ID = an.ANSWER_SET_ID where an.SURVEY_ID = :id");
 			query.setInteger("id", id).executeUpdate();
 
-			Query query1 = session
-					.createSQLQuery("DELETE f.* from ANSWERS_FILES f JOIN ANSWERS a ON f.ANSWERS_ANSWER_ID = a.ANSWER_ID JOIN ANSWERS_SET an ON a.AS_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
+			Query query1 = session.createSQLQuery(
+					"DELETE f.* from ANSWERS_FILES f JOIN ANSWERS a ON f.ANSWERS_ANSWER_ID = a.ANSWER_ID JOIN ANSWERS_SET an ON a.AS_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
 			query1.setInteger("id", id).executeUpdate();
 
-			Query query2 = session.createSQLQuery("DELETE a.* from ANSWERS a JOIN ANSWERS_SET an ON a.AS_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
+			Query query2 = session.createSQLQuery(
+					"DELETE a.* from ANSWERS a JOIN ANSWERS_SET an ON a.AS_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
 			query2.setInteger("id", id).executeUpdate();
 
 			Query query3 = session.createQuery("DELETE from AnswerSet a where a.surveyId = :id");
@@ -1726,7 +1762,8 @@ public class SurveyService extends BasicService {
 				}
 			}
 
-			Query query4 = session.createSQLQuery("SELECT v.VALIDCODE_CODE FROM VALIDCODE v WHERE v.VALIDCODE_SURVEYUID = :uid");
+			Query query4 = session
+					.createSQLQuery("SELECT v.VALIDCODE_CODE FROM VALIDCODE v WHERE v.VALIDCODE_SURVEYUID = :uid");
 			@SuppressWarnings("unchecked")
 			List<String> codes = query4.setString("uid", uid).list();
 			for (String code : codes) {
@@ -1774,7 +1811,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public void delete(int id, boolean deleteLogs, boolean deleteFileMappings) throws Exception {	
+	public void delete(int id, boolean deleteLogs, boolean deleteFileMappings) throws Exception {
 		deleteNoTransaction(id, deleteLogs, deleteFileMappings);
 	}
 
@@ -1790,11 +1827,10 @@ public class SurveyService extends BasicService {
 			throw new Exception("contextpath empty");
 		}
 
-		if (deleteFileMappings)
-		{
-			deleteFileMappings(surveyIDs);		
-		}		
-		
+		if (deleteFileMappings) {
+			deleteFileMappings(surveyIDs);
+		}
+
 		// delete draft
 		Map<String, Integer> referencedFiles = s.getReferencedFileUIDs(contextpath);
 		deleteSurveyData(id, true, true, s.getUniqueId(), deleteLogs);
@@ -1841,20 +1877,16 @@ public class SurveyService extends BasicService {
 
 	private void deleteFileMappings(List<Integer> surveyIDs) {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "delete from ELEMENTS_FILES" + 
-				" where ELEMENTS_FILES.ELEMENTS_ID" + 
-				" in (select ELEMENTS.ID from ELEMENTS" +
-				" where ELEMENTS.ID" +
-				" in (select SURVEYS_ELEMENTS.elements_ID" +
-				" from SURVEYS_ELEMENTS" +
-				" where SURVEYS_ELEMENTS.SURVEYS_SURVEY_ID = :id));";
-		
-		for (int id : surveyIDs)
-		{
+		String sql = "delete from ELEMENTS_FILES" + " where ELEMENTS_FILES.ELEMENTS_ID"
+				+ " in (select ELEMENTS.ID from ELEMENTS" + " where ELEMENTS.ID"
+				+ " in (select SURVEYS_ELEMENTS.elements_ID" + " from SURVEYS_ELEMENTS"
+				+ " where SURVEYS_ELEMENTS.SURVEYS_SURVEY_ID = :id));";
+
+		for (int id : surveyIDs) {
 			Query query = session.createSQLQuery(sql);
 			query.setInteger("id", id);
 			int deleted = query.executeUpdate();
-			logger.info("deleted " + deleted +  " file mappings for survey " + id);
+			logger.info("deleted " + deleted + " file mappings for survey " + id);
 		}
 	}
 
@@ -1878,7 +1910,7 @@ public class SurveyService extends BasicService {
 		@SuppressWarnings("rawtypes")
 		List result = query.list();
 
-		if (result.size() == 0) {
+		if (result.isEmpty()) {
 			logger.error("ivalid language code: " + code);
 			return null;
 		}
@@ -1913,7 +1945,6 @@ public class SurveyService extends BasicService {
 		return codes;
 	}
 
-	@Transactional
 	private Map<String, String> importDraftSurvey(Survey copy, ImportResult result, User user) {
 		if (copy.getSkin() != null) {
 			Skin skin = skinService.get(copy.getSkin().getId());
@@ -2005,9 +2036,9 @@ public class SurveyService extends BasicService {
 		return oldToNewUniqueIds;
 	}
 
-	@Transactional
-	private Survey importOldPublishedSurvey(Survey survey, User user, Map<String, String> oldToNewUniqueIds) throws Exception {
-		HashMap<Integer, Integer> oldSourceIdsById2 = getSourceIdsById(survey);
+	private Survey importOldPublishedSurvey(Survey survey, User user, Map<String, String> oldToNewUniqueIds)
+			throws Exception {
+		Map<Integer, Integer> oldSourceIdsById2 = getSourceIdsById(survey);
 
 		Survey copyOld = survey.copy(this, user, fileDir, false, -1, -1, false, false, true, null, null);
 		copyOld.setIsDraft(false);
@@ -2036,8 +2067,8 @@ public class SurveyService extends BasicService {
 		return copyOld;
 	}
 
-	@Transactional
-	private void importPublishedSurvey(Survey copyActive, ImportResult result, User user, Map<String, String> oldToNewUniqueIds, HashMap<Integer, Integer> oldSourceIdsById) {
+	private void importPublishedSurvey(Survey copyActive, ImportResult result, User user,
+			Map<String, String> oldToNewUniqueIds, Map<Integer, Integer> oldSourceIdsById) {
 		copyActive.setIsDraft(false);
 
 		if (copyActive.getSkin() != null) {
@@ -2060,7 +2091,7 @@ public class SurveyService extends BasicService {
 			}
 		}
 
-		if (result.getActiveAnswerSets() != null && result.getActiveAnswerSets().size() > 0) {
+		if (result.getActiveAnswerSets() != null && !result.getActiveAnswerSets().isEmpty()) {
 			copyActive.setIsActive(true);
 			copyActive.setIsPublished(true);
 		}
@@ -2069,89 +2100,84 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public void setBrpAccess(Survey survey)
-	{
-		if (survey.getIsOPC() && opcusers != null && opcusers.length() > 0)
-		{
+	public void setBrpAccess(Survey survey) {
+		if (survey.getIsOPC() && opcusers != null && opcusers.length() > 0) {
 			String[] users = opcusers.split(";");
 			boolean first = true;
 			for (String user : users) {
-				if (user.length() > 0)
-				{
+				if (user.length() > 0) {
 					User opcuser = administrationService.getUserForLogin(user);
-					if (opcuser != null)
-					{
+					if (opcuser != null) {
 						Access a = new Access();
 						a.setUser(opcuser);
 						a.setSurvey(survey);
 						a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
-						
-						if (first)
-						{
+
+						if (first) {
 							a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);
 							first = false;
 						} else {
 							a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 1);
 						}
-						
+
 						surveyService.saveAccess(a);
 					}
 				}
 			}
-		}	
-		
-		if (survey.getIsOPC() && opcdepartments != null && opcdepartments.length() > 0)
-		{
+		}
+
+		if (survey.getIsOPC() && opcdepartments != null && opcdepartments.length() > 0) {
 			String[] departments = opcdepartments.split(";");
 			for (String department : departments) {
-				if (department.length() > 0)
-				{
+				if (department.length() > 0) {
 					String[] opcdepartment = ldapDBService.getDepartments(null, department, false, false);
-					
-					if (opcdepartment != null && opcdepartment.length > 0)
-					{
+
+					if (opcdepartment != null && opcdepartment.length > 0) {
 						Access a = new Access();
 						a.setDepartment(department);
 						a.setSurvey(survey);
 						a.getLocalPrivileges().put(LocalPrivilege.AccessDraft, 2);
 						a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
-						a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);//						
-						
+						a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);//
+
 						surveyService.saveAccess(a);
 					}
 				}
 			}
 		}
 	}
-	
+
 	@Transactional
 	public int importSurvey(ImportResult result, User user, boolean isRestore) throws Exception {
 		Survey copy = result.getSurvey().copy(this, user, fileDir, false, -1, -1, false, false, true, null, null);
-		
-		if (isRestore && copy.getIsOPC())
-		{
+
+		if (isRestore && copy.getIsOPC()) {
 			setBrpAccess(copy);
 		}
-		
+
 		Survey copyActive = null;
 		try {
 			Map<String, String> missingfiles = new HashMap<>();
-			Map<String, String> convertedUIDs = surveyService.copyFiles(copy, new HashMap<>(), true, missingfiles, result.getSurvey().getUniqueId());
+			Map<String, String> convertedUIDs = surveyService.copyFiles(copy, new HashMap<>(), true, missingfiles,
+					result.getSurvey().getUniqueId());
 
 			Map<String, String> oldToNewUniqueIds = importDraftSurvey(copy, result, user);
-			importSurveyData(result, user, true, copy, oldToNewUniqueIds, result.getSurvey().getId());
+			importSurveyData(result, true, copy, oldToNewUniqueIds, result.getSurvey().getId());
 
-			if (result.getActiveSurvey() != null && result.getActiveAnswerSets() != null && result.getActiveAnswerSets().size() > 0) {
-				HashMap<Integer, Integer> oldSourceIdsById = getSourceIdsById(result.getActiveSurvey());
+			if (result.getActiveSurvey() != null && result.getActiveAnswerSets() != null
+					&& !result.getActiveAnswerSets().isEmpty()) {
+				Map<Integer, Integer> oldSourceIdsById = getSourceIdsById(result.getActiveSurvey());
 				for (int id : result.getOldSurveys().keySet()) {
 					Survey copyOld = importOldPublishedSurvey(result.getOldSurveys().get(id), user, oldToNewUniqueIds);
-					importSurveyData(result, user, false, copyOld, oldToNewUniqueIds, id);
+					importSurveyData(result, false, copyOld, oldToNewUniqueIds, id);
 				}
-				copyActive = result.getActiveSurvey().copy(this, user, fileDir, false, -1, -1, false, false, true, null, null);
-				surveyService.copyFiles(copyActive, convertedUIDs, true, missingfiles, result.getSurvey().getUniqueId());
+				copyActive = result.getActiveSurvey().copy(this, user, fileDir, false, -1, -1, false, false, true, null,
+						null);
+				surveyService.copyFiles(copyActive, convertedUIDs, true, missingfiles,
+						result.getSurvey().getUniqueId());
 
 				importPublishedSurvey(copyActive, result, user, oldToNewUniqueIds, oldSourceIdsById);
-				importSurveyData(result, user, false, copyActive, oldToNewUniqueIds, result.getActiveSurvey().getId());
+				importSurveyData(result, false, copyActive, oldToNewUniqueIds, result.getActiveSurvey().getId());
 			}
 
 			for (String fileuid : convertedUIDs.keySet()) {
@@ -2162,21 +2188,24 @@ public class SurveyService extends BasicService {
 				Locale locale = new Locale(user.getLanguage().toLowerCase());
 
 				StringBuilder text = new StringBuilder();
-				String link = "<a href='" + host + copy.getShortname() + "/management/overview'>" + copy.getShortname() + "</a>";
-				text.append(resources.getMessage("error.ProblemDuringRestore", new Object[] { link }, "Error during operation", locale));
+				String link = "<a href='" + host + copy.getShortname() + "/management/overview'>" + copy.getShortname()
+						+ "</a>";
+				text.append(resources.getMessage("error.ProblemDuringRestore", new Object[] { link },
+						"Error during operation", locale));
 
 				text.append("<table class='table table-bordered'><tr><th>File Name</th><th>Type</th></tr>");
 
-				for (String name : missingfiles.keySet()) {
+				for (Entry<String, String> entry : missingfiles.entrySet()) {
 					text.append("<tr><td>");
-					text.append(name);
+					text.append(entry.getKey());
 					text.append("</td><td>");
-					text.append(missingfiles.get(name));
+					text.append(entry.getValue());
 					text.append("</td></tr>");
 				}
 
 				text.append("</table>");
-				text.append(resources.getMessage("error.ProblemDuringRestore2", null, "Error during operation", locale));
+				text.append(
+						resources.getMessage("error.ProblemDuringRestore2", null, "Error during operation", locale));
 
 				Message m = new Message();
 				m.setType(4);
@@ -2204,7 +2233,8 @@ public class SurveyService extends BasicService {
 		return copy.getId();
 	}
 
-	private void importSurveyData(ImportResult result, User user, boolean draft, Survey survey, Map<String, String> oldToNewUniqueIds, Integer surveyid) throws Exception {
+	private void importSurveyData(ImportResult result, boolean draft, Survey survey,
+			Map<String, String> oldToNewUniqueIds, Integer surveyid) throws Exception {
 		List<Translations> translations = null;
 		List<AnswerSet> answerSets = new ArrayList<>();
 		Map<Integer, List<File>> files = null;
@@ -2236,7 +2266,7 @@ public class SurveyService extends BasicService {
 			copyTranslations(translations, survey, oldToNewUniqueIds, result, true);
 		}
 
-		if (answerSets != null && answerSets.size() > 0) {
+		if (answerSets != null && !answerSets.isEmpty()) {
 			logger.info("starting import of answers");
 
 			Map<String, Integer> keys = new HashMap<>();
@@ -2321,7 +2351,8 @@ public class SurveyService extends BasicService {
 		}
 	}
 
-	public void copyTranslations(List<Translations> translations, Survey survey, Map<String, String> oldToNewUniqueIds, ImportResult result, boolean newTitle) {
+	public void copyTranslations(List<Translations> translations, Survey survey, Map<String, String> oldToNewUniqueIds,
+			ImportResult result, boolean newTitle) {
 		Map<Integer, Element> elementsBySourceId = survey.getElementsBySourceId();
 
 		for (Translations tOriginal : translations) {
@@ -2349,7 +2380,8 @@ public class SurveyService extends BasicService {
 					} else {
 						if (trOriginal.getKey().equalsIgnoreCase(Survey.IPMINTRODUCTION)) {
 							for (com.ec.survey.model.survey.Element element : survey.getElements()) {
-								if (element instanceof Section && element.getPosition() == 0 && element.getShortname().equalsIgnoreCase("Introduction")) {
+								if (element instanceof Section && element.getPosition() == 0
+										&& element.getShortname().equalsIgnoreCase("Introduction")) {
 									Translation tr2 = new Translation();
 									tr2.setSurveyId(survey.getId());
 									tr2.setKey(element.getId().toString());
@@ -2357,19 +2389,23 @@ public class SurveyService extends BasicService {
 									tr2.setLanguage(trOriginal.getLanguage());
 									tr2.setTranslations(t);
 									t.getTranslations().add(tr2);
-								} else if (element instanceof Text && element.getShortname() != null && element.getShortname().equalsIgnoreCase("introduction") && element.getPosition() < 2) {
+								} else if (element instanceof Text && element.getShortname() != null
+										&& element.getShortname().equalsIgnoreCase("introduction")
+										&& element.getPosition() < 2) {
 									tr.setKey(element.getUniqueId());
 									break;
 								}
 							}
 						} else {
 
-							tr.setKey(translateIPMKey(trOriginal.getKey(), elementsBySourceId, oldToNewUniqueIds, result));
+							tr.setKey(translateIPMKey(trOriginal.getKey(), elementsBySourceId, oldToNewUniqueIds,
+									result));
 
 							if (trOriginal.getKey().endsWith("desc") && trOriginal.getKey().length() > 4) {
 
 								for (com.ec.survey.model.survey.Element element : survey.getElements()) {
-									if (element instanceof Text && element.getShortname() != null && element.getShortname().equals(trOriginal.getKey())) {
+									if (element instanceof Text && element.getShortname() != null
+											&& element.getShortname().equals(trOriginal.getKey())) {
 										tr.setKey(element.getUniqueId());
 										break;
 									}
@@ -2416,7 +2452,8 @@ public class SurveyService extends BasicService {
 		}
 	}
 
-	private String translateKey(String key, Map<Integer, Element> elementsBySourceId, Map<String, String> oldToNewUniqueIds) {
+	private String translateKey(String key, Map<Integer, Element> elementsBySourceId,
+			Map<String, String> oldToNewUniqueIds) {
 
 		if (key == null)
 			return key;
@@ -2511,7 +2548,8 @@ public class SurveyService extends BasicService {
 		return key;
 	}
 
-	private String translateIPMKey(String key, Map<Integer, Element> elementsBySourceId, Map<String, String> oldToNewUniqueIds, ImportResult result) {
+	private String translateIPMKey(String key, Map<Integer, Element> elementsBySourceId,
+			Map<String, String> oldToNewUniqueIds, ImportResult result) {
 		if (key.equalsIgnoreCase(Survey.TITLE))
 			return key;
 		if (key.equalsIgnoreCase(Survey.INTRODUCTION))
@@ -2580,10 +2618,11 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public Access getAccess(Integer id, Integer userId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Access a WHERE a.survey.id = :id AND a.user.id = :userId").setInteger("id", id).setInteger("userId", userId);
+		Query query = session.createQuery("FROM Access a WHERE a.survey.id = :id AND a.user.id = :userId")
+				.setInteger("id", id).setInteger("userId", userId);
 		@SuppressWarnings("unchecked")
 		List<Access> result = query.list();
-		if (result.size() > 0)
+		if (!result.isEmpty())
 			return result.get(0);
 		return null;
 	}
@@ -2591,10 +2630,11 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public Access getGroupAccess(Integer id, String groupName) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Access a WHERE a.survey.id = :id AND a.department = :groupName").setInteger("id", id).setString("groupName", groupName);
+		Query query = session.createQuery("FROM Access a WHERE a.survey.id = :id AND a.department = :groupName")
+				.setInteger("id", id).setString("groupName", groupName);
 		@SuppressWarnings("unchecked")
 		List<Access> result = query.list();
-		if (result.size() > 0)
+		if (!result.isEmpty())
 			return result.get(0);
 		return null;
 	}
@@ -2635,8 +2675,9 @@ public class SurveyService extends BasicService {
 	@SuppressWarnings("unchecked")
 	public List<Survey> getSurveysToStart() {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Survey s WHERE s.isDraft = true AND s.start <= :start AND ((s.end is not null AND s.end > :start) OR (s.end is null)) AND s.automaticPublishing = true AND s.isActive = false").setTimestamp("start",
-				new Date());
+		Query query = session.createQuery(
+				"FROM Survey s WHERE s.isDraft = true AND s.start <= :start AND ((s.end is not null AND s.end > :start) OR (s.end is null)) AND s.automaticPublishing = true AND s.isActive = false")
+				.setTimestamp("start", new Date());
 		return query.list();
 	}
 
@@ -2644,8 +2685,9 @@ public class SurveyService extends BasicService {
 	@SuppressWarnings("unchecked")
 	public List<Survey> getSurveysToStop() {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("FROM Survey s WHERE s.isDraft = true AND s.end <= :end AND s.automaticPublishing = true AND s.isPublished = true AND s.isActive = true").setTimestamp("end",
-				new Date());
+		Query query = session.createQuery(
+				"FROM Survey s WHERE s.isDraft = true AND s.end <= :end AND s.automaticPublishing = true AND s.isPublished = true AND s.isActive = true")
+				.setTimestamp("end", new Date());
 		return query.list();
 	}
 
@@ -2686,7 +2728,8 @@ public class SurveyService extends BasicService {
 
 			// check if it is time to notify
 			if (today.after(cal)) {
-				logger.info("found survey to notify: " + survey.getUniqueId() + " ending at " + survey.getEnd() + " " + survey.getNotificationValue() + " " + survey.getNotificationUnit());
+				logger.info("found survey to notify: " + survey.getUniqueId() + " ending at " + survey.getEnd() + " "
+						+ survey.getNotificationValue() + " " + survey.getNotificationUnit());
 				result.add(survey);
 			}
 		}
@@ -2698,7 +2741,8 @@ public class SurveyService extends BasicService {
 	public Map<Element, Integer> getPendingChanges(Survey draft) {
 		Map<Element, Integer> result = new HashMap<>();
 
-		Survey published = getSurvey(draft.getShortname(), false, false, false, false, draft.getLanguage().getCode(), true, true);
+		Survey published = getSurvey(draft.getShortname(), false, false, false, false, draft.getLanguage().getCode(),
+				true, true);
 
 		if (draft != null && published != null) {
 			Map<String, Element> publishedElements = published.getElementsByUniqueId();
@@ -2767,24 +2811,26 @@ public class SurveyService extends BasicService {
 			if (!Tools.isEqual(draft.getShowQuizIcons(), published.getShowQuizIcons()))
 				hasPendingChanges = true;
 
-			if (!Tools.isEqual(draft.getIsUseMaxNumberContribution(),published.getIsUseMaxNumberContribution()))
-				hasPendingChanges = true;
-			
-			if (!Tools.isEqual(draft.getIsUseMaxNumberContributionLink(),published.getIsUseMaxNumberContributionLink()))
-				hasPendingChanges = true;
-			
-			if (!Tools.isEqual(draft.getMaxNumberContributionText(),published.getMaxNumberContributionText()))
+			if (!Tools.isEqual(draft.getIsUseMaxNumberContribution(), published.getIsUseMaxNumberContribution()))
 				hasPendingChanges = true;
 
-			if (!Tools.isEqual(draft.getMaxNumberContributionLink(),published.getMaxNumberContributionLink()))
+			if (!Tools.isEqual(draft.getIsUseMaxNumberContributionLink(),
+					published.getIsUseMaxNumberContributionLink()))
 				hasPendingChanges = true;
-			
-			if (!Tools.isEqual(draft.getMaxNumberContribution(),published.getMaxNumberContribution()))
+
+			if (!Tools.isEqual(draft.getMaxNumberContributionText(), published.getMaxNumberContributionText()))
+				hasPendingChanges = true;
+
+			if (!Tools.isEqual(draft.getMaxNumberContributionLink(), published.getMaxNumberContributionLink()))
+				hasPendingChanges = true;
+
+			if (!Tools.isEqual(draft.getMaxNumberContribution(), published.getMaxNumberContribution()))
 				hasPendingChanges = true;
 
 			if (!hasPendingChanges)
 				for (String key : draft.getUsefulLinks().keySet()) {
-					if (!published.getUsefulLinks().containsKey(key) || !published.getUsefulLinks().get(key).equals(draft.getUsefulLinks().get(key))) {
+					if (!published.getUsefulLinks().containsKey(key)
+							|| !published.getUsefulLinks().get(key).equals(draft.getUsefulLinks().get(key))) {
 						hasPendingChanges = true;
 						break;
 					}
@@ -2792,7 +2838,8 @@ public class SurveyService extends BasicService {
 
 			if (!hasPendingChanges)
 				for (String key : published.getUsefulLinks().keySet()) {
-					if (!draft.getUsefulLinks().containsKey(key) || !draft.getUsefulLinks().get(key).equals(published.getUsefulLinks().get(key))) {
+					if (!draft.getUsefulLinks().containsKey(key)
+							|| !draft.getUsefulLinks().get(key).equals(published.getUsefulLinks().get(key))) {
 						hasPendingChanges = true;
 						break;
 					}
@@ -2800,7 +2847,8 @@ public class SurveyService extends BasicService {
 
 			if (!hasPendingChanges)
 				for (String key : draft.getBackgroundDocuments().keySet()) {
-					if (!published.getBackgroundDocuments().containsKey(key) || !published.getBackgroundDocuments().get(key).equals(draft.getBackgroundDocuments().get(key))) {
+					if (!published.getBackgroundDocuments().containsKey(key) || !published.getBackgroundDocuments()
+							.get(key).equals(draft.getBackgroundDocuments().get(key))) {
 						hasPendingChanges = true;
 						break;
 					}
@@ -2808,7 +2856,8 @@ public class SurveyService extends BasicService {
 
 			if (!hasPendingChanges)
 				for (String key : published.getBackgroundDocuments().keySet()) {
-					if (!draft.getBackgroundDocuments().containsKey(key) || !draft.getBackgroundDocuments().get(key).equals(published.getBackgroundDocuments().get(key))) {
+					if (!draft.getBackgroundDocuments().containsKey(key) || !draft.getBackgroundDocuments().get(key)
+							.equals(published.getBackgroundDocuments().get(key))) {
 						hasPendingChanges = true;
 						break;
 					}
@@ -2825,22 +2874,23 @@ public class SurveyService extends BasicService {
 			}
 
 			List<Translations> draftTranslations = translationService.getActiveTranslationsForSurvey(draft.getId());
-			List<Translations> publishedTranslations = translationService.getActiveTranslationsForSurvey(published.getId());
+			List<Translations> publishedTranslations = translationService
+					.getActiveTranslationsForSurvey(published.getId());
 
 			Translations currentTranslations = TranslationsHelper.getTranslations(draft, false);
 			Map<String, Translation> currentKeys = currentTranslations.getTranslationsByKey();
 
-			if (checkTranslations(draftTranslations, publishedTranslations, currentKeys) || checkTranslations(publishedTranslations, draftTranslations, currentKeys))
-			{
+			if (checkTranslations(draftTranslations, publishedTranslations, currentKeys)
+					|| checkTranslations(publishedTranslations, draftTranslations, currentKeys)) {
 				result.put(new TranslationsElement(), 1);
 			}
 		}
 
 		return result;
 	}
-	
-	private boolean checkTranslations(List<Translations> first, List<Translations> second, Map<String, Translation> currentKeys)
-	{
+
+	private boolean checkTranslations(List<Translations> first, List<Translations> second,
+			Map<String, Translation> currentKeys) {
 		Map<String, Translations> secondTranslationsByLanguageCode = new HashMap<>();
 		for (Translations trans : second) {
 			secondTranslationsByLanguageCode.put(trans.getLanguage().getCode(), trans);
@@ -2854,16 +2904,15 @@ public class SurveyService extends BasicService {
 
 			Map<String, String> secondTranslationsMap = pub.getTranslationsMap();
 			for (Translation t : trans.getFilteredTranslations()) {
-				if (!secondTranslationsMap.containsKey(t.getKey()) || !secondTranslationsMap.get(t.getKey()).equals(t.getLabel())) {
-					if (t.getLabel() != null && t.getLabel().trim().length() > 0) {
-						if (currentKeys.containsKey(t.getKey()) && !t.getKey().startsWith("ESCAPE")) {
-							return true;
-						}
+				if (!secondTranslationsMap.containsKey(t.getKey())
+						|| !secondTranslationsMap.get(t.getKey()).equals(t.getLabel())) {
+					if (t.getLabel() != null && t.getLabel().trim().length() > 0 && currentKeys.containsKey(t.getKey()) && !t.getKey().startsWith("ESCAPE")) {
+						return true;
 					}
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -2886,7 +2935,7 @@ public class SurveyService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Status> states = statusQuery.setReadOnly(true).list();
 
-		if (states.size() == 0) {
+		if (states.isEmpty()) {
 			return 0;
 		}
 
@@ -2894,6 +2943,7 @@ public class SurveyService extends BasicService {
 		return status.getDbversion();
 	}
 
+	@Override
 	public String getFileDir() {
 		return fileDir;
 	}
@@ -2906,7 +2956,7 @@ public class SurveyService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Status> states = statusQuery.setReadOnly(true).list();
 
-		if (states.size() == 0) {
+		if (states.isEmpty()) {
 			Status status = new Status();
 			status.setDbversion(version);
 			status.setUpdateDate(new Date());
@@ -2917,7 +2967,8 @@ public class SurveyService extends BasicService {
 	public void removeDependencies(Element element) {
 		Session session = sessionFactory.getCurrentSession();
 
-		Query query = session.createSQLQuery("DELETE FROM POSSIBLEANSWER_ELEMENT WHERE dependentElements_ID = :id").setInteger("id", element.getId());
+		Query query = session.createSQLQuery("DELETE FROM POSSIBLEANSWER_ELEMENT WHERE dependentElements_ID = :id")
+				.setInteger("id", element.getId());
 		query.executeUpdate();
 	}
 
@@ -2943,28 +2994,31 @@ public class SurveyService extends BasicService {
 
 		@SuppressWarnings("rawtypes")
 		List list = query.list();
-		
-		if (addErrorIfExists && !list.isEmpty())
-		{
+
+		if (addErrorIfExists && !list.isEmpty()) {
 			for (Object o : list) {
 				Object[] a = (Object[]) o;
-				logger.error("Existing answer set for this unique code found: " + uniqueCode + "; id: " + ConversionTools.getValue(a[0]) + "; created: " + a[1]);
+				logger.error("Existing answer set for this unique code found: " + uniqueCode + "; id: "
+						+ ConversionTools.getValue(a[0]) + "; created: " + a[1]);
 			}
 		}
-		
+
 		return !list.isEmpty();
 	}
 
 	@Transactional(readOnly = true)
 	public Element getParentForChildQuestion(Integer id) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createSQLQuery("SELECT childElements_ID FROM ELEMENTS WHERE ID = :id").setInteger("id", id);
+		Query query = session.createSQLQuery("SELECT childElements_ID FROM ELEMENTS WHERE ID = :id").setInteger("id",
+				id);
 		int parentid = ConversionTools.getValue(query.uniqueResult());
 
 		// questions could have been deleted from the parent -> get newest version of
 		// the parent
 		if (parentid > 0) {
-			query = session.createSQLQuery("SELECT MAX(ID) FROM ELEMENTS WHERE ELEM_UID IN (SELECT ELEM_UID FROM ELEMENTS WHERE ID = :id)").setInteger("id", parentid);
+			query = session.createSQLQuery(
+					"SELECT MAX(ID) FROM ELEMENTS WHERE ELEM_UID IN (SELECT ELEM_UID FROM ELEMENTS WHERE ID = :id)")
+					.setInteger("id", parentid);
 			parentid = ConversionTools.getValue(query.uniqueResult());
 		}
 
@@ -2974,7 +3028,8 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public Element getNewestElementByUid(String uid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createSQLQuery("SELECT MAX(ID) FROM ELEMENTS WHERE ELEM_UID = :uid").setString("uid", uid);
+		Query query = session.createSQLQuery("SELECT MAX(ID) FROM ELEMENTS WHERE ELEM_UID = :uid").setString("uid",
+				uid);
 		int elementid = ConversionTools.getValue(query.uniqueResult());
 
 		if (elementid > 0) {
@@ -2985,7 +3040,6 @@ public class SurveyService extends BasicService {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Transactional(readOnly = true)
 	private List<Object> GetAllQuestionsAndPossibleAnswers(String surveyUid) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery(
@@ -3002,11 +3056,10 @@ public class SurveyService extends BasicService {
 		for (Element element : surveyelements) {
 			surveyelementsbyuid.put(element.getUniqueId(), element);
 		}
-		
+
 		List<Object> res = reportingService.GetAllQuestionsAndPossibleAnswers(survey);
-		
-		if (res == null)
-		{
+
+		if (res == null) {
 			res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
 		}
 
@@ -3025,14 +3078,15 @@ public class SurveyService extends BasicService {
 					// this comes from a matrix question, also load matrix
 					Element parent = getParentForChildQuestion(missingquestion.getId());
 
-					if (parent != null && parent instanceof Matrix) {
+					if (parent instanceof Matrix) {
 						Matrix parentMatrix = (Matrix) parent;
 						if (surveyelementsbyuid.containsKey(parentMatrix.getUniqueId())) {
 							// the matrix still exists (only the matrix question was deleted)
 							Matrix matrix = (Matrix) surveyelementsbyuid.get(parentMatrix.getUniqueId());
 							matrix.getMissingQuestions().add(missingquestion);
 							missingelementuids.put(missingquestion.getUniqueId(), missingquestion);
-						} else if (!surveyelementsbyuid.containsKey(parentMatrix.getUniqueId()) && !missingelementuids.containsKey(parentMatrix.getUniqueId())) {
+						} else if (!surveyelementsbyuid.containsKey(parentMatrix.getUniqueId())
+								&& !missingelementuids.containsKey(parentMatrix.getUniqueId())) {
 							survey.getMissingElements().add(parentMatrix);
 							missingelementuids.put(parentMatrix.getUniqueId(), parentMatrix);
 							if (filter != null) {
@@ -3044,23 +3098,25 @@ public class SurveyService extends BasicService {
 							}
 
 							// check if matrix contains question
-							if (!((Matrix) parentMatrix).containsChild(missingquestion.getId())) {
-								((Matrix) parentMatrix).getMissingQuestions().add(missingquestion);
+							if (!parentMatrix.containsChild(missingquestion.getId())) {
+								parentMatrix.getMissingQuestions().add(missingquestion);
 							}
-						} else if (!surveyelementsbyuid.containsKey(parentMatrix.getUniqueId()) && missingelementuids.containsKey(parentMatrix.getUniqueId())) {
+						} else if (!surveyelementsbyuid.containsKey(parentMatrix.getUniqueId())
+								&& missingelementuids.containsKey(parentMatrix.getUniqueId())
+								&& !parentMatrix.containsChild(missingquestion.getId())) {
 							// check if matrix contains question
-							if (!((Matrix) parentMatrix).containsChild(missingquestion.getId())) {
-								((Matrix) parentMatrix).getMissingQuestions().add(missingquestion);
-							}
+							parentMatrix.getMissingQuestions().add(missingquestion);
 						}
-					} else if (parent != null && parent instanceof RatingQuestion) {
+					} else if (parent instanceof RatingQuestion) {
 						RatingQuestion parentRating = (RatingQuestion) parent;
 						if (surveyelementsbyuid.containsKey(parentRating.getUniqueId())) {
 							// the rating element still exists (only the rating question was deleted)
-							RatingQuestion rating = (RatingQuestion) surveyelementsbyuid.get(parentRating.getUniqueId());
+							RatingQuestion rating = (RatingQuestion) surveyelementsbyuid
+									.get(parentRating.getUniqueId());
 							rating.getMissingQuestions().add(missingquestion);
 							missingelementuids.put(missingquestion.getUniqueId(), missingquestion);
-						} else if (!surveyelementsbyuid.containsKey(parentRating.getUniqueId()) && !missingelementuids.containsKey(parentRating.getUniqueId())) {
+						} else if (!surveyelementsbyuid.containsKey(parentRating.getUniqueId())
+								&& !missingelementuids.containsKey(parentRating.getUniqueId())) {
 							survey.getMissingElements().add(parentRating);
 							missingelementuids.put(parentRating.getUniqueId(), parentRating);
 							if (filter != null) {
@@ -3072,13 +3128,14 @@ public class SurveyService extends BasicService {
 							}
 
 							// check if rating contains question
-							if (!((RatingQuestion) parentRating).containsChild(missingquestion.getId())) {
-								((RatingQuestion) parentRating).getMissingQuestions().add(missingquestion);
+							if (!(parentRating).containsChild(missingquestion.getId())) {
+								(parentRating).getMissingQuestions().add(missingquestion);
 							}
-						} else if (!surveyelementsbyuid.containsKey(parentRating.getUniqueId()) && missingelementuids.containsKey(parentRating.getUniqueId())) {
+						} else if (!surveyelementsbyuid.containsKey(parentRating.getUniqueId())
+								&& missingelementuids.containsKey(parentRating.getUniqueId())) {
 							// check if matrix contains question
-							if (!((RatingQuestion) parentRating).containsChild(missingquestion.getId())) {
-								((RatingQuestion) parentRating).getMissingQuestions().add(missingquestion);
+							if (!(parentRating).containsChild(missingquestion.getId())) {
+								(parentRating).getMissingQuestions().add(missingquestion);
 							}
 						}
 					}
@@ -3111,7 +3168,8 @@ public class SurveyService extends BasicService {
 						String matrixQuestionUID = possibleAnswerUID.substring(0, possibleAnswerUID.indexOf('#'));
 						String answerUID = possibleAnswerUID.substring(possibleAnswerUID.indexOf('#') + 1);
 
-						if (!surveyelementsbyuid.containsKey(matrixQuestionUID) && !missingelementuids.containsKey(matrixQuestionUID)) {
+						if (!surveyelementsbyuid.containsKey(matrixQuestionUID)
+								&& !missingelementuids.containsKey(matrixQuestionUID)) {
 							Element missingquestion = getNewestElementByUid(matrixQuestionUID);
 							if (missingquestion != null) {
 								table.getMissingQuestions().add(missingquestion);
@@ -3134,7 +3192,8 @@ public class SurveyService extends BasicService {
 				}
 			}
 
-			if (possibleAnswerUID != null && possibleAnswerUID.length() > 0 && !possibleAnswerUID.contains("#") && !surveyelementsbyuid.containsKey(possibleAnswerUID)
+			if (possibleAnswerUID != null && possibleAnswerUID.length() > 0 && !possibleAnswerUID.contains("#")
+					&& !surveyelementsbyuid.containsKey(possibleAnswerUID)
 					&& !missingelementuids.containsKey(possibleAnswerUID)) {
 				Element pa = getNewestElementByUid(possibleAnswerUID);
 
@@ -3187,14 +3246,16 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = false)
 	public void markAsArchived(String uid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("UPDATE Survey s SET s.archived = 1 WHERE s.uniqueId = :uid").setString("uid", uid);
+		Query query = session.createQuery("UPDATE Survey s SET s.archived = 1 WHERE s.uniqueId = :uid").setString("uid",
+				uid);
 		query.executeUpdate();
 	}
 
 	@Transactional(readOnly = false)
 	public void unmarkAsArchived(String uid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("UPDATE Survey s SET s.archived = 0 WHERE s.uniqueId = :uid").setString("uid", uid);
+		Query query = session.createQuery("UPDATE Survey s SET s.archived = 0 WHERE s.uniqueId = :uid").setString("uid",
+				uid);
 		query.executeUpdate();
 	}
 
@@ -3204,7 +3265,8 @@ public class SurveyService extends BasicService {
 		Query query;
 
 		if (shortname != null && shortname.length() > 0 && uid != null && uid.length() > 0) {
-			query = session.createSQLQuery("SELECT SURVEY_ID FROM SURVEYS WHERE SURVEYNAME LIKE :shortname AND SURVEY_UID LIKE :uid");
+			query = session.createSQLQuery(
+					"SELECT SURVEY_ID FROM SURVEYS WHERE SURVEYNAME LIKE :shortname AND SURVEY_UID LIKE :uid");
 			query.setString("shortname", "%" + shortname + "%");
 			query.setString("uid", "%" + uid + "%");
 		} else if (shortname != null && shortname.length() > 0) {
@@ -3228,7 +3290,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public boolean changeOwner(String surveyuid, String owner, int currentuserid) throws Exception {
+	public boolean changeOwner(String surveyuid, String owner, int currentuserid) throws MessageException {
 		int ownerid = 0;
 		User newowner = null;
 
@@ -3243,7 +3305,7 @@ public class SurveyService extends BasicService {
 			Survey survey = surveyService.getSurveyByUniqueIdToWrite(surveyuid);
 			Integer oldownerid = survey.getOwner().getId();
 
-			if (survey != null && !Objects.equals(survey.getOwner().getId(), newowner.getId())) {
+			if (!Objects.equals(survey.getOwner().getId(), newowner.getId())) {
 				survey.setOwner(newowner);
 				List<Integer> allsurveyids = surveyService.getAllPublishedSurveyVersions(survey.getId());
 
@@ -3265,7 +3327,8 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<Integer> getAllSurveyVersions(int surveyId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createSQLQuery("SELECT s1.SURVEY_ID FROM SURVEYS s1 JOIN SURVEYS s2 ON s1.SURVEY_UID = s2.SURVEY_UID AND s1.ISDRAFT = s2.ISDRAFT WHERE s2.SURVEY_ID = :id")
+		Query query = session.createSQLQuery(
+				"SELECT s1.SURVEY_ID FROM SURVEYS s1 JOIN SURVEYS s2 ON s1.SURVEY_UID = s2.SURVEY_UID AND s1.ISDRAFT = s2.ISDRAFT WHERE s2.SURVEY_ID = :id")
 				.setInteger("id", surveyId);
 
 		@SuppressWarnings("rawtypes")
@@ -3283,8 +3346,9 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<Integer> getAllPublishedSurveyVersions(int surveyId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createSQLQuery("SELECT s1.SURVEY_ID FROM SURVEYS s1 JOIN SURVEYS s2 ON s1.SURVEY_UID = s2.SURVEY_UID WHERE s2.SURVEY_ID = :id AND s1.ISDRAFT=0 ORDER BY s1.SURVEY_ID ASC").setInteger("id",
-				surveyId);
+		Query query = session.createSQLQuery(
+				"SELECT s1.SURVEY_ID FROM SURVEYS s1 JOIN SURVEYS s2 ON s1.SURVEY_UID = s2.SURVEY_UID WHERE s2.SURVEY_ID = :id AND s1.ISDRAFT=0 ORDER BY s1.SURVEY_ID ASC")
+				.setInteger("id", surveyId);
 
 		@SuppressWarnings("rawtypes")
 		List res = query.list();
@@ -3301,7 +3365,10 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<Integer> getAllPublishedSurveyVersions(String surveyUid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createSQLQuery("SELECT SURVEY_ID FROM SURVEYS WHERE SURVEY_UID = :uid AND ISDRAFT=0 ORDER BY SURVEY_ID ASC").setString("uid", surveyUid);
+		Query query = session
+				.createSQLQuery(
+						"SELECT SURVEY_ID FROM SURVEYS WHERE SURVEY_UID = :uid AND ISDRAFT=0 ORDER BY SURVEY_ID ASC")
+				.setString("uid", surveyUid);
 
 		@SuppressWarnings("rawtypes")
 		List res = query.list();
@@ -3324,11 +3391,15 @@ public class SurveyService extends BasicService {
 	@Transactional(readOnly = true)
 	public String getLanguageCode(String shortname, String uid) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("SELECT s.language.code FROM Survey s WHERE s.uniqueId = :uid AND s.isDraft = true").setString("uid", uid);
+		Query query = session
+				.createQuery("SELECT s.language.code FROM Survey s WHERE s.uniqueId = :uid AND s.isDraft = true")
+				.setString("uid", uid);
 		String result = (String) query.uniqueResult();
 
 		if (result == null) {
-			query = session.createQuery("SELECT s.language.code FROM Survey s WHERE s.shortname = :name AND s.isDraft = true").setString("name", shortname);
+			query = session
+					.createQuery("SELECT s.language.code FROM Survey s WHERE s.shortname = :name AND s.isDraft = true")
+					.setString("name", shortname);
 			result = (String) query.uniqueResult();
 		}
 
@@ -3345,7 +3416,7 @@ public class SurveyService extends BasicService {
 			session.setReadOnly(e, false);
 		}
 
-		DocumentBuilder builder = XHTMLValidator.getBuilder(servletContext);
+		DocumentBuilder builder = XHTMLValidator.getBuilder();
 
 		int repairedLabels = repairXHTML(draft, builder);
 
@@ -3393,10 +3464,10 @@ public class SurveyService extends BasicService {
 				keysToReplace.put(label, HtmlUtils.htmlEscape(label));
 			}
 		}
-		for (String label : keysToReplace.keySet()) {
-			String url = survey.getBackgroundDocuments().get(label);
-			survey.getBackgroundDocuments().remove(label);
-			survey.getBackgroundDocuments().put(keysToReplace.get(label), url);
+		for (Entry<String, String> entry : keysToReplace.entrySet()) {
+			String url = survey.getBackgroundDocuments().get(entry.getKey());
+			survey.getBackgroundDocuments().remove(entry.getKey());
+			survey.getBackgroundDocuments().put(entry.getValue(), url);
 		}
 
 		keysToReplace = new HashMap<>();
@@ -3405,10 +3476,10 @@ public class SurveyService extends BasicService {
 				keysToReplace.put(label, HtmlUtils.htmlEscape(label));
 			}
 		}
-		for (String label : keysToReplace.keySet()) {
-			String url = survey.getUsefulLinks().get(label);
-			survey.getUsefulLinks().remove(label);
-			survey.getUsefulLinks().put(keysToReplace.get(label), url);
+		for (Entry<String, String> entry : keysToReplace.entrySet()) {
+			String url = survey.getUsefulLinks().get(entry.getKey());
+			survey.getUsefulLinks().remove(entry.getKey());
+			survey.getUsefulLinks().put(entry.getValue(), url);
 		}
 
 		for (Element element : survey.getElementsRecursive(true)) {
@@ -3444,7 +3515,8 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public List<Survey> getPublicSurveysForValidation(String filteralias, String filterowner, String filterrequestdatefrom, String filterrequestdateto) {
+	public List<Survey> getPublicSurveysForValidation(String filteralias, String filterowner,
+			String filterrequestdatefrom, String filterrequestdateto) {
 		Session session = sessionFactory.getCurrentSession();
 		String sql = "FROM Survey s WHERE s.isDraft = true AND s.listForm = true AND (s.listFormValidated = false OR s.listFormValidated = null)";
 
@@ -3490,21 +3562,25 @@ public class SurveyService extends BasicService {
 	}
 
 	public void sendListFormMail(Survey survey) throws Exception {
-		String body = "A request for publishing the survey '" + survey.getShortname() + "' in the list of all public surveys has been made.<br /><br />"
-				+ "To see all requests, please follow this link:<br /><a href=\"" + host + "administration/publicsurveys\">" + host + "administration/publicsurveys</a><br /><br />"
+		String body = "A request for publishing the survey '" + survey.getShortname()
+				+ "' in the list of all public surveys has been made.<br /><br />"
+				+ "To see all requests, please follow this link:<br /><a href=\"" + host
+				+ "administration/publicsurveys\">" + host + "administration/publicsurveys</a><br /><br />"
 				+ "Your EUSurvey Team";
 
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 		String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);
 
-		mailService.SendHtmlMail(publicsurveynotification, sender, sender, "New publication request for the EUSurvey Homepage", text, null);
+		mailService.SendHtmlMail(publicsurveynotification, sender, sender,
+				"New publication request for the EUSurvey Homepage", text, null);
 	}
 
 	public void sendOPCApplyChangesMail(Survey survey, int userId) throws NumberFormatException, Exception {
 		if (survey.getIsOPC() && opcnotify != null && opcnotify.length() > 0) {
 			User user = userId > 0 ? administrationService.getUser(userId) : null;
 
-			String body = "The survey <a href=\"" + host + survey.getShortname() + "/management/overview\">" + survey.getShortname() + "</a> has been changed by user "
+			String body = "The survey <a href=\"" + host + survey.getShortname() + "/management/overview\">"
+					+ survey.getShortname() + "</a> has been changed by user "
 					+ (user != null ? user.getName() : "SYSTEM") + " at " + new Date() + ".";
 			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 			String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);
@@ -3512,9 +3588,9 @@ public class SurveyService extends BasicService {
 			String[] users = opcnotify.split(";");
 			for (String opcuser : users) {
 				if (opcuser.length() > 0) {
-					if (opcuser != null) {
-						mailService.SendHtmlMail(opcuser, sender, sender, "The online version of a published 'BRP Public Consultation' has been changed", text, null);
-					}
+					mailService.SendHtmlMail(opcuser, sender, sender,
+							"The online version of a published 'BRP Public Consultation' has been changed", text,
+							null);
 				}
 			}
 		}
@@ -3556,7 +3632,7 @@ public class SurveyService extends BasicService {
 
 		@SuppressWarnings("rawtypes")
 		List data = query.setMaxResults(1).list();
-		if (data.size() > 0) {
+		if (!data.isEmpty()) {
 			Object[] values = (Object[]) data.get(0);
 			String[] result = new String[3];
 			result[0] = values[0].toString();
@@ -3570,7 +3646,7 @@ public class SurveyService extends BasicService {
 		sqlquery.setInteger("id", file.getId());
 
 		data = sqlquery.setMaxResults(1).list();
-		if (data.size() > 0) {
+		if (!data.isEmpty()) {
 			Object[] values = (Object[]) data.get(0);
 			String[] result = new String[3];
 			result[0] = values[1].toString();
@@ -3589,10 +3665,9 @@ public class SurveyService extends BasicService {
 					"SELECT e.type, s.SURVEY_UID, s.SURVEYNAME FROM ELEMENTS e JOIN SURVEYS_ELEMENTS se ON se.elements_ID = e.ID JOIN SURVEYS s ON s.SURVEY_ID = se.SURVEYS_SURVEY_ID WHERE URL = :url");
 			sqlquery.setString("url", contextpath + "/files/" + file.getUid());
 			data = sqlquery.setMaxResults(1).list();
-			if (data.size() > 0) {
+			if (!data.isEmpty()) {
 				Object[] values = (Object[]) data.get(0);
 				if (values[0].toString().equalsIgnoreCase("IMAGE"))
-					;
 				{
 					String[] result = new String[3];
 					result[0] = values[1].toString();
@@ -3637,8 +3712,8 @@ public class SurveyService extends BasicService {
 			}
 		}
 
-		sqlquery = session
-				.createSQLQuery("SELECT s.SURVEY_UID, s.SURVEYNAME FROM SURVEYS s JOIN Survey_backgroundDocuments sb ON sb.Survey_SURVEY_ID = s.SURVEY_ID WHERE sb.BACKGROUNDDOCUMENTS LIKE :url");
+		sqlquery = session.createSQLQuery(
+				"SELECT s.SURVEY_UID, s.SURVEYNAME FROM SURVEYS s JOIN Survey_backgroundDocuments sb ON sb.Survey_SURVEY_ID = s.SURVEY_ID WHERE sb.BACKGROUNDDOCUMENTS LIKE :url");
 		sqlquery.setString("url", "%" + file.getUid());
 		data = sqlquery.setMaxResults(1).list();
 		if (data.size() > 0) {
@@ -3658,15 +3733,13 @@ public class SurveyService extends BasicService {
 	}
 
 	public java.io.File exportSurvey(String shortname, SurveyService surveyService, boolean answers) {
-		return SurveyExportHelper.exportSurvey(shortname, surveyService, answers, translationService, answerService, fileDir, sessionService, fileService, sessionFactory.getCurrentSession(), host);
+		return SurveyExportHelper.exportSurvey(shortname, surveyService, answers, translationService, answerService,
+				fileDir, sessionService, fileService, sessionFactory.getCurrentSession(), host);
 	}
 
 	@Transactional(readOnly = true)
 	public List<Element> getElements(String[] ids) {
 		Session session = sessionFactory.getCurrentSession();
-		// Query query = session.createQuery("FROM Element where ID IN
-		// (:ids)").setParameterList("ids", ids);
-		// return query.list();
 
 		List<Element> result = new ArrayList<Element>();
 		for (String id : ids) {
@@ -3676,7 +3749,8 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public Map<String, String> copyFiles(Survey survey, Map<String, String> convertedUIDs, boolean allowMissingFiles, Map<String, String> missingFiles, String originalSurveyUID) throws IOException {
+	public Map<String, String> copyFiles(Survey survey, Map<String, String> convertedUIDs, boolean allowMissingFiles,
+			Map<String, String> missingFiles, String originalSurveyUID) throws IOException {
 
 		Map<String, String> result = new HashMap<>();
 
@@ -3719,7 +3793,8 @@ public class SurveyService extends BasicService {
 				String newuid = UUID.randomUUID().toString();
 				if (convertedUIDs.containsKey(olduid)) {
 					newuid = convertedUIDs.get(olduid);
-					survey.getBackgroundDocuments().put(label, servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + newuid);
+					survey.getBackgroundDocuments().put(label,
+							servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + newuid);
 					result.put(olduid, newuid);
 				} else {
 					try {
@@ -3735,7 +3810,8 @@ public class SurveyService extends BasicService {
 						f.setName(label);
 						f.setUid(newuid);
 						fileService.add(f);
-						survey.getBackgroundDocuments().put(label, servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + newuid);
+						survey.getBackgroundDocuments().put(label,
+								servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + newuid);
 						result.put(olduid, newuid);
 					} catch (IOException ex) {
 						if (allowMissingFiles) {
@@ -3832,7 +3908,8 @@ public class SurveyService extends BasicService {
 						String newuid = UUID.randomUUID().toString();
 						if (convertedUIDs.containsKey(fileUID)) {
 							newuid = convertedUIDs.get(fileUID);
-							image.setUrl(servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + newuid);
+							image.setUrl(
+									servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + newuid);
 							result.put(fileUID, newuid);
 						} else {
 							try {
@@ -3847,7 +3924,8 @@ public class SurveyService extends BasicService {
 								File f2 = f.copy(fileDir);
 								f2.setUid(newuid);
 								fileService.add(f2);
-								image.setUrl(servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + newuid);
+								image.setUrl(servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/"
+										+ newuid);
 								result.put(fileUID, newuid);
 							} catch (IOException ex) {
 								if (allowMissingFiles) {
@@ -3911,7 +3989,8 @@ public class SurveyService extends BasicService {
 	@Transactional
 	public void markDeleted(int surveyid, Integer userid, String shortname, String uniqueId, boolean published) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("UPDATE Survey s SET s.isDeleted = true, s.deleted = NOW() WHERE s.uniqueId = :uniqueId");
+		Query query = session
+				.createQuery("UPDATE Survey s SET s.isDeleted = true, s.deleted = NOW() WHERE s.uniqueId = :uniqueId");
 		query.setParameter("uniqueId", uniqueId);
 		query.executeUpdate();
 
@@ -3952,7 +4031,8 @@ public class SurveyService extends BasicService {
 		cal.add(Calendar.MONTH, -3);
 
 		Date threemonthsago = cal.getTime();
-		Query query = session.createQuery("SELECT s.id FROM Survey s WHERE s.isDraft = true AND s.isDeleted = true AND s.deleted < :threemonthsago");
+		Query query = session.createQuery(
+				"SELECT s.id FROM Survey s WHERE s.isDraft = true AND s.isDeleted = true AND s.deleted < :threemonthsago");
 		query.setParameter("threemonthsago", threemonthsago);
 
 		return query.list();
@@ -3974,22 +4054,21 @@ public class SurveyService extends BasicService {
 			session.save(published);
 		}
 	}
-	
+
 	public List<Survey> getAllSurveysForUser(User user) {
 		Session session = sessionFactory.getCurrentSession();
-		
+
 		String hql = "FROM Survey s WHERE s.isDraft = true AND s.owner.id = :userid";
 		Query query = session.createQuery(hql);
 		query.setInteger("userid", user.getId());
-		
+
 		@SuppressWarnings("unchecked")
 		List<Survey> result = query.list();
-		
+
 		return result;
 	}
-	
-	private String getOwnerWhere(User user, String type)
-	{
+
+	private String getOwnerWhere(User user, String type) {
 		String ownerwhere;
 
 		if (type != null && type.equalsIgnoreCase("my")) {
@@ -3999,15 +4078,17 @@ public class SurveyService extends BasicService {
 		} else {
 			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
 		}
-		
+
 		return ownerwhere;
 	}
 
 	public Map<Integer, String> getAllPublishedSurveysForUser(User user, String sort, String type) {
 		Session session = sessionFactory.getCurrentSession();
-		
+
 		String ownerwhere = getOwnerWhere(user, type);
-		String sql = "SELECT s.SURVEY_ID, s.SURVEYNAME from SURVEYS s where s.ISDRAFT = 1 and s.ACTIVE = 1 and (" + ownerwhere + ") and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) ORDER BY ";
+		String sql = "SELECT s.SURVEY_ID, s.SURVEYNAME from SURVEYS s where s.ISDRAFT = 1 and s.ACTIVE = 1 and ("
+				+ ownerwhere
+				+ ") and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) ORDER BY ";
 
 		if (sort.equalsIgnoreCase("created")) {
 			sql += "s.SURVEY_CREATED DESC";
@@ -4018,7 +4099,7 @@ public class SurveyService extends BasicService {
 		}
 
 		Query query = session.createSQLQuery(sql);
-	
+
 		query.setInteger("userid", user.getId());
 
 		if (type == null || !type.equalsIgnoreCase("my")) {
@@ -4038,12 +4119,14 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public List<String> getAllPublishedSurveysUIDsForUser(User user, boolean escapeforsql, boolean includearchived, String type) {
+	public List<String> getAllPublishedSurveysUIDsForUser(User user, boolean escapeforsql, boolean includearchived,
+			String type) {
 		Session session = sessionFactory.getCurrentSession();
-		
+
 		String ownerwhere = getOwnerWhere(user, type);
-		
-		String sql = "SELECT DISTINCT s.SURVEY_UID from SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere + ") and (s.DELETED = 0 or s.DELETED is null)";
+
+		String sql = "SELECT DISTINCT s.SURVEY_UID from SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere
+				+ ") and (s.DELETED = 0 or s.DELETED is null)";
 
 		if (!includearchived) {
 			sql += " and (s.ARCHIVED = 0 or s.ARCHIVED is null)";
@@ -4056,7 +4139,7 @@ public class SurveyService extends BasicService {
 			query.setString("login", user.getLogin());
 		}
 
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 
 		@SuppressWarnings("rawtypes")
 		List res = query.list();
@@ -4077,9 +4160,10 @@ public class SurveyService extends BasicService {
 
 		List<String> surveyUIDs = getAllPublishedSurveysUIDsForUser(user, true, false, type);
 
-		if (surveyUIDs.size() > 0) {
+		if (!surveyUIDs.isEmpty()) {
 			Session session = sessionFactory.getCurrentSession();
-			String sql = "SELECT s.SURVEYNAME from SURVEYS s where s.ISDRAFT = 1 and SURVEY_UID IN (" + StringUtils.collectionToCommaDelimitedString(surveyUIDs)
+			String sql = "SELECT s.SURVEYNAME from SURVEYS s where s.ISDRAFT = 1 and SURVEY_UID IN ("
+					+ StringUtils.collectionToCommaDelimitedString(surveyUIDs)
 					+ ") ORDER BY s.SURVEY_UPDATED DESC LIMIT 1";
 
 			Query query = session.createSQLQuery(sql);
@@ -4087,7 +4171,8 @@ public class SurveyService extends BasicService {
 			String shortname = (String) query.uniqueResult();
 			result[0] = shortname != null ? shortname : "";
 
-			sql = "SELECT s.SURVEYNAME FROM ANSWERS_SET ans JOIN SURVEYS s ON ans.SURVEY_ID = s.SURVEY_ID WHERE s.SURVEY_UID IN (" + StringUtils.collectionToCommaDelimitedString(surveyUIDs)
+			sql = "SELECT s.SURVEYNAME FROM ANSWERS_SET ans JOIN SURVEYS s ON ans.SURVEY_ID = s.SURVEY_ID WHERE s.SURVEY_UID IN ("
+					+ StringUtils.collectionToCommaDelimitedString(surveyUIDs)
 					+ ") ORDER BY ans.ANSWER_SET_DATE DESC LIMIT 1";
 
 			query = session.createSQLQuery(sql);
@@ -4146,9 +4231,9 @@ public class SurveyService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 
 		String ownerwhere = getOwnerWhere(user, type);
-		
-		String sql = "SELECT s.SURVEY_ID, s.ACTIVE, s.ISPUBLISHED, s.ARCHIVED, s.HASPENDINGCHANGES from SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere
-				+ ") and (s.DELETED = 0 or s.DELETED is null)";
+
+		String sql = "SELECT s.SURVEY_ID, s.ACTIVE, s.ISPUBLISHED, s.ARCHIVED, s.HASPENDINGCHANGES from SURVEYS s where s.ISDRAFT = 1 and ("
+				+ ownerwhere + ") and (s.DELETED = 0 or s.DELETED is null)";
 
 		Query query = session.createSQLQuery(sql);
 		query.setInteger("userid", user.getId());
@@ -4163,7 +4248,6 @@ public class SurveyService extends BasicService {
 		for (Object o : res) {
 			Object[] a = (Object[]) o;
 			boolean active = (boolean) a[1];
-			// boolean published = (boolean)a[2];
 			boolean archived = a[3] != null && (boolean) a[3];
 			boolean pending = (boolean) a[4];
 
@@ -4181,7 +4265,7 @@ public class SurveyService extends BasicService {
 
 			result[4]++;
 		}
-		
+
 		List<Archive> archives = archiveService.getArchivesForUser(user.getId());
 		result[2] += archives.size();
 		result[4] += archives.size();
@@ -4191,9 +4275,10 @@ public class SurveyService extends BasicService {
 
 	public Map<Date, List<String>> getSurveysWithEndDatesForUser(User user, String type) {
 		Session session = sessionFactory.getCurrentSession();
-				
+
 		String ownerwhere = getOwnerWhere(user, type);
-		String sql = "SELECT s.SURVEYNAME, s.SURVEY_END_DATE FROM SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere + ") and s.SURVEY_END_DATE is not null and s.SURVEY_END_DATE >= CURDATE() and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) and s.AUTOMATICPUBLISHING = 1";
+		String sql = "SELECT s.SURVEYNAME, s.SURVEY_END_DATE FROM SURVEYS s where s.ISDRAFT = 1 and (" + ownerwhere
+				+ ") and s.SURVEY_END_DATE is not null and s.SURVEY_END_DATE >= CURDATE() and (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null) and s.AUTOMATICPUBLISHING = 1";
 
 		Query query = session.createSQLQuery(sql);
 		query.setInteger("userid", user.getId());
@@ -4229,33 +4314,45 @@ public class SurveyService extends BasicService {
 		}
 		StringBuilder s = new StringBuilder();
 		User owner = survey.getOwner();
-		EcasHelper.readData(owner, this.ldapService);	
+		EcasHelper.readData(owner, this.ldapService);
 
 		s.append("<?xml version='1.0' encoding='UTF-8' standalone='no' ?>\n");
-		s.append("<Survey id='").append(survey.getId()).append("' alias='").append(survey.getShortname()).append("'>\n");
+		s.append("<Survey id='").append(survey.getId()).append("' alias='").append(survey.getShortname())
+				.append("'>\n");
 
-		s.append("<SurveyType>").append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : "Standard")).append("</SurveyType>\n");
+		s.append("<SurveyType>")
+				.append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : "Standard"))
+				.append("</SurveyType>\n");
 
 		s.append("<Title>").append(survey.getTitle()).append("</Title>\n");
 
 		s.append("<PivotLanguage>").append(survey.getLanguage().getCode().toUpperCase()).append("</PivotLanguage>\n");
 
 		s.append("<Owner>").append(owner.getGivenName()).append(" ").append(owner.getSurName()).append("</Owner>\n");
-		
+
 		s.append("<OwnerDepartment>").append(owner.getDepartment()).append("</OwnerDepartment>\n");
 
 		s.append("<Contact>").append(survey.getContact()).append("</Contact>\n");
 
-		s.append("<Status>").append(survey.getIsPublished() && survey.getIsActive() ? "published" : "unpublished").append("</Status>\n");
+		s.append("<Status>").append(survey.getIsPublished() && survey.getIsActive() ? "published" : "unpublished")
+				.append("</Status>\n");
 
-		Survey published = surveyService.getSurvey(survey.getShortname(), false, false, false, false, null, true, false);
-		s.append("<PendingChanges>").append(published != null && surveyService.getPendingChanges(survey).size() > 0 ? "yes" : "no").append("</PendingChanges>\n");
+		Survey published = surveyService.getSurvey(survey.getShortname(), false, false, false, false, null, true,
+				false);
+		s.append("<PendingChanges>")
+				.append(published != null && surveyService.getPendingChanges(survey).size() > 0 ? "yes" : "no")
+				.append("</PendingChanges>\n");
 
-		s.append("<Start>").append(survey.getStart() == null ? "Unset" : ConversionTools.getFullString4Webservice(survey.getStart())).append("</Start>\n");
-		s.append("<End>").append(survey.getEnd() == null ? "Unset" : ConversionTools.getFullString4Webservice(survey.getEnd())).append("</End>\n");
+		s.append("<Start>").append(
+				survey.getStart() == null ? "Unset" : ConversionTools.getFullString4Webservice(survey.getStart()))
+				.append("</Start>\n");
+		s.append("<End>")
+				.append(survey.getEnd() == null ? "Unset" : ConversionTools.getFullString4Webservice(survey.getEnd()))
+				.append("</End>\n");
 		s.append("<Results>").append(results).append("</Results>\n");
 
-		s.append("<AutomaticPublishing>").append(survey.getAutomaticPublishing() ? "yes" : "no").append("</AutomaticPublishing>\n");
+		s.append("<AutomaticPublishing>").append(survey.getAutomaticPublishing() ? "yes" : "no")
+				.append("</AutomaticPublishing>\n");
 
 		s.append("<UseFulLinks>");
 		for (String label : survey.getAdvancedUsefulLinks().keySet()) {
@@ -4301,14 +4398,17 @@ public class SurveyService extends BasicService {
 
 		s.append("<Contribution>").append(survey.getChangeContribution() ? "yes" : "no").append("</Contribution>\n");
 
-		s.append("<DownloadContribution>").append(survey.getDownloadContribution() ? "yes" : "no").append("</DownloadContribution>\n");
+		s.append("<DownloadContribution>").append(survey.getDownloadContribution() ? "yes" : "no")
+				.append("</DownloadContribution>\n");
 
 		s.append("<Draft>").append(survey.getSaveAsDraft() ? "yes" : "no").append("</Draft>\n");
 
-		s.append("<Skin>").append(survey.getSkin() != null ? survey.getSkin().getName() : "no skin").append("</Skin>\n");
+		s.append("<Skin>").append(survey.getSkin() != null ? survey.getSkin().getName() : "no skin")
+				.append("</Skin>\n");
 
 		s.append("<PublishedResults>");
-		if (survey.getPublication() != null && (survey.getPublication().isShowContent() || survey.getPublication().isShowStatistics())) {
+		if (survey.getPublication() != null
+				&& (survey.getPublication().isShowContent() || survey.getPublication().isShowStatistics())) {
 			boolean first = true;
 			if (survey.getPublication().isShowContent()) {
 				s.append("Answers");
@@ -4368,9 +4468,13 @@ public class SurveyService extends BasicService {
 		for (Survey survey : surveys) {
 			if (!survey.getOwner().getId().equals(user.getId())) {
 				Access access = surveyService.getAccess(survey.getId(), user.getId());
-				survey.setFullFormManagementRights(access != null && access.getLocalPrivileges().get(LocalPrivilege.FormManagement) > 1);
-				survey.setFormManagementRights(access != null && access.getLocalPrivileges().get(LocalPrivilege.FormManagement) > 0);
-				survey.setAccessResultsRights(access != null && (access.getLocalPrivileges().get(LocalPrivilege.AccessResults) > 0 || access.getLocalPrivileges().get(LocalPrivilege.AccessDraft) > 0));
+				survey.setFullFormManagementRights(
+						access != null && access.getLocalPrivileges().get(LocalPrivilege.FormManagement) > 1);
+				survey.setFormManagementRights(
+						access != null && access.getLocalPrivileges().get(LocalPrivilege.FormManagement) > 0);
+				survey.setAccessResultsRights(
+						access != null && (access.getLocalPrivileges().get(LocalPrivilege.AccessResults) > 0
+								|| access.getLocalPrivileges().get(LocalPrivilege.AccessDraft) > 0));
 			}
 
 			String disabled = settingsService.get(Setting.CreateSurveysForExternalsDisabled);
@@ -4404,7 +4508,7 @@ public class SurveyService extends BasicService {
 		Query query = session.createSQLQuery(sql);
 		return ConversionTools.getValue(query.uniqueResult());
 	}
-	
+
 //	@Transactional(readOnly = true)
 //	public Pair<Date, Date> getFirstLastPublishDate(String surveyuid) {
 //		Session session = sessionFactory.getCurrentSession();
@@ -4434,9 +4538,10 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public void reportAbuse(Survey survey, String type, String text, String email) throws NumberFormatException, Exception {
+	public void reportAbuse(Survey survey, String type, String text, String email)
+			throws NumberFormatException, Exception {
 		Session session = sessionFactory.getCurrentSession();
-		
+
 		int count = getAbuseReportsForSurvey(survey.getUniqueId());
 
 		Abuse abuse = new Abuse(survey.getUniqueId(), type, text, email);
@@ -4447,34 +4552,36 @@ public class SurveyService extends BasicService {
 		int max = Integer.parseInt(maxs);
 		String mailtext = settingsService.get(Setting.ReportText);
 		String recipients = settingsService.get(Setting.ReportRecipients);
-		
-		if (count < max) {	
+
+		if (count < max) {
 			Locale locale = new Locale("EN");
-			switch(type) {
-				case "fake":
-					type = resources.getMessage("info.ReportAbuseFake", null, "Fake", locale);
-					break;
-				case "propaganda":
-					type = resources.getMessage("info.ReportAbusePropaganda", null, "Propaganda", locale);
-					break;
-				case "hate":
-					type = resources.getMessage("info.ReportAbuseHate", null, "Hate", locale);
-					break;
-				case "images":
-					type = resources.getMessage("info.ReportAbuseImages", null, "Images", locale);
-					break;
-				case "promo":
-					type = resources.getMessage("info.ReportAbusePromo", null, "Promo", locale);
-					break;
-				case "others":
-					type = resources.getMessage("info.ReportAbuseOthers", null, "Others", locale) + ":" + text;
-					break;
+			switch (type) {
+			case "fake":
+				type = resources.getMessage("info.ReportAbuseFake", null, "Fake", locale);
+				break;
+			case "propaganda":
+				type = resources.getMessage("info.ReportAbusePropaganda", null, "Propaganda", locale);
+				break;
+			case "hate":
+				type = resources.getMessage("info.ReportAbuseHate", null, "Hate", locale);
+				break;
+			case "images":
+				type = resources.getMessage("info.ReportAbuseImages", null, "Images", locale);
+				break;
+			case "promo":
+				type = resources.getMessage("info.ReportAbusePromo", null, "Promo", locale);
+				break;
+			case "others":
+				type = resources.getMessage("info.ReportAbuseOthers", null, "Others", locale) + ":" + text;
+				break;
 			}
-			
+
 			String link = serverPrefix + "runner/" + survey.getShortname();
-			
-			mailtext = mailtext.replace("[ALIAS]", survey.getShortname()).replace("[LINK]", link).replace("[TITLE]", survey.getTitle()).replace("[ID]", survey.getId().toString()).replace("[EMAIL]", email)
-					.replace("[TYPE]", type).replace("[TEXT]", text).replace("[DATE]", abuse.getCreated().toString()).replace("[COUNT]", Integer.toString(count+1));
+
+			mailtext = mailtext.replace("[ALIAS]", survey.getShortname()).replace("[LINK]", link)
+					.replace("[TITLE]", survey.getTitle()).replace("[ID]", survey.getId().toString())
+					.replace("[EMAIL]", email).replace("[TYPE]", type).replace("[TEXT]", text)
+					.replace("[DATE]", abuse.getCreated().toString()).replace("[COUNT]", Integer.toString(count + 1));
 
 			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 			mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailtext).replace("[HOST]", host);
@@ -4489,12 +4596,13 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public void sendAbuseReportsMailForYesterday() {		
-		try {		
+	public void sendAbuseReportsMailForYesterday() {
+		try {
 			String recipients = settingsService.get(Setting.ReportRecipients);
-			if (recipients == null || recipients.trim().length() == 0) return;
+			if (recipients == null || recipients.trim().length() == 0)
+				return;
 			String[] emails = recipients.split(";");
-			
+
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(new Date());
 			cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -4504,26 +4612,30 @@ public class SurveyService extends BasicService {
 			Date today = cal.getTime();
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			Date yesterday = cal.getTime();
-			
+
 			Session session = sessionFactory.getCurrentSession();
 			String sql = "SELECT SURABUSE_SURVEY, s.SURVEYNAME, s.TITLESORT, COUNT(SURABUSE_ID) FROM SURABUSE sa LEFT JOIN SURVEYS s ON s.SURVEY_ID = (SELECT SURVEY_ID FROM SURVEYS s2 WHERE s2.SURVEY_UID = sa.SURABUSE_SURVEY LIMIT 1) WHERE SURABUSE_DATE >= :yesterday AND SURABUSE_DATE < :today GROUP BY SURABUSE_SURVEY";
 			Query query = session.createSQLQuery(sql);
 			query.setTimestamp("today", today);
-			query.setTimestamp("yesterday", yesterday);		
-	
+			query.setTimestamp("yesterday", yesterday);
+
 			@SuppressWarnings("rawtypes")
 			List res = query.list();
-			
-			if (res.size() == 0) return;
+
+			if (res.isEmpty())
+			{
+				return;
+			}
 			
 			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 			StringBuilder content = new StringBuilder();
-			
-			content.append("Surveys reported the day before:<br /><table><tr><th style='text-align: left'>Survey UID</th><th style='text-align: left'>Alias</th><th style='text-align: left'>Title</th><th style='text-align: left'>Number of Reports</th></tr>");
-			
+
+			content.append(
+					"Surveys reported the day before:<br /><table><tr><th style='text-align: left'>Survey UID</th><th style='text-align: left'>Alias</th><th style='text-align: left'>Title</th><th style='text-align: left'>Number of Reports</th></tr>");
+
 			for (Object o : res) {
 				Object[] a = (Object[]) o;
-				
+
 				content.append("<tr>");
 				content.append("<td>").append(a[0]).append("</td>");
 				content.append("<td>").append(a[1]).append("</td>");
@@ -4531,16 +4643,18 @@ public class SurveyService extends BasicService {
 				content.append("<td>").append(ConversionTools.getValue(a[3])).append(" reports</td>");
 				content.append("</tr>");
 			}
-			
+
 			content.append("</table>");
-			
-			String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", content.toString()).replace("[HOST]", host);
-			
+
+			String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", content.toString())
+					.replace("[HOST]", host);
+
 			for (String recipient : emails) {
 				if (recipient.trim().length() > 0) {
-					mailService.SendHtmlMail(recipient, sender, sender, "Survey Abuse Report Statistics", mailtext, null);
+					mailService.SendHtmlMail(recipient, sender, sender, "Survey Abuse Report Statistics", mailtext,
+							null);
 				}
-			}	
+			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
@@ -4550,64 +4664,65 @@ public class SurveyService extends BasicService {
 	public void freeze(String surveyId, String mailText) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		Survey survey = getSurvey(Integer.parseInt(surveyId));
-		
-		if (survey == null)
-		{
+
+		if (survey == null) {
 			throw new Exception("survey does not exist");
 		}
-		
-		survey.setIsFrozen(true);		
+
+		survey.setIsFrozen(true);
 		session.saveOrUpdate(survey);
-		
+
 		// send email
-		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");		
-		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);		
-		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey has been blocked", mailtext, null);
-		
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);
+		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey has been blocked", mailtext,
+				null);
+
 		mailService.SendHtmlMail(monitoringEmail, sender, sender, "Your survey has been blocked", mailtext, null);
 	}
-	
+
 	@Transactional
 	public void unfreeze(String surveyId) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		Survey survey = getSurvey(Integer.parseInt(surveyId));
-		
-		if (survey == null)
-		{
+
+		if (survey == null) {
 			throw new Exception("survey does not exist");
 		}
-		
-		survey.setIsFrozen(false);		
+
+		survey.setIsFrozen(false);
 		session.saveOrUpdate(survey);
-		
+
 		String url = "[HOST]/" + survey.getShortname() + "/management/overview";
-		
-		String mailText = "Your survey<br />" + survey.getShortname() + "<br /><a href='" + url + "'>" + url + "</a>" + "<br />" + survey.getTitleSort() + "<br />is now available again and can be published.";
-		
+
+		String mailText = "Your survey<br />" + survey.getShortname() + "<br /><a href='" + url + "'>" + url + "</a>"
+				+ "<br />" + survey.getTitleSort() + "<br />is now available again and can be published.";
+
 		// send email
-		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");		
-		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);		
-		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey is available again", mailtext, null);
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);
+		mailService.SendHtmlMail(survey.getOwner().getEmail(), sender, sender, "Your survey is available again",
+				mailtext, null);
 	}
 
 	public String getMySurveysXML(SurveyFilter filter, ArchiveFilter archiveFilter) throws Exception {
 		StringBuilder s = new StringBuilder();
-		
+
 		s.append("<?xml version='1.0' encoding='UTF-8' standalone='no' ?>\n");
 		s.append("<Surveys user='").append(filter.getUser().getLogin()).append("'>\n");
-		
-		if (archiveFilter != null)
-		{		
+
+		if (archiveFilter != null) {
 			List<Archive> archives = archiveService.getAllArchives(archiveFilter, 1, 10000, true);
 			for (Archive archive : archives) {
-				s.append("<Survey uid='").append(archive.getSurveyUID()).append("' alias='").append(archive.getSurveyShortname()).append("'>\n");
+				s.append("<Survey uid='").append(archive.getSurveyUID()).append("' alias='")
+						.append(archive.getSurveyShortname()).append("'>\n");
 				s.append("<Title>").append(ConversionTools.removeHTML(archive.getSurveyTitle())).append("</Title>\n");
 				s.append("</Survey>\n");
 			}
 		}
-				
-		SqlPagination pagination = new SqlPagination(1, 10000);		
-		
+
+		SqlPagination pagination = new SqlPagination(1, 10000);
+
 		StringBuilder stringBuilder = new StringBuilder(512);
 		stringBuilder.append("SELECT s.SURVEY_UID");
 		stringBuilder.append(" , s.SURVEYNAME");
@@ -4616,19 +4731,19 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(" FROM SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID ");
 
-		if (filter.getMinReported() != null && filter.getMinReported() > 0)
-		{
-			stringBuilder.append(" LEFT JOIN ( SELECT SURABUSE_SURVEY, count(SURABUSE_ID) as abuses FROM SURABUSE GROUP BY SURABUSE_SURVEY) abu ON abu.SURABUSE_SURVEY = s.SURVEY_UID");	
+		if (filter.getMinReported() != null && filter.getMinReported() > 0) {
+			stringBuilder.append(
+					" LEFT JOIN ( SELECT SURABUSE_SURVEY, count(SURABUSE_ID) as abuses FROM SURABUSE GROUP BY SURABUSE_SURVEY) abu ON abu.SURABUSE_SURVEY = s.SURVEY_UID");
 		}
-		
+
 		stringBuilder.append(" where");
 
 		if (archiveFilter != null) {
 			stringBuilder.append(" (s.ARCHIVED = 1)");
 		} else if (filter.getDeleted() != null && filter.getDeleted()) {
-			stringBuilder.append(" (s.DELETED = "+ (filter.getDeleted() ? "1":"0") + ")");
-		} else if (filter.getFrozen() != null ) {
-			stringBuilder.append(" (s.FROZEN "+ (filter.getFrozen() ? " > 0":" < 1") + ")");
+			stringBuilder.append(" (s.DELETED = " + (filter.getDeleted() ? "1" : "0") + ")");
+		} else if (filter.getFrozen() != null) {
+			stringBuilder.append(" (s.FROZEN " + (filter.getFrozen() ? " > 0" : " < 1") + ")");
 		} else {
 			stringBuilder.append(" (s.ARCHIVED = 0 or s.ARCHIVED is null) and (s.DELETED = 0 or s.DELETED is null)");
 		}
@@ -4643,47 +4758,45 @@ public class SurveyService extends BasicService {
 			survey.setUniqueId((String) row[0]);
 			survey.setShortname((String) row[1]);
 			survey.setTitle((String) row[2]);
-			
+
 			int ownerId = ConversionTools.getValue(row[3]);
 			User owner = administrationService.getUser(ownerId);
 			survey.setOwner(owner);
 			surveys.add(survey);
 		}
-		
-		for (Survey survey: surveys) {
-			if (filter.getUserDepartment() != null && filter.getUserDepartment().length() > 1)
-			{
+
+		for (Survey survey : surveys) {
+			if (filter.getUserDepartment() != null && filter.getUserDepartment().length() > 1) {
 				List<String> departments = ldapService.getUserLDAPGroups(survey.getOwner().getLogin());
-				if (!departments.contains(filter.getUserDepartment()))
-				{
+				if (!departments.contains(filter.getUserDepartment())) {
 					continue;
 				}
-			}	
-			
-			s.append("<Survey uid='").append(survey.getUniqueId()).append("' alias='").append(survey.getShortname()).append("'>\n");
+			}
+
+			s.append("<Survey uid='").append(survey.getUniqueId()).append("' alias='").append(survey.getShortname())
+					.append("'>\n");
 			s.append("<Title>").append(ConversionTools.removeHTML(survey.getTitle())).append("</Title>\n");
 			s.append("</Survey>\n");
 		}
-		
+
 		s.append("</Surveys>");
 
 		return s.toString();
 	}
-	
+
 	@Transactional
 	public List<Integer> getSurveysForUser(int userid) {
 		Session session = sessionFactory.getCurrentSession();
 		SQLQuery query = session.createSQLQuery("SELECT SURVEY_ID FROM SURVEYS WHERE OWNER = :id AND ISDRAFT = 1");
-		
+
 		@SuppressWarnings("rawtypes")
 		List surveys = query.setInteger("id", userid).list();
 		List<Integer> result = new ArrayList<>();
-		
-		for (Object o: surveys)
-		{
+
+		for (Object o : surveys) {
 			result.add(ConversionTools.getValue(o));
 		}
-		
+
 		return result;
 	}
 }

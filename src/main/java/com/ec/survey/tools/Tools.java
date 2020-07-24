@@ -7,8 +7,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.simple.JSONObject;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.errors.IntrusionException;
-
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -57,18 +55,18 @@ public class Tools {
 	{
 		if (o1 == null && o2 == null) return true;
 		
-		if (o1 == null && o2 != null && o2 instanceof Skin)
+		if (o1 == null && o2 instanceof Skin)
 		{
 			return ((Skin)o2).getId() == 1;
 		}
 		
-		if (o2 == null && o1 != null && o1 instanceof Skin)
+		if (o2 == null && o1 instanceof Skin)
 		{
 			return ((Skin)o1).getId() == 1;
 		}
 		
-		if (o1 == null && o2 != null) return false;
-		if (o2 == null && o1 != null) return false;
+		if (o1 == null) return false;
+		if (o2 == null) return false;
 		
 		return o1.equals(o2);
 	}
@@ -201,11 +199,8 @@ public class Tools {
 		PasswordData passwordData = new PasswordData(new Password(password));
 
 		RuleResult result = validator.validate(passwordData);
-		if (result.isValid()) {
-		  return false;
-		} else {		 
-		  return true;
-		}
+		
+		return !result.isValid();
 	}
 
 	public static boolean validUniqueCode(String uniqueCode) {
@@ -229,7 +224,7 @@ public class Tools {
 		return ESAPI.encoder().decodeForHTML(input);
 	}
 	
-	public static String filterHTML(String input) throws IntrusionException {
+	public static String filterHTML(String input) {
 		//this is postponed to ticket ESURVEY-1626, please do not remove this line
 		//return ESAPI.validator().getValidSafeHTML("input", input, 10000, true);
 		return input;
@@ -272,8 +267,7 @@ public class Tools {
 	            .toFormatter(); 
 				
 	    LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
-	    Date date = Date.from(dateTime.atZone(ZoneId.of("CET")).toInstant());
-		return date;
+	    return Date.from(dateTime.atZone(ZoneId.of("CET")).toInstant());
 	}
 
 	public static String formatDate(Date date, String pattern) {
@@ -291,8 +285,7 @@ public class Tools {
 		}
 		
 		LocalDateTime localDateTime = instant.atZone(ZoneId.of("CET")).toLocalDateTime();
-		String formatDateTime = localDateTime.format(formatter);
-		return formatDateTime;
+		return localDateTime.format(formatter);
 	}
 	
 	public static String getCurrentToSVersion()

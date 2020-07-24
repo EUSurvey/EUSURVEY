@@ -35,8 +35,8 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.*;
+import java.util.Map.Entry;
 
 @Controller
 @RequestMapping("/webservice")
@@ -613,11 +613,9 @@ public class WebServiceController extends BasicController {
 				}
 
 				String noEmptyResults = request.getParameter("noempty");
-				if (noEmptyResults != null && noEmptyResults.equalsIgnoreCase("true")) {
-					if (task.isEmpty()) {
-						response.setStatus(200);
-						return "";
-					}
+				if (noEmptyResults != null && noEmptyResults.equalsIgnoreCase("true") && task.isEmpty()) {
+					response.setStatus(200);
+					return "";
 				}
 
 				File file = fileService.get(task.getResult());
@@ -1156,12 +1154,12 @@ public class WebServiceController extends BasicController {
 			parameters.put(param, values1);
 		}
 
-		for (String key : parameters.keySet()) {
-			if (key.equalsIgnoreCase("token")) {
-				token = parameters.get(key)[0];
+		for (Entry<String, String[]> entry : parameters.entrySet()) {
+			if (entry.getKey().equalsIgnoreCase("token")) {
+				token = entry.getValue()[0];
 			} else {
-				if (!values.containsKey(key)) {
-					values.put(key, parameters.get(key)[0]);
+				if (!values.containsKey(entry.getKey())) {
+					values.put(entry.getKey(), entry.getValue()[0]);
 				} else {
 					response.setStatus(412);
 					return "";
@@ -2209,7 +2207,7 @@ public class WebServiceController extends BasicController {
 		return false;
 	}
 
-	private static Date getDate(String input) throws ParseException {
+	private static Date getDate(String input) {
 		if (input != null && !input.equalsIgnoreCase("0")) {
 			return Tools.parseDateString(input, StandardDateString);
 		}

@@ -145,7 +145,7 @@ public class SurveyCreator {
 		matrix.getChildElements().add(dummy);
 		for (int i = 1; i < 6; i++)
 		{
-			Text text = new Text(survey, "Text" + i, UUID.randomUUID().toString());
+			Text text = new Text("Text" + i, UUID.randomUUID().toString());
 			text.setPosition(i);
 			matrix.getChildElements().add(text);
 		}
@@ -277,7 +277,7 @@ public class SurveyCreator {
 		matrix.getChildElements().add(dummy);
 		for (int i = 1; i < 6; i++)
 		{
-			Text text = new Text(survey, "Text" + i, UUID.randomUUID().toString());
+			Text text = new Text("Text" + i, UUID.randomUUID().toString());
 			text.setPosition(i);
 			matrix.getChildElements().add(text);
 		}
@@ -423,12 +423,12 @@ public class SurveyCreator {
 		s.setPosition(counter++);
 		survey.getElements().add(s);
 			
-		Upload f = new Upload(survey, "Please upload a file", "shortname", UUID.randomUUID().toString());
+		Upload f = new Upload("Please upload a file", "shortname", UUID.randomUUID().toString());
 		f.setPosition(counter++);
 		f.setOptional(false);
 		survey.getElements().add(f);
 		
-		f = new Upload(survey, "Please upload another file", "shortname2", UUID.randomUUID().toString());
+		f = new Upload("Please upload another file", "shortname2", UUID.randomUUID().toString());
 		f.setPosition(counter++);
 		f.setOptional(false);
 		survey.getElements().add(f);

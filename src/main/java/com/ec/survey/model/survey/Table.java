@@ -2,7 +2,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.Cacheable;
@@ -25,7 +24,7 @@ public class Table extends MatrixOrTable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public Table(Survey survey, String ptitle, String shortname, String uid) {
+	public Table(String ptitle, String shortname, String uid) {
 		setTitle(ptitle);
 		setShortname(shortname);
 		setUniqueId(uid);
@@ -34,7 +33,7 @@ public class Table extends MatrixOrTable {
 	public Table() {
 	}	
 	
-	public Table copy(String fileDir) throws ValidationException, IntrusionException
+	public Table copy(String fileDir) throws ValidationException
 	{
 		Table copy = new Table();
 		initCopy(copy, fileDir);	

@@ -259,7 +259,7 @@ public class XlsExportCreator extends ExportCreator {
 
 		rowIndex = insertHeader(sheets, publication, filter, export);
 
-		List<File> uploadedFiles = new ArrayList<File>();
+		List<File> uploadedFiles = new ArrayList<>();
 		if (publication == null || publication.getShowUploadedDocuments()) {
 			uploadedFiles = answerService.getAllUploadedFiles(form.getSurvey().getId(), filter, 1, Integer.MAX_VALUE);
 		}
@@ -417,7 +417,7 @@ public class XlsExportCreator extends ExportCreator {
 
 		wb.write(outputStream);
 
-		if (fileCounter > 0 || uploadedFiles.size() > 0) {
+		if (fileCounter > 0 || !uploadedFiles.isEmpty()) {
 			// there are multiple files
 			java.io.File temp = new java.io.File(exportFilePath + ".zip");
 			final OutputStream out = new FileOutputStream(temp);
@@ -963,15 +963,14 @@ public class XlsExportCreator extends ExportCreator {
 		Set<String> visibleQuestions = null;
 		if (filter != null)
 			visibleQuestions = filter.getExportedQuestions();
-		if (visibleQuestions == null || visibleQuestions.size() == 0)
+		if (visibleQuestions == null || visibleQuestions.isEmpty())
 			visibleQuestions = filter.getVisibleQuestions();
 
 		for (Element question : survey.getQuestionsAndSections()) {
 
-			if (filter == null || visibleQuestions.size() == 0
-					|| visibleQuestions.contains(question.getId().toString())) {
+			if (filter == null || visibleQuestions.isEmpty() || visibleQuestions.contains(question.getId().toString())) {
 				if (question instanceof Section) {
-					Cell cell = row.createCell(0); // TODO: bold
+					Cell cell = row.createCell(0);
 					cell.setCellStyle(boldstyle);
 					cell.setCellValue(ConversionTools.removeHTMLNoEscape(question.getTitle()));
 					rowIndex++;
