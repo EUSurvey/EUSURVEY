@@ -66,9 +66,9 @@
 							<span style="margin-right: 10px;"><spring:message code="label.Surveys" />:</span>
 														
 							<select id="surveystatesselector" class="form-control" style="display: inline; width: auto;" onchange="_dashboard.reloadSurveyWidgets();">
-								<option value="all"><spring:message code="label.BothOfThem" /></option>
 								<option value="my" selected="selected"><spring:message code="label.MySurveys" /></option>
 								<option value="shared"><spring:message code="label.SharedWithMe" /></option>
+								<option value="all"><spring:message code="label.BothOfThem" /></option>
 							</select>	
 						</div>	
 				
