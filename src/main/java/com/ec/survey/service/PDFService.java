@@ -341,7 +341,7 @@ public class PDFService extends BasicService {
 					if (!f.exists()) {
 						f = new java.io.File(fileDir + file.getUid());
 						if (f.exists()) {
-							fileService.LogOldFileSystemUse(fileDir + file.getUid());
+							fileService.logOldFileSystemUse(fileDir + file.getUid());
 						}
 					}
 					if (f.exists()) {

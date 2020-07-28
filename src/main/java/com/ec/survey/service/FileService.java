@@ -49,7 +49,7 @@ public class FileService extends BasicService {
 	public static String[] filetypes = { "results", "statistics", "charts", "tokens", "contacts", "activities", "uploaded file", "download", "image", "logo", "background document", "survey", "contribution" };
 	public static String[] fileextensions = { "PDF", "XLS", "ODS", "DOC", "ODT", "XML", "CSV", "JPG", "PNG", "ZIP", "OTHER" };
 	
-	public void LogOldFileSystemUse(String path)
+	public void logOldFileSystemUse(String path)
 	{
 		logger.info("OLD FILESYSTEM ACCESS: " + path);
 	}
@@ -1602,7 +1602,7 @@ public class FileService extends BasicService {
 		{
 			f = new java.io.File(fileDir + uid);
 			if (f.exists())
-			fileService.LogOldFileSystemUse(fileDir + uid);
+			fileService.logOldFileSystemUse(fileDir + uid);
 		}
 		
 		if (f.exists())

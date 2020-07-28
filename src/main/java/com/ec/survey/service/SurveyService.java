@@ -3677,7 +3677,7 @@ public class SurveyService extends BasicService {
 					if (!source.exists()) {
 						source = new java.io.File(fileDir + olduid);
 						if (source.exists()) {
-							fileService.LogOldFileSystemUse(fileDir + olduid);
+							fileService.logOldFileSystemUse(fileDir + olduid);
 						}
 					}
 
@@ -3711,7 +3711,7 @@ public class SurveyService extends BasicService {
 						if (!source.exists()) {
 							source = new java.io.File(fileDir + olduid);
 							if (source.exists()) {
-								fileService.LogOldFileSystemUse(fileDir + olduid);
+								fileService.logOldFileSystemUse(fileDir + olduid);
 							}
 						}
 						FileUtils.copyFile(source, fileService.getSurveyFile(survey.getUniqueId(), newuid));
@@ -3753,7 +3753,7 @@ public class SurveyService extends BasicService {
 							if (!source.exists()) {
 								source = new java.io.File(fileDir + olduid);
 								if (source.exists()) {
-									fileService.LogOldFileSystemUse(fileDir + olduid);
+									fileService.logOldFileSystemUse(fileDir + olduid);
 								}
 							}
 							FileUtils.copyFile(source, fileService.getSurveyFile(survey.getUniqueId(), newuid));
@@ -3788,7 +3788,7 @@ public class SurveyService extends BasicService {
 							if (!source.exists()) {
 								source = new java.io.File(fileDir + olduid);
 								if (source.exists()) {
-									fileService.LogOldFileSystemUse(fileDir + olduid);
+									fileService.logOldFileSystemUse(fileDir + olduid);
 								}
 							}
 							FileUtils.copyFile(source, fileService.getSurveyFile(survey.getUniqueId(), newuid));
@@ -3824,7 +3824,7 @@ public class SurveyService extends BasicService {
 								if (!source.exists()) {
 									source = new java.io.File(fileDir + fileUID);
 									if (source.exists()) {
-										fileService.LogOldFileSystemUse(fileDir + fileUID);
+										fileService.logOldFileSystemUse(fileDir + fileUID);
 									}
 								}
 								FileUtils.copyFile(source, fileService.getSurveyFile(survey.getUniqueId(), newuid));
@@ -3863,7 +3863,7 @@ public class SurveyService extends BasicService {
 							if (!source.exists()) {
 								source = new java.io.File(fileDir + olduid);
 								if (source.exists()) {
-									fileService.LogOldFileSystemUse(fileDir + olduid);
+									fileService.logOldFileSystemUse(fileDir + olduid);
 								}
 							}
 							FileUtils.copyFile(source, fileService.getSurveyFile(survey.getUniqueId(), newuid));

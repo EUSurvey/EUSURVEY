@@ -45,7 +45,7 @@ public class SurveyExportHelper {
 	    		source = new java.io.File(fileDir + logo.getUid());
 	    		if (source.exists())
 				{
-					fileService.LogOldFileSystemUse(fileDir + logo.getUid());
+					fileService.logOldFileSystemUse(fileDir + logo.getUid());
 				}
 	    	}
 	    	
@@ -78,7 +78,7 @@ public class SurveyExportHelper {
 			    		source = new java.io.File(fileDir + file.getUid());
 			    		if (source.exists())
 						{
-							fileService.LogOldFileSystemUse(fileDir + file.getUid());
+							fileService.logOldFileSystemUse(fileDir + file.getUid());
 						}
 			    	}
 					
@@ -110,7 +110,7 @@ public class SurveyExportHelper {
 			    		source = new java.io.File(fileDir + file.getUid());
 			    		if (source.exists())
 						{
-							fileService.LogOldFileSystemUse(fileDir + file.getUid());
+							fileService.logOldFileSystemUse(fileDir + file.getUid());
 						}
 			    	}
 					if (source.exists())
@@ -153,7 +153,7 @@ public class SurveyExportHelper {
 			    		source = new java.io.File(fileDir + fileUID);
 			    		if (source.exists())
 						{
-							fileService.LogOldFileSystemUse(fileDir + fileUID);
+							fileService.logOldFileSystemUse(fileDir + fileUID);
 						}
 			    	}
 					if (source.exists())
@@ -185,7 +185,7 @@ public class SurveyExportHelper {
 			    		source = new java.io.File(fileDir + file.getUid());
 			    		if (source.exists())
 						{
-							fileService.LogOldFileSystemUse(fileDir + file.getUid());
+							fileService.logOldFileSystemUse(fileDir + file.getUid());
 						}
 			    	}
 					if (source.exists())
@@ -227,7 +227,7 @@ public class SurveyExportHelper {
 	    		f = new java.io.File(fileDir + uid);
 	    		if (f.exists())
 				{
-					fileService.LogOldFileSystemUse(fileDir + uid);
+					fileService.logOldFileSystemUse(fileDir + uid);
 				}
 	    	}
 			if (f.exists())
@@ -380,7 +380,7 @@ public class SurveyExportHelper {
 			    		    		f = new java.io.File(fileDir + file.getUid());
 			    		    		if (f.exists())
 									{
-										fileService.LogOldFileSystemUse(fileDir + file.getUid());
+										fileService.logOldFileSystemUse(fileDir + file.getUid());
 									}
 			    		    	}
 			    				os.putArchiveEntry(new ZipArchiveEntry("files/" + file.getUid() + ".eus"));
@@ -446,7 +446,7 @@ public class SurveyExportHelper {
 						    		    		f = new java.io.File(fileDir + file.getUid());
 						    		    		if (f.exists())
 												{
-													fileService.LogOldFileSystemUse(fileDir + file.getUid());
+													fileService.logOldFileSystemUse(fileDir + file.getUid());
 												}
 						    		    	}
 						    				
