@@ -150,7 +150,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 						source = new java.io.File(fileDir + f.getUid());
 						if (source.exists())
 						{
-							fileService.LogOldFileSystemUse(fileDir + f.getUid());
+							fileService.logOldFileSystemUse(fileDir + f.getUid());
 						}
 					}
 					

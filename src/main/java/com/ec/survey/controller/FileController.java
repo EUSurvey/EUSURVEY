@@ -56,7 +56,7 @@ public class FileController extends BasicController {
 				
 				if (f.exists())
 				{
-					fileService.LogOldFileSystemUse(fileDir + file.getUid());
+					fileService.logOldFileSystemUse(fileDir + file.getUid());
 					
 					//check if it is an uploaded file
 					Survey survey = surveyService.getSurveyForUploadedFile(file.getId());
@@ -197,7 +197,7 @@ public class FileController extends BasicController {
 				{
 					//fallback to old file system
 					f = new java.io.File(fileDir + file.getUid());
-					fileService.LogOldFileSystemUse(fileDir + file.getUid());
+					fileService.logOldFileSystemUse(fileDir + file.getUid());
 				}
 				
 				if (f.exists())
