@@ -105,7 +105,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	public void run() {
 		try {
 			webserviceService.setStarted(task);
-			WebserviceTask t = webserviceService.get(task);
+			WebserviceTask webserviceTask = webserviceService.get(task);
 						
 			String uid = UUID.randomUUID().toString();
 			
@@ -113,22 +113,21 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	    	
 	    	Survey survey = null;
 	    	
-	    	if (t.getSurveyUid() != null && t.getSurveyUid().length() > 0) {
-	    		survey = surveyService.getSurveyByUniqueId(t.getSurveyUid(), true, false);
+	    	if (webserviceTask.getSurveyUid() != null && webserviceTask.getSurveyUid().length() > 0)
+	    	survey = surveyService.getSurveyByUniqueId(webserviceTask.getSurveyUid(), true, false);
+	    	
+	    	if (survey == null)
+	    	{
+	    		survey = surveyService.getSurvey(webserviceTask.getSurveyId(), true, true);
 	    	}
 	    	
 	    	if (survey == null)
 	    	{
-	    		survey = surveyService.getSurvey(t.getSurveyId(), true, true);
-	    	}
-	    	
-	    	if (survey == null)
-	    	{
-	    		webserviceService.setError(task, "Survey with id " + t.getSurveyId() + " not found");
+	    		webserviceService.setError(task, "Survey with id " + webserviceTask.getSurveyId() + " not found");
 	    		return;
 	    	}
 	    	
-	    	List<String> translations = translationService.getTranslationLanguagesForSurvey(t.getSurveyId(),false);
+	    	List<String> translations = translationService.getTranslationLanguagesForSurvey(webserviceTask.getSurveyId(),false);
 			survey.setTranslations(translations);
 	    	
 	    	form.setSurvey(survey);
@@ -139,38 +138,38 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	    	
 	    	ResultFilter filter = new ResultFilter();
 	    	
-	    	if (t.getContributionType() != null && t.getContributionType().equalsIgnoreCase("N"))
+	    	if (webserviceTask.getContributionType() != null && webserviceTask.getContributionType().equalsIgnoreCase("N"))
 	    	{
-	    		filter.setGeneratedFrom(t.getStart());
-		    	filter.setGeneratedTo(t.getEnd());	    	
-	    	} else if (t.getContributionType() != null && t.getContributionType().equalsIgnoreCase("U"))
+	    		filter.setGeneratedFrom(webserviceTask.getStart());
+		    	filter.setGeneratedTo(webserviceTask.getEnd());	    	
+	    	} else if (webserviceTask.getContributionType() != null && webserviceTask.getContributionType().equalsIgnoreCase("U"))
 	    	{
 	    		filter.setOnlyReallyUpdated(true);
-	    		filter.setUpdatedFrom(t.getStart());
-	    		filter.setUpdatedTo(t.getEnd());
+	    		filter.setUpdatedFrom(webserviceTask.getStart());
+	    		filter.setUpdatedTo(webserviceTask.getEnd());
 	    	} else { //A
 	    		filter.setCreatedOrUpdated(true);
-	    		filter.setUpdatedFrom(t.getStart());
-	    		filter.setUpdatedTo(t.getEnd());
-	    		filter.setGeneratedFrom(t.getStart());
-		    	filter.setGeneratedTo(t.getEnd());	
+	    		filter.setUpdatedFrom(webserviceTask.getStart());
+	    		filter.setUpdatedTo(webserviceTask.getEnd());
+	    		filter.setGeneratedFrom(webserviceTask.getStart());
+		    	filter.setGeneratedTo(webserviceTask.getEnd());	
 	    	}
 	    	
-	    	if (t.getToken() != null && t.getToken().length() > 0)
+	    	if (webserviceTask.getToken() != null && webserviceTask.getToken().length() > 0)
 	    	{
 	    		//this is a single answerSet export
-	    		filter.setInvitation(t.getToken());
+	    		filter.setInvitation(webserviceTask.getToken());
 	    	}
 	    	
-	    	export.setShowShortnames(t.isShowIDs());
-	    	export.setAddMeta(t.isAddMeta());
+	    	export.setShowShortnames(webserviceTask.isShowIDs());
+	    	export.setAddMeta(webserviceTask.isAddMeta());
 	    	export.setResultFilter(filter);	 
 	   	
 	    	XmlExportCreator xmlExportCreator = (XmlExportCreator) context.getBean("xmlExportCreator");
-	    	java.io.File target = fileService.getSurveyExportFile(t.getSurveyUid(), uid);
+	    	java.io.File target = fileService.getSurveyExportFile(webserviceTask.getSurveyUid(), uid);
 	    	xmlExportCreator.init(0,form, null, target.getAbsolutePath(), resources, locale, "", "");
 	    	
-	    	if (t.getExportType() != null && t.getExportType().equals(2))
+	    	if (webserviceTask.getExportType() != null && webserviceTask.getExportType().equals(2))
 	    	{
 	    		xmlExportCreator.SimulateExportContent(false, export);
 	    	} else {
@@ -183,28 +182,28 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 	    	
 	    	if (uniqueCodesById.size() == 0)
 	    	{
-	    		t.setEmpty(true);
+	    		webserviceTask.setEmpty(true);
 	    	}     	
 	    	
 		    	//results_[type]-<alias>[_<start-date>][_to_<end-date>].zip
 		    	String zipFileName = "results";
-		    	if (t.getExportType() != null)
+		    	if (webserviceTask.getExportType() != null)
 		    	{
-			    	if (t.getExportType().equals(1))
+			    	if (webserviceTask.getExportType().equals(1))
 			    	{
 			    		zipFileName += "_xml";
-			    	} else if (t.getExportType().equals(2))
+			    	} else if (webserviceTask.getExportType().equals(2))
 			    	{
 			    		zipFileName += "_pdf";
 			    	}
 			    	zipFileName += "-" + survey.getShortname();
-			    	if (t.getStart() != null)
+			    	if (webserviceTask.getStart() != null)
 			    	{
-			    		zipFileName += "_" + ConversionTools.getFullString4Webservice(t.getStart());
+			    		zipFileName += "_" + ConversionTools.getFullString4Webservice(webserviceTask.getStart());
 			    	}
-			    	if (t.getEnd() != null)
+			    	if (webserviceTask.getEnd() != null)
 			    	{
-			    		zipFileName += "_" + ConversionTools.getFullString4Webservice(t.getEnd());
+			    		zipFileName += "_" + ConversionTools.getFullString4Webservice(webserviceTask.getEnd());
 			    	} else {
 			    		zipFileName += "_" + ConversionTools.getFullString4Webservice(xmlExportCreator.getExportedNow());
 			    	}
@@ -221,7 +220,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 		    	f.setUid(uid2);
 				f.setName(zipFileName);
 		    
-		    	if (t.getExportType() == null || t.getExportType().equals(0) || t.getExportType().equals(1) || (t.getExportType().equals(3) && t.getFileTypes() != null && t.getFileTypes().contains("x")))
+		    	if (webserviceTask.getExportType() == null || webserviceTask.getExportType().equals(0) || webserviceTask.getExportType().equals(1) || (webserviceTask.getExportType().equals(3) && webserviceTask.getFileTypes() != null && webserviceTask.getFileTypes().contains("x")))
 		    	{
 					os.putArchiveEntry(new ZipArchiveEntry("result.xml"));
 					IOUtils.copy(new FileInputStream(target), os);
@@ -235,7 +234,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 					String uniqueCode = uniqueCodesById.get(answerSetId);
 					
 					//this counter should stop creation of PDFs when there is an obvious problem
-					if (t.getExportType() == null || t.getExportType().equals(0) || t.getExportType().equals(2) || (t.getExportType().equals(3) && t.getFileTypes() != null && t.getFileTypes().contains("p")))
+					if (webserviceTask.getExportType() == null || webserviceTask.getExportType().equals(0) || webserviceTask.getExportType().equals(2) || (webserviceTask.getExportType().equals(3) && webserviceTask.getFileTypes() != null && webserviceTask.getFileTypes().contains("p")))
 			    	{
 						if (invalidCounter < 3)
 						{
@@ -303,37 +302,37 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 						}
 			    	}
 					
-					if (!(t.getExportType() != null && t.getExportType().equals(3)) || (t.getFileTypes() != null && t.getFileTypes().contains("u")))
+					if ((webserviceTask.getExportType() != null  && !webserviceTask.getExportType().equals(3)) || (webserviceTask.getFileTypes() != null && webserviceTask.getFileTypes().contains("u")))
 					{
 						List<File> uploadedFiles = answerService.getUploadedFilesForAnswerset(answerSetId);
-						for (File file: uploadedFiles)
+						for (File uploadedFile: uploadedFiles)
 				    	{
-				    		java.io.File fup = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
+				    		java.io.File uploadedFileIO = fileService.getSurveyFile(survey.getUniqueId(), uploadedFile.getUid());
 				    		
-				    		if (!fup.exists())
+				    		if (!uploadedFileIO.exists())
 				    		{
-				    			fup = new java.io.File(fileDir + file.getUid());
-				    			if (fup.exists())
+				    			uploadedFileIO = new java.io.File(fileDir + uploadedFile.getUid());
+				    			if (uploadedFileIO.exists())
 				    			{
-				    				fileService.logOldFileSystemUse(fileDir + file.getUid());
+				    				fileService.logOldFileSystemUse(fileDir + uploadedFile.getUid());
 				    			}
 				    		}		
 				    		
-				    		String folder = file.getUid();
-				    		if (file.getAnswerId() != null)
+				    		String folderName = uploadedFile.getUid();
+				    		if (uploadedFile.getAnswerId() != null)
 				    		{
-				    			if (questionIdsByAnswerId.containsKey(file.getAnswerId()))
+				    			if (questionIdsByAnswerId.containsKey(uploadedFile.getAnswerId()))
 				    			{
-				    				String questionUniqueId = questionIdsByAnswerId.get(file.getAnswerId());
+				    				String questionUniqueId = questionIdsByAnswerId.get(uploadedFile.getAnswerId());
 				    				if (questionsByUniqueId.containsKey(questionUniqueId))
 				    				{
-				    					folder = questionsByUniqueId.get(questionUniqueId).getShortname();
+				    					folderName = questionsByUniqueId.get(questionUniqueId).getShortname();
 				    				}
 				    			}
 				    		}
 				    		
-				    		os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/Uploaded Files/" + folder + "/" + file.getName()));
-						    IOUtils.copy(new FileInputStream(fup), os);
+				    		os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/Uploaded Files/" + folderName + "/" + uploadedFile.getName()));
+						    IOUtils.copy(new FileInputStream(uploadedFileIO), os);
 						    os.closeArchiveEntry();			    	
 				    	}
 					}
@@ -341,10 +340,10 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 		    	
 				os.close();
 			    fileService.add(f);
-			    t.setResult(uid2);
+			    webserviceTask.setResult(uid2);
 			
-			t.setDone(true);
-			webserviceService.save(t);
+			webserviceTask.setDone(true);
+			webserviceService.save(webserviceTask);
 			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

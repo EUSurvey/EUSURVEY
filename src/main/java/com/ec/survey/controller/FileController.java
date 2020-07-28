@@ -43,11 +43,12 @@ public class FileController extends BasicController {
 				}
 
 				java.io.File f = new java.io.File(fileDir + file.getUid());
-
-				if (f.exists()) {
+				
+				if (f.exists())
+				{
 					fileService.logOldFileSystemUse(fileDir + file.getUid());
-
-					// check if it is an uploaded file
+					
+					//check if it is an uploaded file
 					Survey survey = surveyService.getSurveyForUploadedFile(file.getId());
 					if (survey != null && !(survey.getPublication().isShowContent()
 						&& survey.getPublication().getShowUploadedDocuments())) {
