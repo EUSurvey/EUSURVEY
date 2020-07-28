@@ -17,16 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 @Service("participationService")
 @Configurable
 public class ParticipationService extends BasicService {
-	
-	@Resource(name = "mailService")
-	protected MailService mailService;
-	
+		
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<ParticipationGroup> getAll(String uid, boolean checkRunningMails, int page, int rowsPerPage) {
@@ -115,7 +111,7 @@ public class ParticipationService extends BasicService {
 				Query query = session.createQuery("SELECT i.participationGroupId FROM Invitation i WHERE i.uniqueId = :id").setString("id", invitationId);
 				@SuppressWarnings("rawtypes")
 				List result = query.list();
-				if (result.size() > 0) return result.get(0).toString();
+				if (!result.isEmpty()) return result.get(0).toString();
 			}
 		} catch (Exception e)
 		{
@@ -202,7 +198,7 @@ public class ParticipationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<InvitationTemplate> result = session.createQuery("FROM InvitationTemplate t WHERE t.name like :name AND t.owner.id = :user").setString("name", name).setInteger("user", user).list();
-		return result.size() > 0 ? result.get(0) : null;
+		return !result.isEmpty() ? result.get(0) : null;
 	}
 
 	@Transactional

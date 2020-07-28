@@ -363,7 +363,7 @@
 	</script>
 </head>
 <body>
-	<div class="page-wrap">
+	<div class="page-wrap" style="margin-bottom: -252px;">
 		<%@ include file="../header.jsp" %>
 		
 		<div class="fullpage" style="padding-top: 50px; padding-bottom: 0px;">
@@ -406,7 +406,7 @@
 					<c:if test="${publication.showContent}">
 						<div class="tab-pane-x <c:if test="${selectedtab == 1}">active</c:if>" id="content" style="min-width: 800px">
 							<c:if test="${publication == null || publication.isShowSearch()}">
-								<div class="contentonly" style="text-align: center; position: fixed; top: 130px; padding: 10px; width: 100%; height: 46px; left:0px; background-color: #fff; z-index: 1010">
+								<div class="contentonly" style="text-align: center; position: fixed; top: 60px; padding: 20px; width: 100%; height: 66px; left:0px; background-color: #fff; z-index: 999">
 									<div style="width: 850px; margin-left: auto; margin-right: auto">
 										<div style="text-align: right; height: 36px; float: right; width: 200px;">
 											<b><spring:message code="label.Export" /></b>										
@@ -438,7 +438,7 @@
 					 </c:if>
 					 <c:if test="${publication.showStatistics}">
 					 	 <div class="tab-pane <c:if test="${selectedtab == 3}">active</c:if>" id="statistics">							
-				 		  	<div style="text-align: center; position: fixed; top: 130px; padding: 10px; width: 100%; left:0px; background-color: #fff;">
+				 		  	<div style="text-align: center; position: fixed; top: 60px; padding: 20px; width: 100%; left:0px; background-color: #fff;">
 				  		  		<b><spring:message code="label.Export" /></b>
 								
 								<span class="deactivatedstatexports">

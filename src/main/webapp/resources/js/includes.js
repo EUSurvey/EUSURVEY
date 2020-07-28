@@ -2353,6 +2353,9 @@ function initModals(item)
 		if ($(btn).closest(".widget").length > 0)
 		{
 			$(overlay).css("top",rect.top);
+		} else {
+			var rectbtn = $(btn)[0].getBoundingClientRect();
+			$(overlay).css("top", rectbtn.top + rectbtn.height + 2);
 		}
 		
 		var realwidth = overlay.width();

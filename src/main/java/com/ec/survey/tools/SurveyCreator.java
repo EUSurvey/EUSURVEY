@@ -33,33 +33,33 @@ public class SurveyCreator {
 		survey.setTitle("Register for EUSurvey!");
 		survey.setCaptcha(true);
 		
-		FreeTextQuestion username = new FreeTextQuestion(survey, "Your login", "name", UUID.randomUUID().toString());
+		FreeTextQuestion username = new FreeTextQuestion("Your login", "name", UUID.randomUUID().toString());
 		username.setNumRows(1);
 		username.setPosition(1);
 		username.setOptional(false);
 		username.setHelp("The user name must be unique and cannot contain blanks. You can use your email address or any other text that contains only numbers and small/upper characters.");
 		survey.getElements().add(username);
 		
-		FreeTextQuestion firstname = new FreeTextQuestion(survey, "Your first name", "firstname", UUID.randomUUID().toString());
+		FreeTextQuestion firstname = new FreeTextQuestion("Your first name", "firstname", UUID.randomUUID().toString());
 		firstname.setNumRows(1);
 		firstname.setPosition(2);
 		firstname.setOptional(false);
 		survey.getElements().add(firstname);
 		
-		FreeTextQuestion lastname = new FreeTextQuestion(survey, "Your last name", "lastname", UUID.randomUUID().toString());
+		FreeTextQuestion lastname = new FreeTextQuestion("Your last name", "lastname", UUID.randomUUID().toString());
 		lastname.setNumRows(1);
 		lastname.setPosition(3);
 		lastname.setOptional(false);
 		survey.getElements().add(lastname);
 		
-		FreeTextQuestion password = new FreeTextQuestion(survey, "Your password", "password", UUID.randomUUID().toString());
+		FreeTextQuestion password = new FreeTextQuestion("Your password", "password", UUID.randomUUID().toString());
 		password.setPosition(4);
 		password.setOptional(false);
 		password.setNumRows(1);
 		password.setIsPassword(true);
 		survey.getElements().add(password);
 		
-		EmailQuestion email = new EmailQuestion(survey, "Your email address", "email", UUID.randomUUID().toString());
+		EmailQuestion email = new EmailQuestion("Your email address", "email", UUID.randomUUID().toString());
 		email.setPosition(5);
 		email.setOptional(false);
 		email.setHelp("Please provide a valid email address for account validation.");
@@ -103,17 +103,17 @@ public class SurveyCreator {
 		
 		int position = 1;
 		
-		Section section = new Section(survey, "This is a section", "section1", UUID.randomUUID().toString());
+		Section section = new Section("This is a section", "section1", UUID.randomUUID().toString());
 		section.setPosition(position++);
 		section.setLevel(1);
 		survey.getElements().add(section);
 		
-		section = new Section(survey, "This is a sub-section", "section1a", UUID.randomUUID().toString());
+		section = new Section("This is a sub-section", "section1a", UUID.randomUUID().toString());
 		section.setPosition(position++);
 		section.setLevel(2);
 		survey.getElements().add(section);
 		
-		FreeTextQuestion question = new FreeTextQuestion(survey, "This is a free text question", "free1", UUID.randomUUID().toString());
+		FreeTextQuestion question = new FreeTextQuestion("This is a free text question", "free1", UUID.randomUUID().toString());
 		question.setPosition(position++);
 		question.setHelp("This is a help message");
 		question.setOptional(false);
@@ -140,12 +140,12 @@ public class SurveyCreator {
 		matrix.setColumns(4);
 		matrix.setRows(3);
 		matrix.setIsSingleChoice(true);
-		EmptyElement dummy = new EmptyElement(survey, "empty", "empty");
+		EmptyElement dummy = new EmptyElement("empty", "empty");
 		dummy.setPosition(0);
 		matrix.getChildElements().add(dummy);
 		for (int i = 1; i < 6; i++)
 		{
-			Text text = new Text(survey, "Text" + i, UUID.randomUUID().toString());
+			Text text = new Text("Text" + i, UUID.randomUUID().toString());
 			text.setPosition(i);
 			matrix.getChildElements().add(text);
 		}
@@ -169,7 +169,7 @@ public class SurveyCreator {
 		
 		int counter = 1;
 		
-		FreeTextQuestion f = new FreeTextQuestion(survey, "FreeText, 4 to 10 characters" , "FreeText", UUID.randomUUID().toString());
+		FreeTextQuestion f = new FreeTextQuestion("FreeText, 4 to 10 characters" , "FreeText", UUID.randomUUID().toString());
 		f.setOptional(false);
 		f.setNumRows(1);
 		f.setMinCharacters(4);
@@ -177,7 +177,7 @@ public class SurveyCreator {
 		f.setPosition(counter++);
 		survey.getElements().add(f);
 		
-		NumberQuestion n = new NumberQuestion(survey, "Number between 1 and 10", "Number", UUID.randomUUID().toString());
+		NumberQuestion n = new NumberQuestion("Number between 1 and 10", "Number", UUID.randomUUID().toString());
 		n.setOptional(false);
 		n.setMin(1.0);
 		n.setMax(10.0);
@@ -272,12 +272,12 @@ public class SurveyCreator {
 		matrix.setPosition(counter++);
 		matrix.setRows(3);
 		matrix.setIsSingleChoice(true);
-		EmptyElement dummy = new EmptyElement(survey, "empty", "empty");
+		EmptyElement dummy = new EmptyElement("empty", "empty");
 		dummy.setPosition(0);
 		matrix.getChildElements().add(dummy);
 		for (int i = 1; i < 6; i++)
 		{
-			Text text = new Text(survey, "Text" + i, UUID.randomUUID().toString());
+			Text text = new Text("Text" + i, UUID.randomUUID().toString());
 			text.setPosition(i);
 			matrix.getChildElements().add(text);
 		}
@@ -299,7 +299,7 @@ public class SurveyCreator {
 		survey.setTitle("Password Test Survey");
 		survey.setLanguage(l);
 		
-		Section s = new Section(survey, "Section", "section", UUID.randomUUID().toString());
+		Section s = new Section("Section", "section", UUID.randomUUID().toString());
 		s.setLevel(1);
 		s.setPosition(1);
 		survey.getElements().add(s);
@@ -324,12 +324,12 @@ public class SurveyCreator {
 		
 		for (int i = 1; i < 5; i++)
 		{
-			Section s = new Section(survey, "Section " + i, "section" + i, UUID.randomUUID().toString());
+			Section s = new Section("Section " + i, "section" + i, UUID.randomUUID().toString());
 			s.setLevel(1);
 			s.setPosition(counter++);
 			survey.getElements().add(s);
 			
-			FreeTextQuestion f = new FreeTextQuestion(survey, "Question " + 1, "Q"+1, UUID.randomUUID().toString());
+			FreeTextQuestion f = new FreeTextQuestion("Question " + 1, "Q"+1, UUID.randomUUID().toString());
 			f.setNumRows(1);
 			f.setPosition(counter++);
 			f.setOptional(false);
@@ -361,21 +361,21 @@ public class SurveyCreator {
 		
 		for (int i = 1; i < 5; i++)
 		{
-			Section s = new Section(survey, "Section " + i, "section" + i, UUID.randomUUID().toString());
+			Section s = new Section("Section " + i, "section" + i, UUID.randomUUID().toString());
 			s.setLevel(1);
 			s.setPosition(counter++);
 			survey.getElements().add(s);
 			
 			for (int j = 1; j < 5; j++)
 			{
-				Section s2 = new Section(survey, "Section " + i + j, "section" + i + j, UUID.randomUUID().toString());
+				Section s2 = new Section("Section " + i + j, "section" + i + j, UUID.randomUUID().toString());
 				s2.setLevel(2);
 				s2.setPosition(counter++);
 				survey.getElements().add(s2);
 				
 				for (int k = 1; k < 5; k++)
 				{
-					Section s3 = new Section(survey, "Section " + i + j + k, "section" + i + j + k, UUID.randomUUID().toString());
+					Section s3 = new Section("Section " + i + j + k, "section" + i + j + k, UUID.randomUUID().toString());
 					s3.setLevel(3);
 					s3.setPosition(counter++);
 					survey.getElements().add(s3);
@@ -383,7 +383,7 @@ public class SurveyCreator {
 					for (int l = 1; l < 5; l++)
 					{
 					
-						FreeTextQuestion f = new FreeTextQuestion(survey, "Question " + qcounter, "Q"+qcounter, UUID.randomUUID().toString());
+						FreeTextQuestion f = new FreeTextQuestion("Question " + qcounter, "Q"+qcounter, UUID.randomUUID().toString());
 						qcounter++;
 						f.setNumRows(1);
 						f.setPosition(counter++);
@@ -418,17 +418,17 @@ public class SurveyCreator {
 		
 		int counter = 1;
 		
-		Section s = new Section(survey, "Section", "section", UUID.randomUUID().toString());
+		Section s = new Section("Section", "section", UUID.randomUUID().toString());
 		s.setLevel(1);
 		s.setPosition(counter++);
 		survey.getElements().add(s);
 			
-		Upload f = new Upload(survey, "Please upload a file", "shortname", UUID.randomUUID().toString());
+		Upload f = new Upload("Please upload a file", "shortname", UUID.randomUUID().toString());
 		f.setPosition(counter++);
 		f.setOptional(false);
 		survey.getElements().add(f);
 		
-		f = new Upload(survey, "Please upload another file", "shortname2", UUID.randomUUID().toString());
+		f = new Upload("Please upload another file", "shortname2", UUID.randomUUID().toString());
 		f.setPosition(counter++);
 		f.setOptional(false);
 		survey.getElements().add(f);
@@ -566,7 +566,7 @@ public class SurveyCreator {
 		
 		int counter = 1;
 
-		Section h1 = new Section(survey, "General Information", "sectiongeneral", UUID.randomUUID().toString());
+		Section h1 = new Section("General Information", "sectiongeneral", UUID.randomUUID().toString());
 		h1.setPosition(counter++);
 		survey.getElements().add(h1);
 		
@@ -585,13 +585,13 @@ public class SurveyCreator {
 			question.setPosition(counter++);
 			survey.getElements().add(question);
 	
-			FreeTextQuestion question2 = new FreeTextQuestion(survey, "Lorem ipsum dolor sit amet?", "shortname", UUID.randomUUID().toString());
+			FreeTextQuestion question2 = new FreeTextQuestion("Lorem ipsum dolor sit amet?", "shortname", UUID.randomUUID().toString());
 			question2.setNumRows(5); 
 			question2.setHelp("Block of help text to describe the field above if need be.");
 			question2.setPosition(counter++);
 			survey.getElements().add(question2);
 	
-			Section h2 = new Section(survey, "Your comments on the course content", "sectioncomment", UUID.randomUUID().toString());
+			Section h2 = new Section("Your comments on the course content", "sectioncomment", UUID.randomUUID().toString());
 			h2.setPosition(counter++);
 			survey.getElements().add(h2);
 	
@@ -619,7 +619,7 @@ public class SurveyCreator {
 			question4.setPosition(counter++);
 			survey.getElements().add(question4);
 	
-			FreeTextQuestion question5 = new FreeTextQuestion(survey, "And now another freetext question?", "shortname", UUID.randomUUID().toString());
+			FreeTextQuestion question5 = new FreeTextQuestion("And now another freetext question?", "shortname", UUID.randomUUID().toString());
 			question5.setNumRows(1); 
 			question5.setHelp("Block of help text to describe the field above if need be.");
 			question5.setPosition(counter++);
@@ -644,7 +644,7 @@ public class SurveyCreator {
 					survey.getElements().add(question);
 				} else if (elementcounter % 4 == 0)
 				{
-					FreeTextQuestion question2 = new FreeTextQuestion(survey, "Lorem ipsum dolor sit amet?", "shortname", UUID.randomUUID().toString());
+					FreeTextQuestion question2 = new FreeTextQuestion("Lorem ipsum dolor sit amet?", "shortname", UUID.randomUUID().toString());
 					question2.setNumRows(5); 
 					question2.setHelp("Block of help text to describe the field above if need be.");
 					question2.setPosition(counter++);
@@ -676,7 +676,7 @@ public class SurveyCreator {
 					question4.setPosition(counter++);
 					survey.getElements().add(question4);
 				} else {
-					FreeTextQuestion question5 = new FreeTextQuestion(survey, "And now another freetext question?", "shortname", UUID.randomUUID().toString());
+					FreeTextQuestion question5 = new FreeTextQuestion("And now another freetext question?", "shortname", UUID.randomUUID().toString());
 					question5.setNumRows(1); 
 					question5.setHelp("Block of help text to describe the field above if need be.");
 					question5.setPosition(counter++);

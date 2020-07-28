@@ -124,7 +124,7 @@ public abstract class MatrixOrTable extends Question {
 					{
 						if (s.length() > 0)
 						{
-							w += Integer.parseInt(s); // + 9;
+							w += Integer.parseInt(s);
 						}
 					}
 					return w.toString() + "px";
@@ -239,14 +239,14 @@ public abstract class MatrixOrTable extends Question {
 			if (element instanceof MatrixOrTable)
 			{
 				MatrixOrTable matrix = (MatrixOrTable)element;
-				if (!(getRows() == matrix.getRows())) return true;
-				if (!(getColumns() == matrix.getColumns())) return true;				
+				if (getRows() != matrix.getRows()) return true;
+				if (getColumns() != matrix.getColumns()) return true;				
 				if (!(Objects.equals(getTableType(), matrix.getTableType()))) return true;
 				
 				//only check column widths when size is set to "manual columns width"
-				if (getTableType() == 2)
+				if (getTableType() == 2 && !Tools.isEqual(getWidths(), matrix.getWidths()))
 				{
-					if (!Tools.isEqual(getWidths(), matrix.getWidths())) return true;
+					return true;
 				}
 				
 				if (getFirstCellText() != null && !getFirstCellText().equals(matrix.getFirstCellText())) return true;

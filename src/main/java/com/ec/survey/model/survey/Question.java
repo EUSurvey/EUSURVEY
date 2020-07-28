@@ -21,7 +21,8 @@ import java.util.Objects;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public abstract class Question extends Element {
 	
-	public final static String FEEDBACK = "FEEDBACK";
+	public static final String FEEDBACK = "FEEDBACK";
+	public static final String FIRSTCELL = "FIRSTCELL";
 	
 	private static final long serialVersionUID = 1L;
 	private String help;
@@ -36,7 +37,7 @@ public abstract class Question extends Element {
 	
 	public Question() {}
 	
-	public Question(Survey survey, String title, String shortname, String uid) {
+	public Question(String title, String shortname, String uid) {
 		this.setTitle(title);
 		this.setUniqueId(uid);
 		this.setShortname(shortname);

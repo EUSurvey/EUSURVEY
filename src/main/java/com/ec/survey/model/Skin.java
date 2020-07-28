@@ -32,7 +32,7 @@ public class Skin implements java.io.Serializable {
 	}
 	
 	public void createMissingElements() {
-		List<String> allElements = new ArrayList<String>();
+		List<String> allElements = new ArrayList<>();
 		allElements.add(".answertext");
 		allElements.add(".info-box");
 		allElements.add(".link");
@@ -46,7 +46,7 @@ public class Skin implements java.io.Serializable {
 		allElements.add(".right-area");
 		allElements.add(".text");		
 		
-		List<String> existingElements = new ArrayList<String>();
+		List<String> existingElements = new ArrayList<>();
 		for (SkinElement element : elements)
 		{
 			existingElements.add(element.getName());
@@ -96,6 +96,8 @@ public class Skin implements java.io.Serializable {
 					return "EUSurvey (obsolete)";
 				case "Official EC Skin":
 					return "EC Official (obsolete)";
+				default:
+					break;
 			}	
 		}
 		
@@ -185,6 +187,8 @@ public class Skin implements java.io.Serializable {
 						return true;
 					case "border-color":
 						return true;
+					default:
+						break;
 				}				
 			}
 		}
@@ -211,6 +215,8 @@ public class Skin implements java.io.Serializable {
 						return element.getFontWeight() != null && element.getFontWeight().length() > 0 ? element.getFontWeight() : getDefault(name, key);
 					case "font-style":
 						return element.getFontStyle() != null && element.getFontStyle().length() > 0 ? element.getFontStyle() : getDefault(name, key);
+					default:
+						break;
 				}	
 			}
 		}
@@ -242,6 +248,8 @@ public class Skin implements java.io.Serializable {
 				return "normal";
 			case "font-style":
 				return "normal";
+			default:
+				break;
 		}	
 		
 		return "";
@@ -264,9 +272,7 @@ public class Skin implements java.io.Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Skin other = (Skin) obj;
-		if (id != other.id)
-			return false;
-		return true;
+		return (id == other.id);
 	}
 
 }

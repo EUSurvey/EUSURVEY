@@ -27,26 +27,16 @@ public class TranslationService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Integer> list = query.list();
 				
-		if (list.size() < 1) return null;
+		if (list.isEmpty()) return null;
 		
-		Translations result = (Translations) session.get(Translations.class, list.get(0));
-
-		return result;
+		return (Translations) session.get(Translations.class, list.get(0));
 	}	
 
 	@Transactional
 	public void deleteTranslations(int surveyId, String language) {
 		Session session = sessionFactory.getCurrentSession();
 		Translations translations = getTranslations(surveyId, language);
-		if (translations != null){
-//			int id = translations.getId();
-			
-			//sometimes there are translation entries left that are not deleted
-			//this removes the foreign key to the TRANSLATIONS table
-//			Query query = session.createSQLQuery("UPDATE TRANSLATION SET TRANS_ID = NULL WHERE TRANS_ID = :id");
-//			query.setParameter("id", id);
-//			query.executeUpdate();
-			
+		if (translations != null){		
 			session.delete(translations);
 		}		
 	}

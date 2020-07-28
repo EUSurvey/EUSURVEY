@@ -4,7 +4,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
@@ -92,18 +91,12 @@ public class Matrix extends MatrixOrTable {
 				}
 			}
 		}
-		if (mapDependentElements != null)
-		{
-			String[] result = new String[maxposition+1];
-			for (int i = 0; i <= maxposition; i++) {
-				result[i] = mapDependentElements.getOrDefault(i, "");
-			}
-			cachedDependentElementsStrings = result;
-			return result;
+
+		String[] result = new String[maxposition+1];
+		for (int i = 0; i <= maxposition; i++) {
+			result[i] = mapDependentElements.getOrDefault(i, "");
 		}
-		
-		String[] result = new String[1];
-		result[0] = "";
+		cachedDependentElementsStrings = result;
 		return result;
 	}
 	
@@ -152,7 +145,7 @@ public class Matrix extends MatrixOrTable {
 		return "";
 	}
 	
-	public Matrix copy(String fileDir) throws ValidationException, IntrusionException
+	public Matrix copy(String fileDir) throws ValidationException
 	{
 		Matrix copy = new Matrix();
 		initCopy(copy, fileDir);
@@ -223,7 +216,7 @@ public class Matrix extends MatrixOrTable {
 		
 		Matrix matrix = (Matrix)element;
 
-		if (!(isSingleChoice == matrix.isSingleChoice)) return true;
+		if (isSingleChoice != matrix.isSingleChoice) return true;
 
 		if (getChildElements().size() != matrix.getChildElements().size()) return true;
 		
@@ -239,9 +232,7 @@ public class Matrix extends MatrixOrTable {
 		
 		if (!Objects.equals(order, matrix.order)) return true;
 		
-		if (!isInterdependent.equals(matrix.isInterdependent)) return true;
-		
-		return false;
+		return !isInterdependent.equals(matrix.isInterdependent);
 	}
 
 	public Boolean isUseRadioButtons() {
@@ -258,6 +249,7 @@ public class Matrix extends MatrixOrTable {
 	}
 	
 	@Transient
+	@Override
 	public String getCss()
 	{
 		String css = super.getCss();

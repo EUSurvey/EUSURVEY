@@ -1980,3 +1980,8 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	text-align: right;
 	margin-top: 9px;
 }
+
+#dropdownLangElements {
+	max-height: 350px;
+	margin-right: -10px;
+}

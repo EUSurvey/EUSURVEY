@@ -19,7 +19,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,8 +35,8 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.*;
+import java.util.Map.Entry;
 
 @Controller
 @RequestMapping("/webservice")
@@ -51,7 +54,7 @@ public class WebServiceController extends BasicController {
 	private @Value("${webservice.maxrequestsperday}") String maxrequestsperday;
 
 	private static String StandardDateString = "yyyy-MM-dd_HH-mm-ss";
-	
+
 	private KeyValue getLoginAndPassword(HttpServletRequest request, HttpServletResponse response) {
 		String line = request.getHeader("Authorization");
 		if (line != null && line.startsWith("Basic")) {
@@ -201,7 +204,7 @@ public class WebServiceController extends BasicController {
 			}
 
 			ParticipationGroup group = new ParticipationGroup(survey.getUniqueId());
-			group.setActive(active != null && active.equalsIgnoreCase("true"));
+			group.setActive(active.equalsIgnoreCase("true"));
 			group.setOwnerId(user.getId());
 			group.setName("remote" + Tools.formatDate(new Date(), "MM/dd/yyyy HH:mm:ss"));
 			group.setSurveyId(survey.getId());
@@ -610,11 +613,9 @@ public class WebServiceController extends BasicController {
 				}
 
 				String noEmptyResults = request.getParameter("noempty");
-				if (noEmptyResults != null && noEmptyResults.equalsIgnoreCase("true")) {
-					if (task.isEmpty()) {
-						response.setStatus(200);
-						return "";
-					}
+				if (noEmptyResults != null && noEmptyResults.equalsIgnoreCase("true") && task.isEmpty()) {
+					response.setStatus(200);
+					return "";
 				}
 
 				File file = fileService.get(task.getResult());
@@ -933,7 +934,8 @@ public class WebServiceController extends BasicController {
 				return "";
 
 			Survey survey = surveyService.getSurvey(formid, true, false, false, false, null, true, true, false, false);
-			Survey publishedsurvey = survey == null ? null : surveyService.getSurvey(survey.getUniqueId(), false, false, false, false, null, true, false);
+			Survey publishedsurvey = survey == null ? null
+					: surveyService.getSurvey(survey.getUniqueId(), false, false, false, false, null, true, false);
 
 			if (survey == null || publishedsurvey == null || survey.getArchived()) {
 				response.setStatus(412);
@@ -1096,7 +1098,7 @@ public class WebServiceController extends BasicController {
 			task.setSurveyUid(publishedsurvey.getUniqueId());
 			task.setToken(token);
 
-			task.setShowIDs(showids != null && showids.equalsIgnoreCase("true"));
+			task.setShowIDs(showids.equalsIgnoreCase("true"));
 
 			task.setUser(user);
 
@@ -1135,7 +1137,6 @@ public class WebServiceController extends BasicController {
 		String token = null;
 		Map<String, String> values = new HashMap<>();
 
-		// HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		HashMap<String, String[]> parameters = new HashMap<>();
 		@SuppressWarnings("rawtypes")
 		Enumeration en = request.getParameterNames();
@@ -1153,12 +1154,12 @@ public class WebServiceController extends BasicController {
 			parameters.put(param, values1);
 		}
 
-		for (String key : parameters.keySet()) {
-			if (key.equalsIgnoreCase("token")) {
-				token = parameters.get(key)[0];
+		for (Entry<String, String[]> entry : parameters.entrySet()) {
+			if (entry.getKey().equalsIgnoreCase("token")) {
+				token = entry.getValue()[0];
 			} else {
-				if (!values.containsKey(key)) {
-					values.put(key, parameters.get(key)[0]);
+				if (!values.containsKey(entry.getKey())) {
+					values.put(entry.getKey(), entry.getValue()[0]);
 				} else {
 					response.setStatus(412);
 					return "";
@@ -1758,7 +1759,7 @@ public class WebServiceController extends BasicController {
 		return jb.toString();
 	}
 
-	@RequestMapping(value = "/changeSurveyTitle/{alias}", method = { RequestMethod.PATCH }, produces = "text/html")
+	@PatchMapping(value = "/changeSurveyTitle/{alias}", produces = "text/html")
 	public @ResponseBody String changeSurveyTitle(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -1806,7 +1807,7 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/changeContact/{alias}", method = { RequestMethod.PATCH }, produces = "text/html")
+	@PatchMapping(value = "/changeContact/{alias}", produces = "text/html")
 	public @ResponseBody String changeContact(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -1848,7 +1849,7 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/uploadBackgroundDocument/{alias}", method = { RequestMethod.PUT }, produces = "text/html")
+	@PutMapping(value = "/uploadBackgroundDocument/{alias}", produces = "text/html")
 	public @ResponseBody String uploadBackgroundDocument(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -1910,8 +1911,7 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/removeBackgroundDocument/{alias}", method = {
-			RequestMethod.DELETE }, produces = "text/html")
+	@DeleteMapping(value = "/removeBackgroundDocument/{alias}", produces = "text/html")
 	public @ResponseBody String removeBackgroundDocument(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -1967,7 +1967,7 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/addUsefulLink/{alias}", method = { RequestMethod.PUT }, produces = "text/html")
+	@PutMapping(value = "/addUsefulLink/{alias}", produces = "text/html")
 	public @ResponseBody String addUsefulLink(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -2014,7 +2014,7 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/removeUsefulLink/{alias}", method = { RequestMethod.DELETE }, produces = "text/html")
+	@DeleteMapping(value = "/removeUsefulLink/{alias}", produces = "text/html")
 	public @ResponseBody String removeUsefulLink(@PathVariable String alias, HttpServletRequest request,
 			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
@@ -2156,22 +2156,35 @@ public class WebServiceController extends BasicController {
 		}
 	}
 
-	@RequestMapping(value = "/getMySurveys", method = {
-			RequestMethod.GET, RequestMethod.HEAD }, produces = MediaType.APPLICATION_XML_VALUE)
-	public @ResponseBody String getMySurveys(@RequestParam(required = false, value="surveyType") String surveyType, @RequestParam(required = false, value="published") String published,
-			@RequestParam(required = false, value="department") String department, @RequestParam(required = false, value="creator") String creator, @RequestParam(required = false, value="privileged") String privileged,
-			@RequestParam(required = false, value="firstPublicationFrom") String firstPublicationFrom, @RequestParam(required = false, value="firstPublicationTo") String firstPublicationTo,
-			@RequestParam(required = false, value="createdFrom") String createdFrom, @RequestParam(required = false, value="createdTo") String createdTo, @RequestParam(required = false, value="endFrom") String endFrom,
-			@RequestParam(required = false, value="endTo") String endTo, @RequestParam(required = false, value="archived") String archived, @RequestParam(required = false, value="archivedFrom") String archivedFrom,
-			@RequestParam(required = false, value="archivedTo") String archivedTo, @RequestParam(required = false, value="deleted") String deleted, @RequestParam(required = false, value="deletedFrom") String deletedFrom,
-			@RequestParam(required = false, value="deletedTo") String deletedTo, @RequestParam(required = false, value="frozen") String frozen, @RequestParam(required = false, value="minReported") String minReported,
-			@RequestParam(required = false, value="minContributions") String minContributions,@RequestParam(required = false, value="title") String title, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/getMySurveys", method = { RequestMethod.GET,
+			RequestMethod.HEAD }, produces = MediaType.APPLICATION_XML_VALUE)
+	public @ResponseBody String getMySurveys(@RequestParam(required = false, value = "surveyType") String surveyType,
+			@RequestParam(required = false, value = "published") String published,
+			@RequestParam(required = false, value = "department") String department,
+			@RequestParam(required = false, value = "creator") String creator,
+			@RequestParam(required = false, value = "privileged") String privileged,
+			@RequestParam(required = false, value = "firstPublicationFrom") String firstPublicationFrom,
+			@RequestParam(required = false, value = "firstPublicationTo") String firstPublicationTo,
+			@RequestParam(required = false, value = "createdFrom") String createdFrom,
+			@RequestParam(required = false, value = "createdTo") String createdTo,
+			@RequestParam(required = false, value = "endFrom") String endFrom,
+			@RequestParam(required = false, value = "endTo") String endTo,
+			@RequestParam(required = false, value = "archived") String archived,
+			@RequestParam(required = false, value = "archivedFrom") String archivedFrom,
+			@RequestParam(required = false, value = "archivedTo") String archivedTo,
+			@RequestParam(required = false, value = "deleted") String deleted,
+			@RequestParam(required = false, value = "deletedFrom") String deletedFrom,
+			@RequestParam(required = false, value = "deletedTo") String deletedTo,
+			@RequestParam(required = false, value = "frozen") String frozen,
+			@RequestParam(required = false, value = "minReported") String minReported,
+			@RequestParam(required = false, value = "minContributions") String minContributions,
+			@RequestParam(required = false, value = "title") String title, HttpServletRequest request,
+			HttpServletResponse response) {
 		KeyValue credentials = getLoginAndPassword(request, response);
 		if (credentials != null) {
-			return getMySurveysXml(surveyType, published, department,
-					creator, privileged, firstPublicationFrom, firstPublicationTo, createdFrom, createdTo, endFrom,
-					endTo, archived, archivedFrom, archivedTo, deleted, deletedFrom, deletedTo, frozen, minReported,
-					minContributions, title, request, response);
+			return getMySurveysXml(surveyType, published, department, creator, privileged, firstPublicationFrom,
+					firstPublicationTo, createdFrom, createdTo, endFrom, endTo, archived, archivedFrom, archivedTo,
+					deleted, deletedFrom, deletedTo, frozen, minReported, minContributions, title, request, response);
 		}
 		return "";
 	}
@@ -2180,8 +2193,9 @@ public class WebServiceController extends BasicController {
 		return input == null || input.trim().equals("0") || input.trim().equals("1");
 	}
 
-	private static boolean is0orDate(String input) {		
-		if (input == null || input.equalsIgnoreCase("0")) return true;
+	private static boolean is0orDate(String input) {
+		if (input == null || input.equalsIgnoreCase("0"))
+			return true;
 
 		try {
 			Tools.parseDateString(input, StandardDateString);
@@ -2193,7 +2207,7 @@ public class WebServiceController extends BasicController {
 		return false;
 	}
 
-	private static Date getDate(String input) throws ParseException {
+	private static Date getDate(String input) {
 		if (input != null && !input.equalsIgnoreCase("0")) {
 			return Tools.parseDateString(input, StandardDateString);
 		}
@@ -2225,7 +2239,7 @@ public class WebServiceController extends BasicController {
 				return "";
 			}
 		}
-		
+
 		if (!is0or1(published) || !is0or1(creator) || !is0or1(privileged) || !is0or1(archived) || !is0or1(deleted)
 				|| !is0or1(frozen)) {
 			response.setStatus(412);
@@ -2238,7 +2252,7 @@ public class WebServiceController extends BasicController {
 			response.setStatus(412);
 			return "";
 		}
-		
+
 		if (minReported != null && !Tools.isInteger(minReported)) {
 			response.setStatus(412);
 			return "";
@@ -2253,75 +2267,71 @@ public class WebServiceController extends BasicController {
 		response.setStatus(200);
 
 		try {
-			
+
 			SurveyFilter filter = new SurveyFilter();
 			ArchiveFilter archiveFilter = null;
-			
-			filter.setUser(user);		
+
+			filter.setUser(user);
 			filter.setUserDepartment(department);
 			filter.setType(surveyType);
 			filter.setTitle(title);
 
-			if (creator != null && creator.equalsIgnoreCase("1") && (privileged == null || privileged.equalsIgnoreCase("0")))
-			{
+			if (creator != null && creator.equalsIgnoreCase("1")
+					&& (privileged == null || privileged.equalsIgnoreCase("0"))) {
 				filter.setSelector("my");
-			} else if ((creator == null || creator.equalsIgnoreCase("0")) && privileged != null && privileged.equalsIgnoreCase("1")) {
+			} else if ((creator == null || creator.equalsIgnoreCase("0")) && privileged != null
+					&& privileged.equalsIgnoreCase("1")) {
 				filter.setSelector("shared");
 			}
-			
+
 			filter.setFirstPublishedFrom(getDate(firstPublicationFrom));
 			filter.setFirstPublishedTo(getDate(firstPublicationTo));
-			
+
 			filter.setGeneratedFrom(getDate(createdFrom));
 			filter.setGeneratedTo(getDate(createdTo));
-			
+
 			filter.setEndFrom(getDate(endFrom));
 			filter.setEndTo(getDate(endTo));
-			
-			if (published != null)
-			{
+
+			if (published != null) {
 				filter.setStatus(published.equalsIgnoreCase("1") ? "Published;" : "Unpublished;");
 			}
-			
+
 			if (archived != null && archived.equalsIgnoreCase("1")) {
 				archiveFilter = new ArchiveFilter();
 				archiveFilter.setArchivedFrom(getDate(archivedFrom));
 				archiveFilter.setArchivedTo(getDate(archivedTo));
-				
+
 				archiveFilter.setCreatedFrom(getDate(createdFrom));
 				archiveFilter.setCreatedTo(getDate(createdTo));
-				
+
 				archiveFilter.setTitle(title);
 				archiveFilter.setOwner(user.getLogin());
 			}
-			
-			if (deleted != null)
-			{
+
+			if (deleted != null) {
 				filter.setDeleted(deleted.equalsIgnoreCase("1"));
-				if (deleted.equalsIgnoreCase("1"))
-				{
+				if (deleted.equalsIgnoreCase("1")) {
 					filter.setDeletedFrom(getDate(deletedFrom));
 					filter.setDeletedTo(getDate(deletedTo));
 				}
 			}
-			
-			if (frozen != null)
-			{
+
+			if (frozen != null) {
 				filter.setFrozen(frozen.equalsIgnoreCase("1"));
 			}
-			
-			if (minReported != null && !minReported.equalsIgnoreCase("0"))
-			{
+
+			if (minReported != null && !minReported.equalsIgnoreCase("0")) {
 				filter.setMinReported(Integer.parseInt(minReported));
 			}
-			
+
 			if (minContributions != null && !minContributions.equalsIgnoreCase("0")) {
 				filter.setMinContributions(Integer.parseInt(minContributions));
 			}
-			
-			response.setContentType("text/xml");			
+
+			response.setContentType("text/xml");
 			return surveyService.getMySurveysXML(filter, archiveFilter);
-						
+
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			response.setStatus(500);

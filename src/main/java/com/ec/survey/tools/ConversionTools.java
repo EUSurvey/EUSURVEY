@@ -188,7 +188,6 @@ public class ConversionTools {
 				result = result.substring(1).trim();
 			}
 			
-			//result = Jsoup.parse(htmlString).text().trim();
 			result = StringEscapeUtils.escapeXml11(Jsoup.parse(htmlString).text().trim());
 		}
 		

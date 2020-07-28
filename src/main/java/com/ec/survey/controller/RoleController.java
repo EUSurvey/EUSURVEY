@@ -3,12 +3,12 @@ package com.ec.survey.controller;
 import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,18 +16,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.Role;
-import com.ec.survey.service.AdministrationService;
-import com.ec.survey.service.SurveyService;
 
 @Controller
 @RequestMapping("/administration")
 public class RoleController extends BasicController {
-	
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="surveyService")
-	private SurveyService surveyService;
 	
 	@RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String root(Locale locale, Model model) {	
@@ -43,7 +35,7 @@ public class RoleController extends BasicController {
     	return m;
 	}
 	
-	@RequestMapping(value = "/roles", method = RequestMethod.POST)
+	@PostMapping(value = "/roles")
 	public ModelAndView rolesPost(HttpServletRequest request,  Locale locale) {	
 		
 		String target = request.getParameter("target");

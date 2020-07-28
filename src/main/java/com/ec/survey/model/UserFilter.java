@@ -27,9 +27,11 @@ public class UserFilter {
 	public boolean containsLanguage(String code)
 	{
 		if (languages != null)
-		for (String c : languages)
 		{
-			if (c.equalsIgnoreCase(code)) return true;
+			for (String c : languages)
+			{
+				if (c.equalsIgnoreCase(code)) return true;
+			}
 		}
 		return false;
 	}
@@ -99,9 +101,11 @@ public class UserFilter {
 	public boolean containsRole(String id)
 	{
 		if (roles != null)
-		for (String c : roles)
 		{
-			if (c.equalsIgnoreCase(id)) return true;
+			for (String c : roles)
+			{
+				if (c.equalsIgnoreCase(id)) return true;
+			}
 		}
 		return false;
 	}

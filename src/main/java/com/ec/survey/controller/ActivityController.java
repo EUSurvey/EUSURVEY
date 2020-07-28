@@ -4,39 +4,24 @@ import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.ActivityService;
-import com.ec.survey.service.AdministrationService;
-import com.ec.survey.service.SessionService;
-import com.ec.survey.service.SurveyService;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Ucs2Utf8;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @Controller
 @RequestMapping("/{shortname}/management")
 public class ActivityController extends BasicController {
 
-	@Resource(name = "sessionService")
-	private SessionService sessionService;
-	
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name = "surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name = "activityService")
-	private ActivityService activityService;
-	
 	@RequestMapping(value = "/activity")
 	public ModelAndView activity(@PathVariable String shortname, HttpServletRequest request) throws Exception {
 		Form form;
@@ -52,7 +37,7 @@ public class ActivityController extends BasicController {
 			throw new ForbiddenURLException();			
 		}
 		
-		HashMap<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		Map<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		ActivityFilter filter = sessionService.getLastActivityFilter(request);
 		@SuppressWarnings("unchecked")
 		Paging<Activity> paging = (Paging<Activity>) request.getSession().getAttribute("activity-paging");
@@ -68,63 +53,63 @@ public class ActivityController extends BasicController {
 		}
 		
 		boolean filtered = false;
-		for (String key : parameters.keySet())
+		for (Entry<String, String[]> entry : parameters.entrySet())
 		{
-			String v = parameters.get(key)[0];
+			String v = entry.getValue()[0];
 			
 			if (v != null && v.trim().length() > 0)
 			{				
-				if (key.equalsIgnoreCase("metafilteractivityid"))
+				if (entry.getKey().equalsIgnoreCase("metafilteractivityid"))
 				{
-					filter.setLogId(ConversionTools.getInt(parameters.get("metafilteractivityid")[0].trim()));
+					filter.setLogId(ConversionTools.getInt(entry.getValue()[0].trim()));
 					filtered = true;
-				} else if (key.equalsIgnoreCase("metafilteractivityuser"))
+				} else if (entry.getKey().equalsIgnoreCase("metafilteractivityuser"))
 				{
-					filter.setUserId(ConversionTools.getInt(parameters.get("metafilteractivityuser")[0].trim()));
+					filter.setUserId(ConversionTools.getInt(entry.getValue()[0].trim()));
 					filtered = true;
-				} else if (key.equalsIgnoreCase("metafilteractivitydatefrom"))
+				} else if (entry.getKey().equalsIgnoreCase("metafilteractivitydatefrom"))
 				{
-					filter.setDateFrom(ConversionTools.getDate(parameters.get("metafilteractivitydatefrom")[0].trim()));
+					filter.setDateFrom(ConversionTools.getDate(entry.getValue()[0].trim()));
 					filtered = true;
-				} else if (key.equalsIgnoreCase("metafilteractivitydateto"))
+				} else if (entry.getKey().equalsIgnoreCase("metafilteractivitydateto"))
 				{
-					filter.setDateTo(ConversionTools.getDate(parameters.get("metafilteractivitydateto")[0].trim()));
+					filter.setDateTo(ConversionTools.getDate(entry.getValue()[0].trim()));
 					filtered = true;
-				} else if (key.equalsIgnoreCase("metafilteractivityobject"))
+				} else if (entry.getKey().equalsIgnoreCase("metafilteractivityobject"))
 				{
-					filter.setObject(parameters.get("metafilteractivityobject")[0].trim());
+					filter.setObject(entry.getValue()[0].trim());
 					filtered = true;
-				} else if (key.equalsIgnoreCase("metafilteractivityproperty"))
+				} else if (entry.getKey().equalsIgnoreCase("metafilteractivityproperty"))
 				{
-					filter.setProperty(parameters.get("metafilteractivityproperty")[0].trim());
+					filter.setProperty(entry.getValue()[0].trim());
 					filtered = true;
-				} else if (key.equalsIgnoreCase("metafilteractivityevent"))
+				} else if (entry.getKey().equalsIgnoreCase("metafilteractivityevent"))
 				{
-					filter.setEvent(parameters.get("metafilteractivityevent")[0].trim());
+					filter.setEvent(entry.getValue()[0].trim());
 					filtered = true;
-				} else if (key.equalsIgnoreCase("metafilteractivityoldvalue"))
+				} else if (entry.getKey().equalsIgnoreCase("metafilteractivityoldvalue"))
 				{
-					filter.setOldValue(parameters.get("metafilteractivityoldvalue")[0].trim());
+					filter.setOldValue(entry.getValue()[0].trim());
 					filtered = true;
-				} else if (key.equalsIgnoreCase("metafilteractivitynewvalue"))
+				} else if (entry.getKey().equalsIgnoreCase("metafilteractivitynewvalue"))
 				{
-					filter.setNewValue(parameters.get("metafilteractivitynewvalue")[0].trim());
+					filter.setNewValue(entry.getValue()[0].trim());
 					filtered = true;
-				} else if (key.equalsIgnoreCase("metafilteractivitydescription"))
+				} else if (entry.getKey().equalsIgnoreCase("metafilteractivitydescription"))
 				{
-					filter.setDescription(parameters.get("metafilteractivitydescription")[0].trim());
+					filter.setDescription(entry.getValue()[0].trim());
 					filtered = true;
-				} else if (key.startsWith("selected"))
+				} else if (entry.getKey().startsWith("selected"))
 				{
-					filter.getVisibleColumns().add(key.substring(8));
-				} else if (key.startsWith("exportselected"))
+					filter.getVisibleColumns().add(entry.getKey().substring(8));
+				} else if (entry.getKey().startsWith("exportselected"))
 				{
-					filter.getExportedColumns().add(key.substring(14));
+					filter.getExportedColumns().add(entry.getKey().substring(14));
 				} 
 			}
 		}
 		
-		if (filter.getVisibleColumns().size() == 0)
+		if (filter.getVisibleColumns().isEmpty())
 		{
 			filter.getVisibleColumns().add("date");
 			filter.getVisibleColumns().add("logid");
@@ -137,7 +122,7 @@ public class ActivityController extends BasicController {
 			filter.getVisibleColumns().add("newvalue");
 		}
 		
-		if (filter.getExportedColumns().size() == 0)
+		if (filter.getExportedColumns().isEmpty())
 		{
 			filter.getExportedColumns().add("date");
 			filter.getExportedColumns().add("user");
@@ -172,8 +157,9 @@ public class ActivityController extends BasicController {
 		List<User> allUsers = new ArrayList<>();
 		for (int id : allUserIds)
 		{
-			if (id > 0)
-			allUsers.add(administrationService.getUser(id));
+			if (id > 0) {
+				allUsers.add(administrationService.getUser(id));
+			}
 		}
 		
 		sessionService.setLastActivityFilter(request, filter);

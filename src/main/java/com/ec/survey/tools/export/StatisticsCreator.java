@@ -87,10 +87,10 @@ public class StatisticsCreator implements Runnable {
 			surveyService.CheckAndRecreateMissingElements(survey, filter);
 		}	
 		
-		HashMap<Integer, Integer> numberOfAnswersMap = new HashMap<>();
-		HashMap<Integer, HashMap<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();
-		HashMap<Integer, HashMap<Integer, Integer>> numberOfAnswersMapRatingQuestion = new HashMap<>();
-		HashMap<Integer, HashMap<Integer, Integer>> numberOfAnswersMapGallery = new HashMap<>();
+		Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
+		Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();
+		Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion = new HashMap<>();
+		Map<Integer, Map<Integer, Integer>> numberOfAnswersMapGallery = new HashMap<>();
 		Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset = new HashMap<>();
 				
 		int total = getAnswers4Statistics(survey, filter, numberOfAnswersMap, numberOfAnswersMapMatrix, numberOfAnswersMapGallery, multipleChoiceSelectionsByAnswerset, numberOfAnswersMapRatingQuestion);
@@ -109,7 +109,7 @@ public class StatisticsCreator implements Runnable {
 									
 				for (Element questionElement : matrix.getQuestions()) {
 					for (Element answerElement : matrix.getAnswers()) {
-						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix, numberOfAnswersMap);
+						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix);
 					}
 					
 					int answered = numberOfAnswersMap.get(questionElement.getId());
@@ -126,7 +126,7 @@ public class StatisticsCreator implements Runnable {
 				for (Element questionElement : rating.getQuestions()) {					
 					for (int i = 1; i <= rating.getNumIcons(); i++)
 					{
-						addStatistics4RatingQuestion(survey, i, questionElement, statistics, numberOfAnswersMapRatingQuestion, numberOfAnswersMap);
+						addStatistics4RatingQuestion(survey, i, questionElement, statistics, numberOfAnswersMapRatingQuestion);
 					}
 					
 					int answered = numberOfAnswersMap.get(questionElement.getId());
@@ -157,7 +157,7 @@ public class StatisticsCreator implements Runnable {
 			int totalScore = 0;
 			int counter = 0;
 			
-			Map<String, Integer> questionMaximumScores = new HashMap<String, Integer>();
+			Map<String, Integer> questionMaximumScores = new HashMap<>();
 			
 			List<AnswerSet> allanswers = answerService.getAllAnswers(survey.getId(), filter);
 			for (AnswerSet answerSet : allanswers) {
@@ -249,7 +249,7 @@ public class StatisticsCreator implements Runnable {
 				for (Element questionElement : rating.getQuestions()) {					
 					for (int i = 1; i <= rating.getNumIcons(); i++)
 					{
-						addStatistics4RatingQuestion(survey, i, questionElement, statistics, numberOfAnswersMapRatingQuestion, numberOfAnswersMap);
+						addStatistics4RatingQuestion(survey, i, questionElement, statistics, numberOfAnswersMapRatingQuestion);
 					}
 					
 					int answered = numberOfAnswersMap.get(questionElement.getId());
@@ -265,18 +265,18 @@ public class StatisticsCreator implements Runnable {
 				
 				for (Element answerElement : matrix.getAnswers()) {
 					for (Element questionElement : matrix.getQuestions()) {
-						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix, numberOfAnswersMap);
+						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix);
 					}
 					for (Element questionElement : matrix.getMissingQuestions()) {
-						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix, numberOfAnswersMap);
+						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix);
 					}
 				}
 				for (Element answerElement : matrix.getMissingAnswers()) {
 					for (Element questionElement : matrix.getQuestions()) {
-						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix, numberOfAnswersMap);
+						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix);
 					}
 					for (Element questionElement : matrix.getMissingQuestions()) {
-						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix, numberOfAnswersMap);
+						addStatistics4Matrix(survey, answerElement, questionElement, statistics, numberOfAnswersMapMatrix);
 					}
 				}
 				
@@ -306,7 +306,7 @@ public class StatisticsCreator implements Runnable {
 	}
 	
 	@Transactional
-	public int getAnswers4Statistics(Survey survey, ResultFilter filter, HashMap<Integer,Integer> map, HashMap<Integer,HashMap<Integer,Integer>> mapMatrix, HashMap<Integer, HashMap<Integer, Integer>> mapGallery, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset, HashMap<Integer, HashMap<Integer, Integer>> mapRatingQuestion) throws TooManyFiltersException {
+	public int getAnswers4Statistics(Survey survey, ResultFilter filter, Map<Integer,Integer> map, Map<Integer,Map<Integer,Integer>> mapMatrix, Map<Integer, Map<Integer, Integer>> mapGallery, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset, Map<Integer, Map<Integer, Integer>> mapRatingQuestion) throws TooManyFiltersException {
 				
 		boolean quiz = survey.getIsQuiz();
 		Set<String> multipleChoiceQuestionUids = new HashSet<>();
@@ -325,7 +325,7 @@ public class StatisticsCreator implements Runnable {
 		if (reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft()))
 		{
 			
-			Map<String, Object> values = new HashMap<String, Object>();
+			Map<String, Object> values = new HashMap<>();
 			String where = ReportingService.getWhereClause(filter, values, survey);
 			
 			try {
@@ -394,9 +394,9 @@ public class StatisticsCreator implements Runnable {
 		
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();		
-		HashMap<Integer, String> uniqueIdsById = SurveyService.getUniqueIdsById(survey);
+		Map<Integer, String> uniqueIdsById = SurveyService.getUniqueIdsById(survey);
 		
-		String where =  answerService.getSql(null, survey.getId(), filter, values, false, true);
+		String where =  answerService.getSql(null, survey.getId(), filter, values, true);
 		
 		String sql = "select a.PA_ID, a.PA_UID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN (" + where + ")"  ;
 		
@@ -553,17 +553,14 @@ public class StatisticsCreator implements Runnable {
 						matrixcountsUID.put(key, 1);
 					}
 				} else {
-					if (value != null && org.apache.commons.lang3.StringUtils.isNumeric(value))
+					if (value != null && org.apache.commons.lang3.StringUtils.isNumeric(value) && quid != null)
 					{
-						if (quid != null)
+						String galleryKey = quid + "-" + value;
+						if (gallerycounts.containsKey(galleryKey))
 						{
-							String galleryKey = quid + "-" + value;
-							if (gallerycounts.containsKey(galleryKey))
-							{
-								gallerycounts.put(galleryKey, gallerycounts.get(galleryKey) + 1);
-							} else {
-								gallerycounts.put(galleryKey, 1);
-							}
+							gallerycounts.put(galleryKey, gallerycounts.get(galleryKey) + 1);
+						} else {
+							gallerycounts.put(galleryKey, 1);
 						}
 					}
 				}
@@ -643,7 +640,7 @@ public class StatisticsCreator implements Runnable {
 		return resultSets.size();		
 	}
 	
-	private int addStatistics4Matrix(Survey survey, Element answer, Element question, Statistics statistics, HashMap<Integer, HashMap<Integer, Integer>> numberOfAnswersMapMatrix, HashMap<Integer, Integer> numberOfAnswersMap)
+	private int addStatistics4Matrix(Survey survey, Element answer, Element question, Statistics statistics, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix)
 	{			
 		String id = question.getId().toString() + answer.getId().toString();
 		int numberOfAnswers = 0;
@@ -663,7 +660,7 @@ public class StatisticsCreator implements Runnable {
 		return numberOfAnswers;
 	}
 
-	private int addStatistics4RatingQuestion(Survey survey, Integer answer, Element question, Statistics statistics, HashMap<Integer, HashMap<Integer, Integer>> numberOfAnswersMapRatingQuestion, HashMap<Integer, Integer> numberOfAnswersMap)
+	private int addStatistics4RatingQuestion(Survey survey, Integer answer, Element question, Statistics statistics, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion)
 	{			
 		String id = question.getId().toString() + answer.toString();
 		int numberOfAnswers = 0;
@@ -683,7 +680,7 @@ public class StatisticsCreator implements Runnable {
 		return numberOfAnswers;
 	}
 	
-	private void addStatistics(Survey survey, ChoiceQuestion question, Statistics statistics, HashMap<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset)
+	private void addStatistics(Survey survey, ChoiceQuestion question, Statistics statistics, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset)
 	{	
 		boolean quiz = survey.getIsQuiz() && question.getScoring() > 0;
 		int total = survey.getNumberOfAnswerSets();
@@ -769,19 +766,16 @@ public class StatisticsCreator implements Runnable {
 		statistics.getRequestedRecordsPercentScore().put(question.getId().toString(), percent);
 	}
 	
-	private void addStatistics4Gallery(Survey survey, GalleryQuestion question, Statistics statistics, HashMap<Integer, HashMap<Integer, Integer>> numberOfAnswersMap, HashMap<Integer, Integer> numberOfAnswersMap2)
+	private void addStatistics4Gallery(Survey survey, GalleryQuestion question, Statistics statistics, Map<Integer, Map<Integer, Integer>> numberOfAnswersMap, Map<Integer, Integer> numberOfAnswersMap2)
 	{		
 		int total = survey.getNumberOfAnswerSets();
 		
 		for (int i = 0; i < question.getFiles().size(); i++) {
 			
 			int numberOfAnswers = 0;
-			if (numberOfAnswersMap.containsKey(question.getId()))
+			if (numberOfAnswersMap.containsKey(question.getId()) && numberOfAnswersMap.get(question.getId()).containsKey(i))
 			{
-				if (numberOfAnswersMap.get(question.getId()).containsKey(i))
-				{
-					numberOfAnswers = numberOfAnswersMap.get(question.getId()).get(i);
-				}
+				numberOfAnswers = numberOfAnswersMap.get(question.getId()).get(i);
 			}
 			double percent = total == 0 ? 0 : (double)numberOfAnswers / (double)total * 100;
 			

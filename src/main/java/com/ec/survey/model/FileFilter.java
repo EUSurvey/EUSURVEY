@@ -155,12 +155,12 @@ public class FileFilter implements java.io.Serializable {
 	}
 	
 	public boolean isVisible(String type) {
-		if (fileTypes == null || fileTypes.size() == 0) return true;
+		if (fileTypes == null || fileTypes.isEmpty()) return true;
 		return fileTypes.contains(type);
 	}
 	
 	public boolean isValidExtension(String extension) {
-		if (fileExtensions == null || fileExtensions.size() == 0) return true;
+		if (fileExtensions == null || fileExtensions.isEmpty()) return true;
 		return fileExtensions.contains(extension);
 	}
 	

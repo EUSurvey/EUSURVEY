@@ -176,11 +176,10 @@ public class Translations implements java.io.Serializable {
 
 	@Transient
 	public Map<String, String> getInfo() {
-		Map<String, String> result = new HashMap<>(); //this.getLanguage().getCode() + ": ";
+		Map<String, String> result = new HashMap<>();
 		for (Translation translation: translations)
 		{
 			result.put(translation.getKey() , translation.getLabel());
-			//result += translation.getKey() + "," + translation.getLabel() + ";";
 		}
 		return result;
 	}

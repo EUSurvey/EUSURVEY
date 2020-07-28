@@ -18,6 +18,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Statistics;
 import com.ec.survey.model.survey.ChoiceQuestion;
 import com.ec.survey.model.survey.Element;
@@ -42,8 +43,8 @@ public class DocExportCreator extends ExportCreator {
 	}
 
 	@Override
-	void ExportContent(boolean sync) throws Exception {
-		throw new Exception("Not implemented");
+	void ExportContent(boolean sync) throws MessageException {
+		throw new MessageException("Not implemented");
 	}
 	
 	@Override
@@ -66,12 +67,16 @@ public class DocExportCreator extends ExportCreator {
         String cellValue;
         
 		Set<String> visibleQuestions = null;
-		if (export.getResultFilter() != null) visibleQuestions = export.getResultFilter().getExportedQuestions();
-		if (visibleQuestions == null || visibleQuestions.size() == 0) visibleQuestions = export.getResultFilter().getVisibleQuestions();
+		if (export.getResultFilter() != null) {
+			visibleQuestions = export.getResultFilter().getExportedQuestions();
+		}
+		if (visibleQuestions == null || visibleQuestions.isEmpty()) {
+			visibleQuestions = export.getResultFilter().getVisibleQuestions();
+		}
 		
         for (Element question : survey.getQuestionsAndSections()) {
         	
-        	if (export.getResultFilter() == null || visibleQuestions.size() == 0 || visibleQuestions.contains(question.getId().toString()))
+        	if (export.getResultFilter() == null || visibleQuestions.isEmpty() || visibleQuestions.contains(question.getId().toString()))
         	{
         		if (question instanceof Section)
         		{
@@ -92,7 +97,7 @@ public class DocExportCreator extends ExportCreator {
 						cellValue += " (" + question.getShortname() + ")";
 					}						
 					
-					XWPFTable table = CreateTableForAnswer(cellValue);
+					XWPFTable table = createTableForAnswer(cellValue);
 					ChoiceQuestion choiceQuestion = (ChoiceQuestion)question;
 					for (PossibleAnswer possibleAnswer : choiceQuestion.getAllPossibleAnswers()) {
 						XWPFTableRow row = table.createRow();				
@@ -109,7 +114,7 @@ public class DocExportCreator extends ExportCreator {
 						
 						if (percent > 0)
 						{						
-							XWPFParagraph p = row.getCell(1).getParagraphs().get(0); //.addParagraph();
+							XWPFParagraph p = row.getCell(1).getParagraphs().get(0);
 							
 							InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
 							
@@ -120,8 +125,7 @@ public class DocExportCreator extends ExportCreator {
 								document.createPicture(blipId, document.getNextPicNameNumber(Document.PICTURE_TYPE_PNG), percent.intValue(), 10, inline);
 															
 							} catch (InvalidFormatException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								logger.error(e.getLocalizedMessage(), e);
 							}
 						}
 						
@@ -146,8 +150,7 @@ public class DocExportCreator extends ExportCreator {
 							document.createPicture(blipId, document.getNextPicNameNumber(Document.PICTURE_TYPE_PNG), percent.intValue(), 10, inline);
 														
 						} catch (InvalidFormatException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							logger.error(e.getLocalizedMessage(), e);
 						}
 					}					
 					row.getCell(2).setText(statistics.getRequestedRecords().get(question.getId().toString()).toString());
@@ -161,7 +164,7 @@ public class DocExportCreator extends ExportCreator {
 						cellValue += " (" + question.getShortname() + ")";
 					}						
 					
-					XWPFTable table = CreateTableForAnswer(cellValue);
+					XWPFTable table = createTableForAnswer(cellValue);
 					GalleryQuestion galleryQuestion = (GalleryQuestion)question;
 					for (int i = 0; i < galleryQuestion.getFiles().size(); i++) {
 						XWPFTableRow row = table.createRow();				
@@ -174,7 +177,7 @@ public class DocExportCreator extends ExportCreator {
 						
 						if (percent > 0)
 						{						
-							XWPFParagraph p = row.getCell(1).getParagraphs().get(0); //.addParagraph();
+							XWPFParagraph p = row.getCell(1).getParagraphs().get(0);
 							
 							InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
 							
@@ -185,8 +188,7 @@ public class DocExportCreator extends ExportCreator {
 								document.createPicture(blipId, document.getNextPicNameNumber(Document.PICTURE_TYPE_PNG), percent.intValue(), 10, inline);
 															
 							} catch (InvalidFormatException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								logger.error(e.getLocalizedMessage(), e);
 							}
 						}
 						
@@ -211,8 +213,7 @@ public class DocExportCreator extends ExportCreator {
 							document.createPicture(blipId, document.getNextPicNameNumber(Document.PICTURE_TYPE_PNG), percent.intValue(), 10, inline);
 														
 						} catch (InvalidFormatException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							logger.error(e.getLocalizedMessage(), e);
 						}
 					}					
 					row.getCell(2).setText(statistics.getRequestedRecords().get(question.getId().toString()).toString());
@@ -231,7 +232,7 @@ public class DocExportCreator extends ExportCreator {
 							cellValue += " (" + matrixQuestion.getShortname() + ")";
 						}						
 						
-						XWPFTable table = CreateTableForAnswer(cellValue);
+						XWPFTable table = createTableForAnswer(cellValue);
 
 						for (Element matrixAnswer: matrix.getAnswers()) {
 							XWPFTableRow row = table.createRow();	
@@ -248,7 +249,7 @@ public class DocExportCreator extends ExportCreator {
 							
 							if (percent > 0)
 							{						
-								XWPFParagraph p = row.getCell(1).getParagraphs().get(0); //.addParagraph();
+								XWPFParagraph p = row.getCell(1).getParagraphs().get(0);
 								
 								InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
 								
@@ -259,8 +260,7 @@ public class DocExportCreator extends ExportCreator {
 									document.createPicture(blipId, document.getNextPicNameNumber(Document.PICTURE_TYPE_PNG), percent.intValue(), 10, inline);
 																
 								} catch (InvalidFormatException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									logger.error(e.getLocalizedMessage(), e);
 								}
 							}
 							
@@ -285,8 +285,7 @@ public class DocExportCreator extends ExportCreator {
 								document.createPicture(blipId, document.getNextPicNameNumber(Document.PICTURE_TYPE_PNG), percent.intValue(), 10, inline);
 															
 							} catch (InvalidFormatException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								logger.error(e.getLocalizedMessage(), e);
 							}
 						}					
 						row.getCell(2).setText(statistics.getRequestedRecords().get(matrixQuestion.getId().toString()).toString());
@@ -306,7 +305,7 @@ public class DocExportCreator extends ExportCreator {
 							cellValue += " (" + childQuestion.getShortname() + ")";
 						}						
 						
-						XWPFTable table = CreateTableForAnswer(cellValue);
+						XWPFTable table = createTableForAnswer(cellValue);
 
 						for (int i = 1; i <= rating.getNumIcons(); i++) {
 							XWPFTableRow row = table.createRow();	
@@ -319,7 +318,7 @@ public class DocExportCreator extends ExportCreator {
 							
 							if (percent > 0)
 							{						
-								XWPFParagraph p = row.getCell(1).getParagraphs().get(0); //.addParagraph();
+								XWPFParagraph p = row.getCell(1).getParagraphs().get(0);
 								
 								InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
 								
@@ -330,8 +329,7 @@ public class DocExportCreator extends ExportCreator {
 									document.createPicture(blipId, document.getNextPicNameNumber(Document.PICTURE_TYPE_PNG), percent.intValue(), 10, inline);
 																
 								} catch (InvalidFormatException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									logger.error(e.getLocalizedMessage(), e);
 								}
 							}
 							
@@ -356,8 +354,7 @@ public class DocExportCreator extends ExportCreator {
 								document.createPicture(blipId, document.getNextPicNameNumber(Document.PICTURE_TYPE_PNG), percent.intValue(), 10, inline);
 															
 							} catch (InvalidFormatException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								logger.error(e.getLocalizedMessage(), e);
 							}
 						}					
 						row.getCell(2).setText(statistics.getRequestedRecords().get(childQuestion.getId().toString()).toString());
@@ -371,7 +368,7 @@ public class DocExportCreator extends ExportCreator {
         document.write(outputStream);		
 	}
 	
-	private XWPFTable CreateTableForAnswer(String title) {	
+	private XWPFTable createTableForAnswer(String title) {	
 		XWPFParagraph paragraph = document.createParagraph();
 		
 		if (paragraph.getCTP().getPPr() == null) paragraph.getCTP().addNewPPr();

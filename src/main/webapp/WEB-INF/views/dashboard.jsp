@@ -56,19 +56,34 @@
 				<div id="invitations-button" data-bind="attr: {class: mode() == 'invitations' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToInvitations"><spring:message code="label.PersonalInvitations" /></a></div>
 			</div>		
 	
-			<div class="fullpage">			
+			<div class="fullpage" style="padding-top:137px;">			
 			
 				<c:if test="${USER.formPrivilege > 0}">
 			
 					<div id="surveysarea" data-bind="visible: mode() == 'surveys'">	
+					
+						<div style="text-align: left; margin-left: 15px; margin-bottom: 20px;">
+							<span style="margin-right: 10px;"><spring:message code="label.Surveys" />:</span>
+														
+							<select id="surveystatesselector" class="form-control" style="display: inline; width: auto;" onchange="_dashboard.reloadSurveyWidgets();">
+								<option value="my" selected="selected"><spring:message code="label.MySurveys" /></option>
+								<option value="shared"><spring:message code="label.SharedWithMe" /></option>
+								<option value="all"><spring:message code="label.BothOfThem" /></option>
+							</select>	
+						</div>	
 				
 					<c:if test="${USER.formPrivilege > 0 && USER.canCreateSurveys}">
-						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived'">
+						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived' && sharedOnly() == false">
 							<a class="btn btn-primary" onclick="showCreateSurveyDialog();"><spring:message code="label.CreateFirstSurvey" /></a>
 						</div>
 					</c:if>
+					
+						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived' && sharedOnly() == true">
+							<spring:message code="info.NoSharedSurveys" />
+						</div>
 							
 						<div class="container-fluid" style="display: none" data-bind="visible: (lastEditedSurveyShortname() != null && lastEditedSurveyShortname().length > 0) || surveysMode() == 'archived'">
+														
 							<div class="row" style="margin-bottom: 10px;">				
 								<div class="col-md-6" >
 									<div data-bind="visible: lastEditedByMeSurveyShortname() != null && lastEditedByMeSurveyShortname().length > 0">
@@ -154,14 +169,7 @@
 								<div class="col-md-4">
 									<div class="widget">
 										<div class="widgettitle" style="padding-bottom: 7px;">
-											<div id="surveys">
-												<div style="float: right">
-													<select id="surveystatesselector" class="dashboardselect" onchange="_dashboard.loadSurveyStates(0)">
-														<option value="all" selected="selected"><spring:message code="label.AllSurveys" /></option>
-														<option value="my"><spring:message code="label.Own" /></option>
-														<option value="shared"><spring:message code="label.Shared" /></option>
-													</select>
-												</div>
+											<div id="surveys">												
 												<spring:message code="label.SurveyStatistics" />
 												<div class="widgetheaderhide" data-bind="visible: surveyStates() == null">
 												</div>

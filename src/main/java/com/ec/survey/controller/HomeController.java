@@ -15,7 +15,9 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,9 +33,10 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -156,8 +159,8 @@ public class HomeController extends BasicController {
 		return "home/support";
 	}
 	
-	@RequestMapping(value = "/home/support", method = {RequestMethod.POST})
-	public String supportPOST(HttpServletRequest request, Locale locale, ModelMap model) throws NumberFormatException, Exception {
+	@PostMapping(value = "/home/support")
+	public String supportPOST(HttpServletRequest request, Locale locale, ModelMap model) throws Exception {
 		
 		if (!checkCaptcha(request))
 		{
@@ -218,23 +221,20 @@ public class HomeController extends BasicController {
 		
 		java.io.File attachment1 = null;
 		java.io.File attachment2 = null;
-		if (uploadedfiles != null)
+		if (uploadedfiles != null && uploadedfiles.length > 0)
 		{
-			if (uploadedfiles.length > 0)
+			attachment1 = fileService.getTemporaryFile(uploadedfiles[0]);
+			if (uploadedfiles.length > 1)
 			{
-				attachment1 = fileService.getTemporaryFile(uploadedfiles[0]);
-				if (uploadedfiles.length > 1)
-				{
-					attachment2 = fileService.getTemporaryFile(uploadedfiles[1]);
-				}
+				attachment2 = fileService.getTemporaryFile(uploadedfiles[1]);
 			}
 		}
 		
 		if (email.toLowerCase().endsWith("ec.europa.eu"))
 		{
-			mailService.SendHtmlMail(supportEmailInternal, sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort), attachment1, attachment2, null, true);
+			mailService.SendHtmlMail(supportEmailInternal, sender, sender, subject, text, attachment1, attachment2, null, true);
 		} else {
-			mailService.SendHtmlMail(supportEmail, sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort), attachment1, attachment2, null, true);
+			mailService.SendHtmlMail(supportEmail, sender, sender, subject, text, attachment1, attachment2, null, true);
 		}
 		
 		model.put("messagesent", true);
@@ -263,7 +263,7 @@ public class HomeController extends BasicController {
 		return "{\"success\": false}";
 	}	
 	
-	@RequestMapping(value = "/home/support/uploadfile", method = RequestMethod.POST)
+	@PostMapping(value = "/home/support/uploadfile")
 	public void uploadFile(HttpServletRequest request, HttpServletResponse response) {
 
 		PrintWriter writer = null;
@@ -276,8 +276,7 @@ public class HomeController extends BasicController {
             logger.error(ex.getLocalizedMessage(), ex);
         }
 
-        String filename;
-        boolean error = false;
+        String filename;       
         
         try {
         
@@ -291,17 +290,14 @@ public class HomeController extends BasicController {
 	        	is = request.getInputStream();
 	        }
         	
-	        if (!error)
-	        {
-	        	java.io.File file = fileService.getTemporaryFile();          
-	        	String uid = file.getName();
-	        			
-	            fos = new FileOutputStream(file);
-	            IOUtils.copy(is, fos);
-	                                  
-            	response.setStatus(HttpServletResponse.SC_OK);
-            	writer.print("{\"success\": true, \"id\": '" + uid + "', \"uid\": '" + uid + "', \"longdesc\": '', \"comment\": '', \"width\": '', \"name\": '" + filename + "'}");
-	        }
+            java.io.File file = fileService.getTemporaryFile();          
+        	String uid = file.getName();
+        			
+            fos = new FileOutputStream(file);
+            IOUtils.copy(is, fos);
+                                  
+        	response.setStatus(HttpServletResponse.SC_OK);
+        	writer.print("{\"success\": true, \"id\": '" + uid + "', \"uid\": '" + uid + "', \"longdesc\": '', \"comment\": '', \"width\": '', \"name\": '" + filename + "'}");
         } catch (Exception ex) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             writer.print("{\"success\": false}");
@@ -311,6 +307,7 @@ public class HomeController extends BasicController {
                 fos.close();
                 is.close();
             } catch (IOException ignored) {
+            	//ignore
             }
         }
 
@@ -472,19 +469,19 @@ public class HomeController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/home/welcome", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView welcome(HttpServletRequest request, Locale locale) {	
-		return basicwelcome(request, locale);
+	public ModelAndView welcome(HttpServletRequest request) {	
+		return basicwelcome(request);
 	}
 	
 	@RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView home(HttpServletRequest request, Locale locale) {
+	public ModelAndView home(HttpServletRequest request) {
 		request.getSession().setAttribute("serverprefix",serverPrefix);
-		return basicwelcome(request, locale);
+		return basicwelcome(request);
 	}
 	
 	@RequestMapping(value = "/home/welcome/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView welcomerunner(HttpServletRequest request, Locale locale) {	
-		return basicwelcome(request, locale);
+	public ModelAndView welcomerunner(HttpServletRequest request) {	
+		return basicwelcome(request);
 	}
 	
 	@RequestMapping(value = "/home/editcontribution")
@@ -507,7 +504,7 @@ public class HomeController extends BasicController {
 		return cal.after(cal2);
 	}	
 	
-	@RequestMapping(value = "/home/editcontribution", method = RequestMethod.POST)
+	@PostMapping(value = "/home/editcontribution")
 	public ModelAndView editcontributionPost(HttpServletRequest request, Locale locale) {		
 		try {
 			
@@ -539,13 +536,10 @@ public class HomeController extends BasicController {
 		
 			//get answerset
 	        String uniqueCode = request.getParameter("uniqueCode");	
-	        String token = request.getParameter("token");	
 	        
 	        if (uniqueCode != null) uniqueCode = uniqueCode.trim();
 	        
-	        if (token != null) token = token.trim();
-	        
-			AnswerSet answerSet = null;
+	        AnswerSet answerSet = null;
 			
 			if (uniqueCode != null && uniqueCode.length() > 0)
 			{			
@@ -578,7 +572,7 @@ public class HomeController extends BasicController {
 		}
 	}
 	
-	@RequestMapping(value = "/home/downloadcontribution", headers = "Accept=*/*", method = {RequestMethod.POST})
+	@PostMapping(value = "/home/downloadcontribution", headers = "Accept=*/*")
 	public @ResponseBody String downloadcontribution(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			
@@ -587,7 +581,7 @@ public class HomeController extends BasicController {
 				return "errorcaptcha";
 			}
 			
-			HashMap<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 			String code = parameters.get("caseid")[0];
 			
 			AnswerSet answerSet = answerService.get(code);
@@ -610,11 +604,11 @@ public class HomeController extends BasicController {
 				if (answerSet.getSurvey().getIsQuiz())
 				{
 					QuizExecutor export = (QuizExecutor) context.getBean("quizExecutor");
-					export.init(answerSet, email, sender, smtpServer, smtpPort, serverPrefix);
+					export.init(answerSet, email, sender, serverPrefix);
 					taskExecutor.execute(export);
 				} else {				
 					AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
-					export.init(answerSet, email, sender, smtpServer, smtpPort, serverPrefix);
+					export.init(answerSet, email, sender, serverPrefix);
 					taskExecutor.execute(export);
 				}
 			} else {
@@ -636,7 +630,6 @@ public class HomeController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/home/publicsurveys")
-
 	public ModelAndView publicsurveys(HttpServletRequest request) throws Exception {	
 		
 		if (!enablepublicsurveys.equalsIgnoreCase("true"))
@@ -793,7 +786,7 @@ public class HomeController extends BasicController {
 		return "error/validation";
 	}
 	 	
-	@RequestMapping(value = "home/notifySuccess", method = RequestMethod.POST)
+	@PostMapping(value = "home/notifySuccess")
 	public void notifySuccess(HttpServletRequest request, Locale locale, HttpServletResponse response) {
 		String requestId = request.getParameter("requestId");
 		if (requestId == null) {
@@ -805,7 +798,7 @@ public class HomeController extends BasicController {
 		machineTranslationService.saveSuccessResponse(requestId,targetLanguage,translatedText);
 	}
 
-	@RequestMapping(value = "home/notifyError", method = RequestMethod.POST)
+	@PostMapping(value = "home/notifyError")
 	public void notifyError(HttpServletRequest request, Locale locale, HttpServletResponse response) {
 		String requestId = request.getParameter("requestId");
 		if (requestId == null) {
@@ -819,7 +812,7 @@ public class HomeController extends BasicController {
 		machineTranslationService.saveErrorResponse(requestId,targetLanguage,errorCode,errorMessage);
 	}
 	
-	@RequestMapping(value = "/home/reportAbuse", method = RequestMethod.GET)
+	@GetMapping(value = "/home/reportAbuse")
 	public String reportAbuse (HttpServletRequest request, Locale locale, Model model) throws InvalidURLException {	
 		model.addAttribute("lang", locale.getLanguage());
 		model.addAttribute("runnermode", true);
@@ -853,8 +846,8 @@ public class HomeController extends BasicController {
 		return "home/reportabuse";
 	}
 	
-	@RequestMapping(value = "home/reportAbuse", method = RequestMethod.POST)
-	public ModelAndView reportAbusePOST(HttpServletRequest request, Locale locale, HttpServletResponse response) throws NumberFormatException, Exception {
+	@PostMapping(value = "home/reportAbuse")
+	public ModelAndView reportAbusePOST(HttpServletRequest request, Locale locale, HttpServletResponse response) throws Exception {
 		ModelAndView model = new ModelAndView("home/reportabuse");
 		
 		String uid = request.getParameter("abuseSurvey");

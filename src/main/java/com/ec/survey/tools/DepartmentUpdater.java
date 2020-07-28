@@ -8,8 +8,6 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.ec.survey.model.DepartmentItem;
 import com.ec.survey.service.LdapDBService;
 import com.ec.survey.service.LdapService;
@@ -39,7 +37,6 @@ public class DepartmentUpdater implements Runnable {
 		logger.info("DepartmentUpdater completed");
 	}
 	
-	@Transactional
 	private void reloadDepartments(Set<DepartmentItem> departments)
 	{
 		ldapDBService.reload(departments);

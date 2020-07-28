@@ -770,7 +770,7 @@ public class SurveyExportHelper {
 	         result.getSurvey().setLogo(logo);
         }
         
-        DocumentBuilder builder = XHTMLValidator.getBuilder(servletContext);
+        DocumentBuilder builder = XHTMLValidator.getBuilder();
         
         int repaired = surveyService.repairXHTML(result.getSurvey(), builder);
         for (Translations translations : result.getTranslations()) {

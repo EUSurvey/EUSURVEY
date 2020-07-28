@@ -200,7 +200,7 @@ public class InvitationMailCreator implements Runnable {
 				
 		String text = getMailTemplate(mailtemplate).replace("[CONTENT]", body).replace("[HOST]", host);
 		
-		mailService.SendHtmlMail(ecasUser.getEmail(), senderAddress, reply, subject, text, smtpServer, Integer.parseInt(smtpPort), invitation.getUniqueId());
+		mailService.SendHtmlMail(ecasUser.getEmail(), senderAddress, reply, subject, text, invitation.getUniqueId());
 	}
 	
 	private String getMailTemplate(String name)
@@ -262,7 +262,7 @@ public class InvitationMailCreator implements Runnable {
 		
 		String text = getMailTemplate(mailtemplate).replace("[CONTENT]", body).replace("[HOST]", host);
 				
-		mailService.SendHtmlMail(attendee.getEmail(), senderAddress, reply, subject, text, smtpServer, Integer.parseInt(smtpPort), null);
+		mailService.SendHtmlMail(attendee.getEmail(), senderAddress, reply, subject, text, null);
 	}
 	
 	/**

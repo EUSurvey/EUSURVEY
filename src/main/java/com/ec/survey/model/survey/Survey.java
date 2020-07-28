@@ -137,9 +137,8 @@ public class Survey implements java.io.Serializable {
 	private int questionNumbering;
 	private Skin skin;
 	private File logo;
-	private String confirmationPage = CONFIRMATIONTEXT; // "Thank you for your contribution";
-	private String escapePage = ESCAPETEXT; // "This survey has not yet been published or has already been unpublished
-											// in the meantime.";
+	private String confirmationPage = CONFIRMATIONTEXT;
+	private String escapePage = ESCAPETEXT;
 	private String confirmationLink = "";
 	private String escapeLink = "";
 	private List<String> translations;

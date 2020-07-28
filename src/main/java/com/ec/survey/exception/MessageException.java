@@ -11,4 +11,8 @@ public class MessageException extends Exception {
 		super(message);
 	}
 
+	public MessageException(String message, Exception e) {
+		super(message, e);
+	}
+
 }

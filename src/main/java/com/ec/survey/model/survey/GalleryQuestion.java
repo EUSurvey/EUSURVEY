@@ -6,7 +6,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
@@ -26,8 +25,8 @@ public class GalleryQuestion extends Question {
 
 	public GalleryQuestion() {}
 	
-	public GalleryQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+	public GalleryQuestion(String title, String shortname, String uid) {
+		super(title, shortname, uid);
 	}
 	
 	private Integer columns;
@@ -82,7 +81,7 @@ public class GalleryQuestion extends Question {
 		this.files = files;
 	}
 	
-	public GalleryQuestion copy(String fileDir) throws ValidationException, IntrusionException
+	public GalleryQuestion copy(String fileDir) throws ValidationException
 	{
 		GalleryQuestion copy = new GalleryQuestion();
 		baseCopy(copy);
@@ -100,6 +99,7 @@ public class GalleryQuestion extends Question {
 	}
 	
 	@Transient
+	@Override
 	public String getCss()
 	{
 		String css = super.getCss();
@@ -134,7 +134,7 @@ public class GalleryQuestion extends Question {
 
 		if (columns != null && !columns.equals(gallery.columns)) return true;
 		if (limit != null && !limit.equals(gallery.limit)) return true;
-		if (!(selection == gallery.selection)) return true;
+		if (selection != gallery.selection) return true;
 		
 		for (File file: files)
 		{
