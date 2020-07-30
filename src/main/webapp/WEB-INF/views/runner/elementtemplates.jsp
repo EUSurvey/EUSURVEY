@@ -68,7 +68,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="answer-columns">
 			<!-- ko if: useRadioButtons -->
 			<table class="answers-table">
@@ -182,7 +182,7 @@
 			<div class='limits' data-bind="html: getMaxChoice(maxChoices())"></div>
 		<!-- /ko -->
 		
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="answer-columns">
 			<!-- ko if: useCheckboxes -->
 			<table class="answers-table">
@@ -288,7 +288,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onfocus="clearStars(this);" onkeyup="countChar(this); propagateChange();" onblur="validateInput($(this).parent(), true)" autocomplete="off" type="password"></input>
 		<!-- ko if: isComparable -->		
 			<br /><span style="margin-left: 20px">${form.getMessage("label.PleaseRepeat")}</span>:<br />
@@ -339,7 +339,7 @@
 			<div class='limits' data-bind="html: getMaxCharacters(maxCharacters())"></div>
 		<!-- /ko -->
 
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 	
 		<!-- ko if: type == "RegExQuestion" -->
 			<input type="hidden" data-bind="value: regex, attr: {'name': 'regex' + id()}" />
@@ -403,7 +403,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<label class='questiontitle confirmationelement' data-bind='html: title'></label>
 		<!-- ko if: usetext -->																					
 			<a class="confirmationlabel" style="margin-left: 40px; cursor: pointer;" onclick="$(this).parent().find('.confirmation-dialog').modal('show')" data-bind="html:confirmationlabel"></a>
@@ -444,7 +444,7 @@
 	
 	<div id="rating-template">
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'rating', attr: {'name': 'type' + id()}" />	
@@ -535,7 +535,7 @@
 			<div class='limits' data-bind="html: getMax(maxString())"></div>
 		<!-- /ko -->
 		
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onkeyup="propagateChange();" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'number', attr: {'name': 'type' + id()}" />	
@@ -575,7 +575,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="input-group" style="margin-left: 20px;">
 	    	<div class="input-group-addon" style="margin-bottom: 5px">@</div>
 	      	<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}"  onblur="validateInput($(this).parent().parent())" onkeyup="propagateChange();" onchange="validateInput($(this).parent());" style="width: 180px; margin-left: 0px; margin-bottom: 0px !important;" type='text' maxlength="255" />
@@ -609,7 +609,7 @@
 			<div class='limits' data-bind="html: getMaxDate(maxString())"></div>
 		<!-- /ko -->
 		
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="input-group">
 			<!-- ko if: !foreditor && !readonly() -->
 				<div class="input-group-addon" onclick='$(this).parent().find(".datepicker").datepicker( "show" );'><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
@@ -656,7 +656,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class="questionhelp" data-bind="html: niceHelp"></div>	
+		<span class="questionhelp" data-bind="html: niceHelp"></span>	
 		<!-- ko if: extensions() != null && extensions().length > 0 -->
 			<div class="questionhelp">
 				<span class='glyphicon glyphicon-question-sign'></span>&nbsp;<span data-bind="html: getExtensionsHelp(extensions())"></span>
@@ -687,7 +687,7 @@
 	
 	<div id="download-template">
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class="questionhelp" data-bind="html: niceHelp"></div>	
+		<span class="questionhelp" data-bind="html: niceHelp"></span>	
 		<div class="files" data-bind="foreach: files">
 			<!-- ko if: $parent.foreditor -->
 			<input type="hidden" data-bind="value: uid(), attr: {'name': 'files' + $parent.id()}" />	
@@ -721,7 +721,7 @@
 			<div class='limits' data-bind="html: getMaxSelections(limit())"></div>
 		<!-- /ko -->
 
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		
 		<div class="gallery-div" style="width: 920px; max-width: 100%; text-align:left;">				
 			<!-- ko if: files().length == 0 -->
@@ -851,7 +851,7 @@
 			<div class='limits' data-bind="html: getMaxRows(maxRows())"></div>
 		<!-- /ko -->
 				
-		<div class="questionhelp" data-bind="html: niceHelp"></div>
+		<span class="questionhelp" data-bind="html: niceHelp"></span>
 		
 		<!-- ko if: ismobile || istablet -->
 			<div data-bind="attr: {'class': 'matrixdiv' + css()}">
@@ -969,7 +969,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class="questionhelp" data-bind="html: niceHelp"></div>	
+		<span class="questionhelp" data-bind="html: niceHelp"></span>	
 		
 		<!-- ko if: ismobile || istablet -->
 			<!-- ko foreach: questions -->	
