@@ -1,18 +1,18 @@
 function getNiceHelp(help)
 {
-	if (help == null || help.trim().length == 0) return "";
+	if (help == null || help.trim().length == 0) return "<br />";
 
 	return addIconToHelp(help);	
 }
 
 function addIconToHelp(help)
 {
-	if (help.indexOf("<span") == 0 || help.indexOf("<div") == 0)
-	{
-		return help.substring(0, help.indexOf(">")+1) + "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;" + help.substring(help.indexOf(">")+1);
-	}
+	//if (help.indexOf("<span") == 0 || help.indexOf("<div") == 0)
+	//{
+	//	return help.substring(0, help.indexOf(">")+1) + "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;" + help.substring(help.indexOf(">")+1);
+	//}
 	
-	return "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;" + help;
+	return "<span onclick='$(this).next().toggle()' class='glyphicon glyphicon-question-sign'></span><div style='display: none; padding-top: 5px;'>" + help + "</div><br />";
 }
 
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)
