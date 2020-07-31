@@ -3993,6 +3993,8 @@ public class SurveyService extends BasicService {
 				.createQuery("UPDATE Survey s SET s.isDeleted = true, s.deleted = NOW() WHERE s.uniqueId = :uniqueId");
 		query.setParameter("uniqueId", uniqueId);
 		query.executeUpdate();
+		
+		activityService.log(104, shortname, null, userid, uniqueId);
 
 		if (uniqueId != null) {
 			int answers = answerService.getNumberOfAnswerSetsPublished(shortname, uniqueId);
