@@ -245,6 +245,11 @@ textarea.freetext {
 	width: 130px !important;
 }
 
+
+input[type="text"].time {
+	width: 130px !important;
+}
+
 .tabletable textarea {
 	width: 100% !important;
 	/*height: 100% !important;*/

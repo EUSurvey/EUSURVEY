@@ -43,6 +43,7 @@ import com.ec.survey.model.survey.RegExQuestion;
 import com.ec.survey.model.survey.SingleChoiceQuestion;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.Table;
+import com.ec.survey.model.survey.TimeQuestion;
 import com.ec.survey.model.survey.Upload;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.ConversionTools;
@@ -320,6 +321,9 @@ public class ReportingService {
 									Date val = ConversionTools.getDate(answer);
 									where += columnname + " = :answer" + i;
 									values.put("answer" + i, val);
+								} else if (question instanceof TimeQuestion) {
+									where += columnname + " LIKE :answer" + i;
+									values.put("answer" + i,  "%" + answer + "%");
 								} else if (answer.contains("|")) { // Matrices
 									String answerUid = answer.substring(answer.indexOf('|')+1);
 									where += columnname + " LIKE :answer" + i;
@@ -380,6 +384,8 @@ public class ReportingService {
 			} else if (question instanceof NumberQuestion) {
 				columns++;	
 			} else if (question instanceof DateQuestion) {
+				columns++;
+			} else if (question instanceof TimeQuestion) {
 				columns++;
 			} else if (question instanceof SingleChoiceQuestion) {
 				columns++;	
@@ -810,6 +816,8 @@ public class ReportingService {
 				columnNamesToType.put(question.getUniqueId(), "DOUBLE");
 			} else if (question instanceof DateQuestion) {
 				columnNamesToType.put(question.getUniqueId(), "DATE");
+			} else if (question instanceof TimeQuestion) {
+				columnNamesToType.put(question.getUniqueId(), "TIME");
 			} else if (question instanceof SingleChoiceQuestion) {
 				columnNamesToType.put(question.getUniqueId(), "TEXT");
 			} else if (question instanceof MultipleChoiceQuestion) {
@@ -1205,7 +1213,17 @@ public class ReportingService {
 				}
 				columns.add(question.getUniqueId());
 				values.add(":value" + parameters.size());
-				parameters.put("value" + parameters.size(), d);				
+				parameters.put("value" + parameters.size(), d);
+			} else if (question instanceof TimeQuestion) {
+				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
+				String d = null;
+				if (!answers.isEmpty())
+				{
+					d = answers.get(0).getValue();						
+				}
+				columns.add(question.getUniqueId());
+				values.add(":value" + parameters.size());
+				parameters.put("value" + parameters.size(), d);			
 			} else if (question instanceof ChoiceQuestion) {
 				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
 				columns.add(question.getUniqueId());

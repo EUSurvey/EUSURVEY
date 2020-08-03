@@ -728,6 +728,8 @@ function getMinMaxPropertiesRow(label, min, max, valuemin, valuemax)
 	if ($(_elementProperties.selectedelement).hasClass("dateitem"))
 	{
 		row.ContentType("minmaxdate");
+	} else if ($(_elementProperties.selectedelement).hasClass("timeitem")) {
+		row.ContentType("minmaxtime");
 	} else {
 		row.ContentType("minmax");
 	}
@@ -757,6 +759,9 @@ function getMinMaxPropertiesRow(label, min, max, valuemin, valuemax)
 	if ($(_elementProperties.selectedelement).hasClass("dateitem"))
 	{
 		createDatePickerForEditor(input, valuemax);	
+	} else if ($(_elementProperties.selectedelement).hasClass("timeitem")) {
+		//createTimePickerForEditor(input, valuemax);
+		$(input).attr("placeholder", "HH:mm:ss");
 	} else {	
 		$(input).spinner({ decimals:2, min:min, max:max, start:"", allowNull: true });
 		$(input).parent().find('.ui-spinner-button').click(function() {
@@ -771,7 +776,10 @@ function getMinMaxPropertiesRow(label, min, max, valuemin, valuemax)
 	
 	if ($(_elementProperties.selectedelement).hasClass("dateitem"))
 	{
-		createDatePickerForEditor(input2, valuemin);	
+		createDatePickerForEditor(input2, valuemin);
+	} else if ($(_elementProperties.selectedelement).hasClass("timeitem")) {
+		//createTimePickerForEditor(input2, valuemin);
+		$(input2).attr("placeholder", "HH:mm:ss");
 	} else {	
 		$(input2).spinner({ decimals:2, min:min, max:max, start:"", allowNull: true });
 		$(input2).parent().find('.ui-spinner-button').click(function() {

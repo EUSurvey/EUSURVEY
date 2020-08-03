@@ -99,6 +99,94 @@ function checkMinMaxDate(input, hasInputError, showrulehint)
 	return true;
 }
 
+function checkMinMaxTime(input, hasInputError, showrulehint)
+{
+	removeValidationMarkup();
+	var minstring = null;
+	var maxstring = null;
+	if ($(input).attr("data-to"))
+	{
+		minstring = $(input).val();
+		maxstring = $("#" + $(input).attr("data-to")).val();
+		if (minstring.length > 0)
+		{
+			var isValid = isValidTime(minstring);
+			
+			if (!isValid)
+			{
+				addValidationInfo(input, "mintimeinvalid");
+				return false;
+			}
+			
+			if (maxstring.length > 0)
+			{
+				isValid = isValidTime(maxstring);
+				
+				if (!isValid)
+				{
+					addValidationInfo(input, "maxtimeinvalid");
+					return false;
+				}
+				
+				if (minstring >= maxstring)
+				{
+					addValidationInfo(input, "invalidMinMaxTime");
+					return false;
+				}
+			}
+		}	
+	} else if ($(input).attr("data-from"))
+	{
+		maxstring = $(input).val();
+		minstring = $("#" + $(input).attr("data-from")).val();
+		if (maxstring.length > 0)
+		{
+			var isValid = isValidTime(maxstring);
+			
+			if (!isValid)
+			{
+				addValidationInfo(input, "maxtimeinvalid");
+				return false;
+			}
+						
+			if (minstring.length > 0)
+			{
+				isValid = isValidTime(minstring);
+				
+				if (!isValid)
+				{
+					addValidationInfo(input, "mintimeinvalid");
+					return false;
+				}
+				
+				if (minstring >= maxstring)
+				{
+					addValidationInfo(input, "invalidMinMaxTime");
+					return false;
+				}
+			}
+		}	
+	}
+	
+	if (hasInputError)
+	{
+		if ($(input).attr("data-from"))
+		{
+			update($("#" + $(input).attr("data-from")));
+		} else if ($(input).attr("data-to"))
+		{
+			update($("#" + $(input).attr("data-to")));
+		}
+	}
+	
+	if (showrulehint)
+	{
+		addValidationHint(input, "checkRules");
+	}
+	
+	return true;
+}
+
 function addValidationMessage(row, label)
 {
 	$(row).find(".validationinfobutton").remove();	
@@ -535,6 +623,8 @@ function addValidationInfo(input, type)
 		label = getPropertyLabel("invalidNumber5k");
 	} else if (type == "mindateinvalid" || type == "maxdateinvalid") {
 		label = getPropertyLabel("invalidDate");
+	} else if (type == "mintimeinvalid" || type == "maxtimeinvalid") {
+		label = getPropertyLabel("invalidTime");
 	} else if (type == "invalidMinMax") {
 		if ($(_elementProperties.selectedelement).hasClass("freetextitem"))
 		{
@@ -548,6 +638,8 @@ function addValidationInfo(input, type)
 		}
 	} else if (type == "invalidMinMaxDate") {
 		label = getPropertyLabel("invalidStartEnd");
+	} else if (type == "invalidMinMaxTime") {
+		label = getPropertyLabel("invalidStartEndTime");
 	} else if (type == "maxinvalidmatrix") {
 		label = getPropertyLabel("invalidMatrixRows");
 	} else {

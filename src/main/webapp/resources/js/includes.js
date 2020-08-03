@@ -1123,7 +1123,15 @@ function initModals(item)
 						$(this).parent().parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");						
 					}
 					result = false;
-				};				
+				};	
+			} else if ($(this).hasClass("time"))
+			{
+				if ($(this).val().length == 0 || $(this).val() == 'HH:mm:ss')
+				{
+					validationinfo += $(this).attr("name") + " (R) ";
+					$(this).parent().parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");						
+					result = false;
+				};	
 			} else if ($(this).closest(".tabletable").length > 0) {
 				if ($(this).val().length == 0)
 				{
@@ -1376,6 +1384,61 @@ function initModals(item)
 			
 		});
 		
+		$(parent).find(".time").each(function(){
+			
+			//only if visible
+			if ($(this).closest(".survey-element").hasClass("untriggered"))
+			{
+				return;	
+			}
+			
+			var value = $(this).val();
+			
+			$(this).val(value.trim());
+			value = $(this).val();
+			
+			if (value.length == 0 || value == 'HH:mm:ss') return;
+			
+			var isValid = isValidTime(value);
+			if (!isValid)
+			{
+				validationinfo += $(this).attr("name") + " (TIME) ";
+				$(this).parent().after("<div class='validation-error' aria-live='polite'>" + invalidTime + "</div>");	
+				result = false;
+			}
+			
+			var classes = $(this).attr('class').split(" ");
+						
+			for ( var i = 0, l = classes.length; i<l; ++i ) {
+				if ($(this).parent().parent().find(".validation-error").length == 0)
+				{
+					var valuewithoutcolons = value.replace(/:/g, "");					
+					
+				 	if (strStartsWith(classes[i], 'min'))
+				 	{
+				 		var min = classes[i].substring(3);
+				 					 		
+				 		if (min > valuewithoutcolons)
+				 		{
+				 			validationinfo += $(this).attr("name") + " (MinTime) ";
+				 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");	
+				 			result = false;
+				 		};
+				 	} else if (strStartsWith(classes[i], 'max'))
+				 	{
+				 		var max = classes[i].substring(3);
+				 		
+				 		if (max < valuewithoutcolons)
+				 		{
+				 			validationinfo += $(this).attr("name") + " (MaxTime) ";
+				 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");		
+				 			result = false;
+				 		};
+				 	};
+				};	
+			};	
+			
+		});
 		
 		$(parent).find(".xhtml").each(function(){
 			
@@ -1866,6 +1929,10 @@ function initModals(item)
 	  if ( Object.prototype.toString.call(d) !== "[object Date]" )
 	    return false;
 	  return !isNaN(d.getTime());
+	}
+		
+	function isValidTime(t) {
+		return /^([0-1]?[0-9]|2[0-4]):([0-5][0-9]):([0-5][0-9])?$/.test(t);
 	}
 	
 	function parseMinMaxDate(s)

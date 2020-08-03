@@ -716,7 +716,7 @@ public class OdfExportCreator extends ExportCreator {
 									cell.setDateValue(c);
 								}
 							}
-
+						
 						} else {
 							cell = sheet.getCellByPosition(columnIndex++, rowIndex);
 							if (answerSet == null) {

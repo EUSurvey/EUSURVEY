@@ -1234,6 +1234,20 @@ public class WebServiceController extends BasicController {
 						answer.setQuestionUniqueId(question.getUniqueId());
 						answer.setValue(dateval);
 						answerSet.addAnswer(answer);
+					} else if (question instanceof TimeQuestion) {
+
+						String timeval = values.get(questionalias);
+						if (!Tools.isTimeString(timeval))
+						{
+							response.setStatus(412);
+						}
+
+						Answer answer = new Answer();
+						answer.setAnswerSet(answerSet);
+						answer.setQuestionId(question.getId());
+						answer.setQuestionUniqueId(question.getUniqueId());
+						answer.setValue(timeval);
+						answerSet.addAnswer(answer);
 					} else if (question instanceof ChoiceQuestion) {
 						String[] arrvalues = values.get(questionalias).split(",");
 						for (String alias : arrvalues) {

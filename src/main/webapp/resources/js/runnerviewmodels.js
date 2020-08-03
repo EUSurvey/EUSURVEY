@@ -827,6 +827,25 @@ function newDateViewModel(element)
 	return viewModel;
 }
 
+function newTimeViewModel(element)
+{
+	var viewModel = newBasicViewModel(element);
+	
+	viewModel.optional = ko.observable(element.optional);	
+	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.attributeName = ko.observable(element.attributeName);	
+	viewModel.help = ko.observable(element.help);
+	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
+	viewModel.css = ko.observable(element.css);	
+	viewModel.min = ko.observable(element.min);	
+	viewModel.minString = ko.observable(element.minString);	
+	viewModel.max = ko.observable(element.max);	
+	viewModel.maxString = ko.observable(element.maxString);	
+	
+	return viewModel;
+}
+
 function newUploadViewModel(element)
 {
 	var viewModel = newBasicViewModel(element);

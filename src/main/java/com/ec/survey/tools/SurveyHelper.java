@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class SurveyHelper {
@@ -117,7 +118,7 @@ public class SurveyHelper {
 						} else {
 							for (String value : values) {
 								if (value.isEmpty() || value.equalsIgnoreCase("false")
-										|| (question instanceof DateQuestion && value.equalsIgnoreCase("DD/MM/YYYY"))) {
+										|| (question instanceof DateQuestion && value.equalsIgnoreCase("DD/MM/YYYY")) || (question instanceof TimeQuestion && value.equalsIgnoreCase("HH:mm:ss"))) {
 									continue;
 								}
 								Answer answer = new Answer();
@@ -586,17 +587,63 @@ public class SurveyHelper {
 								resources.getMessage("validation.valueTooBig", null, "This value is too big", locale));
 					}
 				}
+				
+				if (element instanceof TimeQuestion) {
+					TimeQuestion timeQuestion = (TimeQuestion) element;
+
+					String answer = null;
+					if (answers.size() > 0 && answers.get(0).getValue().length() > 0)
+						answer = answers.get(0).getValue();
+					
+					if (timeQuestion.getMin() != null && answer != null)
+					{
+						 Date timeMin = new SimpleDateFormat(ConversionTools.TimeFormat).parse(timeQuestion.getMin());
+						 Calendar calendarMin = Calendar.getInstance();
+						 calendarMin.setTime(timeMin);
+						 calendarMin.add(Calendar.DATE, 1);
+						 
+						 Date timeAnswer = new SimpleDateFormat(ConversionTools.TimeFormat).parse(answer);
+						 Calendar calendarAnswer = Calendar.getInstance();
+						 calendarAnswer.setTime(timeAnswer);
+						 calendarAnswer.add(Calendar.DATE, 1);
+						 
+						 if (calendarMin.getTime().after(calendarAnswer.getTime()))
+						 {
+							 result.put(element, resources.getMessage("validation.valueTooSmall", null,
+										"This value is too small", locale));
+						 }
+					}
+
+					if (timeQuestion.getMax() != null && answer != null)
+					{
+						 Date timeMax = new SimpleDateFormat(ConversionTools.TimeFormat).parse(timeQuestion.getMax());
+						 Calendar calendarMax = Calendar.getInstance();
+						 calendarMax.setTime(timeMax);
+						 calendarMax.add(Calendar.DATE, 1);
+						 
+						 Date timeAnswer = new SimpleDateFormat(ConversionTools.TimeFormat).parse(answer);
+						 Calendar calendarAnswer = Calendar.getInstance();
+						 calendarAnswer.setTime(timeAnswer);
+						 calendarAnswer.add(Calendar.DATE, 1);
+						 
+						 if (calendarMax.getTime().before(calendarAnswer.getTime()))
+						 {
+							 result.put(element,
+										resources.getMessage("validation.valueTooBig", null, "This value is too big", locale));
+						 }
+					}
+				}
 
 				if (element instanceof MultipleChoiceQuestion) {
 					MultipleChoiceQuestion multipleChoiceQuestion = (MultipleChoiceQuestion) element;
 
-					if (multipleChoiceQuestion.getMinChoices() > answers.size() && answers.size() > 0) {
+					if (multipleChoiceQuestion.getMinChoices() > answers.size() && !answers.isEmpty()) {
 						result.put(element, resources.getMessage("validation.notEnoughAnswers", null,
 								"Not enough answers selected", locale));
 					}
 
 					if (multipleChoiceQuestion.getMaxChoices() < answers.size()
-							&& multipleChoiceQuestion.getMaxChoices() > 0 && answers.size() > 0) {
+							&& multipleChoiceQuestion.getMaxChoices() > 0 && !answers.isEmpty()) {
 						result.put(element, resources.getMessage("validation.tooManyAnswers", null,
 								"Too many answers selected", locale));
 					}
@@ -1954,6 +2001,104 @@ public class SurveyHelper {
 
 		return date;
 	}
+	
+	private static TimeQuestion getTime(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
+			String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+		TimeQuestion time;
+		String oldValues = "";
+		String newValues = "";
+		if (currentElement == null) {
+			time = new TimeQuestion(getString(parameterMap, "text", id, servletContext),
+					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, "uid", id, servletContext));
+		} else {
+			time = (TimeQuestion) currentElement;
+		}
+
+		String title = getString(parameterMap, "text", id, servletContext);
+		if (log220 && !time.getTitle().equals(title)) {
+			oldValues += " title: " + time.getTitle();
+			newValues += " title: " + title;
+		}
+		time.setTitle(title);
+
+		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		if (log220 && time.getShortname() != null && !time.getShortname().equals(shortname)) {
+			oldValues += " shortname: " + time.getShortname();
+			newValues += " shortname: " + shortname;
+		}
+		time.setShortname(shortname);
+
+		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (log220 && !isOptional.equals(time.getOptional())) {
+			oldValues += " optional: " + time.getOptional();
+			newValues += " optional: " + isOptional;
+		}
+		time.setOptional(isOptional);
+
+		Boolean isReadonly = getBoolean(parameterMap, "readonly", id);
+		if (log220 && !isReadonly.equals(time.getReadonly())) {
+			oldValues += " readonly: " + time.getReadonly();
+			newValues += " readonly: " + isReadonly;
+		}
+		time.setReadonly(isReadonly);
+
+		String help = getString(parameterMap, "help", id, servletContext);
+		if (log220 && time.getHelp() != null && !time.getHelp().equals(help)) {
+			oldValues += " help: " + time.getHelp();
+			newValues += " help: " + help;
+		}
+		time.setHelp(help);
+
+		Boolean attribute = getBoolean(parameterMap, "attribute", id);
+		if (log220 && !attribute.equals(time.getIsAttribute())) {
+			oldValues += " attribute: " + time.getIsAttribute();
+			newValues += " attribute: " + attribute;
+		}
+		time.setIsAttribute(attribute);
+
+		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
+		if (log220 && !time.getAttributeName().equals(nameattribute)) {
+			oldValues += " attributename: " + time.getAttributeName();
+			newValues += " attributename: " + nameattribute;
+		}
+		time.setAttributeName(nameattribute);
+
+		String min = getString(parameterMap, "min", id, servletContext);
+		if (log220 && min != null && !min.equals(time.getMin())) {
+			oldValues += " min: " + time.getMin();
+			newValues += " min: " + min;
+		}
+		time.setMin(min);
+
+		String max = getString(parameterMap, "max", id, servletContext);
+		if (log220 && max != null && !max.equals(time.getMax())) {
+			oldValues += " max: " + time.getMax();
+			newValues += " max: " + max;
+		}
+		time.setMax(max);
+
+//		Integer scoring = getInteger(parameterMap, "scoring", id);
+//		if (log220 && !scoring.equals(date.getScoring())) {
+//			oldValues += " scoring: " + date.getScoring();
+//			newValues += " scoring: " + scoring;
+//		}
+//		date.setScoring(scoring);
+//
+//		Integer points = getInteger(parameterMap, "points", id, 1);
+//		if (log220 && !points.equals(date.getPoints())) {
+//			oldValues += " points: " + date.getPoints();
+//			newValues += " points: " + points;
+//		}
+//		date.setPoints(points);
+
+		if (log220 && oldValues.length() > 0) {
+			String[] oldnew = { oldValues, newValues };
+			time.getActivitiesToLog().put(220, oldnew);
+		}
+
+		return time;
+	}
 
 	private static RatingQuestion getRating(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
 			String id, ServletContext servletContext, boolean log220, String[] questions,
@@ -3010,6 +3155,9 @@ public class SurveyHelper {
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("date")) {
 			element = getDate(parameterMap, currentElement, survey, id, servletContext,
+					log220 && currentElement != null);
+		} else if (type.equalsIgnoreCase("time")) {
+			element = getTime(parameterMap, currentElement, survey, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("rating")) {
 			String[] questions = parameterMap.get("question" + id);

@@ -537,6 +537,8 @@ public class XmlExportCreator extends ExportCreator {
 			return "Number";
 		} else if (question instanceof DateQuestion) {
 			return "Date";
+		} else if (question instanceof TimeQuestion) {
+			return "Time";
 		} else if (question instanceof Matrix) {
 			return "Matrix";
 		} else if (question instanceof Table) {

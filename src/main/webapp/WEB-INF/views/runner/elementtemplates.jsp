@@ -651,6 +651,43 @@
 		<!-- /ko -->		
 	</div>
 	
+	<div id="time-template">
+		<!-- ko if: optional() == false -->
+			<span class="mandatory">*</span>
+		<!-- /ko -->
+		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		
+		<!-- ko if: min() != null && max() != null -->
+			<div class='limits' data-bind="html: getMinMaxDate(min(), max())"></div>
+		<!-- /ko -->
+		<!-- ko if: min() != null && max() == null -->
+			<div class='limits' data-bind="html: getMinDate(min())"></div>
+		<!-- /ko -->
+		<!-- ko if: min() == null && max() != null -->
+			<div class='limits' data-bind="html: getMaxDate(max())"></div>
+		<!-- /ko -->
+		
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
+		<div class="input-group">
+			<div class="input-group-addon"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></div>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'timepicker ' + css()}" onblur="validateInput($(this).parent().parent());propagateChange();" type="text" placeholder="HH:mm:ss" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
+		</div>
+		
+		<!-- ko if: foreditor -->
+			<input type="hidden" data-bind="value: 'time', attr: {'name': 'type' + id()}" />	
+			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
+			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
+			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: minString(), attr: {'name': 'min' + id()}" />	
+			<input type="hidden" data-bind="value: maxString(), attr: {'name': 'max' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
+			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
+			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
+			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
+			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>			
+		<!-- /ko -->		
+	</div>
+	
 	<div id="upload-template">
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>

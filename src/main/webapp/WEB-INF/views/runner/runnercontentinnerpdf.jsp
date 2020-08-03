@@ -140,6 +140,17 @@
 								<c:when test="${element.getType() == 'DateQuestion' && element.getMax() != null}">
 									<div class='limits'>${form.getMessage("limits.MaxDate", element.getMaxString())}</div>
 								</c:when>
+								
+								<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null && element.getMax() != null}">
+									<div class='limits'>${form.getMessage("limits.MinMaxDate", element.getMin(), element.getMax())}</div>
+								</c:when>
+								<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null}">
+									<div class='limits'>${form.getMessage("limits.MinDate", element.getMin())}</div>
+								</c:when>
+								<c:when test="${element.getType() == 'TimeQuestion' && element.getMax() != null}">
+									<div class='limits'>${form.getMessage("limits.MaxDate", element.getMax())}</div>
+								</c:when>
+								
 								<c:when test="${element.getType() == 'GalleryQuestion' && element.selection && element.getLimit() != null && element.getLimit() > 0}">
 									<div class='limits'>${form.getMessage("limits.MaxSelections", element.getLimit())}</div>
 								</c:when>
@@ -513,7 +524,7 @@
 							</div>	
 						</c:if>
 						
-						<c:if test="${element.getType() == 'DateQuestion'}">
+						<c:if test="${element.getType() == 'DateQuestion' || element.getType() == 'TimeQuestion'}">
 							<div style="width: 206px; word-wrap: break-word; border: 1px solid #bbb; padding: 5px; min-height: 20px; margin-left: 20px;">${form.getValue(element)}</div>                                                                                    
                         </c:if>
 							

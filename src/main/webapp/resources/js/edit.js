@@ -341,6 +341,8 @@ function getIcon(element)
 		$(span).addClass("glyphicon glyphicon-list");
 	} else if (element.hasClass("dateitem")) {
 		$(span).addClass("glyphicon glyphicon-calendar");
+	} else if (element.hasClass("timeitem")) {
+		$(span).addClass("glyphicon glyphicon-time");
 	} else if (element.hasClass("textitem")) {
 		$(span).addClass("glyphicon glyphicon-font");
 	} else if (element.hasClass("imageitem")) {

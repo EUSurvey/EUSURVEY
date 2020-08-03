@@ -179,6 +179,7 @@
 								<li id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable quiz"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
 								<li id="drag_number" class="toolboxitem numberitem draggable quiz"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.Number" /></li>
 								<li id="drag_date" class="toolboxitem dateitem draggable quiz"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
+								<li id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
 							</c:when>
 							<c:otherwise>
 								<li id="drag_freetext" class="toolboxitem freetextitem draggable"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="form.FreeText" /></li>
@@ -186,6 +187,7 @@
 								<li id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
 								<li id="drag_number" class="toolboxitem numberitem draggable"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.Number" /></li>
 								<li id="drag_date" class="toolboxitem dateitem draggable"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
+								<li id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
 							</c:otherwise>
 						</c:choose>
 						<li id="drag_matrix" class="toolboxitem matrixitem draggable"><span class="glyphicon glyphicon-list-alt"></span> <spring:message code="form.Matrix" /></li>
@@ -601,6 +603,7 @@
 			if (element.hasClass("matrixitem")) return "<spring:message code='form.Matrix' />";
 			if (element.hasClass("mytableitem")) return "<spring:message code='form.Table' />";
 			if (element.hasClass("dateitem")) return "<spring:message code='form.Date' />";
+			if (element.hasClass("timeitem")) return "<spring:message code='form.Time' />";
 			if (element.hasClass("textitem")) return "<spring:message code='form.Text' />";
 			if (element.hasClass("imageitem")) return "<spring:message code='form.Image' />";
 			if (element.hasClass("ruleritem")) return "<spring:message code='form.Line' />";
@@ -628,6 +631,7 @@
 			if (element.hasClass("matrixitem")) return "idTypematrixitem";
 			if (element.hasClass("mytableitem")) return "idTypemytableitem";
 			if (element.hasClass("dateitem")) return "idTypedateitem";
+			if (element.hasClass("timeitem")) return "idTypetimeitem";
 			if (element.hasClass("textitem")) return "idTypetextitem";
 			if (element.hasClass("imageitem")) return "idTypeimageitem";
 			if (element.hasClass("ruleritem")) return "idTyperuleritem";
@@ -725,7 +729,9 @@
 	 		strings["invalidNumber"] = "<spring:message code="validation.invalidNumber" />";
 	 		strings["invalidNumber5k"] = "<spring:message code="validation.textTooLong5000" />";
 	 		strings["invalidDate"] = "<spring:message code="validation.invalidDate" />";
+	 		strings["invalidTime"] = "<spring:message code="validation.invalidTime" />";
 	 		strings["invalidStartEnd"] = "<spring:message code="validation.invalidStartEnd" />";
+	 		strings["invalidStartEndTime"] = "<spring:message code="validation.invalidStartEndTime" />";
 	 		strings["invalidMinMaxNumber"] = "<spring:message code="error.invalidMinMaxNumber" />";
 	 		strings["NotUniqueAnswers"] = "<spring:message code="validation.NotUniqueAnswers" />";
 	 		strings["required"] = "<spring:message code="validation.required" />";
