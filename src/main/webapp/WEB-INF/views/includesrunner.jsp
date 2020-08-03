@@ -98,9 +98,11 @@
 			var toomanyanswers = "${form.getMessage("validation.tooManyAnswers")}";
 			var noRegExmatchText = "${form.getMessage("validation.noRegExMatch")}";
 			var invalidDate = "${form.getMessage("validation.invalidDate")}";
+			var invalidTime = "${form.getMessage("validation.invalidTime")}";
 			var invalidEmail = "${form.getMessage("validation.invalidEmail")}";
 			var invalidCaseId = "${form.getMessage("validation.invalidContributionId")}";
 			var invalidStartEnd = "${form.getMessage("validation.invalidStartEnd")}";
+			var invalidStartEndTime = "${form.getMessage("validation.invalidStartEndTime")}";
 			var interdependentText = "${form.getMessage("validation.interdependentText")}";
 			var invalidURL = "${form.getMessage("validation.invalidURL")}";
 			var invalidPrecisionText = "${form.getMessage("validation.invalidPrecisionNumber")}";
@@ -173,9 +175,11 @@
 			var toomanyanswers = "<spring:message code='validation.tooManyAnswers' />";
 			var noRegExmatchText = "<spring:message code='validation.noRegExMatch' />";
 			var invalidDate = "<spring:message code='validation.invalidDate' />";
+			var invalidTime = "<spring:message code='validation.invalidTime' />";
 			var invalidEmail = "<spring:message code='validation.invalidEmail' />";
 			var invalidCaseId = "<spring:message code='validation.invalidContributionId' />";
 			var invalidStartEnd = "<spring:message code='validation.invalidStartEnd' />";
+			var invalidStartEndTime = "<spring:message code='validation.invalidStartEndTime' />";
 			var interdependentText = "<spring:message code='validation.interdependentText' />";
 			var invalidURL = "<spring:message code='validation.invalidURL' />";
 			var invalidPrecisionText = "<spring:message code='validation.invalidPrecisionNumber' />";

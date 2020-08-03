@@ -305,6 +305,10 @@ input[type="text"].date {
 	width: 177px;
 }
 
+input[type="text"].time {
+	width: 177px;
+}
+
 input.regex, textarea.regex {
 	width: 430px !important;
 }

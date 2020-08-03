@@ -29,6 +29,8 @@ function getElementViewModel(element)
 			return newNumberViewModel(element);
 		case 'DateQuestion':
 			return newDateViewModel(element);
+		case 'TimeQuestion':
+			return newTimeViewModel(element);
 		case 'EmailQuestion':
 			return newEmailViewModel(element);
 		case 'Matrix':
@@ -188,6 +190,10 @@ function addElementToContainer(element, container, foreditor, forskin)
 	} else if (viewModel.type == 'DateQuestion') {
 		$(container).addClass("dateitem");
 		var s = $("#date-template").clone().attr("id","");
+		$(container.append(s));
+	} else if (viewModel.type == 'TimeQuestion') {
+		$(container).addClass("timeitem");
+		var s = $("#time-template").clone().attr("id","");
 		$(container.append(s));
 	} else if (viewModel.type == 'EmailQuestion') {
 		$(container).addClass("emailitem");
