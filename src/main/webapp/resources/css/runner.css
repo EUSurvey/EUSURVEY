@@ -297,6 +297,11 @@ textarea.freetext {
 	margin-left: 20px;
 }
 
+.slider-horizontal {
+	
+	margin-top: 20px;
+}
+
 input[type="text"].number {
 	width: 215px;
 }

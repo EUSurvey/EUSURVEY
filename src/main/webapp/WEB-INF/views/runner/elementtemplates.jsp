@@ -536,7 +536,22 @@
 		<!-- /ko -->
 		
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
-		<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onkeyup="propagateChange();" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
+				
+		<!-- ko if: display() != 'Slider' -->
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onkeyup="propagateChange();" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
+		<!-- /ko -->
+		
+		<!-- ko if: display() == 'Slider' -->
+		
+		<div style="padding: 20px; padding-left: 50px;">
+		<input class="sliderbox" data-slider-id='ex1Slider' type="text"
+		 data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-ticks-labels' : labels()}"
+		 data-slider-ticks="[0, 20]"
+		 data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
+		</div>
+	
+		<!-- /ko -->
+		
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'number', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
@@ -567,6 +582,12 @@
 			<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />
 			<input type="hidden" data-bind="value: points, attr: {'name': 'points' + id()}" />
 			<!-- /ko -->
+			
+			<input type="hidden" data-bind="value: minLabel, attr: {'name': 'minLabel' + id()}" />
+			<input type="hidden" data-bind="value: maxLabel, attr: {'name': 'maxLabel' + id()}" />
+			<input type="hidden" data-bind="value: display, attr: {'name': 'display' + id()}" />
+			<input type="hidden" data-bind="value: initialSliderPosition, attr: {'name': 'initialSliderPosition' + id()}" />
+			<input type="hidden" data-bind="value: displayGraduationScale, attr: {'name': 'displayGraduationScale' + id()}" />
 		<!-- /ko -->
 	</div> 
 	

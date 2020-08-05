@@ -27,6 +27,11 @@ public class NumberQuestion extends Question {
 	private String unit;
 	private Double minD;
 	private Double maxD;
+	private String minLabel;
+	private String maxLabel;
+	private String display;
+	private String initialSliderPosition;
+	private Boolean displayGraduationScale;
 	
 	//this is for backward compatibility (serializer), do not remove!
 	private double min;
@@ -82,6 +87,46 @@ public class NumberQuestion extends Question {
 		this.unit = unit;
 	}
 	
+	@Column(name = "MINLABEL")
+	public String getMinLabel() {
+		return minLabel != null ? minLabel : "";
+	}
+	public void setMinLabel(String minLabel) {
+		this.minLabel = minLabel != null ? minLabel : "";
+	}
+
+	@Column(name = "MAXLABEL")
+	public String getMaxLabel() {
+		return maxLabel != null ? maxLabel : "";
+	}
+	public void setMaxLabel(String maxLabel) {
+		this.maxLabel = maxLabel != null ? maxLabel : "";
+	}
+	
+	@Column(name = "DISPLAY")
+	public String getDisplay() {
+		return (display != null && display.length() > 0) ? display: "Number";
+	}
+	public void setDisplay(String display) {
+		this.display =  (display != null && display.length() > 0) ? display: "Number";
+	}
+	
+	@Column(name = "INITSLIDER")
+	public String getInitialSliderPosition() {
+		return (initialSliderPosition != null && initialSliderPosition.length() > 0) ? initialSliderPosition: "left";
+	}
+	public void setInitialSliderPosition(String initialSliderPosition) {
+		this.initialSliderPosition = (initialSliderPosition != null && initialSliderPosition.length() > 0) ? initialSliderPosition: "left";
+	}
+	
+	@Column(name = "GRADSCALE")
+	public Boolean getDisplayGraduationScale() {
+		return displayGraduationScale == null ? false : displayGraduationScale;
+	}
+	public void setDisplayGraduationScale(Boolean displayGraduationScale) {
+		this.displayGraduationScale = displayGraduationScale == null ? false : displayGraduationScale;
+	}	
+	
 	public NumberQuestion copy(String fileDir) throws ValidationException
 	{
 		NumberQuestion copy = new NumberQuestion();
@@ -90,6 +135,10 @@ public class NumberQuestion extends Question {
 		copy.maxD = maxD;
 		copy.minD = minD;
 		copy.unit = unit;
+		copy.minLabel = minLabel;
+		copy.maxLabel = maxLabel;
+		copy.initialSliderPosition = initialSliderPosition;
+		copy.displayGraduationScale = displayGraduationScale;
 		
 		return copy;
 	}
@@ -132,11 +181,18 @@ public class NumberQuestion extends Question {
 		if (maxD == null && number.maxD != null) return true;
 		if (minD == null && number.minD != null) return true;
 		if (unit == null && number.unit != null) return true;
+		if (minLabel == null && number.minLabel != null) return true;
+		if (maxLabel == null && number.maxLabel != null) return true;
 		
 		if (maxD != null && !maxD.equals(number.maxD)) return true;
 		if (minD != null && !minD.equals(number.minD)) return true;
 		if (unit != null && !unit.equals(number.unit)) return true;
+		if (minLabel != null && !minLabel.equals(number.minLabel)) return true;
+		if (maxLabel != null && !maxLabel.equals(number.maxLabel)) return true;
 		
+		if (displayGraduationScale != null && !displayGraduationScale.equals(number.displayGraduationScale)) return true;
+		if (initialSliderPosition != null && !initialSliderPosition.equals(number.initialSliderPosition)) return true;
+			
 		return false;
 	}
 
@@ -159,5 +215,5 @@ public class NumberQuestion extends Question {
 			this.maxD = null;
 		}
 	}
-	
+
 }

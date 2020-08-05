@@ -400,6 +400,16 @@ function addElementToContainer(element, container, foreditor, forskin)
 	    });
 	});
 	
+	$(container).find(".sliderbox").each(function(){
+		$(this).bootstrapSlider({
+			formatter: function(value) {
+				return value;
+			},
+			tooltip: 'always',
+			ticks_labels: [viewModel.minLabel(), viewModel.maxLabel()]
+		});
+	});
+	
 	return viewModel;
 }
 

@@ -160,6 +160,32 @@ function update(input)
 			_undoProcessor.addUndoStep(["DisplayMode", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			addElementHandler($(_elementProperties.selectedelement));
 			break;
+		case "DisplaySlider":
+			var text = $(input).val();
+			var oldtext = element.display();
+			element.display(text);
+			_undoProcessor.addUndoStep(["DisplaySlider", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
+			adaptSliderDisplay(text === "Slider");
+			break;
+		case "MinLabel":
+			var text = $(input).val();
+			var oldtext = element.minLabel();
+			element.minLabel(text);
+			_undoProcessor.addUndoStep(["MinLabel", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
+			//$(_elementProperties.selectedelement).find('.sliderbox').bootstrapSlider('destroy');
+			//$(_elementProperties.selectedelement).find('.sliderbox').bootstrapSlider();
+			break;
+		case "MaxLabel":
+			var text = $(input).val();
+			var oldtext = element.maxLabel();
+			element.maxLabel(text);
+			_undoProcessor.addUndoStep(["MaxLabel", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
+			//$(_elementProperties.selectedelement).find('.sliderbox').bootstrapSlider('destroy');
+			//$(_elementProperties.selectedelement).find('.sliderbox').bootstrapSlider();
+			break;
 		case "Order":
 			var text = $(input).val();
 			var oldtext = element.order();

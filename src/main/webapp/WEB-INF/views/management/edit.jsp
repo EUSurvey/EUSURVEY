@@ -290,6 +290,10 @@
 						<!-- ko template: { name: 'quiz-template' } --><!-- /ko -->
 					<!-- /ko -->
 					
+					<!--  ko if: Type() == 'slider' -->
+						<!-- ko template: { name: 'slider-template' } --><!-- /ko -->
+					<!-- /ko -->
+					
 					<!--  ko if: Type() == 'quizanswers' -->
 						<!-- ko template: { name: 'quizanswers-template' } --><!-- /ko -->
 					<!-- /ko -->
@@ -693,7 +697,18 @@
 	 		strings["CheckBox"] = "<spring:message code="html.CheckBox" />";
 	 		strings["ListBox"] = "<spring:message code="html.ListBox" />";	 
 	 		strings["Unit"] = "<spring:message code="label.Unit" />";	 
-	 		strings["DecimalPlaces"] = "<spring:message code="label.DecimalPlaces" />";	 
+	 		strings["DecimalPlaces"] = "<spring:message code="label.DecimalPlaces" />";
+	 		strings["DisplaySlider"] = "<spring:message code="label.Display" />";	 
+	 		strings["MinLabel"] = "<spring:message code="label.MinLabel" />";	 
+	 		strings["MaxLabel"] = "<spring:message code="label.MaxLabel" />";	 
+	 		strings["InitialSliderPosition"] = "<spring:message code="label.InitialSliderPosition" />";	 
+	 		strings["DisplayGraduationScale"] = "<spring:message code="label.DisplayGraduationScale" />";	 
+	 		strings["Number"] = "<spring:message code="label.Number" />";	 
+	 		strings["Slider"] = "<spring:message code="label.Slider" />";
+	 		strings["Left"] = "<spring:message code="label.Left" />";
+	 		strings["Middle"] = "<spring:message code="label.Middle" />";
+	 		strings["Right"] = "<spring:message code="label.Right" />";
+	 		
 	 		strings["Values"] = "<spring:message code="label.Values" />";
 	 		strings["NumberOfAnsweredRows"] = "<spring:message code="label.NumberOfAnsweredRows" />";
 	 		strings["Interdependency"] = "<spring:message code="label.Interdependency" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.Interdependency" />'><span class='glyphicon glyphicon-question-sign'></span></a>";

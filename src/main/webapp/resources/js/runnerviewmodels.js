@@ -788,6 +788,17 @@ function newNumberViewModel(element)
 	viewModel.max = ko.observable(element.max);
 	viewModel.maxString = ko.observable(element.maxString);	
 	
+	viewModel.display = ko.observable(element.display);
+	viewModel.minLabel = ko.observable(element.minLabel);
+	viewModel.maxLabel = ko.observable(element.maxLabel);
+	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition);
+	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
+	
+	viewModel.labels = function(id)
+	{		
+		return "['" + this.minLabel() + "','" + this.maxLabel() + "']";
+	}
+	
 	return viewModel;
 }
 

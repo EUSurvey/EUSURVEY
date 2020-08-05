@@ -217,7 +217,7 @@
 </script>
 
 <script type="text/html" id="advanced-template">	
-	<tr class="firstpropertyrow collapsiblerow">
+	<tr class="firstpropertyrow collapsiblerow advanced">
 		<td colspan='2' style="text-align: left">
 			<a class='advancedtogglebutton' onclick='toggleAdvancedProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.Advanced" /></a>
 		</td>
@@ -229,8 +229,8 @@
 		<td colspan='2' style="text-align: left; border-bottom: 0px;">
 			<div class="toolboxheader">
 				<a>
-					<span id="quizpropertiescollapsebutton" class="glyphicon glyphicon-chevron-down" onclick="showHideQuizProperties(this)"></span>
-					<spring:message code="label.QuizProperties" />
+					<span class="glyphicon glyphicon-chevron-down" onclick="showHideQuizProperties(this)"></span>
+					<spring:message code="label.Quiz" />
 				</a>
 			</div>
 		</td>
