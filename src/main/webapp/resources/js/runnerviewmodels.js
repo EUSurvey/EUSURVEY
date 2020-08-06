@@ -781,7 +781,7 @@ function newNumberViewModel(element)
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.css = ko.observable(element.css);	
-	viewModel.decimalPlaces = ko.observable(element.decimalPlaces);	
+	viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces : 0);	
 	viewModel.unit = ko.observable(element.unit);	
 	viewModel.min = ko.observable(element.min);	
 	viewModel.minString = ko.observable(element.minString);	
@@ -791,12 +791,113 @@ function newNumberViewModel(element)
 	viewModel.display = ko.observable(element.display);
 	viewModel.minLabel = ko.observable(element.minLabel);
 	viewModel.maxLabel = ko.observable(element.maxLabel);
-	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition);
+	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition != null ? element.initialSliderPosition : "Left");
 	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
 	
-	viewModel.labels = function(id)
-	{		
-		return "['" + this.minLabel() + "','" + this.maxLabel() + "']";
+	viewModel.labelsString = function()
+	{
+		var result = "[";
+		var v = this.min();
+		var step = this.step();
+		while (v <= this.max()) {
+			if (result.length > 1)
+			{
+				result += ",";
+			}
+			
+			if (v === this.min()) {
+				result += "'" + this.min() + "'";
+			} else if (v === this.max()) {
+				result += "'" + this.max() + "'";
+			} else {
+				result += "'" + v + "'";
+			}
+			v += step;
+		}
+		
+		result += "]";
+		
+		return result;
+		//return "['" + this.min() + "','" + this.max() + "']";
+	}
+	
+	viewModel.labels = function()
+	{
+		var result =[];
+		result[result.length] = this.min().toString();
+		var v = this.min();
+		
+		if (this.displayGraduationScale())
+		{
+			var tickStep = (this.max() - this.min()) / 5;
+			
+			for (var i = 0; i < 4; i++)
+			{
+				v = Math.round((v + tickStep)* 100) / 100;
+				result[result.length] = v;
+			}
+		}
+		
+		result[result.length] = this.max().toString();		
+			
+		return result;
+	}
+	
+	viewModel.ticks = function()
+	{
+		if (!this.displayGraduationScale())
+		{
+			return "[" + this.min() + "," + this.max() + "]";
+		}
+		
+		//we always use 6 ticks
+		var tickStep = (this.max() - this.min()) / 5;
+		
+		var result = "[";
+		var v = this.min();
+		result += v;
+		
+		for (var i = 0; i < 4; i++)
+		{
+			v = Math.round((v + tickStep)* 100) / 100;
+			result += ",";
+			result += v;
+		}
+		
+		result += ",";
+		result += this.max();
+		
+		result += "]";
+		
+		return result;
+	}
+	
+	viewModel.step = function()
+	{
+		var result = 1;
+		for (var i = 0; i < this.decimalPlaces(); i++)
+		{
+			result = result / 10;
+		}
+		
+		return result;	
+	}
+	
+	viewModel.initialValue = function() {
+		if (this.initialSliderPosition() === "Middle")
+		{
+			if (this.decimalPlaces() > 0) {
+				return Math.round((this.max()-this.min()) * 100 / 2) / 100;
+			}
+			return Math.round((this.max()-this.min()) / 2);
+		}
+		
+		if (this.initialSliderPosition() === "Right")
+		{
+			return this.max();
+		}
+		
+		return this.min();
 	}
 	
 	return viewModel;

@@ -167,6 +167,21 @@ function update(input)
 			_undoProcessor.addUndoStep(["DisplaySlider", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			addElementHandler($(_elementProperties.selectedelement));
 			adaptSliderDisplay(text === "Slider");
+			
+			if (text === "Slider")
+			{
+				if (element.min() == null)
+				{
+					$("tr[data-label='Values']").find("input[data-type='min']").val("0");					
+				}
+				if (element.max() == null)
+				{
+					$("tr[data-label='Values']").find("input[data-type='max']").val("10");					
+				}
+				
+				initSlider($(".selectedquestion").find(".sliderbox").first(), true);
+			}
+			
 			break;
 		case "MinLabel":
 			var text = $(input).val();
@@ -174,8 +189,6 @@ function update(input)
 			element.minLabel(text);
 			_undoProcessor.addUndoStep(["MinLabel", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			addElementHandler($(_elementProperties.selectedelement));
-			//$(_elementProperties.selectedelement).find('.sliderbox').bootstrapSlider('destroy');
-			//$(_elementProperties.selectedelement).find('.sliderbox').bootstrapSlider();
 			break;
 		case "MaxLabel":
 			var text = $(input).val();
@@ -183,9 +196,24 @@ function update(input)
 			element.maxLabel(text);
 			_undoProcessor.addUndoStep(["MaxLabel", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			addElementHandler($(_elementProperties.selectedelement));
-			//$(_elementProperties.selectedelement).find('.sliderbox').bootstrapSlider('destroy');
-			//$(_elementProperties.selectedelement).find('.sliderbox').bootstrapSlider();
 			break;
+		case "DisplayGraduationScale":
+			var checked = $(input).is(":checked");
+			var text = checked ? "true" : "false";
+			var oldtext = checked ? "false" : "true";
+			element.displayGraduationScale(checked);
+			_undoProcessor.addUndoStep(["DisplayGraduationScale", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			$(".selectedquestion").find(".sliderbox").first().bootstrapSlider().bootstrapSlider('destroy');
+			initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);
+			break;
+		case "InitialSliderPosition":
+			var text = $(input).val();
+			var oldtext = element.initialSliderPosition();
+			element.initialSliderPosition(text);
+			_undoProcessor.addUndoStep(["InitialSliderPosition", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
+			initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);
+			break;			
 		case "Order":
 			var text = $(input).val();
 			var oldtext = element.order();
@@ -351,6 +379,10 @@ function update(input)
 						update(this);
 					});
 				});
+			}
+			
+			if (element.display() === "Slider") {
+				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);				
 			}
 			
 			break;
@@ -565,6 +597,11 @@ function update(input)
 			});
 			
 			_undoProcessor.addUndoStep(["DecimalPlaces", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			
+			if (element.display() === "Slider") {
+				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);				
+			}
+			
 			break;
 		case "LabelText":
 			var text = $(input).val();		

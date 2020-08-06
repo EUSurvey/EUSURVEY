@@ -541,15 +541,19 @@
 			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onkeyup="propagateChange();" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
 		<!-- /ko -->
 		
-		<!-- ko if: display() == 'Slider' -->
-		
-		<div style="padding: 20px; padding-left: 50px;">
-		<input class="sliderbox" data-slider-id='ex1Slider' type="text"
-		 data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-ticks-labels' : labels()}"
-		 data-slider-ticks="[0, 20]"
-		 data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
-		</div>
-	
+		<!-- ko if: display() == 'Slider' -->		
+		<div class="slider-div">
+			<div style="float: left; margin-left: -20px; padding-bottom: 20px;" data-bind="html: minLabel()"></div>
+			<div style="float: right; padding-bottom: 20px;" data-bind="html: maxLabel()"></div>
+			<div style="clear: both"></div>
+			
+			<input class="sliderbox" data-slider-id='ex1Slider' type="text"
+			 data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue()}"
+			
+			
+			
+			 />
+		</div>	
 		<!-- /ko -->
 		
 		<!-- ko if: foreditor -->
