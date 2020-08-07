@@ -5,4 +5,509 @@
         overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
         timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU"/>
 
+<cache name="com.ec.survey.model.survey.Survey"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>        
+        
+<cache name="com.ec.survey.model.Translations"
+		eternal="false" maxEntriesLocalHeap="10000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+</cache>     
+        
+<cache name="com.ec.survey.model.Translation"
+		eternal="false" maxEntriesLocalHeap="10000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />         
+</cache>     
+
+<cache name="com.ec.survey.model.attendees.Attribute"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+</cache>        
+
+
+<cache name="com.ec.survey.model.survey.Element"
+		eternal="false" maxEntriesLocalHeap="100000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+</cache>        
+
+
+<cache name="com.ec.survey.model.ParticipationGroup"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />
+</cache>        
+
+
+<cache name="com.ec.survey.model.SkinElement"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />
+</cache>        
+
+<cache name="com.ec.survey.model.Language"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">        
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />
+ </cache>        
+
+
+<cache name="com.ec.survey.model.Template"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+ </cache>        
+
+
+<cache name="com.ec.survey.model.Draft"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">        
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+</cache>        
+
+
+<cache name="com.ec.survey.model.ResultFilter"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />  
+</cache>        
+
+
+<cache name="com.ec.survey.model.UsersConfiguration"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">                
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />  
+ </cache>        
+
+
+<cache name="com.ec.survey.model.attendees.Invitation"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />          
+</cache>        
+
+
+<cache name="com.ec.survey.model.Export"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />          
+</cache>        
+
+
+<cache name="com.ec.survey.model.administration.Role"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />          
+</cache>        
+
+
+<cache name="com.ec.survey.model.attendees.AttendeeFilter"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />          
+</cache>        
+
+
+<cache name="com.ec.survey.model.Skin"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />         
+</cache>        
+
+
+<cache name="com.ec.survey.model.Dashboard"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>        
+
+
+<cache name="com.ec.survey.model.Publication"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>        
+
+
+<cache name="com.ec.survey.model.survey.Widget"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>
+
+
+<cache name="com.ec.survey.model.attendees.Share"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>   
+
+
+<cache name="com.ec.survey.model.survey.base.File"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>   
+
+
+<cache name="com.ec.survey.model.Status"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>    
+
+
+<cache name="com.ec.survey.model.WrongAttempts"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>
+
+
+<cache name="com.ec.survey.model.administration.User"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>        
+
+
+<cache name="com.ec.survey.model.attendees.AttributeName"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>     
+
+
+<cache name="com.ec.survey.model.Access"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>        
+
+
+<cache name="com.ec.survey.model.survey.DependencyItem"
+		eternal="false" maxEntriesLocalHeap="100000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>        
+
+
+<cache name="com.ec.survey.model.attendees.Attendee"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>       
+
+
+<cache name="org.hibernate.cache.spi.UpdateTimestampsCache"
+		eternal="true" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LFU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>        
+
+
+<cache name="org.hibernate.cache.internal.StandardQueryCache"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU">
+                        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" /> 
+        </cache>           
+
+<cache name="com.ec.survey.model.ActivityFilter"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.MailTask"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.ScoringItem"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.InvitationTemplate"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.ChoiceQuestion.possibleAnswers"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.AnswerSet.answers"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.Download.files"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.MatrixOrTable.childElements"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.attendees.AttendeeFilter.attributes"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.attendees.Attendee.attributes"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.Confirmation.files"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.DependencyItem.dependentElements"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.ParticipationGroup.attendees"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.Skin.elements"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.Matrix.dependentElements"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.GalleryQuestion.files"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.administration.User.roles"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.Survey.elements"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.ParticipationGroup.ecasUsers"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.Answer.files"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.Question.scoringItems"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.survey.RatingQuestion.childElements"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.administration.User.selectedAttributes"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>   
+<cache name="com.ec.survey.model.Translations.translations"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>  
+<cache name="com.ec.survey.model.attendees.Share.attendees"
+		eternal="false" maxEntriesLocalHeap="1000" maxEntriesLocalDisk="10000000"
+        overflowToDisk="true" diskPersistent="false" timeToIdleSeconds="300"
+        timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" >
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+    		properties="replicateAsynchronously=true, replicatePuts=true,
+    		replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true" />        
+</cache>  
 </ehcache>
