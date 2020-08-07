@@ -1985,3 +1985,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	max-height: 350px;
 	margin-right: -10px;
 }
+
+.slider-tick.round {
+	/*display: none;*/
+} 

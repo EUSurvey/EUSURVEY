@@ -794,49 +794,26 @@ function newNumberViewModel(element)
 	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition != null ? element.initialSliderPosition : "Left");
 	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
 	
-	viewModel.labelsString = function()
-	{
-		var result = "[";
-		var v = this.min();
-		var step = this.step();
-		while (v <= this.max()) {
-			if (result.length > 1)
-			{
-				result += ",";
-			}
-			
-			if (v === this.min()) {
-				result += "'" + this.min() + "'";
-			} else if (v === this.max()) {
-				result += "'" + this.max() + "'";
-			} else {
-				result += "'" + v + "'";
-			}
-			v += step;
-		}
-		
-		result += "]";
-		
-		return result;
-		//return "['" + this.min() + "','" + this.max() + "']";
-	}
-	
 	viewModel.labels = function()
 	{
 		var result =[];
 		result[result.length] = this.min().toString();
 		var v = this.min();
 		
-		if (this.displayGraduationScale())
-		{
-			var tickStep = (this.max() - this.min()) / 5;
-			
-			for (var i = 0; i < 4; i++)
-			{
-				v = Math.round((v + tickStep)* 100) / 100;
-				result[result.length] = v;
-			}
-		}
+//		if (this.displayGraduationScale())
+//		{
+//			var distance = this.max() - this.min();
+//			var tickStep = 1; 
+//			while (distance / tickStep > 10) {
+//				tickStep *= 2;
+//			}
+//			
+//			while (v < this.max())
+//			{
+//				v = Math.round((v + tickStep)* 100) / 100;
+//				result[result.length] = v;
+//			}
+//		}
 		
 		result[result.length] = this.max().toString();		
 			
@@ -845,31 +822,35 @@ function newNumberViewModel(element)
 	
 	viewModel.ticks = function()
 	{
-		if (!this.displayGraduationScale())
-		{
+//		if (!this.displayGraduationScale())
+//		{
 			return "[" + this.min() + "," + this.max() + "]";
-		}
-		
-		//we always use 6 ticks
-		var tickStep = (this.max() - this.min()) / 5;
-		
-		var result = "[";
-		var v = this.min();
-		result += v;
-		
-		for (var i = 0; i < 4; i++)
-		{
-			v = Math.round((v + tickStep)* 100) / 100;
-			result += ",";
-			result += v;
-		}
-		
-		result += ",";
-		result += this.max();
-		
-		result += "]";
-		
-		return result;
+//		}
+//		
+//		var distance = this.max() - this.min();
+//		var tickStep = 1; 
+//		while (distance / tickStep > 10) {
+//			tickStep *= 2;
+//		}
+//		
+//		
+//		var result = "[";
+//		var v = this.min();
+//		result += v;
+//		
+//		while (v < this.max())
+//		{
+//			v = Math.round((v + tickStep)* 100) / 100;
+//			result += ",";
+//			result += v;
+//		}
+//		
+//		//result += ",";
+//		//result += this.max();
+//		
+//		result += "]";
+//		
+//		return result;
 	}
 	
 	viewModel.step = function()
@@ -886,10 +867,11 @@ function newNumberViewModel(element)
 	viewModel.initialValue = function() {
 		if (this.initialSliderPosition() === "Middle")
 		{
+			var distance = this.max()-this.min();
 			if (this.decimalPlaces() > 0) {
-				return Math.round((this.max()-this.min()) * 100 / 2) / 100;
+				return Math.round(100 * (this.min() + (distance / 2))) / 100;
 			}
-			return Math.round((this.max()-this.min()) / 2);
+			return Math.round(this.min() + (distance / 2));
 		}
 		
 		if (this.initialSliderPosition() === "Right")

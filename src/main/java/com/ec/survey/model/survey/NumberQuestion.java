@@ -113,10 +113,10 @@ public class NumberQuestion extends Question {
 	
 	@Column(name = "INITSLIDER")
 	public String getInitialSliderPosition() {
-		return (initialSliderPosition != null && initialSliderPosition.length() > 0) ? initialSliderPosition: "left";
+		return (initialSliderPosition != null && initialSliderPosition.length() > 0) ? initialSliderPosition: "Left";
 	}
 	public void setInitialSliderPosition(String initialSliderPosition) {
-		this.initialSliderPosition = (initialSliderPosition != null && initialSliderPosition.length() > 0) ? initialSliderPosition: "left";
+		this.initialSliderPosition = (initialSliderPosition != null && initialSliderPosition.length() > 0) ? initialSliderPosition: "Left";
 	}
 	
 	@Column(name = "GRADSCALE")
@@ -135,6 +135,7 @@ public class NumberQuestion extends Question {
 		copy.maxD = maxD;
 		copy.minD = minD;
 		copy.unit = unit;
+		copy.display = display;
 		copy.minLabel = minLabel;
 		copy.maxLabel = maxLabel;
 		copy.initialSliderPosition = initialSliderPosition;
@@ -190,6 +191,7 @@ public class NumberQuestion extends Question {
 		if (minLabel != null && !minLabel.equals(number.minLabel)) return true;
 		if (maxLabel != null && !maxLabel.equals(number.maxLabel)) return true;
 		
+		if (display != null && !display.equals(number.display)) return true;
 		if (displayGraduationScale != null && !displayGraduationScale.equals(number.displayGraduationScale)) return true;
 		if (initialSliderPosition != null && !initialSliderPosition.equals(number.initialSliderPosition)) return true;
 			

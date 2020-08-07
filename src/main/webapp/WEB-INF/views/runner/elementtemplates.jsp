@@ -549,9 +549,6 @@
 			
 			<input class="sliderbox" data-slider-id='ex1Slider' type="text"
 			 data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue()}"
-			
-			
-			
 			 />
 		</div>	
 		<!-- /ko -->

@@ -172,14 +172,16 @@ function update(input)
 			{
 				if (element.min() == null)
 				{
-					$("tr[data-label='Values']").find("input[data-type='min']").val("0");					
+					$("tr[data-label='Values']").find("input[data-type='min']").val("0");
+					element.min(0);
 				}
 				if (element.max() == null)
 				{
-					$("tr[data-label='Values']").find("input[data-type='max']").val("10");					
+					$("tr[data-label='Values']").find("input[data-type='max']").val("10");
+					element.max(10);
 				}
 				
-				initSlider($(".selectedquestion").find(".sliderbox").first(), true);
+				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);
 			}
 			
 			break;

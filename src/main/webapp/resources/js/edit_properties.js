@@ -426,7 +426,7 @@ var ElementProperties = function() {
 				getTextPropertiesRow("MinLabel", $(e).find("input[name^='minLabel']").val(), false);
 				getTextPropertiesRow("MaxLabel", $(e).find("input[name^='maxLabel']").val(), false);
 				getChoosePropertiesRow("InitialSliderPosition", "Left,Middle,Right", false, false, $(e).find("input[name^='initialSliderPosition']").val());
-				getCheckPropertiesRow("DisplayGraduationScale", $(e).find("input[name^='displayGraduationScale']").val() == 'true');
+				//getCheckPropertiesRow("DisplayGraduationScale", $(e).find("input[name^='displayGraduationScale']").val() == 'true');
 	
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
 				getVisibilityRow(false);								
