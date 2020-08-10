@@ -657,13 +657,13 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
-		<!-- ko if: min() != null && max() != null -->
+		<!-- ko if: min() != null && max() != null && min() != '' && max() != ''  -->
 			<div class='limits' data-bind="html: getMinMaxDate(min(), max())"></div>
 		<!-- /ko -->
-		<!-- ko if: min() != null && max() == null -->
+		<!-- ko if: min() != null && min() != '' && (max() == null || max() == '') -->
 			<div class='limits' data-bind="html: getMinDate(min())"></div>
 		<!-- /ko -->
-		<!-- ko if: min() == null && max() != null -->
+		<!-- ko if: max() != null && max() != '' && (min() == null || min() == '') -->
 			<div class='limits' data-bind="html: getMaxDate(max())"></div>
 		<!-- /ko -->
 		
@@ -678,8 +678,8 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
-			<input type="hidden" data-bind="value: minString(), attr: {'name': 'min' + id()}" />	
-			<input type="hidden" data-bind="value: maxString(), attr: {'name': 'max' + id()}" />	
+			<input type="hidden" data-bind="value: min(), attr: {'name': 'min' + id()}" />	
+			<input type="hidden" data-bind="value: max(), attr: {'name': 'max' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
