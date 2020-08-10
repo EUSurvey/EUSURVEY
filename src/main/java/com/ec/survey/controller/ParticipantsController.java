@@ -486,8 +486,8 @@ public class ParticipantsController extends BasicController {
 		} catch (NoFormLoadedException ne) {
 			logger.error(ne.getLocalizedMessage(), ne);
 			ModelAndView model = new ModelAndView("error/generic");
-			String message = resources.getMessage("error.NoFormLoaded", null,
-					"You have to load a survey before you can use this page!", locale);
+			String message = resources.getMessage("error.NoFormLoadedNew", null,
+					"You have to load a survey before using this page!", locale);
 			model.addObject("message", message);
 			return model;
 		} catch (Exception e) {
@@ -605,8 +605,8 @@ public class ParticipantsController extends BasicController {
 		} catch (NoFormLoadedException ne) {
 			logger.error(ne);
 			ModelAndView model = new ModelAndView("error/generic");
-			String message = resources.getMessage("error.NoFormLoaded", null,
-					"You have to load a survey before you can use this page!", locale);
+			String message = resources.getMessage("error.NoFormLoadedNew", null,
+					"You have to load a survey before using this page!", locale);
 			model.addObject("message", message);
 			return model;
 		} catch (Exception e) {
@@ -984,8 +984,8 @@ public class ParticipantsController extends BasicController {
 		} catch (NoFormLoadedException ne) {
 			logger.error(ne);
 			ModelAndView model = new ModelAndView("error/generic");
-			String message = resources.getMessage("error.NoFormLoaded", null,
-					"You have to load a survey before you can use this page!", locale);
+			String message = resources.getMessage("error.NoFormLoadedNew", null,
+					"You have to load a survey before using this page!", locale);
 			model.addObject("message", message);
 			return model;
 		} catch (Exception e) {

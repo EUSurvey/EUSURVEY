@@ -292,7 +292,7 @@ public class BasicController implements BeanFactoryAware {
     public ModelAndView handleNoFormLoadedException(Exception e, Locale locale, HttpServletRequest request) {
 		logger.error(e.getLocalizedMessage(), e);
 		ModelAndView model = new ModelAndView("error/generic");
-		String message = resources.getMessage("error.NoFormLoaded", null, "You have to load a survey before you can use this page!", locale);
+		String message = resources.getMessage("error.NoFormLoadedNew", null, "You have to load a survey before using this page!", locale);
 		model.addObject("message", message);
 		model.addObject("contextpath", contextpath);
 		return model;
@@ -323,7 +323,7 @@ public class BasicController implements BeanFactoryAware {
 		if (!response.getOutputStream().isReady())
 		{
 			logger.error("Exception thrown after outputstream was closed, caused by URL: " + request.getRequestURL().toString() + "?" + request.getQueryString());
-			return null;
+			//return null;
 		}
 		
 		ModelAndView model;		

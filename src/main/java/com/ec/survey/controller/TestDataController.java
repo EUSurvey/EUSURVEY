@@ -47,7 +47,7 @@ public class TestDataController extends BasicController {
 
 			model.put("message",
 					"The generation of a test survey with " + answers
-							+ " answers was started. You will receive an email to " + email
+							+ " answer(s) has started. You will receive an email to " + email
 							+ " when the operation is completed. This can take a while.");
 			return "error/info";
 		} catch (Exception e) {
@@ -67,7 +67,7 @@ public class TestDataController extends BasicController {
 
 			model.put("message",
 					"The generation of a test survey with " + answers
-							+ " answers was started. You will receive an email to " + email
+							+ " answer(s) has started. You will receive an email to " + email
 							+ " when the operation is completed. This can take a while.");
 			return "error/info";
 		} catch (Exception e) {
@@ -87,8 +87,8 @@ public class TestDataController extends BasicController {
 			getPool().execute(testDataGenerator);
 
 			model.put("message",
-					"The generation of a test survey with " + questions + " questions and " + answers
-							+ " answers was started. You will receive an email to " + email
+					"The generation of a test survey with " + questions + " question(s) and " + answers
+							+ " answer(s) has started. You will receive an email to " + email
 							+ " when the operation is completed. This can take a while.");
 			return "error/info";
 		} catch (Exception e) {
@@ -108,7 +108,7 @@ public class TestDataController extends BasicController {
 					0, 5000, 0);
 			getPool().execute(testDataGenerator);
 
-			model.put("message", "The generation of 5000 test surveys was started. You will receive an email to "
+			model.put("message", "The generation of 5000 test surveys has started. You will receive an email to "
 					+ email + " when the operation is completed. This can take a while. Seriously.");
 			return "error/info";
 		} catch (Exception e) {
@@ -128,7 +128,7 @@ public class TestDataController extends BasicController {
 					context, 0, 1, 0);
 			getPool().execute(testDataGenerator);
 
-			model.put("message", "The generation of 1000000 answers was started. You will receive an email to " + email
+			model.put("message", "The generation of 1000000 answers has started. You will receive an email to " + email
 					+ " when the operation is completed. This can take a while. Seriously.");
 			return "error/info";
 		} catch (Exception e) {
@@ -155,7 +155,7 @@ public class TestDataController extends BasicController {
 				}
 			}
 
-			model.put("message", "The generation of 1000 archived surveys was started. You will receive an email to "
+			model.put("message", "The generation of 1000 archived surveys has started. You will receive an email to "
 					+ email + " when the operation is completed. This can take a while. Seriously.");
 			return "error/info";
 		} catch (Exception e) {
@@ -174,7 +174,7 @@ public class TestDataController extends BasicController {
 					Integer.parseInt(files), 1, 0);
 			getPool().execute(testDataGenerator);
 
-			model.put("message", "The generation of " + files + " files was started. You will receive an email to "
+			model.put("message", "The generation of " + files + " file(s) has started. You will receive an email to "
 					+ email + " when the operation is completed. This can take a while. Seriously.");
 			return "error/info";
 		} catch (Exception e) {
@@ -194,7 +194,7 @@ public class TestDataController extends BasicController {
 			getPool().execute(testDataGenerator);
 
 			model.put("message",
-					"The generation of " + contacts + " contacts was started. You will receive an email to " + email
+					"The generation of " + contacts + " contact(s) has started. You will receive an email to " + email
 							+ " when the operation is completed. This can take a while. Seriously.");
 			return "error/info";
 		} catch (Exception e) {
