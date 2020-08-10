@@ -737,6 +737,8 @@ function getMinMaxPropertiesRow(label, min, max, valuemin, valuemax)
 		row.ContentType("minmaxdate");
 	} else if ($(_elementProperties.selectedelement).hasClass("timeitem")) {
 		row.ContentType("minmaxtime");
+	} else if ($(_elementProperties.selectedelement).hasClass("numberitem")) {
+		row.ContentType("minmaxnumber");
 	} else {
 		row.ContentType("minmax");
 	}

@@ -177,7 +177,7 @@
 								<li id="drag_freetext" class="toolboxitem freetextitem draggable quiz"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="form.FreeText" /></li>
 								<li id="drag_simplechoice" class="toolboxitem singlechoiceitem draggable quiz"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="form.SingleChoice" /></li>
 								<li id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable quiz"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
-								<li id="drag_number" class="toolboxitem numberitem draggable quiz"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.Number" /></li>
+								<li id="drag_number" class="toolboxitem numberitem draggable quiz"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
 								<li id="drag_date" class="toolboxitem dateitem draggable quiz"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
 								<li id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
 							</c:when>
@@ -185,7 +185,7 @@
 								<li id="drag_freetext" class="toolboxitem freetextitem draggable"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="form.FreeText" /></li>
 								<li id="drag_simplechoice" class="toolboxitem singlechoiceitem draggable"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="form.SingleChoice" /></li>
 								<li id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
-								<li id="drag_number" class="toolboxitem numberitem draggable"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.Number" /></li>
+								<li id="drag_number" class="toolboxitem numberitem draggable"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
 								<li id="drag_date" class="toolboxitem dateitem draggable"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
 								<li id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
 							</c:otherwise>
@@ -603,7 +603,7 @@
 			if (element.hasClass("freetextitem")) return "<spring:message code='form.FreeText' />";
 			if (element.hasClass("singlechoiceitem")) return "<spring:message code='form.SingleChoice' />";
 			if (element.hasClass("multiplechoiceitem")) return "<spring:message code='form.MultipleChoice' />";
-			if (element.hasClass("numberitem")) return "<spring:message code='form.Number' />";
+			if (element.hasClass("numberitem")) return "<spring:message code='form.NumberSlider' />";
 			if (element.hasClass("matrixitem")) return "<spring:message code='form.Matrix' />";
 			if (element.hasClass("mytableitem")) return "<spring:message code='form.Table' />";
 			if (element.hasClass("dateitem")) return "<spring:message code='form.Date' />";
@@ -697,7 +697,7 @@
 	 		strings["CheckBox"] = "<spring:message code="html.CheckBox" />";
 	 		strings["ListBox"] = "<spring:message code="html.ListBox" />";	 
 	 		strings["Unit"] = "<spring:message code="label.Unit" />";	 
-	 		strings["DecimalPlaces"] = "<spring:message code="label.DecimalPlaces" />";
+	 		strings["DecimalPlaces"] = "<spring:message code="label.DecimalPlacesNew" />";
 	 		strings["DisplaySlider"] = "<spring:message code="label.Display" />";	 
 	 		strings["MinLabel"] = "<spring:message code="label.MinLabel" />";	 
 	 		strings["MaxLabel"] = "<spring:message code="label.MaxLabel" />";	 

@@ -83,6 +83,22 @@
 				</table>
 			</td>
 		<!-- /ko -->
+
+		<!--  ko if: ContentType() == 'minmaxnumber' -->
+			<td class="propertycontent">
+				<table class="minmaxtable">
+					<tr>
+						<td><spring:message code="label.MinValue" />&nbsp;</td>
+						<td><input class="spinner" style="min-width:60px" type="text" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
+					</tr>
+					<tr>
+						<td><spring:message code="label.MaxValue" />&nbsp;</td>
+						<td><input class="spinner" style="min-width:60px" type="text" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
+					</tr>
+				</table>
+			</td>
+		<!-- /ko -->
+
 		<!--  ko if: ContentType() == 'minmaxdate' -->
 			<td class="propertycontent">
 				<table class="minmaxtable">
