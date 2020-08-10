@@ -498,7 +498,7 @@ public class XlsExportCreator extends ExportCreator {
 	private Row row;
 
 	CellStyle dateCellStyle = null;
-
+	
 	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication,
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export, List<Question> questions,
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
@@ -532,7 +532,7 @@ public class XlsExportCreator extends ExportCreator {
 			dateCellStyle = wb.createCellStyle();
 			dateCellStyle.setDataFormat((short) 14);
 		}
-
+		
 		sheet = sheets.get(0);
 		row = sheet.createRow(rowIndex++);
 		lastSheet = 0;
@@ -725,11 +725,27 @@ public class XlsExportCreator extends ExportCreator {
 					}
 				} else if (question instanceof NumberQuestion && (export == null || !export.getShowShortnames())) {
 					Cell cell = checkColumnsParseAnswerSet();
+					
+					CellStyle numberCellStyle = wb.createCellStyle();
+					String format = "0";
+					NumberQuestion numberQuestion = (NumberQuestion)question;
+					if (numberQuestion.getDecimalPlaces() > 0)
+					{
+						format += ".";
+						for (int i = 0; i < numberQuestion.getDecimalPlaces(); i++)
+						{
+							format += "0";
+						}
+					}
+					
+					numberCellStyle.setDataFormat(wb.createDataFormat().getFormat(format));					
+					
 					if (answerSet == null) {
 						String v = answerrow.get(answerrowcounter++);
 						if (v != null && v.length() > 0) {
 							double cellValue = Double.parseDouble(v);
 							cell.setCellValue(cellValue);
+							cell.setCellStyle(numberCellStyle);
 						}
 					} else {
 						List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
@@ -737,6 +753,7 @@ public class XlsExportCreator extends ExportCreator {
 						if (!answers.isEmpty()) {
 							cellValue = Double.parseDouble(answers.get(0).getValue());
 							cell.setCellValue(cellValue);
+							cell.setCellStyle(numberCellStyle);
 						}
 					}
 				} else if (question instanceof DateQuestion && (export == null || !export.getShowShortnames())) {

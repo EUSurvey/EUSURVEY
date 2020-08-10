@@ -525,14 +525,16 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
-		<!-- ko if: min() != null && min() != 0 && max() != null && max() != 0 -->
-			<div class='limits' data-bind="html: getMinMax(minString(), maxString())"></div>
-		<!-- /ko -->
-		<!-- ko if: min() != 0 && min() != null && (max() == 0 || max() == null) -->
-			<div class='limits' data-bind="html: getMin(minString())"></div>
-		<!-- /ko -->
-		<!-- ko if: (min() == 0 || min() == null) && max() != null && max() != 0 -->
-			<div class='limits' data-bind="html: getMax(maxString())"></div>
+		<!-- ko if: display() != 'Slider' -->
+			<!-- ko if: min() != null && min() != 0 && max() != null && max() != 0 -->
+				<div class='limits' data-bind="html: getMinMax(minString(), maxString())"></div>
+			<!-- /ko -->
+			<!-- ko if: min() != 0 && min() != null && (max() == 0 || max() == null) -->
+				<div class='limits' data-bind="html: getMin(minString())"></div>
+			<!-- /ko -->
+			<!-- ko if: (min() == 0 || min() == null) && max() != null && max() != 0 -->
+				<div class='limits' data-bind="html: getMax(maxString())"></div>
+			<!-- /ko -->
 		<!-- /ko -->
 		
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
@@ -547,9 +549,13 @@
 			<div style="float: right; padding-bottom: 20px;" data-bind="html: maxLabel()"></div>
 			<div style="clear: both"></div>
 			
-			<input class="sliderbox" data-slider-id='ex1Slider' type="text"
+			<a data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
+			
+			<input class="sliderbox" type="text"
 			 data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue()}"
 			 />
+			 
+			 <a data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
 		</div>	
 		<!-- /ko -->
 		

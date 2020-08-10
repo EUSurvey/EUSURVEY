@@ -45,7 +45,7 @@ function getNewElement(item)
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("numberitem"))
 	{
-		element = getBasicElement("NumberQuestion", true, "Number Question", item.attr("id"), true);
+		element = getBasicElement("NumberQuestion", true, "Number-Slider Question", item.attr("id"), true);
 		element.decimalPlaces = 0;
 		element.unit = "";
 		element.min = null;

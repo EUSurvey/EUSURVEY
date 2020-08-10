@@ -174,11 +174,23 @@ function update(input)
 				{
 					$("tr[data-label='Values']").find("input[data-type='min']").val("0");
 					element.min(0);
+					element.minString("0");
 				}
 				if (element.max() == null)
 				{
 					$("tr[data-label='Values']").find("input[data-type='max']").val("10");
 					element.max(10);
+					element.maxString("10");
+				}
+				if (element.minLabel() == null)
+				{
+					element.minLabel("Very unlikely");
+					$("tr[data-label='MinLabel']").find("input[type='text']").val("Very unlikely");
+				}
+				if (element.maxLabel() == null)
+				{
+					element.maxLabel("Very likely");
+					$("tr[data-label='MaxLabel']").find("input[type='text']").val("Very likely");
 				}
 				
 				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);

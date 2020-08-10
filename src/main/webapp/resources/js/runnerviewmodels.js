@@ -855,23 +855,54 @@ function newNumberViewModel(element)
 	
 	viewModel.step = function()
 	{
-		var result = 1;
-		for (var i = 0; i < this.decimalPlaces(); i++)
-		{
-			result = result / 10;
-		}
+//		var result = 1;
+//		for (var i = 0; i < this.decimalPlaces(); i++)
+//		{
+//			result = result / 10;
+//		}
+//		
+//		return result;	
 		
-		return result;	
+		var decimals = parseInt(this.decimalPlaces());
+		if (decimals === 0)
+		{
+			return 1;
+		}
+		return 10 ** (-1 * decimals);
+	}
+	
+	viewModel.increase = function(element)
+	{
+		var min = parseFloat(this.min());
+		var max = parseFloat(this.max());
+		var input = $("#answer" + element.id());
+		var value = parseFloat($(input).bootstrapSlider().bootstrapSlider('getValue'));
+		if (value < max) {
+			$(input).bootstrapSlider().bootstrapSlider('setValue', value + this.step());
+		}
+	}
+	
+	viewModel.decrease = function(element)
+	{
+		var min = parseFloat(this.min());
+		var max = parseFloat(this.max());
+		var input = $("#answer" + element.id());
+		var value = parseFloat($(input).bootstrapSlider().bootstrapSlider('getValue'));
+		if (value > min) {
+			$(input).bootstrapSlider().bootstrapSlider('setValue', value - this.step());
+		}
 	}
 	
 	viewModel.initialValue = function() {
 		if (this.initialSliderPosition() === "Middle")
 		{
-			var distance = this.max()-this.min();
+			var min = parseInt(this.min());
+			var max = parseInt(this.max());
+			var distance = max-min;
 			if (this.decimalPlaces() > 0) {
-				return Math.round(100 * (this.min() + (distance / 2))) / 100;
+				return Math.round(100 * (min + (distance / 2))) / 100;
 			}
-			return Math.round(this.min() + (distance / 2));
+			return Math.round(min + (distance / 2));
 		}
 		
 		if (this.initialSliderPosition() === "Right")

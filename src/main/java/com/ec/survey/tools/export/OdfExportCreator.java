@@ -672,12 +672,25 @@ public class OdfExportCreator extends ExportCreator {
 								&& (export == null || !export.getShowShortnames())) {
 
 							cell = sheet.getCellByPosition(columnIndex++, rowIndex);
+							
+							String format = "0";
+							NumberQuestion numberQuestion = (NumberQuestion)question;
+							if (numberQuestion.getDecimalPlaces() > 0)
+							{
+								format += ".";
+								for (int i = 0; i < numberQuestion.getDecimalPlaces(); i++)
+								{
+									format += "0";
+								}
+							}							
+							
 							if (answerSet == null) {
 								String v = answerrow.get(answerrowcounter++);
 								if (v != null && v.length() > 0) {
 									double cellValue = Double.parseDouble(v);
 									cell.setDoubleValue(cellValue);
 									cell.setValueType("float");
+									cell.setFormatString(format);
 								}
 							} else {
 								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
@@ -688,6 +701,7 @@ public class OdfExportCreator extends ExportCreator {
 									cellValue = Double.parseDouble(answers.get(0).getValue());
 									cell.setDoubleValue(cellValue);
 									cell.setValueType("float");
+									cell.setFormatString(format);
 								}
 							}
 						} else if (question instanceof DateQuestion
