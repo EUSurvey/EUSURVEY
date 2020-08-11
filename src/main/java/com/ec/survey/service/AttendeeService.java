@@ -543,7 +543,7 @@ public class AttendeeService extends BasicService {
 		return result;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<Invitation> getInvitationsForParticipationGroup(Integer participationGroupId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session
@@ -818,5 +818,15 @@ public class AttendeeService extends BasicService {
 		}
 
 		return result;
+	}
+
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public void deactivateInvitations(List<Integer> invitationsToDeactivate) {
+		Session session = sessionFactory.getCurrentSession();
+		for (int id : invitationsToDeactivate) {
+			Invitation invitation = (Invitation) session.get(Invitation.class, id);
+			invitation.setDeactivated(true);
+			session.saveOrUpdate(invitation);
+		}		
 	}
 }
