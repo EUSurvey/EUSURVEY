@@ -1310,7 +1310,7 @@
 		var p_deactivated = '<spring:message code="message.ParticipantsGroupDeactivatedSuccessfully" />';
 		var p_deleted = '<spring:message code="message.ParticipantsGroupDeletedSuccessfully" />';
 		var p_operations = '<spring:message code="message.OperationsExecutedSuccessfully" />';
-		var p_guestlistcreated = '<spring:message code="info.GuestListCreated" />';
+		var p_guestlistcreated = '<spring:message code="info.GuestListCreatedNew" />';
 		var p_mailsstarted = '<spring:message code="info.MailsStarted" />';
 	</script>
 	
