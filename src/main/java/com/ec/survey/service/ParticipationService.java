@@ -187,9 +187,9 @@ public class ParticipationService extends BasicService {
 		getPool().execute(c);
 	}
 	
-	public void addTokensToGuestListAsync(Integer id, List<String> tokens) {
+	public void addTokensToGuestListAsync(Integer id, List<String> tokens, List<String> deactivatedTokens) {
 		GuestListCreator c = (GuestListCreator) context.getBean("guestListCreator");
-		c.initTokens(id, tokens);
+		c.initTokens(id, tokens, deactivatedTokens);
 		getPool().execute(c);
 	}	
 

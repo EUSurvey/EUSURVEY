@@ -165,8 +165,8 @@ public class RunnerController extends BasicController {
 			// The access has not yet been activated. Please try again later.
 			if (invitation != null && invitation.getDeactivated() != null && invitation.getDeactivated()) {
 				ModelAndView model = new ModelAndView("error/generic");
-				model.addObject("message", resources.getMessage("error.AccessDeactivated", null,
-						"The access has not yet been activated. Please try again later.", locale));
+				model.addObject("message", resources.getMessage("error.TokenInvalidOrDeactivated", null,
+						"This token is invalid or has been deactivated.", locale));
 				model.addObject("noMenu", true);
 				model.addObject("runnermode", true);
 				return model;
