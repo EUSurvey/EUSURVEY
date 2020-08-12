@@ -2767,7 +2767,7 @@ public class ManagementController extends BasicController {
 						filter.setLanguages(languages);
 						filtered = true;
 					} else if (entry.getKey().startsWith("filter")) {
-						String questionId = entry.getKey().substring(6);
+						String questionId = entry.getKey().substring(6);		
 						String[] values = entry.getValue();
 						String value = StringUtils.arrayToDelimitedString(values, ";");
 						filter.getFilterValues().put(questionId, value);

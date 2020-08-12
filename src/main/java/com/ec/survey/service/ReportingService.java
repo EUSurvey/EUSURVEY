@@ -272,7 +272,7 @@ public class ReportingService {
 				{
 					String questionIdAndUid = item.getKey();
 					String questionId = questionIdAndUid.substring(0, questionIdAndUid.indexOf('|'));
-					String questionUid = questionIdAndUid.substring(questionIdAndUid.indexOf('|')+1);
+					String questionUid = questionIdAndUid.substring(questionIdAndUid.indexOf('|')+1).replace("from", "").replace("to", "");
 					
 					Element question = elementsByUniqueID.get(questionUid);
 					
@@ -319,7 +319,13 @@ public class ReportingService {
 									values.put("answer" + i, val);
 								} else if (question instanceof DateQuestion) {
 									Date val = ConversionTools.getDate(answer);
-									where += columnname + " = :answer" + i;
+									if (questionIdAndUid.endsWith("from")) {
+										where += columnname + " >= :answer" + i;
+									} else if (questionIdAndUid.endsWith("to")) {
+										where += columnname + " <= :answer" + i;
+									} else {
+										where += columnname + " = :answer" + i;
+									}
 									values.put("answer" + i, val);
 								} else if (question instanceof TimeQuestion) {
 									where += columnname + " LIKE :answer" + i;

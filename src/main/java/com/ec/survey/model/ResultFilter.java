@@ -306,6 +306,22 @@ public class ResultFilter implements java.io.Serializable {
 		return "";
 	}
 	
+	@Transient
+	public String getFromValue(String questionId, String questionUid)
+	{
+		String combined = questionId + "|" + questionUid + "from";
+		if (filterValues.containsKey(combined)) return filterValues.get(combined);
+		return "";
+	}
+	
+	@Transient
+	public String getToValue(String questionId, String questionUid)
+	{
+		String combined = questionId + "|" + questionUid + "to";
+		if (filterValues.containsKey(combined)) return filterValues.get(combined);
+		return "";
+	}
+	
 	public ResultFilter copy() {
 		ResultFilter copy = new ResultFilter();
 		merge(copy);

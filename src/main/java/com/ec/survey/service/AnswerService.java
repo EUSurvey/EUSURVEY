@@ -661,53 +661,72 @@ public class AnswerService extends BasicService {
 									where.append(" OR (");
 								}
 
-								String answerPart = "a" + joincounter + ".VALUE like :answer" + i;
-
-								if (answer.contains("|")) {
-									String answerUid = answer.substring(answer.indexOf('|') + 1);
-									answerPart = "(a" + joincounter + ".PA_UID like :answerUid" + i + ")";
-									values.put("answerUid" + i, answerUid);
-								} else {
-									if (answer.contains("/")) {
-										answerPart = "a" + joincounter + ".VALUE LIKE :answer" + i;
-										values.put("answer" + i, "%" + answer + "%");
+								if (questionUid.endsWith("from")) {
+									String answerPart = "(STR_TO_DATE(a" + joincounter + ".VALUE,'%d/%m/%Y') >= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
+									
+									questionUid = questionUid.replace("from", "");
+									where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
+									.append(i).append(" AND ").append(answerPart).append(")");
+									values.put("questionUid" + i, questionUid);
+									values.put("answer" + i, answer);									
+								} else if (questionUid.endsWith("to")) {
+									String answerPart = "(STR_TO_DATE(a" + joincounter + ".VALUE,'%d/%m/%Y') <= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
+									
+									questionUid = questionUid.replace("to", "");
+									where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
+									.append(i).append(" AND ").append(answerPart).append(")");
+									values.put("questionUid" + i, questionUid);
+									values.put("answer" + i, answer);									
+								} else {								
+								
+									String answerPart = "a" + joincounter + ".VALUE like :answer" + i;
+	
+									if (answer.contains("|")) {
+										String answerUid = answer.substring(answer.indexOf('|') + 1);
+										answerPart = "(a" + joincounter + ".PA_UID like :answerUid" + i + ")";
+										values.put("answerUid" + i, answerUid);
 									} else {
-										values.put("answer" + i, "%" + answer + "%");
+										if (answer.contains("/")) {
+											answerPart = "a" + joincounter + ".VALUE LIKE :answer" + i;
+											values.put("answer" + i, "%" + answer + "%");
+										} else {
+											values.put("answer" + i, "%" + answer + "%");
+										}
 									}
-								}
-
-								if (questionId.contains("-")) {
-									String[] data = questionId.split("-");
-
-									if (questionUid.length() > 0) {
-										where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
-												.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
-												.append(i).append(" AND (a").append(joincounter)
-												.append(".QUESTION_ID = :questionId").append(i).append(" OR a")
-												.append(joincounter).append(".QUESTION_UID = :questionUid").append(i)
-												.append(") AND ").append(answerPart).append(")");
-										values.put("questionUid" + i, questionUid);
+	
+									if (questionId.contains("-")) {
+										String[] data = questionId.split("-");
+	
+										if (questionUid.length() > 0) {
+											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
+													.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
+													.append(i).append(" AND (a").append(joincounter)
+													.append(".QUESTION_ID = :questionId").append(i).append(" OR a")
+													.append(joincounter).append(".QUESTION_UID = :questionUid").append(i)
+													.append(") AND ").append(answerPart).append(")");
+											values.put("questionUid" + i, questionUid);
+										} else {
+											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
+													.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
+													.append(i).append(" AND a").append(joincounter)
+													.append(".QUESTION_ID = :questionId").append(i).append(" AND ")
+													.append(answerPart).append(")");
+										}
+	
+										values.put("questionId" + i, data[0]);
+										values.put("row" + i, data[1]);
+										values.put("col" + i, data[2]);
+	
 									} else {
-										where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
-												.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
-												.append(i).append(" AND a").append(joincounter)
-												.append(".QUESTION_ID = :questionId").append(i).append(" AND ")
-												.append(answerPart).append(")");
-									}
-
-									values.put("questionId" + i, data[0]);
-									values.put("row" + i, data[1]);
-									values.put("col" + i, data[2]);
-
-								} else {
-									if (questionUid.length() > 0) {
-										where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
-												.append(i).append(" AND ").append(answerPart).append(")");
-										values.put("questionUid" + i, questionUid);
-									} else {
-										where.append("( a").append(joincounter).append(".QUESTION_ID = :questionId")
-												.append(i).append(" AND ").append(answerPart).append(")");
-										values.put("questionId" + i, questionId);
+										if (questionUid.length() > 0) {
+											where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
+													.append(i).append(" AND ").append(answerPart).append(")");
+											values.put("questionUid" + i, questionUid);
+										} else {
+											where.append("( a").append(joincounter).append(".QUESTION_ID = :questionId")
+													.append(i).append(" AND ").append(answerPart).append(")");
+											values.put("questionId" + i, questionId);
+										}
 									}
 								}
 

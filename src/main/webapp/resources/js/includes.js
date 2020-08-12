@@ -327,7 +327,11 @@ function initModals(item)
 			    	{
 			    		applyDateFilter($(this).attr("id"), dateText);
 			    	}
-			    } 				   
+			    }
+			    
+			    if ($(this).hasClass("results")) {
+			    	$('#resultsForm').submit();
+			    }
 		
 				if ($(this).attr("data-to"))
 				{
