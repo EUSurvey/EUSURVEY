@@ -63,12 +63,12 @@ public class TimeQuestion extends Question {
 		
 		css += " time";
 		
-		if (min != null)
+		if (min != null && min.length() > 0)
 		{
 			css += " min" + min.replace(":", "");
 		}
 		
-		if (max != null)
+		if (max != null && max.length() > 0)
 		{
 			css += " max" + max.replace(":", "");
 		}
