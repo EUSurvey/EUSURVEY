@@ -37,6 +37,7 @@ public class GuestListCreator implements Runnable {
 	private int groupId;
 	private List<Integer> userIDs;
 	private List<String> tokens;
+	private List<String> deactivatedTokens;
 	private List<Integer> attendeeIDs;
 	private int type;
 	
@@ -52,9 +53,10 @@ public class GuestListCreator implements Runnable {
 		type = 2;
 	}
 	
-	public void initTokens(int groupId, List<String> tokens) {
+	public void initTokens(int groupId, List<String> tokens, List<String> deactivatedTokens) {
 		this.groupId = groupId;
 		this.tokens = tokens;
+		this.deactivatedTokens = deactivatedTokens;
 		type = 3;
 	}
 
@@ -129,6 +131,11 @@ public class GuestListCreator implements Runnable {
 			 	 	}
 										
 					attendeeService.addTokens(tokens, g.getId());
+					
+					for (String token : deactivatedTokens) {
+						Invitation invitation = attendeeService.getInvitationByUniqueId(token);
+						invitationsToDeactivate.add(invitation.getId());
+					}
 				} catch (GenericJDBCException e)
 				{
 					if (e.getMessage().equalsIgnoreCase("maximum number of invitations per guestlist exceeded"))

@@ -307,6 +307,7 @@ public class ParticipantsController extends BasicController {
 			List<Integer> attendeeIDs = null;
 			List<Integer> userIDs = null;
 			List<String> tokens = null;
+			List<String> deactivatedTokens = null;
 			if (g.getType() == ParticipationGroupType.Static) {
 				ArrayList<LinkedHashMap> attendees = (ArrayList) json.get("attendees");
 				attendeeIDs = new ArrayList<>();
@@ -319,9 +320,14 @@ public class ParticipantsController extends BasicController {
 			} else if (g.getType() == ParticipationGroupType.Token) {
 				ArrayList<LinkedHashMap> invitations = (ArrayList) json.get("tokens");
 				tokens = new ArrayList<>();
+				deactivatedTokens = new ArrayList<>();
 				for (int i = 0; i < invitations.size(); i++) {
 					LinkedHashMap token = invitations.get(i);
 					tokens.add(token.get("uniqueId").toString());
+					
+					if (token.get("deactivated").toString().equalsIgnoreCase("true")) {
+						deactivatedTokens.add(token.get("uniqueId").toString());
+					}
 				}
 			} else if (g.getType() == ParticipationGroupType.ECMembers) {
 				ArrayList<LinkedHashMap> users = (ArrayList) json.get("users");
@@ -338,7 +344,7 @@ public class ParticipantsController extends BasicController {
 			if (g.getType() == ParticipationGroupType.Static) {
 				participationService.addParticipantsToGuestListAsync(g.getId(), attendeeIDs);
 			} else if (g.getType() == ParticipationGroupType.Token) {
-				participationService.addTokensToGuestListAsync(g.getId(), tokens);
+				participationService.addTokensToGuestListAsync(g.getId(), tokens, deactivatedTokens);
 			} else if (g.getType() == ParticipationGroupType.ECMembers) {
 				participationService.addUsersToGuestListAsync(g.getId(), userIDs);
 			}
