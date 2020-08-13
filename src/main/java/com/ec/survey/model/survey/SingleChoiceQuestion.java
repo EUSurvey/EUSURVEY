@@ -28,8 +28,8 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	public SingleChoiceQuestion() {
 	}
 
-	public SingleChoiceQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+	public SingleChoiceQuestion(String title, String shortname, String uid) {
+		super(title, shortname, uid);
 	}
 
 	private boolean useRadioButtons;

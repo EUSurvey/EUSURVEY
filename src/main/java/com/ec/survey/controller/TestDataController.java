@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.TestDataGenerator;
 
 @Controller
@@ -37,7 +38,7 @@ public class TestDataController extends BasicController {
 
 	@RequestMapping(value = "/survey", method = { RequestMethod.GET, RequestMethod.HEAD })
 	@Transactional
-	public String survey(@RequestParam("answers") String answers, @RequestParam("email") String email, Locale locale,
+	public String survey(@RequestParam("answers") String answers, @RequestParam(Constants.EMAIL) String email, Locale locale,
 			ModelMap model, HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
@@ -45,7 +46,7 @@ public class TestDataController extends BasicController {
 					null, false, context, 0, 1, 0);
 			getPool().execute(testDataGenerator);
 
-			model.put("message",
+			model.put(Constants.MESSAGE,
 					"The generation of a test survey with " + answers
 							+ " answer(s) has started. You will receive an email to " + email
 							+ " when the operation is completed. This can take a while.");
@@ -57,15 +58,15 @@ public class TestDataController extends BasicController {
 	}
 
 	@RequestMapping(value = "/survey2", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public String survey2(@RequestParam("shortname") String shortname, @RequestParam("answers") String answers,
-			@RequestParam("email") String email, Locale locale, ModelMap model, HttpServletRequest request) {
+	public String survey2(@RequestParam(Constants.SHORTNAME) String shortname, @RequestParam("answers") String answers,
+			@RequestParam(Constants.EMAIL) String email, Locale locale, ModelMap model, HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
 			testDataGenerator.init(user, Integer.parseInt(answers), fileDir, sender, email,
 					shortname, null, false, context, 0, 1, 0);
 			getPool().execute(testDataGenerator);
 
-			model.put("message",
+			model.put(Constants.MESSAGE,
 					"The generation of a test survey with " + answers
 							+ " answer(s) has started. You will receive an email to " + email
 							+ " when the operation is completed. This can take a while.");
@@ -79,14 +80,14 @@ public class TestDataController extends BasicController {
 	@RequestMapping(value = "/survey3", method = { RequestMethod.GET, RequestMethod.HEAD })
 	@Transactional
 	public String survey3(@RequestParam("answers") String answers, @RequestParam("questions") String questions,
-			@RequestParam("email") String email, Locale locale, ModelMap model, HttpServletRequest request) {
+			@RequestParam(Constants.EMAIL) String email, Locale locale, ModelMap model, HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
 			testDataGenerator.init(user, Integer.parseInt(answers), fileDir, sender, email, null,
 					Integer.parseInt(questions), false, context, 0, 1, 0);
 			getPool().execute(testDataGenerator);
 
-			model.put("message",
+			model.put(Constants.MESSAGE,
 					"The generation of a test survey with " + questions + " question(s) and " + answers
 							+ " answer(s) has started. You will receive an email to " + email
 							+ " when the operation is completed. This can take a while.");
@@ -98,7 +99,7 @@ public class TestDataController extends BasicController {
 	}
 
 	@RequestMapping(value = "/stress", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public String stress(@RequestParam("email") String email, Locale locale, ModelMap model,
+	public String stress(@RequestParam(Constants.EMAIL) String email, Locale locale, ModelMap model,
 			HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
@@ -108,7 +109,7 @@ public class TestDataController extends BasicController {
 					0, 5000, 0);
 			getPool().execute(testDataGenerator);
 
-			model.put("message", "The generation of 5000 test surveys has started. You will receive an email to "
+			model.put(Constants.MESSAGE, "The generation of 5000 test surveys has started. You will receive an email to "
 					+ email + " when the operation is completed. This can take a while. Seriously.");
 			return "error/info";
 		} catch (Exception e) {
@@ -118,7 +119,7 @@ public class TestDataController extends BasicController {
 	}
 
 	@RequestMapping(value = "/stress2", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public String stress2(@RequestParam("email") String email, Locale locale, ModelMap model,
+	public String stress2(@RequestParam(Constants.EMAIL) String email, Locale locale, ModelMap model,
 			HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
@@ -128,7 +129,7 @@ public class TestDataController extends BasicController {
 					context, 0, 1, 0);
 			getPool().execute(testDataGenerator);
 
-			model.put("message", "The generation of 1000000 answers has started. You will receive an email to " + email
+			model.put(Constants.MESSAGE, "The generation of 1000000 answers has started. You will receive an email to " + email
 					+ " when the operation is completed. This can take a while. Seriously.");
 			return "error/info";
 		} catch (Exception e) {
@@ -138,7 +139,7 @@ public class TestDataController extends BasicController {
 	}
 
 	@RequestMapping(value = "/archives", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public String archives(@RequestParam("email") String email, Locale locale, ModelMap model,
+	public String archives(@RequestParam(Constants.EMAIL) String email, Locale locale, ModelMap model,
 			HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
@@ -155,7 +156,7 @@ public class TestDataController extends BasicController {
 				}
 			}
 
-			model.put("message", "The generation of 1000 archived surveys has started. You will receive an email to "
+			model.put(Constants.MESSAGE, "The generation of 1000 archived surveys has started. You will receive an email to "
 					+ email + " when the operation is completed. This can take a while. Seriously.");
 			return "error/info";
 		} catch (Exception e) {
@@ -166,7 +167,7 @@ public class TestDataController extends BasicController {
 
 	@RequestMapping(value = "/files", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public String files(@RequestParam("files") String files, @RequestParam("type") String type,
-			@RequestParam("email") String email, Locale locale, ModelMap model, HttpServletRequest request) {
+			@RequestParam(Constants.EMAIL) String email, Locale locale, ModelMap model, HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
 
@@ -174,7 +175,7 @@ public class TestDataController extends BasicController {
 					Integer.parseInt(files), 1, 0);
 			getPool().execute(testDataGenerator);
 
-			model.put("message", "The generation of " + files + " file(s) has started. You will receive an email to "
+			model.put(Constants.MESSAGE, "The generation of " + files + " file(s) has started. You will receive an email to "
 					+ email + " when the operation is completed. This can take a while. Seriously.");
 			return "error/info";
 		} catch (Exception e) {
@@ -184,7 +185,7 @@ public class TestDataController extends BasicController {
 	}
 
 	@RequestMapping(value = "/contacts", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public String contacts(@RequestParam("contacts") String contacts, @RequestParam("email") String email,
+	public String contacts(@RequestParam("contacts") String contacts, @RequestParam(Constants.EMAIL) String email,
 			Locale locale, ModelMap model, HttpServletRequest request) {
 		try {
 			User user = sessionService.getCurrentUser(request);
@@ -193,7 +194,7 @@ public class TestDataController extends BasicController {
 					0, Integer.parseInt(contacts));
 			getPool().execute(testDataGenerator);
 
-			model.put("message",
+			model.put(Constants.MESSAGE,
 					"The generation of " + contacts + " contact(s) has started. You will receive an email to " + email
 							+ " when the operation is completed. This can take a while. Seriously.");
 			return "error/info";
@@ -208,7 +209,7 @@ public class TestDataController extends BasicController {
 		response.getOutputStream().flush();
 		response.getOutputStream().close();
 
-		throw new MessageException("Error");
+		throw new MessageException(Constants.ERROR);
 	}
 
 	private ExecutorService pool;

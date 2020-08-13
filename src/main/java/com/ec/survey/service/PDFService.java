@@ -7,6 +7,7 @@ import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.AnswerExecutor;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.PDFRenderer;
 import com.ec.survey.tools.PDFRendererPoolFactory;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -164,7 +165,7 @@ public class PDFService extends BasicService {
 
 				if (!result.toString().equals("OK")) {
 					logger.error("calling worker server for creation of answer pdf for contribution " + code + " returned " + result);
-					return "error";
+					return Constants.ERROR;
 				}
 
 				return "success";
@@ -208,7 +209,7 @@ public class PDFService extends BasicService {
 
 				if (!result.toString().equals("OK")) {
 					logger.error("calling worker server for creation of draft answer pdf for contribution " + code + " returned " + result);
-					return "error";
+					return Constants.ERROR;
 				}
 
 				return "success";
@@ -239,7 +240,7 @@ public class PDFService extends BasicService {
 		try {
 			java.io.File target = null;
 			java.io.File folder = fileService.getSurveyExportsFolder(surveyUid);
-			target = new java.io.File(String.format("%s/%s%s.pdf", folder.getPath(), isDraft ? "draft" : "answer", uniqueCode));
+			target = new java.io.File(String.format("%s/%s%s.pdf", folder.getPath(), isDraft ? "draft" : Constants.ANSWER, uniqueCode));
 
 			logger.info("starting PDF creation target is " + target.getAbsolutePath());
 			renderer = getRenderer();

@@ -9,6 +9,7 @@ import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -1420,7 +1421,7 @@ public class XlsExportCreator extends ExportCreator {
 		}
 
 		cell.setCellStyle(dateStyle);
-		localRow = sheet.createRow(rowIndex);
+		sheet.createRow(rowIndex);
 		return rowIndex;
 	}
 

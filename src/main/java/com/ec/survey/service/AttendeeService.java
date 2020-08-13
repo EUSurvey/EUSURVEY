@@ -5,6 +5,7 @@ import com.ec.survey.model.ParticipationGroup;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.*;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
@@ -193,7 +194,7 @@ public class AttendeeService extends BasicService {
 
 		if (attributeFilter != null && attributeFilter.size() > 0) {
 			for (Entry<String, String> entry : attributeFilter.entrySet()) {
-				if (!entry.getKey().equalsIgnoreCase("name") && !entry.getKey().equalsIgnoreCase("email")
+				if (!entry.getKey().equalsIgnoreCase("name") && !entry.getKey().equalsIgnoreCase(Constants.EMAIL)
 						&& !entry.getKey().equalsIgnoreCase("owner") && !entry.getKey().equalsIgnoreCase("_csrf")
 						&& !entry.getKey().startsWith("visibleAttendee") && entry.getValue() != null
 						&& entry.getValue().trim().length() > 0) {
@@ -225,7 +226,7 @@ public class AttendeeService extends BasicService {
 		if (attributeFilter != null && attributeFilter.size() > 0) {
 			int counter = 0;
 			for (Entry<String, String> entry : attributeFilter.entrySet()) {
-				if (!entry.getKey().equalsIgnoreCase("name") && !entry.getKey().equalsIgnoreCase("email") && !entry.getKey().equalsIgnoreCase("owner"))
+				if (!entry.getKey().equalsIgnoreCase("name") && !entry.getKey().equalsIgnoreCase(Constants.EMAIL) && !entry.getKey().equalsIgnoreCase("owner"))
 				{
 					try {
 						int intKey = Integer.parseInt(entry.getKey());
@@ -250,10 +251,10 @@ public class AttendeeService extends BasicService {
 				oQueryParameters.put("name", "%" + attributeFilter.get("name") + "%");
 			}
 
-			if (attributeFilter.containsKey("email") && attributeFilter.get("email") != null
-					&& attributeFilter.get("email").length() > 0) {
+			if (attributeFilter.containsKey(Constants.EMAIL) && attributeFilter.get(Constants.EMAIL) != null
+					&& attributeFilter.get(Constants.EMAIL).length() > 0) {
 				sql.append(" AND a.ATTENDEE_EMAIL like :email");
-				oQueryParameters.put("email", "%" + attributeFilter.get("email") + "%");
+				oQueryParameters.put(Constants.EMAIL, "%" + attributeFilter.get(Constants.EMAIL) + "%");
 			}
 
 			if (attributeFilter.containsKey("owner") && attributeFilter.get("owner") != null
@@ -768,7 +769,7 @@ public class AttendeeService extends BasicService {
 	@Transactional(readOnly = true)
 	public boolean attendeeExists(String email, Integer id) throws Exception {
 		Map<String, String> filterValues = new HashMap<>();
-		filterValues.put("email", email);
+		filterValues.put(Constants.EMAIL, email);
 
 		List<Attendee> attendees = getAttendees(id, filterValues, 1, 2);
 		return !attendees.isEmpty();

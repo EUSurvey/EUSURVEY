@@ -296,7 +296,7 @@ public class InvitationMailCreator implements Runnable {
 				replacements.put(att.getAttributeName().getName(), att.getValue());
 			}
 		}
-		replacements.put("email", attendee.getEmail());
+		replacements.put(Constants.EMAIL, attendee.getEmail());
 		replacements.put("Email", attendee.getEmail());
 		replacements.put("Name", attendee.getName());
 		replacements.put("name", attendee.getName());

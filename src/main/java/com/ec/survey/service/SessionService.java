@@ -9,6 +9,7 @@ import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
@@ -125,8 +126,8 @@ public class SessionService extends BasicService {
 		if (form != null)
 			return form;
 
-		if (request.getParameter("shortname") != null) {
-			String alias = request.getParameter("shortname");
+		if (request.getParameter(Constants.SHORTNAME) != null) {
+			String alias = request.getParameter(Constants.SHORTNAME);
 			User user = getCurrentUser(request);
 			Survey survey = surveyService.getSurvey(alias, true, false, loadReplies, false, null, true, synchronize);
 			if (survey != null)
@@ -502,7 +503,7 @@ public class SessionService extends BasicService {
 		}
 
 		filter.setLogin(request.getParameter("login"));
-		filter.setEmail(request.getParameter("email"));
+		filter.setEmail(request.getParameter(Constants.EMAIL));
 		filter.setComment(request.getParameter("comment"));
 
 		filter.setECaccess(
@@ -530,7 +531,7 @@ public class SessionService extends BasicService {
 		}
 
 		String sortKey = request.getParameter("sortkey");
-		if (sortKey != null && (sortKey.equalsIgnoreCase("login") || sortKey.equalsIgnoreCase("email"))) {
+		if (sortKey != null && (sortKey.equalsIgnoreCase("login") || sortKey.equalsIgnoreCase(Constants.EMAIL))) {
 			filter.setSortKey(request.getParameter("sortkey"));
 			filter.setSortOrder(request.getParameter("sortorder"));
 		}
@@ -559,6 +560,7 @@ public class SessionService extends BasicService {
 		System.getProperties().setProperty("http.nonProxyHosts", proxyNonProxyHosts);
 
 		Authenticator.setDefault(new Authenticator() {
+			@Override
 			public PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
 			}

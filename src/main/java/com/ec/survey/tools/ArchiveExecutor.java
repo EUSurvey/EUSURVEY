@@ -1,5 +1,7 @@
 package com.ec.survey.tools;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.Locale;
 
@@ -240,9 +242,13 @@ public class ArchiveExecutor implements Runnable {
 		archive.setError(e.getLocalizedMessage());
 		
 		//delete files
-		if (target != null && target.exists())
+		if (target != null)
 		{
-			target.delete();
+			try {
+				Files.deleteIfExists(target.toPath());
+			} catch (IOException e1) {
+				//ignore
+			}
 		}
 		
 		Session session = sessionFactory.openSession();

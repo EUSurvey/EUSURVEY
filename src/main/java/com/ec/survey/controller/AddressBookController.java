@@ -40,6 +40,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -255,7 +256,7 @@ public class AddressBookController extends BasicController {
 	@GetMapping(value = "/attendeeExists", headers="Accept=*/*")
 	public @ResponseBody boolean attendeeExists(HttpServletRequest request, HttpServletResponse response ) throws Exception {
 		Map<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-		String email = parameters.get("email")[0];
+		String email = parameters.get(Constants.EMAIL)[0];
 		User user = sessionService.getCurrentUser(request);
 		
 		return attendeeService.attendeeExists(email, user.getId());
@@ -319,7 +320,7 @@ public class AddressBookController extends BasicController {
 					try {
 						ownerUser = administrationService.getUserForLogin(owner);
 					} catch (Exception e) {
-						return new ModelAndView("error/generic", "message", resources.getMessage("error.OwnerNotValid", null, "The selected owner is not a valid user", locale));
+						return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, resources.getMessage("error.OwnerNotValid", null, "The selected owner is not a valid user", locale));
 					}	
 				}
 			} else if (entry.getKey().equals("name"))
@@ -336,7 +337,7 @@ public class AddressBookController extends BasicController {
 					//override values
 					name = value;
 				}
-			} else if (entry.getKey().equals("email"))
+			} else if (entry.getKey().equals(Constants.EMAIL))
 			{
 				String value = Tools.escapeHTML(entry.getValue()[0]);
 				if (value.equalsIgnoreCase("0"))
@@ -731,9 +732,9 @@ public class AddressBookController extends BasicController {
 	             		if (header.trim().equalsIgnoreCase("name"))
 	             		{
 	             			headermappings.put(header, "name");
-	             		} else if (header.trim().equalsIgnoreCase("email"))
+	             		} else if (header.trim().equalsIgnoreCase(Constants.EMAIL))
 	             		{
-	             			headermappings.put(header, "email");
+	             			headermappings.put(header, Constants.EMAIL);
 	             		} else if (header.trim().equalsIgnoreCase("owner"))
 	             		{
 	             			headermappings.put(header, "owner");
@@ -766,7 +767,7 @@ public class AddressBookController extends BasicController {
              
              	if (error != null)
              	{
-             		result.addObject("error", error);
+             		result.addObject(Constants.ERROR, error);
              	}
              	
             	result.addObject("attributeNames", attributeNames);            	
@@ -774,13 +775,13 @@ public class AddressBookController extends BasicController {
             	result.addObject("target", "importAttendeesCheck");
             	
             	//delete temporary file
-            	file.delete();
+            	Files.delete(file.toPath());
              }                  
              
          } catch (Exception e) {
         	logger.error(e.getLocalizedMessage(), e);
-    		ModelAndView model = new ModelAndView("error/generic");
-    		model.addObject("message", resources.getMessage("error.ProblemDuringImport", null, "There was a problem during the import process.", locale));
+    		ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+    		model.addObject(Constants.MESSAGE, resources.getMessage("error.ProblemDuringImport", null, "There was a problem during the import process.", locale));
 			return model;
          }
       	return result;
@@ -860,7 +861,7 @@ public class AddressBookController extends BasicController {
 				if (entry.getValue().equalsIgnoreCase("name"))
 				{
 					attendee.setName(row[entry.getKey()]);
-				} else if (entry.getValue().equalsIgnoreCase("email"))
+				} else if (entry.getValue().equalsIgnoreCase(Constants.EMAIL))
 				{
 					attendee.setEmail(row[entry.getKey()]);
 				} 
@@ -875,7 +876,7 @@ public class AddressBookController extends BasicController {
 			} else if (attendee.getEmail() == null || attendee.getEmail().trim().length() == 0 || !MailService.isValidEmailAddress(attendee.getEmail().trim()))
 			{
 				messages.add(resources.getMessage("error.ContactWithoutEmail", null, "There is a contact without valid email address. It will be ignored.", locale));
-				invalidAttendees.put(row, "email");
+				invalidAttendees.put(row, Constants.EMAIL);
 				valid.add(false);
 				existing.add(false);
 			} else if (existingEmailsAddresses.contains(attendee.getEmail()))
@@ -928,9 +929,9 @@ public class AddressBookController extends BasicController {
 	     		if (header.trim().equalsIgnoreCase("name"))
 	     		{
 	     			headermappings.put(header, "name");
-	     		} else if (header.trim().equalsIgnoreCase("email"))
+	     		} else if (header.trim().equalsIgnoreCase(Constants.EMAIL))
 	     		{
-	     			headermappings.put(header, "email");
+	     			headermappings.put(header, Constants.EMAIL);
 	     		} else if (header.trim().equalsIgnoreCase("owner"))
 	     		{
 	     			headermappings.put(header, "owner");
@@ -994,7 +995,7 @@ public class AddressBookController extends BasicController {
 					if (entry.getValue().equalsIgnoreCase("name"))
 					{
 						attendee.setName(row[entry.getKey()]);
-					} else if (entry.getValue().equalsIgnoreCase("email"))
+					} else if (entry.getValue().equalsIgnoreCase(Constants.EMAIL))
 					{
 						attendee.setEmail(row[entry.getKey()]);
 					} else if (entry.getValue().equalsIgnoreCase("owner"))
@@ -1029,7 +1030,7 @@ public class AddressBookController extends BasicController {
 				} else if (attendee.getEmail().trim().length() == 0 || !MailService.isValidEmailAddress(attendee.getEmail().trim()))
 				{
 					messages.add(resources.getMessage("error.ContactWithoutEmail", null, "There is a contact without valid email address. It will be ignored.", locale));
-					invalidAttendees.put(row, "email");
+					invalidAttendees.put(row, Constants.EMAIL);
 				} else {					
 					attendees.add(attendee);
 				}							
@@ -1399,7 +1400,7 @@ public class AddressBookController extends BasicController {
 			
 			if (entry.getKey().equalsIgnoreCase("name")) {
 				attendee.setName(Tools.escapeHTML(entry.getValue()[0]));
-			} else if (entry.getKey().equalsIgnoreCase("email")) {
+			} else if (entry.getKey().equalsIgnoreCase(Constants.EMAIL)) {
 				attendee.setEmail(Tools.escapeHTML(entry.getValue()[0]));
 			} else if (entry.getKey().equalsIgnoreCase("owner")) {
 				if (user.getGlobalPrivileges().get(GlobalPrivilege.UserManagement) > 1 && entry.getValue()[0].length() > 0)

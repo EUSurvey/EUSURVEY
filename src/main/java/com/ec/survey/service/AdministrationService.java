@@ -4,6 +4,7 @@ import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.*;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.LoginAlreadyExistsException;
 import com.ec.survey.tools.Tools;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.Map.Entry;
@@ -185,7 +187,7 @@ public class AdministrationService extends BasicService {
 	}
 	
 	@Transactional
-	public String setUserDeleteRequested(int id) throws Exception {
+	public String setUserDeleteRequested(int id) throws IOException, MessageException {
 		Session session = sessionFactory.getCurrentSession();
 		User user = (User) session.get(User.class, id);
 		String login = user.getLogin();
@@ -273,9 +275,9 @@ public class AdministrationService extends BasicService {
 		Query query = null;
 		if (term.length() > 0 && (emailterm != null && emailterm.length() > 0)) {
 			query = session.createQuery("FROM User u where u.login like :login and u.email like :email and u.type = :type order by u.login asc").setString("type", User.SYSTEM)
-					.setString("login", "%" + term + "%").setString("email", "%" + emailterm + "%");
+					.setString("login", "%" + term + "%").setString(Constants.EMAIL, "%" + emailterm + "%");
 		} else if (emailterm != null && emailterm.length() > 0) {
-			query = session.createQuery("FROM User u where u.email like :email and u.type = :type order by u.login asc").setString("type", User.SYSTEM).setString("email", "%" + emailterm + "%");
+			query = session.createQuery("FROM User u where u.email like :email and u.type = :type order by u.login asc").setString("type", User.SYSTEM).setString(Constants.EMAIL, "%" + emailterm + "%");
 		} else {
 			query = session.createQuery("FROM User u where u.login like :login and u.type = :type order by u.login asc").setString("type", User.SYSTEM).setString("login", "%" + term + "%");
 		}
@@ -561,7 +563,7 @@ public class AdministrationService extends BasicService {
 
 		if (filter.getEmail() != null && filter.getEmail().length() > 0) {
 			hql.append(" AND u.email like :email");
-			parameters.put("email", "%" + filter.getEmail() + "%");
+			parameters.put(Constants.EMAIL, "%" + filter.getEmail() + "%");
 		}
 
 		if (filter.getComment() != null && filter.getComment().length() > 0) {

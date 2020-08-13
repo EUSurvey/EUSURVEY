@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,11 +55,13 @@ public class TranslationService extends BasicService {
 		if (evict) session.evict(translation);
 	}
 	
+	@Transactional(readOnly = true)
 	public List<Translations> getTranslationsForSurvey(int surveyId, boolean checkComplete, boolean loadTranslationTitles)
 	{
 		return getTranslationsForSurvey(surveyId, false, checkComplete, loadTranslationTitles);		
 	}
 	
+	@Transactional(readOnly = true)
 	public List<Translations> getTranslationsForSurvey(int surveyId, boolean checkComplete)
 	{
 		return getTranslationsForSurvey(surveyId, false, checkComplete, false);		
@@ -148,6 +151,7 @@ public class TranslationService extends BasicService {
 		return result;
 	}
 
+	@Transactional(readOnly = true)
 	public List<String> getTranslationLanguagesForSurvey(Integer surveyId) {
 		return getTranslationLanguagesForSurvey(surveyId, true);
 	}
@@ -187,7 +191,7 @@ public class TranslationService extends BasicService {
 		try
 		{
 			java.io.File target = fileService.getSurveyPDFFile(translations.getSurveyUid(), translations.getSurveyId(), translations.getLanguage().getCode());
-			if (target.exists()) target.delete();		
+			Files.deleteIfExists(target.toPath());
 		} catch (Exception e)
 		{
 			logger.error(e.getLocalizedMessage(), e);

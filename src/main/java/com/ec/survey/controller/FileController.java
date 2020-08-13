@@ -93,8 +93,6 @@ public class FileController extends BasicController {
 
 					try {
 						FileCopyUtils.copy(new FileInputStream(f), response.getOutputStream());
-					} catch (FileNotFoundException e) {
-						logger.error(e.getLocalizedMessage(), e);
 					} catch (ClientAbortException e) {
 						// ignore
 					} catch (IOException e) {
@@ -226,8 +224,6 @@ public class FileController extends BasicController {
 
 					try {
 						FileCopyUtils.copy(new FileInputStream(f), response.getOutputStream());
-					} catch (FileNotFoundException e) {
-						logger.error(e.getLocalizedMessage(), e);
 					} catch (ClientAbortException e) {
 						// ignore
 					} catch (IOException e) {

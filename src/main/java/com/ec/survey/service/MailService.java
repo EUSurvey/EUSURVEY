@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.MailTask;
 import com.ec.survey.tools.InvitationMailCreator;
 import com.ec.survey.tools.MailSender;
@@ -17,14 +18,14 @@ import java.util.List;
 @Service("mailService")
 public class MailService extends BasicService {
 	
-	public void SendHtmlMail(String to, String from, String reply, String subject, String body, File attachment, File attachment2, String info, boolean deleteFiles) throws Exception {
+	public void SendHtmlMail(String to, String from, String reply, String subject, String body, File attachment, File attachment2, String info, boolean deleteFiles) throws MessageException {
 		MailSender sender = (MailSender) context.getBean("mailSender");
 		sender.init(to, from, subject, reply, body, attachment, attachment2, info, deleteFiles);		
 		getMailPool().execute(sender);
 	}
 	
 	
-	public void SendHtmlMail(String to, String from, String reply, String subject, String body, File attachment, String info) throws Exception {
+	public void SendHtmlMail(String to, String from, String reply, String subject, String body, File attachment, String info) throws MessageException {
 		MailSender sender = (MailSender) context.getBean("mailSender");
 		sender.init(to, from, subject, reply, body, attachment, null, info, false);		
 		getMailPool().execute(sender);

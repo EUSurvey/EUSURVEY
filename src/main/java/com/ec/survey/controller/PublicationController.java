@@ -172,7 +172,7 @@ public class PublicationController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 
-		ModelAndView result = new ModelAndView("error/generic", "message",
+		ModelAndView result = new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE,
 				resources.getMessage("error.NoPublishedResults", null, "This survey has no published results", locale));
 		result.addObject("noMenu", true);
 		return result;
@@ -180,7 +180,7 @@ public class PublicationController extends BasicController {
 
 	@GetMapping(value = "/auth/{shortname}")
 	public ModelAndView authenticate(@PathVariable String shortname, HttpServletRequest request, Locale locale) {
-		return new ModelAndView("publication/auth", "shortname", shortname);
+		return new ModelAndView("publication/auth", Constants.SHORTNAME, shortname);
 	}
 
 	@PostMapping(value = "/auth/{shortname}")
@@ -203,8 +203,8 @@ public class PublicationController extends BasicController {
 			throw new InvalidURLException();
 		}
 
-		ModelAndView result = new ModelAndView("publication/auth", "shortname", shortname);
-		result.addObject("error", resources.getMessage("error.WrongPassword", null, "the password is wrong", locale));
+		ModelAndView result = new ModelAndView("publication/auth", Constants.SHORTNAME, shortname);
+		result.addObject(Constants.ERROR, resources.getMessage("error.WrongPassword", null, "the password is wrong", locale));
 		return result;
 	}
 
@@ -436,8 +436,8 @@ public class PublicationController extends BasicController {
 
 			Survey survey = surveyService.getSurvey(Integer.parseInt(id), false, true);
 
-			if (survey != null && (type.startsWith("Statistics") && survey.getPublication().isShowStatistics())
-					|| (!type.startsWith("Statistics") && survey.getPublication().isShowContent())) {
+			if (survey != null && ((type.startsWith("Statistics") && survey.getPublication().isShowStatistics())
+					|| (!type.startsWith("Statistics") && survey.getPublication().isShowContent()))) {
 				if (survey.getPublication().getPassword() != null
 						&& survey.getPublication().getPassword().length() > 0) {
 					String publicationpassword = (String) request.getSession().getAttribute("publicationpassword");
@@ -448,7 +448,7 @@ public class PublicationController extends BasicController {
 				}
 
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-				String email = parameters.get("email")[0];
+				String email = parameters.get(Constants.EMAIL)[0];
 				StatisticsExecutor export = (StatisticsExecutor) context.getBean("statisticsExecutor");
 				export.init(survey, type, format, survey.getPublication().getFilter().getHash(false), email, sender,
 						host, locale);
@@ -462,7 +462,7 @@ public class PublicationController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 
-		return "error";
+		return Constants.ERROR;
 	}
 
 	@GetMapping(value = "/exportresultsxls/{id}", headers = "Accept=*/*")
@@ -485,7 +485,7 @@ public class PublicationController extends BasicController {
 				}
 
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-				String email = parameters.get("email")[0];
+				String email = parameters.get(Constants.EMAIL)[0];
 				ResultFilter filter = survey.getPublication().getFilter();
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
 				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "xls",
@@ -494,7 +494,7 @@ public class PublicationController extends BasicController {
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error";
+			return Constants.ERROR;
 		}
 		return "success";
 	}
@@ -519,7 +519,7 @@ public class PublicationController extends BasicController {
 				}
 
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-				String email = parameters.get("email")[0];
+				String email = parameters.get(Constants.EMAIL)[0];
 				ResultFilter filter = survey.getPublication().getFilter();
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
 				resultsExecutor.init(survey, filter, email, sender, host, fileDir, "ods",
@@ -528,7 +528,7 @@ public class PublicationController extends BasicController {
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error";
+			return Constants.ERROR;
 		}
 		return "success";
 	}
@@ -556,7 +556,7 @@ public class PublicationController extends BasicController {
 				Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 
 				String question = parameters.get("question")[0];
-				String email = parameters.get("email")[0];
+				String email = parameters.get(Constants.EMAIL)[0];
 				ResultFilter filter = survey.getPublication().getFilter();
 
 				ResultsExecutor resultsExecutor = (ResultsExecutor) context.getBean("resultsExecutor");
@@ -566,7 +566,7 @@ public class PublicationController extends BasicController {
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error";
+			return Constants.ERROR;
 		}
 		return "success";
 	}

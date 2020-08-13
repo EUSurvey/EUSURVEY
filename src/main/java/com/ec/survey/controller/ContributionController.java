@@ -11,6 +11,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ValidCodesService;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
@@ -32,10 +33,12 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
+
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -106,7 +109,7 @@ public class ContributionController extends BasicController {
 		SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements, resources, locale, null, null, true,
 				null, fileService);
 
-		ModelAndView result = new ModelAndView("runner/quizResult", "uniqueCode", answerSet.getUniqueCode());
+		ModelAndView result = new ModelAndView("runner/quizResult", Constants.UNIQUECODE, answerSet.getUniqueCode());
 		Form form = new Form(resources, surveyService.getLanguage(answerSet.getLanguageCode().toUpperCase()),
 				translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
 
@@ -129,10 +132,10 @@ public class ContributionController extends BasicController {
 	@RequestMapping(value = "/preparecontribution/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparecontribution(@PathVariable String code, Locale locale, HttpServletRequest request)
 			throws Exception {
-		ModelAndView result = editContribution(code, locale, request, false, false, true, false);
+		ModelAndView result = editContribution(code, locale, request, false, false, false);
 
 		Form f = (Form) result.getModel().get("form");
-		SurveyHelper.calcTableWidths(f.getSurvey(), surveyService, f);
+		SurveyHelper.calcTableWidths(f.getSurvey(), f);
 		f.setForPDF(true);
 		result.addObject("forpdf", "true");
 		result.addObject("submit", "false");
@@ -142,10 +145,10 @@ public class ContributionController extends BasicController {
 	@RequestMapping(value = "/preparedraft/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparedraft(@PathVariable String code, Locale locale, HttpServletRequest request)
 			throws Exception {
-		ModelAndView result = editContribution(code, locale, request, false, false, true, true);
+		ModelAndView result = editContribution(code, locale, request, false, false, true);
 
 		Form f = (Form) result.getModel().get("form");
-		SurveyHelper.calcTableWidths(f.getSurvey(), surveyService, f);
+		SurveyHelper.calcTableWidths(f.getSurvey(), f);
 		f.setForPDF(true);
 		result.addObject("forpdf", "true");
 		result.addObject("submit", "false");
@@ -156,7 +159,7 @@ public class ContributionController extends BasicController {
 	public ModelAndView showforpublishedpdf(@PathVariable String id, Locale locale, HttpServletRequest request)
 			throws Exception {
 		AnswerSet answerSet = answerService.get(Integer.parseInt(id));
-		ModelAndView result = editContribution(answerSet.getUniqueCode(), locale, request, false, false, true, false);
+		ModelAndView result = editContribution(answerSet.getUniqueCode(), locale, request, false, false, false);
 		result.addObject("forpdf", "true");
 		result.addObject("submit", "false");
 
@@ -170,17 +173,19 @@ public class ContributionController extends BasicController {
 	@RequestMapping(value = "/editcontribution/{code}/back", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView editcontributionfrombackoffice(@PathVariable String code, Locale locale,
 			HttpServletRequest request) throws Exception {
-		return editContribution(code, locale, request, true, true, false, false);
+		return editContribution(code, locale, request, true, true, false);
 	}
 
 	@RequestMapping(value = "/editcontribution/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView editcontribution(@PathVariable String code, Locale locale, HttpServletRequest request)
 			throws Exception {
-		return editContribution(code, locale, request, false, true, false, false);
+		return editContribution(code, locale, request, false, true, false);
 	}
 
 	private ModelAndView editContribution(String code, Locale locale, HttpServletRequest request,
-			boolean fromBackOffice, boolean useNewestSurvey, boolean forpdf, boolean isdraft) throws Exception {
+			boolean fromBackOffice, boolean useNewestSurvey, boolean isdraft)
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
+			InvalidURLException, InterruptedException, IOException {
 
 		AnswerSet answerSet;
 		String draftid = "";
@@ -212,15 +217,15 @@ public class ContributionController extends BasicController {
 					|| request.getRequestURI().contains("preparedraft")) {
 				// ignore authorization for PDF export
 			} else if (u == null && !draft.getIsActive()) {
-				ModelAndView model = new ModelAndView("error/generic");
-				model.addObject("message",
+				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+				model.addObject(Constants.MESSAGE,
 						resources.getMessage("error.ContributionClosedSurvey", null,
 								"The survey has been closed and it is not possible to access the contribution anymore.",
 								locale));
 				return model;
 			} else if (u == null && !draft.getChangeContribution()) {
-				ModelAndView model = new ModelAndView("error/generic");
-				model.addObject("message",
+				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+				model.addObject(Constants.MESSAGE,
 						resources.getMessage("error.ContributionEditNotAllowed", null,
 								"The survey has been closed and it is not possible to access the contribution anymore.",
 								locale));
@@ -286,7 +291,7 @@ public class ContributionController extends BasicController {
 			}
 
 			// this code will be used as an identifier (for uploaded files etc)
-			model.addObject("uniqueCode", answerSet.getUniqueCode());
+			model.addObject(Constants.UNIQUECODE, answerSet.getUniqueCode());
 
 			if (isdraft) {
 				model.addObject("draftid", draftid);
@@ -295,12 +300,12 @@ public class ContributionController extends BasicController {
 			validCodesService.revalidate(answerSet.getUniqueCode(), newestSurvey);
 
 			// recreate uploaded files
-			SurveyHelper.recreateUploadedFiles(answerSet, fileDir, translated, fileService);
+			SurveyHelper.recreateUploadedFiles(answerSet, translated, fileService);
 
 			return model;
 		} else {
-			ModelAndView model = new ModelAndView("error/generic");
-			model.addObject("message", resources.getMessage("error.ContributionNotLoaded", null,
+			ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+			model.addObject(Constants.MESSAGE, resources.getMessage("error.ContributionNotLoaded", null,
 					"The contribution could not be loaded.", locale));
 			return model;
 		}
@@ -322,13 +327,13 @@ public class ContributionController extends BasicController {
 			if (oldAnswerSet != null) {
 				List<String> oldFileUIDs = oldAnswerSet.getAllFiles();
 
-				String uniqueCode = request.getParameter("uniqueCode");
-				SurveyHelper.parseAndMergeAnswerSet(request, origsurvey, fileDir, uniqueCode, oldAnswerSet,
+				String uniqueCode = request.getParameter(Constants.UNIQUECODE);
+				SurveyHelper.parseAndMergeAnswerSet(request, origsurvey, uniqueCode, oldAnswerSet,
 						oldAnswerSet.getLanguageCode(), null, fileService);
 
 				Set<String> invisibleElements = new HashSet<>();
 
-				HashMap<Element, String> validation = SurveyHelper.validateAnswerSet(oldAnswerSet, answerService,
+				Map<Element, String> validation = SurveyHelper.validateAnswerSet(oldAnswerSet, answerService,
 						invisibleElements, resources, locale, request.getParameter("draftid"), request, true, u,
 						fileService);
 				if (validation.size() > 0) {
@@ -345,12 +350,12 @@ public class ContributionController extends BasicController {
 					ModelAndView model = new ModelAndView("contributions/edit", "form", f);
 					model.addObject("submit", true);
 					model.addObject("runnermode", true);
-					model.addObject("uniqueCode", uniqueCode);
+					model.addObject(Constants.UNIQUECODE, uniqueCode);
 					model.addObject("answerSet", oldAnswerSet.getId());
 					if (dialogmode) {
 						model.addObject("dialogmode", dialogmode);
 					}
-					model.addObject("message", resources.getMessage("error.CheckValidation", null,
+					model.addObject(Constants.MESSAGE, resources.getMessage("error.CheckValidation", null,
 							"Please check for validation errors.", locale));
 					return model;
 				}
@@ -368,7 +373,7 @@ public class ContributionController extends BasicController {
 					surveyService.initializeSkin(f.getSurvey());
 					model.addObject("submit", true);
 					model.addObject("runnermode", true);
-					model.addObject("uniqueCode", uniqueCode);
+					model.addObject(Constants.UNIQUECODE, uniqueCode);
 					model.addObject("answerSet", oldAnswerSet.getId());
 					if (dialogmode) {
 						model.addObject("dialogmode", dialogmode);
@@ -391,7 +396,7 @@ public class ContributionController extends BasicController {
 					return new ModelAndView("close", "surveyprefix", origsurvey.getId() + ".");
 				}
 
-				ModelAndView result = new ModelAndView("thanks", "uniqueCode", oldAnswerSet.getUniqueCode());
+				ModelAndView result = new ModelAndView("thanks", Constants.UNIQUECODE, oldAnswerSet.getUniqueCode());
 
 				if (origsurvey.getIsOPC()) {
 					result.addObject("opcredirection",
@@ -417,8 +422,8 @@ public class ContributionController extends BasicController {
 				result.addObject("surveyprefix", origsurvey.getId() + ".");
 				return result;
 			} else {
-				ModelAndView model = new ModelAndView("error/generic");
-				model.addObject("message", resources.getMessage("error.ProblemDuringSave", null,
+				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+				model.addObject(Constants.MESSAGE, resources.getMessage("error.ProblemDuringSave", null,
 						"There was a problem during the save process.", locale));
 				return model;
 			}

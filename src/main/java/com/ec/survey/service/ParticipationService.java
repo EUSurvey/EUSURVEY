@@ -7,6 +7,7 @@ import com.ec.survey.model.ParticipationGroupsForAttendee;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.GuestListCreator;
 import org.hibernate.Query;
@@ -341,7 +342,7 @@ public class ParticipationService extends BasicService {
 			query.setParameterList("emails", allemails);
 		} else {
 			query = session.createSQLQuery(sql.toString());
-			query.setString("email", user.getEmail());
+			query.setString(Constants.EMAIL, user.getEmail());
 		}	
 		
 		query.setFirstResult(paging.getFirstResult()).setMaxResults(paging.getMaxResult());

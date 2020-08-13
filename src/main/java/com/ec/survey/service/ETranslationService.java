@@ -85,7 +85,7 @@ public class ETranslationService {
 	private void sendMessage(String applicationName, String documentToTranslate,
 			String errorCallback, String externalReference, String institution, int priority, String requesterCallback,
 			String sourceLanguage, String targetLanguage, String targetTranslationPath, String textToTranslate,
-			String username) {
+			String username) throws MessageException {
 
 		try {
 			CredentialsProvider provider = new BasicCredentialsProvider();
@@ -116,7 +116,7 @@ public class ETranslationService {
 			if (logger.isErrorEnabled()) {
 				logger.error("Error when sending message to translation service", e);
 			}
-			throw new RuntimeException("Error when call machine translation web service");
+			throw new MessageException("Error when call machine translation web service");
 		}
 	}
 

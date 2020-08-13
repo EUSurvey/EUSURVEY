@@ -111,11 +111,11 @@ public abstract class Element implements java.io.Serializable {
 
 	@Column(name = "ELOCKED")
 	public Boolean getLocked() {
-		return locked != null ? locked : false;
+		return locked != null && locked;
 	}
 
 	public void setLocked(Boolean locked) {
-		this.locked = locked != null ? locked : false;
+		this.locked = locked != null && locked;
 	}
 
 	@Column(name = "SUBTYPE")

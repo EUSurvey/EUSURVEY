@@ -9,7 +9,6 @@ import com.ec.survey.service.*;
 import com.lowagie.text.pdf.BaseFont;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.owasp.esapi.errors.IntrusionException;
 import org.springframework.context.MessageSource;
 
 import javax.servlet.ServletContext;
@@ -17,14 +16,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 
 public class SurveyHelper {
 
 	private static final Logger logger = Logger.getLogger(SurveyHelper.class);
 
-	public static AnswerSet parseAnswerSet(HttpServletRequest request, Survey survey, String fileDir, String uniqueCode,
+	public static AnswerSet parseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode,
 			boolean update, String languageCode, User user, FileService fileService) {
 		Map<Integer, Question> questions = survey.getQuestionMap();
 		Map<Integer, Element> matrixQuestions = survey.getMatrixMap();
@@ -64,7 +65,7 @@ public class SurveyHelper {
 		while (iterator.hasNext()) {
 			String key = iterator.next(); // key is the question id
 			String[] values = parameterMap.get(key);
-			if (key.startsWith("answer")) {
+			if (key.startsWith(Constants.ANSWER)) {
 				key = key.substring(6);
 
 				if (key.contains("|")) {
@@ -107,7 +108,7 @@ public class SurveyHelper {
 
 								checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), answer);
 
-								if (answer.getFiles().size() > 0) {
+								if (!answer.getFiles().isEmpty()) {
 									answer.setQuestionId(question.getId());
 									answer.setQuestionUniqueId(question.getUniqueId());
 									answer.setValue("files");
@@ -118,7 +119,8 @@ public class SurveyHelper {
 						} else {
 							for (String value : values) {
 								if (value.isEmpty() || value.equalsIgnoreCase("false")
-										|| (question instanceof DateQuestion && value.equalsIgnoreCase("DD/MM/YYYY")) || (question instanceof TimeQuestion && value.equalsIgnoreCase("HH:mm:ss"))) {
+										|| (question instanceof DateQuestion && value.equalsIgnoreCase("DD/MM/YYYY"))
+										|| (question instanceof TimeQuestion && value.equalsIgnoreCase("HH:mm:ss"))) {
 									continue;
 								}
 								Answer answer = new Answer();
@@ -191,7 +193,7 @@ public class SurveyHelper {
 
 						answerSet.clearAnswers(q);
 						answerSet.addAnswer(answer);
-					} else if (q.getShortname().equalsIgnoreCase("email")) {
+					} else if (q.getShortname().equalsIgnoreCase(Constants.EMAIL)) {
 						Answer answer = new Answer();
 						answer.setAnswerSet(answerSet);
 						answer.setQuestionId(q.getId());
@@ -212,11 +214,11 @@ public class SurveyHelper {
 		return answerSet;
 	}
 
-	public static HashMap<Element, String> validateAnswerSet(AnswerSet answerSet, AnswerService answerService,
+	public static Map<Element, String> validateAnswerSet(AnswerSet answerSet, AnswerService answerService,
 			Set<String> invisibleElements, MessageSource resources, Locale locale, String draftid,
 			HttpServletRequest request, boolean skipDraftCreation, User user, FileService fileService)
-			throws Exception {
-		HashMap<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
+			throws InterruptedException, IOException {
+		Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
 		HashMap<Element, String> result = new HashMap<>();
 
 		Draft draft = null;
@@ -255,7 +257,7 @@ public class SurveyHelper {
 				// special case: elements in an invisible page
 				invisibleElements.add(element.getUniqueId());
 
-				List<Answer> answers = new ArrayList<Answer>();
+				List<Answer> answers = new ArrayList<>();
 				if (element instanceof Matrix) {
 					answers = answerSet.getMatrixAnswers((Matrix) element);
 				} else if (element instanceof RatingQuestion) {
@@ -300,7 +302,7 @@ public class SurveyHelper {
 			String uid = UUID.randomUUID().toString();
 
 			if (draft != null) {
-				SurveyHelper.parseAndMergeAnswerSet(request, answerSet.getSurvey(), answerService.getFileDir(),
+				SurveyHelper.parseAndMergeAnswerSet(request, answerSet.getSurvey(),
 						answerSet.getUniqueCode(), draft.getAnswerSet(), answerSet.getLanguageCode(), user,
 						fileService);
 				draft.getAnswerSet().setIsDraft(true); // this also sets the ISDRAFT flag of the answers inside the
@@ -324,7 +326,7 @@ public class SurveyHelper {
 	}
 
 	public static boolean validateElement(Element element, AnswerSet answerSet,
-			HashMap<Element, List<Element>> dependencies, HashMap<Element, String> result, AnswerService answerService,
+			Map<Element, List<Element>> dependencies, Map<Element, String> result, AnswerService answerService,
 			Set<String> invisibleElements, MessageSource resources, Locale locale, Element parentElement,
 			HttpServletRequest request, Draft draft) {
 		try {
@@ -332,7 +334,7 @@ public class SurveyHelper {
 			List<Answer> answers;
 
 			Matrix parent = null;
-			if (parentElement != null && parentElement instanceof Matrix)
+			if (parentElement instanceof Matrix)
 				parent = (Matrix) parentElement;
 
 			if (element instanceof Question) {
@@ -399,12 +401,11 @@ public class SurveyHelper {
 									for (Answer answer : answerSet.getAnswers(possibleAnswer.getQuestionId(),
 											answerSet.getSurvey().getElementsById().get(possibleAnswer.getQuestionId())
 													.getUniqueId())) {
-										if (answer.getPossibleAnswerId().equals(trigger.getId())
+										if ((answer.getPossibleAnswerId().equals(trigger.getId())
 												|| (answer.getPossibleAnswerUniqueId() != null && answer
-														.getPossibleAnswerUniqueId().equals(trigger.getUniqueId()))) {
-											if (!invisibleElements.contains(answer.getQuestionUniqueId())) {
-												found = true;
-											}
+														.getPossibleAnswerUniqueId().equals(trigger.getUniqueId())))
+												&& !invisibleElements.contains(answer.getQuestionUniqueId())) {
+											found = true;
 										}
 									}
 								}
@@ -415,10 +416,10 @@ public class SurveyHelper {
 						invisibleElements.add(question.getUniqueId());
 					}
 
-					if (!(element instanceof Matrix) && !question.getOptional() && answers.size() == 0 && found) {
+					if (!(element instanceof Matrix) && !question.getOptional() && answers.isEmpty() && found) {
 						result.put(element,
 								resources.getMessage("validation.required", null, "This field is required.", locale));
-					} else if (!(element instanceof Matrix) && !found && answers.size() > 0) {
+					} else if (!(element instanceof Matrix) && !found && !answers.isEmpty()) {
 						// this answer must be ignored because the dependent question was not triggered
 						for (Answer answer : answers) {
 							answerSet.getAnswers().remove(answer);
@@ -438,18 +439,17 @@ public class SurveyHelper {
 				} else {
 
 					if (!(element instanceof Matrix) && !(element instanceof RatingQuestion) && !question.getOptional()
-							&& answers.size() == 0) {
-						if (parentElement == null || !invisibleElements.contains(parentElement.getUniqueId())) {
-							result.put(element, resources.getMessage("validation.required", null,
-									"This field is required.", locale));
-						}
+							&& answers.isEmpty()
+							&& (parentElement == null || !invisibleElements.contains(parentElement.getUniqueId()))) {
+						result.put(element,
+								resources.getMessage("validation.required", null, "This field is required.", locale));
 					}
 				}
 
 				if (element instanceof FreeTextQuestion) {
 					FreeTextQuestion freeTextQuestion = (FreeTextQuestion) element;
 					String answer = "";
-					if (answers.size() > 0)
+					if (!answers.isEmpty())
 						answer = answers.get(0).getValue();
 
 					if (!(freeTextQuestion.getIsPassword() && answer.equals("********"))) {
@@ -472,10 +472,10 @@ public class SurveyHelper {
 
 						if (draft != null) {
 							List<Answer> originalAnswers = draft.getAnswerSet().getAnswers(freeTextQuestion.getId());
-							if (originalAnswers.size() > 0) {
+							if (!originalAnswers.isEmpty()) {
 								String first = originalAnswers.get(0).getValue();
 								List<Answer> currentPasswordAnswers = answerSet.getAnswers(freeTextQuestion.getId());
-								if (currentPasswordAnswers.size() > 0) {
+								if (!currentPasswordAnswers.isEmpty()) {
 									String currentAnswer = currentPasswordAnswers.get(0).getValue();
 									if (currentAnswer != null && currentAnswer.equalsIgnoreCase("********")
 											&& !first.equals(second)) {
@@ -488,11 +488,10 @@ public class SurveyHelper {
 					}
 
 					if (answerSet.getSurvey().getRegistrationForm()
-							&& question.getAttributeName().equalsIgnoreCase("email")) {
-						if (!MailService.isValidEmailAddress(answer)) {
-							result.put(element, resources.getMessage("validation.invalidEmail", null,
-									"This is not a valid email address", locale));
-						}
+							&& question.getAttributeName().equalsIgnoreCase(Constants.EMAIL)
+							&& !MailService.isValidEmailAddress(answer)) {
+						result.put(element, resources.getMessage("validation.invalidEmail", null,
+								"This is not a valid email address", locale));
 					}
 
 					if (freeTextQuestion.getIsUnique()) {
@@ -504,26 +503,20 @@ public class SurveyHelper {
 									"This input already exists. Please try another entry.", locale));
 					}
 
-					if (freeTextQuestion.getIsComparable()) {
-						// TODO
-					}
-
 					if (freeTextQuestion.getIsPassword()
 							&& freeTextQuestion.getSurvey().getShortname().equalsIgnoreCase("NewSelfRegistrationSurvey")
-							&& answer.length() > 0) {
-						if (answer != null && !answer.equals("********") && Tools.isPasswordWeak(answer)) {
-							result.put(element, resources.getMessage("error.PasswordWeak", null,
-									"This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$%...).",
-									locale));
-						}
+							&& answer.length() > 0 && answer != null && !answer.equals("********")
+							&& Tools.isPasswordWeak(answer)) {
+						result.put(element, resources.getMessage("error.PasswordWeak", null,
+								"This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$%...).",
+								locale));
 					}
-
 				}
 
 				if (element instanceof RegExQuestion) {
 					RegExQuestion regExQuestion = (RegExQuestion) element;
 					String answer = "";
-					if (answers.size() > 0)
+					if (!answers.isEmpty())
 						answer = answers.get(0).getValue();
 					if (regExQuestion.getIsUnique()) {
 						int existing = answerService.getNumberAnswersForValue(answer, regExQuestion.getId(),
@@ -540,7 +533,7 @@ public class SurveyHelper {
 
 					double answer = 0;
 					try {
-						if (answers.size() > 0 && answers.get(0).getValue().length() > 0) {
+						if (!answers.isEmpty() && answers.get(0).getValue().length() > 0) {
 							answer = Double.parseDouble(answers.get(0).getValue());
 
 							if (numberQuestion.getMin() != null && answer != 0 && answer < numberQuestion.getMin()) {
@@ -572,7 +565,7 @@ public class SurveyHelper {
 					DateQuestion dateQuestion = (DateQuestion) element;
 
 					Date answer = null;
-					if (answers.size() > 0 && answers.get(0).getValue().length() > 0)
+					if (!answers.isEmpty() && answers.get(0).getValue().length() > 0)
 						answer = ConversionTools.getDate(answers.get(0).getValue());
 
 					if (dateQuestion.getMin() != null && answer != null
@@ -587,50 +580,46 @@ public class SurveyHelper {
 								resources.getMessage("validation.valueTooBig", null, "This value is too big", locale));
 					}
 				}
-				
+
 				if (element instanceof TimeQuestion) {
 					TimeQuestion timeQuestion = (TimeQuestion) element;
 
 					String answer = null;
-					if (answers.size() > 0 && answers.get(0).getValue().length() > 0)
+					if (!answers.isEmpty() && answers.get(0).getValue().length() > 0)
 						answer = answers.get(0).getValue();
-					
-					if (timeQuestion.getMin() != null && answer != null)
-					{
-						 Date timeMin = new SimpleDateFormat(ConversionTools.TimeFormat).parse(timeQuestion.getMin());
-						 Calendar calendarMin = Calendar.getInstance();
-						 calendarMin.setTime(timeMin);
-						 calendarMin.add(Calendar.DATE, 1);
-						 
-						 Date timeAnswer = new SimpleDateFormat(ConversionTools.TimeFormat).parse(answer);
-						 Calendar calendarAnswer = Calendar.getInstance();
-						 calendarAnswer.setTime(timeAnswer);
-						 calendarAnswer.add(Calendar.DATE, 1);
-						 
-						 if (calendarMin.getTime().after(calendarAnswer.getTime()))
-						 {
-							 result.put(element, resources.getMessage("validation.valueTooSmall", null,
-										"This value is too small", locale));
-						 }
+
+					if (timeQuestion.getMin() != null && answer != null) {
+						Date timeMin = new SimpleDateFormat(ConversionTools.TimeFormat).parse(timeQuestion.getMin());
+						Calendar calendarMin = Calendar.getInstance();
+						calendarMin.setTime(timeMin);
+						calendarMin.add(Calendar.DATE, 1);
+
+						Date timeAnswer = new SimpleDateFormat(ConversionTools.TimeFormat).parse(answer);
+						Calendar calendarAnswer = Calendar.getInstance();
+						calendarAnswer.setTime(timeAnswer);
+						calendarAnswer.add(Calendar.DATE, 1);
+
+						if (calendarMin.getTime().after(calendarAnswer.getTime())) {
+							result.put(element, resources.getMessage("validation.valueTooSmall", null,
+									"This value is too small", locale));
+						}
 					}
 
-					if (timeQuestion.getMax() != null && answer != null)
-					{
-						 Date timeMax = new SimpleDateFormat(ConversionTools.TimeFormat).parse(timeQuestion.getMax());
-						 Calendar calendarMax = Calendar.getInstance();
-						 calendarMax.setTime(timeMax);
-						 calendarMax.add(Calendar.DATE, 1);
-						 
-						 Date timeAnswer = new SimpleDateFormat(ConversionTools.TimeFormat).parse(answer);
-						 Calendar calendarAnswer = Calendar.getInstance();
-						 calendarAnswer.setTime(timeAnswer);
-						 calendarAnswer.add(Calendar.DATE, 1);
-						 
-						 if (calendarMax.getTime().before(calendarAnswer.getTime()))
-						 {
-							 result.put(element,
-										resources.getMessage("validation.valueTooBig", null, "This value is too big", locale));
-						 }
+					if (timeQuestion.getMax() != null && answer != null) {
+						Date timeMax = new SimpleDateFormat(ConversionTools.TimeFormat).parse(timeQuestion.getMax());
+						Calendar calendarMax = Calendar.getInstance();
+						calendarMax.setTime(timeMax);
+						calendarMax.add(Calendar.DATE, 1);
+
+						Date timeAnswer = new SimpleDateFormat(ConversionTools.TimeFormat).parse(answer);
+						Calendar calendarAnswer = Calendar.getInstance();
+						calendarAnswer.setTime(timeAnswer);
+						calendarAnswer.add(Calendar.DATE, 1);
+
+						if (calendarMax.getTime().before(calendarAnswer.getTime())) {
+							result.put(element, resources.getMessage("validation.valueTooBig", null,
+									"This value is too big", locale));
+						}
 					}
 				}
 
@@ -654,7 +643,7 @@ public class SurveyHelper {
 					for (Answer answerelem : answers) {
 						String answer = answerelem.getValue().replaceAll("[^\\u0000-\\uFFFF]", "\uFFFD");
 
-						if (answers.size() > 0 && answer.indexOf('\uFFFD') > -1) {
+						if (!answers.isEmpty() && answer.indexOf('\uFFFD') > -1) {
 							answerelem.setValue(answer);
 							found = true;
 						}
@@ -719,8 +708,8 @@ public class SurveyHelper {
 		}
 	}
 
-	public static AnswerSet parseAndMergeAnswerSet(HttpServletRequest request, Survey survey, String fileDir,
-			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService) {
+	public static AnswerSet parseAndMergeAnswerSet(HttpServletRequest request, Survey survey,
+			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService) throws IOException {
 		if (user == null && survey.getIsOPC()) {
 			// edit contribution
 			user = new User();
@@ -734,22 +723,22 @@ public class SurveyHelper {
 				FreeTextQuestion q = (FreeTextQuestion) element;
 				if (q.getIsPassword()) {
 					List<Answer> answers = answerSet.getAnswers(q.getId(), q.getUniqueId());
-					if (answers.size() > 0) {
+					if (!answers.isEmpty()) {
 						passwordValues.put(q.getUniqueId(), answers.get(0).getValue());
 					}
 				} else if (survey.getIsOPC() && q.getShortname().equalsIgnoreCase("firstName")) {
 					List<Answer> answers = answerSet.getAnswers(q.getId(), q.getUniqueId());
-					if (answers.size() > 0) {
+					if (!answers.isEmpty()) {
 						user.setGivenName(answers.get(0).getValue());
 					}
 				} else if (survey.getIsOPC() && q.getShortname().equalsIgnoreCase("surname")) {
 					List<Answer> answers = answerSet.getAnswers(q.getId(), q.getUniqueId());
-					if (answers.size() > 0) {
+					if (!answers.isEmpty()) {
 						user.setSurName(answers.get(0).getValue());
 					}
-				} else if (survey.getIsOPC() && q.getShortname().equalsIgnoreCase("email")) {
+				} else if (survey.getIsOPC() && q.getShortname().equalsIgnoreCase(Constants.EMAIL)) {
 					List<Answer> answers = answerSet.getAnswers(q.getId(), q.getUniqueId());
-					if (answers.size() > 0) {
+					if (!answers.isEmpty()) {
 						user.setEmail(answers.get(0).getValue());
 					}
 				}
@@ -768,7 +757,7 @@ public class SurveyHelper {
 
 		answerSet.getAnswers().clear();
 
-		AnswerSet parsedAnswerSet = parseAnswerSet(request, survey, fileDir, uniqueCode, true, languageCode, user,
+		AnswerSet parsedAnswerSet = parseAnswerSet(request, survey, uniqueCode, true, languageCode, user,
 				fileService);
 
 		for (Answer answer : parsedAnswerSet.getAnswers()) {
@@ -800,15 +789,13 @@ public class SurveyHelper {
 		// remove deleted uploaded files from the file system
 		for (String uid : uploadedFiles) {
 			java.io.File file = fileService.getSurveyUploadFile(survey.getUniqueId(), uid);
-			if (file.exists()) {
-				file.delete();
-			}
+			Files.deleteIfExists(file.toPath());
 		}
 
 		return answerSet;
 	}
 
-	public static void recreateUploadedFiles(AnswerSet answerSet, String fileDir, Survey survey,
+	public static void recreateUploadedFiles(AnswerSet answerSet, Survey survey,
 			FileService fileService) {
 		Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
 
@@ -892,7 +879,7 @@ public class SurveyHelper {
 		Section section;
 		if (currentElement == null) {
 			section = new Section(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			section = (Section) currentElement;
@@ -908,7 +895,7 @@ public class SurveyHelper {
 		}
 		section.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && section.getShortname() != null && !section.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + section.getShortname();
 			newValues += " shortname: " + shortname;
@@ -937,7 +924,7 @@ public class SurveyHelper {
 		return section;
 	}
 
-	private static Text getText(Map<String, String[]> parameterMap, Element currentElement, Survey survey, String id,
+	private static Text getText(Map<String, String[]> parameterMap, Element currentElement, String id,
 			ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		String oldValues = "";
 		String newValues = "";
@@ -963,7 +950,7 @@ public class SurveyHelper {
 		}
 		text.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && text.getShortname() != null && !text.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + text.getShortname();
 			newValues += " shortname: " + shortname;
@@ -992,7 +979,7 @@ public class SurveyHelper {
 		return text;
 	}
 
-	private static Image getImage(Map<String, String[]> parameterMap, Element currentElement, Survey survey, String id,
+	private static Image getImage(Map<String, String[]> parameterMap, Element currentElement, String id,
 			ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		Image image;
 		String oldValues = "";
@@ -1012,7 +999,7 @@ public class SurveyHelper {
 		}
 		image.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && image.getShortname() != null && !image.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + image.getShortname();
 			newValues += " shortname: " + shortname;
@@ -1071,7 +1058,7 @@ public class SurveyHelper {
 		return image;
 	}
 
-	private static Ruler getRuler(Map<String, String[]> parameterMap, Element currentElement, Survey survey, String id,
+	private static Ruler getRuler(Map<String, String[]> parameterMap, Element currentElement, String id,
 			ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		Ruler ruler;
 		String oldValues = "";
@@ -1091,7 +1078,7 @@ public class SurveyHelper {
 		}
 		ruler.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && ruler.getShortname() != null && !ruler.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + ruler.getShortname();
 			newValues += " shortname: " + shortname;
@@ -1129,7 +1116,7 @@ public class SurveyHelper {
 		return ruler;
 	}
 
-	private static GalleryQuestion getGallery(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
+	private static GalleryQuestion getGallery(Map<String, String[]> parameterMap, Element currentElement,
 			String id, FileService fileService, ServletContext servletContext, boolean log220,
 			Map<String, Integer> fileIDsByUID) throws InvalidXHTMLException {
 		GalleryQuestion gallery;
@@ -1138,7 +1125,7 @@ public class SurveyHelper {
 
 		if (currentElement == null) {
 			gallery = new GalleryQuestion(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			gallery = (GalleryQuestion) currentElement;
@@ -1151,7 +1138,7 @@ public class SurveyHelper {
 		}
 		gallery.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && gallery.getShortname() != null && !gallery.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + gallery.getShortname();
 			newValues += " shortname: " + shortname;
@@ -1247,7 +1234,7 @@ public class SurveyHelper {
 		return gallery;
 	}
 
-	private static Upload getUpload(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
+	private static Upload getUpload(Map<String, String[]> parameterMap, Element currentElement,
 			String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		Upload upload;
 		String oldValues = "";
@@ -1255,7 +1242,7 @@ public class SurveyHelper {
 
 		if (currentElement == null) {
 			upload = new Upload(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			upload = (Upload) currentElement;
@@ -1268,7 +1255,7 @@ public class SurveyHelper {
 		}
 		upload.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && upload.getShortname() != null && !upload.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + upload.getShortname();
 			newValues += " shortname: " + shortname;
@@ -1281,11 +1268,6 @@ public class SurveyHelper {
 			newValues += " optional: " + isOptional;
 		}
 		upload.setOptional(isOptional);
-
-		if (log220 && oldValues.length() > 0) {
-			String[] oldnew = { oldValues, newValues };
-			upload.getActivitiesToLog().put(220, oldnew);
-		}
 
 		String help = getString(parameterMap, "help", id, servletContext);
 		if (log220 && upload.getHelp() != null && !upload.getHelp().equals(help)) {
@@ -1300,11 +1282,16 @@ public class SurveyHelper {
 			newValues += " extensions: " + extensions;
 		}
 		upload.setExtensions(extensions);
+		
+		if (log220 && oldValues.length() > 0) {
+			String[] oldnew = { oldValues, newValues };
+			upload.getActivitiesToLog().put(220, oldnew);
+		}
 
 		return upload;
 	}
 
-	private static Download getDownload(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
+	private static Download getDownload(Map<String, String[]> parameterMap, Element currentElement,
 			String id, FileService fileService, ServletContext servletContext, boolean log220,
 			Map<String, Integer> fileIDsByUID) throws InvalidXHTMLException {
 		Download download;
@@ -1313,7 +1300,7 @@ public class SurveyHelper {
 
 		if (currentElement == null) {
 			download = new Download(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			download = (Download) currentElement;
@@ -1326,7 +1313,7 @@ public class SurveyHelper {
 		}
 		download.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && download.getShortname() != null && !download.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + download.getShortname();
 			newValues += " shortname: " + shortname;
@@ -1395,7 +1382,7 @@ public class SurveyHelper {
 
 		if (currentElement == null) {
 			confirmation = new Confirmation(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			confirmation = (Confirmation) currentElement;
@@ -1422,7 +1409,7 @@ public class SurveyHelper {
 		}
 		confirmation.setConfirmationlabel(confirmationlabel);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && confirmation.getShortname() != null && !confirmation.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + confirmation.getShortname();
 			newValues += " shortname: " + shortname;
@@ -1485,13 +1472,13 @@ public class SurveyHelper {
 	}
 
 	private static FreeTextQuestion getFreeText(Map<String, String[]> parameterMap, Element currentElement,
-			Survey survey, String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+			String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		String oldValues = "";
 		String newValues = "";
 		FreeTextQuestion freetext;
 		if (currentElement == null) {
 			freetext = new FreeTextQuestion(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			freetext = (FreeTextQuestion) currentElement;
@@ -1504,7 +1491,7 @@ public class SurveyHelper {
 		}
 		freetext.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && freetext.getShortname() != null && !freetext.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + freetext.getShortname();
 			newValues += " shortname: " + shortname;
@@ -1610,14 +1597,14 @@ public class SurveyHelper {
 		return freetext;
 	}
 
-	private static RegExQuestion getRegEx(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
+	private static RegExQuestion getRegEx(Map<String, String[]> parameterMap, Element currentElement,
 			String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		String oldValues = "";
 		String newValues = "";
 		RegExQuestion regex;
 		if (currentElement == null) {
 			regex = new RegExQuestion(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			regex = (RegExQuestion) currentElement;
@@ -1630,7 +1617,7 @@ public class SurveyHelper {
 		}
 		regex.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && regex.getShortname() != null && !regex.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + regex.getShortname();
 			newValues += " shortname: " + shortname;
@@ -1715,14 +1702,14 @@ public class SurveyHelper {
 		return regex;
 	}
 
-	private static EmailQuestion getEmail(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
+	private static EmailQuestion getEmail(Map<String, String[]> parameterMap, Element currentElement,
 			String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		EmailQuestion email;
 		String oldValues = "";
 		String newValues = "";
 		if (currentElement == null) {
 			email = new EmailQuestion(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			email = (EmailQuestion) currentElement;
@@ -1735,7 +1722,7 @@ public class SurveyHelper {
 		}
 		email.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && email.getShortname() != null && !email.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + email.getShortname();
 			newValues += " shortname: " + shortname;
@@ -1785,14 +1772,14 @@ public class SurveyHelper {
 		return email;
 	}
 
-	private static NumberQuestion getNumber(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
+	private static NumberQuestion getNumber(Map<String, String[]> parameterMap, Element currentElement,
 			String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		NumberQuestion number;
 		String oldValues = "";
 		String newValues = "";
 		if (currentElement == null) {
 			number = new NumberQuestion(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			number = (NumberQuestion) currentElement;
@@ -1805,7 +1792,7 @@ public class SurveyHelper {
 		}
 		number.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && number.getShortname() != null && !number.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + number.getShortname();
 			newValues += " shortname: " + shortname;
@@ -1904,14 +1891,14 @@ public class SurveyHelper {
 		return number;
 	}
 
-	private static DateQuestion getDate(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
+	private static DateQuestion getDate(Map<String, String[]> parameterMap, Element currentElement,
 			String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		DateQuestion date;
 		String oldValues = "";
 		String newValues = "";
 		if (currentElement == null) {
-			date = new DateQuestion(survey, getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+			date = new DateQuestion(getString(parameterMap, "text", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			date = (DateQuestion) currentElement;
@@ -1924,7 +1911,7 @@ public class SurveyHelper {
 		}
 		date.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && date.getShortname() != null && !date.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + date.getShortname();
 			newValues += " shortname: " + shortname;
@@ -2001,15 +1988,15 @@ public class SurveyHelper {
 
 		return date;
 	}
-	
-	private static TimeQuestion getTime(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
+
+	private static TimeQuestion getTime(Map<String, String[]> parameterMap, Element currentElement,
 			String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		TimeQuestion time;
 		String oldValues = "";
 		String newValues = "";
 		if (currentElement == null) {
 			time = new TimeQuestion(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			time = (TimeQuestion) currentElement;
@@ -2022,7 +2009,7 @@ public class SurveyHelper {
 		}
 		time.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && time.getShortname() != null && !time.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + time.getShortname();
 			newValues += " shortname: " + shortname;
@@ -2078,20 +2065,6 @@ public class SurveyHelper {
 		}
 		time.setMax(max);
 
-//		Integer scoring = getInteger(parameterMap, "scoring", id);
-//		if (log220 && !scoring.equals(date.getScoring())) {
-//			oldValues += " scoring: " + date.getScoring();
-//			newValues += " scoring: " + scoring;
-//		}
-//		date.setScoring(scoring);
-//
-//		Integer points = getInteger(parameterMap, "points", id, 1);
-//		if (log220 && !points.equals(date.getPoints())) {
-//			oldValues += " points: " + date.getPoints();
-//			newValues += " points: " + points;
-//		}
-//		date.setPoints(points);
-
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
 			time.getActivitiesToLog().put(220, oldnew);
@@ -2100,10 +2073,9 @@ public class SurveyHelper {
 		return time;
 	}
 
-	private static RatingQuestion getRating(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
-			String id, ServletContext servletContext, boolean log220, String[] questions,
-			String[] shortnamesForQuestions, String[] uidsForQuestions, String[] optionalsForQuestions)
-			throws InvalidXHTMLException {
+	private static RatingQuestion getRating(Map<String, String[]> parameterMap, Element currentElement, String id,
+			ServletContext servletContext, boolean log220, String[] questions, String[] shortnamesForQuestions,
+			String[] uidsForQuestions, String[] optionalsForQuestions) throws InvalidXHTMLException {
 		RatingQuestion rating;
 		String oldValues = "";
 		String newValues = "";
@@ -2112,7 +2084,7 @@ public class SurveyHelper {
 
 		if (currentElement == null) {
 			rating = new RatingQuestion(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			rating = (RatingQuestion) currentElement;
@@ -2152,7 +2124,7 @@ public class SurveyHelper {
 		}
 		rating.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && rating.getShortname() != null && !rating.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + rating.getShortname();
 			newValues += " shortname: " + shortname;
@@ -2247,18 +2219,18 @@ public class SurveyHelper {
 
 	private static SingleChoiceQuestion getSingleChoice(Map<String, String[]> parameterMap, Element currentElement,
 			Survey survey, String id, String[] answers, String[] dependenciesForAnswers,
-			HashMap<PossibleAnswer, String> dependencies, String[] shortnamesForAnswers, String[] uidsForAnswers,
-			String[] correctForAnswers, String[] pointsForAnswers, String[] feedbackForAnswers,
-			ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+			HashMap<PossibleAnswer, String> dependencies, String[] shortnamesForAnswers, String[] correctForAnswers,
+			String[] pointsForAnswers, String[] feedbackForAnswers, ServletContext servletContext, boolean log220)
+			throws InvalidXHTMLException {
 		String oldValues = "";
 		String newValues = "";
 
 		SingleChoiceQuestion singlechoice;
 		String choicetype = parameterMap.get("choicetype" + id)[0];
 
-		if (currentElement == null || !(currentElement instanceof SingleChoiceQuestion)) {
-			singlechoice = new SingleChoiceQuestion(survey, getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+		if (!(currentElement instanceof SingleChoiceQuestion)) {
+			singlechoice = new SingleChoiceQuestion(getString(parameterMap, "text", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			singlechoice = (SingleChoiceQuestion) currentElement;
@@ -2292,7 +2264,7 @@ public class SurveyHelper {
 		}
 		singlechoice.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && singlechoice.getShortname() != null && !singlechoice.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + singlechoice.getShortname();
 			newValues += " shortname: " + shortname;
@@ -2475,9 +2447,9 @@ public class SurveyHelper {
 
 	private static MultipleChoiceQuestion getMultipleChoice(Map<String, String[]> parameterMap, Element currentElement,
 			Survey survey, String id, String[] answers, String[] dependenciesForAnswers,
-			HashMap<PossibleAnswer, String> dependencies, String[] shortnamesForAnswers, String[] uidsForAnswers,
-			String[] correctForAnswers, String[] pointsForAnswers, String[] feedbackForAnswers,
-			ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+			HashMap<PossibleAnswer, String> dependencies, String[] shortnamesForAnswers, String[] correctForAnswers,
+			String[] pointsForAnswers, String[] feedbackForAnswers, ServletContext servletContext, boolean log220)
+			throws InvalidXHTMLException {
 		String oldValues = "";
 		String newValues = "";
 
@@ -2485,9 +2457,9 @@ public class SurveyHelper {
 
 		MultipleChoiceQuestion multiplechoice;
 
-		if (currentElement == null || !(currentElement instanceof MultipleChoiceQuestion)) {
-			multiplechoice = new MultipleChoiceQuestion(survey, getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+		if (!(currentElement instanceof MultipleChoiceQuestion)) {
+			multiplechoice = new MultipleChoiceQuestion(getString(parameterMap, "text", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			multiplechoice = (MultipleChoiceQuestion) currentElement;
@@ -2521,7 +2493,7 @@ public class SurveyHelper {
 		}
 		multiplechoice.setTitle(title);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && multiplechoice.getShortname() != null && !multiplechoice.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + multiplechoice.getShortname();
 			newValues += " shortname: " + shortname;
@@ -2723,7 +2695,7 @@ public class SurveyHelper {
 		return multiplechoice;
 	}
 
-	private static Matrix getMatrix(Map<String, String[]> parameterMap, Element currentElement, Survey survey,
+	private static Matrix getMatrix(Map<String, String[]> parameterMap, Element currentElement,
 			String id, Map<Integer, Element> elementsById, String[] dependenciesForAnswers,
 			HashMap<Matrix, HashMap<Integer, String>> matrixDependencies, ServletContext servletContext, boolean log220)
 			throws InvalidXHTMLException {
@@ -2733,8 +2705,8 @@ public class SurveyHelper {
 		StringBuilder newLabels = new StringBuilder();
 		Matrix matrix;
 		if (currentElement == null) {
-			matrix = new Matrix(survey, getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+			matrix = new Matrix(getString(parameterMap, "text", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			matrix = (Matrix) currentElement;
@@ -2770,7 +2742,7 @@ public class SurveyHelper {
 		}
 		matrix.setHelp(help);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && matrix.getShortname() != null && !matrix.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + matrix.getShortname();
 			newValues += " shortname: " + shortname;
@@ -2886,9 +2858,9 @@ public class SurveyHelper {
 
 					Element child = null;
 					if (elementtype.equalsIgnoreCase("text")) {
-						child = getText(parameterMap, currentChild, survey, elementid, servletContext, log220);
+						child = getText(parameterMap, currentChild, elementid, servletContext, log220);
 					} else if (elementtype.equalsIgnoreCase("image")) {
-						child = getImage(parameterMap, currentChild, survey, elementid, servletContext, log220);
+						child = getImage(parameterMap, currentChild, elementid, servletContext, log220);
 					} else {
 						child = new EmptyElement();
 					}
@@ -2938,7 +2910,7 @@ public class SurveyHelper {
 		return matrix;
 	}
 
-	private static Table getTable(Map<String, String[]> parameterMap, Element currentElement, Survey survey, String id,
+	private static Table getTable(Map<String, String[]> parameterMap, Element currentElement, String id,
 			Map<Integer, Element> elementsById, ServletContext servletContext, boolean log220)
 			throws InvalidXHTMLException {
 		String oldValues = "";
@@ -2949,7 +2921,7 @@ public class SurveyHelper {
 		Table table;
 		if (currentElement == null) {
 			table = new Table(getString(parameterMap, "text", id, servletContext),
-					getString(parameterMap, "shortname", id, servletContext),
+					getString(parameterMap, Constants.SHORTNAME, id, servletContext),
 					getString(parameterMap, "uid", id, servletContext));
 		} else {
 			table = (Table) currentElement;
@@ -2984,7 +2956,7 @@ public class SurveyHelper {
 		}
 		table.setHelp(help);
 
-		String shortname = getString(parameterMap, "shortname", id, servletContext);
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && table.getShortname() != null && !table.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + table.getShortname();
 			newValues += " shortname: " + shortname;
@@ -3055,7 +3027,7 @@ public class SurveyHelper {
 						currentChild = null;
 					}
 
-					Element child = getText(parameterMap, currentChild, survey, elementid, servletContext, log220);
+					Element child = getText(parameterMap, currentChild, elementid, servletContext, log220);
 
 					if (child != null) {
 						child.setPosition(j);
@@ -3082,16 +3054,16 @@ public class SurveyHelper {
 	}
 
 	public static Element parseElement(HttpServletRequest request, FileService fileService, String id, Survey survey,
-			ServletContext servletContext, boolean log220) throws InvalidXHTMLException, IntrusionException {
+			ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
 		return parseElement(request, fileService, id, survey, new HashMap<>(), new HashMap<>(), new HashMap<>(),
-				new HashMap<>(), servletContext, log220, new HashMap<>());
+				servletContext, log220, new HashMap<>());
 	}
 
 	private static Element parseElement(HttpServletRequest request, FileService fileService, String id, Survey survey,
-			Map<Integer, Element> elementsById, Map<Integer, Element> gridElementsById,
+			Map<Integer, Element> elementsById,
 			HashMap<PossibleAnswer, String> dependencies, HashMap<Matrix, HashMap<Integer, String>> matrixDependencies,
 			ServletContext servletContext, boolean log220, Map<String, Integer> fileIDsByUID)
-			throws InvalidXHTMLException, IntrusionException {
+			throws InvalidXHTMLException {
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 
 		if (!parameterMap.containsKey("type" + id)) {
@@ -3115,49 +3087,47 @@ public class SurveyHelper {
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("matrix")) {
 			String[] dependenciesForAnswers = parameterMap.get("dependencies" + id);
-			element = getMatrix(parameterMap, currentElement, survey, id, elementsById, dependenciesForAnswers,
+			element = getMatrix(parameterMap, currentElement, id, elementsById, dependenciesForAnswers,
 					matrixDependencies, servletContext, log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("table")) {
-			element = getTable(parameterMap, currentElement, survey, id, elementsById, servletContext,
+			element = getTable(parameterMap, currentElement, id, elementsById, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("text")) {
-			element = getText(parameterMap, currentElement, survey, id, servletContext,
-					log220 && currentElement != null);
+			element = getText(parameterMap, currentElement, id, servletContext, log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("image")) {
-			element = getImage(parameterMap, currentElement, survey, id, servletContext,
-					log220 && currentElement != null);
+			element = getImage(parameterMap, currentElement, id, servletContext, log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("ruler")) {
-			element = getRuler(parameterMap, currentElement, survey, id, servletContext,
+			element = getRuler(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("gallery")) {
-			element = getGallery(parameterMap, currentElement, survey, id, fileService, servletContext,
+			element = getGallery(parameterMap, currentElement, id, fileService, servletContext,
 					log220 && currentElement != null, fileIDsByUID);
 		} else if (type.equalsIgnoreCase("upload")) {
-			element = getUpload(parameterMap, currentElement, survey, id, servletContext,
+			element = getUpload(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("download")) {
-			element = getDownload(parameterMap, currentElement, survey, id, fileService, servletContext,
+			element = getDownload(parameterMap, currentElement, id, fileService, servletContext,
 					log220 && currentElement != null, fileIDsByUID);
 		} else if (type.equalsIgnoreCase("confirmation")) {
 			element = getConfirmation(parameterMap, currentElement, survey, id, fileService, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("freetext")) {
-			element = getFreeText(parameterMap, currentElement, survey, id, servletContext,
+			element = getFreeText(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("regex")) {
-			element = getRegEx(parameterMap, currentElement, survey, id, servletContext,
+			element = getRegEx(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
-		} else if (type.equalsIgnoreCase("email")) {
-			element = getEmail(parameterMap, currentElement, survey, id, servletContext,
+		} else if (type.equalsIgnoreCase(Constants.EMAIL)) {
+			element = getEmail(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("number")) {
-			element = getNumber(parameterMap, currentElement, survey, id, servletContext,
+			element = getNumber(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("date")) {
-			element = getDate(parameterMap, currentElement, survey, id, servletContext,
+			element = getDate(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("time")) {
-			element = getTime(parameterMap, currentElement, survey, id, servletContext,
+			element = getTime(parameterMap, currentElement, id, servletContext,
 					log220 && currentElement != null);
 		} else if (type.equalsIgnoreCase("rating")) {
 			String[] questions = parameterMap.get("question" + id);
@@ -3178,11 +3148,10 @@ public class SurveyHelper {
 			String[] uidsForQuestions = parameterMap.get("questionuid" + id);
 			String[] optionalsForQuestions = parameterMap.get("questionoptional" + id);
 
-			element = getRating(parameterMap, currentElement, survey, id, servletContext,
-					log220 && currentElement != null, questions, shortnamesForQuestions, uidsForQuestions,
-					optionalsForQuestions);
+			element = getRating(parameterMap, currentElement, id, servletContext, log220 && currentElement != null,
+					questions, shortnamesForQuestions, uidsForQuestions, optionalsForQuestions);
 		} else if (type.equalsIgnoreCase("choice")) {
-			String[] answers = parameterMap.get("answer" + id);
+			String[] answers = parameterMap.get(Constants.ANSWER + id);
 			if (answers == null) {
 				answers = new String[0];
 			}
@@ -3198,7 +3167,6 @@ public class SurveyHelper {
 
 			String[] dependenciesForAnswers = parameterMap.get("dependencies" + id);
 			String[] shortnamesForAnswers = parameterMap.get("pashortname" + id);
-			String[] uidsForAnswers = parameterMap.get("pauid" + id);
 			String[] correctForAnswers = parameterMap.get("correct" + id);
 			String[] pointsForAnswers = parameterMap.get("answerpoints" + id);
 			String[] feedbackForAnswers = parameterMap.get("feedback" + id);
@@ -3207,12 +3175,12 @@ public class SurveyHelper {
 
 			if (single) {
 				element = getSingleChoice(parameterMap, currentElement, survey, id, answers, dependenciesForAnswers,
-						dependencies, shortnamesForAnswers, uidsForAnswers, correctForAnswers, pointsForAnswers,
-						feedbackForAnswers, servletContext, log220);
+						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers,
+						servletContext, log220);
 			} else {
 				element = getMultipleChoice(parameterMap, currentElement, survey, id, answers, dependenciesForAnswers,
-						dependencies, shortnamesForAnswers, uidsForAnswers, correctForAnswers, pointsForAnswers,
-						feedbackForAnswers, servletContext, log220);
+						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers,
+						servletContext, log220);
 			}
 		}
 
@@ -3239,7 +3207,7 @@ public class SurveyHelper {
 			}
 
 			for (int i = 0; i < scoringitems.length; i++) {
-				ScoringItem item = getScoringItem(parameterMap, question, scoringitems[i], servletContext, log220);
+				ScoringItem item = getScoringItem(parameterMap, question, scoringitems[i], servletContext);
 				item.setPosition(i);
 			}
 		}
@@ -3248,7 +3216,7 @@ public class SurveyHelper {
 	}
 
 	private static ScoringItem getScoringItem(Map<String, String[]> parameterMap, Question element, String id,
-			ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+			ServletContext servletContext) throws InvalidXHTMLException {
 		ScoringItem scoringItem = null;
 		if (element.getScoringItems() != null)
 			for (ScoringItem item : element.getScoringItems()) {
@@ -3298,9 +3266,9 @@ public class SurveyHelper {
 		return scoringItem;
 	}
 
-	public static Survey parseSurvey(HttpServletRequest request, SurveyService surveyService, boolean draft,
+	public static Survey parseSurvey(HttpServletRequest request, SurveyService surveyService,
 			FileService fileService, ServletContext servletContext, boolean log217, boolean log220,
-			Map<String, Integer> fileIDsByUID) throws InvalidXHTMLException, IntrusionException {
+			Map<String, Integer> fileIDsByUID) throws InvalidXHTMLException {
 		Map<Integer, String[]> activitiesToLog = new HashMap<>();
 		Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 
@@ -3314,7 +3282,6 @@ public class SurveyHelper {
 		}
 
 		Map<Integer, Element> elementsById = new HashMap<>();
-		Map<Integer, Element> gridElementsById = new HashMap<>();
 		List<Element> oldElements = new ArrayList<>();
 		for (Element element : survey.getElementsRecursive(true)) {
 			elementsById.put(element.getId(), element);
@@ -3346,7 +3313,7 @@ public class SurveyHelper {
 			for (int i = 0; i < ids.length; i++) {
 				String id = ids[i];
 				if (!id.equalsIgnoreCase("undefined")) {
-					Element element = parseElement(request, fileService, id, survey, elementsById, gridElementsById,
+					Element element = parseElement(request, fileService, id, survey, elementsById,
 							dependencies, matrixDependencies, servletContext, log220, fileIDsByUID);
 					if (element != null) {
 						if (element.getId() == null) {
@@ -3388,15 +3355,15 @@ public class SurveyHelper {
 		survey.resetElementsRecursive();
 
 		// post processing for dependencies
-		for (PossibleAnswer p : dependencies.keySet()) {
-			String[] questionIDs = dependencies.get(p).split(";");
+		for (Entry<PossibleAnswer, String> entry : dependencies.entrySet()) {
+			String[] questionIDs = entry.getValue().split(";");
 
 			for (String questionID : questionIDs) {
 				for (Element element : survey.getElementsRecursive()) {
 					if ((element.getId() != null && element.getId().toString().equalsIgnoreCase(questionID))
 							|| (element.getOldId() != null && element.getOldId().equalsIgnoreCase(questionID))) {
 						// add the question to the answer's dependent elements
-						p.getDependentElements().getDependentElements().add(element);
+						entry.getKey().getDependentElements().getDependentElements().add(element);
 						break;
 					}
 
@@ -3665,8 +3632,8 @@ public class SurveyHelper {
 					linkstodelete.add(key);
 				}
 			}
-			for (String key : changes.keySet()) {
-				survey.getUsefulLinks().put(key, changes.get(key));
+			for (Entry<String, String> entry : changes.entrySet()) {
+				survey.getUsefulLinks().put(entry.getKey(), entry.getValue());
 			}
 			for (String key : linkstodelete) {
 				survey.getUsefulLinks().remove(key);
@@ -3683,8 +3650,8 @@ public class SurveyHelper {
 					backdocstodelete.add(key);
 				}
 			}
-			for (String key : changes.keySet()) {
-				survey.getBackgroundDocuments().put(key, changes.get(key));
+			for (Entry<String, String> entry : changes.entrySet()) {
+				survey.getBackgroundDocuments().put(entry.getKey(), entry.getValue());
 			}
 			for (String key : backdocstodelete) {
 				survey.getBackgroundDocuments().remove(key);
@@ -3819,156 +3786,158 @@ public class SurveyHelper {
 		return survey;
 	}
 
-	public static void calcTableWidths(Survey survey, SurveyService surveyService, Form f) {
+	public static void calcTableWidths(Survey survey, Form f) {
 
-		List<String> ids = new ArrayList<>(), widths = new ArrayList<>();
+		List<String> ids = new ArrayList<>();
+		List<String> widths = new ArrayList<>();
 
 		BaseFont bf = null;
 		try {
 			bf = BaseFont.createFont("/Fonts/FreeSans.ttf", BaseFont.IDENTITY_H, true);
 		} catch (Exception e) {
+			// ignore
 		}
 
 		for (Element element : survey.getElementsRecursive()) {
-			if (element instanceof MatrixOrTable || element instanceof GalleryQuestion) {
+			if (bf != null && (element instanceof MatrixOrTable || element instanceof GalleryQuestion)) {
 
-				if (bf != null) {
-					boolean isTable = element instanceof Table;
+				boolean isTable = element instanceof Table;
 
-					float w = 0.0f;
-					boolean done = false;
-					double wtext;
-					double wimage;
+				float w = 0.0f;
+				boolean done = false;
+				double wtext;
+				double wimage;
 
-					if (element instanceof GalleryQuestion) {
-						GalleryQuestion gallery = (GalleryQuestion) element;
-						double imageWidth = (600 - 20 - (gallery.getColumns() * 30)) / gallery.getColumns();
+				if (element instanceof GalleryQuestion) {
+					GalleryQuestion gallery = (GalleryQuestion) element;
+					double imageWidth = (600 - 20 - (gallery.getColumns() * 30)) / gallery.getColumns();
 
-						int col = 0;
+					int col = 0;
 
-						double[] galWidths = new double[gallery.getColumns()];
-						for (int i = 0; i < galWidths.length; i++) {
-							galWidths[i] = imageWidth;
-						}
-
-						for (File file : gallery.getFiles()) {
-							String name = getLongestWord(file.getName());
-							String comment = getLongestWord(file.getComment());
-							if (name != null) {
-								double wcand = bf.getWidthPoint(name, 10) + 2 * 9.0 + 1.0;
-								if (wcand > galWidths[col]) {
-									galWidths[col] = wcand;
-								}
-							}
-							if (comment != null) {
-								double wcand = bf.getWidthPoint(comment, 10) + 2 * 9.0 + 1.0;
-								if (wcand > galWidths[col]) {
-									galWidths[col] = wcand;
-								}
-							}
-
-							col++;
-							if (col >= gallery.getColumns()) {
-								col = 0;
-							}
-						}
-
-						for (double galWidth : galWidths) {
-							w += galWidth;
-						}
-
-						done = true;
+					double[] galWidths = new double[gallery.getColumns()];
+					for (int i = 0; i < galWidths.length; i++) {
+						galWidths[i] = imageWidth;
 					}
 
-					if (!done && isTable) {
-						try {
-							String width = ((Table) element).getCompleteWidth();
-							if (!width.equalsIgnoreCase("auto") && width.endsWith("px")) {
-								w = Integer.parseInt(width.replace("px", ""));
-								done = true;
+					for (File file : gallery.getFiles()) {
+						String name = getLongestWord(file.getName());
+						String comment = getLongestWord(file.getComment());
+						if (name != null) {
+							double wcand = bf.getWidthPoint(name, 10) + 2 * 9.0 + 1.0;
+							if (wcand > galWidths[col]) {
+								galWidths[col] = wcand;
 							}
-						} catch (Exception e) {
+						}
+						if (comment != null) {
+							double wcand = bf.getWidthPoint(comment, 10) + 2 * 9.0 + 1.0;
+							if (wcand > galWidths[col]) {
+								galWidths[col] = wcand;
+							}
+						}
+
+						col++;
+						if (col >= gallery.getColumns()) {
+							col = 0;
 						}
 					}
 
-					if (!done) {
-
-						MatrixOrTable matrix = (MatrixOrTable) element;
-						List<Element> lst = matrix.getChildElements();
-						int i;
-						for (i = 0; i < matrix.getColumns(); i++) {
-							Element child = lst.get(i);
-							if (child.getUniqueId() != null || child.getId().toString() != null) {
-								String str = child.getStrippedTitleNoEscape2();
-								str = getLongestWord(str);
-								wtext = 0;
-								if (str != null) {
-									wtext += bf.getWidthPoint(str, 10)
-											+ 2 * 9.0/* matrixtable.td.padding-left + matrixtable.td.padding-right */
-											+ 1.0 /* border *//* cf. [runner.jsp] */; // FIXME: Remove hardcoding
-																						// constants from runner.jsp
-								}
-								if (!isTable) {
-									wimage = getBiggestImageWidth(child.getTitle());
-									if (wimage > wtext) {
-										wtext = wimage;
-									}
-								}
-
-								w += wtext;
-
-							}
-						}
-
-						double w2 = 0;
-						for (i = matrix.getColumns(); i < matrix.getColumns() + matrix.getRows() - 1; i++) {
-							Element child = lst.get(i);
-							if (child.getUniqueId() != null || child.getId().toString() != null) {
-								String str = child.getStrippedTitleNoEscape2();
-								str = getLongestWord(str);
-								double cw = 0;
-								if (str != null) {
-									cw = bf.getWidthPoint(str, 10) + (float) (2
-											* 9.0)/* matrixtable.td.padding-left + matrixtable.td.padding-right */
-											+ 1.0f /* border *//* cf. [runner.jsp] */; // FIXME: Remove hardcoding
-																						// constants from runner.jsp
-								}
-								if (!isTable) {
-									wimage = getBiggestImageWidth(child.getTitle());
-									if (wimage > cw) {
-										cw = wimage;
-									}
-								}
-
-								if (cw > w2)
-									w2 = cw;
-
-							}
-						}
-						w += w2;
+					for (double galWidth : galWidths) {
+						w += galWidth;
 					}
 
-					// w += 2.0 + 28.34/*page.margin-left + page.margin-right*/ +
-					// 18.0/*matrixtable.margin-left*/ + 1.0/*last border*/;
-					// w += 100.0 ;
+					done = true;
+				}
 
-					// px to pt
-					w = (float) (w * 1.333333);
-
-					element.setPDFWidth(w);
-					if (w > 595.0) { // NOTE: A4 = 595 pt x 842 pt ; Letter = 612 pt
-
-						if (w <= 842) {
-							w = 842;
-							element.setPDFWidth(w);
+				if (!done && isTable) {
+					try {
+						String width = ((Table) element).getCompleteWidth();
+						if (!width.equalsIgnoreCase("auto") && width.endsWith("px")) {
+							w = Integer.parseInt(width.replace("px", ""));
+							done = true;
 						}
-
-						element.setHasPDFWidth(true);
-						ids.add(element.getId().toString());
-						widths.add(Float.toString(w));
+					} catch (Exception e) {
+						// ignore
 					}
 				}
+
+				if (!done) {
+
+					MatrixOrTable matrix = (MatrixOrTable) element;
+					List<Element> lst = matrix.getChildElements();
+					int i;
+					for (i = 0; i < matrix.getColumns(); i++) {
+						Element child = lst.get(i);
+						if (child.getUniqueId() != null || child.getId().toString() != null) {
+							String str = child.getStrippedTitleNoEscape2();
+							str = getLongestWord(str);
+							wtext = 0;
+							if (str != null) {
+								wtext += bf.getWidthPoint(str, 10) + 2 * 9.0/*
+																			 * matrixtable.td.padding-left +
+																			 * matrixtable.td.padding-right
+																			 */
+										+ 1.0 /* border *//* cf. [runner.jsp] */; // FIXME: Remove hardcoding
+																					// constants from runner.jsp
+							}
+							if (!isTable) {
+								wimage = getBiggestImageWidth(child.getTitle());
+								if (wimage > wtext) {
+									wtext = wimage;
+								}
+							}
+
+							w += wtext;
+
+						}
+					}
+
+					double w2 = 0;
+					for (i = matrix.getColumns(); i < matrix.getColumns() + matrix.getRows() - 1; i++) {
+						Element child = lst.get(i);
+						if (child.getUniqueId() != null || child.getId().toString() != null) {
+							String str = child.getStrippedTitleNoEscape2();
+							str = getLongestWord(str);
+							double cw = 0;
+							if (str != null) {
+								cw = bf.getWidthPoint(str, 10) + (float) (2 * 9.0)/*
+																					 * matrixtable.td.padding-left +
+																					 * matrixtable.td.padding-right
+																					 */
+										+ 1.0f /* border *//* cf. [runner.jsp] */; // FIXME: Remove hardcoding
+																					// constants from runner.jsp
+							}
+							if (!isTable) {
+								wimage = getBiggestImageWidth(child.getTitle());
+								if (wimage > cw) {
+									cw = wimage;
+								}
+							}
+
+							if (cw > w2)
+								w2 = cw;
+
+						}
+					}
+					w += w2;
+				}
+
+				// px to pt
+				w = (float) (w * 1.333333);
+
+				element.setPDFWidth(w);
+				if (w > 595.0) { // NOTE: A4 = 595 pt x 842 pt ; Letter = 612 pt
+
+					if (w <= 842) {
+						w = 842;
+						element.setPDFWidth(w);
+					}
+
+					element.setHasPDFWidth(true);
+					ids.add(element.getId().toString());
+					widths.add(Float.toString(w));
+				}
 			}
+
 		}
 
 		if (ids.size() > 0) {
@@ -4057,8 +4026,7 @@ public class SurveyHelper {
 		return bln;
 	}
 
-	public static boolean isMaxContributionReached(Survey survey, AnswerService answerService)
-			throws FrozenSurveyException {
+	public static boolean isMaxContributionReached(Survey survey, AnswerService answerService) {
 		if (survey.getIsUseMaxNumberContribution()) {
 			return survey.getMaxNumberContribution() <= answerService.getNumberOfAnswerSetsPublished(null,
 					survey.getUniqueId());

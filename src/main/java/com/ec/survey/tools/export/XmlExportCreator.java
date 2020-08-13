@@ -15,6 +15,7 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
@@ -43,6 +44,8 @@ public class XmlExportCreator extends ExportCreator {
 
 	private Date exportedNow = null;
 
+	private static final String ANSWER = "Answer";
+	
 	@Override
 	@Transactional
 	public void ExportContent(boolean sync) throws Exception {
@@ -270,7 +273,7 @@ public class XmlExportCreator extends ExportCreator {
 						ChoiceQuestion choice = (ChoiceQuestion) question;
 
 						for (PossibleAnswer answer : choice.getPossibleAnswers()) {
-							writer.writeStartElement("Answer");
+							writer.writeStartElement(ANSWER);
 							writer.writeAttribute("id", answer.getUniqueId());
 							writer.writeAttribute("type", getNiceType(answer));
 
@@ -379,10 +382,8 @@ public class XmlExportCreator extends ExportCreator {
 			filterWithMeta.getVisibleQuestions().add("score");
 		}
 
-		if (fromWebService) {
-			if (!filterWithMeta.getVisibleQuestions().contains("case")) {
-				filterWithMeta.getVisibleQuestions().add("case");
-			}
+		if (fromWebService && !filterWithMeta.getVisibleQuestions().contains("case")) {
+			filterWithMeta.getVisibleQuestions().add("case");
 		}
 
 		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false,
@@ -665,178 +666,176 @@ public class XmlExportCreator extends ExportCreator {
 
 		int answerrowcounter = 2;
 		for (Element question : questions) {
-			if (filter == null || filter.exported(question.getId().toString())) {
-				if (question.isUsedInResults()) {
-					if (question instanceof Matrix) {
-						Matrix matrix = (Matrix) question;
-						for (Element matrixQuestion : matrix.getQuestions()) {
-							if (answerSet == null) {
-								String sanswers = row.get(answerrowcounter++);
-								if (sanswers != null) {
-									String[] answers = sanswers.split(";");
-									for (String answer : answers) {
-										if (answer.length() > 0) {
-											writer.writeStartElement("Answer");
-											writer.writeAttribute("aid", answer);
-											writer.writeAttribute("qid", matrixQuestion.getUniqueId());
-											writer.writeEndElement(); // Answer
-										}
-									}
-								}
-							} else {
-								List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(),
-										matrixQuestion.getUniqueId());
-
-								for (Answer answer : answers) {
-									writer.writeStartElement("Answer");
-									writer.writeAttribute("aid",
-											answer.getPossibleAnswerUniqueId() != null
-													? answer.getPossibleAnswerUniqueId()
-													: "");
-									writer.writeAttribute("qid", matrixQuestion.getUniqueId());
-									writer.writeEndElement(); // Answer
-								}
-							}
-						}
-					} else if (question instanceof RatingQuestion) {
-						RatingQuestion rating = (RatingQuestion) question;
-						for (Element childQuestion : rating.getQuestions()) {
-							if (answerSet == null) {
-								String sanswers = row.get(answerrowcounter++);
-								if (sanswers != null) {
-									writer.writeStartElement("Answer");
-									writer.writeAttribute("qid", childQuestion.getUniqueId());
-									writer.writeCharacters(sanswers);
-									writer.writeEndElement(); // Answer
-								}
-							} else {
-								List<Answer> answers = answerSet.getAnswers(childQuestion.getId(),
-										childQuestion.getUniqueId());
-
-								if (!answers.isEmpty()) {
-									writer.writeStartElement("Answer");
-									writer.writeAttribute("qid", childQuestion.getUniqueId());
-									writer.writeCharacters(answers.get(0).getValue());
-									writer.writeEndElement(); // Answer
-								}
-							}
-						}
-					} else if (question instanceof Table) {
-						Table table = (Table) question;
-
-						for (int tableRow = 1; tableRow < table.getRows(); tableRow++) {
-							for (int tableCol = 1; tableCol < table.getColumns(); tableCol++) {
-								Element tq = table.getQuestions().get(tableRow - 1);
-								Element ta = table.getAnswers().get(tableCol - 1);
-
-								writer.writeStartElement("Answer");
-								writer.writeAttribute("qid", tq.getUniqueId());
-								writer.writeAttribute("aid", ta.getUniqueId());
-
-								if (answerSet == null) {
-									String sanswers = row.get(answerrowcounter++);
-									if (sanswers != null) {
-										writer.writeCharacters(sanswers);
-									}
-								} else {
-									String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);
-									if (answer != null && answer.length() > 0) {
-										writer.writeCharacters(answer);
-									}
-								}
-
-								writer.writeEndElement(); // Answer
-							}
-						}
-					} else if (question instanceof Text) {
-						// ignore
-					} else if (question instanceof Question) {
+			if ((filter == null || filter.exported(question.getId().toString())) && question.isUsedInResults()) {
+				if (question instanceof Matrix) {
+					Matrix matrix = (Matrix) question;
+					for (Element matrixQuestion : matrix.getQuestions()) {
 						if (answerSet == null) {
-							if (row.size() <= answerrowcounter) {
-								logger.error("no data for question " + question.getId() + " found");
-							} else {
-
-								String sanswers = row.get(answerrowcounter++);
-								if (sanswers != null) {
-
-									String[] answers;
-									if (question instanceof FreeTextQuestion) {
-										answers = new String[1];
-										answers[0] = sanswers;
-									} else {
-										answers = sanswers.split(";");
-									}
-
-									for (String answer : answers) {
-										if (answer.length() > 0) {
-											writer.writeStartElement("Answer");
-											writer.writeAttribute("qid", question.getUniqueId());
-											if (question instanceof ChoiceQuestion) {
-												writer.writeAttribute("aid", answer);
-											} else if (question instanceof Upload) {
-												StringBuilder text = new StringBuilder();
-												File file;
-												try {
-
-													if (answer.contains("|")) {
-														answer = answer.substring(0, answer.indexOf('|'));
-													}
-
-													file = fileService.get(answer);
-													if (!uploadedFilesByQuestionUID
-															.containsKey(question.getUniqueId())) {
-														uploadedFilesByQuestionUID.put(question.getUniqueId(),
-																new ArrayList<>());
-													}
-													uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
-
-													text.append((text.length() > 0) ? ";" : "").append(file.getName());
-												} catch (FileNotFoundException e) {
-													logger.error(e.getLocalizedMessage(), e);
-												}
-
-												writer.writeCharacters(text.toString());
-											} else {
-												writer.writeCharacters(
-														ConversionTools.removeInvalidHtmlEntities(answer));
-											}
-
-											writer.writeEndElement(); // Answer
-										}
+							String sanswers = row.get(answerrowcounter++);
+							if (sanswers != null) {
+								String[] answers = sanswers.split(";");
+								for (String answer : answers) {
+									if (answer.length() > 0) {
+										writer.writeStartElement(ANSWER);
+										writer.writeAttribute("aid", answer);
+										writer.writeAttribute("qid", matrixQuestion.getUniqueId());
+										writer.writeEndElement(); // Answer
 									}
 								}
 							}
 						} else {
-							List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+							List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(),
+									matrixQuestion.getUniqueId());
+
 							for (Answer answer : answers) {
-								writer.writeStartElement("Answer");
-								writer.writeAttribute("qid", question.getUniqueId());
-
-								if (question instanceof ChoiceQuestion) {
-									writer.writeAttribute("aid",
-											answer.getPossibleAnswerUniqueId() != null
-													? answer.getPossibleAnswerUniqueId()
-													: "");
-								} else if (question instanceof Upload) {
-									StringBuilder text = new StringBuilder();
-									if (filesByAnswer.containsKey(answer.getId())) {
-										for (File file : filesByAnswer.get(answer.getId())) {
-											if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId())) {
-												uploadedFilesByQuestionUID.put(question.getUniqueId(),
-														new ArrayList<>());
-											}
-											uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
-
-											text.append((text.length() > 0) ? ";" : "").append(file.getName());
-										}
-									}
-									writer.writeCharacters(text.toString());
-								} else {
-									writer.writeCharacters(form.getAnswerTitleStripInvalidXML(answer));
-								}
-
+								writer.writeStartElement(ANSWER);
+								writer.writeAttribute("aid",
+										answer.getPossibleAnswerUniqueId() != null
+												? answer.getPossibleAnswerUniqueId()
+												: "");
+								writer.writeAttribute("qid", matrixQuestion.getUniqueId());
 								writer.writeEndElement(); // Answer
 							}
+						}
+					}
+				} else if (question instanceof RatingQuestion) {
+					RatingQuestion rating = (RatingQuestion) question;
+					for (Element childQuestion : rating.getQuestions()) {
+						if (answerSet == null) {
+							String sanswers = row.get(answerrowcounter++);
+							if (sanswers != null) {
+								writer.writeStartElement(ANSWER);
+								writer.writeAttribute("qid", childQuestion.getUniqueId());
+								writer.writeCharacters(sanswers);
+								writer.writeEndElement(); // Answer
+							}
+						} else {
+							List<Answer> answers = answerSet.getAnswers(childQuestion.getId(),
+									childQuestion.getUniqueId());
+
+							if (!answers.isEmpty()) {
+								writer.writeStartElement(ANSWER);
+								writer.writeAttribute("qid", childQuestion.getUniqueId());
+								writer.writeCharacters(answers.get(0).getValue());
+								writer.writeEndElement(); // Answer
+							}
+						}
+					}
+				} else if (question instanceof Table) {
+					Table table = (Table) question;
+
+					for (int tableRow = 1; tableRow < table.getRows(); tableRow++) {
+						for (int tableCol = 1; tableCol < table.getColumns(); tableCol++) {
+							Element tq = table.getQuestions().get(tableRow - 1);
+							Element ta = table.getAnswers().get(tableCol - 1);
+
+							writer.writeStartElement(ANSWER);
+							writer.writeAttribute("qid", tq.getUniqueId());
+							writer.writeAttribute("aid", ta.getUniqueId());
+
+							if (answerSet == null) {
+								String sanswers = row.get(answerrowcounter++);
+								if (sanswers != null) {
+									writer.writeCharacters(sanswers);
+								}
+							} else {
+								String answer = answerSet.getTableAnswer(table, tableRow, tableCol, false);
+								if (answer != null && answer.length() > 0) {
+									writer.writeCharacters(answer);
+								}
+							}
+
+							writer.writeEndElement(); // Answer
+						}
+					}
+				} else if (question instanceof Text) {
+					// ignore
+				} else if (question instanceof Question) {
+					if (answerSet == null) {
+						if (row.size() <= answerrowcounter) {
+							logger.error("no data for question " + question.getId() + " found");
+						} else {
+
+							String sanswers = row.get(answerrowcounter++);
+							if (sanswers != null) {
+
+								String[] answers;
+								if (question instanceof FreeTextQuestion) {
+									answers = new String[1];
+									answers[0] = sanswers;
+								} else {
+									answers = sanswers.split(";");
+								}
+
+								for (String answer : answers) {
+									if (answer.length() > 0) {
+										writer.writeStartElement(ANSWER);
+										writer.writeAttribute("qid", question.getUniqueId());
+										if (question instanceof ChoiceQuestion) {
+											writer.writeAttribute("aid", answer);
+										} else if (question instanceof Upload) {
+											StringBuilder text = new StringBuilder();
+											File file;
+											try {
+
+												if (answer.contains("|")) {
+													answer = answer.substring(0, answer.indexOf('|'));
+												}
+
+												file = fileService.get(answer);
+												if (!uploadedFilesByQuestionUID
+														.containsKey(question.getUniqueId())) {
+													uploadedFilesByQuestionUID.put(question.getUniqueId(),
+															new ArrayList<>());
+												}
+												uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
+
+												text.append((text.length() > 0) ? ";" : "").append(file.getName());
+											} catch (FileNotFoundException e) {
+												logger.error(e.getLocalizedMessage(), e);
+											}
+
+											writer.writeCharacters(text.toString());
+										} else {
+											writer.writeCharacters(
+													ConversionTools.removeInvalidHtmlEntities(answer));
+										}
+
+										writer.writeEndElement(); // Answer
+									}
+								}
+							}
+						}
+					} else {
+						List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+						for (Answer answer : answers) {
+							writer.writeStartElement(ANSWER);
+							writer.writeAttribute("qid", question.getUniqueId());
+
+							if (question instanceof ChoiceQuestion) {
+								writer.writeAttribute("aid",
+										answer.getPossibleAnswerUniqueId() != null
+												? answer.getPossibleAnswerUniqueId()
+												: "");
+							} else if (question instanceof Upload) {
+								StringBuilder text = new StringBuilder();
+								if (filesByAnswer.containsKey(answer.getId())) {
+									for (File file : filesByAnswer.get(answer.getId())) {
+										if (!uploadedFilesByQuestionUID.containsKey(question.getUniqueId())) {
+											uploadedFilesByQuestionUID.put(question.getUniqueId(),
+													new ArrayList<>());
+										}
+										uploadedFilesByQuestionUID.get(question.getUniqueId()).add(file);
+
+										text.append((text.length() > 0) ? ";" : "").append(file.getName());
+									}
+								}
+								writer.writeCharacters(text.toString());
+							} else {
+								writer.writeCharacters(form.getAnswerTitleStripInvalidXML(answer));
+							}
+
+							writer.writeEndElement(); // Answer
 						}
 					}
 				}
@@ -847,14 +846,17 @@ public class XmlExportCreator extends ExportCreator {
 
 	@Override
 	void ExportStatistics() throws Exception {
+		throw new NotImplementedException();
 	}
 
 	@Override
 	void ExportStatisticsQuiz() throws Exception {
+		throw new NotImplementedException();
 	}
 
 	@Override
 	void ExportAddressBook() throws Exception {
+		throw new NotImplementedException();
 	}
 
 	public Date getExportedNow() {
@@ -883,10 +885,12 @@ public class XmlExportCreator extends ExportCreator {
 
 	@Override
 	void ExportActivities() throws Exception {
+		throw new NotImplementedException();
 	}
 
 	@Override
 	void ExportTokens() throws Exception {
+		throw new NotImplementedException();
 	}
 
 }

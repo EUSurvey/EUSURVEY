@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.MailService;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.Ucs2Utf8;
 
 @Controller
@@ -49,8 +50,8 @@ public class PublicSurveysController extends BasicController {
 		List<Survey> surveys = surveyService.getPublicSurveysForValidation(filteralias, filterowner, filterrequestdatefrom, filterrequestdateto);		
     	ModelAndView m =  new ModelAndView("administration/publicsurveys", "surveys", surveys);
     	m.addObject("sender",sender);
-    	String error = request.getParameter("error");
-    	if (error != null) m.addObject("error",resources.getMessage("error.OperationFailed", null, "", locale));
+    	String error = request.getParameter(Constants.ERROR);
+    	if (error != null) m.addObject(Constants.ERROR,resources.getMessage("error.OperationFailed", null, "", locale));
     	
     	m.addObject("filteralias", filteralias);
     	m.addObject("filterowner", filterowner);
