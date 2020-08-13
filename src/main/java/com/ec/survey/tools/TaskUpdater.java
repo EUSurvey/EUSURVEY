@@ -1,5 +1,6 @@
 package com.ec.survey.tools;
 
+import java.nio.file.Files;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -81,10 +82,7 @@ public class TaskUpdater implements Runnable, BeanFactoryAware {
 					if (export.prepare()) {					
 						//it's not allowed to override existing archive files so we have to delete them first
 						java.io.File target = new java.io.File(archiveFileDir + survey.getUniqueId());
-						if (target.exists())
-						{
-							target.delete();
-						}
+						Files.deleteIfExists(target.toPath());
 						taskExecutorLong.execute(export);
 					}
 				}

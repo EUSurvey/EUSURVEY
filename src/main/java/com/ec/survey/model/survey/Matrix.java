@@ -31,7 +31,7 @@ public class Matrix extends MatrixOrTable {
 	
 	private List<DependencyItem> dependentElements = new ArrayList<>();
 	
-	public Matrix(Survey survey, String ptitle, String shortname, String uid) {
+	public Matrix(String ptitle, String shortname, String uid) {
 		setTitle(ptitle);
 		setShortname(shortname);
 		setUniqueId(uid);

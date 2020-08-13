@@ -9,6 +9,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -77,12 +80,12 @@ public class FileManagementController extends BasicController {
 		
 		if (request.getParameter("deleted") != null)
 		{
-			if (!request.getParameter("deleted").equalsIgnoreCase("error"))
+			if (!request.getParameter("deleted").equalsIgnoreCase(Constants.ERROR))
 			{
 				result.addObject("info", resources.getMessage("info.FileDeleted", new Object[] {request.getParameter("deleted")}, "Deleted", locale));
-			} else if (request.getParameter("deleted").equalsIgnoreCase("error"))
+			} else if (request.getParameter("deleted").equalsIgnoreCase(Constants.ERROR))
 			{
-				result.addObject("error", resources.getMessage("error.OperationFailed", null, "Delete error", locale));
+				result.addObject(Constants.ERROR, resources.getMessage("error.OperationFailed", null, "Delete error", locale));
 			}
 			
 			List<FileResult> resultfiles = fileService.getFiles2(filter);
@@ -109,18 +112,18 @@ public class FileManagementController extends BasicController {
 			if (request.getParameter("recreationstarted").equalsIgnoreCase("started"))
 			{
 				result.addObject("info", resources.getMessage("info.RecreateStarted2", null, "Recreate started", locale));
-			} else if (request.getParameter("recreationstarted").equalsIgnoreCase("error"))
+			} else if (request.getParameter("recreationstarted").equalsIgnoreCase(Constants.ERROR))
 			{
-				result.addObject("error", resources.getMessage("error.OperationFailed", null, "Recreate error", locale));
+				result.addObject(Constants.ERROR, resources.getMessage("error.OperationFailed", null, "Recreate error", locale));
 			}
 		} else if (request.getParameter("recreated") != null)
 		{
-			if (!request.getParameter("recreated").equalsIgnoreCase("error"))
+			if (!request.getParameter("recreated").equalsIgnoreCase(Constants.ERROR))
 			{
 				result.addObject("info", resources.getMessage("info.FileRecreated", new Object[] {request.getParameter("recreated")}, "Recreated", locale));
-			} else if (request.getParameter("recreated").equalsIgnoreCase("error"))
+			} else if (request.getParameter("recreated").equalsIgnoreCase(Constants.ERROR))
 			{
-				result.addObject("error", resources.getMessage("error.OperationFailed", null, "Recreate error", locale));
+				result.addObject(Constants.ERROR, resources.getMessage("error.OperationFailed", null, "Recreate error", locale));
 			}
 		}
 		
@@ -187,7 +190,7 @@ public class FileManagementController extends BasicController {
 			
 			if (!checkall && (files2export == null || files2export.length == 0))
 			{
-				result.addObject("error", "Please select at least one file");
+				result.addObject(Constants.ERROR, "Please select at least one file");
 				fileerror = true;
 				inputFilter = (FileFilter) request.getSession().getAttribute("lastfilefilter");
 				if (inputFilter == null)
@@ -235,7 +238,7 @@ public class FileManagementController extends BasicController {
 					if (uid == null)
 					{
 						result = files(request, model, locale);
-						result.addObject("error", "No survey with this alias found!");
+						result.addObject(Constants.ERROR, "No survey with this alias found!");
 						return result;
 					}
 				}
@@ -247,7 +250,7 @@ public class FileManagementController extends BasicController {
 			    UUID.fromString(uid);
 			} catch (IllegalArgumentException exception){
 				result = files(request, model, locale);
-				result.addObject("error", "The UID is not valid!");
+				result.addObject(Constants.ERROR, "The UID is not valid!");
 				return result;
 			}
 		}
@@ -257,9 +260,9 @@ public class FileManagementController extends BasicController {
 			result = files(request, model, locale);
 			if (!fileerror)
 			{
-				result.addObject("error", "Please provide a survey alias or uid!");
+				result.addObject(Constants.ERROR, "Please provide a survey alias or uid!");
 			} else {
-				result.addObject("error", "Please select at least one file");
+				result.addObject(Constants.ERROR, "Please select at least one file");
 			}
 			result.addObject("filter", inputFilter);
 			result.addObject("mode", mode);
@@ -438,9 +441,13 @@ public class FileManagementController extends BasicController {
 		String path = request.getParameter("path");
 		java.io.File file = new java.io.File(path);
 		
-		if (file.exists() && file.delete())
-		{
-			return new ModelAndView("redirect:/administration/files?deleted=1");
+		try {
+			if (Files.deleteIfExists(file.toPath()))
+			{
+				return new ModelAndView("redirect:/administration/files?deleted=1");
+			}
+		} catch (IOException e) {
+			logger.error(e.getLocalizedMessage(), e);
 		}
 		
 		return new ModelAndView("redirect:/administration/files?deleted=error");

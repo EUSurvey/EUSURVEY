@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.FtpEndPoint;
 import com.ec.survey.model.Translation;
 import com.ec.survey.model.Translations;
@@ -180,7 +181,7 @@ public class MachineTranslationService extends BasicService {
 		return result;
 	}
 
-	private void translateTranlationsWithMicrosoft(Integer sourceTranslationsId, List<Integer> targetIDs) throws Exception {
+	private void translateTranlationsWithMicrosoft(Integer sourceTranslationsId, List<Integer> targetIDs) throws MessageException {
 		Translations sourceTranslations = translationService.getTranslations(sourceTranslationsId);
 
 		List<Translation> translationsList = sourceTranslations.getTranslations();
@@ -226,7 +227,7 @@ public class MachineTranslationService extends BasicService {
 		
 	}
 
-	private void translateTranlations(Integer sourceTranslationsId, String targetLanguage, User user, List<Integer> targetIDs) throws Exception {
+	private void translateTranlations(Integer sourceTranslationsId, String targetLanguage, User user, List<Integer> targetIDs) {
 
 		Translations sourceTranslations = translationService.getTranslations(sourceTranslationsId);
 		

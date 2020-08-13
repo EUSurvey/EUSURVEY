@@ -12,6 +12,7 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.AnswerExecutor;
 import com.ec.survey.tools.ArchiveExecutor;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.RestoreExecutor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +48,7 @@ public class WorkerController extends BasicController {
 		
 		try {
 			AnswerSet answerSet = answerService.get(code);
-			String email = request.getParameter("email");
+			String email = request.getParameter(Constants.EMAIL);
 			if (answerSet != null) {
 				AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
 								
@@ -76,7 +77,7 @@ public class WorkerController extends BasicController {
 		
 		try {
 			Draft draft = answerService.getDraftByAnswerUID(code);
-			String email = request.getParameter("email");
+			String email = request.getParameter(Constants.EMAIL);
 			if (draft != null) {
 				AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
 								

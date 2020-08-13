@@ -4,6 +4,7 @@ import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Matrix;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -260,7 +261,7 @@ public class AnswerSet implements java.io.Serializable {
 
 	@Column(name = "ANSWER_SET_DISCLAIMER")
 	public Boolean getDisclaimerMinimized() {
-		return disclaimerMinimized != null ? disclaimerMinimized : false;
+		return disclaimerMinimized != null && disclaimerMinimized;
 	}
 
 	public void setDisclaimerMinimized(Boolean disclaimerMinimized) {

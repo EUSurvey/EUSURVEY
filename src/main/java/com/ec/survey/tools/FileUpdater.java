@@ -1,5 +1,6 @@
 package com.ec.survey.tools;
 
+import java.nio.file.Files;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -36,15 +37,12 @@ public class FileUpdater implements Runnable {
 				if (file.getComment() != null && file.getComment().length() > 0)
 				{
 					java.io.File export = fileService.getSurveyExportFile(file.getComment(), file.getUid(), false);
-					if (export.exists())
-					{
-						export.delete();
-					}
+					Files.deleteIfExists(export.toPath());
 				}
 				
 				//also delete from old file system
 				java.io.File f = new java.io.File(fileDir + file.getUid());
-				if (f.exists()) f.delete();
+				Files.deleteIfExists(f.toPath());
 				fileService.delete(file);
 			}
 			

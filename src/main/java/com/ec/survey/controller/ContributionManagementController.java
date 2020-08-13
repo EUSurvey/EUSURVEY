@@ -8,6 +8,7 @@ import com.ec.survey.model.administration.ContributionSearchResult;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.service.mapping.PaginationMapper;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -136,12 +137,12 @@ public class ContributionManagementController extends BasicController {
 		
 		if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
 			//only form administrators are allowed to do this
-			return "error";
+			return Constants.ERROR;
 		}
 		
 		String uid = answerService.resetContribution(code);
 		
-		return uid != null ? uid : "error";
+		return uid != null ? uid : Constants.ERROR;
 	}
 		
 }

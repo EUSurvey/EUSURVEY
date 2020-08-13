@@ -9,7 +9,11 @@ import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.dashboard.Contributions;
 import com.ec.survey.model.survey.dashboard.EndDates;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.NotAgreedToPsException;
+import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -21,6 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -29,7 +35,9 @@ public class DashboardController extends BasicController {
 	private @Value("${server.prefix}") String host;
 
 	@RequestMapping(value = "/dashboard", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public ModelAndView dashboard(HttpServletRequest request, Locale locale, Model model) throws Exception {
+	public ModelAndView dashboard(HttpServletRequest request, Locale locale, Model model)
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
+			IOException {
 
 		if (request.getParameter("deletearchive") != null) {
 			String archiveid = request.getParameter("deletearchive");
@@ -201,8 +209,8 @@ public class DashboardController extends BasicController {
 				page = Integer.parseInt(request.getParameter("page"));
 			}
 
-			if (request.getParameter("shortname") != null) {
-				String shortname = request.getParameter("shortname");
+			if (request.getParameter(Constants.SHORTNAME) != null) {
+				String shortname = request.getParameter(Constants.SHORTNAME);
 				if (shortname.trim().length() > 0) {
 					filter.setShortname(shortname);
 				}

@@ -2,7 +2,7 @@ package com.ec.survey.tools;
 
 public class InvalidEmailException extends Exception {
 	private static final long serialVersionUID = 1L;
-	private Object element;
+	private final Object element;
 
 	public InvalidEmailException(Object element, String message)
 	{
@@ -12,9 +12,5 @@ public class InvalidEmailException extends Exception {
 
 	public Object getElement() {
 		return element;
-	}
-
-	public void setElement(Object element) {
-		this.element = element;
 	}
 }

@@ -5,6 +5,7 @@ import com.ec.survey.model.Archive;
 import com.ec.survey.model.ArchiveFilter;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.ImportResult;
 import com.ec.survey.tools.SurveyExportHelper;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 
 @Service("archiveService")
@@ -35,7 +39,7 @@ public class ArchiveService extends BasicService {
 	}
 
 	@Transactional(readOnly = false)
-	public void delete(Archive archive) {
+	public void delete(Archive archive) throws IOException {
 		String uid = archive.getSurveyUID();
 
 		Session session = sessionFactory.getCurrentSession();
@@ -44,80 +48,50 @@ public class ArchiveService extends BasicService {
 
 		// delete archive files
 		java.io.File file = fileService.getArchiveFile(uid, uid);
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = fileService.getArchiveFile(uid, uid + ".pdf");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = fileService.getArchiveFile(uid, uid + "statistics.pdf");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = fileService.getArchiveFile(uid, uid + "statistics.xls");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = fileService.getArchiveFile(uid, uid + "results.xls");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = fileService.getArchiveFile(uid, uid + "results.zip");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = fileService.getArchiveFile(uid, uid + "results.xls.zip");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = fileService.getArchiveFolder(uid);
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		// delete old archive files
 		file = new java.io.File(archiveFileDir + uid);
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = new java.io.File(archiveFileDir + uid + ".pdf");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = new java.io.File(archiveFileDir + uid + "statistics.pdf");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = new java.io.File(archiveFileDir + uid + "statistics.xls");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = new java.io.File(archiveFileDir + uid + "results.xls");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = new java.io.File(archiveFileDir + uid + "results.zip");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 
 		file = new java.io.File(archiveFileDir + uid + "results.xls.zip");
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 	}
 
 	@Transactional(readOnly = false)
@@ -140,7 +114,7 @@ public class ArchiveService extends BasicService {
 			file = new java.io.File(archiveFileDir + archive.getSurveyUID());
 
 		if (file.exists()) {
-			ImportResult result = SurveyExportHelper.importSurvey(file, fileDir, fileService, null);
+			ImportResult result = SurveyExportHelper.importSurvey(file, fileService, null);
 
 			if (result != null && result.getSurvey() != null) {
 				Survey existing = null;
@@ -210,7 +184,7 @@ public class ArchiveService extends BasicService {
 
 		if (filter.getShortname() != null && filter.getShortname().trim().length() > 0) {
 			hql += " AND a.surveyShortname LIKE :shortname";
-			params.put("shortname", "%" + filter.getShortname() + "%");
+			params.put(Constants.SHORTNAME, "%" + filter.getShortname() + "%");
 		}
 
 		if (filter.getTitle() != null && filter.getTitle().trim().length() > 0) {
@@ -298,7 +272,7 @@ public class ArchiveService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery(
 				"FROM Archive a WHERE a.userId = :userId AND a.surveyShortname = :shortname AND a.finished = true AND a.error IS NULL")
-				.setInteger("userId", userid).setString("shortname", shortname);
+				.setInteger("userId", userid).setString(Constants.SHORTNAME, shortname);
 
 		@SuppressWarnings("unchecked")
 		List<Archive> result = query.list();
@@ -313,7 +287,7 @@ public class ArchiveService extends BasicService {
 	public String getSurveyUIDForArchivedSurveyShortname(String shortname) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("SELECT a.surveyUID FROM Archive a WHERE a.surveyShortname = :shortname");
-		query.setString("shortname", shortname);
+		query.setString(Constants.SHORTNAME, shortname);
 		return (String) query.uniqueResult();
 	}
 

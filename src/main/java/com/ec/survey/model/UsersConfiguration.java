@@ -66,7 +66,7 @@ public class UsersConfiguration implements java.io.Serializable {
 		return showOtherEmail;
 	}
 	public void setShowOtherEmail(Boolean showOtherEmail) {
-		this.showOtherEmail = showOtherEmail != null ? showOtherEmail : false;
+		this.showOtherEmail = showOtherEmail != null && showOtherEmail;
 	}
 	
 	@Column(name = "UC_LANG")
@@ -98,7 +98,7 @@ public class UsersConfiguration implements java.io.Serializable {
 		return showBanned;
 	}
 	public void setShowBanned(Boolean showBanned) {
-		this.showBanned = showBanned != null ? showBanned : true;
+		this.showBanned = showBanned == null || showBanned;
 	}
 	
 }

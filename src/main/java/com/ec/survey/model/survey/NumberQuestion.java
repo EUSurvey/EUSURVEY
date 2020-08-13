@@ -135,9 +135,7 @@ public class NumberQuestion extends Question {
 		
 		if (maxD != null && !maxD.equals(number.maxD)) return true;
 		if (minD != null && !minD.equals(number.minD)) return true;
-		if (unit != null && !unit.equals(number.unit)) return true;
-		
-		return false;
+		return (unit != null && !unit.equals(number.unit));
 	}
 
 	//used during import process to upgrade older version of the class

@@ -326,7 +326,7 @@ public class User implements java.io.Serializable {
 	}
 
 	public void setAgreedToToS(Boolean agreedToToS) {
-		this.agreedToToS = agreedToToS != null ? agreedToToS : false;
+		this.agreedToToS = agreedToToS != null && agreedToToS;
 	}
 
 	public void setAgreedToToS(boolean agreedToToS) {
@@ -357,7 +357,7 @@ public class User implements java.io.Serializable {
 	}
 
 	public void setAgreedToPS(Boolean agreedToPS) {
-		this.agreedToPS = agreedToPS != null ? agreedToPS : false;
+		this.agreedToPS = agreedToPS != null && agreedToPS;
 	}
 
 	@Column(name = "USER_PSDATE")
@@ -384,7 +384,7 @@ public class User implements java.io.Serializable {
 	}
 
 	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted != null ? deleted : false;
+		this.deleted = deleted != null && deleted;
 	}
 
 	@Column(name = "USER_DELREQ")
@@ -393,7 +393,7 @@ public class User implements java.io.Serializable {
 	}
 
 	public void setDeleteRequested(Boolean deleteRequested) {
-		this.deleteRequested = deleteRequested != null ? deleteRequested : false;
+		this.deleteRequested = deleteRequested != null && deleteRequested;
 	}
 
 	@Column(name = "USER_DELDATE")
@@ -429,7 +429,7 @@ public class User implements java.io.Serializable {
 	}
 
 	public void setFrozen(Boolean isFrozen) {
-		this.isFrozen = isFrozen != null ? isFrozen : false;
+		this.isFrozen = isFrozen != null && isFrozen;
 	}
 
 	@Transient

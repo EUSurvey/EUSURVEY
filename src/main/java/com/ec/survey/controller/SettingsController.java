@@ -5,6 +5,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Share;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
@@ -54,24 +55,24 @@ public class SettingsController extends BasicController {
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		model.addAttribute("languages", surveyService.getLanguages());
 
-		String message = request.getParameter("message");
+		String message = request.getParameter(Constants.MESSAGE);
 		if (message != null) {
 			switch (message) {
 				case "password":
-					model.addAttribute("message",
+					model.addAttribute(Constants.MESSAGE,
 							resources.getMessage("info.PasswordChanged", null, "The password has been changed", locale));
 					break;
-				case "email":
-					model.addAttribute("message", resources.getMessage("message.NewEmailAddressSend", null,
+				case Constants.EMAIL:
+					model.addAttribute(Constants.MESSAGE, resources.getMessage("message.NewEmailAddressSend", null,
 							"The email address will be changed after confirmation", locale));
 					break;
 				case "language":
 					User user = sessionService.getCurrentUser(request);
-					model.addAttribute("message", resources.getMessage("message.LanguageChanged", null,
+					model.addAttribute(Constants.MESSAGE, resources.getMessage("message.LanguageChanged", null,
 							"The language has been changed", new Locale(user.getLanguage())));
 					break;
 				case "pivot":
-					model.addAttribute("message",
+					model.addAttribute(Constants.MESSAGE,
 							resources.getMessage("message.LanguageChanged", null, "The language has been changed", locale));
 					break;
 				default:
@@ -102,7 +103,7 @@ public class SettingsController extends BasicController {
 				request.getSession().invalidate();
 				sessionService.setCurrentUser(request, null);
 
-				model.addAttribute("message", resources.getMessage("message.validateDelete", null,
+				model.addAttribute(Constants.MESSAGE, resources.getMessage("message.validateDelete", null,
 						"The deletion of your account has been started. You will receive a confirmation mail containing a link. Click on the link to confirm the deletion of your account.",
 						locale));
 				return "error/info";
@@ -123,14 +124,14 @@ public class SettingsController extends BasicController {
 		model.addAttribute("languages", surveyService.getLanguages());
 
 		if (newPassword == null || newPassword2 == null || newPassword.trim().length() == 0) {
-			model.addAttribute("error",
+			model.addAttribute(Constants.ERROR,
 					resources.getMessage("message.ValidPassword", null, "Please provide a valid password", locale));
 			model.addAttribute("operation", "changePassword");
 			return "settings/myAccount";
 		}
 
 		if (!newPassword.equals(newPassword2)) {
-			model.addAttribute("error", resources.getMessage("validation.NewPasswordsDontMatch", null,
+			model.addAttribute(Constants.ERROR, resources.getMessage("validation.NewPasswordsDontMatch", null,
 					"The new passwords do not match", locale));
 			model.addAttribute("operation", "changePassword");
 			return "settings/myAccount";
@@ -139,14 +140,14 @@ public class SettingsController extends BasicController {
 		User user = sessionService.getCurrentUser(request);
 
 		if (oldPassword == null || !Tools.isPasswordValid(user.getPassword(), oldPassword + user.getPasswordSalt())) {
-			model.addAttribute("error",
+			model.addAttribute(Constants.ERROR,
 					resources.getMessage("validation.OldPasswordWrong", null, "The old password is wrong", locale));
 			model.addAttribute("operation", "changePassword");
 			return "settings/myAccount";
 		}
 
 		if (Tools.isPasswordWeak(newPassword)) {
-			model.addAttribute("error", resources.getMessage("error.PasswordWeak", null,
+			model.addAttribute(Constants.ERROR, resources.getMessage("error.PasswordWeak", null,
 					"This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$&%...).",
 					locale));
 			model.addAttribute("operation", "changePassword");
@@ -171,14 +172,14 @@ public class SettingsController extends BasicController {
 		model.addAttribute("languages", surveyService.getLanguages());
 
 		if (email == null || email2 == null || email.trim().length() == 0) {
-			model.addAttribute("error",
+			model.addAttribute(Constants.ERROR,
 					resources.getMessage("error.ValidEmail", null, "Please provide a valid email address", locale));
 			model.addAttribute("operation", "changeEmail");
 			return "settings/myAccount";
 		}
 
 		if (!email.equals(email2)) {
-			model.addAttribute("error",
+			model.addAttribute(Constants.ERROR,
 					resources.getMessage("error.EmailsDontMatch", null, "The email addresses do not match", locale));
 			model.addAttribute("operation", "changeEmail");
 			return "settings/myAccount";
@@ -187,14 +188,14 @@ public class SettingsController extends BasicController {
 		User user = sessionService.getCurrentUser(request);
 
 		if (password == null || !Tools.isPasswordValid(user.getPassword(), password + user.getPasswordSalt())) {
-			model.addAttribute("error",
+			model.addAttribute(Constants.ERROR,
 					resources.getMessage("error.WrongPassword", null, "The password is wrong", locale));
 			model.addAttribute("operation", "changeEmail");
 			return "settings/myAccount";
 		}
 
 		if (!EmailValidator.getInstance().isValid(email)) {
-			model.addAttribute("error",
+			model.addAttribute(Constants.ERROR,
 					resources.getMessage("error.InvalidEmail", null, "The email address is not valid", locale));
 			model.addAttribute("operation", "changeEmail");
 			return "settings/myAccount";
@@ -204,7 +205,7 @@ public class SettingsController extends BasicController {
 		administrationService.updateUser(user);
 
 		if (!administrationService.sendNewEmailAdressValidationEmail(user)) {
-			model.addAttribute("error", resources.getMessage("error.InvalidEmail", null,
+			model.addAttribute(Constants.ERROR, resources.getMessage("error.InvalidEmail", null,
 					"The confirmation email could not be sent", locale));
 			model.addAttribute("operation", "changeEmail");
 			return "settings/myAccount";
@@ -299,14 +300,14 @@ public class SettingsController extends BasicController {
 		ModelAndView result = shares(request, locale);
 
 		if (share == null) {
-			result.addObject("message", resources.getMessage("message.ShareNotFound", null, "Share not found", locale));
+			result.addObject(Constants.MESSAGE, resources.getMessage("message.ShareNotFound", null, "Share not found", locale));
 		} else {
 
 			if (!share.getOwner().getId().equals(user.getId())
 					&& user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) != 2
 					&& !(share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))
 					&& (share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))) {
-				result.addObject("message", resources.getMessage("error.ShareUnauthorized", null,
+				result.addObject(Constants.MESSAGE, resources.getMessage("error.ShareUnauthorized", null,
 						"You are not authorized to edit this share.", locale));
 				return result;
 			}
@@ -377,7 +378,7 @@ public class SettingsController extends BasicController {
 			recipient = administrationService.getUserForLogin(recipientname);
 		} catch (Exception e) {
 			ModelAndView result = shares(request, locale);
-			result.addObject("message",
+			result.addObject(Constants.MESSAGE,
 					resources.getMessage("error.UnknownRecipient", null, "The recipient does not exist", locale));
 			return result;
 		}
@@ -406,7 +407,7 @@ public class SettingsController extends BasicController {
 
 			if (share == null) {
 				ModelAndView result = shares(request, locale);
-				result.addObject("message",
+				result.addObject(Constants.MESSAGE,
 						resources.getMessage("error.ShareNotFound", null, "Share not found", locale));
 				return result;
 			}
@@ -417,7 +418,7 @@ public class SettingsController extends BasicController {
 					&& (share.getReadonly() || !share.getRecipient().getId().equals(user.getId()))) {
 
 				ModelAndView result = shares(request, locale);
-				result.addObject("message", resources.getMessage("error.ShareUnauthorized", null,
+				result.addObject(Constants.MESSAGE, resources.getMessage("error.ShareUnauthorized", null,
 						"You are not authorized to edit this share.", locale));
 				return result;
 			}

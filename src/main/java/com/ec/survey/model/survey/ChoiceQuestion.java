@@ -29,7 +29,7 @@ public abstract class ChoiceQuestion extends Question {
 	
 	public ChoiceQuestion() {}
 
-	public ChoiceQuestion(Survey survey, String title, String shortname, String uid) {
+	public ChoiceQuestion(String title, String shortname, String uid) {
 		super(title, shortname, uid);
 	}
 	

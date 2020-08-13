@@ -1,11 +1,13 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.exception.InvalidURLException;
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.service.mapping.PaginationMapper;
 import com.ec.survey.tools.AnswerExecutor;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizExecutor;
 import com.ec.survey.tools.Ucs2Utf8;
@@ -31,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -113,7 +116,7 @@ public class HomeController extends BasicController {
 	{
 		StringBuilder result = new StringBuilder();
 		
-		if (request.getParameter("error") != null)
+		if (request.getParameter(Constants.ERROR) != null)
 		{
 			String url = (String) request.getSession().getAttribute("lastErrorURL");
 			if (url != null)
@@ -141,7 +144,7 @@ public class HomeController extends BasicController {
 		model.put("continueWithoutJavascript", true);
 		model.put("additionalinfo", getBrowserInformation(request, locale));
 		
-		if (request.getParameter("error") != null)
+		if (request.getParameter(Constants.ERROR) != null)
 		{
 			model.put("fromerrorpage", true);
 		}
@@ -160,7 +163,7 @@ public class HomeController extends BasicController {
 	}
 	
 	@PostMapping(value = "/home/support")
-	public String supportPOST(HttpServletRequest request, Locale locale, ModelMap model) throws Exception {
+	public String supportPOST(HttpServletRequest request, Locale locale, ModelMap model) throws IOException, MessageException {
 		
 		if (!checkCaptcha(request))
 		{
@@ -170,9 +173,9 @@ public class HomeController extends BasicController {
 		
 		String reason = ConversionTools.removeHTML(request.getParameter("contactreason"), true);
 		String name = ConversionTools.removeHTML(request.getParameter("name"), true);
-		String email = ConversionTools.removeHTML(request.getParameter("email"), true);
+		String email = ConversionTools.removeHTML(request.getParameter(Constants.EMAIL), true);
 		String subject = ConversionTools.removeHTML(request.getParameter("subject"), true);
-		String message = ConversionTools.removeHTML(request.getParameter("message"), true);
+		String message = ConversionTools.removeHTML(request.getParameter(Constants.MESSAGE), true);
 		String additionalinfo  = request.getParameter("additionalinfo");
 		String additionalsurveyinfotitle = request.getParameter("additionalsurveyinfotitle");
 		String additionalsurveyinfoalias = request.getParameter("additionalsurveyinfoalias");
@@ -250,7 +253,7 @@ public class HomeController extends BasicController {
 			
 			java.io.File file = fileService.getTemporaryFile(uid);
 			
-			if (file.exists() && file.delete())
+			if (Files.deleteIfExists(file.toPath()))
 			{
 				return "{\"success\": true}";
 			}			
@@ -274,6 +277,7 @@ public class HomeController extends BasicController {
             writer = response.getWriter();
         } catch (IOException ex) {
             logger.error(ex.getLocalizedMessage(), ex);
+            return;
         }
 
         String filename;       
@@ -304,8 +308,12 @@ public class HomeController extends BasicController {
             logger.error(ex.getMessage(), ex);
         } finally {
             try {
-                fos.close();
-                is.close();
+            	if (fos != null) {
+            		fos.close();
+            	}
+            	if (is != null) {
+            		is.close();
+            	}
             } catch (IOException ignored) {
             	//ignore
             }
@@ -517,7 +525,7 @@ public class HomeController extends BasicController {
 		
 			if (!checkValid(attempts))
 			{
-				result.addObject("message", resources.getMessage("message.IPblocked", null, "Your IP is blocked after 10 wrong attempts!", locale));
+				result.addObject(Constants.MESSAGE, resources.getMessage("message.IPblocked", null, "Your IP is blocked after 10 wrong attempts!", locale));
 				result.addObject("runnermode", true);
 				return result;
 			}
@@ -535,7 +543,7 @@ public class HomeController extends BasicController {
 	        }
 		
 			//get answerset
-	        String uniqueCode = request.getParameter("uniqueCode");	
+	        String uniqueCode = request.getParameter(Constants.UNIQUECODE);	
 	        
 	        if (uniqueCode != null) uniqueCode = uniqueCode.trim();
 	        
@@ -556,7 +564,7 @@ public class HomeController extends BasicController {
 	        	if (attempts == null) attempts = new WrongAttempts(remoteAddr);
 	        	attempts.increaseCounter();
 	        	answerService.save(attempts);
-				result.addObject("message", resources.getMessage("message.contributionidwrong", null, "The case code is not correct!", locale));
+				result.addObject(Constants.MESSAGE, resources.getMessage("message.contributionidwrong", null, "The case code is not correct!", locale));
 				result.addObject("runnermode", true);
 				return result;
 	        }
@@ -566,7 +574,7 @@ public class HomeController extends BasicController {
 		} catch (Exception e)
 		{
 			logger.error(e.getLocalizedMessage(), e);
-			ModelAndView result = new ModelAndView("home/accesscontribution", "message", resources.getMessage("message.contributionerror", null, "Loading of the contribution not possible!", locale));
+			ModelAndView result = new ModelAndView("home/accesscontribution", Constants.MESSAGE, resources.getMessage("message.contributionerror", null, "Loading of the contribution not possible!", locale));
 			result.addObject("runnermode", true);
 			return result;
 		}
@@ -597,7 +605,7 @@ public class HomeController extends BasicController {
 					return "errorcaseidinvitation";
 				}
 				
-				String email = parameters.get("email")[0];
+				String email = parameters.get(Constants.EMAIL)[0];
 				
 				logger.info("starting creation of answer pdf for contribution " + code + " to be sent to " + email);
 								
@@ -616,7 +624,7 @@ public class HomeController extends BasicController {
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error";
+			return Constants.ERROR;
 		}
 
 		return "success";
@@ -748,20 +756,20 @@ public class HomeController extends BasicController {
 		
 		try {
 			administrationService.confirmUserDeleteRequest(Integer.parseInt(id), code);
-			model.addAttribute("message", resources.getMessage("message.AccountDeleted", null, "Your account has been deleted!", locale));
+			model.addAttribute(Constants.MESSAGE, resources.getMessage("message.AccountDeleted", null, "Your account has been deleted!", locale));
 			return "error/info";
 		} catch (NumberFormatException nfe) {
-			model.addAttribute("message", resources.getMessage("error.UserNotFound", null, "User not found.", locale));
+			model.addAttribute(Constants.MESSAGE, resources.getMessage("error.UserNotFound", null, "User not found.", locale));
 		} catch (Exception e) {
 			switch (e.getMessage()) {
 			case "User unknown":
-				model.addAttribute("message", resources.getMessage("error.UserNotFound", null, "User not found.", locale));
+				model.addAttribute(Constants.MESSAGE, resources.getMessage("error.UserNotFound", null, "User not found.", locale));
 				break;
 			case "Wrong code":
-				model.addAttribute("message", resources.getMessage("error.WrongCode", null, "The code is wrong.", locale));
+				model.addAttribute(Constants.MESSAGE, resources.getMessage("error.WrongCode", null, "The code is wrong.", locale));
 				break;
 			case "Request too old":
-				model.addAttribute("message", resources.getMessage("error.DeleteCodeOutdated", null, "You did not confirm the account deletion during the corresponding time span.", locale));
+				model.addAttribute(Constants.MESSAGE, resources.getMessage("error.DeleteCodeOutdated", null, "You did not confirm the account deletion during the corresponding time span.", locale));
 				break;
 			default:
 				logger.error(e.getLocalizedMessage(), e);
@@ -769,7 +777,7 @@ public class HomeController extends BasicController {
 			}
 		}
 	
-		return "error/generic";
+		return Constants.VIEW_ERROR_GENERIC;
 	}
 	
 	@RequestMapping(value = "/validateNewEmail/{id}/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -881,7 +889,7 @@ public class HomeController extends BasicController {
 		model = new ModelAndView("error/info");
 		String message = resources.getMessage("info.ReportAbuseSent", null, "The abuse has been reported to the team in charge of the service.", locale);
 		
-		model.addObject("message", message);
+		model.addObject(Constants.MESSAGE, message);
 		model.addObject("contextpath", contextpath);
 		
 		String link = serverPrefix + "runner/" + survey.getShortname();

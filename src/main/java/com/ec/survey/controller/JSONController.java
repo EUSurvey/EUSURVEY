@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ec.survey.tools.Constants;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,7 +46,7 @@ public class JSONController extends BasicController {
 		if (first != null) first = first.trim();
 		String last = request.getParameter("last");
 		if (last != null) last = last.trim();
-		String email = request.getParameter("email");
+		String email = request.getParameter(Constants.EMAIL);
 		if (email != null) email = email.trim();
 		String department = request.getParameter("department");
 		if (department != null) department = department.trim();

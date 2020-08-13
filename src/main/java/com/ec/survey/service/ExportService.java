@@ -32,6 +32,7 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.*;
 
 @Service("exportService")
@@ -68,7 +69,7 @@ public class ExportService extends BasicService {
 		}		
 	}
 	
-	@Transactional(readOnly = false)
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public void markFinished(Export export) {
 		export.setValid(true);
 		export.setState(ExportState.Finished);
@@ -351,7 +352,7 @@ public class ExportService extends BasicService {
 	}
 
 	@Transactional(readOnly = false)
-	public void deleteSurveyExports(int surveyId) {
+	public void deleteSurveyExports(int surveyId) throws IOException {
 		Session session = sessionFactory.getCurrentSession();
 		
 		Query query = session.createQuery("SELECT e.id, e.format FROM Export e WHERE e.survey.id = :id");
@@ -362,10 +363,7 @@ public class ExportService extends BasicService {
 		for (Object[] export : data)
 		{
 			java.io.File f = new java.io.File(getTempExportFilePath(ConversionTools.getValue(export[0]),(ExportFormat) export[1]));
-			if (f.exists())
-			{
-				f.delete();
-			}
+			Files.deleteIfExists(f.toPath());
 		}		
 		
 		query = session.createQuery("DELETE FROM Export e WHERE e.survey.id = :id");
@@ -412,14 +410,11 @@ public class ExportService extends BasicService {
 			String filePath = getTempExportFilePath(export, null);
 
 			File file = new File(filePath);
-			file.delete();
+			Files.delete(file.toPath());
 			
 			file = new File(filePath + ".zip");
-			if (file.exists())
-			{
-				file.delete();
-			}
-			
+			Files.deleteIfExists(file.toPath());
+				
 			Session session = sessionFactory.getCurrentSession();
 			
 			Query query = session.createQuery("delete Export e where e.id = :id");
@@ -474,11 +469,7 @@ public class ExportService extends BasicService {
 					
 					Date max = (Date)query.uniqueResult();
 					
-					if (max != null && max.after(export.getDate())) {
-						export.setValid(false);
-					} else {
-						export.setValid(true);
-					}
+					export.setValid(!(max != null && max.after(export.getDate())));
 				}
 			}		
 		} catch (Exception e)
@@ -556,10 +547,10 @@ public class ExportService extends BasicService {
 		return export;
 	}
 
-	public void recreateExport(Export export, Locale locale, MessageSource resources) {
+	public void recreateExport(Export export, Locale locale, MessageSource resources) throws IOException {
 		String filePath = exportService.getTempExportFilePath(export, null);
 		File file = new File(filePath);
-		file.delete();
+		Files.deleteIfExists(file.toPath());
 		export.setState(ExportState.Pending);
 		export.setDate(new Date());
 		Form form = new Form(resources);
@@ -729,7 +720,7 @@ public class ExportService extends BasicService {
 				File file = new File(filePath);
 				if (file.exists())
 				{
-					file.delete();
+					Files.delete(file.toPath());
 					counter++;
 				}
 				
@@ -738,7 +729,7 @@ public class ExportService extends BasicService {
 					file = new File(filePath + ".zip");
 					if (file.exists())
 					{
-						file.delete();
+						Files.delete(file.toPath());
 						counter++;
 					}
 				}

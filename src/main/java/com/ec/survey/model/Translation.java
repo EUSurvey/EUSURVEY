@@ -4,6 +4,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.cache.annotation.Cacheable;
 
+import com.ec.survey.tools.Constants;
+
 import javax.persistence.*;
 
 @SuppressWarnings("rawtypes")
@@ -65,7 +67,7 @@ public class Translation implements java.io.Serializable, Comparable {
 	}
 	
 	@Lob
-	@Column(name = "LABEL", nullable = false) //, columnDefinition = "TEXT")
+	@Column(name = "LABEL", nullable = false)
 	public String getLabel() {
 		return label;
 	}	

@@ -72,8 +72,6 @@ public class Ruler extends Question {
 
 		if (color != null && !color.equals(ruler.color)) return true;
 		if (height != null && !height.equals(ruler.height)) return true;
-		if (style != null && !style.equals(ruler.style)) return true;
-	
-		return false;
+		return (style != null && !style.equals(ruler.style));
 	}
 }

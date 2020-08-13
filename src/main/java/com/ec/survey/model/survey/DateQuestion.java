@@ -28,7 +28,7 @@ public class DateQuestion extends Question {
 
 	public DateQuestion() {}
 	
-	public DateQuestion(Survey survey, String title, String shortname, String uid) {
+	public DateQuestion(String title, String shortname, String uid) {
 		super(title, shortname, uid);
 	}
 	

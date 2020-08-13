@@ -6,6 +6,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.AttributeName;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class CsvExportCreator extends ExportCreator {
 			out = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
 			
 			writefirst(out, "name");
-			write(out, "email");
+			write(out, Constants.EMAIL);
 			
 			for (AttributeName att: configuredattributes)
 			{

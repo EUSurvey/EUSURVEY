@@ -6,6 +6,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.CleanupWorker;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.MutableInteger;
 import com.ec.survey.tools.RecreateWorker;
@@ -769,7 +770,7 @@ public class FileService extends BasicService {
 		fileResult.setFileType("");
 		fileResult.setFileExtension("");
 
-		if (name.startsWith("answer") && name.endsWith(".pdf")) {
+		if (name.startsWith(Constants.ANSWER) && name.endsWith(".pdf")) {
 			fileResult.setFileName(name);
 			fileResult.setFileExtension("PDF");
 			fileResult.setFileType("contribution");
@@ -1144,7 +1145,7 @@ public class FileService extends BasicService {
 		return deletecounter;
 	}
 
-	public int deleteContributions(Date pdfbefore) throws MessageException {
+	public int deleteContributions(Date pdfbefore) throws IOException {
 		logger.info("starting deleteContributions: " + ConversionTools.getFullString(new Date()));
 
 		int deletecounter = 0;
@@ -1157,11 +1158,7 @@ public class FileService extends BasicService {
 				if (file.exists()) {
 					Date modified = new Date(file.lastModified());
 					if (modified.before(pdfbefore)) {
-						if (file.delete()) {
-							deletecounter++;
-						} else {
-							throw new MessageException("not possible to delete file " + file.getAbsolutePath());
-						}
+						Files.delete(file.toPath());						
 					}
 				}
 			}
@@ -1287,7 +1284,7 @@ public class FileService extends BasicService {
 		// exports and contribution/survey pdfs can be recreated
 		String name = file.getName();
 
-		if (name.startsWith("answer") && name.endsWith(".pdf")) {
+		if (name.startsWith(Constants.ANSWER) && name.endsWith(".pdf")) {
 			String uid = name.substring(6).replace(".pdf", "");
 			if (file.delete()) {
 				AnswerSet answerSet = answerService.get(uid);
@@ -1326,7 +1323,8 @@ public class FileService extends BasicService {
 		return false;
 	}
 
-	public void deleteIfNotReferenced(String fileuid, String surveyuid) {
+	@Transactional(readOnly = false)
+	public void deleteIfNotReferenced(String fileuid, String surveyuid) throws IOException {
 		try {
 			List<File> fs = getAll(fileuid);
 			if (fs.size() > 1) {
@@ -1347,14 +1345,10 @@ public class FileService extends BasicService {
 		}
 
 		java.io.File file = fileService.getSurveyFile(surveyuid, fileuid);
-		if (file.exists()) {
-			file.delete();
-		}
-
+		Files.deleteIfExists(file.toPath());
+		
 		file = new java.io.File(fileDir + fileuid);
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 	}
 
 	public Map<String, String> getMissingFiles(String uniqueId) throws Exception {
@@ -1741,7 +1735,7 @@ public class FileService extends BasicService {
 				if (!p.toFile().isDirectory()) {
 					java.io.File candidate = p.toFile();
 
-					if ((candidate.getName().startsWith("answer") || candidate.getName().startsWith("draft"))
+					if ((candidate.getName().startsWith(Constants.ANSWER) || candidate.getName().startsWith("draft"))
 							&& candidate.getName().endsWith(".pdf")) {
 						Date modified = new Date(candidate.lastModified());
 						if (modified.before(before) && candidate.isFile()) {

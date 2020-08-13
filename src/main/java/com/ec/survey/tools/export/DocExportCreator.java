@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Set;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -35,12 +36,6 @@ import com.ec.survey.tools.ConversionTools;
 public class DocExportCreator extends ExportCreator {
 
 	CustomXWPFDocument document;
-	
-	@Override
-	public void init()
-	{
-
-	}
 
 	@Override
 	void ExportContent(boolean sync) throws MessageException {
@@ -48,7 +43,9 @@ public class DocExportCreator extends ExportCreator {
 	}
 	
 	@Override
-	void ExportStatisticsQuiz() throws Exception {}
+	void ExportStatisticsQuiz() throws Exception {
+		throw new NotImplementedException();
+	}
 
 	@Override
 	void ExportStatistics() throws IOException {
@@ -400,12 +397,18 @@ public class DocExportCreator extends ExportCreator {
 	}
 	
 	@Override
-	void ExportAddressBook() throws Exception {}
+	void ExportAddressBook() throws Exception {
+		throw new NotImplementedException();
+	}
 
 	@Override
-	void ExportActivities() throws Exception {}
+	void ExportActivities() throws Exception {
+		throw new NotImplementedException();
+	}
 	
 	@Override
-	void ExportTokens() throws Exception {}	
+	void ExportTokens() throws Exception {
+		throw new NotImplementedException();
+	}	
 
 }

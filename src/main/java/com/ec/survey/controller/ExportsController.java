@@ -8,6 +8,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.MailService;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -100,7 +102,7 @@ public class ExportsController extends BasicController {
 
 				Survey survey = null;
 
-				String shortname = request.getParameter("shortname");
+				String shortname = request.getParameter(Constants.SHORTNAME);
 				if (shortname != null && shortname.length() > 0) {
 					survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, false, true, false);
 				} else {
@@ -381,11 +383,11 @@ public class ExportsController extends BasicController {
 
 	@RequestMapping(value = "/recreate/{exportId}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView recreateExport(@PathVariable int exportId, HttpServletRequest request, Locale locale)
-			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, IOException {
 		Export export = exportService.getExport(exportId, true);
 		if (export == null || !(sessionService.checkUser(export.getUserId(), request) || sessionService
 				.getCurrentUser(request).getGlobalPrivileges().get(GlobalPrivilege.FormManagement).equals(2))) {
-			return new ModelAndView("error/generic", "message", "Access denied");
+			return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, "Access denied");
 		}
 		exportService.recreateExport(export, locale, resources);
 		return new ModelAndView("redirect:/exports/list");
@@ -393,7 +395,7 @@ public class ExportsController extends BasicController {
 
 	@RequestMapping(value = "/recreateMany/{exportIdList}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView recreateExport(@PathVariable String exportIdList, HttpServletRequest request, Locale locale)
-			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, IOException {
 		String[] exportIds = exportIdList.split("-");
 		List<Export> exports = new ArrayList<>();
 
@@ -404,7 +406,7 @@ public class ExportsController extends BasicController {
 
 				if (!(sessionService.checkUser(export.getUserId(), request) || sessionService.getCurrentUser(request)
 						.getGlobalPrivileges().get(GlobalPrivilege.FormManagement).equals(2))) {
-					return new ModelAndView("error/generic", "message",
+					return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE,
 							resources.getMessage("message.AccessDenied", null, "Access denied", locale));
 				}
 				exports.add(export);

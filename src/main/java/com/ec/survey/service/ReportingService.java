@@ -46,6 +46,7 @@ import com.ec.survey.model.survey.Table;
 import com.ec.survey.model.survey.TimeQuestion;
 import com.ec.survey.model.survey.Upload;
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
@@ -144,9 +145,8 @@ public class ReportingService {
 				}
 				
 				where += " QCONTRIBUTIONID = :uniqueCode";
-				values.put("uniqueCode", filter.getCaseId().trim());
-			}
-					
+				values.put(Constants.UNIQUECODE, filter.getCaseId().trim());
+			}					
 			
 			if (filter.getUser() != null && filter.getUser().length() > 0)
 			{
@@ -158,7 +158,7 @@ public class ReportingService {
 				}
 				
 				where += " QUSER = :email";
-				values.put("email", filter.getUser().trim());
+				values.put(Constants.EMAIL, filter.getUser().trim());
 			}
 			
 			if (filter.getCreatedOrUpdated() != null && filter.getCreatedOrUpdated() && filter.getGeneratedFrom() != null && filter.getGeneratedTo() != null && filter.getUpdatedFrom() != null && filter.getUpdatedTo() != null)
@@ -304,19 +304,19 @@ public class ReportingService {
 								if (question instanceof FreeTextQuestion || question instanceof EmailQuestion || question instanceof RegExQuestion)
 								{
 									where += columnname + " LIKE :answer" + i;
-									values.put("answer" + i, "%" + answer + "%");
+									values.put(Constants.ANSWER + i, "%" + answer + "%");
 								} else if (question instanceof SingleChoiceQuestion) {
 									String answerUid = answer.substring(answer.indexOf('|')+1);
 									where += columnname + " = :answer" + i;
-									values.put("answer" + i, answerUid);
+									values.put(Constants.ANSWER + i, answerUid);
 								} else if (question instanceof MultipleChoiceQuestion) {
 									String answerUid = answer.substring(answer.indexOf('|')+1);
 									where += columnname + " LIKE :answer" + i;
-									values.put("answer" + i, "%" + answerUid + "%");
+									values.put(Constants.ANSWER + i, "%" + answerUid + "%");
 								} else if (question instanceof NumberQuestion) {
 									double val = Double.parseDouble(answer);
 									where += columnname + " = :answer" + i;
-									values.put("answer" + i, val);
+									values.put(Constants.ANSWER + i, val);
 								} else if (question instanceof DateQuestion) {
 									Date val = ConversionTools.getDate(answer);
 									if (questionIdAndUid.endsWith("from")) {
@@ -326,14 +326,14 @@ public class ReportingService {
 									} else {
 										where += columnname + " = :answer" + i;
 									}
-									values.put("answer" + i, val);
+									values.put(Constants.ANSWER + i, val);
 								} else if (question instanceof TimeQuestion) {
 									where += columnname + " LIKE :answer" + i;
-									values.put("answer" + i,  "%" + answer + "%");
+									values.put(Constants.ANSWER + i,  "%" + answer + "%");
 								} else if (answer.contains("|")) { // Matrices
 									String answerUid = answer.substring(answer.indexOf('|')+1);
 									where += columnname + " LIKE :answer" + i;
-									values.put("answer" + i, "%" + answerUid + "%");
+									values.put(Constants.ANSWER + i, "%" + answerUid + "%");
 								} else if (question instanceof Table) {
 									Table table = (Table) question;
 									String[] data = questionId.split("-");
@@ -347,13 +347,13 @@ public class ReportingService {
 									columnname = "Q" + id;
 									
 									where += columnname + " LIKE :answer" + i;
-									values.put("answer" + i, "%" + answer + "%");								
+									values.put(Constants.ANSWER + i, "%" + answer + "%");								
 								} else if (question instanceof GalleryQuestion) {
 									where += columnname + " LIKE :answer" + i;
-									values.put("answer" + i, "%" + answer + ";%");								
+									values.put(Constants.ANSWER + i, "%" + answer + ";%");								
 								} else { //Rating
 									where += columnname + " LIKE :answer" + i;
-									values.put("answer" + i, "%" + answer + "%");
+									values.put(Constants.ANSWER + i, "%" + answer + "%");
 								}
 														
 								i++;
@@ -1589,7 +1589,7 @@ public class ReportingService {
 	public void addToDoInternal(ToDo todo, String uid, String code) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
-		//check if ToDo table exists
+		//check if table exists
 		try {
 			SQLQuery querytodoexists = sessionReporting.createSQLQuery("SELECT 1 FROM TODO LIMIT 1");
 			querytodoexists.uniqueResult();
@@ -1605,7 +1605,7 @@ public class ReportingService {
 		
 		if (todo == ToDo.NEWCONTRIBUTION || todo == ToDo.NEWTESTCONTRIBUTION)
 		{		
-			//check if there is a similar ToDo
+			//check if there is a similar entry
 			SQLQuery querytodoexists = sessionReporting.createSQLQuery("SELECT ID FROM TODO WHERE TYPE = :type AND UID = :uid LIMIT 1");
 			querytodoexists.setInteger("type", todo.getValue());
 			querytodoexists.setString("uid", uid);

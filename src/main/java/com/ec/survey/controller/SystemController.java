@@ -8,6 +8,7 @@ import com.ec.survey.model.administration.ComplexityParameters;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.service.MailService;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
@@ -117,7 +118,7 @@ public class SystemController extends BasicController {
 			message = new Message();
 		}
 
-		ModelAndView m = new ModelAndView("administration/messages", "message", message);
+		ModelAndView m = new ModelAndView("administration/messages", Constants.MESSAGE, message);
 
 		if (runnermode) {
 			m.addObject("runnermode", true);
@@ -129,7 +130,7 @@ public class SystemController extends BasicController {
 	@RequestMapping
 	public ModelAndView system(HttpServletRequest request, Model model) {
 		Message message = systemService.getMessage();
-		ModelAndView m = new ModelAndView("administration/system", "message", message);
+		ModelAndView m = new ModelAndView("administration/system", Constants.MESSAGE, message);
 		String loggingenabled = settingsService.get(Setting.ActivityLoggingEnabled);
 		m.addObject("logging", loggingenabled);
 		m.addObject("activity", new Activity());
@@ -271,17 +272,17 @@ public class SystemController extends BasicController {
 	}
 
 	@PostMapping(value = "/configureReports")
-	public ModelAndView configureReports(HttpServletRequest request, Locale locale) throws Exception {
+	public ModelAndView configureReports(HttpServletRequest request, Locale locale) throws MessageException {
 		String number = request.getParameter("maxNumber");
 
 		if (number == null || !Tools.isInteger(number)) {
-			throw new Exception("Invalid number");
+			throw new MessageException("Invalid number");
 		}
 
 		String text = request.getParameter("messageText");
 
 		if (text == null || text.length() == 0) {
-			throw new Exception("text must not be empty");
+			throw new MessageException("text must not be empty");
 		}
 
 		String[] emails = request.getParameterValues("messageEmail");
@@ -290,7 +291,7 @@ public class SystemController extends BasicController {
 			for (String email : emails) {
 				if (email.trim().length() > 0) {
 					if (!MailService.isValidEmailAddress(email)) {
-						throw new Exception("invalid email address:" + email);
+						throw new MessageException("invalid email address:" + email);
 					}
 
 					if (recipients.length() > 0) {
@@ -366,13 +367,13 @@ public class SystemController extends BasicController {
 			systemService.save(message);
 			return new ModelAndView("redirect:/administration/system");
 		} catch (NumberFormatException e) {
-			ModelAndView m = new ModelAndView("administration/system", "message", message);
-			m.addObject("error",
+			ModelAndView m = new ModelAndView("administration/system", Constants.MESSAGE, message);
+			m.addObject(Constants.ERROR,
 					resources.getMessage("validation.invalidNumber", null, "This value is not a valid number", locale));
 			return m;
 		} catch (DateTimeParseException e) {
-			ModelAndView m = new ModelAndView("administration/system", "message", message);
-			m.addObject("error",
+			ModelAndView m = new ModelAndView("administration/system", Constants.MESSAGE, message);
+			m.addObject(Constants.ERROR,
 					resources.getMessage("validation.invalidDate", null, "This value is not a valid date", locale));
 			return m;
 		}
@@ -394,7 +395,7 @@ public class SystemController extends BasicController {
 			m = new ModelAndView("redirect:/administration/system");
 		} catch (NumberFormatException e) {
 			m = new ModelAndView("administration/system");
-			m.addObject("error",
+			m.addObject(Constants.ERROR,
 					resources.getMessage("validation.invalidNumber", null, "This value is not a valid number", locale));
 		}
 
