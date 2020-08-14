@@ -2182,4 +2182,8 @@ public class Survey implements java.io.Serializable {
 				? maxNumberContribution
 				: 0L;
 	}
+
+	public void reorderElementsByPosition() {
+		elements.sort(Comparator.comparing(o -> (o.getPosition())));		
+	}
 }

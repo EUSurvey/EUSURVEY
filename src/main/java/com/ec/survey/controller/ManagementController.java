@@ -2083,9 +2083,7 @@ public class ManagementController extends BasicController {
 
 		u = administrationService.setLastEditedSurvey(u, survey.getId());
 		sessionService.setCurrentUser(request, u);
-
-		form.setSurvey(survey);
-		form.setTranslations(translationService.getTranslationsForSurvey(survey.getId(), false));
+		
 		String editorredirect = request.getParameter("editorredirect");
 		if (editorredirect != null && editorredirect.trim().length() > 0) {
 			if (editorredirect.startsWith("/")) {

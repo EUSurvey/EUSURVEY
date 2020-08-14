@@ -3310,6 +3310,7 @@ public class SurveyHelper {
 		}
 
 		if (idsAsString.trim().length() > 0)
+		{
 			for (int i = 0; i < ids.length; i++) {
 				String id = ids[i];
 				if (!id.equalsIgnoreCase("undefined")) {
@@ -3351,7 +3352,10 @@ public class SurveyHelper {
 					}
 				}
 			}
-
+			
+			survey.reorderElementsByPosition();
+		}
+		
 		survey.resetElementsRecursive();
 
 		// post processing for dependencies
