@@ -2102,8 +2102,8 @@ public class RunnerController extends BasicController {
 			String link = parameters.get("link")[0];
 			String id = parameters.get("id")[0];
 
-			Survey survey = surveyService.getSurvey(Integer.parseInt(id), true);
-
+			Survey survey = surveyService.getSurvey(Integer.parseInt(id), false, true, true, false);
+			
 			if (email == null || link == null) {
 				return Constants.ERROR;
 			}
@@ -2119,7 +2119,7 @@ public class RunnerController extends BasicController {
 						serverPrefix);
 
 				mailService.SendHtmlMail(email, sender, sender,
-						resources.getMessage("message.mail.linkDraftSubject", null, request.getLocale()), text, null);
+						resources.getMessage("message.mail.linkDraftSubject", null, new Locale("EN")), text, null);
 			} catch (Exception e) {
 				logger.error("Problem during sending the draft link. To:" + email + " Link:" + link, e);
 				return Constants.ERROR;
