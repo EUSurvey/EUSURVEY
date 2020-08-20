@@ -31,7 +31,7 @@ public class MailService extends BasicService {
 		getMailPool().execute(sender);
 	}
 	
-	public void SendHtmlMail(String to, String from, String reply, String subject, String body, String info) throws Exception {
+	public void SendHtmlMail(String to, String from, String reply, String subject, String body, String info) throws MessageException {
 		SendHtmlMail(to, from, reply, subject, body, null, info);
 	}
 	

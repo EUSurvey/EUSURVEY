@@ -11,6 +11,7 @@ import com.ec.survey.model.survey.ChoiceQuestion;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.Text;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.export.*;
@@ -69,13 +70,6 @@ public class ExportService extends BasicService {
 		}		
 	}
 	
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void markFinished(Export export) {
-		export.setValid(true);
-		export.setState(ExportState.Finished);
-		this.update(export);
-	}
-
 	@Transactional
 	public boolean startExport(Form form, Export export, boolean immediate, MessageSource resources, Locale locale, String uid, String exportFilePath, boolean skipcheckworkerserver) {	
 		
@@ -88,7 +82,7 @@ public class ExportService extends BasicService {
 			{
 				logger.info("calling worker server for export " + export.getId());
 				
-				URL workerurl = new URL(workerserverurl + "worker/start/" + export.getId() + "/" + uid);
+				URL workerurl = new URL(workerserverurl + "worker/start/" + export.getId() + Constants.PATH_DELIMITER + uid);
 				
 				try {				
 					URLConnection wc = workerurl.openConnection();
@@ -157,7 +151,9 @@ public class ExportService extends BasicService {
 				
 				if (export.getEmail() != null)
 				{
-					markFinished(export);
+					export.setValid(true);
+					export.setState(ExportState.Finished);
+					this.update(export);
 					
 					Calendar end = Calendar.getInstance();
 					end.setTime( new Date());
@@ -495,7 +491,7 @@ public class ExportService extends BasicService {
 		return count > 0 ;
 	}
 	
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	public void update(Export export) {
 		Session session = sessionFactory.getCurrentSession();
 		export = (Export) session.merge(export);

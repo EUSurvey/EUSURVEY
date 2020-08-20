@@ -83,7 +83,7 @@ public class CleanupWorker implements Runnable {
 					case "archived":
 						counter += fileService.deleteFilesForArchivedSurveys();
 						break;
-					case "deleted":
+					case Constants.DELETED:
 						counter += fileService.deleteFilesForDeletedElements();
 						break;
 					case "pdfbefore":

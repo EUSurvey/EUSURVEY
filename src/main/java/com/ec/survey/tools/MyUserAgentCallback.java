@@ -24,7 +24,7 @@ public class MyUserAgentCallback extends ITextUserAgent
     @Override
     protected InputStream resolveAndOpenStream(String uri) 
     {    	
-    	if (uri != null && (uri.startsWith(sessionService.getPdfServerPrefix() + "/graphics/") || (!uri.startsWith(sessionService.getPdfServerPrefix()) && !uri.startsWith(sessionService.getContextPath() + "/"))))
+    	if (uri != null && (uri.startsWith(sessionService.getPdfServerPrefix() + "/graphics/") || (!uri.startsWith(sessionService.getPdfServerPrefix()) && !uri.startsWith(sessionService.getContextPath() + Constants.PATH_DELIMITER))))
     	{   	
         	sessionService.initializeProxy();
 	    	

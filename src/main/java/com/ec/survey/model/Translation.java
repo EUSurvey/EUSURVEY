@@ -4,8 +4,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.cache.annotation.Cacheable;
 
-import com.ec.survey.tools.Constants;
-
 import javax.persistence.*;
 
 @SuppressWarnings("rawtypes")

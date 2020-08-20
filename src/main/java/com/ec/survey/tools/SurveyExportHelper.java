@@ -137,7 +137,7 @@ public class SurveyExportHelper {
 				
 				if (image.getUrl() != null && !image.getUrl().contains(sessionService.getContextPath() + "/resources/"))
 				{
-					String fileUID = image.getUrl().substring( image.getUrl().lastIndexOf("/")+1);
+					String fileUID = image.getUrl().substring( image.getUrl().lastIndexOf(Constants.PATH_DELIMITER)+1);
 					File f = fileService.get(fileUID);
 					if (f != null)
 					{
@@ -210,7 +210,7 @@ public class SurveyExportHelper {
 			}
 		}
 	    for (String url :  survey.getBackgroundDocuments().values()) {
-			String uid = url.substring(url.lastIndexOf("/")+1);
+			String uid = url.substring(url.lastIndexOf(Constants.PATH_DELIMITER)+1);
 			
 			File fi = fileService.get(uid);
 			if (fi != null)
@@ -498,7 +498,7 @@ public class SurveyExportHelper {
 	{
 		Object o = HibernateCleaner.clean(session, original);
 		
-		java.io.File f = fileService.createTempFile("survey" + UUID.randomUUID().toString(), ".eus"); 
+		java.io.File f = fileService.createTempFile(Constants.SURVEY + UUID.randomUUID().toString(), ".eus"); 
 		ObjectOutput ObjOut = new ObjectOutputStream(new FileOutputStream(f));			 
 		ObjOut.writeObject(o);			  
 		ObjOut.close();	

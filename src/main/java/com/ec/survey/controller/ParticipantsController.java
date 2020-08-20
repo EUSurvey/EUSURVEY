@@ -87,7 +87,7 @@ public class ParticipantsController extends BasicController {
 		int numberOfAttendees = attendeeService.getNumberOfAttendees(owner, filter);
 		result.addObject("numberOfAttendees", numberOfAttendees);
 		result.addObject("attributeNames", u.getSelectedAttributes());
-		result.addObject("filter", filter);
+		result.addObject(Constants.FILTER, filter);
 		result.addObject("allAttributeNames", attendeeService.getAllAttributes(owner));
 		if (request.getParameter("action") != null) {
 			result.addObject("action", request.getParameter("action"));
@@ -272,7 +272,7 @@ public class ParticipantsController extends BasicController {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@PostMapping(value = "/saveguestlist")
-	public @ResponseBody String saveguestlist(@RequestBody LinkedHashMap json, HttpServletRequest request,
+	public @ResponseBody String saveguestlist(@RequestBody Map json, HttpServletRequest request,
 			Locale locale) {
 		try {
 			User user = sessionService.getCurrentUser(request);

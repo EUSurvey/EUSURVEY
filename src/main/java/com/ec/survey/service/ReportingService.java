@@ -636,7 +636,7 @@ public class ReportingService {
 									{
 										if (addlinks)
 										{
-											v += "<a target='blank' href='" + contextpath + "/files/" + survey.getUniqueId() + "/" + file.getUid() + "'>" + file.getNameForExport() + "</a><br />";
+											v += "<a target='blank' href='" + contextpath + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + file.getUid() + "'>" + file.getNameForExport() + "</a><br />";
 										} else if (forexport) {
 											v += file.getUid() + "|" + file.getNameForExport() + ";";
 										} else {

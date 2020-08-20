@@ -246,7 +246,7 @@ public class RunnerController extends BasicController {
 							for (Translations trans : translations) {
 								if (trans.getLanguage().getCode().equalsIgnoreCase(lang)
 										&& (!trans.getComplete() || !trans.getActive())) {
-									return new ModelAndView("redirect:/runner/invited/" + group + "/" + unique);
+									return new ModelAndView("redirect:/runner/invited/" + group + Constants.PATH_DELIMITER + unique);
 								}
 							}
 
@@ -255,7 +255,7 @@ public class RunnerController extends BasicController {
 							f.setSurvey(translated);
 							f.setLanguage(surveyService.getLanguage(lang));
 						} else {
-							return new ModelAndView("redirect:/runner/invited/" + group + "/" + unique);
+							return new ModelAndView("redirect:/runner/invited/" + group + Constants.PATH_DELIMITER + unique);
 						}
 					}
 
@@ -779,7 +779,7 @@ public class RunnerController extends BasicController {
 			throw new InvalidURLException();
 		}
 
-		return new ModelAndView("runner/contactForm", "survey", survey);
+		return new ModelAndView("runner/contactForm", Constants.SURVEY, survey);
 	}
 
 	@PostMapping(value = "/contactform/{uidorshortname}")
@@ -871,7 +871,7 @@ public class RunnerController extends BasicController {
 		if (isCasOss())
 			modelReturn.getModelMap().put("casoss", true);
 
-		if (request.getRequestURL().toString().endsWith("/")) {
+		if (request.getRequestURL().toString().endsWith(Constants.PATH_DELIMITER)) {
 			modelReturn.setViewName("redirect:/runner/" + uidorshortname);
 			return modelReturn;
 		}
@@ -1252,7 +1252,7 @@ public class RunnerController extends BasicController {
 	private String validateDeleteParameters(String id, String uniqueCode, String fileName, String surveyUID)
 			throws ValidationException, IOException {
 		Validator validator = ESAPI.validator();
-		String folderPath = fileService.getSurveyUploadsFolder(surveyUID, false) + "/" + uniqueCode + "/" + id;
+		String folderPath = fileService.getSurveyUploadsFolder(surveyUID, false) + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
 		String canonicalPath = new File(folderPath).getCanonicalPath();
 		boolean validDirectoryPath = validator.isValidDirectoryPath(
 				"check directory path in RunnerController.delete method", canonicalPath,
@@ -1260,10 +1260,10 @@ public class RunnerController extends BasicController {
 		if (!validDirectoryPath) {
 			throw new ValidationException("Invalid folder path: " + folderPath, "Invalid folder path: " + folderPath);
 		}
-		if (fileName.contains("/") || fileName.contains("\\") || fileName.contains("*")) {
+		if (fileName.contains(Constants.PATH_DELIMITER) || fileName.contains("\\") || fileName.contains("*")) {
 			throw new ValidationException("Invalid file name: " + fileName, "Invalid file name: " + fileName);
 		}
-		return folderPath + "/" + fileName;
+		return folderPath + Constants.PATH_DELIMITER + fileName;
 	}
 
 	@PostMapping(value = "/upload/{id}/{uniqueCode}")
@@ -1317,7 +1317,7 @@ public class RunnerController extends BasicController {
 				}
 			}
 
-			String surveyuid = request.getParameter("survey");
+			String surveyuid = request.getParameter(Constants.SURVEY);
 
 			if (surveyuid == null) {
 				Survey survey = surveyService.getSurveyForQuestion(element.getUniqueId());
@@ -1344,7 +1344,7 @@ public class RunnerController extends BasicController {
 
 			if (!error) {
 				if (!wrongextension) {
-					java.io.File file = new java.io.File(directory.getPath() + "/" + filename);
+					java.io.File file = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + filename);
 
 					int counter = 0;
 
@@ -1546,9 +1546,9 @@ public class RunnerController extends BasicController {
 				ParticipationGroup group = participationService.get(Integer.parseInt(participationGroupId));
 
 				if (group.getType() == ParticipationGroupType.Token) {
-					url = serverPrefix + "runner/" + survey.getUniqueId() + "/" + invitation.getUniqueId();
+					url = serverPrefix + "runner/" + survey.getUniqueId() + Constants.PATH_DELIMITER + invitation.getUniqueId();
 				} else {
-					url = serverPrefix + "runner/invited/" + participationGroupId + "/" + invitation.getUniqueId();
+					url = serverPrefix + "runner/invited/" + participationGroupId + Constants.PATH_DELIMITER + invitation.getUniqueId();
 				}
 			} else if (mode.equalsIgnoreCase("test")) {
 				url = serverPrefix + survey.getShortname() + "/management/test?draftid=" + uid;
@@ -1662,7 +1662,7 @@ public class RunnerController extends BasicController {
 						if (participationGroup != null
 								&& participationGroup.getSurveyUid().equals(draftsurvey.getUniqueId())) {
 							return new ModelAndView(
-									"redirect:/runner/invited/" + participationGroup.getId() + "/" + password);
+									"redirect:/runner/invited/" + participationGroup.getId() + Constants.PATH_DELIMITER + password);
 						}
 					}
 

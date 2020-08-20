@@ -35,6 +35,7 @@ import com.ec.survey.model.Skin;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SurveyService;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
@@ -2064,7 +2065,7 @@ public class Survey implements java.io.Serializable {
 					String fileUID = image.getUrl().replace(contextpath + "/files/", "");
 
 					if (fileUID.length() > 0) {
-						if (fileUID.contains("/")) {
+						if (fileUID.contains(Constants.PATH_DELIMITER)) {
 							fileUID = fileUID.substring(fileUID.indexOf('/') + 1);
 						}
 

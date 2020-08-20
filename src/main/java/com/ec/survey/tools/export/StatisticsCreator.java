@@ -10,6 +10,7 @@ import com.ec.survey.service.AnswerService;
 import com.ec.survey.service.ReportingService;
 import com.ec.survey.service.ReportingServiceProxy;
 import com.ec.survey.service.SurveyService;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.QuizHelper;
 import org.apache.log4j.Logger;
@@ -374,7 +375,7 @@ public class StatisticsCreator implements Runnable {
 								if (!mapRatingQuestion.containsKey(childQuestion.getId()))
 									mapRatingQuestion.put(childQuestion.getId(), new HashMap<>());
 								int count = reportingService.getCount(survey, childQuestion.getUniqueId(),
-										Integer.toString(i) + "/", true, where, values);
+										Integer.toString(i) + Constants.PATH_DELIMITER, true, where, values);
 								mapRatingQuestion.get(childQuestion.getId()).put(i, count);
 							}
 							int count = reportingService.getCount(survey, childQuestion.getUniqueId(), null, false,

@@ -56,7 +56,7 @@ public class IndividualsExecutor implements Runnable {
 
 	    fileService.add(f);
 	    	
-		String link = host + "files/" + uid+ "/";
+		String link = host + "files/" + uid+ Constants.PATH_DELIMITER;
 		
 		String body = "Your export of the individual results of survey " + survey.getShortname() + " has finished.<br /><br />You can download it here: <a href=\"" + link + "\">IndividualResults.zip</a>";
 

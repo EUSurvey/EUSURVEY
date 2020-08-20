@@ -32,6 +32,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -328,9 +329,9 @@ public class PDFService extends BasicService {
 			}
 		}
 
-		for (String code : uploadedFiles.keySet()) {
-			for (String nicename : uploadedFiles.get(code).keySet()) {
-				for (File file : uploadedFiles.get(code).get(nicename)) {
+		for (Entry<String, Map<String, List<File>>> entry : uploadedFiles.entrySet()) {
+			for (String nicename : entry.getValue().keySet()) {
+				for (File file : entry.getValue().get(nicename)) {
 					java.io.File f = fileService.getSurveyFile(survey.getUniqueId(), file.getUid());
 					if (!f.exists()) {
 						f = new java.io.File(fileDir + file.getUid());
@@ -339,7 +340,7 @@ public class PDFService extends BasicService {
 						}
 					}
 					if (f.exists()) {
-						os.putArchiveEntry(new ZipArchiveEntry(code + "/" + nicename + "/" + file.getName()));
+						os.putArchiveEntry(new ZipArchiveEntry(entry.getKey() + Constants.PATH_DELIMITER + nicename + Constants.PATH_DELIMITER + file.getName()));
 						IOUtils.copy(new FileInputStream(f), os);
 						os.closeArchiveEntry();
 					}
@@ -367,7 +368,7 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
-			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparecharts/" + survey.getId() + "/" + exportId, os);
+			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparecharts/" + survey.getId() + Constants.PATH_DELIMITER + exportId, os);
 
 			return target;
 		} catch (Exception ex) {
@@ -402,7 +403,7 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
-			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparestatistics/" + survey.getId() + "/" + exportId, os);
+			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparestatistics/" + survey.getId() + Constants.PATH_DELIMITER + exportId, os);
 
 			return target;
 		} catch (Exception ex) {
@@ -437,7 +438,7 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target);
-			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparestatisticsquiz/" + survey.getId() + "/" + exportId, os);
+			renderer.createPDF(pdfhost + survey.getShortname() + "/management/preparestatisticsquiz/" + survey.getId() + Constants.PATH_DELIMITER + exportId, os);
 
 			return target;
 		} catch (Exception ex) {

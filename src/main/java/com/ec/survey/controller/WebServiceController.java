@@ -1914,7 +1914,7 @@ public class WebServiceController extends BasicController {
 			fileService.add(f);
 
 			survey.getBackgroundDocuments().put(label,
-					servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + uid);
+					servletContext.getContextPath() + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + uid);
 
 			surveyService.update(survey, true);
 			webserviceService.increaseServiceRequest(user.getId());
@@ -2188,7 +2188,7 @@ public class WebServiceController extends BasicController {
 			@RequestParam(required = false, value = "archived") String archived,
 			@RequestParam(required = false, value = "archivedFrom") String archivedFrom,
 			@RequestParam(required = false, value = "archivedTo") String archivedTo,
-			@RequestParam(required = false, value = "deleted") String deleted,
+			@RequestParam(required = false, value = Constants.DELETED) String deleted,
 			@RequestParam(required = false, value = "deletedFrom") String deletedFrom,
 			@RequestParam(required = false, value = "deletedTo") String deletedTo,
 			@RequestParam(required = false, value = "frozen") String frozen,

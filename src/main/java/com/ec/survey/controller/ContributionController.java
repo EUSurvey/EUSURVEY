@@ -132,7 +132,7 @@ public class ContributionController extends BasicController {
 	@RequestMapping(value = "/preparecontribution/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparecontribution(@PathVariable String code, Locale locale, HttpServletRequest request)
 			throws Exception {
-		ModelAndView result = editContribution(code, locale, request, false, false, false);
+		ModelAndView result = editContributionInner(code, locale, request, false, false, false);
 
 		Form f = (Form) result.getModel().get("form");
 		SurveyHelper.calcTableWidths(f.getSurvey(), f);
@@ -144,8 +144,9 @@ public class ContributionController extends BasicController {
 
 	@RequestMapping(value = "/preparedraft/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparedraft(@PathVariable String code, Locale locale, HttpServletRequest request)
-			throws Exception {
-		ModelAndView result = editContribution(code, locale, request, false, false, true);
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
+			InvalidURLException, InterruptedException, IOException {
+		ModelAndView result = editContributionInner(code, locale, request, false, false, true);
 
 		Form f = (Form) result.getModel().get("form");
 		SurveyHelper.calcTableWidths(f.getSurvey(), f);
@@ -157,9 +158,10 @@ public class ContributionController extends BasicController {
 
 	@RequestMapping(value = "/preparepublishedcontribution/{id}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView showforpublishedpdf(@PathVariable String id, Locale locale, HttpServletRequest request)
-			throws Exception {
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
+			InvalidURLException, InterruptedException, IOException {
 		AnswerSet answerSet = answerService.get(Integer.parseInt(id));
-		ModelAndView result = editContribution(answerSet.getUniqueCode(), locale, request, false, false, false);
+		ModelAndView result = editContributionInner(answerSet.getUniqueCode(), locale, request, false, false, false);
 		result.addObject("forpdf", "true");
 		result.addObject("submit", "false");
 
@@ -172,17 +174,19 @@ public class ContributionController extends BasicController {
 
 	@RequestMapping(value = "/editcontribution/{code}/back", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView editcontributionfrombackoffice(@PathVariable String code, Locale locale,
-			HttpServletRequest request) throws Exception {
-		return editContribution(code, locale, request, true, true, false);
+			HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException,
+			NotAgreedToPsException, ForbiddenURLException, InvalidURLException, InterruptedException, IOException {
+		return editContributionInner(code, locale, request, true, true, false);
 	}
 
 	@RequestMapping(value = "/editcontribution/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView editcontribution(@PathVariable String code, Locale locale, HttpServletRequest request)
-			throws Exception {
-		return editContribution(code, locale, request, false, true, false);
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
+			InvalidURLException, InterruptedException, IOException {
+		return editContributionInner(code, locale, request, false, true, false);
 	}
 
-	private ModelAndView editContribution(String code, Locale locale, HttpServletRequest request,
+	private ModelAndView editContributionInner(String code, Locale locale, HttpServletRequest request,
 			boolean fromBackOffice, boolean useNewestSurvey, boolean isdraft)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
 			InvalidURLException, InterruptedException, IOException {

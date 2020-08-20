@@ -8,6 +8,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.machinetranslation.Request;
 import com.ec.survey.model.machinetranslation.RequestTranslationMessage;
 import com.ec.survey.model.machinetranslation.Response;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
@@ -263,7 +264,7 @@ public class MachineTranslationService extends BasicService {
 		
 		logger.debug("MachineTranslationService.translateTranslations Get FTP SOurce " +ftpURI);
 		// construct the return ftp path used in the call back to get translated file
-		if (ftpURI.endsWith("/")){
+		if (ftpURI.endsWith(Constants.PATH_DELIMITER)){
 			ftpTargetPath = ftpURI;
 		}else{
 			ftpTargetPath = ftpURI + '/';

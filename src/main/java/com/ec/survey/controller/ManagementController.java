@@ -356,7 +356,7 @@ public class ManagementController extends BasicController {
 						paging.setItems(surveys);
 
 						result = new ModelAndView("forms/forms", "paging", paging);
-						result.addObject("filter", filter);
+						result.addObject(Constants.FILTER, filter);
 
 						if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null
 								|| filter.getStartFrom() != null || filter.getStartTo() != null
@@ -426,7 +426,7 @@ public class ManagementController extends BasicController {
 				filename = com.ec.survey.tools.FileUtils.cleanFilename(request.getHeader("X-File-Name"));
 			}
 
-			String uuid = UUID.randomUUID().toString().replace("/", "");
+			String uuid = UUID.randomUUID().toString().replace(Constants.PATH_DELIMITER, "");
 			java.io.File file = null;
 			ImportResult result = null;
 			file = fileService.createTempFile("import" + uuid, null);
@@ -743,7 +743,7 @@ public class ManagementController extends BasicController {
 		if (request.getParameter("uuid") != null && request.getParameter("uuid").length() > 0) {
 			// Case 1: import survey
 			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-			String uuid = request.getParameter("uuid").replace("/", "");
+			String uuid = request.getParameter("uuid").replace(Constants.PATH_DELIMITER, "");
 
 			try {
 				java.io.File file = fileService.getUsersFile(u.getId(), "import" + uuid);
@@ -1679,8 +1679,8 @@ public class ManagementController extends BasicController {
 
 			String logo = request.getParameter("logo");
 			if (logo != null && logo.length() > 0) {
-				if (logo.equalsIgnoreCase("deleted")) {
-					String[] oldnew = { survey.getLogo().getName(), "deleted" };
+				if (logo.equalsIgnoreCase(Constants.DELETED)) {
+					String[] oldnew = { survey.getLogo().getName(), Constants.DELETED };
 					activitiesToLog.put(213, oldnew);
 
 					survey.setLogo(null);
@@ -2083,10 +2083,10 @@ public class ManagementController extends BasicController {
 
 		u = administrationService.setLastEditedSurvey(u, survey.getId());
 		sessionService.setCurrentUser(request, u);
-		
+
 		String editorredirect = request.getParameter("editorredirect");
 		if (editorredirect != null && editorredirect.trim().length() > 0) {
-			if (editorredirect.startsWith("/")) {
+			if (editorredirect.startsWith(Constants.PATH_DELIMITER)) {
 				editorredirect = editorredirect.substring(1);
 				editorredirect = editorredirect.substring(editorredirect.indexOf('/') + 1);
 			}
@@ -2318,7 +2318,8 @@ public class ManagementController extends BasicController {
 
 	@RequestMapping(value = "/test", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView test(@PathVariable String shortname, HttpServletRequest request, Locale locale)
-			throws Exception {
+			throws InvalidURLException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException,
+			ForbiddenURLException, FrozenSurveyException {
 		User u = sessionService.getCurrentUser(request);
 		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, true, true, true, false);
 
@@ -2436,8 +2437,7 @@ public class ManagementController extends BasicController {
 			lang = request.getParameter("language.code");
 		}
 
-		AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user,
-				fileService);
+		AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
 
 		String newlang = request.getParameter("newlang");
 		String newlangpost = request.getParameter("newlangpost");
@@ -2446,9 +2446,8 @@ public class ManagementController extends BasicController {
 
 		Set<String> invisibleElements = new HashSet<>();
 
-		Map<Element, String> validation = SurveyHelper.validateAnswerSet(answerSet, answerService,
-				invisibleElements, resources, locale, request.getParameter("draftid"), request, false, user,
-				fileService);
+		Map<Element, String> validation = SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements,
+				resources, locale, request.getParameter("draftid"), request, false, user, fileService);
 
 		if (newlangpost != null && newlangpost.equalsIgnoreCase("true")) {
 			survey = surveyService.getSurvey(survey.getId(), newlang);
@@ -2767,7 +2766,7 @@ public class ManagementController extends BasicController {
 						}
 						filter.setLanguages(languages);
 						filtered = true;
-					} else if (entry.getKey().startsWith("filter")) {
+					} else if (entry.getKey().startsWith(Constants.FILTER)) {
 						String questionId = entry.getKey().substring(6);
 						String[] values = entry.getValue();
 						String value = StringUtils.arrayToDelimitedString(values, ";");
@@ -2906,7 +2905,7 @@ public class ManagementController extends BasicController {
 			filter.setVisibleQuestions(filter.getExportedQuestions());
 		}
 
-		result.addObject("filter", filter);
+		result.addObject(Constants.FILTER, filter);
 
 		if (request != null) {
 			request.getSession().setAttribute("resultsform", form);
@@ -3130,8 +3129,9 @@ public class ManagementController extends BasicController {
 												|| (survey.getIsDraft()
 														&& user.getLocalPrivilegeValue("AccessDraft") > 0)) {
 											s.append("<a target='blank' href='").append(contextpath).append("/files/")
-													.append(survey.getUniqueId()).append("/").append(file.getUid())
-													.append("'>").append(file.getName()).append("</a><br />");
+													.append(survey.getUniqueId()).append(Constants.PATH_DELIMITER)
+													.append(file.getUid()).append("'>").append(file.getName())
+													.append("</a><br />");
 										} else {
 											s.append(file.getName()).append("<br />");
 										}

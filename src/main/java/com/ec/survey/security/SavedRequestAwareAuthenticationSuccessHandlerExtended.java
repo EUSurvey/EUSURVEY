@@ -2,6 +2,8 @@ package com.ec.survey.security;
 
 import com.ec.survey.controller.ManagementController;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.tools.Constants;
+
 import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -26,7 +28,7 @@ public class SavedRequestAwareAuthenticationSuccessHandlerExtended extends Simpl
 			Authentication authentication) throws ServletException, IOException {
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
-		String survey = request.getParameter("survey");
+		String survey = request.getParameter(Constants.SURVEY);
 
 		if (survey != null) {
 			getRedirectStrategy().sendRedirect(request, response, "/runner/" + survey);

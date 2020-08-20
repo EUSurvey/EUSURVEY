@@ -531,7 +531,7 @@ public class TranslationController extends BasicController {
 		try {
 
 			boolean dirty = false;
-			String survey = request.getParameter("survey");
+			String survey = request.getParameter(Constants.SURVEY);
 			int surveyId = Integer.parseInt(survey);
 
 			User u = sessionService.getCurrentUser(request);
