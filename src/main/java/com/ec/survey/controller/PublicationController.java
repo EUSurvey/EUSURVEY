@@ -88,7 +88,7 @@ public class PublicationController extends BasicController {
 				userFilter.setSurveyId(survey.getId());
 
 				for (Entry<String, String[]> entry : parameters.entrySet()) {
-					if (entry.getKey().startsWith("filter")) {
+					if (entry.getKey().startsWith(Constants.FILTER)) {
 						String questionId = entry.getKey().substring(6);
 						String[] values = entry.getValue();
 						String value = StringUtils.arrayToDelimitedString(values, ";");
@@ -137,7 +137,7 @@ public class PublicationController extends BasicController {
 					result.addObject("publication", publication);
 					result.addObject("paging", paging);
 					result.addObject("active", active);
-					result.addObject("filter", userFilter);
+					result.addObject(Constants.FILTER, userFilter);
 					result.addObject("publicationFilter", publicationFilter);
 					result.addObject("filtered", filtered);
 
@@ -212,8 +212,8 @@ public class PublicationController extends BasicController {
 	public @ResponseBody Map<String, String> individualJSON(HttpServletRequest request, HttpServletResponse response) {
 		Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		String surveyid = "";
-		if (parameters.containsKey("survey"))
-			surveyid = parameters.get("survey")[0];
+		if (parameters.containsKey(Constants.SURVEY))
+			surveyid = parameters.get(Constants.SURVEY)[0];
 		String counter = "";
 		if (parameters.containsKey("counter"))
 			counter = parameters.get("counter")[0];
@@ -455,7 +455,7 @@ public class PublicationController extends BasicController {
 				taskExecutor.execute(export);
 				return "success";
 			} else {
-				logger.error("try to export published results: " + type + "/" + format + "/" + id);
+				logger.error("try to export published results: " + type + Constants.PATH_DELIMITER + format + Constants.PATH_DELIMITER + id);
 			}
 
 		} catch (Exception e) {

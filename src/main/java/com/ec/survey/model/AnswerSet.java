@@ -4,7 +4,6 @@ import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Matrix;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.base.File;
-import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -343,7 +342,7 @@ public class AnswerSet implements java.io.Serializable {
 
 	@Transient
 	public List<String> getAllFiles() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for (Answer answer : answers) {
 			if (answer.getFiles() != null) {
 				for (File file : answer.getFiles()) {

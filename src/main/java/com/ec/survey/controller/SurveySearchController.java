@@ -59,13 +59,13 @@ public class SurveySearchController extends BasicController {
 
 		result.addObject("archivedfilter", new ArchiveFilter());
 
-		if (request.getParameter("deleted") != null) {
-			result.addObject("deleted", true);
+		if (request.getParameter(Constants.DELETED) != null) {
+			result.addObject(Constants.DELETED, true);
 			SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lstdeletedfilter");
 			if (filter == null)
 				filter = new SurveyFilter();
 			result.addObject("deletedfilter", filter);
-			result.addObject("mode", "deleted");
+			result.addObject("mode", Constants.DELETED);
 		} else {
 			result.addObject("deletedfilter", new SurveyFilter());
 		}
@@ -130,7 +130,7 @@ public class SurveySearchController extends BasicController {
 			}
 		}
 
-		result.addObject("filter", sfilter);
+		result.addObject(Constants.FILTER, sfilter);
 
 		List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
 		result.addObject("domains", domains);
@@ -168,7 +168,7 @@ public class SurveySearchController extends BasicController {
 			}
 
 			request.getSession().setAttribute("lstarchivefilter", archivedFilter);
-		} else if (mode.equalsIgnoreCase("deleted")) {
+		} else if (mode.equalsIgnoreCase(Constants.DELETED)) {
 			deletedSurveysFilter.setUser(sessionService.getCurrentUser(request));
 			deletedSurveysFilter.setId(request.getParameter("deletedid"));
 			deletedSurveysFilter.setUid(request.getParameter("deleteduid"));
@@ -230,7 +230,7 @@ public class SurveySearchController extends BasicController {
 
 		ModelAndView result = new ModelAndView("administration/surveysearch");
 		result.addObject("mode", mode);
-		result.addObject("filter", filter);
+		result.addObject(Constants.FILTER, filter);
 		result.addObject("archivedfilter", archivedFilter);
 		result.addObject("deletedfilter", deletedSurveysFilter);
 		result.addObject("reportedfilter", reportedFilter);

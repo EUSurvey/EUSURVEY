@@ -481,7 +481,7 @@ public class HomeController extends BasicController {
 		return basicwelcome(request);
 	}
 	
-	@RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.HEAD})
+	@RequestMapping(value = Constants.PATH_DELIMITER, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView home(HttpServletRequest request) {
 		request.getSession().setAttribute("serverprefix",serverPrefix);
 		return basicwelcome(request);
@@ -684,7 +684,7 @@ public class HomeController extends BasicController {
 		
 		ModelAndView result = new ModelAndView("home/publicsurveys", "paging", paging);    	
     	result.addObject("isPublic", true);
-    	result.addObject("filter", filter);
+    	result.addObject(Constants.FILTER, filter);
     	
     	//get most popular surveys
     	SurveyFilter popfilter = new SurveyFilter();
@@ -825,7 +825,7 @@ public class HomeController extends BasicController {
 		model.addAttribute("lang", locale.getLanguage());
 		model.addAttribute("runnermode", true);
 		
-		String surveyid = request.getParameter("survey");
+		String surveyid = request.getParameter(Constants.SURVEY);
 		if (surveyid == null || surveyid.trim().length() == 0)
 		{
 			throw new InvalidURLException();

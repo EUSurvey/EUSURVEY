@@ -4,6 +4,7 @@ import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Ucs2Utf8;
 
@@ -167,7 +168,7 @@ public class ActivityController extends BasicController {
 		ModelAndView result = new ModelAndView("management/activity", "paging", paging);
 		result.addObject("allActivityIds", Setting.ActivityLoggingIds());
 		
-		result.addObject("filter", filter);
+		result.addObject(Constants.FILTER, filter);
 		result.addObject("filtered", filtered);
 		result.addObject("allUsers", allUsers);
 		

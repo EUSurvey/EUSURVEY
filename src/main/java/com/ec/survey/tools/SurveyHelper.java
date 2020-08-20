@@ -99,7 +99,7 @@ public class SurveyHelper {
 							// find temporary directory
 							java.io.File rootfolder = fileService.getSurveyUploadsFolder(survey.getUniqueId(), false);
 							java.io.File directory = new java.io.File(
-									rootfolder.getPath() + "/" + uniqueCode + "/" + question.getId());
+									rootfolder.getPath() + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + question.getId());
 
 							if (directory.exists()) {
 								// create File items
@@ -806,7 +806,7 @@ public class SurveyHelper {
 
 				try {
 					java.io.File folder = fileService.getSurveyFilesFolder(answerSet.getSurvey().getUniqueId());
-					in = new FileInputStream(folder.getPath() + "/" + file.getUid());
+					in = new FileInputStream(folder.getPath() + Constants.PATH_DELIMITER + file.getUid());
 
 					int questionId = answer.getQuestionId();
 
@@ -816,10 +816,10 @@ public class SurveyHelper {
 					}
 
 					java.io.File directory = new java.io.File(
-							fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(), false) + "/"
-									+ answerSet.getUniqueCode() + "/" + questionId);
+							fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(), false) + Constants.PATH_DELIMITER
+									+ answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
 					directory.mkdirs();
-					java.io.File fileOut = new java.io.File(directory.getPath() + "/" + file.getName());
+					java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
 					out = new FileOutputStream(fileOut);
 
 					IOUtils.copy(in, out);
@@ -850,7 +850,7 @@ public class SurveyHelper {
 				try {
 					in = new FileInputStream(file);
 
-					out = new FileOutputStream(new java.io.File(folder.getPath() + "/" + uid));
+					out = new FileOutputStream(new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + uid));
 
 					IOUtils.copy(in, out);
 
@@ -1042,7 +1042,7 @@ public class SurveyHelper {
 		image.setWidth(width);
 
 		String url = getString(parameterMap, "url", id, servletContext);
-		if (!url.contains("/"))
+		if (!url.contains(Constants.PATH_DELIMITER))
 			url = servletContext.getContextPath() + "/files/" + url;
 		if (log220 && !url.equals(image.getUrl())) {
 			oldValues += " url: " + image.getUrl();

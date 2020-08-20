@@ -69,21 +69,21 @@ public class FileManagementController extends BasicController {
 		String mode = (String)request.getSession().getAttribute("lastfilemode");
 		if (mode == null) mode = "surveys";
 		
-		if (request.getParameter("deleted") == null)
+		if (request.getParameter(Constants.DELETED) == null)
 		{		
 			filter.setSurveyFiles(true);
 			filter.setSystemExports(true);
 			filter.setTemporaryFiles(true);
 		}
-		result.addObject("filter", filter);
+		result.addObject(Constants.FILTER, filter);
 		result.addObject("mode", mode);
 		
-		if (request.getParameter("deleted") != null)
+		if (request.getParameter(Constants.DELETED) != null)
 		{
-			if (!request.getParameter("deleted").equalsIgnoreCase(Constants.ERROR))
+			if (!request.getParameter(Constants.DELETED).equalsIgnoreCase(Constants.ERROR))
 			{
-				result.addObject("info", resources.getMessage("info.FileDeleted", new Object[] {request.getParameter("deleted")}, "Deleted", locale));
-			} else if (request.getParameter("deleted").equalsIgnoreCase(Constants.ERROR))
+				result.addObject("info", resources.getMessage("info.FileDeleted", new Object[] {request.getParameter(Constants.DELETED)}, "Deleted", locale));
+			} else if (request.getParameter(Constants.DELETED).equalsIgnoreCase(Constants.ERROR))
 			{
 				result.addObject(Constants.ERROR, resources.getMessage("error.OperationFailed", null, "Delete error", locale));
 			}
@@ -105,7 +105,7 @@ public class FileManagementController extends BasicController {
 			paging.setEnableGoToLastPage(false);
 								
 			result.addObject("paging", paging);
-			result.addObject("filter", filter);
+			result.addObject(Constants.FILTER, filter);
 			
 		} else if (request.getParameter("recreationstarted") != null)
 		{
@@ -264,7 +264,7 @@ public class FileManagementController extends BasicController {
 			} else {
 				result.addObject(Constants.ERROR, "Please select at least one file");
 			}
-			result.addObject("filter", inputFilter);
+			result.addObject(Constants.FILTER, inputFilter);
 			result.addObject("mode", mode);
 			return result;
 		}
@@ -293,7 +293,7 @@ public class FileManagementController extends BasicController {
 		}
 				
 		result.addObject("paging", paging);
-		result.addObject("filter", inputFilter);
+		result.addObject(Constants.FILTER, inputFilter);
 		result.addObject("mode", mode);
 		request.getSession().setAttribute("lastfilesfilter", inputFilter);
 		

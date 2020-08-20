@@ -792,7 +792,7 @@ public class SurveyCreator {
 	    	logger.warn("creating stress test surveys");
 	    	inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/EC/StressTest10.eus");
 	    	
-	    	String uuid = UUID.randomUUID().toString().replace("/", "");
+	    	String uuid = UUID.randomUUID().toString().replace(Constants.PATH_DELIMITER, "");
 	        java.io.File file = null;
 	        ImportResult result = null;
         	file = fileService.createTempFile("import" + uuid, null); 	        	        
@@ -849,7 +849,7 @@ public class SurveyCreator {
 	private static void createStressTestSurvey(String path, User analyst, ServletContext servletContext, String fileDir, SurveyService surveyService, FileService fileService) throws Exception {
 		InputStream inputStream = servletContext.getResourceAsStream(path);
     	
-    	String uuid = UUID.randomUUID().toString().replace("/", "");
+    	String uuid = UUID.randomUUID().toString().replace(Constants.PATH_DELIMITER, "");
         java.io.File file = null;
         ImportResult result = null;
     	file = fileService.createTempFile("import" + uuid, null); 	        	        

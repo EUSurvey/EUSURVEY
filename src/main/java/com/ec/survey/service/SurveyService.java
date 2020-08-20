@@ -3693,7 +3693,7 @@ public class SurveyService extends BasicService {
 		} else {
 			sqlquery = session.createSQLQuery(
 					"SELECT e.type, s.SURVEY_UID, s.SURVEYNAME FROM ELEMENTS e JOIN SURVEYS_ELEMENTS se ON se.elements_ID = e.ID JOIN SURVEYS s ON s.SURVEY_ID = se.SURVEYS_SURVEY_ID WHERE URL = :url");
-			sqlquery.setString("url", contextpath + "/files/" + surveyuid + "/" + file.getUid());
+			sqlquery.setString("url", contextpath + "/files/" + surveyuid + Constants.PATH_DELIMITER + file.getUid());
 			data = sqlquery.setMaxResults(1).list();
 			if (!data.isEmpty()) {
 				Object[] values = (Object[]) data.get(0);
@@ -3789,7 +3789,7 @@ public class SurveyService extends BasicService {
 				if (convertedUIDs.containsKey(olduid)) {
 					newuid = convertedUIDs.get(olduid);
 					survey.getBackgroundDocuments().put(label,
-							servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + newuid);
+							servletContext.getContextPath() + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + newuid);
 					result.put(olduid, newuid);
 				} else {
 					try {
@@ -3806,7 +3806,7 @@ public class SurveyService extends BasicService {
 						f.setUid(newuid);
 						fileService.add(f);
 						survey.getBackgroundDocuments().put(label,
-								servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + newuid);
+								servletContext.getContextPath() + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + newuid);
 						result.put(olduid, newuid);
 					} catch (IOException ex) {
 						if (allowMissingFiles) {
@@ -3904,7 +3904,7 @@ public class SurveyService extends BasicService {
 						if (convertedUIDs.containsKey(fileUID)) {
 							newuid = convertedUIDs.get(fileUID);
 							image.setUrl(
-									servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + newuid);
+									servletContext.getContextPath() + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + newuid);
 							result.put(fileUID, newuid);
 						} else {
 							try {
@@ -3919,7 +3919,7 @@ public class SurveyService extends BasicService {
 								File f2 = f.copy(fileDir);
 								f2.setUid(newuid);
 								fileService.add(f2);
-								image.setUrl(servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/"
+								image.setUrl(servletContext.getContextPath() + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER
 										+ newuid);
 								result.put(fileUID, newuid);
 							} catch (IOException ex) {
@@ -4089,7 +4089,7 @@ public class SurveyService extends BasicService {
 
 		if (sort.equalsIgnoreCase("created")) {
 			sql += "s.SURVEY_CREATED DESC";
-		} else if (sort.equalsIgnoreCase("edited")) {
+		} else if (sort.equalsIgnoreCase(Constants.EDITED)) {
 			sql += "s.SURVEY_UPDATED DESC";
 		} else {
 			sql += "s.SURVEYNAME ASC";
@@ -4413,13 +4413,13 @@ public class SurveyService extends BasicService {
 			}
 			if (survey.getPublication().isShowStatistics()) {
 				if (!first)
-					s.append("/");
+					s.append(Constants.PATH_DELIMITER);
 				s.append("Statistics");
 				first = false;
 			}
 			if (survey.getPublication().isShowSearch()) {
 				if (!first)
-					s.append("/");
+					s.append(Constants.PATH_DELIMITER);
 				s.append("Search");
 			}
 		}

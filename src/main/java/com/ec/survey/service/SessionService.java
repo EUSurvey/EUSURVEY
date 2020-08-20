@@ -104,8 +104,8 @@ public class SessionService extends BasicService {
 	public Form getForm(HttpServletRequest request, String shortname, boolean loadReplies, boolean synchronize)
 			throws Exception {
 		// first check if a survey id was specified as url parameter
-		if (request.getParameter("survey") != null) {
-			String id = request.getParameter("survey");
+		if (request.getParameter(Constants.SURVEY) != null) {
+			String id = request.getParameter(Constants.SURVEY);
 			User user = getCurrentUser(request);
 			Survey survey = surveyService.getSurvey(Integer.parseInt(id), false, true);
 			if (survey != null)

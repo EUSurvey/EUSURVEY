@@ -217,7 +217,7 @@ public class AnswerService extends BasicService {
 				try {
 					java.io.File folder = fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(),
 							false);
-					java.io.File directory = new java.io.File(folder.getPath() + "/" + answerSet.getUniqueCode());
+					java.io.File directory = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + answerSet.getUniqueCode());
 					FileUtils.delete(directory);
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
@@ -687,7 +687,7 @@ public class AnswerService extends BasicService {
 										answerPart = "(a" + joincounter + ".PA_UID like :answerUid" + i + ")";
 										values.put("answerUid" + i, answerUid);
 									} else {
-										if (answer.contains("/")) {
+										if (answer.contains(Constants.PATH_DELIMITER)) {
 											answerPart = "a" + joincounter + ".VALUE LIKE :answer" + i;
 											values.put(Constants.ANSWER + i, "%" + answer + "%");
 										} else {
@@ -2044,9 +2044,9 @@ public class AnswerService extends BasicService {
 			ParticipationGroup group = participationService.get(invitation.getParticipationGroupId());
 
 			if (group.getType() == ParticipationGroupType.Token) {
-				url = serverPrefix + "runner/" + survey.getUniqueId() + "/" + invitation.getUniqueId();
+				url = serverPrefix + "runner/" + survey.getUniqueId() + Constants.PATH_DELIMITER + invitation.getUniqueId();
 			} else {
-				url = serverPrefix + "runner/invited/" + invitation.getParticipationGroupId() + "/"
+				url = serverPrefix + "runner/invited/" + invitation.getParticipationGroupId() + Constants.PATH_DELIMITER
 						+ invitation.getUniqueId();
 			}
 

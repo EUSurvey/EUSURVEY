@@ -62,7 +62,7 @@ public class FileExportCreator implements Runnable {
 	private String getFileName(java.io.File source, FileResult fileresult) {
 		String name = source.getName();
 		if (fileresult != null && fileresult.getFileName() != null && fileresult.getFileName().length() > 0
-				&& !name.startsWith(Constants.ANSWER) && !name.startsWith("survey") && !name.startsWith("export")) {
+				&& !name.startsWith(Constants.ANSWER) && !name.startsWith(Constants.SURVEY) && !name.startsWith("export")) {
 			String name2 = fileresult.getFileName();
 			if (!name.equals(name2)) {
 				name += "_" + name2;
@@ -110,7 +110,7 @@ public class FileExportCreator implements Runnable {
 			os.close();
 			out.close();
 
-			String path = host + "administration/files/download/" + user.getId() + "/" + tempuid;
+			String path = host + "administration/files/download/" + user.getId() + Constants.PATH_DELIMITER + tempuid;
 			String body = "The file download has been created. You can download it here:<br /><a href='" + path + "'>"
 					+ path + "</a>";
 

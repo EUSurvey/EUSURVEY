@@ -8,6 +8,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.mapping.PaginationMapper;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -86,7 +87,7 @@ public class SurveyController extends BasicController {
 		paging.setItems(surveys);
 		
 		ModelAndView result = new ModelAndView("forms/forms", "paging", paging);
-    	result.addObject("filter", filter);
+    	result.addObject(Constants.FILTER, filter);
     	
     	if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null || filter.getStartFrom() != null || filter.getStartTo() != null || filter.getEndFrom() != null || filter.getEndTo() != null)
     	{
@@ -95,7 +96,7 @@ public class SurveyController extends BasicController {
     	
     	if (deleted)
     	{
-    		result.addObject("deleted", true);
+    		result.addObject(Constants.DELETED, true);
     		result.addObject("deletedShortname", shortname);
     		
     		if (currentlyloaded)

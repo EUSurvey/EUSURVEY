@@ -193,7 +193,7 @@ public class AdministrationService extends BasicService {
 		String login = user.getLogin();
 		String code = UUID.randomUUID().toString();
 		
-		String url = host + "deleteaccount/" + user.getId() + "/" + code;
+		String url = host + "deleteaccount/" + user.getId() + Constants.PATH_DELIMITER + code;
 		
 		StringBuilder body = new StringBuilder();
 		body.append("Dear ").append(user.getName()).append(",<br /><br />Please confirm the deletion of your account by clicking the following link:<br /><br/>");
@@ -397,7 +397,7 @@ public class AdministrationService extends BasicService {
 		user.setValidationCodeGeneration(new Date());
 		session.update(user);
 
-		String link = host + "validate/" + user.getId() + "/" + user.getValidationCode();
+		String link = host + "validate/" + user.getId() + Constants.PATH_DELIMITER + user.getValidationCode();
 
 		String body = "Dear " + user.getLogin() + ",<br /><br />Please validate your account by clicking the link below: <br /><br /> <a href=\"" + link + "\">" + link + "</a>";
 
@@ -412,7 +412,7 @@ public class AdministrationService extends BasicService {
 			user.setValidationCodeGeneration(new Date());
 			session.update(user);
 
-			String link = host + "validateNewEmail/" + user.getId() + "/" + user.getValidationCode();
+			String link = host + "validateNewEmail/" + user.getId() + Constants.PATH_DELIMITER + user.getValidationCode();
 
 			String body = "Dear " + user.getLogin() + ",<br /><br />Please confirm your email change by clicking the link below: <br /><br /> <a href=\"" + link + "\">" + link + "</a>";
 

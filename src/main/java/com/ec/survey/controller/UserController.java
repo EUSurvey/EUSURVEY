@@ -63,7 +63,7 @@ public class UserController extends BasicController {
     	
     	List<Role> roles = administrationService.getAllRoles();
     	m.addObject("ExistingRoles", roles);
-    	m.addObject("filter", filter);
+    	m.addObject(Constants.FILTER, filter);
     	
     	UsersConfiguration usersConfiguration = administrationService.getUsersConfiguration(sessionService.getCurrentUser(request).getId());
     	if (usersConfiguration == null) usersConfiguration = new UsersConfiguration();

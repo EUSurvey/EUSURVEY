@@ -312,7 +312,7 @@ public class AdministrationController extends BasicController {
 		{
 			survey = "-";
 		}
-		result.addObject("survey", survey);
+		result.addObject(Constants.SURVEY, survey);
 		
 		return result;
 	}

@@ -29,7 +29,7 @@ public class QuizHelper {
 			{
 				if (currentSectionUid != null)
 				{
-					result.getSectionScores().put(currentSectionUid, currentSectionScore + "/" + currentSectionMaxScore);
+					result.getSectionScores().put(currentSectionUid, currentSectionScore + Constants.PATH_DELIMITER + currentSectionMaxScore);
 				}
 				currentSectionUid = element.getUniqueId();
 				currentSectionScore = 0;
@@ -426,7 +426,7 @@ public class QuizHelper {
 		
 		if (currentSectionUid != null)
 		{
-			result.getSectionScores().put(currentSectionUid, currentSectionScore + "/" + currentSectionMaxScore);
+			result.getSectionScores().put(currentSectionUid, currentSectionScore + Constants.PATH_DELIMITER + currentSectionMaxScore);
 		}
 		
 		result.setScore(score);

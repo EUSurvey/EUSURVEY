@@ -455,7 +455,7 @@ public class XlsExportCreator extends ExportCreator {
 
 							if (f.exists()) {
 								os.putArchiveEntry(
-										new ZipArchiveEntry(code + "/" + questionNiceName + "/" + file.getName()));
+										new ZipArchiveEntry(code + Constants.PATH_DELIMITER + questionNiceName + Constants.PATH_DELIMITER + file.getName()));
 								IOUtils.copy(new FileInputStream(f), os);
 								os.closeArchiveEntry();
 							}
@@ -650,7 +650,7 @@ public class XlsExportCreator extends ExportCreator {
 												.get(uploadQuestionNicenames.get(question.getUniqueId())).add(file);
 
 										cellValue.append((cellValue.length() > 0) ? ";" : "").append(file.getName());
-										linkValue = answerrow.get(0) + "/"
+										linkValue = answerrow.get(0) + Constants.PATH_DELIMITER
 												+ uploadQuestionNicenames.get(question.getUniqueId());
 									}
 								}
@@ -681,7 +681,7 @@ public class XlsExportCreator extends ExportCreator {
 												.get(uploadQuestionNicenames.get(question.getUniqueId())).add(file);
 
 										cellValue.append((cellValue.length() > 0) ? ";" : "").append(file.getName());
-										linkValue = answerSet.getUniqueCode() + "/"
+										linkValue = answerSet.getUniqueCode() + Constants.PATH_DELIMITER
 												+ uploadQuestionNicenames.get(question.getUniqueId());
 									}
 								}
@@ -1287,7 +1287,7 @@ public class XlsExportCreator extends ExportCreator {
 						for (int i = 1; i <= rating.getNumIcons(); i++) {
 							row = sheet.createRow(rowIndex++);
 
-							cellValue = i + "/" + rating.getNumIcons();
+							cellValue = i + Constants.PATH_DELIMITER + rating.getNumIcons();
 
 							row.createCell(0).setCellValue(cellValue);
 

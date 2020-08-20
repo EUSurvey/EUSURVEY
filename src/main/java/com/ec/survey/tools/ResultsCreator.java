@@ -265,11 +265,11 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 						}
 
 						if (answerPDF != null) {
-							os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/" + uniqueCode + ".pdf"));
+							os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + Constants.PATH_DELIMITER + uniqueCode + ".pdf"));
 							IOUtils.copy(new FileInputStream(answerPDF), os);
 							os.closeArchiveEntry();
 						} else {
-							os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/" + uniqueCode + ".error.txt"));
+							os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + Constants.PATH_DELIMITER + uniqueCode + ".error.txt"));
 							os.write("The PDF file could not be generated".getBytes());
 							os.closeArchiveEntry();
 							invalidCounter++;
@@ -281,7 +281,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 							}
 						}
 					} else {
-						os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + "/" + uniqueCode + ".error.txt"));
+						os.putArchiveEntry(new ZipArchiveEntry(uniqueCode + Constants.PATH_DELIMITER + uniqueCode + ".error.txt"));
 						os.write("The PDF file could not be generated".getBytes());
 						os.closeArchiveEntry();
 						invalidCounter++;
@@ -319,7 +319,7 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 						}
 
 						os.putArchiveEntry(new ZipArchiveEntry(
-								uniqueCode + "/Uploaded Files/" + folderName + "/" + uploadedFile.getName()));
+								uniqueCode + "/Uploaded Files/" + folderName + Constants.PATH_DELIMITER + uploadedFile.getName()));
 						IOUtils.copy(new FileInputStream(uploadedFileIO), os);
 						os.closeArchiveEntry();
 					}

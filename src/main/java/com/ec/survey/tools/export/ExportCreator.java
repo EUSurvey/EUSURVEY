@@ -5,6 +5,7 @@ import com.ec.survey.model.ExportCache;
 import com.ec.survey.model.Export.ExportState;
 import com.ec.survey.model.Form;
 import com.ec.survey.service.*;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.FileUtils;
 
 import org.apache.commons.io.IOUtils;
@@ -166,11 +167,11 @@ public abstract class ExportCreator implements Runnable {
 				fileService.addNewTransaction(f);			
 				fileService.saveNewTransaction(ec);
 				
-				String link = host + "files/" + uid + "/";		
+				String link = host + "files/" + uid + Constants.PATH_DELIMITER;		
 				
 				if (export.getSurvey() != null)
 				{
-					link = host + "files/" + export.getSurvey().getUniqueId() + "/" + uid + "/";		
+					link = host + "files/" + export.getSurvey().getUniqueId() + Constants.PATH_DELIMITER + uid + Constants.PATH_DELIMITER;		
 				}
 								
 				String body = "Dear EUSurvey user,<br /><br />The export you requested from the published results of the survey '<b>" + export.getSurvey().cleanTitle() + "</b>' is now finished. You can download it here:<br /><br /> <a href=\"" + link + "\">" + name + "</a><br /><br />Your EUSurvey team";

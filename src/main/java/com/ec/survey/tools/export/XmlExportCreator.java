@@ -6,6 +6,7 @@ import com.ec.survey.model.Export;
 import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.exception.TooManyFiltersException;
@@ -506,7 +507,7 @@ public class XmlExportCreator extends ExportCreator {
 
 					if (f.exists()) {
 						os.putArchiveEntry(
-								new ZipArchiveEntry(entry.getKey() + "/" + file.getUid() + "_" + file.getName()));
+								new ZipArchiveEntry(entry.getKey() + Constants.PATH_DELIMITER + file.getUid() + "_" + file.getName()));
 						IOUtils.copy(new FileInputStream(f), os);
 						os.closeArchiveEntry();
 					}

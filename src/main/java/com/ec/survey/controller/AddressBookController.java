@@ -105,7 +105,7 @@ public class AddressBookController extends BasicController {
     	}
     	result.addObject("ownerSelected",ownerSelected);    	
     	result.addObject("allAttributeNames", attendeeService.getAllAttributes(ownerId));    	
-    	result.addObject("filter", filter);
+    	result.addObject(Constants.FILTER, filter);
     	result.addObject("uploadItem", new UploadItem());
     	request.getSession().setAttribute("attendees-paging", paging.clean());
     	request.getSession().setAttribute("attendees-filter", filter);    	
@@ -116,11 +116,11 @@ public class AddressBookController extends BasicController {
     	if (request.getParameter("added") != null)
     	{
     		result.addObject("added", true);
-    	} else if (request.getParameter("edited") != null && request.getParameter("edited").length() > 0)
+    	} else if (request.getParameter(Constants.EDITED) != null && request.getParameter(Constants.EDITED).length() > 0)
 		{
-			if (!request.getParameter("edited").equalsIgnoreCase("batch"))
+			if (!request.getParameter(Constants.EDITED).equalsIgnoreCase("batch"))
 			{
-				String[] idsstring = request.getParameter("edited").split(";");
+				String[] idsstring = request.getParameter(Constants.EDITED).split(";");
 				for (String id: idsstring)
 				{
 					ids.add(Integer.parseInt(id));
@@ -128,10 +128,10 @@ public class AddressBookController extends BasicController {
 			} else {
 				result.addObject("editedAttendeesBatch", true);
 			}
-		} else if (request.getParameter("deleted") != null && request.getParameter("deleted").length() > 0) {
-			if (!request.getParameter("deleted").equalsIgnoreCase("batch"))
+		} else if (request.getParameter(Constants.DELETED) != null && request.getParameter(Constants.DELETED).length() > 0) {
+			if (!request.getParameter(Constants.DELETED).equalsIgnoreCase("batch"))
 			{
-				String[] idsstring = request.getParameter("deleted").split(";");
+				String[] idsstring = request.getParameter(Constants.DELETED).split(";");
 				for (String id: idsstring)
 				{
 					ids.add(Integer.parseInt(id));
@@ -718,7 +718,7 @@ public class AddressBookController extends BasicController {
          	         		         				
              	result = new ModelAndView("addressbook/addressbook", "paging", paging);
              	
-             	result.addObject("filter", filter);
+             	result.addObject(Constants.FILTER, filter);
              	result.addObject("uploadItem", new UploadItem());
              	
              	result.addObject("fileheaders", fileheaders);
@@ -913,7 +913,7 @@ public class AddressBookController extends BasicController {
  		allAttributes.add(0, new AttributeName(-1, "Name"));
  		allAttributes.add(0, new AttributeName(-1, "Email"));
     	result.addObject("allAttributeNames", allAttributes);
-     	result.addObject("filter", filter);
+     	result.addObject(Constants.FILTER, filter);
      	result.addObject("messages", messages);
      	result.addObject("uploadItem", new UploadItem());
           	
@@ -1072,7 +1072,7 @@ public class AddressBookController extends BasicController {
  		ModelAndView result = new ModelAndView("addressbook/addressbook", "paging", paging);
  		result.addObject("attributeNames", user.getSelectedAttributes());
     	result.addObject("allAttributeNames", attendeeService.getAllAttributes(ownerId));
-     	result.addObject("filter", filter);
+     	result.addObject(Constants.FILTER, filter);
      	result.addObject("messages", messages);
      	
      	result.addObject("target", "results");
@@ -1244,7 +1244,7 @@ public class AddressBookController extends BasicController {
     	ModelAndView result = new ModelAndView("addressbook/addressbook", "paging", paging);
     	result.addObject("attributeNames", user.getSelectedAttributes());
     	result.addObject("allAttributeNames", attendeeService.getAllAttributes(ownerId));
-    	result.addObject("filter", filter);
+    	result.addObject(Constants.FILTER, filter);
     	result.addObject("uploadItem", new UploadItem());
     	
     	request.getSession().setAttribute("attendees-paging", paging.clean());
@@ -1287,7 +1287,7 @@ public class AddressBookController extends BasicController {
     	ModelAndView result = new ModelAndView("addressbook/addressbook", "paging", paging);
     	result.addObject("attributeNames", user.getSelectedAttributes());
     	result.addObject("allAttributeNames", attendeeService.getAllAttributes(ownerId));
-    	result.addObject("filter", filter);
+    	result.addObject(Constants.FILTER, filter);
     	result.addObject("attendee", attendee);
     	result.addObject("uploadItem", new UploadItem());
     	

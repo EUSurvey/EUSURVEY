@@ -137,7 +137,7 @@ public class LoginLogoutController extends BasicController {
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		String ticket = request.getParameter("ticket");
-		String shortname = request.getParameter("survey");
+		String shortname = request.getParameter(Constants.SURVEY);
 		String draftid = request.getParameter("draftid");
 		String surveylanguage = request.getParameter("surveylanguage");
 		

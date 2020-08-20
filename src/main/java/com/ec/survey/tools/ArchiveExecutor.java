@@ -177,7 +177,7 @@ public class ArchiveExecutor implements Runnable {
 		
 		java.io.File zip = surveyService.exportSurvey(survey.getShortname(), surveyService, true);
 				
-		target = new java.io.File(folder.getPath() + "/" + survey.getUniqueId());
+		target = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + survey.getUniqueId());
 		
 		if (target.exists())
 		{
@@ -190,11 +190,11 @@ public class ArchiveExecutor implements Runnable {
 		{
 			logger.info("archiving PDF of survey " + survey.getShortname());
 			
-			pdfService.createSurveyPDF(published, published.getLanguage().getCode(), new java.io.File(folder.getPath() + "/" + published.getUniqueId() + ".pdf"));
+			pdfService.createSurveyPDF(published, published.getLanguage().getCode(), new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + ".pdf"));
 			
 			logger.info("archiving results (Excel) of survey " + survey.getShortname());
 			
-			exportService.startExport(form, export, true, resources,new Locale("en"), null, folder.getPath() + "/" + published.getUniqueId() + "results.xls", true);
+			exportService.startExport(form, export, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "results.xls", true);
 			if (export.getState() == ExportState.Failed)
 			{
 				throw new MessageException("export failed, abort archiving");
@@ -202,7 +202,7 @@ public class ArchiveExecutor implements Runnable {
 			
 			logger.info("archiving statistics (Excel) of survey " + survey.getShortname());
 			
-			exportService.startExport(form, exportstats, true, resources,new Locale("en"), null, folder.getPath() + "/" + published.getUniqueId() + "statistics.xls", true);
+			exportService.startExport(form, exportstats, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "statistics.xls", true);
 			if (exportstats.getState() == ExportState.Failed)
 			{
 				throw new MessageException("export failed, abort archiving");
@@ -210,7 +210,7 @@ public class ArchiveExecutor implements Runnable {
 			
 			logger.info("archiving statistics (PDF) of survey " + survey.getShortname());
 		
-			exportService.startExport(form, exportstatspdf, true, resources,new Locale("en"), null, folder.getPath() + "/" + published.getUniqueId() + "statistics.pdf", true);
+			exportService.startExport(form, exportstatspdf, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "statistics.pdf", true);
 			if (exportstatspdf.getState() == ExportState.Failed)
 			{
 				throw new MessageException("export failed, abort archiving");
@@ -218,7 +218,7 @@ public class ArchiveExecutor implements Runnable {
 		} else {
 			logger.info("archiving PDF of survey " + survey.getShortname());
 			
-			pdfService.createSurveyPDF(survey, survey.getLanguage().getCode(), new java.io.File(folder.getPath() + "/" + survey.getUniqueId() + ".pdf"));
+			pdfService.createSurveyPDF(survey, survey.getLanguage().getCode(), new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + survey.getUniqueId() + ".pdf"));
 		}
 		
 		logger.info("deleting survey " + survey.getShortname());

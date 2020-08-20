@@ -429,7 +429,7 @@ public class OdfExportCreator extends ExportCreator {
 						}
 
 						if (f.exists()) {
-							os.putArchiveEntry(new ZipArchiveEntry(code + "/" + nicename + "/" + file.getName()));
+							os.putArchiveEntry(new ZipArchiveEntry(code + Constants.PATH_DELIMITER + nicename + Constants.PATH_DELIMITER + file.getName()));
 							IOUtils.copy(new FileInputStream(f), os);
 							os.closeArchiveEntry();
 						}
@@ -572,7 +572,7 @@ public class OdfExportCreator extends ExportCreator {
 										}
 
 										Paragraph p = cell.addParagraph("");
-										p.appendHyperlink(cellValue.toString(), new URI("../" + answerrow.get(0) + "/"
+										p.appendHyperlink(cellValue.toString(), new URI("../" + answerrow.get(0) + Constants.PATH_DELIMITER
 												+ uploadQuestionNicenames.get(question.getUniqueId())));
 									}
 								} else {
@@ -613,7 +613,7 @@ public class OdfExportCreator extends ExportCreator {
 									}
 									Paragraph p = cell.addParagraph("");
 									p.appendHyperlink(cellValue.toString(), new URI("../" + answerSet.getUniqueCode()
-											+ "/" + uploadQuestionNicenames.get(question.getUniqueId())));
+											+ Constants.PATH_DELIMITER + uploadQuestionNicenames.get(question.getUniqueId())));
 								}
 							}
 						} else if (question instanceof Table) {
@@ -1196,7 +1196,7 @@ public class OdfExportCreator extends ExportCreator {
 						for (int i = 1; i < rating.getNumIcons(); i++) {
 							rowIndex++;
 
-							cellValue = i + "/" + rating.getNumIcons();
+							cellValue = i + Constants.PATH_DELIMITER + rating.getNumIcons();
 
 							cell = sheet.getCellByPosition(0, rowIndex);
 							cell.setStringValue(cellValue);
@@ -1543,7 +1543,7 @@ public class OdfExportCreator extends ExportCreator {
 						for (int i = 1; i <= rating.getNumIcons(); i++) {
 							Row row = table.appendRow();
 
-							cellValue = i + "/" + rating.getNumIcons();
+							cellValue = i + Constants.PATH_DELIMITER + rating.getNumIcons();
 
 							row.getCellByIndex(0).setStringValue(cellValue);
 

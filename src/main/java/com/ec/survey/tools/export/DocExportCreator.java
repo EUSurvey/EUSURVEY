@@ -29,6 +29,7 @@ import com.ec.survey.model.survey.PossibleAnswer;
 import com.ec.survey.model.survey.RatingQuestion;
 import com.ec.survey.model.survey.Section;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 
 @Service("docExportCreator")
@@ -307,7 +308,7 @@ public class DocExportCreator extends ExportCreator {
 						for (int i = 1; i <= rating.getNumIcons(); i++) {
 							XWPFTableRow row = table.createRow();	
 							
-							cellValue = i + "/" + rating.getNumIcons();		
+							cellValue = i + Constants.PATH_DELIMITER + rating.getNumIcons();		
 							
 							row.getCell(0).setText(cellValue);
 							
