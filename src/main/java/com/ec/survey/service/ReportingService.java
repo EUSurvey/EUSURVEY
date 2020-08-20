@@ -43,23 +43,14 @@ import com.ec.survey.model.survey.RegExQuestion;
 import com.ec.survey.model.survey.SingleChoiceQuestion;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.Table;
+import com.ec.survey.model.survey.TimeQuestion;
 import com.ec.survey.model.survey.Upload;
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.SQLGrammarException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Service("reportingService")
 public class ReportingService {
@@ -154,9 +145,8 @@ public class ReportingService {
 				}
 				
 				where += " QCONTRIBUTIONID = :uniqueCode";
-				values.put("uniqueCode", filter.getCaseId().trim());
-			}
-					
+				values.put(Constants.UNIQUECODE, filter.getCaseId().trim());
+			}					
 			
 			if (filter.getUser() != null && filter.getUser().length() > 0)
 			{
@@ -168,7 +158,7 @@ public class ReportingService {
 				}
 				
 				where += " QUSER = :email";
-				values.put("email", filter.getUser().trim());
+				values.put(Constants.EMAIL, filter.getUser().trim());
 			}
 			
 			if (filter.getCreatedOrUpdated() != null && filter.getCreatedOrUpdated() && filter.getGeneratedFrom() != null && filter.getGeneratedTo() != null && filter.getUpdatedFrom() != null && filter.getUpdatedTo() != null)
@@ -247,7 +237,7 @@ public class ReportingService {
 				}
 			}
 			
-			if (filter.getLanguages() != null && filter.getLanguages().size() > 0)
+			if (filter.getLanguages() != null && !filter.getLanguages().isEmpty())
 			{
 				int i = 0;
 				if (where.length() == 0)
@@ -282,7 +272,7 @@ public class ReportingService {
 				{
 					String questionIdAndUid = item.getKey();
 					String questionId = questionIdAndUid.substring(0, questionIdAndUid.indexOf('|'));
-					String questionUid = questionIdAndUid.substring(questionIdAndUid.indexOf('|')+1);
+					String questionUid = questionIdAndUid.substring(questionIdAndUid.indexOf('|')+1).replace("from", "").replace("to", "");
 					
 					Element question = elementsByUniqueID.get(questionUid);
 					
@@ -304,61 +294,71 @@ public class ReportingService {
 						boolean first = true;
 						
 						for (String answer: answers)
-						if (answer.trim().length() > 0)
 						{
-							if (!first) {
-								where += " OR ";
-							}
-							
-							if (question instanceof FreeTextQuestion || question instanceof EmailQuestion || question instanceof RegExQuestion)
+							if (answer.trim().length() > 0)
 							{
-								where += columnname + " LIKE :answer" + i;
-								values.put("answer" + i, "%" + answer + "%");
-							} else if (question instanceof SingleChoiceQuestion) {
-								String answerUid = answer.substring(answer.indexOf('|')+1);
-								where += columnname + " = :answer" + i;
-								values.put("answer" + i, answerUid);
-							} else if (question instanceof MultipleChoiceQuestion) {
-								String answerUid = answer.substring(answer.indexOf('|')+1);
-								where += columnname + " LIKE :answer" + i;
-								values.put("answer" + i, "%" + answerUid + "%");
-							} else if (question instanceof NumberQuestion) {
-								double val = Double.parseDouble(answer);
-								where += columnname + " = :answer" + i;
-								values.put("answer" + i, val);
-							} else if (question instanceof DateQuestion) {
-								Date val = ConversionTools.getDate(answer);
-								where += columnname + " = :answer" + i;
-								values.put("answer" + i, val);
-							} else if (answer.contains("|")) { // Matrices
-								String answerUid = answer.substring(answer.indexOf('|')+1);
-								where += columnname + " LIKE :answer" + i;
-								values.put("answer" + i, "%" + answerUid + "%");
-							} else if (question instanceof Table) {
-								Table table = (Table) question;
-								String[] data = questionId.split("-");
-								int row = Integer.parseInt(data[1]);
-								int col = Integer.parseInt(data[2]);
+								if (!first) {
+									where += " OR ";
+								}
 								
-								Element tablequestion = table.getQuestions().get(row-1);
-								Element tableanswer = table.getAnswers().get(col-1);
-								
-								String id = Tools.md5hash(tablequestion.getUniqueId() + tableanswer.getUniqueId()); 
-								columnname = "Q" + id;
-								
-								where += columnname + " LIKE :answer" + i;
-								values.put("answer" + i, "%" + answer + "%");								
-							} else if (question instanceof GalleryQuestion) {
-								where += columnname + " LIKE :answer" + i;
-								values.put("answer" + i, "%" + answer + ";%");								
-							} else { //Rating
-								where += columnname + " LIKE :answer" + i;
-								values.put("answer" + i, "%" + answer + "%");
+								if (question instanceof FreeTextQuestion || question instanceof EmailQuestion || question instanceof RegExQuestion)
+								{
+									where += columnname + " LIKE :answer" + i;
+									values.put(Constants.ANSWER + i, "%" + answer + "%");
+								} else if (question instanceof SingleChoiceQuestion) {
+									String answerUid = answer.substring(answer.indexOf('|')+1);
+									where += columnname + " = :answer" + i;
+									values.put(Constants.ANSWER + i, answerUid);
+								} else if (question instanceof MultipleChoiceQuestion) {
+									String answerUid = answer.substring(answer.indexOf('|')+1);
+									where += columnname + " LIKE :answer" + i;
+									values.put(Constants.ANSWER + i, "%" + answerUid + "%");
+								} else if (question instanceof NumberQuestion) {
+									double val = Double.parseDouble(answer);
+									where += columnname + " = :answer" + i;
+									values.put(Constants.ANSWER + i, val);
+								} else if (question instanceof DateQuestion) {
+									Date val = ConversionTools.getDate(answer);
+									if (questionIdAndUid.endsWith("from")) {
+										where += columnname + " >= :answer" + i;
+									} else if (questionIdAndUid.endsWith("to")) {
+										where += columnname + " <= :answer" + i;
+									} else {
+										where += columnname + " = :answer" + i;
+									}
+									values.put(Constants.ANSWER + i, val);
+								} else if (question instanceof TimeQuestion) {
+									where += columnname + " LIKE :answer" + i;
+									values.put(Constants.ANSWER + i,  "%" + answer + "%");
+								} else if (answer.contains("|")) { // Matrices
+									String answerUid = answer.substring(answer.indexOf('|')+1);
+									where += columnname + " LIKE :answer" + i;
+									values.put(Constants.ANSWER + i, "%" + answerUid + "%");
+								} else if (question instanceof Table) {
+									Table table = (Table) question;
+									String[] data = questionId.split("-");
+									int row = Integer.parseInt(data[1]);
+									int col = Integer.parseInt(data[2]);
+									
+									Element tablequestion = table.getQuestions().get(row-1);
+									Element tableanswer = table.getAnswers().get(col-1);
+									
+									String id = Tools.md5hash(tablequestion.getUniqueId() + tableanswer.getUniqueId()); 
+									columnname = "Q" + id;
+									
+									where += columnname + " LIKE :answer" + i;
+									values.put(Constants.ANSWER + i, "%" + answer + "%");								
+								} else if (question instanceof GalleryQuestion) {
+									where += columnname + " LIKE :answer" + i;
+									values.put(Constants.ANSWER + i, "%" + answer + ";%");								
+								} else { //Rating
+									where += columnname + " LIKE :answer" + i;
+									values.put(Constants.ANSWER + i, "%" + answer + "%");
+								}
+														
+								i++;
+								first = false;													
 							}
-													
-							i++;
-							first = false;
-												
 						}
 						where += " )";
 					}
@@ -391,6 +391,8 @@ public class ReportingService {
 				columns++;	
 			} else if (question instanceof DateQuestion) {
 				columns++;
+			} else if (question instanceof TimeQuestion) {
+				columns++;
 			} else if (question instanceof SingleChoiceQuestion) {
 				columns++;	
 			} else if (question instanceof MultipleChoiceQuestion) {
@@ -421,10 +423,10 @@ public class ReportingService {
 	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
-		Map<String, Object> values = new HashMap<String, Object>();
+		Map<String, Object> values = new HashMap<>();
 		String where = getWhereClause(filter, values, survey);
 		
-		Map<String, Element> visibleQuestions = new LinkedHashMap<String, Element>();
+		Map<String, Element> visibleQuestions = new LinkedHashMap<>();
 		
 		for (Element question : survey.getQuestions())
     	{
@@ -459,7 +461,7 @@ public class ReportingService {
 	    			{
 	    				visibleQuestions.put(question.getUniqueId(), question);	  
 	    			}
-    			} else if (question.IsUsedInResults()) {
+    			} else if (question.isUsedInResults()) {
 	    			visibleQuestions.put(question.getUniqueId(), question);	    		
 	    		}
     		}
@@ -493,15 +495,7 @@ public class ReportingService {
 	    {
 	    	visibleQuestions.put("SCORE", null);
 	    }
-	    
-//	    for (Element missingQuestion : survey.getMissingElements())
-//	    {
-//	    	if (missingQuestion instanceof Question)
-//	    	{
-//	    		visibleQuestions.put(missingQuestion.getUniqueId(), missingQuestion);
-//	    	}
-//	    }
-	    
+	        
 	    String sql = "SELECT QCONTRIBUTIONID, QANSWERSETID";
 	    for (String question : visibleQuestions.keySet())
 	    {
@@ -537,7 +531,7 @@ public class ReportingService {
 		sqlQueryService.setParameters(query, values);
 		
 		try {
-			List<List<String>> rows = new ArrayList<List<String>>();
+			List<List<String>> rows = new ArrayList<>();
 			
 			if (sqlPagination != null)
 			{
@@ -549,7 +543,7 @@ public class ReportingService {
 			
 			for (Object o : result)
 			{
-				List<String> row = new ArrayList<String>();
+				List<String> row = new ArrayList<>();
 				
 				if (o instanceof Integer)
 				{
@@ -562,15 +556,16 @@ public class ReportingService {
 					row.add(answerrow[1].toString()); //this is the answerset id
 					
 					int counter = 2;
-					for (String questionuid : visibleQuestions.keySet())
+					for (Entry<String, Element> entry : visibleQuestions.entrySet())
 				    {
+						String questionuid = entry.getKey();
 						if (questionuid.equals("CONTRIBUTIONID"))
 						{
 							row.add(answerrow[0].toString());
 						} else {						
 						
 							Object item = answerrow[counter];
-							Element question = visibleQuestions.get(questionuid);
+							Element question = entry.getValue();
 							
 							if (question == null || item == null)
 							{
@@ -673,7 +668,7 @@ public class ReportingService {
 	public List<Integer> getAnswerSetIDsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
-		Map<String, Object> values = new HashMap<String, Object>();
+		Map<String, Object> values = new HashMap<>();
 		String where = getWhereClause(filter, values, survey);
 		
 		String sql = "SELECT QANSWERSETID FROM " + getOLAPTableName(survey);
@@ -749,7 +744,7 @@ public class ReportingService {
 	}
 	
 	@Transactional(transactionManager = "transactionManagerReporting")
-	public void deleteOLAPTableInternal(String uid, boolean draftversion, boolean publishedversion) throws Exception {
+	public void deleteOLAPTableInternal(String uid, boolean draftversion, boolean publishedversion) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		SQLQuery query;
 		int counter = 1;
@@ -787,11 +782,8 @@ public class ReportingService {
 		{
 			//create published survey table
 			Survey survey = surveyService.getSurveyWithMissingElements(shortname, false, false, false, false, null, true, false);
-			if (survey != null && !survey.getIsDeleted() && !survey.getArchived()) {
-				if (!OLAPTableExistsInternal(survey.getUniqueId(), false))
-				{
-					createOLAPTable(survey);
-				}
+			if (survey != null && !survey.getIsDeleted() && !survey.getArchived() && !OLAPTableExistsInternal(survey.getUniqueId(), false)) {
+				createOLAPTable(survey);
 			}
 		}
 		
@@ -799,11 +791,8 @@ public class ReportingService {
 		{
 			//create draft survey table
 			Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
-			if (draft != null && !draft.getIsDeleted() && !draft.getArchived()) {
-				if (!OLAPTableExistsInternal(draft.getUniqueId(), true))
-				{
-					createOLAPTable(draft);
-				}
+			if (draft != null && !draft.getIsDeleted() && !draft.getArchived() && !OLAPTableExistsInternal(draft.getUniqueId(), true)) {
+				createOLAPTable(draft);
 			}
 		}
 	}
@@ -812,7 +801,7 @@ public class ReportingService {
 		if (survey == null) {
 			throw new IllegalArgumentException("survey is not null");
 		}
-		Map<String, String> columnNamesToType = new LinkedHashMap<String, String>();
+		Map<String, String> columnNamesToType = new LinkedHashMap<>();
 
 		// meta info
 		columnNamesToType.put("ANSWERSETID", "INT NOT NULL PRIMARY KEY");
@@ -833,6 +822,8 @@ public class ReportingService {
 				columnNamesToType.put(question.getUniqueId(), "DOUBLE");
 			} else if (question instanceof DateQuestion) {
 				columnNamesToType.put(question.getUniqueId(), "DATE");
+			} else if (question instanceof TimeQuestion) {
+				columnNamesToType.put(question.getUniqueId(), "TIME");
 			} else if (question instanceof SingleChoiceQuestion) {
 				columnNamesToType.put(question.getUniqueId(), "TEXT");
 			} else if (question instanceof MultipleChoiceQuestion) {
@@ -867,7 +858,7 @@ public class ReportingService {
 		return columnNamesToType;
 	}
 
-	public boolean validateOLAPTableInternal(Survey survey, Integer counter) throws Exception {
+	public boolean validateOLAPTableInternal(Survey survey, Integer counter) {
 		logger.info("starting reporting table validation for survey UID" + survey.getUniqueId()
 		+ (survey.getIsDraft() ? " (draft)" : ""));
 
@@ -935,7 +926,7 @@ public class ReportingService {
 		return true;
 	}
 
-	public boolean validateOLAPTableInternal(Survey survey) throws Exception {
+	public boolean validateOLAPTableInternal(Survey survey) {
 		return this.validateOLAPTableInternal(survey, null);
 	}
 
@@ -996,7 +987,7 @@ public class ReportingService {
 		boolean first = true;
 		int counter = 0;
 		int tablecounter = 1;
-		for (String col : columns.keySet())
+		for (Entry<String, String> entry : columns.entrySet())
 		{
 			if (first)
 			{
@@ -1005,7 +996,7 @@ public class ReportingService {
 				sql.append(", ");
 			}
 			
-			sql.append("Q").append(col.replace("-", "")).append(" ").append(columns.get(col));
+			sql.append("Q").append(entry.getKey().replace("-", "")).append(" ").append(entry.getValue());
 			
 			counter++;
 			if (counter > 1000)
@@ -1033,7 +1024,6 @@ public class ReportingService {
 			
 		logger.info("finished creating reporting table creation for " + survey.getShortname());	
 		settingsService.update(Setting.ReportingMigrationSurveyToMigrate, "");
-		return;
 	}
 	
 	@Transactional(transactionManager = "transactionManagerReporting")
@@ -1150,7 +1140,6 @@ public class ReportingService {
 			AnswerSet answerSet = answerService.get(id, true);
 			parseAnswerSetForReportingTable(answerSet, create, survey);
 			session.evict(answerSet);
-			answerSet = null;
 		}
 		
 		logger.info(results.size() + " new answers copied");
@@ -1166,11 +1155,11 @@ public class ReportingService {
 
 	private void parseAnswerSetForReportingTable(AnswerSet answerSet, boolean create, Survey survey) throws Exception
 	{
-		List<String> columns = new ArrayList<String>();
-		Map<String, String> columnByParent = new HashMap<String, String>();
-		List<String> values = new ArrayList<String>();		
+		List<String> columns = new ArrayList<>();
+		Map<String, String> columnByParent = new HashMap<>();
+		List<String> values = new ArrayList<>();		
 		
-		HashMap<String, Object> parameters = new HashMap<String, Object>();	
+		HashMap<String, Object> parameters = new HashMap<>();	
 
 		columns.add("INVITATIONID");
 		values.add(answerSet.getInvitationId() != null && answerSet.getInvitationId().length() > 0 ? "'" + answerSet.getInvitationId() + "'" : null);
@@ -1206,11 +1195,11 @@ public class ReportingService {
 				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 				columns.add(question.getUniqueId());
 				values.add(":value" + parameters.size());
-				parameters.put("value" + parameters.size(), answers.size() > 0 ? shrink(answers.get(0).getValue()) : null);
+				parameters.put("value" + parameters.size(), !answers.isEmpty() ? shrink(answers.get(0).getValue()) : null);
 			} else if (question instanceof NumberQuestion) {
 				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
 				Double num = null;
-				if (answers.size() > 0)
+				if (!answers.isEmpty())
 				{
 					try {
 						num = Double.parseDouble(answers.get(0).getValue());
@@ -1224,18 +1213,28 @@ public class ReportingService {
 			} else if (question instanceof DateQuestion) {
 				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
 				Date d = null;
-				if (answers.size() > 0)
+				if (!answers.isEmpty())
 				{
 					d = ConversionTools.getDate(answers.get(0).getValue());						
 				}
 				columns.add(question.getUniqueId());
 				values.add(":value" + parameters.size());
-				parameters.put("value" + parameters.size(), d);				
+				parameters.put("value" + parameters.size(), d);
+			} else if (question instanceof TimeQuestion) {
+				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
+				String d = null;
+				if (!answers.isEmpty())
+				{
+					d = answers.get(0).getValue();						
+				}
+				columns.add(question.getUniqueId());
+				values.add(":value" + parameters.size());
+				parameters.put("value" + parameters.size(), d);			
 			} else if (question instanceof ChoiceQuestion) {
 				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
 				columns.add(question.getUniqueId());
 				String v = null;
-				if (answers.size() > 0)
+				if (!answers.isEmpty())
 				{
 					v = "'";
 					for (Answer answer : answers)
@@ -1251,7 +1250,7 @@ public class ReportingService {
 				for(Element matrixQuestion: matrix.getQuestions()) {
 					List<Answer> answers = answerSet.getAnswers(matrixQuestion.getId(), matrixQuestion.getUniqueId());
 					String v = null;
-					if (answers.size() > 0)
+					if (!answers.isEmpty())
 					{
 						v = "'";
 						for (Answer answer : answers)
@@ -1299,7 +1298,7 @@ public class ReportingService {
 			} else if (question instanceof Upload) {
 				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 				String v = null; 
-				if (answers.size() > 0)
+				if (!answers.isEmpty())
 				{
 					v = "'";
 					for (Answer answer : answers)
@@ -1320,7 +1319,7 @@ public class ReportingService {
 				{
 					List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 					String v = null; 
-					if (answers.size() > 0)
+					if (!answers.isEmpty())
 					{
 						v = "'";
 						for (Answer answer : answers)
@@ -1340,7 +1339,7 @@ public class ReportingService {
 				for(Element ratingQuestion: rating.getChildElements()) {
 					List<Answer> answers = answerSet.getAnswers(ratingQuestion.getId(), ratingQuestion.getUniqueId());
 					columns.add(ratingQuestion.getUniqueId());		
-					values.add(answers.size() == 0 ? null : "'" + answers.get(0).getValue() + "'");
+					values.add(answers.isEmpty() ? null : "'" + answers.get(0).getValue() + "'");
 				}
 			}
 		}
@@ -1445,10 +1444,6 @@ public class ReportingService {
 			sqlQueryService.setParameters(createQuery, parameters);
 			logger.debug(lastQuery);
 			createQuery.executeUpdate();
-			
-			counter = 0;
-			tablecounter++;
-			row = new StringBuilder(); 
 		}
 	}
 	
@@ -1594,7 +1589,7 @@ public class ReportingService {
 	public void addToDoInternal(ToDo todo, String uid, String code) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
-		//check if TODO table exists
+		//check if table exists
 		try {
 			SQLQuery querytodoexists = sessionReporting.createSQLQuery("SELECT 1 FROM TODO LIMIT 1");
 			querytodoexists.uniqueResult();
@@ -1610,14 +1605,14 @@ public class ReportingService {
 		
 		if (todo == ToDo.NEWCONTRIBUTION || todo == ToDo.NEWTESTCONTRIBUTION)
 		{		
-			//check if there is a similar TODO
+			//check if there is a similar entry
 			SQLQuery querytodoexists = sessionReporting.createSQLQuery("SELECT ID FROM TODO WHERE TYPE = :type AND UID = :uid LIMIT 1");
 			querytodoexists.setInteger("type", todo.getValue());
 			querytodoexists.setString("uid", uid);
 			@SuppressWarnings("rawtypes")
 			List results = querytodoexists.list();
 			
-			if (results.size() > 0) return;		
+			if (!results.isEmpty()) return;		
 		}
 		
 		SQLQuery queryinsert = sessionReporting.createSQLQuery("INSERT INTO TODO (ID, TYPE, UID, CODE) VALUES (null, :type, :uid, :code)");
@@ -1636,7 +1631,7 @@ public class ReportingService {
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
 	public List<ToDoItem> getToDosInternal(int page, int rowsPerPage) {
-		List<ToDoItem> todos = new ArrayList<ToDoItem>();
+		List<ToDoItem> todos = new ArrayList<>();
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		//check if TODO table exists
@@ -1813,7 +1808,7 @@ public class ReportingService {
 			}
 			query.executeUpdate();
 		} else {
-			List<ToDoItem> list = new ArrayList<ToDoItem>();
+			List<ToDoItem> list = new ArrayList<>();
 			list.add(todo);
 			removeToDosInternal(list);
 		}
@@ -1822,7 +1817,7 @@ public class ReportingService {
 	private void removeToDosInternal(List<ToDoItem> todos) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
-		List<Integer> ids = new ArrayList<Integer>();
+		List<Integer> ids = new ArrayList<>();
 		for (ToDoItem todo : todos)
 		{
 			ids.add(todo.Id);
@@ -1838,7 +1833,9 @@ public class ReportingService {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		List<ToDoItem> todos = getToDosInternal(-1,-1);
-		if (todos.size() == 0) return;
+		if (todos.isEmpty()) {
+			return;
+		}
 		
 		SQLQuery queryremove = sessionReporting.createSQLQuery("DELETE FROM TODO");
 		queryremove.executeUpdate();
@@ -1876,7 +1873,7 @@ public class ReportingService {
 		@SuppressWarnings("unchecked")
 		List<Map<String,Object>> aliasToValueMapList=query.list();
 		
-		List<Object> result = new ArrayList<Object>();
+		List<Object> result = new ArrayList<>();
 		
 		for (Map<String,Object> entry : aliasToValueMapList)
 		{

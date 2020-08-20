@@ -279,10 +279,10 @@
 		$('#new-survey-contact').val(contact);
 		$('#new-survey-contact-label').val('');
 		
-		$("#new-survey-table").find(".hideimport").show();
-		$("#new-survey-table").find(".hidecopy").hide();
+		$("#add-survey-dialog").find(".hideimport").show();
+		$("#add-survey-dialog").find(".hidecreate").show();
+		$("#add-survey-dialog").find(".hidecopy").hide();
 		
-		$('#add-survey-dialog').find("th").first().text("<spring:message code="label.Copy" />");
 		$('#add-survey-dialog').find("#importbtn").hide();
 		$('#add-survey-dialog').find("#createbtn").show();
 		
@@ -357,7 +357,8 @@
     <div class="modal-content">
 	<div class="modal-header">
 		<span class="hidecopy hidecreate"><spring:message code="label.ImportSurvey" /></span>
-		<span class="hideimport"><spring:message code="label.NewSurvey" /></span>		
+		<span class="hideimport hidecopy"><spring:message code="label.NewSurvey" /></span>
+		<span class="hideimport hidecreate"><spring:message code="label.CopySurvey" /></span>		
 	</div>
 	<div class="modal-body" style="padding: 10px;">
 		<table class="table table-striped table-bordered" id="new-survey-table">
@@ -380,8 +381,7 @@
 							    <input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-opc" value="opc" />&#160;<spring:message code="label.OPC" />
 							  </label>
 						  </c:if>
-						</div>		
-						<div style="color: #777; margin-top: 10px"><spring:message code="info.SettingCanBeChanged" /></div>
+						</div>
 					</td>
 				</tr>
 				<tr>

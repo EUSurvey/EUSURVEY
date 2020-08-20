@@ -118,7 +118,7 @@ public abstract class ExportCreator implements Runnable {
 	abstract void ExportActivities() throws Exception;
 	abstract void ExportTokens() throws Exception;
 	
-	private void initAnswers(boolean onlyStatistics) throws Exception
+	private void initAnswers() throws Exception
 	{
 		form.setStatistics(answerService.getStatistics(export.getSurvey(), export.getResultFilter(), true, export.isAllAnswers(), false));
 	}
@@ -178,7 +178,7 @@ public abstract class ExportCreator implements Runnable {
 				InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
 				
-				mailService.SendHtmlMail(export.getEmail(), sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort.trim()), null);		
+				mailService.SendHtmlMail(export.getEmail(), sender, sender, subject, text, null);		
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
@@ -204,20 +204,20 @@ public abstract class ExportCreator implements Runnable {
 		exportService.update(export);
 	}
 	
-	@Transactional
 	private void innerRunBasic(boolean sync, Export export) throws Exception
 	{
 		switch (export.getType()) {
-			case Content: /*initAnswers(false);*/ ExportContent(sync); break;
-			case Statistics: initAnswers(true); ExportStatistics(); break;
-			case StatisticsQuiz: initAnswers(true); ExportStatisticsQuiz(); break;
+			case Content: ExportContent(sync); break;
+			case Statistics: initAnswers(); ExportStatistics(); break;
+			case StatisticsQuiz: initAnswers(); ExportStatisticsQuiz(); break;
 			case AddressBook: ExportAddressBook(); break;
 			case Activity: ExportActivities(); break;
 			case Tokens: ExportTokens(); break;
 			case Files: ExportContent(sync); break;
 			case Survey: ExportContent(sync); break;
+		default:
+			break;
 		}
 	}
 	
-
 }

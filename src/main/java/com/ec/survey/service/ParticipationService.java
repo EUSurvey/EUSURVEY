@@ -7,6 +7,7 @@ import com.ec.survey.model.ParticipationGroupsForAttendee;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.GuestListCreator;
 import org.hibernate.Query;
@@ -17,16 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 @Service("participationService")
 @Configurable
 public class ParticipationService extends BasicService {
-	
-	@Resource(name = "mailService")
-	protected MailService mailService;
-	
+		
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<ParticipationGroup> getAll(String uid, boolean checkRunningMails, int page, int rowsPerPage) {
@@ -115,7 +112,7 @@ public class ParticipationService extends BasicService {
 				Query query = session.createQuery("SELECT i.participationGroupId FROM Invitation i WHERE i.uniqueId = :id").setString("id", invitationId);
 				@SuppressWarnings("rawtypes")
 				List result = query.list();
-				if (result.size() > 0) return result.get(0).toString();
+				if (!result.isEmpty()) return result.get(0).toString();
 			}
 		} catch (Exception e)
 		{
@@ -191,9 +188,9 @@ public class ParticipationService extends BasicService {
 		getPool().execute(c);
 	}
 	
-	public void addTokensToGuestListAsync(Integer id, List<String> tokens) {
+	public void addTokensToGuestListAsync(Integer id, List<String> tokens, List<String> deactivatedTokens) {
 		GuestListCreator c = (GuestListCreator) context.getBean("guestListCreator");
-		c.initTokens(id, tokens);
+		c.initTokens(id, tokens, deactivatedTokens);
 		getPool().execute(c);
 	}	
 
@@ -202,7 +199,7 @@ public class ParticipationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<InvitationTemplate> result = session.createQuery("FROM InvitationTemplate t WHERE t.name like :name AND t.owner.id = :user").setString("name", name).setInteger("user", user).list();
-		return result.size() > 0 ? result.get(0) : null;
+		return !result.isEmpty() ? result.get(0) : null;
 	}
 
 	@Transactional
@@ -345,7 +342,7 @@ public class ParticipationService extends BasicService {
 			query.setParameterList("emails", allemails);
 		} else {
 			query = session.createSQLQuery(sql.toString());
-			query.setString("email", user.getEmail());
+			query.setString(Constants.EMAIL, user.getEmail());
 		}	
 		
 		query.setFirstResult(paging.getFirstResult()).setMaxResults(paging.getMaxResult());

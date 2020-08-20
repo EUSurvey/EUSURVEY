@@ -2,7 +2,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
@@ -16,13 +15,13 @@ import javax.persistence.*;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class NumberQuestion extends Question {
 	
-	public final static String UNIT = "UNIT";
+	public static final String UNIT = "UNIT";
 	private static final long serialVersionUID = 1L;
 
 	public NumberQuestion() {}
 	
-	public NumberQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+	public NumberQuestion(String title, String shortname, String uid) {
+		super(title, shortname, uid);
 	}
 	private int decimalPlaces;
 	private String unit;
@@ -83,7 +82,7 @@ public class NumberQuestion extends Question {
 		this.unit = unit;
 	}
 	
-	public NumberQuestion copy(String fileDir) throws ValidationException, IntrusionException
+	public NumberQuestion copy(String fileDir) throws ValidationException
 	{
 		NumberQuestion copy = new NumberQuestion();
 		baseCopy(copy);
@@ -96,6 +95,7 @@ public class NumberQuestion extends Question {
 	}
 	
 	@Transient
+	@Override
 	public String getCss()
 	{
 		String css = super.getCss();
@@ -135,9 +135,7 @@ public class NumberQuestion extends Question {
 		
 		if (maxD != null && !maxD.equals(number.maxD)) return true;
 		if (minD != null && !minD.equals(number.minD)) return true;
-		if (unit != null && !unit.equals(number.unit)) return true;
-		
-		return false;
+		return (unit != null && !unit.equals(number.unit));
 	}
 
 	//used during import process to upgrade older version of the class

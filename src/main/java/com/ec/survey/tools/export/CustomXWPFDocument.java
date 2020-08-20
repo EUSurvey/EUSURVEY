@@ -54,7 +54,6 @@ public class CustomXWPFDocument extends XWPFDocument
                 "   </a:graphicData>" +
                 "</a:graphic>";
 
-        //CTGraphicalObjectData graphicData = inline.addNewGraphic().addNewGraphicData();
         XmlToken xmlToken = null;
         try
         {
@@ -62,11 +61,9 @@ public class CustomXWPFDocument extends XWPFDocument
         }
         catch(XmlException xe)
         {
-            xe.printStackTrace();
+            //ignore
         }
         inline.set(xmlToken);
-        //graphicData.set(xmlToken);
-
         inline.setDistT(0);
         inline.setDistB(0);
         inline.setDistL(0);

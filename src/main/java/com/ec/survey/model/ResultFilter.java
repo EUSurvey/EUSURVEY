@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.Map.Entry;
 
 @Entity
 @Table(name = "RESULTFILTER")
@@ -131,9 +132,11 @@ public class ResultFilter implements java.io.Serializable {
 	public boolean containsLanguage(String code)
 	{
 		if (languages != null)
-		for (String c : languages)
 		{
-			if (c.equalsIgnoreCase(code)) return true;
+			for (String c : languages)
+			{
+				if (c.equalsIgnoreCase(code)) return true;
+			}
 		}
 		return false;
 	}
@@ -283,7 +286,7 @@ public class ResultFilter implements java.io.Serializable {
 	public boolean exported(String questionId)
 	{
 		//Fallback for old filter that have no exported questions
-		if (exportedQuestions == null || exportedQuestions.size() == 0) return visible(questionId);
+		if (exportedQuestions == null || exportedQuestions.isEmpty()) return visible(questionId);
 		
 		return exportedQuestions.contains(questionId);
 	}
@@ -299,6 +302,22 @@ public class ResultFilter implements java.io.Serializable {
 	public String getValue(String questionId, String questionUid)
 	{
 		String combined = questionId + "|" + questionUid;
+		if (filterValues.containsKey(combined)) return filterValues.get(combined);
+		return "";
+	}
+	
+	@Transient
+	public String getFromValue(String questionId, String questionUid)
+	{
+		String combined = questionId + "|" + questionUid + "from";
+		if (filterValues.containsKey(combined)) return filterValues.get(combined);
+		return "";
+	}
+	
+	@Transient
+	public String getToValue(String questionId, String questionUid)
+	{
+		String combined = questionId + "|" + questionUid + "to";
 		if (filterValues.containsKey(combined)) return filterValues.get(combined);
 		return "";
 	}
@@ -343,7 +362,7 @@ public class ResultFilter implements java.io.Serializable {
 		result.append(StringUtils.join(this.filterValues.values(), ""));
 		
 		//visibleQuestions
-		if (visibleQuestions != null && visibleQuestions.size() > 0)
+		if (visibleQuestions != null && !visibleQuestions.isEmpty())
 		{
 			SortedSet<String> sortedVisibleQuestions = new TreeSet<>(visibleQuestions);
 			for (String id : sortedVisibleQuestions)
@@ -351,7 +370,7 @@ public class ResultFilter implements java.io.Serializable {
 				result.append(id);
 			}
 		}
-		if (exportedQuestions != null && exportedQuestions.size() > 0)
+		if (exportedQuestions != null && !exportedQuestions.isEmpty())
 		{
 			SortedSet<String> sortedExportedQuestions = new TreeSet<>(exportedQuestions);
 			for (String id : sortedExportedQuestions)
@@ -377,8 +396,8 @@ public class ResultFilter implements java.io.Serializable {
 		if (generatedTo != null) return false;
 		if (updatedFrom != null) return false;
 		if (updatedTo != null) return false;
-		if (languages != null && languages.size() > 0) return false;
-		if (filterValues != null && filterValues.size() > 0) return false;
+		if (languages != null && !languages.isEmpty()) return false;
+		if (filterValues != null && !filterValues.isEmpty()) return false;
 		
 		return true;
 	}
@@ -388,8 +407,8 @@ public class ResultFilter implements java.io.Serializable {
 		if (filterValues != null)
 		{
 			Map<String, String> newFilterValues = new HashMap<>();
-			for (String key : filterValues.keySet()) {
-				newFilterValues.put(key, filterValues.get(key));
+			for (Entry<String, String> entry : filterValues.entrySet()) {
+				newFilterValues.put(entry.getKey(), entry.getValue());
 			}
 
 			copy.filterValues = newFilterValues;

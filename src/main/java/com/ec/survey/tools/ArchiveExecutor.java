@@ -1,5 +1,7 @@
 package com.ec.survey.tools;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.Locale;
 
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.Export;
 import com.ec.survey.model.ResultFilter;
@@ -119,10 +122,14 @@ public class ArchiveExecutor implements Runnable {
 			for (Element element : published.getElementsRecursive(false))
 			{
 				if (!resultFilter.getVisibleQuestions().contains(element.getId().toString()))
-				resultFilter.getVisibleQuestions().add(element.getId().toString());
+				{
+					resultFilter.getVisibleQuestions().add(element.getId().toString());
+				}
 								
 				if (!resultFilter.getExportedQuestions().contains(element.getId().toString()))
-				resultFilter.getExportedQuestions().add(element.getId().toString());
+				{
+					resultFilter.getExportedQuestions().add(element.getId().toString());
+				}
 			}
 			
 			export.setDate(new Date());
@@ -174,7 +181,7 @@ public class ArchiveExecutor implements Runnable {
 		
 		if (target.exists())
 		{
-			throw new Exception("Survey cannot be archived as archive file already exists: " + survey.getShortname());
+			throw new MessageException("Survey cannot be archived as archive file already exists: " + survey.getShortname());
 		}
 		
 		FileUtils.copyFile(zip, target);
@@ -190,7 +197,7 @@ public class ArchiveExecutor implements Runnable {
 			exportService.startExport(form, export, true, resources,new Locale("en"), null, folder.getPath() + "/" + published.getUniqueId() + "results.xls", true);
 			if (export.getState() == ExportState.Failed)
 			{
-				throw new Exception("export failed, abort archiving");
+				throw new MessageException("export failed, abort archiving");
 			}
 			
 			logger.info("archiving statistics (Excel) of survey " + survey.getShortname());
@@ -198,7 +205,7 @@ public class ArchiveExecutor implements Runnable {
 			exportService.startExport(form, exportstats, true, resources,new Locale("en"), null, folder.getPath() + "/" + published.getUniqueId() + "statistics.xls", true);
 			if (exportstats.getState() == ExportState.Failed)
 			{
-				throw new Exception("export failed, abort archiving");
+				throw new MessageException("export failed, abort archiving");
 			}
 			
 			logger.info("archiving statistics (PDF) of survey " + survey.getShortname());
@@ -206,7 +213,7 @@ public class ArchiveExecutor implements Runnable {
 			exportService.startExport(form, exportstatspdf, true, resources,new Locale("en"), null, folder.getPath() + "/" + published.getUniqueId() + "statistics.pdf", true);
 			if (exportstatspdf.getState() == ExportState.Failed)
 			{
-				throw new Exception("export failed, abort archiving");
+				throw new MessageException("export failed, abort archiving");
 			}
 		} else {
 			logger.info("archiving PDF of survey " + survey.getShortname());
@@ -221,7 +228,7 @@ public class ArchiveExecutor implements Runnable {
 		{
 			surveyService.deleteNoTransaction(survey.getId(), false, true);
 		} else {
-			throw new Exception("archive file not found, abort archiving");
+			throw new MessageException("archive file not found, abort archiving");
 		}
 		
 		archive.setFinished(true);
@@ -235,9 +242,13 @@ public class ArchiveExecutor implements Runnable {
 		archive.setError(e.getLocalizedMessage());
 		
 		//delete files
-		if (target != null && target.exists())
+		if (target != null)
 		{
-			target.delete();
+			try {
+				Files.deleteIfExists(target.toPath());
+			} catch (IOException e1) {
+				//ignore
+			}
 		}
 		
 		Session session = sessionFactory.openSession();

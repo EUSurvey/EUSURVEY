@@ -30,19 +30,15 @@ public class QuizExecutor implements Runnable {
 	private AnswerSet answerSet;
 	private String email;
 	private String from;
-	private String server;
-	private String smtpPort;
 	private String host;
 	
 	private static final Logger logger = Logger.getLogger(QuizExecutor.class);
 	
-	public void init(AnswerSet answerSet, String email, String from, String server, String smtpPort, String host)
+	public void init(AnswerSet answerSet, String email, String from, String host)
 	{
 		this.answerSet = answerSet;
 		this.email = email;
 		this.from = from;
-		this.server = server;
-		this.smtpPort = smtpPort;
 		this.host = host;
 	}
 	
@@ -65,7 +61,7 @@ public class QuizExecutor implements Runnable {
 				InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
 								
-				mailService.SendHtmlMail(email, from, from, "Copy of your PDF quiz results", text, server, Integer.parseInt(smtpPort.trim()), file, file2, null, false);
+				mailService.SendHtmlMail(email, from, from, "Copy of your PDF quiz results", text, file, file2, null, false);
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

@@ -149,9 +149,33 @@
 		  #participantstablecontacts, #participantstabletokens, #participantstableec {		  	
 		  	table-layout: fixed;
 		  }
+		  
+		  .participantstablediv {
+		  	max-height: 450px;
+		  	height: 450px;
+		  	max-width: 100%;
+		  	overflow-x: auto;
+		  	overflow-y: scroll;"
+		  }
     </style>
     
     <script>
+    
+    	function resize()
+    	{
+    		var totalHeight = $(window).height();
+    		var height = totalHeight - 280 - 280;
+    		if (height < 200) height = 200;
+    		if (height > 450) height = 450;
+    		$('.participantstablediv').height(height);
+    		$('.participantstablediv table').css("min-height", height - 1);
+    		
+    	}
+    	
+    	$( window ).resize(function() {
+    		resize();
+   		});
+    
     	$(function() {	
 	    <c:choose>
 			<c:when test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
@@ -164,11 +188,13 @@
 				_participants.Access(0);
 			</c:otherwise>
 		</c:choose>	
+		
+			resize();
     	});
 	</script>
 </head>
 <body>
-	<div class="page-wrap">
+	<div class="page-wrap" style="padding-bottom: 0; margin-bottom: -272px;">
 		<%@ include file="../header.jsp" %>
 		<%@ include file="../menu.jsp" %>
 		<%@ include file="formmenu.jsp" %>
@@ -195,7 +221,7 @@
 				</div>
 			</div>	
 			
-			<div class="fullpageform" style="padding-top: 40px">
+			<div class="fullpageform" style="padding-top: 10px">
 			
 					<div class="participantstable" data-bind="visible: ContactGuestlists().length > 0">
 			
@@ -686,7 +712,7 @@
 						</div>
 					</div>	
 				
-					<div class="fullpageform" style="padding-top: 40px">
+					<div class="fullpageform" style="padding-top: 10px">
 						<div data-bind="visible: Step() == 1">						
 							<div>
 								<div class="row">
@@ -725,8 +751,8 @@
 												</thead>
 											</table>
 										</div>
-										<div id="contactsdiv" style="max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;"> 
-											<table style="height: 500px" id="contacts" class="table table-bordered table-styled table-striped ptable">
+										<div id="contactsdiv" class="participantstablediv"> 
+											<table id="contacts" class="table table-bordered table-styled table-striped ptable">
 												<!-- ko if: Attendees().length == 0 -->
 												<tbody>
 													<tr>
@@ -790,8 +816,8 @@
 												</thead>
 											</table>
 										</div>
-										<div id="selectedcontactsdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
-											<table style="height: 500px" class="table table-bordered table-styled table-striped ptable">											
+										<div id="selectedcontactsdiv" class="participantstablediv" style="margin-bottom: 10px;">
+											<table class="table table-bordered table-styled table-striped ptable">											
 												<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
 												<tbody>
 													<tr>
@@ -824,7 +850,7 @@
 								</div>							
 							</div>
 						
-							<div style="text-align: center; margin-top: 30px; width: 800px; margin-left: auto; margin-right: auto;">
+							<div style="text-align: center; margin-top: 30px; margin-bottom: 20px; width: 800px; margin-left: auto; margin-right: auto;">
 								<div style="float: left; width: 200px; height: 20px; text-align: left;"></div>
 								<div style="float: right; width: 200px; text-align: right;">
 									<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
@@ -857,8 +883,8 @@
 									</thead>
 								</table>
 							</div>
-							<div id="selectedcontactsdiv2" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 900px; overflow-x: auto; overflow-y: scroll;">
-								<table style="height: 500px" class="table table-bordered table-styled table-striped ptable">											
+							<div id="selectedcontactsdiv2" class="participantstablediv" style="margin-bottom: 10px; max-width: 900px;">
+								<table class="table table-bordered table-styled table-striped ptable">											
 									<!-- ko if: selectedGroup() != null && selectedGroup().attendees().length == 0 -->
 									<tbody>
 										<tr>
@@ -881,7 +907,7 @@
 								</table>
 							</div>
 							
-							<div style="text-align: center; margin-top: 30px; width: 800px; margin-left: auto; margin-right: auto;">
+							<div style="text-align: center; margin-top: 30px; margin-bottom: 20px; width: 800px; margin-left: auto; margin-right: auto;">
 								<div style="float: left; width: 200px; text-align: left;">
 									<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
 								</div>
@@ -921,12 +947,12 @@
 				</div>
 			</div>	
 		
-			<div class="fullpageform" style="padding-top: 40px">
+			<div class="fullpageform" style="padding-top: 0px">
 				<div data-bind="visible: Step() == 1">						
 					<div class="row">
 						<div class="col-md-5x">	
 							<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.Domain" /><br />
-							<select id="domain" data-bind="value: Domain" onchange="_participants.loadUsers(true)" class="small-form-control" style="width: 450px; margin-bottom: 20px;" >
+							<select id="domain" data-bind="value: Domain" onchange="_participants.loadUsers(true)" class="small-form-control" style="width: auto; min-width: 450px; margin-bottom: 20px;" >
 								<option></option>
 								<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
 									<option value="${domain.key}">${domain.value} </option>	
@@ -966,8 +992,8 @@
 									</thead>
 								</table>
 							</div>
-							<div id="eccontactsdiv" style="max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;"> 
-								<table id="eccontacts" style="height: 500px" class="table table-bordered table-styled table-striped ptable">
+							<div id="eccontactsdiv"class="participantstablediv"> 
+								<table id="eccontacts" class="table table-bordered table-styled table-striped ptable">
 									<!-- ko if: Users().length == 0 -->
 									<tbody>
 										<tr>
@@ -1024,8 +1050,8 @@
 									</thead>
 								</table>
 							</div>
-							<div id="selectedeccontactsdiv" style="margin-bottom: 10px; max-height: 500px; height: 500px; max-width: 100%; overflow-x: auto; overflow-y: scroll;">
-								<table style="height: 500px;" class="table table-bordered table-styled table-striped ptable">											
+							<div id="selectedeccontactsdiv" class="participantstablediv" style="margin-bottom: 10px;">
+								<table class="table table-bordered table-styled table-striped ptable">											
 									<!-- ko if: selectedGroup() != null && selectedGroup().users().length == 0 -->
 									<tbody>
 										<tr>
@@ -1056,7 +1082,7 @@
 					</div>							
 				</div>
 				
-				<div data-bind="visible: Step() == 1" style="text-align: center; margin-top: 30px; width: 800px; margin-left: auto; margin-right: auto;">
+				<div data-bind="visible: Step() == 1" style="text-align: center; margin-top: 30px; margin-bottom: 20px; width: 800px; margin-left: auto; margin-right: auto;">
 					<div style="float: left; width: 200px; height: 20px; text-align: left;"></div>
 					<div style="float: right; width: 200px; text-align: right;">
 						<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
@@ -1109,7 +1135,7 @@
 					</table>
 				</div>
 				
-				<div style="text-align: center; margin-top: 30px; width: 800px; margin-left: auto; margin-right: auto;">
+				<div style="text-align: center; margin-top: 30px; margin-bottom: 20px; width: 800px; margin-left: auto; margin-right: auto;">
 					<div style="float: left; width: 200px; text-align: left;">
 						<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
 					</div>
@@ -1212,7 +1238,7 @@
 						</div>
 					</div>
 					
-					<div style="text-align: center; margin-top: 30px; width: 660px; margin-left: auto; margin-right: auto;">
+					<div style="text-align: center; margin-top: 30px; margin-bottom: 20px; width: 660px; margin-left: auto; margin-right: auto;">
 						<div style="float: left; width: 200px; height: 20px; text-align: left;"></div>
 						<div style="float: right; width: 200px; text-align: right;">
 							<a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Cancel" /></a>	
@@ -1263,7 +1289,7 @@
 						</table>
 					</div>	
 				</div>
-				<div data-bind="visible: Step() == 2"style="text-align: center; margin-top: 30px; width: 660px; margin-left: auto; margin-right: auto;">
+				<div data-bind="visible: Step() == 2"style="text-align: center; margin-top: 30px; margin-bottom: 20px; width: 660px; margin-left: auto; margin-right: auto;">
 					<div style="float: left; width: 200px; text-align: left;">
 						<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>	
 					</div>
@@ -1284,7 +1310,7 @@
 		var p_deactivated = '<spring:message code="message.ParticipantsGroupDeactivatedSuccessfully" />';
 		var p_deleted = '<spring:message code="message.ParticipantsGroupDeletedSuccessfully" />';
 		var p_operations = '<spring:message code="message.OperationsExecutedSuccessfully" />';
-		var p_guestlistcreated = '<spring:message code="info.GuestListCreated" />';
+		var p_guestlistcreated = '<spring:message code="info.GuestListCreatedNew" />';
 		var p_mailsstarted = '<spring:message code="info.MailsStarted" />';
 	</script>
 	

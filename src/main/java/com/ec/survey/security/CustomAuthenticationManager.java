@@ -18,7 +18,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -45,7 +44,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 	private @Value("${server.prefix}") String host;
 	
 	public Authentication authenticate(Authentication auth)
-			throws AuthenticationException {
+	{
 
 		User user = null;
 		boolean surveyLoginMode = auth.getName() != null && auth.getName().startsWith("surveyloginmode");
@@ -53,7 +52,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 		if (surveyLoginMode || (auth.getName() == null || auth.getName().length() == 0 || auth.getName().startsWith("oldLogin:")) && (((String)auth.getCredentials()).startsWith("ECAS_ST") || ((String)auth.getCredentials()).startsWith("ST")))
 		{
 			String ticket = (String)auth.getCredentials();
-			String ValidationURL="";
+			String validationUrl="";
 			
 			String service = "auth/ecaslogin";
 			String survey = "";
@@ -66,14 +65,14 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			// check if we are on open Cas solution then use the validateservice  url to avoid exception
 			// other (ecas) we have to use the laxValidate to allow login with external user JIRA ESURVEY-2759
 			if(ldapService.isCasOss()){
-				ValidationURL = ecasvalidationhost + "/serviceValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
+				validationUrl = ecasvalidationhost + "/serviceValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
 			}else{
-				ValidationURL = ecasvalidationhost + "/laxValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
+				validationUrl = ecasvalidationhost + "/laxValidate?userDetails=true&ticket=" + ticket + "&service=" + host + service;
 			}
 			
 			boolean weakAuthentication = false;
     		sessionService.initializeProxy();
-    		String xmlValidationAnswer = EcasHelper.getSourceContents(ValidationURL);
+    		String xmlValidationAnswer = EcasHelper.getSourceContents(validationUrl);
     		logger.info("authenticate".toUpperCase() +" GET THE SOURCE CONTENT " + xmlValidationAnswer);
     		if (xmlValidationAnswer.contains("<cas:authenticationSuccess>")) {
     			String username = EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:user");
@@ -96,10 +95,10 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 					//if an ecas user logs in for the first time there is no db entry for him yes
 		    	}
 				
-				List<Role> Roles = administrationService.getAllRoles();
+				List<Role> roles = administrationService.getAllRoles();
 				Role ecRole = null;
 				Role intRole = null;
-				for (Role role : Roles) {
+				for (Role role : roles) {
 					if (role.getName().equalsIgnoreCase("Form Manager (EC)")) ecRole = role;
 					if (role.getName().equalsIgnoreCase("Form Manager")) intRole = role;
 				}	
@@ -145,14 +144,11 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 									
 					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c")) 
 					{
-						if (ecRole != null)
+						if (ecRole != null && (user.getRoles().size() != 1 || !Objects.equals(user.getRoles().get(0).getId(), ecRole.getId())))
 						{
-							if (user.getRoles().size() != 1 || !Objects.equals(user.getRoles().get(0).getId(), ecRole.getId()))
-							{
-								user.getRoles().clear();
-								user.getRoles().add(ecRole);
-								administrationService.updateUser(user);
-							}
+							user.getRoles().clear();
+							user.getRoles().add(ecRole);
+							administrationService.updateUser(user);
 						}
 					} else {
 						if (intRole != null)
@@ -254,12 +250,6 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 			logger.error("User not validated!");
 			throw new BadCredentialsException("User not validated!");
 		}
-		
-//		if (user.isDeleted())
-//		{
-//			logger.info("Login with deleted user account!");
-//			throw new BadCredentialsException("User does not exists!");
-//		}
 		
 		checkUserNotBanned(user);
 		

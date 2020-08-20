@@ -5,7 +5,8 @@ import java.util.Hashtable;
 
 public abstract class ObjectPool<T> {
 
-	  private Hashtable<T, Long> locked, unlocked;
+	  private Hashtable<T, Long> locked;
+	  private Hashtable<T, Long> unlocked;
 	  private int max;
 	  
 	  public ObjectPool(int max) {

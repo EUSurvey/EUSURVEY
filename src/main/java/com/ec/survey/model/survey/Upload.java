@@ -2,7 +2,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import com.ec.survey.tools.Tools;
@@ -27,13 +26,13 @@ public class Upload extends Question {
 
 	public Upload(){}
 	
-	public Upload(Survey survey, String text, String shortname, String uid) {
+	public Upload(String text, String shortname, String uid) {
 		setTitle(text);
 		setUniqueId(uid);
 		setShortname(shortname);
 	}
 	
-	public Upload copy(String fileDir) throws ValidationException, IntrusionException
+	public Upload copy(String fileDir) throws ValidationException
 	{
 		Upload copy = new Upload();
 		baseCopy(copy);

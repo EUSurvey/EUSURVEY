@@ -279,6 +279,12 @@ function update(input)
 				{
 					return;
 				}
+			} else if (element.type == "TimeQuestion")
+			{
+				if (!checkMinMaxTime(input, hasInputError, $(".quizrule").length > 0))
+				{
+					return;
+				}
 			} else {
 				if (!checkMinMax(input, hasInputError, null, $(".quizrule").length > 0))
 				{

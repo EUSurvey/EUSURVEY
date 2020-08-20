@@ -90,7 +90,7 @@ public class Publication implements java.io.Serializable {
 		return showUploadedDocuments;
 	}
 	public void setShowUploadedDocuments(Boolean showUploadedDocuments) {
-		this.showUploadedDocuments = showUploadedDocuments != null ? showUploadedDocuments : true;
+		this.showUploadedDocuments = showUploadedDocuments == null || showUploadedDocuments;
 	}
 	
 	@OneToOne(cascade = CascadeType.ALL)

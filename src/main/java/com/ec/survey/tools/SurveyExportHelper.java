@@ -421,7 +421,7 @@ public class SurveyExportHelper {
 			    		answerSets = null;
 						SqlPagination sqlPagination = new SqlPagination(counter, 100);
 						answerSets = answerService.getAnswers(activeSurvey, null, sqlPagination, false, true, false);			    		
-			    		if (answerSets.size() == 0)
+			    		if (answerSets.isEmpty())
 			    		{
 			    			stop = true;
 			    		} else {
@@ -507,7 +507,7 @@ public class SurveyExportHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static ImportResult importSurvey(java.io.File file, String fileDir, FileService fileService, String email) {
+	public static ImportResult importSurvey(java.io.File file, FileService fileService, String email) {
 		
 		ImportResult result = new ImportResult();
 		
@@ -662,50 +662,38 @@ public class SurveyExportHelper {
 		return null;
 	}
 	
-	private static void saveFile(ZipFile zipFile, ZipArchiveEntry zipEntry, String filePath) throws Exception
+	private static void saveFile(ZipFile zipFile, ZipArchiveEntry zipEntry, String filePath) throws IOException 
 	{
 		java.io.File destinationFile = new java.io.File(filePath);
 		
 		if (!destinationFile.exists())
 		{
-			FileOutputStream fos = null;
 			byte[] buf = new byte[65536];
 			int n;
 			
-			try {
-	            fos = new FileOutputStream(destinationFile);
+			try (FileOutputStream fos = new FileOutputStream(destinationFile)) {	            
 	            InputStream entryContent = zipFile.getInputStream(zipEntry);
 	            while ((n = entryContent.read(buf)) != -1) {
 	                if (n > 0) {
 	                    fos.write(buf, 0, n);
 	                }
 	            }
-	        } finally {
-	            if (fos != null) {
-	                fos.close();
-	            }
 	        }
 		}
 	}
 	
-	private static Object getObject(ZipFile zipFile, ZipArchiveEntry zipEntry, FileService fileService) throws Exception
+	private static Object getObject(ZipFile zipFile, ZipArchiveEntry zipEntry, FileService fileService) throws IOException, ClassNotFoundException
 	{
 		java.io.File destinationFile = fileService.createTempFile("importSurveyAnswers" + UUID.randomUUID().toString(), ".eus"); 
-		FileOutputStream fos = null;
 		byte[] buf = new byte[65536];
 		int n;
 		
-		try {
-            fos = new FileOutputStream(destinationFile);
+		try (FileOutputStream fos = new FileOutputStream(destinationFile)) {            
             InputStream entryContent = zipFile.getInputStream(zipEntry);
             while ((n = entryContent.read(buf)) != -1) {
                 if (n > 0) {
                     fos.write(buf, 0, n);
                 }
-            }
-        } finally {
-            if (fos != null) {
-                fos.close();
             }
         }
 		
@@ -717,15 +705,15 @@ public class SurveyExportHelper {
 			result = d.readObject();
 			d.close();
 		} else {		
-			ObjectInputStream obj = new ObjectInputStream(new FileInputStream(destinationFile));
-			result = obj.readObject();
-			obj.close();	
+			try (ObjectInputStream obj = new ObjectInputStream(new FileInputStream(destinationFile))) {
+				result = obj.readObject();
+			}	
 		}
 		
 		return result;
 	}
 
-	public static ImportResult importIPMSurvey(java.io.File f, SurveyService surveyService, User owner, String fileDir, FileService fileService, ServletContext servletContext, String email) throws IOException {
+	public static ImportResult importIPMSurvey(java.io.File f, SurveyService surveyService, User owner, FileService fileService, ServletContext servletContext, String email) throws IOException {
 		ImportResult result = new ImportResult();
 		result.setFromIPM(true);
 		ZipFile zipFile = new ZipFile(f);
@@ -770,7 +758,7 @@ public class SurveyExportHelper {
 	         result.getSurvey().setLogo(logo);
         }
         
-        DocumentBuilder builder = XHTMLValidator.getBuilder(servletContext);
+        DocumentBuilder builder = XHTMLValidator.getBuilder();
         
         int repaired = surveyService.repairXHTML(result.getSurvey(), builder);
         for (Translations translations : result.getTranslations()) {
@@ -837,7 +825,7 @@ public class SurveyExportHelper {
 				survey.setContact(location);
 			} 			
 			
-			survey.setShortname(AdministrationProperties.getElementsByTagName("ShortName").item(0).getTextContent());
+			survey.setShortname(AdministrationProperties.getElementsByTagName(Constants.SHORTNAME).item(0).getTextContent());
 		    String lang = AdministrationProperties.getElementsByTagName("PivotLanguage").item(0).getTextContent().toUpperCase();
 		    Language language = surveyService.getLanguage(lang);
 		    survey.setLanguage(language);
@@ -934,7 +922,7 @@ public class SurveyExportHelper {
 			    	if (InformationReference.getElementsByTagName("InformationLang").getLength() > 0)
 					{
 			    		org.w3c.dom.Element InformationLang = (Element) InformationReference.getElementsByTagName("InformationLang").item(0);
-			    		String label = InformationLang.getElementsByTagName("Label").item(0) != null ? InformationLang.getElementsByTagName("Label").item(0).getTextContent() : "url";
+			    		String label = InformationLang.getElementsByTagName(Constants.LABEL).item(0) != null ? InformationLang.getElementsByTagName(Constants.LABEL).item(0).getTextContent() : "url";
 			    		if (InformationLang.getElementsByTagName("Location").item(0) != null)
 			    		{
 				    		String location = InformationLang.getElementsByTagName("Location").item(0).getTextContent();
@@ -944,7 +932,6 @@ public class SurveyExportHelper {
 			    			}
 				    		survey.getUsefulLinks().put(label, location);
 			    		}
-			    		//TODO: other languages
 					}		    	
 				}
 		    }
@@ -960,7 +947,7 @@ public class SurveyExportHelper {
 			    	if (InformationReference.getElementsByTagName("InformationLang").getLength() > 0)
 					{
 			    		org.w3c.dom.Element InformationLang = (Element) InformationReference.getElementsByTagName("InformationLang").item(0);
-			    		String label = InformationLang.getElementsByTagName("Label").item(0) != null ? InformationLang.getElementsByTagName("Label").item(0).getTextContent() : "url";
+			    		String label = InformationLang.getElementsByTagName(Constants.LABEL).item(0) != null ? InformationLang.getElementsByTagName(Constants.LABEL).item(0).getTextContent() : "url";
 			    		
 			    		if (InformationLang.getElementsByTagName("Location").item(0) != null)
 			    		{
@@ -972,7 +959,6 @@ public class SurveyExportHelper {
 				    		//in IPM also background documents where external links. In EUSurvey background documents must be internal links
 				    		survey.getUsefulLinks().put(label, location);
 			    		}
-			    		//TODO: other languages
 					}
 				}
 		    }
@@ -982,10 +968,8 @@ public class SurveyExportHelper {
 		    {
 		    	org.w3c.dom.Element InternalReference = (Element) ConfirmationPage.getElementsByTagName("InternalReference").item(0);
 		    	org.w3c.dom.Element Text = (Element) InternalReference.getElementsByTagName("Text").item(0);
-		    	org.w3c.dom.Element Label = (Element) Text.getElementsByTagName("Label").item(0);
+		    	org.w3c.dom.Element Label = (Element) Text.getElementsByTagName(Constants.LABEL).item(0);
 		    	survey.setConfirmationPage(Label.getTextContent());
-		    	//TODO: other languages
-		    	//TODO: external references
 		    }
 		    
 		    org.w3c.dom.Element EscapePage = (Element) SurveyProperties.getElementsByTagName("EscapePage").item(0);
@@ -993,10 +977,8 @@ public class SurveyExportHelper {
 		    {
 		    	org.w3c.dom.Element InternalReference = (Element) EscapePage.getElementsByTagName("InternalReference").item(0);
 		    	org.w3c.dom.Element Text = (Element) InternalReference.getElementsByTagName("Text").item(0);
-		    	org.w3c.dom.Element Label = (Element) Text.getElementsByTagName("Label").item(0);
+		    	org.w3c.dom.Element Label = (Element) Text.getElementsByTagName(Constants.LABEL).item(0);
 		    	survey.setEscapePage(Label.getTextContent());
-		    	//TODO: other languages
-		    	//TODO: external references
 		    }
 		    
 		    org.w3c.dom.Element Headers = (Element) SurveyElement.getElementsByTagName("Headers").item(0);
@@ -1027,7 +1009,7 @@ public class SurveyExportHelper {
 				survey.getElements().add(text);
 		    }
 		    
-		    NodeList sections = SurveyElement.getChildNodes(); //SurveyElement.getElementsByTagName("Section");
+		    NodeList sections = SurveyElement.getChildNodes();
 		  
 			for (int s = 0; s < sections.getLength(); s++)
 			{
@@ -1053,7 +1035,7 @@ public class SurveyExportHelper {
 	private static Section parseSection(Element sectionElement, ImportResult result, Survey survey, ServletContext servletContext)
 	{
 		Section section = new Section();
-		section.setShortname(sectionElement.getElementsByTagName("ShortName").item(0).getTextContent());
+		section.setShortname(sectionElement.getElementsByTagName(Constants.SHORTNAME).item(0).getTextContent());
 		if (section.getShortname() != null)
 		{
 			section.setShortname(section.getShortname().replace("&", "and"));
@@ -1067,12 +1049,12 @@ public class SurveyExportHelper {
 			result.getOriginalIdsToNewIds().put(sectionElement.getAttribute("id"), idcounter++);
 			
 			section.setPosition(counter++);
-			if (sectionElement.getElementsByTagName("Label").getLength() > 0)
+			if (sectionElement.getElementsByTagName(Constants.LABEL).getLength() > 0)
 			{
-				section.setTitle(sectionElement.getElementsByTagName("Label").item(0).getTextContent());
+				section.setTitle(sectionElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent());
 			}				
 			
-			String description = getChildElementValue(sectionElement, "Description", servletContext);
+			String description = getChildElementValue(sectionElement, "Description");
 			if (description != null)
 			{
 				Text text = new Text();
@@ -1213,13 +1195,13 @@ public class SurveyExportHelper {
 			Text text = new Text();
 			text.setId(idcounter);
 			result.getOriginalIdsToNewIds().put(questionElement.getAttribute("id"), idcounter++);
-			text.setShortname(questionElement.getElementsByTagName("ShortName").item(0).getTextContent());
+			text.setShortname(questionElement.getElementsByTagName(Constants.SHORTNAME).item(0).getTextContent());
 			if (text.getShortname() != null)
 			{
 				text.setShortname(text.getShortname().replace("&", "and"));
 			}
 			text.setPosition(counter++);
-			text.setTitle(questionElement.getElementsByTagName("Label").item(0).getTextContent());
+			text.setTitle(questionElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent());
 			
 			if (questionElement.getElementsByTagName("Description").getLength() > 0)
 			{
@@ -1238,7 +1220,7 @@ public class SurveyExportHelper {
 			for (int a = 0; a < answers.getLength(); a++)
 			{
 				Element answerElement = (Element) answers.item(a);
-				String label = answerElement.getElementsByTagName("Label").item(0).getTextContent();
+				String label = answerElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent();
 				
 				if (label != null && label.trim().length() > 0)
 				{
@@ -1271,14 +1253,14 @@ public class SurveyExportHelper {
 		matrix.setRows(questions.getLength()+1);
 		matrix.setColumns(((ChoiceQuestion)template).getPossibleAnswers().size()+1);
 		matrix.setIsSingleChoice(template instanceof SingleChoiceQuestion);
-		matrix.setTitle(matrixElement.getElementsByTagName("Label").item(0).getTextContent());
-		matrix.setShortname(matrixElement.getElementsByTagName("ShortName").item(0).getTextContent());
+		matrix.setTitle(matrixElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent());
+		matrix.setShortname(matrixElement.getElementsByTagName(Constants.SHORTNAME).item(0).getTextContent());
 		if (matrix.getShortname() != null)
 		{
 			matrix.setShortname(matrix.getShortname().replace("&", "and"));
 		}
 		
-		String description = getChildElementValue(matrixElement, "Description", servletContext);
+		String description = getChildElementValue(matrixElement, "Description");
 		if (description != null)
 		{
 			matrix.setTitle(matrix.getTitle() + "<br />" + description);
@@ -1287,7 +1269,7 @@ public class SurveyExportHelper {
 		return matrix;
 	}
 	
-	private static String getChildElementValue(Element parent, String name, ServletContext servletContext)
+	private static String getChildElementValue(Element parent, String name)
 	{		
 		NodeList children = parent.getChildNodes();		
 		
@@ -1303,10 +1285,7 @@ public class SurveyExportHelper {
 		return null;
 	}
 
-	private static Question parseQuestion(Element questionElement, boolean template, ImportResult result) {
-
-		//TODO: dependencies
-		
+	private static Question parseQuestion(Element questionElement, boolean template, ImportResult result) {	
 		Question question = null;
 		if (questionElement.getElementsByTagName("RadioButton").getLength() > 0)
 		{
@@ -1547,14 +1526,14 @@ public class SurveyExportHelper {
 		{		
 			question.setId(idcounter);
 			result.getOriginalIdsToNewIds().put(questionElement.getAttribute("id"), idcounter++);
-			question.setShortname(questionElement.getElementsByTagName("ShortName").item(0).getTextContent());
+			question.setShortname(questionElement.getElementsByTagName(Constants.SHORTNAME).item(0).getTextContent());
 			
 			if (question.getShortname() != null)
 			{
 				question.setShortname(question.getShortname().replace("&", "and"));
 			}
 			
-			question.setTitle(questionElement.getElementsByTagName("Label").item(0).getTextContent());
+			question.setTitle(questionElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent());
 			
 			if (questionElement.getElementsByTagName("Description").getLength() > 0)
 			{
@@ -1582,7 +1561,7 @@ public class SurveyExportHelper {
 		for (int a = 0; a < answers.getLength(); a++)
 		{
 			Element answerElement = (Element) answers.item(a);
-			String label = answerElement.getElementsByTagName("Label").item(0).getTextContent();
+			String label = answerElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent();
 			
 			if (label != null && label.trim().length() > 0)
 			{
@@ -1590,7 +1569,7 @@ public class SurveyExportHelper {
 				answer.setPosition(counter++);
 				answer.setId(idcounter);
 				result.getOriginalIdsToNewIds().put(answerElement.getAttribute("id"), idcounter++);
-				answer.setTitle(answerElement.getElementsByTagName("Label").item(0).getTextContent());
+				answer.setTitle(answerElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent());
 				if (question instanceof SingleChoiceQuestion)
 				{
 					((SingleChoiceQuestion)question).getPossibleAnswers().add(answer);
@@ -1692,9 +1671,9 @@ public class SurveyExportHelper {
 				{
 					Element SectionElement = (Element) sectionElements.item(s);
 					String id = SectionElement.getAttribute("id");
-					String label = SectionElement.getElementsByTagName("Label").item(0).getTextContent();
+					String label = SectionElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent();
 					
-					String shortName = SectionElement.getElementsByTagName("ShortName").item(0).getTextContent();
+					String shortName = SectionElement.getElementsByTagName(Constants.SHORTNAME).item(0).getTextContent();
 					if (shortName != null && shortName.length() > 0)
 					{
 						shortName = shortName.replace("&", "and");
@@ -1702,7 +1681,7 @@ public class SurveyExportHelper {
 						translations.getTranslations().add(new Translation(id + Section.TABTITLE, shortName, language, surveyId, translations));
 					}
 					
-					String description = getChildElementValue(SectionElement, "Description", servletContext);
+					String description = getChildElementValue(SectionElement, "Description");
 									
 					translations.getTranslations().add(new Translation(id, label, language, surveyId, translations));
 					if (description != null && description.length() > 0)
@@ -1715,8 +1694,8 @@ public class SurveyExportHelper {
 					{
 						Element MatrixElement = (Element) matrixElements.item(m);
 						id = MatrixElement.getAttribute("id");
-						label = MatrixElement.getElementsByTagName("Label").item(0).getTextContent();
-						description = getChildElementValue(MatrixElement, "Description", servletContext); 
+						label = MatrixElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent();
+						description = getChildElementValue(MatrixElement, "Description"); 
 						
 						if (description != null && description.length() > 0)
 						{
@@ -1733,7 +1712,7 @@ public class SurveyExportHelper {
 						{
 							Element AnswerElement = (Element) answerElements.item(a);
 							id = AnswerElement.getAttribute("id");
-							label = AnswerElement.getElementsByTagName("Label").item(0).getTextContent();
+							label = AnswerElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent();
 							translations.getTranslations().add(new Translation(id, label, language, surveyId, translations));
 						}					
 						
@@ -1742,7 +1721,7 @@ public class SurveyExportHelper {
 						{
 							Element QuestionElement = (Element) questionElements.item(q);
 							id = QuestionElement.getAttribute("id");
-							label = QuestionElement.getElementsByTagName("Label").item(0).getTextContent();
+							label = QuestionElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent();
 							
 							if (QuestionElement.getElementsByTagName("Description").getLength() > 0)
 							{
@@ -1768,7 +1747,7 @@ public class SurveyExportHelper {
 						if (QuestionElement.getParentNode().getNodeName().equalsIgnoreCase("Section"))
 						{
 							id = QuestionElement.getAttribute("id");
-							label = QuestionElement.getElementsByTagName("Label").item(0).getTextContent();
+							label = QuestionElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent();
 							
 							if (QuestionElement.getElementsByTagName("Description").getLength() > 0)
 							{						
@@ -1790,7 +1769,7 @@ public class SurveyExportHelper {
 								{
 									Element AnswerElement = (Element) answerElements.item(a);
 									id = AnswerElement.getAttribute("id");
-									label = AnswerElement.getElementsByTagName("Label").item(0).getTextContent();
+									label = AnswerElement.getElementsByTagName(Constants.LABEL).item(0).getTextContent();
 									if (label != null && label.trim().length() > 0)
 									{
 										translations.getTranslations().add(new Translation(id, label, language, surveyId, translations));

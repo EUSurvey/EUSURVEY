@@ -170,6 +170,16 @@
 						<c:when test="${element.getType() == 'DateQuestion' && element.getMax() != null}">
 							<div class='limits'><spring:message code="limits.MaxDate" arguments="${element.getMaxString()}" /></div>
 						</c:when>
+						
+						<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null && element.getMax() != null}">
+							<div class='limits'><spring:message code="limits.MinMaxDate" arguments="${element.getMinString()},${element.getMaxString()}" /></div>
+						</c:when>
+						<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null}">
+							<div class='limits'><spring:message code="limits.MinDate" arguments="${element.getMinString()}" /></div>
+						</c:when>
+						<c:when test="${element.getType() == 'TimeQuestion' && element.getMax() != null}">
+							<div class='limits'><spring:message code="limits.MaxDate" arguments="${element.getMaxString()}" /></div>
+						</c:when>
 					</c:choose>
 				</c:if>					
 											

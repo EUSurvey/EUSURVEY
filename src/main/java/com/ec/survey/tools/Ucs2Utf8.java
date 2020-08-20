@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Ucs2Utf8 {
 
@@ -32,16 +33,16 @@ public class Ucs2Utf8 {
             }
             in.close();
         } catch (IOException ex) {
-            
+            //ignore
         }
         return buffer.toString();
     }   
     
-    public static HashMap<String,String[]> requestToHashMap(HttpServletRequest r) {
+    public static Map<String,String[]> requestToHashMap(HttpServletRequest r) {
     	return requestToHashMap(r, false);
     }
     
-    public static HashMap<String,String[]> requestToHashMap(HttpServletRequest r, boolean escape) {
+    public static Map<String,String[]> requestToHashMap(HttpServletRequest r, boolean escape) {
     	String re = "\\p{C}"; 
     	
         HashMap<String,String[]> result = new LinkedHashMap<>();
@@ -57,7 +58,9 @@ public class Ucs2Utf8 {
 	            for (int i = 0; i < values.length; i++) {
 	                //escape html
 	            	if (values[i] != null)
-	            	values[i] = values[i].replace("<", "&lt;").replace(">", "&gt;").replace("&", "&amp;");
+	            	{
+	            		values[i] = values[i].replace("<", "&lt;").replace(">", "&gt;").replace("&", "&amp;");
+	            	}
 	            }
             }
             

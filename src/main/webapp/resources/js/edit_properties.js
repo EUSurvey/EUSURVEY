@@ -569,6 +569,24 @@ var ElementProperties = function() {
 					getQuizPropertiesRow();
 					getQuizPropertiesContent();
 				}
+			} else if ($(e).hasClass("timeitem"))
+			{
+				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false');
+				getMinMaxPropertiesRow("Values", 0, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
+				getVisibilityRow(false);
+				
+				getAdvancedPropertiesRow();
+				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
+				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
+								
+//				if (isQuiz)
+//				{
+//					getQuizPropertiesRow();
+//					getQuizPropertiesContent();
+//				}
 			} else if ($(e).hasClass("textitem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);

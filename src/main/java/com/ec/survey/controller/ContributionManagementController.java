@@ -7,19 +7,17 @@ import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.administration.ContributionSearchResult;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
-import com.ec.survey.service.AdministrationService;
-import com.ec.survey.service.SessionService;
-import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.mapping.PaginationMapper;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Controller
 @RequestMapping("/administration")
 public class ContributionManagementController extends BasicController {
-	
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;
 	
 	@Autowired
 	protected PaginationMapper paginationMapper;    
@@ -75,7 +64,7 @@ public class ContributionManagementController extends BasicController {
     	return result;
 	}
 	
-	@RequestMapping(value = "/contributionsearch", method = {RequestMethod.POST})
+	@PostMapping(value = "/contributionsearch")
 	public ModelAndView contributionsearchPOST(HttpServletRequest request, Model model) throws Exception {
 		
 		ResultFilter filter = new ResultFilter();		
@@ -113,8 +102,7 @@ public class ContributionManagementController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/contributionsearchJSON", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<ContributionSearchResult> contributionsearchJSON(HttpServletRequest request) {
-		
+	public @ResponseBody List<ContributionSearchResult> contributionsearchJSON(HttpServletRequest request) {		
 		try {
 		
 			String rows = request.getParameter("rows");			
@@ -142,19 +130,19 @@ public class ContributionManagementController extends BasicController {
 		return null;
 	}
 	
-	@RequestMapping(value = "/resetcontribution", method = {RequestMethod.POST})
+	@PostMapping(value = "/resetcontribution")
 	public @ResponseBody String resetcontribution(Locale locale, HttpServletRequest request) throws Exception {		
 		User user = sessionService.getCurrentUser(request);
 		String code = request.getParameter("uid");	
 		
 		if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-			//only form admins are allowed to do this
-			return "error";
+			//only form administrators are allowed to do this
+			return Constants.ERROR;
 		}
 		
 		String uid = answerService.resetContribution(code);
 		
-		return uid != null ? uid : "error";
+		return uid != null ? uid : Constants.ERROR;
 	}
 		
 }

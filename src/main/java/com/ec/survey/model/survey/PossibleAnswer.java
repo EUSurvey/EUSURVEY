@@ -3,7 +3,6 @@ package com.ec.survey.model.survey;
 import com.ec.survey.tools.Tools;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
@@ -33,7 +32,7 @@ public class PossibleAnswer extends Element {
 		this.questionId = questionId;
 	}
 	
-	public PossibleAnswer copy(String fileDir) throws ValidationException, IntrusionException
+	public PossibleAnswer copy(String fileDir) throws ValidationException
 	{
 		PossibleAnswer copy = new PossibleAnswer();
 		copy.setUniqueId(getUniqueId());
@@ -89,6 +88,8 @@ public class PossibleAnswer extends Element {
 					return this.getShortname() + " - " + this.getTitle();
 				case 3:
 					return this.getTitle() + " (" + this.getShortname() + ")";
+				default:
+					break;
 			}
 		}
 		return this.getTitle();

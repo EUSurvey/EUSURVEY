@@ -136,8 +136,7 @@
 
 .questionhelp {
 	color: #A6A6A6;
-	font-size: 11px;
-	margin-left:10px
+	margin-left:5px
 }
 
 .limits {
@@ -303,6 +302,10 @@ input[type="text"].number {
 }
 
 input[type="text"].date {
+	width: 177px;
+}
+
+input[type="text"].time {
 	width: 177px;
 }
 

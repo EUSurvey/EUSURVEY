@@ -62,7 +62,7 @@ public class EcasUserDeactivator implements Runnable {
 					ids.add(existingusers.get(name).getId());
 				}				
 			}
-			if (ids.size() > 0)
+			if (!ids.isEmpty())
 			{
 				administrationService.deactivateEcasUsers(ids);
 			}

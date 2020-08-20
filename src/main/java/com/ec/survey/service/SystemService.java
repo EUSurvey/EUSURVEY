@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +15,6 @@ import com.ec.survey.model.MessageType;
 @Service("systemService")
 @Configurable
 public class SystemService extends BasicService {
-
-	@Autowired
-	protected MessageSource resources;	
 	
 	@Transactional(readOnly = true)
 	public Message getMessage()
@@ -31,7 +26,7 @@ public class SystemService extends BasicService {
 		
 		Message result = new Message();
 		
-		if (messages.size() > 0)
+		if (!messages.isEmpty())
 		{
 			result =  messages.get(0);
 						
@@ -59,9 +54,9 @@ public class SystemService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Message> messages = q.list();
 		
-		Message result = new Message();
+		Message result;
 		
-		if (messages.size() > 0)
+		if (!messages.isEmpty())
 		{
 			result =  messages.get(0);
 						
@@ -90,9 +85,9 @@ public class SystemService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Message> messages = q.list();
 		
-		Message result = new Message();
+		Message result;
 		
-		if (messages.size() > 0)
+		if (!messages.isEmpty())
 		{
 			result =  messages.get(0);
 						

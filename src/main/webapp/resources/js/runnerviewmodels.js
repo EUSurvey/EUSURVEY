@@ -1,18 +1,18 @@
 function getNiceHelp(help)
 {
-	if (help == null || help.trim().length == 0) return "";
+	if (help == null || help.trim().length == 0) return "<br />";
 
 	return addIconToHelp(help);	
 }
 
 function addIconToHelp(help)
 {
-	if (help.indexOf("<span") == 0 || help.indexOf("<div") == 0)
-	{
-		return help.substring(0, help.indexOf(">")+1) + "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;" + help.substring(help.indexOf(">")+1);
-	}
+	//if (help.indexOf("<span") == 0 || help.indexOf("<div") == 0)
+	//{
+	//	return help.substring(0, help.indexOf(">")+1) + "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;" + help.substring(help.indexOf(">")+1);
+	//}
 	
-	return "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;" + help;
+	return "<span onclick='$(this).next().toggle()' class='glyphicon glyphicon-question-sign'></span><div style='display: none; padding-top: 5px;'>" + help + "</div><br />";
 }
 
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)
@@ -819,6 +819,25 @@ function newDateViewModel(element)
 	viewModel.css = ko.observable(element.css);	
 	viewModel.decimalPlaces = ko.observable(element.decimalPlaces);	
 	viewModel.unit = ko.observable(element.unit);	
+	viewModel.min = ko.observable(element.min);	
+	viewModel.minString = ko.observable(element.minString);	
+	viewModel.max = ko.observable(element.max);	
+	viewModel.maxString = ko.observable(element.maxString);	
+	
+	return viewModel;
+}
+
+function newTimeViewModel(element)
+{
+	var viewModel = newBasicViewModel(element);
+	
+	viewModel.optional = ko.observable(element.optional);	
+	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.attributeName = ko.observable(element.attributeName);	
+	viewModel.help = ko.observable(element.help);
+	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
+	viewModel.css = ko.observable(element.css);	
 	viewModel.min = ko.observable(element.min);	
 	viewModel.minString = ko.observable(element.minString);	
 	viewModel.max = ko.observable(element.max);	

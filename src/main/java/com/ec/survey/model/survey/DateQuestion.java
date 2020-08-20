@@ -6,7 +6,6 @@ import com.ec.survey.tools.Tools;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -29,8 +28,8 @@ public class DateQuestion extends Question {
 
 	public DateQuestion() {}
 	
-	public DateQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+	public DateQuestion(String title, String shortname, String uid) {
+		super(title, shortname, uid);
 	}
 	
 	private Date min;
@@ -56,7 +55,7 @@ public class DateQuestion extends Question {
 		this.max = max;
 	}
 	
-	public DateQuestion copy(String fileDir) throws ValidationException, IntrusionException
+	public DateQuestion copy(String fileDir) throws ValidationException
 	{
 		DateQuestion copy = new DateQuestion();		
 		baseCopy(copy);
@@ -67,6 +66,7 @@ public class DateQuestion extends Question {
 	}
 	
 	@Transient
+	@Override
 	public String getCss()
 	{
 		String css = super.getCss();
@@ -94,10 +94,7 @@ public class DateQuestion extends Question {
 		
 		DateQuestion date = (DateQuestion)element;
 
-		if (min != null && !min.equals(date.min)) return true;
-		if (max != null && !max.equals(date.max)) return true;
-				
-		return false;
+		return ((min != null && !min.equals(date.min)) || (max != null && !max.equals(date.max)));
 	}
 	
 	@Transient 

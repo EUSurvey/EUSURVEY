@@ -3,7 +3,6 @@ package com.ec.survey.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,7 +112,7 @@ public class BasicService implements BeanFactoryAware {
 	
 	protected BeanFactory context;
 	@Override
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+	public void setBeanFactory(BeanFactory beanFactory) {
 		context = beanFactory;		
 	}
 	
@@ -193,7 +192,7 @@ public class BasicService implements BeanFactoryAware {
 
 	public String getFileUIDFromUrl(String url)
 	{
-		return url.substring(url.lastIndexOf("/")+1);
+		return url.substring(url.lastIndexOf('/')+1);
 	}
 	
 	public boolean isOss(){

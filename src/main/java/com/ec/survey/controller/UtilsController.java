@@ -1,7 +1,6 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.tools.Tools;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +15,6 @@ import java.util.Map;
 @Controller
 @RequestMapping("/utils")
 public class UtilsController extends BasicController {
-	
-	public @Value("${captcha.bypass:@null}") String bypassCaptcha;
 	
 	@RequestMapping(value = "/euCountries", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody Map<String, String> getListOfCountries(HttpServletRequest request) {
@@ -40,7 +37,7 @@ public class UtilsController extends BasicController {
 		countryList.put("HU", resources.getMessage("label.country.Hungary", null, locale));
 		countryList.put("HR", resources.getMessage("label.country.Croatia", null, locale));
 		countryList.put("IE", resources.getMessage("label.country.Ireland", null, locale));
-		countryList.put("IR", resources.getMessage("label.country.Italy", null, locale));
+		countryList.put("IT", resources.getMessage("label.country.Italy", null, locale));
 		countryList.put("LT", resources.getMessage("label.country.Lithuania", null, locale));
 		countryList.put("LU", resources.getMessage("label.country.Luxembourg", null, locale));
 		countryList.put("LV", resources.getMessage("label.country.Latvia", null, locale));
@@ -73,7 +70,7 @@ public class UtilsController extends BasicController {
 		langList.put("ET", resources.getMessage("label.lang.Estonian", null, locale));
 		langList.put("FI", resources.getMessage("label.lang.Finnish", null, locale));
 		langList.put("FR", resources.getMessage("label.lang.French", null, locale));
-		langList.put("GA", resources.getMessage("label.lang.Gaelic", null, locale));
+		langList.put("GA", resources.getMessage("label.lang.Irish", null, locale));
 		langList.put("HR", resources.getMessage("label.lang.Croatian", null, locale));
 		langList.put("HU", resources.getMessage("label.lang.Hungarian", null, locale));
 		langList.put("IT", resources.getMessage("label.lang.Italian", null, locale));
@@ -302,59 +299,61 @@ public class UtilsController extends BasicController {
 		
 		Map<String, String> dgList = new HashMap<>();
 
-		dgList.put("SG",resources.getMessage("label.dg.SG",null,locale));
-		dgList.put("SJ",resources.getMessage("label.dg.SJ",null,locale));
-		dgList.put("COMM",resources.getMessage("label.dg.COMM",null,locale));
-		dgList.put("EPSC",resources.getMessage("label.dg.EPSC",null,locale));
-		dgList.put("ECFIN",resources.getMessage("label.dg.ECFIN",null,locale));
-		dgList.put("GROW",resources.getMessage("label.dg.GROW",null,locale));
-		dgList.put("COMP",resources.getMessage("label.dg.COMP",null,locale));
-		dgList.put("EMPL",resources.getMessage("label.dg.EMPL",null,locale));
-		dgList.put("AGRI",resources.getMessage("label.dg.AGRI",null,locale));
-		dgList.put("ENER",resources.getMessage("label.dg.ENER",null,locale));
-		dgList.put("MOVE",resources.getMessage("label.dg.MOVE",null,locale));
-		dgList.put("CLIMA",resources.getMessage("label.dg.CLIMA",null,locale));
-		dgList.put("ENV",resources.getMessage("label.dg.ENV",null,locale));
-		dgList.put("RTD",resources.getMessage("label.dg.RTD",null,locale));
-		dgList.put("JRC",resources.getMessage("label.dg.JRC",null,locale));
-		dgList.put("CNECT",resources.getMessage("label.dg.CNECT",null,locale));
-		dgList.put("MARE",resources.getMessage("label.dg.MARE",null,locale));
-		dgList.put("FISMA",resources.getMessage("label.dg.FISMA",null,locale));
-		dgList.put("REGIO",resources.getMessage("label.dg.REGIO",null,locale));
-		dgList.put("TAXUD",resources.getMessage("label.dg.TAXUD",null,locale));
-		dgList.put("EAC",resources.getMessage("label.dg.EAC2",null,locale));
-		dgList.put("SANTE",resources.getMessage("label.dg.SANTE",null,locale));
-		dgList.put("HOME",resources.getMessage("label.dg.HOME",null,locale));
-		dgList.put("JUST",resources.getMessage("label.dg.JUST",null,locale));
-		dgList.put("FPI",resources.getMessage("label.dg.FPI",null,locale));
-		dgList.put("TRADE",resources.getMessage("label.dg.TRADE",null,locale));
-		dgList.put("NEAR",resources.getMessage("label.dg.NEAR",null,locale));
-		dgList.put("DEVCO",resources.getMessage("label.dg.DEVCO",null,locale));
-		dgList.put("ECHO",resources.getMessage("label.dg.ECHO",null,locale));
-		dgList.put("ESTAT",resources.getMessage("label.dg.ESTAT",null,locale));
-		dgList.put("HR",resources.getMessage("label.dg.HR",null,locale));
-		dgList.put("DIGIT",resources.getMessage("label.dg.DIGIT",null,locale));
-		dgList.put("BUDG",resources.getMessage("label.dg.BUDG",null,locale));
-		dgList.put("IAS",resources.getMessage("label.dg.IAS",null,locale));
-		dgList.put("OLAF",resources.getMessage("label.dg.OLAF",null,locale));
-		dgList.put("SCIC",resources.getMessage("label.dg.SCIC",null,locale));
-		dgList.put("DGT",resources.getMessage("label.dg.DGT",null,locale));
-		dgList.put("OP",resources.getMessage("label.dg.OP",null,locale));
-		dgList.put("OIB",resources.getMessage("label.dg.OIB",null,locale));
-		dgList.put("PMO",resources.getMessage("label.dg.PMO",null,locale));
-		dgList.put("OIL",resources.getMessage("label.dg.OIL",null,locale));
-		dgList.put("EPSO",resources.getMessage("label.dg.EPSO",null,locale));
-		dgList.put("EASME",resources.getMessage("label.dg.EASME",null,locale));
-		dgList.put("EACEA",resources.getMessage("label.dg.EACEA",null,locale));
-		dgList.put("CHAFEA",resources.getMessage("label.dg.CHAFEA",null,locale));
-		dgList.put("INEA",resources.getMessage("label.dg.INEA",null,locale));
-		dgList.put("ERCEA",resources.getMessage("label.dg.ERCEA",null,locale));
-		dgList.put("REA",resources.getMessage("label.dg.REA",null,locale));		
-		dgList.put("DPO",resources.getMessage("label.dg.DPO",null,locale));
-		dgList.put("HAS",resources.getMessage("label.dg.HAS",null,locale));
-		dgList.put("LIB",resources.getMessage("label.dg.LIB",null,locale));
-		dgList.put("SRSS",resources.getMessage("label.dg.SRSS",null,locale));
-		dgList.put("A50TF",resources.getMessage("label.dg.A50TF",null,locale));
+		dgList.put("PMO",resources.getMessage("label.dgnew.PMO",null,locale));
+		dgList.put("AGRI",resources.getMessage("label.dgnew.AGRI",null,locale));
+		dgList.put("BUDG",resources.getMessage("label.dgnew.BUDG",null,locale));
+		dgList.put("CLIMA",resources.getMessage("label.dgnew.CLIMA",null,locale));
+		dgList.put("COMM",resources.getMessage("label.dgnew.COMM",null,locale));
+		dgList.put("CNECT",resources.getMessage("label.dgnew.CNECT",null,locale));
+		dgList.put("COMP",resources.getMessage("label.dgnew.COMP",null,locale));
+		dgList.put("CHAFEA",resources.getMessage("label.dgnew.CHAFEA",null,locale));
+		dgList.put("DPO",resources.getMessage("label.dgnew.DPO",null,locale));
+		dgList.put("DEFIS",resources.getMessage("label.dgnew.DEFIS",null,locale));
+		dgList.put("ECFIN",resources.getMessage("label.dgnew.ECFIN",null,locale));
+		dgList.put("EACEA",resources.getMessage("label.dgnew.EACEA",null,locale));
+		dgList.put("EAC",resources.getMessage("label.dgnew.EAC",null,locale));
+		dgList.put("EMPL",resources.getMessage("label.dgnew.EMPL",null,locale));
+		dgList.put("ENER",resources.getMessage("label.dgnew.ENER",null,locale));
+		dgList.put("ENV",resources.getMessage("label.dgnew.ENV",null,locale));
+		dgList.put("OLAF",resources.getMessage("label.dgnew.OLAF",null,locale));
+		dgList.put("ECHO",resources.getMessage("label.dgnew.ECHO",null,locale));
+		dgList.put("NEAR",resources.getMessage("label.dgnew.NEAR",null,locale));
+		dgList.put("EPSO",resources.getMessage("label.dgnew.EPSO",null,locale));
+		dgList.put("ERCEA",resources.getMessage("label.dgnew.ERCEA",null,locale));
+		dgList.put("ESOA",resources.getMessage("label.dgnew.ESOA",null,locale));
+		dgList.put("ESTAT",resources.getMessage("label.dgnew.ESTAT",null,locale));
+		dgList.put("EASME",resources.getMessage("label.dgnew.EASME",null,locale));
+		dgList.put("FISMA",resources.getMessage("label.dgnew.FISMA",null,locale));
+		dgList.put("FPI",resources.getMessage("label.dgnew.FPI",null,locale));
+		dgList.put("SANTE",resources.getMessage("label.dgnew.SANTE",null,locale));
+		dgList.put("HAS",resources.getMessage("label.dgnew.HAS",null,locale));
+		dgList.put("HR",resources.getMessage("label.dgnew.HR",null,locale));
+		dgList.put("DIGIT",resources.getMessage("label.dgnew.DIGIT",null,locale));
+		dgList.put("OIB",resources.getMessage("label.dgnew.OIB",null,locale));
+		dgList.put("OIL",resources.getMessage("label.dgnew.OIL",null,locale));
+		dgList.put("INEA",resources.getMessage("label.dgnew.INEA",null,locale));
+		dgList.put("IDEA",resources.getMessage("label.dgnew.IDEA",null,locale));
+		dgList.put("IAS",resources.getMessage("label.dgnew.IAS",null,locale));
+		dgList.put("GROW",resources.getMessage("label.dgnew.GROW",null,locale));
+		dgList.put("DEVCO",resources.getMessage("label.dgnew.DEVCO",null,locale));
+		dgList.put("SCIC",resources.getMessage("label.dgnew.SCIC",null,locale));
+		dgList.put("JRC",resources.getMessage("label.dgnew.JRC",null,locale));
+		dgList.put("JUST",resources.getMessage("label.dgnew.JUST",null,locale));
+		dgList.put("SJ",resources.getMessage("label.dgnew.SJ",null,locale));
+		dgList.put("LERC",resources.getMessage("label.dgnew.LERC",null,locale));
+		dgList.put("MARE",resources.getMessage("label.dgnew.MARE",null,locale));
+		dgList.put("HOME",resources.getMessage("label.dgnew.HOME",null,locale));
+		dgList.put("MOVE",resources.getMessage("label.dgnew.MOVE",null,locale));
+		dgList.put("OP",resources.getMessage("label.dgnew.OP",null,locale));
+		dgList.put("REGIO",resources.getMessage("label.dgnew.REGIO",null,locale));
+		dgList.put("RTD",resources.getMessage("label.dgnew.RTD",null,locale));
+		dgList.put("REA",resources.getMessage("label.dgnew.REA",null,locale));
+		dgList.put("SG",resources.getMessage("label.dgnew.SG",null,locale));
+		dgList.put("REFORM",resources.getMessage("label.dgnew.REFORM",null,locale));
+		dgList.put("UKTF",resources.getMessage("label.dgnew.UKTF",null,locale));
+		dgList.put("TAXUD",resources.getMessage("label.dgnew.TAXUD",null,locale));
+		dgList.put("TRADE",resources.getMessage("label.dgnew.TRADE",null,locale));
+		dgList.put("DGT",resources.getMessage("label.dgnew.DGT",null,locale));
 			
 		dgList = Tools.sortByComparator(dgList);
 		return dgList;
@@ -410,12 +409,9 @@ public class UtilsController extends BasicController {
 	@RequestMapping(value = "/config/{key}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String getConfigValue(@PathVariable String key, HttpServletRequest request) {
 		String result = "";		
-		if(key != null)
-		{
-			if(key.equals("captchaBypass"))
-			{				
-				result =  bypassCaptcha;				
-			}
+		if (key != null && key.equals("captchaBypass"))
+		{	
+			result =  bypassCaptcha;				
 		}
 		return result;
 	}

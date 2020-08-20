@@ -2,7 +2,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
@@ -27,7 +26,7 @@ public class Image extends Question {
 	private String longdesc;
 	private String filename;
 	
-	public Image(Survey survey, String text, String uid) {
+	public Image(String text, String uid) {
 		setTitle(text);
 		setUniqueId(uid);
 	}
@@ -75,7 +74,7 @@ public class Image extends Question {
 		this.url = url;
 	}
 	
-	public Image copy(String fileDir) throws ValidationException, IntrusionException
+	public Image copy(String fileDir) throws ValidationException
 	{
 		Image copy = new Image();
 		baseCopy(copy);
@@ -98,9 +97,7 @@ public class Image extends Question {
 		if (align != null && !align.equals(image.align)) return true;
 		if (scale != null && !scale.equals(image.scale)) return true;
 		if (url != null && !url.equals(image.url)) return true;
-		if (width != null && !width.equals(image.width)) return true;
-		
-		return false;
+		return (width != null && !width.equals(image.width));
 	}
 	
 	@Transient

@@ -110,6 +110,15 @@ function getNewElement(item)
 		element.maxString = null;
 		element.css = "date";
 		updateComplexityScore("addSimpleQuestion");
+	} else if (item.hasClass("timeitem"))
+	{
+		element = getBasicElement("TimeQuestion", true, "Time", item.attr("id"), true);
+		element.min = null;
+		element.minString = null;
+		element.max = null;
+		element.maxString = null;
+		element.css = "time";
+		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("textitem"))
 	{
 		element = getBasicElement("Text", false, "Text", item.attr("id"), false);
@@ -402,7 +411,7 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		} else {
 			element.optional = true;
 		}
-		element.isAttribute = true;
+		element.isAttribute = false;
 		element.isUnique = false;
 		element.attributeName = element.shortname;
 		element.readonly = false;		

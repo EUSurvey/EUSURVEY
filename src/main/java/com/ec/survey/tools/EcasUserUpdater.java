@@ -72,16 +72,6 @@ public class EcasUserUpdater implements Runnable {
 				}				
 			}
 			
-//			logger.info("EcasUserUpdater: Users updates");
-//			
-//			for (String name : existingusers.keySet())
-//			{
-//				if (!existingusers.get(name).isDeactivated())
-//				{
-//					administrationService.deactivateEcasUser(existingusers.get(name).getId());
-//				}				
-//			}
-			
 			stopWatch.stop();
 			schemaService.saveLastLDAPSynchronizationDate(currentDate);
 			logger.info(stopWatch.prettyPrint());

@@ -5,6 +5,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.security.CustomAuthenticationManager;
 import com.ec.survey.security.CustomAuthenticationSuccessHandler;
 import com.ec.survey.service.MailService;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.Tools;
@@ -24,6 +25,7 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,12 +66,12 @@ public class LoginLogoutController extends BasicController {
 	private @Value("${server.prefix}") String host;
 	
 	@RequestMapping(value = "/auth/login/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String getLoginPageRunnerMode(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) {
+	public String getLoginPageRunnerMode(@RequestParam(value=Constants.ERROR, required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) {
 		return "redirect:/auth/login";
 	}
 	
 	@RequestMapping(value = "/auth/login", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public String getLoginPage(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
+	public String getLoginPage(@RequestParam(value=Constants.ERROR, required=false) boolean error, HttpServletRequest request, ModelMap model, Locale locale) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		
@@ -80,7 +82,7 @@ public class LoginLogoutController extends BasicController {
 
 		if (error) {
 			// Assign an error message
-			model.put("error", resources.getMessage("error.CredentialsInvalid", null, "You have entered an invalid login or password!", locale));		
+			model.put(Constants.ERROR, resources.getMessage("error.CredentialsInvalid", null, "You have entered an invalid login or password!", locale));		
 		}
 		
 		model.put("ecasurl", ecashost);
@@ -98,19 +100,19 @@ public class LoginLogoutController extends BasicController {
 		return "auth/login";
 	}
 	
-	@RequestMapping(value = "/auth/login", method = {RequestMethod.POST})
+	@PostMapping(value = "/auth/login")
 	public String postLoginPage(ModelMap model, HttpServletRequest request, Locale locale) {
 		String target = request.getParameter("target");
 		
 		if (target != null && target.equals("forgotPassword"))
 		{
-			return forgotPassword(request.getParameter("email"), request.getParameter("login"), model, locale, request);
+			return forgotPassword(request.getParameter(Constants.EMAIL), request.getParameter("login"), model, locale, request);
 		}	
 		return "auth/login";
 	}
 	
 	@RequestMapping(value = "/auth/ecaslogin", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public void ecaslogin(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, HttpServletResponse response, ModelMap model) throws ServletException, IOException {
+	public void ecaslogin(@RequestParam(value=Constants.ERROR, required=false) boolean error, HttpServletRequest request, HttpServletResponse response, ModelMap model) throws ServletException, IOException {
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		String ticket = request.getParameter("ticket");
@@ -131,7 +133,7 @@ public class LoginLogoutController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/auth/surveylogin", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public void surveylogin(@RequestParam(value="error", required=false) boolean error, HttpServletRequest request, HttpServletResponse response, ModelMap model) throws ServletException, IOException {
+	public void surveylogin(@RequestParam(value=Constants.ERROR, required=false) boolean error, HttpServletRequest request, HttpServletResponse response, ModelMap model) throws ServletException, IOException {
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		String ticket = request.getParameter("ticket");
@@ -152,12 +154,8 @@ public class LoginLogoutController extends BasicController {
 		User user = null;
 		try {
 			user = sessionService.getCurrentUser(request);
-		} catch (NotAgreedToTosException e) {
-			//ignore
-		} catch (NotAgreedToPsException e) {
-			//ignore
-		} catch (WeakAuthenticationException e) {
-			//ignore
+		} catch (NotAgreedToTosException | NotAgreedToPsException | WeakAuthenticationException e) {
+			//ignore	
 		}
 		
 		request.getSession().invalidate();
@@ -179,7 +177,7 @@ public class LoginLogoutController extends BasicController {
 	public ModelAndView getPSPage(HttpServletRequest request) {
 		User user = (User) request.getSession().getAttribute("USER");
 		if (super.isShowPrivacy()) {
-			Map<String, Object> model = new HashMap<String,Object>();
+			Map<String, Object> model = new HashMap<>();
 			model.put("user", user);
 			model.put("oss", super.isOss());
 			return new ModelAndView("auth/ps", model);
@@ -191,7 +189,7 @@ public class LoginLogoutController extends BasicController {
 		}
 	}
 	
-	@RequestMapping(value = "/auth/ps", method = RequestMethod.POST)
+	@PostMapping(value = "/auth/ps")
 	public String getPSPagePost(HttpServletRequest request, HttpServletResponse response) {
 		
 		User user = (User) request.getSession().getAttribute("USER");
@@ -222,7 +220,7 @@ public class LoginLogoutController extends BasicController {
 	public ModelAndView getToSPage(HttpServletRequest request) {
 		User user = (User) request.getSession().getAttribute("USER");
 		if (super.isShowPrivacy()) {
-			Map<String, Object> model = new HashMap<String,Object>();
+			Map<String, Object> model = new HashMap<>();
 			model.put("user", user);
 			model.put("oss", super.isOss());
 			return new ModelAndView("auth/tos", model);
@@ -234,7 +232,7 @@ public class LoginLogoutController extends BasicController {
 		}
 	}
 	
-	@RequestMapping(value = "/auth/tos", method = RequestMethod.POST)
+	@PostMapping(value = "/auth/tos")
 	public String getToSPagePost(HttpServletRequest request, HttpServletResponse response) {
 		
 		User user = (User) request.getSession().getAttribute("USER");
@@ -284,7 +282,7 @@ public class LoginLogoutController extends BasicController {
 				
 				if (!user.getEmail().equalsIgnoreCase(email))
 				{
-					model.put("error", errorMessage);
+					model.put(Constants.ERROR, errorMessage);
 					model.put("mode", "forgotPassword");
 					return "auth/login";
 				}
@@ -306,9 +304,9 @@ public class LoginLogoutController extends BasicController {
 				InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]", host);		
 								
-				mailService.SendHtmlMail(code.getEmail(), sender, sender, resources.getMessage("mail.PasswordResetRequest", null, "Password Reset Request", locale), text, smtpServer, Integer.parseInt(smtpPort), null);
+				mailService.SendHtmlMail(code.getEmail(), sender, sender, resources.getMessage("mail.PasswordResetRequest", null, "Password Reset Request", locale), text, null);
 			} catch (Exception e) {
-				model.put("error", errorMessage);
+				model.put(Constants.ERROR, errorMessage);
 				return "auth/login";
 			}
 			
@@ -316,7 +314,7 @@ public class LoginLogoutController extends BasicController {
 			return "auth/login";
 		}
 		
-		model.put("error", errorMessage);
+		model.put(Constants.ERROR, errorMessage);
 		return "auth/login";
 	}
 	
@@ -327,7 +325,7 @@ public class LoginLogoutController extends BasicController {
 		if (isCasOss()) model.put("casoss", true);
 		if (code == null || code.length() == 0)
 		{
-			model.put("error", resources.getMessage("error.ResetCodeInvalid", null, "You did not provide a valid password reset code!", locale));
+			model.put(Constants.ERROR, resources.getMessage("error.ResetCodeInvalid", null, "You did not provide a valid password reset code!", locale));
 			return "auth/login";
 		}
 		
@@ -336,7 +334,7 @@ public class LoginLogoutController extends BasicController {
 			
 			if (!checkValid(codeItem))
 			{
-				model.put("error", resources.getMessage("error.ResetCodeOutdated", null, "This password reset code is not valid anymore! Please request a new one.", locale));
+				model.put(Constants.ERROR, resources.getMessage("error.ResetCodeOutdated", null, "This password reset code is not valid anymore! Please request a new one.", locale));
 				return "auth/login";
 			}
 			
@@ -344,7 +342,7 @@ public class LoginLogoutController extends BasicController {
 			return "auth/reset";
 			
 		} catch (Exception e) {
-			model.put("error", resources.getMessage("error.ResetCodeInvalid", null, "You did not provide a valid password reset code!", locale));
+			model.put(Constants.ERROR, resources.getMessage("error.ResetCodeInvalid", null, "You did not provide a valid password reset code!", locale));
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		
@@ -362,7 +360,7 @@ public class LoginLogoutController extends BasicController {
 		return !cal2.before(cal);
 	}
 	
-	@RequestMapping(value = "/auth/resetPost", method = RequestMethod.POST)
+	@PostMapping(value = "/auth/resetPost")
 	public String resetPost (@RequestParam(value="password", required=true) String password, @RequestParam(value="password2", required=true) String password2, @RequestParam(value="code", required=true) String code, ModelMap model, Locale locale) {
 		
 		model.put("code", code);
@@ -370,13 +368,13 @@ public class LoginLogoutController extends BasicController {
 		if (isCasOss()) model.put("casoss", true);
 		if (password == null || password.length() == 0 || password2 == null)
 		{
-			model.put("error", resources.getMessage("error.PasswordInvalid", null, "You did not provide a valid password!", locale));	
+			model.put(Constants.ERROR, resources.getMessage("error.PasswordInvalid", null, "You did not provide a valid password!", locale));	
 			return "auth/reset";
 		}
 		
 		if (!password.equals(password2))
 		{
-			model.put("error", resources.getMessage("error.PasswordsDontMatch", null, "The two passwords do not match!", locale));	
+			model.put(Constants.ERROR, resources.getMessage("error.PasswordsDontMatch", null, "The two passwords do not match!", locale));	
 			return "auth/reset";
 		}
 		
@@ -385,13 +383,13 @@ public class LoginLogoutController extends BasicController {
 			
 			if (!checkValid(codeItem))
 			{
-				model.put("error", resources.getMessage("error.ResetCodeOutdated", null, "This password reset code is not valid anymore! Please request a new one.", locale));
+				model.put(Constants.ERROR, resources.getMessage("error.ResetCodeOutdated", null, "This password reset code is not valid anymore! Please request a new one.", locale));
 				return "auth/reset";
 			}
 			
 			if (Tools.isPasswordWeak(password))
 			{
-				model.put("error", resources.getMessage("error.PasswordWeak", null, "This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$&%...).", locale));
+				model.put(Constants.ERROR, resources.getMessage("error.PasswordWeak", null, "This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$&%...).", locale));
 				return "auth/reset";
 			}
 			
@@ -404,10 +402,9 @@ public class LoginLogoutController extends BasicController {
 
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			model.put("error", resources.getMessage("error.ResetNotPossible", null, "Reset not possible!", locale));
+			model.put(Constants.ERROR, resources.getMessage("error.ResetNotPossible", null, "Reset not possible!", locale));
 			return "auth/reset";
-		}
-		
+		}		
 	}
 
 }

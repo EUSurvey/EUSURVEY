@@ -18,7 +18,7 @@ public class XHTMLValidator {
 	
 	private static final Logger logger = Logger.getLogger(XHTMLValidator.class);
 		
-	public static DocumentBuilder getBuilder(ServletContext servletContext)
+	public static DocumentBuilder getBuilder()
 	{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setValidating(true);			
@@ -52,8 +52,7 @@ public class XHTMLValidator {
 			builder.setErrorHandler(myErrorHandler);
 		
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//ignore
 		}
 		
 		return builder;
@@ -62,7 +61,7 @@ public class XHTMLValidator {
 	public static boolean validate(String label, ServletContext servletContext, DocumentBuilder builder) {
 		try {
 		
-			if (builder == null) builder = getBuilder(servletContext);
+			if (builder == null) builder = getBuilder();
 			
 			final InputStream is = servletContext.getResourceAsStream("/WEB-INF/Content/xhtml1-strict.dtd");
 			final InputStream is2 = servletContext.getResourceAsStream("/WEB-INF/Content/xhtml-lat1.ent");

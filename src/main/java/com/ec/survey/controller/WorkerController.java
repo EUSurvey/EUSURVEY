@@ -12,6 +12,7 @@ import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.AnswerExecutor;
 import com.ec.survey.tools.ArchiveExecutor;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.RestoreExecutor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -32,28 +33,14 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/worker")
 public class WorkerController extends BasicController {
 		
-	@Resource(name = "exportService")
-	private ExportService exportService;
-	
-	@Resource(name = "archiveService")
-	private ArchiveService archiveService;
-	
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-	
 	@Resource(name = "webserviceService")
 	private WebserviceService webserviceService;
-	
-	@Resource(name = "taskExecutorLong")
-	private TaskExecutor taskExecutorLong;
-	
+
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
 	
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
-	private @Value("${sender}") String sender;
-	private @Value("${server.prefix}") String serverPrefix;
 	private @Value("${webservice.maxrequestsperday}") String maxrequestsperday;		
 
 	@RequestMapping(value = "createanswerpdf/{code}", method = {RequestMethod.GET, RequestMethod.HEAD}, produces = "text/html")
@@ -61,13 +48,13 @@ public class WorkerController extends BasicController {
 		
 		try {
 			AnswerSet answerSet = answerService.get(code);
-			String email = request.getParameter("email");
+			String email = request.getParameter(Constants.EMAIL);
 			if (answerSet != null) {
 				AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
 								
 				if (email != null)
 				{
-					export.init(answerSet, email, sender, smtpServer, smtpPort, serverPrefix);
+					export.init(answerSet, email, sender, serverPrefix);
 				} else {
 					export.init( answerService.get(code));
 				}
@@ -90,13 +77,13 @@ public class WorkerController extends BasicController {
 		
 		try {
 			Draft draft = answerService.getDraftByAnswerUID(code);
-			String email = request.getParameter("email");
+			String email = request.getParameter(Constants.EMAIL);
 			if (draft != null) {
 				AnswerExecutor export = (AnswerExecutor) context.getBean("answerExecutor");
 								
 				if (email != null)
 				{
-					export.init(draft.getAnswerSet(), email, sender, smtpServer, smtpPort, serverPrefix);
+					export.init(draft.getAnswerSet(), email, sender, serverPrefix);
 				} else {
 					export.init(draft.getAnswerSet());
 				}

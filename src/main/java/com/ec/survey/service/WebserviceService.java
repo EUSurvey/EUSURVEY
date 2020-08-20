@@ -1,8 +1,10 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.ParticipationGroup;
 import com.ec.survey.model.ServiceRequest;
 import com.ec.survey.model.WebserviceTask;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.ExportsRemover;
 import com.ec.survey.tools.ResultsCreator;
@@ -11,9 +13,7 @@ import com.ec.survey.tools.Tools;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +29,6 @@ import java.util.Locale;
 @Service("webserviceService")
 @Configurable
 public class WebserviceService extends BasicService {
-	
-	@Autowired
-	protected MessageSource resources;	
 		
 	@Transactional
 	public WebserviceTask get(int id)
@@ -74,7 +71,7 @@ public class WebserviceService extends BasicService {
 		if (error.length() > 250) error = error.substring(0, 250);
 		
 		SQLQuery query = session.createSQLQuery("UPDATE WEBSERVICETASK t SET t.WST_DONE = true, t.WST_ERROR = :error WHERE t.WST_ID = :id");
-		query.setString("error", error);
+		query.setString(Constants.ERROR, error);
 		query.setInteger("id", task);
 			
 		query.executeUpdate();
@@ -82,12 +79,10 @@ public class WebserviceService extends BasicService {
 	
 	@Transactional
 	public Date setStarted(int taskid) throws InterruptedException
-	{
-		boolean saved = false;
-		
+	{	
 		int counter = 1;
 		
-		while(!saved)
+		while(true)
 		{
 			try {
 				return internalSetStarted(taskid);
@@ -104,9 +99,7 @@ public class WebserviceService extends BasicService {
 				
 				Thread.sleep(1000);
 			}
-		}	
-		
-		return null;
+		}
 	}
 	
 	private Date internalSetStarted(int taskid) {
@@ -252,7 +245,7 @@ public class WebserviceService extends BasicService {
 					getPool().execute(exportsRemover);	
 					break;
 				default:
-					throw new Exception("Task type not supported");
+					throw new MessageException("Task type not supported");
 			}
 				
 			logger.info(String.format("Task %s started successfully", task.getId()));
@@ -318,7 +311,7 @@ public class WebserviceService extends BasicService {
 					getPool().execute(resultsCreator2);
 					break;
 				default:
-					throw new Exception("Task type not supported");
+					throw new MessageException("Task type not supported");
 			}
 			
 			logger.info(String.format("Task %s started successfully", task.getId()));
