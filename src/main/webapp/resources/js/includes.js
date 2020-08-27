@@ -1425,7 +1425,7 @@ function initModals(item)
 				 		if (min > valuewithoutcolons)
 				 		{
 				 			validationinfo += $(this).attr("name") + " (MinTime) ";
-				 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");	
+				 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + timevaluetoosmall + "</div>");	
 				 			result = false;
 				 		};
 				 	} else if (strStartsWith(classes[i], 'max'))
@@ -1435,7 +1435,7 @@ function initModals(item)
 				 		if (max < valuewithoutcolons)
 				 		{
 				 			validationinfo += $(this).attr("name") + " (MaxTime) ";
-				 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");		
+				 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + timevaluetoolarge + "</div>");		
 				 			result = false;
 				 		};
 				 	};
@@ -1936,7 +1936,7 @@ function initModals(item)
 	}
 		
 	function isValidTime(t) {
-		return /^([0-1]?[0-9]|2[0-4]):([0-5][0-9]):([0-5][0-9])?$/.test(t);
+		return /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])?$/.test(t);
 	}
 	
 	function parseMinMaxDate(s)
