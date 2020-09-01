@@ -1882,7 +1882,42 @@ public class SurveyHelper {
 			newValues += " points: " + points;
 		}
 		number.setPoints(points);
+		
+		String display = getString(parameterMap, "display", id, servletContext);
+		if (log220 && !number.getDisplay().equals(display)) {
+			oldValues += " display: " + number.getDisplay();
+			newValues += " display: " + display;
+		}
+		number.setDisplay(display);
+		
+		String minLabel = getString(parameterMap, "minLabel", id, servletContext);
+		if (log220 && !number.getMinLabel().equals(minLabel)) {
+			oldValues += " minLabel: " + number.getMinLabel();
+			newValues += " minLabel: " + minLabel;
+		}
+		number.setMinLabel(minLabel);
+		
+		String maxLabel = getString(parameterMap, "maxLabel", id, servletContext);
+		if (log220 && !number.getMaxLabel().equals(maxLabel)) {
+			oldValues += " maxLabel: " + number.getMaxLabel();
+			newValues += " maxLabel: " + maxLabel;
+		}
+		number.setMaxLabel(maxLabel);
+		
+		String initialSliderPosition = getString(parameterMap, "initialSliderPosition", id, servletContext);
+		if (log220 && !number.getInitialSliderPosition().equals(initialSliderPosition)) {
+			oldValues += " initialSliderPosition: " + number.getInitialSliderPosition();
+			newValues += " initialSliderPosition: " + initialSliderPosition;
+		}
+		number.setInitialSliderPosition(initialSliderPosition);
 
+		Boolean displayGraduationScale = getBoolean(parameterMap, "displayGraduationScale", id);
+		if (log220 && !attribute.equals(number.getDisplayGraduationScale())) {
+			oldValues += " displayGraduationScale: " + number.getDisplayGraduationScale();
+			newValues += " displayGraduationScale: " + displayGraduationScale;
+		}
+		number.setDisplayGraduationScale(displayGraduationScale);
+		
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
 			number.getActivitiesToLog().put(220, oldnew);

@@ -525,18 +525,40 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
-		<!-- ko if: min() != null && min() != 0 && max() != null && max() != 0 -->
-			<div class='limits' data-bind="html: getMinMax(minString(), maxString())"></div>
-		<!-- /ko -->
-		<!-- ko if: min() != 0 && min() != null && (max() == 0 || max() == null) -->
-			<div class='limits' data-bind="html: getMin(minString())"></div>
-		<!-- /ko -->
-		<!-- ko if: (min() == 0 || min() == null) && max() != null && max() != 0 -->
-			<div class='limits' data-bind="html: getMax(maxString())"></div>
+		<!-- ko if: display() != 'Slider' -->
+			<!-- ko if: min() != null && min() != 0 && max() != null && max() != 0 -->
+				<div class='limits' data-bind="html: getMinMax(minString(), maxString())"></div>
+			<!-- /ko -->
+			<!-- ko if: min() != 0 && min() != null && (max() == 0 || max() == null) -->
+				<div class='limits' data-bind="html: getMin(minString())"></div>
+			<!-- /ko -->
+			<!-- ko if: (min() == 0 || min() == null) && max() != null && max() != 0 -->
+				<div class='limits' data-bind="html: getMax(maxString())"></div>
+			<!-- /ko -->
 		<!-- /ko -->
 		
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
-		<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onkeyup="propagateChange();" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
+				
+		<!-- ko if: display() != 'Slider' -->
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onkeyup="propagateChange();" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
+		<!-- /ko -->
+		
+		<!-- ko if: display() == 'Slider' -->		
+		<div class="slider-div">
+			<div style="float: left; margin-left: -20px; padding-bottom: 20px;" data-bind="html: minLabel()"></div>
+			<div style="float: right; padding-bottom: 20px;" data-bind="html: maxLabel()"></div>
+			<div style="clear: both"></div>
+			
+			<a data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
+			
+			<input class="sliderbox" type="text"
+			 data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue()}"
+			 />
+			 
+			 <a data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
+		</div>	
+		<!-- /ko -->
+		
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'number', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
@@ -567,6 +589,12 @@
 			<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />
 			<input type="hidden" data-bind="value: points, attr: {'name': 'points' + id()}" />
 			<!-- /ko -->
+			
+			<input type="hidden" data-bind="value: minLabel, attr: {'name': 'minLabel' + id()}" />
+			<input type="hidden" data-bind="value: maxLabel, attr: {'name': 'maxLabel' + id()}" />
+			<input type="hidden" data-bind="value: display, attr: {'name': 'display' + id()}" />
+			<input type="hidden" data-bind="value: initialSliderPosition, attr: {'name': 'initialSliderPosition' + id()}" />
+			<input type="hidden" data-bind="value: displayGraduationScale, attr: {'name': 'displayGraduationScale' + id()}" />
 		<!-- /ko -->
 	</div> 
 	

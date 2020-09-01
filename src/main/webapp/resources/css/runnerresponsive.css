@@ -175,6 +175,18 @@
 	font-weight: bold;
 }
 
+.slider-horizontal {	
+	margin-top: 20px;
+	margin-bottom: 10px;
+	width: 300px !important;
+}
+
+.slider-div {
+	padding: 20px;
+	padding-left: 20px;
+	max-width: 420px;
+}
+
 .numbering {
     margin-right: 5px;
 }

@@ -400,7 +400,30 @@ function addElementToContainer(element, container, foreditor, forskin)
 	    });
 	});
 	
+	$(container).find(".sliderbox").each(function(){
+		initSlider(this, foreditor, viewModel);
+	});
+	
 	return viewModel;
+}
+
+function initSlider(input, foreditor, viewModel)
+{
+	try {
+		$(input).bootstrapSlider().bootstrapSlider('destroy');
+	} catch (e) {
+		//ignore
+	}
+		
+	$(input).bootstrapSlider({
+		formatter: function(value) {
+			return value;
+		},
+		tooltip: 'always',
+		ticks_labels: viewModel.labels(),
+		enabled: !foreditor
+		//ticks_labels: [viewModel.minLabel(), viewModel.maxLabel()]
+	});
 }
 
 function getWidth(widths, index)

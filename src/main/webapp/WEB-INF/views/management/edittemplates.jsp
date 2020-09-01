@@ -83,6 +83,22 @@
 				</table>
 			</td>
 		<!-- /ko -->
+
+		<!--  ko if: ContentType() == 'minmaxnumber' -->
+			<td class="propertycontent">
+				<table class="minmaxtable">
+					<tr>
+						<td><spring:message code="label.MinValue" />&nbsp;</td>
+						<td><input class="spinner" style="min-width:60px" type="text" data-type="min" data-bind="value: ContentItems()[0].Value, attr: {id: ContentItems()[0].Id, 'data-to' : ContentItems()[1].Id}" /></td>
+					</tr>
+					<tr>
+						<td><spring:message code="label.MaxValue" />&nbsp;</td>
+						<td><input class="spinner" style="min-width:60px" type="text" data-type="max" data-bind="value: ContentItems()[1].Value, attr: {id: ContentItems()[1].Id, 'data-from' : ContentItems()[0].Id}" /></td>
+					</tr>
+				</table>
+			</td>
+		<!-- /ko -->
+
 		<!--  ko if: ContentType() == 'minmaxdate' -->
 			<td class="propertycontent">
 				<table class="minmaxtable">
@@ -217,7 +233,7 @@
 </script>
 
 <script type="text/html" id="advanced-template">	
-	<tr class="firstpropertyrow collapsiblerow">
+	<tr class="firstpropertyrow collapsiblerow advanced">
 		<td colspan='2' style="text-align: left">
 			<a class='advancedtogglebutton' onclick='toggleAdvancedProperties(this)'><span class='glyphicon glyphicon-minus-sign'></span>&nbsp;<spring:message code="label.Advanced" /></a>
 		</td>
@@ -229,8 +245,8 @@
 		<td colspan='2' style="text-align: left; border-bottom: 0px;">
 			<div class="toolboxheader">
 				<a>
-					<span id="quizpropertiescollapsebutton" class="glyphicon glyphicon-chevron-down" onclick="showHideQuizProperties(this)"></span>
-					<spring:message code="label.QuizProperties" />
+					<span class="glyphicon glyphicon-chevron-down" onclick="showHideQuizProperties(this)"></span>
+					<spring:message code="label.Quiz" />
 				</a>
 			</div>
 		</td>
