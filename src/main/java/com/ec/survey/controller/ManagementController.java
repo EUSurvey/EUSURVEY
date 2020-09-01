@@ -45,6 +45,7 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -95,7 +96,7 @@ public class ManagementController extends BasicController {
 
 		Survey survey = surveyService.getSurvey(answerSet.getSurveyId(), lang);
 
-		ModelAndView result = new ModelAndView("thanksloggedin", "uniqueCode", code);
+		ModelAndView result = new ModelAndView("thanksloggedin", Constants.UNIQUECODE, code);
 
 		if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
 			result.addObject("participantsemail", answerSet.getResponderEmail());
@@ -165,7 +166,7 @@ public class ManagementController extends BasicController {
 			message += "connection failed: " + e.getLocalizedMessage() + "<br />";
 		}
 
-		return new ModelAndView("error/info", "message", message);
+		return new ModelAndView("error/info", Constants.MESSAGE, message);
 	}
 
 	public ModelAndView clearchanges(String shortname, HttpServletRequest request, Locale locale) throws Exception {
@@ -187,7 +188,8 @@ public class ManagementController extends BasicController {
 
 	@RequestMapping(value = "/overview", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView overview(@PathVariable String shortname, HttpServletRequest request, Locale locale)
-			throws Exception {
+			throws ForbiddenURLException, InvalidURLException, NotAgreedToTosException, WeakAuthenticationException,
+			NotAgreedToPsException {
 		User user = sessionService.getCurrentUser(request);
 
 		Form form;
@@ -222,9 +224,9 @@ public class ManagementController extends BasicController {
 				return new ModelAndView("redirect:/" + form.getSurvey().getShortname() + "/management/participants");
 			}
 
-			ModelAndView model = new ModelAndView("error/generic");
+			ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
 			String message = resources.getMessage("error.NoAccessToSurvey", null, "No Access", locale);
-			model.addObject("message", message);
+			model.addObject(Constants.MESSAGE, message);
 			return model;
 		}
 
@@ -318,7 +320,7 @@ public class ManagementController extends BasicController {
 
 		String delete = request.getParameter("delete");
 		if (delete == null) {
-			delete = "false";
+			delete = Constants.FALSE;
 		}
 		User u = sessionService.getCurrentUser(request);
 		if (!u.getId().equals(survey.getOwner().getId())
@@ -354,7 +356,7 @@ public class ManagementController extends BasicController {
 						paging.setItems(surveys);
 
 						result = new ModelAndView("forms/forms", "paging", paging);
-						result.addObject("filter", filter);
+						result.addObject(Constants.FILTER, filter);
 
 						if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null
 								|| filter.getStartFrom() != null || filter.getStartTo() != null
@@ -424,7 +426,7 @@ public class ManagementController extends BasicController {
 				filename = com.ec.survey.tools.FileUtils.cleanFilename(request.getHeader("X-File-Name"));
 			}
 
-			String uuid = UUID.randomUUID().toString().replace("/", "");
+			String uuid = UUID.randomUUID().toString().replace(Constants.PATH_DELIMITER, "");
 			java.io.File file = null;
 			ImportResult result = null;
 			file = fileService.createTempFile("import" + uuid, null);
@@ -434,10 +436,10 @@ public class ManagementController extends BasicController {
 
 			if (filename.toLowerCase().endsWith("zip")) {
 				result = SurveyExportHelper.importIPMSurvey(file, surveyService, sessionService.getCurrentUser(request),
-						fileDir, fileService, servletContext, u.getEmail());
+						fileService, servletContext, u.getEmail());
 				request.getSession().setAttribute("IMPORTORIGIN", "IPM");
 			} else {
-				result = SurveyExportHelper.importSurvey(file, fileDir, fileService, u.getEmail());
+				result = SurveyExportHelper.importSurvey(file, fileService, u.getEmail());
 				request.getSession().setAttribute("IMPORTORIGIN", "EUSURVEY");
 			}
 
@@ -584,9 +586,9 @@ public class ManagementController extends BasicController {
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			ModelAndView model = new ModelAndView("error/generic");
+			ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
 			String message = resources.getMessage("error.OperationFailed", null, "Operation failed.", locale);
-			model.addObject("message", message);
+			model.addObject(Constants.MESSAGE, message);
 			return model;
 		}
 		return overview(shortname, request, locale);
@@ -689,11 +691,11 @@ public class ManagementController extends BasicController {
 				if (!question.getOptional()) {
 					if (question.getAttributeName().equalsIgnoreCase("name"))
 						nameFound = true;
-					if (question.getAttributeName().equalsIgnoreCase("email"))
+					if (question.getAttributeName().equalsIgnoreCase(Constants.EMAIL))
 						emailFound = true;
 					if (question.getShortname().equalsIgnoreCase("name"))
 						nameFound = true;
-					if (question.getShortname().equalsIgnoreCase("email"))
+					if (question.getShortname().equalsIgnoreCase(Constants.EMAIL))
 						emailFound = true;
 					if (nameFound && emailFound)
 						break;
@@ -703,7 +705,8 @@ public class ManagementController extends BasicController {
 
 		result.addObject("validregform", nameFound && emailFound);
 
-		if (form.getSurvey().getSecurity().contains("anonymous") && form.getSurvey().getIsPublished() && answerService.getHasPublishedAnswers(form.getSurvey().getUniqueId())) {
+		if (form.getSurvey().getSecurity().contains("anonymous") && form.getSurvey().getIsPublished()
+				&& answerService.getHasPublishedAnswers(form.getSurvey().getUniqueId())) {
 			result.addObject("haspublishedanswers", "true");
 		}
 
@@ -740,7 +743,7 @@ public class ManagementController extends BasicController {
 		if (request.getParameter("uuid") != null && request.getParameter("uuid").length() > 0) {
 			// Case 1: import survey
 			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-			String uuid = request.getParameter("uuid").replace("/", "");
+			String uuid = request.getParameter("uuid").replace(Constants.PATH_DELIMITER, "");
 
 			try {
 				java.io.File file = fileService.getUsersFile(u.getId(), "import" + uuid);
@@ -749,12 +752,12 @@ public class ManagementController extends BasicController {
 				if (request.getSession().getAttribute("IMPORTORIGIN") != null
 						&& request.getSession().getAttribute("IMPORTORIGIN").toString().equalsIgnoreCase("IPM")) {
 					result = SurveyExportHelper.importIPMSurvey(file, surveyService,
-							sessionService.getCurrentUser(request), fileDir, fileService, servletContext, u.getEmail());
+							sessionService.getCurrentUser(request), fileService, servletContext, u.getEmail());
 				} else {
-					result = SurveyExportHelper.importSurvey(file, fileDir, fileService, u.getEmail());
+					result = SurveyExportHelper.importSurvey(file, fileService, u.getEmail());
 				}
 
-				result.getSurvey().setShortname(Tools.escapeHTML(parameters.get("shortname")[0]));
+				result.getSurvey().setShortname(Tools.escapeHTML(parameters.get(Constants.SHORTNAME)[0]));
 				result.getSurvey().setTitle(Tools.filterHTML(parameters.get("title")[0]));
 				Language objLang = surveyService.getLanguage(Tools.escapeHTML(parameters.get("surveylanguage")[0]));
 				if (objLang == null) {
@@ -769,7 +772,7 @@ public class ManagementController extends BasicController {
 				result.getSurvey().setAudience(Tools.escapeHTML(parameters.get("audience")[0]));
 
 				if (result.getActiveSurvey() != null) {
-					result.getActiveSurvey().setShortname(Tools.escapeHTML(parameters.get("shortname")[0]));
+					result.getActiveSurvey().setShortname(Tools.escapeHTML(parameters.get(Constants.SHORTNAME)[0]));
 					result.getActiveSurvey().setTitle(Tools.filterHTML(parameters.get("title")[0]));
 					result.getActiveSurvey().setLanguage(objLang);
 					result.getActiveSurvey().setListForm(request.getParameter("listform") != null
@@ -782,18 +785,20 @@ public class ManagementController extends BasicController {
 				if (result != null && result.getSurvey() != null) {
 					int id = surveyService.importSurvey(result, sessionService.getCurrentUser(request), true);
 					activityService.log(102, null, Integer.toString(id), u.getId(), result.getSurvey().getUniqueId());
-					if (!file.delete()) {
-						logger.error("not possible to delete file " + file.getAbsolutePath());
+					try {
+						Files.delete(file.toPath());
+					} catch (IOException e) {
+						logger.error(e.getLocalizedMessage(), e);
 					}
 					if (request.getParameter("origin") != null
 							&& request.getParameter("origin").startsWith(contextpath)) {
 						return new ModelAndView(
 								"redirect:" + request.getParameter("origin").substring(contextpath.length())
-										+ "?imported=" + Tools.escapeHTML(parameters.get("shortname")[0])
+										+ "?imported=" + Tools.escapeHTML(parameters.get(Constants.SHORTNAME)[0])
 										+ "&invalidCodeFound=" + result.isInvalidCodeFound());
 					} else {
 						return new ModelAndView(
-								"redirect:/forms?imported=" + Tools.escapeHTML(parameters.get("shortname")[0])
+								"redirect:/forms?imported=" + Tools.escapeHTML(parameters.get(Constants.SHORTNAME)[0])
 										+ "&invalidCodeFound=" + result.isInvalidCodeFound());
 					}
 
@@ -801,8 +806,8 @@ public class ManagementController extends BasicController {
 					String message = resources.getMessage("message.FileCouldNotBeImported", null,
 							"The file could not be imported.", locale);
 					logger.error(message);
-					ModelAndView model = new ModelAndView("error/generic");
-					model.addObject("message", message);
+					ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+					model.addObject(Constants.MESSAGE, message);
 					return model;
 				}
 
@@ -810,8 +815,8 @@ public class ManagementController extends BasicController {
 				logger.error(ex.getMessage(), ex);
 				String message = resources.getMessage("message.FileCouldNotBeImported", null,
 						"The file could not be imported.", locale);
-				ModelAndView model = new ModelAndView("error/generic");
-				model.addObject("message", message);
+				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+				model.addObject(Constants.MESSAGE, message);
 
 				// if the survey import failed after the survey was already created
 				// we have to delete it here
@@ -854,16 +859,16 @@ public class ManagementController extends BasicController {
 				}
 				Map<String, String[]> parameterMap = Ucs2Utf8.requestToHashMap(request);
 
-				String newShortName = Tools.escapeHTML(parameterMap.get("shortname")[0]);
+				String newShortName = Tools.escapeHTML(parameterMap.get(Constants.SHORTNAME)[0]);
 
 				// check if shortname already exists
 				Survey existingSurvey = surveyService.getSurvey(newShortName, true, false, false, false, null, true,
 						false);
-				if (existingSurvey != null) {
+				if (existingSurvey != null && !existingSurvey.getIsDeleted()) {
 
 					String message = resources.getMessage("message.ShortnameAlreadyExists", null,
 							"A survey with this shortname already exists.", locale);
-					return new ModelAndView("error/generic", "message", message);
+					return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 				}
 
 				Survey copy = original.copy(surveyService, sessionService.getCurrentUser(request), fileDir, false, -1,
@@ -938,9 +943,9 @@ public class ManagementController extends BasicController {
 				}
 			}
 
-			ModelAndView model = new ModelAndView("error/generic");
+			ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
 			String message = resources.getMessage("message.ProblemDuringCopy", null, "There was a problem.", locale);
-			model.addObject("message", message);
+			model.addObject(Constants.MESSAGE, message);
 			return model;
 
 		} else {
@@ -964,7 +969,7 @@ public class ManagementController extends BasicController {
 		File oldlogo = null;
 
 		if (creation) {
-			uploadedSurvey.setShortname(Tools.escapeHTML(parameterMap.get("shortname")[0]));
+			uploadedSurvey.setShortname(Tools.escapeHTML(parameterMap.get(Constants.SHORTNAME)[0]));
 			uploadedSurvey.setTitle(Tools.filterHTML(parameterMap.get("title")[0]));
 
 			Language objLang = surveyService.getLanguage(parameterMap.get("surveylanguage")[0]);
@@ -998,7 +1003,7 @@ public class ManagementController extends BasicController {
 
 				String message = resources.getMessage("message.ShortnameAlreadyExists", null,
 						"A survey with this shortname already exists.", locale);
-				return new ModelAndView("error/generic", "message", message);
+				return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 			}
 
 		} else {
@@ -1042,7 +1047,7 @@ public class ManagementController extends BasicController {
 
 				String message = resources.getMessage("message.ShortnameAlreadyExists", null,
 						"A survey with this shortname already exists.", locale);
-				return new ModelAndView("error/generic", "message", message);
+				return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 			}
 
 			if (!uploadedSurvey.getShortname().equals(survey.getShortname())) {
@@ -1055,25 +1060,25 @@ public class ManagementController extends BasicController {
 		if (uploadedSurvey.getShortname() == null || uploadedSurvey.getShortname().trim().length() == 0) {
 			String message = resources.getMessage("message.SpecifyShortname", null, "Please specify a short name.",
 					locale);
-			return new ModelAndView("error/generic", "message", message);
+			return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 		}
 
 		if (invalid(uploadedSurvey.getShortname())) {
 			String message = resources.getMessage("validation.name2", null,
 					"The name must only contain alphanumerical characters (characters of the alphabet (from A to Z), numbers (0 to 9)) and hyphens.",
 					locale);
-			return new ModelAndView("error/generic", "message", message);
+			return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 		}
 
 		if (uploadedSurvey.getShortname().contains("__")) {
 			String message = resources.getMessage("validation.shortname2", null,
 					"Please do not use mora than one hyphen in a row.", locale);
-			return new ModelAndView("error/generic", "message", message);
+			return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 		}
 
 		if (uploadedSurvey.getTitle() == null || uploadedSurvey.getTitle().trim().length() == 0) {
 			String message = resources.getMessage("validation.notitle", null, "Please specify a title.", locale);
-			return new ModelAndView("error/generic", "message", message);
+			return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 		}
 
 		if (uploadedSurvey.getTitle() != null
@@ -1083,7 +1088,7 @@ public class ManagementController extends BasicController {
 
 		if (uploadedSurvey.getContact() == null || uploadedSurvey.getContact().trim().length() == 0) {
 			String message = resources.getMessage("validation.nocontact", null, "Please specify a contact.", locale);
-			return new ModelAndView("error/generic", "message", message);
+			return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 		}
 
 		if (uploadedSurvey.getLanguage() == null) {
@@ -1092,7 +1097,7 @@ public class ManagementController extends BasicController {
 
 		if (uploadedSurvey.getLanguage() == null || uploadedSurvey.getLanguage().getCode().trim().length() == 0) {
 			String message = resources.getMessage("validation.nolanguage", null, "Please specify a language.", locale);
-			return new ModelAndView("error/generic", "message", message);
+			return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 		}
 
 		if (uploadedSurvey.getRegistrationForm()) {
@@ -1107,7 +1112,7 @@ public class ManagementController extends BasicController {
 					if (question.getIsAttribute() && !question.getOptional()) {
 						if (question.getAttributeName().equalsIgnoreCase("name"))
 							nameFound = true;
-						if (question.getAttributeName().equalsIgnoreCase("email"))
+						if (question.getAttributeName().equalsIgnoreCase(Constants.EMAIL))
 							emailFound = true;
 						if (nameFound && emailFound)
 							break;
@@ -1126,9 +1131,9 @@ public class ManagementController extends BasicController {
 								question.setAttributeName("name");
 								question.setIsAttribute(true);
 							}
-							if (!emailFound && question.getShortname().equalsIgnoreCase("email")) {
+							if (!emailFound && question.getShortname().equalsIgnoreCase(Constants.EMAIL)) {
 								emailFound = true;
-								question.setAttributeName("email");
+								question.setAttributeName(Constants.EMAIL);
 								question.setIsAttribute(true);
 							}
 							if (nameFound && emailFound)
@@ -1139,7 +1144,7 @@ public class ManagementController extends BasicController {
 			}
 
 			if (!emailFound) {
-				EmailQuestion email = new EmailQuestion("Email", "email", UUID.randomUUID().toString());
+				EmailQuestion email = new EmailQuestion(Constants.EMAIL, Constants.EMAIL, UUID.randomUUID().toString());
 				email.setOptional(false);
 				email.setPosition(0);
 				email.setHelp("");
@@ -1549,7 +1554,7 @@ public class ManagementController extends BasicController {
 				if (entry.getKey().startsWith("linklabel")) {
 					String number = entry.getKey().substring(9);
 					String label = number + "#" + Tools.escapeHTML(entry.getValue()[0]);
-					String url = parameterMap.get(entry.getKey().replace("label", "url"))[0];
+					String url = parameterMap.get(entry.getKey().replace(Constants.LABEL, "url"))[0];
 
 					if (StringUtils.hasText(label) && StringUtils.hasText(url)) {
 
@@ -1601,7 +1606,7 @@ public class ManagementController extends BasicController {
 			for (Entry<String, String[]> entry : parameterMap.entrySet()) {
 				if (entry.getKey().startsWith("doclabel")) {
 					String label = Tools.escapeHTML(entry.getValue()[0]);
-					String url = parameterMap.get(entry.getKey().replace("label", "url"))[0];
+					String url = parameterMap.get(entry.getKey().replace(Constants.LABEL, "url"))[0];
 
 					if (StringUtils.hasText(label) && StringUtils.hasText(url)) {
 						if (label != null && !XHTMLValidator.validate(label, servletContext, null)) {
@@ -1621,7 +1626,7 @@ public class ManagementController extends BasicController {
 			for (Entry<String, String[]> entry : parameterMap.entrySet()) {
 				if (entry.getKey().startsWith("docurl")) {
 					String url = Tools.escapeHTML(entry.getValue()[0]);
-					String label = parameterMap.get(entry.getKey().replace("url", "label"))[0];
+					String label = parameterMap.get(entry.getKey().replace("url", Constants.LABEL))[0];
 
 					if (StringUtils.hasText(url) && !StringUtils.hasText(label)) {
 						String uid = url.substring(url.lastIndexOf('/') + 1);
@@ -1674,8 +1679,8 @@ public class ManagementController extends BasicController {
 
 			String logo = request.getParameter("logo");
 			if (logo != null && logo.length() > 0) {
-				if (logo.equalsIgnoreCase("deleted")) {
-					String[] oldnew = { survey.getLogo().getName(), "deleted" };
+				if (logo.equalsIgnoreCase(Constants.DELETED)) {
+					String[] oldnew = { survey.getLogo().getName(), Constants.DELETED };
 					activitiesToLog.put(213, oldnew);
 
 					survey.setLogo(null);
@@ -1793,7 +1798,7 @@ public class ManagementController extends BasicController {
 					if (contributionfiltercounter > 4) {
 						String message = resources.getMessage("validation.atmost3Selections", null,
 								"Please select at most 3 answers", locale);
-						return new ModelAndView("error/generic", "message", message);
+						return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, message);
 					}
 				} else if (key.equalsIgnoreCase("newskin") && !survey.getIsOPC()
 						&& entry.getValue()[0].trim().length() > 0) {
@@ -2079,11 +2084,9 @@ public class ManagementController extends BasicController {
 		u = administrationService.setLastEditedSurvey(u, survey.getId());
 		sessionService.setCurrentUser(request, u);
 
-		form.setSurvey(survey);
-		form.setTranslations(translationService.getTranslationsForSurvey(survey.getId(), false));
 		String editorredirect = request.getParameter("editorredirect");
 		if (editorredirect != null && editorredirect.trim().length() > 0) {
-			if (editorredirect.startsWith("/")) {
+			if (editorredirect.startsWith(Constants.PATH_DELIMITER)) {
 				editorredirect = editorredirect.substring(1);
 				editorredirect = editorredirect.substring(editorredirect.indexOf('/') + 1);
 			}
@@ -2315,7 +2318,8 @@ public class ManagementController extends BasicController {
 
 	@RequestMapping(value = "/test", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView test(@PathVariable String shortname, HttpServletRequest request, Locale locale)
-			throws Exception {
+			throws InvalidURLException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException,
+			ForbiddenURLException, FrozenSurveyException {
 		User u = sessionService.getCurrentUser(request);
 		Survey survey = surveyService.getSurveyByShortname(shortname, true, u, request, true, true, true, false);
 
@@ -2338,7 +2342,7 @@ public class ManagementController extends BasicController {
 
 		String lang = request.getParameter("surveylanguage");
 
-		if (lang != null &&form.translationIsValid(lang)) {
+		if (lang != null && form.translationIsValid(lang)) {
 			Survey translated = SurveyHelper.createTranslatedSurvey(form.getSurvey().getId(), lang, surveyService,
 					translationService, true);
 			form.setSurvey(translated);
@@ -2378,7 +2382,7 @@ public class ManagementController extends BasicController {
 				form.setWcagCompliance(
 						draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 
-				SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), fileDir, form.getSurvey(), fileService);
+				SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), form.getSurvey(), fileService);
 				uniqueCode = draft.getAnswerSet().getUniqueCode();
 
 				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
@@ -2409,7 +2413,7 @@ public class ManagementController extends BasicController {
 		}
 
 		result.addObject("submit", true);
-		result.addObject("uniqueCode", uniqueCode);
+		result.addObject(Constants.UNIQUECODE, uniqueCode);
 
 		return result;
 	}
@@ -2422,7 +2426,7 @@ public class ManagementController extends BasicController {
 
 		User user = sessionService.getCurrentUser(request);
 
-		String uniqueCode = request.getParameter("uniqueCode");
+		String uniqueCode = request.getParameter(Constants.UNIQUECODE);
 
 		ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 		if (err != null)
@@ -2433,8 +2437,7 @@ public class ManagementController extends BasicController {
 			lang = request.getParameter("language.code");
 		}
 
-		AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, fileDir, uniqueCode, false, lang, user,
-				fileService);
+		AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
 
 		String newlang = request.getParameter("newlang");
 		String newlangpost = request.getParameter("newlangpost");
@@ -2443,9 +2446,8 @@ public class ManagementController extends BasicController {
 
 		Set<String> invisibleElements = new HashSet<>();
 
-		HashMap<Element, String> validation = SurveyHelper.validateAnswerSet(answerSet, answerService,
-				invisibleElements, resources, locale, request.getParameter("draftid"), request, false, user,
-				fileService);
+		Map<Element, String> validation = SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements,
+				resources, locale, request.getParameter("draftid"), request, false, user, fileService);
 
 		if (newlangpost != null && newlangpost.equalsIgnoreCase("true")) {
 			survey = surveyService.getSurvey(survey.getId(), newlang);
@@ -2457,7 +2459,7 @@ public class ManagementController extends BasicController {
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 
 			model.addObject("submit", true);
-			model.addObject("uniqueCode", uniqueCode);
+			model.addObject(Constants.UNIQUECODE, uniqueCode);
 			model.addObject("invisibleElements", invisibleElements);
 
 			return model;
@@ -2475,7 +2477,7 @@ public class ManagementController extends BasicController {
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 
 			model.addObject("submit", true);
-			model.addObject("uniqueCode", uniqueCode);
+			model.addObject(Constants.UNIQUECODE, uniqueCode);
 			model.addObject("invisibleElements", invisibleElements);
 
 			return model;
@@ -2494,15 +2496,15 @@ public class ManagementController extends BasicController {
 			f.setValidation(validation);
 
 			// recreate uploaded files
-			SurveyHelper.recreateUploadedFiles(answerSet, fileDir, survey, fileService);
+			SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService);
 
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			model.addObject("submit", true);
-			model.addObject("uniqueCode", uniqueCode);
+			model.addObject(Constants.UNIQUECODE, uniqueCode);
 
 			String message = resources.getMessage("error.CheckValidation", null, "Please check for validation errors.",
 					locale);
-			model.addObject("message", message);
+			model.addObject(Constants.MESSAGE, message);
 
 			return model;
 		}
@@ -2516,7 +2518,7 @@ public class ManagementController extends BasicController {
 			f.getAnswerSets().add(answerSet);
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			model.addObject("submit", true);
-			model.addObject("uniqueCode", uniqueCode);
+			model.addObject(Constants.UNIQUECODE, uniqueCode);
 			model.addObject("wrongcaptcha", "true");
 			return model;
 		}
@@ -2532,7 +2534,7 @@ public class ManagementController extends BasicController {
 		survey = surveyService.getSurvey(survey.getId(), lang);
 
 		if (survey.getIsQuiz()) {
-			ModelAndView result = new ModelAndView("management/testQuizResult", "uniqueCode",
+			ModelAndView result = new ModelAndView("management/testQuizResult", Constants.UNIQUECODE,
 					answerSet.getUniqueCode());
 			Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
 					translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
@@ -2547,7 +2549,7 @@ public class ManagementController extends BasicController {
 			return result;
 		}
 
-		ModelAndView result = new ModelAndView("thanksloggedin", "uniqueCode", answerSet.getUniqueCode());
+		ModelAndView result = new ModelAndView("thanksloggedin", Constants.UNIQUECODE, answerSet.getUniqueCode());
 
 		if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
 			result.addObject("participantsemail", answerSet.getResponderEmail());
@@ -2573,21 +2575,19 @@ public class ManagementController extends BasicController {
 
 	@RequestMapping(value = "/recalculateScore")
 	public ModelAndView recalculateScore(@PathVariable String shortname, @RequestParam String id,
-			HttpServletRequest request, Locale locale) throws Exception {
+			HttpServletRequest request, Locale locale)
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException {
 		Survey survey = null;
 		User u = sessionService.getCurrentUser(request);
 
 		survey = surveyService.getSurvey(Integer.parseInt(id));
 		sessionService.upgradePrivileges(survey, u, request);
 
-		if (!u.getId().equals(survey.getOwner().getId())) {
-			if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-				if (u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
-					if (u.getLocalPrivileges().get(LocalPrivilege.AccessDraft) < 2) {
-						throw new ForbiddenURLException();
-					}
-				}
-			}
+		if (!u.getId().equals(survey.getOwner().getId())
+				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+				&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1
+				&& u.getLocalPrivileges().get(LocalPrivilege.AccessDraft) < 2) {
+			throw new ForbiddenURLException();
 		}
 
 		RecalculateScoreExecutor recalculateScoreExecutor = (RecalculateScoreExecutor) context
@@ -2766,7 +2766,7 @@ public class ManagementController extends BasicController {
 						}
 						filter.setLanguages(languages);
 						filtered = true;
-					} else if (entry.getKey().startsWith("filter")) {
+					} else if (entry.getKey().startsWith(Constants.FILTER)) {
 						String questionId = entry.getKey().substring(6);
 						String[] values = entry.getValue();
 						String value = StringUtils.arrayToDelimitedString(values, ";");
@@ -2905,7 +2905,7 @@ public class ManagementController extends BasicController {
 			filter.setVisibleQuestions(filter.getExportedQuestions());
 		}
 
-		result.addObject("filter", filter);
+		result.addObject(Constants.FILTER, filter);
 
 		if (request != null) {
 			request.getSession().setAttribute("resultsform", form);
@@ -2947,9 +2947,9 @@ public class ManagementController extends BasicController {
 
 		String message = null;
 		if (request != null)
-			message = request.getParameter("message");
+			message = request.getParameter(Constants.MESSAGE);
 		if (message != null && message.length() > 0) {
-			result.addObject("message", message);
+			result.addObject(Constants.MESSAGE, message);
 		}
 
 		if (request != null) {
@@ -3129,8 +3129,9 @@ public class ManagementController extends BasicController {
 												|| (survey.getIsDraft()
 														&& user.getLocalPrivilegeValue("AccessDraft") > 0)) {
 											s.append("<a target='blank' href='").append(contextpath).append("/files/")
-													.append(survey.getUniqueId()).append("/").append(file.getUid())
-													.append("'>").append(file.getName()).append("</a><br />");
+													.append(survey.getUniqueId()).append(Constants.PATH_DELIMITER)
+													.append(file.getUid()).append("'>").append(file.getName())
+													.append("</a><br />");
 										} else {
 											s.append(file.getName()).append("<br />");
 										}
@@ -3554,7 +3555,7 @@ public class ManagementController extends BasicController {
 			ModelAndView result = access(shortname, request, locale);
 
 			String message = resources.getMessage("message.AccessNotFound", null, "Access not found", locale);
-			result.addObject("message", message);
+			result.addObject(Constants.MESSAGE, message);
 
 			return result;
 		}
@@ -3607,7 +3608,7 @@ public class ManagementController extends BasicController {
 			for (Access access : accesses) {
 				if (access.getUser() != null && access.getUser().getId().equals(user.getId())) {
 					ModelAndView result = access(shortname, request, locale);
-					result.addObject("message", "User already exists");
+					result.addObject(Constants.MESSAGE, "User already exists");
 					return result;
 				}
 			}
@@ -3620,7 +3621,7 @@ public class ManagementController extends BasicController {
 					sessionService.getCurrentUser(request).getId(), form.getSurvey().getUniqueId());
 		} else {
 			ModelAndView result = access(shortname, request, locale);
-			result.addObject("message", "User not found");
+			result.addObject(Constants.MESSAGE, "User not found");
 			return result;
 		}
 
@@ -3657,7 +3658,7 @@ public class ManagementController extends BasicController {
 			for (Access access : accesses) {
 				if (access.getDepartment() != null && access.getDepartment().equals(groupname)) {
 					ModelAndView result = access(shortname, request, locale);
-					result.addObject("message", "Group already exists");
+					result.addObject(Constants.MESSAGE, "Group already exists");
 					return result;
 				}
 			}
@@ -3671,7 +3672,7 @@ public class ManagementController extends BasicController {
 
 		} else {
 			ModelAndView result = access(shortname, request, locale);
-			result.addObject("message", "Group not found");
+			result.addObject(Constants.MESSAGE, "Group not found");
 			return result;
 		}
 
@@ -3703,7 +3704,7 @@ public class ManagementController extends BasicController {
 			return access(shortname, request, locale);
 		} else {
 			ModelAndView result = access(shortname, request, locale);
-			result.addObject("message", "Access not found");
+			result.addObject(Constants.MESSAGE, "Access not found");
 			return result;
 		}
 	}

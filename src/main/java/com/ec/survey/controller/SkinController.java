@@ -6,6 +6,7 @@ import com.ec.survey.model.SkinElement;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
@@ -62,7 +63,7 @@ public class SkinController extends BasicController {
 		ModelAndView result = new ModelAndView("settings/skins", "skins", skins);
 
 		if (request.getParameter("used") != null && request.getParameter("used").equalsIgnoreCase("true")) {
-			result.addObject("message", resources.getMessage("error.SkinInUse", null,
+			result.addObject(Constants.MESSAGE, resources.getMessage("error.SkinInUse", null,
 					"This skin is being used in a survey and can therefore not be deleted.", locale));
 		}
 
@@ -207,7 +208,7 @@ public class SkinController extends BasicController {
 			Skin existingSkin = skinService.get(skin.getId());
 			if (!existingSkin.getOwner().getId().equals(user.getId())
 					&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-				return new ModelAndView("error/generic", "message", resources.getMessage("error.SkinUnauthorized", null,
+				return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE, resources.getMessage("error.SkinUnauthorized", null,
 						"You are not authorized to edit this skin.", locale));
 			}
 
@@ -219,7 +220,7 @@ public class SkinController extends BasicController {
 				ModelAndView model = new ModelAndView("settings/skin");
 				model.addObject("skin", skin);
 				model.addObject("form", form);
-				model.addObject("message", resources.getMessage("error.NameAlreadyUsed", null,
+				model.addObject(Constants.MESSAGE, resources.getMessage("error.NameAlreadyUsed", null,
 						"This name already exists. Please choose a unique one.", locale));
 				return model;
 			}
@@ -235,7 +236,7 @@ public class SkinController extends BasicController {
 			ModelAndView model = new ModelAndView("settings/skin");
 			model.addObject("skin", skin);
 			model.addObject("form", form);
-			model.addObject("message",
+			model.addObject(Constants.MESSAGE,
 					resources.getMessage("error.ChoseName", null, "Please choose a unique name.", locale));
 			return model;
 		}
@@ -274,7 +275,7 @@ public class SkinController extends BasicController {
 					logger.error(e.getLocalizedMessage(), e);
 				}
 			} else {
-				return new ModelAndView("error/generic", "message",
+				return new ModelAndView(Constants.VIEW_ERROR_GENERIC, Constants.MESSAGE,
 						resources.getMessage("error.SkinDownloadUnauthorized", null,
 								"You are not authorized to download this skin", locale));
 			}
@@ -360,6 +361,7 @@ public class SkinController extends BasicController {
 			try {
 				is.close();
 			} catch (IOException ignored) {
+				//ignore
 			}
 		}
 
@@ -391,7 +393,6 @@ public class SkinController extends BasicController {
 						currentElement = "";
 						currentElementMap = null;
 					} else {
-						// name: value;
 						if (line.contains(":")) {
 							name = line.substring(0, line.indexOf(':')).trim();
 							value = line.substring(line.indexOf(':') + 1).replace(";", "").trim();

@@ -1,6 +1,7 @@
 package com.ec.survey.model.survey;
 
 
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
@@ -28,7 +29,7 @@ public class DateQuestion extends Question {
 
 	public DateQuestion() {}
 	
-	public DateQuestion(Survey survey, String title, String shortname, String uid) {
+	public DateQuestion(String title, String shortname, String uid) {
 		super(title, shortname, uid);
 	}
 	
@@ -75,12 +76,12 @@ public class DateQuestion extends Question {
 		
 		if (min != null)
 		{
-			css += " min" + Tools.formatDate(min, ConversionTools.DateFormat).replace("/", "");
+			css += " min" + Tools.formatDate(min, ConversionTools.DateFormat).replace(Constants.PATH_DELIMITER, "");
 		}
 		
 		if (max != null)
 		{
-			css += " max" + Tools.formatDate(max, ConversionTools.DateFormat).replace("/", "");
+			css += " max" + Tools.formatDate(max, ConversionTools.DateFormat).replace(Constants.PATH_DELIMITER, "");
 		}
 		
 		return css;

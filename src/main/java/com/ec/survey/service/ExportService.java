@@ -11,6 +11,7 @@ import com.ec.survey.model.survey.ChoiceQuestion;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.Text;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.export.*;
@@ -32,6 +33,7 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.*;
 
 @Service("exportService")
@@ -68,13 +70,6 @@ public class ExportService extends BasicService {
 		}		
 	}
 	
-	@Transactional(readOnly = false)
-	public void markFinished(Export export) {
-		export.setValid(true);
-		export.setState(ExportState.Finished);
-		this.update(export);
-	}
-
 	@Transactional
 	public boolean startExport(Form form, Export export, boolean immediate, MessageSource resources, Locale locale, String uid, String exportFilePath, boolean skipcheckworkerserver) {	
 		
@@ -87,7 +82,7 @@ public class ExportService extends BasicService {
 			{
 				logger.info("calling worker server for export " + export.getId());
 				
-				URL workerurl = new URL(workerserverurl + "worker/start/" + export.getId() + "/" + uid);
+				URL workerurl = new URL(workerserverurl + "worker/start/" + export.getId() + Constants.PATH_DELIMITER + uid);
 				
 				try {				
 					URLConnection wc = workerurl.openConnection();
@@ -156,7 +151,9 @@ public class ExportService extends BasicService {
 				
 				if (export.getEmail() != null)
 				{
-					markFinished(export);
+					export.setValid(true);
+					export.setState(ExportState.Finished);
+					this.update(export);
 					
 					Calendar end = Calendar.getInstance();
 					end.setTime( new Date());
@@ -351,7 +348,7 @@ public class ExportService extends BasicService {
 	}
 
 	@Transactional(readOnly = false)
-	public void deleteSurveyExports(int surveyId) {
+	public void deleteSurveyExports(int surveyId) throws IOException {
 		Session session = sessionFactory.getCurrentSession();
 		
 		Query query = session.createQuery("SELECT e.id, e.format FROM Export e WHERE e.survey.id = :id");
@@ -362,10 +359,7 @@ public class ExportService extends BasicService {
 		for (Object[] export : data)
 		{
 			java.io.File f = new java.io.File(getTempExportFilePath(ConversionTools.getValue(export[0]),(ExportFormat) export[1]));
-			if (f.exists())
-			{
-				f.delete();
-			}
+			Files.deleteIfExists(f.toPath());
 		}		
 		
 		query = session.createQuery("DELETE FROM Export e WHERE e.survey.id = :id");
@@ -412,14 +406,11 @@ public class ExportService extends BasicService {
 			String filePath = getTempExportFilePath(export, null);
 
 			File file = new File(filePath);
-			file.delete();
+			Files.delete(file.toPath());
 			
 			file = new File(filePath + ".zip");
-			if (file.exists())
-			{
-				file.delete();
-			}
-			
+			Files.deleteIfExists(file.toPath());
+				
 			Session session = sessionFactory.getCurrentSession();
 			
 			Query query = session.createQuery("delete Export e where e.id = :id");
@@ -474,11 +465,7 @@ public class ExportService extends BasicService {
 					
 					Date max = (Date)query.uniqueResult();
 					
-					if (max != null && max.after(export.getDate())) {
-						export.setValid(false);
-					} else {
-						export.setValid(true);
-					}
+					export.setValid(!(max != null && max.after(export.getDate())));
 				}
 			}		
 		} catch (Exception e)
@@ -504,7 +491,7 @@ public class ExportService extends BasicService {
 		return count > 0 ;
 	}
 	
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	public void update(Export export) {
 		Session session = sessionFactory.getCurrentSession();
 		export = (Export) session.merge(export);
@@ -556,10 +543,10 @@ public class ExportService extends BasicService {
 		return export;
 	}
 
-	public void recreateExport(Export export, Locale locale, MessageSource resources) {
+	public void recreateExport(Export export, Locale locale, MessageSource resources) throws IOException {
 		String filePath = exportService.getTempExportFilePath(export, null);
 		File file = new File(filePath);
-		file.delete();
+		Files.deleteIfExists(file.toPath());
 		export.setState(ExportState.Pending);
 		export.setDate(new Date());
 		Form form = new Form(resources);
@@ -729,7 +716,7 @@ public class ExportService extends BasicService {
 				File file = new File(filePath);
 				if (file.exists())
 				{
-					file.delete();
+					Files.delete(file.toPath());
 					counter++;
 				}
 				
@@ -738,7 +725,7 @@ public class ExportService extends BasicService {
 					file = new File(filePath + ".zip");
 					if (file.exists())
 					{
-						file.delete();
+						Files.delete(file.toPath());
 						counter++;
 					}
 				}

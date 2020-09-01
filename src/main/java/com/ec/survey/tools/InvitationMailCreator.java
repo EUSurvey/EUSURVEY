@@ -189,7 +189,7 @@ public class InvitationMailCreator implements Runnable {
 			}
 		}
 			
-		String middleText = host + "runner/invited/" + participationGroup.getId() + "/" + invitation.getUniqueId();
+		String middleText = host + "runner/invited/" + participationGroup.getId() + Constants.PATH_DELIMITER + invitation.getUniqueId();
 			
 		String body = text1 + "<br /><br /><a href='"  + middleText + "'>" + middleText + "</a><br /><br />" + text2;
 		body = body.replace("{Name}", ecasUser.getDisplayName());		
@@ -251,7 +251,7 @@ public class InvitationMailCreator implements Runnable {
 			}
 		}
 			
-		String middleText = host + "runner/invited/" + participationGroup.getId() + "/" + invitation.getUniqueId();
+		String middleText = host + "runner/invited/" + participationGroup.getId() + Constants.PATH_DELIMITER + invitation.getUniqueId();
 		
 		String body = text1 + "<br /><br /><a href='"  + middleText + "'>" + middleText + "</a><br /><br />" + text2;
 		body = replaceAttributePlaceholders(body, attendee);		
@@ -296,7 +296,7 @@ public class InvitationMailCreator implements Runnable {
 				replacements.put(att.getAttributeName().getName(), att.getValue());
 			}
 		}
-		replacements.put("email", attendee.getEmail());
+		replacements.put(Constants.EMAIL, attendee.getEmail());
 		replacements.put("Email", attendee.getEmail());
 		replacements.put("Name", attendee.getName());
 		replacements.put("name", attendee.getName());

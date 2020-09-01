@@ -96,13 +96,13 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 				if (createStressTestData)
 				{
 					User analyst = administrationService.getUserForLogin(administrationService.getStressUser(), false);
-					SurveyCreator.createStressTestSurvey(analyst, objLang, servletContext, fileDir, surveyService, fileService);
+					SurveyCreator.createStressTestSurvey(analyst, servletContext, fileDir, surveyService, fileService);
 				}
 				
 				if (createStressTestData || createNewStressTestData)
 				{
 					User analyst = administrationService.getUserForLogin(administrationService.getStressUser(), false);
-					SurveyCreator.createStressTestSurveys(analyst, objLang, servletContext, fileDir, surveyService, fileService);
+					SurveyCreator.createStressTestSurveys(analyst, servletContext, fileDir, surveyService, fileService);
 				}
 				
 				Survey survey = SurveyCreator.createDemoSkinSurvey(admin, objLang);

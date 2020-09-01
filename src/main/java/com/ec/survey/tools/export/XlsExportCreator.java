@@ -9,6 +9,7 @@ import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -454,7 +455,7 @@ public class XlsExportCreator extends ExportCreator {
 
 							if (f.exists()) {
 								os.putArchiveEntry(
-										new ZipArchiveEntry(code + "/" + questionNiceName + "/" + file.getName()));
+										new ZipArchiveEntry(code + Constants.PATH_DELIMITER + questionNiceName + Constants.PATH_DELIMITER + file.getName()));
 								IOUtils.copy(new FileInputStream(f), os);
 								os.closeArchiveEntry();
 							}
@@ -649,7 +650,7 @@ public class XlsExportCreator extends ExportCreator {
 												.get(uploadQuestionNicenames.get(question.getUniqueId())).add(file);
 
 										cellValue.append((cellValue.length() > 0) ? ";" : "").append(file.getName());
-										linkValue = answerrow.get(0) + "/"
+										linkValue = answerrow.get(0) + Constants.PATH_DELIMITER
 												+ uploadQuestionNicenames.get(question.getUniqueId());
 									}
 								}
@@ -680,7 +681,7 @@ public class XlsExportCreator extends ExportCreator {
 												.get(uploadQuestionNicenames.get(question.getUniqueId())).add(file);
 
 										cellValue.append((cellValue.length() > 0) ? ";" : "").append(file.getName());
-										linkValue = answerSet.getUniqueCode() + "/"
+										linkValue = answerSet.getUniqueCode() + Constants.PATH_DELIMITER
 												+ uploadQuestionNicenames.get(question.getUniqueId());
 									}
 								}
@@ -1303,7 +1304,7 @@ public class XlsExportCreator extends ExportCreator {
 						for (int i = 1; i <= rating.getNumIcons(); i++) {
 							row = sheet.createRow(rowIndex++);
 
-							cellValue = i + "/" + rating.getNumIcons();
+							cellValue = i + Constants.PATH_DELIMITER + rating.getNumIcons();
 
 							row.createCell(0).setCellValue(cellValue);
 
@@ -1437,7 +1438,7 @@ public class XlsExportCreator extends ExportCreator {
 		}
 
 		cell.setCellStyle(dateStyle);
-		localRow = sheet.createRow(rowIndex);
+		sheet.createRow(rowIndex);
 		return rowIndex;
 	}
 

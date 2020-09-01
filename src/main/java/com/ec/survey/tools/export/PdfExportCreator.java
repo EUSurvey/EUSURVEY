@@ -2,6 +2,10 @@ package com.ec.survey.tools.export;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.poi.util.IOUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -16,34 +20,40 @@ public class PdfExportCreator extends ExportCreator {
 		FileInputStream fis = new FileInputStream(file);
 		IOUtils.copy(fis, outputStream);
 		fis.close();
-		file.delete();
+		Files.delete(file.toPath());
 	}
 	
 	@Override
-	void ExportStatistics() throws Exception {
+	void ExportStatistics() throws IOException {
 		File file = pdfService.createStatisticsPDF(form.getSurvey(), export.getId().toString());
 		FileInputStream fis = new FileInputStream(file);
 		IOUtils.copy(fis, outputStream);
 		fis.close();
-		file.delete();
+		Files.delete(file.toPath());
 	}
 	
 	@Override
-	void ExportStatisticsQuiz() throws Exception {
+	void ExportStatisticsQuiz() throws IOException {
 		File file = pdfService.createStatisticsQuizPDF(form.getSurvey(), export.getId().toString());
 		FileInputStream fis = new FileInputStream(file);
 		IOUtils.copy(fis, outputStream);
 		fis.close();
-		file.delete();
+		Files.delete(file.toPath());
 	}
 
 	@Override
-	void ExportAddressBook() throws Exception {}
+	void ExportAddressBook() throws Exception {
+		throw new NotImplementedException();
+	}
 
 	@Override
-	void ExportActivities() throws Exception {}
+	void ExportActivities() throws Exception {
+		throw new NotImplementedException();
+	}
 	
 	@Override
-	void ExportTokens() throws Exception {}	
+	void ExportTokens() throws Exception {
+		throw new NotImplementedException();
+	}	
 
 }

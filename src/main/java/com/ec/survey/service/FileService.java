@@ -6,6 +6,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.CleanupWorker;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.MutableInteger;
 import com.ec.survey.tools.RecreateWorker;
@@ -39,7 +40,7 @@ public class FileService extends BasicService {
 	protected PDFService pdfService;
 
 	public static final String[] filetypes = { "results", "statistics", "charts", "tokens", "contacts", "activities",
-			"uploaded file", "download", "image", "logo", "background document", "survey", "contribution" };
+			"uploaded file", "download", "image", "logo", "background document", Constants.SURVEY, "contribution" };
 	public static final String[] fileextensions = { "PDF", "XLS", "ODS", "DOC", "ODT", "XML", "CSV", "JPG", "PNG",
 			"ZIP", "OTHER" };
 
@@ -74,7 +75,7 @@ public class FileService extends BasicService {
 	@Transactional(readOnly = true)
 	public File get(String uid) throws FileNotFoundException {
 
-		if (uid.contains("/")) {
+		if (uid.contains(Constants.PATH_DELIMITER)) {
 			// the new file system structure has the survey uid as subfolder
 			uid = uid.substring(uid.indexOf('/') + 1);
 		}
@@ -93,7 +94,7 @@ public class FileService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<File> getAll(String uid) {
 
-		if (uid.contains("/")) {
+		if (uid.contains(Constants.PATH_DELIMITER)) {
 			// the new file system structure has the survey uid as subfolder
 			uid = uid.substring(uid.indexOf('/') + 1);
 		}
@@ -477,8 +478,8 @@ public class FileService extends BasicService {
 		return true;
 	}
 
-	private List<FileResult> getFilesForSurvey(FileFilter filter, int page, int itemsperpage, Path archivedir)
-			throws Exception {
+	private List<FileResult> getFilesForSurvey(FileFilter filter, int page, int itemsperpage, Path archivedir) throws Exception
+			 {
 		List<Integer> ids = surveyService.getAllSurveyVersions(filter.getSurveyShortname(), filter.getSurveyUid());
 		Map<String, FileResult> result = new HashMap<>();
 
@@ -693,7 +694,7 @@ public class FileService extends BasicService {
 			}
 
 			// survey pdf
-			if (filter.isVisible("survey") && filter.isValidExtension("PDF")) {
+			if (filter.isVisible(Constants.SURVEY) && filter.isValidExtension("PDF")) {
 				for (String lang : translationService.getTranslationLanguagesForSurvey(id, false)) {
 					String filePath = String.format("%s/survey%s%s.pdf", folder.getPath(), id, lang);
 					Path path = Paths.get(filePath);
@@ -769,7 +770,7 @@ public class FileService extends BasicService {
 		fileResult.setFileType("");
 		fileResult.setFileExtension("");
 
-		if (name.startsWith("answer") && name.endsWith(".pdf")) {
+		if (name.startsWith(Constants.ANSWER) && name.endsWith(".pdf")) {
 			fileResult.setFileName(name);
 			fileResult.setFileExtension("PDF");
 			fileResult.setFileType("contribution");
@@ -793,10 +794,10 @@ public class FileService extends BasicService {
 			} else {
 				fileResult.setError("unknown draft id");
 			}
-		} else if (name.startsWith("survey") && name.endsWith(".pdf")) {
+		} else if (name.startsWith(Constants.SURVEY) && name.endsWith(".pdf")) {
 			fileResult.setFileName(name);
 			fileResult.setFileExtension("PDF");
-			fileResult.setFileType("survey");
+			fileResult.setFileType(Constants.SURVEY);
 			// the name pattern is survey[id][lang].pdf
 			String surveyid = name.substring(6).replace(".pdf", "");
 			surveyid = surveyid.substring(0, surveyid.length() - 2);
@@ -888,7 +889,7 @@ public class FileService extends BasicService {
 				fileResult.setFileType("statistics");
 			} else if (name.endsWith(".pdf")) {
 				fileResult.setFileExtension("PDF");
-				fileResult.setFileType("survey");
+				fileResult.setFileType(Constants.SURVEY);
 			} else {
 				fileResult.setFileType("archive");
 			}
@@ -1144,7 +1145,7 @@ public class FileService extends BasicService {
 		return deletecounter;
 	}
 
-	public int deleteContributions(Date pdfbefore) throws MessageException {
+	public int deleteContributions(Date pdfbefore) throws IOException {
 		logger.info("starting deleteContributions: " + ConversionTools.getFullString(new Date()));
 
 		int deletecounter = 0;
@@ -1157,11 +1158,7 @@ public class FileService extends BasicService {
 				if (file.exists()) {
 					Date modified = new Date(file.lastModified());
 					if (modified.before(pdfbefore)) {
-						if (file.delete()) {
-							deletecounter++;
-						} else {
-							throw new MessageException("not possible to delete file " + file.getAbsolutePath());
-						}
+						Files.delete(file.toPath());						
 					}
 				}
 			}
@@ -1266,15 +1263,15 @@ public class FileService extends BasicService {
 		if (files == null) {
 			List<FileResult> fileresults = getFiles(filter);
 			for (FileResult fileresult : fileresults) {
-				java.io.File source = new java.io.File(fileresult.getFilePath());
-				if (source.exists() && source.delete()) {
+				if (Files.deleteIfExists(Paths.get(fileresult.getFilePath())))
+				{
 					counter++;
 				}
 			}
 		} else {
-			for (String path : files) {
-				java.io.File source = new java.io.File(path);
-				if (source.exists() && source.delete()) {
+			for (String path : files) {				
+				if (Files.deleteIfExists(Paths.get(path)))
+				{
 					counter++;
 				}
 			}
@@ -1287,32 +1284,33 @@ public class FileService extends BasicService {
 		// exports and contribution/survey pdfs can be recreated
 		String name = file.getName();
 
-		if (name.startsWith("answer") && name.endsWith(".pdf")) {
+		if (name.startsWith(Constants.ANSWER) && name.endsWith(".pdf")) {
 			String uid = name.substring(6).replace(".pdf", "");
-			if (file.delete()) {
-				AnswerSet answerSet = answerService.get(uid);
-				if (answerSet != null)
-					pdfService.createAnswerPDF(null, uid, answerSet.getSurvey().getUniqueId(), answerSet.getIsDraft());
-				return true;
+			Files.delete(file.toPath());
+			AnswerSet answerSet = answerService.get(uid);
+			if (answerSet != null)
+			{
+				pdfService.createAnswerPDF(null, uid, answerSet.getSurvey().getUniqueId(), answerSet.getIsDraft());
 			}
+			return true;			
 		} else if (name.startsWith("draft") && name.endsWith(".pdf")) {
 			String uid = name.substring(5).replace(".pdf", "");
-			if (file.delete()) {
-				Draft draft = answerService.getDraft(uid);
-				if (draft != null)
-					pdfService.createAnswerPDF(null, uid, draft.getAnswerSet().getSurvey().getUniqueId(),
-							draft.getAnswerSet().getIsDraft());
-				return true;
+			Files.delete(file.toPath());
+			Draft draft = answerService.getDraft(uid);
+			if (draft != null)
+			{
+				pdfService.createAnswerPDF(null, uid, draft.getAnswerSet().getSurvey().getUniqueId(),
+						draft.getAnswerSet().getIsDraft());
 			}
-		} else if (name.startsWith("survey") && name.endsWith(".pdf")) {
+			return true;			
+		} else if (name.startsWith(Constants.SURVEY) && name.endsWith(".pdf")) {
 			String language = name.substring(name.length() - 6, name.length() - 4);
 			String id = name.substring(6);
 			id = id.substring(0, id.length() - 6);
-			if (file.delete()) {
-				Survey survey = surveyService.getSurvey(Integer.parseInt(id));
-				pdfService.createSurveyPDF(survey, language, file);
-				return true;
-			}
+			Files.delete(file.toPath());
+			Survey survey = surveyService.getSurvey(Integer.parseInt(id));
+			pdfService.createSurveyPDF(survey, language, file);
+			return true;			
 		} else if (name.startsWith("Export")) {
 			String exportid = file.getName().substring(6);
 			exportid = exportid.substring(0, exportid.indexOf('.'));
@@ -1326,7 +1324,8 @@ public class FileService extends BasicService {
 		return false;
 	}
 
-	public void deleteIfNotReferenced(String fileuid, String surveyuid) {
+	@Transactional(readOnly = false)
+	public void deleteIfNotReferenced(String fileuid, String surveyuid) throws IOException {
 		try {
 			List<File> fs = getAll(fileuid);
 			if (fs.size() > 1) {
@@ -1347,14 +1346,10 @@ public class FileService extends BasicService {
 		}
 
 		java.io.File file = fileService.getSurveyFile(surveyuid, fileuid);
-		if (file.exists()) {
-			file.delete();
-		}
-
+		Files.deleteIfExists(file.toPath());
+		
 		file = new java.io.File(fileDir + fileuid);
-		if (file.exists()) {
-			file.delete();
-		}
+		Files.deleteIfExists(file.toPath());
 	}
 
 	public Map<String, String> getMissingFiles(String uniqueId) throws Exception {
@@ -1406,14 +1401,14 @@ public class FileService extends BasicService {
 	/////////////// new file system ///////////////////////////
 
 	public java.io.File getSurveyFolder(String surveyUID) {
-		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + "/" + surveyUID + "/");
+		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + Constants.PATH_DELIMITER);
 		if (!folder.exists())
 			folder.mkdirs();
 		return folder;
 	}
 
 	public java.io.File getSurveyFilesFolder(String surveyUID) {
-		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + "/" + surveyUID + "/FILES/");
+		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + "/FILES/");
 		if (!folder.exists())
 			folder.mkdirs();
 		return folder;
@@ -1424,14 +1419,14 @@ public class FileService extends BasicService {
 	}
 
 	public java.io.File getSurveyExportsFolder(String surveyUID, boolean create) {
-		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + "/" + surveyUID + "/EXPORTS/");
+		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + "/EXPORTS/");
 		if (!folder.exists() && create)
 			folder.mkdirs();
 		return folder;
 	}
 
 	public java.io.File getSurveyUploadsFolder(String surveyUID, boolean create) {
-		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + "/" + surveyUID + "/UPLOADS/");
+		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + "/UPLOADS/");
 		if (!folder.exists() && create)
 			folder.mkdirs();
 		return folder;
@@ -1439,7 +1434,7 @@ public class FileService extends BasicService {
 
 	public java.io.File getSurveyFile(String surveyUID, String fileUID) {
 		java.io.File folder = getSurveyFilesFolder(surveyUID);
-		return new java.io.File(folder.getPath() + "/" + fileUID);
+		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);
 	}
 
 	public java.io.File getSurveyExportFile(String surveyUID, Integer id, String format) {
@@ -1453,12 +1448,12 @@ public class FileService extends BasicService {
 
 	public java.io.File getSurveyExportFile(String surveyUID, String fileUID, boolean create) {
 		java.io.File folder = getSurveyExportsFolder(surveyUID, create);
-		return new java.io.File(folder.getPath() + "/" + fileUID);
+		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);
 	}
 
 	public java.io.File getSurveyUploadFile(String surveyUID, String fileUID) {
 		java.io.File folder = getSurveyUploadsFolder(surveyUID, false);
-		return new java.io.File(folder.getPath() + "/" + fileUID);
+		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);
 	}
 
 	public java.io.File getSurveyPDFFile(String surveyUID, Integer surveyID, String lang) {
@@ -1489,7 +1484,7 @@ public class FileService extends BasicService {
 		if (userfolderNumber > 0)
 			userfolder += userfolderNumber;
 
-		java.io.File folder = new java.io.File(usersDir + userfolder + "/" + userId + "/");
+		java.io.File folder = new java.io.File(usersDir + userfolder + Constants.PATH_DELIMITER + userId + Constants.PATH_DELIMITER);
 
 		if (!folder.exists() && !create)
 			return null;
@@ -1505,7 +1500,7 @@ public class FileService extends BasicService {
 	}
 
 	public java.io.File getArchiveFolder(String surveyUID) {
-		java.io.File folder = new java.io.File(archiveDir + surveyUID.substring(0, 1) + "/" + surveyUID + "/");
+		java.io.File folder = new java.io.File(archiveDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + Constants.PATH_DELIMITER);
 		if (!folder.exists())
 			folder.mkdirs();
 		return folder;
@@ -1513,7 +1508,7 @@ public class FileService extends BasicService {
 
 	public java.io.File getArchiveFile(String surveyUID, String name) {
 		java.io.File folder = getArchiveFolder(surveyUID);
-		return new java.io.File(folder.getPath() + "/" + name);
+		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + name);
 	}
 
 	private boolean migrateSurveyFile(String surveyuid, String fileUID) throws IOException {
@@ -1550,7 +1545,7 @@ public class FileService extends BasicService {
 					String fileUID = image.getUrl().replace(contextpath + "/files/", "");
 					if (migrateSurveyFile(survey.getUniqueId(), fileUID)) {
 						image.setUrl(
-								servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + fileUID);
+								servletContext.getContextPath() + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + fileUID);
 					}
 				}
 			} else if (element instanceof Download) {
@@ -1584,7 +1579,7 @@ public class FileService extends BasicService {
 			String fileUID = url.replace(sessionService.getContextPath() + "/files/", "");
 			if (migrateSurveyFile(survey.getUniqueId(), fileUID)) {
 				survey.getBackgroundDocuments().put(label,
-						sessionService.getContextPath() + "/files/" + survey.getUniqueId() + "/" + fileUID);
+						sessionService.getContextPath() + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + fileUID);
 			}
 		}
 
@@ -1682,40 +1677,40 @@ public class FileService extends BasicService {
 			java.io.File original = new java.io.File(archiveFileDir + archive.getSurveyUID());
 			java.io.File folder = fileService.getArchiveFolder(archive.getSurveyUID());
 			if (original.exists()) {
-				java.io.File copy = new java.io.File(folder.getPath() + "/" + archive.getSurveyUID());
+				java.io.File copy = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID());
 				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
 
 			original = new java.io.File(archiveFileDir + archive.getSurveyUID() + ".pdf");
 			if (original.exists()) {
-				java.io.File copy = new java.io.File(folder.getPath() + "/" + archive.getSurveyUID() + ".pdf");
+				java.io.File copy = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + ".pdf");
 				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
 
 			original = new java.io.File(archiveFileDir + archive.getSurveyUID() + "statistics.pdf");
 			if (original.exists()) {
 				java.io.File copy = new java.io.File(
-						folder.getPath() + "/" + archive.getSurveyUID() + "statistics.pdf");
+						folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + "statistics.pdf");
 				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
 
 			original = new java.io.File(archiveFileDir + archive.getSurveyUID() + "statistics.xls");
 			if (original.exists()) {
 				java.io.File copy = new java.io.File(
-						folder.getPath() + "/" + archive.getSurveyUID() + "statistics.xls");
+						folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + "statistics.xls");
 				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
 
 			original = new java.io.File(archiveFileDir + archive.getSurveyUID() + "results.xls");
 			if (original.exists()) {
-				java.io.File copy = new java.io.File(folder.getPath() + "/" + archive.getSurveyUID() + "results.xls");
+				java.io.File copy = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + "results.xls");
 				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
 
 			original = new java.io.File(archiveFileDir + archive.getSurveyUID() + "results.xls.zip");
 			if (original.exists()) {
 				java.io.File copy = new java.io.File(
-						folder.getPath() + "/" + archive.getSurveyUID() + "results.xls.zip");
+						folder.getPath() + Constants.PATH_DELIMITER + archive.getSurveyUID() + "results.xls.zip");
 				Files.copy(original.toPath(), copy.toPath(), StandardCopyOption.REPLACE_EXISTING);
 			}
 		}
@@ -1741,7 +1736,7 @@ public class FileService extends BasicService {
 				if (!p.toFile().isDirectory()) {
 					java.io.File candidate = p.toFile();
 
-					if ((candidate.getName().startsWith("answer") || candidate.getName().startsWith("draft"))
+					if ((candidate.getName().startsWith(Constants.ANSWER) || candidate.getName().startsWith("draft"))
 							&& candidate.getName().endsWith(".pdf")) {
 						Date modified = new Date(candidate.lastModified());
 						if (modified.before(before) && candidate.isFile()) {
@@ -1814,7 +1809,7 @@ public class FileService extends BasicService {
 				if (!p.toFile().isDirectory()) {
 					java.io.File candidate = p.toFile();
 
-					if (candidate.getName().startsWith("survey" + id) && candidate.getName().endsWith(".pdf")) {
+					if (candidate.getName().startsWith(Constants.SURVEY + id) && candidate.getName().endsWith(".pdf")) {
 
 						if (candidate.delete()) {
 							deletecounter.setValue(deletecounter.getValue() + 1);
@@ -1844,7 +1839,7 @@ public class FileService extends BasicService {
 	}
 
 	public java.io.File createTempFile(String filename, String suffix) {
-		return new java.io.File(getTempFolder().getAbsolutePath() + "/" + filename + (suffix != null ? suffix : ""));
+		return new java.io.File(getTempFolder().getAbsolutePath() + Constants.PATH_DELIMITER + filename + (suffix != null ? suffix : ""));
 	}
 
 	public int deleteOldTempFiles(Date before) {
@@ -1857,10 +1852,9 @@ public class FileService extends BasicService {
 					Date modified = new Date(file.lastModified());
 					if (modified.before(before)) {
 						try {
-							if (file.delete()) {
-								deletecounter++;
-							}
-						} catch (Exception e) {
+							Files.delete(file.toPath());
+							deletecounter++;							
+						} catch (IOException e) {
 							logger.error("not possible to delete file " + file.getAbsolutePath());
 						}
 					}

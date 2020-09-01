@@ -381,8 +381,7 @@
 							    <input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-opc" value="opc" />&#160;<spring:message code="label.OPC" />
 							  </label>
 						  </c:if>
-						</div>		
-						<div style="color: #777; margin-top: 10px"><spring:message code="info.SettingCanBeChanged" /></div>
+						</div>
 					</td>
 				</tr>
 				<tr>

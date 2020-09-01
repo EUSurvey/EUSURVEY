@@ -102,33 +102,33 @@ public class TranslationController extends BasicController {
 
 		if (request.getParameter("saved") != null && request.getParameter("saved").equalsIgnoreCase("true")) {
 			String message = resources.getMessage("message.ChangesSaved", null, "The changes have been saved.", locale);
-			result.addObject("message", message);
+			result.addObject(Constants.MESSAGE, message);
 		}
 
 		if (request.getParameter("done") != null && request.getParameter("done").equalsIgnoreCase("1")) {
 			String message = resources.getMessage("message.TranslationImportedSuccessfully", null,
 					"Translation has been imported successfully.", locale);
-			result.addObject("message", message);
+			result.addObject(Constants.MESSAGE, message);
 		}
 
 		if (request.getParameter("done") != null && request.getParameter("done").equalsIgnoreCase("2")) {
 			String message = resources.getMessage("message.TranslationAddedSuccessfully", null,
 					"Translation has been added successfully.", locale);
-			result.addObject("message", message);
+			result.addObject(Constants.MESSAGE, message);
 		}
 
-		if (request.getParameter("error") != null
-				&& request.getParameter("error").equalsIgnoreCase("RequestTranslation")) {
+		if (request.getParameter(Constants.ERROR) != null
+				&& request.getParameter(Constants.ERROR).equalsIgnoreCase("RequestTranslation")) {
 			String message = resources.getMessage("error.RequestTranslation", null, "Request for translation failed",
 					locale);
-			result.addObject("error", message);
+			result.addObject(Constants.ERROR, message);
 		}
 
-		if (request.getParameter("error") != null
-				&& request.getParameter("error").equalsIgnoreCase("LanguageNotRecognized")) {
+		if (request.getParameter(Constants.ERROR) != null
+				&& request.getParameter(Constants.ERROR).equalsIgnoreCase("LanguageNotRecognized")) {
 			String message = resources.getMessage("error.LanguageNotRecognized", null,
 					"The language was not recognized.", locale);
-			result.addObject("error", message);
+			result.addObject(Constants.ERROR, message);
 		}
 
 		return result;
@@ -490,8 +490,8 @@ public class TranslationController extends BasicController {
 			form = sessionService.getForm(request, null, false, false);
 		} catch (NoFormLoadedException ne) {
 			logger.error(ne.getLocalizedMessage(), ne);
-			return resources.getMessage("error.NoFormLoaded", null,
-					"You have to load a survey before you can use this page!", locale);
+			return resources.getMessage("error.NoFormLoadedNew", null,
+					"You have to load a survey before using this page!", locale);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return resources.getMessage("error.NoAccessToSurvey", null, "No Access", locale);
@@ -531,7 +531,7 @@ public class TranslationController extends BasicController {
 		try {
 
 			boolean dirty = false;
-			String survey = request.getParameter("survey");
+			String survey = request.getParameter(Constants.SURVEY);
 			int surveyId = Integer.parseInt(survey);
 
 			User u = sessionService.getCurrentUser(request);
@@ -632,7 +632,7 @@ public class TranslationController extends BasicController {
 						ModelAndView result = translations(shortname, request, locale);
 						String message = resources.getMessage("info.KeepOneCompleteTranslation", null,
 								"There must be at least one complete translation left!", locale);
-						result.addObject("error", message);
+						result.addObject(Constants.ERROR, message);
 						return result;
 					}
 				}
@@ -657,7 +657,7 @@ public class TranslationController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 			ModelAndView result = translations(shortname, request, locale);
 			String message = resources.getMessage("error.DuringSave", null, "There was a problem during save.", locale);
-			result.addObject("error", message);
+			result.addObject(Constants.ERROR, message);
 			return result;
 		}
 	}
@@ -696,7 +696,7 @@ public class TranslationController extends BasicController {
 						ModelAndView result = translations(shortname, request, locale);
 						String message = resources.getMessage("message.TranslationAlreadyExists", null,
 								"There already exists a translation for this language.", locale);
-						result.addObject("message", message);
+						result.addObject(Constants.MESSAGE, message);
 						return result;
 					}
 				}
@@ -754,12 +754,12 @@ public class TranslationController extends BasicController {
 								ModelAndView result = translations(shortname, request, locale);
 								String message = resources.getMessage("error.UnsupportedLanguage", null,
 										"This language is not supported.", locale);
-								result.addObject("message", message);
+								result.addObject(Constants.MESSAGE, message);
 								return result;
 							}
 						} catch (Exception e) {
 							ModelAndView result = translations(shortname, request, locale);
-							result.addObject("message", e.getMessage());
+							result.addObject(Constants.MESSAGE, e.getMessage());
 							return result;
 						}
 					}
@@ -966,10 +966,10 @@ public class TranslationController extends BasicController {
 					form = sessionService.getForm(request, shortname, false, false);
 				} catch (NoFormLoadedException ne) {
 					logger.error(ne.getLocalizedMessage(), ne);
-					ModelAndView model = new ModelAndView("error/generic");
-					String message = resources.getMessage("error.NoFormLoaded", null,
-							"You have to load a survey before you can use this page!", locale);
-					model.addObject("message", message);
+					ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+					String message = resources.getMessage("error.NoFormLoadedNew", null,
+							"You have to load a survey before using this page!", locale);
+					model.addObject(Constants.MESSAGE, message);
 					return model;
 				}
 
@@ -1031,7 +1031,7 @@ public class TranslationController extends BasicController {
 		ModelAndView result = translations(shortname, request, locale);
 		String message = resources.getMessage("error.TranslationCouldNotBeSaved", null,
 				"The translation could not be saved!", locale);
-		result.addObject("message", message);
+		result.addObject(Constants.MESSAGE, message);
 		return result;
 	}
 
@@ -1066,8 +1066,7 @@ public class TranslationController extends BasicController {
 					logger.error(e1.getLocalizedMessage(), e1);
 				}
 			} else if (format.equalsIgnoreCase("xls")) {
-				java.io.File xml = TranslationsHelper.getXLS(form.getSurvey(), translations, resources, locale,
-						fileService);
+				java.io.File xml = TranslationsHelper.getXLS(form.getSurvey(), translations, fileService);
 				try {
 					response.setContentLength((int) xml.length());
 					response.setHeader("Content-Disposition", "attachment; filename=\""
@@ -1081,8 +1080,7 @@ public class TranslationController extends BasicController {
 					logger.error(e1.getLocalizedMessage(), e1);
 				}
 			} else if (format.equalsIgnoreCase("ods")) {
-				java.io.File xml = TranslationsHelper.getODS(form.getSurvey(), translations, resources, locale,
-						fileService);
+				java.io.File xml = TranslationsHelper.getODS(form.getSurvey(), translations, fileService);
 				try {
 					response.setContentLength((int) xml.length());
 					response.setHeader("Content-Disposition", "attachment; filename=\""

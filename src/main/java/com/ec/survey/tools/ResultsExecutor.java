@@ -230,7 +230,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 				}
 			}
 			
-			String link = host + "files/" + survey.getUniqueId() + "/" + uid + "/";			
+			String link = host + "files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + uid + Constants.PATH_DELIMITER;			
 			String body = "Dear EUSurvey user,<br /><br />The export you requested from the published results of the survey '<b>" + survey.cleanTitle() + "</b>' is now finished. You can download it here:<br /><br /> <a href=\"" + link + "\">" + filename + "</a><br /><br />Your EUSurvey team";
 			
 			String subject = "Copy of your requested export from '" + survey.cleanTitleForMailSubject() + "'";

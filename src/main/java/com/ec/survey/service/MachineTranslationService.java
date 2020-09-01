@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.FtpEndPoint;
 import com.ec.survey.model.Translation;
 import com.ec.survey.model.Translations;
@@ -7,6 +8,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.machinetranslation.Request;
 import com.ec.survey.model.machinetranslation.RequestTranslationMessage;
 import com.ec.survey.model.machinetranslation.Response;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
@@ -180,7 +182,7 @@ public class MachineTranslationService extends BasicService {
 		return result;
 	}
 
-	private void translateTranlationsWithMicrosoft(Integer sourceTranslationsId, List<Integer> targetIDs) throws Exception {
+	private void translateTranlationsWithMicrosoft(Integer sourceTranslationsId, List<Integer> targetIDs) throws MessageException {
 		Translations sourceTranslations = translationService.getTranslations(sourceTranslationsId);
 
 		List<Translation> translationsList = sourceTranslations.getTranslations();
@@ -226,7 +228,7 @@ public class MachineTranslationService extends BasicService {
 		
 	}
 
-	private void translateTranlations(Integer sourceTranslationsId, String targetLanguage, User user, List<Integer> targetIDs) throws Exception {
+	private void translateTranlations(Integer sourceTranslationsId, String targetLanguage, User user, List<Integer> targetIDs) {
 
 		Translations sourceTranslations = translationService.getTranslations(sourceTranslationsId);
 		
@@ -262,7 +264,7 @@ public class MachineTranslationService extends BasicService {
 		
 		logger.debug("MachineTranslationService.translateTranslations Get FTP SOurce " +ftpURI);
 		// construct the return ftp path used in the call back to get translated file
-		if (ftpURI.endsWith("/")){
+		if (ftpURI.endsWith(Constants.PATH_DELIMITER)){
 			ftpTargetPath = ftpURI;
 		}else{
 			ftpTargetPath = ftpURI + '/';

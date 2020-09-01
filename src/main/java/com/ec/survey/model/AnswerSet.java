@@ -260,7 +260,7 @@ public class AnswerSet implements java.io.Serializable {
 
 	@Column(name = "ANSWER_SET_DISCLAIMER")
 	public Boolean getDisclaimerMinimized() {
-		return disclaimerMinimized != null ? disclaimerMinimized : false;
+		return disclaimerMinimized != null && disclaimerMinimized;
 	}
 
 	public void setDisclaimerMinimized(Boolean disclaimerMinimized) {
@@ -342,7 +342,7 @@ public class AnswerSet implements java.io.Serializable {
 
 	@Transient
 	public List<String> getAllFiles() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for (Answer answer : answers) {
 			if (answer.getFiles() != null) {
 				for (File file : answer.getFiles()) {

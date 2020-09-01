@@ -38,7 +38,11 @@
 						<div id="requestTranslation" style="margin-top: 20px">
 							<input type="checkbox" class="check" name="request" id="mtrequestcheck" />
 							<spring:message code="label.RequestLanguageTranslation" />
-						</div>
+							<a style="margin-left: 5px" onclick="$(this).parent().find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+							<div class="help" style="display: none; margin-top: 10px;">
+								<span><spring:message code="message.RequestLanguageTranslation" /></span>	
+							</div>
+						</div>						
 					</c:if>					
 					
 				</div>

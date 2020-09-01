@@ -2,6 +2,7 @@ package com.ec.survey.controller;
 
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.ArchiveFilter;
 import com.ec.survey.model.KeyValue;
@@ -11,6 +12,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.mapping.PaginationMapper;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
@@ -57,13 +59,13 @@ public class SurveySearchController extends BasicController {
 
 		result.addObject("archivedfilter", new ArchiveFilter());
 
-		if (request.getParameter("deleted") != null) {
-			result.addObject("deleted", true);
+		if (request.getParameter(Constants.DELETED) != null) {
+			result.addObject(Constants.DELETED, true);
 			SurveyFilter filter = (SurveyFilter) request.getSession().getAttribute("lstdeletedfilter");
 			if (filter == null)
 				filter = new SurveyFilter();
 			result.addObject("deletedfilter", filter);
-			result.addObject("mode", "deleted");
+			result.addObject("mode", Constants.DELETED);
 		} else {
 			result.addObject("deletedfilter", new SurveyFilter());
 		}
@@ -128,7 +130,7 @@ public class SurveySearchController extends BasicController {
 			}
 		}
 
-		result.addObject("filter", sfilter);
+		result.addObject(Constants.FILTER, sfilter);
 
 		List<KeyValue> domains = ldapDBService.getDomains(true, true, resources, locale);
 		result.addObject("domains", domains);
@@ -166,7 +168,7 @@ public class SurveySearchController extends BasicController {
 			}
 
 			request.getSession().setAttribute("lstarchivefilter", archivedFilter);
-		} else if (mode.equalsIgnoreCase("deleted")) {
+		} else if (mode.equalsIgnoreCase(Constants.DELETED)) {
 			deletedSurveysFilter.setUser(sessionService.getCurrentUser(request));
 			deletedSurveysFilter.setId(request.getParameter("deletedid"));
 			deletedSurveysFilter.setUid(request.getParameter("deleteduid"));
@@ -213,7 +215,7 @@ public class SurveySearchController extends BasicController {
 			request.getSession().setAttribute("lstfrozenfilter", frozenFilter);
 		} else {
 			filter.setUser(sessionService.getCurrentUser(request));
-			filter.setShortname(request.getParameter("shortname"));
+			filter.setShortname(request.getParameter(Constants.SHORTNAME));
 			filter.setUid(request.getParameter("uid"));
 			filter.setTitle(request.getParameter("title"));
 			filter.setOwner(request.getParameter("owner"));
@@ -228,7 +230,7 @@ public class SurveySearchController extends BasicController {
 
 		ModelAndView result = new ModelAndView("administration/surveysearch");
 		result.addObject("mode", mode);
-		result.addObject("filter", filter);
+		result.addObject(Constants.FILTER, filter);
 		result.addObject("archivedfilter", archivedFilter);
 		result.addObject("deletedfilter", deletedSurveysFilter);
 		result.addObject("reportedfilter", reportedFilter);
@@ -246,7 +248,7 @@ public class SurveySearchController extends BasicController {
 		String emailText = request.getParameter("emailText");
 
 		if (surveyId == null || surveyId.length() == 0 || emailText == null || emailText.length() == 0) {
-			throw new Exception("invalid parameters");
+			throw new MessageException("invalid parameters");
 		}
 
 		surveyService.freeze(surveyId, emailText);
@@ -259,7 +261,7 @@ public class SurveySearchController extends BasicController {
 		String surveyId = request.getParameter("surveyId");
 
 		if (surveyId == null || surveyId.length() == 0) {
-			throw new Exception("invalid parameters");
+			throw new MessageException("invalid parameters");
 		}
 
 		surveyService.unfreeze(surveyId);

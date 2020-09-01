@@ -65,7 +65,7 @@ public class Translation implements java.io.Serializable, Comparable {
 	}
 	
 	@Lob
-	@Column(name = "LABEL", nullable = false) //, columnDefinition = "TEXT")
+	@Column(name = "LABEL", nullable = false)
 	public String getLabel() {
 		return label;
 	}	

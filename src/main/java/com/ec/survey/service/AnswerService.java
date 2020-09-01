@@ -13,6 +13,7 @@ import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ReportingService.ToDo;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.InvalidEmailException;
@@ -36,8 +37,10 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -76,7 +79,7 @@ public class AnswerService extends BasicService {
 			for (Element element : answerSet.getSurvey().getElements()) {
 				if (element.getShortname().equalsIgnoreCase("name"))
 					nameQuestion = element.getId();
-				else if (element.getShortname().equalsIgnoreCase("email")) {
+				else if (element.getShortname().equalsIgnoreCase(Constants.EMAIL)) {
 					emailQuestion = element.getId();
 					emailElement = element;
 				} else if (element.getShortname().equalsIgnoreCase("password")) {
@@ -201,14 +204,12 @@ public class AnswerService extends BasicService {
 					java.io.File target = new java.io.File(
 							String.format("%s/publishedanswer%s.pdf", folder.getPath(), answerSet.getId()));
 
-					if (target.exists())
-						target.delete();
+					Files.deleteIfExists(target.toPath());
 
 					target = new java.io.File(
 							String.format("%s/answer%s.pdf", folder.getPath(), answerSet.getUniqueCode()));
 
-					if (target.exists())
-						target.delete();
+					Files.deleteIfExists(target.toPath());
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
@@ -216,7 +217,7 @@ public class AnswerService extends BasicService {
 				try {
 					java.io.File folder = fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(),
 							false);
-					java.io.File directory = new java.io.File(folder.getPath() + "/" + answerSet.getUniqueCode());
+					java.io.File directory = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + answerSet.getUniqueCode());
 					FileUtils.delete(directory);
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
@@ -237,7 +238,7 @@ public class AnswerService extends BasicService {
 					if (question != null && question.getIsAttribute()) {
 						if (question.getAttributeName().equalsIgnoreCase("name"))
 							attendee.setName(answer.getValue());
-						else if (question.getAttributeName().equalsIgnoreCase("email"))
+						else if (question.getAttributeName().equalsIgnoreCase(Constants.EMAIL))
 							attendee.setEmail(answer.getValue());
 						else {
 							Attribute a = new Attribute();
@@ -367,7 +368,7 @@ public class AnswerService extends BasicService {
 		if (filter.getUser().indexOf(';') > 0) {
 			parameters.put("emails", filter.getUser().trim().split(";"));
 		} else {
-			parameters.put("email", filter.getUser());
+			parameters.put(Constants.EMAIL, filter.getUser());
 		}
 
 		SQLQuery query = session.createSQLQuery(sql);
@@ -558,7 +559,7 @@ public class AnswerService extends BasicService {
 
 			if (filter.getCaseId() != null && filter.getCaseId().length() > 0) {
 				where.append(" AND ans.UNIQUECODE = :uniqueCode");
-				values.put("uniqueCode", filter.getCaseId().trim());
+				values.put(Constants.UNIQUECODE, filter.getCaseId().trim());
 			}
 
 			if (filter.getDraftId() != null && filter.getDraftId().length() > 0) {
@@ -572,7 +573,7 @@ public class AnswerService extends BasicService {
 					values.put("emails", filter.getUser().trim().split(";"));
 				} else {
 					where.append(" AND ans.RESPONDER_EMAIL = :email");
-					values.put("email", filter.getUser().trim());
+					values.put(Constants.EMAIL, filter.getUser().trim());
 				}
 			}
 
@@ -661,53 +662,72 @@ public class AnswerService extends BasicService {
 									where.append(" OR (");
 								}
 
-								String answerPart = "a" + joincounter + ".VALUE like :answer" + i;
-
-								if (answer.contains("|")) {
-									String answerUid = answer.substring(answer.indexOf('|') + 1);
-									answerPart = "(a" + joincounter + ".PA_UID like :answerUid" + i + ")";
-									values.put("answerUid" + i, answerUid);
-								} else {
-									if (answer.contains("/")) {
-										answerPart = "a" + joincounter + ".VALUE LIKE :answer" + i;
-										values.put("answer" + i, "%" + answer + "%");
+								if (questionUid.endsWith("from")) {
+									String answerPart = "(STR_TO_DATE(a" + joincounter + ".VALUE,'%d/%m/%Y') >= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
+									
+									questionUid = questionUid.replace("from", "");
+									where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
+									.append(i).append(" AND ").append(answerPart).append(")");
+									values.put("questionUid" + i, questionUid);
+									values.put(Constants.ANSWER + i, answer);									
+								} else if (questionUid.endsWith("to")) {
+									String answerPart = "(STR_TO_DATE(a" + joincounter + ".VALUE,'%d/%m/%Y') <= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
+									
+									questionUid = questionUid.replace("to", "");
+									where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
+									.append(i).append(" AND ").append(answerPart).append(")");
+									values.put("questionUid" + i, questionUid);
+									values.put(Constants.ANSWER + i, answer);									
+								} else {								
+								
+									String answerPart = "a" + joincounter + ".VALUE like :answer" + i;
+	
+									if (answer.contains("|")) {
+										String answerUid = answer.substring(answer.indexOf('|') + 1);
+										answerPart = "(a" + joincounter + ".PA_UID like :answerUid" + i + ")";
+										values.put("answerUid" + i, answerUid);
 									} else {
-										values.put("answer" + i, "%" + answer + "%");
+										if (answer.contains(Constants.PATH_DELIMITER)) {
+											answerPart = "a" + joincounter + ".VALUE LIKE :answer" + i;
+											values.put(Constants.ANSWER + i, "%" + answer + "%");
+										} else {
+											values.put(Constants.ANSWER + i, "%" + answer + "%");
+										}
 									}
-								}
-
-								if (questionId.contains("-")) {
-									String[] data = questionId.split("-");
-
-									if (questionUid.length() > 0) {
-										where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
-												.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
-												.append(i).append(" AND (a").append(joincounter)
-												.append(".QUESTION_ID = :questionId").append(i).append(" OR a")
-												.append(joincounter).append(".QUESTION_UID = :questionUid").append(i)
-												.append(") AND ").append(answerPart).append(")");
-										values.put("questionUid" + i, questionUid);
+	
+									if (questionId.contains("-")) {
+										String[] data = questionId.split("-");
+	
+										if (questionUid.length() > 0) {
+											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
+													.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
+													.append(i).append(" AND (a").append(joincounter)
+													.append(".QUESTION_ID = :questionId").append(i).append(" OR a")
+													.append(joincounter).append(".QUESTION_UID = :questionUid").append(i)
+													.append(") AND ").append(answerPart).append(")");
+											values.put("questionUid" + i, questionUid);
+										} else {
+											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
+													.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
+													.append(i).append(" AND a").append(joincounter)
+													.append(".QUESTION_ID = :questionId").append(i).append(" AND ")
+													.append(answerPart).append(")");
+										}
+	
+										values.put("questionId" + i, data[0]);
+										values.put("row" + i, data[1]);
+										values.put("col" + i, data[2]);
+	
 									} else {
-										where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
-												.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
-												.append(i).append(" AND a").append(joincounter)
-												.append(".QUESTION_ID = :questionId").append(i).append(" AND ")
-												.append(answerPart).append(")");
-									}
-
-									values.put("questionId" + i, data[0]);
-									values.put("row" + i, data[1]);
-									values.put("col" + i, data[2]);
-
-								} else {
-									if (questionUid.length() > 0) {
-										where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
-												.append(i).append(" AND ").append(answerPart).append(")");
-										values.put("questionUid" + i, questionUid);
-									} else {
-										where.append("( a").append(joincounter).append(".QUESTION_ID = :questionId")
-												.append(i).append(" AND ").append(answerPart).append(")");
-										values.put("questionId" + i, questionId);
+										if (questionUid.length() > 0) {
+											where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
+													.append(i).append(" AND ").append(answerPart).append(")");
+											values.put("questionUid" + i, questionUid);
+										} else {
+											where.append("( a").append(joincounter).append(".QUESTION_ID = :questionId")
+													.append(i).append(" AND ").append(answerPart).append(")");
+											values.put("questionId" + i, questionId);
+										}
 									}
 								}
 
@@ -1163,27 +1183,21 @@ public class AnswerService extends BasicService {
 			java.io.File target = new java.io.File(
 					String.format("%s/publishedanswer%s.pdf", folder.getPath(), answerSet.getId()));
 
-			if (target.exists())
-				target.delete();
+			Files.deleteIfExists(target.toPath());
 
 			target = new java.io.File(String.format("%sanswer%s.pdf", tempFileDir, answerSet.getUniqueCode()));
-			if (target.exists())
-				target.delete();
+			Files.deleteIfExists(target.toPath());
 
 			for (Answer answer : answerSet.getAnswers()) {
 				if (answer.getFiles() != null) {
 					for (File f : answer.getFiles()) {
 						// new file system
 						java.io.File file = fileService.getSurveyFile(answerSet.getSurvey().getUniqueId(), f.getUid());
-						if (file.exists()) {
-							file.delete();
-						}
+						Files.deleteIfExists(file.toPath());
 
 						// old file system
 						file = new java.io.File(fileDir + f.getUid());
-						if (file.exists()) {
-							file.delete();
-						}
+						Files.deleteIfExists(file.toPath());
 					}
 				}
 			}
@@ -1220,7 +1234,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery(
 				"SELECT a FROM AnswerSet a WHERE a.isDraft = false AND a.uniqueCode = :uniqueCode order by date DESC")
-				.setString("uniqueCode", uniqueCode);
+				.setString(Constants.UNIQUECODE, uniqueCode);
 		@SuppressWarnings("unchecked")
 		List<AnswerSet> list = query.list();
 		if (list.isEmpty()) {
@@ -1355,6 +1369,7 @@ public class AnswerService extends BasicService {
 		return statistics;
 	}
 
+	@Transactional
 	public Statistics getStatistics(Survey survey, ResultFilter filter, boolean useEagerLoading, boolean allanswers,
 			boolean asynchronous) throws Exception {
 		filter = answerService.initialize(filter);
@@ -1510,7 +1525,7 @@ public class AnswerService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session
 				.createQuery("FROM Draft d WHERE d.answerSet.uniqueCode = :uniqueCode order by answerSet.date DESC")
-				.setString("uniqueCode", uniqueCode);
+				.setString(Constants.UNIQUECODE, uniqueCode);
 		@SuppressWarnings("unchecked")
 		List<Draft> list = query.list();
 		if (list.isEmpty()) {
@@ -1535,7 +1550,7 @@ public class AnswerService extends BasicService {
 		while (true) {
 			try {
 				Query query = session.createQuery("FROM Draft d WHERE d.answerSet.invitationId = :uniqueCode")
-						.setString("uniqueCode", uniqueCode);
+						.setString(Constants.UNIQUECODE, uniqueCode);
 				@SuppressWarnings("unchecked")
 				List<Draft> list = query.list();
 				if (list.isEmpty()) {
@@ -1594,12 +1609,12 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional(readOnly = false)
-	public String resetContribution(String code) throws Exception {
+	public String resetContribution(String code) throws MessageException {
 		Session session = sessionFactory.getCurrentSession();
 
 		Query query = session.createQuery(
 				"SELECT a FROM AnswerSet a WHERE a.isDraft = false AND a.uniqueCode = :uniqueCode order by date DESC")
-				.setString("uniqueCode", code);
+				.setString(Constants.UNIQUECODE, code);
 		@SuppressWarnings("unchecked")
 		List<AnswerSet> list1 = query.list();
 
@@ -1612,7 +1627,7 @@ public class AnswerService extends BasicService {
 		if (answerSet != null) {
 			query = session
 					.createQuery("FROM Draft d WHERE d.answerSet.uniqueCode = :uniqueCode order by answerSet.date DESC")
-					.setString("uniqueCode", code);
+					.setString(Constants.UNIQUECODE, code);
 			@SuppressWarnings("unchecked")
 			List<Draft> list = query.list();
 
@@ -1769,7 +1784,7 @@ public class AnswerService extends BasicService {
 
 		List<Integer> ids = surveyService.getAllSurveyVersions(survey.getId());
 
-		query.setString("email", user.getEmail());
+		query.setString(Constants.EMAIL, user.getEmail());
 		query.setString("email2", Tools.md5hash(user.getEmail()));
 		query.setParameterList("ids", ids);
 
@@ -1914,7 +1929,7 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional
-	public int deleteOldDrafts(Date date) {
+	public int deleteOldDrafts(Date date) throws IOException {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("SELECT d.id from Draft d where d.answerSet.updateDate < :date");
 		query.setDate("date", date).setMaxResults(1000);
@@ -1931,15 +1946,12 @@ public class AnswerService extends BasicService {
 						// new file system
 						java.io.File file = fileService.getSurveyFile(draft.getAnswerSet().getSurvey().getUniqueId(),
 								f.getUid());
-						if (file.exists()) {
-							file.delete();
-						}
+						
+						Files.deleteIfExists(file.toPath());						
 
 						// old file system
 						file = new java.io.File(fileDir + f.getUid());
-						if (file.exists()) {
-							file.delete();
-						}
+						Files.deleteIfExists(file.toPath());
 					}
 				}
 			}
@@ -2021,7 +2033,7 @@ public class AnswerService extends BasicService {
 		return filter;
 	}
 
-	public String getDraftURL(AnswerSet answerSet, String draftid, User user) throws Exception {
+	public String getDraftURL(AnswerSet answerSet, String draftid, User user) throws MessageException {
 		Survey survey = answerSet.getSurvey();
 		String mode = survey.getIsDraft() ? "test" : "runner";
 		String invitationId = answerSet.getInvitationId();
@@ -2032,9 +2044,9 @@ public class AnswerService extends BasicService {
 			ParticipationGroup group = participationService.get(invitation.getParticipationGroupId());
 
 			if (group.getType() == ParticipationGroupType.Token) {
-				url = serverPrefix + "runner/" + survey.getUniqueId() + "/" + invitation.getUniqueId();
+				url = serverPrefix + "runner/" + survey.getUniqueId() + Constants.PATH_DELIMITER + invitation.getUniqueId();
 			} else {
-				url = serverPrefix + "runner/invited/" + invitation.getParticipationGroupId() + "/"
+				url = serverPrefix + "runner/invited/" + invitation.getParticipationGroupId() + Constants.PATH_DELIMITER
 						+ invitation.getUniqueId();
 			}
 

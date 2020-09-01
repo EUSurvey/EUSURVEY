@@ -63,7 +63,7 @@ public class Confirmation extends Question {
 		return usetext;
 	}
 	public void setUsetext(Boolean usetext) {
-		this.usetext = usetext != null ? usetext : true;
+		this.usetext = usetext == null || usetext;
 	}
 	
 	@Column(name = "ISUSEUPLOAD")

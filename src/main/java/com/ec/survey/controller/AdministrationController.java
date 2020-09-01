@@ -4,6 +4,7 @@ import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.CreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.FileUpdater;
 import com.ec.survey.tools.NotAgreedToPsException;
@@ -113,7 +114,7 @@ public class AdministrationController extends BasicController {
 		}
 		
 		String name = Tools.escapeHTML(request.getParameter("name"));
-		String email = Tools.escapeHTML(request.getParameter("email"));
+		String email = Tools.escapeHTML(request.getParameter(Constants.EMAIL));
 		String otherEmail = Tools.escapeHTML(request.getParameter("otherEmail"));
 		String language = Tools.escapeHTML(request.getParameter("ulang"));
 		
@@ -141,13 +142,13 @@ public class AdministrationController extends BasicController {
 	public ModelAndView synchronizeLDAP(HttpServletRequest request) {
 		ldapService.reloadDepartments();
 		ldapService.reloadEcasUser();
-		return new ModelAndView("error/info", "message", "synchronization started");
+		return new ModelAndView("error/info", Constants.MESSAGE, "synchronization started");
 	}
 	
 	@RequestMapping(value = "/synchronizeDomains", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView synchronizeDomains(HttpServletRequest request) {
 		ldapService.reloadDomains();
-		return new ModelAndView("error/info", "message", "synchronization started");
+		return new ModelAndView("error/info", Constants.MESSAGE, "synchronization started");
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForSurvey/{survey}", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -162,7 +163,7 @@ public class AdministrationController extends BasicController {
 		long tDelta = tEnd - tStart;
 		double elapsedSeconds = tDelta / 1000.0;
 		
-		return new ModelAndView("error/info", "message", "files for survey migrated, it took " + elapsedSeconds + " seconds");
+		return new ModelAndView("error/info", Constants.MESSAGE, "files for survey migrated, it took " + elapsedSeconds + " seconds");
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForUser/{user}", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -176,11 +177,11 @@ public class AdministrationController extends BasicController {
 		long tDelta = tEnd - tStart;
 		double elapsedSeconds = tDelta / 1000.0;
 		
-		return new ModelAndView("error/info", "message", "files for user migrated, it took " + elapsedSeconds + " seconds");
+		return new ModelAndView("error/info", Constants.MESSAGE, "files for user migrated, it took " + elapsedSeconds + " seconds");
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForUsers", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView migrateFileSystemForUsers(HttpServletRequest request) throws Exception {
+	public ModelAndView migrateFileSystemForUsers(HttpServletRequest request) throws IOException {
 		long tStart = System.currentTimeMillis();
 		
 		fileService.migrateAllUserFiles();
@@ -189,7 +190,7 @@ public class AdministrationController extends BasicController {
 		long tDelta = tEnd - tStart;
 		double elapsedSeconds = tDelta / 1000.0;
 		
-		return new ModelAndView("error/info", "message", "files for users migrated, it took " + elapsedSeconds + " seconds");
+		return new ModelAndView("error/info", Constants.MESSAGE, "files for users migrated, it took " + elapsedSeconds + " seconds");
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForArchives", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -202,19 +203,19 @@ public class AdministrationController extends BasicController {
 		long tDelta = tEnd - tStart;
 		double elapsedSeconds = tDelta / 1000.0;
 		
-		return new ModelAndView("error/info", "message", "files for archives migrated, it took " + elapsedSeconds + " seconds");
+		return new ModelAndView("error/info", Constants.MESSAGE, "files for archives migrated, it took " + elapsedSeconds + " seconds");
 	}	
 	
 	@RequestMapping(value = "/startfileworker", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView startfileworker(HttpServletRequest request) {
 		fileWorker.run();
-		return new ModelAndView("error/info", "message", "file worker started");
+		return new ModelAndView("error/info", Constants.MESSAGE, "file worker started");
 	}
 	
 	@RequestMapping(value = "/deletetempfiles", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView deletetempfiles(HttpServletRequest request) {
 		int deletedfiles = fileService.deleteOldTempFiles(new Date());
-		return new ModelAndView("error/info", "message", deletedfiles +  " files deleted");
+		return new ModelAndView("error/info", Constants.MESSAGE, deletedfiles +  " files deleted");
 	}
 	
 	@RequestMapping(value = "/languages", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -311,7 +312,7 @@ public class AdministrationController extends BasicController {
 		{
 			survey = "-";
 		}
-		result.addObject("survey", survey);
+		result.addObject(Constants.SURVEY, survey);
 		
 		return result;
 	}
@@ -401,7 +402,7 @@ public class AdministrationController extends BasicController {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		return "error";
+		return Constants.ERROR;
 	}
 	
 	@RequestMapping(value = "/updateAllOLAPTables", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -420,6 +421,6 @@ public class AdministrationController extends BasicController {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		return "error";
+		return Constants.ERROR;
 	}
 }

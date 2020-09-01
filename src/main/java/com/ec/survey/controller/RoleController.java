@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.Role;
+import com.ec.survey.tools.Constants;
 
 @Controller
 @RequestMapping("/administration")
@@ -79,7 +80,7 @@ public class RoleController extends BasicController {
 		
 		if (name.trim().length() == 0)
 		{
-			m.addObject("error", resources.getMessage("validation.required", null, "This field is required", locale));					
+			m.addObject(Constants.ERROR, resources.getMessage("validation.required", null, "This field is required", locale));					
 		} else {
 			if (valid)
 			{
@@ -87,7 +88,7 @@ public class RoleController extends BasicController {
 				role.setName(name);
 				administrationService.createRole(role);
 			} else {
-				m.addObject("error", resources.getMessage("error.UniqueName", null, "This name already exists. Please choose a unique name.", locale));
+				m.addObject(Constants.ERROR, resources.getMessage("error.UniqueName", null, "This name already exists. Please choose a unique name.", locale));
 			}
 		}
 		
@@ -104,7 +105,7 @@ public class RoleController extends BasicController {
 			administrationService.deleteRole(Integer.parseInt(id));
 		} catch (DataIntegrityViolationException e)
 		{
-			m.addObject("error", resources.getMessage("error.CannotDeleteRole", null, "You cannot delete a role when there are users with that role.", locale));
+			m.addObject(Constants.ERROR, resources.getMessage("error.CannotDeleteRole", null, "You cannot delete a role when there are users with that role.", locale));
 		}
 		
 		List<Role> roles = administrationService.getAllRoles();   	

@@ -96,6 +96,8 @@
 			var invalidCharacter = "${form.getMessage("validation.invalidCharacter")}";
 			var valuetoosmall = "${form.getMessage("validation.valueTooSmall")}";
 			var valuetoolarge = "${form.getMessage("validation.valueTooLarge")}";
+			var timevaluetoosmall = "${form.getMessage("validation.valueTooSmallTime")}";
+			var timevaluetoolarge = "${form.getMessage("validation.valueTooLargeTime")}";
 			var notenoughanswers = "${form.getMessage("validation.notEnoughAnswers")}";
 			var toomanyanswers = "${form.getMessage("validation.tooManyAnswers")}";
 			var noRegExmatchText = "${form.getMessage("validation.noRegExMatch")}";
@@ -173,6 +175,8 @@
 			var invalidnumberText = "<spring:message code='validation.invalidNumber' />";
 			var valuetoosmall = "<spring:message code='validation.valueTooSmall' />";
 			var valuetoolarge = "<spring:message code='validation.valueTooLarge' />";
+			var timevaluetoosmall = "<spring:message code='validation.valueTooSmallTime' />";
+			var timevaluetoolarge = "<spring:message code='validation.valueTooLargeTime' />";
 			var notenoughanswers = "<spring:message code='validation.notEnoughAnswers' />";
 			var toomanyanswers = "<spring:message code='validation.tooManyAnswers' />";
 			var noRegExmatchText = "<spring:message code='validation.noRegExMatch' />";

@@ -64,7 +64,7 @@ public class GalleryQuestion extends Question {
 		return numbering;
 	}	
 	public void setNumbering(Boolean numbering) {
-		this.numbering = numbering != null ? numbering : false;
+		this.numbering = numbering != null && numbering;
 	}
 	
 	@SuppressWarnings("deprecation")

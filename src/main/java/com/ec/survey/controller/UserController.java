@@ -9,6 +9,7 @@ import com.ec.survey.model.UsersConfiguration;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.service.mapping.PaginationMapper;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 import org.springframework.stereotype.Controller;
@@ -62,7 +63,7 @@ public class UserController extends BasicController {
     	
     	List<Role> roles = administrationService.getAllRoles();
     	m.addObject("ExistingRoles", roles);
-    	m.addObject("filter", filter);
+    	m.addObject(Constants.FILTER, filter);
     	
     	UsersConfiguration usersConfiguration = administrationService.getUsersConfiguration(sessionService.getCurrentUser(request).getId());
     	if (usersConfiguration == null) usersConfiguration = new UsersConfiguration();
@@ -147,7 +148,7 @@ public class UserController extends BasicController {
 		{
 			if (Tools.isPasswordWeak(password))
 			{
-				model.addAttribute("error", resources.getMessage("error.PasswordWeak", null, "This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$&%...).", locale));
+				model.addAttribute(Constants.ERROR, resources.getMessage("error.PasswordWeak", null, "This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$&%...).", locale));
 			} else {
 				User user = new User();
 				user.setValidated(true);
@@ -164,7 +165,7 @@ public class UserController extends BasicController {
 				
 				if (!administrationService.checkEmailsNotBanned(user.getAllEmailAddresses()))
 				{
-					model.addAttribute("error", resources.getMessage("error.EmailBanned", null, "This email adress belongs to a banned user.", locale));
+					model.addAttribute(Constants.ERROR, resources.getMessage("error.EmailBanned", null, "This email adress belongs to a banned user.", locale));
 				} else {
 					if (roles != null && roles.length() > 0)
 					{
@@ -182,7 +183,7 @@ public class UserController extends BasicController {
 				}
 			}
 		} else {
-			model.addAttribute("error", resources.getMessage("error.LoginExists", null, "This login already exists. Please choose a unique login.", locale));
+			model.addAttribute(Constants.ERROR, resources.getMessage("error.LoginExists", null, "This login already exists. Please choose a unique login.", locale));
 		}
 		
 		return users(request, model);
@@ -210,7 +211,7 @@ public class UserController extends BasicController {
 				{
 					if (Tools.isPasswordWeak(password))
 					{
-						model.addAttribute("error", resources.getMessage("error.PasswordWeak", null, "This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$&%...).", locale));
+						model.addAttribute(Constants.ERROR, resources.getMessage("error.PasswordWeak", null, "This password does not fit our password policy. Please choose a password between 8 and 16 characters with at least one digit and one non-alphanumeric characters (e.g. !?$&%...).", locale));
 						return users(request, model);
 					}
 									
@@ -241,7 +242,7 @@ public class UserController extends BasicController {
 			
 			administrationService.updateUser(user);
 		} else {
-			model.addAttribute("error", resources.getMessage("error.UserNotFound", null, "User not found", locale));
+			model.addAttribute(Constants.ERROR, resources.getMessage("error.UserNotFound", null, "User not found", locale));
 		}
 		
 		return users(request, model);
@@ -259,7 +260,7 @@ public class UserController extends BasicController {
 		} catch (Exception e)
 		{
 			logger.error(e.getLocalizedMessage(), e);
-			model.addAttribute("error", resources.getMessage("error.DeletionFailed", null, "Deletion failed", locale));
+			model.addAttribute(Constants.ERROR, resources.getMessage("error.DeletionFailed", null, "Deletion failed", locale));
 		}
 		return users(request, model);
 	}

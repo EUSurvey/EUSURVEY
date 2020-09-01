@@ -9,7 +9,11 @@ import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.dashboard.Contributions;
 import com.ec.survey.model.survey.dashboard.EndDates;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
+import com.ec.survey.tools.NotAgreedToPsException;
+import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -21,6 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -29,7 +35,9 @@ public class DashboardController extends BasicController {
 	private @Value("${server.prefix}") String host;
 
 	@RequestMapping(value = "/dashboard", method = { RequestMethod.GET, RequestMethod.HEAD })
-	public ModelAndView dashboard(HttpServletRequest request, Locale locale, Model model) throws Exception {
+	public ModelAndView dashboard(HttpServletRequest request, Locale locale, Model model)
+			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
+			IOException {
 
 		if (request.getParameter("deletearchive") != null) {
 			String archiveid = request.getParameter("deletearchive");
@@ -63,9 +71,9 @@ public class DashboardController extends BasicController {
 			result.addObject("archived", shortname);
 		}
 
-		if (request.getParameter("deleted") != null) {
-			String shortname = request.getParameter("deleted");
-			result.addObject("deleted", shortname);
+		if (request.getParameter(Constants.DELETED) != null) {
+			String shortname = request.getParameter(Constants.DELETED);
+			result.addObject(Constants.DELETED, shortname);
 		}
 
 		if (request.getParameter("frozen") != null) {
@@ -73,7 +81,7 @@ public class DashboardController extends BasicController {
 			result.addObject("frozen", shortname);
 		}
 
-		result.addObject("filter", new ArchiveFilter());
+		result.addObject(Constants.FILTER, new ArchiveFilter());
 
 		return result;
 	}
@@ -94,8 +102,8 @@ public class DashboardController extends BasicController {
 			contributions.setSurveys(surveys);
 
 			int index = 0;
-			if (request.getParameter("survey") != null) {
-				index = Integer.parseInt(request.getParameter("survey"));
+			if (request.getParameter(Constants.SURVEY) != null) {
+				index = Integer.parseInt(request.getParameter(Constants.SURVEY));
 			}
 
 			if (request.getParameter("surveyid") != null) {
@@ -201,8 +209,8 @@ public class DashboardController extends BasicController {
 				page = Integer.parseInt(request.getParameter("page"));
 			}
 
-			if (request.getParameter("shortname") != null) {
-				String shortname = request.getParameter("shortname");
+			if (request.getParameter(Constants.SHORTNAME) != null) {
+				String shortname = request.getParameter(Constants.SHORTNAME);
 				if (shortname.trim().length() > 0) {
 					filter.setShortname(shortname);
 				}
@@ -426,8 +434,8 @@ public class DashboardController extends BasicController {
 					filter.setUpdatedTo(ConversionTools.getDate(lasteditto));
 				}
 			}
-			if (request.getParameter("survey") != null) {
-				String survey = request.getParameter("survey");
+			if (request.getParameter(Constants.SURVEY) != null) {
+				String survey = request.getParameter(Constants.SURVEY);
 				if (survey.trim().length() > 0) {
 					filter.setSurveyTitle(survey);
 				}
@@ -517,8 +525,8 @@ public class DashboardController extends BasicController {
 					filter.setUpdatedTo(ConversionTools.getDate(lasteditto));
 				}
 			}
-			if (request.getParameter("survey") != null) {
-				String survey = request.getParameter("survey");
+			if (request.getParameter(Constants.SURVEY) != null) {
+				String survey = request.getParameter(Constants.SURVEY);
 				if (survey.trim().length() > 0) {
 					filter.setSurveyTitle(survey);
 				}
@@ -560,7 +568,7 @@ public class DashboardController extends BasicController {
 
 				Invitation invitation = attendeeService.getInvitationByUniqueId(answerSet.getInvitationId());
 				String link = invitation == null ? ""
-						: host + "runner/invited/" + invitation.getParticipationGroupId() + "/"
+						: host + "runner/invited/" + invitation.getParticipationGroupId() + Constants.PATH_DELIMITER
 								+ invitation.getUniqueId();
 
 				answer[6] = link;
@@ -588,7 +596,7 @@ public class DashboardController extends BasicController {
 				page = Integer.parseInt(request.getParameter("page"));
 			}
 
-			String survey = request.getParameter("survey");
+			String survey = request.getParameter(Constants.SURVEY);
 			String surveystatus = request.getParameter("surveystatus");
 			String expirystart = request.getParameter("endfrom");
 			String expiryend = request.getParameter("endto");
@@ -629,7 +637,7 @@ public class DashboardController extends BasicController {
 				answer[1] = ConversionTools.removeHTML(s.getTitle());
 				answer[2] = s.getIsActive();
 				answer[3] = s.getEndString();
-				answer[4] = host + "runner/invited/" + invitation.getParticipationGroupId() + "/"
+				answer[4] = host + "runner/invited/" + invitation.getParticipationGroupId() + Constants.PATH_DELIMITER
 						+ invitation.getUniqueId();
 
 				invitations.add(answer);

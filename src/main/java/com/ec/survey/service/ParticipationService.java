@@ -7,6 +7,7 @@ import com.ec.survey.model.ParticipationGroupsForAttendee;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.GuestListCreator;
 import org.hibernate.Query;
@@ -187,9 +188,9 @@ public class ParticipationService extends BasicService {
 		getPool().execute(c);
 	}
 	
-	public void addTokensToGuestListAsync(Integer id, List<String> tokens) {
+	public void addTokensToGuestListAsync(Integer id, List<String> tokens, List<String> deactivatedTokens) {
 		GuestListCreator c = (GuestListCreator) context.getBean("guestListCreator");
-		c.initTokens(id, tokens);
+		c.initTokens(id, tokens, deactivatedTokens);
 		getPool().execute(c);
 	}	
 
@@ -341,14 +342,14 @@ public class ParticipationService extends BasicService {
 			query.setParameterList("emails", allemails);
 		} else {
 			query = session.createSQLQuery(sql.toString());
-			query.setString("email", user.getEmail());
+			query.setString(Constants.EMAIL, user.getEmail());
 		}	
 		
 		query.setFirstResult(paging.getFirstResult()).setMaxResults(paging.getMaxResult());
 		
 		if (survey != null)
 		{
-			query.setString("survey", "%" + survey + "%");
+			query.setString(Constants.SURVEY, "%" + survey + "%");
 		}
 		if (expiryStart != null)
 		{

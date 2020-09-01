@@ -229,6 +229,45 @@
 														  
 														</div>
 													</c:when>
+													
+													<c:when test="${question.getType() == 'DateQuestion'}">
+														<div class="btn-toolbar" style="margin: 0px; text-align: center">
+															<div class="datefilter" style="float: left">
+													  		<a class="btn btn-default" onclick="showOverlayMenu(this)" >
+															     <c:choose>
+															     	<c:when test="${filter.getFromValue(question.id, question.uniqueId).length() > 0}">
+															     		<spring:eval expression="filter.getFromValue(question.id, question.uniqueId)" />
+															     	</c:when>
+															     	<c:otherwise>
+															     		<spring:message code="label.from" />
+															     	</c:otherwise>
+															     </c:choose>
+															    <span class="caret"></span>
+															  </a>
+															  <div class="overlaymenu hideme">
+															    	<input type="hidden" name="filter${question.id}|${question.uniqueId}from" class="hiddendate" value="<spring:eval expression="filter.getFromValue(question.id, question.uniqueId)" />" />
+															    	<div id="metafilter${question.id}|${question.uniqueId}fromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
+															   </div>
+															</div>
+															<div class="datefilter" style="float: left">	
+															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+															  	<c:choose>
+															     	<c:when test="${filter.getToValue(question.id, question.uniqueId).length() > 0}">
+															     		<spring:eval expression="filter.getToValue(question.id, question.uniqueId)" />
+															     	</c:when>
+															     	<c:otherwise>
+															     		<spring:message code="label.To" />
+															     	</c:otherwise>
+															     </c:choose>
+															    <span class="caret"></span>
+															  </a>
+															 <div class="overlaymenu hideme">
+															    	<input type="hidden" name="filter${question.id}|${question.uniqueId}to" class="hiddendate" value="<spring:eval expression="filter.getToValue(question.id, question.uniqueId)" />" />
+															    	<div id="metafilter${question.id}|${question.uniqueId}todiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
+															    </div>
+															</div>	
+														</div>	
+													</c:when>													
 													<c:otherwise>
 														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100"  style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
 												         <a class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign white"></span></a>
@@ -295,7 +334,7 @@
 										  <div class="overlaymenu hideme">
 										  		<spring:message code="label.from" />
 										    	<input type="hidden" name="metafilterdatefrom" class="hiddendate" value="<spring:eval expression="filter.generatedFrom" />" />
-										    	<div id="metafilterdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    	<div id="metafilterdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
 										   </div>
 										</div>
 										<div class="datefilter" style="float: left">	
@@ -313,7 +352,7 @@
 										 <div class="overlaymenu hideme">
 										 		<spring:message code="label.To" />
 										    	<input type="hidden" name="metafilterdateto" class="hiddendate" value="<spring:eval expression="filter.generatedTo" />" />
-										    	<div id="metafilterdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    	<div id="metafilterdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
 										    </div>
 										</div>	
 									</div>	
@@ -337,7 +376,7 @@
 										   <div class="overlaymenu hideme">
 										   		<spring:message code="label.from" />
 										    	<input type="hidden" name="metafilterupdatefrom" class="hiddendate" value="<spring:eval expression="filter.updatedFrom" />" />
-										    	<div id="metafilterupdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    	<div id="metafilterupdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
 										    </div>
 										</div>		
 										<div class="datefilter" style="float: left">
@@ -355,7 +394,7 @@
 										   <div class="overlaymenu hideme">
 										   		<spring:message code="label.To" />
 										    	<input type="hidden" name="metafilterupdateto" class="hiddendate" value="<spring:eval expression="filter.updatedTo" />" />
-										    	<div id="metafilterupdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+										    	<div id="metafilterupdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker results"></div>
 										   </div>
 										</div>	
 									</div>										

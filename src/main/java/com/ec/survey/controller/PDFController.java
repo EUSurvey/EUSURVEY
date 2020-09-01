@@ -10,6 +10,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
@@ -226,7 +227,7 @@ public class PDFController extends BasicController {
 
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error";
+			return Constants.ERROR;
 		}
 	}
 
@@ -248,7 +249,7 @@ public class PDFController extends BasicController {
 
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error";
+			return Constants.ERROR;
 		}
 	}
 
@@ -267,7 +268,7 @@ public class PDFController extends BasicController {
 
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error";
+			return Constants.ERROR;
 		}
 	}
 
@@ -283,7 +284,7 @@ public class PDFController extends BasicController {
 			AnswerSet answerSet = answerService.get(code);
 
 			if (answerSet == null)
-				return "error";
+				return Constants.ERROR;
 
 			java.io.File folder = fileService.getSurveyExportsFolder(answerSet.getSurvey().getUniqueId());
 			target = new java.io.File(String.format("%s/answer%s.pdf", folder.getPath(), code));
@@ -296,7 +297,7 @@ public class PDFController extends BasicController {
 
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return "error";
+			return Constants.ERROR;
 		}
 	}
 

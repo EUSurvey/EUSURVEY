@@ -2,7 +2,6 @@ package com.ec.survey.controller;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,12 +35,8 @@ public class FileController extends BasicController {
 			File file = null;
 			try {
 
-				try {
-					file = fileService.get(uid);
-				} catch (FileNotFoundException fnf) {
-					throw new InvalidURLException();
-				}
-
+				file = fileService.get(uid);
+				
 				java.io.File f = new java.io.File(fileDir + file.getUid());
 				
 				if (f.exists())
@@ -69,14 +64,8 @@ public class FileController extends BasicController {
 					response.setContentLength((int) f.length());
 					response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
 
-					String type = "";
-
-					try {
-						type = Magic.getMagicMatch(f, false).getMimeType();
-					} catch (Exception e) {
-						// unknown type
-					}
-
+					String type = getMimeType(f);
+										
 					if (file.getName().toLowerCase().endsWith("pdf")) {
 						response.setContentType("application/pdf");
 					} else if (file.getName().toLowerCase().endsWith("xml")) {
@@ -91,29 +80,30 @@ public class FileController extends BasicController {
 						response.setContentType(type);
 					}
 
-					try {
-						FileCopyUtils.copy(new FileInputStream(f), response.getOutputStream());
-					} catch (FileNotFoundException e) {
-						logger.error(e.getLocalizedMessage(), e);
-					} catch (ClientAbortException e) {
-						// ignore
-					} catch (IOException e) {
-						logger.error(e.getLocalizedMessage(), e);
-					}
+					FileCopyUtils.copy(new FileInputStream(f), response.getOutputStream());
 				}
 
-			} catch (InvalidURLException iv) {
-				throw iv;
+			} catch (FileNotFoundException | ClientAbortException iv) {
+				//ignore
 			} catch (ForbiddenURLException fe1) {
 				throw fe1;
 			} catch (Exception e1) {
-				logger.error(e1);
+				logger.error(e1.getLocalizedMessage(), e1);
 			}
 
 		}
 		throw new InvalidURLException();
 	}
 
+	private String getMimeType(java.io.File f) {
+		try {
+			return Magic.getMagicMatch(f, false).getMimeType();
+		} catch (Exception e) {
+			// unknown type
+			return "";
+		}
+	}
+	
 	@RequestMapping(value = "/withcomment/{uid}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView fileWithComment(@PathVariable String uid, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -141,12 +131,8 @@ public class FileController extends BasicController {
 			boolean zipped = false;
 			try {
 
-				try {
-					file = fileService.get(uid);
-				} catch (FileNotFoundException fnf) {
-					return null;
-				}
-
+				file = fileService.get(uid);
+				
 				java.io.File f = fileService.getSurveyFile(surveyuid, uid);
 
 				if (!f.exists()) {
@@ -200,13 +186,7 @@ public class FileController extends BasicController {
 						response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
 					}
 
-					String type = "";
-
-					try {
-						type = Magic.getMagicMatch(f, false).getMimeType();
-					} catch (Exception e) {
-						// unknown type
-					}
+					String type = getMimeType(f);
 
 					if (zipped) {
 						response.setContentType("application/zip");
@@ -224,21 +204,15 @@ public class FileController extends BasicController {
 						response.setContentType(type);
 					}
 
-					try {
-						FileCopyUtils.copy(new FileInputStream(f), response.getOutputStream());
-					} catch (FileNotFoundException e) {
-						logger.error(e.getLocalizedMessage(), e);
-					} catch (ClientAbortException e) {
-						// ignore
-					} catch (IOException e) {
-						logger.error(e.getLocalizedMessage(), e);
-					}
+					FileCopyUtils.copy(new FileInputStream(f), response.getOutputStream());					
 				}
 
+			} catch (ClientAbortException ce) {
+				// ignore
 			} catch (ForbiddenURLException fe1) {
 				throw fe1;
-			} catch (Exception e1) {
-				logger.error(e1);
+			} catch (Exception e) {
+				logger.error(e.getLocalizedMessage(), e);
 			}
 
 		}

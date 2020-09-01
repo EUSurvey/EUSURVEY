@@ -253,7 +253,7 @@ public class TranslationsHelper {
 		return translations;
 	}
 
-	public static List<KeyValue> getShortDescriptions(Survey survey, Locale locale) {
+	public static List<KeyValue> getShortDescriptions(Survey survey) {
 		List<KeyValue> result = new ArrayList<>();
 
 		result.add(new KeyValue(Survey.TITLE, "L"));
@@ -387,7 +387,7 @@ public class TranslationsHelper {
 		}
 
 		for (Element element : survey.getElements()) {
-			result.add(new KeyValue(element.getUniqueId() + "shortname",
+			result.add(new KeyValue(element.getUniqueId() + Constants.SHORTNAME,
 					resources.getMessage("label.Identifier", null, "Identifier", locale)));
 
 			if (element instanceof Section) {
@@ -526,7 +526,7 @@ public class TranslationsHelper {
 
 		String label = getLabel(element, "", translationByKey);
 
-		org.w3c.dom.Element labelNode = doc.createElement("Label");
+		org.w3c.dom.Element labelNode = doc.createElement(Constants.LABEL);
 		labelNode.appendChild(doc.createCDATASection(label));
 		elementNode.appendChild(labelNode);
 
@@ -597,7 +597,7 @@ public class TranslationsHelper {
 				answerNode.setAttributeNode(attr);
 
 				label = getLabel(answer, "", translationByKey);
-				labelNode = doc.createElement("Label");
+				labelNode = doc.createElement(Constants.LABEL);
 				labelNode.appendChild(doc.createCDATASection(label));
 				answerNode.appendChild(labelNode);
 
@@ -802,8 +802,7 @@ public class TranslationsHelper {
 		return null;
 	}
 
-	public static java.io.File getXLS(Survey survey, Translations translations, MessageSource resources, Locale locale,
-			FileService fileService) {
+	public static java.io.File getXLS(Survey survey, Translations translations, FileService fileService) {
 
 		try {
 
@@ -814,7 +813,7 @@ public class TranslationsHelper {
 				}
 			}
 
-			List<KeyValue> infos = getShortDescriptions(survey, locale);
+			List<KeyValue> infos = getShortDescriptions(survey);
 			Map<String, String> descriptions = new HashMap<>();
 			for (KeyValue keyValue : infos) {
 				descriptions.put(keyValue.getKey(), keyValue.getValue());
@@ -1071,8 +1070,7 @@ public class TranslationsHelper {
 
 	}
 
-	public static java.io.File getODS(Survey survey, Translations translations, MessageSource resources, Locale locale,
-			FileService fileService) {
+	public static java.io.File getODS(Survey survey, Translations translations,	FileService fileService) {
 		try {
 
 			HashMap<String, String> translationsByKey = new HashMap<>();
@@ -1082,7 +1080,7 @@ public class TranslationsHelper {
 				}
 			}
 
-			List<KeyValue> infos = getShortDescriptions(survey, locale);
+			List<KeyValue> infos = getShortDescriptions(survey);
 			Map<String, String> descriptions = new HashMap<>();
 			for (KeyValue keyValue : infos) {
 				descriptions.put(keyValue.getKey(), keyValue.getValue());
@@ -1454,6 +1452,7 @@ public class TranslationsHelper {
 				result.getTranslations()
 						.add(new Translation(Survey.QUIZWELCOMEMESSAGE, quizwelcome, lang, surveyId, result));
 			} catch (Exception e) {
+				//ignore
 			}
 
 			try {
@@ -1461,6 +1460,7 @@ public class TranslationsHelper {
 				result.getTranslations()
 						.add(new Translation(Survey.QUIZRESULTSMESSAGE, quizresult, lang, surveyId, result));
 			} catch (Exception e) {
+				//ignore
 			}
 
 			String escape = getText(translation.getElementsByTagName("EscapePage"), "EscapePage");
@@ -1489,7 +1489,7 @@ public class TranslationsHelper {
 
 				String key = Tools.repairXML(element.getAttribute("key"));
 				String type = Tools.repairXML(element.getAttribute("type"));
-				String label = getText(element.getElementsByTagName("Label"), "Label");
+				String label = getText(element.getElementsByTagName(Constants.LABEL), Constants.LABEL);
 
 				result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
 
@@ -1524,7 +1524,7 @@ public class TranslationsHelper {
 						org.w3c.dom.Element answer = (org.w3c.dom.Element) element.getElementsByTagName("Answer")
 								.item(j);
 						key = answer.getAttribute("key");
-						label = getText(answer.getElementsByTagName("Label"), "Label");
+						label = getText(answer.getElementsByTagName(Constants.LABEL), Constants.LABEL);
 						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
 
 						try {
@@ -1553,7 +1553,7 @@ public class TranslationsHelper {
 								.item(j);
 						key = Tools.repairXML(child.getAttribute("key"));
 						type = Tools.repairXML(child.getAttribute("type"));
-						label = getText(child.getElementsByTagName("Label"), "Label");
+						label = getText(child.getElementsByTagName(Constants.LABEL), Constants.LABEL);
 
 						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
 					}
@@ -1567,7 +1567,7 @@ public class TranslationsHelper {
 						org.w3c.dom.Element child = (org.w3c.dom.Element) children.getElementsByTagName("Element")
 								.item(j);
 						key = Tools.repairXML(child.getAttribute("key"));
-						label = getText(child.getElementsByTagName("Label"), "Label");
+						label = getText(child.getElementsByTagName(Constants.LABEL), Constants.LABEL);
 
 						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
 					}
@@ -1872,7 +1872,7 @@ public class TranslationsHelper {
 			survey.setConfirmationLink(translationsByKey.get(Survey.CONFIRMATIONLINK).getLabel());
 
 		Set<String> linkstodelete = new HashSet<>();
-		Map<String, String> newlinks = new HashMap<String, String>();
+		Map<String, String> newlinks = new HashMap<>();
 		for (String key : survey.getUsefulLinks().keySet()) {
 			String[] data = key.split("#");
 			if (translationsByKey.containsKey(data[0] + "#usefullink")
@@ -1891,7 +1891,7 @@ public class TranslationsHelper {
 		}
 
 		Set<String> backdocstodelete = new HashSet<>();
-		Map<String, String> newbackdocs = new HashMap<String, String>();
+		Map<String, String> newbackdocs = new HashMap<>();
 		for (String key : survey.getBackgroundDocuments().keySet()) {
 			if (translationsByKey.containsKey(key + "#backgrounddocument")
 					&& notNullOrEmpty(translationsByKey.get(key + "#backgrounddocument").getLabel())

@@ -6,7 +6,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
@@ -210,7 +209,7 @@ public abstract class MatrixOrTable extends Question {
 		return result;
 	}
 	
-	public void initCopy(MatrixOrTable matrixOrTable, String fileDir) throws ValidationException, IntrusionException
+	public void initCopy(MatrixOrTable matrixOrTable, String fileDir) throws ValidationException
 	{
 		baseCopy(matrixOrTable);
 		matrixOrTable.setColumns(columns);

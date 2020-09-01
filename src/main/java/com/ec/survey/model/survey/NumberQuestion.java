@@ -187,15 +187,12 @@ public class NumberQuestion extends Question {
 		
 		if (maxD != null && !maxD.equals(number.maxD)) return true;
 		if (minD != null && !minD.equals(number.minD)) return true;
-		if (unit != null && !unit.equals(number.unit)) return true;
-		if (minLabel != null && !minLabel.equals(number.minLabel)) return true;
-		if (maxLabel != null && !maxLabel.equals(number.maxLabel)) return true;
 		
 		if (display != null && !display.equals(number.display)) return true;
 		if (displayGraduationScale != null && !displayGraduationScale.equals(number.displayGraduationScale)) return true;
-		if (initialSliderPosition != null && !initialSliderPosition.equals(number.initialSliderPosition)) return true;
-			
-		return false;
+		if (initialSliderPosition != null && !initialSliderPosition.equals(number.initialSliderPosition)) return true;			
+
+		return (unit != null && !unit.equals(number.unit));
 	}
 
 	//used during import process to upgrade older version of the class

@@ -141,13 +141,13 @@
 									<div class='limits'>${form.getMessage("limits.MaxDate", element.getMaxString())}</div>
 								</c:when>
 								
-								<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null && element.getMax() != null}">
+								<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null && element.getMin().length() > 0 && element.getMax() != null && element.getMax().length() > 0}">
 									<div class='limits'>${form.getMessage("limits.MinMaxDate", element.getMin(), element.getMax())}</div>
 								</c:when>
-								<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null}">
+								<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null && element.getMin().length() > 0}">
 									<div class='limits'>${form.getMessage("limits.MinDate", element.getMin())}</div>
 								</c:when>
-								<c:when test="${element.getType() == 'TimeQuestion' && element.getMax() != null}">
+								<c:when test="${element.getType() == 'TimeQuestion' && element.getMax() != null && element.getMax().length() > 0}">
 									<div class='limits'>${form.getMessage("limits.MaxDate", element.getMax())}</div>
 								</c:when>
 								

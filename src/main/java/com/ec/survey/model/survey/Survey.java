@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -34,6 +35,7 @@ import com.ec.survey.model.Skin;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SurveyService;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 
@@ -41,7 +43,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -58,22 +59,22 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Survey implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
-	public final static String TITLE = "TITLE";
-	public final static String ESCAPEPAGE = "ESCAPEPAGE";
-	public final static String ESCAPELINK = "ESCAPELINK";
-	public final static String CONFIRMATIONPAGE = "CONFIRMATIONPAGE";
-	public final static String CONFIRMATIONLINK = "CONFIRMATIONLINK";
-	public final static String INTRODUCTION = "INTRODUCTION";
-	public final static String IPMINTRODUCTION = "IPMINTRODUCTION";
-	public final static String HELP = "HELP";
-	public final static String QUIZWELCOMEMESSAGE = "QUIZWELCOMEMESSAGE";
-	public final static String QUIZRESULTSMESSAGE = "QUIZRESULTSMESSAGE";
+	public static final String TITLE = "TITLE";
+	public static final String ESCAPEPAGE = "ESCAPEPAGE";
+	public static final String ESCAPELINK = "ESCAPELINK";
+	public static final String CONFIRMATIONPAGE = "CONFIRMATIONPAGE";
+	public static final String CONFIRMATIONLINK = "CONFIRMATIONLINK";
+	public static final String INTRODUCTION = "INTRODUCTION";
+	public static final String IPMINTRODUCTION = "IPMINTRODUCTION";
+	public static final String HELP = "HELP";
+	public static final String QUIZWELCOMEMESSAGE = "QUIZWELCOMEMESSAGE";
+	public static final String QUIZRESULTSMESSAGE = "QUIZRESULTSMESSAGE";
 
-	public final static String CONFIRMATIONTEXT = "Thank you for your contribution";
-	public final static String ESCAPETEXT = "This survey has not yet been published or has already been unpublished in the meantime.";
-	public final static String RESULTSMESSAGETEXT = "Thank you for your contribution";
+	public static final String CONFIRMATIONTEXT = "Thank you for your contribution";
+	public static final String ESCAPETEXT = "This survey has not yet been published or has already been unpublished in the meantime.";
+	public static final String RESULTSMESSAGETEXT = "Thank you for your contribution";
 
-	public final static String MAXNUMBEROFRESULTSTEXT = "This survey has been closed due to the maximum number of contributions reached.";
+	public static final String MAXNUMBEROFRESULTSTEXT = "This survey has been closed due to the maximum number of contributions reached.";
 
 	private Integer id;
 	private String uniqueId;
@@ -366,8 +367,7 @@ public class Survey implements java.io.Serializable {
 	}
 
 	@Transient
-	public String getNiceFirstPublished()
-	{
+	public String getNiceFirstPublished() {
 		return firstPublished != null ? Tools.formatDate(firstPublished, ConversionTools.DateFormat) : "";
 	}
 
@@ -517,12 +517,12 @@ public class Survey implements java.io.Serializable {
 			return result;
 		}
 
-		for (String key : usefulLinks.keySet()) {
-			String value = usefulLinks.get(key);
+		for (Entry<String, String> entry : usefulLinks.entrySet()) {
+			String value = entry.getValue();
 			if (value != null && value.length() > 0 && !value.toLowerCase().startsWith("http")) {
 				value = "http://" + value;
 			}
-			result.put(key, value);
+			result.put(entry.getKey(), value);
 		}
 		return result;
 	}
@@ -539,8 +539,7 @@ public class Survey implements java.io.Serializable {
 
 	@Transient
 	public Map<String, String> getBackgroundDocumentsAlphabetical() {
-		SortedMap<String, String> map = new TreeMap<>(backgroundDocuments);
-		return map;
+		return new TreeMap<>(backgroundDocuments);
 	}
 
 	@OneToMany(targetEntity = Element.class, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -792,7 +791,7 @@ public class Survey implements java.io.Serializable {
 	}
 
 	public void setWcagCompliance(Boolean wcagCompliance) {
-		this.wcagCompliance = wcagCompliance != null ? wcagCompliance : false;
+		this.wcagCompliance = wcagCompliance != null && wcagCompliance;
 	}
 
 	@Column(name = "CAPTCHA")
@@ -824,7 +823,7 @@ public class Survey implements java.io.Serializable {
 	}
 
 	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive == null ? false : isActive;
+		this.isActive = isActive != null && isActive;
 	}
 
 	@Column(name = "CHANGECONTRIBUTION")
@@ -842,7 +841,7 @@ public class Survey implements java.io.Serializable {
 	}
 
 	public void setSaveAsDraft(Boolean saveAsDraft) {
-		this.saveAsDraft = saveAsDraft != null ? saveAsDraft : true;
+		this.saveAsDraft = saveAsDraft == null || saveAsDraft;
 	}
 
 	@Column(name = "DOWNLOADCONTRIBUTION")
@@ -1109,7 +1108,7 @@ public class Survey implements java.io.Serializable {
 		}
 
 		// sort collection by position
-		if (missingElements.size() > 0) {
+		if (!missingElements.isEmpty()) {
 			result.sort(newElementByPositionComparator());
 		}
 
@@ -1125,10 +1124,8 @@ public class Survey implements java.io.Serializable {
 
 			if (question instanceof Matrix) {
 				for (Element matrixquestion : ((Matrix) question).getQuestions()) {
-					if (matrixquestion instanceof Question) {
-						if (!((Question) matrixquestion).getOptional()) {
-							return true;
-						}
+					if (matrixquestion instanceof Question && !((Question) matrixquestion).getOptional()) {
+						return true;
 					}
 				}
 			}
@@ -1209,25 +1206,25 @@ public class Survey implements java.io.Serializable {
 	}
 
 	public void setArchived(Boolean isArchived) {
-		this.isArchived = isArchived != null ? isArchived : false;
+		this.isArchived = isArchived != null && isArchived;
 	}
 
 	@Column(name = "DELETED")
 	public Boolean getIsDeleted() {
-		return isDeleted != null ? isDeleted : false;
+		return isDeleted != null && isDeleted;
 	}
 
 	public void setIsDeleted(Boolean isDeleted) {
-		this.isDeleted = isDeleted != null ? isDeleted : false;
+		this.isDeleted = isDeleted != null && isDeleted;
 	}
 
 	@Column(name = "FROZEN")
 	public Boolean getIsFrozen() {
-		return isFrozen != null ? isFrozen : false;
+		return isFrozen != null && isFrozen;
 	}
 
 	public void setIsFrozen(Boolean isFrozen) {
-		this.isFrozen = isFrozen != null ? isFrozen : false;
+		this.isFrozen = isFrozen != null && isFrozen;
 	}
 
 	@Column(name = "ECASSEC")
@@ -1236,7 +1233,7 @@ public class Survey implements java.io.Serializable {
 	}
 
 	public void setEcasSecurity(Boolean ecasSecurity) {
-		this.ecasSecurity = ecasSecurity != null ? ecasSecurity : false;
+		this.ecasSecurity = ecasSecurity != null && ecasSecurity;
 	}
 
 	@Column(name = "ECASMODE")
@@ -1250,7 +1247,7 @@ public class Survey implements java.io.Serializable {
 
 	@Column(name = "LOGOPOS")
 	public Boolean getLogoInInfo() {
-		return logoInInfo != null ? logoInInfo : true;
+		return logoInInfo != null && logoInInfo;
 	}
 
 	public void setLogoInInfo(Boolean logoInInfo) {
@@ -1263,7 +1260,7 @@ public class Survey implements java.io.Serializable {
 	}
 
 	public void setIsQuiz(Boolean isQuiz) {
-		this.isQuiz = isQuiz != null ? isQuiz : false;
+		this.isQuiz = isQuiz != null && isQuiz;
 	}
 
 	@Column(name = "OPC")
@@ -1272,12 +1269,12 @@ public class Survey implements java.io.Serializable {
 	}
 
 	public void setIsOPC(Boolean isOPC) {
-		this.isOPC = isOPC != null ? isOPC : false;
+		this.isOPC = isOPC != null && isOPC;
 	}
 
 	@Column(name = "SHOWSCORE")
 	public Boolean getShowTotalScore() {
-		return showTotalScore != null ? showTotalScore : true;
+		return showTotalScore == null || showTotalScore;
 	}
 
 	public void setShowTotalScore(Boolean showTotalScore) {
@@ -1286,7 +1283,7 @@ public class Survey implements java.io.Serializable {
 
 	@Column(name = "SHOWICONS")
 	public Boolean getShowQuizIcons() {
-		return showQuizIcons != null ? showQuizIcons : true;
+		return showQuizIcons == null || showQuizIcons;
 	}
 
 	public void setShowQuizIcons(Boolean showQuizIcons) {
@@ -1304,7 +1301,7 @@ public class Survey implements java.io.Serializable {
 
 	@Column(name = "PDFUNAVAIL")
 	public Boolean getShowPDFOnUnavailabilityPage() {
-		return showPDFOnUnavailabilityPage != null ? showPDFOnUnavailabilityPage : false;
+		return showPDFOnUnavailabilityPage != null && showPDFOnUnavailabilityPage;
 	}
 
 	public void setShowPDFOnUnavailabilityPage(Boolean showPDFOnUnavailabilityPage) {
@@ -1313,7 +1310,7 @@ public class Survey implements java.io.Serializable {
 
 	@Column(name = "DOCSUNAVAIL")
 	public Boolean getShowDocsOnUnavailabilityPage() {
-		return showDocsOnUnavailabilityPage != null ? showDocsOnUnavailabilityPage : false;
+		return showDocsOnUnavailabilityPage != null && showDocsOnUnavailabilityPage;
 	}
 
 	public void setShowDocsOnUnavailabilityPage(Boolean showDocsOnUnavailabilityPage) {
@@ -1399,20 +1396,22 @@ public class Survey implements java.io.Serializable {
 
 			try {
 				if (backgroundDocuments != null)
-					for (String key : backgroundDocuments.keySet()) {
-						result.append(" BackgroundDocument: ").append(key).append(" - ")
-								.append(backgroundDocuments.get(key)).append(";");
+					for (Entry<String, String> entry : backgroundDocuments.entrySet()) {
+						result.append(" BackgroundDocument: ").append(entry.getKey()).append(" - ")
+								.append(entry.getValue()).append(";");
 					}
 			} catch (Exception e) {
+				// ignore
 			}
 
 			try {
 				if (usefulLinks != null)
-					for (String key : usefulLinks.keySet()) {
-						result.append(" UsefulLink: ").append(key).append(" - ").append(usefulLinks.get(key))
+					for (Entry<String, String> entry : usefulLinks.entrySet()) {
+						result.append(" UsefulLink: ").append(entry.getKey()).append(" - ").append(entry.getValue())
 								.append(";");
 					}
 			} catch (Exception e) {
+				// ignore
 			}
 		}
 
@@ -1428,7 +1427,7 @@ public class Survey implements java.io.Serializable {
 	@Transient
 	public Survey copy(SurveyService surveyService, User powner, String fileDir, boolean copyNumberOfAnswerSets,
 			int pnumberOfAnswerSets, int pnumberOfAnswerSetsPublished, boolean copyPublication, boolean resetSourceIds,
-			boolean keepuid, String newshortname, String newuid) throws Exception {
+			boolean keepuid, String newshortname, String newuid) throws ValidationException {
 		Survey copy = new Survey();
 		copy.contact = contact;
 		copy.contactLabel = contactLabel;
@@ -1505,18 +1504,20 @@ public class Survey implements java.io.Serializable {
 
 		try {
 			if (backgroundDocuments != null)
-				for (String key : backgroundDocuments.keySet()) {
-					copy.backgroundDocuments.put(key, backgroundDocuments.get(key));
+				for (Entry<String, String> entry : backgroundDocuments.entrySet()) {
+					copy.backgroundDocuments.put(entry.getKey(), entry.getValue());
 				}
 		} catch (Exception e) {
+			// ignore
 		}
 
 		try {
 			if (usefulLinks != null)
-				for (String key : usefulLinks.keySet()) {
-					copy.usefulLinks.put(key, usefulLinks.get(key));
+				for (Entry<String, String> entry : usefulLinks.entrySet()) {
+					copy.usefulLinks.put(entry.getKey(), entry.getValue());
 				}
 		} catch (Exception e) {
+			// ignore
 		}
 
 		Map<Integer, Element> elementsBySourceId = copyElements(copy, surveyService, false);
@@ -1557,6 +1558,7 @@ public class Survey implements java.io.Serializable {
 				copy.skin = skin;
 			}
 		} catch (Exception e) {
+			// ignore
 		}
 
 		if (resetSourceIds) {
@@ -1575,7 +1577,7 @@ public class Survey implements java.io.Serializable {
 
 	@Transient
 	public Map<Integer, Element> copyElements(Survey copy, SurveyService surveyService, boolean makeQuestionsLocked)
-			throws IntrusionException, ValidationException {
+			throws ValidationException {
 		for (Element element : elements) {
 			Element c = element.copy(surveyService.getFileDir());
 			c.setLocked(makeQuestionsLocked);
@@ -1677,12 +1679,12 @@ public class Survey implements java.io.Serializable {
 	}
 
 	@Transient
-	public HashMap<Element, List<Element>> getTriggersByDependantElement() {
+	public Map<Element, List<Element>> getTriggersByDependantElement() {
 		HashMap<Element, List<Element>> result = new HashMap<>();
 		for (Element element : elements) {
 			if (element instanceof ChoiceQuestion) {
 				for (PossibleAnswer p : ((ChoiceQuestion) element).getPossibleAnswers()) {
-					if (p.getDependentElements().getDependentElements().size() > 0) {
+					if (!p.getDependentElements().getDependentElements().isEmpty()) {
 						List<Element> list;
 						for (Element t : p.getDependentElements().getDependentElements()) {
 							if (result.containsKey(t)) {
@@ -1699,7 +1701,7 @@ public class Survey implements java.io.Serializable {
 
 			if (element instanceof Matrix) {
 				Matrix m = (Matrix) element;
-				if (m.getDependentElements().size() > 0) {
+				if (!m.getDependentElements().isEmpty()) {
 					List<Element> list;
 					for (DependencyItem d : m.getDependentElements()) {
 						for (Element t : d.getDependentElements()) {
@@ -1962,13 +1964,9 @@ public class Survey implements java.io.Serializable {
 	@Transient
 	public boolean hasNoQuestionsForStatistics() {
 		for (Element question : elements) {
-			if (question instanceof Matrix) {
-				return false;
-			} else if (question instanceof ChoiceQuestion) {
-				return false;
-			} else if (question instanceof GalleryQuestion && ((GalleryQuestion) question).getSelection()) {
-				return false;
-			} else if (question instanceof RatingQuestion) {
+			if (question instanceof Matrix || question instanceof ChoiceQuestion
+					|| (question instanceof GalleryQuestion && ((GalleryQuestion) question).getSelection())
+					|| question instanceof RatingQuestion) {
 				return false;
 			}
 		}
@@ -2067,8 +2065,8 @@ public class Survey implements java.io.Serializable {
 					String fileUID = image.getUrl().replace(contextpath + "/files/", "");
 
 					if (fileUID.length() > 0) {
-						if (fileUID.contains("/")) {
-							fileUID = fileUID.substring(fileUID.indexOf("/") + 1);
+						if (fileUID.contains(Constants.PATH_DELIMITER)) {
+							fileUID = fileUID.substring(fileUID.indexOf('/') + 1);
 						}
 
 						referencedFiles.put(fileUID, null);
@@ -2147,22 +2145,27 @@ public class Survey implements java.io.Serializable {
 	}
 
 	public void setIsUseMaxNumberContributionLink(Boolean useMaxNumberContributionLink) {
-		this.isUseMaxNumberContributionLink = useMaxNumberContributionLink != null ? useMaxNumberContributionLink : false;
+		this.isUseMaxNumberContributionLink = useMaxNumberContributionLink != null ? useMaxNumberContributionLink
+				: false;
 	}
 
 	@Column(name = "MAXNUMBERCONTRIBUTIONTEXT", length = 255)
 	public String getMaxNumberContributionText() {
-		return this.maxNumberContributionText != null && this.maxNumberContributionText.length() > 0 ? this.maxNumberContributionText : MAXNUMBEROFRESULTSTEXT;
+		return this.maxNumberContributionText != null && this.maxNumberContributionText.length() > 0
+				? this.maxNumberContributionText
+				: MAXNUMBEROFRESULTSTEXT;
 	}
 
 	public void setMaxNumberContributionText(String maxNumberContributionText) {
 		this.maxNumberContributionText = maxNumberContributionText != null ? Tools.filterHTML(maxNumberContributionText)
 				: MAXNUMBEROFRESULTSTEXT;
 	}
-	
+
 	@Column(name = "MAXNUMBERCONTRIBUTIONLINK", length = 255)
 	public String getMaxNumberContributionLink() {
-		return this.maxNumberContributionLink != null && this.maxNumberContributionLink.length() > 0 ? this.maxNumberContributionLink : "";
+		return this.maxNumberContributionLink != null && this.maxNumberContributionLink.length() > 0
+				? this.maxNumberContributionLink
+				: "";
 	}
 
 	public void setMaxNumberContributionLink(String maxNumberContributionLink) {
@@ -2179,5 +2182,9 @@ public class Survey implements java.io.Serializable {
 		this.maxNumberContribution = maxNumberContribution != null && maxNumberContribution >= 0L
 				? maxNumberContribution
 				: 0L;
+	}
+
+	public void reorderElementsByPosition() {
+		elements.sort(Comparator.comparing(o -> (o.getPosition())));		
 	}
 }

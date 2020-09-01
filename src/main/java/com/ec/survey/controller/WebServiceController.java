@@ -8,6 +8,7 @@ import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
@@ -1207,7 +1208,8 @@ public class WebServiceController extends BasicController {
 
 			Map<String, Element> elementsByAlias = survey.getElementsByAlias();
 
-			for (String questionalias : values.keySet()) {
+			for (Entry<String, String> entry : values.entrySet()) {
+				String questionalias = entry.getKey();
 				if (elementsByAlias.containsKey(questionalias)) {
 					Element question = elementsByAlias.get(questionalias);
 
@@ -1217,11 +1219,11 @@ public class WebServiceController extends BasicController {
 						answer.setAnswerSet(answerSet);
 						answer.setQuestionId(question.getId());
 						answer.setQuestionUniqueId(question.getUniqueId());
-						answer.setValue(values.get(questionalias));
+						answer.setValue(entry.getValue());
 						answerSet.addAnswer(answer);
 					} else if (question instanceof DateQuestion) {
 
-						String dateval = values.get(questionalias);
+						String dateval = entry.getValue();
 						Date date = Tools.parseDateString(dateval, ConversionTools.DateFormat);
 						if (date == null) {
 							response.setStatus(412);
@@ -1249,7 +1251,7 @@ public class WebServiceController extends BasicController {
 						answer.setValue(timeval);
 						answerSet.addAnswer(answer);
 					} else if (question instanceof ChoiceQuestion) {
-						String[] arrvalues = values.get(questionalias).split(",");
+						String[] arrvalues = entry.getValue().split(",");
 						for (String alias : arrvalues) {
 							Integer paid = elementsByAlias.get(alias).getId();
 							Answer answer = new Answer();
@@ -1266,7 +1268,7 @@ public class WebServiceController extends BasicController {
 							answerSet.addAnswer(answer);
 						}
 					} else if (question instanceof GalleryQuestion) {
-						String[] arrvalues = values.get(questionalias).split(",");
+						String[] arrvalues = entry.getValue().split(",");
 						for (String value : arrvalues) {
 							Answer answer = new Answer();
 							answer.setAnswerSet(answerSet);
@@ -1279,7 +1281,7 @@ public class WebServiceController extends BasicController {
 						// this is a matrix
 						if (matrixQuestionsByAlias.containsKey(questionalias)) {
 							// a matrix question
-							String[] arrvalues = values.get(questionalias).split(",");
+							String[] arrvalues = entry.getValue().split(",");
 
 							for (String alias : arrvalues) {
 								Integer paid = elementsByAlias.get(alias).getId();
@@ -1320,7 +1322,7 @@ public class WebServiceController extends BasicController {
 
 					answer.setPossibleAnswerUniqueId(tablequestion.getUniqueId() + "#" + tableanswer.getUniqueId());
 
-					answer.setValue(values.get(questionalias));
+					answer.setValue(entry.getValue());
 					answer.setRow(row);
 					answer.setColumn(col);
 					answerSet.addAnswer(answer);
@@ -1884,7 +1886,7 @@ public class WebServiceController extends BasicController {
 			if (survey == null)
 				return "";
 
-			String label = request.getHeader("label");
+			String label = request.getHeader(Constants.LABEL);
 			if (label == null) {
 				response.setStatus(412);
 				return "";
@@ -1912,7 +1914,7 @@ public class WebServiceController extends BasicController {
 			fileService.add(f);
 
 			survey.getBackgroundDocuments().put(label,
-					servletContext.getContextPath() + "/files/" + survey.getUniqueId() + "/" + uid);
+					servletContext.getContextPath() + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + uid);
 
 			surveyService.update(survey, true);
 			webserviceService.increaseServiceRequest(user.getId());
@@ -1946,7 +1948,7 @@ public class WebServiceController extends BasicController {
 			if (survey == null)
 				return "";
 
-			String label = request.getHeader("label");
+			String label = request.getHeader(Constants.LABEL);
 			if (label == null) {
 				response.setStatus(412);
 				return "";
@@ -2002,7 +2004,7 @@ public class WebServiceController extends BasicController {
 			if (survey == null)
 				return "";
 
-			String label = request.getHeader("label");
+			String label = request.getHeader(Constants.LABEL);
 			if (label == null) {
 				response.setStatus(412);
 				return "";
@@ -2049,7 +2051,7 @@ public class WebServiceController extends BasicController {
 			if (survey == null)
 				return "";
 
-			String label = request.getHeader("label");
+			String label = request.getHeader(Constants.LABEL);
 			if (label == null) {
 				response.setStatus(412);
 				return "";
@@ -2186,7 +2188,7 @@ public class WebServiceController extends BasicController {
 			@RequestParam(required = false, value = "archived") String archived,
 			@RequestParam(required = false, value = "archivedFrom") String archivedFrom,
 			@RequestParam(required = false, value = "archivedTo") String archivedTo,
-			@RequestParam(required = false, value = "deleted") String deleted,
+			@RequestParam(required = false, value = Constants.DELETED) String deleted,
 			@RequestParam(required = false, value = "deletedFrom") String deletedFrom,
 			@RequestParam(required = false, value = "deletedTo") String deletedTo,
 			@RequestParam(required = false, value = "frozen") String frozen,

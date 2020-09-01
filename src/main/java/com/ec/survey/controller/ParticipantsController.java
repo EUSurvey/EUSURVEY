@@ -11,6 +11,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.Ucs2Utf8;
@@ -73,12 +74,12 @@ public class ParticipantsController extends BasicController {
 		ModelAndView result = new ModelAndView("management/participants", "form", form);
 
 		String name = request.getParameter("name");
-		String email = request.getParameter("email");
+		String email = request.getParameter(Constants.EMAIL);
 		HashMap<String, String> filter = new HashMap<>();
 		if (name != null)
 			filter.put("name", name);
 		if (email != null)
-			filter.put("email", email);
+			filter.put(Constants.EMAIL, email);
 
 		if (u.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) == 2) {
 			owner = 0;
@@ -86,14 +87,14 @@ public class ParticipantsController extends BasicController {
 		int numberOfAttendees = attendeeService.getNumberOfAttendees(owner, filter);
 		result.addObject("numberOfAttendees", numberOfAttendees);
 		result.addObject("attributeNames", u.getSelectedAttributes());
-		result.addObject("filter", filter);
+		result.addObject(Constants.FILTER, filter);
 		result.addObject("allAttributeNames", attendeeService.getAllAttributes(owner));
 		if (request.getParameter("action") != null) {
 			result.addObject("action", request.getParameter("action"));
 		}
 
-		if (request.getParameter("error") != null) {
-			result.addObject("error", request.getParameter("error"));
+		if (request.getParameter(Constants.ERROR) != null) {
+			result.addObject(Constants.ERROR, request.getParameter(Constants.ERROR));
 		}
 
 		List<KeyValue> domains = ldapDBService.getDomains(false, false, resources, locale);
@@ -271,7 +272,7 @@ public class ParticipantsController extends BasicController {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@PostMapping(value = "/saveguestlist")
-	public @ResponseBody String saveguestlist(@RequestBody LinkedHashMap json, HttpServletRequest request,
+	public @ResponseBody String saveguestlist(@RequestBody Map json, HttpServletRequest request,
 			Locale locale) {
 		try {
 			User user = sessionService.getCurrentUser(request);
@@ -307,6 +308,7 @@ public class ParticipantsController extends BasicController {
 			List<Integer> attendeeIDs = null;
 			List<Integer> userIDs = null;
 			List<String> tokens = null;
+			List<String> deactivatedTokens = null;
 			if (g.getType() == ParticipationGroupType.Static) {
 				ArrayList<LinkedHashMap> attendees = (ArrayList) json.get("attendees");
 				attendeeIDs = new ArrayList<>();
@@ -319,9 +321,14 @@ public class ParticipantsController extends BasicController {
 			} else if (g.getType() == ParticipationGroupType.Token) {
 				ArrayList<LinkedHashMap> invitations = (ArrayList) json.get("tokens");
 				tokens = new ArrayList<>();
+				deactivatedTokens = new ArrayList<>();
 				for (int i = 0; i < invitations.size(); i++) {
 					LinkedHashMap token = invitations.get(i);
 					tokens.add(token.get("uniqueId").toString());
+					
+					if (token.get("deactivated").toString().equalsIgnoreCase("true")) {
+						deactivatedTokens.add(token.get("uniqueId").toString());
+					}
 				}
 			} else if (g.getType() == ParticipationGroupType.ECMembers) {
 				ArrayList<LinkedHashMap> users = (ArrayList) json.get("users");
@@ -338,7 +345,7 @@ public class ParticipantsController extends BasicController {
 			if (g.getType() == ParticipationGroupType.Static) {
 				participationService.addParticipantsToGuestListAsync(g.getId(), attendeeIDs);
 			} else if (g.getType() == ParticipationGroupType.Token) {
-				participationService.addTokensToGuestListAsync(g.getId(), tokens);
+				participationService.addTokensToGuestListAsync(g.getId(), tokens, deactivatedTokens);
 			} else if (g.getType() == ParticipationGroupType.ECMembers) {
 				participationService.addUsersToGuestListAsync(g.getId(), userIDs);
 			}
@@ -375,7 +382,7 @@ public class ParticipantsController extends BasicController {
 						String participants;
 
 						if (g.getError() != null && g.getError().length() > 0) {
-							participants = "error" + g.getError();
+							participants = Constants.ERROR + g.getError();
 						} else if (g.getType() == ParticipationGroupType.ECMembers) {
 							participants = Integer.toString(g.getEcasUsers().size());
 						} else if (g.getType() == ParticipationGroupType.Token) {
@@ -485,10 +492,10 @@ public class ParticipantsController extends BasicController {
 			form = sessionService.getForm(request, shortname, false, false);
 		} catch (NoFormLoadedException ne) {
 			logger.error(ne.getLocalizedMessage(), ne);
-			ModelAndView model = new ModelAndView("error/generic");
-			String message = resources.getMessage("error.NoFormLoaded", null,
-					"You have to load a survey before you can use this page!", locale);
-			model.addObject("message", message);
+			ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+			String message = resources.getMessage("error.NoFormLoadedNew", null,
+					"You have to load a survey before using this page!", locale);
+			model.addObject(Constants.MESSAGE, message);
 			return model;
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
@@ -604,10 +611,10 @@ public class ParticipantsController extends BasicController {
 			form = sessionService.getForm(request, shortname, false, false);
 		} catch (NoFormLoadedException ne) {
 			logger.error(ne);
-			ModelAndView model = new ModelAndView("error/generic");
-			String message = resources.getMessage("error.NoFormLoaded", null,
-					"You have to load a survey before you can use this page!", locale);
-			model.addObject("message", message);
+			ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+			String message = resources.getMessage("error.NoFormLoadedNew", null,
+					"You have to load a survey before using this page!", locale);
+			model.addObject(Constants.MESSAGE, message);
 			return model;
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
@@ -657,12 +664,12 @@ public class ParticipantsController extends BasicController {
 		int participationGroupId = Integer.parseInt(participationGroupIdString);
 		List<EcasUser> invalidEcasUsers = getInvalidEcasUsers(participationGroupId, selectedAttendee, request);
 		if (!invalidEcasUsers.isEmpty()) {
-			ModelAndView model = new ModelAndView("error/generic");
+			ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
 			String[] args = { invalidEcasUsers.get(0).getName() };
 			String message = resources.getMessage("error.InvalidEmailForParticipant", args,
 					"The email address of participant {0} is invalid. Please remove that participant before sending the invitations.",
 					locale);
-			model.addObject("message", message);
+			model.addObject(Constants.MESSAGE, message);
 			return model;
 		}
 
@@ -769,8 +776,8 @@ public class ParticipantsController extends BasicController {
 		if (parameters.containsKey("name"))
 			name = parameters.get("name")[0];
 		String email = "";
-		if (parameters.containsKey("email"))
-			email = parameters.get("email")[0];
+		if (parameters.containsKey(Constants.EMAIL))
+			email = parameters.get(Constants.EMAIL)[0];
 		String department = "";
 		if (parameters.containsKey("department"))
 			department = parameters.get("department")[0];
@@ -829,11 +836,11 @@ public class ParticipantsController extends BasicController {
 
 			User user = sessionService.getCurrentUser(request);
 			if (user == null)
-				return "ERROR";
+				return Constants.ERROR;
 
 			InvitationTemplate existing = participationService.getTemplateByName(name, user.getId());
 			if (existing != null)
-				return "EXISTS";
+				return "exists";
 
 			InvitationTemplate it = new InvitationTemplate();
 			it.setName(name);
@@ -850,7 +857,7 @@ public class ParticipantsController extends BasicController {
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
-		return "ERROR";
+		return Constants.ERROR;
 	}
 
 	@GetMapping(value = "/loadTemplateJSON", headers = "Accept=*/*")
@@ -898,11 +905,11 @@ public class ParticipantsController extends BasicController {
 
 			participationService.delete(existing);
 
-			return "OK";
+			return "ok";
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
-		return "ERROR";
+		return Constants.ERROR;
 	}
 
 	private @ResponseBody Paging<Attendee> participantsSearch(HttpServletRequest request, HttpServletResponse response,
@@ -916,13 +923,13 @@ public class ParticipantsController extends BasicController {
 		if (parameters.containsKey("name"))
 			name = parameters.get("name")[0];
 		String email = "";
-		if (parameters.containsKey("email"))
-			email = parameters.get("email")[0];
+		if (parameters.containsKey(Constants.EMAIL))
+			email = parameters.get(Constants.EMAIL)[0];
 		HashMap<String, String> attributeFilter = new HashMap<>();
 		if (name.length() > 0)
 			attributeFilter.put("name", name);
 		if (email.length() > 0)
-			attributeFilter.put("email", email);
+			attributeFilter.put(Constants.EMAIL, email);
 
 		if (user.getGlobalPrivileges().get(GlobalPrivilege.ContactManagement) == 2) {
 			owner = 0;
@@ -954,7 +961,7 @@ public class ParticipantsController extends BasicController {
 					int intKey = Integer.parseInt(entry.getKey());
 
 					if (intKey > 0 && entry.getValue() != null && entry.getValue().length > 0
-							&& !entry.getKey().equalsIgnoreCase("name") && !entry.getKey().equalsIgnoreCase("email")
+							&& !entry.getKey().equalsIgnoreCase("name") && !entry.getKey().equalsIgnoreCase(Constants.EMAIL)
 							&& !entry.getKey().equalsIgnoreCase("newPage")) {
 						String[] value = entry.getValue();
 						if (value[0] != null && value[0].length() > 0) {
@@ -983,10 +990,10 @@ public class ParticipantsController extends BasicController {
 			form = sessionService.getForm(request, shortname, false, false);
 		} catch (NoFormLoadedException ne) {
 			logger.error(ne);
-			ModelAndView model = new ModelAndView("error/generic");
-			String message = resources.getMessage("error.NoFormLoaded", null,
-					"You have to load a survey before you can use this page!", locale);
-			model.addObject("message", message);
+			ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+			String message = resources.getMessage("error.NoFormLoadedNew", null,
+					"You have to load a survey before using this page!", locale);
+			model.addObject(Constants.MESSAGE, message);
 			return model;
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
@@ -1015,8 +1022,8 @@ public class ParticipantsController extends BasicController {
 		if (parameters.containsKey("name"))
 			name = parameters.get("name")[0];
 		String email = "";
-		if (parameters.containsKey("email"))
-			email = parameters.get("email")[0];
+		if (parameters.containsKey(Constants.EMAIL))
+			email = parameters.get(Constants.EMAIL)[0];
 		HashMap<String, String> attributeFilter = new HashMap<>();
 		AttendeeFilter filter = new AttendeeFilter();
 
@@ -1032,7 +1039,7 @@ public class ParticipantsController extends BasicController {
 			filter.setName(name);
 		}
 		if (email.length() > 0) {
-			attributeFilter.put("email", email);
+			attributeFilter.put(Constants.EMAIL, email);
 			filter.setEmail(email);
 		}
 
@@ -1044,7 +1051,7 @@ public class ParticipantsController extends BasicController {
 		parameters.remove("groupOwner");
 		parameters.remove("groupType");
 		parameters.remove("name");
-		parameters.remove("email");
+		parameters.remove(Constants.EMAIL);
 		parameters.remove("newPage");
 
 		if (groupType.equalsIgnoreCase("dynamic")) {

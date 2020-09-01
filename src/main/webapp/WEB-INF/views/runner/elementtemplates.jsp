@@ -30,7 +30,7 @@
 	<div id="image-template">
 		
 		<div class='alignment-div' data-bind="attr: {'style': 'width: 920px; max-width: 100%; text-align:' + align()}">
-			<img style="max-width: 100%" data-bind="attr: {'src': url, 'alt': originalTitle, 'width': usedwidth() > 0 ? usedwidth() : ''}" />
+			<img style="max-width: 100%" data-bind="attr: {'src': url, 'alt': originalTitle, 'width': usedwidth() > 0 ? usedwidth() : '', 'longdesc' : longdesc()}" />
 		</div>
 		
 		<!-- ko if: foreditor -->
@@ -685,13 +685,13 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
-		<!-- ko if: min() != null && max() != null -->
+		<!-- ko if: min() != null && max() != null && min() != '' && max() != ''  -->
 			<div class='limits' data-bind="html: getMinMaxDate(min(), max())"></div>
 		<!-- /ko -->
-		<!-- ko if: min() != null && max() == null -->
+		<!-- ko if: min() != null && min() != '' && (max() == null || max() == '') -->
 			<div class='limits' data-bind="html: getMinDate(min())"></div>
 		<!-- /ko -->
-		<!-- ko if: min() == null && max() != null -->
+		<!-- ko if: max() != null && max() != '' && (min() == null || min() == '') -->
 			<div class='limits' data-bind="html: getMaxDate(max())"></div>
 		<!-- /ko -->
 		
@@ -706,8 +706,8 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
-			<input type="hidden" data-bind="value: minString(), attr: {'name': 'min' + id()}" />	
-			<input type="hidden" data-bind="value: maxString(), attr: {'name': 'max' + id()}" />	
+			<input type="hidden" data-bind="value: min(), attr: {'name': 'min' + id()}" />	
+			<input type="hidden" data-bind="value: max(), attr: {'name': 'max' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
@@ -820,7 +820,7 @@
 								<span data-bind='html: name().replace("%20"," ")'></span>
 							</div>
 							<a onclick="showGalleryBrowser($(this).parent())">																	
-								<img class="gallery-image" data-bind="attr: {'alt': cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px'}"  style="max-width: 100%;" />	
+								<img class="gallery-image" data-bind="attr: {'alt': cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px', 'longdesc' : longdesc()}"  style="max-width: 100%;" />	
 							</a>
 							<div class="comment" data-bind="html: comment"></div>	
 							<!-- ko if: $parents[1].foreditor -->
@@ -866,7 +866,7 @@
 								<span data-bind='html: name().replace("%20"," ")'></span>
 							</div>
 						
-							<img style="width: 95%;" data-bind="attr: {'alt':cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+uid()}" />	
+							<img style="width: 95%;" data-bind="attr: {'alt':cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+uid(), 'longdesc' : longdesc()}" />	
 							<div class="gallery-image-comment" style="text-align: center; padding: 15px;" data-bind="html: comment()"></div>							
 						</div>
 				  </div>

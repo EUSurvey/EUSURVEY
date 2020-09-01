@@ -5,6 +5,7 @@ import com.ec.survey.model.DepartmentItem;
 import com.ec.survey.model.Domain;
 import com.ec.survey.model.KeyValue;
 import com.ec.survey.model.administration.EcasUser;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -188,7 +189,7 @@ public class LdapDBService extends BasicService {
 		}
 		if (email != null && email.length() > 0)
 		{
-			query.setString("email", "%" + email + "%");
+			query.setString(Constants.EMAIL, "%" + email + "%");
 		}
 		if (department != null && department.length() > 0 && !department.equalsIgnoreCase("undefined"))
 		{

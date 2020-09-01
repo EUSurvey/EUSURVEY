@@ -25,8 +25,8 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 	public MultipleChoiceQuestion() {
 	}
 
-	public MultipleChoiceQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+	public MultipleChoiceQuestion(String title, String shortname, String uid) {
+		super(title, shortname, uid);
 	}
 
 	private boolean useCheckboxes;
@@ -77,7 +77,7 @@ public class MultipleChoiceQuestion extends ChoiceQuestion {
 	}
 
 	public void setNoNegativeScore(Boolean noNegativeScore) {
-		this.noNegativeScore = noNegativeScore != null ? noNegativeScore : false;
+		this.noNegativeScore = noNegativeScore != null && noNegativeScore;
 	}
 
 	public MultipleChoiceQuestion copy(String fileDir) throws ValidationException {
