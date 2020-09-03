@@ -262,10 +262,7 @@ public class BasicController implements BeanFactoryAware {
 	@ExceptionHandler(WeakAuthenticationException.class)
 	public ModelAndView handleWeakAuthenticationException(Exception e, HttpServletRequest request, Locale locale) {
 		logger.error(e.getLocalizedMessage(), e);
-		ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
-		String message = resources.getMessage("error.WeakAuthentication", null,
-				"Please log in using two factor authentication in order to access the system.", locale);
-		model.addObject(Constants.MESSAGE, message);
+		ModelAndView model = new ModelAndView("redirect:/errors/weak.html");
 		model.addObject("contextpath", contextpath);
 		return model;
 	}
