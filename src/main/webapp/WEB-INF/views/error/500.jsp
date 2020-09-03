@@ -23,7 +23,7 @@
 					</div>
 					<spring:message code="label.Error" />
 				</h1>
-				<spring:message code="support.new500" arguments="${contextpath}/home/support?error=1" />
+				<spring:message code="support.new500b" />
 			</div>
 		</div>
 	</div>

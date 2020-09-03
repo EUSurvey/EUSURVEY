@@ -1,6 +1,7 @@
 package com.ec.survey.controller;
 
 import java.util.Date;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,6 +69,17 @@ public class HttpErrorController extends BasicController {
 	public ModelAndView handlefrozen(HttpServletRequest request){
 		return new ModelAndView("error/frozen",Constants.ERROR,"exception" );
 	}	
+	
+	@RequestMapping(value = "/weak.html")
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	public ModelAndView handleWeak(HttpServletRequest request, Locale locale) {
+		ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
+		String message = resources.getMessage("error.WeakAuthentication", null,
+				"Please log in using two factor authentication in order to access the system.", locale);
+		model.addObject(Constants.MESSAGE, message);
+		model.addObject("contextpath", contextpath);
+		return model;
+	}
 		
 	@RequestMapping(value = "/request-rejected")
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

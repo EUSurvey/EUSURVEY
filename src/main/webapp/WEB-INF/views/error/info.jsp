@@ -19,12 +19,18 @@
 			</c:when>
 		</c:choose>	
 		
-		<div style="padding-top: 120px; padding-bottom: 120px;">
-			<div class="alert alert-success">${message}</div>
-			<c:if test="${SurveyLink != null}">
-				<a class="btn btn-primary" href="${SurveyLink}"><spring:message code="label.BackToSurvey" /></a>
-			</c:if>
-		</div>
+		<div class='${responsive != null ? "responsivepage" : "page"}' style='padding: 20px; padding-top: 80px; padding-bottom: 100px; max-width: 600px; margin-left: auto; margin-right: auto'>
+			<div style="text-align: left;">
+				
+				${message}
+				<c:if test="${SurveyLink != null}">
+					<br /><br />
+					<a class="btn btn-primary" href="${SurveyLink}"><spring:message code="label.BackToSurvey" /></a>
+				</c:if>
+				
+			</div>
+		</div>	
+		
 	</div>
 	
 	<%@ include file="../footer.jsp" %>
