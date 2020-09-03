@@ -300,7 +300,7 @@
 									
 							<c:if test="${enablearchiving}">
 								<c:choose>
-									<c:when test="${form.survey.numberOfAnswerSetsPublished < 2001 && form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+									<c:when test="${form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
 										<a id="btnArchiveSurvey" class="actionRowAction"  onclick="showArchiveDialog('${form.survey.shortname}','${form.survey.id}', false)" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import"></span></a>
 									</c:when>
 									<c:when test="${!form.survey.fullFormManagementRights}">
@@ -313,9 +313,6 @@
 							</c:if>
 														
 							<c:choose>
-								<c:when test="${form.survey.numberOfAnswerSetsPublished > 2000}">
-									<a id="notRunningDeleteSurveyButtonOverview" class="disabled actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc;"></span></a>
-								</c:when>
 								<c:when test="${form.survey.state != 'Running' && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
 									<a class="actionRowAction" id="deleteSurveyButtonOverview" onclick="showDeleteDialog('${form.survey.id}');" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />" ><span class="glyphicon glyphicon-remove"></span></a>
 								</c:when>
