@@ -2253,7 +2253,7 @@ public class SurveyHelper {
 	}
 
 	private static SingleChoiceQuestion getSingleChoice(Map<String, String[]> parameterMap, Element currentElement,
-			Survey survey, String id, String[] answers, String[] dependenciesForAnswers,
+			Survey survey, String id, String[] answers, String[] originalAnswers, String[] dependenciesForAnswers,
 			HashMap<PossibleAnswer, String> dependencies, String[] shortnamesForAnswers, String[] correctForAnswers,
 			String[] pointsForAnswers, String[] feedbackForAnswers, ServletContext servletContext, boolean log220)
 			throws InvalidXHTMLException {
@@ -2280,6 +2280,15 @@ public class SurveyHelper {
 						break;
 					}
 				}
+				if (!found)
+		        {
+		    	  for (String answer : originalAnswers) {
+		             if (pa.getTitle().equals(answer)) {
+		               found = true;
+		               break;
+		             }
+		          }	
+		        }
 				if (!found || palist.contains(pa.getTitle())) {
 					toDelete.add(pa);
 				} else {
@@ -2403,6 +2412,7 @@ public class SurveyHelper {
 		for (int k = 0; k < answers.length; k++) {
 
 			String answer = answers[k];
+			String originalAnswer = originalAnswers[k];
 			String answerDependencies = "";
 			if (dependenciesForAnswers != null && dependenciesForAnswers.length > k)
 				answerDependencies = dependenciesForAnswers[k];
@@ -2414,7 +2424,7 @@ public class SurveyHelper {
 			boolean found = false;
 
 			for (PossibleAnswer pa : singlechoice.getPossibleAnswers()) {
-				if (pa.getTitle().equals(answer)) {
+				if (pa.getTitle().equals(answer) || pa.getTitle().equals(originalAnswer)) {
 					p = pa;
 					p.getDependentElements().getDependentElements().clear();
 					found = true;
@@ -2481,7 +2491,7 @@ public class SurveyHelper {
 	}
 
 	private static MultipleChoiceQuestion getMultipleChoice(Map<String, String[]> parameterMap, Element currentElement,
-			Survey survey, String id, String[] answers, String[] dependenciesForAnswers,
+			Survey survey, String id, String[] answers, String[] originalAnswers, String[] dependenciesForAnswers,
 			HashMap<PossibleAnswer, String> dependencies, String[] shortnamesForAnswers, String[] correctForAnswers,
 			String[] pointsForAnswers, String[] feedbackForAnswers, ServletContext servletContext, boolean log220)
 			throws InvalidXHTMLException {
@@ -2509,6 +2519,15 @@ public class SurveyHelper {
 						break;
 					}
 				}
+				if (!found)
+		        {
+		    	  for (String answer : originalAnswers) {
+		             if (pa.getTitle().equals(answer)) {
+		               found = true;
+		               break;
+		             }
+		          }	
+		        }
 				if (!found || palist.contains(pa.getTitle())) {
 					toDelete.add(pa);
 				} else {
@@ -2653,6 +2672,7 @@ public class SurveyHelper {
 		for (int k = 0; k < answers.length; k++) {
 
 			String answer = answers[k];
+			String originalAnswer = originalAnswers[k];
 			String answerDependencies = "";
 			if (dependenciesForAnswers != null && dependenciesForAnswers.length > k)
 				answerDependencies = dependenciesForAnswers[k];
@@ -2664,7 +2684,7 @@ public class SurveyHelper {
 			boolean found = false;
 
 			for (PossibleAnswer pa : multiplechoice.getPossibleAnswers()) {
-				if (pa.getTitle().equals(answer)) {
+				if (pa.getTitle().equals(answer) || pa.getTitle().equals(originalAnswer)) {
 					p = pa;
 					p.getDependentElements().getDependentElements().clear();
 					found = true;
@@ -3199,6 +3219,21 @@ public class SurveyHelper {
 				if (answers[i] != null)
 					answers[i] = Tools.filterHTML(answers[i]);
 			}
+			
+			String[] originalAnswers = parameterMap.get("originalAnswer" + id);
+			if (originalAnswers == null) {
+				originalAnswers = new String[0];
+			}
+			
+			list = new ArrayList<>(Arrays.asList(originalAnswers));
+			list.removeAll(Arrays.asList("", null));
+			originalAnswers = list.toArray(new String[0]);
+			
+			for (int i = 0; i < originalAnswers.length; i++) {
+				if (originalAnswers[i] != null) {
+					originalAnswers[i] = Tools.filterHTML(originalAnswers[i]);
+				}
+			}
 
 			String[] dependenciesForAnswers = parameterMap.get("dependencies" + id);
 			String[] shortnamesForAnswers = parameterMap.get("pashortname" + id);
@@ -3209,11 +3244,11 @@ public class SurveyHelper {
 			boolean single = getBoolean(parameterMap, "single", id);
 
 			if (single) {
-				element = getSingleChoice(parameterMap, currentElement, survey, id, answers, dependenciesForAnswers,
+				element = getSingleChoice(parameterMap, currentElement, survey, id, answers, originalAnswers, dependenciesForAnswers,
 						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers,
 						servletContext, log220);
 			} else {
-				element = getMultipleChoice(parameterMap, currentElement, survey, id, answers, dependenciesForAnswers,
+				element = getMultipleChoice(parameterMap, currentElement, survey, id, answers, originalAnswers, dependenciesForAnswers,
 						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers,
 						servletContext, log220);
 			}

@@ -85,6 +85,7 @@
 							<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parent.id(), 'data-id' : id()}" />	
 							<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parent.id(), 'data-id' : id()}"></textarea>					
+							<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea>
 							<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: scoring.feedback, attr: {'name': 'feedback' + $parent.id(), 'data-id' : id()}" />						
@@ -128,6 +129,7 @@
 							<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parents[0].id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parents[0].id(), 'data-id' : id()}" />	
 							<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parents[0].id(), 'data-id' : id()}"></textarea>
+							<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea> 
 							<div class="answertext" data-bind="html: title, attr: {'id' : id(), 'data-id' : id()}"></div>
 							<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parents[0].id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parents[0].id(), 'data-id' : id()}" />	
@@ -199,6 +201,7 @@
 							<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parent.id(), 'data-id' : id()}" />	
 							<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parent.id(), 'data-id' : id()}"></textarea>					
+							<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea> 
 							<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: scoring.feedback, attr: {'name': 'feedback' + $parent.id(), 'data-id' : id()}" />						
@@ -244,6 +247,7 @@
 						<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parents[0].id(), 'data-id' : id()}" />	
 						<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parents[0].id(), 'data-id' : id()}" />	
 						<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parents[0].id(), 'data-id' : id()}"></textarea>
+						<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea>
 						<div class="answertext" data-bind="html: title, attr: {'id' : id(), 'data-id' : id()}"></div>
 						<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parents[0].id(), 'data-id' : id()}" />	
 						<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parents[0].id(), 'data-id' : id()}" />	
