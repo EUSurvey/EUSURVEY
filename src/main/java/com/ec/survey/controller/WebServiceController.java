@@ -1916,7 +1916,7 @@ public class WebServiceController extends BasicController {
 			survey.getBackgroundDocuments().put(label,
 					servletContext.getContextPath() + "/files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + uid);
 
-			surveyService.update(survey, true);
+			surveyService.update(survey, true, true, true, user.getId());
 			webserviceService.increaseServiceRequest(user.getId());
 			response.setStatus(200);
 			return "1";
@@ -2017,8 +2017,6 @@ public class WebServiceController extends BasicController {
 			}
 			
 			survey.getUsefulLinks().put(survey.getUsefulLinks().size() + "#" + label, url);
-
-			//surveyService.update(survey, true);
 			surveyService.update(survey, true, true, true, user.getId());
 
 			response.setStatus(200);
