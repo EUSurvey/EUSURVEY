@@ -122,6 +122,7 @@ function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsSt
 	viewModel.shortname = ko.observable(shortname);
 	viewModel.dependentElementsString = ko.observable(dependentElementsString);
 	viewModel.title = ko.observable(title);
+	viewModel.originalTitle = ko.observable(title);
 	viewModel.scoring = newScoringViewModel(scoring);
 	
 	viewModel.titleForDisplayMode = function(displayMode)
