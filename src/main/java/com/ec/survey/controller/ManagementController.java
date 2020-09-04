@@ -1626,7 +1626,7 @@ public class ManagementController extends BasicController {
 			for (Entry<String, String[]> entry : parameterMap.entrySet()) {
 				if (entry.getKey().startsWith("docurl")) {
 					String url = Tools.escapeHTML(entry.getValue()[0]);
-					String label = parameterMap.get(entry.getKey().replace("url", Constants.LABEL))[0];
+					String label = parameterMap.get(entry.getKey().replace("url", "label"))[0];
 
 					if (StringUtils.hasText(url) && !StringUtils.hasText(label)) {
 						String uid = url.substring(url.lastIndexOf('/') + 1);
