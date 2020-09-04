@@ -1554,7 +1554,7 @@ public class ManagementController extends BasicController {
 				if (entry.getKey().startsWith("linklabel")) {
 					String number = entry.getKey().substring(9);
 					String label = number + "#" + Tools.escapeHTML(entry.getValue()[0]);
-					String url = parameterMap.get(entry.getKey().replace(Constants.LABEL, "url"))[0];
+					String url = parameterMap.get(entry.getKey().replace("label", "url"))[0];
 
 					if (StringUtils.hasText(label) && StringUtils.hasText(url)) {
 
@@ -1606,7 +1606,7 @@ public class ManagementController extends BasicController {
 			for (Entry<String, String[]> entry : parameterMap.entrySet()) {
 				if (entry.getKey().startsWith("doclabel")) {
 					String label = Tools.escapeHTML(entry.getValue()[0]);
-					String url = parameterMap.get(entry.getKey().replace(Constants.LABEL, "url"))[0];
+					String url = parameterMap.get(entry.getKey().replace("label", "url"))[0];
 
 					if (StringUtils.hasText(label) && StringUtils.hasText(url)) {
 						if (label != null && !XHTMLValidator.validate(label, servletContext, null)) {

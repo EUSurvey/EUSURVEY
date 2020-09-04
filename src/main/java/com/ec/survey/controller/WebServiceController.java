@@ -2015,10 +2015,11 @@ public class WebServiceController extends BasicController {
 				response.setStatus(412);
 				return "";
 			}
+			
+			survey.getUsefulLinks().put(survey.getUsefulLinks().size() + "#" + label, url);
 
-			survey.getUsefulLinks().put(label, url);
-
-			surveyService.update(survey, true);
+			//surveyService.update(survey, true);
+			surveyService.update(survey, true, true, true, user.getId());
 
 			response.setStatus(200);
 			webserviceService.increaseServiceRequest(user.getId());
@@ -2056,23 +2057,25 @@ public class WebServiceController extends BasicController {
 				response.setStatus(412);
 				return "";
 			}
-
-			if (!survey.getUsefulLinks().containsKey(label)) {
-				response.setStatus(412);
-				return "";
+			
+			for (String key : survey.getUsefulLinks().keySet())
+			{
+				if (key.endsWith("#" + label)) {
+					survey.getUsefulLinks().remove(key);
+					surveyService.update(survey, true);
+					webserviceService.increaseServiceRequest(user.getId());
+					response.setStatus(200);
+					return "";
+				}
 			}
 
-			survey.getUsefulLinks().remove(label);
-			surveyService.update(survey, true);
-			webserviceService.increaseServiceRequest(user.getId());
-			response.setStatus(200);
-
-			return "";
+			response.setStatus(412);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			response.setStatus(500);
-			return "";
 		}
+		
+		return "";
 	}
 
 	@RequestMapping(value = "/applyChanges/{alias}", method = { RequestMethod.GET,
