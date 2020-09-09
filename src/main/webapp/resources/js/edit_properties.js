@@ -422,7 +422,7 @@ var ElementProperties = function() {
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false');
 				getTextPropertiesRow("Unit", $(e).find("input[name^='unit']").val(), false);
 				getChoosePropertiesRow("DecimalPlaces", ",1,2,3,4,5,6,7,8,9,10", false, false, $(e).find("input[name^='decimalplaces']").val());
-				getMinMaxPropertiesRow("Values", 0, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
+				getMinMaxPropertiesRow("Values", null, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
 				getTextPropertiesRow("MinLabel", $(e).find("input[name^='minLabel']").val(), false);
 				getTextPropertiesRow("MaxLabel", $(e).find("input[name^='maxLabel']").val(), false);
 				getChoosePropertiesRow("InitialSliderPosition", "Left,Middle,Right", false, false, $(e).find("input[name^='initialSliderPosition']").val());
