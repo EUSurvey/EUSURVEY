@@ -170,6 +170,12 @@ function update(input)
 			
 			if (text === "Slider")
 			{
+				element.optional(true);
+				$('#idPropertyMandatory').removeAttr("checked");
+				
+				element.unit("");
+				$('tr[data-label=Unit]').find("input[type=text]").val("");
+				
 				if (element.min() == null)
 				{
 					$("tr[data-label='Values']").find("input[data-type='min']").val("0");
@@ -396,6 +402,19 @@ function update(input)
 			}
 			
 			if (element.display() === "Slider") {
+				if (element.min() == null || element.min().length == 0)
+				{
+					$(input).val("0");
+					element.min("0");
+					element.minString("0");
+				}
+				if (element.max() == null || element.max().length == 0)
+				{
+					$(input).val("10");
+					element.max("10");
+					element.maxString("10");
+				}
+				
 				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);				
 			}
 			

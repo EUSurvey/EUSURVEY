@@ -748,6 +748,7 @@
 	 		strings["invalidStartEnd"] = "<spring:message code="validation.invalidStartEnd" />";
 	 		strings["invalidStartEndTime"] = "<spring:message code="validation.invalidStartEndTime" />";
 	 		strings["invalidMinMaxNumber"] = "<spring:message code="error.invalidMinMaxNumber" />";
+	 		strings["invalidMinMaxEqual"] = "<spring:message code="error.invalidMinMaxEqual" />";
 	 		strings["NotUniqueAnswers"] = "<spring:message code="validation.NotUniqueAnswers" />";
 	 		strings["required"] = "<spring:message code="validation.required" />";
 	 		strings["Edit"] = "<spring:message code="label.Edit" />";
