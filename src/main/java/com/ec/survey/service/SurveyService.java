@@ -2101,7 +2101,7 @@ public class SurveyService extends BasicService {
 	public void setBrpAccess(Survey survey) {
 		if (survey.getIsOPC() && opcusers != null && opcusers.length() > 0) {
 			String[] users = opcusers.split(";");
-			boolean first = true;
+			int counter = 1;
 			for (String user : users) {
 				if (user.length() > 0) {
 					User opcuser = administrationService.getUserForLogin(user);
@@ -2109,14 +2109,18 @@ public class SurveyService extends BasicService {
 						Access a = new Access();
 						a.setUser(opcuser);
 						a.setSurvey(survey);
-						a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
-
-						if (first) {
+						
+						if (counter == 1) {
+							a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
 							a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 2);
-							first = false;
+						} else if (counter == 2) {
+							a.getLocalPrivileges().put(LocalPrivilege.AccessResults, 1);
+							a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 1);
 						} else {
 							a.getLocalPrivileges().put(LocalPrivilege.FormManagement, 1);
-						}
+						}	
+						
+						counter++;
 
 						surveyService.saveAccess(a);
 					}
