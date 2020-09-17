@@ -289,13 +289,24 @@
 							<div class="help hideme"><spring:message code="info.Reminder" /></div>
 						</td>
 					</tr>
-					<!-- <tr class="subelement noborder" data-bind="visible: endNotifications() && automaticPublishing()">
+					<tr>
 						<td>
-							<div style="float: right; text-align: right">
-								
-							</div>		
+							<div style="float: left">
+								<spring:message code="label.AutomaticConfirmationEmail" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.AutomaticConfirmationEmail" /></div>
+							</div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.sendConfirmationEmail" data-bind="checked: sendConfirmationEmail" class="onoffswitch-checkbox" id="myonoffswitchSendConfirmationEmail" />
+									 <label class="onoffswitch-label" for="myonoffswitchSendConfirmationEmail">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</div>
 						</td>
-					</tr> -->
+					</tr>	
 					<tr>
 						<td>
 							<div style="float: left; max-width: 500px;">
@@ -443,7 +454,7 @@
 								<a data-bind="visible: !showBackgroundDocs(), click: addDocRow" data-toggle="tooltip" title="<spring:message code="label.AddBackgroundDocument" />" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span></a>
 							</div>
 						</td>
-					</tr>		
+					</tr>					
 				</table>
 			</div>		
 			

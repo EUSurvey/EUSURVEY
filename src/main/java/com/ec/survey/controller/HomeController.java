@@ -496,6 +496,14 @@ public class HomeController extends BasicController {
 	public String editcontribution (HttpServletRequest request, Locale locale, Model model) {	
 		model.addAttribute("lang", locale.getLanguage());
 		model.addAttribute("runnermode", true);
+		
+		String code = request.getParameter("code");
+		if (code == null)
+		{
+			code = "";
+		}
+		model.addAttribute("uniqueid", code);
+		
 		return "home/accesscontribution";
 	}
 	
@@ -580,6 +588,30 @@ public class HomeController extends BasicController {
 		}
 	}
 	
+	@RequestMapping(value = "/home/downloadcontribution", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView downloadcontributionGet(HttpServletRequest request) throws Exception {	
+		ModelAndView model = new ModelAndView("home/welcome");
+		model.addObject("page", "welcome");
+		model.addObject("ecasurl", ecashost);
+		model.addObject("serviceurl", serverPrefix + "auth/ecaslogin");
+		model.addObject("continueWithoutJavascript", true);
+		if (isShowEcas())
+			model.addObject("showecas", true);
+		// CASOSS
+		if (isCasOss())
+			model.addObject("casoss", true);
+
+		String code = request.getParameter("code");
+		model.addObject("code", code);
+		
+		String email = request.getParameter("email");
+		model.addObject("email", email);
+		
+		model.addObject("showDownloadPdfDialog", true);
+
+		return model;
+	}
+
 	@PostMapping(value = "/home/downloadcontribution", headers = "Accept=*/*")
 	public @ResponseBody String downloadcontribution(HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -600,10 +632,10 @@ public class HomeController extends BasicController {
 					return "errorcaseidforbidden";
 				}
 				
-				if (answerSet.getInvitationId() != null && answerSet.getInvitationId().length() > 0)
-				{
-					return "errorcaseidinvitation";
-				}
+//				if (answerSet.getInvitationId() != null && answerSet.getInvitationId().length() > 0)
+//				{
+//					return "errorcaseidinvitation";
+//				}
 				
 				String email = parameters.get(Constants.EMAIL)[0];
 				

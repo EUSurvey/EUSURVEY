@@ -37,6 +37,7 @@
 			this.multiPaging = ko.observable(${form.survey.multiPaging});
 			this.isUseMaxNumberContribution = ko.observable(${form.survey.isUseMaxNumberContribution});
 			this.isUseMaxNumberContributionLink = ko.observable(${form.survey.isUseMaxNumberContributionLink});
+			this.sendConfirmationEmail = ko.observable(${form.survey.sendConfirmationEmail});
 			
 			this.addLinksRow = function()
 			{

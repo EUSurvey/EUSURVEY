@@ -4780,4 +4780,40 @@ public class SurveyService extends BasicService {
 
 		return result;
 	}
+
+	public String getNotificationEmailText(Survey survey, String email, Locale locale) {
+		String notificationemailtext = null;
+		if (survey.getSendConfirmationEmail() && email != null && email.contains("@")) {
+			String[] args = new String[] { email };
+			notificationemailtext = resources.getMessage("message.ConfirmationEmailText", args,
+					"We’ve sent you a confirmation email to your registered email address: {0}.", locale);
+		}
+		return notificationemailtext;
+	}
+
+	public void sendNotificationEmail(Survey survey, AnswerSet answerSet, String email) throws MessageException, IOException {
+		StringBuilder body = new StringBuilder();
+		body.append("Dear EUSurvey user,<br /><br />Thank you for having submitted your contribution to the following survey: <b>");
+		body.append(survey.shortCleanTitle());
+		body.append("</b><br />Your contribution has the following ID: <b>");
+		body.append(answerSet.getUniqueCode());
+		body.append("</b><br /><br />");
+		
+		if (survey.getDownloadContribution()) {		
+			body.append("To download your contribution, please click on this link: <a href='").append(host).append("/home/downloadcontribution?email=").append(email).append("&code=").append(answerSet.getUniqueCode()).append("'>Get PDF</a><br />");
+		}
+		
+		if (survey.getChangeContribution())
+		{
+			body.append("To edit your contribution, please click on this link: <a href='").append(host).append("/home/editcontribution?code=").append(answerSet.getUniqueCode()).append("'>Edit</a><br />");
+			body.append("<br />You can edit your contribution only as long as the survey is open and running.");
+		}
+		
+		body.append("<br /><br />The EUSurvey team");
+		
+		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body.toString()).replace("[HOST]", host);
+		
+		mailService.SendHtmlMail(email, sender, sender, "Confirmation of your submission", mailtext, null);		
+	}
 }

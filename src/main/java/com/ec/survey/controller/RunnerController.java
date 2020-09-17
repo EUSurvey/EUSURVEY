@@ -653,7 +653,12 @@ public class RunnerController extends BasicController {
 			if (survey.getIsOPC()) {
 				result.addObject("opcredirection", survey.getFinalConfirmationLink(opcredirect, lang));
 			}
-
+			
+			if (survey.getSendConfirmationEmail() && email != null && email.contains("@")) {
+				surveyService.sendNotificationEmail(survey, answerSet, email);
+				result.addObject("notificationemailtext", surveyService.getNotificationEmailText(survey, email, locale));
+			}
+			
 			survey = surveyService.getSurvey(survey.getId(), lang);
 
 			if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
@@ -1635,6 +1640,7 @@ public class RunnerController extends BasicController {
 	public ModelAndView processSubmit(@PathVariable String uidorshortname, HttpServletRequest request,
 			HttpServletResponse response, Locale locale, Model modelMap, Device device) {
 		boolean hibernateOptimisticLockingFailureExceptionCatched = false;
+		String email = null;
 		try {
 
 			if (request.getParameter("redirectFromCheckPassword") != null
@@ -1800,6 +1806,7 @@ public class RunnerController extends BasicController {
 
 			if (origsurvey.getEcasSecurity() && request.getParameter("passwordauthenticated") == null && user != null) {
 				answerSet.setResponderEmail(user.getEmail());
+				email = user.getEmail();
 
 				if (user.getType().equalsIgnoreCase(User.ECAS)) {
 					// if the user already submitted, show error page
@@ -1978,6 +1985,11 @@ public class RunnerController extends BasicController {
 			if (survey.getIsOPC()) {
 				result.addObject("opcredirection", survey.getFinalConfirmationLink(opcredirect, lang));
 			}
+			
+			if (survey.getSendConfirmationEmail() && email != null && email.contains("@")) {
+				surveyService.sendNotificationEmail(survey, answerSet, email);
+				result.addObject("notificationemailtext", surveyService.getNotificationEmailText(survey, email, locale));
+			}		
 
 			if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
 				result.addObject("participantsemail", answerSet.getResponderEmail());

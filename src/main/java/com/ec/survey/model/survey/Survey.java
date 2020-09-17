@@ -174,6 +174,7 @@ public class Survey implements java.io.Serializable {
 	private Long maxNumberContribution = 0L;
 	private Boolean isUseMaxNumberContributionLink = false;
 	private String maxNumberContributionLink = "";
+	private Boolean sendConfirmationEmail = false;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1433,6 +1434,7 @@ public class Survey implements java.io.Serializable {
 		copy.contactLabel = contactLabel;
 		copy.audience = audience;
 		copy.automaticPublishing = automaticPublishing;
+		copy.sendConfirmationEmail = sendConfirmationEmail;
 		copy.setStart(start);
 		copy.setEnd(end);
 		copy.introduction = Tools.filterHTML(introduction);
@@ -2143,12 +2145,12 @@ public class Survey implements java.io.Serializable {
 	public Boolean getIsUseMaxNumberContributionLink() {
 		return this.isUseMaxNumberContributionLink != null ? this.isUseMaxNumberContributionLink : false;
 	}
-
+	
 	public void setIsUseMaxNumberContributionLink(Boolean useMaxNumberContributionLink) {
 		this.isUseMaxNumberContributionLink = useMaxNumberContributionLink != null ? useMaxNumberContributionLink
 				: false;
 	}
-
+	
 	@Column(name = "MAXNUMBERCONTRIBUTIONTEXT", length = 255)
 	public String getMaxNumberContributionText() {
 		return this.maxNumberContributionText != null && this.maxNumberContributionText.length() > 0
@@ -2183,8 +2185,18 @@ public class Survey implements java.io.Serializable {
 				? maxNumberContribution
 				: 0L;
 	}
+	
+	@Column(name = "SENDCONFIRMATION")
+	public Boolean getSendConfirmationEmail() {
+		return sendConfirmationEmail  != null ? sendConfirmationEmail : false;
+	}
+
+	public void setSendConfirmationEmail(Boolean sendConfirmationEmail) {
+		this.sendConfirmationEmail = sendConfirmationEmail  != null ? sendConfirmationEmail : false;
+	}
 
 	public void reorderElementsByPosition() {
 		elements.sort(Comparator.comparing(o -> (o.getPosition())));		
 	}
+
 }
