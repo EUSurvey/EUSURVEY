@@ -1425,6 +1425,8 @@ public class ManagementController extends BasicController {
 						uploadedSurvey.getAutomaticPublishing() ? "enabled" : "disabled" };
 				activitiesToLog.put(210, oldnew);
 			}
+			
+			survey.setSendConfirmationEmail(uploadedSurvey.getSendConfirmationEmail());
 
 			survey.setAutomaticPublishing(uploadedSurvey.getAutomaticPublishing());
 

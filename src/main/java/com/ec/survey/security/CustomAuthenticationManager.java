@@ -138,9 +138,13 @@ public class CustomAuthenticationManager implements AuthenticationManager {
 				} else {
 					String oldEmail = user.getEmail();
 					
-					user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
-					user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
-					user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
+					try {
+						user.setEmail(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:email"));
+						user.setGivenName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:firstName"));
+						user.setSurName(EcasHelper.getXmlTagValue(xmlValidationAnswer, "cas:lastName"));
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
 									
 					if (type.equalsIgnoreCase("f") || type.equalsIgnoreCase("x") || type.equalsIgnoreCase("i") || type.equalsIgnoreCase("c")) 
 					{

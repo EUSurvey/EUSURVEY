@@ -26,6 +26,11 @@
 		</c:choose>
 	</c:if>
 	
+	<c:if test="${notificationemailtext != null}">
+		<br /><br />
+		${notificationemailtext}
+	</c:if>
+	
 	<c:if test="${opcredirection != null}">
 		<br /><br />
 		<a class="btn btn-primary" href="${opcredirection}"><spring:message code="label.ConsultationPage" /></a>
