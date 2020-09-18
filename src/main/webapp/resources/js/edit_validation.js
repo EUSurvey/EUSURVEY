@@ -796,6 +796,7 @@ function checkMinMax(input, hasInputError, globalmax, showrulehint)
 				if (min == max)
 				{
 					addValidationInfo(input, "invalidMinMaxEqual");
+					return false;
 				}
 				
 			}
@@ -861,6 +862,7 @@ function checkMinMax(input, hasInputError, globalmax, showrulehint)
 				if (min == max)
 				{
 					addValidationInfo(input, "invalidMinMaxEqual");
+					return false;
 				}
 			}
 			
