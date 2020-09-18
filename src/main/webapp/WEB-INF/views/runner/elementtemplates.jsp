@@ -549,8 +549,8 @@
 		
 		<!-- ko if: display() == 'Slider' -->		
 		<div class="slider-div">
-			<div style="float: left; margin-left: -20px; padding-bottom: 20px;" data-bind="html: minLabel()"></div>
-			<div style="float: right; padding-bottom: 20px;" data-bind="html: maxLabel()"></div>
+			<div style="float: left; margin-left: -20px; padding-bottom: 20px; max-width: 45%; text-align: center;" data-bind="html: minLabel()"></div>
+			<div style="float: right; padding-bottom: 20px;  max-width: 45%; text-align: center;" data-bind="html: maxLabel()"></div>
 			<div style="clear: both"></div>
 			
 			<a data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>

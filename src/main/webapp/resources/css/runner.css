@@ -411,3 +411,31 @@ legend {
 .morebutton, .lessbutton {
 	margin-left: 5px;
 }
+
+.slider.slider-disabled .slider-track {
+	background-color: #f5f5f5 !important;
+	background-image: none !important;
+}
+
+.slider-selection.tick-slider-selection {
+	background-color: #8ac1ef !important;
+	background-image: none !important;
+}
+
+.slider-tick {
+	background-color: #eee !important;
+	background-image: none !important;
+	
+    filter: none !important;
+ 
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    filter: none;
+    opacity: 1;
+    border: 0 solid transparent;
+}
+
+.slider.slider-disabled .slider-handle {
+	background-color: #ccc !important;
+	background-image: none !important;
+}
