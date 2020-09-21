@@ -5,6 +5,7 @@ import com.ec.survey.model.DepartmentItem;
 import com.ec.survey.model.Domain;
 import com.ec.survey.model.KeyValue;
 import com.ec.survey.model.administration.EcasUser;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -77,7 +78,7 @@ public class LdapDBService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Domain> dbDomains = query.list();
 		
-		Map<String, Domain> dbDomainCodes = new HashMap<String, Domain>();
+		Map<String, Domain> dbDomainCodes = new HashMap<>();
 		for (Domain domain : dbDomains)
 		{
 			dbDomainCodes.put(domain.getCode(), domain);			
@@ -147,7 +148,7 @@ public class LdapDBService extends BasicService {
 			user.setName(((String) a[0]).trim());
 			user.setId(ConversionTools.getValue(a[1]));
 			user.setDeactivated((Boolean) a[2]);
-			result.put(((String) a[0]).trim(), user); //ConversionTools.getValue(a[1]));			
+			result.put(((String) a[0]).trim(), user);	
 		}
 		
 		return result;
@@ -188,7 +189,7 @@ public class LdapDBService extends BasicService {
 		}
 		if (email != null && email.length() > 0)
 		{
-			query.setString("email", "%" + email + "%");
+			query.setString(Constants.EMAIL, "%" + email + "%");
 		}
 		if (department != null && department.length() > 0 && !department.equalsIgnoreCase("undefined"))
 		{
@@ -213,7 +214,7 @@ public class LdapDBService extends BasicService {
 		if (term != null && !prefix)
 		{
 			query = session.createQuery("SELECT DISTINCT d.name FROM Department d WHERE d.name like :name ORDER BY d.name ASC").setString("name", term);
-		} else if (term != null && prefix)
+		} else if (term != null)
 		{
 			query = session.createQuery("SELECT DISTINCT d.name FROM Department d WHERE d.name like :nameDot ORDER BY d.name ASC").setString("nameDot", term + ".%");
 		} else {

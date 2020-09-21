@@ -50,8 +50,6 @@ public class TestDataGenerator implements Runnable {
 	
 	private String fileDir;
 	private String sender;
-	private String smtpServer;
-	private String smtpPort;
 	
 	private User user;
 	private int answers;
@@ -59,28 +57,24 @@ public class TestDataGenerator implements Runnable {
 	private Integer questions;
 	private String email;
 	private String shortname;
-	private String filetype;
 	private BeanFactory context;
 	private int surveys;
 	private int contacts;
 	
 	private boolean archive = false;
 	
-	public void init(User user, int answers, String fileDir, String sender, String smtpServer, String smtpPort, String email, String shortname, Integer questions, boolean archive, BeanFactory context, int files, String filetype, int surveys, int contacts)
+	public void init(User user, int answers, String fileDir, String sender, String email, String shortname, Integer questions, boolean archive, BeanFactory context, int files, int surveys, int contacts)
 	{
 		this.user = user;
 		this.answers = answers;
 		this.questions = questions;
 		this.fileDir = fileDir;
 		this.sender = sender;
-		this.smtpServer = smtpServer;
-		this.smtpPort = smtpPort;
 		this.email = email;
 		this.shortname = shortname;
 		this.archive = archive;
 		this.context = context;
 		this.files = files;
-		this.filetype = filetype;
 		this.surveys = surveys;
 		this.contacts = contacts;
 	}
@@ -93,11 +87,11 @@ public class TestDataGenerator implements Runnable {
 			if (contacts > 0)
 			{
 				attendeeService.createDummyAttendees(contacts, user.getId());
-				if (email != null) mailService.SendHtmlMail(email, sender, sender, "Test data generated", contacts + " contacts have been generated", smtpServer, Integer.parseInt(smtpPort), null);
+				if (email != null) mailService.SendHtmlMail(email, sender, sender, "Test data generated", contacts + " contacts have been generated", null);
 			} else if (files > 0)
 			{
-				fileService.createDummyFiles(files, filetype);
-				if (email != null) mailService.SendHtmlMail(email, sender, sender, "Test data generated", files + " files have been generated", smtpServer, Integer.parseInt(smtpPort), null);
+				fileService.createDummyFiles(files);
+				if (email != null) mailService.SendHtmlMail(email, sender, sender, "Test data generated", files + " files have been generated", null);
 			} else {
 				if (shortname != null && shortname.length() > 0)
 				{
@@ -113,7 +107,7 @@ public class TestDataGenerator implements Runnable {
 					}
 				}
 				
-				if (email != null) mailService.SendHtmlMail(email, sender, sender, "Test data generated", "The test survey with " + answers + " answers has been generated", smtpServer, Integer.parseInt(smtpPort), null);
+				if (email != null) mailService.SendHtmlMail(email, sender, sender, "Test data generated", "The test survey with " + answers + " answers has been generated", null);
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

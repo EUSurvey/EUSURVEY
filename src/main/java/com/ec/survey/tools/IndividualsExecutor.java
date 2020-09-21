@@ -33,18 +33,14 @@ public class IndividualsExecutor implements Runnable {
 	private ResultFilter filter;
 	private String email;
 	private String from;
-	private String server;
-	private String smtpPort;
 	private String host;
 	
-	public void init(Survey survey, ResultFilter filter, String email, String from, String server, String smtpPort, String host)
+	public void init(Survey survey, ResultFilter filter, String email, String from, String host)
 	{
 		this.survey = survey;
 		this.filter = filter;
 		this.email = email;
 		this.from = from;
-		this.server = server;
-		this.smtpPort = smtpPort;
 		this.host = host;
 	}
 	
@@ -60,12 +56,12 @@ public class IndividualsExecutor implements Runnable {
 
 	    fileService.add(f);
 	    	
-		String link = host + "files/" + uid+ "/";
+		String link = host + "files/" + uid+ Constants.PATH_DELIMITER;
 		
 		String body = "Your export of the individual results of survey " + survey.getShortname() + " has finished.<br /><br />You can download it here: <a href=\"" + link + "\">IndividualResults.zip</a>";
 
 		try {
-			mailService.SendHtmlMail(email, from, from, "Export finished", body, server, Integer.parseInt(smtpPort), null);
+			mailService.SendHtmlMail(email, from, from, "Export finished", body, null);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}

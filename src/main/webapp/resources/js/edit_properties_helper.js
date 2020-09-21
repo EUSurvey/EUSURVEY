@@ -90,6 +90,13 @@ function getQuizPropertiesRow()
 	_elementProperties.propertyRows.push(row);
 }
 
+function getSliderPropertiesRow()
+{
+	var row = new PropertyRow();
+	row.Type("slider");
+	_elementProperties.propertyRows.push(row);
+}
+
 function toggleRegistrationFormProperties(button)
 {
 	if ($(button).parent().find(".glyphicon-minus-sign").length > 0)
@@ -526,7 +533,7 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 	var rowcontent = "";
 	var options = content.split(",");
 	var name = getNewId();
-	if (label == "Style" || label == "Order" || label == "Display")
+	if (label == "Style" || label == "Order" || label == "Display" || label == "DisplaySlider" || label == "InitialSliderPosition")
 	{
 		row.ContentType("radio");
 		row.Content(options);
@@ -728,6 +735,10 @@ function getMinMaxPropertiesRow(label, min, max, valuemin, valuemax)
 	if ($(_elementProperties.selectedelement).hasClass("dateitem"))
 	{
 		row.ContentType("minmaxdate");
+	} else if ($(_elementProperties.selectedelement).hasClass("timeitem")) {
+		row.ContentType("minmaxtime");
+	} else if ($(_elementProperties.selectedelement).hasClass("numberitem")) {
+		row.ContentType("minmaxnumber");
 	} else {
 		row.ContentType("minmax");
 	}
@@ -757,6 +768,9 @@ function getMinMaxPropertiesRow(label, min, max, valuemin, valuemax)
 	if ($(_elementProperties.selectedelement).hasClass("dateitem"))
 	{
 		createDatePickerForEditor(input, valuemax);	
+	} else if ($(_elementProperties.selectedelement).hasClass("timeitem")) {
+		//createTimePickerForEditor(input, valuemax);
+		$(input).attr("placeholder", "HH:mm:ss");
 	} else {	
 		$(input).spinner({ decimals:2, min:min, max:max, start:"", allowNull: true });
 		$(input).parent().find('.ui-spinner-button').click(function() {
@@ -771,7 +785,10 @@ function getMinMaxPropertiesRow(label, min, max, valuemin, valuemax)
 	
 	if ($(_elementProperties.selectedelement).hasClass("dateitem"))
 	{
-		createDatePickerForEditor(input2, valuemin);	
+		createDatePickerForEditor(input2, valuemin);
+	} else if ($(_elementProperties.selectedelement).hasClass("timeitem")) {
+		//createTimePickerForEditor(input2, valuemin);
+		$(input2).attr("placeholder", "HH:mm:ss");
 	} else {	
 		$(input2).spinner({ decimals:2, min:min, max:max, start:"", allowNull: true });
 		$(input2).parent().find('.ui-spinner-button').click(function() {
@@ -1937,5 +1954,24 @@ function getRowsText(useparagraphs)
 		return s;
 	} else {
 		return arr;
+	}
+}
+
+function adaptSliderDisplay(isSlider)
+{
+	if (isSlider) {
+		$("tr[data-label='Mandatory']").hide();
+		$("tr[data-label='Unit']").hide();
+		$("tr[data-label='MinLabel']").show();
+		$("tr[data-label='MaxLabel']").show();
+		$("tr[data-label='InitialSliderPosition']").show();
+		$("tr[data-label='DisplayGraduationScale']").show();
+	} else {
+		$("tr[data-label='Mandatory']").show();
+		$("tr[data-label='Unit']").show();
+		$("tr[data-label='MinLabel']").hide();
+		$("tr[data-label='MaxLabel']").hide();
+		$("tr[data-label='InitialSliderPosition']").hide();
+		$("tr[data-label='DisplayGraduationScale']").hide();
 	}
 }

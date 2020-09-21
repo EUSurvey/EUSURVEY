@@ -1,18 +1,18 @@
 function getNiceHelp(help)
 {
-	if (help == null || help.trim().length == 0) return "";
+	if (help == null || help.trim().length == 0) return "<br />";
 
 	return addIconToHelp(help);	
 }
 
 function addIconToHelp(help)
 {
-	if (help.indexOf("<span") == 0 || help.indexOf("<div") == 0)
-	{
-		return help.substring(0, help.indexOf(">")+1) + "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;" + help.substring(help.indexOf(">")+1);
-	}
+	//if (help.indexOf("<span") == 0 || help.indexOf("<div") == 0)
+	//{
+	//	return help.substring(0, help.indexOf(">")+1) + "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;" + help.substring(help.indexOf(">")+1);
+	//}
 	
-	return "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;" + help;
+	return "<span onclick='$(this).next().toggle()' class='glyphicon glyphicon-question-sign'></span><div style='display: none; padding-top: 5px;'>" + help + "</div><br />";
 }
 
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)
@@ -122,6 +122,7 @@ function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsSt
 	viewModel.shortname = ko.observable(shortname);
 	viewModel.dependentElementsString = ko.observable(dependentElementsString);
 	viewModel.title = ko.observable(title);
+	viewModel.originalTitle = ko.observable(title);
 	viewModel.scoring = newScoringViewModel(scoring);
 	
 	viewModel.titleForDisplayMode = function(displayMode)
@@ -781,12 +782,137 @@ function newNumberViewModel(element)
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.css = ko.observable(element.css);	
-	viewModel.decimalPlaces = ko.observable(element.decimalPlaces);	
+	viewModel.decimalPlaces = ko.observable(element.decimalPlaces != null ? element.decimalPlaces : 0);	
 	viewModel.unit = ko.observable(element.unit);	
 	viewModel.min = ko.observable(element.min);	
 	viewModel.minString = ko.observable(element.minString);	
 	viewModel.max = ko.observable(element.max);
 	viewModel.maxString = ko.observable(element.maxString);	
+	
+	viewModel.display = ko.observable(element.display);
+	viewModel.minLabel = ko.observable(element.minLabel);
+	viewModel.maxLabel = ko.observable(element.maxLabel);
+	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition != null ? element.initialSliderPosition : "Left");
+	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
+	
+	viewModel.labels = function()
+	{
+		var result =[];
+		result[result.length] = this.min().toString();
+		var v = this.min();
+		
+//		if (this.displayGraduationScale())
+//		{
+//			var distance = this.max() - this.min();
+//			var tickStep = 1; 
+//			while (distance / tickStep > 10) {
+//				tickStep *= 2;
+//			}
+//			
+//			while (v < this.max())
+//			{
+//				v = Math.round((v + tickStep)* 100) / 100;
+//				result[result.length] = v;
+//			}
+//		}
+		
+		result[result.length] = this.max().toString();		
+			
+		return result;
+	}
+	
+	viewModel.ticks = function()
+	{
+//		if (!this.displayGraduationScale())
+//		{
+			return "[" + this.min() + "," + this.max() + "]";
+//		}
+//		
+//		var distance = this.max() - this.min();
+//		var tickStep = 1; 
+//		while (distance / tickStep > 10) {
+//			tickStep *= 2;
+//		}
+//		
+//		
+//		var result = "[";
+//		var v = this.min();
+//		result += v;
+//		
+//		while (v < this.max())
+//		{
+//			v = Math.round((v + tickStep)* 100) / 100;
+//			result += ",";
+//			result += v;
+//		}
+//		
+//		//result += ",";
+//		//result += this.max();
+//		
+//		result += "]";
+//		
+//		return result;
+	}
+	
+	viewModel.step = function()
+	{
+//		var result = 1;
+//		for (var i = 0; i < this.decimalPlaces(); i++)
+//		{
+//			result = result / 10;
+//		}
+//		
+//		return result;	
+		
+		var decimals = parseInt(this.decimalPlaces());
+		if (decimals === 0)
+		{
+			return 1;
+		}
+		return 10 ** (-1 * decimals);
+	}
+	
+	viewModel.increase = function(element)
+	{
+		var min = parseFloat(this.min());
+		var max = parseFloat(this.max());
+		var input = $("#answer" + element.id());
+		var value = parseFloat($(input).bootstrapSlider().bootstrapSlider('getValue'));
+		if (value < max) {
+			$(input).bootstrapSlider().bootstrapSlider('setValue', value + this.step());
+		}
+	}
+	
+	viewModel.decrease = function(element)
+	{
+		var min = parseFloat(this.min());
+		var max = parseFloat(this.max());
+		var input = $("#answer" + element.id());
+		var value = parseFloat($(input).bootstrapSlider().bootstrapSlider('getValue'));
+		if (value > min) {
+			$(input).bootstrapSlider().bootstrapSlider('setValue', value - this.step());
+		}
+	}
+	
+	viewModel.initialValue = function() {
+		if (this.initialSliderPosition() === "Middle")
+		{
+			var min = parseInt(this.min());
+			var max = parseInt(this.max());
+			var distance = max-min;
+			if (this.decimalPlaces() > 0) {
+				return Math.round(100 * (min + (distance / 2))) / 100;
+			}
+			return Math.round(min + (distance / 2));
+		}
+		
+		if (this.initialSliderPosition() === "Right")
+		{
+			return this.max();
+		}
+		
+		return this.min();
+	}
 	
 	return viewModel;
 }
@@ -819,6 +945,25 @@ function newDateViewModel(element)
 	viewModel.css = ko.observable(element.css);	
 	viewModel.decimalPlaces = ko.observable(element.decimalPlaces);	
 	viewModel.unit = ko.observable(element.unit);	
+	viewModel.min = ko.observable(element.min);	
+	viewModel.minString = ko.observable(element.minString);	
+	viewModel.max = ko.observable(element.max);	
+	viewModel.maxString = ko.observable(element.maxString);	
+	
+	return viewModel;
+}
+
+function newTimeViewModel(element)
+{
+	var viewModel = newBasicViewModel(element);
+	
+	viewModel.optional = ko.observable(element.optional);	
+	viewModel.readonly = ko.observable(element.readonly);	
+	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.attributeName = ko.observable(element.attributeName);	
+	viewModel.help = ko.observable(element.help);
+	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
+	viewModel.css = ko.observable(element.css);	
 	viewModel.min = ko.observable(element.min);	
 	viewModel.minString = ko.observable(element.minString);	
 	viewModel.max = ko.observable(element.max);	

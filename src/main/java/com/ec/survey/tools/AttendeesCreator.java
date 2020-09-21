@@ -45,12 +45,12 @@ public class AttendeesCreator {
 		attendee.setOwnerId(ownerId);
 		attendee.setName("John Doe");
 		attendee.setEmail(sender);
-		attendee.getAttributes().add(new Attribute(ownerId, favCar, "Ferrari F50"));
+		attendee.getAttributes().add(new Attribute(favCar, "Ferrari F50"));
 		
 		for (int i = 1; i < 30; i++)
 		{
 			AttributeName an = new AttributeName(ownerId, "Attribute" + i);
-			attendee.getAttributes().add(new Attribute(ownerId, an, "Value" + i));
+			attendee.getAttributes().add(new Attribute(an, "Value" + i));
 		}		
 		
 		attendeeService.add(attendee);
@@ -59,35 +59,35 @@ public class AttendeesCreator {
 		attendee.setOwnerId(ownerId);
 		attendee.setName("Bob Hope");
 		attendee.setEmail(sender);
-		attendee.getAttributes().add(new Attribute(ownerId, favCar, "Mini Cooper"));
+		attendee.getAttributes().add(new Attribute(favCar, "Mini Cooper"));
 		attendeeService.add(attendee);			
 		
 		attendee = new Attendee();
 		attendee.setOwnerId(ownerId);
 		attendee.setName("Jack Jones");
 		attendee.setEmail(sender);
-		attendee.getAttributes().add(new Attribute(ownerId, favCar, "Suzuki Swift"));
+		attendee.getAttributes().add(new Attribute(favCar, "Suzuki Swift"));
 		attendeeService.add(attendee);	
 				
 		attendee = new Attendee();
 		attendee.setOwnerId(ownerId);
 		attendee.setName("Harry Smith");
 		attendee.setEmail(sender);
-		attendee.getAttributes().add(new Attribute(ownerId, favCar, "Jaguar E-Type"));
+		attendee.getAttributes().add(new Attribute(favCar, "Jaguar E-Type"));
 		attendeeService.add(attendee);	
 					
 		attendee = new Attendee();
 		attendee.setOwnerId(ownerId);
 		attendee.setName("Ron Howard");
 		attendee.setEmail(sender);
-		attendee.getAttributes().add(new Attribute(ownerId, favCar, "Mercedes"));
+		attendee.getAttributes().add(new Attribute(favCar, "Mercedes"));
 		attendeeService.add(attendee);	
 				
 		attendee = new Attendee();
 		attendee.setOwnerId(ownerId);
 		attendee.setName("James Bond");
 		attendee.setEmail(sender);
-		attendee.getAttributes().add(new Attribute(ownerId, favCar, "Aston Martin DB5"));
+		attendee.getAttributes().add(new Attribute(favCar, "Aston Martin DB5"));
 		attendeeService.add(attendee);	
 				
 		for (int i = 1; i < 100; i++)
@@ -96,7 +96,7 @@ public class AttendeesCreator {
 			attendee.setOwnerId(ownerId);
 			attendee.setName("Attendee" + i);
 			attendee.setEmail(sender);
-			attendee.getAttributes().add(new Attribute(ownerId, favCar, "Z" + i));
+			attendee.getAttributes().add(new Attribute(favCar, "Z" + i));
 			attendeeService.add(attendee);	
 		}
 		

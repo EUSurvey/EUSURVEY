@@ -29,6 +29,8 @@ function getElementViewModel(element)
 			return newNumberViewModel(element);
 		case 'DateQuestion':
 			return newDateViewModel(element);
+		case 'TimeQuestion':
+			return newTimeViewModel(element);
 		case 'EmailQuestion':
 			return newEmailViewModel(element);
 		case 'Matrix':
@@ -188,6 +190,10 @@ function addElementToContainer(element, container, foreditor, forskin)
 	} else if (viewModel.type == 'DateQuestion') {
 		$(container).addClass("dateitem");
 		var s = $("#date-template").clone().attr("id","");
+		$(container.append(s));
+	} else if (viewModel.type == 'TimeQuestion') {
+		$(container).addClass("timeitem");
+		var s = $("#time-template").clone().attr("id","");
 		$(container.append(s));
 	} else if (viewModel.type == 'EmailQuestion') {
 		$(container).addClass("emailitem");
@@ -394,7 +400,30 @@ function addElementToContainer(element, container, foreditor, forskin)
 	    });
 	});
 	
+	$(container).find(".sliderbox").each(function(){
+		initSlider(this, foreditor, viewModel);
+	});
+	
 	return viewModel;
+}
+
+function initSlider(input, foreditor, viewModel)
+{
+	try {
+		$(input).bootstrapSlider().bootstrapSlider('destroy');
+	} catch (e) {
+		//ignore
+	}
+		
+	$(input).bootstrapSlider({
+		formatter: function(value) {
+			return value;
+		},
+		tooltip: 'always',
+		ticks_labels: viewModel.labels(),
+		enabled: !foreditor
+		//ticks_labels: [viewModel.minLabel(), viewModel.maxLabel()]
+	});
 }
 
 function getWidth(widths, index)

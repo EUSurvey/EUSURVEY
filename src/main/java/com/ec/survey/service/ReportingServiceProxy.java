@@ -44,7 +44,7 @@ public class ReportingServiceProxy {
 		return reportingService.OLAPTableExistsInternal(uid, draft);
 	}
 	
-	public void deleteOLAPTable(String uid, boolean draftversion, boolean publishedversion) throws Exception {
+	public void deleteOLAPTable(String uid, boolean draftversion, boolean publishedversion) {
 		if (!isReportingDatabaseEnabled()) return;
 		reportingService.deleteOLAPTableInternal(uid, draftversion, publishedversion);
 	}
@@ -142,12 +142,12 @@ public class ReportingServiceProxy {
 		return reportingService.GetAllQuestionsAndPossibleAnswersInternal(survey);
 	}	
 
-	public boolean validateOLAPTable(Survey survey) throws Exception {
+	public boolean validateOLAPTable(Survey survey) {
 		if (!isReportingDatabaseEnabled()) return false;
 		return reportingService.validateOLAPTableInternal(survey);
 	}
 
-	public boolean validateOLAPTable(Survey survey, Integer counter) throws Exception {
+	public boolean validateOLAPTable(Survey survey, Integer counter) {
 		if (!isReportingDatabaseEnabled()) return false;
 		return reportingService.validateOLAPTableInternal(survey, counter);
 	}

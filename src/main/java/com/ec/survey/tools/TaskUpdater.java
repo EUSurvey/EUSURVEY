@@ -1,10 +1,10 @@
 package com.ec.survey.tools;
 
+import java.nio.file.Files;
 import java.util.List;
 
 import javax.annotation.Resource;
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,7 +49,7 @@ public class TaskUpdater implements Runnable, BeanFactoryAware {
 	
 	protected BeanFactory context;
 	@Override
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+	public void setBeanFactory(BeanFactory beanFactory) {
 		context = beanFactory;		
 	}
 	
@@ -82,10 +82,7 @@ public class TaskUpdater implements Runnable, BeanFactoryAware {
 					if (export.prepare()) {					
 						//it's not allowed to override existing archive files so we have to delete them first
 						java.io.File target = new java.io.File(archiveFileDir + survey.getUniqueId());
-						if (target.exists())
-						{
-							target.delete();
-						}
+						Files.deleteIfExists(target.toPath());
 						taskExecutorLong.execute(export);
 					}
 				}

@@ -28,7 +28,7 @@
 			<form:form id="form" method="POST" action="editcontribution" commandName="form">	
 				<div>
 					<h5><spring:message code="label.ContributionId" />:</h5>
-					<input type="text" class="required uuid" name="uniqueCode" maxlength="36" />
+					<input type="text" class="required uuid" name="uniqueCode" maxlength="36" value="${uniqueid}" />
 						<c:if test="${message != null}">
 							<div class="validation-error">${message}</div>
 						</c:if>

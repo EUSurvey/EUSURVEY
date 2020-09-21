@@ -59,8 +59,7 @@ public class SurveyUpdater implements Runnable {
 			{				
 				Survey published = surveyService.getSurvey(survey.getShortname(), false, false, false, true, null, true, false);
 				
-				if (published != null)
-				{
+				if (published != null) {
 					try {
 						surveyService.applyChanges(survey, false, -1, true);
 					} catch (Exception e) {
@@ -120,7 +119,7 @@ public class SurveyUpdater implements Runnable {
 							
 							String subject = "Your survey '" + survey.cleanTitleForMailSubject() + "' will end soon";
 							
-							mailService.SendHtmlMail(user.getEmail(), sender, sender, subject, text, smtpServer, Integer.parseInt(smtpPort), null);
+							mailService.SendHtmlMail(user.getEmail(), sender, sender, subject, text, null);
 							usermails.append(user.getEmail()).append(";");
 						} else {
 							logger.error("User " + user.getName() + " has no email address! Writing notification email not possible");

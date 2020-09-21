@@ -106,18 +106,12 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             modelAndView.getModelMap().addAttribute("enablereportingdatabase", enablereportingdatabase);
             
             Device device = DeviceUtils.getCurrentDevice(request);
-            if (!request.getRequestURI().endsWith("management/edit"))
+            if (!request.getRequestURI().endsWith("management/edit") && (device.isMobile() || device.isTablet()))
             {
-	            if (device.isMobile() || device.isTablet())
+				modelAndView.getModelMap().addAttribute("responsive", true);
+				if (device.isMobile())
 	    		{
-	    			//if (enableresponsive != null && enableresponsive.equalsIgnoreCase("true"))
-	    			//{
-	    				modelAndView.getModelMap().addAttribute("responsive", true);
-	    				if (device.isMobile())
-	    	    		{
-	    					modelAndView.getModelMap().addAttribute("ismobile", true);
-	    	    		}
-	    			//}
+					modelAndView.getModelMap().addAttribute("ismobile", true);
 	    		}
             }
             

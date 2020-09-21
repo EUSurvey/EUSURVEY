@@ -2,7 +2,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
@@ -16,18 +15,23 @@ import javax.persistence.*;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class NumberQuestion extends Question {
 	
-	public final static String UNIT = "UNIT";
+	public static final String UNIT = "UNIT";
 	private static final long serialVersionUID = 1L;
 
 	public NumberQuestion() {}
 	
-	public NumberQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+	public NumberQuestion(String title, String shortname, String uid) {
+		super(title, shortname, uid);
 	}
 	private int decimalPlaces;
 	private String unit;
 	private Double minD;
 	private Double maxD;
+	private String minLabel;
+	private String maxLabel;
+	private String display;
+	private String initialSliderPosition;
+	private Boolean displayGraduationScale;
 	
 	//this is for backward compatibility (serializer), do not remove!
 	private double min;
@@ -83,7 +87,47 @@ public class NumberQuestion extends Question {
 		this.unit = unit;
 	}
 	
-	public NumberQuestion copy(String fileDir) throws ValidationException, IntrusionException
+	@Column(name = "MINLABEL")
+	public String getMinLabel() {
+		return minLabel != null ? minLabel : "";
+	}
+	public void setMinLabel(String minLabel) {
+		this.minLabel = minLabel != null ? minLabel : "";
+	}
+
+	@Column(name = "MAXLABEL")
+	public String getMaxLabel() {
+		return maxLabel != null ? maxLabel : "";
+	}
+	public void setMaxLabel(String maxLabel) {
+		this.maxLabel = maxLabel != null ? maxLabel : "";
+	}
+	
+	@Column(name = "DISPLAY")
+	public String getDisplay() {
+		return (display != null && display.length() > 0) ? display: "Number";
+	}
+	public void setDisplay(String display) {
+		this.display =  (display != null && display.length() > 0) ? display: "Number";
+	}
+	
+	@Column(name = "INITSLIDER")
+	public String getInitialSliderPosition() {
+		return (initialSliderPosition != null && initialSliderPosition.length() > 0) ? initialSliderPosition: "Left";
+	}
+	public void setInitialSliderPosition(String initialSliderPosition) {
+		this.initialSliderPosition = (initialSliderPosition != null && initialSliderPosition.length() > 0) ? initialSliderPosition: "Left";
+	}
+	
+	@Column(name = "GRADSCALE")
+	public Boolean getDisplayGraduationScale() {
+		return displayGraduationScale == null ? false : displayGraduationScale;
+	}
+	public void setDisplayGraduationScale(Boolean displayGraduationScale) {
+		this.displayGraduationScale = displayGraduationScale == null ? false : displayGraduationScale;
+	}	
+	
+	public NumberQuestion copy(String fileDir) throws ValidationException
 	{
 		NumberQuestion copy = new NumberQuestion();
 		baseCopy(copy);
@@ -91,11 +135,17 @@ public class NumberQuestion extends Question {
 		copy.maxD = maxD;
 		copy.minD = minD;
 		copy.unit = unit;
+		copy.display = display;
+		copy.minLabel = minLabel;
+		copy.maxLabel = maxLabel;
+		copy.initialSliderPosition = initialSliderPosition;
+		copy.displayGraduationScale = displayGraduationScale;
 		
 		return copy;
 	}
 	
 	@Transient
+	@Override
 	public String getCss()
 	{
 		String css = super.getCss();
@@ -132,12 +182,17 @@ public class NumberQuestion extends Question {
 		if (maxD == null && number.maxD != null) return true;
 		if (minD == null && number.minD != null) return true;
 		if (unit == null && number.unit != null) return true;
+		if (minLabel == null && number.minLabel != null) return true;
+		if (maxLabel == null && number.maxLabel != null) return true;
 		
 		if (maxD != null && !maxD.equals(number.maxD)) return true;
 		if (minD != null && !minD.equals(number.minD)) return true;
-		if (unit != null && !unit.equals(number.unit)) return true;
 		
-		return false;
+		if (display != null && !display.equals(number.display)) return true;
+		if (displayGraduationScale != null && !displayGraduationScale.equals(number.displayGraduationScale)) return true;
+		if (initialSliderPosition != null && !initialSliderPosition.equals(number.initialSliderPosition)) return true;			
+
+		return (unit != null && !unit.equals(number.unit));
 	}
 
 	//used during import process to upgrade older version of the class
@@ -159,5 +214,5 @@ public class NumberQuestion extends Question {
 			this.maxD = null;
 		}
 	}
-	
+
 }

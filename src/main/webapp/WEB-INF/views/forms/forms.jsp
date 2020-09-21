@@ -333,7 +333,7 @@
 							  
 							  $(td).append("&nbsp;");
 							  
-								if(list[i].numberOfAnswerSetsPublished < 2001 && list[i].state != 'Running' && (list[i].fullFormManagementRights))
+								if(list[i].state != 'Running' && (list[i].fullFormManagementRights))
 								{
 									var a = document.createElement("a");
 									$(a).addClass("actionRowAction");
@@ -364,7 +364,7 @@
 								
 								 $(td).append("&nbsp;");
 								
-								if (list[i].numberOfAnswerSetsPublished < 2001 && list[i].state != 'Running')
+								if (list[i].state != 'Running')
 								{
 									var a = document.createElement("a");
 									$(a).attr("onclick","showDeleteDialog('" + list[i].id  + "')").addClass("actionRowAction").attr("rel","tooltip").attr("data-toggle","tooltip").attr("title", '<spring:message code="label.Delete" />').append("<span class='glyphicon glyphicon-remove'></span></a>");
@@ -758,7 +758,7 @@
 												
 												<c:if test="${enablearchiving}">
 													<c:choose>
-														<c:when test="${survey.numberOfAnswerSetsPublished < 2001 && survey.state != 'Running' && (survey.owner.id.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
+														<c:when test="${survey.state != 'Running' && (survey.owner.id.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
 															<a id="btnArchiveSurvey" class="actionRowAction"  onclick="showArchiveDialog('${survey.shortname}','${survey.id}', true)" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import"></</span></a>
 														</c:when>
 														<c:when test="${!survey.fullFormManagementRights}">
@@ -771,7 +771,7 @@
 												</c:if>
 	
 												<c:choose>
-													<c:when test="${survey.numberOfAnswerSetsPublished < 2001 && survey.state != 'Running' && (survey.fullFormManagementRights)}">
+													<c:when test="${survey.state != 'Running' && (survey.fullFormManagementRights)}">
 														<a id="deleteBtnEnabledFromListSurvey" onclick="showDeleteDialog('${survey.id}');"  class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></</span></a>
 													</c:when>
 													<c:when test="${!survey.fullFormManagementRights}">

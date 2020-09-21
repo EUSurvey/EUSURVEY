@@ -9,8 +9,6 @@ import java.util.*;
 
 public class QuizHelper {
 
-	//private static final Logger logger = Logger.getLogger(QuizHelper.class);
-	
 	public static QuizResult getQuizResult(AnswerSet answerSet)
 	{
 		return getQuizResult(answerSet, answerSet.getSurvey());
@@ -31,7 +29,7 @@ public class QuizHelper {
 			{
 				if (currentSectionUid != null)
 				{
-					result.getSectionScores().put(currentSectionUid, currentSectionScore + "/" + currentSectionMaxScore);
+					result.getSectionScores().put(currentSectionUid, currentSectionScore + Constants.PATH_DELIMITER + currentSectionMaxScore);
 				}
 				currentSectionUid = element.getUniqueId();
 				currentSectionScore = 0;
@@ -49,7 +47,7 @@ public class QuizHelper {
 					maximumScore += question.getPoints();
 					currentSectionMaxScore += question.getPoints();
 					
-					if (answers.size() == 0 && question instanceof MultipleChoiceQuestion)
+					if (answers.isEmpty() && question instanceof MultipleChoiceQuestion)
 					{
 						result.getPartiallyAnswersMultipleChoiceQuestions().add(question.getUniqueId());
 					}
@@ -57,7 +55,9 @@ public class QuizHelper {
 					
 					if (question instanceof SingleChoiceQuestion)
 					{
-						if (answers.size() == 0) continue;
+						if (answers.isEmpty()) {
+							continue;
+						}
 						// get points if answer is correct						
 						Answer answer = answers.get(0);
 						ChoiceQuestion choice = (ChoiceQuestion) question;
@@ -70,7 +70,9 @@ public class QuizHelper {
 						}						
 					} else if (question instanceof MultipleChoiceQuestion)
 					{
-						if (answers.size() == 0) continue;
+						if (answers.isEmpty()) {
+							continue;
+						}
 						// get points if exactly all correct answers are selected						
 						ChoiceQuestion choice = (ChoiceQuestion) question;
 						Set<String> correctUIDs = new HashSet<>();
@@ -107,7 +109,7 @@ public class QuizHelper {
 						//get points if at least one correct rule is fulfilled
 						boolean ok = false;
 						boolean wrong = false;
-						Double value = answers.size() > 0 ? Double.parseDouble(answers.get(0).getValue()) : null;
+						Double value = !answers.isEmpty() ? Double.parseDouble(answers.get(0).getValue()) : null;
 						ScoringItem defaultItem = null;
 						for (ScoringItem scoringItem : question.getScoringItems())
 						{
@@ -147,7 +149,7 @@ public class QuizHelper {
 						//get points if at least one correct rule is fulfilled
 						boolean ok = false;
 						boolean wrong = false;
-						Date value = answers.size() > 0 ? ConversionTools.getDate(answers.get(0).getValue()) : null;
+						Date value = !answers.isEmpty() ? ConversionTools.getDate(answers.get(0).getValue()) : null;
 						ScoringItem defaultItem = null;
 						for (ScoringItem scoringItem : question.getScoringItems())
 						{							
@@ -187,7 +189,7 @@ public class QuizHelper {
 						//get points if at least one correct rule is fulfilled
 						boolean ok = false;
 						boolean wrong = false;
-						String value = answers.size() > 0 ? answers.get(0).getValue() : null;
+						String value = !answers.isEmpty() ? answers.get(0).getValue() : null;
 						ScoringItem defaultItem = null;
 						for (ScoringItem scoringItem : question.getScoringItems())
 						{
@@ -239,7 +241,7 @@ public class QuizHelper {
 						currentSectionMaxScore += max;
 						result.getQuestionMaximumScores().put(question.getUniqueId(), max);
 						
-						if (answers.size() > 0)
+						if (!answers.isEmpty())
 						{
 							Answer answer = answers.get(0);
 							PossibleAnswer pa = choice.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId());
@@ -293,7 +295,7 @@ public class QuizHelper {
 						}
 					} else if (question instanceof NumberQuestion)
 					{
-						Double value = answers.size() == 0 ? null : Double.parseDouble(answers.get(0).getValue());
+						Double value = answers.isEmpty() ? null : Double.parseDouble(answers.get(0).getValue());
 						List<ScoringItem> matches = new ArrayList<>();
 						ScoringItem defaultItem = null;
 						int max = 0;
@@ -317,7 +319,7 @@ public class QuizHelper {
 						result.getQuestionMaximumScores().put(question.getUniqueId(), max);
 						maximumScore += max;
 						currentSectionMaxScore += max;
-						if (matches.size() > 0)
+						if (!matches.isEmpty())
 						{
 							ScoringItem bestMatch = getBestMatch(matches);
 							score += bestMatch.getPoints();
@@ -335,7 +337,7 @@ public class QuizHelper {
 						}
 					}  else if (question instanceof DateQuestion)
 					{
-						Date value = answers.size() == 0 ? null : ConversionTools.getDate(answers.get(0).getValue());
+						Date value = answers.isEmpty() ? null : ConversionTools.getDate(answers.get(0).getValue());
 						List<ScoringItem> matches = new ArrayList<>();
 						ScoringItem defaultItem = null;
 						int max = 0;
@@ -359,7 +361,7 @@ public class QuizHelper {
 						result.getQuestionMaximumScores().put(question.getUniqueId(), max);
 						maximumScore += max;
 						currentSectionMaxScore += max;
-						if (matches.size() > 0)
+						if (!matches.isEmpty())
 						{
 							ScoringItem bestMatch = getBestMatch(matches);
 							score += bestMatch.getPoints();
@@ -377,7 +379,7 @@ public class QuizHelper {
 						}
 					} else if (question instanceof FreeTextQuestion)
 					{
-						String value = answers.size() == 0 ? null : answers.get(0).getValue();
+						String value = answers.isEmpty() ? null : answers.get(0).getValue();
 						List<ScoringItem> matches = new ArrayList<>();
 						ScoringItem defaultItem = null;
 						int max = 0;
@@ -401,7 +403,7 @@ public class QuizHelper {
 						result.getQuestionMaximumScores().put(question.getUniqueId(), max);
 						maximumScore += max;
 						currentSectionMaxScore += max;
-						if (matches.size() > 0)
+						if (!matches.isEmpty())
 						{
 							ScoringItem bestMatch = matches.get(0);
 							score += bestMatch.getPoints();
@@ -424,7 +426,7 @@ public class QuizHelper {
 		
 		if (currentSectionUid != null)
 		{
-			result.getSectionScores().put(currentSectionUid, currentSectionScore + "/" + currentSectionMaxScore);
+			result.getSectionScores().put(currentSectionUid, currentSectionScore + Constants.PATH_DELIMITER + currentSectionMaxScore);
 		}
 		
 		result.setScore(score);
@@ -516,6 +518,8 @@ public class QuizHelper {
 					return false;
 				}
 				break;
+			default:
+				break;
 		}
 		
 		return true;
@@ -573,6 +577,8 @@ public class QuizHelper {
 				{
 					return false;
 				}
+				break;
+			default:
 				break;
 		}
 		

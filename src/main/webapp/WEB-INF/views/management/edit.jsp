@@ -177,15 +177,17 @@
 								<li id="drag_freetext" class="toolboxitem freetextitem draggable quiz"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="form.FreeText" /></li>
 								<li id="drag_simplechoice" class="toolboxitem singlechoiceitem draggable quiz"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="form.SingleChoice" /></li>
 								<li id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable quiz"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
-								<li id="drag_number" class="toolboxitem numberitem draggable quiz"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.Number" /></li>
+								<li id="drag_number" class="toolboxitem numberitem draggable quiz"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
 								<li id="drag_date" class="toolboxitem dateitem draggable quiz"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
+								<li id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
 							</c:when>
 							<c:otherwise>
 								<li id="drag_freetext" class="toolboxitem freetextitem draggable"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="form.FreeText" /></li>
 								<li id="drag_simplechoice" class="toolboxitem singlechoiceitem draggable"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="form.SingleChoice" /></li>
 								<li id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
-								<li id="drag_number" class="toolboxitem numberitem draggable"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.Number" /></li>
+								<li id="drag_number" class="toolboxitem numberitem draggable"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
 								<li id="drag_date" class="toolboxitem dateitem draggable"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
+								<li id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
 							</c:otherwise>
 						</c:choose>
 						<li id="drag_matrix" class="toolboxitem matrixitem draggable"><span class="glyphicon glyphicon-list-alt"></span> <spring:message code="form.Matrix" /></li>
@@ -228,7 +230,7 @@
 						<li class="toolboxitem countriesitem draggable"><span class="glyphicon glyphicon-globe"></span> <spring:message code="form.predefined.eucountries" /></li>
 						<li class="toolboxitem languagesitem draggable"><span class="glyphicon glyphicon-flag"></span> <spring:message code="form.predefined.eulanguages" /></li>
                                                 <c:if test="${!oss}">
-                                                    <li class="toolboxitem dgsitem draggable"><span class="glyphicon glyphicon-home"></span> <spring:message code="form.predefined.dgs" /></li>
+                                                    <li class="toolboxitem dgsitem draggable"><span class="glyphicon glyphicon-home"></span> <spring:message code="form.predefined.dgsnew" /></li>
                                                 </c:if>                                                
 						<li class="toolboxitem unsitem draggable"><span class="glyphicon"><img style="vertical-align: bottom;" src="${contextpath}/resources/images/unlogo.png" /></span> <spring:message code="form.predefined.uns" /></li>
 					</ul>
@@ -286,6 +288,10 @@
 					
 					<!--  ko if: Type() == 'quiz' -->
 						<!-- ko template: { name: 'quiz-template' } --><!-- /ko -->
+					<!-- /ko -->
+					
+					<!--  ko if: Type() == 'slider' -->
+						<!-- ko template: { name: 'slider-template' } --><!-- /ko -->
 					<!-- /ko -->
 					
 					<!--  ko if: Type() == 'quizanswers' -->
@@ -597,10 +603,11 @@
 			if (element.hasClass("freetextitem")) return "<spring:message code='form.FreeText' />";
 			if (element.hasClass("singlechoiceitem")) return "<spring:message code='form.SingleChoice' />";
 			if (element.hasClass("multiplechoiceitem")) return "<spring:message code='form.MultipleChoice' />";
-			if (element.hasClass("numberitem")) return "<spring:message code='form.Number' />";
+			if (element.hasClass("numberitem")) return "<spring:message code='form.NumberSlider' />";
 			if (element.hasClass("matrixitem")) return "<spring:message code='form.Matrix' />";
 			if (element.hasClass("mytableitem")) return "<spring:message code='form.Table' />";
 			if (element.hasClass("dateitem")) return "<spring:message code='form.Date' />";
+			if (element.hasClass("timeitem")) return "<spring:message code='form.Time' />";
 			if (element.hasClass("textitem")) return "<spring:message code='form.Text' />";
 			if (element.hasClass("imageitem")) return "<spring:message code='form.Image' />";
 			if (element.hasClass("ruleritem")) return "<spring:message code='form.Line' />";
@@ -628,6 +635,7 @@
 			if (element.hasClass("matrixitem")) return "idTypematrixitem";
 			if (element.hasClass("mytableitem")) return "idTypemytableitem";
 			if (element.hasClass("dateitem")) return "idTypedateitem";
+			if (element.hasClass("timeitem")) return "idTypetimeitem";
 			if (element.hasClass("textitem")) return "idTypetextitem";
 			if (element.hasClass("imageitem")) return "idTypeimageitem";
 			if (element.hasClass("ruleritem")) return "idTyperuleritem";
@@ -689,7 +697,18 @@
 	 		strings["CheckBox"] = "<spring:message code="html.CheckBox" />";
 	 		strings["ListBox"] = "<spring:message code="html.ListBox" />";	 
 	 		strings["Unit"] = "<spring:message code="label.Unit" />";	 
-	 		strings["DecimalPlaces"] = "<spring:message code="label.DecimalPlaces" />";	 
+	 		strings["DecimalPlaces"] = "<spring:message code="label.DecimalPlacesNew" />";
+	 		strings["DisplaySlider"] = "<spring:message code="label.Display" />";	 
+	 		strings["MinLabel"] = "<spring:message code="label.MinLabel" />";	 
+	 		strings["MaxLabel"] = "<spring:message code="label.MaxLabel" />";	 
+	 		strings["InitialSliderPosition"] = "<spring:message code="label.InitialSliderPosition" />";	 
+	 		strings["DisplayGraduationScale"] = "<spring:message code="label.DisplayGraduationScale" />";	 
+	 		strings["Number"] = "<spring:message code="label.Number" />";	 
+	 		strings["Slider"] = "<spring:message code="label.Slider" />";
+	 		strings["Left"] = "<spring:message code="label.Left" />";
+	 		strings["Middle"] = "<spring:message code="label.Middle" />";
+	 		strings["Right"] = "<spring:message code="label.Right" />";
+	 		
 	 		strings["Values"] = "<spring:message code="label.Values" />";
 	 		strings["NumberOfAnsweredRows"] = "<spring:message code="label.NumberOfAnsweredRows" />";
 	 		strings["Interdependency"] = "<spring:message code="label.Interdependency" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.Interdependency" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
@@ -725,8 +744,11 @@
 	 		strings["invalidNumber"] = "<spring:message code="validation.invalidNumber" />";
 	 		strings["invalidNumber5k"] = "<spring:message code="validation.textTooLong5000" />";
 	 		strings["invalidDate"] = "<spring:message code="validation.invalidDate" />";
+	 		strings["invalidTime"] = "<spring:message code="validation.invalidTime" />";
 	 		strings["invalidStartEnd"] = "<spring:message code="validation.invalidStartEnd" />";
+	 		strings["invalidStartEndTime"] = "<spring:message code="validation.invalidStartEndTime" />";
 	 		strings["invalidMinMaxNumber"] = "<spring:message code="error.invalidMinMaxNumber" />";
+	 		strings["invalidMinMaxEqual"] = "<spring:message code="error.invalidMinMaxEqual" />";
 	 		strings["NotUniqueAnswers"] = "<spring:message code="validation.NotUniqueAnswers" />";
 	 		strings["required"] = "<spring:message code="validation.required" />";
 	 		strings["Edit"] = "<spring:message code="label.Edit" />";

@@ -7,7 +7,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import com.ec.survey.tools.Tools;
@@ -27,7 +26,7 @@ public class EmptyElement extends Element {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public EmptyElement(Survey survey, String ptitle, String shortname) {
+	public EmptyElement(String ptitle, String shortname) {
 		setTitle(ptitle);
 		setShortname(shortname);
 	}
@@ -36,7 +35,7 @@ public class EmptyElement extends Element {
 		this.setUniqueId("");
 	}	
 	
-	public EmptyElement copy(String fileDir) throws ValidationException, IntrusionException
+	public EmptyElement copy(String fileDir) throws ValidationException
 	{	
 		EmptyElement copy = new EmptyElement();
 		copy.setUniqueId(getUniqueId());

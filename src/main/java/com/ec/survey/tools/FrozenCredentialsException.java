@@ -7,7 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 
 public class FrozenCredentialsException extends BadCredentialsException {
 	
-	protected static Logger logger = Logger.getLogger(BadCredentialsException.class);
+	protected static final Logger logger = Logger.getLogger(BadCredentialsException.class);
 	
 	public FrozenCredentialsException(String message) {		
 		super(message);

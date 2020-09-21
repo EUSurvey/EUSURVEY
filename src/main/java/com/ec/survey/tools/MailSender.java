@@ -2,6 +2,8 @@ package com.ec.survey.tools;
 
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.util.Date;
 
@@ -16,6 +18,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.service.MailService;
 
 @Service("mailSender")
@@ -39,11 +42,11 @@ public class MailSender implements Runnable {
 	private String info;
 	private boolean deletefiles;
 	
-	public void init(String to, String from, String subject, String reply, String body, File attachment, File attachment2, String info, boolean deletefiles) throws Exception
+	public void init(String to, String from, String subject, String reply, String body, File attachment, File attachment2, String info, boolean deletefiles) throws MessageException
 	{
 		if (to == null || to.trim().length() == 0 || !MailService.isValidEmailAddress(to))
 		{
-			throw new Exception("Invalid email address");
+			throw new MessageException("Invalid email address");
 		}
 		
 		this.to = to;
@@ -61,11 +64,11 @@ public class MailSender implements Runnable {
 	@Transactional
 	public void run() {
 		System.setProperty("mail.mime.charset", "utf8");
-		JavaMailSenderImpl sender = new JavaMailSenderImpl();
-		sender.setHost(server);
-		sender.setPort(Integer.parseInt(port));
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		mailSender.setHost(server);
+		mailSender.setPort(Integer.parseInt(port));
 		
-		MimeMessage message = sender.createMimeMessage();
+		MimeMessage message = mailSender.createMimeMessage();
 		MimeMessageHelper helper;
 		try {
 			helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -99,30 +102,30 @@ public class MailSender implements Runnable {
 			if (attachment2 != null)
 				helper.addAttachment(adaptFilename(attachment2.getName()), attachment2);
 			
-			sender.send(message);
+			mailSender.send(message);
 			logger.info("mail sent to " + to + " at " + DateFormat.getInstance().format(new Date()) + (info != null ? " " + info : ""));
 			
 			if (deletefiles)
 			{
-				if (attachment != null && attachment.exists())
+				if (attachment != null)
 				{
-					attachment.delete();
+					Files.deleteIfExists(attachment.toPath());
 				}
 				
-				if (attachment2 != null && attachment2.exists())
+				if (attachment2 != null)
 				{
-					attachment2.delete();
+					Files.deleteIfExists(attachment2.toPath());
 				}
 			}			
 			
-		} catch (MessagingException e) {
+		} catch (MessagingException | IOException e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 	}
 	
 	private String adaptFilename(String file)
 	{
-		if (file.startsWith("answer"))
+		if (file.startsWith(Constants.ANSWER))
 		{
 			return "Contribution" + file.substring(6);
 		} else if (file.startsWith("quiz"))

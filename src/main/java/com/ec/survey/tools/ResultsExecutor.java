@@ -17,7 +17,6 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.ExportCache;
 import com.ec.survey.model.Form;
 import com.ec.survey.model.ResultFilter;
@@ -47,8 +47,6 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 	private ResultFilter filter;
 	private String email;
 	private String from;
-	private String server;
-	private String smtpPort;
 	private String host;
 	
 	@Resource(name="mailService")
@@ -60,7 +58,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 	
 	private BeanFactory context;
 	@Override
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+	public void setBeanFactory(BeanFactory beanFactory) {
 		context = beanFactory;		
 	}
 	
@@ -83,14 +81,12 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 	
 	private static final Logger logger = Logger.getLogger(ResultsExecutor.class);
 	
-	public void init(Survey survey, ResultFilter filter, String email, String from, String server, String smtpPort, String host, String fileDir, String type, MessageSource resources, Locale locale, String question)
+	public void init(Survey survey, ResultFilter filter, String email, String from, String host, String fileDir, String type, MessageSource resources, Locale locale, String question)
 	{
 		this.survey = survey;
 		this.filter = filter;
 		this.email = email;
 		this.from = from;
-		this.server = server;
-		this.smtpPort = smtpPort;
 		this.host = host;
 		this.fileDir = fileDir;
 		this.type = type;
@@ -131,7 +127,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 				{
 					files = answerService.getFilesForQuestion(question.replace("false", ""), false);
 				} else {
-					throw new Exception("invalid question id");
+					throw new MessageException("invalid question id");
 				}
 				
 				java.io.File temp = fileService.getSurveyExportFile(survey.getUniqueId(), uid);	
@@ -150,7 +146,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 						source = new java.io.File(fileDir + f.getUid());
 						if (source.exists())
 						{
-							fileService.LogOldFileSystemUse(fileDir + f.getUid());
+							fileService.logOldFileSystemUse(fileDir + f.getUid());
 						}
 					}
 					
@@ -197,10 +193,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 			    	f.setUid(uid);
 					
 			    	Form form = new Form(resources);
-			    	
-			    	//List<AnswerSet> answerSets = answerService.getAllAnswers(survey.getId(), filter);
-			    	
-					//form.setAnswerSets(answerSets);	    		    	
+			    	    		    	
 			    	form.setSurvey(survey);
 			    	form.setPublicationMode(true);
 			    	
@@ -237,7 +230,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 				}
 			}
 			
-			String link = host + "files/" + survey.getUniqueId() + "/" + uid + "/";			
+			String link = host + "files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + uid + Constants.PATH_DELIMITER;			
 			String body = "Dear EUSurvey user,<br /><br />The export you requested from the published results of the survey '<b>" + survey.cleanTitle() + "</b>' is now finished. You can download it here:<br /><br /> <a href=\"" + link + "\">" + filename + "</a><br /><br />Your EUSurvey team";
 			
 			String subject = "Copy of your requested export from '" + survey.cleanTitleForMailSubject() + "'";
@@ -245,7 +238,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 			String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
 						
-			mailService.SendHtmlMail(email, from, from, subject, text, server, Integer.parseInt(smtpPort), null);
+			mailService.SendHtmlMail(email, from, from, subject, text, null);
 			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

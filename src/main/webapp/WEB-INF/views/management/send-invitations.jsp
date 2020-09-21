@@ -57,10 +57,10 @@
 				  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 				  cache: false,
 				  success: function( result ) {
-					  if (result == 'EXISTS')
+					  if (result == 'exists')
 					  {
 						 $('#savetextdialoginput').after("<div class='validation-error'><spring:message code="error.NameAlreadyUsed" /></div>");
-					  } else if (result == 'ERROR')
+					  } else if (result == 'error')
 					  {
 						  showError("<spring:message code="error.OperationFailed" />");
 					  } else {
@@ -135,7 +135,7 @@
 				  data: "id=" + id,
 				  cache: false,
 				  success: function( result ) {					  
-					  if (result == "OK")
+					  if (result == "ok")
 					  {
 					 	$("#mailtext").find("option[value='" + id + "']").remove();
 					  	$("#mailtext").val(0);

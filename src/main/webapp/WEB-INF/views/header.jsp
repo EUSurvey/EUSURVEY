@@ -86,7 +86,7 @@
 										<span class="caret"></span>
 			  						</a>	
 			  						
-			  						<ul class="dropdown-menu" id="dropdownLangElements" aria-labelledby="dropdownLang">	 						
+			  						<ul class="dropdown-menu dropdown-menu-right" id="dropdownLangElements" aria-labelledby="dropdownLang">	 						
 			  							<c:choose>	  							
 											<c:when test="${isthankspage != null || isdraftinfopage != null}">
 												<li>
@@ -98,10 +98,10 @@
 												<li> 
 													<c:choose>						  									
 														<c:when test="${escapemode != null}">
-															<a href="?surveylanguage=${lang.value.code}"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
+															<a href="?surveylanguage=${lang.value.code}"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></a>
 														</c:when>
 														<c:when test="${publication != null}">
-															<a href="?language=${lang.value.code}&surveylanguage=${lang.value.code}"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></a>
+															<a href="?language=${lang.value.code}&surveylanguage=${lang.value.code}"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></a>
 														</c:when>
 														<c:when test="${lang.value.code == form.language.code}">
 														<a class="skipScriptAnchor" onclick="$('.dropdown.open .dropdown-toggle').dropdown('toggle')"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></a>
@@ -145,36 +145,36 @@
 							
 							 |
 		
-							<div class="dropdown" >
+							<div class="dropdown">
 								<a class="dropdown-toggle" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
 									<spring:message code="label.Language" />&nbsp;
 									<span class="caret"></span>
 		  						</a>
-		  						<ul class="dropdown-menu" id="dropdownLangElements" aria-labelledby="dropdownLang">				
-						 			<li><a href="?language=bg">Български</a></li>
-						 			<li><a href="?language=cs">Čeština</a></li>
-						 			<li><a href="?language=da">Dansk</a></li>
-						 			<li><a href="?language=de">Deutsch</a></li>
-						 			<li><a href="?language=et">Eesti keel</a></li>
-						 			<li><a href="?language=el">Ελληνικά</a></li>
-						 			<li><a href="?language=en">English</a></li>
-						 			<li><a href="?language=es">Español</a></li>
-						 			<li><a href="?language=fr">Français</a></li>
-						 			<li><a href="?language=ga">Gaeilge</a></li>
-						 			<li><a href="?language=hr">Hrvatski jezik</a></li> 
-						 			<li><a href="?language=it">Italiano</a></li>
-						 			<li><a href="?language=lv">Latviešu valoda</a></li> 
-						 			<li><a href="?language=lt">Lietuvių kalba</a></li>
-						 			<li><a href="?language=hu">Magyar</a></li>
-						 			<li><a href="?language=mt">Malti</a></li>
-						 			<li><a href="?language=nl">Nederlands</a></li>
-						 			<li><a href="?language=pl">Polski</a></li>
-						 			<li><a href="?language=pt">Português</a></li>
-						 			<li><a href="?language=ro">Română</a></li>
-						 			<li><a href="?language=sk">Slovenčina</a></li>
-						 			<li><a href="?language=sl">Slovenščina</a></li>
-						 			<li><a href="?language=fi">Suomi</a></li>
-						 			<li><a href="?language=sv">Svenska</a></li>
+		  						<ul class="dropdown-menu dropdown-menu-right" id="dropdownLangElements" aria-labelledby="dropdownLang">				
+						 			<li><a href="?language=bg">[BG] Български</a></li>
+						 			<li><a href="?language=cs">[CS] Čeština</a></li>
+						 			<li><a href="?language=da">[DA] Dansk</a></li>
+						 			<li><a href="?language=de">[DE] Deutsch</a></li>
+						 			<li><a href="?language=et">[ET] Eesti keel</a></li>
+						 			<li><a href="?language=el">[EL] Ελληνικά</a></li>
+						 			<li><a href="?language=en">[EN] English</a></li>
+						 			<li><a href="?language=es">[ES] Español</a></li>
+						 			<li><a href="?language=fr">[FR] Français</a></li>
+						 			<li><a href="?language=ga">[GA] Gaeilge</a></li>
+						 			<li><a href="?language=hr">[HR] Hrvatski jezik</a></li> 
+						 			<li><a href="?language=it">[IT] Italiano</a></li>
+						 			<li><a href="?language=lv">[LV] Latviešu valoda</a></li> 
+						 			<li><a href="?language=lt">[LT] Lietuvių kalba</a></li>
+						 			<li><a href="?language=hu">[HU] Magyar</a></li>
+						 			<li><a href="?language=mt">[MT] Malti</a></li>
+						 			<li><a href="?language=nl">[NL] Nederlands</a></li>
+						 			<li><a href="?language=pl">[PL] Polski</a></li>
+						 			<li><a href="?language=pt">[PT] Português</a></li>
+						 			<li><a href="?language=ro">[RO] Română</a></li>
+						 			<li><a href="?language=sk">[SK] Slovenčina</a></li>
+						 			<li><a href="?language=sl">[SL] Slovenščina</a></li>
+						 			<li><a href="?language=fi">[FI] Suomi</a></li>
+						 			<li><a href="?language=sv">[SV] Svenska</a></li>
 					 			</ul>
 							</div>	
 						</c:otherwise>

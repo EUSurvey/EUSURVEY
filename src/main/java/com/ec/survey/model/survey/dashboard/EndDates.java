@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class EndDates {
 	
-	private Map<Date, List<String>> endDates = new TreeMap<Date, List<String>>();
+	private Map<Date, List<String>> endDates = new TreeMap<>();
 	
 	@JsonIgnore
 	public Map<Date, List<String>> getEndDates() {

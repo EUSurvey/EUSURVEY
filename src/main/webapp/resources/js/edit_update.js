@@ -160,6 +160,80 @@ function update(input)
 			_undoProcessor.addUndoStep(["DisplayMode", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			addElementHandler($(_elementProperties.selectedelement));
 			break;
+		case "DisplaySlider":
+			var text = $(input).val();
+			var oldtext = element.display();
+			element.display(text);
+			_undoProcessor.addUndoStep(["DisplaySlider", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
+			adaptSliderDisplay(text === "Slider");
+			
+			if (text === "Slider")
+			{
+				element.optional(true);
+				$('#idPropertyMandatory').removeAttr("checked");
+				
+				element.unit("");
+				$('tr[data-label=Unit]').find("input[type=text]").val("");
+				
+				if (element.min() == null)
+				{
+					$("tr[data-label='Values']").find("input[data-type='min']").val("0");
+					element.min(0);
+					element.minString("0");
+				}
+				if (element.max() == null)
+				{
+					$("tr[data-label='Values']").find("input[data-type='max']").val("10");
+					element.max(10);
+					element.maxString("10");
+				}
+				if (element.minLabel() == null)
+				{
+					element.minLabel("Very unlikely");
+					$("tr[data-label='MinLabel']").find("input[type='text']").val("Very unlikely");
+				}
+				if (element.maxLabel() == null)
+				{
+					element.maxLabel("Very likely");
+					$("tr[data-label='MaxLabel']").find("input[type='text']").val("Very likely");
+				}
+				
+				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);
+			}
+			
+			break;
+		case "MinLabel":
+			var text = $(input).val();
+			var oldtext = element.minLabel();
+			element.minLabel(text);
+			_undoProcessor.addUndoStep(["MinLabel", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
+			break;
+		case "MaxLabel":
+			var text = $(input).val();
+			var oldtext = element.maxLabel();
+			element.maxLabel(text);
+			_undoProcessor.addUndoStep(["MaxLabel", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
+			break;
+		case "DisplayGraduationScale":
+			var checked = $(input).is(":checked");
+			var text = checked ? "true" : "false";
+			var oldtext = checked ? "false" : "true";
+			element.displayGraduationScale(checked);
+			_undoProcessor.addUndoStep(["DisplayGraduationScale", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			$(".selectedquestion").find(".sliderbox").first().bootstrapSlider().bootstrapSlider('destroy');
+			initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);
+			break;
+		case "InitialSliderPosition":
+			var text = $(input).val();
+			var oldtext = element.initialSliderPosition();
+			element.initialSliderPosition(text);
+			_undoProcessor.addUndoStep(["InitialSliderPosition", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
+			initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);
+			break;			
 		case "Order":
 			var text = $(input).val();
 			var oldtext = element.order();
@@ -279,6 +353,12 @@ function update(input)
 				{
 					return;
 				}
+			} else if (element.type == "TimeQuestion")
+			{
+				if (!checkMinMaxTime(input, hasInputError, $(".quizrule").length > 0))
+				{
+					return;
+				}
 			} else {
 				if (!checkMinMax(input, hasInputError, null, $(".quizrule").length > 0))
 				{
@@ -319,6 +399,23 @@ function update(input)
 						update(this);
 					});
 				});
+			}
+			
+			if (element.display() === "Slider") {
+				if (element.min() == null || element.min().length == 0)
+				{
+					$(input).val("0");
+					element.min("0");
+					element.minString("0");
+				}
+				if (element.max() == null || element.max().length == 0)
+				{
+					$(input).val("10");
+					element.max("10");
+					element.maxString("10");
+				}
+				
+				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);				
 			}
 			
 			break;
@@ -533,6 +630,11 @@ function update(input)
 			});
 			
 			_undoProcessor.addUndoStep(["DecimalPlaces", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			
+			if (element.display() === "Slider") {
+				initSlider($(".selectedquestion").find(".sliderbox").first(), true, element);				
+			}
+			
 			break;
 		case "LabelText":
 			var text = $(input).val();		

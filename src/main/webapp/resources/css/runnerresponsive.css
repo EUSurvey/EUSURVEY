@@ -107,7 +107,6 @@
 
 .questionhelp {
 	color: #A6A6A6;
-	font-size: 11px;
 }
 
 .limits {
@@ -174,6 +173,18 @@
 
 .table-label {
 	font-weight: bold;
+}
+
+.slider-horizontal {	
+	margin-top: 20px;
+	margin-bottom: 10px;
+	width: 300px !important;
+}
+
+.slider-div {
+	padding: 20px;
+	padding-left: 20px;
+	max-width: 420px;
 }
 
 .numbering {
@@ -243,6 +254,11 @@ textarea.freetext {
 }
 
 .date {
+	width: 130px !important;
+}
+
+
+input[type="text"].time {
 	width: 130px !important;
 }
 
@@ -392,4 +408,32 @@ legend {
 
 .ecl-footer__title {
 	margin-bottom: 0px !important;
+}
+
+.slider.slider-disabled .slider-track {
+	background-color: #f5f5f5 !important;
+	background-image: none !important;
+}
+
+.slider-selection.tick-slider-selection {
+	background-color: #8ac1ef !important;
+	background-image: none !important;
+}
+
+.slider-tick {
+	background-color: #eee !important;
+	background-image: none !important;
+	
+    filter: none !important;
+ 
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    filter: none;
+    opacity: 1;
+    border: 0 solid transparent;
+}
+
+.slider.slider-disabled .slider-handle {
+	background-color: #ccc !important;
+	background-image: none !important;
 }

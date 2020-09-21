@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.Export;
 import com.ec.survey.model.Export.ExportFormat;
 import com.ec.survey.model.Export.ExportState;
@@ -10,6 +11,7 @@ import com.ec.survey.model.survey.ChoiceQuestion;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.Text;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.export.*;
@@ -24,24 +26,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.*;
 
 @Service("exportService")
 @Configurable
 public class ExportService extends BasicService {
-	
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name = "activityService")
-	private ActivityService activityService;
 	
 	private @Value("${export.deleteexportstimeout}") String deleteexportstimeout;
 	private @Value("${smtpserver}") String smtpServer;
@@ -62,7 +59,9 @@ public class ExportService extends BasicService {
 		session.saveOrUpdate(export);
 		session.flush();		
 		if (form != null && form.getSurvey() != null)
-		Hibernate.initialize(form.getSurvey().getElementsRecursive(true));
+		{
+			Hibernate.initialize(form.getSurvey().getElementsRecursive(true));
+		}
 		
 		if (export.getActivityFilter() != null)
 		{
@@ -71,13 +70,6 @@ public class ExportService extends BasicService {
 		}		
 	}
 	
-	@Transactional(readOnly = false)
-	public void markFinished(Export export) {
-		export.setValid(true);
-		export.setState(ExportState.Finished);
-		this.update(export);
-	}
-
 	@Transactional
 	public boolean startExport(Form form, Export export, boolean immediate, MessageSource resources, Locale locale, String uid, String exportFilePath, boolean skipcheckworkerserver) {	
 		
@@ -90,7 +82,7 @@ public class ExportService extends BasicService {
 			{
 				logger.info("calling worker server for export " + export.getId());
 				
-				URL workerurl = new URL(workerserverurl + "worker/start/" + export.getId() + "/" + uid);
+				URL workerurl = new URL(workerserverurl + "worker/start/" + export.getId() + Constants.PATH_DELIMITER + uid);
 				
 				try {				
 					URLConnection wc = workerurl.openConnection();
@@ -128,7 +120,7 @@ public class ExportService extends BasicService {
 			case pdf: exportCreator = (PdfExportCreator) context.getBean("pdfExportCreator"); break;
 			case zip: exportCreator = (ZipExportCreator) context.getBean("zipExportCreator"); break;
 			case eus: exportCreator = (EusExportCreator) context.getBean("eusExportCreator"); break;
-			default: throw new Exception("Export format not supported");
+			default: throw new MessageException("Export format not supported");
 			}
 			
 			if (user == null)
@@ -148,7 +140,9 @@ public class ExportService extends BasicService {
 					break;
 				case Activity:
 					activityService.log(312, null, export.getId() != null ? export.getId().toString() : "", user != null ? user.getId() : 0, export.getSurvey() != null ? export.getSurvey().getUniqueId() : "");
-					break;					
+					break;
+			default:
+				break;					
 			}
 			
 			if (immediate)
@@ -157,7 +151,9 @@ public class ExportService extends BasicService {
 				
 				if (export.getEmail() != null)
 				{
-					markFinished(export);
+					export.setValid(true);
+					export.setState(ExportState.Finished);
+					this.update(export);
 					
 					Calendar end = Calendar.getInstance();
 					end.setTime( new Date());
@@ -299,7 +295,7 @@ public class ExportService extends BasicService {
 			exports = list;
 		} else {
 			
-			if (onlynotnotified) //if (export.isFinished() && !export.isNotified())
+			if (onlynotnotified)
 			{
 				query.setMaxResults(1);
 			}
@@ -352,7 +348,7 @@ public class ExportService extends BasicService {
 	}
 
 	@Transactional(readOnly = false)
-	public void deleteSurveyExports(int surveyId) {
+	public void deleteSurveyExports(int surveyId) throws IOException {
 		Session session = sessionFactory.getCurrentSession();
 		
 		Query query = session.createQuery("SELECT e.id, e.format FROM Export e WHERE e.survey.id = :id");
@@ -363,10 +359,7 @@ public class ExportService extends BasicService {
 		for (Object[] export : data)
 		{
 			java.io.File f = new java.io.File(getTempExportFilePath(ConversionTools.getValue(export[0]),(ExportFormat) export[1]));
-			if (f.exists())
-			{
-				f.delete();
-			}
+			Files.deleteIfExists(f.toPath());
 		}		
 		
 		query = session.createQuery("DELETE FROM Export e WHERE e.survey.id = :id");
@@ -413,14 +406,11 @@ public class ExportService extends BasicService {
 			String filePath = getTempExportFilePath(export, null);
 
 			File file = new File(filePath);
-			file.delete();
+			Files.delete(file.toPath());
 			
 			file = new File(filePath + ".zip");
-			if (file.exists())
-			{
-				file.delete();
-			}
-			
+			Files.deleteIfExists(file.toPath());
+				
 			Session session = sessionFactory.getCurrentSession();
 			
 			Query query = session.createQuery("delete Export e where e.id = :id");
@@ -435,7 +425,6 @@ public class ExportService extends BasicService {
 		}
 	}
 
-	@Transactional(readOnly = true)
 	void determineValidState(Export export, boolean evict) {
 		try {
 			if (export != null)
@@ -455,12 +444,7 @@ public class ExportService extends BasicService {
 					
 					Date max = (Date)query.uniqueResult();
 					
-					if (max != null && max.after(export.getDate())) {
-						export.setValid(false);
-					} else {
-						export.setValid(true);
-					}
-					
+					export.setValid(!(max != null && max.after(export.getDate())));
 				} else {		
 					Session session = sessionFactory.getCurrentSession();
 					
@@ -481,11 +465,7 @@ public class ExportService extends BasicService {
 					
 					Date max = (Date)query.uniqueResult();
 					
-					if (max != null && max.after(export.getDate())) {
-						export.setValid(false);
-					} else {
-						export.setValid(true);
-					}
+					export.setValid(!(max != null && max.after(export.getDate())));
 				}
 			}		
 		} catch (Exception e)
@@ -511,7 +491,7 @@ public class ExportService extends BasicService {
 		return count > 0 ;
 	}
 	
-	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	public void update(Export export) {
 		Session session = sessionFactory.getCurrentSession();
 		export = (Export) session.merge(export);
@@ -563,10 +543,10 @@ public class ExportService extends BasicService {
 		return export;
 	}
 
-	public void recreateExport(Export export, Locale locale, MessageSource resources) {
+	public void recreateExport(Export export, Locale locale, MessageSource resources) throws IOException {
 		String filePath = exportService.getTempExportFilePath(export, null);
 		File file = new File(filePath);
-		file.delete();
+		Files.deleteIfExists(file.toPath());
 		export.setState(ExportState.Pending);
 		export.setDate(new Date());
 		Form form = new Form(resources);
@@ -581,7 +561,7 @@ public class ExportService extends BasicService {
 				try {				
 				
 					//get mapping of old ids to source ids
-					HashMap<Integer, String> oldUniqueIdsById = SurveyService.getUniqueIdsById(oldSurvey);
+					Map<Integer, String> oldUniqueIdsById = SurveyService.getUniqueIdsById(oldSurvey);
 					
 					//get mapping of source ids to new ids
 					HashMap<String, Integer> newIdsByUniqueId = new HashMap<>();
@@ -627,32 +607,29 @@ public class ExportService extends BasicService {
 					{				
 						int key = Integer.parseInt(skey);
 						
-						if (oldUniqueIdsById.containsKey(key))
+						if (oldUniqueIdsById.containsKey(key) && newIdsByUniqueId.containsKey(oldUniqueIdsById.get(key)))
 						{
-							if (newIdsByUniqueId.containsKey(oldUniqueIdsById.get(key)))
+							Element element = oldSurvey.getElementsById().get(key);
+							
+							//check if value is also key
+							if (element instanceof ChoiceQuestion || element instanceof Text)
 							{
-								Element element = oldSurvey.getElementsById().get(key);
-								
-								//check if value is also key
-								if (element instanceof ChoiceQuestion || element instanceof Text)
+								String value = export.getResultFilter().getFilterValues().get(String.valueOf(key));
+								String[] values = value.split(";");
+								StringBuilder newValues = new StringBuilder();
+								for (String svalId : values)
 								{
-									String value = export.getResultFilter().getFilterValues().get(String.valueOf(key));
-									String[] values = value.split(";");
-									StringBuilder newValues = new StringBuilder();
-									for (String svalId : values)
+									int valId = Integer.parseInt(svalId);
+									
+									if (newValues.length() > 0)
 									{
-										int valId = Integer.parseInt(svalId);
-										
-										if (newValues.length() > 0)
-										{
-											newValues.append(";");
-										}
-										if (oldUniqueIdsById.containsKey(valId) && newIdsByUniqueId.containsKey(oldUniqueIdsById.get(valId)))
-										{
-											newValues.append(newIdsByUniqueId.get(oldUniqueIdsById.get(valId)));
-										} else {
-											newValues.append(valId); // this should not happen but we keep the original id if we cannot find a new one
-										}
+										newValues.append(";");
+									}
+									if (oldUniqueIdsById.containsKey(valId) && newIdsByUniqueId.containsKey(oldUniqueIdsById.get(valId)))
+									{
+										newValues.append(newIdsByUniqueId.get(oldUniqueIdsById.get(valId)));
+									} else {
+										newValues.append(valId); // this should not happen but we keep the original id if we cannot find a new one
 									}
 								}
 							}
@@ -674,7 +651,6 @@ public class ExportService extends BasicService {
 	@Transactional
 	public void applyExportTimeout() {
 		Session session = sessionFactory.getCurrentSession();
-		//Query query = session.createQuery("UPDATE Export e SET e.state = 1 WHERE e.state = 0 AND e.date < :date");
 		Query query = session.createQuery("UPDATE Export e SET e.state = 1 WHERE e.state = 0 AND e.date <= :date");
 		
 		Calendar cal = Calendar.getInstance();
@@ -686,7 +662,7 @@ public class ExportService extends BasicService {
 	}
 
 	@Transactional
-	public void deleteOldExports() throws Exception {
+	public void deleteOldExports() throws IOException {
 		
 		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false"))
 		{
@@ -740,7 +716,7 @@ public class ExportService extends BasicService {
 				File file = new File(filePath);
 				if (file.exists())
 				{
-					file.delete();
+					Files.delete(file.toPath());
 					counter++;
 				}
 				
@@ -749,7 +725,7 @@ public class ExportService extends BasicService {
 					file = new File(filePath + ".zip");
 					if (file.exists())
 					{
-						file.delete();
+						Files.delete(file.toPath());
 						counter++;
 					}
 				}
@@ -775,7 +751,7 @@ public class ExportService extends BasicService {
 		query.setInteger("id", id);
 		@SuppressWarnings("unchecked")
 		List<Export> exports = query.list();
-		if (exports.size() > 0) return exports.get(0);
+		if (!exports.isEmpty()) return exports.get(0);
 		return null;
 	}	
 	

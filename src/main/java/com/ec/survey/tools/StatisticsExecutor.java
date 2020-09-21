@@ -54,23 +54,19 @@ public class StatisticsExecutor implements Runnable {
 	private String format;
 	private String email;
 	private String from;
-	private String server;
-	private String smtpPort;
 	private String host;
 	private String hash;
 	private Locale locale;
 	
 	private static final Logger logger = Logger.getLogger(StatisticsExecutor.class);
 	
-	public void init(Survey survey, String type, String format, String hash, String email, String from, String server, String smtpPort, String host, Locale locale)
+	public void init(Survey survey, String type, String format, String hash, String email, String from, String host, Locale locale)
 	{
 		this.survey = survey;
 		this.type = type;
 		this.format = format;
 		this.email = email;
 		this.from = from;
-		this.server = server;
-		this.smtpPort = smtpPort;
 		this.host = host;
 		this.locale = locale;
 		this.hash = hash;
@@ -86,13 +82,13 @@ public class StatisticsExecutor implements Runnable {
 			if (c != null)
 			{
 				String name =  FileUtils.cleanFilename(String.format("%s_Export_%s.%s", type, "Published Results Export",format));	
-				String link = host + "files/" + survey.getUniqueId() + "/" + c.getUid() + "/";					
+				String link = host + "files/" + survey.getUniqueId() + Constants.PATH_DELIMITER + c.getUid() + Constants.PATH_DELIMITER;					
 				String body = "Dear EUSurvey user,<br /><br />The export you requested from the published results of the survey '<b>" + survey.cleanTitle() + "</b>' is now finished. You can download it here:<br /><br /> <a href=\"" + link + "\">" + name + "</a><br /><br />Your EUSurvey team";
 				String subject = "Copy of your requested export from '" + survey.cleanTitleForMailSubject() + "'";
 				InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",host);
 				
-				mailService.SendHtmlMail(email, from, from, subject, text, server, Integer.parseInt(smtpPort.trim()), null);				
+				mailService.SendHtmlMail(email, from, from, subject, text, null);				
 			} else {	
 							
 				ResultFilter filter = survey.getPublication().getFilter().copy();

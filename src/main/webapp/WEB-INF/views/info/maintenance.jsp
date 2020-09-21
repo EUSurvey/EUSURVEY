@@ -17,7 +17,7 @@
 		<img src="${contextpath}/resources/images/logo_Eusurvey.png" alt="EUSurvey logo" />
 
 		<div style="margin-left: 185px;">			
-			<h2><hr /><div style="padding-left: 30px;"><spring:message code="error.Maintenance" /></div><hr /></h2>
+			<h2><hr /><div style="padding-left: 30px;"><spring:message code="error.MaintenanceNew" /></div><hr /></h2>
 		</div>
 
 	</div>

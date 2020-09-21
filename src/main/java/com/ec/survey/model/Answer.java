@@ -65,7 +65,6 @@ public class Answer implements java.io.Serializable {
 	public String getValueEscaped()
 	{
 		return JSONObject.escape(value);
-		//return value.replace("\"", "\\x22").replace("\r", "").replace("\n", "\\n");
 	}
 	
 	@Column(name = "QUESTION_UID")

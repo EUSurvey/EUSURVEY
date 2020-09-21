@@ -26,7 +26,9 @@ public class HibernateCleaner {
 	private static Object clean(Session session,
                                 Object obj, 
                                 Map<Class, Map<Object, Object>> visitedObjects) throws Exception {
-        Object newObj, value = null, cleanValue = null;
+        Object newObj;
+        Object value = null;
+        Object cleanValue = null;
         Map.Entry m;
         Class clazz;
         Object[] array;
@@ -36,7 +38,8 @@ public class HibernateCleaner {
         String property;
         ClassMetadata clazzMetaData;
         Map<Object, Object> visitedObjectsInClass;
-        int index, length;
+        int index;
+        int length;
         
         if (obj == null)
             return (null);
@@ -107,8 +110,8 @@ public class HibernateCleaner {
         if (!Hibernate.isInitialized(obj)) {
             if (session != null) {
                 clazzMetaData = session.getSessionFactory().getClassMetadata(newObj.getClass());
-                Serializable id = clazzMetaData.getIdentifier(obj, (SessionImplementor)session); //, EntityMode.POJO);
-                clazzMetaData.setIdentifier(newObj, id, (SessionImplementor)session); //, EntityMode.POJO);
+                Serializable id = clazzMetaData.getIdentifier(obj, (SessionImplementor)session);
+                clazzMetaData.setIdentifier(newObj, id, (SessionImplementor)session);
             }
         } else {
             descriptors = PropertyUtils.getPropertyDescriptors(newObj);

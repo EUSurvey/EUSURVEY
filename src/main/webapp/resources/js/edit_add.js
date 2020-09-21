@@ -45,7 +45,7 @@ function getNewElement(item)
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("numberitem"))
 	{
-		element = getBasicElement("NumberQuestion", true, "Number Question", item.attr("id"), true);
+		element = getBasicElement("NumberQuestion", true, "Number-Slider Question", item.attr("id"), true);
 		element.decimalPlaces = 0;
 		element.unit = "";
 		element.min = null;
@@ -109,6 +109,15 @@ function getNewElement(item)
 		element.max = null;
 		element.maxString = null;
 		element.css = "date";
+		updateComplexityScore("addSimpleQuestion");
+	} else if (item.hasClass("timeitem"))
+	{
+		element = getBasicElement("TimeQuestion", true, "Time", item.attr("id"), true);
+		element.min = null;
+		element.minString = null;
+		element.max = null;
+		element.maxString = null;
+		element.css = "time";
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("textitem"))
 	{
@@ -402,7 +411,7 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		} else {
 			element.optional = true;
 		}
-		element.isAttribute = true;
+		element.isAttribute = false;
 		element.isUnique = false;
 		element.attributeName = element.shortname;
 		element.readonly = false;		

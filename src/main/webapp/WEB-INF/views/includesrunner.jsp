@@ -21,6 +21,7 @@
 <link href="${contextpath}/resources/css/jquery-ui.structure.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 <link href="${contextpath}/resources/css/jquery-ui.theme.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 <link href="${contextpath}/resources/css/common.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
+<link href="${contextpath}/resources/css/bootstrap-slider.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 
 <c:if test="${ismobile != null}">
 	<link href="${contextpath}/resources/css/commonmobile.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
@@ -72,6 +73,7 @@
 <script type="text/javascript" src="${contextpath}/resources/js/scroll-sneak.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/system.js?version=<%@include file="version.txt" %>"></script>
 <script src="https://ec.europa.eu/wel/cookie-consent/consent.js" type="text/javascript"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/bootstrap-slider.min.js?version=<%@include file="version.txt" %>"></script>
  
 <script type="text/javascript">
 	if (top != self) top.location=location;
@@ -94,13 +96,17 @@
 			var invalidCharacter = "${form.getMessage("validation.invalidCharacter")}";
 			var valuetoosmall = "${form.getMessage("validation.valueTooSmall")}";
 			var valuetoolarge = "${form.getMessage("validation.valueTooLarge")}";
+			var timevaluetoosmall = "${form.getMessage("validation.valueTooSmallTime")}";
+			var timevaluetoolarge = "${form.getMessage("validation.valueTooLargeTime")}";
 			var notenoughanswers = "${form.getMessage("validation.notEnoughAnswers")}";
 			var toomanyanswers = "${form.getMessage("validation.tooManyAnswers")}";
 			var noRegExmatchText = "${form.getMessage("validation.noRegExMatch")}";
 			var invalidDate = "${form.getMessage("validation.invalidDate")}";
+			var invalidTime = "${form.getMessage("validation.invalidTime")}";
 			var invalidEmail = "${form.getMessage("validation.invalidEmail")}";
 			var invalidCaseId = "${form.getMessage("validation.invalidContributionId")}";
 			var invalidStartEnd = "${form.getMessage("validation.invalidStartEnd")}";
+			var invalidStartEndTime = "${form.getMessage("validation.invalidStartEndTime")}";
 			var interdependentText = "${form.getMessage("validation.interdependentText")}";
 			var invalidURL = "${form.getMessage("validation.invalidURL")}";
 			var invalidPrecisionText = "${form.getMessage("validation.invalidPrecisionNumber")}";
@@ -169,13 +175,17 @@
 			var invalidnumberText = "<spring:message code='validation.invalidNumber' />";
 			var valuetoosmall = "<spring:message code='validation.valueTooSmall' />";
 			var valuetoolarge = "<spring:message code='validation.valueTooLarge' />";
+			var timevaluetoosmall = "<spring:message code='validation.valueTooSmallTime' />";
+			var timevaluetoolarge = "<spring:message code='validation.valueTooLargeTime' />";
 			var notenoughanswers = "<spring:message code='validation.notEnoughAnswers' />";
 			var toomanyanswers = "<spring:message code='validation.tooManyAnswers' />";
 			var noRegExmatchText = "<spring:message code='validation.noRegExMatch' />";
 			var invalidDate = "<spring:message code='validation.invalidDate' />";
+			var invalidTime = "<spring:message code='validation.invalidTime' />";
 			var invalidEmail = "<spring:message code='validation.invalidEmail' />";
 			var invalidCaseId = "<spring:message code='validation.invalidContributionId' />";
 			var invalidStartEnd = "<spring:message code='validation.invalidStartEnd' />";
+			var invalidStartEndTime = "<spring:message code='validation.invalidStartEndTime' />";
 			var interdependentText = "<spring:message code='validation.interdependentText' />";
 			var invalidURL = "<spring:message code='validation.invalidURL' />";
 			var invalidPrecisionText = "<spring:message code='validation.invalidPrecisionNumber' />";

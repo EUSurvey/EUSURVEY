@@ -16,6 +16,10 @@ import java.util.List;
 public class LanguageTools {
 	
 	private static final Logger logger = Logger.getLogger(LanguageTools.class);
+	
+	private LanguageTools() {
+	    throw new IllegalStateException("Utility class");
+	}
 			
 	public static void loadLanguages(SurveyService surveyService, ServletContext servletContext) throws IOException
 	{
