@@ -6,6 +6,7 @@ import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.service.AttendeeService;
 import com.ec.survey.service.ParticipationService;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -29,7 +30,7 @@ public class GuestListCreator implements Runnable {
 	protected ParticipationService participationService;	
 	
 	@Resource(name = "attendeeService")
-	protected AttendeeService attendeeService;	
+	protected AttendeeService attendeeService;
 	
 	@Resource(name = "sessionFactory")
 	protected SessionFactory sessionFactory;	 
@@ -75,6 +76,7 @@ public class GuestListCreator implements Runnable {
 	{
 		Session session = sessionFactory.getCurrentSession();
 		ParticipationGroup g = participationService.get(groupId);
+
 		List<Integer> invitationsToDeactivate = new ArrayList<>();
 		
 		try {
@@ -83,6 +85,17 @@ public class GuestListCreator implements Runnable {
 			
 			if (type == 1)
 			{
+
+				for (EcasUser existingUser : g.getEcasUsers())
+				{
+					if (!userIDs.contains(existingUser.getId()))
+					{
+						Invitation invitation = attendeeService.getInvitationForParticipationGroupAndAttendee(g.getId(), existingUser.getId());
+						invitation.setDeactivated(true);
+						attendeeService.update(invitation);
+					}
+				}
+
 				List<EcasUser> users = new ArrayList<>();
 				
 				for (int id : userIDs)
@@ -90,6 +103,8 @@ public class GuestListCreator implements Runnable {
 					EcasUser user = (EcasUser) session.get(EcasUser.class, id);
 					users.add(user);
 				}
+
+				g.setEcasUsers(users);			
 				
 				for (Invitation invitation : existingInvitations) {
 					if (!userIDs.contains(invitation.getAttendeeId()))
@@ -102,6 +117,15 @@ public class GuestListCreator implements Runnable {
 			
 			} else if (type == 2)
 			{
+				for (Attendee existingAttendee : g.getAttendees())
+				{
+					if (!attendeeIDs.contains(existingAttendee.getId()))
+					{
+						Invitation invitation = attendeeService.getInvitationForParticipationGroupAndAttendee(g.getId(), existingAttendee.getId());
+						invitation.setDeactivated(true);
+						attendeeService.update(invitation);
+					}
+				}
 				List<Attendee> attendees = new ArrayList<>();
 				for (int intKey : attendeeIDs)
 				{
