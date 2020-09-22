@@ -566,6 +566,24 @@
 		</div>
 	</div>
 	
+	<div class="modal" id="timeout-dialog" data-backdrop="static">
+		<div class="modal-dialog">
+	  		<div class="modal-content">
+				<div class="modal-header">
+					<b><spring:message code="label.SessionTimeout" /></b>
+				</div>
+				<div class="modal-body">
+					<spring:message code="message.SessionTimeout" />&nbsp;<span style="color:#f00" id="timeoutleft"></span>.<br />
+					<spring:message code="message.SessionTimeout2" />
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" onclick="extend()"><spring:message code="label.Extend" /></a>	
+					<a class="btn btn-default" onclick="logout()"><spring:message code="label.Logout" /></a>				
+				</div>
+			</div>
+		</div>	
+	</div>
+	
 	<c:if test="${missingFiles != null}">
 	
 		<div class="modal" id="missingFilesDuringArchivingDialog" data-backdrop="static">
@@ -599,12 +617,69 @@
 		<script>
 			$("#missingFilesDuringArchivingDialog").modal("show");
 			$("#acceptMissingFilesButton").attr("href",	contextpath + "/noform/management/exportSurvey/true/${missingFilesSurvey}?delete=true&acceptMissingFiles=true");
-		</script>
+		</script>	
+
 	</c:if>
 	
 	<script>
-	$('[data-toggle="tooltip"]').tooltip({
-	    trigger : 'hover',
-	    container: 'body'
-	});
+		$('[data-toggle="tooltip"]').tooltip({
+		    trigger : 'hover',
+		    container: 'body'
+		});
+		
+		checkTimeout();
+		
+		function checkTimeout()
+		{
+			var diffTimeMilliseconds = getTimeoutMilliseconds();
+			if (diffTimeMilliseconds < 5 * 60 * 1000) {
+				$('#timeout-dialog').modal('show');
+				updateTimeout();
+			} else {
+				window.setTimeout(function() {
+				    checkTimeout();
+				}, 60000);
+			}		
+		}
+		
+		function getTimeoutMilliseconds()
+		{
+			var currentTime = new Date();
+			return Math.abs(currentTime - timeoutTime); 
+		}
+			
+		
+		function updateTimeout()
+		{		
+			var diffTimeMilliseconds = getTimeoutMilliseconds();
+			var diffTimeSeconds = diffTimeMilliseconds / 1000;
+			var minutes = Math.floor(diffTimeSeconds / 60);
+			var seconds = Math.floor(diffTimeSeconds - (minutes * 60));
+			$('#timeoutleft').html(minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
+			
+			window.setTimeout(function() {
+			    updateTimeout();
+			}, 1000);		
+		}
+		
+		function extend()
+		{
+			$.ajax({
+				  url: contextpath + "/info/renewsession",
+				  cache: false,
+				  error: function(e)
+				  {
+					  //this happens when there is no message
+				  },	  
+				  success: function(message)
+				  {
+					  //session timeout reset
+					  $('#timeout-dialog').modal('hide');
+					  refreshTimeout();
+					  checkTimeout();
+				  }
+				});
+		}				
+		
+
 	</script>

@@ -61,9 +61,11 @@ function checkSystemMessages()
 	  {
 		  //this happens when there is no message
 		  window.setTimeout("checkSystemMessages()", 60000);
+		  refreshTimeout();
 	  },	  
 	  success: function(message)
 	  {
+		  refreshTimeout();
 		  if (message != null)
 		  {
 			  if (currentmessageversion != message.version)
