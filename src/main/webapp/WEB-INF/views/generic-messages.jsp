@@ -142,6 +142,28 @@
 	</div>	
 </div>
 
+<div class="modal" id="timeout-dialog" data-backdrop="static">
+	<div class="modal-dialog">
+  		<div class="modal-content">
+			<div class="modal-header">
+				<b><spring:message code="label.SessionTimeout" /></b>
+			</div>
+			<div class="modal-body">
+				<div id="timeout-dialog-info">
+					<spring:message code="message.SessionTimeout" />&nbsp;<span style="color:#f00" id="timeoutleft"></span>.<br />
+					<spring:message code="message.SessionTimeout2" />
+				</div>
+				<div id="timeout-dialog-error" style="display: none">
+					<spring:message code="message.SessionTimeout3" />
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a class="btn btn-primary" id="timeout-dialog-extend" onclick="extend()"><spring:message code="label.Extend" /></a>				
+			</div>
+		</div>
+	</div>	
+</div>
+
 
 <script type="text/javascript">
 	
@@ -291,6 +313,8 @@
 		ko.applyBindings(_messages, $("#messages-box")[0]);
 		ko.applyBindings(_messages, $("#messages-log")[0]);
 		ko.applyBindings(_messages, $("#messages-button")[0]);
+		
+		checkTimeout();
 	});
 	
 	function showInfo(text)
@@ -329,5 +353,82 @@
 		$('#ask-export-dialog').modal('show');		
 		setTimeout(function() { $('#email').focus(); }, 1000);
 	}
+	
+	var sessiontimeout = 6 * 60; // <%=session.getMaxInactiveInterval()%>;
+	var timeoutTime = new Date();
+	refreshTimeout();
+	
+	function refreshTimeout()
+	{
+	  timeoutTime = new Date();
+	  timeoutTime.setSeconds(timeoutTime.getSeconds() + sessiontimeout);
+	}
+		
+	function checkTimeout()
+	{
+		var diffTimeMilliseconds = getTimeoutMilliseconds();
+		if (diffTimeMilliseconds < 5 * 60 * 1000) {
+			$('#timeout-dialog').modal('show');
+			updateTimeout();
+		} else {
+			window.setTimeout(function() {
+			    checkTimeout();
+			}, 60000);
+		}		
+	}
+	
+	function getTimeoutMilliseconds()
+	{
+		var currentTime = new Date();
+		return Math.abs(currentTime - timeoutTime); 
+	}
+			
+	function updateTimeout()
+	{		
+		var diffTimeMilliseconds = getTimeoutMilliseconds();
+		
+		if (diffTimeMilliseconds <= 0) {
+			//this means the session has timed out
+			$('#timeout-dialog-info').hide();
+			$('#timeout-dialog-error').show();			
+			$('#timeout-dialog-extend').hide();
+			return;
+		}
+		
+		if (diffTimeMilliseconds > 5 * 60 * 1000) {
+			//this means there was a request in the meantime that extended the session
+			$('#timeout-dialog').modal('hide');
+			checkTimeout();
+			return;
+		}
+		
+		var diffTimeSeconds = diffTimeMilliseconds / 1000;
+		var minutes = Math.floor(diffTimeSeconds / 60);
+		var seconds = Math.floor(diffTimeSeconds - (minutes * 60));
+		$('#timeoutleft').html(minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
+		
+		window.setTimeout(function() {
+		    updateTimeout();
+		}, 1000);		
+	}
+	
+	function extend()
+	{
+		$.ajax({
+			  url: contextpath + "/info/renewsession",
+			  cache: false,
+			  error: function(e)
+			  {
+				  //this happens when there is no message
+			  },	  
+			  success: function(message)
+			  {
+				  //session timeout reset
+				  $('#timeout-dialog').modal('hide');
+				  refreshTimeout();
+				  checkTimeout();
+			  }
+			});
+	}	
 	
 </script>

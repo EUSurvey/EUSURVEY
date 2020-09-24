@@ -251,16 +251,6 @@
 	 	localStorage.removeItem("SurveyEditorBackup${surveyeditorsaved}");
 	</c:if>
 	
-	var timeout = <%=session.getMaxInactiveInterval()%>;
-	var timeoutTime = new Date();
-	refreshTimeout();
-	
-	function refreshTimeout()
-	{
-		  timeoutTime = new Date();
-		  timeoutTime.setSeconds(timeoutTime.getSeconds() + timeout);
-	}
-	
 </script>
 <script type="text/javascript" src="${contextpath}/resources/js/utf8.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/includes.js?version=<%@include file="version.txt" %>"></script>
