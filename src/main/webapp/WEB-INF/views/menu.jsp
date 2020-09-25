@@ -599,12 +599,13 @@
 		<script>
 			$("#missingFilesDuringArchivingDialog").modal("show");
 			$("#acceptMissingFilesButton").attr("href",	contextpath + "/noform/management/exportSurvey/true/${missingFilesSurvey}?delete=true&acceptMissingFiles=true");
-		</script>
+		</script>	
+
 	</c:if>
 	
 	<script>
-	$('[data-toggle="tooltip"]').tooltip({
-	    trigger : 'hover',
-	    container: 'body'
-	});
+		$('[data-toggle="tooltip"]').tooltip({
+		    trigger : 'hover',
+		    container: 'body'
+		});
 	</script>
