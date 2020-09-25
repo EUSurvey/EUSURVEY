@@ -20,6 +20,7 @@ import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
+import com.ec.survey.tools.AnswerSetAnonymWorker;
 import com.ec.survey.tools.DeleteDraftsUpdater;
 import com.ec.survey.tools.DeleteInvalidStatisticsWorker;
 import com.ec.survey.tools.DeleteSurveyUpdater;
@@ -81,6 +82,9 @@ public class SchedulerService extends BasicService {
 	
 	@Resource(name = "surveyWorker")
 	private SurveyUpdater surveyWorker;
+
+	@Resource(name= "answerSetAnonymWorker")
+	private AnswerSetAnonymWorker answerSetAnonymWorker;
 	
 	@Resource(name = "schemaService")
 	private SchemaService schemaService;
@@ -527,6 +531,7 @@ public class SchedulerService extends BasicService {
 		deleteInvalidStatisticsWorker.run();
 		sendReportedSurveysWorker.run();
 		deleteUserAccountsWorker.run();
+		answerSetAnonymWorker.run();
 		
 		logger.debug("End nightly schedule");
 	 }

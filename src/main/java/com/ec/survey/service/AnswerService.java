@@ -1229,6 +1229,41 @@ public class AnswerService extends BasicService {
 		session.delete(answerSet);
 	}
 
+
+	@Transactional
+	public Date getOldestAnswerSetDate() {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query query = session.createQuery(
+				"SELECT min(a.date) FROM AnswerSet a");
+		return (Date) query.uniqueResult();
+	}
+
+	@Transactional
+	public void anonymiseAnswerSets(List<AnswerSet> answerSets) {
+        Session session = sessionFactory.getCurrentSession();
+        for (AnswerSet answerSet : answerSets) {
+			answerSet.setIP(null);
+			session.merge(answerSet);
+		}
+		session.flush();
+    }
+
+	@Transactional
+	public List<AnswerSet> getAnswerSetsToAnonymize(Date maxDate, int max) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query query = session.createQuery(
+				"SELECT a FROM AnswerSet a WHERE (a.date < :maxDate) and (a.IP IS NOT NULL) order by date ASC");
+		query.setDate("maxDate", maxDate);				
+		query.setMaxResults(max);
+
+		@SuppressWarnings("unchecked")
+		List<AnswerSet> list1 = query.list();
+		return list1;
+	}
+
+
 	@Transactional(readOnly = true)
 	public AnswerSet get(String uniqueCode) {
 		Session session = sessionFactory.getCurrentSession();
