@@ -797,7 +797,7 @@ public class ReportingService {
 		}
 	}
 
-	private Map<String, String> getColumnNamesAndTypes(Survey survey) {
+	private Map<String, String> getColumnNamesAndTypes(Survey survey) throws Exception {
 		if (survey == null) {
 			throw new IllegalArgumentException("survey is not null");
 		}
@@ -814,51 +814,67 @@ public class ReportingService {
 		columnNamesToType.put("SCORE", "INT");
 
 		for (Element question : survey.getQuestions()) {
+			logger.info("element " + question.getUniqueId());
+			
 			if (question instanceof FreeTextQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "TEXT");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof EmailQuestion || question instanceof RegExQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "TEXT");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof NumberQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "DOUBLE");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "DOUBLE");
 			} else if (question instanceof DateQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "DATE");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "DATE");
 			} else if (question instanceof TimeQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "TIME");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TIME");
 			} else if (question instanceof SingleChoiceQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "TEXT");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof MultipleChoiceQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "TEXT");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof Matrix) {
 				Matrix matrix = (Matrix) question;
 				for (Element child : matrix.getQuestions()) {
-					columnNamesToType.put(child.getUniqueId(), "TEXT");
+					putColumnNameAndType(columnNamesToType, child.getUniqueId(), "TEXT");
 				}
 			} else if (question instanceof Table) {
 				Table table = (Table) question;
 				for (Element child : table.getQuestions()) {
+					logger.info("Q " + child.getUniqueId());
 					for (Element answer : table.getAnswers()) {
-						columnNamesToType.put(Tools.md5hash(child.getUniqueId() + answer.getUniqueId()), "TEXT");
+						logger.info("A " + answer.getUniqueId());
+						putColumnNameAndType(columnNamesToType, Tools.md5hash(child.getUniqueId() + answer.getUniqueId()), "TEXT");
 					}
 				}
 			} else if (question instanceof Upload) {
-				columnNamesToType.put(question.getUniqueId(), "TEXT");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof GalleryQuestion) {
 				GalleryQuestion gallery = (GalleryQuestion) question;
 
 				if (gallery.getSelection())
-					columnNamesToType.put(question.getUniqueId(), "TEXT");
+				{
+					putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
+				}
 			} else if (question instanceof RatingQuestion) {
 				RatingQuestion rating = (RatingQuestion) question;
 
 				for (Element child : rating.getChildElements()) {
-					columnNamesToType.put(child.getUniqueId(), "TEXT");
+					putColumnNameAndType(columnNamesToType, child.getUniqueId(), "TEXT");
 				}
 			}
 		}
 		return columnNamesToType;
 	}
+	
+	private void putColumnNameAndType(Map<String, String> columnNamesToType, String uid, String type) throws Exception {
+		if (columnNamesToType.containsKey(uid)) {
+			throw new Exception("key already exists");
+		}
+		
+		logger.info(uid);
+		
+		columnNamesToType.put(uid, type);
+	}
 
-	public boolean validateOLAPTableInternal(Survey survey, Integer counter) {
+	public boolean validateOLAPTableInternal(Survey survey, Integer counter) throws Exception {
 		logger.info("starting reporting table validation for survey UID" + survey.getUniqueId()
 		+ (survey.getIsDraft() ? " (draft)" : ""));
 
@@ -926,7 +942,7 @@ public class ReportingService {
 		return true;
 	}
 
-	public boolean validateOLAPTableInternal(Survey survey) {
+	public boolean validateOLAPTableInternal(Survey survey) throws Exception {
 		return this.validateOLAPTableInternal(survey, null);
 	}
 

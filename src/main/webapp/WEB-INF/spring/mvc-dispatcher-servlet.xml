@@ -119,7 +119,7 @@
 
 	<bean id="propertyPlaceholderConfigurer" class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
 	  <constructor-arg ref="configurationEncryptor" />
-	  <property name="location" value="/WEB-INF/spring.properties" />
+	  <property name="location" value="/WEB-INF/springCLAM.properties" />
 	</bean>
 	
 	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
