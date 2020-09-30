@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
@@ -797,7 +798,7 @@ public class ReportingService {
 		}
 	}
 
-	private Map<String, String> getColumnNamesAndTypes(Survey survey) throws Exception {
+	private Map<String, String> getColumnNamesAndTypes(Survey survey) throws MessageException {
 		if (survey == null) {
 			throw new IllegalArgumentException("survey is not null");
 		}
@@ -814,8 +815,6 @@ public class ReportingService {
 		columnNamesToType.put("SCORE", "INT");
 
 		for (Element question : survey.getQuestions()) {
-			logger.info("element " + question.getUniqueId());
-			
 			if (question instanceof FreeTextQuestion) {
 				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof EmailQuestion || question instanceof RegExQuestion) {
@@ -838,9 +837,7 @@ public class ReportingService {
 			} else if (question instanceof Table) {
 				Table table = (Table) question;
 				for (Element child : table.getQuestions()) {
-					logger.info("Q " + child.getUniqueId());
 					for (Element answer : table.getAnswers()) {
-						logger.info("A " + answer.getUniqueId());
 						putColumnNameAndType(columnNamesToType, Tools.md5hash(child.getUniqueId() + answer.getUniqueId()), "TEXT");
 					}
 				}
@@ -864,17 +861,15 @@ public class ReportingService {
 		return columnNamesToType;
 	}
 	
-	private void putColumnNameAndType(Map<String, String> columnNamesToType, String uid, String type) throws Exception {
+	private void putColumnNameAndType(Map<String, String> columnNamesToType, String uid, String type) throws MessageException {
 		if (columnNamesToType.containsKey(uid)) {
-			throw new Exception("key already exists");
+			throw new MessageException("key already exists");
 		}
-		
-		logger.info(uid);
 		
 		columnNamesToType.put(uid, type);
 	}
 
-	public boolean validateOLAPTableInternal(Survey survey, Integer counter) throws Exception {
+	public boolean validateOLAPTableInternal(Survey survey, Integer counter) throws MessageException {
 		logger.info("starting reporting table validation for survey UID" + survey.getUniqueId()
 		+ (survey.getIsDraft() ? " (draft)" : ""));
 
@@ -942,11 +937,11 @@ public class ReportingService {
 		return true;
 	}
 
-	public boolean validateOLAPTableInternal(Survey survey) throws Exception {
+	public boolean validateOLAPTableInternal(Survey survey) throws MessageException {
 		return this.validateOLAPTableInternal(survey, null);
 	}
 
-	public boolean validateOLAPTablesInternal(Survey survey) throws Exception {
+	public boolean validateOLAPTablesInternal(Survey survey) throws MessageException {
 		if (survey == null) {
 			throw new IllegalArgumentException("survey is not null");
 		}
@@ -969,7 +964,7 @@ public class ReportingService {
 	}
 
 
-	public boolean validateOLAPTablesInternal(String surveyUID, boolean isDraft) throws Exception {
+	public boolean validateOLAPTablesInternal(String surveyUID, boolean isDraft) throws MessageException {
 		if (surveyUID == null || surveyUID.isEmpty()) {
 			throw new IllegalArgumentException("surveyUID is not null and not empty");
 		}
