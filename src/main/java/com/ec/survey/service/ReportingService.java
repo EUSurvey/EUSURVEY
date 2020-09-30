@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
@@ -797,7 +798,7 @@ public class ReportingService {
 		}
 	}
 
-	private Map<String, String> getColumnNamesAndTypes(Survey survey) {
+	private Map<String, String> getColumnNamesAndTypes(Survey survey) throws MessageException {
 		if (survey == null) {
 			throw new IllegalArgumentException("survey is not null");
 		}
@@ -815,50 +816,60 @@ public class ReportingService {
 
 		for (Element question : survey.getQuestions()) {
 			if (question instanceof FreeTextQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "TEXT");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof EmailQuestion || question instanceof RegExQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "TEXT");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof NumberQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "DOUBLE");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "DOUBLE");
 			} else if (question instanceof DateQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "DATE");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "DATE");
 			} else if (question instanceof TimeQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "TIME");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TIME");
 			} else if (question instanceof SingleChoiceQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "TEXT");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof MultipleChoiceQuestion) {
-				columnNamesToType.put(question.getUniqueId(), "TEXT");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof Matrix) {
 				Matrix matrix = (Matrix) question;
 				for (Element child : matrix.getQuestions()) {
-					columnNamesToType.put(child.getUniqueId(), "TEXT");
+					putColumnNameAndType(columnNamesToType, child.getUniqueId(), "TEXT");
 				}
 			} else if (question instanceof Table) {
 				Table table = (Table) question;
 				for (Element child : table.getQuestions()) {
 					for (Element answer : table.getAnswers()) {
-						columnNamesToType.put(Tools.md5hash(child.getUniqueId() + answer.getUniqueId()), "TEXT");
+						putColumnNameAndType(columnNamesToType, Tools.md5hash(child.getUniqueId() + answer.getUniqueId()), "TEXT");
 					}
 				}
 			} else if (question instanceof Upload) {
-				columnNamesToType.put(question.getUniqueId(), "TEXT");
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			} else if (question instanceof GalleryQuestion) {
 				GalleryQuestion gallery = (GalleryQuestion) question;
 
 				if (gallery.getSelection())
-					columnNamesToType.put(question.getUniqueId(), "TEXT");
+				{
+					putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
+				}
 			} else if (question instanceof RatingQuestion) {
 				RatingQuestion rating = (RatingQuestion) question;
 
 				for (Element child : rating.getChildElements()) {
-					columnNamesToType.put(child.getUniqueId(), "TEXT");
+					putColumnNameAndType(columnNamesToType, child.getUniqueId(), "TEXT");
 				}
 			}
 		}
 		return columnNamesToType;
 	}
+	
+	private void putColumnNameAndType(Map<String, String> columnNamesToType, String uid, String type) throws MessageException {
+		if (columnNamesToType.containsKey(uid)) {
+			throw new MessageException("key already exists");
+		}
+		
+		columnNamesToType.put(uid, type);
+	}
 
-	public boolean validateOLAPTableInternal(Survey survey, Integer counter) {
+	public boolean validateOLAPTableInternal(Survey survey, Integer counter) throws MessageException {
 		logger.info("starting reporting table validation for survey UID" + survey.getUniqueId()
 		+ (survey.getIsDraft() ? " (draft)" : ""));
 
@@ -926,11 +937,11 @@ public class ReportingService {
 		return true;
 	}
 
-	public boolean validateOLAPTableInternal(Survey survey) {
+	public boolean validateOLAPTableInternal(Survey survey) throws MessageException {
 		return this.validateOLAPTableInternal(survey, null);
 	}
 
-	public boolean validateOLAPTablesInternal(Survey survey) throws Exception {
+	public boolean validateOLAPTablesInternal(Survey survey) throws MessageException {
 		if (survey == null) {
 			throw new IllegalArgumentException("survey is not null");
 		}
@@ -953,7 +964,7 @@ public class ReportingService {
 	}
 
 
-	public boolean validateOLAPTablesInternal(String surveyUID, boolean isDraft) throws Exception {
+	public boolean validateOLAPTablesInternal(String surveyUID, boolean isDraft) throws MessageException {
 		if (surveyUID == null || surveyUID.isEmpty()) {
 			throw new IllegalArgumentException("surveyUID is not null and not empty");
 		}

@@ -142,12 +142,12 @@ public class ReportingServiceProxy {
 		return reportingService.GetAllQuestionsAndPossibleAnswersInternal(survey);
 	}	
 
-	public boolean validateOLAPTable(Survey survey) {
+	public boolean validateOLAPTable(Survey survey) throws Exception {
 		if (!isReportingDatabaseEnabled()) return false;
 		return reportingService.validateOLAPTableInternal(survey);
 	}
 
-	public boolean validateOLAPTable(Survey survey, Integer counter) {
+	public boolean validateOLAPTable(Survey survey, Integer counter) throws Exception {
 		if (!isReportingDatabaseEnabled()) return false;
 		return reportingService.validateOLAPTableInternal(survey, counter);
 	}

@@ -1270,19 +1270,27 @@ function updateColumns(element, columns)
 	var answers = [];
 	for (var i = 0; i < element.answers().length; i++)
 	{
-		answers[element.answers()[i].title()] = element.answers()[i];
+		answers.push(element.answers()[i]);
 	}
 
 	element.answers.removeAll();
 	for (var i = 0; i < columns.length; i++)
 	{
-		if (answers.hasOwnProperty(columns[i]))
+		var newelement = null;
+		for (var j = 0; j < answers.length; j++)
 		{
-			element.answers.push(answers[columns[i]]);
-		} else {
-			var newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, columns[i], columns[i], false, "", element.answers().length);
-			element.answers.push(newelement);
+			if (answers[j].originalTitle() == columns[i]) {
+				newelement = answers[j];
+				answers.splice(j, 1);
+				break;
+			}
 		}
+		
+		if (newelement == null) {
+			newelement = newMatrixItemViewModel(getNewId(), getNewId(), true, getNewShortname(), false, columns[i], columns[i], false, "", element.answers().length);			
+		}		
+		
+		element.answers.push(newelement);
 	}
 
 	updateNavigation($(_elementProperties.selectedelement), element.id());
@@ -1291,23 +1299,33 @@ function updateColumns(element, columns)
 function updateRows(element, rows)
 {
 	var questions = [];
+	var usedQuestions = [];
 	var allmandatory = true;
 	for (var i = 0; i < element.questions().length; i++)
 	{
-		questions[element.questions()[i].originalTitle()] = element.questions()[i];
+		questions.push(element.questions()[i]);
 		if (element.questions()[i].optional()) allmandatory = false;
 	}
 
 	element.questions.removeAll();
 	for (var i = 0; i < rows.length; i++)
 	{
-		if (questions.hasOwnProperty(rows[i]))
+		var newelement = null;
+		for (var j = 0; j < questions.length; j++)
 		{
-			element.questions.push(questions[rows[i]]);
-		} else {
-			var newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, "<span class=\"" + (allmandatory ? "mandatory" : "optional") + "\">*</span>" + rows[i], rows[i], false, "", element.questions().length);
-			element.questions.push(newelement);
+			if (questions[j].originalTitle() == rows[i]) {
+				newelement = questions[j];
+				questions.splice(j, 1);
+				break;
+			}
 		}
+		
+		if (newelement == null) {
+			newelement = newMatrixItemViewModel(getNewId(), getNewId(), !allmandatory, getNewShortname(), false, rows[i], rows[i], false, "", element.questions().length);
+		}
+		
+		
+		element.questions.push(newelement);
 	}
 	
 	updateDependenciesView();
