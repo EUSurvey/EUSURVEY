@@ -45,30 +45,32 @@ public class EcasUserUpdater implements Runnable {
 						
 			logger.info("EcasUserUpdater started");
 			stopWatch.start("get LDAP data");
-			List<EcasUser> users = ldapService.getAllEcasUsers(lastLDAPSynchronizationDate);
+			List<EcasUser> usersInLDAP = ldapService.getAllEcasUsers(lastLDAPSynchronizationDate);
 			stopWatch.stop();
-			logger.info("Ldap users count: "+users.size());
+			logger.info("Ldap users count: "+usersInLDAP.size());
 			
 			logger.info("EcasUserUpdater: Users read");
 			stopWatch.start("get database data");
-			Map<String,EcasUser> existingusers = ldapDBService.getAllECASLogins();
-			logger.info("Database users count: "+existingusers.size());
+			Map<String,EcasUser> usersInDB = ldapDBService.getAllECASLogins();
+			logger.info("Database users count: "+usersInDB.size());
 			stopWatch.stop();
 
 			stopWatch.start("update Data");
-			for (EcasUser user: users)
+
+			// Go through the users in the LDAP modified since last run and add them again in the DB
+			for (EcasUser userInLDAP: usersInLDAP)
 			{
-				if (existingusers.containsKey(user.getName()))
+				if (usersInDB.containsKey(userInLDAP.getName()))
 				{
-					Integer id = existingusers.get(user.getName()).getId();
-					user.setId(id);
-					administrationService.removeUserGroups(id);
+					Integer userInDBID = usersInDB.get(userInLDAP.getName()).getId();
+					userInLDAP.setId(userInDBID);
+					administrationService.removeUserGroups(userInDBID);
 				}
 				
-				administrationService.add(user);
+				administrationService.add(userInLDAP);
 				
-				if (!existingusers.containsKey(user.getName())) {
-					existingusers.put(user.getName(), user);
+				if (!usersInDB.containsKey(userInLDAP.getName())) {
+					usersInDB.put(userInLDAP.getName(), userInLDAP);
 				}				
 			}
 			

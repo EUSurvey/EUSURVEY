@@ -42,6 +42,27 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
+
+	@Transactional
+	public void step95() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		Setting interval = new Setting();
+		interval.setKey(Setting.AnswersAnonymWorkerInterval);
+		interval.setValue("1y");
+		interval.setFormat("number followed by 'y' or 'w' or 'd' (years or weeks or days)");
+		session.saveOrUpdate(interval);
+
+		Setting enabled = new Setting();
+		enabled.setKey(Setting.AnswersAnonymWorkerEnabled);
+		enabled.setValue("true");
+		enabled.setFormat("true / false");
+		session.saveOrUpdate(enabled);
+
+		status.setDbversion(95);
+		session.saveOrUpdate(status);
+	}
 	
 	@Transactional
 	public void step94() {
@@ -2005,6 +2026,40 @@ public class SchemaService extends BasicService {
 			session.setReadOnly(status, false);
 			status.setLastLDAPSynchronization2Date(syncDate);
 			session.saveOrUpdate(status);
+		}
+	}
+
+	@Transactional
+	public Date getLastAnswerSetAnonymDate() {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query statusQuery = session.createQuery("FROM Status");
+		@SuppressWarnings("unchecked")
+		List<Status> states = statusQuery.setReadOnly(true).list();
+
+		if (!states.isEmpty()) {
+			return states.get(0).getLastAnswerSetAnonymDate();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Sets the time of the last answer set that was anonymised
+	 */
+	@Transactional
+	public void saveLastAnswerSetAnonymDate(Date lastAnswerSetAnonymisedDate) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query statusQuery = session.createQuery("FROM Status");
+		@SuppressWarnings("unchecked")
+		List<Status> states = statusQuery.list();
+
+		if (!states.isEmpty()) {
+			Status status = states.get(0);
+			session.setReadOnly(status, false);
+			status.setLastAnswerSetAnonymDate(lastAnswerSetAnonymisedDate);
+			// Save is automatic on Transactional methods
 		}
 	}
 

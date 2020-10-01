@@ -21,6 +21,7 @@ public class Status {
 	private Date updateDate;
 	private Date lastLDAPSynchronizationDate;
 	private Date lastLDAPSynchronization2Date;
+	private Date lastAnswerSetAnonymDate;
 	
 	@Id
 	@Column(name = "STATUS_ID")
@@ -64,6 +65,22 @@ public class Status {
 	}	
 	public void setLastLDAPSynchronization2Date(Date lastLDAPSynchronization2Date) {
 		this.lastLDAPSynchronization2Date = lastLDAPSynchronization2Date;
+	}
+	
+	/**
+	 * Gets the time of the last answer set that was anonymised
+	 */
+	@Column(name = "ANSWERANONYMDATE")
+	@DateTimeFormat(pattern=ConversionTools.DateTimeFormat)
+	public Date getLastAnswerSetAnonymDate() {
+		return lastAnswerSetAnonymDate;
 	}	
+
+	/**
+	 * Sets the time of the last answer set that was anonymised
+	 */
+	public void setLastAnswerSetAnonymDate(Date lastAnswerSetAnonymDate) {
+		this.lastAnswerSetAnonymDate = lastAnswerSetAnonymDate;
+	}
 
 }

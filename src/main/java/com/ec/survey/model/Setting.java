@@ -55,6 +55,9 @@ public class Setting {
 	public static final String TrustValuePrivilegedUser = "TrustValuePrivilegedUser";
 	public static final String TrustValueNbContributions = "TrustValueNbContributions";
 	public static final String TrustValueMinimumPassMark = "TrustValueMinimumPassMark";
+
+	public static final String AnswersAnonymWorkerInterval = "AnswersAnonymWorkerInterval";
+	public static final String AnswersAnonymWorkerEnabled = "AnswersAnonymWorkerEnabled";
 	
 	@Id
 	@Column(name = "SETTINGS_ID")
