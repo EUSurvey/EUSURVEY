@@ -348,6 +348,8 @@ public class ActivityService extends BasicService {
 					hql += " AND (logID > 220 AND logID < 225) OR logID = 227 OR logID = 228"; break;
 				case "UsefulLink":
 					hql += " AND (logID = 203 OR logID = 204)"; break;
+				case "DeleteColumn":
+					hql += " AND (logID = 315)"; break;
 				default:
 					break;
 			}			
@@ -371,7 +373,7 @@ public class ActivityService extends BasicService {
 					break;
 				case "Deleted":
 					hql += " AND logID IN :logids4"; 
-					Integer[] logids4 = {104,219,222,311,402,405,502};
+					Integer[] logids4 = {104,219,222,311,315,402,405,502};
 					params.put("logids4", logids4);
 					break;
 				case "Disabled":

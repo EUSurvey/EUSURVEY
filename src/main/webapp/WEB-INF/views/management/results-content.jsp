@@ -270,7 +270,10 @@
 													</c:when>													
 													<c:otherwise>
 														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100"  style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
-												         <a class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign white"></span></a>
+												        <a class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign white"></span></a>
+                                                 		<if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+                                                 			<a onclick="showDeleteColumnDialog('${question.uniqueId}')" class="filterinfo" style="right: 25px" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.DeleteColumn" />"><span class="glyphicon glyphicon-remove white"></span></a>
+                                                 		</if>
                                                    	</c:otherwise>
 												</c:choose>
 											</th>

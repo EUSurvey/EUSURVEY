@@ -1229,7 +1229,6 @@ public class AnswerService extends BasicService {
 		session.delete(answerSet);
 	}
 
-
 	@Transactional
 	public Date getOldestAnswerSetDate() {
 		Session session = sessionFactory.getCurrentSession();
@@ -2095,5 +2094,48 @@ public class AnswerService extends BasicService {
 			}
 		}
 		return url;
+	}
+	
+	private int clearAnswersForQuestionInMainDatabase(Survey survey, String questionUID)
+	{
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "UPDATE ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID SET a.VALUE = '' WHERE a.QUESTION_UID = :quid AND ans.SURVEY_ID";
+		if (survey.getIsDraft()) {
+			sql += " = " + survey.getId();
+		} else {
+			List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(survey.getUniqueId());
+			sql += " IN (" +StringUtils.collectionToCommaDelimitedString(allVersions) + ")";
+		}
+		
+		Query query = session.createSQLQuery(sql);
+		query.setString("quid", questionUID);
+		
+		return query.executeUpdate();
+	}
+
+	@Transactional
+	public void clearAnswersForQuestion(Survey survey, String questionUID, int userId) throws Exception {	
+		
+		//blank answers in main database		
+		clearAnswersForQuestionInMainDatabase(survey, questionUID);
+		
+		//blank answers in reporting database
+		reportingService.clearAnswersForQuestionInReportingDatabase(survey, questionUID);
+		
+		//delete contribution PDFs
+		List<Integer> surveyIDs = new ArrayList<>();
+		if (survey.getIsDraft()) {
+			surveyIDs.add(survey.getId());
+		} else {
+			surveyIDs = surveyService.getAllPublishedSurveyVersions(survey.getUniqueId());
+		}
+		Set<java.io.File> files = fileService.getPDFContributionFilesForSurvey(surveyIDs); 
+		for (java.io.File file : files)
+		{
+			Files.deleteIfExists(file.toPath());
+		}
+		
+		//log entry
+		activityService.log(315, null, questionUID, userId, survey.getUniqueId());
 	}
 }

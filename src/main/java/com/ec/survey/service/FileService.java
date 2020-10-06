@@ -923,6 +923,38 @@ public class FileService extends BasicService {
 		c.init(options, pdfbefore, tempbefore, email);
 		getPool().execute(c);
 	}
+	
+	public Set<java.io.File> getPDFContributionFilesForSurvey(List<Integer> surveyIDs) throws Exception
+	{
+		Set<java.io.File> result = new HashSet<>();
+		for (int surveyID : surveyIDs) {
+			Survey survey = surveyService.getSurvey(surveyID);
+
+			ResultFilter r = new ResultFilter();
+			r.setSurveyId(surveyID);
+			boolean stop = false;
+			int answerpage = 0;
+			while (!stop) {
+				Set<String> caseids = answerService.getCaseIds(surveyID, r, answerpage++, 1000, false);
+				if (caseids.size() < 1000)
+					stop = true;
+
+				for (String caseid : caseids) {
+					java.io.File folder = fileService.getSurveyExportsFolder(survey.getUniqueId());
+					java.io.File file = new java.io.File(
+							String.format("%s/answer%s.pdf", folder.getPath(), caseid));
+
+					if (!file.exists()) {
+						String filePath = String.format("%sanswer%s.pdf", tempFileDir, caseid);
+						file = new java.io.File(filePath);
+					}
+					result.add(file);
+				}
+			}
+		}
+		
+		return result;
+	}
 
 	public Set<java.io.File> getFilesForSurveys(List<Integer> surveyIDs, boolean onlySurveyFiles) throws Exception {
 		Set<java.io.File> result = new HashSet<>();
@@ -960,31 +992,7 @@ public class FileService extends BasicService {
 			}
 
 			// get contribution pdfs
-			for (int surveyID : surveyIDs) {
-				Survey survey = surveyService.getSurvey(surveyID);
-
-				ResultFilter r = new ResultFilter();
-				r.setSurveyId(surveyID);
-				boolean stop = false;
-				int answerpage = 0;
-				while (!stop) {
-					Set<String> caseids = answerService.getCaseIds(surveyID, r, answerpage++, 1000, false);
-					if (caseids.size() < 1000)
-						stop = true;
-
-					for (String caseid : caseids) {
-						java.io.File folder = fileService.getSurveyExportsFolder(survey.getUniqueId());
-						java.io.File file = new java.io.File(
-								String.format("%s/answer%s.pdf", folder.getPath(), caseid));
-
-						if (!file.exists()) {
-							String filePath = String.format("%sanswer%s.pdf", tempFileDir, caseid);
-							file = new java.io.File(filePath);
-						}
-						result.add(file);
-					}
-				}
-			}
+			result.addAll(getPDFContributionFilesForSurvey(surveyIDs));			
 		}
 
 		// get survey files

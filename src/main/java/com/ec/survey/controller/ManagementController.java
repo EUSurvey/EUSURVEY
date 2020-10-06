@@ -2684,6 +2684,10 @@ public class ManagementController extends BasicController {
 
 		boolean multidelete = request != null && request.getParameter("operation") != null
 				&& request.getParameter("operation").equalsIgnoreCase("multidelete");
+		
+		boolean deletecolumn = request != null && request.getParameter("operation") != null
+				&& request.getParameter("operation").equalsIgnoreCase("deletecolumn"); 
+		
 		List<String> deletedAnswers = null;
 
 		if (active) {
@@ -2839,6 +2843,22 @@ public class ManagementController extends BasicController {
 				}
 			}
 		}
+		
+		boolean columnDeleted = false;
+		
+		if (deletecolumn) {
+			if (!u.getId().equals(survey.getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
+				throw new ForbiddenURLException();
+			}
+			
+			String questionUID = request.getParameter("deleteColumnUID");
+			if (questionUID != null) {
+				answerService.clearAnswersForQuestion(survey, questionUID, u.getId());
+				columnDeleted = true;
+			}
+		}
 
 		if (filter.getVisibleQuestions().isEmpty()) {
 			// preselect first 20 questions
@@ -2907,6 +2927,10 @@ public class ManagementController extends BasicController {
 		result.addObject("active", active);
 		result.addObject("allanswers", allanswers);
 		result.addObject("filtered", filtered);
+		
+		if (columnDeleted) {
+			result.addObject("columnDeleted", true);
+		}
 
 		if (forPDF) {
 			Statistics statistics = answerService.getStatistics(survey, filter, false, active && allanswers, false);
