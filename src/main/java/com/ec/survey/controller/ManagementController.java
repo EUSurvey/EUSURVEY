@@ -2854,8 +2854,25 @@ public class ManagementController extends BasicController {
 			}
 			
 			String questionUID = request.getParameter("deleteColumnUID");
+			
 			if (questionUID != null) {
-				answerService.clearAnswersForQuestion(survey, questionUID, u.getId());
+				if (questionUID.contains("#"))
+				{
+					// a table
+					String suffix = questionUID.substring(questionUID.indexOf("#")+1);
+					questionUID = questionUID.substring(0, questionUID.indexOf("#"));
+					
+					String row = suffix.substring(0, suffix.indexOf("#"));
+					String col = suffix.substring(suffix.indexOf("#")+1);
+					
+					Table table = (Table)survey.getQuestionMapByUniqueId().get(questionUID);
+					String quid = table.getQuestions().get(Integer.parseInt(row)-1).getUniqueId();
+					String auid = table.getAnswers().get(Integer.parseInt(col)-1).getUniqueId();
+					
+					answerService.clearAnswersForQuestion(survey, quid, auid, u.getId());					
+				} else {				
+					answerService.clearAnswersForQuestion(survey, questionUID, null, u.getId());
+				}
 				columnDeleted = true;
 			}
 		}

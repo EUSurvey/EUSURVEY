@@ -162,9 +162,9 @@ public class ReportingServiceProxy {
 		return reportingService.validateOLAPTablesInternal(surveyUID, isDraft);
 	}
 
-	public void clearAnswersForQuestionInReportingDatabase(Survey survey, String questionUID) {
+	public void clearAnswersForQuestionInReportingDatabase(Survey survey, String questionUID, String childUID) {
 		if (!isReportingDatabaseEnabled()) return;
-		reportingService.clearAnswersForQuestionInReportingDatabase(survey, questionUID);
+		reportingService.clearAnswersForQuestionInReportingDatabase(survey, questionUID, childUID);
 	}
 
 }
