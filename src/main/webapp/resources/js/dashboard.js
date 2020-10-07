@@ -206,7 +206,7 @@ function DashboardViewModel()
 				this.surveysMode(s);
 				if (s == "archived")
 				{
-					$("#surveytypeselector"),val(m);
+					$("#surveytypeselector").val(s);
 				}
 			}
 				
