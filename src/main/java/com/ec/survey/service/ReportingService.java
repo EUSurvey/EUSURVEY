@@ -1913,5 +1913,28 @@ public class ReportingService {
 		return result;
 	}
 
+	@Transactional(transactionManager = "transactionManagerReporting")
+	public int clearAnswersForQuestionInReportingDatabase(Survey survey, String questionUID, String childUID) {
+		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
+		
+		if (!OLAPTableExistsInternal(survey.getUniqueId(), survey.getIsDraft()))
+		{
+			return 0;
+		}
+		 
+		String column = questionUID;
+		
+		if (childUID != null)
+		{
+			column = Tools.md5hash(questionUID + childUID); 
+		}
+		
+		String sql = "UPDATE " + getOLAPTableName(survey) + " SET Q" + column.replace("-", "") + " = NULL";
+		
+		Query query = sessionReporting.createSQLQuery(sql);
+		
+		return query.executeUpdate();		
+	}
+
 	
 }

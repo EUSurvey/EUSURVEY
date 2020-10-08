@@ -2684,6 +2684,10 @@ public class ManagementController extends BasicController {
 
 		boolean multidelete = request != null && request.getParameter("operation") != null
 				&& request.getParameter("operation").equalsIgnoreCase("multidelete");
+		
+		boolean deletecolumn = request != null && request.getParameter("operation") != null
+				&& request.getParameter("operation").equalsIgnoreCase("deletecolumn"); 
+		
 		List<String> deletedAnswers = null;
 
 		if (active) {
@@ -2839,6 +2843,39 @@ public class ManagementController extends BasicController {
 				}
 			}
 		}
+		
+		boolean columnDeleted = false;
+		
+		if (deletecolumn) {
+			if (!u.getId().equals(survey.getOwner().getId())
+					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
+				throw new ForbiddenURLException();
+			}
+			
+			String questionUID = request.getParameter("deleteColumnUID");
+			
+			if (questionUID != null) {
+				if (questionUID.contains("#"))
+				{
+					// a table
+					String suffix = questionUID.substring(questionUID.indexOf("#")+1);
+					questionUID = questionUID.substring(0, questionUID.indexOf("#"));
+					
+					String row = suffix.substring(0, suffix.indexOf("#"));
+					String col = suffix.substring(suffix.indexOf("#")+1);
+					
+					Table table = (Table)survey.getQuestionMapByUniqueId().get(questionUID);
+					String quid = table.getQuestions().get(Integer.parseInt(row)-1).getUniqueId();
+					String auid = table.getAnswers().get(Integer.parseInt(col)-1).getUniqueId();
+					
+					answerService.clearAnswersForQuestion(survey, quid, auid, u.getId());					
+				} else {				
+					answerService.clearAnswersForQuestion(survey, questionUID, null, u.getId());
+				}
+				columnDeleted = true;
+			}
+		}
 
 		if (filter.getVisibleQuestions().isEmpty()) {
 			// preselect first 20 questions
@@ -2907,6 +2944,10 @@ public class ManagementController extends BasicController {
 		result.addObject("active", active);
 		result.addObject("allanswers", allanswers);
 		result.addObject("filtered", filtered);
+		
+		if (columnDeleted) {
+			result.addObject("columnDeleted", true);
+		}
 
 		if (forPDF) {
 			Statistics statistics = answerService.getStatistics(survey, filter, false, active && allanswers, false);

@@ -308,7 +308,8 @@ public class ActivityFilter implements java.io.Serializable {
 		"Token/Contacts/Department",
 		"Invitations",
 		"WCAGCompliance",
-		"EndNotificationMessage"};
+		"EndNotificationMessage",
+		"DeleteColumn"};
 		Arrays.sort(result);
 		return result;
 	}

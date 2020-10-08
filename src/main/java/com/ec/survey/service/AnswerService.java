@@ -1229,7 +1229,6 @@ public class AnswerService extends BasicService {
 		session.delete(answerSet);
 	}
 
-
 	@Transactional
 	public Date getOldestAnswerSetDate() {
 		Session session = sessionFactory.getCurrentSession();
@@ -2096,4 +2095,64 @@ public class AnswerService extends BasicService {
 		}
 		return url;
 	}
+	
+	private int clearAnswersForQuestionInMainDatabase(Survey survey, String questionUID, String answerUID)
+	{
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "UPDATE ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID SET a.VALUE = '' WHERE a.QUESTION_UID = :quid ";
+		
+		if (answerUID != null)
+		{		
+			sql = "UPDATE ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID SET a.VALUE = '' WHERE a.PA_UID = :auid ";			
+		}
+		
+		sql += " AND ans.SURVEY_ID";
+		
+		if (survey.getIsDraft()) {
+			sql += " = " + survey.getId();
+		} else {
+			List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(survey.getUniqueId());
+			sql += " IN (" +StringUtils.collectionToCommaDelimitedString(allVersions) + ")";
+		}
+		
+		Query query = session.createSQLQuery(sql);		
+		
+		if (answerUID != null) {
+			query.setString("auid", questionUID + "#" + answerUID);
+		} else {
+			query.setString("quid", questionUID);
+		}
+		
+		return query.executeUpdate();
+	}
+	
+	private void deleteContributionPDFs(Survey survey) throws Exception {
+		//delete contribution PDFs
+		List<Integer> surveyIDs = new ArrayList<>();
+		if (survey.getIsDraft()) {
+			surveyIDs.add(survey.getId());
+		} else {
+			surveyIDs = surveyService.getAllPublishedSurveyVersions(survey.getUniqueId());
+		}
+		Set<java.io.File> files = fileService.getPDFContributionFilesForSurvey(surveyIDs); 
+		for (java.io.File file : files)
+		{
+			Files.deleteIfExists(file.toPath());
+		}
+	}
+
+	@Transactional
+	public void clearAnswersForQuestion(Survey survey, String questionUID, String childUID, int userId) throws Exception {	
+		
+		//blank answers in main database		
+		clearAnswersForQuestionInMainDatabase(survey, questionUID, childUID);
+		
+		//blank answers in reporting database
+		reportingService.clearAnswersForQuestionInReportingDatabase(survey, questionUID, childUID);
+		
+		deleteContributionPDFs(survey);		
+		
+		activityService.log(315, null, questionUID, userId, survey.getUniqueId());
+	}	
+	
 }

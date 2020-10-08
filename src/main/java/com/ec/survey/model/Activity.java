@@ -198,6 +198,7 @@ public class Activity implements java.io.Serializable {
 		if (logID == 312) return "ExportActivities";
 		if (logID == 313) return "PublishUploadedElements";
 		if (logID == 314) return "ExportUploadedElements";
+		if (logID == 315) return "DeleteColumn";
 		if (logID < 312) return "Export";
 		if (logID < 407) return "n/a";
 		if (logID < 506) return type != null ? type : "Token/Contacts/Department";
