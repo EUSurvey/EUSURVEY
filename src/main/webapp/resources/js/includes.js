@@ -1343,48 +1343,48 @@ function initModals(item)
 					$(this).parent().after("<div class='validation-error' aria-live='polite'>" + invalidDate + "</div>");						
 				}
 				result = false;
-			}
-			
-			var classes = $(this).attr('class').split(" ");
-						
-			for ( var i = 0, l = classes.length; i<l; ++i ) {
-				if ($(this).parent().find(".validation-error").length == 0)
-				{
-				 	if (strStartsWith(classes[i], 'min'))
-				 	{
-				 		var min = classes[i].substring(3);
-				 		minD = parseMinMaxDate(min);
-				 		
-				 		if (minD > date)
-				 		{
-				 			validationinfo += $(this).attr("name") + " (MinDate) ";
-				 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
-							{
-								$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");
-							} else {
-								$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");						
-							}
-				 			result = false;
-				 		};
-				 	} else if (strStartsWith(classes[i], 'max'))
-				 	{
-				 		var max = classes[i].substring(3);
-				 		maxD = parseMinMaxDate(max);
-				 		
-				 		if (maxD < date)
-				 		{
-				 			validationinfo += $(this).attr("name") + " (MaxDate) ";
-				 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
-							{
-								$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");
-							} else {
-								$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");						
-							}
-				 			result = false;
-				 		};
-				 	};
+			} else {			
+				var classes = $(this).attr('class').split(" ");
+							
+				for ( var i = 0, l = classes.length; i<l; ++i ) {
+					if ($(this).parent().find(".validation-error").length == 0)
+					{
+					 	if (strStartsWith(classes[i], 'min'))
+					 	{
+					 		var min = classes[i].substring(3);
+					 		minD = parseMinMaxDate(min);
+					 		
+					 		if (minD > date)
+					 		{
+					 			validationinfo += $(this).attr("name") + " (MinDate) ";
+					 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
+								{
+									$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");
+								} else {
+									$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");						
+								}
+					 			result = false;
+					 		};
+					 	} else if (strStartsWith(classes[i], 'max'))
+					 	{
+					 		var max = classes[i].substring(3);
+					 		maxD = parseMinMaxDate(max);
+					 		
+					 		if (maxD < date)
+					 		{
+					 			validationinfo += $(this).attr("name") + " (MaxDate) ";
+					 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
+								{
+									$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");
+								} else {
+									$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");						
+								}
+					 			result = false;
+					 		};
+					 	};
+					};	
 				};	
-			};	
+			};
 			
 		});
 		
@@ -1409,37 +1409,38 @@ function initModals(item)
 				validationinfo += $(this).attr("name") + " (TIME) ";
 				$(this).parent().after("<div class='validation-error' aria-live='polite'>" + invalidTime + "</div>");	
 				result = false;
-			}
+			} else {
 			
-			var classes = $(this).attr('class').split(" ");
+				var classes = $(this).attr('class').split(" ");
+							
+				for ( var i = 0, l = classes.length; i<l; ++i ) {
+					if ($(this).parent().parent().find(".validation-error").length == 0)
+					{
+						var valuewithoutcolons = value.replace(/:/g, "");					
 						
-			for ( var i = 0, l = classes.length; i<l; ++i ) {
-				if ($(this).parent().parent().find(".validation-error").length == 0)
-				{
-					var valuewithoutcolons = value.replace(/:/g, "");					
-					
-				 	if (strStartsWith(classes[i], 'min'))
-				 	{
-				 		var min = classes[i].substring(3);
-				 					 		
-				 		if (min > valuewithoutcolons)
-				 		{
-				 			validationinfo += $(this).attr("name") + " (MinTime) ";
-				 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + timevaluetoosmall + "</div>");	
-				 			result = false;
-				 		};
-				 	} else if (strStartsWith(classes[i], 'max'))
-				 	{
-				 		var max = classes[i].substring(3);
-				 		
-				 		if (max < valuewithoutcolons)
-				 		{
-				 			validationinfo += $(this).attr("name") + " (MaxTime) ";
-				 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + timevaluetoolarge + "</div>");		
-				 			result = false;
-				 		};
-				 	};
-				};	
+					 	if (strStartsWith(classes[i], 'min'))
+					 	{
+					 		var min = classes[i].substring(3);
+					 					 		
+					 		if (min > valuewithoutcolons)
+					 		{
+					 			validationinfo += $(this).attr("name") + " (MinTime) ";
+					 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + timevaluetoosmall + "</div>");	
+					 			result = false;
+					 		};
+					 	} else if (strStartsWith(classes[i], 'max'))
+					 	{
+					 		var max = classes[i].substring(3);
+					 		
+					 		if (max < valuewithoutcolons)
+					 		{
+					 			validationinfo += $(this).attr("name") + " (MaxTime) ";
+					 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + timevaluetoolarge + "</div>");		
+					 			result = false;
+					 		};
+					 	};
+					};	
+				};
 			};	
 			
 		});
