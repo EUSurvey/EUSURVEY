@@ -387,6 +387,11 @@
 		var highLevel = '<spring:message code="label.Complexity.high" />';
 		var criticLevel = '<spring:message code="label.Complexity.toohigh" />';
 		
+		var isAdmin = false;
+		<c:if test="${USER.getGlobalPrivilegeValue('FormManagement') == 2}">
+			isAdmin = true;
+		</c:if>
+		
 		$(function() {
 			if (globalLanguage.toLowerCase() == "de")
 			{
@@ -840,6 +845,8 @@
 	 		strings["Country+ISO"] = "<spring:message code="label.Country+ISO" />";
 	 		strings["ISO+Country"] = "<spring:message code="label.ISO+Country" />";
 	 		strings["ISOOnly"] = "<spring:message code="label.ISOOnly" />";	 		
+	 		
+	 		strings["MaximumFileSize"] = "<spring:message code="label.MaximumFileSize" />";	 		
 
 	 		return strings[label];
 	 	}

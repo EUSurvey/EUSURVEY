@@ -233,7 +233,7 @@ function addElementToContainer(element, container, foreditor, forskin)
 
 	if (viewModel.type == 'Upload') {
 		$(container).find(".file-uploader").each(function() {
-			createUploader(this);
+			createUploader(this, viewModel.maxFileSize());
 		});
 		
 		$(container).find(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");

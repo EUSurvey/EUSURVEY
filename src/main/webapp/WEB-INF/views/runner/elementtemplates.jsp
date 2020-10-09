@@ -751,6 +751,7 @@
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
 			<input type="hidden" data-bind="value: extensions, attr: {'name': 'extensions' + id()}" />
+			<input type="hidden" data-bind="value: maxFileSize, attr: {'name': 'maxFileSize' + id()}" />
 		<!-- /ko -->
 	</div>
 	

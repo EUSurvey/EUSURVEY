@@ -937,6 +937,16 @@ function update(input)
 			element.height(text);
 			_undoProcessor.addUndoStep(["Height", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			break;
+		case "MaximumFileSize":
+			var text = $(input).val();
+			
+			if (text.length == 0) text = "1";
+			
+			var oldtext = element.maxFileSize();
+			element.maxFileSize(parseInt(text));
+			
+			_undoProcessor.addUndoStep(["MaximumFileSize", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
+			break;
 		default:
 			throw label + " not implemented"; 
 	}	

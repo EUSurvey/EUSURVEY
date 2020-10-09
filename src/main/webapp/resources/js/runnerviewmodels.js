@@ -984,6 +984,7 @@ function newUploadViewModel(element)
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.css = ko.observable(element.css);
 	viewModel.extensions = ko.observable(element.extensions);
+	viewModel.maxFileSize = ko.observable(element.maxFileSize);
 	
 	return viewModel;
 }

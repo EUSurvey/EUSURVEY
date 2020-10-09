@@ -618,6 +618,11 @@ var ElementProperties = function() {
 			} else if ($(e).hasClass("uploaditem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+				
+				if (isAdmin) {
+					getChoosePropertiesRow("MaximumFileSize", "1,2,5,10", false, false, $(e).find("input[name^='maxFileSize']").val());
+				}
+				
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false');
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
 				getVisibilityRow(false);
