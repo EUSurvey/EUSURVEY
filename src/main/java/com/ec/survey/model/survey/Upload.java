@@ -23,6 +23,7 @@ public class Upload extends Question {
 	private static final long serialVersionUID = 1L;
 	
 	private String extensions;
+	private int maxFileSize = 1;
 
 	public Upload(){}
 	
@@ -38,6 +39,7 @@ public class Upload extends Question {
 		baseCopy(copy);
 		
 		copy.setExtensions(extensions);
+		copy.setMaxFileSize(maxFileSize);
 		
 		return copy;
 	}
@@ -47,6 +49,10 @@ public class Upload extends Question {
 		
 		Upload upload = (Upload) element;
 		if (!Tools.isEqual(extensions, upload.getExtensions()))
+		{
+			return true;
+		}
+		if (!Tools.isEqual(maxFileSize, upload.getMaxFileSize()))
 		{
 			return true;
 		}
@@ -63,4 +69,11 @@ public class Upload extends Question {
 		this.extensions = extensions;
 	}
 	
+	@Column(name = "MAXFILESIZE")
+	public Integer getMaxFileSize() {
+		return maxFileSize > 0 ? maxFileSize : 1;
+	}
+	public void setMaxFileSize(Integer maxFileSize) {
+		this.maxFileSize = (maxFileSize != null && maxFileSize > 0) ? maxFileSize : 1;
+	}
 }

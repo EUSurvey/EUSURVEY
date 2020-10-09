@@ -1283,6 +1283,13 @@ public class SurveyHelper {
 		}
 		upload.setExtensions(extensions);
 		
+		Integer maxFileSize = getInteger(parameterMap, "maxFileSize", id);
+		if (log220 && upload.getMaxFileSize() != null && !upload.getMaxFileSize().equals(maxFileSize)) {
+			oldValues += " maxFileSize: " + upload.getMaxFileSize();
+			newValues += " maxFileSize: " + maxFileSize;
+		}
+		upload.setMaxFileSize(maxFileSize);		
+		
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
 			upload.getActivitiesToLog().put(220, oldnew);

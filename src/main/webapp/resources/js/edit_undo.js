@@ -655,6 +655,10 @@ var UndoProcessor = function() {
 			case "Height":
 				element.height(step[3]);
 				break;
+			case "MaximumFileSize":
+				element.maxFileSize(step[3]);
+				break;
+				
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -1141,6 +1145,9 @@ var UndoProcessor = function() {
 				break;
 			case "Height":
 				element.height(step[4]);
+				break;
+			case "MaximumFileSize":
+				element.maxFileSize(step[4]);
 				break;
 		}
 		
