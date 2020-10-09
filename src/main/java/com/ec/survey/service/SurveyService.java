@@ -850,7 +850,7 @@ public class SurveyService extends BasicService {
 	@Transactional
 	public Survey getSurvey(String uidorshortname, boolean isDraft, boolean checkActive, boolean readReplies,
 			boolean useEagerLoading, String language, boolean readonly, boolean synchronize) {
-		return getSurvey(uidorshortname, isDraft, checkActive, readReplies, useEagerLoading, language, readonly, false,
+		return getSurvey(uidorshortname, isDraft, checkActive, readReplies, useEagerLoading, language, readonly, true,
 				false, synchronize);
 	}
 

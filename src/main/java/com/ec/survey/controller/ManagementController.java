@@ -1043,7 +1043,7 @@ public class ManagementController extends BasicController {
 			// check if shortname already exists
 			Survey existingSurvey = surveyService.getSurvey(uploadedSurvey.getShortname(), true, false, false, false,
 					null, true, false);
-			if (existingSurvey != null && !existingSurvey.getId().equals(uploadedSurvey.getId())) {
+			if (existingSurvey != null && !existingSurvey.getId().equals(uploadedSurvey.getId()) && !existingSurvey.getIsDeleted()) {
 
 				String message = resources.getMessage("message.ShortnameAlreadyExists", null,
 						"A survey with this shortname already exists.", locale);
