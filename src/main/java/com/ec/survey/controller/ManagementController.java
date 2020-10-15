@@ -1424,6 +1424,10 @@ public class ManagementController extends BasicController {
 				String[] oldnew = { survey.getAutomaticPublishing() ? "enabled" : "disabled",
 						uploadedSurvey.getAutomaticPublishing() ? "enabled" : "disabled" };
 				activitiesToLog.put(210, oldnew);
+				if (!uploadedSurvey.getAutomaticPublishing()){
+					uploadedSurvey.setStart(null);
+					uploadedSurvey.setEnd(null);
+				}
 			}
 			
 			survey.setSendConfirmationEmail(uploadedSurvey.getSendConfirmationEmail());
