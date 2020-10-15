@@ -401,21 +401,29 @@ public class SurveyService extends BasicService {
 			oQueryParameters.put("endTo", Tools.getFollowingDay(filter.getEndTo()));
 		}
 
+		
 		if (filter.getOwner() != null && filter.getOwner().length() > 0 && filter.getUser() != null
 				&& (filter.getUser().getLogin().equals(filter.getOwner())
 						|| filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2)) {
+			// Searching by owner, checking if current user is owner or has global priviledge
 			sql.append(
 					" AND (s.OWNER in (SELECT USER_ID FROM USERS WHERE USER_LOGIN = :ownername OR USER_DISPLAYNAME = :ownername))");
 			oQueryParameters.put("ownername", filter.getOwner());
+		
 		} else if (filter.getUser() == null) {
+			// Searching public surveys
 			sql.append(
 					" AND s.LISTFORM = 1 AND s.LISTFORMVALIDATED = 1 AND s.ISPUBLISHED = true AND s.ACTIVE = true AND (s.SURVEYSECURITY = 'open' or s.SURVEYSECURITY = 'openanonymous') AND (s.SURVEY_END_DATE IS NULL OR s.SURVEY_END_DATE > :now)");
 			oQueryParameters.put("now", new Date());
-		} else if (filter.getUser() != null) {
+		} 
+		
+		if (filter.getUser() != null) {
 			if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("my")) {
+				// Overriding owner with current user
 				sql.append(" AND (s.OWNER = :ownerId)");
 				oQueryParameters.put("ownerId", filter.getUser().getId());
 			} else if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("shared")) {
+				// Overriding condition by sharing condition
 				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
 					sql.append(
 							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
@@ -427,6 +435,7 @@ public class SurveyService extends BasicService {
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 				}
 			} else if (filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
+				// Searching for the last case, assuming selector is "all"
 				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
 					sql.append(
 							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
