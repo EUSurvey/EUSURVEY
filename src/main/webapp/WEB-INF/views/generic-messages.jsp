@@ -354,7 +354,7 @@
 		setTimeout(function() { $('#email').focus(); }, 1000);
 	}
 	
-	var sessiontimeout = <%=session.getMaxInactiveInterval()%>;
+	var sessiontimeout = ${uisessiontimeout * 60};
 	var timeoutTime = new Date();
 	refreshTimeout();
 	
