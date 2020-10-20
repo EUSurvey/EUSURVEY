@@ -367,7 +367,7 @@ public class SurveyService extends BasicService {
 		}
 
 		if (filter.getGeneratedTo() != null) {
-			sql.append(" AND s.SURVEY_CREATED <= :generatedTo");
+			sql.append(" AND s.SURVEY_CREATED < :generatedTo");
 			oQueryParameters.put("generatedTo", Tools.getFollowingDay(filter.getGeneratedTo()));
 		}
 
@@ -377,7 +377,7 @@ public class SurveyService extends BasicService {
 		}
 
 		if (filter.getDeletedTo() != null) {
-			sql.append(" AND s.SURVEY_DELETED <= :deletedTo");
+			sql.append(" AND s.SURVEY_DELETED < :deletedTo");
 			oQueryParameters.put("deletedTo", Tools.getFollowingDay(filter.getDeletedTo()));
 		}
 
@@ -387,7 +387,7 @@ public class SurveyService extends BasicService {
 		}
 
 		if (filter.getStartTo() != null) {
-			sql.append(" AND s.SURVEY_START_DATE <= :startTo");
+			sql.append(" AND s.SURVEY_START_DATE < :startTo");
 			oQueryParameters.put("startTo", Tools.getFollowingDay(filter.getStartTo()));
 		}
 
@@ -397,7 +397,7 @@ public class SurveyService extends BasicService {
 		}
 
 		if (filter.getEndTo() != null) {
-			sql.append(" AND s.SURVEY_END_DATE <= :endTo");
+			sql.append(" AND s.SURVEY_END_DATE < :endTo");
 			oQueryParameters.put("endTo", Tools.getFollowingDay(filter.getEndTo()));
 		}
 
