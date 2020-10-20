@@ -1826,7 +1826,16 @@ public class AnswerService extends BasicService {
 		List<String> result = query.list();
 
 		if (!result.isEmpty()) {
-			return result.get(0);
+			// if multiple contributions are allowed there can be several drafts for the same user
+			// we skip those that have already been submitted
+			for (String draftUid : result) {
+				Draft draft = answerService.getDraft(draftUid);
+				String answerUid = draft.getAnswerSet().getUniqueCode();
+				AnswerSet answerSet = answerService.get(answerUid);
+				if (answerSet == null) {
+					return draftUid;
+				}
+			}
 		}
 
 		return null;
