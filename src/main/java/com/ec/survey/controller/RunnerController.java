@@ -143,7 +143,7 @@ public class RunnerController extends BasicController {
 					model.addObject("messageComplement", resources.getMessage("message.SubmittedOn", args,
 							"Submitted on: " + ConversionTools.getFullString(answerDate), locale));
 				}
-
+				model.addObject("skipErrorLabel", true);
 				model.addObject("noMenu", true);
 				model.addObject("runnermode", true);
 
@@ -439,6 +439,7 @@ public class RunnerController extends BasicController {
 				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
 				model.addObject(Constants.MESSAGE,
 						resources.getMessage("error.InvitationUsed", null, "The invitation was already used.", locale));
+				model.addObject("skipErrorLabel", true);
 				AnswerSet aws = answerService.getByInvitationCode(invitation.getUniqueId());
 				Date answerDate;
 				if (aws != null) {
