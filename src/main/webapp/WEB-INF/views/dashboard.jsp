@@ -601,7 +601,7 @@
 														<!-- /ko -->
 														
 													<!-- ko if: formManagementRights && canCreateSurveys -->
-													<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', 'true'); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
+													<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', isQuiz.toString()); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
 													<!-- /ko -->
 													
 														<!-- ko if: formManagementRights -->

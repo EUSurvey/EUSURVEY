@@ -321,7 +321,7 @@
 								  $(acopy).addClass("disabled actionRowAction").append("<span style='color: #ccc' class='glyphicon glyphicon-copy'></span>");
 							  }							     
 							     
-							  $(acopy).attr('rel','tooltip').attr("data-toggle","tooltip").attr('title','<spring:message code="label.Copy" />').attr("href", "#");
+							  $(acopy).attr('rel','tooltip').attr("data-toggle","tooltip").attr('title','<spring:message code="label.Copy" />');
 							  $(td).append(acopy);
 							  
 							  if(list[i].formManagementRights)
