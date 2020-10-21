@@ -599,21 +599,37 @@
 								<spring:message code="label.AnonymousSurveyMode" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 							</div>						
-							<div style="float: right">					
-								<div class="onoffswitch">
-									<c:choose>
-										<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
-											<input type="checkbox" checked="checked" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
-										</c:when>
-										<c:otherwise>
-											<input type="checkbox" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
+							<div style="float: right">								
+							
+								<c:choose>
+									<c:when test='${haspublishedanswers != null && (form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous"))}'>
+										<div class="onoffswitch">
+											<input type="checkbox" disabled="disabled" class="onoffswitch-checkbox"  checked="checked" id="myonoffswitchprivacy" />									
+										
+											<label class="onoffswitch-label disabled" for="myonoffswitchprivacy">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
+									    </div>
+									</c:when>
+									<c:otherwise>
+										<div class="onoffswitch">
+											<c:choose>
+												<c:when test='${form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous")}'>
+													<input type="checkbox" checked="checked" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
+												</c:when>
+												<c:otherwise>
+													<input type="checkbox" name="radio-new-survey-privacy" class="onoffswitch-checkbox" id="myonoffswitchprivacy">
+												</c:otherwise>
+											</c:choose>		
+											 <label class="onoffswitch-label" for="myonoffswitchprivacy">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
+										</div>		
 										</c:otherwise>
-									</c:choose>		
-									 <label class="onoffswitch-label" for="myonoffswitchprivacy">
-								        <span class="onoffswitch-inner"></span>
-								        <span class="onoffswitch-switch"></span>
-								    </label>
-								</div>									
+								</c:choose>											
+															
 							</div>
 							<div style="clear: both"></div>
 							<div class="help hideme"><spring:message code="info.AnonymousSurveyMode" /></div>
