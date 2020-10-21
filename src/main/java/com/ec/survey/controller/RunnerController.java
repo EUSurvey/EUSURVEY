@@ -715,6 +715,12 @@ public class RunnerController extends BasicController {
 				if (participationGroup != null && participationGroup.getSurveyUid().equals(survey.getUniqueId())) {
 					return invited(participationGroup.getId().toString(), token, request, locale, survey.getId(),
 							device);
+				} else {
+					ModelAndView model = new ModelAndView("error/generic");
+					model.addObject("message", resources.getMessage("error.AccessDisabled", null, "The access has been disabled.", locale));
+					model.addObject("noMenu", true);
+					model.addObject("runnermode", true);
+					return model;
 				}
 			}
 
