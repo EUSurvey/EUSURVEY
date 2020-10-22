@@ -109,6 +109,10 @@ function toggleRegistrationFormProperties(button)
 	}
 }
 
+function markActiveProperty(input) {
+	$(input).addClass("activeproperty");
+}
+
 var idcounter = 1;
 function getTextPropertiesRow(label, content, usetinymce, unit)
 {
@@ -165,7 +169,7 @@ function getTextPropertiesRow(label, content, usetinymce, unit)
 		tinyMCE.settings = myConfigSettingEditor;
 		tinymce.EditorManager.execCommand('mceToggleEditor', true, id);
 	} else {
-		var rowcontent = "<input type='text' id='" + id + "' value='" + content + "' onblur='update(this)' />"
+		var rowcontent = "<input type='text' id='" + id + "' value='" + content + "' onfocus='markActiveProperty(this)' onblur='update(this)' />"
 		
 		if (unit != null)
 		{
