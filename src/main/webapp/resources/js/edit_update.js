@@ -950,6 +950,8 @@ function update(input)
 		default:
 			throw label + " not implemented"; 
 	}	
+	
+	$(input).removeClass("activeproperty");
 }
 
 function updateFeedback(span, reset)

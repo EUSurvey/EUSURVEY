@@ -187,9 +187,13 @@ var ElementProperties = function() {
 	}
 	
 	this.showProperties = function(e, event, doubleclick)
-	{			
+	{
+		$('.activeproperty').each(function(){
+			update(this);
+		})
+	
 		var advancedOpen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
-		
+				
 		_actions.ElementSelected(false);
 		
 		if ($(e).hasClass("selectedquestion") && !cntrlIsPressed && !shiftIsPressed && !$("#multiselectButton").hasClass("selected"))
