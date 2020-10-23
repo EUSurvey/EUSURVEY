@@ -2105,9 +2105,12 @@ public class AnswerService extends BasicService {
 		return url;
 	}
 	
-	private int clearAnswersForQuestionInMainDatabase(Survey survey, String questionUID, String answerUID)
+	private int clearAnswersForQuestionInMainDatabase(Survey survey, ResultFilter filter, String questionUID, String answerUID) throws Exception
 	{
 		Session session = sessionFactory.getCurrentSession();
+		
+		Map<String, Object> parameters = new HashMap<>();
+				
 		String sql = "UPDATE ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID SET a.VALUE = '' WHERE a.QUESTION_UID = :quid ";
 		
 		if (answerUID != null)
@@ -2124,7 +2127,17 @@ public class AnswerService extends BasicService {
 			sql += " IN (" +StringUtils.collectionToCommaDelimitedString(allVersions) + ")";
 		}
 		
-		Query query = session.createSQLQuery(sql);		
+		if (!filter.isEmpty()) {
+			String sqlAnswerSets = getSql(null,  survey.getId(), filter, parameters, true);
+			
+			Query queryAnswerSets = session.createSQLQuery(sqlAnswerSets);
+			sqlQueryService.setParameters(queryAnswerSets, parameters);
+			List answersetIds = queryAnswerSets.list();		
+			
+			sql += " AND ans.ANSWER_SET_ID IN (" +StringUtils.collectionToCommaDelimitedString(answersetIds) + ")";
+		}
+		
+		Query query = session.createSQLQuery(sql);
 		
 		if (answerUID != null) {
 			query.setString("auid", questionUID + "#" + answerUID);
@@ -2151,13 +2164,13 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional
-	public void clearAnswersForQuestion(Survey survey, String questionUID, String childUID, int userId) throws Exception {	
+	public void clearAnswersForQuestion(Survey survey, ResultFilter filter, String questionUID, String childUID, int userId) throws Exception {	
 		
 		//blank answers in main database		
-		clearAnswersForQuestionInMainDatabase(survey, questionUID, childUID);
+		clearAnswersForQuestionInMainDatabase(survey, filter, questionUID, childUID);
 		
 		//blank answers in reporting database
-		reportingService.clearAnswersForQuestionInReportingDatabase(survey, questionUID, childUID);
+		reportingService.clearAnswersForQuestionInReportingDatabase(survey, filter, questionUID, childUID);
 		
 		deleteContributionPDFs(survey);		
 		

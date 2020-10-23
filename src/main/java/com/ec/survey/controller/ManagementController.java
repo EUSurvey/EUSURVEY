@@ -2873,9 +2873,9 @@ public class ManagementController extends BasicController {
 					String quid = table.getQuestions().get(Integer.parseInt(row)-1).getUniqueId();
 					String auid = table.getAnswers().get(Integer.parseInt(col)-1).getUniqueId();
 					
-					answerService.clearAnswersForQuestion(survey, quid, auid, u.getId());					
+					answerService.clearAnswersForQuestion(survey, filter, quid, auid, u.getId());					
 				} else {				
-					answerService.clearAnswersForQuestion(survey, questionUID, null, u.getId());
+					answerService.clearAnswersForQuestion(survey, filter, questionUID, null, u.getId());
 				}
 				columnDeleted = true;
 			}
