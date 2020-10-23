@@ -1914,7 +1914,7 @@ public class ReportingService {
 	}
 
 	@Transactional(transactionManager = "transactionManagerReporting")
-	public int clearAnswersForQuestionInReportingDatabase(Survey survey, String questionUID, String childUID) {
+	public int clearAnswersForQuestionInReportingDatabase(Survey survey, ResultFilter filter, String questionUID, String childUID) throws Exception {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		if (!OLAPTableExistsInternal(survey.getUniqueId(), survey.getIsDraft()))
@@ -1931,7 +1931,20 @@ public class ReportingService {
 		
 		String sql = "UPDATE " + getOLAPTableName(survey) + " SET Q" + column.replace("-", "") + " = NULL";
 		
+		Map<String, Object> values = new HashMap<>();
+		
+		if (!filter.isEmpty()) {
+		
+			String where = getWhereClause(filter, values, survey);
+			
+			if (where.length() > 10)
+			{
+				sql += where;
+			}		
+		}
+		
 		Query query = sessionReporting.createSQLQuery(sql);
+		sqlQueryService.setParameters(query, values);
 		
 		return query.executeUpdate();		
 	}
