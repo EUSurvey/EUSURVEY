@@ -1351,16 +1351,12 @@ public class AnswerService extends BasicService {
 	@Transactional
 	public Statistics getStatisticsForFilterHash(int surveyId, String hash, boolean useEagerLoading) {
 		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("from Statistics s where s.surveyId=:surveyId and filterHash=:filterHash order by id DESC");
+		query.setInteger("surveyId", surveyId);
+		query.setString("filterHash", hash);
+		query.setMaxResults(1);
+		Statistics result = (Statistics) query.uniqueResult();
 
-		SQLQuery sqlQuery = session
-				.createSQLQuery("SELECT MAX(ACCESS_ID) from STATISTICS WHERE SURVEYID = :surveyId AND FILTER = :hash");
-		sqlQuery.setInteger("surveyId", surveyId).setString("hash", hash);
-
-		int id = ConversionTools.getValue(sqlQuery.uniqueResult());
-		if (id == 0)
-			return null;
-
-		Statistics result = (Statistics) session.get(Statistics.class, id);
 		if (result != null) {
 			if (result.getInvalid() != null && result.getInvalid()) {
 				return null;
