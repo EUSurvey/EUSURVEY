@@ -602,7 +602,12 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 			
 			var item = new ContentItem();
 			item.Value(options[i]);
-			item.Label(getPropertyLabel(options[i]));
+			
+			if (label == "MaximumFileSize") {
+				item.Label(options[i] + " MB");
+			} else {			
+				item.Label(getPropertyLabel(options[i]));
+			}
 			
 			if (options[i] == value)
 			{
