@@ -1425,6 +1425,9 @@ public class Survey implements java.io.Serializable {
 		return result.toString();
 	}
 
+	/**
+	 * Copies the survey into a new one, with its elements and translations
+	 */
 	@Transient
 	public Survey copy(SurveyService surveyService, User powner, String fileDir, boolean copyNumberOfAnswerSets,
 			int pnumberOfAnswerSets, int pnumberOfAnswerSetsPublished, boolean copyPublication, boolean resetSourceIds,

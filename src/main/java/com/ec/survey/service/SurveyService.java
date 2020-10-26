@@ -1065,169 +1065,172 @@ public class SurveyService extends BasicService {
 		session.saveOrUpdate(survey);
 	}
 
+	/**
+	 * Creates a copy of the survey and save it as non-draft survey
+	 */
 	@Transactional
-	public Survey publish(Survey survey, int pnumberOfAnswerSets, int pnumberOfAnswerSetsPublished,
+	public Survey publish(Survey draftSurvey, int pnumberOfAnswerSets, int pnumberOfAnswerSetsPublished,
 			boolean deactivateAutoPublishing, int userId, boolean resetSourceIds, boolean resetSurvey)
 			throws Exception {
-		// this means to create a copy of the survey and save it as non-draft survey
 		Session session = sessionFactory.getCurrentSession();
-		boolean alreadyPublished = survey.getIsPublished();
+		boolean alreadyPublished = draftSurvey.getIsPublished();
 
 		if (resetSurvey) {
-			session.evict(survey);
-			survey = (Survey) session.merge(survey);
+			session.evict(draftSurvey);
+			draftSurvey = (Survey) session.merge(draftSurvey);
 		}
 
-		Survey published = survey.copy(this, survey.getOwner(), fileDir, true, pnumberOfAnswerSets,
+		Survey publishedSurvey = draftSurvey.copy(this, draftSurvey.getOwner(), fileDir, true, pnumberOfAnswerSets,
 				pnumberOfAnswerSetsPublished, true, resetSourceIds, true, null, null);
-		published.setIsDraft(false); // this means it is not a draft
+		publishedSurvey.setIsDraft(false); // this means it is not a draft
 		if (deactivateAutoPublishing) {
-			published.setAutomaticPublishing(false);
+			publishedSurvey.setAutomaticPublishing(false);
 		}
-		published = update(published, false, true, false, userId);
+		publishedSurvey = update(publishedSurvey, false, true, false, userId);
 
-		computeTrustScore(survey);
+		this.computeTrustScore(draftSurvey);
 
 		// copy translations
-		Map<String, String> keys = new HashMap<>();
-		for (Element element : published.getElementsRecursive()) {
-			keys.put(element.getUniqueId(), element.getUniqueId());
-			keys.put(element.getSourceId().toString(), element.getId().toString());
+		Map<String, String> publishedSurveyKeys = new HashMap<>();
+		for (Element element : publishedSurvey.getElementsRecursive()) {
+			publishedSurveyKeys.put(element.getUniqueId(), element.getUniqueId());
+			publishedSurveyKeys.put(element.getSourceId().toString(), element.getId().toString());
 			if (element instanceof ChoiceQuestion) {
 				for (PossibleAnswer answer : ((ChoiceQuestion) element).getPossibleAnswers()) {
-					keys.put(answer.getUniqueId(), answer.getUniqueId());
-					keys.put(answer.getSourceId().toString(), answer.getId().toString());
+					publishedSurveyKeys.put(answer.getUniqueId(), answer.getUniqueId());
+					publishedSurveyKeys.put(answer.getSourceId().toString(), answer.getId().toString());
 				}
 			}
 			if (element instanceof Question) {
 				Question question = (Question) element;
 				if (question.getScoringItems() != null) {
 					for (ScoringItem scoringItem : question.getScoringItems()) {
-						keys.put(scoringItem.getUniqueId(), scoringItem.getUniqueId());
-						keys.put(scoringItem.getSourceId().toString(), scoringItem.getId().toString());
+						publishedSurveyKeys.put(scoringItem.getUniqueId(), scoringItem.getUniqueId());
+						publishedSurveyKeys.put(scoringItem.getSourceId().toString(), scoringItem.getId().toString());
 					}
 				}
 			}
 		}
-		List<Translations> translations = translationService.getTranslationsForSurvey(survey.getId(), true);
-		for (Translations translation : translations) {
-			if (!translation.getLanguage().getCode().equalsIgnoreCase(survey.getLanguage().getCode())) {
-				Translations tcopy = new Translations();
-				tcopy.setActive(translation.getActive());
-				tcopy.setLanguage(translation.getLanguage());
-				tcopy.setSurveyId(published.getId());
-				tcopy.setSurveyUid(published.getUniqueId());
-				tcopy.setTitle(translation.getTitle());
-				tcopy.setComplete(translation.getComplete());
+		List<Translations> draftTranslationsList = translationService.getTranslationsForSurvey(draftSurvey.getId(), true);
+		for (Translations draftTranslations : draftTranslationsList) {
+			if (!draftTranslations.getLanguage().getCode().equalsIgnoreCase(draftSurvey.getLanguage().getCode())) {
+				Translations translationsCopy = new Translations();
+				translationsCopy.setActive(draftTranslations.getActive());
+				translationsCopy.setLanguage(draftTranslations.getLanguage());
+				translationsCopy.setSurveyId(publishedSurvey.getId());
+				translationsCopy.setSurveyUid(publishedSurvey.getUniqueId());
+				translationsCopy.setTitle(draftTranslations.getTitle());
+				translationsCopy.setComplete(draftTranslations.getComplete());
 
-				for (Translation t : translation.getTranslations()) {
-					Translation tc = new Translation();
-					tc.setLabel(t.getLabel());
-					tc.setLanguage(t.getLanguage());
-					tc.setSurveyId(published.getId());
-					tc.setTranslations(tcopy);
-					if (t.getKey().equalsIgnoreCase(Survey.TITLE) || t.getKey().equalsIgnoreCase(Survey.INTRODUCTION)
-							|| t.getKey().equalsIgnoreCase(Survey.ESCAPEPAGE)
-							|| t.getKey().equalsIgnoreCase(Survey.ESCAPELINK)
-							|| t.getKey().equalsIgnoreCase(Survey.CONFIRMATIONPAGE)
-							|| t.getKey().equalsIgnoreCase(Survey.CONFIRMATIONLINK)
-							|| t.getKey().equalsIgnoreCase(Survey.HELP)
-							|| t.getKey().equalsIgnoreCase(Survey.QUIZWELCOMEMESSAGE)
-							|| t.getKey().equalsIgnoreCase(Survey.QUIZRESULTSMESSAGE)) {
-						tc.setKey(t.getKey());
-						tcopy.getTranslations().add(tc);
+				for (Translation draftTranslation : draftTranslations.getTranslations()) {
+					Translation translationCopy = new Translation();
+					translationCopy.setLabel(draftTranslation.getLabel());
+					translationCopy.setLanguage(draftTranslation.getLanguage());
+					translationCopy.setSurveyId(publishedSurvey.getId());
+					translationCopy.setTranslations(translationsCopy);
+					if (draftTranslation.getKey().equalsIgnoreCase(Survey.TITLE) 
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.INTRODUCTION)
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.ESCAPEPAGE)
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.ESCAPELINK)
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.CONFIRMATIONPAGE)
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.CONFIRMATIONLINK)
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.HELP)
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.QUIZWELCOMEMESSAGE)
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.QUIZRESULTSMESSAGE)) {
+						translationCopy.setKey(draftTranslation.getKey());
+						translationsCopy.getTranslations().add(translationCopy);
 					} else {
-						if (t.getKey().endsWith("help")) {
-							String k = t.getKey().replace("help", "");
-							if (keys.containsKey(k)) {
-								tc.setKey(keys.get(k) + "help");
-								tcopy.getTranslations().add(tc);
+						if (draftTranslation.getKey().endsWith("help")) {
+							String draftKey = draftTranslation.getKey().replace("help", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "help");
+								translationsCopy.getTranslations().add(translationCopy);
 							} else {
-								logger.info("key " + t.getKey() + " not found in key map for translation");
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
-						} else if (t.getKey().endsWith("FEEDBACK")) {
-							String k = t.getKey().replace("FEEDBACK", "");
-							if (keys.containsKey(k)) {
-								tc.setKey(keys.get(k) + "FEEDBACK");
-								tcopy.getTranslations().add(tc);
+						} else if (draftTranslation.getKey().endsWith("FEEDBACK")) {
+							String draftKey = draftTranslation.getKey().replace("FEEDBACK", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "FEEDBACK");
+								translationsCopy.getTranslations().add(translationCopy);
 							} else {
-								logger.info("key " + t.getKey() + " not found in key map for translation");
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
-						} else if (t.getKey().endsWith("UNIT")) {
-							String k = t.getKey().replace("UNIT", "");
-							if (keys.containsKey(k)) {
-								tc.setKey(keys.get(k) + "UNIT");
-								tcopy.getTranslations().add(tc);
+						} else if (draftTranslation.getKey().endsWith("UNIT")) {
+							String draftKey = draftTranslation.getKey().replace("UNIT", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "UNIT");
+								translationsCopy.getTranslations().add(translationCopy);
 							} else {
-								logger.info("key " + t.getKey() + " not found in key map for translation");
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
-						} else if (t.getKey().endsWith("CONFIRMATIONTEXT")) {
-							String k = t.getKey().replace("CONFIRMATIONTEXT", "");
-							if (keys.containsKey(k)) {
-								tc.setKey(keys.get(k) + "CONFIRMATIONTEXT");
-								tcopy.getTranslations().add(tc);
+						} else if (draftTranslation.getKey().endsWith("CONFIRMATIONTEXT")) {
+							String draftKey = draftTranslation.getKey().replace("CONFIRMATIONTEXT", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "CONFIRMATIONTEXT");
+								translationsCopy.getTranslations().add(translationCopy);
 							} else {
-								logger.info("key " + t.getKey() + " not found in key map for translation");
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
-						} else if (t.getKey().endsWith("CONFIRMATIONLABEL")) {
-							String k = t.getKey().replace("CONFIRMATIONLABEL", "");
-							if (keys.containsKey(k)) {
-								tc.setKey(keys.get(k) + "CONFIRMATIONLABEL");
-								tcopy.getTranslations().add(tc);
+						} else if (draftTranslation.getKey().endsWith("CONFIRMATIONLABEL")) {
+							String draftKey = draftTranslation.getKey().replace("CONFIRMATIONLABEL", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "CONFIRMATIONLABEL");
+								translationsCopy.getTranslations().add(translationCopy);
 							} else {
-								logger.info("key " + t.getKey() + " not found in key map for translation");
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
-						} else if (t.getKey().endsWith("TABTITLE")) {
-							String k = t.getKey().replace("TABTITLE", "");
-							if (keys.containsKey(k)) {
-								tc.setKey(keys.get(k) + "TABTITLE");
-								tcopy.getTranslations().add(tc);
+						} else if (draftTranslation.getKey().endsWith("TABTITLE")) {
+							String draftKey = draftTranslation.getKey().replace("TABTITLE", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "TABTITLE");
+								translationsCopy.getTranslations().add(translationCopy);
 							} else {
-								logger.info("key " + t.getKey() + " not found in key map for translation");
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
-						} else if (t.getKey().endsWith(Constants.SHORTNAME)) {
-							String k = t.getKey().replace(Constants.SHORTNAME, "");
-							if (keys.containsKey(k)) {
-								tc.setKey(keys.get(k) + Constants.SHORTNAME);
-								tcopy.getTranslations().add(tc);
+						} else if (draftTranslation.getKey().endsWith(Constants.SHORTNAME)) {
+							String draftKey = draftTranslation.getKey().replace(Constants.SHORTNAME, "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + Constants.SHORTNAME);
+								translationsCopy.getTranslations().add(translationCopy);
 							} else {
-								logger.info("key " + t.getKey() + " not found in key map for translation");
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
-						} else if (t.getKey().endsWith("#backgrounddocument") || t.getKey().endsWith("#usefullink")) {
-							tc.setKey(t.getKey());
-							tcopy.getTranslations().add(tc);
-						} else if (keys.containsKey(t.getKey())) {
-							tc.setKey(keys.get(t.getKey()));
-							tcopy.getTranslations().add(tc);
+						} else if (draftTranslation.getKey().endsWith("#backgrounddocument") || draftTranslation.getKey().endsWith("#usefullink")) {
+							translationCopy.setKey(draftTranslation.getKey());
+							translationsCopy.getTranslations().add(translationCopy);
+						} else if (publishedSurveyKeys.containsKey(draftTranslation.getKey())) {
+							translationCopy.setKey(publishedSurveyKeys.get(draftTranslation.getKey()));
+							translationsCopy.getTranslations().add(translationCopy);
 						} else {
-							logger.info("key " + t.getKey() + " not found in key map for translation");
+							logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 						}
 					}
 				}
-				translationService.save(tcopy);
-			}
+				translationService.save(translationsCopy);
+			} 
 		}
 
 		Survey ob = null;
-		ob = (Survey) session.get(Survey.class, survey.getId());
+		ob = (Survey) session.get(Survey.class, draftSurvey.getId());
 
 		ob.setIsPublished(true);
 		ob.setHasPendingChanges(false);
 
 		if (deactivateAutoPublishing) {
 			ob.setAutomaticPublishing(false);
-			survey.setAutomaticPublishing(false);
+			draftSurvey.setAutomaticPublishing(false);
 		}
 
-		survey.setHasPendingChanges(false);
+		draftSurvey.setHasPendingChanges(false);
 
 		session.update(ob);
-		survey.setIsPublished(true);
+		draftSurvey.setIsPublished(true);
 
 		if (!alreadyPublished)
-			reportingService.addToDo(ToDo.NEWSURVEY, survey.getUniqueId(), null);
+			reportingService.addToDo(ToDo.NEWSURVEY, draftSurvey.getUniqueId(), null);
 
-		return published;
+		return publishedSurvey;
 	}
 
 	@Transactional
@@ -1414,52 +1417,52 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public int applyChanges(Survey survey, boolean deactivateAutoPublishing, int userId, boolean resetSurey)
+	public int applyChanges(Survey draftSurvey, boolean deactivateAutoPublishing, int userId, boolean resetSurey)
 			throws Exception {
 		if (resetSurey) {
 			Session session = sessionFactory.getCurrentSession();
-			session.evict(survey);
-			survey = (Survey) session.merge(survey);
-			initializeSurvey(survey);
+			session.evict(draftSurvey);
+			draftSurvey = (Survey) session.merge(draftSurvey);
+			initializeSurvey(draftSurvey);
 		}
 
-		boolean sendListFormMail = survey.isListFormValidated();
+		boolean sendListFormMail = draftSurvey.isListFormValidated();
 
-		Survey publishedSurvey = getSurvey(survey.getShortname(), false, false, false, true, null, true, false);
+		Survey publishedSurvey = getSurvey(draftSurvey.getShortname(), false, false, false, true, null, true, false);
 
-		Survey newPublishedSurvey = publish(survey, -1, -1, deactivateAutoPublishing, userId, false, false);
+		Survey newPublishedSurvey = publish(draftSurvey, -1, -1, deactivateAutoPublishing, userId, false, false);
 		newPublishedSurvey.setVersion(publishedSurvey.getVersion() + 1);
 		newPublishedSurvey.setIsActive(publishedSurvey.getIsActive());
 		newPublishedSurvey.setNotified(publishedSurvey.getNotified());
 		newPublishedSurvey.setListFormValidated(false);
-		survey.setNotified(publishedSurvey.getNotified());
-		survey.getPublication().setShowCharts(false);
-		survey.getPublication().setShowStatistics(false);
-		survey.getPublication().setShowContent(false);
+		draftSurvey.setNotified(publishedSurvey.getNotified());
+		draftSurvey.getPublication().setShowCharts(false);
+		draftSurvey.getPublication().setShowStatistics(false);
+		draftSurvey.getPublication().setShowContent(false);
 		newPublishedSurvey.getPublication().setShowCharts(false);
 		newPublishedSurvey.getPublication().setShowStatistics(false);
 		newPublishedSurvey.getPublication().setShowContent(false);
 		AdaptIDs(publishedSurvey, newPublishedSurvey, false);
-		survey.setHasPendingChanges(false);
-		survey.setListFormValidated(false);
-		survey.setPublicationRequestedDate(new Date());
+		draftSurvey.setHasPendingChanges(false);
+		draftSurvey.setListFormValidated(false);
+		draftSurvey.setPublicationRequestedDate(new Date());
 
-		computeTrustScore(survey);
+		computeTrustScore(draftSurvey);
 
 		// copy result filters
-		List<ResultFilter> filters = sessionService.getAllResultFilter(publishedSurvey.getId());
-		if (filters != null) {
-			for (ResultFilter filter : filters) {
+		List<ResultFilter> publishedSurveyFilters = sessionService.getAllResultFilter(publishedSurvey.getId());
+		if (publishedSurveyFilters != null) {
+			for (ResultFilter publishedSurveyFilter : publishedSurveyFilters) {
 				// do not copy filters of exports
-				Export export = exportService.getExportByResultFilterID(filter.getId());
+				Export export = exportService.getExportByResultFilterID(publishedSurveyFilter.getId());
 				if (export == null) {
-					ResultFilter newFilter = filter.copy();
+					ResultFilter newPublishedSurveyFilter = publishedSurveyFilter.copy();
 
-					if (filter.getDefaultQuestions() == null || !filter.getDefaultQuestions()) {
+					if (publishedSurveyFilter.getDefaultQuestions() == null || !publishedSurveyFilter.getDefaultQuestions()) {
 						Map<String, String> uidsById = publishedSurvey.getUniqueIDsByID();
 						Map<String, String> idsByUid = newPublishedSurvey.getIDsByUniqueID();
 						Set<String> newids = new HashSet<>();
-						for (String sid : filter.getVisibleQuestions()) {
+						for (String sid : publishedSurveyFilter.getVisibleQuestions()) {
 							String uid = uidsById.get(sid);
 							if (uid != null) {
 								String id = idsByUid.get(uid);
@@ -1468,10 +1471,10 @@ public class SurveyService extends BasicService {
 								}
 							}
 						}
-						newFilter.setVisibleQuestions(newids);
+						newPublishedSurveyFilter.setVisibleQuestions(newids);
 
 						newids = new HashSet<>();
-						for (String sid : filter.getExportedQuestions()) {
+						for (String sid : publishedSurveyFilter.getExportedQuestions()) {
 							String uid = uidsById.get(sid);
 							if (uid != null) {
 								String id = idsByUid.get(uid);
@@ -1480,32 +1483,32 @@ public class SurveyService extends BasicService {
 								}
 							}
 						}
-						newFilter.setExportedQuestions(newids);
+						newPublishedSurveyFilter.setExportedQuestions(newids);
 					}
 
-					newFilter.setSurveyId(newPublishedSurvey.getId());
-					if (filter.getUserId() != null) {
-						sessionService.internalSetLastResultFilter(newFilter, filter.getUserId(),
-								newFilter.getSurveyId());
+					newPublishedSurveyFilter.setSurveyId(newPublishedSurvey.getId());
+					if (publishedSurveyFilter.getUserId() != null) {
+						sessionService.internalSetLastResultFilter(newPublishedSurveyFilter, publishedSurveyFilter.getUserId(),
+								newPublishedSurveyFilter.getSurveyId());
 					}
 				}
 			}
 		}
 
-		update(survey, true);
+		update(draftSurvey, true);
 
 		if (sendListFormMail) {
-			sendListFormMail(survey);
+			sendListFormMail(draftSurvey);
 		}
 
-		if (survey.getIsOPC()) {
-			sendOPCApplyChangesMail(survey, userId);
+		if (draftSurvey.getIsOPC()) {
+			sendOPCApplyChangesMail(draftSurvey, userId);
 		}
 
 		fileService.deleteOldSurveyPDFs(publishedSurvey.getUniqueId(), publishedSurvey.getId());
 		answerService.deleteStatisticsForSurvey(publishedSurvey.getId());
 
-		reportingService.addToDo(ToDo.CHANGEDSURVEY, survey.getUniqueId(), null);
+		reportingService.addToDo(ToDo.CHANGEDSURVEY, draftSurvey.getUniqueId(), null);
 
 		return newPublishedSurvey.getId();
 	}
@@ -1693,11 +1696,11 @@ public class SurveyService extends BasicService {
 				}
 
 				List<String> deletedElements = new ArrayList<>();
-				for (Translation translation : originalTranslations.getTranslations()) {
-					if (!newTranslationsMap.containsKey(translation.getKey()) && !translation.getKey().endsWith("help") && !translation.getKey().endsWith("UNIT")
-							&& !translation.getKey().endsWith("TABTITLE")
-							&& !deletedElements.contains(translation.getKey())) {
-						deletedElements.add(translation.getKey());
+				for (Translation originalTranslation : originalTranslations.getTranslations()) {
+					if (!newTranslationsMap.containsKey(originalTranslation.getKey()) && !originalTranslation.getKey().endsWith("help") && !originalTranslation.getKey().endsWith("UNIT")
+							&& !originalTranslation.getKey().endsWith("TABTITLE")
+							&& !deletedElements.contains(originalTranslation.getKey())) {
+						deletedElements.add(originalTranslation.getKey());
 					}					
 				}
 
@@ -2749,126 +2752,128 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public Map<Element, Integer> getPendingChanges(Survey draft) {
+	public Map<Element, Integer> getPendingChanges(Survey draftSurvey) {
 		Map<Element, Integer> result = new HashMap<>();
 
-		Survey published = getSurvey(draft.getShortname(), false, false, false, false, draft.getLanguage().getCode(),
+		Survey publishedSurvey = getSurvey(draftSurvey.getShortname(), false, false, false, false, draftSurvey.getLanguage().getCode(),
 				true, true);
 
-		if (draft != null && published != null) {
-			Map<String, Element> publishedElements = published.getElementsByUniqueId();
-			for (Element element : draft.getElements()) {
+		// Compare elements
+		if (draftSurvey != null && publishedSurvey != null) {
+			Map<String, Element> publishedElements = publishedSurvey.getElementsByUniqueId();
+			for (Element element : draftSurvey.getElements()) {
 				if (!publishedElements.containsKey(element.getUniqueId())) {
 					// these are new elements
 					result.put(element, 0);
 				} else {
 					Element publishedElement = publishedElements.get(element.getUniqueId());
 					if (publishedElement.differsFrom(element)) {
+						// these are modified elements
 						result.put(element, 1);
 					}
 				}
 			}
 
 			// deleted elements
-			Map<String, Element> draftElements = draft.getElementsByUniqueId();
-			for (Element element : published.getElements()) {
+			Map<String, Element> draftElements = draftSurvey.getElementsByUniqueId();
+			for (Element element : publishedSurvey.getElements()) {
 				if (!draftElements.containsKey(element.getUniqueId())) {
 					// these are deleted elements
 					result.put(element, 2);
 				}
 			}
-		}
+		} 
 
 		boolean hasPendingChanges = false;
 
-		if (draft != null && published != null) {
-			if (draft.getContact() != null && !draft.getContact().equals(published.getContact()))
+		if (draftSurvey != null && publishedSurvey != null) {
+			if (draftSurvey.getContact() != null && !draftSurvey.getContact().equals(publishedSurvey.getContact()))
 				hasPendingChanges = true;
-			if (draft.getMultiPaging() != published.getMultiPaging())
+			if (draftSurvey.getMultiPaging() != publishedSurvey.getMultiPaging())
 				hasPendingChanges = true;
-			if (draft.getValidatedPerPage() != published.getValidatedPerPage())
+			if (draftSurvey.getValidatedPerPage() != publishedSurvey.getValidatedPerPage())
 				hasPendingChanges = true;
-			if (!Objects.equals(draft.getWcagCompliance(), published.getWcagCompliance()))
+			if (!Objects.equals(draftSurvey.getWcagCompliance(), publishedSurvey.getWcagCompliance()))
 				hasPendingChanges = true;
-			if (!Tools.isFileEqual(draft.getLogo(), published.getLogo()))
+			if (!Tools.isFileEqual(draftSurvey.getLogo(), publishedSurvey.getLogo()))
 				hasPendingChanges = true;
-			if (!draft.getLogoInInfo().equals(published.getLogoInInfo()))
+			if (!draftSurvey.getLogoInInfo().equals(publishedSurvey.getLogoInInfo()))
 				hasPendingChanges = true;
-			if (!Tools.isEqual(draft.getSkin(), published.getSkin()))
+			if (!Tools.isEqual(draftSurvey.getSkin(), publishedSurvey.getSkin()))
 				hasPendingChanges = true;
-			if (draft.getSectionNumbering() != published.getSectionNumbering())
+			if (draftSurvey.getSectionNumbering() != publishedSurvey.getSectionNumbering())
 				hasPendingChanges = true;
-			if (draft.getQuestionNumbering() != published.getQuestionNumbering())
+			if (draftSurvey.getQuestionNumbering() != publishedSurvey.getQuestionNumbering())
 				hasPendingChanges = true;
-			if (!Tools.isEqual(draft.getConfirmationPage(), published.getConfirmationPage()))
+			if (!Tools.isEqual(draftSurvey.getConfirmationPage(), publishedSurvey.getConfirmationPage()))
 				hasPendingChanges = true;
-			if (!Tools.isEqual(draft.getConfirmationPageLink(), published.getConfirmationPageLink()))
+			if (!Tools.isEqual(draftSurvey.getConfirmationPageLink(), publishedSurvey.getConfirmationPageLink()))
 				hasPendingChanges = true;
-			if (!Tools.isEqual(draft.getConfirmationLink(), published.getConfirmationLink()))
-				hasPendingChanges = true;
-
-			if (!Tools.isEqual(draft.getIsQuiz(), published.getIsQuiz()))
-				hasPendingChanges = true;
-			if (!Tools.isEqualIgnoreEmptyString(draft.getQuizWelcomeMessage(), published.getQuizWelcomeMessage()))
-				hasPendingChanges = true;
-			if (!Tools.isEqualIgnoreEmptyString(draft.getQuizResultsMessage(), published.getQuizResultsMessage()))
+			if (!Tools.isEqual(draftSurvey.getConfirmationLink(), publishedSurvey.getConfirmationLink()))
 				hasPendingChanges = true;
 
-			if (!Tools.isEqual(draft.getShowTotalScore(), published.getShowTotalScore()))
+			if (!Tools.isEqual(draftSurvey.getIsQuiz(), publishedSurvey.getIsQuiz()))
 				hasPendingChanges = true;
-			if (!Tools.isEqual(draft.getScoresByQuestion(), published.getScoresByQuestion()))
+			if (!Tools.isEqualIgnoreEmptyString(draftSurvey.getQuizWelcomeMessage(), publishedSurvey.getQuizWelcomeMessage()))
 				hasPendingChanges = true;
-
-			if (!Tools.isEqual(draft.getShowQuizIcons(), published.getShowQuizIcons()))
-				hasPendingChanges = true;
-
-			if (!Tools.isEqual(draft.getIsUseMaxNumberContribution(), published.getIsUseMaxNumberContribution()))
+			if (!Tools.isEqualIgnoreEmptyString(draftSurvey.getQuizResultsMessage(), publishedSurvey.getQuizResultsMessage()))
 				hasPendingChanges = true;
 
-			if (!Tools.isEqual(draft.getIsUseMaxNumberContributionLink(),
-					published.getIsUseMaxNumberContributionLink()))
+			if (!Tools.isEqual(draftSurvey.getShowTotalScore(), publishedSurvey.getShowTotalScore()))
+				hasPendingChanges = true;
+			if (!Tools.isEqual(draftSurvey.getScoresByQuestion(), publishedSurvey.getScoresByQuestion()))
 				hasPendingChanges = true;
 
-			if (!Tools.isEqual(draft.getMaxNumberContributionText(), published.getMaxNumberContributionText()))
+			if (!Tools.isEqual(draftSurvey.getShowQuizIcons(), publishedSurvey.getShowQuizIcons()))
 				hasPendingChanges = true;
 
-			if (!Tools.isEqual(draft.getMaxNumberContributionLink(), published.getMaxNumberContributionLink()))
+			if (!Tools.isEqual(draftSurvey.getIsUseMaxNumberContribution(), publishedSurvey.getIsUseMaxNumberContribution()))
 				hasPendingChanges = true;
 
-			if (!Tools.isEqual(draft.getMaxNumberContribution(), published.getMaxNumberContribution()))
+			if (!Tools.isEqual(draftSurvey.getIsUseMaxNumberContributionLink(),
+					publishedSurvey.getIsUseMaxNumberContributionLink()))
+				hasPendingChanges = true;
+
+			if (!Tools.isEqual(draftSurvey.getMaxNumberContributionText(), publishedSurvey.getMaxNumberContributionText()))
+				hasPendingChanges = true;
+
+			if (!Tools.isEqual(draftSurvey.getMaxNumberContributionLink(), publishedSurvey.getMaxNumberContributionLink()))
+				hasPendingChanges = true;
+
+			if (!Tools.isEqual(draftSurvey.getMaxNumberContribution(), publishedSurvey.getMaxNumberContribution()))
 				hasPendingChanges = true;
 
 			if (!hasPendingChanges)
-				for (String key : draft.getUsefulLinks().keySet()) {
-					if (!published.getUsefulLinks().containsKey(key)
-							|| !published.getUsefulLinks().get(key).equals(draft.getUsefulLinks().get(key))) {
+				for (String key : draftSurvey.getUsefulLinks().keySet()) {
+					if (!publishedSurvey.getUsefulLinks().containsKey(key)
+							|| !publishedSurvey.getUsefulLinks().get(key).equals(draftSurvey.getUsefulLinks().get(key))) {
 						hasPendingChanges = true;
 						break;
 					}
 				}
 
 			if (!hasPendingChanges)
-				for (String key : published.getUsefulLinks().keySet()) {
-					if (!draft.getUsefulLinks().containsKey(key)
-							|| !draft.getUsefulLinks().get(key).equals(published.getUsefulLinks().get(key))) {
+				for (String key : publishedSurvey.getUsefulLinks().keySet()) {
+					if (!draftSurvey.getUsefulLinks().containsKey(key)
+							|| !draftSurvey.getUsefulLinks().get(key).equals(publishedSurvey.getUsefulLinks().get(key))) {
 						hasPendingChanges = true;
 						break;
 					}
 				}
 
 			if (!hasPendingChanges)
-				for (String key : draft.getBackgroundDocuments().keySet()) {
-					if (!published.getBackgroundDocuments().containsKey(key) || !published.getBackgroundDocuments()
-							.get(key).equals(draft.getBackgroundDocuments().get(key))) {
+				for (String key : draftSurvey.getBackgroundDocuments().keySet()) {
+					if (!publishedSurvey.getBackgroundDocuments().containsKey(key) || !publishedSurvey.getBackgroundDocuments()
+							.get(key).equals(draftSurvey.getBackgroundDocuments().get(key))) {
 						hasPendingChanges = true;
 						break;
 					}
 				}
 
 			if (!hasPendingChanges)
-				for (String key : published.getBackgroundDocuments().keySet()) {
-					if (!draft.getBackgroundDocuments().containsKey(key) || !draft.getBackgroundDocuments().get(key)
-							.equals(published.getBackgroundDocuments().get(key))) {
+				for (String key : publishedSurvey.getBackgroundDocuments().keySet()) {
+					if (!draftSurvey.getBackgroundDocuments().containsKey(key) || !draftSurvey.getBackgroundDocuments().get(key)
+							.equals(publishedSurvey.getBackgroundDocuments().get(key))) {
 						hasPendingChanges = true;
 						break;
 					}
@@ -2878,17 +2883,17 @@ public class SurveyService extends BasicService {
 				result.put(new PropertiesElement(), 1);
 
 			// check if the order of elements has changed
-			if (!hasPendingChanges && !draft.getElementsRecursiveUids().equals(published.getElementsRecursiveUids())) {
+			if (!hasPendingChanges && !draftSurvey.getElementsRecursiveUids().equals(publishedSurvey.getElementsRecursiveUids())) {
 				hasPendingChanges = true;
 				if (hasPendingChanges)
 					result.put(new PropertiesElement(true), 1);
 			}
 
-			List<Translations> draftTranslations = translationService.getActiveTranslationsForSurvey(draft.getId());
+			List<Translations> draftTranslations = translationService.getActiveTranslationsForSurvey(draftSurvey.getId());
 			List<Translations> publishedTranslations = translationService
-					.getActiveTranslationsForSurvey(published.getId());
+					.getActiveTranslationsForSurvey(publishedSurvey.getId());
 
-			Translations currentTranslations = TranslationsHelper.getTranslations(draft, false);
+			Translations currentTranslations = TranslationsHelper.getTranslations(draftSurvey, false);
 			Map<String, Translation> currentKeys = currentTranslations.getTranslationsByKey();
 
 			if (checkTranslations(draftTranslations, publishedTranslations, currentKeys)
@@ -2899,26 +2904,30 @@ public class SurveyService extends BasicService {
 
 		return result;
 	}
-
 	private boolean checkTranslations(List<Translations> first, List<Translations> second,
 			Map<String, Translation> currentKeys) {
 		Map<String, Translations> secondTranslationsByLanguageCode = new HashMap<>();
-		for (Translations trans : second) {
-			secondTranslationsByLanguageCode.put(trans.getLanguage().getCode(), trans);
+		for (Translations secondTranslations : second) {
+			secondTranslationsByLanguageCode.put(secondTranslations.getLanguage().getCode(), secondTranslations);
 		}
 
-		for (Translations trans : first) {
-			if (!secondTranslationsByLanguageCode.containsKey(trans.getLanguage().getCode())) {
+		// Go through the first translations - i.e. through the different languages of the survey
+		for (Translations firstTranslations : first) {
+			// Check if the firstTranslation is the same in the secondTranslation
+			if (!secondTranslationsByLanguageCode.containsKey(firstTranslations.getLanguage().getCode())) {
 				return true;
 			}
-			Translations pub = secondTranslationsByLanguageCode.get(trans.getLanguage().getCode());
 
-			Map<String, String> secondTranslationsMap = pub.getTranslationsMap();
-			for (Translation t : trans.getFilteredTranslations()) {
-				if (!secondTranslationsMap.containsKey(t.getKey())
-						|| !secondTranslationsMap.get(t.getKey()).equals(t.getLabel())) {
-					if (t.getLabel() != null && t.getLabel().trim().length() > 0 && currentKeys.containsKey(t.getKey())
-							&& !t.getKey().startsWith("ESCAPE")) {
+			Translations secondTranslations = secondTranslationsByLanguageCode.get(firstTranslations.getLanguage().getCode());
+			Map<String, String> secondTranslationsMap = secondTranslations.getTranslationsMap();
+			for (Translation firstFilteredTranslation : firstTranslations.getFilteredTranslations()) {
+				// Compare keys and labels
+				if (!secondTranslationsMap.containsKey(firstFilteredTranslation.getKey())
+						|| !secondTranslationsMap.get(firstFilteredTranslation.getKey()).equals(firstFilteredTranslation.getLabel())) {
+							// A label is not the same or a key is not present
+							// Check if the key is supposed to be present in the current survey? 
+					if (firstFilteredTranslation.getLabel() != null && firstFilteredTranslation.getLabel().trim().length() > 0 && currentKeys.containsKey(firstFilteredTranslation.getKey())
+							&& !firstFilteredTranslation.getKey().startsWith("ESCAPE")) {
 						return true;
 					}
 				}

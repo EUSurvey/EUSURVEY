@@ -161,6 +161,11 @@ public class TranslationController extends BasicController {
 				surveyService.update(form.getSurvey(), true, true, true, u.getId());
 			} else {
 				Translations translations = translationService.getTranslations(id);
+				if (form.getSurvey().getLanguage().getCode().equalsIgnoreCase(translations.getLanguage().getCode())) {
+					SurveyHelper.replace(form.getSurvey(), search, replace);
+					surveyService.update(form.getSurvey(), true, false, true, u.getId());
+				}
+
 				for (Translation translation : translations.getTranslations()) {
 					if (translation.getLabel() != null && translation.getLabel().contains(search)) {
 						translation.setLabel(translation.getLabel().replace(search, replace));
@@ -535,8 +540,8 @@ public class TranslationController extends BasicController {
 			int surveyId = Integer.parseInt(survey);
 
 			User u = sessionService.getCurrentUser(request);
-			Survey s = surveyService.getSurvey(surveyId, false, false, false, true);
-			if (u == null || !sessionService.userIsFormAdmin(s, u, request)) {
+			Survey surveyByID = surveyService.getSurvey(surveyId, false, false, false, true);
+			if (u == null || !sessionService.userIsFormAdmin(surveyByID, u, request)) {
 				throw new ForbiddenURLException();
 			}
 
@@ -621,7 +626,7 @@ public class TranslationController extends BasicController {
 					dirty = true;
 				}
 
-				if (!TranslationsHelper.isComplete(t, s)) {
+				if (!TranslationsHelper.isComplete(t, surveyByID)) {
 					t.setActive(false);
 
 					if (completeTranslations.contains(t.getId())) {
@@ -637,14 +642,14 @@ public class TranslationController extends BasicController {
 					}
 				}
 
-				if (t.getLanguage().getCode().equals(s.getLanguage().getCode())) {
-					TranslationsHelper.synchronizePivot(s, t);
-					surveyService.update(s, false);
+				if (t.getLanguage().getCode().equalsIgnoreCase(surveyByID.getLanguage().getCode())) {
+					TranslationsHelper.synchronizePivot(surveyByID, t);
+					surveyService.update(surveyByID, false);
 				}
 
 				translationService.save(t);
 				activityService.logTranslations(227, t.getLanguage().getCode(), oldInfos.get(t.getId()), t.getInfo(),
-						sessionService.getCurrentUser(request).getId(), s.getUniqueId());
+						sessionService.getCurrentUser(request).getId(), surveyByID.getUniqueId());
 			}
 
 			if (dirty) {
