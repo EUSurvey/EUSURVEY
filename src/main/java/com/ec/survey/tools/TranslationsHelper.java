@@ -44,6 +44,10 @@ public class TranslationsHelper {
 
 	private static final int maxEmptyOdsLines = 20;
 
+	/**
+	 * Loads the Survey's current elements' translation.
+	 * That is, loads the Translation in English if the pivot language is English.
+	 */
 	public static Translations getTranslations(Survey survey, boolean complete) {
 		Translations translations = new Translations();
 
