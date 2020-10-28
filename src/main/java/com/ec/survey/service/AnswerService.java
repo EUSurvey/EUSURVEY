@@ -1123,6 +1123,15 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public int getNumberOfAnswerSetsPublished(String uid) {
+		if (uid == null || uid.isEmpty()) {
+			throw new IllegalArgumentException("uid is null or empty");
+		}
+		return this.getNumberOfAnswerSetsPublished(null, uid);
+	}
+
+
+	@Transactional(readOnly = true)
 	public int getNumberOfAnswerSetsPublished(String surveyname, String uid) {
 		Session session = sessionFactory.getCurrentSession();
 		if (uid != null && uid.length() > 0) {
@@ -1343,9 +1352,9 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional
-	public void deleteStatisticsRequest(StatisticsRequest sr) {
+	public void deleteStatisticsRequest(StatisticsRequest statisticsRequest) {
 		Session session = sessionFactory.getCurrentSession();
-		session.delete(sr);
+		session.delete(statisticsRequest);
 	}
 
 	@Transactional
@@ -1384,16 +1393,16 @@ public class AnswerService extends BasicService {
 
 	@Transactional
 	public Statistics getStatistics(int requestid) {
-		StatisticsRequest sr = getStatisticRequest(requestid);
+		StatisticsRequest statisticsRequest = getStatisticRequest(requestid);
 
-		if (sr == null)
+		if (statisticsRequest == null)
 			return null;
 
-		Statistics statistics = getStatisticsForFilterHash(sr.getSurveyId(), sr.getFilter().getHash(sr.isAllanswers()),
+		Statistics statistics = this.getStatisticsForFilterHash(statisticsRequest.getSurveyId(), statisticsRequest.getFilter().getHash(statisticsRequest.isAllanswers()),
 				false);
 
 		if (statistics != null) {
-			deleteStatisticsRequest(sr);
+			this.deleteStatisticsRequest(statisticsRequest);
 		}
 
 		return statistics;
@@ -1728,8 +1737,8 @@ public class AnswerService extends BasicService {
 
 		String query = "SELECT count(*) FROM ANSWERS_SET ans WHERE ans.SURVEY_ID IN ("
 				+ StringUtils.collectionToCommaDelimitedString(allVersions)
-				+ ") AND ans.ISDRAFT = 1 AND ans.UNIQUECODE NOT IN (SELECT UNIQUECODE FROM ANSWERS_SET WHERE SURVEY_ID IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans.ISDRAFT = 0)";
+				+ ") AND ans.ISDRAFT = 1 AND ans.UNIQUECODE NOT IN (SELECT UNIQUECODE FROM ANSWERS_SET ans2 WHERE SURVEY_ID IN ("
+				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans2.ISDRAFT = 0)";
 
 		Query q = session.createSQLQuery(query);
 		return ConversionTools.getValue(q.uniqueResult());
@@ -1940,31 +1949,21 @@ public class AnswerService extends BasicService {
 		return result;
 	}
 
+
+	/**
+	 * Returns a table in which
+	 * 1st index is the number of Answers (not drafts)
+	 * 2d index is the number of Draft answers
+	 * 3d index is the number of Open Invitations
+	 */
 	@Transactional(readOnly = true)
 	public int[] getAnswerStatistics(int surveyId) {
-		int[] result = new int[3];
-
+		int[] intArray = new int[3];
 		Survey survey = surveyService.getSurvey(surveyId);
-
-		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(surveyId);
-
-		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT count(*) FROM ANSWERS_SET ans WHERE ans.ISDRAFT = 0 AND ans.SURVEY_ID IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ")";
-		SQLQuery query = session.createSQLQuery(sql);
-		result[0] = ConversionTools.getValue(query.uniqueResult());
-
-		sql = "SELECT count(*) FROM ANSWERS_SET ans WHERE ans.ISDRAFT = 1 AND ans.SURVEY_ID IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ")";
-		query = session.createSQLQuery(sql);
-		result[1] = ConversionTools.getValue(query.uniqueResult());
-
-		sql = "SELECT count(*) FROM INVITATIONS i LEFT JOIN PARTICIPANTS p ON p.PARTICIPATION_ID = i.PARTICIPATIONGROUP_ID WHERE p.PARTICIPATION_SURVEY_UID = :uid AND i.ATTENDEE_ANSWERS = 0";
-		query = session.createSQLQuery(sql);
-		query.setString("uid", survey.getUniqueId());
-		result[2] = ConversionTools.getValue(query.uniqueResult());
-
-		return result;
+		intArray[0] = this.getNumberOfAnswerSetsPublished(survey.getUniqueId());
+		intArray[1] = this.getNumberOfDrafts(survey.getUniqueId());
+		intArray[2] = this.participationService.getNumberOfOpenInvitations(survey.getUniqueId());
+		return intArray;
 	}
 
 	@Transactional

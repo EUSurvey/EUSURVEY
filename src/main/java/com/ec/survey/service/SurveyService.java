@@ -175,7 +175,7 @@ public class SurveyService extends BasicService {
 		List<Survey> surveys = getSurveys(filter, sqlPagination);
 		for (Survey survey : surveys) {
 			survey.setTranslations(translationService.getTranslationLanguagesForSurvey(survey.getId(), false));
-			survey.setCompleteTranslations(getCompletedTranslations(survey));
+			survey.setCompleteTranslations(this.getCompletedTranslations(survey));
 
 			if (addInvitedAndDrafts) {
 				survey.setNumberOfInvitations(participationService.getNumberOfInvitations(survey.getUniqueId()));
