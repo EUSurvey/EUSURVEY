@@ -2152,6 +2152,13 @@ function initModals(item)
 			$("#create-survey-opc").val("false");
 		}
 		
+		if ($("#new-survey-type-delphi:checked").length > 0)
+		{
+			$("#create-survey-delphi").val("true");
+		} else {
+			$("#create-survey-delphi").val("false");
+		}
+		
 		if ($("#new-survey-contact-type").val() == "form")
 		{
 			$("#create-survey-contact").val("form:" + $("#new-survey-contact").val());

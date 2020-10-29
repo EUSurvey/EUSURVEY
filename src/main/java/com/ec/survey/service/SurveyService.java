@@ -114,6 +114,7 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(" ,s.QUIZ");
 		stringBuilder.append(" ,s.OPC");
 		stringBuilder.append(" ,s.HASPENDINGCHANGES");
+		stringBuilder.append(" ,s.DELPHI");
 		stringBuilder.append(" from SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
 		stringBuilder.append(
@@ -162,7 +163,9 @@ public class SurveyService extends BasicService {
 			survey.setIsQuiz((Boolean) row[rowIndex++]);// 17 or 18
 			survey.setIsOPC((Boolean) row[rowIndex++]);// 18 or 19
 
-			survey.setHasPendingChanges((Boolean) row[rowIndex]);// 19 or 20
+			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 19 or 20
+			
+			survey.setIsDelphi((Boolean) row[rowIndex]);// 19 or 20
 
 			surveys.add(survey);
 		}
@@ -2814,6 +2817,10 @@ public class SurveyService extends BasicService {
 
 			if (!Tools.isEqual(draftSurvey.getIsQuiz(), publishedSurvey.getIsQuiz()))
 				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draftSurvey.getIsDelphi(), publishedSurvey.getIsDelphi()))
+				hasPendingChanges = true;
+			
 			if (!Tools.isEqualIgnoreEmptyString(draftSurvey.getQuizWelcomeMessage(), publishedSurvey.getQuizWelcomeMessage()))
 				hasPendingChanges = true;
 			if (!Tools.isEqualIgnoreEmptyString(draftSurvey.getQuizResultsMessage(), publishedSurvey.getQuizResultsMessage()))
@@ -4340,7 +4347,7 @@ public class SurveyService extends BasicService {
 				.append("'>\n");
 
 		s.append("<SurveyType>")
-				.append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : "Standard"))
+				.append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : (survey.getIsDelphi() ? "Delphi" : "Standard")))
 				.append("</SurveyType>\n");
 
 		s.append("<Title>").append(survey.getTitle()).append("</Title>\n");
