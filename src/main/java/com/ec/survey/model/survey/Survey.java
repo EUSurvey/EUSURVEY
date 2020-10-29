@@ -56,7 +56,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 		@Index(name = "DRA_IDX", columnList = "ISDRAFT") })
 @Cacheable("com.ec.survey.model.survey.Survey")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Survey implements java.io.Serializable {
+final public class Survey implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	public static final String TITLE = "TITLE";
@@ -155,6 +155,7 @@ public class Survey implements java.io.Serializable {
 	private String ecasMode;
 	private Boolean logoInInfo;
 	private Boolean isQuiz;
+	private Boolean isDelphi;
 	private Boolean isOPC;
 	private Boolean showQuizIcons;
 	private Boolean showTotalScore;
@@ -1262,6 +1263,15 @@ public class Survey implements java.io.Serializable {
 
 	public void setIsQuiz(Boolean isQuiz) {
 		this.isQuiz = isQuiz != null && isQuiz;
+	}
+
+	@Column(name = "DELPHI")
+	public Boolean getIsDelphi() {
+	    return isDelphi;
+	}
+
+	public void setIsDelphi(Boolean isDelphi) {
+	    this.isDelphi = isDelphi != null && isDelphi;
 	}
 
 	@Column(name = "OPC")
