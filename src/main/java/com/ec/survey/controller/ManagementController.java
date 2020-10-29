@@ -1239,6 +1239,10 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getIsQuiz(), uploadedSurvey.getIsQuiz()))
 			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getIsOPC(), uploadedSurvey.getIsOPC()))
+			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getIsDelphi(), uploadedSurvey.getIsDelphi()))
+			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowTotalScore(), uploadedSurvey.getShowTotalScore()))
 			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowQuizIcons(), uploadedSurvey.getShowQuizIcons()))
