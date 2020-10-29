@@ -165,7 +165,7 @@ public class SurveyService extends BasicService {
 
 			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 19 or 20
 			
-			survey.setIsDelphi((Boolean) row[rowIndex]);// 19 or 20
+			survey.setIsDelphi((Boolean) row[rowIndex++]);// 19 or 20
 
 			surveys.add(survey);
 		}
