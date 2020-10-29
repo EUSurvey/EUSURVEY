@@ -956,6 +956,20 @@ public class ManagementController extends BasicController {
 		}
 	}
 
+	/** checks if the type of the given surves is only one of the possibilites (normal, quiz, opc, delphi)
+	*/
+	private boolean checkConclusiveSurveyType(Survey survey) {
+		boolean isQuiz = survey.getIsQuiz();
+		boolean isOPC = survey.getIsOPC();
+		boolean isDelphi = survey.getIsDelphi();
+		boolean isNormal = !(isQuiz || isOPC || isDelphi);
+		if ( isNormal && !isQuiz && !isOPC && !isDelphi) return true;
+		if (!isNormal &&  isQuiz && !isOPC && !isDelphi) return true;
+		if (!isNormal && !isQuiz &&  isOPC && !isDelphi) return true;
+		if (!isNormal && !isQuiz && !isOPC &&  isDelphi) return true;
+		return false;
+	}
+
 	private ModelAndView updateSurvey(Form form, HttpServletRequest request, boolean creation, Locale locale)
 			throws Exception {
 		Survey uploadedSurvey = new Survey();
@@ -998,6 +1012,11 @@ public class ManagementController extends BasicController {
 			if (uploadedSurvey.getTitle() != null
 					&& !XHTMLValidator.validate(uploadedSurvey.getTitle(), servletContext, null)) {
 				throw new InvalidXHTMLException(uploadedSurvey.getTitle(), uploadedSurvey.getTitle());
+			}
+
+			// check for mutual exclusion of types quiz, opc, delphi (or normal)
+			if (!checkConclusiveSurveyType(uploadedSurvey)) {
+				throw new MessageException("multiple selected survey types at once");
 			}
 
 			// check if shortname already exists
