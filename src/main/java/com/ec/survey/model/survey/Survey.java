@@ -1508,6 +1508,7 @@ final public class Survey implements java.io.Serializable {
 		copy.setMaxNumberContribution(maxNumberContribution);
 		copy.setMaxNumberContributionText(Tools.filterHTML(maxNumberContributionText));
 		copy.setMaxNumberContributionLink(Tools.filterHTML(maxNumberContributionLink));
+		copy.isDelphi = isDelphi;
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;

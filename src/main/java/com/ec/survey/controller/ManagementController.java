@@ -919,6 +919,8 @@ public class ManagementController extends BasicController {
 							&& request.getParameter("quiz").equalsIgnoreCase("true"));
 					copy.setIsOPC(request.getParameter("opc") != null
 							&& request.getParameter("opc").equalsIgnoreCase("true"));
+					copy.setIsDelphi(request.getParameter("delphi") != null
+							&& request.getParameter("delphi").equalsIgnoreCase("true"));
 					copy.setSaveAsDraft(!copy.getIsQuiz());
 
 					surveyService.update(copy, false, true, true, u.getId());
@@ -989,6 +991,8 @@ public class ManagementController extends BasicController {
 					request.getParameter("quiz") != null && request.getParameter("quiz").equalsIgnoreCase("true"));
 			uploadedSurvey.setIsOPC(
 					request.getParameter("opc") != null && request.getParameter("opc").equalsIgnoreCase("true"));
+			uploadedSurvey.setIsDelphi(request.getParameter("delphi") != null
+					&& request.getParameter("delphi").equalsIgnoreCase("true"));
 			uploadedSurvey.setSaveAsDraft(!uploadedSurvey.getIsQuiz());
 
 			if (uploadedSurvey.getTitle() != null
@@ -1280,6 +1284,7 @@ public class ManagementController extends BasicController {
 		survey.setContactLabel(Tools.escapeHTML(uploadedSurvey.getContactLabel()));
 		survey.setIsQuiz(uploadedSurvey.getIsQuiz());
 		survey.setIsOPC(uploadedSurvey.getIsOPC());
+		survey.setIsDelphi(uploadedSurvey.getIsDelphi());
 		survey.setSaveAsDraft(uploadedSurvey.getSaveAsDraft());
 		survey.setShowQuizIcons(uploadedSurvey.getShowQuizIcons());
 		survey.setShowTotalScore(uploadedSurvey.getShowTotalScore());
@@ -1309,6 +1314,10 @@ public class ManagementController extends BasicController {
 				}
 			}
 		}
+		
+		if (survey.getIsDelphi()) {
+			survey.setChangeContribution(true);
+		}		
 
 		if (!creation) {
 			if (!uploadedSurvey.getSecurity().equals(survey.getSecurity())) {

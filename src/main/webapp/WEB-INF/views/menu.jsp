@@ -265,7 +265,7 @@
 		$('#add-survey-dialog').modal();
 	}
 	
-	function copySurvey(id, title, lang, security, isQuiz)
+	function copySurvey(id, title, lang, security, isQuiz, isDelphi)
 	{
 		var login = '${USER.login}';
 		var contact = "${USER.email}";
@@ -296,12 +296,23 @@
 		if (isQuiz == 'true')
 		{
 			$("#new-survey-type-normal").closest("label").removeClass("active");
+			$("#new-survey-type-delphi").closest("label").removeClass("active");
 			$("#new-survey-type-quiz").closest("label").addClass("active");
 			$("#new-survey-type-quiz").attr("checked", "checked");
 		} else {
-			$("#new-survey-type-normal").closest("label").addClass("active");
-			$("#new-survey-type-quiz").closest("label").removeClass("active");
-			$("#new-survey-type-normal").attr("checked", "checked");
+			if (isDelphi == 'true')
+			{
+				$("#new-survey-type-normal").closest("label").removeClass("active");
+				$("#new-survey-type-quiz").closest("label").removeClass("active");
+				$("#new-survey-type-delphi").closest("label").addClass("active");
+				$("#new-survey-type-delphi").attr("checked", "checked");
+			} else {
+				$("#new-survey-type-normal").closest("label").addClass("active");
+				$("#new-survey-type-quiz").closest("label").removeClass("active");
+				$("#new-survey-type-delphi").closest("label").removeClass("active");
+				$("#new-survey-type-normal").attr("checked", "checked");
+			}	
+			
 		}
 		
 		$('#add-survey-dialog').modal();
@@ -381,6 +392,10 @@
 							    <input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-opc" value="opc" />&#160;<spring:message code="label.OPC" />
 							  </label>
 						  </c:if>
+						  <label style="height: auto" class="btn btn-default" title="<spring:message code="info.Delphi" />" data-toggle='tooltip'>
+						    <img style="height: 18px;" src="${contextpath}/resources/images/icons/24/delphi.png">
+						    <input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-delphi" value="delphi" />&#160;<spring:message code="label.Delphi" />
+						  </label>
 						</div>
 					</td>
 				</tr>
@@ -484,6 +499,7 @@
 	<input type="hidden" name="listform" id="create-survey-listform" value="" />
 	<input type="hidden" name="quiz" id="create-survey-quiz" value="" />
 	<input type="hidden" name="opc" id="create-survey-opc" value="" />
+	<input type="hidden" name="delphi" id="create-survey-delphi" value="" />
 	<input type="hidden" name="contact" id="create-survey-contact" value="" />
 	<input type="hidden" name="contactlabel" id="create-survey-contact-label" value="" />
 	<input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute>${origin}</esapi:encodeForHTMLAttribute>" />
