@@ -731,6 +731,11 @@
 				<span class='glyphicon glyphicon-question-sign'></span>&nbsp;<span data-bind="html: getExtensionsHelp(extensions())"></span>
 			</div>
 		<!-- /ko -->
+		
+		<div class="uploadinfo" style="display: none; padding: 10px; color: #777;">
+			${form.getMessage("label.UploadStarted")}			
+		</div>
+		
 		<input type="hidden" data-bind="attr: {'id': 'answer' + id(), 'name':'answer' + id()}" value="files" />				
 		<div class="uploaded-files" data-bind="foreach: getFileAnswer(uniqueId())">
 			<div>
