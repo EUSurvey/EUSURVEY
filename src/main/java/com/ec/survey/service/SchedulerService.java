@@ -1,12 +1,7 @@
 package com.ec.survey.service;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -19,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.ReportingService.ToDoItem;
 import com.ec.survey.tools.DeleteDraftsUpdater;
 import com.ec.survey.tools.DeleteInvalidStatisticsWorker;
 import com.ec.survey.tools.DeleteSurveyUpdater;
@@ -44,7 +38,7 @@ public class SchedulerService extends BasicService {
 	private DepartmentUpdater departmentWorker;
 	
 	@Resource(name = "domainWorker")
-	private DomainUpdater domaintWorker;
+	private DomainUpdater domainWorker;
 	
 	@Resource(name = "ecasWorker")
 	private EcasUserUpdater ecasWorker;
@@ -89,16 +83,16 @@ public class SchedulerService extends BasicService {
 	private SchemaService schemaService;
 
 	public @Value("${showecas}") String showecas;	
-	public @Value("${host.executing.task:@null}") String hostExecutingTask;
 		
 	public boolean isShowEcas()
 	{
 		return showecas != null && showecas.equalsIgnoreCase("true");
 	}
+
 	
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void migrateFSSchedule() {	
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteScheduledTask())
 			return;
 		
 		try {
@@ -170,7 +164,7 @@ public class SchedulerService extends BasicService {
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void deleteAnswerPDFSchedule() {
 		
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteScheduledTask())
 			return;
 		
 		try {
@@ -256,7 +250,7 @@ public class SchedulerService extends BasicService {
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void doLDAPRemoveDeletedUsersSyncSchedule() {
 		
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteScheduledTask())
 			return;
 
 		if (!isShowEcas()) return;	
@@ -328,7 +322,7 @@ public class SchedulerService extends BasicService {
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void doLDAPSyncSchedule() {
 		
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteScheduledTask())
 			return;
 		
 		logger.debug("Try Start ldap sync schedule host compaptible to launch this task");
@@ -393,7 +387,7 @@ public class SchedulerService extends BasicService {
 						return;
 					}				
 					
-					domaintWorker.run();
+					domainWorker.run();
 					departmentWorker.run();
 					ecasWorker.run();		
 				    
@@ -408,7 +402,7 @@ public class SchedulerService extends BasicService {
 	
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void migrateReportingSchedule() {	
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteScheduledTask())
 			return;
 		
 		try {
@@ -476,35 +470,9 @@ public class SchedulerService extends BasicService {
 		}
 	}
 	
-	@Scheduled(fixedDelay=10000) //wait for 10 seconds between calls
-	public void doToDosSchedule() throws Exception {
-		
-		if (!isReportingDatabaseEnabled()) return;
-		
-		if(!isHost2ExecuteTask())
-			return;
-		
-		List<ToDoItem> todos = reportingService.getToDos();
-		
-		if (todos.size() > 0)
-		{
-			logger.info("Start executing " + todos.size() + " todos");
-			
-			for (ToDoItem todo : todos) {
-				try {
-					reportingService.executeToDo(todo, true);
-				} catch (Exception e) {
-					logger.error(e.getLocalizedMessage(), e);
-				}
-			}
-
-			logger.info("Finished executing " + todos.size() + " todos");
-		}		
-	}
-	
 	@Scheduled(cron="0 0 * * * *") //every hour
 	public void doHourlySchedule() {	
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteScheduledTask())
 			return;
 
 		logger.debug("Start hourly schedule");
@@ -517,7 +485,7 @@ public class SchedulerService extends BasicService {
 	
 	@Scheduled(cron="0 0 4 * * *") //every night at 4 pm
 	public void doNightlySchedule() {
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteScheduledTask())
 			return;
 
 		logger.debug("Start nightly schedule");
@@ -533,46 +501,5 @@ public class SchedulerService extends BasicService {
 		
 		logger.debug("End nightly schedule");
 	 }
-	
-	private boolean isHost2ExecuteTask(){
-		
-		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("true"))
-		{
-			return false;
-		}
-				
-		// if nothing specified then assume that it's OK 
-		if (StringUtils.isEmpty(hostExecutingTask)){
-			logger.debug("The property host.executing.task= is empty and scheduler will be executed");
-			return true;
-		}
 
-		Enumeration<NetworkInterface> ipAddresses=null;
-		try {
-			 ipAddresses=NetworkInterface.getNetworkInterfaces();
-		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
-			logger.error(e1);
-			e1.printStackTrace();
-			return true;
-		}
-		
-		for(NetworkInterface netint : Collections.list(ipAddresses)){						
-			Enumeration<InetAddress> inetAddrs = netint.getInetAddresses();
-			for(InetAddress inetAddr: Collections.list(inetAddrs)){
-				if (StringUtils.contains(inetAddr.getHostName().toLowerCase(), hostExecutingTask.toLowerCase())){
-					return true;
-				}
-					
-			}
-		}
-
-		if (StringUtils.isEmpty(hostExecutingTask)){
-			logger.warn("Unable to determine if should be execute the Task on this host, no server name set in hostExecutingTask property");	
-		}else{
-			logger.debug("no server name found with this value: " + hostExecutingTask);
-		}
-		
-		return false;
-	}
 }
