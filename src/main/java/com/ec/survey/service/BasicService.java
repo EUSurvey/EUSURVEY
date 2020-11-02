@@ -13,8 +13,12 @@ import org.springframework.stereotype.Service;
 
 import com.ec.survey.tools.ConversionTools;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -96,7 +100,8 @@ public class BasicService implements BeanFactoryAware {
 	protected @Value("${server.prefix}") String serverPrefix;	
 	protected @Value("${isworkerserver}") String isworkerserver;
 	protected @Value("${useworkerserver}") String useworkerserver;
-	protected @Value("${workerserverurl}") String workerserverurl;	
+	protected @Value("${workerserverurl}") String workerserverurl;
+	protected @Value("${host.executing.task:@null}") String hostExecutingTask;	
 	protected @Value("${contextpath}") String contextpath;	
 	protected @Value("${oss}") String oss;
 	protected @Autowired ServletContext servletContext;
@@ -117,9 +122,64 @@ public class BasicService implements BeanFactoryAware {
 		context = beanFactory;		
 	}
 	
-	protected boolean isReportingDatabaseEnabled()
-	{
+	protected boolean isReportingDatabaseEnabled() {
 		return enablereportingdatabase != null && enablereportingdatabase.equalsIgnoreCase("true");
+	}
+
+	/**
+	 * Returns true if this server SHALL execute worker tasks
+	 */
+	public boolean isHost2ExecuteWorkerTask() {
+		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("true")) {
+			return true;
+		}
+		if (useworkerserver.equalsIgnoreCase("false") && isworkerserver.equalsIgnoreCase("false")) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true if this server SHALL execute scheduled tasks
+	 */
+	protected boolean isHost2ExecuteScheduledTask() {
+		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("true")) {
+			return false;
+		}
+
+		// if nothing specified then assume that it's OK
+		if (StringUtils.isEmpty(hostExecutingTask)) {
+			logger.debug("The property host.executing.task= is empty and scheduler will be executed");
+			return true;
+		}
+
+		Enumeration<NetworkInterface> ipAddresses = null;
+		try {
+			ipAddresses = NetworkInterface.getNetworkInterfaces();
+		} catch (SocketException e1) {
+			logger.error(e1);
+			e1.printStackTrace();
+			return true;
+		}
+
+		for (NetworkInterface netint : Collections.list(ipAddresses)) {
+			Enumeration<InetAddress> inetAddrs = netint.getInetAddresses();
+			for (InetAddress inetAddr : Collections.list(inetAddrs)) {
+				if (StringUtils.contains(inetAddr.getHostName().toLowerCase(), hostExecutingTask.toLowerCase())) {
+					return true;
+				}
+
+			}
+		}
+
+		if (StringUtils.isEmpty(hostExecutingTask)) {
+			logger.warn(
+					"Unable to determine if should be execute the Task on this host, no server name set in hostExecutingTask property");
+		} else {
+			logger.debug("no server name found with this value: " + hostExecutingTask);
+		}
+
+		return false;
 	}
 	
 	private LinkedBlockingQueue< Runnable> taskQueue = new LinkedBlockingQueue<>();

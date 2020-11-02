@@ -148,15 +148,18 @@
 
 	<encryption:encryptable-properties id="propertyConfigurer" encryptor="configurationEncryptor" /> 
       
+	<!-- Enabling @Scheduled and @Async annotations -->  
 	<task:annotation-driven executor="executorWithPoolSizeRange" scheduler="taskScheduler"/>
 	
+	<!-- Creates a ThreadPoolTaskExecutor  -->
+	<!-- By default, when a task is rejected (queue capacity full), a thread pool executor will throw a TaskRejectedException -->
 	<task:executor id="executorWithPoolSizeRange"
                 pool-size="2-4"
                 queue-capacity="100"/>
    
 	<!-- Defines a ThreadPoolTaskScheduler instance with configurable pool size.
 	  The id becomes the default thread name prefix. -->             
-	<task:scheduler id="taskScheduler" pool-size="1" />   
+	<task:scheduler id="taskScheduler" pool-size="5" />   
 	
 	<import resource="hibernate-context.xml" />	
 
