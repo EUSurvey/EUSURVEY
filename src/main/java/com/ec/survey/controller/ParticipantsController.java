@@ -277,7 +277,7 @@ public class ParticipantsController extends BasicController {
 		try {
 			User user = sessionService.getCurrentUser(request);
 			Form form = sessionService.getFormFromSessionInfo(request);
-			ParticipationGroup g = new ParticipationGroup(form.getSurvey().getUniqueId());
+			ParticipationGroup participationGroup = new ParticipationGroup(form.getSurvey().getUniqueId());
 
 			sessionService.upgradePrivileges(form.getSurvey(), user, request);
 			int accessPrivilege = 0;
@@ -296,20 +296,20 @@ public class ParticipantsController extends BasicController {
 			int id = json.get("id") != null && json.get("id").toString().length() > 0 ? (int) json.get("id") : 0;
 
 			if (id > 0) {
-				g = participationService.get(id);
+				participationGroup = participationService.get(id);
 			} else {
-				g.setActive(true);
-				g.setSurveyId(form.getSurvey().getId());
+				participationGroup.setActive(true);
+				participationGroup.setSurveyId(form.getSurvey().getId());
 			}
 
-			g.setName(json.get("name").toString());
-			g.setType(ParticipationGroupType.valueOf(json.get("type").toString()));
+			participationGroup.setName(json.get("name").toString());
+			participationGroup.setType(ParticipationGroupType.valueOf(json.get("type").toString()));
 
 			List<Integer> attendeeIDs = null;
 			List<Integer> userIDs = null;
 			List<String> tokens = null;
 			List<String> deactivatedTokens = null;
-			if (g.getType() == ParticipationGroupType.Static) {
+			if (participationGroup.getType() == ParticipationGroupType.Static) {
 				ArrayList<LinkedHashMap> attendees = (ArrayList) json.get("attendees");
 				attendeeIDs = new ArrayList<>();
 
@@ -318,7 +318,7 @@ public class ParticipantsController extends BasicController {
 					attendeeIDs.add((int) attendee.get("id"));
 				}
 
-			} else if (g.getType() == ParticipationGroupType.Token) {
+			} else if (participationGroup.getType() == ParticipationGroupType.Token) {
 				ArrayList<LinkedHashMap> invitations = (ArrayList) json.get("tokens");
 				tokens = new ArrayList<>();
 				deactivatedTokens = new ArrayList<>();
@@ -330,7 +330,7 @@ public class ParticipantsController extends BasicController {
 						deactivatedTokens.add(token.get("uniqueId").toString());
 					}
 				}
-			} else if (g.getType() == ParticipationGroupType.ECMembers) {
+			} else if (participationGroup.getType() == ParticipationGroupType.ECMembers) {
 				ArrayList<LinkedHashMap> users = (ArrayList) json.get("users");
 				userIDs = new ArrayList<>();
 				for (int i = 0; i < users.size(); i++) {
@@ -338,24 +338,24 @@ public class ParticipantsController extends BasicController {
 					userIDs.add((int) ecasuser.get("id"));
 				}
 			}
-			g.setOwnerId(user.getId());
-			g.setInCreation(true);
+			participationGroup.setOwnerId(user.getId());
+			participationGroup.setInCreation(true);
 
-			participationService.save(g);
-			if (g.getType() == ParticipationGroupType.Static) {
-				participationService.addParticipantsToGuestListAsync(g.getId(), attendeeIDs);
-			} else if (g.getType() == ParticipationGroupType.Token) {
-				participationService.addTokensToGuestListAsync(g.getId(), tokens, deactivatedTokens);
-			} else if (g.getType() == ParticipationGroupType.ECMembers) {
-				participationService.addUsersToGuestListAsync(g.getId(), userIDs);
+			participationService.save(participationGroup);
+			if (participationGroup.getType() == ParticipationGroupType.Static) {
+				participationService.addParticipantsToGuestListAsync(participationGroup.getId(), attendeeIDs);
+			} else if (participationGroup.getType() == ParticipationGroupType.Token) {
+				participationService.addTokensToGuestListAsync(participationGroup.getId(), tokens, deactivatedTokens);
+			} else if (participationGroup.getType() == ParticipationGroupType.ECMembers) {
+				participationService.addUsersToGuestListAsync(participationGroup.getId(), userIDs);
 			}
 
 			if (id > 0) {
-				activityService.log(505, null, g.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
-						g.getNiceType());
+				activityService.log(505, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
+						participationGroup.getNiceType());
 			} else {
-				activityService.log(501, null, g.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
-						g.getNiceType());
+				activityService.log(501, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
+						participationGroup.getNiceType());
 			}
 
 			return "success";
