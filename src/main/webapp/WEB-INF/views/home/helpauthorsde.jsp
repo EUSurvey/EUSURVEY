@@ -831,7 +831,7 @@
 			<p>
 				Siehe auch
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc3-2"
+						href="#_Toc_4_2"
 						>
 					„Wie erstelle ich einen Fragebogen mit dem EUSurvey Editor?“
 				</a>
@@ -844,7 +844,7 @@
 				und <b>im Bereich Elementeigenschaften des Editors bearbeitet</b> werden –
 				siehe
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc3-2"
+						href="_Toc_4_2"
 						>
 					„Wie erstelle ich einen Fragebogen mit dem EUSurvey Editor?“
 				</a>
@@ -925,7 +925,7 @@
 			<p>
 				Siehe auch
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc3-2"
+						href="_Toc_4_2"
 						>
 					„Wie erstelle ich einen Fragebogen mit dem EUSurvey Editor?“
 				</a>
@@ -952,7 +952,7 @@
 			<p>
 				Siehe auch
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc3-2"
+						href="_Toc_4_2"
 						>
 					„Wie erstelle ich einen Fragebogen mit dem EUSurvey Editor?“
 				</a>
@@ -1012,7 +1012,7 @@
 				auf Einfachauswahl-/Mehrfachauswahl- und Matrixfragen anzeigen oder
 				ausblenden lassen (siehe auch
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc3-2"
+						href="_Toc_4_2"
 						>
 					„Wie erstelle ich einen Fragebogen mit dem EUSurvey Editor?)“
 				</a>
@@ -1166,7 +1166,7 @@
 			<p>
 				Weitere Informationen erhalten Sie unter
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc8-8"
+						href="#_Toc_9_8"
 						>
 					„Wie erhalten andere Nutzer Zugang zu meiner Umfrage?“
 				</a>
@@ -1306,7 +1306,7 @@
 				<li>
 					Sie können einzelne Befragte über EUSurvey einladen (siehe „
 					<a
-							href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc12"
+							href="#_Toc_13_0"
 							>
 						Teilnehmer einladen
 					</a>
@@ -1336,7 +1336,7 @@
 					alle Befragte, denen Sie den Umfragelink und das globale Passwort
 					senden (siehe
 					<a
-							href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc4-3"
+							href="#_Toc_5_2"
 							>
 						„Wie lege ich ein Passwort für meine Umfrage fest?“
 					</a>
@@ -1354,7 +1354,7 @@
 			<p>
 				Wie Sie einzelne Kontakte dazu einzuladen können, auf Ihre geschützte
 				Umfrage zuzugreifen, erfahren Sie im Abschnitt
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc12">
+				<a href="#_Toc_13_0">
 					„Teilnehmer einladen“
 				</a>
 				.
@@ -1477,7 +1477,7 @@
 			<p>
 				Weitere Informationen hierzu siehe:
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc8-8"
+						href="#_Toc_9_8"
 						>
 					„Wie erhalten andere Nutzer Zugang zu meiner Umfrage?“
 				</a>
@@ -1530,7 +1530,7 @@
 			<p>
 				Lesen Sie auch „
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc6-3"
+						href="#_Toc_7_3"
 						>
 					Kann ich eine vorhandene Übersetzung online bearbeiten?
 				</a>
@@ -1799,7 +1799,7 @@
 				Ihrer Umfrage und stellt sie online, ebenso wie die Übersetzungen, die Sie
 				zur Veröffentlichung ausgewählt haben (Siehe „
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc6-6"
+						href="#_Toc_7_5"
 						>
 					Wie veröffentliche ich meine Übersetzungen bzw. wie hebe ich
 					Veröffentlichungen auf?
@@ -2212,7 +2212,7 @@
 							Die Umfrage erscheint dann bei den Nutzern automatisch auf ihrer
 							„Umfragen“-Seite, wenn sie sich bei EUSurvey anmelden (siehe auch „
 							<a
-									href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc5-2"
+									href="#_Toc_6_2"
 									>
 								Wie können meine Kollegen meine Umfrage vor der Veröffentlichung
 								testen?
@@ -2232,7 +2232,7 @@
 							Stellen Sie die Farbe auf Grün um, können sie die Antworten sowohl
 							einsehen als auch bearbeiten und löschen (siehe auch „
 							<a
-									href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc9-7"
+									href=#_Toc_9_8"
 									>
 								Wie erhalten andere Nutzer Zugang zu den Ergebnissen meiner Umfrage?
 							</a>
@@ -2252,7 +2252,7 @@
 							- Die Nutzer sehen Ihre Umfrage dann automatisch in ihrer Umfragenliste
 							(siehe auch „
 							<a
-									href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc3-5"
+									href="#_Toc_4_11"
 									>
 								Wie erlaube ich anderen Nutzern, meine Umfrage zu bearbeiten?
 							</a>
@@ -2276,7 +2276,7 @@
 							Die Nutzer sehen Ihre Umfrage dann automatisch in ihrer Umfragenliste
 							(siehe auch „
 							<a
-									href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc3-5"
+									href="#_Toc_4_11"
 									>
 								Wie erlaube ich anderen Nutzern, meine Umfrage zu bearbeiten?
 							</a>
@@ -2360,7 +2360,7 @@
 			<p>
 				Siehe auch „
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc2-5"
+						href="#_Toc_3_5"
 						>
 					Wie öffne ich eine vorhandene Umfrage zur Bearbeitung usw.?
 				</a>
@@ -2436,7 +2436,7 @@
 				Hinweis: Um Ergebnisse anzusehen und zu analysieren, benötigen Sie
 				bestimmte Rechte (siehe „
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc9-7"
+						href="#_Toc_9_8"
 						>
 					Wie erhalten andere Nutzer Zugang zu den Ergebnissen meiner Umfrage?
 				</a>
@@ -2449,9 +2449,9 @@
 			<p>
 				Siehe auch „
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc9-1"
+						href="#_Toc_10_1"
 						>
-					Wo finde ich die von meinen Teilnehmern eingereichten Beiträge?
+					Wo finde ich die von meinen Befragten übermittelten Antwort?
 				</a>
 				“
 			</p>
@@ -2506,7 +2506,7 @@
 			<p>
 				Weitere Informationen hierzu erhalten Sie unter
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc8-8"
+						href="#_Toc_9_8"
 						>
 					„Wie erhalten andere Nutzer Zugang zu meiner Umfrage?“
 				</a>
@@ -2856,7 +2856,7 @@
 			<p>
 				Siehe auch „
 				<a
-						href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc11-5"
+						href="#_Toc_12_5"
 						>
 					Wie importiere ich mehrere Kontakte aus einer Datei in mein Adressbuch?
 				</a>
@@ -3038,7 +3038,7 @@
 					<br/>
 					Wählen Sie Kontakte aus Ihrem „Adressbuch“ aus (siehe
 					<a
-							href="https://ec.europa.eu/eusurvey/home/helpauthors?language=de#_Toc11-1"
+							href="#_Toc_12_1"
 							>
 						Was ist das „Adressbuch?“
 					</a>
@@ -3431,6 +3431,7 @@
 				</u>
 			</p>
 			
+			</div>
 			</div>
 			</div>
 

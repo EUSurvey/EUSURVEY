@@ -89,12 +89,12 @@
 	
 		<div id="ulContainer">
 		
-		<a href="javascript:ddtreemenu.flatten('treemenu', 'expand')">Expand All</a>&nbsp;|&nbsp;<a href="javascript:ddtreemenu.flatten('treemenu', 'contact')">Collapse All</a>
-		<br/><br/>
-		<ul id="treemenu" class="treeview" rel="closed">
-			
-		</ul>
-	</div>
+			<a href="javascript:ddtreemenu.flatten('treemenu', 'expand')">Expand All</a>&nbsp;|&nbsp;<a href="javascript:ddtreemenu.flatten('treemenu', 'contact')">Collapse All</a>
+			<br/><br/>
+			<ul id="treemenu" class="treeview" rel="closed">
+				
+			</ul>
+		</div>
 	
 	<div id="faqcontent">
 			<h1>
@@ -767,8 +767,8 @@
 			</p>
 			<p>
 				See also
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc3-2">
-					'How to create a questionnaire by using the EUSurvey editor?')
+				<a href="#_Toc_4_2">
+					'How to create a questionnaire via the EUSurvey editor?')
 				</a>
 			</p>
 			<h2>
@@ -776,8 +776,8 @@
 			</h2>
 			<p>
 				Items can be <strong>selected for editing in the form area</strong> and    <strong>edited in the element properties pane</strong> of the Editor - see
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc3-2">
-					'How to create a questionnaire by using the EUSurvey editor?')
+				<a href="#_Toc_4_2">
+					'How to create a questionnaire via the EUSurvey editor?')
 				</a>
 			</p>
 			<p>
@@ -851,8 +851,8 @@
 			</p>
 			<p>
 				See also
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc3-2">
-					'How to create a questionnaire by using the EUSurvey editor?')
+				<a href="#_Toc_4_2">
+					'How to create a questionnaire via the EUSurvey editor?')
 				</a>
 			</p>
 			<h2>
@@ -873,8 +873,8 @@
 				</ol>
 
 				See also
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc3-2">
-					'How to create a questionnaire by using the EUSurvey editor?')
+				<a href="#_Toc_4_2">
+					'How to create a questionnaire via the EUSurvey editor?')
 				</a>
 			</p>
 			<h2>
@@ -1070,7 +1070,7 @@
 			</p>
 			<p>
 				Read more about this under '
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc8-8">
+				<a href="#_Toc_10_7">
 					How do I give other users access to my survey?
 				</a>'
 			</p>
@@ -1210,8 +1210,8 @@
 				<li>
 					You can invite your respondents with the EUSurvey invitation module
 					(see '
-					<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc12">
-						Inviting participants
+					<a href="#_Toc_13_0">
+						Inviting respondents
 					</a>
 					<u>'</u>
 					). Each respondent will get a unique access link. OR
@@ -1235,7 +1235,7 @@
 				<li>
 					Set up a password which will be the same for all respondents to whom
 					you will send the survey location link and the global password (see "
-					<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc4-3">
+					<a href="#_Toc_5_2">
 						How do I set a password for my survey?"
 					</a>
 					).
@@ -1250,8 +1250,8 @@
 			</p>
 			<p>
 				To invite individuals to access your secured survey, see '
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc12">
-					Inviting participants
+				<a href="#_Toc_13_0">
+					Inviting respondents
 				</a>
 				'.
 			</p>
@@ -1360,7 +1360,7 @@
 			</p>
 			<p>
 				Read more about this under "
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc8-8">
+				<a href="#_Toc_10_7">
 					How do I give other users access to my survey?
 				</a>
 				"
@@ -1406,7 +1406,7 @@
 			<p>
 				For more information on how to add new labels to your newly created
 				translation, read '
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc6-3">
+				<a href="#_Toc_7_3">
 					Can I edit an existing translation online?
 				</a>
 				'.
@@ -1653,7 +1653,7 @@
 				After confirmation, the system will automatically create a working copy of
 				your survey and put it online, along with the translations you selected for
 				publication (See '
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc6-6">
+				<a href="#_Toc_7_5">
 					How do I publish/unpublish my translations?
 				</a>
 				').
@@ -2045,7 +2045,7 @@
 						<li>
 							The survey will automatically appear in their 'Surveys' page once they
 							log into EUSurvey (see also '
-							<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc5-2">
+							<a href="#_Toc_6_2">
 								How can my colleagues test my survey before it is published?
 							</a>
 							').
@@ -2063,8 +2063,8 @@
 						<li>
 							If you change the colour to 'Green', they can view, edit and delete the
 							answers (see also '
-							<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc9-7">
-								How do I give other users access to the results of my survey?
+							<a href="#_Toc_10_7">
+								How do I give other users access to my survey's results?
 							</a>
 							').
 						</li>
@@ -2080,7 +2080,7 @@
 						<li>
 							They will automatically see your survey in their list of surveys (see
 							also '
-							<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc3-5">
+							<a href="#_Toc_4_11">
 								How do I give other users permission to edit my survey?
 							</a>
 							').
@@ -2100,7 +2100,7 @@
 						<li>
 							They will automatically see your survey in their list of surveys (see
 							also '
-							<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc3-5">
+							<a href="#_Toc_4_11">
 								How do I give other users permission to edit my survey?
 							</a>
 							').
@@ -2180,7 +2180,7 @@
 			</p>
 			<p>
 				See also '
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc2-5">
+				<a href="#_Toc_3_5">
 					How do I open an existing survey for editing etc.?
 				</a>
 				'
@@ -2251,8 +2251,8 @@
 			</p>
 			<p>
 				Note: to view and analyse results, you need certain privileges (see '
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc9-7">
-					How do I give other users access to the results of my survey?
+				<a href="#_Toc_10_7">
+					How do I give other users access to my survey's results?
 				</a>
 				').
 			</p>
@@ -2262,8 +2262,8 @@
 			</p>
 			<p>
 				See also '
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc9-1">
-					Where can I find the contributions submitted by my participants?
+				<a href="#_Toc_10_1">
+					Where can I find the answers submitted by my respondents?
 				</a>
 				'
 			</p>
@@ -2313,7 +2313,7 @@
 			</p>
 			<p>
 				Read more about this under '
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc8-8">
+				<a href="#_Toc_10_7">
 					How do I give other users access to my survey?
 				</a>
 				'.
@@ -2654,7 +2654,7 @@
 			</p>
 			<p>
 				See also '
-				<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc11-5">
+				<a href="#_Toc_12_5">
 					How do I import multiple contacts from a file to my address book?
 				</a>
 				'
@@ -2827,7 +2827,7 @@
 					<br/>
 					Select contacts from the 'Address Book' to add them to your guest list
 					(see '
-					<a href="https://ec.europa.eu/eusurvey/home/helpauthors#_Toc11-1">
+					<a href="#_Toc_12_1">
 						What is the "Address Book?
 					</a>
 					')
