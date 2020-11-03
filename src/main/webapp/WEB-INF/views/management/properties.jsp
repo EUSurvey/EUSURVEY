@@ -1230,6 +1230,31 @@
 							</div>
 						</td> 
 					</tr>
+					<tr  data-bind="visible: !opc()">
+						<td>
+							<div style="float: left"><spring:message code="label.EnableDelphi" /></div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<c:choose>
+										<c:when test="${form.survey.isOPC}">
+											<input type="radio" disabled="disabled" name="survey.isDelphi" class="onoffswitch-checkbox" id="myonoffswitchdelphi" />
+											<label class="onoffswitch-label disabled" for="myonoffswitchdelphi">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
+										</c:when>
+										<c:otherwise>
+											<form:checkbox path="survey.isDelphi" onclick="_properties.delphi(!_properties.delphi())" class="onoffswitch-checkbox" id="myonoffswitchdelphi" />
+											<label class="onoffswitch-label" for="myonoffswitchdelphi">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
+										</c:otherwise>
+									</c:choose>
+								</div>
+							</div>
+						</td>
+					</tr>
 				</table>	
 			</div>			
 			
