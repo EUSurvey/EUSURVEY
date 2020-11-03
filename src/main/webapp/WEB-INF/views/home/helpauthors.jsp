@@ -1264,7 +1264,13 @@
 			</p>
 			<p>
 				Set the number in the 'Contribution per user' option.
-			</p>
+			</p>			
+			
+			<h2>How to limit the number of contributions from a survey?</h2>
+			<p>
+				You can change the number of contributions a survey can accept by going to Properties &gt;&gt; Advanced. By default, there is no limit to the number of contributions but if a limit is set then the survey will no longer be accessible as soon as it is reached. This can be used for event registration forms for example.
+			</p>			
+			
 			<h2>
 				How do I prevent robots from submitting multiple answers?    
 			</h2>

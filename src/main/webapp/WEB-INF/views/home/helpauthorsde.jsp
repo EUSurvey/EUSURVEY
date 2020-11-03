@@ -1371,6 +1371,10 @@
 				Legen Sie unter der Option „Beiträge pro Nutzer“ die gewünschte Anzahl
 				fest.
 			</p>
+						
+			<h2>Wie kann die Anzahl der Beiträge einer Umfrage begrenzt werden?</h2>
+			<p>Sie können die Anzahl der Beiträge, die eine Umfrage akzeptieren kann, unter Eigenschaften >> Erweitert ändern. Standardmäßig gibt es keine Begrenzung der Anzahl der Beiträge, aber wenn ein Limit gesetzt wird, ist die Umfrage nicht mehr zugänglich, sobald sie erreicht ist. Dies kann z.B. für Formulare zur Anmeldung von Veranstaltungen genutzt werden.</p>
+						
 			<h2>
 				Wie verhindere ich, dass Bots mehrfach Antworten übermitteln?
 			</h2>
