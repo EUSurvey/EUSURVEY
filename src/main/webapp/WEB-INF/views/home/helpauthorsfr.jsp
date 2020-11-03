@@ -1409,6 +1409,10 @@
 				Activez l’option «Limit number of contributions» et indiquez le nombre
 				maximal de contribution(s) par utilisateur.
 			</p>
+			
+			<h2>Comment limiter le nombre de contributions d’une enquête?</h2>
+			<p>Vous pouvez modifier le nombre de contributions que peut accepter une enquête en allant dans Propriétés >> Avancé. Par défaut, il n’y a pas de limite au nombre de contributions mais si une limite est définie alors l’enquête ne sera plus accessible dès lors qu’elle est atteinte. Ceci peut être utilisé pour les formulaires d’inscription à des évènements par exemple.</p>
+			
 			<h2>
 				Comment éviter que des bots ne soumettent des contributions en masse à une
 				enquête?
