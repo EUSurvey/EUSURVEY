@@ -8,9 +8,18 @@ $(function() {
 		if ($(this).is('h1')) {
 			i++;
 			j = 0;
-			$(li).addClass("anchorlink head").append("<a href='#_Toc_" + i + "_" + j + "'>" + $(this).text() + "</a>");
-			lastUl = document.createElement("ul");
-			$(li).append(lastUl);
+			
+			$(li).addClass("anchorlink").append("<a href='#_Toc_" + i + "_" + j + "'>" + $(this).text() + "</a>");
+			
+			if (!$(this).hasClass('empty'))
+			{
+				$(li).addClass("head");
+				lastUl = document.createElement("ul");
+				$(li).append(lastUl);
+			} else {
+				$(li).addClass("empty");
+			}
+			
 			$('#treemenu').append(li);
 		} else {
 			j++;

@@ -34,11 +34,11 @@
 			font-size: 13px;
 			font-weight: normal;
 			text-decoration: none;
+			margin: 20px;
 		}				
 		
 		.anchorlink {
 			margin-left: 40px;
-			text-decoration: underline;
 			color: #005580;
 		}
 		
@@ -50,38 +50,17 @@
 		.head {
 			margin-left: 20px;
 		}
+		
+		.empty {
+			margin-left: 0px;
+			text-decoration: none;
+		}
 	</style>
-	
-	<script type="text/javascript">
-		$(function() {
-		 
-			 
-			 $("a.anchorTop").click(function(){
-				 $('html, body').animate({scrollTop : 0},100);
-					return false;
-			 });
-			 
-		});
-	</script>
 	
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
 	<link rel="stylesheet" href="${contextpath}/resources/js/tree/treeview.css?version=<%@include file="../version.txt" %>" type="text/css">
+	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu2.js?version=<%@include file="../version.txt" %>"></script>
 
-
-	<script type="text/javascript">
-	
-		$(document).ready(function(){
-			
-			ddtreemenu.createTree("treemenu", false, 0,"${contextpath}");
-			
-			 $("a.anchorTop").click(function(){
-				 $('html, body').animate({scrollTop : 0},100);
-					return false;
-			 });
-			 
-		});
-	
-	</script>
 </head>
 <body>
 	<div class="page-wrap">
@@ -116,118 +95,284 @@
 				<a href="javascript:ddtreemenu.flatten('treemenu', 'expand')">Expand All</a>&nbsp;|&nbsp;<a href="javascript:ddtreemenu.flatten('treemenu', 'contact')">Collapse All</a>
 				<br/><br/>
 				<ul id="treemenu" class="treeview" rel="closed">
-					<li><a class="anchorlink" href="#_Toc1">Wie kann ich mit dem Autor der Umfrage Kontakt aufnehmen?</a></li>
-					<li><a class="anchorlink head" href="#_Toc369865010">Eine Umfrage einsehen</a>
-						<ul>
-							<li><a class="anchorlink" href="#_Toc369865012">Was bedeutet &quot;Die eingegebene URL ist falsch&quot;?</a></li>
-							<li><a class="anchorlink" href="#_Toc369865013">Was bedeutet &quot;Seite nicht gefunden&quot;?</a></li>
-							<li><a class="anchorlink" href="#_Toc369865026">Welche Browser unterstützt EUSurvey?</a></li>
-							<li><a class="anchorlink" href="#_Toc369865027">Kann ich mobile Endger&auml;te oder Tablet-PCs benutzen um meine Umfrage zu beantworten?</a></li>
-												</ul>
-					</li>
-					<li><a class="anchorlink head" href="#_Toc369865014">Einen Beitrag einreichen</a>
-						<ul>
-							<li><a class="anchorlink" href="#_Toc369865015">Was bedeutet &quot;Dies ist keine gültige Zahl/kein gültiges Datum/keine gültige E-Mail-Adresse&quot;?</a></li>
-							<li><a class="anchorlink" href="#_Toc369865016">Warum verschwindet die von mir gewählte Antwort auf eine Matrix-Auswahlfrage?</a></li>
-						</ul>
-					</li>
-					
-					<li><a class="anchorlink head" href="#_Toc369865016a">Missbrauch melden</a></li>
-									
-					<li><a class="anchorlink head" href="#_Toc369865017">Nach dem Beitrag</a>
-						<ul>
-							<li><a class="anchorlink" href="#_Toc369865018">Kann ich meinen Beitrag nach dem Absenden einsehen oder drucken?</a></li>
-							<li><a class="anchorlink" href="#_Toc369865019">Wie kann ich eine PDF-Kopie meines Beitrags speichern?</a></li>
-							<li><a class="anchorlink" href="#_Toc369865020">Kann ich meinen Beitrag nach dem Absenden bearbeiten?</a></li>
-							<li><a class="anchorlink" href="#_Toc369865021">Ich habe gerade einen Beitrag zu einer Umfrage eingesandt.  Kann ich einsehen, was andere Personen geantwortet haben?</a></li>
-							<li><a class="anchorlink" href="#_Toc369865022">Beim Öffnen der PDF Version meines Beitrags erscheint eine Fehlermeldung &quot;Unzureichende Bildinformation&quot;</a></li>
-							<li><a class="anchorlink" href="#_Toc369865023">Warum werden in der PDF-Exportdatei der Umfrage kleine Kästchen angezeigt?</a></li>
-							<li><a class="anchorlink" href="#_Toc369865028">Wo kann ich meine als Entwurf gespeicherten Antworten finden?</a></li>
-						</ul>
-					</li>
-					<li><a class="anchorlink head" href="#_Toc369865024">Schutz der Privatsphäre</a>
-						<ul>
-							<li><a class="anchorlink" href="#_Toc369865025">Dieses System verwendet Cookies. Welche Informationen werden dabei gespeichert?</a></li>
-						</ul>
-					</li>
+				
 				</ul>
 			</div>
-			<br/ ><br />
 			
-			<h2><a class="anchor" name="_Toc1"></a>Wie kann ich mit dem Autor der Umfrage Kontakt aufnehmen?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Per E-Mail – klicken Sie auf <i>Kontakt</i> (rechts oben auf der ersten Seite der Umfrage).</p>
-			
-			<h1><a class="anchor" name="_Toc369865010"></a>Eine Umfrage einsehen</h1>
-			
-			<h2><a class="anchor" name="_Toc369865012"></a>Was bedeutet &quot;Die eingegebene URL ist falsch&quot;?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Das System kann Ihnen keinen Zugang gewähren.  Dies ist meistens dann der Fall, wenn eine vor einiger Zeit aktive Einladung gelöscht oder deaktiviert wurde, weil der Zeitraum für die Aktivierung verstrichen war.</p>
-			<p>Wenn Sie glauben, dass der von Ihnen benutzte Zugangslink doch gültig ist, wenden Sie sich bitte an den Autor der Umfrage.</p>
-			
-			<h2><a class="anchor" name="_Toc369865013"></a>Was bedeutet &quot;Seite nicht gefunden&quot;?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>	Das bedeutet:
+			<div id="faqcontent">
+				<h1 class="empty">
+				    Wie kann ich mich mit dem Eigentümer der Umfrage Kontakt aufnehmen?
+				</h1>
+				<p>
+				    Wählen Sie auf der rechten Seite die Option „Kontakt“.
+				</p>
+				<h1>
+				    Eine Umfrage einsehen
+				</h1>
+				<h2>
+				    Was bedeutet die Meldung „Die eingegebene URL ist falsch“?
+				</h2>
+				<p>
+			        EUSurvey kann Ihnen keinen Zugang zu der Umfrage gewähren.
+				</p>
+				<p>
+				    Dies bedeutet, dass eine zuvor aktive Einladung gelöscht oder deaktiviert
+				    wurde, weil der Aktivierungszeitraum abgelaufen ist.
+				</p>
+				<p>
+				    Wenn Sie glauben, der von Ihnen benutzte Link doch gültig ist, wenden Sie
+				    sich bitte an die Verfasser der Umfrage.
+				</p>
+				<h2>
+				    Was bedeutet „Seite nicht gefunden“?
+				</h2>
+				<p>
+				    Dies bedeutet entweder,
+				</p>
 				<ul>
-					<li>Sie verwenden einen fehlerhaften Link, um auf Ihre Umfrage bei EUSurvey zuzugreifen, oder</li>
-					<li>die von Ihnen gesuchte Umfrage wurde bereits aus dem System entfernt.</li>
+				    <li>
+				        dass Sie für den Zugriff auf die Umfrage einen ungültigen Link
+				        verwenden oder
+				    </li>
+				    <li>
+				        dass die Umfrage, auf die Sie zugreifen möchten, bereits entfernt
+				        wurde.
+				    </li>
 				</ul>
-		 		Wenn der Link Ihrer Ansicht nach doch gültig ist, teilen Sie dies dem Autor bitte direkt mit. Anderenfalls informieren Sie bitte die für die Veröffentlichung des Links verantwortliche Stelle über den Fehler.</p>
+				<p>
+				    Wenn Sie glauben, dass der Link doch gültig ist, wenden Sie sich bitte an
+				    die Verfasser der Umfrage. Andernfalls informieren Sie bitte die Stelle,
+				    die den ungültigen Link veröffentlicht hat.
+				</p>
+				<h2>
+			        Was bedeutet die Meldung „Diese Umfrage wurde noch nicht veröffentlicht
+			        oder bereits wieder vom Portal entfernt“?
+				</h2>
+				<p>
+				    Dies bedeutet, dass die Einladung zur Teilnahme verschickt wurde, die
+				    Organisatoren der Umfrage diese jedoch noch nicht veröffentlicht oder
+				    bereits wieder entfernt haben.
+				</p>
+				<p>
+				    Für weitere Einzelheiten wenden Sie sich bitte an den Eigentümer der
+				    Umfrage.
+				</p>
+				<h2>
+				    Welche Browser unterstützt EUSurvey?
+				</h2>
+				<p>
+				    Microsoft Edge (die beiden letzten Versionen) sowie Mozilla Firefox und
+				    Google Chrome (die neuesten Versionen).
+				</p>
+				<p>
+				    Die Verwendung anderer Browser kann Kompatibilitätsprobleme verursachen.
+				</p>
+				<h2>
+				    Kann ich eine Umfrage auf meinem Mobiltelefon oder Tablet-PC beantworten?
+				</h2>
+				<p>
+				    Ja, das Layout des Fragebogens passt sich an die Größe und Auflösung des
+				    verwendeten Bildschirms an.
+				</p>
+				<h1>
+				    Einen Beitrag einreichen
+				</h1>
+				<h2>
+				    Was bedeuten die Meldungen „Dies ist keine gültige Zahl/kein gültiges
+				    Datum/keine gültige E-Mail-Adresse“?
+				</h2>
+				<p>
+				    Die Verfasser der Umfrage können für manche Fragentypen ein bestimmtes
+				    Eingabeformat vorgeben, z. B. eine Zahl, ein Datum oder eine
+				    E-Mail-Adresse.
+				</p>
+				<p>
+				    Daten sind im Format TT/MM/JJJJ anzugeben.
+				</p>
+				<h2>
+				    Warum verschwindet die von mir ausgewählte Antwort auf eine Matrix-Frage?
+				</h2>
+				<p>
+				    Manche Matrixfragen sind so konfiguriert, dass jede mögliche Antwort nur
+				    einmal ausgewählt werden kann. Dies wird manchmal verwendet, um die
+				    gewählten Antworten in eine bestimmte Rangfolge einzuordnen.
+				</p>
+				<h1>
+				    Nach dem Absenden des Beitrags
+				</h1>
+				<h2>
+				    Kann ich meinen Beitrag nach dem Absenden einsehen oder drucken?
+				</h2>
+				<p>
+				    Ja.
+				</p>
+				<p>
+				    Klicken Sie hierfür nach dem Absenden auf der „Bestätigungs“-Seite auf die
+				    Option „Drucken“.
+				</p>
+				<h2>
+				    Kann ich meinen Beitrag als PDF-Datei speichern?
+				</h2>
+				<p>
+				    Ja.
+				</p>
+				<p>
+				    Nach dem Absenden können Sie per E-Mail eine PDF-Version Ihres Beitrags
+				    anfordern.
+				</p>
+				<p>
+				    Klicken Sie auf der „Bestätigungs“-Seite auf „PDF-Datei erstellen“.
+				</p>
+				<h2>
+				    Kann ich meinen Beitrag nach dem Absenden weiter bearbeiten?
+				</h2>
+				<p>
+				    Dies richtet sich jeweils nach den für die Umfrage gewählten Einstellungen.
+				</p>
+				<p>
+				    Bei manchen Umfragen können Sie den Beitrag
+				    <a
+				        href="https://ec.europa.eu/eusurvey/home/editcontribution"
+				        target="_blank"
+				    >
+				        nach dem Absenden erneut bearbeiten
+				    </a>
+				    , in anderen Fällen ist diese Funktion nicht aktiviert.
+				</p>
+				<p>
+				    Um Ihren bereits eingereichten Beitrag zu bearbeiten, geben Sie bitte die
+				    Beitrags-Kennnummer an, die auf der „Bestätigungs“-Seite angegeben wurde.
+				    Diese ID erscheint auch auf manchen PDF-Dokumenten zu Ihrem Beitrag.
+				</p>
+				<p>
+				    Wenn Sie die Beitrags-Kennnummer nicht gespeichert haben, klicken Sie bitte
+				    auf die Option
+				    <a href="https://ec.europa.eu/eusurvey/home/support">
+				        Kontaktieren Sie uns
+				    </a>
+				    .
+				</p>
+				<h2>
+				    Ich habe gerade einen Beitrag zu einer Umfrage eingesandt. Kann ich
+				    einsehen, was andere Befragte geantwortet haben?
+				</h2>
+				<p>
+				    Dies richtet sich jeweils nach den für die Umfrage gewählten Einstellungen.
+				</p>
+				<p>
+				    Wenn Ihnen nach dem Absenden Ihres Beitrags kein Link zu den
+				    veröffentlichten Ergebnissen angezeigt wird, ist diese Funktion
+				    möglicherweise nicht verfügbar.
+				</p>
+				<p>
+				    Wenn Sie der Ansicht sind, dass die Ergebnisse dieser Umfrage von
+				    öffentlichem Interesse sein könnten, wenden Sie sich bitte an den
+				    <a
+				        href="#_Toc_1_0"
+				    >
+				        Verfasser
+				    </a>
+				    der Umfrage.
+				</p>
+				<h2>
+				    Warum erscheint beim Öffnen der PDF Version meines Beitrags die
+				    Fehlermeldung „Unzureichende Bildinformation“?
+				</h2>
+				<p>
+				    Wird ein beschädigtes Bild hochgeladen, kann der PDF-Leser es nicht
+				    ordnungsgemäß anzeigen.
+				    <br/>
+				    Dies löst einen internen Fehler in Ihrem PDF-Leser aus.
+				</p>
+				<p>
+				    In einem solchen Fall müssen Sie das Bild entweder reparieren oder
+				    entfernen.
+				</p>
+				<h2>
+				    Warum erscheinen in der PDF-Exportdatei der Umfrage kleine Kästchen?
+				</h2>
+				<p>
+				    Solche Kästchen können erscheinen, wenn die Verfasser oder Teilnehmer der
+				    Umfrage Schriftarten verwenden, die nicht von EUSurvey unterstützt werden.
+				</p>
+				<p>
+				    Wenn EUSurvey nicht über das entsprechende Zeichen verfügt, wird es durch
+				    ein kleines Kästchen ersetzt, um anzuzeigen, dass es nicht im PDF-Format
+				    wiedergegeben werden kann.
+				</p>
+				<p>
+				    Wenn Sie nicht unterstützte Zeichen verwenden, sollten Sie dies über die
+				    Rubrik „Kontakt“ auf der rechten Seite melden.
+				</p>
+				<p>
+				    Dies hat keinen Einfluss auf Ihren Beitrag. Sobald Ihre Antworten korrekt
+				    gespeichert wurden, können sie vom Verfasser der Umfrage leicht eingesehen
+				    und exportiert werden, auch wenn das PDF-Rendering-Engine nicht in der Lage
+				    ist, Ihre PDF-Datei korrekt anzuzeigen.
+				</p>
+				<h2>
+				    Wo finde ich meine als Entwurf gespeicherten Antworten?
+				</h2>
+				<p>
+				    Nachdem Sie auf „Als Entwurf speichern“ geklickt haben, werden Sie
+				    automatisch auf eine andere Seite weitergeleitet. Über einen dort
+				    aufgeführten Link können Sie auf ihren Entwurf zugreifen, um ihre Antworten
+				    weiter zu bearbeiten und einzureichen.
+				</p>
+				<p>
+				    <b>Bitte speichern Sie diesen Link!</b>
+				    Sie können ihn per E-Mail versenden, zu Ihrer Favoritenliste hinzufügen
+				    oder in die Zwischenablage kopieren.
+				</p>
+				<h1 class="empty">
+				    Missbrauch melden
+				</h1>
+				<p>
+				    Wenn eine Umfrage illegale Inhalte enthält oder die Rechte anderer verletzt
+				    (einschließlich geistiger Eigentumsrechte, Wettbewerbsrecht und allgemeines
+				    Recht), verwenden Sie bitte den Link „Missbrauch melden“ auf der rechten
+				    Seite.
+				</p>
+				<p>
+				Näheres hierzu siehe die    <a href="https://ec.europa.eu/eusurvey/home/tos">Nutzungsbedingungen</a>
+				    von EUSurvey.
+				</p>
+				<h1>
+				    Datenschutz
+				</h1>
+				<h2>
+				    Dieses System verwendet Cookies. Welche Informationen werden dabei
+				    gespeichert?
+				</h2>
+				<p>
+				    EUSurvey verwendet sogenannte Sitzungscookies, um die Kommunikation
+				    zwischen Client und Server zu gewährleisten. Ihr Browser muss so
+				    konfiguriert sein, dass er Cookies akzeptiert. Nach Beendigung der Sitzung
+				    werden die Cookies gelöscht.
+				</p>
+				<p>
+				    Das System speichert Ihre Antworten zu einer Umfrage lokal, um
+				    beispielsweise bei einer Unterbrechung der Serververbindung während der
+				    Übermittlung der Antworten oder bei versehentlichem Abschalten des
+				    Computers über eine Sicherheitskopie zu verfügen.
+				</p>
+				<p>
+				    Gespeichert werden die Kennungen der Fragen und die zugehörigen Antworten
+				    in der jeweils letzten Fassung.
+				</p>
+				<p>
+				    Sobald Sie Ihre Antworten an den Server übermittelt oder einen Entwurf
+				    erfolgreich auf dem Server gespeichert haben, werden die lokal
+				    gespeicherten Daten gelöscht.
+				</p>
+				<p>
+				    Sie können diese Funktion ausschalten, indem Sie folgendes Kästchen über
+				    der Umfrage anklicken: „Lokale Sicherheitskopie anlegen (bei öffentlichen /
+				    gemeinsam genutzten Computern deaktivieren)“. Danach werden hierzu keine
+				    Daten mehr auf Ihrem Rechner gespeichert.
+				</p>
 			
-			<h2><a class="anchor" name="_Toc369865026"></a>Welche Browser unterstützt EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>EUSurvey unterst&uuml;tzt die letzten beiden Versionen des Internet Explorers, von Mozilla Firefox und Google Chrome.</p>
-			<p>Die Verwendung anderer Browser kann Kompatibilit&auml;tsprobleme verursachen.</p>
-			
-			<h2><a class="anchor" name="_Toc369865027"></a>Kann ich mobile Endger&auml;te oder Tablet-PCs benutzen um meine Umfrage zu beantworten?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Ja, EUSurvey stellt ein sog. &bdquo;Responsive Webdesign&ldquo; f&uuml;r ver&ouml;ffentlichte Umfragen zur Verf&uuml;gung. EUSurvey bietet Ihnen dadurch eine gleichbleibende Benutzerfreundlichkeit auf dem Computer-Desktop, Tablet und Smartphone.</p>
-			
-			<h1><a class="anchor" name="_Toc369865014"></a>Einen Beitrag einreichen</h1>
-			
-			<h2><a class="anchor" name="_Toc369865015"></a>Was bedeutet &quot;Dies ist keine gültige Zahl/kein gültiges Datum/keine gültige E-Mail-Adresse&quot;?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>In EUSurvey kann der Autor einer Umfrage Fragen wählen, auf die eine Antwort in einem bestimmten Format erwartet wird – z. B. eine Zahl, ein Datum oder eine E-Mail-Adresse. So muss ein Datum das Format TT/MM/JJJJ haben.</p>
-			
-			<h2><a class="anchor" name="_Toc369865016"></a>Warum verschwindet die von mir gewählte Antwort auf eine Matrix-Auswahlfrage?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Bei Matrix-Fragen kann eingestellt sein, dass Sie jede Antwort nur ein einziges Mal auswählen können. So lässt sich eine Rangordnung der Antworten erzwingen.</p>
-			
-			<h1><a class="anchor" name="_Toc369865016a"></a>Missbrauch melden<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h1>
-			<p>Wenn eine Umfrage illegale Inhalte enthält oder die Rechte anderer verletzt (einschließlich geistiger Eigentumsrechte, Wettbewerbsrecht und allgemeines Recht), verwenden Sie bitte den Link "Missbrauch melden" auf der rechten Seite.</p>
-			<p>Weitere Informationen hierzu finden Sie in den <a href="${contextpath}/home/tos">EUSurvey-Nutzungsbedingungen</a>.</p>
-				
-			<h1><a class="anchor" name="_Toc369865017"></a>Nach dem Beitrag</h1>
-			
-			<h2><a class="anchor" name="_Toc369865018"></a>Kann ich meinen Beitrag nach dem Absenden einsehen oder drucken?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Selbstverständlich. Sobald Sie Ihr Dokument versandt haben, bietet Ihnen das System die Möglichkeit an, es auszudrucken.</p>
-			
-			<h2><a class="anchor" name="_Toc369865019"></a>Wie kann ich eine PDF-Kopie meines Beitrags speichern?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Sobald Sie Ihr Dokument versandt haben, bietet Ihnen das System eine PDF-Datei Ihres Beitrags zum Herunterladen an.</p>
-			
-			<h2><a class="anchor" name="_Toc369865020"></a>Kann ich meinen Beitrag nach dem Absenden bearbeiten?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Dies hängt von den Einstellungen für die jeweilige Umfrage ab.  </p>
-			<p>Bei manchen Umfragen können Sie <a target="_blank" href="${contextpath}/home/editcontribution">nach Versand erneut Zugang erhalten</a>, bei anderen ist diese Möglichkeit nicht vorgesehen.</p>
-			
-			<h2><a class="anchor" name="_Toc369865021"></a>Ich habe gerade einen Beitrag zu einer Umfrage eingesandt.  Kann ich einsehen, was andere Personen geantwortet haben?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Dies hängt von den Einstellungen für die jeweilige Umfrage ab. </p>
-			<p>Wenn Sie nach dem Einreichen Ihres Beitrags keinen Link zu den veröffentlichten Ergebnissen sehen, ist diese Funktion möglicherweise nicht vorgesehen.</p>
-			<p>Wenn Sie der Meinung sind, dass die Ergebnisse dieser Umfrage von allgemeinem Interesse sind, wenden Sie sich bitte an den <a href="#_Toc1">Autor der Umfrage</a>.</p>
-				
-			<h2><a class="anchor" name="_Toc369865022"></a>Beim Öffnen der PDF Version meines Beitrags erscheint eine Fehlermeldung &quot;Unzureichende Bildinformation&quot;<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Wird ein beschädigtes Bild hochgeladen, kann der PDF Leser es nicht ordnungsgemäß anzeigen. <br/>Dies löst einen internen Fehler in Ihrem PDF-Leser aus.</p>
-			<p>In einem solchen Fall müssen Sie das Bild entfernen oder reparieren.</p>
-			
-			<h2><a class="anchor" name="_Toc369865023"></a>Warum werden in der PDF-Exportdatei der Umfrage  kleine Kästchen angezeigt?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Dieses Phänomen tritt auf, wenn die von den Autoren der Umfrage oder den Teilnehmern verwendeten Zeichensätze von der Anwendung nicht unterstützt werden.</p>
-			<p>Wenn das System ein bestimmtes Zeichen nicht findet, ersetzt es dieses durch ein kleines Kästchen, um anzuzeigen, dass es im PDF-Format nicht wiedergegeben werden kann.</p>
-			<p>Sie können über die Kontaktadresse im dafür vorgesehenen Abschnitt melden, dass ein nicht unterstütztes Zeichen verwendet wurde.</p>
-			<p>Dies hat keinerlei Einfluss auf Ihren Beitrag. Sobald Ihr Beitrag korrekt gespeichert wurde, kann er von der für die Umfrage zuständigen Behörde problemlos angezeigt und exportiert werden – selbst wenn die PDF-Maschine der Anwendung Ihre Zeichen nicht korrekt wiedergeben konnte.</p>
-			
-			<h2><a class="anchor" name="_Toc369865028"></a>Wo kann ich meine als Entwurf gespeicherten Antworten finden?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Top of the page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Nachdem Sie auf &bdquo;Als Entwurf speichern&ldquo; geklickt haben, werden Sie automatisch auf eine andere Seite weitergeleitet. Dort sehen Sie den Link, auf dem Sie Ihren Entwurf wiederfinden k&ouml;nnen um ihre Beitr&auml;ge zu bearbeiten und einzureichen. <b>Bitte speichern Sie diesen Link!</b> Sie k&ouml;nnen ihn per Email versenden, zu Ihrer Favoritenliste hinzuf&uuml;gen oder in die Zwischenablage kopieren.</p>
-			
-			<h1><a class="anchor" name="_Toc369865024"></a>Schutz der Privatsphäre</h1>
-			
-			<h2><a class="anchor" name="_Toc369865025"></a>Dieses System verwendet Cookies. Welche Informationen werden dabei gespeichert?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Anfang der Seite&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-			<p>Das Informatiksystem verwendet sogenannte &quot;Cookies&quot;, um die Kommunikation zwischen Client und Server zu gewährleisten. Ihr Browser muss also so konfiguriert sein, dass er Cookies akzeptiert. Nach dem Abmelden werden die Cookies gelöscht.</p>
-			<p>Das System speichert Ihre Beiträge zu einer Umfrage lokal, um beispielsweise bei einer Unterbrechung der Serververbindung während der Übermittlung des Beitrags oder bei versehentlichem Abschalten Ihres Computers über eine Sicherheitskopie zu verfügen.
-			   Gespeichert werden die Kennungen der Fragen und die zugehörigen Antworten in der jeweils letzten Fassung. Sobald Sie Ihren Beitrag an den Server übermittelt und darauf gespeichert haben, werden die lokal gespeicherten Daten gelöscht.
-			   Über der Umfrage befindet sich ein Kästchen &quot;Lokale Sicherheitskopie anlegen (bei öffentlichen / gemeinsam genutzten Computern deaktivieren)&quot;, um diese Funktion auszuschalten. In dem Fall werden keine Daten auf Ihrem Rechner gespeichert.</p>
-			
+			</div>
 		</div>
 	</div>
 
