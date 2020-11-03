@@ -1125,8 +1125,8 @@
 										    </label>
 										</c:when>
 										<c:otherwise>
-											<form:checkbox path="survey.isQuiz" onclick="_properties.quiz(!_properties.quiz())" class="onoffswitch-checkbox" id="myonoffswitchquiz" />
-											<label class="onoffswitch-label" for="myonoffswitchquiz">
+											<form:checkbox path="survey.isQuiz" onclick="_properties.toggleQuiz(this)" class="onoffswitch-checkbox" data-bind="enable: (_properties.isNormalSurvey()||_properties.quiz())" id="myonoffswitchquiz" />
+											<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.isNormalSurvey()||_properties.quiz()) ? "" : " disabled")' for="myonoffswitchquiz">
 										        <span class="onoffswitch-inner"></span>
 										        <span class="onoffswitch-switch"></span>
 										    </label>
@@ -1244,8 +1244,8 @@
 										    </label>
 										</c:when>
 										<c:otherwise>
-											<form:checkbox path="survey.isDelphi" onclick="_properties.delphi(!_properties.delphi())" class="onoffswitch-checkbox" id="myonoffswitchdelphi" />
-											<label class="onoffswitch-label" for="myonoffswitchdelphi">
+											<form:checkbox path="survey.isDelphi" onclick="_properties.toggleDelphi(this)" class="onoffswitch-checkbox" data-bind="enable: (_properties.isNormalSurvey()||_properties.delphi())" id="myonoffswitchdelphi" />
+											<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.isNormalSurvey()||_properties.delphi()) ? "" : " disabled")' for="myonoffswitchdelphi">
 										        <span class="onoffswitch-inner"></span>
 										        <span class="onoffswitch-switch"></span>
 										    </label>
