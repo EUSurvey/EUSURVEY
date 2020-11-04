@@ -3265,6 +3265,7 @@ public class ManagementController extends BasicController {
 	public @ResponseBody Statistics statisticsJSON(@PathVariable String shortname, HttpServletRequest request) {
 
 		try {
+			// Load latest filter from Sessions
 			ResultFilter filter = sessionService.getLastResultFilter(request);
 
 			String active = request.getParameter("active");
@@ -3305,16 +3306,16 @@ public class ManagementController extends BasicController {
 						return statistics;
 					}
 
-					StatisticsRequest r = new StatisticsRequest();
-					r.setAllanswers(active.equalsIgnoreCase("true") && allanswers.equalsIgnoreCase("true"));
-					r.setSurveyId(survey.getId());
-					r.setFilter(filter.copy());
-					answerService.saveStatisticsRequest(r);
+					StatisticsRequest statisticsRequest = new StatisticsRequest();
+					statisticsRequest.setAllanswers(active.equalsIgnoreCase("true") && allanswers.equalsIgnoreCase("true"));
+					statisticsRequest.setSurveyId(survey.getId());
+					statisticsRequest.setFilter(filter.copy());
+					answerService.saveStatisticsRequest(statisticsRequest);
 
 					logger.info("calling worker server for statistics");
 
 					try {
-						URL workerurl = new URL(workerserverurl + "worker/startStatistics/" + r.getId());
+						URL workerurl = new URL(workerserverurl + "worker/startStatistics/" + statisticsRequest.getId());
 						URLConnection wc = workerurl.openConnection();
 						BufferedReader in = new BufferedReader(new InputStreamReader(wc.getInputStream()));
 						String inputLine;
@@ -3325,11 +3326,11 @@ public class ManagementController extends BasicController {
 
 						if (result.toString().equals("OK")) {
 							Statistics s = new Statistics();
-							s.setRequestID(r.getId());
+							s.setRequestID(statisticsRequest.getId());
 							return s;
 						} else {
 							logger.error(
-									"calling worker server for statisticsrequest " + r.getId() + " returned" + result);
+									"calling worker server for statisticsrequest " + statisticsRequest.getId() + " returned" + result);
 							return null;
 						}
 					} catch (ConnectException e) {
