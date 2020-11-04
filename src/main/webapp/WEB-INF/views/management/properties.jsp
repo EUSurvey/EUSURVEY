@@ -1255,6 +1255,26 @@
 							</div>
 						</td>
 					</tr>
+					<tr class="subelement" data-bind="visible: delphi">
+						<td>
+							<div style="float: left">(dummy) minimum number of contributions for statistics display</div>
+						</td>
+					</tr>
+					<tr class="subelement" data-bind="visible: delphi">
+						<td>
+							<div style="float: left">(dummy) show peer answers in form runner</div>
+							<div style="float: right">
+								<div class="onoffswitch disabled">
+									<label class="onoffswitch-label">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</div>
+							<div style="clear: both"></div>
+						</td>
+					</tr>
+
 				</table>	
 			</div>			
 			
