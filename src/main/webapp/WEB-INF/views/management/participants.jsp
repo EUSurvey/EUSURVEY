@@ -219,7 +219,6 @@
 					</div>
 				</div>
 			</div>	
-			
 			<div class="fullpageform10">
 				<div class="container">
 					<div class="row">
@@ -561,41 +560,31 @@
 					</div> <!-- row -->
 				</div> <!-- container -->	
 			</div>
-			
-				
-				
-				
-				<div style="text-align: center; margin-top: 140px;" data-bind="visible: DataLoaded() && Guestlists().length == 0">
-					<h1 style="margin-bottom: 20px;"><spring:message code="message.noguestlistyet" /></h1>
-					
-					<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
-						<spring:message code="label.createguestlist" /><br />
-						
-						<a onclick="_participants.newContactList()" class="btn btn-success createlist">
-							<span class="glyphicon glyphicon-book"></span><br />
-							<spring:message code="label.ContactList" /><br /><br />
-							<span class="info"><spring:message code="info.ContactList" /></span>
-						</a>
-						
-						<a onclick="_participants.newEUList()" class="btn btn-success createlist">
-							<span class="glyphicon glyphicon-user"></span><br />
-							<spring:message code="label.EUList" /><br /><br />
-							<span class="info"><spring:message code="info.EUList" /></span>
-						</a>
-						
-						<a onclick="_participants.newTokenList()" class="btn btn-success createlist">
-							<span class="glyphicon glyphicon-barcode"></span><br />
-							<spring:message code="label.TokenList" /><br /><br />
-							<span class="info"><spring:message code="info.TokenList" /></span>
-						</a>						
-					</c:if>
-				</div>
-				
-				<div style="text-align: center" data-bind="visible: !DataLoaded()">
-					<img src="${contextpath}/resources/images/ajax-loader.gif" />
-				</div>
-				
-		</div>
+			<div style="text-align: center;" data-bind="visible: DataLoaded() && Guestlists().length == 0">
+				<h1 style="margin-bottom: 20px;"><spring:message code="message.noguestlistyet" /></h1>
+				<c:if test="${USER.formPrivilege > 1 || form.survey.owner.id == USER.id || USER.getLocalPrivilegeValue('ManageInvitations') > 1}">
+					<spring:message code="label.createguestlist" /><br />
+					<a onclick="_participants.newContactList()" class="btn btn-success createlist">
+						<span class="glyphicon glyphicon-book"></span><br />
+						<spring:message code="label.ContactList" /><br /><br />
+						<span class="info"><spring:message code="info.ContactList" /></span>
+					</a>
+					<a onclick="_participants.newEUList()" class="btn btn-success createlist">
+						<span class="glyphicon glyphicon-user"></span><br />
+						<spring:message code="label.EUList" /><br /><br />
+						<span class="info"><spring:message code="info.EUList" /></span>
+					</a>
+					<a onclick="_participants.newTokenList()" class="btn btn-success createlist">
+						<span class="glyphicon glyphicon-barcode"></span><br />
+						<spring:message code="label.TokenList" /><br /><br />
+						<span class="info"><spring:message code="info.TokenList" /></span>
+					</a>						
+				</c:if>
+			</div>
+			<div style="text-align: center" data-bind="visible: !DataLoaded()">
+				<img src="${contextpath}/resources/images/ajax-loader.gif" />
+			</div>
+		</div> <!-- participants -->
 		
 		<div id="details" data-bind="visible: Page() == 2">
 			<div class="fixedtitleform">
@@ -691,7 +680,7 @@
 		<div id="newcontactlist" data-bind="visible: Page() == 3">		
 			<c:choose>
 				<c:when test="${numberOfAttendees == 0}">
-					<div style="padding-top: 160px; text-align: center">
+					<div style="text-align: center">
 						<b><spring:message code="info.NoContacts" /></b><br /><br />
 						<a href="${contextpath}/addressbook" class="btn btn-default"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.CreateContacts" /></a>
 					</div>
@@ -731,7 +720,7 @@
 												<spring:message code="info.SelectContacts" />
 											</div>
 										</div>
-										<div id="contactshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
+										<div id="contactshead" style="overflow-y: scroll; overflow-x: hidden;">
 											<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden">
 												<thead>
 													<tr>
@@ -796,7 +785,7 @@
 												<spring:message code="info.CollectContacts" />
 											</div>	
 										</div>
-										<div id="selectedcontactshead" style="max-width: 100%; overflow-y: scroll; overflow-x: hidden;">
+										<div id="selectedcontactshead" style="overflow-y: scroll; overflow-x: hidden;">
 											<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden;">
 												<thead>
 													<tr>
@@ -955,7 +944,7 @@
 				</div> 	<!-- row -->
 			</div>	<!-- container -->
 		
-			<div class="fullpageform10">
+			<div class="fullpageform0">
 				<div data-bind="visible: Step() == 1">	
 					<div class="container">
 						<div class="row">
@@ -1116,7 +1105,7 @@
 									<spring:message code="info.CurrentGuestlistEntries" />: <span data-bind="text: selectedGroup() != null ? selectedGroup().users().length : '0'"></span>
 								</div>	
 							</div>
-							<div id="selectedcontactshead2" style="max-width: 900px; overflow-y: scroll; overflow-x: hidden;">
+							<div id="selectedcontactshead2" style="overflow-y: scroll; overflow-x: hidden;">
 								<table class="table table-bordered table-styled table-striped ptable" style="overflow-y: hidden;">
 									<thead>
 										<tr>
@@ -1219,7 +1208,7 @@
 										</thead>
 									</table>
 								</div>
-								<div id="selectedtokenssdiv" style="margin-bottom: 10px; overflow-x: auto; overflow-y: scroll;">
+								<div id="selectedtokenssdiv" style="overflow-x: auto; overflow-y: scroll;">
 									<table class="table table-bordered table-styled table-striped ptable">											
 										<!-- ko if: selectedGroup() != null && selectedGroup().tokens().length == 0 -->
 										<tbody>
