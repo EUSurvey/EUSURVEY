@@ -134,15 +134,15 @@ public class WorkerController extends BasicController {
 		try {
 			int id = Integer.parseInt(reqid);
 			
-			StatisticsRequest r = answerService.getStatisticRequest(id);
-			if (r == null)
+			StatisticsRequest statisticsRequest = answerService.getStatisticRequest(id);
+			if (statisticsRequest == null)
 			{
 				return "StatisticsRequest with that id not found";
 			}
 			
-			Survey survey = surveyService.getSurvey(r.getSurveyId());
+			Survey survey = surveyService.getSurvey(statisticsRequest.getSurveyId());
 			
-			answerService.getStatistics(survey, r.getFilter(), false, r.isAllanswers(), true);	
+			answerService.getStatistics(survey, statisticsRequest.getFilter(), false, statisticsRequest.isAllanswers(), true);	
 		} catch (Exception e)
 		{
 			logger.error(e.getLocalizedMessage(), e);
