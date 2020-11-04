@@ -128,18 +128,14 @@
 			top: 0;
 		  }
 		  
-		  .participantstable {
-		  	width: 800px;
-		  	margin-left: auto;
-		  	margin-right: auto;
-		  	margin-bottom: 30px;
-		  }
-		  
 		  #participantstablecontacts, #participantstabletokens, #participantstableec {		  	
 		  	table-layout: fixed;
 		  }
 		  
 		  .participantstablediv {
+			max-height: 450px;
+		  	height: 450px;
+		  	max-width: 100%;
 		  	overflow-x: auto;
 		  	overflow-y: scroll;
 		  }
