@@ -37,6 +37,7 @@ public class Answer implements java.io.Serializable {
 	private int row;
 	private int column;
 	private Boolean isDraft = false;
+	private String explanation;
 	
 	@Id
 	@Column(name = "ANSWER_ID")
@@ -156,6 +157,10 @@ public class Answer implements java.io.Serializable {
 	public void setIsDraft(Boolean isDraft) {
 		this.isDraft = isDraft;
 	}
+
+	@Column(name = "ANSWER_EXPLANATION")
+	public String getExplanation() { return explanation; }
+	public void setExplanation(String explanation) { this.explanation = explanation; }
 	
 	public Answer copy(AnswerSet b, Map<Integer, List<File>> files) {
 		Answer bn = new Answer();
@@ -179,6 +184,7 @@ public class Answer implements java.io.Serializable {
 				bn.files.add(copy);
 			}
 		}
+		bn.setExplanation(getExplanation());
 		return bn;
 	}
 

@@ -329,7 +329,7 @@ public class OdfExportCreator extends ExportCreator {
 			}
 		} else {
 
-			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
+			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, a.ANSWER_EXPLANATION, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, parameters, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
 
@@ -356,6 +356,7 @@ public class OdfExportCreator extends ExportCreator {
 				answer.setRow(ConversionTools.getValue(a[6]));
 				answer.setPossibleAnswerId(ConversionTools.getValue(a[7]));
 				answer.setPossibleAnswerUniqueId((String) a[8]);
+				answer.setExplanation((String) a[9]);
 
 				if (lastAnswerSet == answer.getAnswerSetId()) {
 					answerSet.addAnswer(answer);
@@ -371,14 +372,13 @@ public class OdfExportCreator extends ExportCreator {
 					answerSet.setId(answer.getAnswerSetId());
 					lastAnswerSet = answer.getAnswerSetId();
 					answerSet.getAnswers().add(answer);
-					answerSet.setDate((Date) a[10]);
-					answerSet.setUpdateDate((Date) a[11]);
-					answerSet.setLanguageCode((String) a[14]);
-					answerSet.setUniqueCode((String) a[9]);
-					answerSet.setInvitationId((String) a[12]);
-					answerSet.setResponderEmail((String) a[13]);
-					answerSet.setLanguageCode((String) a[14]);
-					answerSet.setScore(ConversionTools.getValue(a[15]));
+					answerSet.setDate((Date) a[11]);
+					answerSet.setUpdateDate((Date) a[12]);
+					answerSet.setUniqueCode((String) a[10]);
+					answerSet.setInvitationId((String) a[13]);
+					answerSet.setResponderEmail((String) a[14]);
+					answerSet.setLanguageCode((String) a[15]);
+					answerSet.setScore(ConversionTools.getValue(a[16]));
 				}
 			}
 			if (lastAnswerSet > 0)

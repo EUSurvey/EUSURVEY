@@ -406,7 +406,7 @@ public class XmlExportCreator extends ExportCreator {
 			}
 		} else {
 
-			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
+			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, a.ANSWER_EXPLANATION, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(),
 							export == null ? null : export.getResultFilter(), values, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
@@ -447,6 +447,7 @@ public class XmlExportCreator extends ExportCreator {
 				answer.setRow(ConversionTools.getValue(a[6]));
 				answer.setPossibleAnswerId(ConversionTools.getValue(a[7]));
 				answer.setPossibleAnswerUniqueId((String) a[8]);
+				answer.setExplanation((String) a[9]);
 
 				exportedQuestionsByAnswerId.put(answer.getId(), answer.getQuestionUniqueId());
 
@@ -464,13 +465,13 @@ public class XmlExportCreator extends ExportCreator {
 					answerSet.setId(answer.getAnswerSetId());
 					lastAnswerSet = answer.getAnswerSetId();
 					answerSet.getAnswers().add(answer);
-					answerSet.setUniqueCode((String) a[9]);
-					answerSet.setDate((Date) a[10]);
-					answerSet.setUpdateDate((Date) a[11]);
-					answerSet.setInvitationId((String) a[12]);
-					answerSet.setResponderEmail((String) a[13]);
-					answerSet.setLanguageCode((String) a[14]);
-					Integer ilist = ConversionTools.getValue(a[15]);
+					answerSet.setUniqueCode((String) a[10]);
+					answerSet.setDate((Date) a[11]);
+					answerSet.setUpdateDate((Date) a[12]);
+					answerSet.setInvitationId((String) a[13]);
+					answerSet.setResponderEmail((String) a[14]);
+					answerSet.setLanguageCode((String) a[15]);
+					Integer ilist = ConversionTools.getValue(a[16]);
 					list = ilist.toString();
 
 					if (answerSet.getLanguageCode() == null
@@ -478,7 +479,7 @@ public class XmlExportCreator extends ExportCreator {
 						answerSet.setLanguageCode(questionlists.keySet().toArray()[0].toString());
 					}
 
-					answerSet.setScore(ConversionTools.getValue(a[16]));
+					answerSet.setScore(ConversionTools.getValue(a[17]));
 				}
 			}
 			if (lastAnswerSet > 0)
