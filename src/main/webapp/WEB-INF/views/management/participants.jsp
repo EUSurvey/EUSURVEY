@@ -134,7 +134,6 @@
 		  
 		  .participantstablediv {
 			max-height: 450px;
-		  	height: 450px;
 		  	max-width: 100%;
 		  	overflow-x: auto;
 		  	overflow-y: scroll;
