@@ -112,16 +112,6 @@
 		  	border-radius: 10px;
 		  }
 		  
-		  .col-md-5x {
-		  	float: left;
-		  	width: 48%;
-		  }
-		  
-		  .col-md-2x {
-		  	float: left;
-		  	width: 4%;
-		  }
-		  
 		  .increation {
 		  	background-color: #FFE0BF;
 		  }
@@ -150,30 +140,12 @@
 		  }
 		  
 		  .participantstablediv {
-		  	max-height: 450px;
-		  	height: 450px;
-		  	max-width: 100%;
 		  	overflow-x: auto;
 		  	overflow-y: scroll;
 		  }
     </style>
     
     <script>
-    
-    	function resize()
-    	{
-    		var totalHeight = $(window).height();
-    		var height = totalHeight - 280 - 280;
-    		if (height < 200) height = 200;
-    		if (height > 450) height = 450;
-    		$('.participantstablediv').height(height);
-    		$('.participantstablediv table').css("min-height", height - 1);
-    		
-    	}
-    	
-    	$( window ).resize(function() {
-    		resize();
-   		});
     
     	$(function() {	
 	    <c:choose>
@@ -188,7 +160,6 @@
 			</c:otherwise>
 		</c:choose>	
 		
-			resize();
     	});
 	</script>
 </head>
@@ -446,7 +417,7 @@
 							</div>
 						</div> <!-- col md 12 -->	
 					</div> <!-- row -->	
-					<div class="row lastRowBeforeFooter">
+					<div class="row">
 						<div class="col-md-12">
 							<div data-bind="visible: ECGuestlists().length > 0">
 								<h2><spring:message code="label.EUList" /></h2>
@@ -558,6 +529,7 @@
 							</div>
 						</div>
 					</div> <!-- row -->
+					<div class="row lastRowBeforeFooter"></div>
 				</div> <!-- container -->	
 			</div>
 			<div style="text-align: center;" data-bind="visible: DataLoaded() && Guestlists().length == 0">
@@ -713,7 +685,7 @@
 						<div data-bind="visible: Step() == 1">						
 							<div class="container">
 								<div class="row">
-									<div class="col-md-5x">										
+									<div class="col-md-5">										
 										<div class="tabletitle">
 											<spring:message code="label.AddressBookContacts" />
 											<div class="info">
@@ -772,13 +744,13 @@
 											</table>
 										</div>
 									</div>
-									<div class="col-md-2x" style="text-align: center; margin-top: 55px;">
+									<div class="col-md-2" style="text-align: center;">
 										<a class="iconbutton" onclick="$('#configure-attributes-dialog').modal();" data-toggle="tooltip" title="<spring:message code="label.ConfigureTables" />"><span class="glyphicon glyphicon-wrench"></span></a><br />
-										<div style="margin-top: 230px;">
+										<div style="margin-top: 2em">
 											<a data-bind="click: moveContacts" class="iconbutton" data-toggle="tooltip" style="font-size: 20px;" title="<spring:message code="label.AddToGuestlist" />"><span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right" style="margin-left: -9px;"></span></a>
 										</div>
 									</div>
-									<div class="col-md-5x">
+									<div class="col-md-5">
 										<div class="tabletitle">
 											<spring:message code="label.GuestList" />
 											<div class="info">
@@ -948,7 +920,7 @@
 				<div data-bind="visible: Step() == 1">	
 					<div class="container">
 						<div class="row">
-							<div class="col-md-5x">	
+							<div class="col-md-5">	
 								<span class='mandatory' aria-label='Mandatory'>*</span><spring:message code="label.Domain" /><br />
 								<select id="domain" data-bind="value: Domain" onchange="_participants.loadUsers(true)" class="small-form-control" style="width: auto; min-width: 450px; margin-bottom: 20px;" >
 									<option></option>
@@ -959,7 +931,7 @@
 							</div>
 						</div> <!-- row -->
 						<div class="row">
-							<div class="col-md-5x">										
+							<div class="col-md-5">										
 								<div class="tabletitle">
 									<spring:message code="label.Contacts" />
 									<div class="info">
@@ -1012,12 +984,12 @@
 									</table>
 								</div>
 							</div> <!-- col -->
-							<div class="col-md-2x" style="text-align: center; margin-top: 75px;">
-								<div style="margin-top: 230px;">
+							<div class="col-md-2" style="text-align: center;">
+								<div>
 									<a data-bind="click: moveECContacts" class="iconbutton" data-toggle="tooltip" style="font-size: 20px;" title="<spring:message code="label.AddToGuestlist" />"><span class="glyphicon glyphicon-chevron-right"></span><span class="glyphicon glyphicon-chevron-right" style="margin-left: -9px;"></span></a>
 								</div>
 							</div> <!-- col -->
-							<div class="col-md-5x">
+							<div class="col-md-5">
 								<div class="tabletitle">
 									<spring:message code="label.GuestList" />
 									<div class="info">
