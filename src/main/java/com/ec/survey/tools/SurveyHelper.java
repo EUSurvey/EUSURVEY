@@ -794,6 +794,28 @@ public class SurveyHelper {
 
 		return answerSet;
 	}
+	
+	public static AnswerSet parseAndMergeDelphiAnswerSet(HttpServletRequest request, Survey survey,
+			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService) throws IOException {
+		AnswerSet parsedAnswerSet = parseAnswerSet(request, survey, uniqueCode, true, languageCode, user,
+				fileService);
+
+		for (Answer answer : parsedAnswerSet.getAnswers()) {
+			answer.setAnswerSet(answerSet);
+			
+			//remove existing answers for the question
+			List<Answer> oldAnswers = answerSet.getAnswers(answer.getQuestionId(), answer.getQuestionUniqueId());
+			for (Answer oldAnswer: oldAnswers) {
+				answerSet.getAnswers().remove(oldAnswer);
+			}
+			
+			//add new answers for the question
+			answerSet.getAnswers().add(answer);
+		}
+
+	
+		return answerSet;
+	}
 
 	public static void recreateUploadedFiles(AnswerSet answerSet, Survey survey,
 			FileService fileService) {

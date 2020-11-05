@@ -2248,30 +2248,34 @@ public class RunnerController extends BasicController {
 	}
 	
 	@PostMapping(value = "/delphiUpdate")
-	public @ResponseBody String delphiUpdate(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, MessageException {
+	public @ResponseBody String delphiUpdate(HttpServletRequest request) throws MessageException {
 		
 		try {
 		
 			String surveyid = request.getParameter("surveyid");
 			int id = Integer.parseInt(surveyid);
 			Survey survey = surveyService.getSurvey(id);
-			String languageCode = survey.getLanguage().getCode();
-			User user = sessionService.getCurrentUser(request, false, false);
-			
-			AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, UUID.randomUUID().toString(), false, languageCode, user, fileService);
-			
+			String languageCode = request.getParameter("languagecode");
 			String uniqueCode = request.getParameter("uniquecode");
+			User user = sessionService.getCurrentUser(request, false, false);
+			AnswerSet answerSet;
 			AnswerSet existingAnswerSet = answerService.get(uniqueCode);
 			if (existingAnswerSet == null) {
 				//save
+				answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, languageCode, user, fileService);
+				saveAnswerSet(answerSet, fileDir, null, -1);
 			} else {
 				//update
-			}
+				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, uniqueCode, existingAnswerSet, languageCode, user, fileService);
+			}			
+			saveAnswerSet(answerSet, fileDir, null, -1);
 			
 			return "OK";
 		
 		} catch (NumberFormatException nfe) {
 			throw new MessageException("Invalid Data");
+		} catch (Exception nfe) {
+			throw new MessageException("Error");
 		}
 	}
 }
