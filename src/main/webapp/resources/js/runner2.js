@@ -174,6 +174,11 @@ function addElementToContainer(element, container, foreditor, forskin)
 		} else {
 			var s = $("#freetext-template").clone().attr("id","");			
 			$(container).append(s);
+			
+			if (isdelphi) {
+				var d = $("#delphi-template").clone().attr("id","");			
+				$(container).append(d);
+			}
 		}		
 	} else if (viewModel.type == 'NumberQuestion') {
 		$(container).addClass("numberitem");
@@ -435,4 +440,26 @@ function getWidth(widths, index)
 	}
 	
 	return "50px";
+}
+
+function delphiUpdate(div) {
+	var form = document.createElement("form");
+	$(form).append($(div).clone());
+	var data = $(form).serialize();
+	
+	$.ajax({type: "POST",
+		url: contextpath + "/runner/delphiUpdate",
+		async: false,
+		data: data,
+		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+		error: function(message)
+	    {
+			alert(message);
+	    },
+		success: function(message)
+	    {
+	    	//everything is ok
+			alert("update successful");
+	    }
+	 });
 }

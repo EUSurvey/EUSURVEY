@@ -2246,4 +2246,32 @@ public class RunnerController extends BasicController {
 
 		return result;
 	}
+	
+	@PostMapping(value = "/delphiUpdate")
+	public @ResponseBody String delphiUpdate(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, MessageException {
+		
+		try {
+		
+			String surveyid = request.getParameter("surveyid");
+			int id = Integer.parseInt(surveyid);
+			Survey survey = surveyService.getSurvey(id);
+			String languageCode = survey.getLanguage().getCode();
+			User user = sessionService.getCurrentUser(request, false, false);
+			
+			AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, UUID.randomUUID().toString(), false, languageCode, user, fileService);
+			
+			String uniqueCode = request.getParameter("uniquecode");
+			AnswerSet existingAnswerSet = answerService.get(uniqueCode);
+			if (existingAnswerSet == null) {
+				//save
+			} else {
+				//update
+			}
+			
+			return "OK";
+		
+		} catch (NumberFormatException nfe) {
+			throw new MessageException("Invalid Data");
+		}
+	}
 }
