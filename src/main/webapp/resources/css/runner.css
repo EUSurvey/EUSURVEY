@@ -286,14 +286,24 @@ textarea.freetext {
 
 }
 
-.survey-element {
-	margin: 5px; 
-	margin-top: 25px;
+.survey-element,
+.explanation-section {
+	margin: 25px 5px 5px 5px;
 	max-width: 980px;
 	overflow-x: auto;
 }
 
-.freetext, .number, .date, .matrixtable, .tabletable, .dataTable, .regex, .alignment-div, .input-group, .ratingtable {
+.freetext,
+.number,
+.date,
+.matrixtable,
+.tabletable,
+.dataTable,
+.regex,
+.alignment-div,
+.input-group,
+.ratingtable,
+.explanation-section > .mce-tinymce {
 	margin-left: 20px;
 }
 

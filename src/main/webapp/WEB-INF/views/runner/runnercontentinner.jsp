@@ -156,8 +156,14 @@
 									</c:choose>
 								  						  
 								  		<img src="${contextpath}/resources/images/ajax-loader.gif" />									
-									</div>	
-									</div>								
+									</div>
+									<c:if test="${form.survey.isDelphi}">
+										<div class="explanation-section">
+											<label class="questiontitle">${form.getMessage("label.ExplainYourAnswer")}</label>
+											<textarea class="explanation-editor"></textarea>
+										</div>
+									</c:if>
+									</div>
 									</fieldset>
 								</c:if>
 							</c:forEach>
