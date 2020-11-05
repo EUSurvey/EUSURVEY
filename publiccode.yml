@@ -1,0 +1,83 @@
+# This repository adheres to the publiccode.yml standard by including this 
+# metadata file that makes public software easily discoverable.
+# More info at https://github.com/italia/publiccode.yml
+
+publiccodeYmlVersion: '0.2'
+categories:
+  - survey
+description:
+  en:
+    documentation: |-
+      https://joinup.ec.europa.eu/sites/default/files/document/2017-08/eusurvey_oss_installation_guide_v1_4_0_1.pdf
+    features:
+      - Create new survey
+    genericName: Survey Software
+    longDescription: |
+      EUSurvey is the official online survey management tool of the European
+      Commission. Its development was started in 2013 under the supervision of
+      [DIGIT](http://ec.europa.eu/dgs/informatics/index\_en.htm) and is
+      published as open source software under the terms of the EUPL public
+      license on JOINUP at [this
+      link](https://joinup.ec.europa.eu/software/eusurvey/home). 
+
+
+      EUSurvey is a servlet based application and can be installed on any system
+      that runs a JAVA servlet-container. The system’s development and reference
+      installation runs Apache Tomcat as the servlet container and uses a MySQL
+      database to store its information. The build process is assisted by Maven
+      for resolving external dependencies. This document describes the steps
+      that are necessary to compile and install the open source version of
+      EUSurvey. 
+
+
+      Please notice that EUSurvey can be configured to run on a large number of
+      different environments. 
+
+
+      [Here](https://joinup.ec.europa.eu/sites/default/files/document/2017-08/eusurvey\_oss\_installation\_guide\_v1\_4\_0\_1.pdf)
+      you can find the PDF guide related to this software. The aim of such
+      document document is to guide the interested user through the process of
+      installing a development environment and to deploy a working instance of
+      the EUSurvey system, with as less effort as possible.
+
+
+      The experienced developer should feel free to use a compatible set of
+      tools of his choice.
+    shortDescription: |-
+      EUSurvey is the official online survey management tool of the European
+      Commission
+developmentStatus: stable
+intendedAudience:
+  scope:
+    - government
+    - local-authorities
+it:
+  conforme:
+    gdpr: true
+    lineeGuidaDesign: false
+    misureMinimeSicurezza: false
+    modelloInteroperabilita: false
+  countryExtensionVersion: '0.2'
+  piattaforme:
+    anpr: false
+    cie: false
+    pagopa: false
+    spid: false
+landingURL: 'https://ec.europa.eu/eusurvey/'
+legal:
+  license: EUPL-1.1
+  mainCopyrightOwner: European Commission
+  repoOwner: European Commission
+localisation:
+  availableLanguages:
+    - en
+  localisationReady: false
+maintenance:
+  type: none
+name: EUSurvery
+platforms:
+  - web
+releaseDate: '2020-06-17'
+softwareType: standalone/web
+softwareVersion: 1.5.0
+url: 'https://github.com/EUSurvey/EUSURVEY'
