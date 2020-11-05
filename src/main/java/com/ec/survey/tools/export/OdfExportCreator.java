@@ -900,7 +900,9 @@ public class OdfExportCreator extends ExportCreator {
 		if (export == null) {
 			cell.setDateTimeValue(Calendar.getInstance());
 		} else {
-			cell.setDisplayText(export.getDate().toString());
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(export.getDate());
+			cell.setDateTimeValue(calendar);
 		}
 
 		// this is a workaround for a bug in ODFToolkit or LibreOffice that displays
