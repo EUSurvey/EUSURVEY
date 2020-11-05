@@ -1105,7 +1105,7 @@
 							</div>
 						</div> <!-- col md 12 -->
 					</div> <!-- row -->	
-					<div class="row">
+					<div class="row lastRowBeforeFooter">
 						<div class="col-md-4 text-center">
 							<a class="btn btn-default" onclick="_participants.Step(1)"><spring:message code="label.PreviousStep" /></a>
 						</div>
