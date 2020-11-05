@@ -137,133 +137,105 @@ function addElementToContainer(element, container, foreditor, forskin)
 		}
 	
 	} catch (e) {}
-	
-	if (viewModel.type == 'Section')
-	{
+
+	var supportsDelphi = false;
+
+	if (viewModel.type == 'Section') {
 		$(container).addClass("sectionitem");
-		var s = $("#section-template").clone().attr("id","");	
+		var s = $("#section-template").clone().attr("id", "");
 		$(container).append(s);
-	} else if (viewModel.type == 'Text')
-	{
+	} else if (viewModel.type == 'Text') {
 		$(container).addClass("textitem");
-		var s = $("#text-template").clone().attr("id","");	
+		var s = $("#text-template").clone().attr("id", "");
 		$(container).append(s);
-	} else if (viewModel.type == 'Image')
-	{
+	} else if (viewModel.type == 'Image') {
 		$(container).addClass("imageitem");
-		var s = $("#image-template").clone().attr("id","");
+		var s = $("#image-template").clone().attr("id", "");
 		$(container).append(s);
-	} else if (viewModel.type == 'Ruler')
-	{
+	} else if (viewModel.type == 'Ruler') {
 		$(container).addClass("ruleritem");
-		var s = $("#ruler-template").clone().attr("id","");
+		var s = $("#ruler-template").clone().attr("id", "");
 		$(container).append(s);
-	} else if (viewModel.type == 'FreeTextQuestion' || viewModel.type == 'RegExQuestion')
-	{
-		if (viewModel.type == 'RegExQuestion')
-		{
+	} else if (viewModel.type == 'FreeTextQuestion' || viewModel.type == 'RegExQuestion') {
+		if (viewModel.type == 'RegExQuestion') {
 			$(container).addClass("regexitem");
 		} else {
 			$(container).addClass("freetextitem");
 		}
-		
-		if (viewModel.isPassword())
-		{
-			var s = $("#password-template").clone().attr("id","");			
+
+		if (viewModel.isPassword()) {
+			var s = $("#password-template").clone().attr("id", "");
 			$(container).append(s);
 		} else {
-			var s = $("#freetext-template").clone().attr("id","");			
+			var s = $("#freetext-template").clone().attr("id", "");
 			$(container).append(s);
-			
-			if (isdelphi) {
-				var d = $("#delphi-template").clone().attr("id","");			
-				$(container).append(d);
-			}
-		}		
+			supportsDelphi = true;
+		}
 	} else if (viewModel.type == 'NumberQuestion') {
 		$(container).addClass("numberitem");
-		var s = $("#number-template").clone().attr("id","");			
+		var s = $("#number-template").clone().attr("id", "");
 		$(container.append(s));
-		if (isdelphi) {
-			var d = $("#delphi-template").clone().attr("id","");			
-			$(container).append(d);
-		}
+		supportsDelphi = true;
 	} else if (viewModel.type == 'SingleChoiceQuestion') {
 		$(container).addClass("singlechoiceitem");
-		var s = $("#single-choice-template").clone().attr("id","");			
+		var s = $("#single-choice-template").clone().attr("id", "");
 		$(container).append(s);
-		if (isdelphi) {
-			var d = $("#delphi-template").clone().attr("id","");			
-			$(container).append(d);
-		}
+		supportsDelphi = true;
 	} else if (viewModel.type == 'MultipleChoiceQuestion') {
 		$(container).addClass("multiplechoiceitem");
-		var s = $("#multiple-choice-template").clone().attr("id","");			
+		var s = $("#multiple-choice-template").clone().attr("id", "");
 		$(container).append(s);
-		if (isdelphi) {
-			var d = $("#delphi-template").clone().attr("id","");			
-			$(container).append(d);
-		}
+		supportsDelphi = true;
 	} else if (viewModel.type == 'DateQuestion') {
 		$(container).addClass("dateitem");
-		var s = $("#date-template").clone().attr("id","");
+		var s = $("#date-template").clone().attr("id", "");
 		$(container.append(s));
-		if (isdelphi) {
-			var d = $("#delphi-template").clone().attr("id","");			
-			$(container).append(d);
-		}
+		supportsDelphi = true;
 	} else if (viewModel.type == 'TimeQuestion') {
 		$(container).addClass("timeitem");
-		var s = $("#time-template").clone().attr("id","");
+		var s = $("#time-template").clone().attr("id", "");
 		$(container.append(s));
-		if (isdelphi) {
-			var d = $("#delphi-template").clone().attr("id","");			
-			$(container).append(d);
-		}
+		supportsDelphi = true;
 	} else if (viewModel.type == 'EmailQuestion') {
 		$(container).addClass("emailitem");
-		var s = $("#email-template").clone().attr("id","");			
+		var s = $("#email-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Matrix') {
 		$(container).addClass("matrixitem");
-		var s = $("#matrix-template").clone().attr("id","");			
+		var s = $("#matrix-template").clone().attr("id", "");
 		$(container.append(s));
-		if (isdelphi) {
-			var d = $("#delphi-template").clone().attr("id","");			
-			$(container).append(d);
-		}
+		supportsDelphi = true;
 	} else if (viewModel.type == 'Table') {
 		$(container).addClass("mytableitem");
-		var s = $("#table-template").clone().attr("id","");	
+		var s = $("#table-template").clone().attr("id", "");
 		$(container.append(s));
-		if (isdelphi) {
-			var d = $("#delphi-template").clone().attr("id","");			
-			$(container).append(d);
-		}
+		supportsDelphi = true;
 	} else if (viewModel.type == 'Upload') {
 		$(container).addClass("uploaditem");
-		var s = $("#upload-template").clone().attr("id","");
+		var s = $("#upload-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Download') {
 		$(container).addClass("downloaditem");
-		var s = $("#download-template").clone().attr("id","");			
+		var s = $("#download-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'GalleryQuestion') {
 		$(container).addClass("galleryitem");
-		var s = $("#gallery-template").clone().attr("id","");			
-		$(container.append(s));		
+		var s = $("#gallery-template").clone().attr("id", "");
+		$(container.append(s));
 	} else if (viewModel.type == 'Confirmation') {
 		$(container).addClass("confirmationitem");
-		var s = $("#confirmation-template").clone().attr("id","");			
+		var s = $("#confirmation-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'RatingQuestion') {
 		$(container).addClass("ratingitem");
-		var s = $("#rating-template").clone().attr("id","");			
+		var s = $("#rating-template").clone().attr("id", "");
 		$(container.append(s));
-		if (isdelphi) {
-			var d = $("#delphi-template").clone().attr("id","");			
-			$(container).append(d);
-		}
+		supportsDelphi = true;
+	}
+
+	if (isdelphi && supportsDelphi) {
+		var d = $("#delphi-template").clone().attr("id", "");
+		$(container).append(d);
 	}
 	
 	ko.applyBindings(viewModel, $(container)[0]);
