@@ -2248,10 +2248,9 @@ public class RunnerController extends BasicController {
 	}
 	
 	@PostMapping(value = "/delphiUpdate")
-	public @ResponseBody String delphiUpdate(HttpServletRequest request) throws MessageException {
-		
+	public @ResponseBody String delphiUpdate(HttpServletRequest request, Locale locale) {		
 		try {
-		
+					
 			String surveyid = request.getParameter("surveyid");
 			int id = Integer.parseInt(surveyid);
 			Survey survey = surveyService.getSurvey(id);
@@ -2272,10 +2271,9 @@ public class RunnerController extends BasicController {
 			
 			return "OK";
 		
-		} catch (NumberFormatException nfe) {
-			throw new MessageException("Invalid Data");
-		} catch (Exception nfe) {
-			throw new MessageException("Error");
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return resources.getMessage("error.delphiupdate", null, locale);
 		}
 	}
 }
