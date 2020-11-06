@@ -21,6 +21,8 @@ import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mobile.device.Device;
 import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
@@ -2251,12 +2253,16 @@ public class RunnerController extends BasicController {
 	}
 	
 	@PostMapping(value = "/delphiUpdate")
-	public @ResponseBody String delphiUpdate(HttpServletRequest request, Locale locale) {		
+	public ResponseEntity<String> delphiUpdate(HttpServletRequest request, Locale locale) {		
 		try {
-					
+							
 			String surveyid = request.getParameter("surveyid");
-			int id = Integer.parseInt(surveyid);
-			Survey survey = surveyService.getSurvey(id);
+			int sid = Integer.parseInt(surveyid);
+			
+			String questionid = request.getParameter("questionid");
+			int qid = Integer.parseInt(questionid);
+			
+			Survey survey = surveyService.getSurvey(sid);
 			String languageCode = request.getParameter("languagecode");
 			String uniqueCode = request.getParameter("uniquecode");
 			User user = sessionService.getCurrentUser(request, false, false);
@@ -2269,14 +2275,28 @@ public class RunnerController extends BasicController {
 			} else {
 				//update
 				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, uniqueCode, existingAnswerSet, languageCode, user, fileService);
-			}			
+			}	
+			
+			Set<String> invisibleElements = new HashSet<>();
+			Element element = survey.getElementsById().get(qid);
+			Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
+			HashMap<Element, String> result = new HashMap<>();
+
+			Draft draft = null;
+			boolean validation = SurveyHelper.validateElement(element, answerSet, dependencies, result, answerService, invisibleElements, resources,
+					locale, null, request, draft);
+			
+			if (!validation) {
+				return new ResponseEntity<>(resources.getMessage("error.CheckValidation", null, locale), HttpStatus.BAD_REQUEST);
+			}
+			
 			saveAnswerSet(answerSet, fileDir, null, -1);
 			
-			return "OK";
+			return new ResponseEntity<>(resources.getMessage("message.ChangesSaved", null, locale), HttpStatus.OK);
 		
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return resources.getMessage("error.delphiupdate", null, locale);
+			return new ResponseEntity<>(resources.getMessage("error.delphiupdate", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
