@@ -852,7 +852,7 @@ public class SurveyService extends BasicService {
 		Survey survey = getSurvey(uidorshortname, isDraft, checkActive, readReplies, useEagerLoading, language,
 				readonly, false, false, synchronize);
 		if (survey != null)
-			CheckAndRecreateMissingElements(survey, null);
+			checkAndRecreateMissingElements(survey, null);
 		return survey;
 	}
 
@@ -3071,7 +3071,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public void CheckAndRecreateMissingElements(Survey survey, ResultFilter filter) {
+	public void checkAndRecreateMissingElements(Survey survey, ResultFilter filter) {
 		List<Element> surveyelements = survey.getElementsRecursive(true);
 		Map<String, Element> surveyelementsbyuid = new HashMap<>();
 		Map<String, Element> missingelementuids = new HashMap<>();

@@ -1409,9 +1409,23 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional
-	public Statistics getStatistics(Survey survey, ResultFilter filter, boolean useEagerLoading, boolean allanswers,
+	public Statistics getStatisticsOrStartCreator(int statisticsRequestId) throws Exception {
+		StatisticsRequest statisticsRequest = answerService.getStatisticRequest(statisticsRequestId);
+		Survey survey = surveyService.getSurvey(statisticsRequest.getSurveyId());
+		return this.getStatisticsOrStartCreator(survey, statisticsRequest.getFilter(), false, statisticsRequest.isAllanswers(), true);
+	}
+	
+	/**
+	 * <p>In Asynchronous mode:
+	 * Returns the statistics of the survey using the filter, or null and launches the StatisticsCreator
+	 * </p>
+	 * <p>In synchronous mode:
+	 * Returns the statistics of the survey using the filter (using a creator if necessary)</p>
+	 */
+	@Transactional
+	public Statistics getStatisticsOrStartCreator(Survey survey, ResultFilter filter, boolean useEagerLoading, boolean allanswers,
 			boolean asynchronous) throws Exception {
-		filter = answerService.initialize(filter);
+		// filter = answerService.initialize(filter);
 		Statistics statistics = getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers), useEagerLoading);
 
 		if (statistics == null) {
@@ -1432,7 +1446,7 @@ public class AnswerService extends BasicService {
 					// this can happen when a runner is added or removed while the list is checked
 				}
 
-				getAnswerPool().execute(creator);
+				this.getAnswerPool().execute(creator);
 				return null;
 
 			} else {
@@ -1440,9 +1454,9 @@ public class AnswerService extends BasicService {
 				while (statistics == null && counter < 120) {
 					boolean found = false;
 					try {
-						for (Runnable r : running) {
-							StatisticsCreator s = (StatisticsCreator) r;
-							if (s.getFilter().getHash(allanswers).equals(filter.getHash(allanswers))) {
+						for (Runnable runnable : running) {
+							StatisticsCreator statisticsCreator = (StatisticsCreator) runnable;
+							if (statisticsCreator.getFilter().getHash(allanswers).equals(filter.getHash(allanswers))) {
 								found = true;
 								break;
 							}
@@ -1454,7 +1468,7 @@ public class AnswerService extends BasicService {
 					// if there is no computation running, start one
 					if (!found) {
 						if (asynchronous) {
-							getAnswerPool().execute(creator);
+							this.getAnswerPool().execute(creator);
 						} else {
 							creator.runSync();
 						}
@@ -1470,10 +1484,10 @@ public class AnswerService extends BasicService {
 						}
 
 						if (allanswers && !survey.isMissingElementsChecked()) {
-							surveyService.CheckAndRecreateMissingElements(survey, filter);
+							surveyService.checkAndRecreateMissingElements(survey, filter);
 						}
 
-						statistics = getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers),
+						statistics = this.getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers),
 								useEagerLoading);
 					}
 				}

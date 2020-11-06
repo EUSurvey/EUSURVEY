@@ -132,19 +132,9 @@ public class WorkerController extends BasicController {
 	public @ResponseBody String startStatistics(@PathVariable String reqid, HttpServletRequest request, HttpServletResponse response) {	
 		
 		try {
-			int id = Integer.parseInt(reqid);
-			
-			StatisticsRequest statisticsRequest = answerService.getStatisticRequest(id);
-			if (statisticsRequest == null)
-			{
-				return "StatisticsRequest with that id not found";
-			}
-			
-			Survey survey = surveyService.getSurvey(statisticsRequest.getSurveyId());
-			
-			answerService.getStatistics(survey, statisticsRequest.getFilter(), false, statisticsRequest.isAllanswers(), true);	
-		} catch (Exception e)
-		{
+			int statisticsRequestId = Integer.parseInt(reqid);
+			this.answerService.getStatisticsOrStartCreator(statisticsRequestId);
+		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return e.getLocalizedMessage();
 		}

@@ -2636,7 +2636,7 @@ public class ManagementController extends BasicController {
 		String languagecode = survey.getLanguage().getCode();
 		String uid = survey.getUniqueId();
 
-		User u = sessionService.getCurrentUser(request);
+		User user = sessionService.getCurrentUser(request);
 
 		boolean active = !survey.getIsDraft();
 		if (!active)
@@ -2704,9 +2704,9 @@ public class ManagementController extends BasicController {
 			if (survey == null) {
 				active = false;
 				survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
-			} else if (request != null && !u.getId().equals(survey.getOwner().getId())
-					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
+			} else if (request != null && !user.getId().equals(survey.getOwner().getId())
+					&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& user.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
 				active = false;
 				allanswers = false;
 				survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
@@ -2716,7 +2716,7 @@ public class ManagementController extends BasicController {
 			survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
 		}
 
-		ResultFilter filter = u != null ? sessionService.getLastResultFilter(request, u.getId(), survey.getId()) : null;
+		ResultFilter filter = user != null ? sessionService.getLastResultFilter(request, user.getId(), survey.getId()) : null;
 
 		if (resultFilter != null)
 			filter = resultFilter;
@@ -2814,9 +2814,9 @@ public class ManagementController extends BasicController {
 		}
 
 		if (multidelete) {
-			if (!u.getId().equals(survey.getOwner().getId())
-					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
+			if (!user.getId().equals(survey.getOwner().getId())
+					&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& user.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
 				throw new ForbiddenURLException();
 			}
 
@@ -2851,9 +2851,9 @@ public class ManagementController extends BasicController {
 		boolean columnDeleted = false;
 		
 		if (deletecolumn) {
-			if (!u.getId().equals(survey.getOwner().getId())
-					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
+			if (!user.getId().equals(survey.getOwner().getId())
+					&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& user.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
 				throw new ForbiddenURLException();
 			}
 			
@@ -2873,9 +2873,9 @@ public class ManagementController extends BasicController {
 					String quid = table.getQuestions().get(Integer.parseInt(row)-1).getUniqueId();
 					String auid = table.getAnswers().get(Integer.parseInt(col)-1).getUniqueId();
 					
-					answerService.clearAnswersForQuestion(survey, filter, quid, auid, u.getId());					
+					answerService.clearAnswersForQuestion(survey, filter, quid, auid, user.getId());					
 				} else {				
-					answerService.clearAnswersForQuestion(survey, filter, questionUID, null, u.getId());
+					answerService.clearAnswersForQuestion(survey, filter, questionUID, null, user.getId());
 				}
 				columnDeleted = true;
 			}
@@ -2924,7 +2924,7 @@ public class ManagementController extends BasicController {
 
 		if (active && allanswers) {
 			if (!survey.isMissingElementsChecked())
-				surveyService.CheckAndRecreateMissingElements(survey, filter);
+				surveyService.checkAndRecreateMissingElements(survey, filter);
 		} else {
 			survey.clearMissingData();
 		}
@@ -2954,7 +2954,7 @@ public class ManagementController extends BasicController {
 		}
 
 		if (forPDF) {
-			Statistics statistics = answerService.getStatistics(survey, filter, false, active && allanswers, false);
+			Statistics statistics = answerService.getStatisticsOrStartCreator(survey, filter, false, active && allanswers, false);
 			result.addObject("statistics", statistics);
 			filter.setVisibleQuestions(filter.getExportedQuestions());
 		}
@@ -3008,7 +3008,7 @@ public class ManagementController extends BasicController {
 
 		if (request != null) {
 			try {
-				sessionService.setLastResultFilter(request, filter, u.getId(), survey.getId());
+				sessionService.setLastResultFilter(request, filter, user.getId(), survey.getId());
 			} catch (Exception e) {
 				logger.warn(e.getLocalizedMessage(), e);
 			}
@@ -3082,7 +3082,7 @@ public class ManagementController extends BasicController {
 			List<String> result = new ArrayList<>();
 
 			if (active && allanswers) {
-				surveyService.CheckAndRecreateMissingElements(survey, filter);
+				surveyService.checkAndRecreateMissingElements(survey, filter);
 			} else {
 				survey.clearMissingData();
 			}
@@ -3338,7 +3338,7 @@ public class ManagementController extends BasicController {
 					}
 				}
 
-				return answerService.getStatistics(survey, filter, false,
+				return answerService.getStatisticsOrStartCreator(survey, filter, false,
 						active.equalsIgnoreCase("true") && allanswers.equalsIgnoreCase("true"), true);
 
 			} else {
