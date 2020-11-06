@@ -2478,25 +2478,14 @@ public class ManagementController extends BasicController {
 			lang = request.getParameter("language.code");
 		}
 		
-		AnswerSet answerSet = null;
-
 		if (!survey.getIsDelphi()) {
 			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 			if (err != null)
 				return err;
-		} else {
-			if (surveyService.answerSetExists(uniqueCode, false, true))
-			{
-				AnswerSet existingAnswerSet = answerService.get(uniqueCode);
-				answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, existingAnswerSet, lang, user, fileService);
-			}				
 		}
-
-		if (answerSet == null)
-		{
-			answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
-		}
-
+		
+		AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);
+	
 		String newlang = request.getParameter("newlang");
 		String newlangpost = request.getParameter("newlangpost");
 		String newcss = request.getParameter("newcss");
