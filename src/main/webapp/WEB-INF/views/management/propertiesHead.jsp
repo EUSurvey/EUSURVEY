@@ -39,6 +39,7 @@
 			this.isUseMaxNumberContribution = ko.observable(${form.survey.isUseMaxNumberContribution});
 			this.isUseMaxNumberContributionLink = ko.observable(${form.survey.isUseMaxNumberContributionLink});
 			this.sendConfirmationEmail = ko.observable(${form.survey.sendConfirmationEmail});
+			this.changeContribution = ko.observable(${form.survey.changeContribution});
 			
 			this.addLinksRow = function()
 			{
@@ -145,13 +146,28 @@
 				this.self.showBackgroundDocs($("#backgrounddocumentstable").find("tr").length > 1);
 			}
 
+			this.toggleChangeContribution = function(link)
+			{
+				if (this.self.delphi()) {
+					this.self.changeContribution(true); // should always be activated for delphi surveys
+				} else {
+					this.self.changeContribution(!this.self.changeContribution());
+				}
+				console.log("toggleChangeContribution "+this.self.changeContribution());
+			}
 			this.toggleQuiz = function(link)
 			{
 				this.self.quiz(!this.self.quiz());
 			}
 			this.toggleDelphi = function(link)
 			{
-				this.self.delphi(!this.self.delphi());
+				if (this.self.delphi()) { // switch to standard survey
+					this.self.delphi(false);
+				} else { // switch to delphi survey
+					this.self.delphi(true);
+					this.self.changeContribution(true); // should always be activated for delphi surveys
+				}
+				console.log("toggleDelphi changeContribution"+this.self.changeContribution());
 			}
 			this.isNormalSurvey = function()
 			{
