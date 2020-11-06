@@ -382,45 +382,13 @@
 
 		};
 	
-	var explanationEditorConfig = {
-		script_url: '${contextpath}/resources/js/tinymce/tinymce.min.js',
-		theme: 'modern',
-		entity_encoding: 'raw',
-		menubar: false,
-		toolbar: ['bold italic underline strikethrough | undo redo | bullist numlist | link code | fontsizeselect forecolor fontselect'],
-		plugins: 'paste link image code textcolor',
-		font_formats:
-		'Sans Serif=FreeSans, Arial, Helvetica, Tahoma, Verdana, sans-serif;' +
-		'Serif=FreeSerif,Times,serif;' +
-		'Mono=FreeMono,Courier, mono;',
-		language : globalLanguage,
-		image_advtab: true,
-		width: '645',
-		entities: '',
-		content_css: '${contextpath}/resources/css/tinymce.css',
-		popup_css_add: '${contextpath}/resources/css/tinymcepopup.css',
-		forced_root_block: false,
-		browser_spellcheck: true,
-		paste_postprocess: function(pl, o) {
-			o.node.innerHTML = replaceBRs(strip_tags(o.node.innerHTML, '<p><br>'));
-		},
-		relative_urls: false,
-		remove_script_host: false,
-		document_base_url: serverPrefix,
-		default_link_target: "_blank",
-		anchor_top: false,
-		anchor_bottom: false,
-		branding: false,
-		invalid_elements: 'html,head,body'
-	};
-	
 	$(document).ready(function(){
 		
 		$(".filtercell").find("input[type=text]").attr("placeholder", "<spring:message code="label.Filter" />");
 		
 		$('textarea.tinymce').each(function(){
 			$(this).tinymce(myConfigSetting2);
-		});
+		          });
 
 		$('textarea.tinymcealign').each(function(){
 			$(this).tinymce(myConfigSetting);
@@ -481,10 +449,6 @@
 		   valid_classes: 'y',
 		   invalid_elements : 'html,head,body'
 
-		});
-
-		$('textarea.explanation-editor').each(function(){
-			$(this).tinymce(explanationEditorConfig);
 		});
 	});
 </script>
