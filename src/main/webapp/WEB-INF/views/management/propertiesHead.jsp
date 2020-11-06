@@ -153,7 +153,6 @@
 				} else {
 					this.self.changeContribution(!this.self.changeContribution());
 				}
-				console.log("toggleChangeContribution "+this.self.changeContribution());
 			}
 			this.toggleQuiz = function(link)
 			{
@@ -167,7 +166,6 @@
 					this.self.delphi(true);
 					this.self.changeContribution(true); // should always be activated for delphi surveys
 				}
-				console.log("toggleDelphi changeContribution"+this.self.changeContribution());
 			}
 			this.isNormalSurvey = function()
 			{
