@@ -970,6 +970,15 @@ public class ManagementController extends BasicController {
 		return false;
 	}
 
+	/** when a particular Survey type has some conditions on properties, they are set here
+	*/
+	private void ensurePropertiesDependingOnSurveyType(Survey survey) {
+		if (survey.getIsDelphi()) {
+			survey.setChangeContribution(true); // should always be activated for delphi surveys
+		}
+	}
+
+
 	private ModelAndView updateSurvey(Form form, HttpServletRequest request, boolean creation, Locale locale)
 			throws Exception {
 		Survey uploadedSurvey = new Survey();
@@ -1018,6 +1027,7 @@ public class ManagementController extends BasicController {
 			if (!checkConclusiveSurveyType(uploadedSurvey)) {
 				throw new MessageException("multiple selected survey types at once");
 			}
+			ensurePropertiesDependingOnSurveyType(uploadedSurvey);
 
 			// check if shortname already exists
 			Survey existingSurvey = surveyService.getSurvey(uploadedSurvey.getShortname(), true, false, false, false,
@@ -1033,6 +1043,8 @@ public class ManagementController extends BasicController {
 			uploadedSurvey = form.getSurvey();
 			survey = surveyService.getSurvey(form.getSurvey().getId(), false, false);
 			hasPendingChanges = survey.getHasPendingChanges();
+
+			ensurePropertiesDependingOnSurveyType(uploadedSurvey);
 
 			oldlogo = survey.getLogo();
 
