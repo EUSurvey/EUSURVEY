@@ -1108,6 +1108,8 @@
 		<input type="hidden" name="surveyid" value="${form.survey.id}" />
 		<input type="hidden" name="uniquecode" value="${uniqueCode}" />
 		<input type="hidden" name="languagecode" value="${form.language.code}" />
+		<label>${form.getMessage("label.ExplainYourAnswer")}</label>
+		<textarea class="tinymce"></textarea>
 		<a class="btn btn-primary" onclick="delphiUpdate($(this).closest('.survey-element'))" style="margin-left: 20px; margin-top: 8px;">${form.getMessage("label.Save")}</a>
 	</div>
 
