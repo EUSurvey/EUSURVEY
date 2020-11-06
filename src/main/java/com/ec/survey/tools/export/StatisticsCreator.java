@@ -82,7 +82,7 @@ public class StatisticsCreator implements Runnable {
 		session.evict(survey);
 
 		if (allanswers && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, filter);
+			surveyService.checkAndRecreateMissingElements(survey, filter);
 		}
 
 		Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();

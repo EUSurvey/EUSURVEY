@@ -246,7 +246,7 @@ public class OdfExportCreator extends ExportCreator {
 		}
 
 		if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, filter);
+			surveyService.checkAndRecreateMissingElements(survey, filter);
 			Hibernate.initialize(survey.getMissingElements());
 			for (Element e : survey.getMissingElements()) {
 				if (e instanceof ChoiceQuestion) {
@@ -934,7 +934,7 @@ public class OdfExportCreator extends ExportCreator {
 				form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
 
 		if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, export.getResultFilter());
+			surveyService.checkAndRecreateMissingElements(survey, export.getResultFilter());
 		}
 
 		form.setSurvey(survey);
@@ -1314,7 +1314,7 @@ public class OdfExportCreator extends ExportCreator {
 				form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
 
 		if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, export.getResultFilter());
+			surveyService.checkAndRecreateMissingElements(survey, export.getResultFilter());
 		}
 
 		form.setSurvey(survey);
