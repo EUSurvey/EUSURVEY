@@ -5,8 +5,6 @@
 	
 <script type="text/javascript" src="${contextpath}/resources/js/fileuploader.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/importsurvey.js?version=<%@include file="version.txt" %>"></script>
-<script type="text/javascript" src="${contextpath}/resources/js/tinymce/jquery.tinymce.min.js?version=<%@include file="version.txt" %>"></script>
-<script type="text/javascript" src="${contextpath}/resources/js/tinymce/tinymce.min.js?version=<%@include file="version.txt" %>"></script>
 
 <script type="text/javascript">	
 

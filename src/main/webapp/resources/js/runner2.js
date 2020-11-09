@@ -413,6 +413,12 @@ function addElementToContainer(element, container, foreditor, forskin)
 		initSlider(this, foreditor, viewModel);
 	});
 	
+	$(container).find(".tinymce").each(function(){
+		var id = $(this).attr("id");
+		tinyMCE.settings = myConfigSettingRunner;
+		tinymce.EditorManager.execCommand('mceToggleEditor', true, id);
+	});
+	
 	return viewModel;
 }
 

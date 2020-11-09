@@ -439,3 +439,9 @@ legend {
 	background-color: #ccc !important;
 	background-image: none !important;
 }
+
+.tinymcediv {
+	max-width: 645px;
+	margin-left: 20px;
+	margin-top: 10px;
+}

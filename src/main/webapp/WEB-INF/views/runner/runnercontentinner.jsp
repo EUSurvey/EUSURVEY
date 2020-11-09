@@ -645,4 +645,106 @@
 	 	
 	 	initializeAnswerData();
 	 	initializeTriggers();
+	 	
+	 	var myConfigSettingRunner = {
+	 			
+	 			// Location of TinyMCE script
+	 			forced_root_block : '',
+	 			script_url : '${contextpath}/resources/js/tinymce/tinymce.min.js',
+	 			theme : "modern",
+	 			entity_encoding : "raw",
+	 			element_format : "xhtml",
+	 			menubar : false,
+	 			statusbar: true,
+	 			browser_spellcheck: true,
+	 					
+	 			toolbar : ["bold italic underline strikethrough alignleft aligncenter alignright alignjustify indent outdent | undo redo bullist numlist link code forecolor"],
+	 		    
+	 			formats: {
+	 		    	alignleft: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'myleft', defaultBlock: 'div'},
+	 		    	aligncenter: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'mycenter', defaultBlock: 'div'},
+	 		    	alignright: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'myright', defaultBlock: 'div'},
+	 		    	alignfull: {selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'myfull', defaultBlock: 'div'}
+	 			},
+	 			content_style: '.myleft { text-align:left; } .mycenter { text-align:center; } .myright { text-align:right; } .myfull { text-align:justify; }',
+	 			
+	 		    plugins : "paste link image code textcolor fullscreen lists",
+	 		    
+	 		    font_formats: 
+	 	            "Sans Serif=FreeSans, Arial, Helvetica, Tahoma, Verdana, sans-serif;"+
+	 	            "Serif=FreeSerif,Times,serif;"+
+	 	            "Mono=FreeMono,Courier, mono;",
+	 		    
+	 		    image_advtab: true,
+	 		    language : globalLanguage,
+	 		    
+	 		    height: "50",
+	 		 
+	 			entities: "",
+	 			object_resizing : false,
+	 			paste_auto_cleanup_on_paste : true,
+	 			paste_text_sticky: true,
+	 			paste_text_use_dialog: true,
+	 			content_css : "${contextpath}/resources/css/tinymce.css",
+	 			popup_css_add : "${contextpath}/resources/css/tinymcepopup.css",
+	 			forced_root_block : false,
+	 			
+	 			force_br_newlines : true,
+	 			force_p_newlines : false,
+	 			
+	 			resize: true,
+	 				
+	 			paste_postprocess : function(pl, o) {
+	 				  o.node.innerHTML = strip_tags( o.node.innerHTML,'<p><br>' );
+	 				},
+	 				
+	 			init_instance_callback: function (editor) {
+	 			    editor.on('Change', function (e) {
+	 			    	try {
+	 		        		  $('#savetextbutton').removeAttr('disabled');
+	 		        	  	unsavedChanges = true;
+	 		        	  } catch (e) {}
+	 			    });
+	 			},
+	 						
+	 			setup : function(ed) {	          
+	 		          ed.onresizestart=function(){
+	 		        	  return false;
+	 		          };
+	 		          
+	 		          ed.on('FullscreenStateChanged', function(e) {
+	 		        	  if (e.state)
+	 		        	  {
+	 		        		  $("#editorheader").hide();
+	 		        		  if ($(".btn-primary1").length == 0)
+	 		        		  {
+	 		        		  	$(".mce-i-fullscreen").closest("div").after("<a class='btn btn-primary1' onclick='closeFullScreen(this, true);'><spring:message code="label.Apply" /></a><a class='btn btn-default1' onclick='closeFullScreen(this, false);'><spring:message code="label.Cancel" /></a>")
+	 		        		  };
+	 		        	  } else {
+	 		        		  $("#editorheader").show();
+	 		        		  $(".btn-primary1").remove();
+	 		        		  $(".btn-default1").remove();
+	 		        	  }
+	 		          });
+	 		          
+	 		          ed.on('keydown', function(e) {
+	 		              if (e.keyCode === 27) { // escape
+	 		            	if (ed.plugins.fullscreen.isFullscreen())
+	 		            	{
+	 		                	ed.execCommand('mceFullScreen');
+	 		            	}
+	 		              }
+	 		          });		         
+	 		   },
+	 		   
+	 		   relative_urls : false,
+	 		   remove_script_host : false,
+	 		   document_base_url : serverPrefix,
+	 		   default_link_target: "_blank",
+	 		   anchor_top: false,
+	 		   anchor_bottom: false,
+	 		   branding: false,
+	 		   valid_classes: 'mycenter myleft myright myfull',
+	 		   invalid_elements : 'html,head,body'
+	 		};
 	</script>
