@@ -2472,18 +2472,20 @@ public class ManagementController extends BasicController {
 		User user = sessionService.getCurrentUser(request);
 
 		String uniqueCode = request.getParameter(Constants.UNIQUECODE);
-
-		ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
-		if (err != null)
-			return err;
-
+		
 		String lang = locale.getLanguage();
 		if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
 			lang = request.getParameter("language.code");
 		}
-
-		AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
-
+		
+		if (!survey.getIsDelphi()) {
+			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
+			if (err != null)
+				return err;
+		}
+		
+		AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);
+	
 		String newlang = request.getParameter("newlang");
 		String newlangpost = request.getParameter("newlangpost");
 		String newcss = request.getParameter("newcss");

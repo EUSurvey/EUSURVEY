@@ -19,6 +19,7 @@ import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.InvalidEmailException;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 import com.ec.survey.tools.export.StatisticsCreator;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +57,7 @@ public class AnswerService extends BasicService {
 
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
-
+	
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void internalSaveAnswerSet(AnswerSet answerSet, String fileDir, String draftid,
 			boolean invalidateExportsAndStatistics, boolean createAttendees) throws Exception {
@@ -2171,6 +2173,25 @@ public class AnswerService extends BasicService {
 		deleteContributionPDFs(survey);		
 		
 		activityService.log(315, null, questionUID, userId, survey.getUniqueId());
-	}	
+	}
+	
+	public AnswerSet automaticParseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode,
+			boolean update, String lang, User user) throws IOException
+	{
+		AnswerSet answerSet = null;
+		
+		if (survey.getIsDelphi() && surveyService.answerSetExists(uniqueCode, false, true))
+		{
+			AnswerSet existingAnswerSet = answerService.get(uniqueCode);
+			answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, existingAnswerSet, lang, user, fileService);
+		}
+
+		if (answerSet == null)
+		{
+			answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
+		}	
+	
+		return answerSet;
+	}
 	
 }

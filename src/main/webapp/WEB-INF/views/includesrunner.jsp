@@ -80,6 +80,7 @@
 	
 	var contextpath = "${contextpath}";
 	var isresponsive = ${responsive != null};
+	var isdelphi = ${form != null && form.survey.getIsDelphi()};
 
 	<c:choose>
 		<c:when test="${form != null && form.getResources() != null && resultType == null}">

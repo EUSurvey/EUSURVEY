@@ -10,7 +10,6 @@ import com.lowagie.text.pdf.BaseFont;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
@@ -792,6 +791,28 @@ public class SurveyHelper {
 			Files.deleteIfExists(file.toPath());
 		}
 
+		return answerSet;
+	}
+	
+	public static AnswerSet parseAndMergeDelphiAnswerSet(HttpServletRequest request, Survey survey,
+			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService) throws IOException {
+		AnswerSet parsedAnswerSet = parseAnswerSet(request, survey, uniqueCode, true, languageCode, user,
+				fileService);
+
+		for (Answer answer : parsedAnswerSet.getAnswers()) {
+			answer.setAnswerSet(answerSet);
+			
+			//remove existing answers for the question
+			List<Answer> oldAnswers = answerSet.getAnswers(answer.getQuestionId(), answer.getQuestionUniqueId());
+			for (Answer oldAnswer: oldAnswers) {
+				answerSet.getAnswers().remove(oldAnswer);
+			}
+			
+			//add new answers for the question
+			answerSet.getAnswers().add(answer);
+		}
+
+	
 		return answerSet;
 	}
 

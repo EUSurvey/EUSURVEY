@@ -450,11 +450,7 @@ public class RunnerController extends BasicController {
 				}
 				return model;
 			}
-
-			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
-			if (err != null)
-				return err;
-
+			
 			if (SurveyHelper.isDeactivatedOrEndDateExceeded(survey, surveyService)) {
 				return getEscapePageModel(survey, request, device);
 			}
@@ -473,9 +469,15 @@ public class RunnerController extends BasicController {
 			}
 
 			User user = sessionService.getCurrentUser(request, false, false);
-			AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user,
-					fileService);
-
+			
+			if (!survey.getIsDelphi()) {
+				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
+				if (err != null)
+					return err;
+			}
+			
+			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);			
+			
 			if (survey != null) {
 				survey = surveyService.getSurvey(survey.getId(), lang);
 			}
@@ -1743,15 +1745,16 @@ public class RunnerController extends BasicController {
 			if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
 				lang = request.getParameter("language.code");
 			}
-
-			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
-			if (err != null)
-				return err;
-
+			
 			User user = sessionService.getCurrentUser(request, false, false);
-			AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, origsurvey, uniqueCode, false, lang,
-					user, fileService);
-
+			if (!origsurvey.getIsDelphi()) {
+				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
+				if (err != null)
+					return err;
+			}
+			
+			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, origsurvey, uniqueCode, false, lang, user);
+		
 			String newlang = request.getParameter("newlang");
 			String newlangpost = request.getParameter("newlangpost");
 			String newcss = request.getParameter("newcss");
@@ -2245,5 +2248,35 @@ public class RunnerController extends BasicController {
 		}
 
 		return result;
+	}
+	
+	@PostMapping(value = "/delphiUpdate")
+	public @ResponseBody String delphiUpdate(HttpServletRequest request, Locale locale) {		
+		try {
+					
+			String surveyid = request.getParameter("surveyid");
+			int id = Integer.parseInt(surveyid);
+			Survey survey = surveyService.getSurvey(id);
+			String languageCode = request.getParameter("languagecode");
+			String uniqueCode = request.getParameter("uniquecode");
+			User user = sessionService.getCurrentUser(request, false, false);
+			AnswerSet answerSet;
+			AnswerSet existingAnswerSet = answerService.get(uniqueCode);
+			if (existingAnswerSet == null) {
+				//save
+				answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, languageCode, user, fileService);
+				saveAnswerSet(answerSet, fileDir, null, -1);
+			} else {
+				//update
+				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, uniqueCode, existingAnswerSet, languageCode, user, fileService);
+			}			
+			saveAnswerSet(answerSet, fileDir, null, -1);
+			
+			return "OK";
+		
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return resources.getMessage("error.delphiupdate", null, locale);
+		}
 	}
 }
