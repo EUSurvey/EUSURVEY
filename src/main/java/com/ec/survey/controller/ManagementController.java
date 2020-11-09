@@ -20,6 +20,7 @@ import com.ec.survey.tools.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -971,11 +972,38 @@ public class ManagementController extends BasicController {
 	}
 
 	/** when a particular Survey type has some conditions on properties, they are set here
+	 * @throws ValidationException 
 	*/
-	private void ensurePropertiesDependingOnSurveyType(Survey survey) {
+	private void ensurePropertiesDependingOnSurveyType(Survey survey, boolean creation) throws ValidationException {
 		if (survey.getIsDelphi()) {
 			survey.setChangeContribution(true); // should always be activated for delphi surveys
 		}
+		
+		if (survey.getIsOPC()) {
+			survey.setSecurity("secured");
+			survey.setEcasSecurity(true);
+			survey.setEcasMode("all");
+			survey.setCaptcha(false);
+			if (survey.getSkin() == null || !survey.getSkin().getName().equalsIgnoreCase("New Official EC Skin")) {
+				Skin ecSkin = skinService.getSkin("New Official EC Skin");
+				survey.setSkin(ecSkin);
+			}
+
+			if (creation) {
+				survey.setWcagCompliance(true);
+				survey.setShowPDFOnUnavailabilityPage(true);
+				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0) {
+					Survey template = surveyService.getSurveyByUniqueId(opctemplatesurvey, false, true);
+					template.copyElements(survey, surveyService, true);
+
+					// recreate unique ids
+					for (Element elem : survey.getElementsRecursive(true)) {
+						String newUniqueId = UUID.randomUUID().toString();
+						elem.setUniqueId(newUniqueId);
+					}
+				}
+			}		
+		}		
 	}
 
 
@@ -1027,7 +1055,6 @@ public class ManagementController extends BasicController {
 			if (!checkConclusiveSurveyType(uploadedSurvey)) {
 				throw new MessageException("multiple selected survey types at once");
 			}
-			ensurePropertiesDependingOnSurveyType(uploadedSurvey);
 
 			// check if shortname already exists
 			Survey existingSurvey = surveyService.getSurvey(uploadedSurvey.getShortname(), true, false, false, false,
@@ -1043,8 +1070,6 @@ public class ManagementController extends BasicController {
 			uploadedSurvey = form.getSurvey();
 			survey = surveyService.getSurvey(form.getSurvey().getId(), false, false);
 			hasPendingChanges = survey.getHasPendingChanges();
-
-			ensurePropertiesDependingOnSurveyType(uploadedSurvey);
 
 			oldlogo = survey.getLogo();
 
@@ -1325,35 +1350,8 @@ public class ManagementController extends BasicController {
 		survey.setShowTotalScore(uploadedSurvey.getShowTotalScore());
 		survey.setScoresByQuestion(uploadedSurvey.getScoresByQuestion());
 
-		if (survey.getIsOPC()) {
-			survey.setSecurity("secured");
-			survey.setEcasSecurity(true);
-			survey.setEcasMode("all");
-			survey.setCaptcha(false);
-			if (survey.getSkin() == null || !survey.getSkin().getName().equalsIgnoreCase("New Official EC Skin")) {
-				Skin ecSkin = skinService.getSkin("New Official EC Skin");
-				survey.setSkin(ecSkin);
-			}
-
-			if (creation) {
-				survey.setWcagCompliance(true);
-				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0) {
-					Survey template = surveyService.getSurveyByUniqueId(opctemplatesurvey, false, true);
-					template.copyElements(survey, surveyService, true);
-
-					// recreate unique ids
-					for (Element elem : survey.getElementsRecursive(true)) {
-						String newUniqueId = UUID.randomUUID().toString();
-						elem.setUniqueId(newUniqueId);
-					}
-				}
-			}
-		}
+		ensurePropertiesDependingOnSurveyType(survey, creation);
 		
-		if (survey.getIsDelphi()) {
-			survey.setChangeContribution(true);
-		}		
-
 		if (!creation) {
 			if (!uploadedSurvey.getSecurity().equals(survey.getSecurity())) {
 				if (survey.getSecurity().startsWith("open") && !uploadedSurvey.getSecurity().startsWith("open")) {
@@ -1382,8 +1380,10 @@ public class ManagementController extends BasicController {
 			}
 		}
 
-		if (!survey.getIsOPC())
+		if (!survey.getIsOPC()) {
 			survey.setSecurity(uploadedSurvey.getSecurity());
+		}
+		
 		survey.setMultiPaging(uploadedSurvey.getMultiPaging());
 
 		survey.setConfirmationPageLink(uploadedSurvey.getConfirmationPageLink());
@@ -1401,10 +1401,6 @@ public class ManagementController extends BasicController {
 		User u = sessionService.getCurrentUser(request);
 
 		if (creation) {
-			if (survey.getIsOPC()) {
-				survey.setShowPDFOnUnavailabilityPage(true);
-			}
-
 			survey.setOwner(u);
 			survey.setDownloadContribution(true);
 		}
