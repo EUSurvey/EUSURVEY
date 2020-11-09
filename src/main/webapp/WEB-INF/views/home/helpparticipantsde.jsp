@@ -100,9 +100,49 @@
 			</div>
 			
 			<div id="faqcontent">
-				<h1 class="empty">
-				    Wie kann ich mich mit dem Eigentümer der Umfrage Kontakt aufnehmen?
+				<h1>
+					Einloggen/Konto erstellen
 				</h1>
+				<h2>
+					Ich habe ein EU-Login-Konto. Muss ich mich separat bei EUSurvey registrieren?
+				</h2>
+				<p>
+					Nein, ein EU-Login-Konto ist ausreichend. 
+				</p>
+				<p>
+					Für den Zugang zu EUSurvey klicken Sie bitte auf der <a href="https://ec.europa.eu/eusurvey/home/welcome">EUSurvey-Startseite</a> auf die Anmeldeschaltfläche
+				</p>
+				
+				<h2>
+					Wie verbinde ich mich mit EUSurvey?
+				</h2>
+				<p>
+					Klicken Sie auf den Login-Button auf der <a href="https://ec.europa.eu/eusurvey/home/welcome">EUSurvey-Homepage</a>, Sie werden dann zum EUSurvey-Anmeldebildschirm weitergeleitet.
+				</p>
+				<p>
+					Dort können Sie die Option auswählen, die Ihrer persönlichen Situation entspricht:
+					<ul>
+						<li>
+							<b>Wenn Sie für eine EU-Institution arbeiten</b>, wählen Sie die zweite Option, und verwenden Sie Ihren EU-Login-Benutzernamen und Ihr Passwort.
+						</li>
+						<li>
+							<b>Wenn Sie nicht für eine EU-Institution arbeiten (externe Nutzer)</b>wählen Sie die erste Option. Sie müssen Ihr Mobiltelefon zuvor registriert haben, um die <a href="https://de.wikipedia.org/wiki/Hilfe:Zwei-Faktor-Authentifizierung">Zwei-Faktor-Authentifizierung</a> zu durchlaufen.
+						</li>
+					</ul>
+				</p>
+				<p>
+					<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cg">EU-Login-Konto erstellen</a> (sofern nicht bereits vorhanden)
+				</p>
+				<p>
+					<a href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi">Registrieren Sie bitte Ihr Mobiltelefon</a> (sofern Sie nicht für eine EU-Institution arbeiten)
+				</p>
+			
+				<h1>
+					Kontaktaufnahme mit dem Eigentümer der Umfrage
+				</h1>
+				<h2>
+				    Wie kann ich mit dem Eigentümer der Umfrage Kontakt aufnehmen?
+				</h2>
 				<p>
 				    Wählen Sie auf der rechten Seite die Option „Kontakt“.
 				</p>

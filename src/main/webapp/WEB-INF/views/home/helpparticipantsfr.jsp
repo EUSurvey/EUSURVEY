@@ -99,9 +99,48 @@
 			</div>
 			
 			<div id="faqcontent">
-				<h1 class="empty">
-				    Comment puis-je entrer en contact avec le propriétaire de l’enquête?
+				<h1>
+					Connexion/création d’un compte
 				</h1>
+				<h2>
+					J’ai un compte EU Login. Dois-je aussi créer un compte EUSurvey?
+				</h2>
+				<p>
+					Non, un compte EU Login est suffisant. 
+				</p>
+				<p>
+					Pour accéder à EUSurvey, cliquez sur le bouton «Login» sur la <a href="https://ec.europa.eu/eusurvey/home/welcome?language=fr">page d’accueil d’EUSurvey</a>.
+				</p>
+				<h2>
+					Comment puis-je me connecter à EUSurvey?
+				</h2>
+				<p>
+					Après avoir cliqué sur «Login» sur la <a href="https://ec.europa.eu/eusurvey/home/welcome?language=fr">page d’accueil d’EUSurvey</a>, vous serez redirigé vers l’écran de connexion à EUSurvey.
+				</p>
+				<p>
+					Une fois arrivé sur l’écran de connexion, vous devez choisir l’option correspondant à votre cas personnel:
+					<ul>
+						<li>
+							<b>Si vous travaillez pour une institution de l’UE</b>, choisissez la seconde option pour vous connecter à l’aide de votre nom d’utilisateur et de votre mot de passe EU Login.
+						</li>
+						<li>
+							<b>Si vous ne travaillez pas pour une institution de l’UE (utilisateurs externes)</b>), choisissez la première option pour vous connecter. Vous devrez avoir préalablement enregistré votre téléphone portable pour passer <a href="https://meta.wikimedia.org/wiki/Help:Two-factor_authentication/fr">l’authentification à deux facteurs</a>.
+						</li>
+					</ul>
+				</p>
+				<p>
+					<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cg">Créez un compte EU Login</a> (si ce n’est déjà fait)
+				</p>
+				<p>
+					<a href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi">Enregistrez votre téléphone portable</a> (si vous ne travaillez pas pour une institution de l’UE)
+				</p>
+			
+				<h1>
+					Contacter le propriétaire de l'enquête
+				</h1>
+				<h2>
+				    Comment puis-je entrer en contact avec le propriétaire de l’enquête?
+				</h2>
 				<p>
 				    Utilisez l’option «Contact» dans le panneau à droite.
 				</p>

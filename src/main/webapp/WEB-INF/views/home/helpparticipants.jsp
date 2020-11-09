@@ -108,9 +108,9 @@
 				<p>
 					To access EUSurvey, click on the login button on the <a href="https://ec.europa.eu/eusurvey/home/welcome">EUSurvey homepage</a>.
 				</p>
-				<p>
+				<h2>
 					How do I connect to EUSurvey?
-				</p>
+				</h2>
 				<p>
 					After you click on ‘login’ on the <a href="https://ec.europa.eu/eusurvey/home/welcome">EUSurvey homepage</a>, you will be redirected to the EUSurvey login screen.
 				</p>
@@ -129,12 +129,12 @@
 					<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cg">Create an EU Login account</a> (if you don’t already have one)
 				</p>
 				<p>
-					<a href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi?ticket=ST-21002212-zzlP2O5Vk7v3Lrybvgu0tmdvnRA0XlwiJHbSfmzmifWYFm6R6x8wLNtKCziamsRjpHDNxt0piYplSsJkaRelQ9S-rS0vSrmBGYCBAqIgQI5dC4-SYzvmgEAHJps6zYyn5lODmUR3BUcznA8ENrwzMnuwoj7ocalACSrpk4iD6QMHyJSBuhF98UCNUhkyYu25tH0I20">Register your mobile phone</a> (If you don't work for an EU institution)
+					<a href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi">Register your mobile phone</a> (If you don't work for an EU institution)
 				</p>
-			
-				<h1 class="empty">
+				<h1>Contacting the survey owner</h1>
+				<h2>
 				    How can I contact the survey owner?
-				</h1>
+				</h2>
 				<p>
 				    Use the ‘Contact’ option on the panel on the right-hand side.
 				</p>
