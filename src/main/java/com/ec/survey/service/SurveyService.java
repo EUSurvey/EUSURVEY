@@ -3079,7 +3079,7 @@ public class SurveyService extends BasicService {
 			surveyelementsbyuid.put(element.getUniqueId(), element);
 		}
 
-		List<Object> res = reportingService.GetAllQuestionsAndPossibleAnswers(survey);
+		List<Object> res = reportingService.getAllQuestionsAndPossibleAnswers(survey);
 
 		if (res == null) {
 			res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());

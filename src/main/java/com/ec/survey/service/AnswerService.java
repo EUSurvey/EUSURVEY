@@ -217,7 +217,8 @@ public class AnswerService extends BasicService {
 				try {
 					java.io.File folder = fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(),
 							false);
-					java.io.File directory = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + answerSet.getUniqueCode());
+					java.io.File directory = new java.io.File(
+							folder.getPath() + Constants.PATH_DELIMITER + answerSet.getUniqueCode());
 					FileUtils.delete(directory);
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
@@ -444,7 +445,8 @@ public class AnswerService extends BasicService {
 				answerSet.setUniqueCode("");
 			}
 
-			if (loadDraftIds && answerSet.getIsDraft() && checkDraftSubmitted && surveyService.answerSetExists(answerSet.getUniqueCode(), false, false)) {
+			if (loadDraftIds && answerSet.getIsDraft() && checkDraftSubmitted
+					&& surveyService.answerSetExists(answerSet.getUniqueCode(), false, false)) {
 				answerSet.setIsDraft(false);
 			}
 
@@ -663,25 +665,27 @@ public class AnswerService extends BasicService {
 								}
 
 								if (questionUid.endsWith("from")) {
-									String answerPart = "(STR_TO_DATE(a" + joincounter + ".VALUE,'%d/%m/%Y') >= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
-									
+									String answerPart = "(STR_TO_DATE(a" + joincounter
+											+ ".VALUE,'%d/%m/%Y') >= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
+
 									questionUid = questionUid.replace("from", "");
 									where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
-									.append(i).append(" AND ").append(answerPart).append(")");
+											.append(i).append(" AND ").append(answerPart).append(")");
 									values.put("questionUid" + i, questionUid);
-									values.put(Constants.ANSWER + i, answer);									
+									values.put(Constants.ANSWER + i, answer);
 								} else if (questionUid.endsWith("to")) {
-									String answerPart = "(STR_TO_DATE(a" + joincounter + ".VALUE,'%d/%m/%Y') <= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
-									
+									String answerPart = "(STR_TO_DATE(a" + joincounter
+											+ ".VALUE,'%d/%m/%Y') <= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
+
 									questionUid = questionUid.replace("to", "");
 									where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
-									.append(i).append(" AND ").append(answerPart).append(")");
+											.append(i).append(" AND ").append(answerPart).append(")");
 									values.put("questionUid" + i, questionUid);
-									values.put(Constants.ANSWER + i, answer);									
-								} else {								
-								
+									values.put(Constants.ANSWER + i, answer);
+								} else {
+
 									String answerPart = "a" + joincounter + ".VALUE like :answer" + i;
-	
+
 									if (answer.contains("|")) {
 										String answerUid = answer.substring(answer.indexOf('|') + 1);
 										answerPart = "(a" + joincounter + ".PA_UID like :answerUid" + i + ")";
@@ -694,34 +698,36 @@ public class AnswerService extends BasicService {
 											values.put(Constants.ANSWER + i, "%" + answer + "%");
 										}
 									}
-	
+
 									if (questionId.contains("-")) {
 										String[] data = questionId.split("-");
-	
+
 										if (questionUid.length() > 0) {
-											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
-													.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
-													.append(i).append(" AND (a").append(joincounter)
-													.append(".QUESTION_ID = :questionId").append(i).append(" OR a")
-													.append(joincounter).append(".QUESTION_UID = :questionUid").append(i)
-													.append(") AND ").append(answerPart).append(")");
+											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row")
+													.append(i).append(" AND a").append(joincounter)
+													.append(".ANSWER_COL = :col").append(i).append(" AND (a")
+													.append(joincounter).append(".QUESTION_ID = :questionId").append(i)
+													.append(" OR a").append(joincounter)
+													.append(".QUESTION_UID = :questionUid").append(i).append(") AND ")
+													.append(answerPart).append(")");
 											values.put("questionUid" + i, questionUid);
 										} else {
-											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
-													.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
+											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row")
 													.append(i).append(" AND a").append(joincounter)
-													.append(".QUESTION_ID = :questionId").append(i).append(" AND ")
-													.append(answerPart).append(")");
+													.append(".ANSWER_COL = :col").append(i).append(" AND a")
+													.append(joincounter).append(".QUESTION_ID = :questionId").append(i)
+													.append(" AND ").append(answerPart).append(")");
 										}
-	
+
 										values.put("questionId" + i, data[0]);
 										values.put("row" + i, data[1]);
 										values.put("col" + i, data[2]);
-	
+
 									} else {
 										if (questionUid.length() > 0) {
-											where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
-													.append(i).append(" AND ").append(answerPart).append(")");
+											where.append(" (a").append(joincounter)
+													.append(".QUESTION_UID = :questionUid").append(i).append(" AND ")
+													.append(answerPart).append(")");
 											values.put("questionUid" + i, questionUid);
 										} else {
 											where.append("( a").append(joincounter).append(".QUESTION_ID = :questionId")
@@ -1130,7 +1136,6 @@ public class AnswerService extends BasicService {
 		return this.getNumberOfAnswerSetsPublished(null, uid);
 	}
 
-
 	@Transactional(readOnly = true)
 	public int getNumberOfAnswerSetsPublished(String surveyname, String uid) {
 		Session session = sessionFactory.getCurrentSession();
@@ -1181,57 +1186,41 @@ public class AnswerService extends BasicService {
 		return ConversionTools.getValue(query.uniqueResult());
 	}
 
+	public void deleteFilesForAnswerSet(AnswerSet answerSet) throws IOException {
+		java.io.File folder = fileService.getSurveyExportsFolder(answerSet.getSurvey().getUniqueId());
+		java.io.File target = new java.io.File(
+				String.format("%s/publishedanswer%s.pdf", folder.getPath(), answerSet.getId()));
+
+		Files.deleteIfExists(target.toPath());
+
+		target = new java.io.File(String.format("%sanswer%s.pdf", tempFileDir, answerSet.getUniqueCode()));
+		Files.deleteIfExists(target.toPath());
+
+		for (Answer answer : answerSet.getAnswers()) {
+			if (answer.getFiles() != null) {
+				for (File f : answer.getFiles()) {
+					// new file system
+					java.io.File file = fileService.getSurveyFile(answerSet.getSurvey().getUniqueId(), f.getUid());
+					Files.deleteIfExists(file.toPath());
+
+					// old file system
+					file = new java.io.File(fileDir + f.getUid());
+					Files.deleteIfExists(file.toPath());
+				}
+			}
+		}
+	}
+
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void delete(AnswerSet answerSet) {
-
+	public void delete(AnswerSet answerSet) throws IOException, MessageException {
 		// delete precomputed statistics and pdfs
-		try {
-			deleteStatisticsForSurvey(answerSet.getSurvey().getId());
-
-			java.io.File folder = fileService.getSurveyExportsFolder(answerSet.getSurvey().getUniqueId());
-			java.io.File target = new java.io.File(
-					String.format("%s/publishedanswer%s.pdf", folder.getPath(), answerSet.getId()));
-
-			Files.deleteIfExists(target.toPath());
-
-			target = new java.io.File(String.format("%sanswer%s.pdf", tempFileDir, answerSet.getUniqueCode()));
-			Files.deleteIfExists(target.toPath());
-
-			for (Answer answer : answerSet.getAnswers()) {
-				if (answer.getFiles() != null) {
-					for (File f : answer.getFiles()) {
-						// new file system
-						java.io.File file = fileService.getSurveyFile(answerSet.getSurvey().getUniqueId(), f.getUid());
-						Files.deleteIfExists(file.toPath());
-
-						// old file system
-						file = new java.io.File(fileDir + f.getUid());
-						Files.deleteIfExists(file.toPath());
-					}
-				}
-			}
-
-			if (!answerSet.getIsDraft() && answerSet.getInvitationId() != null
-					&& answerSet.getInvitationId().length() > 0) {
-				Invitation invitation = attendeeService.getInvitationByUniqueId(answerSet.getInvitationId());
-				if (invitation != null && invitation.getAnswers() > 0) {
-					invitation.setAnswers(invitation.getAnswers() - 1);
-					attendeeService.update(invitation);
-				}
-			}
-
-			if (!answerSet.getIsDraft()) {
-				if (answerSet.getSurvey().getIsDraft()) {
-					reportingService.addToDo(ToDo.DELETEDTESTCONTRIBUTION, answerSet.getSurvey().getUniqueId(),
-							answerSet.getUniqueCode());
-				} else {
-					reportingService.addToDo(ToDo.DELETEDCONTRIBUTION, answerSet.getSurvey().getUniqueId(),
-							answerSet.getUniqueCode());
-				}
-			}
-
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
+		this.deleteStatisticsForSurvey(answerSet.getSurvey().getId());
+		this.deleteFilesForAnswerSet(answerSet);
+		this.attendeeService.decreaseInvitationAnswer(answerSet.getInvitationId());
+		if (!answerSet.getIsDraft()) {
+			boolean publishedSurvey = !answerSet.getSurvey().getIsDraft();
+			reportingService.removeFromOLAPTable(answerSet.getSurvey().getUniqueId(), answerSet.getUniqueCode(),
+					publishedSurvey);
 		}
 
 		Session session = sessionFactory.getCurrentSession();
