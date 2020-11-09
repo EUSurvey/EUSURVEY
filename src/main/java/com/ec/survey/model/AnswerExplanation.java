@@ -5,7 +5,7 @@ import com.ec.survey.model.administration.User;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ANSWER_EXPLANATION")
+@Table(name = "ANSWERS_EXPLANATIONS")
 public class AnswerExplanation implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
