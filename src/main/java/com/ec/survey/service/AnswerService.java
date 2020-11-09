@@ -892,7 +892,7 @@ public class AnswerService extends BasicService {
 		HashMap<String, Object> parameters = new HashMap<>();
 
 		String answersetsql = getSql(null, surveyId, filter, parameters, true);
-		String sql = "select a1.AS_ID, a1.QUESTION_ID, a1.QUESTION_UID, a1.VALUE, a1.ANSWER_COL, a1.ANSWER_ID, a1.ANSWER_ROW, a1.PA_ID, a1.PA_UID, a1.ANSWER_EXPLANATION, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a1 JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID WHERE ans.ANSWER_SET_ID IN ("
+		String sql = "select a1.AS_ID, a1.QUESTION_ID, a1.QUESTION_UID, a1.VALUE, a1.ANSWER_COL, a1.ANSWER_ID, a1.ANSWER_ROW, a1.PA_ID, a1.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a1 JOIN ANSWERS_SET ans ON a1.AS_ID = ans.ANSWER_SET_ID WHERE ans.ANSWER_SET_ID IN ("
 				+ answersetsql + ")";
 
 		SQLQuery query = session.createSQLQuery(sql);
@@ -915,7 +915,6 @@ public class AnswerService extends BasicService {
 			answer.setRow(ConversionTools.getValue(a[6]));
 			answer.setPossibleAnswerId(ConversionTools.getValue(a[7]));
 			answer.setPossibleAnswerUniqueId((String) a[8]);
-			answer.setExplanation((String) a[9]);
 
 			if (result.containsKey(answer.getAnswerSetId())) {
 				result.get(answer.getAnswerSetId()).addAnswer(answer);
@@ -923,12 +922,12 @@ public class AnswerService extends BasicService {
 				AnswerSet answerSet = new AnswerSet();
 				answerSet.setId(answer.getAnswerSetId());
 				answerSet.getAnswers().add(answer);
-				answerSet.setUniqueCode((String) a[10]);
-				answerSet.setDate((Date) a[11]);
-				answerSet.setUpdateDate((Date) a[12]);
-				answerSet.setInvitationId((String) a[13]);
-				answerSet.setResponderEmail((String) a[14]);
-				answerSet.setLanguageCode((String) a[15]);
+				answerSet.setUniqueCode((String) a[9]);
+				answerSet.setDate((Date) a[10]);
+				answerSet.setUpdateDate((Date) a[11]);
+				answerSet.setInvitationId((String) a[12]);
+				answerSet.setResponderEmail((String) a[13]);
+				answerSet.setLanguageCode((String) a[14]);
 				result.put(answerSet.getId(), answerSet);
 			}
 		}
