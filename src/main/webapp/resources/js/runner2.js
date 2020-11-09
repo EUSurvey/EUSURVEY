@@ -412,11 +412,9 @@ function addElementToContainer(element, container, foreditor, forskin)
 	$(container).find(".sliderbox").each(function(){
 		initSlider(this, foreditor, viewModel);
 	});
-	
-	$(container).find(".tinymce").each(function(){
-		var id = $(this).attr("id");
-		tinyMCE.settings = myConfigSettingRunner;
-		tinymce.EditorManager.execCommand('mceToggleEditor', true, id);
+
+	$(container).find('.explanation-editor').each(function(){
+		$(this).tinymce(explanationEditorConfig);
 	});
 	
 	return viewModel;

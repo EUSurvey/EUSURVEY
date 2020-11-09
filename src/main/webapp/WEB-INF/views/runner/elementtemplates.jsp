@@ -1108,9 +1108,9 @@
 		<input type="hidden" name="surveyid" value="${form.survey.id}" />
 		<input type="hidden" name="uniquecode" value="${uniqueCode}" />
 		<input type="hidden" name="languagecode" value="${form.language.code}" />
-		<div class="tinymcediv">
-			<label>${form.getMessage("label.ExplainYourAnswer")}</label>
-			<textarea class="tinymce" name="explanation"  data-bind="attr: {'id': 'explanation' + id()}"></textarea>
+		<div class="explanation-section">
+			<label class="questiontitle">${form.getMessage("label.ExplainYourAnswer")}</label>
+			<textarea class="explanation-editor" name="explanation" data-bind="attr: {'id': 'explanation' + id()}"></textarea>
 		</div>
 		<a class="btn btn-primary" onclick="delphiUpdate($(this).closest('.survey-element'))" style="margin-left: 20px; margin-top: 8px;">${form.getMessage("label.Save")}</a>
 	</div>
