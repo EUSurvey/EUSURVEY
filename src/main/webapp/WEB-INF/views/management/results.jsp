@@ -682,21 +682,23 @@
 		
 			$('#delete-contribution-dialog').modal('hide');
 			$('#show-wait-image').modal('show');
-			
+			// DELETE <url/eusurvey/contribution/UID>
 			$.ajax({
-				type:'POST',
-				  url: '<c:url value="/deletecontribution/"/>' + deletionCode,
+				type:'DELETE',
+				  url: '<c:url value="/contribution/"/>' + deletionCode,
 				  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 				  cache: false,
 				  success: function( data ) {						  
-					  if (data == "success") {
-							$('#message').val("success");				
-						} else {
-							$('#message').val("failure");
-						}
-						$('#resultsForm').submit();
+					$('#message').val("success");	
+				  },
+				  error: function(data) {
+					$('#message').val("failure");
+				  },
+				  complete: function(data) {
+					$('#resultsForm').submit();
+				  }			
 				}
-			});	
+			);	
 			
 			return false;
 		}

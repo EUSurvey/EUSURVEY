@@ -2,6 +2,10 @@ package com.ec.survey.controller;
 
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
+import com.ec.survey.exception.MessageException;
+import com.ec.survey.exception.httpexception.ForbiddenException;
+import com.ec.survey.exception.httpexception.InternalServerErrorException;
+import com.ec.survey.exception.httpexception.NotFoundException;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Draft;
 import com.ec.survey.model.Form;
@@ -22,6 +26,7 @@ import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -489,26 +494,42 @@ public class ContributionController extends BasicController {
 
 	}
 
-	@PostMapping(value = "/deletecontribution/{code}")
-	public @ResponseBody String delete(@PathVariable String code, HttpServletRequest request, Locale locale) {
+	@DeleteMapping(value = "/contribution/{code}")
+	public @ResponseBody String deleteContribution(@PathVariable String code, HttpServletRequest request, Locale locale)
+			throws NotFoundException, ForbiddenException, InternalServerErrorException {
+		User currentUser = null;
+		AnswerSet answerSet = null;
 		try {
-			AnswerSet answerSet = getAnswerSet(code, request);
-			if (answerSet != null) {
-				answerService.delete(answerSet);
-				if (answerSet.getSurvey().getIsDraft()) {
-					activityService.log(405, answerSet.getUniqueCode(), null,
-							sessionService.getCurrentUser(request).getId(), answerSet.getSurvey().getUniqueId());
-				} else {
-					activityService.log(402, null, answerSet.getUniqueCode(),
-							sessionService.getCurrentUser(request).getId(), answerSet.getSurvey().getUniqueId());
-				}
-				return "success";
-			}
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
+			answerSet = this.getAnswerSet(code, request);
+			currentUser = this.sessionService.getCurrentUser(request);
+		} catch (NotAgreedToTosException | WeakAuthenticationException | NotAgreedToPsException e1) {
+			throw new ForbiddenException();
 		}
 
-		return resources.getMessage("error.DeletionFailed", null, "Deletion failed.", locale);
+		if (answerSet == null) {
+			throw new NotFoundException();
+		}
+
+		Survey answerSetSurvey = answerSet.getSurvey();
+
+		if (!this.sessionService.userIsFormAdmin(answerSetSurvey, currentUser, request)) {
+			throw new ForbiddenException();
+		}
+
+		try {
+			this.answerService.delete(answerSet);
+		} catch (IOException | MessageException e) {
+			throw new InternalServerErrorException(e);
+		}
+
+		if (answerSet.getSurvey().getIsDraft()) {
+			this.activityService.log(405, answerSet.getUniqueCode(), null, currentUser.getId(),
+					answerSet.getSurvey().getUniqueId());
+		} else {
+			this.activityService.log(402, null, answerSet.getUniqueCode(), currentUser.getId(),
+					answerSet.getSurvey().getUniqueId());
+		}
+		return "success";
 	}
 
 	@RequestMapping(value = "/downloadcontribution/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
