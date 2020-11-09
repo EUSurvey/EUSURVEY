@@ -33,6 +33,7 @@
 			this.useConfLink =  ko.observable(${form.survey.confirmationPageLink});
 			this.useEscapeLink =  ko.observable(${form.survey.escapePageLink});
 			this.quiz = ko.observable(${form.survey.isQuiz});
+			this.delphi = ko.observable(${form.survey.isDelphi});
 			this.opc = ko.observable(${form.survey.isOPC});
 			this.multiPaging = ko.observable(${form.survey.multiPaging});
 			this.isUseMaxNumberContribution = ko.observable(${form.survey.isUseMaxNumberContribution});
@@ -142,6 +143,22 @@
 					deleteFile(v);
 				}
 				this.self.showBackgroundDocs($("#backgrounddocumentstable").find("tr").length > 1);
+			}
+
+			this.toggleQuiz = function(link)
+			{
+				this.self.quiz(!this.self.quiz());
+			}
+			this.toggleDelphi = function(link)
+			{
+				this.self.delphi(!this.self.delphi());
+			}
+			this.isNormalSurvey = function()
+			{
+				if (this.self.quiz()) return false;
+				if (this.self.delphi()) return false;
+				if (this.self.opc()) return false;
+				return true;
 			}
 		}
 		
