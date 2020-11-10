@@ -1460,15 +1460,15 @@ public class ReportingService {
 	
 	public static String lastQuery;
 	
-	private void removeFromOLAPTableInternal(String uid, String code, boolean publishedSurvey) {
+	public void removeFromOLAPTableInternal(String surveyUID, String code, boolean publishedSurvey) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		StringBuilder query = new StringBuilder();
 		
-		if (OLAPTableExistsInternal(uid, !publishedSurvey))
+		if (OLAPTableExistsInternal(surveyUID, !publishedSurvey))
 		{
 			//get the answerset id first
 			query.append("SELECT QANSWERSETID FROM ");
-			query.append(getOLAPTableName(publishedSurvey, uid));
+			query.append(getOLAPTableName(publishedSurvey, surveyUID));
 			query.append(" WHERE QCONTRIBUTIONID = '");
 			query.append(code).append("'");
 			SQLQuery selectQuery = sessionReporting.createSQLQuery(query.toString());
@@ -1481,7 +1481,7 @@ public class ReportingService {
 			query = new StringBuilder();
 			
 			query.append("DELETE FROM ");
-			query.append(getOLAPTableName(publishedSurvey, uid));
+			query.append(getOLAPTableName(publishedSurvey, surveyUID));
 			query.append(" WHERE QANSWERSETID = ");
 			query.append(answerSetId);
 			
@@ -1490,11 +1490,11 @@ public class ReportingService {
 			
 			//also remove from additional tables
 			int counter = 1;
-			while (OLAPTableExistsInternal(uid + "_" + counter, !publishedSurvey))
+			while (OLAPTableExistsInternal(surveyUID + "_" + counter, !publishedSurvey))
 			{
 				query = new StringBuilder();
 				query.append("DELETE FROM ");
-				query.append(getOLAPTableName(publishedSurvey, uid) + "_" + counter);
+				query.append(getOLAPTableName(publishedSurvey, surveyUID) + "_" + counter);
 				query.append(" WHERE QANSWERSETID = ");
 				query.append(answerSetId);
 				
@@ -1597,7 +1597,13 @@ public class ReportingService {
 	}
 
 	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
-	public void addToDoInternal(ToDo todo, String uid, String code) {
+	public void addToDoInternal(ToDo todo, String uid, String code) { 
+		this.addToDoInternal(todo, uid, code, false);
+	}
+
+
+	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
+	public void addToDoInternal(ToDo todo, String uid, String code, boolean executeTodoSynchronously) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		//check if table exists
@@ -1613,9 +1619,10 @@ public class ReportingService {
 			SQLQuery queryindex = sessionReporting.createSQLQuery("CREATE UNIQUE INDEX IDXUNIQUE ON TODO (TYPE, UID, CODE)");
 			queryindex.executeUpdate();
 		}
+
+		boolean similarEntryPresent = false;
 		
-		if (todo == ToDo.NEWCONTRIBUTION || todo == ToDo.NEWTESTCONTRIBUTION)
-		{		
+		if (todo == ToDo.NEWCONTRIBUTION || todo == ToDo.NEWTESTCONTRIBUTION) {		
 			//check if there is a similar entry
 			SQLQuery querytodoexists = sessionReporting.createSQLQuery("SELECT ID FROM TODO WHERE TYPE = :type AND UID = :uid LIMIT 1");
 			querytodoexists.setInteger("type", todo.getValue());
@@ -1623,20 +1630,33 @@ public class ReportingService {
 			@SuppressWarnings("rawtypes")
 			List results = querytodoexists.list();
 			
-			if (!results.isEmpty()) return;		
+			if (!results.isEmpty()) {
+				similarEntryPresent = true;
+			}
 		}
-		
-		SQLQuery queryinsert = sessionReporting.createSQLQuery("INSERT INTO TODO (ID, TYPE, UID, CODE) VALUES (null, :type, :uid, :code)");
-		queryinsert.setInteger("type", todo.getValue());
-		queryinsert.setString("uid", uid);
-		queryinsert.setString("code", code);
-		
-		try {
-			queryinsert.executeUpdate();
-		} catch (ConstraintViolationException ce) {
-			//this means there is already the same entry in the table: ignore
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
+
+		if (!similarEntryPresent) {
+			SQLQuery queryinsert = sessionReporting.createSQLQuery("INSERT INTO TODO (ID, TYPE, UID, CODE) VALUES (null, :type, :uid, :code)");
+			queryinsert.setInteger("type", todo.getValue());
+			queryinsert.setString("uid", uid);
+			queryinsert.setString("code", code);
+			try {
+				queryinsert.executeUpdate();
+			} catch (ConstraintViolationException ce) {
+				//this means there is already the same entry in the table: ignore
+				return;
+			} catch (Exception e) {
+				logger.error(e.getLocalizedMessage(), e);
+				return;
+			}
+		}
+		if (executeTodoSynchronously) {
+			ToDoItem todoItem = new ToDoItem(-1, todo.getValue(), uid, code);
+			try {
+				this.executeToDoInternal(todoItem, true);
+			} catch (Exception e) {
+				logger.error(e.getLocalizedMessage(), e);
+			}
 		}
 	}
 	
@@ -1690,7 +1710,7 @@ public class ReportingService {
 		
 		return null;
 	}
-	
+
 	@Transactional(readOnly = false, transactionManager = "transactionManagerReporting")
 	public void executeToDoInternal(ToDoItem todo, boolean removeSimilar) throws Exception
 	{

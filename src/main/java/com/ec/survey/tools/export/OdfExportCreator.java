@@ -246,7 +246,7 @@ public class OdfExportCreator extends ExportCreator {
 		}
 
 		if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, filter);
+			surveyService.checkAndRecreateMissingElements(survey, filter);
 			Hibernate.initialize(survey.getMissingElements());
 			for (Element e : survey.getMissingElements()) {
 				if (e instanceof ChoiceQuestion) {
@@ -810,15 +810,15 @@ public class OdfExportCreator extends ExportCreator {
 					if (v != null && v.length() > 0) {
 						Date cellValue = ConversionTools.getDate(v);
 						if (cellValue != null) {
-							Calendar c = Calendar.getInstance();
-							c.setTime(cellValue);
-							cell.setDateTimeValue(c);
+							Calendar calendar = Calendar.getInstance();
+							calendar.setTime(cellValue);
+							cell.setDateTimeValue(calendar);
 						}
 					}
 				} else if (answerSet.getDate() != null) {
-					Calendar c = Calendar.getInstance();
-					c.setTime(answerSet.getDate());
-					cell.setDateTimeValue(c);
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(answerSet.getDate());
+					cell.setDateTimeValue(calendar);
 				}
 			}
 			if (filter.exported("updated")) {
@@ -898,9 +898,11 @@ public class OdfExportCreator extends ExportCreator {
 		cell = sheet.getCellByPosition(1, rowIndex);
 
 		if (export == null) {
-			cell.setDisplayText(new Date().toString());
+			cell.setDateTimeValue(Calendar.getInstance());
 		} else {
-			cell.setDisplayText(export.getDate().toString());
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(export.getDate());
+			cell.setDateTimeValue(calendar);
 		}
 
 		// this is a workaround for a bug in ODFToolkit or LibreOffice that displays
@@ -932,7 +934,7 @@ public class OdfExportCreator extends ExportCreator {
 				form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
 
 		if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, export.getResultFilter());
+			surveyService.checkAndRecreateMissingElements(survey, export.getResultFilter());
 		}
 
 		form.setSurvey(survey);
@@ -1312,7 +1314,7 @@ public class OdfExportCreator extends ExportCreator {
 				form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
 
 		if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, export.getResultFilter());
+			surveyService.checkAndRecreateMissingElements(survey, export.getResultFilter());
 		}
 
 		form.setSurvey(survey);
@@ -1879,14 +1881,14 @@ public class OdfExportCreator extends ExportCreator {
 					if (!export.getSurvey().isAnonymous()) {
 						cell = sheet.getCellByPosition(2, rowIndex);
 
-						Calendar c = Calendar.getInstance();
-						c.setTime(invitation.getInvited());
-						cell.setDateTimeValue(c);
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(invitation.getInvited());
+						cell.setDateTimeValue(calendar);
 
 						cell = sheet.getCellByPosition(3, rowIndex);
 						if (invitation.getReminded() != null) {
-							c.setTime(invitation.getReminded());
-							cell.setDateTimeValue(c);
+							calendar.setTime(invitation.getReminded());
+							cell.setDateTimeValue(calendar);
 						}
 
 						cell = sheet.getCellByPosition(4, rowIndex);
@@ -1911,14 +1913,14 @@ public class OdfExportCreator extends ExportCreator {
 					if (!export.getSurvey().isAnonymous()) {
 						cell = sheet.getCellByPosition(2, rowIndex);
 
-						Calendar c = Calendar.getInstance();
-						c.setTime(invitation.getInvited());
-						cell.setDateTimeValue(c);
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(invitation.getInvited());
+						cell.setDateTimeValue(calendar);
 
 						cell = sheet.getCellByPosition(3, rowIndex);
 						if (invitation.getReminded() != null) {
-							c.setTime(invitation.getReminded());
-							cell.setDateTimeValue(c);
+							calendar.setTime(invitation.getReminded());
+							cell.setDateTimeValue(calendar);
 						}
 
 						cell = sheet.getCellByPosition(4, rowIndex);
@@ -1974,15 +1976,15 @@ public class OdfExportCreator extends ExportCreator {
 					cell.setStringValue(invitation.getAnswers().toString());
 
 					cell = sheet.getCellByPosition(2, rowIndex);
-					Calendar c = Calendar.getInstance();
-					c.setTime(invitation.getInvited());
-					cell.setDateTimeValue(c);
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(invitation.getInvited());
+					cell.setDateTimeValue(calendar);
 
 				} else {
 					cell = sheet.getCellByPosition(1, rowIndex);
-					Calendar c = Calendar.getInstance();
-					c.setTime(invitation.getInvited());
-					cell.setDateTimeValue(c);
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(invitation.getInvited());
+					cell.setDateTimeValue(calendar);
 				}
 
 				rowIndex++;

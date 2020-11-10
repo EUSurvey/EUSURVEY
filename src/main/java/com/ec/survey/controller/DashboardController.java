@@ -199,7 +199,6 @@ public class DashboardController extends BasicController {
 	public @ResponseBody List<Survey> surveys(HttpServletRequest request, HttpServletResponse response, Locale locale,
 			Model model) {
 		try {
-
 			User u = sessionService.getCurrentUser(request);
 			SurveyFilter filter = new SurveyFilter();
 			filter.setUser(u);
@@ -293,11 +292,11 @@ public class DashboardController extends BasicController {
 			}
 
 			SqlPagination paging = new SqlPagination(page, 10);
-			List<Survey> result = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, false, false);
+			List<Survey> surveyList = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, false, false);
 
-			surveyService.generateAccessInformation(result, u);
+			surveyService.generateAccessInformation(surveyList, u);
 
-			return result;
+			return surveyList;
 		} catch (Exception ex) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			logger.error(ex.getMessage(), ex);
@@ -310,20 +309,20 @@ public class DashboardController extends BasicController {
 	public @ResponseBody List<List<Integer>> surveysadvanced(HttpServletRequest request, HttpServletResponse response,
 			Locale locale, Model model) {
 		try {
-			List<List<Integer>> results = new ArrayList<>();
-			String suids = request.getParameter("ids");
-			if (suids != null && suids.length() > 0) {
-				String[] uids = suids.split(";");
+			List<List<Integer>> listOfList = new ArrayList<>();
+			String surveysUIDS = request.getParameter("ids");
+			if (surveysUIDS != null && surveysUIDS.length() > 0) {
+				String[] uids = surveysUIDS.split(";");
 				for (String uid : uids) {
-					List<Integer> result = new ArrayList<>();
-
-					result.add(participationService.getNumberOfInvitations(uid));
-					result.add(answerService.getNumberOfDrafts(uid));
-
-					results.add(result);
+					List<Integer> list = new ArrayList<>();
+					// 1: The number of invitations
+					list.add(participationService.getNumberOfInvitations(uid));
+					// 2: The number of drafts
+					list.add(answerService.getNumberOfDrafts(uid));
+					listOfList.add(list);
 				}
 
-				return results;
+				return listOfList;
 			}
 		} catch (Exception ex) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
