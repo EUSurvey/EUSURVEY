@@ -1261,6 +1261,9 @@ public class AnswerService extends BasicService {
 	}
 
 
+	/**
+	 * Returns a non draft AnswerSet corresponding to uniqueCode, or NULL if no such AnswerSet is found
+	 */
 	@Transactional(readOnly = true)
 	public AnswerSet get(String uniqueCode) {
 		Session session = sessionFactory.getCurrentSession();
