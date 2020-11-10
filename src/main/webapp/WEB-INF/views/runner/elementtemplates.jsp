@@ -1114,7 +1114,15 @@
 		<input type="hidden" name="questionid" data-bind="value: id()" />
 		<input type="hidden" name="uniquecode" value="${uniqueCode}" />
 		<input type="hidden" name="languagecode" value="${form.language.code}" />
-		<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }" style="margin-left: 20px; margin-top: 20px;">${form.getMessage("label.Save")}</a>
+		
+		<div style="margin-left: 20px; margin-top: 20px;">
+			<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
+			
+			<span class="inline-loader">
+				<img class="center" src="${contextpath}/resources/images/ajax-loader.gif" />
+			</span>
+		</div>								
+			
 		<div class="delphiupdatemessage"></div>
 	</div>
 
