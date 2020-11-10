@@ -30,6 +30,10 @@ public class AnswerExplanationService extends BasicService {
         Query query = session.createQuery("FROM AnswerExplanation WHERE ANSWER_ID = :answerId")
                 .setInteger("answerId", answerId);
         AnswerExplanation result = (AnswerExplanation) query.uniqueResult();
+        if (result == null) {
+            result = new AnswerExplanation();
+            result.setText("");
+        }
         return result;
     }
 }

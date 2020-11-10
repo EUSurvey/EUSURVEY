@@ -2257,10 +2257,14 @@ public class RunnerController extends BasicController {
 	public @ResponseBody String delphiGetExplanation(HttpServletRequest request, Locale locale) {
 
 		try {
-			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
+			final String answerSetId = request.getParameter("answerSetId");
+			final int answerSetIdParsed = Integer.parseInt(answerSetId);
+			final AnswerSet answerSet = answerService.get(answerSetIdParsed);
+			if (answerSet == null) {
+				throw new RuntimeException("The explanation could not be retrieved as the answer set is not saved yet.");
+			}
 			final String questionId = request.getParameter("questionId");
 			final int questionIdParsed = Integer.parseInt(questionId);
-			final AnswerSet answerSet = answerService.get(answerSetUniqueCode);
 			final Answer answer = answerSet.getAnswers().stream()
 					.filter(a -> a.getQuestionId().equals(questionIdParsed))
 					.findFirst()

@@ -415,8 +415,7 @@ function addElementToContainer(element, container, foreditor, forskin)
 
 	$(container).find('.explanation-editor').each(function(){
 		$(this).tinymce(explanationEditorConfig);
-		var currentExplanationText = delphiGet($(this));
-		$(this).val(currentExplanationText);
+		delphiPrefill($(this));
 	});
 	
 	return viewModel;
@@ -452,13 +451,17 @@ function getWidth(widths, index)
 	return "50px";
 }
 
-function delphiGet(editorElement) {
+function delphiPrefill(editorElement) {
+	var answerSetId = $('#IdAnswerSet').val();
+	if (!answerSetId) {
+		return; // Cannot prefill when answers have not not been submitted yet.
+	}
 	var surveyElement = editorElement.closest('.survey-element');
-	var uniqueCodeElement = surveyElement.find('input[name="uniquecode"]');
-	var uniqueCode = uniqueCodeElement.val();
+	var questionIdElement = surveyElement.find('input[name="questionId"]');
+	var questionId = questionIdElement.val();
 	var data = {
-		setUniqueCode: uniqueCode,
-		questionId: ''
+		answerSetId: answerSetId,
+		questionId: questionId
 	};
 	$.ajax({
 		url: contextpath + "/runner/delphiGet",
@@ -470,9 +473,11 @@ function delphiGet(editorElement) {
 		{
 			showError(message);
 		},
-		success: function(message)
+		success: function(currentExplanationText)
 		{
-			return message;
+			if (currentExplanationText) {
+				editorElement.val(currentExplanationText);
+			}
 		}
 	});
 }
@@ -493,9 +498,8 @@ function delphiUpdate(div) {
 	    },
 		success: function(message)
 	    {
-	    	//everything is ok
 			if (message === "OK") {
-				
+				showSuccess("OK")
 			} else {
 				showError(message);
 			}
