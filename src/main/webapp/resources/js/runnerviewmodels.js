@@ -296,6 +296,7 @@ function newBasicViewModel(element)
 		viewModel.locked = ko.observable(element.locked);
 		viewModel.css = ko.observable(element.css);
 		viewModel.optional = ko.observable(element.optional);
+		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 		
 		if (element.scoringItems != null)
 		{
@@ -555,6 +556,7 @@ function newChoiceViewModel(element)
 	});
 	
 	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.readonly = ko.observable(element.readonly);	
 	viewModel.numColumns = ko.observable(element.numColumns);
@@ -700,6 +702,7 @@ function newFreeTextViewModel(element)
 	viewModel.optional = ko.observable(element.optional);	
 	viewModel.readonly = ko.observable(element.readonly);	
 	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.numRows = ko.observable(element.numRows);	
 	viewModel.minCharacters = ko.observable(element.minCharacters);	
@@ -778,6 +781,7 @@ function newNumberViewModel(element)
 	viewModel.readonly = ko.observable(element.readonly);	
 	viewModel.isUnique = ko.observable(element.isUnique);	
 	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
@@ -924,6 +928,7 @@ function newEmailViewModel(element)
 	viewModel.optional = ko.observable(element.optional);	
 	viewModel.readonly = ko.observable(element.readonly);	
 	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
@@ -939,6 +944,7 @@ function newDateViewModel(element)
 	viewModel.optional = ko.observable(element.optional);	
 	viewModel.readonly = ko.observable(element.readonly);	
 	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
@@ -960,6 +966,7 @@ function newTimeViewModel(element)
 	viewModel.optional = ko.observable(element.optional);	
 	viewModel.readonly = ko.observable(element.readonly);	
 	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
@@ -1064,6 +1071,7 @@ function newMatrixViewModel(element)
 	viewModel.optional = ko.observable(element.optional);	
 	viewModel.readonly = ko.observable(element.readonly);	
 	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
@@ -1175,6 +1183,7 @@ function newTableViewModel(element)
 	viewModel.optional = ko.observable(element.optional);	
 	viewModel.readonly = ko.observable(element.readonly);	
 	viewModel.isAttribute = ko.observable(element.isAttribute);
+	viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 	viewModel.attributeName = ko.observable(element.attributeName);	
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));

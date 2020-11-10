@@ -34,6 +34,7 @@ public abstract class Question extends Element {
 	private int scoring;
 	private int points = 1;
 	private List<ScoringItem> scoringItems;
+	private boolean delphiQuestion;
 	
 	public Question() {}
 	
@@ -113,6 +114,14 @@ public abstract class Question extends Element {
 		this.points = points != null ? points : 1;
 	}
 	
+	@Column(name = "DELPHI")
+	public Boolean getIsDelphiQuestion() {
+		return delphiQuestion;
+	}	
+	public void setIsDelphiQuestion(Boolean delphiQuestion) {
+		this.delphiQuestion = delphiQuestion != null && delphiQuestion;
+	}
+	
 	@OneToMany(targetEntity=ScoringItem.class, cascade = CascadeType.ALL)
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "position asc")
@@ -142,6 +151,7 @@ public abstract class Question extends Element {
 		copy.setLocked(getLocked());
 		copy.setSubType(getSubType());
 		copy.setDisplayMode(getDisplayMode());
+		copy.setIsDelphiQuestion(getIsDelphiQuestion());
 		
 		if (scoringItems != null)
 		{
@@ -227,6 +237,7 @@ public abstract class Question extends Element {
 			if (!(Objects.equals(getReadonly(), question.getReadonly()))) return true;
 			
 			if (!(Objects.equals(getAttributeName(), question.getAttributeName()))) return true;
+			if (!(Objects.equals(getIsDelphiQuestion(), question.getIsDelphiQuestion()))) return true;			
 			
 		} else {
 			return true;

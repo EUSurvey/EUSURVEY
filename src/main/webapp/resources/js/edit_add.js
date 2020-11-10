@@ -414,7 +414,9 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		element.isAttribute = false;
 		element.isUnique = false;
 		element.attributeName = element.shortname;
-		element.readonly = false;		
+		element.readonly = false;
+		
+		element.isDelphiQuestion = isDelphi;		
 	}
 	
 	if (type == "PossibleAnswer")

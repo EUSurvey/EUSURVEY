@@ -138,8 +138,6 @@ function addElementToContainer(element, container, foreditor, forskin)
 	
 	} catch (e) {}
 
-	var supportsDelphi = false;
-
 	if (viewModel.type == 'Section') {
 		$(container).addClass("sectionitem");
 		var s = $("#section-template").clone().attr("id", "");
@@ -169,33 +167,27 @@ function addElementToContainer(element, container, foreditor, forskin)
 		} else {
 			var s = $("#freetext-template").clone().attr("id", "");
 			$(container).append(s);
-			supportsDelphi = true;
 		}
 	} else if (viewModel.type == 'NumberQuestion') {
 		$(container).addClass("numberitem");
 		var s = $("#number-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	} else if (viewModel.type == 'SingleChoiceQuestion') {
 		$(container).addClass("singlechoiceitem");
 		var s = $("#single-choice-template").clone().attr("id", "");
 		$(container).append(s);
-		supportsDelphi = true;
 	} else if (viewModel.type == 'MultipleChoiceQuestion') {
 		$(container).addClass("multiplechoiceitem");
 		var s = $("#multiple-choice-template").clone().attr("id", "");
 		$(container).append(s);
-		supportsDelphi = true;
 	} else if (viewModel.type == 'DateQuestion') {
 		$(container).addClass("dateitem");
 		var s = $("#date-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	} else if (viewModel.type == 'TimeQuestion') {
 		$(container).addClass("timeitem");
 		var s = $("#time-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	} else if (viewModel.type == 'EmailQuestion') {
 		$(container).addClass("emailitem");
 		var s = $("#email-template").clone().attr("id", "");
@@ -204,12 +196,10 @@ function addElementToContainer(element, container, foreditor, forskin)
 		$(container).addClass("matrixitem");
 		var s = $("#matrix-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	} else if (viewModel.type == 'Table') {
 		$(container).addClass("mytableitem");
 		var s = $("#table-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	} else if (viewModel.type == 'Upload') {
 		$(container).addClass("uploaditem");
 		var s = $("#upload-template").clone().attr("id", "");
@@ -230,10 +220,9 @@ function addElementToContainer(element, container, foreditor, forskin)
 		$(container).addClass("ratingitem");
 		var s = $("#rating-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	}
 
-	if (isdelphi && supportsDelphi) {
+	if (isdelphi) {
 		var d = $("#delphi-template").clone().attr("id", "");
 		$(container).append(d);
 	}
