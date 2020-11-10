@@ -293,7 +293,17 @@ textarea.freetext {
 	overflow-x: auto;
 }
 
-.freetext, .number, .date, .matrixtable, .tabletable, .dataTable, .regex, .alignment-div, .input-group, .ratingtable {
+.freetext,
+.number,
+.date,
+.matrixtable,
+.tabletable,
+.dataTable,
+.regex,
+.alignment-div,
+.input-group,
+.ratingtable,
+.explanation-section{
 	margin-left: 20px;
 }
 
@@ -438,4 +448,9 @@ legend {
 .slider.slider-disabled .slider-handle {
 	background-color: #ccc !important;
 	background-image: none !important;
+}
+
+.explanation-section {
+	margin-top: 25px;
+	max-width: 645px;
 }

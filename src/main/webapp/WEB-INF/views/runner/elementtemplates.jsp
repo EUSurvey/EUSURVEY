@@ -1114,6 +1114,10 @@
 		<input type="hidden" name="ansSetUniqueCode" value="${uniqueCode}" />
 		<input type="hidden" name="languageCode" value="${form.language.code}" />
 		<input type="hidden" name="questionId" data-bind="value: id" />
+		<div class="explanation-section">
+			<label class="questiontitle">${form.getMessage("label.ExplainYourAnswer")}</label>
+			<textarea class="explanation-editor" name="explanation" data-bind="attr: {'id': 'explanation' + id()}"></textarea>
+		</div>
 		<a class="btn btn-primary" onclick="delphiUpdate($(this).closest('.survey-element'))" style="margin-left: 20px; margin-top: 8px;">${form.getMessage("label.Save")}</a>
 	</div>
 

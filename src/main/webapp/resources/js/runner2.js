@@ -412,6 +412,12 @@ function addElementToContainer(element, container, foreditor, forskin)
 	$(container).find(".sliderbox").each(function(){
 		initSlider(this, foreditor, viewModel);
 	});
+
+	$(container).find('.explanation-editor').each(function(){
+		$(this).tinymce(explanationEditorConfig);
+		var currentExplanationText = delphiGet($(this));
+		$(this).val(currentExplanationText);
+	});
 	
 	return viewModel;
 }
@@ -444,6 +450,31 @@ function getWidth(widths, index)
 	}
 	
 	return "50px";
+}
+
+function delphiGet(editorElement) {
+	var surveyElement = editorElement.closest('.survey-element');
+	var uniqueCodeElement = surveyElement.find('input[name="uniquecode"]');
+	var uniqueCode = uniqueCodeElement.val();
+	var data = {
+		setUniqueCode: uniqueCode,
+		questionId: ''
+	};
+	$.ajax({
+		url: contextpath + "/runner/delphiGet",
+		data: data,
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function(message)
+		{
+			showError(message);
+		},
+		success: function(message)
+		{
+			return message;
+		}
+	});
 }
 
 function delphiUpdate(div) {
