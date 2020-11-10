@@ -54,6 +54,7 @@
 					<div id="surveys-button" data-bind="attr: {class: mode() == 'surveys' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToSurveys"><spring:message code="label.ManagedSurveys" /></a></div>
 				</c:if>
 				<div id="invitations-button" data-bind="attr: {class: mode() == 'invitations' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToInvitations"><spring:message code="label.PersonalInvitations" /></a></div>
+				<div id="delphi-button" data-bind="attr: {class: mode() == 'delphi' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToDelphi"><spring:message code="label.DelphiSurveys" /></a></div>
 			</div>		
 	
 			<div class="fullpage" style="padding-top:137px;">			
@@ -1132,6 +1133,105 @@
 						</div>				
 					</div>
 				</div>
+		
+		
+				<div id="delphiarea" style="display: none" data-bind="visible: mode() == 'delphi'">
+					<div class="widget" style="min-height: auto; height: auto; padding: 0px;">
+						<div class="widgettitle" style="margin: 0px;">
+							<spring:message code="label.OpenDelphiSurveys" />
+						</div>
+						<img class="center" data-bind="visible: delphiSurveys() == null" src="${contextpath}/resources/images/ajax-loader.gif" />
+							
+						<div class="widgetheaderhide" style="height: 110px;" data-bind="visible: delphiSurveys() == null">
+						</div>
+							
+							<table class="table table-striped" style="margin-bottom: 10px">
+								<tr class="headerrow">
+									<th><spring:message code="label.Title" /></th>
+									<th><spring:message code="label.SurveyStatus" /></th>
+									<th><spring:message code="label.ExpiryDate" /></th>
+									<th></th>
+								</tr>
+										
+								<tr id="delphifilterrow" class="filterrow">
+									<th><input type="text" id="delphisurvey" placeholder="<spring:message code="label.Filter" />" /></th>
+									<th>
+										<select id="delphisurveystatus">
+											<option value=""><spring:message code="label.All" /></option>
+											<option value="Published"><spring:message code="label.Published" /></option>
+											<option value="Unpublished"><spring:message code="label.Unpublished" /></option>
+										</select>
+									</th>
+									<th class="filtercell">
+										<div class="btn-toolbar" style="margin: 0px; text-align: center">
+											<div class="filtertools" data-bind="visible: delphiFilterEndFrom().length > 0 || delphiFilterEndTo().length > 0">
+												<a data-toggle="tooltip" title="<spring:message code="label.RemoveFilter" />" data-bind="click: function(data, event) {delphiFilterEndFrom(''); delphiFilterEndTo(''); clearDashboardFilterCellContent(this)}">
+													<span class="glyphicon glyphicon-remove-circle black"></span>
+												</a>
+											</div>
+											
+											<div class="datefilter" style="float: left">
+											  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+											     <span data-bind="html: delphiFilterEndFrom().length > 0 ? delphiFilterEndFrom() : '<spring:message code="label.from" />'"></span>
+											     &nbsp;<span class="caret"></span>
+											  </a>
+											  <div class="overlaymenu hideme">
+											  		<spring:message code="label.from" />
+											    	<input type="hidden" name="metafilterdelphienddatefrom" class="hiddendate" data-bind="value: delphiFilterEndFrom" />
+											    	<div id="metafilterdelphienddatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+											   </div>
+											</div>
+											<div class="datefilter" style="float: left">	
+											  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+											  	<span data-bind="html: delphiFilterEndTo().length > 0 ? delphiFilterEndTo() : '<spring:message code="label.to" />'"></span>
+											  	&nbsp;<span class="caret"></span>
+											  </a>
+											 <div class="overlaymenu hideme">
+											 		<spring:message code="label.to" />
+											    	<input type="hidden" name="metafilterdelphienddateto" class="hiddendate" data-bind="value: delphiFilterEndTo" />
+											    	<div id="metafilterdelphienddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+											    </div>
+											</div>	
+										</div>	
+									</th>
+									<th style="min-width: 150px;">
+										<a class="btn btn-default" onclick="_dashboard.delphiPage(1);_dashboard.loadDelphiSurveys();"><spring:message code="label.Search" /></a>
+										<a class="btn btn-default" onclick="_dashboard.delphiPage(1);_dashboard.resetDelphiSurveys();"><spring:message code="label.Reset" /></a>
+									</th>
+								</tr>
+										
+								<!-- ko foreach: delphiSurveys -->
+								<tr>
+									<td data-bind="html: $data[0]"></td>
+									<td data-bind="html: $data[1] ? '<spring:message code="label.Published" />' : '<spring:message code="label.Unpublished" />'"></td>
+									<td data-bind="html: $data[2]"></td>
+									<td>
+										<a target="_blank" class="btn btn-primary" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Open" />" data-bind="attr: {'href' : $data[3]}"><spring:message code="label.Open" /></a>
+									</td>
+								</tr>									
+								<!-- /ko -->
+										
+								<!-- ko if: delphiSurveys() == null || delphiSurveys().length == 0 -->	
+								<tr>
+									<td style="text-align: center" colspan="4">
+										<spring:message code="message.NoResults" />
+									</td>
+								</tr>
+								<!-- /ko -->	
+							</table>
+						<div data-bind="visible: delphiSurveys != null && delphiSurveys > 0" style="text-align: center; margin-bottom: 10px;">
+							<a data-bind="click: firstDelphiPage, attr: {style: delphiPage() > 1 ? '' : 'color: #ccc'}"><span class="glyphicon glyphicon-step-backward"></span></a>
+							<a data-bind="click: previousDelphiPage, attr: {style: delphiPage() > 1 ? '' : 'color: #ccc'}"><span class="glyphicon glyphicon-chevron-left"></span></a>
+							
+							<span data-bind="html: (delphiPage() - 1) * 10 + 1"></span>&nbsp;
+							<spring:message code="label.to" />&nbsp;
+							<span data-bind="html: (delphiPage() ) * 10"></span>
+							
+							<a data-bind="click: nextDelphiPage, attr: {style: lastDelphiReached() ? 'color: #ccc' : ''}"><span class="glyphicon glyphicon-chevron-right"></span></a>
+						</div>
+					</div>	
+				</div>
+		
 			</div>
 		</div>
 	</div>
