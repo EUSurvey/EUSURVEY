@@ -13,6 +13,7 @@ import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.apache.commons.lang3.StringUtils;
@@ -184,6 +185,21 @@ public class SessionService extends BasicService {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 
+		return false;
+	}
+
+	public boolean userIsAnswerer(AnswerSet answerSet, User user) {
+		if (answerSet != null && answerSet.getResponderEmail() != null && user.getEmail() != null
+				&& (answerSet.getResponderEmail().equalsIgnoreCase(user.getEmail())
+						|| answerSet.getResponderEmail().equalsIgnoreCase(Tools.md5hash(user.getEmail())))) {
+			// User's email is the same
+			return true;
+		}
+		if (answerSet != null && answerSet.getSurvey() != null && answerSet.getSurvey().getOwner() != null
+				&& answerSet.getSurvey().getOwner().getId().equals(user.getId())) {
+			// User is same ID
+			return true;
+		}
 		return false;
 	}
 

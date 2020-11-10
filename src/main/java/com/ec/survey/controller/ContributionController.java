@@ -56,49 +56,34 @@ public class ContributionController extends BasicController {
 
 	public AnswerSet getAnswerSet(String code, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
-		AnswerSet answerSet = null;
+		AnswerSet answerSetOrNull = null;
 		User user = sessionService.getCurrentUser(request);
-		try {
-			answerSet = answerService.get(code);
+		answerSetOrNull = answerService.get(code);
 
-			if (user == null) {
-				// comes from "Access a Contribution" -> check
-				return answerSet;
+		if (answerSetOrNull == null) {
+			return null;
+		}
+
+		if (user == null) {
+			// comes from "Access a Contribution" -> check
+			return answerSetOrNull;
+		}
+
+		if (sessionService.userIsAnswerer(answerSetOrNull, user)) {
+			return answerSetOrNull;
+		}
+
+		if (answerSetOrNull.getSurvey() != null) {
+			if (sessionService.userIsFormAdmin(answerSetOrNull.getSurvey(), user, request)) {
+				return answerSetOrNull;
 			}
 
-			if (answerSet != null && answerSet.getSurvey() != null
-					&& answerSet.getSurvey().getOwner().getId().equals(user.getId())) {
-				// owner is always allowed to retrieve data
-				return answerSet;
-			}
-
-			if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2 || (answerSet != null
-					&& answerSet.getResponderEmail() != null && user.getEmail() != null
-					&& (answerSet.getResponderEmail().equalsIgnoreCase(user.getEmail())
-							|| answerSet.getResponderEmail().equalsIgnoreCase(Tools.md5hash(user.getEmail()))))) {
-				return answerSet;
-			}
-
-			Survey draft = answerSet != null
-					? surveyService.getSurvey(answerSet.getSurvey().getShortname(), true, false, false, false, null,
-							true, false)
-					: null;
-
-			if (draft == null)
-				draft = surveyService.getSurveyByUniqueId(answerSet.getSurvey().getUniqueId(), false, true);
-
+			Survey draftSurvey = surveyService.getSurveyByUniqueId(answerSetOrNull.getSurvey().getUniqueId(), false,
+					true);
 			// if participants are allowed to change their contribution
-			if (draft != null && draft.getChangeContribution()) {
-				return answerSet;
+			if (draftSurvey != null && draftSurvey.getChangeContribution()) {
+				return answerSetOrNull;
 			}
-
-			sessionService.upgradePrivileges(draft, user, request);
-
-			if (user.getLocalPrivileges().get(LocalPrivilege.AccessResults) == 2) {
-				return answerSet;
-			}
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
 		}
 		return null;
 	}
