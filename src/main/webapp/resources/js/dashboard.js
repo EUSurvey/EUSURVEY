@@ -54,6 +54,13 @@ function DashboardViewModel()
 	this.asc = ko.observable(false);
 	this.invitationDataLoaded = false;
 	
+	this.delphiSurveys = ko.observable(null);
+	this.delphiPage = ko.observable(1);
+	this.lastDelphiReached = ko.observable(false);
+	this.delphiFilterEndFrom = ko.observable("");
+	this.delphiFilterEndTo = ko.observable("");
+	this.delphiDataLoaded = false;
+	
 	this.switchToSurveys = function()
 	{
 		this.mode("surveys");
@@ -74,6 +81,19 @@ function DashboardViewModel()
 		
 		this.mode("invitations");
 		writeToLocalstorage("DASHBOARDMode", "invitations");
+	}
+	
+	this.switchToDelphi = function()
+	{
+		if (!this.delphiDataLoaded)
+		{
+			_dashboard.loadDelphiSurveys(-2);
+			this.delphiDataLoaded = true;
+		}
+		
+		this.mode("delphi");
+		
+		writeToLocalstorage("DASHBOARDMode", "delphi");
 	}
 	
 	this.switchSurveyMode = function(m)
@@ -1161,6 +1181,8 @@ function DashboardViewModel()
 		if (this.mode() == "surveys")
 		{
 			this.loadSurveys(0);
+		} else if (this.mode() == "delphi") {
+			this.loadDelphiSurveys(0);
 		} else {
 			this.loadPersonalContributions(0);
 		}
@@ -1214,6 +1236,108 @@ function DashboardViewModel()
 	
 		_dashboard.invitationsPage(1); _dashboard.loadPersonalInvitations(0);
 	}
+	
+	this.firstDelphiPage = function()
+	{
+		this.delphiPage(1);
+		this.loadDelphiSurveys(0);
+	}
+	
+	this.previousDelphiPage = function()
+	{
+		if (this.delphiPage() > 1)
+		{
+			this.delphiPage(this.delphiPage()-1);
+			this.loadDelphiSurveys(0);
+		}
+	}
+	
+	this.nextDelphiPage = function()
+	{
+		if (!this.lastDelphiReached())
+		{
+			this.delphiPage(this.delphiPage()+1);
+			this.loadDelphiSurveys(0);
+		}
+	}
+	
+	this.loadDelphiSurveys = function(index)
+	{
+		if (index == -2)
+		{
+			var s = readFromLocalstorage("DASHBOARDDelphiSurvey");
+			if (s != null && s.length > 0) $("#delphisurvey").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDDelphiSurveyStatus");
+			if (s != null && s.length > 0) $("#delphisurveystatus").val(s);
+			
+			s = readFromLocalstorage("DASHBOARDDelphiEndFrom");
+			if (s != null && s.length > 0) this.delphiFilterEndFrom(s);
+			
+			s = readFromLocalstorage("DASHBOARDDelphiEndTo");
+			if (s != null && s.length > 0) this.delphiFilterEndTo(s);
+		} else {
+			writeToLocalstorage("DASHBOARDDelphiSurvey", $("#delphisurvey").val());
+			writeToLocalstorage("DASHBOARDDelphiSurveyStatus", $("#delphisurveystatus").val());
+			writeToLocalstorage("DASHBOARDDelphiEndFrom", this.delphiFilterEndFrom());
+			writeToLocalstorage("DASHBOARDDelphiEndTo", this.delphiFilterEndTo());
+		}
+		
+		var model = this;
+		model.delphiSurveys(null);
+		var params = "page=" +  model.delphiPage();
+		
+		var delphisurvey = $("#delphisurvey").val().trim();
+		if (delphisurvey.length > 0)
+		{
+			params = params + "&title=" + delphisurvey;
+		}
+		var surveystatus = $("#delphisurveystatus").val().trim();
+		if (surveystatus.length > 0)
+		{
+			params = params + "&surveystatus=" + surveystatus;
+		}
+		if (this.delphiFilterEndFrom().length > 0)
+		{
+			params = params + "&endfrom=" + this.invitationFilterEndFrom();
+		}
+		if (this.delphiFilterEndTo().length > 0)
+		{
+			params = params + "&endto=" + this.invitationFilterEndTo();
+		}
+	
+		var request = $.ajax({
+			  url: contextpath + "/dashboard/opendelphisurveys",
+			  data: params,
+			  dataType: "json",
+			  cache: false,
+			  success: function(data)
+			  {
+				  if (data.length == 0 && model.invitationsPage() > 1)
+				  {
+					  model.delphiPage(model.delphiPage()-1);
+					  model.lastDelphiReached(true);
+				  } else {
+					  model.delphiSurveys(data);
+					  model.lastDelphiReached(data.length < 10);
+					  
+					  $('[data-toggle="tooltip"]').tooltip({
+							trigger : 'hover'
+						});	
+				  }	
+				 
+			  }
+			});
+	}
+	
+	this.resetDelphiSurveys = function()
+	{
+		$("#delphifilterrow").find("input[type=text]").val('');
+		$("#delphifilterrow").find("select").val('');
+		this.delphiFilterEndFrom("");
+		this.delphiFilterEndTo("");
+		this.search();
+	}
 }
 
 var _dashboard = new DashboardViewModel();
@@ -1237,6 +1361,8 @@ $(function() {
 			_dashboard.mode(s);
 			if (s == "invitations") {
 				_dashboard.switchToInvitations();
+			} else if (s == "delphi") {
+				_dashboard.switchToDelphi();
 			}
 		}
 		
