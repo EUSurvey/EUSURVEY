@@ -46,6 +46,9 @@ import java.util.*;
 @RequestMapping("/runner")
 public class RunnerController extends BasicController {
 
+	@Resource
+	protected AnswerExplanationService answerExplanationService;
+
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
 
@@ -2249,34 +2252,65 @@ public class RunnerController extends BasicController {
 
 		return result;
 	}
-	
+
+	@GetMapping("/delphiGet")
+	public @ResponseBody String delphiGetExplanation(HttpServletRequest request, Locale locale) {
+
+		try {
+			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
+			final String questionId = request.getParameter("questionId");
+			final int questionIdParsed = Integer.parseInt(questionId);
+			final AnswerSet answerSet = answerService.get(answerSetUniqueCode);
+			final Answer answer = answerSet.getAnswers().stream()
+					.filter(a -> a.getQuestionId().equals(questionIdParsed))
+					.findFirst()
+					.get();
+			AnswerExplanation explanation = answerExplanationService.getExplanation(answer);
+			String explanationText = explanation.getText();
+			return explanationText;
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return resources.getMessage("error.DelphiGet", null, locale);
+		}
+	}
+
 	@PostMapping(value = "/delphiUpdate")
-	public @ResponseBody String delphiUpdate(HttpServletRequest request, Locale locale) {		
+	public @ResponseBody String delphiCreateOrUpdateExplanation(HttpServletRequest request, Locale locale) {
 		try {
 					
-			String surveyid = request.getParameter("surveyid");
-			int id = Integer.parseInt(surveyid);
-			Survey survey = surveyService.getSurvey(id);
-			String languageCode = request.getParameter("languagecode");
-			String uniqueCode = request.getParameter("uniquecode");
-			User user = sessionService.getCurrentUser(request, false, false);
+			final String surveyId = request.getParameter("surveyId");
+			final int surveyIdParsed = Integer.parseInt(surveyId);
+			final Survey survey = surveyService.getSurvey(surveyIdParsed);
+			final String languageCode = request.getParameter("languageCode");
+			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
+			final String questionId = request.getParameter("questionId");
+			final int questionIdParsed = Integer.parseInt(questionId);
+			final String explanation = request.getParameter("explanation");
+			final User user = sessionService.getCurrentUser(request, false, false);
+
 			AnswerSet answerSet;
-			AnswerSet existingAnswerSet = answerService.get(uniqueCode);
+			final AnswerSet existingAnswerSet = answerService.get(answerSetUniqueCode);
 			if (existingAnswerSet == null) {
 				//save
-				answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, languageCode, user, fileService);
-				saveAnswerSet(answerSet, fileDir, null, -1);
+				answerSet = SurveyHelper.parseAnswerSet(request, survey, answerSetUniqueCode, false, languageCode, user, fileService);
 			} else {
 				//update
-				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, uniqueCode, existingAnswerSet, languageCode, user, fileService);
+				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, answerSetUniqueCode, existingAnswerSet, languageCode, user, fileService);
 			}			
 			saveAnswerSet(answerSet, fileDir, null, -1);
+
+			final Answer answer = answerSet.getAnswers().stream()
+					.filter(a -> a.getQuestionId().equals(questionIdParsed))
+					.findFirst()
+					.get();
+
+			answerExplanationService.createOrUpdateExplanation(answer, explanation);
 			
 			return "OK";
 		
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return resources.getMessage("error.delphiupdate", null, locale);
+			return resources.getMessage("error.DelphiCreateOrUpdate", null, locale);
 		}
 	}
 }
