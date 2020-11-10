@@ -2257,6 +2257,13 @@ public class SurveyHelper {
 		}
 		rating.setIconType(iconType);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(rating.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + rating.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		rating.setIsDelphiQuestion(isDelphiQuestion);
+		
 		Element q;
 		int j = 0;
 		for (int k = 0; k < questions.length; k++) {
