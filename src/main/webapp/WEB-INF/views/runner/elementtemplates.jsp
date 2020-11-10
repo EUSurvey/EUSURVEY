@@ -1106,7 +1106,7 @@
 	
 	<div id="delphi-template">
 		<input type="hidden" name="surveyId" value="${form.survey.id}" />
-		<input type="hidden" name="setUniqueCode" value="${uniqueCode}" />
+		<input type="hidden" name="ansSetUniqueCode" value="${uniqueCode}" />
 		<input type="hidden" name="languageCode" value="${form.language.code}" />
 		<input type="hidden" name="questionId" data-bind="value: id" />
 		<a class="btn btn-primary" onclick="delphiUpdate($(this).closest('.survey-element'))" style="margin-left: 20px; margin-top: 8px;">${form.getMessage("label.Save")}</a>

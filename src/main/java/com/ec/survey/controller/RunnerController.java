@@ -2257,7 +2257,7 @@ public class RunnerController extends BasicController {
 	public @ResponseBody String delphiGetExplanation(HttpServletRequest request, Locale locale) {
 
 		try {
-			final String answerSetUniqueCode = request.getParameter("setUniqueCode");
+			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
 			final String questionId = request.getParameter("questionId");
 			final int questionIdParsed = Integer.parseInt(questionId);
 			final AnswerSet answerSet = answerService.get(answerSetUniqueCode);
@@ -2265,8 +2265,7 @@ public class RunnerController extends BasicController {
 					.filter(a -> a.getQuestionId().equals(questionIdParsed))
 					.findFirst()
 					.get();
-			final User user = sessionService.getCurrentUser(request, false, false);
-			AnswerExplanation explanation = answerExplanationService.getExplanation(user, answer);
+			AnswerExplanation explanation = answerExplanationService.getExplanation(answer);
 			String explanationText = explanation.getText();
 			return explanationText;
 		} catch (Exception e) {
@@ -2283,7 +2282,7 @@ public class RunnerController extends BasicController {
 			final int surveyIdParsed = Integer.parseInt(surveyId);
 			final Survey survey = surveyService.getSurvey(surveyIdParsed);
 			final String languageCode = request.getParameter("languageCode");
-			final String answerSetUniqueCode = request.getParameter("setUniqueCode");
+			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
 			final String questionId = request.getParameter("questionId");
 			final int questionIdParsed = Integer.parseInt(questionId);
 			final String explanation = request.getParameter("explanation");
@@ -2305,7 +2304,7 @@ public class RunnerController extends BasicController {
 					.findFirst()
 					.get();
 
-			answerExplanationService.createOrUpdateExplanation(user, answer, explanation);
+			answerExplanationService.createOrUpdateExplanation(answer, explanation);
 			
 			return "OK";
 		

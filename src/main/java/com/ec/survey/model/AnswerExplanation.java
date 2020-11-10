@@ -1,7 +1,5 @@
 package com.ec.survey.model;
 
-import com.ec.survey.model.administration.User;
-
 import javax.persistence.*;
 
 @Entity
@@ -11,7 +9,6 @@ public class AnswerExplanation implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    private User authorUser;
     private Answer referredAnswer;
     private String text;
 
@@ -27,16 +24,6 @@ public class AnswerExplanation implements java.io.Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name = "USER_ID")
-    public User getAuthorUser() {
-        return authorUser;
-    }
-
-    public void setAuthorUser(User authorUser) {
-        this.authorUser = authorUser;
-    }
-
-    @ManyToOne
     @JoinColumn(name = "ANSWER_ID")
     public Answer getReferredAnswer() {
         return referredAnswer;
@@ -46,7 +33,8 @@ public class AnswerExplanation implements java.io.Serializable {
         this.referredAnswer = referredAnswer;
     }
 
-    @Column(name = "TEXT")
+    @Lob
+    @Column(name = "TEXT", nullable = false)
     public String getText() {
         return text;
     }

@@ -12,10 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class AnswerExplanationService extends BasicService {
 
     @Transactional
-    public void createOrUpdateExplanation(User user, Answer answer, String explanationText) {
+    public void createOrUpdateExplanation(Answer answer, String explanationText) {
 
         final AnswerExplanation explanation = new AnswerExplanation();
-        explanation.setAuthorUser(user);
         explanation.setReferredAnswer(answer);
         explanation.setText(explanationText);
 
@@ -24,14 +23,11 @@ public class AnswerExplanationService extends BasicService {
     }
 
     @Transactional(readOnly = true)
-    public AnswerExplanation getExplanation(User user, Answer answer) {
+    public AnswerExplanation getExplanation(Answer answer) {
 
-        int userId = user.getId();
         int answerId = answer.getId();
         final Session session = sessionFactory.getCurrentSession();
-        Query query = session
-                .createQuery("FROM AnswerExplanation WHERE USER_ID = :userId AND ANSWER_ID = :answerId")
-                .setInteger("userId", userId)
+        Query query = session.createQuery("FROM AnswerExplanation WHERE ANSWER_ID = :answerId")
                 .setInteger("answerId", answerId);
         AnswerExplanation result = (AnswerExplanation) query.uniqueResult();
         return result;
