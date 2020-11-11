@@ -439,3 +439,8 @@ legend {
 	background-color: #ccc !important;
 	background-image: none !important;
 }
+
+.inline-loader {
+	display: none;
+	margin-left: 20px;	
+}

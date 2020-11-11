@@ -73,8 +73,7 @@ function returnTrueForSpace(event)
 }
 
 function ratingClick(link)
-{
-	
+{	
 	var pos = $(link).index();
 	var icons = $(link).attr("data-icons");
 	
@@ -88,6 +87,7 @@ function ratingClick(link)
 	}
 	
 	updateRatingIcons(pos, $(link).parent());
+	propagateChange(link);
 }
 
 function updateRatingIcons(pos, parent)
@@ -135,15 +135,19 @@ function singleClick(r) {
 	  $(r).attr('previousValue', 'checked');
 	}
 	
-	propagateChange();
+	propagateChange(r);
 }
 
-function propagateChange()
+function propagateChange(element)
 {
 	if (!$("#btnSaveDraft").hasClass('disabled'))
 	{
 		$("#btnSaveDraft").removeClass("btn-default").addClass("btn-primary");
 	}
+	
+	var div = $(element).closest(".survey-element");
+	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
+	$(div).find(".delphiupdatemessage").empty();
 }
 
 var downloadsurveypdflang;

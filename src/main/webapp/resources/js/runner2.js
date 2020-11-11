@@ -447,27 +447,41 @@ function getWidth(widths, index)
 }
 
 function delphiUpdate(div) {
+	
+	var result = validateInput(div);
+	var message = $(div).find(".delphiupdatemessage").first();
+	$(message).removeClass("update-error");
+	
+	var loader = $(div).find(".inline-loader").first();
+	
+	if (result == false)
+	{
+		return;
+	}
+	
+	saveCookies();
+	
+	$(loader).show();
+	
 	var form = document.createElement("form");
 	$(form).append($(div).clone());
 	var data = $(form).serialize();
 	
 	$.ajax({type: "POST",
 		url: contextpath + "/runner/delphiUpdate",
-		async: false,
 		data: data,
 		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
-		error: function(message)
+		error: function(data)
 	    {
-			alert(message);
+			$(message).html(data.responseText).addClass("update-error");
+			$(loader).hide();
 	    },
-		success: function(message)
+		success: function(data)
 	    {
 	    	//everything is ok
-			if (message === "OK") {
-				
-			} else {
-				showError(message);
-			}
+			$(message).html(data).addClass("info");
+			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
+			$(loader).hide();
 	    }
 	 });
 }

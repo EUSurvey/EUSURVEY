@@ -587,7 +587,7 @@ public class SurveyHelper {
 					if (!answers.isEmpty() && answers.get(0).getValue().length() > 0)
 						answer = answers.get(0).getValue();
 
-					if (timeQuestion.getMin() != null && answer != null) {
+					if (timeQuestion.getMin() != null && timeQuestion.getMin().length() > 0 && answer != null) {
 						Date timeMin = new SimpleDateFormat(ConversionTools.TimeFormat).parse(timeQuestion.getMin());
 						Calendar calendarMin = Calendar.getInstance();
 						calendarMin.setTime(timeMin);
@@ -604,7 +604,7 @@ public class SurveyHelper {
 						}
 					}
 
-					if (timeQuestion.getMax() != null && answer != null) {
+					if (timeQuestion.getMax() != null && timeQuestion.getMax().length() > 0 && answer != null) {
 						Date timeMax = new SimpleDateFormat(ConversionTools.TimeFormat).parse(timeQuestion.getMax());
 						Calendar calendarMax = Calendar.getInstance();
 						calendarMax.setTime(timeMax);
