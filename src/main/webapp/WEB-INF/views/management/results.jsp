@@ -184,6 +184,7 @@
 		
 		function showDeleteColumnDialog(uid)
 		{
+			$('.resultoverlaymenu').hide();
 			$('#deleteColumnUID').val(uid);
 			$('#confirmDeleteColumnDialog').modal('show')
 		}
@@ -1078,13 +1079,16 @@
 		<div class="modal-body">
 			<spring:message code="question.DeleteColumns" />
 			<br /><br />
-			<input style="margin-left: 30px;" type="checkbox" id="agreedeletecolumn" onclick="checkColumnConfirmationTicked(this)" /> <spring:message code="label.Iagree" />
+			<span style="color: #FF9800;  font-size: 40px; margin-left: 20px;" class="glyphicon glyphicon-exclamation-sign"></span>
+			<div style="display: inline-block; vertical-align: top; padding-top: 10px;">
+				<input style="margin-left: 30px;" type="checkbox" id="agreedeletecolumn" onclick="checkColumnConfirmationTicked(this)" /> <spring:message code="label.Imsure" />
+			</div>
 			<br /><br />
 		</div>
 		<div class="modal-footer">
 			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="deleteColumnConfirm" onclick="submitDeleteColumn()"  class="btn disabled btn-primary"><spring:message code="label.Yes" /></a>
-			<a id="deleteColumnCancel"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>					
+			<a id="deleteColumnConfirm" onclick="submitDeleteColumn()"  class="btn disabled btn-primary"><spring:message code="label.Delete" /></a>
+			<a id="deleteColumnCancel"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>					
 		</div>
 		</div>
 		</div>
