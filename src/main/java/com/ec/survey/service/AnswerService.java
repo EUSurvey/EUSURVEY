@@ -795,18 +795,22 @@ public class AnswerService extends BasicService {
 		return deleteAnswers(answerSetsToDelete, surveyId);
 	}
 
+	/**
+	 * Deletes the answersets by uniqueCode, returns the UIDS of the ones it could delete
+	 * Ignores a failed deletion, prints a stacktrace
+	 */
 	@Transactional
-	public List<String> deleteAnswers(List<String> answerSetsToDelete, int surveyid) {
+	public List<String> deleteAnswers(List<String> answerSetsUIDS, int surveyid) {
 		List<String> deletedAnswerSets = new ArrayList<>();
 
-		if (answerSetsToDelete == null || answerSetsToDelete.isEmpty()) {
+		if (answerSetsUIDS == null || answerSetsUIDS.isEmpty()) {
 			return deletedAnswerSets;
 		}
 
 		Session session = sessionFactory.getCurrentSession();
 		StringBuilder sql = new StringBuilder("From AnswerSet a where a.uniqueCode in (");
 		int counter = 0;
-		for (String uniqueCode : answerSetsToDelete) {
+		for (String uniqueCode : answerSetsUIDS) {
 			if (counter > 0) {
 				sql.append(", ");
 			}
@@ -821,25 +825,16 @@ public class AnswerService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<AnswerSet> answerSets = query.list();
 
-		for (AnswerSet as : answerSets) {
-			if (!as.getIsDraft()) {
-				session.delete(as);
-
-				if (!as.getIsDraft()) {
-					if (as.getSurvey().getIsDraft()) {
-						reportingService.addToDo(ToDo.DELETEDTESTCONTRIBUTION, as.getSurvey().getUniqueId(),
-								as.getUniqueCode());
-					} else {
-						reportingService.addToDo(ToDo.DELETEDCONTRIBUTION, as.getSurvey().getUniqueId(),
-								as.getUniqueCode());
-					}
-				}
-
-				deletedAnswerSets.add(as.getUniqueCode());
+		for (AnswerSet answerSet : answerSets) {
+			try {
+				this.deleteAnswer(answerSet, false);
+				deletedAnswerSets.add(answerSet.getUniqueCode());
+			} catch (IOException | MessageException e) {
+				e.printStackTrace();
 			}
 		}
 
-		deleteStatisticsForSurvey(surveyid);
+		this.deleteStatisticsForSurvey(surveyid);
 
 		return deletedAnswerSets;
 	}
@@ -1212,9 +1207,11 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void delete(AnswerSet answerSet) throws IOException, MessageException {
+	public void deleteAnswer(AnswerSet answerSet, boolean deleteStatistics) throws IOException, MessageException {
 		// delete precomputed statistics and pdfs
-		this.deleteStatisticsForSurvey(answerSet.getSurvey().getId());
+		if (deleteStatistics) {
+			this.deleteStatisticsForSurvey(answerSet.getSurvey().getId());
+		}
 		this.deleteFilesForAnswerSet(answerSet);
 		this.attendeeService.decreaseInvitationAnswer(answerSet.getInvitationId());
 		if (!answerSet.getIsDraft()) {
@@ -1225,6 +1222,11 @@ public class AnswerService extends BasicService {
 
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(answerSet);
+	}
+
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public void deleteAnswer(AnswerSet answerSet) throws IOException, MessageException {
+		this.deleteAnswer(answerSet, true);
 	}
 
 	@Transactional
