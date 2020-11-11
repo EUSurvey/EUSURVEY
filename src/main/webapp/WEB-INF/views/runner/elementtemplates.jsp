@@ -1135,6 +1135,7 @@
 		</div>								
 			
 		<div class="delphiupdatemessage"></div>
+		<!-- /ko -->
 	</div>
 
 </div>
