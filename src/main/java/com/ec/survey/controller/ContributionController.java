@@ -502,7 +502,7 @@ public class ContributionController extends BasicController {
 		}
 
 		try {
-			this.answerService.delete(answerSet);
+			this.answerService.deleteAnswer(answerSet);
 		} catch (IOException | MessageException e) {
 			throw new InternalServerErrorException(e);
 		}
