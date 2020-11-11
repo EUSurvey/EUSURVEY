@@ -400,6 +400,11 @@
 		paste_postprocess: function(pl, o) {
 			o.node.innerHTML = replaceBRs(strip_tags(o.node.innerHTML, '<p><br>'));
 		},
+		setup: function(editor) {
+			editor.on('init', function(event) {
+				delphiPrefill($(event.target));
+			});
+		},
 		relative_urls: false,
 		remove_script_host: false,
 		document_base_url: serverPrefix,

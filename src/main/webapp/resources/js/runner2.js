@@ -415,7 +415,6 @@ function addElementToContainer(element, container, foreditor, forskin)
 
 	$(container).find('.explanation-editor').each(function(){
 		$(this).tinymce(explanationEditorConfig);
-		delphiPrefill($(this));
 	});
 	
 	return viewModel;
@@ -456,9 +455,7 @@ function delphiPrefill(editorElement) {
 	if (!answerSetId) {
 		return; // Cannot prefill when answers have not not been submitted yet.
 	}
-	var surveyElement = editorElement.closest('.survey-element');
-	var questionIdElement = surveyElement.find('input[name="questionId"]');
-	var questionId = questionIdElement.val();
+	var questionId = editorElement[0].id.substring("explanation".length);
 	var data = {
 		answerSetId: answerSetId,
 		questionId: questionId
@@ -476,7 +473,7 @@ function delphiPrefill(editorElement) {
 		success: function(currentExplanationText)
 		{
 			if (currentExplanationText) {
-				editorElement.val(currentExplanationText);
+				editorElement[0].setContent(currentExplanationText);
 			}
 		}
 	});
