@@ -454,3 +454,12 @@ legend {
 	margin-top: 25px;
 	max-width: 645px;
 }
+
+.explanation-section > a.btn {
+	margin-top: 20px;
+}
+
+.inline-loader {
+	display: none;
+	margin-left: 20px;
+}

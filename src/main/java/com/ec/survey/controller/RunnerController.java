@@ -21,6 +21,8 @@ import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mobile.device.Device;
 import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
@@ -2254,7 +2256,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@GetMapping("/delphiGet")
-	public @ResponseBody String delphiGetExplanation(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<String> delphiGetExplanation(HttpServletRequest request, Locale locale) {
 
 		try {
 			final String answerSetId = request.getParameter("answerSetId");
@@ -2271,24 +2273,26 @@ public class RunnerController extends BasicController {
 					.get();
 			AnswerExplanation explanation = answerExplanationService.getExplanation(answer);
 			String explanationText = explanation.getText();
-			return explanationText;
+			return new ResponseEntity<>(explanationText, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return resources.getMessage("error.DelphiGet", null, locale);
+			return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@PostMapping(value = "/delphiUpdate")
-	public @ResponseBody String delphiCreateOrUpdateExplanation(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<String> delphiCreateOrUpdateExplanation(HttpServletRequest request, Locale locale) {
 		try {
 					
 			final String surveyId = request.getParameter("surveyId");
 			final int surveyIdParsed = Integer.parseInt(surveyId);
+
+			final String questionId = request.getParameter("questionId");
+			final int questionIdParsed = Integer.parseInt(questionId);
+
 			final Survey survey = surveyService.getSurvey(surveyIdParsed);
 			final String languageCode = request.getParameter("languageCode");
 			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
-			final String questionId = request.getParameter("questionId");
-			final int questionIdParsed = Integer.parseInt(questionId);
 			final String explanation = request.getParameter("explanation");
 			final User user = sessionService.getCurrentUser(request, false, false);
 
@@ -2300,7 +2304,21 @@ public class RunnerController extends BasicController {
 			} else {
 				//update
 				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, answerSetUniqueCode, existingAnswerSet, languageCode, user, fileService);
-			}			
+			}
+			
+			Set<String> invisibleElements = new HashSet<>();
+			Element element = survey.getElementsById().get(questionId);
+			Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
+			HashMap<Element, String> result = new HashMap<>();
+
+			Draft draft = null;
+			boolean validation = SurveyHelper.validateElement(element, answerSet, dependencies, result, answerService, invisibleElements, resources,
+					locale, null, request, draft);
+			
+			if (!validation) {
+				return new ResponseEntity<>(resources.getMessage("error.CheckValidation", null, locale), HttpStatus.BAD_REQUEST);
+			}
+
 			saveAnswerSet(answerSet, fileDir, null, -1);
 
 			final Answer answer = answerSet.getAnswers().stream()
@@ -2310,11 +2328,11 @@ public class RunnerController extends BasicController {
 
 			answerExplanationService.createOrUpdateExplanation(answer, explanation);
 			
-			return "OK";
+			return new ResponseEntity<>(resources.getMessage("message.ChangesSaved", null, locale), HttpStatus.OK);
 		
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return resources.getMessage("error.DelphiCreateOrUpdate", null, locale);
+			return new ResponseEntity<>(resources.getMessage("error.DelphiCreateOrUpdate", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

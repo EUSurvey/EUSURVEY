@@ -138,8 +138,6 @@ function addElementToContainer(element, container, foreditor, forskin)
 	
 	} catch (e) {}
 
-	var supportsDelphi = false;
-
 	if (viewModel.type == 'Section') {
 		$(container).addClass("sectionitem");
 		var s = $("#section-template").clone().attr("id", "");
@@ -169,33 +167,27 @@ function addElementToContainer(element, container, foreditor, forskin)
 		} else {
 			var s = $("#freetext-template").clone().attr("id", "");
 			$(container).append(s);
-			supportsDelphi = true;
 		}
 	} else if (viewModel.type == 'NumberQuestion') {
 		$(container).addClass("numberitem");
 		var s = $("#number-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	} else if (viewModel.type == 'SingleChoiceQuestion') {
 		$(container).addClass("singlechoiceitem");
 		var s = $("#single-choice-template").clone().attr("id", "");
 		$(container).append(s);
-		supportsDelphi = true;
 	} else if (viewModel.type == 'MultipleChoiceQuestion') {
 		$(container).addClass("multiplechoiceitem");
 		var s = $("#multiple-choice-template").clone().attr("id", "");
 		$(container).append(s);
-		supportsDelphi = true;
 	} else if (viewModel.type == 'DateQuestion') {
 		$(container).addClass("dateitem");
 		var s = $("#date-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	} else if (viewModel.type == 'TimeQuestion') {
 		$(container).addClass("timeitem");
 		var s = $("#time-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	} else if (viewModel.type == 'EmailQuestion') {
 		$(container).addClass("emailitem");
 		var s = $("#email-template").clone().attr("id", "");
@@ -204,12 +196,10 @@ function addElementToContainer(element, container, foreditor, forskin)
 		$(container).addClass("matrixitem");
 		var s = $("#matrix-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	} else if (viewModel.type == 'Table') {
 		$(container).addClass("mytableitem");
 		var s = $("#table-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	} else if (viewModel.type == 'Upload') {
 		$(container).addClass("uploaditem");
 		var s = $("#upload-template").clone().attr("id", "");
@@ -230,10 +220,9 @@ function addElementToContainer(element, container, foreditor, forskin)
 		$(container).addClass("ratingitem");
 		var s = $("#rating-template").clone().attr("id", "");
 		$(container.append(s));
-		supportsDelphi = true;
 	}
 
-	if (isdelphi && supportsDelphi) {
+	if (isdelphi) {
 		var d = $("#delphi-template").clone().attr("id", "");
 		$(container).append(d);
 	}
@@ -480,26 +469,40 @@ function delphiPrefill(editorElement) {
 }
 
 function delphiUpdate(div) {
+	
+	var result = validateInput(div);
+	var message = $(div).find(".delphiupdatemessage").first();
+	$(message).removeClass("update-error");
+	
+	var loader = $(div).find(".inline-loader").first();
+	
+	if (result == false)
+	{
+		return;
+	}
+	
+	saveCookies();
+	
+	$(loader).show();
+	
 	var form = document.createElement("form");
 	$(form).append($(div).clone());
 	var data = $(form).serialize();
 	
 	$.ajax({type: "POST",
 		url: contextpath + "/runner/delphiUpdate",
-		async: false,
 		data: data,
 		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
-		error: function(message)
+		error: function(data)
 	    {
-			alert(message);
+			$(message).html(data.responseText).addClass("update-error");
+			$(loader).hide();
 	    },
-		success: function(message)
+		success: function(data)
 	    {
-			if (message === "OK") {
-				showSuccess("OK")
-			} else {
-				showError(message);
-			}
+			$(message).html(data).addClass("info");
+			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
+			$(loader).hide();
 	    }
 	 });
 }

@@ -404,6 +404,11 @@
 			editor.on('init', function(event) {
 				delphiPrefill($(event.target));
 			});
+			editor.on('Change', function (event) {
+				try {
+				    $('#' + event.target.id).closest(".survey-element").find("a[data-type='delphisavebutton']").removeClass("disabled");
+				} catch (e) {}
+			});
 		},
 		relative_urls: false,
 		remove_script_host: false,
