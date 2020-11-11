@@ -139,10 +139,9 @@
 											<c:forEach var="r" begin="1" end="${question.allRows-1}"> 
 												<c:forEach var="c" begin="1" end="${question.allColumns-1}"> 																
 													<th class="filtercell cell${question.id}-${r}-${c}"<c:if test="${filter.visible(question.id.toString()) == false}">style="display: none;"</c:if>>
-														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id.toString().concat("-").concat(r.toString()).concat("-").concat(c.toString()), question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text"  style="margin:0px;" name='filter${question.id}-${r}-${c}|${question.uniqueId}' />
-												          <a class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign white"></span></a>
+														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id.toString().concat("-").concat(r.toString()).concat("-").concat(c.toString()), question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" class="limitedfilter" style="margin:0px;" name='filter${question.id}-${r}-${c}|${question.uniqueId}' />
 												          <if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                 			<a onclick="showDeleteColumnDialog('${question.uniqueId}#${r.toString()}#${c.toString()}')" class="filterinfo" style="right: 25px" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.DeleteColumn" />"><span class="glyphicon glyphicon-remove white"></span></a>
+                                                 			<a onclick="showDeleteColumnDialog('${question.uniqueId}#${r.toString()}#${c.toString()}')" class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.DeleteColumn" />"><span class="glyphicon glyphicon-remove white"></span></a>
                                                  		  </if>
 			                                        </th>										
 												</c:forEach>													
@@ -295,10 +294,9 @@
                                                 		</if>
 													</c:when>													
 													<c:otherwise>
-														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100"  style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
-												        <a class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.SearchWholeWordOnly" />"><span class="glyphicon glyphicon-question-sign white"></span></a>
-                                                 		<if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
-                                                 			<a onclick="showDeleteColumnDialog('${question.uniqueId}')" class="filterinfo" style="right: 25px" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.DeleteColumn" />"><span class="glyphicon glyphicon-remove white"></span></a>
+														<input onkeyup="checkFilterCell($(this).closest('.filtercell'), false)" value='<esapi:encodeForHTMLAttribute>${filter.getValue(question.id, question.uniqueId)}</esapi:encodeForHTMLAttribute>' type="text" maxlength="100" class="limitedfilter" style="margin:0px;" name="filter${question.id}|${question.uniqueId}" />
+												       <if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+                                                 			<a onclick="showDeleteColumnDialog('${question.uniqueId}')" class="filterinfo" data-toggle="tooltip" data-container="body" data-placement="top" title="<spring:message code="info.DeleteColumn" />"><span class="glyphicon glyphicon-remove white"></span></a>
                                                  		</if>
                                                    	</c:otherwise>
 												</c:choose>
