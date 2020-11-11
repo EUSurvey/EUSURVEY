@@ -1244,6 +1244,15 @@ legend {
 	font-weight: bold; white-space: pre; margin-right: 2px;
 }
 
+.delphiupdatemessage {
+	margin-left: 20px;
+    margin-top: 10px;
+}
+
+.update-error {
+	color: #f00;
+}
+
 .validation-error {
 	color: #f00; font-size: 13px;
 }
