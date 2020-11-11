@@ -17,6 +17,7 @@ function getNewElement(item)
 		element.isComparable = false;
 		element.css = "freetext";
 		element.numRows = 1;
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("singlechoiceitem"))
 	{
@@ -28,6 +29,7 @@ function getNewElement(item)
 		element.order = 0;
 		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
 		element.orderedPossibleAnswers = element.possibleAnswers;
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("multiplechoiceitem"))
@@ -41,6 +43,7 @@ function getNewElement(item)
 		element.order = 0;
 		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
 		element.orderedPossibleAnswers = element.possibleAnswers;
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("numberitem"))
@@ -51,6 +54,7 @@ function getNewElement(item)
 		element.min = null;
 		element.max = null;
 		element.css = "number";
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("matrixitem"))
 	{
@@ -78,6 +82,7 @@ function getNewElement(item)
 		element.questions = getMatrixQuestions(element);
 		element.questionsOrdered = element.questions;
 		element.dependentElementsStrings = [""];
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addTableOrMatrixQuestion");
 	} else if (item.hasClass("mytableitem"))
 	{
@@ -100,6 +105,7 @@ function getNewElement(item)
 		element.answers = getMatrixAnswers(element);
 		element.questions = getMatrixQuestions(element);
 		element.dependentElementsStrings = [""];
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addTableOrMatrixQuestion");
 	} else if (item.hasClass("dateitem"))
 	{
@@ -109,6 +115,7 @@ function getNewElement(item)
 		element.max = null;
 		element.maxString = null;
 		element.css = "date";
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("timeitem"))
 	{
@@ -118,6 +125,7 @@ function getNewElement(item)
 		element.max = null;
 		element.maxString = null;
 		element.css = "time";
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("textitem"))
 	{
@@ -172,6 +180,7 @@ function getNewElement(item)
 		element.css = "regex";
 		element.numRows = 1;
 		element.regex = "";
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("galleryitem"))
 	{
@@ -199,7 +208,7 @@ function getNewElement(item)
 		element.iconType = 0;
 		element.confirmationlabel = "Show";
 		element.childElements = [getBasicElement("Text", false, "Question 1", null, false), getBasicElement("Text", false, "Question 2", null, false)];
-		
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");	
 	} else if (item.hasClass("countriesitem") || item.hasClass("languagesitem") || item.hasClass("dgsitem") || item.hasClass("unsitem") || item.hasClass("agenciesitem")) {
 		item.addClass("singlechoiceitem");
@@ -210,7 +219,7 @@ function getNewElement(item)
 		element.useRadioButtons = true;
 		element.numColumns = 1;
 		element.order = 1;
-		
+		element.isDelphiQuestion = isDelphi;	
 		element.possibleAnswers = [];
 		
 		updateComplexityScore("addChoiceQuestion");
@@ -414,7 +423,9 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		element.isAttribute = false;
 		element.isUnique = false;
 		element.attributeName = element.shortname;
-		element.readonly = false;		
+		element.readonly = false;
+		
+		element.isDelphiQuestion = false;		
 	}
 	
 	if (type == "PossibleAnswer")

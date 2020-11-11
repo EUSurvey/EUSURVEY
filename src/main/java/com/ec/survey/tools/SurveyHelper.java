@@ -1574,6 +1574,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		freetext.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(freetext.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + freetext.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		freetext.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !freetext.getAttributeName().equals(nameattribute)) {
@@ -1686,6 +1693,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		regex.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(regex.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + regex.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		regex.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !regex.getAttributeName().equals(nameattribute)) {
@@ -1784,7 +1798,7 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		email.setIsAttribute(attribute);
-
+		
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !email.getAttributeName().equals(nameattribute)) {
 			oldValues += " attributename: " + email.getAttributeName();
@@ -1854,6 +1868,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		number.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(number.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + number.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		number.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !number.getAttributeName().equals(nameattribute)) {
@@ -2008,6 +2029,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		date.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(date.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + date.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		date.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !date.getAttributeName().equals(nameattribute)) {
@@ -2106,6 +2134,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		time.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(time.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + time.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		time.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !time.getAttributeName().equals(nameattribute)) {
@@ -2222,6 +2257,13 @@ public class SurveyHelper {
 		}
 		rating.setIconType(iconType);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(rating.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + rating.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		rating.setIsDelphiQuestion(isDelphiQuestion);
+		
 		Element q;
 		int j = 0;
 		for (int k = 0; k < questions.length; k++) {
@@ -2370,6 +2412,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		singlechoice.setIsAttribute(attribute);
+				
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(singlechoice.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + singlechoice.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		singlechoice.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !singlechoice.getAttributeName().equals(nameattribute)) {
@@ -2609,6 +2658,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		multiplechoice.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(multiplechoice.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + multiplechoice.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		multiplechoice.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !multiplechoice.getAttributeName().equals(nameattribute)) {
@@ -2916,6 +2972,13 @@ public class SurveyHelper {
 			newValues += " widths: " + widths;
 		}
 		matrix.setWidths(widths);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(matrix.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + matrix.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		matrix.setIsDelphiQuestion(isDelphiQuestion);
 
 		// now get the elements inside the matrix
 		String matrixIdsAsString = parameterMap.get("matrixelements" + id)[0];
@@ -3087,6 +3150,13 @@ public class SurveyHelper {
 			newValues += " widths: " + widths;
 		}
 		table.setWidths(widths);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(table.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + table.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		table.setIsDelphiQuestion(isDelphiQuestion);
 
 		// now get the elements inside the table
 		String tableIdsAsString = parameterMap.get("tableelements" + id)[0];
