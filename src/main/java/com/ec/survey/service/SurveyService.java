@@ -178,7 +178,7 @@ public class SurveyService extends BasicService {
 		List<Survey> surveys = getSurveys(filter, sqlPagination);
 		for (Survey survey : surveys) {
 			survey.setTranslations(translationService.getTranslationLanguagesForSurvey(survey.getId(), false));
-			survey.setCompleteTranslations(getCompletedTranslations(survey));
+			survey.setCompleteTranslations(this.getCompletedTranslations(survey));
 
 			if (addInvitedAndDrafts) {
 				survey.setNumberOfInvitations(participationService.getNumberOfInvitations(survey.getUniqueId()));
@@ -855,7 +855,7 @@ public class SurveyService extends BasicService {
 		Survey survey = getSurvey(uidorshortname, isDraft, checkActive, readReplies, useEagerLoading, language,
 				readonly, false, false, synchronize);
 		if (survey != null)
-			CheckAndRecreateMissingElements(survey, null);
+			checkAndRecreateMissingElements(survey, null);
 		return survey;
 	}
 
@@ -3081,7 +3081,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public void CheckAndRecreateMissingElements(Survey survey, ResultFilter filter) {
+	public void checkAndRecreateMissingElements(Survey survey, ResultFilter filter) {
 		List<Element> surveyelements = survey.getElementsRecursive(true);
 		Map<String, Element> surveyelementsbyuid = new HashMap<>();
 		Map<String, Element> missingelementuids = new HashMap<>();
@@ -3089,7 +3089,7 @@ public class SurveyService extends BasicService {
 			surveyelementsbyuid.put(element.getUniqueId(), element);
 		}
 
-		List<Object> res = reportingService.GetAllQuestionsAndPossibleAnswers(survey);
+		List<Object> res = reportingService.getAllQuestionsAndPossibleAnswers(survey);
 
 		if (res == null) {
 			res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());

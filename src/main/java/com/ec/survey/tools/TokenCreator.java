@@ -54,9 +54,9 @@ public class TokenCreator implements Runnable {
 		try {
 			
 			webserviceService.setStarted(task);
-			WebserviceTask t = webserviceService.get(task);
+			WebserviceTask webserviceTask = webserviceService.get(task);
 			
-			ParticipationGroup group = participationService.get(t.getGroupId());
+			ParticipationGroup group = participationService.get(webserviceTask.getGroupId());
 			
 			String uid = UUID.randomUUID().toString();
 			String filename = "tokens" + task + ".xml";
@@ -74,7 +74,7 @@ public class TokenCreator implements Runnable {
 	        out.print("<tokenList id=\"" + group.getId().toString() + "\">");	        
 	        
 	        List<String> tokens = new ArrayList<>();
-	        for (int i = 0; i < t.getNumber(); i++) {
+	        for (int i = 0; i < webserviceTask.getNumber(); i++) {
 	        	String token = UUID.randomUUID().toString();
 	        	tokens.add(token);
 	        	out.println("<ual code=\"" + token + "\" />");
@@ -87,9 +87,9 @@ public class TokenCreator implements Runnable {
 			attendeeService.addTokens(tokens, group.getId());        
 	       
 			fileService.add(f);
-			t.setResult(uid);
-			t.setDone(true);
-			webserviceService.save(t);
+			webserviceTask.setResult(uid);
+			webserviceTask.setDone(true);
+			webserviceService.save(webserviceTask);
 			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

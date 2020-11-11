@@ -229,7 +229,11 @@ function createUploader(instance, maxSize)
 	    },
 	    cache: false,
 	    sizeLimit: (maxSize * 1048576),
+	    onSubmit: function() {
+	    	$(this.element).parent().find(".uploadinfo").show();
+	    },
 		onComplete : function(id, fileName, responseJSON) {
+			$(this.element).parent().find(".uploadinfo").hide();
 	    	updateFileList($(this.element), responseJSON);
 	    	
 	    	if (responseJSON.wrongextension)
@@ -238,6 +242,7 @@ function createUploader(instance, maxSize)
 	    	}
 		},
 		onError: function() {
+			$(this.element).parent().find(".uploadinfo").hide();
 			showError(messageuploadnoconnection);
 		},
 		showMessage: function(message){

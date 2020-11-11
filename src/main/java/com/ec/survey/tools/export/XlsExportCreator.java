@@ -245,7 +245,7 @@ public class XlsExportCreator extends ExportCreator {
 		}
 
 		if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, filter);
+			surveyService.checkAndRecreateMissingElements(survey, filter);
 			Hibernate.initialize(survey.getMissingElements());
 			for (Element e : survey.getMissingElements()) {
 				if (e instanceof ChoiceQuestion) {
@@ -948,7 +948,7 @@ public class XlsExportCreator extends ExportCreator {
 		ResultFilter filter = export.getResultFilter().copy();
 
 		if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, filter);
+			surveyService.checkAndRecreateMissingElements(survey, filter);
 		}
 
 		form.setSurvey(survey);

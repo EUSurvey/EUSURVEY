@@ -275,21 +275,25 @@ public class ParticipationService extends BasicService {
 	@Transactional(readOnly = true)
 	public int getNumberOfInvitations(String surveyuid) {
 		Session session = sessionFactory.getCurrentSession();
-		
-		String sql = "SELECT count(*) FROM PARTICIPANTS_ATTENDEE pa JOIN PARTICIPANTS p ON pa.PARTICIPANTS_PARTICIPATION_ID = p.PARTICIPATION_ID WHERE p.PARTICIPATION_SURVEY_UID = :uid";
-		SQLQuery query = session.createSQLQuery(sql);
-		query.setString("uid", surveyuid);
-		
-		int invitations = ConversionTools.getValue(query.uniqueResult());
-		
-		sql = "SELECT count(*) FROM PARTICIPANTS_ECASUSERS pe JOIN PARTICIPANTS p ON pe.PARTICIPANTS_PARTICIPATION_ID = p.PARTICIPATION_ID WHERE p.PARTICIPATION_SURVEY_UID = :uid";
-		query = session.createSQLQuery(sql);
-		query.setString("uid", surveyuid);
-		
-		invitations += ConversionTools.getValue(query.uniqueResult());
-		
-		return invitations;
+		Query hquery = session.createQuery("SELECT count(*) " + 
+		"FROM Invitation i, ParticipationGroup pg " + 
+		"WHERE pg.surveyUid=:uid " + 
+		"AND i.participationGroupId = pg.id ").setString("uid", surveyuid);
+		return ConversionTools.getValue(hquery.uniqueResult());
 	}
+
+	@Transactional(readOnly = true)
+	public int getNumberOfOpenInvitations(String surveyuid) {
+		Session session = sessionFactory.getCurrentSession();
+		Query hquery = session.createQuery("SELECT count(*) " + 
+		"FROM Invitation i, ParticipationGroup pg " + 
+		"WHERE pg.surveyUid=:uid " + 
+		"AND i.participationGroupId = pg.id " +
+		"AND i.answers = 0").setString("uid", surveyuid);
+		return ConversionTools.getValue(hquery.uniqueResult());
+	}
+
+
 
 	public List<Invitation> getInvitations(User user, SqlPagination paging, String survey, String surveystatus, Date expiryStart, Date expiryEnd, Date startInv, Date endInv) {
 		Session session = sessionFactory.getCurrentSession();

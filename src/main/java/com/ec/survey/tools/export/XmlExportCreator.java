@@ -83,7 +83,7 @@ public class XmlExportCreator extends ExportCreator {
 		form.setSurvey(surveyService.initializeAndMergeSurvey(form.getSurvey()));
 
 		if (export != null && export.isAllAnswers() && !form.getSurvey().isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(form.getSurvey(), export.getResultFilter());
+			surveyService.checkAndRecreateMissingElements(form.getSurvey(), export.getResultFilter());
 			Hibernate.initialize(form.getSurvey().getMissingElements());
 			for (Element e : form.getSurvey().getMissingElements()) {
 				if (e instanceof ChoiceQuestion) {

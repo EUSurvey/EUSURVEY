@@ -712,9 +712,9 @@ public class AttendeeService extends BasicService {
 	}
 
 	@Transactional(readOnly = false)
-	public void decreaseInvitationAnswer(String token) throws MessageException {
+	public void decreaseInvitationAnswer(String invitationUID) throws MessageException {
 		Session session = sessionFactory.getCurrentSession();
-		Invitation invitation = internalGetInvitationByUniqueId(token);
+		Invitation invitation = internalGetInvitationByUniqueId(invitationUID);
 		if (invitation != null) {
 			if (invitation.getAnswers() > 0) {
 				invitation.setAnswers(invitation.getAnswers() - 1);

@@ -23,8 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ec.survey.exception.ForbiddenURLException;
@@ -33,6 +35,10 @@ import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.NoFormLoadedException;
 import com.ec.survey.exception.TooManyFiltersException;
+import com.ec.survey.exception.httpexception.ForbiddenException;
+import com.ec.survey.exception.httpexception.InternalServerErrorException;
+import com.ec.survey.exception.httpexception.NotFoundException;
+import com.ec.survey.exception.httpexception.UnauthorizedException;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.Draft;
@@ -314,6 +320,31 @@ public class BasicController implements BeanFactoryAware {
 	@ExceptionHandler({ java.net.SocketException.class, ClientAbortException.class })
 	public void handleClientAbortException(Exception e, Locale locale, HttpServletRequest request) {
 		logger.info(e.getLocalizedMessage(), e);
+	}
+
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ExceptionHandler(UnauthorizedException.class)
+	public void handleUnauthorizedException(UnauthorizedException e) {
+		// nothing else to do
+	}
+
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(ForbiddenException.class)
+	public void handleForbiddenException(ForbiddenException e) {
+		// nothing else to do
+	}
+
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(NotFoundException.class)
+	public void handleNotFoundException(NotFoundException e) {
+		// nothing else to do
+	}
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(InternalServerErrorException.class)
+	public void handleInternalServerErrorException(InternalServerErrorException e) {
+		logger.error(e.getLocalizedMessage(), e);
+		// nothing else to do
 	}
 
 	@ExceptionHandler(Exception.class)
