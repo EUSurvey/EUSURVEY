@@ -406,6 +406,7 @@
 			});
 			editor.on('Change', function (event) {
 				try {
+				    // The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
 				    $('#' + event.target.id).closest(".survey-element").find("a[data-type='delphisavebutton']").removeClass("disabled");
 				} catch (e) {}
 			});
