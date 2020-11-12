@@ -554,93 +554,94 @@
 		</div> <!-- participants -->
 		
 		<div id="details" data-bind="visible: Page() == 2">
-			<div class="fixedtitleform">
-				<div class="fixedtitleinner">
-					<div id="action-bar" class="container action-bar" data-bind="visible: DataLoaded() && Guestlists().length > 0">
-						<div class="row">
-							<div class="col-md-4" style="text-align: left">
-								<a onclick="_participants.Page(1)"><spring:message code="label.Participants" /></a> > <spring:message code="label.ViewGuestList" />
-							</div>
-							<div class="col-md-4" style="text-align: center">
-								<spring:message code="label.GuestListEntries" /> <span style="margin-left: 10px;" data-bind="text: selectedGroup() != null ? selectedGroup().children() : ''"></span>
-							</div>
-							<div class="col-md-4" style="text-align: right">
-								<!-- ko if: selectedGroup() != null && selectedGroup().exportEnabled() -->
-									<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: selectedGroup().exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
-									<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: selectedGroup().exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
-								<!-- /ko -->
-							</div>
+			<div id="action-bar" class="action-bar container-fluid" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+				<div class="row">
+						<div class="col-md-4" style="text-align: left">
+							<a onclick="_participants.Page(1)"><spring:message code="label.Participants" /></a> > <spring:message code="label.ViewGuestList" />
 						</div>
-					</div>
-				</div>
-			</div>
-			
-			<div class="fullpageform160">
-				<table id="participantdetailstable" class="table table-bordered table-styled table-striped" style="max-width: none; width: auto; margin-left: auto; margin-right: auto;" data-bind="visible: DataLoaded() && Guestlists().length > 0">
-					<thead>
-						<tr>
-							<!-- ko if: selectedGroup() != null && (selectedGroup().type() == 'Static' || selectedGroup().type() == 'ECMembers') -->
-									<th style="width: 150px"><spring:message code="label.Name" /></th>
-									<th style="width: 150px"><spring:message code="label.Email" /></th>
-									 <c:if test="${!form.survey.isAnonymous()}">
-										<th style="width: 150px"><spring:message code="label.InvitationDate" /></th>
-										<th style="width: 150px"><spring:message code="label.ReminderDate" /></th>
-										<th style="width: 150px"><spring:message code="label.Answers" /></th>
-									</c:if>
+						<div class="col-md-4" style="text-align: center">
+							<spring:message code="label.GuestListEntries" /> <span style="margin-left: 10px;" data-bind="text: selectedGroup() != null ? selectedGroup().children() : ''"></span>
+						</div>
+						<div class="col-md-4" style="text-align: right">
+							<!-- ko if: selectedGroup() != null && selectedGroup().exportEnabled() -->
+								<a id="startExportTokensxls" class="iconbutton" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.Downloadxls" />" data-bind="click: selectedGroup().exportxls"><img src='${contextpath}/resources/images/file_extension_xls_small.png' /></a>
+								<a id="startExportTokensods" class="iconbutton" data-toggle="tooltip" data-placement="bottom" title="<spring:message code="tooltip.Downloadods" />" data-bind="click: selectedGroup().exportods"><img src='${contextpath}/resources/images/file_extension_ods_small.png' /></a>
 							<!-- /ko -->
-							<!-- ko if: selectedGroup() != null && (selectedGroup().type() == 'Token') -->
-									<th style="width: 150px"><spring:message code="label.Token" /></th>
-									<c:if test="${!form.survey.isAnonymous()}">
- 										<th style="width: 150px"><spring:message code="label.Answers" /></th>
- 									</c:if>
- 									<th style="width: 150px"><spring:message code="label.CreationDate" /></th>
-							<!-- /ko -->							
-						</tr>
-					</thead>
-					
-						<!-- ko if: selectedGroup() != null && selectedGroup().type() == 'Static' -->
-						<tbody data-bind="foreach: selectedGroup().attendees()">
-							<tr>
-								<td data-bind="text: name"></td>
-								<td data-bind="text: email"></td>
-								<c:if test="${!form.survey.isAnonymous()}">
-									<td data-bind="text: niceInvited"></td>
-									<td data-bind="text: niceReminded"></td>
-									<td data-bind="text: answers"></td>
-								</c:if>
-							</tr>
-						</tbody>
-						<!-- /ko -->
-						<!-- ko if: selectedGroup() != null && selectedGroup().type() == 'ECMembers' -->
-						<tbody data-bind="foreach: selectedGroup().users()">
-							<tr>
-								<td data-bind="text: name"></td>
-								<td data-bind="text: email"></td>
-								<c:if test="${!form.survey.isAnonymous()}">
-									<td data-bind="text: niceInvited"></td>
-									<td data-bind="text: niceReminded"></td>
-									<td data-bind="text: answers"></td>
-								</c:if>
-							</tr>
-						</tbody>
-						<!-- /ko -->
-						<!-- ko if: selectedGroup() != null && selectedGroup().type() == 'Token' -->
-						<tbody data-bind="foreach: selectedGroup().tokens()">
-							<tr>
-								<td data-bind="text: uniqueId"></td>
-								<c:if test="${!form.survey.isAnonymous()}">
-								 	<td data-bind="text: answers"></td>
-								</c:if>
-								<td data-bind="text: niceInvited"></td>
-							</tr>
-						</tbody>
-						<!-- /ko -->
-				</table>			
-				
-				<div style="text-align: center">
-					<a class="btn btn-primary" onclick="_participants.Page(1)"><spring:message code="label.Back" /></a>	
-				</div>
-			</div>
+						</div>
+					</div> <!-- row -->
+				</div> <!-- container -->
+			<div class="fullpageform10">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<table id="participantdetailstable" class="table table-bordered table-styled table-striped" style="margin-left: auto; margin-right: auto;" data-bind="visible: DataLoaded() && Guestlists().length > 0">
+								<thead>
+									<tr>
+										<!-- ko if: selectedGroup() != null && (selectedGroup().type() == 'Static' || selectedGroup().type() == 'ECMembers') -->
+											<th><spring:message code="label.Name" /></th>
+											<th><spring:message code="label.Email" /></th>
+											<c:if test="${!form.survey.isAnonymous()}">
+												<th><spring:message code="label.InvitationDate" /></th>
+												<th><spring:message code="label.ReminderDate" /></th>
+												<th><spring:message code="label.Answers" /></th>
+											</c:if>
+										<!-- /ko -->
+										<!-- ko if: selectedGroup() != null && (selectedGroup().type() == 'Token') -->
+											<th><spring:message code="label.Token" /></th>
+												<c:if test="${!form.survey.isAnonymous()}">
+													<th><spring:message code="label.Answers" /></th>
+												</c:if>
+											<th><spring:message code="label.CreationDate" /></th>
+										<!-- /ko -->							
+									</tr>
+								</thead>
+								<!-- ko if: selectedGroup() != null && selectedGroup().type() == 'Static' -->
+									<tbody data-bind="foreach: selectedGroup().attendees()">
+										<tr>
+											<td data-bind="text: name"></td>
+											<td data-bind="text: email"></td>
+											<c:if test="${!form.survey.isAnonymous()}">
+												<td data-bind="text: niceInvited"></td>
+												<td data-bind="text: niceReminded"></td>
+												<td data-bind="text: answers"></td>
+											</c:if>
+										</tr>
+									</tbody>
+								<!-- /ko -->
+								<!-- ko if: selectedGroup() != null && selectedGroup().type() == 'ECMembers' -->
+									<tbody data-bind="foreach: selectedGroup().users()">
+										<tr>
+											<td data-bind="text: name"></td>
+											<td data-bind="text: email"></td>
+											<c:if test="${!form.survey.isAnonymous()}">
+												<td data-bind="text: niceInvited"></td>
+												<td data-bind="text: niceReminded"></td>
+												<td data-bind="text: answers"></td>
+											</c:if>
+										</tr>
+									</tbody>
+								<!-- /ko -->
+								<!-- ko if: selectedGroup() != null && selectedGroup().type() == 'Token' -->
+									<tbody data-bind="foreach: selectedGroup().tokens()">
+										<tr>
+											<td data-bind="text: uniqueId"></td>
+											<c:if test="${!form.survey.isAnonymous()}">
+												<td data-bind="text: answers"></td>
+											</c:if>
+											<td data-bind="text: niceInvited"></td>
+										</tr>
+									</tbody>
+								<!-- /ko -->
+							</table>
+						</div> <!-- col md -->
+					</div> <!-- row -->
+					<div class="row lastRowBeforeFooter">
+						<div class="col-md-4"></div>
+  						<div class="col-md-4"></div>
+  						<div class="col-md-4 text-right"><a class="btn btn-default" onclick="_participants.Page(1)"><spring:message code="label.Back" /></a></div>
+					</div>	<!-- row -->
+				</div> <!-- container-fluid -->
+			</div> <!-- fullpageform10 -->
 		</div> <!-- details -->
 		
 		<div id="newcontactlist" data-bind="visible: Page() == 3">		
