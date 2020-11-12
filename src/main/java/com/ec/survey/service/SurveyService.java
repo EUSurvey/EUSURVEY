@@ -2842,6 +2842,9 @@ public class SurveyService extends BasicService {
 
 			if (!Tools.isEqual(draftSurvey.getMaxNumberContribution(), publishedSurvey.getMaxNumberContribution()))
 				hasPendingChanges = true;
+			
+			if (draftSurvey.getSendConfirmationEmail() != publishedSurvey.getSendConfirmationEmail())
+				hasPendingChanges = true;
 
 			if (!hasPendingChanges)
 				for (String key : draftSurvey.getUsefulLinks().keySet()) {
