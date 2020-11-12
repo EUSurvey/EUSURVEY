@@ -74,6 +74,7 @@
 <script type="text/javascript" src="${contextpath}/resources/js/system.js?version=<%@include file="version.txt" %>"></script>
 <script src="https://ec.europa.eu/wel/cookie-consent/consent.js" type="text/javascript"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/bootstrap-slider.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="version.txt" %>"></script>
  
 <script type="text/javascript">
 	if (top != self) top.location=location;

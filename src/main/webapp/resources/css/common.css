@@ -1249,6 +1249,11 @@ legend {
     margin-top: 10px;
 }
 
+.elementwrapper {
+	display: flex;
+	justify-content: space-between;
+}
+
 .update-error {
 	color: #f00;
 }

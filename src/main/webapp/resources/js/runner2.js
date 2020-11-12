@@ -471,6 +471,70 @@ function delphiUpdate(div) {
 			$(message).html(data).addClass("info");
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
 			$(loader).hide();
+
+			// remove existing charts and recreate next to survey-element (such that question and chart are shown next to each other)
+			var elementWrapper = $(div).closest(".elementwrapper");
+			$(elementWrapper).find("canvas.delphi-chart").remove();
+			$(elementWrapper).append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
+			var canvas = $(elementWrapper).find(".delphi-chart")[0];
+
+			var chartColors = {
+				red: 'rgb(255, 99, 132)',
+				orange: 'rgb(255, 159, 64)',
+				yellow: 'rgb(255, 205, 86)',
+				green: 'rgb(75, 192, 192)',
+				blue: 'rgb(54, 162, 235)',
+				purple: 'rgb(153, 102, 255)',
+				grey: 'rgb(201, 203, 207)'
+			};
+
+			var chartData = {
+				datasets: [{
+					label: '',
+					data: [
+						Math.random() * 20,
+						Math.random() * 20,
+						Math.random() * 20,
+						Math.random() * 20,
+						Math.random() * 20,
+						Math.random() * 20,
+						Math.random() * 20],
+					backgroundColor: [
+						chartColors.red,
+						chartColors.orange,
+						chartColors.yellow,
+						chartColors.green,
+						chartColors.blue,
+						chartColors.purple,
+						chartColors.grey
+					]
+				}],
+				labels: [
+					'It will never happen',
+					'It is very unlikely',
+					'It is unlikely',
+					'Neutral',
+					'It is likely',
+					'It is very likely',
+					'It will happen'
+				]
+			};
+
+			var chartOptions = {
+				scaleShowValues: true,
+				responsive: false,
+				scales: {
+					yAxes: [{ticks: {beginAtZero: true}}],
+					xAxes: [{ticks: {autoSkip: false}}]
+				},
+				legend: {display: false},
+			};
+
+			new Chart(canvas.getContext('2d'), {
+				type: 'bar',
+				data: chartData,
+				options: chartOptions
+			});
 	    }
 	 });
 }
