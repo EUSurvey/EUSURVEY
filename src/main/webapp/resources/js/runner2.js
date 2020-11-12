@@ -482,46 +482,33 @@ function delphiUpdate(div) {
 
 			var canvas = $(chartWrapper).find(".delphi-chart")[0];
 
-			var chartColors = {
-				red: 'rgb(255, 99, 132)',
-				orange: 'rgb(255, 159, 64)',
-				yellow: 'rgb(255, 205, 86)',
-				green: 'rgb(75, 192, 192)',
-				blue: 'rgb(54, 162, 235)',
-				purple: 'rgb(153, 102, 255)',
-				grey: 'rgb(201, 203, 207)'
-			};
+			var colors = [];
+			var internalData = [];
+			var labels = [
+				'It will never happen',
+				'It is very unlikely',
+				'It is unlikely',
+				'Neutral',
+				'It is likely',
+				'It is very likely',
+				'It will happen'
+			];
+
+			for (var i = 0; i < labels.length; i++) {
+				var hue = Math.floor(360 - (i * 360 / labels.length));
+				var saturation = 100 - Math.floor(Math.random() * 30);
+				var lightness = 60 - Math.floor(Math.random() * 20);
+				colors.push('hsl(' + hue + ',' + saturation + '%, ' + lightness + '%)');
+				internalData.push(Math.floor(Math.random() * 30));
+			}
 
 			var chartData = {
 				datasets: [{
 					label: '',
-					data: [
-						Math.random() * 20,
-						Math.random() * 20,
-						Math.random() * 20,
-						Math.random() * 20,
-						Math.random() * 20,
-						Math.random() * 20,
-						Math.random() * 20],
-					backgroundColor: [
-						chartColors.red,
-						chartColors.orange,
-						chartColors.yellow,
-						chartColors.green,
-						chartColors.blue,
-						chartColors.purple,
-						chartColors.grey
-					]
+					data: internalData,
+					backgroundColor: colors
 				}],
-				labels: [
-					'It will never happen',
-					'It is very unlikely',
-					'It is unlikely',
-					'Neutral',
-					'It is likely',
-					'It is very likely',
-					'It will happen'
-				]
+				labels
 			};
 
 			var chartOptions = {
