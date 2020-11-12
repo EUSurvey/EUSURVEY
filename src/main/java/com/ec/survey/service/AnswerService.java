@@ -832,7 +832,7 @@ public class AnswerService extends BasicService {
 					.map(AnswerSet::getAnswers)
 					.flatMap(Collection::stream)
 					.collect(Collectors.toList());
-			answerExplanationService.deleteExplanationIfNotReferencedByAnAnswerAnymore(answersToDelete);
+			//answerExplanationService.deleteExplanationIfNotReferencedByAnAnswerAnymore(answersToDelete);
 		}
 
 		for (AnswerSet as : answerSets) {
@@ -1239,7 +1239,7 @@ public class AnswerService extends BasicService {
 
 		if (answerSet.getSurvey().getIsDelphi()) {
 			final List<Answer> answersToDelete = answerSet.getAnswers();
-			answerExplanationService.deleteExplanationIfNotReferencedByAnAnswerAnymore(answersToDelete);
+			//answerExplanationService.deleteExplanationIfNotReferencedByAnAnswerAnymore(answersToDelete);
 		}
 
 		Session session = sessionFactory.getCurrentSession();

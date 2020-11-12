@@ -1,8 +1,6 @@
 package com.ec.survey.model;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "ANSWERS_EXPLANATIONS")
@@ -11,10 +9,16 @@ public class AnswerExplanation implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    private List<Integer> answerIds = new ArrayList<>();
+    private Integer answerSetId;
+    private String questionUid;
     private String text;
 
-    @Id
+    public AnswerExplanation(int answerSetId, String questionUid) {
+		this.answerSetId = answerSetId;
+		this.questionUid = questionUid;
+	}
+
+	@Id
     @Column(name = "ANSWER_EXPLANATION_ID")
     @GeneratedValue
     public Integer getId() {
@@ -25,28 +29,30 @@ public class AnswerExplanation implements java.io.Serializable {
         this.id = id;
     }
 
-    @ElementCollection
-    @CollectionTable(name="ANSWERS_EXPLANATIONS_ANSWER_IDS", joinColumns=@JoinColumn(name="ANSWER_EXPLANATION_ID"))
-    @Column(name="ANSWER_ID")
-    public List<Integer> getAnswerIds() {
-        return answerIds;
+    @Column(name="ANSWER_SET_ID")
+    public Integer getAnswerSetId() {
+        return answerSetId;
+    }
+    public void setAnswerSetId(Integer answerSetId) {
+        this.answerSetId = answerSetId;
     }
 
-    public void setAnswerIds(List<Integer> answerIds) {
-        this.answerIds = answerIds;
-    }
-
-    public void removeAnswerId(Integer answerId) {
-        this.answerIds.remove(answerId);
-    }
+    @Column(name="QUESTION_UID")
+    public String getQuestionUid() {
+		return questionUid;
+	}
+	public void setQuestionUid(String questionUid) {
+		this.questionUid = questionUid;
+	}
 
     @Lob
     @Column(name = "TEXT", nullable = false)
     public String getText() {
         return text;
     }
-
     public void setText(String text) {
         this.text = text;
     }
+
+	
 }

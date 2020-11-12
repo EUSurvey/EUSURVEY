@@ -2258,23 +2258,16 @@ public class RunnerController extends BasicController {
 
 	@GetMapping("/delphiGet")
 	public ResponseEntity<String> delphiGetExplanation(HttpServletRequest request, Locale locale) {
-
 		try {
 			final String answerSetId = request.getParameter("answerSetId");
 			final int answerSetIdParsed = Integer.parseInt(answerSetId);
 			final AnswerSet answerSet = answerService.get(answerSetIdParsed);
 			if (answerSet == null) {
-				throw new RuntimeException("The explanation could not be retrieved as the answer set is not saved yet.");
+				return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.BAD_REQUEST);
 			}
-			final String questionId = request.getParameter("questionId");
-			final int questionIdParsed = Integer.parseInt(questionId);
-			final Answer answer = answerSet.getAnswers().stream()
-					.filter(a -> a.getQuestionId().equals(questionIdParsed))
-					.findFirst()
-					.get();
-			AnswerExplanation explanation = answerExplanationService.getExplanation(answer);
-			String explanationText = explanation.getText();
-			return new ResponseEntity<>(explanationText, HttpStatus.OK);
+			final String questionUid = request.getParameter("questionUid");
+			AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
+			return new ResponseEntity<>(explanation.getText(), HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
@@ -2290,9 +2283,8 @@ public class RunnerController extends BasicController {
 			final String surveyId = request.getParameter("surveyId");
 			final int surveyIdParsed = Integer.parseInt(surveyId);
 
-			final String questionId = request.getParameter("questionId");
-			final int questionIdParsed = Integer.parseInt(questionId);
-
+			final String questionUid = request.getParameter("questionUid");
+	
 			final Survey survey = surveyService.getSurvey(surveyIdParsed);
 			final String languageCode = request.getParameter("languageCode");
 			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
@@ -2310,7 +2302,7 @@ public class RunnerController extends BasicController {
 			}
 			
 			Set<String> invisibleElements = new HashSet<>();
-			Element element = survey.getElementsById().get(questionId);
+			Element element = survey.getElementsByUniqueId().get(questionUid);
 			Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
 			HashMap<Element, String> result = new HashMap<>();
 
@@ -2324,17 +2316,7 @@ public class RunnerController extends BasicController {
 
 			saveAnswerSet(answerSet, fileDir, null, -1);
 
-			final List<Answer> oldAnswersToQuestion = new ArrayList<>();
-			if (existingAnswerSet != null) {
-				existingAnswerSet.getAnswers().stream()
-						.filter(a -> a.getQuestionId().equals(questionIdParsed))
-						.collect(Collectors.toList());
-			}
-			final List<Answer> newAnswersToQuestion = answerSet.getAnswers().stream()
-					.filter(a -> a.getQuestionId().equals(questionIdParsed))
-					.collect(Collectors.toList());
-
-			answerExplanationService.createOrUpdateExplanation(oldAnswersToQuestion, newAnswersToQuestion, explanation);
+			answerExplanationService.createOrUpdateExplanation(answerSet, questionUid, explanation);
 			
 			return new ResponseEntity<>(resources.getMessage("message.ChangesSaved", null, locale), HttpStatus.OK);
 		
