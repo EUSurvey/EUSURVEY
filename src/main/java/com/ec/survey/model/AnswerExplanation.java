@@ -1,6 +1,8 @@
 package com.ec.survey.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "ANSWERS_EXPLANATIONS")
@@ -9,7 +11,7 @@ public class AnswerExplanation implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    private Answer referredAnswer;
+    private List<Integer> answerIds = new ArrayList<>();
     private String text;
 
     @Id
@@ -23,14 +25,17 @@ public class AnswerExplanation implements java.io.Serializable {
         this.id = id;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "ANSWER_ID")
-    public Answer getReferredAnswer() {
-        return referredAnswer;
+    @ElementCollection
+    public List<Integer> getAnswerIds() {
+        return answerIds;
     }
 
-    public void setReferredAnswer(Answer referredAnswer) {
-        this.referredAnswer = referredAnswer;
+    public void setAnswerIds(List<Integer> answerIds) {
+        this.answerIds = answerIds;
+    }
+
+    public void removeAnswerId(Integer answerId) {
+        this.answerIds.remove(answerId);
     }
 
     @Lob

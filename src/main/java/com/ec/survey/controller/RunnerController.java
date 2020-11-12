@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/runner")
@@ -2274,6 +2275,8 @@ public class RunnerController extends BasicController {
 			AnswerExplanation explanation = answerExplanationService.getExplanation(answer);
 			String explanationText = explanation.getText();
 			return new ResponseEntity<>(explanationText, HttpStatus.OK);
+		} catch (NoSuchElementException ex) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -2321,12 +2324,17 @@ public class RunnerController extends BasicController {
 
 			saveAnswerSet(answerSet, fileDir, null, -1);
 
-			final Answer answer = answerSet.getAnswers().stream()
+			final List<Answer> oldAnswersToQuestion = new ArrayList<>();
+			if (existingAnswerSet != null) {
+				existingAnswerSet.getAnswers().stream()
+						.filter(a -> a.getQuestionId().equals(questionIdParsed))
+						.collect(Collectors.toList());
+			}
+			final List<Answer> newAnswersToQuestion = answerSet.getAnswers().stream()
 					.filter(a -> a.getQuestionId().equals(questionIdParsed))
-					.findFirst()
-					.get();
+					.collect(Collectors.toList());
 
-			answerExplanationService.createOrUpdateExplanation(answer, explanation);
+			answerExplanationService.createOrUpdateExplanation(oldAnswersToQuestion, newAnswersToQuestion, explanation);
 			
 			return new ResponseEntity<>(resources.getMessage("message.ChangesSaved", null, locale), HttpStatus.OK);
 		

@@ -45,9 +45,13 @@ import java.math.BigInteger;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 @Service("answerService")
 public class AnswerService extends BasicService {
+
+	@Resource
+	private AnswerExplanationService answerExplanationService;
 
 	@Resource(name = "attendeeService")
 	private AttendeeService attendeeService;
@@ -823,6 +827,12 @@ public class AnswerService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<AnswerSet> answerSets = query.list();
 
+		final List<Answer> answersToDelete = answerSets.stream()
+				.map(AnswerSet::getAnswers)
+				.flatMap(Collection::stream)
+				.collect(Collectors.toList());
+		answerExplanationService.deleteExplanationIfNotReferencedByOneAnswerAnymore(answersToDelete);
+
 		for (AnswerSet as : answerSets) {
 			if (!as.getIsDraft()) {
 				session.delete(as);
@@ -1224,6 +1234,9 @@ public class AnswerService extends BasicService {
 			reportingService.removeFromOLAPTable(answerSet.getSurvey().getUniqueId(), answerSet.getUniqueCode(),
 					publishedSurvey);
 		}
+
+		final List<Answer> answersToDelete = answerSet.getAnswers();
+		answerExplanationService.deleteExplanationIfNotReferencedByOneAnswerAnymore(answersToDelete);
 
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(answerSet);
