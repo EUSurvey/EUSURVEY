@@ -26,6 +26,8 @@ public class AnswerExplanation implements java.io.Serializable {
     }
 
     @ElementCollection
+    @CollectionTable(name="ANSWERS_EXPLANATIONS_ANSWER_IDS", joinColumns=@JoinColumn(name="ANSWER_EXPLANATION_ID"))
+    @Column(name="ANSWER_ID")
     public List<Integer> getAnswerIds() {
         return answerIds;
     }
