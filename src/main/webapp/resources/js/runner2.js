@@ -441,19 +441,17 @@ function loadGraphData(div)
 	var questionuid = $(div).find("[name=questionuid]").first().val();
 	
 	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid;
-	$.ajax({type: "GET",
+	$.ajax({
+		type: "GET",
 		url: contextpath + "/runner/delphiGraph",
 		data: data,
-		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
-		error: function(data)
-	    {
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function (data) {
 			//TODO
-	    },
-		success: function(data)
-	    {
-			var labels = data.labels;
-			var points = data.data;
-			
+		},
+		success: function (result) {
 			// remove existing charts and recreate next to survey-element (such that question and chart are shown next to each other)
 			var elementWrapper = $(div).closest(".elementwrapper");
 			$(elementWrapper).find(".chart-wrapper").remove();
@@ -466,13 +464,17 @@ function loadGraphData(div)
 
 			var colors = [];
 			var internalData = [];
-		
-			for (var i = 0; i < labels.length; i++) {
-				var hue = Math.floor(360 - (i * 360 / labels.length));
-				var saturation = 100 - Math.floor(Math.random() * 30);
-				var lightness = 60 - Math.floor(Math.random() * 20);
+			var labels = [];
+
+			var graphData = result.data;
+
+			for (var i = 0; i < graphData.length; i++) {
+				var hue = Math.floor(360 - (i * 360 / graphData.length));
+				var saturation = 95 - Math.floor(Math.pow(-1, i + 1) * 5);
+				var lightness = 50 - Math.floor(Math.pow(-1, i + 1) * 5);
 				colors.push('hsl(' + hue + ',' + saturation + '%, ' + lightness + '%)');
-				internalData.push(points[i]);
+				internalData.push(graphData[i].value);
+				labels.push(graphData[i].label);
 			}
 
 			var chartData = {

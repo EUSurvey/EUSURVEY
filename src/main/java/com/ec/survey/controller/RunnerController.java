@@ -1,10 +1,6 @@
 package com.ec.survey.controller;
 
-import com.ec.survey.exception.ForbiddenURLException;
-import com.ec.survey.exception.FrozenSurveyException;
-import com.ec.survey.exception.InvalidURLException;
-import com.ec.survey.exception.MessageException;
-import com.ec.survey.exception.SmtpServerNotConfiguredException;
+import com.ec.survey.exception.*;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.GlobalPrivilege;
@@ -12,10 +8,11 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
-import com.ec.survey.service.*;
+import com.ec.survey.service.MailService;
+import com.ec.survey.service.PDFService;
+import com.ec.survey.service.ValidCodesService;
 import com.ec.survey.tools.*;
 import com.ec.survey.tools.export.StatisticsCreator;
-
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.owasp.esapi.ESAPI;
@@ -30,12 +27,7 @@ import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureExcep
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -2305,59 +2297,57 @@ public class RunnerController extends BasicController {
 	@GetMapping(value="delphiGraph")
 	public ResponseEntity<DelphiGraphData> delphiGraph(HttpServletRequest request, Locale locale)
 	{
-		DelphiGraphData result = null;
 		try {
-			
 			String surveyid = request.getParameter("surveyid");
 			int sid = Integer.parseInt(surveyid);
 			Survey survey = surveyService.getSurvey(sid);
-			
-			if (survey == null || !survey.getIsDelphi())
-			{
-				return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+
+			if (survey == null || !survey.getIsDelphi()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
-			
+
 			String questionuid = request.getParameter("questionuid");
 			Element element = survey.getQuestionMapByUniqueId().get(questionuid);
-			
-			if (element == null || !(element instanceof ChoiceQuestion))
-			{
-				return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+
+			if (!(element instanceof Question)) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
-			
+
 			Question question = (Question) element;
-			if (!question.getIsDelphiQuestion())
-			{
-				return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-			}			
-			
-			result = new DelphiGraphData();
-			
+			if (!question.getIsDelphiQuestion()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
 			Statistics statistics = new Statistics();
 			statistics.setSurveyId(survey.getId());
-			
+
 			StatisticsCreator creator = (StatisticsCreator) context.getBean("statisticsCreator");
-			
+
 			Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapGallery = new HashMap<>();
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset = new HashMap<>();
 
-			creator.getAnswers4Statistics(survey, (ChoiceQuestion)question, numberOfAnswersMap, numberOfAnswersMapMatrix,
+			creator.getAnswers4Statistics(survey, question, numberOfAnswersMap, numberOfAnswersMapMatrix,
 					numberOfAnswersMapGallery, multipleChoiceSelectionsByAnswerset, numberOfAnswersMapRatingQuestion);
-	
-			creator.addStatistics(survey, (ChoiceQuestion)question, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
-			
-			for (PossibleAnswer answer : ((ChoiceQuestion)question).getAllPossibleAnswers()) {
-				result.addPoint(statistics.getRequestedRecords().get(answer.getId().toString()), answer.getTitle());				
-			}			
-			
-			return new ResponseEntity<>(result, HttpStatus.OK);
-			
+
+			creator.addStatistics(survey, (ChoiceQuestion) question, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
+
+			DelphiGraphData result = new DelphiGraphData();
+
+			for (PossibleAnswer answer : ((ChoiceQuestion) question).getAllPossibleAnswers()) {
+				DelphiGraphEntry entry = new DelphiGraphEntry();
+				entry.setLabel(answer.getTitle());
+				entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
+				result.addEntry(entry);
+			}
+
+			return ResponseEntity.ok(result);
+
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
