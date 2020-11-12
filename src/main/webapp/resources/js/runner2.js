@@ -435,6 +435,74 @@ function getWidth(widths, index)
 	return "50px";
 }
 
+function loadGraphData(div)
+{
+	var surveyid = $(div).find("[name=surveyid]").first().val();
+	var questionuid = $(div).find("[name=questionuid]").first().val();
+	
+	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid;
+	$.ajax({type: "GET",
+		url: contextpath + "/runner/delphiGraph",
+		data: data,
+		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+		error: function(data)
+	    {
+			//TODO
+	    },
+		success: function(data)
+	    {
+			var labels = data.labels;
+			var points = data.data;
+			
+			// remove existing charts and recreate next to survey-element (such that question and chart are shown next to each other)
+			var elementWrapper = $(div).closest(".elementwrapper");
+			$(elementWrapper).find(".chart-wrapper").remove();
+			$(elementWrapper).append("<div class='chart-wrapper'></div>");
+
+			var chartWrapper = $(elementWrapper).find("div.chart-wrapper").first();
+			$(chartWrapper).append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
+
+			var canvas = $(chartWrapper).find(".delphi-chart")[0];
+
+			var colors = [];
+			var internalData = [];
+		
+			for (var i = 0; i < labels.length; i++) {
+				var hue = Math.floor(360 - (i * 360 / labels.length));
+				var saturation = 100 - Math.floor(Math.random() * 30);
+				var lightness = 60 - Math.floor(Math.random() * 20);
+				colors.push('hsl(' + hue + ',' + saturation + '%, ' + lightness + '%)');
+				internalData.push(points[i]);
+			}
+
+			var chartData = {
+				datasets: [{
+					label: '',
+					data: internalData,
+					backgroundColor: colors
+				}],
+				labels
+			};
+
+			var chartOptions = {
+				scaleShowValues: true,
+				responsive: false,
+				scales: {
+					yAxes: [{ticks: {beginAtZero: true}}],
+					xAxes: [{ticks: {autoSkip: false}}]
+				},
+				legend: {display: false},
+			};
+
+			new Chart(canvas.getContext('2d'), {
+				type: 'bar',
+				data: chartData,
+				options: chartOptions
+			});
+	    }
+	 });
+}
+
 function delphiUpdate(div) {
 	
 	var result = validateInput(div);
@@ -471,61 +539,8 @@ function delphiUpdate(div) {
 			$(message).html(data).addClass("info");
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
 			$(loader).hide();
-
-			// remove existing charts and recreate next to survey-element (such that question and chart are shown next to each other)
-			var elementWrapper = $(div).closest(".elementwrapper");
-			$(elementWrapper).find(".chart-wrapper").remove();
-			$(elementWrapper).append("<div class='chart-wrapper'></div>");
-
-			var chartWrapper = $(elementWrapper).find("div.chart-wrapper").first();
-			$(chartWrapper).append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
-
-			var canvas = $(chartWrapper).find(".delphi-chart")[0];
-
-			var colors = [];
-			var internalData = [];
-			var labels = [
-				'It will never happen',
-				'It is very unlikely',
-				'It is unlikely',
-				'Neutral',
-				'It is likely',
-				'It is very likely',
-				'It will happen'
-			];
-
-			for (var i = 0; i < labels.length; i++) {
-				var hue = Math.floor(360 - (i * 360 / labels.length));
-				var saturation = 100 - Math.floor(Math.random() * 30);
-				var lightness = 60 - Math.floor(Math.random() * 20);
-				colors.push('hsl(' + hue + ',' + saturation + '%, ' + lightness + '%)');
-				internalData.push(Math.floor(Math.random() * 30));
-			}
-
-			var chartData = {
-				datasets: [{
-					label: '',
-					data: internalData,
-					backgroundColor: colors
-				}],
-				labels
-			};
-
-			var chartOptions = {
-				scaleShowValues: true,
-				responsive: false,
-				scales: {
-					yAxes: [{ticks: {beginAtZero: true}}],
-					xAxes: [{ticks: {autoSkip: false}}]
-				},
-				legend: {display: false},
-			};
-
-			new Chart(canvas.getContext('2d'), {
-				type: 'bar',
-				data: chartData,
-				options: chartOptions
-			});
+			
+			loadGraphData(div);
 	    }
 	 });
 }

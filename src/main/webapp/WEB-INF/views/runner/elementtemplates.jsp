@@ -1124,6 +1124,7 @@
 		<!-- ko if: isDelphiQuestion() -->
 		<input type="hidden" name="surveyid" value="${form.survey.id}" />
 		<input type="hidden" name="questionid" data-bind="value: id()" />
+		<input type="hidden" name="questionuid" data-bind="value: uniqueId()" />
 		<input type="hidden" name="uniquecode" value="${uniqueCode}" />
 		<input type="hidden" name="languagecode" value="${form.language.code}" />
 		<div style="margin-left: 20px; margin-top: 20px;">
