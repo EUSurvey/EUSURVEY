@@ -2329,22 +2329,33 @@ public class RunnerController extends BasicController {
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapGallery = new HashMap<>();
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset = new HashMap<>();
 
-			creator.getAnswers4Statistics(survey, question, numberOfAnswersMap, numberOfAnswersMapMatrix,
-					numberOfAnswersMapGallery, multipleChoiceSelectionsByAnswerset, numberOfAnswersMapRatingQuestion);
+			creator.getAnswers4Statistics(
+					survey,
+					question,
+					numberOfAnswersMap,
+					numberOfAnswersMapMatrix,
+					numberOfAnswersMapGallery,
+					multipleChoiceSelectionsByAnswerset,
+					numberOfAnswersMapRatingQuestion);
 
-			creator.addStatistics(survey, (ChoiceQuestion) question, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
+			if (question instanceof ChoiceQuestion) {
+				ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
 
-			DelphiGraphData result = new DelphiGraphData();
+				creator.addStatistics(survey, choiceQuestion, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
 
-			for (PossibleAnswer answer : ((ChoiceQuestion) question).getAllPossibleAnswers()) {
-				DelphiGraphEntry entry = new DelphiGraphEntry();
-				entry.setLabel(answer.getTitle());
-				entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
-				result.addEntry(entry);
+				DelphiGraphData result = new DelphiGraphData();
+
+				for (PossibleAnswer answer : choiceQuestion.getAllPossibleAnswers()) {
+					DelphiGraphEntry entry = new DelphiGraphEntry();
+					entry.setLabel(answer.getTitle());
+					entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
+					result.addEntry(entry);
+				}
+
+				return ResponseEntity.ok(result);
 			}
 
-			return ResponseEntity.ok(result);
-
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
