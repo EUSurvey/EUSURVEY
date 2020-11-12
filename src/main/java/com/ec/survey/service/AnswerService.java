@@ -827,11 +827,14 @@ public class AnswerService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<AnswerSet> answerSets = query.list();
 
-		final List<Answer> answersToDelete = answerSets.stream()
-				.map(AnswerSet::getAnswers)
-				.flatMap(Collection::stream)
-				.collect(Collectors.toList());
-		answerExplanationService.deleteExplanationIfNotReferencedByOneAnswerAnymore(answersToDelete);
+		Survey survey = surveyService.getSurvey(surveyid, false, true);
+		if (survey != null && survey.getIsDelphi()) {
+			final List<Answer> answersToDelete = answerSets.stream()
+					.map(AnswerSet::getAnswers)
+					.flatMap(Collection::stream)
+					.collect(Collectors.toList());
+			answerExplanationService.deleteExplanationIfNotReferencedByOneAnswerAnymore(answersToDelete);
+		}
 
 		for (AnswerSet as : answerSets) {
 			if (!as.getIsDraft()) {
@@ -1235,8 +1238,10 @@ public class AnswerService extends BasicService {
 					publishedSurvey);
 		}
 
-		final List<Answer> answersToDelete = answerSet.getAnswers();
-		answerExplanationService.deleteExplanationIfNotReferencedByOneAnswerAnymore(answersToDelete);
+		if (answerSet.getSurvey().getIsDelphi()) {
+			final List<Answer> answersToDelete = answerSet.getAnswers();
+			answerExplanationService.deleteExplanationIfNotReferencedByOneAnswerAnymore(answersToDelete);
+		}
 
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(answerSet);
