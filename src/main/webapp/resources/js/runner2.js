@@ -444,13 +444,14 @@ function delphiPrefill(editorElement) {
 	if (!answerSetId) {
 		return; // Cannot prefill when answers have not been submitted yet.
 	}
-	var questionId = editorElement[0].id.substring("explanation".length);
+	// The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
+	var questionUid = $('#' + editorElement[0].id).closest('.survey-element').find('input[name="questionUid"]').val();
 	var data = {
 		answerSetId: answerSetId,
-		questionId: questionId
+		questionUid: questionUid
 	};
 	$.ajax({
-		url: contextpath + "/runner/delphiGet",
+		url: contextpath + '/runner/delphiGet',
 		data: data,
 		beforeSend: function(xhr) {
 			xhr.setRequestHeader(csrfheader, csrftoken);

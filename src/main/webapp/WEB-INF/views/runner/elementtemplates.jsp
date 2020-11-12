@@ -1125,7 +1125,7 @@
 		<input type="hidden" name="surveyId" value="${form.survey.id}" />
 		<input type="hidden" name="ansSetUniqueCode" value="${uniqueCode}" />
 		<input type="hidden" name="languageCode" value="${form.language.code}" />
-		<input type="hidden" name="questionId" data-bind="value: id" />
+		<input type="hidden" name="questionUid" data-bind="value: uniqueId()" />
 		<div class="explanation-section">
 			<label class="questiontitle">${form.getMessage("label.ExplainYourAnswer")}</label>
 			<textarea class="explanation-editor" name="explanation" data-bind="attr: {'id': 'explanation' + id()}"></textarea>

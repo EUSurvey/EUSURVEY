@@ -2266,7 +2266,7 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.BAD_REQUEST);
 			}
 			final String questionUid = request.getParameter("questionUid");
-			AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
+			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
 			return new ResponseEntity<>(explanation.getText(), HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

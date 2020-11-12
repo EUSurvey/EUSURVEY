@@ -407,14 +407,14 @@
 			editor.on('Change', function (event) {
 				try {
 				    // The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
-				    $('#' + event.target.id).closest(".survey-element").find("a[data-type='delphisavebutton']").removeClass("disabled");
+				    $('#' + event.target.id).closest('.survey-element').find('a[data-type="delphisavebutton"]').removeClass('disabled');
 				} catch (e) {}
 			});
 		},
 		relative_urls: false,
 		remove_script_host: false,
 		document_base_url: serverPrefix,
-		default_link_target: "_blank",
+		default_link_target: '_blank',
 		anchor_top: false,
 		anchor_bottom: false,
 		branding: false,

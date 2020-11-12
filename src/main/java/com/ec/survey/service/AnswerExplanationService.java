@@ -8,66 +8,48 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+
 @Service
 public class AnswerExplanationService extends BasicService {
 
-    @Transactional
-    public void createOrUpdateExplanation(AnswerSet answerSet, String questionUid, String explanationText) {
+	@Transactional
+	public void createOrUpdateExplanation(AnswerSet answerSet, String questionUid, String explanationText) {
 
-        AnswerExplanation explanation = getExplanation(answerSet.getId(), questionUid);
-    
-        if (explanation == null) 
-        {
-        	explanation = new AnswerExplanation(answerSet.getSurveyId(), questionUid);        	
-        }
-        
-        explanation.setText(explanationText);
+		AnswerExplanation explanation;
+		try {
+			explanation = getExplanation(answerSet.getId(), questionUid);
+		} catch (NoSuchElementException ex) {
+			explanation = new AnswerExplanation(answerSet.getId(), questionUid);
+		}
 
-        final Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(explanation);
-    }
+		explanation.setText(explanationText);
 
-//    @Transactional
-//    public void deleteExplanationIfNotReferencedByAnAnswerAnymore(List<Answer> answersToDelete) {
-//
-//        final List<Integer> answersToDeleteIds = answersToDelete.stream()
-//                .map(Answer::getId)
-//                .collect(Collectors.toList());
-//
-//        final Session session = sessionFactory.getCurrentSession();
-//
-//        final Map<Integer, AnswerExplanation> explanationsToCheck = new HashMap<>();
-//        for(Integer answerToDeleteId : answersToDeleteIds) {
-//            Query query = session.createQuery("SELECT ex FROM AnswerExplanation ex JOIN ex.answerIds aid WHERE aid = :answerId")
-//                    .setInteger("answerId", answerToDeleteId);
-//            final AnswerExplanation currentExplanation = (AnswerExplanation) query.uniqueResult();
-//            if (currentExplanation == null) {
-//                continue;
-//            }
-//            final Integer currentExplanationId = currentExplanation.getId();
-//            final AnswerExplanation explanationAlreadyFound = explanationsToCheck.get(currentExplanationId);
-//            if (explanationAlreadyFound == null) {
-//                currentExplanation.removeAnswerId(answerToDeleteId);
-//                explanationsToCheck.put(currentExplanationId, currentExplanation);
-//            } else {
-//                explanationAlreadyFound.removeAnswerId(answerToDeleteId);
-//            }
-//        }
-//
-//        for(AnswerExplanation explanation : explanationsToCheck.values()) {
-//            if (explanation.getAnswerIds().size() == 0) {
-//                session.delete(explanation);
-//            } else {
-//                session.update(explanation);
-//            }
-//        }
-//    }
+		final Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(explanation);
+	}
 
-    @Transactional(readOnly = true)
-    public AnswerExplanation getExplanation(int answerSetId, String questionUid) {     
-        final Session session = sessionFactory.getCurrentSession();
-        final Query query = session.createQuery("SELECT ex FROM AnswerExplanation ex WHERE answerSetId = :answerSetId AND questionUid = :questionUid")
-                .setInteger("answerSetId", answerSetId).setString("questionUid", questionUid);
-        return (AnswerExplanation) query.uniqueResult();
-    }
+	@Transactional
+	public void deleteExplanationByAnswerSet(AnswerSet answerSet) {
+
+		final Integer answerSetId = answerSet.getId();
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createQuery("DELETE FROM AnswerExplanation WHERE answerSetId = :answerId")
+				.setInteger("answerId", answerSetId);
+		query.executeUpdate();
+	}
+
+	@Transactional(readOnly = true)
+	public AnswerExplanation getExplanation(int answerSetId, String questionUid) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createQuery("SELECT ex FROM AnswerExplanation ex WHERE answerSetId = :answerSetId AND questionUid = :questionUid")
+				.setInteger("answerSetId", answerSetId)
+				.setString("questionUid", questionUid);
+		AnswerExplanation explanation = (AnswerExplanation) query.uniqueResult();
+		if (explanation == null) {
+			throw new NoSuchElementException();
+		}
+		return explanation;
+	}
 }

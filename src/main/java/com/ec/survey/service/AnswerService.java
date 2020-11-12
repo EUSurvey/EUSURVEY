@@ -828,11 +828,7 @@ public class AnswerService extends BasicService {
 
 		Survey survey = surveyService.getSurvey(surveyid, false, true);
 		if (survey != null && survey.getIsDelphi()) {
-			final List<Answer> answersToDelete = answerSets.stream()
-					.map(AnswerSet::getAnswers)
-					.flatMap(Collection::stream)
-					.collect(Collectors.toList());
-			//answerExplanationService.deleteExplanationIfNotReferencedByAnAnswerAnymore(answersToDelete);
+			answerSets.forEach(set -> answerExplanationService.deleteExplanationByAnswerSet(set));
 		}
 
 		for (AnswerSet as : answerSets) {
@@ -1238,8 +1234,7 @@ public class AnswerService extends BasicService {
 		}
 
 		if (answerSet.getSurvey().getIsDelphi()) {
-			final List<Answer> answersToDelete = answerSet.getAnswers();
-			//answerExplanationService.deleteExplanationIfNotReferencedByAnAnswerAnymore(answersToDelete);
+			answerExplanationService.deleteExplanationByAnswerSet(answerSet);
 		}
 
 		Session session = sessionFactory.getCurrentSession();
