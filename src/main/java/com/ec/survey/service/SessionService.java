@@ -258,7 +258,7 @@ public class SessionService extends BasicService {
 					throw new ForbiddenURLException();
 				}
 
-				setCurrentUser(request, user);
+				this.setCurrentUser(request, user);
 			}
 		} else {
 			// owner has full local privileges

@@ -219,7 +219,7 @@
 													<!-- ko if: !activateEnabled() && !deactivateEnabled() -->
 														<a id="btnDeactivateFromParticipant" class="iconbutton disabled" data-class="deactivatebutton" onclick="return false;" data-toggle="tooltip" title="<spring:message code="label.Deactivate" />"><span class='glyphicon glyphicon-stop'></span></a>
 													<!-- /ko -->
-														<!-- ko if: editEnabled() -->
+													<!-- ko if: editEnabled() -->
 														<a id="btnEditEnabledFromParticipant" class="iconbutton" data-toggle="tooltip" title="<spring:message code="label.Edit" />" data-bind="click: edit"><span class='glyphicon glyphicon-pencil'></span></a>
 													<!-- /ko -->
 													<!-- ko if: !editEnabled() -->
@@ -576,7 +576,6 @@
 			</div>
 			
 			<div class="fullpageform160">
-			
 				<table id="participantdetailstable" class="table table-bordered table-styled table-striped" style="max-width: none; width: auto; margin-left: auto; margin-right: auto;" data-bind="visible: DataLoaded() && Guestlists().length > 0">
 					<thead>
 						<tr>
@@ -642,14 +641,18 @@
 					<a class="btn btn-primary" onclick="_participants.Page(1)"><spring:message code="label.Back" /></a>	
 				</div>
 			</div>
-		</div>
+		</div> <!-- details -->
 		
 		<div id="newcontactlist" data-bind="visible: Page() == 3">		
 			<c:choose>
 				<c:when test="${numberOfAttendees == 0}">
-					<div style="text-align: center">
-						<b><spring:message code="info.NoContacts" /></b><br /><br />
-						<a href="${contextpath}/addressbook" class="btn btn-default"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.CreateContacts" /></a>
+					<div id="action-bar" class="container-fluid action-bar">
+						<div class="row">
+							<div class="col-md-4" style="text-align: center">
+								<b><spring:message code="info.NoContacts" /></b><br /><br />
+								<a href="${contextpath}/addressbook" class="btn btn-default"><span class="glyphicon glyphicon-book"></span> <spring:message code="label.CreateContacts" /></a>
+							</div>
+						</div>
 					</div>
 				</c:when>
 				<c:otherwise>
@@ -885,7 +888,7 @@
 					</div>
 				</c:otherwise>
 			</c:choose>
-		</div>
+		</div> <!-- newcontactlist -->
 		
 		<div id="neweclist" data-bind="visible: Page() == 4">
 			<div id="action-bar" class="container-fluid action-bar">
@@ -1121,7 +1124,7 @@
 					</div> <!-- row -->	
 				</div> 	<!-- container -->	
 			</div>
-		</div>
+		</div> <!-- neweclist --> 
 		
 		<div id="newtokenlist" data-bind="visible: Page() == 5">
 			<div id="action-bar" class="container-fluid action-bar">
@@ -1285,7 +1288,7 @@
 					</div> 	<!-- container -->	
 				</div>
 			</div>
-		</div>
+		</div> <!-- tokenlist --> 
 	</div>
 
 	<%@ include file="../footer.jsp" %>	
