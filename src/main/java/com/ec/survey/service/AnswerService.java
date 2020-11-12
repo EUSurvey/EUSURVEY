@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -833,7 +832,7 @@ public class AnswerService extends BasicService {
 					.map(AnswerSet::getAnswers)
 					.flatMap(Collection::stream)
 					.collect(Collectors.toList());
-			answerExplanationService.deleteExplanationIfNotReferencedByOneAnswerAnymore(answersToDelete);
+			answerExplanationService.deleteExplanationIfNotReferencedByAnAnswerAnymore(answersToDelete);
 		}
 
 		for (AnswerSet as : answerSets) {
@@ -1240,7 +1239,7 @@ public class AnswerService extends BasicService {
 
 		if (answerSet.getSurvey().getIsDelphi()) {
 			final List<Answer> answersToDelete = answerSet.getAnswers();
-			answerExplanationService.deleteExplanationIfNotReferencedByOneAnswerAnymore(answersToDelete);
+			answerExplanationService.deleteExplanationIfNotReferencedByAnAnswerAnymore(answersToDelete);
 		}
 
 		Session session = sessionFactory.getCurrentSession();

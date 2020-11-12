@@ -40,7 +40,7 @@ public class AnswerExplanationService extends BasicService {
     }
 
     @Transactional
-    public void deleteExplanationIfNotReferencedByOneAnswerAnymore(List<Answer> answersToDelete) {
+    public void deleteExplanationIfNotReferencedByAnAnswerAnymore(List<Answer> answersToDelete) {
 
         final List<Integer> answersToDeleteIds = answersToDelete.stream()
                 .map(Answer::getId)
