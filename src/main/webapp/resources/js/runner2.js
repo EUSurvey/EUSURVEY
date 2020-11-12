@@ -442,7 +442,7 @@ function getWidth(widths, index)
 function delphiPrefill(editorElement) {
 	var answerSetId = $('#IdAnswerSet').val();
 	if (!answerSetId) {
-		return; // Cannot prefill when answers have not not been submitted yet.
+		return; // Cannot prefill when answers have not been submitted yet.
 	}
 	var questionId = editorElement[0].id.substring("explanation".length);
 	var data = {
