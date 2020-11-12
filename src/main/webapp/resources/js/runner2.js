@@ -474,9 +474,13 @@ function delphiUpdate(div) {
 
 			// remove existing charts and recreate next to survey-element (such that question and chart are shown next to each other)
 			var elementWrapper = $(div).closest(".elementwrapper");
-			$(elementWrapper).find("canvas.delphi-chart").remove();
-			$(elementWrapper).append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
-			var canvas = $(elementWrapper).find(".delphi-chart")[0];
+			$(elementWrapper).find(".chart-wrapper").remove();
+			$(elementWrapper).append("<div class='chart-wrapper'></div>");
+
+			var chartWrapper = $(elementWrapper).find("div.chart-wrapper").first();
+			$(chartWrapper).append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
+
+			var canvas = $(chartWrapper).find(".delphi-chart")[0];
 
 			var chartColors = {
 				red: 'rgb(255, 99, 132)',
