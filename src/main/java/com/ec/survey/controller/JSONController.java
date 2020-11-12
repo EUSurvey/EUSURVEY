@@ -1,29 +1,19 @@
 package com.ec.survey.controller;
 
-import com.ec.survey.service.AdministrationService;
-import com.ec.survey.service.LdapDBService;
-import com.ec.survey.service.LdapService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
+import com.ec.survey.tools.Constants;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/logins")
 public class JSONController extends BasicController {
-	
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="ldapDBService")
-	private LdapDBService ldapDBService;
-
-	@Resource(name="ldapService")
-	private LdapService ldapService;
 	
 	@RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String[] getLoginsJSON(HttpServletRequest request) {
@@ -46,7 +36,7 @@ public class JSONController extends BasicController {
 		return ldapDBService.getDepartments(null,query, true, false);
 	}
 	
-	@RequestMapping(value = "/usersJSON", headers="Accept=*/*", method=RequestMethod.GET)
+	@GetMapping(value = "/usersJSON", headers="Accept=*/*")
 	public @ResponseBody String[] participantsSearch(HttpServletRequest request, HttpServletResponse response ) {
 		String name = request.getParameter("name");
 		if (name != null) name = name.trim();
@@ -56,7 +46,7 @@ public class JSONController extends BasicController {
 		if (first != null) first = first.trim();
 		String last = request.getParameter("last");
 		if (last != null) last = last.trim();
-		String email = request.getParameter("email");
+		String email = request.getParameter(Constants.EMAIL);
 		if (email != null) email = email.trim();
 		String department = request.getParameter("department");
 		if (department != null) department = department.trim();
@@ -65,9 +55,8 @@ public class JSONController extends BasicController {
 		if (!type.equalsIgnoreCase("system"))
 		{
 			return ldapService.getECASLogins(name, department, type, first, last, email, order);
-		}else {
+		} else {
 			return administrationService.getLoginsForPrefix(name, email, true);
 		}
-
 	}
 }

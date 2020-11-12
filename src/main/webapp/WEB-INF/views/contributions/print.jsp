@@ -152,13 +152,13 @@
 						<c:when test="${element.getType() == 'MultipleChoiceQuestion' && element.getMaxChoices() != null && element.getMaxChoices() > 0}">
 							<div class='limits'><spring:message code="limits.MaxChoices" arguments="${element.getMaxChoices()}" /></div>
 						</c:when>
-						<c:when test="${element.getType() == 'NumberQuestion' && element.getMin() != null && element.getMin() > 0 && element.getMax() != null && element.getMax() > 0}">
+						<c:when test="${element.getType() == 'NumberQuestion' && element.getDisplay() != 'Slider' && element.getMin() != null && element.getMin() > 0 && element.getMax() != null && element.getMax() > 0}">
 							<div class='limits'><spring:message code="limits.MinMaxNumber" arguments="${element.getMinString()},${element.getMaxString()}" /></div>
 						</c:when>
-						<c:when test="${element.getType() == 'NumberQuestion' && element.getMin() != null && element.getMin() > 0}">
+						<c:when test="${element.getType() == 'NumberQuestion' && element.getDisplay() != 'Slider' && element.getMin() != null && element.getMin() > 0}">
 							<div class='limits'><spring:message code="limits.MinNumber" arguments="${element.getMinString()}" /></div>
 						</c:when>
-						<c:when test="${element.getType() == 'NumberQuestion' && element.getMax() != null && element.getMax() > 0}">
+						<c:when test="${element.getType() == 'NumberQuestion' && element.getDisplay() != 'Slider' && element.getMax() != null && element.getMax() > 0}">
 							<div class='limits'><spring:message code="limits.MaxNumber" arguments="${element.getMaxString()}" /></div>
 						</c:when>
 						<c:when test="${element.getType() == 'DateQuestion' && element.getMin() != null && element.getMax() != null}">
@@ -169,6 +169,16 @@
 						</c:when>
 						<c:when test="${element.getType() == 'DateQuestion' && element.getMax() != null}">
 							<div class='limits'><spring:message code="limits.MaxDate" arguments="${element.getMaxString()}" /></div>
+						</c:when>
+						
+						<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null && element.getMin().length() > 0 && element.getMax() != null && element.getMax().length() > 0}">
+							<div class='limits'><spring:message code="limits.MinMaxDate" arguments="${element.getMin()},${element.getMax()}" /></div>
+						</c:when>
+						<c:when test="${element.getType() == 'TimeQuestion' && element.getMin() != null && element.getMin().length() > 0}">
+							<div class='limits'><spring:message code="limits.MinDate" arguments="${element.getMin()}" /></div>
+						</c:when>
+						<c:when test="${element.getType() == 'TimeQuestion' && element.getMax() != null && element.getMax().length() > 0}">
+							<div class='limits'><spring:message code="limits.MaxDate" arguments="${element.getMax()}" /></div>
 						</c:when>
 					</c:choose>
 				</c:if>					
@@ -509,7 +519,7 @@
 					<pre style="white-space: pre-wrap; font-family: FreeMono, 'Courier New', Courier, monospace"><div style="word-wrap: break-word; margin-left: 0px;"><esapi:encodeForHTML>${form.getValue(element)}</esapi:encodeForHTML><span class="unit-text"><esapi:encodeForHTML>${element.unit}</esapi:encodeForHTML></span></div></pre>
 				</c:if>
 				
-				<c:if test="${element.getType() == 'DateQuestion'}">
+				<c:if test="${element.getType() == 'DateQuestion' || element.getType() == 'TimeQuestion'}">
 					<pre style="white-space: pre-wrap; font-family: FreeMono, 'Courier New', Courier, monospace"><div style="word-wrap: break-word; margin-left: 0px;"><esapi:encodeForHTML>${form.getValue(element)}</esapi:encodeForHTML></div></pre>
 				</c:if>
 					

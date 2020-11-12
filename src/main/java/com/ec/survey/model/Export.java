@@ -151,7 +151,7 @@ public class Export implements java.io.Serializable {
 		return allAnswers;
 	}
 	public void setAllAnswers(Boolean allAnswers) {
-		this.allAnswers = allAnswers != null ? allAnswers : false;
+		this.allAnswers = allAnswers != null && allAnswers;
 	}
 	
 	@Column(name = "EXPORT_VALID")

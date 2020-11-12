@@ -2,7 +2,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>	
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
-<%@ page contentType="text/html; charset=UTF-8" session="false" %>
+<%@ page contentType="text/html; charset=UTF-8" session="true" %>
 <!DOCTYPE html>
 <html>
 <head>

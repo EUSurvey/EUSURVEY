@@ -209,7 +209,7 @@ function removeElementScore(element)
 	removeElementFromDependencies(tmpId);
 	
 	if($(element).hasClass("freetextitem") || $(element).hasClass("numberitem")
-			|| $(element).hasClass("dateitem") || $(element).hasClass("uploaditem") || $(element).hasClass("emailitem")
+			|| $(element).hasClass("dateitem") || $(element).hasClass("timeitem") || $(element).hasClass("uploaditem") || $(element).hasClass("emailitem")
 			|| $(element).hasClass("regexitem"))
 	{
 		updateComplexityScore("removeSimpleQuestion");
@@ -335,7 +335,7 @@ function scanSurveyComplexity()
 		var id = $(this).attr("id");
 		
 		if($(this).hasClass("freetextitem") || $(this).hasClass("numberitem")
-				|| $(this).hasClass("dateitem") || $(this).hasClass("uploaditem") || $(this).hasClass("emailitem")
+				|| $(this).hasClass("dateitem") || $(this).hasClass("timeitem") || $(this).hasClass("uploaditem") || $(this).hasClass("emailitem")
 				|| $(this).hasClass("regexitem"))
 		{
 			updateComplexityScore("addSimpleQuestion");

@@ -214,7 +214,7 @@ public class WebserviceTask {
 		return empty;
 	}
 	public void setEmpty(Boolean empty) {
-		this.empty = empty != null ? empty : false;
+		this.empty = empty != null && empty;
 	}
 }
 

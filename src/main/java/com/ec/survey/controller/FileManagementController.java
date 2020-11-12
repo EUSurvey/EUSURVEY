@@ -9,22 +9,25 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.*;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -32,21 +35,6 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/administration/files")
 public class FileManagementController extends BasicController {
-	
-	@Resource(name="administrationService")
-	private AdministrationService administrationService;
-	
-	@Resource(name="surveyService")
-	private SurveyService surveyService;
-	
-	@Resource(name="sessionService")
-	private SessionService sessionService;
-	
-	@Resource(name="fileService")
-	private FileService fileService;
-	
-	@Resource(name="exportService")
-	private ExportService exportService;
 	
 	public @Value("${ui.enablefilemanagement}") String enablefilemanagement;
 	
@@ -81,23 +69,23 @@ public class FileManagementController extends BasicController {
 		String mode = (String)request.getSession().getAttribute("lastfilemode");
 		if (mode == null) mode = "surveys";
 		
-		if (request.getParameter("deleted") == null)
+		if (request.getParameter(Constants.DELETED) == null)
 		{		
 			filter.setSurveyFiles(true);
 			filter.setSystemExports(true);
 			filter.setTemporaryFiles(true);
 		}
-		result.addObject("filter", filter);
+		result.addObject(Constants.FILTER, filter);
 		result.addObject("mode", mode);
 		
-		if (request.getParameter("deleted") != null)
+		if (request.getParameter(Constants.DELETED) != null)
 		{
-			if (!request.getParameter("deleted").equalsIgnoreCase("error"))
+			if (!request.getParameter(Constants.DELETED).equalsIgnoreCase(Constants.ERROR))
 			{
-				result.addObject("info", resources.getMessage("info.FileDeleted", new Object[] {request.getParameter("deleted")}, "Deleted", locale));
-			} else if (request.getParameter("deleted").equalsIgnoreCase("error"))
+				result.addObject("info", resources.getMessage("info.FileDeleted", new Object[] {request.getParameter(Constants.DELETED)}, "Deleted", locale));
+			} else if (request.getParameter(Constants.DELETED).equalsIgnoreCase(Constants.ERROR))
 			{
-				result.addObject("error", resources.getMessage("error.OperationFailed", null, "Delete error", locale));
+				result.addObject(Constants.ERROR, resources.getMessage("error.OperationFailed", null, "Delete error", locale));
 			}
 			
 			List<FileResult> resultfiles = fileService.getFiles2(filter);
@@ -117,32 +105,32 @@ public class FileManagementController extends BasicController {
 			paging.setEnableGoToLastPage(false);
 								
 			result.addObject("paging", paging);
-			result.addObject("filter", filter);
+			result.addObject(Constants.FILTER, filter);
 			
 		} else if (request.getParameter("recreationstarted") != null)
 		{
 			if (request.getParameter("recreationstarted").equalsIgnoreCase("started"))
 			{
 				result.addObject("info", resources.getMessage("info.RecreateStarted2", null, "Recreate started", locale));
-			} else if (request.getParameter("recreationstarted").equalsIgnoreCase("error"))
+			} else if (request.getParameter("recreationstarted").equalsIgnoreCase(Constants.ERROR))
 			{
-				result.addObject("error", resources.getMessage("error.OperationFailed", null, "Recreate error", locale));
+				result.addObject(Constants.ERROR, resources.getMessage("error.OperationFailed", null, "Recreate error", locale));
 			}
 		} else if (request.getParameter("recreated") != null)
 		{
-			if (!request.getParameter("recreated").equalsIgnoreCase("error"))
+			if (!request.getParameter("recreated").equalsIgnoreCase(Constants.ERROR))
 			{
 				result.addObject("info", resources.getMessage("info.FileRecreated", new Object[] {request.getParameter("recreated")}, "Recreated", locale));
-			} else if (request.getParameter("recreated").equalsIgnoreCase("error"))
+			} else if (request.getParameter("recreated").equalsIgnoreCase(Constants.ERROR))
 			{
-				result.addObject("error", resources.getMessage("error.OperationFailed", null, "Recreate error", locale));
+				result.addObject(Constants.ERROR, resources.getMessage("error.OperationFailed", null, "Recreate error", locale));
 			}
 		}
 		
 		return result;
 	}
 	
-	@RequestMapping(method = {RequestMethod.POST})
+	@PostMapping
 	public ModelAndView filesPOST(HttpServletRequest request, Model model, Locale locale) throws Exception {	
 		
 		if (enablefilemanagement == null || !enablefilemanagement.equalsIgnoreCase("true"))
@@ -202,7 +190,7 @@ public class FileManagementController extends BasicController {
 			
 			if (!checkall && (files2export == null || files2export.length == 0))
 			{
-				result.addObject("error", "Please select at least one file");
+				result.addObject(Constants.ERROR, "Please select at least one file");
 				fileerror = true;
 				inputFilter = (FileFilter) request.getSession().getAttribute("lastfilefilter");
 				if (inputFilter == null)
@@ -250,7 +238,7 @@ public class FileManagementController extends BasicController {
 					if (uid == null)
 					{
 						result = files(request, model, locale);
-						result.addObject("error", "No survey with this alias found!");
+						result.addObject(Constants.ERROR, "No survey with this alias found!");
 						return result;
 					}
 				}
@@ -262,7 +250,7 @@ public class FileManagementController extends BasicController {
 			    UUID.fromString(uid);
 			} catch (IllegalArgumentException exception){
 				result = files(request, model, locale);
-				result.addObject("error", "The UID is not valid!");
+				result.addObject(Constants.ERROR, "The UID is not valid!");
 				return result;
 			}
 		}
@@ -272,11 +260,11 @@ public class FileManagementController extends BasicController {
 			result = files(request, model, locale);
 			if (!fileerror)
 			{
-				result.addObject("error", "Please provide a survey alias or uid!");
+				result.addObject(Constants.ERROR, "Please provide a survey alias or uid!");
 			} else {
-				result.addObject("error", "Please select at least one file");
+				result.addObject(Constants.ERROR, "Please select at least one file");
 			}
-			result.addObject("filter", inputFilter);
+			result.addObject(Constants.FILTER, inputFilter);
 			result.addObject("mode", mode);
 			return result;
 		}
@@ -305,7 +293,7 @@ public class FileManagementController extends BasicController {
 		}
 				
 		result.addObject("paging", paging);
-		result.addObject("filter", inputFilter);
+		result.addObject(Constants.FILTER, inputFilter);
 		result.addObject("mode", mode);
 		request.getSession().setAttribute("lastfilesfilter", inputFilter);
 		
@@ -363,12 +351,9 @@ public class FileManagementController extends BasicController {
 		java.io.File file = new java.io.File(path);
 		
 		try {		
-			if (file.exists())
+			if (file.exists() && fileService.recreate(file, locale, resources))
 			{
-				if (fileService.recreate(file, new File(archiveFileDir), locale, resources))
-				{
-					return new ModelAndView("redirect:/administration/files?recreated=1");
-				}
+				return new ModelAndView("redirect:/administration/files?recreated=1");
 			}		
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
@@ -445,7 +430,7 @@ public class FileManagementController extends BasicController {
 		return null;
 	}
 	
-	@RequestMapping(value = "/delete", method = {RequestMethod.POST})
+	@PostMapping(value = "/delete")
 	public ModelAndView delete(HttpServletRequest request, HttpServletResponse response) throws InvalidURLException {
 		
 		if (enablefilemanagement == null || !enablefilemanagement.equalsIgnoreCase("true"))
@@ -456,9 +441,13 @@ public class FileManagementController extends BasicController {
 		String path = request.getParameter("path");
 		java.io.File file = new java.io.File(path);
 		
-		if (file.exists() && file.delete())
-		{
-			return new ModelAndView("redirect:/administration/files?deleted=1");
+		try {
+			if (Files.deleteIfExists(file.toPath()))
+			{
+				return new ModelAndView("redirect:/administration/files?deleted=1");
+			}
+		} catch (IOException e) {
+			logger.error(e.getLocalizedMessage(), e);
 		}
 		
 		return new ModelAndView("redirect:/administration/files?deleted=error");

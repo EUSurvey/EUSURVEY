@@ -71,13 +71,11 @@ public class EcasHelper {
          rd.close();
       } catch (Exception e) {
     	 logger.error("EcasHelper error on getSourceContents when reading answer from URL" + e);
-         //e.printStackTrace();
       }
       return result.toString();
    }
 
 	public static void readData(User user, LdapService ldapService) {		
-		//user.setEmail(ldapService.getEmail(user.getLogin()));	
 		user.setDisplayName(ldapService.getMoniker(user.getLogin()));
 		user.setDepartments(ldapService.getUserLDAPGroups(user.getLogin()));		
 	}

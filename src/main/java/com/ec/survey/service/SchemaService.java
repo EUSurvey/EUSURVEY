@@ -31,15 +31,6 @@ import java.util.List;
 @Service("schemaService")
 public class SchemaService extends BasicService {
 
-	@Resource(name = "skinService")
-	private SkinService skinService;
-
-	@Resource(name = "settingsService")
-	private SettingsService settingsService;
-
-	@Resource(name = "administrationService")
-	private AdministrationService administrationService;
-
 	private @Value("${showecas}") String showecas;
 
 	// OCAS
@@ -49,14 +40,41 @@ public class SchemaService extends BasicService {
 		return cassOss != null && cassOss.equalsIgnoreCase("true");
 	}
 
-	public @Value("${oss}") String oss;
-
-	public boolean isOss() {
-		return oss != null && oss.equalsIgnoreCase("true");
-	}
-
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
+
+	@Transactional
+	public void step95() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		Setting interval = new Setting();
+		interval.setKey(Setting.AnswersAnonymWorkerInterval);
+		interval.setValue("1y");
+		interval.setFormat("number followed by 'y' or 'w' or 'd' (years or weeks or days)");
+		session.saveOrUpdate(interval);
+
+		Setting enabled = new Setting();
+		enabled.setKey(Setting.AnswersAnonymWorkerEnabled);
+		enabled.setValue("true");
+		enabled.setFormat("true / false");
+		session.saveOrUpdate(enabled);
+
+		status.setDbversion(95);
+		session.saveOrUpdate(status);
+	}
+	
+	@Transactional
+	public void step94() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		SQLQuery query = session.createSQLQuery("UPDATE LANGUAGES SET LANGUAGE_OFFI = 1 WHERE LANGUAGE_CODE = 'HR'");
+		query.executeUpdate();
+
+		status.setDbversion(94);
+		session.saveOrUpdate(status);
+	}
 
 	@Transactional
 	public void step93() {
@@ -322,9 +340,7 @@ public class SchemaService extends BasicService {
 		session.doWork(con -> con.createStatement().execute(view));
 
 		final String index = "ALTER TABLE INVITATIONS ADD INDEX inv_attendee_id (ATTENDEE_ID)";
-		session.doWork(con -> {
-			con.createStatement().execute(index);
-		});
+		session.doWork(con -> con.createStatement().execute(index));
 
 		status.setDbversion(82);
 		session.saveOrUpdate(status);
@@ -469,7 +485,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex = "CREATE INDEX IDX_DRAFTS_DRAFT_UID  ON DRAFTS (DRAFT_UID);";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
 
@@ -517,7 +533,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex = "CREATE INDEX IDX_VALIDCODE_SURVEY_UID on VALIDCODE (VALIDCODE_SURVEYUID )";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
 
@@ -534,7 +550,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex = "CREATE INDEX IDX_LANGUAGES_LANGUAGE_CODE on LANGUAGES (LANGUAGE_CODE)";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			logger.info(
 					"SchemaService Step71 Execute SQL CREATE INDEX IDX_LANGUAGES_LANGUAGE_CODE on LANGUAGES (LANGUAGE_CODE)");
 			session.createSQLQuery(createkIndex).executeUpdate();
@@ -546,7 +562,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex2 = "CREATE INDEX IDX_TRANSLATIONS_SURVEY_ID on TRANSLATIONS (SURVEY_ID)";
 
 		query = session.createSQLQuery(checkIndexExists2);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			logger.info(
 					"SchemaService Step71 Execute SQL CREATE INDEX IDX_TRANSLATIONS_SURVEY_ID on TRANSLATIONS (SURVEY_ID)");
 			session.createSQLQuery(createkIndex2).executeUpdate();
@@ -558,7 +574,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex3 = "CREATE INDEX IDX_SURVEYS_SURVEY_UID on SURVEYS (SURVEY_UID)";
 
 		query = session.createSQLQuery(checkIndexExists3);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			logger.info("SchemaService Step71 Execute SQL CREATE INDEX IDX_SURVEYS_SURVEY_UID on SURVEYS (SURVEY_UID)");
 			session.createSQLQuery(createkIndex3).executeUpdate();
 		} else {
@@ -576,8 +592,9 @@ public class SchemaService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Status> states = statusQuery.list();
 
-		if (states.size() == 0)
+		if (states.isEmpty()) {
 			return null;
+		}
 
 		session.setReadOnly(states.get(0), false);
 
@@ -611,7 +628,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex = "CREATE INDEX IDX_FILE_UID on FILES (FILE_UID)";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
 
@@ -628,7 +645,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex = "CREATE INDEX IDX_ARCHIVE_FINISHED on ARCHIVE (ARCHIVE_FINISHED, ARCHIVE_ERROR)";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
 
@@ -665,7 +682,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex = "CREATE INDEX IDX_BACK_DOCS on Survey_backgroundDocuments (BACKGROUNDDOCUMENTS)";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
 
@@ -682,7 +699,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex = "CREATE INDEX IDX_ELEMENT_URL on ELEMENTS (URL)";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
 
@@ -699,7 +716,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex = "CREATE INDEX IDX_SURVEY_UID on ACTIVITY (ACTIVITY_SUID)";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
 
@@ -895,7 +912,7 @@ public class SchemaService extends BasicService {
 		final String createIndex = "ALTER TABLE ANSWERS_SET ADD INDEX IDX_SURVEYID_DATE (SURVEY_ID ASC, ANSWER_SET_DATE ASC)";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createIndex).executeUpdate();
 		}
 
@@ -945,7 +962,7 @@ public class SchemaService extends BasicService {
 		final String createIndex = "ALTER TABLE EXPORTS ADD INDEX CHECKNEW (USER_ID ASC, EXPORT_STATE ASC, EXPORT_NOT ASC)";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createIndex).executeUpdate();
 		}
 
@@ -1042,7 +1059,6 @@ public class SchemaService extends BasicService {
 		dropIndexIfExists("ANSWERS_SET", "surveyIndex", session);
 		dropIndexIfExists("ANSWERS_FILES", "FK3BD115EDA02270B1", session);
 		dropIndexIfExists("ATTENDEE_ATTRIBUTES", "FK2E1AD5FC999EC0EF", session);
-		// dropIndexIfExists("DASHBOARDS_WIDGETS", "FK91CCA6AFC6A2F52D", session);
 		dropIndexIfExists("ECASGROUPS", "eg_id", session);
 		dropIndexIfExists("ELEMENTS", "FK2E26B0F7B81F47CB", session);
 		dropIndexIfExists("ELEMENTS_ELEMENTS", "FKC0C7573FE592223", session);
@@ -1068,7 +1084,7 @@ public class SchemaService extends BasicService {
 		final String createIndex = "ALTER TABLE " + table + " DROP INDEX " + index + ";";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() > 0) {
+		if (!query.list().isEmpty()) {
 			session.createSQLQuery(createIndex).executeUpdate();
 		}
 	}
@@ -1224,7 +1240,7 @@ public class SchemaService extends BasicService {
 		final String createIndex = "ALTER TABLE ANSWERS ADD FULLTEXT INDEX v_ft_idx (VALUE);";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createIndex).executeUpdate();
 		}
 
@@ -1242,7 +1258,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex = "ALTER TABLE ANSWERS_SET	ADD INDEX INX_RESPONDER_EMAIL (RESPONDER_EMAIL);";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
 
@@ -1260,7 +1276,7 @@ public class SchemaService extends BasicService {
 		final String createkIndex = "CREATE INDEX IDX_ELEMENT_UID on ELEMENTS (ELEM_UID)";
 
 		SQLQuery query = session.createSQLQuery(checkIndexExists);
-		if (query.list().size() <= 0) {
+		if (query.list().isEmpty()) {
 			session.createSQLQuery(createkIndex).executeUpdate();
 		}
 
@@ -1397,7 +1413,7 @@ public class SchemaService extends BasicService {
 		queryCreateIndex.executeUpdate();
 
 		if (showecas.equalsIgnoreCase("true") && !isCasOss()) {
-			System.out.println("Start CopyEcas");
+			logger.debug("Start CopyEcas");
 			domaintWorker.run();
 			copyEcasData();
 		}
@@ -1959,7 +1975,7 @@ public class SchemaService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Status> states = statusQuery.setReadOnly(true).list();
 
-		if (states.size() > 0) {
+		if (!states.isEmpty()) {
 			return states.get(0).getLastLDAPSynchronizationDate();
 		}
 
@@ -1974,7 +1990,7 @@ public class SchemaService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Status> states = statusQuery.list();
 
-		if (states.size() > 0) {
+		if (!states.isEmpty()) {
 			Status status = states.get(0);
 			session.setReadOnly(status, false);
 			status.setLastLDAPSynchronizationDate(syncDate);
@@ -1990,7 +2006,7 @@ public class SchemaService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Status> states = statusQuery.setReadOnly(true).list();
 
-		if (states.size() > 0) {
+		if (!states.isEmpty()) {
 			return states.get(0).getLastLDAPSynchronization2Date();
 		}
 
@@ -2005,11 +2021,45 @@ public class SchemaService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<Status> states = statusQuery.list();
 
-		if (states.size() > 0) {
+		if (!states.isEmpty()) {
 			Status status = states.get(0);
 			session.setReadOnly(status, false);
 			status.setLastLDAPSynchronization2Date(syncDate);
 			session.saveOrUpdate(status);
+		}
+	}
+
+	@Transactional
+	public Date getLastAnswerSetAnonymDate() {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query statusQuery = session.createQuery("FROM Status");
+		@SuppressWarnings("unchecked")
+		List<Status> states = statusQuery.setReadOnly(true).list();
+
+		if (!states.isEmpty()) {
+			return states.get(0).getLastAnswerSetAnonymDate();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Sets the time of the last answer set that was anonymised
+	 */
+	@Transactional
+	public void saveLastAnswerSetAnonymDate(Date lastAnswerSetAnonymisedDate) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Query statusQuery = session.createQuery("FROM Status");
+		@SuppressWarnings("unchecked")
+		List<Status> states = statusQuery.list();
+
+		if (!states.isEmpty()) {
+			Status status = states.get(0);
+			session.setReadOnly(status, false);
+			status.setLastAnswerSetAnonymDate(lastAnswerSetAnonymisedDate);
+			// Save is automatic on Transactional methods
 		}
 	}
 
@@ -2031,7 +2081,7 @@ public class SchemaService extends BasicService {
 
 		SQLQuery deleteQuery = session.createSQLQuery(sqlDeleteString);
 
-		if (duplicateRows.size() > 0) {
+		if (!duplicateRows.isEmpty()) {
 			for (Object row : duplicateRows) {
 				Object[] a = (Object[]) row;
 				for (int i = 0; i < length; i++) {
@@ -2055,9 +2105,7 @@ public class SchemaService extends BasicService {
 		int length = valueColumns.length;
 		for (int i = 0; i < length; i++) {
 			result.append(valueColumns[i]);
-			if (i + 1 == length) {
-				continue;
-			} else {
+			if (i + 1 != length) {
 				result.append(", ");
 			}
 		}
@@ -2131,7 +2179,7 @@ public class SchemaService extends BasicService {
 
 		List<?> duplicateRows = selectQuery.list();
 
-		if (duplicateRows.size() > 0) {
+		if (!duplicateRows.isEmpty()) {
 			for (Object row : duplicateRows) {
 				Object[] a = (Object[]) row;
 				String sqlDeleteString = baseSqlDeleteString + " LIMIT " + a[length];
@@ -2156,9 +2204,7 @@ public class SchemaService extends BasicService {
 		int length = valueColumns.length;
 		for (int i = 0; i < length; i++) {
 			result.append(valueColumns[i]);
-			if (i + 1 == length) {
-				continue;
-			} else {
+			if (i + 1 != length) {
 				result.append(", ");
 			}
 		}
@@ -2197,7 +2243,7 @@ public class SchemaService extends BasicService {
 			final String createIndex = "ALTER TABLE ANSWERS ADD FULLTEXT INDEX v_ft_idx (VALUE);";
 
 			SQLQuery query = session.createSQLQuery(checkIndexExists);
-			if (query.list().size() <= 0) {
+			if (query.list().isEmpty()) {
 				logger.error("Special update full text not existing create them");
 				session.createSQLQuery(createIndex).executeUpdate();
 			}

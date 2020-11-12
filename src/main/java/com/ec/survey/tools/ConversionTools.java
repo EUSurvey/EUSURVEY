@@ -29,6 +29,7 @@ public class ConversionTools {
 	public static final String DateTimeFormatWebservice = "yyyy-MM-dd_HH-mm-ss";
 	public static final String DateTimeFormatSQL = "yyyy-MM-dd HH:mm:ss";
 	public static final String IPMDateFormat = "yyyy-MM-dd";
+	public static final String TimeFormat = "HH:mm:ss";
 		
 	public static int getValue(Object num)
 	{
@@ -188,7 +189,6 @@ public class ConversionTools {
 				result = result.substring(1).trim();
 			}
 			
-			//result = Jsoup.parse(htmlString).text().trim();
 			result = StringEscapeUtils.escapeXml11(Jsoup.parse(htmlString).text().trim());
 		}
 		

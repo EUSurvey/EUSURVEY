@@ -327,7 +327,11 @@ function initModals(item)
 			    	{
 			    		applyDateFilter($(this).attr("id"), dateText);
 			    	}
-			    } 				   
+			    }
+			    
+			    if ($(this).hasClass("results")) {
+			    	$('#resultsForm').submit();
+			    }
 		
 				if ($(this).attr("data-to"))
 				{
@@ -540,8 +544,16 @@ function initModals(item)
 			$(cell).find(".icon-filter").remove();
 			$(cell).find(".glyphicon-remove-circle").parent().parent().remove();
 			
+			var resetButtonAdded = false;
+			
+			if ($(cell).find(".resultoverlaymenu").length > 0)
+			{
+				resetButtonAdded = true;
+			}
+			
 			if ($(cell).find(".btn-toolbar").length > 0)
 			{
+				if (!resetButtonAdded)
 				$(cell).find(".btn-toolbar").first().prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 				
 				$(cell).find(".datefilter").each(function(){
@@ -551,6 +563,7 @@ function initModals(item)
 					}						
 				});
 			} else if ($(cell).find(".dropdown-menu").length > 0) {
+				if (!resetButtonAdded)
 				$(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 				
 				var counter = 0;
@@ -577,7 +590,8 @@ function initModals(item)
 				}
 				$(cell).find(".dropdown-toggle").html(first + "&nbsp;<span class='caret'></span>");		
 				$(cell).attr("title",all).attr("rel","tooltip");
-			} else if ($(cell).find(".overlaymenu").length > 0) {
+			} else if ($(cell).find(".overlaymenu").not(".resultoverlaymenu").length > 0) {
+				if (!resetButtonAdded)
 				$(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 								
 				var counter = 0;
@@ -608,6 +622,7 @@ function initModals(item)
 				//checkNoBreaks();
 				
 			} else {
+				if (!resetButtonAdded)
                 $(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
             }
 		} else if ($(cell).find(".activityselect").length > 0) {
@@ -1123,7 +1138,15 @@ function initModals(item)
 						$(this).parent().parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");						
 					}
 					result = false;
-				};				
+				};	
+			} else if ($(this).hasClass("time"))
+			{
+				if ($(this).val().length == 0 || $(this).val() == 'HH:mm:ss')
+				{
+					validationinfo += $(this).attr("name") + " (R) ";
+					$(this).parent().parent().append("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");						
+					result = false;
+				};	
 			} else if ($(this).closest(".tabletable").length > 0) {
 				if ($(this).val().length == 0)
 				{
@@ -1331,51 +1354,107 @@ function initModals(item)
 					$(this).parent().after("<div class='validation-error' aria-live='polite'>" + invalidDate + "</div>");						
 				}
 				result = false;
-			}
-			
-			var classes = $(this).attr('class').split(" ");
-						
-			for ( var i = 0, l = classes.length; i<l; ++i ) {
-				if ($(this).parent().find(".validation-error").length == 0)
-				{
-				 	if (strStartsWith(classes[i], 'min'))
-				 	{
-				 		var min = classes[i].substring(3);
-				 		minD = parseMinMaxDate(min);
-				 		
-				 		if (minD > date)
-				 		{
-				 			validationinfo += $(this).attr("name") + " (MinDate) ";
-				 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
-							{
-								$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");
-							} else {
-								$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");						
-							}
-				 			result = false;
-				 		};
-				 	} else if (strStartsWith(classes[i], 'max'))
-				 	{
-				 		var max = classes[i].substring(3);
-				 		maxD = parseMinMaxDate(max);
-				 		
-				 		if (maxD < date)
-				 		{
-				 			validationinfo += $(this).attr("name") + " (MaxDate) ";
-				 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
-							{
-								$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");
-							} else {
-								$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");						
-							}
-				 			result = false;
-				 		};
-				 	};
+			} else {			
+				var classes = $(this).attr('class').split(" ");
+							
+				for ( var i = 0, l = classes.length; i<l; ++i ) {
+					if ($(this).parent().find(".validation-error").length == 0)
+					{
+					 	if (strStartsWith(classes[i], 'min'))
+					 	{
+					 		var min = classes[i].substring(3);
+					 		minD = parseMinMaxDate(min);
+					 		
+					 		if (minD > date)
+					 		{
+					 			validationinfo += $(this).attr("name") + " (MinDate) ";
+					 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
+								{
+									$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");
+								} else {
+									$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoosmall + "</div>");						
+								}
+					 			result = false;
+					 		};
+					 	} else if (strStartsWith(classes[i], 'max'))
+					 	{
+					 		var max = classes[i].substring(3);
+					 		maxD = parseMinMaxDate(max);
+					 		
+					 		if (maxD < date)
+					 		{
+					 			validationinfo += $(this).attr("name") + " (MaxDate) ";
+					 			if ($(this).parent().find(".ui-datepicker-trigger").length > 0 && !($(this).hasClass("hourselector")) )
+								{
+									$(this).parent().find(".ui-datepicker-trigger").first().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");
+								} else {
+									$(this).parent().after("<div class='validation-error' aria-live='polite'>" + valuetoolarge + "</div>");						
+								}
+					 			result = false;
+					 		};
+					 	};
+					};	
 				};	
-			};	
+			};
 			
 		});
 		
+		$(parent).find(".time").each(function(){
+			
+			//only if visible
+			if ($(this).closest(".survey-element").hasClass("untriggered"))
+			{
+				return;	
+			}
+			
+			var value = $(this).val();
+			
+			$(this).val(value.trim());
+			value = $(this).val();
+			
+			if (value.length == 0 || value == 'HH:mm:ss') return;
+			
+			var isValid = isValidTime(value);
+			if (!isValid)
+			{
+				validationinfo += $(this).attr("name") + " (TIME) ";
+				$(this).parent().after("<div class='validation-error' aria-live='polite'>" + invalidTime + "</div>");	
+				result = false;
+			} else {
+			
+				var classes = $(this).attr('class').split(" ");
+							
+				for ( var i = 0, l = classes.length; i<l; ++i ) {
+					if ($(this).parent().parent().find(".validation-error").length == 0)
+					{
+						var valuewithoutcolons = value.replace(/:/g, "");					
+						
+					 	if (strStartsWith(classes[i], 'min'))
+					 	{
+					 		var min = classes[i].substring(3);
+					 					 		
+					 		if (min > valuewithoutcolons)
+					 		{
+					 			validationinfo += $(this).attr("name") + " (MinTime) ";
+					 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + timevaluetoosmall + "</div>");	
+					 			result = false;
+					 		};
+					 	} else if (strStartsWith(classes[i], 'max'))
+					 	{
+					 		var max = classes[i].substring(3);
+					 		
+					 		if (max < valuewithoutcolons)
+					 		{
+					 			validationinfo += $(this).attr("name") + " (MaxTime) ";
+					 			$(this).parent().after("<div class='validation-error' aria-live='polite'>" + timevaluetoolarge + "</div>");		
+					 			result = false;
+					 		};
+					 	};
+					};	
+				};
+			};	
+			
+		});
 		
 		$(parent).find(".xhtml").each(function(){
 			
@@ -1867,6 +1946,10 @@ function initModals(item)
 	    return false;
 	  return !isNaN(d.getTime());
 	}
+		
+	function isValidTime(t) {
+		return /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])?$/.test(t);
+	}
 	
 	function parseMinMaxDate(s)
 	{
@@ -2353,6 +2436,9 @@ function initModals(item)
 		if ($(btn).closest(".widget").length > 0)
 		{
 			$(overlay).css("top",rect.top);
+		} else {
+			var rectbtn = $(btn)[0].getBoundingClientRect();
+			$(overlay).css("top", rectbtn.top + rectbtn.height + 2);
 		}
 		
 		var realwidth = overlay.width();

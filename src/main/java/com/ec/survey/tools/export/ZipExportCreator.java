@@ -11,6 +11,7 @@ import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -35,7 +36,7 @@ public class ZipExportCreator extends ExportCreator {
 		for (String uid : export.getResultFilter().getVisibleQuestions())
 		{
 			List<String[]> files = answerService.getFilesForQuestion(uid, form.getSurvey().getIsDraft());
-			List<String> fileuids = new ArrayList<String>();
+			List<String> fileuids = new ArrayList<>();
 			for (Object[] item : files)
 			{				
 				fileuids.add(item[1].toString());
@@ -70,18 +71,28 @@ public class ZipExportCreator extends ExportCreator {
 	}
 	
 	@Override
-	void ExportStatistics() throws Exception {}
+	void ExportStatistics() throws Exception {
+		throw new NotImplementedException();
+	}
 	
 	@Override
-	void ExportStatisticsQuiz() throws Exception {}
+	void ExportStatisticsQuiz() throws Exception {
+		throw new NotImplementedException();
+	}
 
 	@Override
-	void ExportAddressBook() throws Exception {}
+	void ExportAddressBook() throws Exception {
+		throw new NotImplementedException();
+	}	
 
 	@Override
-	void ExportActivities() throws Exception {}
+	void ExportActivities() throws Exception {
+		throw new NotImplementedException();
+	}
 	
 	@Override
-	void ExportTokens() throws Exception {}	
+	void ExportTokens() throws Exception {
+		throw new NotImplementedException();
+	}	
 
 }

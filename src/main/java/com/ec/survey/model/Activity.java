@@ -32,7 +32,17 @@ public class Activity implements java.io.Serializable {
 	private int userId;
 	private String userName;
 	private String type;
-		
+	
+	private static final String ADDED = "Added";
+	private static final String CREATED = "Created";
+	private static final String DELETED = "Deleted";
+	private static final String MODIFIED = "Modified";
+	private static final String REMOVED = "Removed";
+	private static final String SENT = "Sent";
+	private static final String STARTED = "Started";
+	private static final String SUBMITTED = "Submitted";
+	private static final String TRANSLATION = "Translation";
+			
 	@Id
 	@Column(name = "ACTIVITY_ID")
 	@GeneratedValue
@@ -171,11 +181,11 @@ public class Activity implements java.io.Serializable {
 		if (logID == 216) return "AutoNumberingQuestions";
 		if (logID == 217) return "ElementOrder";
 		if (logID < 221) return "SurveyElement";
-		if (logID < 225) return "Translation";
+		if (logID < 225) return TRANSLATION;
 		if (logID == 225) return "ConfirmationPage";
 		if (logID == 226) return "EscapePage";
-		if (logID == 227) return "Translation";
-		if (logID == 228) return "Translation";
+		if (logID == 227) return TRANSLATION;
+		if (logID == 228) return TRANSLATION;
 		if (logID == 301) return "PublishIndividual";
 		if (logID == 302) return "PublishCharts";
 		if (logID == 303) return "PublishStatistics";
@@ -188,6 +198,7 @@ public class Activity implements java.io.Serializable {
 		if (logID == 312) return "ExportActivities";
 		if (logID == 313) return "PublishUploadedElements";
 		if (logID == 314) return "ExportUploadedElements";
+		if (logID == 315) return "DeleteColumn";
 		if (logID < 312) return "Export";
 		if (logID < 407) return "n/a";
 		if (logID < 506) return type != null ? type : "Token/Contacts/Department";
@@ -201,51 +212,51 @@ public class Activity implements java.io.Serializable {
 	@Transient
 	public String getEvent()
 	{
-		if (logID < 104) return "Created";
-		if (logID == 104) return "Deleted";
-		if (logID < 107) return "Modified";
+		if (logID < 104) return CREATED;
+		if (logID == 104) return DELETED;
+		if (logID < 107) return MODIFIED;
 		if (logID == 107) return "Applied";
 		if (logID == 108) return "Discarded";
-		if (logID < 200) return "Modified";
+		if (logID < 200) return MODIFIED;
 		if (logID == 201) return "Opened";
 		if (logID == 202) return "Saved";
-		if (logID == 203) return "Added";
-		if (logID == 204) return "Removed";
-		if (logID == 205) return "Added";
-		if (logID == 206) return "Removed";
-		if (logID < 218) return "Modified";
-		if (logID == 218) return "Added";
-		if (logID == 219) return "Deleted";
-		if (logID == 220) return "Modified";
-		if (logID == 221) return "Added";
-		if (logID == 222) return "Deleted";
+		if (logID == 203) return ADDED;
+		if (logID == 204) return REMOVED;
+		if (logID == 205) return ADDED;
+		if (logID == 206) return REMOVED;
+		if (logID < 218) return MODIFIED;
+		if (logID == 218) return ADDED;
+		if (logID == 219) return DELETED;
+		if (logID == 220) return MODIFIED;
+		if (logID == 221) return ADDED;
+		if (logID == 222) return DELETED;
 		if (logID == 223) return "Enabled";
 		if (logID == 224) return "Disabled";
 		if (logID == 228) return "Requested";
-		if (logID < 307) return "Modified";
-		if (logID < 310) return "Started";
+		if (logID < 307) return MODIFIED;
+		if (logID < 310) return STARTED;
 		if (logID == 310) return "Returned";
-		if (logID == 311) return "Deleted";
-		if (logID == 312) return "Started";
-		if (logID == 313) return "Modified";
-		if (logID == 314) return "Started";
-		if (logID == 401) return "Submitted";
-		if (logID == 402) return "Deleted";
-		if (logID == 403) return "Modified";
-		if (logID == 404) return "Submitted";
-		if (logID == 405) return "Deleted";
-		if (logID == 406) return "Modified";
-		if (logID == 501) return "Created";
-		if (logID == 502) return "Deleted";
+		if (logID == 311) return DELETED;
+		if (logID == 312) return STARTED;
+		if (logID == 313) return MODIFIED;
+		if (logID == 314) return STARTED;
+		if (logID == 401) return SUBMITTED;
+		if (logID == 402) return DELETED;
+		if (logID == 403) return MODIFIED;
+		if (logID == 404) return SUBMITTED;
+		if (logID == 405) return DELETED;
+		if (logID == 406) return MODIFIED;
+		if (logID == 501) return CREATED;
+		if (logID == 502) return DELETED;
 		if (logID == 503) return "Paused";
-		if (logID == 504) return "Started";
-		if (logID == 505) return "Modified";
-		if (logID == 506) return "Sent";
-		if (logID == 507) return "Modified";
-		if (logID == 601) return "Added";
-		if (logID == 602) return "Modified";
-		if (logID == 603) return "Removed";
-		if (logID == 701) return "Sent";
+		if (logID == 504) return STARTED;
+		if (logID == 505) return MODIFIED;
+		if (logID == 506) return SENT;
+		if (logID == 507) return MODIFIED;
+		if (logID == 601) return ADDED;
+		if (logID == 602) return MODIFIED;
+		if (logID == 603) return REMOVED;
+		if (logID == 701) return SENT;
 		return "";
 	}
 	

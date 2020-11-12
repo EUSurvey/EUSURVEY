@@ -305,7 +305,7 @@ textarea {
 	background-color: #EFF6FA;
 }
 
-.toolboxitem.freetextitem, .toolboxitem.singlechoiceitem, .toolboxitem.multiplechoiceitem, .toolboxitem.numberitem, .toolboxitem.matrixitem, .toolboxitem.mytableitem, .toolboxitem.dateitem {
+.toolboxitem.freetextitem, .toolboxitem.singlechoiceitem, .toolboxitem.multiplechoiceitem, .toolboxitem.numberitem, .toolboxitem.matrixitem, .toolboxitem.mytableitem, .toolboxitem.dateitem , .toolboxitem.timeitem {
  	background-color: #FFF1D6;
 }
 

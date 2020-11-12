@@ -187,9 +187,13 @@ var ElementProperties = function() {
 	}
 	
 	this.showProperties = function(e, event, doubleclick)
-	{			
+	{
+		$('.activeproperty').each(function(){
+			update(this);
+		})
+	
 		var advancedOpen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
-		
+				
 		_actions.ElementSelected(false);
 		
 		if ($(e).hasClass("selectedquestion") && !cntrlIsPressed && !shiftIsPressed && !$("#multiselectButton").hasClass("selected"))
@@ -417,13 +421,20 @@ var ElementProperties = function() {
 			} else if ($(e).hasClass("numberitem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+				getChoosePropertiesRow("DisplaySlider", "Number,Slider", false, false, $(e).find("input[name^='display']").val());
+								
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false');
 				getTextPropertiesRow("Unit", $(e).find("input[name^='unit']").val(), false);
 				getChoosePropertiesRow("DecimalPlaces", ",1,2,3,4,5,6,7,8,9,10", false, false, $(e).find("input[name^='decimalplaces']").val());
-				getMinMaxPropertiesRow("Values", 0, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
-				getVisibilityRow(false);
-				
+				getMinMaxPropertiesRow("Values", null, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
+				getTextPropertiesRow("MinLabel", $(e).find("input[name^='minLabel']").val(), false);
+				getTextPropertiesRow("MaxLabel", $(e).find("input[name^='maxLabel']").val(), false);
+				getChoosePropertiesRow("InitialSliderPosition", "Left,Middle,Right", false, false, $(e).find("input[name^='initialSliderPosition']").val());
+				//getCheckPropertiesRow("DisplayGraduationScale", $(e).find("input[name^='displayGraduationScale']").val() == 'true');
+	
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
+				getVisibilityRow(false);								
+					
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
@@ -435,6 +446,9 @@ var ElementProperties = function() {
 					getQuizPropertiesRow();
 					getQuizPropertiesContent();
 				}
+				
+				adaptSliderDisplay($(e).find("input[name^='display']").val() === 'Slider');
+				
 			} else if ($(e).hasClass("matrixitem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
@@ -569,6 +583,24 @@ var ElementProperties = function() {
 					getQuizPropertiesRow();
 					getQuizPropertiesContent();
 				}
+			} else if ($(e).hasClass("timeitem"))
+			{
+				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false');
+				getMinMaxPropertiesRow("Values", 0, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
+				getVisibilityRow(false);
+				
+				getAdvancedPropertiesRow();
+				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
+				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
+				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
+								
+//				if (isQuiz)
+//				{
+//					getQuizPropertiesRow();
+//					getQuizPropertiesContent();
+//				}
 			} else if ($(e).hasClass("textitem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
@@ -590,6 +622,11 @@ var ElementProperties = function() {
 			} else if ($(e).hasClass("uploaditem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+				
+				if (isAdmin) {
+					getChoosePropertiesRow("MaximumFileSize", "1,2,5,10", false, false, $(e).find("input[name^='maxFileSize']").val());
+				}
+				
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false');
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
 				getVisibilityRow(false);

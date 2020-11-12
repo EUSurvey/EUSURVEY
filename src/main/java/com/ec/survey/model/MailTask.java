@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.persistence.*;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "MAILTASKS", indexes = {@Index(name = "IDX_MAILTASKS", columnList = "MAILTASK_SURVEY, MAILTASK_NOT, MAILTASK_STATE")})
@@ -34,9 +35,9 @@ public class MailTask implements java.io.Serializable {
 	private boolean notified;
 	private String mailtemplate;
 	
-	public final static String WAITING = "WAITING";
-	public final static String FINISHED = "FINISHED";
-	public final static String ERROR = "ERROR";
+	public static final String WAITING = "WAITING";
+	public static final String FINISHED = "FINISHED";
+	public static final String ERROR = "ERROR";
 	
 	@Id
 	@Column(name = "MAILTASK_ID")
@@ -132,10 +133,10 @@ public class MailTask implements java.io.Serializable {
 	
 	@SuppressWarnings("unchecked")
 	@Transient
-	public HashMap<String,String[]> getParameters() throws IOException {
+	public Map<String,String[]> getParameters() throws IOException {
 		return parametersSerialized != null ? new ObjectMapper().readValue(parametersSerialized, HashMap.class) : null;
 	}
-	public void setParameters(HashMap<String,String[]> parameters) throws IOException {
+	public void setParameters(Map<String,String[]> parameters) throws IOException {
 		this.parametersSerialized = new ObjectMapper().writeValueAsString(parameters);
 	}
 	

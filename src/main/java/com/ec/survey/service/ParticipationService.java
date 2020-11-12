@@ -7,6 +7,7 @@ import com.ec.survey.model.ParticipationGroupsForAttendee;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.GuestListCreator;
 import org.hibernate.Query;
@@ -17,16 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 @Service("participationService")
 @Configurable
 public class ParticipationService extends BasicService {
-	
-	@Resource(name = "mailService")
-	protected MailService mailService;
-	
+		
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<ParticipationGroup> getAll(String uid, boolean checkRunningMails, int page, int rowsPerPage) {
@@ -115,7 +112,7 @@ public class ParticipationService extends BasicService {
 				Query query = session.createQuery("SELECT i.participationGroupId FROM Invitation i WHERE i.uniqueId = :id").setString("id", invitationId);
 				@SuppressWarnings("rawtypes")
 				List result = query.list();
-				if (result.size() > 0) return result.get(0).toString();
+				if (!result.isEmpty()) return result.get(0).toString();
 			}
 		} catch (Exception e)
 		{
@@ -191,9 +188,9 @@ public class ParticipationService extends BasicService {
 		getPool().execute(c);
 	}
 	
-	public void addTokensToGuestListAsync(Integer id, List<String> tokens) {
+	public void addTokensToGuestListAsync(Integer id, List<String> tokens, List<String> deactivatedTokens) {
 		GuestListCreator c = (GuestListCreator) context.getBean("guestListCreator");
-		c.initTokens(id, tokens);
+		c.initTokens(id, tokens, deactivatedTokens);
 		getPool().execute(c);
 	}	
 
@@ -202,7 +199,7 @@ public class ParticipationService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<InvitationTemplate> result = session.createQuery("FROM InvitationTemplate t WHERE t.name like :name AND t.owner.id = :user").setString("name", name).setInteger("user", user).list();
-		return result.size() > 0 ? result.get(0) : null;
+		return !result.isEmpty() ? result.get(0) : null;
 	}
 
 	@Transactional
@@ -278,21 +275,25 @@ public class ParticipationService extends BasicService {
 	@Transactional(readOnly = true)
 	public int getNumberOfInvitations(String surveyuid) {
 		Session session = sessionFactory.getCurrentSession();
-		
-		String sql = "SELECT count(*) FROM PARTICIPANTS_ATTENDEE pa JOIN PARTICIPANTS p ON pa.PARTICIPANTS_PARTICIPATION_ID = p.PARTICIPATION_ID WHERE p.PARTICIPATION_SURVEY_UID = :uid";
-		SQLQuery query = session.createSQLQuery(sql);
-		query.setString("uid", surveyuid);
-		
-		int invitations = ConversionTools.getValue(query.uniqueResult());
-		
-		sql = "SELECT count(*) FROM PARTICIPANTS_ECASUSERS pe JOIN PARTICIPANTS p ON pe.PARTICIPANTS_PARTICIPATION_ID = p.PARTICIPATION_ID WHERE p.PARTICIPATION_SURVEY_UID = :uid";
-		query = session.createSQLQuery(sql);
-		query.setString("uid", surveyuid);
-		
-		invitations += ConversionTools.getValue(query.uniqueResult());
-		
-		return invitations;
+		Query hquery = session.createQuery("SELECT count(*) " + 
+		"FROM Invitation i, ParticipationGroup pg " + 
+		"WHERE pg.surveyUid=:uid " + 
+		"AND i.participationGroupId = pg.id ").setString("uid", surveyuid);
+		return ConversionTools.getValue(hquery.uniqueResult());
 	}
+
+	@Transactional(readOnly = true)
+	public int getNumberOfOpenInvitations(String surveyuid) {
+		Session session = sessionFactory.getCurrentSession();
+		Query hquery = session.createQuery("SELECT count(*) " + 
+		"FROM Invitation i, ParticipationGroup pg " + 
+		"WHERE pg.surveyUid=:uid " + 
+		"AND i.participationGroupId = pg.id " +
+		"AND i.answers = 0").setString("uid", surveyuid);
+		return ConversionTools.getValue(hquery.uniqueResult());
+	}
+
+
 
 	public List<Invitation> getInvitations(User user, SqlPagination paging, String survey, String surveystatus, Date expiryStart, Date expiryEnd, Date startInv, Date endInv) {
 		Session session = sessionFactory.getCurrentSession();
@@ -345,14 +346,14 @@ public class ParticipationService extends BasicService {
 			query.setParameterList("emails", allemails);
 		} else {
 			query = session.createSQLQuery(sql.toString());
-			query.setString("email", user.getEmail());
+			query.setString(Constants.EMAIL, user.getEmail());
 		}	
 		
 		query.setFirstResult(paging.getFirstResult()).setMaxResults(paging.getMaxResult());
 		
 		if (survey != null)
 		{
-			query.setString("survey", "%" + survey + "%");
+			query.setString(Constants.SURVEY, "%" + survey + "%");
 		}
 		if (expiryStart != null)
 		{

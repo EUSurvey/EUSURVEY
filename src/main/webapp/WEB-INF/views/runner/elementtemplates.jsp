@@ -30,7 +30,7 @@
 	<div id="image-template">
 		
 		<div class='alignment-div' data-bind="attr: {'style': 'width: 920px; max-width: 100%; text-align:' + align()}">
-			<img style="max-width: 100%" data-bind="attr: {'src': url, 'alt': originalTitle, 'width': usedwidth() > 0 ? usedwidth() : ''}" />
+			<img style="max-width: 100%" data-bind="attr: {'src': url, 'alt': originalTitle, 'width': usedwidth() > 0 ? usedwidth() : '', 'longdesc' : longdesc()}" />
 		</div>
 		
 		<!-- ko if: foreditor -->
@@ -68,7 +68,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="answer-columns">
 			<!-- ko if: useRadioButtons -->
 			<table class="answers-table">
@@ -85,6 +85,7 @@
 							<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parent.id(), 'data-id' : id()}" />	
 							<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parent.id(), 'data-id' : id()}"></textarea>					
+							<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea>
 							<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: scoring.feedback, attr: {'name': 'feedback' + $parent.id(), 'data-id' : id()}" />						
@@ -128,6 +129,7 @@
 							<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parents[0].id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parents[0].id(), 'data-id' : id()}" />	
 							<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parents[0].id(), 'data-id' : id()}"></textarea>
+							<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea> 
 							<div class="answertext" data-bind="html: title, attr: {'id' : id(), 'data-id' : id()}"></div>
 							<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parents[0].id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parents[0].id(), 'data-id' : id()}" />	
@@ -182,7 +184,7 @@
 			<div class='limits' data-bind="html: getMaxChoice(maxChoices())"></div>
 		<!-- /ko -->
 		
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="answer-columns">
 			<!-- ko if: useCheckboxes -->
 			<table class="answers-table">
@@ -199,6 +201,7 @@
 							<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parent.id(), 'data-id' : id()}" />	
 							<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parent.id(), 'data-id' : id()}"></textarea>					
+							<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea> 
 							<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parent.id(), 'data-id' : id()}" />	
 							<input type="hidden" data-bind="value: scoring.feedback, attr: {'name': 'feedback' + $parent.id(), 'data-id' : id()}" />						
@@ -244,6 +247,7 @@
 						<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parents[0].id(), 'data-id' : id()}" />	
 						<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parents[0].id(), 'data-id' : id()}" />	
 						<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parents[0].id(), 'data-id' : id()}"></textarea>
+						<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea>
 						<div class="answertext" data-bind="html: title, attr: {'id' : id(), 'data-id' : id()}"></div>
 						<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parents[0].id(), 'data-id' : id()}" />	
 						<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parents[0].id(), 'data-id' : id()}" />	
@@ -288,7 +292,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onfocus="clearStars(this);" onkeyup="countChar(this); propagateChange();" onblur="validateInput($(this).parent(), true)" autocomplete="off" type="password"></input>
 		<!-- ko if: isComparable -->		
 			<br /><span style="margin-left: 20px">${form.getMessage("label.PleaseRepeat")}</span>:<br />
@@ -339,7 +343,7 @@
 			<div class='limits' data-bind="html: getMaxCharacters(maxCharacters())"></div>
 		<!-- /ko -->
 
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 	
 		<!-- ko if: type == "RegExQuestion" -->
 			<input type="hidden" data-bind="value: regex, attr: {'name': 'regex' + id()}" />
@@ -403,7 +407,7 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<label class='questiontitle confirmationelement' data-bind='html: title'></label>
 		<!-- ko if: usetext -->																					
 			<a class="confirmationlabel" style="margin-left: 40px; cursor: pointer;" onclick="$(this).parent().find('.confirmation-dialog').modal('show')" data-bind="html:confirmationlabel"></a>
@@ -444,7 +448,7 @@
 	
 	<div id="rating-template">
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'rating', attr: {'name': 'type' + id()}" />	
@@ -525,18 +529,40 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		
-		<!-- ko if: min() != null && min() != 0 && max() != null && max() != 0 -->
-			<div class='limits' data-bind="html: getMinMax(minString(), maxString())"></div>
-		<!-- /ko -->
-		<!-- ko if: min() != 0 && min() != null && (max() == 0 || max() == null) -->
-			<div class='limits' data-bind="html: getMin(minString())"></div>
-		<!-- /ko -->
-		<!-- ko if: (min() == 0 || min() == null) && max() != null && max() != 0 -->
-			<div class='limits' data-bind="html: getMax(maxString())"></div>
+		<!-- ko if: display() != 'Slider' -->
+			<!-- ko if: min() != null && min() != 0 && max() != null && max() != 0 -->
+				<div class='limits' data-bind="html: getMinMax(minString(), maxString())"></div>
+			<!-- /ko -->
+			<!-- ko if: min() != 0 && min() != null && (max() == 0 || max() == null) -->
+				<div class='limits' data-bind="html: getMin(minString())"></div>
+			<!-- /ko -->
+			<!-- ko if: (min() == 0 || min() == null) && max() != null && max() != 0 -->
+				<div class='limits' data-bind="html: getMax(maxString())"></div>
+			<!-- /ko -->
 		<!-- /ko -->
 		
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
-		<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onkeyup="propagateChange();" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
+				
+		<!-- ko if: display() != 'Slider' -->
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onkeyup="propagateChange();" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
+		<!-- /ko -->
+		
+		<!-- ko if: display() == 'Slider' -->		
+		<div class="slider-div">
+			<div style="float: left; margin-left: -20px; padding-bottom: 20px; max-width: 45%; text-align: center;" data-bind="html: minLabel()"></div>
+			<div style="float: right; padding-bottom: 20px;  max-width: 45%; text-align: center;" data-bind="html: maxLabel()"></div>
+			<div style="clear: both"></div>
+			
+			<a data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
+			
+			<input class="sliderbox" type="text"
+			 data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue()}"
+			 />
+			 
+			 <a data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
+		</div>	
+		<!-- /ko -->
+		
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'number', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
@@ -567,6 +593,12 @@
 			<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />
 			<input type="hidden" data-bind="value: points, attr: {'name': 'points' + id()}" />
 			<!-- /ko -->
+			
+			<input type="hidden" data-bind="value: minLabel, attr: {'name': 'minLabel' + id()}" />
+			<input type="hidden" data-bind="value: maxLabel, attr: {'name': 'maxLabel' + id()}" />
+			<input type="hidden" data-bind="value: display, attr: {'name': 'display' + id()}" />
+			<input type="hidden" data-bind="value: initialSliderPosition, attr: {'name': 'initialSliderPosition' + id()}" />
+			<input type="hidden" data-bind="value: displayGraduationScale, attr: {'name': 'displayGraduationScale' + id()}" />
 		<!-- /ko -->
 	</div> 
 	
@@ -575,7 +607,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="input-group" style="margin-left: 20px;">
 	    	<div class="input-group-addon" style="margin-bottom: 5px">@</div>
 	      	<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}"  onblur="validateInput($(this).parent().parent())" onkeyup="propagateChange();" onchange="validateInput($(this).parent());" style="width: 180px; margin-left: 0px; margin-bottom: 0px !important;" type='text' maxlength="255" />
@@ -609,7 +641,7 @@
 			<div class='limits' data-bind="html: getMaxDate(maxString())"></div>
 		<!-- /ko -->
 		
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="input-group">
 			<!-- ko if: !foreditor && !readonly() -->
 				<div class="input-group-addon" onclick='$(this).parent().find(".datepicker").datepicker( "show" );'><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
@@ -651,17 +683,59 @@
 		<!-- /ko -->		
 	</div>
 	
+	<div id="time-template">
+		<!-- ko if: optional() == false -->
+			<span class="mandatory">*</span>
+		<!-- /ko -->
+		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		
+		<!-- ko if: min() != null && max() != null && min() != '' && max() != ''  -->
+			<div class='limits' data-bind="html: getMinMaxDate(min(), max())"></div>
+		<!-- /ko -->
+		<!-- ko if: min() != null && min() != '' && (max() == null || max() == '') -->
+			<div class='limits' data-bind="html: getMinDate(min())"></div>
+		<!-- /ko -->
+		<!-- ko if: max() != null && max() != '' && (min() == null || min() == '') -->
+			<div class='limits' data-bind="html: getMaxDate(max())"></div>
+		<!-- /ko -->
+		
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
+		<div class="input-group">
+			<div class="input-group-addon"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></div>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'timepicker ' + css()}" onblur="validateInput($(this).parent().parent());propagateChange();" type="text" placeholder="HH:mm:ss" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
+		</div>
+		
+		<!-- ko if: foreditor -->
+			<input type="hidden" data-bind="value: 'time', attr: {'name': 'type' + id()}" />	
+			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
+			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
+			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: min(), attr: {'name': 'min' + id()}" />	
+			<input type="hidden" data-bind="value: max(), attr: {'name': 'max' + id()}" />	
+			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
+			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
+			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
+			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
+			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>			
+		<!-- /ko -->		
+	</div>
+	
 	<div id="upload-template">
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class="questionhelp" data-bind="html: niceHelp"></div>	
+		<span class="questionhelp" data-bind="html: niceHelp"></span>	
 		<!-- ko if: extensions() != null && extensions().length > 0 -->
 			<div class="questionhelp">
 				<span class='glyphicon glyphicon-question-sign'></span>&nbsp;<span data-bind="html: getExtensionsHelp(extensions())"></span>
 			</div>
 		<!-- /ko -->
+		
+		<div class="uploadinfo" style="display: none; padding: 10px; color: #777;">
+			${form.getMessage("label.UploadStarted")}			
+		</div>
+		
 		<input type="hidden" data-bind="attr: {'id': 'answer' + id(), 'name':'answer' + id()}" value="files" />				
 		<div class="uploaded-files" data-bind="foreach: getFileAnswer(uniqueId())">
 			<div>
@@ -682,12 +756,13 @@
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
 			<input type="hidden" data-bind="value: extensions, attr: {'name': 'extensions' + id()}" />
+			<input type="hidden" data-bind="value: maxFileSize, attr: {'name': 'maxFileSize' + id()}" />
 		<!-- /ko -->
 	</div>
 	
 	<div id="download-template">
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class="questionhelp" data-bind="html: niceHelp"></div>	
+		<span class="questionhelp" data-bind="html: niceHelp"></span>	
 		<div class="files" data-bind="foreach: files">
 			<!-- ko if: $parent.foreditor -->
 			<input type="hidden" data-bind="value: uid(), attr: {'name': 'files' + $parent.id()}" />	
@@ -721,7 +796,7 @@
 			<div class='limits' data-bind="html: getMaxSelections(limit())"></div>
 		<!-- /ko -->
 
-		<div class='questionhelp' data-bind="html: niceHelp"></div>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		
 		<div class="gallery-div" style="width: 920px; max-width: 100%; text-align:left;">				
 			<!-- ko if: files().length == 0 -->
@@ -755,7 +830,7 @@
 								<span data-bind='html: name().replace("%20"," ")'></span>
 							</div>
 							<a onclick="showGalleryBrowser($(this).parent())">																	
-								<img class="gallery-image" data-bind="attr: {'alt': cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px'}"  style="max-width: 100%;" />	
+								<img class="gallery-image" data-bind="attr: {'alt': cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px', 'longdesc' : longdesc()}"  style="max-width: 100%;" />	
 							</a>
 							<div class="comment" data-bind="html: comment"></div>	
 							<!-- ko if: $parents[1].foreditor -->
@@ -801,7 +876,7 @@
 								<span data-bind='html: name().replace("%20"," ")'></span>
 							</div>
 						
-							<img style="width: 95%;" data-bind="attr: {'alt':cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+uid()}" />	
+							<img style="width: 95%;" data-bind="attr: {'alt':cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+uid(), 'longdesc' : longdesc()}" />	
 							<div class="gallery-image-comment" style="text-align: center; padding: 15px;" data-bind="html: comment()"></div>							
 						</div>
 				  </div>
@@ -851,7 +926,7 @@
 			<div class='limits' data-bind="html: getMaxRows(maxRows())"></div>
 		<!-- /ko -->
 				
-		<div class="questionhelp" data-bind="html: niceHelp"></div>
+		<span class="questionhelp" data-bind="html: niceHelp"></span>
 		
 		<!-- ko if: ismobile || istablet -->
 			<div data-bind="attr: {'class': 'matrixdiv' + css()}">
@@ -969,7 +1044,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		<div class="questionhelp" data-bind="html: niceHelp"></div>	
+		<span class="questionhelp" data-bind="html: niceHelp"></span>	
 		
 		<!-- ko if: ismobile || istablet -->
 			<!-- ko foreach: questions -->	

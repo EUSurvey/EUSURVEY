@@ -7,10 +7,8 @@ import com.ec.survey.model.SurveyFilter;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
-import com.ec.survey.service.ActivityService;
-import com.ec.survey.service.SessionService;
-import com.ec.survey.service.SurveyService;
 import com.ec.survey.service.mapping.PaginationMapper;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,20 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequestMapping("/forms")
 public class SurveyController extends BasicController {
 	
-	@Resource(name="surveyService")
-	private SurveyService surveyService;
-
-	@Resource(name="sessionService")
-	private SessionService sessionService;
-	
-	@Resource(name="activityService")
-	private ActivityService activityService;
-	
 	@Autowired
 	protected PaginationMapper paginationMapper;       
 		
 	@RequestMapping()
-	public ModelAndView surveys(HttpServletRequest request) throws NumberFormatException, Exception {	
+	public ModelAndView surveys(HttpServletRequest request) throws Exception {	
 		
 		SurveyFilter filter = sessionService.getSurveyFilter(request, true);			
 		
@@ -99,7 +87,7 @@ public class SurveyController extends BasicController {
 		paging.setItems(surveys);
 		
 		ModelAndView result = new ModelAndView("forms/forms", "paging", paging);
-    	result.addObject("filter", filter);
+    	result.addObject(Constants.FILTER, filter);
     	
     	if (filter.getGeneratedFrom() != null || filter.getGeneratedTo() != null || filter.getStartFrom() != null || filter.getStartTo() != null || filter.getEndFrom() != null || filter.getEndTo() != null)
     	{
@@ -108,7 +96,7 @@ public class SurveyController extends BasicController {
     	
     	if (deleted)
     	{
-    		result.addObject("deleted", true);
+    		result.addObject(Constants.DELETED, true);
     		result.addObject("deletedShortname", shortname);
     		
     		if (currentlyloaded)

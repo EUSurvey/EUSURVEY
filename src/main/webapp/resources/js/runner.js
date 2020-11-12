@@ -215,7 +215,7 @@ var page = 0;
 
 var currentUploader;
 
-function createUploader(instance)
+function createUploader(instance, maxSize)
 {
 	var uploader = new qq.FileUploader({
 	    element: instance,
@@ -228,8 +228,12 @@ function createUploader(instance)
 	    	'_csrf': csrftoken
 	    },
 	    cache: false,
-	    sizeLimit: 1048576,
+	    sizeLimit: (maxSize * 1048576),
+	    onSubmit: function() {
+	    	$(this.element).parent().find(".uploadinfo").show();
+	    },
 		onComplete : function(id, fileName, responseJSON) {
+			$(this.element).parent().find(".uploadinfo").hide();
 	    	updateFileList($(this.element), responseJSON);
 	    	
 	    	if (responseJSON.wrongextension)
@@ -238,10 +242,11 @@ function createUploader(instance)
 	    	}
 		},
 		onError: function() {
+			$(this.element).parent().find(".uploadinfo").hide();
 			showError(messageuploadnoconnection);
 		},
 		showMessage: function(message){
-			message = message.replace("1.0MB", "1 MB");
+			message = message.replace(".0MB", " MB");
 		    $(instance).closest(".survey-element").append("<div class='validation-error' aria-live='polite'>" + message + "</div>");
 		},
 		onUpload: function(id, fileName, xhr){
@@ -268,7 +273,7 @@ $(function() {
 	$(".file-uploader").each(function() {
 		if (!$(this).hasClass("importsurveyuploader"))
 		{
-			createUploader(this);
+			createUploader(this, 1);
 		}
 	});
 

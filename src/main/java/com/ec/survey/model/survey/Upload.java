@@ -2,7 +2,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import com.ec.survey.tools.Tools;
@@ -24,21 +23,23 @@ public class Upload extends Question {
 	private static final long serialVersionUID = 1L;
 	
 	private String extensions;
+	private int maxFileSize = 1;
 
 	public Upload(){}
 	
-	public Upload(Survey survey, String text, String shortname, String uid) {
+	public Upload(String text, String shortname, String uid) {
 		setTitle(text);
 		setUniqueId(uid);
 		setShortname(shortname);
 	}
 	
-	public Upload copy(String fileDir) throws ValidationException, IntrusionException
+	public Upload copy(String fileDir) throws ValidationException
 	{
 		Upload copy = new Upload();
 		baseCopy(copy);
 		
 		copy.setExtensions(extensions);
+		copy.setMaxFileSize(maxFileSize);
 		
 		return copy;
 	}
@@ -48,6 +49,10 @@ public class Upload extends Question {
 		
 		Upload upload = (Upload) element;
 		if (!Tools.isEqual(extensions, upload.getExtensions()))
+		{
+			return true;
+		}
+		if (!Tools.isEqual(maxFileSize, upload.getMaxFileSize()))
 		{
 			return true;
 		}
@@ -64,4 +69,11 @@ public class Upload extends Question {
 		this.extensions = extensions;
 	}
 	
+	@Column(name = "MAXFILESIZE")
+	public Integer getMaxFileSize() {
+		return maxFileSize > 0 ? maxFileSize : 1;
+	}
+	public void setMaxFileSize(Integer maxFileSize) {
+		this.maxFileSize = (maxFileSize != null && maxFileSize > 0) ? maxFileSize : 1;
+	}
 }

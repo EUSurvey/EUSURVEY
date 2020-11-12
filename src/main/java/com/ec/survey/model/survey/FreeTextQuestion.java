@@ -3,7 +3,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
@@ -24,8 +23,8 @@ public class FreeTextQuestion extends Question {
 
 	public FreeTextQuestion() {}
 	
-	public FreeTextQuestion(Survey survey, String title, String shortname, String uid) {
-		super(survey, title, shortname, uid);
+	public FreeTextQuestion(String title, String shortname, String uid) {
+		super(title, shortname, uid);
 	}
 	private int minCharacters;
 	private int maxCharacters;
@@ -82,7 +81,7 @@ public class FreeTextQuestion extends Question {
 		this.answer = answer;
 	}
 	
-	public FreeTextQuestion copy(String fileDir) throws ValidationException, IntrusionException
+	public FreeTextQuestion copy(String fileDir) throws ValidationException
 	{
 		FreeTextQuestion copy = new FreeTextQuestion();
 		baseCopy(copy);
@@ -97,6 +96,7 @@ public class FreeTextQuestion extends Question {
 	}
 	
 	@Transient
+	@Override
 	public String getCss()
 	{
 		String css = super.getCss();
@@ -136,9 +136,7 @@ public class FreeTextQuestion extends Question {
 		if (getNumRows() != null && !getNumRows().equals(text.getNumRows())) return true;
 		if (getIsPassword() != null && !getIsPassword().equals(text.getIsPassword())) return true;
 		if (getIsUnique() != null && !getIsUnique().equals(text.getIsUnique())) return true;
-		if (getIsComparable() != null && !getIsComparable().equals(text.getIsComparable())) return true;
-		
-		return false;
+		return (getIsComparable() != null && !getIsComparable().equals(text.getIsComparable()));
 	}
 
 }

@@ -49,6 +49,7 @@ public class ShutdownListener implements ServletContextListener {
 		}
 		catch (Exception e)
 		{
+			//ignore
 		}		
 		
 		try
@@ -65,6 +66,7 @@ public class ShutdownListener implements ServletContextListener {
 			}}
 		catch (Exception e)
 		{
+			//ignore
 		}
 
 		try
@@ -79,6 +81,7 @@ public class ShutdownListener implements ServletContextListener {
 		}
 		catch (Exception e)
 		{
+			//ignore
 		}
 		
 		try
@@ -94,6 +97,7 @@ public class ShutdownListener implements ServletContextListener {
 		}
 		catch (Exception e)
 		{
+			//ignore
 		}
 		
 		try
@@ -109,6 +113,7 @@ public class ShutdownListener implements ServletContextListener {
 		}
 		catch (Exception e)
 		{
+			//ignore
 		}
 		
 		try
@@ -123,6 +128,7 @@ public class ShutdownListener implements ServletContextListener {
 		}
 		catch (Exception e)
 		{
+			//ignore
 		}
 
 		try {
@@ -138,11 +144,13 @@ public class ShutdownListener implements ServletContextListener {
         }
         catch (Exception e)
 		{
+        	//ignore
 		}
 		
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 	}
 }

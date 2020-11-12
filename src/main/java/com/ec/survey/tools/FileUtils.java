@@ -2,8 +2,14 @@ package com.ec.survey.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class FileUtils {
+	
+	private FileUtils() {
+	    throw new IllegalStateException("Utility class");
+	}
+	
 	public static String cleanFilename(String name) {
 	    return name.replaceAll("[^a-zA-Z0-9.-]", "_").replaceAll("\\.\\.", "_");
 	}
@@ -18,7 +24,7 @@ public class FileUtils {
 				      delete(c);
 		    }
 		  }
-		  f.delete();
+		  Files.delete(f.toPath());
 		}
 	}
 }

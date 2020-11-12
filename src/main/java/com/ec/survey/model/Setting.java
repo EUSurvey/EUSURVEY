@@ -13,48 +13,51 @@ public class Setting {
 	private String value;
 	private String format;
 	
-	public final static String LDAPsyncEnabled = "LDAPsyncEnabled";
-	public final static String LDAPsyncFrequency = "LDAPsyncFrequency";
-	public final static String LDAPsyncStart = "LDAPsyncStart";
-	public final static String LDAPsyncTime = "LDAPsyncTime";
+	public static final String LDAPsyncEnabled = "LDAPsyncEnabled";
+	public static final String LDAPsyncFrequency = "LDAPsyncFrequency";
+	public static final String LDAPsyncStart = "LDAPsyncStart";
+	public static final String LDAPsyncTime = "LDAPsyncTime";
 	
-	public final static String LDAPsync2Enabled = "LDAPsync2Enabled";
-	public final static String LDAPsync2Frequency = "LDAPsync2Frequency";
-	public final static String LDAPsync2Start = "LDAPsync2Start";
-	public final static String LDAPsync2Time = "LDAPsync2Time";
+	public static final String LDAPsync2Enabled = "LDAPsync2Enabled";
+	public static final String LDAPsync2Frequency = "LDAPsync2Frequency";
+	public static final String LDAPsync2Start = "LDAPsync2Start";
+	public static final String LDAPsync2Time = "LDAPsync2Time";
 	
-	public final static String SurveyMigrateStart = "surveymigratestart";
-	public final static String SurveyMigrateTime = "surveymigratetime";
-	public final static String LastSurveyToMigrate = "lastsurveytomigrate";
+	public static final String SurveyMigrateStart = "surveymigratestart";
+	public static final String SurveyMigrateTime = "surveymigratetime";
+	public static final String LastSurveyToMigrate = "lastsurveytomigrate";
 	
-	public final static String AnswerPDFDeletionStart = "answerpdfdeletionstart";
-	public final static String AnswerPDFDeletionTime = "answerpdfdeletiontime";
-	public final static String LastSurveyToDeleteAnswerPDFs = "lastsurveytodeleteanswerpdfs";
+	public static final String AnswerPDFDeletionStart = "answerpdfdeletionstart";
+	public static final String AnswerPDFDeletionTime = "answerpdfdeletiontime";
+	public static final String LastSurveyToDeleteAnswerPDFs = "lastsurveytodeleteanswerpdfs";
 	
-	public final static String ActivityLoggingEnabled = "ActivityLoggingEnabled";
-	public final static String CreateSurveysForExternalsDisabled = "CreateSurveysForExternalsDisabled";	
+	public static final String ActivityLoggingEnabled = "ActivityLoggingEnabled";
+	public static final String CreateSurveysForExternalsDisabled = "CreateSurveysForExternalsDisabled";	
 	
-	public final static String ReportingMigrationEnabled = "ReportingMigrationEnabled";
-	public final static String ReportingMigrationStart = "ReportingMigrationStart";
-	public final static String ReportingMigrationTime = "ReportingMigrationTime";
-	public final static String ReportingMigrationSurveyToMigrate = "ReportingMigrationSurveyToMigrate";
+	public static final String ReportingMigrationEnabled = "ReportingMigrationEnabled";
+	public static final String ReportingMigrationStart = "ReportingMigrationStart";
+	public static final String ReportingMigrationTime = "ReportingMigrationTime";
+	public static final String ReportingMigrationSurveyToMigrate = "ReportingMigrationSurveyToMigrate";
 	
-	public final static String WeakAuthenticationDisabled = "WeakAuthenticationDisabled";
-	public final static String MaxReports = "MaxReports";
-	public final static String ReportText = "ReportText";
-	public final static String ReportRecipients = "ReportRecipients";
+	public static final String WeakAuthenticationDisabled = "WeakAuthenticationDisabled";
+	public static final String MaxReports = "MaxReports";
+	public static final String ReportText = "ReportText";
+	public static final String ReportRecipients = "ReportRecipients";
 	
-	public final static String FreezeUserTextAdminBan = "FreezeUserTextAdminBan";
-	public final static String FreezeUserTextAdminUnban = "FreezeUserTextAdminUnban";	
-	public final static String FreezeUserTextBan = "FreezeUserTextBan";
-	public final static String FreezeUserTextUnban = "FreezeUserTextUnban";
-	public final static String BannedUserRecipients = "BannedUserRecipients";
+	public static final String FreezeUserTextAdminBan = "FreezeUserTextAdminBan";
+	public static final String FreezeUserTextAdminUnban = "FreezeUserTextAdminUnban";	
+	public static final String FreezeUserTextBan = "FreezeUserTextBan";
+	public static final String FreezeUserTextUnban = "FreezeUserTextUnban";
+	public static final String BannedUserRecipients = "BannedUserRecipients";
 	
-	public final static String TrustValueCreatorInternal = "TrustValueCreatorInternal";
-	public final static String TrustValuePastSurveys = "TrustValuePastSurveys";
-	public final static String TrustValuePrivilegedUser = "TrustValuePrivilegedUser";
-	public final static String TrustValueNbContributions = "TrustValueNbContributions";
-	public final static String TrustValueMinimumPassMark = "TrustValueMinimumPassMark";
+	public static final String TrustValueCreatorInternal = "TrustValueCreatorInternal";
+	public static final String TrustValuePastSurveys = "TrustValuePastSurveys";
+	public static final String TrustValuePrivilegedUser = "TrustValuePrivilegedUser";
+	public static final String TrustValueNbContributions = "TrustValueNbContributions";
+	public static final String TrustValueMinimumPassMark = "TrustValueMinimumPassMark";
+
+	public static final String AnswersAnonymWorkerInterval = "AnswersAnonymWorkerInterval";
+	public static final String AnswersAnonymWorkerEnabled = "AnswersAnonymWorkerEnabled";
 	
 	@Id
 	@Column(name = "SETTINGS_ID")

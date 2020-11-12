@@ -20,6 +20,7 @@ import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
+import com.ec.survey.tools.AnswerSetAnonymWorker;
 import com.ec.survey.tools.DeleteDraftsUpdater;
 import com.ec.survey.tools.DeleteInvalidStatisticsWorker;
 import com.ec.survey.tools.DeleteSurveyUpdater;
@@ -81,9 +82,9 @@ public class SchedulerService extends BasicService {
 	
 	@Resource(name = "surveyWorker")
 	private SurveyUpdater surveyWorker;
-	
-	@Resource(name = "settingsService")
-	private SettingsService settingsService;
+
+	@Resource(name= "answerSetAnonymWorker")
+	private AnswerSetAnonymWorker answerSetAnonymWorker;
 	
 	@Resource(name = "schemaService")
 	private SchemaService schemaService;
@@ -107,8 +108,8 @@ public class SchedulerService extends BasicService {
 			
 			if (start == null || start.length() == 0 || time == null || time.length() == 0) return;
 			
-			String hours = start.substring(0, start.indexOf(":"));
-			String minutes = start.substring(start.indexOf(":")+1);
+			String hours = start.substring(0, start.indexOf(':'));
+			String minutes = start.substring(start.indexOf(':')+1);
 			Date currentDate = new Date();
 			
 			Calendar c = Calendar.getInstance();
@@ -179,8 +180,8 @@ public class SchedulerService extends BasicService {
 			
 			if (start == null || start.length() == 0 || time == null || time.length() == 0) return;
 			
-			String hours = start.substring(0, start.indexOf(":"));
-			String minutes = start.substring(start.indexOf(":")+1);
+			String hours = start.substring(0, start.indexOf(':'));
+			String minutes = start.substring(start.indexOf(':')+1);
 			Date currentDate = new Date();
 			
 			Calendar c = Calendar.getInstance();
@@ -423,8 +424,8 @@ public class SchedulerService extends BasicService {
 			
 			if (start == null || start.length() == 0 || time == null || time.length() == 0) return;
 			
-			String hours = start.substring(0, start.indexOf(":"));
-			String minutes = start.substring(start.indexOf(":")+1);
+			String hours = start.substring(0, start.indexOf(':'));
+			String minutes = start.substring(start.indexOf(':')+1);
 			Date currentDate = new Date();
 			
 			Calendar c = Calendar.getInstance();
@@ -486,7 +487,7 @@ public class SchedulerService extends BasicService {
 		
 		List<ToDoItem> todos = reportingService.getToDos();
 		
-		if (todos.size() > 0)
+		if (!todos.isEmpty())
 		{
 			logger.info("Start executing " + todos.size() + " todos");
 			
@@ -530,6 +531,7 @@ public class SchedulerService extends BasicService {
 		deleteInvalidStatisticsWorker.run();
 		sendReportedSurveysWorker.run();
 		deleteUserAccountsWorker.run();
+		answerSetAnonymWorker.run();
 		
 		logger.debug("End nightly schedule");
 	 }
@@ -551,10 +553,7 @@ public class SchedulerService extends BasicService {
 		try {
 			 ipAddresses=NetworkInterface.getNetworkInterfaces();
 		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
 			logger.error(e1);
-			e1.printStackTrace();
-			return true;
 		}
 		
 		for(NetworkInterface netint : Collections.list(ipAddresses)){						

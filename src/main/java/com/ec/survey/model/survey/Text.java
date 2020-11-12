@@ -2,7 +2,6 @@ package com.ec.survey.model.survey;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.Cacheable;
@@ -20,7 +19,7 @@ public class Text extends Question {
 	
 	private static final long serialVersionUID = 1L;
 
-	public Text(Survey survey, String text, String uid) {
+	public Text(String text, String uid) {
 		setTitle(text);
 		setUniqueId(uid);
 	}
@@ -28,7 +27,7 @@ public class Text extends Question {
 	public Text() {
 	}	
 	
-	public Text copy(String fileDir) throws ValidationException, IntrusionException
+	public Text copy(String fileDir) throws ValidationException
 	{
 		Text copy = new Text();
 		baseCopy(copy);

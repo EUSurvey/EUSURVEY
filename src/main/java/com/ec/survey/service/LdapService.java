@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.MessageException;
 import com.ec.survey.model.DepartmentItem;
 import com.ec.survey.model.KeyValue;
 import com.ec.survey.model.LdapSearchResult;
@@ -26,7 +27,7 @@ import java.util.*;
 public class LdapService extends BasicService {
     private DirContext ctx;
     
-    public static String LDAP_CONSTANT_PREFIX="$";
+    public static final String LDAP_CONSTANT_PREFIX = "$";
     
     @Resource(name="ldapDBService")
 	private LdapDBService ldapDBService;
@@ -97,14 +98,14 @@ public class LdapService extends BasicService {
         }
     }
       
-    public String getEmail(String Username) {
+    public String getEmail(String userName) {
     	
-    	Username = Tools.encodeForLDAP(Username);
+    	userName = Tools.encodeForLDAP(userName);
     	
         String email = "";
         initialize();
         try {
-        	String searchValue= String.format(ldapSearchUserFormat, Username);
+        	String searchValue= String.format(ldapSearchUserFormat, userName);
             Attributes attrs = ctx.getAttributes(searchValue);
             email = (String) attrs.get("mail").get();
         } catch (Exception e) {
@@ -113,53 +114,6 @@ public class LdapService extends BasicService {
         return email;
     }
     
-//	@SuppressWarnings("unused")
-//	public boolean init(String Username, User u) {
-//		initialize();
-//        try {
-//        	logger.debug("INIT GET ATTRIBUTES FOR USER " + Username);
-//        	Username = Tools.encodeForLDAP(Username);
-//        	String searchValue= String.format(ldapSearchUserFormat, Username);
-//        	
-//        	Attributes attrs = ctx.getAttributes(searchValue);
-//            
-//            NamingEnumeration<String> enumIds= attrs.getIDs();
-//
-//            boolean useGivenName=false;
-//            do {
-//				String attrName = enumIds.nextElement();
-//				if (attrName.equalsIgnoreCase("givenName")){
-//					useGivenName=true;
-//					break;
-//				}
-//            	
-//            	if(attrName.equalsIgnoreCase("userPassword")){
-//            		String valPwd = new String((byte[]) attrs.get(attrName).get());
-//            	}
-//
-//			} while (enumIds.hasMoreElements());
-//            
-//            u.setEmail((String) attrs.get("mail").get());
-//            u.setSurName((String) attrs.get("sn").get());
-//            // look if cn is used instead the GivenName attribute
-//            if(useGivenName){
-//            	u.setGivenName((String) attrs.get("givenName").get());
-//            }else{
-//            	u.setGivenName((String) attrs.get("cn").get());
-//            }
-//         
-//            boolean result=false;
-//            if(isCasOss())
-//            	return true;            
-//            result =attrs.get("employeeType") != null && !attrs.get("employeeType").get().toString().equalsIgnoreCase("n");
-//            return result;
-//            
-//        } catch (Exception e) {
-//            logger.error(e.getLocalizedMessage(), e);
-//            return false;
-//        }
-//	}    
-
 	public String getMoniker(String login) {
 		  String moniker = "";
 	        initialize();
@@ -266,14 +220,14 @@ public class LdapService extends BasicService {
 				String message = String.format(
 						"The property %s from the spring.properties file MUST have a value",
 						"ldap.mapping.user.departmentNumber");
-				throw new Exception(message);				
+				throw new MessageException(message);				
 			}
 			
 			if (StringUtils.isEmpty(ldapMappingUserO)){
 				String message = String.format(
 						"The property %s from the spring.properties file MUST have a value",
 						"ldap.mapping.user.o");
-				throw new Exception(message);				
+				throw new MessageException(message);				
 			}				
 			
 			String departmentNumber="";
@@ -285,7 +239,7 @@ public class LdapService extends BasicService {
 					String message = String.format(
 							"The property %s from the spring.properties file MUST be a constant (staring with '%s' value)",
 							"ldap.mapping.domain.o",  ldapMappingDomainO);
-					throw new Exception(message);						
+					throw new MessageException(message);						
 				}else{					
 					String domainCode= ldapMappingDomainO.replace(LDAP_CONSTANT_PREFIX, "");
 					DepartmentItem currentDepartmentItem = new DepartmentItem(domainCode, departmentNumber);
@@ -294,7 +248,7 @@ public class LdapService extends BasicService {
 				}
 			}
 							
-			SearchControls sc= getSearchControls(LdapSearchTypeEnum.SearchlDepartment);
+			SearchControls sc= getSearchControls(LdapSearchTypeEnum.DEPARTMENT);
 			NamingEnumeration<SearchResult> ne = null; 
 			Attributes set_att;
 			String searchString = "(objectClass=*)";
@@ -368,7 +322,7 @@ public class LdapService extends BasicService {
 					String message = String.format(
 							"Unable to retrieve the necessary information from the config file for the domain value, the property (%s) MUST contain a constant value starting with (%s) but this value is found (%s)",
 							"ldap.mapping.domain.description", LDAP_CONSTANT_PREFIX,ldapMappingDomainDescription);
-					throw new Exception(message);
+					throw new MessageException(message);
 				}
 
 				// check that the value is a constant value start with $
@@ -376,7 +330,7 @@ public class LdapService extends BasicService {
 					String message = String.format(
 							"Unable to retrieve the necessary information from the config file for the domain value, the property (%s) MUST contain a constant value starting with (%s) but this value is found (%s)",
 							"ldap.mapping.domain.description", LDAP_CONSTANT_PREFIX,ldapMappingDomainDescription);
-					throw new Exception(message);
+					throw new MessageException(message);
 	
 				}
 				
@@ -384,7 +338,7 @@ public class LdapService extends BasicService {
 					String message = String.format(
 							"Unable to retrieve the necessary information from the config file for the domain value, the property (%s) MUST contain a constant value staring with (%s) but this value is found (%s)",
 							"ldap.mapping.domain.o",LDAP_CONSTANT_PREFIX ,ldapMappingDomainO);
-					throw new Exception(message);
+					throw new MessageException(message);
 				}
 				
 				// check that the value is a constant value start with $
@@ -392,7 +346,7 @@ public class LdapService extends BasicService {
 					String message = String.format(
 							"Unable to retrieve the necessary information from the config file for the domain value, the property (%s) MUST contain a constant value starting with (%s) but this value is found (%s)",
 							"ldap.mapping.domain.o", LDAP_CONSTANT_PREFIX,ldapMappingDomainO);
-					throw new Exception(message);
+					throw new MessageException(message);
 					
 				}
 				
@@ -401,7 +355,7 @@ public class LdapService extends BasicService {
 				logger.debug("ADD NEW DOMAIN WITH O " + domainO + " DESC " + domainDesc);
 				domains.put(domainO, domainDesc);						
 			}else{
-				SearchControls sc = getSearchControls(LdapSearchTypeEnum.SearchDomain);
+				SearchControls sc = getSearchControls(LdapSearchTypeEnum.DOMAIN);
 			NamingEnumeration<SearchResult> ne = null; 
 	
 			Attributes setOfAttributes;
@@ -460,10 +414,10 @@ public class LdapService extends BasicService {
 		
 		try {
 
-			SearchControls sc= getSearchControls(LdapSearchTypeEnum.SearchUser);
-			NamingEnumeration<SearchResult> ne = null; 
+			SearchControls sc= getSearchControls(LdapSearchTypeEnum.USER);
+			NamingEnumeration<SearchResult> namingEnumeration = null; 
 
-			Attributes set_att;
+			Attributes userAttributes;
 
 			String searchString = "(objectClass=*)";
 			
@@ -474,57 +428,57 @@ public class LdapService extends BasicService {
 			}
 
 			try{
-				ne = ctx.search(ldapSearchFormat,searchString,sc);
+				namingEnumeration = ctx.search(ldapSearchFormat,searchString,sc);
 				
-				while(ne.hasMore()){
+				while(namingEnumeration.hasMore()){
 					
-					SearchResult sr = ne.next();  
-					set_att = sr.getAttributes();
+					SearchResult searchResult = namingEnumeration.next();  
+					userAttributes = searchResult.getAttributes();
 			
-					if(StringUtils.isEmpty(ldapMappingUserUid) || set_att.get(ldapMappingUserUid)==null ){
+					if (StringUtils.isEmpty(ldapMappingUserUid) || userAttributes.get(ldapMappingUserUid)==null ){
 						String message =String.format("Missing required attribute %s or equivalent, either is empty or not defined, name of the attribute found in the property file is %s,  please check","uid",ldapMappingUserUid);
-						throw new Exception(message);
+						throw new MessageException(message);
 					}
 					
-					String name = ((String)set_att.get(ldapMappingUserUid).get()).trim();
+					String name = ((String)userAttributes.get(ldapMappingUserUid).get()).trim();
 					String email = "";
-					if (set_att.get(ldapMappingUserMail) != null) email = (String)set_att.get(ldapMappingUserMail).get();		
+					if (userAttributes.get(ldapMappingUserMail) != null) email = (String)userAttributes.get(ldapMappingUserMail).get();		
 					
 					String givenName = "";
-					if (set_att.get(ldapMappingUserGivenName) != null) givenName = (String)set_att.get(ldapMappingUserGivenName).get();		
+					if (userAttributes.get(ldapMappingUserGivenName) != null) givenName = (String)userAttributes.get(ldapMappingUserGivenName).get();		
 					
 					String ecMoniker = "";
-					if (set_att.get(ldapMappingUserEcMoniker) != null) ecMoniker = ((String)set_att.get(ldapMappingUserEcMoniker).get()).trim();
+					if (userAttributes.get(ldapMappingUserEcMoniker) != null) ecMoniker = ((String)userAttributes.get(ldapMappingUserEcMoniker).get()).trim();
 					
 					String employeeType = "";
-					if (set_att.get(ldapMappingUserEmployeeType) != null) employeeType = (String)set_att.get(ldapMappingUserEmployeeType).get();
+					if (userAttributes.get(ldapMappingUserEmployeeType) != null) employeeType = (String)userAttributes.get(ldapMappingUserEmployeeType).get();
 					
 					String o = "";
 					if(!StringUtils.isEmpty(ldapMappingUserO)){
 						if(ldapMappingUserO.startsWith(LDAP_CONSTANT_PREFIX)){
 							o = ldapMappingUserO.replace(LDAP_CONSTANT_PREFIX, "");
 						}else{
-							o = (String)set_att.get(ldapMappingUserO).get();
+							o = (String)userAttributes.get(ldapMappingUserO).get();
 						}							
 					}					
 					
 					String surname = "";
-					if (set_att.get(ldapMappingUserSn) != null) surname = (String)set_att.get(ldapMappingUserSn).get();
+					if (userAttributes.get(ldapMappingUserSn) != null) surname = (String)userAttributes.get(ldapMappingUserSn).get();
 					
 					String phone = "";
-					if (set_att.get(ldapMappingUserTelephoneNumber) != null) phone = (String)set_att.get(ldapMappingUserTelephoneNumber).get();
+					if (userAttributes.get(ldapMappingUserTelephoneNumber) != null) phone = (String)userAttributes.get(ldapMappingUserTelephoneNumber).get();
 					
 					String modifyTimestamp = "";
 					Date modified = new Date();
-					if (set_att.get(ldapMappingUserModifyTimstamp) != null) {
-						modifyTimestamp = (String)set_att.get(ldapMappingUserModifyTimstamp).get();
+					if (userAttributes.get(ldapMappingUserModifyTimstamp) != null) {
+						modifyTimestamp = (String)userAttributes.get(ldapMappingUserModifyTimstamp).get();
 						modified = Tools.parseDateString(modifyTimestamp.replace("Z", ""), "yyyyMMddHHmmss");
 					}					
 									
 					boolean deactivated = false;
-					if (set_att.get(ldapMappingUserRecordStatus) != null)
+					if (userAttributes.get(ldapMappingUserRecordStatus) != null)
 					{
-						String recordStatus = (String)set_att.get(ldapMappingUserRecordStatus).get();
+						String recordStatus = (String)userAttributes.get(ldapMappingUserRecordStatus).get();
 						deactivated = recordStatus != null && recordStatus.equalsIgnoreCase("d");
 					}
 										
@@ -539,8 +493,8 @@ public class LdapService extends BasicService {
 						if(ldapMappingUserDepartmentNumber.startsWith(LDAP_CONSTANT_PREFIX))
 							department = ldapMappingUserDepartmentNumber.replace(LDAP_CONSTANT_PREFIX, "");													
 					} else {
-						if (set_att.get(ldapMappingUserDepartmentNumber) != null)
-							department = getAttributeValue(set_att, ldapMappingUserDepartmentNumber,true);						
+						if (userAttributes.get(ldapMappingUserDepartmentNumber) != null)
+							department = getAttributeValue(userAttributes, ldapMappingUserDepartmentNumber,true);						
 					}
 				            
 		            if (department != null) {
@@ -582,45 +536,41 @@ public class LdapService extends BasicService {
 	
 	public List<String> getAllEcasUserNames()
 	{
-		List<String> result = new ArrayList<>();
+		List<String> ecasUserNamesStillActivated = new ArrayList<>();
 	
 		initialize();
 		
 		try {
 
-			SearchControls sc = getSearchControls(LdapSearchTypeEnum.SearchUserName);
+			SearchControls sc = getSearchControls(LdapSearchTypeEnum.USERNAME);
 			NamingEnumeration<SearchResult> ne = null; 
-			Attributes set_att;
+			Attributes userAttributes;
 			String searchString = "(objectClass=*)";
 			
 			try{
-				ne = ctx.search(ldapSearchFormat,searchString,sc);
+				ne = ctx.search(ldapSearchFormat, searchString, sc);
 				
 				while(ne.hasMore()){
-					SearchResult sr = ne.next();  
-					set_att = sr.getAttributes();
+					SearchResult nextSearchResult = ne.next();  
+					userAttributes = nextSearchResult.getAttributes();
 					
-					if(StringUtils.isEmpty(ldapMappingUserUid) || set_att.get(ldapMappingUserUid)==null ){
+					if (StringUtils.isEmpty(ldapMappingUserUid) || userAttributes.get(ldapMappingUserUid)==null ){
 						String message =String.format("Missing required attribute %s or equivalent, either is empty or not defined, name of the attribute found in the property file is %s,  please check","uid",ldapMappingUserUid);
-						throw new Exception(message);
+						throw new MessageException(message);
 					}
 									
 					
-					String name = (String)set_att.get(ldapMappingUserUid).get();						
+					String name = (String) userAttributes.get(ldapMappingUserUid).get();						
 									
 					boolean deactivated = false;
 					// check if deactivated only if not from cas version
-					if(!isCasOss()){
-						if (set_att.get(ldapMappingUserRecordStatus) != null)
-						{
-								String recordStatus = (String)set_att.get(ldapMappingUserRecordStatus).get();
-							deactivated = recordStatus != null && recordStatus.equalsIgnoreCase("d");
-						}
+					if (!isCasOss() && userAttributes.get(ldapMappingUserRecordStatus) != null) {
+						String recordStatus = (String)userAttributes.get(ldapMappingUserRecordStatus).get();
+						deactivated = recordStatus != null && recordStatus.equalsIgnoreCase("d");
 					}
 										
-					if (!deactivated)
-					{        
-						result.add(name);
+					if (!deactivated) {        
+						ecasUserNamesStillActivated.add(name);
 					}
 				}
 			
@@ -632,7 +582,7 @@ public class LdapService extends BasicService {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		
-		return result;		
+		return ecasUserNamesStillActivated;		
 	}
 	
 	public List<KeyValue> getTopDepartments(String domain) {
@@ -734,7 +684,7 @@ public class LdapService extends BasicService {
 		initialize();
 		
 		try {
-			SearchControls sc = getSearchControls(LdapSearchTypeEnum.SearchLogin);
+			SearchControls sc = getSearchControls(LdapSearchTypeEnum.LOGIN);
 			
 			sc.setCountLimit(100);
 			sc.setTimeLimit(60000);
@@ -744,46 +694,28 @@ public class LdapService extends BasicService {
 
 			String searchString = "(& (objectClass=*)";
 						
-			if (isAttributeEligible(ldapMappingUserEcMoniker)){
-				if (name != null && name.length() > 0)
-				{
-						searchString += getFilterContains(ldapMappingUserEcMoniker, name);			
-				}
+			if (isAttributeEligible(ldapMappingUserEcMoniker) && name != null && name.length() > 0){
+				searchString += getFilterContains(ldapMappingUserEcMoniker, name);			
 			}
 			
-			if (isAttributeEligible(ldapMappingUserGivenName)){
-				if (first != null && first.length() > 0)
-				{
-						searchString += getFilterContains(ldapMappingUserGivenName, first);			
-				}
+			if (isAttributeEligible(ldapMappingUserGivenName) && first != null && first.length() > 0){
+				searchString += getFilterContains(ldapMappingUserGivenName, first);			
 			}
 			
-			if (isAttributeEligible(ldapMappingUserSn)){
-				if (last != null && last.length() > 0)
-				{
-						searchString += getFilterContains(ldapMappingUserSn, last);
-				}
+			if (isAttributeEligible(ldapMappingUserSn) && last != null && last.length() > 0){
+				searchString += getFilterContains(ldapMappingUserSn, last);
 			}
 			
-			if (isAttributeEligible(ldapMappingUserMail)){
-				if (email != null && email.length() > 0)
-				{
-						searchString += getFilterContains(ldapMappingUserMail, email);			
-				}
+			if (isAttributeEligible(ldapMappingUserMail) && email != null && email.length() > 0){
+				searchString += getFilterContains(ldapMappingUserMail, email);			
 			}			
 			
-			if (isAttributeEligible(ldapMappingUserDepartmentNumber)){
-				if (department != null && department.length() > 0 && !department.equalsIgnoreCase("undefined"))
-				{
-						searchString += getFilterStartsWith(ldapMappingUserDepartmentNumber, department);			
-				}
+			if (isAttributeEligible(ldapMappingUserDepartmentNumber) && department != null && department.length() > 0 && !department.equalsIgnoreCase("undefined")){
+				searchString += getFilterStartsWith(ldapMappingUserDepartmentNumber, department);			
 			}			
 
-			if(isAttributeEligible(ldapMappingUserO)){
-				if (type != null && type.length() > 0 )
-				{
-						searchString += getFilterEquals(ldapMappingUserO, type); 			
-				}
+			if(isAttributeEligible(ldapMappingUserO) && type != null && type.length() > 0){
+				searchString += getFilterEquals(ldapMappingUserO, type); 			
 			}
 			
 			if(!isCasOss()){
@@ -803,21 +735,27 @@ public class LdapService extends BasicService {
 
 					String login = getAttributeValue(set_att, "uid",false) ;
 					String displayName="";
-					if(set_att.get(ldapMappingUserEcMoniker)!=null)
+					if(set_att.get(ldapMappingUserEcMoniker)!=null) {
 						displayName = getAttributeValue(set_att, ldapMappingUserEcMoniker,false) ;
+					}
 					String organisation="";
-					if(set_att.get(ldapMappingUserO)!=null)
+					if(set_att.get(ldapMappingUserO)!=null) {
 						organisation = getAttributeValue(set_att, ldapMappingUserO,false) ;
+					}
 					String group="";
-					if(set_att.get(ldapMappingUserDepartmentNumber)!=null)
+					if(set_att.get(ldapMappingUserDepartmentNumber)!=null) {
 						group = getAttributeValue(set_att, ldapMappingUserDepartmentNumber,false) ;
+					}
 					String fname="";
 					if(set_att.get(ldapMappingUserGivenName)!=null)
-					fname = getAttributeValue(set_att, ldapMappingUserGivenName,false) ;
+					{
+						fname = getAttributeValue(set_att, ldapMappingUserGivenName,false) ;
+					}
 					String lname="";
 					if(set_att.get(ldapMappingUserSn)!=null)
+					{
 						lname = getAttributeValue(set_att, ldapMappingUserSn,false) ;
-					
+					}
 					ldqpUsers.add(new LdapSearchResult(login, displayName, organisation, group, fname, lname));				
 				}
 			} catch (javax.naming.SizeLimitExceededException se) {
@@ -913,7 +851,7 @@ public class LdapService extends BasicService {
 		List<String> lstAttr= new ArrayList<>();
 		
 		switch (typeSearch) {
-		case SearchLogin:
+		case LOGIN:
 			if (isAttributeEligible(ldapMappingUserUid))
 				lstAttr.add(ldapMappingUserUid);
 			if (isAttributeEligible(ldapMappingUserEcMoniker))
@@ -927,25 +865,25 @@ public class LdapService extends BasicService {
 			if (isAttributeEligible(ldapMappingUserGivenName))
 				lstAttr.add(ldapMappingUserGivenName);
 			break;
-		case SearchUserName:
+		case USERNAME:
 			if (isAttributeEligible(ldapMappingUserUid))
 				lstAttr.add(ldapMappingUserUid);
 			if (isAttributeEligible(ldapMappingUserRecordStatus))
 				lstAttr.add(ldapMappingUserRecordStatus);
 			break;
-		case SearchDomain:
+		case DOMAIN:
 			if (isAttributeEligible(ldapMappingDomainDescription))
 				lstAttr.add(ldapMappingDomainDescription);
 			if (isAttributeEligible(ldapMappingUserO))
 				lstAttr.add(ldapMappingUserO);
 			break;
-		case SearchlDepartment:
+		case DEPARTMENT:
 			if (isAttributeEligible(ldapMappingUserDepartmentNumber))
 				lstAttr.add(ldapMappingUserDepartmentNumber);
 			if (isAttributeEligible(ldapMappingUserO))
 				lstAttr.add(ldapMappingUserO);
 			break;
-		case SearchUser:
+		case USER:
 			if (isAttributeEligible(ldapMappingUserUid))
 				lstAttr.add(ldapMappingUserUid);
 			if (isAttributeEligible(ldapMappingUserMail))
@@ -988,9 +926,7 @@ public class LdapService extends BasicService {
 	private boolean isAttributeEligible(String attr){
 		if (StringUtils.isEmpty(attr))
 			return false;
-		if (attr.startsWith("$"))
-			// this is a constant value to search for it
-			return false;
-		return true;
+		return !attr.startsWith("$");
+		// this is a constant value to search for it		
 	}
 }

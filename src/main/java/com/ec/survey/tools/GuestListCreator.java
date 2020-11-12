@@ -6,6 +6,7 @@ import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.service.AttendeeService;
 import com.ec.survey.service.ParticipationService;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -29,7 +30,7 @@ public class GuestListCreator implements Runnable {
 	protected ParticipationService participationService;	
 	
 	@Resource(name = "attendeeService")
-	protected AttendeeService attendeeService;	
+	protected AttendeeService attendeeService;
 	
 	@Resource(name = "sessionFactory")
 	protected SessionFactory sessionFactory;	 
@@ -37,6 +38,7 @@ public class GuestListCreator implements Runnable {
 	private int groupId;
 	private List<Integer> userIDs;
 	private List<String> tokens;
+	private List<String> deactivatedTokens;
 	private List<Integer> attendeeIDs;
 	private int type;
 	
@@ -52,45 +54,78 @@ public class GuestListCreator implements Runnable {
 		type = 2;
 	}
 	
-	public void initTokens(int groupId, List<String> tokens) {
+	public void initTokens(int groupId, List<String> tokens, List<String> deactivatedTokens) {
 		this.groupId = groupId;
 		this.tokens = tokens;
+		this.deactivatedTokens = deactivatedTokens;
 		type = 3;
 	}
 
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public void run() {
-		runBasic(true);
+		runBasic();
 	}
 
 	@Transactional
 	public void runSync() {
-		runBasic(true);
+		runBasic();
 	}
 	
-	@Transactional(propagation=Propagation.REQUIRED)
-	private void runBasic(boolean sync)
+	private void runBasic()
 	{
 		Session session = sessionFactory.getCurrentSession();
 		ParticipationGroup g = participationService.get(groupId);
+
+		List<Integer> invitationsToDeactivate = new ArrayList<>();
 		
 		try {
 			
+			List<Invitation> existingInvitations = attendeeService.getInvitationsForParticipationGroup(g.getId());
+			
 			if (type == 1)
 			{
-				List<EcasUser> users = new ArrayList<EcasUser>(); //participationService.getUsersForParticipationGroup(g);
+
+				for (EcasUser existingUser : g.getEcasUsers())
+				{
+					if (!userIDs.contains(existingUser.getId()))
+					{
+						Invitation invitation = attendeeService.getInvitationForParticipationGroupAndAttendee(g.getId(), existingUser.getId());
+						invitation.setDeactivated(true);
+						attendeeService.update(invitation);
+					}
+				}
+
+				List<EcasUser> users = new ArrayList<>();
 				
 				for (int id : userIDs)
 				{
 					EcasUser user = (EcasUser) session.get(EcasUser.class, id);
 					users.add(user);
 				}
-				g.setEcasUsers(users);
 
+				g.setEcasUsers(users);			
+				
+				for (Invitation invitation : existingInvitations) {
+					if (!userIDs.contains(invitation.getAttendeeId()))
+					{
+						invitationsToDeactivate.add(invitation.getId());
+					}
+				}
+				
+				g.setEcasUsers(users);
 			
 			} else if (type == 2)
 			{
+				for (Attendee existingAttendee : g.getAttendees())
+				{
+					if (!attendeeIDs.contains(existingAttendee.getId()))
+					{
+						Invitation invitation = attendeeService.getInvitationForParticipationGroupAndAttendee(g.getId(), existingAttendee.getId());
+						invitation.setDeactivated(true);
+						attendeeService.update(invitation);
+					}
+				}
 				List<Attendee> attendees = new ArrayList<>();
 				for (int intKey : attendeeIDs)
 				{
@@ -98,11 +133,19 @@ public class GuestListCreator implements Runnable {
 					attendees.add(attendee);
 					
 				}
+				
+				for (Invitation invitation : existingInvitations) {
+					if (!attendeeIDs.contains(invitation.getAttendeeId()))
+					{
+						invitationsToDeactivate.add(invitation.getId());
+					}
+				}
+				
 				g.setAttendees(attendees);
 			} else if (type == 3)
 			{
 				try {
-					List<Invitation> existingInvitations = attendeeService.getInvitationsForParticipationGroup(g.getId());
+					
 			 	 	for (Invitation invitation : existingInvitations)
 			 	 	{
 			 	 		if (tokens.contains(invitation.getUniqueId()))
@@ -112,6 +155,11 @@ public class GuestListCreator implements Runnable {
 			 	 	}
 										
 					attendeeService.addTokens(tokens, g.getId());
+					
+					for (String token : deactivatedTokens) {
+						Invitation invitation = attendeeService.getInvitationByUniqueId(token);
+						invitationsToDeactivate.add(invitation.getId());
+					}
 				} catch (GenericJDBCException e)
 				{
 					if (e.getMessage().equalsIgnoreCase("maximum number of invitations per guestlist exceeded"))
@@ -129,6 +177,10 @@ public class GuestListCreator implements Runnable {
 		
 		g.setInCreation(false);
 		participationService.save(g);
+		
+		if (!invitationsToDeactivate.isEmpty()) {
+			attendeeService.deactivateInvitations(invitationsToDeactivate);
+		}
 	}
 
 }

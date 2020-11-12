@@ -9,8 +9,10 @@
 	<%@ include file="../includes.jsp" %>
 	
 	<style>
-		ulx {
-			margin-left: 140px;
+		@media (min-width: 767px) {   
+			ul {
+				margin-left: 140px;
+			}
 		}
 	</style>
 </head>
@@ -19,16 +21,14 @@
 	<%@ include file="../header.jsp" %>	
 	
 		<div class='${responsive != null ? "responsivepage" : "page"}' style='padding: 20px; padding-top: 80px; padding-bottom: 100px; max-width: 600px; margin-left: auto; margin-right: auto'>
-	
-		<div class="hidden-xs" style="float: left; height: 200px;">
-			<span class="glyphicon glyphicon-ban-circle" style="font-size: 100px; color: #bd281d; margin-right: 60px; margin-top: 10px"></span>
-		</div>
-		<div style="text-align: left; margin-bottom: 50px;">
-			<div style="float: left" class="visible-xs">
-				<span class="glyphicon glyphicon-ban-circle" style="font-size: 30px; color: #bd281d; margin-right: 10px; "></span>
+			<div class="hidden-xs" style="float: left; height: 300px;">
+				<span class="glyphicon glyphicon-ban-circle" style="font-size: 100px; color: #bd281d; margin-right: 60px; margin-top: 10px"></span>
 			</div>
-			<div style="float: right; width: 400px;">
-				<h1>				
+			<div style="text-align: left;">
+				<h1>			
+					<div class="visible-xs" style="float: left">
+						<span class="glyphicon glyphicon-ban-circle" style="font-size: 30px; color: #bd281d; margin-right: 10px; "></span>
+					</div>	
 					<spring:message code="label.InformationLoginError" /> 
 				</h1>
 								
@@ -37,10 +37,8 @@
 				<br />
 				<a href="<c:url value="/auth/login"/>"><spring:message code="label.BackToLogin" /></a>
 			</div>
-			<div style="clear: both"></div>
 		</div>
 		
-	</div>
 	</div>
 	
 	<%@ include file="../footer.jsp" %>		

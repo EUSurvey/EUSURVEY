@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ page contentType="text/html; charset=UTF-8" session="true" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -57,22 +58,8 @@
 
 	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu.js?version=<%@include file="../version.txt" %>"></script>
 	<link rel="stylesheet" href="${contextpath}/resources/js/tree/treeview.css?version=<%@include file="../version.txt" %>" type="text/css">
+	<script language="javascript" type="text/javascript" src="${contextpath}/resources/js/tree/treemenu2.js?version=<%@include file="../version.txt" %>"></script>
 
-
-	<script type="text/javascript">
-	
-		$(document).ready(function(){
-			
-			ddtreemenu.createTree("treemenu", false, 0,"${contextpath}");
-			
-			 $("a.anchorTop").click(function(){
-				 $('html, body').animate({scrollTop : 0},100);
-					return false;
-			 });
-		});
-	
-	</script>
-	
 </head>
 <body>
 	<div class="page-wrap">
@@ -106,651 +93,3413 @@
 		<br/>
 		<br/>
 		<ul id="treemenu" class="treeview" rel="closed">
-			<li><a class="anchorlink head" href="#_Toc0">Questions g&eacute;n&eacute;rales</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc0-1">Qu'est-ce qu'EUSurvey?</a></li>
-					<li><a class="anchorlink" href="#_Toc0-2">Quand utiliser EUSurvey?</a></li>
-					<li><a class="anchorlink" href="#_Toc0-3">Quelles sont les limitations d'EUSurvey?</a></li>
-					<li><a class="anchorlink" href="#_Toc0-4">Quelles sont les fonctionnalit&eacute;s d'EUSurvey?</a></li>
-					<li><a class="anchorlink" href="#_Toc0-5">Gestion des formulaires</a></li>
-					<li><a class="anchorlink" href="#_Toc0-6">Exploitation des r&eacute;sultats</a></li>
-					<li><a class="anchorlink" href="#_Toc0-7">O� trouver des informations compl&eacute;mentaires sur EUSurvey?</a></li>
-					<li><a class="anchorlink" href="#_Toc0-8">Qui contacter en cas de probl&egrave;mes techniques li&eacute;s &agrave; EUSurvey?</a></li>
-					<li><a class="anchorlink" href="#_Toc0-9">Qui contacter pour sugg&eacute;rer des am&eacute;liorations &agrave; EUSurvey?</a></li>
-					<li><a class="anchorlink" href="#_Toc0-10">Avec quels navigateurs l'application EUSurvey est-elle compatible?</a></li>
-					<li><a class="anchorlink" href="#_Toc0-11">EUSurvey: clause de non-responsabilit&eacute; (pour les utilisateurs non membres des institutions de l'UE)</a></li>
-					<li><a class="anchorlink" href="#_Toc0-12">Mes participants peuvent-ils r&eacute;pondre &agrave; mon questionnaire &agrave; partir d'un appareil mobile?</a></li>
-					<li><a class="anchorlink" href="#_Toc0-13">Y a-t-il une taille minimale d'�cran?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc1">Connexion et inscription � l'EU Login</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc1-1">J'ai un compte EU Login. Dois-je aussi cr�er un compte EUSurvey?</a></li>
-					<li><a class="anchorlink" href="#_Toc1-2">Comment puis-je me connecter � EUSurvey?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc2">Cr&eacute;ation d'une enqu&ecirc;te</a>
-			<ul>
-					<li><a class="anchorlink " href="#_Toc2-1">Comment cr&eacute;er une nouvelle enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc2-2">Comment importer une enqu&ecirc;te existante depuis un ordinateur?</a></li>
-					<li><a class="anchorlink" href="#_Toc2-3">Comment importer une enqu&ecirc;te existante depuis l'application IPM?</a></li>
-					<li><a class="anchorlink" href="#_Toc2-4">O� se trouvent toutes les enqu&ecirc;tes que j'ai cr&eacute;&eacute;es?</a></li>
-					<li><a class="anchorlink " href="#_Toc2-5">Comment ouvrir une enqu&ecirc;te existante pour la modifier, par exemple?</a></li>
-					<li><a class="anchorlink" href="#_Toc2-6">Comment exporter une enqu&ecirc;te existante?</a></li>
-					<li><a class="anchorlink" href="#_Toc2-7">Comment copier une enqu&ecirc;te existante?</a></li>
-					<li><a class="anchorlink" href="#_Toc2-8">Comment supprimer une enqu&ecirc;te existante?</a></li>
-					<li><a class="anchorlink" href="#_Toc2-9">Comment cr&eacute;er un questionnaire conforme aux normes WCAG avec EUSurvey?</a></li>
-					<li><a class="anchorlink" href="#_Toc2-10">Comment cr&eacute;er un questionnaire de type quiz?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc3">Modifier une enqu&ecirc;te</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc3-1">Comment lancer l'&eacute;diteur?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-2">Comment cr&eacute;er un questionnaire avec l'&eacute;diteur EUSurvey?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-3">Comment ajouter ou supprimer des questions de mon questionnaire?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-4">Comment modifier les &eacute;l&eacute;ments de mon questionnaire?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-10">Comment copier les &eacute;l&eacute;ments?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-11">Comment ajouter ou supprimer des r&eacute;ponses dans les questions &agrave; choix ?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-12">Puis-je rendre une question obligatoire?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-13">Comment d&eacute;placer les &eacute;l&eacute;ments dans le questionnaire?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-14">Comment utiliser la fonction visibilit&eacute; (d&eacute;pendances)?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-7">Peut-on modifier l'ordre des r&eacute;ponses aux questions simples ou &agrave; choix multiple?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-5">Comment autoriser d'autres utilisateurs &agrave; modifier une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-8">Quelles langues sont compatibles avec l'application?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-9">Pourquoi l'UTF-8? Quelles polices de caract&egrave;res utiliser?</a></li>
-					<li><a class="anchorlink" href="#_Toc3-6">Que signifie la notion de "Complexit&eacute;" ?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc4">S&eacute;curit&eacute; des enqu&ecirc;tes</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc4-1">Comment restreindre l'acc&egrave;s &agrave; une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc4-3">Comment d&eacute;finir un mot de passe pour une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc4-4">Comment s'assurer qu'un utilisateur ne soumette pas plus qu'un nombre donn&eacute; de contributions &agrave; une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink " href="#_Toc4-5">Comment &eacute;viter que des logiciels robots ne soumettent des contributions en masse &agrave; une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc4-6">Est-il possible d'autoriser les participants &agrave; acc&eacute;der &agrave; leurs contributions apr&egrave;s envoi?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc5">Tester une enqu&ecirc;te</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc5-1">Est-il possible d'afficher l'enqu&ecirc;te telle qu'elle appara�tra une fois publi&eacute;e?</a></li>
-					<li><a class="anchorlink" href="#_Toc5-2">Des coll&egrave;gues peuvent-ils tester l'enqu&ecirc;te avant sa publication?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc6">Traductions</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc6-1">Comment traduire une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc6-2">Comment ajouter une traduction existante &agrave; une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc6-3">Est-il possible de modifier une traduction existante en ligne?</a></li>
-					<li><a class="anchorlink" href="#_Toc6-4">Est-il possible de cr&eacute;er des traductions hors ligne?</a></li>
-					<li><a class="anchorlink" href="#_Toc6-6">Comment publier/d&eacute;publier des traductions? Pourquoi est-il parfois impossible de publier une traduction? Qu'entend-on par traduction &laquo;incompl&egrave;te&raquo;?</a></li>
-					<li><a class="anchorlink" href="#_Toc6-7">Est-il possible de t&eacute;l&eacute;verser des traductions dans des langues non europ&eacute;ennes?</a></li>	
-					<li><a class="anchorlink" href="#_Toc6-8">Qu'entend-on par &laquo;Demander une traduction automatique&raquo;?</a></li>	
-					<li><a class="anchorlink" href="#_Toc6-5">Instructions pour le personnel des institutions europ&eacute;ennes</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc7">Publication d'une enqu&ecirc;te</a>
-				<ul>	
-					<li><a class="anchorlink" href="#_Toc7-1">Comment publier une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc7-2">Est-il possible de personnaliser l'URL d'une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc7-7">Puis-je envoyer un lien direct vers une traduction de mon enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc7-3">Comment programmer la publication d'une enqu&ecirc;te pendant un cong&eacute;?</a></li>
-					<li><a class="anchorlink" href="#_Toc7-4">Est-il possible de programmer un rappel de la date de fin de l'enqu&ecirc;te?</a></li>
-					<c:if test="${enablepublicsurveys}">
-					<li><a class="anchorlink" href="#_Toc7-5">Comment afficher une enqu&ecirc;te dans la liste des enqu&ecirc;tes publiques dans EUSurvey?</a></li>
-					</c:if>
-					<li><a class="anchorlink" href="#_Toc7-6">Pour le personnel des institutions europ&eacute;ennes: quelles sont les exigences officielles pour le lancement d'une consultation publique ouverte (site web &laquo;Votre point de vue sur l'Europe&raquo;)?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc8">Gestion des enqu&ecirc;tes</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc8-1">Est-il possible de corriger les erreurs d&eacute;couvertes dans une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc8-2">En cas de modification de l'enqu&ecirc;te, des contributions sont-elles supprim&eacute;es?</a></li>
-					<li><a class="anchorlink" href="#_Toc8-3">Comment modifier le titre d'une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc8-4">Comment modifier l'adresse de contact d'une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc8-5">Comment personnaliser le message de confirmation par d&eacute;faut? </a></li>
-					<li><a class="anchorlink" href="#_Toc8-6">Comment personnaliser le message de sortie par d&eacute;faut? </a></li>
-					<li><a class="anchorlink" href="#_Toc8-7">Fonctionnalit&eacute; d'archivage</a></li>
-					<li><a class="anchorlink" href="#_Toc8-8">Comment donner acc&egrave;s &agrave; mon enqu&ecirc;te &agrave; d'autres utilisateurs?</a></li>
-					<li><a class="anchorlink" href="#_Toc8-9">Que sont les journaux d'activit� ?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc9">Analyse, exportation et publication des r&eacute;sultats</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc9-1">O� trouver les contributions re�ues des participants?</a></li>
-					<li><a class="anchorlink" href="#_Toc9-2">Comment t&eacute;l&eacute;charger les contributions re�ues?</a></li>
-					<li><a class="anchorlink" href="#_Toc9-3">Comment rechercher et analyser un sous-ensemble d&eacute;fini de contributions?</a></li>
-					<li><a class="anchorlink" href="#_Toc9-4">Comment retourner &agrave; l'ensemble des contributions apr&egrave;s avoir d&eacute;fini un sous-ensemble?</a></li>
-					<li><a class="anchorlink" href="#_Toc9-5">Comment publier les r&eacute;sultats? </a></li>
-					<li><a class="anchorlink" href="#_Toc9-6">Comment acc&eacute;der aux r&eacute;sultats publi&eacute;s?</a></li>
-					<li><a class="anchorlink" href="#_Toc9-7">Comment autoriser d'autres utilisateurs &agrave; acc&eacute;der aux r&eacute;sultats d'une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc9-8">Je ne parviens pas � d�compresser mes fichiers export�s</a></li>
-					<li><a class="anchorlink" href="#_Toc9-9">Les r&eacute;sultats publi&eacute;s - protection des donn&eacute;es &agrave; caract&egrave;re personnel, charg&eacute;es par les participants</a></li>
-					<li><a class="anchorlink" href="#_Toc9-10">Comment concevoir une enqu&ecirc;te afin de publier les r&eacute;sultats avec ou sans donn&eacute;es personnelles?</a></li>
-					<li><a class="anchorlink" href="#_Toc9-11">Pourquoi mes r�sultats ne sont-ils pas � jour?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc10">Styles et mise en pages</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc10-1">Comment modifier l'apparence d'une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc10-2">Comment cr&eacute;er son propre th&egrave;me visuel?</a></li>
-					<li><a class="anchorlink" href="#_Toc10-3">Comment ajouter un logo &agrave; une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc10-4">Comment ajouter des liens utiles &agrave; une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc10-5">Comment ajouter des documents de r&eacute;f&eacute;rence &agrave; une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc10-6">Comment cr&eacute;er une enqu&ecirc;te en plusieurs pages?</a></li>
-					<li><a class="anchorlink" href="#_Toc10-7">Comment activer la num&eacute;rotation automatique pour une enqu&ecirc;te?</a></li>
-					<li><a class="anchorlink" href="#_Toc10-8">Comment cr&eacute;er une apparence personnalis&eacute;e pour une enqu&ecirc;te?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc11">Gestion des contacts et des invitations</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc11-1">Qu'est-ce que le &laquo;carnet d'adresses&raquo;?</a></li>
-					<li><a class="anchorlink" href="#_Toc11-2">Que sont les &laquo;attributs&raquo; des contacts?</a></li>
-					<li><a class="anchorlink" href="#_Toc11-3">Comment ajouter de nouveaux contacts dans le carnet d'adresses?</a></li>
-					<li><a class="anchorlink" href="#_Toc11-4">Qu'est-ce qu'un &laquo;formulaire d'enregistrement&raquo;?</a></li>
-					<li><a class="anchorlink" href="#_Toc11-5">Comment importer un fichier avec plusieurs contacts dans le carnet d'adresses?</a></li>
-					<li><a class="anchorlink" href="#_Toc11-6">Comment modifier un attribut pour plusieurs contacts &agrave; la fois?</a></li>
-					<li><a class="anchorlink" href="#_Toc11-7">Est-il possible d'exporter les contacts du carnet d'adresses dans un fichier?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc12">Invitation de participants</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc12-1">Comment d&eacute;finir un groupe de participants potentiels? Qu'est-ce qu'une &laquo;liste d'invit&eacute;s&raquo;?</a></li>
-					<li><a class="anchorlink" href="#_Toc12-2">Comment modifier/supprimer une liste d'invit&eacute;s existante?</a></li>
-					<li><a class="anchorlink" href="#_Toc12-3">Comment envoyer un courriel d'invitation aux participants?</a></li>
-				</ul>
-			<li><a class="anchorlink head" href="#_Toc13">Gestion du compte personnel</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc13-1">Comment modifier le mot de passe?</a></li>
-					<li><a class="anchorlink" href="#_Toc13-2">Comment modifier l'adresse &eacute;lectronique?</a></li>
-					<li><a class="anchorlink" href="#_Toc13-3">Comment modifier la langue par d&eacute;faut?</a></li>
-				</ul>
-			</li>
-			<li><a class="anchorlink head" href="#_Toc14">Protection de la vie priv&eacute;e</a>
-				<ul>
-					<li><a class="anchorlink" href="#_Toc14-1">Ce syst&egrave;me utilise des cookies. Quelles informations y sont enregistr&eacute;es?</a></li>
-					<li><a class="anchorlink" href="#_Toc14-2">Quelles informations sont enregistr&eacute;es par EUSurvey lorsqu'un participant soumet une contribution?</a></li>
-					<li><a class="anchorlink" href="#_Toc14-3">Les enqu&ecirc;tes doivent-elles inclure une d&eacute;claration relative &agrave; la protection de la vie priv&eacute;e?</a></li>
-				</ul>
-			</li>
+			
 		
 		</ul>
 	</div>
 	
-	<h1 style="margin-top: 40px"><a class="anchor" name="_Toc0"></a>Questions g&eacute;n&eacute;rales</h1>
-	<h2><a class="anchor" name="_Toc0-1"></a>Qu'est-ce qu'EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>EUSurvey est un outil de gestion d'enqu&ecirc;tes en ligne qui permet de cr&eacute;er, publier et g&eacute;rer des questionnaires et d'autres formulaires interactifs, compatibles avec la plupart des logiciels de navigation.</p>
-	<h2><a class="anchor" name="_Toc0-2"></a>Quand utiliser EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Utilisez EUSurvey si vous souhaitez cr&eacute;er un questionnaire ou un formulaire interactif accessibles en ligne, ou pour enregistrer un grand nombre de jeux de donn&eacute;es semblables.</p>
-	<h2><a class="anchor" name="_Toc0-3"></a>Quelles sont les limitations d'EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>EUSurvey n'est peut-&ecirc;tre pas adapt&eacute; &agrave; votre projet dans les situations suivantes:</p>
-		<ul>
-			<li>si plusieurs participants doivent travailler sur la m&ecirc;me contribution avant qu'elle ne soit soumise</li>
-			<li>si les contributions doivent &ecirc;tre valid&eacute;es avant de pouvoir &ecirc;tre soumises</li>
-		</ul>
-	<p>Veuillez contacter DIGIT-EUSURVEY-SUPPORT pour obtenir plus d'informations, &ecirc;tre tenu au courant des fonctionnalit&eacute;s futures et savoir comment contourner les probl&egrave;mes rencontr&eacute;s.</p>
-	<h2><a class="anchor" name="_Toc0-4"></a>Quelles sont les fonctionnalit&eacute;s d'EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p><b>Personnalisation des formulaires</b><br />Facile &agrave; utiliser, l'&eacute;diteur permet de choisir diff&eacute;rents types de questions: texte simple, questions &agrave; choix multiple, tableaux, &eacute;l&eacute;ments multim&eacute;dias, etc. Vous pouvez structurer votre questionnaire au moyen d'&eacute;l&eacute;ments structurels sp&eacute;cifiques.</p>
-	<p><b>Questions d&eacute;pendantes</b><br />EUSurvey peut afficher des questions et champs suppl&eacute;mentaires en fonction des r&eacute;ponses du participant, ce qui rend les questionnaires interactifs.</p>
-	<p><b>Programmation de la publication</b><br />Vous pouvez programmer la publication et la d&eacute;publication automatiques de votre enqu&ecirc;te &agrave; la date et &agrave; l'heure que vous souhaitez.</p>
-	<p><b>Modification des formulaires apr&egrave;s publication</b><br />Vous pouvez modifier un formulaire publi&eacute; sans perdre aucune contribution.</p>
-	<p><b>Langues</b><br />L'interface utilisateur est disponible dans 23 langues de l'UE. Vous pouvez &eacute;galement traduire votre formulaire dans l'une des 136 langues couvertes par la norme ISO 639-1, de l'abkhaze au zoulou.</p>
-	<p><b>S&eacute;curit&eacute;</b><br />EUSurvey dispose de l'infrastructure n&eacute;cessaire pour assurer la s&eacute;curit&eacute; des formulaires en ligne.</p>
-	<p><b>Envoi d'invitations directement &agrave; partir de l'application</b><br />Vous pouvez s&eacute;lectionner des contacts dans le &laquo;carnet d'adresses&raquo; et leur envoyer &agrave; chacun un message contenant un lien d'acc&egrave;s individuel.</p>
-	<p><b>Protection des donn&eacute;es &agrave; caract&egrave;re personnel</b><br />Vous pouvez garantir le respect des donn&eacute;es &agrave; caract&egrave;re personnel des participants en cr&eacute;ant des formulaires anonymes. Dans ce cas, en tant qu'auteur, vous n'aurez pas acc&egrave;s aux param&egrave;tres de connexion des participants.</p>
-	<p><b>Personnalisation de l'apparence</b><br />Vous pouvez personnaliser compl&egrave;tement la mise en pages des formulaires gr�ce &agrave; l'&eacute;diteur de styles CSS et aux &eacute;diteurs de texte enrichi, qui permettent de configurer tous les &eacute;l&eacute;ments visibles. Vous pouvez &eacute;galement adapter le formulaire &agrave; l'identit&eacute; de votre projet au moyen d'une vari&eacute;t&eacute; de th&egrave;mes graphiques. Les questionnaires peuvent tenir sur une page ou sur plusieurs pages, &agrave; votre convenance.</p>
-	<p><b>Sauvegarde de brouillons</b><br />Vous pouvez permettre aux participants de sauvegarder leur contribution &agrave; l'&eacute;tat de brouillon sur le serveur, et de la terminer plus tard.</p>
-	<p><b>Remplissage de formulaires hors ligne</b><br />EUSurvey permet de compl&eacute;ter les formulaires hors ligne avant de les envoyer sur le serveur au moment voulu.</p>
-	<p><b>Num&eacute;rotation automatique</b><br />Pour structurer votre enqu&ecirc;te, EUSurvey peut num&eacute;roter les &eacute;l&eacute;ments des formulaires &agrave; votre place.</p>
-	<p><b>Contraste renforc&eacute;</b><br />Les personnes malvoyantes peuvent afficher une version &agrave; contraste renforc&eacute; du questionnaire. Cette version est cr&eacute;&eacute;e automatiquement pour tous les formulaires.</p>
-	<p><b>Ajout de fichiers compl&eacute;mentaires</b><br />Vous pouvez ajouter des fichiers &agrave; votre questionnaire en les envoyant sur le serveur. Tous les participants pourront alors t&eacute;l&eacute;charger ces fichiers.</p>
-	
-	<h3><a class="anchor" name="_Toc0-5"></a>Gestion des formulaires</h3>
-	<c:if test="${enablepublicsurveys}">
-	<p><b>Publication d'une enqu&ecirc;te</b><br />Pour accro�tre la visibilit&eacute; de votre enqu&ecirc;te, vous pouvez la faire publier automatiquement dans la <a href="https://ec.europa.eu${contextpath}/home/publicsurveys" target="_blank">liste des enqu&ecirc;tes publiques</a> accessibles par l'application EUSurvey de la Commission europ&eacute;enne.</p>
-	</c:if>
-	<p><b>Travailler ensemble</b><br />Pour les enqu&ecirc;tes g&eacute;r&eacute;es par plusieurs utilisateurs, EUSurvey permet de d&eacute;finir des droits avanc&eacute;s pour d'autres utilisateurs, afin de tester une enqu&ecirc;te ou d'analyser des r&eacute;sultats.</p>
-	
-	<h3><a class="anchor" name="_Toc0-6"></a>Exploitation des r&eacute;sultats</h3>
-	<p><b>Analyse des r&eacute;sultats</b><br />EUSurvey propose des fonctions basiques d'analyse des r&eacute;sultats et de visualisation des donn&eacute;es sous forme d'histogrammes et de graphiques. Vous pouvez &eacute;galement exporter les r&eacute;sultats d'enqu&ecirc;tes dans des formats tabulaires standards, afin de les importer dans des logiciels statistiques.</p>
-	<p><b>Publication des r&eacute;sultats</b><br />L'application EUSurvey permet de publier des sous-ensembles de toutes les r&eacute;ponses soumises. Le syst&egrave;me peut calculer et cr&eacute;er automatiquement des statistiques et des graphiques.</p>
-	<p><b>Modification des contributions envoy&eacute;es</b><br />Vous pouvez permettre aux participants de modifier leur contribution apr&egrave;s l'avoir soumise.</p>
-	
-	<h2><a class="anchor" name="_Toc0-7"></a>O� trouver des informations compl&eacute;mentaires sur EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Vous trouverez des informations pratiques en cliquant sur le lien &laquo;<a href="https://ec.europa.eu${contextpath}/home/documentation" target="_blank">Documentation</a>&raquo; dans le bandeau sup&eacute;rieur de l'application EUSurvey. Consultez la page &laquo;<a href="https://ec.europa.eu${contextpath}/home/about" target="_blank">&agrave; propos</a>&raquo; pour en savoir plus sur l'historique et le financement de l'application.</p>
-	<h2><a class="anchor" name="_Toc0-8"></a>Qui contacter en cas de probl&egrave;mes techniques li&eacute;s &agrave; EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p> Les membres du personnel des institutions europ&eacute;ennes doivent d&eacute;crire le probl&egrave;me aussi pr&eacute;cis&eacute;ment que possible &agrave; leur service d'aide informatique qui le signalera &agrave; DIGIT-EUSURVEY-SUPPORT.<br /><br /> Les utilisateurs externes doivent contacter le <a href="mailto:EC-CENTRAL-HELPDESK@ec.europa.eu?subject=Incident%20Creation%20Request%20for%20DIGIT%20EUSURVEY%20SUPPORT%20&amp;body=%20Dear%20Helpdesk,%0D%0DCould%20you%20please%20open%20a%20ticket%20to%20DIGIT%20EUSURVEY%20SUPPORT%20with%20the%20following%20description:" target="_blank">SERVICE D'AIDE CENTRAL</a> de la Commission.</p>
-	<h2><a class="anchor" name="_Toc0-9"></a>Qui contacter pour sugg&eacute;rer des am&eacute;liorations &agrave; EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Tous les commentaires et remarques sont les bienvenus. Veuillez adresser vos suggestions &agrave; votre service d'aide informatique ou au <a href="mailto:EC-CENTRAL-HELPDESK@ec.europa.eu?subject=Incident%20Creation%20Request%20for%20DIGIT%20EUSURVEY%20SUPPORT%20&amp;body=%20Dear%20Helpdesk,%0D%0DCould%20you%20please%20open%20a%20ticket%20to%20DIGIT%20EUSURVEY%20SUPPORT%20with%20the%20following%20description:" target="_blank">SERVICE D'AIDE CENTRAL</a> de la Commission, en lui demandant de les transmettre &agrave; l'&eacute;quipe technique d'EUSurvey. L'&eacute;quipe technique prendra contact avec vous dans les meilleurs d&eacute;lais afin de discuter des applications possibles de vos suggestions et de leur int&eacute;gration &eacute;ventuelle dans une future version de l'application.</p>
-	<h2><a class="anchor" name="_Toc0-10"></a>Avec quels navigateurs l'application EUSurvey est-elle compatible?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>EUSurvey est compatible avec les deux derni&egrave;res versions d'Internet Explorer, de Mozilla Firefox et Google Chrome.</p>
-	<p>L'utilisation d'autres navigateurs pourrait poser des probl&egrave;mes de compatibilit&eacute;.</p>
-	<h2><a class="anchor" name="_Toc0-11"></a>EUSurvey: clause de non-responsabilit&eacute; (pour les utilisateurs non membres des institutions de l'UE)<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour tous les questionnaires et messages d'invitation provenant d'une enqu&ecirc;te cr&eacute;&eacute;e par un utilisateur <b>qui ne travaille pas officiellement pour les institutions de l'UE</b>, la clause de non-responsabilit&eacute; suivante sera affich&eacute;e dans le questionnaire et dans les courriels associ&eacute;s:</p>
-	<p>Clause de non-responsabilit&eacute;<br> 
-	<i>La Commission europ&eacute;enne ne saurait &ecirc;tre tenue responsable du contenu des questionnaires cr&eacute;&eacute;s au moyen du service EUSurvey; celui-ci rel&egrave;ve de la responsabilit&eacute; exclusive du cr&eacute;ateur et du gestionnaire de ces questionnaires. L'utilisation du service EUSurvey n'entra&icirc;ne aucunement l'approbation ou la recommandation, par la Commission europ&eacute;enne, des points de vue exprim&eacute;s dans les questionnaires.</i></p> 
-	<h2><a class="anchor" name="_Toc0-12"></a>Mes participants peuvent-ils r&eacute;pondre &agrave; mon questionnaire &agrave; partir d'un appareil mobile?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Oui, EUSurvey est con&ccedil;u pour des sites web adaptatifs. Cela signifie que la page sera adapt&eacute;e &agrave; la r&eacute;solution de l'&eacute;cran utilis&eacute;. Ceci permettra &agrave; vos participants de r&eacute;pondre &agrave; partir d'un appareil mobile (t&eacute;l&eacute;phone portable ou tablette PC).</p>
-	
-	<h2><a class="anchor" name="_Toc0-13"></a>Y a-t-il une taille minimale d'�cran?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Les questionnaires en ligne sont enti�rement r�actifs et s'adaptent � la taille de votre appareil, ceci vous permet de compl�ter le questionnaire avec n'importe quelle taille d'�cran.<br />Pour la cr�ation et la gestion de vos enqu�tes, nous recommandons d'utiliser une r�solution minimale de 1680x1050 pixels pour une bonne exp�rience utilisateur.</p>
-	
-	<h1><a class="anchor" name="_Toc1"></a>Connexion et inscription � l'EU Login</h1>
-	<h2><a class="anchor" name="_Toc1-1"></a>J'ai un compte EU Login. Dois-je aussi cr�er un compte EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Non, il n'est pas n�cessaire de s'enregistrer s�par�ment dans EUSurvey. Un compte EULogin suffit. Vous pouvez acc�der � EUSurvey en cliquant sur le bouton 'Login' sur la <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">page d'accueil</a> d'EUSurvey. Vous acc�dez alors � l'�cran de connexion (voir ci-dessous pour plus de d�tails).</p>
-	<h2><a class="anchor" name="_Toc1-2"></a>Comment puis-je me connecter � EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Veuillez cliquer sur le bouton 'Login' sur la  <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">page d'accueil</a> d'EUSurvey. Vous serez alors redirig� vers l'�cran de connexion � EUSurvey.</p>
-	<p>Une fois arriv� sur l'�cran de connexion, vous devez choisir l'option correspondant � votre cas personnel :
-		<ul>
-			<li><b>Si vous travaillez pour une institution europ�enne</b>, choisissez la deuxi�me option pour vous connecter � l'application EUSurvey. Votre nom d'utilisateur et votre mot de passe EULogin seront alors suffisants.</li>
-			<li><b>Si vous ne travaillez pas pour une institution europ�enne</b>, choisissez la premi�re option pour vous connecter � l'application EUSurvey. Vous devrez avoir pr�alablement enregistr� votre t�l�phone mobile pour passer l'authentification � deux facteurs.</li>
-		</ul>
-	</p>
-	<p>Si vous n'avez pas de compte EULogin, veuillez en cr�er un en cliquant <a href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi">ici</a>.</p>
-	<p>Si vous ne travaillez pas pour une institution europ�enne, veuillez �galement enregistrer votre t�l�phone portable en cliquant <a href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi">ici</a>.</p>
-	
-	<h1><a class="anchor" name="_Toc2"></a>Cr&eacute;ation d'une enqu&ecirc;te</h1>
-	<h2><a class="anchor" name="_Toc2-1"></a>Comment cr&eacute;er une nouvelle enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p> Sur la page &laquo;Bienvenue&raquo; ou la page &laquo;Enqu&ecirc;tes&raquo;, cliquez sur &laquo;Cr&eacute;er une nouvelle enqu&ecirc;te maintenant&raquo;. Une fen&ecirc;tre s'ouvre alors. Apr&egrave;s avoir saisi toutes les informations obligatoires, cliquez sur &laquo;Cr&eacute;er&raquo;. L'application chargera votre nouvelle enqu&ecirc;te dans le syst&egrave;me et ouvrira automatiquement l'&eacute;diteur. Vous pouvez commencer directement &agrave; ajouter des &eacute;l&eacute;ments &agrave; votre enqu&ecirc;te.</p>
-	<h2><a class="anchor" name="_Toc2-2"></a>Comment importer une enqu&ecirc;te existante depuis un ordinateur?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p> Sur la page &laquo;Bienvenue&raquo; ou la page &laquo;Enqu&ecirc;tes&raquo;, cliquez sur &laquo;Importer l'enqu&ecirc;te&raquo;. Une fen&ecirc;tre s'ouvre alors. S&eacute;lectionnez un fichier d'enqu&ecirc;te sur votre ordinateur, puis cliquez sur &laquo;Importer&raquo;. Votre enqu&ecirc;te est ajout&eacute;e &agrave; EUSurvey. Remarque: vous ne pouvez importer d'enqu&ecirc;tes qu'au format zip ou avec l'extension de fichier .eus.</p>
-	<h2><a class="anchor" name="_Toc2-3"></a>Comment importer une enqu&ecirc;te existante depuis l'application IPM?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p> Tout d'abord, exportez votre enqu&ecirc;te depuis l'application IPM. Pour ce faire, connectez-vous &agrave; IPM et ouvrez votre questionnaire. Dans la partie gauche de la page, cliquez sur &laquo;Exporter&raquo; pour sauvegarder le questionnaire sous la forme d'un fichier zip.</p>
-	<p> Connectez-vous &agrave; pr&eacute;sent &agrave; EUSurvey. Sur la page &laquo;Bienvenue&raquo;, cliquez sur &laquo;Importer l'enqu&ecirc;te&raquo;. S&eacute;lectionnez l'enqu&ecirc;te &agrave; importer (le fichier zip, qui se trouve g&eacute;n&eacute;ralement dans le dossier &laquo;T&eacute;l&eacute;chargements&raquo; si vous venez de l'exporter d'IPM). Si l'importation r&eacute;ussit, vous pouvez ouvrir et utiliser le sondage dans EUSurvey.</p>
-	<h2><a class="anchor" name="_Toc2-4"></a>O� se trouvent toutes les enqu&ecirc;tes que j'ai cr&eacute;&eacute;es?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>La liste se trouve sur la page &laquo;Enqu&ecirc;tes&raquo;. Vous pouvez rechercher des enqu&ecirc;tes au moyen de mots-cl&eacute;s, ou rechercher, filtrer et classer les enqu&ecirc;tes &agrave; l'aide d'autres crit&egrave;res: date de cr&eacute;ation, langue, statut, etc. N'oubliez pas de cliquer sur &laquo;Rechercher&raquo; pour appliquer les nouveaux crit&egrave;res.</p>
-	<h2><a class="anchor" name="_Toc2-5"></a>Comment ouvrir une enqu&ecirc;te existante pour la modifier, par exemple?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Sur la page &laquo;Enqu&ecirc;tes&raquo;, cliquez sur l'ic�ne &laquo;Ouvrir&raquo; de l'enqu&ecirc;te en question. La page &laquo;Aper�u&raquo; qui s'affiche alors pr&eacute;sente plusieurs nouveaux onglets. En cliquant sur les onglets respectifs, vous pourrez acc&eacute;der &agrave; l'&eacute;diteur, tester votre enqu&ecirc;te, acc&eacute;der aux r&eacute;sultats de l'enqu&ecirc;te, &agrave; ses traductions, &agrave; ses propri&eacute;t&eacute;s, etc.</p>
-	<h2><a class="anchor" name="_Toc2-6"></a>Comment exporter une enqu&ecirc;te existante?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Sur la page &laquo;Enqu&ecirc;tes&raquo;, recherchez l'enqu&ecirc;te &agrave; exporter. Vous pouvez:</p>
-	<p>soit cliquer sur l'ic�ne &laquo;Exporter&raquo;;</p>
-	<p>soit cliquer sur l'ic�ne &laquo;Ouvrir&raquo;, puis, sur la page &laquo;Aper�u&raquo;, cliquer sur l'ic�ne &laquo;Exporter&raquo;.</p>
-	<p>Votre enqu&ecirc;te sera sauvegard&eacute;e sur votre ordinateur, ainsi que tous ses param&egrave;tres. Les fichiers des enqu&ecirc;tes EUSurvey portent l'extension &laquo;.eus&raquo;.</p>
-	<h2><a class="anchor" name="_Toc2-7"></a>Comment copier une enqu&ecirc;te existante?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Sur la page &laquo;Enqu&ecirc;tes&raquo;, ouvrez l'enqu&ecirc;te en question et cliquez sur l'ic�ne &laquo;Copier&raquo;. Dans la fen&ecirc;tre qui s'ouvre, vous pouvez ajuster les param&egrave;tres n&eacute;cessaires, puis cliquer sur &laquo;Cr&eacute;er&raquo;. Votre enqu&ecirc;te sera ajout&eacute;e &agrave; la liste de la page &laquo;Enqu&ecirc;tes&raquo;. Vous pouvez commencer directement &agrave; travailler sur la nouvelle enqu&ecirc;te.</p>
-	<h2><a class="anchor" name="_Toc2-8"></a>Comment supprimer une enqu&ecirc;te existante?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Sur la page &laquo;Enqu&ecirc;tes&raquo;, ouvrez l'enqu&ecirc;te en question et cliquez sur l'ic�ne &laquo;Supprimer&raquo;. Confirmez ensuite cette action. Votre enqu&ecirc;te est alors supprim&eacute;e de la liste. Attention: la suppression d'une enqu&ecirc;te effacera du syst&egrave;me EUSurvey toute trace de vos questions et des r&eacute;sultats! Cette action est irr&eacute;versible!</p>
-	<h2><a class="anchor" name="_Toc2-9"></a>Comment cr&eacute;er un questionnaire conforme aux normes WCAG avec EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Les lignes directrices sur l'accessibilit&eacute; des contenus web (WCAG) sont un ensemble de recommandations visant &agrave; rendre les contenus plus accessibles, principalement pour les personnes handicap&eacute;es, mais &eacute;galement pour les applications de t&eacute;l&eacute;phonie mobile.</p>
-	<p>Si vous souhaitez que votre enqu&ecirc;te soit compatible avec la norme WCAG, veuillez suivre les instructions pr&eacute;sent&eacute;es <a href="https://circabc.europa.eu/d/a/workspace/SpacesStore/78b03213-5cf4-4aab-8e90-ada7e2eb1101/WCAG_tutorial%20.pdf" target="_blank">dans ce document</a>.</p>
-	<h2><a class="anchor" name="_Toc2-10"></a>Comment cr&eacute;er un questionnaire de type quiz?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Lorsque vous cr&eacute;ez un nouveau questionnaire, vous pouvez choisir entre une enqu&ecirc;te &laquo;normale&raquo; et une enqu&ecirc;te de type &laquo;quiz&raquo;.</p>
-	<p>Un quiz est un type particulier d'enqu&ecirc;te permettant de d&eacute;finir de &laquo;bonnes&raquo; ou &laquo;mauvaises&raquo; r&eacute;ponses et de calculer un score final pour chaque participant. De telles enqu&ecirc;tes peuvent &ecirc;tre utilis&eacute;es, par ex. comme tests de comp&eacute;tence ou examens &eacute;lectroniques.</p>
-	<p>Vous trouverez des informations d&eacute;taill&eacute;es dans le <a href="https://circabc.europa.eu/sd/a/400e1268-1329-413b-b873-b42e41369a07/EUSurvey_Quiz_Guide.pdf" target="_blank">manuel d&eacute;di&eacute; &agrave; la cr&eacute;ation de quiz avec EUSurvey</a>.</p>
-	<p>Le mode quiz contient entre autres:</p>
-		<ul>
-			<li>Un m&eacute;canisme de notation </li>
-			<li>La v&eacute;rification des r&eacute;ponses des participants</li>
-			<li>La possibilit&eacute; de fournir des commentaires &agrave; vos participants, en fonction de leurs r&eacute;ponses</li>
-			<li>Analyse des r&eacute;sultats et rapport sp&eacute;cifique pour les quiz </li>
-		</ul>
-	
-	<h1><a class="anchor" name="_Toc3"></a>Modifier une enqu&ecirc;te</h1>
-	<h2><a class="anchor" name="_Toc3-1"></a>Comment lancer l'&eacute;diteur?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez le questionnaire dans la page &laquo;Enqu&ecirc;tes&raquo;, ic&ocirc;ne &laquo;Ouvrir&raquo;. &Agrave; partir de la page &laquo;Aper�u&raquo; cliquez sur &laquo;Editeur&raquo; pour &eacute;diter votre questionnaire.</p>
-	<p>Veuillez sauvegarder votre travail de temps en temps.</p>
-	<h2><a class="anchor" name="_Toc3-2"></a>Comment cr&eacute;er un questionnaire avec l'&eacute;diteur EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>L'&eacute;diteur est utilis&eacute; pour cr&eacute;er un questionnaire. Vous pouvez l'utiliser pour ajouter des questions et d'autres &eacute;l&eacute;ments &agrave; votre questionnaire.</p>
-	<p>La documentation relative &agrave; l'Editeur EUSurvey (Manuel de l'&eacute;diteur) est disponible <a href="https://ec.europa.eu/eusurvey/resources/documents/Editor_Guide_FR.pdf" target="_blank">ici</a>.</p>
-	<p>L'&eacute;diteur est compos&eacute; de cinq diff&eacute;rentes zones:</p>
-	<p><b>Volet de navigation:</b><br>Le volet de navigation donne une vue structur&eacute;e du questionnaire. Tous les &eacute;l&eacute;ments sont repr&eacute;sent&eacute;s par leur libell&eacute; respectif dans l'enqu&ecirc;te. Lorsque vous s&eacute;lectionnez un &eacute;l&eacute;ment dans le volet de navigation, la zone du formulaire se positionne sur cet &eacute;l&eacute;ment, qui est mis en &eacute;vidence en bleu.</p>
-	<p><b>Volet de la bo&icirc;te &agrave; outils:</b><br>La boite &agrave; outils contient les diff&eacute;rents types d'&eacute;l&eacute;ments qui peuvent &ecirc;tre ajout&eacute;s au questionnaire. Vous pouvez ajouter des &eacute;l&eacute;ments en les glissant-d&eacute;posant (drag-and-drop) dans le formulaire, ou en double-cliquant dessus.</p>
-	<p><b>Zone du formulaire:</b><br>Tous les &eacute;l&eacute;ments sont ajout&eacute;s dans cette zone. Elle  donne un aper�u de la pr&eacute;sentation des &eacute;l&eacute;ments dans le questionnaire.</p>
-	<p><b>Volet des propri&eacute;t&eacute;s de l'&eacute;l&eacute;ment:</b><br>Affiche toutes les options disponibles pour les &eacute;l&eacute;ments s&eacute;lectionn&eacute;s. Vous pouvez modifier les &eacute;l&eacute;ments dans ce volet: changer le texte de la question, ajouter des messages d'aide, ou modifier tout autre param&egrave;tre de la question.</p>
-	<p><b>La barre d'outils:</b><br>Contient des boutons permettant d'effectuer des actions de base.</p>
-	<h2><a class="anchor" name="_Toc3-3"></a>Comment ajouter ou supprimer des questions de mon questionnaire?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour ajouter ou supprimer des &eacute;l&eacute;ments de votre questionnaire, veuillez d'abord acc&eacute;der &agrave; l'&eacute;diteur.</p>
-	<p>Dans l'&eacute;diteur, vous trouverez une boite &agrave; outils &agrave; gauche et la zone du formulaire au centre de la page. Les &eacute;l&eacute;ments contiennent des textes par d&eacute;faut; leur nom est affich&eacute; comme texte de la question. Vous pouvez ajouter des &eacute;l&eacute;ments (question, texte, image, etc.) en les glissant-d&eacute;posant (drag-and-drop) dans le formulaire, ou en double-cliquant dessus.</p> 
-	<p>Pour supprimer un &eacute;l&eacute;ment de l'enqu&ecirc;te, cliquez sur l'&eacute;l&eacute;ment pour le s&eacute;lectionner. L'&eacute;l&eacute;ment s&eacute;lectionn&eacute; apparaitra en bleu. Cliquez sur l'ic&ocirc;ne &laquo;Supprimer&raquo; disponible dans la barre d'outils, confirmez en cliquant sur OK.</p>
-	<p>Voir &laquo;<a href="#_Toc3-2">Comment cr&eacute;er un questionnaire avec l'&eacute;diteur EUSurvey?</a>&raquo;</p> 
-	<h2><a class="anchor" name="_Toc3-4"></a>Comment modifier les &eacute;l&eacute;ments de mon questionnaire?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Les &eacute;l&eacute;ments de votre questionnaire peuvent &ecirc;tre <b>s&eacute;lectionn&eacute;s dans la zone du formulaire</b> et <b>modifi&eacute;s dans le volet des propri&eacute;t&eacute;s de l'&eacute;l&eacute;ment</b>. Voir &laquo;<a href="#_Toc3-2">Comment cr&eacute;er un questionnaire avec l'&eacute;diteur EUSurvey?</a>&raquo;</p>
-	<p>Pour modifier un &eacute;l&eacute;ment de l'enqu&ecirc;te, cliquez sur l'&eacute;l&eacute;ment pour le s&eacute;lectionner. L'&eacute;l&eacute;ment s&eacute;lectionn&eacute; apparaitra en bleu. Vous pouvez le modifier dans le volet &laquo;Propri&eacute;t&eacute;s de l'&eacute;l&eacute;ment&raquo; (ex: changer le texte de la question, ajouter un message d'aide, ou modifier tout autre param&egrave;tre de la question).</p>
-	<p>Pour modifier un texte:</p>
-		<ol>
-			<li>Cliquez sur le texte ou sur l'ic&ocirc;ne en forme de crayon.</li>
-			<li>Modifiez le texte.</li>
-			<li>Cliquez sur &laquo;Appliquer&raquo; pour afficher les modifications dans la zone du formulaire.</li>
-		</ol>
-	<p>Par d&eacute;faut, le volet affiche uniquement les options de base. Pour afficher plus d'options, cliquez sur &laquo;Avanc&eacute;&raquo;.</p>
-	<p>Pour les matrices, les tableaux, et les questions &agrave; choix, vous pouvez &eacute;galement s&eacute;lectionner une question, une r&eacute;ponse, une ligne ou une colonne de l'&eacute;l&eacute;ment en cliquant sur le libell&eacute; correspondant. Vous pouvez par exemple rendre une question de la matrice ou tableau obligatoire.</p>
-	<h2><a class="anchor" name="_Toc3-10"></a>Comment copier les &eacute;l&eacute;ments?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour copier des &eacute;l&eacute;ments de votre questionnaire, veuillez d'abord acc&eacute;der &agrave; l'&eacute;diteur.</p>
-	<p>Tous les &eacute;l&eacute;ments qui ont &eacute;t&eacute; copi&eacute;s ou coup&eacute;s sont symbolis&eacute;s par un espace r&eacute;serv&eacute; dans la partie sup&eacute;rieure de la bo&icirc;te &agrave; outils. Vous pouvez les ajouter au questionnaire ou les replacer en les glissant-d&eacute;posant (drag-and-drop). Vous pouvez &eacute;galement cliquer sur le bouton situ&eacute; &agrave; c&ocirc;t&eacute; de l'&eacute;l&eacute;ment pour annuler cette op&eacute;ration.</p>
-		<ol>
-			<li>S&eacute;lectionnez un ou plusieurs &eacute;l&eacute;ments.</li>
-			<li>Cliquez sur Copier.</li>
-			<li>Glissez-d&eacute;posez (drag-and-drop) l'espace r&eacute;serv&eacute; de la bo&icirc;te &agrave; outils vers la zone du formulaire, ou s&eacute;lectionnez l'&eacute;l&eacute;ment dans la zone du formulaire et cliquez sur &laquo;Coller apr&egrave;s&raquo;.</li>
-		</ol>
-	<p>Voir &laquo;<a href="#_Toc3-2">Comment cr&eacute;er un questionnaire avec l'&eacute;diteur EUSurvey?</a>&raquo;</p>
-	<h2><a class="anchor" name="_Toc3-11"></a>Comment ajouter ou supprimer des r&eacute;ponses dans les questions &agrave; choix?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Vous pouvez ajouter ou supprimer des r&eacute;ponses en cliquant sur le bouton +/- dans le volet des propri&eacute;t&eacute;s de l'&eacute;l&eacute;ment. Modifiez  les r&eacute;ponses en cliquant sur l'ic&ocirc;ne en forme de crayon situ&eacute;e &agrave; c&ocirc;t&eacute; de &laquo;R&eacute;ponses possibles&raquo;. Vous pouvez les modifier dans l'&eacute;diteur de texte enrichi.</p>
-	<p>Voir aussi  &laquo;<a href="#_Toc3-2">Comment cr&eacute;er un questionnaire avec l'&eacute;diteur EUSurvey?</a>&raquo;</p>
-	<h2><a class="anchor" name="_Toc3-12"></a>Puis-je rendre une question obligatoire?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>S&eacute;lectionnez la question, puis cochez la case &laquo;Obligatoire&raquo; dans le volet des propri&eacute;t&eacute;s de l'&eacute;l&eacute;ment.</p>
-	<p>Les questions obligatoires seront indiqu&eacute;es par un ast&eacute;risque rouge figurant &agrave; gauche du texte de la question.</p>
-	<h2><a class="anchor" name="_Toc3-13"></a>Comment d&eacute;placer les &eacute;l&eacute;ments dans le questionnaire?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Vous pouvez modifier la position d'un &eacute;l&eacute;ment dans votre questionnaire de plusieurs mani&egrave;res:</p>
-	<p>Glisser-d&eacute;poser (Drag-and-drop):<br> S&eacute;lectionnez l'&eacute;l&eacute;ment dans la zone du formulaire et glissez-le &agrave; l'emplacement souhait&eacute; dans le questionnaire.</p>
-	<p>Boutons de d&eacute;placement:<br> S&eacute;lectionnez l'&eacute;l&eacute;ment &agrave; d&eacute;placer et cliquez sur les boutons en forme de fl&egrave;che pour le faire monter ou descendre.</p>
-	<p>Couper-coller:<br>Coupez l'&eacute;l&eacute;ment &agrave; d&eacute;placer et utilisez la fonction glisser-d&eacute;poser (drag-and-drop) pour d&eacute;placer l'espace r&eacute;serv&eacute; &agrave; l'emplacement souhait&eacute;.</p>
-	<h2><a class="anchor" name="_Toc3-14"></a>Comment utiliser la fonction visibilit&eacute; (d&eacute;pendances)?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Cette fonction permet d'afficher ou de masquer des &eacute;l&eacute;ments en fonction des r&eacute;ponses donn&eacute;es aux questions &agrave; choix unique, multiple ou &agrave; des matrices. (voir aussi &laquo;<a href="#_Toc3-2">Comment cr&eacute;er un questionnaire avec l'&eacute;diteur EUSurvey?</a>&raquo;.</p>
-	<p>Par d&eacute;faut, tous les &eacute;l&eacute;ments sont param&eacute;tr&eacute;s pour &ecirc;tre toujours visibles.</p>
-	<p>Pour utiliser la fonction visibilit&eacute;:</p>
-		<ol>
-			<li>Ajoutez une question &agrave; choix unique, multiple ou une matrice &agrave; votre questionnaire.</li>
-			<li>Ajoutez d'autres &eacute;l&eacute;ments &agrave; votre questionnaire.</li>
-			<li>S&eacute;lectionnez  un &eacute;l&eacute;ment qui suit une question &agrave; choix unique, multiple ou une matrice qui n'appara&icirc;tra que si une r&eacute;ponse sp&eacute;cifique est coch&eacute;e.</li>
-			<li>Cliquez sur l'ic&ocirc;ne en forme de crayon pour modifier les param&egrave;tres de visibilit&eacute;. Toutes les questions &agrave; choix unique, multiple et  matrice qui figurent au-dessus de l'&eacute;l&eacute;ment ou des &eacute;l&eacute;ments s&eacute;lectionn&eacute;(s) sont affich&eacute;es, avec le texte des questions et les r&eacute;ponses possibles.</li>
-			<li>S&eacute;lectionnez la r&eacute;ponse dont la s&eacute;lection entra&icirc;nera l'affichage de l'&eacute;l&eacute;ment s&eacute;lectionn&eacute;.</li>
-			<li>Cliquez sur &laquo;Appliquer&raquo; pour confirmer les param&egrave;tres de visibilit&eacute;.</li>
-		</ol>
-	<p>Si vous avez s&eacute;lectionn&eacute; plusieurs &eacute;l&eacute;ments, vous pouvez modifier leurs param&egrave;tres de visibilit&eacute; en une seule fois.</p>
-	<p><b>Remarque:</b> Tous les &eacute;l&eacute;ments resteront visibles dans l'&eacute;diteur. La visibilit&eacute; fonctionne dans la page test ou lors de la publication du questionnaire.</p>
-	<p>Une fois activ&eacute;s, les param&egrave;tres de visibilit&eacute; sont indiqu&eacute;s dans la zone du formulaire par des fl&egrave;ches situ&eacute;es &agrave; c&ocirc;t&eacute; des &eacute;l&eacute;ments li&eacute;s. Les r&eacute;ponses qui d&eacute;clenchent un &eacute;l&eacute;ment sont indiqu&eacute;es par une fl&egrave;che pointant vers le bas. Les &eacute;l&eacute;ments qui sont d&eacute;clench&eacute;s par une r&eacute;ponse sont indiqu&eacute;s par une fl&egrave;che pointant vers le haut.</p>
-	<p>Lorsque vous pointez la souris sur les fl&egrave;ches ou les identifiants dans le volet des propri&eacute;t&eacute;s de l'&eacute;l&eacute;ment, les &eacute;l&eacute;ments li&eacute;s sont mis en &eacute;vidence dans la zone du formulaire et dans le volet de navigation.</p>
-	<p>Les &eacute;l&eacute;ments dont les param&egrave;tres de visibilit&eacute;s ont &eacute;t&eacute; modifi&eacute;s ne s'affichent que si au moins une r&eacute;ponse configur&eacute;e a &eacute;t&eacute; s&eacute;lectionn&eacute;e.</p>
-	
-	<h2><a class="anchor" name="_Toc3-7"></a>Peut-on modifier l'ordre des r&eacute;ponses aux questions simples ou &agrave; choix multiple?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Lors de la cr�ation d'une question simple ou &agrave; choix multiple, vous pouvez programmer l'affichage des r�ponses de trois fa�ons diff�rentes:</p>
-		<ul>
-			<li>Ordre original</li>
-			<li>Ordre alphab�tique</li>
-			<li>Ordre al�atoire</li>
-		</ul>
-	<p>Ordre original: cette option affiche les r�ponses dans l'ordre dans lequel vous les avez saisies.</p>
-	<p>Ordre alphab�tique: s�lectionnez cette option si vous voulez que les r�ponses s'affichent dans l'ordre alphab�tique.</p>
-	<p>Ordre al�atoire: s�lectionnez cette option si vous voulez que les r�ponses s'affichent dans un ordre al�atoire.</p>
-	<h2><a class="anchor" name="_Toc3-5"></a>Comment autoriser d'autres utilisateurs &agrave; modifier une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p> Ouvrez votre enqu&ecirc;te et ouvrez la page &laquo;Droits&raquo;. Cliquez sur &laquo;Ajouter un utilisateur&raquo; ou &laquo;Ajouter un service&raquo;. L'assistant d'ajout d'utilisateurs s'ouvre alors. Vous pouvez leur donner des droits d'acc&egrave;s sp&eacute;cifiques. Cliquez simplement sur la couleur pour modifier les droits.</p>
-		<ul>
-			<li>Vert: 	acc&egrave;s en lecture et &eacute;criture</li>
-			<li>Jaune: 	acc&egrave;s en lecture</li>
-			<li>Rouge: 	pas d'acc&egrave;s</li>
-		</ul>
-	<p>Les utilisateurs ajout&eacute;s verront automatiquement votre enqu&ecirc;te appara�tre dans leur liste lors de leur prochaine connexion &agrave; EUSurvey. Pour en savoir plus, voir &laquo;<a href="#_Toc8-8">Comment donner acc&egrave;s &agrave; mon enqu&ecirc;te &agrave; d'autres utilisateurs?</a>&raquo;</p>
-	<h2><a class="anchor" name="_Toc3-8"></a>Quelles langues sont compatibles avec l'application?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Vous pouvez cr�er une enqu&ecirc;te dans toute langue encodable au format �UTF-8 &agrave; trois octets�.</p>
-	<h2><a class="anchor" name="_Toc3-9"></a>Pourquoi l'UTF-8? Quelles polices de caract�res utiliser?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>N'oubliez pas que les participants pourront afficher l'enqu&ecirc;te sans probl�mes si la police choisie est install�e dans leur logiciel de navigation. L'UTF-8 est la norme d'encodage la plus courante pour les pages HTML.<br> Si vous choisissez une police non compatible, vous risquez de rencontrer des probl�mes pour l'exportation au format PDF.</p> 
-	<p>Nous recommandons ces jeux de caract�res compatibles:</p>
-		<ul>
-			<li>Freesans <a href="https://circabc.europa.eu/sd/a/36f72861-fc6e-4fe1-87d6-0a8e1c6fa161/EUSurvey-SupportedCharacterSet(freesans).txt" target="_blank">(https://circabc.europa.eu/sd/a/36f72861-fc6e-4fe1-87d6-0a8e1c6fa161/EUSurvey-SupportedCharacterSet(freesans).txt)</a></li>
-			<li>Freemono <a href="https://circabc.europa.eu/sd/a/55ce0f35-b3cc-4712-80bf-af42800a278f/EUSurvey-SupportedCharacterSet(freemono).txt" target="_blank">(https://circabc.europa.eu/sd/a/55ce0f35-b3cc-4712-80bf-af42800a278f/EUSurvey-SupportedCharacterSet(freemono).txt)</a></li>
-			<li>Freeserif <a href="https://circabc.europa.eu/sd/a/29cd78bb-9eeb-40b1-a22f-b54700750537/EUSurvey-SupportedCharacterSet(freeserif).txt" target="_blank">(https://circabc.europa.eu/sd/a/29cd78bb-9eeb-40b1-a22f-b54700750537/EUSurvey-SupportedCharacterSet(freeserif).txt)</a></li>
-			<li>Jeu de caract�res couramment compatible <a href="https://circabc.europa.eu/sd/a/1eb30efd-e2d8-4c3b-9f55-533bb903f7d0/EUSurvey-SupportedCharacterSet(common).txt" target="_blank">(https://circabc.europa.eu/sd/a/1eb30efd-e2d8-4c3b-9f55-533bb903f7d0/EUSurvey-SupportedCharacterSet(common).txt)</a></li>
-		</ul>
-	<p><b>"Freesans" est la police utilis�e par d�faut.</b></p>
-	<p>En cas de doute, exportez votre enqu&ecirc;te en PDF pour v�rifier si elle s'affiche correctement dans ce format. Il est possible que certaines contributions ne s'affichent pas correctement en PDF, car les participants peuvent librement choisir toute police de caract�res support�e par l'application. M&ecirc;me si l'application ne parvient pas &agrave; afficher correctement les caract�res qu'ils ont utilis�s, ceux-ci sont bien enregistr�s dans la base de donn�es EUSurvey. Ces contributions peuvent donc �tre export�es depuis la page des r�sultats.</p>
-	<h2><a class="anchor" name="_Toc3-6"></a>Que signifie la notion de "Complexit�" ?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ajouter trop d'�l�ments ou trop de d�pendances &agrave; une enqu�te risque d'affecter les performances du syst�me pour vos participants.</p>
-	<p>Un niveau de compl�xit� critique peut �tre d� &agrave;:</p>
-		<ul>
-			<li>Trop de tables/matrices</li>
-			<li>Trop de d�pendances</li>
-			<li>Trop de d�pendances imbriqu�es</li>
-		</ul>
-	<p>Pour plus d'informations, suivez ce lien <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf" target="_blank">best practices</a>.</p>
-	
-	<h1><a class="anchor" name="_Toc4"></a>S&eacute;curit&eacute; des enqu&ecirc;tes</h1>
-	<h2><a class="anchor" name="_Toc4-1"></a>Comment restreindre l'acc&egrave;s &agrave; une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Par d&eacute;faut, les formulaires en ligne EUSurvey sont accessibles publiquement d&egrave;s leur publication. Si vous le souhaitez, vous pouvez n'autoriser l'acc&egrave;s &agrave; l'enqu&ecirc;te qu'&agrave; des utilisateurs privil&eacute;gi&eacute;s en s&eacute;lectionnant &laquo;<b>S&eacute;curis&eacute;</b>&raquo; dans les &laquo;Param&egrave;tres de s&eacute;curit&eacute;&raquo; de la section &laquo;Propri&eacute;t&eacute;s&raquo;. Vous pouvez par apr&egrave;s donner l'acc&egrave;s aux participants de trois fa�ons:</p>
-		<ul>
-			<li>soit en envoyant des courriels d'invitation aux invit&eacute;s avec EUSurvey. Consultez la section suivante: &laquo;<a href="#_Toc12">Invitation de participants</a>&raquo;. Chaque participant recevra un lien d'acc&egrave;s unique.</li>
-			<li>soit en s&eacute;curisant votre enqu&ecirc;te avec EU Login. Dans la section &laquo;Propri&eacute;t&eacute;s&raquo;, &eacute;ditez &laquo;S&eacute;curis&eacute;&raquo; dans les &laquo;Param&egrave;tres de s&eacute;curit&eacute;&raquo; et s&eacute;lectionnez &laquo;Enable EU Login&raquo;. Si vous &ecirc;tes un membre interne d'un organe de l'UE, vous pouvez autoriser l'acc&egrave;s &agrave; votre questionnaire &agrave; tous les utilisateurs disposants d'un compte EU Login (comptes d'un membre d'un organe de l'UE ainsi qu'externes), ou donner acc&egrave;s aux comptes des membres d'un organe de l'UE uniquement.</li>
-			<li>soit en d&eacute;finissant un mot de passe g&eacute;n&eacute;ral. Ce mot de passe sera identique pour tous les participants et devra leur &ecirc;tre communiqu&eacute;. En pratique, vous envoyez le lien du l'emplacement de l'enqu&ecirc;te et le mot de passe g&eacute;n&eacute;ral. Voir &laquo;<a href="#_Toc4-3">Comment d&eacute;finir un mot de passe pour une enqu&ecirc;te?</a>&raquo;.</li>
-		</ul>		
-	<h2><a class="anchor" name="_Toc4-3"></a>Comment d&eacute;finir un mot de passe pour une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour prot&eacute;ger votre enqu&ecirc;te par un mot de passe, modifiez les &laquo;Param&egrave;tres de s&eacute;curit&eacute;&raquo; de la section &laquo;Propri&eacute;t&eacute;s&raquo;. Pour inviter des personnes donn&eacute;es &agrave; acc&eacute;der &agrave; votre enqu&ecirc;te s&eacute;curis&eacute;e, voir &laquo;<a href="#_Toc12">Inviter des participants</a>&raquo;.</p>
-	<h2><a class="anchor" name="_Toc4-4"></a>Comment s'assurer qu'un utilisateur ne soumette pas plus qu'un nombre donn&eacute; de contributions &agrave; une enqu&ecirc;te?</a><a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Une fois que vous aurez envoy&eacute; les liens d'acc&egrave;s individuel &agrave; vos participants, le syst&egrave;me pourra identifier chacun d'entre eux.</p>
-	<h2><a class="anchor" name="_Toc4-5"></a>Comment &eacute;viter que des logiciels robots ne soumettent des contributions en masse &agrave; une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Des scripts automatis&eacute;s pourraient fausser les r&eacute;sultats d'une enqu&ecirc;te en ligne en soumettant un grand nombre de contributions. Pour &eacute;viter cela, EUSurvey dispose d'une fonction demandant aux participants de saisir les caract&egrave;res d'un <a href="http://fr.wikipedia.org/wiki/CAPTCHA" target="_blank">CAPTCHA</a> (code de s&eacute;curit&eacute; visuel) pour soumettre leur contribution.</p>
-	<h2><a class="anchor" name="_Toc4-6"></a>Est-il possible d'autoriser les participants &agrave; acc&eacute;der &agrave; leurs contributions apr&egrave;s envoi?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Oui, dans les param&egrave;tres de s&eacute;curit&eacute; de la section &laquo;Propri&eacute;t&eacute;s&raquo;. Les participants auront besoin du num&eacute;ro de r&eacute;f&eacute;rence de leur contribution, qui s'affiche apr&egrave;s la soumission de celle-ci. Pour modifier une contribution apr&egrave;s coup, les participants doivent ouvrir la page d'accueil d'EUSurvey: <a href="https://ec.europa.eu/eusurvey" target="_blank">https://ec.europa.eu/eusurvey</a>. Sous le bouton �Inscrivez-vous d�s maintenant!�, un lien permet <a href="${contextpath}/home/editcontribution" target="_blank">d'acc&eacute;der aux diff&eacute;rentes contributions.</a> Sur cette page, les participants doivent indiquer leur num&eacute;ro de r&eacute;f&eacute;rence pour que le syst&egrave;me affiche leur contribution. Ils peuvent ainsi modifier leur contribution apr&egrave;s qu'elle a &eacute;t&eacute; soumise.</p>
-	
-	<h1><a class="anchor" name="_Toc5"></a>Tester une enqu&ecirc;te</h1>
-	<h2><a class="anchor" name="_Toc5-1"></a>Est-il possible d'afficher l'enqu&ecirc;te telle qu'elle appara�tra une fois publi&eacute;e?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Oui: ouvrez l'enqu&ecirc;te dans EUSurvey et cliquez sur &laquo;Test&raquo;. Vous verrez le brouillon de votre enqu&ecirc;te et pourrez acc&eacute;der &agrave; tous les &eacute;l&eacute;ments du formulaire tel que publi&eacute;. Vous pouvez enregistrer le test &agrave; l'&eacute;tat de brouillon, ou le soumettre directement en tant que contribution.</p>
-	<h2><a class="anchor" name="_Toc5-2"></a>Des coll&egrave;gues peuvent-ils tester l'enqu&ecirc;te avant sa publication?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Vous pouvez rendre la page de test de votre enqu&ecirc;te accessible &agrave; vos coll&egrave;gues. Pour donner acc&egrave;s &agrave; cette page, ouvrez votre enqu&ecirc;te dans EUSurvey, cliquez sur l'onglet &laquo;Droits&raquo; et cliquez sur &laquo;Ajouter un utilisateur&raquo; ou &laquo;Ajouter un service&raquo;. L'assistant qui s'ouvre alors permet d'ajouter vos coll&egrave;gues. Pour leur donner les droits d'acc&egrave;s de test, s&eacute;lectionnez la couleur verte pour la fonction &laquo;Acc&egrave;s aper�u formulaire&raquo;. Cliquez simplement sur la couleur pour modifier les droits. Pour en savoir plus, voir &laquo;<a href="#_Toc8-8">Comment donner acc&egrave;s &agrave; mon enqu&ecirc;te &agrave; d'autres utilisateurs?</a>&raquo;</p>
-	
-	<h1><a class="anchor" name="_Toc6"></a>Traductions</h1>
-	<h2><a class="anchor" name="_Toc6-1"></a>Comment traduire une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>EUSurvey propose diff&eacute;rentes mani&egrave;res de rendre l'enqu&ecirc;te disponible en plusieurs langues. Important: terminez de modifier et de tester votre enqu&ecirc;te avant d'entamer sa traduction!</p>
-	<p>Ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Traductions&raquo;. Cliquez sur &laquo;Ajouter une nouvelle traduction&raquo; et s&eacute;lectionnez la langue dans la liste des langues accept&eacute;es. Si la langue souhait&eacute;e n'appara�t pas dans la liste, s&eacute;lectionnez &laquo;autre&raquo; et indiquez les deux lettres identifiant cette langue conform&eacute;ment &agrave; la norme ISO 639-1. Cliquez sur &laquo;OK&raquo; pour ajouter un formulaire de traduction vierge &agrave; votre enqu&ecirc;te. Voyez &laquo;<a href="#_Toc6-3">Est-il possible de modifier une traduction existante en ligne?</a>&raquo; pour savoir comment ajouter du texte &agrave; la traduction que vous venez de cr&eacute;er.</p>
-	<p>N'oubliez pas de cocher la case &laquo;Publier&raquo; si la traduction doit &ecirc;tre publi&eacute;e en m&ecirc;me temps que votre enqu&ecirc;te. Les langues ajout&eacute;es pour publication pourront &ecirc;tre choisies par les participants &agrave; partir du lien vers l'enqu&ecirc;te.</p>
-	<h2><a class="anchor" name="_Toc6-2"></a>Comment ajouter une traduction existante &agrave; une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Traductions&raquo;. Cliquez sur le bouton &laquo;T&eacute;l&eacute;verser la traduction existante&raquo;. L'assistant qui s'ouvre alors permet d'envoyer le fichier de traduction.</p>
-	<h2><a class="anchor" name="_Toc6-3"></a>Est-il possible de modifier une traduction existante en ligne?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Oui: ouvrez votre enqu&ecirc;te, allez &agrave; la page &laquo;Traductions&raquo; et s&eacute;lectionnez une ou plusieurs traductions &agrave; modifier. S&eacute;lectionnez &laquo;Modifier les traductions&raquo; dans le menu des actions, sous la liste des traductions disponibles, et cliquez sur le bouton &laquo;Aller&raquo;. L'&eacute;diteur de traductions en ligne s'ouvre alors. Il permet de modifier plusieurs traductions &agrave; la fois. N'oubliez pas de cliquer sur le bouton &laquo;Enregistrer&raquo; pour veiller &agrave; ce que votre travail soit sauvegard&eacute; dans le syst&egrave;me.</p>
-	<h2><a class="anchor" name="_Toc6-4"></a>Est-il possible de cr&eacute;er des traductions hors ligne?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Oui: ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Traductions&raquo;. De l&agrave;, vous pouvez exporter votre enqu&ecirc;te au format XLS, ODS ou XML, afin d'effectuer la traduction hors ligne. La traduction pourra ensuite &ecirc;tre import&eacute;e dans l'enqu&ecirc;te.</p>
-	<p>La proc&eacute;dure courante est d'exporter une version linguistique avec le statut &laquo;Compl&egrave;te&raquo;, puis de traduire tous les &eacute;l&eacute;ments textuels dans la nouvelle langue. N'oubliez pas d'indiquer le code de cette langue au d&eacute;but du formulaire, afin que le syst&egrave;me puisse reconna�tre la langue de la traduction. Une fois l'enqu&ecirc;te traduite hors ligne, cliquez sur &laquo;T&eacute;l&eacute;verser la traduction existante&raquo; pour l'ajouter dans le syst&egrave;me. Pour &eacute;viter d'&eacute;craser une traduction accidentellement, vous devrez pr&eacute;ciser la version linguistique du fichier que vous allez t&eacute;l&eacute;verser. Pour des raisons de s&eacute;curit&eacute;, vous pouvez &eacute;galement s&eacute;lectionner individuellement des &eacute;l&eacute;ments textuels &agrave; remplacer, si vous ne voulez pas que tous les &eacute;l&eacute;ments soient pris en compte.</p>
-	<h2><a class="anchor" name="_Toc6-6"></a>Comment publier/d&eacute;publier des traductions? Pourquoi est-il parfois impossible de publier une traduction? Qu'entend-on par traduction &laquo;incompl&egrave;te&raquo;?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour publier une enqu&ecirc;te dans plusieurs langues, ouvrez votre enqu&ecirc;te, allez &agrave; la page &laquo;Traductions&raquo; et cochez ou d&eacute;cochez les traductions que vous souhaitez publier (ou d&eacute;publier), dans la section &laquo;Publier&raquo;. Passez ensuite &agrave; la page &laquo;Aper�u&raquo; de l'enqu&ecirc;te, o� vous pourrez la publier. Si l'enqu&ecirc;te avait &eacute;t&eacute; publi&eacute;e avant l'ajout ou la modification des traductions, cliquez sur &laquo;Appliquer les modifications&raquo;.</p>
-	<p>Pour &eacute;viter la publication de traductions dont tout le texte n'aurait pas &eacute;t&eacute; traduit, il n'est pas possible de publier des traductions comportant des &eacute;l&eacute;ments vides - des traductions qui ne sont pas &laquo;compl&egrave;tes&raquo;. V&eacute;rifiez que votre traduction ne comporte aucun &eacute;l&eacute;ment vide au moyen de l'&eacute;diteur de traduction en ligne. Ces &eacute;l&eacute;ments se distinguent par leur fond rouge.</p>
-	<h2><a class="anchor" name="_Toc6-7"></a>Est-il possible de t&eacute;l&eacute;verser des traductions dans des langues non europ&eacute;ennes?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>L'application est &eacute;galement compatible avec d'autres langues que les langues officielles de l'UE. Lors de l'envoi du fichier comportant la traduction, indiquez les deux lettres identifiant cette langue conform&eacute;ment &agrave; la norme ISO 639-1.</p>
-	<h2><a class="anchor" name="_Toc6-8"></a>Qu'entend-on par &laquo;Demander une traduction automatique&raquo;?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>EUSurvey peut fournir des <b>traductions automatiques</b> de votre questionnaire. � cette fin, l'application utilise le service MT@EC, fourni par la Commission europ&eacute;enne.</p>
-	<p>� partir de la page &laquo;Traductions&raquo;, il existe plusieurs fa�ons de demander des traductions automatiques:</p>
-		<ul>
-			<li>Pour ajouter une nouvelle traduction, cochez la case &laquo;Demander une traduction&raquo; (pour une traduction depuis la langue pivot de votre enqu&ecirc;te)</li>
-			<li>Cliquez sur le bouton &laquo;Demander une traduction&raquo; dans la colonne &laquo;Action&raquo; (pour une traduction depuis la langue pivot de votre enqu&ecirc;te)</li>
-			<li>S�lectionnez toutes les langues vers lesquelles vous souhaitez faire traduire votre enqu&ecirc;te (s&eacute;lectionnez &eacute;galement au moins une version linguistique). S&eacute;lectionnez ensuite &laquo;Demander une traduction&raquo; dans la zone de s&eacute;lection en dessous de vos traductions et cliquez sur &laquo;OK&raquo;</li>
-		</ul>
-	<p>Le statut des traductions sera &laquo;Demand�&raquo; jusqu'� ce qu'elles soient termin&eacute;es. Pour savoir si ce statut a chang&eacute;, consultez la page &laquo;Traductions&raquo;.</p> 
-	<p>Les traductions automatiques se comporteront comme les autres traductions que vous avez ajout&eacute;es manuellement, c'est-&agrave;-dire qu'elles ne seront pas publi&eacute;es automatiquement, et le fait d'ajouter de nouveaux &eacute;l&eacute;ments &agrave; votre enqu&ecirc;te les rendra incompl&egrave;tes (pour les compl&eacute;ter, vous devrez demander une nouvelle traduction).
-	<p><i>Nous ne pouvons garantir ni la qualit&eacute; du texte produit, ni le d&eacute;lai de livraison des traductions.</i></p>
-	<p><a href="https://webgate.ec.europa.eu/etranslation/help.html" target="_blank">Aide pour la traduction automatique</a> (uniquement pour le personnel des institutions de l'UE).</p>
-	<h2><a class="anchor" name="_Toc6-5"></a>Instructions pour le personnel des institutions europ&eacute;ennes<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Nous vous recommandons de contacter la DGT avant de finaliser votre enqu&ecirc;te. Leurs services de la r&eacute;vision linguistique (email: DGT-EDIT) peuvent vous aider &agrave; v&eacute;rifier la clart&eacute; et l'attrait du texte de votre enqu&ecirc;te. Pour en savoir plus, voyez le site de la <a href="https://myintracomm.ec.europa.eu/serv/fr/dgt/Pages/index.aspx" target="_blank">DGT sur MyIntraComm</a>.</p>
-	<p>Les utilisateurs de la Commission europ&eacute;enne peuvent demander &agrave; la DG Traduction (DGT) de traduire leurs enqu&ecirc;tes dans les langues officielles de l'UE. L'enqu&ecirc;te doit &ecirc;tre export&eacute;e au format XML et envoy&eacute;e &agrave; la DGT via l'application Poetry, en s&eacute;lectionnant le code de leur DG. Le texte de l'enqu&ecirc;te ne doit pas d&eacute;passer 15 000 caract&egrave;res, espaces non compris, selon la fonction de comptage de MS Word.</p>
-	
-	<h1><a class="anchor" name="_Toc7"></a>Publication d'une enqu&ecirc;te</h1>
-	<h2><a class="anchor" name="_Toc7-1"></a>Comment publier une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour publier une enqu&ecirc;te &agrave; partir d'un brouillon en cours, ouvrez la page &laquo;Aper�u&raquo; et cliquez sur &laquo;Publier&raquo;. Apr&egrave;s confirmation, le syst&egrave;me cr&eacute;e automatiquement une copie fonctionnelle de votre enqu&ecirc;te et la met en ligne, ainsi que toutes les traductions s&eacute;lectionn&eacute;es pour publication sur la page &laquo;Traductions&raquo; (voir &laquo;<a  href="#_Toc6-6">Comment publier/d&eacute;publier des traductions?</a>&raquo;). Le lien vers votre enqu&ecirc;te publi&eacute;e se trouve &agrave; la rubrique &laquo;Emplacement de l'enqu&ecirc;te&raquo; de la page &laquo;Aper�u&raquo;.</p>
-	<p>Pour d&eacute;publier l'enqu&ecirc;te, cliquez simplement sur le bouton &laquo;D&eacute;publier&raquo;. Vous pourrez toujours acc&eacute;der &agrave; l'enqu&ecirc;te d&eacute;publi&eacute;e, dans la forme sous laquelle elle &eacute;tait publi&eacute;e, ainsi qu'&agrave; votre brouillon en cours. Cela signifie que l'enqu&ecirc;te d&eacute;publi&eacute;e ne sera pas automatiquement remplac&eacute;e par votre brouillon en cours, mais que vous pourrez la republier telle quelle si n&eacute;cessaire.</p>
-	<h2><a class="anchor" name="_Toc7-2"></a>Est-il possible de personnaliser l'URL d'une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Oui: en modifiant l'&laquo;alias&raquo; de votre enqu&ecirc;te, vous pourrez disposer d'une adresse URL plus compr&eacute;hensible. Ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo;. Cliquez sur le bouton &laquo;Modifier&raquo; dans la rubrique &laquo;Param&egrave;tres de base&raquo;, puis modifiez l'alias de l'enqu&ecirc;te. Les alias ne peuvent contenir que des caract&egrave;res alphanum&eacute;riques et des traits d'union. Si vous modifiez l'alias d'une enqu&ecirc;te publi&eacute;e, ouvrez la page &laquo;Aper�u&raquo; et cliquez sur &laquo;Appliquer les modifications&raquo;.</p>
-	<p>Remarque: un m&ecirc;me alias ne peut &ecirc;tre utilis&eacute; qu'une seule fois dans tout le syst&egrave;me EUSurvey. Vous serez averti si votre alias est d&eacute;j&agrave; utilis&eacute; par une autre enqu&ecirc;te.</p>
-	<h2><a class="anchor" name="_Toc7-7"></a>Puis-je envoyer un lien direct vers une traduction de mon enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Lorsque vous envoyez des invitations, ou utilisez le lien vers le formulaire publi&eacute; sur la page &laquo;Aper�u&raquo;, le lien renvoie par d&eacute;faut vers le formulaire dans la langue pivot.</p>
-	<p>Cependant, il est &eacute;galement possible de <b>rediriger les r&eacute;pondants directement</b> vers la traduction souhait&eacute;e, &agrave; l'aide du lien suivant:<br /><b>https://ec.europa.eu${contextpath}/runner/<span style="color:red">SurveyAlias</span>?surveylanguage=<span style="color:red">LC</span></b></p>
-	<p>Il vous suffit de remplacer:</p>
-		<ul>
-			<li>&laquo;<b><span style="color:red">SurveyAlias</span></b>&raquo; par l'<b>alias de votre enqu&ecirc;te</b></li>
-			<li>&laquo;<b><span style="color:red">LC</span></b>&raquo; par le <b>code de la langue</b> (FR pour le fran�ais, DE pour l'allemand, etc.)</li>
-		</ul>
-	<h2><a class="anchor" name="_Toc7-3"></a>Comment programmer la publication d'une enqu&ecirc;te pendant un cong&eacute;?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Vous pouvez programmer la publication automatique de votre enqu&ecirc;te au moment de votre choix. Ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo;. Cliquez sur le bouton &laquo;Modifier&raquo; dans la rubrique &laquo;Param&egrave;tres avanc�s&raquo;, puis indiquez les dates de d&eacute;but et de fin de publication de votre enqu&ecirc;te.</p>
-	<h2><a class="anchor" name="_Toc7-4"></a>Est-il possible de programmer un rappel de la date de fin de l'enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>EUSurvey peut vous envoyer un courrier &eacute;lectronique pour vous rappeler que l'enqu&ecirc;te est sur le point de se terminer. Vous pourrez ainsi pr&eacute;parer les &eacute;tapes suivantes (organiser les ressources n&eacute;cessaires &agrave; l'analyse des r&eacute;sultats, par ex.).</p>
-	<p>Pour activer cette fonction, ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo;. Cliquez sur &laquo;Param&egrave;tres avanc&eacute;s&raquo;, puis sur le bouton &laquo;Modifier&raquo;. Cochez l'option &laquo;Notification de fin&raquo;, indiquez &agrave; quel moment vous souhaitez recevoir le courrier de rappel et pr&eacute;cisez si tous les autres gestionnaires de formulaires doivent &eacute;galement recevoir ce message. Cliquez enfin sur &laquo;Enregistrer&raquo;.</p>
-	<c:if test="${enablepublicsurveys}">
-	<h2><a class="anchor" name="_Toc7-5"></a>Comment afficher une enqu&ecirc;te dans la liste des enqu&ecirc;tes publiques dans EUSurvey?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Vous pouvez publier un lien vers votre enqu&ecirc;te dans la &laquo;<a href="http://ec.europa.eu${contextpath}/home/publicsurveys" target="_blank">liste des enqu&ecirc;tes publiques</a>&raquo; d'EUSurvey.</p>
-	<p>Ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo;. S&eacute;lectionnez &laquo;Param&egrave;tres de s&eacute;curit&eacute;&raquo; et cliquez sur le bouton &laquo;Modifier&raquo;. Sous la rubrique &laquo;Public&raquo;, s&eacute;lectionnez &laquo;Oui&raquo; et cliquez sur le bouton &laquo;Enregistrer&raquo;.</p>
-	<p><b>N.B.:</b> l'ajout de votre enqu&ecirc;te &agrave; la liste des enqu&ecirc;tes publiques d'EUSurvey doit &ecirc;tre valid&eacute; par l'&eacute;quipe administrative d'EUSurvey. Celle-ci re�oit automatiquement un email du syst&egrave;me quand, sur la page &laquo;Aper�u&raquo;, vous cliquez sur &laquo;Publier&raquo; ou si vous appliquez des changements. Une fois l'autorisation accord&eacute;e, vous recevez un message de confirmation et votre enqu&ecirc;te est disponible dans la liste des enqu&ecirc;tes publiques.</p>
-	<p>Pour toute enqu&ecirc;te affich&eacute;e dans la liste publique d'EUSurvey, les participants doivent r&eacute;soudre un CAPTCHA avant de soumettre leur contribution. Ce CAPTCHA est cr&eacute;&eacute; automatiquement.</p>
-	</c:if>
-	<h2><a class="anchor" name="_Toc7-6"></a>Pour le personnel des institutions europ�ennes: quelles sont les exigences officielles pour le lancement d'une consultation publique ouverte (site web &laquo;Votre point de vue sur l'Europe&raquo;)?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Veuillez suivre pas &agrave; pas <a href="https://circabc.europa.eu/sd/d/fc02d2ac-d94f-42ed-b866-b3429e0d717b/Survey_publication_your_voice_in_europe_NEW.pdf" target="_blank">la proc&eacute;dure du Secr&eacute;tariat G&eacute;n&eacute;ral</a> pour publier une consultation publique ouverte sur le site <a href="http://ec.europa.eu/yourvoice/consultations/index_en.htm" target="_blank">&laquo;Votre point de vue sur l'Europe&raquo;</a>.</p>
-	
-	<h1><a class="anchor" name="_Toc8"></a>Gestion des enqu&ecirc;tes</h1>
-	<h2><a class="anchor" name="_Toc8-1"></a>Est-il possible de corriger les erreurs d&eacute;couvertes dans une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Oui, vous pouvez modifier l'enqu&ecirc;te aussi souvent que vous le souhaitez, ainsi qu'ajouter ou modifier des questions (y compris des questions d&eacute;pendantes). Nous vous signalons toutefois que plus vous effectuerez de modifications, moins les donn&eacute;es recueillies seront utilisables, compte tenu de la possibilit&eacute; que diff&eacute;rents participants &agrave; votre enqu&ecirc;te aient r&eacute;pondu &agrave; des versions diff&eacute;rentes de l'enqu&ecirc;te. D&egrave;s lors, si vous souhaitez toujours pouvoir comparer toutes les r&eacute;ponses, il est recommand&eacute; de ne pas modifier du tout la structure de votre enqu&ecirc;te. Veuillez noter que vous conservez l'enti&egrave;re responsabilit&eacute; de toute modification appliqu&eacute;e &agrave; votre enqu&ecirc;te au cours de son existence.</p>
-	<p>Si vous tenez &agrave; modifier une enqu&ecirc;te d&eacute;j&agrave; publi&eacute;e, n'oubliez pas de cliquer sur le bouton &laquo;Appliquer les modifications&raquo; de la page &laquo;Aper�u&raquo;, afin que ces modifications apparaissent dans l'enqu&ecirc;te publi&eacute;e.</p>
-	<p>Si vous souhaitez supprimer des r&eacute;ponses de votre enqu&ecirc;te, voyez &laquo;En cas de modification de l'enqu&ecirc;te, des contributions sont-elles supprim&eacute;es?&raquo;</p>
-	<h2><a class="anchor" name="_Toc8-2"></a>En cas de modification de l'enqu&ecirc;te, des contributions sont-elles supprim&eacute;es?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Aucune contribution ne sera supprim&eacute;e, sauf si vous effacez votre enqu&ecirc;te du syst&egrave;me. Il se pourrait toutefois que vous ne soyez pas en mesure de visualiser l'ensemble des donn&eacute;es recueillies si vous supprimez certaines questions de l'enqu&ecirc;te au cours de sa p&eacute;riode d'activit&eacute;: cela tient au fait que le masque de recherche repr&eacute;sente toujours la derni&egrave;re version publi&eacute;e de l'enqu&ecirc;te. Pour visualiser toutes les r&eacute;ponses, m&ecirc;me celles &agrave; des questions supprim&eacute;es pendant la p&eacute;riode d'activit&eacute; de votre enqu&ecirc;te, voyez &laquo;Comment afficher l'ensemble des questions enregistr&eacute;es?&raquo;.</p>
-	<h2><a class="anchor" name="_Toc8-3"></a>Comment modifier le titre d'une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo;. Cliquez sur le bouton &laquo;Modifier&raquo; dans la rubrique &laquo;Param&egrave;tres de base&raquo;, puis modifiez le titre de l'enqu&ecirc;te. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aper�u&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
-	<h2><a class="anchor" name="_Toc8-4"></a>Comment modifier l'adresse de contact d'une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Le message de confirmation s'affiche apr&egrave;s que les participants soumettent leur contribution. Pour modifier le message par d&eacute;faut, ouvrez l'enqu&ecirc;te, allez &agrave; l'&eacute;diteur et cliquez sur le bouton &laquo;Modifier la page de confirmation&raquo;. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aper�u&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
-	<h2><a class="anchor" name="_Toc8-5"></a>Comment personnaliser le message de confirmation par d&eacute;faut?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Le message de confirmation est le message que verront les participants apr�s avoir soumis leur contribution. Pour modifier le message par d�faut, ouvrez l'enqu�te, allez � � Propri�t�s �, ensuite allez � � Pages Sp�ciales � et cliquez sur le bouton � Modifier �. Si vous avez d�j� publi� votre enqu�te, n'oubliez pas d'ouvrir la page � Aper�u � et de cliquer sur � Afficher les modifications en attente �, puis sur �Appliquer les modifications�.</p>
-	<h2><a class="anchor" name="_Toc8-6"></a>Comment personnaliser le message de sortie par d&eacute;faut? <a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>La page de sortie contient le message que verront les participants si votre enqu&ecirc;te n'est pas accessible. Pour modifier le message par d&eacute;faut, ouvrez l'enqu&ecirc;te, allez &agrave; l'&eacute;diteur et cliquez sur le bouton &laquo;Modifier la page de sortie&raquo;. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aper�u&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
-	<h2><a class="anchor" name="_Toc8-7"></a>Fonctionnalit&eacute; d'archivage<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Vous pouvez archiver votre formulaire avec toutes ses r&eacute;ponses soumises pour le recharger ou le lancer plus tard. Pour archiver votre formulaire, cliquez sur l'ic&ocirc;ne &laquo;Archiver le questionnaire&raquo; dans le menu des actions de la page &laquo;Aper&ccedil;u&raquo;.</p>
-	<p>Les questionnaires archiv&eacute;s ne peuvent ni &ecirc;tre &eacute;dit&eacute;s ni recevoir des nouvelles r&eacute;ponses. Vous pouvez par contre exporter les r&eacute;sultats ou exporter une version PDF de votre survey. Les questionnaires archiv&eacute;s sont disponibles dans le &laquo;Tableau de bord&raquo; d'o&ugrave; ils peuvent &ecirc;tre restaur&eacute;s. Les questionnaires restaur&eacute;s peuvent &ecirc;tre &eacute;dit&eacute;s de nouveau.</p>
-	<h2><a class="anchor" name="_Toc8-8"></a>Comment donner acc&egrave;s &agrave; mon enqu&ecirc;te &agrave; d'autres utilisateurs?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Dans EUSurvey, vous pouvez donner acc&egrave;s &agrave; d'autres utilisateurs pour diff&eacute;rentes t&acirc;ches:</p>
-		<ul>
-			<li>tester l'enqu&ecirc;te (&laquo;Acc&egrave;s aper�u formulaire&raquo;);</li>
-			<li>acc&eacute;der aux r&eacute;sultats (&laquo;R&eacute;sultats&raquo;);</li>
-			<li>modifier l'enqu&ecirc;te (&laquo;Gestion du formulaire&raquo;).</li>
-		</ul>
-	<p>Pour leur donner l'acc&egrave;s, ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Droits&raquo;. Vous pouvez octroyer l'acc&egrave;s &agrave; une personne ou &agrave; un service. Les droits d'acc&egrave;s suivants sont possibles:</p>
-		<ul>
-			<li>vert: acc&egrave;s en lecture et &eacute;criture;</li>
-			<li>jaune: acc&egrave;s en lecture;</li>
-			<li>rouge: pas d'acc&egrave;s.</li>
-		</ul>
-	<p>Depuis la page &laquo;Droits&raquo;, cliquez sur &laquo;Ajouter un utilisateur&raquo; ou &laquo;Ajouter un service&raquo;. L'assistant d'ajout d'utilisateurs s'ouvre alors.</p>
-	<p>Apr&egrave;s avoir cliqu&eacute; sur &laquo;Ajouter un utilisateur&raquo;, vous devez s&eacute;lectionner le domaine (&agrave; savoir la Commission europ&eacute;enne), puis indiquer le nom d'utilisateur, l'adresse &eacute;lectronique ou tout autre champ, et cliquer sur &laquo;Rechercher&raquo;. S&eacute;lectionnez l'utilisateur et cliquez sur &laquo;OK&raquo;.</p>
-	<p>Si vous cliquez sur &laquo;Ajouter un service&raquo;, s&eacute;lectionnez le domaine correct et naviguez jusqu'au service voulu. Cliquez ensuite sur &laquo;OK&raquo;.</p>
-	<p>Vous serez redirig&eacute; vers la page &laquo;Droits&raquo;, o&ugrave; vous pourrez d&eacute;terminer les autorisations en cliquant sur les ic&ocirc;nes rouges:</p>
-		<ul>
-			<li>Pour octroyer le droit de tester votre enqu&ecirc;te:<br>
-				S&eacute;lectionnez la couleur verte pour la fonction &laquo;Acc&egrave;s aper�u formulaire&raquo;. Cliquez simplement sur la couleur pour modifier les droits. Les utilisateurs ajout&eacute;s verront automatiquement votre enqu&ecirc;te appara&icirc;tre dans leur page &laquo;Enqu&ecirc;tes&raquo; lors de leur prochaine connexion &agrave; EUSurvey. (Voir &eacute;galement "<a href="#_Toc5-2">Des coll&egrave;gues peuvent-ils tester l'enqu&ecirc;te avant sa publication?</a>").</li>
-			<li>Pour octroyer le droit d'acc&eacute;der aux r&eacute;sultats de votre enqu&ecirc;te:<br>
-				S&eacute;lectionnez la couleur jaune pour la fonction &laquo;R&eacute;sultats&raquo;. Les utilisateurs pourront afficher les r&eacute;sultats, sans pouvoir modifier ou supprimer quoi que ce soit. Si vous s&eacute;lectionnez la couleur verte, ils pourront afficher, modifier et supprimer les r&eacute;ponses. (Voir &eacute;galement "<a href="#_Toc9-7">Comment autoriser d'autres utilisateurs &agrave; acc&eacute;der aux r&eacute;sultats d'une enqu&ecirc;te?</a>").</li>
-			<li>Pour octroyer le droit de modifier votre enqu&ecirc;te:<br>
-				Si vous s&eacute;lectionnez la couleur jaune, les utilisateurs autoris&eacute;s pourront seulement afficher votre enqu&ecirc;te. Si vous s&eacute;lectionnez la couleur verte, ils pourront &eacute;galement la modifier, et votre enqu&ecirc;te appara&icirc;tra automatiquement dans leur liste d'enqu&ecirc;tes. (Voir &eacute;galement "<a href="#_Toc3-5">Comment autoriser d'autres utilisateurs &agrave; modifier une enqu&ecirc;te?</a>").</li>
-		</ul>
-	<p>Si vous s&eacute;lectionnez la couleur verte pour les trois cercles, l'utilisateur disposera de tous les droits pour votre enqu&ecirc;te.</p>
-	
-	<h2><a class="anchor" name="_Toc8-9"></a>Que sont les journaux d'activit� ?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>
-	Les journaux d'activit� surveillent et enregistrent l'activit� sur votre enqu�te. De cette fa�on, vous pouvez v�rifier quel utilisateur a appliqu� quelle modification � votre enqu�te et � quel moment. Vous pouvez �galement exporter les journaux d'activit�s dans plusieurs formats de fichiers tels que xls, csv et ods. Entrez le journal d'activit� de votre enqu�te en cliquant sur le lien "Activit�", � c�t� de "Propri�t�s". Si les journaux d'activit�s sont vides, il se peut qu'ils soient d�sactiv�s � l'�chelle du syst�me. Vous trouverez <a href="${contextpath}/resources/documents/ActivityLogEvents.xlsx">ici</a> une liste des �v�nements enregistr�s.
-	</p>
-	
-	<h1><a class="anchor" name="_Toc9"></a>Analyse, exportation et publication des r&eacute;sultats</h1>
-	<h2><a class="anchor" name="_Toc9-1"></a>O� trouver les contributions re�ues des participants?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez votre enqu&ecirc;te dans EUSurvey (voir aussi &laquo;<a href="#_Toc2-5">Comment ouvrir une enqu&ecirc;te existante pour la modifier, par exemple?</a>&raquo;) et allez &agrave; la page &laquo;R&eacute;sultats&raquo;. Vous verrez d'abord un tableau pr&eacute;sentant le contenu int&eacute;gral de toutes les contribution soumises. Vous pouvez afficher les r&eacute;sultats de 2 fa�ons:</p>
-		<ul>
-			<li>Contenu int&eacute;gral</li>
-			<li>Statistiques</li>
-		</ul>
-	<p>Vous pouvez passer d'un mode &agrave; l'autre en cliquant sur les ic&ocirc;nes du coin sup&eacute;rieur gauche de la page.</p>
-	<h2><a class="anchor" name="_Toc9-2"></a>Comment t&eacute;l&eacute;charger les contributions re�ues?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour exporter les r&eacute;ponses d'EUSurvey sur votre ordinateur, ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;R&eacute;sultats&raquo;. Les ic�nes du coin sup&eacute;rieur droit de la page indiquent les formats de fichiers disponibles pour l'exportation. Cliquez sur une des ic�nes, puis indiquez un nom de fichier dans la fen&ecirc;tre qui s'affiche. Le fichier d'exportation appara�tra sous ce nom sur la page &laquo;Exporter&raquo;. Diff&eacute;rents formats de fichier d'exportation sont disponibles, en fonction du mode d'affichage (contenu int&eacute;gral, graphiques ou statistiques). Remarque: le fichier d'exportation ne contiendra que l'ensemble de questions configur&eacute;, ainsi que les r&eacute;sultats de recherche correspondant au filtre utilis&eacute;.</p>
-	<h2><a class="anchor" name="_Toc9-3"></a>Comment rechercher et analyser un sous-ensemble d&eacute;fini de contributions?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Sur la page &laquo;R&eacute;sultats&raquo; (voir &laquo;<a href="#_Toc9-1">O� trouver les contributions re�ues des participants?</a>&raquo;), vous pouvez rechercher des mots cl&eacute;s dans les r&eacute;ponses en texte libre ou s&eacute;lectionner des r&eacute;ponses sp&eacute;cifiques dans les questions &agrave; choix, au moyen des filtres propos&eacute;s. Cela r&eacute;duit l'ensemble des r&eacute;ponses &agrave; un sous-ensemble de contributions. Vous pouvez changer le mode d'affichage &agrave; tout moment afin d'effectuer une analyse statistique d&eacute;taill&eacute;e des donn&eacute;es recueillies. Remarque: pour afficher et analyser les r&eacute;sultats, vous devez disposer de certains droits (voir &laquo;<a href="#_Toc9-7">Comment autoriser d'autres utilisateurs d'acc&eacute;der aux r&eacute;sultats d'une enqu&ecirc;te?</a>&raquo;). Pour exporter un sous-ensemble de contributions, voir &laquo;Comment t&eacute;l&eacute;charger les contributions re�ues?&raquo;.</p>
-	<h2><a class="anchor" name="_Toc9-4"></a>Comment retourner &agrave; l'ensemble des contributions apr&egrave;s avoir d&eacute;fini un sous-ensemble?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour afficher l'ensemble des r&eacute;ponses, cliquez sur le bouton &laquo;R&eacute;initialiser&raquo;, en haut de la page &laquo;R&eacute;sultats&raquo;, ou d&eacute;sactivez toutes les recherches effectu&eacute;es au moyen des filtres de cette page.</p>
-	<h2><a class="anchor" name="_Toc9-5"></a>Comment publier les r&eacute;sultats? <a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez votre enqu&ecirc;te, allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo; et s&eacute;lectionnez &laquo;Publier les r&eacute;sultats&raquo;. Vous verrez alors l'URL menant aux r&eacute;sultats publi&eacute;s. En cliquant sur le bouton &laquo;Modifier&raquo;, vous pouvez choisir les questions, r&eacute;ponses ou contributions &agrave; publier. Vous pouvez aussi y acc&eacute;der directement en cliquant sur le bouton &laquo;Modifier la publication des r&eacute;sultats&raquo; de la page &laquo;Aper�u&raquo; de votre enqu&ecirc;te.</p>
-	<p>Veillez &agrave; effectuer une s&eacute;lection dans la rubrique &laquo;Publier les r&eacute;sultats&raquo; de la section &laquo;Publier&raquo;, faute de quoi le syst&egrave;me ne publiera aucun r&eacute;sultat. </p>
-	<h2><a class="anchor" name="_Toc9-6"></a>Comment acc&eacute;der aux r&eacute;sultats publi&eacute;s?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez la page &laquo;Aper�u&raquo; et cliquez sur le lien &laquo;Publi&eacute;&raquo;, juste &agrave; c�t&eacute; du mot &laquo;R&eacute;sultats&raquo;, pour acc&eacute;der aux r&eacute;sultats publi&eacute;s. Toute personne connaissant cette adresse pourra acc&eacute;der &agrave; vos r&eacute;sultats.</p>
-	<h2><a class="anchor" name="_Toc9-7"></a>Comment autoriser d'autres utilisateurs &agrave; acc&eacute;der aux r&eacute;sultats d'une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez votre enqu&ecirc;te, allez &agrave; la page &laquo;Droits&raquo; et donnez acc&egrave;s aux r&eacute;sultats &agrave; d'autres utilisateurs. Pour en savoir plus, voir &laquo;<a href="#_Toc8-8">Comment donner acc&egrave;s &agrave; mon enqu&ecirc;te &agrave; d'autres utilisateurs?</a>&raquo;</p>
-	<h2><a class="anchor" name="_Toc9-8"></a>Je ne parviens pas � d�compresser mes fichiers export�s<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Cela peut se produire si le nom des fichiers contenus dans votre dossier est trop long. Dans Windows, la longueur du chemin d'acc�s d'un fichier ne peut pas d�passer 260 caract�res. Voici les solutions possibles:</p>
-		<ul>
-			<li>D�compressez le dossier dans le r�pertoire racine de votre syst�me d'exploitation, dans le r�pertoire "C:" au lieu de "C:\Users\NOMD'UTILISATEUR\Desktop", par exemple</li>
-			<li>Lorsque vous d�compressez les fichiers, renommez le dossier afin de r�duire la longueur du chemin d'acc�s</li>
-		</ul>
-	<h2><a class="anchor" name="_Toc9-9"></a>Les r&eacute;sultats publi&eacute;s - protection des donn&eacute;es &agrave; caract&egrave;re personnel, charg&eacute;es par les participants<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour des raisons de protection des donn&eacute;es, le gestionnaire du formulaire doit valider la publication des documents charg&eacute;s par les participants en parall&egrave;le aux r&eacute;sultats. Pour cela, il faut cocher l'option  &laquo;Document charg&eacute;s&raquo; dans la page &laquo;Propri&eacute;t&eacute;s - Publier les r&eacute;sultats&raquo;.</p>
-	<p>Veuillez noter que cette option apparait uniquement si le questionnaire contient des fichiers charg�s.</p>
-	<h2><a class="anchor" name="_Toc9-10"></a>Comment concevoir une enqu&ecirc;te afin de publier les r&eacute;sultats avec ou sans donn&eacute;es personnelles?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Si vous voulez donner le choix &agrave; vos participants de publier ou non leurs donn&eacute;es personnelles avec leurs r&eacute;ponses, suivez <a href="https://circabc.europa.eu/sd/d/e68ff760-226f-40e9-b7cb-d3dcdd04bfb1/How_to_publish_survey_results_anonymously.pdf" target="_blank">ces instructions</a>.</p>
-	<h2><a class="anchor" name="_Toc9-11"></a>Pourquoi mes r�sultats ne sont-ils pas � jour?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Une nouvelle base de donn�es a �t� introduite pour am�liorer les performances d'EUSurvey lors de l'interrogation des r�sultats de votre enqu�te. Toutefois, cela peut entra�ner des retards jusqu'� ce que les donn�es les plus r�centes apparaissent sur la page de r�sultats de votre enqu�te. Ce d�lai ne doit pas d�passer 12 heures.</p>
-	<p>Si les donn�es affich�es ont plus de 12 heures, veuillez contacter <a href="https://ec.europa.eu/eusurvey/home/support">l'assistance</a> EUSurvey.</p>
-	
-	<h1><a class="anchor" name="_Toc10"></a>Styles et mise en pages</h1>
-	<h2><a class="anchor" name="_Toc10-1"></a>Comment modifier l'apparence d'une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez votre enqu&ecirc;te, allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo; et s&eacute;lectionnez &laquo;Apparence&raquo;. Cliquez sur &laquo;Modifier&raquo; et choisissez l'habillage de votre enqu&ecirc;te parmi les habillages disponibles. Cliquez sur &laquo;Enregistrer&raquo;. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aper�u&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
-	<h2><a class="anchor" name="_Toc10-2"></a>Comment cr&eacute;er son propre th&egrave;me visuel?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Sur la page &laquo;Param&egrave;tres&raquo; d'EUSurvey, en haut de l'&eacute;cran, s&eacute;lectionnez &laquo;Habillages&raquo; et cliquez sur &laquo;Cr&eacute;er un nouvel habillage&raquo;. L'&eacute;diteur d'habillages s'ouvre alors. Vous pouvez partir d'un th&egrave;me visuel existant et utiliser l'&eacute;diteur d'habillages en ligne pour adapter ce mod&egrave;le &agrave; vos besoins.</p>
-	<h2><a class="anchor" name="_Toc10-3"></a>Comment ajouter un logo &agrave; une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour que le logo de votre projet ou de votre entreprise apparaisse dans le coin sup&eacute;rieur droit de votre enqu&ecirc;te, t&eacute;l&eacute;chargez un fichier d'image au moyen du sous-menu &laquo;Apparence&raquo; de la page &laquo;Propri&eacute;t&eacute;s&raquo;. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aper�u&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
-	<h2><a class="anchor" name="_Toc10-4"></a>Comment ajouter des liens utiles &agrave; une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez votre enqu&ecirc;te, allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo; et s&eacute;lectionnez &laquo;Param&egrave;tres avanc&eacute;s&raquo;. Cliquez sur le bouton &laquo;Modifier&raquo; pour ajouter des URL et leurs titres dans la rubrique &laquo;Liens utiles&raquo;. Ces liens figureront sur chaque page de votre enqu&ecirc;te, sur le c�t&eacute; droit. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aper�u&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
-	<h2><a class="anchor" name="_Toc10-5"></a>Comment ajouter des documents de r&eacute;f&eacute;rence &agrave; une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez votre enqu&ecirc;te, allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo; et s&eacute;lectionnez &laquo;Param&egrave;tres avanc&eacute;s&raquo;. Cliquez sur le bouton &laquo;Modifier&raquo;. Dans la rubrique &laquo;Documents de r&eacute;f&eacute;rence&raquo;, choisissez le document &agrave; t&eacute;l&eacute;charger et indiquez son titre. Les documents ajout&eacute;s figureront sur chaque page de votre enqu&ecirc;te, sur le c�t&eacute; droit. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aper�u&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
-	<h2><a class="anchor" name="_Toc10-6"></a>Comment cr&eacute;er une enqu&ecirc;te en plusieurs pages?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Les sections de haut niveau de votre enqu&ecirc;te peuvent &ecirc;tre divis&eacute;es automatiquement en pages distinctes. Ouvrez votre enqu&ecirc;te, allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo; et s&eacute;lectionnez &laquo;Apparence&raquo;. Cliquez sur &laquo;Modifier&raquo;. Activez l'option &laquo;Pr&eacute;sentation sur plusieurs pages&raquo; et cliquez sur &laquo;Enregistrer&raquo;. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aper�u&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
-	<h2><a class="anchor" name="_Toc10-7"></a>Comment activer la num&eacute;rotation automatique pour une enqu&ecirc;te? <a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour num&eacute;roter automatiquement toutes les sections et questions de votre formulaire, ouvrez votre enqu&ecirc;te, allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo;, s&eacute;lectionnez &laquo;Apparence&raquo; et cliquez sur &laquo;Modifier&raquo;. Activez l'option &laquo;Num&eacute;rotation automatique&raquo; et enregistrez. Si vous avez d&eacute;j&agrave; publi&eacute; votre enqu&ecirc;te, n'oubliez pas d'ouvrir la page &laquo;Aper�u&raquo; et de cliquer sur &laquo;Appliquer les modifications&raquo;.</p>
-	<h2><a class="anchor" name="_Toc10-8"></a>Comment cr&eacute;er une apparence personnalis&eacute;e pour une enqu&ecirc;te?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour cr&eacute;er une nouvelle apparence de votre questionnaire, allez &agrave; la page &laquo;Param&egrave;tres&raquo;, puis s&eacute;lectionnez &laquo;Apparences&raquo;. Cliquez sur &laquo;Cr&eacute;er une nouvelle apparence&raquo; o&ugrave; vous pourrez configurer le visuel des diff&eacute;rents &eacute;l&eacute;ments d'une enqu&ecirc;te: les questions, son texte, les titres, les bulles d'aides et bien d'autres.</p>
-	<p>Vous devez d'abord donner un nom &agrave; votre nouvelle apparence. Puis s&eacute;lectionnez l'&eacute;l&eacute;ment que vous d&eacute;sirez configurer. &Agrave; droite de la page, vous trouverez une bo&icirc;te o&ugrave; vous pourrez changer les diff&eacute;rents aspects tels que: les couleurs d'affichage, la police utilis&eacute;e, sa taille et son &eacute;paisseur. Chaque changement sera visible dans la zone de pr&eacute;visualisation, qui se trouve en dessous de &laquo;Skin Preview Survey&raquo;. N'oubliez pas de cliquer sur &laquo;Enregistrer&raquo;!</p>
-	<p>Il n'est pas n&eacute;cessaire de sauvegarder &agrave; chaque configuration d'&eacute;l&eacute;ment. Vous pouvez enregistrer toutes vos modifications &agrave; la fin.</p> 
-	<p>Enfin, pour appliquer une &laquo;Apparence&raquo; &agrave; vos enqu&ecirc;tes, allez dans l'onglet &laquo;Propri&eacute;t&eacute;s&raquo; d'un questionnaire, puis &laquo;Apparence&raquo;. Cliquez sur &laquo;Modifier&raquo; et choisissez parmi les apparences disponibles dans le menu &laquo;Style&raquo;. Sauvegardez pour finaliser la configuration.</p>
-	
-	<h1><a class="anchor" name="_Toc11"></a>Gestion des contacts et des invitations</h1>
-	<h2><a class="anchor" name="_Toc11-1"></a>Qu'est-ce que le &laquo;carnet d'adresses&raquo;? <a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Le carnet d'adresses permet de cr&eacute;er vos propres groupes de participants. Vous pouvez ainsi inviter des personnes ou organisations qui correspondent &agrave; certains crit&egrave;res (par exemple &laquo;masculin&raquo; et &laquo;plus de 21 ans&raquo;). Chaque participant potentiel constitue un contact du carnet d'adresses. Pour chaque contact, vous pouvez sp&eacute;cifier autant d'attributs que vous le souhaitez. Vous pouvez ajouter n'importe quel contact dans votre carnet d'adresses, du moment que vous indiquez son identifiant (&laquo;Nom&raquo;) et son adresse &eacute;lectronique.</p>
-	<h2><a class="anchor" name="_Toc11-2"></a>Que sont les &laquo;attributs&raquo; des contacts?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Tout contact enregistr&eacute; dans le carnet d'adresses peut &ecirc;tre caract&eacute;ris&eacute; par un ensemble d'attributs variables, tels que &laquo;Pays&raquo;, &laquo;T&eacute;l&eacute;phone&raquo;, &laquo;Remarques&raquo;, etc. Vous pouvez cr&eacute;er de nouveaux attributs en modifiant les contacts. Dans la fen&ecirc;tre &laquo;Modifier le contact&raquo;, ouvrez le menu des attributs et cliquez sur &laquo;Nouveau...&raquo;. Dans la fen&ecirc;tre qui s'affiche, vous pouvez indiquer le nom du nouvel attribut. L'attribut ainsi cr&eacute;&eacute; s'affichera dans une colonne du carnet d'adresses. Il peut &ecirc;tre ajout&eacute; &agrave; une s&eacute;rie de contacts.</p>
-	<h2><a class="anchor" name="_Toc11-3"></a>Comment ajouter de nouveaux contacts dans le carnet d'adresses?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour ajouter un seul contact, allez &agrave; la page &laquo;Carnet d'adresses&raquo; et cliquez &laquo;Ajouter un contact&raquo;. Vous pouvez &eacute;galement cliquer sur &laquo;Importer&raquo; pour t&eacute;l&eacute;charger une liste de contacts existante au format XLS, ODS, CSV ou TXT. Voir &eacute;galement &laquo;<a  href="#_Toc11-5">Comment importer un fichier avec plusieurs contacts dans le carnet d'adresses?</a>&raquo;</p>
-	<h2><a class="anchor" name="_Toc11-4"></a>Qu'est-ce qu'un &laquo;formulaire d'enregistrement&raquo;?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Un formulaire d'enregistrement est une forme d'&laquo;enqu&ecirc;te&raquo; qui permet de cr&eacute;er automatiquement des contacts &agrave; partir des donn&eacute;es &agrave; caract&egrave;re personnel introduites par les participants. Pour activer cette fonction, ouvrez votre enqu&ecirc;te, allez &agrave; la page &laquo;Propri&eacute;t&eacute;s&raquo; et s&eacute;lectionnez &laquo;Param&egrave;tres avanc&eacute;s&raquo;. Cliquez sur &laquo;Modifier&raquo;, cochez &laquo;Oui&raquo; &agrave; c�t&eacute; de l'option &laquo;Cr&eacute;er des contacts&raquo;, puis sur &laquo;Enregistrer&raquo;. D&egrave;s que cette option est s&eacute;lectionn&eacute;e, le syst&egrave;me ins&egrave;re 2 questions obligatoires en texte libre (&laquo;Nom&raquo; et &laquo;Adresse &eacute;lectronique&raquo;), afin de garantir que chaque participant indique valablement ses coordonn&eacute;es.</p>
-	<p>Si vous activez l'option &laquo;Attribut&raquo; pour des questions sp&eacute;cifiques, vous pouvez choisir quelles autres informations seront enregistr&eacute;es pour chaque nouveau contact (exemple: vous pouvez associer l'attribut &laquo;T&eacute;l&eacute;phone&raquo; &agrave; une question en texte libre afin d'enregistrer le num&eacute;ro de t&eacute;l&eacute;phone du participant dans le carnet d'adresses).</p>
-	<h2><a class="anchor" name="_Toc11-5"></a>Comment importer un fichier avec plusieurs contacts dans le carnet d'adresses?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>EUSurvey dispose d'un assistant qui facilite l'importation de listes de contacts dans le syst&egrave;me. Les formats de fichiers suivants sont pris en charge: XLS, ODS, CSV et TXT (avec s&eacute;parateurs).</p>
-	<p>Pour d&eacute;marrer l'assistant, ouvrez la page &laquo;Carnet d'adresses&raquo; et cliquez sur &laquo;Importer&raquo;. Tout d'abord, s&eacute;lectionnez le fichier dans lequel vous avez enregistr&eacute; vos contacts. Indiquez si votre fichier contient une ligne d'en-t&ecirc;te. Pour un fichier CSV ou TXT, pr&eacute;cisez le type de s&eacute;parateur utilis&eacute; (le caract&egrave;re le plus probable est propos&eacute; par d&eacute;faut).</p>
-	<p>Ensuite, le syst&egrave;me vous demandera d'indiquer quelles colonnes correspondent &agrave; quels attributs pour l'importation des contacts dans EUSurvey. Remarque: vous devez indiquer quelles colonnes contiennent les attributs obligatoires &laquo;Nom&raquo; et &laquo;Adresse &eacute;lectronique&raquo; avant de pouvoir continuer. Cliquez sur &laquo;Suivant&raquo;; le syst&egrave;me charge le fichier et affiche les contacts individuels qui seront import&eacute;s. Vous pouvez d&eacute;s&eacute;lectionner les contacts que vous ne souhaitez pas importer. Cliquez sur &laquo;Enregistrer&raquo; pour ajouter les contacts &agrave; votre carnet d'adresses.</p>
-	<h2><a class="anchor" name="_Toc11-6"></a>Comment modifier un attribut pour plusieurs contacts &agrave; la fois?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Pour modifier un attribut pour plusieurs contacts, s&eacute;lectionnez les contacts en question dans votre carnet d'adresses, cliquez sur l'action &laquo;Modifier en bloc&raquo;, puis sur &laquo;OK&raquo;.</p>
-	<p>La fen&ecirc;tre qui s'affiche permet de conserver, d'effacer ou de modifier les attributs de plusieurs contacts &agrave; la fois. Par d&eacute;faut, seuls les attributs configur&eacute;s sont affich&eacute;s. Cliquez sur la croix verte pour afficher les autres attributs. Apr&egrave;s avoir introduit les modifications voulues, cliquez sur &laquo;Mettre &agrave; jour&raquo; et confirmez. L'application enregistre les modifications dans le carnet d'adresses.</p>
-	<h2><a class="anchor" name="_Toc11-7"></a>Est-il possible d'exporter les contacts du carnet d'adresses dans un fichier?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Oui: sur la page &laquo;Carnet d'adresses&raquo;, cliquez sur une des ic�nes du coin sup&eacute;rieur droit, qui indiquent les formats de fichiers disponibles. Vous trouverez les contacts export&eacute;s sur la page &laquo;Exportations&raquo;.</p>
-	
-	<h1><a class="anchor" name="_Toc12"></a>Invitation de participants</h1>
-	<h2><a class="anchor" name="_Toc12-1"></a>Comment d&eacute;finir un groupe de participants potentiels? Qu'est-ce qu'une &laquo;liste d'invit&eacute;s&raquo;?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>EUSurvey permet de s&eacute;lectionner plusieurs contacts &agrave; la fois et d'envoyer &agrave; chacun de ces contacts un message contenant un lien d'acc&egrave;s individuel. Ces groupes de contacts sont appel&eacute;s &laquo;<a href="#_Toc11-1">listes d'invit&eacute;s</a>&raquo;. Il s'agit de la deuxi&egrave;me fa�on - outre la d&eacute;finition d'un mot de passe global pour l'enqu&ecirc;te - de permettre &agrave; des personnes de participer &agrave; votre enqu&ecirc;te.</p>
-	<p>Pour inviter plusieurs contacts &agrave; participer, ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Participants&raquo;. Cliquez sur &laquo;Cr&eacute;er une nouvelle liste d'invit&eacute;s&raquo; pour d&eacute;marrer un assistant qui vous guidera tout au long de cette proc&eacute;dure. Choisissez un nom pour le groupe et s&eacute;lectionnez un des types de liste suivants:</p>
-		<ul>
-			<li>Contacts du carnet d'adresses EUSurvey (d&eacute;faut)<br/>S&eacute;lectionnez des contacts du carnet d'adresses (voir &laquo;Qu'est-ce que le "carnet d'adresses"?&raquo;) pour les ajouter &agrave; votre liste d'invit&eacute;s.</li>
-			<li>Institutions et autres organes de l'UE (uniquement pour le personnel des institutions europ�ennes)<br/>S&eacute;lectionnez plusieurs services de votre institution ou agence pour ajouter &agrave; la liste toutes les personnes de ces services.</li>
-			<li>Jetons<br/>Cette fonction cr&eacute;e une liste de &laquo;jetons&raquo; (des codes d'acc&egrave;s) qui peuvent &ecirc;tre distribu&eacute;s hors ligne afin d'acc&eacute;der &agrave; une enqu&ecirc;te en ligne s&eacute;curis&eacute;e.</li>
-		</ul>
-	<p>Utilisez la fonction de recherche de votre carnet d'adresses pour trouver les contacts voulus, puis cliquez sur le bouton &laquo;Ajouter&raquo; pour les ajouter &agrave; votre nouvelle liste d'invit&eacute;s. Cliquez sur &laquo;Enregistrer&raquo;. Une nouvelle liste d'invit&eacute;s est cr&eacute;&eacute;e, contenant tous les contacts que vous souhaitez inviter &agrave; participer &agrave; l'enqu&ecirc;te.</p>
-	<p>Maintenant, nous allons voir comment envoyer des liens d'acc&egrave;s individuels par courrier &eacute;lectronique &agrave; des contacts configur&eacute;s au moyen d'une liste d'invit&eacute;s.</p>
-	<h2><a class="anchor" name="_Toc12-2"></a>Comment modifier/supprimer une liste d'invit&eacute;s existante?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Ouvrez votre enqu&ecirc;te et allez &agrave; la page &laquo;Participants&raquo;. Pour modifier la liste d'invit&eacute;s, cliquez sur la petite ic�ne repr&eacute;sentant un crayon. Pour supprimer une liste, cliquez d'abord sur le bouton &laquo;D&eacute;sactiver&raquo;. Vous pouvez ensuite cliquer sur le bouton &laquo;Supprimer&raquo;.</p>
-	<h2><a class="anchor" name="_Toc12-3"></a>Comment envoyer un courriel d'invitation aux participants?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Une fois la nouvelle liste d'invit&eacute;s cr&eacute;&eacute;e, vous pouvez envoyer des courriels d'invitation aux invit&eacute;s. Pour les questionnaires &laquo;S&eacute;curis&eacute;&raquo; et &laquo;Ouvert&raquo;, ils recevront chacun un lien d'acc&egrave;s individuel. <b>Chaque invit&eacute; ne peut soumettre qu'une seule contribution.</b></p>
-	<p>Sur la page &laquo;Participants&raquo;, cliquez sur la petite ic&ocirc;ne en forme d'enveloppe. Une fen&ecirc;tre s'ouvre o&ugrave; vous pouvez choisir un mod&egrave;le de courriel &agrave; partir de la boite &laquo;Style&raquo;. Par d&eacute;faut, le style utilis&eacute; est &laquo;EUSurvey&raquo;. Vous pouvez changer l'objet, le contenu de votre courriel et l'adresse email &laquo;r&eacute;ponse&raquo;. Les r&eacute;ponses &agrave; vos invitations seront envoy&eacute;es &agrave; cette adresse. Par apr&egrave;s, enregistrez votre texte du courriel. Il sera disponible dans toutes vos listes d'invit&eacute;es ainsi que tous vos questionnaires. Vous le trouverez dans la liste d&eacute;roulante &laquo;Texte&raquo;. Puis cliquez sur &laquo;Suivant&raquo;. Un assistant vous aidera � envoyer les invitations.</p>
-	
-	<h1><a class="anchor" name="_Toc13"></a>Gestion du compte personnel</h1>
-	<h2><a class="anchor" name="_Toc13-1"></a>Comment modifier le mot de passe?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>L'acc&egrave;s &agrave; la version de r&eacute;f&eacute;rence d'EUSurvey, &agrave; la Commission europ&eacute;enne, est g&eacute;r&eacute; via EU Login. Les utilisateurs d'EUSurvey doivent donc modifier leur mot de passe EU Login s'ils ont perdu celui-ci. Pour ce faire, cliquez sur &laquo;Mot de passe perdu?&raquo; sur la page d'accueil d'EU Login.</p>
-	<h2><a class="anchor" name="_Toc13-2"></a>Comment modifier l'adresse &eacute;lectronique?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Si vous acc&eacute;dez &agrave; EUSurvey au moyen de votre compte EU Login, vous ne pouvez pas modifier votre adresse &eacute;lectronique dans EUSurvey. Connectez-vous &agrave; EU Login, cliquez sur l'onglet &laquo;Donn&eacute;es personnelles&raquo;, puis sur &laquo;Modifiez vos donn&eacute;es personnelles&raquo;.</p>
-	<p>Si vous utilisez la version open source d'EUSurvey ou l'interface API, connectez-vous &agrave; l'application. Cliquez sur &laquo;Param&egrave;tres, puis sur &laquo;Mon compte&raquo;, puis sur &laquo;Modifier l'adresse &eacute;lectronique&raquo;.</p>
-	<h2><a class="anchor" name="_Toc13-3"></a>Comment modifier la langue par d&eacute;faut?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Vous pouvez modifier la langue par d&eacute;faut pour les nouvelles enqu&ecirc;tes. Cliquez sur &laquo;Param&egrave;tres, puis sur &laquo;Mon compte&raquo;, puis sur &laquo;Modifier la langue&raquo;. Confirmez votre choix. Le syst&egrave;me proposera d'utiliser la langue s&eacute;lectionn&eacute;e comme langue principale pour toutes vos nouvelles enqu&ecirc;tes.</p>
-	
-	<h1><a class="anchor" name="_Toc14"></a>Protection de la vie priv&eacute;e</h1>
-	<h2><a class="anchor" name="_Toc14-1"></a>Ce syst&egrave;me utilise des cookies. Quelles informations y sont enregistr&eacute;es?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Le syst�me utilise des �cookies� (ou t�moins) de session afin d'assurer une bonne communication entre le client (l'ordinateur de l'utilisateur) et le serveur. Le navigateur de l'utilisateur doit donc �tre configur� pour les accepter. Les cookies disparaissent une fois la session termin�e.</p>
-	<p>Le syst�me enregistre une copie de sauvegarde locale de la contribution d'un participant � une enqu�te. Ce fichier peut servir en cas d'indisponibilit� du serveur lorsque l'utilisateur envoie sa contribution, ou si son ordinateur s'�teint accidentellement, par exemple. Il contient le num�ro des questions et les brouillons de r�ponses. Une fois la contribution � l'enqu�te envoy�e au serveur, ou apr�s sauvegarde d'un brouillon sur celui-ci, ces donn�es locales sont supprim�es. Au-dessus de l'enqu�te figure une case � cocher avec la mention �Enregistrer une copie de sauvegarde locale sur votre ordinateur (d�cochez cette case si vous utilisez un ordinateur public/partag�)�, qui permet de d�sactiver cette fonction. Si l'utilisateur la d�coche, aucune donn�e ne sera conserv�e sur son ordinateur.</p>
-	<h2><a class="anchor" name="_Toc14-2"></a>Quelles informations sont enregistr&eacute;es par EUSurvey lorsqu'un participant soumet une contribution?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Les informations enregistr&eacute;es par EUSurvey d&eacute;pendent des param&egrave;tres de s&eacute;curit&eacute; de votre enqu&ecirc;te ainsi que de la m&eacute;thode que vous utilisez pour inviter vos participants &agrave; contribuer &agrave; votre enqu&ecirc;te.</p>
-	<p><b>Enqu&ecirc;tes ouvertes au public:</b> Par d&eacute;faut - si votre enqu&ecirc;te n'est pas s&eacute;curis&eacute;e -  EUSurvey ne stocke aucune information li&eacute;e &agrave; l'utilisateur. Toutefois, l'adresse IP de chaque connexion au serveur est enregistr&eacute;e pour des raisons de s&eacute;curit&eacute; (voir <a href=" https://ec.europa.eu/eusurvey/home/privacystatement " target="_blank">d&eacute;claration relative &agrave; la protection de la vie priv&eacute;e</a>).</p>
-	<p><b>Enqu&ecirc;tes prot&eacute;g&eacute;es par mot de passe individuel:</b> Lorsque votre sondage est s&eacute;curis&eacute; par un mot de passe seulement, EUSurvey ne stocke aucune information li&eacute;e &agrave; l'utilisateur. Toutefois, l'adresse IP de chaque connexion au serveur est enregistr&eacute;e pour des raisons de s&eacute;curit&eacute; (voir <a href=" https://ec.europa.eu/eusurvey/home/privacystatement " target="_blank">d&eacute;claration relative &agrave; la protection de la vie priv&eacute;e</a>).</p>
-	<p><b>Enqu&ecirc;te s&eacute;curis&eacute;e avec l'authentification EU Login:</b> Lorsque votre enqu&ecirc;te sera s&eacute;curis&eacute;e par l'authentification EU Login, EUSurvey enregistrera l'adresse e-mail du compte EU Login. Toutefois, l'adresse IP de chaque connexion au serveur est enregistr&eacute;e pour des raisons de s&eacute;curit&eacute; (voir <a href=" https://ec.europa.eu/eusurvey/home/privacystatement " target="_blank">d&eacute;claration relative &agrave; la protection de la vie priv&eacute;e</a>).</p>
-	<p><b>Envoi d'invitations via EUSurvey:</b> Si vous utilisez EUSurvey pour envoyer des invitations &agrave; vos participants via une liste d'invit&eacute;s, ils recevront chacun un lien d'acc&egrave;s individuel. Lors de la soumission, EUSurvey enregistrera un num&eacute;ro d'invitation pouvant &ecirc;tre utilis&eacute; pour associer le participant invit&eacute; aux contributions soumises. Ce comportement est ind&eacute;pendant des param&egrave;tres de s&eacute;curit&eacute; de votre enqu&ecirc;te. En outre, l'adresse IP de chaque connexion au serveur est enregistr&eacute;e pour des raisons de s&eacute;curit&eacute;. (voir <a href=" https://ec.europa.eu/eusurvey/home/privacystatement " target="_blank">d&eacute;claration relative &agrave; la protection de la vie priv&eacute;e</a>).</p>
-	<p><b>Cr&eacute;er un sondage anonyme:</b> Vous pouvez choisir de cr&eacute;er un sondage anonyme en mettant la &laquo;Protection de la vie priv&eacute;e&raquo; dans les &laquo;Param&egrave;tres de s&eacute;curit&eacute;&raquo; de vos Propri&eacute;t&eacute;s sur &laquo;Non&raquo;. Ensuite, toutes les informations utilisateur collect&eacute;es seront remplac&eacute;es par &laquo;Anonyme&raquo;. Toutefois, l'adresse IP de chaque connexion au serveur est enregistr&eacute;e pour des raisons de s&eacute;curit&eacute; (voir <a href="https://ec.europa.eu/eusurvey/home/privacystatement" target="_blank">d&eacute;claration relative &agrave; la protection de la vie priv&eacute;e</a>).</p>
-	<h2><a class="anchor" name="_Toc14-3"></a>Les enqu&ecirc;tes doivent-elles inclure une d&eacute;claration relative &agrave; la protection de la vie priv&eacute;e?<a href="#topAnchor"  class="anchorlink anchorTop" style="text-decoration:none;">Haut de la page&nbsp;<i class="icon icon-chevron-up"></i></a></h2>
-	<p>Cela d�pend des questions pos�es et du type de donn�es recueillies dans le cadre de votre enqu�te. Veuillez noter que certaines personnes pourraient refuser de r�pondre � votre enqu�te si vous n'�tes pas en mesure de garantir la confidentialit� des donn�es fournies.</p>
-	<p><b>Pour le personnel des institutions europ&eacute;ennes:</b></p>
-	<p>Nous attirons votre attention sur la politique en mati�re de �protection des personnes physiques � l'�gard du traitement des donn�es � caract�re personnel� <a href="http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2001:008:0001:0022:EN:PDF" target="_blank">(r�glement (CE) n� 45/2001)</a>. Si des donn�es � caract�re personnel sont recueillies, une d�claration relative � la protection de la vie priv�e doit �tre r�dig�e et publi�e avec le questionnaire. Veuillez prendre contact avec le coordinateur de la protection des donn�es de votre DG, afin de valider cette d�claration. <p>En outre, toute collecte de donn�es � caract�re personnel doit �tre notifi�e au d�l�gu� � la protection des donn�es (DPD). Veuillez contacter votre coordinateur de la protection des donn�es si vous avez besoin d'aide concernant cette notification.</p>
-	<p>Vous trouverez ci-joint des mod�les de d�claration relative � la protection de la vie priv�e, que vous pouvez utiliser pour vos enqu�tes. Vous pouvez les adapter � vos besoins:</p>
-		<ul>
-			<li>Mod�le de <a href="https://circabc.europa.eu/sd/a/a8f80d78-8620-4326-95ee-7bceb5b18fbc/Template_privacy_statement_surveys_or_consultations.doc" target="_blank">�d�claration relative � la protection de la vie priv�e pour les enqu�tes et les consultations�</a></li>
-			<li>Mod�le de <a href="https://circabc.europa.eu/sd/a/650ea0ea-79d4-4cf3-93d4-5feb37af10a1/Template_privacy_statement_online_registrations.doc" target="_blank">�d�claration relative � la protection de la vie priv�e pour les inscriptions � des conf�rences et autres �v�nements�</a></li>
-		</ul>
+	<div id="faqcontent">
+
+			<h1>
+				Questions d’ordre général
+			</h1>
+			<h2>
+				Qu’est-ce qu’EUSurvey?
+			</h2>
+			<p>
+				EUSurvey est un outil en ligne qui permet de créer, publier et gérer des
+				questionnaires et d’autres formulaires interactifs.
+			</p>
+			<h2>
+				Quand utiliser EUSurvey?
+			</h2>
+			<p>
+				Utilisez EUSurvey si vous souhaitez:
+			</p>
+			<p>
+				<ul>
+					<li>
+						créer un questionnaire ou un formulaire interactif accessible en ligne;
+					</li>
+					<li>
+						enregistrer un grand nombre de jeux de données semblables.
+					</li>
+				</ul>
+			</p>
+			<h2>
+				Quelles sont les limitations techniques d’EUSurvey?
+			</h2>
+			<p>
+				EUSurvey n’est peut-être pas adapté à votre projet dans les situations
+				suivantes:
+			</p>
+			<ul>
+				<li>
+					si plusieurs participants doivent travailler sur la même contribution
+					(réponse) avant qu’elle ne soit soumise;
+				</li>
+				<li>
+					si les réponses doivent être validées avant de pouvoir être soumises.
+				</li>
+			</ul>
+			<p>
+				Pour de plus amples informations:
+			</p>
+			<p>
+				<ul>
+					<li>
+						consultez la section «Taille et facilité d’utilisation» de la page
+						<a href="https://ec.europa.eu/eusurvey/home/documentation?language=fr">
+							aide
+						</a>
+						de l’outil;
+					</li>		
+					<li>
+						contactez l’équipe d’assistance EUSurvey
+						<a href="https://ec.europa.eu/eusurvey/home/support?language=fr">
+							ici
+						</a>
+						.
+					</li>
+				</ul>
+			</p>
+			<h2>
+				Quelles sont les fonctionnalités d’EUSurvey?
+			</h2>
+			<p>
+				<b>Personnalisation des formulaires</b>
+				<br/>
+				Vous pouvez choisir différents types de questions, par exemple:
+			</p>
+			<ul>
+				<li>
+					texte simple et questions à choix multiple;
+				</li>
+				<li>
+					tableaux;
+				</li>
+				<li>
+					éléments multimédias.
+				</li>
+			</ul>
+			<p>
+				Vous pouvez structurer votre questionnaire au moyen d’éléments structurels
+				spécifiques.
+			</p>
+			<p>
+				<b>Questions dépendantes</b>
+				<br/>
+				EUSurvey peut afficher des questions et champs supplémentaires en fonction
+				des réponses du participant, ce qui rend les questionnaires plus
+				interactifs.
+			</p>
+			<p>
+				<b>Programmation de la publication</b>
+				<br/>
+				Vous pouvez programmer la publication et la dépublication automatiques de
+				votre enquête à la date et à l’heure que vous souhaitez.
+			</p>
+			<p>
+				<b>Modification après publication</b>
+				<br/>
+				Vous pouvez modifier une enquête publiée sans perdre aucune contribution.
+			</p>
+			<p>
+				<b>Langues</b>
+				<br/>
+				L’interface utilisateur est disponible dans 23 langues de l’UE.
+			</p>
+			<p>
+				Vous pouvez traduire votre formulaire dans l’une des 136 langues couvertes
+				par la norme ISO 639-1 (l’ISO 639 est une nomenclature normalisée qui est
+				utilisée pour classer les langues).
+			</p>
+			<p>
+				<b>Sécurité</b>
+				<br/>
+				EUSurvey est doté du dispositif nécessaire pour assurer la sécurité des
+				formulaires en ligne.
+			</p>
+			<p>
+				<b>Envoi direct d’invitations</b>
+				<br/>
+				Vous pouvez gérer vos contacts et leur envoyer à chacun un courrier
+				électronique contenant un lien d’accès individuel à votre enquête.
+			</p>
+			<p>
+				<b>Protection des données à caractère personnel</b>
+				<br/>
+				En créant un formulaire anonyme, vous garantissez le respect de la vie
+				privée des participants.
+			</p>
+			<p>
+				Vous n’aurez pas accès aux paramètres de connexion des participants.
+			</p>
+			<p>
+				<b>Personnalisation de l’apparence</b>
+			</p>
+			<p>
+				<ul>
+					<li>
+						Vous pouvez configurer tous les éléments de la mise en page du formulaire
+						à l’aide d’outils flexibles.
+					</li>
+					<li>
+						Vous pouvez adapter votre formulaire à un projet spécifique au moyen
+						d’une grande variété de thèmes graphiques.
+					</li>
+					<li>
+						Vous pouvez choisir de faire tenir votre formulaire sur une page ou sur
+						plusieurs pages.
+					</li>
+				</ul>
+			</p>
+			<p>
+				<b>Sauvegarde des réponses à l’état de brouillon</b>
+				<br/>
+				Les participants peuvent enregistrer leur réponse à l’état de brouillon sur
+				le serveur, et la terminer plus tard.
+			</p>
+			<p>
+				<b>Remplissage de formulaires hors ligne </b>
+				<br/>
+				Les participants peuvent remplir un formulaire hors ligne avant de le
+				soumettre au serveur lorsqu’il est terminé.
+			</p>
+			<p>
+				<b>Numérotation automatique</b>
+				<br/>
+				Pour structurer votre enquête, EUSurvey peut numéroter les différentes
+				sections.
+			</p>
+			<p>
+				<b>Version à contraste élevé</b>
+				<br/>
+				Les personnes malvoyantes peuvent choisir d’afficher une version à
+				contraste élevé du questionnaire. Cette version est créée automatiquement
+				pour tous les formulaires.
+			</p>
+			<p>
+				<b>Ajout de fichiers complémentaires</b>
+				<br/>
+				Vous pouvez ajouter des fichiers à votre questionnaire, de telle sorte que
+				tous les participants puissent les télécharger.
+			</p>
+			<h2>
+				Gestion des formulaires
+			</h2>
+			<p>
+				<b>Travailler ensemble</b>
+				<br/>
+				Pour les enquêtes gérées par plusieurs utilisateurs, EUSurvey permet de
+				définir des droits pour d’autres utilisateurs les autorisant à tester une
+				enquête ou à analyser des résultats.
+			</p>
+			<h2>
+				Gestion des résultats
+			</h2>
+			<p>
+				<b>Analyse des résultats</b>
+				<br/>
+				Vous pouvez effectuer des analyses de résultats basiques et présenter les
+				données sous forme d’histogrammes et de graphiques.
+			</p>
+			<p>
+				Vous pouvez également créer des formats tabulaires standards avec les
+				résultats de l’enquête, en vue de les utiliser dans des logiciels
+				statistiques.
+			</p>
+			<p>
+				<b>Publication des résultats</b>
+				<br/>
+				Vous pouvez publier un sous-ensemble de toutes les réponses soumises sur
+				les pages internes de l’application. Le système peut calculer et créer
+				automatiquement des statistiques et des graphiques.
+			</p>
+			<p>
+				<b>Modification des réponses envoyées</b>
+				<br/>
+				Les participants peuvent modifier leurs réponses après avoir soumis
+				l’enquête, si nécessaire.
+			</p>
+			<h2>
+				Où trouver des informations complémentaires sur EUSurvey?
+			</h2>
+			<p>
+				Si vous avez besoin<b> d’une aide pratique</b>, cliquez sur
+				<a
+						href="https://ec.europa.eu/eusurvey/home/documentation?language=fr"
+						target="_blank"
+						>
+					«Aide»
+				</a>
+				(dans le menu déroulant <i>«Aide» </i>en haut à droite de l’écran).
+			</p>
+			<p>
+				Pour en savoir plus sur l’historique et le financement d’EUSurvey, cliquez
+				sur
+				<a
+						href="https://ec.europa.eu/eusurvey/home/about?language=fr"
+						target="_blank"
+						>
+					«À propos»
+				</a>
+				.
+			</p>
+			<h2>
+				Qui contacter en cas de problèmes techniques?
+			</h2>
+			<p>
+				<b>Personnel des institutions de l’UE</b>
+				: contactez votre service d’aide informatique et demandez-leur de
+				transmettre votre problème à l’équipe d’assistance EUSurvey (veillez à
+				décrire le problème aussi précisément que possible).
+				décrire le problème aussi précisément que possible).
+			</p>
+			<p>
+				<b>Utilisateurs externes</b>
+				: contactez le
+				<a
+						href="mailto:EC-CENTRAL-HELPDESK@ec.europa.eu?subject=Demande%20de%20cr%C3%A9ation%20d%E2%80%99un%20ticket%20d%E2%80%99incident%20%C3%A0%20l%E2%80%99attention%20de%20DIGIT%20EUSURVEY%20SUPPORT%20&amp;body=%20Chers%20membres%20du%20service%20d%E2%80%99assistance,%20%20Pourriez-vous%20cr%C3%A9er%20un%20ticket%20%C3%A0%20l%E2%80%99attention%20de%20DIGIT%20EUSURVEY%20SUPPORT,%20accompagn%C3%A9%20de%20la%20description%20suivante?"
+						target="_blank"
+						>
+					service d’aide central
+				</a>
+				de la Commission.
+			</p>
+			<h2>
+				Qui contacter pour suggérer des améliorations à EUSurvey?
+			</h2>
+			<p>
+				Veuillez adresser vos commentaires et vos retours à votre service d’aide
+				informatique ou au service d’aide central afin qu’ils les transmettent à
+				l’équipe d’assistance d’EUSurvey.
+			</p>
+			<p>
+				L’équipe d’assistance prendra contact avec vous dans les meilleurs délais.
+			</p>
+			<h2>
+				Avec quels navigateurs l’application EUSurvey est-elle compatible?
+			</h2>
+			<p>
+				EUSurvey est compatible avec Microsoft Edge, Mozilla Firefox et Google
+				Chrome (les deux dernières versions).
+			</p>
+			<p>
+				L’utilisation d’autres navigateurs pourrait poser des problèmes de
+				compatibilité.
+			</p>
+			<h2>
+				Clause de non-responsabilité EUSurvey (pour les utilisateurs non membres
+				des institutions de l’UE uniquement)
+			</h2>
+			<p>
+				Pour tous les questionnaires et courriers électroniques d’invitation
+				envoyés par un utilisateur qui n’est pas un <b>fonctionnaire de l’UE</b>,
+				la clause de non-responsabilité suivante sera affichée:
+			</p>
+			<p>
+				Clause de non-responsabilité
+				<br/>
+				<i>
+					La Commission européenne ne saurait être tenue responsable du contenu
+					des questionnaires créés au moyen du service EUSurvey; celui-ci relève
+					de la responsabilité exclusive du créateur et du gestionnaire de ces
+					questionnaires. L’utilisation du service EUSurvey n’entraîne aucunement
+					l’approbation ou la recommandation, par la Commission européenne, des
+					points de vue exprimés dans les questionnaires.
+				</i>
+			</p>
+			<h2>
+				Les participants peuvent-ils répondre à l’aide d’un appareil mobile?
+			</h2>
+			<p>
+				Oui, les participants peuvent répondre à l’aide d’un téléphone portable ou
+				d’une tablette.
+			</p>
+			<h2>
+				Y a-t-il une taille minimale d’écran?
+			</h2>
+			<p>
+				Non, les questionnaires s’adaptent à la taille de l’écran de l’appareil
+				utilisé par les participants.
+			</p>
+			<p>
+				Toutefois, pour la <i>création</i> et la <i>gestion</i> de vos enquêtes,
+				nous recommandons d’utiliser une résolution minimale de 1680x1050 pixels
+				pour une bonne expérience utilisateur.
+			</p>
+			<h1>
+				Connexion/création d’un compte
+			</h1>
+			<h2>
+				J’ai un compte EU Login. Dois-je aussi créer un compte EUSurvey?
+			</h2>
+			<p>
+				Non, un compte EU Login est suffisant.
+			</p>
+			<p>
+				Pour accéder à EUSurvey, cliquez sur le bouton «Login» sur la
+				<a
+						href="https://ec.europa.eu/eusurvey/home/welcome?language=fr"
+						target="_blank"
+						>
+					page d’accueil d’EUSurvey
+				</a>
+				.
+			</p>
+			<h2>
+				Comment puis-je me connecter à EUSurvey?<u> </u>
+			</h2>
+			<p>
+				Après avoir cliqué sur «Login» sur la <u>page d’accueil d’EUSurvey</u>,
+				vous serez redirigé vers l’écran de connexion à EUSurvey.
+			</p>
+			<p>
+				Une fois arrivé sur l’écran de connexion, vous devez choisir l’option
+				correspondant à votre cas personnel:
+			</p>
+			<ul>
+				<li>
+					<b>Si vous travaillez pour une institution de l’UE</b>
+					, choisissez la seconde option pour vous connecter à l’aide de votre
+					nom d’utilisateur et de votre mot de passe EU Login.
+				</li>
+				<li>
+					<b>
+						Si vous ne travaillez pas pour une institution de l’UE
+						(utilisateurs externes)
+					</b>
+					, choisissez la première option pour vous connecter. Vous devrez avoir
+					préalablement enregistré votre téléphone portable pour passer
+					<a
+							href="https://meta.wikimedia.org/wiki/Help:Two-factor_authentication/fr"
+							>
+						l’authentification à deux facteurs
+					</a>
+					.
+				</li>
+			</ul>
+			<p>
+				<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cg">
+					Créez un compte EU Login
+				</a>
+				(si ce n’est déjà fait)
+			</p>
+			<p>
+				<a
+						href="https://ecas.ec.europa.eu/cas/login?loginRequestId=ECAS_LR-37272549-D8c5uCnxYk4PagAJ3h57kPGJsddgLE9XSWDL8YHzmZTBSSFVlpDiPelqx5No9wn3NMBjIgk0VbPzW7dIrr1OF0-jpJZscgsw0K7uFRvGtGsEu-3NVKmHt3EdjogOH0oML41MpKiD9pay1L6oNS2dTn5G1CLx0S4y2y1sp2IF8JNJOzr0l8w43phzzOFa1CSm45RJ0"
+						>
+					Enregistrez votre téléphone portable
+				</a>
+				(si vous ne travaillez pas pour une institution de l’UE)
+			</p>
+			<h1>
+				Création d’une enquête
+			</h1>
+			<h2>
+				Comment créer une nouvelle enquête?
+			</h2>
+			<p>
+				Sur la page «Bienvenue» ou la page «Enquêtes»:
+			</p>
+			<p>
+				<ol>
+					<li>
+						cliquez sur <b>«Nouvelle enquête»</b> &#8594; puis sur    <b>«Créer une nouvelle enquête»</b>, et une fenêtre s’ouvrira.
+					</li>
+					<li>
+						Après avoir saisi toutes les informations obligatoires, cliquez sur
+						«Créer».
+					</li>
+					<li>
+						L’outil chargera votre nouvelle enquête dans le système et ouvrira
+						automatiquement l’éditeur afin que vous puissiez commencer à ajouter les
+						renseignements.
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Quels types d’enquêtes puis-je créer?				
+			</h2>
+			<p>
+				Vous pouvez choisir entre les options suivantes:
+			</p>
+			<p>
+				<ul>
+					<li>
+						<b>Enquête normale</b><br />
+						Un questionnaire classique.
+					</li>
+					<li>
+						<b>Quiz</b>
+						<br/>
+						<br/>
+						Dans une enquête de type «quiz», une note finale est attribuée à chaque
+						participant. De telles enquêtes peuvent être utilisées, par exemple, pour
+						des tests de compétence ou des examens électroniques. Pour de plus amples
+						informations, veuillez consulter le
+						<a
+								href="https://circabc.europa.eu/sd/a/400e1268-1329-413b-b873-b42e41369a07/EUSurvey_Quiz_Guide.pdf"
+								target="_blank"
+								>
+							manuel dédié à la création de quiz avec EUSurvey
+						</a>
+						.
+						<br /><br />
+						Le mode quiz contient entre autres:
+						<ul>			
+							<li>
+								un mécanisme de notation;
+							</li>
+							<li>
+								la vérification des réponses des participants;
+							</li>
+							<li>
+								la possibilité de fournir des commentaires à vos participants, en
+								fonction de leurs réponses;
+							</li>
+							<li>
+								une analyse des résultats supplémentaire conçue spécifiquement pour les
+								quiz.
+							</li>
+						</ul>
+					</li>
+					<li>
+						<b>Consultation publique sur le portail «Mieux légiférer»</b><br />
+
+						Format spécifique pour les consultations publiques menées par
+						l’intermédiaire du portail «Mieux légiférer» (publiées sur la page
+						<a href="https://ec.europa.eu/info/law/better-regulation/have-your-say">
+							«Donnez votre avis»
+						</a>
+						du site web officiel de l’Union européenne).
+						<br/>
+						<br/>
+
+						Le format utilisé pour le portail «Mieux légiférer» inclut:
+						<ul>			
+							<li>
+								des <b>champs de métadonnées</b> prédéfinis permettant l’identification
+								uniforme des participants d’une enquête à l’autre, ce qui simplifie
+								l’élaboration de rapports;
+							</li>
+							<li>
+								une<b> déclaration de confidentialité</b> sur mesure tenant compte des
+								contraintes spécifiques des consultations publiques;
+							</li>
+							<li>
+								<b>l’ouverture et la fermeture automatiques</b> de l’enquête depuis le
+								portail «Mieux légiférer»;
+							</li>
+							<li>
+								o la synchronisation automatique (envoi de données) des réponses des
+								participants vers le portail «Mieux légiférer» en vue d’un traitement
+								ultérieur.
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</p>
+
+			<h2>
+				Comment importer une enquête existante depuis un ordinateur?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Rendez-vous sur la page «Bienvenue» ou sur la page «Enquêtes».
+					</li>
+					<li>
+						Cliquez sur «Nouvelle enquête», puis sur «Importer une enquête», et une
+						fenêtre s’ouvrira.
+					</li>
+					<li>
+						Après avoir sélectionné un fichier d’enquête sur votre ordinateur,
+						cliquez sur «Importer» et votre enquête sera ajoutée à EUSurvey.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Remarque: vous pouvez uniquement importer des enquêtes au format zip ou
+				avec l’extension de fichier «.eus».
+			</p>
+			<h2>
+				Où se trouvent toutes les enquêtes que j’ai créées?
+			</h2>
+			<p>
+				Deux possibilités s’offrent à vous:
+			</p>
+			<p>
+				<ul>
+					<li>
+						allez sur la page du tableau de bord, où vous trouverez une liste de
+						toutes les enquêtes que vous avez créées; ou
+					</li>
+					<li>
+						allez sur la page «Enquêtes» &#8594; sélectionnez l’option «My surveys» dans
+						les critères de recherche.
+					</li>
+				</ul>
+			</p>
+			<h2>
+				Comment ouvrir une enquête existante pour la modifier, par exemple?
+			</h2>
+			<p>
+				Rendez-vous sur la page «Enquêtes».
+			</p>
+			<p>
+				<ol>
+					<li>
+						Cliquez sur l’icône «Ouvrir» de l’enquête que vous souhaitez ouvrir; la
+						page «Aperçu» qui s’affiche alors présente plusieurs nouveaux onglets.
+					</li>
+					<li>
+						Cliquez sur «Éditeur» pour tester votre enquête, accéder aux résultats
+						de l’enquête, à ses traductions, à ses propriétés, etc.
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Comment exporter une enquête existante?
+			</h2>
+			<p>
+				Sur la page «Enquêtes», recherchez l’enquête à exporter. Vous pouvez:
+			</p>
+			<ul>
+				<li>
+					soit cliquer sur l’icône «Exporter»;
+				</li>
+				<li>
+					soit cliquer sur l’icône «Ouvrir» &#8594; puis, sur la page «Aperçu», cliquer
+					sur l’icône «Exporter».
+				</li>
+			</ul>
+			
+			<p>
+				Votre enquête sera sauvegardée sur votre ordinateur, ainsi que tous ses
+				paramètres.
+			</p>
+			<p>
+				Les fichiers des enquêtes EUSurvey portent l’extension «.eus».
+			</p>
+			<h2>
+				Comment copier une enquête existante?
+			</h2>
+			<p>
+				Rendez-vous sur la page «Enquêtes».
+			</p>
+			<p>
+				<ol>
+					<li>
+						Ouvrez l’enquête que vous souhaitez copier et cliquez sur l’icône
+						«Copier».
+					</li>
+					<li>
+						Dans la fenêtre qui s’ouvre, vous pouvez modifier les paramètres
+						nécessaires.
+					</li>
+					<li>
+						Cliquez sur «Créer».
+					</li>
+					<li>
+						Votre enquête sera ajoutée à la liste de la page «Enquêtes» &#8594; vous
+						pouvez commencer à travailler sur l’enquête.
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Comment supprimer une enquête existante?
+			</h2>
+			<p>
+				Rendez-vous sur la page «Enquêtes».
+			</p>
+			<p>
+				<ol>
+					<li>
+						Ouvrez l’enquête que vous souhaitez supprimer.
+					</li>
+					<li>
+						Cliquez sur l’icône «Supprimer».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Confirmez ensuite cette action, et votre enquête sera supprimée de la liste
+				des enquêtes.
+			</p>
+			<p>
+				<b><u>Attention</u></b>
+				: la suppression d’une enquête effacera du système EUSurvey<b><u>toute trace</u> </b>de vos questions et des résultats!    <u>Cette action est irréversible</u>!
+			</p>
+			<h2>
+				Comment créer un questionnaire conforme aux normes WCAG avec EUSurvey?
+			</h2>
+			<p>
+				Les lignes directrices sur l’accessibilité des contenus web (WCAG) sont un
+				ensemble de recommandations visant à rendre les contenus plus accessibles,
+				principalement pour les personnes handicapées, mais également pour les
+				applications de téléphonie mobile.
+			</p>
+			<p>
+				Si vous souhaitez que votre enquête soit compatible avec la norme WCAG,
+				veuillez suivre les instructions présentées
+				<a
+						href="https://circabc.europa.eu/d/a/workspace/SpacesStore/78b03213-5cf4-4aab-8e90-ada7e2eb1101/WCAG_tutorial%20.pdf"
+						target="_blank"
+						>
+					dans ce document
+				</a>
+				.
+			</p>
+			<h1>
+				Modifier une enquête
+			</h1>
+			<h2>
+				Comment lancer l’éditeur?
+			</h2>
+			<p>
+				Vérifiez tout d’abord que vous avez ouvert une enquête existante &#8594; allez à
+				la page «Enquêtes»:
+			</p>
+			<p>
+				<ol>
+					<li>
+						cliquez sur l’icône «Ouvrir» pour l’enquête que vous souhaitez modifier;
+					</li>
+					<li>
+						à partir de la page «Aperçu», cliquez sur la page «Éditeur» pour
+						l’ouvrir et commencer à effectuer des modifications.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Veillez à sauvegarder régulièrement votre travail.
+			</p>
+			<h2>
+				Comment créer un questionnaire avec l’éditeur EUSurvey?
+			</h2>
+			<p>
+				L’éditeur est composé de cinq zones différentes:
+			</p>
+			<p>
+				<b>i) Volet de navigation:</b>
+				le volet de navigation donne une vue structurée du questionnaire, où tous
+				les éléments sont représentés par leur libellé respectif dans l’enquête.
+			</p>
+			<p>
+				Lorsque vous sélectionnez un élément dans le volet de navigation, la zone
+				du formulaire se positionne sur cet élément, qui est mis en évidence en
+				bleu.
+			</p>
+			<p>
+				<b>ii) Volet de la boîte à outils:</b>
+				la boîte à outils contient les différents types d’éléments qui peuvent être
+				ajoutés au questionnaire, soit en utilisant la méthode du glisser-déposer
+				soit en double-cliquant dessus.
+			</p>
+			<p>
+				<b>iii) Zone du formulaire:</b>
+				affiche un aperçu du questionnaire; des éléments peuvent être ajoutés dans
+				cette zone et sélectionnés en vue d’être modifiés.
+			</p>
+			<p>
+				<b>iv) Volet propriétés de l’élément:</b>
+				affiche toutes les options disponibles pour les éléments sélectionnés.
+			</p>
+			<p>
+				Vous pouvez modifier les éléments, par exemple en changeant le texte de la
+				question, en ajoutant des messages d’aide, ou en modifiant tous les
+				paramètres pertinents pour adapter la question à vos besoins.
+			</p>
+			<p>
+				<b>v) Barre d’outils:</b>
+				contient toutes les tâches de base disponibles que vous pouvez effectuer
+				lors de la création du questionnaire.
+			</p>
+			<p>
+				Pour de plus amples informations sur la manière d’utiliser l’éditeur,
+				consultez le
+				<a
+						href="https://ec.europa.eu/eusurvey/resources/documents/Editor_Guide_FR.pdf"
+						target="_blank"
+						>
+					manuel de l’éditeur EUSurvey
+				</a>
+				.
+			</p>
+			<h2>
+				Comment ajouter ou supprimer des questions de mon questionnaire?
+			</h2>
+			<p>
+				Pour ajouter ou supprimer des éléments de votre questionnaire, veuillez
+				d’abord:
+			</p>
+			<p>
+				&#8594; accéder à l’éditeur.
+			</p>
+			<p>
+				Dans l’éditeur, vous trouverez une boîte à outils avec les éléments
+				disponibles à gauche et la zone du formulaire au centre de l’écran.
+			</p>
+			<p>
+				Les éléments contiennent des textes par défaut; leur nom est affiché comme
+				texte de la question.
+			</p>
+			<p>
+				Pour ajouter des éléments (question, texte, image, etc.):
+			</p>
+			<p>
+				&#8594; sélectionnez un élément depuis la boîte à outils, soit en utilisant la
+				méthode du glisser-déposer soit en double-cliquant dessus.
+			</p>
+			<p>
+				Pour supprimer un élément du formulaire:
+			</p>
+			<p>
+				&#8594; cliquez sur l’élément pour le sélectionner, et cliquez sur «Supprimer»;
+				dès que vous aurez confirmé, l’élément sera supprimé.
+			</p>
+			<p>
+				Voir également
+				<a
+						href="#_Toc_4_2"
+						>
+					«Comment créer un questionnaire avec l’éditeur EUSurvey?»
+				</a>
+			</p>
+			<h2>
+				Comment modifier les éléments de mon questionnaire?
+			</h2>
+			<p>
+				Les éléments de votre questionnaire peuvent être<b>sélectionnés dans la zone du formulaire </b>et    <b>modifiés dans le volet des propriétés de l’élément</b> de l’éditeur;
+				voir
+				<a
+						href="#_Toc_4_2"
+						>
+					«Comment créer un questionnaire avec l’éditeur EUSurvey?»
+				</a>
+			</p>
+			<p>
+				Cliquez sur l’élément dans la zone du formulaire pour le sélectionner.
+			</p>
+			<p>
+				L’élément sélectionné apparaît en bleu et les options correspondantes sont
+				visibles dans le volet des propriétés de l’élément. Vous pouvez modifier
+				les éléments dans ce volet, par exemple en changeant/modifiant le texte de
+				la question, en ajoutant des messages d’aide, ou en modifiant tous les
+				paramètres pertinents pour adapter la question à vos besoins.
+			</p>
+			<p>
+				Pour modifier un texte:
+			</p>
+			<ol>
+				<li>
+					cliquez sur le texte ou sur l’icône en forme de crayon;
+				</li>
+				<li>
+					modifiez le texte;
+				</li>
+				<li>
+					cliquez sur «Appliquer» pour afficher les modifications dans la zone du
+					formulaire.
+				</li>
+			</ol>
+			<p>
+				Par défaut, le volet des propriétés de l’élément affiche uniquement les
+				options de base.
+			</p>
+			<p>
+				Pour afficher plus d’options, cliquez sur «Avancé».
+			</p>
+			<p>
+				Pour les questions de type matrice et texte, vous pouvez également
+				sélectionner séparément une question, une réponse, une ligne ou une colonne
+				de l’élément en cliquant sur le libellé correspondant, comme indiqué
+				ci-dessous. Ainsi, vous pouvez par exemple sélectionner séparément des
+				questions d’un élément présenté sous la forme d’une matrice ou d’un
+				tableau, et les rendre obligatoires.
+			</p>
+			<h2>
+				Comment copier les éléments?
+			</h2>
+			<p>
+				Pour copier des éléments de votre questionnaire:
+			</p>
+			<p>
+				&#8594; ouvrez l’éditeur.
+			</p>
+			<ol>
+				<li>
+					Sélectionnez le(s) élément(s) à copier.
+				</li>
+				<li>
+					Cliquez sur «Copier».
+				</li>
+				<li>
+					Déplacez l’espace réservé de la boîte à outils vers la zone du
+					formulaire, ou sélectionnez l’élément dans la zone du formulaire et
+					cliquez sur «Coller après».
+				</li>
+			</ol>
+			<p>
+				Tous les éléments qui ont été copiés ou coupés sont symbolisés par une
+				icône dans la partie supérieure du volet de la boîte à outils.
+			</p>
+			<p>
+				&#8594; ajoutez-les à nouveau au questionnaire en utilisant la méthode du
+				glisser-déposer.
+			</p>
+			<p>
+				Pour annuler l’opération:
+			</p>
+			<p>
+				&#8594; cliquez sur le bouton situé à côté de l’élément.
+			</p>
+			<p>
+				Voir également
+				<a
+						href="#_Toc_4_2"
+						>
+					«Comment créer un questionnaire avec l’éditeur EUSurvey?»
+				</a>
+			</p>
+			<h2>
+				Comment ajouter ou supprimer des réponses possibles dans les questions à
+				choix?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Cliquez sur le bouton «+» dans le volet des propriétés de l’élément pour
+						ajouter des réponses; cliquez sur le bouton «-» pour en supprimer.
+					</li>
+					<li>
+						Modifiez les réponses existantes en cliquant sur l’icône en forme de
+						crayon située à côté de «Réponses possibles».
+					</li>
+					<li>
+						Vous pouvez les modifier dans l’éditeur de texte enrichi.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Voir également
+				<a
+						href="#_Toc_4_2"
+						>
+					«Comment créer un questionnaire avec l’éditeur EUSurvey?»
+				</a>
+			</p>
+			<h2>
+				Puis-je rendre une question obligatoire?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Dans l’éditeur, sélectionnez la question que vous souhaitez rendre
+						obligatoire.
+					</li>
+					<li>
+						Ensuite, dans le volet des propriétés de l’élément,
+					</li>
+					<li>
+						cochez la case «Obligatoire».
+					</li>
+				</ol>
+			</p>
+			<p>
+				La question obligatoire sera précédée d’un astérisque rouge.
+			</p>
+			<h2>
+				Comment déplacer les éléments dans le questionnaire?
+			</h2>
+			<p>
+				Dans l’éditeur, vous pouvez modifier la position d’un élément dans votre
+				questionnaire de plusieurs manières:
+			</p>
+			<p>
+				&#8594; Glisser-déposer:
+				<br/>
+				sélectionnez l’élément dans la zone du formulaire, puis faites-le glisser
+				jusqu’à l’endroit où vous souhaitez qu’il soit dans le questionnaire.
+			</p>
+			<p>
+				&#8594; Boutons de déplacement:
+				<br/>
+				sélectionnez l’élément que vous souhaitez déplacer, puis utilisez les
+				boutons «Déplacer vers le haut» et «Déplacer vers le bas» dans la barre
+				d’outils au-dessus de la zone du formulaire.
+			</p>
+			<p>
+				&#8594; Couper-coller:
+				<br/>
+				coupez l’élément à déplacer et utilisez la méthode du glisser-déposer pour
+				déplacer l’espace réservé à l’emplacement où vous souhaitez coller
+				l’élément.
+			</p>
+			<h2>
+				Comment utiliser la fonction visibilité (dépendances)?
+			</h2>
+			<p>
+				Cette fonction permet d’afficher ou de masquer des éléments en fonction des
+				réponses données par les participants aux questions soit à choix
+				unique/multiple, soit de type matrice (voir également
+				<a
+						href="#_Toc_4_2"
+						>
+					«Comment créer un questionnaire avec l’éditeur EUSurvey?»
+				</a>
+			</p>
+			<p>
+				Par défaut, tous les éléments sont paramétrés pour être toujours visibles,
+				ce qui signifie que tous les participants verront l’ensemble des questions
+				lorsqu’ils répondront à l’enquête.
+			</p>
+			<p>
+				Suivez les étapes ci-dessous pour créer une question dépendante.
+			</p>
+			<ol>
+				<li>
+					Ajoutez une question à choix unique/multiple ou une question de type
+					matrice à votre questionnaire.
+				</li>
+				<li>
+					Ajoutez d’autres éléments à votre questionnaire.
+				</li>
+				<li>
+					Sélectionnez une question à choix unique/multiple, ou de type matrice,
+					qui ne doit apparaître que si une réponse spécifique a été choisie.
+				</li>
+				<li>
+					Cliquez sur l’icône en forme de crayon pour modifier les paramètres de
+					visibilité. Toutes les questions disponibles à choix unique/multiple et
+					de type matrice, qui figurent au-dessus de l’élément ou des éléments
+					sélectionné(s) sont affichées, avec le texte des questions et les
+					réponses possibles.
+				</li>
+				<li>
+					Sélectionnez la réponse dont la sélection entraînera l’affichage de
+					l’élément sélectionné.
+				</li>
+				<li>
+					Cliquez sur «Appliquer» pour confirmer les paramètres de visibilité.
+				</li>
+			</ol>
+			<p>
+				Si vous avez sélectionné plusieurs éléments, vous pouvez modifier leurs
+				paramètres de visibilité en une seule fois.
+			</p>
+			<p>
+				<b>Remarque:</b>
+				cette modification ne sera appliquée au questionnaire que dans la page test
+				ou lors de la publication du questionnaire. Tous les éléments resteront
+				visibles dans l’éditeur.
+			</p>
+			<p>
+				Une fois activés, les paramètres de visibilité sont indiqués dans la zone
+				du formulaire par des flèches situées à côté des éléments liés.
+			</p>
+			<p>
+				Les réponses qui déclenchent un élément sont indiquées par une flèche
+				pointant vers le bas.
+			</p>
+			<p>
+				Les éléments qui sont déclenchés par une réponse sont indiqués par une
+				flèche pointant vers le haut.
+			</p>
+			<p>
+				Lorsque vous pointez la souris sur les flèches ou les identifiants dans le
+				volet des propriétés de l’élément, les éléments liés sont mis en évidence
+				dans la zone du formulaire et dans le volet de navigation.
+			</p>
+			<p>
+				Les éléments dont les paramètres de visibilité ont été modifiés seront
+				masqués dans le questionnaire jusqu’à ce que le participant sélectionne au
+				moins une des réponses configurées.
+			</p>
+			<h2>
+				Peut-on modifier l’ordre des réponses aux questions à choix unique ou
+				multiple?<u> </u>
+			</h2>
+			<p>
+				Lors de la création d’une question à choix unique ou multiple, vous pouvez
+				programmer l’affichage des réponses de trois façons différentes:
+			</p>
+			<ul>
+				<li>
+					ordre original;
+				</li>
+				<li>
+					ordre alphabétique;
+				</li>
+				<li>
+					ordre aléatoire.
+				</li>
+			</ul>
+			<p>
+				Ordre original: cette option affiche les réponses dans l’ordre dans lequel
+				vous les avez saisies.
+			</p>
+			<p>
+				Ordre alphabétique: sélectionnez cette option si vous voulez que les
+				réponses s’affichent dans l’ordre alphabétique.
+			</p>
+			<p>
+				Ordre aléatoire: sélectionnez cette option si vous voulez que les réponses
+				s’affichent dans un ordre aléatoire.
+			</p>
+			<h2>
+				Comment autoriser d’autres utilisateurs à modifier une enquête?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête et ouvrez la page «Privilèges».
+					</li>
+					<li>
+						Cliquez sur «Ajouter un utilisateur» ou «Ajouter un service».
+					</li>
+					<li>
+						Un assistant s’ouvre alors pour vous guider tout au long du processus
+						d’ajout d’utilisateurs.
+					</li>
+					<li>
+						Vous pouvez leur donner des droits d’accès spécifiques; cliquez
+						simplement sur la couleur pour modifier les droits.
+						
+						<ul>
+							<li>
+								Vert: accès en lecture et en écriture
+							</li>
+							<li>
+								Jaune: accès en lecture
+							</li>
+							<li>
+								Rouge: pas d’accès
+							</li>
+						</ul>
+					</li>
+				</ol>
+			</p>
+			<p>
+				Les utilisateurs ajoutés verront automatiquement votre enquête apparaître
+				dans leur liste d’enquêtes lors de leur prochaine connexion à EUSurvey.
+			</p>
+			<p>
+				Les propriétaires ou organisateurs d’enquêtes externes ne peuvent pas voir
+				les champs de l’UE sur le bouton «Ajouter un utilisateur» de la page
+				«Privilèges». Par conséquent, ils ne peuvent pas donner un accès direct à
+				ces personnes.
+			</p>
+			<p>
+				<a href="https://ec.europa.eu/eusurvey/home/support?language=fr">
+					Contactez-nous
+				</a>
+				si vous souhaitez demander l’accès pour des utilisateurs externes.
+			</p>
+			<p>
+				Pour en savoir plus, voir également
+				<a
+						href="#_Toc_9_9"
+						>
+					«Comment donner accès à mon enquête à d’autres utilisateurs?»
+				</a>
+			</p>
+			<h2>
+				Quelles langues sont prises en charge par l’application?
+			</h2>
+			<p>
+				Vous pouvez créer une enquête dans toute langue encodable au format «UTF-8
+				à trois octets».
+			</p>
+			<h2>
+				Pourquoi l’UTF-8 et quelles polices de caractères utiliser?
+			</h2>
+			<p>
+				Les participants ciblés peuvent afficher l’enquête sans encombre si la
+				police choisie est installée dans leur navigateur internet. L’UTF-8 est la
+				norme d’encodage la plus courante pour les pages HTML. En revanche, si vous
+				choisissez une police non compatible, vous risquez de rencontrer des
+				problèmes pour l’exportation au format PDF.
+			</p>
+			<p>
+				Nous recommandons d’utiliser les <b>jeux de caractères compatibles</b>
+				suivants:
+			</p>
+			<ul>
+				<li>
+					Freesans
+					<a
+							href="https://circabc.europa.eu/d/a/workspace/SpacesStore/602784e1-bb06-4b0d-a474-eae77dbe2d11/EUSurvey-SupportedCharacterSet(freesans).txt"
+							target="_blank"
+							>
+						(
+						https://circabc.europa.eu/sd/a/36f72861-fc6e-4fe1-87d6-0a8e1c6fa161/EUSurvey-SupportedCharacterSet(freesans).txt)
+					</a>
+				</li>
+				<li>
+					Freemono
+					<a
+							href="https://circabc.europa.eu/d/a/workspace/SpacesStore/dfc640e9-56ac-4d25-8361-4b07dbbd0579/EUSurvey-SupportedCharacterSet(freemono).txt"
+							target="_blank"
+							>
+						(
+						https://circabc.europa.eu/sd/a/55ce0f35-b3cc-4712-80bf-af42800a278f/EUSurvey-SupportedCharacterSet(freemono).txt)
+					</a>
+				</li>
+				<li>
+					Freeserif
+					<a
+							href="https://circabc.europa.eu/d/a/workspace/SpacesStore/5b98b11a-f306-4d97-aab3-ec1c7a24965f/EUSurvey-SupportedCharacterSet(freeserif).txt"
+							target="_blank"
+							>
+						(
+						https://circabc.europa.eu/sd/a/29cd78bb-9eeb-40b1-a22f-b54700750537/EUSurvey-SupportedCharacterSet(freeserif).txt)
+					</a>
+				</li>
+				<li>
+					Jeu de caractères couramment pris en charge
+					<a
+							href="https://circabc.europa.eu/d/a/workspace/SpacesStore/621396c0-92d3-49a3-acd0-546b0c1a170b/EUSurvey-SupportedCharacterSet(common).txt"
+							target="_blank"
+							>
+						(
+						https://circabc.europa.eu/sd/a/1eb30efd-e2d8-4c3b-9f55-533bb903f7d0/EUSurvey-SupportedCharacterSet(common).txt)
+					</a>
+				</li>
+			</ul>
+			<p>
+				<b>«Freesans» est la police utilisée par défaut.</b>
+			</p>
+			<p>
+				En cas de doute, exportez votre enquête finale en PDF pour vérifier si elle
+				s’affiche correctement dans ce format.
+			</p>
+			<p>
+				Sachez toutefois qu’il est possible que certaines réponses ne s’affichent
+				pas correctement en PDF. Vos participants peuvent choisir n’importe quelle
+				police de caractères compatible avec l’application.
+			</p>
+			<p>
+				Même si l’outil ne parvient pas à afficher correctement les caractères
+				utilisés, ceux-ci seront bien enregistrés dans la base de données EUSurvey.
+				Ces contributions peuvent donc être exportées depuis la page des résultats.
+			</p>
+			<h2>
+				Que signifie la notion de «Complexité»?
+			</h2>
+			<p>
+				Ajouter trop d’éléments ou trop de dépendances rend votre enquête trop
+				«complexe», ce qui peut entraîner un ralentissement du système pour les
+				participants au moment de remplir votre questionnaire.
+			</p>
+			<p>
+				Votre enquête pourrait présenter un niveau de complexité élevé pour
+				plusieurs raisons:
+			</p>
+			<ul>
+				<li>
+					trop de tables/matrices;
+				</li>
+				<li>
+					trop de dépendances;
+				</li>
+				<li>
+					trop de dépendances imbriquées.
+				</li>
+			</ul>
+			<p>
+				Pour de plus amples informations, veuillez consulter notre
+				<a
+						href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf"
+						target="_blank"
+						>
+					guide des
+				</a>
+				<u> bonnes pratiques</u>
+				.
+			</p>
+			<h1>
+				Sécurité des enquêtes
+			</h1>
+			<h2>
+				Comment restreindre l’accès à une enquête?
+			</h2>
+			<p>
+				Par défaut, les enquêtes sont accessibles publiquement dès leur
+				publication.
+			</p>
+			<p>
+				Si vous souhaitez n’autoriser l’accès à l’enquête qu’à des utilisateurs
+				privilégiés:
+			</p>
+			<p>
+				&#8594; activez l’option <b>«Secure your survey»</b> dans la section «Sécurité»
+				de la page «Propriétés».
+			</p>
+			<p>
+				Vous pouvez par la suite donner l’accès aux utilisateurs privilégiés de
+				différentes façons:
+			</p>
+			<ul>
+				<li>
+					vous pouvez inviter les participants à l’aide du module d’invitation
+					d’EUSurvey (voir
+					<a
+							href="#_Toc_13_0"
+							>
+						«Inviter des participants»
+					</a>
+					). Chaque participant recevra un lien d’accès unique; ou
+				</li>
+				<li>
+					vous pouvez sécuriser votre enquête avec EU Login. Dans la page
+					«Propriétés», activez les options «Secure your survey» et «Secure with
+					EU Login». Si vous êtes un membre du personnel des institutions de
+					l’UE, vous pouvez:
+					
+					<ul>
+						<li>
+							soit autoriser l’accès à votre questionnaire à tous les utilisateurs
+							disposant d’un compte EU Login (personnel des institutions de l’UE et
+							utilisateurs externes);
+						</li>
+						<li>
+							soit donner accès aux membres du personnel des institutions de l’UE
+							uniquement; ou
+						</li>
+					</ul>
+					
+				</li>
+				<li>
+					vous pouvez définir un mot de passe qui sera identique pour tous les
+					participants auxquels vous enverrez le lien vers l’enquête et le mot de
+					passe général (voir
+					<a
+							href="#_Toc_5_2"
+							>
+						«Comment définir un mot de passe pour une enquête?»
+					</a>
+					).
+				</li>
+			</ul>
+			<h2>
+				Comment définir un mot de passe pour une enquête?
+			</h2>
+			<p>
+				Utilisez l’option «Secure with password» dans la section «Propriétés».
+			</p>
+			<p>
+				Pour inviter des personnes à accéder à votre enquête sécurisée, voir
+				<a href="#_Toc_13_0">
+					«Inviter des participants»
+				</a>
+				.
+			</p>
+			<h2>
+				Comment s’assurer qu’un utilisateur ne soumette pas un nombre trop élevé de
+				contributions?
+			</h2>
+			<p>
+				Dans la page «Propriétés», activez les options «Secure your survey» et
+				«Secure with EU Login».
+			</p>
+			<p>
+				Activez l’option «Limit number of contributions» et indiquez le nombre
+				maximal de contribution(s) par utilisateur.
+			</p>
+			
+			<h2>Comment limiter le nombre de contributions d’une enquête?</h2>
+			<p>Vous pouvez modifier le nombre de contributions que peut accepter une enquête en allant dans Propriétés >> Avancé. Par défaut, il n’y a pas de limite au nombre de contributions mais si une limite est définie alors l’enquête ne sera plus accessible dès lors qu’elle est atteinte. Ceci peut être utilisé pour les formulaires d’inscription à des évènements par exemple.</p>
+			
+			<h2>
+				Comment éviter que des bots ne soumettent des contributions en masse à une
+				enquête?
+			</h2>
+			<p>
+				Des scripts automatisés pourraient fausser les résultats d’une enquête en
+				ligne en soumettant un grand nombre de contributions. Pour éviter cela,
+				EUSurvey dispose d’une fonction demandant aux participants de saisir les
+				caractères d’une
+				<a href="http://fr.wikipedia.org/wiki/CAPTCHA" target="_blank">
+					image de vérification (CAPTCHA)
+				</a>
+				avant de soumettre leur contribution.
+			</p>
+			<p>
+				Vous pouvez activer/désactiver l’option «Image de vérification (CAPTCHA)»
+				dans la section «Sécurité» de la page «Propriétés».
+			</p>
+			<p>
+				Remarque: bien que cette option ne permette pas d’empêcher toute fraude,
+				elle pourrait décourager les personnes qui tentent sans cesse de falsifier
+				les résultats de l’enquête.
+			</p>
+			<h2>
+				Est-il possible d’autoriser les participants à accéder à leurs
+				contributions après envoi?
+			</h2>
+			<p>
+				Oui!
+			</p>
+			<p>
+				Dans la section «Sécurité» de la page «Propriétés» &#8594; activez l’option
+				«Allow participants to change their contribution».
+			</p>
+			<p>
+				Les participants auront besoin du numéro d’identification de leur
+				contribution, qui leur est donné après la soumission de celle-ci.
+			</p>
+			<p>
+				Pour modifier leur contribution après envoi, les participants doivent
+				ouvrir la page d’accueil d’EUSurvey
+				<a href="https://ec.europa.eu/eusurvey/?language=fr" target="_blank">
+					https://ec.europa.eu/eusurvey/?language=fr
+				</a>
+				.
+			</p>
+			<p>
+				Sous le bouton «Inscrivez-vous dès maintenant!», un lien permet d’accéder
+				<a
+						href="https://ec.europa.eu/eusurvey/home/editcontribution?language=fr"
+						target="_blank"
+						>
+					à la page de modification des contributions individuelles
+				</a>
+				. Sur cette page, les participants doivent indiquer le numéro
+				d’identification de leur contribution individuelle pour l’ouvrir et la
+				modifier.
+			</p>
+			<h1>
+				Tester une enquête
+			</h1>
+			<h2>
+				Est-il possible de tester mon enquête et de l’afficher telle qu’elle
+				apparaîtra une fois publiée?
+			</h2>
+			<p>
+				Oui. Ouvrez l’enquête dans EUSurvey et cliquez sur «Test».
+			</p>
+			<p>
+				Vous verrez le brouillon de votre enquête et pourrez tester tous les
+				éléments du formulaire tel que publié.
+			</p>
+			<p>
+				Vous pouvez aussi enregistrer vos réponses au test à l’état de brouillon,
+				ou les soumettre directement.
+			</p>
+			<h2>
+				Comment tester mon enquête auprès de mes collègues avant sa publication?
+			</h2>
+			<p>
+				Pour donner à vos collègues accès à la page de test de votre enquête:
+			</p>
+			<p>
+				<ol>
+					<li>
+						ouvrez votre enquête dans EUSurvey;
+					</li>
+					<li>
+						dans la page «Privilèges», cliquez sur «Ajouter un utilisateur» ou
+						«Ajouter un service».
+					</li>
+					<li>
+						L’assistant qui s’ouvre alors permet d’ajouter vos collègues.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Pour leur donner les droits d’accès de test:
+			</p>
+			<p>
+				&#8594; sélectionnez la couleur verte pour la fonction «Accès aperçu formulaire»
+				(il suffit de cliquer sur la couleur pour modifier les droits).
+			</p>
+			<p>
+				Les utilisateurs ajoutés verront automatiquement votre enquête apparaître
+				dans leur page «Enquêtes» lors de leur prochaine connexion à EUSurvey.
+			</p>
+			<p>
+				Pour en savoir plus, voir également
+				<a
+						href="#_Toc_9_9"
+						>
+					«Comment donner accès à mon enquête à d’autres utilisateurs?»
+				</a>
+			</p>
+			<p>
+				Les propriétaires ou organisateurs d’enquêtes externes ne peuvent pas voir
+				les champs de l’UE sur le bouton «Ajouter un utilisateur» de la page
+				«Privilèges». Par conséquent, ils ne peuvent pas donner un accès direct à
+				ces personnes.
+			</p>
+			<p>
+				<a href="https://ec.europa.eu/eusurvey/home/support?language=fr">
+					Contactez-nous
+				</a>
+				si vous souhaitez demander l’accès pour des utilisateurs externes.
+			</p>
+			<h1>
+				Traductions
+			</h1>
+			<h2>
+				Comment traduire une enquête?
+			</h2>
+			<p>
+				Remarque importante: assurez-vous d’avoir terminé de modifier et de tester
+				votre enquête avant d’entamer sa traduction!
+			</p>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête et allez à la page «Traductions».
+					</li>
+					<li>
+						Cliquez sur «Ajouter nouvelle traduction».
+					</li>
+					<li>
+						Sélectionnez la langue dans la liste des langues prises en charge.
+					</li>
+					<li>
+						Si la langue souhaitée n’apparaît pas dans la liste, sélectionnez
+						«autre» et indiquez les deux lettres identifiant cette langue conformément
+						à la norme ISO 639-1.
+					</li>
+					<li>
+						Cliquez sur «OK» pour ajouter un formulaire de traduction vierge à votre
+						enquête.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Pour de plus amples informations sur la manière d’ajouter de nouveaux
+				éléments textuels à votre traduction nouvellement créée, veuillez consulter
+				<a
+						href="#_Toc_7_3"
+						>
+					«Est-il possible de modifier une traduction existante en ligne?»
+				</a>
+			</p>
+			<p>
+				Cochez la case «Publier» si la traduction doit être publiée en même temps
+				que votre enquête.
+			</p>
+			<p>
+				Si vous avez ajouté une traduction pour la publication, les participants
+				peuvent choisir une langue parmi les langues disponibles directement à
+				partir du lien vers l’enquête.
+			</p>
+			<h2>
+				Comment ajouter une traduction existante à une enquête?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête et ouvrez la page «Traductions».
+					</li>
+					<li>
+						Cliquez sur «Charger une traduction existante».
+					</li>
+					<li>
+						L’assistant qui s’ouvre alors permet de charger le fichier de
+						traduction.
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Est-il possible de modifier une traduction existante en ligne?
+			</h2>
+			<p>
+				Oui!
+			</p>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête et allez à la page «Traductions».
+					</li>
+					<li>
+						Sélectionnez une ou plusieurs traductions à modifier.
+					</li>
+					<li>
+						Sélectionnez «Modifier les traductions» dans les icôns d’action.
+					</li>
+					<li>
+						Cliquez sur «OK» &#8594; l’éditeur de traductions en ligne s’ouvre alors, et
+						vous pouvez l’utiliser pour modifier plusieurs traductions à la fois.
+					</li>
+					<li>
+						Cliquez sur «Enregistrer» pour veiller à ce que votre travail soit
+						sauvegardé dans le système.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Pour modifier une seule traduction:
+			</p>
+			<p>
+				<ol>
+					<li>
+						ouvrez votre enquête;
+					</li>
+					<li>
+						allez à la page «Traductions»;
+					</li>
+					<li>
+						cliquez sur l’icône en forme de crayon dans la colonne «Actions».
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Est-il possible de créer des traductions hors ligne?
+			</h2>
+			<p>
+				Oui! Les étapes à suivre sont les suivantes:
+			</p>
+			<p>
+				<ol>
+					<li>
+						allez à la page «Traductions»;
+					</li>
+					<li>
+						exportez une version linguistique ayant le statut «Complète» en tant que
+						fichier XLS;
+					</li>
+					<li>
+						modifiez le code de la langue (ISO 639-1) en haut du fichier (cellule
+						B1);
+					</li>
+					<li>
+						traduisez tous les éléments textuels disponibles dans la nouvelle langue
+						(colonne C);
+					</li>
+					<li>
+						une fois que l’enquête a été traduite hors ligne, sauvegardez-la;
+					</li>
+					<li>
+						cliquez sur «Charger une traduction existante» pour importer la
+						traduction.
+					</li>
+				</ol>
+			</p>
+			<p>
+				C’est terminé. Vous pouvez vérifier la traduction depuis la page «Test».
+			</p>
+			<h2>
+				Comment publier/dépublier mes traductions?
+			</h2>
+			<p>
+				Pour publier une enquête dans plusieurs langues:
+			</p>
+			<p>
+				<ol>
+					<li>
+						ouvrez votre enquête;
+					</li>
+					<li>
+						ouvrez la page «Traductions»;
+					</li>
+					<li>
+						cochez ou décochez les traductions que vous souhaitez publier (ou
+						dépublier) dans la section «Publier»;
+					</li>
+					<li>
+						rendez-vous ensuite à la page «Aperçu» de l’enquête, où vous pourrez la
+						publier.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Si l’enquête avait été publiée avant l’ajout ou la suppression des
+				traductions, cliquez sur «Appliquer les modifications».
+			</p>
+			<p>
+				Pour éviter la publication de traductions dont tout le texte n’aurait pas
+				été traduit, il n’est pas possible de publier des traductions comportant
+				des éléments vides (traductions qui ne sont pas «complètes»).
+			</p>
+			<p>
+				Vérifiez que votre traduction ne comporte aucun élément vide au moyen de
+				l’éditeur de traduction en ligne. Les cellules vides se distinguent par
+				leur fond rouge.
+			</p>
+			<h2>
+				Est-il possible de charger des traductions dans des langues non
+				européennes?
+			</h2>
+			<p>
+				L’application est également compatible avec d’autres langues que les
+				langues officielles de l’UE.
+			</p>
+			<p>
+				Sélectionnez «Autre» au moment de charger la traduction et indiquez les
+				deux lettres correspondant à la langue souhaitée conformément à la norme
+				<a href="https://fr.wikipedia.org/wiki/Liste_des_codes_ISO_639-1">
+					ISO 639-1
+				</a>
+				.
+			</p>
+			<h2>
+				Qu’entend-on par «Demander une traduction automatique»?
+</h2>
+			<p>
+				Un <b>moteur de traduction automatique</b> peut être utilisé pour traduire
+				automatiquement votre questionnaire sur EUSurvey. L’application utilise le
+				système eTranslation de la Commission européenne.
+			</p>
+			<p>
+				À partir de la page «Traductions», il existe plusieurs façons de demander
+				des traductions automatiques:
+			</p>
+			<ul>
+				<li>
+					au moment d’ajouter une nouvelle traduction, cochez la case «Demander
+					une traduction automatique» (pour une traduction depuis la langue pivot
+					de votre enquête);
+				</li>
+				<li>
+					cliquez sur l’icône «Demander une traduction» dans la colonne «Actions»
+					(pour une traduction depuis la langue pivot de votre enquête);
+				</li>
+				<li>
+					sélectionnez toutes les langues vers lesquelles vous souhaitez faire
+					traduire votre enquête (sélectionnez aussi au moins une traduction
+					complète); sélectionnez ensuite «Demander une traduction» et cliquez
+					sur «OK».
+				</li>
+			</ul>
+			<p>
+				Le statut de la traduction passera à «Demandée» jusqu’à ce qu’elle soit
+				terminée.
+			</p>
+			<p>
+				Pour savoir si ce statut a changé, consultez la page «Traductions».
+			</p>
+			<p>
+				Les traductions automatiques se comporteront comme les autres traductions
+				que vous avez ajoutées manuellement, c’est-à-dire qu’elles ne seront pas
+				publiées automatiquement, et le fait d’ajouter de nouveaux éléments à votre
+				enquête les rendra incomplètes (pour les compléter, vous devrez demander
+				une nouvelle traduction).
+			</p>
+			<p>
+				<i>
+					Nous ne pouvons garantir ni la qualité du texte produit ni le délai de
+					livraison des traductions.
+				</i>
+			</p>
+			<p>
+				<a
+						href="https://webgate.ec.europa.eu/etranslation/help.html"
+						target="_blank"
+						>
+					Aide pour la traduction automatique
+				</a>
+				(uniquement pour le personnel des institutions de l’UE).
+			</p>
+			<h2>
+				Instructions pour le personnel des institutions de l’UE
+		</h2>
+			<p>
+				Nous vous recommandons de contacter la DGT avant de finaliser votre
+				enquête. Ses réviseurs vérifieront que votre enquête est clairement rédigée
+				et présentée. Pour en savoir plus, consultez
+				<a
+						href="https://myintracomm.ec.europa.eu/serv/fr/dgt/Pages/index.aspx"
+						target="_blank"
+						>
+					le site de la DGT sur MyIntraComm
+				</a>
+				.
+			</p>
+			<p>
+				La DGT peut aussi se charger de traduire votre enquête dans les langues
+				officielles de l’UE.
+			</p>
+			<p>
+				Exportez-la en tant que fichier XML et envoyez-la au moyen de l’application
+				Poetry, en sélectionnant le code de votre DG. Le texte de l’enquête ne doit
+				pas dépasser 15 000 caractères, espaces non compris (selon la fonction de
+				comptage de MS Word).
+			</p>
+			<h1>
+				Publication d’une enquête
+			</h1>
+			<h2>
+				Comment publier une enquête?
+			</h2>
+			<p>
+				Pour publier une enquête à partir d’un brouillon en cours:
+			</p>
+			<p>
+				&#8594; rendez-vous sur la page «Aperçu» et cliquez sur «Lancer».
+			</p>
+			<p>
+				Après confirmation, le système crée automatiquement une copie fonctionnelle
+				de votre enquête et la met en ligne, ainsi que toutes les traductions
+				sélectionnées pour publication (voir
+				<a
+						href="#_Toc_7_5"
+						>
+					«Comment publier/dépublier mes traductions?»
+				</a>
+				).
+			</p>
+			<p>
+				Le lien vers votre enquête publiée se trouve à la rubrique «Lien de
+				l’enquête publiée» de la page «Aperçu».
+			</p>
+			<p>
+				Pour dépublier votre enquête &#8594; cliquez sur le bouton «Arrêter».
+			</p>
+			<p>
+				Vous pourrez toujours accéder à l’enquête dépubliée, ainsi qu’à votre
+				brouillon en cours.
+			</p>
+			<p>
+				Cela signifie que l’enquête dépubliée ne sera pas automatiquement remplacée
+				par votre brouillon en cours, mais que vous pourrez la republier telle
+				quelle si nécessaire.
+			</p>
+			<h2>
+				Est-il possible de personnaliser l’URL d’une enquête?
+			</h2>
+			<p>
+				Oui!
+			</p>
+			<p>
+				En modifiant l’«alias» de votre enquête, vous pourrez disposer d’une
+				adresse URL plus compréhensible.
+			</p>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête et allez à la page «Propriétés».
+					</li>
+					<li>
+						Modifiez l’alias de votre enquête dans la section «de base».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Les alias ne peuvent contenir que des caractères alphanumériques et des
+				traits d’union.
+			</p>
+			<p>
+				Si vous modifiez l’alias d’une enquête publiée &#8594; allez à la page «Aperçu»
+				et cliquez sur «Appliquer les modifications».
+			</p>
+			<p>
+				Un même alias ne peut être utilisé qu’une seule fois dans tout le système
+				EUSurvey. Vous serez averti si votre alias est déjà utilisé par une autre
+				enquête.
+			</p>
+			<h2>
+				Puis-je envoyer un lien direct vers une traduction de mon enquête?
+			</h2>
+			<p>
+				Lorsque vous envoyez des invitations, ou utilisez le lien vers le
+				formulaire publié figurant sur la page «Aperçu», le lien renvoie par défaut
+				vers le formulaire dans la langue pivot.
+			</p>
+			<p>
+				Cependant, il est également possible de    <b>rediriger les participants directement</b> vers la traduction souhaitée,
+				à l’aide du lien suivant:
+			</p>
+			<p>
+				<b>https://ec.europa.eu/eusurvey/runner/</b>
+				<b>SurveyAlias</b>
+				<b>?surveylanguage=</b>
+				<b>LC</b>
+			</p>
+			<p>
+				Il vous suffit de remplacer:
+			</p>
+			<ul>
+				<li>
+					«<b>SurveyAlias</b>» par <b>l’alias de votre enquête</b>; et
+				</li>
+				<li>
+					«<b>LC</b>» par le        <b>code de la langue souhaitée conformément à la norme ISO 639-1</b>
+					(FR pour le français, DE pour l’allemand, etc.)
+				</li>
+			</ul>
+			<h2>
+				Comment programmer la publication d’une enquête pendant un congé?
+			</h2>
+			<p>
+				Vous pouvez programmer la publication automatique de votre enquête au
+				moment de votre choix.
+			</p>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête et allez à la page «Propriétés».
+					</li>
+					<li>
+						Activez l’option «Automatic survey publishing» dans la section «Avancé».
+					</li>
+					<li>
+						Indiquez les dates de début et de fin de publication de votre enquête.
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Est-il possible de programmer un rappel de la date de fin de l’enquête?
+			</h2>
+			<p>
+				Oui, EUSurvey peut vous envoyer un courrier électronique de rappel avant
+				que votre enquête ne prenne fin. Vous pourrez ainsi préparer les étapes
+				suivantes (organiser les ressources nécessaires à l’analyse des résultats,
+				par exemple).
+			</p>
+			<p>
+				Pour activer cette fonction:
+			</p>
+			<p>
+				<ol>
+					<li>
+						ouvrez votre enquête et allez à la page «Propriétés»;
+					</li>
+					<li>
+						à la section «Avancé», rendez-vous à la rubrique «Reminder» et indiquez
+						combien de temps à l’avance vous souhaitez recevoir un rappel;
+					</li>
+					<li>
+						cliquez sur «Enregistrer».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Le courrier électronique de rappel sera envoyé à tous les gestionnaires du
+				formulaire.
+			</p>
+			<h2>
+				Pour le personnel des institutions de l’UE:
+			</h2>
+			<h2>
+				quelles sont les exigences officielles pour le lancement d’une
+				consultation publique ouverte (site web «Votre point de vue sur
+				l’Europe»)?
+			</h2>
+			<p>
+				Veuillez suivre
+				<a
+						href="https://circabc.europa.eu/sd/d/fc02d2ac-d94f-42ed-b866-b3429e0d717b/Survey_publication_your_voice_in_europe_NEW.pdf"
+						target="_blank"
+						>
+					la procédure
+				</a>
+				du secrétariat général de la Commission pour publier une consultation
+				publique ouverte sur le site
+				<a href="https://ec.europa.eu/info/consultations_fr" target="_blank">
+					«Votre point de vue sur l’Europe»
+				</a>
+				.
+			</p>
+			<h1>
+				Gestion des enquêtes
+			</h1>
+			<h2>
+				Est-il possible de corriger les erreurs découvertes dans une enquête?
+			</h2>
+			<p>
+				Oui, vous pouvez éditer et modifier l’enquête aussi souvent que vous le
+				souhaitez, ainsi qu’ajouter ou modifier des questions (y compris des
+				questions dépendantes).
+			</p>
+			<p>
+				Toutefois, plus vous effectuerez des modifications, moins les données
+				recueillies seront utilisables, car il se peut que différents participants
+				à votre enquête aient répondu à des versions différentes de l’enquête.
+			</p>
+			<p>
+				Dès lors, si vous souhaitez toujours pouvoir comparer toutes les réponses,
+				il est recommandé de ne pas modifier du tout la structure de votre enquête.
+			</p>
+			<p>
+				Veuillez noter que vous conservez l’entière responsabilité de toute
+				modification appliquée à votre enquête au cours de son existence.
+			</p>
+			<p>
+				Pour modifier une enquête déjà publiée &#8594; cliquez sur le bouton «Appliquer
+				les modifications» de la page «Aperçu», afin que ces modifications
+				apparaissent dans l’enquête publiée.
+			</p>
+			<h2>
+				Si vous souhaitez supprimer des réponses de votre enquête, veuillez
+				consulter la section «En cas de modification de l’enquête, des
+				contributions sont-elles supprimées?».
+			</h2>
+			<h2>
+				En cas de modification de l’enquête, des contributions sont-elles
+				supprimées?
+			</h2>
+			<p>
+				Aucune contribution ne sera supprimée, sauf si vous effacez votre enquête
+				du système.
+			</p>
+			<p>
+				Il se pourrait toutefois que vous ne soyez pas en mesure de visualiser
+				l’ensemble des données recueillies si vous supprimez certaines questions de
+				l’enquête au cours de sa période d’activité, car les résultats de recherche
+				affichés sont toujours issus de la dernière version publiée de l’enquête.
+			</p>
+			<p>
+				Pour visualiser toutes les réponses, même celles à des questions supprimées
+				pendant la période d’activité de votre enquête:
+			</p>
+			<p>
+				&#8594; sélectionnez l’option «Contributions (including deleted questions)» dans
+				le menu déroulant de la page «Résultats».
+			</p>
+			<h2>
+				Comment modifier le titre d’une enquête?
+			</h2>
+			<p>
+				Ouvrez votre enquête et allez à la page «Propriétés» &#8594; modifiez le titre de
+				votre enquête depuis la rubrique «paramètres de base».
+			</p>
+			<p>
+				Si vous avez déjà publié votre enquête, allez à la page «Aperçu» et cliquez
+				sur «Appliquer les modifications».
+			</p>
+			<h2>
+				Comment modifier l’adresse de contact d’une enquête?
+			</h2>
+			<p>
+				Ouvrez votre enquête et allez à la page «Propriétés».
+			</p>
+			<p>
+				Dans la rubrique «paramètres de base», choisissez une des options du menu
+				déroulant sous la rubrique «Contact»:
+			</p>
+			<p>
+				<ul>
+					<li>
+						«Contact Form»: les utilisateurs peuvent vous contacter au moyen d’un
+						formulaire;
+					</li>
+					<li>
+						«Courriel»: les utilisateurs peuvent vous contacter directement par
+						courrier électronique (votre adresse électronique sera affichée);
+					</li>
+					<li>
+						«Page web»: cette option redirige les utilisateurs vers une page web
+						spécifique.
+					</li>
+				</ul>
+			</p>
+			<p>
+				Si vous avez déjà publié votre enquête, allez à la page «Aperçu» et cliquez
+				sur «Appliquer les modifications».
+			</p>
+			<h2>
+				Comment personnaliser le message de confirmation par défaut?
+			</h2>
+			<p>
+				Une fois que les participants ont soumis leur contribution, ils reçoivent
+				un message de confirmation.
+			</p>
+			<p>
+				Pour modifier le message par défaut:
+			</p>
+			<p>
+				<ol>
+					<li>
+						ouvrez votre enquête et allez à la page «Propriétés»;
+					</li>
+					<li>
+						dans la section «Pages spéciales», modifiez le message de confirmation.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Si vous avez déjà publié votre enquête, allez à la page «Aperçu» et cliquez
+				sur «Appliquer les modifications».
+			</p>
+			<h2>
+				Comment personnaliser le message d’indisponibilité par défaut?
+			</h2>
+			<p>
+				La page d’indisponibilité contient le message que verront les participants
+				si votre enquête n’est pas accessible.
+			</p>
+			<p>
+				Pour modifier le message par défaut:
+			</p>
+			<p>
+				<ol>
+					<li>
+						ouvrez votre enquête et allez à la page «Propriétés»;
+					</li>
+					<li>
+						dans la section «Pages spéciales», cliquez sur l’icône en forme de
+						crayon &#8594; changez le texte de la «Page d’indisponibilité».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Si vous avez déjà publié votre enquête, allez à la page «Aperçu» et cliquez
+				sur «Appliquer les modifications».
+			</p>
+			<h2>
+				Est-il possible d’archiver une enquête?<u> </u>
+			</h2>
+			<p>
+				Oui, vous pouvez archiver votre enquête et la recharger ou la relancer plus
+				tard.
+			</p>
+			<p>
+				Pour archiver votre enquête &#8594; cliquez sur l’icône «Archiver» dans la barre
+				d’outils de la page «Aperçu».
+			</p>
+			<p>
+				Les questionnaires archivés ne peuvent ni être édités ni recevoir de
+				nouvelles réponses.
+			</p>
+			<p>
+				Toutefois, vous pouvez exporter les résultats ou télécharger une version
+				PDF de votre enquête.
+			</p>
+			<p>
+				Les questionnaires archivés sont disponibles dans le «Tableau de bord» d’où
+				ils peuvent être restaurés.
+			</p>
+			<p>
+				Les questionnaires restaurés peuvent être édités de nouveau.
+			</p>
+			<h2>
+				Comment donner accès à mon enquête à d’autres utilisateurs?
+			</h2>
+			<p>
+				Vous pouvez donner accès à d’autres utilisateurs pour différentes tâches:
+			</p>
+			<ul>
+				<li>
+					tester l’enquête («Accès aperçu formulaire»);
+				</li>
+				<li>
+					accéder aux résultats («Résultats»);
+				</li>
+				<li>
+					modifier l’enquête («Gestion du formulaire»).
+				</li>
+			</ul>
+			<p>
+				Pour octroyer un accès à une personne ou à un service: ouvrez votre enquête
+				et allez à la page «Privilèges».
+			</p>
+			<p>
+				Les droits d’accès suivants sont possibles:
+			</p>
+			<ul>
+				<li>
+					vert: accès en lecture et en écriture;
+				</li>
+				<li>
+					jaune: accès en lecture;
+				</li>
+				<li>
+					rouge: pas d’accès.
+				</li>
+			</ul>
+			<p>
+				<ol>
+					<li>
+						Dans la page «Privilèges», cliquez sur «Ajouter un utilisateur» ou
+						«Ajouter un service».
+					</li>
+					<li>
+						L’assistant d’ajout d’utilisateurs s’ouvre alors.
+					</li>
+					<li>
+						Après avoir cliqué sur «Ajouter un utilisateur», vous devez sélectionner
+						le domaine approprié (par exemple, «Commission européenne»).
+					</li>
+					<li>
+						Indiquez le nom d’utilisateur, l’adresse électronique ou tout autre
+						champ, et cliquez sur «Rechercher».
+					</li>
+					<li>
+						Sélectionnez l’utilisateur et cliquez sur «OK».
+					</li>
+					<li>
+						Si vous cliquez sur «Ajouter un service», sélectionnez le domaine
+						approprié.
+					</li>
+					<li>
+						Cherchez le service souhaité, et cliquez ensuite sur «OK».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Vous serez ensuite redirigé vers la page «Privilèges»,
+			</p>
+			<p>
+				où vous pourrez déterminer les droits d’accès appropriés en cliquant sur
+				les icônes rouges:
+			</p>
+			<ul>
+				<li>
+					Pour octroyer le droit de tester votre enquête:
+					
+					<ul>
+						<li>
+							sélectionnez la couleur verte pour la fonction «Accès aperçu formulaire»
+							(il suffit de cliquer sur la couleur pour modifier les droits);
+						</li>
+						<li>
+							les utilisateurs ajoutés verront automatiquement votre enquête apparaître
+							dans leur page «Enquêtes» lors de leur prochaine connexion à EUSurvey (voir
+							également
+							<a
+									href="#_Toc_6_2"
+									>
+								«Comment tester mon enquête auprès de mes collègues avant sa
+								publication?»
+							</a>
+							).
+						</li>
+					</ul>
+				</li>
+			
+				<li>
+					Pour octroyer le droit de consulter les résultats de votre enquête:
+					
+					<ul>
+						<li>
+							sélectionnez la couleur jaune pour la fonction «Résultats». Les
+							utilisateurs pourront afficher les résultats, sans pouvoir modifier ou
+							supprimer quoi que ce soit;
+						</li>
+						<li>
+							si vous sélectionnez la couleur verte, ils pourront afficher, modifier et
+							supprimer les réponses (voir également
+							<a
+									href="#_Toc_10_7"
+									>
+								«Comment autoriser d’autres utilisateurs à accéder aux résultats de mon
+								enquête?»
+							</a>
+							).
+						</li>
+					</ul>
+				</li>
+			
+				<li>
+					Pour octroyer le droit de modifier votre enquête:
+					
+					<ul>
+						<li>
+							sélectionnez la couleur verte &#8594; les utilisateurs peuvent maintenant la
+							modifier;
+						</li>
+						<li>
+							votre enquête apparaîtra automatiquement dans leur liste d’enquêtes (voir
+							également
+							<a
+									href="#_Toc_4_11"
+									>
+								«Comment autoriser d’autres utilisateurs à modifier une enquête?»
+							</a>
+							).
+						</li>
+					</ul>
+				</li>
+			
+				<li>
+					Pour octroyer le droit de gérer les invitations à votre enquête:
+					
+					<ul>
+						<li>
+							si la couleur est jaune &#8594; les utilisateurs peuvent uniquement consulter
+							les invitations;
+						</li>
+						<li>
+							sélectionnez la couleur verte &#8594; les utilisateurs peuvent modifier les
+							invitations;
+						</li>
+						<li>
+							votre enquête apparaîtra automatiquement dans leur liste d’enquêtes (voir
+							également
+							<a
+									href="#_Toc_4_11"
+									>
+								«Comment autoriser d’autres utilisateurs à modifier une enquête?»
+							</a>
+							).
+						</li>
+					</ul>
+				</li>
+			</ul>
+		
+			<p>
+				Si vous sélectionnez la couleur verte pour les quatre cercles,
+				l’utilisateur disposera de tous les droits d’accès pour votre enquête.
+			</p>
+			<p>
+				Les propriétaires ou organisateurs d’enquêtes externes ne peuvent pas voir
+				les champs de l’UE sur le bouton «Ajouter un utilisateur» de la page
+				«Privilèges». Par conséquent, ils ne peuvent pas accorder un accès direct à
+				ces utilisateurs.
+			</p>
+			<p>
+				Veuillez
+				<a href="https://ec.europa.eu/eusurvey/home/support?language=fr">
+					nous contacter
+				</a>
+				si vous souhaitez demander l’accès pour des utilisateurs externes.
+			</p>
+			<h2>
+				Que sont les journaux d’activité?
+			</h2>
+			<p>
+				Les journaux d’activité surveillent et enregistrent l’activité sur votre
+				enquête. Vous pouvez ainsi vérifier quel utilisateur a appliqué quelle
+				modification à votre enquête et à quel moment.
+			</p>
+			<p>
+				Vous pouvez également exporter les journaux d’activité dans plusieurs
+				formats de fichiers tels que XLS, CSV et ODS.
+			</p>
+			<p>
+				Pour consulter le journal d’activité de votre enquête &#8594; cliquez sur la page
+				«Activité», à côté de la page «Propriétés».
+			</p>
+			<p>
+				Si les journaux d’activité sont vides, il se peut qu’ils soient désactivés
+				à l’échelle du système.
+			</p>
+			<p>
+				Vous trouverez
+				<a
+						href="https://ec.europa.eu/eusurvey/resources/documents/ActivityLogEvents.xlsx"
+						>
+					ici
+				</a>
+				une liste des événements enregistrés.
+			</p>
+			<h1>
+				Analyse, exportation et publication des résultats
+			</h1>
+			<h2>
+				Où trouver les contributions reçues des participants?
+			</h2>
+			<p>
+				Ouvrez votre enquête dans EUSurvey &#8594; cliquez sur la page «Résultats».
+			</p>
+			<p>
+				Vous verrez d’abord un tableau présentant le contenu intégral de toutes les
+				contributions soumises.
+			</p>
+			<p>
+				Vous pouvez afficher les résultats de 2 façons:
+			</p>
+			<ul>
+				<li>
+					contenu intégral;
+				</li>
+				<li>
+					statistiques.
+				</li>
+			</ul>
+			<p>
+				Pour passer d’un mode à l’autre &#8594; cliquez sur les icônes dans le coin
+				supérieur gauche de la page.
+			</p>
+			<p>
+				Voir également
+				<a
+						href="#_Toc_3_5"
+						>
+					«Comment ouvrir une enquête existante pour la modifier, par exemple?»)
+				</a>
+			</p>
+			<h2>
+				Comment télécharger les contributions reçues?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête et allez à la page «Résultats».
+					</li>
+					<li>
+						Cliquez sur «Exporter» dans le coin supérieur droit.
+					</li>
+					<li>
+						Sélectionnez un format parmi les formats de fichiers disponibles pour
+						l’exportation.
+					</li>
+					<li>
+						Indiquez un nom de fichier dans la fenêtre qui s’affiche; le fichier
+						d’exportation apparaîtra sous ce nom sur la page «Exports».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Différents formats de fichier d’exportation sont disponibles, en fonction
+				du mode d’affichage (contenu intégral ou statistiques).
+			</p>
+			<p>
+				Remarque: le fichier d’exportation ne contiendra que l’ensemble de
+				questions définies comme exportables, ainsi que les résultats de recherche
+				correspondant au filtre utilisé.
+			</p>
+			<h2>
+				Comment extraire les brouillons de contributions?
+			</h2>
+			<p>
+				Notre politique actuelle en matière de protection de la vie privée ne vous
+				autorise pas à extraire les brouillons de contributions.
+			</p>
+			<p>
+				Sur votre tableau de bord, vous pouvez voir le nombre de brouillons
+				enregistrés pour votre enquête.
+			</p>
+			<h2>
+				Comment rechercher et analyser un sous-ensemble défini de contributions?
+			</h2>
+			<p>
+				Sur la page «Résultats»:
+			</p>
+			<p>
+				<ul>
+					<li>
+						recherchez des mots clés dans les réponses en texte libre; ou
+					</li>
+					<li>
+						sélectionnez des réponses spécifiques dans les questions à choix, au
+						moyen des filtres proposés.
+					</li>
+				</ul>
+			</p>
+			<p>
+				Cela réduit l’ensemble des réponses à un sous-ensemble de contributions.
+			</p>
+			<p>
+				Pour des raisons de performance, vous ne pouvez utiliser qu’un maximum de
+				trois filtres!
+			</p>
+			<p>
+				Vous pouvez changer le mode d’affichage à tout moment afin d’effectuer une
+				analyse statistique détaillée des données recueillies.
+			</p>
+			<p>
+				Remarque: pour afficher et analyser les résultats, vous devez disposer de
+				certains droits (voir
+				<a
+						href="#_Toc_10_7"
+						>
+					«Comment autoriser d’autres utilisateurs à accéder aux résultats de mon
+					enquête?»
+				</a>
+				).
+			</p>
+			<p>
+				Pour exporter un sous-ensemble de contributions, voir «Comment télécharger
+				les contributions reçues?»
+			</p>
+			<p>
+				Voir également
+				<a
+						href="#_Toc_10_1"
+						>
+					«Où trouver les contributions reçues des participants?»
+				</a>
+			</p>
+			<h2>
+				Comment publier les résultats?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Ouvrez l’enquête.
+					</li>
+					<li>
+						Allez à la page «Propriétés» et sélectionnez «Publier les résultats».
+					</li>
+					<li>
+						Vous verrez alors l’URL menant aux résultats publiés.
+					</li>
+					<li>
+						Choisissez les questions, réponses ou contributions que vous souhaitez
+						publier.
+					</li>
+					<li>
+						Pour y accéder directement &#8594; cliquez sur le bouton «Modifier la
+						publication des résultats» de la page «Aperçu».
+					</li>
+					<li>
+						Veillez à effectuer une sélection dans la rubrique «Lancer» dans la
+						section «Publier les résultats», faute de quoi le système ne publiera aucun
+						résultat.
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Comment accéder aux résultats publiés?
+			</h2>
+			<p>
+				Ouvrez la page «Aperçu» &#8594; cliquez sur l’hyperlien «Publié», juste à côté de
+				«Résultats».
+			</p>
+			<p>
+				Toute personne connaissant cette adresse pourra accéder à vos résultats.
+			</p>
+			<h2>
+				Comment autoriser d’autres utilisateurs à accéder aux résultats d’une
+				enquête?
+			</h2>
+			<p>
+				Ouvrez votre enquête &#8594; allez à la page «Privilèges» et donnez accès aux
+				résultats à d’autres utilisateurs.
+			</p>
+			<p>
+				Pour en savoir plus, voir également
+				<a
+						href="#_Toc_9_9"
+						>
+					«Comment donner accès à mon enquête à d’autres utilisateurs?»
+				</a>
+			</p>
+			<h2>
+				Je ne parviens pas à décompresser mes fichiers exportés; comment faire?
+			</h2>
+			<p>
+				Cela peut se produire si le nom des fichiers contenus dans votre dossier
+				est trop long.
+			</p>
+			<p>
+				Dans Windows, la longueur du chemin d’accès d’un fichier sur disque dur ne
+				peut pas dépasser 260 caractères.
+			</p>
+			<p>
+				Voici les solutions possibles:
+			</p>
+			<ul>
+				<li>
+					décompressez le dossier dans le répertoire racine de votre système
+					d’exploitation, dans le répertoire «C:» au lieu de
+					«C:\Users\NOMD’UTILISATEUR\Bureau», par exemple; ou
+				</li>
+				<li>
+					lorsque vous décompressez les fichiers, renommez le dossier afin de
+					réduire la longueur du chemin d’accès.
+				</li>
+			</ul>
+			<h2>
+				Les résultats publiés - protection des données à caractère personnel
+				chargées par les participants
+			</h2>
+			<p>
+				En vertu des règles en matière de protection des données, le gestionnaire
+				du formulaire peut publier les fichiers chargés par les participants en
+				parallèle aux résultats.
+			</p>
+			<p>
+				Pour ce faire &#8594; cochez l’option «Documents chargés».
+			</p>
+			<p>
+				Celle-ci se trouve dans la section «Publier les résultats» de la page
+				«Propriétés».
+			</p>
+			<p>
+				Cette option apparaît uniquement si l’enquête contient des fichiers
+				chargés.
+			</p>
+			<h2>
+				Comment concevoir une enquête afin de publier les résultats avec ou sans
+				données personnelles?
+			</h2>
+			<p>
+				Si vous voulez donner le choix à vos participants de publier ou non leurs
+				données personnelles avec leurs réponses, suivez
+				<a
+						href="https://circabc.europa.eu/sd/d/e68ff760-226f-40e9-b7cb-d3dcdd04bfb1/How_to_publish_survey_results_anonymously.pdf"
+						target="_blank"
+						>
+					ces instructions
+				</a>
+				pour concevoir une enquête conforme aux exigences.
+			</p>
+			<h2>
+				Pourquoi mes résultats ne sont-ils pas à jour?
+			</h2>
+			<p>
+				Une nouvelle base de données a été introduite pour améliorer les
+				performances d’EUSurvey lors des recherches portant sur des résultats
+				d’enquêtes.
+			</p>
+			<p>
+				Toutefois, cela peut entraîner des retards jusqu’à ce que les données les
+				plus récentes apparaissent sur la page de résultats de votre enquête.
+			</p>
+			<p>
+				Ce délai ne devrait pas dépasser 12 heures; si le retard dépasse 12 heures
+				&#8594; contactez
+				<a href="https://ec.europa.eu/eusurvey/home/support?language=fr">
+					l’assistance
+				</a>
+				d’EUSurvey.
+			</p>
+			<h1>
+				Style et mise en page
+			</h1>
+			<h2>
+				Comment modifier l’apparence générale d’une enquête?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête, allez à la page «Propriétés»
+					</li>
+					<li>
+						et sélectionnez la section «Apparence».
+					</li>
+					<li>
+						Choisissez une nouvelle apparence pour votre enquête à l’aide du menu
+						déroulant de la rubrique «Apparence» &#8594; cliquez sur «Enregistrer».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Si vous avez déjà publié votre enquête &#8594; allez à la page «Aperçu» et
+				cliquez sur «Appliquer les modifications».
+			</p>
+			<h2>
+				Comment créer son propre thème visuel?
+			</h2>
+			<p>
+				<ol>
+					<li>
+				Allez à l’onglet «Paramètres», en haut de l’écran &#8594; cliquez sur
+				«Apparences».
+			</li>
+			<li>
+				Cliquez sur «Créer une nouvelle apparence».
+			</li>
+			<li>
+				 L’éditeur d’apparences s’ouvre alors.
+			</p>
+			<p>
+				Vous pouvez reprendre un thème visuel existant et utiliser l’éditeur
+				d’apparences en ligne pour adapter ce modèle à vos besoins.
+			</p>
+			<h2>
+				Comment ajouter un logo à une enquête?
+			</h2>
+			<p>
+				Pour que le logo de votre projet ou de votre entreprise apparaisse dans le
+				coin supérieur droit de votre enquête &#8594; téléchargez un fichier d’image à la
+				section «Apparence» de la page «Propriétés».
+			</p>
+			<p>
+				Si vous avez déjà publié votre enquête &#8594; allez à la page «Aperçu» et
+				cliquez sur «Appliquer les modifications».
+			</p>
+			<h2>
+				Comment ajouter des liens utiles à une enquête?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête.
+					</li>
+					<li>
+						Allez à la page «Propriétés» et sélectionnez «Avancé».
+					</li>
+					<li>
+						Ajoutez des URL et leurs titres dans la rubrique «Liens utiles».
+					</li>
+					<li>
+						Ces liens figureront sur chaque page de votre enquête, sur le côté
+						droit.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Si vous avez déjà publié votre enquête &#8594; allez à la page «Aperçu» et
+				cliquez sur «Appliquer les modifications».
+			</p>
+			<h2>
+				Comment ajouter des documents de référence à une enquête?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête.
+					</li>
+					<li>
+						Allez à la page «Propriétés» et sélectionnez «Avancé».
+					</li>
+					<li>
+						Chargez un fichier à la rubrique «Documents de référence».
+					</li>
+					<li>
+						Ces documents figureront sur chaque page de votre enquête, sur le côté
+						droit.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Si vous avez déjà publié votre enquête &#8594; allez à la page «Aperçu» et
+				cliquez sur «Appliquer les modifications».
+			</p>
+			<h2>
+				Comment créer une enquête en plusieurs pages?
+			</h2>
+			<p>
+				Les sections de haut niveau de votre enquête peuvent être divisées
+				automatiquement en pages distinctes.
+			</p>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête.
+					</li>
+					<li>
+						Allez à la page «Propriétés» et sélectionnez la section «Apparence».
+					</li>
+					<li>
+						 Activez l’option «Présentation sur plusieurs pages» et cliquez sur
+						«Enregistrer».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Si vous avez déjà publié votre enquête &#8594; allez à la page «Aperçu» et
+				cliquez sur «Appliquer les modifications».
+			</p>
+			<h2>
+				Comment activer la numérotation automatique pour mon enquête?
+			</h2>
+			<p>
+				Pour numéroter automatiquement toutes les sections et questions de votre
+				formulaire:
+			</p>
+			<p>
+				<ol>
+					<li>
+						ouvrez votre enquête, allez à la page «Propriétés» et sélectionnez
+						«Apparence»;
+					</li>
+					<li>
+						activez les options «Automatically number sections» et/ou «Automatically
+						number questions» et sélectionnez vos préférences;
+					</li>
+					<li>
+						cliquez sur «Enregistrer».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Si vous avez déjà publié votre enquête &#8594; allez à la page «Aperçu» et
+				cliquez sur «Appliquer les modifications».
+			</p>
+			<h2>
+				Est-il possible de créer une apparence personnalisée pour une enquête?
+			</h2>
+			<p>
+				Oui, vous pouvez créer une nouvelle apparence pour votre enquête en suivant
+				les étapes ci-dessous.
+			</p>
+			<p>
+				<ol>
+					<li>
+						Allez à la page «Paramètres» &#8594; sélectionnez «Apparences».
+					</li>
+					<li>
+						Cliquez sur «Créer une nouvelle apparence» &#8594; modifiez le visuel des
+						différents éléments de votre enquête: les questions, son texte, les titres,
+						les bulles d’aides et bien d’autres.
+					</li>
+					<li>
+						Donnez un nom à votre nouvelle apparence.
+					</li>
+					<li>
+						Sélectionnez l’élément dont vous voulez personnaliser l’apparence.
+					</li>
+					<li>
+						À droite de la page, vous trouverez une boîte où vous pourrez modifier
+						la police de l’élément:
+						<ul>
+							<li>
+								couleurs d’avant-plan et d’arrière-plan;
+							</li>
+							<li>
+								style de police, polices de caractère, taille et épaisseur.
+							</li>
+						</ul>
+					</li>		
+					<li>
+						Vous pouvez visualiser l’apparence des éléments modifiés dans la zone de
+						prévisualisation, qui se trouve en bas de la page.
+					</li>
+					<li>
+						Cliquez sur «Enregistrer».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Si vous souhaitez modifier plusieurs éléments &#8594; effectuez toutes vos
+				modifications &#8594; enregistrez tous les éléments modifiés une fois que vous
+				avez terminé (il n’est pas nécessaire de sauvegarder à chaque modification
+				d’élément).
+			</p>
+			<p>
+				Pour appliquer votre nouvelle apparence à votre enquête &#8594; allez à la page
+				«Propriétés» et sélectionnez «Apparence».
+			</p>
+			<p>
+				Choisissez votre nouvelle apparence dans le menu déroulant de la rubrique
+				«Apparence» &#8594; cliquez sur «Enregistrer».
+			</p>
+			<h1>
+				Gestion des contacts et des invitations
+			</h1>
+			<h2>
+				Qu’est-ce que le «carnet d’adresses»?
+			</h2>
+			<p>
+				Le carnet d’adresses permet de créer vos propres groupes de participants.
+			</p>
+			<p>
+				Vous pouvez ainsi inviter des personnes ou organisations qui correspondent
+				à certains critères (par exemple, «masculin» et «plus de 21 ans»).
+			</p>
+			<p>
+				Chaque participant potentiel constitue un contact du carnet d’adresses.
+				Pour chaque contact, vous pouvez spécifier autant d’attributs que vous le
+				souhaitez.
+			</p>
+			<p>
+				Pour ajouter un contact dans votre carnet d’adresses, il vous faut un
+				identifiant («Nom») et une adresse électronique.
+			</p>
+			<h2>
+				Que sont les «attributs» des contacts?
+			</h2>
+			<p>
+				Tout contact enregistré dans le carnet d’adresses peut être caractérisé par
+				un ensemble d’attributs variables, tels que «Pays», «Téléphone»,
+				«Remarques», etc.
+			</p>
+			<p>
+				Vous pouvez créer de nouveaux attributs en modifiant un contact.
+			</p>
+			<p>
+				<ol>
+					<li>
+						Ouvrez la fenêtre «Modifier le contact» &#8594; dans le menu déroulant des
+						attributs, sélectionnez «Nouveau...».
+					</li>
+					<li>
+						Dans la fenêtre qui s’affiche, vous pouvez modifier le nouvel attribut.
+					</li>
+					<li>
+						L’attribut ainsi créé s’affichera dans une colonne du carnet d’adresses;
+						il peut aussi être ajouté à une série de contacts.
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Comment ajouter de nouveaux contacts dans le carnet d’adresses?
+			</h2>
+			<p>
+				Allez à la page «Carnet d’adresses» &#8594; cliquez «Ajouter un contact» pour
+				ajouter un seul contact.
+			</p>
+			<p>
+				Vous pouvez cliquer sur «Importer» pour télécharger une liste de contacts
+				existante au format XLS, ODS, CSV ou TXT.
+			</p>
+			<p>
+				Voir également
+				<a
+						href="#_Toc_12_5"
+						>
+					«Comment importer un fichier avec plusieurs contacts dans le carnet
+					d’adresses?»
+				</a>
+			</p>
+			<h2>
+				Qu’est-ce qu’un «formulaire d’enregistrement»?
+			</h2>
+			<p>
+				Il s’agit d’un formulaire qui permet de créer automatiquement des contacts
+				à partir des données à caractère personnel introduites par les
+				participants.
+			</p>
+			<p>
+				Vous pouvez en créer un en suivant les étapes ci-dessous.
+			</p>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête.
+					</li>
+					<li>
+						Allez à la page «Propriétés» et sélectionnez «Avancé».
+					</li>
+					<li>
+						Activez l’option «Créer des contacts» et cliquez sur «Enregistrer».
+					</li>
+				</ol>
+			</p>
+			<p>
+				Dès que cette option est activée, le système insère deux questions
+				obligatoires en texte libre («Nom» et «Adresse électronique»),
+			</p>
+			<p>
+				afin de garantir que chaque participant indique des coordonnées valables.
+			</p>
+			<p>
+				Si vous activez l’option «Attribut» pour des questions spécifiques, vous
+				pouvez choisir quelles autres informations seront enregistrées pour chaque
+				nouveau contact (par exemple, vous pouvez associer l’attribut «Téléphone» à
+				une question en texte libre afin d’enregistrer le numéro de téléphone du
+				participant dans le carnet d’adresses).
+			</p>
+			<h2>
+				Comment importer un fichier avec plusieurs contacts dans le carnet
+				d’adresses?
+			</h2>
+			<p>
+				EUSurvey dispose d’un assistant qui facilite l’importation de listes de
+				contacts dans le système.
+			</p>
+			<p>
+				Les formats de fichiers suivants sont pris en charge:
+			</p>
+			<ul>
+				<li>
+					XLS;
+				</li>
+				<li>
+					ODS;
+				</li>
+				<li>
+					CSV;
+				</li>
+				<li>
+					TXT (avec séparateurs).
+				</li>
+			</ul>
+			<p>
+				Pour démarrer l’assistant:
+			</p>
+			<p>
+				<ol>
+					<li>
+						ouvrez la page «Carnet d’adresses» et cliquez sur «Importer»;
+					</li>
+					<li>
+						sélectionnez le fichier dans lequel vous avez enregistré vos contacts;
+					</li>
+					<li>
+						indiquez si votre fichier contient une ligne d’en-tête;
+					</li>
+					<li>
+						pour un fichier CSV ou TXT, précisez le type de séparateur utilisé (le
+						caractère le plus probable est proposé par défaut).
+					</li>
+				</ol>
+			</p>
+			<p>
+				Ensuite:
+			</p>
+			<p>
+				<ol>
+					<li>
+						le système vous demandera d’indiquer quelles colonnes correspondent à
+						quels attributs pour l’importation des contacts (vous devez indiquer
+						quelles colonnes contiennent les attributs obligatoires «Nom» et «Adresse
+						électronique» avant de pouvoir continuer);
+					</li>
+					<li>
+						cliquez sur «Suivant»; le système charge votre fichier dans le système
+						et affiche les contacts individuels qui seront importés;
+					</li>
+					<li>
+						vous pouvez désélectionner les contacts que vous ne souhaitez pas
+						importer;
+					</li>
+					<li>
+						cliquez sur «Enregistrer» pour ajouter les contacts à votre carnet
+						d’adresses.
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Comment modifier un attribut pour plusieurs contacts à la fois?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Recherchez puis sélectionnez les contacts en question dans votre carnet
+						d’adresses.
+					</li>
+					<li>
+						Cliquez sur «Modifier en bloc», puis sur «OK».
+					</li>
+					<li>
+						La fenêtre qui s’affiche permet de conserver, d’effacer ou de modifier
+						les attributs de plusieurs contacts à la fois; par défaut, seuls les
+						attributs configurés sont affichés.
+					</li>
+					<li>
+						Cliquez sur la croix verte pour afficher les autres attributs.
+					</li>
+					<li>
+						Après avoir introduit les modifications voulues, cliquez sur «Mettre à
+						jour» et confirmez. L’application enregistre les modifications dans le
+						carnet d’adresses.
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Est-il possible d’exporter les contacts du carnet d’adresses dans un
+				fichier?
+			</h2>
+			<p>
+				Oui.
+			</p>
+			<p>
+				Sur la page «Carnet d’adresses», cliquez sur une des icônes du coin
+				supérieur droit, qui indiquent les formats de fichiers disponibles.
+			</p>
+			<p>
+				Vous trouverez les contacts exportés sur la page «Exports».
+			</p>
+			<h1>
+				Inviter des participants
+			</h1>
+			<h2>
+				Comment définir un groupe de participants potentiels? Qu’est-ce qu’une
+				«liste d’invités»?
+			</h2>
+			<p>
+				Vous pouvez sélectionner plusieurs contacts à la fois et envoyer à chacun
+				de ces contacts un message contenant un lien d’accès individuel. Ces
+				groupes de contacts sont appelés «listes d’invités».
+			</p>
+			<p>
+				Il s’agit de la deuxième façon (outre la définition d’un mot de passe pour
+				l’enquête) de permettre à des personnes de participer à votre enquête.
+			</p>
+			<p>
+				Pour inviter plusieurs contacts à participer &#8594; ouvrez votre enquête et
+				allez à la page «Participants».
+			</p>
+			<p>
+				Choisissez un type parmi les types de «liste d’invités» proposés pour
+				lancer un assistant qui vous guidera tout au long du processus:
+			</p>
+			<ul>
+				<li>
+					<b>«Contact list»</b>
+					: contacts du carnet d’adresses
+					<br/>
+					Sélectionnez des contacts du carnet d’adresses pour les ajouter à votre
+					liste d’invités (voir
+					<a
+							href="#_Toc_12_1"
+							>
+						«Qu’est-ce que le “carnet d’adresses”?»
+					</a>
+					).
+				</li>
+				<li>
+					<b>«EU list»</b>
+					: institutions et autres organes de l’UE (uniquement pour le personnel
+					des institutions de l’UE)
+					<br/>
+					Sélectionnez plusieurs services de votre institution ou agence pour
+					ajouter à la liste toutes les personnes de ces services.
+				</li>
+				<li>
+					<b>«Token list»</b>
+					<br/>
+					Cette fonction crée une liste de jetons (des codes d’accès uniques) qui
+					peuvent être distribués hors ligne afin d’accéder à une enquête en
+					ligne sécurisée.
+				</li>
+			</ul>
+			<p>
+				Utilisez la fonction de recherche de votre carnet d’adresses &#8594; cliquez sur
+				le bouton «&gt;&gt;» au centre de la page pour déplacer vos contacts depuis
+				votre carnet d’adresses vers votre nouvelle liste d’invités.
+			</p>
+			<p>
+				Cliquez sur «Enregistrer» pour créer une nouvelle liste d’invités contenant
+				tous les contacts que vous souhaitez inviter à participer à l’enquête.
+			</p>
+			<p>
+				Consultez la section ci-après pour voir comment envoyer des liens d’accès
+				individuels par courrier électronique à des contacts configurés au moyen
+				d’une liste d’invités.
+			</p>
+			<h2>
+				Comment modifier/supprimer une liste d’invités existante?
+			</h2>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête.
+					</li>
+					<li>
+						Allez à la page «Participants».
+					</li>
+					<li>
+						Pour modifier la liste d’invités &#8594; cliquez sur la petite icône en forme
+						de crayon.
+					</li>
+					<li>
+						Pour supprimer une liste &#8594; cliquez d’abord sur le bouton «Désactiver».
+					</li>
+					<li>
+						5. Cliquez ensuite sur le bouton «Supprimer».
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Comment envoyer un courrier électronique d’invitation aux participants?
+			</h2>
+			<p>
+				Une fois la nouvelle liste d’invités créée, vous pouvez envoyer des
+				courriers électroniques d’invitation aux invités.
+			</p>
+			<p>
+				Pour les questionnaires configurés comme sécurisés et ouverts, ils
+				recevront chacun un lien d’accès individuel.
+			</p>
+			<p>
+				<b>
+					Cela signifie que toute personne recevant un courrier électronique
+					d’invitation EUSurvey ne peut soumettre qu’une seule contribution
+					(réponse).
+				</b>
+			</p>
+			<p>
+				<ol>
+					<li>
+						Sur la page «Participants», cliquez sur la petite icône en forme
+						d’enveloppe.
+					</li>
+					<li>
+						Une fenêtre s’ouvre où vous pouvez choisir un modèle de courrier
+						électronique à partir de la boîte «Select mail design»; par défaut, le
+						style utilisé est «EUSurvey».
+					</li>
+					<li>
+						Vous pouvez ensuite modifier l’objet et le corps du message de votre
+						courrier électronique, et ajouter un courriel de réponse; toutes les
+						réponses à vos invitations seront envoyées à cette adresse.
+					</li>
+					<li>
+						Par après, enregistrez le corps du message de votre courrier
+						électronique &#8594; il sera disponible pour toutes vos listes d’invités et
+						enquêtes; vous le trouverez dans le menu déroulant de la boîte «Use mail
+						template».
+					</li>
+					<li>
+						Cliquez ensuite sur «Suivant» &#8594; un assistant vous aidera à envoyer les
+						invitations.
+					</li>
+				</ol>
+			</p>
+			<h2>
+				Comment utiliser des jetons pour créer un lien?
+			</h2>
+			<p>
+				Suivez les étapes ci-dessous pour créer une liste de jetons (c’est-à-dire
+				de codes d’authentification uniques) qui peuvent être distribués hors ligne
+				afin d’accéder à une enquête en ligne sécurisée.
+			</p>
+			<p>
+				<ol>
+					<li>
+						Ouvrez votre enquête.
+					</li>
+					<li>
+						Allez à la page «Participants».
+					</li>
+					<li>
+						Cliquez sur «Token list» pour lancer un assistant qui vous guidera tout
+						au long du processus.
+					</li>
+					<li>
+						Choisissez un nom pour le groupe et sélectionnez «Tokens» parmi les
+						différents types de listes d’invités.
+					</li>
+				</ol>
+			</p>
+			<p>
+				Utilisez les jetons créés pour générer des liens d’accès individuels qui
+				peuvent être envoyés par courrier électronique aux participants, comme
+				suit:
+			</p>
+			<p>
+				https://ec.europa.eu/eusurvey/runner/<b>SurveyAlias</b>/<b>TOKEN</b>
+			</p>
+			<p>
+				Il vous suffit de remplacer:
+			</p>
+			<ul>
+				<li>
+					«<b>SurveyAlias</b>» par <b>l’alias</b> <b>de votre enquête</b>; et
+				</li>
+				<li>
+					«<b>TOKEN</b>» par le jeton de la liste que vous souhaitez utiliser.
+				</li>
+			</ul>
+			<h1>
+				Gestion du compte personnel
+			</h1>
+			<h2>
+				Comment modifier mon mot de passe?
+			</h2>
+			<p>
+				Les utilisateurs doivent modifier leur mot de passe EU Login s’ils ont
+				perdu celui-ci.
+			</p>
+			<p>
+				Pour ce faire: rendez-vous sur la page d’accueil d’EU Login &#8594; cliquez sur
+				«Mot de passe perdu?».
+			</p>
+			<h2>
+				Comment modifier mon adresse électronique?
+			</h2>
+			<p>
+				Si vous accédez à EUSurvey au moyen de votre compte EU Login, vous pouvez
+				modifier votre adresse électronique en suivant les étapes ci-dessous:
+			</p>
+			<p>
+				connectez-vous à EU Login &#8594; une fois connecté, cliquez sur «Modifier mes
+				données personnelles» à la page «Mon compte»;
+			</p>
+			<p>
+				si vous utilisez la version open source d’EUSurvey ou l’interface API &#8594;
+				connectez-vous à l’application &#8594; cliquez sur «Paramètres», puis sur «Mon
+				compte», puis sur l’icône en forme de crayon à la rubrique «Courriel».
+			</p>
+			<h2>
+				Comment modifier la langue par défaut?
+			</h2>
+			<p>
+				Cliquez sur «Paramètres», puis sur «Mon compte», puis sur l’icône en forme
+				de crayon à la rubrique «Langue».
+			</p>
+			<p>
+				Une fois la modification enregistrée, le système proposera d’utiliser la
+				langue sélectionnée comme langue principale pour toutes vos nouvelles
+				enquêtes.
+			</p>
+			<h1>
+				Protection de la vie privée
+			</h1>
+			<h2>
+				Ce système utilise des cookies. Quelles informations y sont enregistrées?
+			</h2>
+			<p>
+				Le système utilise des «cookies» (ou témoins) de session afin d’assurer une
+				bonne communication entre le client et le serveur.
+			</p>
+			<p>
+				Le navigateur de l’utilisateur doit donc être configuré pour accepter les
+				«cookies», qui disparaissent une fois la session terminée.
+			</p>
+			<p>
+				Le système enregistre une copie de sauvegarde locale de la contribution
+				d’un participant à une enquête. Ce fichier peut servir en cas
+				d’indisponibilité du serveur lorsque l’utilisateur envoie sa contribution,
+				ou si son ordinateur s’éteint accidentellement, par exemple.
+			</p>
+			<p>
+				Il contient le numéro des questions et les brouillons de réponses.
+			</p>
+			<p>
+				Une fois la contribution à l’enquête envoyée au serveur, ou après
+				sauvegarde d’un brouillon sur celui-ci, ces données locales sont
+				supprimées.
+			</p>
+			<p>
+				Au-dessus de l’enquête figure une case à cocher avec la mention
+				«Enregistrer une copie de sauvegarde locale sur votre ordinateur (à
+				désactiver si vous utilisez un ordinateur public/partagé)», qui permet de
+				désactiver cette fonction, de telle sorte qu’aucune donnée ne sera
+				conservée sur son ordinateur.
+			</p>
+			<h2>
+				Quelles informations sont enregistrées par EUSurvey lorsqu’un participant
+				soumet une contribution (réponse)?
+			</h2>
+			<p>
+				Les informations enregistrées par EUSurvey dépendent des paramètres de
+				sécurité de votre enquête ainsi que de la méthode que vous utilisez pour
+				inviter vos participants à contribuer à votre enquête.
+			</p>
+			<p>
+				<b>Enquêtes ouvertes au public:</b>
+			</p>
+			<p>
+				par défaut, si votre enquête n’est <b>pas sécurisée</b>, EUSurvey    <b>n’enregistre aucune information liée à l’utilisateur</b>.
+			</p>
+			<p>
+				Toutefois, l’adresse IP de chaque connexion au serveur est enregistrée pour
+				des raisons de sécurité (voir
+				<a
+						href="https://ec.europa.eu/eusurvey/home/privacystatement?language=fr"
+						target="_blank"
+						>
+					déclaration relative à la protection de la vie privée
+				</a>
+				).
+			</p>
+			<p>
+				<b>Enquêtes protégées par mot de passe:</b>
+			</p>
+			<p>
+				lorsque votre enquête est sécurisée par un <b>mot de passe seulement</b>,
+				EUSurvey <b>n’enregistre aucune</b> information liée à l’utilisateur.
+			</p>
+			<p>
+				Toutefois, l’adresse IP de chaque connexion au serveur est enregistrée pour
+				des raisons de sécurité (voir
+				<a
+						href="https://ec.europa.eu/eusurvey/home/privacystatement?language=fr"
+						target="_blank"
+						>
+					déclaration relative à la protection de la vie privée
+				</a>
+				).
+			</p>
+			<p>
+				<b>Enquête sécurisée avec l’authentification EU Login:</b>
+			</p>
+			<p>
+				lorsque votre enquête est sécurisée par <b>l’authentification EU Login</b>,
+				EUSurvey <b>enregistrera</b> l’adresse électronique du compte EU Login.
+			</p>
+			<p>
+				Toutefois, l’adresse IP de chaque connexion au serveur est enregistrée pour
+				des raisons de sécurité (voir
+				<a
+						href="https://ec.europa.eu/eusurvey/home/privacystatement?language=fr"
+						target="_blank"
+						>
+					déclaration relative à la protection de la vie privée
+				</a>
+				).
+			</p>
+			<p>
+				<b>Envoi d’invitations par l’intermédiaire d’EUSurvey:</b>
+				<b></b>
+			</p>
+			<p>
+				si vous utilisez EUSurvey pour envoyer des invitations à vos participants
+				au moyen d’une liste d’invités sur la page «Participants», ils recevront
+				chacun <b>un lien d’accès individuel</b>.
+			</p>
+			<p>
+				Lors de la soumission, EUSurvey enregistrera un numéro d’invitation pouvant
+				être utilisé pour <b>associer</b> le participant invité aux contributions
+				soumises. Ce comportement est indépendant des paramètres de sécurité de
+				votre enquête.
+			</p>
+			<p>
+				De plus, l’adresse IP de chaque connexion au serveur est enregistrée pour
+				des raisons de sécurité (voir
+				<a
+						href="https://ec.europa.eu/eusurvey/home/privacystatement?language=fr"
+						target="_blank"
+						>
+					déclaration relative à la protection de la vie privée
+				</a>
+				).
+			</p>
+			<p>
+				<b>Créer un sondage anonyme:</b>
+			</p>
+			<p>
+				vous pouvez choisir de créer un sondage anonyme en activant l’option    <b>«Anonymous survey mode»</b> dans la section «Sécurité» de la page
+				«Propriétés».
+			</p>
+			<p>
+				Toutes les informations utilisateur collectées seront alors    <b>remplacées</b> par <b>«Anonyme»</b>.
+			</p>
+			<p>
+				Toutefois, l’adresse IP de chaque connexion au serveur est enregistrée pour
+				des raisons de sécurité (voir
+				<a
+						href="https://ec.europa.eu/eusurvey/home/privacystatement?language=fr"
+						target="_blank"
+						>
+					déclaration relative à la protection de la vie privée
+				</a>
+				).
+			</p>
+			<h2>
+				Les enquêtes doivent-elles inclure une déclaration relative à la protection
+				de la vie privée?
+			</h2>
+			<p>
+				Cela dépend des questions posées et du type de données recueillies dans le
+				cadre de votre enquête.
+			</p>
+			<p>
+				Veuillez noter que certaines personnes pourraient refuser de répondre à
+				votre enquête si vous n’êtes pas en mesure de garantir la confidentialité
+				des données fournies.
+			</p>
+			<p>
+				<b>Pour le personnel des institutions de l’UE uniquement:</b>
+			</p>
+			<p>
+				Nous attirons votre attention sur la politique en matière de «protection
+				des personnes physiques à l’égard du traitement des données à caractère
+				personnel [...]» adoptée conformément au
+				<a
+						href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:32018R1725"
+						target="_blank"
+						>
+					règlement (UE) 2018/1725
+				</a>
+				.
+			</p>
+			<p>
+				Si des données à caractère personnel sont recueillies, une déclaration
+				relative à la protection de la vie privée doit être publiée avec le
+				questionnaire.
+			</p>
+			<p>
+				Veuillez prendre contact avec le coordinateur de la protection des données
+				(CPD) de votre DG afin de valider cette déclaration.
+			</p>
+			<p>
+				En outre, toute collecte de données à caractère personnel doit être
+				notifiée au délégué à la protection des données (DPD). Veuillez contacter
+				votre CPD si vous avez besoin d’aide concernant cette notification.
+			</p>
+			<p>
+				Vous trouverez ci-joint un modèle de déclaration relative à la protection
+				de la vie privée, que vous pouvez utiliser pour vos enquêtes. Vous devez le
+				modifier et l’adapter à vos besoins:
+			</p>
+			<p>
+				Modèle:
+				<u>
+					<a
+							href="https://circabc.europa.eu/ui/group/599f39d2-e0cc-4765-bfdc-c9917c931509/library/dfed4f34-fa25-42ed-af44-e1acc4f0a58f/details"
+							>
+						«Déclaration relative à la protection de la vie privée pour les
+						enquêtes et les consultations»
+					</a>
+				</u>
+			</p>
+
+		</div>
 	
 	
 		</div>

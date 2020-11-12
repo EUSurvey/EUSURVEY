@@ -5,7 +5,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 import javax.persistence.*;
@@ -27,7 +26,7 @@ public class Download extends Question {
 	
 	private List<File> files = new ArrayList<>();
 	
-	public Download(Survey survey, String text, String shortname, String uid) {
+	public Download(String text, String shortname, String uid) {
 		setTitle(text);
 		setUniqueId(uid);
 		setShortname(shortname);
@@ -44,7 +43,7 @@ public class Download extends Question {
 		this.files = files;
 	}
 	
-	public Download copy(String fileDir) throws ValidationException, IntrusionException
+	public Download copy(String fileDir) throws ValidationException
 	{
 		Download copy = new Download();
 		baseCopy(copy);
@@ -58,7 +57,9 @@ public class Download extends Question {
 			}
 		
 		} catch (org.hibernate.LazyInitializationException e)
-		{}
+		{
+			//ignore
+		}
 		
 		return copy;
 	}

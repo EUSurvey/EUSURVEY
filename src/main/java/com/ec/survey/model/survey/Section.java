@@ -17,12 +17,12 @@ import javax.persistence.Entity;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Section extends Element {
 	
-	public final static String TABTITLE = "TABTITLE";
+	public static final String TABTITLE = "TABTITLE";
 	private static final long serialVersionUID = 1L;
 	private int level = 1;
 	private String tabTitle;
 	
-	public Section(Survey survey, String ptitle, String shortname, String uid) {
+	public Section(String ptitle, String shortname, String uid) {
 		setTitle(ptitle);
 		setShortname(shortname);
 		setUniqueId(uid);

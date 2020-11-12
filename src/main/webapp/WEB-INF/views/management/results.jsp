@@ -46,8 +46,8 @@
 		
 		.filterinfo {
 			position: absolute;
-			right: 5px;
-    		top: -30px;
+			right: 2px;
+    		top: -24px;
 		}
 		
 		.white {
@@ -79,8 +79,8 @@
 		    padding: 8px;
 		}
 		
-		.glyphicon-question-sign, .glyphicon-info-sign {
-			font-size: 22px;
+		.glyphicon-question-sign, .glyphicon-info-sign, th .glyphicon-remove {
+			font-size: 18px;
 			vertical-align: bottom;
 		}
 	
@@ -127,6 +127,10 @@
 				
 			<c:if test="${deletedAnswers != null}">
 				showSuccess('${deletedAnswers}&nbsp;<spring:message code="message.ContributionDeleted" />');
+			</c:if>
+			
+			<c:if test="${columnDeleted != null}">
+				showSuccess('<spring:message code="message.ColumnDeleted" />');
 			</c:if>
 			
 			$("#form-menu-tab").addClass("active");
@@ -177,6 +181,13 @@
 			$('[data-toggle="tooltip"]').tooltip(); 
 
 		});
+		
+		function showDeleteColumnDialog(uid)
+		{
+			$('.resultoverlaymenu').hide();
+			$('#deleteColumnUID').val(uid);
+			$('#confirmDeleteColumnDialog').modal('show')
+		}
 		
 		function checkAndShowMultiDeleteDialog()
 		{
@@ -343,6 +354,16 @@
 			}
 		}
 		
+		function checkColumnConfirmationTicked(input)
+		{
+			if ($(input).is(':checked')) 
+			{ 
+				$('#deleteColumnConfirm').removeClass('disabled'); 
+			} else {
+				$('#deleteColumnConfirm').addClass('disabled');
+			}
+		}
+		
 		function submitDeleteMultiple()
 		{
 			if (!$("#agreedelete").is(":checked"))
@@ -352,6 +373,19 @@
 			
 			$('#confirmDeleteMultipleDialog').modal('hide');
 			$("#operation").val("multidelete");
+			$("#resultsForm").submit();
+		}
+		
+		function submitDeleteColumn()
+		{
+
+			if (!$("#agreedeletecolumn").is(":checked"))
+			{
+				return;	
+			}
+			
+			$('#confirmDeleteColumnDialog').modal('hide');
+			$("#operation").val("deletecolumn");
 			$("#resultsForm").submit();
 		}
 				
@@ -649,21 +683,23 @@
 		
 			$('#delete-contribution-dialog').modal('hide');
 			$('#show-wait-image').modal('show');
-			
+			// DELETE <url/eusurvey/contribution/UID>
 			$.ajax({
-				type:'POST',
-				  url: '<c:url value="/deletecontribution/"/>' + deletionCode,
+				type:'DELETE',
+				  url: '<c:url value="/contribution/"/>' + deletionCode,
 				  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 				  cache: false,
 				  success: function( data ) {						  
-					  if (data == "success") {
-							$('#message').val("success");				
-						} else {
-							$('#message').val("failure");
-						}
-						$('#resultsForm').submit();
+					$('#message').val("success");	
+				  },
+				  error: function(data) {
+					$('#message').val("failure");
+				  },
+				  complete: function(data) {
+					$('#resultsForm').submit();
+				  }			
 				}
-			});	
+			);	
 			
 			return false;
 		}
@@ -754,6 +790,7 @@
 	<form:form modelAttribute="paging" id="resultsForm" method="POST" action="${contextpath}/${sessioninfo.shortname}/management/results" style="padding-top: 20px; padding-bottom: 0px;">
 		<input type="hidden" name="operation" id="operation" />
 		<input type="hidden" name="sort" id="sort" />
+		<input type="hidden" id="deleteColumnUID" name="deleteColumnUID" />
 		
 		<div class="fixedtitleform" style="padding-left: 10px; padding-right: 10px; padding-bottom:7px; border-bottom: 0px solid #ddd;">
 					
@@ -1031,6 +1068,27 @@
 			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
 			<a id="deleteContributionConfirm" onclick="submitDeleteMultiple()"  class="btn disabled btn-primary"><spring:message code="label.Yes" /></a>
 			<a id="deleteContributionCancel"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>					
+		</div>
+		</div>
+		</div>
+	</div>
+	
+	<div class="modal" id="confirmDeleteColumnDialog" data-backdrop="static">
+		<div class="modal-dialog">
+    	<div class="modal-content">
+		<div class="modal-body">
+			<spring:message code="question.DeleteColumns" />
+			<br /><br />
+			<span style="color: #FF9800;  font-size: 40px; margin-left: 20px;" class="glyphicon glyphicon-exclamation-sign"></span>
+			<div style="display: inline-block; vertical-align: top; padding-top: 10px;">
+				<input style="margin-left: 30px;" type="checkbox" id="agreedeletecolumn" onclick="checkColumnConfirmationTicked(this)" /> <spring:message code="label.Imsure" />
+			</div>
+			<br /><br />
+		</div>
+		<div class="modal-footer">
+			<img id="delete-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
+			<a id="deleteColumnConfirm" onclick="submitDeleteColumn()"  class="btn disabled btn-primary"><spring:message code="label.Delete" /></a>
+			<a id="deleteColumnCancel"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>					
 		</div>
 		</div>
 		</div>

@@ -45,7 +45,7 @@ function getNewElement(item)
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("numberitem"))
 	{
-		element = getBasicElement("NumberQuestion", true, "Number Question", item.attr("id"), true);
+		element = getBasicElement("NumberQuestion", true, "Number-Slider Question", item.attr("id"), true);
 		element.decimalPlaces = 0;
 		element.unit = "";
 		element.min = null;
@@ -110,6 +110,15 @@ function getNewElement(item)
 		element.maxString = null;
 		element.css = "date";
 		updateComplexityScore("addSimpleQuestion");
+	} else if (item.hasClass("timeitem"))
+	{
+		element = getBasicElement("TimeQuestion", true, "Time", item.attr("id"), true);
+		element.min = null;
+		element.minString = null;
+		element.max = null;
+		element.maxString = null;
+		element.css = "time";
+		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("textitem"))
 	{
 		element = getBasicElement("Text", false, "Text", item.attr("id"), false);
@@ -136,7 +145,7 @@ function getNewElement(item)
 	} else if (item.hasClass("uploaditem"))
 	{
 		element = getBasicElement("Upload", true, "Please upload your file", item.attr("id"), true);
-		element.help = "The maximum file size is 1 MB";
+		//element.help = "The maximum file size is 1 MB";
 		
 		if (isOPC)
 		{
@@ -402,7 +411,7 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		} else {
 			element.optional = true;
 		}
-		element.isAttribute = true;
+		element.isAttribute = false;
 		element.isUnique = false;
 		element.attributeName = element.shortname;
 		element.readonly = false;		

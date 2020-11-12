@@ -35,6 +35,15 @@
 			});
 		</c:if>
 		
+		<c:if test="${showDownloadPdfDialog != null }">
+			$(function() {
+				$('#caseid').val('${code}');
+				$('#emailcontribution').val('${email}');
+				$('#download-contribution-dialog').modal('show');
+				setTimeout(function() {createCaptcha();}, 100);
+			});			
+		</c:if>
+		
 		function checkEmail()
 		{
 			var val = $("#emailcontribution").val();

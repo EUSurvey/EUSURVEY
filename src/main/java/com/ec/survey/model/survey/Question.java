@@ -21,7 +21,8 @@ import java.util.Objects;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public abstract class Question extends Element {
 	
-	public final static String FEEDBACK = "FEEDBACK";
+	public static final String FEEDBACK = "FEEDBACK";
+	public static final String FIRSTCELL = "FIRSTCELL";
 	
 	private static final long serialVersionUID = 1L;
 	private String help;
@@ -36,7 +37,7 @@ public abstract class Question extends Element {
 	
 	public Question() {}
 	
-	public Question(Survey survey, String title, String shortname, String uid) {
+	public Question(String title, String shortname, String uid) {
 		this.setTitle(title);
 		this.setUniqueId(uid);
 		this.setShortname(shortname);
@@ -47,7 +48,7 @@ public abstract class Question extends Element {
 		return isUnique;
 	}	
 	public void setIsUnique(Boolean isUnique) {
-		this.isUnique = isUnique != null ? isUnique : false;
+		this.isUnique = isUnique != null && isUnique;
 	}
 	
 	@Column(name = "QHELP")
@@ -64,7 +65,7 @@ public abstract class Question extends Element {
 		return optional;
 	}	
 	public void setOptional(Boolean optional) {
-		this.optional = optional == null ? false : optional;
+		this.optional = optional != null && optional;
 	}
 	
 	@Column(name = "QREADONLY")
@@ -72,7 +73,7 @@ public abstract class Question extends Element {
 		return readonly;
 	}	
 	public void setReadonly(Boolean readonly) {
-		this.readonly = readonly == null ? false : readonly;
+		this.readonly = readonly != null && readonly;
 	}	
 	
 	@Column(name = "QATT")
@@ -80,7 +81,7 @@ public abstract class Question extends Element {
 		return attribute;
 	}	
 	public void setIsAttribute(Boolean attribute) {
-		this.attribute = attribute == null ? false : attribute;
+		this.attribute = attribute != null && attribute;
 	}
 	
 	@Column(name = "QATTNAME")

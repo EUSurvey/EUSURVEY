@@ -38,33 +38,35 @@ public class EcasUserDeactivator implements Runnable {
 						
 			logger.info("EcasUserDeactivator started");
 			stopWatch.start("get LDAP data");
-			List<String> usersList = ldapService.getAllEcasUserNames();
-			Set<String> users = new HashSet<>(usersList);
+			List<String> activatedUsersList = ldapService.getAllEcasUserNames();
+			Set<String> activatedUsersSet = new HashSet<>(activatedUsersList);
 			stopWatch.stop();
-			logger.info("Ldap users count: "+users.size());
+			logger.info("Ldap users count: "+activatedUsersSet.size());
 			
 			logger.info("EcasUserDeactivator: Users read");
 			stopWatch.start("get database data");
-			Map<String,EcasUser> existingusers = ldapDBService.getAllECASLogins();
-			logger.info("Database users count: "+existingusers.size());
+			Map<String,EcasUser> usersInDB = ldapDBService.getAllECASLogins();
+			logger.info("Database users count: "+usersInDB.size());
 			stopWatch.stop();
 
 			stopWatch.start("update Data");		
-			List<Integer> ids = new ArrayList<>();
+			List<Integer> userIdsToDeactivate = new ArrayList<>();
 			String name;
 			EcasUser ecasUser;
-			for (Entry<String, EcasUser> item : existingusers.entrySet())
+
+			// Go through all users in DB and compare them to the activated users in the LDAP
+			for (Entry<String, EcasUser> userInDB : usersInDB.entrySet())
 			{
-				name = item.getKey();
-				ecasUser = item.getValue();
-				if (!users.contains(name) && (ecasUser.getDeactivated() == null || !ecasUser.getDeactivated()))
+				name = userInDB.getKey();
+				ecasUser = userInDB.getValue();
+				if (!activatedUsersSet.contains(name) && (ecasUser.getDeactivated() == null || !ecasUser.getDeactivated()))
 				{
-					ids.add(existingusers.get(name).getId());
+					userIdsToDeactivate.add(usersInDB.get(name).getId());
 				}				
 			}
-			if (ids.size() > 0)
+			if (!userIdsToDeactivate.isEmpty())
 			{
-				administrationService.deactivateEcasUsers(ids);
+				administrationService.deactivateEcasUsers(userIdsToDeactivate);
 			}
 			schemaService.saveLastLDAPSynchronization2Date(new Date());
 			

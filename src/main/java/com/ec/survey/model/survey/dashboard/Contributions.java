@@ -19,7 +19,7 @@ public class Contributions {
 	private int surveyId;
 	private int surveyIndex;
 	private String surveyTitle;
-	private Map<Date, Integer> answersPerDay = new TreeMap<Date, Integer>();
+	private Map<Date, Integer> answersPerDay = new TreeMap<>();
 	private Map<Integer, String> surveys;
 	private int[] contributionStates;
 	
@@ -86,7 +86,7 @@ public class Contributions {
 	        endDate = temp;
 	    }
 
-	    List<Date> resultList = new ArrayList<Date>();
+	    List<Date> resultList = new ArrayList<>();
 	    Calendar cal = Calendar.getInstance();
 	    cal.setTime(startDate);
 

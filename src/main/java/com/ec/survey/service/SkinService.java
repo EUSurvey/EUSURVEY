@@ -38,7 +38,7 @@ public class SkinService extends BasicService {
 	
 	private List<Skin> orderSkins(List<Skin> skins)
 	{
-		List<Skin> result = new ArrayList<Skin>();
+		List<Skin> result = new ArrayList<>();
 		
 		Skin[] defaultSkins = new Skin[5];
 		
@@ -84,7 +84,7 @@ public class SkinService extends BasicService {
 	public boolean nameAlreadyExists(String name, int userId) {
 		Session session = sessionFactory.getCurrentSession();		
 		Query query = session.createQuery("FROM Skin s WHERE s.name LIKE :name AND s.owner.id = :userId").setInteger("userId", userId).setString("name", name);
-		return query.list().size() > 0;
+		return !query.list().isEmpty();
 	}
 	
 	@Transactional(readOnly = true)
@@ -150,6 +150,6 @@ public class SkinService extends BasicService {
 		Query query = session.createQuery("FROM Skin s WHERE s.name = :name").setString("name", name);
 		@SuppressWarnings("unchecked")
 		List<Skin> skins = query.list();
-		return skins.size() > 0 ? skins.get(0) : null;
+		return !skins.isEmpty() ? skins.get(0) : null;
 	}
 }

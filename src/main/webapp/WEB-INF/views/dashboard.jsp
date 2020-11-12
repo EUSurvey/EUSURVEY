@@ -56,19 +56,34 @@
 				<div id="invitations-button" data-bind="attr: {class: mode() == 'invitations' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToInvitations"><spring:message code="label.PersonalInvitations" /></a></div>
 			</div>		
 	
-			<div class="fullpage">			
+			<div class="fullpage" style="padding-top:137px;">			
 			
 				<c:if test="${USER.formPrivilege > 0}">
 			
 					<div id="surveysarea" data-bind="visible: mode() == 'surveys'">	
+					
+						<div style="text-align: left; margin-left: 15px; margin-bottom: 20px;">
+							<span style="margin-right: 10px;"><spring:message code="label.Surveys" />:</span>
+														
+							<select id="surveystatesselector" class="form-control" style="display: inline; width: auto;" onchange="_dashboard.reloadSurveyWidgets();">
+								<option value="my" selected="selected"><spring:message code="label.MySurveys" /></option>
+								<option value="shared"><spring:message code="label.SharedWithMe" /></option>
+								<option value="all"><spring:message code="label.BothOfThem" /></option>
+							</select>	
+						</div>	
 				
 					<c:if test="${USER.formPrivilege > 0 && USER.canCreateSurveys}">
-						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived'">
+						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived' && sharedOnly() == false">
 							<a class="btn btn-primary" onclick="showCreateSurveyDialog();"><spring:message code="label.CreateFirstSurvey" /></a>
 						</div>
 					</c:if>
+					
+						<div style="text-align: center" data-bind="visible: (lastEditedSurveyShortname() == null || lastEditedSurveyShortname().length == 0) && surveysMode() != 'archived' && sharedOnly() == true">
+							<spring:message code="info.NoSharedSurveys" />
+						</div>
 							
 						<div class="container-fluid" style="display: none" data-bind="visible: (lastEditedSurveyShortname() != null && lastEditedSurveyShortname().length > 0) || surveysMode() == 'archived'">
+														
 							<div class="row" style="margin-bottom: 10px;">				
 								<div class="col-md-6" >
 									<div data-bind="visible: lastEditedByMeSurveyShortname() != null && lastEditedByMeSurveyShortname().length > 0">
@@ -154,14 +169,7 @@
 								<div class="col-md-4">
 									<div class="widget">
 										<div class="widgettitle" style="padding-bottom: 7px;">
-											<div id="surveys">
-												<div style="float: right">
-													<select id="surveystatesselector" class="dashboardselect" onchange="_dashboard.loadSurveyStates(0)">
-														<option value="all" selected="selected"><spring:message code="label.AllSurveys" /></option>
-														<option value="my"><spring:message code="label.Own" /></option>
-														<option value="shared"><spring:message code="label.Shared" /></option>
-													</select>
-												</div>
+											<div id="surveys">												
 												<spring:message code="label.SurveyStatistics" />
 												<div class="widgetheaderhide" data-bind="visible: surveyStates() == null">
 												</div>
@@ -240,446 +248,449 @@
 										
 										<img class="center" data-bind="visible: surveys() == null && archives() == null" src="${contextpath}/resources/images/ajax-loader.gif" />
 										
-										<table class="table table-striped table-bordered" style="margin-bottom: 10px">
-											<tr class="headerrow">
-												<!-- ko if: surveysMode() == 'simple' || surveysMode() == 'advanced' -->									
-												<th>
-													<div style="float: right">
-														<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('SURVEYNAME',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('SURVEYNAME',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-													</div>
-													<spring:message code="label.Alias" />
-												</th>
-												<th>
-													<div style="float: right">
-														<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('TITLESORT',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('TITLESORT',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-													</div>
-													<spring:message code="label.Title" />
-												</th>
-												<th>
-													<spring:message code="label.Owner" />
-												</th>
-													
-												<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Status" /></th>
-												<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Security" /></th>
-												<th data-bind="visible: surveysMode() == 'advanced'">
-													<div style="float: right">
-														<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Survey_Start_Date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Survey_Start_Date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-													</div>
-													<spring:message code="label.StartDate" />											
-												</th>
-												<th data-bind="visible: surveysMode() == 'advanced'">
-													<div style="float: right">
-														<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Survey_End_Date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Survey_End_Date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-													</div>
-													<spring:message code="label.ExpiryDate" />
-												</th>
-												<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Invited" /></th>
-												<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Drafts" /></th>
-												<th style="min-width: 130px;">
-													<div style="float: right">
-														<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-													</div>
-													<spring:message code="label.Contributions" />											
-												</th>
-												<th><spring:message code="label.Languages" /></th>
-												<th style="min-width: 280px;"><spring:message code="label.Actions" /></th>
-												
-												<!-- /ko -->
-												
-												<!-- ko if: surveysMode() == 'reported' -->									
-												<th>
-													<div style="float: right">
-														<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('SURVEYNAME',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('SURVEYNAME',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-													</div>
-													<spring:message code="label.Alias" />
-												</th>
-												<th>
-													<div style="float: right">
-														<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('TITLESORT',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('TITLESORT',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-													</div>
-													<spring:message code="label.Title" />
-												</th>
-												<th>
-													<spring:message code="label.Owner" />
-												</th>
-													
-												<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Status" /></th>
-												<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Security" /></th>
-												<th data-bind="visible: surveysMode() == 'advanced'">
-													<div style="float: right">
-														<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Survey_Start_Date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Survey_Start_Date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-													</div>
-													<spring:message code="label.StartDate" />											
-												</th>
-												<th data-bind="visible: surveysMode() == 'advanced'">
-													<div style="float: right">
-														<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Survey_End_Date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Survey_End_Date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-													</div>
-													<spring:message code="label.ExpiryDate" />
-												</th>
-												<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Invited" /></th>
-												<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Drafts" /></th>
-												<th style="min-width: 130px;">
-													<div style="float: right">
-														<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
-													</div>
-													<spring:message code="label.Contributions" />											
-												</th>
-												<th><spring:message code="label.Languages" /></th>
-												<th style="min-width: 280px;"><spring:message code="label.Actions" /></th>
-												
-												<!-- /ko -->
-												
-												<!-- ko if: surveysMode() == 'archived' -->	
+										<div class="table-responsive">
+										
+											<table class="table table-striped table-bordered" style="margin-bottom: 10px; max-width: 99.9%">
+												<tr class="headerrow">
+													<!-- ko if: surveysMode() == 'simple' || surveysMode() == 'advanced' -->									
 													<th>
 														<div style="float: right">
-															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Shortname',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Shortname',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('SURVEYNAME',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('SURVEYNAME',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 														</div>
 														<spring:message code="label.Alias" />
 													</th>
 													<th>
 														<div style="float: right">
-															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('surveyTitle',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('surveyTitle',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('TITLESORT',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('TITLESORT',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 														</div>
 														<spring:message code="label.Title" />
 													</th>
 													<th>
+														<spring:message code="label.Owner" />
+													</th>
+														
+													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Status" /></th>
+													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Security" /></th>
+													<th data-bind="visible: surveysMode() == 'advanced'">
 														<div style="float: right">
-															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('created',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('created',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Survey_Start_Date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Survey_Start_Date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 														</div>
-														<spring:message code="label.Created" />
+														<spring:message code="label.StartDate" />											
+													</th>
+													<th data-bind="visible: surveysMode() == 'advanced'">
+														<div style="float: right">
+															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Survey_End_Date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Survey_End_Date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+														</div>
+														<spring:message code="label.ExpiryDate" />
+													</th>
+													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Invited" /></th>
+													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Drafts" /></th>
+													<th style="min-width: 130px;">
+														<div style="float: right">
+															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+														</div>
+														<spring:message code="label.Contributions" />											
+													</th>
+													<th><spring:message code="label.Languages" /></th>
+													<th style="min-width: 280px;"><spring:message code="label.Actions" /></th>
+													
+													<!-- /ko -->
+													
+													<!-- ko if: surveysMode() == 'reported' -->									
+													<th>
+														<div style="float: right">
+															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('SURVEYNAME',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('SURVEYNAME',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+														</div>
+														<spring:message code="label.Alias" />
 													</th>
 													<th>
 														<div style="float: right">
-															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('archived',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('archived',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('TITLESORT',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('TITLESORT',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 														</div>
-														<spring:message code="label.Archived" />
+														<spring:message code="label.Title" />
 													</th>
-													<th style="width:150px">
+													<th>
+														<spring:message code="label.Owner" />
+													</th>
+														
+													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Status" /></th>
+													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Security" /></th>
+													<th data-bind="visible: surveysMode() == 'advanced'">
 														<div style="float: right">
-															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Survey_Start_Date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Survey_Start_Date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 														</div>
-														<spring:message code="label.Contributions" />
+														<spring:message code="label.StartDate" />											
 													</th>
-													<th>PDF</th>
-													<th style="min-width: 70px;"><spring:message code="label.Results" /></th>
-													<th style="min-width: 70px;"><spring:message code="label.Statistics" /></th>
-													<th><spring:message code="label.Actions" /></th>										
-												<!-- /ko -->
-												
-											</tr>
-											
-											<tr id="surveyfilterrow" class="filterrow">
-												<!-- ko if: surveysMode() != 'archived' -->									
-											
-												<th><input type="text" id="shortname" placeholder="<spring:message code="label.Filter" />" /></th>
-												<th><input type="text" id="title" placeholder="<spring:message code="label.Filter" />" /></th>
-												<th><input type="text" id="owner" placeholder="<spring:message code="label.Filter" />" /></th>
-													
-												<th data-bind="visible: surveysMode() == 'advanced'">
-													<select id="status">
-														<option value=""><spring:message code="label.All" /></option>
-														<option value="Published"><spring:message code="label.Published" /></option>
-														<option value="Unpublished"><spring:message code="label.Unpublished" /></option>
-													</select>
-												</th>
-												<th data-bind="visible: surveysMode() == 'advanced'">
-													<select id="security">
-														<option value=""><spring:message code="label.All" /></option>
-														<option value="secured"><spring:message code="form.Secured" /></option>
-														<option value="open"><spring:message code="form.Open" /></option>
-													</select>
-												</th>
-												<th data-bind="visible: surveysMode() == 'advanced'" class="filtercell cellstart">
-													<div class="btn-toolbar" style="margin: 0px; text-align: center">
-														
-														<div class="filtertools" data-bind="visible: surveyFilterStartFrom().length > 0 || surveyFilterStartTo().length > 0">
-															<a data-toggle="tooltip" title="<spring:message code="label.RemoveFilter" />" data-bind="click: function(data, event) {surveyFilterStartFrom(''); surveyFilterStartTo(''); clearDashboardFilterCellContent(this)}">
-																<span class="glyphicon glyphicon-remove-circle black"></span>
-															</a>
+													<th data-bind="visible: surveysMode() == 'advanced'">
+														<div style="float: right">
+															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Survey_End_Date',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Survey_End_Date',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
 														</div>
-																								
-														<div class="datefilter" style="float: left">
-														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														  	 <span data-bind="html: surveyFilterStartFrom().length > 0 ? surveyFilterStartFrom() : '<spring:message code="label.from" />'"></span>
-														     &nbsp;<span class="caret"></span>
-														  </a>
-														  <div class="overlaymenu hideme">
-														  		<spring:message code="label.from" />
-														  		<input type="hidden" name="metafilterstartdatefrom" class="hiddendate" data-bind="value: surveyFilterStartFrom" />
-														    	<div id="metafilterstartdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-														   </div>
-														</div>
-														<div class="datefilter" style="float: left">	
-														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														  	<span data-bind="html: surveyFilterStartTo().length > 0 ? surveyFilterStartTo() : '<spring:message code="label.to" />'"></span>
-														  	&nbsp;<span class="caret"></span>
-														  </a>
-														 <div class="overlaymenu hideme">
-														 		<spring:message code="label.to" /> 
-														    	<input type="hidden" name="metafilterstartdateto" class="hiddendate" data-bind="value: surveyFilterStartTo" />
-														    	<div id="metafilterstartdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-														    </div>
-														</div>	
-													</div>											
-												</th>
-												<th data-bind="visible: surveysMode() == 'advanced'" class="filtercell cellend">
-													<div class="btn-toolbar" style="margin: 0px; text-align: center">
-													
-														<div class="filtertools" data-bind="visible: surveyFilterEndFrom().length > 0 || surveyFilterEndTo().length > 0">
-															<a data-toggle="tooltip" title="<spring:message code="label.RemoveFilter" />" data-bind="click: function(data, event) {surveyFilterEndFrom(''); surveyFilterEndTo(''); clearDashboardFilterCellContent(this)}">
-																<span class="glyphicon glyphicon-remove-circle black"></span>
-															</a>
-														</div>
-													
-														<div class="datefilter" style="float: left">
-														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														     <span data-bind="html: surveyFilterEndFrom().length > 0 ? surveyFilterEndFrom() : '<spring:message code="label.from" />'"></span>
-														     &nbsp;<span class="caret"></span>
-														  </a>
-														  <div class="overlaymenu hideme">
-														  		<spring:message code="label.from" />
-														    	<input type="hidden" name="metafilterenddatefrom" class="hiddendate" data-bind="value: surveyFilterEndFrom" />
-														    	<div id="metafilterenddatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-														   </div>
-														</div>
-														<div class="datefilter" style="float: left">	
-														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-														  	<span data-bind="html: surveyFilterEndTo().length > 0 ? surveyFilterEndTo() : '<spring:message code="label.to" />'"></span>
-														  	&nbsp;<span class="caret"></span>
-														  </a>
-														 <div class="overlaymenu hideme">
-														 		<spring:message code="label.to" />
-														    	<input type="hidden" name="metafilterenddateto" class="hiddendate" data-bind="value: surveyFilterEndTo" />
-														    	<div id="metafilterenddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-														    </div>
-														</div>	
-													</div>	
-												</th>
-												<th data-bind="visible: surveysMode() == 'advanced'"></th>
-												<th data-bind="visible: surveysMode() == 'advanced'"></th>
-												<th></th>
-												<th>
-													<select id="language">
-														<option value=""><spring:message code="label.All" /></option>
-														<c:forEach items="${languages}" var="language">	
-															<c:if test="${language.official}">		
-																<option value="<esapi:encodeForHTMLAttribute>${language.id}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
-															</c:if>
-														</c:forEach>
-													</select>
-												</th>
-												<th style="min-width: 200px;">
-													<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys(0);"><spring:message code="label.Search" /></a>
-													<a class="btn btn-default" onclick="_dashboard.resetSurveys();"><spring:message code="label.Reset" /></a>
-												</th>
-												
-												<!-- /ko -->
-												
-												<!-- ko if: surveysMode() == 'archived' -->	
-													<th><input type="text" id="archiveshortname" placeholder="<spring:message code="label.Filter" />" /></th>
-													<th><input type="text" id="archivetitle" placeholder="<spring:message code="label.Filter" />" /></th>
-													<th class="filtercell cellcreated">
-														<div class="btn-toolbar" style="margin: 0px; text-align: center">
-															<div class="filtertools" data-bind="visible: archivedFilterCreatedFrom().length > 0 || archivedFilterCreatedTo().length > 0">
-																<a data-toggle="tooltip" title="<spring:message code="label.RemoveFilter" />" data-bind="click: function(data, event) {archivedFilterCreatedFrom(''); archivedFilterCreatedTo(''); clearDashboardFilterCellContent(this)}">
-																	<span class="glyphicon glyphicon-remove-circle black"></span>
-																</a>
-															</div>
-														
-															<div class="datefilter" style="float: left">
-															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-															  	 <span data-bind="html: archivedFilterCreatedFrom().length > 0 ? archivedFilterCreatedFrom() : '<spring:message code="label.from" />'"></span>
-															     &nbsp;<span class="caret"></span>
-															  </a>
-															  <div class="overlaymenu hideme">
-															  		<spring:message code="label.from" />
-															  		<input type="hidden" name="metafiltercreateddatefrom" class="hiddendate" data-bind="value: archivedFilterCreatedFrom" />
-															    	<div id="metafiltercreateddatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-															   </div>
-															</div>
-															<div class="datefilter" style="float: left">	
-															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-															  	 <span data-bind="html: archivedFilterCreatedTo().length > 0 ? archivedFilterCreatedTo() : '<spring:message code="label.to" />'"></span>&nbsp;
-															    <span class="caret"></span>
-															  </a>
-															 <div class="overlaymenu hideme">
-															 		<spring:message code="label.to" /> 
-															    	<input type="hidden" name="metafiltercreateddateto" class="hiddendate" data-bind="value: archivedFilterCreatedTo" />
-															    	<div id="metafiltercreateddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-															    </div>
-															</div>	
-														</div>	
+														<spring:message code="label.ExpiryDate" />
 													</th>
-													<th class="filtercell cellarchived">
-														<div class="btn-toolbar" style="margin: 0px; text-align: center">
-															<div class="filtertools" data-bind="visible:archivedFilterArchivedFrom().length > 0 || archivedFilterArchivedTo().length > 0">
-																<a data-toggle="tooltip" title="<spring:message code="label.RemoveFilter" />" data-bind="click: function(data, event) {archivedFilterArchivedFrom(''); archivedFilterArchivedTo(''); clearDashboardFilterCellContent(this)}">
-																	<span class="glyphicon glyphicon-remove-circle black"></span>
-																</a>
-															</div>
-														
-															<div class="datefilter" style="float: left">
-															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-															  	 <span data-bind="html: archivedFilterArchivedFrom().length > 0 ? archivedFilterArchivedFrom() : '<spring:message code="label.from" />'"></span>
-															     &nbsp;<span class="caret"></span>
-															  </a>
-															  <div class="overlaymenu hideme">
-															  		<spring:message code="label.from" />
-															  		<input type="hidden" name="metafilterarchiveddatefrom" class="hiddendate" data-bind="value: archivedFilterArchivedFrom" />
-															    	<div id="metafilterarchiveddatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-															   </div>
-															</div>
-															<div class="datefilter" style="float: left">	
-															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
-															  	 <span data-bind="html: archivedFilterArchivedTo().length > 0 ? archivedFilterArchivedTo() : '<spring:message code="label.to" />'"></span>&nbsp;
-															    <span class="caret"></span>
-															  </a>
-															 <div class="overlaymenu hideme">
-															 		<spring:message code="label.to" /> 
-															    	<input type="hidden" name="metafilterarchiveddateto" class="hiddendate" data-bind="value: archivedFilterArchivedTo" />
-															    	<div id="metafilterarchiveddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
-															    </div>
-															</div>	
-														</div>	
+													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Invited" /></th>
+													<th data-bind="visible: surveysMode() == 'advanced'"><spring:message code="label.Drafts" /></th>
+													<th style="min-width: 130px;">
+														<div style="float: right">
+															<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+														</div>
+														<spring:message code="label.Contributions" />											
 													</th>
-													<th></th>
-													<th></th>
-													<th></th>
-													<th></th>
-													<th style="min-width: 150px;">
-														<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys(0);"><spring:message code="label.Search" /></a>
-														<a class="btn btn-default" onclick="_dashboard.resetSurveys();"><spring:message code="label.Reset" /></a>
-													</th>									
-												<!-- /ko -->
-												
-											</tr>
-											
-											<!-- ko if: surveysMode() != 'archived' -->									
-												<!-- ko foreach: surveys -->
-												<tr>
-													<td data-bind="html: shortname"></td>
-													<td>
-														<a data-bind="html: title.stripHtml115(), attr: {href: '${contextpath}/' + shortname + '/management/overview'}"></a>
-													</td>
-													<td data-bind="html: owner.name"></td>
+													<th><spring:message code="label.Languages" /></th>
+													<th style="min-width: 280px;"><spring:message code="label.Actions" /></th>
 													
-													<td data-bind="html: isActive ? labelpublished : labelunpublished, visible: $parent.surveysMode() == 'advanced'"></td>
-													<td data-bind="html: security.indexOf('secured') == 0 ? labelsecured : labelopen, visible: $parent.surveysMode() == 'advanced'"></td>
-													<td data-bind="html: startString, visible: $parent.surveysMode() == 'advanced'"></td>
-													<td data-bind="html: endString, visible: $parent.surveysMode() == 'advanced'"></td>
-															
-													<td data-bind="visible: $parent.surveysMode() == 'advanced', attr: {id: 'numberinvitations' + uniqueId}">
-														<img src="${contextpath}/resources/images/ajax-loader.gif" />
-													</td>
-													<td data-bind="visible: $parent.surveysMode() == 'advanced', attr: {id: 'numberdrafts' + uniqueId}">
-														<img src="${contextpath}/resources/images/ajax-loader.gif" />
-													</td>
-																					
-													<td data-bind="html: numberOfAnswerSetsPublished"></td>
-													<td style="word-break: break-all; word-wrap: break-word;">
-														<!-- ko foreach: translations -->
-														<div data-toggle="tooltip" title="Available" data-bind="html: $data, attr: {class: $data == $parent.language.code ? 'language pivotlanguage' : $.inArray($data, $parent.completeTranslations) > -1 ? 'language' : ' language languageUnpublished', title: $data == $parent.language.code ? '<spring:message code="label.PivotLanguage" />' : $.inArray($data, $parent.completeTranslations) > -1 ? '<spring:message code="label.Available" />' : '<spring:message code="label.NotYetAvailable" />'}"></div>
-														<!-- /ko -->
-													</td>
-													<td class="surveyactions">
-														<a data-bind="attr: {href: '${contextpath}/' + shortname + '/management/overview'}" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Open" />"><span class="glyphicon glyphicon-folder-open"></span></a>
-														
-														<!-- ko if: fullFormManagementRights -->
-														<a data-bind="attr: {href: '${contextpath}/' + shortname + '/management/edit'}"  rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span style="color: #333" class="glyphicon glyphicon-pencil"></span></a>
-														<!-- /ko -->
-														<!-- ko if: !fullFormManagementRights -->
-														<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span style="color: #aaa" class="glyphicon glyphicon-pencil disabled"></span></a>
-														<!-- /ko -->
-														
-													<!-- ko if: formManagementRights && canCreateSurveys -->
-													<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', 'true'); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
 													<!-- /ko -->
 													
-														<!-- ko if: formManagementRights -->
-														<a data-bind="attr: {href: '${contextpath}/noform/management/exportSurvey/false/' + shortname}" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></span></a>
-														<!-- /ko -->
-														
-														<!-- ko if: !formManagementRights -->
-														<a class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy" style="color: #ccc"></span></a>
-														<a class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt" style="color: #ccc"></span></a>
-														<!-- /ko -->
-																						
-														<!-- ko if: fullFormManagementRights && numberOfAnswerSetsPublished < 2001 && state != 'Running' -->	
-														<a data-bind="click: function(data, event) { showArchiveDialog(shortname, id, 'true'); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Archive" />"><span class="glyphicon glyphicon-import"></span></a>
-														<a data-bind="click: function(data, event) { showDeleteDialog(id); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></span></a>
-														<!-- /ko -->
+													<!-- ko if: surveysMode() == 'archived' -->	
+														<th>
+															<div style="float: right">
+																<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('Shortname',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('Shortname',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+															</div>
+															<spring:message code="label.Alias" />
+														</th>
+														<th>
+															<div style="float: right">
+																<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('surveyTitle',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('surveyTitle',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+															</div>
+															<spring:message code="label.Title" />
+														</th>
+														<th>
+															<div style="float: right">
+																<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('created',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('created',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+															</div>
+															<spring:message code="label.Created" />
+														</th>
+														<th>
+															<div style="float: right">
+																<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('archived',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('archived',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+															</div>
+															<spring:message code="label.Archived" />
+														</th>
+														<th style="width:150px">
+															<div style="float: right">
+																<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sort('replies',false);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a>
+															</div>
+															<spring:message code="label.Contributions" />
+														</th>
+														<th>PDF</th>
+														<th style="min-width: 70px;"><spring:message code="label.Results" /></th>
+														<th style="min-width: 70px;"><spring:message code="label.Statistics" /></th>
+														<th><spring:message code="label.Actions" /></th>										
+													<!-- /ko -->
 													
-														<!-- ko if: !fullFormManagementRights -->	
-														<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
-														<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc"></span></a>
-														<!-- /ko -->	
+												</tr>
+												
+												<tr id="surveyfilterrow" class="filterrow">
+													<!-- ko if: surveysMode() != 'archived' -->									
+												
+													<th><input type="text" id="shortname" placeholder="<spring:message code="label.Filter" />" /></th>
+													<th><input type="text" id="title" placeholder="<spring:message code="label.Filter" />" /></th>
+													<th><input type="text" id="owner" placeholder="<spring:message code="label.Filter" />" /></th>
 														
-														<!-- ko if: fullFormManagementRights && (numberOfAnswerSetsPublished > 2000 || state == 'Running')  -->	
-														<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.ArchiveDisabled" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
-														<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="info.CannotDeleteRunningSurvey" />"><span class="glyphicon glyphicon-remove" style="color: #ccc"></span></a>
-														<!-- /ko -->												
+													<th data-bind="visible: surveysMode() == 'advanced'">
+														<select id="status">
+															<option value=""><spring:message code="label.All" /></option>
+															<option value="Published"><spring:message code="label.Published" /></option>
+															<option value="Unpublished"><spring:message code="label.Unpublished" /></option>
+														</select>
+													</th>
+													<th data-bind="visible: surveysMode() == 'advanced'">
+														<select id="security">
+															<option value=""><spring:message code="label.All" /></option>
+															<option value="secured"><spring:message code="form.Secured" /></option>
+															<option value="open"><spring:message code="form.Open" /></option>
+														</select>
+													</th>
+													<th data-bind="visible: surveysMode() == 'advanced'" class="filtercell cellstart">
+														<div class="btn-toolbar" style="margin: 0px; text-align: center">
+															
+															<div class="filtertools" data-bind="visible: surveyFilterStartFrom().length > 0 || surveyFilterStartTo().length > 0">
+																<a data-toggle="tooltip" title="<spring:message code="label.RemoveFilter" />" data-bind="click: function(data, event) {surveyFilterStartFrom(''); surveyFilterStartTo(''); clearDashboardFilterCellContent(this)}">
+																	<span class="glyphicon glyphicon-remove-circle black"></span>
+																</a>
+															</div>
+																									
+															<div class="datefilter" style="float: left">
+															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+															  	 <span data-bind="html: surveyFilterStartFrom().length > 0 ? surveyFilterStartFrom() : '<spring:message code="label.from" />'"></span>
+															     &nbsp;<span class="caret"></span>
+															  </a>
+															  <div class="overlaymenu hideme">
+															  		<spring:message code="label.from" />
+															  		<input type="hidden" name="metafilterstartdatefrom" class="hiddendate" data-bind="value: surveyFilterStartFrom" />
+															    	<div id="metafilterstartdatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+															   </div>
+															</div>
+															<div class="datefilter" style="float: left">	
+															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+															  	<span data-bind="html: surveyFilterStartTo().length > 0 ? surveyFilterStartTo() : '<spring:message code="label.to" />'"></span>
+															  	&nbsp;<span class="caret"></span>
+															  </a>
+															 <div class="overlaymenu hideme">
+															 		<spring:message code="label.to" /> 
+															    	<input type="hidden" name="metafilterstartdateto" class="hiddendate" data-bind="value: surveyFilterStartTo" />
+															    	<div id="metafilterstartdatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+															    </div>
+															</div>	
+														</div>											
+													</th>
+													<th data-bind="visible: surveysMode() == 'advanced'" class="filtercell cellend">
+														<div class="btn-toolbar" style="margin: 0px; text-align: center">
 														
-														<!-- ko if: accessResultsRights -->
-														<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Results" />" data-bind="attr: {href: '${contextpath}/' + shortname + '/management/results'}"><img style="width: 20px; margin-bottom: 3px;" src="${contextpath}/resources/images/icons/24/table.png"></a>							
+															<div class="filtertools" data-bind="visible: surveyFilterEndFrom().length > 0 || surveyFilterEndTo().length > 0">
+																<a data-toggle="tooltip" title="<spring:message code="label.RemoveFilter" />" data-bind="click: function(data, event) {surveyFilterEndFrom(''); surveyFilterEndTo(''); clearDashboardFilterCellContent(this)}">
+																	<span class="glyphicon glyphicon-remove-circle black"></span>
+																</a>
+															</div>
+														
+															<div class="datefilter" style="float: left">
+															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+															     <span data-bind="html: surveyFilterEndFrom().length > 0 ? surveyFilterEndFrom() : '<spring:message code="label.from" />'"></span>
+															     &nbsp;<span class="caret"></span>
+															  </a>
+															  <div class="overlaymenu hideme">
+															  		<spring:message code="label.from" />
+															    	<input type="hidden" name="metafilterenddatefrom" class="hiddendate" data-bind="value: surveyFilterEndFrom" />
+															    	<div id="metafilterenddatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+															   </div>
+															</div>
+															<div class="datefilter" style="float: left">	
+															  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+															  	<span data-bind="html: surveyFilterEndTo().length > 0 ? surveyFilterEndTo() : '<spring:message code="label.to" />'"></span>
+															  	&nbsp;<span class="caret"></span>
+															  </a>
+															 <div class="overlaymenu hideme">
+															 		<spring:message code="label.to" />
+															    	<input type="hidden" name="metafilterenddateto" class="hiddendate" data-bind="value: surveyFilterEndTo" />
+															    	<div id="metafilterenddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+															    </div>
+															</div>	
+														</div>	
+													</th>
+													<th data-bind="visible: surveysMode() == 'advanced'"></th>
+													<th data-bind="visible: surveysMode() == 'advanced'"></th>
+													<th></th>
+													<th>
+														<select id="language">
+															<option value=""><spring:message code="label.All" /></option>
+															<c:forEach items="${languages}" var="language">	
+																<c:if test="${language.official}">		
+																	<option value="<esapi:encodeForHTMLAttribute>${language.id}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML><spring:message code="label.lang.${language.englishName}" /></esapi:encodeForHTML></option>
+																</c:if>
+															</c:forEach>
+														</select>
+													</th>
+													<th style="min-width: 200px;">
+														<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys(0);"><spring:message code="label.Search" /></a>
+														<a class="btn btn-default" onclick="_dashboard.resetSurveys();"><spring:message code="label.Reset" /></a>
+													</th>
+													
+													<!-- /ko -->
+													
+													<!-- ko if: surveysMode() == 'archived' -->	
+														<th><input type="text" id="archiveshortname" placeholder="<spring:message code="label.Filter" />" /></th>
+														<th><input type="text" id="archivetitle" placeholder="<spring:message code="label.Filter" />" /></th>
+														<th class="filtercell cellcreated">
+															<div class="btn-toolbar" style="margin: 0px; text-align: center">
+																<div class="filtertools" data-bind="visible: archivedFilterCreatedFrom().length > 0 || archivedFilterCreatedTo().length > 0">
+																	<a data-toggle="tooltip" title="<spring:message code="label.RemoveFilter" />" data-bind="click: function(data, event) {archivedFilterCreatedFrom(''); archivedFilterCreatedTo(''); clearDashboardFilterCellContent(this)}">
+																		<span class="glyphicon glyphicon-remove-circle black"></span>
+																	</a>
+																</div>
+															
+																<div class="datefilter" style="float: left">
+																  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+																  	 <span data-bind="html: archivedFilterCreatedFrom().length > 0 ? archivedFilterCreatedFrom() : '<spring:message code="label.from" />'"></span>
+																     &nbsp;<span class="caret"></span>
+																  </a>
+																  <div class="overlaymenu hideme">
+																  		<spring:message code="label.from" />
+																  		<input type="hidden" name="metafiltercreateddatefrom" class="hiddendate" data-bind="value: archivedFilterCreatedFrom" />
+																    	<div id="metafiltercreateddatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+																   </div>
+																</div>
+																<div class="datefilter" style="float: left">	
+																  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+																  	 <span data-bind="html: archivedFilterCreatedTo().length > 0 ? archivedFilterCreatedTo() : '<spring:message code="label.to" />'"></span>&nbsp;
+																    <span class="caret"></span>
+																  </a>
+																 <div class="overlaymenu hideme">
+																 		<spring:message code="label.to" /> 
+																    	<input type="hidden" name="metafiltercreateddateto" class="hiddendate" data-bind="value: archivedFilterCreatedTo" />
+																    	<div id="metafiltercreateddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+																    </div>
+																</div>	
+															</div>	
+														</th>
+														<th class="filtercell cellarchived">
+															<div class="btn-toolbar" style="margin: 0px; text-align: center">
+																<div class="filtertools" data-bind="visible:archivedFilterArchivedFrom().length > 0 || archivedFilterArchivedTo().length > 0">
+																	<a data-toggle="tooltip" title="<spring:message code="label.RemoveFilter" />" data-bind="click: function(data, event) {archivedFilterArchivedFrom(''); archivedFilterArchivedTo(''); clearDashboardFilterCellContent(this)}">
+																		<span class="glyphicon glyphicon-remove-circle black"></span>
+																	</a>
+																</div>
+															
+																<div class="datefilter" style="float: left">
+																  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+																  	 <span data-bind="html: archivedFilterArchivedFrom().length > 0 ? archivedFilterArchivedFrom() : '<spring:message code="label.from" />'"></span>
+																     &nbsp;<span class="caret"></span>
+																  </a>
+																  <div class="overlaymenu hideme">
+																  		<spring:message code="label.from" />
+																  		<input type="hidden" name="metafilterarchiveddatefrom" class="hiddendate" data-bind="value: archivedFilterArchivedFrom" />
+																    	<div id="metafilterarchiveddatefromdiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+																   </div>
+																</div>
+																<div class="datefilter" style="float: left">	
+																  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+																  	 <span data-bind="html: archivedFilterArchivedTo().length > 0 ? archivedFilterArchivedTo() : '<spring:message code="label.to" />'"></span>&nbsp;
+																    <span class="caret"></span>
+																  </a>
+																 <div class="overlaymenu hideme">
+																 		<spring:message code="label.to" /> 
+																    	<input type="hidden" name="metafilterarchiveddateto" class="hiddendate" data-bind="value: archivedFilterArchivedTo" />
+																    	<div id="metafilterarchiveddatetodiv" data-stopPropagation="true" style="margin:0px; width:auto;" class="datepicker"></div>
+																    </div>
+																</div>	
+															</div>	
+														</th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th></th>
+														<th style="min-width: 150px;">
+															<a class="btn btn-default" onclick="_dashboard.surveysPage(1); _dashboard.loadSurveys(0);"><spring:message code="label.Search" /></a>
+															<a class="btn btn-default" onclick="_dashboard.resetSurveys();"><spring:message code="label.Reset" /></a>
+														</th>									
+													<!-- /ko -->
+													
+												</tr>
+												
+												<!-- ko if: surveysMode() != 'archived' -->									
+													<!-- ko foreach: surveys -->
+													<tr>
+														<td data-bind="html: shortname"></td>
+														<td>
+															<a data-bind="html: title.stripHtml115(), attr: {href: '${contextpath}/' + shortname + '/management/overview'}"></a>
+														</td>
+														<td data-bind="html: owner.name"></td>
+														
+														<td data-bind="html: isActive ? labelpublished : labelunpublished, visible: $parent.surveysMode() == 'advanced'"></td>
+														<td data-bind="html: security.indexOf('secured') == 0 ? labelsecured : labelopen, visible: $parent.surveysMode() == 'advanced'"></td>
+														<td data-bind="html: startString, visible: $parent.surveysMode() == 'advanced'"></td>
+														<td data-bind="html: endString, visible: $parent.surveysMode() == 'advanced'"></td>
+																
+														<td data-bind="visible: $parent.surveysMode() == 'advanced', attr: {id: 'numberinvitations' + uniqueId}">
+															<img src="${contextpath}/resources/images/ajax-loader.gif" />
+														</td>
+														<td data-bind="visible: $parent.surveysMode() == 'advanced', attr: {id: 'numberdrafts' + uniqueId}">
+															<img src="${contextpath}/resources/images/ajax-loader.gif" />
+														</td>
+																						
+														<td data-bind="html: numberOfAnswerSetsPublished"></td>
+														<td style="word-break: break-all; word-wrap: break-word;">
+															<!-- ko foreach: translations -->
+															<div data-toggle="tooltip" title="Available" data-bind="html: $data, attr: {class: $data == $parent.language.code ? 'language pivotlanguage' : $.inArray($data, $parent.completeTranslations) > -1 ? 'language' : ' language languageUnpublished', title: $data == $parent.language.code ? '<spring:message code="label.PivotLanguage" />' : $.inArray($data, $parent.completeTranslations) > -1 ? '<spring:message code="label.Available" />' : '<spring:message code="label.NotYetAvailable" />'}"></div>
+															<!-- /ko -->
+														</td>
+														<td class="surveyactions">
+															<a data-bind="attr: {href: '${contextpath}/' + shortname + '/management/overview'}" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Open" />"><span class="glyphicon glyphicon-folder-open"></span></a>
+															
+															<!-- ko if: fullFormManagementRights -->
+															<a data-bind="attr: {href: '${contextpath}/' + shortname + '/management/edit'}"  rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span style="color: #333" class="glyphicon glyphicon-pencil"></span></a>
+															<!-- /ko -->
+															<!-- ko if: !fullFormManagementRights -->
+															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Edit" />"><span style="color: #aaa" class="glyphicon glyphicon-pencil disabled"></span></a>
+															<!-- /ko -->
+															
+														<!-- ko if: formManagementRights && canCreateSurveys -->
+														<a data-bind="click: function(data, event) { copySurvey(id, title, language.code, 'open', isQuiz.toString()); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
 														<!-- /ko -->
 														
-														<!-- ko if: !accessResultsRights -->
-														<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Results" />"><img style="width: 20px; margin-bottom: 3px;" src="${contextpath}/resources/images/icons/24/table_grey.png"></a>							
-														<!-- /ko -->
-													</td>											
-												</tr>		
+															<!-- ko if: formManagementRights -->
+															<a data-bind="attr: {href: '${contextpath}/noform/management/exportSurvey/false/' + shortname}" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt"></span></a>
+															<!-- /ko -->
+															
+															<!-- ko if: !formManagementRights -->
+															<a class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy" style="color: #ccc"></span></a>
+															<a class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Export" />"><span class="glyphicon glyphicon-download-alt" style="color: #ccc"></span></a>
+															<!-- /ko -->
+																							
+															<!-- ko if: fullFormManagementRights && numberOfAnswerSetsPublished < 2001 && state != 'Running' -->	
+															<a data-bind="click: function(data, event) { showArchiveDialog(shortname, id, 'true'); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Archive" />"><span class="glyphicon glyphicon-import"></span></a>
+															<a data-bind="click: function(data, event) { showDeleteDialog(id); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></span></a>
+															<!-- /ko -->
+														
+															<!-- ko if: !fullFormManagementRights -->	
+															<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
+															<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc"></span></a>
+															<!-- /ko -->	
+															
+															<!-- ko if: fullFormManagementRights && (numberOfAnswerSetsPublished > 2000 || state == 'Running')  -->	
+															<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.ArchiveDisabled" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
+															<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="info.CannotDeleteRunningSurvey" />"><span class="glyphicon glyphicon-remove" style="color: #ccc"></span></a>
+															<!-- /ko -->												
+															
+															<!-- ko if: accessResultsRights -->
+															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Results" />" data-bind="attr: {href: '${contextpath}/' + shortname + '/management/results'}"><img style="width: 20px; margin-bottom: 3px;" src="${contextpath}/resources/images/icons/24/table.png"></a>							
+															<!-- /ko -->
+															
+															<!-- ko if: !accessResultsRights -->
+															<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Results" />"><img style="width: 20px; margin-bottom: 3px;" src="${contextpath}/resources/images/icons/24/table_grey.png"></a>							
+															<!-- /ko -->
+														</td>											
+													</tr>		
+													<!-- /ko -->	
+													
+													<!-- ko if: surveys() == null || surveys().length == 0 -->	
+													<tr>
+														<td style="text-align: center" data-bind="attr: {colspan: surveysMode() == 'advanced' ? 12 : 6}">
+															<spring:message code="message.NoResults" />
+														</td>
+													</tr>
+													<!-- /ko -->											
 												<!-- /ko -->	
 												
-												<!-- ko if: surveys() == null || surveys().length == 0 -->	
-												<tr>
-													<td style="text-align: center" data-bind="attr: {colspan: surveysMode() == 'advanced' ? 12 : 6}">
-														<spring:message code="message.NoResults" />
-													</td>
-												</tr>
-												<!-- /ko -->											
-											<!-- /ko -->	
-											
-											<!-- ko if: surveysMode() == 'archived' -->
-												<!-- ko foreach: archives -->
-												<tr data-bind="attr: {'data-f': finished, 'data-e': error != null && error.length > 0, style: error != null && error.length > 0 ? 'background-color: rgba(255, 96, 96, 0.57)' : (finished ? '' : 'background-color: #FFC6A3') }">	
-													<td data-bind="html: surveyShortname"></td>
-													<td data-bind="html: surveyTitle.stripHtml115()"></td>
-													<td data-bind="html: formattedCreated"></td>
-													<td data-bind="html: formattedArchived"></td>
-													<td data-bind="html: replies"></td>
-													<td>
-														<!-- ko if: finished && error == null -->
-														<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadPDF" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/surveypdf/' + id}"><img src="/eusurvey/resources/images/file_extension_pdf_small.png" alt="pdf"></a>
-														<!-- /ko -->	
-													</td>
-													<td>
-														<!-- ko if: finished && error == null && replies > 0 -->
-														<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxls/' + id}"><img src="/eusurvey/resources/images/file_extension_xls_small.png" alt="xls"></a>
-														<!-- /ko -->	
-													</td>
-													<td>
-														<!-- ko if: finished && error == null && replies > 0 -->
-														<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadPDF" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statspdf/' + id}"><img src="/eusurvey/resources/images/file_extension_pdf_small.png" alt="pdf" style="margin: 0px;"></a>
-														<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statsxls/' + id}"><img src="/eusurvey/resources/images/file_extension_xls_small.png" alt="xls" style="margin: 0px;"></a>
-														<!-- /ko -->	
-													</td>
-													<td>
-														<!-- ko if: finished && error == null -->
-														<a class="btn btn-primary" data-bind="click: function(data, event) { confirmRestore(id, surveyShortname); }"><spring:message code="label.Restore" /></a>
-														<!-- /ko -->
-													</td>
-												</tr>
-												<!-- /ko -->
-												<!-- ko if: archives() == null || archives().length == 0 -->	
-												<tr>
-													<td style="text-align: center" colspan="9">
-														<spring:message code="message.NoResults" />
-													</td>
-												</tr>
-												<!-- /ko -->	
-											<!-- /ko -->							
-										</table>
+												<!-- ko if: surveysMode() == 'archived' -->
+													<!-- ko foreach: archives -->
+													<tr data-bind="attr: {'data-f': finished, 'data-e': error != null && error.length > 0, style: error != null && error.length > 0 ? 'background-color: rgba(255, 96, 96, 0.57)' : (finished ? '' : 'background-color: #FFC6A3') }">	
+														<td data-bind="html: surveyShortname"></td>
+														<td data-bind="html: surveyTitle.stripHtml115()"></td>
+														<td data-bind="html: formattedCreated"></td>
+														<td data-bind="html: formattedArchived"></td>
+														<td data-bind="html: replies"></td>
+														<td>
+															<!-- ko if: finished && error == null -->
+															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadPDF" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/surveypdf/' + id}"><img src="/eusurvey/resources/images/file_extension_pdf_small.png" alt="pdf"></a>
+															<!-- /ko -->	
+														</td>
+														<td>
+															<!-- ko if: finished && error == null && replies > 0 -->
+															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxls/' + id}"><img src="/eusurvey/resources/images/file_extension_xls_small.png" alt="xls"></a>
+															<!-- /ko -->	
+														</td>
+														<td>
+															<!-- ko if: finished && error == null && replies > 0 -->
+															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadPDF" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statspdf/' + id}"><img src="/eusurvey/resources/images/file_extension_pdf_small.png" alt="pdf" style="margin: 0px;"></a>
+															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/statsxls/' + id}"><img src="/eusurvey/resources/images/file_extension_xls_small.png" alt="xls" style="margin: 0px;"></a>
+															<!-- /ko -->	
+														</td>
+														<td>
+															<!-- ko if: finished && error == null -->
+															<a class="btn btn-primary" data-bind="click: function(data, event) { confirmRestore(id, surveyShortname); }"><spring:message code="label.Restore" /></a>
+															<!-- /ko -->
+														</td>
+													</tr>
+													<!-- /ko -->
+													<!-- ko if: archives() == null || archives().length == 0 -->	
+													<tr>
+														<td style="text-align: center" colspan="9">
+															<spring:message code="message.NoResults" />
+														</td>
+													</tr>
+													<!-- /ko -->	
+												<!-- /ko -->							
+											</table>
+										</div>
 										<div data-bind="visible: surveysMode() == 'archived' ? (archives()!= null && archives().length > 0) : (surveys()!= null && surveys().length > 0)" style="text-align: center; margin-bottom: 10px;">
 											<a data-toggle="tooltip" title="<spring:message code="label.GoToFirstPage" />" data-bind="click: firstSurveyPage, attr: {style: surveysPage() > 1 ? '' : 'color: #ccc'}"><span class="glyphicon glyphicon-step-backward"></span></a>
 											<a data-toggle="tooltip" title="<spring:message code="label.GoToPreviousPage" />" data-bind="click: previousSurveyPage, attr: {style: surveysPage() > 1 ? '' : 'color: #ccc'}"><span class="glyphicon glyphicon-chevron-left"></span></a>

@@ -1,6 +1,7 @@
 function DashboardViewModel()
 {
 	this.self = this;
+	this.sharedOnly = ko.observable(false);
 	this.mode = ko.observable("surveys");
 	this.surveysMode = ko.observable("simple");
 	this.lastEditedSurveyShortname = ko.observable(null);
@@ -95,12 +96,21 @@ function DashboardViewModel()
 		writeToLocalstorage("DASHBOARDSurveyMode", m);
 	}
 	
+	this.reloadSurveyWidgets = function() {	
+		this.loadMeta();
+		this.loadContributions(-2);
+		this.loadSurveyStates(-2);
+		this.loadSurveys(-2);
+		this.loadEndDates();
+	}
+	
 	this.loadMeta = function()
 	{
 		var model = this;
 		var request = $.ajax({
 			  url: contextpath + "/dashboard/metadata",
 			  dataType: "json",
+			  data: {type: $("#surveystatesselector").val()},
 			  cache: false,
 			  success: function(data)
 			  {			 
@@ -114,6 +124,7 @@ function DashboardViewModel()
 					model.surveysMode('archived');
 					model.loadSurveys(-2);
 				  }
+				  model.sharedOnly($("#surveystatesselector").val() == "shared");
 			  }
 			});
 	}
@@ -149,7 +160,7 @@ function DashboardViewModel()
 		}
 		var request = $.ajax({
 			  url: contextpath + "/dashboard/contributions",
-			  data: {survey: i, surveyid: survey, sort: $("#contributionsorderselector").val(), span: $("#contributionsspanselector").val()},
+			  data: {survey: i, surveyid: survey, sort: $("#contributionsorderselector").val(), span: $("#contributionsspanselector").val(), type: $("#surveystatesselector").val()},
 			  dataType: "json",
 			  cache: false,
 			  success: function(data)
@@ -164,16 +175,7 @@ function DashboardViewModel()
 	
 	this.loadSurveyStates = function(index)
 	{
-		if (index == -2)
-		{
-			var s = readFromLocalstorage("DASHBOARDSurveyStateSelector");
-			if (s != null && s.length > 0)
-			{
-				$("#surveystatesselector").val(s);
-			}
-		} else {
-			writeToLocalstorage("DASHBOARDSurveyStateSelector", $("#surveystatesselector").val());
-		}
+		writeToLocalstorage("DASHBOARDSurveyStateSelector", $("#surveystatesselector").val());
 		
 		var model = this;
 		model.surveyStates(null);
@@ -204,7 +206,7 @@ function DashboardViewModel()
 				this.surveysMode(s);
 				if (s == "archived")
 				{
-					$("#surveytypeselector"),val(m);
+					$("#surveytypeselector").val(s);
 				}
 			}
 				
@@ -399,6 +401,8 @@ function DashboardViewModel()
 			{
 				params = params + "&frozen=true";
 			}
+			
+			params = params + "&type=" + $("#surveystatesselector").val();
 					
 			var request = $.ajax({
 				  url: contextpath + "/dashboard/surveys",
@@ -453,6 +457,7 @@ function DashboardViewModel()
 		var request = $.ajax({
 			  url: contextpath + "/dashboard/enddates",
 			  dataType: "json",
+			  data: {type: $("#surveystatesselector").val()},
 			  cache: false,
 			  success: function(data)
 			  {			 
@@ -1235,11 +1240,13 @@ $(function() {
 			}
 		}
 		
-		_dashboard.loadMeta();
-		_dashboard.loadContributions(-2);
-		_dashboard.loadSurveyStates(-2);
-		_dashboard.loadSurveys(-2);
-		_dashboard.loadEndDates();
+		s = readFromLocalstorage("DASHBOARDSurveyStateSelector");
+		if (s != null && s.length > 0)
+		{
+			$("#surveystatesselector").val(s);
+		}
+		
+		_dashboard.reloadSurveyWidgets();
 	}
 	applyEvents();
 	

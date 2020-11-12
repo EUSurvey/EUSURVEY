@@ -1,10 +1,10 @@
 package com.ec.survey.controller;
 
 import com.ec.survey.exception.InvalidURLException;
-import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.*;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ReportingService.ToDoItem;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.CreateAllOLAPTablesExecutor;
 import com.ec.survey.tools.FileUpdater;
 import com.ec.survey.tools.NotAgreedToPsException;
@@ -23,7 +23,9 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,7 +54,7 @@ public class AdministrationController extends BasicController {
 	@Resource(name = "taskExecutor")
 	private TaskExecutor taskExecutor;
 	
-	@RequestMapping(value = "/checkPasswordNotWeak", method = RequestMethod.POST)
+	@PostMapping(value = "/checkPasswordNotWeak")
 	public @ResponseBody String checkPasswordNotWeak(HttpServletRequest request, Locale locale) {	
 		String password = request.getParameter("password");
 		if (Tools.isPasswordWeak(password))
@@ -63,7 +65,7 @@ public class AdministrationController extends BasicController {
 		return "";
 	}
 	
-	@RequestMapping(value = "/checkLoginFree", method = RequestMethod.GET)
+	@GetMapping(value = "/checkLoginFree")
 	public @ResponseBody String checkLoginFree(HttpServletRequest request, Locale locale) {	
 		String login = request.getParameter("login");
 		try {
@@ -101,7 +103,7 @@ public class AdministrationController extends BasicController {
 		return password + "#" + mySecondEncryptor.encrypt(input);
 	}
 		
-	@RequestMapping(value = "/saveUserConfiguration", method = {RequestMethod.POST})
+	@PostMapping(value = "/saveUserConfiguration")
 	public @ResponseBody String saveUserConfiguration(HttpServletRequest request) throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		int userId = sessionService.getCurrentUser(request).getId();
 		UsersConfiguration usersConfiguration = administrationService.getUsersConfiguration(userId);
@@ -112,7 +114,7 @@ public class AdministrationController extends BasicController {
 		}
 		
 		String name = Tools.escapeHTML(request.getParameter("name"));
-		String email = Tools.escapeHTML(request.getParameter("email"));
+		String email = Tools.escapeHTML(request.getParameter(Constants.EMAIL));
 		String otherEmail = Tools.escapeHTML(request.getParameter("otherEmail"));
 		String language = Tools.escapeHTML(request.getParameter("ulang"));
 		
@@ -140,13 +142,13 @@ public class AdministrationController extends BasicController {
 	public ModelAndView synchronizeLDAP(HttpServletRequest request) {
 		ldapService.reloadDepartments();
 		ldapService.reloadEcasUser();
-		return new ModelAndView("error/info", "message", "synchronization started");
+		return new ModelAndView("error/info", Constants.MESSAGE, "synchronization started");
 	}
 	
 	@RequestMapping(value = "/synchronizeDomains", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView synchronizeDomains(HttpServletRequest request) {
 		ldapService.reloadDomains();
-		return new ModelAndView("error/info", "message", "synchronization started");
+		return new ModelAndView("error/info", Constants.MESSAGE, "synchronization started");
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForSurvey/{survey}", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -161,11 +163,11 @@ public class AdministrationController extends BasicController {
 		long tDelta = tEnd - tStart;
 		double elapsedSeconds = tDelta / 1000.0;
 		
-		return new ModelAndView("error/info", "message", "files for survey migrated, it took " + elapsedSeconds + " seconds");
+		return new ModelAndView("error/info", Constants.MESSAGE, "files for survey migrated, it took " + elapsedSeconds + " seconds");
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForUser/{user}", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView migrateFileSystemForUser(@PathVariable String user, HttpServletRequest request) throws InvalidURLException, IOException {
+	public ModelAndView migrateFileSystemForUser(@PathVariable String user, HttpServletRequest request) throws IOException {
 		int userId = Integer.parseInt(user);	
 		long tStart = System.currentTimeMillis();
 		
@@ -175,11 +177,11 @@ public class AdministrationController extends BasicController {
 		long tDelta = tEnd - tStart;
 		double elapsedSeconds = tDelta / 1000.0;
 		
-		return new ModelAndView("error/info", "message", "files for user migrated, it took " + elapsedSeconds + " seconds");
+		return new ModelAndView("error/info", Constants.MESSAGE, "files for user migrated, it took " + elapsedSeconds + " seconds");
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForUsers", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public ModelAndView migrateFileSystemForUsers(HttpServletRequest request) throws Exception {
+	public ModelAndView migrateFileSystemForUsers(HttpServletRequest request) throws IOException {
 		long tStart = System.currentTimeMillis();
 		
 		fileService.migrateAllUserFiles();
@@ -188,7 +190,7 @@ public class AdministrationController extends BasicController {
 		long tDelta = tEnd - tStart;
 		double elapsedSeconds = tDelta / 1000.0;
 		
-		return new ModelAndView("error/info", "message", "files for users migrated, it took " + elapsedSeconds + " seconds");
+		return new ModelAndView("error/info", Constants.MESSAGE, "files for users migrated, it took " + elapsedSeconds + " seconds");
 	}
 	
 	@RequestMapping(value = "/migrateFileSystemForArchives", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -201,28 +203,27 @@ public class AdministrationController extends BasicController {
 		long tDelta = tEnd - tStart;
 		double elapsedSeconds = tDelta / 1000.0;
 		
-		return new ModelAndView("error/info", "message", "files for archives migrated, it took " + elapsedSeconds + " seconds");
+		return new ModelAndView("error/info", Constants.MESSAGE, "files for archives migrated, it took " + elapsedSeconds + " seconds");
 	}	
 	
 	@RequestMapping(value = "/startfileworker", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView startfileworker(HttpServletRequest request) {
 		fileWorker.run();
-		return new ModelAndView("error/info", "message", "file worker started");
+		return new ModelAndView("error/info", Constants.MESSAGE, "file worker started");
 	}
 	
 	@RequestMapping(value = "/deletetempfiles", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView deletetempfiles(HttpServletRequest request) {
 		int deletedfiles = fileService.deleteOldTempFiles(new Date());
-		return new ModelAndView("error/info", "message", deletedfiles +  " files deleted");
+		return new ModelAndView("error/info", Constants.MESSAGE, deletedfiles +  " files deleted");
 	}
 	
 	@RequestMapping(value = "/languages", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView languages(HttpServletRequest request) {
-		ModelAndView result = new ModelAndView("administration/languages","uploadItem", new UploadItem());
-		return result;
+		return new ModelAndView("administration/languages","uploadItem", new UploadItem());
 	}
 		
-	@RequestMapping(value = "/languages", method = RequestMethod.POST)
+	@PostMapping(value = "/languages")
 	public ModelAndView languagesPost(UploadItem uploadItem, BindingResult bindingresult, HttpServletRequest request, HttpServletResponse response, Locale locale) {	
 		        
 	    List<String> messages = new ArrayList<>();
@@ -311,12 +312,12 @@ public class AdministrationController extends BasicController {
 		{
 			survey = "-";
 		}
-		result.addObject("survey", survey);
+		result.addObject(Constants.SURVEY, survey);
 		
 		return result;
 	}
 	
-	@RequestMapping(value = "/reporting", method = {RequestMethod.POST})
+	@PostMapping(value = "/reporting")
 	public ModelAndView reportingPOST(HttpServletRequest request) {
 		String enabled = Tools.escapeHTML(request.getParameter("enabled"));
 		String start = Tools.escapeHTML(request.getParameter("start"));
@@ -330,7 +331,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/todosjson", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody List<ToDoItem> exportsjson(HttpServletRequest request) throws NotAgreedToTosException {	
+	public @ResponseBody List<ToDoItem> exportsjson(HttpServletRequest request) {	
 		
 		int itemsPerPage = -1;
 		int page = -1;
@@ -353,8 +354,8 @@ public class AdministrationController extends BasicController {
 	@RequestMapping(value = "/executeToDo/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String executeToDo(@PathVariable String id) {
 		try {
-			int ID = Integer.parseInt(id);
-			ToDoItem todo = reportingService.getToDo(ID);
+			int todoId = Integer.parseInt(id);
+			ToDoItem todo = reportingService.getToDo(todoId);
 			reportingService.executeToDo(todo, false);
 			return "{\"success\": true}";
 		} catch (Exception e) {
@@ -366,8 +367,8 @@ public class AdministrationController extends BasicController {
 	@RequestMapping(value = "/deleteToDo/{id}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public @ResponseBody String deleteToDo(@PathVariable String id) {
 		try {
-			int ID = Integer.parseInt(id);
-			ToDoItem todo = reportingService.getToDo(ID);
+			int todoId = Integer.parseInt(id);
+			ToDoItem todo = reportingService.getToDo(todoId);
 			reportingService.removeToDo(todo, true);
 			return "{\"success\": true}";
 		} catch (Exception e) {
@@ -377,7 +378,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/recreateAllOLAPTables", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public  @ResponseBody String recreateAllOLAPTables(HttpServletRequest request) throws Exception {
+	public @ResponseBody String recreateAllOLAPTables(HttpServletRequest request) {
 		
 		RecreateAllOLAPTablesExecutor executor = (RecreateAllOLAPTablesExecutor) context.getBean("recreateAllOLAPTablesExecutor");
 		taskExecutor.execute(executor);
@@ -386,7 +387,7 @@ public class AdministrationController extends BasicController {
 	}
 	
 	@RequestMapping(value = "/createAllOLAPTables", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody String createAllOLAPTables(HttpServletRequest request) throws TooManyFiltersException, IOException {
+	public @ResponseBody String createAllOLAPTables(HttpServletRequest request) {
 		CreateAllOLAPTablesExecutor executor = (CreateAllOLAPTablesExecutor) context.getBean("createAllOLAPTablesExecutor");
 		taskExecutor.execute(executor);
 		
@@ -401,11 +402,11 @@ public class AdministrationController extends BasicController {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		return "error";
+		return Constants.ERROR;
 	}
 	
 	@RequestMapping(value = "/updateAllOLAPTables", method = {RequestMethod.GET, RequestMethod.HEAD})
-	public @ResponseBody String updateAllOLAPTables(HttpServletRequest request) throws TooManyFiltersException, IOException {
+	public @ResponseBody String updateAllOLAPTables(HttpServletRequest request) {
 		UpdateAllOLAPTablesExecutor executor = (UpdateAllOLAPTablesExecutor) context.getBean("updateAllOLAPTablesExecutor");
 		taskExecutor.execute(executor);
 		
@@ -420,6 +421,6 @@ public class AdministrationController extends BasicController {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		return "error";
+		return Constants.ERROR;
 	}
 }

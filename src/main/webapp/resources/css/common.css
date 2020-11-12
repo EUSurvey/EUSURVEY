@@ -12,6 +12,11 @@ html, body {
   height: 100%;
 }
 
+/* Helper for rows */ 
+.mtop20 {
+	margin-top: 20px;
+}
+
 #messages-log-div {
 	position: fixed;
 	top: 0;
@@ -74,6 +79,12 @@ html, body {
 	padding-left: 10px;
 	color: #333;
 }
+
+.lastRowBeforeFooter {
+	margin-top: 2em;
+	margin-bottom: 3em;
+}
+
 
 .message-success-header {
 	margin-top: -10px;
@@ -626,12 +637,44 @@ select {
  	padding-top: 180px; 
 }
 
+.fullpageform160 {
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: left;
+	padding-bottom: 50px;
+ 	padding-top: 160px;
+}
+
 .fullpageform100 {
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: left;
 	padding-bottom: 50px;
  	padding-top: 100px; 
+}
+
+.fullpageform40 {
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: left;
+	padding-bottom: 50px;
+ 	padding-top: 40px; 
+}
+
+.fullpageform10{
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: left;
+	padding-bottom: 50px;
+ 	padding-top: 10px; 
+}
+
+.fullpageform0 {
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: left;
+	padding-bottom: 50px;
+ 	padding-top: 0px; 
 }
 
 .fixedtitle {
@@ -1980,3 +2023,12 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	text-align: right;
 	margin-top: 9px;
 }
+
+#dropdownLangElements {
+	max-height: 350px;
+	margin-right: -10px;
+}
+
+.slider-tick.round {
+	/*display: none;*/
+} 

@@ -61,9 +61,11 @@ function checkSystemMessages()
 	  {
 		  //this happens when there is no message
 		  window.setTimeout("checkSystemMessages()", 60000);
+		  refreshTimeout();
 	  },	  
 	  success: function(message)
 	  {
+		  refreshTimeout();
 		  if (message != null)
 		  {
 			  if (currentmessageversion != message.version)
@@ -82,35 +84,24 @@ function checkSystemMessages()
 			  			  
 			  if (usermessage)
 			  {
-//				  $("#btnDeleteUserMessage").show();
+				  if (usermessageid == message.id)
+				  {
+					  //the message was already shown
+					  return;
+				  }
 				  usermessageid = message.id;
-			  } else {
-//				  $("#btnDeleteUserMessage").hide();
 			  }
 			  
-//			  $("#system-message-box").addClass(message.css);
-//			  $("#system-message-box-icon").attr("src", contextpath + "/resources/images/" + message.icon);
-//			  $("#system-message-box-content").html(message.text);
-//			  			  
 			  if (usermessage || retrievedmessageversion != lastshownmessageversion)
 			  {
 				  showSystemMessage(message);
 				  lastshownmessageversion = retrievedmessageversion;
-//				  $("#system-message-box").show();
 				  messagedisplaydate = new Date();
 				  if (message.time > 0)
 				  {
 					  window.setTimeout("hideSystemMessage()", (message.time - alreadydoneseconds) * 1000);
 				  }		
-//				  
-//				  $(".user-info").css("top", ($("#system-message-box").outerHeight() + 25) + "px");
-			  } else {
-//				  $(".user-info").css("top", "5px");
-			  }
-			  
-//			  $("#systemmessagebutton").show();
-//		  } else {
-//			  $("#systemmessagebutton").hide();
+			  }			  
 		  }
 		  		  
 		  window.setTimeout("checkSystemMessages()", 60000);
