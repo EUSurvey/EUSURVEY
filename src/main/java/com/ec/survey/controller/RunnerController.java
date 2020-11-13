@@ -2317,6 +2317,9 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
+			// TODO: check if user is allowed to see chart (has already answered, enough answers, ...)
+			// TODO: localized texts?
+
 			Statistics statistics = new Statistics();
 			statistics.setSurveyId(survey.getId());
 
