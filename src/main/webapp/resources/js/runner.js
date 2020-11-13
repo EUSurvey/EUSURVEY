@@ -147,6 +147,7 @@ function propagateChange(element)
 	
 	var div = $(element).closest(".survey-element");
 	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
+	$(div).find(".explanation-section").show();
 	$(div).find(".delphiupdatemessage").empty();
 }
 

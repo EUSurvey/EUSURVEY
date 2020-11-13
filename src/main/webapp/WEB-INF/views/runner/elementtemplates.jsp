@@ -1128,7 +1128,9 @@
 		<input type="hidden" name="questionUid" data-bind="value: uniqueId()" />
 		<div class="explanation-section">
 			<label class="questiontitle">${form.getMessage("label.ExplainYourAnswer")}</label>
-			<textarea class="explanation-editor" name="explanation" data-bind="attr: {'id': 'explanation' + id()}"></textarea>
+			<textarea class="explanation-editor" name="explanation" data-bind="attr: {'id': 'explanation' + id()}"></textarea>			
+		</div>
+		<div class="update-section">
 			<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
 			<span class="inline-loader">
 				<img class="center" src="${contextpath}/resources/images/ajax-loader.gif" />
