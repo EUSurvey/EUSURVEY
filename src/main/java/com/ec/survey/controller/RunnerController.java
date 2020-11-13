@@ -2378,6 +2378,34 @@ public class RunnerController extends BasicController {
 				return ResponseEntity.ok(result);
 			}
 
+			if (question instanceof RatingQuestion) {
+				RatingQuestion ratingQuestion = (RatingQuestion) question;
+				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
+
+				for (Element subQuestion : ratingQuestion.getQuestions()) {
+					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
+					questionResults.setLabel(subQuestion.getTitle());
+
+					for (int i = 1; i <= ratingQuestion.getNumIcons(); i++) {
+						creator.addStatistics4RatingQuestion(survey, i, subQuestion, statistics, numberOfAnswersMapRatingQuestion);
+
+						StringBuilder label = new StringBuilder();
+						for (int j = 0; j < i; j++) {
+							label.append("⭐");
+						}
+
+						DelphiGraphEntry entry = new DelphiGraphEntry();
+						entry.setLabel(label.toString());
+						entry.setValue(statistics.getRequestedRecordsForRatingQuestion(subQuestion, i));
+						questionResults.addEntry(entry);
+					}
+
+					result.addQuestion(questionResults);
+				}
+
+				return ResponseEntity.ok(result);
+			}
+
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
