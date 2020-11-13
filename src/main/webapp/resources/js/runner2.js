@@ -445,7 +445,8 @@ function delphiPrefill(editorElement) {
 		return; // Cannot prefill when answers have not been submitted yet.
 	}
 	// The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
-	var questionUid = $('#' + editorElement[0].id).closest('.survey-element').find('input[name="questionUid"]').val();
+	var surveyElement = $('#' + editorElement[0].id).closest('.survey-element');
+	var questionUid = surveyElement.find('input[name="questionUid"]').val();
 	var data = {
 		answerSetId: answerSetId,
 		questionUid: questionUid
@@ -458,7 +459,8 @@ function delphiPrefill(editorElement) {
 		},
 		error: function(message)
 		{
-			showError(message);
+			var messageElement = surveyElement.find(".delphiupdatemessage").first();
+			$(messageElement).html(message).addClass("update-error");
 		},
 		success: function(currentExplanationText)
 		{
