@@ -459,15 +459,16 @@ function delphiPrefill(editorElement) {
 		},
 		error: function(message)
 		{
-			var messageElement = surveyElement.find(".delphiupdatemessage").first();
+			var messageElement = $('#' + editorElement[0].id).find(".delphiupdatemessage").first();
 			$(messageElement).html(message).addClass("update-error");
+			$('#' + editorElement[0].id).closest(".explanation-section").show();
 		},
 		success: function(currentExplanationText)
 		{
 			if (currentExplanationText) {
 				editorElement[0].setContent(currentExplanationText);
-				$('#' + editorElement[0].id).closest(".explanation-section").show();
 			}
+			$('#' + editorElement[0].id).closest(".explanation-section").show();
 		}
 	});
 }
