@@ -3,7 +3,7 @@ package com.ec.survey.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ANSWERS_EXPLANATIONS")
+@Table(name = "ANSWERS_EXPLANATIONS", indexes = {@Index(name = "ANSWEREXPLANATION_IDX", columnList = "ANSWER_SET_ID, QUESTION_UID")})
 public class AnswerExplanation implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
