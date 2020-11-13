@@ -1246,7 +1246,7 @@ legend {
 
 .delphiupdatemessage {
 	margin-left: 20px;
-    margin-top: 10px;
+	margin-top: 10px;
 }
 
 .elementwrapper {
@@ -1254,12 +1254,17 @@ legend {
 	justify-content: space-between;
 }
 
+.chart-wrapper {
+	margin: 25px 5px 5px;
+}
+
 .update-error {
 	color: #f00;
 }
 
 .validation-error {
-	color: #f00; font-size: 13px;
+	color: #f00;
+	font-size: 13px;
 }
 
 .validation-error-keep {
