@@ -304,7 +304,7 @@ textarea.freetext {
 .input-group,
 .ratingtable,
 .explanation-section,
-.update-section {
+.explanation-update-section {
 	margin-left: 20px;
 }
 
@@ -457,7 +457,7 @@ legend {
 	max-width: 645px;
 }
 
-.update-section > a.btn {
+.explanation-update-section > a.btn {
 	margin-top: 20px;
 }
 
