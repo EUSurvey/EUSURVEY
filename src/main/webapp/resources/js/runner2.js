@@ -424,22 +424,32 @@ function initSlider(input, foreditor, viewModel)
 	});
 }
 
-function getWidth(widths, index)
-{
-	if (widths != null)
-	{
+function getWidth(widths, index) {
+	if (widths != null) {
 		var w = widths.split(";")
 		return w[index] + "px";
 	}
-	
+
 	return "50px";
 }
 
-function loadGraphData(div)
-{
+function generateColorArray(size) {
+	var result = [];
+
+	for (var i = 0; i < size; i++) {
+		var hue = Math.floor(360 - (i * 360 / size));
+		var saturation = 95 - Math.floor(Math.pow(-1, i + 1) * 5);
+		var lightness = 50 - Math.floor(Math.pow(-1, i + 1) * 5);
+		result.push("hsl(" + hue + "," + saturation + "%," + lightness + "%)");
+	}
+
+	return result;
+}
+
+function loadGraphData(div) {
 	var surveyid = $(div).find("[name=surveyid]").first().val();
 	var questionuid = $(div).find("[name=questionuid]").first().val();
-	
+
 	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid;
 	$.ajax({
 		type: "GET",
@@ -452,40 +462,11 @@ function loadGraphData(div)
 			//TODO
 		},
 		success: function (result) {
-			// remove existing charts and recreate next to survey-element (such that question and chart are shown next to each other)
+			// remove existing charts
 			var elementWrapper = $(div).closest(".elementwrapper");
 			$(elementWrapper).find(".chart-wrapper").remove();
-			$(elementWrapper).append("<div class='chart-wrapper'></div>");
 
-			var chartWrapper = $(elementWrapper).find("div.chart-wrapper").first();
-			$(chartWrapper).append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
-
-			var canvas = $(chartWrapper).find(".delphi-chart")[0];
-
-			var colors = [];
-			var internalData = [];
-			var labels = [];
-
-			var graphData = result.data;
-
-			for (var i = 0; i < graphData.length; i++) {
-				var hue = Math.floor(360 - (i * 360 / graphData.length));
-				var saturation = 95 - Math.floor(Math.pow(-1, i + 1) * 5);
-				var lightness = 50 - Math.floor(Math.pow(-1, i + 1) * 5);
-				colors.push('hsl(' + hue + ',' + saturation + '%, ' + lightness + '%)');
-				internalData.push(graphData[i].value);
-				labels.push(graphData[i].label);
-			}
-
-			var chartData = {
-				datasets: [{
-					label: '',
-					data: internalData,
-					backgroundColor: colors
-				}],
-				labels
-			};
-
+			var chartData = {};
 			var chartOptions = {
 				scaleShowValues: true,
 				responsive: false,
@@ -495,13 +476,68 @@ function loadGraphData(div)
 				},
 				legend: {display: false},
 			};
+			var chartType = "bar";
 
-			new Chart(canvas.getContext('2d'), {
+			if (result.type === "single") {
+				var graphData = result.data;
+
+				chartData = {
+					datasets: [{
+						label: '',
+						data: graphData.map(function (g) {
+							return g.value
+						}),
+						backgroundColor: generateColorArray(graphData.length)
+					}],
+					labels: graphData.map(function (g) {
+						return g.label
+					})
+				};
+			} else if (result.type === "multi") {
+				var questionTitles = Object.keys(result.questions);
+				chartType = "line";
+				var colors = generateColorArray(questionTitles.length);
+				var datasets = [];
+				var labels = undefined;
+
+				for (var i = 0; i < questionTitles.length; i++) {
+					var questionTitle = questionTitles[i];
+					var question = result.questions[questionTitle];
+
+					datasets.push({
+						data: question.data.map(function (d) {
+							return d.value;
+						}),
+						label: questionTitle,
+						backgroundColor: colors[i]
+					});
+
+					if (!labels) {
+						labels = question.data.map(function (d) {
+							return d.label;
+						});
+					}
+				}
+
+				chartData = {
+					datasets,
+					labels
+				}
+
+				chartOptions.legend.display = true;
+			} else {
+				return;
+			}
+
+			// create new chart next to survey-element
+			$(elementWrapper).append("<div class='chart-wrapper'><canvas class='delphi-chart' width='300' height='220'></canvas></div>");
+
+			new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), {
 				type: 'bar',
 				data: chartData,
 				options: chartOptions
 			});
-	    }
+		}
 	 });
 }
 

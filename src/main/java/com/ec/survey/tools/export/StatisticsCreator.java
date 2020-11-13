@@ -712,7 +712,7 @@ public class StatisticsCreator implements Runnable {
 		return resultSets.size();
 	}
 
-	private int addStatistics4Matrix(Survey survey, Element answer, Element question, Statistics statistics,
+	public int addStatistics4Matrix(Survey survey, Element answer, Element question, Statistics statistics,
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix) {
 		String id = question.getId().toString() + answer.getId().toString();
 		int numberOfAnswers = 0;
@@ -731,7 +731,7 @@ public class StatisticsCreator implements Runnable {
 		return numberOfAnswers;
 	}
 
-	private int addStatistics4RatingQuestion(Survey survey, Integer answer, Element question, Statistics statistics,
+	public int addStatistics4RatingQuestion(Survey survey, Integer answer, Element question, Statistics statistics,
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion) {
 		String id = question.getId().toString() + answer.toString();
 		int numberOfAnswers = 0;

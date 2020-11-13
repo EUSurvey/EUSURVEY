@@ -2283,20 +2283,19 @@ public class RunnerController extends BasicController {
 			if (!validation) {
 				return new ResponseEntity<>(resources.getMessage("error.CheckValidation", null, locale), HttpStatus.BAD_REQUEST);
 			}
-			
+
 			saveAnswerSet(answerSet, fileDir, null, -1);
-			
+
 			return new ResponseEntity<>(resources.getMessage("message.ChangesSaved", null, locale), HttpStatus.OK);
-		
+
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(resources.getMessage("error.delphiupdate", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	@GetMapping(value="delphiGraph")
-	public ResponseEntity<DelphiGraphData> delphiGraph(HttpServletRequest request, Locale locale)
-	{
+
+	@GetMapping(value = "delphiGraph")
+	public ResponseEntity delphiGraph(HttpServletRequest request, Locale locale) {
 		try {
 			String surveyid = request.getParameter("surveyid");
 			int sid = Integer.parseInt(surveyid);
@@ -2340,16 +2339,38 @@ public class RunnerController extends BasicController {
 
 			if (question instanceof ChoiceQuestion) {
 				ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
-
 				creator.addStatistics(survey, choiceQuestion, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
 
-				DelphiGraphData result = new DelphiGraphData();
+				DelphiGraphDataSingle result = new DelphiGraphDataSingle();
 
 				for (PossibleAnswer answer : choiceQuestion.getAllPossibleAnswers()) {
 					DelphiGraphEntry entry = new DelphiGraphEntry();
 					entry.setLabel(answer.getTitle());
 					entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
 					result.addEntry(entry);
+				}
+
+				return ResponseEntity.ok(result);
+			}
+
+			if (question instanceof Matrix) {
+				Matrix matrix = (Matrix) question;
+
+				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
+
+				for (Element matrixQuestion : matrix.getQuestions()) {
+					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
+
+					for (Element matrixAnswer : matrix.getAnswers()) {
+						creator.addStatistics4Matrix(survey, matrixAnswer, matrixQuestion, statistics, numberOfAnswersMapMatrix);
+
+						DelphiGraphEntry entry = new DelphiGraphEntry();
+						entry.setLabel(matrixAnswer.getTitle());
+						entry.setValue(statistics.getRequestedRecordsForMatrix(matrixQuestion, matrixAnswer));
+						questionResults.addEntry(entry);
+					}
+
+					result.addQuestion(matrixQuestion.getTitle(), questionResults);
 				}
 
 				return ResponseEntity.ok(result);
