@@ -2321,6 +2321,7 @@ public class RunnerController extends BasicController {
 			statistics.setSurveyId(survey.getId());
 
 			StatisticsCreator creator = (StatisticsCreator) context.getBean("statisticsCreator");
+			creator.init(survey, null, false);
 
 			Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();

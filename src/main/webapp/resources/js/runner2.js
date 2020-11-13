@@ -508,7 +508,7 @@ function loadGraphData(div) {
 							return d.value;
 						}),
 						label: question.label,
-						backgroundColor: colors[i]
+						borderColor: colors[i]
 					});
 
 					if (!labels) {
