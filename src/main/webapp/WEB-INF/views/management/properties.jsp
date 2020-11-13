@@ -1269,7 +1269,17 @@
 							<div style="clear: both"></div>
 						</td>
 					</tr>
-
+					<tr class="subelement" data-bind="visible: delphi">
+						<td>
+							<div style="float: left">(dummy) Minimum answers</div>
+							<div style="float: right">
+								<div style="float: right; max-width: 500px;">
+									<input id="edit-delphi-min-answers" type="number" min="0" class="form-control" />
+								</div>
+							</div>
+							<div style="clear: both"></div>
+						</td>
+					</tr>
 				</table>	
 			</div>			
 			
