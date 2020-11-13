@@ -388,20 +388,27 @@ function addElementToContainer(element, container, foreditor, forskin)
 	
 	$(container).find(".freetext").each(function(){
 		countChar(this);
-		
-		$(this).bind('paste', function(event) {
-	        var _this = this;
-	        // Short pause to wait for paste to complete
-	        setTimeout( function() {
-	        	countChar(_this);
-	        }, 100);
-	    });
+
+		$(this).bind('paste', function (event) {
+			var _this = this;
+			// Short pause to wait for paste to complete
+			setTimeout(function () {
+				countChar(_this);
+			}, 100);
+		});
 	});
-	
-	$(container).find(".sliderbox").each(function(){
+
+	$(container).find(".sliderbox").each(function () {
 		initSlider(this, foreditor, viewModel);
 	});
-	
+
+	if (isdelphi) {
+		var surveyElement = $(container).closest(".survey-element");
+		if (surveyElement) {
+			loadGraphData(surveyElement);
+		}
+	}
+
 	return viewModel;
 }
 
