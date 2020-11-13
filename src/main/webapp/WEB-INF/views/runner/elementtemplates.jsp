@@ -1114,29 +1114,46 @@
 						 <!-- /ko -->
 					</tr>
 					<!-- /ko -->
-				</tbody>	
+				</tbody>
 			</table>
 		</div>
-		<!-- /ko -->	
+		<!-- /ko -->
 	</div>
-	
+
 	<div id="delphi-template">
 		<!-- ko if: isDelphiQuestion() -->
-		<input type="hidden" name="surveyid" value="${form.survey.id}" />
-		<input type="hidden" name="questionid" data-bind="value: id()" />
-		<input type="hidden" name="questionuid" data-bind="value: uniqueId()" />
-		<input type="hidden" name="uniquecode" value="${uniqueCode}" />
-		<input type="hidden" name="languagecode" value="${form.language.code}" />
+		<input type="hidden" name="surveyid" value="${form.survey.id}"/>
+		<input type="hidden" name="questionid" data-bind="value: id()"/>
+		<input type="hidden" name="questionuid" data-bind="value: uniqueId()"/>
+		<input type="hidden" name="uniquecode" value="${uniqueCode}"/>
+		<input type="hidden" name="languagecode" value="${form.language.code}"/>
 		<div style="margin-left: 20px; margin-top: 20px;">
-			<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
-			
+			<a class="btn btn-primary disabled" data-type="delphisavebutton"
+			   onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
+
 			<span class="inline-loader">
-				<img class="center" src="${contextpath}/resources/images/ajax-loader.gif" />
+				<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
 			</span>
-		</div>								
-			
+		</div>
+
 		<div class="delphiupdatemessage"></div>
 		<!-- /ko -->
 	</div>
 
+	<div id="delphi-chart-template">
+		<!-- ko if: isDelphiQuestion() -->
+		<div class='chart-wrapper'>
+			<table class='table table-condensed table-bordered'>
+				<tr>
+					<th class='area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
+				</tr>
+				<tr>
+					<td style='padding-top:10px; padding-bottom:10px'>
+						<canvas class='delphi-chart' width='300' height='220'></canvas>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- /ko -->
+	</div>
 </div>

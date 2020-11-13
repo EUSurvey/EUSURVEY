@@ -1267,15 +1267,22 @@ legend {
 	font-size: 13px;
 }
 
+.area-header {
+	background-color: #245077;
+	color: #fff;
+}
+
 .validation-error-keep {
-	color: #f00; font-size: 13px;
+	color: #f00;
+	font-size: 13px;
 }
 
 .emailvalidation {
-	font-weight: bold; font-size: 13px;
+	font-weight: bold;
+	font-size: 13px;
 }
 
-.small-well{
+.small-well {
 	padding-top: 2px !important;
 	padding-bottom: 2px !important;
 }

@@ -529,7 +529,8 @@ function loadGraphData(div) {
 			}
 
 			// create new chart next to survey-element
-			$(elementWrapper).append("<div class='chart-wrapper'><canvas class='delphi-chart' width='300' height='220'></canvas></div>");
+			var chartTemplate = $("#delphi-chart-template").clone().attr("id", "");
+			$(elementWrapper).append(chartTemplate);
 
 			new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), {
 				type: chartType,
