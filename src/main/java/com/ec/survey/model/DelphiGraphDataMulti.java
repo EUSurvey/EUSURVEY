@@ -1,17 +1,18 @@
 package com.ec.survey.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class DelphiGraphDataMulti {
     public final String type = "multi";
-    private final Map<String, DelphiGraphDataSingle> questions = new HashMap<>();
 
-    public Map<String, DelphiGraphDataSingle> getQuestions() {
-        return new HashMap<>(questions);
+    private final Collection<DelphiGraphDataSingle> questions = new ArrayList<>();
+
+    public Collection<DelphiGraphDataSingle> getQuestions() {
+        return questions;
     }
 
-    public void addQuestion(String label, DelphiGraphDataSingle question) {
-        questions.put(label, question);
+    public void addQuestion(DelphiGraphDataSingle question) {
+        questions.add(question);
     }
 }

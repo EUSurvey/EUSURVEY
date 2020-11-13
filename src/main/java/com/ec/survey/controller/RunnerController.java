@@ -2360,6 +2360,7 @@ public class RunnerController extends BasicController {
 
 				for (Element matrixQuestion : matrix.getQuestions()) {
 					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
+					questionResults.setLabel(matrixQuestion.getTitle());
 
 					for (Element matrixAnswer : matrix.getAnswers()) {
 						creator.addStatistics4Matrix(survey, matrixAnswer, matrixQuestion, statistics, numberOfAnswersMapMatrix);
@@ -2370,7 +2371,7 @@ public class RunnerController extends BasicController {
 						questionResults.addEntry(entry);
 					}
 
-					result.addQuestion(matrixQuestion.getTitle(), questionResults);
+					result.addQuestion(questionResults);
 				}
 
 				return ResponseEntity.ok(result);
