@@ -694,8 +694,8 @@
 							</div>						
 							<div style="float: right">							
 								<div class="onoffswitch">
-									<form:checkbox path="survey.changeContribution" class="onoffswitch-checkbox" id="myonoffswitchcontribution" />
-									 <label class="onoffswitch-label" for="myonoffswitchcontribution">
+									<form:checkbox path="survey.changeContribution" class="onoffswitch-checkbox" data-bind="checked: _properties.changeContribution()" />
+									<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+(_properties.delphi() ? " disabled" : "")' onclick="_properties.toggleChangeContribution()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
