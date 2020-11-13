@@ -464,6 +464,7 @@ function delphiPrefill(editorElement) {
 		{
 			if (currentExplanationText) {
 				editorElement[0].setContent(currentExplanationText);
+				$('#' + editorElement[0].id).closest(".explanation-section").show();
 			}
 		}
 	});
