@@ -2299,13 +2299,20 @@ public class RunnerController extends BasicController {
 		try {
 			String surveyid = request.getParameter("surveyid");
 			int sid = Integer.parseInt(surveyid);
-			Survey survey = surveyService.getSurvey(sid);
+
+			String languageCode = request.getParameter("languagecode");
+			Survey survey = surveyService.getSurvey(sid, languageCode);
 
 			if (survey == null || !survey.getIsDelphi()) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
 			if (!survey.getIsDelphiShowAnswers()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			if (answerService.get(request.getParameter("uniquecode")) == null) {
+				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
@@ -2320,9 +2327,6 @@ public class RunnerController extends BasicController {
 			if (!question.getIsDelphiQuestion()) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
-
-			// TODO: check if user is allowed to see chart (has already answered, ...)
-			// TODO: localized texts?
 
 			Statistics statistics = new Statistics();
 			statistics.setSurveyId(survey.getId());

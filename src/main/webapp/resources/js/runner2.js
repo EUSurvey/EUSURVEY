@@ -456,8 +456,10 @@ function generateColorArray(size) {
 function loadGraphData(div) {
 	var surveyid = $(div).find("[name=surveyid]").first().val();
 	var questionuid = $(div).find("[name=questionuid]").first().val();
+	var languagecode = $(div).find("[name=languagecode]").first().val();
+	var uniquecode = $(div).find("[name=uniquecode]").first().val();
 
-	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid;
+	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
 	$.ajax({
 		type: "GET",
 		url: contextpath + "/runner/delphiGraph",
