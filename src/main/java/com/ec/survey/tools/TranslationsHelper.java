@@ -2116,7 +2116,7 @@ public class TranslationsHelper {
 					if (element instanceof MatrixOrTable) {
 						MatrixOrTable matrix = (MatrixOrTable) element;
 
-						if (matrix.getFirstCellText() != null && matrix.getFirstCellText().length() > 0
+						if (matrix.getFirstCellText() != null && matrix.getFirstCellText().trim().length() > 0
 								&& getLabel(matrix, MatrixOrTable.FIRSTCELL, translationMap).length() == 0) {
 							return false;
 						}
