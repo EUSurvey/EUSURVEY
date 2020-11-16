@@ -499,6 +499,7 @@ public class XlsExportCreator extends ExportCreator {
 	private Row row;
 
 	CellStyle dateCellStyle = null;
+	private Map<String, CellStyle> cellStyles = new HashMap<>();
 	
 	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication,
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export, List<Question> questions,
@@ -727,19 +728,29 @@ public class XlsExportCreator extends ExportCreator {
 				} else if (question instanceof NumberQuestion && (export == null || !export.getShowShortnames())) {
 					Cell cell = checkColumnsParseAnswerSet();
 					
-					CellStyle numberCellStyle = wb.createCellStyle();
-					String format = "0";
-					NumberQuestion numberQuestion = (NumberQuestion)question;
-					if (numberQuestion.getDecimalPlaces() > 0)
-					{
-						format += ".";
-						for (int i = 0; i < numberQuestion.getDecimalPlaces(); i++)
-						{
-							format += "0";
-						}
-					}
+					CellStyle numberCellStyle;					
 					
-					numberCellStyle.setDataFormat(wb.createDataFormat().getFormat(format));					
+					if (cellStyles.containsKey(question.getUniqueId()))
+					{
+						numberCellStyle = cellStyles.get(question.getUniqueId());
+					} else {
+						numberCellStyle = wb.createCellStyle();
+						
+						String format = "0";
+						NumberQuestion numberQuestion = (NumberQuestion)question;
+						if (numberQuestion.getDecimalPlaces() > 0)
+						{
+							format += ".";
+							for (int i = 0; i < numberQuestion.getDecimalPlaces(); i++)
+							{
+								format += "0";
+							}
+						}				
+						
+						numberCellStyle.setDataFormat(wb.createDataFormat().getFormat(format));	
+						
+						cellStyles.put(question.getUniqueId(), numberCellStyle);
+					}				
 					
 					if (answerSet == null) {
 						String v = answerrow.get(answerrowcounter++);
