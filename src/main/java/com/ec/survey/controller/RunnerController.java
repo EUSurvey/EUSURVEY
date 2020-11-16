@@ -2305,6 +2305,10 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
+			if (!survey.getIsDelphiShowAnswers()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
 			String questionuid = request.getParameter("questionuid");
 			Element element = survey.getQuestionMapByUniqueId().get(questionuid);
 
@@ -2317,7 +2321,7 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
-			// TODO: check if user is allowed to see chart (has already answered, enough answers, ...)
+			// TODO: check if user is allowed to see chart (has already answered, ...)
 			// TODO: localized texts?
 
 			Statistics statistics = new Statistics();
@@ -2341,9 +2345,20 @@ public class RunnerController extends BasicController {
 					multipleChoiceSelectionsByAnswerset,
 					numberOfAnswersMapRatingQuestion);
 
+			int minAnswers = survey.getMinNumberDelphiStatistics();
+
 			if (question instanceof ChoiceQuestion) {
+				if (numberOfAnswersMap.get(question.getId()) < minAnswers) {
+					// only show statistics for this question if the total number of answers exceeds the threshold
+					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				}
+
 				ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
 				creator.addStatistics(survey, choiceQuestion, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
+
+				ResultFilter resultFilter = new ResultFilter();
+				resultFilter.setVisibleQuestions(new HashSet<>(question.getId()));
+				answerService.getNumberOfAnswerSets(survey, resultFilter);
 
 				DelphiGraphDataSingle result = new DelphiGraphDataSingle();
 
@@ -2359,10 +2374,14 @@ public class RunnerController extends BasicController {
 
 			if (question instanceof Matrix) {
 				Matrix matrix = (Matrix) question;
-
 				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 
 				for (Element matrixQuestion : matrix.getQuestions()) {
+					if (numberOfAnswersMap.get(matrixQuestion.getId()) < minAnswers) {
+						// only show statistics for this question if the total number of answers exceeds the threshold
+						continue;
+					}
+
 					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
 					questionResults.setLabel(matrixQuestion.getTitle());
 
@@ -2378,7 +2397,12 @@ public class RunnerController extends BasicController {
 					result.addQuestion(questionResults);
 				}
 
-				return ResponseEntity.ok(result);
+				// only show statistics if applicable for some subquestion
+				if (result.getQuestions().size() > 0) {
+					return ResponseEntity.ok(result);
+				}
+
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
 			if (question instanceof RatingQuestion) {
@@ -2386,6 +2410,11 @@ public class RunnerController extends BasicController {
 				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 
 				for (Element subQuestion : ratingQuestion.getQuestions()) {
+					if (numberOfAnswersMap.get(subQuestion.getId()) < minAnswers) {
+						// only show statistics for this question if the total number of answers exceeds the threshold
+						continue;
+					}
+
 					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
 					questionResults.setLabel(subQuestion.getTitle());
 
@@ -2406,7 +2435,12 @@ public class RunnerController extends BasicController {
 					result.addQuestion(questionResults);
 				}
 
-				return ResponseEntity.ok(result);
+				// only show statistics if applicable for some subquestion
+				if (result.getQuestions().size() > 0) {
+					return ResponseEntity.ok(result);
+				}
+
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
