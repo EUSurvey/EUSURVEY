@@ -335,13 +335,13 @@
 </script>
 
 <c:choose>
-	<c:when test="${!oss && piwik && is404}">
+	<c:when test="${forpdf == null && !oss && piwik && is404}">
 		<script defer src="//europa.eu/webtools/load.js" type="text/javascript"></script>
 		<script type="application/json">
 		{ "utility": "piwik", "siteID": 63, "is404": true, "sitePath": ["ec.europa.eu\/eusurvey"] } 
 		</script>
 	</c:when>
-	<c:when test="${!oss && piwik}">
+	<c:when test="${forpdf == null && !oss && piwik}">
 		<script defer src="//europa.eu/webtools/load.js" type="text/javascript"></script>
 		<script type="application/json">
 		{ "utility": "piwik", "siteID": 63, "sitePath": ["ec.europa.eu\/eusurvey"] } 
