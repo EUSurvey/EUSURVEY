@@ -295,6 +295,13 @@
 					return;
 				}
 				
+				result = validateInput($("#minNumberDelphiStatistics").parent());
+				
+				if (result == false)
+				{
+					return;
+				}
+				
 				<c:if test="${!validregform}">
 					if ($("#survey\\.registrationForm").is(":checked") && !regformconfirmed)
 					{

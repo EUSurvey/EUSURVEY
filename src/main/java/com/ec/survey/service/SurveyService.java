@@ -2852,6 +2852,13 @@ public class SurveyService extends BasicService {
 
 			if (!Tools.isEqual(draftSurvey.getMaxNumberContribution(), publishedSurvey.getMaxNumberContribution()))
 				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draftSurvey.getIsDelphiShowAnswers(), publishedSurvey.getIsDelphiShowAnswers()))
+				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draftSurvey.getMinNumberDelphiStatistics(), publishedSurvey.getMinNumberDelphiStatistics()))
+				hasPendingChanges = true;
+			
 
 			if (!hasPendingChanges)
 				for (String key : draftSurvey.getUsefulLinks().keySet()) {
