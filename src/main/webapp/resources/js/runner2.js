@@ -483,7 +483,6 @@ function loadGraphData(div) {
 				},
 				legend: {display: false},
 			};
-			var chartType = "bar";
 
 			if (result.type === "single") {
 				var graphData = result.data;
@@ -502,7 +501,6 @@ function loadGraphData(div) {
 				};
 			} else if (result.type === "multi") {
 				var questions = result.questions;
-				chartType = "line";
 				var colors = generateColorArray(questions.length);
 				var datasets = [];
 				var labels = undefined;
@@ -515,7 +513,7 @@ function loadGraphData(div) {
 							return d.value;
 						}),
 						label: question.label,
-						borderColor: colors[i]
+						backgroundColor: colors[i]
 					});
 
 					if (!labels) {
@@ -540,7 +538,7 @@ function loadGraphData(div) {
 			$(elementWrapper).append(chartTemplate);
 
 			new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), {
-				type: chartType,
+				type: "bar",
 				data: chartData,
 				options: chartOptions
 			});
