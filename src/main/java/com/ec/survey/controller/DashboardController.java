@@ -685,7 +685,7 @@ public class DashboardController extends BasicController {
 			filter.setUser(u);
 			
 			filter.setType("delphi");
-			filter.setStatus("Published;");
+			filter.setAccess("open");
 			
 			if (request.getParameter("title") != null) {
 				String title = request.getParameter("title");
