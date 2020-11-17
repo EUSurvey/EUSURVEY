@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/runner")
@@ -2283,6 +2282,7 @@ public class RunnerController extends BasicController {
 			final Survey survey = surveyService.getSurvey(surveyIdParsed);
 			final String languageCode = request.getParameter("languageCode");
 			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
+			final String invitationId = request.getParameter("invitation");
 			final String explanation = request.getParameter("explanation");
 			final User user = sessionService.getCurrentUser(request, false, false);
 
@@ -2294,6 +2294,20 @@ public class RunnerController extends BasicController {
 			} else {
 				//update
 				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, answerSetUniqueCode, existingAnswerSet, languageCode, user, fileService);
+			}
+			
+			if (invitationId != null && invitationId.length() > 0) {
+				Invitation invitation = attendeeService.getInvitation(Integer.parseInt(invitationId));
+
+				answerSet.setInvitationId(invitation.getUniqueId());
+				if (invitation.getAnswers() == 0)
+				{
+					invitation.setAnswers(1);
+				}
+			}
+			
+			if (survey.getEcasSecurity() && user != null) {
+				answerSet.setResponderEmail(user.getEmail());
 			}
 			
 			Set<String> invisibleElements = new HashSet<>();
@@ -2335,7 +2349,7 @@ public class RunnerController extends BasicController {
 			}
 
 			if (!survey.getIsDelphiShowAnswers()) {
-				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
 			if (answerService.get(request.getParameter("uniquecode")) == null) {
