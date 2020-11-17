@@ -381,7 +381,13 @@
 
 	$(document).ready(function(){
 		
-		$(".filtercell").find("input[type=text]").attr("placeholder", "<spring:message code="label.Filter" />");
+		$(".filtercell").find("input[type=text]").each(function(){
+			if ($(this).hasClass("limitedfilter")) {
+				$(this).attr("placeholder", "<spring:message code="label.FilterLimited" />")
+			} else {
+				$(this).attr("placeholder", "<spring:message code="label.Filter" />")
+			}
+		});
 		
 		$('textarea.tinymce').each(function(){
 			$(this).tinymce(myConfigSetting2);

@@ -2866,7 +2866,6 @@ public class ManagementController extends BasicController {
 			}
 
 			List<String> answerSetsToDelete = new ArrayList<>();
-
 			if (request.getParameter("check-all-delete") != null
 					&& (request.getParameter("check-all-delete").equalsIgnoreCase("true")
 							|| request.getParameter("check-all-delete").equalsIgnoreCase("on"))) {
