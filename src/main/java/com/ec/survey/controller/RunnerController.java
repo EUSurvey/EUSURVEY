@@ -2313,7 +2313,7 @@ public class RunnerController extends BasicController {
 
 			if (answerService.get(request.getParameter("uniquecode")) == null) {
 				// participant may only see answers if he answered before
-				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
 			String questionuid = request.getParameter("questionuid");
@@ -2402,11 +2402,11 @@ public class RunnerController extends BasicController {
 				}
 
 				// only show statistics if applicable for some subquestion
-				if (result.getQuestions().size() > 0) {
+				if (!result.getQuestions().isEmpty()) {
 					return ResponseEntity.ok(result);
 				}
 
-				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
 			if (question instanceof RatingQuestion) {
@@ -2425,13 +2425,8 @@ public class RunnerController extends BasicController {
 					for (int i = 1; i <= ratingQuestion.getNumIcons(); i++) {
 						creator.addStatistics4RatingQuestion(survey, i, subQuestion, statistics, numberOfAnswersMapRatingQuestion);
 
-						StringBuilder label = new StringBuilder();
-						for (int j = 0; j < i; j++) {
-							label.append("⭐");
-						}
-
 						DelphiGraphEntry entry = new DelphiGraphEntry();
-						entry.setLabel(label.toString());
+						entry.setLabel(Integer.toString(i));
 						entry.setValue(statistics.getRequestedRecordsForRatingQuestion(subQuestion, i));
 						questionResults.addEntry(entry);
 					}
@@ -2440,7 +2435,7 @@ public class RunnerController extends BasicController {
 				}
 
 				// only show statistics if applicable for some subquestion
-				if (result.getQuestions().size() > 0) {
+				if (!result.getQuestions().isEmpty()) {
 					return ResponseEntity.ok(result);
 				}
 

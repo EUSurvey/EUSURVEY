@@ -1,3 +1,5 @@
+Chart.defaults.global.plugins.colorschemes.scheme = 'office.Blue6';
+
 function getElementViewModel(element)
 {
 	if (element.hasOwnProperty("isViewModel") && element.isViewModel)
@@ -469,11 +471,19 @@ function loadGraphData(div) {
 		},
 		error: function (data) {
 			//TODO
+			var message = $(div).find(".delphiupdatemessage").first();
+			$(message).html(data.responseText).addClass("update-error");
 		},
-		success: function (result) {
+		success: function (result, textStatus, jqXHR) {
+			
 			// remove existing charts
 			var elementWrapper = $(div).closest(".elementwrapper");
 			$(elementWrapper).find(".chart-wrapper").remove();
+			
+			if (textStatus === "nocontent")
+			{
+				return;
+			}
 
 			var chartData = {};
 			var chartOptions = {
@@ -483,7 +493,7 @@ function loadGraphData(div) {
 					yAxes: [{ticks: {beginAtZero: true}}],
 					xAxes: [{ticks: {autoSkip: false}}]
 				},
-				legend: {display: false},
+				legend: {display: false}
 			};
 
 			if (result.type === "single") {
@@ -494,8 +504,7 @@ function loadGraphData(div) {
 						label: '',
 						data: graphData.map(function (g) {
 							return g.value
-						}),
-						backgroundColor: generateColorArray(graphData.length)
+						})
 					}],
 					labels: graphData.map(function (g) {
 						return g.label
@@ -514,8 +523,7 @@ function loadGraphData(div) {
 						data: question.data.map(function (d) {
 							return d.value;
 						}),
-						label: question.label,
-						backgroundColor: colors[i]
+						label: question.label
 					});
 
 					if (!labels) {
@@ -561,7 +569,7 @@ function delphiUpdate(div) {
 		return;
 	}
 	
-	saveCookies();
+	//saveCookies();
 	
 	$(loader).show();
 	

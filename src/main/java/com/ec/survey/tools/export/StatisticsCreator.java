@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 @Service("statisticsCreator")
 @Scope("prototype")
@@ -566,7 +567,8 @@ public class StatisticsCreator implements Runnable {
 			}
 		}
 		
-		if (reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft())) {
+		//we do not use the reporting database for delphi surveys as the data has to be up to date at any time
+		if (!survey.getIsDelphi() && reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft())) {
 			Map<String, Object> values = new HashMap<>();
 			String where = ReportingService.getWhereClause(new ResultFilter(), values, survey);
 
@@ -585,10 +587,28 @@ public class StatisticsCreator implements Runnable {
 
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
 
-		String sql = "select a.PA_ID, a.PA_UID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID = :questionuid AND ans.ANSWER_SET_ID IN ("
-				+ where + ")";
-		values.put("questionuid", question.getUniqueId());
-
+		String sql = "select a.PA_ID, a.PA_UID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
+		
+		if (question instanceof Matrix || question instanceof RatingQuestion)
+		{
+			String questionuids = "";
+			
+			if (question instanceof Matrix)
+			{
+				Matrix matrix = (Matrix)question;
+				questionuids = matrix.getQuestions().stream().map(Element::getUniqueId).map(s -> "'" + s + "'").collect(Collectors.joining(","));
+			} else {
+				RatingQuestion rating = (RatingQuestion)question;
+				questionuids = rating.getQuestions().stream().map(Element::getUniqueId).map(s -> "'" + s + "'").collect(Collectors.joining(","));
+			}
+			
+			sql += " IN (" + questionuids + ") AND ans.ANSWER_SET_ID IN (" + where + ")";		
+		} else {
+			sql += " = :questionuid AND ans.ANSWER_SET_ID IN ("
+					+ where + ")";
+			values.put("questionuid", question.getUniqueId());
+		}	
+	
 		SQLQuery query = session.createSQLQuery(sql);
 		query.setReadOnly(true);
 
