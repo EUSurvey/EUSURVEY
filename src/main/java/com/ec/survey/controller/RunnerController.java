@@ -2402,11 +2402,11 @@ public class RunnerController extends BasicController {
 				}
 
 				// only show statistics if applicable for some subquestion
-				if (!result.getQuestions().isEmpty()) {
-					return ResponseEntity.ok(result);
+				if (result.getQuestions().isEmpty()) {
+					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 				}
 
-				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+				return ResponseEntity.ok(result);
 			}
 
 			if (question instanceof RatingQuestion) {
@@ -2435,11 +2435,11 @@ public class RunnerController extends BasicController {
 				}
 
 				// only show statistics if applicable for some subquestion
-				if (!result.getQuestions().isEmpty()) {
-					return ResponseEntity.ok(result);
+				if (result.getQuestions().isEmpty()) {
+					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 				}
 
-				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				return ResponseEntity.ok(result);
 			}
 
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

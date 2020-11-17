@@ -442,19 +442,6 @@ function getWidth(widths, index) {
 	return "50px";
 }
 
-function generateColorArray(size) {
-	var result = [];
-
-	for (var i = 0; i < size; i++) {
-		var hue = Math.floor(360 - (i * 360 / size));
-		var saturation = 95 - Math.floor(Math.pow(-1, i + 1) * 5);
-		var lightness = 50 - Math.floor(Math.pow(-1, i + 1) * 5);
-		result.push("hsl(" + hue + "," + saturation + "%," + lightness + "%)");
-	}
-
-	return result;
-}
-
 function loadGraphData(div) {
 	var surveyid = $(div).find("[name=surveyid]").first().val();
 	var questionuid = $(div).find("[name=questionuid]").first().val();
@@ -474,14 +461,12 @@ function loadGraphData(div) {
 			var message = $(div).find(".delphiupdatemessage").first();
 			$(message).html(data.responseText).addClass("update-error");
 		},
-		success: function (result, textStatus, jqXHR) {
-			
+		success: function (result, textStatus) {
 			// remove existing charts
 			var elementWrapper = $(div).closest(".elementwrapper");
 			$(elementWrapper).find(".chart-wrapper").remove();
-			
-			if (textStatus === "nocontent")
-			{
+
+			if (textStatus === "nocontent") {
 				return;
 			}
 
@@ -512,7 +497,6 @@ function loadGraphData(div) {
 				};
 			} else if (result.type === "multi") {
 				var questions = result.questions;
-				var colors = generateColorArray(questions.length);
 				var datasets = [];
 				var labels = undefined;
 
