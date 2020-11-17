@@ -43,10 +43,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/runner")
 public class RunnerController extends BasicController {
+
+	@Resource
+	protected AnswerExplanationService answerExplanationService;
 
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
@@ -2251,34 +2255,54 @@ public class RunnerController extends BasicController {
 
 		return result;
 	}
-	
-	@PostMapping(value = "/delphiUpdate")
-	public ResponseEntity<String> delphiUpdate(HttpServletRequest request, Locale locale) {		
+
+	@GetMapping("/delphiGet")
+	public ResponseEntity<String> delphiGetExplanation(HttpServletRequest request, Locale locale) {
 		try {
-							
-			String surveyid = request.getParameter("surveyid");
-			int sid = Integer.parseInt(surveyid);
-			
-			String questionid = request.getParameter("questionid");
-			int qid = Integer.parseInt(questionid);
-			
-			Survey survey = surveyService.getSurvey(sid);
-			String languageCode = request.getParameter("languagecode");
-			String uniqueCode = request.getParameter("uniquecode");
-			User user = sessionService.getCurrentUser(request, false, false);
+			final String answerSetId = request.getParameter("answerSetId");
+			final int answerSetIdParsed = Integer.parseInt(answerSetId);
+			final AnswerSet answerSet = answerService.get(answerSetIdParsed);
+			if (answerSet == null) {
+				return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.BAD_REQUEST);
+			}
+			final String questionUid = request.getParameter("questionUid");
+			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
+			return new ResponseEntity<>(explanation.getText(), HttpStatus.OK);
+		} catch (NoSuchElementException ex) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PostMapping(value = "/delphiUpdate")
+	public ResponseEntity<String> delphiCreateOrUpdateExplanation(HttpServletRequest request, Locale locale) {
+		try {
+					
+			final String surveyId = request.getParameter("surveyId");
+			final int surveyIdParsed = Integer.parseInt(surveyId);
+
+			final String questionUid = request.getParameter("questionUid");
+	
+			final Survey survey = surveyService.getSurvey(surveyIdParsed);
+			final String languageCode = request.getParameter("languageCode");
+			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
+			final String explanation = request.getParameter("explanation");
+			final User user = sessionService.getCurrentUser(request, false, false);
+
 			AnswerSet answerSet;
-			AnswerSet existingAnswerSet = answerService.get(uniqueCode);
+			final AnswerSet existingAnswerSet = answerService.get(answerSetUniqueCode);
 			if (existingAnswerSet == null) {
 				//save
-				answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, languageCode, user, fileService);
-				saveAnswerSet(answerSet, fileDir, null, -1);
+				answerSet = SurveyHelper.parseAnswerSet(request, survey, answerSetUniqueCode, false, languageCode, user, fileService);
 			} else {
 				//update
-				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, uniqueCode, existingAnswerSet, languageCode, user, fileService);
-			}	
+				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, answerSetUniqueCode, existingAnswerSet, languageCode, user, fileService);
+			}
 			
 			Set<String> invisibleElements = new HashSet<>();
-			Element element = survey.getElementsById().get(qid);
+			Element element = survey.getElementsByUniqueId().get(questionUid);
 			Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
 			HashMap<Element, String> result = new HashMap<>();
 
@@ -2289,14 +2313,16 @@ public class RunnerController extends BasicController {
 			if (!validation) {
 				return new ResponseEntity<>(resources.getMessage("error.CheckValidation", null, locale), HttpStatus.BAD_REQUEST);
 			}
-			
+
 			saveAnswerSet(answerSet, fileDir, null, -1);
+
+			answerExplanationService.createOrUpdateExplanation(answerSet, questionUid, explanation);
 			
 			return new ResponseEntity<>(resources.getMessage("message.ChangesSaved", null, locale), HttpStatus.OK);
 		
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>(resources.getMessage("error.delphiupdate", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(resources.getMessage("error.DelphiCreateOrUpdate", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

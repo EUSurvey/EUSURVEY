@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -45,9 +44,13 @@ import java.math.BigInteger;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 @Service("answerService")
 public class AnswerService extends BasicService {
+
+	@Resource
+	private AnswerExplanationService answerExplanationService;
 
 	@Resource(name = "attendeeService")
 	private AttendeeService attendeeService;
@@ -823,6 +826,11 @@ public class AnswerService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<AnswerSet> answerSets = query.list();
 
+		Survey survey = surveyService.getSurvey(surveyid, false, true);
+		if (survey != null && survey.getIsDelphi()) {
+			answerSets.forEach(set -> answerExplanationService.deleteExplanationByAnswerSet(set));
+		}
+
 		for (AnswerSet as : answerSets) {
 			if (!as.getIsDraft()) {
 				session.delete(as);
@@ -1223,6 +1231,10 @@ public class AnswerService extends BasicService {
 			boolean publishedSurvey = !answerSet.getSurvey().getIsDraft();
 			reportingService.removeFromOLAPTable(answerSet.getSurvey().getUniqueId(), answerSet.getUniqueCode(),
 					publishedSurvey);
+		}
+
+		if (answerSet.getSurvey().getIsDelphi()) {
+			answerExplanationService.deleteExplanationByAnswerSet(answerSet);
 		}
 
 		Session session = sessionFactory.getCurrentSession();

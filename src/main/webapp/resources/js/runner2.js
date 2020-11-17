@@ -401,6 +401,10 @@ function addElementToContainer(element, container, foreditor, forskin)
 	$(container).find(".sliderbox").each(function(){
 		initSlider(this, foreditor, viewModel);
 	});
+
+	$(container).find('.explanation-editor').each(function(){
+		$(this).tinymce(explanationEditorConfig);
+	});
 	
 	return viewModel;
 }
@@ -435,6 +439,40 @@ function getWidth(widths, index)
 	return "50px";
 }
 
+function delphiPrefill(editorElement) {
+	var answerSetId = $('#IdAnswerSet').val();
+	if (!answerSetId) {
+		return; // Cannot prefill when answers have not been submitted yet.
+	}
+	// The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
+	var surveyElement = $('#' + editorElement[0].id).closest('.survey-element');
+	var questionUid = surveyElement.find('input[name="questionUid"]').val();
+	var data = {
+		answerSetId: answerSetId,
+		questionUid: questionUid
+	};
+	$.ajax({
+		url: contextpath + '/runner/delphiGet',
+		data: data,
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function(message)
+		{
+			var messageElement = $('#' + editorElement[0].id).find(".delphiupdatemessage").first();
+			$(messageElement).html(message).addClass("update-error");
+			$('#' + editorElement[0].id).closest(".explanation-section").show();
+		},
+		success: function(currentExplanationText)
+		{
+			if (currentExplanationText) {
+				editorElement[0].setContent(currentExplanationText);
+			}
+			$('#' + editorElement[0].id).closest(".explanation-section").show();
+		}
+	});
+}
+
 function delphiUpdate(div) {
 	
 	var result = validateInput(div);
@@ -467,7 +505,6 @@ function delphiUpdate(div) {
 	    },
 		success: function(data)
 	    {
-	    	//everything is ok
 			$(message).html(data).addClass("info");
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
 			$(loader).hide();

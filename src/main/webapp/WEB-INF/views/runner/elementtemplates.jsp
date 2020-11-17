@@ -1122,18 +1122,20 @@
 	
 	<div id="delphi-template">
 		<!-- ko if: isDelphiQuestion() -->
-		<input type="hidden" name="surveyid" value="${form.survey.id}" />
-		<input type="hidden" name="questionid" data-bind="value: id()" />
-		<input type="hidden" name="uniquecode" value="${uniqueCode}" />
-		<input type="hidden" name="languagecode" value="${form.language.code}" />
-		<div style="margin-left: 20px; margin-top: 20px;">
+		<input type="hidden" name="surveyId" value="${form.survey.id}" />
+		<input type="hidden" name="ansSetUniqueCode" value="${uniqueCode}" />
+		<input type="hidden" name="languageCode" value="${form.language.code}" />
+		<input type="hidden" name="questionUid" data-bind="value: uniqueId()" />
+		<div class="explanation-section">
+			<label class="questiontitle">${form.getMessage("label.ExplainYourAnswer")}</label>
+			<textarea class="explanation-editor" name="explanation" data-bind="attr: {'id': 'explanation' + id()}"></textarea>			
+		</div>
+		<div class="explanation-update-section">
 			<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
-			
 			<span class="inline-loader">
 				<img class="center" src="${contextpath}/resources/images/ajax-loader.gif" />
 			</span>
-		</div>								
-			
+		</div>
 		<div class="delphiupdatemessage"></div>
 		<!-- /ko -->
 	</div>
