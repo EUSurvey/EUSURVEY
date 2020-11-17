@@ -1,3 +1,5 @@
+Chart.defaults.global.plugins.colorschemes.scheme = 'office.Blue6';
+
 function getElementViewModel(element)
 {
 	if (element.hasOwnProperty("isViewModel") && element.isViewModel)
@@ -388,17 +390,17 @@ function addElementToContainer(element, container, foreditor, forskin)
 	
 	$(container).find(".freetext").each(function(){
 		countChar(this);
-		
-		$(this).bind('paste', function(event) {
-	        var _this = this;
-	        // Short pause to wait for paste to complete
-	        setTimeout( function() {
-	        	countChar(_this);
-	        }, 100);
-	    });
+
+		$(this).bind('paste', function (event) {
+			var _this = this;
+			// Short pause to wait for paste to complete
+			setTimeout(function () {
+				countChar(_this);
+			}, 100);
+		});
 	});
-	
-	$(container).find(".sliderbox").each(function(){
+
+	$(container).find(".sliderbox").each(function () {
 		initSlider(this, foreditor, viewModel);
 	});
 
@@ -406,6 +408,13 @@ function addElementToContainer(element, container, foreditor, forskin)
 		$(this).tinymce(explanationEditorConfig);
 	});
 	
+	if (isdelphi) {
+		var surveyElement = $(container).closest(".survey-element");
+		if (surveyElement) {
+			loadGraphData(surveyElement);
+		}
+	}
+
 	return viewModel;
 }
 
@@ -428,14 +437,12 @@ function initSlider(input, foreditor, viewModel)
 	});
 }
 
-function getWidth(widths, index)
-{
-	if (widths != null)
-	{
+function getWidth(widths, index) {
+	if (widths != null) {
 		var w = widths.split(";")
 		return w[index] + "px";
 	}
-	
+
 	return "50px";
 }
 
@@ -473,6 +480,104 @@ function delphiPrefill(editorElement) {
 	});
 }
 
+function loadGraphData(div) {
+	var surveyid = $(div).find("[name=surveyId]").first().val();
+	var questionuid = $(div).find("[name=questionUid]").first().val();
+	var languagecode = $(div).find("[name=languageCode]").first().val();
+	var uniquecode = $(div).find("[name=ansSetUniqueCode]").first().val();
+
+	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
+	$.ajax({
+		type: "GET",
+		url: contextpath + "/runner/delphiGraph",
+		data: data,
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function (data) {
+			//TODO
+			var message = $(div).find(".delphiupdatemessage").first();
+			$(message).html(data.responseText).addClass("update-error");
+		},
+		success: function (result, textStatus) {
+			// remove existing charts
+			var elementWrapper = $(div).closest(".elementwrapper");
+			$(elementWrapper).find(".chart-wrapper").remove();
+
+			if (textStatus === "nocontent") {
+				return;
+			}
+
+			var chartData = {};
+			var chartOptions = {
+				scaleShowValues: true,
+				responsive: false,
+				scales: {
+					yAxes: [{ticks: {beginAtZero: true}}],
+					xAxes: [{ticks: {autoSkip: false}}]
+				},
+				legend: {display: false}
+			};
+
+			if (result.type === "single") {
+				var graphData = result.data;
+
+				chartData = {
+					datasets: [{
+						label: '',
+						data: graphData.map(function (g) {
+							return g.value
+						})
+					}],
+					labels: graphData.map(function (g) {
+						return g.label
+					})
+				};
+			} else if (result.type === "multi") {
+				var questions = result.questions;
+				var datasets = [];
+				var labels = undefined;
+
+				for (var i = 0; i < questions.length; i++) {
+					var question = questions[i];
+
+					datasets.push({
+						data: question.data.map(function (d) {
+							return d.value;
+						}),
+						label: question.label
+					});
+
+					if (!labels) {
+						labels = question.data.map(function (d) {
+							return d.label;
+						});
+					}
+				}
+
+				chartData = {
+					datasets,
+					labels
+				}
+
+				chartOptions.legend.display = true;
+			} else {
+				return;
+			}
+
+			// create new chart next to survey-element
+			var chartTemplate = $("#delphi-chart-template").clone().attr("id", "");
+			$(elementWrapper).append(chartTemplate);
+
+			new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), {
+				type: "bar",
+				data: chartData,
+				options: chartOptions
+			});
+		}
+	 });
+}
+
 function delphiUpdate(div) {
 	
 	var result = validateInput(div);
@@ -486,7 +591,7 @@ function delphiUpdate(div) {
 		return;
 	}
 	
-	saveCookies();
+	//saveCookies();
 	
 	$(loader).show();
 	
@@ -508,6 +613,8 @@ function delphiUpdate(div) {
 			$(message).html(data).addClass("info");
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
 			$(loader).hide();
+			
+			loadGraphData(div);
 	    }
 	 });
 }

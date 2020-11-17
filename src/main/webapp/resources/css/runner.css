@@ -454,7 +454,8 @@ legend {
 .explanation-section {
 	display: none;
 	margin-top: 25px;
-	max-width: 645px;
+	max-width: 410px;
+	padding: 5px;
 }
 
 .explanation-update-section > a.btn {

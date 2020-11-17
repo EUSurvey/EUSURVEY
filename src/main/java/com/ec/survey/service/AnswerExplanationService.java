@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
-@Service
+@Service("answerExplanationService")
 public class AnswerExplanationService extends BasicService {
 
 	@Transactional

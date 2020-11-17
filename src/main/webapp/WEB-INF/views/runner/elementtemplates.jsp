@@ -1114,17 +1114,18 @@
 						 <!-- /ko -->
 					</tr>
 					<!-- /ko -->
-				</tbody>	
+				</tbody>
 			</table>
 		</div>
-		<!-- /ko -->	
+		<!-- /ko -->
 	</div>
-	
+
 	<div id="delphi-template">
 		<!-- ko if: isDelphiQuestion() -->
 		<input type="hidden" name="surveyId" value="${form.survey.id}" />
 		<input type="hidden" name="ansSetUniqueCode" value="${uniqueCode}" />
 		<input type="hidden" name="languageCode" value="${form.language.code}" />
+		<input type="hidden" name="questionid" data-bind="value: id()"/>
 		<input type="hidden" name="questionUid" data-bind="value: uniqueId()" />
 		<div class="explanation-section">
 			<label class="questiontitle">${form.getMessage("label.ExplainYourAnswer")}</label>
@@ -1132,12 +1133,31 @@
 		</div>
 		<div class="explanation-update-section">
 			<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
+
 			<span class="inline-loader">
-				<img class="center" src="${contextpath}/resources/images/ajax-loader.gif" />
+				<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
 			</span>
 		</div>
+
 		<div class="delphiupdatemessage"></div>
 		<!-- /ko -->
 	</div>
 
+	<div id="delphi-chart-template">
+		<!-- ko if: isDelphiQuestion() -->
+		<div class='chart-wrapper'>
+			<table class='table table-condensed table-bordered'>
+				<tr>
+					<th class='area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
+				</tr>
+				<tr>
+					<td style='padding-top:10px; padding-bottom:10px'>
+						<canvas class='delphi-chart' width='300' height='220'></canvas>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<!-- /ko -->
+	</div>
 </div>
+

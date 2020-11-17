@@ -1,10 +1,6 @@
 package com.ec.survey.controller;
 
-import com.ec.survey.exception.ForbiddenURLException;
-import com.ec.survey.exception.FrozenSurveyException;
-import com.ec.survey.exception.InvalidURLException;
-import com.ec.survey.exception.MessageException;
-import com.ec.survey.exception.SmtpServerNotConfiguredException;
+import com.ec.survey.exception.*;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.GlobalPrivilege;
@@ -12,8 +8,12 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.survey.*;
-import com.ec.survey.service.*;
+import com.ec.survey.service.AnswerExplanationService;
+import com.ec.survey.service.MailService;
+import com.ec.survey.service.PDFService;
+import com.ec.survey.service.ValidCodesService;
 import com.ec.survey.tools.*;
+import com.ec.survey.tools.export.StatisticsCreator;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.owasp.esapi.ESAPI;
@@ -28,12 +28,7 @@ import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureExcep
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -49,7 +44,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/runner")
 public class RunnerController extends BasicController {
 
-	@Resource
+	@Resource(name = "answerExplanationService")
 	protected AnswerExplanationService answerExplanationService;
 
 	@Resource(name = "validCodesService")
@@ -2319,10 +2314,165 @@ public class RunnerController extends BasicController {
 			answerExplanationService.createOrUpdateExplanation(answerSet, questionUid, explanation);
 			
 			return new ResponseEntity<>(resources.getMessage("message.ChangesSaved", null, locale), HttpStatus.OK);
-		
+
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(resources.getMessage("error.DelphiCreateOrUpdate", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping(value = "delphiGraph")
+	public ResponseEntity<Object> delphiGraph(HttpServletRequest request, Locale locale) {
+		try {
+			String surveyid = request.getParameter("surveyid");
+			int sid = Integer.parseInt(surveyid);
+
+			String languageCode = request.getParameter("languagecode");
+			Survey survey = surveyService.getSurvey(sid, languageCode);
+
+			if (survey == null || !survey.getIsDelphi()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			if (!survey.getIsDelphiShowAnswers()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			if (answerService.get(request.getParameter("uniquecode")) == null) {
+				// participant may only see answers if he answered before
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			String questionuid = request.getParameter("questionuid");
+			Element element = survey.getQuestionMapByUniqueId().get(questionuid);
+
+			if (!(element instanceof Question)) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			Question question = (Question) element;
+			if (!question.getIsDelphiQuestion()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			Statistics statistics = new Statistics();
+			statistics.setSurveyId(survey.getId());
+
+			StatisticsCreator creator = (StatisticsCreator) context.getBean("statisticsCreator");
+			creator.init(survey, null, false);
+
+			Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
+			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();
+			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion = new HashMap<>();
+			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapGallery = new HashMap<>();
+			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset = new HashMap<>();
+
+			creator.getAnswers4Statistics(
+					survey,
+					question,
+					numberOfAnswersMap,
+					numberOfAnswersMapMatrix,
+					numberOfAnswersMapGallery,
+					multipleChoiceSelectionsByAnswerset,
+					numberOfAnswersMapRatingQuestion);
+
+			int minAnswers = survey.getMinNumberDelphiStatistics();
+
+			if (question instanceof ChoiceQuestion) {
+				if (numberOfAnswersMap.get(question.getId()) < minAnswers) {
+					// only show statistics for this question if the total number of answers exceeds the threshold
+					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				}
+
+				ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
+				creator.addStatistics(survey, choiceQuestion, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
+
+				ResultFilter resultFilter = new ResultFilter();
+				resultFilter.setVisibleQuestions(new HashSet<>(question.getId()));
+				answerService.getNumberOfAnswerSets(survey, resultFilter);
+
+				DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+
+				for (PossibleAnswer answer : choiceQuestion.getAllPossibleAnswers()) {
+					DelphiGraphEntry entry = new DelphiGraphEntry();
+					entry.setLabel(answer.getTitle());
+					entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
+					result.addEntry(entry);
+				}
+
+				return ResponseEntity.ok(result);
+			}
+
+			if (question instanceof Matrix) {
+				Matrix matrix = (Matrix) question;
+				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
+
+				for (Element matrixQuestion : matrix.getQuestions()) {
+					if (numberOfAnswersMap.get(matrixQuestion.getId()) < minAnswers) {
+						// only show statistics for this question if the total number of answers exceeds the threshold
+						continue;
+					}
+
+					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
+					questionResults.setLabel(matrixQuestion.getTitle());
+
+					for (Element matrixAnswer : matrix.getAnswers()) {
+						creator.addStatistics4Matrix(survey, matrixAnswer, matrixQuestion, statistics, numberOfAnswersMapMatrix);
+
+						DelphiGraphEntry entry = new DelphiGraphEntry();
+						entry.setLabel(matrixAnswer.getTitle());
+						entry.setValue(statistics.getRequestedRecordsForMatrix(matrixQuestion, matrixAnswer));
+						questionResults.addEntry(entry);
+					}
+
+					result.addQuestion(questionResults);
+				}
+
+				// only show statistics if applicable for some subquestion
+				if (result.getQuestions().isEmpty()) {
+					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+				}
+
+				return ResponseEntity.ok(result);
+			}
+
+			if (question instanceof RatingQuestion) {
+				RatingQuestion ratingQuestion = (RatingQuestion) question;
+				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
+
+				for (Element subQuestion : ratingQuestion.getQuestions()) {
+					if (numberOfAnswersMap.get(subQuestion.getId()) < minAnswers) {
+						// only show statistics for this question if the total number of answers exceeds the threshold
+						continue;
+					}
+
+					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
+					questionResults.setLabel(subQuestion.getTitle());
+
+					for (int i = 1; i <= ratingQuestion.getNumIcons(); i++) {
+						creator.addStatistics4RatingQuestion(survey, i, subQuestion, statistics, numberOfAnswersMapRatingQuestion);
+
+						DelphiGraphEntry entry = new DelphiGraphEntry();
+						entry.setLabel(Integer.toString(i));
+						entry.setValue(statistics.getRequestedRecordsForRatingQuestion(subQuestion, i));
+						questionResults.addEntry(entry);
+					}
+
+					result.addQuestion(questionResults);
+				}
+
+				// only show statistics if applicable for some subquestion
+				if (result.getQuestions().isEmpty()) {
+					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+				}
+
+				return ResponseEntity.ok(result);
+			}
+
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

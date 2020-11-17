@@ -1257,10 +1257,15 @@
 					</tr>
 					<tr class="subelement" data-bind="visible: delphi">
 						<td>
-							<div style="float: left">(dummy) show peer answers in form runner</div>
+							<div style="float: left">
+								<spring:message code="label.ShowDelphiAnswerTable" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.ShowDelphiAnswerTable" /></div>	
+							</div>
 							<div style="float: right">
-								<div class="onoffswitch disabled">
-									<label class="onoffswitch-label">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.isDelphiShowAnswers" class="onoffswitch-checkbox" id="myonoffswitchdelphianswers" />
+									<label class="onoffswitch-label" for="myonoffswitchdelphianswers">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -1269,7 +1274,21 @@
 							<div style="clear: both"></div>
 						</td>
 					</tr>
-
+					<tr class="subelement" data-bind="visible: delphi">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.MinimumResultsForStatistics" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.MinimumResultsForStatistics" /></div>	
+							</div>
+							<div style="float: right">
+								<div style="float: right; max-width: 500px;">
+									<form:input htmlEscape="false" path="survey.minNumberDelphiStatistics" id="minNumberDelphiStatistics" type="number" class="form-control number max1000000000" min='0' max='1000000000' style="display: inline-block" />
+								</div>
+							</div>
+							<div style="clear: both"></div>
+						</td>
+					</tr>
 				</table>	
 			</div>			
 			
