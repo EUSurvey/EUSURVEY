@@ -57,8 +57,15 @@ public class ContributionController extends BasicController {
 	public AnswerSet getAnswerSet(String code, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		AnswerSet answerSetOrNull = null;
-		User user = sessionService.getCurrentUser(request);
+		User user;
 		answerSetOrNull = answerService.get(code);
+		
+		if (answerSetOrNull != null && answerSetOrNull.getSurvey().getIsDelphi() && request.getRequestURI().contains("editcontribution"))
+		{
+			user = sessionService.getCurrentUser(request, false, false);
+		} else {
+			user = sessionService.getCurrentUser(request);
+		}
 
 		if (answerSetOrNull == null) {
 			return null;
@@ -194,7 +201,14 @@ public class ContributionController extends BasicController {
 		Set<String> invisibleElements = new HashSet<>();
 		if (answerSet != null) {
 			// participants can only access it if the survey is still active
-			User u = sessionService.getCurrentUser(request);
+			User u;
+			
+			if (answerSet.getSurvey().getIsDelphi() && request.getRequestURI().contains("editcontribution"))
+			{
+				u = sessionService.getCurrentUser(request, false, false);
+			} else {
+				u = sessionService.getCurrentUser(request);
+			}
 
 			Survey draft = surveyService.getSurveyByUniqueId(answerSet.getSurvey().getUniqueId(), false, true);
 
