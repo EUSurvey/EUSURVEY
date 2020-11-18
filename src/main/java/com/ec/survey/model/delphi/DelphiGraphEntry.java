@@ -1,4 +1,4 @@
-package com.ec.survey.model;
+package com.ec.survey.model.delphi;
 
 public class DelphiGraphEntry {
     private Object value;
