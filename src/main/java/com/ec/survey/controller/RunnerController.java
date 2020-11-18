@@ -7,6 +7,12 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.model.delphi.DelphiGraphDataMulti;
+import com.ec.survey.model.delphi.DelphiGraphDataSingle;
+import com.ec.survey.model.delphi.DelphiGraphEntry;
+import com.ec.survey.model.delphi.DelphiQuestion;
+import com.ec.survey.model.delphi.DelphiSection;
+import com.ec.survey.model.delphi.DelphiStructure;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.service.AnswerExplanationService;
 import com.ec.survey.service.MailService;
@@ -2503,6 +2509,48 @@ public class RunnerController extends BasicController {
 			}
 
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}	
+	
+	@GetMapping(value = "delphiStructure")
+	public ResponseEntity<DelphiStructure> delphiStructure(HttpServletRequest request, Locale locale) {
+		try {
+			String surveyid = request.getParameter("surveyid");
+			int sid = Integer.parseInt(surveyid);
+
+			String languageCode = request.getParameter("languagecode");
+			Survey survey = surveyService.getSurvey(sid, languageCode);
+
+			if (survey == null || !survey.getIsDelphi()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			
+			DelphiStructure structure = new DelphiStructure();
+			DelphiSection currentDelphiSection = new DelphiSection();
+			
+			for (Element element : survey.getQuestionsAndSections()) {
+				if (element instanceof Section) {
+					currentDelphiSection = new DelphiSection();
+					currentDelphiSection.setTitle(element.getTitle());
+				} else if (element instanceof Question) {
+					Question question = (Question)element;
+					if (question.getIsDelphiQuestion()) {
+						if (currentDelphiSection.getQuestions().isEmpty())
+						{
+							structure.getSections().add(currentDelphiSection);
+						}
+						
+						DelphiQuestion delphiQuestion = new DelphiQuestion();
+						delphiQuestion.setTitle(question.getTitle());
+						currentDelphiSection.getQuestions().add(delphiQuestion);						
+					}					
+				}
+			}
+			
+			return ResponseEntity.ok(structure);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
