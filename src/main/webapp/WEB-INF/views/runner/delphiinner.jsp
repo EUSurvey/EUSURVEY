@@ -127,6 +127,12 @@
 		</c:choose>
 						
 			<div id="sections">
+				<!-- ko if: !loaded() -->
+				<div>
+					<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
+				</div>
+				<!-- /ko -->
+			
 				<!-- ko foreach: sections -->
 				<div class="sectionwithquestions">
 			
@@ -185,7 +191,8 @@
 		}
 		
 		var sectionViewModel = {
-		    sections: ko.observableArray()
+		    sections: ko.observableArray(),
+		    loaded: ko.observable(false)
 		};
 		
 		function loadSectionsAndQuestions(div) {
@@ -207,13 +214,11 @@
 					alert(data);
 				},
 				success: function (data, textStatus) {
-					// remove existing charts
-					var sections = $("#sections");
-					$(sections).find(".section").empty();
-
 					for (var i = 0; i < data.sections.length; i++) {
 						sectionViewModel.sections.push(data.sections[i]);
 					}
+					
+					sectionViewModel.loaded(true);
 				}
 			 });
 		}
