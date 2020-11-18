@@ -328,6 +328,9 @@ public class RunnerController extends BasicController {
 								if (survey.getIsQuiz() && request.getParameter("startQuiz") == null) {
 									model = new ModelAndView("runner/quiz", "form", f);
 									model.addObject("isquizpage", true);
+								} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+									model = new ModelAndView("runner/delphi", "form", f);
+									model.addObject("isdelphipage", true);
 								}
 							}
 						} catch (Exception e) {
@@ -1206,6 +1209,10 @@ public class RunnerController extends BasicController {
 				if (survey.getIsQuiz() && request.getParameter("startQuiz") == null) {
 					model = new ModelAndView("runner/quiz", "form", f);
 					model.addObject("isquizpage", true);
+					model.addObject("runnermode", true);
+				} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+					model = new ModelAndView("runner/delphi", "form", f);
+					model.addObject("isdelphipage", true);
 					model.addObject("runnermode", true);
 				}
 
