@@ -2465,6 +2465,9 @@ public class ManagementController extends BasicController {
 			if (survey.getIsQuiz() && request.getParameter("startQuiz") == null) {
 				result = new ModelAndView("management/testQuiz", "form", form);
 				result.addObject("isquizpage", true);
+			} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+				result = new ModelAndView("management/testDelphi", "form", form);
+				result.addObject("isdelphipage", true);
 			}
 		}
 
