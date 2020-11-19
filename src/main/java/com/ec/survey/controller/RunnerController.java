@@ -138,6 +138,11 @@ public class RunnerController extends BasicController {
 				AnswerSet aws = answerService.getByInvitationCode(invitation.getUniqueId());
 				Date answerDate;
 				if (aws != null) {
+					if (aws.getSurvey().getIsDelphi())
+					{
+						return new ModelAndView("redirect:/editcontribution/" + aws.getUniqueCode());
+					}
+					
 					answerDate = aws.getDate();
 					String[] args = new String[] { ConversionTools.getFullString(answerDate) };
 					model.addObject("messageComplement", resources.getMessage("message.SubmittedOn", args,
@@ -960,6 +965,13 @@ public class RunnerController extends BasicController {
 							int contributionsCount = answerService.userContributionsToSurvey(survey, user);
 							if (contributionsCount > 0 && (survey.getAllowedContributionsPerUser() == 1
 									|| survey.getAllowedContributionsPerUser() <= contributionsCount)) {
+								
+								if (survey.getIsDelphi())
+								{
+									AnswerSet aws = answerService.getUserContributionToSurvey(survey, user);
+									return new ModelAndView("redirect:/editcontribution/" + aws.getUniqueCode());
+								}
+								
 								request.getSession().removeAttribute("ECASSURVEY");
 								modelReturn.setViewName(Constants.VIEW_ERROR_GENERIC);
 								modelReturn.addObject("runnermode", true);

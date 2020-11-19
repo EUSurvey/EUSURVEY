@@ -44,7 +44,6 @@ import java.math.BigInteger;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 @Service("answerService")
 public class AnswerService extends BasicService {
@@ -1171,6 +1170,27 @@ public class AnswerService extends BasicService {
 
 		return ConversionTools.getValue(query.uniqueResult());
 	}
+	
+	@Transactional(readOnly = true)
+	public AnswerSet getUserContributionToSurvey(Survey survey, User user) {
+		Session session = sessionFactory.getCurrentSession();
+
+		String queryString = "SELECT ans.ANSWER_SET_ID from ANSWERS_SET ans inner join SURVEYS s on ans.SURVEY_ID = s.SURVEY_ID WHERE s.SURVEY_UID = :uid AND s.ISDRAFT = 0 AND ans.ISDRAFT = 0 AND (ans.RESPONDER_EMAIL = :mail1 OR ans.RESPONDER_EMAIL = :mail2)";
+		SQLQuery query = session.createSQLQuery(queryString);
+		query.setString("uid", survey.getUniqueId()).setString("mail1", user.getEmail()).setString("mail2",
+				Tools.md5hash(user.getEmail()));
+
+		@SuppressWarnings("rawtypes")
+		List res = query.setMaxResults(1).list();
+		
+		for (Object o : res) {
+			Integer i = ConversionTools.getValue(o);
+			AnswerSet answerSet = (AnswerSet) session.get(AnswerSet.class, i);
+			return answerSet;
+		}
+
+		return null;
+	}
 
 	@Transactional(readOnly = true)
 	public int getNumberOfAnswerSets(Survey survey, ResultFilter filter) throws Exception {
@@ -2149,6 +2169,7 @@ public class AnswerService extends BasicService {
 			
 			Query queryAnswerSets = session.createSQLQuery(sqlAnswerSets);
 			sqlQueryService.setParameters(queryAnswerSets, parameters);
+			@SuppressWarnings("rawtypes")
 			List answersetIds = queryAnswerSets.list();		
 			
 			sql += " AND ans.ANSWER_SET_ID IN (" +StringUtils.collectionToCommaDelimitedString(answersetIds) + ")";
