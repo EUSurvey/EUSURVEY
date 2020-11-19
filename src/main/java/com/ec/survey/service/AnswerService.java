@@ -1172,7 +1172,7 @@ public class AnswerService extends BasicService {
 	}
 	
 	@Transactional(readOnly = true)
-	public AnswerSet userContributionToSurvey(Survey survey, User user) {
+	public AnswerSet getUserContributionToSurvey(Survey survey, User user) {
 		Session session = sessionFactory.getCurrentSession();
 
 		String queryString = "SELECT ans.ANSWER_SET_ID from ANSWERS_SET ans inner join SURVEYS s on ans.SURVEY_ID = s.SURVEY_ID WHERE s.SURVEY_UID = :uid AND s.ISDRAFT = 0 AND ans.ISDRAFT = 0 AND (ans.RESPONDER_EMAIL = :mail1 OR ans.RESPONDER_EMAIL = :mail2)";
