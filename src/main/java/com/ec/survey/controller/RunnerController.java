@@ -968,7 +968,7 @@ public class RunnerController extends BasicController {
 								
 								if (survey.getIsDelphi())
 								{
-									AnswerSet aws = answerService.userContributionToSurvey(survey, user);
+									AnswerSet aws = answerService.getUserContributionToSurvey(survey, user);
 									return new ModelAndView("redirect:/editcontribution/" + aws.getUniqueCode());
 								}
 								
