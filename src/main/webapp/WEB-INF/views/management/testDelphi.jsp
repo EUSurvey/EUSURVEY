@@ -10,6 +10,7 @@
 	
 	<link id="runnerCss" href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/management.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="${contextpath}/resources/js/runner2.js?version=<%@include file="../version.txt" %>"></script>
 		
 	<style type="text/css">
 	</style>
@@ -34,7 +35,9 @@
 			</div>
 		</div>
 		
-		<%@ include file="../runner/delphiinner.jsp" %>
+		<div style="padding-top: 150px">		
+			<%@ include file="../runner/delphiinner.jsp" %>		
+		</div>
 	</div>
 
 	<%@ include file="../footer.jsp" %>	
