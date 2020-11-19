@@ -16,7 +16,7 @@
 		padding: 10px;
 	}
 	
-	.sectionwithquestions a {
+	.section a {
 		color: #fff;
 	}
 
@@ -41,16 +41,33 @@
 		margin-right: 20px;
 		margin-bottom: 20px;
 		width: 300px;
-		height: 250px;
+		min-height: 315px;
 		background-color: #fff;
+		border: 1px solid #ccc;
 	}
 	
 	.question-title {
 		padding: 5px;
 		border-bottom: 1px solid #ccc;
 		margin-bottom: 5px;
+		font-weight: bold;
 	}
 	
+	.greenanswer {	
+		color: #0b0;
+		margin-bottom: 5px;
+	}
+	
+	.redanswer {
+		color: #b00;
+		margin-bottom: 5px;
+	}
+	
+	.question-footer {
+		padding: 5px;
+		border-top: 1px solid #ccc;
+		margin-top: 5px;
+	}
 	
 </style>
 
@@ -150,12 +167,13 @@
 				<!-- ko foreach: sections -->
 				<div class="sectionwithquestions">
 			
-					<div style="float: right; margin-top: 4px; margin-right: 0px;">
-						<a onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-bottom"></span></a>
-						<a style="display: none" onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-left"></span></a>
+					<div class="section">
+						<div style="float: right; margin-top: 4px; margin-right: 0px;">
+							<a onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-bottom"></span></a>
+							<a style="display: none" onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-left"></span></a>
+						</div>
+						<span data-bind="html: title"></span>					
 					</div>
-			
-					<div class="section"><span data-bind="html: title"></span></div>
 					
 					<div class="sectioncontent">
 										
@@ -163,7 +181,19 @@
 						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid}">
 							<div class="question-title" data-bind="html: title"></div>
 							
-							<canvas class='delphi-chart' width='300' height='210'></canvas>
+							<canvas class='delphi-chart' width='300' height='200'></canvas>
+							
+							<div class="question-footer">
+								<!-- ko if: answer.length > 0 -->
+								<div class="greenanswer">You answered: <span style="font-weight: bold" data-bind="html: answer"></span></div>
+								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}">Edit Answer</a>
+								<!-- <a class="btn btn-xs btn-default">Show Comments</a> -->
+								<!-- /ko -->
+								<!-- ko if: answer.length == 0 -->
+								<div class="redanswer">You did not answer to this question</div>
+								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}">Answer</a>
+								<!-- /ko -->
+							</div>
 						</div>					
 						<!-- /ko -->
 						

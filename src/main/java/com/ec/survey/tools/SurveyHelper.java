@@ -4215,4 +4215,126 @@ public class SurveyHelper {
 		return false;
 	}
 
+	public static String getAnswerTitle(Survey survey, Answer answer, boolean publicationMode) {
+		String answerValue = answer.getValue();
+
+		try {
+
+			if (survey != null) {
+
+				Element question = null;
+
+				Map<Integer, Question> questionMap = survey.getQuestionMap();
+
+				if (questionMap != null) {
+					question = questionMap.get(answer.getQuestionId());
+				}
+
+				if (question == null) {
+					question = survey.getMatrixMap().get(answer.getQuestionId());
+				}
+
+				if (question == null) {
+					question = survey.getQuestionMapByUniqueId().get(answer.getQuestionUniqueId());
+				}
+
+				if (question == null) {
+					question = survey.getMissingElementsById().get(answer.getQuestionId());
+				}
+
+				if (question == null && answer.getQuestionUniqueId() != null
+						&& answer.getQuestionUniqueId().length() > 0) {
+					question = survey.getMissingElementsByUniqueId().get(answer.getQuestionUniqueId());
+				}
+
+				if (question == null && answer.getPossibleAnswerId() > 0) {
+					int possibleAnswerId = Integer.parseInt(answerValue);
+					if (survey.getMissingElementsById().containsKey(possibleAnswerId)) {
+						return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitle();
+					}
+
+					if (answer.getPossibleAnswerUniqueId() != null && answer.getPossibleAnswerUniqueId().length() > 0
+							&& survey.getElementsByUniqueId().containsKey(answer.getPossibleAnswerUniqueId())) {
+						return survey.getElementsByUniqueId().get(answer.getPossibleAnswerUniqueId())
+								.getStrippedTitle();
+					}
+
+					if (answer.getPossibleAnswerUniqueId() != null && answer.getPossibleAnswerUniqueId().length() > 0
+							&& survey.getMissingElementsByUniqueId().containsKey(answer.getPossibleAnswerUniqueId())) {
+						return survey.getMissingElementsByUniqueId().get(answer.getPossibleAnswerUniqueId())
+								.getStrippedTitle();
+					}
+				}
+
+				if (question instanceof FreeTextQuestion) {
+					if (publicationMode && answerValue != null && answerValue.length() > 0) {
+						FreeTextQuestion q = (FreeTextQuestion) question;
+						if (q.getIsPassword()) {
+							return "********";
+						}
+					}
+					return answerValue;
+				} else if (question instanceof ChoiceQuestion) {
+					int possibleAnswerId = Integer.parseInt(answerValue);
+					ChoiceQuestion choicequestion = (ChoiceQuestion) question;
+					if (choicequestion.getPossibleAnswer(possibleAnswerId) != null) {
+						return choicequestion.getPossibleAnswer(possibleAnswerId).getStrippedTitle();
+					} else {
+						if (survey.getMissingElementsById().containsKey(possibleAnswerId)) {
+							return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitle();
+						}
+					}
+
+					if (choicequestion.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null) {
+						return choicequestion.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
+								.getStrippedTitle();
+					}
+
+					return "";
+				} else if (question instanceof Text || question instanceof Image || question instanceof EmptyElement) {
+					// could be inside a matrix
+					int possibleAnswerId = Integer.parseInt(answerValue);
+					for (Element element : survey.getElements()) {
+						if (element instanceof Matrix) {
+							for (Element child : ((Matrix) element).getChildElements()) {
+								if (child.getId().equals(possibleAnswerId) || (child.getUniqueId() != null
+										&& child.getUniqueId().equalsIgnoreCase(answer.getPossibleAnswerUniqueId()))) {
+									return child.getStrippedTitle();
+								}
+							}
+							for (Element child : ((Matrix) element).getMissingAnswers()) {
+								if (child.getId().equals(possibleAnswerId)) {
+									return child.getStrippedTitle();
+								}
+							}
+						}
+					}
+					for (Element element : survey.getMissingElements()) {
+						if (element instanceof Matrix) {
+							for (Element child : ((Matrix) element).getChildElements()) {
+								if (child.getId().equals(possibleAnswerId)) {
+									return child.getStrippedTitle();
+								}
+							}
+							for (Element child : ((Matrix) element).getMissingAnswers()) {
+								if (child.getId().equals(possibleAnswerId)) {
+									return child.getStrippedTitle();
+								}
+							}
+						} else if (element.getId().equals(possibleAnswerId)) {
+							return element.getStrippedTitle();
+						}
+					}
+
+					return "";
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return "";
+		}
+
+		return answerValue;
+	}
 }

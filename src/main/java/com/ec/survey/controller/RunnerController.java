@@ -2373,7 +2373,7 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
-			if (answerService.get(request.getParameter("uniquecode")) == null) {
+			if (!survey.getIsDraft() && answerService.get(request.getParameter("uniquecode")) == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -2524,6 +2524,13 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 			
+			String uniqueCode = request.getParameter("uniquecode");
+			AnswerSet answerSet = null;
+			if (uniqueCode != null && uniqueCode.length() > 0)
+			{
+				answerSet = answerService.get(uniqueCode);
+			}
+			
 			DelphiStructure structure = new DelphiStructure();
 			DelphiSection currentDelphiSection = new DelphiSection();
 			
@@ -2542,6 +2549,53 @@ public class RunnerController extends BasicController {
 						DelphiQuestion delphiQuestion = new DelphiQuestion();
 						delphiQuestion.setTitle(question.getTitle());
 						delphiQuestion.setUid(question.getUniqueId());
+						delphiQuestion.setId(question.getId());
+						
+						if (answerSet != null)
+						{
+							String result = "";
+							
+							if (question instanceof Matrix)
+							{								
+								Matrix matrix = (Matrix)question;
+						
+								for (Element matrixQuestions : matrix.getQuestions()) {
+									List<Answer> answers = answerSet.getAnswers(matrixQuestions.getId(), matrixQuestions.getUniqueId());
+									
+									for (Answer answer: answers) {
+										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
+									}
+								}
+								
+								delphiQuestion.setAnswer(result);
+							} else if (question instanceof RatingQuestion)
+							{								
+								RatingQuestion rating = (RatingQuestion)question;
+						
+								for (Element ratingQuestions : rating.getQuestions()) {
+									List<Answer> answers = answerSet.getAnswers(ratingQuestions.getId(), ratingQuestions.getUniqueId());
+									
+									for (Answer answer: answers) {
+										result += answer.getValue() + " ";
+									}
+								}
+								
+								delphiQuestion.setAnswer(result);
+							} else {
+								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+								
+								if (!answers.isEmpty())
+								{
+									for (Answer answer: answers) {
+										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
+									}
+								}
+							}
+
+							delphiQuestion.setAnswer(result);
+						}
+						
+						
 						currentDelphiSection.getQuestions().add(delphiQuestion);						
 					}					
 				}
