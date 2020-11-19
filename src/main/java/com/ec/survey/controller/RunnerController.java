@@ -2276,7 +2276,7 @@ public class RunnerController extends BasicController {
 			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
 			return new ResponseEntity<>(explanation.getText(), HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -2374,12 +2374,12 @@ public class RunnerController extends BasicController {
 			Element element = survey.getQuestionMapByUniqueId().get(questionuid);
 
 			if (!(element instanceof Question)) {
-				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
 			Question question = (Question) element;
 			if (!question.getIsDelphiQuestion()) {
-				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
 			Statistics statistics = new Statistics();
@@ -2496,7 +2496,7 @@ public class RunnerController extends BasicController {
 				return ResponseEntity.ok(result);
 			}
 
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -2533,6 +2533,7 @@ public class RunnerController extends BasicController {
 						
 						DelphiQuestion delphiQuestion = new DelphiQuestion();
 						delphiQuestion.setTitle(question.getTitle());
+						delphiQuestion.setUid(question.getUniqueId());
 						currentDelphiSection.getQuestions().add(delphiQuestion);						
 					}					
 				}

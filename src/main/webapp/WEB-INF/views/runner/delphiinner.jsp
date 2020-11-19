@@ -39,18 +39,32 @@
 	.question {
 		float: left;
 		margin-right: 20px;
-		width: 220px;
+		margin-bottom: 20px;
+		width: 300px;
+		height: 250px;
 		background-color: #fff;
 	}
 	
-	.question .areaheader {
-		height: 65px;
+	.question-title {
+		padding: 5px;
+		border-bottom: 1px solid #ccc;
+		margin-bottom: 5px;
 	}
 	
 	
 </style>
-	
-	<div class="fullpageform">	
+
+	<c:choose>
+		<c:when test="${forpdf == null && responsive == null}">
+			<div class="fullpageform" style="padding-top: 40px;">
+		</c:when>
+		<c:when test="${responsive != null}">
+			<div style="padding-top: 40px;">
+		</c:when>
+		<c:otherwise>
+			<div>
+		</c:otherwise>
+	</c:choose>
 	
 		<c:if test="${responsive == null}">
 	
@@ -102,7 +116,7 @@
 			</div>
 		</c:if>
 		
-		<div>
+		<div style="padding: 20px">
 			<c:if test="${form.survey.logo != null && !form.survey.logoInInfo}">
 				<div style="max-width: 900px">
 					<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" style="max-width: 900px;" />
@@ -146,8 +160,10 @@
 					<div class="sectioncontent">
 										
 						<!-- ko foreach: questions -->
-						<div class="question">
-							<span data-bind="html: title"></span>
+						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid}">
+							<div class="question-title" data-bind="html: title"></div>
+							
+							<canvas class='delphi-chart' width='300' height='210'></canvas>
 						</div>					
 						<!-- /ko -->
 						
@@ -216,6 +232,15 @@
 				success: function (data, textStatus) {
 					for (var i = 0; i < data.sections.length; i++) {
 						sectionViewModel.sections.push(data.sections[i]);
+					}
+					
+					for (var i = 0; i < data.sections.length; i++)
+					{
+						for (var j = 0; j < data.sections[i].questions.length; j++)
+						{
+							var div = $('#delphiquestion' + data.sections[i].questions[j].uid);
+							loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart);
+						}
 					}
 					
 					sectionViewModel.loaded(true);

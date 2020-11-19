@@ -267,6 +267,11 @@ public class ContributionController extends BasicController {
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 
 			ModelAndView model = new ModelAndView("contributions/edit", "form", f);
+			
+			if (newestSurvey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+				model = new ModelAndView("runner/delphi", "form", f);
+				model.addObject("isdelphipage", true);
+			}
 
 			model.addObject("submit", true);
 			model.addObject("answerSet", answerSet.getId());
