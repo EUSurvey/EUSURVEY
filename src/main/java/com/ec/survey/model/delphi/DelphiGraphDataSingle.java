@@ -3,10 +3,8 @@ package com.ec.survey.model.delphi;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DelphiGraphDataSingle {
-    public final String type = "single";
+public class DelphiGraphDataSingle extends AbstractDelphiGraphData {
     private final Collection<DelphiGraphEntry> data = new ArrayList<>();
-
     private String label;
 
     public String getLabel() {
@@ -23,5 +21,10 @@ public class DelphiGraphDataSingle {
 
     public Collection<DelphiGraphEntry> getData() {
         return new ArrayList<>(data);
+    }
+
+    @Override
+    public String getType() {
+        return "single";
     }
 }

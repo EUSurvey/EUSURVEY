@@ -7,12 +7,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
-import com.ec.survey.model.delphi.DelphiGraphDataMulti;
-import com.ec.survey.model.delphi.DelphiGraphDataSingle;
-import com.ec.survey.model.delphi.DelphiGraphEntry;
-import com.ec.survey.model.delphi.DelphiQuestion;
-import com.ec.survey.model.delphi.DelphiSection;
-import com.ec.survey.model.delphi.DelphiStructure;
+import com.ec.survey.model.delphi.*;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.service.AnswerExplanationService;
 import com.ec.survey.service.MailService;
@@ -44,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/runner")
@@ -2431,14 +2427,47 @@ public class RunnerController extends BasicController {
 				answerService.getNumberOfAnswerSets(survey, resultFilter);
 
 				DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+				Map<String, String> answerIdToTitle = new HashMap<>();
 
 				for (PossibleAnswer answer : choiceQuestion.getAllPossibleAnswers()) {
+					String id = answer.getId().toString();
+					String title = answer.getTitle();
+					answerIdToTitle.put(id, title);
+
 					DelphiGraphEntry entry = new DelphiGraphEntry();
-					entry.setLabel(answer.getTitle());
-					entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
+					entry.setLabel(title);
+					entry.setValue(statistics.getRequestedRecords().get(id));
 					result.addEntry(entry);
 				}
 
+				Map<Integer, List<DelphiExplanation>> groupedAnswers = answerExplanationService.getDelphiExplanations(questionuid)
+						.stream()
+						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
+				List<DelphiExplanation> explanations = new ArrayList<>();
+
+				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedAnswers.entrySet()) {
+					List<String> values = entry.getValue().stream()
+							.map(DelphiExplanation::getValue)
+							.collect(Collectors.toList());
+
+					if (!values.stream().allMatch(answerIdToTitle::containsKey)) {
+						// invalid answer set
+						continue;
+					}
+
+					DelphiExplanation firstValue = entry.getValue().get(0);
+
+					DelphiExplanation ex = new DelphiExplanation();
+					ex.setAnswerSetId(entry.getKey());
+					ex.setExplanation(firstValue.getExplanation());
+					ex.setUpdate(firstValue.getUpdate());
+					ex.setValue(values.stream().map(answerIdToTitle::get).collect(Collectors.joining(", ")));
+
+					explanations.add(ex);
+				}
+
+				result.setExplanations(explanations);
 				return ResponseEntity.ok(result);
 			}
 

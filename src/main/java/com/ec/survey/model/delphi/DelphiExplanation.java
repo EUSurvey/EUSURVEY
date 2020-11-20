@@ -1,0 +1,60 @@
+package com.ec.survey.model.delphi;
+
+import java.util.Date;
+
+public class DelphiExplanation {
+    private int answerSetId;
+    private int column;
+    private String explanation;
+    private int row;
+    private Date update;
+    private String value;
+
+    public int getAnswerSetId() {
+        return answerSetId;
+    }
+
+    public void setAnswerSetId(int answerSetId) {
+        this.answerSetId = answerSetId;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+    public String getExplanation() {
+        return explanation;
+    }
+
+    public void setExplanation(String explanation) {
+        this.explanation = explanation;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public Date getUpdate() {
+        return update;
+    }
+
+    public void setUpdate(Date update) {
+        this.update = update;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+}
