@@ -626,6 +626,20 @@ function delphiUpdate(div) {
 	
 	var form = document.createElement("form");
 	$(form).append($(div).clone());
+	
+	var surveyId = $('#survey\\.id').val();
+	$(form).append('<input type="hidden" name="surveyId" value="' + surveyId + '" />');
+	var ansSetUniqueCode = $('#uniqueCode').val();
+	$(form).append('<input type="hidden" name="ansSetUniqueCode" value="' + ansSetUniqueCode + '" />');
+	var invitation = $('#invitation').val();
+	$(form).append('<input type="hidden" name="invitation" value="' + invitation + '" />');
+	var lang = $('#language.code').val();
+	$(form).append('<input type="hidden" name="languageCode" value="' + lang + '" />');
+	var id = $(div).attr("data-id");
+	$(form).append('<input type="hidden" name="questionId" value="' + id + '" />');
+	var uid = $(div).attr("data-uid");
+	$(form).append('<input type="hidden" name="questionUid" value="' + uid + '" />');
+
 	var data = $(form).serialize();
 	
 	$.ajax({type: "POST",

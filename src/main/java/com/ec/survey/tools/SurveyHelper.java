@@ -135,10 +135,18 @@ public class SurveyHelper {
 									ChoiceQuestion cq = (ChoiceQuestion) question;
 									answer.setPossibleAnswerUniqueId(cq.getPossibleAnswer(paid).getUniqueId());
 								}
-
+																					
 								answerSet.addAnswer(answer);
 							}
 						}
+						
+						if (question.getIsDelphiQuestion())
+						{
+							String[] explanation = parameterMap.get("explanation" + question.getId());
+							if (explanation != null && explanation.length > 0) {
+								answerSet.getExplanations().put(question.getUniqueId(), explanation[0]);
+							}
+						}		
 					} else {
 						// try matrix
 

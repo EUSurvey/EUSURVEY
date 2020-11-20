@@ -178,6 +178,11 @@ public class AnswerService extends BasicService {
 			boolean newAnswer = answerSet.getId() == null;
 			session.saveOrUpdate(answerSet);
 			session.flush();
+			
+			if (answerSet.getSurvey().getIsDelphi()) {
+				answerExplanationService.createOrUpdateExplanations(answerSet);
+			}			
+			
 			if (!answerSet.getSurvey().getIsDraft()) {
 				if (newAnswer) {
 					reportingService.addToDo(ToDo.NEWCONTRIBUTION, answerSet.getSurvey().getUniqueId(),
