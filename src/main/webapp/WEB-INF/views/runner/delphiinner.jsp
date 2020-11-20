@@ -44,6 +44,7 @@
 		min-height: 315px;
 		background-color: #fff;
 		border: 1px solid #ccc;
+		position: relative;
 	}
 	
 	.question-title {
@@ -67,6 +68,16 @@
 		padding: 5px;
 		border-top: 1px solid #ccc;
 		margin-top: 5px;
+	}
+	
+	.no-graph-image {
+		font-size: 90px;
+		text-align: center;
+		display: block;
+		position: absolute;
+		width: 100%;
+		margin-top: 110px;
+		color: #aaa;
 	}
 	
 </style>
@@ -181,17 +192,18 @@
 						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid}">
 							<div class="question-title" data-bind="html: title"></div>
 							
+							<span class="no-graph-image glyphicon glyphicon-signal"></span>
 							<canvas class='delphi-chart' width='300' height='200'></canvas>
 							
 							<div class="question-footer">
 								<!-- ko if: answer.length > 0 -->
-								<div class="greenanswer">You answered: <span style="font-weight: bold" data-bind="html: answer"></span></div>
-								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}">Edit Answer</a>
+								<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: answer"></span></div>
+								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}"><spring:message code="label.EditAnswer" /></a>
 								<!-- <a class="btn btn-xs btn-default">Show Comments</a> -->
 								<!-- /ko -->
 								<!-- ko if: answer.length == 0 -->
-								<div class="redanswer">You did not answer to this question</div>
-								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}">Answer</a>
+								<div class="redanswer"><spring:message code="info.NotAnswered" /></div>
+								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}"><spring:message code="label.Answer" /></a>
 								<!-- /ko -->
 							</div>
 						</div>					

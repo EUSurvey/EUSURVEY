@@ -591,14 +591,11 @@ function addStructureChart(div, chartData, chartOptions)
 		data: chartData,
 		options: chartOptions
 	});
+	
+	$(div).find('.no-graph-image').hide();
 }
 
 function loadGraphData(div) {
-	
-	if ( $(div).find("[name=surveyId]").length == 0) {
-		return;
-	}
-	
 	var surveyid = $(div).find("[name=surveyId]").first().val();
 	var questionuid = $(div).find("[name=questionUid]").first().val();
 	var languagecode = $(div).find("[name=languageCode]").first().val();
