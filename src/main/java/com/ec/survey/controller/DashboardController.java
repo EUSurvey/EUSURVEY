@@ -630,16 +630,20 @@ public class DashboardController extends BasicController {
 			for (Invitation invitation : lstInvitations) {
 				ParticipationGroup group = participationService.get(invitation.getParticipationGroupId());
 				Survey s = surveyService.getSurvey(group.getSurveyUid(), true, false, false, false, null, true, false);
+				
+				if (s != null) {
 
-				Object[] answer = new Object[8];
-				answer[0] = ConversionTools.getFullStringSmall(invitation.getInvited());
-				answer[1] = ConversionTools.removeHTML(s.getTitle());
-				answer[2] = s.getIsActive();
-				answer[3] = s.getEndString();
-				answer[4] = host + "runner/invited/" + invitation.getParticipationGroupId() + Constants.PATH_DELIMITER
-						+ invitation.getUniqueId();
-
-				invitations.add(answer);
+					Object[] answer = new Object[8];
+					answer[0] = ConversionTools.getFullStringSmall(invitation.getInvited());
+					answer[1] = ConversionTools.removeHTML(s.getTitle());
+					answer[2] = s.getIsActive();
+					answer[3] = s.getEndString();
+					answer[4] = host + "runner/invited/" + invitation.getParticipationGroupId() + Constants.PATH_DELIMITER
+							+ invitation.getUniqueId();
+	
+					invitations.add(answer);
+				
+				}
 			}
 
 			return invitations;
@@ -658,6 +662,75 @@ public class DashboardController extends BasicController {
 
 			User u = sessionService.getCurrentUser(request);
 			return answerService.getContributionStatisticsForUser(u.getId());
+		} catch (Exception ex) {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			logger.error(ex.getMessage(), ex);
+		}
+
+		return null;
+	}
+	
+	@RequestMapping(value = "/dashboard/opendelphisurveys", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody List<Object[]> delphisurveys(HttpServletRequest request, HttpServletResponse response,
+			Locale locale, Model model) {
+		try {
+
+			int page = 1;
+			if (request.getParameter("page") != null) {
+				page = Integer.parseInt(request.getParameter("page"));
+			}
+			
+			User u = sessionService.getCurrentUser(request);
+			SurveyFilter filter = new SurveyFilter();
+			filter.setUser(u);
+			
+			filter.setType("delphi");
+			filter.setAccess("open");
+			
+			if (request.getParameter("title") != null) {
+				String title = request.getParameter("title");
+				if (title.trim().length() > 0) {
+					filter.setTitle(title);
+				}
+			}
+			
+			if (request.getParameter("status") != null) {
+				String status = request.getParameter("status");
+				if (status.trim().length() > 0) {
+					filter.setStatus(status);
+				}
+			}
+			
+			if (request.getParameter("endfrom") != null) {
+				String endfrom = request.getParameter("endfrom");
+				if (endfrom.trim().length() > 0) {
+					filter.setEndFrom(ConversionTools.getDate(endfrom));
+				}
+			}
+			if (request.getParameter("endto") != null) {
+				String endto = request.getParameter("endto");
+				if (endto.trim().length() > 0) {
+					filter.setEndTo(ConversionTools.getDate(endto));
+				}
+			}
+			
+			SqlPagination paging = new SqlPagination(page, 10);
+			List<Survey> surveyList = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, false, false);		
+			
+			List<Object[]> result = new ArrayList<Object[]>();
+		
+			for (Survey survey : surveyList) {
+
+				Object[] answer = new Object[4];
+				answer[0] = ConversionTools.removeHTML(survey.getTitle());
+				answer[1] = survey.getIsActive();
+				answer[2] = survey.getEndString();
+				answer[3] = host + "runner/" + survey.getShortname();
+
+				result.add(answer);
+			}
+
+			return result;
 		} catch (Exception ex) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			logger.error(ex.getMessage(), ex);
