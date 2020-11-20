@@ -591,6 +591,8 @@ function addStructureChart(div, chartData, chartOptions)
 		data: chartData,
 		options: chartOptions
 	});
+	
+	$(div).find('.no-graph-image').hide();
 }
 
 function loadGraphData(div) {
@@ -600,6 +602,7 @@ function loadGraphData(div) {
 	var uniquecode = $('#uniqueCode').val();
 
 	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart);
+
 }
 
 function delphiUpdate(div) {
