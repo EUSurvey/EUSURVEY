@@ -527,6 +527,10 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 						})
 					}],
 					labels: graphData.map(function (g) {
+						if (g.label.length > 15)
+						{
+							return g.label.substring(0,15) + "...";
+						}
 						return g.label
 					})
 				};
