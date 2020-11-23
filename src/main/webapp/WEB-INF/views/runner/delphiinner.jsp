@@ -194,17 +194,19 @@
 										
 						<!-- ko foreach: questions -->
 						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid}">
-							<div class="question-title" data-bind="html: title"></div>
+							<div class="question-title" data-bind="html: sectionViewModel.niceTitle(title)"></div>
 							
 							<div class="no-graph-image">
 								<span class="glyphicon glyphicon-signal"></span><br />
 								<span><spring:message code="info.NoData" /></span>
 							</div>
-							<canvas class='delphi-chart' width='300' height='200'></canvas>
+							<div style="height: 200px;" class="delphi-chart-div">
+								<canvas class='delphi-chart' width='300' height='200'></canvas>
+							</div>
 							
 							<div class="question-footer">
 								<!-- ko if: answer.length > 0 -->
-								<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: answer"></span></div>
+								<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: sectionViewModel.niceAnswer(answer)"></span></div>
 								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}"><spring:message code="label.EditAnswer" /></a>
 								<!-- <a class="btn btn-xs btn-default">Show Comments</a> -->
 								<!-- /ko -->
@@ -260,7 +262,25 @@
 		
 		var sectionViewModel = {
 		    sections: ko.observableArray(),
-		    loaded: ko.observable(false)
+		    loaded: ko.observable(false),
+		    
+		    niceTitle: function(title)
+			{
+		    	if (title.length < 80) {
+		    		return title;
+		    	}
+		    	
+		    	return "<span data-toggle='tooltip' title='" + title + "'>" + title.substring(0,75) + "...</span>";
+			},
+			
+			niceAnswer: function(answer)
+			{
+		    	if (answer.length < 25) {
+		    		return answer;
+		    	}
+		    	
+		    	return "<span data-toggle='tooltip' title='" + answer + "'>" + answer.substring(0,20) + "...</span>";
+			}
 		};
 		
 		function loadSectionsAndQuestions(div) {
@@ -296,6 +316,7 @@
 					}
 					
 					sectionViewModel.loaded(true);
+					$('[data-toggle="tooltip"]').tooltip()
 				}
 			 });
 		}

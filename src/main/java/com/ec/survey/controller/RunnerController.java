@@ -2414,6 +2414,12 @@ public class RunnerController extends BasicController {
 			int minAnswers = survey.getMinNumberDelphiStatistics();
 
 			if (question instanceof ChoiceQuestion) {
+				
+				if (!numberOfAnswersMap.containsKey(question.getId()) || numberOfAnswersMap.get(question.getId()) == 0) {
+					//participant may only see answers if he answered before
+					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+				}
+				
 				if (numberOfAnswersMap.get(question.getId()) < minAnswers) {
 					// only show statistics for this question if the total number of answers exceeds the threshold
 					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
