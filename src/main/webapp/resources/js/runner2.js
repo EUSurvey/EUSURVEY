@@ -608,6 +608,10 @@ function createMultipleChoiceCell(values) {
 	return createTableCell(values.join(", "));
 }
 
+function createRatingCell(values) {
+	return createTableCell(values.join("<br/>"));
+}
+
 function createSingleChoiceCell(values) {
 	return createTableCell(values[0]);
 }
@@ -634,6 +638,10 @@ function addTable(div, explanations, questionType) {
 
 		case "MultipleChoice":
 			valueCellFunction = createMultipleChoiceCell;
+			break;
+
+		case "Rating":
+			valueCellFunction = createRatingCell;
 			break;
 
 		default:
