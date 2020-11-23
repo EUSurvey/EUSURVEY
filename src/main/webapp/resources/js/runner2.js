@@ -615,8 +615,12 @@ function addStructureChart(div, chartData, chartOptions) {
 		data: chartData,
 		options: chartOptions
 	});
-	
+
 	$(div).find('.no-graph-image').hide();
+}
+
+function createMatrixCell(values) {
+	return createRatingCell(values);
 }
 
 function createMultipleChoiceCell(values) {
@@ -666,6 +670,10 @@ function addTable(div, explanations, questionType) {
 
 		case "Rating":
 			valueCellFunction = createRatingCell;
+			break;
+
+		case "Matrix":
+			valueCellFunction = createMatrixCell;
 			break;
 
 		default:

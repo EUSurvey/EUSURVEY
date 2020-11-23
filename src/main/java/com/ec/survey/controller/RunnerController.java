@@ -2482,13 +2482,20 @@ public class RunnerController extends BasicController {
 				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 				result.setType(AbstractDelphiGraphData.DelphiQuestionType.Matrix);
 
+				Map<String, String> answerTitles = new HashMap<>();
+				for (Element matrixAnswer : matrix.getAnswers()) {
+					answerTitles.put(matrixAnswer.getId().toString(), matrixAnswer.getTitle());
+				}
+
+				Map<Integer, String> questionTitles = new HashMap<>();
 				for (Element matrixQuestion : matrix.getQuestions()) {
+					questionTitles.put(matrixQuestion.getId(), matrixQuestion.getTitle());
 
 					if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
 						//participant may only see answers if he answered before
 						continue;
 					}
-					
+
 					if (numberOfAnswersMap.get(matrixQuestion.getId()) < minAnswers) {
 						// only show statistics for this question if the total number of answers exceeds the threshold
 						continue;
@@ -2513,6 +2520,48 @@ public class RunnerController extends BasicController {
 				if (result.getQuestions().isEmpty()) {
 					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 				}
+
+				List<DelphiExplanationDto> explanations = new ArrayList<>();
+
+				// group explanations by answer set ID
+				Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(matrix)
+						.stream()
+						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
+				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+					List<Object> values = new ArrayList<>();
+
+					boolean skipped = false;
+
+					for (DelphiExplanation de : entry.getValue()) {
+						// find labels for question and answer
+						String label = questionTitles.get(de.getQuestionId());
+						String value = answerTitles.get(de.getValue());
+
+						if (label == null || value == null) {
+							// invalid answer or question, skip answer set
+							skipped = true;
+							break;
+						}
+
+						values.add(new DelphiExplanationValueLabelPair(label, value));
+					}
+
+					if (skipped || values.isEmpty()) {
+						continue;
+					}
+
+					DelphiExplanation firstValue = entry.getValue().get(0);
+
+					DelphiExplanationDto ex = new DelphiExplanationDto();
+					ex.setExplanation(firstValue.getExplanation());
+					ex.setUpdate(firstValue.getUpdate());
+					ex.setValues(values);
+
+					explanations.add(ex);
+				}
+
+				result.setExplanations(explanations);
 
 				return ResponseEntity.ok(result);
 			}
