@@ -624,7 +624,16 @@ function createMultipleChoiceCell(values) {
 }
 
 function createRatingCell(values) {
-	return createTableCell(values.join("<br/>"));
+	var elements = [];
+
+	for (var i = 0; i < values.length; i++) {
+		var element = values[i];
+		var span = document.createElement("span");
+		$(span).text(element.label + ": " + element.value);
+		elements.push($(span).html());
+	}
+
+	return createTableCell(elements.join("<br/>"));
 }
 
 function createSingleChoiceCell(values) {

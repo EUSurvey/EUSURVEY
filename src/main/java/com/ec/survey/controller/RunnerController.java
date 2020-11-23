@@ -2405,12 +2405,7 @@ public class RunnerController extends BasicController {
 
 			int minAnswers = survey.getMinNumberDelphiStatistics();
 
-			Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(questionuid)
-					.stream()
-					.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
-
 			if (question instanceof ChoiceQuestion) {
-				
 				if (!numberOfAnswersMap.containsKey(question.getId()) || numberOfAnswersMap.get(question.getId()) == 0) {
 					//participant may only see answers if he answered before
 					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -2453,6 +2448,11 @@ public class RunnerController extends BasicController {
 
 				List<DelphiExplanationDto> explanations = new ArrayList<>();
 
+				// group explanations by answer set ID
+				Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(choiceQuestion)
+						.stream()
+						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
 				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
 					List<String> values = entry.getValue().stream()
 							.map(DelphiExplanation::getValue)
@@ -2483,7 +2483,7 @@ public class RunnerController extends BasicController {
 				result.setType(AbstractDelphiGraphData.DelphiQuestionType.Matrix);
 
 				for (Element matrixQuestion : matrix.getQuestions()) {
-					
+
 					if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
 						//participant may only see answers if he answered before
 						continue;
@@ -2522,33 +2522,16 @@ public class RunnerController extends BasicController {
 				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 				result.setType(AbstractDelphiGraphData.DelphiQuestionType.Rating);
 
-				List<DelphiExplanationDto> explanations = new ArrayList<>();
-
-				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
-					List<Object> values = new ArrayList<>(Collections.nCopies(ratingQuestion.getNumIcons(), 0));
-
-					for (DelphiExplanation de : entry.getValue()) {
-						values.set(de.getRow() - 1, Integer.parseInt(de.getValue()));
-					}
-
-					DelphiExplanation firstValue = entry.getValue().get(0);
-
-					DelphiExplanationDto ex = new DelphiExplanationDto();
-					ex.setExplanation(firstValue.getExplanation());
-					ex.setUpdate(firstValue.getUpdate());
-					ex.setValues(values);
-
-					explanations.add(ex);
-				}
-
-				result.setExplanations(explanations);
+				Map<Integer, String> questionTitles = new HashMap<>();
 
 				for (Element subQuestion : ratingQuestion.getQuestions()) {
+					questionTitles.put(subQuestion.getId(), subQuestion.getTitle());
+
 					if (!numberOfAnswersMap.containsKey(subQuestion.getId()) || numberOfAnswersMap.get(subQuestion.getId()) == 0) {
 						//participant may only see answers if he answered before
 						continue;
 					}
-					
+
 					if (numberOfAnswersMap.get(subQuestion.getId()) < minAnswers) {
 						// only show statistics for this question if the total number of answers exceeds the threshold
 						continue;
@@ -2574,6 +2557,47 @@ public class RunnerController extends BasicController {
 					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 				}
 
+				List<DelphiExplanationDto> explanations = new ArrayList<>();
+
+				// group explanations by answer set ID
+				Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(ratingQuestion)
+						.stream()
+						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
+				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+					List<Object> values = new ArrayList<>();
+
+					boolean skipped = false;
+
+					for (DelphiExplanation de : entry.getValue()) {
+						// find label for question ID
+						String label = questionTitles.get(de.getQuestionId());
+
+						if (label == null) {
+							// invalid answer, skip answer set
+							skipped = true;
+							break;
+						}
+
+						// TODO: check for invalid answers
+						values.add(new DelphiExplanationValueLabelPair(label, de.getValue()));
+					}
+
+					if (skipped || values.isEmpty()) {
+						continue;
+					}
+
+					DelphiExplanation firstValue = entry.getValue().get(0);
+
+					DelphiExplanationDto ex = new DelphiExplanationDto();
+					ex.setExplanation(firstValue.getExplanation());
+					ex.setUpdate(firstValue.getUpdate());
+					ex.setValues(values);
+
+					explanations.add(ex);
+				}
+
+				result.setExplanations(explanations);
 				return ResponseEntity.ok(result);
 			}
 
