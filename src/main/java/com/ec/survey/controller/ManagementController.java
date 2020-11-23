@@ -977,6 +977,7 @@ public class ManagementController extends BasicController {
 	private void ensurePropertiesDependingOnSurveyType(Survey survey, boolean creation) throws ValidationException {
 		if (survey.getIsDelphi()) {
 			survey.setChangeContribution(true); // should always be activated for delphi surveys
+			survey.setSaveAsDraft(false); // should always be deactivated for delphi surveys
 		}
 		
 		if (survey.getIsOPC()) {
