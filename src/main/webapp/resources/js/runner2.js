@@ -511,7 +511,20 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				responsive: false,
 				scales: {
 					yAxes: [{ticks: {beginAtZero: true}}],
-					xAxes: [{ticks: {autoSkip: false}}]
+					xAxes: [
+						{
+							ticks: {
+								autoSkip: false,
+								callback: function(value, index, values) {
+									if (value.length > 15)
+									{
+										return value.substring(0,10) + "...";
+									}
+			                        return value;
+			                    }
+							}
+						}
+					]
 				},
 				legend: {display: false}
 			};
@@ -527,10 +540,6 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 						})
 					}],
 					labels: graphData.map(function (g) {
-						if (g.label.length > 15)
-						{
-							return g.label.substring(0,15) + "...";
-						}
 						return g.label
 					})
 				};
