@@ -510,7 +510,20 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				responsive: false,
 				scales: {
 					yAxes: [{ticks: {beginAtZero: true}}],
-					xAxes: [{ticks: {autoSkip: false}}]
+					xAxes: [
+						{
+							ticks: {
+								autoSkip: false,
+								callback: function(value, index, values) {
+									if (value.length > 15)
+									{
+										return value.substring(0,10) + "...";
+									}
+			                        return value;
+			                    }
+							}
+						}
+					]
 				},
 				legend: {display: false}
 			};
@@ -602,6 +615,8 @@ function addStructureChart(div, chartData, chartOptions) {
 		data: chartData,
 		options: chartOptions
 	});
+	
+	$(div).find('.no-graph-image').hide();
 }
 
 function createMultipleChoiceCell(values) {
@@ -674,7 +689,6 @@ function loadGraphData(div) {
 	var questionuid = $(div).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-
 	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, addTable);
 }
 
