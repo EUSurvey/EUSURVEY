@@ -453,7 +453,7 @@ function delphiPrefill(editorElement) {
 	}
 	// The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
 	var surveyElement = $('#' + editorElement[0].id).closest('.survey-element');
-	var questionUid = surveyElement.find('input[name="questionUid"]').val();
+	var questionUid =  $(surveyElement).attr("data-uid");
 	var data = {
 		answerSetId: answerSetId,
 		questionUid: questionUid
