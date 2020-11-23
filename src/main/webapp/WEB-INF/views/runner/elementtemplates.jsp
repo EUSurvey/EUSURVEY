@@ -1122,15 +1122,9 @@
 
 	<div id="delphi-template">
 		<!-- ko if: isDelphiQuestion() -->
-		<input type="hidden" name="surveyId" value="${form.survey.id}" />
-		<input type="hidden" name="ansSetUniqueCode" value="${uniqueCode}" />
-		<input type="hidden" name="invitation" value="<esapi:encodeForHTMLAttribute>${invitation}</esapi:encodeForHTMLAttribute>" />
-		<input type="hidden" name="languageCode" value="${form.language.code}" />
-		<input type="hidden" name="questionid" data-bind="value: id()"/>
-		<input type="hidden" name="questionUid" data-bind="value: uniqueId()" />
 		<div class="explanation-section">
 			<label class="questiontitle">${form.getMessage("label.ExplainYourAnswer")}</label>
-			<textarea class="explanation-editor" name="explanation" data-bind="attr: {'id': 'explanation' + id()}"></textarea>			
+			<textarea class="explanation-editor" data-bind="attr: {'id': 'explanation' + id(), name: 'explanation' + id()}"></textarea>			
 		</div>
 		<div class="explanation-update-section">
 			<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
