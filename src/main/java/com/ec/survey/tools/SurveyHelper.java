@@ -820,6 +820,8 @@ public class SurveyHelper {
 			//add new answers for the question
 			answerSet.getAnswers().add(answer);
 		}
+		
+		answerSet.getExplanations().putAll(parsedAnswerSet.getExplanations());
 
 	
 		return answerSet;
