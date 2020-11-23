@@ -2449,6 +2449,12 @@ public class RunnerController extends BasicController {
 				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 
 				for (Element matrixQuestion : matrix.getQuestions()) {
+					
+					if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
+						//participant may only see answers if he answered before
+						continue;
+					}
+					
 					if (numberOfAnswersMap.get(matrixQuestion.getId()) < minAnswers) {
 						// only show statistics for this question if the total number of answers exceeds the threshold
 						continue;
@@ -2482,6 +2488,11 @@ public class RunnerController extends BasicController {
 				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 
 				for (Element subQuestion : ratingQuestion.getQuestions()) {
+					if (!numberOfAnswersMap.containsKey(subQuestion.getId()) || numberOfAnswersMap.get(subQuestion.getId()) == 0) {
+						//participant may only see answers if he answered before
+						continue;
+					}
+					
 					if (numberOfAnswersMap.get(subQuestion.getId()) < minAnswers) {
 						// only show statistics for this question if the total number of answers exceeds the threshold
 						continue;
