@@ -2353,7 +2353,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@GetMapping(value = "delphiGraph")
-	public ResponseEntity<Object> delphiGraph(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<AbstractDelphiGraphData> delphiGraph(HttpServletRequest request, Locale locale) {
 		try {
 			String surveyid = request.getParameter("surveyid");
 			int sid = Integer.parseInt(surveyid);

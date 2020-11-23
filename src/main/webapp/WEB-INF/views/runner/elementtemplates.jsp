@@ -1154,5 +1154,22 @@
 		</div>
 		<!-- /ko -->
 	</div>
+
+	<div id="delphi-answers-table-template" class="delphi-table-wrapper">
+		<table class="table table-condensed table-striped table-bordered">
+			<thead>
+			<tr>
+				<th colspan="3" class="area-header">${form.getMessage("label.DelphiAnswersTableTitle")}</th>
+			</tr>
+			<tr>
+				<th>${form.getMessage("label.DelphiAnswersTableAnswer")}</th>
+				<th>${form.getMessage("label.DelphiAnswersTableExplanation")}</th>
+				<th>${form.getMessage("label.DelphiAnswersTableUpdate")}</th>
+			</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
 </div>
 

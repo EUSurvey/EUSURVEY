@@ -1258,6 +1258,10 @@ legend {
 	margin: 25px 5px 5px;
 }
 
+.delphi-table-wrapper {
+	margin: 15px 0 0 25px;
+}
+
 .update-error {
 	color: #f00;
 }
