@@ -14,6 +14,7 @@
 		border-top-left-radius: 5px;
 		border-top-right-radius: 5px;
 		padding: 10px;
+		min-height: 40px;
 	}
 	
 	.section a {
@@ -71,13 +72,16 @@
 	}
 	
 	.no-graph-image {
-		font-size: 90px;
 		text-align: center;
 		display: block;
 		position: absolute;
 		width: 100%;
-		margin-top: 110px;
+		padding-top: 45px;
 		color: #aaa;
+	}
+	
+	.no-graph-image .glyphicon {
+		font-size: 90px;	
 	}
 	
 </style>
@@ -192,7 +196,10 @@
 						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid}">
 							<div class="question-title" data-bind="html: title"></div>
 							
-							<span class="no-graph-image glyphicon glyphicon-signal"></span>
+							<div class="no-graph-image">
+								<span class="glyphicon glyphicon-signal"></span><br />
+								<span><spring:message code="info.NoData" /></span>
+							</div>
 							<canvas class='delphi-chart' width='300' height='200'></canvas>
 							
 							<div class="question-footer">
@@ -215,7 +222,10 @@
 				<!-- /ko -->
 			</div>
 			
-			<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}"><spring:message code="label.Start" /></a>
+			<div style="text-align: center">
+				<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}"><spring:message code="label.Start" /></a>
+			</div>
+		
 		</div>
 		
 		<div style="clear: both"></div>
