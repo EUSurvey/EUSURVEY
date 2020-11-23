@@ -2423,6 +2423,15 @@ public class RunnerController extends BasicController {
 				answerService.getNumberOfAnswerSets(survey, resultFilter);
 
 				DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+
+				if (choiceQuestion instanceof SingleChoiceQuestion) {
+					result.setType(AbstractDelphiGraphData.DelphiQuestionType.SingleChoice);
+				} else if (choiceQuestion instanceof MultipleChoiceQuestion) {
+					result.setType(AbstractDelphiGraphData.DelphiQuestionType.MultipleChoice);
+				} else {
+					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				}
+
 				Map<String, String> answerIdToTitle = new HashMap<>();
 
 				for (PossibleAnswer answer : choiceQuestion.getAllPossibleAnswers()) {
@@ -2440,7 +2449,7 @@ public class RunnerController extends BasicController {
 						.stream()
 						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
 
-				List<DelphiExplanation> explanations = new ArrayList<>();
+				List<DelphiExplanationDto> explanations = new ArrayList<>();
 
 				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedAnswers.entrySet()) {
 					List<String> values = entry.getValue().stream()
@@ -2454,11 +2463,10 @@ public class RunnerController extends BasicController {
 
 					DelphiExplanation firstValue = entry.getValue().get(0);
 
-					DelphiExplanation ex = new DelphiExplanation();
-					ex.setAnswerSetId(entry.getKey());
+					DelphiExplanationDto ex = new DelphiExplanationDto();
 					ex.setExplanation(firstValue.getExplanation());
 					ex.setUpdate(firstValue.getUpdate());
-					ex.setValue(values.stream().map(answerIdToTitle::get).collect(Collectors.joining(", ")));
+					ex.setValues(values.stream().map(answerIdToTitle::get).collect(Collectors.toList()));
 
 					explanations.add(ex);
 				}
@@ -2470,6 +2478,7 @@ public class RunnerController extends BasicController {
 			if (question instanceof Matrix) {
 				Matrix matrix = (Matrix) question;
 				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
+				result.setType(AbstractDelphiGraphData.DelphiQuestionType.Matrix);
 
 				for (Element matrixQuestion : matrix.getQuestions()) {
 					if (numberOfAnswersMap.get(matrixQuestion.getId()) < minAnswers) {
@@ -2503,6 +2512,11 @@ public class RunnerController extends BasicController {
 			if (question instanceof RatingQuestion) {
 				RatingQuestion ratingQuestion = (RatingQuestion) question;
 				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
+				result.setType(AbstractDelphiGraphData.DelphiQuestionType.Rating);
+
+				Map<Integer, List<DelphiExplanation>> groupedAnswers = answerExplanationService.getDelphiExplanations(questionuid)
+						.stream()
+						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
 
 				for (Element subQuestion : ratingQuestion.getQuestions()) {
 					if (numberOfAnswersMap.get(subQuestion.getId()) < minAnswers) {

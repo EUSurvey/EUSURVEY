@@ -22,9 +22,4 @@ public class DelphiGraphDataSingle extends AbstractDelphiGraphData {
     public Collection<DelphiGraphEntry> getData() {
         return new ArrayList<>(data);
     }
-
-    @Override
-    public String getType() {
-        return "single";
-    }
 }

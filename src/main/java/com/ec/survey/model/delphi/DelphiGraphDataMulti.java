@@ -13,9 +13,4 @@ public class DelphiGraphDataMulti extends AbstractDelphiGraphData {
     public void addQuestion(DelphiGraphDataSingle question) {
         questions.add(question);
     }
-
-    @Override
-    public String getType() {
-        return "multi";
-    }
 }

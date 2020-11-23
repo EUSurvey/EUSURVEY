@@ -515,50 +515,57 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				legend: {display: false}
 			};
 
-			if (result.type === "single") {
-				var graphData = result.data;
+			switch (result.type) {
+				case "MultipleChoice":
+				case "SingleChoice":
+					var graphData = result.data;
 
-				chartData = {
-					datasets: [{
-						label: '',
-						data: graphData.map(function (g) {
-							return g.value
+					chartData = {
+						datasets: [{
+							label: '',
+							data: graphData.map(function (g) {
+								return g.value
+							})
+						}],
+						labels: graphData.map(function (g) {
+							return g.label
 						})
-					}],
-					labels: graphData.map(function (g) {
-						return g.label
-					})
-				};
-			} else if (result.type === "multi") {
-				var questions = result.questions;
-				var datasets = [];
-				var labels = undefined;
+					};
+					break;
 
-				for (var i = 0; i < questions.length; i++) {
-					var question = questions[i];
+				case "Matrix":
+				case "Rating":
+					var questions = result.questions;
+					var datasets = [];
+					var labels = undefined;
 
-					datasets.push({
-						data: question.data.map(function (d) {
-							return d.value;
-						}),
-						label: question.label
-					});
+					for (var i = 0; i < questions.length; i++) {
+						var question = questions[i];
 
-					if (!labels) {
-						labels = question.data.map(function (d) {
-							return d.label;
+						datasets.push({
+							data: question.data.map(function (d) {
+								return d.value;
+							}),
+							label: question.label
 						});
+
+						if (!labels) {
+							labels = question.data.map(function (d) {
+								return d.label;
+							});
+						}
 					}
-				}
 
-				chartData = {
-					datasets,
-					labels
-				}
+					chartData = {
+						datasets,
+						labels
+					}
 
-				chartOptions.legend.display = true;
-			} else {
-				return;
+					chartOptions.legend.display = true;
+					break;
+
+				default:
+					return;
 			}
 
 			if (chartCallback instanceof Function) {
@@ -566,7 +573,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			}
 
 			if (tableCallback instanceof Function) {
-				tableCallback(div, result.explanations);
+				tableCallback(div, result.explanations, result.type);
 			}
 		}
 	 });
@@ -597,7 +604,15 @@ function addStructureChart(div, chartData, chartOptions) {
 	});
 }
 
-function addTable(div, explanations) {
+function createMultipleChoiceCell(values) {
+	return createTableCell(values.join(", "));
+}
+
+function createSingleChoiceCell(values) {
+	return createTableCell(values[0]);
+}
+
+function addTable(div, explanations, questionType) {
 	if (!Array.isArray(explanations)) {
 		return;
 	}
@@ -610,11 +625,26 @@ function addTable(div, explanations) {
 	var tableTemplate = $("#delphi-answers-table-template").clone().removeAttr("id");
 	var tbody = $(tableTemplate).find("tbody").first();
 
+	var valueCellFunction;
+
+	switch (questionType) {
+		case "SingleChoice":
+			valueCellFunction = createSingleChoiceCell;
+			break;
+
+		case "MultipleChoice":
+			valueCellFunction = createMultipleChoiceCell;
+			break;
+
+		default:
+			return;
+	}
+
 	for (var i = 0; i < explanations.length; i++) {
 		var element = explanations[i];
 
 		var row = $(document.createElement("tr"));
-		$(row).append(createTableCell(element.value));
+		$(row).append(valueCellFunction(element.values));
 		$(row).append(createTableCell(element.explanation));
 		$(row).append(createTableCell(new Date(element.update).toLocaleString()));
 
