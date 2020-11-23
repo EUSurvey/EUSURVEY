@@ -453,7 +453,7 @@ function delphiPrefill(editorElement) {
 	}
 	// The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
 	var surveyElement = $('#' + editorElement[0].id).closest('.survey-element');
-	var questionUid = surveyElement.find('input[name="questionUid"]').val();
+	var questionUid =  $(surveyElement).attr("data-uid");
 	var data = {
 		answerSetId: answerSetId,
 		questionUid: questionUid
@@ -594,17 +594,12 @@ function addStructureChart(div, chartData, chartOptions)
 }
 
 function loadGraphData(div) {
-	
-	if ( $(div).find("[name=surveyId]").length == 0) {
-		return;
-	}
-	
-	var surveyid = $(div).find("[name=surveyId]").first().val();
-	var questionuid = $(div).find("[name=questionUid]").first().val();
-	var languagecode = $(div).find("[name=languageCode]").first().val();
-	var uniquecode = $(div).find("[name=ansSetUniqueCode]").first().val();
+	var surveyId = $('#survey\\.id').val();
+	var questionuid =  $(div).attr("data-uid");
+	var languagecode = $('#language\\.code').val();
+	var uniquecode = $('#uniqueCode').val();
 
-	loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, addChart);
+	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart);
 }
 
 function delphiUpdate(div) {
@@ -626,6 +621,20 @@ function delphiUpdate(div) {
 	
 	var form = document.createElement("form");
 	$(form).append($(div).clone());
+	
+	var surveyId = $('#survey\\.id').val();
+	$(form).append('<input type="hidden" name="surveyId" value="' + surveyId + '" />');
+	var ansSetUniqueCode = $('#uniqueCode').val();
+	$(form).append('<input type="hidden" name="ansSetUniqueCode" value="' + ansSetUniqueCode + '" />');
+	var invitation = $('#invitation').val();
+	$(form).append('<input type="hidden" name="invitation" value="' + invitation + '" />');
+	var lang = $('#language\\.code').val();
+	$(form).append('<input type="hidden" name="languageCode" value="' + lang + '" />');
+	var id = $(div).attr("data-id");
+	$(form).append('<input type="hidden" name="questionId" value="' + id + '" />');
+	var uid = $(div).attr("data-uid");
+	$(form).append('<input type="hidden" name="questionUid" value="' + uid + '" />');
+
 	var data = $(form).serialize();
 	
 	$.ajax({type: "POST",

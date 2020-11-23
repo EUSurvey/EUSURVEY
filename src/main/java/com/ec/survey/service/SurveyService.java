@@ -348,6 +348,9 @@ public class SurveyService extends BasicService {
 			case "brp":
 				sql.append(" AND s.OPC = 1");
 				break;
+			case "delphi":
+				sql.append(" AND s.DELPHI = 1");
+				break;
 			}
 		}
 

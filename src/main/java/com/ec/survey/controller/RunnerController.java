@@ -2299,12 +2299,10 @@ public class RunnerController extends BasicController {
 			final int surveyIdParsed = Integer.parseInt(surveyId);
 
 			final String questionUid = request.getParameter("questionUid");
-	
 			final Survey survey = surveyService.getSurvey(surveyIdParsed);
 			final String languageCode = request.getParameter("languageCode");
 			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
 			final String invitationId = request.getParameter("invitation");
-			final String explanation = request.getParameter("explanation");
 			final User user = sessionService.getCurrentUser(request, false, false);
 
 			AnswerSet answerSet;
@@ -2345,8 +2343,6 @@ public class RunnerController extends BasicController {
 			}
 
 			saveAnswerSet(answerSet, fileDir, null, -1);
-
-			answerExplanationService.createOrUpdateExplanation(answerSet, questionUid, explanation);
 			
 			return new ResponseEntity<>(resources.getMessage("message.ChangesSaved", null, locale), HttpStatus.OK);
 

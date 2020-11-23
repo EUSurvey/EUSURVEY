@@ -42,6 +42,7 @@ public class AnswerSet implements java.io.Serializable {
 	private Boolean disclaimerMinimized;
 	private Boolean wcagMode;
 	private Integer score;
+	private Map<String, String> explanations = new HashMap<>();
 
 	@Id
 	@Column(name = "ANSWER_SET_ID")
@@ -351,5 +352,14 @@ public class AnswerSet implements java.io.Serializable {
 			}
 		}
 		return result;
+	}
+
+	@Transient
+	public Map<String, String> getExplanations() {
+		return explanations;
+	}
+
+	public void setExplanations(Map<String, String> explanations) {
+		this.explanations = explanations;
 	}
 }
