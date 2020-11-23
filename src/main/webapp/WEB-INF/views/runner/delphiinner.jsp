@@ -14,9 +14,10 @@
 		border-top-left-radius: 5px;
 		border-top-right-radius: 5px;
 		padding: 10px;
+		min-height: 40px;
 	}
 	
-	.sectionwithquestions a {
+	.section a {
 		color: #fff;
 	}
 
@@ -41,16 +42,47 @@
 		margin-right: 20px;
 		margin-bottom: 20px;
 		width: 300px;
-		height: 250px;
+		min-height: 315px;
 		background-color: #fff;
+		border: 1px solid #ccc;
+		position: relative;
 	}
 	
 	.question-title {
 		padding: 5px;
 		border-bottom: 1px solid #ccc;
 		margin-bottom: 5px;
+		font-weight: bold;
 	}
 	
+	.greenanswer {	
+		color: #0b0;
+		margin-bottom: 5px;
+	}
+	
+	.redanswer {
+		color: #b00;
+		margin-bottom: 5px;
+	}
+	
+	.question-footer {
+		padding: 5px;
+		border-top: 1px solid #ccc;
+		margin-top: 5px;
+	}
+	
+	.no-graph-image {
+		text-align: center;
+		display: block;
+		position: absolute;
+		width: 100%;
+		padding-top: 45px;
+		color: #aaa;
+	}
+	
+	.no-graph-image .glyphicon {
+		font-size: 90px;	
+	}
 	
 </style>
 
@@ -150,20 +182,39 @@
 				<!-- ko foreach: sections -->
 				<div class="sectionwithquestions">
 			
-					<div style="float: right; margin-top: 4px; margin-right: 0px;">
-						<a onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-bottom"></span></a>
-						<a style="display: none" onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-left"></span></a>
+					<div class="section">
+						<div style="float: right; margin-top: 4px; margin-right: 0px;">
+							<a onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-bottom"></span></a>
+							<a style="display: none" onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-left"></span></a>
+						</div>
+						<span data-bind="html: title"></span>					
 					</div>
-			
-					<div class="section"><span data-bind="html: title"></span></div>
 					
 					<div class="sectioncontent">
 										
 						<!-- ko foreach: questions -->
 						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid}">
-							<div class="question-title" data-bind="html: title"></div>
+							<div class="question-title" data-bind="html: sectionViewModel.niceTitle(title)"></div>
 							
-							<canvas class='delphi-chart' width='300' height='210'></canvas>
+							<div class="no-graph-image">
+								<span class="glyphicon glyphicon-signal"></span><br />
+								<span><spring:message code="info.NoData" /></span>
+							</div>
+							<div style="height: 200px;" class="delphi-chart-div">
+								<canvas class='delphi-chart' width='300' height='200'></canvas>
+							</div>
+							
+							<div class="question-footer">
+								<!-- ko if: answer.length > 0 -->
+								<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: sectionViewModel.niceAnswer(answer)"></span></div>
+								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}"><spring:message code="label.EditAnswer" /></a>
+								<!-- <a class="btn btn-xs btn-default">Show Comments</a> -->
+								<!-- /ko -->
+								<!-- ko if: answer.length == 0 -->
+								<div class="redanswer"><spring:message code="info.NotAnswered" /></div>
+								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}"><spring:message code="label.Answer" /></a>
+								<!-- /ko -->
+							</div>
 						</div>					
 						<!-- /ko -->
 						
@@ -173,7 +224,10 @@
 				<!-- /ko -->
 			</div>
 			
-			<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}"><spring:message code="label.Start" /></a>
+			<div style="text-align: center">
+				<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}"><spring:message code="label.Start" /></a>
+			</div>
+		
 		</div>
 		
 		<div style="clear: both"></div>
@@ -208,7 +262,25 @@
 		
 		var sectionViewModel = {
 		    sections: ko.observableArray(),
-		    loaded: ko.observable(false)
+		    loaded: ko.observable(false),
+		    
+		    niceTitle: function(title)
+			{
+		    	if (title.length < 80) {
+		    		return title;
+		    	}
+		    	
+		    	return "<span data-toggle='tooltip' title='" + title + "'>" + title.substring(0,75) + "...</span>";
+			},
+			
+			niceAnswer: function(answer)
+			{
+		    	if (answer.length < 25) {
+		    		return answer;
+		    	}
+		    	
+		    	return "<span data-toggle='tooltip' title='" + answer + "'>" + answer.substring(0,20) + "...</span>";
+			}
 		};
 		
 		function loadSectionsAndQuestions(div) {
@@ -244,6 +316,7 @@
 					}
 					
 					sectionViewModel.loaded(true);
+					$('[data-toggle="tooltip"]').tooltip()
 				}
 			 });
 		}
