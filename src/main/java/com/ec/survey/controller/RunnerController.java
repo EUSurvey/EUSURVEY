@@ -2409,6 +2409,10 @@ public class RunnerController extends BasicController {
 
 			int minAnswers = survey.getMinNumberDelphiStatistics();
 
+			Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(questionuid)
+					.stream()
+					.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
 			if (question instanceof ChoiceQuestion) {
 				if (numberOfAnswersMap.get(question.getId()) < minAnswers) {
 					// only show statistics for this question if the total number of answers exceeds the threshold
@@ -2445,13 +2449,9 @@ public class RunnerController extends BasicController {
 					result.addEntry(entry);
 				}
 
-				Map<Integer, List<DelphiExplanation>> groupedAnswers = answerExplanationService.getDelphiExplanations(questionuid)
-						.stream()
-						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
-
 				List<DelphiExplanationDto> explanations = new ArrayList<>();
 
-				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedAnswers.entrySet()) {
+				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
 					List<String> values = entry.getValue().stream()
 							.map(DelphiExplanation::getValue)
 							.collect(Collectors.toList());
@@ -2514,9 +2514,26 @@ public class RunnerController extends BasicController {
 				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 				result.setType(AbstractDelphiGraphData.DelphiQuestionType.Rating);
 
-				Map<Integer, List<DelphiExplanation>> groupedAnswers = answerExplanationService.getDelphiExplanations(questionuid)
-						.stream()
-						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+				List<DelphiExplanationDto> explanations = new ArrayList<>();
+
+				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+					List<Object> values = new ArrayList<>(Collections.nCopies(ratingQuestion.getNumIcons(), 0));
+
+					for (DelphiExplanation de : entry.getValue()) {
+						values.set(de.getRow() - 1, Integer.parseInt(de.getValue()));
+					}
+
+					DelphiExplanation firstValue = entry.getValue().get(0);
+
+					DelphiExplanationDto ex = new DelphiExplanationDto();
+					ex.setExplanation(firstValue.getExplanation());
+					ex.setUpdate(firstValue.getUpdate());
+					ex.setValues(values);
+
+					explanations.add(ex);
+				}
+
+				result.setExplanations(explanations);
 
 				for (Element subQuestion : ratingQuestion.getQuestions()) {
 					if (numberOfAnswersMap.get(subQuestion.getId()) < minAnswers) {

@@ -6,7 +6,7 @@ import java.util.List;
 public class DelphiExplanationDto {
     private String explanation;
     private Date update;
-    private List<String> values;
+    private List<Object> values;
 
     public String getExplanation() {
         return explanation;
@@ -24,11 +24,11 @@ public class DelphiExplanationDto {
         this.update = update;
     }
 
-    public List<String> getValues() {
+    public List<Object> getValues() {
         return values;
     }
 
-    public void setValues(List<String> values) {
+    public void setValues(List<Object> values) {
         this.values = values;
     }
 }
