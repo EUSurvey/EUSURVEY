@@ -2753,7 +2753,7 @@ public class RunnerController extends BasicController {
 
 		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
 			// maps position to element
-			Set<Pair<Integer, DelphiTableAnswer>> answers = new HashSet<>();
+			Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.getValue().size());
 
 			boolean skipped = false;
 			for (DelphiExplanation de : entry.getValue()) {
@@ -2812,7 +2812,7 @@ public class RunnerController extends BasicController {
 
 		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
 			// maps position to element
-			Set<Pair<Integer, DelphiTableAnswer>> answers = new HashSet<>();
+			Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.getValue().size());
 
 			boolean skipped = false;
 			for (DelphiExplanation de : entry.getValue()) {
