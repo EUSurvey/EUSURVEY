@@ -138,15 +138,7 @@ public class SurveyHelper {
 																					
 								answerSet.addAnswer(answer);
 							}
-						}
-						
-						if (question.getIsDelphiQuestion())
-						{
-							String[] explanation = parameterMap.get("explanation" + question.getId());
-							if (explanation != null && explanation.length > 0) {
-								answerSet.getExplanations().put(question.getUniqueId(), explanation[0]);
-							}
-						}		
+						}	
 					} else {
 						// try matrix
 
@@ -174,6 +166,15 @@ public class SurveyHelper {
 								answerSet.addAnswer(answer);
 							}
 						}
+					}
+				}
+			} else if (key.startsWith("explanation")) {
+				key = key.substring(11);
+				Question question = questions.get(Integer.parseInt(key));
+				if (question != null && question.getIsDelphiQuestion()) {
+					String[] explanation = parameterMap.get("explanation" + question.getId());
+					if (explanation != null && explanation.length > 0) {
+						answerSet.getExplanations().put(question.getUniqueId(), explanation[0]);
 					}
 				}
 			}
