@@ -2716,7 +2716,7 @@ public class RunnerController extends BasicController {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			DelphiExplanation firstValue = entry.getValue().get(0);
 			tableEntry.setExplanation(firstValue.getExplanation());
-			tableEntry.setUpdate(firstValue.getUpdate());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
 			for (String value : values) {
 				String title = answerIdToTitle.get(value);
@@ -2752,7 +2752,7 @@ public class RunnerController extends BasicController {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			DelphiExplanation firstValue = entry.getValue().get(0);
 			tableEntry.setExplanation(firstValue.getExplanation());
-			tableEntry.setUpdate(firstValue.getUpdate());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
 			boolean skipped = false;
 			for (DelphiExplanation de : entry.getValue()) {
@@ -2797,7 +2797,7 @@ public class RunnerController extends BasicController {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			DelphiExplanation firstValue = entry.getValue().get(0);
 			tableEntry.setExplanation(firstValue.getExplanation());
-			tableEntry.setUpdate(firstValue.getUpdate());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
 			boolean skipped = false;
 			for (DelphiExplanation de : entry.getValue()) {

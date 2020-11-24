@@ -1,13 +1,12 @@
 package com.ec.survey.model.delphi;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class DelphiTableEntry {
     private final List<DelphiTableAnswer> answers = new ArrayList<>();
     private String explanation;
-    private Date update;
+    private String update;
 
     public String getExplanation() {
         return explanation;
@@ -17,11 +16,11 @@ public class DelphiTableEntry {
         this.explanation = explanation;
     }
 
-    public Date getUpdate() {
+    public String getUpdate() {
         return update;
     }
 
-    public void setUpdate(Date update) {
+    public void setUpdate(String update) {
         this.update = update;
     }
 
