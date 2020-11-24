@@ -2738,8 +2738,10 @@ public class RunnerController extends BasicController {
 			answerTitles.put(matrixAnswer.getId().toString(), matrixAnswer.getTitle());
 		}
 
+		Map<Integer, Integer> questionPositions = new HashMap<>();
 		Map<Integer, String> questionTitles = new HashMap<>();
 		for (Element matrixQuestion : question.getQuestions()) {
+			questionPositions.put(matrixQuestion.getId(), matrixQuestion.getPosition());
 			questionTitles.put(matrixQuestion.getId(), matrixQuestion.getTitle());
 		}
 
@@ -2749,10 +2751,8 @@ public class RunnerController extends BasicController {
 				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
 
 		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
-			DelphiTableEntry tableEntry = new DelphiTableEntry();
-			DelphiExplanation firstValue = entry.getValue().get(0);
-			tableEntry.setExplanation(firstValue.getExplanation());
-			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			// maps position to element
+			Map<Integer, DelphiTableAnswer> answers = new HashMap<>();
 
 			boolean skipped = false;
 			for (DelphiExplanation de : entry.getValue()) {
@@ -2767,12 +2767,26 @@ public class RunnerController extends BasicController {
 				}
 
 				DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
-				tableEntry.getAnswers().add(answer);
+				int position = questionPositions.get(de.getQuestionId());
+				answers.put(position, answer);
 			}
 
-			if (skipped || tableEntry.getAnswers().isEmpty()) {
+			if (skipped || answers.isEmpty()) {
 				continue;
 			}
+
+			// sort answers by position
+			List<DelphiTableAnswer> sortedAnswers = answers.entrySet().stream()
+					.sorted(Comparator.comparingInt(Map.Entry::getKey))
+					.map(Map.Entry::getValue)
+					.collect(Collectors.toList());
+
+			DelphiExplanation firstValue = entry.getValue().get(0);
+
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.getAnswers().addAll(sortedAnswers);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
 			result.getEntries().add(tableEntry);
 		}
@@ -2783,8 +2797,10 @@ public class RunnerController extends BasicController {
 	private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestions(RatingQuestion question) {
 		DelphiTable result = new DelphiTable(DelphiQuestionType.Rating);
 
+		Map<Integer, Integer> questionPositions = new HashMap<>();
 		Map<Integer, String> questionTitles = new HashMap<>();
 		for (Element subQuestion : question.getQuestions()) {
+			questionPositions.put(subQuestion.getId(), subQuestion.getPosition());
 			questionTitles.put(subQuestion.getId(), subQuestion.getTitle());
 		}
 
@@ -2794,10 +2810,8 @@ public class RunnerController extends BasicController {
 				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
 
 		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
-			DelphiTableEntry tableEntry = new DelphiTableEntry();
-			DelphiExplanation firstValue = entry.getValue().get(0);
-			tableEntry.setExplanation(firstValue.getExplanation());
-			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			// maps position to element
+			Map<Integer, DelphiTableAnswer> answers = new HashMap<>();
 
 			boolean skipped = false;
 			for (DelphiExplanation de : entry.getValue()) {
@@ -2811,12 +2825,26 @@ public class RunnerController extends BasicController {
 				}
 
 				DelphiTableAnswer answer = new DelphiTableAnswer(label, de.getValue());
-				tableEntry.getAnswers().add(answer);
+				int position = questionPositions.get(de.getQuestionId());
+				answers.put(position, answer);
 			}
 
-			if (skipped || tableEntry.getAnswers().isEmpty()) {
+			if (skipped || answers.isEmpty()) {
 				continue;
 			}
+
+			// sort answers by position
+			List<DelphiTableAnswer> sortedAnswers = answers.entrySet().stream()
+					.sorted(Comparator.comparingInt(Map.Entry::getKey))
+					.map(Map.Entry::getValue)
+					.collect(Collectors.toList());
+
+			DelphiExplanation firstValue = entry.getValue().get(0);
+
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.getAnswers().addAll(sortedAnswers);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
 			result.getEntries().add(tableEntry);
 		}
