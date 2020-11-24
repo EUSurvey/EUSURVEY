@@ -1152,9 +1152,18 @@
 				<tbody>
 					<!-- ko foreach: delphiTableEntries -->
 					<tr>
-						<td><span data-bind="html: answers"></span></td>
+						<td>
+							<!-- ko foreach: answers -->
+								<div style="margin-bottom: 5px;">
+									<!-- ko if: question -->
+										<span data-bind="html: question"></span>:
+									<!-- /ko -->						
+									<span data-bind="html: value"></span>
+								</div>
+							<!-- /ko -->
+						</td>
 						<td><span data-bind="html: explanation"></span></td>
-						<td><span data-bind="html: date"></span></td>
+						<td><span data-bind="html: update"></span></td>
 					</tr>
 					<!-- /ko -->
 				</tbody>

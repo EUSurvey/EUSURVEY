@@ -649,8 +649,8 @@ function loadTableData(div, viewModel) {
 				return;
 			}
 			
-			for (var i = 0; i < result.tableEntries.length; i++) {
-				viewModel.delphiTableEntries.push(result.tableEntries[i]);
+			for (var i = 0; i < result.entries.length; i++) {
+				viewModel.delphiTableEntries.push(result.entries[i]);
 			}
 		}
 	 });
