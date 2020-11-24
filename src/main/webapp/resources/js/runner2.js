@@ -116,6 +116,8 @@ function checkTriggersAfterLoad(container)
 	}
 }
 
+var modelsForDelphiQuestions = [];
+
 function addElementToContainer(element, container, foreditor, forskin)
 {
 	var viewModel = getElementViewModel(element);
@@ -409,6 +411,8 @@ function addElementToContainer(element, container, foreditor, forskin)
 	});
 	
 	if (isdelphi) {
+		modelsForDelphiQuestions[viewModel.uniqueId()] = viewModel;
+		
 		var surveyElement = $(container).closest(".survey-element");
 		if (surveyElement) {
 			loadGraphData(surveyElement);
@@ -649,6 +653,8 @@ function loadTableData(div, viewModel) {
 				return;
 			}
 			
+			viewModel.delphiTableEntries.removeAll();
+						
 			for (var i = 0; i < result.entries.length; i++) {
 				viewModel.delphiTableEntries.push(result.entries[i]);
 			}
@@ -712,6 +718,9 @@ function delphiUpdate(div) {
 			$(loader).hide();
 			
 			loadGraphData(div);
+			
+			var viewModel = modelsForDelphiQuestions[uid];
+			loadTableData(div, viewModel);
 	    }
 	 });
 }
