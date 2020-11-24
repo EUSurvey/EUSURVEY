@@ -2665,6 +2665,43 @@ public class RunnerController extends BasicController {
 		result.setExplanations(explanations);
 		return ResponseEntity.ok(result);
 	}
+	
+	@GetMapping(value = "delphiTable")
+	public ResponseEntity<AbstractDelphiGraphData> delphiTable(HttpServletRequest request) {
+		try {
+			String surveyid = request.getParameter("surveyid");
+			int sid = Integer.parseInt(surveyid);
+
+			String languageCode = request.getParameter("languagecode");
+			Survey survey = surveyService.getSurvey(sid, languageCode);
+
+			if (survey == null || !survey.getIsDelphi()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			if (!survey.getIsDraft() && answerService.get(request.getParameter("uniquecode")) == null) {
+				// participant may only see answers if he answered before
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			String questionuid = request.getParameter("questionuid");
+			Element element = survey.getQuestionMapByUniqueId().get(questionuid);
+
+			if (!(element instanceof Question)) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			Question question = (Question) element;
+			if (!question.getIsDelphiQuestion()) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}		
+
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@GetMapping(value = "delphiStructure")
 	public ResponseEntity<DelphiStructure> delphiStructure(HttpServletRequest request, Locale locale) {

@@ -297,6 +297,7 @@ function newBasicViewModel(element)
 		viewModel.css = ko.observable(element.css);
 		viewModel.optional = ko.observable(element.optional);
 		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
+		viewModel.delphiTableEntries = ko.observableArray();
 		
 		if (element.scoringItems != null)
 		{
