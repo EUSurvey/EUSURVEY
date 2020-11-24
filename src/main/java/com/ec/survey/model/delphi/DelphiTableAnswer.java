@@ -4,8 +4,8 @@ public class DelphiTableAnswer {
     private final String question;
     private final String value;
 
-    public DelphiTableAnswer(String questionText, String value) {
-        this.question = questionText;
+    public DelphiTableAnswer(String question, String value) {
+        this.question = question;
         this.value = value;
     }
 
