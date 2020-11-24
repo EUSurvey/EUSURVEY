@@ -722,8 +722,6 @@ function delphiUpdate(div) {
 		return;
 	}
 	
-	//saveCookies();
-	
 	$(loader).show();
 	
 	var form = document.createElement("form");
@@ -741,6 +739,13 @@ function delphiUpdate(div) {
 	$(form).append('<input type="hidden" name="questionId" value="' + id + '" />');
 	var uid = $(div).attr("data-uid");
 	$(form).append('<input type="hidden" name="questionUid" value="' + uid + '" />');
+	
+	//this is a workaround for a bug in jquery
+	// see https://bugs.jquery.com/ticket/1294
+	$(form).find("select").each(function(){
+		var id = $(this).attr("id");		
+		$(this).val($(div).find("#" + id).first().val());
+	});
 
 	var data = $(form).serialize();
 	

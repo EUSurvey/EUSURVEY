@@ -11,7 +11,10 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service("answerExplanationService")
@@ -82,7 +85,7 @@ public class AnswerExplanationService extends BasicService {
 			if (question.getIsDelphiQuestion()) {
 				String explanationtext = answerSet.getExplanations().get(question.getUniqueId());
 				if (explanationtext == null) {
-					explanationtext = "";
+					continue;
 				}
 
 				AnswerExplanation explanation;

@@ -445,7 +445,7 @@ public class RunnerController extends BasicController {
 
 			Attendee attendee = attendeeService.get(invitation.getAttendeeId());
 
-			if (invitation.getAnswers() > 0) {
+			if (!survey.getIsDelphi() && invitation.getAnswers() > 0) {
 				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
 				model.addObject(Constants.MESSAGE,
 						resources.getMessage("error.InvitationUsed", null, "The invitation was already used.", locale));
