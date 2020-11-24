@@ -4,9 +4,17 @@ import java.util.Date;
 import java.util.List;
 
 public class DelphiExplanationDto {
+    private List<DelphiExplanationAnswer> answers;
     private String explanation;
     private Date update;
-    private List<Object> values;
+
+    public List<DelphiExplanationAnswer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<DelphiExplanationAnswer> answers) {
+        this.answers = answers;
+    }
 
     public String getExplanation() {
         return explanation;
@@ -22,13 +30,5 @@ public class DelphiExplanationDto {
 
     public void setUpdate(Date update) {
         this.update = update;
-    }
-
-    public List<Object> getValues() {
-        return values;
-    }
-
-    public void setValues(List<Object> values) {
-        this.values = values;
     }
 }

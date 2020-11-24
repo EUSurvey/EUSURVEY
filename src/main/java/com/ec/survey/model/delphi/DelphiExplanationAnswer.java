@@ -1,10 +1,10 @@
 package com.ec.survey.model.delphi;
 
-public class DelphiExplanationValueLabelPair {
+public class DelphiExplanationAnswer {
     private final String label;
     private final String value;
 
-    public DelphiExplanationValueLabelPair(String label, String value) {
+    public DelphiExplanationAnswer(String label, String value) {
         this.label = label;
         this.value = value;
     }

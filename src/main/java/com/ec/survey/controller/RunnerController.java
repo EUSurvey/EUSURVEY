@@ -2353,7 +2353,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@GetMapping(value = "delphiGraph")
-	public ResponseEntity<AbstractDelphiGraphData> delphiGraph(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<AbstractDelphiGraphData> delphiGraph(HttpServletRequest request) {
 		try {
 			String surveyid = request.getParameter("surveyid");
 			int sid = Integer.parseInt(surveyid);
@@ -2403,251 +2403,16 @@ public class RunnerController extends BasicController {
 					multipleChoiceSelectionsByAnswerset,
 					numberOfAnswersMapRatingQuestion);
 
-			int minAnswers = survey.getMinNumberDelphiStatistics();
-
 			if (question instanceof ChoiceQuestion) {
-				if (!numberOfAnswersMap.containsKey(question.getId()) || numberOfAnswersMap.get(question.getId()) == 0) {
-					//participant may only see answers if he answered before
-					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-				}
-				
-				if (numberOfAnswersMap.get(question.getId()) < minAnswers) {
-					// only show statistics for this question if the total number of answers exceeds the threshold
-					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-				}
-
-				ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
-				creator.addStatistics(survey, choiceQuestion, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
-
-				ResultFilter resultFilter = new ResultFilter();
-				resultFilter.setVisibleQuestions(new HashSet<>(question.getId()));
-				answerService.getNumberOfAnswerSets(survey, resultFilter);
-
-				DelphiGraphDataSingle result = new DelphiGraphDataSingle();
-
-				if (choiceQuestion instanceof SingleChoiceQuestion) {
-					result.setType(AbstractDelphiGraphData.DelphiQuestionType.SingleChoice);
-				} else if (choiceQuestion instanceof MultipleChoiceQuestion) {
-					result.setType(AbstractDelphiGraphData.DelphiQuestionType.MultipleChoice);
-				} else {
-					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-				}
-
-				Map<String, String> answerIdToTitle = new HashMap<>();
-
-				for (PossibleAnswer answer : choiceQuestion.getAllPossibleAnswers()) {
-					String id = answer.getId().toString();
-					String title = answer.getTitle();
-					answerIdToTitle.put(id, title);
-
-					DelphiGraphEntry entry = new DelphiGraphEntry();
-					entry.setLabel(title);
-					entry.setValue(statistics.getRequestedRecords().get(id));
-					result.addEntry(entry);
-				}
-
-				List<DelphiExplanationDto> explanations = new ArrayList<>();
-
-				// group explanations by answer set ID
-				Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(choiceQuestion)
-						.stream()
-						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
-
-				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
-					List<String> values = entry.getValue().stream()
-							.map(DelphiExplanation::getValue)
-							.collect(Collectors.toList());
-
-					if (!values.stream().allMatch(answerIdToTitle::containsKey)) {
-						// invalid answer set
-						continue;
-					}
-
-					DelphiExplanation firstValue = entry.getValue().get(0);
-
-					DelphiExplanationDto ex = new DelphiExplanationDto();
-					ex.setExplanation(firstValue.getExplanation());
-					ex.setUpdate(firstValue.getUpdate());
-					ex.setValues(values.stream().map(answerIdToTitle::get).collect(Collectors.toList()));
-
-					explanations.add(ex);
-				}
-
-				result.setExplanations(explanations);
-				return ResponseEntity.ok(result);
+				return handleDelphiGraphChoiceQuestion(survey, (ChoiceQuestion) question, statistics, creator, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
 			}
 
 			if (question instanceof Matrix) {
-				Matrix matrix = (Matrix) question;
-				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
-				result.setType(AbstractDelphiGraphData.DelphiQuestionType.Matrix);
-
-				Map<String, String> answerTitles = new HashMap<>();
-				for (Element matrixAnswer : matrix.getAnswers()) {
-					answerTitles.put(matrixAnswer.getId().toString(), matrixAnswer.getTitle());
-				}
-
-				Map<Integer, String> questionTitles = new HashMap<>();
-				for (Element matrixQuestion : matrix.getQuestions()) {
-					questionTitles.put(matrixQuestion.getId(), matrixQuestion.getTitle());
-
-					if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
-						//participant may only see answers if he answered before
-						continue;
-					}
-
-					if (numberOfAnswersMap.get(matrixQuestion.getId()) < minAnswers) {
-						// only show statistics for this question if the total number of answers exceeds the threshold
-						continue;
-					}
-
-					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
-					questionResults.setLabel(matrixQuestion.getTitle());
-
-					for (Element matrixAnswer : matrix.getAnswers()) {
-						creator.addStatistics4Matrix(survey, matrixAnswer, matrixQuestion, statistics, numberOfAnswersMapMatrix);
-
-						DelphiGraphEntry entry = new DelphiGraphEntry();
-						entry.setLabel(matrixAnswer.getTitle());
-						entry.setValue(statistics.getRequestedRecordsForMatrix(matrixQuestion, matrixAnswer));
-						questionResults.addEntry(entry);
-					}
-
-					result.addQuestion(questionResults);
-				}
-
-				// only show statistics if applicable for some subquestion
-				if (result.getQuestions().isEmpty()) {
-					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-				}
-
-				List<DelphiExplanationDto> explanations = new ArrayList<>();
-
-				// group explanations by answer set ID
-				Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(matrix)
-						.stream()
-						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
-
-				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
-					List<Object> values = new ArrayList<>();
-
-					boolean skipped = false;
-
-					for (DelphiExplanation de : entry.getValue()) {
-						// find labels for question and answer
-						String label = questionTitles.get(de.getQuestionId());
-						String value = answerTitles.get(de.getValue());
-
-						if (label == null || value == null) {
-							// invalid answer or question, skip answer set
-							skipped = true;
-							break;
-						}
-
-						values.add(new DelphiExplanationValueLabelPair(label, value));
-					}
-
-					if (skipped || values.isEmpty()) {
-						continue;
-					}
-
-					DelphiExplanation firstValue = entry.getValue().get(0);
-
-					DelphiExplanationDto ex = new DelphiExplanationDto();
-					ex.setExplanation(firstValue.getExplanation());
-					ex.setUpdate(firstValue.getUpdate());
-					ex.setValues(values);
-
-					explanations.add(ex);
-				}
-
-				result.setExplanations(explanations);
-
-				return ResponseEntity.ok(result);
+				return handleDelphiGraphMatrix(survey, (Matrix) question, statistics, creator, numberOfAnswersMap, numberOfAnswersMapMatrix);
 			}
 
 			if (question instanceof RatingQuestion) {
-				RatingQuestion ratingQuestion = (RatingQuestion) question;
-				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
-				result.setType(AbstractDelphiGraphData.DelphiQuestionType.Rating);
-
-				Map<Integer, String> questionTitles = new HashMap<>();
-
-				for (Element subQuestion : ratingQuestion.getQuestions()) {
-					questionTitles.put(subQuestion.getId(), subQuestion.getTitle());
-
-					if (!numberOfAnswersMap.containsKey(subQuestion.getId()) || numberOfAnswersMap.get(subQuestion.getId()) == 0) {
-						//participant may only see answers if he answered before
-						continue;
-					}
-
-					if (numberOfAnswersMap.get(subQuestion.getId()) < minAnswers) {
-						// only show statistics for this question if the total number of answers exceeds the threshold
-						continue;
-					}
-
-					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
-					questionResults.setLabel(subQuestion.getTitle());
-
-					for (int i = 1; i <= ratingQuestion.getNumIcons(); i++) {
-						creator.addStatistics4RatingQuestion(survey, i, subQuestion, statistics, numberOfAnswersMapRatingQuestion);
-
-						DelphiGraphEntry entry = new DelphiGraphEntry();
-						entry.setLabel(Integer.toString(i));
-						entry.setValue(statistics.getRequestedRecordsForRatingQuestion(subQuestion, i));
-						questionResults.addEntry(entry);
-					}
-
-					result.addQuestion(questionResults);
-				}
-
-				// only show statistics if applicable for some subquestion
-				if (result.getQuestions().isEmpty()) {
-					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-				}
-
-				List<DelphiExplanationDto> explanations = new ArrayList<>();
-
-				// group explanations by answer set ID
-				Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(ratingQuestion)
-						.stream()
-						.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
-
-				for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
-					List<Object> values = new ArrayList<>();
-
-					boolean skipped = false;
-
-					for (DelphiExplanation de : entry.getValue()) {
-						// find label for question ID
-						String label = questionTitles.get(de.getQuestionId());
-
-						if (label == null) {
-							// invalid answer, skip answer set
-							skipped = true;
-							break;
-						}
-
-						// TODO: check for invalid answers
-						values.add(new DelphiExplanationValueLabelPair(label, de.getValue()));
-					}
-
-					if (skipped || values.isEmpty()) {
-						continue;
-					}
-
-					DelphiExplanation firstValue = entry.getValue().get(0);
-
-					DelphiExplanationDto ex = new DelphiExplanationDto();
-					ex.setExplanation(firstValue.getExplanation());
-					ex.setUpdate(firstValue.getUpdate());
-					ex.setValues(values);
-
-					explanations.add(ex);
-				}
-
-				result.setExplanations(explanations);
-				return ResponseEntity.ok(result);
+				return handleDelphiGraphRatingQuestion(survey, (RatingQuestion) question, statistics, creator, numberOfAnswersMap, numberOfAnswersMapRatingQuestion);
 			}
 
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -2655,8 +2420,252 @@ public class RunnerController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}	
-	
+	}
+
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRatingQuestion(Survey survey, RatingQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion) {
+		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
+		result.setType(AbstractDelphiGraphData.DelphiQuestionType.Rating);
+
+		Map<Integer, String> questionTitles = new HashMap<>();
+
+		for (Element subQuestion : question.getQuestions()) {
+			questionTitles.put(subQuestion.getId(), subQuestion.getTitle());
+
+			if (!numberOfAnswersMap.containsKey(subQuestion.getId()) || numberOfAnswersMap.get(subQuestion.getId()) == 0) {
+				//participant may only see answers if he answered before
+				continue;
+			}
+
+			if (numberOfAnswersMap.get(subQuestion.getId()) < survey.getMinNumberDelphiStatistics()) {
+				// only show statistics for this question if the total number of answers exceeds the threshold
+				continue;
+			}
+
+			DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
+			questionResults.setLabel(subQuestion.getTitle());
+
+			for (int i = 1; i <= question.getNumIcons(); i++) {
+				creator.addStatistics4RatingQuestion(survey, i, subQuestion, statistics, numberOfAnswersMapRatingQuestion);
+
+				DelphiGraphEntry entry = new DelphiGraphEntry();
+				entry.setLabel(Integer.toString(i));
+				entry.setValue(statistics.getRequestedRecordsForRatingQuestion(subQuestion, i));
+				questionResults.addEntry(entry);
+			}
+
+			result.addQuestion(questionResults);
+		}
+
+		// only show statistics if applicable for some subquestion
+		if (result.getQuestions().isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		List<DelphiExplanationDto> explanations = new ArrayList<>();
+
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
+		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+			List<DelphiExplanationAnswer> values = new ArrayList<>();
+
+			boolean skipped = false;
+
+			for (DelphiExplanation de : entry.getValue()) {
+				// find label for question ID
+				String label = questionTitles.get(de.getQuestionId());
+
+				if (label == null) {
+					// invalid answer, skip answer set
+					skipped = true;
+					break;
+				}
+
+				values.add(new DelphiExplanationAnswer(label, de.getValue()));
+			}
+
+			if (skipped || values.isEmpty()) {
+				continue;
+			}
+
+			DelphiExplanation firstValue = entry.getValue().get(0);
+
+			DelphiExplanationDto ex = new DelphiExplanationDto();
+			ex.setExplanation(firstValue.getExplanation());
+			ex.setUpdate(firstValue.getUpdate());
+			ex.setAnswers(values);
+
+			explanations.add(ex);
+		}
+
+		result.setExplanations(explanations);
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix) {
+		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
+		result.setType(AbstractDelphiGraphData.DelphiQuestionType.Matrix);
+
+		Map<String, String> answerTitles = new HashMap<>();
+		for (Element matrixAnswer : question.getAnswers()) {
+			answerTitles.put(matrixAnswer.getId().toString(), matrixAnswer.getTitle());
+		}
+
+		Map<Integer, String> questionTitles = new HashMap<>();
+		for (Element matrixQuestion : question.getQuestions()) {
+			questionTitles.put(matrixQuestion.getId(), matrixQuestion.getTitle());
+
+			if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
+				//participant may only see answers if he answered before
+				continue;
+			}
+
+			if (numberOfAnswersMap.get(matrixQuestion.getId()) < survey.getMinNumberDelphiStatistics()) {
+				// only show statistics for this question if the total number of answers exceeds the threshold
+				continue;
+			}
+
+			DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
+			questionResults.setLabel(matrixQuestion.getTitle());
+
+			for (Element matrixAnswer : question.getAnswers()) {
+				creator.addStatistics4Matrix(survey, matrixAnswer, matrixQuestion, statistics, numberOfAnswersMapMatrix);
+
+				DelphiGraphEntry entry = new DelphiGraphEntry();
+				entry.setLabel(matrixAnswer.getTitle());
+				entry.setValue(statistics.getRequestedRecordsForMatrix(matrixQuestion, matrixAnswer));
+				questionResults.addEntry(entry);
+			}
+
+			result.addQuestion(questionResults);
+		}
+
+		// only show statistics if applicable for some subquestion
+		if (result.getQuestions().isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		List<DelphiExplanationDto> explanations = new ArrayList<>();
+
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
+		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+			List<DelphiExplanationAnswer> values = new ArrayList<>();
+
+			boolean skipped = false;
+
+			for (DelphiExplanation de : entry.getValue()) {
+				// find labels for question and answer
+				String label = questionTitles.get(de.getQuestionId());
+				String value = answerTitles.get(de.getValue());
+
+				if (label == null || value == null) {
+					// invalid answer or question, skip answer set
+					skipped = true;
+					break;
+				}
+
+				values.add(new DelphiExplanationAnswer(label, value));
+			}
+
+			if (skipped || values.isEmpty()) {
+				continue;
+			}
+
+			DelphiExplanation firstValue = entry.getValue().get(0);
+
+			DelphiExplanationDto ex = new DelphiExplanationDto();
+			ex.setExplanation(firstValue.getExplanation());
+			ex.setUpdate(firstValue.getUpdate());
+			ex.setAnswers(values);
+
+			explanations.add(ex);
+		}
+
+		result.setExplanations(explanations);
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphChoiceQuestion(Survey survey, ChoiceQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset) throws Exception {
+		if (!numberOfAnswersMap.containsKey(question.getId()) || numberOfAnswersMap.get(question.getId()) == 0) {
+			//participant may only see answers if he answered before
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		if (numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics()) {
+			// only show statistics for this question if the total number of answers exceeds the threshold
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+
+		creator.addStatistics(survey, question, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
+
+		ResultFilter resultFilter = new ResultFilter();
+		resultFilter.setVisibleQuestions(new HashSet<>(question.getId()));
+		answerService.getNumberOfAnswerSets(survey, resultFilter);
+
+		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+
+		if (question instanceof SingleChoiceQuestion) {
+			result.setType(AbstractDelphiGraphData.DelphiQuestionType.SingleChoice);
+		} else if (question instanceof MultipleChoiceQuestion) {
+			result.setType(AbstractDelphiGraphData.DelphiQuestionType.MultipleChoice);
+		} else {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+
+		Map<String, String> answerIdToTitle = new HashMap<>();
+
+		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
+			String id = answer.getId().toString();
+			String title = answer.getTitle();
+			answerIdToTitle.put(id, title);
+
+			DelphiGraphEntry entry = new DelphiGraphEntry();
+			entry.setLabel(title);
+			entry.setValue(statistics.getRequestedRecords().get(id));
+			result.addEntry(entry);
+		}
+
+		List<DelphiExplanationDto> explanations = new ArrayList<>();
+
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
+		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+			List<String> values = entry.getValue().stream()
+					.map(DelphiExplanation::getValue)
+					.collect(Collectors.toList());
+
+			if (!values.stream().allMatch(answerIdToTitle::containsKey)) {
+				// invalid answer set
+				continue;
+			}
+
+			DelphiExplanation firstValue = entry.getValue().get(0);
+			List<DelphiExplanationAnswer> answers = values.stream()
+					.map(answerIdToTitle::get)
+					.map(title -> new DelphiExplanationAnswer(null, title))
+					.collect(Collectors.toList());
+
+			DelphiExplanationDto ex = new DelphiExplanationDto();
+			ex.setExplanation(firstValue.getExplanation());
+			ex.setUpdate(firstValue.getUpdate());
+			ex.setAnswers(answers);
+
+			explanations.add(ex);
+		}
+
+		result.setExplanations(explanations);
+		return ResponseEntity.ok(result);
+	}
+
 	@GetMapping(value = "delphiStructure")
 	public ResponseEntity<DelphiStructure> delphiStructure(HttpServletRequest request, Locale locale) {
 		try {

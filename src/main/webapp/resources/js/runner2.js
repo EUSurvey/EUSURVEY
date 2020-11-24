@@ -619,29 +619,31 @@ function addStructureChart(div, chartData, chartOptions) {
 	$(div).find('.no-graph-image').hide();
 }
 
-function createMatrixCell(values) {
-	return createRatingCell(values);
+function createMatrixCell(answers) {
+	return createRatingCell(answers);
 }
 
-function createMultipleChoiceCell(values) {
-	return createTableCell(values.join(", "));
+function createMultipleChoiceCell(answers) {
+	return createTableCell(answers.map(function (a) {
+		return a.value
+	}).join(", "));
 }
 
-function createRatingCell(values) {
+function createRatingCell(answers) {
 	var elements = [];
 
-	for (var i = 0; i < values.length; i++) {
-		var element = values[i];
+	for (var i = 0; i < answers.length; i++) {
+		var answer = answers[i];
 		var span = document.createElement("span");
-		$(span).text(element.label + ": " + element.value);
+		$(span).text(answer.label + ": " + answer.value);
 		elements.push($(span).html());
 	}
 
 	return createTableCell(elements.join("<br/>"));
 }
 
-function createSingleChoiceCell(values) {
-	return createTableCell(values[0]);
+function createSingleChoiceCell(answers) {
+	return createTableCell(answers[0].value);
 }
 
 function addTable(div, explanations, questionType) {
@@ -684,7 +686,7 @@ function addTable(div, explanations, questionType) {
 		var element = explanations[i];
 
 		var row = $(document.createElement("tr"));
-		$(row).append(valueCellFunction(element.values));
+		$(row).append(valueCellFunction(element.answers));
 		$(row).append(createTableCell(element.explanation));
 		$(row).append(createTableCell(new Date(element.update).toLocaleString()));
 
