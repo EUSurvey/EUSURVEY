@@ -45,7 +45,7 @@ public class AnswerExplanationService extends BasicService {
 				String explanationtext = answerSet.getExplanations().get(question.getUniqueId());
 				if (explanationtext == null)
 				{
-					explanationtext = "";
+					continue;
 				}
 				
 				AnswerExplanation explanation;
