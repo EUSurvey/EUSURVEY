@@ -46,33 +46,35 @@ public class AnswerExplanationService extends BasicService {
 
 	@Transactional(readOnly = true)
 	public List<DelphiExplanation> getDelphiExplanations(ChoiceQuestion question) {
-		return getDelphiExplanationsInternal(Collections.singletonList(question.getUniqueId()));
+		return getDelphiExplanationsInternal(Collections.singletonList(question.getUniqueId()), question.getSurvey().getIsDraft());
 	}
 
 	@Transactional(readOnly = true)
 	public List<DelphiExplanation> getDelphiExplanations(Matrix question) {
 		List<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
-		return getDelphiExplanationsInternal(uids);
+		return getDelphiExplanationsInternal(uids, question.getSurvey().getIsDraft());
 	}
 
 	@Transactional(readOnly = true)
 	public List<DelphiExplanation> getDelphiExplanations(RatingQuestion question) {
 		List<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
-		return getDelphiExplanationsInternal(uids);
+		return getDelphiExplanationsInternal(uids, question.getSurvey().getIsDraft());
 	}
 
 	@Transactional(readOnly = true)
-	protected List<DelphiExplanation> getDelphiExplanationsInternal(Collection<String> questionUids) {
+	protected List<DelphiExplanation> getDelphiExplanationsInternal(Collection<String> questionUids, boolean isDraft) {
 		String delphiExplanationQuery = "select a.AS_ID as `answerSetId`, ex.TEXT as `explanation`, aset.ANSWER_SET_UPDATE as `update`, a.VALUE as `value`, a.QUESTION_ID as `questionId`\n" +
 				"from answers a\n" +
 				"left join answers_explanations ex on a.QUESTION_UID = ex.QUESTION_UID and ex.ANSWER_SET_ID = a.AS_ID\n" +
 				"join answers_set aset on a.AS_ID = aset.ANSWER_SET_ID\n" +
-				"where a.QUESTION_UID IN :questionUids";
+				"join surveys s on aset.SURVEY_ID = s.SURVEY_ID\n" +
+				"where a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft";
 
 		Session session = sessionFactory.getCurrentSession();
 		SQLQuery query = session.createSQLQuery(delphiExplanationQuery);
 		query.setResultTransformer(Transformers.aliasToBean(DelphiExplanation.class));
 		query.setParameterList("questionUids", questionUids);
+		query.setBoolean("isDraft", isDraft);
 
 		@SuppressWarnings("unchecked")
 		List<DelphiExplanation> results = query.list();
