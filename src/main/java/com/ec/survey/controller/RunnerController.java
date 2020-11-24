@@ -2424,13 +2424,9 @@ public class RunnerController extends BasicController {
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRatingQuestion(Survey survey, RatingQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion) {
 		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
-		result.setType(AbstractDelphiGraphData.DelphiQuestionType.Rating);
-
-		Map<Integer, String> questionTitles = new HashMap<>();
+		result.setType(DelphiQuestionType.Rating);
 
 		for (Element subQuestion : question.getQuestions()) {
-			questionTitles.put(subQuestion.getId(), subQuestion.getTitle());
-
 			if (!numberOfAnswersMap.containsKey(subQuestion.getId()) || numberOfAnswersMap.get(subQuestion.getId()) == 0) {
 				//participant may only see answers if he answered before
 				continue;
@@ -2461,62 +2457,14 @@ public class RunnerController extends BasicController {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 
-		List<DelphiExplanationDto> explanations = new ArrayList<>();
-
-		// group explanations by answer set ID
-		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
-				.stream()
-				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
-
-		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
-			List<DelphiExplanationAnswer> values = new ArrayList<>();
-
-			boolean skipped = false;
-
-			for (DelphiExplanation de : entry.getValue()) {
-				// find label for question ID
-				String label = questionTitles.get(de.getQuestionId());
-
-				if (label == null) {
-					// invalid answer, skip answer set
-					skipped = true;
-					break;
-				}
-
-				values.add(new DelphiExplanationAnswer(label, de.getValue()));
-			}
-
-			if (skipped || values.isEmpty()) {
-				continue;
-			}
-
-			DelphiExplanation firstValue = entry.getValue().get(0);
-
-			DelphiExplanationDto ex = new DelphiExplanationDto();
-			ex.setExplanation(firstValue.getExplanation());
-			ex.setUpdate(firstValue.getUpdate());
-			ex.setAnswers(values);
-
-			explanations.add(ex);
-		}
-
-		result.setExplanations(explanations);
 		return ResponseEntity.ok(result);
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix) {
 		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
-		result.setType(AbstractDelphiGraphData.DelphiQuestionType.Matrix);
+		result.setType(DelphiQuestionType.Matrix);
 
-		Map<String, String> answerTitles = new HashMap<>();
-		for (Element matrixAnswer : question.getAnswers()) {
-			answerTitles.put(matrixAnswer.getId().toString(), matrixAnswer.getTitle());
-		}
-
-		Map<Integer, String> questionTitles = new HashMap<>();
 		for (Element matrixQuestion : question.getQuestions()) {
-			questionTitles.put(matrixQuestion.getId(), matrixQuestion.getTitle());
-
 			if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
 				//participant may only see answers if he answered before
 				continue;
@@ -2547,47 +2495,6 @@ public class RunnerController extends BasicController {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 
-		List<DelphiExplanationDto> explanations = new ArrayList<>();
-
-		// group explanations by answer set ID
-		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
-				.stream()
-				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
-
-		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
-			List<DelphiExplanationAnswer> values = new ArrayList<>();
-
-			boolean skipped = false;
-
-			for (DelphiExplanation de : entry.getValue()) {
-				// find labels for question and answer
-				String label = questionTitles.get(de.getQuestionId());
-				String value = answerTitles.get(de.getValue());
-
-				if (label == null || value == null) {
-					// invalid answer or question, skip answer set
-					skipped = true;
-					break;
-				}
-
-				values.add(new DelphiExplanationAnswer(label, value));
-			}
-
-			if (skipped || values.isEmpty()) {
-				continue;
-			}
-
-			DelphiExplanation firstValue = entry.getValue().get(0);
-
-			DelphiExplanationDto ex = new DelphiExplanationDto();
-			ex.setExplanation(firstValue.getExplanation());
-			ex.setUpdate(firstValue.getUpdate());
-			ex.setAnswers(values);
-
-			explanations.add(ex);
-		}
-
-		result.setExplanations(explanations);
 		return ResponseEntity.ok(result);
 	}
 
@@ -2611,58 +2518,21 @@ public class RunnerController extends BasicController {
 		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
 
 		if (question instanceof SingleChoiceQuestion) {
-			result.setType(AbstractDelphiGraphData.DelphiQuestionType.SingleChoice);
+			result.setType(DelphiQuestionType.SingleChoice);
 		} else if (question instanceof MultipleChoiceQuestion) {
-			result.setType(AbstractDelphiGraphData.DelphiQuestionType.MultipleChoice);
+			result.setType(DelphiQuestionType.MultipleChoice);
 		} else {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 
-		Map<String, String> answerIdToTitle = new HashMap<>();
-
 		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
-			String id = answer.getId().toString();
-			String title = answer.getTitle();
-			answerIdToTitle.put(id, title);
-
 			DelphiGraphEntry entry = new DelphiGraphEntry();
-			entry.setLabel(title);
-			entry.setValue(statistics.getRequestedRecords().get(id));
+			entry.setLabel(answer.getTitle());
+			entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
 			result.addEntry(entry);
 		}
 
-		List<DelphiExplanationDto> explanations = new ArrayList<>();
-
-		// group explanations by answer set ID
-		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
-				.stream()
-				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
-
-		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
-			List<String> values = entry.getValue().stream()
-					.map(DelphiExplanation::getValue)
-					.collect(Collectors.toList());
-
-			if (!values.stream().allMatch(answerIdToTitle::containsKey)) {
-				// invalid answer set
-				continue;
-			}
-
-			DelphiExplanation firstValue = entry.getValue().get(0);
-			List<DelphiExplanationAnswer> answers = values.stream()
-					.map(answerIdToTitle::get)
-					.map(title -> new DelphiExplanationAnswer(null, title))
-					.collect(Collectors.toList());
-
-			DelphiExplanationDto ex = new DelphiExplanationDto();
-			ex.setExplanation(firstValue.getExplanation());
-			ex.setUpdate(firstValue.getUpdate());
-			ex.setAnswers(answers);
-
-			explanations.add(ex);
-		}
-
-		result.setExplanations(explanations);
+		handleDelphiTableChoiceQuestion(question);
 		return ResponseEntity.ok(result);
 	}
 	
@@ -2763,7 +2633,7 @@ public class RunnerController extends BasicController {
 							} else if (question instanceof RatingQuestion)
 							{								
 								RatingQuestion rating = (RatingQuestion)question;
-						
+
 								for (Element ratingQuestions : rating.getQuestions()) {
 									List<Answer> answers = answerSet.getAnswers(ratingQuestions.getId(), ratingQuestions.getUniqueId());
 									
@@ -2771,14 +2641,13 @@ public class RunnerController extends BasicController {
 										result += answer.getValue() + " ";
 									}
 								}
-								
+
 								delphiQuestion.setAnswer(result);
 							} else {
 								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
-								
-								if (!answers.isEmpty())
-								{
-									for (Answer answer: answers) {
+
+								if (!answers.isEmpty()) {
+									for (Answer answer : answers) {
 										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
 									}
 								}
@@ -2786,17 +2655,209 @@ public class RunnerController extends BasicController {
 
 							delphiQuestion.setAnswer(result);
 						}
-						
-						
-						currentDelphiSection.getQuestions().add(delphiQuestion);						
-					}					
+
+						currentDelphiSection.getQuestions().add(delphiQuestion);
+					}
 				}
 			}
-			
+
 			return ResponseEntity.ok(structure);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@GetMapping(value = "delphiTable")
+	public ResponseEntity<DelphiTable> delphiTable(HttpServletRequest request) {
+		try {
+			String surveyid = request.getParameter("surveyid");
+			int sid = Integer.parseInt(surveyid);
+
+			String languageCode = request.getParameter("languagecode");
+			Survey survey = surveyService.getSurvey(sid, languageCode);
+
+			if (survey == null || !survey.getIsDelphi()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			if (!survey.getIsDraft() && answerService.get(request.getParameter("uniquecode")) == null) {
+				// participant may only see answers if he answered before
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			String questionuid = request.getParameter("questionuid");
+			Element element = survey.getQuestionMapByUniqueId().get(questionuid);
+
+			if (!(element instanceof Question)) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			Question question = (Question) element;
+			if (!question.getIsDelphiQuestion()) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			if (question instanceof ChoiceQuestion) {
+				return handleDelphiTableChoiceQuestion((ChoiceQuestion) question);
+			}
+
+			if (question instanceof Matrix) {
+				return handleDelphiTableMatrix((Matrix) question);
+			}
+
+			if (question instanceof RatingQuestion) {
+				return handleDelphiTableRatingQuestions((RatingQuestion) question);
+			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+	}
+
+	private ResponseEntity<DelphiTable> handleDelphiTableChoiceQuestion(ChoiceQuestion question) {
+		DelphiTable result;
+
+		if (question instanceof SingleChoiceQuestion) {
+			result = new DelphiTable(DelphiQuestionType.SingleChoice);
+		} else if (question instanceof MultipleChoiceQuestion) {
+			result = new DelphiTable(DelphiQuestionType.MultipleChoice);
+		} else {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		Map<String, String> answerIdToTitle = new HashMap<>();
+		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
+			String id = answer.getId().toString();
+			String title = answer.getTitle();
+			answerIdToTitle.put(id, title);
+		}
+
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
+		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+			List<String> values = entry.getValue().stream()
+					.map(DelphiExplanation::getValue)
+					.collect(Collectors.toList());
+
+			if (!values.stream().allMatch(answerIdToTitle::containsKey)) {
+				// invalid answer set
+				continue;
+			}
+
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			DelphiExplanation firstValue = entry.getValue().get(0);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(firstValue.getUpdate());
+
+			for (String value : values) {
+				String title = answerIdToTitle.get(value);
+				DelphiTableAnswer answer = new DelphiTableAnswer(null, title);
+				tableEntry.getAnswers().add(answer);
+			}
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<DelphiTable> handleDelphiTableMatrix(Matrix question) {
+		DelphiTable result = new DelphiTable(DelphiQuestionType.Matrix);
+
+		Map<String, String> answerTitles = new HashMap<>();
+		for (Element matrixAnswer : question.getAnswers()) {
+			answerTitles.put(matrixAnswer.getId().toString(), matrixAnswer.getTitle());
+		}
+
+		Map<Integer, String> questionTitles = new HashMap<>();
+		for (Element matrixQuestion : question.getQuestions()) {
+			questionTitles.put(matrixQuestion.getId(), matrixQuestion.getTitle());
+		}
+
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
+		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			DelphiExplanation firstValue = entry.getValue().get(0);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(firstValue.getUpdate());
+
+			boolean skipped = false;
+			for (DelphiExplanation de : entry.getValue()) {
+				// find labels for question and answer
+				String label = questionTitles.get(de.getQuestionId());
+				String value = answerTitles.get(de.getValue());
+
+				if (label == null || value == null) {
+					// invalid answer or question, skip answer set
+					skipped = true;
+					break;
+				}
+
+				DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
+				tableEntry.getAnswers().add(answer);
+			}
+
+			if (skipped || tableEntry.getAnswers().isEmpty()) {
+				continue;
+			}
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestions(RatingQuestion question) {
+		DelphiTable result = new DelphiTable(DelphiQuestionType.Rating);
+
+		Map<Integer, String> questionTitles = new HashMap<>();
+		for (Element subQuestion : question.getQuestions()) {
+			questionTitles.put(subQuestion.getId(), subQuestion.getTitle());
+		}
+
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+
+		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			DelphiExplanation firstValue = entry.getValue().get(0);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(firstValue.getUpdate());
+
+			boolean skipped = false;
+			for (DelphiExplanation de : entry.getValue()) {
+				// find label for question ID
+				String label = questionTitles.get(de.getQuestionId());
+
+				if (label == null) {
+					// invalid answer, skip answer set
+					skipped = true;
+					break;
+				}
+
+				DelphiTableAnswer answer = new DelphiTableAnswer(label, de.getValue());
+				tableEntry.getAnswers().add(answer);
+			}
+
+			if (skipped || tableEntry.getAnswers().isEmpty()) {
+				continue;
+			}
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return ResponseEntity.ok(result);
 	}
 }
