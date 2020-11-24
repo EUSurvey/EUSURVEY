@@ -15,6 +15,7 @@ import com.ec.survey.service.PDFService;
 import com.ec.survey.service.ValidCodesService;
 import com.ec.survey.tools.*;
 import com.ec.survey.tools.export.StatisticsCreator;
+import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.owasp.esapi.ESAPI;
@@ -2752,7 +2753,7 @@ public class RunnerController extends BasicController {
 
 		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
 			// maps position to element
-			Map<Integer, DelphiTableAnswer> answers = new HashMap<>();
+			Set<Pair<Integer, DelphiTableAnswer>> answers = new HashSet<>();
 
 			boolean skipped = false;
 			for (DelphiExplanation de : entry.getValue()) {
@@ -2768,7 +2769,7 @@ public class RunnerController extends BasicController {
 
 				DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
 				int position = questionPositions.get(de.getQuestionId());
-				answers.put(position, answer);
+				answers.add(new Pair<>(position, answer));
 			}
 
 			if (skipped || answers.isEmpty()) {
@@ -2776,9 +2777,9 @@ public class RunnerController extends BasicController {
 			}
 
 			// sort answers by position
-			List<DelphiTableAnswer> sortedAnswers = answers.entrySet().stream()
-					.sorted(Comparator.comparingInt(Map.Entry::getKey))
-					.map(Map.Entry::getValue)
+			List<DelphiTableAnswer> sortedAnswers = answers.stream()
+					.sorted(Comparator.comparingInt(Pair::getKey))
+					.map(Pair::getValue)
 					.collect(Collectors.toList());
 
 			DelphiExplanation firstValue = entry.getValue().get(0);
@@ -2811,7 +2812,7 @@ public class RunnerController extends BasicController {
 
 		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
 			// maps position to element
-			Map<Integer, DelphiTableAnswer> answers = new HashMap<>();
+			Set<Pair<Integer, DelphiTableAnswer>> answers = new HashSet<>();
 
 			boolean skipped = false;
 			for (DelphiExplanation de : entry.getValue()) {
@@ -2826,7 +2827,7 @@ public class RunnerController extends BasicController {
 
 				DelphiTableAnswer answer = new DelphiTableAnswer(label, de.getValue());
 				int position = questionPositions.get(de.getQuestionId());
-				answers.put(position, answer);
+				answers.add(new Pair<>(position, answer));
 			}
 
 			if (skipped || answers.isEmpty()) {
@@ -2834,9 +2835,9 @@ public class RunnerController extends BasicController {
 			}
 
 			// sort answers by position
-			List<DelphiTableAnswer> sortedAnswers = answers.entrySet().stream()
-					.sorted(Comparator.comparingInt(Map.Entry::getKey))
-					.map(Map.Entry::getValue)
+			List<DelphiTableAnswer> sortedAnswers = answers.stream()
+					.sorted(Comparator.comparingInt(Pair::getKey))
+					.map(Pair::getValue)
 					.collect(Collectors.toList());
 
 			DelphiExplanation firstValue = entry.getValue().get(0);
