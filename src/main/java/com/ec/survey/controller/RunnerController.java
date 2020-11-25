@@ -2533,7 +2533,6 @@ public class RunnerController extends BasicController {
 			result.addEntry(entry);
 		}
 
-		handleDelphiTableChoiceQuestion(question);
 		return ResponseEntity.ok(result);
 	}
 
