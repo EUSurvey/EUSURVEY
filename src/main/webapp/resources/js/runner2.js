@@ -116,6 +116,8 @@ function checkTriggersAfterLoad(container)
 	}
 }
 
+var modelsForDelphiQuestions = [];
+
 function addElementToContainer(element, container, foreditor, forskin)
 {
 	var viewModel = getElementViewModel(element);
@@ -409,9 +411,12 @@ function addElementToContainer(element, container, foreditor, forskin)
 	});
 	
 	if (isdelphi) {
+		modelsForDelphiQuestions[viewModel.uniqueId()] = viewModel;
+		
 		var surveyElement = $(container).closest(".survey-element");
 		if (surveyElement) {
-			loadGraphData(surveyElement);			
+			loadGraphData(surveyElement);
+			loadTableData(surveyElement, viewModel);	
 		}
 	}
 
@@ -484,9 +489,9 @@ function delphiPrefill(editorElement) {
 	});
 }
 
-function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, callback)
-{
+function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback) {
 	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
+
 	$.ajax({
 		type: "GET",
 		url: contextpath + "/runner/delphiGraph",
@@ -500,7 +505,6 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			$(message).html(data.responseText).addClass("update-error");
 		},
 		success: function (result, textStatus) {
-		
 			if (textStatus === "nocontent") {
 				return;
 			}
@@ -529,53 +533,62 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				legend: {display: false}
 			};
 
-			if (result.type === "single") {
-				var graphData = result.data;
+			switch (result.type) {
+				case "MultipleChoice":
+				case "SingleChoice":
+					var graphData = result.data;
 
-				chartData = {
-					datasets: [{
-						label: '',
-						data: graphData.map(function (g) {
-							return g.value
+					chartData = {
+						datasets: [{
+							label: '',
+							data: graphData.map(function (g) {
+								return g.value
+							})
+						}],
+						labels: graphData.map(function (g) {
+							return g.label
 						})
-					}],
-					labels: graphData.map(function (g) {
-						return g.label
-					})
-				};
-			} else if (result.type === "multi") {
-				var questions = result.questions;
-				var datasets = [];
-				var labels = undefined;
+					};
+					break;
 
-				for (var i = 0; i < questions.length; i++) {
-					var question = questions[i];
+				case "Matrix":
+				case "Rating":
+					var questions = result.questions;
+					var datasets = [];
+					var labels = undefined;
 
-					datasets.push({
-						data: question.data.map(function (d) {
-							return d.value;
-						}),
-						label: question.label
-					});
+					for (var i = 0; i < questions.length; i++) {
+						var question = questions[i];
 
-					if (!labels) {
-						labels = question.data.map(function (d) {
-							return d.label;
+						datasets.push({
+							data: question.data.map(function (d) {
+								return d.value;
+							}),
+							label: question.label
 						});
+
+						if (!labels) {
+							labels = question.data.map(function (d) {
+								return d.label;
+							});
+						}
 					}
-				}
 
-				chartData = {
-					datasets,
-					labels
-				}
+					chartData = {
+						datasets,
+						labels
+					}
 
-				chartOptions.legend.display = true;
-			} else {
-				return;
+					chartOptions.legend.display = true;
+					break;
+
+				default:
+					return;
 			}
 
-			callback(div, chartData, chartOptions);
+			if (chartCallback instanceof Function) {
+				chartCallback(div, chartData, chartOptions);
+			}
 		}
 	 });
 }
@@ -584,11 +597,11 @@ function addChart(div, chartData, chartOptions)
 {
 	// remove existing charts
 	var elementWrapper = $(div).closest(".elementwrapper");
-	$(elementWrapper).find(".chart-wrapper").remove();
-	
-	// create new chart next to survey-element
-	var chartTemplate = $("#delphi-chart-template").clone().attr("id", "");
-	$(elementWrapper).append(chartTemplate);
+	$(elementWrapper).find(".chart-wrapper").show();
+//	
+//	// create new chart next to survey-element
+//	var chartTemplate = $("#delphi-chart-template").clone().attr("id", "");
+//	$(elementWrapper).append(chartTemplate);
 
 	new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), {
 		type: "bar",
@@ -597,25 +610,56 @@ function addChart(div, chartData, chartOptions)
 	});
 }
 
-function addStructureChart(div, chartData, chartOptions)
-{
+function addStructureChart(div, chartData, chartOptions) {
 	new Chart($(div).find("canvas")[0].getContext('2d'), {
 		type: "bar",
 		data: chartData,
 		options: chartOptions
 	});
-	
+
 	$(div).find('.no-graph-image').hide();
 }
 
 function loadGraphData(div) {
 	var surveyId = $('#survey\\.id').val();
-	var questionuid =  $(div).attr("data-uid");
+	var questionuid = $(div).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-
 	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart);
+}
 
+function loadTableData(div, viewModel) {
+	var surveyId = $('#survey\\.id').val();
+	var questionuid = $(div).attr("data-uid");
+	var languagecode = $('#language\\.code').val();
+	var uniquecode = $('#uniqueCode').val();
+	
+	var data = "surveyid=" + surveyId + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
+
+	$.ajax({
+		type: "GET",
+		url: contextpath + "/runner/delphiTable",
+		data: data,
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function (data) {
+			//TODO
+			var message = $(div).find(".delphiupdatemessage").first();
+			$(message).html(data.responseText).addClass("update-error");
+		},
+		success: function (result, textStatus) {
+			if (textStatus === "nocontent") {
+				return;
+			}
+			
+			viewModel.delphiTableEntries.removeAll();
+						
+			for (var i = 0; i < result.entries.length; i++) {
+				viewModel.delphiTableEntries.push(result.entries[i]);
+			}
+		}
+	 });
 }
 
 function delphiUpdate(div) {
@@ -674,6 +718,9 @@ function delphiUpdate(div) {
 			$(loader).hide();
 			
 			loadGraphData(div);
+			
+			var viewModel = modelsForDelphiQuestions[uid];
+			loadTableData(div, viewModel);
 	    }
 	 });
 }

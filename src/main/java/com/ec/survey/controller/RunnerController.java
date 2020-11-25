@@ -7,12 +7,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
-import com.ec.survey.model.delphi.DelphiGraphDataMulti;
-import com.ec.survey.model.delphi.DelphiGraphDataSingle;
-import com.ec.survey.model.delphi.DelphiGraphEntry;
-import com.ec.survey.model.delphi.DelphiQuestion;
-import com.ec.survey.model.delphi.DelphiSection;
-import com.ec.survey.model.delphi.DelphiStructure;
+import com.ec.survey.model.delphi.*;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.service.AnswerExplanationService;
 import com.ec.survey.service.MailService;
@@ -20,6 +15,7 @@ import com.ec.survey.service.PDFService;
 import com.ec.survey.service.ValidCodesService;
 import com.ec.survey.tools.*;
 import com.ec.survey.tools.export.StatisticsCreator;
+import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.owasp.esapi.ESAPI;
@@ -44,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/runner")
@@ -2284,11 +2281,24 @@ public class RunnerController extends BasicController {
 			if (answerSet == null) {
 				return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.BAD_REQUEST);
 			}
+			
 			final String questionUid = request.getParameter("questionUid");
+			
+			Element element = answerSet.getSurvey().getQuestionMapByUniqueId().get(questionUid);
+
+			if (!(element instanceof Question)) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			Question question = (Question) element;
+			if (!answerSetContainsAnswerForQuestion(answerSet, question)) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}			
+			
 			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
 			return new ResponseEntity<>(explanation.getText(), HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
-			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			return new ResponseEntity<>("", HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -2357,7 +2367,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@GetMapping(value = "delphiGraph")
-	public ResponseEntity<Object> delphiGraph(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<AbstractDelphiGraphData> delphiGraph(HttpServletRequest request) {
 		try {
 			String surveyid = request.getParameter("surveyid");
 			int sid = Integer.parseInt(surveyid);
@@ -2369,7 +2379,9 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
-			if (!survey.getIsDraft() && answerService.get(request.getParameter("uniquecode")) == null) {
+			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
+			
+			if (answerSet == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -2382,7 +2394,7 @@ public class RunnerController extends BasicController {
 			}
 
 			Question question = (Question) element;
-			if (!question.getIsDelphiQuestion()) {
+			if (!question.getIsDelphiQuestion()|| !answerSetContainsAnswerForQuestion(answerSet, question)) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
@@ -2407,114 +2419,16 @@ public class RunnerController extends BasicController {
 					multipleChoiceSelectionsByAnswerset,
 					numberOfAnswersMapRatingQuestion);
 
-			int minAnswers = survey.getMinNumberDelphiStatistics();
-
 			if (question instanceof ChoiceQuestion) {
-				
-				if (!numberOfAnswersMap.containsKey(question.getId()) || numberOfAnswersMap.get(question.getId()) == 0) {
-					//participant may only see answers if he answered before
-					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-				}
-				
-				if (numberOfAnswersMap.get(question.getId()) < minAnswers) {
-					// only show statistics for this question if the total number of answers exceeds the threshold
-					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-				}
-
-				ChoiceQuestion choiceQuestion = (ChoiceQuestion) question;
-				creator.addStatistics(survey, choiceQuestion, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
-
-				ResultFilter resultFilter = new ResultFilter();
-				resultFilter.setVisibleQuestions(new HashSet<>(question.getId()));
-				answerService.getNumberOfAnswerSets(survey, resultFilter);
-
-				DelphiGraphDataSingle result = new DelphiGraphDataSingle();
-
-				for (PossibleAnswer answer : choiceQuestion.getAllPossibleAnswers()) {
-					DelphiGraphEntry entry = new DelphiGraphEntry();
-					entry.setLabel(answer.getTitle());
-					entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
-					result.addEntry(entry);
-				}
-
-				return ResponseEntity.ok(result);
+				return handleDelphiGraphChoiceQuestion(survey, (ChoiceQuestion) question, statistics, creator, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
 			}
 
 			if (question instanceof Matrix) {
-				Matrix matrix = (Matrix) question;
-				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
-
-				for (Element matrixQuestion : matrix.getQuestions()) {
-					
-					if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
-						//participant may only see answers if he answered before
-						continue;
-					}
-					
-					if (numberOfAnswersMap.get(matrixQuestion.getId()) < minAnswers) {
-						// only show statistics for this question if the total number of answers exceeds the threshold
-						continue;
-					}
-
-					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
-					questionResults.setLabel(matrixQuestion.getTitle());
-
-					for (Element matrixAnswer : matrix.getAnswers()) {
-						creator.addStatistics4Matrix(survey, matrixAnswer, matrixQuestion, statistics, numberOfAnswersMapMatrix);
-
-						DelphiGraphEntry entry = new DelphiGraphEntry();
-						entry.setLabel(matrixAnswer.getTitle());
-						entry.setValue(statistics.getRequestedRecordsForMatrix(matrixQuestion, matrixAnswer));
-						questionResults.addEntry(entry);
-					}
-
-					result.addQuestion(questionResults);
-				}
-
-				// only show statistics if applicable for some subquestion
-				if (result.getQuestions().isEmpty()) {
-					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-				}
-
-				return ResponseEntity.ok(result);
+				return handleDelphiGraphMatrix(survey, (Matrix) question, statistics, creator, numberOfAnswersMap, numberOfAnswersMapMatrix);
 			}
 
 			if (question instanceof RatingQuestion) {
-				RatingQuestion ratingQuestion = (RatingQuestion) question;
-				DelphiGraphDataMulti result = new DelphiGraphDataMulti();
-
-				for (Element subQuestion : ratingQuestion.getQuestions()) {
-					if (!numberOfAnswersMap.containsKey(subQuestion.getId()) || numberOfAnswersMap.get(subQuestion.getId()) == 0) {
-						//participant may only see answers if he answered before
-						continue;
-					}
-					
-					if (numberOfAnswersMap.get(subQuestion.getId()) < minAnswers) {
-						// only show statistics for this question if the total number of answers exceeds the threshold
-						continue;
-					}
-
-					DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
-					questionResults.setLabel(subQuestion.getTitle());
-
-					for (int i = 1; i <= ratingQuestion.getNumIcons(); i++) {
-						creator.addStatistics4RatingQuestion(survey, i, subQuestion, statistics, numberOfAnswersMapRatingQuestion);
-
-						DelphiGraphEntry entry = new DelphiGraphEntry();
-						entry.setLabel(Integer.toString(i));
-						entry.setValue(statistics.getRequestedRecordsForRatingQuestion(subQuestion, i));
-						questionResults.addEntry(entry);
-					}
-
-					result.addQuestion(questionResults);
-				}
-
-				// only show statistics if applicable for some subquestion
-				if (result.getQuestions().isEmpty()) {
-					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-				}
-
-				return ResponseEntity.ok(result);
+				return handleDelphiGraphRatingQuestion(survey, (RatingQuestion) question, statistics, creator, numberOfAnswersMap, numberOfAnswersMapRatingQuestion);
 			}
 
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -2522,8 +2436,121 @@ public class RunnerController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}	
-	
+	}
+
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRatingQuestion(Survey survey, RatingQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion) {
+		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
+		result.setType(DelphiQuestionType.Rating);
+
+		for (Element subQuestion : question.getQuestions()) {
+			if (!numberOfAnswersMap.containsKey(subQuestion.getId()) || numberOfAnswersMap.get(subQuestion.getId()) == 0) {
+				//participant may only see answers if he answered before
+				continue;
+			}
+
+			if (numberOfAnswersMap.get(subQuestion.getId()) < survey.getMinNumberDelphiStatistics()) {
+				// only show statistics for this question if the total number of answers exceeds the threshold
+				continue;
+			}
+
+			DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
+			questionResults.setLabel(subQuestion.getTitle());
+
+			for (int i = 1; i <= question.getNumIcons(); i++) {
+				creator.addStatistics4RatingQuestion(survey, i, subQuestion, statistics, numberOfAnswersMapRatingQuestion);
+
+				DelphiGraphEntry entry = new DelphiGraphEntry();
+				entry.setLabel(Integer.toString(i));
+				entry.setValue(statistics.getRequestedRecordsForRatingQuestion(subQuestion, i));
+				questionResults.addEntry(entry);
+			}
+
+			result.addQuestion(questionResults);
+		}
+
+		// only show statistics if applicable for some subquestion
+		if (result.getQuestions().isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix) {
+		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
+		result.setType(DelphiQuestionType.Matrix);
+
+		for (Element matrixQuestion : question.getQuestions()) {
+			if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
+				//participant may only see answers if he answered before
+				continue;
+			}
+
+			if (numberOfAnswersMap.get(matrixQuestion.getId()) < survey.getMinNumberDelphiStatistics()) {
+				// only show statistics for this question if the total number of answers exceeds the threshold
+				continue;
+			}
+
+			DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
+			questionResults.setLabel(matrixQuestion.getTitle());
+
+			for (Element matrixAnswer : question.getAnswers()) {
+				creator.addStatistics4Matrix(survey, matrixAnswer, matrixQuestion, statistics, numberOfAnswersMapMatrix);
+
+				DelphiGraphEntry entry = new DelphiGraphEntry();
+				entry.setLabel(matrixAnswer.getTitle());
+				entry.setValue(statistics.getRequestedRecordsForMatrix(matrixQuestion, matrixAnswer));
+				questionResults.addEntry(entry);
+			}
+
+			result.addQuestion(questionResults);
+		}
+
+		// only show statistics if applicable for some subquestion
+		if (result.getQuestions().isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphChoiceQuestion(Survey survey, ChoiceQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset) throws Exception {
+		if (!numberOfAnswersMap.containsKey(question.getId()) || numberOfAnswersMap.get(question.getId()) == 0) {
+			//participant may only see answers if he answered before
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		if (numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics()) {
+			// only show statistics for this question if the total number of answers exceeds the threshold
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+
+		creator.addStatistics(survey, question, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
+
+		ResultFilter resultFilter = new ResultFilter();
+		resultFilter.setVisibleQuestions(new HashSet<>(question.getId()));
+		answerService.getNumberOfAnswerSets(survey, resultFilter);
+
+		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+
+		if (question instanceof SingleChoiceQuestion) {
+			result.setType(DelphiQuestionType.SingleChoice);
+		} else if (question instanceof MultipleChoiceQuestion) {
+			result.setType(DelphiQuestionType.MultipleChoice);
+		} else {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+
+		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
+			DelphiGraphEntry entry = new DelphiGraphEntry();
+			entry.setLabel(answer.getTitle());
+			entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
+			result.addEntry(entry);
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
 	@GetMapping(value = "delphiStructure")
 	public ResponseEntity<DelphiStructure> delphiStructure(HttpServletRequest request, Locale locale) {
 		try {
@@ -2584,7 +2611,7 @@ public class RunnerController extends BasicController {
 							} else if (question instanceof RatingQuestion)
 							{								
 								RatingQuestion rating = (RatingQuestion)question;
-						
+
 								for (Element ratingQuestions : rating.getQuestions()) {
 									List<Answer> answers = answerSet.getAnswers(ratingQuestions.getId(), ratingQuestions.getUniqueId());
 									
@@ -2592,14 +2619,13 @@ public class RunnerController extends BasicController {
 										result += answer.getValue() + " ";
 									}
 								}
-								
+
 								delphiQuestion.setAnswer(result);
 							} else {
 								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
-								
-								if (!answers.isEmpty())
-								{
-									for (Answer answer: answers) {
+
+								if (!answers.isEmpty()) {
+									for (Answer answer : answers) {
 										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
 									}
 								}
@@ -2607,17 +2633,274 @@ public class RunnerController extends BasicController {
 
 							delphiQuestion.setAnswer(result);
 						}
-						
-						
-						currentDelphiSection.getQuestions().add(delphiQuestion);						
-					}					
+
+						currentDelphiSection.getQuestions().add(delphiQuestion);
+					}
 				}
 			}
-			
+
 			return ResponseEntity.ok(structure);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	@GetMapping(value = "delphiTable")
+	public ResponseEntity<DelphiTable> delphiTable(HttpServletRequest request) {
+		try {
+			String surveyid = request.getParameter("surveyid");
+			int sid = Integer.parseInt(surveyid);
+
+			String languageCode = request.getParameter("languagecode");
+			Survey survey = surveyService.getSurvey(sid, languageCode);
+
+			if (survey == null || !survey.getIsDelphi()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			
+			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
+
+			if (answerSet == null) {
+				// participant may only see answers if he answered before
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			String questionuid = request.getParameter("questionuid");
+			Element element = survey.getQuestionMapByUniqueId().get(questionuid);
+
+			if (!(element instanceof Question)) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			Question question = (Question) element;
+			if (!question.getIsDelphiQuestion() || !answerSetContainsAnswerForQuestion(answerSet, question)) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			if (question instanceof ChoiceQuestion) {				
+				return handleDelphiTableChoiceQuestion((ChoiceQuestion) question);
+			}
+
+			if (question instanceof Matrix) {				
+				return handleDelphiTableMatrix((Matrix) question);
+			}
+
+			if (question instanceof RatingQuestion) {				
+				return handleDelphiTableRatingQuestions((RatingQuestion) question);
+			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+	}
+	
+	private boolean answerSetContainsAnswerForQuestion(AnswerSet answerSet, Question question)
+	{
+		if (question instanceof Matrix) {
+			return !answerSet.getMatrixAnswers((Matrix)question).isEmpty();
+		}
+
+		if (question instanceof RatingQuestion) {
+			boolean found = false;
+			for (Element childQuestion : ((RatingQuestion) question).getChildElements()) {
+				if (!answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId()).isEmpty())
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		return !answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty();
+	}
+
+	private ResponseEntity<DelphiTable> handleDelphiTableChoiceQuestion(ChoiceQuestion question) {
+		DelphiTable result;
+
+		if (question instanceof SingleChoiceQuestion) {
+			result = new DelphiTable(DelphiQuestionType.SingleChoice);
+		} else if (question instanceof MultipleChoiceQuestion) {
+			result = new DelphiTable(DelphiQuestionType.MultipleChoice);
+		} else {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		Map<String, String> answerIdToTitle = new HashMap<>();
+		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
+			String id = answer.getId().toString();
+			String title = answer.getTitle();
+			answerIdToTitle.put(id, title);
+		}
+
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
+
+		Survey survey = question.getSurvey();
+		if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
+			List<String> values = entry.getValue().stream()
+					.map(DelphiContribution::getValue)
+					.collect(Collectors.toList());
+
+			if (!values.stream().allMatch(answerIdToTitle::containsKey)) {
+				// invalid answer set
+				continue;
+			}
+
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			DelphiContribution firstValue = entry.getValue().get(0);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+
+			for (String value : values) {
+				String title = answerIdToTitle.get(value);
+				DelphiTableAnswer answer = new DelphiTableAnswer(null, title);
+				tableEntry.getAnswers().add(answer);
+			}
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<DelphiTable> handleDelphiTableMatrix(Matrix question) {
+		DelphiTable result = new DelphiTable(DelphiQuestionType.Matrix);
+
+		Map<String, String> answerTitles = new HashMap<>();
+		for (Element matrixAnswer : question.getAnswers()) {
+			answerTitles.put(matrixAnswer.getId().toString(), matrixAnswer.getTitle());
+		}
+
+		Map<Integer, Integer> questionPositions = new HashMap<>();
+		Map<Integer, String> questionTitles = new HashMap<>();
+		for (Element matrixQuestion : question.getQuestions()) {
+			questionPositions.put(matrixQuestion.getId(), matrixQuestion.getPosition());
+			questionTitles.put(matrixQuestion.getId(), matrixQuestion.getTitle());
+		}
+
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
+
+		Survey survey = question.getSurvey();
+		if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
+			// maps position to element
+			Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.getValue().size());
+
+			boolean skipped = false;
+			for (DelphiContribution contrib : entry.getValue()) {
+				// find labels for question and answer
+				String label = questionTitles.get(contrib.getQuestionId());
+				String value = answerTitles.get(contrib.getValue());
+
+				if (label == null || value == null) {
+					// invalid answer or question, skip answer set
+					skipped = true;
+					break;
+				}
+
+				DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
+				int position = questionPositions.get(contrib.getQuestionId());
+				answers.add(new Pair<>(position, answer));
+			}
+
+			if (skipped || answers.isEmpty()) {
+				continue;
+			}
+
+			// sort answers by position
+			List<DelphiTableAnswer> sortedAnswers = answers.stream()
+					.sorted(Comparator.comparingInt(Pair::getKey))
+					.map(Pair::getValue)
+					.collect(Collectors.toList());
+
+			DelphiContribution firstValue = entry.getValue().get(0);
+
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.getAnswers().addAll(sortedAnswers);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestions(RatingQuestion question) {
+		DelphiTable result = new DelphiTable(DelphiQuestionType.Rating);
+
+		Map<Integer, Integer> questionPositions = new HashMap<>();
+		Map<Integer, String> questionTitles = new HashMap<>();
+		for (Element subQuestion : question.getQuestions()) {
+			questionPositions.put(subQuestion.getId(), subQuestion.getPosition());
+			questionTitles.put(subQuestion.getId(), subQuestion.getTitle());
+		}
+
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
+
+		Survey survey = question.getSurvey();
+		if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
+			// maps position to element
+			Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.getValue().size());
+
+			boolean skipped = false;
+			for (DelphiContribution contrib : entry.getValue()) {
+				// find label for question ID
+				String label = questionTitles.get(contrib.getQuestionId());
+
+				if (label == null) {
+					// invalid answer, skip answer set
+					skipped = true;
+					break;
+				}
+
+				DelphiTableAnswer answer = new DelphiTableAnswer(label, contrib.getValue());
+				int position = questionPositions.get(contrib.getQuestionId());
+				answers.add(new Pair<>(position, answer));
+			}
+
+			if (skipped || answers.isEmpty()) {
+				continue;
+			}
+
+			// sort answers by position
+			List<DelphiTableAnswer> sortedAnswers = answers.stream()
+					.sorted(Comparator.comparingInt(Pair::getKey))
+					.map(Pair::getValue)
+					.collect(Collectors.toList());
+
+			DelphiContribution firstValue = entry.getValue().get(0);
+
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.getAnswers().addAll(sortedAnswers);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return ResponseEntity.ok(result);
 	}
 }

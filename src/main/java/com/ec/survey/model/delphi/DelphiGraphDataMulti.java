@@ -3,9 +3,7 @@ package com.ec.survey.model.delphi;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DelphiGraphDataMulti {
-    public final String type = "multi";
-
+public class DelphiGraphDataMulti extends AbstractDelphiGraphData {
     private final Collection<DelphiGraphDataSingle> questions = new ArrayList<>();
 
     public Collection<DelphiGraphDataSingle> getQuestions() {

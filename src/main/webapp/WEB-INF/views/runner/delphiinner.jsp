@@ -310,8 +310,11 @@
 					{
 						for (var j = 0; j < data.sections[i].questions.length; j++)
 						{
-							var div = $('#delphiquestion' + data.sections[i].questions[j].uid);
-							loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart);
+							if (data.sections[i].questions[j].answer.length > 0) 
+							{
+								var div = $('#delphiquestion' + data.sections[i].questions[j].uid);
+								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart);
+							}
 						}
 					}
 					

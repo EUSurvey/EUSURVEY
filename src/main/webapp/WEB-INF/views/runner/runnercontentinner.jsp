@@ -127,6 +127,9 @@
 								<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id)}">
 								 <fieldset>							
 								  <c:choose>
+								   <c:when test="${form.survey.isDelphi}">
+								    	<div class="elementwrapper delphi">
+								    </c:when>
 								    <c:when test="${element.hasPDFWidth}">
 								    	<div class="elementwrapper elem_${element.id}">
 								    </c:when>

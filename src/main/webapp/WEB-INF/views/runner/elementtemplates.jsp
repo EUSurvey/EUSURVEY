@@ -1122,37 +1122,96 @@
 
 	<div id="delphi-template">
 		<!-- ko if: isDelphiQuestion() -->
-		<div class="explanation-section">
-			<label class="questiontitle">${form.getMessage("label.ExplainYourAnswer")}</label>
-			<textarea class="explanation-editor" data-bind="attr: {'id': 'explanation' + id(), name: 'explanation' + id()}"></textarea>			
+		
+		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">					
+			<div class="col-md-7">
+				<div class="explanation-section">
+					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff">
+						<tr>
+							<th class='area-header'>${form.getMessage("label.ExplainYourAnswer")}</th>
+						</tr>
+						<tr>
+							<td style='padding-top:10px; padding-bottom:10px'>
+								<textarea style="height: 125px" class="explanation-editor" data-bind="attr: {'id': 'explanation' + id(), name: 'explanation' + id()}"></textarea>			
+							</td>
+						</tr>
+					</table>				
+				</div>				
+			</div>
+			<div class="col-md-5">
+				<div class='chart-wrapper'>
+					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: right">
+						<tr>
+							<th class='area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
+						</tr>
+						<tr>
+							<td style='padding-top:10px; padding-bottom:10px'>
+								<canvas class='delphi-chart' width='300' height='220'></canvas>
+							</td>
+						</tr>
+					</table>
+					<div style="clear: both"></div>
+				</div>
+			</div>
 		</div>
-		<div class="explanation-update-section">
-			<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
-
-			<span class="inline-loader">
-				<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
-			</span>
+		
+		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 0px;">
+			<div class="col-md-12">
+				<div class="explanation-update-section">
+					<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
+		
+					<span class="inline-loader">
+						<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
+					</span>
+				</div>
+		
+				<div class="delphiupdatemessage"></div>
+			</div>
+		</div>
+		
+		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">
+		
+			<!-- ko if: delphiTableEntries().length > 0 -->
+			<div class="delphi-table">
+				<table class="table table-condensed table-striped table-bordered">
+					<thead>
+						<tr>
+							<th colspan="3" class="area-header">${form.getMessage("label.DelphiAnswersTableTitle")}</th>
+						</tr>
+						<tr>
+							<th>${form.getMessage("label.DelphiAnswersTableAnswer")}</th>
+							<th>${form.getMessage("label.DelphiAnswersTableExplanation")}</th>
+							<th>${form.getMessage("label.DelphiAnswersTableUpdate")}</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- ko foreach: delphiTableEntries -->
+						<tr>
+							<td>
+								<!-- ko foreach: answers -->
+									<div style="margin-bottom: 5px;">
+										<!-- ko if: question -->
+											<span data-bind="html: question"></span>:
+										<!-- /ko -->						
+										<span data-bind="html: value"></span>
+									</div>
+								<!-- /ko -->
+							</td>
+							<td><span data-bind="html: explanation"></span></td>
+							<td><span data-bind="html: update"></span></td>
+						</tr>
+						<!-- /ko -->
+					</tbody>
+				</table>
+			</div>
+			
+			<!-- /ko -->		
+		
 		</div>
 
-		<div class="delphiupdatemessage"></div>
+		
 		<!-- /ko -->
 	</div>
 
-	<div id="delphi-chart-template">
-		<!-- ko if: isDelphiQuestion() -->
-		<div class='chart-wrapper'>
-			<table class='table table-condensed table-bordered'>
-				<tr>
-					<th class='area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
-				</tr>
-				<tr>
-					<td style='padding-top:10px; padding-bottom:10px'>
-						<canvas class='delphi-chart' width='300' height='220'></canvas>
-					</td>
-				</tr>
-			</table>
-		</div>
-		<!-- /ko -->
-	</div>
 </div>
 
