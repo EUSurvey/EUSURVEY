@@ -1199,6 +1199,15 @@ public class SurveyService extends BasicService {
 						} else if (draftTranslation.getKey().endsWith("#backgrounddocument") || draftTranslation.getKey().endsWith("#usefullink")) {
 							translationCopy.setKey(draftTranslation.getKey());
 							translationsCopy.getTranslations().add(translationCopy);
+						} else if (draftTranslation.getKey().endsWith("FIRSTCELL")) {
+							String draftKey = draftTranslation.getKey().replace("FIRSTCELL", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "FIRSTCELL");
+								translationsCopy.getTranslations().add(translationCopy);
+							} else {
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
+							}
+							
 						} else if (publishedSurveyKeys.containsKey(draftTranslation.getKey())) {
 							translationCopy.setKey(publishedSurveyKeys.get(draftTranslation.getKey()));
 							translationsCopy.getTranslations().add(translationCopy);
@@ -2548,6 +2557,16 @@ public class SurveyService extends BasicService {
 
 				if (elementsBySourceId.containsKey(retVal))
 					return elementsBySourceId.get(retVal).getUniqueId() + Constants.SHORTNAME;
+			} else if (key.endsWith("FIRSTCELL")) {
+				uid = key.substring(0, key.indexOf("FIRSTCELL"));
+
+				if (oldToNewUniqueIds.containsKey(uid)) {
+					return oldToNewUniqueIds.get(uid) + "FIRSTCELL";
+				}
+
+				retVal = Integer.parseInt(uid);
+				if (elementsBySourceId.containsKey(retVal))
+					return elementsBySourceId.get(retVal).getUniqueId() + "FIRSTCELL";
 			} else if (oldToNewUniqueIds.containsKey(key)) {
 				return oldToNewUniqueIds.get(key);
 			} else {
