@@ -450,19 +450,3 @@ legend {
 	background-color: #ccc !important;
 	background-image: none !important;
 }
-
-.explanation-section {
-	display: none;
-	margin-top: 25px;
-	max-width: 410px;
-	padding: 5px;
-}
-
-.explanation-update-section > a.btn {
-	margin-top: 20px;
-}
-
-.inline-loader {
-	display: none;
-	margin-left: 20px;
-}

@@ -597,11 +597,11 @@ function addChart(div, chartData, chartOptions)
 {
 	// remove existing charts
 	var elementWrapper = $(div).closest(".elementwrapper");
-	$(elementWrapper).find(".chart-wrapper").remove();
-	
-	// create new chart next to survey-element
-	var chartTemplate = $("#delphi-chart-template").clone().attr("id", "");
-	$(elementWrapper).append(chartTemplate);
+	$(elementWrapper).find(".chart-wrapper").show();
+//	
+//	// create new chart next to survey-element
+//	var chartTemplate = $("#delphi-chart-template").clone().attr("id", "");
+//	$(elementWrapper).append(chartTemplate);
 
 	new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), {
 		type: "bar",
