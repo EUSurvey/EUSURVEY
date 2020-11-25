@@ -2366,7 +2366,7 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
-			if (!survey.getIsDraft() && answerService.get(request.getParameter("uniquecode")) == null) {
+			if (answerService.get(request.getParameter("uniquecode")) == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -2644,7 +2644,7 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
-			if (!survey.getIsDraft() && answerService.get(request.getParameter("uniquecode")) == null) {
+			if (answerService.get(request.getParameter("uniquecode")) == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
