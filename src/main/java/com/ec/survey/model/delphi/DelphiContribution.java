@@ -2,7 +2,7 @@ package com.ec.survey.model.delphi;
 
 import java.util.Date;
 
-public class DelphiExplanation {
+public class DelphiContribution {
     private int answerSetId;
     private String explanation;
     private int questionId;

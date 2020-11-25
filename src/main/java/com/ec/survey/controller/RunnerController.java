@@ -2700,13 +2700,13 @@ public class RunnerController extends BasicController {
 		}
 
 		// group explanations by answer set ID
-		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
+		Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
 				.stream()
-				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
 
-		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
 			List<String> values = entry.getValue().stream()
-					.map(DelphiExplanation::getValue)
+					.map(DelphiContribution::getValue)
 					.collect(Collectors.toList());
 
 			if (!values.stream().allMatch(answerIdToTitle::containsKey)) {
@@ -2715,7 +2715,7 @@ public class RunnerController extends BasicController {
 			}
 
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
-			DelphiExplanation firstValue = entry.getValue().get(0);
+			DelphiContribution firstValue = entry.getValue().get(0);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
@@ -2747,19 +2747,19 @@ public class RunnerController extends BasicController {
 		}
 
 		// group explanations by answer set ID
-		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
+		Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
 				.stream()
-				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
 
-		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
 			// maps position to element
 			Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.getValue().size());
 
 			boolean skipped = false;
-			for (DelphiExplanation de : entry.getValue()) {
+			for (DelphiContribution contrib : entry.getValue()) {
 				// find labels for question and answer
-				String label = questionTitles.get(de.getQuestionId());
-				String value = answerTitles.get(de.getValue());
+				String label = questionTitles.get(contrib.getQuestionId());
+				String value = answerTitles.get(contrib.getValue());
 
 				if (label == null || value == null) {
 					// invalid answer or question, skip answer set
@@ -2768,7 +2768,7 @@ public class RunnerController extends BasicController {
 				}
 
 				DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
-				int position = questionPositions.get(de.getQuestionId());
+				int position = questionPositions.get(contrib.getQuestionId());
 				answers.add(new Pair<>(position, answer));
 			}
 
@@ -2782,7 +2782,7 @@ public class RunnerController extends BasicController {
 					.map(Pair::getValue)
 					.collect(Collectors.toList());
 
-			DelphiExplanation firstValue = entry.getValue().get(0);
+			DelphiContribution firstValue = entry.getValue().get(0);
 
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.getAnswers().addAll(sortedAnswers);
@@ -2806,18 +2806,18 @@ public class RunnerController extends BasicController {
 		}
 
 		// group explanations by answer set ID
-		Map<Integer, List<DelphiExplanation>> groupedExplanations = answerExplanationService.getDelphiExplanations(question)
+		Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
 				.stream()
-				.collect(Collectors.groupingBy(DelphiExplanation::getAnswerSetId));
+				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
 
-		for (Map.Entry<Integer, List<DelphiExplanation>> entry : groupedExplanations.entrySet()) {
+		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
 			// maps position to element
 			Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.getValue().size());
 
 			boolean skipped = false;
-			for (DelphiExplanation de : entry.getValue()) {
+			for (DelphiContribution contrib : entry.getValue()) {
 				// find label for question ID
-				String label = questionTitles.get(de.getQuestionId());
+				String label = questionTitles.get(contrib.getQuestionId());
 
 				if (label == null) {
 					// invalid answer, skip answer set
@@ -2825,8 +2825,8 @@ public class RunnerController extends BasicController {
 					break;
 				}
 
-				DelphiTableAnswer answer = new DelphiTableAnswer(label, de.getValue());
-				int position = questionPositions.get(de.getQuestionId());
+				DelphiTableAnswer answer = new DelphiTableAnswer(label, contrib.getValue());
+				int position = questionPositions.get(contrib.getQuestionId());
 				answers.add(new Pair<>(position, answer));
 			}
 
@@ -2840,7 +2840,7 @@ public class RunnerController extends BasicController {
 					.map(Pair::getValue)
 					.collect(Collectors.toList());
 
-			DelphiExplanation firstValue = entry.getValue().get(0);
+			DelphiContribution firstValue = entry.getValue().get(0);
 
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.getAnswers().addAll(sortedAnswers);

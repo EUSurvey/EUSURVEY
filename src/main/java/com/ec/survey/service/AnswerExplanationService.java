@@ -2,7 +2,7 @@ package com.ec.survey.service;
 
 import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
-import com.ec.survey.model.delphi.DelphiExplanation;
+import com.ec.survey.model.delphi.DelphiContribution;
 import com.ec.survey.model.survey.*;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -45,25 +45,25 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<DelphiExplanation> getDelphiExplanations(ChoiceQuestion question) {
-		return getDelphiExplanationsInternal(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
+	public List<DelphiContribution> getDelphiContributions(ChoiceQuestion question) {
+		return getDelphiContributionsInternal(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
 	}
 
 	@Transactional(readOnly = true)
-	public List<DelphiExplanation> getDelphiExplanations(Matrix question) {
+	public List<DelphiContribution> getDelphiContributions(Matrix question) {
 		List<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
-		return getDelphiExplanationsInternal(uids, question.getUniqueId(), question.getSurvey().getIsDraft());
+		return getDelphiContributionsInternal(uids, question.getUniqueId(), question.getSurvey().getIsDraft());
 	}
 
 	@Transactional(readOnly = true)
-	public List<DelphiExplanation> getDelphiExplanations(RatingQuestion question) {
+	public List<DelphiContribution> getDelphiContributions(RatingQuestion question) {
 		List<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
-		return getDelphiExplanationsInternal(uids, question.getUniqueId(), question.getSurvey().getIsDraft());
+		return getDelphiContributionsInternal(uids, question.getUniqueId(), question.getSurvey().getIsDraft());
 	}
 
 	@Transactional(readOnly = true)
-	protected List<DelphiExplanation> getDelphiExplanationsInternal(Collection<String> questionUids, String mainQuestionUid, boolean isDraft) {
-		String delphiExplanationQuery = "select a.AS_ID as `answerSetId`, COALESCE(ex.TEXT, main_explanation.TEXT) as `explanation`, aset.ANSWER_SET_UPDATE as `update`, a.VALUE as `value`, a.QUESTION_ID as `questionId`\n" +
+	protected List<DelphiContribution> getDelphiContributionsInternal(Collection<String> questionUids, String mainQuestionUid, boolean isDraft) {
+		String queryText = "select a.AS_ID as `answerSetId`, COALESCE(ex.TEXT, main_explanation.TEXT) as `explanation`, aset.ANSWER_SET_UPDATE as `update`, a.VALUE as `value`, a.QUESTION_ID as `questionId`\n" +
 				"from answers a\n" +
 				"left join answers_explanations ex on a.QUESTION_UID = ex.QUESTION_UID and ex.ANSWER_SET_ID = a.AS_ID\n" +
 				"left join (\n" +
@@ -76,14 +76,14 @@ public class AnswerExplanationService extends BasicService {
 				"where a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft";
 
 		Session session = sessionFactory.getCurrentSession();
-		SQLQuery query = session.createSQLQuery(delphiExplanationQuery);
-		query.setResultTransformer(Transformers.aliasToBean(DelphiExplanation.class));
+		SQLQuery query = session.createSQLQuery(queryText);
+		query.setResultTransformer(Transformers.aliasToBean(DelphiContribution.class));
 		query.setParameterList("questionUids", questionUids);
 		query.setBoolean("isDraft", isDraft);
 		query.setString("mainQuestionUid", mainQuestionUid);
 
 		@SuppressWarnings("unchecked")
-		List<DelphiExplanation> results = query.list();
+		List<DelphiContribution> results = query.list();
 		return results;
 	}
 
