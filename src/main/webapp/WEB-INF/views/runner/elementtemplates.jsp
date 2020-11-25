@@ -1146,7 +1146,7 @@
 						</tr>
 						<tr>
 							<td style='padding-top:10px; padding-bottom:10px'>
-								<canvas class='delphi-chart' width='300' height='220'></canvas>
+								<div class="delphi-chart-div"></div>
 							</td>
 						</tr>
 					</table>

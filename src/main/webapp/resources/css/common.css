@@ -1271,6 +1271,10 @@ legend {
 	margin-right: 15px;
 }
 
+.matrixtable {
+	background-color: #fff;
+}
+
 .explanation-section {
 	display: none;
 	max-width: 410px;

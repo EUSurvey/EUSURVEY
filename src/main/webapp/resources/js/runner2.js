@@ -595,15 +595,14 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 
 function addChart(div, chartData, chartOptions)
 {
-	// remove existing charts
 	var elementWrapper = $(div).closest(".elementwrapper");
+	
+	$(elementWrapper).find(".delphi-chart").remove();
+	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
+		
 	$(elementWrapper).find(".chart-wrapper").show();
-//	
-//	// create new chart next to survey-element
-//	var chartTemplate = $("#delphi-chart-template").clone().attr("id", "");
-//	$(elementWrapper).append(chartTemplate);
-
-	new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), {
+	
+	var graph = new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), {
 		type: "bar",
 		data: chartData,
 		options: chartOptions
