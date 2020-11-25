@@ -530,9 +530,10 @@ function updateText(selectedelement, text, fromundo)
 {
 	
 	var isgalleryimage = $(_elementProperties.selectedelement).find(".gallery-image").length > 0 && $(_elementProperties.selectedelement).closest(".gallery-div").length > 0;
+	var isfirstcell = $(_elementProperties.selectedelement).hasClass("firstCell");
 	
 	if (!fromundo)
-	if (!isgalleryimage)
+	if (!isgalleryimage && !isfirstcell)
 	if (!checkText(text))
 	{
 		return false;
