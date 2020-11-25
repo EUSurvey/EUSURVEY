@@ -64,15 +64,15 @@ public class AnswerExplanationService extends BasicService {
 	@Transactional(readOnly = true)
 	protected List<DelphiContribution> getDelphiContributionsInternal(Collection<String> questionUids, String mainQuestionUid, boolean isDraft) {
 		String queryText = "select a.AS_ID as `answerSetId`, COALESCE(ex.TEXT, main_explanation.TEXT) as `explanation`, aset.ANSWER_SET_UPDATE as `update`, a.VALUE as `value`, a.QUESTION_ID as `questionId`\n" +
-				"from answers a\n" +
-				"left join answers_explanations ex on a.QUESTION_UID = ex.QUESTION_UID and ex.ANSWER_SET_ID = a.AS_ID\n" +
+				"from ANSWERS a\n" +
+				"left join ANSWERS_EXPLANATIONS ex on a.QUESTION_UID = ex.QUESTION_UID and ex.ANSWER_SET_ID = a.AS_ID\n" +
 				"left join (\n" +
 				"    select TEXT, ANSWER_SET_ID\n" +
-				"    from answers_explanations\n" +
+				"    from ANSWERS_EXPLANATIONS\n" +
 				"    where QUESTION_UID = :mainQuestionUid\n" +
 				"    ) as main_explanation on a.AS_ID = main_explanation.ANSWER_SET_ID\n" +
-				"join answers_set aset on a.AS_ID = aset.ANSWER_SET_ID\n" +
-				"join surveys s on aset.SURVEY_ID = s.SURVEY_ID\n" +
+				"join ANSWERS_SET aset on a.AS_ID = aset.ANSWER_SET_ID\n" +
+				"join SURVEYS s on aset.SURVEY_ID = s.SURVEY_ID\n" +
 				"where a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft";
 
 		Session session = sessionFactory.getCurrentSession();
