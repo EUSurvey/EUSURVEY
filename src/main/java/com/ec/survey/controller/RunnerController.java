@@ -2281,11 +2281,24 @@ public class RunnerController extends BasicController {
 			if (answerSet == null) {
 				return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.BAD_REQUEST);
 			}
+			
 			final String questionUid = request.getParameter("questionUid");
+			
+			Element element = answerSet.getSurvey().getQuestionMapByUniqueId().get(questionUid);
+
+			if (!(element instanceof Question)) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
+			Question question = (Question) element;
+			if (!answerSetContainsAnswerForQuestion(answerSet, question)) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}			
+			
 			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
 			return new ResponseEntity<>(explanation.getText(), HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
-			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			return new ResponseEntity<>("", HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -2366,7 +2379,9 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
-			if (answerService.get(request.getParameter("uniquecode")) == null) {
+			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
+			
+			if (answerSet == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -2379,7 +2394,7 @@ public class RunnerController extends BasicController {
 			}
 
 			Question question = (Question) element;
-			if (!question.getIsDelphiQuestion()) {
+			if (!question.getIsDelphiQuestion()|| !answerSetContainsAnswerForQuestion(answerSet, question)) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
@@ -2643,8 +2658,10 @@ public class RunnerController extends BasicController {
 			if (survey == null || !survey.getIsDelphi()) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
+			
+			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 
-			if (answerService.get(request.getParameter("uniquecode")) == null) {
+			if (answerSet == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -2657,19 +2674,19 @@ public class RunnerController extends BasicController {
 			}
 
 			Question question = (Question) element;
-			if (!question.getIsDelphiQuestion()) {
+			if (!question.getIsDelphiQuestion() || !answerSetContainsAnswerForQuestion(answerSet, question)) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
-			if (question instanceof ChoiceQuestion) {
+			if (question instanceof ChoiceQuestion) {				
 				return handleDelphiTableChoiceQuestion((ChoiceQuestion) question);
 			}
 
-			if (question instanceof Matrix) {
+			if (question instanceof Matrix) {				
 				return handleDelphiTableMatrix((Matrix) question);
 			}
 
-			if (question instanceof RatingQuestion) {
+			if (question instanceof RatingQuestion) {				
 				return handleDelphiTableRatingQuestions((RatingQuestion) question);
 			}
 		} catch (Exception e) {
@@ -2678,6 +2695,26 @@ public class RunnerController extends BasicController {
 		}
 
 		return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+	}
+	
+	private boolean answerSetContainsAnswerForQuestion(AnswerSet answerSet, Question question)
+	{
+		if (question instanceof Matrix) {
+			return !answerSet.getMatrixAnswers((Matrix)question).isEmpty();
+		}
+
+		if (question instanceof RatingQuestion) {
+			boolean found = false;
+			for (Element childQuestion : ((RatingQuestion) question).getChildElements()) {
+				if (!answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId()).isEmpty())
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		return !answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty();
 	}
 
 	private ResponseEntity<DelphiTable> handleDelphiTableChoiceQuestion(ChoiceQuestion question) {
