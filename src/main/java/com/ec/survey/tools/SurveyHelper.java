@@ -68,6 +68,9 @@ public class SurveyHelper {
 				key = key.substring(6);
 
 				if (key.contains("|")) {
+					if (values[0].isEmpty()) {
+						continue;
+					}
 					String suffix = key.substring(key.indexOf('|') + 1);
 					int row = Integer.parseInt(suffix.substring(0, suffix.indexOf('|')));
 					int col = Integer.parseInt(suffix.substring(suffix.indexOf('|') + 1));
