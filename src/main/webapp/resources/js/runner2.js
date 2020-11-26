@@ -471,8 +471,7 @@ function delphiPrefill(editorElement) {
 		},
 		error: function(message)
 		{
-			var messageElement = $('#' + editorElement[0].id).find(".delphiupdatemessage").first();
-			$(messageElement).html(message).addClass("update-error");
+			showErrorl(message);
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 		},
 		success: function(currentExplanationText, textStatus)
@@ -500,9 +499,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
 		error: function (data) {
-			//TODO
-			var message = $(div).find(".delphiupdatemessage").first();
-			$(message).html(data.responseText).addClass("update-error");
+			showError(data.responseText);
 		},
 		success: function (result, textStatus) {
 			if (textStatus === "nocontent") {
@@ -643,9 +640,7 @@ function loadTableData(div, viewModel) {
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
 		error: function (data) {
-			//TODO
-			var message = $(div).find(".delphiupdatemessage").first();
-			$(message).html(data.responseText).addClass("update-error");
+			showError(data.responseText);
 		},
 		success: function (result, textStatus) {
 			if (textStatus === "nocontent") {

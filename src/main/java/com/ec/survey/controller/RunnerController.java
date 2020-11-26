@@ -2522,7 +2522,7 @@ public class RunnerController extends BasicController {
 
 		if (numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics()) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 
 		creator.addStatistics(survey, question, statistics, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
@@ -2538,7 +2538,7 @@ public class RunnerController extends BasicController {
 		} else if (question instanceof MultipleChoiceQuestion) {
 			result.setType(DelphiQuestionType.MultipleChoice);
 		} else {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 
 		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
