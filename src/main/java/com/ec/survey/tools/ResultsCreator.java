@@ -177,7 +177,6 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 			}
 
 			Map<Integer, String> uniqueCodesById = xmlExportCreator.getExportedUniqueCodes();
-			Map<Integer, String> questionIdsByAnswerId = xmlExportCreator.getExportedQuestionsByAnswerId();
 			Map<String, Element> questionsByUniqueId = survey.getElementsByUniqueId();
 
 			if (uniqueCodesById.size() == 0) {
@@ -310,11 +309,9 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 
 						String folderName = uploadedFile.getUid();
 						if (uploadedFile.getAnswerId() != null) {
-							if (questionIdsByAnswerId.containsKey(uploadedFile.getAnswerId())) {
-								String questionUniqueId = questionIdsByAnswerId.get(uploadedFile.getAnswerId());
-								if (questionsByUniqueId.containsKey(questionUniqueId)) {
-									folderName = questionsByUniqueId.get(questionUniqueId).getShortname();
-								}
+							String questionUniqueId = uploadedFile.getQuestionUid();
+							if (questionsByUniqueId.containsKey(questionUniqueId)) {
+								folderName = questionsByUniqueId.get(questionUniqueId).getShortname();
 							}
 						}
 
