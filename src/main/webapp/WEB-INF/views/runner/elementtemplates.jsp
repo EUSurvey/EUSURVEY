@@ -657,7 +657,7 @@
 			<!-- ko if: foreditor || readonly() -->
 				<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
 			<!-- /ko -->
-			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'datepicker ' + css()}" onblur="validateInput($(this).parent().parent());propagateChange(this);" type="text" placeholder="DD/MM/YYYY" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'datepicker ' + css()}" onblur="if(validateInput($(this).parent().parent())) { propagateChange(this); }" type="text" placeholder="DD/MM/YYYY" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
 		</div>
 		
 		<!-- ko if: foreditor -->
@@ -710,7 +710,7 @@
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="input-group">
 			<div class="input-group-addon"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></div>
-			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'timepicker ' + css()}" onblur="validateInput($(this).parent().parent());propagateChange(this);" type="text" placeholder="HH:mm:ss" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'timepicker ' + css()}" onblur="if(validateInput($(this).parent().parent())) { propagateChange(this); }" type="text" placeholder="HH:mm:ss" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
 		</div>
 		
 		<!-- ko if: foreditor -->
