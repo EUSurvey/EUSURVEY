@@ -1295,15 +1295,15 @@ function DashboardViewModel()
 		var surveystatus = $("#delphisurveystatus").val().trim();
 		if (surveystatus.length > 0)
 		{
-			params = params + "&surveystatus=" + surveystatus;
+			params = params + "&status=" + surveystatus;
 		}
 		if (this.delphiFilterEndFrom().length > 0)
 		{
-			params = params + "&endfrom=" + this.invitationFilterEndFrom();
+			params = params + "&endfrom=" + this.delphiFilterEndFrom();
 		}
 		if (this.delphiFilterEndTo().length > 0)
 		{
-			params = params + "&endto=" + this.invitationFilterEndTo();
+			params = params + "&endto=" + this.delphiFilterEndTo();
 		}
 	
 		var request = $.ajax({
@@ -1478,6 +1478,12 @@ function applyDateFilter(id, value)
 			break;
 		case 'metafilterinvitationenddatetodiv':
 			_dashboard.invitationFilterEndTo(value);
+			break;
+		case 'metafilterdelphienddatefromdiv':
+			_dashboard.delphiFilterEndFrom(value);
+			break;
+		case 'metafilterdelphienddatetodiv':
+			_dashboard.delphiFilterEndTo(value);
 			break;
 	}
 	$(".overlaymenu").hide();
