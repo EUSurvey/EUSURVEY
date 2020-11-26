@@ -922,7 +922,7 @@ public class ManagementController extends BasicController {
 							&& request.getParameter("opc").equalsIgnoreCase("true"));
 					copy.setIsDelphi(request.getParameter("delphi") != null
 							&& request.getParameter("delphi").equalsIgnoreCase("true"));
-					copy.setSaveAsDraft(!copy.getIsQuiz());
+					copy.setSaveAsDraft(!copy.getIsQuiz() && !copy.getIsDelphi());
 
 					surveyService.update(copy, false, true, true, u.getId());
 
@@ -1353,8 +1353,6 @@ public class ManagementController extends BasicController {
 		
 		survey.setIsDelphiShowAnswers(uploadedSurvey.getIsDelphiShowAnswers());
 		survey.setMinNumberDelphiStatistics(uploadedSurvey.getMinNumberDelphiStatistics());
-
-		ensurePropertiesDependingOnSurveyType(survey, creation);
 		
 		if (!creation) {
 			if (!uploadedSurvey.getSecurity().equals(survey.getSecurity())) {
@@ -1883,8 +1881,11 @@ public class ManagementController extends BasicController {
 				String[] oldnew = { oldContributions.toString(), newContributions.toString() };
 				activitiesToLog.put(306, oldnew);
 			}
+		
 		}
 
+		ensurePropertiesDependingOnSurveyType(survey, creation);
+		
 		form.setSurvey(survey);
 		form.setLanguage(survey.getLanguage());
 
