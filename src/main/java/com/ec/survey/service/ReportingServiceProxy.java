@@ -141,11 +141,6 @@ public class ReportingServiceProxy {
 		return reportingService.getLastUpdateInternal(survey);
 	}
 		
-	public List<Object> getAllQuestionsAndPossibleAnswers(Survey survey) {
-		if (!isReportingDatabaseEnabled()) return null;
-		return reportingService.GetAllQuestionsAndPossibleAnswersInternal(survey);
-	}	
-
 	public boolean validateOLAPTable(Survey survey) throws Exception {
 		if (!isReportingDatabaseEnabled()) return false;
 		return reportingService.validateOLAPTableInternal(survey);
