@@ -3101,11 +3101,8 @@ public class SurveyService extends BasicService {
 			surveyelementsbyuid.put(element.getUniqueId(), element);
 		}
 
-		List<Object> res = reportingService.getAllQuestionsAndPossibleAnswers(survey);
-
-		if (res == null) {
-			res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
-		}
+		// the reporting database is not used here fore performance reasons
+		List<Object> res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
 
 		for (Object o : res) {
 			Object[] a = (Object[]) o;
