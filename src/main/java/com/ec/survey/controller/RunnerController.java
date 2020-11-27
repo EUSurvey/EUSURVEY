@@ -2318,6 +2318,8 @@ public class RunnerController extends BasicController {
 			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
 			final String invitationId = request.getParameter("invitation");
 			final User user = sessionService.getCurrentUser(request, false, false);
+			
+			Element element = survey.getElementsByUniqueId().get(questionUid);
 
 			AnswerSet answerSet;
 			final AnswerSet existingAnswerSet = answerService.get(answerSetUniqueCode);
@@ -2326,7 +2328,7 @@ public class RunnerController extends BasicController {
 				answerSet = SurveyHelper.parseAnswerSet(request, survey, answerSetUniqueCode, false, languageCode, user, fileService);
 			} else {
 				//update
-				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, answerSetUniqueCode, existingAnswerSet, languageCode, user, fileService);
+				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, answerSetUniqueCode, existingAnswerSet, languageCode, user, fileService, element);
 			}
 			
 			if (invitationId != null && invitationId.length() > 0) {
@@ -2344,7 +2346,7 @@ public class RunnerController extends BasicController {
 			}
 			
 			Set<String> invisibleElements = new HashSet<>();
-			Element element = survey.getElementsByUniqueId().get(questionUid);
+			
 			Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
 			HashMap<Element, String> result = new HashMap<>();
 
