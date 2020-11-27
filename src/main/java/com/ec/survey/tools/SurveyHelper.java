@@ -808,18 +808,36 @@ public class SurveyHelper {
 	}
 	
 	public static AnswerSet parseAndMergeDelphiAnswerSet(HttpServletRequest request, Survey survey,
-			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService) throws IOException {
+			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService, Element question) throws IOException {
 		AnswerSet parsedAnswerSet = parseAnswerSet(request, survey, uniqueCode, true, languageCode, user,
 				fileService);
 		
-		for (Answer answer : parsedAnswerSet.getAnswers()) {
-			//remove existing answers for the question
-			List<Answer> oldAnswers = answerSet.getAnswers(answer.getQuestionId(), answer.getQuestionUniqueId());
+		//remove existing answers for the question
+		if (question instanceof MatrixOrTable) {
+			MatrixOrTable parent = (MatrixOrTable) question;
+			for (Element childQuestion : parent.getQuestions())
+			{
+				List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+				for (Answer oldAnswer: oldAnswers) {
+					answerSet.getAnswers().remove(oldAnswer);
+				}
+			}
+		} else if (question instanceof RatingQuestion) {
+			RatingQuestion parent = (RatingQuestion) question;
+			for (Element childQuestion : parent.getQuestions())
+			{
+				List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+				for (Answer oldAnswer: oldAnswers) {
+					answerSet.getAnswers().remove(oldAnswer);
+				}
+			}
+		} else {
+			List<Answer> oldAnswers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 			for (Answer oldAnswer: oldAnswers) {
 				answerSet.getAnswers().remove(oldAnswer);
 			}
 		}
-
+		
 		for (Answer answer : parsedAnswerSet.getAnswers()) {
 			answer.setAnswerSet(answerSet);
 			
@@ -828,7 +846,6 @@ public class SurveyHelper {
 		}
 		
 		answerSet.getExplanations().putAll(parsedAnswerSet.getExplanations());
-
 	
 		return answerSet;
 	}
