@@ -477,12 +477,14 @@ function delphiPrefill(editorElement) {
 		},
 		success: function(currentExplanationText, textStatus)
 		{
+			console.log("BRS:67 "+JSON.stringify(currentExplanationText));
 			if (textStatus === "nocontent") {
 				return;
 			}
 			
 			if (currentExplanationText) {
-				editorElement[0].setContent(currentExplanationText);
+				editorElement[0].setContent(currentExplanationText.text);
+				// BRS: also update the files name list from currentExplanationText.fileInfo
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 		}

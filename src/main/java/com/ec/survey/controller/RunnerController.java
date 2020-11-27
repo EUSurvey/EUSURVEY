@@ -2278,13 +2278,13 @@ public class RunnerController extends BasicController {
 	}
 
 	@GetMapping("/delphiGet")
-	public ResponseEntity<String> delphiGetExplanation(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<DelphiExplanation> delphiGetExplanation(HttpServletRequest request, Locale locale) {
 		try {
 			final String answerSetId = request.getParameter("answerSetId");
 			final int answerSetIdParsed = Integer.parseInt(answerSetId);
 			final AnswerSet answerSet = answerService.get(answerSetIdParsed);
 			if (answerSet == null) {
-				return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(new DelphiExplanation(resources.getMessage("error.DelphiGet", null, locale), ""), HttpStatus.BAD_REQUEST);
 			}
 			
 			final String questionUid = request.getParameter("questionUid");
@@ -2301,12 +2301,15 @@ public class RunnerController extends BasicController {
 			}			
 			
 			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
-			return new ResponseEntity<>(explanation.getText(), HttpStatus.OK);
+			DelphiExplanation delphiExplanation = new DelphiExplanation();
+			delphiExplanation.setText(explanation.getText());
+			// BRS: delphiExplanation.initFilesInfoFromFiles(explanation.getFiles());
+			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK); // mit file list
 		} catch (NoSuchElementException ex) {
-			return new ResponseEntity<>("", HttpStatus.OK);
+			return new ResponseEntity<>(new DelphiExplanation("", ""), HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new DelphiExplanation(resources.getMessage("error.DelphiGet", null, locale), ""), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
