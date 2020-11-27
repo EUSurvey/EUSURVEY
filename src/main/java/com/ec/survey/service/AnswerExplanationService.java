@@ -91,8 +91,8 @@ public class AnswerExplanationService extends BasicService {
 	public void createOrUpdateExplanations(AnswerSet answerSet) {
 		for (Question question : answerSet.getSurvey().getQuestions()) {
 			if (question.getIsDelphiQuestion()) {
-				String explanationtext = answerSet.getExplanations().get(question.getUniqueId());
-				if (explanationtext == null) {
+				AnswerSet.ExplanationData explanationData = answerSet.getExplanations().get(question.getUniqueId());
+				if (explanationData == null) {
 					continue;
 				}
 
@@ -100,14 +100,15 @@ public class AnswerExplanationService extends BasicService {
 				try {
 					explanation = getExplanation(answerSet.getId(), question.getUniqueId());
 				} catch (NoSuchElementException ex) {
-					if (explanationtext.length() == 0) {
+					if ((explanationData.text.length() == 0) && (explanationData.files.isEmpty())) {
 						continue;
 					}
 
 					explanation = new AnswerExplanation(answerSet.getId(), question.getUniqueId());
 				}
 
-				explanation.setText(explanationtext);
+				explanation.setText(explanationData.text);
+				explanation.setFiles(explanationData.files);
 
 				final Session session = sessionFactory.getCurrentSession();
 				session.saveOrUpdate(explanation);

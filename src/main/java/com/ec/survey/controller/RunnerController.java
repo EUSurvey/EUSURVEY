@@ -1353,7 +1353,12 @@ public class RunnerController extends BasicController {
 			IOUtils.copy(is, fos);
 			fos.close();
 
-			java.io.File folder = fileService.getSurveyUploadsFolder(surveyuid, false);
+			java.io.File folder;
+			if ((element instanceof Question) && (((Question)element).getIsDelphiQuestion())) {
+				folder = fileService.getSurveyExplanationUploadsFolder(surveyuid, false);
+			} else {
+				folder = fileService.getSurveyUploadsFolder(surveyuid, false);
+			}
 			java.io.File directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, id));
 
 			// we try 3 times to create the folders

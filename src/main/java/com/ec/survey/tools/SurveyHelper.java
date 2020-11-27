@@ -24,6 +24,17 @@ public class SurveyHelper {
 
 	private static final Logger logger = Logger.getLogger(SurveyHelper.class);
 
+	private static void gatherExplanationUploadsForQuestion(Survey survey, Question question, String uniqueCode, AnswerSet answerSet, AnswerSet.ExplanationData explanationData, FileService fileService) {
+		// find temporary directory
+		java.io.File rootfolder = fileService.getSurveyExplanationUploadsFolder(survey.getUniqueId(), false);
+		java.io.File directory = new java.io.File(
+				rootfolder.getPath() + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + question.getId());
+
+		if (directory.exists()) {
+			checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), explanationData.files);
+		}
+	}
+
 	public static AnswerSet parseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode,
 			boolean update, String languageCode, User user, FileService fileService) {
 		Map<Integer, Question> questions = survey.getQuestionMap();
@@ -108,7 +119,7 @@ public class SurveyHelper {
 								Answer answer = new Answer();
 								answer.setAnswerSet(answerSet);
 
-								checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), answer);
+								checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), answer.getFiles());
 
 								if (!answer.getFiles().isEmpty()) {
 									answer.setQuestionId(question.getId());
@@ -175,9 +186,19 @@ public class SurveyHelper {
 				key = key.substring(11);
 				Question question = questions.get(Integer.parseInt(key));
 				if (question != null && question.getIsDelphiQuestion()) {
-					String[] explanation = parameterMap.get("explanation" + question.getId());
-					if (explanation != null && explanation.length > 0) {
-						answerSet.getExplanations().put(question.getUniqueId(), explanation[0]);
+					String[] explanationText = parameterMap.get("explanation" + question.getId());
+					AnswerSet.ExplanationData explanationData = new AnswerSet.ExplanationData();
+					boolean doUpdateAnswerSet = false;
+					if (explanationText != null && explanationText.length > 0) {
+						explanationData.text = explanationText[0];
+						doUpdateAnswerSet = true;
+					}
+					gatherExplanationUploadsForQuestion(survey, question, uniqueCode, answerSet, explanationData, fileService);
+					if (!explanationData.files.isEmpty()) {
+						doUpdateAnswerSet = true;
+					}
+					if (doUpdateAnswerSet) {
+						answerSet.getExplanations().put(question.getUniqueId(), explanationData);
 					}
 				}
 			}
@@ -876,7 +897,7 @@ public class SurveyHelper {
 		}
 	}
 
-	private static void checkFiles(java.io.File directory, java.io.File folder, Answer answer) {
+	private static void checkFiles(java.io.File directory, java.io.File folder, List<File> files) {
 		java.io.File[] listFiles = directory.listFiles();
 		if (listFiles != null) {
 			for (java.io.File file : listFiles) {
@@ -896,7 +917,7 @@ public class SurveyHelper {
 					f.setUid(uid);
 					f.setName(file.getName());
 
-					answer.getFiles().add(f);
+					files.add(f);
 
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);

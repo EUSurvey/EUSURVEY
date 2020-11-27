@@ -25,6 +25,11 @@ import java.util.*;
 		@UniqueConstraint(columnNames = { "UNIQUECODE", "ISDRAFT" }, name = "UNIQUECODE_UNIQUE") })
 public class AnswerSet implements java.io.Serializable {
 
+	public static class ExplanationData {
+		public String text = "";
+		public List<File> files = new ArrayList<>();
+	};
+
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String invitationId;
@@ -42,7 +47,7 @@ public class AnswerSet implements java.io.Serializable {
 	private Boolean disclaimerMinimized;
 	private Boolean wcagMode;
 	private Integer score;
-	private Map<String, String> explanations = new HashMap<>();
+	private Map<String, ExplanationData> explanations = new HashMap<>();
 
 	@Id
 	@Column(name = "ANSWER_SET_ID")
@@ -355,11 +360,11 @@ public class AnswerSet implements java.io.Serializable {
 	}
 
 	@Transient
-	public Map<String, String> getExplanations() {
+	public Map<String, ExplanationData> getExplanations() {
 		return explanations;
 	}
 
-	public void setExplanations(Map<String, String> explanations) {
+	public void setExplanations(Map<String, ExplanationData> explanations) {
 		this.explanations = explanations;
 	}
 }
