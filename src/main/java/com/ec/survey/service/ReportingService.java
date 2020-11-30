@@ -369,7 +369,7 @@ public class ReportingService {
 			if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("score"))
 			{
 				where += " ORDER BY QSCORE " + filter.getSortOrder();
-			} else if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("date"))
+			} else if (filter.getSortKey() != null && (filter.getSortKey().equalsIgnoreCase("date") || filter.getSortKey().equalsIgnoreCase("created")))
 			{
 				where += " ORDER BY QCREATED " + filter.getSortOrder();
 			}
