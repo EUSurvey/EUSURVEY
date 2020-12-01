@@ -438,8 +438,8 @@ function initSlider(input, foreditor, viewModel)
 		tooltip: 'always',
 		ticks_labels: viewModel.labels(),
 		enabled: !foreditor
-		//ticks_labels: [viewModel.minLabel(), viewModel.maxLabel()]
 	});
+	
 }
 
 function getWidth(widths, index) {

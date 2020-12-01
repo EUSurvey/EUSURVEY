@@ -1449,7 +1449,7 @@ public class XlsExportCreator extends ExportCreator {
 		}
 
 		cell.setCellStyle(dateStyle);
-		sheet.createRow(rowIndex);
+		sheet.createRow(rowIndex++);
 		return rowIndex;
 	}
 

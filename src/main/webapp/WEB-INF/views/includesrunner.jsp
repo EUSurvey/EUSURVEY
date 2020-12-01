@@ -386,13 +386,13 @@
 
 <c:choose>
 	<c:when test="${forpdf == null && !oss && piwik && is404}">
-		<script defer src="//europa.eu/webtools/load.js" type="text/javascript"></script>
+		<script defer="defer" src="//europa.eu/webtools/load.js" type="text/javascript"></script>
 		<script type="application/json">
 		{ "utility":"analytics", "siteID":"63", "sitePath":["ec.europa.eu/eusurvey"], "is404":true, "is403":false, "instance":"ec.europa.eu"}
 		</script>
 	</c:when>
 	<c:when test="${forpdf == null && !oss && piwik}">
-		<script defer src="//europa.eu/webtools/load.js" type="text/javascript"></script>
+		<script defer="defer" src="//europa.eu/webtools/load.js" type="text/javascript"></script>
 		<script type="application/json">
 		{ "utility":"analytics", "siteID":"63", "sitePath":["ec.europa.eu/eusurvey"], "is404":false, "is403":false, "instance":"ec.europa.eu"} 
 		</script>

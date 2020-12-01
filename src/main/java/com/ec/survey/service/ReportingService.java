@@ -369,7 +369,7 @@ public class ReportingService {
 			if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("score"))
 			{
 				where += " ORDER BY QSCORE " + filter.getSortOrder();
-			} else if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("date"))
+			} else if (filter.getSortKey() != null && (filter.getSortKey().equalsIgnoreCase("date") || filter.getSortKey().equalsIgnoreCase("created")))
 			{
 				where += " ORDER BY QCREATED " + filter.getSortOrder();
 			}
@@ -1888,51 +1888,6 @@ public class ReportingService {
 		return  (Date) query.uniqueResult();
 	}
 	
-	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<Object> GetAllQuestionsAndPossibleAnswersInternal(Survey survey) {
-		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		
-		if (!OLAPTableExistsInternal(survey.getUniqueId(), survey.getIsDraft()))
-		{
-			return null;
-		}
-		
-		String sql = "SELECT * FROM " + getOLAPTableName(survey);	
-		
-		Query query=sessionReporting.createSQLQuery(sql);
-		query.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
-		@SuppressWarnings("unchecked")
-		List<Map<String,Object>> aliasToValueMapList=query.list();
-		
-		List<Object> result = new ArrayList<>();
-		
-		for (Map<String,Object> entry : aliasToValueMapList)
-		{
-			for (String question : entry.keySet())
-			{
-				String compactUID = question.substring(1);
-				
-				if (compactUID.length() == 32)
-				{
-					String questionUID = compactUID.replaceFirst( 
-				        "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5" 
-					    );
-				
-					Object[] o = new Object[2];
-					o[0] = questionUID;
-					
-					Object v = entry.get(question);
-					
-					o[1] = (v instanceof String && ((String)v).length() == 36) ? v : "";
-					
-					result.add(o);		
-				}
-			}
-		}		
-		
-		return result;
-	}
-
 	@Transactional(transactionManager = "transactionManagerReporting")
 	public int clearAnswersForQuestionInReportingDatabase(Survey survey, ResultFilter filter, String questionUID, String childUID) throws Exception {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();

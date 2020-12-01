@@ -3430,7 +3430,7 @@ public class ManagementController extends BasicController {
 			}
 
 			results.setViewName("management/chartspdf");
-			results.addObject("forPDF", true);
+			results.addObject("forpdf", true);
 			return results;
 
 		} catch (Exception e) {
@@ -3489,7 +3489,7 @@ public class ManagementController extends BasicController {
 		}
 
 		results.setViewName("management/statisticspdf");
-		results.addObject("forPDF", true);
+		results.addObject("forpdf", true);
 		return results;
 	}
 
@@ -3530,7 +3530,7 @@ public class ManagementController extends BasicController {
 		}
 
 		results.setViewName("management/statisticsquizpdf");
-		results.addObject("forPDF", true);
+		results.addObject("forpdf", true);
 		return results;
 	}
 

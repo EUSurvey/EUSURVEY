@@ -1060,7 +1060,7 @@ public class AnswerService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<File> getUploadedFilesForAnswerset(int answersetId) {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, af.ANSWERS_ANSWER_ID FROM FILES f JOIN ANSWERS_FILES af ON f.FILE_ID = af.files_FILE_ID JOIN ANSWERS a ON af.ANSWERS_ANSWER_ID = a.ANSWER_ID WHERE a.AS_ID = :id";
+		String sql = "SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, af.ANSWERS_ANSWER_ID, a.QUESTION_UID FROM FILES f JOIN ANSWERS_FILES af ON f.FILE_ID = af.files_FILE_ID JOIN ANSWERS a ON af.ANSWERS_ANSWER_ID = a.ANSWER_ID WHERE a.AS_ID = :id";
 
 		SQLQuery query = session.createSQLQuery(sql);
 		query.setInteger("id", answersetId);
@@ -1077,6 +1077,7 @@ public class AnswerService extends BasicService {
 			file.setName((String) a[1]);
 			file.setUid((String) a[2]);
 			file.setAnswerId(ConversionTools.getValue(a[3]));
+			file.setQuestionUid((String) a[4]);
 
 			result.add(file);
 		}

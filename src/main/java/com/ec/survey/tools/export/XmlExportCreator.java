@@ -9,8 +9,6 @@ import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Tools;
-import com.ec.survey.exception.TooManyFiltersException;
-
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -41,7 +39,6 @@ import java.util.Map.Entry;
 public class XmlExportCreator extends ExportCreator {
 
 	private Map<Integer, String> exportedUniqueCodes = new HashMap<>();
-	private Map<Integer, String> exportedQuestionsByAnswerId = new HashMap<>();
 
 	private Date exportedNow = null;
 
@@ -448,8 +445,6 @@ public class XmlExportCreator extends ExportCreator {
 				answer.setPossibleAnswerId(ConversionTools.getValue(a[7]));
 				answer.setPossibleAnswerUniqueId((String) a[8]);
 
-				exportedQuestionsByAnswerId.put(answer.getId(), answer.getQuestionUniqueId());
-
 				if (lastAnswerSet == answer.getAnswerSetId()) {
 					answerSet.addAnswer(answer);
 				} else {
@@ -571,7 +566,7 @@ public class XmlExportCreator extends ExportCreator {
 	}
 
 	@Transactional
-	public void SimulateExportContent(boolean sync, Export export) throws TooManyFiltersException {
+	public void SimulateExportContent(boolean sync, Export export) throws Exception {
 		exportedUniqueCodes.clear();
 
 		Session session;
@@ -582,40 +577,56 @@ public class XmlExportCreator extends ExportCreator {
 		}
 
 		exportedNow = new Date();
+		
+		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), export == null ? null : export.getResultFilter(), null, false,
+				true, true, true, true);
+		
 
-		HashMap<String, Object> values = new HashMap<>();
-		String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
-				+ answerService.getSql(null, form.getSurvey().getId(), export == null ? null : export.getResultFilter(),
-						values, true)
-				+ ") ORDER BY ans.ANSWER_SET_ID";
-
-		SQLQuery query = session.createSQLQuery(sql);
-
-		query.setReadOnly(true);
-
-		for (Entry<String, Object> entry : values.entrySet()) {
-			Object value = entry.getValue();
-			if (value instanceof String) {
-				query.setString(entry.getKey(), (String) value);
-			} else if (value instanceof Integer) {
-				query.setInteger(entry.getKey(), (Integer) value);
-			} else if (value instanceof Date) {
-				query.setTimestamp(entry.getKey(), (Date) value);
+		if (answersets != null) {
+			for (List<String> row : answersets) {
+				
+				int answerSetId = ConversionTools.getValue(row.get(1));
+				String answerSetUniqueCode = row.get(0);
+								
+				if (!exportedUniqueCodes.containsKey(answerSetId)) {
+					exportedUniqueCodes.put(answerSetId, answerSetUniqueCode);
+				}
 			}
-		}
+		} else {
 
-		query.setFetchSize(Integer.MIN_VALUE);
-		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
-
-		while (results.next()) {
-			Object[] a = results.get();
-			exportedQuestionsByAnswerId.put(ConversionTools.getValue(a[5]), (String) (a[2]));
-
-			if (!exportedUniqueCodes.containsKey(ConversionTools.getValue(a[0]))) {
-				exportedUniqueCodes.put(ConversionTools.getValue(a[0]), (String) a[9]);
+			HashMap<String, Object> values = new HashMap<>();
+			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
+					+ answerService.getSql(null, form.getSurvey().getId(), export == null ? null : export.getResultFilter(),
+							values, true)
+					+ ") ORDER BY ans.ANSWER_SET_ID";
+	
+			SQLQuery query = session.createSQLQuery(sql);
+	
+			query.setReadOnly(true);
+	
+			for (Entry<String, Object> entry : values.entrySet()) {
+				Object value = entry.getValue();
+				if (value instanceof String) {
+					query.setString(entry.getKey(), (String) value);
+				} else if (value instanceof Integer) {
+					query.setInteger(entry.getKey(), (Integer) value);
+				} else if (value instanceof Date) {
+					query.setTimestamp(entry.getKey(), (Date) value);
+				}
 			}
+	
+			query.setFetchSize(Integer.MIN_VALUE);
+			ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
+	
+			while (results.next()) {
+				Object[] a = results.get();
+				if (!exportedUniqueCodes.containsKey(ConversionTools.getValue(a[0]))) {
+					exportedUniqueCodes.put(ConversionTools.getValue(a[0]), (String) a[9]);
+				}
+			}
+			results.close();
+		
 		}
-		results.close();
 	}
 
 	void parseAnswerSet(Survey survey, XMLStreamWriter writer, List<Element> questions, AnswerSet answerSet,
@@ -874,14 +885,6 @@ public class XmlExportCreator extends ExportCreator {
 
 	public void setExportedUniqueCodes(Map<Integer, String> exportedUniqueCodes) {
 		this.exportedUniqueCodes = exportedUniqueCodes;
-	}
-
-	public Map<Integer, String> getExportedQuestionsByAnswerId() {
-		return exportedQuestionsByAnswerId;
-	}
-
-	public void setExportedQuestionsByAnswerId(Map<Integer, String> exportedQuestionsByAnswerId) {
-		this.exportedQuestionsByAnswerId = exportedQuestionsByAnswerId;
 	}
 
 	@Override

@@ -62,7 +62,7 @@
 	  				</div>
 				</c:when>
 				<c:otherwise>
-					<script src="https://www.google.com/recaptcha/api.js?hl=${form.language.code}" async defer></script>
+					<script src="https://www.google.com/recaptcha/api.js?hl=${form.language.code}" async="async" defer="defer"></script>
 	
 					<div class="g-recaptcha unset" <c:if test="${responsive != null}">data-size="compact"</c:if> data-callback="hidecaptchaerror" data-sitekey="<c:out value="${captchaKey}"/>"></div>
 					<c:choose>

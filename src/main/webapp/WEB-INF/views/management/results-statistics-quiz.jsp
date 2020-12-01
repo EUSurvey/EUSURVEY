@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:choose>
-	<c:when test="${forPDF != null}">
+	<c:when test="${forpdf != null}">
 		<div id="results-statistics-quiz" style="margin-top: 70px">	
 	</c:when>
 	<c:when test="${publication != null}">

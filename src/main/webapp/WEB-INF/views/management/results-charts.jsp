@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <c:choose>
-	<c:when test="${forPDF != null}">
+	<c:when test="${forpdf != null}">
 		<div id="results-charts" style="margin-top: 70px">	
 	</c:when>
 	<c:when test="${publication != null}">
