@@ -146,6 +146,14 @@ public class XlsExportCreator extends ExportCreator {
 					sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
 					checkColumnInsertHeader(export);
 				}
+				
+				if (form.getSurvey().getIsDelphi() && question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+					Cell cell = rowInsertHeader.createCell(columnIndexInsertHeader++);
+					cell.setCellValue("Explanation");
+					cell.setCellStyle(questionTitleStyle);
+					sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
+					checkColumnInsertHeader(export);
+				}
 			}
 		}
 
@@ -842,6 +850,16 @@ public class XlsExportCreator extends ExportCreator {
 						cell.setCellValue(cellValue.toString());
 					}
 				}
+			
+			if (question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+				Cell cell = checkColumnsParseAnswerSet();
+				try {
+					AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
+					cell.setCellValue(explanation.getText());
+				} catch (NoSuchElementException ex) {
+					//ignore
+				}
+			}
 		}
 		if (publication == null && filter != null) {
 			if (filter.exported("invitation")) {
