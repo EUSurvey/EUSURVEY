@@ -33,6 +33,9 @@ public abstract class ExportCreator implements Runnable {
 	@Resource(name = "attendeeService")
 	protected AttendeeService attendeeService;	
 	
+	@Resource(name = "answerExplanationService")
+	protected AnswerExplanationService answerExplanationService;
+	
 	@Resource(name = "participationService")
 	protected ParticipationService participationService;
 	
