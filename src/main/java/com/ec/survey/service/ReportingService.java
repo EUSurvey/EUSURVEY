@@ -647,7 +647,7 @@ public class ReportingService extends BasicService {
 									AnswerExplanation explanation = answerExplanationService.getExplanation(ConversionTools.getValue(answerrow[1]), question.getUniqueId());
 									row.add(explanation.getText());
 								} catch (NoSuchElementException ex) {
-									row.add("no explanation");
+									row.add("");
 								}
 							}
 							
