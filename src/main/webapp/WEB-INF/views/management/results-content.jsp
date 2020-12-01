@@ -67,6 +67,9 @@
 								</c:choose>
 							</c:if>
 						</c:if>
+						<c:if test="${form.getSurvey().isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleExplanations.contains(question.id.toString()))}">
+							<th class="topaligned"><spring:message code="label.Explanation" /></th>
+						</c:if>
 					</c:forEach>
 					<c:if test="${publication == null}">
 						<c:if test='${filter.visible("invitation") == true}'><th class="topaligned cellinvitation"><div class="headertitle"><spring:message code="label.InvitationNumber" /></div></th></c:if>
@@ -371,6 +374,11 @@
 											</th>
 										</c:otherwise>
 									</c:choose>		
+									
+									<c:if test="${form.getSurvey().isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleExplanations.contains(question.id.toString()))}">
+										<th class="filtercell"></th>
+									</c:if>
+									
 								</c:if>						
 							</c:if>
 						</c:forEach>
@@ -1208,6 +1216,12 @@ var closeOverlayDivsEnabled = false;
 												
 											</c:otherwise>									
 										</c:choose>
+										
+										<c:if test="${form.survey.isDelphi && question.getIsDelphiQuestion() && (filter == null || filter.visibleExplanations.contains(question.id.toString()))}">
+											var td = document.createElement("td");
+											$(td).append(list[i++]);
+											$(tr).append(td);
+										</c:if>
 											
 									</c:if>
 								</c:if>

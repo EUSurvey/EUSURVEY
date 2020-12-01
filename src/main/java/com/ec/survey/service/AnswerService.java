@@ -48,9 +48,6 @@ import java.util.Map.Entry;
 @Service("answerService")
 public class AnswerService extends BasicService {
 
-	@Resource
-	private AnswerExplanationService answerExplanationService;
-
 	@Resource(name = "attendeeService")
 	private AttendeeService attendeeService;
 
