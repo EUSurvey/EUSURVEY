@@ -46,9 +46,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/runner")
 public class RunnerController extends BasicController {
 
-	@Resource(name = "answerExplanationService")
-	protected AnswerExplanationService answerExplanationService;
-
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
 
