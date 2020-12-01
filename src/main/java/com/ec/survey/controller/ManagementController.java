@@ -3290,7 +3290,7 @@ public class ManagementController extends BasicController {
 								AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
 								result.add(explanation.getText());
 							} catch (NoSuchElementException ex) {
-								result.add("no explanation");
+								result.add("");
 							}
 						}
 					}
