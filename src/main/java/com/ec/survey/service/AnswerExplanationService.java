@@ -63,7 +63,7 @@ public class AnswerExplanationService extends BasicService {
 
 	@Transactional(readOnly = true)
 	protected List<DelphiContribution> getDelphiContributionsInternal(Collection<String> questionUids, String mainQuestionUid, boolean isDraft) {
-		String queryText = "select a.AS_ID as `answerSetId`, COALESCE(ex.TEXT, main_explanation.TEXT) as `explanation`, aset.ANSWER_SET_UPDATE as `update`, a.VALUE as `value`, a.QUESTION_ID as `questionId`\n" +
+		String queryText = "select a.AS_ID as `answerSetId`, COALESCE(ex.TEXT, main_explanation.TEXT) as `explanation`, aset.ANSWER_SET_UPDATE as `update`, a.VALUE as `value`, a.PA_UID as `answerUid`, a.QUESTION_UID as `questionUid`\n" +
 				"from ANSWERS a\n" +
 				"left join ANSWERS_EXPLANATIONS ex on a.QUESTION_UID = ex.QUESTION_UID and ex.ANSWER_SET_ID = a.AS_ID\n" +
 				"left join (\n" +
