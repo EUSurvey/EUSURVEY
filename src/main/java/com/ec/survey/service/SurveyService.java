@@ -114,6 +114,7 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(" ,s.QUIZ");
 		stringBuilder.append(" ,s.OPC");
 		stringBuilder.append(" ,s.HASPENDINGCHANGES");
+		stringBuilder.append(" ,s.DELPHI");
 		stringBuilder.append(" from SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
 		stringBuilder.append(
@@ -162,7 +163,9 @@ public class SurveyService extends BasicService {
 			survey.setIsQuiz((Boolean) row[rowIndex++]);// 17 or 18
 			survey.setIsOPC((Boolean) row[rowIndex++]);// 18 or 19
 
-			survey.setHasPendingChanges((Boolean) row[rowIndex]);// 19 or 20
+			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 19 or 20
+			
+			survey.setIsDelphi((Boolean) row[rowIndex++]);// 21 or 22
 
 			surveys.add(survey);
 		}
@@ -175,7 +178,7 @@ public class SurveyService extends BasicService {
 		List<Survey> surveys = getSurveys(filter, sqlPagination);
 		for (Survey survey : surveys) {
 			survey.setTranslations(translationService.getTranslationLanguagesForSurvey(survey.getId(), false));
-			survey.setCompleteTranslations(getCompletedTranslations(survey));
+			survey.setCompleteTranslations(this.getCompletedTranslations(survey));
 
 			if (addInvitedAndDrafts) {
 				survey.setNumberOfInvitations(participationService.getNumberOfInvitations(survey.getUniqueId()));
@@ -344,6 +347,9 @@ public class SurveyService extends BasicService {
 				break;
 			case "brp":
 				sql.append(" AND s.OPC = 1");
+				break;
+			case "delphi":
+				sql.append(" AND s.DELPHI = 1");
 				break;
 			}
 		}
@@ -852,7 +858,7 @@ public class SurveyService extends BasicService {
 		Survey survey = getSurvey(uidorshortname, isDraft, checkActive, readReplies, useEagerLoading, language,
 				readonly, false, false, synchronize);
 		if (survey != null)
-			CheckAndRecreateMissingElements(survey, null);
+			checkAndRecreateMissingElements(survey, null);
 		return survey;
 	}
 
@@ -1199,6 +1205,15 @@ public class SurveyService extends BasicService {
 						} else if (draftTranslation.getKey().endsWith("#backgrounddocument") || draftTranslation.getKey().endsWith("#usefullink")) {
 							translationCopy.setKey(draftTranslation.getKey());
 							translationsCopy.getTranslations().add(translationCopy);
+						} else if (draftTranslation.getKey().endsWith("FIRSTCELL")) {
+							String draftKey = draftTranslation.getKey().replace("FIRSTCELL", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "FIRSTCELL");
+								translationsCopy.getTranslations().add(translationCopy);
+							} else {
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
+							}
+							
 						} else if (publishedSurveyKeys.containsKey(draftTranslation.getKey())) {
 							translationCopy.setKey(publishedSurveyKeys.get(draftTranslation.getKey()));
 							translationsCopy.getTranslations().add(translationCopy);
@@ -1761,6 +1776,9 @@ public class SurveyService extends BasicService {
 			Query query2 = session.createSQLQuery(
 					"DELETE a.* from ANSWERS a JOIN ANSWERS_SET an ON a.AS_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
 			query2.setInteger("id", id).executeUpdate();
+			
+			Query query6 = session.createSQLQuery("DELETE ae.* FROM ANSWERS_EXPLANATIONS ae JOIN ANSWERS_SET an ON ae.ANSWER_SET_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
+			query6.setInteger("id", id).executeUpdate();
 
 			Query query3 = session.createQuery("DELETE from AnswerSet a where a.surveyId = :id");
 			query3.setInteger("id", id).executeUpdate();
@@ -1789,6 +1807,7 @@ public class SurveyService extends BasicService {
 
 			Query query5 = session.createSQLQuery("DELETE FROM VALIDCODE WHERE VALIDCODE_SURVEYUID = :uid");
 			query5.setString("uid", uid).executeUpdate();
+			
 		}
 
 		List<Translations> translations = translationService.getTranslationsForSurvey(id, false);
@@ -2548,6 +2567,16 @@ public class SurveyService extends BasicService {
 
 				if (elementsBySourceId.containsKey(retVal))
 					return elementsBySourceId.get(retVal).getUniqueId() + Constants.SHORTNAME;
+			} else if (key.endsWith("FIRSTCELL")) {
+				uid = key.substring(0, key.indexOf("FIRSTCELL"));
+
+				if (oldToNewUniqueIds.containsKey(uid)) {
+					return oldToNewUniqueIds.get(uid) + "FIRSTCELL";
+				}
+
+				retVal = Integer.parseInt(uid);
+				if (elementsBySourceId.containsKey(retVal))
+					return elementsBySourceId.get(retVal).getUniqueId() + "FIRSTCELL";
 			} else if (oldToNewUniqueIds.containsKey(key)) {
 				return oldToNewUniqueIds.get(key);
 			} else {
@@ -2814,6 +2843,13 @@ public class SurveyService extends BasicService {
 
 			if (!Tools.isEqual(draftSurvey.getIsQuiz(), publishedSurvey.getIsQuiz()))
 				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draftSurvey.getIsOPC(), publishedSurvey.getIsOPC()))
+				hasPendingChanges = true;
+
+			if (!Tools.isEqual(draftSurvey.getIsDelphi(), publishedSurvey.getIsDelphi()))
+				hasPendingChanges = true;
+			
 			if (!Tools.isEqualIgnoreEmptyString(draftSurvey.getQuizWelcomeMessage(), publishedSurvey.getQuizWelcomeMessage()))
 				hasPendingChanges = true;
 			if (!Tools.isEqualIgnoreEmptyString(draftSurvey.getQuizResultsMessage(), publishedSurvey.getQuizResultsMessage()))
@@ -2841,6 +2877,15 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 
 			if (!Tools.isEqual(draftSurvey.getMaxNumberContribution(), publishedSurvey.getMaxNumberContribution()))
+				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draftSurvey.getIsDelphiShowAnswers(), publishedSurvey.getIsDelphiShowAnswers()))
+				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draftSurvey.getMinNumberDelphiStatistics(), publishedSurvey.getMinNumberDelphiStatistics()))
+				hasPendingChanges = true;			
+
+			if (draftSurvey.getSendConfirmationEmail() != publishedSurvey.getSendConfirmationEmail())
 				hasPendingChanges = true;
 
 			if (!hasPendingChanges)
@@ -3071,7 +3116,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public void CheckAndRecreateMissingElements(Survey survey, ResultFilter filter) {
+	public void checkAndRecreateMissingElements(Survey survey, ResultFilter filter) {
 		List<Element> surveyelements = survey.getElementsRecursive(true);
 		Map<String, Element> surveyelementsbyuid = new HashMap<>();
 		Map<String, Element> missingelementuids = new HashMap<>();
@@ -3079,11 +3124,8 @@ public class SurveyService extends BasicService {
 			surveyelementsbyuid.put(element.getUniqueId(), element);
 		}
 
-		List<Object> res = reportingService.GetAllQuestionsAndPossibleAnswers(survey);
-
-		if (res == null) {
-			res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
-		}
+		// the reporting database is not used here fore performance reasons
+		List<Object> res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
 
 		for (Object o : res) {
 			Object[] a = (Object[]) o;
@@ -4340,7 +4382,7 @@ public class SurveyService extends BasicService {
 				.append("'>\n");
 
 		s.append("<SurveyType>")
-				.append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : "Standard"))
+				.append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : (survey.getIsDelphi() ? "Delphi" : "Standard")))
 				.append("</SurveyType>\n");
 
 		s.append("<Title>").append(survey.getTitle()).append("</Title>\n");

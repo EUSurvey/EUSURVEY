@@ -544,8 +544,16 @@ function initModals(item)
 			$(cell).find(".icon-filter").remove();
 			$(cell).find(".glyphicon-remove-circle").parent().parent().remove();
 			
+			var resetButtonAdded = false;
+			
+			if ($(cell).find(".resultoverlaymenu").length > 0)
+			{
+				resetButtonAdded = true;
+			}
+			
 			if ($(cell).find(".btn-toolbar").length > 0)
 			{
+				if (!resetButtonAdded)
 				$(cell).find(".btn-toolbar").first().prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 				
 				$(cell).find(".datefilter").each(function(){
@@ -555,6 +563,7 @@ function initModals(item)
 					}						
 				});
 			} else if ($(cell).find(".dropdown-menu").length > 0) {
+				if (!resetButtonAdded)
 				$(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 				
 				var counter = 0;
@@ -581,7 +590,8 @@ function initModals(item)
 				}
 				$(cell).find(".dropdown-toggle").html(first + "&nbsp;<span class='caret'></span>");		
 				$(cell).attr("title",all).attr("rel","tooltip");
-			} else if ($(cell).find(".overlaymenu").length > 0) {
+			} else if ($(cell).find(".overlaymenu").not(".resultoverlaymenu").length > 0) {
+				if (!resetButtonAdded)
 				$(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
 								
 				var counter = 0;
@@ -612,6 +622,7 @@ function initModals(item)
 				//checkNoBreaks();
 				
 			} else {
+				if (!resetButtonAdded)
                 $(cell).prepend("<div class='filtertools'><a data-toggle='tooltip' title='Remove filter' onclick='clearFilterCellContent(this)'><span class='glyphicon glyphicon-remove-circle black'></span></a></div>");
             }
 		} else if ($(cell).find(".activityselect").length > 0) {
@@ -1897,6 +1908,11 @@ function initModals(item)
 			}
 		});
 		
+		if (!result) {
+			$(parent).closest(".survey-element").find("a[data-type='delphisavebutton']").addClass("disabled");
+			$(parent).closest(".survey-element").find(".delphiupdatemessage").empty();
+		}
+		
 		return result;
 	}
 	
@@ -2150,6 +2166,13 @@ function initModals(item)
 			$("#create-survey-opc").val("true");
 		} else {
 			$("#create-survey-opc").val("false");
+		}
+		
+		if ($("#new-survey-type-delphi:checked").length > 0)
+		{
+			$("#create-survey-delphi").val("true");
+		} else {
+			$("#create-survey-delphi").val("false");
 		}
 		
 		if ($("#new-survey-contact-type").val() == "form")

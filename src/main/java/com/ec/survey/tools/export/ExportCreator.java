@@ -121,7 +121,7 @@ public abstract class ExportCreator implements Runnable {
 	
 	private void initAnswers() throws Exception
 	{
-		form.setStatistics(answerService.getStatistics(export.getSurvey(), export.getResultFilter(), true, export.isAllAnswers(), false));
+		form.setStatistics(answerService.getStatisticsOrStartCreator(export.getSurvey(), export.getResultFilter(), true, export.isAllAnswers(), false));
 	}
 	
 	@Transactional

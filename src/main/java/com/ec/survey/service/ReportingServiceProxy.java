@@ -85,9 +85,13 @@ public class ReportingServiceProxy {
 		return reportingService.getCountInternal(survey, quid, auid, noPrefixSearch, where, values);
 	}
 	
-	public void addToDo(ToDo todo, String uid, String code) {
+	public void addToDo(ToDo todo, String uid, String code, boolean executeTodoSync) {
 		if (!isReportingDatabaseEnabled()) return;
-		reportingService.addToDoInternal(todo, uid, code);
+		reportingService.addToDoInternal(todo, uid, code, executeTodoSync);
+	}
+
+	public void addToDo(ToDo todo, String uid, String code) {
+		this.addToDo(todo, uid, code, false);
 	}
 		
 	public List<ToDoItem> getToDos(int page, int rowsPerPage) {
@@ -137,11 +141,6 @@ public class ReportingServiceProxy {
 		return reportingService.getLastUpdateInternal(survey);
 	}
 		
-	public List<Object> GetAllQuestionsAndPossibleAnswers(Survey survey) {
-		if (!isReportingDatabaseEnabled()) return null;
-		return reportingService.GetAllQuestionsAndPossibleAnswersInternal(survey);
-	}	
-
 	public boolean validateOLAPTable(Survey survey) throws Exception {
 		if (!isReportingDatabaseEnabled()) return false;
 		return reportingService.validateOLAPTableInternal(survey);
@@ -165,6 +164,11 @@ public class ReportingServiceProxy {
 	public void clearAnswersForQuestionInReportingDatabase(Survey survey, ResultFilter filter, String questionUID, String childUID) throws Exception {
 		if (!isReportingDatabaseEnabled()) return;
 		reportingService.clearAnswersForQuestionInReportingDatabase(survey, filter, questionUID, childUID);
+	}
+
+	public void removeFromOLAPTable(String surveyUID, String answerSetUID, boolean surveyIsPublished) {
+		if (!isReportingDatabaseEnabled()) return;
+		reportingService.removeFromOLAPTableInternal(surveyUID, answerSetUID, surveyIsPublished);
 	}
 
 }

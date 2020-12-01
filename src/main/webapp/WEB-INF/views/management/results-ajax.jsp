@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
-<c:if test="${forPDF == null}">
+<c:if test="${forpdf == null}">
 	<script type="text/javascript"> 
 		var statisticsrequestid = null;
 		function loadStatisticsAsync(publication)

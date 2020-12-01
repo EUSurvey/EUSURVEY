@@ -245,7 +245,7 @@ public class XlsExportCreator extends ExportCreator {
 		}
 
 		if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, filter);
+			surveyService.checkAndRecreateMissingElements(survey, filter);
 			Hibernate.initialize(survey.getMissingElements());
 			for (Element e : survey.getMissingElements()) {
 				if (e instanceof ChoiceQuestion) {
@@ -499,6 +499,7 @@ public class XlsExportCreator extends ExportCreator {
 	private Row row;
 
 	CellStyle dateCellStyle = null;
+	private Map<String, CellStyle> cellStyles = new HashMap<>();
 	
 	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication,
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export, List<Question> questions,
@@ -727,19 +728,29 @@ public class XlsExportCreator extends ExportCreator {
 				} else if (question instanceof NumberQuestion && (export == null || !export.getShowShortnames())) {
 					Cell cell = checkColumnsParseAnswerSet();
 					
-					CellStyle numberCellStyle = wb.createCellStyle();
-					String format = "0";
-					NumberQuestion numberQuestion = (NumberQuestion)question;
-					if (numberQuestion.getDecimalPlaces() > 0)
-					{
-						format += ".";
-						for (int i = 0; i < numberQuestion.getDecimalPlaces(); i++)
-						{
-							format += "0";
-						}
-					}
+					CellStyle numberCellStyle;					
 					
-					numberCellStyle.setDataFormat(wb.createDataFormat().getFormat(format));					
+					if (cellStyles.containsKey(question.getUniqueId()))
+					{
+						numberCellStyle = cellStyles.get(question.getUniqueId());
+					} else {
+						numberCellStyle = wb.createCellStyle();
+						
+						String format = "0";
+						NumberQuestion numberQuestion = (NumberQuestion)question;
+						if (numberQuestion.getDecimalPlaces() > 0)
+						{
+							format += ".";
+							for (int i = 0; i < numberQuestion.getDecimalPlaces(); i++)
+							{
+								format += "0";
+							}
+						}				
+						
+						numberCellStyle.setDataFormat(wb.createDataFormat().getFormat(format));	
+						
+						cellStyles.put(question.getUniqueId(), numberCellStyle);
+					}				
 					
 					if (answerSet == null) {
 						String v = answerrow.get(answerrowcounter++);
@@ -948,7 +959,7 @@ public class XlsExportCreator extends ExportCreator {
 		ResultFilter filter = export.getResultFilter().copy();
 
 		if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked()) {
-			surveyService.CheckAndRecreateMissingElements(survey, filter);
+			surveyService.checkAndRecreateMissingElements(survey, filter);
 		}
 
 		form.setSurvey(survey);
@@ -1438,7 +1449,7 @@ public class XlsExportCreator extends ExportCreator {
 		}
 
 		cell.setCellStyle(dateStyle);
-		sheet.createRow(rowIndex);
+		sheet.createRow(rowIndex++);
 		return rowIndex;
 	}
 

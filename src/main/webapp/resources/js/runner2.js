@@ -1,3 +1,5 @@
+Chart.defaults.global.plugins.colorschemes.scheme = 'office.Blue6';
+
 function getElementViewModel(element)
 {
 	if (element.hasOwnProperty("isViewModel") && element.isViewModel)
@@ -114,6 +116,8 @@ function checkTriggersAfterLoad(container)
 	}
 }
 
+var modelsForDelphiQuestions = [];
+
 function addElementToContainer(element, container, foreditor, forskin)
 {
 	var viewModel = getElementViewModel(element);
@@ -137,96 +141,94 @@ function addElementToContainer(element, container, foreditor, forskin)
 		}
 	
 	} catch (e) {}
-	
-	if (viewModel.type == 'Section')
-	{
+
+	if (viewModel.type == 'Section') {
 		$(container).addClass("sectionitem");
-		var s = $("#section-template").clone().attr("id","");	
+		var s = $("#section-template").clone().attr("id", "");
 		$(container).append(s);
-	} else if (viewModel.type == 'Text')
-	{
+	} else if (viewModel.type == 'Text') {
 		$(container).addClass("textitem");
-		var s = $("#text-template").clone().attr("id","");	
+		var s = $("#text-template").clone().attr("id", "");
 		$(container).append(s);
-	} else if (viewModel.type == 'Image')
-	{
+	} else if (viewModel.type == 'Image') {
 		$(container).addClass("imageitem");
-		var s = $("#image-template").clone().attr("id","");
+		var s = $("#image-template").clone().attr("id", "");
 		$(container).append(s);
-	} else if (viewModel.type == 'Ruler')
-	{
+	} else if (viewModel.type == 'Ruler') {
 		$(container).addClass("ruleritem");
-		var s = $("#ruler-template").clone().attr("id","");
+		var s = $("#ruler-template").clone().attr("id", "");
 		$(container).append(s);
-	} else if (viewModel.type == 'FreeTextQuestion' || viewModel.type == 'RegExQuestion')
-	{
-		if (viewModel.type == 'RegExQuestion')
-		{
+	} else if (viewModel.type == 'FreeTextQuestion' || viewModel.type == 'RegExQuestion') {
+		if (viewModel.type == 'RegExQuestion') {
 			$(container).addClass("regexitem");
 		} else {
 			$(container).addClass("freetextitem");
 		}
-		
-		if (viewModel.isPassword())
-		{
-			var s = $("#password-template").clone().attr("id","");			
+
+		if (viewModel.isPassword()) {
+			var s = $("#password-template").clone().attr("id", "");
 			$(container).append(s);
 		} else {
-			var s = $("#freetext-template").clone().attr("id","");			
+			var s = $("#freetext-template").clone().attr("id", "");
 			$(container).append(s);
-		}		
+		}
 	} else if (viewModel.type == 'NumberQuestion') {
 		$(container).addClass("numberitem");
-		var s = $("#number-template").clone().attr("id","");			
-		$(container.append(s));		
+		var s = $("#number-template").clone().attr("id", "");
+		$(container.append(s));
 	} else if (viewModel.type == 'SingleChoiceQuestion') {
 		$(container).addClass("singlechoiceitem");
-		var s = $("#single-choice-template").clone().attr("id","");			
-		$(container).append(s);				
+		var s = $("#single-choice-template").clone().attr("id", "");
+		$(container).append(s);
 	} else if (viewModel.type == 'MultipleChoiceQuestion') {
 		$(container).addClass("multiplechoiceitem");
-		var s = $("#multiple-choice-template").clone().attr("id","");			
-		$(container).append(s);			
+		var s = $("#multiple-choice-template").clone().attr("id", "");
+		$(container).append(s);
 	} else if (viewModel.type == 'DateQuestion') {
 		$(container).addClass("dateitem");
-		var s = $("#date-template").clone().attr("id","");
+		var s = $("#date-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'TimeQuestion') {
 		$(container).addClass("timeitem");
-		var s = $("#time-template").clone().attr("id","");
+		var s = $("#time-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'EmailQuestion') {
 		$(container).addClass("emailitem");
-		var s = $("#email-template").clone().attr("id","");			
+		var s = $("#email-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Matrix') {
 		$(container).addClass("matrixitem");
-		var s = $("#matrix-template").clone().attr("id","");			
-		$(container.append(s));		
+		var s = $("#matrix-template").clone().attr("id", "");
+		$(container.append(s));
 	} else if (viewModel.type == 'Table') {
 		$(container).addClass("mytableitem");
-		var s = $("#table-template").clone().attr("id","");	
+		var s = $("#table-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Upload') {
 		$(container).addClass("uploaditem");
-		var s = $("#upload-template").clone().attr("id","");
+		var s = $("#upload-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'Download') {
 		$(container).addClass("downloaditem");
-		var s = $("#download-template").clone().attr("id","");			
+		var s = $("#download-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'GalleryQuestion') {
 		$(container).addClass("galleryitem");
-		var s = $("#gallery-template").clone().attr("id","");			
-		$(container.append(s));		
+		var s = $("#gallery-template").clone().attr("id", "");
+		$(container.append(s));
 	} else if (viewModel.type == 'Confirmation') {
 		$(container).addClass("confirmationitem");
-		var s = $("#confirmation-template").clone().attr("id","");			
+		var s = $("#confirmation-template").clone().attr("id", "");
 		$(container.append(s));
 	} else if (viewModel.type == 'RatingQuestion') {
 		$(container).addClass("ratingitem");
-		var s = $("#rating-template").clone().attr("id","");			
+		var s = $("#rating-template").clone().attr("id", "");
 		$(container.append(s));
+	}
+
+	if (isdelphi) {
+		var d = $("#delphi-template").clone().attr("id", "");
+		$(container).append(d);
 	}
 	
 	ko.applyBindings(viewModel, $(container)[0]);
@@ -390,20 +392,34 @@ function addElementToContainer(element, container, foreditor, forskin)
 	
 	$(container).find(".freetext").each(function(){
 		countChar(this);
-		
-		$(this).bind('paste', function(event) {
-	        var _this = this;
-	        // Short pause to wait for paste to complete
-	        setTimeout( function() {
-	        	countChar(_this);
-	        }, 100);
-	    });
+
+		$(this).bind('paste', function (event) {
+			var _this = this;
+			// Short pause to wait for paste to complete
+			setTimeout(function () {
+				countChar(_this);
+			}, 100);
+		});
 	});
-	
-	$(container).find(".sliderbox").each(function(){
+
+	$(container).find(".sliderbox").each(function () {
 		initSlider(this, foreditor, viewModel);
 	});
+
+	$(container).find('.explanation-editor').each(function(){
+		$(this).tinymce(explanationEditorConfig);
+	});
 	
+	if (isdelphi) {
+		modelsForDelphiQuestions[viewModel.uniqueId()] = viewModel;
+		
+		var surveyElement = $(container).closest(".survey-element");
+		if (surveyElement) {
+			loadGraphData(surveyElement);
+			loadTableData(surveyElement, viewModel);	
+		}
+	}
+
 	return viewModel;
 }
 
@@ -422,17 +438,289 @@ function initSlider(input, foreditor, viewModel)
 		tooltip: 'always',
 		ticks_labels: viewModel.labels(),
 		enabled: !foreditor
-		//ticks_labels: [viewModel.minLabel(), viewModel.maxLabel()]
 	});
+	
 }
 
-function getWidth(widths, index)
-{
-	if (widths != null)
-	{
+function getWidth(widths, index) {
+	if (widths != null) {
 		var w = widths.split(";")
 		return w[index] + "px";
 	}
-	
+
 	return "50px";
+}
+
+function delphiPrefill(editorElement) {
+	var answerSetId = $('#IdAnswerSet').val();
+	if (!answerSetId) {
+		return; // Cannot prefill when answers have not been submitted yet.
+	}
+	// The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
+	var surveyElement = $('#' + editorElement[0].id).closest('.survey-element');
+	var questionUid =  $(surveyElement).attr("data-uid");
+	var data = {
+		answerSetId: answerSetId,
+		questionUid: questionUid
+	};
+	$.ajax({
+		url: contextpath + '/runner/delphiGet',
+		data: data,
+		beforeSend: function(xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function(message)
+		{
+			showErrorl(message);
+			$('#' + editorElement[0].id).closest(".explanation-section").show();
+		},
+		success: function(currentExplanationText, textStatus)
+		{
+			if (textStatus === "nocontent") {
+				return;
+			}
+			
+			if (currentExplanationText) {
+				editorElement[0].setContent(currentExplanationText);
+			}
+			$('#' + editorElement[0].id).closest(".explanation-section").show();
+		}
+	});
+}
+
+function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback, removeIfEmpty) {
+	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
+
+	$.ajax({
+		type: "GET",
+		url: contextpath + "/runner/delphiGraph",
+		data: data,
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function (data) {
+			showError(data.responseText);
+		},
+		success: function (result, textStatus) {
+			if (textStatus === "nocontent") {
+				if (removeIfEmpty) {
+					var elementWrapper = $(div).closest(".elementwrapper");					
+					$(elementWrapper).find(".delphi-chart").remove();
+					$(elementWrapper).find(".chart-wrapper").hide();
+				}				
+				
+				return;
+			}
+
+			var chartData = {};
+			var chartOptions = {
+				scaleShowValues: true,
+				responsive: false,
+				scales: {
+					yAxes: [{ticks: {beginAtZero: true}}],
+					xAxes: [
+						{
+							ticks: {
+								autoSkip: false,
+								callback: function(value, index, values) {
+									if (value.length > 15)
+									{
+										return value.substring(0,10) + "...";
+									}
+			                        return value;
+			                    }
+							}
+						}
+					]
+				},
+				legend: {display: false}
+			};
+
+			switch (result.type) {
+				case "MultipleChoice":
+				case "SingleChoice":
+					var graphData = result.data;
+
+					chartData = {
+						datasets: [{
+							label: '',
+							data: graphData.map(function (g) {
+								return g.value
+							})
+						}],
+						labels: graphData.map(function (g) {
+							return g.label
+						})
+					};
+					break;
+
+				case "Matrix":
+				case "Rating":
+					var questions = result.questions;
+					var datasets = [];
+					var labels = undefined;
+
+					for (var i = 0; i < questions.length; i++) {
+						var question = questions[i];
+
+						datasets.push({
+							data: question.data.map(function (d) {
+								return d.value;
+							}),
+							label: question.label
+						});
+
+						if (!labels) {
+							labels = question.data.map(function (d) {
+								return d.label;
+							});
+						}
+					}
+
+					chartData = {
+						datasets,
+						labels
+					}
+
+					chartOptions.legend.display = true;
+					break;
+
+				default:
+					return;
+			}
+
+			if (chartCallback instanceof Function) {
+				chartCallback(div, chartData, chartOptions);
+			}
+		}
+	 });
+}
+
+function addChart(div, chartData, chartOptions)
+{
+	var elementWrapper = $(div).closest(".elementwrapper");
+	
+	$(elementWrapper).find(".delphi-chart").remove();
+	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
+		
+	$(elementWrapper).find(".chart-wrapper").show();
+	
+	var graph = new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), {
+		type: "bar",
+		data: chartData,
+		options: chartOptions
+	});
+}
+
+function addStructureChart(div, chartData, chartOptions) {
+	new Chart($(div).find("canvas")[0].getContext('2d'), {
+		type: "bar",
+		data: chartData,
+		options: chartOptions
+	});
+
+	$(div).find('.no-graph-image').hide();
+}
+
+function loadGraphData(div) {
+	var surveyId = $('#survey\\.id').val();
+	var questionuid = $(div).attr("data-uid");
+	var languagecode = $('#language\\.code').val();
+	var uniquecode = $('#uniqueCode').val();
+	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true);
+}
+
+function loadTableData(div, viewModel) {
+	var surveyId = $('#survey\\.id').val();
+	var questionuid = $(div).attr("data-uid");
+	var languagecode = $('#language\\.code').val();
+	var uniquecode = $('#uniqueCode').val();
+	
+	var data = "surveyid=" + surveyId + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
+
+	$.ajax({
+		type: "GET",
+		url: contextpath + "/runner/delphiTable",
+		data: data,
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function (data) {
+			showError(data.responseText);
+		},
+		success: function (result, textStatus) {
+			viewModel.delphiTableEntries.removeAll();
+			
+			if (textStatus === "nocontent") {
+				return;
+			}
+						
+			for (var i = 0; i < result.entries.length; i++) {
+				viewModel.delphiTableEntries.push(result.entries[i]);
+			}
+		}
+	 });
+}
+
+function delphiUpdate(div) {
+	
+	var result = validateInput(div);
+	var message = $(div).find(".delphiupdatemessage").first();
+	$(message).removeClass("update-error");
+	
+	var loader = $(div).find(".inline-loader").first();
+	
+	if (result == false)
+	{
+		return;
+	}
+	
+	$(loader).show();
+	
+	var form = document.createElement("form");
+	$(form).append($(div).clone());
+	
+	var surveyId = $('#survey\\.id').val();
+	$(form).append('<input type="hidden" name="surveyId" value="' + surveyId + '" />');
+	var ansSetUniqueCode = $('#uniqueCode').val();
+	$(form).append('<input type="hidden" name="ansSetUniqueCode" value="' + ansSetUniqueCode + '" />');
+	var invitation = $('#invitation').val();
+	$(form).append('<input type="hidden" name="invitation" value="' + invitation + '" />');
+	var lang = $('#language\\.code').val();
+	$(form).append('<input type="hidden" name="languageCode" value="' + lang + '" />');
+	var id = $(div).attr("data-id");
+	$(form).append('<input type="hidden" name="questionId" value="' + id + '" />');
+	var uid = $(div).attr("data-uid");
+	$(form).append('<input type="hidden" name="questionUid" value="' + uid + '" />');
+	
+	//this is a workaround for a bug in jquery
+	// see https://bugs.jquery.com/ticket/1294
+	$(form).find("select").each(function(){
+		var id = $(this).attr("id");		
+		$(this).val($(div).find("#" + id).first().val());
+	});
+
+	var data = $(form).serialize();
+	
+	$.ajax({type: "POST",
+		url: contextpath + "/runner/delphiUpdate",
+		data: data,
+		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+		error: function(data)
+	    {
+			$(message).html(data.responseText).addClass("update-error");
+			$(loader).hide();
+	    },
+		success: function(data)
+	    {
+			$(message).html(data).addClass("info");
+			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
+			$(loader).hide();
+			
+			loadGraphData(div);
+			
+			var viewModel = modelsForDelphiQuestions[uid];
+			loadTableData(div, viewModel);
+	    }
+	 });
 }

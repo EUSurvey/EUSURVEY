@@ -19,6 +19,7 @@ import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.InvalidEmailException;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 import com.ec.survey.tools.export.StatisticsCreator;
@@ -47,6 +48,9 @@ import java.util.Map.Entry;
 @Service("answerService")
 public class AnswerService extends BasicService {
 
+	@Resource
+	private AnswerExplanationService answerExplanationService;
+
 	@Resource(name = "attendeeService")
 	private AttendeeService attendeeService;
 
@@ -55,7 +59,7 @@ public class AnswerService extends BasicService {
 
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
-
+	
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void internalSaveAnswerSet(AnswerSet answerSet, String fileDir, String draftid,
 			boolean invalidateExportsAndStatistics, boolean createAttendees) throws Exception {
@@ -174,6 +178,11 @@ public class AnswerService extends BasicService {
 			boolean newAnswer = answerSet.getId() == null;
 			session.saveOrUpdate(answerSet);
 			session.flush();
+			
+			if (answerSet.getSurvey().getIsDelphi()) {
+				answerExplanationService.createOrUpdateExplanations(answerSet);
+			}			
+			
 			if (!answerSet.getSurvey().getIsDraft()) {
 				if (newAnswer) {
 					reportingService.addToDo(ToDo.NEWCONTRIBUTION, answerSet.getSurvey().getUniqueId(),
@@ -217,7 +226,8 @@ public class AnswerService extends BasicService {
 				try {
 					java.io.File folder = fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(),
 							false);
-					java.io.File directory = new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + answerSet.getUniqueCode());
+					java.io.File directory = new java.io.File(
+							folder.getPath() + Constants.PATH_DELIMITER + answerSet.getUniqueCode());
 					FileUtils.delete(directory);
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
@@ -444,7 +454,8 @@ public class AnswerService extends BasicService {
 				answerSet.setUniqueCode("");
 			}
 
-			if (loadDraftIds && answerSet.getIsDraft() && checkDraftSubmitted && surveyService.answerSetExists(answerSet.getUniqueCode(), false, false)) {
+			if (loadDraftIds && answerSet.getIsDraft() && checkDraftSubmitted
+					&& surveyService.answerSetExists(answerSet.getUniqueCode(), false, false)) {
 				answerSet.setIsDraft(false);
 			}
 
@@ -663,25 +674,27 @@ public class AnswerService extends BasicService {
 								}
 
 								if (questionUid.endsWith("from")) {
-									String answerPart = "(STR_TO_DATE(a" + joincounter + ".VALUE,'%d/%m/%Y') >= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
-									
+									String answerPart = "(STR_TO_DATE(a" + joincounter
+											+ ".VALUE,'%d/%m/%Y') >= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
+
 									questionUid = questionUid.replace("from", "");
 									where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
-									.append(i).append(" AND ").append(answerPart).append(")");
+											.append(i).append(" AND ").append(answerPart).append(")");
 									values.put("questionUid" + i, questionUid);
-									values.put(Constants.ANSWER + i, answer);									
+									values.put(Constants.ANSWER + i, answer);
 								} else if (questionUid.endsWith("to")) {
-									String answerPart = "(STR_TO_DATE(a" + joincounter + ".VALUE,'%d/%m/%Y') <= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
-									
+									String answerPart = "(STR_TO_DATE(a" + joincounter
+											+ ".VALUE,'%d/%m/%Y') <= STR_TO_DATE(:answer" + i + ",'%d/%m/%Y'))";
+
 									questionUid = questionUid.replace("to", "");
 									where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
-									.append(i).append(" AND ").append(answerPart).append(")");
+											.append(i).append(" AND ").append(answerPart).append(")");
 									values.put("questionUid" + i, questionUid);
-									values.put(Constants.ANSWER + i, answer);									
-								} else {								
-								
+									values.put(Constants.ANSWER + i, answer);
+								} else {
+
 									String answerPart = "a" + joincounter + ".VALUE like :answer" + i;
-	
+
 									if (answer.contains("|")) {
 										String answerUid = answer.substring(answer.indexOf('|') + 1);
 										answerPart = "(a" + joincounter + ".PA_UID like :answerUid" + i + ")";
@@ -694,34 +707,36 @@ public class AnswerService extends BasicService {
 											values.put(Constants.ANSWER + i, "%" + answer + "%");
 										}
 									}
-	
+
 									if (questionId.contains("-")) {
 										String[] data = questionId.split("-");
-	
+
 										if (questionUid.length() > 0) {
-											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
-													.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
-													.append(i).append(" AND (a").append(joincounter)
-													.append(".QUESTION_ID = :questionId").append(i).append(" OR a")
-													.append(joincounter).append(".QUESTION_UID = :questionUid").append(i)
-													.append(") AND ").append(answerPart).append(")");
+											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row")
+													.append(i).append(" AND a").append(joincounter)
+													.append(".ANSWER_COL = :col").append(i).append(" AND (a")
+													.append(joincounter).append(".QUESTION_ID = :questionId").append(i)
+													.append(" OR a").append(joincounter)
+													.append(".QUESTION_UID = :questionUid").append(i).append(") AND ")
+													.append(answerPart).append(")");
 											values.put("questionUid" + i, questionUid);
 										} else {
-											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row").append(i)
-													.append(" AND a").append(joincounter).append(".ANSWER_COL = :col")
+											where.append(" (a").append(joincounter).append(".ANSWER_ROW = :row")
 													.append(i).append(" AND a").append(joincounter)
-													.append(".QUESTION_ID = :questionId").append(i).append(" AND ")
-													.append(answerPart).append(")");
+													.append(".ANSWER_COL = :col").append(i).append(" AND a")
+													.append(joincounter).append(".QUESTION_ID = :questionId").append(i)
+													.append(" AND ").append(answerPart).append(")");
 										}
-	
+
 										values.put("questionId" + i, data[0]);
 										values.put("row" + i, data[1]);
 										values.put("col" + i, data[2]);
-	
+
 									} else {
 										if (questionUid.length() > 0) {
-											where.append(" (a").append(joincounter).append(".QUESTION_UID = :questionUid")
-													.append(i).append(" AND ").append(answerPart).append(")");
+											where.append(" (a").append(joincounter)
+													.append(".QUESTION_UID = :questionUid").append(i).append(" AND ")
+													.append(answerPart).append(")");
 											values.put("questionUid" + i, questionUid);
 										} else {
 											where.append("( a").append(joincounter).append(".QUESTION_ID = :questionId")
@@ -789,18 +804,22 @@ public class AnswerService extends BasicService {
 		return deleteAnswers(answerSetsToDelete, surveyId);
 	}
 
+	/**
+	 * Deletes the answersets by uniqueCode, returns the UIDS of the ones it could delete
+	 * Ignores a failed deletion, prints a stacktrace
+	 */
 	@Transactional
-	public List<String> deleteAnswers(List<String> answerSetsToDelete, int surveyid) {
+	public List<String> deleteAnswers(List<String> answerSetsUIDS, int surveyid) {
 		List<String> deletedAnswerSets = new ArrayList<>();
 
-		if (answerSetsToDelete == null || answerSetsToDelete.isEmpty()) {
+		if (answerSetsUIDS == null || answerSetsUIDS.isEmpty()) {
 			return deletedAnswerSets;
 		}
 
 		Session session = sessionFactory.getCurrentSession();
 		StringBuilder sql = new StringBuilder("From AnswerSet a where a.uniqueCode in (");
 		int counter = 0;
-		for (String uniqueCode : answerSetsToDelete) {
+		for (String uniqueCode : answerSetsUIDS) {
 			if (counter > 0) {
 				sql.append(", ");
 			}
@@ -815,25 +834,21 @@ public class AnswerService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<AnswerSet> answerSets = query.list();
 
-		for (AnswerSet as : answerSets) {
-			if (!as.getIsDraft()) {
-				session.delete(as);
+		Survey survey = surveyService.getSurvey(surveyid, false, true);
+		if (survey != null && survey.getIsDelphi()) {
+			answerSets.forEach(set -> answerExplanationService.deleteExplanationByAnswerSet(set));
+		}
 
-				if (!as.getIsDraft()) {
-					if (as.getSurvey().getIsDraft()) {
-						reportingService.addToDo(ToDo.DELETEDTESTCONTRIBUTION, as.getSurvey().getUniqueId(),
-								as.getUniqueCode());
-					} else {
-						reportingService.addToDo(ToDo.DELETEDCONTRIBUTION, as.getSurvey().getUniqueId(),
-								as.getUniqueCode());
-					}
-				}
-
-				deletedAnswerSets.add(as.getUniqueCode());
+		for (AnswerSet answerSet : answerSets) {
+			try {
+				this.deleteAnswer(answerSet, false);
+				deletedAnswerSets.add(answerSet.getUniqueCode());
+			} catch (IOException | MessageException e) {
+				e.printStackTrace();
 			}
 		}
 
-		deleteStatisticsForSurvey(surveyid);
+		this.deleteStatisticsForSurvey(surveyid);
 
 		return deletedAnswerSets;
 	}
@@ -1045,7 +1060,7 @@ public class AnswerService extends BasicService {
 	@Transactional(readOnly = true)
 	public List<File> getUploadedFilesForAnswerset(int answersetId) {
 		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, af.ANSWERS_ANSWER_ID FROM FILES f JOIN ANSWERS_FILES af ON f.FILE_ID = af.files_FILE_ID JOIN ANSWERS a ON af.ANSWERS_ANSWER_ID = a.ANSWER_ID WHERE a.AS_ID = :id";
+		String sql = "SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, af.ANSWERS_ANSWER_ID, a.QUESTION_UID FROM FILES f JOIN ANSWERS_FILES af ON f.FILE_ID = af.files_FILE_ID JOIN ANSWERS a ON af.ANSWERS_ANSWER_ID = a.ANSWER_ID WHERE a.AS_ID = :id";
 
 		SQLQuery query = session.createSQLQuery(sql);
 		query.setInteger("id", answersetId);
@@ -1062,6 +1077,7 @@ public class AnswerService extends BasicService {
 			file.setName((String) a[1]);
 			file.setUid((String) a[2]);
 			file.setAnswerId(ConversionTools.getValue(a[3]));
+			file.setQuestionUid((String) a[4]);
 
 			result.add(file);
 		}
@@ -1123,6 +1139,14 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public int getNumberOfAnswerSetsPublished(String uid) {
+		if (uid == null || uid.isEmpty()) {
+			throw new IllegalArgumentException("uid is null or empty");
+		}
+		return this.getNumberOfAnswerSetsPublished(null, uid);
+	}
+
+	@Transactional(readOnly = true)
 	public int getNumberOfAnswerSetsPublished(String surveyname, String uid) {
 		Session session = sessionFactory.getCurrentSession();
 		if (uid != null && uid.length() > 0) {
@@ -1152,6 +1176,27 @@ public class AnswerService extends BasicService {
 
 		return ConversionTools.getValue(query.uniqueResult());
 	}
+	
+	@Transactional(readOnly = true)
+	public AnswerSet getUserContributionToSurvey(Survey survey, User user) {
+		Session session = sessionFactory.getCurrentSession();
+
+		String queryString = "SELECT ans.ANSWER_SET_ID from ANSWERS_SET ans inner join SURVEYS s on ans.SURVEY_ID = s.SURVEY_ID WHERE s.SURVEY_UID = :uid AND s.ISDRAFT = 0 AND ans.ISDRAFT = 0 AND (ans.RESPONDER_EMAIL = :mail1 OR ans.RESPONDER_EMAIL = :mail2)";
+		SQLQuery query = session.createSQLQuery(queryString);
+		query.setString("uid", survey.getUniqueId()).setString("mail1", user.getEmail()).setString("mail2",
+				Tools.md5hash(user.getEmail()));
+
+		@SuppressWarnings("rawtypes")
+		List res = query.setMaxResults(1).list();
+		
+		for (Object o : res) {
+			Integer i = ConversionTools.getValue(o);
+			AnswerSet answerSet = (AnswerSet) session.get(AnswerSet.class, i);
+			return answerSet;
+		}
+
+		return null;
+	}
 
 	@Transactional(readOnly = true)
 	public int getNumberOfAnswerSets(Survey survey, ResultFilter filter) throws Exception {
@@ -1172,61 +1217,56 @@ public class AnswerService extends BasicService {
 		return ConversionTools.getValue(query.uniqueResult());
 	}
 
+	public void deleteFilesForAnswerSet(AnswerSet answerSet) throws IOException {
+		java.io.File folder = fileService.getSurveyExportsFolder(answerSet.getSurvey().getUniqueId());
+		java.io.File target = new java.io.File(
+				String.format("%s/publishedanswer%s.pdf", folder.getPath(), answerSet.getId()));
+
+		Files.deleteIfExists(target.toPath());
+
+		target = new java.io.File(String.format("%sanswer%s.pdf", tempFileDir, answerSet.getUniqueCode()));
+		Files.deleteIfExists(target.toPath());
+
+		for (Answer answer : answerSet.getAnswers()) {
+			if (answer.getFiles() != null) {
+				for (File f : answer.getFiles()) {
+					// new file system
+					java.io.File file = fileService.getSurveyFile(answerSet.getSurvey().getUniqueId(), f.getUid());
+					Files.deleteIfExists(file.toPath());
+
+					// old file system
+					file = new java.io.File(fileDir + f.getUid());
+					Files.deleteIfExists(file.toPath());
+				}
+			}
+		}
+	}
+
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
-	public void delete(AnswerSet answerSet) {
-
+	public void deleteAnswer(AnswerSet answerSet, boolean deleteStatistics) throws IOException, MessageException {
 		// delete precomputed statistics and pdfs
-		try {
-			deleteStatisticsForSurvey(answerSet.getSurvey().getId());
+		if (deleteStatistics) {
+			this.deleteStatisticsForSurvey(answerSet.getSurvey().getId());
+		}
+		this.deleteFilesForAnswerSet(answerSet);
+		this.attendeeService.decreaseInvitationAnswer(answerSet.getInvitationId());
+		if (!answerSet.getIsDraft()) {
+			boolean publishedSurvey = !answerSet.getSurvey().getIsDraft();
+			reportingService.removeFromOLAPTable(answerSet.getSurvey().getUniqueId(), answerSet.getUniqueCode(),
+					publishedSurvey);
+		}
 
-			java.io.File folder = fileService.getSurveyExportsFolder(answerSet.getSurvey().getUniqueId());
-			java.io.File target = new java.io.File(
-					String.format("%s/publishedanswer%s.pdf", folder.getPath(), answerSet.getId()));
-
-			Files.deleteIfExists(target.toPath());
-
-			target = new java.io.File(String.format("%sanswer%s.pdf", tempFileDir, answerSet.getUniqueCode()));
-			Files.deleteIfExists(target.toPath());
-
-			for (Answer answer : answerSet.getAnswers()) {
-				if (answer.getFiles() != null) {
-					for (File f : answer.getFiles()) {
-						// new file system
-						java.io.File file = fileService.getSurveyFile(answerSet.getSurvey().getUniqueId(), f.getUid());
-						Files.deleteIfExists(file.toPath());
-
-						// old file system
-						file = new java.io.File(fileDir + f.getUid());
-						Files.deleteIfExists(file.toPath());
-					}
-				}
-			}
-
-			if (!answerSet.getIsDraft() && answerSet.getInvitationId() != null
-					&& answerSet.getInvitationId().length() > 0) {
-				Invitation invitation = attendeeService.getInvitationByUniqueId(answerSet.getInvitationId());
-				if (invitation != null && invitation.getAnswers() > 0) {
-					invitation.setAnswers(invitation.getAnswers() - 1);
-					attendeeService.update(invitation);
-				}
-			}
-
-			if (!answerSet.getIsDraft()) {
-				if (answerSet.getSurvey().getIsDraft()) {
-					reportingService.addToDo(ToDo.DELETEDTESTCONTRIBUTION, answerSet.getSurvey().getUniqueId(),
-							answerSet.getUniqueCode());
-				} else {
-					reportingService.addToDo(ToDo.DELETEDCONTRIBUTION, answerSet.getSurvey().getUniqueId(),
-							answerSet.getUniqueCode());
-				}
-			}
-
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
+		if (answerSet.getSurvey().getIsDelphi()) {
+			answerExplanationService.deleteExplanationByAnswerSet(answerSet);
 		}
 
 		Session session = sessionFactory.getCurrentSession();
 		session.delete(answerSet);
+	}
+
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public void deleteAnswer(AnswerSet answerSet) throws IOException, MessageException {
+		this.deleteAnswer(answerSet, true);
 	}
 
 	@Transactional
@@ -1263,6 +1303,9 @@ public class AnswerService extends BasicService {
 	}
 
 
+	/**
+	 * Returns a non draft AnswerSet corresponding to uniqueCode, or NULL if no such AnswerSet is found
+	 */
 	@Transactional(readOnly = true)
 	public AnswerSet get(String uniqueCode) {
 		Session session = sessionFactory.getCurrentSession();
@@ -1343,9 +1386,9 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional
-	public void deleteStatisticsRequest(StatisticsRequest sr) {
+	public void deleteStatisticsRequest(StatisticsRequest statisticsRequest) {
 		Session session = sessionFactory.getCurrentSession();
-		session.delete(sr);
+		session.delete(statisticsRequest);
 	}
 
 	@Transactional
@@ -1384,25 +1427,39 @@ public class AnswerService extends BasicService {
 
 	@Transactional
 	public Statistics getStatistics(int requestid) {
-		StatisticsRequest sr = getStatisticRequest(requestid);
+		StatisticsRequest statisticsRequest = getStatisticRequest(requestid);
 
-		if (sr == null)
+		if (statisticsRequest == null)
 			return null;
 
-		Statistics statistics = getStatisticsForFilterHash(sr.getSurveyId(), sr.getFilter().getHash(sr.isAllanswers()),
+		Statistics statistics = this.getStatisticsForFilterHash(statisticsRequest.getSurveyId(), statisticsRequest.getFilter().getHash(statisticsRequest.isAllanswers()),
 				false);
 
 		if (statistics != null) {
-			deleteStatisticsRequest(sr);
+			this.deleteStatisticsRequest(statisticsRequest);
 		}
 
 		return statistics;
 	}
 
 	@Transactional
-	public Statistics getStatistics(Survey survey, ResultFilter filter, boolean useEagerLoading, boolean allanswers,
+	public Statistics getStatisticsOrStartCreator(int statisticsRequestId) throws Exception {
+		StatisticsRequest statisticsRequest = answerService.getStatisticRequest(statisticsRequestId);
+		Survey survey = surveyService.getSurvey(statisticsRequest.getSurveyId());
+		return this.getStatisticsOrStartCreator(survey, statisticsRequest.getFilter(), false, statisticsRequest.isAllanswers(), true);
+	}
+	
+	/**
+	 * <p>In Asynchronous mode:
+	 * Returns the statistics of the survey using the filter, or null and launches the StatisticsCreator
+	 * </p>
+	 * <p>In synchronous mode:
+	 * Returns the statistics of the survey using the filter (using a creator if necessary)</p>
+	 */
+	@Transactional
+	public Statistics getStatisticsOrStartCreator(Survey survey, ResultFilter filter, boolean useEagerLoading, boolean allanswers,
 			boolean asynchronous) throws Exception {
-		filter = answerService.initialize(filter);
+		// filter = answerService.initialize(filter);
 		Statistics statistics = getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers), useEagerLoading);
 
 		if (statistics == null) {
@@ -1423,7 +1480,7 @@ public class AnswerService extends BasicService {
 					// this can happen when a runner is added or removed while the list is checked
 				}
 
-				getAnswerPool().execute(creator);
+				this.getAnswerPool().execute(creator);
 				return null;
 
 			} else {
@@ -1431,9 +1488,9 @@ public class AnswerService extends BasicService {
 				while (statistics == null && counter < 120) {
 					boolean found = false;
 					try {
-						for (Runnable r : running) {
-							StatisticsCreator s = (StatisticsCreator) r;
-							if (s.getFilter().getHash(allanswers).equals(filter.getHash(allanswers))) {
+						for (Runnable runnable : running) {
+							StatisticsCreator statisticsCreator = (StatisticsCreator) runnable;
+							if (statisticsCreator.getFilter().getHash(allanswers).equals(filter.getHash(allanswers))) {
 								found = true;
 								break;
 							}
@@ -1445,7 +1502,7 @@ public class AnswerService extends BasicService {
 					// if there is no computation running, start one
 					if (!found) {
 						if (asynchronous) {
-							getAnswerPool().execute(creator);
+							this.getAnswerPool().execute(creator);
 						} else {
 							creator.runSync();
 						}
@@ -1461,10 +1518,10 @@ public class AnswerService extends BasicService {
 						}
 
 						if (allanswers && !survey.isMissingElementsChecked()) {
-							surveyService.CheckAndRecreateMissingElements(survey, filter);
+							surveyService.checkAndRecreateMissingElements(survey, filter);
 						}
 
-						statistics = getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers),
+						statistics = this.getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers),
 								useEagerLoading);
 					}
 				}
@@ -1728,8 +1785,8 @@ public class AnswerService extends BasicService {
 
 		String query = "SELECT count(*) FROM ANSWERS_SET ans WHERE ans.SURVEY_ID IN ("
 				+ StringUtils.collectionToCommaDelimitedString(allVersions)
-				+ ") AND ans.ISDRAFT = 1 AND ans.UNIQUECODE NOT IN (SELECT UNIQUECODE FROM ANSWERS_SET WHERE SURVEY_ID IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans.ISDRAFT = 0)";
+				+ ") AND ans.ISDRAFT = 1 AND ans.UNIQUECODE NOT IN (SELECT UNIQUECODE FROM ANSWERS_SET ans2 WHERE SURVEY_ID IN ("
+				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans2.ISDRAFT = 0)";
 
 		Query q = session.createSQLQuery(query);
 		return ConversionTools.getValue(q.uniqueResult());
@@ -1940,31 +1997,21 @@ public class AnswerService extends BasicService {
 		return result;
 	}
 
+
+	/**
+	 * Returns a table in which
+	 * 1st index is the number of Answers (not drafts)
+	 * 2d index is the number of Draft answers
+	 * 3d index is the number of Open Invitations
+	 */
 	@Transactional(readOnly = true)
 	public int[] getAnswerStatistics(int surveyId) {
-		int[] result = new int[3];
-
+		int[] intArray = new int[3];
 		Survey survey = surveyService.getSurvey(surveyId);
-
-		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(surveyId);
-
-		Session session = sessionFactory.getCurrentSession();
-		String sql = "SELECT count(*) FROM ANSWERS_SET ans WHERE ans.ISDRAFT = 0 AND ans.SURVEY_ID IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ")";
-		SQLQuery query = session.createSQLQuery(sql);
-		result[0] = ConversionTools.getValue(query.uniqueResult());
-
-		sql = "SELECT count(*) FROM ANSWERS_SET ans WHERE ans.ISDRAFT = 1 AND ans.SURVEY_ID IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ")";
-		query = session.createSQLQuery(sql);
-		result[1] = ConversionTools.getValue(query.uniqueResult());
-
-		sql = "SELECT count(*) FROM INVITATIONS i LEFT JOIN PARTICIPANTS p ON p.PARTICIPATION_ID = i.PARTICIPATIONGROUP_ID WHERE p.PARTICIPATION_SURVEY_UID = :uid AND i.ATTENDEE_ANSWERS = 0";
-		query = session.createSQLQuery(sql);
-		query.setString("uid", survey.getUniqueId());
-		result[2] = ConversionTools.getValue(query.uniqueResult());
-
-		return result;
+		intArray[0] = this.getNumberOfAnswerSetsPublished(survey.getUniqueId());
+		intArray[1] = this.getNumberOfDrafts(survey.getUniqueId());
+		intArray[2] = this.participationService.getNumberOfOpenInvitations(survey.getUniqueId());
+		return intArray;
 	}
 
 	@Transactional
@@ -2128,6 +2175,7 @@ public class AnswerService extends BasicService {
 			
 			Query queryAnswerSets = session.createSQLQuery(sqlAnswerSets);
 			sqlQueryService.setParameters(queryAnswerSets, parameters);
+			@SuppressWarnings("rawtypes")
 			List answersetIds = queryAnswerSets.list();		
 			
 			sql += " AND ans.ANSWER_SET_ID IN (" +StringUtils.collectionToCommaDelimitedString(answersetIds) + ")";
@@ -2171,6 +2219,25 @@ public class AnswerService extends BasicService {
 		deleteContributionPDFs(survey);		
 		
 		activityService.log(315, null, questionUID, userId, survey.getUniqueId());
-	}	
+	}
+	
+	public AnswerSet automaticParseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode,
+			boolean update, String lang, User user) throws IOException
+	{
+		AnswerSet answerSet = null;
+		
+		if (survey.getIsDelphi() && surveyService.answerSetExists(uniqueCode, false, true))
+		{
+			AnswerSet existingAnswerSet = answerService.get(uniqueCode);
+			answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, existingAnswerSet, lang, user, fileService);
+		}
+
+		if (answerSet == null)
+		{
+			answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
+		}	
+	
+		return answerSet;
+	}
 	
 }

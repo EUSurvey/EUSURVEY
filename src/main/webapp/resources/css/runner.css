@@ -293,7 +293,18 @@ textarea.freetext {
 	overflow-x: auto;
 }
 
-.freetext, .number, .date, .matrixtable, .tabletable, .dataTable, .regex, .alignment-div, .input-group, .ratingtable {
+.freetext,
+.number,
+.date,
+.matrixtable,
+.tabletable,
+.dataTable,
+.regex,
+.alignment-div,
+.input-group,
+.ratingtable,
+.explanation-section,
+.explanation-update-section {
 	margin-left: 20px;
 }
 

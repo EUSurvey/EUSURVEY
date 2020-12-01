@@ -380,6 +380,7 @@
 		var surveyUniqueId = "${form.survey.uniqueId}";
 		var isQuiz = ${form.survey.isQuiz};
 		var isOPC = ${form.survey.isOPC};
+		var isDelphi = ${form.survey.isDelphi};
 		var automaticNumbering = ${form.survey.sectionNumbering != 0 || form.survey.questionNumbering != 0};
 		
 		var lowLevel = '<spring:message code="label.Complexity.low" />';
@@ -846,7 +847,8 @@
 	 		strings["ISO+Country"] = "<spring:message code="label.ISO+Country" />";
 	 		strings["ISOOnly"] = "<spring:message code="label.ISOOnly" />";	 		
 	 		
-	 		strings["MaximumFileSize"] = "<spring:message code="label.MaximumFileSize" />";	 		
+	 		strings["MaximumFileSize"] = "<spring:message code="label.MaximumFileSize" />";
+	 		strings["DelphiQuestion"] = "<spring:message code="label.DelphiQuestion" />";	 	
 
 	 		return strings[label];
 	 	}

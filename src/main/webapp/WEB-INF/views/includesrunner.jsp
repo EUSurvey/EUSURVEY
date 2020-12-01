@@ -23,6 +23,8 @@
 <link href="${contextpath}/resources/css/common.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 <link href="${contextpath}/resources/css/bootstrap-slider.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 
+<link href="${contextpath}/resources/css/Chart.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
+
 <c:if test="${ismobile != null}">
 	<link href="${contextpath}/resources/css/commonmobile.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 </c:if>
@@ -74,12 +76,17 @@
 <script type="text/javascript" src="${contextpath}/resources/js/system.js?version=<%@include file="version.txt" %>"></script>
 <script src="https://ec.europa.eu/wel/cookie-consent/consent.js" type="text/javascript"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/bootstrap-slider.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/tinymce/jquery.tinymce.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/tinymce/tinymce.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/chartjs-plugin-colorschemes.min.js?version=<%@include file="version.txt" %>"></script>
  
 <script type="text/javascript">
 	if (top != self) top.location=location;
 	
 	var contextpath = "${contextpath}";
 	var isresponsive = ${responsive != null};
+	var isdelphi = ${form != null && form.survey.getIsDelphi()};
 
 	<c:choose>
 		<c:when test="${form != null && form.getResources() != null && resultType == null}">
@@ -251,6 +258,49 @@
 	 	localStorage.removeItem("SurveyEditorBackup${surveyeditorsaved}");
 	</c:if>
 	
+	var explanationEditorConfig = {
+			script_url: '${contextpath}/resources/js/tinymce/tinymce.min.js',
+			theme: 'modern',
+			entity_encoding: 'raw',
+			menubar: false,
+			toolbar: ['bold italic underline strikethrough | undo redo | bullist numlist | link code | fontsizeselect forecolor fontselect'],
+			plugins: 'paste link image code textcolor',
+			font_formats:
+				'Sans Serif=FreeSans, Arial, Helvetica, Tahoma, Verdana, sans-serif;' +
+				'Serif=FreeSerif,Times,serif;' +
+				'Mono=FreeMono,Courier, mono;',
+			language : globalLanguage,
+			image_advtab: true,
+			entities: '',
+			content_css: '${contextpath}/resources/css/tinymce.css',
+			popup_css_add: '${contextpath}/resources/css/tinymcepopup.css',
+			forced_root_block: false,
+			browser_spellcheck: true,
+			paste_postprocess: function(pl, o) {
+				o.node.innerHTML = replaceBRs(strip_tags(o.node.innerHTML, '<p><br>'));
+			},
+			setup: function(editor) {
+				editor.on('init', function(event) {
+					delphiPrefill($(event.target));
+				});
+				editor.on('Change', function (event) {
+					try {
+					    // The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
+					    $('#' + event.target.id).closest('.survey-element').find('a[data-type="delphisavebutton"]').removeClass('disabled');
+					} catch (e) {}
+				});
+			},
+			relative_urls: false,
+			remove_script_host: false,
+			document_base_url: serverPrefix,
+			default_link_target: '_blank',
+			anchor_top: false,
+			anchor_bottom: false,
+			branding: false,
+			invalid_elements: 'html,head,body',
+			object_resizing: false
+		};
+	
 </script>
 <script type="text/javascript" src="${contextpath}/resources/js/utf8.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/includes.js?version=<%@include file="version.txt" %>"></script>
@@ -335,16 +385,16 @@
 </script>
 
 <c:choose>
-	<c:when test="${!oss && piwik && is404}">
-		<script defer src="//europa.eu/webtools/load.js" type="text/javascript"></script>
+	<c:when test="${forpdf == null && !oss && piwik && is404}">
+		<script defer="defer" src="//europa.eu/webtools/load.js" type="text/javascript"></script>
 		<script type="application/json">
-		{ "utility": "piwik", "siteID": 63, "is404": true, "sitePath": ["ec.europa.eu\/eusurvey"] } 
+		{ "utility":"analytics", "siteID":"63", "sitePath":["ec.europa.eu/eusurvey"], "is404":true, "is403":false, "instance":"ec.europa.eu"}
 		</script>
 	</c:when>
-	<c:when test="${!oss && piwik}">
-		<script defer src="//europa.eu/webtools/load.js" type="text/javascript"></script>
+	<c:when test="${forpdf == null && !oss && piwik}">
+		<script defer="defer" src="//europa.eu/webtools/load.js" type="text/javascript"></script>
 		<script type="application/json">
-		{ "utility": "piwik", "siteID": 63, "sitePath": ["ec.europa.eu\/eusurvey"] } 
+		{ "utility":"analytics", "siteID":"63", "sitePath":["ec.europa.eu/eusurvey"], "is404":false, "is403":false, "instance":"ec.europa.eu"} 
 		</script>
 	</c:when>
 </c:choose>

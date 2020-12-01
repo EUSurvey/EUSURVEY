@@ -675,8 +675,8 @@
 							</div>						
 							<div style="float: right">							
 								<div class="onoffswitch">
-									<form:checkbox path="survey.saveAsDraft" class="onoffswitch-checkbox" id="myonoffswitchdraft" />
-									 <label class="onoffswitch-label" for="myonoffswitchdraft">
+									<form:checkbox path="survey.saveAsDraft" class="onoffswitch-checkbox" id="myonoffswitchdraft" data-bind="checked: _properties.saveAsDraft()"  />
+									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+(_properties.delphi() ? " disabled" : "")' onclick="_properties.toggleSaveAsDraft()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -694,8 +694,8 @@
 							</div>						
 							<div style="float: right">							
 								<div class="onoffswitch">
-									<form:checkbox path="survey.changeContribution" class="onoffswitch-checkbox" id="myonoffswitchcontribution" />
-									 <label class="onoffswitch-label" for="myonoffswitchcontribution">
+									<form:checkbox path="survey.changeContribution" class="onoffswitch-checkbox" data-bind="checked: _properties.changeContribution()" />
+									<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+(_properties.delphi() ? " disabled" : "")' onclick="_properties.toggleChangeContribution()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -1125,8 +1125,8 @@
 										    </label>
 										</c:when>
 										<c:otherwise>
-											<form:checkbox path="survey.isQuiz" onclick="_properties.quiz(!_properties.quiz())" class="onoffswitch-checkbox" id="myonoffswitchquiz" />
-											<label class="onoffswitch-label" for="myonoffswitchquiz">
+											<form:checkbox path="survey.isQuiz" onclick="_properties.toggleQuiz(this)" class="onoffswitch-checkbox" data-bind="enable: (_properties.isNormalSurvey()||_properties.quiz())" id="myonoffswitchquiz" />
+											<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.isNormalSurvey()||_properties.quiz()) ? "" : " disabled")' for="myonoffswitchquiz">
 										        <span class="onoffswitch-inner"></span>
 										        <span class="onoffswitch-switch"></span>
 										    </label>
@@ -1229,6 +1229,65 @@
 								</div>
 							</div>
 						</td> 
+					</tr>
+					<tr  data-bind="visible: !opc()">
+						<td>
+							<div style="float: left"><spring:message code="label.EnableDelphi" /></div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<c:choose>
+										<c:when test="${form.survey.isOPC}">
+											<input type="radio" disabled="disabled" name="survey.isDelphi" class="onoffswitch-checkbox" id="myonoffswitchdelphi" />
+											<label class="onoffswitch-label disabled" for="myonoffswitchdelphi">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
+										</c:when>
+										<c:otherwise>
+											<form:checkbox path="survey.isDelphi" onclick="_properties.toggleDelphi(this)" class="onoffswitch-checkbox" data-bind="enable: (_properties.isNormalSurvey()||_properties.delphi())" id="myonoffswitchdelphi" />
+											<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.isNormalSurvey()||_properties.delphi()) ? "" : " disabled")' for="myonoffswitchdelphi">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
+										</c:otherwise>
+									</c:choose>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr class="subelement" data-bind="visible: delphi">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.ShowDelphiAnswerTable" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.ShowDelphiAnswerTable" /></div>	
+							</div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.isDelphiShowAnswers" class="onoffswitch-checkbox" id="myonoffswitchdelphianswers" />
+									<label class="onoffswitch-label" for="myonoffswitchdelphianswers">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</div>
+							<div style="clear: both"></div>
+						</td>
+					</tr>
+					<tr class="subelement" data-bind="visible: delphi">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.MinimumResultsForStatistics" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+								<div class="help hideme"><spring:message code="info.MinimumResultsForStatistics" /></div>	
+							</div>
+							<div style="float: right">
+								<div style="float: right; max-width: 500px;">
+									<form:input htmlEscape="false" path="survey.minNumberDelphiStatistics" id="minNumberDelphiStatistics" type="number" class="form-control number max1000000000" min='0' max='1000000000' style="display: inline-block" />
+								</div>
+							</div>
+							<div style="clear: both"></div>
+						</td>
 					</tr>
 				</table>	
 			</div>			

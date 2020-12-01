@@ -10,7 +10,6 @@ import com.lowagie.text.pdf.BaseFont;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
@@ -69,6 +68,9 @@ public class SurveyHelper {
 				key = key.substring(6);
 
 				if (key.contains("|")) {
+					if (values[0].isEmpty()) {
+						continue;
+					}
 					String suffix = key.substring(key.indexOf('|') + 1);
 					int row = Integer.parseInt(suffix.substring(0, suffix.indexOf('|')));
 					int col = Integer.parseInt(suffix.substring(suffix.indexOf('|') + 1));
@@ -136,10 +138,10 @@ public class SurveyHelper {
 									ChoiceQuestion cq = (ChoiceQuestion) question;
 									answer.setPossibleAnswerUniqueId(cq.getPossibleAnswer(paid).getUniqueId());
 								}
-
+																					
 								answerSet.addAnswer(answer);
 							}
-						}
+						}	
 					} else {
 						// try matrix
 
@@ -167,6 +169,15 @@ public class SurveyHelper {
 								answerSet.addAnswer(answer);
 							}
 						}
+					}
+				}
+			} else if (key.startsWith("explanation")) {
+				key = key.substring(11);
+				Question question = questions.get(Integer.parseInt(key));
+				if (question != null && question.getIsDelphiQuestion()) {
+					String[] explanation = parameterMap.get("explanation" + question.getId());
+					if (explanation != null && explanation.length > 0) {
+						answerSet.getExplanations().put(question.getUniqueId(), explanation[0]);
 					}
 				}
 			}
@@ -588,7 +599,7 @@ public class SurveyHelper {
 					if (!answers.isEmpty() && answers.get(0).getValue().length() > 0)
 						answer = answers.get(0).getValue();
 
-					if (timeQuestion.getMin() != null && answer != null) {
+					if (timeQuestion.getMin() != null && timeQuestion.getMin().length() > 0 && answer != null) {
 						Date timeMin = new SimpleDateFormat(ConversionTools.TimeFormat).parse(timeQuestion.getMin());
 						Calendar calendarMin = Calendar.getInstance();
 						calendarMin.setTime(timeMin);
@@ -605,7 +616,7 @@ public class SurveyHelper {
 						}
 					}
 
-					if (timeQuestion.getMax() != null && answer != null) {
+					if (timeQuestion.getMax() != null && timeQuestion.getMax().length() > 0 && answer != null) {
 						Date timeMax = new SimpleDateFormat(ConversionTools.TimeFormat).parse(timeQuestion.getMax());
 						Calendar calendarMax = Calendar.getInstance();
 						calendarMax.setTime(timeMax);
@@ -785,6 +796,7 @@ public class SurveyHelper {
 		answerSet.setSurvey(survey);
 		answerSet.setWcagMode(parsedAnswerSet.getWcagMode());
 		answerSet.setDisclaimerMinimized(parsedAnswerSet.getDisclaimerMinimized());
+		answerSet.getExplanations().putAll(parsedAnswerSet.getExplanations());
 
 		// remove deleted uploaded files from the file system
 		for (String uid : uploadedFiles) {
@@ -792,6 +804,49 @@ public class SurveyHelper {
 			Files.deleteIfExists(file.toPath());
 		}
 
+		return answerSet;
+	}
+	
+	public static AnswerSet parseAndMergeDelphiAnswerSet(HttpServletRequest request, Survey survey,
+			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService, Element question) throws IOException {
+		AnswerSet parsedAnswerSet = parseAnswerSet(request, survey, uniqueCode, true, languageCode, user,
+				fileService);
+		
+		//remove existing answers for the question
+		if (question instanceof MatrixOrTable) {
+			MatrixOrTable parent = (MatrixOrTable) question;
+			for (Element childQuestion : parent.getQuestions())
+			{
+				List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+				for (Answer oldAnswer: oldAnswers) {
+					answerSet.getAnswers().remove(oldAnswer);
+				}
+			}
+		} else if (question instanceof RatingQuestion) {
+			RatingQuestion parent = (RatingQuestion) question;
+			for (Element childQuestion : parent.getQuestions())
+			{
+				List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+				for (Answer oldAnswer: oldAnswers) {
+					answerSet.getAnswers().remove(oldAnswer);
+				}
+			}
+		} else {
+			List<Answer> oldAnswers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+			for (Answer oldAnswer: oldAnswers) {
+				answerSet.getAnswers().remove(oldAnswer);
+			}
+		}
+		
+		for (Answer answer : parsedAnswerSet.getAnswers()) {
+			answer.setAnswerSet(answerSet);
+			
+			//add new answers for the question
+			answerSet.getAnswers().add(answer);
+		}
+		
+		answerSet.getExplanations().putAll(parsedAnswerSet.getExplanations());
+	
 		return answerSet;
 	}
 
@@ -1553,6 +1608,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		freetext.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(freetext.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + freetext.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		freetext.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !freetext.getAttributeName().equals(nameattribute)) {
@@ -1665,6 +1727,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		regex.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(regex.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + regex.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		regex.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !regex.getAttributeName().equals(nameattribute)) {
@@ -1763,7 +1832,7 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		email.setIsAttribute(attribute);
-
+		
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !email.getAttributeName().equals(nameattribute)) {
 			oldValues += " attributename: " + email.getAttributeName();
@@ -1833,6 +1902,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		number.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(number.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + number.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		number.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !number.getAttributeName().equals(nameattribute)) {
@@ -1987,6 +2063,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		date.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(date.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + date.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		date.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !date.getAttributeName().equals(nameattribute)) {
@@ -2085,6 +2168,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		time.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(time.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + time.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		time.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !time.getAttributeName().equals(nameattribute)) {
@@ -2201,6 +2291,13 @@ public class SurveyHelper {
 		}
 		rating.setIconType(iconType);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(rating.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + rating.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		rating.setIsDelphiQuestion(isDelphiQuestion);
+		
 		Element q;
 		int j = 0;
 		for (int k = 0; k < questions.length; k++) {
@@ -2349,6 +2446,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		singlechoice.setIsAttribute(attribute);
+				
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(singlechoice.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + singlechoice.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		singlechoice.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !singlechoice.getAttributeName().equals(nameattribute)) {
@@ -2588,6 +2692,13 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		multiplechoice.setIsAttribute(attribute);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(multiplechoice.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + multiplechoice.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		multiplechoice.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !multiplechoice.getAttributeName().equals(nameattribute)) {
@@ -2895,6 +3006,13 @@ public class SurveyHelper {
 			newValues += " widths: " + widths;
 		}
 		matrix.setWidths(widths);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(matrix.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + matrix.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		matrix.setIsDelphiQuestion(isDelphiQuestion);
 
 		// now get the elements inside the matrix
 		String matrixIdsAsString = parameterMap.get("matrixelements" + id)[0];
@@ -3066,6 +3184,13 @@ public class SurveyHelper {
 			newValues += " widths: " + widths;
 		}
 		table.setWidths(widths);
+		
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(table.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + table.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		table.setIsDelphiQuestion(isDelphiQuestion);
 
 		// now get the elements inside the table
 		String tableIdsAsString = parameterMap.get("tableelements" + id)[0];
@@ -4115,4 +4240,126 @@ public class SurveyHelper {
 		return false;
 	}
 
+	public static String getAnswerTitle(Survey survey, Answer answer, boolean publicationMode) {
+		String answerValue = answer.getValue();
+
+		try {
+
+			if (survey != null) {
+
+				Element question = null;
+
+				Map<Integer, Question> questionMap = survey.getQuestionMap();
+
+				if (questionMap != null) {
+					question = questionMap.get(answer.getQuestionId());
+				}
+
+				if (question == null) {
+					question = survey.getMatrixMap().get(answer.getQuestionId());
+				}
+
+				if (question == null) {
+					question = survey.getQuestionMapByUniqueId().get(answer.getQuestionUniqueId());
+				}
+
+				if (question == null) {
+					question = survey.getMissingElementsById().get(answer.getQuestionId());
+				}
+
+				if (question == null && answer.getQuestionUniqueId() != null
+						&& answer.getQuestionUniqueId().length() > 0) {
+					question = survey.getMissingElementsByUniqueId().get(answer.getQuestionUniqueId());
+				}
+
+				if (question == null && answer.getPossibleAnswerId() > 0) {
+					int possibleAnswerId = Integer.parseInt(answerValue);
+					if (survey.getMissingElementsById().containsKey(possibleAnswerId)) {
+						return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitle();
+					}
+
+					if (answer.getPossibleAnswerUniqueId() != null && answer.getPossibleAnswerUniqueId().length() > 0
+							&& survey.getElementsByUniqueId().containsKey(answer.getPossibleAnswerUniqueId())) {
+						return survey.getElementsByUniqueId().get(answer.getPossibleAnswerUniqueId())
+								.getStrippedTitle();
+					}
+
+					if (answer.getPossibleAnswerUniqueId() != null && answer.getPossibleAnswerUniqueId().length() > 0
+							&& survey.getMissingElementsByUniqueId().containsKey(answer.getPossibleAnswerUniqueId())) {
+						return survey.getMissingElementsByUniqueId().get(answer.getPossibleAnswerUniqueId())
+								.getStrippedTitle();
+					}
+				}
+
+				if (question instanceof FreeTextQuestion) {
+					if (publicationMode && answerValue != null && answerValue.length() > 0) {
+						FreeTextQuestion q = (FreeTextQuestion) question;
+						if (q.getIsPassword()) {
+							return "********";
+						}
+					}
+					return answerValue;
+				} else if (question instanceof ChoiceQuestion) {
+					int possibleAnswerId = Integer.parseInt(answerValue);
+					ChoiceQuestion choicequestion = (ChoiceQuestion) question;
+					if (choicequestion.getPossibleAnswer(possibleAnswerId) != null) {
+						return choicequestion.getPossibleAnswer(possibleAnswerId).getStrippedTitle();
+					} else {
+						if (survey.getMissingElementsById().containsKey(possibleAnswerId)) {
+							return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitle();
+						}
+					}
+
+					if (choicequestion.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null) {
+						return choicequestion.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
+								.getStrippedTitle();
+					}
+
+					return "";
+				} else if (question instanceof Text || question instanceof Image || question instanceof EmptyElement) {
+					// could be inside a matrix
+					int possibleAnswerId = Integer.parseInt(answerValue);
+					for (Element element : survey.getElements()) {
+						if (element instanceof Matrix) {
+							for (Element child : ((Matrix) element).getChildElements()) {
+								if (child.getId().equals(possibleAnswerId) || (child.getUniqueId() != null
+										&& child.getUniqueId().equalsIgnoreCase(answer.getPossibleAnswerUniqueId()))) {
+									return child.getStrippedTitle();
+								}
+							}
+							for (Element child : ((Matrix) element).getMissingAnswers()) {
+								if (child.getId().equals(possibleAnswerId)) {
+									return child.getStrippedTitle();
+								}
+							}
+						}
+					}
+					for (Element element : survey.getMissingElements()) {
+						if (element instanceof Matrix) {
+							for (Element child : ((Matrix) element).getChildElements()) {
+								if (child.getId().equals(possibleAnswerId)) {
+									return child.getStrippedTitle();
+								}
+							}
+							for (Element child : ((Matrix) element).getMissingAnswers()) {
+								if (child.getId().equals(possibleAnswerId)) {
+									return child.getStrippedTitle();
+								}
+							}
+						} else if (element.getId().equals(possibleAnswerId)) {
+							return element.getStrippedTitle();
+						}
+					}
+
+					return "";
+				}
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return "";
+		}
+
+		return answerValue;
+	}
 }

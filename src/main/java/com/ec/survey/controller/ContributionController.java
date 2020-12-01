@@ -2,6 +2,10 @@ package com.ec.survey.controller;
 
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.InvalidURLException;
+import com.ec.survey.exception.MessageException;
+import com.ec.survey.exception.httpexception.ForbiddenException;
+import com.ec.survey.exception.httpexception.InternalServerErrorException;
+import com.ec.survey.exception.httpexception.NotFoundException;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Draft;
 import com.ec.survey.model.Form;
@@ -22,6 +26,7 @@ import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,49 +56,41 @@ public class ContributionController extends BasicController {
 
 	public AnswerSet getAnswerSet(String code, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
-		AnswerSet answerSet = null;
-		User user = sessionService.getCurrentUser(request);
-		try {
-			answerSet = answerService.get(code);
+		AnswerSet answerSetOrNull = null;
+		User user;
+		answerSetOrNull = answerService.get(code);
+		
+		if (answerSetOrNull != null && answerSetOrNull.getSurvey().getIsDelphi() && request.getRequestURI().contains("editcontribution"))
+		{
+			user = sessionService.getCurrentUser(request, false, false);
+		} else {
+			user = sessionService.getCurrentUser(request);
+		}
 
-			if (user == null) {
-				// comes from "Access a Contribution" -> check
-				return answerSet;
+		if (answerSetOrNull == null) {
+			return null;
+		}
+
+		if (user == null) {
+			// comes from "Access a Contribution" -> check
+			return answerSetOrNull;
+		}
+
+		if (sessionService.userIsAnswerer(answerSetOrNull, user)) {
+			return answerSetOrNull;
+		}
+
+		if (answerSetOrNull.getSurvey() != null) {
+			if (sessionService.userIsFormAdmin(answerSetOrNull.getSurvey(), user, request)) {
+				return answerSetOrNull;
 			}
 
-			if (answerSet != null && answerSet.getSurvey() != null
-					&& answerSet.getSurvey().getOwner().getId().equals(user.getId())) {
-				// owner is always allowed to retrieve data
-				return answerSet;
-			}
-
-			if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2 || (answerSet != null
-					&& answerSet.getResponderEmail() != null && user.getEmail() != null
-					&& (answerSet.getResponderEmail().equalsIgnoreCase(user.getEmail())
-							|| answerSet.getResponderEmail().equalsIgnoreCase(Tools.md5hash(user.getEmail()))))) {
-				return answerSet;
-			}
-
-			Survey draft = answerSet != null
-					? surveyService.getSurvey(answerSet.getSurvey().getShortname(), true, false, false, false, null,
-							true, false)
-					: null;
-
-			if (draft == null)
-				draft = surveyService.getSurveyByUniqueId(answerSet.getSurvey().getUniqueId(), false, true);
-
+			Survey draftSurvey = surveyService.getSurveyByUniqueId(answerSetOrNull.getSurvey().getUniqueId(), false,
+					true);
 			// if participants are allowed to change their contribution
-			if (draft != null && draft.getChangeContribution()) {
-				return answerSet;
+			if (draftSurvey != null && draftSurvey.getChangeContribution()) {
+				return answerSetOrNull;
 			}
-
-			sessionService.upgradePrivileges(draft, user, request);
-
-			if (user.getLocalPrivileges().get(LocalPrivilege.AccessResults) == 2) {
-				return answerSet;
-			}
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
 		}
 		return null;
 	}
@@ -204,7 +201,14 @@ public class ContributionController extends BasicController {
 		Set<String> invisibleElements = new HashSet<>();
 		if (answerSet != null) {
 			// participants can only access it if the survey is still active
-			User u = sessionService.getCurrentUser(request);
+			User u;
+			
+			if (answerSet.getSurvey().getIsDelphi() && request.getRequestURI().contains("editcontribution"))
+			{
+				u = sessionService.getCurrentUser(request, false, false);
+			} else {
+				u = sessionService.getCurrentUser(request);
+			}
 
 			Survey draft = surveyService.getSurveyByUniqueId(answerSet.getSurvey().getUniqueId(), false, true);
 
@@ -277,6 +281,11 @@ public class ContributionController extends BasicController {
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 
 			ModelAndView model = new ModelAndView("contributions/edit", "form", f);
+			
+			if (newestSurvey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+				model = new ModelAndView("runner/delphi", "form", f);
+				model.addObject("isdelphipage", true);
+			}
 
 			model.addObject("submit", true);
 			model.addObject("answerSet", answerSet.getId());
@@ -489,26 +498,42 @@ public class ContributionController extends BasicController {
 
 	}
 
-	@PostMapping(value = "/deletecontribution/{code}")
-	public @ResponseBody String delete(@PathVariable String code, HttpServletRequest request, Locale locale) {
+	@DeleteMapping(value = "/contribution/{code}")
+	public @ResponseBody String deleteContribution(@PathVariable String code, HttpServletRequest request, Locale locale)
+			throws NotFoundException, ForbiddenException, InternalServerErrorException {
+		User currentUser = null;
+		AnswerSet answerSet = null;
 		try {
-			AnswerSet answerSet = getAnswerSet(code, request);
-			if (answerSet != null) {
-				answerService.delete(answerSet);
-				if (answerSet.getSurvey().getIsDraft()) {
-					activityService.log(405, answerSet.getUniqueCode(), null,
-							sessionService.getCurrentUser(request).getId(), answerSet.getSurvey().getUniqueId());
-				} else {
-					activityService.log(402, null, answerSet.getUniqueCode(),
-							sessionService.getCurrentUser(request).getId(), answerSet.getSurvey().getUniqueId());
-				}
-				return "success";
-			}
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
+			answerSet = this.getAnswerSet(code, request);
+			currentUser = this.sessionService.getCurrentUser(request);
+		} catch (NotAgreedToTosException | WeakAuthenticationException | NotAgreedToPsException e1) {
+			throw new ForbiddenException();
 		}
 
-		return resources.getMessage("error.DeletionFailed", null, "Deletion failed.", locale);
+		if (answerSet == null) {
+			throw new NotFoundException();
+		}
+
+		Survey answerSetSurvey = answerSet.getSurvey();
+
+		if (!this.sessionService.userIsFormAdmin(answerSetSurvey, currentUser, request)) {
+			throw new ForbiddenException();
+		}
+
+		try {
+			this.answerService.deleteAnswer(answerSet);
+		} catch (IOException | MessageException e) {
+			throw new InternalServerErrorException(e);
+		}
+
+		if (answerSet.getSurvey().getIsDraft()) {
+			this.activityService.log(405, answerSet.getUniqueCode(), null, currentUser.getId(),
+					answerSet.getSurvey().getUniqueId());
+		} else {
+			this.activityService.log(402, null, answerSet.getUniqueCode(), currentUser.getId(),
+					answerSet.getSurvey().getUniqueId());
+		}
+		return "success";
 	}
 
 	@RequestMapping(value = "/downloadcontribution/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })

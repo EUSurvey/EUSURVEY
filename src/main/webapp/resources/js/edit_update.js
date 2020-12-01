@@ -134,6 +134,12 @@ function update(input)
 			element.isAttribute(checked);
 			_undoProcessor.addUndoStep(["Attribute", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
 			break;
+		case "DelphiQuestion":
+			var checked = $(input).is(":checked");
+			var oldtext = element.isDelphiQuestion();
+			element.isDelphiQuestion(checked);
+			_undoProcessor.addUndoStep(["DelphiQuestion", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
+			break;
 		case "Name":
 			var text = $(input).val();
 			var oldtext = element.attributeName();

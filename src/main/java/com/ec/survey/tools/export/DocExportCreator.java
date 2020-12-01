@@ -58,7 +58,7 @@ public class DocExportCreator extends ExportCreator {
 		    	
     	if (export != null && export.isAllAnswers() && !survey.isMissingElementsChecked())
 		{
-			surveyService.CheckAndRecreateMissingElements(survey,  export.getResultFilter());
+			surveyService.checkAndRecreateMissingElements(survey,  export.getResultFilter());
 		}
 				
 		form.setSurvey(survey);

@@ -20,6 +20,7 @@ import com.ec.survey.tools.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -919,7 +920,9 @@ public class ManagementController extends BasicController {
 							&& request.getParameter("quiz").equalsIgnoreCase("true"));
 					copy.setIsOPC(request.getParameter("opc") != null
 							&& request.getParameter("opc").equalsIgnoreCase("true"));
-					copy.setSaveAsDraft(!copy.getIsQuiz());
+					copy.setIsDelphi(request.getParameter("delphi") != null
+							&& request.getParameter("delphi").equalsIgnoreCase("true"));
+					copy.setSaveAsDraft(!copy.getIsQuiz() && !copy.getIsDelphi());
 
 					surveyService.update(copy, false, true, true, u.getId());
 
@@ -953,6 +956,57 @@ public class ManagementController extends BasicController {
 			return updateSurvey(new Form(resources), request, true, locale);
 		}
 	}
+
+	/** checks if the type of the given surves is only one of the possibilites (normal, quiz, opc, delphi)
+	*/
+	private boolean checkConclusiveSurveyType(Survey survey) {
+		boolean isQuiz = survey.getIsQuiz();
+		boolean isOPC = survey.getIsOPC();
+		boolean isDelphi = survey.getIsDelphi();
+		boolean isNormal = !(isQuiz || isOPC || isDelphi);
+		if ( isNormal && !isQuiz && !isOPC && !isDelphi) return true;
+		if (!isNormal &&  isQuiz && !isOPC && !isDelphi) return true;
+		if (!isNormal && !isQuiz &&  isOPC && !isDelphi) return true;
+		if (!isNormal && !isQuiz && !isOPC &&  isDelphi) return true;
+		return false;
+	}
+
+	/** when a particular Survey type has some conditions on properties, they are set here
+	 * @throws ValidationException 
+	*/
+	private void ensurePropertiesDependingOnSurveyType(Survey survey, boolean creation) throws ValidationException {
+		if (survey.getIsDelphi()) {
+			survey.setChangeContribution(true); // should always be activated for delphi surveys
+			survey.setSaveAsDraft(false); // should always be deactivated for delphi surveys
+		}
+		
+		if (survey.getIsOPC()) {
+			survey.setSecurity("secured");
+			survey.setEcasSecurity(true);
+			survey.setEcasMode("all");
+			survey.setCaptcha(false);
+			if (survey.getSkin() == null || !survey.getSkin().getName().equalsIgnoreCase("New Official EC Skin")) {
+				Skin ecSkin = skinService.getSkin("New Official EC Skin");
+				survey.setSkin(ecSkin);
+			}
+
+			if (creation) {
+				survey.setWcagCompliance(true);
+				survey.setShowPDFOnUnavailabilityPage(true);
+				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0) {
+					Survey template = surveyService.getSurveyByUniqueId(opctemplatesurvey, false, true);
+					template.copyElements(survey, surveyService, true);
+
+					// recreate unique ids
+					for (Element elem : survey.getElementsRecursive(true)) {
+						String newUniqueId = UUID.randomUUID().toString();
+						elem.setUniqueId(newUniqueId);
+					}
+				}
+			}		
+		}		
+	}
+
 
 	private ModelAndView updateSurvey(Form form, HttpServletRequest request, boolean creation, Locale locale)
 			throws Exception {
@@ -989,11 +1043,18 @@ public class ManagementController extends BasicController {
 					request.getParameter("quiz") != null && request.getParameter("quiz").equalsIgnoreCase("true"));
 			uploadedSurvey.setIsOPC(
 					request.getParameter("opc") != null && request.getParameter("opc").equalsIgnoreCase("true"));
+			uploadedSurvey.setIsDelphi(request.getParameter("delphi") != null
+					&& request.getParameter("delphi").equalsIgnoreCase("true"));
 			uploadedSurvey.setSaveAsDraft(!uploadedSurvey.getIsQuiz());
 
 			if (uploadedSurvey.getTitle() != null
 					&& !XHTMLValidator.validate(uploadedSurvey.getTitle(), servletContext, null)) {
 				throw new InvalidXHTMLException(uploadedSurvey.getTitle(), uploadedSurvey.getTitle());
+			}
+
+			// check for mutual exclusion of types quiz, opc, delphi (or normal)
+			if (!checkConclusiveSurveyType(uploadedSurvey)) {
+				throw new MessageException("multiple selected survey types at once");
 			}
 
 			// check if shortname already exists
@@ -1235,6 +1296,10 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getIsQuiz(), uploadedSurvey.getIsQuiz()))
 			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getIsOPC(), uploadedSurvey.getIsOPC()))
+			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getIsDelphi(), uploadedSurvey.getIsDelphi()))
+			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowTotalScore(), uploadedSurvey.getShowTotalScore()))
 			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowQuizIcons(), uploadedSurvey.getShowQuizIcons()))
@@ -1280,36 +1345,15 @@ public class ManagementController extends BasicController {
 		survey.setContactLabel(Tools.escapeHTML(uploadedSurvey.getContactLabel()));
 		survey.setIsQuiz(uploadedSurvey.getIsQuiz());
 		survey.setIsOPC(uploadedSurvey.getIsOPC());
+		survey.setIsDelphi(uploadedSurvey.getIsDelphi());
 		survey.setSaveAsDraft(uploadedSurvey.getSaveAsDraft());
 		survey.setShowQuizIcons(uploadedSurvey.getShowQuizIcons());
 		survey.setShowTotalScore(uploadedSurvey.getShowTotalScore());
 		survey.setScoresByQuestion(uploadedSurvey.getScoresByQuestion());
-
-		if (survey.getIsOPC()) {
-			survey.setSecurity("secured");
-			survey.setEcasSecurity(true);
-			survey.setEcasMode("all");
-			survey.setCaptcha(false);
-			if (survey.getSkin() == null || !survey.getSkin().getName().equalsIgnoreCase("New Official EC Skin")) {
-				Skin ecSkin = skinService.getSkin("New Official EC Skin");
-				survey.setSkin(ecSkin);
-			}
-
-			if (creation) {
-				survey.setWcagCompliance(true);
-				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0) {
-					Survey template = surveyService.getSurveyByUniqueId(opctemplatesurvey, false, true);
-					template.copyElements(survey, surveyService, true);
-
-					// recreate unique ids
-					for (Element elem : survey.getElementsRecursive(true)) {
-						String newUniqueId = UUID.randomUUID().toString();
-						elem.setUniqueId(newUniqueId);
-					}
-				}
-			}
-		}
-
+		
+		survey.setIsDelphiShowAnswers(uploadedSurvey.getIsDelphiShowAnswers());
+		survey.setMinNumberDelphiStatistics(uploadedSurvey.getMinNumberDelphiStatistics());
+		
 		if (!creation) {
 			if (!uploadedSurvey.getSecurity().equals(survey.getSecurity())) {
 				if (survey.getSecurity().startsWith("open") && !uploadedSurvey.getSecurity().startsWith("open")) {
@@ -1338,8 +1382,10 @@ public class ManagementController extends BasicController {
 			}
 		}
 
-		if (!survey.getIsOPC())
+		if (!survey.getIsOPC()) {
 			survey.setSecurity(uploadedSurvey.getSecurity());
+		}
+		
 		survey.setMultiPaging(uploadedSurvey.getMultiPaging());
 
 		survey.setConfirmationPageLink(uploadedSurvey.getConfirmationPageLink());
@@ -1357,10 +1403,6 @@ public class ManagementController extends BasicController {
 		User u = sessionService.getCurrentUser(request);
 
 		if (creation) {
-			if (survey.getIsOPC()) {
-				survey.setShowPDFOnUnavailabilityPage(true);
-			}
-
 			survey.setOwner(u);
 			survey.setDownloadContribution(true);
 		}
@@ -1839,8 +1881,11 @@ public class ManagementController extends BasicController {
 				String[] oldnew = { oldContributions.toString(), newContributions.toString() };
 				activitiesToLog.put(306, oldnew);
 			}
+		
 		}
 
+		ensurePropertiesDependingOnSurveyType(survey, creation);
+		
 		form.setSurvey(survey);
 		form.setLanguage(survey.getLanguage());
 
@@ -2422,6 +2467,9 @@ public class ManagementController extends BasicController {
 			if (survey.getIsQuiz() && request.getParameter("startQuiz") == null) {
 				result = new ModelAndView("management/testQuiz", "form", form);
 				result.addObject("isquizpage", true);
+			} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+				result = new ModelAndView("management/testDelphi", "form", form);
+				result.addObject("isdelphipage", true);
 			}
 		}
 
@@ -2440,18 +2488,20 @@ public class ManagementController extends BasicController {
 		User user = sessionService.getCurrentUser(request);
 
 		String uniqueCode = request.getParameter(Constants.UNIQUECODE);
-
-		ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
-		if (err != null)
-			return err;
-
+		
 		String lang = locale.getLanguage();
 		if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
 			lang = request.getParameter("language.code");
 		}
-
-		AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
-
+		
+		if (!survey.getIsDelphi()) {
+			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
+			if (err != null)
+				return err;
+		}
+		
+		AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);
+	
 		String newlang = request.getParameter("newlang");
 		String newlangpost = request.getParameter("newlangpost");
 		String newcss = request.getParameter("newcss");
@@ -2636,7 +2686,7 @@ public class ManagementController extends BasicController {
 		String languagecode = survey.getLanguage().getCode();
 		String uid = survey.getUniqueId();
 
-		User u = sessionService.getCurrentUser(request);
+		User user = sessionService.getCurrentUser(request);
 
 		boolean active = !survey.getIsDraft();
 		if (!active)
@@ -2704,9 +2754,9 @@ public class ManagementController extends BasicController {
 			if (survey == null) {
 				active = false;
 				survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
-			} else if (request != null && !u.getId().equals(survey.getOwner().getId())
-					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
+			} else if (request != null && !user.getId().equals(survey.getOwner().getId())
+					&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& user.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
 				active = false;
 				allanswers = false;
 				survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
@@ -2716,7 +2766,7 @@ public class ManagementController extends BasicController {
 			survey = surveyService.getSurvey(shortname, true, false, false, false, null, true, true);
 		}
 
-		ResultFilter filter = u != null ? sessionService.getLastResultFilter(request, u.getId(), survey.getId()) : null;
+		ResultFilter filter = user != null ? sessionService.getLastResultFilter(request, user.getId(), survey.getId()) : null;
 
 		if (resultFilter != null)
 			filter = resultFilter;
@@ -2814,14 +2864,13 @@ public class ManagementController extends BasicController {
 		}
 
 		if (multidelete) {
-			if (!u.getId().equals(survey.getOwner().getId())
-					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
+			if (!user.getId().equals(survey.getOwner().getId())
+					&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& user.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
 				throw new ForbiddenURLException();
 			}
 
 			List<String> answerSetsToDelete = new ArrayList<>();
-
 			if (request.getParameter("check-all-delete") != null
 					&& (request.getParameter("check-all-delete").equalsIgnoreCase("true")
 							|| request.getParameter("check-all-delete").equalsIgnoreCase("on"))) {
@@ -2851,9 +2900,9 @@ public class ManagementController extends BasicController {
 		boolean columnDeleted = false;
 		
 		if (deletecolumn) {
-			if (!u.getId().equals(survey.getOwner().getId())
-					&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-					&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
+			if (!user.getId().equals(survey.getOwner().getId())
+					&& user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
+					&& user.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 2) {
 				throw new ForbiddenURLException();
 			}
 			
@@ -2873,9 +2922,9 @@ public class ManagementController extends BasicController {
 					String quid = table.getQuestions().get(Integer.parseInt(row)-1).getUniqueId();
 					String auid = table.getAnswers().get(Integer.parseInt(col)-1).getUniqueId();
 					
-					answerService.clearAnswersForQuestion(survey, filter, quid, auid, u.getId());					
+					answerService.clearAnswersForQuestion(survey, filter, quid, auid, user.getId());					
 				} else {				
-					answerService.clearAnswersForQuestion(survey, filter, questionUID, null, u.getId());
+					answerService.clearAnswersForQuestion(survey, filter, questionUID, null, user.getId());
 				}
 				columnDeleted = true;
 			}
@@ -2924,7 +2973,7 @@ public class ManagementController extends BasicController {
 
 		if (active && allanswers) {
 			if (!survey.isMissingElementsChecked())
-				surveyService.CheckAndRecreateMissingElements(survey, filter);
+				surveyService.checkAndRecreateMissingElements(survey, filter);
 		} else {
 			survey.clearMissingData();
 		}
@@ -2954,7 +3003,7 @@ public class ManagementController extends BasicController {
 		}
 
 		if (forPDF) {
-			Statistics statistics = answerService.getStatistics(survey, filter, false, active && allanswers, false);
+			Statistics statistics = answerService.getStatisticsOrStartCreator(survey, filter, false, active && allanswers, false);
 			result.addObject("statistics", statistics);
 			filter.setVisibleQuestions(filter.getExportedQuestions());
 		}
@@ -3008,7 +3057,7 @@ public class ManagementController extends BasicController {
 
 		if (request != null) {
 			try {
-				sessionService.setLastResultFilter(request, filter, u.getId(), survey.getId());
+				sessionService.setLastResultFilter(request, filter, user.getId(), survey.getId());
 			} catch (Exception e) {
 				logger.warn(e.getLocalizedMessage(), e);
 			}
@@ -3082,7 +3131,7 @@ public class ManagementController extends BasicController {
 			List<String> result = new ArrayList<>();
 
 			if (active && allanswers) {
-				surveyService.CheckAndRecreateMissingElements(survey, filter);
+				surveyService.checkAndRecreateMissingElements(survey, filter);
 			} else {
 				survey.clearMissingData();
 			}
@@ -3265,6 +3314,7 @@ public class ManagementController extends BasicController {
 	public @ResponseBody Statistics statisticsJSON(@PathVariable String shortname, HttpServletRequest request) {
 
 		try {
+			// Load latest filter from Sessions
 			ResultFilter filter = sessionService.getLastResultFilter(request);
 
 			String active = request.getParameter("active");
@@ -3305,16 +3355,16 @@ public class ManagementController extends BasicController {
 						return statistics;
 					}
 
-					StatisticsRequest r = new StatisticsRequest();
-					r.setAllanswers(active.equalsIgnoreCase("true") && allanswers.equalsIgnoreCase("true"));
-					r.setSurveyId(survey.getId());
-					r.setFilter(filter.copy());
-					answerService.saveStatisticsRequest(r);
+					StatisticsRequest statisticsRequest = new StatisticsRequest();
+					statisticsRequest.setAllanswers(active.equalsIgnoreCase("true") && allanswers.equalsIgnoreCase("true"));
+					statisticsRequest.setSurveyId(survey.getId());
+					statisticsRequest.setFilter(filter.copy());
+					answerService.saveStatisticsRequest(statisticsRequest);
 
 					logger.info("calling worker server for statistics");
 
 					try {
-						URL workerurl = new URL(workerserverurl + "worker/startStatistics/" + r.getId());
+						URL workerurl = new URL(workerserverurl + "worker/startStatistics/" + statisticsRequest.getId());
 						URLConnection wc = workerurl.openConnection();
 						BufferedReader in = new BufferedReader(new InputStreamReader(wc.getInputStream()));
 						String inputLine;
@@ -3325,11 +3375,11 @@ public class ManagementController extends BasicController {
 
 						if (result.toString().equals("OK")) {
 							Statistics s = new Statistics();
-							s.setRequestID(r.getId());
+							s.setRequestID(statisticsRequest.getId());
 							return s;
 						} else {
 							logger.error(
-									"calling worker server for statisticsrequest " + r.getId() + " returned" + result);
+									"calling worker server for statisticsrequest " + statisticsRequest.getId() + " returned" + result);
 							return null;
 						}
 					} catch (ConnectException e) {
@@ -3337,7 +3387,7 @@ public class ManagementController extends BasicController {
 					}
 				}
 
-				return answerService.getStatistics(survey, filter, false,
+				return answerService.getStatisticsOrStartCreator(survey, filter, false,
 						active.equalsIgnoreCase("true") && allanswers.equalsIgnoreCase("true"), true);
 
 			} else {
@@ -3380,7 +3430,7 @@ public class ManagementController extends BasicController {
 			}
 
 			results.setViewName("management/chartspdf");
-			results.addObject("forPDF", true);
+			results.addObject("forpdf", true);
 			return results;
 
 		} catch (Exception e) {
@@ -3439,7 +3489,7 @@ public class ManagementController extends BasicController {
 		}
 
 		results.setViewName("management/statisticspdf");
-		results.addObject("forPDF", true);
+		results.addObject("forpdf", true);
 		return results;
 	}
 
@@ -3480,7 +3530,7 @@ public class ManagementController extends BasicController {
 		}
 
 		results.setViewName("management/statisticsquizpdf");
-		results.addObject("forPDF", true);
+		results.addObject("forpdf", true);
 		return results;
 	}
 

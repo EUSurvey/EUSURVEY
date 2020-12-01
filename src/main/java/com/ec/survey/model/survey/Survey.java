@@ -56,7 +56,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 		@Index(name = "DRA_IDX", columnList = "ISDRAFT") })
 @Cacheable("com.ec.survey.model.survey.Survey")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Survey implements java.io.Serializable {
+final public class Survey implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	public static final String TITLE = "TITLE";
@@ -155,6 +155,7 @@ public class Survey implements java.io.Serializable {
 	private String ecasMode;
 	private Boolean logoInInfo;
 	private Boolean isQuiz;
+	private Boolean isDelphi;
 	private Boolean isOPC;
 	private Boolean showQuizIcons;
 	private Boolean showTotalScore;
@@ -175,6 +176,8 @@ public class Survey implements java.io.Serializable {
 	private Boolean isUseMaxNumberContributionLink = false;
 	private String maxNumberContributionLink = "";
 	private Boolean sendConfirmationEmail = false;
+	private Boolean isDelphiShowAnswers = false;
+	private Integer minNumberDelphiStatistics = 5;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1264,6 +1267,15 @@ public class Survey implements java.io.Serializable {
 		this.isQuiz = isQuiz != null && isQuiz;
 	}
 
+	@Column(name = "DELPHI")
+	public Boolean getIsDelphi() {
+	    return isDelphi;
+	}
+
+	public void setIsDelphi(Boolean isDelphi) {
+	    this.isDelphi = isDelphi != null && isDelphi;
+	}
+
 	@Column(name = "OPC")
 	public Boolean getIsOPC() {
 		return isOPC;
@@ -1354,6 +1366,24 @@ public class Survey implements java.io.Serializable {
 
 	public void setTrustScore(Integer trustScore) {
 		this.trustScore = trustScore;
+	}
+	
+	@Column(name = "DELPHIANSWERS")
+	public Boolean getIsDelphiShowAnswers() {
+		return isDelphiShowAnswers  != null ? isDelphiShowAnswers : false;
+	}
+	
+	public void setIsDelphiShowAnswers(Boolean isDelphiShowAnswers) {
+		this.isDelphiShowAnswers = isDelphiShowAnswers != null ? isDelphiShowAnswers : false;
+	}
+
+	@Column(name = "DELPHIMINSTATISTICS")
+	public Integer getMinNumberDelphiStatistics() {
+		return minNumberDelphiStatistics != null ? minNumberDelphiStatistics : 5;
+	}
+
+	public void setMinNumberDelphiStatistics(Integer minNumberDelphiStatistics) {
+		this.minNumberDelphiStatistics = minNumberDelphiStatistics  != null ? minNumberDelphiStatistics : 5;
 	}
 
 	@Transient
@@ -1498,6 +1528,9 @@ public class Survey implements java.io.Serializable {
 		copy.setMaxNumberContribution(maxNumberContribution);
 		copy.setMaxNumberContributionText(Tools.filterHTML(maxNumberContributionText));
 		copy.setMaxNumberContributionLink(Tools.filterHTML(maxNumberContributionLink));
+		copy.isDelphi = isDelphi;
+		copy.isDelphiShowAnswers = isDelphiShowAnswers;
+		copy.minNumberDelphiStatistics = minNumberDelphiStatistics;
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -2201,5 +2234,6 @@ public class Survey implements java.io.Serializable {
 	public void reorderElementsByPosition() {
 		elements.sort(Comparator.comparing(o -> (o.getPosition())));		
 	}
+
 
 }
