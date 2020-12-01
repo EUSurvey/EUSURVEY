@@ -46,6 +46,10 @@ public class ResultFilter implements java.io.Serializable {
 	private Map<String, String> filterValues = new HashMap<>();
 	private Set<String> visibleQuestions = new HashSet<>();
 	private Set<String> exportedQuestions = new HashSet<>();
+	
+	private Set<String> visibleExplanations = new HashSet<>();
+	private Set<String> exportedExplanations = new HashSet<>();
+	
 	private Boolean createdOrUpdated = false;
 	private Boolean onlyReallyUpdated = false;
 	private Boolean noTestAnswers = false;
@@ -240,6 +244,24 @@ public class ResultFilter implements java.io.Serializable {
 		this.exportedQuestions = exportedQuestions;
 	}
 	
+	@ElementCollection
+	@Cascade(value={CascadeType.ALL})
+	public Set<String> getVisibleExplanations() {
+		return visibleExplanations;
+	}
+	public void setVisibleExplanations(Set<String> visibleExplanations) {
+		this.visibleExplanations = visibleExplanations;
+	}
+	
+	@ElementCollection
+	@Cascade(value={CascadeType.ALL})
+	public Set<String> getExportedExplanations() {
+		return exportedExplanations;
+	}
+	public void setExportedExplanations(Set<String> exportedExplanations) {
+		this.exportedExplanations = exportedExplanations;
+	}
+	
 	@Transient
 	public void addExportedQuestion(String question)
 	{
@@ -289,6 +311,21 @@ public class ResultFilter implements java.io.Serializable {
 		if (exportedQuestions == null || exportedQuestions.isEmpty()) return visible(questionId);
 		
 		return exportedQuestions.contains(questionId);
+	}
+	
+	@Transient
+	public boolean explanationVisible(String questionId)
+	{
+		return visibleExplanations.contains(questionId);
+	}
+	
+	@Transient
+	public boolean explanationExported(String questionId)
+	{
+		//Fallback for old filter that have no exported questions
+		if (exportedExplanations == null || exportedExplanations.isEmpty()) return explanationVisible(questionId);
+		
+		return exportedExplanations.contains(questionId);
 	}
 	
 	@Transient

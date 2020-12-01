@@ -35,6 +35,9 @@ public class BasicService implements BeanFactoryAware {
 	@Resource(name = "answerService")
 	protected AnswerService answerService;
 	
+	@Resource
+	protected AnswerExplanationService answerExplanationService;
+	
 	@Resource(name = "participationService")
 	protected ParticipationService participationService;
 	

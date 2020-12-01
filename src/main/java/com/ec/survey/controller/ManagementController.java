@@ -2839,6 +2839,10 @@ public class ManagementController extends BasicController {
 						String value = StringUtils.arrayToDelimitedString(values, ";");
 						filter.getFilterValues().put(questionId, value);
 						filtered = true;
+					} else if (entry.getKey().startsWith("selectedexplanation")) {
+						filter.getVisibleExplanations().add(entry.getKey().substring(19));
+					} else if (entry.getKey().startsWith("exportselectedexplanation")) {
+						filter.getExportedExplanations().add(entry.getKey().substring(25));						
 					} else if (entry.getKey().startsWith("selected")) {
 						filter.getVisibleQuestions().add(entry.getKey().substring(8));
 					} else if (entry.getKey().startsWith("exportselected")) {
@@ -3139,9 +3143,13 @@ public class ManagementController extends BasicController {
 			boolean addlinks = isOwner || user == null || user.getFormPrivilege() > 1
 					|| user.getLocalPrivilegeValue("AccessResults") > 1
 					|| (form.getSurvey().getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0);
-			filter = answerService.initialize(filter);
-			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks,
+			filter = answerService.initialize(filter);			
+			
+			List<List<String>> answersets = null;
+			
+			answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks,
 					false, showuploadedfiles, false, false);
+			 
 			if (answersets != null) {
 				Date updateDate = reportingService.getLastUpdate(survey);
 				result.add(updateDate == null ? "" : ConversionTools.getFullString(updateDate));
@@ -3184,7 +3192,7 @@ public class ManagementController extends BasicController {
 				result.add(answerSet.getUniqueCode());
 				result.add(answerSet.getId().toString());
 
-				for (Element question : survey.getQuestions()) {
+				for (Question question : survey.getQuestions()) {
 					if (visibleQuestions.contains(question) || survey.getMissingElements().contains(question)) {
 						if (question instanceof Matrix) {
 							for (Element matrixQuestion : ((Matrix) question).getQuestions()) {
@@ -3274,6 +3282,16 @@ public class ManagementController extends BasicController {
 										.append("</span>");
 							}
 							result.add(s.toString());
+						}
+						
+						if (survey.getIsDelphi() && question.getIsDelphiQuestion() && filter.getVisibleExplanations().contains(question.getId().toString()))
+						{
+							try {
+								AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
+								result.add(explanation.getText());
+							} catch (NoSuchElementException ex) {
+								result.add("no explanation");
+							}
 						}
 					}
 				}
