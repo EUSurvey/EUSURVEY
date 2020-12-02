@@ -55,6 +55,8 @@ public class ExportService extends BasicService {
 			Hibernate.initialize(export.getResultFilter().getLanguages());
 			Hibernate.initialize(export.getResultFilter().getFilterValues());
 			Hibernate.initialize(export.getResultFilter().getVisibleQuestions());
+			Hibernate.initialize(export.getResultFilter().getVisibleExplanations());
+			Hibernate.initialize(export.getResultFilter().getExportedExplanations());
 		}
 		session.saveOrUpdate(export);
 		session.flush();		
@@ -317,6 +319,8 @@ public class ExportService extends BasicService {
 						Hibernate.initialize(export.getResultFilter().getFilterValues());
 						Hibernate.initialize(export.getResultFilter().getVisibleQuestions());
 						Hibernate.initialize(export.getResultFilter().getExportedQuestions());
+						Hibernate.initialize(export.getResultFilter().getVisibleExplanations());
+						Hibernate.initialize(export.getResultFilter().getExportedExplanations());
 					}
 					
 					if (export.getActivityFilter() != null)
@@ -388,6 +392,8 @@ public class ExportService extends BasicService {
 					Hibernate.initialize(export.getResultFilter().getExportedQuestions());
 					Hibernate.initialize(export.getResultFilter().getFilterValues());
 					Hibernate.initialize(export.getResultFilter().getVisibleQuestions());
+					Hibernate.initialize(export.getResultFilter().getVisibleExplanations());
+					Hibernate.initialize(export.getResultFilter().getExportedExplanations());
 				}
 			}
 			
