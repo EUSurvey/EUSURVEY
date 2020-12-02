@@ -150,7 +150,6 @@ public class XlsExportCreator extends ExportCreator {
 				if (form.getSurvey().getIsDelphi() && question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
 					Cell cell = rowInsertHeader.createCell(columnIndexInsertHeader++);
 					cell.setCellValue(resources.getMessage("label.Explanation", null, "Explanation", locale));
-
 					cell.setCellStyle(questionTitleStyle);
 					sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
 					checkColumnInsertHeader(export);
