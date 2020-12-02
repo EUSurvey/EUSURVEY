@@ -150,6 +150,15 @@ public class OdfExportCreator extends ExportCreator {
 							cell.setFont(font);
 						}
 					}
+					
+					if (form.getSurvey().getIsDelphi() && question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+						cell = sheet.getCellByPosition(columnIndex++, rowIndex);
+						cell.setStringValue(resources.getMessage("label.Explanation", null, "Explanation", locale));
+						Font font = cell.getFont();
+						font.setSize(10);
+						font.setFontStyle(FontStyle.BOLD);
+						cell.setFont(font);
+					}
 				}
 		}
 
@@ -319,6 +328,8 @@ public class OdfExportCreator extends ExportCreator {
 		}
 
 		filter.setVisibleQuestions(filter.getExportedQuestions());
+		filter.setVisibleExplanations(filter.getExportedExplanations());
+		
 		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
 				publication == null || publication.getShowUploadedDocuments(), false, false);
 
@@ -759,6 +770,24 @@ public class OdfExportCreator extends ExportCreator {
 						}
 					}
 				}
+			if (question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+				cell = sheet.getCellByPosition(columnIndex++, rowIndex);
+								
+				if (answerSet == null) {
+					cell.setStringValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter)));
+					cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+				} else {
+					try {
+						AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
+						cell.setStringValue(ConversionTools.removeHTMLNoEscape(explanation.getText()));
+						cell.setDisplayText(ConversionTools.removeHTMLNoEscape(explanation.getText()));
+					} catch (NoSuchElementException ex) {
+						cell.setStringValue("");
+					}					
+				}
+				
+				cell.setValueType(Constants.STRING);
+			}
 		}
 		if (publication == null && filter != null) {
 			if (filter.exported("invitation")) {
