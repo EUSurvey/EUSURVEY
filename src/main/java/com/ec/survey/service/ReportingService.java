@@ -641,7 +641,7 @@ public class ReportingService extends BasicService {
 								row.add(item.toString());
 							}
 							
-							if (survey.getIsDelphi() && question instanceof Question && question != null && ((Question)question).getIsDelphiQuestion() && filter.getVisibleExplanations().contains(question.getId().toString()))
+							if (survey.getIsDelphi() && question.isDelphiElement() && filter.getVisibleExplanations().contains(question.getId().toString()))
 							{
 								try {
 									AnswerExplanation explanation = answerExplanationService.getExplanation(ConversionTools.getValue(answerrow[1]), question.getUniqueId());
