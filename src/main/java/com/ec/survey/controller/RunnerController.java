@@ -2701,7 +2701,7 @@ public class RunnerController extends BasicController {
 			}
 
 			if (question instanceof RatingQuestion) {
-				return handleDelphiTableRatingQuestions((RatingQuestion) question);
+				return handleDelphiTableRatingQuestion((RatingQuestion) question);
 			}
 
 			if (question instanceof TimeQuestion) {
@@ -2937,7 +2937,7 @@ public class RunnerController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 
-	private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestions(RatingQuestion question) {
+	private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestion(RatingQuestion question) {
 		DelphiTable result = new DelphiTable(DelphiQuestionType.Rating);
 
 		Map<String, Integer> questionPositions = new HashMap<>();
