@@ -75,7 +75,9 @@ public class ResultFilter implements java.io.Serializable {
 
 	public void clearSelectedQuestions() {
 		visibleQuestions.clear();
-		exportedQuestions.clear();		
+		exportedQuestions.clear();
+		visibleExplanations.clear();
+		exportedExplanations.clear();
 	}
 
 	@Id
@@ -475,6 +477,14 @@ public class ResultFilter implements java.io.Serializable {
 		Set<String> newExportedQuestions = new HashSet<>();
         newExportedQuestions.addAll(exportedQuestions);
 		copy.exportedQuestions = newExportedQuestions;
+		
+		Set<String> newVisibleExplanations = new HashSet<>();
+        newVisibleExplanations.addAll(visibleExplanations);
+		copy.visibleExplanations = newVisibleExplanations;
+
+		Set<String> newExportedExplanations = new HashSet<>();
+        newExportedExplanations.addAll(exportedExplanations);
+		copy.exportedExplanations = newExportedExplanations;
 
 		copy.surveyId = surveyId;
 		copy.userId = userId;

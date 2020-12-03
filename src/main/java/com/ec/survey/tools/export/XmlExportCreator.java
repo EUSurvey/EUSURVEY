@@ -1,6 +1,7 @@
 package com.ec.survey.tools.export;
 
 import com.ec.survey.model.Answer;
+import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Export;
 import com.ec.survey.model.ResultFilter;
@@ -43,6 +44,7 @@ public class XmlExportCreator extends ExportCreator {
 	private Date exportedNow = null;
 
 	private static final String ANSWER = "Answer";
+	private static final String EXPLANATION = "Explanation";
 	
 	@Override
 	@Transactional
@@ -850,6 +852,24 @@ public class XmlExportCreator extends ExportCreator {
 							writer.writeEndElement(); // Answer
 						}
 					}
+				}
+				
+				if (question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+					writer.writeStartElement(EXPLANATION);
+					writer.writeAttribute("qid", question.getUniqueId());
+									
+					if (answerSet == null) {
+						writer.writeCharacters(ConversionTools.removeHTMLNoEscape(row.get(answerrowcounter++)));
+					} else {
+						try {
+							AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
+							writer.writeCharacters(ConversionTools.removeHTMLNoEscape(explanation.getText()));
+						} catch (NoSuchElementException ex) {
+							//ignore
+						}					
+					}
+					
+					writer.writeEndElement(); // Explanation
 				}
 			}
 		}

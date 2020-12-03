@@ -146,6 +146,14 @@ public class XlsExportCreator extends ExportCreator {
 					sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
 					checkColumnInsertHeader(export);
 				}
+				
+				if (form.getSurvey().getIsDelphi() && question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+					Cell cell = rowInsertHeader.createCell(columnIndexInsertHeader++);
+					cell.setCellValue(resources.getMessage("label.Explanation", null, "Explanation", locale));
+					cell.setCellStyle(questionTitleStyle);
+					sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
+					checkColumnInsertHeader(export);
+				}
 			}
 		}
 
@@ -315,6 +323,11 @@ public class XlsExportCreator extends ExportCreator {
 		filter.getVisibleQuestions().clear();
 		for (String question : filter.getExportedQuestions()) {
 			filter.getVisibleQuestions().add(question);
+		}
+		
+		filter.getVisibleExplanations().clear();
+		for (String question : filter.getExportedExplanations()) {
+			filter.getVisibleExplanations().add(question);
 		}
 
 		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
@@ -842,6 +855,21 @@ public class XlsExportCreator extends ExportCreator {
 						cell.setCellValue(cellValue.toString());
 					}
 				}
+			
+			if (question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+				Cell cell = checkColumnsParseAnswerSet();
+								
+				if (answerSet == null) {
+					cell.setCellValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+				} else {
+					try {
+						AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
+						cell.setCellValue(ConversionTools.removeHTMLNoEscape(explanation.getText()));
+					} catch (NoSuchElementException ex) {
+						cell.setCellValue("");
+					}					
+				}
+			}
 		}
 		if (publication == null && filter != null) {
 			if (filter.exported("invitation")) {
