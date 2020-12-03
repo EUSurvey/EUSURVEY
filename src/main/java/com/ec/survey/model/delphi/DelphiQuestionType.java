@@ -9,5 +9,6 @@ public enum DelphiQuestionType {
     Number,
     Date,
     Time,
-    RegEx
+    RegEx,
+    Table
 }
