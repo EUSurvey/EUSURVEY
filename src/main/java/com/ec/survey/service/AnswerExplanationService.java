@@ -77,6 +77,11 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<DelphiContribution> getDelphiContributions(TimeQuestion question) {
+		return getDelphiContributionsInternal(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
+	}
+
+	@Transactional(readOnly = true)
 	protected List<DelphiContribution> getDelphiContributionsInternal(Collection<String> questionUids, String mainQuestionUid, boolean isDraft) {
 		String queryText = "select a.AS_ID as `answerSetId`, COALESCE(ex.TEXT, main_explanation.TEXT) as `explanation`, aset.ANSWER_SET_UPDATE as `update`, a.VALUE as `value`, a.PA_UID as `answerUid`, a.QUESTION_UID as `questionUid`\n" +
 				"from ANSWERS a\n" +

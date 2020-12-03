@@ -7,5 +7,6 @@ public enum DelphiQuestionType {
     Rating,
     FreeText,
     Number,
-    Date
+    Date,
+    Time
 }
