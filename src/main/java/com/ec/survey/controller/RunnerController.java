@@ -2727,11 +2727,11 @@ public class RunnerController extends BasicController {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 
-		Map<String, String> answerIdToTitle = new HashMap<>();
+		Map<String, String> answerUidToTitle = new HashMap<>();
 		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
-			String id = answer.getId().toString();
+			String id = answer.getUniqueId();
 			String title = answer.getTitle();
-			answerIdToTitle.put(id, title);
+			answerUidToTitle.put(id, title);
 		}
 
 		// group explanations by answer set ID
@@ -2746,10 +2746,10 @@ public class RunnerController extends BasicController {
 
 		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
 			List<String> values = entry.getValue().stream()
-					.map(DelphiContribution::getValue)
+					.map(DelphiContribution::getAnswerUid)
 					.collect(Collectors.toList());
 
-			if (!values.stream().allMatch(answerIdToTitle::containsKey)) {
+			if (!values.stream().allMatch(answerUidToTitle::containsKey)) {
 				// invalid answer set
 				continue;
 			}
@@ -2760,7 +2760,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
 			for (String value : values) {
-				String title = answerIdToTitle.get(value);
+				String title = answerUidToTitle.get(value);
 				DelphiTableAnswer answer = new DelphiTableAnswer(null, title);
 				tableEntry.getAnswers().add(answer);
 			}
@@ -2776,14 +2776,14 @@ public class RunnerController extends BasicController {
 
 		Map<String, String> answerTitles = new HashMap<>();
 		for (Element matrixAnswer : question.getAnswers()) {
-			answerTitles.put(matrixAnswer.getId().toString(), matrixAnswer.getTitle());
+			answerTitles.put(matrixAnswer.getUniqueId(), matrixAnswer.getTitle());
 		}
 
-		Map<Integer, Integer> questionPositions = new HashMap<>();
-		Map<Integer, String> questionTitles = new HashMap<>();
+		Map<String, Integer> questionPositions = new HashMap<>();
+		Map<String, String> questionTitles = new HashMap<>();
 		for (Element matrixQuestion : question.getQuestions()) {
-			questionPositions.put(matrixQuestion.getId(), matrixQuestion.getPosition());
-			questionTitles.put(matrixQuestion.getId(), matrixQuestion.getTitle());
+			questionPositions.put(matrixQuestion.getUniqueId(), matrixQuestion.getPosition());
+			questionTitles.put(matrixQuestion.getUniqueId(), matrixQuestion.getTitle());
 		}
 
 		// group explanations by answer set ID
@@ -2803,8 +2803,8 @@ public class RunnerController extends BasicController {
 			boolean skipped = false;
 			for (DelphiContribution contrib : entry.getValue()) {
 				// find labels for question and answer
-				String label = questionTitles.get(contrib.getQuestionId());
-				String value = answerTitles.get(contrib.getValue());
+				String label = questionTitles.get(contrib.getQuestionUid());
+				String value = answerTitles.get(contrib.getAnswerUid());
 
 				if (label == null || value == null) {
 					// invalid answer or question, skip answer set
@@ -2813,7 +2813,7 @@ public class RunnerController extends BasicController {
 				}
 
 				DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
-				int position = questionPositions.get(contrib.getQuestionId());
+				int position = questionPositions.get(contrib.getQuestionUid());
 				answers.add(new Pair<>(position, answer));
 			}
 
@@ -2843,11 +2843,11 @@ public class RunnerController extends BasicController {
 	private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestions(RatingQuestion question) {
 		DelphiTable result = new DelphiTable(DelphiQuestionType.Rating);
 
-		Map<Integer, Integer> questionPositions = new HashMap<>();
-		Map<Integer, String> questionTitles = new HashMap<>();
+		Map<String, Integer> questionPositions = new HashMap<>();
+		Map<String, String> questionTitles = new HashMap<>();
 		for (Element subQuestion : question.getQuestions()) {
-			questionPositions.put(subQuestion.getId(), subQuestion.getPosition());
-			questionTitles.put(subQuestion.getId(), subQuestion.getTitle());
+			questionPositions.put(subQuestion.getUniqueId(), subQuestion.getPosition());
+			questionTitles.put(subQuestion.getUniqueId(), subQuestion.getTitle());
 		}
 
 		// group explanations by answer set ID
@@ -2867,7 +2867,7 @@ public class RunnerController extends BasicController {
 			boolean skipped = false;
 			for (DelphiContribution contrib : entry.getValue()) {
 				// find label for question ID
-				String label = questionTitles.get(contrib.getQuestionId());
+				String label = questionTitles.get(contrib.getQuestionUid());
 
 				if (label == null) {
 					// invalid answer, skip answer set
@@ -2876,7 +2876,7 @@ public class RunnerController extends BasicController {
 				}
 
 				DelphiTableAnswer answer = new DelphiTableAnswer(label, contrib.getValue());
-				int position = questionPositions.get(contrib.getQuestionId());
+				int position = questionPositions.get(contrib.getQuestionUid());
 				answers.add(new Pair<>(position, answer));
 			}
 

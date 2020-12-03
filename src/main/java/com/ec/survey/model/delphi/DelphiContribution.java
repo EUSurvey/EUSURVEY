@@ -5,7 +5,8 @@ import java.util.Date;
 public class DelphiContribution {
     private int answerSetId;
     private String explanation;
-    private int questionId;
+    private String questionUid;
+    private String answerUid;
     private Date update;
     private String value;
 
@@ -25,14 +26,22 @@ public class DelphiContribution {
         this.explanation = explanation;
     }
 
-    public int getQuestionId() {
-        return questionId;
+    public String getQuestionUid() {
+        return questionUid;
     }
 
-    public void setQuestionId(int questionId) {
-        this.questionId = questionId;
+    public void setQuestionUid(String questionUid) {
+        this.questionUid = questionUid;
     }
 
+	public String getAnswerUid() {
+		return answerUid;
+	}
+
+	public void setAnswerUid(String answerUid) {
+		this.answerUid = answerUid;
+	}
+    
     public Date getUpdate() {
         return update;
     }
