@@ -50,5 +50,3 @@ src/main/webapp/WEB-INF/views/versionfooter.txt
 .settings/
 .classpath
 .project
-/src/main/webapp/WEB-INF/springCLAM.properties
-/src/main/webapp/WEB-INF/springDELPHI.properties
