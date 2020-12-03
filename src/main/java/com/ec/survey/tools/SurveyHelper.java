@@ -813,8 +813,8 @@ public class SurveyHelper {
 				fileService);
 		
 		//remove existing answers for the question
-		if (question instanceof MatrixOrTable) {
-			MatrixOrTable parent = (MatrixOrTable) question;
+		if (question instanceof Matrix) {
+			Matrix parent = (Matrix) question;
 			for (Element childQuestion : parent.getQuestions())
 			{
 				List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
