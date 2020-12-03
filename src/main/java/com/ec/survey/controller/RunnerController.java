@@ -2680,15 +2680,19 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
-			if (question instanceof ChoiceQuestion) {				
+			if (question instanceof ChoiceQuestion) {
 				return handleDelphiTableChoiceQuestion((ChoiceQuestion) question);
+			}
+
+			if (question instanceof DateQuestion) {
+				return handleDelphiTableDateQuestion((DateQuestion) question);
 			}
 
 			if (question instanceof FreeTextQuestion) {
 				return handleDelphiTableFreeTextQuestion((FreeTextQuestion) question);
 			}
 
-			if (question instanceof Matrix) {				
+			if (question instanceof Matrix) {
 				return handleDelphiTableMatrix((Matrix) question);
 			}
 
@@ -2775,6 +2779,32 @@ public class RunnerController extends BasicController {
 				DelphiTableAnswer answer = new DelphiTableAnswer(null, title);
 				tableEntry.getAnswers().add(answer);
 			}
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<DelphiTable> handleDelphiTableDateQuestion(DateQuestion question) {
+		DelphiTable result = new DelphiTable(DelphiQuestionType.Date);
+
+		// get all contributions
+		List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
+
+		// get survey
+		Survey survey = question.getSurvey();
+
+		if (contributions.size() < survey.getMinNumberDelphiStatistics()) {
+			// not enough answers
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		for (DelphiContribution contrib : contributions) {
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setExplanation(contrib.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
+			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
 
 			result.getEntries().add(tableEntry);
 		}

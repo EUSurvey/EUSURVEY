@@ -50,6 +50,11 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<DelphiContribution> getDelphiContributions(DateQuestion question) {
+		return getDelphiContributionsInternal(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
+	}
+
+	@Transactional(readOnly = true)
 	public List<DelphiContribution> getDelphiContributions(FreeTextQuestion question) {
 		return getDelphiContributionsInternal(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
 	}

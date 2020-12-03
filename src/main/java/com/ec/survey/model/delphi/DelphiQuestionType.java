@@ -6,5 +6,6 @@ public enum DelphiQuestionType {
     Matrix,
     Rating,
     FreeText,
-    Number
+    Number,
+    Date
 }
