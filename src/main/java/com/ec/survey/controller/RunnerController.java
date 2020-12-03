@@ -9,7 +9,6 @@ import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.delphi.*;
 import com.ec.survey.model.survey.*;
-import com.ec.survey.service.AnswerExplanationService;
 import com.ec.survey.service.MailService;
 import com.ec.survey.service.PDFService;
 import com.ec.survey.service.ValidCodesService;
@@ -39,7 +38,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -2741,15 +2739,7 @@ public class RunnerController extends BasicController {
     }
 
     private ResponseEntity<DelphiTable> handleDelphiTableChoiceQuestion(ChoiceQuestion question) {
-        DelphiTable result;
-
-        if (question instanceof SingleChoiceQuestion) {
-            result = new DelphiTable(DelphiQuestionType.SingleChoice);
-        } else if (question instanceof MultipleChoiceQuestion) {
-            result = new DelphiTable(DelphiQuestionType.MultipleChoice);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
+        DelphiTable result = new DelphiTable();
 
         Map<String, String> answerUidToTitle = new HashMap<>();
         for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
@@ -2796,7 +2786,7 @@ public class RunnerController extends BasicController {
     }
 
     private ResponseEntity<DelphiTable> handleDelphiTableDateQuestion(DateQuestion question) {
-        DelphiTable result = new DelphiTable(DelphiQuestionType.Date);
+        DelphiTable result = new DelphiTable();
 
         // get all contributions
         List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
@@ -2822,7 +2812,7 @@ public class RunnerController extends BasicController {
     }
 
     private ResponseEntity<DelphiTable> handleDelphiTableFreeTextQuestion(FreeTextQuestion question) {
-        DelphiTable result = new DelphiTable(DelphiQuestionType.FreeText);
+        DelphiTable result = new DelphiTable();
 
         // get all contributions
         List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
@@ -2848,7 +2838,7 @@ public class RunnerController extends BasicController {
     }
 
     private ResponseEntity<DelphiTable> handleDelphiTableMatrix(Matrix question) {
-        DelphiTable result = new DelphiTable(DelphiQuestionType.Matrix);
+        DelphiTable result = new DelphiTable();
 
         Map<String, String> answerTitles = new HashMap<>();
         for (Element matrixAnswer : question.getAnswers()) {
@@ -2917,7 +2907,7 @@ public class RunnerController extends BasicController {
     }
 
     private ResponseEntity<DelphiTable> handleDelphiTableNumberQuestion(NumberQuestion question) {
-        DelphiTable result = new DelphiTable(DelphiQuestionType.Number);
+        DelphiTable result = new DelphiTable();
 
         // get all contributions
         List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
@@ -2943,7 +2933,7 @@ public class RunnerController extends BasicController {
     }
 
     private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestion(RatingQuestion question) {
-        DelphiTable result = new DelphiTable(DelphiQuestionType.Rating);
+        DelphiTable result = new DelphiTable();
 
         Map<String, Integer> questionPositions = new HashMap<>();
         Map<String, String> questionTitles = new HashMap<>();
@@ -3006,7 +2996,7 @@ public class RunnerController extends BasicController {
     }
 
     private ResponseEntity<DelphiTable> handleDelphiTableRegExQuestion(RegExQuestion question) {
-        DelphiTable result = new DelphiTable(DelphiQuestionType.RegEx);
+        DelphiTable result = new DelphiTable();
 
         // get all contributions
         List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
@@ -3032,7 +3022,7 @@ public class RunnerController extends BasicController {
     }
 
     private ResponseEntity<DelphiTable> handleDelphiTableTable(Table question) {
-        DelphiTable result = new DelphiTable(DelphiQuestionType.Table);
+        DelphiTable result = new DelphiTable();
 
         // group explanations by answer set ID
         Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
@@ -3065,7 +3055,7 @@ public class RunnerController extends BasicController {
     }
 
     private ResponseEntity<DelphiTable> handleDelphiTableTimeQuestion(TimeQuestion question) {
-        DelphiTable result = new DelphiTable(DelphiQuestionType.Time);
+        DelphiTable result = new DelphiTable();
 
         // get all contributions
         List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
