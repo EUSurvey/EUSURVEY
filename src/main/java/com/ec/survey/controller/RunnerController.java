@@ -2692,6 +2692,10 @@ public class RunnerController extends BasicController {
 				return handleDelphiTableMatrix((Matrix) question);
 			}
 
+			if (question instanceof NumberQuestion) {
+				return handleDelphiTableNumberQuestion((NumberQuestion) question);
+			}
+
 			if (question instanceof RatingQuestion) {				
 				return handleDelphiTableRatingQuestions((RatingQuestion) question);
 			}
@@ -2866,6 +2870,32 @@ public class RunnerController extends BasicController {
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<DelphiTable> handleDelphiTableNumberQuestion(NumberQuestion question) {
+		DelphiTable result = new DelphiTable(DelphiQuestionType.Number);
+
+		// get all contributions
+		List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
+
+		// get survey
+		Survey survey = question.getSurvey();
+
+		if (contributions.size() < survey.getMinNumberDelphiStatistics()) {
+			// not enough answers
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		for (DelphiContribution contrib : contributions) {
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setExplanation(contrib.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
+			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
 
 			result.getEntries().add(tableEntry);
 		}
