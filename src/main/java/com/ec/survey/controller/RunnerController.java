@@ -2699,43 +2699,23 @@ public class RunnerController extends BasicController {
                 return handleDelphiTableChoiceQuestion((ChoiceQuestion) question);
             }
 
-            if (question instanceof DateQuestion) {
-                return handleDelphiTableDateQuestion((DateQuestion) question);
-            }
-
-            if (question instanceof FreeTextQuestion) {
-                return handleDelphiTableFreeTextQuestion((FreeTextQuestion) question);
-            }
-
             if (question instanceof Matrix) {
                 return handleDelphiTableMatrix((Matrix) question);
-            }
-
-            if (question instanceof NumberQuestion) {
-                return handleDelphiTableNumberQuestion((NumberQuestion) question);
             }
 
             if (question instanceof RatingQuestion) {
                 return handleDelphiTableRatingQuestion((RatingQuestion) question);
             }
 
-            if (question instanceof RegExQuestion) {
-                return handleDelphiTableRegExQuestion((RegExQuestion) question);
-            }
-
             if (question instanceof Table) {
                 return handleDelphiTableTable((Table) question);
             }
 
-            if (question instanceof TimeQuestion) {
-                return handleDelphiTableTimeQuestion((TimeQuestion) question);
-            }
+            return handleDelphiTableRawValueQuestion(question);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
     private ResponseEntity<DelphiTable> handleDelphiTableChoiceQuestion(ChoiceQuestion question) {
@@ -2769,95 +2749,43 @@ public class RunnerController extends BasicController {
             }
 
             DelphiTableEntry tableEntry = new DelphiTableEntry();
-            DelphiContribution firstValue = entry.getValue().get(0);
-            tableEntry.setExplanation(firstValue.getExplanation());
-            tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			DelphiContribution firstValue = entry.getValue().get(0);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
-            for (String value : values) {
-                String title = answerUidToTitle.get(value);
-                DelphiTableAnswer answer = new DelphiTableAnswer(null, title);
-                tableEntry.getAnswers().add(answer);
-            }
+			for (String value : values) {
+				String title = answerUidToTitle.get(value);
+				DelphiTableAnswer answer = new DelphiTableAnswer(null, title);
+				tableEntry.getAnswers().add(answer);
+			}
 
-            result.getEntries().add(tableEntry);
-        }
+			result.getEntries().add(tableEntry);
+		}
 
-        return ResponseEntity.ok(result);
-    }
+		return ResponseEntity.ok(result);
+	}
 
-    private ResponseEntity<DelphiTable> handleDelphiTableDateQuestion(DateQuestion question) {
-        DelphiTable result = new DelphiTable();
+	private ResponseEntity<DelphiTable> handleDelphiTableMatrix(Matrix question) {
+		DelphiTable result = new DelphiTable();
 
-        // get all contributions
-        List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
+		Map<String, String> answerTitles = new HashMap<>();
+		for (Element matrixAnswer : question.getAnswers()) {
+			answerTitles.put(matrixAnswer.getUniqueId(), matrixAnswer.getTitle());
+		}
 
-        // get survey
-        Survey survey = question.getSurvey();
+		Map<String, Integer> questionPositions = new HashMap<>();
+		Map<String, String> questionTitles = new HashMap<>();
+		for (Element matrixQuestion : question.getQuestions()) {
+			questionPositions.put(matrixQuestion.getUniqueId(), matrixQuestion.getPosition());
+			questionTitles.put(matrixQuestion.getUniqueId(), matrixQuestion.getTitle());
+		}
 
-        if (contributions.size() < survey.getMinNumberDelphiStatistics()) {
-            // not enough answers
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
 
-        for (DelphiContribution contrib : contributions) {
-            DelphiTableEntry tableEntry = new DelphiTableEntry();
-            tableEntry.setExplanation(contrib.getExplanation());
-            tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
-            tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
-
-            result.getEntries().add(tableEntry);
-        }
-
-        return ResponseEntity.ok(result);
-    }
-
-    private ResponseEntity<DelphiTable> handleDelphiTableFreeTextQuestion(FreeTextQuestion question) {
-        DelphiTable result = new DelphiTable();
-
-        // get all contributions
-        List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
-
-        // get survey
-        Survey survey = question.getSurvey();
-
-        if (contributions.size() < survey.getMinNumberDelphiStatistics()) {
-            // not enough answers
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
-
-        for (DelphiContribution contrib : contributions) {
-            DelphiTableEntry tableEntry = new DelphiTableEntry();
-            tableEntry.setExplanation(contrib.getExplanation());
-            tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
-            tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
-
-            result.getEntries().add(tableEntry);
-        }
-
-        return ResponseEntity.ok(result);
-    }
-
-    private ResponseEntity<DelphiTable> handleDelphiTableMatrix(Matrix question) {
-        DelphiTable result = new DelphiTable();
-
-        Map<String, String> answerTitles = new HashMap<>();
-        for (Element matrixAnswer : question.getAnswers()) {
-            answerTitles.put(matrixAnswer.getUniqueId(), matrixAnswer.getTitle());
-        }
-
-        Map<String, Integer> questionPositions = new HashMap<>();
-        Map<String, String> questionTitles = new HashMap<>();
-        for (Element matrixQuestion : question.getQuestions()) {
-            questionPositions.put(matrixQuestion.getUniqueId(), matrixQuestion.getPosition());
-            questionTitles.put(matrixQuestion.getUniqueId(), matrixQuestion.getTitle());
-        }
-
-        // group explanations by answer set ID
-        Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
-                .stream()
-                .collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
-
-        Survey survey = question.getSurvey();
+		Survey survey = question.getSurvey();
         if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
@@ -2887,72 +2815,46 @@ public class RunnerController extends BasicController {
                 continue;
             }
 
-            // sort answers by position
-            List<DelphiTableAnswer> sortedAnswers = answers.stream()
-                    .sorted(Comparator.comparingInt(Pair::getKey))
-                    .map(Pair::getValue)
-                    .collect(Collectors.toList());
+			// sort answers by position
+			List<DelphiTableAnswer> sortedAnswers = answers.stream()
+					.sorted(Comparator.comparingInt(Pair::getKey))
+					.map(Pair::getValue)
+					.collect(Collectors.toList());
 
-            DelphiContribution firstValue = entry.getValue().get(0);
+			DelphiContribution firstValue = entry.getValue().get(0);
 
-            DelphiTableEntry tableEntry = new DelphiTableEntry();
-            tableEntry.getAnswers().addAll(sortedAnswers);
-            tableEntry.setExplanation(firstValue.getExplanation());
-            tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.getAnswers().addAll(sortedAnswers);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
-            result.getEntries().add(tableEntry);
-        }
+			result.getEntries().add(tableEntry);
+		}
 
-        return ResponseEntity.ok(result);
-    }
+		return ResponseEntity.ok(result);
+	}
 
-    private ResponseEntity<DelphiTable> handleDelphiTableNumberQuestion(NumberQuestion question) {
-        DelphiTable result = new DelphiTable();
+	private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestion(RatingQuestion question) {
+		DelphiTable result = new DelphiTable();
 
-        // get all contributions
-        List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
+		Map<String, Integer> questionPositions = new HashMap<>();
+		Map<String, String> questionTitles = new HashMap<>();
+		for (Element subQuestion : question.getQuestions()) {
+			questionPositions.put(subQuestion.getUniqueId(), subQuestion.getPosition());
+			questionTitles.put(subQuestion.getUniqueId(), subQuestion.getTitle());
+		}
 
-        // get survey
-        Survey survey = question.getSurvey();
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
 
-        if (contributions.size() < survey.getMinNumberDelphiStatistics()) {
-            // not enough answers
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
+		Survey survey = question.getSurvey();
+		if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
 
-        for (DelphiContribution contrib : contributions) {
-            DelphiTableEntry tableEntry = new DelphiTableEntry();
-            tableEntry.setExplanation(contrib.getExplanation());
-            tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
-            tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
-
-            result.getEntries().add(tableEntry);
-        }
-
-        return ResponseEntity.ok(result);
-    }
-
-    private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestion(RatingQuestion question) {
-        DelphiTable result = new DelphiTable();
-
-        Map<String, Integer> questionPositions = new HashMap<>();
-        Map<String, String> questionTitles = new HashMap<>();
-        for (Element subQuestion : question.getQuestions()) {
-            questionPositions.put(subQuestion.getUniqueId(), subQuestion.getPosition());
-            questionTitles.put(subQuestion.getUniqueId(), subQuestion.getTitle());
-        }
-
-        // group explanations by answer set ID
-        Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
-                .stream()
-                .collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
-
-        Survey survey = question.getSurvey();
-        if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
-
-        for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
+		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
             // maps position to element
             Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.getValue().size());
 
@@ -2976,103 +2878,77 @@ public class RunnerController extends BasicController {
                 continue;
             }
 
-            // sort answers by position
-            List<DelphiTableAnswer> sortedAnswers = answers.stream()
-                    .sorted(Comparator.comparingInt(Pair::getKey))
-                    .map(Pair::getValue)
-                    .collect(Collectors.toList());
+			// sort answers by position
+			List<DelphiTableAnswer> sortedAnswers = answers.stream()
+					.sorted(Comparator.comparingInt(Pair::getKey))
+					.map(Pair::getValue)
+					.collect(Collectors.toList());
 
-            DelphiContribution firstValue = entry.getValue().get(0);
+			DelphiContribution firstValue = entry.getValue().get(0);
 
-            DelphiTableEntry tableEntry = new DelphiTableEntry();
-            tableEntry.getAnswers().addAll(sortedAnswers);
-            tableEntry.setExplanation(firstValue.getExplanation());
-            tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.getAnswers().addAll(sortedAnswers);
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
-            result.getEntries().add(tableEntry);
-        }
+			result.getEntries().add(tableEntry);
+		}
 
-        return ResponseEntity.ok(result);
-    }
+		return ResponseEntity.ok(result);
+	}
 
-    private ResponseEntity<DelphiTable> handleDelphiTableRegExQuestion(RegExQuestion question) {
-        DelphiTable result = new DelphiTable();
+	private ResponseEntity<DelphiTable> handleDelphiTableRawValueQuestion(Question question) {
+		DelphiTable result = new DelphiTable();
 
-        // get all contributions
-        List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
+		// get survey
+		Survey survey = question.getSurvey();
 
-        // get survey
-        Survey survey = question.getSurvey();
+		// get all contributions
+		List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), survey.getIsDraft());
 
-        if (contributions.size() < survey.getMinNumberDelphiStatistics()) {
-            // not enough answers
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
+		if (contributions.size() < survey.getMinNumberDelphiStatistics()) {
+			// not enough answers
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
 
-        for (DelphiContribution contrib : contributions) {
-            DelphiTableEntry tableEntry = new DelphiTableEntry();
-            tableEntry.setExplanation(contrib.getExplanation());
-            tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
-            tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
+		for (DelphiContribution contrib : contributions) {
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setExplanation(contrib.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
+			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
 
-            result.getEntries().add(tableEntry);
-        }
+			result.getEntries().add(tableEntry);
+		}
 
-        return ResponseEntity.ok(result);
-    }
+		return ResponseEntity.ok(result);
+	}
 
-    private ResponseEntity<DelphiTable> handleDelphiTableTable(Table question) {
-        DelphiTable result = new DelphiTable();
+	private ResponseEntity<DelphiTable> handleDelphiTableTable(Table question) {
+		DelphiTable result = new DelphiTable();
 
-        // group explanations by answer set ID
-        Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
-                .stream()
-                .collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
 
-        Survey survey = question.getSurvey();
-        if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
+		Survey survey = question.getSurvey();
+		if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
 
-        for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
-            entry.getValue().sort(Comparator.comparingInt(DelphiContribution::getColumn).thenComparingInt(DelphiContribution::getRow));
+		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
+			entry.getValue().sort(Comparator.comparingInt(DelphiContribution::getRow).thenComparingInt(DelphiContribution::getColumn));
 
-            DelphiContribution firstValue = entry.getValue().get(0);
-            DelphiTableEntry tableEntry = new DelphiTableEntry();
-            tableEntry.setExplanation(firstValue.getExplanation());
-            tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			DelphiContribution firstValue = entry.getValue().get(0);
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setExplanation(firstValue.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
-            for (DelphiContribution contrib : entry.getValue()) {
+			for (DelphiContribution contrib : entry.getValue()) {
                 String col = Character.toString((char) ('A' + contrib.getColumn() - 1)); // column 1 is A
                 DelphiTableAnswer answer = new DelphiTableAnswer(col + contrib.getRow(), contrib.getValue());
                 tableEntry.getAnswers().add(answer);
             }
-
-            result.getEntries().add(tableEntry);
-        }
-
-        return ResponseEntity.ok(result);
-    }
-
-    private ResponseEntity<DelphiTable> handleDelphiTableTimeQuestion(TimeQuestion question) {
-        DelphiTable result = new DelphiTable();
-
-        // get all contributions
-        List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
-
-        // get survey
-        Survey survey = question.getSurvey();
-
-        if (contributions.size() < survey.getMinNumberDelphiStatistics()) {
-            // not enough answers
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
-
-        for (DelphiContribution contrib : contributions) {
-            DelphiTableEntry tableEntry = new DelphiTableEntry();
-            tableEntry.setExplanation(contrib.getExplanation());
-            tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
-            tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
 
             result.getEntries().add(tableEntry);
         }
