@@ -18,6 +18,7 @@ import com.ec.survey.tools.export.StatisticsCreator;
 import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.ConstraintViolationException;
+import org.joda.time.DateTime;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
@@ -2699,6 +2700,8 @@ public class RunnerController extends BasicController {
 		return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 	}
 	
+	private Map<String, String> uniqueCodeToUser = new HashMap<String, String>();
+	
 	private boolean answerSetContainsAnswerForQuestion(AnswerSet answerSet, Question question)
 	{
 		if (question instanceof Matrix) {
@@ -2718,7 +2721,28 @@ public class RunnerController extends BasicController {
 		
 		return !answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty();
 	}
-
+	
+	private void loadComments(DelphiTableEntry tableEntry, int answerSetId, String questionUid) {
+		List<AnswerComment> comments = answerExplanationService.loadComments(answerSetId, questionUid);
+		Map<Integer, DelphiComment> rootComments = new HashMap<Integer, DelphiComment>();
+		for (AnswerComment comment : comments) {
+			if (!uniqueCodeToUser.containsKey(comment.getUniqueCode()))
+			{
+				uniqueCodeToUser.put(comment.getUniqueCode(), "User " + (uniqueCodeToUser.size() + 1));
+			}	
+			
+			DelphiComment delphiComment = new DelphiComment(uniqueCodeToUser.get(comment.getUniqueCode()), comment.getText(), comment.getDate(), comment.getId());
+			
+			if (comment.getParent() == null)
+			{			
+				tableEntry.getComments().add(delphiComment);
+				rootComments.put(comment.getId(), delphiComment);
+			} else {
+				rootComments.get(comment.getParent().getId()).getReplies().add(delphiComment);
+			}
+		}
+	}
+	
 	private ResponseEntity<DelphiTable> handleDelphiTableChoiceQuestion(ChoiceQuestion question) {
 		DelphiTable result;
 
@@ -2759,8 +2783,10 @@ public class RunnerController extends BasicController {
 
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			DelphiContribution firstValue = entry.getValue().get(0);
+			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			for (String value : values) {
 				String title = answerUidToTitle.get(value);
@@ -2833,9 +2859,11 @@ public class RunnerController extends BasicController {
 			DelphiContribution firstValue = entry.getValue().get(0);
 
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
 		}
@@ -2896,13 +2924,72 @@ public class RunnerController extends BasicController {
 			DelphiContribution firstValue = entry.getValue().get(0);
 
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
 		}
 
 		return ResponseEntity.ok(result);
+	}
+	
+	@PostMapping(value = "/delphiAddComment")
+	public ResponseEntity<String> delphiAddComment(HttpServletRequest request, Locale locale) {
+		try {
+					
+			final String surveyId = request.getParameter("surveyid");
+			final int surveyIdParsed = Integer.parseInt(surveyId);
+			final Survey survey = surveyService.getSurvey(surveyIdParsed);
+
+			final String answerSetId = request.getParameter("answersetid");
+			final int answerSetIdParsed = Integer.parseInt(answerSetId);
+			
+			final String text = request.getParameter("text");
+			final String uniqueCode = request.getParameter("uniquecode");
+			
+			final String questionUid = request.getParameter("questionuid");
+			final String parent = request.getParameter("parent");
+			
+			Element element = survey.getQuestionMapByUniqueId().get(questionUid);
+
+			if (!(element instanceof Question) || !element.isDelphiElement()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			
+			AnswerSet answerSet = answerService.get(uniqueCode);
+
+			Question question = (Question) element;
+			if (!answerSetContainsAnswerForQuestion(answerSet, question)) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			
+			AnswerComment comment = new AnswerComment();
+			comment.setAnswerSetId(answerSetIdParsed);
+			comment.setQuestionUid(questionUid);
+			comment.setUniqueCode(uniqueCode);
+			comment.setText(ESAPI.encoder().encodeForHTML(text));
+			comment.setDate(new Date());
+			
+			if (parent != null) {
+				int parentCommentId = Integer.parseInt(parent);
+				AnswerComment parentComment = answerExplanationService.getComment(parentCommentId);
+				if (parentComment == null || !parentComment.getQuestionUid().equals(questionUid))
+				{
+					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				}
+				comment.setParent(parentComment);
+			}
+			
+			answerExplanationService.saveComment(comment);
+			
+			return new ResponseEntity<>(null, HttpStatus.OK);
+
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

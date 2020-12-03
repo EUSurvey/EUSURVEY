@@ -1,7 +1,10 @@
 package com.ec.survey.service;
 
+import com.ec.survey.model.AnswerComment;
 import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
+import com.ec.survey.model.Draft;
+import com.ec.survey.model.delphi.DelphiComment;
 import com.ec.survey.model.delphi.DelphiContribution;
 import com.ec.survey.model.survey.*;
 import org.hibernate.Query;
@@ -114,4 +117,30 @@ public class AnswerExplanationService extends BasicService {
 			}
 		}
 	}
+	
+	@Transactional
+	public void saveComment(AnswerComment comment) {
+		final Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(comment);
+	}
+	
+	@Transactional
+	public List<AnswerComment> loadComments(int answerSetId, String questionUid) {
+		final Session session = sessionFactory.getCurrentSession();
+		
+		Query query = session.createQuery("FROM AnswerComment WHERE answerSetId = :answerSetId and questionUid = :questionUid ORDER BY date");
+		query.setInteger("answerSetId", answerSetId).setString("questionUid", questionUid);
+		
+		@SuppressWarnings("unchecked")
+		List<AnswerComment> list = query.list();
+		
+		return list;
+	}
+
+	@Transactional
+	public AnswerComment getComment(int id) {
+		final Session session = sessionFactory.getCurrentSession();
+		return (AnswerComment) session.get(AnswerComment.class, id);
+	}
+
 }

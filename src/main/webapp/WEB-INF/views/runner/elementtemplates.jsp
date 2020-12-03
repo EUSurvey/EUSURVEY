@@ -1175,13 +1175,11 @@
 			<div class="delphi-table">
 				<table class="table table-condensed table-striped table-bordered">
 					<thead>
-						<tr>
-							<th colspan="3" class="area-header">${form.getMessage("label.DelphiAnswersTableTitle")}</th>
-						</tr>
-						<tr>
-							<th>${form.getMessage("label.DelphiAnswersTableAnswer")}</th>
-							<th>${form.getMessage("label.DelphiAnswersTableExplanation")}</th>
-							<th>${form.getMessage("label.DelphiAnswersTableUpdate")}</th>
+						<tr class="area-header">
+							<th style="width:33%">${form.getMessage("label.DelphiAnswersTableAnswer")}</th>
+							<th style="min-width:100px">${form.getMessage("label.DelphiAnswersTableUpdate")}</th>
+							<th style="width:33%">${form.getMessage("label.DelphiAnswersTableExplanation")}</th>
+							<th style="width:33%">${form.getMessage("label.Discussion")}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -1197,8 +1195,30 @@
 									</div>
 								<!-- /ko -->
 							</td>
-							<td><span data-bind="html: explanation"></span></td>
 							<td><span data-bind="html: update"></span></td>
+							<td><span data-bind="html: explanation"></span></td>
+							<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId}">
+								<!-- ko foreach: comments -->
+									<div class="delphicommentsdiv">
+										<div style="margin-top: 5px;">
+											<span style="font-weight: bold" data-bind="html: user"></span> <span class="delphicommentdate" data-bind="html: date"></span><br />
+											<span data-bind="html: text"></span>
+										</div>
+										<!-- ko foreach: replies -->
+											<div style="margin-top: 10px; margin-left: 20px;">
+												<span style="font-weight: bold" data-bind="html: user"></span> <span class="delphicommentdate" data-bind="html: date"></span><br />
+												<span data-bind="html: text"></span>
+											</div>
+										<!-- /ko -->
+										<div style="margin-left: 20px; margin-top: 10px;">
+											<a data-bind="attr: {onclick: 'addDelphiReply(this,' + id + ')'}" onclick="addDelphiReply(this)">${form.getMessage("label.Reply")}</a>
+										</div>
+									</div>
+								<!-- /ko -->
+								<div style="margin-top: 5px">
+									<a onclick="addDelphiComment(this)">${form.getMessage("label.AddComment")}</a>
+								</div>
+							</td>
 						</tr>
 						<!-- /ko -->
 					</tbody>
