@@ -77,6 +77,11 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<DelphiContribution> getDelphiContributions(RegExQuestion question) {
+		return getDelphiContributionsInternal(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
+	}
+
+	@Transactional(readOnly = true)
 	public List<DelphiContribution> getDelphiContributions(TimeQuestion question) {
 		return getDelphiContributionsInternal(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
 	}

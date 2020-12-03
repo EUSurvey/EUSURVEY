@@ -2704,6 +2704,10 @@ public class RunnerController extends BasicController {
 				return handleDelphiTableRatingQuestion((RatingQuestion) question);
 			}
 
+			if (question instanceof RegExQuestion) {
+				return handleDelphiTableRegExQuestion((RegExQuestion) question);
+			}
+
 			if (question instanceof TimeQuestion) {
 				return handleDelphiTableTimeQuestion((TimeQuestion) question);
 			}
@@ -2993,6 +2997,32 @@ public class RunnerController extends BasicController {
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<DelphiTable> handleDelphiTableRegExQuestion(RegExQuestion question) {
+		DelphiTable result = new DelphiTable(DelphiQuestionType.RegEx);
+
+		// get all contributions
+		List<DelphiContribution> contributions = answerExplanationService.getDelphiContributions(question);
+
+		// get survey
+		Survey survey = question.getSurvey();
+
+		if (contributions.size() < survey.getMinNumberDelphiStatistics()) {
+			// not enough answers
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		for (DelphiContribution contrib : contributions) {
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setExplanation(contrib.getExplanation());
+			tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
+			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
 
 			result.getEntries().add(tableEntry);
 		}

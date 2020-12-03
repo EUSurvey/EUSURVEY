@@ -8,5 +8,6 @@ public enum DelphiQuestionType {
     FreeText,
     Number,
     Date,
-    Time
+    Time,
+    RegEx
 }
