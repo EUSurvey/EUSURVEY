@@ -4,5 +4,6 @@ public enum DelphiQuestionType {
     SingleChoice,
     MultipleChoice,
     Matrix,
-    Rating
+    Rating,
+    FreeText
 }

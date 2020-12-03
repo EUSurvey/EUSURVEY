@@ -50,6 +50,11 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<DelphiContribution> getDelphiContributions(FreeTextQuestion question) {
+		return getDelphiContributionsInternal(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
+	}
+
+	@Transactional(readOnly = true)
 	public List<DelphiContribution> getDelphiContributions(Matrix question) {
 		List<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
 		return getDelphiContributionsInternal(uids, question.getUniqueId(), question.getSurvey().getIsDraft());
