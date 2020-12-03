@@ -2792,7 +2792,9 @@ public class ManagementController extends BasicController {
 		}
 
 		boolean filtered = false;
-
+		final String SELECTEDEXPLANATION = "selectedexplanation"; 
+		final String EXPORTSELECTEDEXPLANATION = "exportselectedexplanation";
+		
 		if (!ignorePostParameters) {
 			if (request != null && request.getMethod().equalsIgnoreCase("POST")) {
 				filter.clearSelectedQuestions();
@@ -2839,10 +2841,10 @@ public class ManagementController extends BasicController {
 						String value = StringUtils.arrayToDelimitedString(values, ";");
 						filter.getFilterValues().put(questionId, value);
 						filtered = true;
-					} else if (entry.getKey().startsWith("selectedexplanation")) {
-						filter.getVisibleExplanations().add(entry.getKey().substring(19));
-					} else if (entry.getKey().startsWith("exportselectedexplanation")) {
-						filter.getExportedExplanations().add(entry.getKey().substring(25));						
+					} else if (entry.getKey().startsWith(SELECTEDEXPLANATION)) {
+						filter.getVisibleExplanations().add(entry.getKey().substring(SELECTEDEXPLANATION.length()));
+					} else if (entry.getKey().startsWith(EXPORTSELECTEDEXPLANATION)) {
+						filter.getExportedExplanations().add(entry.getKey().substring(EXPORTSELECTEDEXPLANATION.length()));						
 					} else if (entry.getKey().startsWith("selected")) {
 						filter.getVisibleQuestions().add(entry.getKey().substring(8));
 					} else if (entry.getKey().startsWith("exportselected")) {
@@ -3145,9 +3147,7 @@ public class ManagementController extends BasicController {
 					|| (form.getSurvey().getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0);
 			filter = answerService.initialize(filter);			
 			
-			List<List<String>> answersets = null;
-			
-			answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks,
+			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks,
 					false, showuploadedfiles, false, false);
 			 
 			if (answersets != null) {
