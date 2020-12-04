@@ -48,9 +48,6 @@ import java.util.Map.Entry;
 @Service("answerService")
 public class AnswerService extends BasicService {
 
-	@Resource
-	private AnswerExplanationService answerExplanationService;
-
 	@Resource(name = "attendeeService")
 	private AttendeeService attendeeService;
 
@@ -2115,6 +2112,8 @@ public class AnswerService extends BasicService {
 		Hibernate.initialize(filter.getFilterValues());
 		Hibernate.initialize(filter.getExportedQuestions());
 		Hibernate.initialize(filter.getVisibleQuestions());
+		Hibernate.initialize(filter.getExportedExplanations());
+		Hibernate.initialize(filter.getVisibleExplanations());
 		Hibernate.initialize(filter.getLanguages());
 		return filter;
 	}

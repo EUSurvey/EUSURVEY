@@ -4,9 +4,11 @@ import java.util.Date;
 
 public class DelphiContribution {
     private int answerSetId;
+    private String answerUid;
+    private int column;
     private String explanation;
     private String questionUid;
-    private String answerUid;
+    private int row;
     private Date update;
     private String value;
 
@@ -16,6 +18,22 @@ public class DelphiContribution {
 
     public void setAnswerSetId(int answerSetId) {
         this.answerSetId = answerSetId;
+    }
+
+    public String getAnswerUid() {
+        return answerUid;
+    }
+
+    public void setAnswerUid(String answerUid) {
+        this.answerUid = answerUid;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
     }
 
     public String getExplanation() {
@@ -34,14 +52,14 @@ public class DelphiContribution {
         this.questionUid = questionUid;
     }
 
-	public String getAnswerUid() {
-		return answerUid;
-	}
+    public int getRow() {
+        return row;
+    }
 
-	public void setAnswerUid(String answerUid) {
-		this.answerUid = answerUid;
-	}
-    
+    public void setRow(int row) {
+        this.row = row;
+    }
+
     public Date getUpdate() {
         return update;
     }

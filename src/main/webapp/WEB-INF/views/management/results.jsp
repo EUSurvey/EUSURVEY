@@ -984,6 +984,15 @@
 								<td>${question.title.length() > 0? question.getStrippedTitleAtMost100() : question.shortname}</td>
 							</tr>
 						</c:if>
+						
+						<c:if test="${question.getIsDelphiQuestion()}">
+							<tr>
+								<td style="vertical-align: top;"><input name="selectedexplanation${question.id}" <c:if test="${filter.explanationVisible(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="explanation${question.id}" /></td>
+								<td style="vertical-align: top; "><input name="exportselectedexplanation${question.id}" <c:if test="${filter.explanationExported(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="explanationexported${question.id}" /></td>
+
+								<td style="padding-left: 20px;"><spring:message code="label.Explanation" /></td>
+							</tr>
+						</c:if>
 					</c:forEach>
 					
 					<tr>
