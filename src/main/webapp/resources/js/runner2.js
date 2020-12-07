@@ -477,14 +477,26 @@ function delphiPrefill(editorElement) {
 		},
 		success: function(currentExplanationText, textStatus)
 		{
-			console.log("BRS:67 "+JSON.stringify(currentExplanationText));
 			if (textStatus === "nocontent") {
 				return;
 			}
 			
 			if (currentExplanationText) {
+				var explanationFileUploadSection = $('#' + editorElement[0].id).closest(".explanation-section").siblings(".explanation-file-upload-section");
+				var viewModel = ko.dataFor(explanationFileUploadSection[0]);
+				const uniqueId = $("#uniqueCode").val();
+				console.log("BRS:67 "+uniqueId+" \n\n\n"+JSON.stringify(viewModel)+" \n\n\n"+JSON.stringify(explanationFileUploadSection)+"\n\n\n"+editorElement[0].id+"\n\n\n "+JSON.stringify(surveyElement.attr('class'))+" \n\n\n HERE ---> "+JSON.stringify(surveyElement.find(".explanation-file-upload-section"))+" \n\n\n Other Stuff --> "+JSON.stringify(currentExplanationText));
 				editorElement[0].setContent(currentExplanationText.text);
 				// BRS: also update the files name list from currentExplanationText.fileInfo
+				var inputElement = surveyElement.find(".explanation-file-upload-section").children("input");
+				// updateFileList($('#' + editorElement[0].id).closest(".explanation-file-upload-section").siblings(".file-uploader").first(), data);
+				filenames = [];
+				currentExplanationText.fileInfo.forEach( function (oneFileInfo, index) {
+					filenames.push(oneFileInfo.name);
+				});
+				var updateinfo = {"success":true,"files":filenames,"wrongextension":false};
+				updateFileList(inputElement, updateinfo);
+				//pushFilesForAnswer(uniqueId, filenames);
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 		}

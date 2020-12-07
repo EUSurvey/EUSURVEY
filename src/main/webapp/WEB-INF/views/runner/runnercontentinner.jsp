@@ -643,7 +643,17 @@
 	 	var filevalues = null;
 	 	function getFileAnswer(uniqueId)
 	 	{
+	 		console.log("BRS 68: "+JSON.stringify(filevalues));
 	 		return typeof filevalues[uniqueId] != 'undefined' ? filevalues[uniqueId] : "";
+	 	}
+	 	
+	 	function pushFilesForAnswer(uniqueId, filenames)
+	 	{
+	 		console.log("BRS 80: "+uniqueId+" "+JSON.stringify(filenames));
+			if (typeof filevalues[uniqueId] === 'undefined') {
+				filevalues[uniqueId] = new Array();
+			}
+			filevalues[uniqueId] = filevalues[uniqueId].concat(filenames);
 	 	}
 	 	
 	 	initializeAnswerData();

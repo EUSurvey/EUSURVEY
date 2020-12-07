@@ -97,6 +97,8 @@
 		}
 		
 		function updateFileList(element, responseJSON) {
+			
+			console.log("BRS 70: "+JSON.stringify(responseJSON));
 						
 			$(element).siblings(".uploaded-files").first().empty();
 			
