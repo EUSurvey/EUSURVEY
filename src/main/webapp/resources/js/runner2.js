@@ -1,4 +1,4 @@
-Chart.defaults.global.plugins.colorschemes.scheme = 'office.Blue6';
+Chart.defaults.global.plugins.colorschemes.scheme = 'tableau.Tableau10';
 
 function getElementViewModel(element)
 {
