@@ -2297,6 +2297,14 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		rating.setIsDelphiQuestion(isDelphiQuestion);
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = delphiChartTypeString == null ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != rating.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + rating.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		rating.setDelphiChartType(delphiChartType);
 		
 		Element q;
 		int j = 0;
@@ -2453,6 +2461,14 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		singlechoice.setIsDelphiQuestion(isDelphiQuestion);
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = delphiChartTypeString == null ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != singlechoice.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + singlechoice.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		singlechoice.setDelphiChartType(delphiChartType);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !singlechoice.getAttributeName().equals(nameattribute)) {
@@ -2699,6 +2715,14 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		multiplechoice.setIsDelphiQuestion(isDelphiQuestion);
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = delphiChartTypeString == null ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != multiplechoice.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + multiplechoice.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		multiplechoice.setDelphiChartType(delphiChartType);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !multiplechoice.getAttributeName().equals(nameattribute)) {
@@ -3013,6 +3037,14 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		matrix.setIsDelphiQuestion(isDelphiQuestion);
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = delphiChartTypeString == null ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != matrix.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + matrix.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		matrix.setDelphiChartType(delphiChartType);
 
 		// now get the elements inside the matrix
 		String matrixIdsAsString = parameterMap.get("matrixelements" + id)[0];

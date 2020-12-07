@@ -140,6 +140,12 @@ function update(input)
 			element.isDelphiQuestion(checked);
 			_undoProcessor.addUndoStep(["DelphiQuestion", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
 			break;
+		case "DelphiChartType":
+			var newValue = $(input).val();
+			var oldValue = element.delphiChartType();
+			element.delphiChartType(newValue);
+			_undoProcessor.addUndoStep(["DelphiChartType", id, $(_elementProperties.selectedelement).index(), oldValue, newValue]);
+			break;
 		case "Name":
 			var text = $(input).val();
 			var oldtext = element.attributeName();
