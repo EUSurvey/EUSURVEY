@@ -4,6 +4,7 @@ import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.SmtpServerNotConfiguredException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.*;
+import com.ec.survey.model.ResultFilter.ResultFilterSortKey;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
@@ -172,6 +173,11 @@ public class AnswerService extends BasicService {
 
 			answerSet.setUpdateDate(new Date());
 			boolean newAnswer = answerSet.getId() == null;
+			
+			if (answerSet.getSurvey().getIsECF()) {
+				this.ecfService.setAnswerSetECFComponents(answerSet.getSurvey(), answerSet);
+			}
+			
 			session.saveOrUpdate(answerSet);
 			session.flush();
 			if (!answerSet.getSurvey().getIsDraft()) {
@@ -389,7 +395,16 @@ public class AnswerService extends BasicService {
 
 		return result;
 	}
+	
+	@Transactional(readOnly = true)
+	public List<AnswerSet> getAnswersFromReporting(Survey survey, SqlPagination sqlPagination) throws Exception {
+		return this.getAnswers(survey, null, sqlPagination, false, false, true);
+	}
 
+	/**
+	 * Returns all the AnswerSets for a specific survey, given a specific Pagination
+	 * ResultFilter can be null to avoid filtering
+	 */
 	@Transactional(readOnly = true)
 	public List<AnswerSet> getAnswers(Survey survey, ResultFilter filter, SqlPagination sqlPagination,
 			boolean loadDraftIds, boolean initFiles, boolean usereportingdatabase) throws Exception {
@@ -562,6 +577,11 @@ public class AnswerService extends BasicService {
 			if (filter.getCaseId() != null && filter.getCaseId().length() > 0) {
 				where.append(" AND ans.UNIQUECODE = :uniqueCode");
 				values.put(Constants.UNIQUECODE, filter.getCaseId().trim());
+			}
+			
+			if (filter.getAnsweredECFProfileUID() != null && filter.getAnsweredECFProfileUID().length() > 0) {
+				where.append(" AND ans.ECF_PROFILE_UID = :profileUid");
+				values.put("profileUid", filter.getAnsweredECFProfileUID());
 			}
 
 			if (filter.getDraftId() != null && filter.getDraftId().length() > 0) {
@@ -746,11 +766,24 @@ public class AnswerService extends BasicService {
 					}
 				}
 			}
-
-			if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("score")) {
+			
+			switch (ResultFilterSortKey.parse(filter.getSortKey())) {
+			case NAME:
+				where.append(" ORDER BY CASE WHEN ans.RESPONDER_EMAIL IS NULL THEN ans.UNIQUECODE ELSE ans.RESPONDER_EMAIL END ").append(filter.getSortOrder());
+				break;
+			case SCORE:
 				where.append(" ORDER BY ans.SCORE ").append(filter.getSortOrder());
-			} else if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("date")) {
+				break;
+			case DATE:
 				where.append(" ORDER BY ans.ANSWER_SET_DATE ").append(filter.getSortOrder());
+				break;
+			case ECFSCORE:
+				where.append(" ORDER BY ans.ECF_TOTAL_SCORE " ).append(filter.getSortOrder());
+				break;
+			case ECFGAP:
+				where.append(" ORDER BY ABS(ans.ECF_TOTAL_GAP) ").append(filter.getSortOrder());
+				break;
+			default :
 			}
 		}
 

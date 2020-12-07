@@ -5,6 +5,7 @@ import com.ec.survey.model.administration.ComplexityParameters;
 import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.survey.PossibleAnswer;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.DomainUpdater;
 import com.ec.survey.tools.SkinCreator;
@@ -27,6 +28,8 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service("schemaService")
 public class SchemaService extends BasicService {
@@ -36,12 +39,89 @@ public class SchemaService extends BasicService {
 	// OCAS
 	public @Value("${casoss}") String cassOss;
 
+	public @Value("${ecf.template}") String ecfSurveyAlias;
+
 	public boolean isCasOss() {
 		return cassOss != null && cassOss.equalsIgnoreCase("true");
 	}
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
+	
+	
+	@Transactional 
+	public void step97() {
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			Query query = session.createQuery("FROM ECFProfile E where E.orderNumber is null and E.name is not null");
+			@SuppressWarnings("unchecked")
+			List<ECFProfile> ecfProfiles = query.list();
+			
+			Map<String, Integer> defaultOrder = ecfService.defaultProfileNameToOrder();
+			for (ECFProfile ecfProfile: ecfProfiles) {
+				String profileName = ecfProfile.getName();
+				ecfProfile.setOrderNumber(defaultOrder.get(profileName));
+				session.saveOrUpdate(ecfProfile);
+			}
+			
+			query = session.createQuery("FROM PossibleAnswer A where A.ecfProfile is not null");
+			@SuppressWarnings("unchecked")
+			List<PossibleAnswer> possibleAnswers = query.list();
+
+			for (PossibleAnswer possibleAnswer : possibleAnswers) {
+				String profileName = possibleAnswer.getEcfProfile().getName();
+				possibleAnswer.setPosition(defaultOrder.get(profileName));
+				session.saveOrUpdate(possibleAnswer);
+			}
+
+			Status status = getStatus();
+			status.setDbversion(97);
+			session.saveOrUpdate(status);
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+	}
+
+	@Transactional
+	public void step96() {
+		try {
+			Session session = sessionFactory.getCurrentSession();
+
+			final String event = "CREATE TABLE IF NOT EXISTS MV_SURVEYS_NUMBERPUBLISHEDANSWERS("+
+				"SURVEYUID varchar(255) NOT NULL," +
+				"PUBLISHEDANSWERS bigint(21) NOT NULL DEFAULT 0," + 
+				"LASTANSWER datetime DEFAULT NULL," + 
+				"MW_TIMESTAMP datetime NOT NULL DEFAULT '0000-00-00 00:00:00'," + 
+				"KEY MV_SURVEYS_IND (SURVEYUID,PUBLISHEDANSWERS)" + 
+			  ") ENGINE=InnoDB CHARSET=utf8;";
+			session.doWork(con -> con.createStatement().execute(event));
+
+			User admin = administrationService.getUserForLogin(administrationService.getAdminUser(), false);
+			Language objLang = surveyService.getLanguage("EN");
+			
+			Map<String, ECFType> clusterNameToType = ecfService.createClusterNameToType(ecfService.defaultClusterToType());
+			Map<String, ECFCluster> competencyNameToCluster = ecfService.createCompetencyNameToCluster(clusterNameToType, ecfService.defaultCompetencyToCluster());
+			Map<ECFProfile, Map<String, Integer>> profileToCompetencyToScore = ecfService.createECFProfileToCompetencyNameToScore(ecfService.defaultProfileNameToCompetencyName(), ecfService.defaultProfileNameToOrder());
+			Set<ECFCompetency> ecfCompetencies = ecfService.createECFCompetencies(profileToCompetencyToScore, competencyNameToCluster, ecfService.defaultCompetenciesOrder());
+			Set<ECFProfile> ecfProfiles = profileToCompetencyToScore.keySet();
+			
+			Survey ecfSurvey = SurveyCreator.createNewECFSurvey(admin, objLang,
+			ecfCompetencies, ecfProfiles,
+			ecfService.defaultQuestionNumberToAnswerToText(),
+			ecfService.defaultCompetencyNumberToQuestionNumberToText(),
+			ecfSurveyAlias);
+			surveyService.add(ecfSurvey, -1);
+			surveyService.publish(ecfSurvey, -1, -1, false, -1, false, false);
+
+			Status status = getStatus();
+			status.setDbversion(96);
+			session.saveOrUpdate(status);
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			logger.error(e.getLocalizedMessage(), e.getCause());
+		}
+	}
 
 	@Transactional
 	public void step95() {

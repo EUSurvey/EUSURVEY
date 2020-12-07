@@ -674,6 +674,33 @@ public class SurveyService extends BasicService {
 		return null;
 	}
 
+
+	@Transactional(readOnly = true)
+	public Survey getSurveyByAlias(String alias, boolean draft) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("SELECT id FROM Survey s WHERE s.shortname = :alias AND s.isDraft = :draft ORDER BY s.id DESC").setString("alias", alias);
+		query.setBoolean("draft", draft);
+
+		@SuppressWarnings("unchecked")
+		List<Survey> list = query.setReadOnly(true).setMaxResults(1).list();
+		if (list.size() > 0) {
+			Survey survey = getSurvey(ConversionTools.getValue(list.get(0)));
+
+			if (survey != null) {
+				synchronizeSurvey(survey, survey.getLanguage().getCode(), true);
+			}
+
+			session.setReadOnly(survey, true);
+			for (Element e : survey.getElementsRecursive(true)) {
+				session.setReadOnly(e, true);
+			}
+
+			return survey;
+		}
+		return null;
+	}
+
+
 	@Transactional(readOnly = true)
 	public Survey getSurveyByUniqueId(String uid, boolean loadTranslations, boolean draft) {
 		Session session = sessionFactory.getCurrentSession();
@@ -4076,7 +4103,18 @@ public class SurveyService extends BasicService {
 			session.save(published);
 		}
 	}
+	
+	@Transactional(readOnly = true)
+	public List<Survey> getAllECFSurveys() {
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "FROM Survey s WHERE s.isECF = true";
+		Query query = session.createQuery(sql);
 
+		@SuppressWarnings("unchecked")
+		List<Survey> result = query.list();
+		return result;
+	}
+	
 	public List<Survey> getAllSurveysForUser(User user) {
 		Session session = sessionFactory.getCurrentSession();
 

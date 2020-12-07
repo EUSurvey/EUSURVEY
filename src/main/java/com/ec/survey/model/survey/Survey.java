@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -28,7 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
+import com.ec.survey.model.ECFProfile;
 import com.ec.survey.model.Language;
 import com.ec.survey.model.Publication;
 import com.ec.survey.model.Skin;
@@ -156,6 +159,7 @@ public class Survey implements java.io.Serializable {
 	private Boolean logoInInfo;
 	private Boolean isQuiz;
 	private Boolean isOPC;
+	private Boolean isECF;
 	private Boolean showQuizIcons;
 	private Boolean showTotalScore;
 	private Boolean scoresByQuestion;
@@ -1273,6 +1277,35 @@ public class Survey implements java.io.Serializable {
 		this.isOPC = isOPC != null && isOPC;
 	}
 
+	@Column(name = "ECF")
+	public Boolean getIsECF() {
+		return isECF != null ? isECF : false;
+	}
+
+	public void setIsECF(Boolean isECF) {
+		this.isECF = isECF != null ? isECF : false;
+	}
+
+	@Transient
+	public Set<ECFProfile> getEcfProfiles() {
+		if (this.getIsECF()) {
+			Set<Element> questionSet = this.getElements().stream()
+					.filter(element -> element instanceof SingleChoiceQuestion).collect(Collectors.toSet());
+			for (Element questionElement : questionSet) {
+				SingleChoiceQuestion question = (SingleChoiceQuestion) questionElement;
+
+				if (!question.getPossibleAnswers().isEmpty()
+						&& question.getPossibleAnswers().get(0).getEcfProfile() != null) {
+					List<PossibleAnswer> possibleAnswers = question.getPossibleAnswers();
+					return possibleAnswers.stream().map(possibleAnswer -> {
+						return possibleAnswer.getEcfProfile();
+					}).collect(Collectors.toSet());
+				}
+			}
+		}
+		return new HashSet<>();
+	}
+
 	@Column(name = "SHOWSCORE")
 	public Boolean getShowTotalScore() {
 		return showTotalScore == null || showTotalScore;
@@ -1492,6 +1525,7 @@ public class Survey implements java.io.Serializable {
 		copy.showPDFOnUnavailabilityPage = showPDFOnUnavailabilityPage;
 		copy.showDocsOnUnavailabilityPage = showDocsOnUnavailabilityPage;
 		copy.isOPC = isOPC;
+		copy.isECF = isECF;
 		copy.setAllowedContributionsPerUser(allowedContributionsPerUser);
 		copy.setIsUseMaxNumberContribution(isUseMaxNumberContribution);
 		copy.setIsUseMaxNumberContributionLink(isUseMaxNumberContributionLink);
@@ -1580,17 +1614,20 @@ public class Survey implements java.io.Serializable {
 		return copy;
 	}
 
+	/**
+	 * Copies this elements into surveyCopy
+	 */
 	@Transient
-	public Map<Integer, Element> copyElements(Survey copy, SurveyService surveyService, boolean makeQuestionsLocked)
+	public Map<Integer, Element> copyElements(Survey surveyCopy, SurveyService surveyService, boolean makeQuestionsLocked)
 			throws ValidationException {
 		for (Element element : elements) {
-			Element c = element.copy(surveyService.getFileDir());
-			c.setLocked(makeQuestionsLocked);
-			copy.elements.add(c);
+			Element copiedElement = element.copy(surveyService.getFileDir());
+			copiedElement.setLocked(makeQuestionsLocked);
+			surveyCopy.elements.add(copiedElement);
 		}
 
 		Map<Integer, Element> elementsBySourceId = new HashMap<>();
-		for (Element newElement : copy.elements) {
+		for (Element newElement : surveyCopy.elements) {
 			elementsBySourceId.put(newElement.getSourceId(), newElement);
 			if (newElement instanceof ChoiceQuestion) {
 				for (PossibleAnswer answer : ((ChoiceQuestion) newElement).getPossibleAnswers()) {

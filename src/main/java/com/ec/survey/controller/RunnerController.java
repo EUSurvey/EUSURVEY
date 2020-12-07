@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/runner")
@@ -638,6 +639,12 @@ public class RunnerController extends BasicController {
 			}
 
 			ModelAndView result = new ModelAndView("thanks", Constants.UNIQUECODE, answerSet.getUniqueCode());
+			
+			if (survey.getIsECF()) {
+				result.addObject("isECF", true);
+				Set<ECFProfile> profiles = this.ecfService.getECFProfiles(survey);
+				result.addObject("ecfProfiles", profiles.stream().sorted().collect(Collectors.toList()));
+			}
 
 			if (survey.getIsOPC()) {
 				result.addObject("opcredirection", survey.getFinalConfirmationLink(opcredirect, lang));
@@ -1988,6 +1995,16 @@ public class RunnerController extends BasicController {
 
 			if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
 				result.addObject("participantsemail", answerSet.getResponderEmail());
+			}
+
+			if (survey.getIsECF()) {
+				result.addObject("isECF", true);
+				Set<ECFProfile> profiles = this.ecfService.getECFProfiles(survey);
+				result.addObject("ecfProfiles", profiles.stream().sorted().collect(Collectors.toList()));
+				// compute results
+				result.addObject("ecfResults", "example");
+				result.addObject("contextpath", contextpath);
+				result.addObject("surveyShortname", survey.getShortname());
 			}
 
 			result.addObject("isthankspage", true);

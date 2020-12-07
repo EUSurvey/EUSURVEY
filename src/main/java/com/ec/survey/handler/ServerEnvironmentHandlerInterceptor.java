@@ -44,6 +44,9 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	public static final String APPLICATION_OPC = "enableopc";
 	public @Value("${ui.enableopc}") String enableopc;
 	
+	public static final String APPLICATION_ECF = "enableecf";
+	public @Value("${ui.enableecf}") String enableecf;
+	
 	public static final String APPLICATION_PUBLICSURVEYS = "enablepublicsurveys";
 	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
 	
@@ -94,6 +97,7 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_KEY, captchakey);
             modelAndView.getModelMap().addAttribute(APPLICATION_ARCHIVING, enablearchiving != null && enablearchiving.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_OPC, enableopc != null && enableopc.equalsIgnoreCase("true"));
+            modelAndView.getModelMap().addAttribute(APPLICATION_ECF, enableecf != null && enableecf.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_PUBLICSURVEYS, enablepublicsurveys != null && enablepublicsurveys.equalsIgnoreCase("true"));
                         
             modelAndView.getModelMap().addAttribute(APPLICATION_FILEMANAGEMENT, enablefilemanagement != null && enablefilemanagement.equalsIgnoreCase("true"));
