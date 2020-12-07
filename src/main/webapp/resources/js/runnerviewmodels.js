@@ -24,7 +24,6 @@ function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)
 	viewModel.longdesc = ko.observable(longdesc == "null" ? "" : longdesc);
 	viewModel.cleanComment = ko.observable(cleanComment);
 	viewModel.width = ko.observable(width);
-	viewModell.explanationFileInfo = ko.observable([]);
 		
 	viewModel.copy = function()
 	{

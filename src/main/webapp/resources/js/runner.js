@@ -235,14 +235,10 @@ function createUploader(instance, maxSize)
 	    cache: false,
 	    sizeLimit: (maxSize * 1048576),
 	    onSubmit: function() {
-			console.log("BRS 72.1");
 	    	$(this.element).parent().find(".uploadinfo").show();
-			console.log("BRS 72.2");
 	    },
 		onComplete : function(id, fileName, responseJSON) {
-			console.log("BRS 72.5: "+JSON.stringify(fileName));
 			$(this.element).parent().find(".uploadinfo").hide();
-			console.log("BRS 73: "+JSON.stringify(responseJSON));
 			updateFileList($(this.element), responseJSON);
 			$(this.element).closest(".survey-element").find("a[data-type='delphisavebutton']").removeClass("disabled");
 	    	
