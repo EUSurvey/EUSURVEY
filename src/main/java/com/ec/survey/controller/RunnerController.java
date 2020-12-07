@@ -1399,7 +1399,8 @@ public class RunnerController extends BasicController {
 				if (!error) {
 					String files = getFiles(directory);
 					response.setStatus(HttpServletResponse.SC_OK);
-
+					response.setContentType("application/json");
+					response.setCharacterEncoding("UTF-8");
 					writer.print("{\"success\": true, \"files\": [" + files + "], \"wrongextension\": " + wrongextension
 							+ "}");
 				}
@@ -2303,8 +2304,8 @@ public class RunnerController extends BasicController {
 			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
 			DelphiExplanation delphiExplanation = new DelphiExplanation();
 			delphiExplanation.setText(explanation.getText());
-			// BRS: delphiExplanation.initFilesInfoFromFiles(explanation.getFiles());
-			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK); // mit file list
+			delphiExplanation.setFileInfoFromFiles(explanation.getFiles());
+			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
 			return new ResponseEntity<>(new DelphiExplanation("", ""), HttpStatus.OK);
 		} catch (Exception e) {
