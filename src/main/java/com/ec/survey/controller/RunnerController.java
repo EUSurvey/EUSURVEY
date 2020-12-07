@@ -17,7 +17,6 @@ import com.ec.survey.tools.export.StatisticsCreator;
 import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.ConstraintViolationException;
-import org.joda.time.DateTime;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
@@ -2647,7 +2646,7 @@ public class RunnerController extends BasicController {
 		}
 	}
 	
-	private Map<String, String> uniqueCodeToUser = new HashMap<String, String>();
+	private final Map<String, String> uniqueCodeToUser = new HashMap<>();
 	
 	private boolean answerSetContainsAnswerForQuestion(AnswerSet answerSet, Question question)
 	{
@@ -2671,7 +2670,7 @@ public class RunnerController extends BasicController {
 	
 	private void loadComments(DelphiTableEntry tableEntry, int answerSetId, String questionUid) {
 		List<AnswerComment> comments = answerExplanationService.loadComments(answerSetId, questionUid);
-		Map<Integer, DelphiComment> rootComments = new HashMap<Integer, DelphiComment>();
+		Map<Integer, DelphiComment> rootComments = new HashMap<>();
 		for (AnswerComment comment : comments) {
 			if (!uniqueCodeToUser.containsKey(comment.getUniqueCode()))
 			{
@@ -2931,9 +2930,8 @@ public class RunnerController extends BasicController {
 	}
 	
 	@PostMapping(value = "/delphiAddComment")
-	public ResponseEntity<String> delphiAddComment(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<String> delphiAddComment(HttpServletRequest request) {
 		try {
-					
 			final String surveyId = request.getParameter("surveyid");
 			final int surveyIdParsed = Integer.parseInt(surveyId);
 			final Survey survey = surveyService.getSurvey(surveyIdParsed);

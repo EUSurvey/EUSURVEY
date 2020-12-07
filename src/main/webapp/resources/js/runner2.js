@@ -683,8 +683,6 @@ function loadTableData(div, viewModel) {
 			for (var i = 0; i < result.entries.length; i++) {
 				viewModel.delphiTableEntries.push(result.entries[i]);
 			}
-			
-			//loadDelphiComments(div, viewModel);
 		}
 	 });
 }

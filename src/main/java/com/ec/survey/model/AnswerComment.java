@@ -11,7 +11,6 @@ import com.ec.survey.tools.ConversionTools;
 @Entity
 @Table(name = "ANSWERS_COMMENTS", indexes = {@Index(name = "ANSWERCOMMENT_IDX", columnList = "ANSWER_SET_ID, QUESTION_UID")})
 public class AnswerComment implements java.io.Serializable {
-
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
@@ -74,7 +73,7 @@ public class AnswerComment implements java.io.Serializable {
 	}
 
 	@ManyToOne  
-	@JoinColumn(name="PARENT", nullable = true)    
+	@JoinColumn(name="PARENT")
 	public AnswerComment getParent() {
 		return parent;
 	}

@@ -3,8 +3,6 @@ package com.ec.survey.service;
 import com.ec.survey.model.AnswerComment;
 import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
-import com.ec.survey.model.Draft;
-import com.ec.survey.model.delphi.DelphiComment;
 import com.ec.survey.model.delphi.DelphiContribution;
 import com.ec.survey.model.survey.*;
 import org.hibernate.Query;

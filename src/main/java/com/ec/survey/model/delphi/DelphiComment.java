@@ -18,7 +18,7 @@ public class DelphiComment {
     	this.text = text;
     	this.date = ConversionTools.getFullString(date);
     	this.id = id;
-    	this.replies = new ArrayList<DelphiComment>();
+    	this.replies = new ArrayList<>();
     }
     
     public String getUser() {
