@@ -207,6 +207,7 @@ var ElementProperties = function() {
 		var id = $(e).attr("data-id");
 		var removeselection = false;
 		
+		// ACTIONS
 		if (!cntrlIsPressed && !shiftIsPressed && !$("#multiselectButton").hasClass("selected"))
 		{
 			$(".selectedquestion").removeClass("selectedquestion");
@@ -367,6 +368,12 @@ var ElementProperties = function() {
 				{
 					getQuizPropertiesRow();
 					getQuizPropertiesContent();
+				}
+				
+				if (isECF)
+				{
+					getECFPropertiesRow();
+					getECFPropertiesContent();
 				}
 			} else if ($(e).hasClass("multiplechoiceitem"))
 			{

@@ -290,6 +290,14 @@
 						<!-- ko template: { name: 'quiz-template' } --><!-- /ko -->
 					<!-- /ko -->
 					
+					<!--  ko if: Type() == 'ecf' -->
+						<!-- ko template: { name: 'ecf-template' } --><!-- /ko -->
+					<!-- /ko -->
+					
+					<!--  ko if: Type() == 'ecfAnswersToScores' -->
+						<!-- ko template: { name: 'ecfanswerstoscores-template' } --><!-- /ko --> 
+					<!-- /ko --> 
+
 					<!--  ko if: Type() == 'slider' -->
 						<!-- ko template: { name: 'slider-template' } --><!-- /ko -->
 					<!-- /ko -->
@@ -379,6 +387,7 @@
 		var surveyShortname = "${form.survey.shortname}";
 		var surveyUniqueId = "${form.survey.uniqueId}";
 		var isQuiz = ${form.survey.isQuiz};
+		var isECF = ${form.survey.isECF};
 		var isOPC = ${form.survey.isOPC};
 		var automaticNumbering = ${form.survey.sectionNumbering != 0 || form.survey.questionNumbering != 0};
 		
@@ -816,6 +825,9 @@
 	 		strings["numberinvaliddecimals"] = "<spring:message code="validation.numberinvaliddecimals" />";
 	 		strings["invalidPositiveNumber"] = "<spring:message code="validation.invalidPositiveNumber" />";
 	 		strings["max255Characters"] = "<spring:message code="validation.max255Characters" />";
+	 		strings["ECFProfileSelection"] = "<spring:message code="label.ECFProfileSelection" />";
+	 		strings["ECFCompetencyQuestion"] = "<spring:message code="label.ECFCompetencyQuestion" />";
+	 		strings["ECFSelectedCompetency"] = "<spring:message code="label.ECFSelectedCompetency" />";
 	 		strings["QuizQuestion"] = "<spring:message code="label.QuizQuestion" />";
 	 		strings["Points"] = "<spring:message code="label.Points" />";
 	 		strings["empty"] = "<spring:message code="label.empty" />";

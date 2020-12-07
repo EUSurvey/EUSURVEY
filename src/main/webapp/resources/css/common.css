@@ -637,6 +637,14 @@ select {
  	padding-top: 180px; 
 }
 
+.fullpagesmaller {
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: left;
+	padding-bottom: 50px;
+ 	padding-top: 3em; 
+}
+
 .fullpageform160 {
 	padding-left: 20px;
 	padding-right: 20px;
@@ -984,6 +992,11 @@ legend {
 
 .center { 
 	text-align: center;
+}
+
+.col-centered{
+    float: none !important;
+    margin: 0 auto;
 }
 
 .left { 
@@ -1609,7 +1622,7 @@ a.draftLink
 {
 	margin-right:55px;
 }
-}
+
 
 .captchawarning {
 	color: #f00;
@@ -2022,6 +2035,56 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 .filtertools {
 	text-align: right;
 	margin-top: 9px;
+}
+
+#canvasContainer {
+	padding: 1em;
+	display: block;
+	max-width: 800px;
+	margin: auto;
+}
+
+#canvasContainerLeft {
+	padding: 1em;
+	display: block;
+	max-width: 850px;
+}
+
+#select-job-profiles-graph {
+}
+
+
+#ecfRespondentChart {
+	margin: 1em;
+}
+
+ 
+.score {
+	display: inline;
+}
+
+.gap {
+	display: inline;
+}
+
+.greenScore {
+	display: inline-block;
+	color: green;
+}
+
+.redScore {
+	display: inline-block;
+	color: red;
+}
+
+.selectedrow {
+	background-color: #98b1ff7d  !important;
+	
+}
+
+.hoverablerow:hover th  {
+	cursor: pointer;
+	background-color: #98b1ff7d  !important;
 }
 
 #dropdownLangElements {

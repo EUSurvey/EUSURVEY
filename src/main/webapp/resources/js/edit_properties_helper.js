@@ -76,6 +76,28 @@ function showHideQuizProperties(span)
 	}
 }
 
+function showHideECFProperties(span)
+{
+	console.log("showHideECFProperties(span)");
+	var tr = $(span).closest("tr");
+	if ($(span).hasClass("glyphicon-chevron-down"))
+	{
+		//lastQuizPropertiesVisible = false;
+		$(tr).nextAll().hide(400);
+		$(span).removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
+	} else {
+		//lastQuizPropertiesVisible = true;
+		if ($(tr).next().find(".ecfquestioncheck").first().is(":checked"))
+		{
+			$(tr).nextAll().not(".hideme").show(400);
+		} else {
+			$(tr).next().show(400);
+		}		
+		
+		$(span).removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
+	}
+}
+
 function getAdvancedPropertiesRow()
 {
 	var row = new PropertyRow();
@@ -89,6 +111,15 @@ function getQuizPropertiesRow()
 	row.Type("quiz");
 	_elementProperties.propertyRows.push(row);
 }
+
+function getECFPropertiesRow()
+{
+	console.log("getECFPropertiesRow!");
+	var row = new PropertyRow();
+	row.Type("ecf");
+	_elementProperties.propertyRows.push(row);
+}
+
 
 function getSliderPropertiesRow()
 {
@@ -333,6 +364,73 @@ function getVisibilityRow(multiselection)
 }
 
 var quizanswersrow;
+
+function getECFPropertiesContent() {
+	console.log("getECFPropertiesContent()");
+	let selectedelement = $("#content").find(".selectedquestion").first();
+	let element = _elements[$(selectedelement).attr("data-id")];
+		
+	let row = new PropertyRow();
+	row.Element(element);
+	row.Type("first");
+	row.ContentType("ecfquestion");
+	row.Label("ECFProfileSelection");
+	row.LabelTitle(getPropertyLabel("ECFProfileSelection")); 
+	console.log(element.possibleAnswers()[0]);
+	/*console.log("typeof " + typeof element.possibleAnswers);
+	
+	console.log(element.possibleAnswers());
+	console.log("possibleAnswers = " + JSON.stringify(element.possibleAnswers()[0].scoring));
+	let selected = (element.possibleAnswers() != null && element.possibleAnswers().get(0) != null && element.possibleAnswers().get(0).ecfProfile() != null);
+	*/
+	let selected = false;
+	
+	row.Value(selected);
+	
+	_elementProperties.propertyRows.push(row);
+	
+	row = new PropertyRow();
+	row.Element(element);
+	row.Type("first");
+	row.ContentType("ecfquestion");
+	row.Label("ECFCompetencyQuestion");
+	row.LabelTitle(getPropertyLabel("ECFCompetencyQuestion")); 
+	selected = element.ecfCompetency() != null;
+	console.log(element.ecfCompetency());
+	row.Value(selected);
+	_elementProperties.propertyRows.push(row);
+	
+	
+	if (selected) {
+		row = new PropertyRow();
+		row.Element(element);
+		row.Type("first");
+		row.ContentType("ecfCompetencySelection");
+		row.Label("ECFSelectedCompetency");
+		row.LabelTitle(getPropertyLabel("ECFSelectedCompetency")); 
+		row.Value(element.ecfCompetency().name);
+		_elementProperties.propertyRows.push(row);
+		
+		
+		row = new PropertyRow();
+		row.Element(element);
+		row.Type("ecfAnswersToScores");
+		row.ContentType("ecfAnswersToScores");
+		row.Label("ECFSelectedCompetency");
+		row.LabelTitle(getPropertyLabel("ECFSelectedCompetency")); 
+		
+		
+		if (element.type === "SingleChoiceQuestion")
+		{
+			for (let i = 0; i < element.possibleAnswers().length; i++)
+			{
+				let pa = element.possibleAnswers()[i];
+				row.ContentItems.push(pa);
+			}
+		} 
+		_elementProperties.propertyRows.push(row);
+	}
+}
 
 function getQuizPropertiesContent()
 {

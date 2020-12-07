@@ -153,6 +153,16 @@
 				<input class="check quizquestioncheck" name="scoring" type="checkbox" data-bind="value: '0', checked: Value(), attr: {id: 'scoring0' + Label()}" onclick='update(this);' />
 			</td>
 		<!-- /ko -->
+		<!--  ko if: ContentType() == 'ecfquestion' -->
+			<td class="propertycontent">
+				<input class="check ecfquestioncheck" name="ecfquestion" type="checkbox" data-bind="value: '0', checked: Value(), attr: {id: 'ecf0' + Label()}" onclick='update(this);' />
+			</td>
+		<!-- /ko -->
+		<!--  ko if: ContentType() == 'ecfCompetencySelection' -->
+			<td class="propertycontent">
+				<input name="competencySelection" type="text" data-bind="value: Value(), attr: {id: 'ecf0' + Label()}" />
+			</td>
+		<!-- /ko -->
 		<!--  ko if: ContentType() == 'scoring' -->
 			<td class="propertycontent">
 				<table class="innerpropertiestable">
@@ -348,3 +358,44 @@
 	</tr>
 	<!-- /ko -->
 </script>
+
+<script type="text/html" id="ecf-template">	
+	<tr class="firstpropertyrow collapsiblerow quiz">
+		<td colspan='2' style="text-align: left; border-bottom: 0px;">
+			<div class="toolboxheader">
+				<a>
+					<span id="ecfpropertiescollapsebutton" class="glyphicon glyphicon-chevron-down" onclick="showHideECFProperties(this)"></span>
+					<spring:message code="label.ECFProperties" />
+				</a>
+			</div>
+		</td>
+	</tr>		
+</script>
+
+<script type="text/html" id="ecfanswerstoscores-template">	
+	<tr class="firstpropertyrow ecf">
+		<td class="propertylabel" style="border-bottom: 0px;"><spring:message code="label.Answers" /></td>
+	</tr>
+
+	<!--  ko foreach: ContentItems() -->
+	<tr class="ecf">
+		<td class="propertylabel" style="border-bottom: 0px; vertical-align: middle !important; padding-bottom: 10px !important;"></td>
+		<td class="propertycontent" style="border-bottom: 0px; padding-bottom:10px !important">			
+				<span data-bind="html: title"></span>
+		</td>	
+	</tr>
+	<tr class="ecf">
+		<td class="propertylabel" style="border-bottom: 0px; padding-top: 10px !important;"><spring:message code="label.ECF.AnswerScore" /><a style='margin-left: 2px'><span data-toggle='tooltip' title='<spring:message code="label.ECF.AnswerScore" />' class='glyphicon glyphicon glyphicon-question-sign'></span></a></td>
+		</td>
+		<td class="propertycontent" style="border-bottom: 0px; padding-top: 10px !important;">
+				<input name="questionScoreSelection" type="text" data-bind="value: ecfScore" />
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" style="border-bottom: 1px dashed #ccc; text-align: right"></td>
+	</tr>
+	
+	
+	<!-- /ko -->	
+</script>
+

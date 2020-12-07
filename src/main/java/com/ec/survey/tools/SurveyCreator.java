@@ -13,11 +13,106 @@ import javax.servlet.ServletContext;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SurveyCreator {
 
 	static int SurveyCounter = 1;
 	private static final Logger logger = Logger.getLogger(SurveyCreator.class);
+
+	public static Survey createNewECFSurvey(User owner, Language language,
+	 Set<ECFCompetency> competencies, Set<ECFProfile> profiles,
+	 Map<Integer, Map<Integer, String>> questionNumberToAnswerToText,
+	 Map<Integer, Map<Integer, String>> competencyNumberToQuestionNumberToText,
+	 String shortname)  {
+		logger.info("Creating the ECF survey");
+		logger.info("There are " + competencies.size() + " competencies");
+		competencies.stream().map(c -> { logger.info(c.toString()); 
+			return c;
+		}).close();
+		logger.info("There are " + profiles.size() + " profiles");
+		profiles.stream().map(p -> { logger.info(p.toString()); 
+			return p;
+		}).close();
+		logger.info(competencyNumberToQuestionNumberToText.toString());
+		Survey survey = new Survey();
+		survey.setContact(owner.getEmail());
+		survey.setIsDraft(true);
+		survey.setCreated(new Date());
+		survey.setOwner(owner);
+		survey.setSecurity("open");
+		survey.setShortname(shortname);
+		survey.setLanguage(language);
+		survey.setListForm(false);
+		survey.setTitle("ECF Survey");
+		survey.setCaptcha(false);
+		survey.setSectionNumbering(1);
+		survey.setQuestionNumbering(1);
+		survey.setIsECF(true);
+		
+		int position = 1;
+		
+		// adding a Section
+		Section section = new Section("ECF Survey", "section1", UUID.randomUUID().toString());
+		section.setPosition(position++);
+		section.setLevel(1);
+		survey.getElements().add(section);
+
+		// adding the profile selection question
+		SingleChoiceQuestion profileScQuestion = new SingleChoiceQuestion(
+		 "Profiles selection", "profileSelection", UUID.randomUUID().toString());
+		profileScQuestion.setPosition(position++);
+		profileScQuestion.setHelp("Please choose your profile");
+		profileScQuestion.setOptional(false);
+		profileScQuestion.setUseRadioButtons(true);
+
+		// generating one answer per profile
+		int answerPosition = 0;
+		for (ECFProfile ecfProfile : profiles.stream().sorted().collect(Collectors.toList())) {
+			PossibleAnswer possibleAnswer = new PossibleAnswer();
+			possibleAnswer.setEcfProfile(ecfProfile);
+			possibleAnswer.setUniqueId(UUID.randomUUID().toString());
+			possibleAnswer.setPosition(answerPosition);
+			possibleAnswer.setShortname("profile." + ecfProfile.getProfileUid());
+			possibleAnswer.setTitle(ecfProfile.getName());
+
+			profileScQuestion.getPossibleAnswers().add(possibleAnswer);
+			answerPosition++;
+		}
+		survey.getElements().add(profileScQuestion);
+
+		// generating 2 questions per competency
+		int numberOfQuestionsForOneCompetency = 2;
+		for (ECFCompetency ecfCompetency : competencies) {
+			for (int noqfoc=0; noqfoc< numberOfQuestionsForOneCompetency; noqfoc++) {
+				int noqfoc1 = noqfoc + 1;
+				logger.info("noqfoc1 " + noqfoc1);
+				logger.info("ecfCompetency.getOrderNumber() " + ecfCompetency.getOrderNumber());
+				logger.info(competencyNumberToQuestionNumberToText.get(ecfCompetency.getOrderNumber()).get(noqfoc1));
+				
+				SingleChoiceQuestion singleChoiceQuestion = new SingleChoiceQuestion(
+						ecfCompetency.getName() + ": " + competencyNumberToQuestionNumberToText.get(ecfCompetency.getOrderNumber()).get(noqfoc1),
+				"q" + noqfoc + ".competency." + ecfCompetency.getCompetenceUid(),
+				 UUID.randomUUID().toString());
+				singleChoiceQuestion.setPosition(ecfCompetency.getOrderNumber() + position);
+				singleChoiceQuestion.setOptional(false);
+				singleChoiceQuestion.setUseRadioButtons(true);
+				singleChoiceQuestion.setEcfCompetency(ecfCompetency);
+				for (int i = 0; i < 5; i++) {
+					PossibleAnswer possibleAnswer = new PossibleAnswer();
+					possibleAnswer.setUniqueId(UUID.randomUUID().toString());
+					possibleAnswer.setPosition(i);
+					possibleAnswer.setShortname("answer." + i);
+					possibleAnswer.setTitle(questionNumberToAnswerToText.get(noqfoc).get(i));
+					possibleAnswer.setEcfScore(i);
+					singleChoiceQuestion.getPossibleAnswers().add(possibleAnswer);
+				}
+				survey.getElements().add(singleChoiceQuestion);
+			}
+		}
+
+		return survey;
+	}
 	
 	public static Survey createNewSelfRegistrationSurvey(User owner, Language la, List<Language> langs)
 	{
