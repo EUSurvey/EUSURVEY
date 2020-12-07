@@ -744,7 +744,9 @@ function addDelphiComment(button) {
 	$(div).append(input);
 	$(div).append("<a class='btn btn-xs btn-primary' onclick='saveDelphiComment(this, false)'>Save</a>");
 	$(div).append("<a class='btn btn-xs btn-default' onclick='cancelDelphiComment(this)'>Cancel</a>");
-	$(button).after(div);	
+	$(button).after(div);
+	
+	$(button).parent().find("textarea").first().focus();
 }
 
 function addDelphiReply(button, parent) {	
@@ -764,7 +766,9 @@ function addDelphiReply(button, parent) {
 	$(div).append(input);
 	$(div).append("<a data-parent='" + parent + "' class='btn btn-xs btn-primary' onclick='saveDelphiComment(this, true)'>Save</a>");
 	$(div).append("<a class='btn btn-xs btn-default' onclick='cancelDelphiComment(this)'>Cancel</a>");
-	$(button).after(div);	
+	$(button).after(div);
+	
+	$(button).parent().find("textarea").first().focus();
 }
 
 function cancelDelphiComment(button) {

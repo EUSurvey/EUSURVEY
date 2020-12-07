@@ -3000,9 +3000,11 @@ public class RunnerController extends BasicController {
 
 		for (DelphiContribution contrib : contributions) {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setAnswerSetId(contrib.getAnswerSetId());
 			tableEntry.setExplanation(contrib.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
 			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
+			loadComments(tableEntry, contrib.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
 		}
@@ -3028,6 +3030,7 @@ public class RunnerController extends BasicController {
 
 			DelphiContribution firstValue = entry.getValue().get(0);
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
@@ -3038,6 +3041,7 @@ public class RunnerController extends BasicController {
             }
 
             result.getEntries().add(tableEntry);
+    		loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
         }
 
         return ResponseEntity.ok(result);
