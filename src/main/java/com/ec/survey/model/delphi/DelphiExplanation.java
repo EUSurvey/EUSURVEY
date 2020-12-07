@@ -6,12 +6,7 @@ import java.util.List;
 import com.ec.survey.model.survey.base.File;
 
 public class DelphiExplanation {
-	
-	public static class FileInfo {
-		public String name = "";
-		public String uid;
-	};
-	
+
 	public DelphiExplanation() {
 		responseMessage = "";
 		text = "";
@@ -24,7 +19,7 @@ public class DelphiExplanation {
 
 	private String responseMessage = "";
 	private String text = "";
-	private List<FileInfo> fileInfo = new ArrayList<>();
+	private List<String> fileList = new ArrayList<>();
 
 	public String getText() {
 		return text;
@@ -42,21 +37,18 @@ public class DelphiExplanation {
 		this.responseMessage = responseMessage;
 	}
 
-	public List<FileInfo> getFileInfo() {
-		return fileInfo;
+	public List<String> getFileList() {
+		return fileList;
 	}
 
-	public void setFileInfo(List<FileInfo> fileInfo) {
-		this.fileInfo = fileInfo;
+	public void setFileList(List<String> fileList) {
+		this.fileList = fileList;
 	}
 
 	public void setFileInfoFromFiles(List<File> files) {
-		this.fileInfo.clear();
+		this.fileList.clear();
 		for (File file : files) {
-			FileInfo fileInfo = new FileInfo();
-			fileInfo.name = file.getName();
-			fileInfo.uid = file.getUid();
-			this.fileInfo.add(fileInfo);			
+			this.fileList.add(file.getName());
 		}
 	}
 }
