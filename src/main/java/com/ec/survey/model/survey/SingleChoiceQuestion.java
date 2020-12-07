@@ -52,20 +52,21 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	public void setNumColumns(int numColumns) {
 		this.numColumns = numColumns;
 	}
-
-	public SingleChoiceQuestion copy(String fileDir) throws ValidationException {
-		SingleChoiceQuestion copy = new SingleChoiceQuestion();
-		baseCopy(copy);
-		copy.numColumns = numColumns;
-		copy.useRadioButtons = useRadioButtons;
-		copy.setOrder(getOrder());
-
+	
+	public SingleChoiceQuestion copy(String fileDir) throws ValidationException
+	{
+		SingleChoiceQuestion questionCopy = new SingleChoiceQuestion();
+		baseCopy(questionCopy);
+		questionCopy.numColumns = numColumns;
+		questionCopy.useRadioButtons = useRadioButtons;
+		questionCopy.setOrder(getOrder());
+		
 		for (PossibleAnswer possibleAnswer : getPossibleAnswers()) {
 			PossibleAnswer answerCopy = possibleAnswer.copy(fileDir);
-			copy.getPossibleAnswers().add(answerCopy);
+			questionCopy.getPossibleAnswers().add(answerCopy);
 		}
-
-		return copy;
+		
+		return questionCopy;
 	}
 
 	@Override

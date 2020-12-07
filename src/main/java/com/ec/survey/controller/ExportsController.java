@@ -68,62 +68,108 @@ public class ExportsController extends BasicController {
 				export.setAllAnswers(true);
 			}
 
-			if (export.getType().equals(ExportType.AddressBook)) {
-				@SuppressWarnings("unchecked")
-				HashMap<String, String> filter = (HashMap<String, String>) request.getSession()
+			switch (export.getType()) {
+				case AddressBook: {
+					@SuppressWarnings("unchecked")
+					HashMap<String, String> filter = (HashMap<String, String>) request.getSession()
 						.getAttribute("attendees-filter");
-				ResultFilter resultFilter = new ResultFilter();
-				resultFilter.setFilterValues(filter);
-				export.setResultFilter(resultFilter);
-			} else if (export.getType().equals(ExportType.Activity)) {
-				ActivityFilter filter = sessionService.getLastActivityFilter(request);
-				export.setActivityFilter(filter);
-				export.setSurvey(form.getSurvey());
-			} else if (export.getType().equals(ExportType.Tokens)) {
-				export.setParticipationGroup(Integer.parseInt(group));
-				export.setSurvey(form.getSurvey());
-			} else if (export.getType().equals(ExportType.Files)) {
-				boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
-				Survey survey = form.getSurvey();
-				survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true,
-						false);
-				export.setSurvey(survey);
-				export.setShowShortnames(showShortnames != null && showShortnames.equalsIgnoreCase("true"));
-				ResultFilter filter = answerService.initialize(sessionService.getLastResultFilter(request)).copy();
-				filter.getVisibleQuestions().clear();
-				filter.getVisibleQuestions().add(uid);
-				export.setResultFilter(filter);
-				form.setSurvey(survey);
-			} else if (export.getType().equals(ExportType.Survey)) {
-				User u = sessionService.getCurrentUser(request);
-				if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
-					return "notallowed";
+					ResultFilter resultFilter = new ResultFilter();
+					resultFilter.setFilterValues(filter);
+					export.setResultFilter(resultFilter);
+					break;
 				}
+				case Activity: {
+					ActivityFilter filter = sessionService.getLastActivityFilter(request);
+					export.setActivityFilter(filter);
+					export.setSurvey(form.getSurvey());
+					break;
+					}
+				case Tokens: {
+					export.setParticipationGroup(Integer.parseInt(group));
+					export.setSurvey(form.getSurvey());
+					break;
+					}
+				case Files: {
+					boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
+					Survey survey = form.getSurvey();
+					survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true,
+							false);
+					export.setSurvey(survey);
+					export.setShowShortnames(showShortnames != null && showShortnames.equalsIgnoreCase("true"));
+					ResultFilter filter = answerService.initialize(sessionService.getLastResultFilter(request)).copy();
+					filter.getVisibleQuestions().clear();
+					filter.getVisibleQuestions().add(uid);
+					export.setResultFilter(filter);
+					form.setSurvey(survey);
+					break;
+					}
+				case Survey: {
+					User u = sessionService.getCurrentUser(request);
+					if (u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
+						return "notallowed";
+					}
 
-				Survey survey = null;
+					Survey survey = null;
 
-				String shortname = request.getParameter(Constants.SHORTNAME);
-				if (shortname != null && shortname.length() > 0) {
-					survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, false, true, false);
-				} else {
-					survey = form.getSurvey();
+					String shortname = request.getParameter(Constants.SHORTNAME);
+					if (shortname != null && shortname.length() > 0) {
+						survey = surveyService.getSurveyByShortname(shortname, true, u, request, false, false, true, false);
+					} else {
+						survey = form.getSurvey();
+					}
+
+					export.setSurvey(survey);
+					export.setResultFilter(new ResultFilter());
+					form.setSurvey(survey);
+					break;
+					}
+				case ECFGlobalResults : {
+						ResultFilter lastResultFilter = sessionService.getLastResultFilter(request);
+						ResultFilter resultFilter = new ResultFilter();
+						resultFilter.setSurveyId(lastResultFilter.getSurveyId());
+						resultFilter.setSurveyShortname(lastResultFilter.getSurveyShortname());
+						resultFilter.setCompareToECFProfileUID(lastResultFilter.getCompareToECFProfileUID());
+						resultFilter.setAnsweredECFProfileUID(lastResultFilter.getAnsweredECFProfileUID());
+						resultFilter.setSortKey(lastResultFilter.getSortKey());
+						resultFilter.setSortOrder(lastResultFilter.getSortOrder());
+						export.setResultFilter(resultFilter);
+						
+						Survey survey = form.getSurvey();
+						boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
+						survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true,
+								false);
+						export.setSurvey(survey);
+						break;
+					}
+					
+					case ECFProfileResults: {
+						ResultFilter lastResultFilter = sessionService.getLastResultFilter(request);
+						ResultFilter resultFilter = new ResultFilter();
+						resultFilter.setSurveyId(lastResultFilter.getSurveyId());
+						resultFilter.setSurveyShortname(lastResultFilter.getSurveyShortname());
+						resultFilter.setCompareToECFProfileUID(lastResultFilter.getCompareToECFProfileUID());
+						export.setResultFilter(resultFilter);
+						
+						Survey survey = form.getSurvey();
+						boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
+						survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true,
+								false);
+						export.setSurvey(survey);
+						break;
+					}
+				default: {
+					boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
+					Survey survey = form.getSurvey();
+					survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true,
+							false);
+					export.setSurvey(survey);
+					export.setShowShortnames(showShortnames != null && showShortnames.equalsIgnoreCase("true"));
+
+					ResultFilter origFilter = answerService.initialize(sessionService.getLastResultFilter(request));
+
+					export.setResultFilter(origFilter.copy());
+					form.setSurvey(survey);
 				}
-
-				export.setSurvey(survey);
-				export.setResultFilter(new ResultFilter());
-				form.setSurvey(survey);
-			} else {
-				boolean active = (Boolean) request.getSession().getAttribute("results-source-active");
-				Survey survey = form.getSurvey();
-				survey = surveyService.getSurvey(survey.getShortname(), !active, false, false, false, null, true,
-						false);
-				export.setSurvey(survey);
-				export.setShowShortnames(showShortnames != null && showShortnames.equalsIgnoreCase("true"));
-
-				ResultFilter origFilter = answerService.initialize(sessionService.getLastResultFilter(request));
-
-				export.setResultFilter(origFilter.copy());
-				form.setSurvey(survey);
 			}
 
 			exportService.prepareExport(form, export);

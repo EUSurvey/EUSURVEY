@@ -17,4 +17,13 @@ public class SqlPagination {
     public int getMaxResult() {
         return rowsPerPage;
     }
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public int getRowsPerPage() {
+		return rowsPerPage;
+	}
+
 }

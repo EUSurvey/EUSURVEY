@@ -133,6 +133,23 @@ public class AdministrationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public User getUser(UserFilter filter) throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+
+		HashMap<String, Object> parameters = new HashMap<>();
+		Query query = session.createQuery(getHql(filter, parameters));
+		sqlQueryService.setParameters(query, parameters);
+
+		@SuppressWarnings("unchecked")
+		List<User> list = query.setReadOnly(true).setMaxResults(1).list();
+
+		if (list.size()>=1) {
+			return list.get(0);
+		}
+		return null;
+	}
+
+	@Transactional(readOnly = true)
 	public User getUser(Integer id) {
 		Session session = sessionFactory.getCurrentSession();
 		return (User) session.get(User.class, id);

@@ -1,6 +1,8 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.ForbiddenException;
 import com.ec.survey.exception.ForbiddenURLException;
+import com.ec.survey.exception.InternalServerErrorException;
 import com.ec.survey.exception.InvalidURLException;
 import com.ec.survey.exception.NoFormLoadedException;
 import com.ec.survey.model.*;
@@ -169,6 +171,30 @@ public class SessionService extends BasicService {
 		}
 
 		return null;
+	}
+
+	public boolean userIsResultReadAuthorized(Survey survey, HttpServletRequest request) throws
+	NotAgreedToTosException,
+	WeakAuthenticationException,
+	NotAgreedToPsException,
+	InternalServerErrorException,
+	ForbiddenException {
+		User user = this.getCurrentUser(request);
+		try {
+			this.sessionService.upgradePrivileges(survey, user, request);
+		} catch (Exception e1) {
+			throw new InternalServerErrorException(e1);
+		}
+		if (!survey.getOwner().getId().equals(user.getId())) {
+			if (!(user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) >= 2)) {
+				if (!(user.getLocalPrivileges().get(LocalPrivilege.FormManagement) >= 1)) {
+					if (!(user.getLocalPrivileges().get(LocalPrivilege.AccessResults) >= 1)) {
+						throw new ForbiddenException();
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	public boolean userIsFormAdmin(Survey survey, User user, HttpServletRequest request) {

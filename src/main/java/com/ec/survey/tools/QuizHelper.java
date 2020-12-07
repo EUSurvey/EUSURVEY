@@ -43,9 +43,9 @@ public class QuizHelper {
 				
 				if (question.getScoring() == 1) //global points
 				{
-					result.getQuestionMaximumScores().put(question.getUniqueId(), question.getPoints());
-					maximumScore += question.getPoints();
-					currentSectionMaxScore += question.getPoints();
+					result.getQuestionMaximumScores().put(question.getUniqueId(), question.getQuizPoints());
+					maximumScore += question.getQuizPoints();
+					currentSectionMaxScore += question.getQuizPoints();
 					
 					if (answers.isEmpty() && question instanceof MultipleChoiceQuestion)
 					{
@@ -64,9 +64,9 @@ public class QuizHelper {
 						PossibleAnswer pa = choice.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId());
 						if (pa != null && pa.getScoring() != null && pa.getScoring().isCorrect())
 						{
-							score += question.getPoints();
-							currentSectionScore += question.getPoints();
-							result.getQuestionScores().put(question.getUniqueId(), question.getPoints());
+							score += question.getQuizPoints();
+							currentSectionScore += question.getQuizPoints();
+							result.getQuestionScores().put(question.getUniqueId(), question.getQuizPoints());
 						}						
 					} else if (question instanceof MultipleChoiceQuestion)
 					{
@@ -95,9 +95,9 @@ public class QuizHelper {
 							}							
 							if (allfound)
 							{
-								score += question.getPoints();
-								currentSectionScore += question.getPoints();
-								result.getQuestionScores().put(question.getUniqueId(), question.getPoints());
+								score += question.getQuizPoints();
+								currentSectionScore += question.getQuizPoints();
+								result.getQuestionScores().put(question.getUniqueId(), question.getQuizPoints());
 							} else {
 								result.getPartiallyAnswersMultipleChoiceQuestions().add(question.getUniqueId());
 							}
@@ -131,9 +131,9 @@ public class QuizHelper {
 						}
 						if (ok)
 						{
-							score += question.getPoints();
-							currentSectionScore += question.getPoints();
-							result.getQuestionScores().put(question.getUniqueId(), question.getPoints());
+							score += question.getQuizPoints();
+							currentSectionScore += question.getQuizPoints();
+							result.getQuestionScores().put(question.getUniqueId(), question.getQuizPoints());
 						} else if (wrong)
 						{
 							result.getQuestionScores().put(question.getUniqueId(), 0);
@@ -171,9 +171,9 @@ public class QuizHelper {
 						}
 						if (ok)
 						{
-							score += question.getPoints();
-							currentSectionScore += question.getPoints();
-							result.getQuestionScores().put(question.getUniqueId(), question.getPoints());
+							score += question.getQuizPoints();
+							currentSectionScore += question.getQuizPoints();
+							result.getQuestionScores().put(question.getUniqueId(), question.getQuizPoints());
 						} else if (wrong)
 						{
 							result.getQuestionScores().put(question.getUniqueId(), 0);
@@ -211,9 +211,9 @@ public class QuizHelper {
 						}
 						if (ok)
 						{
-							score += question.getPoints();
-							currentSectionScore += question.getPoints();
-							result.getQuestionScores().put(question.getUniqueId(), question.getPoints());
+							score += question.getQuizPoints();
+							currentSectionScore += question.getQuizPoints();
+							result.getQuestionScores().put(question.getUniqueId(), question.getQuizPoints());
 						} else if (wrong)
 						{
 							result.getQuestionScores().put(question.getUniqueId(), 0);

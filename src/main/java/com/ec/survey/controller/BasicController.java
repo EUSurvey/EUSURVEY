@@ -49,6 +49,7 @@ import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.AnswerService;
 import com.ec.survey.service.ArchiveService;
 import com.ec.survey.service.AttendeeService;
+import com.ec.survey.service.ECFService;
 import com.ec.survey.service.ExportService;
 import com.ec.survey.service.FileService;
 import com.ec.survey.service.LdapDBService;
@@ -136,6 +137,9 @@ public class BasicController implements BeanFactoryAware {
 	@Resource(name = "reportingServiceProxy")
 	protected ReportingServiceProxy reportingService;
 
+	@Resource(name = "ecfService")
+	protected ECFService ecfService;
+	
 	public @Value("${captcha.secret}") String captchasecret;
 	public @Value("${ui.enableresponsive}") String enableresponsive;
 	private @Value("${ecaslogout}") String ecaslogout;

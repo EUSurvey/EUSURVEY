@@ -28,6 +28,7 @@ import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.ResultFilter;
+import com.ec.survey.model.ResultFilter.ResultFilterSortKey;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.SqlPagination;
 import com.ec.survey.model.survey.ChoiceQuestion;
@@ -147,6 +148,20 @@ public class ReportingService {
 				
 				where += " QCONTRIBUTIONID = :uniqueCode";
 				values.put(Constants.UNIQUECODE, filter.getCaseId().trim());
+			}
+
+			//ECF
+			if (filter.getAnsweredECFProfileUID() != null && filter.getAnsweredECFProfileUID().length() > 0)
+			{
+				if (where.length() == 0)
+				{
+					where += " WHERE";
+				} else {
+					where += " AND";
+				}
+				
+				where += " QECFPROFILEUID = :ecfProfileUid";
+				values.put("ecfProfileUid", filter.getAnsweredECFProfileUID().trim());
 			}					
 			
 			if (filter.getUser() != null && filter.getUser().length() > 0)
@@ -366,12 +381,25 @@ public class ReportingService {
 				}			
 			}
 			
-			if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("score"))
-			{
-				where += " ORDER BY QSCORE " + filter.getSortOrder();
-			} else if (filter.getSortKey() != null && (filter.getSortKey().equalsIgnoreCase("date") || filter.getSortKey().equalsIgnoreCase("created")))
-			{
-				where += " ORDER BY QCREATED " + filter.getSortOrder();
+			if (filter.getSortKey() != null) {
+				switch (ResultFilterSortKey.parse(filter.getSortKey())) {
+					case NAME:
+						where += " ORDER BY CASE WHEN QUSER IS NULL THEN QCONTRIBUTIONID ELSE QUSER END "+ filter.getSortOrder();
+						break;
+					case SCORE:
+						where += " ORDER BY QSCORE " + filter.getSortOrder();
+						break;
+					case CREATED:
+						where += " ORDER BY QCREATED " + filter.getSortOrder();
+						break;
+					case ECFSCORE:
+						where += " ORDER BY QECFTOTALSCORE " + filter.getSortOrder();
+						break;
+					case ECFGAP:
+						where += " ORDER BY ABS(QECFTOTALGAP) " + filter.getSortOrder();
+						break;
+					default :
+				}
 			}
 		}
 		
@@ -813,6 +841,9 @@ public class ReportingService {
 		columnNamesToType.put("UPDATED", "DATETIME");
 		columnNamesToType.put("LANGUAGE", "VARCHAR(2)");
 		columnNamesToType.put("SCORE", "INT");
+		columnNamesToType.put("ECFPROFILEUID", "VARCHAR(255)");
+		columnNamesToType.put("ECFTOTALSCORE", "INT");
+		columnNamesToType.put("ECFTOTALGAP", "INT");
 
 		for (Element question : survey.getQuestions()) {
 			if (question instanceof FreeTextQuestion) {
@@ -1196,6 +1227,15 @@ public class ReportingService {
 		columns.add("SCORE");
 		values.add(answerSet.getScore() != null ? answerSet.getScore().toString() : null);
 		
+		columns.add("ECFPROFILEUID");
+		values.add(answerSet.getEcfProfileUid() != null && answerSet.getEcfProfileUid().length() > 0 ? "'" + answerSet.getEcfProfileUid() + "'" : null);
+		
+		columns.add("ECFTOTALSCORE");
+		values.add(answerSet.getEcfTotalScore() != null ? answerSet.getEcfTotalScore().toString() : null);
+		
+		columns.add("ECFTOTALGAP");
+		values.add(answerSet.getEcfTotalGap() != null ? answerSet.getEcfTotalGap().toString() : null);
+		
 		columns.add("ANSWERSETID");
 		values.add(answerSet.getId().toString());
 		
@@ -1503,6 +1543,12 @@ public class ReportingService {
 				counter++;
 			}
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
+	public int getCount(Survey survey) {
+		return this.getCountInternal(survey.getIsDraft(), survey.getUniqueId());
 	}
 
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
