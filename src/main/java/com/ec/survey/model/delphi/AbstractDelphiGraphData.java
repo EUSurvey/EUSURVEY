@@ -1,13 +1,24 @@
 package com.ec.survey.model.delphi;
 
-public abstract class AbstractDelphiGraphData {
-    private DelphiQuestionType type;
+import com.ec.survey.model.survey.DelphiChartType;
 
-    public DelphiQuestionType getType() {
-        return type;
+public abstract class AbstractDelphiGraphData {
+    private DelphiChartType chartType;
+    private DelphiQuestionType questionType;
+
+    public DelphiChartType getChartType() {
+        return chartType;
     }
 
-    public void setType(DelphiQuestionType type) {
-        this.type = type;
+    public void setChartType(DelphiChartType chartType) {
+        this.chartType = chartType;
+    }
+
+    public DelphiQuestionType getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(DelphiQuestionType questionType) {
+        this.questionType = questionType;
     }
 }
