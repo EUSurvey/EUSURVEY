@@ -848,7 +848,14 @@
 	 		strings["ISOOnly"] = "<spring:message code="label.ISOOnly" />";	 		
 	 		
 	 		strings["MaximumFileSize"] = "<spring:message code="label.MaximumFileSize" />";
-	 		strings["DelphiQuestion"] = "<spring:message code="label.DelphiQuestion" />";	 	
+	 		strings["DelphiQuestion"] = "<spring:message code="label.DelphiQuestion" />";
+			strings["DelphiChartType"] = "<spring:message code="label.DelphiChartType" />";
+	 		strings["Bar"] ="<spring:message code="label.DelphiChartBar" />";
+			strings["Column"] ="<spring:message code="label.DelphiChartColumn" />";
+			strings["Line"] ="<spring:message code="label.DelphiChartLine" />";
+			strings["Pie"] ="<spring:message code="label.DelphiChartPie" />";
+			strings["Radar"] ="<spring:message code="label.DelphiChartRadar" />";
+			strings["Scatter"] ="<spring:message code="label.DelphiChartScatter" />";
 
 	 		return strings[label];
 	 	}

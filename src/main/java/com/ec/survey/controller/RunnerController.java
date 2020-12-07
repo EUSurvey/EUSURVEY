@@ -2437,7 +2437,8 @@ public class RunnerController extends BasicController {
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRatingQuestion(Survey survey, RatingQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion) {
 		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
-		result.setType(DelphiQuestionType.Rating);
+		result.setQuestionType(DelphiQuestionType.Rating);
+		result.setChartType(question.getDelphiChartType());
 
 		for (Element subQuestion : question.getQuestions()) {
 			if (!numberOfAnswersMap.containsKey(subQuestion.getId()) || numberOfAnswersMap.get(subQuestion.getId()) == 0) {
@@ -2475,7 +2476,8 @@ public class RunnerController extends BasicController {
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix) {
 		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
-		result.setType(DelphiQuestionType.Matrix);
+		result.setQuestionType(DelphiQuestionType.Matrix);
+		result.setChartType(question.getDelphiChartType());
 
 		for (Element matrixQuestion : question.getQuestions()) {
 			if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
@@ -2529,11 +2531,12 @@ public class RunnerController extends BasicController {
 		answerService.getNumberOfAnswerSets(survey, resultFilter);
 
 		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+		result.setChartType(question.getDelphiChartType());
 
 		if (question instanceof SingleChoiceQuestion) {
-			result.setType(DelphiQuestionType.SingleChoice);
+			result.setQuestionType(DelphiQuestionType.SingleChoice);
 		} else if (question instanceof MultipleChoiceQuestion) {
-			result.setType(DelphiQuestionType.MultipleChoice);
+			result.setQuestionType(DelphiQuestionType.MultipleChoice);
 		} else {
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
