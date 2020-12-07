@@ -1163,10 +1163,13 @@
 			<div class="col-md-12">
 				<div class="explanation-update-section">
 					<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
-		
+						
 					<span class="inline-loader">
 						<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
 					</span>
+					
+					<br /><br />
+					<a class="link" onclick="return checkGoToDelphiStart(this)">${form.getMessage("label.ReturnToDelphiStart")}</a>
 				</div>
 		
 				<div class="delphiupdatemessage"></div>

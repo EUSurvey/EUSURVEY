@@ -687,6 +687,8 @@ function loadTableData(div, viewModel) {
 	 });
 }
 
+var delphiUpdateFinished = false;
+
 function delphiUpdate(div) {
 	
 	var result = validateInput(div);
@@ -746,6 +748,33 @@ function delphiUpdate(div) {
 			
 			var viewModel = modelsForDelphiQuestions[uid];
 			loadTableData(div, viewModel);
+			
+			delphiUpdateFinished = true;
 	    }
 	 });
+}
+
+function checkGoToDelphiStart(link)
+{
+	var button = $(link).parent().find("a[data-type='delphisavebutton']").first();
+		
+	var ansSetId = $('#IdAnswerSet').val();
+	var ansSetUniqueCode = $('#uniqueCode').val();
+	
+	var url;
+	
+	if (ansSetId == '' && !delphiUpdateFinished)
+	{
+		url = delphiStartPageUrl;
+	} else {
+		url = contextpath + "/editcontribution/" + ansSetUniqueCode;
+	}
+	
+	if (!$(button).hasClass("disabled")) {		
+		$('#unsaveddelphichangesdialoglink').attr("href", url);
+		$('#unsaveddelphichangesdialog').modal("show");
+		return;
+	}
+	
+	window.location = url;
 }

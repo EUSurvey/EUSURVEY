@@ -87,6 +87,7 @@
 	var contextpath = "${contextpath}";
 	var isresponsive = ${responsive != null};
 	var isdelphi = ${form != null && form.survey.getIsDelphi()};
+	var delphiStartPageUrl = '${pageContext.request.getAttribute("javax.servlet.forward.request_uri")}?${pageContext.request.getQueryString().replace("startDelphi=true&", "").replace("startDelphi=true", "?")}';
 
 	<c:choose>
 		<c:when test="${form != null && form.getResources() != null && resultType == null}">
