@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class PdfExportCreator extends ExportCreator {
 	
 	@Override
-	void ExportContent(boolean sync) throws Exception {
+	void exportContent(boolean sync) throws Exception {
 		File file = pdfService.createAllIndividualResultsPDF(form.getSurvey(), export.getResultFilter());
 		FileInputStream fis = new FileInputStream(file);
 		IOUtils.copy(fis, outputStream);
@@ -24,7 +24,7 @@ public class PdfExportCreator extends ExportCreator {
 	}
 	
 	@Override
-	void ExportStatistics() throws IOException {
+	void exportStatistics() throws IOException {
 		File file = pdfService.createStatisticsPDF(form.getSurvey(), export.getId().toString());
 		FileInputStream fis = new FileInputStream(file);
 		IOUtils.copy(fis, outputStream);
@@ -33,7 +33,7 @@ public class PdfExportCreator extends ExportCreator {
 	}
 	
 	@Override
-	void ExportStatisticsQuiz() throws IOException {
+	void exportStatisticsQuiz() throws IOException {
 		File file = pdfService.createStatisticsQuizPDF(form.getSurvey(), export.getId().toString());
 		FileInputStream fis = new FileInputStream(file);
 		IOUtils.copy(fis, outputStream);
@@ -42,17 +42,34 @@ public class PdfExportCreator extends ExportCreator {
 	}
 
 	@Override
-	void ExportAddressBook() throws Exception {
+	void exportAddressBook() throws Exception {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	void ExportActivities() throws Exception {
+	void exportActivities() throws Exception {
 		throw new NotImplementedException();
 	}
 	
 	@Override
-	void ExportTokens() throws Exception {
+	void exportTokens() throws Exception {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	void exportECFGlobalResults() throws Exception {
+		throw new NotImplementedException();
+
+	}
+
+	@Override
+	void exportECFProfileResults() throws Exception {
+		throw new NotImplementedException();
+		
+	}
+
+	@Override
+	void exportECFOrganizationalResults() throws Exception {
 		throw new NotImplementedException();
 	}	
 

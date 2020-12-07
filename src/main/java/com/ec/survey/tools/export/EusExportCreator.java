@@ -12,33 +12,48 @@ import org.springframework.stereotype.Service;
 public class EusExportCreator extends ExportCreator {
 	
 	@Override
-	void ExportContent(boolean sync) throws Exception {
+	void exportContent(boolean sync) throws Exception {
 		java.io.File zip = surveyService.exportSurvey(form.getSurvey().getShortname(), surveyService, true);
 		IOUtils.copy(new FileInputStream(zip), outputStream);
 	}
 	
 	@Override
-	void ExportStatistics() throws Exception {
+	void exportStatistics() throws Exception {
 		throw new NotImplementedException();
 	}
 	
 	@Override
-	void ExportStatisticsQuiz() throws Exception {
+	void exportStatisticsQuiz() throws Exception {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	void ExportAddressBook() throws Exception {
+	void exportAddressBook() throws Exception {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	void ExportActivities() throws Exception {
+	void exportActivities() throws Exception {
 		throw new NotImplementedException();
 	}
 	
 	@Override
-	void ExportTokens() throws Exception {
+	void exportTokens() throws Exception {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	void exportECFGlobalResults() throws Exception {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	void exportECFProfileResults() throws Exception {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	void exportECFOrganizationalResults() throws Exception {
 		throw new NotImplementedException();
 	}	
 

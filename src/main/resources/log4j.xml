@@ -52,6 +52,7 @@
 		<level value="info" />
 		<appender-ref ref="error" />
 		<appender-ref ref="info" />
+		<appender-ref ref="console" />
 	</logger>
 	
 	<!-- 3rdparty Loggers -->
@@ -59,6 +60,7 @@
 		<level value="warn" />
 		<appender-ref ref="error" />
 		<appender-ref ref="info" />
+		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="org.springframework.beans">
@@ -71,18 +73,21 @@
 		<level value="warn" />
 		<appender-ref ref="error" />
 		<appender-ref ref="info" />
+		<appender-ref ref="console" />
 	</logger>
 
 	<logger name="org.springframework.web">
 		<level value="warn" />
 		<appender-ref ref="error" />
 		<appender-ref ref="info" />
+		<appender-ref ref="console" />
 	</logger>
 	
 	<logger name="net.bull.javamelody">
 		<level value="warn" />
 		<appender-ref ref="error" />
 		<appender-ref ref="info" />
+		<appender-ref ref="console" />
 	</logger>
 	
 	<!-- http requests log  -->
@@ -90,24 +95,28 @@
              <level value="warn" />
              <appender-ref ref="error" />
              <appender-ref ref="info" />
+             <appender-ref ref="console" />
      </logger>
 
   	<logger name="org.hibernate">
         <level value="warn" />     
         <appender-ref ref="info" />   
     	<appender-ref ref="error" />
+    	<appender-ref ref="console" />
     </logger>
 
  	<logger name="org.hibernate.SQL">
         <level value="warn" />
         <appender-ref ref="info" />
     	<appender-ref ref="error" />
+    	<appender-ref ref="console" />
     </logger>
 
  	<logger name="org.hibernate.tool.hbm2ddl">
  		<level value="warn"/>
  		<appender-ref ref="info" />
  		<appender-ref ref="error" />
+ 		<appender-ref ref="console" />
  	</logger>
  	
 	<!-- Root Logger -->

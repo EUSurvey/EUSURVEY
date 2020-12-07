@@ -1590,11 +1590,11 @@ public class SurveyHelper {
 		freetext.setScoring(scoring);
 
 		Integer points = getInteger(parameterMap, "points", id, 1);
-		if (log220 && !points.equals(freetext.getPoints())) {
-			oldValues += " points: " + freetext.getPoints();
+		if (log220 && !points.equals(freetext.getQuizPoints())) {
+			oldValues += " points: " + freetext.getQuizPoints();
 			newValues += " points: " + points;
 		}
-		freetext.setPoints(points);
+		freetext.setQuizPoints(points);
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
@@ -1884,11 +1884,11 @@ public class SurveyHelper {
 		number.setScoring(scoring);
 
 		Integer points = getInteger(parameterMap, "points", id, 1);
-		if (log220 && !points.equals(number.getPoints())) {
-			oldValues += " points: " + number.getPoints();
+		if (log220 && !points.equals(number.getQuizPoints())) {
+			oldValues += " points: " + number.getQuizPoints();
 			newValues += " points: " + points;
 		}
-		number.setPoints(points);
+		number.setQuizPoints(points);
 		
 		String display = getString(parameterMap, "display", id, servletContext);
 		if (log220 && !number.getDisplay().equals(display)) {
@@ -2017,11 +2017,11 @@ public class SurveyHelper {
 		date.setScoring(scoring);
 
 		Integer points = getInteger(parameterMap, "points", id, 1);
-		if (log220 && !points.equals(date.getPoints())) {
-			oldValues += " points: " + date.getPoints();
+		if (log220 && !points.equals(date.getQuizPoints())) {
+			oldValues += " points: " + date.getQuizPoints();
 			newValues += " points: " + points;
 		}
-		date.setPoints(points);
+		date.setQuizPoints(points);
 
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
@@ -2386,11 +2386,11 @@ public class SurveyHelper {
 		singlechoice.setScoring(scoring);
 
 		Integer points = getInteger(parameterMap, "points", id, 1);
-		if (log220 && !points.equals(singlechoice.getPoints())) {
-			oldValues += " points: " + singlechoice.getPoints();
+		if (log220 && !points.equals(singlechoice.getQuizPoints())) {
+			oldValues += " points: " + singlechoice.getQuizPoints();
 			newValues += " points: " + points;
 		}
-		singlechoice.setPoints(points);
+		singlechoice.setQuizPoints(points);
 
 		String subType = getString(parameterMap, "subType", id, servletContext);
 		if (log220 && !singlechoice.getSubType().equals(subType)) {
@@ -2639,11 +2639,11 @@ public class SurveyHelper {
 		multiplechoice.setScoring(scoring);
 
 		Integer points = getInteger(parameterMap, "points", id, 1);
-		if (log220 && !points.equals(multiplechoice.getPoints())) {
-			oldValues += " points: " + multiplechoice.getPoints();
+		if (log220 && !points.equals(multiplechoice.getQuizPoints())) {
+			oldValues += " points: " + multiplechoice.getQuizPoints();
 			newValues += " points: " + points;
 		}
-		multiplechoice.setPoints(points);
+		multiplechoice.setQuizPoints(points);
 
 		Boolean noNegativeScore = getBoolean(parameterMap, "noNegativeScore", id);
 		if (log220 && !noNegativeScore.equals(multiplechoice.getNoNegativeScore())) {

@@ -201,7 +201,7 @@ public class ResultsExecutor implements Runnable, BeanFactoryAware{
 					{
 						XlsExportCreator xlsExportCreator = (XlsExportCreator) context.getBean("xlsExportCreator");
 						xlsExportCreator.init(0,form,null, fileService.getSurveyExportFile(survey.getUniqueId(), uid).getPath(), resources, locale, "", "");			
-						xlsExportCreator.ExportContent(dbsurvey.getPublication(), false);
+						xlsExportCreator.exportContent(dbsurvey.getPublication(), false);
 						f.setName(filename);
 					} else if (type.equalsIgnoreCase("ods"))
 					{
