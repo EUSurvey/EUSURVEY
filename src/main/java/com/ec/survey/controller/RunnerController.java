@@ -1253,7 +1253,13 @@ public class RunnerController extends BasicController {
 			String fileName = request.getParameter("fileName");
 
 			fileName = Ucs2Utf8.unconvert(fileName);
-
+				// TODO: what to do when the file is not in the UPLOADS folder anymore but we want to delete them?
+				// how to reproduce: upload some explanation files, EXPLANATION_UPLOADS gets populated
+				// press SAVE
+				// reopen this particular survey and delete some file, do not save
+				// close the tab, withou saving
+				// reopen the particular survey
+				// when you try to delete files that are already deleted, it won't work as expected
 			String validFileName = validateDeleteParameters(id, uniqueCode, fileName, surveyUID);
 
 			java.io.File file = new java.io.File(validFileName);
@@ -1281,16 +1287,17 @@ public class RunnerController extends BasicController {
 			Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, false);
 			isDelphi = survey.getIsDelphi();
 		}
-		String folderPath;
+		java.io.File basePath;
 		if (isDelphi) {
-			folderPath = fileService.getSurveyExplanationUploadsFolder(surveyUID, false) + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
+			basePath = fileService.getSurveyExplanationUploadsFolder(surveyUID, false);
 		} else {
-			folderPath = fileService.getSurveyUploadsFolder(surveyUID, false) + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
+			basePath = fileService.getSurveyUploadsFolder(surveyUID, false);
 		}
+		String folderPath = basePath + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
 		String canonicalPath = new File(folderPath).getCanonicalPath();
 		boolean validDirectoryPath = validator.isValidDirectoryPath(
 				"check directory path in RunnerController.delete method", canonicalPath,
-				fileService.getSurveyUploadsFolder(surveyUID, false), false);
+				basePath, false);
 		if (!validDirectoryPath) {
 			throw new ValidationException("Invalid folder path: " + folderPath, "Invalid folder path: " + folderPath);
 		}

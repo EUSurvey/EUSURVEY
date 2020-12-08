@@ -474,6 +474,7 @@ function delphiPrefill(editorElement) {
 		{
 			showErrorl(message);
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
+			surveyElement.find(".explanation-file-upload-section").show();
 		},
 		success: function(currentExplanationText, textStatus)
 		{
@@ -488,6 +489,7 @@ function delphiPrefill(editorElement) {
 				updateFileList(uploaderElement, updateinfo);
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
+			surveyElement.find(".explanation-file-upload-section").show();
 		}
 	});
 }
