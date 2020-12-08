@@ -329,6 +329,7 @@ public class OdfExportCreator extends ExportCreator {
 
 		filter.setVisibleQuestions(filter.getExportedQuestions());
 		filter.setVisibleExplanations(filter.getExportedExplanations());
+		filter.setVisibleDiscussions(filter.getExportedDiscussions());
 		
 		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
 				publication == null || publication.getShowUploadedDocuments(), false, false);
@@ -781,6 +782,26 @@ public class OdfExportCreator extends ExportCreator {
 						AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
 						cell.setStringValue(ConversionTools.removeHTMLNoEscape(explanation.getText()));
 						cell.setDisplayText(ConversionTools.removeHTMLNoEscape(explanation.getText()));
+					} catch (NoSuchElementException ex) {
+						cell.setStringValue("");
+					}					
+				}
+				
+				cell.setValueType(Constants.STRING);
+			}
+			
+			if (question.isDelphiElement() && filter.getVisibleDiscussions().contains(question.getId().toString()))
+			{
+				cell = sheet.getCellByPosition(columnIndex++, rowIndex);
+				
+				if (answerSet == null) {
+					cell.setStringValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter)));
+					cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+				} else {
+					try {
+						String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerSet.getId()), question.getUniqueId(), false);
+						cell.setStringValue(ConversionTools.removeHTMLNoEscape(discussion));
+						cell.setDisplayText(ConversionTools.removeHTMLNoEscape(discussion));
 					} catch (NoSuchElementException ex) {
 						cell.setStringValue("");
 					}					

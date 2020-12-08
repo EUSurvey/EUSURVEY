@@ -141,16 +141,27 @@ public class AnswerExplanationService extends BasicService {
 	}
 	
 	@Transactional
-	public String getDiscussion(int answerSetId, String questionUid)
+	public String getDiscussion(int answerSetId, String questionUid, boolean useHtml)
 	{
 		List<AnswerComment> comments = loadComments(answerSetId, questionUid);
 		StringBuilder s = new StringBuilder();
 		for (AnswerComment comment : comments) {
 			if (comment.getParent() == null)
 			{
-				s.append("<div class='comment'>").append(comment.getText()).append("</div>");
+				if (useHtml)
+				{
+					s.append("<div class='comment'>").append(comment.getText()).append("</div>");
+				} else {
+					s.append(comment.getText()).append("\n");
+				}
 			} else {
-				s.append("<div class='reply'>").append(comment.getText()).append("</div>");
+
+				if (useHtml)
+				{
+					s.append("<div class='reply'>").append(comment.getText()).append("</div>");
+				} else {
+					s.append(comment.getText()).append("\n");
+				}
 			}
 		}
 		return s.toString();

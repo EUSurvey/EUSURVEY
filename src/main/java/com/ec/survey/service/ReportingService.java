@@ -656,7 +656,7 @@ public class ReportingService extends BasicService {
 								if (filter.getVisibleDiscussions().contains(question.getId().toString()))
 								{
 									try {
-										String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerrow[1]), question.getUniqueId());
+										String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerrow[1]), question.getUniqueId(), !forexport);
 										row.add(discussion);
 									} catch (NoSuchElementException ex) {
 										row.add("");

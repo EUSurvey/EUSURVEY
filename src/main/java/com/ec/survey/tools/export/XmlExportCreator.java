@@ -45,6 +45,7 @@ public class XmlExportCreator extends ExportCreator {
 
 	private static final String ANSWER = "Answer";
 	private static final String EXPLANATION = "Explanation";
+	private static final String DISCUSSION = "Discussion";
 	
 	@Override
 	@Transactional
@@ -864,6 +865,24 @@ public class XmlExportCreator extends ExportCreator {
 						try {
 							AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
 							writer.writeCharacters(ConversionTools.removeHTMLNoEscape(explanation.getText()));
+						} catch (NoSuchElementException ex) {
+							//ignore
+						}					
+					}
+					
+					writer.writeEndElement(); // Explanation
+				}
+				
+				if (question.isDelphiElement() && filter.discussionExported(question.getId().toString())) {
+					writer.writeStartElement(DISCUSSION);
+					writer.writeAttribute("qid", question.getUniqueId());
+									
+					if (answerSet == null) {
+						writer.writeCharacters(ConversionTools.removeHTMLNoEscape(row.get(answerrowcounter++)));
+					} else {
+						try {
+							String discussion = answerExplanationService.getDiscussion(answerSet.getId(), question.getUniqueId(), true);
+							writer.writeCharacters(ConversionTools.removeHTMLNoEscape(discussion));
 						} catch (NoSuchElementException ex) {
 							//ignore
 						}					
