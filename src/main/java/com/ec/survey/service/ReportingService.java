@@ -641,13 +641,26 @@ public class ReportingService extends BasicService {
 								row.add(item.toString());
 							}
 							
-							if (survey.getIsDelphi() && question.isDelphiElement() && filter.getVisibleExplanations().contains(question.getId().toString()))
+							if (survey.getIsDelphi() && question.isDelphiElement())
 							{
-								try {
-									AnswerExplanation explanation = answerExplanationService.getExplanation(ConversionTools.getValue(answerrow[1]), question.getUniqueId());
-									row.add(explanation.getText());
-								} catch (NoSuchElementException ex) {
-									row.add("");
+								if (filter.getVisibleExplanations().contains(question.getId().toString()))
+								{
+									try {
+										AnswerExplanation explanation = answerExplanationService.getExplanation(ConversionTools.getValue(answerrow[1]), question.getUniqueId());
+										row.add(explanation.getText());
+									} catch (NoSuchElementException ex) {
+										row.add("");
+									}
+								}
+								
+								if (filter.getVisibleDiscussions().contains(question.getId().toString()))
+								{
+									try {
+										String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerrow[1]), question.getUniqueId());
+										row.add(discussion);
+									} catch (NoSuchElementException ex) {
+										row.add("");
+									}
 								}
 							}
 							
