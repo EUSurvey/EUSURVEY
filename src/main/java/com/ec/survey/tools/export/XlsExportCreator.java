@@ -1848,10 +1848,17 @@ public class XlsExportCreator extends ExportCreator {
 		String targetLabel = resources.getMessage("label.ECF.Target", null, "Target", locale);
 		Cell secondCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
 		secondCellFirstRow.setCellValue(targetLabel);
+		boolean displayGap = (globalResult.getTotalResults().getTotalGaps() != null &&
+		globalResult.getTotalResults().getTotalScores().size() == globalResult.getTotalResults().getTotalGaps().size());
 
 		for (String participantName : globalResult.getIndividualResults().get(0).getParticipantsNames()) {
 			Cell participantCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
-			participantCell.setCellValue(participantName);
+			participantCell.setCellValue("Score for " + participantName);
+			
+			if (displayGap) {
+				Cell participantGapCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+				participantGapCell.setCellValue("Gap for " + participantName);
+			} 
 		}
 		// SECOND ROW
 		row = sheet.createRow(rowIndex++);
@@ -1868,26 +1875,15 @@ public class XlsExportCreator extends ExportCreator {
 			secondCellSecondRow.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
 		}
 		
-		boolean displayGap = (globalResult.getTotalResults().getTotalGaps() != null &&
-				globalResult.getTotalResults().getTotalScores().size() == globalResult.getTotalResults().getTotalGaps().size());
-
-		for (int i =0; i< globalResult.getTotalResults().getTotalScores().size(); i++) {
+		for (int i = 0; i < globalResult.getTotalResults().getTotalScores().size(); i++) {
 			Integer totalScore = globalResult.getTotalResults().getTotalScores().get(i);
 			Cell totalScoreCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
-			
+			totalScoreCell.setCellValue(totalScore);
+
 			if (displayGap) {
 				Integer totalGap = globalResult.getTotalResults().getTotalGaps().get(i);
-				String plusOrMinus = "";
-				if (totalGap > 0) {
-					plusOrMinus = "+";
-				}
-				if (totalGap < 0) {
-					plusOrMinus = "-";
-				}
-				totalScoreCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
-				totalScoreCell.setCellValue(totalScore + " " + "(" + plusOrMinus + totalGap + ")");
-			} else {
-				totalScoreCell.setCellValue(totalScore);
+				Cell totalGapCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+				totalGapCell.setCellValue(totalGap);
 			}
 		}
 
@@ -1910,18 +1906,13 @@ public class XlsExportCreator extends ExportCreator {
 			for (int i = 0; i<competencyResult.getCompetencyScores().size(); i++) {
 				Integer score  = competencyResult.getCompetencyScores().get(i);
 				Cell scoreCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
-				
+				scoreCell.setCellValue(score);
+
 				if (displayGap) {
+					Cell gapCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
 					Integer gap = competencyResult.getCompetencyScoreGaps().get(i);
-					String plusOrMinus = "";
-					if (gap > 0) {
-						plusOrMinus = "+";
-					}
-					scoreCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
-					scoreCell.setCellValue(score + " " + "(" + plusOrMinus + gap + ")");
-				} else {
-					scoreCell.setCellValue(score);
-				}
+					gapCell.setCellValue(gap);
+				} 
 			}
 		}
 	}
