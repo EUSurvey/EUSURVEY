@@ -1276,7 +1276,17 @@ public class RunnerController extends BasicController {
 	private String validateDeleteParameters(String id, String uniqueCode, String fileName, String surveyUID)
 			throws ValidationException, IOException {
 		Validator validator = ESAPI.validator();
-		String folderPath = fileService.getSurveyUploadsFolder(surveyUID, false) + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
+		boolean isDelphi = false;
+		{
+			Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, false);
+			isDelphi = survey.getIsDelphi();
+		}
+		String folderPath;
+		if (isDelphi) {
+			folderPath = fileService.getSurveyExplanationUploadsFolder(surveyUID, false) + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
+		} else {
+			folderPath = fileService.getSurveyUploadsFolder(surveyUID, false) + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
+		}
 		String canonicalPath = new File(folderPath).getCanonicalPath();
 		boolean validDirectoryPath = validator.isValidDirectoryPath(
 				"check directory path in RunnerController.delete method", canonicalPath,
