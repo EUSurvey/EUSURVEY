@@ -1285,7 +1285,8 @@ public class RunnerController extends BasicController {
 		boolean isDelphi = false;
 		{
 			Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, false);
-			isDelphi = survey.getIsDelphi();
+			Element question = survey.getQuestionMapByUniqueId().get(uniqueCode);
+			isDelphi = survey.getIsDelphi() && question.isDelphiElement();
 		}
 		java.io.File basePath;
 		if (isDelphi) {
