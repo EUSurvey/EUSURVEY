@@ -1279,11 +1279,9 @@ public class RunnerController extends BasicController {
 		{
 			Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, false);
 			int questionId = Integer.parseInt(id);
-			Map<String, Element> map1 = survey.getQuestionMapByUniqueId();
-			Map<Integer, Question> map2 = survey.getQuestionMap();
-			Element element1 = map1.get(uniqueCode);
-			Question element2 = map2.get(questionId);
-			isDelphi = survey.getIsDelphi() && (element2!=null) && (element2.isDelphiElement());
+			Map<Integer, Question> map = survey.getQuestionMap();
+			Question question = map.get(questionId);
+			isDelphi = survey.getIsDelphi() && (question!=null) && (question.isDelphiElement());
 		}
 		java.io.File basePath;
 		if (isDelphi) {
