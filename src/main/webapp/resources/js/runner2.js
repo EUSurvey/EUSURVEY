@@ -483,9 +483,9 @@ function delphiPrefill(editorElement) {
 			
 			if (currentExplanationText) {
 				editorElement[0].setContent(currentExplanationText.text);
-				var inputElement = surveyElement.find(".explanation-file-upload-section").children("input");
+				var uploaderElement = surveyElement.find(".explanation-file-upload-section").children(".file-uploader").first();
 				var updateinfo = {"success":true, "files":currentExplanationText.fileList, "wrongextension":false};
-				updateFileList(inputElement, updateinfo);
+				updateFileList(uploaderElement, updateinfo);
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 		}
