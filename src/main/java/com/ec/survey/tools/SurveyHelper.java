@@ -874,9 +874,19 @@ public class SurveyHelper {
 						questionId = elementsByUniqueId.get(answer.getQuestionUniqueId()).getId();
 					}
 
-					java.io.File directory = new java.io.File(
-							fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(), false) + Constants.PATH_DELIMITER
-									+ answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
+					boolean isDelphi = false;
+					{
+						Element element = survey.getElementsById().get(questionId);
+						isDelphi = survey.getIsDelphi() && element.isDelphiElement();
+					}
+					java.io.File basePath;
+					if (isDelphi) {
+						basePath = fileService.getSurveyExplanationUploadsFolder(answerSet.getSurvey().getUniqueId(), false);
+					} else {
+						basePath = fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(), false);
+					}
+
+					java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
 					directory.mkdirs();
 					java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
 					out = new FileOutputStream(fileOut);

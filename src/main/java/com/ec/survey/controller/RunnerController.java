@@ -1253,13 +1253,6 @@ public class RunnerController extends BasicController {
 			String fileName = request.getParameter("fileName");
 
 			fileName = Ucs2Utf8.unconvert(fileName);
-				// TODO: what to do when the file is not in the UPLOADS folder anymore but we want to delete them?
-				// how to reproduce: upload some explanation files, EXPLANATION_UPLOADS gets populated
-				// press SAVE
-				// reopen this particular survey and delete some file, do not save
-				// close the tab, withou saving
-				// reopen the particular survey
-				// when you try to delete files that are already deleted, it won't work as expected
 			String validFileName = validateDeleteParameters(id, uniqueCode, fileName, surveyUID);
 
 			java.io.File file = new java.io.File(validFileName);
@@ -1285,8 +1278,12 @@ public class RunnerController extends BasicController {
 		boolean isDelphi = false;
 		{
 			Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, false);
-			Element question = survey.getQuestionMapByUniqueId().get(uniqueCode);
-			isDelphi = survey.getIsDelphi() && question.isDelphiElement();
+			int questionId = Integer.parseInt(id);
+			Map<String, Element> map1 = survey.getQuestionMapByUniqueId();
+			Map<Integer, Question> map2 = survey.getQuestionMap();
+			Element element1 = map1.get(uniqueCode);
+			Question element2 = map2.get(questionId);
+			isDelphi = survey.getIsDelphi() && (element2!=null) && (element2.isDelphiElement());
 		}
 		java.io.File basePath;
 		if (isDelphi) {
