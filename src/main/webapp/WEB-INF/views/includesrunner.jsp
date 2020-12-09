@@ -258,49 +258,6 @@
 	 	localStorage.removeItem("SurveyEditorBackup${surveyeditorsaved}");
 	</c:if>
 	
-	var explanationEditorConfig = {
-			script_url: '${contextpath}/resources/js/tinymce/tinymce.min.js',
-			theme: 'modern',
-			entity_encoding: 'raw',
-			menubar: false,
-			toolbar: ['bold italic underline strikethrough | undo redo | bullist numlist | link code | fontsizeselect forecolor fontselect'],
-			plugins: 'paste link image code textcolor',
-			font_formats:
-				'Sans Serif=FreeSans, Arial, Helvetica, Tahoma, Verdana, sans-serif;' +
-				'Serif=FreeSerif,Times,serif;' +
-				'Mono=FreeMono,Courier, mono;',
-			language : globalLanguage,
-			image_advtab: true,
-			entities: '',
-			content_css: '${contextpath}/resources/css/tinymce.css',
-			popup_css_add: '${contextpath}/resources/css/tinymcepopup.css',
-			forced_root_block: false,
-			browser_spellcheck: true,
-			paste_postprocess: function(pl, o) {
-				o.node.innerHTML = replaceBRs(strip_tags(o.node.innerHTML, '<p><br>'));
-			},
-			setup: function(editor) {
-				editor.on('init', function(event) {
-					delphiPrefill($(event.target));
-				});
-				editor.on('Change', function (event) {
-					try {
-					    // The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
-					    $('#' + event.target.id).closest('.survey-element').find('a[data-type="delphisavebutton"]').removeClass('disabled');
-					} catch (e) {}
-				});
-			},
-			relative_urls: false,
-			remove_script_host: false,
-			document_base_url: serverPrefix,
-			default_link_target: '_blank',
-			anchor_top: false,
-			anchor_bottom: false,
-			branding: false,
-			invalid_elements: 'html,head,body',
-			object_resizing: false
-		};
-	
 </script>
 <script type="text/javascript" src="${contextpath}/resources/js/utf8.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/includes.js?version=<%@include file="version.txt" %>"></script>
