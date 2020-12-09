@@ -3159,7 +3159,7 @@ public class ManagementController extends BasicController {
 				return result;
 			}
 
-			answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, false, active && !allanswers);
+			answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, true, active && !allanswers);
 
 			boolean surveyExists = survey != null;
 
