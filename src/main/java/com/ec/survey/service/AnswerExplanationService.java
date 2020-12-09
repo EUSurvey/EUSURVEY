@@ -45,6 +45,16 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<AnswerExplanation> getExplanations(int answerSetId) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createQuery("SELECT ex FROM AnswerExplanation ex WHERE answerSetId = :answerSetId")
+				.setInteger("answerSetId", answerSetId);
+		List<AnswerExplanation> explanations = (List<AnswerExplanation>) query.list();
+		return explanations;
+	}
+
+	@Transactional(readOnly = true)
 	public List<DelphiContribution> getDelphiContributions(ChoiceQuestion question) {
 		return getDelphiContributionsInternal(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
 	}

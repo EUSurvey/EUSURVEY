@@ -860,49 +860,37 @@ public class SurveyHelper {
 		int answerSetId = answerSet.getId();
 		String surveyUniqueId = survey.getUniqueId();
 
-		for (Answer answer : answerSet.getAnswers()) {
-			String questionUid = answer.getQuestionUniqueId();
-			if (null == questionUid) continue;
+		List<AnswerExplanation> explanations = answerExplanationService.getExplanations(answerSetId);
+		for (AnswerExplanation explanation : explanations) {
+			String questionUid = explanation.getQuestionUid();
+			int questionId = elementsByUniqueId.get(questionUid).getId();
+			for (File file : explanation.getFiles()) {
+				String filename = file.getName();
+				if (null != filename) {
+					FileInputStream in = null;
+					FileOutputStream out = null;
 
-			Element element = elementsByUniqueId.get(questionUid);
-			boolean isDelphi = survey.getIsDelphi() && (element!=null) && (element.isDelphiElement());
+					try {
+						java.io.File folder = fileService.getSurveyFilesFolder(surveyUniqueId);
+						in = new FileInputStream(folder.getPath() + Constants.PATH_DELIMITER + file.getUid());
 
-			if (isDelphi) {
-				AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetId, questionUid);
-				if (null == explanation) break;
+						java.io.File basePath = fileService.getSurveyExplanationUploadsFolder(surveyUniqueId, false);
 
-				for (File file : explanation.getFiles()) {
-					String filename = file.getName();
-					if (null != filename) {
-						logger.info("BRS recreate: "+filename);
+						java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
+						directory.mkdirs();
+						java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
+						out = new FileOutputStream(fileOut);
 
-						FileInputStream in = null;
-						FileOutputStream out = null;
+						IOUtils.copy(in, out);
 
+					} catch (Exception e) {
+						logger.error(e.getLocalizedMessage(), e);
+					} finally {
 						try {
-							java.io.File folder = fileService.getSurveyFilesFolder(surveyUniqueId);
-							in = new FileInputStream(folder.getPath() + Constants.PATH_DELIMITER + file.getUid());
-
-							int questionId = element.getId();
-
-							java.io.File basePath = fileService.getSurveyExplanationUploadsFolder(surveyUniqueId, false);
-
-							java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
-							directory.mkdirs();
-							java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
-							out = new FileOutputStream(fileOut);
-
-							IOUtils.copy(in, out);
-
+							in.close();
+							out.close();
 						} catch (Exception e) {
-							logger.error(e.getLocalizedMessage(), e);
-						} finally {
-							try {
-								in.close();
-								out.close();
-							} catch (Exception e) {
-								// ignore
-							}
+							// ignore
 						}
 					}
 				}
