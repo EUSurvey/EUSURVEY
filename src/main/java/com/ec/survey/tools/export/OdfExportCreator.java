@@ -337,10 +337,13 @@ public class OdfExportCreator extends ExportCreator {
 		if (answersets != null) {
 			for (List<String> row : answersets) {
 				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, uploadedFilesByCodeAndQuestionUID,
-						uploadQuestionNicenames);
+						uploadQuestionNicenames, null);
 			}
 		} else {
 
+			//it is not possible to query the database after the result query was executed
+			Map<Integer, Map<String, String>> explanations = answerExplanationService.getAllExplanations(form.getSurvey());			
+					
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, parameters, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
@@ -374,7 +377,7 @@ public class OdfExportCreator extends ExportCreator {
 				} else {
 					if (lastAnswerSet > 0) {
 						parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export,
-								uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+								uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations);
 						session.flush();
 					}
 
@@ -395,7 +398,7 @@ public class OdfExportCreator extends ExportCreator {
 			}
 			if (lastAnswerSet > 0)
 				parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export,
-						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations);
 			results.close();
 		}
 
@@ -461,7 +464,7 @@ public class OdfExportCreator extends ExportCreator {
 	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication,
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export,
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
-			Map<String, String> uploadQuestionNicenames) throws Exception {
+			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations) throws Exception {
 		rowIndex++;
 		columnIndex = 0;
 
@@ -779,9 +782,13 @@ public class OdfExportCreator extends ExportCreator {
 					cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
 				} else {
 					try {
-						AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
-						cell.setStringValue(ConversionTools.removeHTMLNoEscape(explanation.getText()));
-						cell.setDisplayText(ConversionTools.removeHTMLNoEscape(explanation.getText()));
+						if (explanations.containsKey(answerSet.getId()) && explanations.get(answerSet.getId()).containsKey(question.getUniqueId()))
+						{
+							cell.setStringValue(ConversionTools.removeHTMLNoEscape(explanations.get(answerSet.getId()).get(question.getUniqueId())));
+							cell.setDisplayText(ConversionTools.removeHTMLNoEscape(explanations.get(answerSet.getId()).get(question.getUniqueId())));
+						} else {
+							cell.setStringValue("");
+						}
 					} catch (NoSuchElementException ex) {
 						cell.setStringValue("");
 					}					

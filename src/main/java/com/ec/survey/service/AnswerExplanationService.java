@@ -5,6 +5,8 @@ import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.delphi.DelphiContribution;
 import com.ec.survey.model.survey.*;
+import com.ec.survey.tools.ConversionTools;
+
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -14,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -43,6 +47,36 @@ public class AnswerExplanationService extends BasicService {
 			throw new NoSuchElementException();
 		}
 		return explanation;
+	}
+	
+	@Transactional(readOnly = true)
+	public Map<Integer, Map<String, String>> getAllExplanations(Survey survey) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createSQLQuery("SELECT ex.ANSWER_SET_ID, ex.QUESTION_UID, ex.TEXT FROM ANSWERS_EXPLANATIONS ex JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ex.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft")
+				.setBoolean("draft", survey.getIsDraft())
+				.setString("surveyUid", survey.getUniqueId());
+		
+		Map<Integer, Map<String, String>> result = new HashMap<>();		
+		
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
+		
+		for (Object o : res) {
+			Object[] a = (Object[]) o;
+					
+			int answerSetId = ConversionTools.getValue(a[0]);
+			String questionUid = (String)a[1];
+			String explanation =  (String)a[2];
+			
+			if (!result.containsKey(answerSetId))
+			{
+				result.put(answerSetId, new HashMap<String, String>());
+			}
+			
+			result.get(answerSetId).put(questionUid, explanation);
+		}
+		
+		return result;
 	}
 
 	@Transactional(readOnly = true)
