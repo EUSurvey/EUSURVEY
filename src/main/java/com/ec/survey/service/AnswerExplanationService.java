@@ -173,6 +173,22 @@ public class AnswerExplanationService extends BasicService {
 		
 		return list;
 	}
+	
+	@Transactional
+	public String getDiscussion(int answerSetId, String questionUid)
+	{
+		List<AnswerComment> comments = loadComments(answerSetId, questionUid);
+		StringBuilder s = new StringBuilder();
+		for (AnswerComment comment : comments) {
+			if (comment.getParent() == null)
+			{
+				s.append("<div class='comment'>").append(comment.getText()).append("</div>");
+			} else {
+				s.append("<div class='reply'>").append(comment.getText()).append("</div>");
+			}
+		}
+		return s.toString();
+	}
 
 	@Transactional
 	public AnswerComment getComment(int id) {

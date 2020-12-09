@@ -2794,6 +2794,8 @@ public class ManagementController extends BasicController {
 		boolean filtered = false;
 		final String SELECTEDEXPLANATION = "selectedexplanation"; 
 		final String EXPORTSELECTEDEXPLANATION = "exportselectedexplanation";
+		final String SELECTEDDISCUSSION = "selecteddiscussion"; 
+		final String EXPORTSELECTEDDISCUSSION = "exportselecteddiscussion";
 		
 		if (!ignorePostParameters) {
 			if (request != null && request.getMethod().equalsIgnoreCase("POST")) {
@@ -2844,7 +2846,11 @@ public class ManagementController extends BasicController {
 					} else if (entry.getKey().startsWith(SELECTEDEXPLANATION)) {
 						filter.getVisibleExplanations().add(entry.getKey().substring(SELECTEDEXPLANATION.length()));
 					} else if (entry.getKey().startsWith(EXPORTSELECTEDEXPLANATION)) {
-						filter.getExportedExplanations().add(entry.getKey().substring(EXPORTSELECTEDEXPLANATION.length()));						
+						filter.getExportedExplanations().add(entry.getKey().substring(EXPORTSELECTEDEXPLANATION.length()));
+					} else if (entry.getKey().startsWith(SELECTEDDISCUSSION)) {
+						filter.getVisibleDiscussions().add(entry.getKey().substring(SELECTEDDISCUSSION.length()));
+					} else if (entry.getKey().startsWith(EXPORTSELECTEDDISCUSSION)) {
+						filter.getExportedDiscussions().add(entry.getKey().substring(EXPORTSELECTEDDISCUSSION.length()));		
 					} else if (entry.getKey().startsWith("selected")) {
 						filter.getVisibleQuestions().add(entry.getKey().substring(8));
 					} else if (entry.getKey().startsWith("exportselected")) {
@@ -3284,13 +3290,24 @@ public class ManagementController extends BasicController {
 							result.add(s.toString());
 						}
 						
-						if (survey.getIsDelphi() && question.getIsDelphiQuestion() && filter.getVisibleExplanations().contains(question.getId().toString()))
+						if (survey.getIsDelphi() && question.getIsDelphiQuestion())
 						{
-							try {
-								AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
-								result.add(explanation.getText());
-							} catch (NoSuchElementException ex) {
-								result.add("");
+							if (filter.getVisibleExplanations().contains(question.getId().toString())) {
+								try {
+									AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
+									result.add(explanation.getText());
+								} catch (NoSuchElementException ex) {
+									result.add("");
+								}
+							}
+							
+							if (filter.getVisibleDiscussions().contains(question.getId().toString())) {
+								try {
+									String discussion = answerExplanationService.getDiscussion(answerSet.getId(), question.getUniqueId());
+									result.add(discussion);
+								} catch (NoSuchElementException ex) {
+									result.add("");
+								}
 							}
 						}
 					}

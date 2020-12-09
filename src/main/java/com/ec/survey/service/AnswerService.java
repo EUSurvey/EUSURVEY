@@ -2114,6 +2114,8 @@ public class AnswerService extends BasicService {
 		Hibernate.initialize(filter.getVisibleQuestions());
 		Hibernate.initialize(filter.getExportedExplanations());
 		Hibernate.initialize(filter.getVisibleExplanations());
+		Hibernate.initialize(filter.getExportedDiscussions());
+		Hibernate.initialize(filter.getVisibleDiscussions());
 		Hibernate.initialize(filter.getLanguages());
 		return filter;
 	}
