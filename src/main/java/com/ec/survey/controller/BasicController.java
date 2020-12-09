@@ -46,6 +46,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ActivityService;
 import com.ec.survey.service.AdministrationService;
+import com.ec.survey.service.AnswerExplanationService;
 import com.ec.survey.service.AnswerService;
 import com.ec.survey.service.ArchiveService;
 import com.ec.survey.service.AttendeeService;
@@ -108,6 +109,9 @@ public class BasicController implements BeanFactoryAware {
 
 	@Resource(name = "fileService")
 	protected FileService fileService;
+
+	@Resource(name = "answerExplanationService")
+	protected AnswerExplanationService answerExplanationService;
 
 	@Resource(name = "skinService")
 	protected SkinService skinService;

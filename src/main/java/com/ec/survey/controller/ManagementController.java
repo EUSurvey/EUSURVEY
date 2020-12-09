@@ -2440,7 +2440,7 @@ public class ManagementController extends BasicController {
 				form.setWcagCompliance(
 						draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 
-				SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), form.getSurvey(), fileService);
+				SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), form.getSurvey(), fileService, answerExplanationService);
 				uniqueCode = draft.getAnswerSet().getUniqueCode();
 
 				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
@@ -2559,7 +2559,7 @@ public class ManagementController extends BasicController {
 			f.setValidation(validation);
 
 			// recreate uploaded files
-			SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService);
+			SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			model.addObject("submit", true);

@@ -46,9 +46,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/runner")
 public class RunnerController extends BasicController {
 
-	@Resource(name = "answerExplanationService")
-	protected AnswerExplanationService answerExplanationService;
-
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
 
@@ -285,7 +282,7 @@ public class RunnerController extends BasicController {
 									draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 
 							SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), f.getSurvey(),
-									fileService);
+									fileService, answerExplanationService);
 							uniqueCode = draft.getAnswerSet().getUniqueCode();
 
 							if (lang == null) {
@@ -315,7 +312,7 @@ public class RunnerController extends BasicController {
 
 								f.getAnswerSets().add(draft.getAnswerSet());
 								SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), f.getSurvey(),
-										fileService);
+										fileService, answerExplanationService);
 								uniqueCode = draft.getAnswerSet().getUniqueCode();
 
 								if (lang == null) {
@@ -563,7 +560,7 @@ public class RunnerController extends BasicController {
 				model.addObject("participationGroup", participationGroup.getId());
 
 				// recreate uploaded files
-				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService);
+				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 				return model;
 			}
@@ -1200,7 +1197,7 @@ public class RunnerController extends BasicController {
 						f.setWcagCompliance(
 								draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 
-						SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), survey, fileService);
+						SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), survey, fileService, answerExplanationService);
 						uniqueCode = draft.getAnswerSet().getUniqueCode();
 						model.addObject("draftid", draftid);
 
@@ -1888,7 +1885,7 @@ public class RunnerController extends BasicController {
 				f.setValidation(validation);
 
 				// recreate uploaded files
-				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService);
+				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
 				surveyService.initializeSkin(f.getSurvey());
