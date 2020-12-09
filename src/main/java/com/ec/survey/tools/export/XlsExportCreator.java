@@ -337,10 +337,13 @@ public class XlsExportCreator extends ExportCreator {
 		if (answersets != null) {
 			for (List<String> row : answersets) {
 				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, questions,
-						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, null);
 			}
 		} else {
 
+			//it is not possible to query the database after the result query was executed
+			Map<Integer, Map<String, String>> explanations = answerExplanationService.getAllExplanations(form.getSurvey());			
+			
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, values, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
@@ -364,7 +367,7 @@ public class XlsExportCreator extends ExportCreator {
 			ScrollableResults results = query.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
 
 			try {
-
+				
 				int lastAnswerSet = 0;
 				AnswerSet answerSet = new AnswerSet();
 				answerSet.setSurvey(survey);
@@ -398,7 +401,7 @@ public class XlsExportCreator extends ExportCreator {
 						if (lastAnswerSet > 0) {
 							session.flush();
 							parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions,
-									uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+									uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations);
 						}
 
 						answerSet = new AnswerSet();
@@ -417,7 +420,7 @@ public class XlsExportCreator extends ExportCreator {
 				}
 				if (lastAnswerSet > 0)
 					parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions,
-							uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+							uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations);
 			} finally {
 				results.close();
 			}
@@ -517,7 +520,7 @@ public class XlsExportCreator extends ExportCreator {
 	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication,
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export, List<Question> questions,
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
-			Map<String, String> uploadQuestionNicenames) throws IOException {
+			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations) throws IOException {
 		CreationHelper createHelper = wb.getCreationHelper();
 
 		// Excel older than 2007 has a limit on the number of rows
@@ -863,8 +866,12 @@ public class XlsExportCreator extends ExportCreator {
 					cell.setCellValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
 				} else {
 					try {
-						AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
-						cell.setCellValue(ConversionTools.removeHTMLNoEscape(explanation.getText()));
+						if (explanations.containsKey(answerSet.getId()) && explanations.get(answerSet.getId()).containsKey(question.getUniqueId()))
+						{
+							cell.setCellValue(ConversionTools.removeHTMLNoEscape(explanations.get(answerSet.getId()).get(question.getUniqueId())));
+						} else {
+							cell.setCellValue("");
+						}
 					} catch (NoSuchElementException ex) {
 						cell.setCellValue("");
 					}					
