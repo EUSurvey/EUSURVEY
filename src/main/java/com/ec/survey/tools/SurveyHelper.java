@@ -858,6 +858,7 @@ public class SurveyHelper {
 	private static void recreateDelphiExplanationUploadedFiles(AnswerSet answerSet, Survey survey, FileService fileService, AnswerExplanationService answerExplanationService) {
 		Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
 		int answerSetId = answerSet.getId();
+		String surveyUniqueId = survey.getUniqueId();
 
 		for (Answer answer : answerSet.getAnswers()) {
 			String questionUid = answer.getQuestionUniqueId();
@@ -872,47 +873,42 @@ public class SurveyHelper {
 
 				for (File file : explanation.getFiles()) {
 					String filename = file.getName();
-					logger.info("BRS recreate: "+filename);
+					if (null != filename) {
+						logger.info("BRS recreate: "+filename);
+
+						FileInputStream in = null;
+						FileOutputStream out = null;
+
+						try {
+							java.io.File folder = fileService.getSurveyFilesFolder(surveyUniqueId);
+							in = new FileInputStream(folder.getPath() + Constants.PATH_DELIMITER + file.getUid());
+
+							int questionId = element.getId();
+
+							java.io.File basePath = fileService.getSurveyExplanationUploadsFolder(surveyUniqueId, false);
+
+							java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
+							directory.mkdirs();
+							java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
+							out = new FileOutputStream(fileOut);
+
+							IOUtils.copy(in, out);
+
+						} catch (Exception e) {
+							logger.error(e.getLocalizedMessage(), e);
+						} finally {
+							try {
+								in.close();
+								out.close();
+							} catch (Exception e) {
+								// ignore
+							}
+						}
+					}
 				}
 			}
 		}
 	}
-
-//			Map<String, ExplanationData> explanationMap = answerSet.getExplanations();
-//		for (Map.Entry<String, AnswerSet.ExplanationData> entry : explanationMap.entrySet()) {
-//			String questionUniqueId = entry.getKey();
-//			AnswerSet.ExplanationData explanation = entry.getValue();
-//			for (File file : explanation.files) {
-//				FileInputStream in = null;
-//				FileOutputStream out = null;
-//
-//				try {
-//					java.io.File folder = fileService.getSurveyFilesFolder(answerSet.getSurvey().getUniqueId());
-//					in = new FileInputStream(folder.getPath() + Constants.PATH_DELIMITER + file.getUid());
-//
-//					int questionId = elementsByUniqueId.get(questionUniqueId).getId();
-//
-//					java.io.File basePath = fileService.getSurveyExplanationUploadsFolder(answerSet.getSurvey().getUniqueId(), false);
-//
-//					java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
-//					directory.mkdirs();
-//					java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
-//					out = new FileOutputStream(fileOut);
-//
-//					IOUtils.copy(in, out);
-//
-//				} catch (Exception e) {
-//					logger.error(e.getLocalizedMessage(), e);
-//				} finally {
-//					try {
-//						in.close();
-//						out.close();
-//					} catch (Exception e) {
-//						// ignore
-//					}
-//				}
-//			}
-//		}
 
 	public static void recreateUploadedFiles(AnswerSet answerSet, Survey survey,
 			FileService fileService, AnswerExplanationService answerExplanationService) {
