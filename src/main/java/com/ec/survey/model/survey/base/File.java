@@ -28,6 +28,7 @@ public class File implements java.io.Serializable {
 	private Date deletionDate;
 	private Integer answerId;
 	private String longdesc;
+	private String questionUid;
 	
 	@Id
 	@Column(name = "FILE_ID", nullable = false)
@@ -128,5 +129,13 @@ public class File implements java.io.Serializable {
 	public String getNameForExport()
 	{
 		return getName().replace(";", "").replace("|", "");
+	}
+	
+	@Transient
+	public String getQuestionUid() {
+		return questionUid;
+	}
+	public void setQuestionUid(String questionUid) {
+		this.questionUid = questionUid;
 	}
 }

@@ -150,6 +150,24 @@ public class OdfExportCreator extends ExportCreator {
 							cell.setFont(font);
 						}
 					}
+					
+					if (form.getSurvey().getIsDelphi() && question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+						cell = sheet.getCellByPosition(columnIndex++, rowIndex);
+						cell.setStringValue(resources.getMessage("label.Explanation", null, "Explanation", locale));
+						Font font = cell.getFont();
+						font.setSize(10);
+						font.setFontStyle(FontStyle.BOLD);
+						cell.setFont(font);
+					}
+					
+					if (form.getSurvey().getIsDelphi() && question.isDelphiElement() && filter.discussionExported(question.getId().toString())) {
+						cell = sheet.getCellByPosition(columnIndex++, rowIndex);
+						cell.setStringValue(resources.getMessage("label.Discussion", null, "Discussion", locale));
+						Font font = cell.getFont();
+						font.setSize(10);
+						font.setFontStyle(FontStyle.BOLD);
+						cell.setFont(font);
+					}
 				}
 		}
 
@@ -319,16 +337,23 @@ public class OdfExportCreator extends ExportCreator {
 		}
 
 		filter.setVisibleQuestions(filter.getExportedQuestions());
+		filter.setVisibleExplanations(filter.getExportedExplanations());
+		filter.setVisibleDiscussions(filter.getExportedDiscussions());
+		
 		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
 				publication == null || publication.getShowUploadedDocuments(), false, false);
 
 		if (answersets != null) {
 			for (List<String> row : answersets) {
 				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, uploadedFilesByCodeAndQuestionUID,
-						uploadQuestionNicenames);
+						uploadQuestionNicenames, null, null);
 			}
 		} else {
 
+			//it is not possible to query the database after the result query was executed
+			Map<Integer, Map<String, String>> explanations = answerExplanationService.getAllExplanations(form.getSurvey());
+			Map<Integer, Map<String, String>> discussions = answerExplanationService.getAllDiscussions(form.getSurvey());
+					
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, parameters, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
@@ -362,7 +387,7 @@ public class OdfExportCreator extends ExportCreator {
 				} else {
 					if (lastAnswerSet > 0) {
 						parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export,
-								uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+								uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions);
 						session.flush();
 					}
 
@@ -383,7 +408,7 @@ public class OdfExportCreator extends ExportCreator {
 			}
 			if (lastAnswerSet > 0)
 				parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export,
-						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions);
 			results.close();
 		}
 
@@ -449,7 +474,7 @@ public class OdfExportCreator extends ExportCreator {
 	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication,
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export,
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
-			Map<String, String> uploadQuestionNicenames) throws Exception {
+			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations, Map<Integer, Map<String, String>> discussions) throws Exception {
 		rowIndex++;
 		columnIndex = 0;
 
@@ -759,6 +784,48 @@ public class OdfExportCreator extends ExportCreator {
 						}
 					}
 				}
+			if (question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+				cell = sheet.getCellByPosition(columnIndex++, rowIndex);
+								
+				if (answerSet == null) {
+					cell.setStringValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter)));
+					cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+				} else {
+					if (explanations.containsKey(answerSet.getId()) && explanations.get(answerSet.getId()).containsKey(question.getUniqueId()))
+					{
+						cell.setStringValue(ConversionTools.removeHTMLNoEscape(explanations.get(answerSet.getId()).get(question.getUniqueId())));
+						cell.setDisplayText(ConversionTools.removeHTMLNoEscape(explanations.get(answerSet.getId()).get(question.getUniqueId())));
+					} else {
+						cell.setStringValue("");
+					}				
+				}
+				
+				cell.setValueType(Constants.STRING);
+			}
+			
+			if (question.isDelphiElement() && filter.discussionExported(question.getId().toString()))
+			{
+				cell = sheet.getCellByPosition(columnIndex++, rowIndex);
+				
+				String discussion = "";
+				
+				if (answerSet == null) {
+					discussion = answerrow.get(answerrowcounter++);
+				} else if (discussions.containsKey(answerSet.getId()) && discussions.get(answerSet.getId()).containsKey(question.getUniqueId()))
+				{
+					discussion = discussions.get(answerSet.getId()).get(question.getUniqueId());
+				}
+				
+				if (!discussion.isEmpty())  {
+					cell.setStringValue(ConversionTools.removeInvalidHtmlEntities(discussion));
+					cell.setDisplayText(ConversionTools.removeInvalidHtmlEntities(discussion));
+					cell.setTextWrapped(true);
+				} else {
+					cell.setStringValue("");
+				}	
+				
+				cell.setValueType(Constants.STRING);
+			}
 		}
 		if (publication == null && filter != null) {
 			if (filter.exported("invitation")) {

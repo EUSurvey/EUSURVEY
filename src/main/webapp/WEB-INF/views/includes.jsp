@@ -378,7 +378,7 @@
 		   invalid_elements : 'html,head,body'
 
 		};
-
+	
 	$(document).ready(function(){
 		
 		$(".filtercell").find("input[type=text]").each(function(){

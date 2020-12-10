@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
@@ -26,6 +27,7 @@ import org.springframework.util.StringUtils;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
+import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.Setting;
@@ -39,6 +41,7 @@ import com.ec.survey.model.survey.GalleryQuestion;
 import com.ec.survey.model.survey.Matrix;
 import com.ec.survey.model.survey.MultipleChoiceQuestion;
 import com.ec.survey.model.survey.NumberQuestion;
+import com.ec.survey.model.survey.Question;
 import com.ec.survey.model.survey.RatingQuestion;
 import com.ec.survey.model.survey.RegExQuestion;
 import com.ec.survey.model.survey.SingleChoiceQuestion;
@@ -54,7 +57,7 @@ import com.ec.survey.tools.Tools;
 import org.hibernate.exception.SQLGrammarException;
 
 @Service("reportingService")
-public class ReportingService {
+public class ReportingService extends BasicService {
 
 	protected static final int MAX_COLUMN_NUMBER_IN_OLAP_TABLE = 1000;
 	
@@ -65,19 +68,7 @@ public class ReportingService {
 	
 	@Resource(name="sessionFactory")
 	protected SessionFactory sessionFactory;
-	
-	@Resource(name = "surveyService")
-	protected SurveyService surveyService;
-	
-	@Resource(name = "answerService")
-	protected AnswerService answerService;
-	
-	@Resource(name = "fileService")
-	protected FileService fileService;
-	
-	@Resource(name = "settingsService")
-	protected SettingsService settingsService;
-	
+		
 	@Autowired
 	private SqlQueryService sqlQueryService;
 	
@@ -369,7 +360,7 @@ public class ReportingService {
 			if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("score"))
 			{
 				where += " ORDER BY QSCORE " + filter.getSortOrder();
-			} else if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("date"))
+			} else if (filter.getSortKey() != null && (filter.getSortKey().equalsIgnoreCase("date") || filter.getSortKey().equalsIgnoreCase("created")))
 			{
 				where += " ORDER BY QCREATED " + filter.getSortOrder();
 			}
@@ -429,7 +420,7 @@ public class ReportingService {
 		
 		Map<String, Element> visibleQuestions = new LinkedHashMap<>();
 		
-		for (Element question : survey.getQuestions())
+		for (Question question : survey.getQuestions())
     	{
     		if (filter.getVisibleQuestions().contains(question.getId().toString()))
     		{
@@ -649,6 +640,30 @@ public class ReportingService {
 							} else {
 								row.add(item.toString());
 							}
+							
+							if (survey.getIsDelphi() && question.isDelphiElement())
+							{
+								if (filter.getVisibleExplanations().contains(question.getId().toString()))
+								{
+									try {
+										AnswerExplanation explanation = answerExplanationService.getExplanation(ConversionTools.getValue(answerrow[1]), question.getUniqueId());
+										row.add(explanation.getText());
+									} catch (NoSuchElementException ex) {
+										row.add("");
+									}
+								}
+								
+								if (filter.getVisibleDiscussions().contains(question.getId().toString()))
+								{
+									try {
+										String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerrow[1]), question.getUniqueId(), !forexport);
+										row.add(discussion);
+									} catch (NoSuchElementException ex) {
+										row.add("");
+									}
+								}
+							}
+							
 							counter++;
 						}
 				    }
@@ -660,6 +675,8 @@ public class ReportingService {
 			return rows;
 			
 		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			
 			return null;
 		}	
 	}
@@ -1888,51 +1905,6 @@ public class ReportingService {
 		return  (Date) query.uniqueResult();
 	}
 	
-	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<Object> GetAllQuestionsAndPossibleAnswersInternal(Survey survey) {
-		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
-		
-		if (!OLAPTableExistsInternal(survey.getUniqueId(), survey.getIsDraft()))
-		{
-			return null;
-		}
-		
-		String sql = "SELECT * FROM " + getOLAPTableName(survey);	
-		
-		Query query=sessionReporting.createSQLQuery(sql);
-		query.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
-		@SuppressWarnings("unchecked")
-		List<Map<String,Object>> aliasToValueMapList=query.list();
-		
-		List<Object> result = new ArrayList<>();
-		
-		for (Map<String,Object> entry : aliasToValueMapList)
-		{
-			for (String question : entry.keySet())
-			{
-				String compactUID = question.substring(1);
-				
-				if (compactUID.length() == 32)
-				{
-					String questionUID = compactUID.replaceFirst( 
-				        "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5" 
-					    );
-				
-					Object[] o = new Object[2];
-					o[0] = questionUID;
-					
-					Object v = entry.get(question);
-					
-					o[1] = (v instanceof String && ((String)v).length() == 36) ? v : "";
-					
-					result.add(o);		
-				}
-			}
-		}		
-		
-		return result;
-	}
-
 	@Transactional(transactionManager = "transactionManagerReporting")
 	public int clearAnswersForQuestionInReportingDatabase(Survey survey, ResultFilter filter, String questionUID, String childUID) throws Exception {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();

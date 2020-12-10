@@ -2792,7 +2792,11 @@ public class ManagementController extends BasicController {
 		}
 
 		boolean filtered = false;
-
+		final String SELECTEDEXPLANATION = "selectedexplanation"; 
+		final String EXPORTSELECTEDEXPLANATION = "exportselectedexplanation";
+		final String SELECTEDDISCUSSION = "selecteddiscussion"; 
+		final String EXPORTSELECTEDDISCUSSION = "exportselecteddiscussion";
+		
 		if (!ignorePostParameters) {
 			if (request != null && request.getMethod().equalsIgnoreCase("POST")) {
 				filter.clearSelectedQuestions();
@@ -2839,6 +2843,14 @@ public class ManagementController extends BasicController {
 						String value = StringUtils.arrayToDelimitedString(values, ";");
 						filter.getFilterValues().put(questionId, value);
 						filtered = true;
+					} else if (entry.getKey().startsWith(SELECTEDEXPLANATION)) {
+						filter.getVisibleExplanations().add(entry.getKey().substring(SELECTEDEXPLANATION.length()));
+					} else if (entry.getKey().startsWith(EXPORTSELECTEDEXPLANATION)) {
+						filter.getExportedExplanations().add(entry.getKey().substring(EXPORTSELECTEDEXPLANATION.length()));
+					} else if (entry.getKey().startsWith(SELECTEDDISCUSSION)) {
+						filter.getVisibleDiscussions().add(entry.getKey().substring(SELECTEDDISCUSSION.length()));
+					} else if (entry.getKey().startsWith(EXPORTSELECTEDDISCUSSION)) {
+						filter.getExportedDiscussions().add(entry.getKey().substring(EXPORTSELECTEDDISCUSSION.length()));		
 					} else if (entry.getKey().startsWith("selected")) {
 						filter.getVisibleQuestions().add(entry.getKey().substring(8));
 					} else if (entry.getKey().startsWith("exportselected")) {
@@ -3139,9 +3151,11 @@ public class ManagementController extends BasicController {
 			boolean addlinks = isOwner || user == null || user.getFormPrivilege() > 1
 					|| user.getLocalPrivilegeValue("AccessResults") > 1
 					|| (form.getSurvey().getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0);
-			filter = answerService.initialize(filter);
+			filter = answerService.initialize(filter);			
+			
 			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks,
 					false, showuploadedfiles, false, false);
+			 
 			if (answersets != null) {
 				Date updateDate = reportingService.getLastUpdate(survey);
 				result.add(updateDate == null ? "" : ConversionTools.getFullString(updateDate));
@@ -3151,7 +3165,7 @@ public class ManagementController extends BasicController {
 				return result;
 			}
 
-			answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, false, active && !allanswers);
+			answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, true, active && !allanswers);
 
 			boolean surveyExists = survey != null;
 
@@ -3184,7 +3198,7 @@ public class ManagementController extends BasicController {
 				result.add(answerSet.getUniqueCode());
 				result.add(answerSet.getId().toString());
 
-				for (Element question : survey.getQuestions()) {
+				for (Question question : survey.getQuestions()) {
 					if (visibleQuestions.contains(question) || survey.getMissingElements().contains(question)) {
 						if (question instanceof Matrix) {
 							for (Element matrixQuestion : ((Matrix) question).getQuestions()) {
@@ -3274,6 +3288,27 @@ public class ManagementController extends BasicController {
 										.append("</span>");
 							}
 							result.add(s.toString());
+						}
+						
+						if (survey.getIsDelphi() && question.getIsDelphiQuestion())
+						{
+							if (filter.getVisibleExplanations().contains(question.getId().toString())) {
+								try {
+									AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
+									result.add(explanation.getText());
+								} catch (NoSuchElementException ex) {
+									result.add("");
+								}
+							}
+							
+							if (filter.getVisibleDiscussions().contains(question.getId().toString())) {
+								try {
+									String discussion = answerExplanationService.getDiscussion(answerSet.getId(), question.getUniqueId(), true);
+									result.add(discussion);
+								} catch (NoSuchElementException ex) {
+									result.add("");
+								}
+							}
 						}
 					}
 				}
@@ -3430,7 +3465,7 @@ public class ManagementController extends BasicController {
 			}
 
 			results.setViewName("management/chartspdf");
-			results.addObject("forPDF", true);
+			results.addObject("forpdf", true);
 			return results;
 
 		} catch (Exception e) {
@@ -3489,7 +3524,7 @@ public class ManagementController extends BasicController {
 		}
 
 		results.setViewName("management/statisticspdf");
-		results.addObject("forPDF", true);
+		results.addObject("forpdf", true);
 		return results;
 	}
 
@@ -3530,7 +3565,7 @@ public class ManagementController extends BasicController {
 		}
 
 		results.setViewName("management/statisticsquizpdf");
-		results.addObject("forPDF", true);
+		results.addObject("forpdf", true);
 		return results;
 	}
 

@@ -8,6 +8,8 @@ import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
 import com.lowagie.text.pdf.BaseFont;
+import com.mysql.jdbc.StringUtils;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
@@ -830,18 +832,36 @@ public class SurveyHelper {
 	}
 	
 	public static AnswerSet parseAndMergeDelphiAnswerSet(HttpServletRequest request, Survey survey,
-			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService) throws IOException {
+			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService, Element question) throws IOException {
 		AnswerSet parsedAnswerSet = parseAnswerSet(request, survey, uniqueCode, true, languageCode, user,
 				fileService);
 		
-		for (Answer answer : parsedAnswerSet.getAnswers()) {
-			//remove existing answers for the question
-			List<Answer> oldAnswers = answerSet.getAnswers(answer.getQuestionId(), answer.getQuestionUniqueId());
+		//remove existing answers for the question
+		if (question instanceof Matrix) {
+			Matrix parent = (Matrix) question;
+			for (Element childQuestion : parent.getQuestions())
+			{
+				List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+				for (Answer oldAnswer: oldAnswers) {
+					answerSet.getAnswers().remove(oldAnswer);
+				}
+			}
+		} else if (question instanceof RatingQuestion) {
+			RatingQuestion parent = (RatingQuestion) question;
+			for (Element childQuestion : parent.getQuestions())
+			{
+				List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+				for (Answer oldAnswer: oldAnswers) {
+					answerSet.getAnswers().remove(oldAnswer);
+				}
+			}
+		} else {
+			List<Answer> oldAnswers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 			for (Answer oldAnswer: oldAnswers) {
 				answerSet.getAnswers().remove(oldAnswer);
 			}
 		}
-
+		
 		for (Answer answer : parsedAnswerSet.getAnswers()) {
 			answer.setAnswerSet(answerSet);
 			
@@ -850,7 +870,6 @@ public class SurveyHelper {
 		}
 		
 		answerSet.getExplanations().putAll(parsedAnswerSet.getExplanations());
-
 	
 		return answerSet;
 	}
@@ -2345,6 +2364,14 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		rating.setIsDelphiQuestion(isDelphiQuestion);
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != rating.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + rating.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		rating.setDelphiChartType(delphiChartType);
 		
 		Element q;
 		int j = 0;
@@ -2501,6 +2528,14 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		singlechoice.setIsDelphiQuestion(isDelphiQuestion);
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != singlechoice.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + singlechoice.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		singlechoice.setDelphiChartType(delphiChartType);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !singlechoice.getAttributeName().equals(nameattribute)) {
@@ -2747,6 +2782,14 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		multiplechoice.setIsDelphiQuestion(isDelphiQuestion);
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != multiplechoice.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + multiplechoice.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		multiplechoice.setDelphiChartType(delphiChartType);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !multiplechoice.getAttributeName().equals(nameattribute)) {
@@ -3061,6 +3104,14 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		matrix.setIsDelphiQuestion(isDelphiQuestion);
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != matrix.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + matrix.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		matrix.setDelphiChartType(delphiChartType);
 
 		// now get the elements inside the matrix
 		String matrixIdsAsString = parameterMap.get("matrixelements" + id)[0];

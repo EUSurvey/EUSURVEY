@@ -7,6 +7,8 @@ public class DelphiTableEntry {
     private final List<DelphiTableAnswer> answers = new ArrayList<>();
     private String explanation;
     private String update;
+    private int answerSetId;
+    private final List<DelphiComment> comments = new ArrayList<>();
 
     public String getExplanation() {
         return explanation;
@@ -26,5 +28,17 @@ public class DelphiTableEntry {
 
     public List<DelphiTableAnswer> getAnswers() {
         return answers;
+    }
+    
+    public int getAnswerSetId() {
+        return answerSetId;
+    }
+
+    public void setAnswerSetId(int answerSetId) {
+        this.answerSetId = answerSetId;
+    }
+    
+    public List<DelphiComment> getComments() {
+        return comments;
     }
 }

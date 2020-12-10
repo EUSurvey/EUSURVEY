@@ -298,6 +298,7 @@ function newBasicViewModel(element)
 		viewModel.optional = ko.observable(element.optional);
 		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 		viewModel.delphiTableEntries = ko.observableArray();
+		viewModel.delphiChartType = ko.observable(element.delphiChartType);
 		
 		if (element.scoringItems != null)
 		{
@@ -797,27 +798,25 @@ function newNumberViewModel(element)
 	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition != null ? element.initialSliderPosition : "Left");
 	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
 	
-	viewModel.labels = function()
+	if (viewModel.display() == 'Slider')
 	{
-		var result =[];
+		if (viewModel.min() == null)
+		{
+			viewModel.min(0);
+		}
+		
+		if (viewModel.max() == null)
+		{
+			viewModel.max(10)
+		}
+	}
+	
+	viewModel.labels = function()
+	{	
+		var result = [];
 		result[result.length] = this.min().toString();
 		var v = this.min();
-		
-//		if (this.displayGraduationScale())
-//		{
-//			var distance = this.max() - this.min();
-//			var tickStep = 1; 
-//			while (distance / tickStep > 10) {
-//				tickStep *= 2;
-//			}
-//			
-//			while (v < this.max())
-//			{
-//				v = Math.round((v + tickStep)* 100) / 100;
-//				result[result.length] = v;
-//			}
-//		}
-		
+			
 		result[result.length] = this.max().toString();		
 			
 		return result;
@@ -825,47 +824,11 @@ function newNumberViewModel(element)
 	
 	viewModel.ticks = function()
 	{
-//		if (!this.displayGraduationScale())
-//		{
-			return "[" + this.min() + "," + this.max() + "]";
-//		}
-//		
-//		var distance = this.max() - this.min();
-//		var tickStep = 1; 
-//		while (distance / tickStep > 10) {
-//			tickStep *= 2;
-//		}
-//		
-//		
-//		var result = "[";
-//		var v = this.min();
-//		result += v;
-//		
-//		while (v < this.max())
-//		{
-//			v = Math.round((v + tickStep)* 100) / 100;
-//			result += ",";
-//			result += v;
-//		}
-//		
-//		//result += ",";
-//		//result += this.max();
-//		
-//		result += "]";
-//		
-//		return result;
+		return "[" + this.min() + "," + this.max() + "]";
 	}
 	
 	viewModel.step = function()
 	{
-//		var result = 1;
-//		for (var i = 0; i < this.decimalPlaces(); i++)
-//		{
-//			result = result / 10;
-//		}
-//		
-//		return result;	
-		
 		var decimals = parseInt(this.decimalPlaces());
 		if (decimals === 0)
 		{

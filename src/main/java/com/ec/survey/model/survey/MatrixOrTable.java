@@ -250,6 +250,8 @@ public abstract class MatrixOrTable extends Question {
 				
 				if (getFirstCellText() != null && !getFirstCellText().equals(matrix.getFirstCellText())) return true;
 				
+				if (!(Objects.equals(getIsDelphiQuestion(), question.getIsDelphiQuestion()))) return true;
+				if (!(Objects.equals(getDelphiChartType(), question.getDelphiChartType()))) return true;
 			} else {
 				return true;
 			}

@@ -219,10 +219,12 @@ public class ContributionController extends BasicController {
 					u = null;
 				}
 			}
-
-			if (request.getRequestURI().contains("preparecontribution")
+			
+			boolean isPDF = request.getRequestURI().contains("preparecontribution")
 					|| request.getRequestURI().contains("preparepublishedcontribution")
-					|| request.getRequestURI().contains("preparedraft")) {
+					|| request.getRequestURI().contains("preparedraft");
+
+			if (isPDF) {
 				// ignore authorization for PDF export
 			} else if (u == null && !draft.getIsActive()) {
 				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
@@ -282,7 +284,7 @@ public class ContributionController extends BasicController {
 
 			ModelAndView model = new ModelAndView("contributions/edit", "form", f);
 			
-			if (newestSurvey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+			if (!isPDF && newestSurvey.getIsDelphi() && request.getParameter("startDelphi") == null) {
 				model = new ModelAndView("runner/delphi", "form", f);
 				model.addObject("isdelphipage", true);
 			}

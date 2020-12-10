@@ -146,6 +146,22 @@ public class XlsExportCreator extends ExportCreator {
 					sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
 					checkColumnInsertHeader(export);
 				}
+				
+				if (form.getSurvey().getIsDelphi() && question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+					Cell cell = rowInsertHeader.createCell(columnIndexInsertHeader++);
+					cell.setCellValue(resources.getMessage("label.Explanation", null, "Explanation", locale));
+					cell.setCellStyle(questionTitleStyle);
+					sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
+					checkColumnInsertHeader(export);
+				}
+				
+				if (form.getSurvey().getIsDelphi() && question.isDelphiElement() && filter.discussionExported(question.getId().toString())) {
+					Cell cell = rowInsertHeader.createCell(columnIndexInsertHeader++);
+					cell.setCellValue(resources.getMessage("label.Discussion", null, "Discussion", locale));
+					cell.setCellStyle(questionTitleStyle);
+					sheetInsertHeader.setColumnWidth(columnIndexInsertHeader, 5000);
+					checkColumnInsertHeader(export);
+				}
 			}
 		}
 
@@ -312,10 +328,10 @@ public class XlsExportCreator extends ExportCreator {
 			}
 		}
 
-		filter.getVisibleQuestions().clear();
-		for (String question : filter.getExportedQuestions()) {
-			filter.getVisibleQuestions().add(question);
-		}
+		
+		filter.setVisibleQuestions(filter.getExportedQuestions());
+		filter.setVisibleExplanations(filter.getExportedExplanations());
+		filter.setVisibleDiscussions(filter.getExportedDiscussions());		
 
 		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
 				publication == null || publication.getShowUploadedDocuments(), false, false);
@@ -324,10 +340,14 @@ public class XlsExportCreator extends ExportCreator {
 		if (answersets != null) {
 			for (List<String> row : answersets) {
 				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, questions,
-						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, null, null);
 			}
 		} else {
 
+			//it is not possible to query the database after the result query was executed
+			Map<Integer, Map<String, String>> explanations = answerExplanationService.getAllExplanations(form.getSurvey());
+			Map<Integer, Map<String, String>> discussions = answerExplanationService.getAllDiscussions(form.getSurvey());
+			
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(), filter, values, true)
 					+ ") ORDER BY ans.ANSWER_SET_ID";
@@ -351,7 +371,7 @@ public class XlsExportCreator extends ExportCreator {
 			ScrollableResults results = query.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
 
 			try {
-
+				
 				int lastAnswerSet = 0;
 				AnswerSet answerSet = new AnswerSet();
 				answerSet.setSurvey(survey);
@@ -385,7 +405,7 @@ public class XlsExportCreator extends ExportCreator {
 						if (lastAnswerSet > 0) {
 							session.flush();
 							parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions,
-									uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+									uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions);
 						}
 
 						answerSet = new AnswerSet();
@@ -404,7 +424,7 @@ public class XlsExportCreator extends ExportCreator {
 				}
 				if (lastAnswerSet > 0)
 					parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions,
-							uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames);
+							uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions);
 			} finally {
 				results.close();
 			}
@@ -501,10 +521,12 @@ public class XlsExportCreator extends ExportCreator {
 	CellStyle dateCellStyle = null;
 	private Map<String, CellStyle> cellStyles = new HashMap<>();
 	
+	CellStyle cswrap = null;
+	
 	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication,
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export, List<Question> questions,
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
-			Map<String, String> uploadQuestionNicenames) throws IOException {
+			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations, Map<Integer, Map<String, String>> discussions) throws IOException {
 		CreationHelper createHelper = wb.getCreationHelper();
 
 		// Excel older than 2007 has a limit on the number of rows
@@ -842,6 +864,47 @@ public class XlsExportCreator extends ExportCreator {
 						cell.setCellValue(cellValue.toString());
 					}
 				}
+			
+			if (question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+				Cell cell = checkColumnsParseAnswerSet();
+								
+				if (answerSet == null) {
+					cell.setCellValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+				} else {
+					if (explanations.containsKey(answerSet.getId()) && explanations.get(answerSet.getId()).containsKey(question.getUniqueId()))
+					{
+						cell.setCellValue(ConversionTools.removeHTMLNoEscape(explanations.get(answerSet.getId()).get(question.getUniqueId())));
+					} else {
+						cell.setCellValue("");
+					}				
+				}
+			}
+			
+			if (question.isDelphiElement() && filter.discussionExported(question.getId().toString())) {
+				Cell cell = checkColumnsParseAnswerSet();
+				
+				String discussion = "";
+				
+				if (answerSet == null) {
+					discussion = answerrow.get(answerrowcounter++);
+				} else if (discussions.containsKey(answerSet.getId()) && discussions.get(answerSet.getId()).containsKey(question.getUniqueId()))
+				{
+					discussion = discussions.get(answerSet.getId()).get(question.getUniqueId());
+				}
+				
+				if (!discussion.isEmpty())  {
+					cell.setCellValue(ConversionTools.removeInvalidHtmlEntities(discussion));
+					
+					if (cswrap == null) {
+						cswrap = wb.createCellStyle();
+						cswrap.setWrapText(true);
+					}
+					
+					cell.setCellStyle(cswrap);
+				} else {
+					cell.setCellValue("");
+				}
+			}
 		}
 		if (publication == null && filter != null) {
 			if (filter.exported("invitation")) {
@@ -1449,7 +1512,7 @@ public class XlsExportCreator extends ExportCreator {
 		}
 
 		cell.setCellStyle(dateStyle);
-		sheet.createRow(rowIndex);
+		sheet.createRow(rowIndex++);
 		return rowIndex;
 	}
 

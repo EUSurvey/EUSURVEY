@@ -82,6 +82,9 @@ public class BasicController implements BeanFactoryAware {
 
 	@Resource(name = "answerService")
 	protected AnswerService answerService;
+	
+	@Resource(name = "answerExplanationService")
+	protected AnswerExplanationService answerExplanationService;
 
 	@Resource(name = "surveyService")
 	protected SurveyService surveyService;
