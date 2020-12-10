@@ -3303,7 +3303,7 @@ public class ManagementController extends BasicController {
 							
 							if (filter.getVisibleDiscussions().contains(question.getId().toString())) {
 								try {
-									String discussion = answerExplanationService.getDiscussion(answerSet.getId(), question.getUniqueId());
+									String discussion = answerExplanationService.getDiscussion(answerSet.getId(), question.getUniqueId(), true);
 									result.add(discussion);
 								} catch (NoSuchElementException ex) {
 									result.add("");

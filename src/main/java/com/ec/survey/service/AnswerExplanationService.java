@@ -175,19 +175,67 @@ public class AnswerExplanationService extends BasicService {
 	}
 	
 	@Transactional
-	public String getDiscussion(int answerSetId, String questionUid)
+	public String getDiscussion(int answerSetId, String questionUid, boolean useHtml)
 	{
 		List<AnswerComment> comments = loadComments(answerSetId, questionUid);
 		StringBuilder s = new StringBuilder();
 		for (AnswerComment comment : comments) {
 			if (comment.getParent() == null)
 			{
-				s.append("<div class='comment'>").append(comment.getText()).append("</div>");
+				if (useHtml)
+				{
+					s.append("<div class='comment'>").append(comment.getText()).append("</div>");
+				} else {
+					s.append(comment.getText()).append("\n");
+				}
 			} else {
-				s.append("<div class='reply'>").append(comment.getText()).append("</div>");
+
+				if (useHtml)
+				{
+					s.append("<div class='reply'>").append(comment.getText()).append("</div>");
+				} else {
+					s.append(comment.getText()).append("\n");
+				}
 			}
 		}
 		return s.toString();
+	}
+	
+	@Transactional(readOnly = true)
+	public Map<Integer, Map<String, String>> getAllDiscussions(Survey survey) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createSQLQuery("SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.PARENT FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
+				.setBoolean("draft", survey.getIsDraft())
+				.setString("surveyUid", survey.getUniqueId());
+		
+		Map<Integer, Map<String, String>> result = new HashMap<>();		
+		
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
+		
+		for (Object o : res) {
+			Object[] a = (Object[]) o;
+					
+			int answerSetId = ConversionTools.getValue(a[0]);
+			String questionUid = (String)a[1];
+			String explanation =  (String)a[2];
+			int parentId = ConversionTools.getValue(a[3]);
+			
+			if (!result.containsKey(answerSetId))
+			{
+				result.put(answerSetId, new HashMap<String, String>());
+			}
+			
+			if (!result.get(answerSetId).containsKey(questionUid))
+			{			
+				result.get(answerSetId).put(questionUid, explanation);
+			} else {
+				String old = result.get(answerSetId).get(questionUid);
+				result.get(answerSetId).put(questionUid, old + "\n   " + explanation);
+			}
+		}
+		
+		return result;
 	}
 
 	@Transactional
