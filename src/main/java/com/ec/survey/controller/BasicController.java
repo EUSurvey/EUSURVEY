@@ -113,9 +113,6 @@ public class BasicController implements BeanFactoryAware {
 	@Resource(name = "fileService")
 	protected FileService fileService;
 
-	@Resource(name = "answerExplanationService")
-	protected AnswerExplanationService answerExplanationService;
-
 	@Resource(name = "skinService")
 	protected SkinService skinService;
 
