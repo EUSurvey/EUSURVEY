@@ -241,7 +241,8 @@ textarea.freetext {
 }
 
 .survey-element {
-	margin: 5px; margin-top: 25px;
+	margin: 0 5px 5px 5px;
+	padding-top: 30px;
 }
 
 .freetext, .email, .regex, .alignment-div, .text {

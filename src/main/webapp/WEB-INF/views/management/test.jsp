@@ -70,6 +70,7 @@
 							addElement(result[i], false, false);
 						}
 						applyStandardWidths();
+						setTimeout(scrollToQuestionIfSet, 7000);
 						checkPages();
 						readCookies();
 						$("#btnSubmit").removeClass("hidden");

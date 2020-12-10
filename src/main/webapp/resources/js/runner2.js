@@ -694,6 +694,13 @@ function loadTableData(div, viewModel) {
 	 });
 }
 
+function scrollToQuestionIfSet() {
+	if (window.location.hash) {
+		var questionId = location.hash.substr(1);
+		document.getElementById(questionId).scrollIntoView();
+	}
+}
+
 var delphiUpdateFinished = false;
 
 function delphiUpdate(div) {
