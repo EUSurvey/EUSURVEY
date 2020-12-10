@@ -487,6 +487,7 @@ function delphiPrefill(editorElement) {
 				var uploaderElement = surveyElement.find(".explanation-file-upload-section").children(".file-uploader").first();
 				var updateinfo = {"success":true, "files":currentExplanationText.fileList, "wrongextension":false};
 				updateFileList(uploaderElement, updateinfo);
+				$(surveyElement).find("a[data-type='delphisavebutton']").addClass("disabled");
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 			surveyElement.find(".explanation-file-upload-section").show();
