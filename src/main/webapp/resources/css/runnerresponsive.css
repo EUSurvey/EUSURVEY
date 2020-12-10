@@ -241,8 +241,13 @@ textarea.freetext {
 }
 
 .survey-element {
-	margin: 0 5px 5px 5px;
-	padding-top: 30px;
+	margin: -25px 5px 5px 5px;
+	padding-top: 55px;
+}
+
+#bodyManagementTest .survey-element {
+	margin-top: -100px;
+	padding-top: 130px;
 }
 
 .freetext, .email, .regex, .alignment-div, .text {
