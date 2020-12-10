@@ -447,6 +447,9 @@ var UndoProcessor = function() {
 			case "DelphiQuestion":
 				element.isDelphiQuestion(step[3]);
 				break;
+			case "DelphiChartType":
+				element.delphiChartType(step[3]);
+				break;
 			case "Name":
 				element.attributeName(step[3]);
 				break;
@@ -962,6 +965,9 @@ var UndoProcessor = function() {
 				break;
 			case "DelphiQuestion":
 				element.isDelphiQuestion(step[4]);
+				break;
+			case "DelphiChartType":
+				element.delphiChartType(step[4]);
 				break;
 			case "Name":
 				element.attributeName(step[4]);

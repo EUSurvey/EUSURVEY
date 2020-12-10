@@ -1,4 +1,4 @@
-Chart.defaults.global.plugins.colorschemes.scheme = 'office.Blue6';
+Chart.defaults.global.plugins.colorschemes.scheme = 'tableau.Tableau10';
 
 function getElementViewModel(element)
 {
@@ -536,7 +536,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				legend: {display: false}
 			};
 
-			switch (result.type) {
+			switch (result.questionType) {
 				case "MultipleChoice":
 				case "SingleChoice":
 					var graphData = result.data;
@@ -589,14 +589,47 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					return;
 			}
 
+			var chart = {
+				data: chartData,
+				options: chartOptions
+			}
+
+			switch (result.chartType) {
+				case "Bar":
+					chart.type = "horizontalBar";
+					break;
+				case "Column":
+					chart.type = "bar";
+					break;
+				case "Line":
+					chart.type = "line";
+					break;
+				case "Pie":
+					chart.type = "pie";
+					chart.options.legend.display = true;
+					delete chart.options.scales;
+					break;
+				case "Radar":
+					chart.type = "radar";
+					delete chart.options.scales;
+					break;
+				case "Scatter":
+					chart.type = "line";
+					chart.options.showLines = false;
+					break;
+				default:
+					chart.type = "horizontalBar";
+					break;
+			}
+
 			if (chartCallback instanceof Function) {
-				chartCallback(div, chartData, chartOptions);
+				chartCallback(div, chart);
 			}
 		}
 	 });
 }
 
-function addChart(div, chartData, chartOptions)
+function addChart(div, chart)
 {
 	var elementWrapper = $(div).closest(".elementwrapper");
 	
@@ -605,19 +638,11 @@ function addChart(div, chartData, chartOptions)
 		
 	$(elementWrapper).find(".chart-wrapper").show();
 	
-	var graph = new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), {
-		type: "bar",
-		data: chartData,
-		options: chartOptions
-	});
+	var graph = new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
 }
 
-function addStructureChart(div, chartData, chartOptions) {
-	new Chart($(div).find("canvas")[0].getContext('2d'), {
-		type: "bar",
-		data: chartData,
-		options: chartOptions
-	});
+function addStructureChart(div, chart) {
+	new Chart($(div).find("canvas")[0].getContext('2d'), chart);
 
 	$(div).find('.no-graph-image').hide();
 }

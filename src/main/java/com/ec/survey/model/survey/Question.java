@@ -35,15 +35,17 @@ public abstract class Question extends Element {
 	private int points = 1;
 	private List<ScoringItem> scoringItems;
 	private boolean delphiQuestion;
-	
-	public Question() {}
-	
+	private DelphiChartType delphiChartType;
+
+	public Question() {
+	}
+
 	public Question(String title, String shortname, String uid) {
 		this.setTitle(title);
 		this.setUniqueId(uid);
 		this.setShortname(shortname);
 	}
-	
+
 	@Column(name = "ISUNIQUE")
 	public Boolean getIsUnique() {
 		return isUnique;
@@ -113,26 +115,38 @@ public abstract class Question extends Element {
 	public void setPoints(Integer points) {
 		this.points = points != null ? points : 1;
 	}
-	
+
 	@Column(name = "DELPHI")
 	public Boolean getIsDelphiQuestion() {
 		return delphiQuestion;
-	}	
+	}
+
 	public void setIsDelphiQuestion(Boolean delphiQuestion) {
 		this.delphiQuestion = delphiQuestion != null && delphiQuestion;
 	}
-	
-	@OneToMany(targetEntity=ScoringItem.class, cascade = CascadeType.ALL)
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "DELPHICHARTTYPE")
+	public DelphiChartType getDelphiChartType() {
+		return delphiChartType == null ? DelphiChartType.Bar : delphiChartType;
+	}
+
+	public void setDelphiChartType(DelphiChartType delphiChartType) {
+		this.delphiChartType = delphiChartType == null ? DelphiChartType.Bar : delphiChartType;
+	}
+
+	@OneToMany(targetEntity = ScoringItem.class, cascade = CascadeType.ALL)
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "position asc")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	public List<ScoringItem> getScoringItems() {
 		return scoringItems;
-	}	
+	}
+
 	public void setScoringItems(List<ScoringItem> scoringItems) {
 		this.scoringItems = scoringItems;
 	}
-	
+
 	protected void baseCopy(Question copy)
 	{
 		copy.setIsAttribute(getIsAttribute());
@@ -152,12 +166,11 @@ public abstract class Question extends Element {
 		copy.setSubType(getSubType());
 		copy.setDisplayMode(getDisplayMode());
 		copy.setIsDelphiQuestion(getIsDelphiQuestion());
-		
-		if (scoringItems != null)
-		{
+		copy.setDelphiChartType(getDelphiChartType());
+
+		if (scoringItems != null) {
 			copy.setScoringItems(new ArrayList<>());
-			for (ScoringItem item: scoringItems)
-			{
+			for (ScoringItem item : scoringItems) {
 				copy.getScoringItems().add(item.copy());
 			}
 		}
@@ -177,14 +190,14 @@ public abstract class Question extends Element {
 		
 		return css;
 	}
-	
+
 	@Transient
 	@Override
 	protected boolean basicDiffersFrom(Element element)
 	{
 		if (getShortname() != null && !getShortname().equals(element.getShortname())) return true;
 		if (getTitle() != null && !getTitle().equals(element.getTitle())) return true;
-		
+
 		if (element instanceof Question)
 		{
 			Question question = (Question) element;
@@ -198,17 +211,17 @@ public abstract class Question extends Element {
 					return true;
 				}
 			}
-			
+
 			if (scoring != question.scoring)
 			{
 				return true;
 			}
-			
+
 			if (points != question.points)
 			{
 				return true;
 			}
-			
+
 			if (scoring > 0 && (scoringItems != null || question.scoringItems != null))
 			{
 				if (scoringItems != null && question.scoringItems == null)
@@ -218,31 +231,29 @@ public abstract class Question extends Element {
 				{
 					return true;
 				}
-				
+
 				if (scoringItems.size() != question.scoringItems.size())
 				{
 					return true;
 				}
-				
-				for (int i = 0; i < scoringItems.size(); i++)
-				{
-					if (scoringItems.get(i).differsFrom(question.getScoringItems().get(i)))
-					{
+
+				for (int i = 0; i < scoringItems.size(); i++) {
+					if (scoringItems.get(i).differsFrom(question.getScoringItems().get(i))) {
 						return true;
 					}
 				}
 			}
-			
-			if (!(Objects.equals(getOptional(), question.getOptional()))) return true;			
+
+			if (!(Objects.equals(getOptional(), question.getOptional()))) return true;
 			if (!(Objects.equals(getReadonly(), question.getReadonly()))) return true;
-			
+
 			if (!(Objects.equals(getAttributeName(), question.getAttributeName()))) return true;
-			if (!(Objects.equals(getIsDelphiQuestion(), question.getIsDelphiQuestion()))) return true;			
-			
+			if (!(Objects.equals(getIsDelphiQuestion(), question.getIsDelphiQuestion()))) return true;
+			if (!(Objects.equals(getDelphiChartType(), question.getDelphiChartType()))) return true;
 		} else {
 			return true;
 		}
-		
+
 		return false;
 	}
 		

@@ -349,6 +349,7 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", $(e).find("input[name^='delphiquestion']").val() == 'true');
+					getChoosePropertiesRow("DelphiChartType", "Bar,Column,Line,Pie,Radar,Scatter", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))");
@@ -381,6 +382,7 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", $(e).find("input[name^='delphiquestion']").val() == 'true');
+					getChoosePropertiesRow("DelphiChartType", "Bar,Column,Line,Pie,Radar,Scatter", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))");
@@ -470,6 +472,7 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", $(e).find("input[name^='delphiquestion']").val() == 'true');
+					getChoosePropertiesRow("DelphiChartType", "Bar,Column,Line,Pie,Radar,Scatter", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				
@@ -731,6 +734,7 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", $(e).find("input[name^='delphiquestion']").val() == 'true');
+					getChoosePropertiesRow("DelphiChartType", "Bar,Column,Line,Pie,Radar,Scatter", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				
