@@ -53,7 +53,7 @@
 		<!-- /ko -->
 		<!--  ko if: ContentType() == 'checkbox' -->
 			<td class="propertycontent">
-				<input data-bind="checked: Value() == true, attr: {id: 'idProperty' + Label()}" type='checkbox' checked='checked' onclick='update(this)' />
+				<input data-bind="checked: Value, attr: {id: 'idProperty' + Label()}, disable: Disabled" type='checkbox' checked='checked' onclick='update(this)' />
 			</td>
 		<!-- /ko -->
 

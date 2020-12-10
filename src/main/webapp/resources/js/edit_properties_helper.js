@@ -642,11 +642,12 @@ function getChooseColor(label, value)
 	});
 }
 
-function getCheckPropertiesRow(label, value)
+function getCheckPropertiesRow(label, value, disabled = false)
 {
 	var row = new PropertyRow();
 	row.Type("first");
 	row.ContentType("checkbox");
+	row.Disabled(disabled);
 	row.Label(label);
 	row.LabelTitle(getPropertyLabel(label));
 	row.Value(value);
