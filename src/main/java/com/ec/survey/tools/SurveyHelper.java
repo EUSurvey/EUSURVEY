@@ -7,6 +7,8 @@ import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
 import com.lowagie.text.pdf.BaseFont;
+import com.mysql.jdbc.StringUtils;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
@@ -2299,7 +2301,7 @@ public class SurveyHelper {
 		rating.setIsDelphiQuestion(isDelphiQuestion);
 
 		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
-		DelphiChartType delphiChartType = delphiChartTypeString == null ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
 		if (log220 && delphiChartType != rating.getDelphiChartType()) {
 			oldValues += " delphiChartType: " + rating.getDelphiChartType();
 			newValues += " delphiChartType: " + delphiChartType;
@@ -2463,7 +2465,7 @@ public class SurveyHelper {
 		singlechoice.setIsDelphiQuestion(isDelphiQuestion);
 
 		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
-		DelphiChartType delphiChartType = delphiChartTypeString == null ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
 		if (log220 && delphiChartType != singlechoice.getDelphiChartType()) {
 			oldValues += " delphiChartType: " + singlechoice.getDelphiChartType();
 			newValues += " delphiChartType: " + delphiChartType;
@@ -2717,7 +2719,7 @@ public class SurveyHelper {
 		multiplechoice.setIsDelphiQuestion(isDelphiQuestion);
 
 		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
-		DelphiChartType delphiChartType = delphiChartTypeString == null ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
 		if (log220 && delphiChartType != multiplechoice.getDelphiChartType()) {
 			oldValues += " delphiChartType: " + multiplechoice.getDelphiChartType();
 			newValues += " delphiChartType: " + delphiChartType;
@@ -3039,7 +3041,7 @@ public class SurveyHelper {
 		matrix.setIsDelphiQuestion(isDelphiQuestion);
 
 		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
-		DelphiChartType delphiChartType = delphiChartTypeString == null ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
 		if (log220 && delphiChartType != matrix.getDelphiChartType()) {
 			oldValues += " delphiChartType: " + matrix.getDelphiChartType();
 			newValues += " delphiChartType: " + delphiChartType;
