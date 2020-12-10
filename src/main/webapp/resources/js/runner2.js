@@ -838,7 +838,8 @@ function saveDelphiComment(button, reply) {
 			var viewModel = modelsForDelphiQuestions[uid];
 			loadTableData($(td).closest(".survey-element"), viewModel);
 	    }
-	 });	
+	 });
+}
 
 function checkGoToDelphiStart(link)
 {
