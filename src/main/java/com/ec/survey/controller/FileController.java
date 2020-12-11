@@ -161,7 +161,7 @@ public class FileController extends BasicController {
 				if (f.exists()) {
 					// check if it is an uploaded file
 					Survey survey = surveyService.getSurveyForUploadedFile(file.getId());
-					if (survey != null && !(survey.getPublication().isShowContent()
+					if (survey != null && !survey.getIsDelphi() && !(survey.getPublication().isShowContent()
 							&& survey.getPublication().getShowUploadedDocuments())) {
 						User user = sessionService.getCurrentUser(request);
 						if (user == null)

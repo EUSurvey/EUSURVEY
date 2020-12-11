@@ -1222,7 +1222,15 @@
 								<!-- /ko -->
 							</td>
 							<td><span data-bind="html: update"></span></td>
-							<td><span data-bind="html: explanation"></span></td>
+							<td>
+								<span data-bind="html: explanation"></span>
+								<!-- ko if: files.length > 0 -->
+									<br>
+								<!-- /ko -->
+								<!-- ko foreach: files -->
+									<a data-bind="attr: {href: '${contextpath}/files/${form.survey.uniqueId}/' + uid}, text: name"></a>
+								<!-- /ko -->
+							</td>
 							<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId}">
 								<!-- ko foreach: comments -->
 									<div class="delphicommentsdiv">
