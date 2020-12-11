@@ -259,6 +259,8 @@
 	 	localStorage.removeItem("SurveyEditorBackup${surveyeditorsaved}");
 	</c:if>
 	
+	<c:if test="${forpdf == null}">
+	
 	var explanationEditorConfig = {
 			script_url: '${contextpath}/resources/js/tinymce/tinymce.min.js',
 			theme: 'modern',
@@ -301,6 +303,7 @@
 			invalid_elements: 'html,head,body',
 			object_resizing: false
 		};
+	</c:if>
 	
 </script>
 <script type="text/javascript" src="${contextpath}/resources/js/utf8.js?version=<%@include file="version.txt" %>"></script>
