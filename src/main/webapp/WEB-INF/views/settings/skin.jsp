@@ -51,6 +51,7 @@
 					}
 					initializePage();
 					applyStandardWidths();
+					setTimeout(scrollToQuestionIfSet, 7000);
 				},
 				error: function( result ) {	
 					alert(result);

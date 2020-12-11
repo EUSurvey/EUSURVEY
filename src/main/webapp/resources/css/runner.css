@@ -287,10 +287,15 @@ textarea.freetext {
 }
 
 .survey-element {
-	margin: 5px; 
-	margin-top: 25px;
+	margin: -25px 5px 5px 5px;
 	max-width: 980px;
 	overflow-x: auto;
+	padding-top: 55px;
+}
+
+#bodyManagementTest .survey-element {
+	margin-top: -100px;
+	padding-top: 130px;
 }
 
 .freetext,
