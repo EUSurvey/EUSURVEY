@@ -1307,6 +1307,11 @@ legend {
 	max-width: 410px;
 }
 
+.explanation-file-upload-section {
+	display: none;
+	max-width: 410px;
+}
+
 .explanation-update-section > a.btn {
 	margin-top: 20px;
 }

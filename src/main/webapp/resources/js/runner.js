@@ -148,6 +148,7 @@ function propagateChange(element)
 	var div = $(element).closest(".survey-element");
 	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
 	$(div).find(".explanation-section").show();
+	$(div).find(".explanation-file-upload-section").show();
 	$(div).find(".delphiupdatemessage").empty();
 }
 
@@ -239,7 +240,8 @@ function createUploader(instance, maxSize)
 	    },
 		onComplete : function(id, fileName, responseJSON) {
 			$(this.element).parent().find(".uploadinfo").hide();
-	    	updateFileList($(this.element), responseJSON);
+			updateFileList($(this.element), responseJSON);
+			$(this.element).closest(".survey-element").find("a[data-type='delphisavebutton']").removeClass("disabled");
 	    	
 	    	if (responseJSON.wrongextension)
 	    	{

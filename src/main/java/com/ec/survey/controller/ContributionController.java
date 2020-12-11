@@ -315,7 +315,7 @@ public class ContributionController extends BasicController {
 			validCodesService.revalidate(answerSet.getUniqueCode(), newestSurvey);
 
 			// recreate uploaded files
-			SurveyHelper.recreateUploadedFiles(answerSet, translated, fileService);
+			SurveyHelper.recreateUploadedFiles(answerSet, translated, fileService, answerExplanationService);
 
 			return model;
 		} else {

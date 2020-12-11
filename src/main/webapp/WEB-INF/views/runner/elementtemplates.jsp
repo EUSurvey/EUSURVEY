@@ -1141,6 +1141,26 @@
 						</tr>
 					</table>				
 				</div>				
+				<div class="explanation-file-upload-section">
+					<div class="text">${form.getMessage("label.SupplyFileToExplainYourAnswer")}</div>
+					<div class="uploadinfo"
+						style="display: none; padding: 10px; color: #777;">${form.getMessage("label.UploadStarted")}</div>
+					<input type="hidden"
+						data-bind="attr: {'id': 'explanation' + id(), 'name':'explanation' + id()}"
+						value="files" />
+					<div class="uploaded-files"
+						data-bind="foreach: getFileAnswer(uniqueId())">
+						<div>
+							<a data-toggle="tooltip" title="${form.getMessage("
+								label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
+								<span style="margin-right: 10px;"
+								class="glyphicon glyphicon-trash"></span>
+							</a> <span data-bind="html: $data"></span>
+						</div>
+					</div>
+					<div data-bind="attr: {'class': 'file-uploader', 'data-id': id()}"
+						style="margin-left: 10px; margin-top: 10px;"></div>
+				</div>
 			</div>
 			<div class="col-md-5">
 				<div class='chart-wrapper'>

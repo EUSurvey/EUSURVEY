@@ -2,6 +2,7 @@ package com.ec.survey.tools;
 
 import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.model.*;
+import com.ec.survey.model.AnswerSet.ExplanationData;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
@@ -25,6 +26,17 @@ import java.util.Map.Entry;
 public class SurveyHelper {
 
 	private static final Logger logger = Logger.getLogger(SurveyHelper.class);
+
+	private static void gatherExplanationUploadsForQuestion(Survey survey, Question question, String uniqueCode, AnswerSet answerSet, AnswerSet.ExplanationData explanationData, FileService fileService) {
+		// find temporary directory
+		java.io.File rootfolder = fileService.getSurveyExplanationUploadsFolder(survey.getUniqueId(), false);
+		java.io.File directory = new java.io.File(
+				rootfolder.getPath() + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + question.getId());
+
+		if (directory.exists()) {
+			checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), explanationData.files);
+		}
+	}
 
 	public static AnswerSet parseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode,
 			boolean update, String languageCode, User user, FileService fileService) {
@@ -110,7 +122,7 @@ public class SurveyHelper {
 								Answer answer = new Answer();
 								answer.setAnswerSet(answerSet);
 
-								checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), answer);
+								checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), answer.getFiles());
 
 								if (!answer.getFiles().isEmpty()) {
 									answer.setQuestionId(question.getId());
@@ -177,9 +189,19 @@ public class SurveyHelper {
 				key = key.substring(11);
 				Question question = questions.get(Integer.parseInt(key));
 				if (question != null && question.getIsDelphiQuestion()) {
-					String[] explanation = parameterMap.get("explanation" + question.getId());
-					if (explanation != null && explanation.length > 0) {
-						answerSet.getExplanations().put(question.getUniqueId(), explanation[0]);
+					String[] explanationText = parameterMap.get("explanation" + question.getId());
+					AnswerSet.ExplanationData explanationData = new AnswerSet.ExplanationData();
+					boolean doUpdateAnswerSet = false;
+					if (explanationText != null && explanationText.length > 0) {
+						explanationData.text = explanationText[0];
+						doUpdateAnswerSet = true;
+					}
+					gatherExplanationUploadsForQuestion(survey, question, uniqueCode, answerSet, explanationData, fileService);
+					if (!explanationData.files.isEmpty()) {
+						doUpdateAnswerSet = true;
+					}
+					if (doUpdateAnswerSet) {
+						answerSet.getExplanations().put(question.getUniqueId(), explanationData);
 					}
 				}
 			}
@@ -852,8 +874,52 @@ public class SurveyHelper {
 		return answerSet;
 	}
 
+	private static void recreateDelphiExplanationUploadedFiles(AnswerSet answerSet, Survey survey, FileService fileService, AnswerExplanationService answerExplanationService) {
+		Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
+		int answerSetId = answerSet.getId();
+		String surveyUniqueId = survey.getUniqueId();
+
+		List<AnswerExplanation> explanations = answerExplanationService.getExplanations(answerSetId);
+		for (AnswerExplanation explanation : explanations) {
+			String questionUid = explanation.getQuestionUid();
+			int questionId = elementsByUniqueId.get(questionUid).getId();
+			for (File file : explanation.getFiles()) {
+				String filename = file.getName();
+				if (null != filename) {
+					FileInputStream in = null;
+					FileOutputStream out = null;
+
+					try {
+						java.io.File folder = fileService.getSurveyFilesFolder(surveyUniqueId);
+						in = new FileInputStream(folder.getPath() + Constants.PATH_DELIMITER + file.getUid());
+
+						java.io.File basePath = fileService.getSurveyExplanationUploadsFolder(surveyUniqueId, false);
+
+						java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
+						directory.mkdirs();
+						java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
+						out = new FileOutputStream(fileOut);
+
+						IOUtils.copy(in, out);
+
+					} catch (Exception e) {
+						logger.error(e.getLocalizedMessage(), e);
+					} finally {
+						try {
+							in.close();
+							out.close();
+						} catch (Exception e) {
+							// ignore
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public static void recreateUploadedFiles(AnswerSet answerSet, Survey survey,
-			FileService fileService) {
+			FileService fileService, AnswerExplanationService answerExplanationService) {
+		recreateDelphiExplanationUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 		Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
 
 		for (Answer answer : answerSet.getAnswers()) {
@@ -872,9 +938,8 @@ public class SurveyHelper {
 						questionId = elementsByUniqueId.get(answer.getQuestionUniqueId()).getId();
 					}
 
-					java.io.File directory = new java.io.File(
-							fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(), false) + Constants.PATH_DELIMITER
-									+ answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
+					java.io.File basePath = fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(), false);
+					java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
 					directory.mkdirs();
 					java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
 					out = new FileOutputStream(fileOut);
@@ -895,7 +960,7 @@ public class SurveyHelper {
 		}
 	}
 
-	private static void checkFiles(java.io.File directory, java.io.File folder, Answer answer) {
+	private static void checkFiles(java.io.File directory, java.io.File folder, List<File> files) {
 		java.io.File[] listFiles = directory.listFiles();
 		if (listFiles != null) {
 			for (java.io.File file : listFiles) {
@@ -915,7 +980,7 @@ public class SurveyHelper {
 					f.setUid(uid);
 					f.setName(file.getName());
 
-					answer.getFiles().add(f);
+					files.add(f);
 
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);

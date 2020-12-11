@@ -233,9 +233,10 @@ function addElementToContainer(element, container, foreditor, forskin)
 	
 	ko.applyBindings(viewModel, $(container)[0]);
 
-	if (viewModel.type == 'Upload') {
+	if ((viewModel.type == 'Upload') || (viewModel.isDelphiQuestion())) {
+		const maxFileSizeBytes = (viewModel.isDelphiQuestion()) ? (1*1024*1024) : (viewModel.maxFileSize());
 		$(container).find(".file-uploader").each(function() {
-			createUploader(this, viewModel.maxFileSize());
+			createUploader(this, maxFileSizeBytes);
 		});
 		
 		$(container).find(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
@@ -473,6 +474,7 @@ function delphiPrefill(editorElement) {
 		{
 			showErrorl(message);
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
+			surveyElement.find(".explanation-file-upload-section").show();
 		},
 		success: function(currentExplanationText, textStatus)
 		{
@@ -481,9 +483,14 @@ function delphiPrefill(editorElement) {
 			}
 			
 			if (currentExplanationText) {
-				editorElement[0].setContent(currentExplanationText);
+				editorElement[0].setContent(currentExplanationText.text);
+				var uploaderElement = surveyElement.find(".explanation-file-upload-section").children(".file-uploader").first();
+				var updateinfo = {"success":true, "files":currentExplanationText.fileList, "wrongextension":false};
+				updateFileList(uploaderElement, updateinfo);
+				$(surveyElement).find("a[data-type='delphisavebutton']").addClass("disabled");
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
+			surveyElement.find(".explanation-file-upload-section").show();
 		}
 	});
 }

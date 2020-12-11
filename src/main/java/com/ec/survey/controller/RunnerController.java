@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/runner")
 public class RunnerController extends BasicController {
+
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
 
@@ -280,7 +281,7 @@ public class RunnerController extends BasicController {
 									draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 
 							SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), f.getSurvey(),
-									fileService);
+									fileService, answerExplanationService);
 							uniqueCode = draft.getAnswerSet().getUniqueCode();
 
 							if (lang == null) {
@@ -310,7 +311,7 @@ public class RunnerController extends BasicController {
 
 								f.getAnswerSets().add(draft.getAnswerSet());
 								SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), f.getSurvey(),
-										fileService);
+										fileService, answerExplanationService);
 								uniqueCode = draft.getAnswerSet().getUniqueCode();
 
 								if (lang == null) {
@@ -558,7 +559,7 @@ public class RunnerController extends BasicController {
 				model.addObject("participationGroup", participationGroup.getId());
 
 				// recreate uploaded files
-				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService);
+				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 				return model;
 			}
@@ -1195,7 +1196,7 @@ public class RunnerController extends BasicController {
 						f.setWcagCompliance(
 								draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 
-						SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), survey, fileService);
+						SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), survey, fileService, answerExplanationService);
 						uniqueCode = draft.getAnswerSet().getUniqueCode();
 						model.addObject("draftid", draftid);
 
@@ -1248,7 +1249,6 @@ public class RunnerController extends BasicController {
 			String fileName = request.getParameter("fileName");
 
 			fileName = Ucs2Utf8.unconvert(fileName);
-
 			String validFileName = validateDeleteParameters(id, uniqueCode, fileName, surveyUID);
 
 			java.io.File file = new java.io.File(validFileName);
@@ -1271,11 +1271,25 @@ public class RunnerController extends BasicController {
 	private String validateDeleteParameters(String id, String uniqueCode, String fileName, String surveyUID)
 			throws ValidationException, IOException {
 		Validator validator = ESAPI.validator();
-		String folderPath = fileService.getSurveyUploadsFolder(surveyUID, false) + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
+		boolean isDelphi = false;
+		{
+			Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, false);
+			int questionId = Integer.parseInt(id);
+			Map<Integer, Question> map = survey.getQuestionMap();
+			Question question = map.get(questionId);
+			isDelphi = survey.getIsDelphi() && (question!=null) && (question.isDelphiElement());
+		}
+		java.io.File basePath;
+		if (isDelphi) {
+			basePath = fileService.getSurveyExplanationUploadsFolder(surveyUID, false);
+		} else {
+			basePath = fileService.getSurveyUploadsFolder(surveyUID, false);
+		}
+		String folderPath = basePath + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
 		String canonicalPath = new File(folderPath).getCanonicalPath();
 		boolean validDirectoryPath = validator.isValidDirectoryPath(
 				"check directory path in RunnerController.delete method", canonicalPath,
-				fileService.getSurveyUploadsFolder(surveyUID, false), false);
+				basePath, false);
 		if (!validDirectoryPath) {
 			throw new ValidationException("Invalid folder path: " + folderPath, "Invalid folder path: " + folderPath);
 		}
@@ -1348,7 +1362,12 @@ public class RunnerController extends BasicController {
 			IOUtils.copy(is, fos);
 			fos.close();
 
-			java.io.File folder = fileService.getSurveyUploadsFolder(surveyuid, false);
+			java.io.File folder;
+			if ((element instanceof Question) && (((Question)element).getIsDelphiQuestion())) {
+				folder = fileService.getSurveyExplanationUploadsFolder(surveyuid, false);
+			} else {
+				folder = fileService.getSurveyUploadsFolder(surveyuid, false);
+			}
 			java.io.File directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, id));
 
 			// we try 3 times to create the folders
@@ -1389,7 +1408,8 @@ public class RunnerController extends BasicController {
 				if (!error) {
 					String files = getFiles(directory);
 					response.setStatus(HttpServletResponse.SC_OK);
-
+					response.setContentType("application/json");
+					response.setCharacterEncoding("UTF-8");
 					writer.print("{\"success\": true, \"files\": [" + files + "], \"wrongextension\": " + wrongextension
 							+ "}");
 				}
@@ -1864,7 +1884,7 @@ public class RunnerController extends BasicController {
 				f.setValidation(validation);
 
 				// recreate uploaded files
-				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService);
+				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
 				surveyService.initializeSkin(f.getSurvey());
@@ -2268,13 +2288,13 @@ public class RunnerController extends BasicController {
 	}
 
 	@GetMapping("/delphiGet")
-	public ResponseEntity<String> delphiGetExplanation(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<DelphiExplanation> delphiGetExplanation(HttpServletRequest request, Locale locale) {
 		try {
 			final String answerSetId = request.getParameter("answerSetId");
 			final int answerSetIdParsed = Integer.parseInt(answerSetId);
 			final AnswerSet answerSet = answerService.get(answerSetIdParsed);
 			if (answerSet == null) {
-				return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(new DelphiExplanation(resources.getMessage("error.DelphiGet", null, locale), ""), HttpStatus.BAD_REQUEST);
 			}
 			
 			final String questionUid = request.getParameter("questionUid");
@@ -2291,12 +2311,15 @@ public class RunnerController extends BasicController {
 			}			
 			
 			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetIdParsed, questionUid);
-			return new ResponseEntity<>(explanation.getText(), HttpStatus.OK);
+			DelphiExplanation delphiExplanation = new DelphiExplanation();
+			delphiExplanation.setText(explanation.getText());
+			delphiExplanation.setFileInfoFromFiles(explanation.getFiles());
+			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
-			return new ResponseEntity<>("", HttpStatus.OK);
+			return new ResponseEntity<>(new DelphiExplanation("", ""), HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>(resources.getMessage("error.DelphiGet", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new DelphiExplanation(resources.getMessage("error.DelphiGet", null, locale), ""), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
