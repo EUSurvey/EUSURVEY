@@ -138,6 +138,14 @@ function update(input)
 			var checked = $(input).is(":checked");
 			var oldtext = element.isDelphiQuestion();
 			element.isDelphiQuestion(checked);
+			const mandatoryPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Mandatory');
+			if (checked) {
+				mandatoryPropertyRow.Disabled(true);
+				mandatoryPropertyRow.Value(false);
+				element.optional(true);
+			} else {
+				mandatoryPropertyRow.Disabled(false);
+			}
 			_undoProcessor.addUndoStep(["DelphiQuestion", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
 			break;
 		case "DelphiChartType":
