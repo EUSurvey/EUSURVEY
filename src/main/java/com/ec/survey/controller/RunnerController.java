@@ -2697,14 +2697,16 @@ public class RunnerController extends BasicController {
 			if (!uniqueCodeToUser.containsKey(surveyUid))
 			{
 				uniqueCodeToUser.put(surveyUid, new HashMap<String, String>());
-			}			
+			}
 			
-			if (!uniqueCodeToUser.get(surveyUid).containsKey(comment.getUniqueCode()))
+			Map<String, String> map = uniqueCodeToUser.get(surveyUid);			
+			
+			if (!map.containsKey(comment.getUniqueCode()))
 			{
-				uniqueCodeToUser.get(surveyUid).put(comment.getUniqueCode(), "User " + (uniqueCodeToUser.get(surveyUid).size() + 1));
+				map.put(comment.getUniqueCode(), "User " + (map.size() + 1));
 			}	
 			
-			DelphiComment delphiComment = new DelphiComment(uniqueCodeToUser.get(surveyUid).get(comment.getUniqueCode()), comment.getText(), comment.getDate(), comment.getId());
+			DelphiComment delphiComment = new DelphiComment(map.get(comment.getUniqueCode()), comment.getText(), comment.getDate(), comment.getId());
 			
 			if (comment.getParent() == null)
 			{			
