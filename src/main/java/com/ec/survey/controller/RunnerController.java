@@ -2667,7 +2667,7 @@ public class RunnerController extends BasicController {
 		}
 	}
 	
-	private final Map<String, String> uniqueCodeToUser = new HashMap<>();
+	private final Map<String,  Map<String, String>> uniqueCodeToUser = new HashMap<>();
 	
 	private boolean answerSetContainsAnswerForQuestion(AnswerSet answerSet, Question question)
 	{
@@ -2689,16 +2689,22 @@ public class RunnerController extends BasicController {
 		return !answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty();
 	}
 	
-	private void loadComments(DelphiTableEntry tableEntry, int answerSetId, String questionUid) {
+	private void loadComments(DelphiTableEntry tableEntry, int answerSetId, String questionUid, String surveyUid) {
 		List<AnswerComment> comments = answerExplanationService.loadComments(answerSetId, questionUid);
 		Map<Integer, DelphiComment> rootComments = new HashMap<>();
 		for (AnswerComment comment : comments) {
-			if (!uniqueCodeToUser.containsKey(comment.getUniqueCode()))
+			
+			if (!uniqueCodeToUser.containsKey(surveyUid))
 			{
-				uniqueCodeToUser.put(comment.getUniqueCode(), "User " + (uniqueCodeToUser.size() + 1));
+				uniqueCodeToUser.put(surveyUid, new HashMap<String, String>());
+			}			
+			
+			if (!uniqueCodeToUser.get(surveyUid).containsKey(comment.getUniqueCode()))
+			{
+				uniqueCodeToUser.get(surveyUid).put(comment.getUniqueCode(), "User " + (uniqueCodeToUser.get(surveyUid).size() + 1));
 			}	
 			
-			DelphiComment delphiComment = new DelphiComment(uniqueCodeToUser.get(comment.getUniqueCode()), comment.getText(), comment.getDate(), comment.getId());
+			DelphiComment delphiComment = new DelphiComment(uniqueCodeToUser.get(surveyUid).get(comment.getUniqueCode()), comment.getText(), comment.getDate(), comment.getId());
 			
 			if (comment.getParent() == null)
 			{			
@@ -2804,7 +2810,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
-			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 
 			for (String value : values) {
 				String title = answerUidToTitle.get(value);
@@ -2881,7 +2887,7 @@ public class RunnerController extends BasicController {
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
-			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 
 			result.getEntries().add(tableEntry);
 		}
@@ -2946,7 +2952,7 @@ public class RunnerController extends BasicController {
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
-			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 
 			result.getEntries().add(tableEntry);
 		}
@@ -3030,7 +3036,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setExplanation(contrib.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
 			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
-			loadComments(tableEntry, contrib.getAnswerSetId(), question.getUniqueId());
+			loadComments(tableEntry, contrib.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 
 			result.getEntries().add(tableEntry);
 		}
@@ -3067,7 +3073,7 @@ public class RunnerController extends BasicController {
             }
 
             result.getEntries().add(tableEntry);
-    		loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
+    		loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
         }
 
         return ResponseEntity.ok(result);
