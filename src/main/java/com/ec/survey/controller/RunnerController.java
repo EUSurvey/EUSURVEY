@@ -2719,12 +2719,15 @@ public class RunnerController extends BasicController {
 	}
 
 	private void loadFiles(DelphiTableEntry tableEntry, int answerSetId, String questionUid) {
-		final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetId, questionUid);
-		final List<com.ec.survey.model.survey.base.File> explanationFiles = explanation.getFiles();
-		for (com.ec.survey.model.survey.base.File explanationFile : explanationFiles) {
-			DelphiTableFile tableFile = new DelphiTableFile(explanationFile.getName(), explanationFile.getUid());
-			tableEntry.getFiles().add(tableFile);
-		}
+
+		try {
+			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetId, questionUid);
+			final List<com.ec.survey.model.survey.base.File> explanationFiles = explanation.getFiles();
+			for (com.ec.survey.model.survey.base.File explanationFile : explanationFiles) {
+				DelphiTableFile tableFile = new DelphiTableFile(explanationFile.getName(), explanationFile.getUid());
+				tableEntry.getFiles().add(tableFile);
+			}
+		} catch (NoSuchElementException ex) {}
 	}
 
     @GetMapping(value = "delphiTable")
