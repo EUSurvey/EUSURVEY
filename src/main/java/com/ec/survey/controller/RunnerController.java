@@ -1271,14 +1271,12 @@ public class RunnerController extends BasicController {
 	private String validateDeleteParameters(String id, String uniqueCode, String fileName, String surveyUID)
 			throws ValidationException, IOException {
 		Validator validator = ESAPI.validator();
-		boolean isDelphi = false;
-		{
-			Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, false);
-			int questionId = Integer.parseInt(id);
-			Map<Integer, Question> map = survey.getQuestionMap();
-			Question question = map.get(questionId);
-			isDelphi = survey.getIsDelphi() && (question!=null) && (question.isDelphiElement());
-		}
+		
+		int questionId = Integer.parseInt(id);
+		Element question = surveyService.getElement(questionId);
+		Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, true);
+		boolean isDelphi = survey.getIsDelphi() && (question!=null) && (question.isDelphiElement());
+		
 		java.io.File basePath;
 		if (isDelphi) {
 			basePath = fileService.getSurveyExplanationUploadsFolder(surveyUID, false);
