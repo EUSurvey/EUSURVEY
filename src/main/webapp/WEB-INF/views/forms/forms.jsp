@@ -193,7 +193,12 @@
 						  } else if (list[i].isOPC)
 						  {							 
 							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.OPC" />").attr("src", contextpath + "/resources/images/icons/24/people.png");
-						  } else {
+						  } 
+						  else if (list[i].isECF)
+						  {							 
+							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.ECF" />").attr("src", contextpath + "/resources/images/icons/32/user_square.png");
+						  } 
+						  else {
 							  $(img).attr("data-toggle", "tooltip").attr("title", "<spring:message code="label.StandardSurvey" />").css("width","32px").attr("src", contextpath + "/resources/images/icons/64/survey.png");
 						  }
 						  $(divicon).append(img);
@@ -646,6 +651,9 @@
 											</c:when>
 											<c:when test="${survey.isOPC}">
 												<img data-toggle="tooltip" title="<spring:message code="label.OPC" />" src="${contextpath}/resources/images/icons/24/people.png" />
+											</c:when>
+											<c:when test="${survey.isECF}">
+												<span data-toggle="tooltip" title="<spring:message code="label.ECF" />"  class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
 											</c:when>
 											<c:otherwise>
 												<img data-toggle="tooltip" title="<spring:message code="label.StandardSurvey" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/survey.png" />

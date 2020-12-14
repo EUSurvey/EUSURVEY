@@ -114,6 +114,7 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(" ,s.QUIZ");
 		stringBuilder.append(" ,s.OPC");
 		stringBuilder.append(" ,s.HASPENDINGCHANGES");
+		stringBuilder.append(" ,s.ECF");
 		stringBuilder.append(" from SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
 		stringBuilder.append(
@@ -162,7 +163,8 @@ public class SurveyService extends BasicService {
 			survey.setIsQuiz((Boolean) row[rowIndex++]);// 17 or 18
 			survey.setIsOPC((Boolean) row[rowIndex++]);// 18 or 19
 
-			survey.setHasPendingChanges((Boolean) row[rowIndex]);// 19 or 20
+			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 19 or 20
+			survey.setIsECF((Boolean) row[rowIndex]);
 
 			surveys.add(survey);
 		}

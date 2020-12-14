@@ -932,6 +932,8 @@ public class ManagementController extends BasicController {
 							&& request.getParameter("quiz").equalsIgnoreCase("true"));
 					copy.setIsOPC(request.getParameter("opc") != null
 							&& request.getParameter("opc").equalsIgnoreCase("true"));
+					copy.setIsECF(request.getParameter("ecf") != null
+							&& request.getParameter("ecf").equalsIgnoreCase("true"));
 					copy.setSaveAsDraft(!copy.getIsQuiz());
 
 					surveyService.update(copy, false, true, true, u.getId());
