@@ -63,7 +63,8 @@ function addElement(element, foreditor, forskin)
 		uniqueId = element.uniqueId;
 	}
 	var container = $(".emptyelement[data-id=" + id + "]");
-	$(container).removeClass("emptyelement").empty();
+	$(container).removeClass("emptyelement");
+	$(container).find("img").remove();
 	
 	addElementToContainer(element, container, foreditor, forskin);
 	
@@ -696,8 +697,8 @@ function loadTableData(div, viewModel) {
 
 function scrollToQuestionIfSet() {
 	if (window.location.hash) {
-		var questionId = location.hash.substr(1);
-		document.getElementById(questionId).scrollIntoView();
+		const elementAnchorId = location.hash.substr(1);
+		document.getElementById(elementAnchorId).scrollIntoView();
 	}
 }
 
