@@ -1271,14 +1271,12 @@ public class RunnerController extends BasicController {
 	private String validateDeleteParameters(String id, String uniqueCode, String fileName, String surveyUID)
 			throws ValidationException, IOException {
 		Validator validator = ESAPI.validator();
-		boolean isDelphi = false;
-		{
-			Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, false);
-			int questionId = Integer.parseInt(id);
-			Map<Integer, Question> map = survey.getQuestionMap();
-			Question question = map.get(questionId);
-			isDelphi = survey.getIsDelphi() && (question!=null) && (question.isDelphiElement());
-		}
+		
+		int questionId = Integer.parseInt(id);
+		Element question = surveyService.getElement(questionId);
+		Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, true);
+		boolean isDelphi = survey.getIsDelphi() && (question!=null) && (question.isDelphiElement());
+		
 		java.io.File basePath;
 		if (isDelphi) {
 			basePath = fileService.getSurveyExplanationUploadsFolder(surveyUID, false);
@@ -2669,7 +2667,7 @@ public class RunnerController extends BasicController {
 		}
 	}
 	
-	private final Map<String, String> uniqueCodeToUser = new HashMap<>();
+	private final Map<String,  Map<String, String>> uniqueCodeToUser = new HashMap<>();
 	
 	private boolean answerSetContainsAnswerForQuestion(AnswerSet answerSet, Question question)
 	{
@@ -2691,16 +2689,24 @@ public class RunnerController extends BasicController {
 		return !answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty();
 	}
 	
-	private void loadComments(DelphiTableEntry tableEntry, int answerSetId, String questionUid) {
+	private void loadComments(DelphiTableEntry tableEntry, int answerSetId, String questionUid, String surveyUid) {
 		List<AnswerComment> comments = answerExplanationService.loadComments(answerSetId, questionUid);
 		Map<Integer, DelphiComment> rootComments = new HashMap<>();
 		for (AnswerComment comment : comments) {
-			if (!uniqueCodeToUser.containsKey(comment.getUniqueCode()))
+			
+			if (!uniqueCodeToUser.containsKey(surveyUid))
 			{
-				uniqueCodeToUser.put(comment.getUniqueCode(), "User " + (uniqueCodeToUser.size() + 1));
+				uniqueCodeToUser.put(surveyUid, new HashMap<String, String>());
+			}
+			
+			Map<String, String> map = uniqueCodeToUser.get(surveyUid);			
+			
+			if (!map.containsKey(comment.getUniqueCode()))
+			{
+				map.put(comment.getUniqueCode(), "User " + (map.size() + 1));
 			}	
 			
-			DelphiComment delphiComment = new DelphiComment(uniqueCodeToUser.get(comment.getUniqueCode()), comment.getText(), comment.getDate(), comment.getId());
+			DelphiComment delphiComment = new DelphiComment(map.get(comment.getUniqueCode()), comment.getText(), comment.getDate(), comment.getId());
 			
 			if (comment.getParent() == null)
 			{			
@@ -2733,6 +2739,10 @@ public class RunnerController extends BasicController {
             if (survey == null || !survey.getIsDelphi()) {
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
+            
+            if (!survey.getIsDelphiShowAnswers()) {
+                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            }            	
 
             AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 
@@ -2811,7 +2821,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
-			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			for (String value : values) {
@@ -2889,7 +2899,7 @@ public class RunnerController extends BasicController {
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
-			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
@@ -2955,7 +2965,7 @@ public class RunnerController extends BasicController {
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
-			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
@@ -3040,7 +3050,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setExplanation(contrib.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
 			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
-			loadComments(tableEntry, contrib.getAnswerSetId(), question.getUniqueId());
+			loadComments(tableEntry, contrib.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, contrib.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
@@ -3078,7 +3088,7 @@ public class RunnerController extends BasicController {
             }
 
             result.getEntries().add(tableEntry);
-    		loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
         }
 

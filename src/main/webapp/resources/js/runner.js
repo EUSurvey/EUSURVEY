@@ -557,7 +557,7 @@ function deleteFile(id, uniqueCode, fileName, button) {
 				updateFileList($(button).parent().parent().siblings(
 						".file-uploader").first(), data);
 			} else {
-				showRunnerError("Not possible to delete file");
+				showError("Not possible to delete file");
 			}
 	  }
 	});
