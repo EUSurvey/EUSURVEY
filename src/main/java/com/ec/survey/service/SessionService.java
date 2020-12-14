@@ -43,6 +43,15 @@ public class SessionService extends BasicService {
 	private @Value("${pdfserver.prefix}") String pdfServerPrefix;
 	private @Value("${proxy.nonProxyHosts}") String proxyNonProxyHosts;
 
+
+	public void setCaptchaText(HttpServletRequest request, String text) {
+		request.getSession().setAttribute("captcha", text);
+	}
+
+	public String getCaptchaText(HttpServletRequest request) {
+		return (String) request.getSession().getAttribute("captcha");
+	}
+	
 	public User getCurrentUser(HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		return getCurrentUser(request, true, true);
