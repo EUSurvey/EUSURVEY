@@ -207,12 +207,12 @@
 							<div class="question-footer">
 								<!-- ko if: answer.length > 0 -->
 								<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: sectionViewModel.niceAnswer(answer)"></span></div>
-								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}"><spring:message code="label.EditAnswer" /></a>
+								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#E' + id}"><spring:message code="label.EditAnswer" /></a>
 								<!-- <a class="btn btn-xs btn-default">Show Comments</a> -->
 								<!-- /ko -->
 								<!-- ko if: answer.length == 0 -->
 								<div class="redanswer"><spring:message code="info.NotAnswered" /></div>
-								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}"><spring:message code="label.Answer" /></a>
+								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#E' + id}"><spring:message code="label.Answer" /></a>
 								<!-- /ko -->
 							</div>
 						</div>					
