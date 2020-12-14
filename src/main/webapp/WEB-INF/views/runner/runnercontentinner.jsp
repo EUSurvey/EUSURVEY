@@ -157,7 +157,7 @@
 										    <div class="emptyelement survey-element 5" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}">
 										</c:otherwise>
 									</c:choose>
-								  						  
+										<a class="survey-element-anchor" id="E${element.id}"></a>
 								  		<img src="${contextpath}/resources/images/ajax-loader.gif" />									
 									</div>	
 									</div>								
