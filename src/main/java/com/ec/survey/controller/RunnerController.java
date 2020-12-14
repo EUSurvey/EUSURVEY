@@ -2722,6 +2722,10 @@ public class RunnerController extends BasicController {
             if (survey == null || !survey.getIsDelphi()) {
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             }
+            
+            if (!survey.getIsDelphiShowAnswers()) {
+                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            }            	
 
             AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 
