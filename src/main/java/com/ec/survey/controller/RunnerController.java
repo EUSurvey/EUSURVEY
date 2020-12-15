@@ -2814,7 +2814,7 @@ public class RunnerController extends BasicController {
 
 			DelphiTableOrderBy orderBy = DelphiTableOrderBy.UpdateDesc;
 			try {
-				orderBy = DelphiTableOrderBy.valueOf(request.getParameter("orderBy"));
+				orderBy = DelphiTableOrderBy.valueOf(request.getParameter("orderby"));
 			} catch (Exception ignored) {
 			}
 
