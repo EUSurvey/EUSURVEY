@@ -2880,7 +2880,7 @@ public class RunnerController extends BasicController {
 			DelphiContribution firstValue = entry.getValue().get(0);
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setExplanation(firstValue.getExplanation());
-			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			tableEntry.setUpdate(firstValue.getUpdate());
 			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
@@ -2965,7 +2965,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
-			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			tableEntry.setUpdate(firstValue.getUpdate());
 			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
@@ -3038,7 +3038,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
-			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			tableEntry.setUpdate(firstValue.getUpdate());
 			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
@@ -3121,7 +3121,7 @@ public class RunnerController extends BasicController {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(contrib.getAnswerSetId());
 			tableEntry.setExplanation(contrib.getExplanation());
-			tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
+			tableEntry.setUpdate(contrib.getUpdate());
 			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
 			loadComments(tableEntry, contrib.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, contrib.getAnswerSetId(), question.getUniqueId());
@@ -3152,7 +3152,7 @@ public class RunnerController extends BasicController {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setExplanation(firstValue.getExplanation());
-			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
+			tableEntry.setUpdate(firstValue.getUpdate());
 
 			for (DelphiContribution contrib : entry.getValue()) {
 				String col = Character.toString((char) ('A' + contrib.getColumn() - 1)); // column 1 is A
