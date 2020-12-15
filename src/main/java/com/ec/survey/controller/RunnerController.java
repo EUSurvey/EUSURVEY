@@ -2442,11 +2442,11 @@ public class RunnerController extends BasicController {
 			}
 
 			if (question instanceof Matrix) {
-				return handleDelphiGraphMatrix(survey, (Matrix) question, statistics, creator, numberOfAnswersMap, numberOfAnswersMapMatrix);
+				return handleDelphiGraphMatrix(survey, (Matrix) question, statistics, creator, numberOfAnswersMap, numberOfAnswersMapMatrix, answerSet);
 			}
 
 			if (question instanceof RatingQuestion) {
-				return handleDelphiGraphRatingQuestion(survey, (RatingQuestion) question, statistics, creator, numberOfAnswersMap, numberOfAnswersMapRatingQuestion);
+				return handleDelphiGraphRatingQuestion(survey, (RatingQuestion) question, statistics, creator, numberOfAnswersMap, numberOfAnswersMapRatingQuestion, answerSet);
 			}
 
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -2456,16 +2456,21 @@ public class RunnerController extends BasicController {
 		}
 	}
 
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRatingQuestion(Survey survey, RatingQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion) {
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRatingQuestion(Survey survey, RatingQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion, AnswerSet answerSet) {
 		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 		result.setQuestionType(DelphiQuestionType.Rating);
 		result.setChartType(question.getDelphiChartType());
 
 		for (Element subQuestion : question.getQuestions()) {
 			if (!numberOfAnswersMap.containsKey(subQuestion.getId()) || numberOfAnswersMap.get(subQuestion.getId()) == 0) {
-				//participant may only see answers if he answered before
+				//no data
 				continue;
 			}
+			
+			if (!answerSetContainsAnswerForQuestion(answerSet, subQuestion)) {
+				//participant may only see answers if he answered before
+				continue;
+			}					
 
 			if (numberOfAnswersMap.get(subQuestion.getId()) < survey.getMinNumberDelphiStatistics()) {
 				// only show statistics for this question if the total number of answers exceeds the threshold
@@ -2495,13 +2500,18 @@ public class RunnerController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix) {
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix, AnswerSet answerSet) {
 		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 		result.setQuestionType(DelphiQuestionType.Matrix);
 		result.setChartType(question.getDelphiChartType());
 
 		for (Element matrixQuestion : question.getQuestions()) {
 			if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
+				//no data
+				continue;
+			}
+			
+			if (!answerSetContainsAnswerForQuestion(answerSet, matrixQuestion)) {
 				//participant may only see answers if he answered before
 				continue;
 			}
@@ -2669,7 +2679,7 @@ public class RunnerController extends BasicController {
 	
 	private final Map<String,  Map<String, String>> uniqueCodeToUser = new HashMap<>();
 	
-	private boolean answerSetContainsAnswerForQuestion(AnswerSet answerSet, Question question)
+	private boolean answerSetContainsAnswerForQuestion(AnswerSet answerSet, Element question)
 	{
 		if (question instanceof Matrix) {
 			return !answerSet.getMatrixAnswers((Matrix)question).isEmpty();
@@ -2771,11 +2781,11 @@ public class RunnerController extends BasicController {
             }
 
             if (question instanceof Matrix) {
-                return handleDelphiTableMatrix((Matrix) question);
+                return handleDelphiTableMatrix((Matrix) question, answerSet);
             }
 
             if (question instanceof RatingQuestion) {
-                return handleDelphiTableRatingQuestion((RatingQuestion) question);
+                return handleDelphiTableRatingQuestion((RatingQuestion) question, answerSet);
             }
 
             if (question instanceof Table) {
@@ -2839,7 +2849,7 @@ public class RunnerController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 
-	private ResponseEntity<DelphiTable> handleDelphiTableMatrix(Matrix question) {
+	private ResponseEntity<DelphiTable> handleDelphiTableMatrix(Matrix question, AnswerSet answerSet) {
 		DelphiTable result = new DelphiTable();
 
 		Map<String, String> answerTitles = new HashMap<>();
@@ -2849,9 +2859,11 @@ public class RunnerController extends BasicController {
 
 		Map<String, Integer> questionPositions = new HashMap<>();
 		Map<String, String> questionTitles = new HashMap<>();
+		Map<String, Element> subQuestions = new HashMap<>();
 		for (Element matrixQuestion : question.getQuestions()) {
 			questionPositions.put(matrixQuestion.getUniqueId(), matrixQuestion.getPosition());
 			questionTitles.put(matrixQuestion.getUniqueId(), matrixQuestion.getTitle());
+			subQuestions.put(matrixQuestion.getUniqueId(), matrixQuestion);
 		}
 
 		// group explanations by answer set ID
@@ -2879,10 +2891,16 @@ public class RunnerController extends BasicController {
                     skipped = true;
                     break;
                 }
-
-                DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
-                int position = questionPositions.get(contrib.getQuestionUid());
-                answers.add(new Pair<>(position, answer));
+                
+                Element subquestion = subQuestions.get(contrib.getQuestionUid());
+                
+                //check if subquestion was already answered
+                if (answerSetContainsAnswerForQuestion(answerSet, subquestion))
+                {
+	                DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
+	                int position = questionPositions.get(contrib.getQuestionUid());
+	                answers.add(new Pair<>(position, answer));
+                }
             }
 
             if (skipped || answers.isEmpty()) {
@@ -2911,14 +2929,16 @@ public class RunnerController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 
-	private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestion(RatingQuestion question) {
+	private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestion(RatingQuestion question, AnswerSet answerSet) {
 		DelphiTable result = new DelphiTable();
 
 		Map<String, Integer> questionPositions = new HashMap<>();
 		Map<String, String> questionTitles = new HashMap<>();
+		Map<String, Element> subQuestions = new HashMap<>();
 		for (Element subQuestion : question.getQuestions()) {
 			questionPositions.put(subQuestion.getUniqueId(), subQuestion.getPosition());
 			questionTitles.put(subQuestion.getUniqueId(), subQuestion.getTitle());
+			subQuestions.put(subQuestion.getUniqueId(), subQuestion);
 		}
 
 		// group explanations by answer set ID
@@ -2945,10 +2965,16 @@ public class RunnerController extends BasicController {
                     skipped = true;
                     break;
                 }
-
-                DelphiTableAnswer answer = new DelphiTableAnswer(label, contrib.getValue());
-                int position = questionPositions.get(contrib.getQuestionUid());
-                answers.add(new Pair<>(position, answer));
+                
+                Element subquestion = subQuestions.get(contrib.getQuestionUid());
+                
+                //check if subquestion was already answered
+                if (answerSetContainsAnswerForQuestion(answerSet, subquestion))
+                {
+	                DelphiTableAnswer answer = new DelphiTableAnswer(label, contrib.getValue());
+	                int position = questionPositions.get(contrib.getQuestionUid());
+	                answers.add(new Pair<>(position, answer));
+                }
             }
 
             if (skipped || answers.isEmpty()) {

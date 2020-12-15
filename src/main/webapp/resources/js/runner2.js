@@ -529,6 +529,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					xAxes: [
 						{
 							ticks: {
+								beginAtZero: true,
 								autoSkip: false,
 								callback: function(value, index, values) {
 									if (value.length > 15)
