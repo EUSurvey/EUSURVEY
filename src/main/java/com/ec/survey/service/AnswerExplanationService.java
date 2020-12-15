@@ -14,6 +14,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -186,29 +187,49 @@ public class AnswerExplanationService extends BasicService {
 	}
 	
 	@Transactional
-	public String getDiscussion(int answerSetId, String questionUid, boolean useHtml)
+	public String getDiscussion(int answerSetId, String questionUid, boolean useHtml, Map<String, String> usersByUid)
 	{
 		List<AnswerComment> comments = loadComments(answerSetId, questionUid);
 		StringBuilder s = new StringBuilder();
+		
+		Map<Integer, List<AnswerComment>> commentsByParent = new HashMap<>();
+		
 		for (AnswerComment comment : comments) {
+			if (!usersByUid.containsKey(comment.getUniqueCode()))
+			{
+				usersByUid.put(comment.getUniqueCode(), "User " + (usersByUid.size() + 1));
+			}	
+						
 			if (comment.getParent() == null)
 			{
-				if (useHtml)
-				{
-					s.append("<div class='comment'>").append(comment.getText()).append("</div>");
-				} else {
-					s.append(comment.getText()).append("\n");
-				}
+				commentsByParent.put(comment.getId(), new ArrayList<AnswerComment>());
+				commentsByParent.get(comment.getId()).add(comment);
 			} else {
-
-				if (useHtml)
-				{
-					s.append("<div class='reply'>").append(comment.getText()).append("</div>");
+				commentsByParent.get(comment.getParent().getId()).add(comment);
+			}
+		}
+		
+		for (List<AnswerComment> list : commentsByParent.values())
+		{
+			boolean first = true;
+			for (AnswerComment comment : list)
+			{
+				String userprefix = usersByUid.get(comment.getUniqueCode()) + ": "; 
+				
+				if (useHtml) {
+					if (first)
+					{
+						s.append("<div class='comment'>").append(userprefix).append(comment.getText()).append("</div>");
+						first = false;
+					} else {
+						s.append("<div class='reply'>").append(userprefix).append(comment.getText()).append("</div>");
+					}
 				} else {
-					s.append(comment.getText()).append("\n");
+					s.append(userprefix).append(comment.getText()).append("\n");
 				}
 			}
 		}
+
 		return s.toString();
 	}
 	

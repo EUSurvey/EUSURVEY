@@ -533,6 +533,8 @@ public class ReportingService extends BasicService {
 			@SuppressWarnings("unchecked")
 			List<Object> result = query.list();
 			
+			Map<String, String> usersByUid = new HashMap<>();
+			
 			for (Object o : result)
 			{
 				List<String> row = new ArrayList<>();
@@ -656,7 +658,7 @@ public class ReportingService extends BasicService {
 								if (filter.getVisibleDiscussions().contains(question.getId().toString()))
 								{
 									try {
-										String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerrow[1]), question.getUniqueId(), !forexport);
+										String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerrow[1]), question.getUniqueId(), !forexport, usersByUid);
 										row.add(discussion);
 									} catch (NoSuchElementException ex) {
 										row.add("");
