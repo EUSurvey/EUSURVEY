@@ -2718,6 +2718,18 @@ public class RunnerController extends BasicController {
 		}
 	}
 
+	private void loadFiles(DelphiTableEntry tableEntry, int answerSetId, String questionUid) {
+
+		try {
+			final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetId, questionUid);
+			final List<com.ec.survey.model.survey.base.File> explanationFiles = explanation.getFiles();
+			for (com.ec.survey.model.survey.base.File explanationFile : explanationFiles) {
+				DelphiTableFile tableFile = new DelphiTableFile(explanationFile.getName(), explanationFile.getUid());
+				tableEntry.getFiles().add(tableFile);
+			}
+		} catch (NoSuchElementException ex) {}
+	}
+
     @GetMapping(value = "delphiTable")
     public ResponseEntity<DelphiTable> delphiTable(HttpServletRequest request) {
         try {
@@ -2813,6 +2825,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			for (String value : values) {
 				String title = answerUidToTitle.get(value);
@@ -2890,6 +2903,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
 		}
@@ -2955,6 +2969,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
 		}
@@ -3039,6 +3054,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setUpdate(ConversionTools.getFullString(contrib.getUpdate()));
 			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
 			loadComments(tableEntry, contrib.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadFiles(tableEntry, contrib.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
 		}
@@ -3075,7 +3091,8 @@ public class RunnerController extends BasicController {
             }
 
             result.getEntries().add(tableEntry);
-    		loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
         }
 
         return ResponseEntity.ok(result);
