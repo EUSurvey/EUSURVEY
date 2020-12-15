@@ -9,6 +9,7 @@ public class DelphiTableEntry {
     private String update;
     private int answerSetId;
     private final List<DelphiComment> comments = new ArrayList<>();
+    private final List<DelphiTableFile> files = new ArrayList<>();
 
     public String getExplanation() {
         return explanation;
@@ -40,5 +41,9 @@ public class DelphiTableEntry {
     
     public List<DelphiComment> getComments() {
         return comments;
+    }
+
+    public List<DelphiTableFile> getFiles() {
+        return files;
     }
 }
