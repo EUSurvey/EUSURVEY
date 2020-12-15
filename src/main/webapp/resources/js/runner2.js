@@ -678,7 +678,7 @@ function previousDelphiTablePage(element) {
 	var uid = $(surveyElement).attr("data-uid");
 	var viewModel = modelsForDelphiQuestions[uid];
 
-	viewModel.delphiTableOffset(viewModel.delphiTableOffset() - viewModel.delphiTableLimit());
+	viewModel.delphiTableOffset(Math.max(viewModel.delphiTableOffset() - viewModel.delphiTableLimit(), 0));
 	loadTableData(surveyElement, viewModel)
 }
 
@@ -687,8 +687,12 @@ function nextDelphiTablePage(element) {
 	var uid = $(surveyElement).attr("data-uid");
 	var viewModel = modelsForDelphiQuestions[uid];
 
-	viewModel.delphiTableOffset(viewModel.delphiTableOffset() + viewModel.delphiTableLimit());
-	loadTableData(surveyElement, viewModel)
+	var newOffset = viewModel.delphiTableOffset() + viewModel.delphiTableLimit();
+
+	if (newOffset <= viewModel.delphiTableTotalEntries()) {
+		viewModel.delphiTableOffset(newOffset);
+		loadTableData(surveyElement, viewModel)
+	}
 }
 
 function sortDelphiTable(element, direction) {
