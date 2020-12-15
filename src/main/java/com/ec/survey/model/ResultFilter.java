@@ -346,9 +346,6 @@ public class ResultFilter implements java.io.Serializable {
 	@Transient
 	public boolean explanationExported(String questionId)
 	{
-		//Fallback for old filter that have no exported questions
-		if (exportedExplanations == null || exportedExplanations.isEmpty()) return explanationVisible(questionId);
-		
 		return exportedExplanations.contains(questionId);
 	}
 	
@@ -361,9 +358,6 @@ public class ResultFilter implements java.io.Serializable {
 	@Transient
 	public boolean discussionExported(String questionId)
 	{
-		//Fallback for old filter that have no exported questions
-		if (exportedDiscussions == null || exportedDiscussions.isEmpty()) return discussionVisible(questionId);
-		
 		return exportedDiscussions.contains(questionId);
 	}
 	
