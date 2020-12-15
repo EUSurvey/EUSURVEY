@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/runner")
@@ -2831,13 +2832,13 @@ public class RunnerController extends BasicController {
 
 			result.setOffset(offset);
 
-			List<DelphiTableEntry> entries = result.getEntries().stream()
-					.sorted(comparator)
-					.skip(offset)
-					.limit(limit)
-					.collect(Collectors.toList());
+			Stream<DelphiTableEntry> stream = result.getEntries().stream().sorted(comparator).skip(offset);
 
-			result.setEntries(entries);
+			if (limit > 0) {
+				stream = stream.limit(limit);
+			}
+
+			result.setEntries(stream.collect(Collectors.toList()));
 			return ResponseEntity.ok(result);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
