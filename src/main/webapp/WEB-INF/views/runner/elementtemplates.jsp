@@ -1271,6 +1271,23 @@
 					</tbody>
 				</table>
 			</div>
+
+			<div style="text-align: center; margin-bottom: 10px;">
+				<a data-bind="attr: {style: delphiTableOffset() > 0 ? '' : 'color: #ccc'}" onclick="firstDelphiTablePage(this)">
+					<span class="glyphicon glyphicon-step-backward"></span>
+				</a>
+				<a data-bind="attr: {style: delphiTableOffset() > 0 ? '' : 'color: #ccc'}" onclick="previousDelphiTablePage(this)">
+					<span class="glyphicon glyphicon-chevron-left"></span>
+				</a>
+
+				<span data-bind="html: delphiTableOffset() + 1"></span>&nbsp;
+				<spring:message code="label.to" />&nbsp;
+				<span data-bind="html: Math.min(delphiTableOffset() + delphiTableLimit(), delphiTableTotalEntries())"></span>
+
+				<a data-bind="attr: {style: (delphiTableOffset() + delphiTableLimit()) > delphiTableTotalEntries() ? 'color: #ccc' : ''}" onclick="nextDelphiTablePage(this)">
+					<span class="glyphicon glyphicon-chevron-right"></span>
+				</a>
+			</div>
 			
 			<!-- /ko -->		
 		
