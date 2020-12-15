@@ -1206,7 +1206,17 @@
 					<thead>
 						<tr class="area-header">
 							<th style="width:33%">${form.getMessage("label.DelphiAnswersTableAnswer")}</th>
-							<th style="min-width:100px">${form.getMessage("label.DelphiAnswersTableUpdate")}</th>
+							<th style="min-width:150px">
+								<span>${form.getMessage("label.DelphiAnswersTableUpdate")}</span>
+								<div style="float: right">
+									<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sortDelphiTable(this,'UpdateAsc');" class="">
+										<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+									</a>
+									<a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sortDelphiTable(this,'UpdateDesc');" class="">
+										<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+									</a>
+								</div>
+							</th>
 							<th style="width:33%">${form.getMessage("label.DelphiAnswersTableExplanation")}</th>
 							<th style="width:33%">${form.getMessage("label.Discussion")}</th>
 						</tr>

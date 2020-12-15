@@ -664,13 +664,21 @@ function loadGraphData(div) {
 	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true);
 }
 
-function loadTableData(div, viewModel) {
+function sortDelphiTable(element, direction) {
+	var surveyElement = $(element).closest(".survey-element");
+	var uid = $(surveyElement).attr("data-uid");
+	loadTableData(surveyElement, modelsForDelphiQuestions[uid], direction);
+}
+
+function loadTableData(div, viewModel, orderBy) {
 	var surveyId = $('#survey\\.id').val();
 	var questionuid = $(div).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
+
+	orderBy = orderBy || "UpdateDesc";
 	
-	var data = "surveyid=" + surveyId + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
+	var data = "surveyid=" + surveyId + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode + "&orderby=" + orderBy;
 
 	$.ajax({
 		type: "GET",

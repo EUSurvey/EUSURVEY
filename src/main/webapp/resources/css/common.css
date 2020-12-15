@@ -1343,6 +1343,14 @@ legend {
 	color: #fff;
 }
 
+.area-header a {
+	color: #fff;
+}
+
+.area-header a:hover {
+	color: #ccc;
+}
+
 .delphi .area-header {
 	background-color: #8a8989;
     color: #fff;
