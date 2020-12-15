@@ -1151,8 +1151,7 @@
 									<div class="uploaded-files"
 										data-bind="foreach: getFileAnswer(uniqueId())">
 										<div>
-											<a data-toggle="tooltip" title="${form.getMessage("
-												label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
+											<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
 												<span style="margin-right: 10px;"
 												class="glyphicon glyphicon-trash"></span>
 											</a> <span data-bind="html: $data"></span>
