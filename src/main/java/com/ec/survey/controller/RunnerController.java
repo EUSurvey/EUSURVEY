@@ -2693,23 +2693,20 @@ public class RunnerController extends BasicController {
 		List<AnswerComment> comments = answerExplanationService.loadComments(answerSetId, questionUid);
 		Map<Integer, DelphiComment> rootComments = new HashMap<>();
 		for (AnswerComment comment : comments) {
-			
-			if (!uniqueCodeToUser.containsKey(surveyUid))
-			{
+
+			if (!uniqueCodeToUser.containsKey(surveyUid)) {
 				uniqueCodeToUser.put(surveyUid, new HashMap<String, String>());
 			}
-			
-			Map<String, String> map = uniqueCodeToUser.get(surveyUid);			
-			
-			if (!map.containsKey(comment.getUniqueCode()))
-			{
+
+			Map<String, String> map = uniqueCodeToUser.get(surveyUid);
+
+			if (!map.containsKey(comment.getUniqueCode())) {
 				map.put(comment.getUniqueCode(), "User " + (map.size() + 1));
-			}	
-			
+			}
+
 			DelphiComment delphiComment = new DelphiComment(map.get(comment.getUniqueCode()), comment.getText(), comment.getDate(), comment.getId());
-			
-			if (comment.getParent() == null)
-			{			
+
+			if (comment.getParent() == null) {
 				tableEntry.getComments().add(delphiComment);
 				rootComments.put(comment.getId(), delphiComment);
 			} else {
@@ -2718,96 +2715,147 @@ public class RunnerController extends BasicController {
 		}
 	}
 
-    @GetMapping(value = "delphiTable")
-    public ResponseEntity<DelphiTable> delphiTable(HttpServletRequest request) {
-        try {
-            String surveyid = request.getParameter("surveyid");
-            int sid = Integer.parseInt(surveyid);
+	enum DelphiTableOrderBy {
+		UpdateAsc,
+		UpdateDesc
+	}
 
-            String languageCode = request.getParameter("languagecode");
-            Survey survey = surveyService.getSurvey(sid, languageCode);
+	@GetMapping(value = "delphiTable")
+	public ResponseEntity<DelphiTable> delphiTable(HttpServletRequest request) {
+		try {
+			String surveyid = request.getParameter("surveyid");
+			int sid = Integer.parseInt(surveyid);
 
-            if (survey == null || !survey.getIsDelphi()) {
-                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-            }
-            
-            if (!survey.getIsDelphiShowAnswers()) {
-                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-            }            	
+			String languageCode = request.getParameter("languagecode");
+			Survey survey = surveyService.getSurvey(sid, languageCode);
 
-            AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
+			if (survey == null || !survey.getIsDelphi()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
 
-            if (answerSet == null) {
-                // participant may only see answers if he answered before
-                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-            }
+			if (!survey.getIsDelphiShowAnswers()) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
 
-            String questionuid = request.getParameter("questionuid");
-            Element element = survey.getQuestionMapByUniqueId().get(questionuid);
+			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 
-            if (!(element instanceof Question)) {
-                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-            }
+			if (answerSet == null) {
+				// participant may only see answers if he answered before
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
 
-            Question question = (Question) element;
-            if (!question.getIsDelphiQuestion() || !answerSetContainsAnswerForQuestion(answerSet, question)) {
-                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-            }
+			String questionuid = request.getParameter("questionuid");
+			Element element = survey.getQuestionMapByUniqueId().get(questionuid);
 
-            if (question instanceof ChoiceQuestion) {
-                return handleDelphiTableChoiceQuestion((ChoiceQuestion) question);
-            }
+			if (!(element instanceof Question)) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
 
-            if (question instanceof Matrix) {
-                return handleDelphiTableMatrix((Matrix) question);
-            }
+			Question question = (Question) element;
+			if (!question.getIsDelphiQuestion() || !answerSetContainsAnswerForQuestion(answerSet, question)) {
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
 
-            if (question instanceof RatingQuestion) {
-                return handleDelphiTableRatingQuestion((RatingQuestion) question);
-            }
+			DelphiTable result;
 
-            if (question instanceof Table) {
-                return handleDelphiTableTable((Table) question);
-            }
+			if (question instanceof ChoiceQuestion) {
+				result = handleDelphiTableChoiceQuestion((ChoiceQuestion) question);
+			} else if (question instanceof Matrix) {
+				result = handleDelphiTableMatrix((Matrix) question);
+			} else if (question instanceof RatingQuestion) {
+				result = handleDelphiTableRatingQuestion((RatingQuestion) question);
+			} else if (question instanceof Table) {
+				result = handleDelphiTableTable((Table) question);
+			} else {
+				result = handleDelphiTableRawValueQuestion(question);
+			}
 
-            return handleDelphiTableRawValueQuestion(question);
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    
-    private ResponseEntity<DelphiTable> handleDelphiTableChoiceQuestion(ChoiceQuestion question) {
-        DelphiTable result = new DelphiTable();
+			if (result == null) {
+				return ResponseEntity.noContent().build();
+			}
 
-        Map<String, String> answerUidToTitle = new HashMap<>();
-        for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
-            String id = answer.getUniqueId();
-            String title = answer.getTitle();
-            answerUidToTitle.put(id, title);
-        }
+			result.setTotal(result.getEntries().size());
 
-        // group explanations by answer set ID
-        Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
-                .stream()
-                .collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
+			// paginate and sort results (not done in SQL due to incompatible handling)
+			int limit = 0;
+			try {
+				limit = Integer.parseInt(request.getParameter("limit"));
+				limit = Math.max(limit, 0);
+			} catch (Exception ignored) {
+			}
 
-        Survey survey = question.getSurvey();
-        if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
+			int offset = 0;
+			try {
+				offset = Integer.parseInt(request.getParameter("offset"));
+				offset = Math.max(offset, 0);
+			} catch (Exception ignored) {
+			}
 
-        for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
-            List<String> values = entry.getValue().stream()
-                    .map(DelphiContribution::getAnswerUid)
-                    .collect(Collectors.toList());
+			DelphiTableOrderBy orderBy = DelphiTableOrderBy.UpdateDesc;
+			try {
+				orderBy = DelphiTableOrderBy.valueOf(request.getParameter("orderBy"));
+			} catch (Exception ignored) {
+			}
 
-            if (!values.stream().allMatch(answerUidToTitle::containsKey)) {
-                // invalid answer set
-                continue;
-            }
+			Comparator<DelphiTableEntry> comparator;
+			switch (orderBy) {
+				case UpdateAsc:
+					comparator = Comparator.comparing(DelphiTableEntry::getUpdate);
+					break;
 
-            DelphiTableEntry tableEntry = new DelphiTableEntry();
+				case UpdateDesc:
+				default:
+					comparator = Comparator.comparing(DelphiTableEntry::getUpdate).reversed();
+					break;
+			}
+
+			result.setOffset(offset);
+
+			List<DelphiTableEntry> entries = result.getEntries().stream()
+					.sorted(comparator)
+					.skip(offset)
+					.limit(limit)
+					.collect(Collectors.toList());
+
+			result.setEntries(entries);
+			return ResponseEntity.ok(result);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	private DelphiTable handleDelphiTableChoiceQuestion(ChoiceQuestion question) {
+		DelphiTable result = new DelphiTable();
+
+		Map<String, String> answerUidToTitle = new HashMap<>();
+		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
+			String id = answer.getUniqueId();
+			String title = answer.getTitle();
+			answerUidToTitle.put(id, title);
+		}
+
+		// group explanations by answer set ID
+		Map<Integer, List<DelphiContribution>> groupedContributions = answerExplanationService.getDelphiContributions(question)
+				.stream()
+				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
+
+		Survey survey = question.getSurvey();
+		if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
+			return null;
+		}
+
+		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
+			List<String> values = entry.getValue().stream()
+					.map(DelphiContribution::getAnswerUid)
+					.collect(Collectors.toList());
+
+			if (!values.stream().allMatch(answerUidToTitle::containsKey)) {
+				// invalid answer set
+				continue;
+			}
+
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			DelphiContribution firstValue = entry.getValue().get(0);
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
 			tableEntry.setExplanation(firstValue.getExplanation());
@@ -2823,10 +2871,10 @@ public class RunnerController extends BasicController {
 			result.getEntries().add(tableEntry);
 		}
 
-		return ResponseEntity.ok(result);
+		return result;
 	}
 
-	private ResponseEntity<DelphiTable> handleDelphiTableMatrix(Matrix question) {
+	private DelphiTable handleDelphiTableMatrix(Matrix question) {
 		DelphiTable result = new DelphiTable();
 
 		Map<String, String> answerTitles = new HashMap<>();
@@ -2847,30 +2895,30 @@ public class RunnerController extends BasicController {
 				.collect(Collectors.groupingBy(DelphiContribution::getAnswerSetId));
 
 		Survey survey = question.getSurvey();
-        if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
-            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-        }
+		if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
+			return null;
+		}
 
-        for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
-            // maps position to element
-            Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.getValue().size());
+		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
+			// maps position to element
+			Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.getValue().size());
 
-            boolean skipped = false;
-            for (DelphiContribution contrib : entry.getValue()) {
-                // find labels for question and answer
-                String label = questionTitles.get(contrib.getQuestionUid());
-                String value = answerTitles.get(contrib.getAnswerUid());
+			boolean skipped = false;
+			for (DelphiContribution contrib : entry.getValue()) {
+				// find labels for question and answer
+				String label = questionTitles.get(contrib.getQuestionUid());
+				String value = answerTitles.get(contrib.getAnswerUid());
 
-                if (label == null || value == null) {
-                    // invalid answer or question, skip answer set
-                    skipped = true;
-                    break;
-                }
+				if (label == null || value == null) {
+					// invalid answer or question, skip answer set
+					skipped = true;
+					break;
+				}
 
-                DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
-                int position = questionPositions.get(contrib.getQuestionUid());
-                answers.add(new Pair<>(position, answer));
-            }
+				DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
+				int position = questionPositions.get(contrib.getQuestionUid());
+				answers.add(new Pair<>(position, answer));
+			}
 
             if (skipped || answers.isEmpty()) {
                 continue;
@@ -2894,10 +2942,10 @@ public class RunnerController extends BasicController {
 			result.getEntries().add(tableEntry);
 		}
 
-		return ResponseEntity.ok(result);
+		return result;
 	}
 
-	private ResponseEntity<DelphiTable> handleDelphiTableRatingQuestion(RatingQuestion question) {
+	private DelphiTable handleDelphiTableRatingQuestion(RatingQuestion question) {
 		DelphiTable result = new DelphiTable();
 
 		Map<String, Integer> questionPositions = new HashMap<>();
@@ -2914,7 +2962,7 @@ public class RunnerController extends BasicController {
 
 		Survey survey = question.getSurvey();
 		if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
-			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			return null;
 		}
 
 		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
@@ -2959,7 +3007,7 @@ public class RunnerController extends BasicController {
 			result.getEntries().add(tableEntry);
 		}
 
-		return ResponseEntity.ok(result);
+		return result;
 	}
 	
 	@PostMapping(value = "/delphiAddComment")
@@ -3007,18 +3055,17 @@ public class RunnerController extends BasicController {
 				}
 				comment.setParent(parentComment);
 			}
-			
-			answerExplanationService.saveComment(comment);
-			
-			return new ResponseEntity<>(null, HttpStatus.OK);
 
+			answerExplanationService.saveComment(comment);
+
+			return new ResponseEntity<>(null, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	private ResponseEntity<DelphiTable> handleDelphiTableRawValueQuestion(Question question) {
+	private DelphiTable handleDelphiTableRawValueQuestion(Question question) {
 		DelphiTable result = new DelphiTable();
 
 		// get survey
@@ -3029,7 +3076,7 @@ public class RunnerController extends BasicController {
 
 		if (contributions.size() < survey.getMinNumberDelphiStatistics()) {
 			// not enough answers
-			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			return null;
 		}
 
 		for (DelphiContribution contrib : contributions) {
@@ -3043,10 +3090,10 @@ public class RunnerController extends BasicController {
 			result.getEntries().add(tableEntry);
 		}
 
-		return ResponseEntity.ok(result);
+		return result;
 	}
 
-	private ResponseEntity<DelphiTable> handleDelphiTableTable(Table question) {
+	private DelphiTable handleDelphiTableTable(Table question) {
 		DelphiTable result = new DelphiTable();
 
 		// group explanations by answer set ID
@@ -3056,7 +3103,7 @@ public class RunnerController extends BasicController {
 
 		Survey survey = question.getSurvey();
 		if (groupedContributions.size() < survey.getMinNumberDelphiStatistics()) {
-			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			return null;
 		}
 
 		for (Map.Entry<Integer, List<DelphiContribution>> entry : groupedContributions.entrySet()) {
@@ -3069,16 +3116,16 @@ public class RunnerController extends BasicController {
 			tableEntry.setUpdate(ConversionTools.getFullString(firstValue.getUpdate()));
 
 			for (DelphiContribution contrib : entry.getValue()) {
-                String col = Character.toString((char) ('A' + contrib.getColumn() - 1)); // column 1 is A
-                DelphiTableAnswer answer = new DelphiTableAnswer(col + contrib.getRow(), contrib.getValue());
-                tableEntry.getAnswers().add(answer);
-            }
+				String col = Character.toString((char) ('A' + contrib.getColumn() - 1)); // column 1 is A
+				DelphiTableAnswer answer = new DelphiTableAnswer(col + contrib.getRow(), contrib.getValue());
+				tableEntry.getAnswers().add(answer);
+			}
 
-            result.getEntries().add(tableEntry);
-    		loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
-        }
+			result.getEntries().add(tableEntry);
+			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+		}
 
-        return ResponseEntity.ok(result);
-    }
+		return result;
+	}
 
 }

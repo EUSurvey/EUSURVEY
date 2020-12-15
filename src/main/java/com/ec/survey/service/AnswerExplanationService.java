@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 @Service("answerExplanationService")
 public class AnswerExplanationService extends BasicService {
-
 	@Transactional
 	public void deleteExplanationByAnswerSet(AnswerSet answerSet) {
 
@@ -123,7 +122,7 @@ public class AnswerExplanationService extends BasicService {
 				"    ) as main_explanation on a.AS_ID = main_explanation.ANSWER_SET_ID\n" +
 				"join ANSWERS_SET aset on a.AS_ID = aset.ANSWER_SET_ID\n" +
 				"join SURVEYS s on aset.SURVEY_ID = s.SURVEY_ID\n" +
-				"where a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft";
+				"where a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft\n";
 
 		Session session = sessionFactory.getCurrentSession();
 		SQLQuery query = session.createSQLQuery(queryText);
