@@ -501,7 +501,6 @@
 						
 						//applyStandardWidths();
 						setTimeout(loadElements, 500);
-						setTimeout(scrollToQuestionIfSet, 7000);
 					}
 				});
 			} else {
