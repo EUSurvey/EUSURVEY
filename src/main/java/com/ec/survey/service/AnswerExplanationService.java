@@ -246,7 +246,7 @@ public class AnswerExplanationService extends BasicService {
 			if (useHtml) {
 				stringBuilder.append("<br />");
 			} else {
-				stringBuilder.append(" ");
+				stringBuilder.append("\n");
 			}
 		}
 		for (int i = 0; i < files.size(); i++) {
@@ -259,13 +259,15 @@ public class AnswerExplanationService extends BasicService {
 						.append(Constants.PATH_DELIMITER)
 						.append(file.getUid())
 						.append("'>");
+			} else {
+				stringBuilder.append(file.getUid()).append("|");
 			}
-			stringBuilder.append(file.getName());
+			stringBuilder.append(file.getNameForExport());
 			if (useHtml) {
 				stringBuilder.append("</a>");
 			}
 			if (i != files.size() - 1) {
-				stringBuilder.append(" - ");
+				stringBuilder.append(";");
 			}
 		}
 		return stringBuilder.toString();
