@@ -696,11 +696,29 @@ function loadTableData(div, viewModel) {
 	 });
 }
 
-function scrollToQuestionIfSet() {
+function selectPageAndScrollToQuestionIfSet() {
 	if (window.location.hash) {
-		const elementAnchorId = location.hash.substr(1);
-		document.getElementById(elementAnchorId).scrollIntoView();
+		//select correct page in case of multi-paging
+		
+		if ($(".single-page").length > 1)
+		{
+			const elementAnchorId = location.hash.substr(1);
+			const element = document.getElementById(elementAnchorId);	
+			const p = $(element).closest(".single-page");
+			page = parseInt(p.attr("id").substring(4));
+			$(".single-page").hide();		
+			$(p).show();
+			checkPages();
+			setTimeout(scrollToQuestionIfSet, 3000);
+		} else {
+			setTimeout(scrollToQuestionIfSet, 7000);
+		}
 	}
+}
+
+function scrollToQuestionIfSet() {
+	const elementAnchorId = location.hash.substr(1);
+	document.getElementById(elementAnchorId).scrollIntoView();
 }
 
 var delphiUpdateFinished = false;
