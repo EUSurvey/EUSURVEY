@@ -202,7 +202,7 @@ public class AnswerExplanationService extends BasicService {
 						
 			if (comment.getParent() == null)
 			{
-				commentsByParent.put(comment.getId(), new ArrayList<AnswerComment>());
+				commentsByParent.put(comment.getId(), new ArrayList<>());
 				commentsByParent.get(comment.getId()).add(comment);
 			} else {
 				commentsByParent.get(comment.getParent().getId()).add(comment);
@@ -214,18 +214,18 @@ public class AnswerExplanationService extends BasicService {
 			boolean first = true;
 			for (AnswerComment comment : list)
 			{
-				String userprefix = usersByUid.get(comment.getUniqueCode()) + ": "; 
+				String userPrefix = usersByUid.get(comment.getUniqueCode()) + ": "; 
 				
 				if (useHtml) {
 					if (first)
 					{
-						s.append("<div class='comment'>").append(userprefix).append(comment.getText()).append("</div>");
+						s.append("<div class='comment'>").append(userPrefix).append(comment.getText()).append("</div>");
 						first = false;
 					} else {
-						s.append("<div class='reply'>").append(userprefix).append(comment.getText()).append("</div>");
+						s.append("<div class='reply'>").append(userPrefix).append(comment.getText()).append("</div>");
 					}
 				} else {
-					s.append(userprefix).append(comment.getText()).append("\n");
+					s.append(userPrefix).append(comment.getText()).append("\n");
 				}
 			}
 		}
