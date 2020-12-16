@@ -4,6 +4,8 @@ import com.ec.survey.model.AnswerComment;
 import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.delphi.DelphiContribution;
+import com.ec.survey.model.delphi.DelphiContributions;
+import com.ec.survey.model.delphi.DelphiTableOrderBy;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.tools.ConversionTools;
 
@@ -14,6 +16,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -90,51 +93,116 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<DelphiContribution> getDelphiContributions(ChoiceQuestion question) {
-		return getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
+	public DelphiContributions getDelphiContributions(ChoiceQuestion question, DelphiTableOrderBy orderBy, int limit, int offset) {
+		return getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft(), orderBy, limit, offset);
 	}
 
 	@Transactional(readOnly = true)
-	public List<DelphiContribution> getDelphiContributions(Matrix question) {
+	public DelphiContributions getDelphiContributions(Matrix question, DelphiTableOrderBy orderBy, int limit, int offset) {
 		List<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
-		return getDelphiContributions(uids, question.getUniqueId(), question.getSurvey().getIsDraft());
+		return getDelphiContributions(uids, question.getUniqueId(), question.getSurvey().getIsDraft(), orderBy, limit, offset);
 	}
 
 	@Transactional(readOnly = true)
-	public List<DelphiContribution> getDelphiContributions(RatingQuestion question) {
+	public DelphiContributions getDelphiContributions(RatingQuestion question, DelphiTableOrderBy orderBy, int limit, int offset) {
 		List<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
-		return getDelphiContributions(uids, question.getUniqueId(), question.getSurvey().getIsDraft());
+		return getDelphiContributions(uids, question.getUniqueId(), question.getSurvey().getIsDraft(), orderBy, limit, offset);
 	}
 
 	@Transactional(readOnly = true)
-	public List<DelphiContribution> getDelphiContributions(Table question) {
-		return getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft());
+	public DelphiContributions getDelphiContributions(Table question, DelphiTableOrderBy orderBy, int limit, int offset) {
+		return getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft(), orderBy, limit, offset);
 	}
 
 	@Transactional(readOnly = true)
-	public List<DelphiContribution> getDelphiContributions(Collection<String> questionUids, String mainQuestionUid, boolean isDraft) {
-		String queryText = "select a.AS_ID as `answerSetId`, COALESCE(ex.TEXT, main_explanation.TEXT) as `explanation`, aset.ANSWER_SET_UPDATE as `update`, a.VALUE as `value`, a.PA_UID as `answerUid`, a.QUESTION_UID as `questionUid`, a.ANSWER_COL as `column`, a.ANSWER_ROW as `row`\n" +
-				"from ANSWERS a\n" +
-				"left join ANSWERS_EXPLANATIONS ex on a.QUESTION_UID = ex.QUESTION_UID and ex.ANSWER_SET_ID = a.AS_ID\n" +
-				"left join (\n" +
-				"    select TEXT, ANSWER_SET_ID\n" +
-				"    from ANSWERS_EXPLANATIONS\n" +
-				"    where QUESTION_UID = :mainQuestionUid\n" +
-				"    ) as main_explanation on a.AS_ID = main_explanation.ANSWER_SET_ID\n" +
-				"join ANSWERS_SET aset on a.AS_ID = aset.ANSWER_SET_ID\n" +
-				"join SURVEYS s on aset.SURVEY_ID = s.SURVEY_ID\n" +
-				"where a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft\n";
+	public DelphiContributions getDelphiContributions(Collection<String> questionUids, String mainQuestionUid, boolean isDraft, DelphiTableOrderBy orderBy, int limit, int offset) {
+		String orderByClauseInner;
+		String orderByClauseOuter;
+
+		switch (orderBy) {
+			case UpdateAsc:
+				orderByClauseInner = "aset.ANSWER_SET_UPDATE ASC";
+				orderByClauseOuter = "`update` ASC, answerSetId";
+				break;
+
+			case UpdateDesc:
+				orderByClauseInner = "aset.ANSWER_SET_UPDATE DESC";
+				orderByClauseOuter = "`update` DESC, answerSetId";
+				break;
+
+			default:
+				throw new IllegalStateException("Unexpected value: " + orderBy);
+		}
+
+		String contributionsQueryText = "" +
+				"SELECT\n" +
+				"    aset.ANSWER_SET_ID answerSetId,\n" +
+				"    aset.ANSWER_SET_UPDATE `update`,\n" +
+				"    a.VALUE value,\n" +
+				"    a.PA_UID answerUid,\n" +
+				"    a.QUESTION_UID questionUid,\n" +
+				"    a.ANSWER_COL `column`,\n" +
+				"    a.ANSWER_ROW row,\n" +
+				"    COALESCE(ex.TEXT, main_explanation.TEXT) explanation\n" +
+				"FROM ANSWERS a\n" +
+				"JOIN (\n" +
+				// select all answers sets that are relevant for this query
+				"    SELECT\n" +
+				"        aset.ANSWER_SET_ID,\n" +
+				"        aset.ANSWER_SET_UPDATE\n" +
+				"    FROM ANSWERS a\n" +
+				"    JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n" +
+				"    JOIN SURVEYS s ON aset.SURVEY_ID = s.SURVEY_ID\n" +
+				"    WHERE a.QUESTION_UID IN :questionUids\n" +
+				"      AND s.ISDRAFT = :isDraft\n" +
+				"    GROUP BY aset.ANSWER_SET_ID, aset.ANSWER_SET_UPDATE\n" +
+				"    ORDER BY " + orderByClauseInner + "\n" +
+				// pagination
+				"    LIMIT :limit OFFSET :offset\n" +
+				") AS aset ON a.AS_ID = aset.ANSWER_SET_ID\n" +
+				// add explanations
+				"LEFT JOIN ANSWERS_EXPLANATIONS ex ON a.QUESTION_UID = ex.QUESTION_UID AND ex.ANSWER_SET_ID = a.AS_ID\n" +
+				// add explanation of main question (i.e. for ratings)
+				"LEFT JOIN (\n" +
+				"    SELECT TEXT, ANSWER_SET_ID\n" +
+				"    FROM ANSWERS_EXPLANATIONS\n" +
+				"    WHERE QUESTION_UID = :mainQuestionUid\n" +
+				") AS main_explanation ON a.AS_ID = main_explanation.ANSWER_SET_ID\n" +
+				// filter by question
+				"WHERE a.QUESTION_UID IN :questionUids\n" +
+				// sort data as required
+				"ORDER BY " + orderByClauseOuter + ", row, `column`";
 
 		Session session = sessionFactory.getCurrentSession();
-		SQLQuery query = session.createSQLQuery(queryText);
-		query.setResultTransformer(Transformers.aliasToBean(DelphiContribution.class));
-		query.setParameterList("questionUids", questionUids);
-		query.setBoolean("isDraft", isDraft);
-		query.setString("mainQuestionUid", mainQuestionUid);
+		SQLQuery contributionsQuery = session.createSQLQuery(contributionsQueryText);
+		contributionsQuery.setResultTransformer(Transformers.aliasToBean(DelphiContribution.class));
+		contributionsQuery.setParameterList("questionUids", questionUids);
+		contributionsQuery.setBoolean("isDraft", isDraft);
+		contributionsQuery.setString("mainQuestionUid", mainQuestionUid);
+		contributionsQuery.setInteger("limit", limit);
+		contributionsQuery.setInteger("offset", offset);
 
 		@SuppressWarnings("unchecked")
-		List<DelphiContribution> results = query.list();
-		return results;
+		List<DelphiContribution> contributions = contributionsQuery.list();
+
+		int totalCount = getTotalDelphiContributions(questionUids, isDraft);
+		return new DelphiContributions(totalCount, contributions);
+	}
+
+	@Transactional(readOnly = true)
+	protected int getTotalDelphiContributions(Collection<String> questionUids, boolean isDraft) {
+		String totalCountQueryText = "" +
+				"SELECT COUNT(DISTINCT aset.ANSWER_SET_ID)\n" +
+				"FROM ANSWERS a\n" +
+				"JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n" +
+				"JOIN SURVEYS s ON aset.SURVEY_ID = s.SURVEY_ID\n" +
+				"WHERE a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft";
+
+		Session session = sessionFactory.getCurrentSession();
+		SQLQuery totalCountQuery = session.createSQLQuery(totalCountQueryText);
+		totalCountQuery.setParameterList("questionUids", questionUids);
+		totalCountQuery.setBoolean("isDraft", isDraft);
+		return ((BigInteger)totalCountQuery.uniqueResult()).intValue();
 	}
 
 	@Transactional
