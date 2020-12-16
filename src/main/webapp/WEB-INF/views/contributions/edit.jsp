@@ -119,7 +119,7 @@
 								addElement(result[i], false, false);
 							}
 							applyStandardWidths();
-							setTimeout(scrollToQuestionIfSet, 7000);
+							selectPageAndScrollToQuestionIfSet();
 							readCookies();
 							$("#btnSubmit").removeClass("hidden");
 							$("#btnSaveDraft").removeClass("hidden");
