@@ -3193,6 +3193,8 @@ public class ManagementController extends BasicController {
 			}
 
 			result.add("");
+			
+			Map<String, String> usersByUid = new HashMap<>();
 
 			for (AnswerSet answerSet : answerSets) {
 				result.add(answerSet.getUniqueCode());
@@ -3303,7 +3305,7 @@ public class ManagementController extends BasicController {
 							
 							if (filter.getVisibleDiscussions().contains(question.getId().toString())) {
 								try {
-									String discussion = answerExplanationService.getDiscussion(answerSet.getId(), question.getUniqueId(), true);
+									String discussion = answerExplanationService.getDiscussion(answerSet.getId(), question.getUniqueId(), true, usersByUid);
 									result.add(discussion);
 								} catch (NoSuchElementException ex) {
 									result.add("");
