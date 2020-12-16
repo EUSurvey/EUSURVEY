@@ -243,7 +243,11 @@ public class AnswerExplanationService extends BasicService {
 		stringBuilder.append(explanation.getText());
 		final List<File> files = explanation.getFiles();
 		if (files.size() > 0) {
-			stringBuilder.append("<br>");
+			if (useHtml) {
+				stringBuilder.append("<br />");
+			} else {
+				stringBuilder.append(" ");
+			}
 		}
 		for (int i = 0; i < files.size(); i++) {
 			final File file = files.get(i);
