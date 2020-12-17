@@ -192,7 +192,7 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	protected int getTotalDelphiContributions(Collection<String> questionUids, boolean isDraft) {
+	public int getTotalDelphiContributions(Collection<String> questionUids, boolean isDraft) {
 		String totalCountQueryText = "" +
 				"SELECT COUNT(DISTINCT aset.ANSWER_SET_ID)\n" +
 				"FROM ANSWERS a\n" +

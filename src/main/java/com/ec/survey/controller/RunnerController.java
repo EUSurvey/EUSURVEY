@@ -2442,11 +2442,11 @@ public class RunnerController extends BasicController {
 			}
 
 			if (question instanceof Matrix) {
-				return handleDelphiGraphMatrix(survey, (Matrix) question, statistics, creator, numberOfAnswersMap, numberOfAnswersMapMatrix, answerSet);
+				return handleDelphiGraphMatrix(survey, (Matrix) question, statistics, creator, numberOfAnswersMapMatrix);
 			}
 
 			if (question instanceof RatingQuestion) {
-				return handleDelphiGraphRatingQuestion(survey, (RatingQuestion) question, statistics, creator, numberOfAnswersMap, numberOfAnswersMapRatingQuestion, answerSet);
+				return handleDelphiGraphRatingQuestion(survey, (RatingQuestion) question, statistics, creator, numberOfAnswersMapRatingQuestion);
 			}
 
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -2456,27 +2456,19 @@ public class RunnerController extends BasicController {
 		}
 	}
 
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRatingQuestion(Survey survey, RatingQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion, AnswerSet answerSet) {
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphRatingQuestion(Survey survey, RatingQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion) {
 		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 		result.setQuestionType(DelphiQuestionType.Rating);
 		result.setChartType(question.getDelphiChartType());
 
+		Collection<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
+		int contributions = answerExplanationService.getTotalDelphiContributions(uids, survey.getIsDraft());
+
+		if (contributions < survey.getMinNumberDelphiStatistics()) {
+			return ResponseEntity.noContent().build();
+		}
+
 		for (Element subQuestion : question.getQuestions()) {
-			if (!numberOfAnswersMap.containsKey(subQuestion.getId()) || numberOfAnswersMap.get(subQuestion.getId()) == 0) {
-				//no data
-				continue;
-			}
-
-			if (!answerSetContainsAnswerForQuestion(answerSet, subQuestion)) {
-				//participant may only see answers if he answered before
-				continue;
-			}
-
-			if (numberOfAnswersMap.get(subQuestion.getId()) < survey.getMinNumberDelphiStatistics()) {
-				// only show statistics for this question if the total number of answers exceeds the threshold
-				continue;
-			}
-
 			DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
 			questionResults.setLabel(subQuestion.getTitle());
 
@@ -2494,33 +2486,25 @@ public class RunnerController extends BasicController {
 
 		// only show statistics if applicable for some subquestion
 		if (result.getQuestions().isEmpty()) {
-			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			return ResponseEntity.noContent().build();
 		}
 
 		return ResponseEntity.ok(result);
 	}
 
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix, AnswerSet answerSet) {
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphMatrix(Survey survey, Matrix question, Statistics statistics, StatisticsCreator creator, Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix) {
 		DelphiGraphDataMulti result = new DelphiGraphDataMulti();
 		result.setQuestionType(DelphiQuestionType.Matrix);
 		result.setChartType(question.getDelphiChartType());
 
+		Collection<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
+		int contributions = answerExplanationService.getTotalDelphiContributions(uids, survey.getIsDraft());
+
+		if (contributions < survey.getMinNumberDelphiStatistics()) {
+			return ResponseEntity.noContent().build();
+		}
+
 		for (Element matrixQuestion : question.getQuestions()) {
-			if (!numberOfAnswersMap.containsKey(matrixQuestion.getId()) || numberOfAnswersMap.get(matrixQuestion.getId()) == 0) {
-				//no data
-				continue;
-			}
-
-			if (!answerSetContainsAnswerForQuestion(answerSet, matrixQuestion)) {
-				//participant may only see answers if he answered before
-				continue;
-			}
-
-			if (numberOfAnswersMap.get(matrixQuestion.getId()) < survey.getMinNumberDelphiStatistics()) {
-				// only show statistics for this question if the total number of answers exceeds the threshold
-				continue;
-			}
-
 			DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
 			questionResults.setLabel(matrixQuestion.getTitle());
 
@@ -2536,9 +2520,8 @@ public class RunnerController extends BasicController {
 			result.addQuestion(questionResults);
 		}
 
-		// only show statistics if applicable for some subquestion
 		if (result.getQuestions().isEmpty()) {
-			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			return ResponseEntity.noContent().build();
 		}
 
 		return ResponseEntity.ok(result);
