@@ -689,7 +689,7 @@ function nextDelphiTablePage(element) {
 
 	var newOffset = viewModel.delphiTableOffset() + viewModel.delphiTableLimit();
 
-	if (newOffset <= viewModel.delphiTableTotalEntries()) {
+	if (newOffset < viewModel.delphiTableTotalEntries()) {
 		viewModel.delphiTableOffset(newOffset);
 		loadTableData(surveyElement, viewModel)
 	}
