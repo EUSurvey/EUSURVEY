@@ -2838,6 +2838,10 @@ public class RunnerController extends BasicController {
 			currentList.add(contrib);
 		}
 
+		if (!currentList.isEmpty()) {
+			result.add(currentList);
+		}
+
 		return result;
 	}
 
