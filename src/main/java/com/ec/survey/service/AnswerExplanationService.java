@@ -6,6 +6,7 @@ import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.delphi.DelphiContribution;
 import com.ec.survey.model.delphi.DelphiContributions;
 import com.ec.survey.model.delphi.DelphiTableOrderBy;
+import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.Constants;
@@ -381,6 +382,45 @@ public class AnswerExplanationService extends BasicService {
 	public AnswerComment getComment(int id) {
 		final Session session = sessionFactory.getCurrentSession();
 		return (AnswerComment) session.get(AnswerComment.class, id);
+	}
+
+	@Transactional(readOnly = true)
+	public FilesByTypes<Integer, String> getExplanationFilesByAnswerSetIdAndQuestionUid(final Survey survey) {
+
+		final FilesByTypes<Integer, String> result = new FilesByTypes<>();
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createSQLQuery("SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, ans.ANSWER_SET_ID, ae.QUESTION_UID " +
+				"FROM FILES f " +
+				"JOIN ANSWERS_EXPLANATIONS_FILES aef ON aef.files_FILE_ID = f.FILE_ID " +
+				"JOIN ANSWERS_EXPLANATIONS ae ON ae.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID " +
+				"JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID " +
+				"JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID " +
+				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft " +
+				"ORDER BY f.FILE_NAME")
+				.setBoolean("draft", survey.getIsDraft())
+				.setString("surveyUid", survey.getUniqueId());
+
+		@SuppressWarnings("rawtypes")
+		final List queryResult = query.list();
+
+		for (Object row : queryResult) {
+			final Object[] element = (Object[]) row;
+
+			final int fileId = ConversionTools.getValue(element[0]);
+			final String fileName = (String)element[1];
+			final String fileUid = (String)element[2];
+			final int answerSetId = ConversionTools.getValue(element[3]);
+			final String questionUid = (String)element[4];
+
+			final File file = new File();
+			file.setId(fileId);
+			file.setName(fileName);
+			file.setUid(fileUid);
+			result.addFile(answerSetId, questionUid, file);
+		}
+
+		return result;
 	}
 
 }
