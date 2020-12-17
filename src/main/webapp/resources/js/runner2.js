@@ -701,6 +701,7 @@ function sortDelphiTable(element, direction) {
 	var viewModel = modelsForDelphiQuestions[uid];
 
 	viewModel.delphiTableOrder(direction);
+	viewModel.delphiTableOffset(0);
 	loadTableData(surveyElement, viewModel);
 }
 
