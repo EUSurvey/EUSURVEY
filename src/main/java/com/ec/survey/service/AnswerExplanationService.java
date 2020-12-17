@@ -7,6 +7,8 @@ import com.ec.survey.model.delphi.DelphiContribution;
 import com.ec.survey.model.delphi.DelphiContributions;
 import com.ec.survey.model.delphi.DelphiTableOrderBy;
 import com.ec.survey.model.survey.*;
+import com.ec.survey.model.survey.base.File;
+import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 
 import org.hibernate.Query;
@@ -298,6 +300,44 @@ public class AnswerExplanationService extends BasicService {
 		}
 
 		return s.toString();
+	}
+
+	public String getFormattedExplanationWithFiles(final int answerSetId, final String questionUid, final String surveyUid,
+												   final boolean useHtml) {
+
+		final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetId, questionUid);
+		final StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(explanation.getText());
+		final List<File> files = explanation.getFiles();
+		if (!files.isEmpty() && stringBuilder.length() > 0) {
+			if (useHtml) {
+				stringBuilder.append("<br />");
+			} else {
+				stringBuilder.append("\n");
+			}
+		}
+		for (int i = 0; i < files.size(); i++) {
+			final File file = files.get(i);
+			if (useHtml) {
+				stringBuilder.append("<a href='")
+						.append(contextpath)
+						.append("/files/")
+						.append(surveyUid)
+						.append(Constants.PATH_DELIMITER)
+						.append(file.getUid())
+						.append("'>");
+			} else {
+				stringBuilder.append(file.getUid()).append("|");
+			}
+			stringBuilder.append(file.getNameForExport());
+			if (useHtml) {
+				stringBuilder.append("</a>");
+			}
+			if (i != files.size() - 1) {
+				stringBuilder.append(";");
+			}
+		}
+		return stringBuilder.toString();
 	}
 	
 	@Transactional(readOnly = true)
