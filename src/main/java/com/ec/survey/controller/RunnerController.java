@@ -2796,9 +2796,9 @@ public class RunnerController extends BasicController {
 			if (question instanceof ChoiceQuestion) {
 				result = handleDelphiTableChoiceQuestion((ChoiceQuestion) question, orderBy, limit, offset);
 			} else if (question instanceof Matrix) {
-				result = handleDelphiTableMatrix((Matrix) question, answerSet, orderBy, limit, offset);
+				result = handleDelphiTableMatrix((Matrix) question, orderBy, limit, offset);
 			} else if (question instanceof RatingQuestion) {
-				result = handleDelphiTableRatingQuestion((RatingQuestion) question, answerSet, orderBy, limit, offset);
+				result = handleDelphiTableRatingQuestion((RatingQuestion) question, orderBy, limit, offset);
 			} else if (question instanceof Table) {
 				result = handleDelphiTableTable((Table) question, orderBy, limit, offset);
 			} else {
@@ -2869,11 +2869,6 @@ public class RunnerController extends BasicController {
 					.map(DelphiContribution::getAnswerUid)
 					.collect(Collectors.toList());
 
-			if (!values.stream().allMatch(answerUidToTitle::containsKey)) {
-				// invalid answer set
-				continue;
-			}
-
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			DelphiContribution firstValue = entry.get(0);
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
@@ -2883,7 +2878,7 @@ public class RunnerController extends BasicController {
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			for (String value : values) {
-				String title = answerUidToTitle.get(value);
+				String title = answerUidToTitle.getOrDefault(value, "n/a");
 				DelphiTableAnswer answer = new DelphiTableAnswer(null, title);
 				tableEntry.getAnswers().add(answer);
 			}
@@ -2894,7 +2889,7 @@ public class RunnerController extends BasicController {
 		return result;
 	}
 
-	private DelphiTable handleDelphiTableMatrix(Matrix question, AnswerSet answerSet, DelphiTableOrderBy orderBy, int limit, int offset) {
+	private DelphiTable handleDelphiTableMatrix(Matrix question, DelphiTableOrderBy orderBy, int limit, int offset) {
 		DelphiTable result = new DelphiTable();
 		result.setOffset(offset);
 
@@ -2905,11 +2900,9 @@ public class RunnerController extends BasicController {
 
 		Map<String, Integer> questionPositions = new HashMap<>();
 		Map<String, String> questionTitles = new HashMap<>();
-		Map<String, Element> subQuestions = new HashMap<>();
 		for (Element matrixQuestion : question.getQuestions()) {
 			questionPositions.put(matrixQuestion.getUniqueId(), matrixQuestion.getPosition());
 			questionTitles.put(matrixQuestion.getUniqueId(), matrixQuestion.getTitle());
-			subQuestions.put(matrixQuestion.getUniqueId(), matrixQuestion);
 		}
 
 		DelphiContributions contributions = answerExplanationService.getDelphiContributions(question, orderBy, limit, offset);
@@ -2924,30 +2917,14 @@ public class RunnerController extends BasicController {
 			// maps position to element
 			Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.size());
 
-			boolean skipped = false;
 			for (DelphiContribution contrib : entry) {
 				// find labels for question and answer
-				String label = questionTitles.get(contrib.getQuestionUid());
-				String value = answerTitles.get(contrib.getAnswerUid());
+				String label = questionTitles.getOrDefault(contrib.getQuestionUid(), "Unknown");
+				String value = answerTitles.getOrDefault(contrib.getAnswerUid(), "n/a");
 
-				if (label == null || value == null) {
-					// invalid answer or question, skip answer set
-					skipped = true;
-					break;
-				}
-
-				Element subquestion = subQuestions.get(contrib.getQuestionUid());
-
-				//check if subquestion was already answered
-				if (answerSetContainsAnswerForQuestion(answerSet, subquestion)) {
-					DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
-					int position = questionPositions.get(contrib.getQuestionUid());
-					answers.add(new Pair<>(position, answer));
-				}
-			}
-
-			if (skipped || answers.isEmpty()) {
-				continue;
+				DelphiTableAnswer answer = new DelphiTableAnswer(label, value);
+				int position = questionPositions.get(contrib.getQuestionUid());
+				answers.add(new Pair<>(position, answer));
 			}
 
 			// sort answers by position
@@ -2972,17 +2949,15 @@ public class RunnerController extends BasicController {
 		return result;
 	}
 
-	private DelphiTable handleDelphiTableRatingQuestion(RatingQuestion question, AnswerSet answerSet, DelphiTableOrderBy orderBy, int limit, int offset) {
+	private DelphiTable handleDelphiTableRatingQuestion(RatingQuestion question, DelphiTableOrderBy orderBy, int limit, int offset) {
 		DelphiTable result = new DelphiTable();
 		result.setOffset(offset);
 
 		Map<String, Integer> questionPositions = new HashMap<>();
 		Map<String, String> questionTitles = new HashMap<>();
-		Map<String, Element> subQuestions = new HashMap<>();
 		for (Element subQuestion : question.getQuestions()) {
 			questionPositions.put(subQuestion.getUniqueId(), subQuestion.getPosition());
 			questionTitles.put(subQuestion.getUniqueId(), subQuestion.getTitle());
-			subQuestions.put(subQuestion.getUniqueId(), subQuestion);
 		}
 
 		DelphiContributions contributions = answerExplanationService.getDelphiContributions(question, orderBy, limit, offset);
@@ -2997,29 +2972,13 @@ public class RunnerController extends BasicController {
 			// maps position to element
 			Collection<Pair<Integer, DelphiTableAnswer>> answers = new ArrayList<>(entry.size());
 
-			boolean skipped = false;
 			for (DelphiContribution contrib : entry) {
 				// find label for question ID
-				String label = questionTitles.get(contrib.getQuestionUid());
+				String label = questionTitles.getOrDefault(contrib.getQuestionUid(), "Unknown");
 
-				if (label == null) {
-					// invalid answer, skip answer set
-					skipped = true;
-					break;
-				}
-
-				Element subquestion = subQuestions.get(contrib.getQuestionUid());
-
-				//check if subquestion was already answered
-				if (answerSetContainsAnswerForQuestion(answerSet, subquestion)) {
-					DelphiTableAnswer answer = new DelphiTableAnswer(label, contrib.getValue());
-					int position = questionPositions.get(contrib.getQuestionUid());
-					answers.add(new Pair<>(position, answer));
-				}
-			}
-
-			if (skipped || answers.isEmpty()) {
-				continue;
+				DelphiTableAnswer answer = new DelphiTableAnswer(label, contrib.getValue());
+				int position = questionPositions.get(contrib.getQuestionUid());
+				answers.add(new Pair<>(position, answer));
 			}
 
 			// sort answers by position
