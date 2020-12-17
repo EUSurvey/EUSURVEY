@@ -1151,8 +1151,7 @@
 									<div class="uploaded-files"
 										data-bind="foreach: getFileAnswer(uniqueId())">
 										<div>
-											<a data-toggle="tooltip" title="${form.getMessage("
-												label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
+											<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
 												<span style="margin-right: 10px;"
 												class="glyphicon glyphicon-trash"></span>
 											</a> <span data-bind="html: $data"></span>
@@ -1207,7 +1206,17 @@
 					<thead>
 						<tr class="area-header">
 							<th style="width:33%">${form.getMessage("label.DelphiAnswersTableAnswer")}</th>
-							<th style="min-width:100px">${form.getMessage("label.DelphiAnswersTableUpdate")}</th>
+							<th style="min-width:150px">
+								<span>${form.getMessage("label.DelphiAnswersTableUpdate")}</span>
+								<div style="float: right">
+									<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sortDelphiTable(this,'UpdateAsc');" class="">
+										<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+									</a>
+									<a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sortDelphiTable(this,'UpdateDesc');" class="">
+										<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+									</a>
+								</div>
+							</th>
 							<th style="width:33%">${form.getMessage("label.DelphiAnswersTableExplanation")}</th>
 							<th style="width:33%">${form.getMessage("label.Discussion")}</th>
 						</tr>
@@ -1261,6 +1270,23 @@
 						<!-- /ko -->
 					</tbody>
 				</table>
+			</div>
+
+			<div style="text-align: center; margin-bottom: 10px;">
+				<a data-bind="attr: {style: delphiTableOffset() > 0 ? '' : 'color: #ccc'}" onclick="firstDelphiTablePage(this)">
+					<span class="glyphicon glyphicon-step-backward"></span>
+				</a>
+				<a data-bind="attr: {style: delphiTableOffset() > 0 ? '' : 'color: #ccc'}" onclick="previousDelphiTablePage(this)">
+					<span class="glyphicon glyphicon-chevron-left"></span>
+				</a>
+
+				<span data-bind="html: delphiTableOffset() + 1"></span>&nbsp;
+				<spring:message code="label.to" />&nbsp;
+				<span data-bind="html: Math.min(delphiTableOffset() + delphiTableLimit(), delphiTableTotalEntries())"></span>
+
+				<a data-bind="attr: {style: (delphiTableOffset() + delphiTableLimit()) >= delphiTableTotalEntries() ? 'color: #ccc' : ''}" onclick="nextDelphiTablePage(this)">
+					<span class="glyphicon glyphicon-chevron-right"></span>
+				</a>
 			</div>
 			
 			<!-- /ko -->		
