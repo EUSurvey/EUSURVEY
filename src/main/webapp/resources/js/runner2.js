@@ -664,13 +664,58 @@ function loadGraphData(div) {
 	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true);
 }
 
+function firstDelphiTablePage(element) {
+	var surveyElement = $(element).closest(".survey-element");
+	var uid = $(surveyElement).attr("data-uid");
+	var viewModel = modelsForDelphiQuestions[uid];
+
+	viewModel.delphiTableOffset(0);
+	loadTableData(surveyElement, viewModel)
+}
+
+function previousDelphiTablePage(element) {
+	var surveyElement = $(element).closest(".survey-element");
+	var uid = $(surveyElement).attr("data-uid");
+	var viewModel = modelsForDelphiQuestions[uid];
+
+	viewModel.delphiTableOffset(Math.max(viewModel.delphiTableOffset() - viewModel.delphiTableLimit(), 0));
+	loadTableData(surveyElement, viewModel)
+}
+
+function nextDelphiTablePage(element) {
+	var surveyElement = $(element).closest(".survey-element");
+	var uid = $(surveyElement).attr("data-uid");
+	var viewModel = modelsForDelphiQuestions[uid];
+
+	var newOffset = viewModel.delphiTableOffset() + viewModel.delphiTableLimit();
+
+	if (newOffset < viewModel.delphiTableTotalEntries()) {
+		viewModel.delphiTableOffset(newOffset);
+		loadTableData(surveyElement, viewModel)
+	}
+}
+
+function sortDelphiTable(element, direction) {
+	var surveyElement = $(element).closest(".survey-element");
+	var uid = $(surveyElement).attr("data-uid");
+	var viewModel = modelsForDelphiQuestions[uid];
+
+	viewModel.delphiTableOrder(direction);
+	viewModel.delphiTableOffset(0);
+	loadTableData(surveyElement, viewModel);
+}
+
 function loadTableData(div, viewModel) {
 	var surveyId = $('#survey\\.id').val();
 	var questionuid = $(div).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-	
-	var data = "surveyid=" + surveyId + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
+
+	var orderBy = viewModel.delphiTableOrder();
+	var offset = viewModel.delphiTableOffset();
+	var limit = viewModel.delphiTableLimit();
+
+	var data = "surveyid=" + surveyId + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode + "&orderby=" + orderBy + "&offset=" + offset + "&limit=" + limit;
 
 	$.ajax({
 		type: "GET",
@@ -684,14 +729,17 @@ function loadTableData(div, viewModel) {
 		},
 		success: function (result, textStatus) {
 			viewModel.delphiTableEntries.removeAll();
-			
+
 			if (textStatus === "nocontent") {
 				return;
 			}
-						
+
 			for (var i = 0; i < result.entries.length; i++) {
 				viewModel.delphiTableEntries.push(result.entries[i]);
 			}
+
+			viewModel.delphiTableOffset(result.offset);
+			viewModel.delphiTableTotalEntries(result.total);
 		}
 	 });
 }
@@ -706,11 +754,11 @@ function scrollToQuestionIfSet() {
 var delphiUpdateFinished = false;
 
 function delphiUpdate(div) {
-	
+
 	var result = validateInput(div);
 	var message = $(div).find(".delphiupdatemessage").first();
 	$(message).removeClass("update-error");
-	
+
 	var loader = $(div).find(".inline-loader").first();
 	
 	if (result == false)
@@ -860,24 +908,24 @@ function saveDelphiComment(button, reply) {
 function checkGoToDelphiStart(link)
 {
 	var button = $(link).parent().find("a[data-type='delphisavebutton']").first();
-		
+
 	var ansSetId = $('#IdAnswerSet').val();
 	var ansSetUniqueCode = $('#uniqueCode').val();
-	
+
 	var url;
-	
+
 	if (ansSetId == '' && !delphiUpdateFinished)
 	{
 		url = delphiStartPageUrl;
 	} else {
 		url = contextpath + "/editcontribution/" + ansSetUniqueCode;
 	}
-	
-	if (!$(button).hasClass("disabled")) {		
+
+	if (!$(button).hasClass("disabled")) {
 		$('#unsaveddelphichangesdialoglink').attr("href", url);
 		$('#unsaveddelphichangesdialog').modal("show");
 		return;
 	}
-	
+
 	window.location = url;
 }
