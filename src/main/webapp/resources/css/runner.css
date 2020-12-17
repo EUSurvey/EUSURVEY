@@ -294,11 +294,11 @@ textarea.freetext {
 
 .survey-element-anchor {
 	position: relative;
-	top: -55px;
+	top: -75px;
 }
 
 #bodyManagementTest .survey-element-anchor {
-	top: -125px;
+	top: -145px;
 }
 
 .freetext,
