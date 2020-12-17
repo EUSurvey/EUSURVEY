@@ -17,7 +17,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,6 @@ import org.springframework.util.StringUtils;
 import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
-import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.Setting;
@@ -648,8 +646,10 @@ public class ReportingService extends BasicService {
 								if (filter.getVisibleExplanations().contains(question.getId().toString()))
 								{
 									try {
-										AnswerExplanation explanation = answerExplanationService.getExplanation(ConversionTools.getValue(answerrow[1]), question.getUniqueId());
-										row.add(explanation.getText());
+										String explanation = answerExplanationService.getFormattedExplanationWithFiles(
+												ConversionTools.getValue(answerrow[1]), question.getUniqueId(),
+												survey.getUniqueId(), !forexport);
+										row.add(explanation);
 									} catch (NoSuchElementException ex) {
 										row.add("");
 									}

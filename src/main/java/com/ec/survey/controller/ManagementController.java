@@ -2806,30 +2806,31 @@ public class ManagementController extends BasicController {
 				String v = entry.getValue()[0];
 
 				if (v != null && v.trim().length() > 0) {
-					if (entry.getKey().equalsIgnoreCase("metafilterinvitation")) {
+					final String key = entry.getKey();
+					if (key.equalsIgnoreCase("metafilterinvitation")) {
 						filter.setInvitation(parameters.get("metafilterinvitation")[0].trim());
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafiltercase")) {
+					} else if (key.equalsIgnoreCase("metafiltercase")) {
 						filter.setCaseId(parameters.get("metafiltercase")[0].trim());
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilteruser")) {
+					} else if (key.equalsIgnoreCase("metafilteruser")) {
 						filter.setUser(parameters.get("metafilteruser")[0].trim());
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterdatefrom")) {
+					} else if (key.equalsIgnoreCase("metafilterdatefrom")) {
 						filter.setGeneratedFrom(
 								ConversionTools.getDate(parameters.get("metafilterdatefrom")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterdateto")) {
+					} else if (key.equalsIgnoreCase("metafilterdateto")) {
 						filter.setGeneratedTo(ConversionTools.getDate(parameters.get("metafilterdateto")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterupdatefrom")) {
+					} else if (key.equalsIgnoreCase("metafilterupdatefrom")) {
 						filter.setUpdatedFrom(
 								ConversionTools.getDate(parameters.get("metafilterupdatefrom")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterupdateto")) {
+					} else if (key.equalsIgnoreCase("metafilterupdateto")) {
 						filter.setUpdatedTo(ConversionTools.getDate(parameters.get("metafilterupdateto")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterlanguage")) {
+					} else if (key.equalsIgnoreCase("metafilterlanguage")) {
 						Set<String> languages = new HashSet<>();
 						String[] langs = request.getParameterValues("metafilterlanguage");
 						if (langs != null && langs.length > 0) {
@@ -2837,25 +2838,25 @@ public class ManagementController extends BasicController {
 						}
 						filter.setLanguages(languages);
 						filtered = true;
-					} else if (entry.getKey().startsWith(Constants.FILTER)) {
-						String questionId = entry.getKey().substring(6);
+					} else if (key.startsWith(Constants.FILTER)) {
+						String questionId = key.substring(6);
 						String[] values = entry.getValue();
 						String value = StringUtils.arrayToDelimitedString(values, ";");
 						filter.getFilterValues().put(questionId, value);
 						filtered = true;
-					} else if (entry.getKey().startsWith(SELECTEDEXPLANATION)) {
-						filter.getVisibleExplanations().add(entry.getKey().substring(SELECTEDEXPLANATION.length()));
-					} else if (entry.getKey().startsWith(EXPORTSELECTEDEXPLANATION)) {
-						filter.getExportedExplanations().add(entry.getKey().substring(EXPORTSELECTEDEXPLANATION.length()));
-					} else if (entry.getKey().startsWith(SELECTEDDISCUSSION)) {
-						filter.getVisibleDiscussions().add(entry.getKey().substring(SELECTEDDISCUSSION.length()));
-					} else if (entry.getKey().startsWith(EXPORTSELECTEDDISCUSSION)) {
-						filter.getExportedDiscussions().add(entry.getKey().substring(EXPORTSELECTEDDISCUSSION.length()));		
-					} else if (entry.getKey().startsWith("selected")) {
-						filter.getVisibleQuestions().add(entry.getKey().substring(8));
-					} else if (entry.getKey().startsWith("exportselected")) {
-						filter.addExportedQuestion(entry.getKey().substring(14));
-					} else if (entry.getKey().equalsIgnoreCase("sort")) {
+					} else if (key.startsWith(SELECTEDEXPLANATION)) {
+						filter.getVisibleExplanations().add(key.substring(SELECTEDEXPLANATION.length()));
+					} else if (key.startsWith(EXPORTSELECTEDEXPLANATION)) {
+						filter.getExportedExplanations().add(key.substring(EXPORTSELECTEDEXPLANATION.length()));
+					} else if (key.startsWith(SELECTEDDISCUSSION)) {
+						filter.getVisibleDiscussions().add(key.substring(SELECTEDDISCUSSION.length()));
+					} else if (key.startsWith(EXPORTSELECTEDDISCUSSION)) {
+						filter.getExportedDiscussions().add(key.substring(EXPORTSELECTEDDISCUSSION.length()));		
+					} else if (key.startsWith("selected")) {
+						filter.getVisibleQuestions().add(key.substring(8));
+					} else if (key.startsWith("exportselected")) {
+						filter.addExportedQuestion(key.substring(14));
+					} else if (key.equalsIgnoreCase("sort")) {
 						String sorting = entry.getValue()[0].trim();
 						if (sorting.equalsIgnoreCase("scoreDesc")) {
 							filter.setSortKey("score");
@@ -3292,12 +3293,13 @@ public class ManagementController extends BasicController {
 							result.add(s.toString());
 						}
 						
-						if (survey.getIsDelphi() && question.getIsDelphiQuestion())
-						{
+						if (survey.getIsDelphi() && question.getIsDelphiQuestion()) {
+
 							if (filter.getVisibleExplanations().contains(question.getId().toString())) {
 								try {
-									AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
-									result.add(explanation.getText());
+									final String explanation = answerExplanationService.getFormattedExplanationWithFiles(
+											answerSet.getId(), question.getUniqueId(), survey.getUniqueId(), true);
+									result.add(explanation);
 								} catch (NoSuchElementException ex) {
 									result.add("");
 								}

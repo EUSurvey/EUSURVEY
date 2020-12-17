@@ -430,61 +430,13 @@ public class ResultFilter implements java.io.Serializable {
 		result.append(this.languages == null ? "" : StringUtils.join(this.languages, ""));
 		result.append(StringUtils.join(this.filterValues.keySet(), ""));
 		result.append(StringUtils.join(this.filterValues.values(), ""));
-		
-		//visibleQuestions
-		if (visibleQuestions != null && !visibleQuestions.isEmpty())
-		{
-			SortedSet<String> sortedVisibleQuestions = new TreeSet<>(visibleQuestions);
-			for (String id : sortedVisibleQuestions)
-			{
-				result.append(id);
-			}
-		}
-		if (exportedQuestions != null && !exportedQuestions.isEmpty())
-		{
-			SortedSet<String> sortedExportedQuestions = new TreeSet<>(exportedQuestions);
-			for (String id : sortedExportedQuestions)
-			{
-				result.append(id);
-			}
-		}
-		
-		if (visibleExplanations != null && !visibleExplanations.isEmpty())
-		{
-			SortedSet<String> sortedVisibleExplanations = new TreeSet<>(visibleExplanations);
-			for (String id : sortedVisibleExplanations)
-			{
-				result.append(id);
-			}
-		}
-		
-		if (exportedExplanations != null && !exportedExplanations.isEmpty())
-		{
-			SortedSet<String> sortedExportedExplanations = new TreeSet<>(exportedExplanations);
-			for (String id : sortedExportedExplanations)
-			{
-				result.append(id);
-			}
-		}
-		
-		if (visibleDiscussions != null && !visibleDiscussions.isEmpty())
-		{
-			SortedSet<String> sortedVisibleDiscussions = new TreeSet<>(visibleDiscussions);
-			for (String id : sortedVisibleDiscussions)
-			{
-				result.append(id);
-			}
-		}
-		
-		
-		if (exportedDiscussions != null && !exportedDiscussions.isEmpty())
-		{
-			SortedSet<String> sortedExportedDiscussions = new TreeSet<>(exportedDiscussions);
-			for (String id : sortedExportedDiscussions)
-			{
-				result.append(id);
-			}
-		}
+
+		sortAndAppendSetIdsToStringBuilder(visibleQuestions, result);
+		sortAndAppendSetIdsToStringBuilder(exportedQuestions, result);
+		sortAndAppendSetIdsToStringBuilder(visibleExplanations, result);
+		sortAndAppendSetIdsToStringBuilder(exportedExplanations, result);
+		sortAndAppendSetIdsToStringBuilder(visibleDiscussions, result);
+		sortAndAppendSetIdsToStringBuilder(exportedDiscussions, result);
 		
 		if (allAnswers)
 		{
@@ -492,6 +444,16 @@ public class ResultFilter implements java.io.Serializable {
 		}
 		
 		return Tools.md5hash(result.toString());
+	}
+
+	private void sortAndAppendSetIdsToStringBuilder(final Set<String> set, final StringBuilder builder) {
+
+		if (set != null && !set.isEmpty()) {
+			final SortedSet<String> sortedSet = new TreeSet<>(set);
+			for (String id : sortedSet) {
+				builder.append(id);
+			}
+		}
 	}
 	
 	@Transient
@@ -508,6 +470,7 @@ public class ResultFilter implements java.io.Serializable {
 		
 		return true;
 	}
+
 	public ResultFilter merge(ResultFilter copy) {
 		copy.caseId = caseId;
 
