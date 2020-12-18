@@ -910,21 +910,13 @@ public class XmlExportCreator extends ExportCreator {
 					} else {
 						final int answerSetId = answerSet.getId();
 
-						try {
-							if (explanations.containsKey(answerSetId) &&
-									explanations.get(answerSetId).containsKey(questionUid)) {
-								explanation = explanations.get(answerSetId).get(questionUid);
-							}
-						} catch (NoSuchElementException ex) {
-							//ignore
+						if (explanations.containsKey(answerSetId) &&
+								explanations.get(answerSetId).containsKey(questionUid)) {
+							explanation = explanations.get(answerSetId).get(questionUid);
 						}
 
-						try {
-							explanationFilesOfSurvey.getFiles(answerSetId, questionUid)
-									.forEach(file -> explanationFilesToExport.addFile(questionUid, file));
-						} catch (NoSuchElementException ex) {
-							// Ignore.
-						}
+						explanationFilesOfSurvey.getFiles(answerSetId, questionUid)
+								.forEach(file -> explanationFilesToExport.addFile(questionUid, file));
 					}
 					
 					if (!explanation.isEmpty() || explanationFilesToExport.hasFiles())
@@ -936,14 +928,10 @@ public class XmlExportCreator extends ExportCreator {
 							writer.writeCharacters(ConversionTools.removeHTMLNoEscape(explanation));
 							writer.writeEndElement(); // EXPLANATION_TEXT
 						}
-						try {
-							for (final File file : explanationFilesToExport.getFiles(questionUid)) {
-								writer.writeStartElement(EXPLANATION_FILE);
-								writer.writeCharacters(ConversionTools.removeHTMLNoEscape(file.getNameForExport()));
-								writer.writeEndElement(); // EXPLANATION_FILE
-							}
-						} catch (NoSuchElementException ex) {
-							// Ignore.
+						for (final File file : explanationFilesToExport.getFiles(questionUid)) {
+							writer.writeStartElement(EXPLANATION_FILE);
+							writer.writeCharacters(ConversionTools.removeHTMLNoEscape(file.getNameForExport()));
+							writer.writeEndElement(); // EXPLANATION_FILE
 						}
 						writer.writeEndElement(); // EXPLANATION
 					}

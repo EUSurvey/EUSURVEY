@@ -824,16 +824,23 @@ public class OdfExportCreator extends ExportCreator {
 							answerSet, explanations, questionUid, explanationFilesOfSurvey, explanationFilesToExport);
 				}
 
-				Paragraph p = cell.addParagraph(explanation);
-				try {
-					for (File file : explanationFilesToExport.getFiles(answerSetUid, questionUid)) {
-						p.appendHyperlink(" " + file.getNameForExport(),
+				if (!explanation.isEmpty()) {
+					cell.addParagraph(explanation);
+				}
+				final List<File> files = explanationFilesToExport.getFiles(answerSetUid, questionUid);
+				if (!files.isEmpty()) {
+					final Paragraph p = cell.addParagraph("");
+					final Iterator<File> fileIterator = files.iterator();
+					while (fileIterator.hasNext()) {
+						final File file = fileIterator.next();
+						p.appendHyperlink(file.getNameForExport(),
 								new URI("../" + answerSetUid + Constants.PATH_DELIMITER + questionUid +
 										Constants.PATH_DELIMITER + file.getNameForExport())
 						);
+						if (fileIterator.hasNext()) {
+							p.appendTextContent(";");
+						}
 					}
-				} catch (NoSuchElementException ex) {
-					// Ignore.
 				}
 			}
 			

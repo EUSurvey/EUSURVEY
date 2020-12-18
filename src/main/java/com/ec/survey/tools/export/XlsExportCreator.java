@@ -737,9 +737,7 @@ public class XlsExportCreator extends ExportCreator {
 						}
 
 						cell.setCellValue(cellValue.toString());
-						Hyperlink link = createHelper.createHyperlink(Hyperlink.LINK_FILE);
-						link.setAddress(linkValue);
-						cell.setHyperlink((org.apache.poi.ss.usermodel.Hyperlink) link);
+						linkCell(cell, linkValue, createHelper);
 					}
 				} else if (question instanceof GalleryQuestion) {
 
@@ -906,28 +904,26 @@ public class XlsExportCreator extends ExportCreator {
 							answerSet, explanations, questionUid, explanationFilesOfSurvey, explanationFilesToExport);
 				}
 
-				try {
-					List<File> files = explanationFilesToExport.getFiles(answerSetUid, questionUid);
-					Iterator<File> fileNamesIterator = files.iterator();
-					if (fileNamesIterator.hasNext()) {
-						explanation += " ";
-					}
-					while (fileNamesIterator.hasNext()) {
-						File file = fileNamesIterator.next();
-						explanation += file.getNameForExport();
-						if (fileNamesIterator.hasNext()) {
-							explanation += " ";
-						}
-					}
-				} catch (NoSuchElementException ex) {
-					// Ignore.
+				final List<File> files = explanationFilesToExport.getFiles(answerSetUid, questionUid);
+				explanation = ConversionTools.removeHTMLNoEscape(explanation);
+				if (!explanation.isEmpty() && !files.isEmpty()) {
+					explanation += "\n";
 				}
-				cell.setCellValue(ConversionTools.removeHTMLNoEscape(explanation));
+				final Iterator<File> fileIterator = files.iterator();
+				while (fileIterator.hasNext()) {
+					final File file = fileIterator.next();
+					explanation += ConversionTools.removeHTMLNoEscape(file.getNameForExport());
+					if (fileIterator.hasNext()) {
+						explanation += ";";
+					}
+				}
+				cell.setCellValue(explanation);
 
-				final String linkValue = answerSetUid + Constants.PATH_DELIMITER + questionUid;
-				Hyperlink link = createHelper.createHyperlink(Hyperlink.LINK_FILE);
-				link.setAddress(linkValue);
-				cell.setHyperlink((org.apache.poi.ss.usermodel.Hyperlink) link);
+				if (!files.isEmpty()) {
+					linkCell(cell, answerSetUid + Constants.PATH_DELIMITER + questionUid, createHelper);
+				}
+
+				enableLineBreaksInCell(cell);
 			}
 			
 			if (question.isDelphiElement() && filter.discussionExported(question.getId().toString())) {
@@ -944,13 +940,8 @@ public class XlsExportCreator extends ExportCreator {
 				
 				if (!discussion.isEmpty())  {
 					cell.setCellValue(ConversionTools.removeInvalidHtmlEntities(discussion));
-					
-					if (cswrap == null) {
-						cswrap = wb.createCellStyle();
-						cswrap.setWrapText(true);
-					}
-					
-					cell.setCellStyle(cswrap);
+
+					enableLineBreaksInCell(cell);
 				} else {
 					cell.setCellValue("");
 				}
@@ -1056,6 +1047,20 @@ public class XlsExportCreator extends ExportCreator {
 				cell.setCellValue(answerSet.getScore() != null ? answerSet.getScore() : 0);
 			}
 		}
+	}
+
+	private void enableLineBreaksInCell(final Cell cell) {
+		if (cswrap == null) {
+			cswrap = wb.createCellStyle();
+			cswrap.setWrapText(true);
+		}
+		cell.setCellStyle(cswrap);
+	}
+
+	private void linkCell(final Cell cell, final String linkValue, final CreationHelper createHelper) {
+		final Hyperlink link = createHelper.createHyperlink(Hyperlink.LINK_FILE);
+		link.setAddress(linkValue);
+		cell.setHyperlink((org.apache.poi.ss.usermodel.Hyperlink) link);
 	}
 
 	@Override

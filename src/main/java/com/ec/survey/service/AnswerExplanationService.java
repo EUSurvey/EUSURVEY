@@ -303,8 +303,9 @@ public class AnswerExplanationService extends BasicService {
 		return s.toString();
 	}
 
-	public String getFormattedExplanationWithFiles(final int answerSetId, final String questionUid, final String surveyUid,
-												   final boolean useHtml) {
+	@Transactional(readOnly = true)
+	public String getFormattedExplanationWithFiles(final int answerSetId, final String questionUid,
+			 final String surveyUid, final boolean useHtml) {
 
 		final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetId, questionUid);
 		final StringBuilder stringBuilder = new StringBuilder();

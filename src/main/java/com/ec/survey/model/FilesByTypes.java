@@ -16,11 +16,11 @@ public class FilesByTypes<K, T> {
 		filesByTypes.get(key).addFile(secondKey, file);
 	}
 
-	public List<File> getFiles(final K key, final T secondKey) throws NoSuchElementException {
+	public List<File> getFiles(final K key, final T secondKey) {
 		if (filesByTypes.containsKey(key)) {
 			return filesByTypes.get(key).getFiles(secondKey);
 		}
-		throw new NoSuchElementException();
+		return new ArrayList<>();
 	}
 
 	public boolean hasFiles() {

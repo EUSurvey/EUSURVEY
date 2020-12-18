@@ -5,7 +5,6 @@ import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.survey.base.File;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 public class ExportCreatorHelper {
 
@@ -49,12 +48,8 @@ public class ExportCreatorHelper {
 			explanation = explanations.get(answerSetId).get(questionUid);
 		}
 
-		try {
-			for (File file : explanationFilesOfSurvey.getFiles(answerSetId, questionUid)) {
-				explanationFilesToExport.addFile(answerSetUid, questionUid, file);
-			}
-		} catch (NoSuchElementException ex) {
-			// Ignore.
+		for (final File file : explanationFilesOfSurvey.getFiles(answerSetId, questionUid)) {
+			explanationFilesToExport.addFile(answerSetUid, questionUid, file);
 		}
 		return explanation;
 	}
