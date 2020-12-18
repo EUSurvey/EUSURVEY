@@ -294,7 +294,13 @@ public class AnswerExplanationService extends BasicService {
 						s.append("<div class='reply'>").append(userPrefix).append(comment.getText()).append("</div>");
 					}
 				} else {
-					s.append(userPrefix).append(comment.getText()).append("\n");
+					if (first)
+					{
+						s.append(userPrefix).append(comment.getText());
+						first = false;
+					} else {
+						s.append("\n   ").append(userPrefix).append(comment.getText());
+					}
 				}
 			}
 		}
@@ -343,7 +349,7 @@ public class AnswerExplanationService extends BasicService {
 	@Transactional(readOnly = true)
 	public Map<Integer, Map<String, String>> getAllDiscussions(Survey survey) {
 		final Session session = sessionFactory.getCurrentSession();
-		final Query query = session.createSQLQuery("SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.PARENT FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
+		final Query query = session.createSQLQuery("SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.ANSWER_SET_CODE FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
 				.setBoolean("draft", survey.getIsDraft())
 				.setString("surveyUid", survey.getUniqueId());
 		
@@ -352,13 +358,20 @@ public class AnswerExplanationService extends BasicService {
 		@SuppressWarnings("rawtypes")
 		List res = query.list();
 		
+		Map<String, String> usersByUid = new HashMap<String, String>();
+		
 		for (Object o : res) {
 			Object[] a = (Object[]) o;
 					
 			int answerSetId = ConversionTools.getValue(a[0]);
 			String questionUid = (String)a[1];
 			String explanation =  (String)a[2];
-			int parentId = ConversionTools.getValue(a[3]);
+			String code =  (String)a[3];
+			
+			if (!usersByUid.containsKey(code))
+			{
+				usersByUid.put(code, "User " + (usersByUid.size() + 1));
+			}	
 			
 			if (!result.containsKey(answerSetId))
 			{
@@ -367,10 +380,10 @@ public class AnswerExplanationService extends BasicService {
 			
 			if (!result.get(answerSetId).containsKey(questionUid))
 			{			
-				result.get(answerSetId).put(questionUid, explanation);
+				result.get(answerSetId).put(questionUid, usersByUid.get(code) + ": " + explanation);
 			} else {
 				String old = result.get(answerSetId).get(questionUid);
-				result.get(answerSetId).put(questionUid, old + "\n   " + explanation);
+				result.get(answerSetId).put(questionUid, old + "\n   " + usersByUid.get(code) + ": " + explanation);
 			}
 		}
 		
