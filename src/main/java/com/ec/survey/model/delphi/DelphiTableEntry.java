@@ -1,8 +1,6 @@
 package com.ec.survey.model.delphi;
 
 import com.ec.survey.tools.ConversionTools;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,9 +9,8 @@ public class DelphiTableEntry {
     private final List<DelphiTableAnswer> answers = new ArrayList<>();
     private String explanation;
 
-    @JsonFormat(pattern = ConversionTools.DateTimeFormat, shape = JsonFormat.Shape.STRING)
-    private Date update;
-
+    private String updateString;
+    
     private int answerSetId;
     private final List<DelphiComment> comments = new ArrayList<>();
     private final List<DelphiTableFile> files = new ArrayList<>();
@@ -26,12 +23,16 @@ public class DelphiTableEntry {
         this.explanation = explanation;
     }
 
-    public Date getUpdate() {
-        return update;
+    public String getUpdate() {
+        return updateString;
+    }
+    
+    public void setUpdate(String updateString) {
+        this.updateString = updateString;
     }
 
-    public void setUpdate(Date update) {
-        this.update = update;
+    public void setUpdateDate(Date update) {
+        this.updateString = ConversionTools.getFullString(update);
     }
 
     public List<DelphiTableAnswer> getAnswers() {
