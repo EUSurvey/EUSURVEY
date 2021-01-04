@@ -349,7 +349,7 @@ public class AnswerExplanationService extends BasicService {
 	@Transactional(readOnly = true)
 	public Map<Integer, Map<String, String>> getAllDiscussions(Survey survey) {
 		final Session session = sessionFactory.getCurrentSession();
-		final Query query = session.createSQLQuery("SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.ANSWER_SET_CODE FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
+		final Query query = session.createSQLQuery("SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.ANSWER_SET_CODE, ac.PARENT FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
 				.setBoolean("draft", survey.getIsDraft())
 				.setString("surveyUid", survey.getUniqueId());
 		
@@ -367,6 +367,7 @@ public class AnswerExplanationService extends BasicService {
 			String questionUid = (String)a[1];
 			String explanation =  (String)a[2];
 			String code =  (String)a[3];
+			int parent = ConversionTools.getValue(a[4]);
 			
 			if (!usersByUid.containsKey(code))
 			{
@@ -383,7 +384,11 @@ public class AnswerExplanationService extends BasicService {
 				result.get(answerSetId).put(questionUid, usersByUid.get(code) + ": " + explanation);
 			} else {
 				String old = result.get(answerSetId).get(questionUid);
-				result.get(answerSetId).put(questionUid, old + "\n   " + usersByUid.get(code) + ": " + explanation);
+				if (parent == 0) {
+					result.get(answerSetId).put(questionUid, old + "\n" + usersByUid.get(code) + ": " + explanation);
+				} else {
+					result.get(answerSetId).put(questionUid, old + "\n   " + usersByUid.get(code) + ": " + explanation);
+				}
 			}
 		}
 		
