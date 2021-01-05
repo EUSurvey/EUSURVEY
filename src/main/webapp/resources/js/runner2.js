@@ -675,6 +675,22 @@ function firstDelphiTablePage(element) {
 	loadTableData(surveyElement, viewModel)
 }
 
+function lastDelphiTablePage(element) {
+	var surveyElement = $(element).closest(".survey-element");
+	var uid = $(surveyElement).attr("data-uid");
+	var viewModel = modelsForDelphiQuestions[uid];
+
+	var overflow = viewModel.delphiTableTotalEntries() % viewModel.delphiTableLimit();
+
+	if (overflow === 0) {
+		overflow = viewModel.delphiTableLimit();
+	}
+
+	var newOffset = viewModel.delphiTableTotalEntries() - overflow;
+	viewModel.delphiTableOffset(newOffset);
+	loadTableData(surveyElement, viewModel)
+}
+
 function previousDelphiTablePage(element) {
 	var surveyElement = $(element).closest(".survey-element");
 	var uid = $(surveyElement).attr("data-uid");
