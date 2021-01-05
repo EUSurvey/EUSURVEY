@@ -346,7 +346,6 @@ public class AnswerExplanationService extends BasicService {
 	public Map<Integer, Map<String, String>> getAllDiscussions(Survey survey) {
 		final Session session = sessionFactory.getCurrentSession();
 		final Query query = session.createSQLQuery("SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.ANSWER_SET_CODE, ac.PARENT FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
-				"SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.ANSWER_SET_CODE FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
 				.setBoolean("draft", survey.getIsDraft()).setString("surveyUid", survey.getUniqueId());
 
 		Map<Integer, Map<String, String>> result = new HashMap<>();
