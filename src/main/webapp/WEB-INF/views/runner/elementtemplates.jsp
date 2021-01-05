@@ -1287,6 +1287,9 @@
 				<a data-bind="attr: {style: (delphiTableOffset() + delphiTableLimit()) >= delphiTableTotalEntries() ? 'color: #ccc' : ''}" onclick="nextDelphiTablePage(this)">
 					<span class="glyphicon glyphicon-chevron-right"></span>
 				</a>
+				<a data-bind="attr: {style: (delphiTableOffset() + delphiTableLimit()) >= delphiTableTotalEntries() ? 'color: #ccc' : ''}" onclick="lastDelphiTablePage(this)">
+					<span class="glyphicon glyphicon-step-forward"></span>
+				</a>
 			</div>
 			
 			<!-- /ko -->		
