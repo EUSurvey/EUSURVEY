@@ -2,11 +2,14 @@ package com.ec.survey.tools;
 
 import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.model.*;
+import com.ec.survey.model.AnswerSet.ExplanationData;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.*;
 import com.lowagie.text.pdf.BaseFont;
+import com.mysql.jdbc.StringUtils;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
@@ -23,6 +26,17 @@ import java.util.Map.Entry;
 public class SurveyHelper {
 
 	private static final Logger logger = Logger.getLogger(SurveyHelper.class);
+
+	private static void gatherExplanationUploadsForQuestion(Survey survey, Question question, String uniqueCode, AnswerSet answerSet, AnswerSet.ExplanationData explanationData, FileService fileService) {
+		// find temporary directory
+		java.io.File rootfolder = fileService.getSurveyExplanationUploadsFolder(survey.getUniqueId(), false);
+		java.io.File directory = new java.io.File(
+				rootfolder.getPath() + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + question.getId());
+
+		if (directory.exists()) {
+			checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), explanationData.files);
+		}
+	}
 
 	public static AnswerSet parseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode,
 			boolean update, String languageCode, User user, FileService fileService) {
@@ -108,7 +122,7 @@ public class SurveyHelper {
 								Answer answer = new Answer();
 								answer.setAnswerSet(answerSet);
 
-								checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), answer);
+								checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), answer.getFiles());
 
 								if (!answer.getFiles().isEmpty()) {
 									answer.setQuestionId(question.getId());
@@ -175,9 +189,19 @@ public class SurveyHelper {
 				key = key.substring(11);
 				Question question = questions.get(Integer.parseInt(key));
 				if (question != null && question.getIsDelphiQuestion()) {
-					String[] explanation = parameterMap.get("explanation" + question.getId());
-					if (explanation != null && explanation.length > 0) {
-						answerSet.getExplanations().put(question.getUniqueId(), explanation[0]);
+					String[] explanationText = parameterMap.get("explanation" + question.getId());
+					AnswerSet.ExplanationData explanationData = new AnswerSet.ExplanationData();
+					boolean doUpdateAnswerSet = false;
+					if (explanationText != null && explanationText.length > 0) {
+						explanationData.text = explanationText[0];
+						doUpdateAnswerSet = true;
+					}
+					gatherExplanationUploadsForQuestion(survey, question, uniqueCode, answerSet, explanationData, fileService);
+					if (!explanationData.files.isEmpty()) {
+						doUpdateAnswerSet = true;
+					}
+					if (doUpdateAnswerSet) {
+						answerSet.getExplanations().put(question.getUniqueId(), explanationData);
 					}
 				}
 			}
@@ -813,8 +837,8 @@ public class SurveyHelper {
 				fileService);
 		
 		//remove existing answers for the question
-		if (question instanceof MatrixOrTable) {
-			MatrixOrTable parent = (MatrixOrTable) question;
+		if (question instanceof Matrix) {
+			Matrix parent = (Matrix) question;
 			for (Element childQuestion : parent.getQuestions())
 			{
 				List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
@@ -850,8 +874,52 @@ public class SurveyHelper {
 		return answerSet;
 	}
 
+	private static void recreateDelphiExplanationUploadedFiles(AnswerSet answerSet, Survey survey, FileService fileService, AnswerExplanationService answerExplanationService) {
+		Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
+		int answerSetId = answerSet.getId();
+		String surveyUniqueId = survey.getUniqueId();
+
+		List<AnswerExplanation> explanations = answerExplanationService.getExplanations(answerSetId);
+		for (AnswerExplanation explanation : explanations) {
+			String questionUid = explanation.getQuestionUid();
+			int questionId = elementsByUniqueId.get(questionUid).getId();
+			for (File file : explanation.getFiles()) {
+				String filename = file.getName();
+				if (null != filename) {
+					FileInputStream in = null;
+					FileOutputStream out = null;
+
+					try {
+						java.io.File folder = fileService.getSurveyFilesFolder(surveyUniqueId);
+						in = new FileInputStream(folder.getPath() + Constants.PATH_DELIMITER + file.getUid());
+
+						java.io.File basePath = fileService.getSurveyExplanationUploadsFolder(surveyUniqueId, false);
+
+						java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
+						directory.mkdirs();
+						java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
+						out = new FileOutputStream(fileOut);
+
+						IOUtils.copy(in, out);
+
+					} catch (Exception e) {
+						logger.error(e.getLocalizedMessage(), e);
+					} finally {
+						try {
+							in.close();
+							out.close();
+						} catch (Exception e) {
+							// ignore
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public static void recreateUploadedFiles(AnswerSet answerSet, Survey survey,
-			FileService fileService) {
+			FileService fileService, AnswerExplanationService answerExplanationService) {
+		recreateDelphiExplanationUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 		Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
 
 		for (Answer answer : answerSet.getAnswers()) {
@@ -870,9 +938,8 @@ public class SurveyHelper {
 						questionId = elementsByUniqueId.get(answer.getQuestionUniqueId()).getId();
 					}
 
-					java.io.File directory = new java.io.File(
-							fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(), false) + Constants.PATH_DELIMITER
-									+ answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
+					java.io.File basePath = fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(), false);
+					java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
 					directory.mkdirs();
 					java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
 					out = new FileOutputStream(fileOut);
@@ -893,7 +960,7 @@ public class SurveyHelper {
 		}
 	}
 
-	private static void checkFiles(java.io.File directory, java.io.File folder, Answer answer) {
+	private static void checkFiles(java.io.File directory, java.io.File folder, List<File> files) {
 		java.io.File[] listFiles = directory.listFiles();
 		if (listFiles != null) {
 			for (java.io.File file : listFiles) {
@@ -913,7 +980,7 @@ public class SurveyHelper {
 					f.setUid(uid);
 					f.setName(file.getName());
 
-					answer.getFiles().add(f);
+					files.add(f);
 
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
@@ -1560,7 +1627,18 @@ public class SurveyHelper {
 		}
 		freetext.setShortname(shortname);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(freetext.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + freetext.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		freetext.setIsDelphiQuestion(isDelphiQuestion);
+
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (isDelphiQuestion && !isOptional) {
+			// Enforce optionality of Delphi questions.
+			isOptional = true;
+		}
 		if (log220 && !isOptional.equals(freetext.getOptional())) {
 			oldValues += " optional: " + freetext.getOptional();
 			newValues += " optional: " + isOptional;
@@ -1608,13 +1686,6 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		freetext.setIsAttribute(attribute);
-		
-		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
-		if (log220 && !isDelphiQuestion.equals(freetext.getIsDelphiQuestion())) {
-			oldValues += " isDelphiQuestion: " + freetext.getIsDelphiQuestion();
-			newValues += " isDelphiQuestion: " + isDelphiQuestion;
-		}
-		freetext.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !freetext.getAttributeName().equals(nameattribute)) {
@@ -1693,7 +1764,18 @@ public class SurveyHelper {
 		}
 		regex.setShortname(shortname);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(regex.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + regex.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		regex.setIsDelphiQuestion(isDelphiQuestion);
+
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (isDelphiQuestion && !isOptional) {
+			// Enforce optionality of Delphi questions.
+			isOptional = true;
+		}
 		if (log220 && !isOptional.equals(regex.getOptional())) {
 			oldValues += " optional: " + regex.getOptional();
 			newValues += " optional: " + isOptional;
@@ -1727,13 +1809,6 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		regex.setIsAttribute(attribute);
-		
-		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
-		if (log220 && !isDelphiQuestion.equals(regex.getIsDelphiQuestion())) {
-			oldValues += " isDelphiQuestion: " + regex.getIsDelphiQuestion();
-			newValues += " isDelphiQuestion: " + isDelphiQuestion;
-		}
-		regex.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !regex.getAttributeName().equals(nameattribute)) {
@@ -1875,7 +1950,18 @@ public class SurveyHelper {
 		}
 		number.setShortname(shortname);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(number.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + number.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		number.setIsDelphiQuestion(isDelphiQuestion);
+
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (isDelphiQuestion && !isOptional) {
+			// Enforce optionality of Delphi questions.
+			isOptional = true;
+		}
 		if (log220 && !isOptional.equals(number.getOptional())) {
 			oldValues += " optional: " + number.getOptional();
 			newValues += " optional: " + isOptional;
@@ -1902,13 +1988,6 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		number.setIsAttribute(attribute);
-		
-		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
-		if (log220 && !isDelphiQuestion.equals(number.getIsDelphiQuestion())) {
-			oldValues += " isDelphiQuestion: " + number.getIsDelphiQuestion();
-			newValues += " isDelphiQuestion: " + isDelphiQuestion;
-		}
-		number.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !number.getAttributeName().equals(nameattribute)) {
@@ -2036,7 +2115,18 @@ public class SurveyHelper {
 		}
 		date.setShortname(shortname);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(date.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + date.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		date.setIsDelphiQuestion(isDelphiQuestion);
+
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (isDelphiQuestion && !isOptional) {
+			// Enforce optionality of Delphi questions.
+			isOptional = true;
+		}
 		if (log220 && !isOptional.equals(date.getOptional())) {
 			oldValues += " optional: " + date.getOptional();
 			newValues += " optional: " + isOptional;
@@ -2063,13 +2153,6 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		date.setIsAttribute(attribute);
-		
-		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
-		if (log220 && !isDelphiQuestion.equals(date.getIsDelphiQuestion())) {
-			oldValues += " isDelphiQuestion: " + date.getIsDelphiQuestion();
-			newValues += " isDelphiQuestion: " + isDelphiQuestion;
-		}
-		date.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !date.getAttributeName().equals(nameattribute)) {
@@ -2141,7 +2224,18 @@ public class SurveyHelper {
 		}
 		time.setShortname(shortname);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(time.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + time.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		time.setIsDelphiQuestion(isDelphiQuestion);
+
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (isDelphiQuestion && !isOptional) {
+			// Enforce optionality of Delphi questions.
+			isOptional = true;
+		}
 		if (log220 && !isOptional.equals(time.getOptional())) {
 			oldValues += " optional: " + time.getOptional();
 			newValues += " optional: " + isOptional;
@@ -2168,13 +2262,6 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		time.setIsAttribute(attribute);
-		
-		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
-		if (log220 && !isDelphiQuestion.equals(time.getIsDelphiQuestion())) {
-			oldValues += " isDelphiQuestion: " + time.getIsDelphiQuestion();
-			newValues += " isDelphiQuestion: " + isDelphiQuestion;
-		}
-		time.setIsDelphiQuestion(isDelphiQuestion);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !time.getAttributeName().equals(nameattribute)) {
@@ -2263,7 +2350,18 @@ public class SurveyHelper {
 		}
 		rating.setShortname(shortname);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(rating.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + rating.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		rating.setIsDelphiQuestion(isDelphiQuestion);
+
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (isDelphiQuestion && !isOptional) {
+			// Enforce optionality of Delphi questions.
+			isOptional = true;
+		}
 		if (log220 && !isOptional.equals(rating.getOptional())) {
 			oldValues += " optional: " + rating.getOptional();
 			newValues += " optional: " + isOptional;
@@ -2291,12 +2389,13 @@ public class SurveyHelper {
 		}
 		rating.setIconType(iconType);
 
-		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
-		if (log220 && !isDelphiQuestion.equals(rating.getIsDelphiQuestion())) {
-			oldValues += " isDelphiQuestion: " + rating.getIsDelphiQuestion();
-			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != rating.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + rating.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
 		}
-		rating.setIsDelphiQuestion(isDelphiQuestion);
+		rating.setDelphiChartType(delphiChartType);
 		
 		Element q;
 		int j = 0;
@@ -2419,7 +2518,18 @@ public class SurveyHelper {
 		}
 		singlechoice.setShortname(shortname);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(singlechoice.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + singlechoice.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		singlechoice.setIsDelphiQuestion(isDelphiQuestion);
+
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (isDelphiQuestion && !isOptional) {
+			// Enforce optionality of Delphi questions.
+			isOptional = true;
+		}
 		if (log220 && !isOptional.equals(singlechoice.getOptional())) {
 			oldValues += " optional: " + singlechoice.getOptional();
 			newValues += " optional: " + isOptional;
@@ -2446,13 +2556,14 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		singlechoice.setIsAttribute(attribute);
-				
-		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
-		if (log220 && !isDelphiQuestion.equals(singlechoice.getIsDelphiQuestion())) {
-			oldValues += " isDelphiQuestion: " + singlechoice.getIsDelphiQuestion();
-			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != singlechoice.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + singlechoice.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
 		}
-		singlechoice.setIsDelphiQuestion(isDelphiQuestion);
+		singlechoice.setDelphiChartType(delphiChartType);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !singlechoice.getAttributeName().equals(nameattribute)) {
@@ -2665,7 +2776,18 @@ public class SurveyHelper {
 		}
 		multiplechoice.setShortname(shortname);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(multiplechoice.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + multiplechoice.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		multiplechoice.setIsDelphiQuestion(isDelphiQuestion);
+
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (isDelphiQuestion && !isOptional) {
+			// Enforce optionality of Delphi questions.
+			isOptional = true;
+		}
 		if (log220 && !isOptional.equals(multiplechoice.getOptional())) {
 			oldValues += " optional: " + multiplechoice.getOptional();
 			newValues += " optional: " + isOptional;
@@ -2692,13 +2814,14 @@ public class SurveyHelper {
 			newValues += " attribute: " + attribute;
 		}
 		multiplechoice.setIsAttribute(attribute);
-		
-		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
-		if (log220 && !isDelphiQuestion.equals(multiplechoice.getIsDelphiQuestion())) {
-			oldValues += " isDelphiQuestion: " + multiplechoice.getIsDelphiQuestion();
-			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != multiplechoice.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + multiplechoice.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
 		}
-		multiplechoice.setIsDelphiQuestion(isDelphiQuestion);
+		multiplechoice.setDelphiChartType(delphiChartType);
 
 		String nameattribute = getString(parameterMap, "nameattribute", id, servletContext);
 		if (log220 && !multiplechoice.getAttributeName().equals(nameattribute)) {
@@ -2957,7 +3080,18 @@ public class SurveyHelper {
 		}
 		matrix.setIsInterdependent(isInterdependent);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(matrix.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + matrix.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		matrix.setIsDelphiQuestion(isDelphiQuestion);
+
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (isDelphiQuestion && !isOptional) {
+			// Enforce optionality of Delphi questions.
+			isOptional = true;
+		}
 		if (log220 && !isOptional.equals(matrix.getOptional())) {
 			oldValues += " optional: " + matrix.getOptional();
 			newValues += " optional: " + isOptional;
@@ -3006,13 +3140,14 @@ public class SurveyHelper {
 			newValues += " widths: " + widths;
 		}
 		matrix.setWidths(widths);
-		
-		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
-		if (log220 && !isDelphiQuestion.equals(matrix.getIsDelphiQuestion())) {
-			oldValues += " isDelphiQuestion: " + matrix.getIsDelphiQuestion();
-			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != matrix.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + matrix.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
 		}
-		matrix.setIsDelphiQuestion(isDelphiQuestion);
+		matrix.setDelphiChartType(delphiChartType);
 
 		// now get the elements inside the matrix
 		String matrixIdsAsString = parameterMap.get("matrixelements" + id)[0];
@@ -3164,7 +3299,18 @@ public class SurveyHelper {
 		}
 		table.setColumns(cols);
 
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(table.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + table.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		table.setIsDelphiQuestion(isDelphiQuestion);
+
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
+		if (isDelphiQuestion && !isOptional) {
+			// Enforce optionality of Delphi questions.
+			isOptional = true;
+		}
 		if (log220 && !isOptional.equals(table.getOptional())) {
 			oldValues += " optional: " + table.getOptional();
 			newValues += " optional: " + isOptional;
@@ -3184,13 +3330,6 @@ public class SurveyHelper {
 			newValues += " widths: " + widths;
 		}
 		table.setWidths(widths);
-		
-		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
-		if (log220 && !isDelphiQuestion.equals(table.getIsDelphiQuestion())) {
-			oldValues += " isDelphiQuestion: " + table.getIsDelphiQuestion();
-			newValues += " isDelphiQuestion: " + isDelphiQuestion;
-		}
-		table.setIsDelphiQuestion(isDelphiQuestion);
 
 		// now get the elements inside the table
 		String tableIdsAsString = parameterMap.get("tableelements" + id)[0];

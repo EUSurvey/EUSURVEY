@@ -287,10 +287,18 @@ textarea.freetext {
 }
 
 .survey-element {
-	margin: 5px; 
-	margin-top: 25px;
+	margin: 25px 5px 5px 5px;
 	max-width: 980px;
 	overflow-x: auto;
+}
+
+.survey-element-anchor {
+	position: relative;
+	top: -75px;
+}
+
+#bodyManagementTest .survey-element-anchor {
+	top: -145px;
 }
 
 .freetext,
@@ -303,6 +311,7 @@ textarea.freetext {
 .alignment-div,
 .input-group,
 .ratingtable,
+.explanation-file-upload-section,
 .explanation-section,
 .explanation-update-section {
 	margin-left: 20px;

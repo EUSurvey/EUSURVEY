@@ -1017,20 +1017,20 @@ legend {
 	padding-right: 10px;
 }
 
-.standardtable td, th {
+.standardtable td, .standardtable th {
 	padding: 5px;
 	padding-left: 10px;
 	padding-right: 10px;
 }
 
-.propertiestable td, th {
+.propertiestable td, .propertiestable th {
 	padding: 5px;
 	padding-left: 10px;
 	padding-right: 10px;
 	font-size: 90%;
 }
 
-.overviewtable td, th {
+.overviewtable td, .overviewtable th {
 	padding: 5px;
 	padding-left: 10px;
 	padding-right: 10px;
@@ -1249,6 +1249,32 @@ legend {
 	margin-top: 10px;
 }
 
+.delphicomment textarea, .delphireply textarea {
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+.delphicomment a, .delphireply a {
+	margin-right: 5px;
+}
+
+.delphireply {
+	padding-left: 20px;
+}
+
+.delphicommentsdiv {
+	border-bottom: 1px solid #ddd; 
+	padding: 10px; 
+	margin-left: -5px; 
+	margin-right: -5px; 
+}
+
+.delphicommentdate {
+	color: #999;
+	font-size: 90%;
+	margin-left: 5px
+}
+
 .explanation-editor {
 	height: 700px;
 }
@@ -1269,6 +1295,7 @@ legend {
 	background-color: #fff;
 	margin-left: 35px;
 	margin-right: 15px;
+	font-size: 100%;
 }
 
 .matrixtable {
@@ -1276,6 +1303,11 @@ legend {
 }
 
 .explanation-section {
+	display: none;
+	max-width: 410px;
+}
+
+.explanation-file-upload-section {
 	display: none;
 	max-width: 410px;
 }
@@ -1311,9 +1343,18 @@ legend {
 	color: #fff;
 }
 
+.area-header a {
+	color: #fff;
+}
+
+.area-header a:hover {
+	color: #ccc;
+}
+
 .delphi .area-header {
 	background-color: #8a8989;
     color: #fff;
+    font-size: 100%;
 }
 
 .validation-error-keep {

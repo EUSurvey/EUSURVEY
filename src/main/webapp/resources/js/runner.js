@@ -148,6 +148,7 @@ function propagateChange(element)
 	var div = $(element).closest(".survey-element");
 	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
 	$(div).find(".explanation-section").show();
+	$(div).find(".explanation-file-upload-section").show();
 	$(div).find(".delphiupdatemessage").empty();
 }
 
@@ -239,7 +240,8 @@ function createUploader(instance, maxSize)
 	    },
 		onComplete : function(id, fileName, responseJSON) {
 			$(this.element).parent().find(".uploadinfo").hide();
-	    	updateFileList($(this.element), responseJSON);
+			updateFileList($(this.element), responseJSON);
+			$(this.element).closest(".survey-element").find("a[data-type='delphisavebutton']").removeClass("disabled");
 	    	
 	    	if (responseJSON.wrongextension)
 	    	{
@@ -555,7 +557,7 @@ function deleteFile(id, uniqueCode, fileName, button) {
 				updateFileList($(button).parent().parent().siblings(
 						".file-uploader").first(), data);
 			} else {
-				showRunnerError("Not possible to delete file");
+				showError("Not possible to delete file");
 			}
 	  }
 	});
@@ -1386,7 +1388,7 @@ function readCookiesForParent(parent)
 			var id = $(this).attr("data-id");
 			var value = readCookie(survey+id);
 
-			if (value != null && value.length > 0 && ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'j_captcha_response'))) {
+			if (value != null && value.length > 0 && ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'internal_captcha_response'))) {
 				if (type == "text") {
 					$(this).val(value);
 				} else if (type == "hidden" && $(this).attr("data-id") && ($(this).attr("id") == null || !strStartsWith($(this).attr("id"), 'regex'))) {
@@ -1461,7 +1463,7 @@ function saveCookies() {
 		
 		if (!$(this).hasClass("comparable-second"))
 		{
-			if ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'j_captcha_response')) {
+			if ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'internal_captcha_response')) {
 				if (type == "text" || type == "hidden" || type == "password") {
 					createCookie(survey+id, $(this).val(), 7);
 				} else if (type == "radio" || type == "checkbox") {

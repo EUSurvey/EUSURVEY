@@ -53,6 +53,8 @@
 		border-bottom: 1px solid #ccc;
 		margin-bottom: 5px;
 		font-weight: bold;
+		height: 50px;
+		overflow-y: hidden;
 	}
 	
 	.greenanswer {	
@@ -207,12 +209,12 @@
 							<div class="question-footer">
 								<!-- ko if: answer.length > 0 -->
 								<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: sectionViewModel.niceAnswer(answer)"></span></div>
-								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}"><spring:message code="label.EditAnswer" /></a>
+								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#E' + id}"><spring:message code="label.EditAnswer" /></a>
 								<!-- <a class="btn btn-xs btn-default">Show Comments</a> -->
 								<!-- /ko -->
 								<!-- ko if: answer.length == 0 -->
 								<div class="redanswer"><spring:message code="info.NotAnswered" /></div>
-								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#' + id}"><spring:message code="label.Answer" /></a>
+								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#E' + id}"><spring:message code="label.Answer" /></a>
 								<!-- /ko -->
 							</div>
 						</div>					
@@ -270,7 +272,7 @@
 		    		return title;
 		    	}
 		    	
-		    	return "<span data-toggle='tooltip' title='" + title + "'>" + title.substring(0,75) + "...</span>";
+		    	return "<span data-toggle='tooltip' data-html='true' title='" + title + "'>" + title.substring(0,75) + "...</span>";
 			},
 			
 			niceAnswer: function(answer)

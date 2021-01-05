@@ -2440,7 +2440,7 @@ public class ManagementController extends BasicController {
 				form.setWcagCompliance(
 						draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 
-				SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), form.getSurvey(), fileService);
+				SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), form.getSurvey(), fileService, answerExplanationService);
 				uniqueCode = draft.getAnswerSet().getUniqueCode();
 
 				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
@@ -2559,7 +2559,7 @@ public class ManagementController extends BasicController {
 			f.setValidation(validation);
 
 			// recreate uploaded files
-			SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService);
+			SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			model.addObject("submit", true);
@@ -2792,7 +2792,11 @@ public class ManagementController extends BasicController {
 		}
 
 		boolean filtered = false;
-
+		final String SELECTEDEXPLANATION = "selectedexplanation"; 
+		final String EXPORTSELECTEDEXPLANATION = "exportselectedexplanation";
+		final String SELECTEDDISCUSSION = "selecteddiscussion"; 
+		final String EXPORTSELECTEDDISCUSSION = "exportselecteddiscussion";
+		
 		if (!ignorePostParameters) {
 			if (request != null && request.getMethod().equalsIgnoreCase("POST")) {
 				filter.clearSelectedQuestions();
@@ -2802,30 +2806,31 @@ public class ManagementController extends BasicController {
 				String v = entry.getValue()[0];
 
 				if (v != null && v.trim().length() > 0) {
-					if (entry.getKey().equalsIgnoreCase("metafilterinvitation")) {
+					final String key = entry.getKey();
+					if (key.equalsIgnoreCase("metafilterinvitation")) {
 						filter.setInvitation(parameters.get("metafilterinvitation")[0].trim());
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafiltercase")) {
+					} else if (key.equalsIgnoreCase("metafiltercase")) {
 						filter.setCaseId(parameters.get("metafiltercase")[0].trim());
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilteruser")) {
+					} else if (key.equalsIgnoreCase("metafilteruser")) {
 						filter.setUser(parameters.get("metafilteruser")[0].trim());
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterdatefrom")) {
+					} else if (key.equalsIgnoreCase("metafilterdatefrom")) {
 						filter.setGeneratedFrom(
 								ConversionTools.getDate(parameters.get("metafilterdatefrom")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterdateto")) {
+					} else if (key.equalsIgnoreCase("metafilterdateto")) {
 						filter.setGeneratedTo(ConversionTools.getDate(parameters.get("metafilterdateto")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterupdatefrom")) {
+					} else if (key.equalsIgnoreCase("metafilterupdatefrom")) {
 						filter.setUpdatedFrom(
 								ConversionTools.getDate(parameters.get("metafilterupdatefrom")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterupdateto")) {
+					} else if (key.equalsIgnoreCase("metafilterupdateto")) {
 						filter.setUpdatedTo(ConversionTools.getDate(parameters.get("metafilterupdateto")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterlanguage")) {
+					} else if (key.equalsIgnoreCase("metafilterlanguage")) {
 						Set<String> languages = new HashSet<>();
 						String[] langs = request.getParameterValues("metafilterlanguage");
 						if (langs != null && langs.length > 0) {
@@ -2833,17 +2838,25 @@ public class ManagementController extends BasicController {
 						}
 						filter.setLanguages(languages);
 						filtered = true;
-					} else if (entry.getKey().startsWith(Constants.FILTER)) {
-						String questionId = entry.getKey().substring(6);
+					} else if (key.startsWith(Constants.FILTER)) {
+						String questionId = key.substring(6);
 						String[] values = entry.getValue();
 						String value = StringUtils.arrayToDelimitedString(values, ";");
 						filter.getFilterValues().put(questionId, value);
 						filtered = true;
-					} else if (entry.getKey().startsWith("selected")) {
-						filter.getVisibleQuestions().add(entry.getKey().substring(8));
-					} else if (entry.getKey().startsWith("exportselected")) {
-						filter.addExportedQuestion(entry.getKey().substring(14));
-					} else if (entry.getKey().equalsIgnoreCase("sort")) {
+					} else if (key.startsWith(SELECTEDEXPLANATION)) {
+						filter.getVisibleExplanations().add(key.substring(SELECTEDEXPLANATION.length()));
+					} else if (key.startsWith(EXPORTSELECTEDEXPLANATION)) {
+						filter.getExportedExplanations().add(key.substring(EXPORTSELECTEDEXPLANATION.length()));
+					} else if (key.startsWith(SELECTEDDISCUSSION)) {
+						filter.getVisibleDiscussions().add(key.substring(SELECTEDDISCUSSION.length()));
+					} else if (key.startsWith(EXPORTSELECTEDDISCUSSION)) {
+						filter.getExportedDiscussions().add(key.substring(EXPORTSELECTEDDISCUSSION.length()));		
+					} else if (key.startsWith("selected")) {
+						filter.getVisibleQuestions().add(key.substring(8));
+					} else if (key.startsWith("exportselected")) {
+						filter.addExportedQuestion(key.substring(14));
+					} else if (key.equalsIgnoreCase("sort")) {
 						String sorting = entry.getValue()[0].trim();
 						if (sorting.equalsIgnoreCase("scoreDesc")) {
 							filter.setSortKey("score");
@@ -3139,9 +3152,11 @@ public class ManagementController extends BasicController {
 			boolean addlinks = isOwner || user == null || user.getFormPrivilege() > 1
 					|| user.getLocalPrivilegeValue("AccessResults") > 1
 					|| (form.getSurvey().getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0);
-			filter = answerService.initialize(filter);
+			filter = answerService.initialize(filter);			
+			
 			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks,
 					false, showuploadedfiles, false, false);
+			 
 			if (answersets != null) {
 				Date updateDate = reportingService.getLastUpdate(survey);
 				result.add(updateDate == null ? "" : ConversionTools.getFullString(updateDate));
@@ -3150,8 +3165,10 @@ public class ManagementController extends BasicController {
 				}
 				return result;
 			}
+			
+			Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
 
-			answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, false, active && !allanswers);
+			answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, true, active && !allanswers);
 
 			boolean surveyExists = survey != null;
 
@@ -3184,7 +3201,7 @@ public class ManagementController extends BasicController {
 				result.add(answerSet.getUniqueCode());
 				result.add(answerSet.getId().toString());
 
-				for (Element question : survey.getQuestions()) {
+				for (Question question : survey.getQuestions()) {
 					if (visibleQuestions.contains(question) || survey.getMissingElements().contains(question)) {
 						if (question instanceof Matrix) {
 							for (Element matrixQuestion : ((Matrix) question).getQuestions()) {
@@ -3274,6 +3291,28 @@ public class ManagementController extends BasicController {
 										.append("</span>");
 							}
 							result.add(s.toString());
+						}
+						
+						if (survey.getIsDelphi() && question.getIsDelphiQuestion()) {
+
+							if (filter.getVisibleExplanations().contains(question.getId().toString())) {
+								try {
+									final String explanation = answerExplanationService.getFormattedExplanationWithFiles(
+											answerSet.getId(), question.getUniqueId(), survey.getUniqueId(), true);
+									result.add(explanation);
+								} catch (NoSuchElementException ex) {
+									result.add("");
+								}
+							}
+							
+							if (filter.getVisibleDiscussions().contains(question.getId().toString())) {
+								try {
+									String discussion = answerExplanationService.getDiscussion(answerSet.getId(), question.getUniqueId(), true, usersByUid);
+									result.add(discussion);
+								} catch (NoSuchElementException ex) {
+									result.add("");
+								}
+							}
 						}
 					}
 				}

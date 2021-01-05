@@ -87,6 +87,7 @@
 	var contextpath = "${contextpath}";
 	var isresponsive = ${responsive != null};
 	var isdelphi = ${form != null && form.survey.getIsDelphi()};
+	var delphiStartPageUrl = '${pageContext.request.getAttribute("javax.servlet.forward.request_uri")}?${pageContext.request.getQueryString().replace("startDelphi=true&", "").replace("startDelphi=true", "?")}';
 
 	<c:choose>
 		<c:when test="${form != null && form.getResources() != null && resultType == null}">
@@ -258,6 +259,8 @@
 	 	localStorage.removeItem("SurveyEditorBackup${surveyeditorsaved}");
 	</c:if>
 	
+	<c:if test="${forpdf == null}">
+	
 	var explanationEditorConfig = {
 			script_url: '${contextpath}/resources/js/tinymce/tinymce.min.js',
 			theme: 'modern',
@@ -300,6 +303,7 @@
 			invalid_elements: 'html,head,body',
 			object_resizing: false
 		};
+	</c:if>
 	
 </script>
 <script type="text/javascript" src="${contextpath}/resources/js/utf8.js?version=<%@include file="version.txt" %>"></script>

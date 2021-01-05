@@ -43,6 +43,8 @@ public class XmlExportCreator extends ExportCreator {
 	private Date exportedNow = null;
 
 	private static final String ANSWER = "Answer";
+	private static final String EXPLANATION = "Explanation";
+	private static final String DISCUSSION = "Discussion";
 	
 	@Override
 	@Transactional
@@ -399,10 +401,14 @@ public class XmlExportCreator extends ExportCreator {
 					questions = questionlists.get(lang);
 				}
 				parseAnswerSet(form.getSurvey(), writer, questions, null, row, row.get(1), filesByAnswer,
-						uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail);
+						uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail, null, null);
 			}
 		} else {
 
+			//it is not possible to query the database after the result query was executed
+			Map<Integer, Map<String, String>> explanations = answerExplanationService.getAllExplanations(form.getSurvey());
+			Map<Integer, Map<String, String>> discussions = answerExplanationService.getAllDiscussions(form.getSurvey());
+					
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(),
 							export == null ? null : export.getResultFilter(), values, true)
@@ -451,7 +457,7 @@ public class XmlExportCreator extends ExportCreator {
 					if (lastAnswerSet > 0) {
 						parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()),
 								answerSet, null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(),
-								filterWithMeta, ECASUserLoginsByEmail);
+								filterWithMeta, ECASUserLoginsByEmail, explanations, discussions);
 					}
 
 					answerSet = new AnswerSet();
@@ -479,7 +485,7 @@ public class XmlExportCreator extends ExportCreator {
 			if (lastAnswerSet > 0)
 				parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()), answerSet,
 						null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta,
-						ECASUserLoginsByEmail);
+						ECASUserLoginsByEmail, explanations, discussions);
 			results.close();
 		}
 
@@ -632,7 +638,7 @@ public class XmlExportCreator extends ExportCreator {
 	void parseAnswerSet(Survey survey, XMLStreamWriter writer, List<Element> questions, AnswerSet answerSet,
 			List<String> row, String list, Map<Integer, List<File>> filesByAnswer,
 			Map<String, List<File>> uploadedFilesByQuestionUID, boolean meta, ResultFilter filter,
-			Map<String, String> ECASUserLoginsByEmail) throws XMLStreamException {
+			Map<String, String> ECASUserLoginsByEmail, Map<Integer, Map<String, String>> explanations, Map<Integer, Map<String, String>> discussions) throws XMLStreamException {
 		writer.writeStartElement("AnswerSet");
 
 		if (survey.getSecurity().contains("anonymous")) {
@@ -849,6 +855,55 @@ public class XmlExportCreator extends ExportCreator {
 
 							writer.writeEndElement(); // Answer
 						}
+					}
+				}
+				
+				if (question.isDelphiElement() && filter != null && filter.explanationExported(question.getId().toString())) {
+					
+					String explanation = "";				
+					if (answerSet == null) {
+						explanation = row.get(answerrowcounter++);
+					} else {
+						try {
+							if (explanations.containsKey(answerSet.getId()) && explanations.get(answerSet.getId()).containsKey(question.getUniqueId()))
+							{
+								explanation = explanations.get(answerSet.getId()).get(question.getUniqueId());
+							}
+						} catch (NoSuchElementException ex) {
+							//ignore
+						}					
+					}
+					
+					if (!explanation.isEmpty())
+					{
+						writer.writeStartElement(EXPLANATION);
+						writer.writeAttribute("qid", question.getUniqueId());					
+						writer.writeCharacters(ConversionTools.removeHTMLNoEscape(explanation));					
+						writer.writeEndElement(); // Explanation
+					}
+				}
+				
+				if (question.isDelphiElement() && filter != null && filter.discussionExported(question.getId().toString())) {
+					String discussion = "";				
+					if (answerSet == null) {
+						discussion = row.get(answerrowcounter++);
+					} else {
+						try {
+							if (discussions.containsKey(answerSet.getId()) && discussions.get(answerSet.getId()).containsKey(question.getUniqueId()))
+							{
+								discussion = discussions.get(answerSet.getId()).get(question.getUniqueId());
+							}
+						} catch (NoSuchElementException ex) {
+							//ignore
+						}					
+					}
+					
+					if (!discussion.isEmpty())
+					{
+						writer.writeStartElement(DISCUSSION);
+						writer.writeAttribute("qid", question.getUniqueId());					
+						writer.writeCharacters(ConversionTools.removeHTMLNoEscape(discussion));					
+						writer.writeEndElement(); // Discussion
 					}
 				}
 			}

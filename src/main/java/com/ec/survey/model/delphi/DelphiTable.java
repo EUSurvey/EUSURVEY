@@ -4,18 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DelphiTable {
-    private final List<DelphiTableEntry> entries = new ArrayList<>();
-    private final DelphiQuestionType type;
-
-    public DelphiTable(DelphiQuestionType type) {
-        this.type = type;
-    }
+    private List<DelphiTableEntry> entries = new ArrayList<>();
+    private int offset;
+    private int total;
 
     public List<DelphiTableEntry> getEntries() {
         return entries;
     }
 
-    public DelphiQuestionType getType() {
-        return type;
+    public void setEntries(List<DelphiTableEntry> entries) {
+        this.entries = entries;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
     }
 }

@@ -1440,6 +1440,13 @@ public class FileService extends BasicService {
 		return folder;
 	}
 
+	public java.io.File getSurveyExplanationUploadsFolder(String surveyUID, boolean create) {
+		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + "/EXPLANATION_UPLOADS/");
+		if (!folder.exists() && create)
+			folder.mkdirs();
+		return folder;
+	}
+
 	public java.io.File getSurveyFile(String surveyUID, String fileUID) {
 		java.io.File folder = getSurveyFilesFolder(surveyUID);
 		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
@@ -16,7 +17,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,6 +39,7 @@ import com.ec.survey.model.survey.GalleryQuestion;
 import com.ec.survey.model.survey.Matrix;
 import com.ec.survey.model.survey.MultipleChoiceQuestion;
 import com.ec.survey.model.survey.NumberQuestion;
+import com.ec.survey.model.survey.Question;
 import com.ec.survey.model.survey.RatingQuestion;
 import com.ec.survey.model.survey.RegExQuestion;
 import com.ec.survey.model.survey.SingleChoiceQuestion;
@@ -54,7 +55,7 @@ import com.ec.survey.tools.Tools;
 import org.hibernate.exception.SQLGrammarException;
 
 @Service("reportingService")
-public class ReportingService {
+public class ReportingService extends BasicService {
 
 	protected static final int MAX_COLUMN_NUMBER_IN_OLAP_TABLE = 1000;
 	
@@ -65,19 +66,7 @@ public class ReportingService {
 	
 	@Resource(name="sessionFactory")
 	protected SessionFactory sessionFactory;
-	
-	@Resource(name = "surveyService")
-	protected SurveyService surveyService;
-	
-	@Resource(name = "answerService")
-	protected AnswerService answerService;
-	
-	@Resource(name = "fileService")
-	protected FileService fileService;
-	
-	@Resource(name = "settingsService")
-	protected SettingsService settingsService;
-	
+		
 	@Autowired
 	private SqlQueryService sqlQueryService;
 	
@@ -424,12 +413,14 @@ public class ReportingService {
 	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
+		Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
+		
 		Map<String, Object> values = new HashMap<>();
 		String where = getWhereClause(filter, values, survey);
 		
 		Map<String, Element> visibleQuestions = new LinkedHashMap<>();
 		
-		for (Element question : survey.getQuestions())
+		for (Question question : survey.getQuestions())
     	{
     		if (filter.getVisibleQuestions().contains(question.getId().toString()))
     		{
@@ -649,6 +640,32 @@ public class ReportingService {
 							} else {
 								row.add(item.toString());
 							}
+							
+							if (survey.getIsDelphi() && question.isDelphiElement())
+							{
+								if (filter.getVisibleExplanations().contains(question.getId().toString()))
+								{
+									try {
+										String explanation = answerExplanationService.getFormattedExplanationWithFiles(
+												ConversionTools.getValue(answerrow[1]), question.getUniqueId(),
+												survey.getUniqueId(), !forexport);
+										row.add(explanation);
+									} catch (NoSuchElementException ex) {
+										row.add("");
+									}
+								}
+								
+								if (filter.getVisibleDiscussions().contains(question.getId().toString()))
+								{
+									try {
+										String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerrow[1]), question.getUniqueId(), !forexport, usersByUid);
+										row.add(discussion);
+									} catch (NoSuchElementException ex) {
+										row.add("");
+									}
+								}
+							}
+							
 							counter++;
 						}
 				    }
@@ -660,6 +677,8 @@ public class ReportingService {
 			return rows;
 			
 		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			
 			return null;
 		}	
 	}

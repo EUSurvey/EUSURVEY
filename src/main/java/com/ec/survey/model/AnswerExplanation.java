@@ -1,6 +1,15 @@
 package com.ec.survey.model;
 
+import com.ec.survey.model.survey.base.File;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "ANSWERS_EXPLANATIONS", indexes = {@Index(name = "ANSWEREXPLANATION_IDX", columnList = "ANSWER_SET_ID, QUESTION_UID")})
@@ -12,6 +21,7 @@ public class AnswerExplanation implements java.io.Serializable {
 	private Integer answerSetId;
 	private String questionUid;
 	private String text;
+	private List<File> explanationFiles = new ArrayList<>();
 
 	public AnswerExplanation() {}
 
@@ -54,5 +64,16 @@ public class AnswerExplanation implements java.io.Serializable {
 	}
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	@OneToMany(targetEntity=File.class, cascade = CascadeType.ALL  )
+	@Fetch(value = FetchMode.SELECT)
+	@OrderBy(value = "name asc")
+	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+	public List<File> getFiles() {
+		return explanationFiles;
+	}
+	public void setFiles(List<File> files) {
+		this.explanationFiles = files;
 	}
 }

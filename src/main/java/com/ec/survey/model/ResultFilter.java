@@ -46,6 +46,12 @@ public class ResultFilter implements java.io.Serializable {
 	private Map<String, String> filterValues = new HashMap<>();
 	private Set<String> visibleQuestions = new HashSet<>();
 	private Set<String> exportedQuestions = new HashSet<>();
+	
+	private Set<String> visibleExplanations = new HashSet<>();
+	private Set<String> exportedExplanations = new HashSet<>();
+	private Set<String> visibleDiscussions = new HashSet<>();
+	private Set<String> exportedDiscussions = new HashSet<>();
+	
 	private Boolean createdOrUpdated = false;
 	private Boolean onlyReallyUpdated = false;
 	private Boolean noTestAnswers = false;
@@ -71,7 +77,11 @@ public class ResultFilter implements java.io.Serializable {
 
 	public void clearSelectedQuestions() {
 		visibleQuestions.clear();
-		exportedQuestions.clear();		
+		exportedQuestions.clear();
+		visibleExplanations.clear();
+		exportedExplanations.clear();
+		visibleDiscussions.clear();
+		exportedDiscussions.clear();
 	}
 
 	@Id
@@ -240,6 +250,42 @@ public class ResultFilter implements java.io.Serializable {
 		this.exportedQuestions = exportedQuestions;
 	}
 	
+	@ElementCollection
+	@Cascade(value={CascadeType.ALL})
+	public Set<String> getVisibleExplanations() {
+		return visibleExplanations;
+	}
+	public void setVisibleExplanations(Set<String> visibleExplanations) {
+		this.visibleExplanations = visibleExplanations;
+	}
+	
+	@ElementCollection
+	@Cascade(value={CascadeType.ALL})
+	public Set<String> getExportedExplanations() {
+		return exportedExplanations;
+	}
+	public void setExportedExplanations(Set<String> exportedExplanations) {
+		this.exportedExplanations = exportedExplanations;
+	}
+	
+	@ElementCollection
+	@Cascade(value={CascadeType.ALL})
+	public Set<String> getVisibleDiscussions() {
+		return visibleDiscussions;
+	}
+	public void setVisibleDiscussions(Set<String> visibleDiscussions) {
+		this.visibleDiscussions = visibleDiscussions;
+	}
+	
+	@ElementCollection
+	@Cascade(value={CascadeType.ALL})
+	public Set<String> getExportedDiscussions() {
+		return exportedDiscussions;
+	}
+	public void setExportedDiscussions(Set<String> exportedDiscussions) {
+		this.exportedDiscussions = exportedDiscussions;
+	}
+	
 	@Transient
 	public void addExportedQuestion(String question)
 	{
@@ -289,6 +335,30 @@ public class ResultFilter implements java.io.Serializable {
 		if (exportedQuestions == null || exportedQuestions.isEmpty()) return visible(questionId);
 		
 		return exportedQuestions.contains(questionId);
+	}
+	
+	@Transient
+	public boolean explanationVisible(String questionId)
+	{
+		return visibleExplanations.contains(questionId);
+	}
+	
+	@Transient
+	public boolean explanationExported(String questionId)
+	{
+		return exportedExplanations.contains(questionId);
+	}
+	
+	@Transient
+	public boolean discussionVisible(String questionId)
+	{
+		return visibleDiscussions.contains(questionId);
+	}
+	
+	@Transient
+	public boolean discussionExported(String questionId)
+	{
+		return exportedDiscussions.contains(questionId);
 	}
 	
 	@Transient
@@ -360,24 +430,13 @@ public class ResultFilter implements java.io.Serializable {
 		result.append(this.languages == null ? "" : StringUtils.join(this.languages, ""));
 		result.append(StringUtils.join(this.filterValues.keySet(), ""));
 		result.append(StringUtils.join(this.filterValues.values(), ""));
-		
-		//visibleQuestions
-		if (visibleQuestions != null && !visibleQuestions.isEmpty())
-		{
-			SortedSet<String> sortedVisibleQuestions = new TreeSet<>(visibleQuestions);
-			for (String id : sortedVisibleQuestions)
-			{
-				result.append(id);
-			}
-		}
-		if (exportedQuestions != null && !exportedQuestions.isEmpty())
-		{
-			SortedSet<String> sortedExportedQuestions = new TreeSet<>(exportedQuestions);
-			for (String id : sortedExportedQuestions)
-			{
-				result.append(id);
-			}
-		}
+
+		sortAndAppendSetIdsToStringBuilder(visibleQuestions, result);
+		sortAndAppendSetIdsToStringBuilder(exportedQuestions, result);
+		sortAndAppendSetIdsToStringBuilder(visibleExplanations, result);
+		sortAndAppendSetIdsToStringBuilder(exportedExplanations, result);
+		sortAndAppendSetIdsToStringBuilder(visibleDiscussions, result);
+		sortAndAppendSetIdsToStringBuilder(exportedDiscussions, result);
 		
 		if (allAnswers)
 		{
@@ -385,6 +444,16 @@ public class ResultFilter implements java.io.Serializable {
 		}
 		
 		return Tools.md5hash(result.toString());
+	}
+
+	private void sortAndAppendSetIdsToStringBuilder(final Set<String> set, final StringBuilder builder) {
+
+		if (set != null && !set.isEmpty()) {
+			final SortedSet<String> sortedSet = new TreeSet<>(set);
+			for (String id : sortedSet) {
+				builder.append(id);
+			}
+		}
 	}
 	
 	@Transient
@@ -401,6 +470,7 @@ public class ResultFilter implements java.io.Serializable {
 		
 		return true;
 	}
+
 	public ResultFilter merge(ResultFilter copy) {
 		copy.caseId = caseId;
 
@@ -438,6 +508,22 @@ public class ResultFilter implements java.io.Serializable {
 		Set<String> newExportedQuestions = new HashSet<>();
         newExportedQuestions.addAll(exportedQuestions);
 		copy.exportedQuestions = newExportedQuestions;
+		
+		Set<String> newVisibleExplanations = new HashSet<>();
+        newVisibleExplanations.addAll(visibleExplanations);
+		copy.visibleExplanations = newVisibleExplanations;
+
+		Set<String> newExportedExplanations = new HashSet<>();
+        newExportedExplanations.addAll(exportedExplanations);
+		copy.exportedExplanations = newExportedExplanations;
+		
+		Set<String> newVisibleDiscussions = new HashSet<>();
+		newVisibleDiscussions.addAll(visibleDiscussions);
+		copy.visibleDiscussions = newVisibleDiscussions;
+
+		Set<String> newExportedDiscussions = new HashSet<>();
+		newExportedDiscussions.addAll(exportedDiscussions);
+		copy.exportedDiscussions = newExportedDiscussions;
 
 		copy.surveyId = surveyId;
 		copy.userId = userId;

@@ -298,14 +298,18 @@ function newBasicViewModel(element)
 		viewModel.optional = ko.observable(element.optional);
 		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 		viewModel.delphiTableEntries = ko.observableArray();
-		
-		if (element.scoringItems != null)
-		{
-			for (var i = 0; i < element.scoringItems.length; i++)
-			{
+		viewModel.delphiChartType = ko.observable(element.delphiChartType);
+
+		if (element.scoringItems != null) {
+			for (var i = 0; i < element.scoringItems.length; i++) {
 				viewModel.scoringItems.push(newScoringViewModel(element.scoringItems[i]));
 			}
 		}
+
+		viewModel.delphiTableLimit = ko.observable(20);
+		viewModel.delphiTableOffset = ko.observable(0);
+		viewModel.delphiTableTotalEntries = ko.observable(0);
+		viewModel.delphiTableOrder = ko.observable("UpdateDesc");
 	}
 	
 	viewModel.copy = function()

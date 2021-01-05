@@ -35,7 +35,7 @@
 						</c:choose>		
 						 
 						<br />					 
-						<input id="j_captcha_response" type="text" class="required" autocomplete="off" name="j_captcha_response" />
+						<input id="internal_captcha_response" type="text" class="required" autocomplete="off" name="internal_captcha_response" />
 						
 						<c:choose>
 							<c:when test="${form != null}">

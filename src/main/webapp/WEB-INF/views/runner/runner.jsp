@@ -79,6 +79,7 @@
 						}
 						applyStandardWidths();
 						setTimeout(loadElements, 500);
+						selectPageAndScrollToQuestionIfSet();
 					}
 				});
 			} else {
@@ -102,6 +103,9 @@
 			
 			$(element).siblings(".validation-error").remove();
 			
+			var surveyElement = $(element).closest(".survey-element");
+			$(surveyElement).find("a[data-type='delphisavebutton']").removeClass("disabled");
+
 			for (var i = 0; i < responseJSON.files.length; i++) {
 				var f = responseJSON.files[i];
 				var div = document.createElement("div");
