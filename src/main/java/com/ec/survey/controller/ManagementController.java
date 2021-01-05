@@ -3165,6 +3165,8 @@ public class ManagementController extends BasicController {
 				}
 				return result;
 			}
+			
+			Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
 
 			answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, true, active && !allanswers);
 
@@ -3194,8 +3196,6 @@ public class ManagementController extends BasicController {
 			}
 
 			result.add("");
-			
-			Map<String, String> usersByUid = new HashMap<>();
 
 			for (AnswerSet answerSet : answerSets) {
 				result.add(answerSet.getUniqueCode());

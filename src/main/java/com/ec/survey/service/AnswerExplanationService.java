@@ -44,43 +44,42 @@ public class AnswerExplanationService extends BasicService {
 	public AnswerExplanation getExplanation(int answerSetId, String questionUid) {
 
 		final Session session = sessionFactory.getCurrentSession();
-		final Query query = session.createQuery("SELECT ex FROM AnswerExplanation ex WHERE answerSetId = :answerSetId AND questionUid = :questionUid")
-				.setInteger("answerSetId", answerSetId)
-				.setString("questionUid", questionUid);
+		final Query query = session.createQuery(
+				"SELECT ex FROM AnswerExplanation ex WHERE answerSetId = :answerSetId AND questionUid = :questionUid")
+				.setInteger("answerSetId", answerSetId).setString("questionUid", questionUid);
 		AnswerExplanation explanation = (AnswerExplanation) query.uniqueResult();
 		if (explanation == null) {
 			throw new NoSuchElementException();
 		}
 		return explanation;
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Map<Integer, Map<String, String>> getAllExplanations(Survey survey) {
 		final Session session = sessionFactory.getCurrentSession();
-		final Query query = session.createSQLQuery("SELECT ex.ANSWER_SET_ID, ex.QUESTION_UID, ex.TEXT FROM ANSWERS_EXPLANATIONS ex JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ex.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft")
-				.setBoolean("draft", survey.getIsDraft())
-				.setString("surveyUid", survey.getUniqueId());
-		
-		Map<Integer, Map<String, String>> result = new HashMap<>();		
-		
+		final Query query = session.createSQLQuery(
+				"SELECT ex.ANSWER_SET_ID, ex.QUESTION_UID, ex.TEXT FROM ANSWERS_EXPLANATIONS ex JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ex.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft")
+				.setBoolean("draft", survey.getIsDraft()).setString("surveyUid", survey.getUniqueId());
+
+		Map<Integer, Map<String, String>> result = new HashMap<>();
+
 		@SuppressWarnings("rawtypes")
 		List res = query.list();
-		
+
 		for (Object o : res) {
 			Object[] a = (Object[]) o;
-					
+
 			int answerSetId = ConversionTools.getValue(a[0]);
-			String questionUid = (String)a[1];
-			String explanation =  (String)a[2];
-			
-			if (!result.containsKey(answerSetId))
-			{
+			String questionUid = (String) a[1];
+			String explanation = (String) a[2];
+
+			if (!result.containsKey(answerSetId)) {
 				result.put(answerSetId, new HashMap<String, String>());
 			}
-			
+
 			result.get(answerSetId).put(questionUid, explanation);
 		}
-		
+
 		return result;
 	}
 
@@ -95,81 +94,75 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public DelphiContributions getDelphiContributions(ChoiceQuestion question, DelphiTableOrderBy orderBy, int limit, int offset) {
-		return getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft(), orderBy, limit, offset);
+	public DelphiContributions getDelphiContributions(ChoiceQuestion question, DelphiTableOrderBy orderBy, int limit,
+			int offset) {
+		return getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(),
+				question.getSurvey().getIsDraft(), orderBy, limit, offset);
 	}
 
 	@Transactional(readOnly = true)
-	public DelphiContributions getDelphiContributions(Matrix question, DelphiTableOrderBy orderBy, int limit, int offset) {
+	public DelphiContributions getDelphiContributions(Matrix question, DelphiTableOrderBy orderBy, int limit,
+			int offset) {
 		List<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
-		return getDelphiContributions(uids, question.getUniqueId(), question.getSurvey().getIsDraft(), orderBy, limit, offset);
+		return getDelphiContributions(uids, question.getUniqueId(), question.getSurvey().getIsDraft(), orderBy, limit,
+				offset);
 	}
 
 	@Transactional(readOnly = true)
-	public DelphiContributions getDelphiContributions(RatingQuestion question, DelphiTableOrderBy orderBy, int limit, int offset) {
+	public DelphiContributions getDelphiContributions(RatingQuestion question, DelphiTableOrderBy orderBy, int limit,
+			int offset) {
 		List<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
-		return getDelphiContributions(uids, question.getUniqueId(), question.getSurvey().getIsDraft(), orderBy, limit, offset);
+		return getDelphiContributions(uids, question.getUniqueId(), question.getSurvey().getIsDraft(), orderBy, limit,
+				offset);
 	}
 
 	@Transactional(readOnly = true)
-	public DelphiContributions getDelphiContributions(Table question, DelphiTableOrderBy orderBy, int limit, int offset) {
-		return getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), question.getSurvey().getIsDraft(), orderBy, limit, offset);
+	public DelphiContributions getDelphiContributions(Table question, DelphiTableOrderBy orderBy, int limit,
+			int offset) {
+		return getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(),
+				question.getSurvey().getIsDraft(), orderBy, limit, offset);
 	}
 
 	@Transactional(readOnly = true)
-	public DelphiContributions getDelphiContributions(Collection<String> questionUids, String mainQuestionUid, boolean isDraft, DelphiTableOrderBy orderBy, int limit, int offset) {
+	public DelphiContributions getDelphiContributions(Collection<String> questionUids, String mainQuestionUid,
+			boolean isDraft, DelphiTableOrderBy orderBy, int limit, int offset) {
 		String orderByClauseInner;
 		String orderByClauseOuter;
 
 		switch (orderBy) {
-			case UpdateAsc:
-				orderByClauseInner = "aset.ANSWER_SET_UPDATE ASC";
-				orderByClauseOuter = "`update` ASC, answerSetId";
-				break;
+		case UpdateAsc:
+			orderByClauseInner = "aset.ANSWER_SET_UPDATE ASC";
+			orderByClauseOuter = "`update` ASC, answerSetId";
+			break;
 
-			case UpdateDesc:
-				orderByClauseInner = "aset.ANSWER_SET_UPDATE DESC";
-				orderByClauseOuter = "`update` DESC, answerSetId";
-				break;
+		case UpdateDesc:
+			orderByClauseInner = "aset.ANSWER_SET_UPDATE DESC";
+			orderByClauseOuter = "`update` DESC, answerSetId";
+			break;
 
-			default:
-				throw new IllegalStateException("Unexpected value: " + orderBy);
+		default:
+			throw new IllegalStateException("Unexpected value: " + orderBy);
 		}
 
-		String contributionsQueryText = "" +
-				"SELECT\n" +
-				"    aset.ANSWER_SET_ID answerSetId,\n" +
-				"    aset.ANSWER_SET_UPDATE `update`,\n" +
-				"    a.VALUE value,\n" +
-				"    a.PA_UID answerUid,\n" +
-				"    a.QUESTION_UID questionUid,\n" +
-				"    a.ANSWER_COL `column`,\n" +
-				"    a.ANSWER_ROW row,\n" +
-				"    COALESCE(ex.TEXT, main_explanation.TEXT) explanation\n" +
-				"FROM ANSWERS a\n" +
-				"JOIN (\n" +
+		String contributionsQueryText = "" + "SELECT\n" + "    aset.ANSWER_SET_ID answerSetId,\n"
+				+ "    aset.ANSWER_SET_UPDATE `update`,\n" + "    a.VALUE value,\n" + "    a.PA_UID answerUid,\n"
+				+ "    a.QUESTION_UID questionUid,\n" + "    a.ANSWER_COL `column`,\n" + "    a.ANSWER_ROW row,\n"
+				+ "    COALESCE(ex.TEXT, main_explanation.TEXT) explanation\n" + "FROM ANSWERS a\n" + "JOIN (\n" +
 				// select all answers sets that are relevant for this query
-				"    SELECT\n" +
-				"        aset.ANSWER_SET_ID,\n" +
-				"        aset.ANSWER_SET_UPDATE\n" +
-				"    FROM ANSWERS a\n" +
-				"    JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n" +
-				"    JOIN SURVEYS s ON aset.SURVEY_ID = s.SURVEY_ID\n" +
-				"    WHERE a.QUESTION_UID IN :questionUids\n" +
-				"      AND s.ISDRAFT = :isDraft\n" +
-				"    GROUP BY aset.ANSWER_SET_ID, aset.ANSWER_SET_UPDATE\n" +
-				"    ORDER BY " + orderByClauseInner + "\n" +
+				"    SELECT\n" + "        aset.ANSWER_SET_ID,\n" + "        aset.ANSWER_SET_UPDATE\n"
+				+ "    FROM ANSWERS a\n" + "    JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n"
+				+ "    JOIN SURVEYS s ON aset.SURVEY_ID = s.SURVEY_ID\n" + "    WHERE a.QUESTION_UID IN :questionUids\n"
+				+ "      AND s.ISDRAFT = :isDraft\n" + "    GROUP BY aset.ANSWER_SET_ID, aset.ANSWER_SET_UPDATE\n"
+				+ "    ORDER BY " + orderByClauseInner + "\n" +
 				// pagination
-				"    LIMIT :limit OFFSET :offset\n" +
-				") AS aset ON a.AS_ID = aset.ANSWER_SET_ID\n" +
+				"    LIMIT :limit OFFSET :offset\n" + ") AS aset ON a.AS_ID = aset.ANSWER_SET_ID\n" +
 				// add explanations
-				"LEFT JOIN ANSWERS_EXPLANATIONS ex ON a.QUESTION_UID = ex.QUESTION_UID AND ex.ANSWER_SET_ID = a.AS_ID\n" +
+				"LEFT JOIN ANSWERS_EXPLANATIONS ex ON a.QUESTION_UID = ex.QUESTION_UID AND ex.ANSWER_SET_ID = a.AS_ID\n"
+				+
 				// add explanation of main question (i.e. for ratings)
-				"LEFT JOIN (\n" +
-				"    SELECT TEXT, ANSWER_SET_ID\n" +
-				"    FROM ANSWERS_EXPLANATIONS\n" +
-				"    WHERE QUESTION_UID = :mainQuestionUid\n" +
-				") AS main_explanation ON a.AS_ID = main_explanation.ANSWER_SET_ID\n" +
+				"LEFT JOIN (\n" + "    SELECT TEXT, ANSWER_SET_ID\n" + "    FROM ANSWERS_EXPLANATIONS\n"
+				+ "    WHERE QUESTION_UID = :mainQuestionUid\n"
+				+ ") AS main_explanation ON a.AS_ID = main_explanation.ANSWER_SET_ID\n" +
 				// filter by question
 				"WHERE a.QUESTION_UID IN :questionUids\n" +
 				// sort data as required
@@ -193,18 +186,16 @@ public class AnswerExplanationService extends BasicService {
 
 	@Transactional(readOnly = true)
 	public int getTotalDelphiContributions(Collection<String> questionUids, boolean isDraft) {
-		String totalCountQueryText = "" +
-				"SELECT COUNT(DISTINCT aset.ANSWER_SET_ID)\n" +
-				"FROM ANSWERS a\n" +
-				"JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n" +
-				"JOIN SURVEYS s ON aset.SURVEY_ID = s.SURVEY_ID\n" +
-				"WHERE a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft";
+		String totalCountQueryText = "" + "SELECT COUNT(DISTINCT aset.ANSWER_SET_ID)\n" + "FROM ANSWERS a\n"
+				+ "JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n"
+				+ "JOIN SURVEYS s ON aset.SURVEY_ID = s.SURVEY_ID\n"
+				+ "WHERE a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft";
 
 		Session session = sessionFactory.getCurrentSession();
 		SQLQuery totalCountQuery = session.createSQLQuery(totalCountQueryText);
 		totalCountQuery.setParameterList("questionUids", questionUids);
 		totalCountQuery.setBoolean("isDraft", isDraft);
-		return ((BigInteger)totalCountQuery.uniqueResult()).intValue();
+		return ((BigInteger) totalCountQuery.uniqueResult()).intValue();
 	}
 
 	@Transactional
@@ -235,67 +226,77 @@ public class AnswerExplanationService extends BasicService {
 			}
 		}
 	}
-	
+
 	@Transactional
 	public void saveComment(AnswerComment comment) {
 		final Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(comment);
 	}
-	
+
 	@Transactional
 	public List<AnswerComment> loadComments(int answerSetId, String questionUid) {
 		final Session session = sessionFactory.getCurrentSession();
-		
-		Query query = session.createQuery("FROM AnswerComment WHERE answerSetId = :answerSetId and questionUid = :questionUid ORDER BY date");
+
+		Query query = session.createQuery(
+				"FROM AnswerComment WHERE answerSetId = :answerSetId and questionUid = :questionUid ORDER BY date");
 		query.setInteger("answerSetId", answerSetId).setString("questionUid", questionUid);
-		
+
 		@SuppressWarnings("unchecked")
 		List<AnswerComment> list = query.list();
-		
+
 		return list;
 	}
-	
+
 	@Transactional
-	public String getDiscussion(int answerSetId, String questionUid, boolean useHtml, Map<String, String> usersByUid)
-	{
+	public Map<String, String> getUserAliases(String surveyUid) {
+		final Session session = sessionFactory.getCurrentSession();
+
+		Query query = session.createSQLQuery(
+				"SELECT DISTINCT ac.ANSWER_SET_CODE FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyuid ORDER BY ac.COMMENT_DATE DESC");
+		query.setString("surveyuid", surveyUid);
+
+		@SuppressWarnings("unchecked")
+		List<String> list = query.list();
+		
+		Map<String, String> result = new HashMap<>();
+		
+		for (String code : list) {
+			result.put(code, "User " + (result.size() + 1));
+		}
+		
+		return result;
+	}
+
+	@Transactional
+	public String getDiscussion(int answerSetId, String questionUid, boolean useHtml, Map<String, String> usersByUid) {
 		List<AnswerComment> comments = loadComments(answerSetId, questionUid);
 		StringBuilder s = new StringBuilder();
-		
+
 		Map<Integer, List<AnswerComment>> commentsByParent = new HashMap<>();
-		
+
 		for (AnswerComment comment : comments) {
-			if (!usersByUid.containsKey(comment.getUniqueCode()))
-			{
-				usersByUid.put(comment.getUniqueCode(), "User " + (usersByUid.size() + 1));
-			}	
-						
-			if (comment.getParent() == null)
-			{
+			if (comment.getParent() == null) {
 				commentsByParent.put(comment.getId(), new ArrayList<>());
 				commentsByParent.get(comment.getId()).add(comment);
 			} else {
 				commentsByParent.get(comment.getParent().getId()).add(comment);
 			}
 		}
-		
-		for (List<AnswerComment> list : commentsByParent.values())
-		{
+
+		for (List<AnswerComment> list : commentsByParent.values()) {
 			boolean first = true;
-			for (AnswerComment comment : list)
-			{
-				String userPrefix = usersByUid.get(comment.getUniqueCode()) + ": "; 
-				
+			for (AnswerComment comment : list) {
+				String userPrefix = usersByUid.get(comment.getUniqueCode()) + ": ";
+
 				if (useHtml) {
-					if (first)
-					{
+					if (first) {
 						s.append("<div class='comment'>").append(userPrefix).append(comment.getText()).append("</div>");
 						first = false;
 					} else {
 						s.append("<div class='reply'>").append(userPrefix).append(comment.getText()).append("</div>");
 					}
 				} else {
-					if (first)
-					{
+					if (first) {
 						s.append(userPrefix).append(comment.getText());
 						first = false;
 					} else {
@@ -308,8 +309,8 @@ public class AnswerExplanationService extends BasicService {
 		return s.toString();
 	}
 
-	public String getFormattedExplanationWithFiles(final int answerSetId, final String questionUid, final String surveyUid,
-												   final boolean useHtml) {
+	public String getFormattedExplanationWithFiles(final int answerSetId, final String questionUid,
+			final String surveyUid, final boolean useHtml) {
 
 		final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetId, questionUid);
 		final StringBuilder stringBuilder = new StringBuilder();
@@ -325,13 +326,8 @@ public class AnswerExplanationService extends BasicService {
 		for (int i = 0; i < files.size(); i++) {
 			final File file = files.get(i);
 			if (useHtml) {
-				stringBuilder.append("<a href='")
-						.append(contextpath)
-						.append("/files/")
-						.append(surveyUid)
-						.append(Constants.PATH_DELIMITER)
-						.append(file.getUid())
-						.append("'>");
+				stringBuilder.append("<a href='").append(contextpath).append("/files/").append(surveyUid)
+						.append(Constants.PATH_DELIMITER).append(file.getUid()).append("'>");
 			} else {
 				stringBuilder.append(file.getUid()).append("|");
 			}
@@ -345,42 +341,39 @@ public class AnswerExplanationService extends BasicService {
 		}
 		return stringBuilder.toString();
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Map<Integer, Map<String, String>> getAllDiscussions(Survey survey) {
 		final Session session = sessionFactory.getCurrentSession();
 		final Query query = session.createSQLQuery("SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.ANSWER_SET_CODE, ac.PARENT FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
-				.setBoolean("draft", survey.getIsDraft())
-				.setString("surveyUid", survey.getUniqueId());
-		
-		Map<Integer, Map<String, String>> result = new HashMap<>();		
-		
+				"SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.ANSWER_SET_CODE FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
+				.setBoolean("draft", survey.getIsDraft()).setString("surveyUid", survey.getUniqueId());
+
+		Map<Integer, Map<String, String>> result = new HashMap<>();
+
 		@SuppressWarnings("rawtypes")
 		List res = query.list();
-		
+
 		Map<String, String> usersByUid = new HashMap<String, String>();
-		
+
 		for (Object o : res) {
 			Object[] a = (Object[]) o;
-					
+
 			int answerSetId = ConversionTools.getValue(a[0]);
-			String questionUid = (String)a[1];
-			String explanation =  (String)a[2];
-			String code =  (String)a[3];
+			String questionUid = (String) a[1];
+			String explanation = (String) a[2];
+			String code = (String) a[3];
 			int parent = ConversionTools.getValue(a[4]);
-			
-			if (!usersByUid.containsKey(code))
-			{
+
+			if (!usersByUid.containsKey(code)) {
 				usersByUid.put(code, "User " + (usersByUid.size() + 1));
-			}	
-			
-			if (!result.containsKey(answerSetId))
-			{
+			}
+
+			if (!result.containsKey(answerSetId)) {
 				result.put(answerSetId, new HashMap<String, String>());
 			}
-			
-			if (!result.get(answerSetId).containsKey(questionUid))
-			{			
+
+			if (!result.get(answerSetId).containsKey(questionUid)) {
 				result.get(answerSetId).put(questionUid, usersByUid.get(code) + ": " + explanation);
 			} else {
 				String old = result.get(answerSetId).get(questionUid);
@@ -391,7 +384,7 @@ public class AnswerExplanationService extends BasicService {
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
