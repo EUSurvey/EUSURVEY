@@ -413,6 +413,8 @@ public class ReportingService extends BasicService {
 	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
+		Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
+		
 		Map<String, Object> values = new HashMap<>();
 		String where = getWhereClause(filter, values, survey);
 		
@@ -530,8 +532,6 @@ public class ReportingService extends BasicService {
 			
 			@SuppressWarnings("unchecked")
 			List<Object> result = query.list();
-			
-			Map<String, String> usersByUid = new HashMap<>();
 			
 			for (Object o : result)
 			{

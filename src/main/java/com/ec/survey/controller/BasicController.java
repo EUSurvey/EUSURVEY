@@ -69,8 +69,6 @@ import com.ec.survey.tools.InvalidXHTMLException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.WeakAuthenticationException;
-import com.octo.captcha.service.CaptchaServiceException;
-import com.octo.captcha.service.multitype.MultiTypeCaptchaService;
 
 @Controller
 public class BasicController implements BeanFactoryAware {
@@ -156,9 +154,6 @@ public class BasicController implements BeanFactoryAware {
 
 	@Autowired
 	public ServletContext servletContext;
-
-	@Autowired
-	private MultiTypeCaptchaService captchaService;
 
 	@Value("${server.prefix}")
 	public String serverPrefix;
@@ -490,7 +485,6 @@ public class BasicController implements BeanFactoryAware {
 		URLConnection connection = null;
 		try {
 			if (!isByPassCaptcha()) {
-
 				String captcha = settingsService.get("captcha");
 				if (captcha.equalsIgnoreCase("recaptcha")) {
 					sessionService.initializeProxy();
@@ -507,25 +501,13 @@ public class BasicController implements BeanFactoryAware {
 							return inputLine.contains("true");
 						}
 					in.close();
-				} else if (captcha.equalsIgnoreCase("internal")) {
-					String str = request.getParameter("j_captcha_response");
-					if (str == null)
-						str = request.getParameter("g-recaptcha-response");
-
-					boolean validCaptcha = false;
-					try {
-						validCaptcha = captchaService.validateResponseForID(request.getSession().getId(), str);
-					} catch (CaptchaServiceException e) {
-						// should not happen, may be thrown if the id is not valid
-						return false;
-					}
-					return validCaptcha;
-				} else {
-					return true;
 				}
+				if (captcha.equalsIgnoreCase("internal")) {
+					String str = request.getParameter("internal_captcha_response");
+					return sessionService.getCaptchaText(request).equals(str);
+				} 
 				return false;
 			} else {
-				logger.error("checkCaptcha Has been bypassing");
 				return true;
 			}
 		} catch (NullPointerException npe) {

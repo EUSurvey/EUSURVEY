@@ -36,7 +36,7 @@
 						let newSrc = oldSrc + "?" + new Date().getTime().toString();
 						$(this).attr("src", newSrc);
 					});
-					$("#j_captcha_response").val("");
+					$("#internal_captcha_response").val("");
 				</c:when>
 				<c:otherwise>
 					grecaptcha.reset();
@@ -67,10 +67,10 @@
 				<c:when test='${captcha == "internal"}'>
 					if (parent != null)
 					{
-						return parent.find("#j_captcha_response").val();
+						return parent.find("#internal_captcha_response").val();
 					}					
 				
-					return $("#j_captcha_response").val();
+					return $("#internal_captcha_response").val();
 				</c:when>
 				<c:otherwise>
 					return grecaptcha.getResponse();

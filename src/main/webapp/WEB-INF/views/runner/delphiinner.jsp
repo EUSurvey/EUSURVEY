@@ -53,6 +53,8 @@
 		border-bottom: 1px solid #ccc;
 		margin-bottom: 5px;
 		font-weight: bold;
+		height: 50px;
+		overflow-y: hidden;
 	}
 	
 	.greenanswer {	
@@ -270,7 +272,7 @@
 		    		return title;
 		    	}
 		    	
-		    	return "<span data-toggle='tooltip' title='" + title + "'>" + title.substring(0,75) + "...</span>";
+		    	return "<span data-toggle='tooltip' data-html='true' title='" + title + "'>" + title.substring(0,75) + "...</span>";
 			},
 			
 			niceAnswer: function(answer)

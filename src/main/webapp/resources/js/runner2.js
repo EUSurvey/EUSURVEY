@@ -243,7 +243,9 @@ function addElementToContainer(element, container, foreditor, forskin)
 		$(container).find(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 		$(container).find(".qq-upload-drop-area").css("margin-left", "-1000px");
 		$(container).find(".qq-upload-list").hide();
-	} else if (element.type == 'DateQuestion') {
+	} 
+	
+	if (element.type == 'DateQuestion') {
 		$(container).find(".datepicker").each(function(){			
 			createDatePicker(this);						
 		});
@@ -670,6 +672,22 @@ function firstDelphiTablePage(element) {
 	var viewModel = modelsForDelphiQuestions[uid];
 
 	viewModel.delphiTableOffset(0);
+	loadTableData(surveyElement, viewModel)
+}
+
+function lastDelphiTablePage(element) {
+	var surveyElement = $(element).closest(".survey-element");
+	var uid = $(surveyElement).attr("data-uid");
+	var viewModel = modelsForDelphiQuestions[uid];
+
+	var overflow = viewModel.delphiTableTotalEntries() % viewModel.delphiTableLimit();
+
+	if (overflow === 0) {
+		overflow = viewModel.delphiTableLimit();
+	}
+
+	var newOffset = viewModel.delphiTableTotalEntries() - overflow;
+	viewModel.delphiTableOffset(newOffset);
 	loadTableData(surveyElement, viewModel)
 }
 
