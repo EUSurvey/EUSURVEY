@@ -2399,7 +2399,7 @@ public class RunnerController extends BasicController {
 
 			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 			
-			if (answerSet == null) {
+			if (!survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -2412,7 +2412,8 @@ public class RunnerController extends BasicController {
 			}
 
 			Question question = (Question) element;
-			if (!question.getIsDelphiQuestion()|| !answerSetContainsAnswerForQuestion(answerSet, question)) {
+			if (!question.getIsDelphiQuestion() || (!survey.getIsDelphiShowAnswersAndStatisticsInstantly()
+					&& !answerSetContainsAnswerForQuestion(answerSet, question))) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
@@ -2737,7 +2738,7 @@ public class RunnerController extends BasicController {
 
 			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 
-			if (answerSet == null) {
+			if (!survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -2750,7 +2751,8 @@ public class RunnerController extends BasicController {
 			}
 
 			Question question = (Question) element;
-			if (!question.getIsDelphiQuestion() || !answerSetContainsAnswerForQuestion(answerSet, question)) {
+			if (!question.getIsDelphiQuestion() || (!survey.getIsDelphiShowAnswersAndStatisticsInstantly()
+					&& !answerSetContainsAnswerForQuestion(answerSet, question))) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
