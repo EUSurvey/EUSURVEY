@@ -176,6 +176,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isUseMaxNumberContributionLink = false;
 	private String maxNumberContributionLink = "";
 	private Boolean sendConfirmationEmail = false;
+	private Boolean isDelphiShowAnswersAndStatisticsInstantly = false;
 	private Boolean isDelphiShowAnswers = false;
 	private Integer minNumberDelphiStatistics = 5;
 
@@ -1367,7 +1368,16 @@ final public class Survey implements java.io.Serializable {
 	public void setTrustScore(Integer trustScore) {
 		this.trustScore = trustScore;
 	}
-	
+
+	@Column(name = "DELPHIANSWERSANDSTATISTICSINSTANTLY")
+	public Boolean getIsDelphiShowAnswersAndStatisticsInstantly() {
+		return isDelphiShowAnswersAndStatisticsInstantly != null ? isDelphiShowAnswersAndStatisticsInstantly : false;
+	}
+
+	public void setIsDelphiShowAnswersAndStatisticsInstantly(Boolean isDelphiShowAnswersAndStatisticsInstantly) {
+		this.isDelphiShowAnswersAndStatisticsInstantly = isDelphiShowAnswersAndStatisticsInstantly != null ? isDelphiShowAnswersAndStatisticsInstantly : false;
+	}
+
 	@Column(name = "DELPHIANSWERS")
 	public Boolean getIsDelphiShowAnswers() {
 		return isDelphiShowAnswers  != null ? isDelphiShowAnswers : false;
@@ -1529,6 +1539,7 @@ final public class Survey implements java.io.Serializable {
 		copy.setMaxNumberContributionText(Tools.filterHTML(maxNumberContributionText));
 		copy.setMaxNumberContributionLink(Tools.filterHTML(maxNumberContributionLink));
 		copy.isDelphi = isDelphi;
+		copy.isDelphiShowAnswersAndStatisticsInstantly = isDelphiShowAnswersAndStatisticsInstantly;
 		copy.isDelphiShowAnswers = isDelphiShowAnswers;
 		copy.minNumberDelphiStatistics = minNumberDelphiStatistics;
 

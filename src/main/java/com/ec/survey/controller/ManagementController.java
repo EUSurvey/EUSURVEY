@@ -1350,7 +1350,8 @@ public class ManagementController extends BasicController {
 		survey.setShowQuizIcons(uploadedSurvey.getShowQuizIcons());
 		survey.setShowTotalScore(uploadedSurvey.getShowTotalScore());
 		survey.setScoresByQuestion(uploadedSurvey.getScoresByQuestion());
-		
+
+		survey.setIsDelphiShowAnswersAndStatisticsInstantly(uploadedSurvey.getIsDelphiShowAnswersAndStatisticsInstantly());
 		survey.setIsDelphiShowAnswers(uploadedSurvey.getIsDelphiShowAnswers());
 		survey.setMinNumberDelphiStatistics(uploadedSurvey.getMinNumberDelphiStatistics());
 		
