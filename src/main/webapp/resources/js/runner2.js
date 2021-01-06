@@ -64,6 +64,15 @@ function addElement(element, foreditor, forskin)
 	}
 	var container = $(".emptyelement[data-id=" + id + "]");
 	$(container).removeClass("emptyelement");
+	if ((element.hasOwnProperty("isViewModel") && element.isViewModel)) {
+		if (element.isDelphiQuestion()) {
+			$(container).addClass("delphi");
+		}
+	} else {
+		if (element.isDelphiQuestion) {
+			$(container).addClass("delphi");
+		}
+	}
 	$(container).find("img").remove();
 	
 	addElementToContainer(element, container, foreditor, forskin);
