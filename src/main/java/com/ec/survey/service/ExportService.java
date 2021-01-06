@@ -503,12 +503,17 @@ public class ExportService extends BasicService {
 		return count > 0 ;
 	}
 	
-	@Transactional
+	@Transactional(readOnly = false, propagation=Propagation.REQUIRES_NEW)
 	public void update(Export export) {
-		Session session = sessionFactory.getCurrentSession();
-		export = (Export) session.merge(export);
-		session.setReadOnly(export, false);
-		session.saveOrUpdate(export);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			export = (Export) session.merge(export);
+			session.setReadOnly(export, false);
+			session.saveOrUpdate(export);
+			session.flush();
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
 	}
 
 	@Transactional(readOnly = false, propagation=Propagation.REQUIRES_NEW)

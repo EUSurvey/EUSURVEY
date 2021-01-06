@@ -37,6 +37,7 @@ import com.ec.survey.model.survey.EmailQuestion;
 import com.ec.survey.model.survey.FreeTextQuestion;
 import com.ec.survey.model.survey.GalleryQuestion;
 import com.ec.survey.model.survey.Matrix;
+import com.ec.survey.model.survey.MatrixOrTable;
 import com.ec.survey.model.survey.MultipleChoiceQuestion;
 import com.ec.survey.model.survey.NumberQuestion;
 import com.ec.survey.model.survey.Question;
@@ -641,9 +642,38 @@ public class ReportingService extends BasicService {
 								row.add(item.toString());
 							}
 							
-							if (survey.getIsDelphi() && question.isDelphiElement())
+							if (question == null)
 							{
-								if (filter.getVisibleExplanations().contains(question.getId().toString()))
+								logger.info("question not found");
+							}
+								
+							if (survey.getIsDelphi() && question != null && question.isDelphiElement())
+							{
+								boolean skip = false;
+								
+								if (question instanceof MatrixOrTable)
+								{
+									//explanation and discussion columns are only added once (after the last matrix subquestion)
+									MatrixOrTable matrix = (MatrixOrTable)question;
+									List<Element> matrixQuestions = matrix.getQuestions();
+									Element lastQuestion = matrixQuestions.get(matrixQuestions.size()-1);
+									if (!lastQuestion.getUniqueId().equals(questionuid))
+									{
+										skip = true;
+									}
+								} else if (question instanceof RatingQuestion)
+								{
+									//explanation and discussion columns are only added once (after the last matrix subquestion)
+									RatingQuestion rating = (RatingQuestion)question;
+									List<Element> ratingQuestions = rating.getQuestions();
+									Element lastQuestion = ratingQuestions.get(ratingQuestions.size()-1);
+									if (!lastQuestion.getUniqueId().equals(questionuid))
+									{
+										skip = true;
+									}
+								}						
+								
+								if (!skip && filter.getVisibleExplanations().contains(question.getId().toString()))
 								{
 									try {
 										String explanation = answerExplanationService.getFormattedExplanationWithFiles(
@@ -655,7 +685,7 @@ public class ReportingService extends BasicService {
 									}
 								}
 								
-								if (filter.getVisibleDiscussions().contains(question.getId().toString()))
+								if (!skip && filter.getVisibleDiscussions().contains(question.getId().toString()))
 								{
 									try {
 										String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerrow[1]), question.getUniqueId(), !forexport, usersByUid);

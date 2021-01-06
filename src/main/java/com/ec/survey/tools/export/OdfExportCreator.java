@@ -8,6 +8,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SqlQueryService;
@@ -304,6 +305,10 @@ public class OdfExportCreator extends ExportCreator {
 			}
 		}
 
+		FilesByTypes<Integer, String> explanationFilesOfSurvey =
+				answerExplanationService.getExplanationFilesByAnswerSetIdAndQuestionUid(form.getSurvey());
+		FilesByTypes<String, String> explanationFilesToExport = new FilesByTypes<>();
+
 		Session session;
 		Transaction t = null;
 
@@ -346,7 +351,7 @@ public class OdfExportCreator extends ExportCreator {
 		if (answersets != null) {
 			for (List<String> row : answersets) {
 				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, uploadedFilesByCodeAndQuestionUID,
-						uploadQuestionNicenames, null, null);
+						uploadQuestionNicenames, null, null, explanationFilesOfSurvey, explanationFilesToExport);
 			}
 		} else {
 
@@ -387,7 +392,8 @@ public class OdfExportCreator extends ExportCreator {
 				} else {
 					if (lastAnswerSet > 0) {
 						parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export,
-								uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions);
+								uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions,
+								explanationFilesOfSurvey, explanationFilesToExport);
 						session.flush();
 					}
 
@@ -408,7 +414,8 @@ public class OdfExportCreator extends ExportCreator {
 			}
 			if (lastAnswerSet > 0)
 				parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export,
-						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions);
+						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions,
+						explanationFilesOfSurvey, explanationFilesToExport);
 			results.close();
 		}
 
@@ -462,6 +469,21 @@ public class OdfExportCreator extends ExportCreator {
 				}
 			}
 
+			explanationFilesToExport.applyFunctionOnEachFile((answerSetUId, questionUid, explanationFile) -> {
+				java.io.File file = fileService.getSurveyFile(survey.getUniqueId(), explanationFile.getUid());
+
+				if (!file.exists()) {
+					file = new java.io.File(exportService.getFileDir() + explanationFile.getUid());
+				}
+
+				if (file.exists()) {
+					os.putArchiveEntry(new ZipArchiveEntry(answerSetUId + Constants.PATH_DELIMITER + questionUid +
+							Constants.PATH_DELIMITER + explanationFile.getName()));
+					IOUtils.copy(new FileInputStream(file), os);
+					os.closeArchiveEntry();
+				}
+			});
+
 			os.close();
 			if (export != null)
 				export.setZipped(true);
@@ -474,7 +496,9 @@ public class OdfExportCreator extends ExportCreator {
 	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication,
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export,
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
-			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations, Map<Integer, Map<String, String>> discussions) throws Exception {
+			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations,
+			Map<Integer, Map<String, String>> discussions, FilesByTypes<Integer, String> explanationFilesOfSurvey,
+			FilesByTypes<String, String> explanationFilesToExport) throws Exception {
 		rowIndex++;
 		columnIndex = 0;
 
@@ -785,22 +809,39 @@ public class OdfExportCreator extends ExportCreator {
 					}
 				}
 			if (question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
+				final String questionUid = question.getUniqueId();
 				cell = sheet.getCellByPosition(columnIndex++, rowIndex);
-								
+				String answerSetUid;
+				String explanation;
+
 				if (answerSet == null) {
-					cell.setStringValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter)));
-					cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+					answerSetUid = answerrow.get(0);
+					explanation = ExportCreatorHelper.retrieveExplanationWithFilesFromReportingAnswer(
+							answerrow.get(answerrowcounter++), answerSetUid, questionUid, explanationFilesToExport);
 				} else {
-					if (explanations.containsKey(answerSet.getId()) && explanations.get(answerSet.getId()).containsKey(question.getUniqueId()))
-					{
-						cell.setStringValue(ConversionTools.removeHTMLNoEscape(explanations.get(answerSet.getId()).get(question.getUniqueId())));
-						cell.setDisplayText(ConversionTools.removeHTMLNoEscape(explanations.get(answerSet.getId()).get(question.getUniqueId())));
-					} else {
-						cell.setStringValue("");
-					}				
+					answerSetUid = answerSet.getUniqueCode();
+					explanation = ExportCreatorHelper.retrieveExplanationWithFilesFromAnswerSetAndExistingFiles(
+							answerSet, explanations, questionUid, explanationFilesOfSurvey, explanationFilesToExport);
 				}
-				
-				cell.setValueType(Constants.STRING);
+
+				if (!explanation.isEmpty()) {
+					cell.addParagraph(explanation);
+				}
+				final List<File> files = explanationFilesToExport.getFiles(answerSetUid, questionUid);
+				if (!files.isEmpty()) {
+					final Paragraph p = cell.addParagraph("");
+					final Iterator<File> fileIterator = files.iterator();
+					while (fileIterator.hasNext()) {
+						final File file = fileIterator.next();
+						p.appendHyperlink(file.getNameForExport(),
+								new URI("../" + answerSetUid + Constants.PATH_DELIMITER + questionUid +
+										Constants.PATH_DELIMITER + file.getNameForExport())
+						);
+						if (fileIterator.hasNext()) {
+							p.appendTextContent(";");
+						}
+					}
+				}
 			}
 			
 			if (question.isDelphiElement() && filter.discussionExported(question.getId().toString()))

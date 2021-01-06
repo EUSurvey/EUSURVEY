@@ -7,6 +7,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.Constants;
@@ -291,6 +292,10 @@ public class XlsExportCreator extends ExportCreator {
 			}
 		}
 
+		FilesByTypes<Integer, String> explanationFilesOfSurvey =
+				answerExplanationService.getExplanationFilesByAnswerSetIdAndQuestionUid(form.getSurvey());
+		FilesByTypes<String, String> explanationFilesToExport = new FilesByTypes<>();
+
 		Map<String, Map<String, List<File>>> uploadedFilesByCodeAndQuestionUID = new HashMap<>();
 		Map<String, String> uploadQuestionNicenames = new HashMap<>();
 
@@ -340,7 +345,8 @@ public class XlsExportCreator extends ExportCreator {
 		if (answersets != null) {
 			for (List<String> row : answersets) {
 				parseAnswerSet(null, row, publication, filter, filesByAnswer, export, questions,
-						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, null, null);
+						uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, null, null,
+						explanationFilesOfSurvey, explanationFilesToExport);
 			}
 		} else {
 
@@ -405,7 +411,8 @@ public class XlsExportCreator extends ExportCreator {
 						if (lastAnswerSet > 0) {
 							session.flush();
 							parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions,
-									uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions);
+									uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations,discussions,
+									explanationFilesOfSurvey, explanationFilesToExport);
 						}
 
 						answerSet = new AnswerSet();
@@ -424,7 +431,8 @@ public class XlsExportCreator extends ExportCreator {
 				}
 				if (lastAnswerSet > 0)
 					parseAnswerSet(answerSet, null, publication, filter, filesByAnswer, export, questions,
-							uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions);
+							uploadedFilesByCodeAndQuestionUID, uploadQuestionNicenames, explanations, discussions,
+							explanationFilesOfSurvey, explanationFilesToExport);
 			} finally {
 				results.close();
 			}
@@ -438,7 +446,7 @@ public class XlsExportCreator extends ExportCreator {
 
 		wb.write(outputStream);
 
-		if (fileCounter > 0 || !uploadedFiles.isEmpty()) {
+		if (fileCounter > 0 || !uploadedFiles.isEmpty() || explanationFilesToExport.hasFiles()) {
 			// there are multiple files
 			java.io.File temp = new java.io.File(exportFilePath + ".zip");
 			final OutputStream out = new FileOutputStream(temp);
@@ -483,6 +491,21 @@ public class XlsExportCreator extends ExportCreator {
 					}
 				}
 
+				explanationFilesToExport.applyFunctionOnEachFile((answerSetId, questionUid, explanationFile) -> {
+					java.io.File file = fileService.getSurveyFile(survey.getUniqueId(), explanationFile.getUid());
+
+					if (!file.exists()) {
+						file = new java.io.File(exportService.getFileDir() + explanationFile.getUid());
+					}
+
+					if (file.exists()) {
+						os.putArchiveEntry(new ZipArchiveEntry(answerSetId + Constants.PATH_DELIMITER + questionUid +
+								Constants.PATH_DELIMITER + explanationFile.getName()));
+						IOUtils.copy(new FileInputStream(file), os);
+						os.closeArchiveEntry();
+					}
+				});
+
 			} finally {
 				os.close();
 			}
@@ -526,7 +549,9 @@ public class XlsExportCreator extends ExportCreator {
 	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication,
 			ResultFilter filter, Map<Integer, List<File>> filesByAnswer, Export export, List<Question> questions,
 			Map<String, Map<String, List<File>>> uploadedFilesByContributionIDAndQuestionUID,
-			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations, Map<Integer, Map<String, String>> discussions) throws IOException {
+			Map<String, String> uploadQuestionNicenames, Map<Integer, Map<String, String>> explanations,
+			Map<Integer, Map<String, String>> discussions, FilesByTypes<Integer, String> explanationFilesOfSurvey,
+			FilesByTypes<String, String> explanationFilesToExport) throws IOException {
 		CreationHelper createHelper = wb.getCreationHelper();
 
 		// Excel older than 2007 has a limit on the number of rows
@@ -712,9 +737,7 @@ public class XlsExportCreator extends ExportCreator {
 						}
 
 						cell.setCellValue(cellValue.toString());
-						Hyperlink link = createHelper.createHyperlink(Hyperlink.LINK_FILE);
-						link.setAddress(linkValue);
-						cell.setHyperlink((org.apache.poi.ss.usermodel.Hyperlink) link);
+						linkCell(cell, linkValue, createHelper);
 					}
 				} else if (question instanceof GalleryQuestion) {
 
@@ -866,18 +889,41 @@ public class XlsExportCreator extends ExportCreator {
 				}
 			
 			if (question.isDelphiElement() && filter.explanationExported(question.getId().toString())) {
-				Cell cell = checkColumnsParseAnswerSet();
+				final String questionUid = question.getUniqueId();
+				final Cell cell = checkColumnsParseAnswerSet();
+				String answerSetUid;
+				String explanation;
 								
 				if (answerSet == null) {
-					cell.setCellValue(ConversionTools.removeHTMLNoEscape(answerrow.get(answerrowcounter++)));
+					answerSetUid = answerrow.get(0);
+					explanation = ExportCreatorHelper.retrieveExplanationWithFilesFromReportingAnswer(
+							answerrow.get(answerrowcounter++), answerSetUid, questionUid, explanationFilesToExport);
 				} else {
-					if (explanations.containsKey(answerSet.getId()) && explanations.get(answerSet.getId()).containsKey(question.getUniqueId()))
-					{
-						cell.setCellValue(ConversionTools.removeHTMLNoEscape(explanations.get(answerSet.getId()).get(question.getUniqueId())));
-					} else {
-						cell.setCellValue("");
-					}				
+					answerSetUid = answerSet.getUniqueCode();
+					explanation = ExportCreatorHelper.retrieveExplanationWithFilesFromAnswerSetAndExistingFiles(
+							answerSet, explanations, questionUid, explanationFilesOfSurvey, explanationFilesToExport);
 				}
+
+				final List<File> files = explanationFilesToExport.getFiles(answerSetUid, questionUid);
+				explanation = ConversionTools.removeHTMLNoEscape(explanation);
+				if (!explanation.isEmpty() && !files.isEmpty()) {
+					explanation += "\n";
+				}
+				final Iterator<File> fileIterator = files.iterator();
+				while (fileIterator.hasNext()) {
+					final File file = fileIterator.next();
+					explanation += ConversionTools.removeHTMLNoEscape(file.getNameForExport());
+					if (fileIterator.hasNext()) {
+						explanation += ";";
+					}
+				}
+				cell.setCellValue(explanation);
+
+				if (!files.isEmpty()) {
+					linkCell(cell, answerSetUid + Constants.PATH_DELIMITER + questionUid, createHelper);
+				}
+
+				enableLineBreaksInCell(cell);
 			}
 			
 			if (question.isDelphiElement() && filter.discussionExported(question.getId().toString())) {
@@ -894,13 +940,8 @@ public class XlsExportCreator extends ExportCreator {
 				
 				if (!discussion.isEmpty())  {
 					cell.setCellValue(ConversionTools.removeInvalidHtmlEntities(discussion));
-					
-					if (cswrap == null) {
-						cswrap = wb.createCellStyle();
-						cswrap.setWrapText(true);
-					}
-					
-					cell.setCellStyle(cswrap);
+
+					enableLineBreaksInCell(cell);
 				} else {
 					cell.setCellValue("");
 				}
@@ -1006,6 +1047,20 @@ public class XlsExportCreator extends ExportCreator {
 				cell.setCellValue(answerSet.getScore() != null ? answerSet.getScore() : 0);
 			}
 		}
+	}
+
+	private void enableLineBreaksInCell(final Cell cell) {
+		if (cswrap == null) {
+			cswrap = wb.createCellStyle();
+			cswrap.setWrapText(true);
+		}
+		cell.setCellStyle(cswrap);
+	}
+
+	private void linkCell(final Cell cell, final String linkValue, final CreationHelper createHelper) {
+		final Hyperlink link = createHelper.createHyperlink(Hyperlink.LINK_FILE);
+		link.setAddress(linkValue);
+		cell.setHyperlink((org.apache.poi.ss.usermodel.Hyperlink) link);
 	}
 
 	@Override
