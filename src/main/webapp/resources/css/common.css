@@ -1280,10 +1280,14 @@ legend {
 }
 
 .delphi.elementwrapper {
-    border: 1px solid #ccc;
-    background-color: #f5f5f5;
 	margin-top: 20px;
 	position: relative;
+}
+
+.elementwrapper.delphi,
+#editcontent .survey-element.delphi {
+	border: 1px solid #ccc;
+	background-color: #f5f5f5;
 }
 
 .delphi .questiontitle {
