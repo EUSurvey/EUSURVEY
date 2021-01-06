@@ -642,7 +642,12 @@ public class ReportingService extends BasicService {
 								row.add(item.toString());
 							}
 							
-							if (survey.getIsDelphi() && question.isDelphiElement())
+							if (question == null)
+							{
+								logger.info("question not found");
+							}
+								
+							if (survey.getIsDelphi() && question != null && question.isDelphiElement())
 							{
 								boolean skip = false;
 								
