@@ -1293,9 +1293,12 @@ legend {
 
 .delphi-table {
 	background-color: #fff;
+	font-size: 100%;
+}
+
+.survey-element .delphi-table {
 	margin-left: 35px;
 	margin-right: 15px;
-	font-size: 100%;
 }
 
 .matrixtable {
@@ -1323,10 +1326,6 @@ legend {
 
 .chart-wrapper {
 	display: none;
-}
-
-.delphi-table-wrapper {
-	margin: 15px 0 0 25px;
 }
 
 .update-error {
@@ -2143,3 +2142,13 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 .slider-tick.round {
 	/*display: none;*/
 } 
+
+.answers-table-modal .modal-body {
+	overflow: auto;
+}
+
+.answers-table-modal .answers-table-modal-error {
+	color: red;
+	display: none;
+	margin-bottom: 5px;
+}

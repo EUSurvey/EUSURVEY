@@ -195,7 +195,7 @@
 					<div class="sectioncontent">
 										
 						<!-- ko foreach: questions -->
-						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid}">
+						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid}">
 							<div class="question-title" data-bind="html: sectionViewModel.niceTitle(title)"></div>
 							
 							<div class="no-graph-image">
@@ -216,6 +216,9 @@
 								<div class="redanswer"><spring:message code="info.NotAnswered" /></div>
 								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#E' + id}"><spring:message code="label.Answer" /></a>
 								<!-- /ko -->
+								<!-- ko if: isDelphiShowAnswersAndStatisticsInstantly || answer.length > 0 -->
+								<a class="btn btn-xs btn-default" onclick="openAnswersDialog(this);"><spring:message code="label.ShowAllAnswers" /></a>
+								<!-- /ko -->
 							</div>
 						</div>					
 						<!-- /ko -->
@@ -234,8 +237,35 @@
 		
 		<div style="clear: both"></div>
 	</div>
-	
+
+	<div class="modal answers-table-modal" data-backdrop="static">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header"><spring:message code="label.ResultsTable" /></div>
+				<div class="modal-body">
+					<div class="answers-table-modal-error">
+						<spring:message code="error.DelphiTableContributionCouldNotBeSubmitted" />
+					</div>
+					<%@ include file="delphiAnswersTable.jsp" %>
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close" /></a>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<script type="text/javascript">
+		function openAnswersDialog(element) {
+			$('.answers-table-modal').modal('show');
+
+			const languageCode = "${form.language.code}";
+			currentQuestionUidInModal = $(element).closest('.question').attr('data-uid');
+			const surveyId = ${form.survey.id};
+			const uniqueCode = "${uniqueCode}";
+			loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, uniqueCode, answersTableViewModel);
+		}
+
 		function changeLanguageSelectOption(mode) {
 			window.location = "?surveylanguage=" + $('#langSelectorRunner').val();
 		}
@@ -255,12 +285,35 @@
 				toggle($(this).parent());
 			});
 		}
+
+		function saveDelphiCommentWrapper(element, reply) {
+
+			$('.answers-table-modal-error').hide();
+
+			const surveyId = ${form.survey.id};
+			const uniqueCode = "${uniqueCode}";
+			const errorCallback = function() {
+				$('.answers-table-modal-error').show();
+			}
+			const successCallback = function() {
+				const languageCode = "${form.language.code}";
+				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, uniqueCode, answersTableViewModel);
+			}
+			saveDelphiCommentInner(element, reply, currentQuestionUidInModal, surveyId, uniqueCode, errorCallback,
+				successCallback);
+		}
 		
 		function toggle(element)
 		{
 			$(element).closest('.sectionwithquestions').find(".sectioncontent").toggle();
 			$(element).parent().find("a").toggle();
 		}
+
+		const answersTableViewModel = createNewDelphiBasicViewModel();
+
+		const isDelphiShowAnswersAndStatisticsInstantly = ${form.survey.isDelphiShowAnswersAndStatisticsInstantly};
+
+		let currentQuestionUidInModal;
 		
 		var sectionViewModel = {
 		    sections: ko.observableArray(),
@@ -285,9 +338,8 @@
 			}
 		};
 		
-		function loadSectionsAndQuestions(div) {
+		function loadSectionsAndQuestions() {
 			var surveyid = ${form.survey.id};
-			const isDelphiShowAnswersAndStatisticsInstantly = ${form.survey.isDelphiShowAnswersAndStatisticsInstantly};
 			var uniquecode = "${uniqueCode}";
 			var invitation = "${invitation}";
 			var languagecode = "${form.language.code}";
@@ -330,6 +382,7 @@
 		
 		$(document).ready(function(){
 			ko.applyBindings(sectionViewModel, $("#sections")[0]);
+			ko.applyBindings(answersTableViewModel, $('.answers-table-modal').find('.modal-body')[0]);
 			
 			loadSectionsAndQuestions();
 		});

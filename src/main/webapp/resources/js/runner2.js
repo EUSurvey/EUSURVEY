@@ -724,16 +724,22 @@ function sortDelphiTable(element, direction) {
 }
 
 function loadTableData(div, viewModel) {
-	var surveyId = $('#survey\\.id').val();
-	var questionuid = $(div).attr("data-uid");
-	var languagecode = $('#language\\.code').val();
-	var uniquecode = $('#uniqueCode').val();
 
-	var orderBy = viewModel.delphiTableOrder();
-	var offset = viewModel.delphiTableOffset();
-	var limit = viewModel.delphiTableLimit();
+	const surveyId = $('#survey\\.id').val();
+	const questionUid = $(div).attr("data-uid");
+	const languageCode = $('#language\\.code').val();
+	const uniqueCode = $('#uniqueCode').val();
+	loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel);
+}
 
-	var data = "surveyid=" + surveyId + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode + "&orderby=" + orderBy + "&offset=" + offset + "&limit=" + limit;
+function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel) {
+
+	const orderBy = viewModel.delphiTableOrder();
+	const offset = viewModel.delphiTableOffset();
+	const limit = viewModel.delphiTableLimit();
+
+	const data = "surveyid=" + surveyId + "&questionuid=" + questionUid + "&languagecode=" + languageCode
+		+ "&uniquecode=" + uniqueCode + "&orderby=" + orderBy + "&offset=" + offset + "&limit=" + limit;
 
 	$.ajax({
 		type: "GET",
@@ -752,8 +758,15 @@ function loadTableData(div, viewModel) {
 				return;
 			}
 
-			for (var i = 0; i < result.entries.length; i++) {
-				viewModel.delphiTableEntries.push(result.entries[i]);
+			for (let i = 0; i < result.entries.length; i++) {
+				const entry = result.entries[i];
+				entry.delphiTableIsCommentFormVisible = ko.observable(false);
+				entry.delphiTableHasCommentFieldFocus = ko.observable(false);
+				for (let j = 0; j < entry.comments.length; j++) {
+					entry.comments[j].delphiTableIsReplyFormVisible = ko.observable(false);
+					entry.comments[j].delphiTableHasReplyFieldFocus = ko.observable(false);
+				}
+				viewModel.delphiTableEntries.push(entry);
 			}
 
 			viewModel.delphiTableOffset(result.offset);
@@ -854,74 +867,39 @@ function delphiUpdate(div) {
 	 });
 }
 
-function addDelphiComment(button) {	
-	if ($(button).closest(".delphi-table").find(".delphicomment").length > 0)
-	{
-		return;
+function saveDelphiComment(button, reply) {
+
+	const td = $(button).closest("td");
+	const questionUid = $(td).closest(".survey-element").attr("data-uid");
+	const surveyId = $('#survey\\.id').val();
+	const uniqueCode = $('#uniqueCode').val();
+	const errorCallback = function() {
+		showError("error");
 	}
-	if ($(button).closest(".delphi-table").find(".delphireply").length > 0)
-	{
-		return;
+	const successCallback = function() {
+		const viewModel = modelsForDelphiQuestions[questionUid];
+		loadTableData($(td).closest(".survey-element"), viewModel);
 	}
-	
-	var div = document.createElement("div");
-	$(div).addClass("delphicomment");
-	var input = document.createElement("textarea");
-	$(input).addClass("form-control");
-	$(div).append(input);
-	$(div).append("<a class='btn btn-xs btn-primary' onclick='saveDelphiComment(this, false)'>Save</a>");
-	$(div).append("<a class='btn btn-xs btn-default' onclick='cancelDelphiComment(this)'>Cancel</a>");
-	$(button).after(div);
-	
-	$(button).parent().find("textarea").first().focus();
+	saveDelphiCommentInner(button, reply, questionUid, surveyId, uniqueCode, errorCallback, successCallback);
 }
 
-function addDelphiReply(button, parent) {	
-	if ($(button).closest(".delphi-table").find(".delphicomment").length > 0)
-	{
-		return;
-	}
-	if ($(button).closest(".delphi-table").find(".delphireply").length > 0)
-	{
-		return;
-	}
-	
-	var div = document.createElement("div");
-	$(div).addClass("delphireply");
-	var input = document.createElement("textarea");
-	$(input).addClass("form-control");
-	$(div).append(input);
-	$(div).append("<a data-parent='" + parent + "' class='btn btn-xs btn-primary' onclick='saveDelphiComment(this, true)'>Save</a>");
-	$(div).append("<a class='btn btn-xs btn-default' onclick='cancelDelphiComment(this)'>Cancel</a>");
-	$(button).after(div);
-	
-	$(button).parent().find("textarea").first().focus();
-}
-
-function cancelDelphiComment(button) {
-	$(button).closest("td").find(".delphicomment").remove();
-	$(button).closest("td").find(".delphireply").remove();
-}
-
-function saveDelphiComment(button, reply) {	
-	var text;
+function saveDelphiCommentInner(button, reply, questionUid, surveyId, uniqueCode, errorCallback, successCallback) {
+	let text;
 	
 	if (reply) {
-		text = $(button).closest("td").find(".delphireply textarea").val();
+		text = $(button).closest(".delphireply").find("textarea").val();
 	} else {
-		text = $(button).closest("td").find(".delphicomment textarea").val();
+		text = $(button).closest(".delphicomment").find("textarea").val();
 	}
-	
-	var surveyId = $('#survey\\.id').val();
-	var uniqueCode = $('#uniqueCode').val();
-	var td = $(button).closest("td");
-	var answerSetId = $(td).attr("data-id");
-	var uid = $(td).closest(".survey-element").attr("data-uid");
-	
-	var data = "surveyid=" + surveyId + "&uniquecode=" + uniqueCode + "&answersetid=" + answerSetId + "&questionuid=" + uid + "&text=" + encodeURIComponent(text);
+
+	const td = $(button).closest("td");
+	const answerSetId = $(td).attr("data-id");
+
+	let data = "surveyid=" + surveyId + "&uniquecode=" + uniqueCode + "&answersetid=" + answerSetId
+		+ "&questionuid=" + questionUid + "&text=" + encodeURIComponent(text);
 	
 	if (reply) {
-		var parent = $(button).attr("data-parent");
+		const parent = $(button).attr("data-parent");
 		data += "&parent=" + parent;
 	}
 	
@@ -929,15 +907,8 @@ function saveDelphiComment(button, reply) {
 		url: contextpath + "/runner/delphiAddComment",
 		data: data,
 		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
-		error: function(data)
-	    {
-			showError("error");
-	    },
-		success: function(data)
-	    {
-			var viewModel = modelsForDelphiQuestions[uid];
-			loadTableData($(td).closest(".survey-element"), viewModel);
-	    }
+		error: errorCallback,
+		success: successCallback
 	 });
 }
 
