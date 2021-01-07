@@ -110,7 +110,7 @@
 
                         <div class="statelement-wrapper" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
                                 <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}">
-                                        <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: center">
+                                        <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: left">
                                                 <tr>
                                                         <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
                                                 </tr>
@@ -278,7 +278,7 @@
 
                         <div class="statelement-wrapper" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
                                 <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}">
-                                        <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: center">
+                                        <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: left">
                                                 <tr>
                                                         <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
                                                 </tr>
@@ -379,7 +379,7 @@
 
                         <div class="statelement-wrapper" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
                                 <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}">
-                                        <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: center">
+                                        <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: left">
                                                 <tr>
                                                         <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
                                                 </tr>

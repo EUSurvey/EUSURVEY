@@ -1665,12 +1665,17 @@ legend {
 	border-bottom: 1px solid #ddd;
 }
 
+#scrollareastatistics {
+	overflow-x: hidden !important;
+}
+
 .scrollarea {
 	height: 300px;
 	width: 90%;
 	overflow-y: auto;	
-	overflow-x: auto;	
+	overflow-x: auto;
 }
+
 
 #contentstable2 .answercell {
 	width: 150px;
