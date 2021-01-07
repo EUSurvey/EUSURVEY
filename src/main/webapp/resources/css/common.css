@@ -1365,6 +1365,12 @@ legend {
     font-size: 100%;
 }
 
+.statistics-area-header {
+    background-color: #8a8989;
+    color: #fff;
+    font-size: 100%;
+ }
+
 .validation-error-keep {
 	color: #f00;
 	font-size: 13px;

@@ -448,6 +448,8 @@
 					
 					$("#scrollareaheader").css("overflow-x", "auto");
 					$("#scrollareaheader").css("overflow-y","auto");
+
+					delphiPopulateAllGraphs($("#results-statistics"));
 					break;
 				case 'statistics-quiz':
 					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
