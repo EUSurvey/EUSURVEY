@@ -107,6 +107,23 @@
 							</table>
 							
 						</div>
+
+                        <div class="statelement-wrapper" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
+                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}">
+                                        <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: center">
+                                                <tr>
+                                                        <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
+                                                </tr>
+                                                <tr>
+                                                        <td style='padding-top:10px; padding-bottom:10px'>
+                                                                <div class="delphi-chart-div"></div>
+                                                        </td>
+                                                </tr>
+                                        </table>
+                                        <div style="clear: both"></div>
+                                </div>
+                        </div>
+
 					</c:if>
 					
 					<c:if test="${question.getType() == 'GalleryQuestion' && question.selection}">
@@ -258,6 +275,23 @@
 							</c:forEach>
 							
 						</div>
+
+                        <div class="statelement-wrapper" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
+                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}">
+                                        <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: center">
+                                                <tr>
+                                                        <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
+                                                </tr>
+                                                <tr>
+                                                        <td style='padding-top:10px; padding-bottom:10px'>
+                                                                <div class="delphi-chart-div"></div>
+                                                        </td>
+                                                </tr>
+                                        </table>
+                                        <div style="clear: both"></div>
+                                </div>
+                        </div>
+
 					</c:if>
 					
 					<c:if test="${question.getType() == 'RatingQuestion'}">
@@ -342,6 +376,23 @@
 							</c:forEach>
 							
 						</div>
+
+                        <div class="statelement-wrapper" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
+                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}">
+                                        <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: center">
+                                                <tr>
+                                                        <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
+                                                </tr>
+                                                <tr>
+                                                        <td style='padding-top:10px; padding-bottom:10px'>
+                                                                <div class="delphi-chart-div"></div>
+                                                        </td>
+                                                </tr>
+                                        </table>
+                                        <div style="clear: both"></div>
+                                </div>
+                        </div>
+
 					</c:if>
 				</c:if>
 			</c:if>		

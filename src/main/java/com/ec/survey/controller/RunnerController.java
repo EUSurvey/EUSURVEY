@@ -4,6 +4,7 @@ import com.ec.survey.exception.*;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.GlobalPrivilege;
+import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
@@ -2397,9 +2398,15 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
+			User user = sessionService.getCurrentUser(request);
+
+			boolean privileged = (survey.getOwner().getId().equals(user.getId())) ||
+					(user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) ||
+					(user.getLocalPrivileges().get(LocalPrivilege.AccessResults) > 0);
+
 			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 			
-			if (!survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
+			if (!privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -2412,7 +2419,7 @@ public class RunnerController extends BasicController {
 			}
 
 			Question question = (Question) element;
-			if (!question.getIsDelphiQuestion() || (!survey.getIsDelphiShowAnswersAndStatisticsInstantly()
+			if (!question.getIsDelphiQuestion() || (!privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly()
 					&& !answerSetContainsAnswerForQuestion(answerSet, question))) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
