@@ -287,6 +287,7 @@
 		
 		function loadSectionsAndQuestions(div) {
 			var surveyid = ${form.survey.id};
+			const isDelphiShowAnswersAndStatisticsInstantly = ${form.survey.isDelphiShowAnswersAndStatisticsInstantly};
 			var uniquecode = "${uniqueCode}";
 			var invitation = "${invitation}";
 			var languagecode = "${form.language.code}";
@@ -312,7 +313,8 @@
 					{
 						for (var j = 0; j < data.sections[i].questions.length; j++)
 						{
-							if (data.sections[i].questions[j].answer.length > 0) 
+							if (isDelphiShowAnswersAndStatisticsInstantly
+								|| data.sections[i].questions[j].answer.length > 0)
 							{
 								var div = $('#delphiquestion' + data.sections[i].questions[j].uid);
 								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false);
