@@ -216,9 +216,11 @@
 								<div class="redanswer"><spring:message code="info.NotAnswered" /></div>
 								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}#E' + id}"><spring:message code="label.Answer" /></a>
 								<!-- /ko -->
-								<!-- ko if: isDelphiShowAnswersAndStatisticsInstantly || answer.length > 0 -->
-								<a class="btn btn-xs btn-default" onclick="openAnswersDialog(this);"><spring:message code="label.ShowAllAnswers" /></a>
-								<!-- /ko -->
+								<c:if test="${form.survey.isDelphiShowAnswers}">
+									<!-- ko if: isDelphiShowAnswersAndStatisticsInstantly || answer.length > 0 -->
+									<a class="btn btn-xs btn-default" onclick="openAnswersDialog(this);"><spring:message code="label.ShowAllAnswers" /></a>
+									<!-- /ko -->
+								</c:if>
 							</div>
 						</div>					
 						<!-- /ko -->
