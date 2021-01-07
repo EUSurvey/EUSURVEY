@@ -64,15 +64,6 @@ function addElement(element, foreditor, forskin)
 	}
 	var container = $(".emptyelement[data-id=" + id + "]");
 	$(container).removeClass("emptyelement");
-	if ((element.hasOwnProperty("isViewModel") && element.isViewModel)) {
-		if (element.isDelphiQuestion()) {
-			$(container).addClass("delphi");
-		}
-	} else {
-		if (element.isDelphiQuestion) {
-			$(container).addClass("delphi");
-		}
-	}
 	$(container).find("img").remove();
 	
 	addElementToContainer(element, container, foreditor, forskin);
@@ -126,10 +117,24 @@ function checkTriggersAfterLoad(container)
 	}
 }
 
+function addDelphiClassToContainerIfNeeded(element, container) {
+	if ((element.hasOwnProperty("isViewModel") && element.isViewModel)) {
+		if (element.isDelphiQuestion()) {
+			$(container).addClass("delphi");
+		}
+	} else {
+		if (element.isDelphiQuestion) {
+			$(container).addClass("delphi");
+		}
+	}
+}
+
 var modelsForDelphiQuestions = [];
 
-function addElementToContainer(element, container, foreditor, forskin)
-{
+function addElementToContainer(element, container, foreditor, forskin) {
+
+	addDelphiClassToContainerIfNeeded(element, container);
+
 	var viewModel = getElementViewModel(element);
 	
 	viewModel.foreditor = foreditor;

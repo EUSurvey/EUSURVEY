@@ -1290,6 +1290,10 @@ legend {
 	background-color: #f5f5f5;
 }
 
+#editcontent .survey-element.delphi {
+	padding-top: 20px;
+}
+
 .delphi .questiontitle {
 	margin-left: 20px;
 	font-weight: bold !important;
