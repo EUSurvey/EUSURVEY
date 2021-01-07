@@ -136,13 +136,12 @@
 		}
 
         function delphiPopulateAllGraphs(resultsStatisticParentElement) {
-            var languagecode = "EN"; // TODO: get dynamically if needed
-
             var chartwrapperlist = $(resultsStatisticParentElement).find(".chart-wrapper");
             chartwrapperlist.each(function (index) {
                 var chartwrapper = $(this);
                 var surveyId = chartwrapper.data("survey-id");
                 var questionuid = chartwrapper.data("question-uid");
+                var languagecode = chartwrapper.data("language-code");
                 var answersetuniquecode = ""; // not needed for privileged users like form managers
                 loadGraphDataInner(chartwrapper, surveyId, questionuid, languagecode, answersetuniquecode, addChart, true);
             });
