@@ -14,7 +14,7 @@
 
 </head>
 <body>
-	<c:set var="mode" value="delphiStartePage" />
+	<c:set var="mode" value="delphiStartPage" />
 
 	<div class="page-wrap">
 		<%@ include file="../header.jsp" %>	

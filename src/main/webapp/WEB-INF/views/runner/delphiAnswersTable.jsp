@@ -64,7 +64,7 @@
 						<div class="delphireply" data-bind="visible: delphiTableIsReplyFormVisible">
 							<textarea class="form-control" data-bind="hasFocus: delphiTableHasReplyFieldFocus"></textarea>
 							<c:choose>
-								<c:when test='${mode == "delphiStartePage"}'>
+								<c:when test='${mode == "delphiStartPage"}'>
 									<a class="btn btn-xs btn-primary" onClick="saveDelphiCommentWrapper(this, true)" data-bind="attr: { 'data-parent': id }">${form.getMessage("label.Save")}</a>
 								</c:when>
 								<c:otherwise>
@@ -81,7 +81,7 @@
 					<div class="delphicomment" data-bind="visible: delphiTableIsCommentFormVisible">
 						<textarea class="form-control" data-bind="hasFocus: delphiTableHasCommentFieldFocus"></textarea>
 						<c:choose>
-							<c:when test='${mode == "delphiStartePage"}'>
+							<c:when test='${mode == "delphiStartPage"}'>
 								<a class="btn btn-xs btn-primary" onClick="saveDelphiCommentWrapper(this, false)">${form.getMessage("label.Save")}</a>
 							</c:when>
 							<c:otherwise>
@@ -116,7 +116,7 @@
 </div>
 <!-- /ko -->
 
-<c:if test='${mode == "delphiStartePage"}'>
+<c:if test='${mode == "delphiStartPage"}'>
 	<!-- ko if: delphiTableEntries().length === 0 -->
 	<div>
 		<spring:message code="message.DelphiTableNoAnswerGivenYet" />

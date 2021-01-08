@@ -25,6 +25,8 @@
 		
 </head>
 <body id="bodyManagementTest">
+	<c:set var="mode" value="delphiStartPage" />
+
 	<div class="page-wrap">
 		<%@ include file="../header.jsp" %>
 		<%@ include file="../menu.jsp" %>
