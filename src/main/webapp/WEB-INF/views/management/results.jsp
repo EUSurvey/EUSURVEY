@@ -83,6 +83,10 @@
 			font-size: 18px;
 			vertical-align: bottom;
 		}
+		
+		.statelement-wrapper {
+			width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;
+		}
 	
 	</style>
 	
@@ -448,6 +452,9 @@
 					
 					$("#scrollareaheader").css("overflow-x", "auto");
 					$("#scrollareaheader").css("overflow-y","auto");
+
+					delphiPopulateAllGraphs($("#results-statistics"));
+					doResize();
 					break;
 				case 'statistics-quiz':
 					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");

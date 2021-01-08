@@ -1331,6 +1331,7 @@ legend {
 
 .chart-wrapper {
 	display: none;
+	padding-left: 20px;
 }
 
 .delphi-table-wrapper {
@@ -1364,6 +1365,12 @@ legend {
     color: #fff;
     font-size: 100%;
 }
+
+.statistics-area-header {
+    background-color: #8a8989;
+    color: #fff;
+    font-size: 100%;
+ }
 
 .validation-error-keep {
 	color: #f00;
@@ -1659,12 +1666,17 @@ legend {
 	border-bottom: 1px solid #ddd;
 }
 
+#scrollareastatistics {
+	overflow-x: hidden !important;
+}
+
 .scrollarea {
 	height: 300px;
 	width: 90%;
 	overflow-y: auto;	
-	overflow-x: auto;	
+	overflow-x: auto;
 }
+
 
 #contentstable2 .answercell {
 	width: 150px;
