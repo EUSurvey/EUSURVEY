@@ -1331,6 +1331,7 @@ legend {
 
 .chart-wrapper {
 	display: none;
+	padding-left: 20px;
 }
 
 .delphi-table-wrapper {
