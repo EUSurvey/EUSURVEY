@@ -264,7 +264,7 @@
 			const languageCode = "${form.language.code}";
 			currentQuestionUidInModal = $(element).closest('.question').attr('data-uid');
 			const surveyId = ${form.survey.id};
-			const uniqueCode = "${uniqueCode}";
+			const uniqueCode = $(element).closest('td').attr('data-answer-set-unique-code');
 			loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, uniqueCode, answersTableViewModel);
 		}
 
@@ -293,16 +293,15 @@
 			$('.answers-table-modal-error').hide();
 
 			const surveyId = ${form.survey.id};
-			const uniqueCode = "${uniqueCode}";
 			const errorCallback = function() {
 				$('.answers-table-modal-error').show();
 			}
 			const successCallback = function() {
 				const languageCode = "${form.language.code}";
-				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, uniqueCode, answersTableViewModel);
+				const answerSetUniqueCode = $(element).closest('td').attr('data-answer-set-unique-code');
+				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
 			}
-			saveDelphiCommentInner(element, reply, currentQuestionUidInModal, surveyId, uniqueCode, errorCallback,
-				successCallback);
+			saveDelphiCommentInner(element, reply, currentQuestionUidInModal, surveyId, errorCallback, successCallback);
 		}
 		
 		function toggle(element)

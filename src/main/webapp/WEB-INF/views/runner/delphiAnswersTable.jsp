@@ -46,7 +46,7 @@
 				<a data-bind="attr: {href: '${contextpath}/files/${form.survey.uniqueId}/' + uid}, text: name"></a>
 				<!-- /ko -->
 			</td>
-			<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId}">
+			<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId, 'data-answer-set-unique-code': answerSetUniqueCode}">
 				<!-- ko foreach: comments -->
 				<div class="delphicommentsdiv">
 					<div style="margin-top: 5px;">

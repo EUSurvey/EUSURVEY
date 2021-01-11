@@ -872,7 +872,6 @@ function saveDelphiComment(button, reply) {
 	const td = $(button).closest("td");
 	const questionUid = $(td).closest(".survey-element").attr("data-uid");
 	const surveyId = $('#survey\\.id').val();
-	const uniqueCode = $('#uniqueCode').val();
 	const errorCallback = function() {
 		showError("error");
 	}
@@ -880,10 +879,10 @@ function saveDelphiComment(button, reply) {
 		const viewModel = modelsForDelphiQuestions[questionUid];
 		loadTableData($(td).closest(".survey-element"), viewModel);
 	}
-	saveDelphiCommentInner(button, reply, questionUid, surveyId, uniqueCode, errorCallback, successCallback);
+	saveDelphiCommentInner(button, reply, questionUid, surveyId, errorCallback, successCallback);
 }
 
-function saveDelphiCommentInner(button, reply, questionUid, surveyId, uniqueCode, errorCallback, successCallback) {
+function saveDelphiCommentInner(button, reply, questionUid, surveyId, errorCallback, successCallback) {
 	let text;
 	
 	if (reply) {
@@ -894,8 +893,9 @@ function saveDelphiCommentInner(button, reply, questionUid, surveyId, uniqueCode
 
 	const td = $(button).closest("td");
 	const answerSetId = $(td).attr("data-id");
+	const answerSetUniqueCode = $(td).attr("data-answer-set-unique-code");
 
-	let data = "surveyid=" + surveyId + "&uniquecode=" + uniqueCode + "&answersetid=" + answerSetId
+	let data = "surveyid=" + surveyId + "&uniquecode=" + answerSetUniqueCode + "&answersetid=" + answerSetId
 		+ "&questionuid=" + questionUid + "&text=" + encodeURIComponent(text);
 	
 	if (reply) {

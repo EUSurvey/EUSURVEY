@@ -2857,6 +2857,7 @@ public class RunnerController extends BasicController {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			DelphiContribution firstValue = entry.get(0);
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
+			tableEntry.setAnswerSetUniqueCode(firstValue.getAnswerSetUniqueCode());
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdateDate(firstValue.getUpdate());
 			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
@@ -2922,6 +2923,7 @@ public class RunnerController extends BasicController {
 
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
+			tableEntry.setAnswerSetUniqueCode(firstValue.getAnswerSetUniqueCode());
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdateDate(firstValue.getUpdate());
@@ -2976,6 +2978,7 @@ public class RunnerController extends BasicController {
 
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
+			tableEntry.setAnswerSetUniqueCode(firstValue.getAnswerSetUniqueCode());
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdateDate(firstValue.getUpdate());
@@ -3063,6 +3066,7 @@ public class RunnerController extends BasicController {
 		for (DelphiContribution contrib : contributions.getContributions()) {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(contrib.getAnswerSetId());
+			tableEntry.setAnswerSetUniqueCode(contrib.getAnswerSetUniqueCode());
 			tableEntry.setExplanation(contrib.getExplanation());
 			tableEntry.setUpdateDate(contrib.getUpdate());
 			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
@@ -3091,6 +3095,7 @@ public class RunnerController extends BasicController {
 			DelphiContribution firstValue = entry.get(0);
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(firstValue.getAnswerSetId());
+			tableEntry.setAnswerSetUniqueCode(firstValue.getAnswerSetUniqueCode());
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdateDate(firstValue.getUpdate());
 
