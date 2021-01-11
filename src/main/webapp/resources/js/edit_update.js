@@ -146,6 +146,7 @@ function update(input)
 			} else {
 				mandatoryPropertyRow.Disabled(false);
 			}
+			$('#' + id).toggleClass("delphi");
 			_undoProcessor.addUndoStep(["DelphiQuestion", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
 			break;
 		case "DelphiChartType":
