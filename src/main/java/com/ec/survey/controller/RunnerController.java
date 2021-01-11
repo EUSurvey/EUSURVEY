@@ -2399,10 +2399,12 @@ public class RunnerController extends BasicController {
 			}
 
 			User user = sessionService.getCurrentUser(request);
-
-			boolean privileged = (survey.getOwner().getId().equals(user.getId())) ||
+			
+			boolean resultsview = request.getParameter("resultsview") != null && request.getParameter("resultsview").equalsIgnoreCase("true"); 
+			
+			boolean privileged = resultsview && (survey.getOwner().getId().equals(user.getId()) ||
 					(user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) ||
-					(user.getLocalPrivileges().get(LocalPrivilege.AccessResults) > 0);
+					(user.getLocalPrivileges().get(LocalPrivilege.AccessResults) > 0));
 
 			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 			
