@@ -869,14 +869,10 @@ function delphiUpdate(div) {
 }
 
 function addDelphiComment(button) {	
-	if ($(button).closest(".delphi-table").find(".delphicomment").length > 0)
-	{
-		return;
-	}
-	if ($(button).closest(".delphi-table").find(".delphireply").length > 0)
-	{
-		return;
-	}
+	
+	$('a.delphicommentcancel').each(function(){
+		cancelDelphiComment(this);
+	});
 	
 	var div = document.createElement("div");
 	$(div).addClass("delphicomment");
@@ -884,21 +880,16 @@ function addDelphiComment(button) {
 	$(input).addClass("form-control");
 	$(div).append(input);
 	$(div).append("<a class='btn btn-xs btn-primary' onclick='saveDelphiComment(this, false)'>Save</a>");
-	$(div).append("<a class='btn btn-xs btn-default' onclick='cancelDelphiComment(this)'>Cancel</a>");
+	$(div).append("<a class='btn btn-xs btn-default delphicommentcancel' onclick='cancelDelphiComment(this)'>Cancel</a>");
 	$(button).after(div);
 	
 	$(button).parent().find("textarea").first().focus();
 }
 
 function addDelphiReply(button, parent) {	
-	if ($(button).closest(".delphi-table").find(".delphicomment").length > 0)
-	{
-		return;
-	}
-	if ($(button).closest(".delphi-table").find(".delphireply").length > 0)
-	{
-		return;
-	}
+	$('a.delphicommentcancel').each(function(){
+		cancelDelphiComment(this);
+	});
 	
 	var div = document.createElement("div");
 	$(div).addClass("delphireply");
@@ -906,7 +897,7 @@ function addDelphiReply(button, parent) {
 	$(input).addClass("form-control");
 	$(div).append(input);
 	$(div).append("<a data-parent='" + parent + "' class='btn btn-xs btn-primary' onclick='saveDelphiComment(this, true)'>Save</a>");
-	$(div).append("<a class='btn btn-xs btn-default' onclick='cancelDelphiComment(this)'>Cancel</a>");
+	$(div).append("<a class='btn btn-xs btn-default delphicommentcancel' onclick='cancelDelphiComment(this)'>Cancel</a>");
 	$(button).after(div);
 	
 	$(button).parent().find("textarea").first().focus();
