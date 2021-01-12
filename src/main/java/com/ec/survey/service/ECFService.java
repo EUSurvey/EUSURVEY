@@ -2,6 +2,7 @@ package com.ec.survey.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.apache.commons.codec.binary.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,13 +11,33 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import java.awt.GradientPaint;
+import java.awt.Paint;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 
+import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.PolarPlot;
+import org.jfree.chart.plot.SpiderWebPlot;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +111,8 @@ public class ECFService extends BasicService {
 
 		Integer totalContributions = 0;
 		for (String profileUid : profileToNumberAnswers.keySet()) {
-			ECFProfileSummaryResult ecfSummaryProfileResult = new ECFProfileSummaryResult(profileUidToOrder.get(profileUid));
+			ECFProfileSummaryResult ecfSummaryProfileResult = new ECFProfileSummaryResult(
+					profileUidToOrder.get(profileUid));
 			ecfSummaryProfileResult.setProfileName(profileUidToName.get(profileUid));
 			ecfSummaryProfileResult.setNumberOfContributions(profileToNumberAnswers.get(profileUid));
 			ecfSummaryProfileResult.setProfileUid(profileUid);
@@ -104,8 +126,9 @@ public class ECFService extends BasicService {
 		ecfSummaryProfileResult.setNumberOfContributions(totalContributions);
 		ecfSummaryProfileResult.setIsSelected(true);
 		ecfSummaryResult.addProfileResult(ecfSummaryProfileResult);
-		
-		ecfSummaryResult.setProfileResults(ecfSummaryResult.getProfileResults().stream().sorted().collect(Collectors.toList()));
+
+		ecfSummaryResult
+				.setProfileResults(ecfSummaryResult.getProfileResults().stream().sorted().collect(Collectors.toList()));
 
 		return ecfSummaryResult;
 	}
@@ -192,14 +215,15 @@ public class ECFService extends BasicService {
 	public ECFProfileResult getECFProfileResult(Survey survey) throws Exception {
 		return this.getECFProfileResult(survey, (ECFProfile) null);
 	}
-	
+
 	public ECFProfileResult getECFProfileResult(Survey survey, ResultFilter resultFilter) throws Exception {
 		ECFProfile profileComparison = null;
 		if (resultFilter.getCompareToECFProfileUID() != null) {
 			profileComparison = this.getECFProfileByUUID(resultFilter.getCompareToECFProfileUID());
-			if (profileComparison == null) throw new NotFoundException();
+			if (profileComparison == null)
+				throw new NotFoundException();
 		}
-		
+
 		return this.getECFProfileResult(survey, profileComparison);
 	}
 
@@ -373,7 +397,7 @@ public class ECFService extends BasicService {
 			for (ECFCompetency competency : competencyToNumberOfAnswers.keySet()) {
 				Integer numberOfAnswers = competencyToNumberOfAnswers.get(competency);
 				Integer totalNumber = competencyToTotalAnsweredNumbers.get(competency);
-				
+
 				ParticipantScore participantScore = new ParticipantScore();
 				if (answerSet.getResponderEmail() != null && !answerSet.getResponderEmail().isEmpty()) {
 					participantScore.setName(answerSet.getResponderEmail());
@@ -382,7 +406,7 @@ public class ECFService extends BasicService {
 				}
 				participantScore.setContributionUUID(answerSet.getUniqueCode());
 				participantScore.setScore(totalNumber / numberOfAnswers);
-				
+
 				List<ParticipantScore> listOfScores = competencyToScores.get(competency);
 				listOfScores.add(participantScore);
 				competencyToScores.put(competency, listOfScores);
@@ -478,33 +502,37 @@ public class ECFService extends BasicService {
 			ECFProfile profileFilter) throws Exception {
 		return this.getECFGlobalResult(survey, sqlPagination, profileComparison, null, null);
 	}
-	
+
 	/**
 	 * Entry point method from the controller;
 	 */
-	public ECFGlobalResult getECFGlobalResult(Survey survey, SqlPagination sqlPagination, ResultFilter resultFilter) throws Exception {
+	public ECFGlobalResult getECFGlobalResult(Survey survey, SqlPagination sqlPagination, ResultFilter resultFilter)
+			throws Exception {
 		ECFProfile profileFilter = null;
 		ECFProfile profileComparison = null;
 		String sortOrder = resultFilter.getSortOrder();
 		String sortKey = resultFilter.getSortKey();
-		
+
 		if (resultFilter.getAnsweredECFProfileUID() != null) {
 			profileFilter = this.getECFProfileByUUID(resultFilter.getAnsweredECFProfileUID());
-			if (profileFilter == null) throw new NotFoundException();
+			if (profileFilter == null)
+				throw new NotFoundException();
 		}
-		
+
 		if (resultFilter.getCompareToECFProfileUID() != null) {
 			profileComparison = this.getECFProfileByUUID(resultFilter.getCompareToECFProfileUID());
-			if (profileComparison == null) throw new NotFoundException();
+			if (profileComparison == null)
+				throw new NotFoundException();
 		}
-		
-		if (sortOrder !=null && sortKey !=null) {
-			if (ResultFilter.ResultFilterOrderBy.parse(sortKey+sortOrder).equals(ResultFilter.ResultFilterOrderBy.UNKNOWN)) {
+
+		if (sortOrder != null && sortKey != null) {
+			if (ResultFilter.ResultFilterOrderBy.parse(sortKey + sortOrder)
+					.equals(ResultFilter.ResultFilterOrderBy.UNKNOWN)) {
 				throw new BadRequestException();
 			}
 		}
-		 
-		return this.getECFGlobalResult(survey, sqlPagination, profileComparison, profileFilter, sortKey+sortOrder);
+
+		return this.getECFGlobalResult(survey, sqlPagination, profileComparison, profileFilter, sortKey + sortOrder);
 	}
 
 	/**
@@ -535,13 +563,17 @@ public class ECFService extends BasicService {
 			competencyToExpectedScore = this.getProfileExpectedScores(profileComparison);
 		}
 
-		Map<ECFCompetency, List<ParticipantScore>> competenciesToScores = this.getCompetenciesToParticipantScores(survey, answerSets);
+		Map<ECFCompetency, List<ParticipantScore>> competenciesToScores = this
+				.getCompetenciesToParticipantScores(survey, answerSets);
 
 		for (ECFCompetency competency : competenciesToScores.keySet()) {
 			List<ParticipantScore> competencyScores = competenciesToScores.get(competency);
-			List<Integer> competencyScoresNumbers = competencyScores.stream().map(ps -> ps.getScore()).collect(Collectors.toList());
-			List<String> competencyScoresNames = competencyScores.stream().map(ps -> ps.getName()).collect(Collectors.toList());
-			List<String> competencyScoresContUUIDs = competencyScores.stream().map(ps -> ps.getContributionUUID()).collect(Collectors.toList());
+			List<Integer> competencyScoresNumbers = competencyScores.stream().map(ps -> ps.getScore())
+					.collect(Collectors.toList());
+			List<String> competencyScoresNames = competencyScores.stream().map(ps -> ps.getName())
+					.collect(Collectors.toList());
+			List<String> competencyScoresContUUIDs = competencyScores.stream().map(ps -> ps.getContributionUUID())
+					.collect(Collectors.toList());
 
 			ECFGlobalCompetencyResult globalCompetencyResult = new ECFGlobalCompetencyResult();
 			globalCompetencyResult.setOrder(competency.getOrderNumber());
@@ -815,7 +847,7 @@ public class ECFService extends BasicService {
 		profileToCompetencyToScore.put("Neutral profile", this.defaultNeutralProfile());
 		return profileToCompetencyToScore;
 	}
-	
+
 	public Map<String, Integer> defaultProfileNameToOrder() {
 		Map<String, Integer> profileToOrder = new HashMap<>();
 		profileToOrder.put("Procurement support officer", 0);
@@ -1577,8 +1609,8 @@ public class ECFService extends BasicService {
 		return (float) Math.round((totalScore.floatValue() / numberOfScores) * 10) / 10;
 	}
 
-	private List<AnswerSet> getAnswers(Survey survey, ECFProfile profileFilter, String orderBy, SqlPagination sqlPagination)
-			throws Exception {
+	private List<AnswerSet> getAnswers(Survey survey, ECFProfile profileFilter, String orderBy,
+			SqlPagination sqlPagination) throws Exception {
 		ResultFilter resultFilter = new ResultFilter();
 
 		if (profileFilter != null) {
@@ -1616,6 +1648,41 @@ public class ECFService extends BasicService {
 	private Integer getCount(Survey survey) throws Exception {
 		ResultFilter resultFilter = new ResultFilter();
 		return this.answerService.getNumberOfAnswerSets(survey, resultFilter);
+	}
+
+	public String individualResultToSpiderChartB64(ECFIndividualResult individualResult) {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		for (ECFIndividualCompetencyResult competencyResult : individualResult.getCompetencyResultList()) {
+			int competencyScore = competencyResult.getCompetencyScore();
+			int competencyTargetScore = competencyResult.getCompetencyTargetScore();
+
+			dataset.addValue(competencyScore, "Score", competencyResult.getCompetencyName());
+			dataset.addValue(competencyTargetScore, "Target score", competencyResult.getCompetencyName());
+		}
+
+		SpiderWebPlot plot = new SpiderWebPlot(dataset);
+		plot.setSeriesPaint(0, new Color(177, 22, 48));
+		plot.setSeriesPaint(1, new Color(62, 116, 170));
+		plot.setLabelPaint(new Color(90, 90, 90));
+		plot.setAxisLinePaint(new Color(102, 102, 102));
+
+		plot.setWebFilled(true);
+
+		JFreeChart chart = new JFreeChart(plot);
+		BufferedImage image = new BufferedImage(1000, 500, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2 = image.createGraphics();
+		chart.draw(g2, new Rectangle2D.Double(0, 0, 1000, 500), null, null);
+		g2.dispose();
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(image, "PNG", out);
+		} catch (IOException e) {
+			// Logging the error but not interupting the flow
+			logger.error(e);
+		}
+		byte[] bytes = out.toByteArray();
+		return Base64.encodeBase64String(bytes);
 	}
 
 	class ParticipantScore {

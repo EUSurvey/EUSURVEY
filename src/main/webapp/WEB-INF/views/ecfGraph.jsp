@@ -18,7 +18,16 @@
 			</div>
 		</div>
 	</c:if>
-	<canvas class="ecfRespondentChart"></canvas>
+
+	<c:choose>
+         <c:when test="${!print && !forpdf}">
+            <canvas class="ecfRespondentChart"></canvas>
+         </c:when>
+         <c:otherwise>
+			<img src="data:image/png;base64, ${base64ECFSpiderChart}"  alt="spider chart" style="width: 600px;" />
+         </c:otherwise>
+    </c:choose>
+	
 	<table class="table table-styled table-striped table-bordered"
 		id="ecfResultTable" style="margin-bottom: 10px">
 		<thead>
@@ -29,15 +38,50 @@
 			</tr>
 		</thead>
 		<tbody>
+			<c:choose>
+				<c:when test="${!print && !forpdf}">
+					
+				</c:when>
+				<c:otherwise>
+					<c:forEach var="competencyResult"
+					items="${ecfIndividualResult.competencyResultList}" varStatus="loop">
+						<tr class="bodyrow">
+							<th>${competencyResult.competencyName}</th>
+							<th>${competencyResult.competencyTargetScore}</th>
+							<th>
+								<div class="score">${competencyResult.competencyScore}</div>
+								<c:if test="${competencyResult.competencyScoreGap != null}">
+									<c:choose>
+										<c:when test="${competencyResult.competencyScoreGap > 0}">
+											<div class="gap greenScore">(+${competencyResult.competencyScoreGap})</div>
+										</c:when>
+										<c:when test="${competencyResult.competencyScoreGap == 0}">
+											<div class="gap greenScore">(${competencyResult.competencyScoreGap})</div>
+										</c:when>
+										<c:otherwise>
+											<div class="gap redScore">(${competencyResult.competencyScoreGap})</div>
+										</c:otherwise>
+									</c:choose>
+								</c:if>
+							</th>
+						</tr>
+					</c:forEach>
+				</c:otherwise>
+    		</c:choose>
 		</tbody>
 	</table>
 </div>
 
+<script type="text/javascript">
+	var forpdf = "${forpdf}"
+</script>
 
 <script type="text/javascript">
 	var firstTry = true;
 	$(document).ready(function() {
-		const result = fetchECFResult();
+		if(!forpdf) {
+			const result = fetchECFResult();
+		}
 	});
 </script>
 <script type="text/javascript"

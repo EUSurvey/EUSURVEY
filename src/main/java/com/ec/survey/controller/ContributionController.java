@@ -131,6 +131,15 @@ public class ContributionController extends BasicController {
 		Form f = (Form) result.getModel().get("form");
 		SurveyHelper.calcTableWidths(f.getSurvey(), f);
 		f.setForPDF(true);
+
+		AnswerSet answerSet = this.answerService.get(code);
+		if (answerSet.getSurvey().getIsECF()) {
+			ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
+			String b64 = ecfService.individualResultToSpiderChartB64(individualResult);
+			result.addObject("base64ECFSpiderChart", b64);
+			result.addObject("ecfIndividualResult", individualResult);
+		}
+
 		result.addObject("forpdf", "true");
 		result.addObject("submit", "false");
 		return result;
@@ -139,7 +148,7 @@ public class ContributionController extends BasicController {
 	@RequestMapping(value = "/preparedraft/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparedraft(@PathVariable String code, Locale locale, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
-			InvalidURLException, InterruptedException, IOException {
+			InvalidURLException, InterruptedException, IOException, ECFException {
 		ModelAndView result = editContributionInner(code, locale, request, false, false, true);
 
 		Form f = (Form) result.getModel().get("form");
@@ -153,7 +162,7 @@ public class ContributionController extends BasicController {
 	@RequestMapping(value = "/preparepublishedcontribution/{id}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView showforpublishedpdf(@PathVariable String id, Locale locale, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
-			InvalidURLException, InterruptedException, IOException {
+			InvalidURLException, InterruptedException, IOException, ECFException {
 		AnswerSet answerSet = answerService.get(Integer.parseInt(id));
 		ModelAndView result = editContributionInner(answerSet.getUniqueCode(), locale, request, false, false, false);
 		result.addObject("forpdf", "true");
@@ -161,6 +170,13 @@ public class ContributionController extends BasicController {
 
 		Form form = (Form) result.getModel().get("form");
 		form.setForPDF(true);
+
+		if (answerSet.getSurvey().getIsECF()) {
+			ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
+			String b64 = ecfService.individualResultToSpiderChartB64(individualResult);
+			result.addObject("base64ECFSpiderChart", b64);
+			result.addObject("ecfIndividualResult", individualResult);
+		}
 
 		result.addObject("publication", form.getSurvey().getPublication());
 		return result;
@@ -463,7 +479,7 @@ public class ContributionController extends BasicController {
 
 	@GetMapping(value = "/contribution/{uid}/preview")
 	public ModelAndView preview(@PathVariable String uid, HttpServletRequest request, Locale locale)
-			throws InterruptedException, IOException, InvalidURLException {
+			throws InterruptedException, IOException, InvalidURLException, ECFException {
 		if (uid != null && uid.length() > 0) {
 			AnswerSet answerSet = answerService.get(uid);
 			if (answerSet != null) {
@@ -491,6 +507,15 @@ public class ContributionController extends BasicController {
 						: answerSet.getDate();
 				contributionsPrintModel.addObject("submittedDate", ConversionTools.getFullString(submittedDate));
 				contributionsPrintModel.addObject("print", true);
+				
+
+				if (answerSet.getSurvey().getIsECF()) {
+					ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
+					String b64 = ecfService.individualResultToSpiderChartB64(individualResult);
+					contributionsPrintModel.addObject("base64ECFSpiderChart", b64);
+					contributionsPrintModel.addObject("ecfIndividualResult", individualResult);
+				}
+				
 				contributionsPrintModel.addObject("serverprefix", serverPrefix);
 				contributionsPrintModel.addObject("invisibleElements", invisibleElements);
 				contributionsPrintModel.addObject("launchPrint", false);
