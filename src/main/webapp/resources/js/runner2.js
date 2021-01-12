@@ -117,10 +117,24 @@ function checkTriggersAfterLoad(container)
 	}
 }
 
+function addDelphiClassToContainerIfNeeded(element, container) {
+	if ((element.hasOwnProperty("isViewModel") && element.isViewModel)) {
+		if (element.isDelphiQuestion()) {
+			$(container).addClass("delphi");
+		}
+	} else {
+		if (element.isDelphiQuestion) {
+			$(container).addClass("delphi");
+		}
+	}
+}
+
 var modelsForDelphiQuestions = [];
 
-function addElementToContainer(element, container, foreditor, forskin)
-{
+function addElementToContainer(element, container, foreditor, forskin) {
+
+	addDelphiClassToContainerIfNeeded(element, container);
+
 	var viewModel = getElementViewModel(element);
 	
 	viewModel.foreditor = foreditor;
@@ -872,10 +886,10 @@ function saveDelphiComment(button, reply) {
 	const td = $(button).closest("td");
 	const questionUid = $(td).closest(".survey-element").attr("data-uid");
 	const surveyId = $('#survey\\.id').val();
-	const errorCallback = function() {
+	const errorCallback = function () {
 		showError("error");
 	}
-	const successCallback = function() {
+	const successCallback = function () {
 		const viewModel = modelsForDelphiQuestions[questionUid];
 		loadTableData($(td).closest(".survey-element"), viewModel);
 	}
@@ -883,8 +897,10 @@ function saveDelphiComment(button, reply) {
 }
 
 function saveDelphiCommentInner(button, reply, questionUid, surveyId, errorCallback, successCallback) {
+
+	$('a.delphicommentcancel').trigger("click");
+
 	let text;
-	
 	if (reply) {
 		text = $(button).closest(".delphireply").find("textarea").val();
 	} else {

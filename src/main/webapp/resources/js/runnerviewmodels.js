@@ -855,6 +855,8 @@ function newNumberViewModel(element)
 		if (value < max) {
 			$(input).bootstrapSlider().bootstrapSlider('setValue', value + this.step());
 		}
+		
+		propagateChange($(input));
 	}
 	
 	viewModel.decrease = function(element)
@@ -866,6 +868,8 @@ function newNumberViewModel(element)
 		if (value > min) {
 			$(input).bootstrapSlider().bootstrapSlider('setValue', value - this.step());
 		}
+		
+		propagateChange($(input));
 	}
 	
 	viewModel.initialValue = function() {

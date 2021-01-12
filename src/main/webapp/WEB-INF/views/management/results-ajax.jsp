@@ -134,5 +134,172 @@
 		function roundToTwo(num) {    
 		    return +(Math.round(num + "e+2")  + "e-2");
 		}
+
+        function delphiPopulateAllGraphs(resultsStatisticParentElement) {
+            var chartwrapperlist = $(resultsStatisticParentElement).find(".chart-wrapper");
+            chartwrapperlist.each(function (index) {
+                var chartwrapper = $(this);
+                var surveyId = chartwrapper.data("survey-id");
+                var questionuid = chartwrapper.data("question-uid");
+                var languagecode = chartwrapper.data("language-code");
+                var answersetuniquecode = ""; // not needed for privileged users like form managers
+                loadGraphDataInner(chartwrapper, surveyId, questionuid, languagecode, answersetuniquecode, addChart, true);
+            });
+        }
+
+        function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback, removeIfEmpty) {
+        	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode + "&resultsview=true";
+
+        	$.ajax({
+        		type: "GET",
+        		url: contextpath + "/runner/delphiGraph",
+        		data: data,
+        		beforeSend: function (xhr) {
+        			xhr.setRequestHeader(csrfheader, csrftoken);
+        		},
+        		error: function (data) {
+        			showError(data.responseText);
+        		},
+        		success: function (result, textStatus) {
+        			if (textStatus === "nocontent") {
+        				if (removeIfEmpty) {
+        					var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
+        					$(elementWrapper).find(".delphi-chart").remove();
+        					$(elementWrapper).find(".chart-wrapper").hide();
+        				}
+
+        				return;
+        			}
+
+        			var chartData = {};
+        			var chartOptions = {
+        				scaleShowValues: true,
+        				responsive: false,
+        				scales: {
+        					yAxes: [{ticks: {beginAtZero: true}}],
+        					xAxes: [
+        						{
+        							ticks: {
+        								beginAtZero: true,
+        								autoSkip: false,
+        								callback: function(value, index, values) {
+        									if (value.length > 15)
+        									{
+        										return value.substring(0,10) + "...";
+        									}
+        			                        return value;
+        			                    }
+        							}
+        						}
+        					]
+        				},
+        				legend: {display: false}
+        			};
+
+        			switch (result.questionType) {
+        				case "MultipleChoice":
+        				case "SingleChoice":
+        					var graphData = result.data;
+
+        					chartData = {
+        						datasets: [{
+        							label: '',
+        							data: graphData.map(function (g) {
+        								return g.value
+        							})
+        						}],
+        						labels: graphData.map(function (g) {
+        							return g.label
+        						})
+        					};
+        					break;
+
+        				case "Matrix":
+        				case "Rating":
+        					var questions = result.questions;
+        					var datasets = [];
+        					var labels = undefined;
+
+        					for (var i = 0; i < questions.length; i++) {
+        						var question = questions[i];
+
+        						datasets.push({
+        							data: question.data.map(function (d) {
+        								return d.value;
+        							}),
+        							label: question.label
+        						});
+
+        						if (!labels) {
+        							labels = question.data.map(function (d) {
+        								return d.label;
+        							});
+        						}
+        					}
+
+        					chartData = {
+        						datasets,
+        						labels
+        					}
+
+        					chartOptions.legend.display = true;
+        					break;
+
+        				default:
+        					return;
+        			}
+
+        			var chart = {
+        				data: chartData,
+        				options: chartOptions
+        			}
+
+        			switch (result.chartType) {
+        				case "Bar":
+        					chart.type = "horizontalBar";
+        					break;
+        				case "Column":
+        					chart.type = "bar";
+        					break;
+        				case "Line":
+        					chart.type = "line";
+        					break;
+        				case "Pie":
+        					chart.type = "pie";
+        					chart.options.legend.display = true;
+        					delete chart.options.scales;
+        					break;
+        				case "Radar":
+        					chart.type = "radar";
+        					delete chart.options.scales;
+        					break;
+        				case "Scatter":
+        					chart.type = "line";
+        					chart.options.showLines = false;
+        					break;
+        				default:
+        					chart.type = "horizontalBar";
+        					break;
+        			}
+
+        			if (chartCallback instanceof Function) {
+        				chartCallback(div, chart);
+        			}
+        		}
+        	 });
+        }
+
+        function addChart(div, chart)
+        {
+        	var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
+
+        	$(elementWrapper).find(".delphi-chart").remove();
+        	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
+
+        	$(elementWrapper).find(".chart-wrapper").show();
+
+        	var graph = new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
+        }
+
 	</script>
 </c:if>

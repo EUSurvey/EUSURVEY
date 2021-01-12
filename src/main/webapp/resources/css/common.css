@@ -1280,10 +1280,18 @@ legend {
 }
 
 .delphi.elementwrapper {
-    border: 1px solid #ccc;
-    background-color: #f5f5f5;
 	margin-top: 20px;
 	position: relative;
+}
+
+.elementwrapper.delphi,
+#editcontent .survey-element.delphi {
+	border: 1px solid #ccc;
+	background-color: #f5f5f5;
+}
+
+#editcontent .survey-element.delphi {
+	padding-top: 20px;
 }
 
 .delphi .questiontitle {
@@ -1326,6 +1334,7 @@ legend {
 
 .chart-wrapper {
 	display: none;
+	padding-left: 20px;
 }
 
 .update-error {
@@ -1355,6 +1364,12 @@ legend {
     color: #fff;
     font-size: 100%;
 }
+
+.statistics-area-header {
+    background-color: #8a8989;
+    color: #fff;
+    font-size: 100%;
+ }
 
 .validation-error-keep {
 	color: #f00;
@@ -1650,12 +1665,17 @@ legend {
 	border-bottom: 1px solid #ddd;
 }
 
+#scrollareastatistics {
+	overflow-x: hidden !important;
+}
+
 .scrollarea {
 	height: 300px;
 	width: 90%;
 	overflow-y: auto;	
-	overflow-x: auto;	
+	overflow-x: auto;
 }
+
 
 #contentstable2 .answercell {
 	width: 150px;
@@ -2141,7 +2161,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 
 .slider-tick.round {
 	/*display: none;*/
-} 
+}
 
 .answers-table-modal .modal-body {
 	overflow: auto;

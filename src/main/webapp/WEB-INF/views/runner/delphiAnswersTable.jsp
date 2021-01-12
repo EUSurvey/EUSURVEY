@@ -71,7 +71,7 @@
 									<a class="btn btn-xs btn-primary" onClick="saveDelphiComment(this, true)" data-bind="attr: { 'data-parent': id }">${form.getMessage("label.Save")}</a>
 								</c:otherwise>
 							</c:choose>
-							<a class="btn btn-xs btn-default" data-bind="click: () => { delphiTableIsReplyFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
+							<a class="btn btn-xs btn-default delphicommentcancel" data-bind="click: () => { delphiTableIsReplyFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
 						</div>
 					</div>
 				</div>
@@ -88,7 +88,7 @@
 								<a class="btn btn-xs btn-primary" onClick="saveDelphiComment(this, false)">${form.getMessage("label.Save")}</a>
 							</c:otherwise>
 						</c:choose>
-						<a class="btn btn-xs btn-default" data-bind="click: () => { delphiTableIsCommentFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
+						<a class="btn btn-xs btn-default delphicommentcancel" data-bind="click: () => { delphiTableIsCommentFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
 					</div>
 				</div>
 			</td>

@@ -4,6 +4,7 @@ import com.ec.survey.exception.*;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.GlobalPrivilege;
+import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
@@ -2397,9 +2398,17 @@ public class RunnerController extends BasicController {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
+			User user = sessionService.getCurrentUser(request);
+			
+			boolean resultsview = request.getParameter("resultsview") != null && request.getParameter("resultsview").equalsIgnoreCase("true"); 
+			
+			boolean privileged = resultsview && (survey.getOwner().getId().equals(user.getId()) ||
+					(user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2) ||
+					(user.getLocalPrivileges().get(LocalPrivilege.AccessResults) > 0));
+
 			AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
 			
-			if (!survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
+			if (!privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly() && answerSet == null) {
 				// participant may only see answers if he answered before
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -2412,7 +2421,7 @@ public class RunnerController extends BasicController {
 			}
 
 			Question question = (Question) element;
-			if (!question.getIsDelphiQuestion() || (!survey.getIsDelphiShowAnswersAndStatisticsInstantly()
+			if (!question.getIsDelphiQuestion() || (!privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly()
 					&& !answerSetContainsAnswerForQuestion(answerSet, question))) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
@@ -2790,9 +2799,7 @@ public class RunnerController extends BasicController {
 				result = handleDelphiTableRawValueQuestion(question, orderBy, limit, offset);
 			}
 
-			return result == null
-					? ResponseEntity.noContent().build()
-					: ResponseEntity.ok(result);
+			return ResponseEntity.ok(result);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -2845,9 +2852,6 @@ public class RunnerController extends BasicController {
 		result.setTotal(contributions.getTotal());
 
 		Survey survey = question.getSurvey();
-		if (result.getTotal() < survey.getMinNumberDelphiStatistics()) {
-			return null;
-		}
 
 		for (List<DelphiContribution> entry : groupDelphiContributions(contributions)) {
 			List<String> values = entry.stream()
@@ -2895,9 +2899,6 @@ public class RunnerController extends BasicController {
 		result.setTotal(contributions.getTotal());
 
 		Survey survey = question.getSurvey();
-		if (result.getTotal() < survey.getMinNumberDelphiStatistics()) {
-			return null;
-		}
 
 		for (List<DelphiContribution> entry : groupDelphiContributions(contributions)) {
 			// maps position to element
@@ -2951,9 +2952,6 @@ public class RunnerController extends BasicController {
 		result.setTotal(contributions.getTotal());
 
 		Survey survey = question.getSurvey();
-		if (result.getTotal() < survey.getMinNumberDelphiStatistics()) {
-			return null;
-		}
 
 		for (List<DelphiContribution> entry : groupDelphiContributions(contributions)) {
 			// maps position to element
@@ -3057,11 +3055,6 @@ public class RunnerController extends BasicController {
 		DelphiContributions contributions = answerExplanationService.getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), survey.getIsDraft(), orderBy, limit, offset);
 		result.setTotal(contributions.getTotal());
 
-		if (contributions.getTotal() < survey.getMinNumberDelphiStatistics()) {
-			// not enough answers
-			return null;
-		}
-
 		// no need to group by answer set because there can only be one answer per answer set
 		for (DelphiContribution contrib : contributions.getContributions()) {
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
@@ -3087,9 +3080,6 @@ public class RunnerController extends BasicController {
 		result.setTotal(contributions.getTotal());
 
 		Survey survey = question.getSurvey();
-		if (result.getTotal() < survey.getMinNumberDelphiStatistics()) {
-			return null;
-		}
 
 		for (List<DelphiContribution> entry : groupDelphiContributions(contributions)) {
 			DelphiContribution firstValue = entry.get(0);
