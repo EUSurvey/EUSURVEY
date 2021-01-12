@@ -423,6 +423,10 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	$(container).find(".sliderbox").each(function () {
 		initSlider(this, foreditor, viewModel);
 	});
+	
+	$(container).find(".likert").each(function () {
+		initLikert(this, foreditor, viewModel);
+	});
 
 	$(container).find('.explanation-editor').each(function(){
 		$(this).tinymce(explanationEditorConfig);
@@ -456,8 +460,42 @@ function initSlider(input, foreditor, viewModel)
 		tooltip: 'always',
 		ticks_labels: viewModel.labels(),
 		enabled: !foreditor
-	});
+	});	
+}
+
+function initLikert(input, foreditor, viewModel)
+{
+	try {
+		$(input).bootstrapSlider().bootstrapSlider('destroy');
+	} catch (e) {
+		//ignore
+	}
+		
+	var ticks = [0];
+	var labels = [""];
+	var ovalue = $(input).attr('data-ovalue');
+	var value = 0;
+		
+	for (let i = 0; i < viewModel.possibleAnswers().length; i++)
+	{
+		ticks.push(i+1);
+		labels.push(viewModel.possibleAnswers()[i].title());
+		if (viewModel.possibleAnswers()[i].id().toString() === ovalue) {
+			value = i+1;
+		}
+	}
 	
+	$(input).bootstrapSlider({
+		formatter: function(v) {
+			return v;
+		},
+		tooltip: 'hide',
+		ticks: ticks,
+		ticks_labels: labels,
+		value: value,
+		enabled: !foreditor,
+		orientation: viewModel.ismobile ? 'vertical' : 'horizontal'
+	});
 }
 
 function getWidth(widths, index) {

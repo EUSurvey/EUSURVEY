@@ -70,76 +70,103 @@
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="answer-columns">
-			<!-- ko if: useRadioButtons -->
-			<table class="answers-table">
-				<tr class="hideme">
-					<th>radio button</th>
-					<th>label</th>
-				</tr>
-				
+		
+			<!-- ko if: likert -->
+				<div class="likert-div">
+					<input class="likert" type="text" onchange="propagateChange(this);"
+					 data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-ovalue' :getValueByQuestion(uniqueId())}"
+					 />
+				</div>	
+			
 				<!-- ko if: foreditor -->
-				<tr class="hideme">
-					<td>
-					<!-- ko foreach: possibleAnswers() -->
-							<input type="hidden" data-bind="value: dependentElementsString(), attr: {'name': 'dependencies' + $parent.id(), 'data-id' : id()}" />	
-							<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parent.id(), 'data-id' : id()}" />	
-							<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parent.id(), 'data-id' : id()}" />	
-							<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parent.id(), 'data-id' : id()}"></textarea>					
-							<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea>
-							<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parent.id(), 'data-id' : id()}" />	
-							<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parent.id(), 'data-id' : id()}" />	
-							<input type="hidden" data-bind="value: scoring.feedback, attr: {'name': 'feedback' + $parent.id(), 'data-id' : id()}" />						
-					<!-- /ko -->
-					</td>					
-				</tr>
-				<!-- /ko -->				
-				
-				<!-- ko foreach: orderedPossibleAnswersByRows(${ismobile != null}, ${responsive != null}) -->
-				<tr class="possibleanswerrow">				
-					<!-- ko foreach: $data -->					
-										
-					<td style="vertical-align: top">
-						<!-- ko ifnot: id() == 'dummy' -->
-						<input data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id()}" type="radio"  />
-						<!-- /ko -->	
-					</td>
-					<td style="padding-right: 15px; vertical-align: top">
-						<label data-bind="attr: {'for': id}">
-							<!-- ko ifnot: id() == 'dummy' -->
-							<div class="answertext" data-bind="html: titleForDisplayMode($parents[1].displayMode()), attr: {'data-id' : id()}"></div>
-							<!-- /ko -->	
-						</label>
-					</td>					
-				
-					<!-- /ko -->
-				</tr>
-				<!-- /ko -->
-			</table>
-			<!-- /ko -->
-			<!-- ko ifnot: useRadioButtons -->
-			<div class="answer-column">		
-				<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice'}"  onchange="validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);">
-					<option data-bind="html: strip_tags(titleForDisplayMode($parents[0].displayMode())), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
-				</select>
-				<span data-bind="if: readonly"><input data-bind="value: getPAByQuestion3(uniqueId()), attr: {'name':'answer'+id()}" type="hidden" /></span>	
-				<!-- ko if: foreditor -->
-					<!-- ko foreach: possibleAnswers() -->
-						<div class="possibleanswerrow hidden">		
-							<input type="hidden" data-bind="value: dependentElementsString(), attr: {'name': 'dependencies' + $parents[0].id(), 'data-id' : id()}" />	
-							<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parents[0].id(), 'data-id' : id()}" />	
-							<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parents[0].id(), 'data-id' : id()}" />	
-							<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parents[0].id(), 'data-id' : id()}"></textarea>
-							<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea> 
-							<div class="answertext" data-bind="html: title, attr: {'id' : id(), 'data-id' : id()}"></div>
-							<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parents[0].id(), 'data-id' : id()}" />	
-							<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parents[0].id(), 'data-id' : id()}" />	
-							<input type="hidden" data-bind="value: scoring.feedback, attr: {'name': 'feedback' + $parents[0].id(), 'data-id' : id()}" />	
-						</div>
-					<!-- /ko -->
-				<!-- /ko -->					
-			</div>
+						<!-- ko foreach: possibleAnswers() -->
+							<div class="possibleanswerrow hidden">		
+								<input type="hidden" data-bind="value: dependentElementsString(), attr: {'name': 'dependencies' + $parents[0].id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parents[0].id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parents[0].id(), 'data-id' : id()}" />	
+								<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parents[0].id(), 'data-id' : id()}"></textarea>
+								<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea> 
+								<div class="answertext" data-bind="html: title, attr: {'id' : id(), 'data-id' : id()}"></div>
+								<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parents[0].id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parents[0].id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: scoring.feedback, attr: {'name': 'feedback' + $parents[0].id(), 'data-id' : id()}" />	
+							</div>
+						<!-- /ko -->
+					<!-- /ko -->		
 			<!-- /ko -->
 			
+			<!-- ko ifnot: likert -->
+		
+				<!-- ko if: useRadioButtons -->
+				<table class="answers-table">
+					<tr class="hideme">
+						<th>radio button</th>
+						<th>label</th>
+					</tr>
+					
+					<!-- ko if: foreditor -->
+					<tr class="hideme">
+						<td>
+						<!-- ko foreach: possibleAnswers() -->
+								<input type="hidden" data-bind="value: dependentElementsString(), attr: {'name': 'dependencies' + $parent.id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parent.id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parent.id(), 'data-id' : id()}" />	
+								<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parent.id(), 'data-id' : id()}"></textarea>					
+								<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea>
+								<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parent.id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parent.id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: scoring.feedback, attr: {'name': 'feedback' + $parent.id(), 'data-id' : id()}" />						
+						<!-- /ko -->
+						</td>					
+					</tr>
+					<!-- /ko -->				
+					
+					<!-- ko foreach: orderedPossibleAnswersByRows(${ismobile != null}, ${responsive != null}) -->
+					<tr class="possibleanswerrow">				
+						<!-- ko foreach: $data -->					
+											
+						<td style="vertical-align: top">
+							<!-- ko ifnot: id() == 'dummy' -->
+							<input data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id()}" type="radio"  />
+							<!-- /ko -->	
+						</td>
+						<td style="padding-right: 15px; vertical-align: top">
+							<label data-bind="attr: {'for': id}">
+								<!-- ko ifnot: id() == 'dummy' -->
+								<div class="answertext" data-bind="html: titleForDisplayMode($parents[1].displayMode()), attr: {'data-id' : id()}"></div>
+								<!-- /ko -->	
+							</label>
+						</td>					
+					
+						<!-- /ko -->
+					</tr>
+					<!-- /ko -->
+				</table>
+				<!-- /ko -->
+				<!-- ko ifnot: useRadioButtons -->
+				<div class="answer-column">		
+					<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice'}"  onchange="validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);">
+						<option data-bind="html: strip_tags(titleForDisplayMode($parents[0].displayMode())), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
+					</select>
+					<span data-bind="if: readonly"><input data-bind="value: getPAByQuestion3(uniqueId()), attr: {'name':'answer'+id()}" type="hidden" /></span>	
+					<!-- ko if: foreditor -->
+						<!-- ko foreach: possibleAnswers() -->
+							<div class="possibleanswerrow hidden">		
+								<input type="hidden" data-bind="value: dependentElementsString(), attr: {'name': 'dependencies' + $parents[0].id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: shortname, attr: {'name': 'pashortname' + $parents[0].id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'pauid' + $parents[0].id(), 'data-id' : id()}" />	
+								<textarea style="display: none" data-bind="text: title, attr: {'name': 'answer' + $parents[0].id(), 'data-id' : id()}"></textarea>
+								<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'originalAnswer' + $parent.id(), 'data-id' : id()}"></textarea> 
+								<div class="answertext" data-bind="html: title, attr: {'id' : id(), 'data-id' : id()}"></div>
+								<input type="hidden" data-bind="value: scoring.correct, attr: {'name': 'correct' + $parents[0].id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: scoring.points, attr: {'name': 'answerpoints' + $parents[0].id(), 'data-id' : id()}" />	
+								<input type="hidden" data-bind="value: scoring.feedback, attr: {'name': 'feedback' + $parents[0].id(), 'data-id' : id()}" />	
+							</div>
+						<!-- /ko -->
+					<!-- /ko -->					
+				</div>
+				<!-- /ko -->
+			<!-- /ko -->
 			<input type="hidden" data-bind="value: choiceType, attr: {'name': 'choicetype' + id()}" />
 
 			<!-- ko if: foreditor -->
@@ -1201,7 +1228,7 @@
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">
 		
 			<!-- ko if: delphiTableEntries().length > 0 -->
-			<div class="delphi-table">
+			<div class="delphi-table table-responsive">
 				<table class="table table-condensed table-striped table-bordered">
 					<thead>
 						<tr class="area-header">

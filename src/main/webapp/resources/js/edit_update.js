@@ -299,7 +299,20 @@ function update(input)
 					case "list":
 						oldtext = "ListBox";
 						break;
+					case "likert":
+						oldtext = "LikertScale";
+						break;
 				}
+				
+				if (text == "LikertScale")
+				{
+					element.likert(true);
+					element.choiceType("likert");
+					initLikert($(".selectedquestion").find(".likert").first(), true, element);
+				} else {
+					element.likert(false);
+				}
+				
 				if (text == "RadioButton")
 				{
 					element.useRadioButtons(true);

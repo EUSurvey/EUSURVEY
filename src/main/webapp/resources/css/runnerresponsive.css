@@ -187,6 +187,11 @@
 	max-width: 420px;
 }
 
+.likert-div {
+	padding: 20px;
+	padding-left: 20px;
+}
+
 .numbering {
     margin-right: 5px;
 }
@@ -431,7 +436,7 @@ legend {
 }
 
 .slider-tick {
-	background-color: #eee !important;
+	background-color: #ccc !important;
 	background-image: none !important;
 	
     filter: none !important;

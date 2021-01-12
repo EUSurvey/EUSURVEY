@@ -365,6 +365,11 @@ var UndoProcessor = function() {
 					{
 						element.choiceType("list");
 						element.useCheckboxes(false);
+					} else if (step[3] == "LikertScale")
+					{
+						element.choiceType("likert");
+						element.useRadioButtons(false);
+						element.likert(true);
 					}
 					updateChoice();
 				}
@@ -412,10 +417,16 @@ var UndoProcessor = function() {
 			case "ADDANSWER":
 				element.possibleAnswers.pop();
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				if (element.likert()) {
+					initLikert($(_elementProperties.selectedelement).find(".likert").first(), true, element);
+				}
 				break;
 			case "REMOVEANSWER":
 				element.possibleAnswers.push(step[2]);
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				if (element.likert()) {
+					initLikert($(_elementProperties.selectedelement).find(".likert").first(), true, element);
+				}
 				break;
 			case "ADDCOLUMN":
 				element.answers.pop();
@@ -884,6 +895,11 @@ var UndoProcessor = function() {
 					{
 						element.choiceType("list");
 						element.useCheckboxes(false);
+					} else if (step[4] == "LikertScale")
+					{
+						element.choiceType("likert");
+						element.useRadioButtons(false);
+						element.likert(true);
 					}
 					updateChoice();
 				}
@@ -931,10 +947,16 @@ var UndoProcessor = function() {
 			case "ADDANSWER":
 				element.possibleAnswers.push(step[2]);
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				if (element.likert()) {
+					initLikert($(_elementProperties.selectedelement).find(".likert").first(), true, element);
+				}
 				break;
 			case "REMOVEANSWER":
 				element.possibleAnswers.pop();
 				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				if (element.likert()) {
+					initLikert($(_elementProperties.selectedelement).find(".likert").first(), true, element);
+				}
 				break;
 			case "ADDCOLUMN":
 				element.answers.push(step[2]);

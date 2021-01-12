@@ -131,8 +131,22 @@ public class SurveyHelper {
 									answerSet.addAnswer(answer);
 								}
 							}
-
 						} else {
+							if (question instanceof SingleChoiceQuestion) {
+								SingleChoiceQuestion single = (SingleChoiceQuestion) question;
+								if (single.getUseLikert()) {
+									List<String> realValues = new ArrayList<>();
+									for (String value : values) {
+										int index = Integer.parseInt(value);
+										if (index > 0) {
+											PossibleAnswer answer = single.getPossibleAnswers().get(index-1);
+											realValues.add(answer.getId().toString());
+										}
+									}
+									values = realValues.toArray(new String[0]);
+								}
+							}							
+							
 							for (String value : values) {
 								if (value.isEmpty() || value.equalsIgnoreCase("false")
 										|| (question instanceof DateQuestion && value.equalsIgnoreCase("DD/MM/YYYY"))
@@ -2578,6 +2592,13 @@ public class SurveyHelper {
 			newValues += " useRadioButtons: " + useRadioButtons;
 		}
 		singlechoice.setUseRadioButtons(useRadioButtons);
+		
+		Boolean useLikert = choicetype.equalsIgnoreCase("likert");
+		if (log220 && !useLikert.equals(singlechoice.getUseLikert())) {
+			oldValues += " useLikert: " + singlechoice.getUseLikert();
+			newValues += " useLikert: " + useLikert;
+		}
+		singlechoice.setUseLikert(useLikert);
 
 		Integer columns = getInteger(parameterMap, "columns", id);
 		if (log220 && !columns.equals(singlechoice.getNumColumns())) {

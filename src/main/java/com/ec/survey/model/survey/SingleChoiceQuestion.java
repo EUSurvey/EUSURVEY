@@ -33,6 +33,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	}
 
 	private boolean useRadioButtons;
+	private boolean useLikert;
 	private int numColumns = 1;
 
 	@Column(name = "RADIO")
@@ -42,6 +43,15 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 
 	public void setUseRadioButtons(boolean useRadioButtons) {
 		this.useRadioButtons = useRadioButtons;
+	}
+	
+	@Column(name = "LIKERT")
+	public boolean getUseLikert() {
+		return useLikert;
+	}
+
+	public void setUseLikert(Boolean useLikert) {
+		this.useLikert = useLikert != null ? useLikert : false;
 	}
 
 	@Column(name = "NUMCOLUMNS")
@@ -58,6 +68,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 		baseCopy(copy);
 		copy.numColumns = numColumns;
 		copy.useRadioButtons = useRadioButtons;
+		copy.useLikert = useLikert;
 		copy.setOrder(getOrder());
 
 		for (PossibleAnswer possibleAnswer : getPossibleAnswers()) {
@@ -79,6 +90,8 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 		SingleChoiceQuestion single = (SingleChoiceQuestion) element;
 
 		if (useRadioButtons != single.useRadioButtons)
+			return true;
+		if (useLikert != single.useLikert)
 			return true;
 		if (numColumns != single.numColumns)
 			return true;

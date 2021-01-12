@@ -695,6 +695,7 @@
 	 		strings["Columns"] = "<spring:message code="label.Columns" />";
 	 		strings["RadioButton"] = "<spring:message code="html.RadioButton" />";
 	 		strings["SelectBox"] = "<spring:message code="html.SelectBox" />";	 
+	 		strings["LikertScale"] = "<spring:message code="html.LikertScale" />";
 	 		strings["Original"] = "<spring:message code="label.OriginalOrder" />";
 	 		strings["Alphabetical"] = "<spring:message code="label.AlphabeticalOrder" />";
 	 		strings["Random"] = "<spring:message code="label.RandomOrder" />";
