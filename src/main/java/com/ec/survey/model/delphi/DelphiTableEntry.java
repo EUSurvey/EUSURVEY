@@ -12,6 +12,7 @@ public class DelphiTableEntry {
     private String updateString;
     
     private int answerSetId;
+    private String answerSetUniqueCode;
     private final List<DelphiComment> comments = new ArrayList<>();
     private final List<DelphiTableFile> files = new ArrayList<>();
 
@@ -46,7 +47,15 @@ public class DelphiTableEntry {
     public void setAnswerSetId(int answerSetId) {
         this.answerSetId = answerSetId;
     }
-    
+
+    public String getAnswerSetUniqueCode() {
+        return answerSetUniqueCode;
+    }
+
+    public void setAnswerSetUniqueCode(String answerSetUniqueCode) {
+        this.answerSetUniqueCode = answerSetUniqueCode;
+    }
+
     public List<DelphiComment> getComments() {
         return comments;
     }
