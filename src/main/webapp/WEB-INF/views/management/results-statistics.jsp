@@ -123,6 +123,18 @@
                                      </table>
                                      <div style="clear: both"></div>
                                 </div>
+                                <div class="chart-controls">
+                                	<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+                                	<select onchange="changeChartType(this)" data-type="${question.delphiChartType}" class="chart-type form-control" style="width: auto; display: inline;">
+                                		<option value="Bar"><spring:message code="label.DelphiChartBar" /></option>
+                                		<option value="Column"><spring:message code="label.DelphiChartColumn" /></option>
+                                		<option value="Line"><spring:message code="label.DelphiChartLine" /></option>
+                                		<option value="Pie"><spring:message code="label.DelphiChartPie" /></option>
+                                		<option value="Radar"><spring:message code="label.DelphiChartRadar" /></option>
+                                		<option value="Scatter"><spring:message code="label.DelphiChartScatter" /></option>
+                                	</select>                                	
+                                </div>
+                                <div style="clear: both"></div>
 	                        </div>
 	                    </c:if>
 

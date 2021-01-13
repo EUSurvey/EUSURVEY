@@ -87,6 +87,15 @@
 		.statelement-wrapper {
 			width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;
 		}
+		
+		.chart-wrapper, .chart-controls {
+			float: left;
+			display: none;
+		}
+		
+		.chart-controls {
+			margin-left: 20px;
+		}
 	
 	</style>
 	
