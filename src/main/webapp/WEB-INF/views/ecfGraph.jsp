@@ -20,7 +20,7 @@
 	</c:if>
 
 	<c:choose>
-         <c:when test="${!print && !forpdf}">
+         <c:when test="${!forpdf}">
             <canvas class="ecfRespondentChart"></canvas>
          </c:when>
          <c:otherwise>

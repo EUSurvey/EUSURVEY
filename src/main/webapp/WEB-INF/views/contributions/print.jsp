@@ -62,7 +62,7 @@
 	<script type="text/javascript"> 
 		$(function() {	
 			$(".handsontableInput").hide();
-			if (launchPrint === true) {
+			if (launchPrint === "true") {
 				setTimeout(function(){ window.print(); }, 3000);
 			}
 			$("input[type=checkbox]").attr("disabled","disabled");
