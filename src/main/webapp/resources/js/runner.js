@@ -1567,6 +1567,11 @@ function eraseCookie(name) {
 }
 
 function is_local_storage_enabled() {
+	if ($("#saveLocalBackup").length === 0) {
+		// local backup checkbox is not displayed => Delphi question => disable local storage
+		return false;
+	}
+
 	if (typeof (Storage) !== "undefined") {
     var ABCD=0;
 		try {

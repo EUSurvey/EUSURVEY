@@ -32,24 +32,25 @@
 				</c:when>
 			</c:choose>						
 				
-				<div class="left-area">				
-					
-					<div id="nolocalstorage" class="hideme" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
-						<span class="alert-danger" style="padding: 10px;">${form.getMessage("info.LocalStorageDisabled")}</span>						
-					</div>
-					
-					<c:choose>
-						<c:when test="${mode == 'editcontribution' }">
-							<input style="display: none" class="check" type="checkbox" id="saveLocalBackup" onchange="checkLocalBackup()" /> 
-						</c:when>
-						<c:otherwise>
-							<div id="localstorageinfo" class="visible-lg" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
-								<input class="check" type="checkbox" checked="checked" id="saveLocalBackup" onchange="checkLocalBackup()" /> 
-								<label for="saveLocalBackup">${form.getMessage("info.DeactivateLocalStorage")}</label>
-							</div>
-						</c:otherwise>
-					</c:choose>
-				
+				<div class="left-area">
+					<c:if test="${!(form.survey.isDelphi)}">
+						<div id="nolocalstorage" class="hideme" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
+							<span class="alert-danger" style="padding: 10px;">${form.getMessage("info.LocalStorageDisabled")}</span>
+						</div>
+
+						<c:choose>
+							<c:when test="${mode == 'editcontribution' }">
+								<input style="display: none" class="check" type="checkbox" id="saveLocalBackup" onchange="checkLocalBackup()" />
+							</c:when>
+							<c:otherwise>
+								<div id="localstorageinfo" class="visible-lg" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
+									<input class="check" type="checkbox" checked="checked" id="saveLocalBackup" onchange="checkLocalBackup()" />
+									<label for="saveLocalBackup">${form.getMessage("info.DeactivateLocalStorage")}</label>
+								</div>
+							</c:otherwise>
+						</c:choose>
+					</c:if>
+
 					<div class="surveytitle">${form.survey.title}</div><br />
 
 					<c:if test="${form.survey.containsMandatoryQuestion()}">
