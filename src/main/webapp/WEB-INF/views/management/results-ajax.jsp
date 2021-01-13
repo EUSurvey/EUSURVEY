@@ -139,16 +139,19 @@
             var chartwrapperlist = $(resultsStatisticParentElement).find(".chart-wrapper");
             chartwrapperlist.each(function (index) {
                 var chartwrapper = $(this);
-                loadGraphDataInner(chartwrapper, addChart, null);
+                loadGraphDataInner(chartwrapper, addChart, null, 'tableau.Tableau10');
             });
         }
                 
-        function changeChartType(select) {
+        function changeChart(select) {
         	 var chartwrapper = $(select).closest(".statelement-wrapper").find(".chart-wrapper").first();
-             loadGraphDataInner(chartwrapper, addChart, $(select).val());
+        	 var chartType = $(select).parent().find(".chart-type").first().val();
+        	 var scheme =  $(select).parent().find(".chart-scheme").first().val();
+        	 
+             loadGraphDataInner(chartwrapper, addChart, chartType, scheme);
         }
-
-        function loadGraphDataInner(div, chartCallback, chartType) {
+       
+        function loadGraphDataInner(div, chartCallback, chartType, scheme) {
         	
        	    var surveyid = div.data("survey-id");
             var questionuid = div.data("question-uid");
@@ -204,7 +207,12 @@
         	                onComplete: function(animation){
         	                    $(div).closest(".statelement-wrapper").find('.chart-download').attr('href', this.toBase64Image());
         	                }
-        	            }
+        	            },
+        	            plugins: {
+        	                colorschemes: {
+        	                  scheme: scheme
+        	                }
+        	              }
         			};
 
         			switch (result.questionType) {
@@ -310,7 +318,16 @@
         	var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 
         	$(elementWrapper).find(".delphi-chart").remove();
-        	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='300' height='220' style='background-color: #fff;'></canvas>");
+        	
+        	 var size =  $(elementWrapper).find(".chart-size").first().val();
+        	         	 
+        	 if (size === 'medium') {
+        	  	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='450' height='330' style='background-color: #fff;'></canvas>");
+        	 } else if (size === 'large') {
+        	  	 $(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='600' height='440' style='background-color: #fff;'></canvas>");
+        	 } else {
+        		$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='300' height='220' style='background-color: #fff;'></canvas>");
+  		 	 }        	 
 
         	$(elementWrapper).find(".chart-wrapper").show();
         	$(elementWrapper).find(".chart-controls").show();

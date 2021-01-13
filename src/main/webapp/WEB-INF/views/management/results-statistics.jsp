@@ -124,15 +124,110 @@
                                      <div style="clear: both"></div>
                                 </div>
                                 <div class="chart-controls">
-                                	<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-                                	<select onchange="changeChartType(this)" data-type="${question.delphiChartType}" class="chart-type form-control" style="width: auto; display: inline;">
+                                	<label><spring:message code="label.DelphiChartType" /></label><br />
+                                	<select onchange="changeChart(this)" class="chart-type form-control" style="width: auto; display: inline;">
                                 		<option value="Bar"><spring:message code="label.DelphiChartBar" /></option>
                                 		<option value="Column"><spring:message code="label.DelphiChartColumn" /></option>
                                 		<option value="Line"><spring:message code="label.DelphiChartLine" /></option>
                                 		<option value="Pie"><spring:message code="label.DelphiChartPie" /></option>
                                 		<option value="Radar"><spring:message code="label.DelphiChartRadar" /></option>
                                 		<option value="Scatter"><spring:message code="label.DelphiChartScatter" /></option>
-                                	</select>                                	
+                                	</select>
+                                	<br /><br />
+                                	<label><spring:message code="label.ColorScheme" /></label><br />
+                                	<select onchange="changeChart(this)" class="chart-scheme form-control" style="width: auto; display: inline;">
+                                		<option selected="selected">tableau.Tableau10</option>
+                                		<option>tableau.Tableau10</option>
+										<option>tableau.Tableau20</option>
+										<option>tableau.ColorBlind10</option>
+										<option>tableau.SeattleGrays5</option>
+										<option>tableau.Traffic9</option>
+										<option>tableau.MillerStone11</option>
+										<option>tableau.SuperfishelStone10</option>
+										<option>tableau.NurielStone9</option>
+										<option>tableau.JewelBright9</option>
+										<option>tableau.Summer8</option>
+										<option>tableau.Winter10</option>
+										<option>tableau.GreenOrangeTeal12</option>
+										<option>tableau.RedBlueBrown12</option>
+										<option>tableau.PurplePinkGray12</option>
+										<option>tableau.HueCircle19</option>
+										<option>tableau.OrangeBlue7</option>
+										<option>tableau.RedGreen7</option>
+										<option>tableau.GreenBlue7</option>
+										<option>tableau.RedBlue7</option>
+										<option>tableau.RedBlack7</option>
+										<option>tableau.GoldPurple7</option>
+										<option>tableau.RedGreenGold7</option>
+										<option>tableau.SunsetSunrise7</option>
+										<option>tableau.OrangeBlueWhite7</option>
+										<option>tableau.RedGreenWhite7</option>
+										<option>tableau.GreenBlueWhite7</option>
+										<option>tableau.RedBlueWhite7</option>
+										<option>tableau.RedBlackWhite7</option>
+										<option>tableau.OrangeBlueLight7</option>
+										<option>tableau.Temperature7</option>
+										<option>tableau.BlueGreen7</option>
+										<option>tableau.BlueLight7</option>
+										<option>tableau.OrangeLight7</option>
+										<option>tableau.Blue20</option>
+										<option>tableau.Orange20</option>
+										<option>tableau.Green20</option>
+										<option>tableau.Red20</option>
+										<option>tableau.Purple20</option>
+										<option>tableau.Brown20</option>
+										<option>tableau.Gray20</option>
+										<option>tableau.GrayWarm20</option>
+										<option>tableau.BlueTeal20</option>
+										<option>tableau.OrangeGold20</option>
+										<option>tableau.GreenGold20</option>
+										<option>tableau.RedGold21</option>
+										<option>tableau.Classic10</option>
+										<option>tableau.ClassicMedium10</option>
+										<option>tableau.ClassicLight10</option>
+										<option>tableau.Classic20</option>
+										<option>tableau.ClassicGray5</option>
+										<option>tableau.ClassicColorBlind10</option>
+										<option>tableau.ClassicTrafficLight9</option>
+										<option>tableau.ClassicPurpleGray6</option>
+										<option>tableau.ClassicPurpleGray12</option>
+										<option>tableau.ClassicGreenOrange6</option>
+										<option>tableau.ClassicGreenOrange12</option>
+										<option>tableau.ClassicBlueRed6</option>
+										<option>tableau.ClassicBlueRed12</option>
+										<option>tableau.ClassicCyclic13</option>
+										<option>tableau.ClassicGreen7</option>
+										<option>tableau.ClassicGray13</option>
+										<option>tableau.ClassicBlue7</option>
+										<option>tableau.ClassicRed9</option>
+										<option>tableau.ClassicOrange7</option>
+										<option>tableau.ClassicAreaRed11</option>
+										<option>tableau.ClassicAreaGreen11</option>
+										<option>tableau.ClassicAreaBrown11</option>
+										<option>tableau.ClassicRedGreen11</option>
+										<option>tableau.ClassicRedBlue11</option>
+										<option>tableau.ClassicRedBlack11</option>
+										<option>tableau.ClassicAreaRedGreen21</option>
+										<option>tableau.ClassicOrangeBlue13</option>
+										<option>tableau.ClassicGreenBlue11</option>
+										<option>tableau.ClassicRedWhiteGreen11</option>
+										<option>tableau.ClassicRedWhiteBlack11</option>
+										<option>tableau.ClassicOrangeWhiteBlue11</option>
+										<option>tableau.ClassicRedWhiteBlackLight10</option>
+										<option>tableau.ClassicOrangeWhiteBlueLight11</option>
+										<option>tableau.ClassicRedWhiteGreenLight11</option>
+										<option>tableau.ClassicRedGreenLight11</option>
+                                	</select>
+                                	<br /><br />
+                                	<label><spring:message code="label.Size" /></label><br />
+                                	<select onchange="changeChart(this)" class="chart-size form-control" style="width: auto; display: inline;">
+                                		<option selected="selected">small</option>
+                                		<option>medium</option>
+                                		<option>large</option>
+                                	</select>
+                                	<br /><br />   
+                                	<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+                                	           	
                                 </div>
                                 <div style="clear: both"></div>
 	                        </div>
