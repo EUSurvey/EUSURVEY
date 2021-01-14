@@ -632,6 +632,16 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					chart.type = "pie";
 					chart.options.legend.display = true;
 					delete chart.options.scales;
+
+					if (chart.data.datasets.length > 1) {
+						chart.options.tooltips = {
+							callbacks: {
+								title: function(item, data) {
+									return data.datasets[item[0].datasetIndex].label;
+								}
+							}
+						}
+					}
 					break;
 				case "Radar":
 					chart.type = "radar";
@@ -773,11 +783,35 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 
 			for (let i = 0; i < result.entries.length; i++) {
 				const entry = result.entries[i];
+				
+				entry.showCommentArea = function() {
+					
+					$('.delphicommentcancel').each(function(){
+						if ($(this).is(":visible")) {
+							$(this).click();
+						}
+					})					
+					
+					this.delphiTableIsCommentFormVisible(true);
+					this.delphiTableHasCommentFieldFocus(true);
+				}				
+				
 				entry.delphiTableIsCommentFormVisible = ko.observable(false);
 				entry.delphiTableHasCommentFieldFocus = ko.observable(false);
 				for (let j = 0; j < entry.comments.length; j++) {
 					entry.comments[j].delphiTableIsReplyFormVisible = ko.observable(false);
 					entry.comments[j].delphiTableHasReplyFieldFocus = ko.observable(false);
+					
+					entry.comments[j].showCommentArea = function() {
+						$('.delphicommentcancel').each(function(){
+							if ($(this).is(":visible")) {
+								$(this).click();
+							}
+						})	
+						
+						this.delphiTableIsReplyFormVisible(true);
+						this.delphiTableHasReplyFieldFocus(true);
+					}	
 				}
 				viewModel.delphiTableEntries.push(entry);
 			}
@@ -908,7 +942,7 @@ function saveDelphiCommentInner(button, reply, questionUid, surveyId, errorCallb
 
 	const td = $(button).closest("td");
 	const answerSetId = $(td).attr("data-id");
-	const answerSetUniqueCode = $(td).attr("data-answer-set-unique-code");
+	const answerSetUniqueCode = $("#uniqueCode").val();
 
 	let data = "surveyid=" + surveyId + "&uniquecode=" + answerSetUniqueCode + "&answersetid=" + answerSetId
 		+ "&questionuid=" + questionUid + "&text=" + encodeURIComponent(text);
