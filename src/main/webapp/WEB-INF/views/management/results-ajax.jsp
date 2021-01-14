@@ -138,18 +138,34 @@
         function delphiPopulateAllGraphs(resultsStatisticParentElement) {
             var chartwrapperlist = $(resultsStatisticParentElement).find(".chart-wrapper");
             chartwrapperlist.each(function (index) {
+            	
+            	$(this).parent().find(".chart-controls").append($("#chart-controls-template").html());
+            	
+            	$(this).parent().find('[data-toggle="tooltip"]').tooltip();
+            	
                 var chartwrapper = $(this);
-                var surveyId = chartwrapper.data("survey-id");
-                var questionuid = chartwrapper.data("question-uid");
-                var languagecode = chartwrapper.data("language-code");
-                var answersetuniquecode = ""; // not needed for privileged users like form managers
-                loadGraphDataInner(chartwrapper, surveyId, questionuid, languagecode, answersetuniquecode, addChart, true);
+                loadGraphDataInner(chartwrapper, addChart, null, 'tableau.Tableau10', null);
             });
         }
-
-        function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback, removeIfEmpty) {
+                
+        function changeChart(select) {
+        	 var chartwrapper = $(select).closest(".statelement-wrapper").find(".chart-wrapper").first();
+        	 var chartType = $(select).parent().find(".chart-type").first().val();
+        	 var scheme =  $(select).parent().find(".chart-scheme").first().val();
+        	 var legend =  $(select).parent().find(".chart-legend").first().is(":checked");
+        	 
+             loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend);
+        }
+       
+        function loadGraphDataInner(div, chartCallback, chartType, scheme, legend) {
+        	
+       	    var surveyid = div.data("survey-id");
+            var questionuid = div.data("question-uid");
+            var languagecode = div.data("language-code");
+            var uniquecode = ""; // not needed for privileged users like form managers        	
+        	
         	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode + "&resultsview=true";
-
+            
         	$.ajax({
         		type: "GET",
         		url: contextpath + "/runner/delphiGraph",
@@ -162,14 +178,23 @@
         		},
         		success: function (result, textStatus) {
         			if (textStatus === "nocontent") {
-        				if (removeIfEmpty) {
-        					var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
-        					$(elementWrapper).find(".delphi-chart").remove();
-        					$(elementWrapper).find(".chart-wrapper").hide();
-        				}
-
+        				var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
+        				$(elementWrapper).find(".delphi-chart").remove();
+        				$(elementWrapper).find(".chart-wrapper").hide();
+        				$(elementWrapper).find(".chart-controls").hide();
+        			
         				return;
         			}
+        			
+        			if (chartType == null)
+        			{
+        				chartType = result.chartType;	
+        			}
+        			
+                    if (legend === null)
+                    {
+                    	legend = result.questionType === "Matrix" || result.questionType === "Rating" || chartType === "Pie";
+                    }
 
         			var chartData = {};
         			var chartOptions = {
@@ -193,7 +218,17 @@
         						}
         					]
         				},
-        				legend: {display: false}
+        				legend: {display: legend},
+        	            animation: {
+        	                onComplete: function(animation){
+        	                    $(div).closest(".statelement-wrapper").find('.chart-download').attr('href', this.toBase64Image());
+        	                }
+        	            },
+        	            plugins: {
+        	                colorschemes: {
+        	                  scheme: scheme
+        	                }
+        	              }
         			};
 
         			switch (result.questionType) {
@@ -242,7 +277,6 @@
         						labels
         					}
 
-        					chartOptions.legend.display = true;
         					break;
 
         				default:
@@ -254,7 +288,7 @@
         				options: chartOptions
         			}
 
-        			switch (result.chartType) {
+        			switch (chartType) {
         				case "Bar":
         					chart.type = "horizontalBar";
         					break;
@@ -266,7 +300,6 @@
         					break;
         				case "Pie":
         					chart.type = "pie";
-        					chart.options.legend.display = true;
         					delete chart.options.scales;
         					break;
         				case "Radar":
@@ -283,21 +316,39 @@
         			}
 
         			if (chartCallback instanceof Function) {
-        				chartCallback(div, chart);
+        				chartCallback(div, chart, chartType, legend);
         			}
         		}
         	 });
         }
 
-        function addChart(div, chart)
+        function addChart(div, chart, chartType, legend)
         {
         	var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 
         	$(elementWrapper).find(".delphi-chart").remove();
-        	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
+        	
+        	 var size =  $(elementWrapper).find(".chart-size").first().val();
+        	         	 
+        	 if (size === 'medium') {
+        	  	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='450' height='330' style='background-color: #fff;'></canvas>");
+        	 } else if (size === 'large') {
+        	  	 $(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='600' height='440' style='background-color: #fff;'></canvas>");
+        	 } else {
+        		$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='300' height='220' style='background-color: #fff;'></canvas>");
+  		 	 }        	 
 
         	$(elementWrapper).find(".chart-wrapper").show();
-
+        	$(elementWrapper).find(".chart-controls").show();
+        	
+        	$(elementWrapper).find(".chart-type").each(function(){
+        		$(this).val(chartType);
+        	});
+        	
+        	if (legend) {
+        		$(elementWrapper).find(".chart-legend").prop("checked", "checked");
+        	}
+        
         	var graph = new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
         }
 
