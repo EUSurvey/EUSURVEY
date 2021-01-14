@@ -173,6 +173,8 @@
 				<div>
 			</c:otherwise>
 		</c:choose>
+		
+			<input type="hidden" id="uniqueCode" value="${uniqueCode}" />
 						
 			<div id="sections">
 				<!-- ko if: !loaded() -->
@@ -264,7 +266,7 @@
 			const languageCode = "${form.language.code}";
 			currentQuestionUidInModal = $(element).closest('.question').attr('data-uid');
 			const surveyId = ${form.survey.id};
-			const uniqueCode = $(element).closest('td').attr('data-answer-set-unique-code');
+			const uniqueCode = $('#uniqueCode').val();
 			loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, uniqueCode, answersTableViewModel);
 		}
 
@@ -298,7 +300,7 @@
 			}
 			const successCallback = function() {
 				const languageCode = "${form.language.code}";
-				const answerSetUniqueCode = $(element).closest('td').attr('data-answer-set-unique-code');
+				const answerSetUniqueCode = $('#uniqueCode').val();
 				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
 			}
 			saveDelphiCommentInner(element, reply, currentQuestionUidInModal, surveyId, errorCallback, successCallback);

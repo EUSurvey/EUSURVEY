@@ -46,7 +46,7 @@
 				<a data-bind="attr: {href: '${contextpath}/files/${form.survey.uniqueId}/' + uid}, text: name"></a>
 				<!-- /ko -->
 			</td>
-			<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId, 'data-answer-set-unique-code': answerSetUniqueCode}">
+			<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId}">
 				<!-- ko foreach: comments -->
 				<div class="delphicommentsdiv">
 					<div style="margin-top: 5px;">
@@ -60,7 +60,7 @@
 					</div>
 					<!-- /ko -->
 					<div style="margin-left: 20px; margin-top: 10px;">
-						<a data-bind="click: () => { delphiTableIsReplyFormVisible(true); delphiTableHasReplyFieldFocus(true); }">${form.getMessage("label.Reply")}</a>
+						<a data-bind="click: () => { showCommentArea(); }">${form.getMessage("label.Reply")}</a>
 						<div class="delphireply" data-bind="visible: delphiTableIsReplyFormVisible">
 							<textarea class="form-control" data-bind="hasFocus: delphiTableHasReplyFieldFocus"></textarea>
 							<c:choose>
@@ -77,7 +77,7 @@
 				</div>
 				<!-- /ko -->
 				<div style="margin-top: 5px">
-					<a data-bind="click: () => { delphiTableIsCommentFormVisible(true); delphiTableHasCommentFieldFocus(true); }">${form.getMessage("label.AddComment")}</a>
+					<a data-bind="click: () => {showCommentArea(); }">${form.getMessage("label.AddComment")}</a>
 					<div class="delphicomment" data-bind="visible: delphiTableIsCommentFormVisible">
 						<textarea class="form-control" data-bind="hasFocus: delphiTableHasCommentFieldFocus"></textarea>
 						<c:choose>
