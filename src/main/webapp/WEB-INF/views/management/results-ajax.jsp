@@ -301,6 +301,17 @@
         				case "Pie":
         					chart.type = "pie";
         					delete chart.options.scales;
+
+							if (chart.data.datasets.length > 1) {
+								chart.options.tooltips = {
+									callbacks: {
+										title: function(item, data) {
+											return data.datasets[item[0].datasetIndex].label;
+										}
+									}
+								}
+							}
+
         					break;
         				case "Radar":
         					chart.type = "radar";
