@@ -1340,11 +1340,7 @@ function addPossibleAnswer()
 	updateDependenciesView();
 	addElementHandler($(_elementProperties.selectedelement));
 	
-	updateNavigation($(_elementProperties.selectedelement), id);	
-	
-	if (element.likert()) {
-		initLikert($(_elementProperties.selectedelement).find(".likert").first(), true, element);
-	}
+	updateNavigation($(_elementProperties.selectedelement), id);
 }
 
 function removePossibleAnswer()
@@ -1376,10 +1372,6 @@ function removePossibleAnswer()
 	addElementHandler($(_elementProperties.selectedelement));
 	
 	updateNavigation($(_elementProperties.selectedelement), id);
-	
-	if (element.likert()) {
-		initLikert($(_elementProperties.selectedelement).find(".likert").first(), true, element);
-	}
 }
 
 function addColumn(noundo)

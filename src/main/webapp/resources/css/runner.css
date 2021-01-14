@@ -330,19 +330,6 @@ textarea.freetext {
 	max-width: 420px;
 }
 
-.likert-div .slider-horizontal{
- 	width:700px !important;
- }
- 
-.likert-div .slider.slider-horizontal .slider-tick-label-container .slider-tick-label {
-    word-break: break-word;
-    white-space: break-spaces;
-}
- 
-.likert-div {
-	margin-left: 20px;
-}
-
 input[type="text"].number {
 	width: 215px;
 }

@@ -308,7 +308,6 @@ function update(input)
 				{
 					element.likert(true);
 					element.choiceType("likert");
-					initLikert($(".selectedquestion").find(".likert").first(), true, element);
 				} else {
 					element.likert(false);
 				}
