@@ -887,24 +887,32 @@ public class XmlExportCreator extends ExportCreator {
 					String explanation = "";
 
 					if (answerSet == null) {
+						
 						final String cellContent = row.get(answerrowcounter++);
 						final int lastLineBreakPosition = cellContent.lastIndexOf("\n");
+						String filesPart = "";
 						if (lastLineBreakPosition == -1) {
 							explanation = cellContent;
+							
+							if (explanation.contains("|"))
+							{
+								filesPart = cellContent;
+								explanation = "";
+							}
 						} else {
 							explanation = cellContent.substring(0, lastLineBreakPosition);
-
-							final String filesPart = cellContent.substring(lastLineBreakPosition + 1);
-							final String[] filesParts = filesPart.split(";");
-							for (final String part : filesParts) {
-								if (part.contains("|")) {
-									final String fileUid = part.substring(0, part.indexOf("|"));
-									final String fileName = part.substring(part.indexOf("|") + 1);
-									final File file = new File();
-									file.setUid(fileUid);
-									file.setName(fileName);
-									explanationFilesToExport.addFile(questionUid, file);
-								}
+							filesPart = cellContent.substring(lastLineBreakPosition + 1);						
+						}
+						
+						final String[] filesParts = filesPart.split(";");
+						for (final String part : filesParts) {
+							if (part.contains("|")) {
+								final String fileUid = part.substring(0, part.indexOf("|"));
+								final String fileName = part.substring(part.indexOf("|") + 1);
+								final File file = new File();
+								file.setUid(fileUid);
+								file.setName(fileName);
+								explanationFilesToExport.addFile(questionUid, file);
 							}
 						}
 					} else {
