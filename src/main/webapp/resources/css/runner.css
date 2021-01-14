@@ -443,7 +443,7 @@ legend {
 }
 
 .slider-tick {
-	background-color: #eee !important;
+	background-color: #ccc !important;
 	background-image: none !important;
 	
     filter: none !important;

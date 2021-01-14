@@ -131,7 +131,6 @@ public class SurveyHelper {
 									answerSet.addAnswer(answer);
 								}
 							}
-
 						} else {
 							for (String value : values) {
 								if (value.isEmpty() || value.equalsIgnoreCase("false")
@@ -2578,6 +2577,13 @@ public class SurveyHelper {
 			newValues += " useRadioButtons: " + useRadioButtons;
 		}
 		singlechoice.setUseRadioButtons(useRadioButtons);
+		
+		Boolean useLikert = choicetype.equalsIgnoreCase("likert");
+		if (log220 && !useLikert.equals(singlechoice.getUseLikert())) {
+			oldValues += " useLikert: " + singlechoice.getUseLikert();
+			newValues += " useLikert: " + useLikert;
+		}
+		singlechoice.setUseLikert(useLikert);
 
 		Integer columns = getInteger(parameterMap, "columns", id);
 		if (log220 && !columns.equals(singlechoice.getNumColumns())) {

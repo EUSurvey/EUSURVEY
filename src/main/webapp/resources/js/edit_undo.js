@@ -365,6 +365,11 @@ var UndoProcessor = function() {
 					{
 						element.choiceType("list");
 						element.useCheckboxes(false);
+					} else if (step[3] == "LikertScale")
+					{
+						element.choiceType("likert");
+						element.useRadioButtons(false);
+						element.likert(true);
 					}
 					updateChoice();
 				}
@@ -885,6 +890,11 @@ var UndoProcessor = function() {
 					{
 						element.choiceType("list");
 						element.useCheckboxes(false);
+					} else if (step[4] == "LikertScale")
+					{
+						element.choiceType("likert");
+						element.useRadioButtons(false);
+						element.likert(true);
 					}
 					updateChoice();
 				}

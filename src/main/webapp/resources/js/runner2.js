@@ -423,7 +423,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	$(container).find(".sliderbox").each(function () {
 		initSlider(this, foreditor, viewModel);
 	});
-
+	
 	$(container).find('.explanation-editor').each(function(){
 		$(this).tinymce(explanationEditorConfig);
 	});
@@ -456,8 +456,7 @@ function initSlider(input, foreditor, viewModel)
 		tooltip: 'always',
 		ticks_labels: viewModel.labels(),
 		enabled: !foreditor
-	});
-	
+	});	
 }
 
 function getWidth(widths, index) {

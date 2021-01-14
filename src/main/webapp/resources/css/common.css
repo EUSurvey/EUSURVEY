@@ -1332,6 +1332,10 @@ legend {
 	margin-left: 20px;
 }
 
+.likert-bar {
+	height: 6px; margin-top: 6px; margin-left: 50px; margin-right: 100px; background-color: #ddd; position: absolute;
+}
+
 .chart-wrapper {
 	display: none;
 	padding-left: 20px;
