@@ -114,7 +114,6 @@ function getQuizPropertiesRow()
 
 function getECFPropertiesRow()
 {
-	console.log("getECFPropertiesRow!");
 	var row = new PropertyRow();
 	row.Type("ecf");
 	_elementProperties.propertyRows.push(row);
@@ -376,18 +375,43 @@ function getECFPropertiesContent() {
 	row.ContentType("ecfquestion");
 	row.Label("ECFProfileSelection");
 	row.LabelTitle(getPropertyLabel("ECFProfileSelection")); 
-	console.log(element.possibleAnswers()[0]);
-	/*console.log("typeof " + typeof element.possibleAnswers);
-	
-	console.log(element.possibleAnswers());
-	console.log("possibleAnswers = " + JSON.stringify(element.possibleAnswers()[0].scoring));
-	let selected = (element.possibleAnswers() != null && element.possibleAnswers().get(0) != null && element.possibleAnswers().get(0).ecfProfile() != null);
-	*/
 	let selected = false;
+
+	for (var i = 0; i < element.possibleAnswers().length; i++) {
+		selected = element.possibleAnswers()[i].ecfProfile() != null;
+	}
 	
 	row.Value(selected);
-	
 	_elementProperties.propertyRows.push(row);
+
+	// ECF PROFILE SELECTION
+	if (selected) {
+		// row = new PropertyRow();
+		// row.Element(element);
+		// row.Type("first");
+		// row.ContentType("ecfCompetencySelection");
+		// row.Label("ECFSelectedProfile");
+		// row.LabelTitle(getPropertyLabel("ECFSelectedProfile")); 
+		// row.Value("");
+		// _elementProperties.propertyRows.push(row);
+		
+		row = new PropertyRow();
+		row.Element(element);
+		row.Type("ecfAnswersToProfiles");
+		row.ContentType("ecfAnswersToProfiles");
+		row.Label("ECFSelectedProfile");
+		row.LabelTitle(getPropertyLabel("ECFSelectedProfile")); 
+		
+		if (element.type === "SingleChoiceQuestion")
+		{
+			for (let i = 0; i < element.possibleAnswers().length; i++)
+			{
+				let profile = element.possibleAnswers()[i].ecfProfile();
+				row.ContentItems.push(profile);
+			}
+		} 
+		_elementProperties.propertyRows.push(row);
+	}
 	
 	row = new PropertyRow();
 	row.Element(element);
@@ -396,7 +420,6 @@ function getECFPropertiesContent() {
 	row.Label("ECFCompetencyQuestion");
 	row.LabelTitle(getPropertyLabel("ECFCompetencyQuestion")); 
 	selected = element.ecfCompetency() != null;
-	console.log(element.ecfCompetency());
 	row.Value(selected);
 	_elementProperties.propertyRows.push(row);
 	
@@ -411,14 +434,12 @@ function getECFPropertiesContent() {
 		row.Value(element.ecfCompetency().name);
 		_elementProperties.propertyRows.push(row);
 		
-		
 		row = new PropertyRow();
 		row.Element(element);
 		row.Type("ecfAnswersToScores");
 		row.ContentType("ecfAnswersToScores");
 		row.Label("ECFSelectedCompetency");
 		row.LabelTitle(getPropertyLabel("ECFSelectedCompetency")); 
-		
 		
 		if (element.type === "SingleChoiceQuestion")
 		{

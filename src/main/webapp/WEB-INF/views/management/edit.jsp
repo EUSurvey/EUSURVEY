@@ -298,6 +298,10 @@
 						<!-- ko template: { name: 'ecfanswerstoscores-template' } --><!-- /ko --> 
 					<!-- /ko --> 
 
+					<!--  ko if: Type() == 'ecfAnswersToProfiles' -->
+						<!-- ko template: { name: 'ecfanswerstoprofiles-template' } --><!-- /ko --> 
+					<!-- /ko --> 
+
 					<!--  ko if: Type() == 'slider' -->
 						<!-- ko template: { name: 'slider-template' } --><!-- /ko -->
 					<!-- /ko -->
@@ -827,7 +831,8 @@
 	 		strings["max255Characters"] = "<spring:message code="validation.max255Characters" />";
 	 		strings["ECFProfileSelection"] = "<spring:message code="label.ECFProfileSelection" />";
 	 		strings["ECFCompetencyQuestion"] = "<spring:message code="label.ECFCompetencyQuestion" />";
-	 		strings["ECFSelectedCompetency"] = "<spring:message code="label.ECFSelectedCompetency" />";
+			strings["ECFSelectedCompetency"] = "<spring:message code="label.ECFSelectedCompetency" />";
+			strings["ECFSelectedProfile"] = "<spring:message code="label.ECFSelectedProfile" />";
 	 		strings["QuizQuestion"] = "<spring:message code="label.QuizQuestion" />";
 	 		strings["Points"] = "<spring:message code="label.Points" />";
 	 		strings["empty"] = "<spring:message code="label.empty" />";
