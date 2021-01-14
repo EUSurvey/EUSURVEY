@@ -526,7 +526,7 @@ public class XmlExportCreator extends ExportCreator {
 			}
 
 			explanationFilesToExport.applyFunctionOnEachFile((questionUid, explanationFile) -> {
-				java.io.File file = new java.io.File(exportService.getFileDir() + explanationFile.getUid());
+				java.io.File file = fileService.getSurveyFile(form.getSurvey().getUniqueId(), explanationFile.getUid());
 
 				if (file.exists()) {
 					os.putArchiveEntry(new ZipArchiveEntry(questionUid + Constants.PATH_DELIMITER +

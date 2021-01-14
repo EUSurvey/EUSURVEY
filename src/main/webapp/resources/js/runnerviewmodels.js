@@ -260,9 +260,21 @@ function newScoringViewModel(element)
 	return viewModel;
 }
 
+function createNewDelphiBasicViewModel() {
+
+	return {
+		delphiTableEntries: ko.observableArray(),
+
+		delphiTableLimit: ko.observable(20),
+		delphiTableOffset: ko.observable(0),
+		delphiTableTotalEntries: ko.observable(0),
+		delphiTableOrder: ko.observable("UpdateDesc")
+	};
+}
+
 function newBasicViewModel(element)
 {
-	var viewModel = {};
+	const viewModel = new createNewDelphiBasicViewModel();
 	
 	viewModel.isViewModel = true;
 	
@@ -297,7 +309,6 @@ function newBasicViewModel(element)
 		viewModel.css = ko.observable(element.css);
 		viewModel.optional = ko.observable(element.optional);
 		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
-		viewModel.delphiTableEntries = ko.observableArray();
 		viewModel.delphiChartType = ko.observable(element.delphiChartType);
 
 		if (element.scoringItems != null) {
@@ -305,11 +316,6 @@ function newBasicViewModel(element)
 				viewModel.scoringItems.push(newScoringViewModel(element.scoringItems[i]));
 			}
 		}
-
-		viewModel.delphiTableLimit = ko.observable(20);
-		viewModel.delphiTableOffset = ko.observable(0);
-		viewModel.delphiTableTotalEntries = ko.observable(0);
-		viewModel.delphiTableOrder = ko.observable("UpdateDesc");
 	}
 	
 	viewModel.copy = function()

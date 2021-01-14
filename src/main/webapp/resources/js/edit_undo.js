@@ -451,6 +451,7 @@ var UndoProcessor = function() {
 				break;
 			case "DelphiQuestion":
 				element.isDelphiQuestion(step[3]);
+				$('#' + id).toggleClass("delphi");
 				break;
 			case "DelphiChartType":
 				element.delphiChartType(step[3]);
@@ -975,6 +976,7 @@ var UndoProcessor = function() {
 				break;
 			case "DelphiQuestion":
 				element.isDelphiQuestion(step[4]);
+				$('#' + id).toggleClass("delphi");
 				break;
 			case "DelphiChartType":
 				element.delphiChartType(step[4]);

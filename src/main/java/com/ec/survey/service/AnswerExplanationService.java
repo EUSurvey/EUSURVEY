@@ -145,12 +145,12 @@ public class AnswerExplanationService extends BasicService {
 			throw new IllegalStateException("Unexpected value: " + orderBy);
 		}
 
-		String contributionsQueryText = "" + "SELECT\n" + "    aset.ANSWER_SET_ID answerSetId,\n"
+		String contributionsQueryText = "" + "SELECT\n" + "    aset.ANSWER_SET_ID answerSetId,\n" + "    aset.UNIQUECODE answerSetUniqueCode,\n"
 				+ "    aset.ANSWER_SET_UPDATE `update`,\n" + "    a.VALUE value,\n" + "    a.PA_UID answerUid,\n"
 				+ "    a.QUESTION_UID questionUid,\n" + "    a.ANSWER_COL `column`,\n" + "    a.ANSWER_ROW row,\n"
 				+ "    COALESCE(ex.TEXT, main_explanation.TEXT) explanation\n" + "FROM ANSWERS a\n" + "JOIN (\n" +
 				// select all answers sets that are relevant for this query
-				"    SELECT\n" + "        aset.ANSWER_SET_ID,\n" + "        aset.ANSWER_SET_UPDATE\n"
+				"    SELECT\n" + "        aset.ANSWER_SET_ID,\n" + "        aset.UNIQUECODE,\n" + "        aset.ANSWER_SET_UPDATE\n"
 				+ "    FROM ANSWERS a\n" + "    JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n"
 				+ "    JOIN SURVEYS s ON aset.SURVEY_ID = s.SURVEY_ID\n" + "    WHERE a.QUESTION_UID IN :questionUids\n"
 				+ "      AND s.ISDRAFT = :isDraft\n" + "    GROUP BY aset.ANSWER_SET_ID, aset.ANSWER_SET_UPDATE\n"

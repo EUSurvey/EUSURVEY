@@ -132,21 +132,6 @@ public class SurveyHelper {
 								}
 							}
 						} else {
-							if (question instanceof SingleChoiceQuestion) {
-								SingleChoiceQuestion single = (SingleChoiceQuestion) question;
-								if (single.getUseLikert()) {
-									List<String> realValues = new ArrayList<>();
-									for (String value : values) {
-										int index = Integer.parseInt(value);
-										if (index > 0) {
-											PossibleAnswer answer = single.getPossibleAnswers().get(index-1);
-											realValues.add(answer.getId().toString());
-										}
-									}
-									values = realValues.toArray(new String[0]);
-								}
-							}							
-							
 							for (String value : values) {
 								if (value.isEmpty() || value.equalsIgnoreCase("false")
 										|| (question instanceof DateQuestion && value.equalsIgnoreCase("DD/MM/YYYY"))

@@ -426,7 +426,7 @@ public class OdfExportCreator extends ExportCreator {
 
 		spreadsheet.save(outputStream);
 
-		if (fileCounter > 0 || !uploadedFiles.isEmpty()) {
+		if (fileCounter > 0 || !uploadedFiles.isEmpty() || explanationFilesToExport.hasFiles()) {
 			// there are multiple files
 			java.io.File temp = new java.io.File(exportFilePath + ".zip");
 			final OutputStream out = new FileOutputStream(temp);
