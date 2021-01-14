@@ -2480,7 +2480,7 @@ public class RunnerController extends BasicController {
 
 		for (Element subQuestion : question.getQuestions()) {
 			DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
-			questionResults.setLabel(subQuestion.getTitle());
+			questionResults.setLabel(subQuestion.getStrippedTitle());
 
 			for (int i = 1; i <= question.getNumIcons(); i++) {
 				creator.addStatistics4RatingQuestion(survey, i, subQuestion, statistics, numberOfAnswersMapRatingQuestion);
@@ -2516,13 +2516,13 @@ public class RunnerController extends BasicController {
 
 		for (Element matrixQuestion : question.getQuestions()) {
 			DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
-			questionResults.setLabel(matrixQuestion.getTitle());
+			questionResults.setLabel(matrixQuestion.getStrippedTitle());
 
 			for (Element matrixAnswer : question.getAnswers()) {
 				creator.addStatistics4Matrix(survey, matrixAnswer, matrixQuestion, statistics, numberOfAnswersMapMatrix);
 
 				DelphiGraphEntry entry = new DelphiGraphEntry();
-				entry.setLabel(matrixAnswer.getTitle());
+				entry.setLabel(matrixAnswer.getStrippedTitle());
 				entry.setValue(statistics.getRequestedRecordsForMatrix(matrixQuestion, matrixAnswer));
 				questionResults.addEntry(entry);
 			}
@@ -2567,7 +2567,7 @@ public class RunnerController extends BasicController {
 
 		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
 			DelphiGraphEntry entry = new DelphiGraphEntry();
-			entry.setLabel(answer.getTitle());
+			entry.setLabel(answer.getStrippedTitle());
 			entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
 			result.addEntry(entry);
 		}
