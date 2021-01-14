@@ -138,8 +138,13 @@
         function delphiPopulateAllGraphs(resultsStatisticParentElement) {
             var chartwrapperlist = $(resultsStatisticParentElement).find(".chart-wrapper");
             chartwrapperlist.each(function (index) {
+            	
+            	$(this).parent().find(".chart-controls").append($("#chart-controls-template").html());
+            	
+            	$(this).parent().find('[data-toggle="tooltip"]').tooltip();
+            	
                 var chartwrapper = $(this);
-                loadGraphDataInner(chartwrapper, addChart, null, 'tableau.Tableau10');
+                loadGraphDataInner(chartwrapper, addChart, null, 'tableau.Tableau10', null);
             });
         }
                 
@@ -147,11 +152,12 @@
         	 var chartwrapper = $(select).closest(".statelement-wrapper").find(".chart-wrapper").first();
         	 var chartType = $(select).parent().find(".chart-type").first().val();
         	 var scheme =  $(select).parent().find(".chart-scheme").first().val();
+        	 var legend =  $(select).parent().find(".chart-legend").first().is(":checked");
         	 
-             loadGraphDataInner(chartwrapper, addChart, chartType, scheme);
+             loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend);
         }
        
-        function loadGraphDataInner(div, chartCallback, chartType, scheme) {
+        function loadGraphDataInner(div, chartCallback, chartType, scheme, legend) {
         	
        	    var surveyid = div.data("survey-id");
             var questionuid = div.data("question-uid");
@@ -159,7 +165,7 @@
             var uniquecode = ""; // not needed for privileged users like form managers        	
         	
         	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode + "&resultsview=true";
-
+            
         	$.ajax({
         		type: "GET",
         		url: contextpath + "/runner/delphiGraph",
@@ -179,6 +185,16 @@
         			
         				return;
         			}
+        			
+        			if (chartType == null)
+        			{
+        				chartType = result.chartType;	
+        			}
+        			
+                    if (legend === null)
+                    {
+                    	legend = result.questionType === "Matrix" || result.questionType === "Rating" || chartType === "Pie";
+                    }
 
         			var chartData = {};
         			var chartOptions = {
@@ -202,7 +218,7 @@
         						}
         					]
         				},
-        				legend: {display: false},
+        				legend: {display: legend},
         	            animation: {
         	                onComplete: function(animation){
         	                    $(div).closest(".statelement-wrapper").find('.chart-download').attr('href', this.toBase64Image());
@@ -261,7 +277,6 @@
         						labels
         					}
 
-        					chartOptions.legend.display = true;
         					break;
 
         				default:
@@ -271,11 +286,6 @@
         			var chart = {
         				data: chartData,
         				options: chartOptions
-        			}
-        			
-        			if (chartType == null)
-        			{
-        				chartType = result.chartType;	
         			}
 
         			switch (chartType) {
@@ -290,7 +300,6 @@
         					break;
         				case "Pie":
         					chart.type = "pie";
-        					chart.options.legend.display = true;
         					delete chart.options.scales;
         					break;
         				case "Radar":
@@ -307,13 +316,13 @@
         			}
 
         			if (chartCallback instanceof Function) {
-        				chartCallback(div, chart, chartType);
+        				chartCallback(div, chart, chartType, legend);
         			}
         		}
         	 });
         }
 
-        function addChart(div, chart, chartType)
+        function addChart(div, chart, chartType, legend)
         {
         	var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 
@@ -335,6 +344,10 @@
         	$(elementWrapper).find(".chart-type").each(function(){
         		$(this).val(chartType);
         	});
+        	
+        	if (legend) {
+        		$(elementWrapper).find(".chart-legend").prop("checked", "checked");
+        	}
         
         	var graph = new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
         }

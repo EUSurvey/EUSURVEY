@@ -94,7 +94,13 @@
 		}
 		
 		.chart-controls {
-			margin-left: 20px;
+			padding: 20px;
+		}
+		
+		.chart-controls select {
+			width: auto;
+			display: inline-block;
+			margin-bottom: 15px;
 		}
 	
 	</style>
