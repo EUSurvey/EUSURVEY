@@ -39,8 +39,8 @@
 			<td><span data-bind="html: update"></span></td>
 			<td>
 				<span data-bind="html: explanation"></span>
-				<!-- ko if: files.length > 0 -->
-				<br>
+				<!-- ko if: files.length > 0 && explanation.length > 0 -->
+				<br />
 				<!-- /ko -->
 				<!-- ko foreach: files -->
 				<a data-bind="attr: {href: '${contextpath}/files/${form.survey.uniqueId}/' + uid}, text: name"></a>
