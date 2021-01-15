@@ -384,7 +384,6 @@ public class XmlExportCreator extends ExportCreator {
 			filterWithMeta.getVisibleQuestions().add("case");
 		}
 
-		// WHERE WE DONT GO
 		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false,
 				true, true, true, true);
 
@@ -579,7 +578,6 @@ public class XmlExportCreator extends ExportCreator {
 
 		exportedNow = new Date();
 		
-		// WHERE WE GO
 		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), export == null ? null : export.getResultFilter(), null, false,
 				true, true, true, true);
 		
