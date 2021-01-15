@@ -1184,6 +1184,13 @@ public class RunnerController extends BasicController {
 
 			// this code will be used as an identifier (for uploaded files etc)
 			String uniqueCode = UUID.randomUUID().toString();
+			if (survey.getIsDelphi() && request.getParameter("startDelphi") != null) {
+				String originalUniqueCode = request.getParameter("originalUniqueCode");
+				if (originalUniqueCode != null)
+				{
+					uniqueCode = originalUniqueCode;
+				}
+			}
 
 			if (draftid != null && draftid.trim().length() > 0) {
 				try {
@@ -3012,10 +3019,17 @@ public class RunnerController extends BasicController {
 			}
 			
 			AnswerSet answerSet = answerService.get(uniqueCode);
-
-			Question question = (Question) element;
-			if (!answerSetContainsAnswerForQuestion(answerSet, question)) {
-				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			
+			if (!survey.getIsDelphiShowAnswersAndStatisticsInstantly()) {			
+				if (answerSet == null) {
+					// participant may only see answers if he answered before
+					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+				}
+	
+				Question question = (Question) element;
+				if (!answerSetContainsAnswerForQuestion(answerSet, question)) {
+					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				}			
 			}
 			
 			AnswerComment comment = new AnswerComment();
