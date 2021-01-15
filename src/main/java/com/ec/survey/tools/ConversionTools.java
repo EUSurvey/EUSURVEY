@@ -40,13 +40,15 @@ public class ConversionTools {
 		if (num instanceof Long) return ((Long) num).intValue();
 		if (num instanceof BigInteger) return ((BigInteger) num).intValue();	
 		if (num instanceof BigDecimal) return ((BigDecimal) num).intValue();	
+		if (num instanceof String) return Integer.parseInt((String) num);
 		
 		try {
 			num = ((Object[])num)[0];
 			if (num instanceof Integer) return (Integer) num;
 			if (num instanceof Byte) return ((Byte) num).intValue();
 			if (num instanceof BigInteger) return ((BigInteger) num).intValue();	
-			if (num instanceof BigDecimal) return ((BigDecimal) num).intValue();	
+			if (num instanceof BigDecimal) return ((BigDecimal) num).intValue();
+			if (num instanceof String) return Integer.parseInt((String) num);	
 		} catch (Exception e)
 		{
 			//ignore

@@ -47,11 +47,11 @@ public class XmlExportCreator extends ExportCreator {
 	@Override
 	@Transactional
 	public void ExportContent(boolean sync) throws Exception {
-		ExportContent(sync, export, false);
+		exportContent(sync, export, false);
 	}
 
 	@Transactional
-	public void ExportContent(boolean sync, Export export, boolean fromWebService) throws Exception {
+	public void exportContent(boolean sync, Export export, boolean fromWebService) throws Exception {
 		exportedUniqueCodes.clear();
 		XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, "UTF-8");
 
@@ -384,6 +384,7 @@ public class XmlExportCreator extends ExportCreator {
 			filterWithMeta.getVisibleQuestions().add("case");
 		}
 
+		// WHERE WE DONT GO
 		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false,
 				true, true, true, true);
 
@@ -566,7 +567,7 @@ public class XmlExportCreator extends ExportCreator {
 	}
 
 	@Transactional
-	public void SimulateExportContent(boolean sync, Export export) throws Exception {
+	public void simulateExportContent(boolean sync, Export export) throws Exception {
 		exportedUniqueCodes.clear();
 
 		Session session;
@@ -578,6 +579,7 @@ public class XmlExportCreator extends ExportCreator {
 
 		exportedNow = new Date();
 		
+		// WHERE WE GO
 		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), export == null ? null : export.getResultFilter(), null, false,
 				true, true, true, true);
 		

@@ -171,9 +171,9 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 			xmlExportCreator.init(0, form, null, target.getAbsolutePath(), resources, locale, "", "");
 
 			if (webserviceTask.getExportType() != null && webserviceTask.getExportType().equals(2)) {
-				xmlExportCreator.SimulateExportContent(false, export);
+				xmlExportCreator.simulateExportContent(false, export);
 			} else {
-				xmlExportCreator.ExportContent(false, export, true);
+				xmlExportCreator.exportContent(false, export, true);
 			}
 
 			Map<Integer, String> uniqueCodesById = xmlExportCreator.getExportedUniqueCodes();
