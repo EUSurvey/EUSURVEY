@@ -794,8 +794,10 @@ public class AttendeeService extends BasicService {
 		Session session = sessionFactory.getCurrentSession();
 		for (int id : invitationsToDeactivate) {
 			Invitation invitation = (Invitation) session.get(Invitation.class, id);
-			invitation.setDeactivated(true);
-			session.saveOrUpdate(invitation);
+			if (invitation != null) {
+				invitation.setDeactivated(true);
+				session.saveOrUpdate(invitation);
+			}
 		}		
 	}
 }
