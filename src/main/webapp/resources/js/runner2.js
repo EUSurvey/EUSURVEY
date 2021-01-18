@@ -434,7 +434,11 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		var surveyElement = $(container).closest(".survey-element");
 		if (surveyElement) {
 			loadGraphData(surveyElement);
-			loadTableData(surveyElement, viewModel);	
+			loadTableData(surveyElement, viewModel);
+			
+			$(surveyElement).find(".likert-div.median").each(function(){
+				loadMedianData(surveyElement, viewModel);
+			});
 		}
 	}
 
@@ -488,7 +492,7 @@ function delphiPrefill(editorElement) {
 		},
 		error: function(message)
 		{
-			showErrorl(message);
+			showError(message);
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 			surveyElement.find(".explanation-file-upload-section").show();
 		},
@@ -820,6 +824,29 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 			viewModel.delphiTableTotalEntries(result.total);
 		}
 	 });
+}
+
+function loadMedianData(div, viewModel) {
+	const surveyId = $('#survey\\.id').val();
+	const questionUid = $(div).attr("data-uid");
+	const uniqueCode = $('#uniqueCode').val();
+	
+	const data = "surveyid=" + surveyId + "&questionuid=" + questionUid + "&uniquecode=" + uniqueCode;
+
+	$.ajax({
+		type: "GET",
+		url: contextpath + "/runner/delphiMedianExceeded",
+		data: data,
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function (data) {
+			showError(data);
+		},
+		success: function (result, textStatus) {
+			viewModel.maxDistanceExceeded(result);
+		}
+	 });		
 }
 
 function selectPageAndScrollToQuestionIfSet() {

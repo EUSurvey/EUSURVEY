@@ -73,7 +73,7 @@
 		
 			<!-- ko if: likert -->
 						
-				<div class="likert-div" style="margin-top: 30px; display: inline-block; position: relative;">
+				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median' : 'likert-div'}">
 				
 					<div class="likert-bar" data-bind="attr: {'style' : 'width: ' + (possibleAnswers().length - 1) + '00px;'}"></div>
 				
@@ -203,6 +203,8 @@
 				
 				<input type="hidden" data-bind="value: subType, attr: {'name': 'subType' + id()}" />
 				<input type="hidden" data-bind="value: displayMode, attr: {'name': 'displayMode' + id()}" />
+				
+				<input type="hidden" data-bind="value: maxDistance, attr: {'name': 'maxDistance' + id()}" />
 			<!-- /ko -->		
 		</div>
 	</div>
@@ -1164,9 +1166,14 @@
 	<div id="delphi-template">
 		<!-- ko if: isDelphiQuestion() -->
 		
+		<!-- ko if: maxDistanceExceeded() -->
+		<div class="maxDistanceExceededMessage">${form.getMessage("info.MaxDistanceExceeded")}&nbsp;${form.getMessage("info.MaxDistanceExceededExplain")}</div>
+		<!-- /ko -->
+		
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">					
 			<div class="col-md-7">
 				<div class="explanation-section">
+				
 					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff">
 						<tr>
 							<th class='area-header'>${form.getMessage("label.ExplainYourAnswer")}</th>

@@ -2240,5 +2240,77 @@ public class AnswerService extends BasicService {
 	
 		return answerSet;
 	}
+
+	@Transactional
+	public List<String> getPossibleAnswersInsideMedian(Survey survey, SingleChoiceQuestion singleChoiceQuestion) {
+		int maxDistance = singleChoiceQuestion.getMaxDistance();
+		List<String> result = new ArrayList<>();
+	
+		Session session = sessionFactory.getCurrentSession();
+		
+		SQLQuery query = session.createSQLQuery("SELECT a.PA_UID, count(*) FROM ANSWERS a " + 
+				"JOIN ANSWERS_SET an on a.AS_ID = an.ANSWER_SET_ID " + 
+				"JOIN SURVEYS s ON an.SURVEY_ID = s.SURVEY_ID " + 
+				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :isDraft AND QUESTION_UID = :questionUid " + 
+				"GROUP BY a.PA_UID");
+		
+		query.setString("surveyUid", survey.getUniqueId());
+		query.setBoolean("isDraft", survey.getIsDraft());
+		query.setString("questionUid", singleChoiceQuestion.getUniqueId());
+		
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
+
+		Map<String, Integer> countsForPossibleAnswerUid = new HashMap<>();
+		for (Object o : res) {
+			Object[] a = (Object[]) o;			
+			countsForPossibleAnswerUid.put((String) a[0], ConversionTools.getValue(a[1]));
+		}
+		
+		List<Integer> values = new ArrayList<Integer>();
+		int index = 0;
+		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {
+			if (countsForPossibleAnswerUid.containsKey(pa.getUniqueId())) {
+				int count = countsForPossibleAnswerUid.get(pa.getUniqueId());
+				for (int i = 0; i < count; i++) {
+					values.add(index);
+				}
+			}
+			index++;
+		}
+		
+		int length = values.size();
+		if (length == 0) return result;
+		
+		int median;
+		
+		if (length == 1) {
+			median = values.get(0);			
+		} else {
+			int median_index = length / 2;
+			
+			if (length % 2 == 0) {
+				//even TODO
+				median = values.get(median_index);
+			} else {
+				//odd
+				median = values.get(median_index);
+			}
+		}
+		
+		index = 0;
+		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {
+			int distance = median > index ? (median - index) : (index - median);
+			
+			if (distance <= maxDistance) {
+				result.add(pa.getUniqueId());
+			}
+			
+			index++;
+		}
+		
+		return result;
+	}
+	
 	
 }

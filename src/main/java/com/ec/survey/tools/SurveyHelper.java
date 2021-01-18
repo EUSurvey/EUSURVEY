@@ -2627,6 +2627,13 @@ public class SurveyHelper {
 		}
 		singlechoice.setDisplayMode(displayMode);
 
+		Integer maxDistance = getInteger(parameterMap, "maxDistance", id);
+		if (log220 && !maxDistance.equals(singlechoice.getMaxDistance())) {
+			oldValues += " maxDistance: " + singlechoice.getMaxDistance();
+			newValues += " maxDistance: " + maxDistance;
+		}
+		singlechoice.setMaxDistance(maxDistance);
+		
 		StringBuilder oldAnswers = new StringBuilder();
 		StringBuilder newAnswers = new StringBuilder();
 		if (log220) {

@@ -209,6 +209,12 @@
 							</div>
 							
 							<div class="question-footer">
+								<!--  ko if: maxDistanceExceeded -->
+									<div style="color: #f00; font-size: 30px; float: right;">
+										<span style="cursor: pointer" data-toggle="tooltip" title="<spring:message code="info.MaxDistanceExceeded" />"><img style="max-width:24px;" src="<c:url value="/resources/images/warning24.png"/>" alt="max distance exceeded" /></span>
+									</div>
+								<!-- /ko -->							
+							
 								<!-- ko if: answer.length > 0 -->
 								<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: sectionViewModel.niceAnswer(answer)"></span></div>
 								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}#E' + id}"><spring:message code="label.EditAnswer" /></a>
@@ -223,6 +229,7 @@
 									<a class="btn btn-xs btn-default" onclick="openAnswersDialog(this);"><spring:message code="label.ShowAllAnswers" /></a>
 									<!-- /ko -->
 								</c:if>
+								
 							</div>
 						</div>					
 						<!-- /ko -->

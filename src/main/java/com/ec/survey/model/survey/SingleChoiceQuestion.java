@@ -35,6 +35,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	private boolean useRadioButtons;
 	private boolean useLikert;
 	private int numColumns = 1;
+	private int maxDistance = -1;
 
 	@Column(name = "RADIO")
 	public boolean getUseRadioButtons() {
@@ -62,6 +63,15 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	public void setNumColumns(int numColumns) {
 		this.numColumns = numColumns;
 	}
+	
+	@Column(name = "MAXDISTANCE")
+	public int getMaxDistance() {
+		return maxDistance;
+	}
+
+	public void setMaxDistance(Integer maxDistance) {
+		this.maxDistance = maxDistance != null ? maxDistance : -1;
+	}
 
 	public SingleChoiceQuestion copy(String fileDir) throws ValidationException {
 		SingleChoiceQuestion copy = new SingleChoiceQuestion();
@@ -70,6 +80,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 		copy.useRadioButtons = useRadioButtons;
 		copy.useLikert = useLikert;
 		copy.setOrder(getOrder());
+		copy.maxDistance = maxDistance;
 
 		for (PossibleAnswer possibleAnswer : getPossibleAnswers()) {
 			PossibleAnswer answerCopy = possibleAnswer.copy(fileDir);
@@ -96,6 +107,9 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 		if (numColumns != single.numColumns)
 			return true;
 		if (getPossibleAnswers().size() != single.getPossibleAnswers().size())
+			return true;
+		
+		if (maxDistance != single.maxDistance)
 			return true;
 
 		if (!Objects.equals(getOrder(), single.getOrder()))

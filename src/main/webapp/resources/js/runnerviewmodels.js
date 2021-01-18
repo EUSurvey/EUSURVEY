@@ -281,6 +281,7 @@ function newBasicViewModel(element)
 	viewModel.scoringItems = ko.observableArray();
 	viewModel.optional = ko.observable(true);
 	viewModel.css = ko.observable(true);	
+	viewModel.maxDistanceExceeded = ko.observable(false);	
 	
 	viewModel.getScoringItem = function(id)
 	{
@@ -688,6 +689,7 @@ function newSingleChoiceViewModel(element)
 	viewModel.maxChoices = ko.observable(0);
 	viewModel.choiceType = ko.observable(element.useLikert ? "likert" : (element.useRadioButtons ? "radio" : "select"));
 	viewModel.likert = ko.observable(element.useLikert);
+	viewModel.maxDistance = ko.observable(element.maxDistance);
 	
 	return viewModel;
 }

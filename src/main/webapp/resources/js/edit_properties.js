@@ -366,7 +366,8 @@ var ElementProperties = function() {
 			
 				if ($(e).find("input[name^='choicetype']").val() == 'likert')
 				{
-					//TODO: median (DELPHI-11)
+					getChoosePropertiesRow("MaxDistanceToMedian", "Ignore,0,1,2,3,4,5", false, false, $(e).find("input[name^='maxDistance']").val());
+					
 				} else {				
 					getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
 				}

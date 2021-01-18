@@ -2621,7 +2621,7 @@ public class RunnerController extends BasicController {
 						delphiQuestion.setTitle(question.getTitle());
 						delphiQuestion.setUid(question.getUniqueId());
 						delphiQuestion.setId(question.getId());
-						
+												
 						if (answerSet != null)
 						{
 							String result = "";
@@ -2658,6 +2658,17 @@ public class RunnerController extends BasicController {
 								if (!answers.isEmpty()) {
 									for (Answer answer : answers) {
 										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
+										
+										if (question instanceof SingleChoiceQuestion) {
+											SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)question;
+											if (singleChoiceQuestion.getMaxDistance() > -1) {
+												List<String> allowedAnswers = answerService.getPossibleAnswersInsideMedian(survey, singleChoiceQuestion);
+												if (!allowedAnswers.contains(answer.getPossibleAnswerUniqueId()))
+												{
+													delphiQuestion.setMaxDistanceExceeded(true);
+												}
+											}
+										}
 									}
 								}
 							}
@@ -2733,6 +2744,38 @@ public class RunnerController extends BasicController {
 			}
 		} catch (NoSuchElementException ex) {
 		}
+	}
+	
+	@GetMapping(value = "delphiMedianExceeded")
+	public ResponseEntity<Boolean> delphiMedianExceeded(HttpServletRequest request) {
+		String surveyid = request.getParameter("surveyid");
+		int sid = Integer.parseInt(surveyid);
+
+		Survey survey = surveyService.getSurvey(sid);
+
+		if (survey == null || !survey.getIsDelphi()) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+
+		AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
+		
+		String questionuid = request.getParameter("questionuid");
+		Element element = survey.getQuestionMapByUniqueId().get(questionuid);
+		
+		if (answerSet == null || element == null || !(element instanceof SingleChoiceQuestion)) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+		
+		SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion) element;
+		if (singleChoiceQuestion.getMaxDistance() == -1) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+		
+		List<String> allowedAnswers = answerService.getPossibleAnswersInsideMedian(survey, singleChoiceQuestion);
+		
+		Answer answer = answerSet.getAnswers(-1, questionuid).get(0);
+		
+		return ResponseEntity.ok(!allowedAnswers.contains(answer.getPossibleAnswerUniqueId()));
 	}
 
 	@GetMapping(value = "delphiTable")
