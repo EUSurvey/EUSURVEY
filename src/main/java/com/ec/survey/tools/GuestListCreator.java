@@ -91,8 +91,10 @@ public class GuestListCreator implements Runnable {
 					if (!userIDs.contains(existingUser.getId()))
 					{
 						Invitation invitation = attendeeService.getInvitationForParticipationGroupAndAttendee(g.getId(), existingUser.getId());
-						invitation.setDeactivated(true);
-						attendeeService.update(invitation);
+						if (invitation != null) {
+							invitation.setDeactivated(true);
+							attendeeService.update(invitation);
+						}
 					}
 				}
 
@@ -122,8 +124,10 @@ public class GuestListCreator implements Runnable {
 					if (!attendeeIDs.contains(existingAttendee.getId()))
 					{
 						Invitation invitation = attendeeService.getInvitationForParticipationGroupAndAttendee(g.getId(), existingAttendee.getId());
-						invitation.setDeactivated(true);
-						attendeeService.update(invitation);
+						if (invitation != null) {
+							invitation.setDeactivated(true);
+							attendeeService.update(invitation);
+						}
 					}
 				}
 				List<Attendee> attendees = new ArrayList<>();
