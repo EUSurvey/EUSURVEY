@@ -308,19 +308,17 @@ function update(input)
 				if (text == "LikertScale")
 				{
 					element.likert(true);
-					element.choiceType("likert");
-				} else {
-					element.likert(false);
-				}
-				
-				if (text == "RadioButton")
+					element.choiceType("likert");				
+				} else if (text == "RadioButton")
 				{
 					element.useRadioButtons(true);
 					element.choiceType("radio");
+					element.likert(false);
 				} else if (text == "SelectBox")
 				{
 					element.choiceType("select");
 					element.useRadioButtons(false);
+					element.likert(false);
 				} else if (text == "CheckBox")
 				{
 					element.useCheckboxes(true);
