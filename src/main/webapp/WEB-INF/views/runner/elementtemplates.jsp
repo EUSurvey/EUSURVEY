@@ -79,9 +79,9 @@
 				
 					<!-- ko foreach: possibleAnswers() -->
 					
-					<div style="float: left; width: 100px; text-align: center; position: relative;">
+					<div class="likert-pa">
 						<input data-bind="enable: !$parents[0].readonly() && !$parents[0].foreditor, checked: getPAByQuestion2($parents[0].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[0].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[0].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[0].css + ' trigger check', name: 'answer' + $parents[0].id(), value: id()}" type="radio"  />
-						<div class="answertext" style="margin-left: 0; padding-left: 10px; padding-right: 10px;" data-bind="html: titleForDisplayMode($parents[0].displayMode()), attr: {'data-id' : id()}"></div>
+						<div class="answertext" style="margin-left: 0; padding-left: 10px; padding-right: 10px;" data-bind="html: titleForDisplayMode($parents[0].displayMode()), attr: {'data-id' : id(), 'data-pa-uid' : uniqueId()}"></div>
 					</div>
 					<!-- /ko -->
 					

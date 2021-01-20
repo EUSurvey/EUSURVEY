@@ -1319,6 +1319,14 @@ legend {
 	margin-top: 20px;
 }
 
+.likert-pa {
+	float: left; width: 100px; text-align: center; position: relative;
+}
+
+div.medianpa {
+	background-color: #f003;
+}
+
 .explanation-section {
 	display: none;
 	max-width: 410px;

@@ -2320,6 +2320,24 @@ public class RunnerController extends BasicController {
 			DelphiExplanation delphiExplanation = new DelphiExplanation();
 			delphiExplanation.setText(explanation.getText());
 			delphiExplanation.setFileInfoFromFiles(explanation.getFiles());
+			
+			if (element instanceof SingleChoiceQuestion && explanation.getText().trim().length() > 0) {
+				SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)element;
+				if (singleChoiceQuestion.getUseLikert() && singleChoiceQuestion.getMaxDistance() >= 0) {
+					
+					List<Answer> answers = answerSet.getAnswers(singleChoiceQuestion.getId(), singleChoiceQuestion.getUniqueId());
+					if (!answers.isEmpty())
+					{
+						DelphiMedian median = answerService.getMedian(answerSet.getSurvey(), singleChoiceQuestion, answers.get(0));
+						if (median.isMaxDistanceExceeded()) {
+							String text = "New explanation:<br /><br/><br />Old explanation:<br /><br /><span style='color: #999;'>" + explanation.getText() + "</span>";
+							delphiExplanation.setText(text);
+						}
+					}
+				}
+			}
+			
+			
 			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
 			return new ResponseEntity<>(new DelphiExplanation("", ""), HttpStatus.OK);
@@ -2662,11 +2680,8 @@ public class RunnerController extends BasicController {
 										if (question instanceof SingleChoiceQuestion) {
 											SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)question;
 											if (singleChoiceQuestion.getMaxDistance() > -1) {
-												List<String> allowedAnswers = answerService.getPossibleAnswersInsideMedian(survey, singleChoiceQuestion);
-												if (!allowedAnswers.contains(answer.getPossibleAnswerUniqueId()))
-												{
-													delphiQuestion.setMaxDistanceExceeded(true);
-												}
+												DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, answer);
+												delphiQuestion.setMaxDistanceExceeded(median.isMaxDistanceExceeded());												
 											}
 										}
 									}
@@ -2746,8 +2761,8 @@ public class RunnerController extends BasicController {
 		}
 	}
 	
-	@GetMapping(value = "delphiMedianExceeded")
-	public ResponseEntity<Boolean> delphiMedianExceeded(HttpServletRequest request) {
+	@GetMapping(value = "delphiMedian")
+	public ResponseEntity<DelphiMedian> delphiMedian(HttpServletRequest request) {
 		String surveyid = request.getParameter("surveyid");
 		int sid = Integer.parseInt(surveyid);
 
@@ -2771,11 +2786,11 @@ public class RunnerController extends BasicController {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		
-		List<String> allowedAnswers = answerService.getPossibleAnswersInsideMedian(survey, singleChoiceQuestion);
-		
 		Answer answer = answerSet.getAnswers(-1, questionuid).get(0);
 		
-		return ResponseEntity.ok(!allowedAnswers.contains(answer.getPossibleAnswerUniqueId()));
+		DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, answer);
+		
+		return ResponseEntity.ok(median);
 	}
 
 	@GetMapping(value = "delphiTable")

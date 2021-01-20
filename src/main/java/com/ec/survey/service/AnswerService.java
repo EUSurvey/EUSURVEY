@@ -10,6 +10,7 @@ import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Attribute;
 import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.model.delphi.DelphiMedian;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ReportingService.ToDo;
@@ -2242,10 +2243,9 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional
-	public List<String> getPossibleAnswersInsideMedian(Survey survey, SingleChoiceQuestion singleChoiceQuestion) {
+	public DelphiMedian getMedian(Survey survey, SingleChoiceQuestion singleChoiceQuestion, Answer answer) {
 		int maxDistance = singleChoiceQuestion.getMaxDistance();
-		List<String> result = new ArrayList<>();
-	
+		
 		Session session = sessionFactory.getCurrentSession();
 		
 		SQLQuery query = session.createSQLQuery("SELECT a.PA_UID, count(*) FROM ANSWERS a " + 
@@ -2279,37 +2279,47 @@ public class AnswerService extends BasicService {
 			index++;
 		}
 		
-		int length = values.size();
-		if (length == 0) return result;
+		DelphiMedian median = new DelphiMedian();
 		
-		int median;
+		int length = values.size();
+		if (length == 0) return null;
+		
+		int medianIndex;
 		
 		if (length == 1) {
-			median = values.get(0);			
+			medianIndex = values.get(0);			
 		} else {
 			int median_index = length / 2;
 			
 			if (length % 2 == 0) {
 				//even TODO
-				median = values.get(median_index);
+				medianIndex = values.get(median_index);
 			} else {
 				//odd
-				median = values.get(median_index);
+				medianIndex = values.get(median_index);
 			}
 		}
 		
 		index = 0;
 		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {
-			int distance = median > index ? (median - index) : (index - median);
 			
-			if (distance <= maxDistance) {
-				result.add(pa.getUniqueId());
+			if (medianIndex == index) {
+				median.setMedianUid(pa.getUniqueId());
+			}
+			
+			if (pa.getUniqueId().equals(answer.getPossibleAnswerUniqueId()))
+			{
+				int distance = medianIndex > index ? (medianIndex - index) : (index - medianIndex);
+				
+				if (distance > maxDistance) {
+					median.setMaxDistanceExceeded(true);
+				}
 			}
 			
 			index++;
 		}
 		
-		return result;
+		return median;
 	}
 	
 	

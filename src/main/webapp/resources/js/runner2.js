@@ -428,7 +428,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		$(this).tinymce(explanationEditorConfig);
 	});
 	
-	if (isdelphi) {
+	if (isdelphi && !foreditor && !forskin) {
 		modelsForDelphiQuestions[viewModel.uniqueId()] = viewModel;
 		
 		var surveyElement = $(container).closest(".survey-element");
@@ -835,7 +835,7 @@ function loadMedianData(div, viewModel) {
 
 	$.ajax({
 		type: "GET",
-		url: contextpath + "/runner/delphiMedianExceeded",
+		url: contextpath + "/runner/delphiMedian",
 		data: data,
 		beforeSend: function (xhr) {
 			xhr.setRequestHeader(csrfheader, csrftoken);
@@ -844,7 +844,14 @@ function loadMedianData(div, viewModel) {
 			showError(data);
 		},
 		success: function (result, textStatus) {
-			viewModel.maxDistanceExceeded(result);
+			viewModel.maxDistanceExceeded(result.maxDistanceExceeded);
+			
+			$(div).find(".medianpa").removeClass("medianpa");
+			
+			if (result.maxDistanceExceeded)
+			{
+				$('.answertext[data-pa-uid="' + result.medianUid + '"]').closest(".likert-pa").addClass("medianpa");
+			}
 		}
 	 });		
 }
@@ -935,6 +942,8 @@ function delphiUpdate(div) {
 			
 			var viewModel = modelsForDelphiQuestions[uid];
 			loadTableData(div, viewModel);
+			
+			loadMedianData(div, viewModel)
 			
 			delphiUpdateFinished = true;
 	    }
