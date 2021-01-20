@@ -2330,7 +2330,7 @@ public class RunnerController extends BasicController {
 					{
 						DelphiMedian median = answerService.getMedian(answerSet.getSurvey(), singleChoiceQuestion, answers.get(0));
 						if (median.isMaxDistanceExceeded()) {
-							String text = "New explanation:<br /><br/><br />Old explanation:<br /><br /><span style='color: #999;'>" + explanation.getText() + "</span>";
+							String text = resources.getMessage("label.NewExplanation", null, locale) + ":<br /><br/><br />" + resources.getMessage("label.OldExplanation", null, locale) + ":<br /><br /><span style='color: #999;'>" + explanation.getText() + "</span>";
 							delphiExplanation.setText(text);
 						}
 					}
