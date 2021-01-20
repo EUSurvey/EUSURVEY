@@ -850,7 +850,9 @@ function loadMedianData(div, viewModel) {
 			
 			if (result.maxDistanceExceeded)
 			{
-				$('.answertext[data-pa-uid="' + result.medianUid + '"]').closest(".likert-pa").addClass("medianpa");
+				for (let i = 0; i < result.medianUids.length; i++) {				
+					$('.answertext[data-pa-uid="' + result.medianUids[i] + '"]').closest(".likert-pa").addClass("medianpa");
+				}
 			}
 		}
 	 });		

@@ -2284,32 +2284,43 @@ public class AnswerService extends BasicService {
 		int length = values.size();
 		if (length == 0) return null;
 		
-		int medianIndex;
+		//refactor into math-class
+		
+		int medianIndexLower;
+		int medianIndexUpper;
 		
 		if (length == 1) {
-			medianIndex = values.get(0);			
+			medianIndexLower = values.get(0);
+			medianIndexUpper = medianIndexLower;
 		} else {
 			int median_index = length / 2;
 			
 			if (length % 2 == 0) {
-				//even TODO
-				medianIndex = values.get(median_index);
+				medianIndexLower = values.get(median_index);
+				medianIndexUpper = values.get(median_index+1);
 			} else {
-				//odd
-				medianIndex = values.get(median_index);
+				medianIndexLower = values.get(median_index);
+				medianIndexUpper = medianIndexLower;
 			}
 		}
 		
 		index = 0;
 		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {
 			
-			if (medianIndex == index) {
-				median.setMedianUid(pa.getUniqueId());
+			if (medianIndexLower == index || medianIndexUpper == index) {
+				median.getMedianUids().add(pa.getUniqueId());
 			}
 			
 			if (pa.getUniqueId().equals(answer.getPossibleAnswerUniqueId()))
 			{
-				int distance = medianIndex > index ? (medianIndex - index) : (index - medianIndex);
+				int distance = medianIndexLower > index ? (medianIndexLower - index) : (index - medianIndexLower);
+				
+				if (medianIndexLower != medianIndexUpper) {
+					int distanceUpper = medianIndexUpper > index ? (medianIndexUpper - index) : (index - medianIndexUpper);
+					if (distanceUpper < distance) {
+						distance = distanceUpper;
+					}
+				}				
 				
 				if (distance > maxDistance) {
 					median.setMaxDistanceExceeded(true);
@@ -2321,6 +2332,4 @@ public class AnswerService extends BasicService {
 		
 		return median;
 	}
-	
-	
 }
