@@ -18,6 +18,7 @@ import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.InvalidEmailException;
+import com.ec.survey.tools.MathUtils;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.SurveyHelper;
@@ -2267,7 +2268,7 @@ public class AnswerService extends BasicService {
 			countsForPossibleAnswerUid.put((String) a[0], ConversionTools.getValue(a[1]));
 		}
 		
-		List<Integer> values = new ArrayList<Integer>();
+		List<Integer> values = new ArrayList<>();
 		int index = 0;
 		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {
 			if (countsForPossibleAnswerUid.containsKey(pa.getUniqueId())) {
@@ -2284,39 +2285,20 @@ public class AnswerService extends BasicService {
 		int length = values.size();
 		if (length == 0) return null;
 		
-		//refactor into math-class
-		
-		int medianIndexLower;
-		int medianIndexUpper;
-		
-		if (length == 1) {
-			medianIndexLower = values.get(0);
-			medianIndexUpper = medianIndexLower;
-		} else {
-			int median_index = length / 2;
-			
-			if (length % 2 == 0) {
-				medianIndexLower = values.get(median_index);
-				medianIndexUpper = values.get(median_index+1);
-			} else {
-				medianIndexLower = values.get(median_index);
-				medianIndexUpper = medianIndexLower;
-			}
-		}
+		Integer[] medianIndices = MathUtils.computeUpperAndLowerMedian(values.toArray(new Integer[0]));
 		
 		index = 0;
-		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {
-			
-			if (medianIndexLower == index || medianIndexUpper == index) {
+		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {			
+			if (medianIndices[0] == index || medianIndices[1] == index) {
 				median.getMedianUids().add(pa.getUniqueId());
 			}
 			
 			if (pa.getUniqueId().equals(answer.getPossibleAnswerUniqueId()))
 			{
-				int distance = medianIndexLower > index ? (medianIndexLower - index) : (index - medianIndexLower);
+				int distance = medianIndices[0] > index ? (medianIndices[0] - index) : (index - medianIndices[0]);
 				
-				if (medianIndexLower != medianIndexUpper) {
-					int distanceUpper = medianIndexUpper > index ? (medianIndexUpper - index) : (index - medianIndexUpper);
+				if (medianIndices[0] != medianIndices[1]) {
+					int distanceUpper = medianIndices[1] > index ? (medianIndices[1] - index) : (index - medianIndices[1]);
 					if (distanceUpper < distance) {
 						distance = distanceUpper;
 					}

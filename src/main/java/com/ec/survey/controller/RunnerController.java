@@ -2335,8 +2335,7 @@ public class RunnerController extends BasicController {
 						}
 					}
 				}
-			}
-			
+			}			
 			
 			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
@@ -2778,7 +2777,7 @@ public class RunnerController extends BasicController {
 		Element element = survey.getQuestionMapByUniqueId().get(questionuid);
 		
 		if (answerSet == null || element == null || !(element instanceof SingleChoiceQuestion)) {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 		
 		SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion) element;
