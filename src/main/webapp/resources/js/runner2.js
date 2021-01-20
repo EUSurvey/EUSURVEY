@@ -610,6 +610,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					break;
 
 				default:
+					addStatisticsToAnswerText(div, result);
 					return;
 			}
 
@@ -659,8 +660,27 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			if (chartCallback instanceof Function) {
 				chartCallback(div, chart);
 			}
+			addStatisticsToAnswerText(div, result);
 		}
 	 });
+}
+
+function addStatisticsToAnswerText(div, result) {
+	console.log("addStatisticsToAnswerText "+JSON.stringify(result));
+	var questionType = result["questionType"];
+	console.log("questionType: "+questionType);
+	if (["SingleChoice", "MultipleChoice", "Slider"].includes(questionType)) {
+		for (var i = 0; i < result.data.length; i++) {
+			var value = result.data[i].value;
+			var label = result.data[i].label;
+			var newlabel = ""+label+" ("+value+" votes)";
+			if (1 == value) {
+				newlabel = ""+label+" ("+value+" vote)";
+			}
+			console.log("i "+i+' new label "'+newlabel+'"');
+		}
+	}
+	console.log("answersTableViewModel "+(typeof answersTableViewModel));
 }
 
 function addChart(div, chart)
