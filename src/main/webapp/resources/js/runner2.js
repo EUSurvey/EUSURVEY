@@ -849,19 +849,52 @@ function scrollToQuestionIfSet() {
 
 var delphiUpdateFinished = false;
 
+const DELPHI_UPDATE_TYPE = {
+	ONE_QUESTION: 1,
+	ENTIRE_FORM: 2
+};
+Object.freeze(DELPHI_UPDATE_TYPE);
+
+let currentDelphiUpdateType;
+let currentDelphiUpdateContainer;
+
 function delphiUpdate(div) {
 
-	var result = validateInput(div);
-	var message = $(div).find(".delphiupdatemessage").first();
+	const result = validateInput(div);
+	const message = $(div).find(".delphiupdatemessage").first();
 	$(message).removeClass("update-error");
-
-	var loader = $(div).find(".inline-loader").first();
-	
-	if (result == false)
-	{
+	if (result == false) {
 		return;
 	}
-	
+
+	if (isOneAnswerEmptyWhileItsExplanationIsNot(div)) {
+		currentDelphiUpdateType = DELPHI_UPDATE_TYPE.ONE_QUESTION;
+		currentDelphiUpdateContainer = div;
+		$('.confirm-explanation-deletion-modal').modal("show");
+		return;
+	}
+
+	delphiUpdateContinued(div);
+}
+
+function confirmExplanationDeletion() {
+
+	$('.confirm-explanation-deletion-modal').modal("hide");
+	if (currentDelphiUpdateType === DELPHI_UPDATE_TYPE.ONE_QUESTION) {
+		delphiUpdateContinued(currentDelphiUpdateContainer, () => {
+			$(currentDelphiUpdateContainer).find("textarea[name^='explanation']").val("");
+			$(currentDelphiUpdateContainer).find(".uploaded-files").children().remove();
+		});
+	} else if (currentDelphiUpdateType === DELPHI_UPDATE_TYPE.ENTIRE_FORM) {
+		validateInputAndSubmitRunnerContinued(currentDelphiUpdateContainer);
+	}
+}
+
+function delphiUpdateContinued(div, successCallback) {
+
+	const message = $(div).find(".delphiupdatemessage").first();
+
+	var loader = $(div).find(".inline-loader").first();
 	$(loader).show();
 	
 	var form = document.createElement("form");
@@ -908,10 +941,12 @@ function delphiUpdate(div) {
 			
 			var viewModel = modelsForDelphiQuestions[uid];
 			loadTableData(div, viewModel);
+
+			if (typeof successCallback === "function") successCallback();
 			
 			delphiUpdateFinished = true;
 	    }
-	 });
+	});
 }
 
 function saveDelphiComment(button, reply) {

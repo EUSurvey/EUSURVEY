@@ -355,6 +355,20 @@
 			</c:if>
 			
 			<div style="clear: both"></div>
+
+			<div class="modal confirm-explanation-deletion-modal" data-backdrop="static">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content">
+						<div class="modal-body">
+							<spring:message code="info.ConfirmExplanationDeletion" />
+						</div>
+						<div class="modal-footer">
+							<a class="btn btn-default" onclick="confirmExplanationDeletion()"><spring:message code="label.Confirm" /></a>
+							<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+						</div>
+					</div>
+				</div>
+			</div>
 				
 			<script type="text/javascript" src="${contextpath}/resources/js/jquery.textarea-expander.js?version=<%@include file="../version.txt" %>"></script>
 			

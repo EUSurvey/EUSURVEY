@@ -177,7 +177,8 @@ public class AnswerService extends BasicService {
 			session.flush();
 			
 			if (answerSet.getSurvey().getIsDelphi()) {
-				answerExplanationService.createOrUpdateExplanations(answerSet);
+				answerExplanationService.deleteCommentsForDeletedAnswers(answerSet);
+				answerExplanationService.createUpdateOrDeleteExplanations(answerSet);
 			}			
 			
 			if (!answerSet.getSurvey().getIsDraft()) {
