@@ -1,7 +1,7 @@
 package com.ec.survey.tools;
 
 public class MathUtils {
-	public static Integer[] computeUpperAndLowerMedian(Integer[] values) {
+	public static Integer[] computeMedianIndices(Integer[] values) {
 		
 		int medianIndexLower;
 		int medianIndexUpper;
@@ -14,8 +14,11 @@ public class MathUtils {
 			int median_index = length / 2;
 			
 			if (length % 2 == 0) {
-				medianIndexLower = values[median_index-1];
-				medianIndexUpper = values[median_index];
+				double lowermedian = values[median_index-1];
+				double uppermedian = values[median_index];
+				double median = (lowermedian + uppermedian)/2.0;
+				medianIndexLower = (int)(Math.floor(median));
+				medianIndexUpper = (int)(Math.ceil(median));
 			} else {
 				medianIndexLower = values[median_index];
 				medianIndexUpper = medianIndexLower;

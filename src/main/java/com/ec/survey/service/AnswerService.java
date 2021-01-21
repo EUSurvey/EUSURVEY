@@ -2285,7 +2285,7 @@ public class AnswerService extends BasicService {
 		int length = values.size();
 		if (length == 0) return null;
 		
-		Integer[] medianIndices = MathUtils.computeUpperAndLowerMedian(values.toArray(new Integer[0]));
+		Integer[] medianIndices = MathUtils.computeMedianIndices(values.toArray(new Integer[0]));
 		
 		index = 0;
 		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {			

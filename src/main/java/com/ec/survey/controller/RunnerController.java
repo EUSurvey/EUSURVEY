@@ -2785,9 +2785,16 @@ public class RunnerController extends BasicController {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		
-		Answer answer = answerSet.getAnswers(-1, questionuid).get(0);
+		List<Answer> answerList = answerSet.getAnswers(-1, questionuid);
+		if (answerList.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		Answer answer = answerList.get(0);
 		
 		DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, answer);
+		if (null == median) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
 		
 		return ResponseEntity.ok(median);
 	}
