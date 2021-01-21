@@ -200,29 +200,42 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional
-	public void createOrUpdateExplanations(AnswerSet answerSet) {
-		for (Question question : answerSet.getSurvey().getQuestions()) {
+	public void createUpdateOrDeleteExplanations(AnswerSet answerSet) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Survey survey = answerSet.getSurvey();
+		for (Question question : survey.getQuestions()) {
+			final String questionUid = question.getUniqueId();
 			if (question.getIsDelphiQuestion()) {
-				AnswerSet.ExplanationData explanationData = answerSet.getExplanations().get(question.getUniqueId());
+				AnswerSet.ExplanationData explanationData = answerSet.getExplanations().get(questionUid);
 				if (explanationData == null) {
 					continue;
 				}
 
 				AnswerExplanation explanation;
 				try {
-					explanation = getExplanation(answerSet.getId(), question.getUniqueId());
+					explanation = getExplanation(answerSet.getId(), questionUid);
+
+					// Delete explanation text and files if there is no linked answer.
+					final int questionId = question.getId();
+					if (answerSet.getAnswers(questionId, questionUid).size() == 0) {
+						fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(),
+								questionId);
+						explanation.getFiles().forEach(session::delete);
+						session.delete(explanation);
+						return;
+					}
 				} catch (NoSuchElementException ex) {
 					if ((explanationData.text.length() == 0) && (explanationData.files.isEmpty())) {
 						continue;
 					}
 
-					explanation = new AnswerExplanation(answerSet.getId(), question.getUniqueId());
+					explanation = new AnswerExplanation(answerSet.getId(), questionUid);
 				}
 
 				explanation.setText(explanationData.text);
 				explanation.setFiles(explanationData.files);
 
-				final Session session = sessionFactory.getCurrentSession();
 				session.saveOrUpdate(explanation);
 			}
 		}
@@ -246,6 +259,29 @@ public class AnswerExplanationService extends BasicService {
 		List<AnswerComment> list = query.list();
 
 		return list;
+	}
+
+	@Transactional
+	public void deleteCommentsForDeletedAnswers(final AnswerSet answerSet) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		for (Question question : answerSet.getSurvey().getQuestions()) {
+			if (question.getIsDelphiQuestion()
+				&& answerSet.getAnswers(question.getId(), question.getUniqueId()).size() == 0) {
+
+				final Query replyDeletionQuery = session.createQuery("DELETE FROM AnswerComment "
+						+ "WHERE answerSetId = :answerSetId AND questionUid = :questionUid AND parent IS NOT NULL")
+						.setInteger("answerSetId", answerSet.getId())
+						.setString("questionUid", question.getUniqueId());
+				replyDeletionQuery.executeUpdate();
+
+				final Query commentDeletionQuery = session.createQuery("DELETE FROM AnswerComment "
+						+ "WHERE answerSetId = :answerSetId AND questionUid = :questionUid AND parent IS NULL")
+						.setInteger("answerSetId", answerSet.getId())
+						.setString("questionUid", question.getUniqueId());
+				commentDeletionQuery.executeUpdate();
+			}
+		}
 	}
 
 	@Transactional
