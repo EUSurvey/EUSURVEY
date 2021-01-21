@@ -257,7 +257,7 @@
 			
 			let competencyMaxScoreDiv = '';
 				
-			if (competencyResult.competencyMaxScore) {
+			if (competencyResult.competencyMaxScore || competencyResult.competencyMaxScore === 0) {
 				competencyMaxScoreDiv = '<div class="'
 					+ 'score'
 					+ '">'
