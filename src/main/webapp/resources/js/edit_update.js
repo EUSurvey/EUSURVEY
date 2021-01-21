@@ -969,14 +969,24 @@ function update(input)
 			_undoProcessor.addUndoStep(["Height", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			break;
 		case "MaximumFileSize":
-			var text = $(input).val();
-			
-			if (text.length == 0) text = "1";
-			
+			var text = $(input).val();			
+			if (text.length == 0) text = "1";			
 			var oldtext = element.maxFileSize();
-			element.maxFileSize(parseInt(text));
-			
+			element.maxFileSize(parseInt(text));			
 			_undoProcessor.addUndoStep(["MaximumFileSize", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
+			break;
+		case "MaxDistanceToMedian":
+			var text = $(input).val();	
+			var oldtext = element.maxDistance();
+			var index = $(input).prop('selectedIndex');
+			if (index == 0)
+			{
+				text = "-1";
+			}
+			
+			element.maxDistance(parseInt(text));			
+			_undoProcessor.addUndoStep(["MaxDistanceToMedian", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
+		
 			break;
 		default:
 			throw label + " not implemented"; 

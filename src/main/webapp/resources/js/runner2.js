@@ -428,13 +428,17 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		$(this).tinymce(explanationEditorConfig);
 	});
 	
-	if (isdelphi) {
+	if (isdelphi && !foreditor && !forskin) {
 		modelsForDelphiQuestions[viewModel.uniqueId()] = viewModel;
 		
 		var surveyElement = $(container).closest(".survey-element");
 		if (surveyElement) {
 			loadGraphData(surveyElement);
-			loadTableData(surveyElement, viewModel);	
+			loadTableData(surveyElement, viewModel);
+			
+			$(surveyElement).find(".likert-div.median").each(function(){
+				loadMedianData(surveyElement, viewModel);
+			});
 		}
 	}
 
@@ -488,7 +492,7 @@ function delphiPrefill(editorElement) {
 		},
 		error: function(message)
 		{
-			showErrorl(message);
+			showError(message);
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 			surveyElement.find(".explanation-file-upload-section").show();
 		},
@@ -822,6 +826,38 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 	 });
 }
 
+function loadMedianData(div, viewModel) {
+	const surveyId = $('#survey\\.id').val();
+	const questionUid = $(div).attr("data-uid");
+	const uniqueCode = $('#uniqueCode').val();
+	
+	const data = "surveyid=" + surveyId + "&questionuid=" + questionUid + "&uniquecode=" + uniqueCode;
+
+	$.ajax({
+		type: "GET",
+		url: contextpath + "/runner/delphiMedian",
+		data: data,
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function (data) {
+			showError(data);
+		},
+		success: function (result, textStatus) {
+			viewModel.maxDistanceExceeded(result.maxDistanceExceeded);
+			
+			$(div).find(".medianpa").removeClass("medianpa");
+			
+			if (result.maxDistanceExceeded)
+			{
+				for (let i = 0; i < result.medianUids.length; i++) {				
+					$('.answertext[data-pa-uid="' + result.medianUids[i] + '"]').closest(".likert-pa").addClass("medianpa");
+				}
+			}
+		}
+	 });		
+}
+
 function selectPageAndScrollToQuestionIfSet() {
 	if (window.location.hash) {
 		//select correct page in case of multi-paging
@@ -943,6 +979,8 @@ function delphiUpdateContinued(div, successCallback) {
 			loadTableData(div, viewModel);
 
 			if (typeof successCallback === "function") successCallback();
+			
+			loadMedianData(div, viewModel)
 			
 			delphiUpdateFinished = true;
 	    }

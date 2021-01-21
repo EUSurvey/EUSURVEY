@@ -10,6 +10,7 @@ import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Attribute;
 import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.model.delphi.DelphiMedian;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ReportingService.ToDo;
@@ -17,6 +18,7 @@ import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.InvalidEmailException;
+import com.ec.survey.tools.MathUtils;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.SurveyHelper;
@@ -2241,5 +2243,76 @@ public class AnswerService extends BasicService {
 	
 		return answerSet;
 	}
-	
+
+	@Transactional
+	public DelphiMedian getMedian(Survey survey, SingleChoiceQuestion singleChoiceQuestion, Answer answer) {
+		int maxDistance = singleChoiceQuestion.getMaxDistance();
+		
+		Session session = sessionFactory.getCurrentSession();
+		
+		SQLQuery query = session.createSQLQuery("SELECT a.PA_UID, count(*) FROM ANSWERS a " + 
+				"JOIN ANSWERS_SET an on a.AS_ID = an.ANSWER_SET_ID " + 
+				"JOIN SURVEYS s ON an.SURVEY_ID = s.SURVEY_ID " + 
+				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :isDraft AND QUESTION_UID = :questionUid " + 
+				"GROUP BY a.PA_UID");
+		
+		query.setString("surveyUid", survey.getUniqueId());
+		query.setBoolean("isDraft", survey.getIsDraft());
+		query.setString("questionUid", singleChoiceQuestion.getUniqueId());
+		
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
+
+		Map<String, Integer> countsForPossibleAnswerUid = new HashMap<>();
+		for (Object o : res) {
+			Object[] a = (Object[]) o;			
+			countsForPossibleAnswerUid.put((String) a[0], ConversionTools.getValue(a[1]));
+		}
+		
+		List<Integer> values = new ArrayList<>();
+		int index = 0;
+		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {
+			if (countsForPossibleAnswerUid.containsKey(pa.getUniqueId())) {
+				int count = countsForPossibleAnswerUid.get(pa.getUniqueId());
+				for (int i = 0; i < count; i++) {
+					values.add(index);
+				}
+			}
+			index++;
+		}
+		
+		DelphiMedian median = new DelphiMedian();
+		
+		int length = values.size();
+		if (length == 0) return null;
+		
+		Integer[] medianIndices = MathUtils.computeMedianIndices(values.toArray(new Integer[0]));
+		
+		index = 0;
+		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {			
+			if (medianIndices[0] == index || medianIndices[1] == index) {
+				median.getMedianUids().add(pa.getUniqueId());
+			}
+			
+			if (pa.getUniqueId().equals(answer.getPossibleAnswerUniqueId()))
+			{
+				int distance = medianIndices[0] > index ? (medianIndices[0] - index) : (index - medianIndices[0]);
+				
+				if (medianIndices[0] != medianIndices[1]) {
+					int distanceUpper = medianIndices[1] > index ? (medianIndices[1] - index) : (index - medianIndices[1]);
+					if (distanceUpper < distance) {
+						distance = distanceUpper;
+					}
+				}				
+				
+				if (distance > maxDistance) {
+					median.setMaxDistanceExceeded(true);
+				}
+			}
+			
+			index++;
+		}
+		
+		return median;
+	}
 }

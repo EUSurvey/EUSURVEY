@@ -5,6 +5,7 @@ public class DelphiQuestion {
 	private String uid;
 	private int id;
 	private String answer = "";
+	private boolean maxDistanceExceeded;
 
 	public String getTitle() {
 		return title;
@@ -36,5 +37,13 @@ public class DelphiQuestion {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public boolean isMaxDistanceExceeded() {
+		return maxDistanceExceeded;
+	}
+
+	public void setMaxDistanceExceeded(boolean maxDistanceExceeded) {
+		this.maxDistanceExceeded = maxDistanceExceeded;
 	}
 }

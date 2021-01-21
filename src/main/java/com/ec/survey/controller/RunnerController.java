@@ -2320,6 +2320,23 @@ public class RunnerController extends BasicController {
 			DelphiExplanation delphiExplanation = new DelphiExplanation();
 			delphiExplanation.setText(explanation.getText());
 			delphiExplanation.setFileInfoFromFiles(explanation.getFiles());
+			
+			if (element instanceof SingleChoiceQuestion && explanation.getText().trim().length() > 0) {
+				SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)element;
+				if (singleChoiceQuestion.getUseLikert() && singleChoiceQuestion.getMaxDistance() >= 0) {
+					
+					List<Answer> answers = answerSet.getAnswers(singleChoiceQuestion.getId(), singleChoiceQuestion.getUniqueId());
+					if (!answers.isEmpty())
+					{
+						DelphiMedian median = answerService.getMedian(answerSet.getSurvey(), singleChoiceQuestion, answers.get(0));
+						if (median.isMaxDistanceExceeded()) {
+							String text = resources.getMessage("label.NewExplanation", null, locale) + ":<br /><br/><br />" + resources.getMessage("label.OldExplanation", null, locale) + ":<br /><br /><span style='color: #999;'>" + explanation.getText() + "</span>";
+							delphiExplanation.setText(text);
+						}
+					}
+				}
+			}			
+			
 			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
 			return new ResponseEntity<>(new DelphiExplanation("", ""), HttpStatus.OK);
@@ -2621,7 +2638,7 @@ public class RunnerController extends BasicController {
 						delphiQuestion.setTitle(question.getTitle());
 						delphiQuestion.setUid(question.getUniqueId());
 						delphiQuestion.setId(question.getId());
-						
+												
 						if (answerSet != null)
 						{
 							String result = "";
@@ -2658,6 +2675,14 @@ public class RunnerController extends BasicController {
 								if (!answers.isEmpty()) {
 									for (Answer answer : answers) {
 										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
+										
+										if (question instanceof SingleChoiceQuestion) {
+											SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)question;
+											if (singleChoiceQuestion.getMaxDistance() > -1) {
+												DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, answer);
+												delphiQuestion.setMaxDistanceExceeded(median.isMaxDistanceExceeded());												
+											}
+										}
 									}
 								}
 							}
@@ -2733,6 +2758,45 @@ public class RunnerController extends BasicController {
 			}
 		} catch (NoSuchElementException ex) {
 		}
+	}
+	
+	@GetMapping(value = "delphiMedian")
+	public ResponseEntity<DelphiMedian> delphiMedian(HttpServletRequest request) {
+		String surveyid = request.getParameter("surveyid");
+		int sid = Integer.parseInt(surveyid);
+
+		Survey survey = surveyService.getSurvey(sid);
+
+		if (survey == null || !survey.getIsDelphi()) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+
+		AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
+		
+		String questionuid = request.getParameter("questionuid");
+		Element element = survey.getQuestionMapByUniqueId().get(questionuid);
+		
+		if (answerSet == null || element == null || !(element instanceof SingleChoiceQuestion)) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		
+		SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion) element;
+		if (singleChoiceQuestion.getMaxDistance() == -1) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+		
+		List<Answer> answerList = answerSet.getAnswers(-1, questionuid);
+		if (answerList.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		Answer answer = answerList.get(0);
+		
+		DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, answer);
+		if (null == median) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		
+		return ResponseEntity.ok(median);
 	}
 
 	@GetMapping(value = "delphiTable")
