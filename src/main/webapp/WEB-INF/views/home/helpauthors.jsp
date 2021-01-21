@@ -3203,8 +3203,71 @@
 					</a>
 				</u>
 			</p>
+		<h1>ECF Surveys</h1>
+		<h2>How to create an ECF survey ?</h2>
+		<p>
+			In order to create an ECF survey :
+			<ul>
+				<li>Click on the green button 'New Survey'</li>
+				<li>Select 'Create new survey'</li>
+				<li>In the dialog box opened, select ECF Self Assessment in the survey type.</li>
+				<li>Choose a meaningful survey alias. This will be part of your survey's URL.</li>
+				<li>Choose the Title of your survey.</li>
+				<li>Specify the email address for being contacted by the respondents and choose the Contact mode (Form, Email, URL).</li>
+				<li>Select the main language of your survey (translations are managed later).</li>
+				<li>Click on the confirmation box after having read the text.</li>
+			</ul>
+			<img class="center" src="${contextpath}/resources/images/illustrations/ecfCreation.png" />
+		</p>
+		<h2>ECF Results screen</h2>
+		<p>
+			In addition to the two Results screens for standard surveys, 3 new Results screens have been added for ECF surveys :
+			<img class="center" src="${contextpath}/resources/images/illustrations/ecfResultTop.png" />
+		</p>
+		<p>
+			<em>
+				<strong>Organisational results:</strong> Organisations can compile and aggregate individual results and obtain an organisational level assessment indicating competency gaps at <strong>profile and organisational level.</strong>
+			</em>
+		</p>
+		<p>
+			<em>
+				The aggregation of the results for all the individuals who occupy the same job profile, within a department or a team, or for the organisation as a whole, may lead to: 
+				<ul>
+					<li>Calculating the average performance for each competency, which can represent the basis for an assessment of the maturity of the organisation as a whole; </li>
+					<li>Spotting the highest or lowest scores of individuals, which can allow the identification of individual strengths or weaknesses.</li>
+				</ul>
+			</em>
+		</p>
+		<h3>
+			Individual assessment results and gaps
+		</h3>
+		<p>
+			First, there is table showing you the total number of contribution per job profiles and allowing you to filter for a particular job profile. Please note that you can choose the neutral profile or all profiles.
+			<img class="center" src="${contextpath}/resources/images/illustrations/ecfSelectContributions.png" />
+		</p>
+		<p>
+			There are two other options :
+			<img class="center" src="${contextpath}/resources/images/illustrations/ecfSelectTargetProfileAndSortBy.png" />
+		</p>
+		<p>
+			The first one allow you to select the target job profile. This will update the target score in the second column of the main table.
+		</p>
+		<p>
+			The second option is a sorting option. This specify in which order the different individual results will be displayed.
+		</p>
+		<p>
+			Alphabetical order A…Z
+			Alphabetical order Z…A
+			Lowest gap
+			Highest gap
+			Lowest score
+			Highest score
+		</p>
+		<h3>
+			Profile assessment results and gaps
+		</h3>
 
-		</div>
+	</div> <!-- faqcontent -->
 	</div>
 	</div>
 
