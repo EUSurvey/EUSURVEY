@@ -2226,19 +2226,19 @@ public class AnswerService extends BasicService {
 	}
 	
 	public AnswerSet automaticParseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode,
-			boolean update, String lang, User user) throws IOException
+			boolean update, String lang, User user, boolean skipDelphiQuestions) throws IOException
 	{
 		AnswerSet answerSet = null;
 		
 		if (survey.getIsDelphi() && surveyService.answerSetExists(uniqueCode, false, true))
 		{
 			AnswerSet existingAnswerSet = answerService.get(uniqueCode);
-			answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, existingAnswerSet, lang, user, fileService);
+			answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, existingAnswerSet, lang, user, fileService, skipDelphiQuestions);
 		}
 
 		if (answerSet == null)
 		{
-			answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
+			answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService, skipDelphiQuestions);
 		}	
 	
 		return answerSet;

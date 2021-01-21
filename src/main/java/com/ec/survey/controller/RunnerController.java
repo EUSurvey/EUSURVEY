@@ -484,7 +484,7 @@ public class RunnerController extends BasicController {
 					return err;
 			}
 			
-			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);			
+			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user, false);			
 			
 			if (survey != null) {
 				survey = surveyService.getSurvey(survey.getId(), lang);
@@ -1530,7 +1530,7 @@ public class RunnerController extends BasicController {
 					draft.setUniqueId(uid);
 
 					answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user,
-							fileService);
+							fileService, false);
 					answerSet.setIsDraft(true);
 					draft.setAnswerSet(answerSet);
 				}
@@ -1796,7 +1796,7 @@ public class RunnerController extends BasicController {
 					return err;
 			}
 			
-			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, origsurvey, uniqueCode, false, lang, user);
+			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, origsurvey, uniqueCode, false, lang, user, false);
 		
 			String newlang = request.getParameter("newlang");
 			String newlangpost = request.getParameter("newlangpost");
@@ -2360,16 +2360,18 @@ public class RunnerController extends BasicController {
 			final String invitationId = request.getParameter("invitation");
 			final User user = sessionService.getCurrentUser(request, false, false);
 			
+			final boolean delphiQuestions = "true".equalsIgnoreCase(request.getParameter("delphiQuestions"));
+			
 			Element element = survey.getElementsByUniqueId().get(questionUid);
 
 			AnswerSet answerSet;
 			final AnswerSet existingAnswerSet = answerService.get(answerSetUniqueCode);
 			if (existingAnswerSet == null) {
 				//save
-				answerSet = SurveyHelper.parseAnswerSet(request, survey, answerSetUniqueCode, false, languageCode, user, fileService);
+				answerSet = SurveyHelper.parseAnswerSet(request, survey, answerSetUniqueCode, false, languageCode, user, fileService, !delphiQuestions);
 			} else {
 				//update
-				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, answerSetUniqueCode, existingAnswerSet, languageCode, user, fileService, element);
+				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, answerSetUniqueCode, existingAnswerSet, languageCode, user, fileService, element, !delphiQuestions);
 			}
 			
 			if (invitationId != null && invitationId.length() > 0) {
@@ -2691,6 +2693,50 @@ public class RunnerController extends BasicController {
 						}
 
 						currentDelphiSection.getQuestions().add(delphiQuestion);
+					} else {
+						//non-delphi question
+						if (!structure.isUnansweredMandatoryQuestions() && !question.getOptional()) 
+						{
+							if (answerSet == null) {
+								structure.setUnansweredMandatoryQuestions(true);
+							} else if (question instanceof MatrixOrTable)
+							{
+								boolean found = false;
+								MatrixOrTable matrix = (MatrixOrTable)question;
+						
+								for (Element matrixQuestions : matrix.getQuestions()) {
+									List<Answer> answers = answerSet.getAnswers(matrixQuestions.getId(), matrixQuestions.getUniqueId());
+									if (!answers.isEmpty()) {
+										found = true;
+										break;
+									}
+								}
+								
+								if (!found) {
+									structure.setUnansweredMandatoryQuestions(true);
+								}
+							} else if (question instanceof RatingQuestion)
+							{								
+								RatingQuestion rating = (RatingQuestion)question;
+								boolean found = false;
+								for (Element ratingQuestions : rating.getQuestions()) {
+									List<Answer> answers = answerSet.getAnswers(ratingQuestions.getId(), ratingQuestions.getUniqueId());
+									if (!answers.isEmpty()) {
+										found = true;
+										break;
+									}
+								}
+
+								if (!found) {
+									structure.setUnansweredMandatoryQuestions(true);
+								}
+							} else {
+								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+								if (answers.isEmpty()) {
+									structure.setUnansweredMandatoryQuestions(true);
+								}
+							}
+						}
 					}
 				}
 			}
