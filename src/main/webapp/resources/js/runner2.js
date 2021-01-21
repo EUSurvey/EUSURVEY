@@ -666,7 +666,23 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 }
 
 function addStatisticsToAnswerText(div, result) {
-	console.log("addStatisticsToAnswerText "+JSON.stringify(result));
+	var elementWrapper = $(div).closest(".elementwrapper");
+	var answerTextElement = elementWrapper.find(".answertext");
+	if (0 == answerTextElement.length) {
+		console.log("nothing to see here! full stop");
+		return;
+	}
+	var contextForAnswerText = ko.contextFor(answerTextElement[0]);
+	var viewModel = ko.dataFor(answerTextElement[0]);
+	//var viewModels = modelsForDelphiQuestions;
+	console.log("addStatisticsToAnswerText "+JSON.stringify(result)+"\nelementWrapper: "+JSON.stringify(elementWrapper));
+	console.log("answerTextElement: length "+answerTextElement.length + " : "+JSON.stringify(answerTextElement));
+	console.log("elementWrapper.class: "+JSON.stringify(elementWrapper.attr('class')));
+	console.log("contextForAnswerText: "+JSON.stringify(contextForAnswerText));
+	console.log("ko.version: "+JSON.stringify(ko.version));
+	console.log("viewModel JSON: "+JSON.stringify(viewModel));
+	console.log("viewModel: "+viewModel);
+	viewModel.title("bla");
 	var questionType = result["questionType"];
 	console.log("questionType: "+questionType);
 	if (["SingleChoice", "MultipleChoice", "Slider"].includes(questionType)) {
