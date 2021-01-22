@@ -231,12 +231,19 @@
 							
 								<!-- ko if: answer.length > 0 -->
 								<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: sectionViewModel.niceAnswer(answer)"></span></div>
+								
+								<!-- ko if: $parents[1].unansweredMandatoryQuestions() == false -->								
 								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}#E' + id}"><spring:message code="label.EditAnswer" /></a>
-								<!-- <a class="btn btn-xs btn-default">Show Comments</a> -->
+								<!-- /ko -->
+							
 								<!-- /ko -->
 								<!-- ko if: answer.length == 0 -->
 								<div class="redanswer"><spring:message code="info.NotAnswered" /></div>
+			
+								<!-- ko if: $parents[1].unansweredMandatoryQuestions() == false -->
 								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}#E' + id}"><spring:message code="label.Answer" /></a>
+								<!-- /ko -->
+						
 								<!-- /ko -->
 								<c:if test="${form.survey.isDelphiShowAnswers}">
 									<!-- ko if: isDelphiShowAnswersAndStatisticsInstantly || answer.length > 0 -->
@@ -342,6 +349,7 @@
 		var sectionViewModel = {
 		    sections: ko.observableArray(),
 		    loaded: ko.observable(false),
+		    unansweredMandatoryQuestions: ko.observable(false),
 		    
 		    niceTitle: function(title)
 			{
@@ -399,6 +407,7 @@
 					}
 
 					sectionViewModel.loaded(true);
+					sectionViewModel.unansweredMandatoryQuestions(data.unansweredMandatoryQuestions);
 					$('[data-toggle="tooltip"]').tooltip()
 				}
 			 });

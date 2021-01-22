@@ -587,7 +587,7 @@ function nextPage() {
 	{
 		if (!$("#tab" + (page + i)).hasClass("untriggered") && $("#tab" + (page + i)).find(".untriggered").length == 0)
 		{
-			selectPage(page + i);
+			selectPage(page + i);		
 			return;
 		} else {
 			i++;
@@ -616,6 +616,7 @@ function selectPage(val) {
 					//ok
 					if (i == val-page-1)
 					{
+						updateNonDelphiQuestions(page);
 						$(".single-page").hide();		
 						page = val;		
 						$("#page" + page).show();
@@ -629,6 +630,7 @@ function selectPage(val) {
 				} else {
 					if (i > 0)
 					{
+						updateNonDelphiQuestions(page);
 						$(".single-page").hide();		
 						page = page + i;		
 						$("#page" + page).show();
@@ -645,7 +647,7 @@ function selectPage(val) {
 			}			
 		} else {
 			if (!validate || !validatedPerPage || $("#hfsubmit").val() != 'true' || validateInput($("#page" + page))) {
-				
+				updateNonDelphiQuestions(page);
 				$(".single-page").hide();		
 				page = val;		
 				$("#page" + page).show();

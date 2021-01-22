@@ -2501,7 +2501,7 @@ public class ManagementController extends BasicController {
 				return err;
 		}
 		
-		AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);
+		AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user, false);
 	
 		String newlang = request.getParameter("newlang");
 		String newlangpost = request.getParameter("newlangpost");
