@@ -1213,7 +1213,10 @@
 				<div class='chart-wrapper'>
 					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: right">
 						<tr>
-							<th class='area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
+							<th class='area-header'>
+								<span>${form.getMessage("label.DelphiChartTitle")}</span>
+								<span onclick="loadGraphDataModal(this)" class="glyphicon glyphicon-resize-full delphi-chart-expand" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
+							</th>
 						</tr>
 						<tr>
 							<td style='padding-top:10px; padding-bottom:10px'>

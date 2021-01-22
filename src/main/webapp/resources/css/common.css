@@ -8,6 +8,11 @@ body {
 	color: #333;
 }
 
+body.modal-open {
+	/* Avoid scroll to top when modal opens */
+	overflow: visible;
+}
+
 html, body {
   height: 100%;
 }
@@ -1242,6 +1247,11 @@ legend {
 
 .optional {
 	font-weight: bold; white-space: pre; margin-right: 2px;
+}
+
+.delphi-chart-expand {
+	cursor: pointer;
+	float: right;
 }
 
 .delphiupdatemessage {
