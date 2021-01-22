@@ -434,7 +434,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		var surveyElement = $(container).closest(".survey-element");
 		if (surveyElement) {
 			loadGraphData(surveyElement);
-			loadTableData(surveyElement, viewModel);
+			loadTableData($(surveyElement).attr("data-uid"), viewModel);
 			
 			$(surveyElement).find(".likert-div.median").each(function(){
 				loadMedianData(surveyElement, viewModel);
@@ -818,18 +818,16 @@ function loadGraphDataModal(div) {
 }
 
 function firstDelphiTablePage(element) {
-	var surveyElement = $(element).closest(".survey-element");
-	var uid = $(surveyElement).attr("data-uid");
-	var viewModel = modelsForDelphiQuestions[uid];
+	var uid = getDelphiQuestionUid(element);
+	var viewModel = getDelphiViewModel(element);
 
 	viewModel.delphiTableOffset(0);
-	loadTableData(surveyElement, viewModel)
+	loadTableData(uid, viewModel)
 }
 
 function lastDelphiTablePage(element) {
-	var surveyElement = $(element).closest(".survey-element");
-	var uid = $(surveyElement).attr("data-uid");
-	var viewModel = modelsForDelphiQuestions[uid];
+	var uid = getDelphiQuestionUid(element);
+	var viewModel = getDelphiViewModel(element);
 
 	var overflow = viewModel.delphiTableTotalEntries() % viewModel.delphiTableLimit();
 
@@ -839,28 +837,48 @@ function lastDelphiTablePage(element) {
 
 	var newOffset = viewModel.delphiTableTotalEntries() - overflow;
 	viewModel.delphiTableOffset(newOffset);
-	loadTableData(surveyElement, viewModel)
+	loadTableData(uid, viewModel)
 }
 
 function previousDelphiTablePage(element) {
-	var surveyElement = $(element).closest(".survey-element");
-	var uid = $(surveyElement).attr("data-uid");
-	var viewModel = modelsForDelphiQuestions[uid];
+	var uid = getDelphiQuestionUid(element);
+	var viewModel = getDelphiViewModel(element);
 
 	viewModel.delphiTableOffset(Math.max(viewModel.delphiTableOffset() - viewModel.delphiTableLimit(), 0));
-	loadTableData(surveyElement, viewModel)
+	loadTableData(uid, viewModel)
 }
 
 function nextDelphiTablePage(element) {
-	var surveyElement = $(element).closest(".survey-element");
-	var uid = $(surveyElement).attr("data-uid");
-	var viewModel = modelsForDelphiQuestions[uid];
-
+	var uid = getDelphiQuestionUid(element);
+	var viewModel = getDelphiViewModel(element);
+	
 	var newOffset = viewModel.delphiTableOffset() + viewModel.delphiTableLimit();
 
 	if (newOffset < viewModel.delphiTableTotalEntries()) {
 		viewModel.delphiTableOffset(newOffset);
-		loadTableData(surveyElement, viewModel)
+		loadTableData(uid, viewModel)
+	}
+}
+
+function getDelphiViewModel(element)
+{
+	if ($(element).closest(".modal-body").length > 0)
+	{
+		return answersTableViewModel;
+	} else {
+		var surveyElement = $(element).closest(".survey-element");
+		var uid = $(surveyElement).attr("data-uid");
+		return modelsForDelphiQuestions[uid];
+	}
+}
+
+function getDelphiQuestionUid(element)
+{
+	if ($(element).closest(".modal-body").length > 0)
+	{
+		return currentQuestionUidInModal;
+	} else {
+		return $(element).closest(".survey-element").attr("data-uid");
 	}
 }
 
@@ -871,13 +889,12 @@ function sortDelphiTable(element, direction) {
 
 	viewModel.delphiTableOrder(direction);
 	viewModel.delphiTableOffset(0);
-	loadTableData(surveyElement, viewModel);
+	loadTableData($(surveyElement).attr("data-uid"), viewModel);
 }
 
-function loadTableData(div, viewModel) {
+function loadTableData(questionUid, viewModel) {
 
 	const surveyId = $('#survey\\.id').val();
-	const questionUid = $(div).attr("data-uid");
 	const languageCode = $('#language\\.code').val();
 	const uniqueCode = $('#uniqueCode').val();
 	loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel);
@@ -1100,7 +1117,7 @@ function delphiUpdateContinued(div, successCallback) {
 			loadGraphData(div);
 			
 			var viewModel = modelsForDelphiQuestions[uid];
-			loadTableData(div, viewModel);
+			loadTableData($(surveyElement).attr("data-uid"), viewModel);
 
 			if (typeof successCallback === "function") successCallback();
 			
@@ -1121,7 +1138,7 @@ function saveDelphiComment(button, reply) {
 	}
 	const successCallback = function () {
 		const viewModel = modelsForDelphiQuestions[questionUid];
-		loadTableData($(td).closest(".survey-element"), viewModel);
+		loadTableData($(td).closest(".survey-element").attr("data-uid"), viewModel);
 	}
 	saveDelphiCommentInner(button, reply, questionUid, surveyId, errorCallback, successCallback);
 }
