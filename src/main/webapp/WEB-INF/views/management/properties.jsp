@@ -1302,7 +1302,7 @@
 							</div>
 							<div style="float: right">
 								<div style="float: right; max-width: 500px;">
-									<form:input htmlEscape="false" path="survey.minNumberDelphiStatistics" id="minNumberDelphiStatistics" type="number" class="form-control number max1000000000" min='0' max='1000000000' style="display: inline-block" />
+									<form:input htmlEscape="false" path="survey.minNumberDelphiStatistics" id="minNumberDelphiStatistics" type="number" class="form-control number max1000000000" min='1' max='1000000000' style="display: inline-block" />
 								</div>
 							</div>
 							<div style="clear: both"></div>
