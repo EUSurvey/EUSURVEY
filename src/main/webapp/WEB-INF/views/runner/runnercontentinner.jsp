@@ -3,7 +3,7 @@
 <%@ page import="com.ec.survey.model.Form" %>
 <%@ page trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>	
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
@@ -12,8 +12,22 @@
 	<input type="hidden" id="newlangpost" name="newlangpost" value="false" />
 	<input type="hidden" id="newcss" name="newcss" value="" />
 	<input type="hidden" id="newviewpost" name="newviewpost" value="false" />
-	<input type="hidden" id="wcagMode" name="wcagMode" value="${form.wcagCompliance}" />	
-	<input type="hidden" id="multipaging" value="${form.survey.multiPaging}" />			
+	<input type="hidden" id="wcagMode" name="wcagMode" value="${form.wcagCompliance}" />
+	<input type="hidden" id="multipaging" value="${form.survey.multiPaging}" />
+
+<c:if test="${form.survey.isDelphi}">
+	<div class="modal" id="delphi-chart-modal" data-backdrop="static">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-body"></div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</c:if>
+
 		<c:choose>
 				<c:when test="${publication != null}">
 					<div style="width: 220px; max-width: 220px">

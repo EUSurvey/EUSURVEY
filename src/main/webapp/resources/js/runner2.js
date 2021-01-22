@@ -515,7 +515,96 @@ function delphiPrefill(editorElement) {
 	});
 }
 
-function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback, removeIfEmpty) {
+function chartLabelCallback(value, index, values) {
+	return value.length > 15 ? value.substring(0, 10) + "..." : value;
+}
+
+/**
+ * Labels may be returned with some HTML code. This method returns the text content without any markup or an empty string.
+ * @param {string} value
+ */
+function normalizeLabel(value) {
+	var parser = new DOMParser();
+	var doc = parser.parseFromString(value, "text/html");
+	return doc.body.textContent || "";
+}
+
+/**
+ * Tries to nicely split a label into multiple lines for Chart.js
+ * @param value
+ * @param {number} lineLength - Maximum number of characters per line
+ * @returns {string | string[]}
+ */
+function wrapLabel(value, lineLength) {
+	// try to coerce value into a string
+	value = value == undefined ? "" : value.toString();
+
+	// split by whitespace
+	var words = value.trim().split(/\s+/g);
+
+	if (words.length === 0) {
+		// only whitespace
+		return "";
+	}
+
+	var result = [];
+	var currentLine = "";
+	var i = 0;
+
+	while (true) {
+		var word = words[i];
+
+		if (i >= words.length) {
+			// out-of-bounds, add current line to result (if not empty) and stop
+			if (currentLine) {
+				result.push(currentLine);
+			}
+
+			break;
+		}
+
+		if (!currentLine) {
+			if (word.length > lineLength) {
+				// word is longer than allowed length => split word in between and create new line
+				result.push(word.substr(0, lineLength));
+
+				// remove first lineLength characters in word and try again
+				words[i] = word.substr(lineLength);
+				continue;
+			}
+
+			// set current line to current word and increase index
+			currentLine = word;
+			i++;
+			continue;
+		}
+
+		if (currentLine.length + 1 + word.length <= lineLength) {
+			// word fits in current line, separated by space character
+			currentLine += " " + word;
+			i++;
+			continue;
+		}
+
+		// word does not fit into current line anymore => retry on current word with new line (index not increased)
+		result.push(currentLine);
+		currentLine = "";
+	}
+
+	if (result.length === 1) {
+		// only one line => return as string
+		return result[0];
+	}
+
+	// multiple lines => return as array
+	return result;
+}
+
+function wrapChartLabelCallback(value, index, values) {
+	return wrapLabel(value, 20);
+}
+
+function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback, removeIfEmpty, forModal) {
 	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
 
 	$.ajax({
@@ -531,38 +620,28 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 		success: function (result, textStatus) {
 			if (textStatus === "nocontent") {
 				if (removeIfEmpty) {
-					var elementWrapper = $(div).closest(".elementwrapper");					
+					var elementWrapper = $(div).closest(".elementwrapper");
 					$(elementWrapper).find(".delphi-chart").remove();
 					$(elementWrapper).find(".chart-wrapper").hide();
-				}				
-				
+				}
+
 				return;
 			}
+
+			forModal = forModal === true;
 
 			var chartData = {};
 			var chartOptions = {
 				scaleShowValues: true,
 				responsive: false,
 				scales: {
-					yAxes: [{ticks: {beginAtZero: true}}],
-					xAxes: [
-						{
-							ticks: {
-								beginAtZero: true,
-								autoSkip: false,
-								callback: function(value, index, values) {
-									if (value.length > 15)
-									{
-										return value.substring(0,10) + "...";
-									}
-			                        return value;
-			                    }
-							}
-						}
-					]
+					yAxes: [{ticks: {beginAtZero: true, autoSkip: false}}],
+					xAxes: [{ticks: {beginAtZero: true, autoSkip: false}}]
 				},
 				legend: {display: false}
 			};
+
+			chartOptions.scales.xAxes[0].ticks.callback = chartOptions.scales.yAxes[0].ticks.callback = forModal ? wrapChartLabelCallback : chartLabelCallback;
 
 			switch (result.questionType) {
 				case "MultipleChoice":
@@ -577,7 +656,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 							})
 						}],
 						labels: graphData.map(function (g) {
-							return g.label
+							return normalizeLabel(g.label);
 						})
 					};
 					break;
@@ -595,12 +674,12 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 							data: question.data.map(function (d) {
 								return d.value;
 							}),
-							label: question.label
+							label: normalizeLabel(question.label)
 						});
 
 						if (!labels) {
 							labels = question.data.map(function (d) {
-								return d.label;
+								return normalizeLabel(d.label);
 							});
 						}
 					}
@@ -636,20 +715,11 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					chart.type = "pie";
 					chart.options.legend.display = true;
 					delete chart.options.scales;
-
-					if (chart.data.datasets.length > 1) {
-						chart.options.tooltips = {
-							callbacks: {
-								title: function(item, data) {
-									return data.datasets[item[0].datasetIndex].label;
-								}
-							}
-						}
-					}
 					break;
 				case "Radar":
 					chart.type = "radar";
 					delete chart.options.scales;
+					chart.options.scale = {pointLabels: {callback: forModal ? wrapChartLabelCallback : chartLabelCallback}};
 					break;
 				case "Scatter":
 					chart.type = "line";
@@ -660,6 +730,35 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					break;
 			}
 
+			if (!forModal && chart.data.labels.length > 5) {
+				chart.options.legend.display = false;
+			}
+
+			chart.options.tooltips = {
+				callbacks: {
+					title: chart.data.datasets.length === 1
+						? function (item, data) {
+							var label = chart.type === "radar" ? data.labels[item[0].index] : item[0].label;
+							return wrapLabel(label, 30);
+						} : function (item, data) {
+							var label = chart.type === "pie" ? data.datasets[item[0].datasetIndex].label : data.labels[item[0].index];
+							return wrapLabel(label, 30);
+						},
+					label: chart.data.datasets.length === 1
+						? function (item, data) {
+							var label = chart.type === "pie"
+								? data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
+								: item.value;
+							return wrapLabel(label, 30);
+						} : function (item, data) {
+							var label = chart.type === "pie"
+								? data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
+								: data.datasets[item.datasetIndex].label + ": " + item.value;
+							return wrapLabel(label, 30);
+						}
+				}
+			}
+
 			if (chartCallback instanceof Function) {
 				chartCallback(div, chart);
 			}
@@ -667,21 +766,37 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 	 });
 }
 
-function addChart(div, chart)
-{
+function addChart(div, chart) {
 	var elementWrapper = $(div).closest(".elementwrapper");
-	
+
 	$(elementWrapper).find(".delphi-chart").remove();
 	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
-		
+
 	$(elementWrapper).find(".chart-wrapper").show();
-	
-	var graph = new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
+
+	new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
+}
+
+function addChartModal(_, chart) {
+	var modal = $("#delphi-chart-modal");
+	$(modal).find("canvas").remove();
+	$(modal).find(".modal-body").append("<canvas class='center-block' height='600' width='800'></canvas>");
+	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
+	$(modal).modal("show");
+}
+
+function addChartModalStartPage(_, chart) {
+	var modal = $("#delphi-chart-modal-start-page");
+	$(modal).find("canvas").remove();
+	$(modal).find(".modal-body").append("<canvas class='center-block' height='600' width='800'></canvas>");
+	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
+	$(modal).modal("show");
 }
 
 function addStructureChart(div, chart) {
 	new Chart($(div).find("canvas")[0].getContext('2d'), chart);
 
+	$(div).find('.delphi-chart-expand').show();
 	$(div).find('.no-graph-image').hide();
 }
 
@@ -690,7 +805,16 @@ function loadGraphData(div) {
 	var questionuid = $(div).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true);
+	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false);
+}
+
+function loadGraphDataModal(div) {
+	var surveyElement = $(div).closest(".survey-element");
+	var surveyId = $('#survey\\.id').val();
+	var questionuid = $(surveyElement).attr("data-uid");
+	var languagecode = $('#language\\.code').val();
+	var uniquecode = $('#uniqueCode').val();
+	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true);
 }
 
 function firstDelphiTablePage(element) {

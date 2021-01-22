@@ -72,7 +72,7 @@
 		border-top: 1px solid #ccc;
 		margin-top: 5px;
 	}
-	
+
 	.no-graph-image {
 		text-align: center;
 		display: block;
@@ -81,12 +81,23 @@
 		padding-top: 45px;
 		color: #aaa;
 	}
-	
+
 	.no-graph-image .glyphicon {
-		font-size: 90px;	
+		font-size: 90px;
 	}
-	
+
 </style>
+
+	<div class="modal" id="delphi-chart-modal-start-page" data-backdrop="static">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-body"></div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<c:choose>
 		<c:when test="${forpdf == null && responsive == null}">
@@ -182,24 +193,27 @@
 					<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
 				</div>
 				<!-- /ko -->
-			
+
 				<!-- ko foreach: sections -->
 				<div class="sectionwithquestions">
-			
+
 					<div class="section">
 						<div style="float: right; margin-top: 4px; margin-right: 0px;">
 							<a onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-bottom"></span></a>
 							<a style="display: none" onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-left"></span></a>
 						</div>
-						<span data-bind="html: title"></span>					
+						<span data-bind="html: title"></span>
 					</div>
-					
+
 					<div class="sectioncontent">
-										
+
 						<!-- ko foreach: questions -->
 						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid}">
-							<div class="question-title" data-bind="html: sectionViewModel.niceTitle(title)"></div>
-							
+							<div class="question-title">
+								<span data-bind="html: sectionViewModel.niceTitle(title)"></span>
+								<span style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
+							</div>
+
 							<div class="no-graph-image">
 								<span class="glyphicon glyphicon-signal"></span><br />
 								<span><spring:message code="info.NoData" /></span>
@@ -207,7 +221,7 @@
 							<div style="height: 200px;" class="delphi-chart-div">
 								<canvas class='delphi-chart' width='300' height='200'></canvas>
 							</div>
-							
+
 							<div class="question-footer">
 								<!--  ko if: maxDistanceExceeded -->
 									<div style="color: #f00; font-size: 30px; float: right;">
@@ -383,17 +397,25 @@
 							}
 						}
 					}
-					
+
 					sectionViewModel.loaded(true);
 					$('[data-toggle="tooltip"]').tooltip()
 				}
 			 });
 		}
-		
+
+		function loadDelphiModalStartPage(element) {
+			var surveyid = ${form.survey.id};
+			var uniquecode = "${uniqueCode}";
+			var languagecode = "${form.language.code}";
+			var uid = $(element).closest(".question").attr("data-uid");
+			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true);
+		}
+
 		$(document).ready(function(){
 			ko.applyBindings(sectionViewModel, $("#sections")[0]);
 			ko.applyBindings(answersTableViewModel, $('.answers-table-modal').find('.modal-body')[0]);
-			
+
 			loadSectionsAndQuestions();
 		});
 	</script>
