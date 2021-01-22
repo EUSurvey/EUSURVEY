@@ -149,10 +149,12 @@
 		}
 
 		function changeChart(select) {
+			var controls = $(select).closest(".chart-controls");		
+			
 			var chartwrapper = $(select).closest(".statelement-wrapper").find(".chart-wrapper").first();
-			var chartType = $(select).parent().find(".chart-type").first().val();
-			var scheme = $(select).parent().find(".chart-scheme").first().val();
-			var legend = $(select).parent().find(".chart-legend").first().is(":checked");
+			var chartType = $(controls).find(".chart-type").first().val();
+			var scheme = $(controls).find(".chart-scheme").first().val();
+			var legend = $(controls).find(".chart-legend").first().is(":checked");
 
 			loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend);
 		}
@@ -440,6 +442,7 @@
         	});
         	
         	if (legend) {
+        		$(elementWrapper).find(".chart-legend-group").show();
         		$(elementWrapper).find(".chart-legend").prop("checked", "checked");
         	}
         
