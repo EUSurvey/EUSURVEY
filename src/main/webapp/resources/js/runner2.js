@@ -667,6 +667,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 
 function addStatisticsToAnswerText(div, result) {
 	var elementWrapper = $(div).closest(".elementwrapper");
+	var surveyElement = elementWrapper.find(".survey-element");
 	var answerTextElement = elementWrapper.find(".answertext");
 	if (0 == answerTextElement.length) {
 		console.log("nothing to see here! full stop");
@@ -674,26 +675,34 @@ function addStatisticsToAnswerText(div, result) {
 	}
 	var contextForAnswerText = ko.contextFor(answerTextElement[0]);
 	var viewModel = ko.dataFor(answerTextElement[0]);
+	var viewModel0 = ko.dataFor(surveyElement[0]);
 	//var viewModels = modelsForDelphiQuestions;
 	console.log("addStatisticsToAnswerText "+JSON.stringify(result)+"\nelementWrapper: "+JSON.stringify(elementWrapper));
 	console.log("answerTextElement: length "+answerTextElement.length + " : "+JSON.stringify(answerTextElement));
 	console.log("elementWrapper.class: "+JSON.stringify(elementWrapper.attr('class')));
 	console.log("contextForAnswerText: "+JSON.stringify(contextForAnswerText));
 	console.log("ko.version: "+JSON.stringify(ko.version));
+	console.log("viewModel0 JSON: "+JSON.stringify(viewModel0));
 	console.log("viewModel JSON: "+JSON.stringify(viewModel));
 	console.log("viewModel: "+viewModel);
-	viewModel.title("bla");
+	var possibleAnswersArray = viewModel0.possibleAnswers;
+	console.log("possibleAnswersArray length: "+possibleAnswersArray().length);
+	var len = possibleAnswersArray().length;
 	var questionType = result["questionType"];
 	console.log("questionType: "+questionType);
 	if (["SingleChoice", "MultipleChoice", "Slider"].includes(questionType)) {
-		for (var i = 0; i < result.data.length; i++) {
+		var i = 0;
+		while ((result.data.length > i) && (len > i)) {
+			var oldtitle = possibleAnswersArray()[i].title();
 			var value = result.data[i].value;
 			var label = result.data[i].label;
 			var newlabel = ""+label+" ("+value+" votes)";
 			if (1 == value) {
 				newlabel = ""+label+" ("+value+" vote)";
 			}
+			possibleAnswersArray()[i].title(newlabel);
 			console.log("i "+i+' new label "'+newlabel+'"');
+			++i;
 		}
 	}
 	console.log("answersTableViewModel "+(typeof answersTableViewModel));
