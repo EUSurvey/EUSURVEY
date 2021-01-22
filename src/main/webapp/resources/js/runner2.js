@@ -669,28 +669,31 @@ function addStatisticsToAnswerText(div, result) {
 	var elementWrapper = $(div).closest(".elementwrapper");
 	var surveyElement = elementWrapper.find(".survey-element");
 	var answerTextElement = elementWrapper.find(".answertext");
-	if (0 == answerTextElement.length) {
-		console.log("nothing to see here! full stop");
+//	if (0 == answerTextElement.length) { // remove this?
+//		console.log("nothing to see here! full stop");
+//		return;
+//	}
+
+	var viewModel = ko.dataFor(surveyElement[0]);
+	//var viewModels = modelsForDelphiQuestions;
+	console.log("addStatisticsToAnswerText()\nAJAX-result: "+JSON.stringify(result));
+	console.log("viewModel0 JSON: "+JSON.stringify(viewModel));
+	console.log("viewModel0.type: "+viewModel.type);
+	console.log("viewModel0.choiceType(): "+viewModel.choiceType());
+	var possibleAnswersArray = viewModel.possibleAnswers;
+	if (undefined === possibleAnswersArray) {
 		return;
 	}
-	var contextForAnswerText = ko.contextFor(answerTextElement[0]);
-	var viewModel = ko.dataFor(answerTextElement[0]);
-	var viewModel0 = ko.dataFor(surveyElement[0]);
-	//var viewModels = modelsForDelphiQuestions;
-	console.log("addStatisticsToAnswerText "+JSON.stringify(result)+"\nelementWrapper: "+JSON.stringify(elementWrapper));
-	console.log("answerTextElement: length "+answerTextElement.length + " : "+JSON.stringify(answerTextElement));
-	console.log("elementWrapper.class: "+JSON.stringify(elementWrapper.attr('class')));
-	console.log("contextForAnswerText: "+JSON.stringify(contextForAnswerText));
-	console.log("ko.version: "+JSON.stringify(ko.version));
-	console.log("viewModel0 JSON: "+JSON.stringify(viewModel0));
-	console.log("viewModel JSON: "+JSON.stringify(viewModel));
-	console.log("viewModel: "+viewModel);
-	var possibleAnswersArray = viewModel0.possibleAnswers;
-	console.log("possibleAnswersArray length: "+possibleAnswersArray().length);
 	var len = possibleAnswersArray().length;
+	console.log("possibleAnswersArray length: "+len);
 	var questionType = result["questionType"];
-	console.log("questionType: "+questionType);
-	if (["SingleChoice", "MultipleChoice", "Slider"].includes(questionType)) {
+	var viewModelType = viewModel.type;
+	console.log("questionType: "+questionType+" vs. viewModel.type: "+viewModelType);
+	if (!viewModelType.startsWith(questionType)) {
+		console.log('viewModel.type and AJAX result["questionType"] don\'t match!');
+		return;
+	}
+	if (["SingleChoice", "MultipleChoice"].includes(questionType)) {
 		var i = 0;
 		while ((result.data.length > i) && (len > i)) {
 			var oldtitle = possibleAnswersArray()[i].title();
@@ -705,7 +708,10 @@ function addStatisticsToAnswerText(div, result) {
 			++i;
 		}
 	}
-	console.log("answersTableViewModel "+(typeof answersTableViewModel));
+	if (["Slider"].includes(questionType)) {
+		// TODO: change label for all slider positions
+		console.log(" viewModel.display(): "+viewModel.display());
+	}
 }
 
 function addChart(div, chart)
