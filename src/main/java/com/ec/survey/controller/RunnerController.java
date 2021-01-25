@@ -2440,12 +2440,14 @@ public class RunnerController extends BasicController {
 			creator.init(survey, null, false);
 
 			if (question instanceof NumberQuestion) {
+				NumberQuestion numq = (NumberQuestion) question;
 				Map<String, Integer> valuesMagnitude = new HashMap<>();
-				creator.getAnswers4NumberQuestionStatistics(survey, question, valuesMagnitude);
-				for (Map.Entry<String, Integer> entry : valuesMagnitude.entrySet()) {
-					logger.info("BRS histogram: "+entry.getKey()+" "+entry.getValue());
-				}
-				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+				creator.getAnswers4NumberQuestionStatistics(survey, numq, valuesMagnitude);
+//				for (Map.Entry<String, Integer> entry : valuesMagnitude.entrySet()) {
+//					logger.info("BRS histogram: "+entry.getKey()+" "+entry.getValue());
+//				}
+				return handleDelphiNumberQuestion(survey, numq, valuesMagnitude);
+//				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
 			Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
@@ -2548,6 +2550,35 @@ public class RunnerController extends BasicController {
 
 		if (result.getQuestions().isEmpty()) {
 			return ResponseEntity.noContent().build();
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiNumberQuestion(Survey survey, NumberQuestion question, Map<String, Integer> valuesMagnitude) throws Exception {
+//		if (!numberOfAnswersMap.containsKey(question.getId()) || numberOfAnswersMap.get(question.getId()) == 0) {
+//			//participant may only see answers if he answered before
+//			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+//		}
+//
+//		if (numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics()) {
+//			// only show statistics for this question if the total number of answers exceeds the threshold
+//			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+//		}
+
+		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+		result.setChartType(question.getDelphiChartType());
+
+		result.setQuestionType(DelphiQuestionType.Number);
+
+		for (Map.Entry<String, Integer> entry : valuesMagnitude.entrySet()) {
+			logger.info("BRS histogram2: "+entry.getKey()+" "+entry.getValue());
+			String value = entry.getKey();
+			Integer rate = entry.getValue();
+			DelphiGraphEntry dentry = new DelphiGraphEntry();
+			dentry.setLabel(value);
+			dentry.setValue(rate);
+			result.addEntry(dentry);
 		}
 
 		return ResponseEntity.ok(result);

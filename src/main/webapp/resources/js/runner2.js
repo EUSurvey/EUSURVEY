@@ -674,12 +674,6 @@ function addStatisticsToAnswerText(div, result) {
 	console.log("addStatisticsToAnswerText()\nAJAX-result: "+JSON.stringify(result));
 	console.log("viewModel0 JSON: "+JSON.stringify(viewModel));
 	console.log("viewModel0.type: "+viewModel.type);
-	var possibleAnswersArray = viewModel.possibleAnswers;
-	if (undefined === possibleAnswersArray) {
-		return;
-	}
-	var len = possibleAnswersArray().length;
-	console.log("possibleAnswersArray length: "+len);
 	var questionType = result["questionType"];
 	var viewModelType = viewModel.type;
 	console.log("questionType: "+questionType+" vs. viewModel.type: "+viewModelType);
@@ -688,6 +682,12 @@ function addStatisticsToAnswerText(div, result) {
 		return;
 	}
 	if (["SingleChoice", "MultipleChoice"].includes(questionType)) {
+		var possibleAnswersArray = viewModel.possibleAnswers;
+		if (undefined === possibleAnswersArray) {
+			return;
+		}
+		var len = possibleAnswersArray().length;
+		console.log("possibleAnswersArray length: "+len);
 		console.log("viewModel0.choiceType(): "+viewModel.choiceType());
 		var i = 0;
 		while ((result.data.length > i) && (len > i)) {
@@ -703,9 +703,9 @@ function addStatisticsToAnswerText(div, result) {
 			++i;
 		}
 	}
-	if (["Slider"].includes(questionType)) {
+	if (["Number"].includes(questionType)) {
 		// TODO: change label for all slider positions
-		console.log(" viewModel.display(): "+viewModel.display());
+		console.log("viewModel.display(): "+viewModel.display());
 	}
 }
 

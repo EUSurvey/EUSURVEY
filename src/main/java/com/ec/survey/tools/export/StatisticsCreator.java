@@ -552,7 +552,7 @@ public class StatisticsCreator implements Runnable {
 	}
 
 	@Transactional
-	public int getAnswers4NumberQuestionStatistics(Survey survey, Question question, Map<String, Integer> map) throws TooManyFiltersException {
+	public int getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question, Map<String, Integer> map) throws TooManyFiltersException {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
 		Map<Integer, String> uniqueIdsById = SurveyService.getUniqueIdsById(survey);
