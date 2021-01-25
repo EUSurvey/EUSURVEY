@@ -2439,6 +2439,12 @@ public class RunnerController extends BasicController {
 			StatisticsCreator creator = (StatisticsCreator) context.getBean("statisticsCreator");
 			creator.init(survey, null, false);
 
+			if (question instanceof NumberQuestion) {
+				Map<Double, Integer> valuesMagnitude = new HashMap<>();
+				creator.getAnswers4NumberQuestionStatistics(survey, question, valuesMagnitude);
+				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+			}
+
 			Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion = new HashMap<>();

@@ -674,7 +674,6 @@ function addStatisticsToAnswerText(div, result) {
 	console.log("addStatisticsToAnswerText()\nAJAX-result: "+JSON.stringify(result));
 	console.log("viewModel0 JSON: "+JSON.stringify(viewModel));
 	console.log("viewModel0.type: "+viewModel.type);
-	console.log("viewModel0.choiceType(): "+viewModel.choiceType());
 	var possibleAnswersArray = viewModel.possibleAnswers;
 	if (undefined === possibleAnswersArray) {
 		return;
@@ -689,6 +688,7 @@ function addStatisticsToAnswerText(div, result) {
 		return;
 	}
 	if (["SingleChoice", "MultipleChoice"].includes(questionType)) {
+		console.log("viewModel0.choiceType(): "+viewModel.choiceType());
 		var i = 0;
 		while ((result.data.length > i) && (len > i)) {
 			var oldtitle = possibleAnswersArray()[i].title();
@@ -707,7 +707,6 @@ function addStatisticsToAnswerText(div, result) {
 		// TODO: change label for all slider positions
 		console.log(" viewModel.display(): "+viewModel.display());
 	}
-	console.log("showLabel: "+showLabel)
 }
 
 function addChart(div, chart)

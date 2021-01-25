@@ -552,6 +552,14 @@ public class StatisticsCreator implements Runnable {
 	}
 
 	@Transactional
+	public int getAnswers4NumberQuestionStatistics(Survey survey, Question question, Map<Double, Integer> map) {
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "SELECT a.value FROM ANSWERS a WHERE a.QUESTION_UID"; // QUESTION_UID="4010c750-d7c7-fb30-c248-9fa679e714c7";
+		logger.info("BRS: "+sql);
+		return 0;
+	}
+
+	@Transactional
 	public int getAnswers4Statistics(Survey survey, Question question, Map<Integer, Integer> map,
 			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<Integer, Integer>> mapGallery,
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset,
