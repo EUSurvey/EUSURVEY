@@ -3175,7 +3175,7 @@ public class RunnerController extends BasicController {
 		}
 	}
 
-	@PutMapping(value = "/delphiComment/{id}")
+	@PostMapping(value = "/editDelphiComment/{id}")
 	public ResponseEntity<String> delphiEditComment(@PathVariable String id, HttpServletRequest request) {
 
 		try {
@@ -3205,7 +3205,7 @@ public class RunnerController extends BasicController {
 		}
 	}
 
-	@DeleteMapping(value = "/delphiComment/{id}")
+	@PostMapping(value = "/deleteDelphiComment/{id}")
 	public ResponseEntity<String> delphiDeleteComment(@PathVariable String id, HttpServletRequest request) {
 
 		try {

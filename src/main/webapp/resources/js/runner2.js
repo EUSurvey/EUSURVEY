@@ -1239,10 +1239,9 @@ function saveChangedDelphiCommentFromRunner(button, isReply) {
 
 	const errorCallback = () => { showError("error"); }
 	const successCallback = () => {
-		const surveyElement = $(button).closest(".survey-element");
-		const questionUid = $(surveyElement).attr("data-uid");
+		const questionUid = $(button).closest(".survey-element").attr("data-uid");
 		const viewModel = modelsForDelphiQuestions[questionUid];
-		loadTableData(surveyElement, viewModel);
+		loadTableData(questionUid, viewModel);
 	}
 	saveChangedDelphiComment(button, isReply, errorCallback, successCallback);
 }
@@ -1265,8 +1264,9 @@ function saveChangedDelphiComment(button, isReply, errorCallback, successCallbac
 	const text = $(button).closest(".delphi-comment__change-form").find("textarea").val();
 	const answerSetUniqueCode = $("#uniqueCode").val();
 
-	$.ajax({type: "PUT",
-		url: contextpath + "/runner/delphiComment/" + encodeURIComponent(commentId),
+	$.ajax({
+		type: "POST",
+		url: contextpath + "/runner/editDelphiComment/" + encodeURIComponent(commentId),
 		data: "text=" + encodeURIComponent(text) + "&uniqueCode=" + answerSetUniqueCode,
 		beforeSend: function(xhr) { xhr.setRequestHeader(csrfheader, csrftoken); },
 		error: () => {
@@ -1286,10 +1286,9 @@ function deleteDelphiCommentFromRunner(button, isReply) {
 
 	const errorCallback = () => { showError("error"); }
 	const successCallback = () => {
-		const surveyElement = $(button).closest(".survey-element");
-		const questionUid = $(surveyElement).attr("data-uid");
+		const questionUid = $(button).closest(".survey-element").attr("data-uid");
 		const viewModel = modelsForDelphiQuestions[questionUid];
-		loadTableData(surveyElement, viewModel);
+		loadTableData(questionUid, viewModel);
 	}
 	deleteDelphiComment(button, isReply, errorCallback, successCallback);
 }
@@ -1311,8 +1310,9 @@ function deleteDelphiComment(button, isReply, errorCallback, successCallback) {
 
 	const answerSetUniqueCode = $("#uniqueCode").val();
 
-	$.ajax({type: "DELETE",
-		url: contextpath + "/runner/delphiComment/" + encodeURIComponent(commentId),
+	$.ajax({
+		type: "POST",
+		url: contextpath + "/runner/deleteDelphiComment/" + encodeURIComponent(commentId),
 		data: "uniqueCode=" + answerSetUniqueCode,
 		beforeSend: function(xhr) { xhr.setRequestHeader(csrfheader, csrftoken); },
 		error: () => {
