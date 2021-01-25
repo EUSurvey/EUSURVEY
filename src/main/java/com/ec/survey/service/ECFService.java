@@ -73,6 +73,7 @@ import com.ec.survey.model.survey.ecf.ECFProfileCompetencyResult;
 import com.ec.survey.model.survey.ecf.ECFProfileResult;
 import com.ec.survey.model.survey.ecf.ECFProfileSummaryResult;
 import com.ec.survey.model.survey.ecf.ECFSummaryResult;
+import com.ec.survey.model.survey.ecf.TypeUUIDAndName;
 import com.google.common.primitives.Ints;
 
 @Service("ecfService")
@@ -668,14 +669,25 @@ public class ECFService extends BasicService {
 		Map<ECFCompetency, List<Integer>> competenciesToScores = this.getCompetenciesToScores(survey, answerSets);
 		Map<ECFCompetency, Integer> competenciesToExpectedScores = this.getProfileExpectedScores(answererProfile);
 
+		Set<TypeUUIDAndName> competenciesTypes = new HashSet<TypeUUIDAndName>();
+
 		for (ECFCompetency competency : competenciesToScores.keySet()) {
 			ECFIndividualCompetencyResult competencyResult = new ECFIndividualCompetencyResult();
 			competencyResult.setCompetencyName(competency.getName());
 			competencyResult.setOrder(competency.getOrderNumber());
 			competencyResult.setCompetencyTargetScore(competenciesToExpectedScores.get(competency));
 			competencyResult.setCompetencyScore(competenciesToScores.get(competency).get(0));
+			competencyResult.setTypeUUID(competency.getEcfCluster().getEcfType().getUid());
+
+			TypeUUIDAndName ecfTypeNameAndUUID = new TypeUUIDAndName(
+				competency.getEcfCluster().getEcfType().getName(),
+				competency.getEcfCluster().getEcfType().getUid()
+			);
+
+			competenciesTypes.add(ecfTypeNameAndUUID);
 			ecfIndividualResult.addCompetencyResult(competencyResult);
 		}
+		ecfIndividualResult.setcompetenciesTypes(new ArrayList<>(competenciesTypes));
 		ecfIndividualResult.setCompetencyResultList(
 				ecfIndividualResult.getCompetencyResultList().stream().sorted().collect(Collectors.toList()));
 		return ecfIndividualResult;
@@ -753,6 +765,12 @@ public class ECFService extends BasicService {
 		throw new ECFException("An answers set must reference a profile");
 	}
 
+	/**
+	 * Contains <br>
+	 * Horizontal -> Procurement specific competencies <br>
+	 * Pre-award -> Procurement specific competencies <br>
+	 * Post-award -> Procurement specific competencies
+	 */
 	public Map<String, String> defaultClusterToType() {
 		Map<String, String> clusterNameToType = new HashMap<>();
 		clusterNameToType.put("Horizontal", "Procurement specific competencies");
@@ -1370,17 +1388,31 @@ public class ECFService extends BasicService {
 		return profileToCompetencyToScore;
 	}
 
+	/**
+	 * 
+	 */
 	@Transactional
 	public Map<String, ECFType> createClusterNameToType(Map<String, String> clusterToTypeNames) {
 		Session session = sessionFactory.getCurrentSession();
 
 		Map<String, ECFType> clusterNameToType = new HashMap<>();
+		Map<String, ECFType> typeNameToType = new HashMap<>();
+
 		for (String clusterName : clusterToTypeNames.keySet()) {
 			String typeName = clusterToTypeNames.get(clusterName);
-			ECFType type = new ECFType(UUID.randomUUID().toString(), typeName);
-			session.saveOrUpdate(type);
+			ECFType type = null;
+
+			if (typeNameToType.containsKey(typeName)) {
+				 type = typeNameToType.get(typeName);
+			} else {
+				type = new ECFType(UUID.randomUUID().toString(), typeName);
+				session.saveOrUpdate(type);
+				typeNameToType.put(typeName, type);
+			}
+			
 			clusterNameToType.put(clusterName, type);
 		}
+		logger.info("created " + typeNameToType.size() + " ECF types");
 
 		return clusterNameToType;
 	}
@@ -1397,6 +1429,8 @@ public class ECFService extends BasicService {
 			session.saveOrUpdate(cluster);
 			clusterNameToCluster.put(clusterName, cluster);
 		}
+
+		logger.info("created " + clusterNameToCluster.size() + " ECF Clusters");
 
 		Map<String, ECFCluster> competencyNameToCluster = new HashMap<>();
 		for (String competencyName : competencyToClusterNames.keySet()) {
@@ -1415,9 +1449,8 @@ public class ECFService extends BasicService {
 	public Set<ECFCompetency> createECFCompetencies(Map<ECFProfile, Map<String, Integer>> profileToCompetencyToScore,
 			Map<String, ECFCluster> competencyToCluster, Map<String, Integer> competencyToOrder) {
 		Session session = sessionFactory.getCurrentSession();
-		Set<ECFCompetency> ecfCompetencies = new HashSet<ECFCompetency>();
 
-		Map<String, ECFCompetency> nameToCompetency = new HashMap<>();
+		Map<String, ECFCompetency> competencyNameToCompetency = new HashMap<>();
 
 		// Go through the profiles
 		for (ECFProfile profile : profileToCompetencyToScore.keySet()) {
@@ -1428,13 +1461,13 @@ public class ECFService extends BasicService {
 				Integer expectedScoreI = competencyNameToScore.get(competencyName);
 				ECFCompetency ecfCompetency = null;
 				ECFCluster cluster = competencyToCluster.get(competencyName);
-				if (nameToCompetency.containsKey(competencyName)) {
-					ecfCompetency = nameToCompetency.get(competencyName);
+				if (competencyNameToCompetency.containsKey(competencyName)) {
+					ecfCompetency = competencyNameToCompetency.get(competencyName);
 				} else {
 					ecfCompetency = new ECFCompetency(UUID.randomUUID().toString(), competencyName,
 							competencyName + " description", cluster, competencyToOrder.get(competencyName));
 					session.saveOrUpdate(ecfCompetency);
-					nameToCompetency.put(competencyName, ecfCompetency);
+					competencyNameToCompetency.put(competencyName, ecfCompetency);
 				}
 
 				ECFExpectedScoreToProfileEid eid = new ECFExpectedScoreToProfileEid();
@@ -1448,7 +1481,8 @@ public class ECFService extends BasicService {
 			}
 		}
 
-		return nameToCompetency.values().stream().collect(Collectors.toSet());
+		logger.info("created " + competencyNameToCompetency.size() + " ECF competencies");
+		return competencyNameToCompetency.values().stream().collect(Collectors.toSet());
 	}
 
 	public Set<ECFProfile> getECFProfiles(Survey ecfSurvey) {
@@ -1474,10 +1508,10 @@ public class ECFService extends BasicService {
 			throw new IllegalArgumentException("survey needs to be ECF to copy its ECF elements");
 		}
 
-		Map<ECFCompetency, ECFCompetency> oldECFCompetencyToNew = new HashMap<>();
-		Map<ECFProfile, ECFProfile> oldECFProfileToNew = new HashMap<>();
-		Map<ECFCluster, ECFCluster> oldECFClusterToNew = new HashMap<>();
-		Map<ECFType, ECFType> oldECFTypeToNew = new HashMap<>();
+		Map<String, ECFCompetency> oldECFCompetencyToNew = new HashMap<>();
+		Map<String, ECFProfile> oldECFProfileToNew = new HashMap<>();
+		Map<String, ECFCluster> oldECFClusterToNew = new HashMap<>();
+		Map<String, ECFType> oldECFTypeToNew = new HashMap<>();
 
 		Set<ECFExpectedScore> encounteredScores = new HashSet<>();
 
@@ -1492,26 +1526,26 @@ public class ECFService extends BasicService {
 
 					ECFCompetency newCompetency = null;
 
-					if (!oldECFCompetencyToNew.containsKey(oldCompetency)) {
+					if (!oldECFCompetencyToNew.containsKey(oldCompetency.getCompetenceUid())) {
 						// COPYING THE COMPETENCY AND ALL ITS INNER COMPONENTS
 						newCompetency = oldCompetency.copy();
 
 						ECFCluster oldCluster = oldCompetency.getEcfCluster();
 						ECFCluster newCluster = null;
-						if (!oldECFClusterToNew.containsKey(oldCluster)) {
+						if (!oldECFClusterToNew.containsKey(oldCluster.getUid())) {
 							newCluster = oldCluster.copy();
 
 							ECFType oldType = oldCluster.getEcfType();
 							ECFType newType = null;
 
-							if (!oldECFTypeToNew.containsKey(oldType)) {
+							if (!oldECFTypeToNew.containsKey(oldType.getUid())) {
 								newType = oldType.copy();
 
 								// SAVING TYPE
 								session.persist(newType);
-								oldECFTypeToNew.put(oldType, newType);
+								oldECFTypeToNew.put(oldType.getUid(), newType);
 							} else {
-								newType = oldECFTypeToNew.get(oldType);
+								newType = oldECFTypeToNew.get(oldType.getUid());
 							}
 
 							newCluster.setEcfType(newType);
@@ -1519,18 +1553,18 @@ public class ECFService extends BasicService {
 
 							// SAVING CLUSTER
 							session.persist(newCluster);
-							oldECFClusterToNew.put(oldCluster, newCluster);
+							oldECFClusterToNew.put(oldCluster.getUid(), newCluster);
 						} else {
-							newCluster = oldECFClusterToNew.get(oldCluster);
+							newCluster = oldECFClusterToNew.get(oldCluster.getUid());
 						}
 						newCompetency.setEcfCluster(newCluster);
 						newCluster.addCompetency(newCompetency);
 
 						// SAVING COMPETENCY
 						session.persist(newCompetency);
-						oldECFCompetencyToNew.put(oldCompetency, newCompetency);
+						oldECFCompetencyToNew.put(oldCompetency.getCompetenceUid(), newCompetency);
 					} else {
-						newCompetency = oldECFCompetencyToNew.get(oldCompetency);
+						newCompetency = oldECFCompetencyToNew.get(oldCompetency.getCompetenceUid());
 					}
 
 					question.setEcfCompetency(newCompetency);
@@ -1547,12 +1581,12 @@ public class ECFService extends BasicService {
 					ECFProfile oldProfile = possibleAnswer.getEcfProfile();
 
 					ECFProfile newProfile = null;
-					if (!oldECFProfileToNew.containsKey(oldProfile)) {
+					if (!oldECFProfileToNew.containsKey(oldProfile.getProfileUid())) {
 						newProfile = oldProfile.copy();
 						session.persist(newProfile);
-						oldECFProfileToNew.put(oldProfile, newProfile);
+						oldECFProfileToNew.put(oldProfile.getProfileUid(), newProfile);
 					} else {
-						newProfile = oldECFProfileToNew.get(oldProfile);
+						newProfile = oldECFProfileToNew.get(oldProfile.getProfileUid());
 					}
 
 					possibleAnswer.setEcfProfile(newProfile);
@@ -1565,8 +1599,8 @@ public class ECFService extends BasicService {
 			ECFProfile oldScoreProfile = score.getECFExpectedScoreToProfileEid().getECFProfile();
 			Integer oldScore = score.getScore();
 
-			ECFCompetency newScoreCompetency = oldECFCompetencyToNew.get(oldScoreCompetency);
-			ECFProfile newScoreProfile = oldECFProfileToNew.get(oldScoreProfile);
+			ECFCompetency newScoreCompetency = oldECFCompetencyToNew.get(oldScoreCompetency.getCompetenceUid());
+			ECFProfile newScoreProfile = oldECFProfileToNew.get(oldScoreProfile.getProfileUid());
 
 			if (newScoreCompetency == null) {
 				throw new ECFException("Competency " + oldScoreCompetency.getCompetenceUid() + " was not well copied");
@@ -1588,6 +1622,17 @@ public class ECFService extends BasicService {
 			session.persist(newScoreCompetency);
 			session.persist(newScoreProfile);
 		}
+
+		logger.info("copied " + oldECFClusterToNew.size() + " clusters");
+		for (String oldCluster: oldECFClusterToNew.keySet()) {
+			logger.info("cluster "+oldCluster);
+		}
+
+		logger.info("copied "+ oldECFTypeToNew.size() + " types");
+		for (String oldType: oldECFTypeToNew.keySet()) {
+			logger.info("type "+oldType);
+		} 
+		
 
 		return alreadyCopiedSurvey;
 	}
@@ -1648,6 +1693,72 @@ public class ECFService extends BasicService {
 	private Integer getCount(Survey survey) throws Exception {
 		ResultFilter resultFilter = new ResultFilter();
 		return this.answerService.getNumberOfAnswerSets(survey, resultFilter);
+	}
+
+	public List<String> spiderChartsB64ByECFType(ECFIndividualResult individualResult) {
+		List<TypeUUIDAndName> typeAndNames = individualResult.getCompetenciesTypes();
+
+		// Empty list map from type UUIDS
+		Map<String, List<ECFIndividualCompetencyResult>> typeToResultList = new HashMap<>();
+		for (TypeUUIDAndName typeAndName : typeAndNames) {
+			String typeUUID = typeAndName.getTypeUUID();
+			List<ECFIndividualCompetencyResult> emptyList = new ArrayList<>();
+			typeToResultList.put(typeUUID, emptyList);
+		}
+
+
+		// Going through the competency result lists and adding those corresponding to the type
+		for (ECFIndividualCompetencyResult competencyResult : individualResult.getCompetencyResultList()) {
+			List<ECFIndividualCompetencyResult> competencyResultList = typeToResultList.get(competencyResult.getTypeUUID());
+			if (competencyResultList != null) {
+				competencyResultList.add(competencyResult);
+			}
+		}
+
+		// For each Type UUID, generating the spider chart
+		Map<String, String> typesToB64 = new HashMap<>();
+		for (String type : typeToResultList.keySet()) {
+			List<ECFIndividualCompetencyResult> competencyResultList = typeToResultList.get(type);
+			String spiderChartB64 = this.spiderChartB64(competencyResultList,"");
+			typesToB64.put(type, spiderChartB64);
+		}
+
+		return typeAndNames.stream().map(typeAndName -> typesToB64.get(typeAndName.getTypeUUID())).collect(Collectors.toList());
+	}
+
+	private String spiderChartB64(List<ECFIndividualCompetencyResult> competencyResultList, String title) {
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		for (ECFIndividualCompetencyResult competencyResult : competencyResultList) {
+			int competencyScore = competencyResult.getCompetencyScore();
+			int competencyTargetScore = competencyResult.getCompetencyTargetScore();
+
+			dataset.addValue(competencyScore, "Score", competencyResult.getCompetencyName());
+			dataset.addValue(competencyTargetScore, "Target score", competencyResult.getCompetencyName());
+		}
+
+		SpiderWebPlot plot = new SpiderWebPlot(dataset);
+		plot.setSeriesPaint(0, new Color(177, 22, 48));
+		plot.setSeriesPaint(1, new Color(62, 116, 170));
+		plot.setLabelPaint(new Color(90, 90, 90));
+		plot.setAxisLinePaint(new Color(102, 102, 102));
+
+		plot.setWebFilled(true);
+
+		JFreeChart chart = new JFreeChart(plot);
+		BufferedImage image = new BufferedImage(1000, 500, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2 = image.createGraphics();
+		chart.draw(g2, new Rectangle2D.Double(0, 0, 1000, 500), null, null);
+		g2.dispose();
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(image, "PNG", out);
+		} catch (IOException e) {
+			// Logging the error but not interupting the flow
+			logger.error(e);
+		}
+		byte[] bytes = out.toByteArray();
+		return Base64.encodeBase64String(bytes);
 	}
 
 	public String individualResultToSpiderChartB64(ECFIndividualResult individualResult) {

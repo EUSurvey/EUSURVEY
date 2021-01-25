@@ -644,6 +644,7 @@ public class RunnerController extends BasicController {
 				result.addObject("isECF", true);
 				Set<ECFProfile> profiles = this.ecfService.getECFProfiles(survey);
 				result.addObject("ecfProfiles", profiles.stream().sorted().collect(Collectors.toList()));
+				result.addObject("ecfIndividualResult", this.ecfService.getECFIndividualResult(survey, answerSet));
 			}
 
 			if (survey.getIsOPC()) {
@@ -2002,7 +2003,7 @@ public class RunnerController extends BasicController {
 				Set<ECFProfile> profiles = this.ecfService.getECFProfiles(survey);
 				result.addObject("ecfProfiles", profiles.stream().sorted().collect(Collectors.toList()));
 				// compute results
-				result.addObject("ecfResults", "example");
+				result.addObject("ecfIndividualResult", this.ecfService.getECFIndividualResult(survey, answerSet));
 				result.addObject("contextpath", contextpath);
 				result.addObject("surveyShortname", survey.getShortname());
 			}

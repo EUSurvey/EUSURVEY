@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -135,8 +136,8 @@ public class ContributionController extends BasicController {
 		AnswerSet answerSet = this.answerService.get(code);
 		if (answerSet.getSurvey().getIsECF()) {
 			ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
-			String b64 = ecfService.individualResultToSpiderChartB64(individualResult);
-			result.addObject("base64ECFSpiderChart", b64);
+			List<String> base64ECFSpiderCharts = ecfService.spiderChartsB64ByECFType(individualResult);
+			result.addObject("base64ECFSpiderCharts", base64ECFSpiderCharts);
 			result.addObject("ecfIndividualResult", individualResult);
 		}
 
@@ -173,8 +174,8 @@ public class ContributionController extends BasicController {
 
 		if (answerSet.getSurvey().getIsECF()) {
 			ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
-			String b64 = ecfService.individualResultToSpiderChartB64(individualResult);
-			result.addObject("base64ECFSpiderChart", b64);
+			List<String> base64SpiderCharts = ecfService.spiderChartsB64ByECFType(individualResult);
+			result.addObject("base64ECFSpiderCharts", base64SpiderCharts);
 			result.addObject("ecfIndividualResult", individualResult);
 		}
 
@@ -511,6 +512,10 @@ public class ContributionController extends BasicController {
 
 				if (answerSet.getSurvey().getIsECF()) {
 					ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
+
+					List<String> base64SpiderCharts =  ecfService.spiderChartsB64ByECFType(individualResult);
+					contributionsPrintModel.addObject("base64ECFSpiderCharts", base64SpiderCharts);
+
 					String b64 = ecfService.individualResultToSpiderChartB64(individualResult);
 					contributionsPrintModel.addObject("base64ECFSpiderChart", b64);
 					contributionsPrintModel.addObject("ecfIndividualResult", individualResult);
@@ -560,6 +565,10 @@ public class ContributionController extends BasicController {
 					contributionsPrintModel.addObject("answerSet", answerSet.getId());
 					contributionsPrintModel.addObject("code", code);
 					contributionsPrintModel.addObject("isEcf", answerSet.getSurvey().getIsECF());
+					if (answerSet.getSurvey().getIsECF()) {
+						contributionsPrintModel.addObject("ecfIndividualResult", this.ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet));
+					}
+
 					java.util.Date submittedDate = answerSet.getUpdateDate() != null ? answerSet.getUpdateDate() : answerSet.getDate();
 					contributionsPrintModel.addObject("submittedDate", ConversionTools.getFullString(submittedDate));
 					contributionsPrintModel.addObject("print", true);

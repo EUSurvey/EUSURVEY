@@ -21,15 +21,23 @@
 
 	<c:choose>
          <c:when test="${!forpdf}">
-            <canvas class="ecfRespondentChart"></canvas>
+			<c:forEach var="competencyType"
+			items="${ecfIndividualResult.competenciesTypes}" varStatus="loop">
+				<canvas class="ecfRespondentChart_${competencyType.typeUUID}"></canvas>
+			</c:forEach>
          </c:when>
          <c:otherwise>
-			<img src="data:image/png;base64, ${base64ECFSpiderChart}"  alt="spider chart" style="width: 600px;" />
+			<c:forEach var="base64ECFSpiderChart"
+			items="${base64ECFSpiderCharts}" varStatus="loop">
+		 	<div style="margin-top:10px;">
+				<img src="data:image/png;base64, ${base64ECFSpiderChart}"  alt="spider chart" style="width: 600px;" />
+			</div>
+			</c:forEach>
          </c:otherwise>
     </c:choose>
 	
 	<table class="table table-styled table-striped table-bordered"
-		id="ecfResultTable" style="margin-bottom: 10px">
+		id="ecfResultTable" style="margin-top: 10px">
 		<thead>
 			<tr class="headerrow">
 				<th><spring:message code="label.ECF.Competencies" /></th>

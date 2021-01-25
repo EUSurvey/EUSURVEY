@@ -59,73 +59,87 @@ function displayECFTable(result) {
 }
 
 function displayECFChart(result) {
-	if(result) {
-		profileName = result.name;		
-		scores = [];
-		competencies = [];
-		targetScores = [];
-		result.competencies.forEach(competency => {
+	if (result) {
+		result.competenciesTypes.forEach(
+			competencyTypeNameAndUUID => {
+				displayOneTypeChart(result, competencyTypeNameAndUUID);
+			});
+	}
+}
+
+function displayOneTypeChart(result, typeNameAndUUID) {
+	let profileName = result.name;		
+	let scores = [];
+	let competencies = [];
+	let targetScores = [];
+
+	result.competencies.forEach(competency => {
+		if (competency.typeUUID === typeNameAndUUID.typeUUID) {
 			scores.push(competency.score);
 			competencies.push(competency.name);
 			targetScores.push(competency.targetScore);
-		});
-		let chartTitle = 'Comparison between your results and ' + result.name + '\'s expected scores';
-		$('.ecfRespondentChart').each(function(index, element){          
-			var ctx = element.getContext("2d");
-			var options = {
-				scale: {
-					angleLines: {
-						display: false
-					},
-						ticks: {
-							suggestedMin: 0,
-							suggestedMax: 4
-						}
-					},
-				title: {
-					display: false,
-					text: chartTitle
+		}
+	});
+
+	let chartTitle = 'Competencies of type ' + typeNameAndUUID.typeName + ' : Comparison between your results and ' + result.name + '\'s expected scores';
+
+	console.log('.ecfRespondentChart_' + typeNameAndUUID.typeUUID);
+
+	$('.ecfRespondentChart_' + typeNameAndUUID.typeUUID).each(function(index, element){          
+		var ctx = element.getContext("2d");
+		var options = {
+			scale: {
+				angleLines: {
+					display: false
 				},
-				maintainAspectRatio: true,
-				spanGaps: false,
-				elements: {
-					line: {
-						tension: 0.000001
+					ticks: {
+						suggestedMin: 0,
+						suggestedMax: 4
 					}
 				},
-				plugins: {
-					filler: {
-						propagate: false
-					},
-					'samples-filler-analyser': {
-						target: 'chart-analyser'
-					}
+			title: {
+				display: false,
+				text: chartTitle
+			},
+			maintainAspectRatio: true,
+			spanGaps: false,
+			elements: {
+				line: {
+					tension: 0.000001
 				}
-			};
-		
-			var myRadarChart = new Chart(ctx, {
-				type: 'radar',
-				data: {
-					labels: competencies,
-					datasets: [
-					{
-						label: 'Target score ',
-						data: targetScores,
-						backgroundColor: 'rgba(0, 139, 219, 0.2)',
-						borderColor: 'rgba(0, 116, 184, 1)',
-						borderWidth: 1
-					},
-					{
-						label: 'Your score',
-						data: scores,
-						backgroundColor: 'rgba(204, 0, 44, 0.2)',
-						borderColor: 'rgba(179, 0, 39, 1)',
-						borderWidth: 1
-					}
-					]
+			},
+			plugins: {
+				filler: {
+					propagate: false
 				},
-				options: options
-			});
-		})
-	}
+				'samples-filler-analyser': {
+					target: 'chart-analyser'
+				}
+			}
+		};
+	
+		var myRadarChart = new Chart(ctx, {
+			type: 'radar',
+			data: {
+				labels: competencies,
+				datasets: [
+				{
+					label: 'Target score ',
+					data: targetScores,
+					backgroundColor: 'rgba(0, 139, 219, 0.2)',
+					borderColor: 'rgba(0, 116, 184, 1)',
+					borderWidth: 1
+				},
+				{
+					label: 'Your score',
+					data: scores,
+					backgroundColor: 'rgba(204, 0, 44, 0.2)',
+					borderColor: 'rgba(179, 0, 39, 1)',
+					borderWidth: 1
+				}
+				]
+			},
+			options: options
+		});
+	});
 }

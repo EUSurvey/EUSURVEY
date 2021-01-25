@@ -20,6 +20,9 @@ public class ECFIndividualCompetencyResult implements Comparable {
 	@JsonProperty("scoreGap")
 	private Integer competencyScoreGap;
 
+	@JsonProperty("typeUUID")
+	private String typeUUID;
+
 	private Integer order;
 
 	@JsonIgnore
@@ -66,11 +69,12 @@ public class ECFIndividualCompetencyResult implements Comparable {
 		this.order = order;
 	}
 
-	@Override
-	public String toString() {
-		return "ECFIndividualCompetencyResult [competencyName=" + competencyName + ", competencyScore="
-				+ competencyScore + ", competencyTargetScore=" + competencyTargetScore + ", competencyScoreGap="
-				+ competencyScoreGap + ", order=" + order + ", questionsScores=" + questionsScores + "]";
+	public String getTypeUUID() {
+		return typeUUID;
+	}
+
+	public void setTypeUUID(String typeUUID) {
+		this.typeUUID = typeUUID;
 	}
 
 	@Override
@@ -81,6 +85,14 @@ public class ECFIndividualCompetencyResult implements Comparable {
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "ECFIndividualCompetencyResult [competencyName=" + competencyName + ", competencyScore="
+				+ competencyScore + ", competencyScoreGap=" + competencyScoreGap + ", competencyTargetScore="
+				+ competencyTargetScore + ", order=" + order + ", questionsScores=" + questionsScores + ", typeUUID="
+				+ typeUUID + "]";
 	}
 
 }
