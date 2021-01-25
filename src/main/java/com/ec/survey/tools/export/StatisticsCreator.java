@@ -558,7 +558,7 @@ public class StatisticsCreator implements Runnable {
 		Map<Integer, String> uniqueIdsById = SurveyService.getUniqueIdsById(survey);
 
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
-		String sql = "SELECT a.VALUE, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
+		String sql = "SELECT a.VALUE, a.QUESTION_ID, a.QUESTION_UID, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
 		sql += " = :questionuid AND ans.ANSWER_SET_ID IN ("	+ where + ")";
 		values.put("questionuid", question.getUniqueId());
 
@@ -578,13 +578,11 @@ public class StatisticsCreator implements Runnable {
 		query.setFetchSize(Integer.MIN_VALUE);
 		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
 
-		while (results != null && results.next()) {
+		while (results != null && results.next()) { // TODO count number of all commits, check is given quesiton id is in select result
 			Object[] a = results.get();
 			String value = (String) a[0];
 			Integer count = map.getOrDefault(value, 0);
 			map.put(value, count+1);
-			logger.info("BRS: value found "+value);
-			assert Boolean.TRUE;
 		}
 		results.close();
 		return map.size();

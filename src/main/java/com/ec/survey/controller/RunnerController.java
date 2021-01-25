@@ -2443,9 +2443,6 @@ public class RunnerController extends BasicController {
 				NumberQuestion numq = (NumberQuestion) question;
 				Map<String, Integer> valuesMagnitude = new HashMap<>();
 				creator.getAnswers4NumberQuestionStatistics(survey, numq, valuesMagnitude);
-//				for (Map.Entry<String, Integer> entry : valuesMagnitude.entrySet()) {
-//					logger.info("BRS histogram: "+entry.getKey()+" "+entry.getValue());
-//				}
 				return handleDelphiNumberQuestion(survey, numq, valuesMagnitude);
 //				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
