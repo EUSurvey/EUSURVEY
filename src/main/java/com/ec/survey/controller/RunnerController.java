@@ -10,9 +10,7 @@ import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.delphi.*;
 import com.ec.survey.model.survey.*;
-import com.ec.survey.service.MailService;
-import com.ec.survey.service.PDFService;
-import com.ec.survey.service.ValidCodesService;
+import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
 import com.ec.survey.tools.export.StatisticsCreator;
 import javafx.util.Pair;
@@ -2784,7 +2782,15 @@ public class RunnerController extends BasicController {
 				map.put(comment.getUniqueCode(), "User " + (map.size() + 1));
 			}
 
-			DelphiComment delphiComment = new DelphiComment(map.get(comment.getUniqueCode()), comment.getText(), comment.getDate(), comment.getId());
+			String user = "";
+			Date date = null;
+			if (!comment.getText().equals(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
+				// Only put the user and the date when the comment with replies has not been deleted.
+				user = map.get(comment.getUniqueCode());
+				date = comment.getDate();
+			}
+
+			DelphiComment delphiComment = new DelphiComment(user, comment.getText(), date, comment.getId(), comment.getUniqueCode());
 
 			if (comment.getParent() == null) {
 				tableEntry.getComments().add(delphiComment);
@@ -3160,7 +3166,67 @@ public class RunnerController extends BasicController {
 				comment.setParent(parentComment);
 			}
 
-			answerExplanationService.saveComment(comment);
+			answerExplanationService.saveOrUpdateComment(comment);
+
+			return new ResponseEntity<>(null, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PutMapping(value = "/delphiComment/{id}")
+	public ResponseEntity<String> delphiEditComment(@PathVariable String id, HttpServletRequest request) {
+
+		try {
+			final int idParsed = Integer.parseInt(id);
+
+			final String text = request.getParameter("text");
+
+			final String uniqueCode = request.getParameter("uniqueCode");
+			if (uniqueCode == null || uniqueCode.isEmpty()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			final AnswerComment comment = answerExplanationService.getComment(idParsed);
+			if (comment == null
+					|| !comment.getUniqueCode().equals(uniqueCode)
+					|| comment.getText().equals(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			comment.setText(text);
+			comment.setDate(new Date());
+			answerExplanationService.saveOrUpdateComment(comment);
+
+			return new ResponseEntity<>(null, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@DeleteMapping(value = "/delphiComment/{id}")
+	public ResponseEntity<String> delphiDeleteComment(@PathVariable String id, HttpServletRequest request) {
+
+		try {
+			final int idParsed = Integer.parseInt(id);
+
+			final String uniqueCode = request.getParameter("uniqueCode");
+			if (uniqueCode == null || uniqueCode.isEmpty()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			final AnswerComment comment = answerExplanationService.getComment(idParsed);
+			if (comment == null || !comment.getUniqueCode().equals(uniqueCode)) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			if (!answerExplanationService.hasCommentChildren(idParsed)) {
+				answerExplanationService.deleteComment(comment);
+			} else {
+				comment.setText(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT);
+				comment.setDate(new Date());
+				answerExplanationService.saveOrUpdateComment(comment);
+			}
 
 			return new ResponseEntity<>(null, HttpStatus.OK);
 		} catch (Exception e) {

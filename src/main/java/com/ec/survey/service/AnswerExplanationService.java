@@ -31,6 +31,9 @@ import java.util.stream.Collectors;
 
 @Service("answerExplanationService")
 public class AnswerExplanationService extends BasicService {
+
+	public static final String DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT = "[DELETED]";
+
 	@Transactional
 	public void deleteExplanationByAnswerSet(AnswerSet answerSet) {
 
@@ -242,9 +245,15 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional
-	public void saveComment(AnswerComment comment) {
+	public void saveOrUpdateComment(AnswerComment comment) {
 		final Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(comment);
+	}
+
+	@Transactional
+	public void deleteComment(AnswerComment comment) {
+		final Session session = sessionFactory.getCurrentSession();
+		session.delete(comment);
 	}
 
 	@Transactional
@@ -252,7 +261,7 @@ public class AnswerExplanationService extends BasicService {
 		final Session session = sessionFactory.getCurrentSession();
 
 		Query query = session.createQuery(
-				"FROM AnswerComment WHERE answerSetId = :answerSetId and questionUid = :questionUid ORDER BY date");
+				"FROM AnswerComment WHERE answerSetId = :answerSetId and questionUid = :questionUid ORDER BY id");
 		query.setInteger("answerSetId", answerSetId).setString("questionUid", questionUid);
 
 		@SuppressWarnings("unchecked")
@@ -410,14 +419,21 @@ public class AnswerExplanationService extends BasicService {
 				result.put(answerSetId, new HashMap<String, String>());
 			}
 
+			String text = "";
+			if (!explanation.equals(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
+				// Only put the user when the comment with replies has not been deleted.
+				text += usersByUid.get(code) + ": ";
+			}
+			text += explanation;
+
 			if (!result.get(answerSetId).containsKey(questionUid)) {
-				result.get(answerSetId).put(questionUid, usersByUid.get(code) + ": " + explanation);
+				result.get(answerSetId).put(questionUid, text);
 			} else {
 				String old = result.get(answerSetId).get(questionUid);
 				if (parent == 0) {
-					result.get(answerSetId).put(questionUid, old + "\n" + usersByUid.get(code) + ": " + explanation);
+					result.get(answerSetId).put(questionUid, old + "\n" + text);
 				} else {
-					result.get(answerSetId).put(questionUid, old + "\n   " + usersByUid.get(code) + ": " + explanation);
+					result.get(answerSetId).put(questionUid, old + "\n   " + text);
 				}
 			}
 		}
@@ -425,10 +441,18 @@ public class AnswerExplanationService extends BasicService {
 		return result;
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public AnswerComment getComment(int id) {
 		final Session session = sessionFactory.getCurrentSession();
 		return (AnswerComment) session.get(AnswerComment.class, id);
+	}
+
+	@Transactional(readOnly = true)
+	public boolean hasCommentChildren(int id) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createSQLQuery("SELECT COUNT(*) FROM ANSWERS_COMMENTS WHERE PARENT = :parent")
+				.setInteger("parent", id);
+		return ((BigInteger) query.uniqueResult()).intValue() > 0;
 	}
 
 	@Transactional(readOnly = true)

@@ -900,6 +900,14 @@ function loadTableData(questionUid, viewModel) {
 	loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel);
 }
 
+function hideCommentAndReplyForms() {
+	$('.delphi-comment__cancel').each(function() {
+		if ($(this).is(":visible")) {
+			$(this).click();
+		}
+	});
+}
+
 function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel) {
 
 	const orderBy = viewModel.delphiTableOrder();
@@ -930,33 +938,47 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 				const entry = result.entries[i];
 				
 				entry.showCommentArea = function() {
-					
-					$('.delphicommentcancel').each(function(){
-						if ($(this).is(":visible")) {
-							$(this).click();
-						}
-					})					
-					
-					this.delphiTableIsCommentFormVisible(true);
-					this.delphiTableHasCommentFieldFocus(true);
-				}				
-				
-				entry.delphiTableIsCommentFormVisible = ko.observable(false);
-				entry.delphiTableHasCommentFieldFocus = ko.observable(false);
+					hideCommentAndReplyForms();
+					this.isCommentFormVisible(true);
+					this.hasCommentFieldFocus(true);
+				}
+
+				entry.isCommentFormVisible = ko.observable(false);
+				entry.hasCommentFieldFocus = ko.observable(false);
+
 				for (let j = 0; j < entry.comments.length; j++) {
-					entry.comments[j].delphiTableIsReplyFormVisible = ko.observable(false);
-					entry.comments[j].delphiTableHasReplyFieldFocus = ko.observable(false);
+					entry.comments[j].isReplyFormVisible = ko.observable(false);
+					entry.comments[j].hasReplyFieldFocus = ko.observable(false);
+					entry.comments[j].isChangedCommentFormVisible = ko.observable(false);
+					entry.comments[j].hasChangedCommentFieldFocus = ko.observable(false);
+					entry.comments[j].changedComment = ko.observable('');
+
+					entry.comments[j].editComment = function() {
+						hideCommentAndReplyForms();
+						entry.comments[j].changedComment(decodeHTMLEntities(entry.comments[j].text));
+						entry.comments[j].isChangedCommentFormVisible(true);
+						entry.comments[j].hasChangedCommentFieldFocus(true);
+					}
 					
 					entry.comments[j].showCommentArea = function() {
-						$('.delphicommentcancel').each(function(){
-							if ($(this).is(":visible")) {
-								$(this).click();
-							}
-						})	
-						
-						this.delphiTableIsReplyFormVisible(true);
-						this.delphiTableHasReplyFieldFocus(true);
-					}	
+						hideCommentAndReplyForms();
+						this.isReplyFormVisible(true);
+						this.hasReplyFieldFocus(true);
+					}
+
+					for (let k = 0; k < entry.comments[j].replies.length; k++) {
+						entry.comments[j].replies[k].isChangedReplyFormVisible = ko.observable(false);
+						entry.comments[j].replies[k].hasChangedReplyFieldFocus = ko.observable(false);
+						entry.comments[j].replies[k].changedReply = ko.observable('');
+
+						entry.comments[j].replies[k].editReply = function() {
+							hideCommentAndReplyForms();
+							entry.comments[j].replies[k].changedReply(
+								decodeHTMLEntities(entry.comments[j].replies[k].text));
+							entry.comments[j].replies[k].isChangedReplyFormVisible(true);
+							entry.comments[j].replies[k].hasChangedReplyFieldFocus(true);
+						}
+					}
 				}
 				viewModel.delphiTableEntries.push(entry);
 			}
@@ -965,6 +987,21 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 			viewModel.delphiTableTotalEntries(result.total);
 		}
 	 });
+}
+
+const elementForDecodingHTMLEntities = document.createElement('div');
+
+function decodeHTMLEntities(str) {
+
+	if (str && typeof str === 'string') {
+		// Strip script and other tags.
+		str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
+		str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+		elementForDecodingHTMLEntities.innerHTML = str;
+		str = elementForDecodingHTMLEntities.textContent;
+		elementForDecodingHTMLEntities.textContent = '';
+	}
+	return str;
 }
 
 function loadMedianData(div, viewModel) {
@@ -1155,30 +1192,26 @@ function updateNonDelphiQuestions(page)
 	}
 }
 
-function saveDelphiComment(button, reply) {
+function saveDelphiCommentFromRunner(button, reply) {
 
 	const td = $(button).closest("td");
 	const questionUid = $(td).closest(".survey-element").attr("data-uid");
 	const surveyId = $('#survey\\.id').val();
-	const errorCallback = function () {
-		showError("error");
-	}
-	const successCallback = function () {
-		const viewModel = modelsForDelphiQuestions[questionUid];
-		loadTableData($(td).closest(".survey-element").attr("data-uid"), viewModel);
-	}
-	saveDelphiCommentInner(button, reply, questionUid, surveyId, errorCallback, successCallback);
+
+	const errorCallback = () => { showError("error"); }
+	const successCallback = () => { loadTableData(questionUid, modelsForDelphiQuestions[questionUid]); }
+	saveDelphiComment(button, reply, questionUid, surveyId, errorCallback, successCallback);
 }
 
-function saveDelphiCommentInner(button, reply, questionUid, surveyId, errorCallback, successCallback) {
+function saveDelphiComment(button, reply, questionUid, surveyId, errorCallback, successCallback) {
 
-	$('a.delphicommentcancel').trigger("click");
+	hideCommentAndReplyForms();
 
 	let text;
 	if (reply) {
-		text = $(button).closest(".delphireply").find("textarea").val();
+		text = $(button).closest(".delphi-comment__add-reply-form").find("textarea").val();
 	} else {
-		text = $(button).closest(".delphicomment").find("textarea").val();
+		text = $(button).closest(".delphi-comment-add__form").find("textarea").val();
 	}
 
 	const td = $(button).closest("td");
@@ -1200,6 +1233,99 @@ function saveDelphiCommentInner(button, reply, questionUid, surveyId, errorCallb
 		error: errorCallback,
 		success: successCallback
 	 });
+}
+
+function saveChangedDelphiCommentFromRunner(button, isReply) {
+
+	const errorCallback = () => { showError("error"); }
+	const successCallback = () => {
+		const surveyElement = $(button).closest(".survey-element");
+		const questionUid = $(surveyElement).attr("data-uid");
+		const viewModel = modelsForDelphiQuestions[questionUid];
+		loadTableData(surveyElement, viewModel);
+	}
+	saveChangedDelphiComment(button, isReply, errorCallback, successCallback);
+}
+
+function saveChangedDelphiComment(button, isReply, errorCallback, successCallback) {
+
+	const loader = $(button).parent().parent().find(".delphi-comment__loader");
+	const actions = $(button).parent().parent().find(".delphi-comment__actions");
+	$(loader).show();
+	$(actions).hide();
+	hideCommentAndReplyForms();
+
+	let commentId;
+	if (isReply) {
+		commentId = $(button).closest(".delphi-comment__reply").attr("data-id");
+	} else {
+		commentId = $(button).closest(".delphi-comment").attr("data-id");
+	}
+
+	const text = $(button).closest(".delphi-comment__change-form").find("textarea").val();
+	const answerSetUniqueCode = $("#uniqueCode").val();
+
+	$.ajax({type: "PUT",
+		url: contextpath + "/runner/delphiComment/" + encodeURIComponent(commentId),
+		data: "text=" + encodeURIComponent(text) + "&uniqueCode=" + answerSetUniqueCode,
+		beforeSend: function(xhr) { xhr.setRequestHeader(csrfheader, csrftoken); },
+		error: () => {
+			$(loader).hide();
+			$(actions).show();
+			errorCallback();
+		},
+		success: () => {
+			$(loader).hide();
+			$(actions).show();
+			successCallback();
+		}
+	});
+}
+
+function deleteDelphiCommentFromRunner(button, isReply) {
+
+	const errorCallback = () => { showError("error"); }
+	const successCallback = () => {
+		const surveyElement = $(button).closest(".survey-element");
+		const questionUid = $(surveyElement).attr("data-uid");
+		const viewModel = modelsForDelphiQuestions[questionUid];
+		loadTableData(surveyElement, viewModel);
+	}
+	deleteDelphiComment(button, isReply, errorCallback, successCallback);
+}
+
+function deleteDelphiComment(button, isReply, errorCallback, successCallback) {
+
+	const loader = $(button).parent().parent().find(".delphi-comment__loader");
+	const actions = $(button).parent().parent().find(".delphi-comment__actions");
+	$(loader).show();
+	$(actions).hide();
+	hideCommentAndReplyForms();
+
+	let commentId;
+	if (isReply) {
+		commentId = $(button).closest(".delphi-comment__reply").attr("data-id");
+	} else {
+		commentId = $(button).closest(".delphi-comment").attr("data-id");
+	}
+
+	const answerSetUniqueCode = $("#uniqueCode").val();
+
+	$.ajax({type: "DELETE",
+		url: contextpath + "/runner/delphiComment/" + encodeURIComponent(commentId),
+		data: "uniqueCode=" + answerSetUniqueCode,
+		beforeSend: function(xhr) { xhr.setRequestHeader(csrfheader, csrftoken); },
+		error: () => {
+			$(loader).hide();
+			$(actions).show();
+			errorCallback();
+		},
+		success: () => {
+			$(loader).hide();
+			$(actions).show();
+			successCallback();
+		}
+	});
 }
 
 function checkGoToDelphiStart(link)
