@@ -2991,11 +2991,15 @@ public class ManagementController extends BasicController {
 		if (forPDF) {
 			Statistics statistics = answerService.getStatisticsOrStartCreator(survey, filter, false, active && allanswers, false);
 			result.addObject("statistics", statistics);
-			filter.setVisibleQuestions(filter.getExportedQuestions());
+			Set<String> newids = new HashSet<>();
+			newids.addAll(filter.getExportedQuestions());
+			filter.setVisibleQuestions(newids);
 		}
 		
 		if (survey.getIsECF()) {
-			filter.setVisibleQuestions(filter.getExportedQuestions());
+			// Set<String> newids = new HashSet<>();
+			// newids.addAll(filter.getExportedQuestions());
+			// filter.setVisibleQuestions(newids);
 			SqlPagination sqlPagination = new SqlPagination(1, 10);
 			Set<ECFProfile> ecfProfiles = this.ecfService.getECFProfiles(survey);
 			result.addObject("ecfProfiles", ecfProfiles.stream().sorted().collect(Collectors.toList()));
@@ -3650,7 +3654,9 @@ public class ManagementController extends BasicController {
 		surveyService.initializeSurvey(survey);
 
 		ResultFilter filter = export.getResultFilter().copy();
-		filter.setVisibleQuestions(filter.getExportedQuestions());
+		Set<String> newids = new HashSet<>();
+		newids.addAll(filter.getExportedQuestions());
+		filter.setVisibleQuestions(newids);
 
 		if (filter.getLanguages() != null && filter.getLanguages().isEmpty()) {
 			filter.setLanguages(null);
@@ -3662,7 +3668,9 @@ public class ManagementController extends BasicController {
 		Publication publication = new Publication();
 		publication.setFilter(export.getResultFilter());
 
-		publication.getFilter().setVisibleQuestions(publication.getFilter().getExportedQuestions());
+		Set<String> newids2 = new HashSet<>();
+		newids.addAll(publication.getFilter().getExportedQuestions());
+		publication.getFilter().setVisibleQuestions(newids2);
 
 		publication.setAllQuestions(publication.getFilter().getVisibleQuestions().isEmpty());
 		results.addObject("publication", publication);
