@@ -169,6 +169,10 @@
 			var labelto = "${form.getMessage("label.To")}";
 			var messageuploadnoconnection = "${form.getMessage("message.uploadnoconnection")}";
 			var messageuploadwrongextension = "${form.getMessage("message.messageuploadwrongextension")}";
+			var i10n = {
+				"vote" : "${form.getMessage("label.Vote")}",
+				"votes" : "${form.getMessage("label.Votes")}",
+			}
 		</c:when>
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	

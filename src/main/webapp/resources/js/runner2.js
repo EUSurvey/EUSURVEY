@@ -668,11 +668,6 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 function addStatisticsToAnswerText(div, result) {
 	var elementWrapper = $(div).closest(".elementwrapper");
 	var surveyElement = elementWrapper.find(".survey-element");
-	var answerTextElement = elementWrapper.find(".answertext");
-//	if (0 == answerTextElement.length) { // remove this?
-//		console.log("nothing to see here! full stop");
-//		return;
-//	}
 
 	var viewModel = ko.dataFor(surveyElement[0]);
 	//var viewModels = modelsForDelphiQuestions;
@@ -699,9 +694,9 @@ function addStatisticsToAnswerText(div, result) {
 			var oldtitle = possibleAnswersArray()[i].title();
 			var value = result.data[i].value;
 			var label = result.data[i].label;
-			var newlabel = ""+label+" ("+value+" votes)";
+			var newlabel = ""+label+" ("+value+" "+i10n["votes"]+")";
 			if (1 == value) {
-				newlabel = ""+label+" ("+value+" vote)";
+				newlabel = ""+label+" ("+value+" "+i10n["vote"]+")";
 			}
 			possibleAnswersArray()[i].title(newlabel);
 			console.log("i "+i+' new label "'+newlabel+'"');
@@ -712,6 +707,7 @@ function addStatisticsToAnswerText(div, result) {
 		// TODO: change label for all slider positions
 		console.log(" viewModel.display(): "+viewModel.display());
 	}
+	console.log("showLabel: "+showLabel)
 }
 
 function addChart(div, chart)
