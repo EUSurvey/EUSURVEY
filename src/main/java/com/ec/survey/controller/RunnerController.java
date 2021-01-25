@@ -2440,8 +2440,11 @@ public class RunnerController extends BasicController {
 			creator.init(survey, null, false);
 
 			if (question instanceof NumberQuestion) {
-				Map<Double, Integer> valuesMagnitude = new HashMap<>();
+				Map<String, Integer> valuesMagnitude = new HashMap<>();
 				creator.getAnswers4NumberQuestionStatistics(survey, question, valuesMagnitude);
+				for (Map.Entry<String, Integer> entry : valuesMagnitude.entrySet()) {
+					logger.info("BRS histogram: "+entry.getKey()+" "+entry.getValue());
+				}
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
