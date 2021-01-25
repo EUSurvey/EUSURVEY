@@ -1124,7 +1124,7 @@ function delphiUpdateContinued(div, successCallback) {
 				loadGraphData(div);
 				
 				var viewModel = modelsForDelphiQuestions[uid];
-			loadTableData($(surveyElement).attr("data-uid"), viewModel);
+				loadTableData($(div).attr("data-uid"), viewModel);
 			}			
 			
 			if (typeof successCallback === "function") successCallback();
