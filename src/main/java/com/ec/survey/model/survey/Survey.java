@@ -1393,7 +1393,7 @@ final public class Survey implements java.io.Serializable {
 	}
 
 	public void setMinNumberDelphiStatistics(Integer minNumberDelphiStatistics) {
-		this.minNumberDelphiStatistics = minNumberDelphiStatistics  != null ? minNumberDelphiStatistics : 5;
+		this.minNumberDelphiStatistics = minNumberDelphiStatistics != null ? Math.max(minNumberDelphiStatistics, 1) : 5;
 	}
 
 	@Transient

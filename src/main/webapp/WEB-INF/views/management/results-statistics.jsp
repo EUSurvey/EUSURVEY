@@ -521,5 +521,7 @@
         <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
     </div>
     
-    <input class="chart-legend" onchange="changeChart(this)" type="checkbox" /> <spring:message code="label.Legend" />
+    <span class="chart-legend-group" style="display: none">
+    	<input class="chart-legend" onchange="changeChart(this)" type="checkbox" /> <spring:message code="label.Legend" />
+    </span>
 </div>

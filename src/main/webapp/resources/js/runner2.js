@@ -1034,8 +1034,9 @@ Object.freeze(DELPHI_UPDATE_TYPE);
 
 let currentDelphiUpdateType;
 let currentDelphiUpdateContainer;
+let currentDelphiUpdateDelphiQuestions;
 
-function delphiUpdate(div) {
+function delphiUpdate(div, delphiquestions) {
 
 	const result = validateInput(div);
 	const message = $(div).find(".delphiupdatemessage").first();
@@ -1043,6 +1044,8 @@ function delphiUpdate(div) {
 	if (result == false) {
 		return;
 	}
+	
+	currentDelphiUpdateDelphiQuestions = delphiquestions;
 
 	if (isOneAnswerEmptyWhileItsExplanationIsNot(div)) {
 		currentDelphiUpdateType = DELPHI_UPDATE_TYPE.ONE_QUESTION;
@@ -1089,6 +1092,8 @@ function delphiUpdateContinued(div, successCallback) {
 	$(form).append('<input type="hidden" name="questionId" value="' + id + '" />');
 	var uid = $(div).attr("data-uid");
 	$(form).append('<input type="hidden" name="questionUid" value="' + uid + '" />');
+		
+	$(form).append('<input type="hidden" name="delphiQuestions" value="' + currentDelphiUpdateDelphiQuestions + '" />');
 	
 	//this is a workaround for a bug in jquery
 	// see https://bugs.jquery.com/ticket/1294
@@ -1114,11 +1119,14 @@ function delphiUpdateContinued(div, successCallback) {
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
 			$(loader).hide();
 			
-			loadGraphData(div);
-			
-			var viewModel = modelsForDelphiQuestions[uid];
+			if (currentDelphiUpdateDelphiQuestions)
+			{
+				loadGraphData(div);
+				
+				var viewModel = modelsForDelphiQuestions[uid];
 			loadTableData($(surveyElement).attr("data-uid"), viewModel);
-
+			}			
+			
 			if (typeof successCallback === "function") successCallback();
 			
 			loadMedianData(div, viewModel)
@@ -1126,6 +1134,25 @@ function delphiUpdateContinued(div, successCallback) {
 			delphiUpdateFinished = true;
 	    }
 	});
+}
+
+function updateNonDelphiQuestions(page)
+{
+	if (isdelphi)
+	{
+		var section = $("#page" + page);
+		var found = false;
+		$(section).find(".survey-element").each(function(){
+			if (!$(this).hasClass("delphi") && !$(this).hasClass("sectionitem")) {
+				found = true;
+				return;
+			}
+		});
+		
+		if (found) {
+			delphiUpdate(section, false);
+		}
+	}
 }
 
 function saveDelphiComment(button, reply) {
