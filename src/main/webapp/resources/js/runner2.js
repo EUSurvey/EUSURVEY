@@ -450,8 +450,8 @@ function initSlider(input, foreditor, viewModel)
 	}
 		
 	$(input).bootstrapSlider({
-		formatter: function(value) {
-			return value;
+		formatter: function (value) {
+			return viewModel.sliderformatter(value);
 		},
 		tooltip: 'always',
 		ticks_labels: viewModel.labels(),
@@ -670,6 +670,9 @@ function addStatisticsToAnswerText(div, result) {
 	var surveyElement = elementWrapper.find(".survey-element");
 
 	var viewModel = ko.dataFor(surveyElement[0]);
+	if (undefined === viewModel ) {
+		return;
+	}
 	//var viewModels = modelsForDelphiQuestions;
 	console.log("addStatisticsToAnswerText()\nAJAX-result: "+JSON.stringify(result));
 	console.log("viewModel0 JSON: "+JSON.stringify(viewModel));
@@ -706,6 +709,42 @@ function addStatisticsToAnswerText(div, result) {
 	if (["Number"].includes(questionType)) {
 		// TODO: change label for all slider positions
 		console.log("viewModel.display(): "+viewModel.display());
+
+		const getMethods = (obj) => {
+			let properties = new Set()
+			let currentObj = obj
+			do {
+				Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
+			} while ((currentObj = Object.getPrototypeOf(currentObj)));
+			return [...properties.keys()].filter(item => typeof obj[item] === 'function')
+		}
+
+		const getProperties = (obj) => {
+			let properties = new Set()
+			let currentObj = obj
+			do {
+				Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
+			} while ((currentObj = Object.getPrototypeOf(currentObj)));
+			return [...properties.keys()];
+		}
+
+//		console.log("functions "+getMethods(viewModel));
+		console.log("labels "+viewModel.labels());
+
+		var sliderbox = elementWrapper.find(".sliderbox");
+		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
+//		console.log("bootstrapSlider properties "+getProperties(bootstrapSlider));
+//		bootstrapSlider.bootstrapSlider("setValue", value);
+
+//		var value = bootstrapSlider.bootstrapSlider("getValue");
+		//console.log("slider value "+value);
+		viewModel.sliderformatter = function(value) {
+			if (value < 0) return value;
+			return ""+value+" blaabb";
+		}
+		bootstrapSlider.bootstrapSlider("relayout");
+//		bootstrapSlider.bootstrapSlider("refresh", {useCurrentValue: true});
+//		bootstrapSlider.bootstrapSlider("setValue", value);
 	}
 }
 
