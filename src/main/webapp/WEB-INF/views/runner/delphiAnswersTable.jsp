@@ -48,47 +48,105 @@
 			</td>
 			<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId}">
 				<!-- ko foreach: comments -->
-				<div class="delphicommentsdiv">
+				<div class="delphi-comment" data-bind="attr: {'data-id': id}">
 					<div style="margin-top: 5px;">
-						<span style="font-weight: bold" data-bind="html: user"></span> <span class="delphicommentdate" data-bind="html: date"></span><br />
-						<span data-bind="html: text"></span>
-					</div>
-					<!-- ko foreach: replies -->
-					<div style="margin-top: 10px; margin-left: 20px;">
-						<span style="font-weight: bold" data-bind="html: user"></span> <span class="delphicommentdate" data-bind="html: date"></span><br />
-						<span data-bind="html: text"></span>
-					</div>
-					<!-- /ko -->
-					<div style="margin-left: 20px; margin-top: 10px;">
-						<a data-bind="click: () => { showCommentArea(); }">${form.getMessage("label.Reply")}</a>
-						<div class="delphireply" data-bind="visible: delphiTableIsReplyFormVisible">
-							<textarea class="form-control" data-bind="hasFocus: delphiTableHasReplyFieldFocus"></textarea>
+						<!-- ko if: user && date -->
+						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
+						<!-- /ko -->
+						<span data-bind="hidden: isChangedCommentFormVisible, html: text"></span>
+						<img class="delphi-comment__loader" src="${contextpath}/resources/images/ajax-loader.gif"/>
+						<div class="delphi-comment__change-form" data-bind="visible: isChangedCommentFormVisible">
+							<textarea class="form-control" data-bind="hasFocus: hasChangedCommentFieldFocus, value: changedComment"></textarea>
 							<c:choose>
 								<c:when test='${mode == "delphiStartPage"}'>
-									<a class="btn btn-xs btn-primary" onClick="saveDelphiCommentWrapper(this, true)" data-bind="attr: { 'data-parent': id }">${form.getMessage("label.Save")}</a>
+									<a class="btn btn-xs btn-primary" onClick="saveChangedDelphiCommentFromStartPage(this, false)">${form.getMessage("label.Save")}</a>
 								</c:when>
 								<c:otherwise>
-									<a class="btn btn-xs btn-primary" onClick="saveDelphiComment(this, true)" data-bind="attr: { 'data-parent': id }">${form.getMessage("label.Save")}</a>
+									<a class="btn btn-xs btn-primary" onClick="saveChangedDelphiCommentFromRunner(this, false)">${form.getMessage("label.Save")}</a>
 								</c:otherwise>
 							</c:choose>
-							<a class="btn btn-xs btn-default delphicommentcancel" data-bind="click: () => { delphiTableIsReplyFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
+							<a class="btn btn-xs btn-default delphi-comment__cancel" data-bind="click: () => { isChangedCommentFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
+						</div>
+						<!-- ko if: answerSetUniqueCode === "${uniqueCode}" && ((user && date) || replies.length === 0) -->
+						<div class="delphi-comment__actions">
+							<!-- ko if: user && date -->
+							<a data-bind="click: editComment, hidden: isChangedCommentFormVisible">${form.getMessage("label.Edit")}</a>
+							<!-- /ko -->
+							<!-- ko if: (user && date) || replies.length === 0 -->
+							<c:choose>
+								<c:when test='${mode == "delphiStartPage"}'>
+									<a onClick="deleteDelphiCommentFromStartPage(this, false)" data-bind="hidden: isChangedCommentFormVisible">${form.getMessage("label.Delete")}</a>
+								</c:when>
+								<c:otherwise>
+									<a onClick="deleteDelphiCommentFromRunner(this, false)" data-bind="hidden: isChangedCommentFormVisible">${form.getMessage("label.Delete")}</a>
+								</c:otherwise>
+							</c:choose>
+							<!-- /ko -->
+						</div>
+						<!-- /ko -->
+					</div>
+					<!-- ko foreach: replies -->
+					<div class="delphi-comment__reply" data-bind="attr: {'data-id': id}">
+						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
+						<span data-bind="hidden: isChangedReplyFormVisible, html: text"></span>
+						<img class="delphi-comment__loader" src="${contextpath}/resources/images/ajax-loader.gif"/>
+						<div class="delphi-comment__change-form" data-bind="visible: isChangedReplyFormVisible">
+							<textarea class="form-control" data-bind="hasFocus: hasChangedReplyFieldFocus, value: changedReply"></textarea>
+							<c:choose>
+								<c:when test='${mode == "delphiStartPage"}'>
+									<a class="btn btn-xs btn-primary" onClick="saveChangedDelphiCommentFromStartPage(this, true)">${form.getMessage("label.Save")}</a>
+								</c:when>
+								<c:otherwise>
+									<a class="btn btn-xs btn-primary" onClick="saveChangedDelphiCommentFromRunner(this, true)">${form.getMessage("label.Save")}</a>
+								</c:otherwise>
+							</c:choose>
+							<a class="btn btn-xs btn-default delphi-comment__cancel" data-bind="click: () => { isChangedReplyFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
+						</div>
+						<!-- ko if: answerSetUniqueCode === "${uniqueCode}" -->
+						<div class="delphi-comment__actions">
+							<a data-bind="click: editReply, hidden: isChangedReplyFormVisible">${form.getMessage("label.Edit")}</a>
+							<c:choose>
+								<c:when test='${mode == "delphiStartPage"}'>
+									<a onClick="deleteDelphiCommentFromStartPage(this, true)" data-bind="hidden: isChangedReplyFormVisible">${form.getMessage("label.Delete")}</a>
+								</c:when>
+								<c:otherwise>
+									<a onClick="deleteDelphiCommentFromRunner(this, true)" data-bind="hidden: isChangedReplyFormVisible">${form.getMessage("label.Delete")}</a>
+								</c:otherwise>
+							</c:choose>
+						</div>
+						<!-- /ko -->
+					</div>
+					<!-- /ko -->
+					<div class="delphi-comment__add-reply">
+						<a data-bind="click: showCommentArea">${form.getMessage("label.Reply")}</a>
+						<div class="delphi-comment__add-reply-form" data-bind="visible: isReplyFormVisible">
+							<textarea class="form-control" data-bind="hasFocus: hasReplyFieldFocus"></textarea>
+							<c:choose>
+								<c:when test='${mode == "delphiStartPage"}'>
+									<a class="btn btn-xs btn-primary" onClick="saveDelphiCommentFromStartPage(this, true)" data-bind="attr: { 'data-parent': id }">${form.getMessage("label.Save")}</a>
+								</c:when>
+								<c:otherwise>
+									<a class="btn btn-xs btn-primary" onClick="saveDelphiCommentFromRunner(this, true)" data-bind="attr: { 'data-parent': id }">${form.getMessage("label.Save")}</a>
+								</c:otherwise>
+							</c:choose>
+							<a class="btn btn-xs btn-default delphi-comment__cancel" data-bind="click: () => { isReplyFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
 						</div>
 					</div>
 				</div>
 				<!-- /ko -->
-				<div style="margin-top: 5px">
-					<a data-bind="click: () => {showCommentArea(); }">${form.getMessage("label.AddComment")}</a>
-					<div class="delphicomment" data-bind="visible: delphiTableIsCommentFormVisible">
-						<textarea class="form-control" data-bind="hasFocus: delphiTableHasCommentFieldFocus"></textarea>
+				<div class="delphi-comment-add">
+					<a data-bind="click: showCommentArea">${form.getMessage("label.AddComment")}</a>
+					<div class="delphi-comment-add__form" data-bind="visible: isCommentFormVisible">
+						<textarea class="form-control" data-bind="hasFocus: hasCommentFieldFocus"></textarea>
 						<c:choose>
 							<c:when test='${mode == "delphiStartPage"}'>
-								<a class="btn btn-xs btn-primary" onClick="saveDelphiCommentWrapper(this, false)">${form.getMessage("label.Save")}</a>
+								<a class="btn btn-xs btn-primary" onClick="saveDelphiCommentFromStartPage(this, false)">${form.getMessage("label.Save")}</a>
 							</c:when>
 							<c:otherwise>
-								<a class="btn btn-xs btn-primary" onClick="saveDelphiComment(this, false)">${form.getMessage("label.Save")}</a>
+								<a class="btn btn-xs btn-primary" onClick="saveDelphiCommentFromRunner(this, false)">${form.getMessage("label.Save")}</a>
 							</c:otherwise>
 						</c:choose>
-						<a class="btn btn-xs btn-default delphicommentcancel" data-bind="click: () => { delphiTableIsCommentFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
+						<a class="btn btn-xs btn-default delphi-comment__cancel" data-bind="click: () => { isCommentFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
 					</div>
 				</div>
 			</td>

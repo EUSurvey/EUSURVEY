@@ -277,9 +277,7 @@
 			<div class="modal-content">
 				<div class="modal-header"><spring:message code="label.ResultsTable" /></div>
 				<div class="modal-body">
-					<div class="answers-table-modal-error">
-						<spring:message code="error.DelphiTableContributionCouldNotBeSubmitted" />
-					</div>
+					<div class="answers-table-modal-error"></div>
 					<%@ include file="delphiAnswersTable.jsp" %>
 				</div>
 				<div class="modal-footer">
@@ -290,12 +288,17 @@
 	</div>
 
 	<script type="text/javascript">
+		const surveyId = ${form.survey.id};
+		const errorDelphiTableContributionCouldNotBeChanged = "${form.getMessage("error.DelphiTableContributionCouldNotBeChanged")}";
+		const errorDelphiTableContributionCouldNotBeDeleted = "${form.getMessage("error.DelphiTableContributionCouldNotBeDeleted")}";
+		const errorDelphiTableContributionCouldNotBeSubmitted = "${form.getMessage("error.DelphiTableContributionCouldNotBeSubmitted")}";
+
 		function openAnswersDialog(element) {
+			$('.answers-table-modal-error').hide();
 			$('.answers-table-modal').modal('show');
 
 			const languageCode = "${form.language.code}";
 			currentQuestionUidInModal = $(element).closest('.question').attr('data-uid');
-			const surveyId = ${form.survey.id};
 			const uniqueCode = $('#uniqueCode').val();
 			loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, uniqueCode, answersTableViewModel);
 		}
@@ -320,20 +323,52 @@
 			});
 		}
 
-		function saveDelphiCommentWrapper(element, reply) {
+		function saveDelphiCommentFromStartPage(element, reply) {
 
 			$('.answers-table-modal-error').hide();
 
-			const surveyId = ${form.survey.id};
 			const errorCallback = function() {
 				$('.answers-table-modal-error').show();
+				$('.answers-table-modal-error').text(errorDelphiTableContributionCouldNotBeSubmitted);
 			}
 			const successCallback = function() {
 				const languageCode = "${form.language.code}";
 				const answerSetUniqueCode = $('#uniqueCode').val();
 				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
 			}
-			saveDelphiCommentInner(element, reply, currentQuestionUidInModal, surveyId, errorCallback, successCallback);
+			saveDelphiComment(element, reply, currentQuestionUidInModal, surveyId, errorCallback, successCallback);
+		}
+
+		function saveChangedDelphiCommentFromStartPage(element, isReply) {
+
+			$('.answers-table-modal-error').hide();
+
+			const errorCallback = function() {
+				$('.answers-table-modal-error').show();
+				$('.answers-table-modal-error').text(errorDelphiTableContributionCouldNotBeChanged);
+			}
+			const successCallback = function() {
+				const languageCode = "${form.language.code}";
+				const answerSetUniqueCode = $('#uniqueCode').val();
+				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
+			}
+			saveChangedDelphiComment(element, isReply, errorCallback, successCallback);
+		}
+
+		function deleteDelphiCommentFromStartPage(element, isReply) {
+
+			$('.answers-table-modal-error').hide();
+
+			const errorCallback = function() {
+				$('.answers-table-modal-error').show();
+				$('.answers-table-modal-error').text(errorDelphiTableContributionCouldNotBeDeleted);
+			}
+			const successCallback = function() {
+				const languageCode = "${form.language.code}";
+				const answerSetUniqueCode = $('#uniqueCode').val();
+				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
+			}
+			deleteDelphiComment(element, isReply, errorCallback, successCallback);
 		}
 		
 		function toggle(element)

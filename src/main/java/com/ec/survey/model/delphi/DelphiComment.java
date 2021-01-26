@@ -11,13 +11,15 @@ public class DelphiComment {
     private final String text;
     private final String date;
     private final int id;
+    private final String answerSetUniqueCode;
     private final List<DelphiComment> replies;
     
-    public DelphiComment(String user, String text, Date date, int id) {
+    public DelphiComment(String user, String text, Date date, int id, String answerSetUniqueCode) {
     	this.user = user;
     	this.text = text;
     	this.date = ConversionTools.getFullString(date);
     	this.id = id;
+    	this.answerSetUniqueCode = answerSetUniqueCode;
     	this.replies = new ArrayList<>();
     }
     
@@ -36,6 +38,8 @@ public class DelphiComment {
     public int getId() {
         return id;
     }
+
+    public String getAnswerSetUniqueCode() { return answerSetUniqueCode; }
     
     public List<DelphiComment> getReplies() {
     	return replies;
