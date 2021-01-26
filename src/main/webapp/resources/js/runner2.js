@@ -1022,11 +1022,11 @@ function loadMedianData(div, viewModel) {
 			showError(data);
 		},
 		success: function (result, textStatus) {
-			viewModel.maxDistanceExceeded(result.maxDistanceExceeded);
+			viewModel.maxDistanceExceeded(result != undefined && result.maxDistanceExceeded);
 			
 			$(div).find(".medianpa").removeClass("medianpa");
 			
-			if (result.maxDistanceExceeded)
+			if (viewModel.maxDistanceExceeded())
 			{
 				for (let i = 0; i < result.medianUids.length; i++) {				
 					$('.answertext[data-pa-uid="' + result.medianUids[i] + '"]').closest(".likert-pa").addClass("medianpa");
@@ -1147,13 +1147,21 @@ function delphiUpdateContinued(div, successCallback) {
 		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 		error: function(data)
 	    {
-			$(message).html(data.responseText).addClass("update-error");
+			$(message).html(data.message).addClass("update-error");
 			$(loader).hide();
 	    },
 		success: function(data)
 	    {
-			$(message).html(data).addClass("info");
+			$(message).html(data.message).addClass("info");
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
+			
+			if (data.open) {
+				var link = document.createElement("a");
+				$(link).attr("href", data.link).html(data.link);
+				$(div).find(".delphilinkurl").append(link);
+				$(div).find(".delphilink").show();
+			}
+			
 			$(loader).hide();
 			
 			if (currentDelphiUpdateDelphiQuestions)
@@ -1351,4 +1359,34 @@ function checkGoToDelphiStart(link)
 	}
 
 	window.location = url;
+}
+
+function sendDelphiMailLink() {
+	
+	var mail = $("#delphiemail").val();
+	
+	if (mail.trim().length == 0 || !validateEmail(mail))
+	{
+		$("#ask-delphi-email-dialog-error").show();
+		return;
+	}
+	
+	var answerSetUniqueCode = $('#uniqueCode').val();
+	
+	$.ajax({
+		type: "POST",
+		url: contextpath + "/runner/sendDelphiLink",
+		data: "uniqueCode=" + answerSetUniqueCode + "&email=" + mail,
+		beforeSend: function(xhr) { xhr.setRequestHeader(csrfheader, csrftoken); },
+		error: function(data)
+	    {
+			showError(data);
+	    },
+		success: function(data)
+	    {
+			showSuccess(data);
+	    }
+	});
+	
+	$('#ask-email-dialog').modal('hide');
 }
