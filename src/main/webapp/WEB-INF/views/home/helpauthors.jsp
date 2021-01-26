@@ -3204,9 +3204,9 @@
 				</u>
 			</p>
 		<h1>ECF Surveys</h1>
-		<h2>How to create an ECF survey ?</h2>
+		<h2>How to create an ECF survey?</h2>
 		<p>
-			In order to create an ECF survey :
+			In order to create an ECF survey:
 			<ul>
 				<li>Click on the green button 'New Survey'</li>
 				<li>Select 'Create new survey'</li>
@@ -3217,12 +3217,12 @@
 				<li>Select the main language of your survey (translations are managed later).</li>
 				<li>Click on the confirmation box after having read the text.</li>
 			</ul>
-			<img class="center" src="${contextpath}/resources/images/illustrations/ecfCreation.png" />
+			<img style="max-width: 800px;" class="center" src="${contextpath}/resources/images/illustrations/ecfCreation.png" />
 		</p>
 		<h2>ECF Results screen</h2>
 		<p>
-			In addition to the two Results screens for standard surveys, 3 new Results screens have been added for ECF surveys :
-			<img class="center" src="${contextpath}/resources/images/illustrations/ecfResultTop.png" />
+			In addition to the two Results screens for standard surveys, 3 new Results screens have been added for ECF surveys:
+			<img style="max-width: 800px;" class="center" src="${contextpath}/resources/images/illustrations/ecfResultTop.png" />
 		</p>
 		<p>
 			<em>
@@ -3243,11 +3243,15 @@
 		</h3>
 		<p>
 			First, there is table showing you the total number of contribution per job profiles and allowing you to filter for a particular job profile. Please note that you can choose the neutral profile or all profiles.
-			<img class="center" src="${contextpath}/resources/images/illustrations/ecfSelectContributions.png" />
 		</p>
 		<p>
-			There are two other options :
-			<img class="center" src="${contextpath}/resources/images/illustrations/ecfSelectTargetProfileAndSortBy.png" />
+			<img style="max-height: 300px; max-width: 800px;" class="center" src="${contextpath}/resources/images/illustrations/ecfSelectContributions.png" />
+		</p>
+		<p>
+			There are two other options:
+		</p>
+		<p>
+			<img style="max-height: 300px; max-width: 300px;" class="center" src="${contextpath}/resources/images/illustrations/ecfSelectTargetProfileAndSortBy.png" />
 		</p>
 		<p>
 			The first one allow you to select the target job profile. This will update the target score in the second column of the main table.
@@ -3256,8 +3260,8 @@
 			The second option is a sorting option. This specify in which order the different individual results will be displayed.
 		</p>
 		<p>
-			Alphabetical order A…Z
-			Alphabetical order Z…A
+			Alphabetical order A...Z
+			Alphabetical order Z...A
 			Lowest gap
 			Highest gap
 			Lowest score
@@ -3266,7 +3270,114 @@
 		<h3>
 			Profile assessment results and gaps
 		</h3>
+		<p>
+			<em>
+				<strong>Profile assessment</strong> results are obtained by aggregating assessment results from all individuals that belong to the same job profile. For each job profile, the following results are calculated:
+				<ul>
+					<li><strong>Target Score:</strong> The target level set for the competency for a specific job profile;</li>
+					<li><strong>Average Score:</strong> The average of all individual assessment results for the same profile;</li>
+					<li><strong>Maximum Score:</strong> The maximum score obtained by an individual from the same profile.</li>
+				</ul>
+			</em>
+		</p>
+		<p>
+			<em>
+				The <strong>average score</strong> helps to identify patterns of strengths and weaknesses across all team members of a given profile in the organisation. It allows the organisation to see if there are competencies in which professionals with a specific role generally exceed or fall short of the target proficiency level. This information is particularly valuable at a strategic level, telling the leadership where the organisation is particularly strong, or where they need to invest in longer-term capacity building.
+			</em>
+		</p>
+		<p>
+			<em>
+				The <strong>maximum score</strong> allows organisations to answer a very different question: whether any of the team members of a given profile has the maximum proficiency level that the organisation needs in each of the competencies. A finding that no one in that role in the organisation has the maximum target proficiency level may call for more immediate action to address the gap. This is particularly relevant for specialised job profiles, such as those of a legal expert or contract manager, which are expected to bring particular knowledge or skills not present elsewhere in the organisation.
+			</em>
+		</p>
+		<p>
+			Same as for the first result screen, there is a table for selecting the contributions:
+		</p>
+		<p>
+			<img  style="max-height: 300px; max-width: 800px;" class="center" src="${contextpath}/resources/images/illustrations/ecfSelectContributions.png" />
+		</p>
+		<p>
+			The main table show you the Average score and the Max score. It provide you an overview of the skills of your organisation and answer to the following question:
+			<ul>
+				<li>What is the average score (level of skills) for a specific competence?</li>
+				<li>Is there someone (at least one person) having a minimum score for a specific competence?</li>
+				<li>This can help you to identify missing competences of your organisation.</li>
+				<li>Average score = Average score for the selected job profile.</li>
+				<li>Max = Max score reached for the selected job profile.</li>
+			</ul>
+		</p>
+		<h3>
+			Average and maximum scores for all profiles
+		</h3>
+		<p>
+			<em>
+				Organisational assessment results are computed by aggregating all individual assessment results. 
+			</em>
+		</p>
+		<p>
+			This table show you the total number of contribution per job profile. Contrary to the two previous results screen, this one is not a select table.
+			<img style="max-height:400px; max-width: 800px;" class="center" src="${contextpath}/resources/images/illustrations/ecfNumberContributionsPerProfile.png" />
+		</p>
+		<p>
+			There are two spider charts that help to address different kinds of organisational questions.
+		</p>
 
+		<h3>
+			Max scores Vs max target scores
+		</h3>
+		<p>
+			This spider chart shows in blue the maximum target scores for all profiles combined and in red the maximum scores obtained by all people combined (=all individuals for all job profiles).
+		</p>
+		<p>
+			This allow you to identify missing competencies within your organisation.
+		</p>
+		<p>
+			Ideally, all max target scores should be covered by at least one individual.
+		</p>
+		<p>
+			<em>
+				<strong>The maximum score</strong> allows organisations to assess whether anyone in the organisation has the maximum proficiency level that the organisation determined it needs in each of the competencies. A finding that no one in the organisation has the maximum target proficiency level may call for more immediate action to address the gap.
+			</em>
+		</p>
+		<h3>
+			Average scores Vs average target scores
+		</h3>
+		<p>
+			This spider chart shows in blue the average target scores for all profile combined and in red the average scores obtained by all people combined.
+		</p>
+		<p>
+			<em>The <strong>average score</strong> helps to identify patterns of strengths and weaknesses in the organisation. It allows the organisation to see if there are competencies in which multiple individuals exceed or fall short of the target proficiency level. This information is valuable at a strategic level, informing the leadership about areas in which the organisation is particularly strong, or where they need to invest in longer-term capacity building.</em>
+		</p>
+		<h3>
+			Competencies table
+		</h3>
+		<p>
+			For each competency, the table indicates: 
+			<ul>
+				<li><strong>Target Maximum:</strong> The maximum target level for all the job profiles taken together</li>
+				<li><strong>Maximum Score:</strong> The maximum score reached</li>
+				<li><strong>Average Target:</strong> The average of all target proficiency levels</li>
+				<li><strong>Average Score:</strong> The average of all profiles results</li>
+			</ul>
+		</p>
+		<h3>
+			Further analysis of the results
+		</h3>
+		<p>Settings</p>
+		<p>When clicking on the Settings button, a modal window will open where you can select/unselect the competencies you want to show on the screen or export when exporting results. This can be useful to restrict a bit the number of data fields if wished.</p>
+		<p>Export</p>
+		<p>All results can be exported into XLS. This is based on the what-you-see-is-what-you-get principle. In other words, what you see on the screen, which can be adjusted using the Settings, is what is going to be exported when proceeding to the operation.</p>
+		<p>
+			To export you results please follow the steps:
+			<ol>
+				<li>Click on the Export button</li>
+				<li>Select XLS (for ECF survey there is no other choice, for other survey types other choices exist)</li>
+				<li>Click on 'Export'</li>
+				<li>Wait for your export to be ready - a notification to be displayed at the top of the screen</li>
+				<li>Go to the export page</li>
+				<li>Download your export</li>
+			</ol>
+		</p>
 	</div> <!-- faqcontent -->
 	</div>
 	</div>
