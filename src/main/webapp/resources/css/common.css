@@ -1265,9 +1265,14 @@ legend {
 
 .delphilink {
     background-color: #ecebeb;
-    padding: 5px;
+    padding: 10px;
     border: 1px solid #ccc;
     color: #555;
+}
+
+.delphilinkurl {
+	margin-top: 7px;
+	margin-bottom: 7px;
 }
 
 .delphi-comment-add__form textarea,

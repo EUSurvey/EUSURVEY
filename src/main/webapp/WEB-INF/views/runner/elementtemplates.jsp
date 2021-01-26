@@ -1244,7 +1244,7 @@
 				<div class="delphiupdatemessage"></div>
 				<div class="delphilink" style="display: none">
 					${form.getMessage("info.delphilink")}<br />
-					<span class="delphilinkurl"></span><br /><br />
+					<div class="delphilinkurl"></div>
 					<a onclick="$('#ask-email-dialog').modal('show')" class="btn btn-default">${form.getMessage("label.SendLinkAsEmail")}</a>		
 				</div>
 			</div>

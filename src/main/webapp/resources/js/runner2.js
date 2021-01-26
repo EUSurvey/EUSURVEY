@@ -1141,6 +1141,8 @@ function delphiUpdateContinued(div, successCallback) {
 		beforeSend: function (xhr) {
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
+		error: function(data)
+	    {
 			$(message).html(data.message).addClass("update-error");
 			$(loader).hide();
 		},

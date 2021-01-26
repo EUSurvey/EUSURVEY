@@ -3269,7 +3269,7 @@ public class RunnerController extends BasicController {
 						serverPrefix);
 
 				mailService.SendHtmlMail(email, sender, sender,
-						resources.getMessage("message.mail.linkDraftSubject", null, new Locale("EN")), text, null);
+						resources.getMessage("message.mail.linkSubject", null, new Locale("EN")), text, null);
 			} catch (Exception e) {
 				logger.error("Problem during sending the draft link. To:" + email + " Link:" + link, e);
 				return new ResponseEntity<>(resources.getMessage("message.mail.failMailLinkDraft", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
