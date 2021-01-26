@@ -1241,6 +1241,10 @@ legend {
 	font-weight: bold;
 }
 
+.nav-pills > div.tooltip + li {
+	margin-left: 2px;
+}
+
 .mandatory {
 	color:#f00; font-weight: bold; white-space: pre; margin-right: 2px;
 }
