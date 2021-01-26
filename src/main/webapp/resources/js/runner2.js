@@ -707,44 +707,18 @@ function addStatisticsToAnswerText(div, result) {
 		}
 	}
 	if (["Number"].includes(questionType)) {
-		// TODO: change label for all slider positions
 		console.log("viewModel.display(): "+viewModel.display());
-
-		const getMethods = (obj) => {
-			let properties = new Set()
-			let currentObj = obj
-			do {
-				Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
-			} while ((currentObj = Object.getPrototypeOf(currentObj)));
-			return [...properties.keys()].filter(item => typeof obj[item] === 'function')
-		}
-
-		const getProperties = (obj) => {
-			let properties = new Set()
-			let currentObj = obj
-			do {
-				Object.getOwnPropertyNames(currentObj).map(item => properties.add(item))
-			} while ((currentObj = Object.getPrototypeOf(currentObj)));
-			return [...properties.keys()];
-		}
-
-//		console.log("functions "+getMethods(viewModel));
-		console.log("labels "+viewModel.labels());
+		if (!["Slider"].includes(viewModel.display())) return;
 
 		var sliderbox = elementWrapper.find(".sliderbox");
+		if (0 == sliderbox.size()) return;
 		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
-//		console.log("bootstrapSlider properties "+getProperties(bootstrapSlider));
-//		bootstrapSlider.bootstrapSlider("setValue", value);
 
-//		var value = bootstrapSlider.bootstrapSlider("getValue");
-		//console.log("slider value "+value);
 		viewModel.sliderformatter = function(value) {
 			if (value < 0) return value;
-			return ""+value+" blaabb";
+			return ""+value+" units";
 		}
 		bootstrapSlider.bootstrapSlider("relayout");
-//		bootstrapSlider.bootstrapSlider("refresh", {useCurrentValue: true});
-//		bootstrapSlider.bootstrapSlider("setValue", value);
 	}
 }
 
