@@ -19,7 +19,9 @@
 	<div class="modal" id="delphi-chart-modal" data-backdrop="static">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
-				<div class="modal-body"></div>
+				<div class="modal-body">
+					<h1><spring:message code="label.Statistics" /></h1>
+				</div>
 				<div class="modal-footer">
 					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
 				</div>
