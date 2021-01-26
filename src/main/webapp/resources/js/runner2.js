@@ -714,9 +714,21 @@ function addStatisticsToAnswerText(div, result) {
 		if (0 == sliderbox.size()) return;
 		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
 
+		var map0 = result.data;
+		var map = {};
+		map0.forEach((entry) => map[entry.label] = entry.value);
+		console.log("map0 "+JSON.stringify(map));
+
 		viewModel.sliderformatter = function(value) {
-			if (value < 0) return value;
-			return ""+value+" units";
+			var votes = 0;
+			var unit = i10n.votes;
+			if (value in map) {
+				votes = map[value];
+			}
+			if (1 == votes) {
+				unit = i10n.vote;
+			}
+			return ""+value+" ("+votes+" "+unit+")";
 		}
 		bootstrapSlider.bootstrapSlider("relayout");
 	}
