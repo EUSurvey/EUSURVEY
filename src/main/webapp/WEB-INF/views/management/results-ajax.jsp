@@ -148,15 +148,20 @@
 			});
 		}
 
-		function changeChart(select) {
+		function changeChart(select, updateLegendCheckbox) {
 			var controls = $(select).closest(".chart-controls");		
 			
 			var chartwrapper = $(select).closest(".statelement-wrapper").find(".chart-wrapper").first();
 			var chartType = $(controls).find(".chart-type").first().val();
 			var scheme = $(controls).find(".chart-scheme").first().val();
 			var legend = $(controls).find(".chart-legend").first().is(":checked");
-
-			loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend);
+			
+			if (updateLegendCheckbox)
+			{
+				loadGraphDataInner(chartwrapper, addChart, chartType, scheme, null);
+			} else {
+				loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend);
+			}			
 		}
 
 		function chartLabelCallback(value, index, values) {
@@ -444,6 +449,9 @@
         	if (legend) {
         		$(elementWrapper).find(".chart-legend-group").show();
         		$(elementWrapper).find(".chart-legend").prop("checked", "checked");
+        	} else {
+        		$(elementWrapper).find(".chart-legend-group").hide();
+        		$(elementWrapper).find(".chart-legend").removeAttr("checked");
         	}
         
         	var graph = new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
