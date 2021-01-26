@@ -54,11 +54,11 @@ public class ECFIndividualResult {
         return competenciesTypes;
     }
 
-    public void setcompetenciesTypes(List<TypeUUIDAndName> competenciesTypes) {
+    public void setCompetenciesTypes(List<TypeUUIDAndName> competenciesTypes) {
         this.competenciesTypes = competenciesTypes;
     }
 
-    public void addcompetenciesType(TypeUUIDAndName competenciesTypesName) {
+    public void addCompetenciesType(TypeUUIDAndName competenciesTypesName) {
         this.competenciesTypes.add(competenciesTypesName);
     }
 

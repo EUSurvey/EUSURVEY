@@ -314,32 +314,38 @@
 	
 	function displayECFAverageChartByOrganizationalResult(organizationalResult) {
 		if (organizationalResult) {
-			averageScores = [];
-			competencies = [];
-			averageTargetScores = [];
-			organizationalResult.competencyResults.forEach(competencyResult => {
-				averageScores.push(competencyResult.competencyAverageScore);
-				competencies.push(competencyResult.competencyName);
-				averageTargetScores.push(competencyResult.competencyAverageTarget);
+			organizationalResult.competenciesTypes.forEach(competenciesType => {
+				averageScores = [];
+				competencies = [];
+				averageTargetScores = [];
+				organizationalResult.competencyResults.forEach(competencyResult => {
+					if (competencyResult.competencyTypeUid === competenciesType.typeUUID) {
+						averageScores.push(competencyResult.competencyAverageScore);
+						competencies.push(competencyResult.competencyName);
+						averageTargetScores.push(competencyResult.competencyAverageTarget);
+					}
+				});
+				displayECFChart("Average scores vs Average target scores for " + competenciesType.typeName, "#ecfAverageChart_" + competenciesType.typeUUID, averageScores, averageTargetScores, competencies, "Average scores", "Average target scores");
 			});
-			
-			displayECFChart("Average scores vs Average target scores", "#ecfAverageChart", averageScores, averageTargetScores, competencies, "Average scores", "Average target scores");
 		}
 	}
 	
 	
 	function displayECFMaxChartByOrganizationalResult(organizationalResult) {
 		if (organizationalResult) {
-			maxScores = [];
-			competencies = [];
-			maxTargetScores = [];
-			organizationalResult.competencyResults.forEach(competencyResult => {
-				maxScores.push(competencyResult.competencyMaxScore);
-				competencies.push(competencyResult.competencyName);
-				maxTargetScores.push(competencyResult.competencyMaxTarget);
+			organizationalResult.competenciesTypes.forEach(competenciesType => {
+				maxScores = [];
+				competencies = [];
+				maxTargetScores = [];
+				organizationalResult.competencyResults.forEach(competencyResult => {
+					if (competencyResult.competencyTypeUid === competenciesType.typeUUID){
+						maxScores.push(competencyResult.competencyMaxScore);
+						competencies.push(competencyResult.competencyName);
+						maxTargetScores.push(competencyResult.competencyMaxTarget);
+					}
+				});
+				displayECFChart("Max scores vs Max target scores for " + competenciesType.typeName, "#ecfMaxChart_" + competenciesType.typeUUID, maxScores, maxTargetScores, competencies, "Max scores", "Max target scores");
 			});
-			
-			displayECFChart("Max scores vs Max target scores", "#ecfMaxChart", maxScores, maxTargetScores, competencies, "Max scores", "Max target scores");
 		}
 	}
 	

@@ -20,7 +20,10 @@ public class ECFOrganizationalCompetencyResult implements Comparable {
     private Integer competencyMaxTarget;
 
     @JsonProperty("competencyMaxScore")
-    private Integer competencyMaxScore;
+	private Integer competencyMaxScore;
+	
+	@JsonProperty("competencyTypeUid")
+	private String competencyTypeUid;
     
     private Integer order;
 
@@ -64,7 +67,6 @@ public class ECFOrganizationalCompetencyResult implements Comparable {
 		this.competencyMaxScore = competencyMaxScore;
 	}
 	
-
 	public Integer getOrder() {
 		return order;
 	}
@@ -73,13 +75,12 @@ public class ECFOrganizationalCompetencyResult implements Comparable {
 		this.order = order;
 	}
 
+	public String getCompetencyTypeUid() {
+		return competencyTypeUid;
+	}
 
-	@Override
-	public String toString() {
-		return "ECFOrganizationalCompetencyResult [competencyName=" + competencyName + ", competencyAverageTarget="
-				+ competencyAverageTarget + ", competencyAverageScore=" + competencyAverageScore
-				+ ", competencyMaxTarget=" + competencyMaxTarget + ", competencyMaxScore=" + competencyMaxScore
-				+ ", order=" + order + "]";
+	public void setCompetencyTypeUid(String competencyTypeUid) {
+		this.competencyTypeUid = competencyTypeUid;
 	}
 
 	@Override
@@ -91,4 +92,13 @@ public class ECFOrganizationalCompetencyResult implements Comparable {
 			return 0;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "ECFOrganizationalCompetencyResult [competencyAverageScore=" + competencyAverageScore
+				+ ", competencyAverageTarget=" + competencyAverageTarget + ", competencyMaxScore=" + competencyMaxScore
+				+ ", competencyMaxTarget=" + competencyMaxTarget + ", competencyName=" + competencyName
+				+ ", competencyTypeUid=" + competencyTypeUid + ", order=" + order + "]";
+	}
+	
 }

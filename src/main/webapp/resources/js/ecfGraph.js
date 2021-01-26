@@ -81,9 +81,7 @@ function displayOneTypeChart(result, typeNameAndUUID) {
 		}
 	});
 
-	let chartTitle = 'Competencies of type ' + typeNameAndUUID.typeName + ' : Comparison between your results and ' + result.name + '\'s expected scores';
-
-	console.log('.ecfRespondentChart_' + typeNameAndUUID.typeUUID);
+	let chartTitle = 'Comparison for ' + typeNameAndUUID.typeName;
 
 	$('.ecfRespondentChart_' + typeNameAndUUID.typeUUID).each(function(index, element){          
 		var ctx = element.getContext("2d");
@@ -98,7 +96,7 @@ function displayOneTypeChart(result, typeNameAndUUID) {
 					}
 				},
 			title: {
-				display: false,
+				display: true,
 				text: chartTitle
 			},
 			maintainAspectRatio: true,

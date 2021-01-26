@@ -181,10 +181,20 @@ public class ECFService extends BasicService {
 		List<AnswerSet> answerSets = this.answerService.getAllAnswers(survey.getId(), null);
 		Map<ECFCompetency, List<Integer>> competenciesToScores = this.getCompetenciesToScores(survey, answerSets);
 
+		Set<TypeUUIDAndName> competenciesTypes = new HashSet<TypeUUIDAndName>();
+
 		for (ECFCompetency competency : competencyToMaxTarget.keySet()) {
 			ECFOrganizationalCompetencyResult competencyResult = new ECFOrganizationalCompetencyResult();
 			competencyResult.setCompetencyName(competency.getName());
 			competencyResult.setOrder(competency.getOrderNumber());
+
+			TypeUUIDAndName typeUUIDAndName = new TypeUUIDAndName(
+				competency.getEcfCluster().getEcfType().getName(),
+				competency.getEcfCluster().getEcfType().getUid());
+				
+			competenciesTypes.add(typeUUIDAndName);
+
+			competencyResult.setCompetencyTypeUid(competency.getEcfCluster().getEcfType().getUid());
 
 			competencyResult.setCompetencyMaxTarget(competencyToMaxTarget.get(competency));
 
@@ -207,6 +217,7 @@ public class ECFService extends BasicService {
 			ecfOrganizationalResult.addCompetencyResult(competencyResult);
 		}
 
+		ecfOrganizationalResult.setCompetenciesTypes(new ArrayList<>(competenciesTypes));
 		ecfOrganizationalResult.setCompetencyResults(
 				ecfOrganizationalResult.getCompetencyResults().stream().sorted().collect(Collectors.toList()));
 
@@ -687,7 +698,7 @@ public class ECFService extends BasicService {
 			competenciesTypes.add(ecfTypeNameAndUUID);
 			ecfIndividualResult.addCompetencyResult(competencyResult);
 		}
-		ecfIndividualResult.setcompetenciesTypes(new ArrayList<>(competenciesTypes));
+		ecfIndividualResult.setCompetenciesTypes(new ArrayList<>(competenciesTypes));
 		ecfIndividualResult.setCompetencyResultList(
 				ecfIndividualResult.getCompetencyResultList().stream().sorted().collect(Collectors.toList()));
 		return ecfIndividualResult;

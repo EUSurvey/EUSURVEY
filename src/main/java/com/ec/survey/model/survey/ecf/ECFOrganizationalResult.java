@@ -11,7 +11,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ECFOrganizationalResult {
 
     @JsonProperty("competencyResults")
-    private List<ECFOrganizationalCompetencyResult> competencyResults = new ArrayList<>();
+	private List<ECFOrganizationalCompetencyResult> competencyResults = new ArrayList<>();
+
+	@JsonProperty("competenciesTypes")
+	private List<TypeUUIDAndName> competenciesTypes = new ArrayList<>();
 
 	public List<ECFOrganizationalCompetencyResult> getCompetencyResults() {
 		return competencyResults;
@@ -25,10 +28,21 @@ public class ECFOrganizationalResult {
 		this.competencyResults.add(competencyResult);
 	}
 
-	@Override
-	public String toString() {
-		return "ECFOrganizationalResult [competencyResults=" + competencyResults + "]";
+	public void setCompetenciesTypes(List<TypeUUIDAndName> competenciesTypes) {
+        this.competenciesTypes = competenciesTypes;
+    }
+
+    public void addCompetenciesType(TypeUUIDAndName competenciesTypesName) {
+        this.competenciesTypes.add(competenciesTypesName);
 	}
 	
-	
+	public List<TypeUUIDAndName> getCompetenciesTypes() {
+        return competenciesTypes;
+    }
+
+	@Override
+	public String toString() {
+		return "ECFOrganizationalResult [competenciesTypes=" + competenciesTypes + ", competencyResults="
+				+ competencyResults + "]";
+	}
 }

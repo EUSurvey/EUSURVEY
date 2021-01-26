@@ -93,13 +93,23 @@
 		<div id="chartsContainer"
 			class="col-xs-12 col-sm-12 col-md-9 col-lg-9 h-70">
 			<div class="inlineChart col-xs-12 col-sm-12 col-md-9 col-lg-9">
-				<canvas id="ecfMaxChart"></canvas>
+				<c:forEach var="competencyType"
+					items="${ecfOrganizationalResult.competenciesTypes}" varStatus="loop">
+					<div style="margin-top:20px">
+						<canvas id="ecfMaxChart_${competencyType.typeUUID}"></canvas>
+					</div>
+				</c:forEach>
 			</div>
 		</div>
 		<div id="chartsContainer2"
 			class="col-xs-12 col-sm-12 col-md-9 col-lg-9 h-70">
 			<div class="inlineChart col-xs-12 col-sm-12 col-md-9 col-lg-9">
-				<canvas id="ecfAverageChart"></canvas>
+				<c:forEach var="competencyType"
+					items="${ecfOrganizationalResult.competenciesTypes}" varStatus="loop">
+					<div style="margin-top:20px">
+						<canvas id="ecfAverageChart_${competencyType.typeUUID}"></canvas>
+					</div>
+				</c:forEach>
 			</div>
 		</div>
 	</div>

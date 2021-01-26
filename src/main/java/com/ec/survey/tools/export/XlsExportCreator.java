@@ -1924,7 +1924,7 @@ public class XlsExportCreator extends ExportCreator {
 		ECFProfileResult ecfProfileResult = this.ecfService.getECFProfileResult(survey, resultFilter);
 		
 		String exportSheetName = resources.getMessage("label.ECF.Results2", null,
-				"Profile Assessment Results and Gaps", locale);
+				"Profile assessment results and gaps", locale);
 		safeName = WorkbookUtil.createSafeSheetName(exportSheetName);
 		sheet = wb.createSheet(safeName);
 		sheets.add(sheet);
@@ -1997,7 +1997,7 @@ public class XlsExportCreator extends ExportCreator {
 		ECFOrganizationalResult organizationalResult = this.ecfService.getECFOrganizationalResult(survey);
 		
 		String exportSheetName = resources.getMessage("label.ECF.Results3", null,
-				"Average and Maximum score for all profiles", locale);
+				"Average and maximum score for all profiles", locale);
 		safeName = WorkbookUtil.createSafeSheetName(exportSheetName);
 		sheet = wb.createSheet(safeName);
 		sheets.add(sheet);
