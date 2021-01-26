@@ -2263,6 +2263,12 @@ public class RunnerController extends BasicController {
 					}
 				}
 			}
+			
+			//this can happen if a delphi survey is turned into a standard survey or the delphi extension is disabled
+			if (element.isDelphiElement() && !survey.getIsDelphi())
+			{
+				((Question)element).setIsDelphiQuestion(false);
+			}
 		}
 
 		for (Element element : result) {
