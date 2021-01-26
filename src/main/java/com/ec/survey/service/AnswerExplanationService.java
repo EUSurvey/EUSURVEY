@@ -256,7 +256,7 @@ public class AnswerExplanationService extends BasicService {
 		session.delete(comment);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<AnswerComment> loadComments(int answerSetId, String questionUid) {
 		final Session session = sessionFactory.getCurrentSession();
 
@@ -313,7 +313,7 @@ public class AnswerExplanationService extends BasicService {
 		return result;
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public String getDiscussion(int answerSetId, String questionUid, boolean useHtml, Map<String, String> usersByUid) {
 		List<AnswerComment> comments = loadComments(answerSetId, questionUid);
 		StringBuilder s = new StringBuilder();
@@ -335,12 +335,30 @@ public class AnswerExplanationService extends BasicService {
 				String userPrefix = usersByUid.get(comment.getUniqueCode()) + ": ";
 
 				if (useHtml) {
+					s.append("<div class='");
 					if (first) {
-						s.append("<div class='comment'>").append(userPrefix).append(comment.getText()).append("</div>");
+						s.append("comment");
 						first = false;
 					} else {
-						s.append("<div class='reply'>").append(userPrefix).append(comment.getText()).append("</div>");
+						s.append("reply");
 					}
+					s.append("' data-id='")
+							.append(comment.getId())
+							.append("' data-unique-code='")
+							.append(comment.getUniqueCode())
+							.append("'>")
+							.append("<span>")
+							.append(userPrefix)
+							.append(comment.getText())
+							.append("</span>");
+					if (!comment.getText().equals(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
+						s.append("<a onclick='editDelphiComment(this)'>Edit</a>");
+					}
+					if (!(comment.getText().equals(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT))
+							|| (comment.getText().equals(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT) && list.size() == 1)) {
+						s.append("<a onclick='deleteDelphiComment(this)'>Delete</a>");
+					}
+					s.append("</div>");
 				} else {
 					if (first) {
 						s.append(userPrefix).append(comment.getText());
