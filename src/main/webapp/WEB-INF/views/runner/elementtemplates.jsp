@@ -1242,6 +1242,11 @@
 				</div>
 		
 				<div class="delphiupdatemessage"></div>
+				<div class="delphilink" style="display: none">
+					${form.getMessage("info.delphilink")}<br />
+					<div class="delphilinkurl"></div>
+					<a onclick="$('#ask-email-dialog').modal('show')" class="btn btn-default">${form.getMessage("label.SendLinkAsEmail")}</a>		
+				</div>
 			</div>
 		</div>
 		
@@ -1253,5 +1258,25 @@
 		<!-- /ko -->
 	</div>
 
+</div>
+
+<div class="modal" id="ask-email-dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+   	<div class="modal-content">
+	<div class="modal-body">
+		<p style="margin-bottom: 10px">
+			${form.getMessage("info.delphilinkemail")}
+		</p>	
+		<input class="form-control" type="text" maxlength="255" name="delphiemail" id="delphiemail" />
+		<span id="ask-delphi-email-dialog-error" class="validation-error-keep hideme">
+			${form.getMessage("message.ProvideEmail")}
+		</span>
+	</div>
+	<div class="modal-footer">
+		<a class="btn btn-primary" onclick="sendDelphiMailLink()">${form.getMessage("label.Send")}</a>	
+		<a class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>	
+	</div>
+	</div>
+	</div>
 </div>
 

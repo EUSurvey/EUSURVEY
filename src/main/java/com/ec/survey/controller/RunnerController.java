@@ -2351,7 +2351,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@PostMapping(value = "/delphiUpdate")
-	public ResponseEntity<String> delphiCreateOrUpdateExplanation(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<DelphiUpdateResult> delphiCreateOrUpdateExplanation(HttpServletRequest request, Locale locale) {
 		try {
 					
 			final String surveyId = request.getParameter("surveyId");
@@ -2400,16 +2400,22 @@ public class RunnerController extends BasicController {
 					locale, null, request, draft);
 			
 			if (!validation) {
-				return new ResponseEntity<>(resources.getMessage("error.CheckValidation", null, locale), HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(new DelphiUpdateResult(resources.getMessage("error.CheckValidation", null, locale)), HttpStatus.BAD_REQUEST);
 			}
 
 			saveAnswerSet(answerSet, fileDir, null, -1);
 			
-			return new ResponseEntity<>(resources.getMessage("message.ChangesSaved", null, locale), HttpStatus.OK);
+			DelphiUpdateResult updateResult = new DelphiUpdateResult(resources.getMessage("message.ChangesSaved", null, locale));
+			updateResult.setLink(serverPrefix + "editcontribution/" + answerSet.getUniqueCode());
+			if (survey.getSecurity().startsWith("open")) {
+				updateResult.setOpen(true);
+			}
+			
+			return new ResponseEntity<>(updateResult, HttpStatus.OK);
 
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>(resources.getMessage("error.DelphiCreateOrUpdate", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new DelphiUpdateResult(resources.getMessage("error.DelphiCreateOrUpdate", null, locale)), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -3230,6 +3236,49 @@ public class RunnerController extends BasicController {
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@PostMapping(value = "/sendDelphiLink")
+	public ResponseEntity<String> sendDelphiLink(HttpServletRequest request, Locale locale) {
+		try {
+			final String uniqueCode = request.getParameter("uniqueCode");
+			if (uniqueCode == null || uniqueCode.isEmpty()) {
+				return new ResponseEntity<>("Invalid Code", HttpStatus.BAD_REQUEST);
+			}
+			
+			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+			String email = parameters.get(Constants.EMAIL)[0];
+			String link = serverPrefix + "editcontribution/" + uniqueCode;
+			
+			AnswerSet answerSet = answerService.get(uniqueCode);
+		
+			if (email == null || answerSet == null) {
+				return new ResponseEntity<>("Invalid Code", HttpStatus.BAD_REQUEST);
+			}
+
+			String body = "Dear EUSurvey user,<br /><br />Your contribution to the survey '<b>" + answerSet.getSurvey().cleanTitle()
+					+ "</b>' has been saved. To open the contribution again, please follow this link:<br /><br />";
+			body += "<a href=\"" + link + "\">" + link + "</a><br /><br />Your EUSurvey team";
+
+			try {
+				InputStream inputStream = servletContext
+						.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",
+						serverPrefix);
+
+				mailService.SendHtmlMail(email, sender, sender,
+						resources.getMessage("message.mail.linkSubject", null, new Locale("EN")), text, null);
+			} catch (Exception e) {
+				logger.error("Problem during sending the draft link. To:" + email + " Link:" + link, e);
+				return new ResponseEntity<>(resources.getMessage("message.mail.failMailLinkDraft", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
+			}		
+
+			return new ResponseEntity<>(resources.getMessage("message.mail.successMailLinkDraft", null, locale), HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(resources.getMessage("message.mail.failMailLinkDraft", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

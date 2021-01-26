@@ -1258,9 +1258,21 @@ legend {
 	float: right;
 }
 
-.delphiupdatemessage {
+.delphiupdatemessage, .delphilink {
 	margin-left: 20px;
 	margin-top: 10px;
+}
+
+.delphilink {
+    background-color: #ecebeb;
+    padding: 10px;
+    border: 1px solid #ccc;
+    color: #555;
+}
+
+.delphilinkurl {
+	margin-top: 7px;
+	margin-bottom: 7px;
 }
 
 .delphi-comment-add__form textarea,
