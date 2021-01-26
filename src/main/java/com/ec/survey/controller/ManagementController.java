@@ -3039,7 +3039,11 @@ public class ManagementController extends BasicController {
 
 		// this is for security (prevent xss attack)
 		if (!resultType.equalsIgnoreCase("content") && !resultType.equalsIgnoreCase("charts")
-				&& !resultType.equalsIgnoreCase("statistics")) {
+				&& !resultType.equalsIgnoreCase("statistics") 
+				&& !resultType.equalsIgnoreCase("ecf")
+				&& !resultType.equalsIgnoreCase("ecf2")
+				&& !resultType.equalsIgnoreCase("ecf3")
+				) {
 			resultType = "content";
 		}
 

@@ -500,12 +500,10 @@
 		}
 		
 		function showStatistics() {
-			console.log("showStatistics()");
 			$("#results-statistics-link").addClass("btn-primary");
 			$("#results-statistics").removeClass('hidden');
 			$("#statistics-export-buttons").removeClass('hidden');
 			
-			// Strange?
 			$("#results-charts").addClass('hidden');
 			$("#charts-export-buttons").addClass('hidden');
 		}
