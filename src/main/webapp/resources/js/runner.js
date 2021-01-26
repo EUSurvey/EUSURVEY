@@ -616,7 +616,7 @@ function selectPage(val) {
 					//ok
 					if (i == val-page-1)
 					{
-						updateNonDelphiQuestions(page);
+						updateQuestionsOnNavigation(page);
 						$(".single-page").hide();		
 						page = val;		
 						$("#page" + page).show();
@@ -630,7 +630,7 @@ function selectPage(val) {
 				} else {
 					if (i > 0)
 					{
-						updateNonDelphiQuestions(page);
+						updateQuestionsOnNavigation(page);
 						$(".single-page").hide();		
 						page = page + i;		
 						$("#page" + page).show();
@@ -647,7 +647,7 @@ function selectPage(val) {
 			}			
 		} else {
 			if (!validate || !validatedPerPage || $("#hfsubmit").val() != 'true' || validateInput($("#page" + page))) {
-				updateNonDelphiQuestions(page);
+				updateQuestionsOnNavigation(page);
 				$(".single-page").hide();		
 				page = val;		
 				$("#page" + page).show();

@@ -423,20 +423,19 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	$(container).find(".sliderbox").each(function () {
 		initSlider(this, foreditor, viewModel);
 	});
-	
-	$(container).find('.explanation-editor').each(function(){
+
+	$(container).find('.explanation-editor').each(function () {
 		$(this).tinymce(explanationEditorConfig);
 	});
-	
-	if (isdelphi && !foreditor && !forskin) {
+
+	if (isdelphi && !foreditor && !forskin && viewModel.isDelphiQuestion()) {
 		modelsForDelphiQuestions[viewModel.uniqueId()] = viewModel;
-		
 		var surveyElement = $(container).closest(".survey-element");
 		if (surveyElement) {
 			loadGraphData(surveyElement);
 			loadTableData($(surveyElement).attr("data-uid"), viewModel);
-			
-			$(surveyElement).find(".likert-div.median").each(function(){
+
+			$(surveyElement).find(".likert-div.median").each(function () {
 				loadMedianData(surveyElement, viewModel);
 			});
 		}
@@ -909,7 +908,6 @@ function hideCommentAndReplyForms() {
 }
 
 function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, viewModel) {
-
 	const orderBy = viewModel.delphiTableOrder();
 	const offset = viewModel.delphiTableOffset();
 	const limit = viewModel.delphiTableLimit();
@@ -1071,9 +1069,8 @@ Object.freeze(DELPHI_UPDATE_TYPE);
 
 let currentDelphiUpdateType;
 let currentDelphiUpdateContainer;
-let currentDelphiUpdateDelphiQuestions;
 
-function delphiUpdate(div, delphiquestions) {
+function delphiUpdate(div) {
 
 	const result = validateInput(div);
 	const message = $(div).find(".delphiupdatemessage").first();
@@ -1081,8 +1078,6 @@ function delphiUpdate(div, delphiquestions) {
 	if (result == false) {
 		return;
 	}
-	
-	currentDelphiUpdateDelphiQuestions = delphiquestions;
 
 	if (isOneAnswerEmptyWhileItsExplanationIsNot(div)) {
 		currentDelphiUpdateType = DELPHI_UPDATE_TYPE.ONE_QUESTION;
@@ -1129,65 +1124,74 @@ function delphiUpdateContinued(div, successCallback) {
 	$(form).append('<input type="hidden" name="questionId" value="' + id + '" />');
 	var uid = $(div).attr("data-uid");
 	$(form).append('<input type="hidden" name="questionUid" value="' + uid + '" />');
-		
-	$(form).append('<input type="hidden" name="delphiQuestions" value="' + currentDelphiUpdateDelphiQuestions + '" />');
-	
+
 	//this is a workaround for a bug in jquery
 	// see https://bugs.jquery.com/ticket/1294
-	$(form).find("select").each(function(){
-		var id = $(this).attr("id");		
+	$(form).find("select").each(function () {
+		var id = $(this).attr("id");
 		$(this).val($(div).find("#" + id).first().val());
 	});
 
 	var data = $(form).serialize();
-	
-	$.ajax({type: "POST",
+
+	$.ajax({
+		type: "POST",
 		url: contextpath + "/runner/delphiUpdate",
 		data: data,
-		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
-		error: function(data)
-	    {
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: function (data) {
 			$(message).html(data.responseText).addClass("update-error");
 			$(loader).hide();
-	    },
-		success: function(data)
-	    {
+		},
+		success: function (data) {
 			$(message).html(data).addClass("info");
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
 			$(loader).hide();
-			
-			if (currentDelphiUpdateDelphiQuestions)
-			{
-				loadGraphData(div);
-				
-				var viewModel = modelsForDelphiQuestions[uid];
-				loadTableData($(div).attr("data-uid"), viewModel);
-			}			
-			
-			if (typeof successCallback === "function") successCallback();
-			
-			loadMedianData(div, viewModel)
-			
+
+			if ($(div).hasClass("single-page")) {
+				$(div).find(".survey-element").not(".sectionitem").each(function () {
+					updateDelphiElement(this, successCallback);
+				})
+			} else {
+				updateDelphiElement(div, successCallback);
+			}
+
 			delphiUpdateFinished = true;
-	    }
+		}
 	});
 }
 
-function updateNonDelphiQuestions(page)
-{
-	if (isdelphi)
-	{
+function updateDelphiElement(element, successCallback) {
+	var uid = $(element).attr("data-uid");
+	if (!uid) {
+		return;
+	}
+
+	var viewModel = modelsForDelphiQuestions[uid];
+	if (!viewModel) {
+		return;
+	}
+
+	loadGraphData(element);
+	loadMedianData(element, viewModel)
+	loadTableData(uid, viewModel);
+
+	if (typeof successCallback === "function") {
+		successCallback()
+	}
+}
+
+function updateQuestionsOnNavigation(page) {
+	if (isdelphi) {
 		var section = $("#page" + page);
-		var found = false;
-		$(section).find(".survey-element").each(function(){
-			if (!$(this).hasClass("delphi") && !$(this).hasClass("sectionitem")) {
-				found = true;
-				return;
-			}
+		var found = $(section).find(".survey-element").is(function () {
+			return $(this).hasClass("sectionitem") === false;
 		});
-		
+
 		if (found) {
-			delphiUpdate(section, false);
+			delphiUpdate(section);
 		}
 	}
 }

@@ -475,15 +475,15 @@ public class RunnerController extends BasicController {
 			}
 
 			User user = sessionService.getCurrentUser(request, false, false);
-			
+
 			if (!survey.getIsDelphi()) {
 				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 				if (err != null)
 					return err;
 			}
-			
-			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user, false);			
-			
+
+			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);
+
 			if (survey != null) {
 				survey = surveyService.getSurvey(survey.getId(), lang);
 			}
@@ -1528,7 +1528,7 @@ public class RunnerController extends BasicController {
 					draft.setUniqueId(uid);
 
 					answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user,
-							fileService, false);
+							fileService);
 					answerSet.setIsDraft(true);
 					draft.setAnswerSet(answerSet);
 				}
@@ -1786,16 +1786,16 @@ public class RunnerController extends BasicController {
 			if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
 				lang = request.getParameter("language.code");
 			}
-			
+
 			User user = sessionService.getCurrentUser(request, false, false);
 			if (!origsurvey.getIsDelphi()) {
 				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 				if (err != null)
 					return err;
 			}
-			
-			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, origsurvey, uniqueCode, false, lang, user, false);
-		
+
+			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, origsurvey, uniqueCode, false, lang, user);
+
 			String newlang = request.getParameter("newlang");
 			String newlangpost = request.getParameter("newlangpost");
 			String newcss = request.getParameter("newcss");
@@ -2363,19 +2363,17 @@ public class RunnerController extends BasicController {
 			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
 			final String invitationId = request.getParameter("invitation");
 			final User user = sessionService.getCurrentUser(request, false, false);
-			
-			final boolean delphiQuestions = "true".equalsIgnoreCase(request.getParameter("delphiQuestions"));
-			
+
 			Element element = survey.getElementsByUniqueId().get(questionUid);
 
 			AnswerSet answerSet;
 			final AnswerSet existingAnswerSet = answerService.get(answerSetUniqueCode);
 			if (existingAnswerSet == null) {
 				//save
-				answerSet = SurveyHelper.parseAnswerSet(request, survey, answerSetUniqueCode, false, languageCode, user, fileService, !delphiQuestions);
+				answerSet = SurveyHelper.parseAnswerSet(request, survey, answerSetUniqueCode, false, languageCode, user, fileService);
 			} else {
 				//update
-				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, answerSetUniqueCode, existingAnswerSet, languageCode, user, fileService, element, !delphiQuestions);
+				answerSet = SurveyHelper.parseAndMergeDelphiAnswerSet(request, survey, answerSetUniqueCode, existingAnswerSet, languageCode, user, fileService, element);
 			}
 			
 			if (invitationId != null && invitationId.length() > 0) {
