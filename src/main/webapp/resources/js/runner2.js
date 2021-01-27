@@ -920,10 +920,14 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 		url: contextpath + "/runner/delphiTable",
 		data: data,
 		beforeSend: function (xhr) {
+			viewModel.delphiTableLoading(true);
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
 		error: function (data) {
 			showError(data.responseText);
+		},
+		complete: function () {
+			viewModel.delphiTableLoading(false);
 		},
 		success: function (result, textStatus) {
 			viewModel.delphiTableEntries.removeAll();

@@ -4,6 +4,9 @@
 
 <!-- ko if: delphiTableEntries().length > 0 -->
 <div class="delphi-table">
+	<div class="loader" data-bind="style: { display: delphiTableLoading() ? 'flex' : 'none' }">
+		<img src="${contextpath}/resources/images/ajax-loader.gif">
+	</div>
 	<table class="table table-condensed table-striped table-bordered">
 		<thead>
 		<tr class="area-header">
@@ -11,7 +14,8 @@
 			<th style="min-width:150px">
 				<span>${form.getMessage("label.DelphiAnswersTableUpdate")}</span>
 				<div style="float: right">
-					<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" onclick="sortDelphiTable(this,'UpdateAsc');" class="">
+					<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />"
+					   onclick="sortDelphiTable(this,'UpdateAsc');" class="">
 						<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
 					</a>
 					<a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sortDelphiTable(this,'UpdateDesc');" class="">
@@ -154,23 +158,24 @@
 		<!-- /ko -->
 		</tbody>
 	</table>
-</div>
-<div style="text-align: center; margin-bottom: 10px;">
-	<a data-bind="attr: {style: delphiTableOffset() > 0 ? '' : 'color: #ccc; cursor: default;'}" onclick="firstDelphiTablePage(this)">
-		<span class="glyphicon glyphicon-step-backward"></span>
-	</a>
-	<a data-bind="attr: {style: delphiTableOffset() > 0 ? '' : 'color: #ccc; cursor: default;'}" onclick="previousDelphiTablePage(this)">
-		<span class="glyphicon glyphicon-chevron-left"></span>
-	</a>
-	<span data-bind="html: delphiTableOffset() + 1"></span>&nbsp;
-	<spring:message code="label.to" />&nbsp;
-	<span data-bind="html: Math.min(delphiTableOffset() + delphiTableLimit(), delphiTableTotalEntries())"></span>
-	<a data-bind="attr: {style: (delphiTableOffset() + delphiTableLimit()) >= delphiTableTotalEntries() ? 'color: #ccc; cursor: default;' : ''}" onclick="nextDelphiTablePage(this)">
-		<span class="glyphicon glyphicon-chevron-right"></span>
-	</a>
-	<a data-bind="attr: {style: (delphiTableOffset() + delphiTableLimit()) >= delphiTableTotalEntries() ? 'color: #ccc; cursor: default;' : ''}" onclick="lastDelphiTablePage(this)">
-		<span class="glyphicon glyphicon-step-forward"></span>
-	</a>
+
+	<div style="text-align: center; margin-bottom: 10px;">
+		<a data-bind="attr: {style: delphiTableOffset() > 0 ? '' : 'color: #ccc; cursor: default;'}" onclick="firstDelphiTablePage(this)">
+			<span class="glyphicon glyphicon-step-backward"></span>
+		</a>
+		<a data-bind="attr: {style: delphiTableOffset() > 0 ? '' : 'color: #ccc; cursor: default;'}" onclick="previousDelphiTablePage(this)">
+			<span class="glyphicon glyphicon-chevron-left"></span>
+		</a>
+		<span data-bind="html: delphiTableOffset() + 1"></span>&nbsp;
+		<spring:message code="label.to" />&nbsp;
+		<span data-bind="html: Math.min(delphiTableOffset() + delphiTableLimit(), delphiTableTotalEntries())"></span>
+		<a data-bind="attr: {style: (delphiTableOffset() + delphiTableLimit()) >= delphiTableTotalEntries() ? 'color: #ccc; cursor: default;' : ''}" onclick="nextDelphiTablePage(this)">
+			<span class="glyphicon glyphicon-chevron-right"></span>
+		</a>
+		<a data-bind="attr: {style: (delphiTableOffset() + delphiTableLimit()) >= delphiTableTotalEntries() ? 'color: #ccc; cursor: default;' : ''}" onclick="lastDelphiTablePage(this)">
+			<span class="glyphicon glyphicon-step-forward"></span>
+		</a>
+	</div>
 </div>
 <!-- /ko -->
 
