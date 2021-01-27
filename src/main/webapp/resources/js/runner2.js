@@ -1299,17 +1299,6 @@ function saveChangedDelphiComment(button, isReply, errorCallback, successCallbac
 	});
 }
 
-function deleteDelphiCommentFromRunner(button, isReply) {
-
-	const errorCallback = () => { showError("error"); }
-	const successCallback = () => {
-		const questionUid = $(button).closest(".survey-element").attr("data-uid");
-		const viewModel = modelsForDelphiQuestions[questionUid];
-		loadTableData(questionUid, viewModel);
-	}
-	deleteDelphiComment(button, isReply, errorCallback, successCallback);
-}
-
 function deleteDelphiComment(button, isReply, errorCallback, successCallback) {
 
 	const loader = $(button).parent().parent().find(".delphi-comment__loader");

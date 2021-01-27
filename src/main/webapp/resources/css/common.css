@@ -1404,6 +1404,19 @@ div.medianpa {
 	margin-left: 20px;
 }
 
+.delete-confirmation-dialog {
+	display: none;
+}
+
+.no-close .ui-dialog-titlebar-close {
+	display: none;
+}
+
+.ui-dialog {
+	position: fixed;
+	z-index: 10000;
+}
+
 .loader {
 	align-items: center;
 	background-color: rgba(255, 255, 255, 0.75);
