@@ -551,13 +551,19 @@ public class StatisticsCreator implements Runnable {
 		}
 	}
 
+	static public class NumberQuestionStats {
+		public int numberVotes = 0;
+		public boolean questionFound = false;
+	}
+
 	@Transactional
-	public int getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question, Map<String, Integer> map, Boolean answerFound) throws TooManyFiltersException {
+	public NumberQuestionStats getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question, Map<String, Integer> map) throws TooManyFiltersException {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
 		Map<Integer, String> uniqueIdsById = SurveyService.getUniqueIdsById(survey);
-		answerFound = false;
-		int numberOfAnswers = 0;
+		NumberQuestionStats numberQuestionStats = new NumberQuestionStats();
+		numberQuestionStats.questionFound = false;
+		numberQuestionStats.numberVotes = 0;
 
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
 		String sql = "SELECT a.VALUE, a.QUESTION_ID, a.QUESTION_UID, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
@@ -580,16 +586,25 @@ public class StatisticsCreator implements Runnable {
 		query.setFetchSize(Integer.MIN_VALUE);
 		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
 
-		while (results != null && results.next()) { // TODO count number of all commits, check is given quesiton id is in select result
+		logger.info("BRS: numq.getId()="+question.getId());
+		while (results != null && results.next()) {
 			Object[] a = results.get();
 			String value = (String) a[0];
+			Integer qid = ConversionTools.getValue(a[1]);
+			String quid = (String) a[2];
+			Integer asId = ConversionTools.getValue(a[3]);
+
 			Integer count = map.getOrDefault(value, 0);
 			map.put(value, count+1);
-			numberOfAnswers += 1;
-			//if (answer of participant found) answerFound = true;
+			numberQuestionStats.numberVotes += 1;
+			logger.info("BRS: qid="+qid);
+			if (question.getId().intValue() == qid.intValue()) {
+				numberQuestionStats.questionFound = true;
+			}
 		}
 		results.close();
-		return numberOfAnswers;
+		logger.info("BRS: questionIdFound="+numberQuestionStats.questionFound);
+		return numberQuestionStats;
 	}
 
 	@Transactional

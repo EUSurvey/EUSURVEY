@@ -2442,12 +2442,14 @@ public class RunnerController extends BasicController {
 			if (question instanceof NumberQuestion) {
 				NumberQuestion numq = (NumberQuestion) question;
 				Map<String, Integer> valuesMagnitude = new HashMap<>();
-				Boolean answerFound = false;
-				int numberOfAnswers = creator.getAnswers4NumberQuestionStatistics(survey, numq, valuesMagnitude, answerFound);
-				if (0 == numberOfAnswers) {
+				logger.info("BRS: "+numq.getTitle());
+				StatisticsCreator.NumberQuestionStats numberQuestionStats = creator.getAnswers4NumberQuestionStatistics(survey, numq, valuesMagnitude);
+				logger.info("BRS stats: "+numberQuestionStats.numberVotes+" "+numberQuestionStats.questionFound);
+				if (0 == numberQuestionStats.numberVotes || !numberQuestionStats.questionFound) {
+					//participant may only see answers if he answered before
 					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 				}
-				return handleDelphiNumberQuestion(survey, numq, valuesMagnitude, numberOfAnswers);
+				return handleDelphiNumberQuestion(survey, numq, valuesMagnitude, numberQuestionStats.numberVotes);
 			}
 
 			Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
@@ -2556,11 +2558,6 @@ public class RunnerController extends BasicController {
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiNumberQuestion(Survey survey, NumberQuestion question, Map<String, Integer> valuesMagnitude, int numberOfAnswers) throws Exception {
-//		if (!numberOfAnswersMap.containsKey(question.getId()) || numberOfAnswersMap.get(question.getId()) == 0) {
-//			//participant may only see answers if he answered before
-//			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-//		}
-//
 		if (numberOfAnswers < survey.getMinNumberDelphiStatistics()) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
