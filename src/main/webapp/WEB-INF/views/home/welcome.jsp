@@ -197,12 +197,6 @@
 					
 					<div id="firstSeparator" class="largeSeparator" style="display:inline-block; margin-top:30px;"></div>
 					
-					<div id="elearningPlaceHolder" style="text-align:center">
-				<a id="linkElearning" class="elearningWelcomeLink" href="${contextpath}/resources/documents/elearning/story.html" target="_blank"><spring:message code="label.elearningTitle" arguments="EUSurvey"></spring:message></a>
-					</div>
-					
-					<div class="largeSeparator"></div>
-					
 					<div id="welcomeContent">
 						<h1 style="text-align:center; margin-bottom:35px;"><spring:message code="home.create2" /></h1>
 				<img src="${contextpath}/resources/images/icons/128/review-128-blue.png" alt="icon review" style="float:left; width:100px; margin-left:100px;margin-top:30px;"/>	
