@@ -1879,4 +1879,18 @@ public class FileService extends BasicService {
 		return deletecounter;
 	}
 
+	public void deleteExplanationFilesFromDisk(final String surveyUid, final String answerSetUniqueCode,
+			final int questionId) {
+
+		final java.io.File rootFolder = fileService.getSurveyExplanationUploadsFolder(surveyUid, false);
+		final java.io.File directory = new java.io.File(rootFolder.getPath() + Constants.PATH_DELIMITER
+				+ answerSetUniqueCode + Constants.PATH_DELIMITER + questionId);
+		try {
+			FileUtils.deleteDirectory(directory);
+		} catch (IOException e) {
+			logger.error("The directory with its content could not be deleted: " + directory.getAbsolutePath());
+			logger.error(e);
+		}
+	}
+
 }

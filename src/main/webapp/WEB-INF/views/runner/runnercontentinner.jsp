@@ -3,7 +3,7 @@
 <%@ page import="com.ec.survey.model.Form" %>
 <%@ page trimDirectiveWhitespaces="true" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>	
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
@@ -12,8 +12,24 @@
 	<input type="hidden" id="newlangpost" name="newlangpost" value="false" />
 	<input type="hidden" id="newcss" name="newcss" value="" />
 	<input type="hidden" id="newviewpost" name="newviewpost" value="false" />
-	<input type="hidden" id="wcagMode" name="wcagMode" value="${form.wcagCompliance}" />	
-	<input type="hidden" id="multipaging" value="${form.survey.multiPaging}" />			
+	<input type="hidden" id="wcagMode" name="wcagMode" value="${form.wcagCompliance}" />
+	<input type="hidden" id="multipaging" value="${form.survey.multiPaging}" />
+
+<c:if test="${form.survey.isDelphi}">
+	<div class="modal" id="delphi-chart-modal" data-backdrop="static">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-body">
+					<h1><spring:message code="label.Statistics" /></h1>
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</c:if>
+
 		<c:choose>
 				<c:when test="${publication != null}">
 					<div style="width: 220px; max-width: 220px">
@@ -81,30 +97,26 @@
 							<div style="float:left; width:90">							
 								<ul class="nav nav-pills">
 								<c:forEach var="page" items="${form.getPages()}" varStatus="rowCounter">
-									<c:choose>
-										
-								 		<c:when test="${rowCounter.index == 0}">
-											<li data-id="${page[0].id}" id="tab${rowCounter.index}" class="pagebutton active" >
-										</c:when>
-										<c:otherwise>
-											<li data-id="${page[0].id}" id="tab${rowCounter.index}" class="pagebutton">
-										</c:otherwise>
-									</c:choose>
- 										<a href="#page${rowCounter.index}" style="cursor:pointer;" onclick="selectPage(${rowCounter.index});" >
- 											<c:choose>
- 												<c:when test="${page[0].getType() == 'Section' && page[0].tabTitle != null && page[0].tabTitle.length() > 0}">
- 													${page[0].tabTitle}
- 												</c:when>
- 												<c:when test="${page[0].getType() == 'Section'}">
- 													<esapi:encodeForHTML>${page[0].shortname}</esapi:encodeForHTML>
- 												</c:when>
- 												<c:otherwise>
- 													${form.getMessage("label.Start")}
- 												</c:otherwise>
- 											</c:choose>	 										
- 										</a>
- 										</li>
-									</span>
+									<li data-id="${page[0].id}" id="tab${rowCounter.index}"
+										class="pagebutton ${rowCounter.index == 0 ? "active" : ""}"
+										data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
+										title="${form.survey.isDelphi ? form.getMessage("label.SwitchPageDelphi") : ""}">
+
+										<a href="#page${rowCounter.index}" style="cursor:pointer;"
+										   onclick="selectPage(${rowCounter.index});">
+											<c:choose>
+												<c:when test="${page[0].getType() == 'Section' && page[0].tabTitle != null && page[0].tabTitle.length() > 0}">
+													${page[0].tabTitle}
+												</c:when>
+												<c:when test="${page[0].getType() == 'Section'}">
+													<esapi:encodeForHTML>${page[0].shortname}</esapi:encodeForHTML>
+												</c:when>
+												<c:otherwise>
+													${form.getMessage("label.Start")}
+												</c:otherwise>
+											</c:choose>
+										</a>
+									</li>
 								</c:forEach>
 								</ul>
 							</div>							
@@ -126,142 +138,194 @@
 							
 							<c:forEach var="element" items="${page}">
 								<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(element.id)}">
-								 <fieldset>							
-								  <c:choose>
-								   <c:when test="${form.survey.isDelphi && element.isDelphiElement()}">
-								    	<div class="elementwrapper delphi">
-								    </c:when>
-								    <c:when test="${element.hasPDFWidth}">
-								    	<div class="elementwrapper elem_${element.id}">
-								    </c:when>
-								    <c:otherwise>
-										 <div class="elementwrapper">
-								    </c:otherwise>
-								  </c:choose>								  
-								  	  <c:choose>
-										<c:when test="${element.isDummy() && element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-											<div class="emptyelement survey-element untriggered 1" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="margin-top: 5px; display: none;">
-										</c:when>
-										<c:when test="${element.getType() == 'Matrix' && element.getAllQuestionsDependent() && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-											<div class="emptyelement survey-element untriggered 2" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="display: none;">
-										</c:when>
-										<c:when test="${element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-											<div class="emptyelement survey-element untriggered 3" id="${element.id}" data-id="${element.id}" data-triggers="${element.triggers}" data-uid="${element.uniqueId}" style="display: none;">
-										</c:when>
-										<c:when test="${element.isDependent}">
-											<div class="emptyelement survey-element 3b" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}">
-										</c:when>
-										<c:when test="${element.isDummy()}">
-											<div class="emptyelement survey-element 4" data-id="${element.id}" data-uid="${element.uniqueId}" style="margin-top: 5px;">
-										</c:when>
-										<c:otherwise>
-										    <div class="emptyelement survey-element 5" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}">
-										</c:otherwise>
-									</c:choose>
-										<a class="survey-element-anchor" id="E${element.id}"></a>
-								  		<img src="${contextpath}/resources/images/ajax-loader.gif" />									
-									</div>	
-									</div>								
+									<fieldset>
+										<c:choose>
+										<c:when test="${form.survey.isDelphi && element.isDelphiElement()}">
+										<div class="elementwrapper delphi">
+											</c:when>
+											<c:when test="${element.hasPDFWidth}">
+											<div class="elementwrapper elem_${element.id}">
+												</c:when>
+												<c:otherwise>
+												<div class="elementwrapper">
+													</c:otherwise>
+													</c:choose>
+													<c:choose>
+													<c:when test="${element.isDummy() && element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
+													<div class="emptyelement survey-element untriggered 1"
+														 data-id="${element.id}" data-uid="${element.uniqueId}"
+														 data-triggers="${element.triggers}"
+														 style="margin-top: 5px; display: none;">
+														</c:when>
+														<c:when test="${element.getType() == 'Matrix' && element.getAllQuestionsDependent() && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
+														<div class="emptyelement survey-element untriggered 2"
+															 id="${element.id}" data-id="${element.id}"
+															 data-uid="${element.uniqueId}"
+															 data-triggers="${element.triggers}" style="display: none;">
+															</c:when>
+															<c:when test="${element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
+															<div class="emptyelement survey-element untriggered 3"
+																 id="${element.id}" data-id="${element.id}"
+																 data-triggers="${element.triggers}"
+																 data-uid="${element.uniqueId}"
+																 style="display: none;">
+																</c:when>
+																<c:when test="${element.isDependent}">
+																<div class="emptyelement survey-element 3b"
+																	 id="${element.id}"
+																	 data-id="${element.id}"
+																	 data-uid="${element.uniqueId}"
+																	 data-triggers="${element.triggers}">
+																	</c:when>
+																	<c:when test="${element.isDummy()}">
+																	<div class="emptyelement survey-element 4"
+																		 data-id="${element.id}"
+																		 data-uid="${element.uniqueId}"
+																		 style="margin-top: 5px;">
+																		</c:when>
+																		<c:otherwise>
+																		<div class="emptyelement survey-element 5"
+																			 id="${element.id}"
+																			 data-id="${element.id}"
+																			 data-uid="${element.uniqueId}">
+																			</c:otherwise>
+																			</c:choose>
+																			<a class="survey-element-anchor"
+																			   id="E${element.id}"></a>
+																			<img src="${contextpath}/resources/images/ajax-loader.gif"/>
+																		</div>
+																	</div>
 									</fieldset>
 								</c:if>
 							</c:forEach>
-						</div>						
-						
-					</c:forEach>
-					
-					<div class="hpdiv">
-						<label for="hp-7fk9s82jShfgak">${form.getMessage("info.leaveempty")}</label>
-						<textarea id="hp-7fk9s82jShfgak" name="hp-7fk9s82jShfgak" class="hp" autocomplete="false"></textarea>
- 					</div>
-					
-					<c:if test="${form.survey.captcha}">
-						<%@ include file="../captcha.jsp" %>					
-					</c:if>
-									
-				<c:if test="${submit == true}">
-					<div style="text-align: center; margin-top: 20px;">
-						<input type="button" id="btnPrevious" style="display: none;" value="${form.getMessage("label.Previous")}"  onclick="previousPage();" class="btn btn-default" />
-						<c:choose>
-							<c:when test="${dialogmode != null }">
-								<input type="button" id="btnSubmit" value="${form.getMessage("label.Save")}" onclick="validateInputAndSubmitRunner($('#runnerForm'));" class="btn btn-primary" />
-								<input type="button" id="btnSubmit2" value="${form.getMessage("label.Close")}" onclick="window.open('', '_self', '');window.close();" class="btn btn-default" />
-							</c:when>
-							<c:otherwise>
-								<input type="button" id="btnSubmit" value="${form.getMessage("label.Submit")}" onclick="validateInputAndSubmitRunner($('#runnerForm'));" class="btn btn-primary hidden" />
-							</c:otherwise>
-						</c:choose>
-						
-						<input type="button" id="btnNext" style="display: none;" value="${form.getMessage("label.Next")}"  onclick="nextPage();" class="btn btn-default btn-primary" />
-					
-						<c:if test="${responsive != null && mode != 'editcontribution' && dialogmode == null && form.survey.saveAsDraft}">
-							<input type="button" id="btnSaveDraftMobile" value="${form.getMessage("label.SaveAsDraft")}" onclick="saveDraft('${mode}');" class="btn btn-default hidden" style="margin-left: 10px" />
-							<c:if test="${form.answerSets.size() > 0}">
-	 							<div style="margin-top: 20px">
-	 								${form.getMessage("label.LastSavedOn")}<br />
-	 								<spring:eval expression="form.answerSets[0].updateDate" />
-		 						</div>
-							</c:if>	
-						</c:if>	
-					</div>		
-				</c:if>
-					
-				</div>
-				
-				<c:if test="${publication == null && responsive == null}">
-				<div class="right-area" style="z-index: 1; position: relative">
-					
-					<c:if test="${form.survey.logo != null && form.survey.logoInInfo}">
-						<img style="max-width: 100%; margin-top: 10px;" src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" />
-						<hr style="margin-top: 15px;" />
-					</c:if>			
-					
-					<c:if test='${runnermode == null  || form.survey.skin == null || !form.survey.skin.name.equals("New Official EC Skin")}'>
-					
-						<c:if test='${!form.survey.skin.name.equals("New Official EC Skin") && mode != "editcontribution"}'>
-					
-							<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Views")}</div>		
-														
-							<c:choose>
-								<c:when test="${readonlyMode != null && readonlyMode == true}">
-									<div id="normalcss" style="color: #ccc">
-										${form.getMessage("label.Standard")}&#160;
-										<a class="link visiblelink css-switch disabled" id="css-switch-disabled" style="color: #ccc">${form.getMessage("label.AccessibilityMode")}</a>						
+								</div>
+
+									</c:forEach>
+
+									<div class="hpdiv">
+										<label for="hp-7fk9s82jShfgak">${form.getMessage("info.leaveempty")}</label>
+										<textarea id="hp-7fk9s82jShfgak" name="hp-7fk9s82jShfgak" class="hp"
+												  autocomplete="false"></textarea>
 									</div>
-									
-									<div id="enhancedcss" class="hideme" style="color: #ccc">
-										<a class="link css-switch normal" id="css-switch-normal" style="color: #ccc">${form.getMessage("label.Standard")}</a>&#160;
-										${form.getMessage("label.AccessibilityMode")}						
-									</div>
-								</c:when>									
-								<c:otherwise>
-									<div id="normalcss">
-										${form.getMessage("label.Standard")}&#160;
-										<a class="link visiblelink css-switch disabled" id="css-switch-disabled"  onclick="switchCss('${mode}','wcag');">${form.getMessage("label.AccessibilityMode")}</a>						
-									</div>
-									
-									<div id="enhancedcss" class="hideme">
-										<a class="link css-switch normal" id="css-switch-normal"  onclick="switchCss('${mode}','standard');">${form.getMessage("label.Standard")}</a>&#160;
-										${form.getMessage("label.AccessibilityMode")}						
-									</div>
-								</c:otherwise>
-							</c:choose>
-							
-							<hr style="margin-top: 15px;" />
-						
-						</c:if>
-					
-						<c:if test='${form.getLanguages().size() != 0 && mode != "editcontribution"}'>		
+
+									<c:if test="${form.survey.captcha}">
+										<%@ include file="../captcha.jsp" %>
+									</c:if>
+
+									<c:if test="${submit == true}">
+										<div style="text-align: center; margin-top: 20px;">
+											<input type="button" id="btnPrevious" style="display: none;"
+												   value="${form.getMessage("label.Previous")}"
+												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
+												   title="${form.survey.isDelphi ? form.getMessage("label.PreviousPageDelphi") : ""}"
+												   onclick="previousPage();this.blur();" class="btn btn-default"/>
+											<c:choose>
+												<c:when test="${dialogmode != null }">
+													<input type="button" id="btnSubmit"
+														   value="${form.getMessage("label.Save")}"
+														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
+														   class="btn btn-primary"/>
+													<input type="button" id="btnSubmit2"
+														   value="${form.getMessage("label.Close")}"
+														   onclick="window.open('', '_self', '');window.close();"
+														   class="btn btn-default"/>
+												</c:when>
+												<c:otherwise>
+													<input type="button" id="btnSubmit"
+														   value="${form.getMessage("label.Submit")}"
+														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
+														   class="btn btn-primary hidden"/>
+												</c:otherwise>
+											</c:choose>
+
+											<input type="button" id="btnNext" style="display: none;"
+												   value="${form.getMessage("label.Next")}"
+												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
+												   title="${form.survey.isDelphi ? form.getMessage("label.NextPageDelphi") : ""}"
+												   onclick="nextPage();this.blur();"
+												   class="btn btn-default btn-primary"/>
+
+											<c:if test="${responsive != null && mode != 'editcontribution' && dialogmode == null && form.survey.saveAsDraft}">
+												<input type="button" id="btnSaveDraftMobile"
+													   value="${form.getMessage("label.SaveAsDraft")}"
+													   onclick="saveDraft('${mode}');" class="btn btn-default hidden"
+													   style="margin-left: 10px"/>
+												<c:if test="${form.answerSets.size() > 0}">
+													<div style="margin-top: 20px">
+															${form.getMessage("label.LastSavedOn")}<br/>
+														<spring:eval expression="form.answerSets[0].updateDate"/>
+													</div>
+												</c:if>
+											</c:if>
+										</div>
+									</c:if>
+
+								</div>
+
+						<c:if test="${publication == null && responsive == null}">
+						<div class="right-area" style="z-index: 1; position: relative">
+
+							<c:if test="${form.survey.logo != null && form.survey.logoInInfo}">
+								<img style="max-width: 100%; margin-top: 10px;"
+									 src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />"
+									 alt="logo"/>
+								<hr style="margin-top: 15px;"/>
+							</c:if>
+
+							<c:if test='${runnermode == null  || form.survey.skin == null || !form.survey.skin.name.equals("New Official EC Skin")}'>
+
+							<c:if test='${!form.survey.skin.name.equals("New Official EC Skin") && mode != "editcontribution"}'>
+
+								<div class="linkstitle"
+									 style="margin-bottom: 5px;">${form.getMessage("label.Views")}</div>
+
+								<c:choose>
+									<c:when test="${readonlyMode != null && readonlyMode == true}">
+										<div id="normalcss" style="color: #ccc">
+												${form.getMessage("label.Standard")}&#160;
+											<a class="link visiblelink css-switch disabled" id="css-switch-disabled"
+											   style="color: #ccc">${form.getMessage("label.AccessibilityMode")}</a>
+										</div>
+
+										<div id="enhancedcss" class="hideme" style="color: #ccc">
+											<a class="link css-switch normal" id="css-switch-normal"
+											   style="color: #ccc">${form.getMessage("label.Standard")}</a>&#160;
+												${form.getMessage("label.AccessibilityMode")}
+										</div>
+									</c:when>
+									<c:otherwise>
+										<div id="normalcss">
+												${form.getMessage("label.Standard")}&#160;
+											<a class="link visiblelink css-switch disabled" id="css-switch-disabled"
+											   onclick="switchCss('${mode}','wcag');">${form.getMessage("label.AccessibilityMode")}</a>
+										</div>
+
+										<div id="enhancedcss" class="hideme">
+											<a class="link css-switch normal" id="css-switch-normal"
+											   onclick="switchCss('${mode}','standard');">${form.getMessage("label.Standard")}</a>&#160;
+												${form.getMessage("label.AccessibilityMode")}
+										</div>
+									</c:otherwise>
+								</c:choose>
+
+								<hr style="margin-top: 15px;"/>
+
+							</c:if>
+
+							<c:if test='${form.getLanguages().size() != 0 && mode != "editcontribution"}'>
 							<label for="langSelectorRunner">
-								<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Languages")}</div>	
+								<div class="linkstitle"
+									 style="margin-bottom: 5px;">${form.getMessage("label.Languages")}</div>
 							</label>
-							
+
 							<c:choose>
-								<c:when test="${readonlyMode != null && readonlyMode == true}">
-									<select id="langSelectorRunner" name="langSelectorRunner" disabled="disabled">	
+							<c:when test="${readonlyMode != null && readonlyMode == true}">
+							<select id="langSelectorRunner" name="langSelectorRunner" disabled="disabled">
 								</c:when>
 								<c:otherwise>
-									<select id="langSelectorRunner" name="langSelectorRunner" onchange="changeLanguageSelectOption('${mode}')">	
-								</c:otherwise>
+								<select id="langSelectorRunner" name="langSelectorRunner"
+										onchange="changeLanguageSelectOption('${mode}')">
+									</c:otherwise>
 							</c:choose>
 							
 							<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}">
@@ -355,6 +419,20 @@
 			</c:if>
 			
 			<div style="clear: both"></div>
+
+			<div class="modal confirm-explanation-deletion-modal" data-backdrop="static">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content">
+						<div class="modal-body">
+							<spring:message code="info.ConfirmExplanationDeletion" />
+						</div>
+						<div class="modal-footer">
+							<a class="btn btn-default" onclick="confirmExplanationDeletion()"><spring:message code="label.Confirm" /></a>
+							<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+						</div>
+					</div>
+				</div>
+			</div>
 				
 			<script type="text/javascript" src="${contextpath}/resources/js/jquery.textarea-expander.js?version=<%@include file="../version.txt" %>"></script>
 			

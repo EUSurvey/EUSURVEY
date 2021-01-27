@@ -356,7 +356,13 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))");
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
-				getChoosePropertiesRow("Style", "RadioButton,SelectBox,LikertScale", false, false, $(e).find("input[name^='choicetype']").val() == 'likert' ? "LikertScale" : ($(e).find("input[name^='choicetype']").val() == 'radio' ? "RadioButton" : "SelectBox"));
+			
+				if (isDelphi)
+				{
+					getChoosePropertiesRow("Style", "RadioButton,SelectBox,LikertScale", false, false, $(e).find("input[name^='choicetype']").val() == 'likert' ? "LikertScale" : ($(e).find("input[name^='choicetype']").val() == 'radio' ? "RadioButton" : "SelectBox"));
+				} else {
+					getChoosePropertiesRow("Style", "RadioButton,SelectBox", false, false, $(e).find("input[name^='choicetype']").val() == 'radio' ? "RadioButton" : "SelectBox");
+				}
 				
 				var subType = $(e).find("input[name^='subType']").val()
 				if (subType === "euCountries" || subType === "unCountries")
@@ -366,7 +372,8 @@ var ElementProperties = function() {
 			
 				if ($(e).find("input[name^='choicetype']").val() == 'likert')
 				{
-					//TODO: median (DELPHI-11)
+					getChoosePropertiesRow("MaxDistanceToMedian", "Ignore,0,1,2,3,4,5", false, false, $(e).find("input[name^='maxDistance']").val());
+					
 				} else {				
 					getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
 				}

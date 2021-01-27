@@ -73,15 +73,15 @@
 		
 			<!-- ko if: likert -->
 						
-				<div class="likert-div" style="margin-top: 30px; display: inline-block; position: relative;">
+				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median' : 'likert-div'}">
 				
 					<div class="likert-bar" data-bind="attr: {'style' : 'width: ' + (possibleAnswers().length - 1) + '00px;'}"></div>
 				
 					<!-- ko foreach: possibleAnswers() -->
 					
-					<div style="float: left; width: 100px; text-align: center; position: relative;">
+					<div class="likert-pa">
 						<input data-bind="enable: !$parents[0].readonly() && !$parents[0].foreditor, checked: getPAByQuestion2($parents[0].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[0].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[0].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[0].css + ' trigger check', name: 'answer' + $parents[0].id(), value: id()}" type="radio"  />
-						<div class="answertext" style="margin-left: 0; padding-left: 10px; padding-right: 10px;" data-bind="html: titleForDisplayMode($parents[0].displayMode()), attr: {'data-id' : id()}"></div>
+						<div class="answertext" style="margin-left: 0; padding-left: 10px; padding-right: 10px;" data-bind="html: titleForDisplayMode($parents[0].displayMode()), attr: {'data-id' : id(), 'data-pa-uid' : uniqueId()}"></div>
 					</div>
 					<!-- /ko -->
 					
@@ -203,6 +203,8 @@
 				
 				<input type="hidden" data-bind="value: subType, attr: {'name': 'subType' + id()}" />
 				<input type="hidden" data-bind="value: displayMode, attr: {'name': 'displayMode' + id()}" />
+				
+				<input type="hidden" data-bind="value: maxDistance, attr: {'name': 'maxDistance' + id()}" />
 			<!-- /ko -->		
 		</div>
 	</div>
@@ -1164,9 +1166,14 @@
 	<div id="delphi-template">
 		<!-- ko if: isDelphiQuestion() -->
 		
+		<!-- ko if: maxDistanceExceeded() -->
+		<div class="maxDistanceExceededMessage">${form.getMessage("info.MaxDistanceExceeded")}&nbsp;${form.getMessage("info.MaxDistanceExceededExplain")}</div>
+		<!-- /ko -->
+		
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">					
 			<div class="col-md-7">
 				<div class="explanation-section">
+				
 					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff">
 						<tr>
 							<th class='area-header'>${form.getMessage("label.ExplainYourAnswer")}</th>
@@ -1206,7 +1213,10 @@
 				<div class='chart-wrapper'>
 					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: right">
 						<tr>
-							<th class='area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
+							<th class='area-header'>
+								<span>${form.getMessage("label.DelphiChartTitle")}</span>
+								<span onclick="loadGraphDataModal(this)" class="glyphicon glyphicon-resize-full delphi-chart-expand" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
+							</th>
 						</tr>
 						<tr>
 							<td style='padding-top:10px; padding-bottom:10px'>
@@ -1232,6 +1242,11 @@
 				</div>
 		
 				<div class="delphiupdatemessage"></div>
+				<div class="delphilink" style="display: none">
+					${form.getMessage("info.delphilink")}<br />
+					<div class="delphilinkurl"></div>
+					<a onclick="$('#ask-email-dialog').modal('show')" class="btn btn-default">${form.getMessage("label.SendLinkAsEmail")}</a>		
+				</div>
 			</div>
 		</div>
 		
@@ -1243,5 +1258,25 @@
 		<!-- /ko -->
 	</div>
 
+</div>
+
+<div class="modal" id="ask-email-dialog" data-backdrop="static">
+	<div class="modal-dialog modal-sm">
+   	<div class="modal-content">
+	<div class="modal-body">
+		<p style="margin-bottom: 10px">
+			${form.getMessage("info.delphilinkemail")}
+		</p>	
+		<input class="form-control" type="text" maxlength="255" name="delphiemail" id="delphiemail" />
+		<span id="ask-delphi-email-dialog-error" class="validation-error-keep hideme">
+			${form.getMessage("message.ProvideEmail")}
+		</span>
+	</div>
+	<div class="modal-footer">
+		<a class="btn btn-primary" onclick="sendDelphiMailLink()">${form.getMessage("label.Send")}</a>	
+		<a class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>	
+	</div>
+	</div>
+	</div>
 </div>
 

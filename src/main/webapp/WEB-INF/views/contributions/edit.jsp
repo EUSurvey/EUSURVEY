@@ -281,7 +281,8 @@
 					<%@ include file="../menu.jsp" %>	
 				</c:when>
 				<c:otherwise>
-					<%@ include file="../header.jsp" %>	 
+					<%@ include file="../header.jsp" %>	
+					<%@ include file="../generic-messages.jsp" %>
 				</c:otherwise>
 			</c:choose>
 		</c:if>

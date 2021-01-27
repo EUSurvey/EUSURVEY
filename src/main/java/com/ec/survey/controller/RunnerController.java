@@ -10,9 +10,7 @@ import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.delphi.*;
 import com.ec.survey.model.survey.*;
-import com.ec.survey.service.MailService;
-import com.ec.survey.service.PDFService;
-import com.ec.survey.service.ValidCodesService;
+import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
 import com.ec.survey.tools.export.StatisticsCreator;
 import javafx.util.Pair;
@@ -477,15 +475,15 @@ public class RunnerController extends BasicController {
 			}
 
 			User user = sessionService.getCurrentUser(request, false, false);
-			
+
 			if (!survey.getIsDelphi()) {
 				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 				if (err != null)
 					return err;
 			}
-			
-			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);			
-			
+
+			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);
+
 			if (survey != null) {
 				survey = surveyService.getSurvey(survey.getId(), lang);
 			}
@@ -1788,16 +1786,16 @@ public class RunnerController extends BasicController {
 			if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
 				lang = request.getParameter("language.code");
 			}
-			
+
 			User user = sessionService.getCurrentUser(request, false, false);
 			if (!origsurvey.getIsDelphi()) {
 				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
 				if (err != null)
 					return err;
 			}
-			
+
 			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, origsurvey, uniqueCode, false, lang, user);
-		
+
 			String newlang = request.getParameter("newlang");
 			String newlangpost = request.getParameter("newlangpost");
 			String newcss = request.getParameter("newcss");
@@ -2263,6 +2261,12 @@ public class RunnerController extends BasicController {
 					}
 				}
 			}
+			
+			//this can happen if a delphi survey is turned into a standard survey or the delphi extension is disabled
+			if (element.isDelphiElement() && !survey.getIsDelphi())
+			{
+				((Question)element).setIsDelphiQuestion(false);
+			}
 		}
 
 		for (Element element : result) {
@@ -2320,6 +2324,23 @@ public class RunnerController extends BasicController {
 			DelphiExplanation delphiExplanation = new DelphiExplanation();
 			delphiExplanation.setText(explanation.getText());
 			delphiExplanation.setFileInfoFromFiles(explanation.getFiles());
+			
+			if (element instanceof SingleChoiceQuestion && explanation.getText().trim().length() > 0) {
+				SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)element;
+				if (singleChoiceQuestion.getUseLikert() && singleChoiceQuestion.getMaxDistance() >= 0) {
+					
+					List<Answer> answers = answerSet.getAnswers(singleChoiceQuestion.getId(), singleChoiceQuestion.getUniqueId());
+					if (!answers.isEmpty())
+					{
+						DelphiMedian median = answerService.getMedian(answerSet.getSurvey(), singleChoiceQuestion, answers.get(0));
+						if (median.isMaxDistanceExceeded()) {
+							String text = resources.getMessage("label.NewExplanation", null, locale) + ":<br /><br/><br />" + resources.getMessage("label.OldExplanation", null, locale) + ":<br /><br /><span style='color: #999;'>" + explanation.getText() + "</span>";
+							delphiExplanation.setText(text);
+						}
+					}
+				}
+			}			
+			
 			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
 			return new ResponseEntity<>(new DelphiExplanation("", ""), HttpStatus.OK);
@@ -2330,7 +2351,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@PostMapping(value = "/delphiUpdate")
-	public ResponseEntity<String> delphiCreateOrUpdateExplanation(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<DelphiUpdateResult> delphiCreateOrUpdateExplanation(HttpServletRequest request, Locale locale) {
 		try {
 					
 			final String surveyId = request.getParameter("surveyId");
@@ -2342,7 +2363,7 @@ public class RunnerController extends BasicController {
 			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
 			final String invitationId = request.getParameter("invitation");
 			final User user = sessionService.getCurrentUser(request, false, false);
-			
+
 			Element element = survey.getElementsByUniqueId().get(questionUid);
 
 			AnswerSet answerSet;
@@ -2379,16 +2400,22 @@ public class RunnerController extends BasicController {
 					locale, null, request, draft);
 			
 			if (!validation) {
-				return new ResponseEntity<>(resources.getMessage("error.CheckValidation", null, locale), HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(new DelphiUpdateResult(resources.getMessage("error.CheckValidation", null, locale)), HttpStatus.BAD_REQUEST);
 			}
 
 			saveAnswerSet(answerSet, fileDir, null, -1);
 			
-			return new ResponseEntity<>(resources.getMessage("message.ChangesSaved", null, locale), HttpStatus.OK);
+			DelphiUpdateResult updateResult = new DelphiUpdateResult(resources.getMessage("message.ChangesSaved", null, locale));
+			updateResult.setLink(serverPrefix + "editcontribution/" + answerSet.getUniqueCode());
+			if (survey.getSecurity().startsWith("open")) {
+				updateResult.setOpen(true);
+			}
+			
+			return new ResponseEntity<>(updateResult, HttpStatus.OK);
 
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>(resources.getMessage("error.DelphiCreateOrUpdate", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new DelphiUpdateResult(resources.getMessage("error.DelphiCreateOrUpdate", null, locale)), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -2498,7 +2525,7 @@ public class RunnerController extends BasicController {
 
 		for (Element subQuestion : question.getQuestions()) {
 			DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
-			questionResults.setLabel(subQuestion.getStrippedTitle());
+			questionResults.setLabel(subQuestion.getStrippedTitleNoEscape());
 
 			for (int i = 1; i <= question.getNumIcons(); i++) {
 				creator.addStatistics4RatingQuestion(survey, i, subQuestion, statistics, numberOfAnswersMapRatingQuestion);
@@ -2534,13 +2561,13 @@ public class RunnerController extends BasicController {
 
 		for (Element matrixQuestion : question.getQuestions()) {
 			DelphiGraphDataSingle questionResults = new DelphiGraphDataSingle();
-			questionResults.setLabel(matrixQuestion.getStrippedTitle());
+			questionResults.setLabel(matrixQuestion.getStrippedTitleNoEscape());
 
 			for (Element matrixAnswer : question.getAnswers()) {
 				creator.addStatistics4Matrix(survey, matrixAnswer, matrixQuestion, statistics, numberOfAnswersMapMatrix);
 
 				DelphiGraphEntry entry = new DelphiGraphEntry();
-				entry.setLabel(matrixAnswer.getStrippedTitle());
+				entry.setLabel(matrixAnswer.getStrippedTitleNoEscape());
 				entry.setValue(statistics.getRequestedRecordsForMatrix(matrixQuestion, matrixAnswer));
 				questionResults.addEntry(entry);
 			}
@@ -2580,11 +2607,6 @@ public class RunnerController extends BasicController {
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphChoiceQuestion(Survey survey, ChoiceQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset) throws Exception {
-		if (!numberOfAnswersMap.containsKey(question.getId()) || numberOfAnswersMap.get(question.getId()) == 0) {
-			//participant may only see answers if he answered before
-			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-		}
-
 		if (numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics()) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -2609,7 +2631,7 @@ public class RunnerController extends BasicController {
 
 		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
 			DelphiGraphEntry entry = new DelphiGraphEntry();
-			entry.setLabel(answer.getStrippedTitle());
+			entry.setLabel(answer.getStrippedTitleNoEscape());
 			entry.setValue(statistics.getRequestedRecords().get(answer.getId().toString()));
 			result.addEntry(entry);
 		}
@@ -2656,7 +2678,7 @@ public class RunnerController extends BasicController {
 						delphiQuestion.setTitle(question.getTitle());
 						delphiQuestion.setUid(question.getUniqueId());
 						delphiQuestion.setId(question.getId());
-						
+												
 						if (answerSet != null)
 						{
 							String result = "";
@@ -2693,6 +2715,14 @@ public class RunnerController extends BasicController {
 								if (!answers.isEmpty()) {
 									for (Answer answer : answers) {
 										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
+										
+										if (question instanceof SingleChoiceQuestion) {
+											SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)question;
+											if (singleChoiceQuestion.getMaxDistance() > -1) {
+												DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, answer);
+												delphiQuestion.setMaxDistanceExceeded(median.isMaxDistanceExceeded());												
+											}
+										}
 									}
 								}
 							}
@@ -2701,6 +2731,50 @@ public class RunnerController extends BasicController {
 						}
 
 						currentDelphiSection.getQuestions().add(delphiQuestion);
+					} else {
+						//non-delphi question
+						if (!structure.isUnansweredMandatoryQuestions() && !question.getOptional()) 
+						{
+							if (answerSet == null) {
+								structure.setUnansweredMandatoryQuestions(true);
+							} else if (question instanceof MatrixOrTable)
+							{
+								boolean found = false;
+								MatrixOrTable matrix = (MatrixOrTable)question;
+						
+								for (Element matrixQuestions : matrix.getQuestions()) {
+									List<Answer> answers = answerSet.getAnswers(matrixQuestions.getId(), matrixQuestions.getUniqueId());
+									if (!answers.isEmpty()) {
+										found = true;
+										break;
+									}
+								}
+								
+								if (!found) {
+									structure.setUnansweredMandatoryQuestions(true);
+								}
+							} else if (question instanceof RatingQuestion)
+							{								
+								RatingQuestion rating = (RatingQuestion)question;
+								boolean found = false;
+								for (Element ratingQuestions : rating.getQuestions()) {
+									List<Answer> answers = answerSet.getAnswers(ratingQuestions.getId(), ratingQuestions.getUniqueId());
+									if (!answers.isEmpty()) {
+										found = true;
+										break;
+									}
+								}
+
+								if (!found) {
+									structure.setUnansweredMandatoryQuestions(true);
+								}
+							} else {
+								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+								if (answers.isEmpty()) {
+									structure.setUnansweredMandatoryQuestions(true);
+								}
+							}
+						}
 					}
 				}
 			}
@@ -2747,7 +2821,15 @@ public class RunnerController extends BasicController {
 				map.put(comment.getUniqueCode(), "User " + (map.size() + 1));
 			}
 
-			DelphiComment delphiComment = new DelphiComment(map.get(comment.getUniqueCode()), comment.getText(), comment.getDate(), comment.getId());
+			String user = "";
+			Date date = null;
+			if (!comment.getText().equals(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
+				// Only put the user and the date when the comment with replies has not been deleted.
+				user = map.get(comment.getUniqueCode());
+				date = comment.getDate();
+			}
+
+			DelphiComment delphiComment = new DelphiComment(user, comment.getText(), date, comment.getId(), comment.getUniqueCode());
 
 			if (comment.getParent() == null) {
 				tableEntry.getComments().add(delphiComment);
@@ -2768,6 +2850,45 @@ public class RunnerController extends BasicController {
 			}
 		} catch (NoSuchElementException ex) {
 		}
+	}
+	
+	@GetMapping(value = "delphiMedian")
+	public ResponseEntity<DelphiMedian> delphiMedian(HttpServletRequest request) {
+		String surveyid = request.getParameter("surveyid");
+		int sid = Integer.parseInt(surveyid);
+
+		Survey survey = surveyService.getSurvey(sid);
+
+		if (survey == null || !survey.getIsDelphi()) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+
+		AnswerSet answerSet = answerService.get(request.getParameter("uniquecode"));
+		
+		String questionuid = request.getParameter("questionuid");
+		Element element = survey.getQuestionMapByUniqueId().get(questionuid);
+		
+		if (answerSet == null || element == null || !(element instanceof SingleChoiceQuestion)) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		
+		SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion) element;
+		if (singleChoiceQuestion.getMaxDistance() == -1) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
+		
+		List<Answer> answerList = answerSet.getAnswers(-1, questionuid);
+		if (answerList.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		Answer answer = answerList.get(0);
+		
+		DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, answer);
+		if (null == median) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+		
+		return ResponseEntity.ok(median);
 	}
 
 	@GetMapping(value = "delphiTable")
@@ -3084,12 +3205,115 @@ public class RunnerController extends BasicController {
 				comment.setParent(parentComment);
 			}
 
-			answerExplanationService.saveComment(comment);
+			answerExplanationService.saveOrUpdateComment(comment);
 
 			return new ResponseEntity<>(null, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PostMapping(value = "/editDelphiComment/{id}")
+	public ResponseEntity<String> delphiEditComment(@PathVariable String id, HttpServletRequest request) {
+
+		try {
+			final int idParsed = Integer.parseInt(id);
+
+			final String text = request.getParameter("text");
+
+			final String uniqueCode = request.getParameter("uniqueCode");
+			if (uniqueCode == null || uniqueCode.isEmpty()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			final AnswerComment comment = answerExplanationService.getComment(idParsed);
+			if (comment == null
+					|| !comment.getUniqueCode().equals(uniqueCode)
+					|| comment.getText().equals(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			comment.setText(text);
+			comment.setDate(new Date());
+			answerExplanationService.saveOrUpdateComment(comment);
+
+			return new ResponseEntity<>(null, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@PostMapping(value = "/deleteDelphiComment/{id}")
+	public ResponseEntity<String> delphiDeleteComment(@PathVariable String id, HttpServletRequest request) {
+
+		try {
+			final int idParsed = Integer.parseInt(id);
+
+			final String uniqueCode = request.getParameter("uniqueCode");
+			if (uniqueCode == null || uniqueCode.isEmpty()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+
+			final AnswerComment comment = answerExplanationService.getComment(idParsed);
+			if (comment == null || !comment.getUniqueCode().equals(uniqueCode)) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			if (!answerExplanationService.hasCommentChildren(idParsed)) {
+				answerExplanationService.deleteComment(comment);
+			} else {
+				comment.setText(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT);
+				comment.setDate(new Date());
+				answerExplanationService.saveOrUpdateComment(comment);
+			}
+
+			return new ResponseEntity<>(null, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@PostMapping(value = "/sendDelphiLink")
+	public ResponseEntity<String> sendDelphiLink(HttpServletRequest request, Locale locale) {
+		try {
+			final String uniqueCode = request.getParameter("uniqueCode");
+			if (uniqueCode == null || uniqueCode.isEmpty()) {
+				return new ResponseEntity<>("Invalid Code", HttpStatus.BAD_REQUEST);
+			}
+			
+			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+			String email = parameters.get(Constants.EMAIL)[0];
+			String link = serverPrefix + "editcontribution/" + uniqueCode;
+			
+			AnswerSet answerSet = answerService.get(uniqueCode);
+		
+			if (email == null || answerSet == null) {
+				return new ResponseEntity<>("Invalid Code", HttpStatus.BAD_REQUEST);
+			}
+
+			String body = "Dear EUSurvey user,<br /><br />Your contribution to the survey '<b>" + answerSet.getSurvey().cleanTitle()
+					+ "</b>' has been saved. To open the contribution again, please follow this link:<br /><br />";
+			body += "<a href=\"" + link + "\">" + link + "</a><br /><br />Your EUSurvey team";
+
+			try {
+				InputStream inputStream = servletContext
+						.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
+				String text = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body).replace("[HOST]",
+						serverPrefix);
+
+				mailService.SendHtmlMail(email, sender, sender,
+						resources.getMessage("message.mail.linkSubject", null, new Locale("EN")), text, null);
+			} catch (Exception e) {
+				logger.error("Problem during sending the draft link. To:" + email + " Link:" + link, e);
+				return new ResponseEntity<>(resources.getMessage("message.mail.failMailLinkDraft", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
+			}		
+
+			return new ResponseEntity<>(resources.getMessage("message.mail.successMailLinkDraft", null, locale), HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(resources.getMessage("message.mail.failMailLinkDraft", null, locale), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

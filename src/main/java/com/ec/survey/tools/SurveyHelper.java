@@ -2,7 +2,6 @@ package com.ec.survey.tools;
 
 import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.model.*;
-import com.ec.survey.model.AnswerSet.ExplanationData;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
@@ -38,8 +37,7 @@ public class SurveyHelper {
 		}
 	}
 
-	public static AnswerSet parseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode,
-			boolean update, String languageCode, User user, FileService fileService) {
+	public static AnswerSet parseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode, boolean update, String languageCode, User user, FileService fileService) {
 		Map<Integer, Question> questions = survey.getQuestionMap();
 		Map<Integer, Element> matrixQuestions = survey.getMatrixMap();
 
@@ -109,6 +107,7 @@ public class SurveyHelper {
 				} else {
 
 					Question question = questions.get(Integer.parseInt(key));
+
 					if (question != null) {
 
 						if (question instanceof Upload) {
@@ -735,15 +734,13 @@ public class SurveyHelper {
 			}
 
 			return true;
-
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 			return false;
 		}
 	}
 
-	public static AnswerSet parseAndMergeAnswerSet(HttpServletRequest request, Survey survey,
-			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService) throws IOException {
+	public static AnswerSet parseAndMergeAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService) throws IOException {
 		if (user == null && survey.getIsOPC()) {
 			// edit contribution
 			user = new User();
@@ -829,35 +826,42 @@ public class SurveyHelper {
 
 		return answerSet;
 	}
-	
-	public static AnswerSet parseAndMergeDelphiAnswerSet(HttpServletRequest request, Survey survey,
-			String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService, Element question) throws IOException {
+
+	public static AnswerSet parseAndMergeDelphiAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode, AnswerSet answerSet, String languageCode, User user, FileService fileService, Element question) throws IOException {
 		AnswerSet parsedAnswerSet = parseAnswerSet(request, survey, uniqueCode, true, languageCode, user,
 				fileService);
-		
-		//remove existing answers for the question
-		if (question instanceof Matrix) {
-			Matrix parent = (Matrix) question;
-			for (Element childQuestion : parent.getQuestions())
-			{
-				List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
-				for (Answer oldAnswer: oldAnswers) {
-					answerSet.getAnswers().remove(oldAnswer);
-				}
-			}
-		} else if (question instanceof RatingQuestion) {
-			RatingQuestion parent = (RatingQuestion) question;
-			for (Element childQuestion : parent.getQuestions())
-			{
-				List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
-				for (Answer oldAnswer: oldAnswers) {
-					answerSet.getAnswers().remove(oldAnswer);
-				}
-			}
-		} else {
-			List<Answer> oldAnswers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+
+		//remove all answers for questions that were answered here
+		for (Answer answer : parsedAnswerSet.getAnswers()) {
+			List<Answer> oldAnswers = answerSet.getAnswers(answer.getQuestionId(),  answer.getQuestionUniqueId());
 			for (Answer oldAnswer: oldAnswers) {
 				answerSet.getAnswers().remove(oldAnswer);
+			}
+		}
+
+		if (question != null) {
+			if (question instanceof Matrix) {
+				Matrix parent = (Matrix) question;
+				for (Element childQuestion : parent.getQuestions()) {
+					List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+					for (Answer oldAnswer : oldAnswers) {
+						answerSet.getAnswers().remove(oldAnswer);
+					}
+				}
+			} else if (question instanceof RatingQuestion) {
+				RatingQuestion parent = (RatingQuestion) question;
+				for (Element childQuestion : parent.getQuestions())
+				{
+					List<Answer> oldAnswers = answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId());
+					for (Answer oldAnswer: oldAnswers) {
+						answerSet.getAnswers().remove(oldAnswer);
+					}
+				}
+			} else {
+				List<Answer> oldAnswers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+				for (Answer oldAnswer: oldAnswers) {
+					answerSet.getAnswers().remove(oldAnswer);
+				}
 			}
 		}
 		
@@ -2627,6 +2631,13 @@ public class SurveyHelper {
 		}
 		singlechoice.setDisplayMode(displayMode);
 
+		Integer maxDistance = getInteger(parameterMap, "maxDistance", id);
+		if (log220 && !maxDistance.equals(singlechoice.getMaxDistance())) {
+			oldValues += " maxDistance: " + singlechoice.getMaxDistance();
+			newValues += " maxDistance: " + maxDistance;
+		}
+		singlechoice.setMaxDistance(maxDistance);
+		
 		StringBuilder oldAnswers = new StringBuilder();
 		StringBuilder newAnswers = new StringBuilder();
 		if (log220) {
