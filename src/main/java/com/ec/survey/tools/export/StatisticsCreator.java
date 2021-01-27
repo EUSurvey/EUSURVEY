@@ -593,7 +593,6 @@ public class StatisticsCreator implements Runnable {
 			Integer count = map.getOrDefault(value, 0);
 			map.put(value, count+1);
 			numberQuestionStats.numberVotes += 1;
-			logger.info("BRS: qid="+qid);
 			if (qid.equals(question.getId())) {
 				numberQuestionStats.questionFound = true;
 			}
