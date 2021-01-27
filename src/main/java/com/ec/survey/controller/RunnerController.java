@@ -2442,9 +2442,7 @@ public class RunnerController extends BasicController {
 			if (question instanceof NumberQuestion) {
 				NumberQuestion numq = (NumberQuestion) question;
 				Map<String, Integer> valuesMagnitude = new HashMap<>();
-				logger.info("BRS: "+numq.getTitle());
 				StatisticsCreator.NumberQuestionStats numberQuestionStats = creator.getAnswers4NumberQuestionStatistics(survey, numq, valuesMagnitude);
-				logger.info("BRS stats: "+numberQuestionStats.numberVotes+" "+numberQuestionStats.questionFound);
 				if (0 == numberQuestionStats.numberVotes || !numberQuestionStats.questionFound) {
 					//participant may only see answers if he answered before
 					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
@@ -2569,14 +2567,13 @@ public class RunnerController extends BasicController {
 		result.setQuestionType(DelphiQuestionType.Number);
 		result.setLabel(question.getStrippedTitle());
 
-		for (Map.Entry<String, Integer> entry : valuesMagnitude.entrySet()) {
-			logger.info("BRS histogram2: "+entry.getKey()+" "+entry.getValue());
-			String value = entry.getKey();
-			Integer rate = entry.getValue();
-			DelphiGraphEntry dentry = new DelphiGraphEntry();
-			dentry.setLabel(value);
-			dentry.setValue(rate);
-			result.addEntry(dentry);
+		for (Map.Entry<String, Integer> mapEntry : valuesMagnitude.entrySet()) {
+			String value = mapEntry.getKey();
+			Integer rate = mapEntry.getValue();
+			DelphiGraphEntry delphiGraphEntry = new DelphiGraphEntry();
+			delphiGraphEntry.setLabel(value);
+			delphiGraphEntry.setValue(rate);
+			result.addEntry(delphiGraphEntry);
 		}
 
 		return ResponseEntity.ok(result);

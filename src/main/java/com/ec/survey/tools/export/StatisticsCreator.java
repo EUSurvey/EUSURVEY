@@ -566,7 +566,7 @@ public class StatisticsCreator implements Runnable {
 
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
 		String sql = "SELECT a.VALUE, a.QUESTION_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
-		sql += " = :questionuid AND ans.ANSWER_SET_ID IN ("	+ where + ")";
+		sql += " = :questionuid AND ans.ANSWER_SET_ID IN (" + where + ")";
 		values.put("questionuid", question.getUniqueId());
 
 		SQLQuery query = session.createSQLQuery(sql);
@@ -585,7 +585,6 @@ public class StatisticsCreator implements Runnable {
 		query.setFetchSize(Integer.MIN_VALUE);
 		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
 
-		logger.info("BRS: numq.getId()="+question.getId());
 		while (results != null && results.next()) {
 			Object[] a = results.get();
 			String value = (String) a[0];
@@ -595,12 +594,11 @@ public class StatisticsCreator implements Runnable {
 			map.put(value, count+1);
 			numberQuestionStats.numberVotes += 1;
 			logger.info("BRS: qid="+qid);
-			if (question.getId().intValue() == qid.intValue()) {
+			if (qid.equals(question.getId())) {
 				numberQuestionStats.questionFound = true;
 			}
 		}
 		results.close();
-		logger.info("BRS: questionIdFound="+numberQuestionStats.questionFound);
 		return numberQuestionStats;
 	}
 

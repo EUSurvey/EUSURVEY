@@ -673,15 +673,9 @@ function addStatisticsToAnswerText(div, result) {
 	if (undefined === viewModel ) {
 		return;
 	}
-	//var viewModels = modelsForDelphiQuestions;
-	console.log("addStatisticsToAnswerText()\nAJAX-result: "+JSON.stringify(result));
-	console.log("viewModel0 JSON: "+JSON.stringify(viewModel));
-	console.log("viewModel0.type: "+viewModel.type);
 	var questionType = result["questionType"];
 	var viewModelType = viewModel.type;
-	console.log("questionType: "+questionType+" vs. viewModel.type: "+viewModelType);
 	if (!viewModelType.startsWith(questionType)) {
-		console.log('viewModel.type and AJAX result["questionType"] don\'t match!');
 		return;
 	}
 	if (["SingleChoice", "MultipleChoice"].includes(questionType)) {
@@ -690,41 +684,34 @@ function addStatisticsToAnswerText(div, result) {
 			return;
 		}
 		var len = possibleAnswersArray().length;
-		console.log("possibleAnswersArray length: "+len);
-		console.log("viewModel0.choiceType(): "+viewModel.choiceType());
-		var i = 0;
-		while ((result.data.length > i) && (len > i)) {
+		for (var i = 0; (result.data.length > i) && (len > i); ++i) {
 			var oldtitle = possibleAnswersArray()[i].title();
 			var value = result.data[i].value;
 			var label = result.data[i].label;
-			var newlabel = ""+label+" ("+value+" "+i10n["votes"]+")";
+			var newlabel = ""+label+" ("+value+" "+i10n.votes+")";
 			if (1 == value) {
-				newlabel = ""+label+" ("+value+" "+i10n["vote"]+")";
+				newlabel = ""+label+" ("+value+" "+i10n.vote+")";
 			}
 			possibleAnswersArray()[i].title(newlabel);
-			console.log("i "+i+' new label "'+newlabel+'"');
-			++i;
 		}
 	}
 	if (["Number"].includes(questionType)) {
-		console.log("viewModel.display(): "+viewModel.display());
-		if (!["Slider"].includes(viewModel.display())) return;
-
+		if (!["Slider"].includes(viewModel.display())) {
+			return;
+		}
 		var sliderbox = elementWrapper.find(".sliderbox");
-		if (0 == sliderbox.size()) return;
+		if (1 != sliderbox.size()) {
+			return;
+		}
 		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
-
-		var map0 = result.data;
 		var map = {};
-		map0.forEach((entry) => map[entry.label] = entry.value);
-		console.log("map0 "+JSON.stringify(map));
-
+		result.data.forEach((entry) => map[entry.label] = entry.value);
 		viewModel.sliderformatter = function(value) {
 			var votes = 0;
-			var unit = i10n.votes;
 			if (value in map) {
 				votes = map[value];
 			}
+			var unit = i10n.votes;
 			if (1 == votes) {
 				unit = i10n.vote;
 			}
