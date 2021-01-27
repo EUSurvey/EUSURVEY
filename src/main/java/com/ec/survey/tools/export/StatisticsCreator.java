@@ -560,13 +560,12 @@ public class StatisticsCreator implements Runnable {
 	public NumberQuestionStats getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question, Map<String, Integer> map) throws TooManyFiltersException {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
-		Map<Integer, String> uniqueIdsById = SurveyService.getUniqueIdsById(survey);
 		NumberQuestionStats numberQuestionStats = new NumberQuestionStats();
 		numberQuestionStats.questionFound = false;
 		numberQuestionStats.numberVotes = 0;
 
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
-		String sql = "SELECT a.VALUE, a.QUESTION_ID, a.QUESTION_UID, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
+		String sql = "SELECT a.VALUE, a.QUESTION_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
 		sql += " = :questionuid AND ans.ANSWER_SET_ID IN ("	+ where + ")";
 		values.put("questionuid", question.getUniqueId());
 
@@ -591,8 +590,6 @@ public class StatisticsCreator implements Runnable {
 			Object[] a = results.get();
 			String value = (String) a[0];
 			Integer qid = ConversionTools.getValue(a[1]);
-			String quid = (String) a[2];
-			Integer asId = ConversionTools.getValue(a[3]);
 
 			Integer count = map.getOrDefault(value, 0);
 			map.put(value, count+1);
