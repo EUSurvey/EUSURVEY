@@ -350,15 +350,8 @@ public class AnswerExplanationService extends BasicService {
 							.append("<span>")
 							.append(userPrefix)
 							.append(comment.getText())
-							.append("</span>");
-					if (!comment.getText().equals(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
-						s.append("<a onclick='editDelphiComment(this)'>Edit</a>");
-					}
-					if (!(comment.getText().equals(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT))
-							|| (comment.getText().equals(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT) && list.size() == 1)) {
-						s.append("<a onclick='deleteDelphiComment(this)'>Delete</a>");
-					}
-					s.append("</div>");
+							.append("</span>")
+							.append("</div>");
 				} else {
 					if (first) {
 						s.append(userPrefix).append(comment.getText());
