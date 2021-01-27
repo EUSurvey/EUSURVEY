@@ -552,10 +552,12 @@ public class StatisticsCreator implements Runnable {
 	}
 
 	@Transactional
-	public int getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question, Map<String, Integer> map) throws TooManyFiltersException {
+	public int getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question, Map<String, Integer> map, Boolean answerFound) throws TooManyFiltersException {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
 		Map<Integer, String> uniqueIdsById = SurveyService.getUniqueIdsById(survey);
+		answerFound = false;
+		int numberOfAnswers = 0;
 
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
 		String sql = "SELECT a.VALUE, a.QUESTION_ID, a.QUESTION_UID, ans.ANSWER_SET_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
@@ -583,9 +585,11 @@ public class StatisticsCreator implements Runnable {
 			String value = (String) a[0];
 			Integer count = map.getOrDefault(value, 0);
 			map.put(value, count+1);
+			numberOfAnswers += 1;
+			//if (answer of participant found) answerFound = true;
 		}
 		results.close();
-		return map.size();
+		return numberOfAnswers;
 	}
 
 	@Transactional
