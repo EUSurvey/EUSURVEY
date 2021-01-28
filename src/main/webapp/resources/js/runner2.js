@@ -1198,6 +1198,7 @@ function updateDelphiElement(element, successCallback) {
 
 function updateQuestionsOnNavigation(page) {
 	if (isdelphi) {
+		$(".delphiupdatemessage").empty();
 		var section = $("#page" + page);
 		var found = $(section).find(".survey-element").is(function () {
 			return $(this).hasClass("sectionitem") === false;
