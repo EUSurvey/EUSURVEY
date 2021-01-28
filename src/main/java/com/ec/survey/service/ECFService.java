@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.codec.binary.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -181,9 +182,10 @@ public class ECFService extends BasicService {
 		List<AnswerSet> answerSets = this.answerService.getAllAnswers(survey.getId(), null);
 		Map<ECFCompetency, List<Integer>> competenciesToScores = this.getCompetenciesToScores(survey, answerSets);
 
-		Set<TypeUUIDAndName> competenciesTypes = new HashSet<TypeUUIDAndName>();
+		Set<TypeUUIDAndName> competenciesTypes = new LinkedHashSet<TypeUUIDAndName>();
+		List<ECFCompetency> orderedKeySet = competencyToMaxTarget.keySet().stream().sorted().collect(Collectors.toList());
 
-		for (ECFCompetency competency : competencyToMaxTarget.keySet()) {
+		for (ECFCompetency competency : orderedKeySet) {
 			ECFOrganizationalCompetencyResult competencyResult = new ECFOrganizationalCompetencyResult();
 			competencyResult.setCompetencyName(competency.getName());
 			competencyResult.setOrder(competency.getOrderNumber());
@@ -680,9 +682,9 @@ public class ECFService extends BasicService {
 		Map<ECFCompetency, List<Integer>> competenciesToScores = this.getCompetenciesToScores(survey, answerSets);
 		Map<ECFCompetency, Integer> competenciesToExpectedScores = this.getProfileExpectedScores(answererProfile);
 
-		Set<TypeUUIDAndName> competenciesTypes = new HashSet<TypeUUIDAndName>();
-
-		for (ECFCompetency competency : competenciesToScores.keySet()) {
+		Set<TypeUUIDAndName> competenciesTypes = new LinkedHashSet<TypeUUIDAndName>();
+		List<ECFCompetency> orderedKeySet = competenciesToScores.keySet().stream().sorted().collect(Collectors.toList());
+		for (ECFCompetency competency : orderedKeySet) {
 			ECFIndividualCompetencyResult competencyResult = new ECFIndividualCompetencyResult();
 			competencyResult.setCompetencyName(competency.getName());
 			competencyResult.setOrder(competency.getOrderNumber());
@@ -1101,9 +1103,11 @@ public class ECFService extends BasicService {
 		competencyNumberToQuestionNumberToText.put(29, questionNumberToText29);
 
 		Map<Integer, String> questionNumberToText30 = new HashMap<>();
-		questionNumberToText30.put(1, "Knowledge question: How well do you know audit and control functions?");
+		questionNumberToText30.put(1, "Knowledge question a: How well do you know audit and control functions?");
 		questionNumberToText30.put(2,
-				"Skill question: To what extent are you able to carry out the different functions of inspection, control, audit, and evaluation applicable to public procurement?");
+				"Skill question a: To what extent are you able to carry out the different functions of inspection, control, audit, and evaluation applicable to public procurement?");
+		questionNumberToText30.put(3, "Knowledge question b: How well do you know audit risk management tools and techniques?");
+		questionNumberToText30.put(4, "Skill question b: To what extent are you able to monitor risks closely and apply mitigating measures and proactive approaches to protect the interest of the organisation?");
 		competencyNumberToQuestionNumberToText.put(30, questionNumberToText30);
 
 		return competencyNumberToQuestionNumberToText;
@@ -1125,9 +1129,25 @@ public class ECFService extends BasicService {
 		answerNumberToText1.put(3, "I have advanced skills");
 		answerNumberToText1.put(4, "I have expert skills");
 
+		Map<Integer, String> answerNumberToText2 = new HashMap<>();
+		answerNumberToText0.put(0, "I have no knowledge");
+		answerNumberToText0.put(1, "I have basic knowledge");
+		answerNumberToText0.put(2, "I have intermediate knowledge");
+		answerNumberToText0.put(3, "I have advanced knowledge");
+		answerNumberToText0.put(4, "I have expert knowledge");
+
+		Map<Integer, String> answerNumberToText3 = new HashMap<>();
+		answerNumberToText1.put(0, "I have no skills");
+		answerNumberToText1.put(1, "I have basic skills");
+		answerNumberToText1.put(2, "I have intermediate skills");
+		answerNumberToText1.put(3, "I have advanced skills");
+		answerNumberToText1.put(4, "I have expert skills");
+
 		Map<Integer, Map<Integer, String>> questionNumberToAnswerToText = new HashMap<>();
 		questionNumberToAnswerToText.put(0, answerNumberToText0);
 		questionNumberToAnswerToText.put(1, answerNumberToText1);
+		questionNumberToAnswerToText.put(2, answerNumberToText0);
+		questionNumberToAnswerToText.put(3, answerNumberToText1);
 
 		return questionNumberToAnswerToText;
 	}

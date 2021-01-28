@@ -80,15 +80,11 @@ public class SurveyCreator {
 			answerPosition++;
 		}
 		survey.getElements().add(profileScQuestion);
-
-		// generating 2 questions per competency
-		int numberOfQuestionsForOneCompetency = 2;
 		for (ECFCompetency ecfCompetency : competencies) {
-			for (int noqfoc=0; noqfoc< numberOfQuestionsForOneCompetency; noqfoc++) {
+			// generating 2 questions per competency
+			int numberOfQuestionsForOneCompetency = competencyNumberToQuestionNumberToText.get(ecfCompetency.getOrderNumber()).size();
+			for (int noqfoc=0; noqfoc<numberOfQuestionsForOneCompetency; noqfoc++) {
 				int noqfoc1 = noqfoc + 1;
-				logger.info("noqfoc1 " + noqfoc1);
-				logger.info("ecfCompetency.getOrderNumber() " + ecfCompetency.getOrderNumber());
-				logger.info(competencyNumberToQuestionNumberToText.get(ecfCompetency.getOrderNumber()).get(noqfoc1));
 				
 				SingleChoiceQuestion singleChoiceQuestion = new SingleChoiceQuestion(
 						ecfCompetency.getName() + ": " + competencyNumberToQuestionNumberToText.get(ecfCompetency.getOrderNumber()).get(noqfoc1),
