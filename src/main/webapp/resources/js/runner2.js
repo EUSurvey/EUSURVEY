@@ -624,6 +624,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					$(elementWrapper).find(".chart-wrapper").hide();
 				}
 
+				addStatisticsToAnswerText(div, null);
 				return;
 			}
 
@@ -768,6 +769,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 }
 
 function addStatisticsToAnswerText(div, result) {
+	remove = !result; // cast to boolean
 	var elementWrapper = $(div).closest(".elementwrapper");
 	var surveyElement = elementWrapper.find(".survey-element");
 
@@ -775,26 +777,34 @@ function addStatisticsToAnswerText(div, result) {
 	if (undefined === viewModel ) {
 		return;
 	}
-	var questionType = result["questionType"];
 	var viewModelType = viewModel.type;
-	if (!viewModelType.startsWith(questionType)) {
-		return;
+	if (false === remove) {
+		var questionType = result["questionType"];
+		if (!viewModelType.startsWith(questionType)) {
+			return;
+		}
 	}
-	if (["SingleChoice", "MultipleChoice"].includes(questionType)) {
+	if (["SingleChoiceQuestion", "MultipleChoiceQuestion"].includes(viewModelType)) {
 		var possibleAnswersArray = viewModel.possibleAnswers;
 		if (undefined === possibleAnswersArray) {
 			return;
 		}
 		var len = possibleAnswersArray().length;
-		for (var i = 0; (result.data.length > i) && (len > i); ++i) {
-			var oldtitle = possibleAnswersArray()[i].title();
-			var value = result.data[i].value;
-			var label = result.data[i].label;
-			var newlabel = ""+label+' <span class="answertextdelphivotes">('+value+')</span>';
-			possibleAnswersArray()[i].title(newlabel);
+		if (false === remove) {
+			for (var i = 0; (result.data.length > i) && (len > i); ++i) {
+				var label = possibleAnswersArray()[i].originalTitle();
+				var value = result.data[i].value;
+				var newlabel = ""+label+' <span class="answertextdelphivotes">('+value+')</span>';
+				possibleAnswersArray()[i].title(newlabel);
+			}
+		} else {
+			for (var i = 0; len > i; ++i) {
+				var origtitle = possibleAnswersArray()[i].originalTitle();
+				possibleAnswersArray()[i].title(origtitle);
+			}
 		}
 	}
-	if (["Number"].includes(questionType)) {
+	if (["NumberQuestion"].includes(viewModelType)) {
 		if (!["Slider"].includes(viewModel.display())) {
 			return;
 		}
@@ -802,16 +812,22 @@ function addStatisticsToAnswerText(div, result) {
 		if (1 != sliderbox.size()) {
 			return;
 		}
-		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
-		var map = {};
-		result.data.forEach((entry) => map[entry.label] = entry.value);
-		viewModel.sliderformatter = function(value) {
-			var votes = 0;
-			if (value in map) {
-				votes = map[value];
+		if (false === remove) {
+			var map = {};
+			result.data.forEach((entry) => map[entry.label] = entry.value);
+			viewModel.sliderformatter = function(value) {
+				var votes = 0;
+				if (value in map) {
+					votes = map[value];
+				}
+				return ""+value+" ("+votes+")";
 			}
-			return ""+value+" ("+votes+")";
+		} else {
+			viewModel.sliderformatter = function(value) {
+				return value;
+			}
 		}
+		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
 		bootstrapSlider.bootstrapSlider("relayout");
 	}
 }
