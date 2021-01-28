@@ -1350,10 +1350,6 @@ legend {
 	margin-left: 20px;
 }
 
-.delphi-comment__loader {
-	display: none;
-}
-
 .delphi-comment__actions a:first-child {
 	margin-right: 5px;
 }

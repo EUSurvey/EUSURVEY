@@ -736,13 +736,15 @@
 				dialogClass: "no-close",
 				buttons: {
 					'${form.getMessage("label.Delete")}': function () {
+						const questionUid = $(button).closest(".survey-element").attr("data-uid");
+						const viewModel = modelsForDelphiQuestions[questionUid];
+
 						const errorCallback = () => { showError("error"); }
 						const successCallback = () => {
-							const questionUid = $(button).closest(".survey-element").attr("data-uid");
-							const viewModel = modelsForDelphiQuestions[questionUid];
 							loadTableData(questionUid, viewModel);
 						}
-						deleteDelphiComment(button, isReply, errorCallback, successCallback);
+
+						deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
 						$(this).dialog("destroy");
 					},
 					'${form.getMessage("label.Cancel")}': function () {

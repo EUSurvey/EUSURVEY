@@ -354,7 +354,7 @@
 				const answerSetUniqueCode = $('#uniqueCode').val();
 				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
 			}
-			saveChangedDelphiComment(element, isReply, errorCallback, successCallback);
+			saveChangedDelphiComment(element, answersTableViewModel, isReply, errorCallback, successCallback);
 		}
 
 		function deleteDelphiCommentFromStartPage(element, isReply) {
@@ -382,7 +382,7 @@
 							loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
 						}
 
-						deleteDelphiComment(element, isReply, errorCallback, successCallback);
+						deleteDelphiComment(element, answersTableViewModel, isReply, errorCallback, successCallback);
 						$(this).dialog("destroy");
 					},
 					'${form.getMessage("label.Cancel")}': function () {

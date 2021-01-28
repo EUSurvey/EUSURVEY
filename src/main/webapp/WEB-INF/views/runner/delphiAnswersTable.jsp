@@ -61,7 +61,6 @@
 						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
 						<!-- /ko -->
 						<span data-bind="hidden: isChangedCommentFormVisible, html: text"></span>
-						<img class="delphi-comment__loader" src="${contextpath}/resources/images/ajax-loader.gif"/>
 						<div class="delphi-comment__change-form" data-bind="visible: isChangedCommentFormVisible">
 							<textarea class="form-control" data-bind="hasFocus: hasChangedCommentFieldFocus, value: changedComment"></textarea>
 							<c:choose>
@@ -96,7 +95,6 @@
 					<div class="delphi-comment__reply" data-bind="attr: {'data-id': id}">
 						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
 						<span data-bind="hidden: isChangedReplyFormVisible, html: text"></span>
-						<img class="delphi-comment__loader" src="${contextpath}/resources/images/ajax-loader.gif"/>
 						<div class="delphi-comment__change-form" data-bind="visible: isChangedReplyFormVisible">
 							<textarea class="form-control" data-bind="hasFocus: hasChangedReplyFieldFocus, value: changedReply"></textarea>
 							<c:choose>
