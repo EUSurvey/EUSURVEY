@@ -724,6 +724,32 @@
 	 	{
 	 		return typeof filevalues[uniqueId] != 'undefined' ? filevalues[uniqueId] : "";
 	 	}
+
+		function deleteDelphiCommentFromRunner(button, isReply) {
+			var dialog = $(button).closest(".delphi-table").find(".delete-confirmation-dialog");
+			$(dialog).modal("show");
+
+			var deleteButton = $(dialog).find(".btn-danger");
+			$(deleteButton).off("click");
+			$(deleteButton).click(function() {
+				const questionUid = $(button).closest(".survey-element").attr("data-uid");
+				const viewModel = modelsForDelphiQuestions[questionUid];
+
+				const errorCallback = () => { showError("error"); }
+				const successCallback = () => {
+					loadTableData(questionUid, viewModel);
+				}
+
+				$(dialog).modal("hide");
+				deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
+			});
+
+			var cancelButton = $(dialog).find(".btn-default");
+			$(cancelButton).off("click");
+			$(cancelButton).click(function () {
+				$(dialog).modal("hide");
+			})
+		}
 	 	
 	 	initializeAnswerData();
 	 	initializeTriggers();
