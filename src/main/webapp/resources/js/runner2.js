@@ -1157,7 +1157,7 @@ function delphiUpdateContinued(div, successCallback) {
 			if (data.open) {
 				var link = document.createElement("a");
 				$(link).attr("href", data.link).html(data.link);
-				$(div).find(".delphilinkurl").append(link);
+				$(div).find(".delphilinkurl").empty().append(link);
 				$(div).find(".delphilink").show();
 			}
 			
