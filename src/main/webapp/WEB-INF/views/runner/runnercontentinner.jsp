@@ -727,33 +727,28 @@
 
 		function deleteDelphiCommentFromRunner(button, isReply) {
 			var dialog = $(button).closest(".delphi-table").find(".delete-confirmation-dialog");
-			dialog.dialog({
-				autoOpen: false,
-				closeOnEscape: false,
-				draggable: false,
-				modal: true,
-				resizable: false,
-				dialogClass: "no-close",
-				buttons: {
-					'${form.getMessage("label.Delete")}': function () {
-						const questionUid = $(button).closest(".survey-element").attr("data-uid");
-						const viewModel = modelsForDelphiQuestions[questionUid];
+			$(dialog).modal("show");
 
-						const errorCallback = () => { showError("error"); }
-						const successCallback = () => {
-							loadTableData(questionUid, viewModel);
-						}
+			var deleteButton = $(dialog).find(".btn-danger");
+			$(deleteButton).off("click");
+			$(deleteButton).click(function() {
+				const questionUid = $(button).closest(".survey-element").attr("data-uid");
+				const viewModel = modelsForDelphiQuestions[questionUid];
 
-						deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
-						$(this).dialog("destroy");
-					},
-					'${form.getMessage("label.Cancel")}': function () {
-						$(this).dialog("destroy");
-					}
+				const errorCallback = () => { showError("error"); }
+				const successCallback = () => {
+					loadTableData(questionUid, viewModel);
 				}
+
+				$(dialog).modal("hide");
+				deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
 			});
 
-			dialog.dialog("open");
+			var cancelButton = $(dialog).find(".btn-default");
+			$(cancelButton).off("click");
+			$(cancelButton).click(function () {
+				$(dialog).modal("hide");
+			})
 		}
 	 	
 	 	initializeAnswerData();

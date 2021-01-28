@@ -359,39 +359,33 @@
 
 		function deleteDelphiCommentFromStartPage(element, isReply) {
 			var dialog = $(element).closest(".delphi-table").find(".delete-confirmation-dialog");
+			$(dialog).modal("show");
 
-			dialog.dialog({
-				autoOpen: false,
-				closeOnEscape: false,
-				draggable: false,
-				modal: true,
-				resizable: false,
-				dialogClass: "no-close",
-				buttons: {
-					'${form.getMessage("label.Delete")}': function () {
-						$('.answers-table-modal-error').hide();
+			var deleteButton = $(dialog).find(".btn-danger");
+			$(deleteButton).off("click");
+			$(deleteButton).click(function () {
+				$('.answers-table-modal-error').hide();
 
-						const errorCallback = function () {
-							$('.answers-table-modal-error').show();
-							$('.answers-table-modal-error').text(errorDelphiTableContributionCouldNotBeDeleted);
-						}
-
-						const successCallback = function () {
-							const languageCode = "${form.language.code}";
-							const answerSetUniqueCode = $('#uniqueCode').val();
-							loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
-						}
-
-						deleteDelphiComment(element, answersTableViewModel, isReply, errorCallback, successCallback);
-						$(this).dialog("destroy");
-					},
-					'${form.getMessage("label.Cancel")}': function () {
-						$(this).dialog("destroy");
-					}
+				const errorCallback = function () {
+					$('.answers-table-modal-error').show();
+					$('.answers-table-modal-error').text(errorDelphiTableContributionCouldNotBeDeleted);
 				}
+
+				const successCallback = function () {
+					const languageCode = "${form.language.code}";
+					const answerSetUniqueCode = $('#uniqueCode').val();
+					loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
+				}
+
+				$(dialog).modal("hide");
+				deleteDelphiComment(element, answersTableViewModel, isReply, errorCallback, successCallback);
 			});
 
-			dialog.dialog("open");
+			var cancelButton = $(dialog).find(".btn-default");
+			$(cancelButton).off("click");
+			$(cancelButton).click(function () {
+				$(dialog).modal("hide");
+			})
 		}
 		
 		function toggle(element)

@@ -7,8 +7,18 @@
 	<div class="loader" data-bind="style: { display: delphiTableLoading() ? 'flex' : 'none' }">
 		<img src="${contextpath}/resources/images/ajax-loader.gif">
 	</div>
-	<div class="delete-confirmation-dialog" title="<spring:message code="label.DelphiConfirmDeleteComment" />">
-		<p><spring:message code="message.DelphiConfirmDeleteComment" /></p>
+	<div class="modal delete-confirmation-dialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-body">
+					<spring:message code="message.DelphiConfirmDeleteComment" />
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-default"><spring:message code="label.Cancel" /></a>
+					<a class="btn btn-danger"><spring:message code="label.Delete" /></a>
+				</div>
+			</div>
+		</div>
 	</div>
 	<table class="table table-condensed table-striped table-bordered">
 		<thead>
