@@ -1452,6 +1452,15 @@ public class FileService extends BasicService {
 		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);
 	}
 
+	public java.io.File getSurveyExplanationFile(final String surveyUid, final String answerSetUniqueCode,
+			final int questionId, final String fileName) {
+
+		final java.io.File folder = getSurveyExplanationUploadsFolder(surveyUid, false);
+		final String path = folder.getPath() + Constants.PATH_DELIMITER + answerSetUniqueCode
+				+ Constants.PATH_DELIMITER + questionId + Constants.PATH_DELIMITER + fileName;
+		return new java.io.File(path);
+	}
+
 	public java.io.File getSurveyExportFile(String surveyUID, Integer id, String format) {
 		java.io.File folder = getSurveyExportsFolder(surveyUID);
 		return new java.io.File(String.format("%s/Export%s.%s", folder.getPath(), id, format));

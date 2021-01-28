@@ -88,6 +88,69 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<AnswerExplanation> getExplanationsOfSurvey(final int surveyId) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createSQLQuery(
+				"SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, ex.ANSWER_EXPLANATION_ID, ex.ANSWER_SET_ID, ex.QUESTION_UID, ex.TEXT "
+				+ "FROM FILES f "
+				+ "JOIN ANSWERS_EXPLANATIONS_FILES aef ON aef.files_FILE_ID = f.FILE_ID "
+				+ "JOIN ANSWERS_EXPLANATIONS ex ON ex.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
+				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ex.ANSWER_SET_ID "
+				+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
+				+ "WHERE s.SURVEY_ID = :surveyId")
+				.setInteger("surveyId", surveyId);
+
+		final List queryResult = query.list();
+
+		Map<Integer, AnswerExplanation> explanations = new HashMap<>();
+		for (Object row : queryResult) {
+			final Object[] element = (Object[]) row;
+
+			final int fileId = ConversionTools.getValue(element[0]);
+			final String fileName = (String) element[1];
+			final String fileUid = (String) element[2];
+			final int answerExplanationId = ConversionTools.getValue(element[3]);
+			final int answerExplanationAnswerSetId = ConversionTools.getValue(element[4]);
+			final String answerExplanationQuestionUid = (String) element[5];
+			final String answerExplanationText = (String) element[6];
+
+			if (!explanations.containsKey(answerExplanationId)) {
+				final AnswerExplanation file = new AnswerExplanation();
+				file.setId(answerExplanationId);
+				file.setAnswerSetId(answerExplanationAnswerSetId);
+				file.setQuestionUid(answerExplanationQuestionUid);
+				file.setText(answerExplanationText);
+				explanations.put(answerExplanationId, file);
+			}
+
+			final File file = new File();
+			file.setId(fileId);
+			file.setName(fileName);
+			file.setUid(fileUid);
+			explanations.get(answerExplanationId).addFile(file);
+		}
+
+		return new ArrayList<>(explanations.values());
+	}
+
+	@Transactional(readOnly = true)
+	public List<AnswerComment> getCommentsOfSurvey(final int surveyId) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session.createSQLQuery("SELECT ac.* "
+				+ "FROM ANSWERS_COMMENTS ac "
+				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID "
+				+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
+				+ "WHERE s.SURVEY_ID = :surveyId")
+				.setInteger("surveyId", surveyId);
+
+		@SuppressWarnings("unchecked")
+		final List<AnswerComment> comments = (List<AnswerComment>) query.list();
+		return comments;
+	}
+
+	@Transactional(readOnly = true)
 	public List<AnswerExplanation> getExplanations(int answerSetId) {
 
 		final Session session = sessionFactory.getCurrentSession();

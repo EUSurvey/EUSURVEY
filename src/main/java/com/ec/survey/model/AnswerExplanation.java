@@ -76,4 +76,6 @@ public class AnswerExplanation implements java.io.Serializable {
 	public void setFiles(List<File> files) {
 		this.explanationFiles = files;
 	}
+
+	public void addFile(File file) { this.explanationFiles.add(file); }
 }
