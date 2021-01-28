@@ -1870,7 +1870,7 @@ function initModals(item)
 				|| element.find(".uploaded-files").children().length !== 0;
 		}
 
-		let surveyDelphiElements = [].concat(containers || []);
+		let surveyDelphiElements = containers;
 		for (let i = 0; i < surveyDelphiElements.length; i++) {
 			const element = $(surveyDelphiElements[i]);
 			if (isElementInvisible(element) || !hasExplanationTextOrFiles(element)) continue;
