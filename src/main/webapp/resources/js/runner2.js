@@ -1020,10 +1020,15 @@ function loadMedianData(div, viewModel) {
 		beforeSend: function (xhr) {
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
-		error: function (data) {
-			showError(data);
+		error: function () {
+			showError("Not possible to retrieve median data");
 		},
 		success: function (result, textStatus) {
+			
+			if (textStatus === "nocontent") {
+				return;
+			}			
+			
 			viewModel.maxDistanceExceeded(result != undefined && result.maxDistanceExceeded);
 			
 			$(div).find(".medianpa").removeClass("medianpa");
