@@ -790,10 +790,7 @@ function addStatisticsToAnswerText(div, result) {
 			var oldtitle = possibleAnswersArray()[i].title();
 			var value = result.data[i].value;
 			var label = result.data[i].label;
-			var newlabel = ""+label+" ("+value+" "+i10n.votes+")";
-			if (1 == value) {
-				newlabel = ""+label+" ("+value+" "+i10n.vote+")";
-			}
+			var newlabel = ""+label+' <span class="answertextdelphivotes">('+value+')</span>';
 			possibleAnswersArray()[i].title(newlabel);
 		}
 	}
@@ -813,11 +810,7 @@ function addStatisticsToAnswerText(div, result) {
 			if (value in map) {
 				votes = map[value];
 			}
-			var unit = i10n.votes;
-			if (1 == votes) {
-				unit = i10n.vote;
-			}
-			return ""+value+" ("+votes+" "+unit+")";
+			return ""+value+" ("+votes+")";
 		}
 		bootstrapSlider.bootstrapSlider("relayout");
 	}

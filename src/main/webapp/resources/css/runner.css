@@ -126,6 +126,10 @@
 	width: 100%;
 }
 
+.answertextdelphivotes {
+	color: #999;
+}
+
 .text {
 	font-size: 14px;	
 }
