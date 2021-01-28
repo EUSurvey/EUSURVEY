@@ -812,6 +812,7 @@ function addStatisticsToAnswerText(div, result) {
 		if (1 != sliderbox.size()) {
 			return;
 		}
+		var tooltipinner = elementWrapper.find("div.tooltip-inner");
 		if (false === remove) {
 			var map = {};
 			result.data.forEach((entry) => map[entry.label] = entry.value);
@@ -829,6 +830,11 @@ function addStatisticsToAnswerText(div, result) {
 		}
 		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
 		bootstrapSlider.bootstrapSlider("relayout");
+		bootstrapSlider.on("slide slideStop", function(oldvalue, newvalue) {
+			console.log("BRS slider callback");
+			var orightml = tooltipinner.html();
+			tooltipinner.html(orightml+' <span class="answertextdelphivotes">(hack)</span>');
+		});
 	}
 }
 
