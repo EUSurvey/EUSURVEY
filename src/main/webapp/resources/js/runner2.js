@@ -453,9 +453,6 @@ function initSlider(input, foreditor, viewModel)
 	}
 		
 	$(input).bootstrapSlider({
-		formatter: function (value) {
-			return viewModel.sliderformatter(value);
-		},
 		tooltip: 'always',
 		ticks_labels: viewModel.labels(),
 		enabled: !foreditor
@@ -812,10 +809,10 @@ function addStatisticsToAnswerText(div, result) {
 		if (1 != sliderbox.size()) {
 			return;
 		}
-		var tooltipinner = elementWrapper.find("div.tooltip-inner");
 		var painttooltipcallback = function(value) {};
 		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
 		if (false === remove) {
+			var tooltipinner = elementWrapper.find("div.tooltip-inner");
 			var map = {};
 			result.data.forEach((entry) => map[entry.label] = entry.value);
 			painttooltipcallback = function() {
@@ -825,14 +822,7 @@ function addStatisticsToAnswerText(div, result) {
 				if (value in map) {
 					votes = map[value];
 				}
-				tooltipinner.html(value+' <span class="answertextdelphivotes">('+votes+')</span>');
-			}
-			viewModel.sliderformatter = function(value) {
-				return value;
-			}
-		} else {
-			viewModel.sliderformatter = function(value) {
-				return value;
+				tooltipinner.html(value+' <span class="slidertooltipdelphivotes">('+votes+')</span>');
 			}
 		}
 		bootstrapSlider.bootstrapSlider("relayout");

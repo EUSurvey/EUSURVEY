@@ -810,10 +810,6 @@ function newNumberViewModel(element)
 	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition != null ? element.initialSliderPosition : "Left");
 	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
 	
-	viewModel.sliderformatter = function(value) {
-		return value;
-	}
-
 	if (viewModel.display() == 'Slider')
 	{
 		if (viewModel.min() == null)
