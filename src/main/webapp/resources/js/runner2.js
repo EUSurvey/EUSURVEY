@@ -813,28 +813,43 @@ function addStatisticsToAnswerText(div, result) {
 			return;
 		}
 		var tooltipinner = elementWrapper.find("div.tooltip-inner");
+		var painttooltipcallback = function(value) {};
+		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
 		if (false === remove) {
 			var map = {};
 			result.data.forEach((entry) => map[entry.label] = entry.value);
-			viewModel.sliderformatter = function(value) {
+			painttooltipcallback = function() {
+				var orightml = tooltipinner.html();
 				var votes = 0;
+				var value = bootstrapSlider.bootstrapSlider("getValue");
+				console.log("sliderval: "+JSON.stringify(value));
 				if (value in map) {
 					votes = map[value];
 				}
-				return ""+value+" ("+votes+")";
+				tooltipinner.html(value+' <span class="answertextdelphivotes">('+votes+')</span>');
+			}
+			viewModel.sliderformatter = function(value) {
+				return value;
+//				var votes = 0;
+//				if (value in map) {
+//					votes = map[value];
+//				}
+//				return ""+value+" ("+votes+")";
+				//setTimeout(function() { painttooltipcallback(): });
 			}
 		} else {
 			viewModel.sliderformatter = function(value) {
 				return value;
 			}
 		}
-		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
 		bootstrapSlider.bootstrapSlider("relayout");
-		bootstrapSlider.on("slide slideStop", function(oldvalue, newvalue) {
-			console.log("BRS slider callback");
-			var orightml = tooltipinner.html();
-			tooltipinner.html(orightml+' <span class="answertextdelphivotes">(hack)</span>');
-		});
+		var currvalue = bootstrapSlider.bootstrapSlider("getValue");
+		painttooltipcallback();
+		bootstrapSlider.on("slide", painttooltipcallback);
+		bootstrapSlider.on("slideStart", painttooltipcallback);
+		bootstrapSlider.on("slideStop ", painttooltipcallback);
+		bootstrapSlider.on("change", painttooltipcallback);
+		bootstrapSlider.on("relayout", painttooltipcallback);
 	}
 }
 
