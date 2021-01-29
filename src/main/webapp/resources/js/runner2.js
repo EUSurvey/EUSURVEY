@@ -822,7 +822,6 @@ function addStatisticsToAnswerText(div, result) {
 				var orightml = tooltipinner.html();
 				var votes = 0;
 				var value = bootstrapSlider.bootstrapSlider("getValue");
-//				console.log("sliderval: "+JSON.stringify(value));
 				if (value in map) {
 					votes = map[value];
 				}
@@ -830,12 +829,6 @@ function addStatisticsToAnswerText(div, result) {
 			}
 			viewModel.sliderformatter = function(value) {
 				return value;
-//				var votes = 0;
-//				if (value in map) {
-//					votes = map[value];
-//				}
-//				return ""+value+" ("+votes+")";
-				//setTimeout(function() { painttooltipcallback(): });
 			}
 		} else {
 			viewModel.sliderformatter = function(value) {
@@ -843,18 +836,12 @@ function addStatisticsToAnswerText(div, result) {
 			}
 		}
 		bootstrapSlider.bootstrapSlider("relayout");
-		var currvalue = bootstrapSlider.bootstrapSlider("getValue");
-		painttooltipcallback();
-		bootstrapSlider.on("slide", painttooltipcallback);
-		bootstrapSlider.on("slideStart", painttooltipcallback);
-		bootstrapSlider.on("slideStop ", painttooltipcallback);
-		bootstrapSlider.on("change", painttooltipcallback);
-		bootstrapSlider.on("relayout", painttooltipcallback);
+		painttooltipcallback(); // repaint now
+		bootstrapSlider.on("slide slideStart slideStop change", painttooltipcallback);
 		var sliderhandle = elementWrapper.find("div.slider-handle");
-		var counter = 0;
 		sliderhandle.on('mousedown', function(event) {
-			requestAnimationFrame(function() {
-				counter+=1; painttooltipcallback();
+			requestAnimationFrame(function() { // when user presses mouse button without moving, tooltip is updated by slider
+				painttooltipcallback(); // no event generated, but after that we need to repaint
 			});
 		});
 	}
