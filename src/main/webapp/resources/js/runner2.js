@@ -822,7 +822,7 @@ function addStatisticsToAnswerText(div, result) {
 				var orightml = tooltipinner.html();
 				var votes = 0;
 				var value = bootstrapSlider.bootstrapSlider("getValue");
-				console.log("sliderval: "+JSON.stringify(value));
+//				console.log("sliderval: "+JSON.stringify(value));
 				if (value in map) {
 					votes = map[value];
 				}
@@ -850,6 +850,13 @@ function addStatisticsToAnswerText(div, result) {
 		bootstrapSlider.on("slideStop ", painttooltipcallback);
 		bootstrapSlider.on("change", painttooltipcallback);
 		bootstrapSlider.on("relayout", painttooltipcallback);
+		var sliderhandle = elementWrapper.find("div.slider-handle");
+		var counter = 0;
+		sliderhandle.on('mousedown', function(event) {
+			requestAnimationFrame(function() {
+				counter+=1; painttooltipcallback();
+			});
+		});
 	}
 }
 

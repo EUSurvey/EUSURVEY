@@ -864,7 +864,7 @@ function newNumberViewModel(element)
 		var input = $("#answer" + element.id());
 		var value = parseFloat($(input).bootstrapSlider().bootstrapSlider('getValue'));
 		if (value < max) {
-			$(input).bootstrapSlider().bootstrapSlider('setValue', value + this.step());
+			$(input).bootstrapSlider().bootstrapSlider('setValue', value + this.step(), true);
 		}
 		
 		propagateChange($(input));
@@ -877,7 +877,7 @@ function newNumberViewModel(element)
 		var input = $("#answer" + element.id());
 		var value = parseFloat($(input).bootstrapSlider().bootstrapSlider('getValue'));
 		if (value > min) {
-			$(input).bootstrapSlider().bootstrapSlider('setValue', value - this.step());
+			$(input).bootstrapSlider().bootstrapSlider('setValue', value - this.step(), true);
 		}
 		
 		propagateChange($(input));
