@@ -354,23 +354,38 @@
 				const answerSetUniqueCode = $('#uniqueCode').val();
 				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
 			}
-			saveChangedDelphiComment(element, isReply, errorCallback, successCallback);
+			saveChangedDelphiComment(element, answersTableViewModel, isReply, errorCallback, successCallback);
 		}
 
 		function deleteDelphiCommentFromStartPage(element, isReply) {
+			var dialog = $(element).closest(".delphi-table").find(".delete-confirmation-dialog");
+			$(dialog).modal("show");
 
-			$('.answers-table-modal-error').hide();
+			var deleteButton = $(dialog).find(".btn-danger");
+			$(deleteButton).off("click");
+			$(deleteButton).click(function () {
+				$('.answers-table-modal-error').hide();
 
-			const errorCallback = function() {
-				$('.answers-table-modal-error').show();
-				$('.answers-table-modal-error').text(errorDelphiTableContributionCouldNotBeDeleted);
-			}
-			const successCallback = function() {
-				const languageCode = "${form.language.code}";
-				const answerSetUniqueCode = $('#uniqueCode').val();
-				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
-			}
-			deleteDelphiComment(element, isReply, errorCallback, successCallback);
+				const errorCallback = function () {
+					$('.answers-table-modal-error').show();
+					$('.answers-table-modal-error').text(errorDelphiTableContributionCouldNotBeDeleted);
+				}
+
+				const successCallback = function () {
+					const languageCode = "${form.language.code}";
+					const answerSetUniqueCode = $('#uniqueCode').val();
+					loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
+				}
+
+				$(dialog).modal("hide");
+				deleteDelphiComment(element, answersTableViewModel, isReply, errorCallback, successCallback);
+			});
+
+			var cancelButton = $(dialog).find(".btn-default");
+			$(cancelButton).off("click");
+			$(cancelButton).click(function () {
+				$(dialog).modal("hide");
+			})
 		}
 		
 		function toggle(element)

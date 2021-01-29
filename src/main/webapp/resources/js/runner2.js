@@ -992,10 +992,14 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 		url: contextpath + "/runner/delphiTable",
 		data: data,
 		beforeSend: function (xhr) {
+			viewModel.delphiTableLoading(true);
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
 		error: function (data) {
 			showError(data.responseText);
+		},
+		complete: function () {
+			viewModel.delphiTableLoading(false);
 		},
 		success: function (result, textStatus) {
 			viewModel.delphiTableEntries.removeAll();
@@ -1088,10 +1092,15 @@ function loadMedianData(div, viewModel) {
 		beforeSend: function (xhr) {
 			xhr.setRequestHeader(csrfheader, csrftoken);
 		},
-		error: function (data) {
-			showError(data);
+		error: function () {
+			showError("Not possible to retrieve median data");
 		},
 		success: function (result, textStatus) {
+			
+			if (textStatus === "nocontent") {
+				return;
+			}			
+			
 			viewModel.maxDistanceExceeded(result != undefined && result.maxDistanceExceeded);
 			
 			$(div).find(".medianpa").removeClass("medianpa");
@@ -1225,7 +1234,7 @@ function delphiUpdateContinued(div, successCallback) {
 			if (data.open) {
 				var link = document.createElement("a");
 				$(link).attr("href", data.link).html(data.link);
-				$(div).find(".delphilinkurl").append(link);
+				$(div).find(".delphilinkurl").empty().append(link);
 				$(div).find(".delphilink").show();
 			}
 			
@@ -1266,6 +1275,7 @@ function updateDelphiElement(element, successCallback) {
 
 function updateQuestionsOnNavigation(page) {
 	if (isdelphi) {
+		$(".delphiupdatemessage").empty();
 		var section = $("#page" + page);
 		var found = $(section).find(".survey-element").is(function () {
 			return $(this).hasClass("sectionitem") === false;
@@ -1321,21 +1331,21 @@ function saveDelphiComment(button, reply, questionUid, surveyId, errorCallback, 
 }
 
 function saveChangedDelphiCommentFromRunner(button, isReply) {
+	const questionUid = $(button).closest(".survey-element").attr("data-uid");
+	const viewModel = modelsForDelphiQuestions[questionUid];
 
-	const errorCallback = () => { showError("error"); }
+	const errorCallback = () => {
+		showError("error");
+	}
 	const successCallback = () => {
-		const questionUid = $(button).closest(".survey-element").attr("data-uid");
-		const viewModel = modelsForDelphiQuestions[questionUid];
 		loadTableData(questionUid, viewModel);
 	}
-	saveChangedDelphiComment(button, isReply, errorCallback, successCallback);
+
+	saveChangedDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
 }
 
-function saveChangedDelphiComment(button, isReply, errorCallback, successCallback) {
-
-	const loader = $(button).parent().parent().find(".delphi-comment__loader");
+function saveChangedDelphiComment(button, viewModel, isReply, errorCallback, successCallback) {
 	const actions = $(button).parent().parent().find(".delphi-comment__actions");
-	$(loader).show();
 	$(actions).hide();
 	hideCommentAndReplyForms();
 
@@ -1353,36 +1363,32 @@ function saveChangedDelphiComment(button, isReply, errorCallback, successCallbac
 		type: "POST",
 		url: contextpath + "/runner/editDelphiComment/" + encodeURIComponent(commentId),
 		data: "text=" + encodeURIComponent(text) + "&uniqueCode=" + answerSetUniqueCode,
-		beforeSend: function(xhr) { xhr.setRequestHeader(csrfheader, csrftoken); },
-		error: () => {
-			$(loader).hide();
+		beforeSend: function (xhr) {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(true);
+			}
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		complete: function () {
 			$(actions).show();
+		},
+		error: function() {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
 			errorCallback();
 		},
-		success: () => {
-			$(loader).hide();
-			$(actions).show();
+		success: function() {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
 			successCallback();
 		}
 	});
 }
 
-function deleteDelphiCommentFromRunner(button, isReply) {
-
-	const errorCallback = () => { showError("error"); }
-	const successCallback = () => {
-		const questionUid = $(button).closest(".survey-element").attr("data-uid");
-		const viewModel = modelsForDelphiQuestions[questionUid];
-		loadTableData(questionUid, viewModel);
-	}
-	deleteDelphiComment(button, isReply, errorCallback, successCallback);
-}
-
-function deleteDelphiComment(button, isReply, errorCallback, successCallback) {
-
-	const loader = $(button).parent().parent().find(".delphi-comment__loader");
+function deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback) {
 	const actions = $(button).parent().parent().find(".delphi-comment__actions");
-	$(loader).show();
 	$(actions).hide();
 	hideCommentAndReplyForms();
 
@@ -1399,15 +1405,25 @@ function deleteDelphiComment(button, isReply, errorCallback, successCallback) {
 		type: "POST",
 		url: contextpath + "/runner/deleteDelphiComment/" + encodeURIComponent(commentId),
 		data: "uniqueCode=" + answerSetUniqueCode,
-		beforeSend: function(xhr) { xhr.setRequestHeader(csrfheader, csrftoken); },
-		error: () => {
-			$(loader).hide();
+		beforeSend: function (xhr) {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(true);
+			}
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		complete: function () {
 			$(actions).show();
+		},
+		error: function() {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
 			errorCallback();
 		},
-		success: () => {
-			$(loader).hide();
-			$(actions).show();
+		success: function() {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
 			successCallback();
 		}
 	});

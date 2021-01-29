@@ -2873,8 +2873,8 @@ public class RunnerController extends BasicController {
 		}
 		
 		SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion) element;
-		if (singleChoiceQuestion.getMaxDistance() == -1) {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		if (!singleChoiceQuestion.getUseLikert() || singleChoiceQuestion.getMaxDistance() == -1) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
 		
 		List<Answer> answerList = answerSet.getAnswers(-1, questionuid);
