@@ -3796,7 +3796,7 @@ public class SurveyService extends BasicService {
 
 	public java.io.File exportSurvey(String shortname, SurveyService surveyService, boolean answers) {
 		return SurveyExportHelper.exportSurvey(shortname, surveyService, answers, translationService, answerService,
-				fileDir, sessionService, fileService, sessionFactory.getCurrentSession(), host);
+				fileDir, sessionService, fileService, sessionFactory.getCurrentSession(), host, answerExplanationService);
 	}
 
 	@Transactional(readOnly = true)
