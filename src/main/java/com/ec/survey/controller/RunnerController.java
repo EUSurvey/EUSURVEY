@@ -2586,7 +2586,7 @@ public class RunnerController extends BasicController {
 		return ResponseEntity.ok(result);
 	}
 
-	private ResponseEntity<AbstractDelphiGraphData> handleDelphiNumberQuestion(Survey survey, NumberQuestion question, NumberQuestionStatistics numberQuestionStatistics) throws Exception {
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiNumberQuestion(Survey survey, NumberQuestion question, NumberQuestionStatistics numberQuestionStatistics) {
 		if (numberQuestionStatistics.getNumberVotes() < survey.getMinNumberDelphiStatistics()) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);

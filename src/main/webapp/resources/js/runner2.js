@@ -766,7 +766,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 }
 
 function addStatisticsToAnswerText(div, result) {
-	var remove = !result; // cast to boolean
+	const remove = !result; // cast to boolean
 	var elementWrapper = $(div).closest(".elementwrapper");
 	var surveyElement = elementWrapper.find(".survey-element");
 
@@ -795,9 +795,9 @@ function addStatisticsToAnswerText(div, result) {
 				possibleAnswersArray()[i].title(newlabel);
 			}
 		} else {
-			for (var i = 0; len > i; ++i) {
-				var origtitle = possibleAnswersArray()[i].originalTitle();
-				possibleAnswersArray()[i].title(origtitle);
+			for (var j = 0; len > j; ++j) {
+				var origtitle = possibleAnswersArray()[j].originalTitle();
+				possibleAnswersArray()[j].title(origtitle);
 			}
 		}
 	}
@@ -809,20 +809,19 @@ function addStatisticsToAnswerText(div, result) {
 		if (1 != sliderbox.size()) {
 			return;
 		}
-		var painttooltipcallback = function(value) {};
+		var painttooltipcallback = function() {};
 		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
 		if (false === remove) {
 			var tooltipinner = elementWrapper.find("div.tooltip-inner");
 			var map = {};
 			result.data.forEach((entry) => map[entry.label] = entry.value);
 			painttooltipcallback = function() {
-				var orightml = tooltipinner.html();
 				var votes = 0;
-				var value = bootstrapSlider.bootstrapSlider("getValue");
-				if (value in map) {
-					votes = map[value];
+				var sliderValue = bootstrapSlider.bootstrapSlider("getValue");
+				if (sliderValue in map) {
+					votes = map[sliderValue];
 				}
-				tooltipinner.html(value+' <span class="slidertooltipdelphivotes">('+votes+')</span>');
+				tooltipinner.html(sliderValue+' <span class="slidertooltipdelphivotes">('+votes+')</span>');
 			}
 		}
 		bootstrapSlider.bootstrapSlider("relayout");
