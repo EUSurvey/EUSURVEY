@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class DelphiContribution {
     private int answerSetId;
+    private String answerSetUniqueCode;
     private String answerUid;
     private int column;
     private String explanation;
@@ -18,6 +19,14 @@ public class DelphiContribution {
 
     public void setAnswerSetId(int answerSetId) {
         this.answerSetId = answerSetId;
+    }
+
+    public String getAnswerSetUniqueCode() {
+        return answerSetUniqueCode;
+    }
+
+    public void setAnswerSetUniqueCode(String answerSetUniqueCode) {
+        this.answerSetUniqueCode = answerSetUniqueCode;
     }
 
     public String getAnswerUid() {

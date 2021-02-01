@@ -608,6 +608,17 @@
 		margin-left: 20px;
 		margin-bottom: 5px;
 	}
+
+	#contentstablebody .comment > a:first-of-type::before,
+	#contentstablebody .reply > a:first-of-type::before {
+		content: '\A';
+		white-space: pre;
+	}
+
+	#contentstablebody .comment a:first-of-type,
+	#contentstablebody .reply a:first-of-type {
+		margin-right: 8px;
+	}
 	
 </style>
 
@@ -1276,6 +1287,10 @@ var closeOverlayDivsEnabled = false;
 						
 						$( "#contentstablebody").append(tr);						
 					  }
+
+					  <c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
+					  	addDelphiCommentActions();
+					  </c:if>
 					  
 					  inloading = false;
 					  $( "#wheel" ).hide();		
@@ -1294,5 +1309,123 @@ var closeOverlayDivsEnabled = false;
 					 });
 				}});
 		}
+
+		function addDelphiCommentActions() {
+
+			const deletedCommentText = '[DELETED]';
+
+			$('.comment').each((index, element) => {
+				const text = extractTextFromComment($(element).find('span').text());
+				if (text !== deletedCommentText) {
+					$(element).append('<a onclick="editDelphiComment(this)"><spring:message code="label.Edit" /></a>');
+				}
+				if (text !== deletedCommentText
+					|| (text === deletedCommentText
+						&& $(element).next().length !== 0
+						&& !$(element).next().hasClass('reply'))) {
+					$(element).append('<a onclick="deleteDelphiComment(this)"><spring:message code="label.Delete" /></a>');
+				}
+			});
+
+			$('.reply').each((index, element) => {
+				$(element).append('<a onclick="editDelphiComment(this)"><spring:message code="label.Edit" /></a>');
+				$(element).append('<a onclick="deleteDelphiComment(this)"><spring:message code="label.Delete" /></a>');
+			});
+		}
+
+		function extractTextFromComment(comment) {
+			// Format: User 1: Text
+			const colonIndex = comment.indexOf(':');
+			return comment.substring(colonIndex + 2);
+		}
+
+		function deleteDelphiComment(button) {
+
+			const container = $(button).parent();
+			const commentId = $(container).attr("data-id");
+			const answerSetUniqueCode = $(container).attr("data-unique-code");
+
+			$("#show-wait-image").modal("show");
+
+			$.ajax({
+				type: "POST",
+				url: contextpath + "/runner/deleteDelphiComment/" + encodeURIComponent(commentId),
+				data: "uniqueCode=" + answerSetUniqueCode,
+				beforeSend: (xhr) => { xhr.setRequestHeader(csrfheader, csrftoken); },
+				error: () => {
+					$("#show-wait-image").modal("hide");
+					showError('<spring:message code="error.DelphiCommentCouldNotBeDeleted" />');
+				},
+				success: () => {
+					if ($(container).hasClass("comment")
+						&& $(container).next().length !== 0
+						&& $(container).next().hasClass('reply')) {
+						window.location.reload(true);
+					} else {
+						if ($(container).hasClass("reply")
+							&& $(container).prev().hasClass('comment')
+							&& $(container).prev().find('a').length === 0
+							&& ($(container).next().length === 0 || $(container).next().hasClass('comment'))) {
+							$(container).prev().append(
+								'<a onclick="deleteDelphiComment(this)"><spring:message code="label.Delete" /></a>');
+						}
+						$("#show-wait-image").modal("hide");
+						$(container).remove();
+					}
+				}
+			});
+		}
+
+		function editDelphiComment(button) {
+
+			const container = $(button).parent();
+			const textElement = $(container).find('span');
+			const text = extractTextFromComment($(textElement).text());
+			const actionButtons = $(container).find('a');
+
+			$(textElement).hide();
+			$(actionButtons).hide();
+
+			const div = document.createElement('div');
+			$(div).addClass('delphi-change-comment');
+			$(div).append('<textarea class="form-control">' + text + '</textarea>');
+			$(div).append('<a class="btn btn-xs btn-primary" onclick="saveChangedDelphiComment(this)">'
+				+ '<spring:message code="label.Save" /></a>');
+			$(div).append('<a class="btn btn-xs btn-default" onclick="cancelEditingDelphiComment(this)">'
+				+ '<spring:message code="label.Cancel" /></a>');
+			$(container).append(div);
+		}
+
+		function cancelEditingDelphiComment(button) {
+
+			$(button).parent().parent().find('span').show();
+			$(button).parent().parent().find('a').show();
+			$(button).parent().remove();
+		}
+
+		function saveChangedDelphiComment(button) {
+
+			const container = $(button).parent().parent();
+			const commentId = $(container).attr("data-id");
+			const answerSetUniqueCode = $(container).attr("data-unique-code");
+
+			const textElement = $(container).find('textarea');
+			const text = $(textElement).val();
+
+			$("#show-wait-image").modal("show");
+
+			$.ajax({
+				type: "POST",
+				url: contextpath + "/runner/editDelphiComment/" + encodeURIComponent(commentId),
+				data: "text=" + encodeURIComponent(text) + "&uniqueCode=" + answerSetUniqueCode,
+				beforeSend: (xhr) => { xhr.setRequestHeader(csrfheader, csrftoken); },
+				error: () => {
+					$("#show-wait-image").modal("hide");
+					showError('<spring:message code="error.DelphiCommentCouldNotBeChanged" />');
+				},
+				success: () => { window.location.reload(true); }
+			});
+		}
+
 </script>
 		

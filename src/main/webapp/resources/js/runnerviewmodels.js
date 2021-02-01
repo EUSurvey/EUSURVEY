@@ -260,15 +260,28 @@ function newScoringViewModel(element)
 	return viewModel;
 }
 
+function createNewDelphiBasicViewModel() {
+
+	return {
+		delphiTableEntries: ko.observableArray(),
+		delphiTableLoading: ko.observable(false),
+		delphiTableLimit: ko.observable(20),
+		delphiTableOffset: ko.observable(0),
+		delphiTableTotalEntries: ko.observable(0),
+		delphiTableOrder: ko.observable("UpdateDesc")
+	};
+}
+
 function newBasicViewModel(element)
 {
-	var viewModel = {};
+	const viewModel = new createNewDelphiBasicViewModel();
 	
 	viewModel.isViewModel = true;
 	
 	viewModel.scoringItems = ko.observableArray();
 	viewModel.optional = ko.observable(true);
 	viewModel.css = ko.observable(true);	
+	viewModel.maxDistanceExceeded = ko.observable(false);	
 	
 	viewModel.getScoringItem = function(id)
 	{
@@ -297,7 +310,6 @@ function newBasicViewModel(element)
 		viewModel.css = ko.observable(element.css);
 		viewModel.optional = ko.observable(element.optional);
 		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
-		viewModel.delphiTableEntries = ko.observableArray();
 		viewModel.delphiChartType = ko.observable(element.delphiChartType);
 
 		if (element.scoringItems != null) {
@@ -305,11 +317,6 @@ function newBasicViewModel(element)
 				viewModel.scoringItems.push(newScoringViewModel(element.scoringItems[i]));
 			}
 		}
-
-		viewModel.delphiTableLimit = ko.observable(20);
-		viewModel.delphiTableOffset = ko.observable(0);
-		viewModel.delphiTableTotalEntries = ko.observable(0);
-		viewModel.delphiTableOrder = ko.observable("UpdateDesc");
 	}
 	
 	viewModel.copy = function()
@@ -680,7 +687,9 @@ function newSingleChoiceViewModel(element)
 	viewModel.useRadioButtons = ko.observable(element.useRadioButtons);	
 	viewModel.minChoices = ko.observable(0);
 	viewModel.maxChoices = ko.observable(0);
-	viewModel.choiceType = ko.observable(element.useRadioButtons ? "radio" : "select");
+	viewModel.choiceType = ko.observable(element.useLikert ? "likert" : (element.useRadioButtons ? "radio" : "select"));
+	viewModel.likert = ko.observable(element.useLikert);
+	viewModel.maxDistance = ko.observable(element.maxDistance);
 	
 	return viewModel;
 }
@@ -849,6 +858,8 @@ function newNumberViewModel(element)
 		if (value < max) {
 			$(input).bootstrapSlider().bootstrapSlider('setValue', value + this.step());
 		}
+		
+		propagateChange($(input));
 	}
 	
 	viewModel.decrease = function(element)
@@ -860,6 +871,8 @@ function newNumberViewModel(element)
 		if (value > min) {
 			$(input).bootstrapSlider().bootstrapSlider('setValue', value - this.step());
 		}
+		
+		propagateChange($(input));
 	}
 	
 	viewModel.initialValue = function() {

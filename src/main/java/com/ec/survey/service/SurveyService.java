@@ -2878,6 +2878,9 @@ public class SurveyService extends BasicService {
 
 			if (!Tools.isEqual(draftSurvey.getMaxNumberContribution(), publishedSurvey.getMaxNumberContribution()))
 				hasPendingChanges = true;
+
+			if (!Tools.isEqual(draftSurvey.getIsDelphiShowAnswersAndStatisticsInstantly(), publishedSurvey.getIsDelphiShowAnswersAndStatisticsInstantly()))
+				hasPendingChanges = true;
 			
 			if (!Tools.isEqual(draftSurvey.getIsDelphiShowAnswers(), publishedSurvey.getIsDelphiShowAnswers()))
 				hasPendingChanges = true;
@@ -3793,7 +3796,7 @@ public class SurveyService extends BasicService {
 
 	public java.io.File exportSurvey(String shortname, SurveyService surveyService, boolean answers) {
 		return SurveyExportHelper.exportSurvey(shortname, surveyService, answers, translationService, answerService,
-				fileDir, sessionService, fileService, sessionFactory.getCurrentSession(), host);
+				fileDir, sessionService, fileService, sessionFactory.getCurrentSession(), host, answerExplanationService);
 	}
 
 	@Transactional(readOnly = true)
@@ -4860,12 +4863,12 @@ public class SurveyService extends BasicService {
 		body.append("</b><br /><br />");
 		
 		if (survey.getDownloadContribution()) {		
-			body.append("To download your contribution, please click on this link: <a href='").append(host).append("/home/downloadcontribution?email=").append(email).append("&code=").append(answerSet.getUniqueCode()).append("'>Get PDF</a><br />");
+			body.append("To download your contribution, please click on this link: <a href='").append(host).append("home/downloadcontribution?email=").append(email).append("&code=").append(answerSet.getUniqueCode()).append("'>Get PDF</a><br />");
 		}
 		
 		if (survey.getChangeContribution())
 		{
-			body.append("To edit your contribution, please click on this link: <a href='").append(host).append("/home/editcontribution?code=").append(answerSet.getUniqueCode()).append("'>Edit</a><br />");
+			body.append("To edit your contribution, please click on this link: <a href='").append(host).append("home/editcontribution?code=").append(answerSet.getUniqueCode()).append("'>Edit</a><br />");
 			body.append("<br />You can edit your contribution only as long as the survey is open and running.");
 		}
 		

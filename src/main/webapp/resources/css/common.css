@@ -8,6 +8,11 @@ body {
 	color: #333;
 }
 
+body.modal-open {
+	/* Avoid scroll to top when modal opens */
+	overflow: visible;
+}
+
 html, body {
   height: 100%;
 }
@@ -1236,6 +1241,10 @@ legend {
 	font-weight: bold;
 }
 
+.nav-pills > div.tooltip + li {
+	margin-left: 2px;
+}
+
 .mandatory {
 	color:#f00; font-weight: bold; white-space: pre; margin-right: 2px;
 }
@@ -1244,32 +1253,55 @@ legend {
 	font-weight: bold; white-space: pre; margin-right: 2px;
 }
 
-.delphiupdatemessage {
+.delphi-chart-expand {
+	cursor: pointer;
+	float: right;
+}
+
+.delphiupdatemessage, .delphilink {
 	margin-left: 20px;
 	margin-top: 10px;
 }
 
-.delphicomment textarea, .delphireply textarea {
+.delphilink {
+    background-color: #ecebeb;
+    padding: 10px;
+    border: 1px solid #ccc;
+    color: #555;
+}
+
+.delphilinkurl {
+	margin-top: 7px;
+	margin-bottom: 7px;
+}
+
+.delphi-comment-add__form textarea,
+.delphi-comment__add-reply-form textarea {
 	margin-bottom: 5px;
 	margin-top: 5px;
 }
 
-.delphicomment a, .delphireply a {
+.delphi-comment-add__form a,
+.delphi-comment__add-reply-form a {
 	margin-right: 5px;
 }
 
-.delphireply {
+.delphi-comment__add-reply-form {
 	padding-left: 20px;
 }
 
-.delphicommentsdiv {
+.delphi-comment {
 	border-bottom: 1px solid #ddd; 
 	padding: 10px; 
 	margin-left: -5px; 
 	margin-right: -5px; 
 }
 
-.delphicommentdate {
+.delphi-comment__user {
+	font-weight: bold;
+}
+
+.delphi-comment__date {
 	color: #999;
 	font-size: 90%;
 	margin-left: 5px
@@ -1280,10 +1312,18 @@ legend {
 }
 
 .delphi.elementwrapper {
-    border: 1px solid #ccc;
-    background-color: #f5f5f5;
 	margin-top: 20px;
 	position: relative;
+}
+
+.elementwrapper.delphi,
+#editcontent .survey-element.delphi {
+	border: 1px solid #ccc;
+	background-color: #f5f5f5;
+}
+
+#editcontent .survey-element.delphi {
+	padding-top: 20px;
 }
 
 .delphi .questiontitle {
@@ -1292,14 +1332,53 @@ legend {
 }
 
 .delphi-table {
+	font-size: 100%;
+	position: relative;
+}
+
+.delphi-table table.table {
 	background-color: #fff;
+}
+
+.survey-element .delphi-table {
 	margin-left: 35px;
 	margin-right: 15px;
-	font-size: 100%;
+}
+
+.delphi-comment__reply {
+	margin-top: 10px;
+	margin-left: 20px;
+}
+
+.delphi-comment__actions a:first-child {
+	margin-right: 5px;
+}
+
+.delphi-comment__add-reply {
+	margin-left: 20px;
+	margin-top: 10px;
+}
+
+.delphi-comment-add {
+	margin-top: 5px;
 }
 
 .matrixtable {
 	background-color: #fff;
+}
+
+.maxDistanceExceededMessage {
+	color: #f00;
+	margin-left: 40px;
+	margin-top: 20px;
+}
+
+.likert-pa {
+	float: left; width: 100px; text-align: center; position: relative;
+}
+
+div.medianpa {
+	background-color: #f003;
 }
 
 .explanation-section {
@@ -1321,12 +1400,39 @@ legend {
 	margin-left: 20px;
 }
 
-.chart-wrapper {
+.delete-confirmation-dialog {
 	display: none;
 }
 
-.delphi-table-wrapper {
-	margin: 15px 0 0 25px;
+.no-close .ui-dialog-titlebar-close {
+	display: none;
+}
+
+.ui-dialog {
+	position: fixed;
+	z-index: 10000;
+}
+
+.loader {
+	align-items: center;
+	background-color: rgba(255, 255, 255, 0.75);
+	display: flex;
+	height: 100%;
+	justify-content: center;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 10;
+}
+
+.likert-bar {
+	height: 6px; margin-top: 6px; margin-left: 50px; margin-right: 100px; background-color: #ddd; position: absolute;
+}
+
+.chart-wrapper {
+	display: none;
+	padding-left: 20px;
 }
 
 .update-error {
@@ -1356,6 +1462,12 @@ legend {
     color: #fff;
     font-size: 100%;
 }
+
+.statistics-area-header {
+    background-color: #8a8989;
+    color: #fff;
+    font-size: 100%;
+ }
 
 .validation-error-keep {
 	color: #f00;
@@ -1651,12 +1763,17 @@ legend {
 	border-bottom: 1px solid #ddd;
 }
 
+#scrollareastatistics {
+	overflow-x: hidden !important;
+}
+
 .scrollarea {
 	height: 300px;
 	width: 90%;
 	overflow-y: auto;	
-	overflow-x: auto;	
+	overflow-x: auto;
 }
+
 
 #contentstable2 .answercell {
 	width: 150px;
@@ -2142,4 +2259,14 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 
 .slider-tick.round {
 	/*display: none;*/
-} 
+}
+
+.answers-table-modal .modal-body {
+	overflow: auto;
+}
+
+.answers-table-modal .answers-table-modal-error {
+	color: red;
+	display: none;
+	margin-bottom: 5px;
+}

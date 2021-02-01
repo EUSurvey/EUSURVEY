@@ -238,6 +238,10 @@ function updateChoice(answers)
 	updateDependenciesView();
 	checkInputStates();
 	updateNavigation($(_elementProperties.selectedelement), id);
+
+	var element = _elementProperties.selectedelement;
+	_elementProperties.deselectAll();
+	if (element != null) _elementProperties.showProperties($(element), null, false);
 }
 
 function checkInputStates()

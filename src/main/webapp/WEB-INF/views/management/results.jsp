@@ -83,6 +83,25 @@
 			font-size: 18px;
 			vertical-align: bottom;
 		}
+		
+		.statelement-wrapper {
+			width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;
+		}
+		
+		.chart-wrapper, .chart-controls {
+			float: left;
+			display: none;
+		}
+		
+		.chart-controls {
+			padding: 20px;
+		}
+		
+		.chart-controls select {
+			width: auto;
+			display: inline-block;
+			margin-bottom: 15px;
+		}
 	
 	</style>
 	
@@ -448,6 +467,9 @@
 					
 					$("#scrollareaheader").css("overflow-x", "auto");
 					$("#scrollareaheader").css("overflow-y","auto");
+
+					delphiPopulateAllGraphs($("#results-statistics"));
+					doResize();
 					break;
 				case 'statistics-quiz':
 					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");

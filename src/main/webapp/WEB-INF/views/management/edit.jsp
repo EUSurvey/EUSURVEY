@@ -695,6 +695,7 @@
 	 		strings["Columns"] = "<spring:message code="label.Columns" />";
 	 		strings["RadioButton"] = "<spring:message code="html.RadioButton" />";
 	 		strings["SelectBox"] = "<spring:message code="html.SelectBox" />";	 
+	 		strings["LikertScale"] = "<spring:message code="html.LikertScale" />";
 	 		strings["Original"] = "<spring:message code="label.OriginalOrder" />";
 	 		strings["Alphabetical"] = "<spring:message code="label.AlphabeticalOrder" />";
 	 		strings["Random"] = "<spring:message code="label.RandomOrder" />";
@@ -856,7 +857,9 @@
 			strings["Pie"] ="<spring:message code="label.DelphiChartPie" />";
 			strings["Radar"] ="<spring:message code="label.DelphiChartRadar" />";
 			strings["Scatter"] ="<spring:message code="label.DelphiChartScatter" />";
-
+			strings["MaxDistanceToMedian"] ="<spring:message code="label.MaxDistanceToMedian" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.MaxDistanceToMedian" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
+			strings["Ignore"] ="<spring:message code="label.Ignore" />";
+			
 	 		return strings[label];
 	 	}
 	</script>

@@ -7,12 +7,16 @@
 	<title>EUSurvey - <spring:message code="label.Survey" /></title>
 	
 	<%@ include file="../includesrunner.jsp" %>
+	<%@ include file="../generic-messages.jsp" %>
 	
 	<link id="runnerCss" href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="${contextpath}/resources/js/runner2.js?version=<%@include file="../version.txt" %>"></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/runnerviewmodels.js?version=<%@include file="../version.txt" %>"></script>
 
 </head>
 <body>
+	<c:set var="mode" value="delphiStartPage" />
+
 	<div class="page-wrap">
 		<%@ include file="../header.jsp" %>	
 		<%@ include file="../runner/delphiinner.jsp" %>

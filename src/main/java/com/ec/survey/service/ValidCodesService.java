@@ -31,6 +31,10 @@ public class ValidCodesService extends BasicService {
 	
 	@Transactional
 	public void add(String uniqueCode, Survey survey) {
+		if (checkValid(uniqueCode, survey.getUniqueId())) {
+			return;
+		}		
+		
 		Session session = sessionFactory.getCurrentSession();
 		session.evict(survey);
 		ValidCode validCode = new ValidCode(uniqueCode, survey.getUniqueId());

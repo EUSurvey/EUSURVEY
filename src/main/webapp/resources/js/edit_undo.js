@@ -365,6 +365,11 @@ var UndoProcessor = function() {
 					{
 						element.choiceType("list");
 						element.useCheckboxes(false);
+					} else if (step[3] == "LikertScale")
+					{
+						element.choiceType("likert");
+						element.useRadioButtons(false);
+						element.likert(true);
 					}
 					updateChoice();
 				}
@@ -446,6 +451,7 @@ var UndoProcessor = function() {
 				break;
 			case "DelphiQuestion":
 				element.isDelphiQuestion(step[3]);
+				$('#' + id).toggleClass("delphi");
 				break;
 			case "DelphiChartType":
 				element.delphiChartType(step[3]);
@@ -664,7 +670,9 @@ var UndoProcessor = function() {
 			case "MaximumFileSize":
 				element.maxFileSize(step[3]);
 				break;
-				
+			case "MaxDistanceToMedian":
+				element.maxDistance(step[3]);
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -884,6 +892,11 @@ var UndoProcessor = function() {
 					{
 						element.choiceType("list");
 						element.useCheckboxes(false);
+					} else if (step[4] == "LikertScale")
+					{
+						element.choiceType("likert");
+						element.useRadioButtons(false);
+						element.likert(true);
 					}
 					updateChoice();
 				}
@@ -965,6 +978,7 @@ var UndoProcessor = function() {
 				break;
 			case "DelphiQuestion":
 				element.isDelphiQuestion(step[4]);
+				$('#' + id).toggleClass("delphi");
 				break;
 			case "DelphiChartType":
 				element.delphiChartType(step[4]);
@@ -1160,6 +1174,9 @@ var UndoProcessor = function() {
 				break;
 			case "MaximumFileSize":
 				element.maxFileSize(step[4]);
+				break;
+			case "MaxDistanceToMedian":
+				element.maxDistance(step[4]);
 				break;
 		}
 		

@@ -587,7 +587,7 @@ function nextPage() {
 	{
 		if (!$("#tab" + (page + i)).hasClass("untriggered") && $("#tab" + (page + i)).find(".untriggered").length == 0)
 		{
-			selectPage(page + i);
+			selectPage(page + i);		
 			return;
 		} else {
 			i++;
@@ -616,6 +616,7 @@ function selectPage(val) {
 					//ok
 					if (i == val-page-1)
 					{
+						updateQuestionsOnNavigation(page);
 						$(".single-page").hide();		
 						page = val;		
 						$("#page" + page).show();
@@ -629,6 +630,7 @@ function selectPage(val) {
 				} else {
 					if (i > 0)
 					{
+						updateQuestionsOnNavigation(page);
 						$(".single-page").hide();		
 						page = page + i;		
 						$("#page" + page).show();
@@ -645,7 +647,7 @@ function selectPage(val) {
 			}			
 		} else {
 			if (!validate || !validatedPerPage || $("#hfsubmit").val() != 'true' || validateInput($("#page" + page))) {
-				
+				updateQuestionsOnNavigation(page);
 				$(".single-page").hide();		
 				page = val;		
 				$("#page" + page).show();
@@ -1567,6 +1569,11 @@ function eraseCookie(name) {
 }
 
 function is_local_storage_enabled() {
+	if ($("#saveLocalBackup").length === 0) {
+		// local backup checkbox is not displayed => Delphi question => disable local storage
+		return false;
+	}
+
 	if (typeof (Storage) !== "undefined") {
     var ABCD=0;
 		try {

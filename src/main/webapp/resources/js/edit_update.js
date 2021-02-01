@@ -146,6 +146,7 @@ function update(input)
 			} else {
 				mandatoryPropertyRow.Disabled(false);
 			}
+			$('#' + id).toggleClass("delphi");
 			_undoProcessor.addUndoStep(["DelphiQuestion", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
 			break;
 		case "DelphiChartType":
@@ -299,15 +300,25 @@ function update(input)
 					case "list":
 						oldtext = "ListBox";
 						break;
+					case "likert":
+						oldtext = "LikertScale";
+						break;
 				}
-				if (text == "RadioButton")
+				
+				if (text == "LikertScale")
+				{
+					element.likert(true);
+					element.choiceType("likert");				
+				} else if (text == "RadioButton")
 				{
 					element.useRadioButtons(true);
 					element.choiceType("radio");
+					element.likert(false);
 				} else if (text == "SelectBox")
 				{
 					element.choiceType("select");
 					element.useRadioButtons(false);
+					element.likert(false);
 				} else if (text == "CheckBox")
 				{
 					element.useCheckboxes(true);
@@ -958,14 +969,24 @@ function update(input)
 			_undoProcessor.addUndoStep(["Height", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			break;
 		case "MaximumFileSize":
-			var text = $(input).val();
-			
-			if (text.length == 0) text = "1";
-			
+			var text = $(input).val();			
+			if (text.length == 0) text = "1";			
 			var oldtext = element.maxFileSize();
-			element.maxFileSize(parseInt(text));
-			
+			element.maxFileSize(parseInt(text));			
 			_undoProcessor.addUndoStep(["MaximumFileSize", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
+			break;
+		case "MaxDistanceToMedian":
+			var text = $(input).val();	
+			var oldtext = element.maxDistance();
+			var index = $(input).prop('selectedIndex');
+			if (index == 0)
+			{
+				text = "-1";
+			}
+			
+			element.maxDistance(parseInt(text));			
+			_undoProcessor.addUndoStep(["MaxDistanceToMedian", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
+		
 			break;
 		default:
 			throw label + " not implemented"; 
