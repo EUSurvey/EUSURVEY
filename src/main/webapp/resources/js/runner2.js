@@ -766,7 +766,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 }
 
 function addStatisticsToAnswerText(div, result) {
-	remove = !result; // cast to boolean
+	var remove = !result; // cast to boolean
 	var elementWrapper = $(div).closest(".elementwrapper");
 	var surveyElement = elementWrapper.find(".survey-element");
 
@@ -791,7 +791,7 @@ function addStatisticsToAnswerText(div, result) {
 			for (var i = 0; (result.data.length > i) && (len > i); ++i) {
 				var label = possibleAnswersArray()[i].originalTitle();
 				var value = result.data[i].value;
-				var newlabel = ""+label+' <span class="answertextdelphivotes">('+value+')</span>';
+				var newlabel = label+' <span class="answertextdelphivotes">('+value+')</span>';
 				possibleAnswersArray()[i].title(newlabel);
 			}
 		} else {

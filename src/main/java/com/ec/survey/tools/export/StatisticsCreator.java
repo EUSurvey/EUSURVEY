@@ -5,6 +5,7 @@ import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.Statistics;
 import com.ec.survey.model.survey.*;
+import com.ec.survey.model.delphi.NumberQuestionStatistics;
 import com.ec.survey.model.survey.quiz.QuizResult;
 import com.ec.survey.service.AnswerService;
 import com.ec.survey.service.ReportingService;
@@ -551,18 +552,11 @@ public class StatisticsCreator implements Runnable {
 		}
 	}
 
-	static public class NumberQuestionStats {
-		public int numberVotes = 0;
-		public boolean questionFound = false;
-	}
-
 	@Transactional
-	public NumberQuestionStats getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question, Map<String, Integer> map) throws TooManyFiltersException {
+	public NumberQuestionStatistics getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question, Map<String, Integer> map) throws TooManyFiltersException {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
-		NumberQuestionStats numberQuestionStats = new NumberQuestionStats();
-		numberQuestionStats.questionFound = false;
-		numberQuestionStats.numberVotes = 0;
+		NumberQuestionStatistics numberQuestionStats = new NumberQuestionStatistics();
 
 		String where = answerService.getSql(null, survey.getId(), filter, values, true);
 		String sql = "SELECT a.VALUE, a.QUESTION_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
@@ -592,12 +586,14 @@ public class StatisticsCreator implements Runnable {
 
 			Integer count = map.getOrDefault(value, 0);
 			map.put(value, count+1);
-			numberQuestionStats.numberVotes += 1;
+			numberQuestionStats.incrementNumberVotes();
 			if (qid.equals(question.getId())) {
-				numberQuestionStats.questionFound = true;
+				numberQuestionStats.setQuestionFound(true);
 			}
 		}
-		results.close();
+		if (null != results) {
+			results.close();
+		}
 		return numberQuestionStats;
 	}
 
