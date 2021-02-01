@@ -553,7 +553,7 @@ public class StatisticsCreator implements Runnable {
 	}
 
 	@Transactional
-	public NumberQuestionStatistics getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question, Map<String, Integer> map) throws TooManyFiltersException {
+	public NumberQuestionStatistics getAnswers4NumberQuestionStatistics(Survey survey, NumberQuestion question) throws TooManyFiltersException {
 		Session session = sessionFactory.getCurrentSession();
 		HashMap<String, Object> values = new HashMap<>();
 		NumberQuestionStatistics numberQuestionStats = new NumberQuestionStatistics();
@@ -579,6 +579,7 @@ public class StatisticsCreator implements Runnable {
 		query.setFetchSize(Integer.MIN_VALUE);
 		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
 
+		Map<String, Integer> map = new HashMap<>();
 		while (results != null && results.next()) {
 			Object[] a = results.get();
 			String value = (String) a[0];
@@ -594,6 +595,7 @@ public class StatisticsCreator implements Runnable {
 		if (null != results) {
 			results.close();
 		}
+		numberQuestionStats.setValuesMagnitude(map);
 		return numberQuestionStats;
 	}
 
