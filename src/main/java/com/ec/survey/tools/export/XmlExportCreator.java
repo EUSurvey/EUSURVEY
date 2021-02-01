@@ -53,11 +53,11 @@ public class XmlExportCreator extends ExportCreator {
 	@Override
 	@Transactional
 	public void ExportContent(boolean sync) throws Exception {
-		ExportContent(sync, export, false);
+		exportContent(sync, export, false);
 	}
 
 	@Transactional
-	public void ExportContent(boolean sync, Export export, boolean fromWebService) throws Exception {
+	public void exportContent(boolean sync, Export export, boolean fromWebService) throws Exception {
 		exportedUniqueCodes.clear();
 		XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(outputStream, "UTF-8");
 
@@ -593,7 +593,7 @@ public class XmlExportCreator extends ExportCreator {
 	}
 
 	@Transactional
-	public void SimulateExportContent(boolean sync, Export export) throws Exception {
+	public void simulateExportContent(boolean sync, Export export) throws Exception {
 		exportedUniqueCodes.clear();
 
 		Session session;
