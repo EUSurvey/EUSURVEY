@@ -4863,12 +4863,12 @@ public class SurveyService extends BasicService {
 		body.append("</b><br /><br />");
 		
 		if (survey.getDownloadContribution()) {		
-			body.append("To download your contribution, please click on this link: <a href='").append(host).append("/home/downloadcontribution?email=").append(email).append("&code=").append(answerSet.getUniqueCode()).append("'>Get PDF</a><br />");
+			body.append("To download your contribution, please click on this link: <a href='").append(host).append("home/downloadcontribution?email=").append(email).append("&code=").append(answerSet.getUniqueCode()).append("'>Get PDF</a><br />");
 		}
 		
 		if (survey.getChangeContribution())
 		{
-			body.append("To edit your contribution, please click on this link: <a href='").append(host).append("/home/editcontribution?code=").append(answerSet.getUniqueCode()).append("'>Edit</a><br />");
+			body.append("To edit your contribution, please click on this link: <a href='").append(host).append("home/editcontribution?code=").append(answerSet.getUniqueCode()).append("'>Edit</a><br />");
 			body.append("<br />You can edit your contribution only as long as the survey is open and running.");
 		}
 		
