@@ -2271,11 +2271,16 @@ public class SurveyService extends BasicService {
 		List<Translations> translations = null;
 		List<AnswerSet> answerSets = new ArrayList<>();
 		Map<Integer, List<File>> files = null;
-
+		
+		List<AnswerExplanation> explanations;
+		List<AnswerComment> comments;
+		
 		if (draft) {
 			translations = result.getTranslations();
 			answerSets = result.getAnswerSets();
 			files = result.getFiles();
+			explanations = result.getExplanations();
+			comments = result.getComments();
 		} else {
 			if (surveyid.equals(result.getActiveSurvey().getId())) {
 				translations = result.getActiveTranslations();
@@ -2293,6 +2298,9 @@ public class SurveyService extends BasicService {
 				}
 
 			files = result.getActiveFiles();
+			
+			explanations = result.getActiveExplanations();
+			comments = result.getActiveComments();
 		}
 
 		if (translations != null) {
@@ -2315,6 +2323,30 @@ public class SurveyService extends BasicService {
 			}
 
 			Set<AnswerSet> answerSets2 = new HashSet<>();
+			
+			Map<Integer, List<AnswerExplanation>> explanationsByAnswerId = new HashMap<>();
+			if (explanations != null) {
+				for (AnswerExplanation explanation : explanations) {
+					if (!explanationsByAnswerId.containsKey(explanation.getAnswerSetId()))
+					{
+						explanationsByAnswerId.put(explanation.getAnswerSetId(), new ArrayList<AnswerExplanation>());
+					}
+					
+					explanationsByAnswerId.get(explanation.getAnswerSetId()).add(explanation);
+				}
+			}
+			
+			Map<Integer, List<AnswerComment>> commentsByAnswerId = new HashMap<>();
+			if (comments != null) {
+				for (AnswerComment comment : comments) {
+					if (!commentsByAnswerId.containsKey(comment.getAnswerSetId()))
+					{
+						commentsByAnswerId.put(comment.getAnswerSetId(), new ArrayList<AnswerComment>());
+					}
+					
+					commentsByAnswerId.get(comment.getAnswerSetId()).add(comment);
+				}
+			}
 
 			while (!answerSets.isEmpty()) {
 				AnswerSet a = answerSets.remove(0);
@@ -2337,6 +2369,45 @@ public class SurveyService extends BasicService {
 						an.setPossibleAnswerUniqueId(oldToNewUniqueIds.get(an.getPossibleAnswerUniqueId()));
 					}
 				}
+				
+				if (explanationsByAnswerId.containsKey(a.getId())) {
+					for (AnswerExplanation explanation : explanationsByAnswerId.get(a.getId())) {						
+						AnswerSet.ExplanationData explanationData = new AnswerSet.ExplanationData();
+						explanationData.text = explanation.getText();					
+						for (File file : explanation.getFiles())
+						{
+							File copy = file.copy(null);
+							explanationData.files.add(copy);
+						}
+						
+						b.getExplanations().put(oldToNewUniqueIds.get(explanation.getQuestionUid()), explanationData);
+					}
+				}
+				
+				if (commentsByAnswerId.containsKey(a.getId())) {
+					Map<Integer, AnswerComment> commentsByOldId = new HashMap<>();
+					
+					for (AnswerComment comment : commentsByAnswerId.get(a.getId())) {						
+						AnswerComment copy = new AnswerComment();
+						copy.setQuestionUid(oldToNewUniqueIds.get(comment.getQuestionUid()));
+						copy.setUniqueCode(comment.getUniqueCode());
+						copy.setText(comment.getText());
+						copy.setDate(comment.getDate());
+						
+						commentsByOldId.put(comment.getId(), copy);
+						
+						if (comment.getParent() != null) {
+							copy.setParent(commentsByOldId.get(comment.getParent().getId()));
+						}
+						
+						if (!b.getComments().containsKey(oldToNewUniqueIds.get(comment.getQuestionUid())))
+						{
+							b.getComments().put(oldToNewUniqueIds.get(comment.getQuestionUid()), new ArrayList<>());
+						}						
+						
+						b.getComments().get(oldToNewUniqueIds.get(comment.getQuestionUid())).add(copy);
+					}
+				}
 
 				answerSets2.add(b);
 
@@ -2350,6 +2421,8 @@ public class SurveyService extends BasicService {
 			SaveAnswerSets(answerSets2, tempFileDir, null);
 			logger.info("finished import of answers");
 		}
+		
+		
 	}
 
 	@Transactional
