@@ -403,7 +403,7 @@ public class SurveyExportHelper {
 			    		{
 			    			stop = true;
 			    		} else {
-							addObjectAsFileToOutputStream(answerSets, "answers-active.eus", os, session, fileService);
+							addObjectAsFileToOutputStream(answerSets, "answers-active" + counter + ".eus", os, session, fileService);
 						    
 						    for (AnswerSet set: answerSets)
 						    {
@@ -458,8 +458,7 @@ public class SurveyExportHelper {
 			    if (survey.getIsDelphi()) {
 					addDelphiAnswerExplanations(os, session, answerService, answerExplanationService, fileService,
 							surveyService, survey, activeSurvey);
-					addDelphiAnswerComments(os, session, answerExplanationService, fileService, surveyService,
-							survey, activeSurvey);
+					addDelphiAnswerComments(os, session, answerExplanationService, fileService, survey, activeSurvey);
 				}
 		    }
 		    
@@ -479,50 +478,33 @@ public class SurveyExportHelper {
 			final FileService fileService, final SurveyService surveyService, final Survey survey,
 			final Survey activeSurvey) throws Exception {
 
-		List<AnswerExplanation> explanations = answerExplanationService.getExplanationsOfSurvey(survey.getId());
+		List<AnswerExplanation> explanations = answerExplanationService.getExplanationsOfSurvey(survey.getUniqueId(), survey.getIsDraft());
 		addObjectAsFileToOutputStream(explanations, "explanations.eus", os, session, fileService);
-		addDelphiAnswerExplanationFilesToOutputStream(os, session, answerService, fileService, surveyService, survey,
-				explanations, "");
+		addDelphiAnswerExplanationFilesToOutputStream(os, answerService, fileService, surveyService, survey,
+				explanations);
 		if (activeSurvey != null) {
-			explanations = answerExplanationService.getExplanationsOfSurvey(activeSurvey.getId());
+			explanations = answerExplanationService.getExplanationsOfSurvey(activeSurvey.getUniqueId(), activeSurvey.getIsDraft());
 			addObjectAsFileToOutputStream(explanations, "explanations-active.eus", os, session, fileService);
-			addDelphiAnswerExplanationFilesToOutputStream(os, session, answerService, fileService, surveyService, survey,
-					explanations, "-active");
-
-			final List<Integer> allSurveys = surveyService.getAllSurveyVersions(activeSurvey.getId());
-			allSurveys.remove(survey.getId());
-			allSurveys.remove(activeSurvey.getId());
-			for (final Integer id : allSurveys) {
-				explanations = answerExplanationService.getExplanationsOfSurvey(id);
-				addObjectAsFileToOutputStream(explanations, "explanations-active-" + id + ".eus", os, session, fileService);
-			}
+			addDelphiAnswerExplanationFilesToOutputStream(os, answerService, fileService, surveyService, survey,
+					explanations);
 		}
 	}
 
 	private static void addDelphiAnswerComments(final ArchiveOutputStream os, final Session session,
 			final AnswerExplanationService answerExplanationService, final FileService fileService,
-			final SurveyService surveyService, final Survey survey, final Survey activeSurvey) throws Exception {
+			final Survey survey, final Survey activeSurvey) throws Exception {
 
-		List<AnswerComment> comments = answerExplanationService.getCommentsOfSurvey(survey.getId());
+		List<AnswerComment> comments = answerExplanationService.getCommentsOfSurvey(survey.getUniqueId(), survey.getIsDraft());
 		addObjectAsFileToOutputStream(comments, "comments.eus", os, session, fileService);
 		if (activeSurvey != null) {
-			comments = answerExplanationService.getCommentsOfSurvey(activeSurvey.getId());
-			addObjectAsFileToOutputStream(comments, "comments-active.eus", os, session, fileService);
-
-			final List<Integer> allSurveys = surveyService.getAllSurveyVersions(activeSurvey.getId());
-			allSurveys.remove(survey.getId());
-			allSurveys.remove(activeSurvey.getId());
-			for (final Integer id : allSurveys) {
-				comments = answerExplanationService.getCommentsOfSurvey(id);
-				addObjectAsFileToOutputStream(comments, "comments-active-" + id + ".eus", os, session, fileService);
-			}
+			comments = answerExplanationService.getCommentsOfSurvey(activeSurvey.getUniqueId(), activeSurvey.getIsDraft());
+			addObjectAsFileToOutputStream(comments, "comments-active.eus", os, session, fileService);			
 		}
 	}
 
 	private static void addDelphiAnswerExplanationFilesToOutputStream(final ArchiveOutputStream os,
-			final Session session, final AnswerService answerService, final FileService fileService,
-			final SurveyService surveyService, final Survey survey, final List<AnswerExplanation> explanations,
-			final String folderAndFileSuffix) throws Exception {
+			final AnswerService answerService, final FileService fileService, final SurveyService surveyService,
+			final Survey survey, final List<AnswerExplanation> explanations) throws Exception {
 
 		final Map<Integer, List<File>> files = new HashMap<>();
 		for (final AnswerExplanation explanation : explanations) {
@@ -534,8 +516,7 @@ public class SurveyExportHelper {
 					final int questionId = surveyService.getNewestElementByUid(explanation.getQuestionUid()).getId();
 					final java.io.File f = fileService.getSurveyExplanationFile(survey.getUniqueId(),
 							answerSetUniqueCode, questionId, file.getName());
-					final String fileName = "explanation-files" + folderAndFileSuffix + "/" + file.getUid() + ".eus";
-					os.putArchiveEntry(new ZipArchiveEntry(fileName));
+					os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
 					FileInputStream fis = null;
 					try {
 						fis = new FileInputStream(f);
@@ -546,15 +527,11 @@ public class SurveyExportHelper {
 							fis.close();
 						}
 					}
-					os.closeArchiveEntry();
+					os.closeArchiveEntry();					
 				}
 				files.put(explanation.getId(), filesPerExplanation);
 			}
-		}
-		if (files.size() > 0) {
-			final String fileName = "explanation-files" + folderAndFileSuffix + ".eus";
-			addObjectAsFileToOutputStream(files, fileName, os, session, fileService);
-		}
+		}		
 	}
 
 	private static void addObjectAsFileToOutputStream(final Object original, final String fileName,
@@ -694,6 +671,18 @@ public class SurveyExportHelper {
 				} else if (name.equalsIgnoreCase("files-active.eus"))
 				{
 	        		result.setActiveFiles((Map<Integer, List<File>>) getObject(zipFile, zipEntry, fileService));
+				} else if (name.equalsIgnoreCase("explanations.eus"))
+				{
+					result.setExplanations((List<AnswerExplanation>)getObject(zipFile, zipEntry, fileService));	
+				} else if (name.equalsIgnoreCase("explanations-active.eus"))
+				{
+					result.setActiveExplanations((List<AnswerExplanation>)getObject(zipFile, zipEntry, fileService));
+				} else if (name.equalsIgnoreCase("comments.eus"))
+				{
+					result.setComments((List<AnswerComment>)getObject(zipFile, zipEntry, fileService));	
+				} else if (name.equalsIgnoreCase("comments-active.eus"))
+				{
+					result.setActiveComments((List<AnswerComment>)getObject(zipFile, zipEntry, fileService));		
 				} else if (name.endsWith("fil"))
 	        	{
 					String fileUID = name.replace(".fil", "");

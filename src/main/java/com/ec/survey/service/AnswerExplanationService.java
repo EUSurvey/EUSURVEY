@@ -88,7 +88,7 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<AnswerExplanation> getExplanationsOfSurvey(final int surveyId) {
+	public List<AnswerExplanation> getExplanationsOfSurvey(final String surveyUid, final boolean draft) {
 
 		final Session session = sessionFactory.getCurrentSession();
 		final Query query = session.createSQLQuery(
@@ -98,9 +98,10 @@ public class AnswerExplanationService extends BasicService {
 				+ "JOIN ANSWERS_EXPLANATIONS ex ON ex.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
 				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ex.ANSWER_SET_ID "
 				+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
-				+ "WHERE s.SURVEY_ID = :surveyId")
-				.setInteger("surveyId", surveyId);
+				+ "WHERE s.SURVEY_UID = :surveyUid AND S.ISDRAFT = :draft")
+				.setString("surveyUid", surveyUid).setBoolean("draft", draft);
 
+		@SuppressWarnings("rawtypes")
 		final List queryResult = query.list();
 
 		Map<Integer, AnswerExplanation> explanations = new HashMap<>();
@@ -135,18 +136,27 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<AnswerComment> getCommentsOfSurvey(final int surveyId) {
+	public List<AnswerComment> getCommentsOfSurvey(final String surveyUid, final boolean draft) {
 
 		final Session session = sessionFactory.getCurrentSession();
-		final Query query = session.createSQLQuery("SELECT ac.* "
+		final Query query = session.createSQLQuery("SELECT ac.ANSWER_COMMENT_ID "
 				+ "FROM ANSWERS_COMMENTS ac "
 				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID "
 				+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
-				+ "WHERE s.SURVEY_ID = :surveyId")
-				.setInteger("surveyId", surveyId);
+				+ "WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft")
+				.setString("surveyUid", surveyUid).setBoolean("draft", draft);
+	
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
 
-		@SuppressWarnings("unchecked")
-		final List<AnswerComment> comments = (List<AnswerComment>) query.list();
+		final List<AnswerComment> comments = new ArrayList<>();
+		
+		for (Object o : res) {
+			int commentId = ConversionTools.getValue(o);
+			AnswerComment comment = getComment(commentId);
+			comments.add(comment);
+		}
+		
 		return comments;
 	}
 
@@ -156,6 +166,7 @@ public class AnswerExplanationService extends BasicService {
 		final Session session = sessionFactory.getCurrentSession();
 		final Query query = session.createQuery("SELECT ex FROM AnswerExplanation ex WHERE answerSetId = :answerSetId")
 				.setInteger("answerSetId", answerSetId);
+		@SuppressWarnings("unchecked")
 		List<AnswerExplanation> explanations = (List<AnswerExplanation>) query.list();
 		return explanations;
 	}
@@ -267,8 +278,8 @@ public class AnswerExplanationService extends BasicService {
 
 	@Transactional
 	public void createUpdateOrDeleteExplanations(AnswerSet answerSet) {
-
 		final Session session = sessionFactory.getCurrentSession();
+			
 		final Survey survey = answerSet.getSurvey();
 		for (Question question : survey.getQuestions()) {
 			final String questionUid = question.getUniqueId();
@@ -278,7 +289,8 @@ public class AnswerExplanationService extends BasicService {
 					continue;
 				}
 
-				AnswerExplanation explanation;
+				AnswerExplanation explanation = null;				
+				
 				try {
 					explanation = getExplanation(answerSet.getId(), questionUid);
 
@@ -295,7 +307,7 @@ public class AnswerExplanationService extends BasicService {
 					if ((explanationData.text.length() == 0) && (explanationData.files.isEmpty())) {
 						continue;
 					}
-
+					
 					explanation = new AnswerExplanation(answerSet.getId(), questionUid);
 				}
 
@@ -303,7 +315,22 @@ public class AnswerExplanationService extends BasicService {
 				explanation.setFiles(explanationData.files);
 
 				session.saveOrUpdate(explanation);
+				session.flush();
 			}
+		}
+	}
+	
+	@Transactional
+	public void createComments(AnswerSet answerSet) {	
+		if (answerSet.getComments() != null && !answerSet.getComments().isEmpty()) {
+			//this should only happen during a import survey operation for delphi surveys
+			
+			for (String surveyUid : answerSet.getComments().keySet()) {
+				for (AnswerComment comment : answerSet.getComments().get(surveyUid)) {
+					comment.setAnswerSetId(answerSet.getId());
+					answerExplanationService.saveOrUpdateComment(comment);
+				}
+			}			
 		}
 	}
 
