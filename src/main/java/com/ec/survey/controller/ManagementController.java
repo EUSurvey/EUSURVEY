@@ -3454,7 +3454,9 @@ public class ManagementController extends BasicController {
 				survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
 			}
 			
-			return answerService.getCompletionRates(survey, filter);
+			if (survey != null) {
+				return answerService.getCompletionRates(survey, filter);
+			}
 			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);

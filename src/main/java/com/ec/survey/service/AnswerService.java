@@ -2406,6 +2406,7 @@ public class AnswerService extends BasicService {
 			
 			for (int i = 0; i < questionUidsByIndex.size(); i++)
 			{
+				//the first two items in the array are the contribution code and contribution id
 				String value = answerRow.get(2 + i);
 				if (value != null && value.length() > 0)
 				{
