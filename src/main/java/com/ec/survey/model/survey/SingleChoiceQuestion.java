@@ -48,9 +48,13 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	
 	@Column(name = "LIKERT")
 	public boolean getUseLikert() {
-		return isDelphiElement() && useLikert;
+		return useLikert;
 	}
-
+	
+	//this one is needed for serialization. do not remove one of the two setters
+	public void setUseLikert(boolean useLikert) {
+		this.useLikert = useLikert;
+	}	
 	public void setUseLikert(Boolean useLikert) {
 		this.useLikert = useLikert != null ? useLikert : false;
 	}
