@@ -180,6 +180,7 @@ public class AnswerService extends BasicService {
 			
 			if (answerSet.getSurvey().getIsDelphi()) {
 				answerExplanationService.deleteCommentsForDeletedAnswers(answerSet);
+				answerExplanationService.createComments(answerSet);
 				answerExplanationService.createUpdateOrDeleteExplanations(answerSet);
 			}			
 			

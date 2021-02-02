@@ -1,5 +1,7 @@
 package com.ec.survey.tools;
 
+import com.ec.survey.model.AnswerComment;
+import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Translations;
 import com.ec.survey.model.survey.Survey;
@@ -27,6 +29,10 @@ public class ImportResult {
 	private Map<Integer, List<Integer>> additionalElements = new HashMap<>();
 	private Map<Integer, Survey> oldSurveys = new HashMap<>();
 	private Map<Integer, List<Translations>> oldTranslations = new HashMap<>();
+	private List<AnswerExplanation> explanations;
+	private List<AnswerExplanation> activeExplanations;
+	private List<AnswerComment> comments;
+	private List<AnswerComment> activeComments;
 	
 	public Survey getSurvey() {
 		return survey;
@@ -123,6 +129,30 @@ public class ImportResult {
 	}
 	public void setOldTranslations(Map<Integer, List<Translations>> oldTranslations) {
 		this.oldTranslations = oldTranslations;
+	}
+	public List<AnswerExplanation> getExplanations() {
+		return explanations;
+	}
+	public void setExplanations(List<AnswerExplanation> explanations) {
+		this.explanations = explanations;
+	}
+	public List<AnswerExplanation> getActiveExplanations() {
+		return activeExplanations;
+	}
+	public void setActiveExplanations(List<AnswerExplanation> activeExplanations) {
+		this.activeExplanations = activeExplanations;
+	}
+	public List<AnswerComment> getComments() {
+		return comments;
+	}
+	public void setComments(List<AnswerComment> comments) {
+		this.comments = comments;
+	}
+	public List<AnswerComment> getActiveComments() {
+		return activeComments;
+	}
+	public void setActiveComments(List<AnswerComment> activeComments) {
+		this.activeComments = activeComments;
 	}	
 
 }
