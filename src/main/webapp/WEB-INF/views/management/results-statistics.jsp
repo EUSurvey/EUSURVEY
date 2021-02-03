@@ -522,6 +522,6 @@
     </div>
     
     <span class="chart-legend-group" style="display: none">
-    	<input class="chart-legend" onchange="changeChart(this)" type="checkbox" /> <spring:message code="label.Legend" />
+    	<input class="chart-legend" onchange="changeChart(this)" type="checkbox" checked /> <spring:message code="label.Legend" />
     </span>
 </div>
