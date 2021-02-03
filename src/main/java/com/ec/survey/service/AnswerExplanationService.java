@@ -289,21 +289,26 @@ public class AnswerExplanationService extends BasicService {
 					continue;
 				}
 
-				AnswerExplanation explanation = null;				
-				
+				final int questionId = question.getId();
+				boolean hasNoLinkedAnswers = answerSet.getAnswers(questionId, questionUid).size() == 0;
+				if (hasNoLinkedAnswers) {
+					fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(), questionId);
+				}
+
+				AnswerExplanation explanation = null;
 				try {
 					explanation = getExplanation(answerSet.getId(), questionUid);
 
-					// Delete explanation text and files if there is no linked answer.
-					final int questionId = question.getId();
-					if (answerSet.getAnswers(questionId, questionUid).size() == 0) {
-						fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(),
-								questionId);
+					if (hasNoLinkedAnswers) {
 						explanation.getFiles().forEach(session::delete);
 						session.delete(explanation);
 						return;
 					}
 				} catch (NoSuchElementException ex) {
+					if (hasNoLinkedAnswers && !explanationData.files.isEmpty()) {
+						explanationData.files.forEach(session::delete);
+						explanationData.files.clear();
+					}
 					if ((explanationData.text.length() == 0) && (explanationData.files.isEmpty())) {
 						continue;
 					}
