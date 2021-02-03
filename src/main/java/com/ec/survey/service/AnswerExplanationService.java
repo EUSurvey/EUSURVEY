@@ -384,6 +384,69 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional
+	public void deleteCommentsOfSurvey(final int surveyId) {
+
+		final Session session = sessionFactory.getCurrentSession();
+
+		final Query replyDeletionQuery = session.createSQLQuery("DELETE ac.* "
+				+ "FROM ANSWERS_COMMENTS ac "
+				+ "JOIN ANSWERS_SET an ON an.ANSWER_SET_ID = ac.ANSWER_SET_ID "
+				+ "WHERE ac.PARENT IS NOT NULL AND an.SURVEY_ID = :id")
+				.setInteger("id", surveyId);
+		replyDeletionQuery.executeUpdate();
+
+		final Query commentDeletionQuery = session.createSQLQuery("DELETE ac.* "
+				+ "FROM ANSWERS_COMMENTS ac "
+				+ "JOIN ANSWERS_SET an ON an.ANSWER_SET_ID = ac.ANSWER_SET_ID "
+				+ "WHERE ac.PARENT IS NULL AND an.SURVEY_ID = :id")
+				.setInteger("id", surveyId);
+		commentDeletionQuery.executeUpdate();
+	}
+
+	@Transactional
+	public void deleteExplanationFilesOfSurvey(final int surveyId) {
+
+		final Session session = sessionFactory.getCurrentSession();
+
+		final Query explanationFilesRetrievalQuery = session.createSQLQuery("SELECT f.FILE_UID "
+				+ "FROM FILES f "
+				+ "JOIN ANSWERS_EXPLANATIONS_FILES aef ON aef.files_FILE_ID = f.FILE_ID "
+				+ "JOIN ANSWERS_EXPLANATIONS ae ON ae.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
+				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID "
+				+ "WHERE ans.SURVEY_ID = :id")
+				.setInteger("id", surveyId);
+		final List<String> fileUids = explanationFilesRetrievalQuery.list();
+
+		final Query explanationFilesDeletionQuery12 = session.createSQLQuery("DELETE aef.* "
+				+ "FROM ANSWERS_EXPLANATIONS_FILES aef "
+				+ "JOIN ANSWERS_EXPLANATIONS ae ON ae.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
+				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID "
+				+ "WHERE ans.SURVEY_ID = :id")
+				.setInteger("id", surveyId);
+		explanationFilesDeletionQuery12.executeUpdate();
+
+		if (fileUids.isEmpty()) return;
+		final Query explanationFilesDeletionQuery2 = session.createSQLQuery("DELETE f.* "
+				+ "FROM FILES f "
+				+ "WHERE f.FILE_UID IN :ids")
+				.setParameterList("ids", fileUids);
+		explanationFilesDeletionQuery2.executeUpdate();
+	}
+
+	@Transactional
+	public void deleteExplanationsOfSurvey(final int surveyId) {
+
+		final Session session = sessionFactory.getCurrentSession();
+
+		final Query query = session.createSQLQuery("DELETE ae.* "
+				+ "FROM ANSWERS_EXPLANATIONS ae "
+				+ "JOIN ANSWERS_SET an ON ae.ANSWER_SET_ID = an.ANSWER_SET_ID "
+				+ "WHERE an.SURVEY_ID = :id")
+				.setInteger("id", surveyId);
+		query.executeUpdate();
+	}
+
+	@Transactional
 	public Map<String, String> getUserAliases(String surveyUid) {
 		final Session session = sessionFactory.getCurrentSession();
 

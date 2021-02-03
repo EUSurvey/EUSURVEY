@@ -1776,9 +1776,10 @@ public class SurveyService extends BasicService {
 			Query query2 = session.createSQLQuery(
 					"DELETE a.* from ANSWERS a JOIN ANSWERS_SET an ON a.AS_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
 			query2.setInteger("id", id).executeUpdate();
-			
-			Query query6 = session.createSQLQuery("DELETE ae.* FROM ANSWERS_EXPLANATIONS ae JOIN ANSWERS_SET an ON ae.ANSWER_SET_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
-			query6.setInteger("id", id).executeUpdate();
+
+			answerExplanationService.deleteExplanationFilesOfSurvey(id);
+			answerExplanationService.deleteCommentsOfSurvey(id);
+			answerExplanationService.deleteExplanationsOfSurvey(id);
 
 			Query query3 = session.createQuery("DELETE from AnswerSet a where a.surveyId = :id");
 			query3.setInteger("id", id).executeUpdate();

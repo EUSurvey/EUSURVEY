@@ -14,6 +14,8 @@ import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.export.FileExportCreator;
 import edu.emory.mathcs.backport.java.util.Arrays;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.*;
@@ -1064,6 +1067,18 @@ public class FileService extends BasicService {
 
 						result.add(file);
 					}
+				}
+
+				if (question.isDelphiElement()) {
+					final FilesByTypes<Integer, String> files =
+							answerExplanationService.getExplanationFilesByAnswerSetIdAndQuestionUid(survey);
+					files.applyFunctionOnEachFile((answerSetId, questionUid, explanationFile) -> {
+						final String answerSetUid = answerService.get(answerSetId).getUniqueCode();
+						final int questionId = surveyService.getNewestElementByUid(questionUid).getId();
+						final java.io.File file = getSurveyExplanationFile(survey.getUniqueId(), answerSetUid,
+								questionId, explanationFile.getName());
+						result.add(file);
+					});
 				}
 			}
 
