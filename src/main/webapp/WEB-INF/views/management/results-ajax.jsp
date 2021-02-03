@@ -130,7 +130,31 @@
 					}
 				});
 		}
-
+		
+		function loadDelphiStatisticsAsync() {
+			$.ajax({
+				type:'GET',
+				  url: "${contextpath}/${form.survey.shortname}/management/statisticsDelphiJSON",
+				  dataType: 'json',
+				  cache: false,
+				  success: function( statistics ) {
+					  $(".statDelphi").each(function(){
+						 var id = $(this).attr("data-uid");
+						 if (statistics[id] != null)
+						 {
+						 	$(this).html(statistics[id]);
+						 }
+					  });
+				  },
+				error: function () {
+					//this means the asynchronous computation has been started
+					setTimeout(function () {
+						loadDelphiStatisticsAsync();
+					}, 2000);
+				}
+			});
+		}
+		
 		function roundToTwo(num) {
 			return +(Math.round(num + "e+2") + "e-2");
 		}

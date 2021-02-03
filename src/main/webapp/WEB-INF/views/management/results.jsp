@@ -194,6 +194,10 @@
 			</c:otherwise>
 			</c:choose>
 			
+			<c:if test="${form.survey.isDelphi}">
+				loadDelphiStatisticsAsync();
+			</c:if>
+			
 			$(window).on('resize', doResize);
 			
 			initCheckAll();
@@ -415,6 +419,7 @@
 				case 'content':
 					$("#results-table-link").addClass("btn-primary");
 					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
 					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
 					
 					$("#results-table").find("tbody").removeClass('hidden');
@@ -422,6 +427,7 @@
 					$("#pager").removeClass('hidden');
 					$("#results-charts").addClass('hidden');
 					$("#results-statistics").addClass('hidden');
+					$("#results-statistics-delphi").addClass('hidden');
 					$("#results-statistics-quiz").addClass('hidden');
 					
 					$("#content-export-buttons").removeClass('hidden');
@@ -450,6 +456,7 @@
 				case 'statistics':
 					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
 					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
 					$("#results-statistics-link").addClass("btn-primary");
 					
 					$("#results-table").find(".RowsPerPage").addClass('hidden');
@@ -457,6 +464,7 @@
 					$("#results-charts").addClass('hidden');
 					$("#results-statistics").removeClass('hidden');
 					$("#results-statistics-quiz").addClass('hidden');
+					$("#results-statistics-delphi").addClass('hidden');
 					
 					$("#content-export-buttons").addClass('hidden');
 					$("#charts-export-buttons").addClass('hidden');
@@ -474,18 +482,43 @@
 				case 'statistics-quiz':
 					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
 					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
 					$("#results-statistics-quiz-link").addClass("btn-primary");
 					
 					$("#results-table").find(".RowsPerPage").addClass('hidden');
 					$("#pager").addClass('hidden');
 					$("#results-charts").addClass('hidden');
 					$("#results-statistics").addClass('hidden');
+					$("#results-statistics-delphi").addClass('hidden');
 					$("#results-statistics-quiz").removeClass('hidden');
 					
 					$("#content-export-buttons").addClass('hidden');
 					$("#charts-export-buttons").addClass('hidden');
 					$("#statistics-export-buttons").addClass('hidden');
 					$("#statistics-quiz-export-buttons").removeClass('hidden');
+					
+					$("#scrollarea").hide();
+					
+					$("#scrollareaheader").css("overflow-x", "auto");
+					$("#scrollareaheader").css("overflow-y","auto");
+					break;
+				case 'statistics-delphi':
+					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-delphi-link").addClass("btn-primary");
+					
+					$("#results-table").find(".RowsPerPage").addClass('hidden');
+					$("#pager").addClass('hidden');
+					$("#results-charts").addClass('hidden');
+					$("#results-statistics").addClass('hidden');
+					$("#results-statistics-quiz").addClass('hidden');
+					$("#results-statistics-delphi").removeClass('hidden');
+					
+					$("#content-export-buttons").addClass('hidden');
+					$("#charts-export-buttons").addClass('hidden');
+					$("#statistics-export-buttons").addClass('hidden');
+					$("#statistics-quiz-export-buttons").addClass('hidden');
 					
 					$("#scrollarea").hide();
 					
@@ -821,7 +854,10 @@
 					<a id="results-table-link" class="btn btn-xs btn-primary" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
 					<a id="results-statistics-link" class="btn btn-default btn-xs" onclick="switchTo('statistics');"><img src="${contextpath}/resources/images/icons/24/percentage.png" /></a>
 					<c:if test="${form.survey.isQuiz}">
-						<a id="results-statistics-quiz-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
+						<a id="c" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
+					</c:if>
+					<c:if test="${form.survey.isDelphi}">
+						<a id="results-statistics-delphi-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-delphi');"><img src="${contextpath}/resources/images/icons/24/delphi.png" /></a>
 					</c:if>
 				</div>
 				
@@ -948,6 +984,7 @@
 				<%@ include file="results-content.jsp" %>					
 				<%@ include file="results-statistics.jsp" %>
 				<%@ include file="results-statistics-quiz.jsp" %>
+				<%@ include file="results-statistics-delphi.jsp" %>
 				<%@ include file="results-ajax.jsp" %>	
 			</div>
 		</div>

@@ -2316,4 +2316,194 @@ public class AnswerService extends BasicService {
 		
 		return median;
 	}
+	
+	private void initializeHelperMaps(Survey survey, Map<String, List<String>> questionsBySection, Map<String, Integer> answersByQuestion, Map<String, String> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection) {
+		String lastSection = "";
+		questionsBySection.put(lastSection, new ArrayList<String>());
+		
+		for (Element element : survey.getElements()) {
+			if (element instanceof Section) {
+				lastSection = element.getUniqueId();
+				questionsBySection.put(lastSection, new ArrayList<String>());
+				questionUidsPerAnswerAndSection.put(lastSection, new HashMap<String, List<String>>());
+			} else if (element.isDelphiElement()) {
+				
+				if (element instanceof MatrixOrTable) {
+					MatrixOrTable matrix = (MatrixOrTable)element;
+					for (Element matrixQuestion : matrix.getQuestions()) {
+						parentByQuestion.put(matrixQuestion.getUniqueId(), element.getUniqueId());
+					}
+				} else if (element instanceof RatingQuestion) {
+					RatingQuestion rating = (RatingQuestion)element;
+					for (Element ratingQuestion : rating.getQuestions()) {
+						parentByQuestion.put(ratingQuestion.getUniqueId(), element.getUniqueId());
+					}
+				}
+				
+				questionsBySection.get(lastSection).add(element.getUniqueId());
+				sectionsByQuestion.put(element.getUniqueId(), lastSection);
+				answersByQuestion.put(element.getUniqueId(), 0);
+			}
+		}
+	}
+	
+	private Map<String, String> createCompletionRatesResult(Survey survey, Map<String, List<String>> questionsBySection, Map<String, Integer> answersByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection, int totalNumberOfContributions, int completedContributions) {
+		Map<String, String> result = new HashMap<>();
+		for (Element element : survey.getElements()) {
+			if (element instanceof Section) {
+				String section = element.getUniqueId();
+				int counter = 0;
+				int numberOfQuestionsInSection = questionsBySection.get(section).size();
+				Map<String, List<String>> questionUidsPerAnswer = questionUidsPerAnswerAndSection.get(section);
+				
+				for (String answerSetUniqueCode : questionUidsPerAnswer.keySet())
+				{
+					if (questionUidsPerAnswer.get(answerSetUniqueCode).size() == numberOfQuestionsInSection) {
+						counter++;
+					}
+				}			
+		
+				result.put(element.getUniqueId(), getPercentage(counter / (double)totalNumberOfContributions));
+				
+			} else if (element.isDelphiElement()) {
+				result.put(element.getUniqueId(), getPercentage(answersByQuestion.get(element.getUniqueId()) / (double)totalNumberOfContributions));
+			}
+		}		
+				
+		result.put("0", getPercentage(completedContributions / (double)totalNumberOfContributions));
+		
+		return result;
+	}
+	
+	private int parseAnswerSetsForCompletionRates(List<AnswerSet> answers, Map<String, Integer> answersByQuestion, Map<String, String> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection)
+	{
+		int completedContributions = 0;
+		for (AnswerSet answerSet : answers) {
+			List<String> listOfAnswer = new ArrayList<String>();
+			String uniqueCode = answerSet.getUniqueCode();
+			
+			for (Answer answer : answerSet.getAnswers())
+			{
+				String questionUid = answer.getQuestionUniqueId();
+				internalParseForCompletionRates(uniqueCode, questionUid, listOfAnswer, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
+			}
+			
+			if (listOfAnswer.size() == answersByQuestion.size()) {
+				completedContributions++;
+			}
+		}	
+		
+		return completedContributions;
+	}
+	
+	private int parseAnswerRowsForCompletionRates(List<List<String>> answerRows, Map<String, Integer> answersByQuestion, Map<String, String> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection, Map<Integer, String> questionUidsByIndex)
+	{
+		int completedContributions = 0;
+		for (List<String> answerRow : answerRows) {
+			List<String> listOfAnswer = new ArrayList<>();
+			
+			String uniqueCode = answerRow.get(0);
+			
+			for (int i = 0; i < questionUidsByIndex.size(); i++)
+			{
+				//the first two items in the array are the contribution code and contribution id
+				String value = answerRow.get(2 + i);
+				if (value != null && value.length() > 0)
+				{
+					String questionUid = questionUidsByIndex.get(i);
+					internalParseForCompletionRates(uniqueCode, questionUid, listOfAnswer, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
+				}
+			}
+			
+			if (listOfAnswer.size() == answersByQuestion.size()) {
+				completedContributions++;
+			}
+		}	
+		
+		return completedContributions;
+	}
+	
+	private void internalParseForCompletionRates(String uniqueCode, String questionUid, List<String> listOfAnswer, Map<String, Integer> answersByQuestion, Map<String, String> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection)
+	{
+		if (parentByQuestion.containsKey(questionUid)) {
+			questionUid = parentByQuestion.get(questionUid);
+		}
+		
+		if (answersByQuestion.containsKey(questionUid) && !listOfAnswer.contains(questionUid))
+		{
+			listOfAnswer.add(questionUid);
+			
+			answersByQuestion.put(questionUid, answersByQuestion.get(questionUid) + 1);
+		}
+		
+		if (sectionsByQuestion.containsKey(questionUid)) {
+			String section = sectionsByQuestion.get(questionUid);
+			if (!questionUidsPerAnswerAndSection.containsKey(section)) {
+				questionUidsPerAnswerAndSection.put(section, new HashMap<String, List<String>>());
+			}
+			
+			Map<String, List<String>> questionUidsPerAnswer = questionUidsPerAnswerAndSection.get(section);
+			
+			if (!questionUidsPerAnswer.containsKey(uniqueCode))
+			{
+				questionUidsPerAnswer.put(uniqueCode, new ArrayList<String>());
+			}
+			
+			if (!questionUidsPerAnswer.get(uniqueCode).contains(questionUid))
+			{
+				questionUidsPerAnswer.get(uniqueCode).add(questionUid);
+			}
+		}
+	}
+
+	@Transactional
+	public Map<String, String> getCompletionRates(Survey survey, ResultFilter filter) throws Exception {
+		int totalNumberOfContributions = 0;
+		int completedContributions = 0;
+		Map<String, List<String>> questionsBySection = new HashMap<>();		
+		Map<String, Integer> answersByQuestion = new HashMap<>();
+		Map<String, String> sectionsByQuestion = new HashMap<>();
+		Map<String, String> parentByQuestion = new HashMap<>();		
+		Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection = new HashMap<>();
+		initializeHelperMaps(survey, questionsBySection, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
+				
+		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, false, false, false);
+		if (answerRows != null) {
+			totalNumberOfContributions = answerRows.size();
+			Map<Integer, String> questionUidsByIndex = new HashMap<>();
+			List<Question> questions = survey.getQuestions();
+			
+			for (Question question : questions) {
+				if (question.isUsedInResults()) {
+					
+					if (question instanceof MatrixOrTable) {
+						MatrixOrTable parent = (MatrixOrTable)question;						
+						for (Element child: parent.getQuestions()) {
+							questionUidsByIndex.put(questionUidsByIndex.size(), child.getUniqueId());
+						}
+					} else if (question instanceof RatingQuestion) {
+						RatingQuestion parent = (RatingQuestion)question;
+						for (Element child: parent.getQuestions()) {
+							questionUidsByIndex.put(questionUidsByIndex.size(), child.getUniqueId());
+						}						
+					} else {
+						questionUidsByIndex.put(questionUidsByIndex.size(), question.getUniqueId());
+					}
+				}
+			}
+			
+			completedContributions = parseAnswerRowsForCompletionRates(answerRows, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection, questionUidsByIndex);
+		} else {
+			List<AnswerSet> answers = getAllAnswers(survey.getId(), filter);
+			totalNumberOfContributions = answers.size();							
+			completedContributions = parseAnswerSetsForCompletionRates(answers, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
+		}		
+		
+		return createCompletionRatesResult(survey, questionsBySection, answersByQuestion, questionUidsPerAnswerAndSection, totalNumberOfContributions, completedContributions);
+	}
+	
+	private String getPercentage(double value) {
+	    int number = (int) Math.round(value * 100);
+	    return number + " %";
+	}
 }
