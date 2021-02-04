@@ -729,7 +729,7 @@
 			var dialog = $(button).closest(".delphi-table").find(".delete-confirmation-dialog");
 			$(dialog).modal("show");
 
-			var deleteButton = $(dialog).find(".btn-danger");
+			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
 			$(deleteButton).off("click");
 			$(deleteButton).click(function() {
 				const questionUid = $(button).closest(".survey-element").attr("data-uid");
@@ -744,11 +744,11 @@
 				deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
 			});
 
-			var cancelButton = $(dialog).find(".btn-default");
+			var cancelButton = $(dialog).find(".delete-confirmation-dialog__cancel-button");
 			$(cancelButton).off("click");
 			$(cancelButton).click(function () {
 				$(dialog).modal("hide");
-			})
+			});
 		}
 	 	
 	 	initializeAnswerData();

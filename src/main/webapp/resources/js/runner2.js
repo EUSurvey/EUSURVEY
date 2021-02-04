@@ -1291,13 +1291,14 @@ function saveDelphiCommentFromRunner(button, reply) {
 	const td = $(button).closest("td");
 	const questionUid = $(td).closest(".survey-element").attr("data-uid");
 	const surveyId = $('#survey\\.id').val();
+	const viewModel = modelsForDelphiQuestions[questionUid];
 
 	const errorCallback = () => { showError("error"); }
 	const successCallback = () => { loadTableData(questionUid, modelsForDelphiQuestions[questionUid]); }
-	saveDelphiComment(button, reply, questionUid, surveyId, errorCallback, successCallback);
+	saveDelphiComment(button, viewModel, reply, questionUid, surveyId, errorCallback, successCallback);
 }
 
-function saveDelphiComment(button, reply, questionUid, surveyId, errorCallback, successCallback) {
+function saveDelphiComment(button, viewModel, reply, questionUid, surveyId, errorCallback, successCallback) {
 
 	hideCommentAndReplyForms();
 
@@ -1323,9 +1324,24 @@ function saveDelphiComment(button, reply, questionUid, surveyId, errorCallback, 
 	$.ajax({type: "POST",
 		url: contextpath + "/runner/delphiAddComment",
 		data: data,
-		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
-		error: errorCallback,
-		success: successCallback
+		beforeSend: function(xhr) {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(true);
+			}
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: () => {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
+			errorCallback();
+		},
+		success: () => {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
+			successCallback();
+		}
 	 });
 }
 
