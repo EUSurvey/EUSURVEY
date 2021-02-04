@@ -469,7 +469,7 @@ public class DashboardController extends BasicController {
 				answer[2] = answerSet.getNiceUpdateDate();
 				answer[3] = ConversionTools.removeHTML(answerSet.getSurvey().getTitle());
 				answer[4] = answerSet.getSurvey().getIsActive();
-				answer[5] = answerSet.getSurvey().getEndString();
+				answer[5] = answerSet.getSurvey().getAutomaticPublishing() ? answerSet.getSurvey().getEndString() : "";
 				answer[6] = answerSet.getSurvey().getChangeContribution() && answerSet.getSurvey().getIsActive();
 				answer[7] = answerSet.getSurvey().getPublication().isShowContent()
 						|| answerSet.getSurvey().getPublication().isShowStatistics();
@@ -563,7 +563,7 @@ public class DashboardController extends BasicController {
 				answer[2] = answerSet.getNiceUpdateDate();
 				answer[3] = ConversionTools.removeHTML(answerSet.getSurvey().getTitle());
 				answer[4] = answerSet.getSurvey().getIsActive();
-				answer[5] = answerSet.getSurvey().getEndString();
+				answer[5] = answerSet.getSurvey().getAutomaticPublishing() ? answerSet.getSurvey().getEndString() : "";
 
 				Invitation invitation = attendeeService.getInvitationByUniqueId(answerSet.getInvitationId());
 				String link = invitation == null ? ""
@@ -635,7 +635,7 @@ public class DashboardController extends BasicController {
 				answer[0] = ConversionTools.getFullStringSmall(invitation.getInvited());
 				answer[1] = ConversionTools.removeHTML(s.getTitle());
 				answer[2] = s.getIsActive();
-				answer[3] = s.getEndString();
+				answer[3] = s.getAutomaticPublishing() ?  s.getEndString() : "";
 				answer[4] = host + "runner/invited/" + invitation.getParticipationGroupId() + Constants.PATH_DELIMITER
 						+ invitation.getUniqueId();
 
