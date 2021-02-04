@@ -33,7 +33,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	}
 
 	private boolean useRadioButtons;
-	private boolean useLikert;
+	private Boolean useLikert;
 	private int numColumns = 1;
 	private int maxDistance = -1;
 
@@ -47,14 +47,10 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	}
 	
 	@Column(name = "LIKERT")
-	public boolean getUseLikert() {
-		return useLikert;
+	public Boolean getUseLikert() {
+		return useLikert != null ? useLikert : false;
 	}
 	
-	//this one is needed for serialization. do not remove one of the two setters
-	public void setUseLikert(boolean useLikert) {
-		this.useLikert = useLikert;
-	}	
 	public void setUseLikert(Boolean useLikert) {
 		this.useLikert = useLikert != null ? useLikert : false;
 	}
