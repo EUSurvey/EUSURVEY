@@ -163,7 +163,9 @@
 			var chartwrapperlist = $(resultsStatisticParentElement).find(".chart-wrapper");
 			chartwrapperlist.each(function (index) {
 
-				$(this).parent().find(".chart-controls").append($("#chart-controls-template").html());
+				if ($(this).parent().find(".chart-controls").find("select").length == 0) {
+					$(this).parent().find(".chart-controls").append($("#chart-controls-template").html());
+				}
 
 				$(this).parent().find('[data-toggle="tooltip"]').tooltip();
 
