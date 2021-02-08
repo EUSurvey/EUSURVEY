@@ -159,6 +159,10 @@
 							</c:otherwise>
 						</c:choose>
 					</c:if>
+					
+					<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Info")}</div>
+					<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi">${form.getMessage("label.Delphi")}</a>
+							
 				</div>												
 			</div>
 		</c:if>
