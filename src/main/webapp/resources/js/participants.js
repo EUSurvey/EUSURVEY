@@ -792,14 +792,18 @@ var Participants = function() {
 			  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 			  cache: false,
 			  success: function( data ) {						  
-				  if (data == "success") {
-					    showSuccess(p_guestlistcreated);
-					    self.Page(1);
-					    self.loadGuestlists();
-					} else {
-						showExport(data);
-					}
-					self.ShowWait(false);
+				if (data == "successcreated") {
+				   showSuccess(p_guestlistcreated);
+				   self.Page(1);
+				   self.loadGuestlists();
+				} else if (data == "successsaved") {
+					   showSuccess(p_guestlistsaved);
+					   self.Page(1);
+					   self.loadGuestlists();
+				} else {
+					showExport(data);
+				}
+				self.ShowWait(false);
 			}, error: function() {
 				  showGenericError();
 			  }

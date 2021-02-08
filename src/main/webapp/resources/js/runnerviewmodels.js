@@ -7,12 +7,7 @@ function getNiceHelp(help)
 
 function addIconToHelp(help)
 {
-	//if (help.indexOf("<span") == 0 || help.indexOf("<div") == 0)
-	//{
-	//	return help.substring(0, help.indexOf(">")+1) + "<span class='glyphicon glyphicon-question-sign'></span>&nbsp;" + help.substring(help.indexOf(">")+1);
-	//}
-	
-	return "<span onclick='$(this).next().toggle()' class='glyphicon glyphicon-question-sign'></span><div style='display: none; padding-top: 5px;'>" + help + "</div><br />";
+	return "<span onclick='$(this).next().toggle()' class='glyphicon glyphicon-question-sign'></span><div style='display: none; padding-top: 5px; padding-bottom: 5px;'>" + help + "</div>";
 }
 
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)

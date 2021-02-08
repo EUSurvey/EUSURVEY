@@ -577,8 +577,8 @@
 														
 														<td data-bind="html: isActive ? labelpublished : labelunpublished, visible: $parent.surveysMode() == 'advanced'"></td>
 														<td data-bind="html: security.indexOf('secured') == 0 ? labelsecured : labelopen, visible: $parent.surveysMode() == 'advanced'"></td>
-														<td data-bind="html: startString, visible: $parent.surveysMode() == 'advanced'"></td>
-														<td data-bind="html: endString, visible: $parent.surveysMode() == 'advanced'"></td>
+														<td data-bind="html: automaticPublishing ? startString : '', visible: $parent.surveysMode() == 'advanced'"></td>
+														<td data-bind="html: automaticPublishing ? endString : '', visible: $parent.surveysMode() == 'advanced'"></td>
 																
 														<td data-bind="visible: $parent.surveysMode() == 'advanced', attr: {id: 'numberinvitations' + uniqueId}">
 															<img src="${contextpath}/resources/images/ajax-loader.gif" />
