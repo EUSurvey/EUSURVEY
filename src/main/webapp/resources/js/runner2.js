@@ -453,9 +453,6 @@ function initSlider(input, foreditor, viewModel)
 	}
 		
 	$(input).bootstrapSlider({
-		formatter: function(value) {
-			return value;
-		},
 		tooltip: 'always',
 		ticks_labels: viewModel.labels(),
 		enabled: !foreditor
@@ -624,6 +621,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					$(elementWrapper).find(".chart-wrapper").hide();
 				}
 
+				addStatisticsToAnswerText(div, null);
 				return;
 			}
 
@@ -692,6 +690,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					break;
 
 				default:
+					addStatisticsToAnswerText(div, result);
 					return;
 			}
 
@@ -761,8 +760,80 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			if (chartCallback instanceof Function) {
 				chartCallback(div, chart);
 			}
+			addStatisticsToAnswerText(div, result);
 		}
 	 });
+}
+
+function addStatisticsToAnswerText(div, result) {
+	const remove = !result; // cast to boolean
+	var elementWrapper = $(div).closest(".elementwrapper");
+	var surveyElement = elementWrapper.find(".survey-element");
+
+	var viewModel = ko.dataFor(surveyElement[0]);
+	if (undefined === viewModel ) {
+		return;
+	}
+	var viewModelType = viewModel.type;
+	if (false === remove) {
+		var questionType = result["questionType"];
+		if (!viewModelType.startsWith(questionType)) {
+			return;
+		}
+	}
+	if (["SingleChoiceQuestion", "MultipleChoiceQuestion"].includes(viewModelType)) {
+		var possibleAnswersArray = viewModel.possibleAnswers;
+		if (undefined === possibleAnswersArray) {
+			return;
+		}
+		var len = possibleAnswersArray().length;
+		if (false === remove) {
+			for (var i = 0; (result.data.length > i) && (len > i); ++i) {
+				var label = possibleAnswersArray()[i].originalTitle();
+				var value = result.data[i].value;
+				var newlabel = label+' <span class="answertextdelphivotes">('+value+')</span>';
+				possibleAnswersArray()[i].title(newlabel);
+			}
+		} else {
+			for (var j = 0; len > j; ++j) {
+				var origtitle = possibleAnswersArray()[j].originalTitle();
+				possibleAnswersArray()[j].title(origtitle);
+			}
+		}
+	}
+	if (["NumberQuestion"].includes(viewModelType)) {
+		if (!["Slider"].includes(viewModel.display())) {
+			return;
+		}
+		var sliderbox = elementWrapper.find(".sliderbox");
+		if (1 != sliderbox.size()) {
+			return;
+		}
+		var painttooltipcallback = function() {};
+		var bootstrapSlider = viewModel.getBootstrapSlider(sliderbox);
+		if (false === remove) {
+			var tooltipinner = elementWrapper.find("div.tooltip-inner");
+			var map = {};
+			result.data.forEach((entry) => map[entry.label] = entry.value);
+			painttooltipcallback = function() {
+				var votes = 0;
+				var sliderValue = bootstrapSlider.bootstrapSlider("getValue");
+				if (sliderValue in map) {
+					votes = map[sliderValue];
+				}
+				tooltipinner.html(sliderValue+' <span class="slidertooltipdelphivotes">('+votes+')</span>');
+			}
+		}
+		bootstrapSlider.bootstrapSlider("relayout");
+		painttooltipcallback(); // repaint now
+		bootstrapSlider.on("slide slideStart slideStop change", painttooltipcallback);
+		var sliderhandle = elementWrapper.find("div.slider-handle");
+		sliderhandle.on('mousedown', function(event) {
+			requestAnimationFrame(function() { // when user presses mouse button without moving, tooltip is updated by slider
+				painttooltipcallback(); // no event generated, but after that we need to repaint
+			});
+		});
+	}
 }
 
 function addChart(div, chart) {
@@ -1220,13 +1291,14 @@ function saveDelphiCommentFromRunner(button, reply) {
 	const td = $(button).closest("td");
 	const questionUid = $(td).closest(".survey-element").attr("data-uid");
 	const surveyId = $('#survey\\.id').val();
+	const viewModel = modelsForDelphiQuestions[questionUid];
 
 	const errorCallback = () => { showError("error"); }
 	const successCallback = () => { loadTableData(questionUid, modelsForDelphiQuestions[questionUid]); }
-	saveDelphiComment(button, reply, questionUid, surveyId, errorCallback, successCallback);
+	saveDelphiComment(button, viewModel, reply, questionUid, surveyId, errorCallback, successCallback);
 }
 
-function saveDelphiComment(button, reply, questionUid, surveyId, errorCallback, successCallback) {
+function saveDelphiComment(button, viewModel, reply, questionUid, surveyId, errorCallback, successCallback) {
 
 	hideCommentAndReplyForms();
 
@@ -1252,9 +1324,24 @@ function saveDelphiComment(button, reply, questionUid, surveyId, errorCallback, 
 	$.ajax({type: "POST",
 		url: contextpath + "/runner/delphiAddComment",
 		data: data,
-		beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
-		error: errorCallback,
-		success: successCallback
+		beforeSend: function(xhr) {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(true);
+			}
+			xhr.setRequestHeader(csrfheader, csrftoken);
+		},
+		error: () => {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
+			errorCallback();
+		},
+		success: () => {
+			if (viewModel && viewModel.delphiTableLoading) {
+				viewModel.delphiTableLoading(false);
+			}
+			successCallback();
+		}
 	 });
 }
 

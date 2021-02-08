@@ -415,7 +415,7 @@
 
 <div id="chart-controls-template" style="display: none">
 	<label><spring:message code="label.DelphiChartType" /></label><br />
-    <select onchange="changeChart(this, true)" class="chart-type form-control">
+    <select onchange="changeChart(this)" class="chart-type form-control">
     	<option value="Bar"><spring:message code="label.DelphiChartBar" /></option>
     	<option value="Column"><spring:message code="label.DelphiChartColumn" /></option>
     	<option value="Line"><spring:message code="label.DelphiChartLine" /></option>
@@ -425,7 +425,7 @@
     </select><br />
     
     <label><spring:message code="label.ColorScheme" /></label><br />
-    <select onchange="changeChart(this, false)" class="chart-scheme form-control">
+    <select onchange="changeChart(this)" class="chart-scheme form-control">
     	<option selected="selected">tableau.Tableau10</option>
 	    <option>tableau.Tableau10</option>
 		<option>tableau.Tableau20</option>
@@ -510,7 +510,7 @@
     </select><br />
     
     <label><spring:message code="label.Size" /></label><br />
-    <select onchange="changeChart(this, false)" class="chart-size form-control">
+    <select onchange="changeChart(this)" class="chart-size form-control">
     	<option selected="selected" value="small"><spring:message code="html.small" /></option>
     	<option value="medium"><spring:message code="label.middle" /></option>
     	<option value="large"><spring:message code="html.large" /></option>
@@ -522,6 +522,6 @@
     </div>
     
     <span class="chart-legend-group" style="display: none">
-    	<input class="chart-legend" onchange="changeChart(this, false)" type="checkbox" /> <spring:message code="label.Legend" />
+    	<input class="chart-legend" onchange="changeChart(this)" type="checkbox" checked /> <spring:message code="label.Legend" />
     </span>
 </div>

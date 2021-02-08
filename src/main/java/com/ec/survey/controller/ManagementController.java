@@ -3440,6 +3440,30 @@ public class ManagementController extends BasicController {
 
 		return null;
 	}
+	
+	@RequestMapping(value = "/statisticsDelphiJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody Map<String, String> statisticsDelphiJSON(@PathVariable String shortname, HttpServletRequest request) {
+		
+		try {
+			ResultFilter filter = sessionService.getLastResultFilter(request);
+			
+			Survey survey = null;
+			if (filter == null || filter.getSurveyId() == 0) {
+				return null;
+			} else {
+				survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
+			}
+			
+			if (survey != null) {
+				return answerService.getCompletionRates(survey, filter);
+			}
+			
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+		
+		return null;
+	}
 
 	@RequestMapping(value = "/preparecharts/{id}/{exportId}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparecharts(@PathVariable String id, @PathVariable String exportId, Locale locale) {

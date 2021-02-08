@@ -159,6 +159,10 @@
 							</c:otherwise>
 						</c:choose>
 					</c:if>
+					
+					<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Info")}</div>
+					<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi">${form.getMessage("label.Delphi")}</a>
+							
 				</div>												
 			</div>
 		</c:if>
@@ -338,7 +342,8 @@
 				const answerSetUniqueCode = $('#uniqueCode').val();
 				loadTableDataInner(languageCode, currentQuestionUidInModal, surveyId, answerSetUniqueCode, answersTableViewModel);
 			}
-			saveDelphiComment(element, reply, currentQuestionUidInModal, surveyId, errorCallback, successCallback);
+			saveDelphiComment(element, answersTableViewModel, reply, currentQuestionUidInModal, surveyId, errorCallback,
+				successCallback);
 		}
 
 		function saveChangedDelphiCommentFromStartPage(element, isReply) {
@@ -361,7 +366,7 @@
 			var dialog = $(element).closest(".delphi-table").find(".delete-confirmation-dialog");
 			$(dialog).modal("show");
 
-			var deleteButton = $(dialog).find(".btn-danger");
+			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
 			$(deleteButton).off("click");
 			$(deleteButton).click(function () {
 				$('.answers-table-modal-error').hide();
@@ -380,12 +385,11 @@
 				$(dialog).modal("hide");
 				deleteDelphiComment(element, answersTableViewModel, isReply, errorCallback, successCallback);
 			});
-
-			var cancelButton = $(dialog).find(".btn-default");
+			var cancelButton = $(dialog).find(".delete-confirmation-dialog__cancel-button");
 			$(cancelButton).off("click");
 			$(cancelButton).click(function () {
 				$(dialog).modal("hide");
-			})
+			});
 		}
 		
 		function toggle(element)

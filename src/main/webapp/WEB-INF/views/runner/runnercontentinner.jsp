@@ -382,6 +382,14 @@
 							<hr style="margin-top: 15px;" />
 						</c:if>						
 						
+						<c:if test="${form.survey.isDelphi}">
+							<div>
+								<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Info")}</div>
+								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi">${form.getMessage("label.Delphi")}</a>
+							</div>
+							<hr style="margin-top: 15px;" />
+						</c:if>						
+						
 						<c:if test="${!form.survey.isQuiz}">
 							<div>
 								<a data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="link visiblelink" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
@@ -729,7 +737,7 @@
 			var dialog = $(button).closest(".delphi-table").find(".delete-confirmation-dialog");
 			$(dialog).modal("show");
 
-			var deleteButton = $(dialog).find(".btn-danger");
+			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
 			$(deleteButton).off("click");
 			$(deleteButton).click(function() {
 				const questionUid = $(button).closest(".survey-element").attr("data-uid");
@@ -744,11 +752,11 @@
 				deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
 			});
 
-			var cancelButton = $(dialog).find(".btn-default");
+			var cancelButton = $(dialog).find(".delete-confirmation-dialog__cancel-button");
 			$(cancelButton).off("click");
 			$(cancelButton).click(function () {
 				$(dialog).modal("hide");
-			})
+			});
 		}
 	 	
 	 	initializeAnswerData();

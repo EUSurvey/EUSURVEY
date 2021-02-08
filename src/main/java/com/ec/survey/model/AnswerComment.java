@@ -29,7 +29,7 @@ public class AnswerComment implements java.io.Serializable {
 	}
 
 	@Id
-	@Column(name = "ANSWER_EXPLANATION_ID")
+	@Column(name = "ANSWER_COMMENT_ID")
 	@GeneratedValue
 	public Integer getId() {
 		return id;

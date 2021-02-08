@@ -1312,17 +1312,13 @@ legend {
 }
 
 .delphi.elementwrapper {
-	margin-top: 20px;
 	position: relative;
 }
 
-.elementwrapper.delphi,
+.elementwrapper .survey-element.delphi,
 #editcontent .survey-element.delphi {
 	border: 1px solid #ccc;
 	background-color: #f5f5f5;
-}
-
-#editcontent .survey-element.delphi {
 	padding-top: 20px;
 }
 

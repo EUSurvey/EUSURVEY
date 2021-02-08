@@ -126,6 +126,14 @@
 	width: 100%;
 }
 
+.answertextdelphivotes {
+	color: #777;
+}
+
+.slidertooltipdelphivotes {
+	color: #ccc;
+}
+
 .text {
 	font-size: 14px;	
 }

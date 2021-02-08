@@ -14,8 +14,8 @@
 					<spring:message code="message.DelphiConfirmDeleteComment" />
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-default"><spring:message code="label.Cancel" /></a>
-					<a class="btn btn-danger"><spring:message code="label.Delete" /></a>
+					<a class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
+					<a class="btn btn-primary delete-confirmation-dialog__cancel-button"><spring:message code="label.Cancel" /></a>
 				</div>
 			</div>
 		</div>

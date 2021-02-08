@@ -9,6 +9,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.delphi.*;
+import com.ec.survey.model.delphi.NumberQuestionStatistics;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
@@ -2466,6 +2467,20 @@ public class RunnerController extends BasicController {
 			StatisticsCreator creator = (StatisticsCreator) context.getBean("statisticsCreator");
 			creator.init(survey, null, false);
 
+			if (question instanceof NumberQuestion) {
+				NumberQuestion numq = (NumberQuestion) question;
+				if (numq.getDisplay().equals("Slider")) {
+					NumberQuestionStatistics numberQuestionStats = creator.getAnswers4NumberQuestionStatistics(survey, numq);
+					if (0 == numberQuestionStats.getNumberVotes() || !numberQuestionStats.isQuestionFound()) {
+						//participant may only see answers if he answered before
+						return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+					}
+					return handleDelphiNumberQuestion(survey, numq, numberQuestionStats);
+				} else {
+					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+				}
+			}
+
 			Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion = new HashMap<>();
@@ -2566,6 +2581,31 @@ public class RunnerController extends BasicController {
 
 		if (result.getQuestions().isEmpty()) {
 			return ResponseEntity.noContent().build();
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiNumberQuestion(Survey survey, NumberQuestion question, NumberQuestionStatistics numberQuestionStatistics) {
+		if (numberQuestionStatistics.getNumberVotes() < survey.getMinNumberDelphiStatistics()) {
+			// only show statistics for this question if the total number of answers exceeds the threshold
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+		result.setChartType(question.getDelphiChartType());
+
+		result.setQuestionType(DelphiQuestionType.Number);
+		result.setLabel(question.getStrippedTitle());
+
+		Map<String, Integer> valuesMagnitude = numberQuestionStatistics.getValuesMagnitude();
+		for (Map.Entry<String, Integer> mapEntry : valuesMagnitude.entrySet()) {
+			String value = mapEntry.getKey();
+			Integer rate = mapEntry.getValue();
+			DelphiGraphEntry delphiGraphEntry = new DelphiGraphEntry();
+			delphiGraphEntry.setLabel(value);
+			delphiGraphEntry.setValue(rate);
+			result.addEntry(delphiGraphEntry);
 		}
 
 		return ResponseEntity.ok(result);

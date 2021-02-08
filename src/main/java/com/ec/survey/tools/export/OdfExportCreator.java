@@ -469,7 +469,7 @@ public class OdfExportCreator extends ExportCreator {
 				}
 			}
 
-			explanationFilesToExport.applyFunctionOnEachFile((answerSetUId, questionUid, explanationFile) -> {
+			explanationFilesToExport.applyFunctionOnEachFile((answerSetId, questionUid, explanationFile) -> {
 				java.io.File file = fileService.getSurveyFile(survey.getUniqueId(), explanationFile.getUid());
 
 				if (!file.exists()) {
@@ -477,7 +477,7 @@ public class OdfExportCreator extends ExportCreator {
 				}
 
 				if (file.exists()) {
-					os.putArchiveEntry(new ZipArchiveEntry(answerSetUId + Constants.PATH_DELIMITER + questionUid +
+					os.putArchiveEntry(new ZipArchiveEntry(answerSetId + Constants.PATH_DELIMITER + questionUid +
 							Constants.PATH_DELIMITER + explanationFile.getName()));
 					IOUtils.copy(new FileInputStream(file), os);
 					os.closeArchiveEntry();

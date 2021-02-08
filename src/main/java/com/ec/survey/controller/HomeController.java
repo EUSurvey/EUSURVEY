@@ -81,6 +81,21 @@ public class HomeController extends BasicController {
 		return "home/about";
 	}
 	
+	@RequestMapping(value = "/home/delphi", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String delphi(Locale locale, ModelMap model) {
+		model.put("continueWithoutJavascript", true);		
+		model.put("oss", super.isOss());		
+		return "home/delphi";
+	}
+	
+	@RequestMapping(value = "/home/delphi/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String delphiRunner(Locale locale, Model model) {
+		model.addAttribute("continueWithoutJavascript", true);
+		model.addAttribute("runnermode", true);
+		model.addAttribute("oss", super.isOss());
+		return "home/delphi";
+	}
+	
 	@RequestMapping(value = "/home/download", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String download(Locale locale, Model model) {
 		model.addAttribute("continueWithoutJavascript", true);

@@ -130,7 +130,31 @@
 					}
 				});
 		}
-
+		
+		function loadDelphiStatisticsAsync() {
+			$.ajax({
+				type:'GET',
+				  url: "${contextpath}/${form.survey.shortname}/management/statisticsDelphiJSON",
+				  dataType: 'json',
+				  cache: false,
+				  success: function( statistics ) {
+					  $(".statDelphi").each(function(){
+						 var id = $(this).attr("data-uid");
+						 if (statistics[id] != null)
+						 {
+						 	$(this).html(statistics[id]);
+						 }
+					  });
+				  },
+				error: function () {
+					//this means the asynchronous computation has been started
+					setTimeout(function () {
+						loadDelphiStatisticsAsync();
+					}, 2000);
+				}
+			});
+		}
+		
 		function roundToTwo(num) {
 			return +(Math.round(num + "e+2") + "e-2");
 		}
@@ -139,7 +163,9 @@
 			var chartwrapperlist = $(resultsStatisticParentElement).find(".chart-wrapper");
 			chartwrapperlist.each(function (index) {
 
-				$(this).parent().find(".chart-controls").append($("#chart-controls-template").html());
+				if ($(this).parent().find(".chart-controls").find("select").length == 0) {
+					$(this).parent().find(".chart-controls").append($("#chart-controls-template").html());
+				}
 
 				$(this).parent().find('[data-toggle="tooltip"]').tooltip();
 
@@ -148,20 +174,15 @@
 			});
 		}
 
-		function changeChart(select, updateLegendCheckbox) {
+		function changeChart(select) {
 			var controls = $(select).closest(".chart-controls");		
 			
 			var chartwrapper = $(select).closest(".statelement-wrapper").find(".chart-wrapper").first();
 			var chartType = $(controls).find(".chart-type").first().val();
 			var scheme = $(controls).find(".chart-scheme").first().val();
 			var legend = $(controls).find(".chart-legend").first().is(":checked");
-			
-			if (updateLegendCheckbox)
-			{
-				loadGraphDataInner(chartwrapper, addChart, chartType, scheme, null);
-			} else {
-				loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend);
-			}			
+
+			loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend);
 		}
 
 		function chartLabelCallback(value, index, values) {
@@ -282,9 +303,8 @@
 						chartType = result.chartType;
 					}
 
-					if (legend === null) {
-						legend = result.questionType === "Matrix" || result.questionType === "Rating" || chartType === "Pie";
-					}
+					var showLegendBox = result.questionType === "Matrix" || result.questionType === "Rating" || chartType === "Pie";
+					legend = legend == undefined ? showLegendBox : showLegendBox && legend;
 
 					var chartData = {};
 					var chartOptions = {
@@ -418,13 +438,13 @@
 					}
 
 					if (chartCallback instanceof Function) {
-						chartCallback(div, chart, chartType, legend);
+						chartCallback(div, chart, chartType, showLegendBox);
 					}
 				}
 			});
 		}
 
-		function addChart(div, chart, chartType, legend) {
+		function addChart(div, chart, chartType, showLegendBox) {
 			var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 
 			$(elementWrapper).find(".delphi-chart").remove();
@@ -445,16 +465,14 @@
         	$(elementWrapper).find(".chart-type").each(function(){
         		$(this).val(chartType);
         	});
-        	
-        	if (legend) {
-        		$(elementWrapper).find(".chart-legend-group").show();
-        		$(elementWrapper).find(".chart-legend").prop("checked", "checked");
-        	} else {
-        		$(elementWrapper).find(".chart-legend-group").hide();
-        		$(elementWrapper).find(".chart-legend").removeAttr("checked");
-        	}
-        
-        	var graph = new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
+
+			if (showLegendBox) {
+				$(elementWrapper).find(".chart-legend-group").show();
+			} else {
+				$(elementWrapper).find(".chart-legend-group").hide();
+			}
+
+        	new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
         }
 
 	</script>

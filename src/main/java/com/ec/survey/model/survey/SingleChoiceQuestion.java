@@ -33,7 +33,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	}
 
 	private boolean useRadioButtons;
-	private boolean useLikert;
+	private Boolean useLikert;
 	private int numColumns = 1;
 	private int maxDistance = -1;
 
@@ -47,10 +47,10 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	}
 	
 	@Column(name = "LIKERT")
-	public boolean getUseLikert() {
-		return isDelphiElement() && useLikert;
+	public Boolean getUseLikert() {
+		return useLikert != null ? useLikert : false;
 	}
-
+	
 	public void setUseLikert(Boolean useLikert) {
 		this.useLikert = useLikert != null ? useLikert : false;
 	}

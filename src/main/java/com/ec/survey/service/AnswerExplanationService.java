@@ -88,19 +88,19 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<AnswerExplanation> getExplanationsOfSurvey(final int surveyId) {
+	public List<AnswerExplanation> getExplanationsOfSurvey(final String surveyUid, final boolean draft) {
 
 		final Session session = sessionFactory.getCurrentSession();
 		final Query query = session.createSQLQuery(
-				"SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, ex.ANSWER_EXPLANATION_ID, ex.ANSWER_SET_ID, ex.QUESTION_UID, ex.TEXT "
-				+ "FROM FILES f "
-				+ "JOIN ANSWERS_EXPLANATIONS_FILES aef ON aef.files_FILE_ID = f.FILE_ID "
-				+ "JOIN ANSWERS_EXPLANATIONS ex ON ex.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
-				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ex.ANSWER_SET_ID "
-				+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
-				+ "WHERE s.SURVEY_ID = :surveyId")
-				.setInteger("surveyId", surveyId);
+				"SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, ex.ANSWER_EXPLANATION_ID, ex.ANSWER_SET_ID, ex.QUESTION_UID, ex.TEXT FROM ANSWERS_EXPLANATIONS ex " + 
+				"LEFT JOIN ANSWERS_EXPLANATIONS_FILES aef ON ex.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID " + 
+				"LEFT JOIN FILES f ON aef.files_FILE_ID = f.FILE_ID " + 
+				"JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ex.ANSWER_SET_ID " + 
+				"JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID " +
+				"WHERE s.SURVEY_UID = :surveyUid AND S.ISDRAFT = :draft")
+				.setString("surveyUid", surveyUid).setBoolean("draft", draft);
 
+		@SuppressWarnings("rawtypes")
 		final List queryResult = query.list();
 
 		Map<Integer, AnswerExplanation> explanations = new HashMap<>();
@@ -108,45 +108,58 @@ public class AnswerExplanationService extends BasicService {
 			final Object[] element = (Object[]) row;
 
 			final int fileId = ConversionTools.getValue(element[0]);
-			final String fileName = (String) element[1];
-			final String fileUid = (String) element[2];
+			
 			final int answerExplanationId = ConversionTools.getValue(element[3]);
 			final int answerExplanationAnswerSetId = ConversionTools.getValue(element[4]);
 			final String answerExplanationQuestionUid = (String) element[5];
 			final String answerExplanationText = (String) element[6];
 
 			if (!explanations.containsKey(answerExplanationId)) {
-				final AnswerExplanation file = new AnswerExplanation();
-				file.setId(answerExplanationId);
-				file.setAnswerSetId(answerExplanationAnswerSetId);
-				file.setQuestionUid(answerExplanationQuestionUid);
-				file.setText(answerExplanationText);
-				explanations.put(answerExplanationId, file);
+				final AnswerExplanation explanation = new AnswerExplanation();
+				explanation.setId(answerExplanationId);
+				explanation.setAnswerSetId(answerExplanationAnswerSetId);
+				explanation.setQuestionUid(answerExplanationQuestionUid);
+				explanation.setText(answerExplanationText);
+				explanations.put(answerExplanationId, explanation);
 			}
 
-			final File file = new File();
-			file.setId(fileId);
-			file.setName(fileName);
-			file.setUid(fileUid);
-			explanations.get(answerExplanationId).addFile(file);
+			if (fileId > 0) {
+				final String fileName = (String) element[1];
+				final String fileUid = (String) element[2];
+				
+				final File file = new File();
+				file.setId(fileId);
+				file.setName(fileName);
+				file.setUid(fileUid);
+				explanations.get(answerExplanationId).addFile(file);
+			}
 		}
 
 		return new ArrayList<>(explanations.values());
 	}
 
 	@Transactional(readOnly = true)
-	public List<AnswerComment> getCommentsOfSurvey(final int surveyId) {
+	public List<AnswerComment> getCommentsOfSurvey(final String surveyUid, final boolean draft) {
 
 		final Session session = sessionFactory.getCurrentSession();
-		final Query query = session.createSQLQuery("SELECT ac.* "
+		final Query query = session.createSQLQuery("SELECT ac.ANSWER_COMMENT_ID "
 				+ "FROM ANSWERS_COMMENTS ac "
 				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID "
 				+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
-				+ "WHERE s.SURVEY_ID = :surveyId")
-				.setInteger("surveyId", surveyId);
+				+ "WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft")
+				.setString("surveyUid", surveyUid).setBoolean("draft", draft);
+	
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
 
-		@SuppressWarnings("unchecked")
-		final List<AnswerComment> comments = (List<AnswerComment>) query.list();
+		final List<AnswerComment> comments = new ArrayList<>();
+		
+		for (Object o : res) {
+			int commentId = ConversionTools.getValue(o);
+			AnswerComment comment = getComment(commentId);
+			comments.add(comment);
+		}
+		
 		return comments;
 	}
 
@@ -156,6 +169,7 @@ public class AnswerExplanationService extends BasicService {
 		final Session session = sessionFactory.getCurrentSession();
 		final Query query = session.createQuery("SELECT ex FROM AnswerExplanation ex WHERE answerSetId = :answerSetId")
 				.setInteger("answerSetId", answerSetId);
+		@SuppressWarnings("unchecked")
 		List<AnswerExplanation> explanations = (List<AnswerExplanation>) query.list();
 		return explanations;
 	}
@@ -267,8 +281,8 @@ public class AnswerExplanationService extends BasicService {
 
 	@Transactional
 	public void createUpdateOrDeleteExplanations(AnswerSet answerSet) {
-
 		final Session session = sessionFactory.getCurrentSession();
+			
 		final Survey survey = answerSet.getSurvey();
 		for (Question question : survey.getQuestions()) {
 			final String questionUid = question.getUniqueId();
@@ -278,24 +292,30 @@ public class AnswerExplanationService extends BasicService {
 					continue;
 				}
 
-				AnswerExplanation explanation;
+				final int questionId = question.getId();
+				boolean hasNoLinkedAnswers = answerSet.getAnswers(questionId, questionUid).size() == 0;
+				if (hasNoLinkedAnswers) {
+					fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(), questionId);
+				}
+
+				AnswerExplanation explanation = null;
 				try {
 					explanation = getExplanation(answerSet.getId(), questionUid);
 
-					// Delete explanation text and files if there is no linked answer.
-					final int questionId = question.getId();
-					if (answerSet.getAnswers(questionId, questionUid).size() == 0) {
-						fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(),
-								questionId);
+					if (hasNoLinkedAnswers) {
 						explanation.getFiles().forEach(session::delete);
 						session.delete(explanation);
 						return;
 					}
 				} catch (NoSuchElementException ex) {
+					if (hasNoLinkedAnswers && !explanationData.files.isEmpty()) {
+						explanationData.files.forEach(session::delete);
+						explanationData.files.clear();
+					}
 					if ((explanationData.text.length() == 0) && (explanationData.files.isEmpty())) {
 						continue;
 					}
-
+					
 					explanation = new AnswerExplanation(answerSet.getId(), questionUid);
 				}
 
@@ -303,7 +323,22 @@ public class AnswerExplanationService extends BasicService {
 				explanation.setFiles(explanationData.files);
 
 				session.saveOrUpdate(explanation);
+				session.flush();
 			}
+		}
+	}
+	
+	@Transactional
+	public void createComments(AnswerSet answerSet) {	
+		if (answerSet.getComments() != null && !answerSet.getComments().isEmpty()) {
+			//this should only happen during a import survey operation for delphi surveys
+			
+			for (String surveyUid : answerSet.getComments().keySet()) {
+				for (AnswerComment comment : answerSet.getComments().get(surveyUid)) {
+					comment.setAnswerSetId(answerSet.getId());
+					answerExplanationService.saveOrUpdateComment(comment);
+				}
+			}			
 		}
 	}
 
@@ -354,6 +389,69 @@ public class AnswerExplanationService extends BasicService {
 				commentDeletionQuery.executeUpdate();
 			}
 		}
+	}
+
+	@Transactional
+	public void deleteCommentsOfSurvey(final int surveyId) {
+
+		final Session session = sessionFactory.getCurrentSession();
+
+		final Query replyDeletionQuery = session.createSQLQuery("DELETE ac.* "
+				+ "FROM ANSWERS_COMMENTS ac "
+				+ "JOIN ANSWERS_SET an ON an.ANSWER_SET_ID = ac.ANSWER_SET_ID "
+				+ "WHERE ac.PARENT IS NOT NULL AND an.SURVEY_ID = :id")
+				.setInteger("id", surveyId);
+		replyDeletionQuery.executeUpdate();
+
+		final Query commentDeletionQuery = session.createSQLQuery("DELETE ac.* "
+				+ "FROM ANSWERS_COMMENTS ac "
+				+ "JOIN ANSWERS_SET an ON an.ANSWER_SET_ID = ac.ANSWER_SET_ID "
+				+ "WHERE ac.PARENT IS NULL AND an.SURVEY_ID = :id")
+				.setInteger("id", surveyId);
+		commentDeletionQuery.executeUpdate();
+	}
+
+	@Transactional
+	public void deleteExplanationFilesOfSurvey(final int surveyId) {
+
+		final Session session = sessionFactory.getCurrentSession();
+
+		final Query explanationFilesRetrievalQuery = session.createSQLQuery("SELECT f.FILE_UID "
+				+ "FROM FILES f "
+				+ "JOIN ANSWERS_EXPLANATIONS_FILES aef ON aef.files_FILE_ID = f.FILE_ID "
+				+ "JOIN ANSWERS_EXPLANATIONS ae ON ae.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
+				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID "
+				+ "WHERE ans.SURVEY_ID = :id")
+				.setInteger("id", surveyId);
+		final List<String> fileUids = explanationFilesRetrievalQuery.list();
+
+		final Query explanationFilesDeletionQuery12 = session.createSQLQuery("DELETE aef.* "
+				+ "FROM ANSWERS_EXPLANATIONS_FILES aef "
+				+ "JOIN ANSWERS_EXPLANATIONS ae ON ae.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
+				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID "
+				+ "WHERE ans.SURVEY_ID = :id")
+				.setInteger("id", surveyId);
+		explanationFilesDeletionQuery12.executeUpdate();
+
+		if (fileUids.isEmpty()) return;
+		final Query explanationFilesDeletionQuery2 = session.createSQLQuery("DELETE f.* "
+				+ "FROM FILES f "
+				+ "WHERE f.FILE_UID IN :ids")
+				.setParameterList("ids", fileUids);
+		explanationFilesDeletionQuery2.executeUpdate();
+	}
+
+	@Transactional
+	public void deleteExplanationsOfSurvey(final int surveyId) {
+
+		final Session session = sessionFactory.getCurrentSession();
+
+		final Query query = session.createSQLQuery("DELETE ae.* "
+				+ "FROM ANSWERS_EXPLANATIONS ae "
+				+ "JOIN ANSWERS_SET an ON ae.ANSWER_SET_ID = an.ANSWER_SET_ID "
+				+ "WHERE an.SURVEY_ID = :id")
+				.setInteger("id", surveyId);
+		query.executeUpdate();
 	}
 
 	@Transactional

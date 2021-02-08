@@ -249,9 +249,6 @@ var Actions = function() {
     	item.remove();
     	
     	_elementProperties.deselectAll();
-    	$("#copiedtoolboxitem").hide();
-    	$("#cancelcopytoolboxitem").hide();
-    	this.PasteEnabled(false);
     	
     	_undoProcessor.addUndoStep(["COPYPASTE", ids]);
     	
