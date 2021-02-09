@@ -293,6 +293,20 @@
 		</div>
 	</div>
 
+	<div class="modal delete-confirmation-dialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-body">
+					<spring:message code="message.DelphiConfirmDeleteComment" />
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
+					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<script type="text/javascript">
 		const surveyId = ${form.survey.id};
 		const errorDelphiTableContributionCouldNotBeChanged = "${form.getMessage("error.DelphiTableContributionCouldNotBeChanged")}";
@@ -363,7 +377,7 @@
 		}
 
 		function deleteDelphiCommentFromStartPage(element, isReply) {
-			var dialog = $(element).closest(".delphi-table").find(".delete-confirmation-dialog");
+			const dialog = $(".delete-confirmation-dialog");
 			$(dialog).modal("show");
 
 			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
@@ -384,11 +398,6 @@
 
 				$(dialog).modal("hide");
 				deleteDelphiComment(element, answersTableViewModel, isReply, errorCallback, successCallback);
-			});
-			var cancelButton = $(dialog).find(".delete-confirmation-dialog__cancel-button");
-			$(cancelButton).off("click");
-			$(cancelButton).click(function () {
-				$(dialog).modal("hide");
 			});
 		}
 		

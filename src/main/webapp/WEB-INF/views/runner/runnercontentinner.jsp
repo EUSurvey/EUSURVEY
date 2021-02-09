@@ -734,7 +734,7 @@
 	 	}
 
 		function deleteDelphiCommentFromRunner(button, isReply) {
-			var dialog = $(button).closest(".delphi-table").find(".delete-confirmation-dialog");
+			const dialog = $(button).closest(".survey-element").children("div").eq(1).find(".delete-confirmation-dialog");
 			$(dialog).modal("show");
 
 			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
@@ -750,12 +750,6 @@
 
 				$(dialog).modal("hide");
 				deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
-			});
-
-			var cancelButton = $(dialog).find(".delete-confirmation-dialog__cancel-button");
-			$(cancelButton).off("click");
-			$(cancelButton).click(function () {
-				$(dialog).modal("hide");
 			});
 		}
 	 	

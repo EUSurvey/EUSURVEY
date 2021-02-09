@@ -1250,6 +1250,19 @@
 			<%@ include file="delphiAnswersTable.jsp" %>
 		</div>
 
+		<div class="modal delete-confirmation-dialog" data-backdrop="static">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-body">
+						<spring:message code="message.DelphiConfirmDeleteComment" />
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
+						<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+					</div>
+				</div>
+			</div>
+		</div>
 		
 		<!-- /ko -->
 	</div>
