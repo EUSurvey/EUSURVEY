@@ -1290,7 +1290,7 @@ public class RunnerController extends BasicController {
 		} else {
 			basePath = fileService.getSurveyUploadsFolder(surveyUID, false);
 		}
-		String folderPath = basePath + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
+		String folderPath = basePath + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + question.getUniqueId();
 		String canonicalPath = new File(folderPath).getCanonicalPath();
 		boolean validDirectoryPath = validator.isValidDirectoryPath(
 				"check directory path in RunnerController.delete method", canonicalPath,
@@ -1373,7 +1373,7 @@ public class RunnerController extends BasicController {
 			} else {
 				folder = fileService.getSurveyUploadsFolder(surveyuid, false);
 			}
-			java.io.File directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, id));
+			java.io.File directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, element.getUniqueId()));
 
 			// we try 3 times to create the folders
 			boolean error = false;
