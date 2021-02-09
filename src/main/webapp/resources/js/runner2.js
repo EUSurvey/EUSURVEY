@@ -25,6 +25,8 @@ function getElementViewModel(element)
 			return newRegExViewModel(element);
 		case 'SingleChoiceQuestion':
 			return newSingleChoiceViewModel(element);
+		case 'RankingQuestion':
+			return newRankingViewModel(element); // TODO
 		case 'MultipleChoiceQuestion':
 			return newMultipleChoiceViewModel(element);
 		case 'NumberQuestion':
