@@ -513,9 +513,8 @@ public class SurveyExportHelper {
 				for (final File file: explanation.getFiles()) {
 					filesPerExplanation.add(file);
 					final String answerSetUniqueCode = answerService.get(explanation.getAnswerSetId()).getUniqueCode();
-					final int questionId = surveyService.getNewestElementByUid(explanation.getQuestionUid()).getId();
 					final java.io.File f = fileService.getSurveyExplanationFile(survey.getUniqueId(),
-							answerSetUniqueCode, questionId, file.getName());
+							answerSetUniqueCode, explanation.getQuestionUid(), file.getName());
 					os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
 					FileInputStream fis = null;
 					try {

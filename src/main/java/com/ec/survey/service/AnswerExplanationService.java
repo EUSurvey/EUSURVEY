@@ -292,10 +292,9 @@ public class AnswerExplanationService extends BasicService {
 					continue;
 				}
 
-				final int questionId = question.getId();
-				boolean hasNoLinkedAnswers = answerSet.getAnswers(questionId, questionUid).size() == 0;
+				boolean hasNoLinkedAnswers = answerSet.getAnswers(question.getId(), questionUid).isEmpty();
 				if (hasNoLinkedAnswers) {
-					fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(), questionId);
+					fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(), question.getUniqueId());
 				}
 
 				AnswerExplanation explanation = null;
