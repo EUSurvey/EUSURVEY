@@ -392,10 +392,12 @@
 							    <input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-opc" value="opc" />&#160;<spring:message code="label.OPC" />
 							  </label>
 						  </c:if>
-						  <label style="height: auto" class="btn btn-default" title="<spring:message code="info.Delphi" />" data-toggle='tooltip'>
-						    <img style="height: 18px;" src="${contextpath}/resources/images/icons/24/delphi.png">
-						    <input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-delphi" value="delphi" />&#160;<spring:message code="label.Delphi" />
-						  </label>
+							<c:if test="${enabledelphi}">
+								<label style="height: auto" class="btn btn-default" title="<spring:message code="info.Delphi" />" data-toggle='tooltip'>
+									<img style="height: 18px;" src="${contextpath}/resources/images/icons/24/delphi.png">
+									<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-delphi" value="delphi" />&#160;<spring:message code="label.Delphi" />
+								</label>
+					    	</c:if>
 						</div>
 					</td>
 				</tr>
