@@ -22,6 +22,7 @@ public class AnswerExplanation implements java.io.Serializable {
 	private String questionUid;
 	private String text;
 	private List<File> explanationFiles = new ArrayList<>();
+	private Boolean changedForMedian;
 
 	public AnswerExplanation() {}
 
@@ -77,5 +78,13 @@ public class AnswerExplanation implements java.io.Serializable {
 		this.explanationFiles = files;
 	}
 
+	@Column(name="CHANGED")
+	public Boolean getChangedForMedian() {
+		return changedForMedian;
+	}
+	public void setChangedForMedian(Boolean changedForMedian) {
+		this.changedForMedian = changedForMedian;
+	}
+	
 	public void addFile(File file) { this.explanationFiles.add(file); }
 }

@@ -2328,7 +2328,7 @@ public class RunnerController extends BasicController {
 			
 			if (element instanceof SingleChoiceQuestion && explanation.getText().trim().length() > 0) {
 				SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)element;
-				if (singleChoiceQuestion.getUseLikert() && singleChoiceQuestion.getMaxDistance() >= 0) {
+				if (singleChoiceQuestion.getUseLikert() && singleChoiceQuestion.getMaxDistance() >= 0 && !explanation.getChangedForMedian()) {
 					
 					List<Answer> answers = answerSet.getAnswers(singleChoiceQuestion.getId(), singleChoiceQuestion.getUniqueId());
 					if (!answers.isEmpty())
@@ -2340,6 +2340,8 @@ public class RunnerController extends BasicController {
 						}
 					}
 				}
+				
+				delphiExplanation.setChangedForMedian(explanation.getChangedForMedian());
 			}			
 			
 			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK);
@@ -2352,7 +2354,7 @@ public class RunnerController extends BasicController {
 	}
 
 	@PostMapping(value = "/delphiUpdate")
-	public ResponseEntity<DelphiUpdateResult> delphiCreateOrUpdateExplanation(HttpServletRequest request, Locale locale) {
+	public ResponseEntity<DelphiUpdateResult> delphiCreateOrUpdateAnswerAndExplanation(HttpServletRequest request, Locale locale) {
 		try {
 					
 			final String surveyId = request.getParameter("surveyId");
@@ -2410,6 +2412,10 @@ public class RunnerController extends BasicController {
 			updateResult.setLink(serverPrefix + "editcontribution/" + answerSet.getUniqueCode());
 			if (survey.getSecurity().startsWith("open")) {
 				updateResult.setOpen(true);
+			}
+			
+			if (answerSet.getChangedForMedian()) {
+				updateResult.setChangedForMedian(true);
 			}
 			
 			return new ResponseEntity<>(updateResult, HttpStatus.OK);
@@ -2725,7 +2731,16 @@ public class RunnerController extends BasicController {
 											SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)question;
 											if (singleChoiceQuestion.getUseLikert() && singleChoiceQuestion.getMaxDistance() > -1) {
 												DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, answer);
-												delphiQuestion.setMaxDistanceExceeded(median.isMaxDistanceExceeded());												
+												delphiQuestion.setMaxDistanceExceeded(median.isMaxDistanceExceeded());
+												
+												try {
+													AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), singleChoiceQuestion.getUniqueId());
+													if (explanation.getChangedForMedian()) {
+														delphiQuestion.setChangedForMedian(true);
+													}
+												} catch (NoSuchElementException e) {
+													//ignore
+												}
 											}
 										}
 									}

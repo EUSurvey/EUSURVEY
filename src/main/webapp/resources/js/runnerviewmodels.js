@@ -276,7 +276,8 @@ function newBasicViewModel(element)
 	viewModel.scoringItems = ko.observableArray();
 	viewModel.optional = ko.observable(true);
 	viewModel.css = ko.observable(true);	
-	viewModel.maxDistanceExceeded = ko.observable(false);	
+	viewModel.maxDistanceExceeded = ko.observable(false);
+	viewModel.changedForMedian = ko.observable(false);
 	
 	viewModel.getScoringItem = function(id)
 	{

@@ -28,7 +28,7 @@ public class AnswerSet implements java.io.Serializable {
 	public static class ExplanationData {
 		public String text = "";
 		public List<File> files = new ArrayList<>();
-	};
+	}
 
 	private static final long serialVersionUID = 1L;
 	private Integer id;
@@ -49,6 +49,7 @@ public class AnswerSet implements java.io.Serializable {
 	private Integer score;
 	private Map<String, ExplanationData> explanations = new HashMap<>();
 	private Map<String, List<AnswerComment>> comments = new HashMap<>();
+	private boolean changedForMedian = false;
 
 	@Id
 	@Column(name = "ANSWER_SET_ID")
@@ -376,5 +377,13 @@ public class AnswerSet implements java.io.Serializable {
 
 	public void setComments(Map<String, List<AnswerComment>> comments) {
 		this.comments = comments;
+	}
+
+	@Transient
+	public Boolean getChangedForMedian() {
+		return changedForMedian;
+	}
+	public void setChangedForMedian(Boolean changedForMedian) {
+		this.changedForMedian = changedForMedian;
 	}
 }

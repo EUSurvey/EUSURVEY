@@ -1162,7 +1162,7 @@
 	<div id="delphi-template">
 		<!-- ko if: isDelphiQuestion() -->
 		
-		<!-- ko if: maxDistanceExceeded() -->
+		<!-- ko if: maxDistanceExceeded() && !changedForMedian() -->
 		<div class="maxDistanceExceededMessage">${form.getMessage("info.MaxDistanceExceeded")}&nbsp;${form.getMessage("info.MaxDistanceExceededExplain")}</div>
 		<!-- /ko -->
 		
