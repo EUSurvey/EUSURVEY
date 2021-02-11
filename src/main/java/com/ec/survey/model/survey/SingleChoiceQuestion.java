@@ -35,7 +35,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	private boolean useRadioButtons;
 	private Boolean useLikert;
 	private int numColumns = 1;
-	private int maxDistance = -1;
+	private Integer maxDistance = -1;
 
 	@Column(name = "RADIO")
 	public boolean getUseRadioButtons() {
@@ -65,7 +65,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	}
 	
 	@Column(name = "MAXDISTANCE")
-	public int getMaxDistance() {
+	public Integer getMaxDistance() {
 		return maxDistance;
 	}
 
