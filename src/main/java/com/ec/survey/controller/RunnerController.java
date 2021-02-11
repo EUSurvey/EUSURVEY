@@ -2723,7 +2723,7 @@ public class RunnerController extends BasicController {
 										
 										if (question instanceof SingleChoiceQuestion) {
 											SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)question;
-											if (singleChoiceQuestion.getMaxDistance() > -1) {
+											if (singleChoiceQuestion.getUseLikert() && singleChoiceQuestion.getMaxDistance() > -1) {
 												DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, answer);
 												delphiQuestion.setMaxDistanceExceeded(median.isMaxDistanceExceeded());												
 											}
@@ -2799,7 +2799,6 @@ public class RunnerController extends BasicController {
 		}
 
 		if (question instanceof RatingQuestion) {
-			boolean found = false;
 			for (Element childQuestion : ((RatingQuestion) question).getChildElements()) {
 				if (!answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId()).isEmpty()) {
 					return true;
