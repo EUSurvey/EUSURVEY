@@ -3020,6 +3020,21 @@ public class SurveyHelper {
 		return multiplechoice;
 	}
 
+	private static RankingQuestion getRankingQuestion(Map<String, String[]> parameterMap, Element currentElement, String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+		RankingQuestion rankingQuestion;
+		if (currentElement instanceof RankingQuestion) {
+			rankingQuestion = (RankingQuestion) currentElement;
+		} else {
+			rankingQuestion = new RankingQuestion();
+			String uid = getString(parameterMap, "uid", id, servletContext);
+			rankingQuestion.setUniqueId(uid);
+		}
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
+		// TODO D17 log220
+		rankingQuestion.setShortname(shortname);
+		return rankingQuestion;
+	}
+
 	private static Matrix getMatrix(Map<String, String[]> parameterMap, Element currentElement,
 			String id, Map<Integer, Element> elementsById, String[] dependenciesForAnswers,
 			HashMap<Matrix, HashMap<Integer, String>> matrixDependencies, ServletContext servletContext, boolean log220)
@@ -3552,6 +3567,8 @@ public class SurveyHelper {
 						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers,
 						servletContext, log220);
 			}
+		} else if (type.equalsIgnoreCase("rankingquestion")) {
+			element = getRankingQuestion(parameterMap, currentElement, id, servletContext, log220 && currentElement != null);
 		}
 
 		if (survey.getIsQuiz() && element instanceof Question) {

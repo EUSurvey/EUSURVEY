@@ -332,14 +332,14 @@
 	
 	<div id="ranking-question-template">
 		<div>Construction Site: Ranking Question</div>
+		<ul class="ranking-ul-sortable">
 			<!-- ko foreach: observableChildElements() -->
-		<div data-bind="text: title"></div>
+				<li data-bind='text: "Title: "+title'></li>
 			<!-- /ko -->
-<!--  		<ul class="ranking-ul">
-
 		</ul>
--->
+
 		<!-- ko if: foreditor -->
+			<input type="hidden" data-bind="value: 'rankingquestion', attr: {'name': 'type' + id()}" />
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 		<!-- /ko -->
