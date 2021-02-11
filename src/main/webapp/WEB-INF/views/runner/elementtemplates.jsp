@@ -330,6 +330,21 @@
 		</div>
 	</div>
 	
+	<div id="ranking-question-template">
+		<div>Construction Site: Ranking Question</div>
+			<!-- ko foreach: observableChildElements() -->
+		<div data-bind="text: title"></div>
+			<!-- /ko -->
+<!--  		<ul class="ranking-ul">
+
+		</ul>
+-->
+		<!-- ko if: foreditor -->
+			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
+			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+		<!-- /ko -->
+	</div>
+
 	<div id="password-template">
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>

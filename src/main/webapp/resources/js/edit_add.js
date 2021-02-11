@@ -37,13 +37,12 @@ function getNewElement(item)
 		element = getBasicElement("RankingQuestion", true, "Ranking Question", item.attr("id"), true);
 		element.childElements = [
 			getBasicElement("RankingElement", false, "Ranking Element 1", null, false),
-			getBasicElement("RankingElement", false, "Ranking Element 1", null, false),
 			getBasicElement("RankingElement", false, "Ranking Element 2", null, false),
+			getBasicElement("RankingElement", false, "Ranking Element 3", null, false),
 			];
-		
-		element.isDelphiQuestion = isDelphi;	
-		updateComplexityScore("addSimpleQuestion"); // TODO check correct stringly type?
-		// updateListSummary(item.attr("id"),"init", 2); // TODO check needed?
+		element.isDelphiQuestion = isDelphi;
+		updateComplexityScore("addSimpleQuestion"); // TODO-D17 check correct stringly type?
+		// updateListSummary(item.attr("id"),"init", 2); // TODO-D17 check needed?
 	} else if (item.hasClass("multiplechoiceitem"))
 	{
 		element = getBasicElement("MultipleChoiceQuestion", true, "Multiple Choice Question", item.attr("id"), true);
