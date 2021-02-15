@@ -580,6 +580,7 @@ public class SurveyExportHelper {
 	        		result.getSurvey().getPublication().setShowStatistics(false);
 	        		result.getSurvey().getPublication().setShowCharts(false);	        		
 	        		if (email != null) result.getSurvey().setContact(email);
+	        		if (!fileService.isDelphiEnabled()) result.getSurvey().setIsDelphi(false);
 	        		
 	        		if (result.getSurvey().getVersion() < 26)
 	        		{
@@ -604,6 +605,7 @@ public class SurveyExportHelper {
 	        		result.getActiveSurvey().getPublication().setShowStatistics(false);
 	        		result.getActiveSurvey().getPublication().setShowCharts(false);	        		
 	        		if (email != null) result.getActiveSurvey().setContact(email);
+					if (!fileService.isDelphiEnabled()) result.getSurvey().setIsDelphi(false);
 	        		
 	        		if (result.getActiveSurvey().getVersion() < 26)
 	        		{
@@ -629,7 +631,8 @@ public class SurveyExportHelper {
 					oldSurvey.getPublication().setShowStatistics(false);
 					oldSurvey.getPublication().setShowCharts(false);	        		
 					if (email != null) oldSurvey.setContact(email);
-	        		
+					if (!fileService.isDelphiEnabled()) oldSurvey.setIsDelphi(false);
+
 	        		if (oldSurvey.getVersion() < 26)
 	        		{
 	        			for (com.ec.survey.model.survey.Element element : oldSurvey.getElements())

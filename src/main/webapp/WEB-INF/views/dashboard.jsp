@@ -54,7 +54,9 @@
 					<div id="surveys-button" data-bind="attr: {class: mode() == 'surveys' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToSurveys"><spring:message code="label.ManagedSurveys" /></a></div>
 				</c:if>
 				<div id="invitations-button" data-bind="attr: {class: mode() == 'invitations' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToInvitations"><spring:message code="label.PersonalInvitations" /></a></div>
-				<div id="delphi-button" data-bind="attr: {class: mode() == 'delphi' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToDelphi"><spring:message code="label.DelphiSurveys" /></a></div>
+				<c:if test="${enabledelphi}">
+					<div id="delphi-button" data-bind="attr: {class: mode() == 'delphi' ? 'ActiveLinkButton' : 'InactiveLinkButton'}"><span class="glyphicon glyphicon-play"></span><a data-bind="click: switchToDelphi"><spring:message code="label.DelphiSurveys" /></a></div>
+				</c:if>
 			</div>		
 	
 			<div class="fullpage" style="padding-top:137px;">			
