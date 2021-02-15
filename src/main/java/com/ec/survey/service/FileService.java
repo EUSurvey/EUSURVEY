@@ -1001,6 +1001,8 @@ public class FileService extends BasicService {
 		// get survey files
 		for (int surveyID : surveyIDs) {
 			Survey survey = surveyService.getSurvey(surveyID);
+			final FilesByTypes<Integer, String> explanationFiles =
+					answerExplanationService.getExplanationFilesByAnswerSetIdAndQuestionUid(survey);
 
 			if (!onlySurveyFiles) {
 				for (String lang : translationService.getTranslationLanguagesForSurvey(surveyID, false)) {
@@ -1070,13 +1072,13 @@ public class FileService extends BasicService {
 				}
 
 				if (question.isDelphiElement()) {
-					final FilesByTypes<Integer, String> files =
-							answerExplanationService.getExplanationFilesByAnswerSetIdAndQuestionUid(survey);
-					files.applyFunctionOnEachFile((answerSetId, questionUid, explanationFile) -> {
-						final String answerSetUid = answerService.get(answerSetId).getUniqueCode();
-						final java.io.File file = getSurveyExplanationFile(survey.getUniqueId(), answerSetUid,
-								question.getUniqueId(), explanationFile.getName());
-						result.add(file);
+					explanationFiles.applyFunctionOnEachFile((answerSetId, questionUid, explanationFile) -> {
+						if (questionUid.equalsIgnoreCase(question.getUniqueId())) {
+							final String answerSetUid = answerService.get(answerSetId).getUniqueCode();
+							final java.io.File file = getSurveyExplanationFile(survey.getUniqueId(), answerSetUid,
+									question.getUniqueId(), explanationFile.getName());
+							result.add(file);
+						}
 					});
 				}
 			}
