@@ -20,6 +20,7 @@ public class DelphiExplanation {
 	private String responseMessage = "";
 	private String text = "";
 	private List<String> fileList = new ArrayList<>();
+	private boolean changedForMedian;
 
 	public String getText() {
 		return text;
@@ -50,5 +51,13 @@ public class DelphiExplanation {
 		for (File file : files) {
 			this.fileList.add(file.getName());
 		}
+	}
+
+	public boolean isChangedForMedian() {
+		return changedForMedian;
+	}
+
+	public void setChangedForMedian(boolean changedForMedian) {
+		this.changedForMedian = changedForMedian;
 	}
 }

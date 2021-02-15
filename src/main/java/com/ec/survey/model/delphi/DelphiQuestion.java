@@ -6,6 +6,7 @@ public class DelphiQuestion {
 	private int id;
 	private String answer = "";
 	private boolean maxDistanceExceeded;
+	private boolean changedForMedian;
 
 	public String getTitle() {
 		return title;
@@ -45,5 +46,12 @@ public class DelphiQuestion {
 
 	public void setMaxDistanceExceeded(boolean maxDistanceExceeded) {
 		this.maxDistanceExceeded = maxDistanceExceeded;
+	}
+	
+	public Boolean getChangedForMedian() {
+		return changedForMedian;
+	}
+	public void setChangedForMedian(Boolean changedForMedian) {
+		this.changedForMedian = changedForMedian;
 	}
 }

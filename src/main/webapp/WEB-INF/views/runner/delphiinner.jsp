@@ -231,7 +231,7 @@
 							</div>
 
 							<div class="question-footer">
-								<!--  ko if: maxDistanceExceeded -->
+								<!--  ko if: maxDistanceExceeded && !changedForMedian -->
 									<div style="color: #f00; font-size: 30px; float: right;">
 										<span style="cursor: pointer" data-toggle="tooltip" title="<spring:message code="info.MaxDistanceExceeded" />"><img style="max-width:24px;" src="<c:url value="/resources/images/warning24.png"/>" alt="max distance exceeded" /></span>
 									</div>

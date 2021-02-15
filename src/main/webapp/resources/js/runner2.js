@@ -507,6 +507,9 @@ function delphiPrefill(editorElement) {
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 			surveyElement.find(".explanation-file-upload-section").show();
+			
+			var viewModel = modelsForDelphiQuestions[questionUid];			
+			viewModel.changedForMedian(currentExplanationText && currentExplanationText.changedForMedian);
 		}
 	});
 }
@@ -1235,6 +1238,11 @@ function delphiUpdateContinued(div, successCallback) {
 				$(link).attr("href", data.link).html(data.link);
 				$(div).find(".delphilinkurl").empty().append(link);
 				$(div).find(".delphilink").show();
+			}
+			
+			if (data.changedForMedian) {
+				var viewModel = modelsForDelphiQuestions[uid];			
+				viewModel.changedForMedian(true);
 			}
 			
 			$(loader).hide();
