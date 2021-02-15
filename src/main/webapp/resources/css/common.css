@@ -248,6 +248,15 @@ table {
 	}
 }
 
+/* Bootstrap fix for stacked modals: Add appearance of a modal backdrop below the topmost visible modal. */
+.modal-backdrop {
+	visibility: hidden !important;
+}
+.modal.in {
+	background-color: rgba(0,0,0,0.5);
+}
+/* /Bootstrap fix for stacked modals */
+
 select {
 	height: 26px;
 }
