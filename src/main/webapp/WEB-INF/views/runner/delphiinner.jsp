@@ -278,7 +278,7 @@
 		<div style="clear: both"></div>
 	</div>
 
-	<div class="modal answers-table-modal" data-backdrop="static">
+	<div class="modal answers-table-modal" tabindex="-1" role="dialog" data-backdrop="static">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header"><spring:message code="label.ResultsTable" /></div>
@@ -293,7 +293,7 @@
 		</div>
 	</div>
 
-	<div class="modal delete-confirmation-dialog" data-backdrop="static">
+	<div class="modal delete-confirmation-dialog" tabindex="-1" role="dialog" data-backdrop="static">
 		<div class="modal-dialog modal-sm">
 			<div class="modal-content">
 				<div class="modal-body">
@@ -406,6 +406,13 @@
 			$(element).closest('.sectionwithquestions').find(".sectioncontent").toggle();
 			$(element).parent().find("a").toggle();
 		}
+
+		// Make sure modal is focused when modal on top is closed.
+		$(document).on('hidden.bs.modal', function (event) {
+			if ($('.modal:visible').length) {
+				$('body').addClass('modal-open');
+			}
+		});
 
 		const answersTableViewModel = createNewDelphiBasicViewModel();
 
