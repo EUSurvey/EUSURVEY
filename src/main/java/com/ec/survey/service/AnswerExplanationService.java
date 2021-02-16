@@ -329,7 +329,7 @@ public class AnswerExplanationService extends BasicService {
 				if (question instanceof SingleChoiceQuestion) {
 					SingleChoiceQuestion choiceQuestion = (SingleChoiceQuestion) question;
 					if (choiceQuestion.getUseLikert() && choiceQuestion.getMaxDistance() > -1
-							&& explanationData.text != null
+							&& explanationData.text != null && explanationData.text.length() > 0
 							&& !explanationData.text.equalsIgnoreCase(explanation.getText()) && !answers.isEmpty()) {
 						DelphiMedian median = answerService.getMedian(survey, choiceQuestion, answers.get(0));
 						if (median.isMaxDistanceExceeded()) {
