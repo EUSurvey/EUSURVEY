@@ -709,16 +709,14 @@ function newRankingViewModel(element)
 {
 	var viewModel = newBasicViewModel(element);
 
-	console.log("BRS D-17");
 	viewModel.observableChildElements = ko.observableArray();
 
 	$.each(element.childElements, (index, that) => {
-		console.log("BRS D17, yet another child element..."+that.title);
 		var child = {
 			"title": that.title,
 		};
 		viewModel.observableChildElements.push(child);
-		// BRS TODO D17: push to obeservable child elements
+		// TODO DELPHI-190: push to observable child elements
 	});
 
 	return viewModel;

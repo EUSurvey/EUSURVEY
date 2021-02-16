@@ -28,7 +28,7 @@ function getElementViewModel(element)
 		case 'MultipleChoiceQuestion':
 			return newMultipleChoiceViewModel(element);
 		case 'RankingQuestion':
-			return newRankingViewModel(element); // TODO-D17
+			return newRankingViewModel(element);
 		case 'NumberQuestion':
 			return newNumberViewModel(element);
 		case 'DateQuestion':
@@ -202,7 +202,6 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		var s = $("#multiple-choice-template").clone().attr("id", "");
 		$(container).append(s);
 	} else if (viewModel.type == 'RankingQuestion') {
-		console.log("BRS adding RankingQuesiton elemtntemplate");
 		$(container).addClass("rankingitem");
 		var s = $("#ranking-question-template").clone().attr("id", "");
 		$(container).append(s);

@@ -3020,18 +3020,64 @@ public class SurveyHelper {
 		return multiplechoice;
 	}
 
-	private static RankingQuestion getRankingQuestion(Map<String, String[]> parameterMap, Element currentElement, String id, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+	private static RankingQuestion getRankingQuestion(Map<String, String[]> parameterMap, Element currentElement, String id, String[] items, String[] originalItems, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+		String oldValues = "";
+		String newValues = "";
+
 		RankingQuestion rankingQuestion;
 		if (currentElement instanceof RankingQuestion) {
 			rankingQuestion = (RankingQuestion) currentElement;
+
+			// make sure the childElements match the items given and that all are unique
+			List<Element> itemsToDelete = new ArrayList<>();
+			List<String> newUniqueItems = new ArrayList<>();
+			for (Element thatItem : rankingQuestion.getChildElements()) {
+				boolean found = false;
+				for (String item : items) {
+					if (thatItem.getTitle().equals(item)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					for (String item : originalItems) {
+						if (thatItem.getTitle().equals(item)) {
+							found = true;
+							break;
+						}
+					}
+				}
+				if (!found || newUniqueItems.contains(thatItem.getTitle())) {
+					itemsToDelete.add(thatItem);
+				} else {
+					newUniqueItems.add(thatItem.getTitle());
+				}
+			}
+
+			for (Element thatItem : itemsToDelete) {
+				rankingQuestion.getChildElements().remove(thatItem);
+			}
+
 		} else {
 			rankingQuestion = new RankingQuestion();
 			String uid = getString(parameterMap, "uid", id, servletContext);
 			rankingQuestion.setUniqueId(uid);
 		}
+
 		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
-		// TODO D17 log220
+		if (log220 && rankingQuestion.getShortname() != null && !rankingQuestion.getShortname().equals(shortname)) {
+			oldValues += " shortname: " + rankingQuestion.getShortname();
+			newValues += " shortname: " + shortname;
+		}
 		rankingQuestion.setShortname(shortname);
+
+		// TODO DELPHI-189 add other attributes, check also in elementtemplate and match them
+
+		if (log220 && oldValues.length() > 0) {
+			String[] oldnew = { oldValues, newValues };
+			rankingQuestion.getActivitiesToLog().put(220, oldnew);
+		}
+
 		return rankingQuestion;
 	}
 
@@ -3568,7 +3614,36 @@ public class SurveyHelper {
 						servletContext, log220);
 			}
 		} else if (type.equalsIgnoreCase("rankingquestion")) {
-			element = getRankingQuestion(parameterMap, currentElement, id, servletContext, log220 && currentElement != null);
+			String[] items = parameterMap.get("rankingitem" + id); // TODO DELPHI-189 make childElements editable
+			if (items == null) {
+				items = new String[0];
+			}
+
+			List<String> list = new ArrayList<>(Arrays.asList(items));
+			list.removeAll(Arrays.asList("", null));
+			items = list.toArray(new String[0]);
+
+			for (int i = 0; i < items.length; i++) {
+				if (items[i] != null)
+					items[i] = Tools.filterHTML(items[i]);
+			}
+
+			String[] originalItems = parameterMap.get("originalrankingitem" + id);  // TODO DELPHI-189 make childElements editable
+			if (originalItems == null) {
+				originalItems = new String[0];
+			}
+
+			list = new ArrayList<>(Arrays.asList(originalItems));
+			list.removeAll(Arrays.asList("", null));
+			originalItems = list.toArray(new String[0]);
+
+			for (int i = 0; i < originalItems.length; i++) {
+				if (originalItems[i] != null) {
+					originalItems[i] = Tools.filterHTML(originalItems[i]);
+				}
+			}
+
+			element = getRankingQuestion(parameterMap, currentElement, id, items, originalItems, servletContext, log220 && currentElement != null);
 		}
 
 		if (survey.getIsQuiz() && element instanceof Question) {

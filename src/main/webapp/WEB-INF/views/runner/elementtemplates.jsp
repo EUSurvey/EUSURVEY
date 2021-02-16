@@ -331,7 +331,7 @@
 	</div>
 	
 	<div id="ranking-question-template">
-		<div>Construction Site: Ranking Question</div>
+		<div>Ranking Question</div> <!-- TODO DELPHI-188 set/get title per input element -->
 		<ul class="ranking-ul-sortable">
 			<!-- ko foreach: observableChildElements() -->
 				<li data-bind='text: "Title: "+title'></li>
