@@ -1879,7 +1879,7 @@ function initModals(item)
 				if (element.hasClass("dateitem")) {
 					checkValueOfElement(element.find(".date"));
 				} else if (element.hasClass("numberitem")) {
-					checkValueOfElement(element.find(".number"));
+					checkValueOfElement(element.find(".number,.sliderbox"));
 				} else if (element.hasClass("ratingitem")) {
 					checkValueOfElement(element.find(".rating"));
 				} else if (element.hasClass("regexitem")) {
