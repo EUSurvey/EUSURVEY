@@ -2753,7 +2753,7 @@ public class RunnerController extends BasicController {
 						currentDelphiSection.getQuestions().add(delphiQuestion);
 					} else {
 						//non-delphi question
-						if (!structure.isUnansweredMandatoryQuestions() && !question.getOptional()) 
+						if (!structure.isUnansweredMandatoryQuestions() && !question.getOptional() && !question.getIsDependent()) 
 						{
 							if (answerSet == null) {
 								structure.setUnansweredMandatoryQuestions(true);
