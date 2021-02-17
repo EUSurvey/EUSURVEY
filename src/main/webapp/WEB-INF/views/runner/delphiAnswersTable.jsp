@@ -42,7 +42,9 @@
 			</td>
 			<td><span data-bind="html: update"></span></td>
 			<td>
-				<span data-bind="html: explanation"></span>
+				<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: { 'id': 'expanded' + comments.map(c => c.id).join() }">
+				<span class="text-to-be-truncated" data-bind="html: explanation"></span>
+				<label class="text-read-more-label" role="button" data-bind="attr: { 'for': 'expanded' + comments.map(c => c.id).join() }">Read More</label>
 				<!-- ko if: files.length > 0 && explanation.length > 0 -->
 				<br />
 				<!-- /ko -->
@@ -57,7 +59,9 @@
 						<!-- ko if: user && date -->
 						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
 						<!-- /ko -->
-						<span data-bind="hidden: isChangedCommentFormVisible, html: text"></span>
+						<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: {'id': 'expanded' + id}">
+						<span class="text-to-be-truncated" data-bind="hidden: isChangedCommentFormVisible, html: text"></span>
+						<label class="text-read-more-label" role="button" data-bind="attr: {'for': 'expanded' + id}">Read More</label>
 						<div class="delphi-comment__change-form" data-bind="visible: isChangedCommentFormVisible">
 							<textarea class="form-control" data-bind="hasFocus: hasChangedCommentFieldFocus, value: changedComment"></textarea>
 							<c:choose>
@@ -91,7 +95,9 @@
 					<!-- ko foreach: replies -->
 					<div class="delphi-comment__reply" data-bind="attr: {'data-id': id}">
 						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
-						<span data-bind="hidden: isChangedReplyFormVisible, html: text"></span>
+						<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: {'id': 'expanded' + id}">
+						<span class="text-to-be-truncated" data-bind="hidden: isChangedReplyFormVisible, html: text"></span>
+						<label class="text-read-more-label" role="button" data-bind="attr: {'for': 'expanded' + id}">Read More</label>
 						<div class="delphi-comment__change-form" data-bind="visible: isChangedReplyFormVisible">
 							<textarea class="form-control" data-bind="hasFocus: hasChangedReplyFieldFocus, value: changedReply"></textarea>
 							<c:choose>

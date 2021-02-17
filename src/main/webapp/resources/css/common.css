@@ -1295,15 +1295,45 @@ legend {
 	margin-right: 5px;
 }
 
-.delphi-comment__add-reply-form {
-	padding-left: 20px;
-}
-
 .delphi-comment {
 	border-bottom: 1px solid #ddd; 
 	padding: 10px; 
 	margin-left: -5px; 
 	margin-right: -5px; 
+}
+
+.text-read-more-checkbox {
+	opacity: 0;
+	pointer-events: none;
+	position: absolute;
+}
+
+.text-to-be-truncated {
+	-webkit-box-orient: vertical;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+}
+
+.text-read-more-label {
+	color: #337ab7;
+}
+
+.text-read-more-label:hover {
+	text-decoration: underline;
+}
+
+.text-read-more-checkbox:focus ~ .text-read-more-label {
+	outline: -webkit-focus-ring-color auto 5px;
+}
+
+.text-read-more-checkbox:checked + .text-to-be-truncated {
+	-webkit-line-clamp: unset;
+}
+
+.text-read-more-checkbox:checked ~ .text-read-more-label,
+.text-to-be-truncated:not(.truncated) ~ .text-read-more-label {
+	display: none;
 }
 
 .delphi-comment__user {
