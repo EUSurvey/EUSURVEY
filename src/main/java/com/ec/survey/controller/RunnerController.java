@@ -2341,7 +2341,7 @@ public class RunnerController extends BasicController {
 					}
 				}
 				
-				delphiExplanation.setChangedForMedian(explanation.getChangedForMedian());
+				delphiExplanation.setChangedForMedian(explanation.getChangedForMedian() != null && explanation.getChangedForMedian());
 			}			
 			
 			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK);
