@@ -959,10 +959,15 @@ function sortDelphiTable(element, direction) {
 	var surveyElement = $(element).closest(".survey-element");
 	var uid = $(surveyElement).attr("data-uid");
 	var viewModel = modelsForDelphiQuestions[uid];
+	
+	if (viewModel == null && typeof answersTableViewModel !== 'undefined') {
+		viewModel = answersTableViewModel;
+		uid = currentQuestionUidInModal;
+	}
 
 	viewModel.delphiTableOrder(direction);
 	viewModel.delphiTableOffset(0);
-	loadTableData($(surveyElement).attr("data-uid"), viewModel);
+	loadTableData(uid, viewModel);
 }
 
 function loadTableData(questionUid, viewModel) {
