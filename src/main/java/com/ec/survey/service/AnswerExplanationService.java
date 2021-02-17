@@ -295,9 +295,18 @@ public class AnswerExplanationService extends BasicService {
 				if (explanationData == null) {
 					continue;
 				}
+				
+				boolean hasNoLinkedAnswers;
+				List<Answer> answers;
+				if (question instanceof Matrix) {
+					Matrix matrix = (Matrix) question;
+					answers = answerSet.getMatrixAnswers(matrix);
+				} else {
+					answers = answerSet.getAnswers(question.getId(), questionUid);
+				}
 
-				List<Answer> answers = answerSet.getAnswers(question.getId(), questionUid);
-				boolean hasNoLinkedAnswers = answers.isEmpty();
+				hasNoLinkedAnswers = answers.isEmpty();
+				
 				if (hasNoLinkedAnswers) {
 					fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(),
 							question.getUniqueId());
@@ -393,9 +402,20 @@ public class AnswerExplanationService extends BasicService {
 
 		final Session session = sessionFactory.getCurrentSession();
 		for (Question question : answerSet.getSurvey().getQuestions()) {
-			if (question.getIsDelphiQuestion()
-					&& answerSet.getAnswers(question.getId(), question.getUniqueId()).size() == 0) {
+			
+			if (question.getIsDelphiQuestion()) {
 
+				if (question instanceof Matrix) {
+					Matrix matrix = (Matrix) question;
+					if (!answerSet.getMatrixAnswers(matrix).isEmpty()) {
+						continue;
+					}
+				} else {
+					if (!answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty()) {
+						continue;
+					}
+				}
+				
 				final Query replyDeletionQuery = session.createQuery("DELETE FROM AnswerComment "
 						+ "WHERE answerSetId = :answerSetId AND questionUid = :questionUid AND parent IS NOT NULL")
 						.setInteger("answerSetId", answerSet.getId()).setString("questionUid", question.getUniqueId());
