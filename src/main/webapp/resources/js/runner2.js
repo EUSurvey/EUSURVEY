@@ -440,6 +440,22 @@ function addElementToContainer(element, container, foreditor, forskin) {
 			});
 		}
 	}
+	
+	if (isdelphi && !foreditor && !forskin && !viewModel.isDelphiQuestion()) {
+		if ($(container).hasClass("dependent")) {
+			var triggers = $(container).attr("data-triggers").split(";");
+			if (triggers.length == 2)
+			{
+				var triggeringElement = $(".trigger[id='" + triggers[0] + "']");
+				if (triggeringElement.length == 1 && $(triggeringElement).closest(".delphi")) {
+					//move this question inside the delphi element that triggers it
+					var delphi = $(triggeringElement).closest(".delphi");
+					delphi.find(".delphichildren").append(container);
+				}
+			}
+		}
+		
+	}
 
 	return viewModel;
 }

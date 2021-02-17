@@ -145,7 +145,7 @@ function propagateChange(element)
 		$("#btnSaveDraft").removeClass("btn-default").addClass("btn-primary");
 	}
 	
-	var div = $(element).closest(".survey-element");
+	var div = $(element).parents(".survey-element").last();
 	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
 	$(div).find(".explanation-section").show();
 	$(div).find(".explanation-file-upload-section").show();

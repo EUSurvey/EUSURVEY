@@ -1336,6 +1336,11 @@ legend {
 	font-weight: bold !important;
 }
 
+.delphi .mandatory {
+    margin-left: 10px;
+    margin-right: -19px;
+}
+
 .delphi-table {
 	font-size: 100%;
 	position: relative;
