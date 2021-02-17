@@ -876,6 +876,12 @@ function newNumberViewModel(element)
 	}
 	
 	viewModel.initialValue = function() {
+		
+		var ovalue = getValueByQuestion(this.uniqueId());
+		if (ovalue.length > 0) {
+			return ovalue;
+		}
+		
 		if (this.initialSliderPosition() === "Middle")
 		{
 			var min = parseInt(this.min());

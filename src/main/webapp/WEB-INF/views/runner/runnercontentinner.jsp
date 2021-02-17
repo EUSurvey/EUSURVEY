@@ -152,26 +152,26 @@
 													</c:choose>
 													<c:choose>
 													<c:when test="${element.isDummy() && element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-													<div class="emptyelement survey-element untriggered 1"
+													<div class="emptyelement survey-element untriggered dependent 1"
 														 data-id="${element.id}" data-uid="${element.uniqueId}"
 														 data-triggers="${element.triggers}"
 														 style="margin-top: 5px; display: none;">
 														</c:when>
 														<c:when test="${element.getType() == 'Matrix' && element.getAllQuestionsDependent() && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-														<div class="emptyelement survey-element untriggered 2"
+														<div class="emptyelement survey-element untriggered dependent 2"
 															 id="${element.id}" data-id="${element.id}"
 															 data-uid="${element.uniqueId}"
 															 data-triggers="${element.triggers}" style="display: none;">
 															</c:when>
 															<c:when test="${element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-															<div class="emptyelement survey-element untriggered 3"
+															<div class="emptyelement survey-element untriggered dependent 3"
 																 id="${element.id}" data-id="${element.id}"
 																 data-triggers="${element.triggers}"
 																 data-uid="${element.uniqueId}"
 																 style="display: none;">
 																</c:when>
 																<c:when test="${element.isDependent}">
-																<div class="emptyelement survey-element 3b"
+																<div class="emptyelement survey-element dependent 3b"
 																	 id="${element.id}"
 																	 data-id="${element.id}"
 																	 data-uid="${element.uniqueId}"
