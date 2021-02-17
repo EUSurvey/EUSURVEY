@@ -761,13 +761,6 @@ select {
 	margin-left: 200px;
 }
 
-/* .linkstitle { */
-/* 	color: #333; */
-/* 	font-size: 16px; */
-/* 	font-weight: bold; */
-/* 	margin-top: 10px; */
-/* } */
-
 .title, .fulltitle {
 	font-size: 30px; 
 	font-weight: bold;
@@ -1267,21 +1260,13 @@ legend {
 	float: right;
 }
 
-.delphiupdatemessage, .delphilink {
+.delphiupdatemessage {
 	margin-left: 20px;
 	margin-top: 10px;
 }
 
-.delphilink {
-    background-color: #ecebeb;
-    padding: 10px;
-    border: 1px solid #ccc;
-    color: #555;
-}
-
 .delphilinkurl {
-	margin-top: 7px;
-	margin-bottom: 7px;
+	word-wrap: break-word;
 }
 
 .delphi-comment-add__form textarea,
