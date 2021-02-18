@@ -18,7 +18,8 @@
 	<c:set var="mode" value="delphiStartPage" />
 
 	<div class="page-wrap">
-		<%@ include file="../header.jsp" %>	
+		<%@ include file="../header.jsp" %>
+		<%@ include file="../runner/contributionLinkModals.jsp" %>
 		<%@ include file="../runner/delphiinner.jsp" %>
 	</div>
 	<%@ include file="../footerNoLanguages.jsp" %>
