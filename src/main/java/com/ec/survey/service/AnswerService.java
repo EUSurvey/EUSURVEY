@@ -2333,6 +2333,53 @@ public class AnswerService extends BasicService {
 		return median;
 	}
 	
+	@Transactional
+	public DelphiMedian getMedian(Survey survey, NumberQuestion numberQuestion, Answer answer) {
+		double maxDistance = numberQuestion.getMaxDistance();
+		double answerValue = Double.parseDouble(answer.getValue());
+		
+		Session session = sessionFactory.getCurrentSession();
+		
+		SQLQuery query = session.createSQLQuery("SELECT a.VALUE, count(*) FROM ANSWERS a " + 
+				"JOIN ANSWERS_SET an on a.AS_ID = an.ANSWER_SET_ID " + 
+				"JOIN SURVEYS s ON an.SURVEY_ID = s.SURVEY_ID " + 
+				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :isDraft AND QUESTION_UID = :questionUid " + 
+				"GROUP BY a.VALUE");
+		
+		query.setString("surveyUid", survey.getUniqueId());
+		query.setBoolean("isDraft", survey.getIsDraft());
+		query.setString("questionUid", numberQuestion.getUniqueId());
+		
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
+
+		List<Double> values = new ArrayList<>();
+		for (Object o : res) {
+			Object[] a = (Object[]) o;			
+			double value = Double.parseDouble((String)a[0]);
+			int count = ConversionTools.getValue(a[1]);
+			for (int i = 0; i < count; i++) {
+				values.add(value);
+			}
+		}
+				
+		DelphiMedian median = new DelphiMedian();
+		
+		int length = values.size();
+		if (length == 0) return null;		
+			
+		Double medianNumber = MathUtils.computeMedian(values.toArray(new Double[0]));
+		median.setMedian(medianNumber);
+		
+		double distance = Math.abs(medianNumber - answerValue);
+		
+		if (distance > maxDistance) {
+			median.setMaxDistanceExceeded(true);
+		}
+				
+		return median;
+	}
+	
 	private void initializeHelperMaps(Survey survey, Map<String, List<String>> questionsBySection, Map<String, Integer> answersByQuestion, Map<String, String> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection) {
 		String lastSection = "";
 		questionsBySection.put(lastSection, new ArrayList<String>());

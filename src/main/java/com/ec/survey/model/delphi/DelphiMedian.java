@@ -5,8 +5,9 @@ import java.util.List;
 
 public class DelphiMedian {
 	private List<String> medianUids;
+	private double median;
 	private boolean maxDistanceExceeded;	
-
+	
 	public boolean isMaxDistanceExceeded() {
 		return maxDistanceExceeded;
 	}
@@ -19,6 +20,13 @@ public class DelphiMedian {
 	}
 	public void setMedianUids(List<String> medianUids) {
 		this.medianUids = medianUids;
+	}
+	
+	public double getMedian() {
+		return median;
+	}
+	public void setMedian(double median) {
+		this.median = median;
 	}
 	
 	public DelphiMedian() {

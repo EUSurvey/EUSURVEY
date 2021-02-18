@@ -2081,6 +2081,13 @@ public class SurveyHelper {
 		}
 		number.setDisplayGraduationScale(displayGraduationScale);
 		
+		Double maxDistance = getDouble(parameterMap, "maxDistance", id);
+		if (log220 && !maxDistance.equals(number.getMaxDistance())) {
+			oldValues += " maxDistance: " + number.getMaxDistance();
+			newValues += " maxDistance: " + maxDistance;
+		}
+		number.setMaxDistance(maxDistance);
+		
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };
 			number.getActivitiesToLog().put(220, oldnew);

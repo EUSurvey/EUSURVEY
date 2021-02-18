@@ -32,6 +32,7 @@ public class NumberQuestion extends Question {
 	private String display;
 	private String initialSliderPosition;
 	private Boolean displayGraduationScale;
+	private Double maxDistance = -1.0;
 	
 	//this is for backward compatibility (serializer), do not remove!
 	private double min;
@@ -125,7 +126,16 @@ public class NumberQuestion extends Question {
 	}
 	public void setDisplayGraduationScale(Boolean displayGraduationScale) {
 		this.displayGraduationScale = displayGraduationScale == null ? false : displayGraduationScale;
-	}	
+	}
+	
+	@Column(name = "MAXDISTANCEDOUBLE")
+	public Double getMaxDistance() {
+		return maxDistance;
+	}
+
+	public void setMaxDistance(Double maxDistance) {
+		this.maxDistance = maxDistance != null ? maxDistance : -1.0;
+	}
 	
 	public NumberQuestion copy(String fileDir) throws ValidationException
 	{
@@ -140,6 +150,7 @@ public class NumberQuestion extends Question {
 		copy.maxLabel = maxLabel;
 		copy.initialSliderPosition = initialSliderPosition;
 		copy.displayGraduationScale = displayGraduationScale;
+		copy.maxDistance = maxDistance;
 		
 		return copy;
 	}
@@ -192,6 +203,8 @@ public class NumberQuestion extends Question {
 		if (displayGraduationScale != null && !displayGraduationScale.equals(number.displayGraduationScale)) return true;
 		if (initialSliderPosition != null && !initialSliderPosition.equals(number.initialSliderPosition)) return true;			
 
+		if (maxDistance != number.maxDistance) return true;
+		
 		return (unit != null && !unit.equals(number.unit));
 	}
 
@@ -213,6 +226,11 @@ public class NumberQuestion extends Question {
 		{
 			this.maxD = null;
 		}
+	}
+	
+	@Transient
+	public boolean isSlider() {
+		return getDisplay().equals("Slider");
 	}
 
 }

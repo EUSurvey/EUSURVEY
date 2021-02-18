@@ -978,13 +978,24 @@ function update(input)
 		case "MaxDistanceToMedian":
 			var text = $(input).val();	
 			var oldtext = element.maxDistance();
-			var index = $(input).prop('selectedIndex');
-			if (index == 0)
+			
+			if (element.type == "NumberQuestion")
 			{
-				text = "-1";
+				if (text.trim().length == 0) {
+					text = "-1";
+				}				
+				
+				element.maxDistance(parseFloat(text));	
+			} else {
+				var index = $(input).prop('selectedIndex');
+				if (index == 0)
+				{
+					text = "-1";
+				}
+				
+				element.maxDistance(parseInt(text));			
 			}
 			
-			element.maxDistance(parseInt(text));			
 			_undoProcessor.addUndoStep(["MaxDistanceToMedian", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
 		
 			break;
