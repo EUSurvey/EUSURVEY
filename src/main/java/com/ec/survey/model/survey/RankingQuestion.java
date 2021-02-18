@@ -34,7 +34,6 @@ public class RankingQuestion extends Question {
 
 	private List<Element> childElements = new ArrayList<>();
 	private List<Element> missingElements = new ArrayList<>();
-	private boolean foreditor;
 
 	public RankingQuestion() {}
 	
@@ -105,14 +104,6 @@ public class RankingQuestion extends Question {
 		return null;
 	}
 
-	@Transient
-	public boolean isForeditor() {
-		return foreditor;
-	}
-	public void setForeditor(boolean foreditor) {
-		this.foreditor = foreditor;
-	}
-	
 	public RankingQuestion copy(String fileDir) throws ValidationException {
 		RankingQuestion copy = new RankingQuestion();
 		baseCopy(copy);
