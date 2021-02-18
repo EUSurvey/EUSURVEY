@@ -1083,20 +1083,12 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 			viewModel.delphiTableOffset(result.offset);
 			viewModel.delphiTableTotalEntries(result.total);
 
-			setupTruncatedClassObserverForExplanationsAndDelphiCommentTexts(questionUid);
+			addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionUid);
 		}
 	 });
 }
 
-function setupTruncatedClassObserverForExplanationsAndDelphiCommentTexts(questionUid) {
-	// If the truncated box is responsive or the text in the box is of arbitrary size, the following code adds or
-	// removes a "truncated" class to simulate the feature.
-	const truncatedClassObserver = new ResizeObserver(entries => {
-		for (let entry of entries) {
-			entry.target.classList[
-				(entry.target.scrollHeight > Math.round(entry.contentRect.height)) ? 'add' : 'remove']('truncated');
-		}
-	});
+function addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionUid) {
 	let textToBeTruncatedFields = $('[data-uid="' + questionUid + '"]').find('.text-to-be-truncated');
 	if (textToBeTruncatedFields.length === 0) {
 		// If no fields are found, the start page is probably shown, on which the first selector does not work.
@@ -1104,7 +1096,7 @@ function setupTruncatedClassObserverForExplanationsAndDelphiCommentTexts(questio
 		textToBeTruncatedFields = $('.text-to-be-truncated');
 	}
 	$(textToBeTruncatedFields).each(function() {
-		truncatedClassObserver.observe(this);
+		this.classList[(this.scrollHeight > this.getBoundingClientRect().height) ? 'add' : 'remove']('truncated');
 	});
 }
 
