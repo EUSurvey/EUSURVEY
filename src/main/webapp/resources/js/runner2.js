@@ -1052,7 +1052,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 
 					entry.comments[j].editComment = function() {
 						hideCommentAndReplyForms();
-						entry.comments[j].changedComment(decodeHTMLEntities(entry.comments[j].text));
+						entry.comments[j].changedComment(entry.comments[j].text);
 						entry.comments[j].isChangedCommentFormVisible(true);
 						entry.comments[j].hasChangedCommentFieldFocus(true);
 					}
@@ -1070,8 +1070,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 
 						entry.comments[j].replies[k].editReply = function() {
 							hideCommentAndReplyForms();
-							entry.comments[j].replies[k].changedReply(
-								decodeHTMLEntities(entry.comments[j].replies[k].text));
+							entry.comments[j].replies[k].changedReply(entry.comments[j].replies[k].text);
 							entry.comments[j].replies[k].isChangedReplyFormVisible(true);
 							entry.comments[j].replies[k].hasChangedReplyFieldFocus(true);
 						}
@@ -1084,21 +1083,6 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 			viewModel.delphiTableTotalEntries(result.total);
 		}
 	 });
-}
-
-const elementForDecodingHTMLEntities = document.createElement('div');
-
-function decodeHTMLEntities(str) {
-
-	if (str && typeof str === 'string') {
-		// Strip script and other tags.
-		str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
-		str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
-		elementForDecodingHTMLEntities.innerHTML = str;
-		str = elementForDecodingHTMLEntities.textContent;
-		elementForDecodingHTMLEntities.textContent = '';
-	}
-	return str;
 }
 
 function loadMedianData(div, viewModel) {
