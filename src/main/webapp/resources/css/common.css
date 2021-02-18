@@ -1265,8 +1265,14 @@ legend {
 	margin-top: 10px;
 }
 
-.delphilinkurl {
+.contribution-link-dialog__link {
+	margin: 5px 0;
 	word-wrap: break-word;
+}
+
+#ask-email-dialog input {
+	margin-top: 10px;
+	width: 100%;
 }
 
 .delphi-comment-add__form textarea,
