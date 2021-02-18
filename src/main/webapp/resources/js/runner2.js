@@ -1052,7 +1052,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 
 					entry.comments[j].editComment = function() {
 						hideCommentAndReplyForms();
-						entry.comments[j].changedComment(decodeHTMLEntities(entry.comments[j].text));
+						entry.comments[j].changedComment(entry.comments[j].text);
 						entry.comments[j].isChangedCommentFormVisible(true);
 						entry.comments[j].hasChangedCommentFieldFocus(true);
 					}
@@ -1070,8 +1070,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 
 						entry.comments[j].replies[k].editReply = function() {
 							hideCommentAndReplyForms();
-							entry.comments[j].replies[k].changedReply(
-								decodeHTMLEntities(entry.comments[j].replies[k].text));
+							entry.comments[j].replies[k].changedReply(entry.comments[j].replies[k].text);
 							entry.comments[j].replies[k].isChangedReplyFormVisible(true);
 							entry.comments[j].replies[k].hasChangedReplyFieldFocus(true);
 						}
@@ -1098,21 +1097,6 @@ function addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionU
 	$(textToBeTruncatedFields).each(function() {
 		this.classList[(this.scrollHeight > this.getBoundingClientRect().height) ? 'add' : 'remove']('truncated');
 	});
-}
-
-const elementForDecodingHTMLEntities = document.createElement('div');
-
-function decodeHTMLEntities(str) {
-
-	if (str && typeof str === 'string') {
-		// Strip script and other tags.
-		str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
-		str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
-		elementForDecodingHTMLEntities.innerHTML = str;
-		str = elementForDecodingHTMLEntities.textContent;
-		elementForDecodingHTMLEntities.textContent = '';
-	}
-	return str;
 }
 
 function loadMedianData(div, viewModel) {
@@ -1220,6 +1204,8 @@ function confirmExplanationDeletion() {
 	}
 }
 
+const HAS_SHOWN_SURVEY_LINK = "hasShownSurveyLink";
+
 function delphiUpdateContinued(div, successCallback) {
 
 	const message = $(div).find(".delphiupdatemessage").first();
@@ -1269,10 +1255,13 @@ function delphiUpdateContinued(div, successCallback) {
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
 			
 			if (data.open) {
-				var link = document.createElement("a");
-				$(link).attr("href", data.link).html(data.link);
-				$(div).find(".delphilinkurl").empty().append(link);
-				$(div).find(".delphilink").show();
+				const uniqueCode = $("#uniqueCode").val();
+				const key = HAS_SHOWN_SURVEY_LINK + uniqueCode;
+				if (localStorage.getItem(key) == null) {
+					localStorage.setItem(key, "true");
+					appendShowContributionLinkDialogToSidebar();
+					showContributionLinkDialog(data.link);
+				}
 			}
 			
 			if (data.changedForMedian) {
@@ -1293,6 +1282,24 @@ function delphiUpdateContinued(div, successCallback) {
 			delphiUpdateFinished = true;
 		}
 	});
+}
+
+function appendShowContributionLinkDialogToSidebar() {
+	$("<br />").appendTo(".contact-and-pdf__delphi-section");
+	$("<br />").appendTo(".contact-and-pdf__delphi-section");
+	$('<a onclick="showContributionLinkDialog()">' + labelEditYourContributionLater + '</a>')
+		.appendTo(".contact-and-pdf__delphi-section");
+}
+
+function showContributionLinkDialog(url) {
+	if (!url) {
+		const uniqueCode = $("#uniqueCode").val();
+		url = serverPrefix + "editcontribution/" + uniqueCode;
+	}
+	const link = document.createElement("a");
+	$(link).attr("href", url).html(url);
+	$(".contribution-link-dialog__link").empty().append(link);
+	$(".contribution-link-dialog").modal("show");
 }
 
 function updateDelphiElement(element, successCallback) {
@@ -1512,6 +1519,11 @@ function checkGoToDelphiStart(link)
 	window.location = url;
 }
 
+function openAskEmailToSendLinkDialog(button) {
+	$(button).closest('.modal').modal('hide');
+	$('#ask-email-dialog').modal('show');
+}
+
 function sendDelphiMailLink() {
 	
 	var mail = $("#delphiemail").val();
@@ -1521,6 +1533,8 @@ function sendDelphiMailLink() {
 		$("#ask-delphi-email-dialog-error").show();
 		return;
 	}
+	
+	$("#ask-delphi-email-dialog-error").hide();
 	
 	var answerSetUniqueCode = $('#uniqueCode').val();
 	

@@ -163,6 +163,7 @@
 			var varwaitfordependencies = "${form.getMessage("info.WaitForDependencies")}";
 			var varErrorCheckValidation = "${form.getMessage("error.CheckValidation")}";
 			var varErrorCheckValidation2 = "${form.getMessage("error.CheckValidation2")}";
+			var labelEditYourContributionLater =  '${form.getMessage("label.EditYourContributionLater")}';
 			var labelmore = "${form.getMessage("label.more")}";
 			var labelless = "${form.getMessage("label.less")}";
 			var labelfrom = "${form.getMessage("label.from")}";

@@ -60,7 +60,7 @@
 						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
 						<!-- /ko -->
 						<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: {'id': 'expanded' + id}">
-						<span class="text-to-be-truncated" data-bind="hidden: isChangedCommentFormVisible, html: text"></span>
+						<span class="text-to-be-truncated" data-bind="hidden: isChangedCommentFormVisible, text: text"></span>
 						<label class="text-read-more-label" role="button" data-bind="attr: {'for': 'expanded' + id}">${form.getMessage("label.ShowAll")}</label>
 						<div class="delphi-comment__change-form" data-bind="visible: isChangedCommentFormVisible">
 							<textarea class="form-control" data-bind="hasFocus: hasChangedCommentFieldFocus, value: changedComment"></textarea>
@@ -96,7 +96,7 @@
 					<div class="delphi-comment__reply" data-bind="attr: {'data-id': id}">
 						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
 						<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: {'id': 'expanded' + id}">
-						<span class="text-to-be-truncated" data-bind="hidden: isChangedReplyFormVisible, html: text"></span>
+						<span class="text-to-be-truncated" data-bind="hidden: isChangedReplyFormVisible, text: text"></span>
 						<label class="text-read-more-label" role="button" data-bind="attr: {'for': 'expanded' + id}">${form.getMessage("label.ShowAll")}</label>
 						<div class="delphi-comment__change-form" data-bind="visible: isChangedReplyFormVisible">
 							<textarea class="form-control" data-bind="hasFocus: hasChangedReplyFieldFocus, value: changedReply"></textarea>

@@ -3211,7 +3211,7 @@ public class RunnerController extends BasicController {
 			comment.setAnswerSetId(answerSetIdParsed);
 			comment.setQuestionUid(questionUid);
 			comment.setUniqueCode(uniqueCode);
-			comment.setText(ESAPI.encoder().encodeForHTML(text));
+			comment.setText(text);
 			comment.setDate(new Date());
 			
 			if (parent != null) {
