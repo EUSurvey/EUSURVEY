@@ -435,7 +435,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 			loadGraphData(surveyElement);
 			loadTableData($(surveyElement).attr("data-uid"), viewModel);
 
-			$(surveyElement).find(".likert-div.median").each(function () {
+			$(surveyElement).find(".likert-div.median, .slider-div.median").each(function () {
 				loadMedianData(surveyElement, viewModel);
 			});
 		}
@@ -1123,6 +1123,7 @@ function loadMedianData(div, viewModel) {
 			}			
 			
 			viewModel.maxDistanceExceeded(result != undefined && result.maxDistanceExceeded);
+			viewModel.median(result != undefined ? result.median : 0);
 			
 			$(div).find(".medianpa").removeClass("medianpa");
 			

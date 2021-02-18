@@ -277,6 +277,7 @@ function newBasicViewModel(element)
 	viewModel.optional = ko.observable(true);
 	viewModel.css = ko.observable(true);	
 	viewModel.maxDistanceExceeded = ko.observable(false);
+	viewModel.median = ko.observable(0);
 	viewModel.changedForMedian = ko.observable(false);
 	
 	viewModel.getScoringItem = function(id)
@@ -805,6 +806,8 @@ function newNumberViewModel(element)
 	viewModel.maxLabel = ko.observable(element.maxLabel);
 	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition != null ? element.initialSliderPosition : "Left");
 	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
+	
+	viewModel.maxDistance = ko.observable(element.maxDistance);
 	
 	if (viewModel.display() == 'Slider')
 	{

@@ -1345,6 +1345,10 @@ legend {
 	position: relative;
 }
 
+.delphi .slider-div {
+	margin-left: 20px;
+}
+
 .elementwrapper .survey-element.delphi,
 #editcontent .survey-element.delphi {
 	border: 1px solid #ccc;

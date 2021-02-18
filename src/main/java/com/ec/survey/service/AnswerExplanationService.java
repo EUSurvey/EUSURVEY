@@ -335,16 +335,23 @@ public class AnswerExplanationService extends BasicService {
 
 				// special case: if the participant adds an explanation why she is outside the
 				// median
-				if (question instanceof SingleChoiceQuestion) {
-					SingleChoiceQuestion choiceQuestion = (SingleChoiceQuestion) question;
-					if (choiceQuestion.getUseLikert() && choiceQuestion.getMaxDistance() > -1
-							&& explanationData.text != null && explanationData.text.length() > 0
-							&& !explanationData.text.equalsIgnoreCase(explanation.getText()) && !answers.isEmpty()) {
-						DelphiMedian median = answerService.getMedian(survey, choiceQuestion, answers.get(0));
-						if (median.isMaxDistanceExceeded()) {
-							explanation.setChangedForMedian(true);
-							answerSet.setChangedForMedian(true);
+				DelphiMedian median = null;
+				if (explanationData.text != null && explanationData.text.length() > 0
+						&& !explanationData.text.equalsIgnoreCase(explanation.getText()) && !answers.isEmpty()) {
+					if (question instanceof SingleChoiceQuestion) {
+						SingleChoiceQuestion choiceQuestion = (SingleChoiceQuestion) question;
+						if (choiceQuestion.getUseLikert() && choiceQuestion.getMaxDistance() > -1) {
+							median = answerService.getMedian(survey, choiceQuestion, answers.get(0));						
 						}
+					} else if (question instanceof NumberQuestion) {
+						NumberQuestion numberQuestion = (NumberQuestion) question;
+						if (numberQuestion.isSlider() && numberQuestion.getMaxDistance() > -1) {
+							median = answerService.getMedian(survey, numberQuestion, answers.get(0));
+						}
+					}
+					if (median != null && median.isMaxDistanceExceeded()) {
+						explanation.setChangedForMedian(true);
+						answerSet.setChangedForMedian(true);
 					}
 				}
 

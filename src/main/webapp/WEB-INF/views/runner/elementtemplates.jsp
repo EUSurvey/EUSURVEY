@@ -593,7 +593,7 @@
 		<!-- /ko -->
 		
 		<!-- ko if: display() == 'Slider' -->		
-		<div class="slider-div">
+		<div data-bind="attr: {'class' : maxDistance() > -1 ? 'slider-div median' : 'slider-div'}">
 			<div style="float: left; margin-left: -20px; padding-bottom: 20px; max-width: 45%; text-align: center;" data-bind="html: minLabel()"></div>
 			<div style="float: right; padding-bottom: 20px;  max-width: 45%; text-align: center;" data-bind="html: maxLabel()"></div>
 			<div style="clear: both"></div>
@@ -645,6 +645,8 @@
 			<input type="hidden" data-bind="value: display, attr: {'name': 'display' + id()}" />
 			<input type="hidden" data-bind="value: initialSliderPosition, attr: {'name': 'initialSliderPosition' + id()}" />
 			<input type="hidden" data-bind="value: displayGraduationScale, attr: {'name': 'displayGraduationScale' + id()}" />
+			
+			<input type="hidden" data-bind="value: maxDistance, attr: {'name': 'maxDistance' + id()}" />
 		<!-- /ko -->
 	</div> 
 	
@@ -1165,9 +1167,16 @@
 		<div class="delphichildren"></div>
 		
 		<!-- ko if: maxDistanceExceeded() && !changedForMedian() -->
-		<div class="maxDistanceExceededMessage">${form.getMessage("info.MaxDistanceExceeded")}&nbsp;${form.getMessage("info.MaxDistanceExceededExplain")}</div>
+		<div class="maxDistanceExceededMessage">
+			${form.getMessage("info.MaxDistanceExceeded")}&nbsp;${form.getMessage("info.MaxDistanceExceededExplain")}
+			
+			<!-- ko if: median() -->
+			<div>${form.getMessage("label.GroupMedian")}: <span data-bind="html: median()"></span></div>
+			<!-- /ko -->
+		</div>	
+			
 		<!-- /ko -->
-		
+				
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">					
 			<div class="col-md-7">
 				<div class="explanation-section">

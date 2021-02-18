@@ -1,5 +1,7 @@
 package com.ec.survey.tools;
 
+import java.util.Arrays;
+
 public class MathUtils {
 	public static Integer[] computeMedianIndices(Integer[] values) {
 		
@@ -30,5 +32,25 @@ public class MathUtils {
 		result[1] = medianIndexUpper;
 				
 		return result;
+	}
+
+	public static Double computeMedian(Double[] values) {
+		Arrays.sort(values);
+
+		int length = values.length;
+		
+		if (length == 1) {
+			return values[0];
+		}
+		
+		int medianIndex = length / 2;
+		
+		if (length % 2 != 0) {
+			return values[medianIndex];
+		}
+		
+		double lowermedian = values[medianIndex-1];
+		double uppermedian = values[medianIndex];
+		return (lowermedian + uppermedian) / 2.0;	
 	}
 }
