@@ -57,7 +57,7 @@
 						<!-- ko if: user && date -->
 						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
 						<!-- /ko -->
-						<span data-bind="hidden: isChangedCommentFormVisible, html: text"></span>
+						<span data-bind="hidden: isChangedCommentFormVisible, text: text"></span>
 						<div class="delphi-comment__change-form" data-bind="visible: isChangedCommentFormVisible">
 							<textarea class="form-control" data-bind="hasFocus: hasChangedCommentFieldFocus, value: changedComment"></textarea>
 							<c:choose>
@@ -91,7 +91,7 @@
 					<!-- ko foreach: replies -->
 					<div class="delphi-comment__reply" data-bind="attr: {'data-id': id}">
 						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
-						<span data-bind="hidden: isChangedReplyFormVisible, html: text"></span>
+						<span data-bind="hidden: isChangedReplyFormVisible, text: text"></span>
 						<div class="delphi-comment__change-form" data-bind="visible: isChangedReplyFormVisible">
 							<textarea class="form-control" data-bind="hasFocus: hasChangedReplyFieldFocus, value: changedReply"></textarea>
 							<c:choose>
