@@ -332,6 +332,7 @@
 	
 	<div id="ranking-question-template">
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 
 		<ul class="ranking-ul-sortable">
 			<!-- ko foreach: observableChildElements() -->
