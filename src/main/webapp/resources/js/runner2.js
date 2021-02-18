@@ -1520,6 +1520,8 @@ function sendDelphiMailLink() {
 		return;
 	}
 	
+	$("#ask-delphi-email-dialog-error").hide();
+	
 	var answerSetUniqueCode = $('#uniqueCode').val();
 	
 	$.ajax({
