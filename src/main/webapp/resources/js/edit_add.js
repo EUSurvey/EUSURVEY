@@ -41,8 +41,7 @@ function getNewElement(item)
 			getBasicElement("RankingElement", false, "Ranking Element 3", null, false),
 			];
 		element.isDelphiQuestion = isDelphi;
-		updateComplexityScore("addSimpleQuestion"); // TODO-DELPHI-189 check correct stringly type?
-		// updateListSummary(item.attr("id"),"init", 2); // TODO-D1EPLHI-189 check needed?
+		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("multiplechoiceitem"))
 	{
 		element = getBasicElement("MultipleChoiceQuestion", true, "Multiple Choice Question", item.attr("id"), true);

@@ -3064,6 +3064,27 @@ public class SurveyHelper {
 			rankingQuestion.setUniqueId(uid);
 		}
 
+		String title = getString(parameterMap, "text", id, servletContext);
+		if (log220 && !rankingQuestion.getTitle().equals(title)) {
+			oldValues += " title: " + rankingQuestion.getTitle();
+			newValues += " title: " + title;
+		}
+		rankingQuestion.setTitle(title);
+
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(rankingQuestion.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + rankingQuestion.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		rankingQuestion.setIsDelphiQuestion(isDelphiQuestion);
+
+		String help = getString(parameterMap, "help", id, servletContext);
+		if (log220 && rankingQuestion.getHelp() != null && !rankingQuestion.getHelp().equals(help)) {
+			oldValues += " help: " + rankingQuestion.getHelp();
+			newValues += " help: " + help;
+		}
+		rankingQuestion.setHelp(help);
+
 		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
 		if (log220 && rankingQuestion.getShortname() != null && !rankingQuestion.getShortname().equals(shortname)) {
 			oldValues += " shortname: " + rankingQuestion.getShortname();

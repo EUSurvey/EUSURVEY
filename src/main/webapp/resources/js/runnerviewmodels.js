@@ -710,6 +710,8 @@ function newRankingViewModel(element)
 	var viewModel = newBasicViewModel(element);
 
 	viewModel.observableChildElements = ko.observableArray();
+	viewModel.help = ko.observable(element.help);
+	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 
 	$.each(element.childElements, (index, that) => {
 		var child = {

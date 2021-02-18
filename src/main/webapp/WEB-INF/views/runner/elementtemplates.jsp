@@ -331,7 +331,8 @@
 	</div>
 	
 	<div id="ranking-question-template">
-		<div>Ranking Question</div> <!-- TODO DELPHI-188 set/get title per input element -->
+		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+
 		<ul class="ranking-ul-sortable">
 			<!-- ko foreach: observableChildElements() -->
 				<li data-bind='text: "Title: "+title'></li>
@@ -342,6 +343,10 @@
 			<input type="hidden" data-bind="value: 'rankingquestion', attr: {'name': 'type' + id()}" />
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+
+			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
+			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
 		<!-- /ko -->
 	</div>
 
