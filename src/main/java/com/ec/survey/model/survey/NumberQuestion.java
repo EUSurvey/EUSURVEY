@@ -203,7 +203,7 @@ public class NumberQuestion extends Question {
 		if (displayGraduationScale != null && !displayGraduationScale.equals(number.displayGraduationScale)) return true;
 		if (initialSliderPosition != null && !initialSliderPosition.equals(number.initialSliderPosition)) return true;			
 
-		if (maxDistance != number.maxDistance) return true;
+		if (!maxDistance.equals(number.maxDistance)) return true;
 		
 		return (unit != null && !unit.equals(number.unit));
 	}
