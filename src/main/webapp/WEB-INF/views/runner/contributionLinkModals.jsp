@@ -12,10 +12,10 @@
 				<p>${form.getMessage("info.delphiLinkInSidebar")}</p>
 			</div>
 			<div class="modal-footer">
-				<a class="btn btn-primary" onclick="openAskEmailToSendLinkDialog(this)">
+				<a class="btn btn-default" onclick="openAskEmailToSendLinkDialog(this)">
 					${form.getMessage("label.SendByEmail")}
 				</a>
-				<a class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>
+				<a class="btn btn-primary" data-dismiss="modal">${form.getMessage("label.Continue")}</a>
 			</div>
 		</div>
 	</div>
