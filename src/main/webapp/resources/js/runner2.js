@@ -442,19 +442,31 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	}
 	
 	if (isdelphi && !foreditor && !forskin && !viewModel.isDelphiQuestion()) {
-		if ($(container).hasClass("dependent")) {
+		if ($(container).hasClass("dependent") && $(container).hasClass("freetextitem")) {
 			var triggers = $(container).attr("data-triggers").split(";");
+			
 			if (triggers.length == 2)
 			{
+				//radio or checkbox
 				var triggeringElement = $(".trigger[id='" + triggers[0] + "']");
+
+				//select
+				if (triggeringElement.length == 0) {
+					triggeringElement = $(".trigger[id='trigger" + triggers[0] + "']");
+				}
+				
+				//list
+				if (triggeringElement.length == 0) {
+					triggeringElement = $(".trigger[data-id='" + triggers[0] + "']");
+				}
+				
 				if (triggeringElement.length == 1 && $(triggeringElement).closest(".delphi")) {
 					//move this question inside the delphi element that triggers it
 					var delphi = $(triggeringElement).closest(".delphi");
 					delphi.find(".delphichildren").append(container);
 				}
 			}
-		}
-		
+		}		
 	}
 
 	return viewModel;
