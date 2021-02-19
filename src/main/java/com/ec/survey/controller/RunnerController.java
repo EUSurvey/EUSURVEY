@@ -2765,7 +2765,7 @@ public class RunnerController extends BasicController {
 											
 											try {
 												AnswerExplanation explanation = answerExplanationService.getExplanation(answerSet.getId(), question.getUniqueId());
-												if (explanation.getChangedForMedian()) {
+												if (explanation.getChangedForMedian() != null && explanation.getChangedForMedian()) {
 													delphiQuestion.setChangedForMedian(true);
 												}
 											} catch (NoSuchElementException e) {
