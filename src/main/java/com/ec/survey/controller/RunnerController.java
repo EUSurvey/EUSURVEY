@@ -2326,7 +2326,7 @@ public class RunnerController extends BasicController {
 			delphiExplanation.setText(explanation.getText());
 			delphiExplanation.setFileInfoFromFiles(explanation.getFiles());
 			
-			if ((element instanceof SingleChoiceQuestion || element instanceof NumberQuestion) && explanation.getText().trim().length() > 0 && !explanation.getChangedForMedian()) {
+			if ((element instanceof SingleChoiceQuestion || element instanceof NumberQuestion) && explanation.getText().trim().length() > 0 && (explanation.getChangedForMedian() == null || !explanation.getChangedForMedian())) {
 			
 				DelphiMedian median = null;
 				
@@ -2352,7 +2352,7 @@ public class RunnerController extends BasicController {
 					}
 				}
 				
-				if (median.isMaxDistanceExceeded()) {
+				if (median != null && median.isMaxDistanceExceeded()) {
 					String text = resources.getMessage("label.NewExplanation", null, locale) + ":<br /><br/><br />" + resources.getMessage("label.OldExplanation", null, locale) + ":<br /><br /><span style='color: #999;'>" + explanation.getText() + "</span>";
 					delphiExplanation.setText(text);
 				}			
