@@ -73,7 +73,7 @@
 		
 			<!-- ko if: likert -->
 						
-				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median' : 'likert-div'}">
+				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median answers-table' : 'likert-div answers-table'}">
 				
 					<div class="likert-bar" data-bind="attr: {'style' : 'width: ' + (possibleAnswers().length - 1) + '00px;'}"></div>
 				
