@@ -2673,7 +2673,7 @@ public class RunnerController extends BasicController {
 			int sid = Integer.parseInt(surveyid);
 
 			String languageCode = request.getParameter("languagecode");
-			Survey survey = surveyService.getSurvey(sid, languageCode);
+			Survey survey = surveyService.getSurvey(sid, languageCode, true);
 
 			if (survey == null || !survey.getIsDelphi()) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -3062,10 +3062,18 @@ public class RunnerController extends BasicController {
 		result.setOffset(offset);
 
 		Map<String, String> answerUidToTitle = new HashMap<>();
+		Map<String, String> dependentElements = new HashMap<>();
 		for (PossibleAnswer answer : question.getAllPossibleAnswers()) {
 			String id = answer.getUniqueId();
 			String title = answer.getTitle();
 			answerUidToTitle.put(id, title);
+			
+			for (Element dependentElement : answer.getDependentElements().getDependentElements()) {
+				if (dependentElement instanceof FreeTextQuestion && !dependentElement.isDelphiElement() && !dependentElements.containsKey(question.getUniqueId()))
+				{
+					dependentElements.put(question.getUniqueId(), dependentElement.getUniqueId());
+				}
+			}
 		}
 
 		DelphiContributions contributions = answerExplanationService.getDelphiContributions(question, orderBy, limit, offset);
@@ -3091,6 +3099,16 @@ public class RunnerController extends BasicController {
 				String title = answerUidToTitle.getOrDefault(value, "n/a");
 				DelphiTableAnswer answer = new DelphiTableAnswer(null, title);
 				tableEntry.getAnswers().add(answer);
+			}
+			
+			if (dependentElements.containsKey(question.getUniqueId())) {
+				String dependentElementUid = dependentElements.get(question.getUniqueId());
+				List<String> additionalValues = answerExplanationService.getDelphiDependentAnswers(dependentElementUid, firstValue.getAnswerSetId());
+				
+				for (String value : additionalValues) {
+					DelphiTableAnswer answer = new DelphiTableAnswer(null, value);
+					tableEntry.getAnswers().add(answer);
+				}
 			}
 
 			result.getEntries().add(tableEntry);

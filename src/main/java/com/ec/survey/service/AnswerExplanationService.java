@@ -268,10 +268,25 @@ public class AnswerExplanationService extends BasicService {
 		int totalCount = getTotalDelphiContributions(questionUids, isDraft);
 		return new DelphiContributions(totalCount, contributions);
 	}
+	
+	
+	@Transactional(readOnly = true)
+	public List<String> getDelphiDependentAnswers(String dependentElementUid, int answerSetId) {
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "SELECT VALUE FROM ANSWERS a WHERE a.QUESTION_UID = :questionUid AND a.AS_ID = :answerSetId";
+		SQLQuery query = session.createSQLQuery(sql);
+		query.setString("questionUid", dependentElementUid);
+		query.setInteger("answerSetId", answerSetId);
+		
+		@SuppressWarnings("unchecked")
+		List<String> result = query.list();
+		
+		return result;
+	}
 
 	@Transactional(readOnly = true)
 	public int getTotalDelphiContributions(Collection<String> questionUids, boolean isDraft) {
-		String totalCountQueryText = "" + "SELECT COUNT(DISTINCT aset.ANSWER_SET_ID)\n" + "FROM ANSWERS a\n"
+		String totalCountQueryText = "SELECT COUNT(DISTINCT aset.ANSWER_SET_ID) FROM ANSWERS a\n"
 				+ "JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n"
 				+ "JOIN SURVEYS s ON aset.SURVEY_ID = s.SURVEY_ID\n"
 				+ "WHERE a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft";
@@ -695,5 +710,6 @@ public class AnswerExplanationService extends BasicService {
 
 		return result;
 	}
+
 
 }

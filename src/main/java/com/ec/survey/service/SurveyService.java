@@ -639,13 +639,23 @@ public class SurveyService extends BasicService {
 	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly) {
 		return getSurvey(id, loadTranslations, readonly, true, true);
 	}
-
+	
 	@Transactional
 	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly, boolean synchronizeSurvey,
 			boolean setSurvey) {
+		return getSurvey(id, loadTranslations, readonly, synchronizeSurvey, setSurvey, false);
+	}
+
+	@Transactional
+	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly, boolean synchronizeSurvey,
+			boolean setSurvey, boolean initialize) {
 		Session session = sessionFactory.getCurrentSession();
 		Survey survey = (Survey) session.get(Survey.class, id);
-
+		
+		if (initialize) {
+			initializeSurvey(survey);
+		}
+		
 		if (survey != null && (survey.getIsDraft() || loadTranslations)) {
 			List<String> translations = translationService.getTranslationLanguagesForSurvey(survey.getId());
 			survey.setTranslations(translations);
@@ -783,7 +793,14 @@ public class SurveyService extends BasicService {
 
 	@Transactional(readOnly = true)
 	public Survey getSurvey(int id, String language) {
-		Survey survey = getSurvey(id, false, true, false, true);
+		Survey survey = getSurvey(id, false, true, false, true, false);
+		synchronizeSurvey(survey, language, true);
+		return survey;
+	}
+	
+	@Transactional(readOnly = true)
+	public Survey getSurvey(int id, String language, boolean initialize) {
+		Survey survey = getSurvey(id, false, true, false, true, initialize);
 		synchronizeSurvey(survey, language, true);
 		return survey;
 	}
