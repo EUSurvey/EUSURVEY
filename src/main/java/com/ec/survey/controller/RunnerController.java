@@ -2326,7 +2326,7 @@ public class RunnerController extends BasicController {
 			delphiExplanation.setText(explanation.getText());
 			delphiExplanation.setFileInfoFromFiles(explanation.getFiles());
 			
-			if ((element instanceof SingleChoiceQuestion || element instanceof NumberQuestion) && explanation.getText().trim().length() > 0 && (explanation.getChangedForMedian() == null || !explanation.getChangedForMedian())) {
+			if ((element instanceof SingleChoiceQuestion || element instanceof NumberQuestion)) {
 			
 				DelphiMedian median = null;
 				
@@ -2352,14 +2352,13 @@ public class RunnerController extends BasicController {
 					}
 				}
 				
-				if (median != null && median.isMaxDistanceExceeded()) {
+				if (median != null && median.isMaxDistanceExceeded() && explanation.getText().trim().length() > 0 && (explanation.getChangedForMedian() == null || !explanation.getChangedForMedian())) {
 					String text = resources.getMessage("label.NewExplanation", null, locale) + ":<br /><br/><br />" + resources.getMessage("label.OldExplanation", null, locale) + ":<br /><br /><span style='color: #999;'>" + explanation.getText() + "</span>";
 					delphiExplanation.setText(text);
 				}			
 				
 				delphiExplanation.setChangedForMedian(explanation.getChangedForMedian() != null && explanation.getChangedForMedian());
-			}
-			
+			}			
 			
 			return new ResponseEntity<>(delphiExplanation, HttpStatus.OK);
 		} catch (NoSuchElementException ex) {
