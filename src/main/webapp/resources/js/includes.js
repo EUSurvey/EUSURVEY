@@ -78,10 +78,9 @@ $(function() {
 
 function initModals(item)
 {
+	if ($(item).hasClass("non-resizable")) return;
+
 	$(item).on("resize", function(event, ui) {
-    	//this is raised for all children too but we only want to handle the parents
-    	//if (ui.originalElement.hasClass("modal"))
-    	//{
 		modalResize(ui);
 		if (!$(this).hasClass("resized"))
 		{
@@ -93,8 +92,7 @@ function initModals(item)
 			$(this).resizable( "option", "minHeight", h );
 			$(this).resizable( "option", "minWidth", w );
 
-		};		
-    	//}
+		};
 	});
 	
 	
@@ -1879,7 +1877,7 @@ function initModals(item)
 				if (element.hasClass("dateitem")) {
 					checkValueOfElement(element.find(".date"));
 				} else if (element.hasClass("numberitem")) {
-					checkValueOfElement(element.find(".number"));
+					checkValueOfElement(element.find(".number,.sliderbox"));
 				} else if (element.hasClass("ratingitem")) {
 					checkValueOfElement(element.find(".rating"));
 				} else if (element.hasClass("regexitem")) {

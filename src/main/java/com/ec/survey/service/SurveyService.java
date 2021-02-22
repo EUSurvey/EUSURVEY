@@ -100,9 +100,7 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(" ,s.SURVEY_START_DATE");// 6
 		stringBuilder.append(" ,s.ISPUBLISHED");// 7
 		stringBuilder.append(" ,s.LANGUAGE");
-		if (!this.isReportingDatabaseEnabled()) {
-			stringBuilder.append(" ,npa.PUBLISHEDANSWERS as replies");
-		}
+		stringBuilder.append(" ,npa.PUBLISHEDANSWERS as replies");
 		stringBuilder.append(" ,s.ACTIVE");
 		stringBuilder.append(" ,s.OWNER");
 		stringBuilder.append(" ,s.CONTACT");
@@ -140,32 +138,37 @@ public class SurveyService extends BasicService {
 			survey.setIsPublished((Boolean) row[rowIndex++]);// 7
 			survey.setLanguage(languageMap.get(ConversionTools.getValue(row[rowIndex++])));// 8
 
-			if (this.isReportingDatabaseEnabled()) {
+			int mainCount = ConversionTools.getValue(row[rowIndex++]);
+			
+			if (this.isReportingDatabaseEnabled()) {				
 				survey.setNumberOfAnswerSetsPublished(this.reportingService.getCount(false, survey.getUniqueId()));
+				if (survey.getNumberOfAnswerSetsPublished() == 0) {
+					survey.setNumberOfAnswerSetsPublished(mainCount);// 9
+				}
 			} else {
-				survey.setNumberOfAnswerSetsPublished(ConversionTools.getValue(row[rowIndex++]));// 9
+				survey.setNumberOfAnswerSetsPublished(mainCount);// 9
 			}
 
-			survey.setIsActive((Boolean) row[rowIndex++]);// 9 or 10
+			survey.setIsActive((Boolean) row[rowIndex++]);// 10
 
 			User user = new User();
-			user.setId(ConversionTools.getValue(row[rowIndex++]));// 10 or 11
-			survey.setContact((String) row[rowIndex++]);// 11 or 12
+			user.setId(ConversionTools.getValue(row[rowIndex++]));// 11
+			survey.setContact((String) row[rowIndex++]);// 12
 
-			user.setLogin((String) row[rowIndex++]);// 12 or 13
-			user.setDisplayName((String) row[rowIndex++]);// 13 or 14
+			user.setLogin((String) row[rowIndex++]);// 13
+			user.setDisplayName((String) row[rowIndex++]);// 14
 			survey.setOwner(user);
 
-			survey.setAutomaticPublishing((Boolean) row[rowIndex++]);// 14 or 15
-			survey.setContactLabel((String) row[rowIndex++]);// 15 or 16
+			survey.setAutomaticPublishing((Boolean) row[rowIndex++]);// 15
+			survey.setContactLabel((String) row[rowIndex++]);// 16
 
-			survey.setSecurity((String) row[rowIndex++]);// 16 or 17
-			survey.setIsQuiz((Boolean) row[rowIndex++]);// 17 or 18
-			survey.setIsOPC((Boolean) row[rowIndex++]);// 18 or 19
+			survey.setSecurity((String) row[rowIndex++]);// 17
+			survey.setIsQuiz((Boolean) row[rowIndex++]);// 18
+			survey.setIsOPC((Boolean) row[rowIndex++]);// 19
 
-			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 19 or 20
+			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 20
 			
-			survey.setIsDelphi((Boolean) row[rowIndex++]);// 21 or 22
+			survey.setIsDelphi((Boolean) row[rowIndex]);// 21
 
 			surveys.add(survey);
 		}
@@ -639,13 +642,23 @@ public class SurveyService extends BasicService {
 	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly) {
 		return getSurvey(id, loadTranslations, readonly, true, true);
 	}
-
+	
 	@Transactional
 	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly, boolean synchronizeSurvey,
 			boolean setSurvey) {
+		return getSurvey(id, loadTranslations, readonly, synchronizeSurvey, setSurvey, false);
+	}
+
+	@Transactional
+	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly, boolean synchronizeSurvey,
+			boolean setSurvey, boolean initialize) {
 		Session session = sessionFactory.getCurrentSession();
 		Survey survey = (Survey) session.get(Survey.class, id);
-
+		
+		if (initialize) {
+			initializeSurvey(survey);
+		}
+		
 		if (survey != null && (survey.getIsDraft() || loadTranslations)) {
 			List<String> translations = translationService.getTranslationLanguagesForSurvey(survey.getId());
 			survey.setTranslations(translations);
@@ -783,7 +796,14 @@ public class SurveyService extends BasicService {
 
 	@Transactional(readOnly = true)
 	public Survey getSurvey(int id, String language) {
-		Survey survey = getSurvey(id, false, true, false, true);
+		Survey survey = getSurvey(id, false, true, false, true, false);
+		synchronizeSurvey(survey, language, true);
+		return survey;
+	}
+	
+	@Transactional(readOnly = true)
+	public Survey getSurvey(int id, String language, boolean initialize) {
+		Survey survey = getSurvey(id, false, true, false, true, initialize);
 		synchronizeSurvey(survey, language, true);
 		return survey;
 	}

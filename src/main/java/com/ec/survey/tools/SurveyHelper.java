@@ -30,7 +30,7 @@ public class SurveyHelper {
 		// find temporary directory
 		java.io.File rootfolder = fileService.getSurveyExplanationUploadsFolder(survey.getUniqueId(), false);
 		java.io.File directory = new java.io.File(
-				rootfolder.getPath() + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + question.getId());
+				rootfolder.getPath() + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + question.getUniqueId());
 
 		if (directory.exists()) {
 			checkFiles(directory, fileService.getSurveyFilesFolder(survey.getUniqueId()), explanationData.files);
@@ -58,8 +58,9 @@ public class SurveyHelper {
 			answerSet.setIP(ip);
 		}
 
-		if (!update)
+		if (!update) {
 			answerSet.setDate(answerSet.getUpdateDate());
+		}
 
 		answerSet.setSurvey(survey);
 		answerSet.setSurveyId(survey.getId());
@@ -71,6 +72,10 @@ public class SurveyHelper {
 
 		if (request.getParameter("wcagMode") != null) {
 			answerSet.setWcagMode(request.getParameter("wcagMode").equalsIgnoreCase("true"));
+		}
+		
+		if (request.getParameter("medianWarningVisible") != null) {
+			answerSet.setMedianWarningVisible(request.getParameter("medianWarningVisible").equalsIgnoreCase("true"));
 		}
 
 		while (iterator.hasNext()) {
@@ -873,19 +878,19 @@ public class SurveyHelper {
 		}
 		
 		answerSet.getExplanations().putAll(parsedAnswerSet.getExplanations());
+		
+		answerSet.setMedianWarningVisible(parsedAnswerSet.getMedianWarningVisible());
 	
 		return answerSet;
 	}
 
 	private static void recreateDelphiExplanationUploadedFiles(AnswerSet answerSet, Survey survey, FileService fileService, AnswerExplanationService answerExplanationService) {
-		Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
 		int answerSetId = answerSet.getId();
 		String surveyUniqueId = survey.getUniqueId();
 
 		List<AnswerExplanation> explanations = answerExplanationService.getExplanations(answerSetId);
 		for (AnswerExplanation explanation : explanations) {
 			String questionUid = explanation.getQuestionUid();
-			int questionId = elementsByUniqueId.get(questionUid).getId();
 			for (File file : explanation.getFiles()) {
 				String filename = file.getName();
 				if (null != filename) {
@@ -898,7 +903,7 @@ public class SurveyHelper {
 
 						java.io.File basePath = fileService.getSurveyExplanationUploadsFolder(surveyUniqueId, false);
 
-						java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionId);
+						java.io.File directory = new java.io.File(basePath + Constants.PATH_DELIMITER + answerSet.getUniqueCode() + Constants.PATH_DELIMITER + questionUid);
 						directory.mkdirs();
 						java.io.File fileOut = new java.io.File(directory.getPath() + Constants.PATH_DELIMITER + file.getName());
 						out = new FileOutputStream(fileOut);
@@ -2082,6 +2087,13 @@ public class SurveyHelper {
 			newValues += " displayGraduationScale: " + displayGraduationScale;
 		}
 		number.setDisplayGraduationScale(displayGraduationScale);
+		
+		Double maxDistance = getDouble(parameterMap, "maxDistance", id);
+		if (log220 && !maxDistance.equals(number.getMaxDistance())) {
+			oldValues += " maxDistance: " + number.getMaxDistance();
+			newValues += " maxDistance: " + maxDistance;
+		}
+		number.setMaxDistance(maxDistance);
 		
 		if (log220 && oldValues.length() > 0) {
 			String[] oldnew = { oldValues, newValues };

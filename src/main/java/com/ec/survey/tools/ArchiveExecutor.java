@@ -121,14 +121,14 @@ public class ArchiveExecutor implements Runnable {
 			resultFilter.setSurveyId(published.getId());
 			for (Element element : published.getElementsRecursive(false))
 			{
-				if (!resultFilter.getVisibleQuestions().contains(element.getId().toString()))
-				{
-					resultFilter.getVisibleQuestions().add(element.getId().toString());
-				}
-								
-				if (!resultFilter.getExportedQuestions().contains(element.getId().toString()))
-				{
-					resultFilter.getExportedQuestions().add(element.getId().toString());
+				resultFilter.getVisibleQuestions().add(element.getId().toString());
+				resultFilter.getExportedQuestions().add(element.getId().toString());
+				
+				if (element.isDelphiElement()) {
+					resultFilter.getVisibleExplanations().add(element.getId().toString());
+					resultFilter.getExportedExplanations().add(element.getId().toString());
+					resultFilter.getVisibleDiscussions().add(element.getId().toString());
+					resultFilter.getExportedDiscussions().add(element.getId().toString());
 				}
 			}
 			

@@ -1001,6 +1001,8 @@ public class FileService extends BasicService {
 		// get survey files
 		for (int surveyID : surveyIDs) {
 			Survey survey = surveyService.getSurvey(surveyID);
+			final FilesByTypes<Integer, String> explanationFiles =
+					answerExplanationService.getExplanationFilesByAnswerSetIdAndQuestionUid(survey);
 
 			if (!onlySurveyFiles) {
 				for (String lang : translationService.getTranslationLanguagesForSurvey(surveyID, false)) {
@@ -1070,14 +1072,13 @@ public class FileService extends BasicService {
 				}
 
 				if (question.isDelphiElement()) {
-					final FilesByTypes<Integer, String> files =
-							answerExplanationService.getExplanationFilesByAnswerSetIdAndQuestionUid(survey);
-					files.applyFunctionOnEachFile((answerSetId, questionUid, explanationFile) -> {
-						final String answerSetUid = answerService.get(answerSetId).getUniqueCode();
-						final int questionId = surveyService.getNewestElementByUid(questionUid).getId();
-						final java.io.File file = getSurveyExplanationFile(survey.getUniqueId(), answerSetUid,
-								questionId, explanationFile.getName());
-						result.add(file);
+					explanationFiles.applyFunctionOnEachFile((answerSetId, questionUid, explanationFile) -> {
+						if (questionUid.equalsIgnoreCase(question.getUniqueId())) {
+							final String answerSetUid = answerService.get(answerSetId).getUniqueCode();
+							final java.io.File file = getSurveyExplanationFile(survey.getUniqueId(), answerSetUid,
+									question.getUniqueId(), explanationFile.getName());
+							result.add(file);
+						}
 					});
 				}
 			}
@@ -1468,11 +1469,11 @@ public class FileService extends BasicService {
 	}
 
 	public java.io.File getSurveyExplanationFile(final String surveyUid, final String answerSetUniqueCode,
-			final int questionId, final String fileName) {
+			final String questionUid, final String fileName) {
 
 		final java.io.File folder = getSurveyExplanationUploadsFolder(surveyUid, false);
 		final String path = folder.getPath() + Constants.PATH_DELIMITER + answerSetUniqueCode
-				+ Constants.PATH_DELIMITER + questionId + Constants.PATH_DELIMITER + fileName;
+				+ Constants.PATH_DELIMITER + questionUid + Constants.PATH_DELIMITER + fileName;
 		return new java.io.File(path);
 	}
 
@@ -1904,11 +1905,11 @@ public class FileService extends BasicService {
 	}
 
 	public void deleteExplanationFilesFromDisk(final String surveyUid, final String answerSetUniqueCode,
-			final int questionId) {
+			final String questionUid) {
 
 		final java.io.File rootFolder = fileService.getSurveyExplanationUploadsFolder(surveyUid, false);
 		final java.io.File directory = new java.io.File(rootFolder.getPath() + Constants.PATH_DELIMITER
-				+ answerSetUniqueCode + Constants.PATH_DELIMITER + questionId);
+				+ answerSetUniqueCode + Constants.PATH_DELIMITER + questionUid);
 		try {
 			FileUtils.deleteDirectory(directory);
 		} catch (IOException e) {

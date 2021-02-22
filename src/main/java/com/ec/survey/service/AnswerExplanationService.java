@@ -1,10 +1,12 @@
 package com.ec.survey.service;
 
+import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerComment;
 import com.ec.survey.model.AnswerExplanation;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.delphi.DelphiContribution;
 import com.ec.survey.model.delphi.DelphiContributions;
+import com.ec.survey.model.delphi.DelphiMedian;
 import com.ec.survey.model.delphi.DelphiTableOrderBy;
 import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.survey.*;
@@ -92,12 +94,12 @@ public class AnswerExplanationService extends BasicService {
 
 		final Session session = sessionFactory.getCurrentSession();
 		final Query query = session.createSQLQuery(
-				"SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, ex.ANSWER_EXPLANATION_ID, ex.ANSWER_SET_ID, ex.QUESTION_UID, ex.TEXT FROM ANSWERS_EXPLANATIONS ex " + 
-				"LEFT JOIN ANSWERS_EXPLANATIONS_FILES aef ON ex.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID " + 
-				"LEFT JOIN FILES f ON aef.files_FILE_ID = f.FILE_ID " + 
-				"JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ex.ANSWER_SET_ID " + 
-				"JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID " +
-				"WHERE s.SURVEY_UID = :surveyUid AND S.ISDRAFT = :draft")
+				"SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, ex.ANSWER_EXPLANATION_ID, ex.ANSWER_SET_ID, ex.QUESTION_UID, ex.TEXT FROM ANSWERS_EXPLANATIONS ex "
+						+ "LEFT JOIN ANSWERS_EXPLANATIONS_FILES aef ON ex.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
+						+ "LEFT JOIN FILES f ON aef.files_FILE_ID = f.FILE_ID "
+						+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ex.ANSWER_SET_ID "
+						+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
+						+ "WHERE s.SURVEY_UID = :surveyUid AND S.ISDRAFT = :draft")
 				.setString("surveyUid", surveyUid).setBoolean("draft", draft);
 
 		@SuppressWarnings("rawtypes")
@@ -108,7 +110,7 @@ public class AnswerExplanationService extends BasicService {
 			final Object[] element = (Object[]) row;
 
 			final int fileId = ConversionTools.getValue(element[0]);
-			
+
 			final int answerExplanationId = ConversionTools.getValue(element[3]);
 			final int answerExplanationAnswerSetId = ConversionTools.getValue(element[4]);
 			final String answerExplanationQuestionUid = (String) element[5];
@@ -126,7 +128,7 @@ public class AnswerExplanationService extends BasicService {
 			if (fileId > 0) {
 				final String fileName = (String) element[1];
 				final String fileUid = (String) element[2];
-				
+
 				final File file = new File();
 				file.setId(fileId);
 				file.setName(fileName);
@@ -142,24 +144,24 @@ public class AnswerExplanationService extends BasicService {
 	public List<AnswerComment> getCommentsOfSurvey(final String surveyUid, final boolean draft) {
 
 		final Session session = sessionFactory.getCurrentSession();
-		final Query query = session.createSQLQuery("SELECT ac.ANSWER_COMMENT_ID "
-				+ "FROM ANSWERS_COMMENTS ac "
-				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID "
-				+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
-				+ "WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft")
+		final Query query = session
+				.createSQLQuery("SELECT ac.ANSWER_COMMENT_ID " + "FROM ANSWERS_COMMENTS ac "
+						+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID "
+						+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
+						+ "WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft")
 				.setString("surveyUid", surveyUid).setBoolean("draft", draft);
-	
+
 		@SuppressWarnings("rawtypes")
 		List res = query.list();
 
 		final List<AnswerComment> comments = new ArrayList<>();
-		
+
 		for (Object o : res) {
 			int commentId = ConversionTools.getValue(o);
 			AnswerComment comment = getComment(commentId);
 			comments.add(comment);
 		}
-		
+
 		return comments;
 	}
 
@@ -225,13 +227,15 @@ public class AnswerExplanationService extends BasicService {
 			throw new IllegalStateException("Unexpected value: " + orderBy);
 		}
 
-		String contributionsQueryText = "" + "SELECT\n" + "    aset.ANSWER_SET_ID answerSetId,\n" + "    aset.UNIQUECODE answerSetUniqueCode,\n"
-				+ "    aset.ANSWER_SET_UPDATE `update`,\n" + "    a.VALUE value,\n" + "    a.PA_UID answerUid,\n"
-				+ "    a.QUESTION_UID questionUid,\n" + "    a.ANSWER_COL `column`,\n" + "    a.ANSWER_ROW row,\n"
+		String contributionsQueryText = "" + "SELECT\n" + "    aset.ANSWER_SET_ID answerSetId,\n"
+				+ "    aset.UNIQUECODE answerSetUniqueCode,\n" + "    aset.ANSWER_SET_UPDATE `update`,\n"
+				+ "    a.VALUE value,\n" + "    a.PA_UID answerUid,\n" + "    a.QUESTION_UID questionUid,\n"
+				+ "    a.ANSWER_COL `column`,\n" + "    a.ANSWER_ROW row,\n"
 				+ "    COALESCE(ex.TEXT, main_explanation.TEXT) explanation\n" + "FROM ANSWERS a\n" + "JOIN (\n" +
 				// select all answers sets that are relevant for this query
-				"    SELECT\n" + "        aset.ANSWER_SET_ID,\n" + "        aset.UNIQUECODE,\n" + "        aset.ANSWER_SET_UPDATE\n"
-				+ "    FROM ANSWERS a\n" + "    JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n"
+				"    SELECT\n" + "        aset.ANSWER_SET_ID,\n" + "        aset.UNIQUECODE,\n"
+				+ "        aset.ANSWER_SET_UPDATE\n" + "    FROM ANSWERS a\n"
+				+ "    JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n"
 				+ "    JOIN SURVEYS s ON aset.SURVEY_ID = s.SURVEY_ID\n" + "    WHERE a.QUESTION_UID IN :questionUids\n"
 				+ "      AND s.ISDRAFT = :isDraft\n" + "    GROUP BY aset.ANSWER_SET_ID, aset.ANSWER_SET_UPDATE\n"
 				+ "    ORDER BY " + orderByClauseInner + "\n" +
@@ -264,10 +268,25 @@ public class AnswerExplanationService extends BasicService {
 		int totalCount = getTotalDelphiContributions(questionUids, isDraft);
 		return new DelphiContributions(totalCount, contributions);
 	}
+	
+	
+	@Transactional(readOnly = true)
+	public List<String> getDelphiDependentAnswers(String dependentElementUid, int answerSetId) {
+		Session session = sessionFactory.getCurrentSession();
+		String sql = "SELECT VALUE FROM ANSWERS a WHERE a.QUESTION_UID = :questionUid AND a.AS_ID = :answerSetId";
+		SQLQuery query = session.createSQLQuery(sql);
+		query.setString("questionUid", dependentElementUid);
+		query.setInteger("answerSetId", answerSetId);
+		
+		@SuppressWarnings("unchecked")
+		List<String> result = query.list();
+		
+		return result;
+	}
 
 	@Transactional(readOnly = true)
 	public int getTotalDelphiContributions(Collection<String> questionUids, boolean isDraft) {
-		String totalCountQueryText = "" + "SELECT COUNT(DISTINCT aset.ANSWER_SET_ID)\n" + "FROM ANSWERS a\n"
+		String totalCountQueryText = "SELECT COUNT(DISTINCT aset.ANSWER_SET_ID) FROM ANSWERS a\n"
 				+ "JOIN ANSWERS_SET aset ON a.AS_ID = aset.ANSWER_SET_ID\n"
 				+ "JOIN SURVEYS s ON aset.SURVEY_ID = s.SURVEY_ID\n"
 				+ "WHERE a.QUESTION_UID IN :questionUids AND s.ISDRAFT = :isDraft";
@@ -282,7 +301,7 @@ public class AnswerExplanationService extends BasicService {
 	@Transactional
 	public void createUpdateOrDeleteExplanations(AnswerSet answerSet) {
 		final Session session = sessionFactory.getCurrentSession();
-			
+
 		final Survey survey = answerSet.getSurvey();
 		for (Question question : survey.getQuestions()) {
 			final String questionUid = question.getUniqueId();
@@ -291,11 +310,21 @@ public class AnswerExplanationService extends BasicService {
 				if (explanationData == null) {
 					continue;
 				}
+				
+				boolean hasNoLinkedAnswers;
+				List<Answer> answers;
+				if (question instanceof Matrix) {
+					Matrix matrix = (Matrix) question;
+					answers = answerSet.getMatrixAnswers(matrix);
+				} else {
+					answers = answerSet.getAnswers(question.getId(), questionUid);
+				}
 
-				final int questionId = question.getId();
-				boolean hasNoLinkedAnswers = answerSet.getAnswers(questionId, questionUid).size() == 0;
+				hasNoLinkedAnswers = answers.isEmpty();
+				
 				if (hasNoLinkedAnswers) {
-					fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(), questionId);
+					fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(),
+							question.getUniqueId());
 				}
 
 				AnswerExplanation explanation = null;
@@ -305,7 +334,7 @@ public class AnswerExplanationService extends BasicService {
 					if (hasNoLinkedAnswers) {
 						explanation.getFiles().forEach(session::delete);
 						session.delete(explanation);
-						return;
+						continue;
 					}
 				} catch (NoSuchElementException ex) {
 					if (hasNoLinkedAnswers && !explanationData.files.isEmpty()) {
@@ -315,8 +344,36 @@ public class AnswerExplanationService extends BasicService {
 					if ((explanationData.text.length() == 0) && (explanationData.files.isEmpty())) {
 						continue;
 					}
-					
+
 					explanation = new AnswerExplanation(answerSet.getId(), questionUid);
+				}
+
+				// special case: if the participant adds an explanation why she is outside the
+				// median
+				DelphiMedian median = null;
+				if (explanationData.text != null && explanationData.text.length() > 0
+						&& !explanationData.text.equalsIgnoreCase(explanation.getText()) && !answers.isEmpty()) {
+					if (question instanceof SingleChoiceQuestion) {
+						SingleChoiceQuestion choiceQuestion = (SingleChoiceQuestion) question;
+						if (choiceQuestion.getUseLikert() && choiceQuestion.getMaxDistance() > -1) {
+							median = answerService.getMedian(survey, choiceQuestion, answers.get(0));						
+						}
+					} else if (question instanceof NumberQuestion) {
+						NumberQuestion numberQuestion = (NumberQuestion) question;
+						if (numberQuestion.isSlider() && numberQuestion.getMaxDistance() > -1) {
+							median = answerService.getMedian(survey, numberQuestion, answers.get(0));
+						}
+					}
+					if (median != null && median.isMaxDistanceExceeded()) {
+						
+						if (answerSet.getMedianWarningVisible())
+						{
+							explanation.setChangedForMedian(true);
+							answerSet.setChangedForMedian(true);
+						} else if (explanation.getChangedForMedian() == null || !explanation.getChangedForMedian()) {
+							answerSet.setChangeExplanationText(true);
+						}
+					}
 				}
 
 				explanation.setText(explanationData.text);
@@ -327,18 +384,18 @@ public class AnswerExplanationService extends BasicService {
 			}
 		}
 	}
-	
+
 	@Transactional
-	public void createComments(AnswerSet answerSet) {	
+	public void createComments(AnswerSet answerSet) {
 		if (answerSet.getComments() != null && !answerSet.getComments().isEmpty()) {
-			//this should only happen during a import survey operation for delphi surveys
-			
+			// this should only happen during a import survey operation for delphi surveys
+
 			for (String surveyUid : answerSet.getComments().keySet()) {
 				for (AnswerComment comment : answerSet.getComments().get(surveyUid)) {
 					comment.setAnswerSetId(answerSet.getId());
 					answerExplanationService.saveOrUpdateComment(comment);
 				}
-			}			
+			}
 		}
 	}
 
@@ -373,19 +430,29 @@ public class AnswerExplanationService extends BasicService {
 
 		final Session session = sessionFactory.getCurrentSession();
 		for (Question question : answerSet.getSurvey().getQuestions()) {
-			if (question.getIsDelphiQuestion()
-				&& answerSet.getAnswers(question.getId(), question.getUniqueId()).size() == 0) {
+			
+			if (question.getIsDelphiQuestion()) {
 
+				if (question instanceof Matrix) {
+					Matrix matrix = (Matrix) question;
+					if (!answerSet.getMatrixAnswers(matrix).isEmpty()) {
+						continue;
+					}
+				} else {
+					if (!answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty()) {
+						continue;
+					}
+				}
+				
 				final Query replyDeletionQuery = session.createQuery("DELETE FROM AnswerComment "
 						+ "WHERE answerSetId = :answerSetId AND questionUid = :questionUid AND parent IS NOT NULL")
-						.setInteger("answerSetId", answerSet.getId())
-						.setString("questionUid", question.getUniqueId());
+						.setInteger("answerSetId", answerSet.getId()).setString("questionUid", question.getUniqueId());
 				replyDeletionQuery.executeUpdate();
 
-				final Query commentDeletionQuery = session.createQuery("DELETE FROM AnswerComment "
-						+ "WHERE answerSetId = :answerSetId AND questionUid = :questionUid AND parent IS NULL")
-						.setInteger("answerSetId", answerSet.getId())
-						.setString("questionUid", question.getUniqueId());
+				final Query commentDeletionQuery = session
+						.createQuery("DELETE FROM AnswerComment "
+								+ "WHERE answerSetId = :answerSetId AND questionUid = :questionUid AND parent IS NULL")
+						.setInteger("answerSetId", answerSet.getId()).setString("questionUid", question.getUniqueId());
 				commentDeletionQuery.executeUpdate();
 			}
 		}
@@ -396,18 +463,14 @@ public class AnswerExplanationService extends BasicService {
 
 		final Session session = sessionFactory.getCurrentSession();
 
-		final Query replyDeletionQuery = session.createSQLQuery("DELETE ac.* "
-				+ "FROM ANSWERS_COMMENTS ac "
+		final Query replyDeletionQuery = session.createSQLQuery("DELETE ac.* " + "FROM ANSWERS_COMMENTS ac "
 				+ "JOIN ANSWERS_SET an ON an.ANSWER_SET_ID = ac.ANSWER_SET_ID "
-				+ "WHERE ac.PARENT IS NOT NULL AND an.SURVEY_ID = :id")
-				.setInteger("id", surveyId);
+				+ "WHERE ac.PARENT IS NOT NULL AND an.SURVEY_ID = :id").setInteger("id", surveyId);
 		replyDeletionQuery.executeUpdate();
 
-		final Query commentDeletionQuery = session.createSQLQuery("DELETE ac.* "
-				+ "FROM ANSWERS_COMMENTS ac "
+		final Query commentDeletionQuery = session.createSQLQuery("DELETE ac.* " + "FROM ANSWERS_COMMENTS ac "
 				+ "JOIN ANSWERS_SET an ON an.ANSWER_SET_ID = ac.ANSWER_SET_ID "
-				+ "WHERE ac.PARENT IS NULL AND an.SURVEY_ID = :id")
-				.setInteger("id", surveyId);
+				+ "WHERE ac.PARENT IS NULL AND an.SURVEY_ID = :id").setInteger("id", surveyId);
 		commentDeletionQuery.executeUpdate();
 	}
 
@@ -416,27 +479,24 @@ public class AnswerExplanationService extends BasicService {
 
 		final Session session = sessionFactory.getCurrentSession();
 
-		final Query explanationFilesRetrievalQuery = session.createSQLQuery("SELECT f.FILE_UID "
-				+ "FROM FILES f "
+		final Query explanationFilesRetrievalQuery = session.createSQLQuery("SELECT f.FILE_UID " + "FROM FILES f "
 				+ "JOIN ANSWERS_EXPLANATIONS_FILES aef ON aef.files_FILE_ID = f.FILE_ID "
 				+ "JOIN ANSWERS_EXPLANATIONS ae ON ae.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
-				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID "
-				+ "WHERE ans.SURVEY_ID = :id")
+				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID " + "WHERE ans.SURVEY_ID = :id")
 				.setInteger("id", surveyId);
 		final List<String> fileUids = explanationFilesRetrievalQuery.list();
 
 		final Query explanationFilesDeletionQuery12 = session.createSQLQuery("DELETE aef.* "
 				+ "FROM ANSWERS_EXPLANATIONS_FILES aef "
 				+ "JOIN ANSWERS_EXPLANATIONS ae ON ae.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
-				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID "
-				+ "WHERE ans.SURVEY_ID = :id")
+				+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID " + "WHERE ans.SURVEY_ID = :id")
 				.setInteger("id", surveyId);
 		explanationFilesDeletionQuery12.executeUpdate();
 
-		if (fileUids.isEmpty()) return;
-		final Query explanationFilesDeletionQuery2 = session.createSQLQuery("DELETE f.* "
-				+ "FROM FILES f "
-				+ "WHERE f.FILE_UID IN :ids")
+		if (fileUids.isEmpty())
+			return;
+		final Query explanationFilesDeletionQuery2 = session
+				.createSQLQuery("DELETE f.* " + "FROM FILES f " + "WHERE f.FILE_UID IN :ids")
 				.setParameterList("ids", fileUids);
 		explanationFilesDeletionQuery2.executeUpdate();
 	}
@@ -446,10 +506,9 @@ public class AnswerExplanationService extends BasicService {
 
 		final Session session = sessionFactory.getCurrentSession();
 
-		final Query query = session.createSQLQuery("DELETE ae.* "
-				+ "FROM ANSWERS_EXPLANATIONS ae "
-				+ "JOIN ANSWERS_SET an ON ae.ANSWER_SET_ID = an.ANSWER_SET_ID "
-				+ "WHERE an.SURVEY_ID = :id")
+		final Query query = session
+				.createSQLQuery("DELETE ae.* " + "FROM ANSWERS_EXPLANATIONS ae "
+						+ "JOIN ANSWERS_SET an ON ae.ANSWER_SET_ID = an.ANSWER_SET_ID " + "WHERE an.SURVEY_ID = :id")
 				.setInteger("id", surveyId);
 		query.executeUpdate();
 	}
@@ -464,13 +523,13 @@ public class AnswerExplanationService extends BasicService {
 
 		@SuppressWarnings("unchecked")
 		List<String> list = query.list();
-		
+
 		Map<String, String> result = new HashMap<>();
-		
+
 		for (String code : list) {
 			result.put(code, "User " + (result.size() + 1));
 		}
-		
+
 		return result;
 	}
 
@@ -503,16 +562,9 @@ public class AnswerExplanationService extends BasicService {
 					} else {
 						s.append("reply");
 					}
-					s.append("' data-id='")
-							.append(comment.getId())
-							.append("' data-unique-code='")
-							.append(comment.getUniqueCode())
-							.append("'>")
-							.append("<span>")
-							.append(userPrefix)
-							.append(comment.getText())
-							.append("</span>")
-							.append("</div>");
+					s.append("' data-id='").append(comment.getId()).append("' data-unique-code='")
+							.append(comment.getUniqueCode()).append("'>").append("<span>").append(userPrefix)
+							.append(comment.getText()).append("</span>").append("</div>");
 				} else {
 					if (first) {
 						s.append(userPrefix).append(comment.getText());
@@ -529,7 +581,7 @@ public class AnswerExplanationService extends BasicService {
 
 	@Transactional(readOnly = true)
 	public String getFormattedExplanationWithFiles(final int answerSetId, final String questionUid,
-			 final String surveyUid, final boolean useHtml) {
+			final String surveyUid, final boolean useHtml) {
 
 		final AnswerExplanation explanation = answerExplanationService.getExplanation(answerSetId, questionUid);
 		final StringBuilder stringBuilder = new StringBuilder();
@@ -564,7 +616,8 @@ public class AnswerExplanationService extends BasicService {
 	@Transactional(readOnly = true)
 	public Map<Integer, Map<String, String>> getAllDiscussions(Survey survey) {
 		final Session session = sessionFactory.getCurrentSession();
-		final Query query = session.createSQLQuery("SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.ANSWER_SET_CODE, ac.PARENT FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
+		final Query query = session.createSQLQuery(
+				"SELECT ac.ANSWER_SET_ID, ac.QUESTION_UID, ac.TEXT, ac.ANSWER_SET_CODE, ac.PARENT FROM ANSWERS_COMMENTS ac JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ac.ANSWER_SET_ID JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft ORDER BY ac.COMMENT_DATE")
 				.setBoolean("draft", survey.getIsDraft()).setString("surveyUid", survey.getUniqueId());
 
 		Map<Integer, Map<String, String>> result = new HashMap<>();
@@ -633,16 +686,14 @@ public class AnswerExplanationService extends BasicService {
 		final FilesByTypes<Integer, String> result = new FilesByTypes<>();
 
 		final Session session = sessionFactory.getCurrentSession();
-		final Query query = session.createSQLQuery("SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, ans.ANSWER_SET_ID, ae.QUESTION_UID " +
-				"FROM FILES f " +
-				"JOIN ANSWERS_EXPLANATIONS_FILES aef ON aef.files_FILE_ID = f.FILE_ID " +
-				"JOIN ANSWERS_EXPLANATIONS ae ON ae.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID " +
-				"JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID " +
-				"JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID " +
-				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft " +
-				"ORDER BY f.FILE_NAME")
-				.setBoolean("draft", survey.getIsDraft())
-				.setString("surveyUid", survey.getUniqueId());
+		final Query query = session
+				.createSQLQuery("SELECT f.FILE_ID, f.FILE_NAME, f.FILE_UID, ans.ANSWER_SET_ID, ae.QUESTION_UID "
+						+ "FROM FILES f " + "JOIN ANSWERS_EXPLANATIONS_FILES aef ON aef.files_FILE_ID = f.FILE_ID "
+						+ "JOIN ANSWERS_EXPLANATIONS ae ON ae.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
+						+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID "
+						+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
+						+ "WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft " + "ORDER BY f.FILE_NAME")
+				.setBoolean("draft", survey.getIsDraft()).setString("surveyUid", survey.getUniqueId());
 
 		@SuppressWarnings("rawtypes")
 		final List queryResult = query.list();
@@ -651,10 +702,10 @@ public class AnswerExplanationService extends BasicService {
 			final Object[] element = (Object[]) row;
 
 			final int fileId = ConversionTools.getValue(element[0]);
-			final String fileName = (String)element[1];
-			final String fileUid = (String)element[2];
+			final String fileName = (String) element[1];
+			final String fileUid = (String) element[2];
 			final int answerSetId = ConversionTools.getValue(element[3]);
-			final String questionUid = (String)element[4];
+			final String questionUid = (String) element[4];
 
 			final File file = new File();
 			file.setId(fileId);
@@ -665,5 +716,6 @@ public class AnswerExplanationService extends BasicService {
 
 		return result;
 	}
+
 
 }

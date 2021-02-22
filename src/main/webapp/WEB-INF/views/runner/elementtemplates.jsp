@@ -73,7 +73,7 @@
 		
 			<!-- ko if: likert -->
 						
-				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median' : 'likert-div'}">
+				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median answers-table' : 'likert-div answers-table'}">
 				
 					<div class="likert-bar" data-bind="attr: {'style' : 'width: ' + (possibleAnswers().length - 1) + '00px;'}"></div>
 				
@@ -593,7 +593,7 @@
 		<!-- /ko -->
 		
 		<!-- ko if: display() == 'Slider' -->		
-		<div class="slider-div">
+		<div data-bind="attr: {'class' : maxDistance() > -1 ? 'slider-div median' : 'slider-div'}">
 			<div style="float: left; margin-left: -20px; padding-bottom: 20px; max-width: 45%; text-align: center;" data-bind="html: minLabel()"></div>
 			<div style="float: right; padding-bottom: 20px;  max-width: 45%; text-align: center;" data-bind="html: maxLabel()"></div>
 			<div style="clear: both"></div>
@@ -645,6 +645,8 @@
 			<input type="hidden" data-bind="value: display, attr: {'name': 'display' + id()}" />
 			<input type="hidden" data-bind="value: initialSliderPosition, attr: {'name': 'initialSliderPosition' + id()}" />
 			<input type="hidden" data-bind="value: displayGraduationScale, attr: {'name': 'displayGraduationScale' + id()}" />
+			
+			<input type="hidden" data-bind="value: maxDistance, attr: {'name': 'maxDistance' + id()}" />
 		<!-- /ko -->
 	</div> 
 	
@@ -1162,10 +1164,20 @@
 	<div id="delphi-template">
 		<!-- ko if: isDelphiQuestion() -->
 		
-		<!-- ko if: maxDistanceExceeded() -->
-		<div class="maxDistanceExceededMessage">${form.getMessage("info.MaxDistanceExceeded")}&nbsp;${form.getMessage("info.MaxDistanceExceededExplain")}</div>
-		<!-- /ko -->
+		<div class="delphichildren"></div>
 		
+		<!-- ko if: maxDistanceExceeded() && !changedForMedian() -->
+		<div class="maxDistanceExceededMessage">
+			${form.getMessage("info.MaxDistanceExceeded")}&nbsp;${form.getMessage("info.MaxDistanceExceededExplain")}
+			<input type="hidden" name="medianWarningVisible" value="true" />
+			
+			<!-- ko if: median() -->
+			<div>${form.getMessage("label.GroupMedian")}: <span data-bind="html: median()"></span></div>
+			<!-- /ko -->
+		</div>	
+			
+		<!-- /ko -->
+				
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">					
 			<div class="col-md-7">
 				<div class="explanation-section">
@@ -1238,11 +1250,6 @@
 				</div>
 		
 				<div class="delphiupdatemessage"></div>
-				<div class="delphilink" style="display: none">
-					${form.getMessage("info.delphilink")}<br />
-					<div class="delphilinkurl"></div>
-					<a onclick="$('#ask-email-dialog').modal('show')" class="btn btn-default">${form.getMessage("label.SendLinkAsEmail")}</a>		
-				</div>
 			</div>
 		</div>
 		
@@ -1250,29 +1257,21 @@
 			<%@ include file="delphiAnswersTable.jsp" %>
 		</div>
 
+		<div class="modal delete-confirmation-dialog" data-backdrop="static">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-body">
+						<spring:message code="message.DelphiConfirmDeleteComment" />
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
+						<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+					</div>
+				</div>
+			</div>
+		</div>
 		
 		<!-- /ko -->
 	</div>
 
 </div>
-
-<div class="modal" id="ask-email-dialog" data-backdrop="static">
-	<div class="modal-dialog modal-sm">
-   	<div class="modal-content">
-	<div class="modal-body">
-		<p style="margin-bottom: 10px">
-			${form.getMessage("info.delphilinkemail")}
-		</p>	
-		<input class="form-control" type="text" maxlength="255" name="delphiemail" id="delphiemail" />
-		<span id="ask-delphi-email-dialog-error" class="validation-error-keep hideme">
-			${form.getMessage("message.ProvideEmail")}
-		</span>
-	</div>
-	<div class="modal-footer">
-		<a class="btn btn-primary" onclick="sendDelphiMailLink()">${form.getMessage("label.Send")}</a>	
-		<a class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>	
-	</div>
-	</div>
-	</div>
-</div>
-

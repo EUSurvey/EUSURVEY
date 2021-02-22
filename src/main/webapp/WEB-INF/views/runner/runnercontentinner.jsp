@@ -152,26 +152,26 @@
 													</c:choose>
 													<c:choose>
 													<c:when test="${element.isDummy() && element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-													<div class="emptyelement survey-element untriggered 1"
+													<div class="emptyelement survey-element untriggered dependent 1"
 														 data-id="${element.id}" data-uid="${element.uniqueId}"
 														 data-triggers="${element.triggers}"
 														 style="margin-top: 5px; display: none;">
 														</c:when>
 														<c:when test="${element.getType() == 'Matrix' && element.getAllQuestionsDependent() && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-														<div class="emptyelement survey-element untriggered 2"
+														<div class="emptyelement survey-element untriggered dependent 2"
 															 id="${element.id}" data-id="${element.id}"
 															 data-uid="${element.uniqueId}"
 															 data-triggers="${element.triggers}" style="display: none;">
 															</c:when>
 															<c:when test="${element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-															<div class="emptyelement survey-element untriggered 3"
+															<div class="emptyelement survey-element untriggered dependent 3"
 																 id="${element.id}" data-id="${element.id}"
 																 data-triggers="${element.triggers}"
 																 data-uid="${element.uniqueId}"
 																 style="display: none;">
 																</c:when>
 																<c:when test="${element.isDependent}">
-																<div class="emptyelement survey-element 3b"
+																<div class="emptyelement survey-element dependent 3b"
 																	 id="${element.id}"
 																	 data-id="${element.id}"
 																	 data-uid="${element.uniqueId}"
@@ -383,9 +383,13 @@
 						</c:if>						
 						
 						<c:if test="${form.survey.isDelphi}">
-							<div>
+							<div class="contact-and-pdf__delphi-section">
 								<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Info")}</div>
 								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi">${form.getMessage("label.Delphi")}</a>
+								<c:if test="${form.survey.security.startsWith('open') && form.answerSets.size() > 0}">
+									<br /><br />
+									<a onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
+								</c:if>
 							</div>
 							<hr style="margin-top: 15px;" />
 						</c:if>						
@@ -449,9 +453,9 @@
 					switchCss2();				
 				</script> 
 			</c:if>
-			
-		<%@ include file="elementtemplates.jsp" %>	
 
+		<%@ include file="contributionLinkModals.jsp" %>
+		<%@ include file="elementtemplates.jsp" %>
 			
 	<script type="text/javascript">
 		function getMinMaxCharacters(min,max)
@@ -734,7 +738,7 @@
 	 	}
 
 		function deleteDelphiCommentFromRunner(button, isReply) {
-			var dialog = $(button).closest(".delphi-table").find(".delete-confirmation-dialog");
+			const dialog = $(button).closest(".survey-element").children("div").eq(1).find(".delete-confirmation-dialog");
 			$(dialog).modal("show");
 
 			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
@@ -750,12 +754,6 @@
 
 				$(dialog).modal("hide");
 				deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
-			});
-
-			var cancelButton = $(dialog).find(".delete-confirmation-dialog__cancel-button");
-			$(cancelButton).off("click");
-			$(cancelButton).click(function () {
-				$(dialog).modal("hide");
 			});
 		}
 	 	

@@ -162,6 +162,10 @@
 					
 					<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Info")}</div>
 					<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi">${form.getMessage("label.Delphi")}</a>
+					<c:if test="${form.survey.security.startsWith('open') && form.answerSets.size() > 0}">
+						<br /><br />
+						<a onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
+					</c:if>
 							
 				</div>												
 			</div>
@@ -231,7 +235,7 @@
 							</div>
 
 							<div class="question-footer">
-								<!--  ko if: maxDistanceExceeded -->
+								<!--  ko if: maxDistanceExceeded && !changedForMedian -->
 									<div style="color: #f00; font-size: 30px; float: right;">
 										<span style="cursor: pointer" data-toggle="tooltip" title="<spring:message code="info.MaxDistanceExceeded" />"><img style="max-width:24px;" src="<c:url value="/resources/images/warning24.png"/>" alt="max distance exceeded" /></span>
 									</div>
@@ -278,7 +282,7 @@
 		<div style="clear: both"></div>
 	</div>
 
-	<div class="modal answers-table-modal" data-backdrop="static">
+	<div class="modal answers-table-modal" tabindex="-1" role="dialog" data-backdrop="static">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header"><spring:message code="label.ResultsTable" /></div>
@@ -288,6 +292,20 @@
 				</div>
 				<div class="modal-footer">
 					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close" /></a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal delete-confirmation-dialog" tabindex="-1" role="dialog" data-backdrop="static">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-body">
+					<spring:message code="message.DelphiConfirmDeleteComment" />
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
+					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
 				</div>
 			</div>
 		</div>
@@ -363,7 +381,7 @@
 		}
 
 		function deleteDelphiCommentFromStartPage(element, isReply) {
-			var dialog = $(element).closest(".delphi-table").find(".delete-confirmation-dialog");
+			const dialog = $(".delete-confirmation-dialog");
 			$(dialog).modal("show");
 
 			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
@@ -385,11 +403,6 @@
 				$(dialog).modal("hide");
 				deleteDelphiComment(element, answersTableViewModel, isReply, errorCallback, successCallback);
 			});
-			var cancelButton = $(dialog).find(".delete-confirmation-dialog__cancel-button");
-			$(cancelButton).off("click");
-			$(cancelButton).click(function () {
-				$(dialog).modal("hide");
-			});
 		}
 		
 		function toggle(element)
@@ -397,6 +410,13 @@
 			$(element).closest('.sectionwithquestions').find(".sectioncontent").toggle();
 			$(element).parent().find("a").toggle();
 		}
+
+		// Make sure modal is focused when modal on top is closed.
+		$(document).on('hidden.bs.modal', function (event) {
+			if ($('.modal:visible').length) {
+				$('body').addClass('modal-open');
+			}
+		});
 
 		const answersTableViewModel = createNewDelphiBasicViewModel();
 

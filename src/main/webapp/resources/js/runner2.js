@@ -435,10 +435,38 @@ function addElementToContainer(element, container, foreditor, forskin) {
 			loadGraphData(surveyElement);
 			loadTableData($(surveyElement).attr("data-uid"), viewModel);
 
-			$(surveyElement).find(".likert-div.median").each(function () {
+			$(surveyElement).find(".likert-div.median, .slider-div.median").each(function () {
 				loadMedianData(surveyElement, viewModel);
 			});
 		}
+	}
+	
+	if (isdelphi && !foreditor && !forskin && !viewModel.isDelphiQuestion()) {
+		if ($(container).hasClass("dependent") && $(container).hasClass("freetextitem")) {
+			var triggers = $(container).attr("data-triggers").split(";");
+			
+			if (triggers.length == 2)
+			{
+				//radio or checkbox
+				var triggeringElement = $(".trigger[id='" + triggers[0] + "']");
+
+				//select
+				if (triggeringElement.length == 0) {
+					triggeringElement = $(".trigger[id='trigger" + triggers[0] + "']");
+				}
+				
+				//list
+				if (triggeringElement.length == 0) {
+					triggeringElement = $(".trigger[data-id='" + triggers[0] + "']");
+				}
+				
+				if (triggeringElement.length == 1 && $(triggeringElement).closest(".delphi")) {
+					//move this question inside the delphi element that triggers it
+					var delphi = $(triggeringElement).closest(".delphi");
+					delphi.find(".delphichildren").append(container);
+				}
+			}
+		}		
 	}
 
 	return viewModel;
@@ -507,6 +535,9 @@ function delphiPrefill(editorElement) {
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 			surveyElement.find(".explanation-file-upload-section").show();
+			
+			var viewModel = modelsForDelphiQuestions[questionUid];			
+			viewModel.changedForMedian(currentExplanationText && currentExplanationText.changedForMedian);
 		}
 	});
 }
@@ -956,10 +987,15 @@ function sortDelphiTable(element, direction) {
 	var surveyElement = $(element).closest(".survey-element");
 	var uid = $(surveyElement).attr("data-uid");
 	var viewModel = modelsForDelphiQuestions[uid];
+	
+	if (viewModel == null && typeof answersTableViewModel !== 'undefined') {
+		viewModel = answersTableViewModel;
+		uid = currentQuestionUidInModal;
+	}
 
 	viewModel.delphiTableOrder(direction);
 	viewModel.delphiTableOffset(0);
-	loadTableData($(surveyElement).attr("data-uid"), viewModel);
+	loadTableData(uid, viewModel);
 }
 
 function loadTableData(questionUid, viewModel) {
@@ -1028,7 +1064,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 
 					entry.comments[j].editComment = function() {
 						hideCommentAndReplyForms();
-						entry.comments[j].changedComment(decodeHTMLEntities(entry.comments[j].text));
+						entry.comments[j].changedComment(entry.comments[j].text);
 						entry.comments[j].isChangedCommentFormVisible(true);
 						entry.comments[j].hasChangedCommentFieldFocus(true);
 					}
@@ -1046,8 +1082,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 
 						entry.comments[j].replies[k].editReply = function() {
 							hideCommentAndReplyForms();
-							entry.comments[j].replies[k].changedReply(
-								decodeHTMLEntities(entry.comments[j].replies[k].text));
+							entry.comments[j].replies[k].changedReply(entry.comments[j].replies[k].text);
 							entry.comments[j].replies[k].isChangedReplyFormVisible(true);
 							entry.comments[j].replies[k].hasChangedReplyFieldFocus(true);
 						}
@@ -1058,23 +1093,22 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 
 			viewModel.delphiTableOffset(result.offset);
 			viewModel.delphiTableTotalEntries(result.total);
+
+			addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionUid);
 		}
 	 });
 }
 
-const elementForDecodingHTMLEntities = document.createElement('div');
-
-function decodeHTMLEntities(str) {
-
-	if (str && typeof str === 'string') {
-		// Strip script and other tags.
-		str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
-		str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
-		elementForDecodingHTMLEntities.innerHTML = str;
-		str = elementForDecodingHTMLEntities.textContent;
-		elementForDecodingHTMLEntities.textContent = '';
+function addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionUid) {
+	let textToBeTruncatedFields = $('[data-uid="' + questionUid + '"]').find('.text-to-be-truncated');
+	if (textToBeTruncatedFields.length === 0) {
+		// If no fields are found, the start page is probably shown, on which the first selector does not work.
+		// Therefore, get all the ones that are shown.
+		textToBeTruncatedFields = $('.text-to-be-truncated');
 	}
-	return str;
+	$(textToBeTruncatedFields).each(function() {
+		this.classList[(this.scrollHeight > this.getBoundingClientRect().height) ? 'add' : 'remove']('truncated');
+	});
 }
 
 function loadMedianData(div, viewModel) {
@@ -1101,6 +1135,7 @@ function loadMedianData(div, viewModel) {
 			}			
 			
 			viewModel.maxDistanceExceeded(result != undefined && result.maxDistanceExceeded);
+			viewModel.median(result != undefined ? result.median : 0);
 			
 			$(div).find(".medianpa").removeClass("medianpa");
 			
@@ -1182,6 +1217,8 @@ function confirmExplanationDeletion() {
 	}
 }
 
+const HAS_SHOWN_SURVEY_LINK = "hasShownSurveyLink";
+
 function delphiUpdateContinued(div, successCallback) {
 
 	const message = $(div).find(".delphiupdatemessage").first();
@@ -1231,10 +1268,25 @@ function delphiUpdateContinued(div, successCallback) {
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
 			
 			if (data.open) {
-				var link = document.createElement("a");
-				$(link).attr("href", data.link).html(data.link);
-				$(div).find(".delphilinkurl").empty().append(link);
-				$(div).find(".delphilink").show();
+				const uniqueCode = $("#uniqueCode").val();
+				const key = HAS_SHOWN_SURVEY_LINK + uniqueCode;
+				if (localStorage.getItem(key) == null) {
+					localStorage.setItem(key, "true");
+					appendShowContributionLinkDialogToSidebar();
+					showContributionLinkDialog(data.link);
+				}
+			}
+			
+			if (data.changedForMedian) {
+				var viewModel = modelsForDelphiQuestions[uid];			
+				viewModel.changedForMedian(true);
+			}
+			
+			if (data.changeExplanationText) {
+				var ed = tinyMCE.get("explanation" + id);		
+				var old = ed.getContent();
+				var text = labelnewexplanation + ":<br /><br/><br />" + labeloldexplanation + ":<br /><br /><span style='color: #999;'>" + old + "</span>";
+				ed.setContent(text);
 			}
 			
 			$(loader).hide();
@@ -1250,6 +1302,24 @@ function delphiUpdateContinued(div, successCallback) {
 			delphiUpdateFinished = true;
 		}
 	});
+}
+
+function appendShowContributionLinkDialogToSidebar() {
+	$("<br />").appendTo(".contact-and-pdf__delphi-section");
+	$("<br />").appendTo(".contact-and-pdf__delphi-section");
+	$('<a onclick="showContributionLinkDialog()">' + labelEditYourContributionLater + '</a>')
+		.appendTo(".contact-and-pdf__delphi-section");
+}
+
+function showContributionLinkDialog(url) {
+	if (!url) {
+		const uniqueCode = $("#uniqueCode").val();
+		url = serverPrefix + "editcontribution/" + uniqueCode;
+	}
+	const link = document.createElement("a");
+	$(link).attr("href", url).html(url);
+	$(".contribution-link-dialog__link").empty().append(link);
+	$(".contribution-link-dialog").modal("show");
 }
 
 function updateDelphiElement(element, successCallback) {
@@ -1469,6 +1539,11 @@ function checkGoToDelphiStart(link)
 	window.location = url;
 }
 
+function openAskEmailToSendLinkDialog(button) {
+	$(button).closest('.modal').modal('hide');
+	$('#ask-email-dialog').modal('show');
+}
+
 function sendDelphiMailLink() {
 	
 	var mail = $("#delphiemail").val();
@@ -1478,6 +1553,8 @@ function sendDelphiMailLink() {
 		$("#ask-delphi-email-dialog-error").show();
 		return;
 	}
+	
+	$("#ask-delphi-email-dialog-error").hide();
 	
 	var answerSetUniqueCode = $('#uniqueCode').val();
 	

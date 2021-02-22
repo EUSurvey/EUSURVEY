@@ -175,7 +175,7 @@
 					<div style="margin-top: 10px">
 						<b>${form.getMessage("label.Info")}</b>
 						<div style="margin-top: 5px">
-							<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi">${form.getMessage("label.Delphi")}</a>
+							<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi/runner">${form.getMessage("label.Delphi")}</a>
 						</div>
 					</div>
 					<hr style="margin-top: 15px;" />

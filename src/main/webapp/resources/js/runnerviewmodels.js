@@ -276,7 +276,9 @@ function newBasicViewModel(element)
 	viewModel.scoringItems = ko.observableArray();
 	viewModel.optional = ko.observable(true);
 	viewModel.css = ko.observable(true);	
-	viewModel.maxDistanceExceeded = ko.observable(false);	
+	viewModel.maxDistanceExceeded = ko.observable(false);
+	viewModel.median = ko.observable(0);
+	viewModel.changedForMedian = ko.observable(false);
 	
 	viewModel.getScoringItem = function(id)
 	{
@@ -805,6 +807,8 @@ function newNumberViewModel(element)
 	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition != null ? element.initialSliderPosition : "Left");
 	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
 	
+	viewModel.maxDistance = ko.observable(element.maxDistance);
+	
 	if (viewModel.display() == 'Slider')
 	{
 		if (viewModel.min() == null)
@@ -875,6 +879,12 @@ function newNumberViewModel(element)
 	}
 	
 	viewModel.initialValue = function() {
+		
+		var ovalue = getValueByQuestion(this.uniqueId());
+		if (ovalue.length > 0) {
+			return ovalue;
+		}
+		
 		if (this.initialSliderPosition() === "Middle")
 		{
 			var min = parseInt(this.min());

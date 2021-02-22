@@ -498,6 +498,11 @@ function getNumberPropertiesRow(label, value)
 	row.Label(label);
 	row.LabelTitle(getPropertyLabel(label));
 	row.ContentType("number");
+	
+	if (label == "MaxDistanceToMedian" && value == "-1") 
+	{
+		value = "";
+	}	
 	row.Value(value);
 	
 	var inputid = getNewId();
@@ -514,6 +519,9 @@ function getNumberPropertiesRow(label, value)
 	if (label == "NumIcons")
 	{
 		$(input).spinner({ decimals:0, min:2, max:10, start:"", allowNull: true });
+	} else if (label == "MaxDistanceToMedian")
+	{
+		$(input).spinner({ decimals:2, min:0, start:"", allowNull: true });
 	} else {
 		$(input).spinner({ decimals:0, min:0, start:"", allowNull: true });
 	}	
@@ -1976,6 +1984,7 @@ function adaptSliderDisplay(isSlider)
 		$("tr[data-label='MaxLabel']").show();
 		$("tr[data-label='InitialSliderPosition']").show();
 		$("tr[data-label='DisplayGraduationScale']").show();
+		$("tr[data-label='MaxDistanceToMedian']").show();
 	} else {
 		$("tr[data-label='Mandatory']").show();
 		$("tr[data-label='Unit']").show();
@@ -1983,5 +1992,6 @@ function adaptSliderDisplay(isSlider)
 		$("tr[data-label='MaxLabel']").hide();
 		$("tr[data-label='InitialSliderPosition']").hide();
 		$("tr[data-label='DisplayGraduationScale']").hide();
+		$("tr[data-label='MaxDistanceToMedian']").hide();
 	}
 }

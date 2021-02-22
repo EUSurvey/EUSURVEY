@@ -513,9 +513,8 @@ public class SurveyExportHelper {
 				for (final File file: explanation.getFiles()) {
 					filesPerExplanation.add(file);
 					final String answerSetUniqueCode = answerService.get(explanation.getAnswerSetId()).getUniqueCode();
-					final int questionId = surveyService.getNewestElementByUid(explanation.getQuestionUid()).getId();
 					final java.io.File f = fileService.getSurveyExplanationFile(survey.getUniqueId(),
-							answerSetUniqueCode, questionId, file.getName());
+							answerSetUniqueCode, explanation.getQuestionUid(), file.getName());
 					os.putArchiveEntry(new ZipArchiveEntry(file.getUid() + ".fil"));
 					FileInputStream fis = null;
 					try {
@@ -581,6 +580,7 @@ public class SurveyExportHelper {
 	        		result.getSurvey().getPublication().setShowStatistics(false);
 	        		result.getSurvey().getPublication().setShowCharts(false);	        		
 	        		if (email != null) result.getSurvey().setContact(email);
+	        		if (!fileService.isDelphiEnabled()) result.getSurvey().setIsDelphi(false);
 	        		
 	        		if (result.getSurvey().getVersion() < 26)
 	        		{
@@ -605,6 +605,7 @@ public class SurveyExportHelper {
 	        		result.getActiveSurvey().getPublication().setShowStatistics(false);
 	        		result.getActiveSurvey().getPublication().setShowCharts(false);	        		
 	        		if (email != null) result.getActiveSurvey().setContact(email);
+					if (!fileService.isDelphiEnabled()) result.getSurvey().setIsDelphi(false);
 	        		
 	        		if (result.getActiveSurvey().getVersion() < 26)
 	        		{
@@ -630,7 +631,8 @@ public class SurveyExportHelper {
 					oldSurvey.getPublication().setShowStatistics(false);
 					oldSurvey.getPublication().setShowCharts(false);	        		
 					if (email != null) oldSurvey.setContact(email);
-	        		
+					if (!fileService.isDelphiEnabled()) oldSurvey.setIsDelphi(false);
+
 	        		if (oldSurvey.getVersion() < 26)
 	        		{
 	        			for (com.ec.survey.model.survey.Element element : oldSurvey.getElements())
