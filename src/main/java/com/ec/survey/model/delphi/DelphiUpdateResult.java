@@ -5,6 +5,7 @@ public class DelphiUpdateResult {
 	private String link;
 	private boolean open;
 	private boolean changedForMedian;
+	private boolean changeExplanationText;
 	
 	public String getMessage() {
 		return message;
@@ -40,5 +41,13 @@ public class DelphiUpdateResult {
 	
 	public void setChangedForMedian(Boolean changedForMedian) {
 		this.changedForMedian = changedForMedian;
+	}
+
+	public boolean isChangeExplanationText() {
+		return changeExplanationText;
+	}
+
+	public void setChangeExplanationText(boolean changeExplanationText) {
+		this.changeExplanationText = changeExplanationText;
 	}
 }

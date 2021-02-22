@@ -365,8 +365,14 @@ public class AnswerExplanationService extends BasicService {
 						}
 					}
 					if (median != null && median.isMaxDistanceExceeded()) {
-						explanation.setChangedForMedian(true);
-						answerSet.setChangedForMedian(true);
+						
+						if (answerSet.getMedianWarningVisible())
+						{
+							explanation.setChangedForMedian(true);
+							answerSet.setChangedForMedian(true);
+						} else if (explanation.getChangedForMedian() == null || !explanation.getChangedForMedian()) {
+							answerSet.setChangeExplanationText(true);
+						}
 					}
 				}
 

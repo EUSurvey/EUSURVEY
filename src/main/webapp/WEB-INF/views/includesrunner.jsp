@@ -170,6 +170,8 @@
 			var labelto = "${form.getMessage("label.To")}";
 			var messageuploadnoconnection = "${form.getMessage("message.uploadnoconnection")}";
 			var messageuploadwrongextension = "${form.getMessage("message.messageuploadwrongextension")}";
+			var labelnewexplanation = "${form.getMessage("label.NewExplanation")}";
+			var labeloldexplanation = "${form.getMessage("label.OldExplanation")}";
 		</c:when>
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
@@ -249,6 +251,8 @@
 			var labelto = "<spring:message code='label.To' />";
 			var messageuploadnoconnection = "<spring:message code='message.uploadnoconnection' />";
 			var messageuploadwrongextension =  "<spring:message code='message.messageuploadwrongextension' />";
+			var labelnewexplanation = "<spring:message code='label.NewExplanation' />";
+			var labeloldexplanation = "<spring:message code='label.OldExplanation' />";
 		</c:otherwise>
 	</c:choose>
 	

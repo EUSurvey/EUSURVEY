@@ -1282,6 +1282,13 @@ function delphiUpdateContinued(div, successCallback) {
 				viewModel.changedForMedian(true);
 			}
 			
+			if (data.changeExplanationText) {
+				var ed = tinyMCE.get("explanation" + id);		
+				var old = ed.getContent();
+				var text = labelnewexplanation + ":<br /><br/><br />" + labeloldexplanation + ":<br /><br /><span style='color: #999;'>" + old + "</span>";
+				ed.setContent(text);
+			}
+			
 			$(loader).hide();
 
 			if ($(div).hasClass("single-page")) {
