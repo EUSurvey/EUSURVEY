@@ -2382,7 +2382,7 @@ public class RunnerController extends BasicController {
 			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
 			final String invitationId = request.getParameter("invitation");
 			final User user = sessionService.getCurrentUser(request, false, false);
-
+			
 			Element element = survey.getElementsByUniqueId().get(questionUid);
 
 			AnswerSet answerSet;
@@ -2432,6 +2432,8 @@ public class RunnerController extends BasicController {
 			
 			if (answerSet.getChangedForMedian()) {
 				updateResult.setChangedForMedian(true);
+			} else if (answerSet.getChangeExplanationText()) {
+				updateResult.setChangeExplanationText(true);
 			}
 			
 			return new ResponseEntity<>(updateResult, HttpStatus.OK);

@@ -58,8 +58,9 @@ public class SurveyHelper {
 			answerSet.setIP(ip);
 		}
 
-		if (!update)
+		if (!update) {
 			answerSet.setDate(answerSet.getUpdateDate());
+		}
 
 		answerSet.setSurvey(survey);
 		answerSet.setSurveyId(survey.getId());
@@ -71,6 +72,10 @@ public class SurveyHelper {
 
 		if (request.getParameter("wcagMode") != null) {
 			answerSet.setWcagMode(request.getParameter("wcagMode").equalsIgnoreCase("true"));
+		}
+		
+		if (request.getParameter("medianWarningVisible") != null) {
+			answerSet.setMedianWarningVisible(request.getParameter("medianWarningVisible").equalsIgnoreCase("true"));
 		}
 
 		while (iterator.hasNext()) {
@@ -873,6 +878,8 @@ public class SurveyHelper {
 		}
 		
 		answerSet.getExplanations().putAll(parsedAnswerSet.getExplanations());
+		
+		answerSet.setMedianWarningVisible(parsedAnswerSet.getMedianWarningVisible());
 	
 		return answerSet;
 	}

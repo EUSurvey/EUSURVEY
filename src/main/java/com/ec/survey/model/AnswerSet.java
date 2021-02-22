@@ -46,10 +46,12 @@ public class AnswerSet implements java.io.Serializable {
 	private String draftId;
 	private Boolean disclaimerMinimized;
 	private Boolean wcagMode;
+	private boolean medianWarningVisible;
 	private Integer score;
 	private Map<String, ExplanationData> explanations = new HashMap<>();
 	private Map<String, List<AnswerComment>> comments = new HashMap<>();
 	private boolean changedForMedian = false;
+	private boolean changeExplanationText = false;
 
 	@Id
 	@Column(name = "ANSWER_SET_ID")
@@ -285,6 +287,15 @@ public class AnswerSet implements java.io.Serializable {
 	}
 
 	@Transient
+	public boolean getMedianWarningVisible() {
+		return this.medianWarningVisible;
+	}
+	
+	public void setMedianWarningVisible(boolean medianWarningVisible) {
+		this.medianWarningVisible = medianWarningVisible;
+	}	
+	
+	@Transient
 	public String getNiceDate() {
 		return date != null ? ConversionTools.getFullString(date) : "";
 	}
@@ -386,4 +397,12 @@ public class AnswerSet implements java.io.Serializable {
 	public void setChangedForMedian(Boolean changedForMedian) {
 		this.changedForMedian = changedForMedian;
 	}
+	
+	@Transient
+	public Boolean getChangeExplanationText() {
+		return changeExplanationText;
+	}
+	public void setChangeExplanationText(Boolean changeExplanationText) {
+		this.changeExplanationText = changeExplanationText;
+	}	
 }

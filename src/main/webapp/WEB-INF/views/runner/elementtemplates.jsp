@@ -1169,6 +1169,7 @@
 		<!-- ko if: maxDistanceExceeded() && !changedForMedian() -->
 		<div class="maxDistanceExceededMessage">
 			${form.getMessage("info.MaxDistanceExceeded")}&nbsp;${form.getMessage("info.MaxDistanceExceededExplain")}
+			<input type="hidden" name="medianWarningVisible" value="true" />
 			
 			<!-- ko if: median() -->
 			<div>${form.getMessage("label.GroupMedian")}: <span data-bind="html: median()"></span></div>
