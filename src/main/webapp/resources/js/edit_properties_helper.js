@@ -498,6 +498,11 @@ function getNumberPropertiesRow(label, value)
 	row.Label(label);
 	row.LabelTitle(getPropertyLabel(label));
 	row.ContentType("number");
+	
+	if (label == "MaxDistanceToMedian" && value == "-1") 
+	{
+		value = "";
+	}	
 	row.Value(value);
 	
 	var inputid = getNewId();

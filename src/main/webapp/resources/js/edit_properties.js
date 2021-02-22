@@ -461,7 +461,10 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Unit", $(e).find("input[name^='unit']").val(), false);
 				getChoosePropertiesRow("DecimalPlaces", ",1,2,3,4,5,6,7,8,9,10", false, false, $(e).find("input[name^='decimalplaces']").val());
 				
-				getNumberPropertiesRow("MaxDistanceToMedian", $(e).find("input[name^='maxDistance']").val());
+				if (isDelphi)
+				{
+					getNumberPropertiesRow("MaxDistanceToMedian", $(e).find("input[name^='maxDistance']").val());
+				}
 				
 				getMinMaxPropertiesRow("Values", null, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
 				getTextPropertiesRow("MinLabel", $(e).find("input[name^='minLabel']").val(), false);
