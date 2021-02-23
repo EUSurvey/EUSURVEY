@@ -419,6 +419,20 @@ var ElementProperties = function() {
 					getQuizPropertiesRow();
 					getQuizPropertiesContent();
 				}
+			} else if ($(e).hasClass("rankingitem"))
+			{
+				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
+				if (isDelphi)
+				{
+					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+				}
+				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+				// TODO DELPHI-189 getActionRow("childElements", "<span class='glyphicon glyphicon-plus'></span>", "addChildElements()", "<span class='glyphicon glyphicon-minus'></span>", "removeChildElement($(_elementProperties.selectedelement))");
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false);
+
+				getAdvancedPropertiesRow();
+				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 			} else if ($(e).hasClass("answertext"))
 			{
 				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];

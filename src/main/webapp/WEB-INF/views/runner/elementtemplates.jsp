@@ -330,6 +330,27 @@
 		</div>
 	</div>
 	
+	<div id="ranking-question-template">
+		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
+
+		<ul class="ranking-ul-sortable">
+			<!-- ko foreach: observableChildElements() -->
+				<li data-bind='text: "Title: "+title'></li>
+			<!-- /ko -->
+		</ul>
+
+		<!-- ko if: foreditor -->
+			<input type="hidden" data-bind="value: 'rankingquestion', attr: {'name': 'type' + id()}" />
+			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
+			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+
+			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
+			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+		<!-- /ko -->
+	</div>
+
 	<div id="password-template">
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>

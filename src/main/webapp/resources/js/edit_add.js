@@ -32,6 +32,16 @@ function getNewElement(item)
 		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(item.attr("id"),"init", 2);
+	} else if (item.hasClass("rankingitem"))
+	{
+		element = getBasicElement("RankingQuestion", true, "Ranking Question", item.attr("id"), true);
+		element.childElements = [
+			getBasicElement("RankingElement", false, "Ranking Element 1", null, false),
+			getBasicElement("RankingElement", false, "Ranking Element 2", null, false),
+			getBasicElement("RankingElement", false, "Ranking Element 3", null, false),
+			];
+		element.isDelphiQuestion = isDelphi;
+		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("multiplechoiceitem"))
 	{
 		element = getBasicElement("MultipleChoiceQuestion", true, "Multiple Choice Question", item.attr("id"), true);

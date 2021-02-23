@@ -705,6 +705,26 @@ function newMultipleChoiceViewModel(element)
 	return viewModel;
 }
 
+function newRankingViewModel(element)
+{
+	var viewModel = newBasicViewModel(element);
+
+	viewModel.observableChildElements = ko.observableArray();
+	viewModel.help = ko.observable(element.help);
+	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
+
+	$.each(element.childElements, (index, that) => {
+		var child = {
+			"title": that.title,
+		};
+		viewModel.observableChildElements.push(child);
+		// TODO DELPHI-190: push to observable child elements
+	});
+
+	return viewModel;
+}
+
+
 function newFreeTextViewModel(element)
 {
 	var viewModel = newBasicViewModel(element);

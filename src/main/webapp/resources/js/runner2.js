@@ -27,6 +27,8 @@ function getElementViewModel(element)
 			return newSingleChoiceViewModel(element);
 		case 'MultipleChoiceQuestion':
 			return newMultipleChoiceViewModel(element);
+		case 'RankingQuestion':
+			return newRankingViewModel(element);
 		case 'NumberQuestion':
 			return newNumberViewModel(element);
 		case 'DateQuestion':
@@ -198,6 +200,10 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	} else if (viewModel.type == 'MultipleChoiceQuestion') {
 		$(container).addClass("multiplechoiceitem");
 		var s = $("#multiple-choice-template").clone().attr("id", "");
+		$(container).append(s);
+	} else if (viewModel.type == 'RankingQuestion') {
+		$(container).addClass("rankingitem");
+		var s = $("#ranking-question-template").clone().attr("id", "");
 		$(container).append(s);
 	} else if (viewModel.type == 'DateQuestion') {
 		$(container).addClass("dateitem");

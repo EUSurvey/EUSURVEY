@@ -3020,6 +3020,88 @@ public class SurveyHelper {
 		return multiplechoice;
 	}
 
+	private static RankingQuestion getRankingQuestion(Map<String, String[]> parameterMap, Element currentElement, String id, String[] items, String[] originalItems, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+		String oldValues = "";
+		String newValues = "";
+
+		RankingQuestion rankingQuestion;
+		if (currentElement instanceof RankingQuestion) {
+			rankingQuestion = (RankingQuestion) currentElement;
+
+			// make sure the childElements match the items given and that all are unique
+			List<Element> itemsToDelete = new ArrayList<>();
+			List<String> newUniqueItems = new ArrayList<>();
+			for (Element thatItem : rankingQuestion.getChildElements()) {
+				boolean found = false;
+				for (String item : items) {
+					if (thatItem.getTitle().equals(item)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					for (String item : originalItems) {
+						if (thatItem.getTitle().equals(item)) {
+							found = true;
+							break;
+						}
+					}
+				}
+				if (!found || newUniqueItems.contains(thatItem.getTitle())) {
+					itemsToDelete.add(thatItem);
+				} else {
+					newUniqueItems.add(thatItem.getTitle());
+				}
+			}
+
+			for (Element thatItem : itemsToDelete) {
+				rankingQuestion.getChildElements().remove(thatItem);
+			}
+
+		} else {
+			rankingQuestion = new RankingQuestion();
+			String uid = getString(parameterMap, "uid", id, servletContext);
+			rankingQuestion.setUniqueId(uid);
+		}
+
+		String title = getString(parameterMap, "text", id, servletContext);
+		if (log220 && !rankingQuestion.getTitle().equals(title)) {
+			oldValues += " title: " + rankingQuestion.getTitle();
+			newValues += " title: " + title;
+		}
+		rankingQuestion.setTitle(title);
+
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(rankingQuestion.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + rankingQuestion.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		rankingQuestion.setIsDelphiQuestion(isDelphiQuestion);
+
+		String help = getString(parameterMap, "help", id, servletContext);
+		if (log220 && rankingQuestion.getHelp() != null && !rankingQuestion.getHelp().equals(help)) {
+			oldValues += " help: " + rankingQuestion.getHelp();
+			newValues += " help: " + help;
+		}
+		rankingQuestion.setHelp(help);
+
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
+		if (log220 && rankingQuestion.getShortname() != null && !rankingQuestion.getShortname().equals(shortname)) {
+			oldValues += " shortname: " + rankingQuestion.getShortname();
+			newValues += " shortname: " + shortname;
+		}
+		rankingQuestion.setShortname(shortname);
+
+		// TODO DELPHI-189 add other attributes, check also in elementtemplate and match them
+
+		if (log220 && oldValues.length() > 0) {
+			String[] oldnew = { oldValues, newValues };
+			rankingQuestion.getActivitiesToLog().put(220, oldnew);
+		}
+
+		return rankingQuestion;
+	}
+
 	private static Matrix getMatrix(Map<String, String[]> parameterMap, Element currentElement,
 			String id, Map<Integer, Element> elementsById, String[] dependenciesForAnswers,
 			HashMap<Matrix, HashMap<Integer, String>> matrixDependencies, ServletContext servletContext, boolean log220)
@@ -3552,6 +3634,37 @@ public class SurveyHelper {
 						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers,
 						servletContext, log220);
 			}
+		} else if (type.equalsIgnoreCase("rankingquestion")) {
+			String[] items = parameterMap.get("rankingitem" + id); // TODO DELPHI-189 make childElements editable
+			if (items == null) {
+				items = new String[0];
+			}
+
+			List<String> list = new ArrayList<>(Arrays.asList(items));
+			list.removeAll(Arrays.asList("", null));
+			items = list.toArray(new String[0]);
+
+			for (int i = 0; i < items.length; i++) {
+				if (items[i] != null)
+					items[i] = Tools.filterHTML(items[i]);
+			}
+
+			String[] originalItems = parameterMap.get("originalrankingitem" + id);  // TODO DELPHI-189 make childElements editable
+			if (originalItems == null) {
+				originalItems = new String[0];
+			}
+
+			list = new ArrayList<>(Arrays.asList(originalItems));
+			list.removeAll(Arrays.asList("", null));
+			originalItems = list.toArray(new String[0]);
+
+			for (int i = 0; i < originalItems.length; i++) {
+				if (originalItems[i] != null) {
+					originalItems[i] = Tools.filterHTML(originalItems[i]);
+				}
+			}
+
+			element = getRankingQuestion(parameterMap, currentElement, id, items, originalItems, servletContext, log220 && currentElement != null);
 		}
 
 		if (survey.getIsQuiz() && element instanceof Question) {
