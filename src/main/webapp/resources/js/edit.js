@@ -20,9 +20,11 @@ $(function() {
 			if (ui.item.hasClass("copy"))
 			{
 				_actions.copyElement(ui.item);
+				checkContent();	
 			} else if (ui.item.hasClass("cut"))
 			{
 				_actions.pasteElement(ui.item);
+				checkContent();	
 			} else if (ui.item.hasClass("toolboxitem"))
 			{
 				addNewElement(ui.item, null);
@@ -87,11 +89,13 @@ $(function() {
 			var item = $(this).clone();
 			$("#content").append(item);
 			_actions.copyElement(item);
+			checkContent();	
 		} else if ($(this).hasClass("cut"))
 		{
 			var item = $(this).clone();
 			$("#content").append(item);
 			_actions.pasteElement(item);
+			checkContent();
 		} else {
 			var item = $(this).clone();
 			$("#content").append(item);
