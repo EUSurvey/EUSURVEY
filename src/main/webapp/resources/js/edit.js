@@ -171,6 +171,19 @@ $(document).keyup(function(event){
 	if(event.which=="17")
 	    cntrlIsPressed = false;
 	
+    if (event.which=="13")
+    {
+    	var focused = $(document.activeElement);
+    	if (typeof focused != 'undefined' && focused.length > 0 && focused.closest(".properties").length > 0)
+    	{
+    		update(focused);
+    	}
+    }
+    
+    if ($('#mce-modal-block').is(":visible")) {
+    	return;
+    }
+    
     if (event.which=="46" && _actions.DeleteEnabled())
     {
     	var focused = $(document.activeElement);
@@ -179,15 +192,6 @@ $(document).keyup(function(event){
     		return;
     	}
         _actions.deleteElement();
-    }
-    
-    if (event.which=="13")
-    {
-    	var focused = $(document.activeElement);
-    	if (typeof focused != 'undefined' && focused.length > 0 && focused.closest(".properties").length > 0)
-    	{
-    		update(focused);
-    	}
     }
     
     if (cntrlIsPressed && event.which=="67" && _actions.CopyEnabled())
