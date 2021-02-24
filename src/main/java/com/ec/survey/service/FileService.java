@@ -1074,9 +1074,8 @@ public class FileService extends BasicService {
 				if (question.isDelphiElement()) {
 					explanationFiles.applyFunctionOnEachFile((answerSetId, questionUid, explanationFile) -> {
 						if (questionUid.equalsIgnoreCase(question.getUniqueId())) {
-							final String answerSetUid = answerService.get(answerSetId).getUniqueCode();
-							final java.io.File file = getSurveyExplanationFile(survey.getUniqueId(), answerSetUid,
-									question.getUniqueId(), explanationFile.getName());
+							
+							java.io.File file = fileService.getSurveyFile(survey.getUniqueId(), explanationFile.getUid());
 							result.add(file);
 						}
 					});
@@ -1466,15 +1465,6 @@ public class FileService extends BasicService {
 	public java.io.File getSurveyFile(String surveyUID, String fileUID) {
 		java.io.File folder = getSurveyFilesFolder(surveyUID);
 		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);
-	}
-
-	public java.io.File getSurveyExplanationFile(final String surveyUid, final String answerSetUniqueCode,
-			final String questionUid, final String fileName) {
-
-		final java.io.File folder = getSurveyExplanationUploadsFolder(surveyUid, false);
-		final String path = folder.getPath() + Constants.PATH_DELIMITER + answerSetUniqueCode
-				+ Constants.PATH_DELIMITER + questionUid + Constants.PATH_DELIMITER + fileName;
-		return new java.io.File(path);
 	}
 
 	public java.io.File getSurveyExportFile(String surveyUID, Integer id, String format) {
