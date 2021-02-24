@@ -36,7 +36,9 @@
 					<!-- ko if: question -->
 					<span data-bind="html: question"></span>:
 					<!-- /ko -->
-					<span data-bind="html: value"></span>
+					<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: {'id': 'expanded-answer' + value}">
+					<span class="text-to-be-truncated" data-bind="html: value"></span>
+					<label class="text-read-more-label" role="button" data-bind="attr: {'for': 'expanded-answer' + value}">${form.getMessage("label.ShowAll")}</label>
 				</div>
 				<!-- /ko -->
 			</td>
