@@ -370,7 +370,7 @@ var ElementProperties = function() {
 					getChoosePropertiesRow("Display", "CountryOnly,ISOOnly,ISO+Country,Country+ISO", false, false, parseInt($(e).find("input[name^='displayMode']").val()));
 				}	 		
 			
-				if ($(e).find("input[name^='choicetype']").val() == 'likert')
+				if (isDelphi && $(e).find("input[name^='choicetype']").val() == 'likert')
 				{
 					getChoosePropertiesRow("MaxDistanceToMedian", "Ignore,0,1,2,3,4,5", false, false, $(e).find("input[name^='maxDistance']").val());
 				} else {				
