@@ -1113,7 +1113,8 @@ function addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionU
 		textToBeTruncatedFields = $('.text-to-be-truncated');
 	}
 	$(textToBeTruncatedFields).each(function() {
-		this.classList[(this.scrollHeight > this.getBoundingClientRect().height) ? 'add' : 'remove']('truncated');
+		if (this.scrollHeight > Math.round(this.getBoundingClientRect().height))
+			this.classList.add('truncated');
 	});
 }
 
