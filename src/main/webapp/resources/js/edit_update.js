@@ -148,6 +148,14 @@ function update(input)
 					mandatoryPropertyRow.Disabled(false);
 				}
 			}
+			const visibilityPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Visibility');
+			if (visibilityPropertyRow) {
+				if (checked) {
+					visibilityPropertyRow.Visible(false);
+				} else {
+					visibilityPropertyRow.Visible(true);
+				}
+			}
 			$('#' + id).toggleClass("delphi");
 			_undoProcessor.addUndoStep(["DelphiQuestion", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
 			break;

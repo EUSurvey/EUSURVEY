@@ -198,7 +198,7 @@ function getCleanArray(arr)
 	return result;
 }
 
-function getVisibilityRow(multiselection)
+function getVisibilityRow(multiselection, isVisible = true)
 {
 	var label = "Visibility";
 	
@@ -206,7 +206,8 @@ function getVisibilityRow(multiselection)
 	row.Type("first");
 	row.ContentType("visibility");
 	row.Label(label);
-	row.LabelTitle(getPropertyLabel(label)); 
+	row.LabelTitle(getPropertyLabel(label));
+	row.Visible(isVisible);
 	
 	var selectedelement = $("#content").find(".selectedquestion").first();
 	var element = _elements[$(selectedelement).attr("data-id")];
