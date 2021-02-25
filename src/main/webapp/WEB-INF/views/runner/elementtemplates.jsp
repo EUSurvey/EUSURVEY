@@ -1219,7 +1219,6 @@
 									<div class="uploadinfo"
 										style="display: none; padding: 10px; color: #777;">${form.getMessage("label.UploadStarted")}</div>
 									<input type="hidden"
-										data-bind="attr: {'id': 'explanation' + id(), 'name':'explanation' + id()}"
 										value="files" />
 									<div class="uploaded-files"
 										data-bind="foreach: getFileAnswer(uniqueId())">
