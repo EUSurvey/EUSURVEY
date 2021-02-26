@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.connector.ClientAbortException;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.BeanFactory;
@@ -502,6 +503,9 @@ public class BasicController implements BeanFactoryAware {
 					String str = request.getParameter("internal_captcha_response");
 					return sessionService.getCaptchaText(request).equals(str);
 				} 
+				if (captcha.equalsIgnoreCase("eucaptcha")) {
+					throw new NotImplementedException();
+				}
 				return false;
 			} else {
 				return true;

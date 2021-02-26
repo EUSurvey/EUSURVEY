@@ -17,18 +17,24 @@
 		
 		function createCaptcha() {
 			<c:choose>
-				<c:when test='${captcha == "internal"}'>
+				<c:when test='${captcha == "eucaptcha"}'>
 					
 				</c:when>
+				<c:when test='${captcha == "internal"}'>
+				
+				</c:when>
 				<c:otherwise>
-						grecaptcha.render("recaptcha", {sitekey: "<c:out value="${captchaKey}"/>", theme: "light"});
-					</c:otherwise>
+					grecaptcha.render("recaptcha", {sitekey: "<c:out value="${captchaKey}"/>", theme: "light"});
+				</c:otherwise>
 			</c:choose>
 		}
 		
 		function reloadCaptcha()
 		{
 			<c:choose>
+				<c:when test='${captcha == "eucaptcha"}'>
+				
+				</c:when>
 				<c:when test='${captcha == "internal"}'>
 					$(".internalcaptcha").find("img").each(function(){
 						var oldSrc = $(this).attr("src");
@@ -47,6 +53,9 @@
 		function getChallenge(parent)
 		{
 			<c:choose>
+				<c:when test='${captcha == "eucaptcha"}'>
+					return "";
+				</c:when>
 				<c:when test='${captcha == "internal"}'>
 					return "";
 				</c:when>
@@ -64,6 +73,9 @@
 		function getResponse(parent)
 		{
 			<c:choose>
+				<c:when test='${captcha == "eucaptcha"}'>
+				
+				</c:when>
 				<c:when test='${captcha == "internal"}'>
 					if (parent != null)
 					{

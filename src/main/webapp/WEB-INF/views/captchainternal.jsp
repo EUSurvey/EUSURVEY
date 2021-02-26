@@ -4,6 +4,10 @@
  
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
+<c:if test='${captcha == "eucaptcha"}'>
+	<script type="text/javascript" src="${contextpath}/resources/js/restCaptcha.js?version=<%@include file="version.txt" %>"></script>
+</c:if>
+
 <c:choose>
 	<c:when test='${captcha == null || captcha == "off"}'>
 		
@@ -21,6 +25,28 @@
 			<br />
 			
 			<c:choose>
+				<c:when test='${captcha == "eucaptcha"}'>
+					<div>
+					  <div>
+					    <img alt="Captcha Loading" class="img-fluid img-thumbnail" src="" id="captchaImg" captchaId="">
+					    <hr>
+					    <audio controls autostart="1" src="" id="audioCaptcha" onplay="onPlayAudio()"></audio>
+					  </div>
+					  <div>
+					    <a class="btn btn-primary btn-lg " id="captchaReload"> Refresh</a>
+					  </div>
+					
+					</div>
+					<hr>
+					<div>
+					  <div>
+					    <input type="text" class="form-control" id="captchaAnswer" placeholder="Captcha Text">
+					  </div>
+					  <div>
+					    <a class="btn btn-primary btn-lg " id="captchaSubmit"> Check </a>
+					  </div>
+					</div>
+				</c:when>
 				<c:when test='${captcha == "internal"}'>
 					<div class="internalcaptcha">
 						 <img id="captchaImage" src="<c:url value="/captcha.html?1"/>"/><br />
