@@ -110,7 +110,7 @@
 
  						<c:if test="${form.getSurvey().isDelphi && question.isDelphiElement()}">
 	                        <div class="statelement-wrapper">
-                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
                                      <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
                                          <tr>
                                              <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
@@ -282,7 +282,7 @@
 
 						<c:if test="${form.getSurvey().isDelphi && question.isDelphiElement()}">
 	                        <div class="statelement-wrapper">
-                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
                                     <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
                                         <tr>
                                             <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
@@ -300,6 +300,32 @@
 	                        </div>
 	                    </c:if>
 
+					</c:if>
+										
+					<c:if test="${question.getType() == 'FreeTextQuestion'}">				
+						<c:if test='${form.getSurvey().isDelphi && question.isDelphiElement() && (question.getDelphiChartType() != "None")}'>
+							<div style="width: 700px; margin-left: auto; margin-right: auto;">
+								<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
+							</div>
+							
+	                        <div class="statelement-wrapper">
+                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                     <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+                                         <tr>
+                                             <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
+                                         </tr>
+                                         <tr>
+                                             <td style='padding-top:10px; padding-bottom:10px'>
+                                                 <div id="wordcloud${question.uniqueId}" class="delphi-chart-div" style="min-width: 300px; min-height: 220px"></div>
+                                             </td>
+                                         </tr>
+                                     </table>
+                                     <div style="clear: both"></div>
+                                </div>
+                                <div class="chart-controls"></div>
+                                <div style="clear: both"></div>
+	                        </div>
+	                    </c:if>	
 					</c:if>
 					
 					<c:if test="${question.getType() == 'RatingQuestion'}">
@@ -387,7 +413,7 @@
 
 						<c:if test="${form.getSurvey().isDelphi && question.isDelphiElement()}">
 	                        <div class="statelement-wrapper">
-                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
                                     <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
                                         <tr>
                                             <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}</th>
@@ -416,97 +442,102 @@
 <div id="chart-controls-template" style="display: none">
 	<label><spring:message code="label.DelphiChartType" /></label><br />
     <select onchange="changeChart(this)" class="chart-type form-control">
-    	<option value="Bar"><spring:message code="label.DelphiChartBar" /></option>
-    	<option value="Column"><spring:message code="label.DelphiChartColumn" /></option>
-    	<option value="Line"><spring:message code="label.DelphiChartLine" /></option>
-    	<option value="Pie"><spring:message code="label.DelphiChartPie" /></option>
-    	<option value="Radar"><spring:message code="label.DelphiChartRadar" /></option>
-    	<option value="Scatter"><spring:message code="label.DelphiChartScatter" /></option>
+    	<option data-type="numerical" value="Bar"><spring:message code="label.DelphiChartBar" /></option>
+    	<option data-type="numerical" value="Column"><spring:message code="label.DelphiChartColumn" /></option>
+    	<option data-type="numerical" value="Line"><spring:message code="label.DelphiChartLine" /></option>
+    	<option data-type="numerical" value="Pie"><spring:message code="label.DelphiChartPie" /></option>
+    	<option data-type="numerical" value="Radar"><spring:message code="label.DelphiChartRadar" /></option>
+    	<option data-type="numerical" value="Scatter"><spring:message code="label.DelphiChartScatter" /></option>
+    	<option data-type="textual" value="None"><spring:message code="label.None" /></option>
+    	<option data-type="textual" value="WordCloud"><spring:message code="label.DelphiChartWordCloud" /></option>
     </select><br />
     
     <label><spring:message code="label.ColorScheme" /></label><br />
     <select onchange="changeChart(this)" class="chart-scheme form-control">
-    	<option selected="selected">tableau.Tableau10</option>
-	    <option>tableau.Tableau10</option>
-		<option>tableau.Tableau20</option>
-		<option>tableau.ColorBlind10</option>
-		<option>tableau.SeattleGrays5</option>
-		<option>tableau.Traffic9</option>
-		<option>tableau.MillerStone11</option>
-		<option>tableau.SuperfishelStone10</option>
-		<option>tableau.NurielStone9</option>
-		<option>tableau.JewelBright9</option>
-		<option>tableau.Summer8</option>
-		<option>tableau.Winter10</option>
-		<option>tableau.GreenOrangeTeal12</option>
-		<option>tableau.RedBlueBrown12</option>
-		<option>tableau.PurplePinkGray12</option>
-		<option>tableau.HueCircle19</option>
-		<option>tableau.OrangeBlue7</option>
-		<option>tableau.RedGreen7</option>
-		<option>tableau.GreenBlue7</option>
-		<option>tableau.RedBlue7</option>
-		<option>tableau.RedBlack7</option>
-		<option>tableau.GoldPurple7</option>
-		<option>tableau.RedGreenGold7</option>
-		<option>tableau.SunsetSunrise7</option>
-		<option>tableau.OrangeBlueWhite7</option>
-		<option>tableau.RedGreenWhite7</option>
-		<option>tableau.GreenBlueWhite7</option>
-		<option>tableau.RedBlueWhite7</option>
-		<option>tableau.RedBlackWhite7</option>
-		<option>tableau.OrangeBlueLight7</option>
-		<option>tableau.Temperature7</option>
-		<option>tableau.BlueGreen7</option>
-		<option>tableau.BlueLight7</option>
-		<option>tableau.OrangeLight7</option>
-		<option>tableau.Blue20</option>
-		<option>tableau.Orange20</option>
-		<option>tableau.Green20</option>
-		<option>tableau.Red20</option>
-		<option>tableau.Purple20</option>
-		<option>tableau.Brown20</option>
-		<option>tableau.Gray20</option>
-		<option>tableau.GrayWarm20</option>
-		<option>tableau.BlueTeal20</option>
-		<option>tableau.OrangeGold20</option>
-		<option>tableau.GreenGold20</option>
-		<option>tableau.RedGold21</option>
-		<option>tableau.Classic10</option>
-		<option>tableau.ClassicMedium10</option>
-		<option>tableau.ClassicLight10</option>
-		<option>tableau.Classic20</option>
-		<option>tableau.ClassicGray5</option>
-		<option>tableau.ClassicColorBlind10</option>
-		<option>tableau.ClassicTrafficLight9</option>
-		<option>tableau.ClassicPurpleGray6</option>
-		<option>tableau.ClassicPurpleGray12</option>
-		<option>tableau.ClassicGreenOrange6</option>
-		<option>tableau.ClassicGreenOrange12</option>
-		<option>tableau.ClassicBlueRed6</option>
-		<option>tableau.ClassicBlueRed12</option>
-		<option>tableau.ClassicCyclic13</option>
-		<option>tableau.ClassicGreen7</option>
-		<option>tableau.ClassicGray13</option>
-		<option>tableau.ClassicBlue7</option>
-		<option>tableau.ClassicRed9</option>
-		<option>tableau.ClassicOrange7</option>
-		<option>tableau.ClassicAreaRed11</option>
-		<option>tableau.ClassicAreaGreen11</option>
-		<option>tableau.ClassicAreaBrown11</option>
-		<option>tableau.ClassicRedGreen11</option>
-		<option>tableau.ClassicRedBlue11</option>
-		<option>tableau.ClassicRedBlack11</option>
-		<option>tableau.ClassicAreaRedGreen21</option>
-		<option>tableau.ClassicOrangeBlue13</option>
-		<option>tableau.ClassicGreenBlue11</option>
-		<option>tableau.ClassicRedWhiteGreen11</option>
-		<option>tableau.ClassicRedWhiteBlack11</option>
-		<option>tableau.ClassicOrangeWhiteBlue11</option>
-		<option>tableau.ClassicRedWhiteBlackLight10</option>
-		<option>tableau.ClassicOrangeWhiteBlueLight11</option>
-		<option>tableau.ClassicRedWhiteGreenLight11</option>
-		<option>tableau.ClassicRedGreenLight11</option>
+    	<option data-type="numerical" selected="selected">tableau.Tableau10</option>
+		<option data-type="numerical">tableau.Tableau20</option>
+		<option data-type="numerical">tableau.ColorBlind10</option>
+		<option data-type="numerical">tableau.SeattleGrays5</option>
+		<option data-type="numerical">tableau.Traffic9</option>
+		<option data-type="numerical">tableau.MillerStone11</option>
+		<option data-type="numerical">tableau.SuperfishelStone10</option>
+		<option data-type="numerical">tableau.NurielStone9</option>
+		<option data-type="numerical">tableau.JewelBright9</option>
+		<option data-type="numerical">tableau.Summer8</option>
+		<option data-type="numerical">tableau.Winter10</option>
+		<option data-type="numerical">tableau.GreenOrangeTeal12</option>
+		<option data-type="numerical">tableau.RedBlueBrown12</option>
+		<option data-type="numerical">tableau.PurplePinkGray12</option>
+		<option data-type="numerical">tableau.HueCircle19</option>
+		<option data-type="numerical">tableau.OrangeBlue7</option>
+		<option data-type="numerical">tableau.RedGreen7</option>
+		<option data-type="numerical">tableau.GreenBlue7</option>
+		<option data-type="numerical">tableau.RedBlue7</option>
+		<option data-type="numerical">tableau.RedBlack7</option>
+		<option data-type="numerical">tableau.GoldPurple7</option>
+		<option data-type="numerical">tableau.RedGreenGold7</option>
+		<option data-type="numerical">tableau.SunsetSunrise7</option>
+		<option data-type="numerical">tableau.OrangeBlueWhite7</option>
+		<option data-type="numerical">tableau.RedGreenWhite7</option>
+		<option data-type="numerical">tableau.GreenBlueWhite7</option>
+		<option data-type="numerical">tableau.RedBlueWhite7</option>
+		<option data-type="numerical">tableau.RedBlackWhite7</option>
+		<option data-type="numerical">tableau.OrangeBlueLight7</option>
+		<option data-type="numerical">tableau.Temperature7</option>
+		<option data-type="numerical">tableau.BlueGreen7</option>
+		<option data-type="numerical">tableau.BlueLight7</option>
+		<option data-type="numerical">tableau.OrangeLight7</option>
+		<option data-type="numerical">tableau.Blue20</option>
+		<option data-type="numerical">tableau.Orange20</option>
+		<option data-type="numerical">tableau.Green20</option>
+		<option data-type="numerical">tableau.Red20</option>
+		<option data-type="numerical">tableau.Purple20</option>
+		<option data-type="numerical">tableau.Brown20</option>
+		<option data-type="numerical">tableau.Gray20</option>
+		<option data-type="numerical">tableau.GrayWarm20</option>
+		<option data-type="numerical">tableau.BlueTeal20</option>
+		<option data-type="numerical">tableau.OrangeGold20</option>
+		<option data-type="numerical">tableau.GreenGold20</option>
+		<option data-type="numerical">tableau.RedGold21</option>
+		<option data-type="numerical">tableau.Classic10</option>
+		<option data-type="numerical">tableau.ClassicMedium10</option>
+		<option data-type="numerical">tableau.ClassicLight10</option>
+		<option data-type="numerical">tableau.Classic20</option>
+		<option data-type="numerical">tableau.ClassicGray5</option>
+		<option data-type="numerical">tableau.ClassicColorBlind10</option>
+		<option data-type="numerical">tableau.ClassicTrafficLight9</option>
+		<option data-type="numerical">tableau.ClassicPurpleGray6</option>
+		<option data-type="numerical">tableau.ClassicPurpleGray12</option>
+		<option data-type="numerical">tableau.ClassicGreenOrange6</option>
+		<option data-type="numerical">tableau.ClassicGreenOrange12</option>
+		<option data-type="numerical">tableau.ClassicBlueRed6</option>
+		<option data-type="numerical">tableau.ClassicBlueRed12</option>
+		<option data-type="numerical">tableau.ClassicCyclic13</option>
+		<option data-type="numerical">tableau.ClassicGreen7</option>
+		<option data-type="numerical">tableau.ClassicGray13</option>
+		<option data-type="numerical">tableau.ClassicBlue7</option>
+		<option data-type="numerical">tableau.ClassicRed9</option>
+		<option data-type="numerical">tableau.ClassicOrange7</option>
+		<option data-type="numerical">tableau.ClassicAreaRed11</option>
+		<option data-type="numerical">tableau.ClassicAreaGreen11</option>
+		<option data-type="numerical">tableau.ClassicAreaBrown11</option>
+		<option data-type="numerical">tableau.ClassicRedGreen11</option>
+		<option data-type="numerical">tableau.ClassicRedBlue11</option>
+		<option data-type="numerical">tableau.ClassicRedBlack11</option>
+		<option data-type="numerical">tableau.ClassicAreaRedGreen21</option>
+		<option data-type="numerical">tableau.ClassicOrangeBlue13</option>
+		<option data-type="numerical">tableau.ClassicGreenBlue11</option>
+		<option data-type="numerical">tableau.ClassicRedWhiteGreen11</option>
+		<option data-type="numerical">tableau.ClassicRedWhiteBlack11</option>
+		<option data-type="numerical">tableau.ClassicOrangeWhiteBlue11</option>
+		<option data-type="numerical">tableau.ClassicRedWhiteBlackLight10</option>
+		<option data-type="numerical">tableau.ClassicOrangeWhiteBlueLight11</option>
+		<option data-type="numerical">tableau.ClassicRedWhiteGreenLight11</option>
+		<option data-type="numerical">tableau.ClassicRedGreenLight11</option>
+		<option data-type="textual">d3.scale.category10</option>
+		<option data-type="textual">d3.scale.category20</option>
+		<option data-type="textual">d3.scale.category20b</option>
+		<option data-type="textual">d3.scale.category20c</option>
     </select><br />
     
     <label><spring:message code="label.Size" /></label><br />

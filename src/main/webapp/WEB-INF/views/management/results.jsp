@@ -10,6 +10,10 @@
 	<link href="${contextpath}/resources/css/management.css" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/charts.css" rel="stylesheet" type="text/css" />
 	
+	<script type="text/javascript" src="${contextpath}/resources/js/d3.v3.min.js?version=<%@include file="../version.txt" %>"></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/d3.layout.cloud.min.js?version=<%@include file="../version.txt" %>"></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/wordcloud.js?version=<%@include file="../version.txt" %>"></script>
+	
 	<style>
 	
 		.hiddenTableCell {

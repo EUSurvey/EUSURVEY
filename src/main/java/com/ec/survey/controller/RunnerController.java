@@ -14,6 +14,12 @@ import com.ec.survey.model.survey.*;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
 import com.ec.survey.tools.export.StatisticsCreator;
+import com.kennycason.kumo.WordFrequency;
+import com.kennycason.kumo.nlp.FrequencyAnalyzer;
+import com.kennycason.kumo.nlp.normalize.CharacterStrippingNormalizer;
+import com.kennycason.kumo.nlp.normalize.LowerCaseNormalizer;
+import com.kennycason.kumo.nlp.normalize.TrimToEmptyNormalizer;
+
 import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -2504,6 +2510,15 @@ public class RunnerController extends BasicController {
 					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 				}
 			}
+			
+			if (question instanceof FreeTextQuestion) {
+				
+				if (question.getDelphiChartType() == DelphiChartType.None) {
+					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+				}
+				
+				return handleDelphiFreetextQuestion(survey, question, creator);
+			}
 
 			Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapMatrix = new HashMap<>();
@@ -2605,6 +2620,49 @@ public class RunnerController extends BasicController {
 
 		if (result.getQuestions().isEmpty()) {
 			return ResponseEntity.noContent().build();
+		}
+
+		return ResponseEntity.ok(result);
+	}
+	
+	private static List<String> stopWords = null;
+	
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiFreetextQuestion(Survey survey, Question question, StatisticsCreator creator) throws TooManyFiltersException {
+		final FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
+		frequencyAnalyzer.setWordFrequenciesToReturn(200);
+		frequencyAnalyzer.addNormalizer(new LowerCaseNormalizer());
+		frequencyAnalyzer.addNormalizer(new TrimToEmptyNormalizer());
+		frequencyAnalyzer.addNormalizer(new CharacterStrippingNormalizer());
+		frequencyAnalyzer.setMinWordLength(3);
+				
+		if (stopWords == null) {
+			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/StopWords/EN.txt");
+			String text;
+			try {
+				text = IOUtils.toString(inputStream, "UTF-8");
+				String[] stopWordsArray = text.split("\\R");
+				stopWords = Arrays.asList(stopWordsArray);
+			} catch (IOException e) {
+				logger.error(e.getLocalizedMessage(), e);
+				stopWords = Arrays.asList("and", "or");
+			}
+		}
+		
+		frequencyAnalyzer.setStopWords(stopWords);
+		
+		List<String> texts = creator.getAnswers4FreeTextStatistics(survey, question);
+		final List<WordFrequency> wordFrequencies = frequencyAnalyzer.load(texts);
+		
+		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+		result.setChartType(question.getDelphiChartType());
+		result.setQuestionType(DelphiQuestionType.FreeText);
+		result.setLabel(question.getStrippedTitle());
+	
+		for (WordFrequency frequency : wordFrequencies) {
+			DelphiGraphEntry delphiGraphEntry = new DelphiGraphEntry();
+			delphiGraphEntry.setLabel(frequency.getWord());
+			delphiGraphEntry.setValue(frequency.getFrequency());
+			result.addEntry(delphiGraphEntry);
 		}
 
 		return ResponseEntity.ok(result);

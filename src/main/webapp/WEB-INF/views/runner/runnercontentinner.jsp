@@ -7,13 +7,17 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
-	<input type="hidden" id="validatedPerPage" value="${form.survey.validatedPerPage}" />
-	<input type="hidden" id="newlang" name="newlang" value="${form.language.code }" />
-	<input type="hidden" id="newlangpost" name="newlangpost" value="false" />
-	<input type="hidden" id="newcss" name="newcss" value="" />
-	<input type="hidden" id="newviewpost" name="newviewpost" value="false" />
-	<input type="hidden" id="wcagMode" name="wcagMode" value="${form.wcagCompliance}" />
-	<input type="hidden" id="multipaging" value="${form.survey.multiPaging}" />
+<script type="text/javascript" src="${contextpath}/resources/js/d3.v3.min.js?version=<%@include file="../version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/d3.layout.cloud.min.js?version=<%@include file="../version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/wordcloud.js?version=<%@include file="../version.txt" %>"></script>
+
+<input type="hidden" id="validatedPerPage" value="${form.survey.validatedPerPage}" />
+<input type="hidden" id="newlang" name="newlang" value="${form.language.code }" />
+<input type="hidden" id="newlangpost" name="newlangpost" value="false" />
+<input type="hidden" id="newcss" name="newcss" value="" />
+<input type="hidden" id="newviewpost" name="newviewpost" value="false" />
+<input type="hidden" id="wcagMode" name="wcagMode" value="${form.wcagCompliance}" />
+<input type="hidden" id="multipaging" value="${form.survey.multiPaging}" />
 
 <c:if test="${form.survey.isDelphi}">
 	<div class="modal" id="delphi-chart-modal" data-backdrop="static">

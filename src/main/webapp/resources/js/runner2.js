@@ -664,6 +664,11 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 
 			forModal = forModal === true;
 
+			if (result.questionType === "FreeText") {
+				createWordCloud(forModal ? null : div, result, result.chartType, false);
+				return;
+			}			
+			
 			var chartData = {};
 			var chartOptions = {
 				scaleShowValues: true,

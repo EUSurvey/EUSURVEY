@@ -863,6 +863,8 @@
 			strings["Scatter"] ="<spring:message code="label.DelphiChartScatter" />";
 			strings["MaxDistanceToMedian"] ="<spring:message code="label.MaxDistanceToMedian" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.MaxDistanceToMedian" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 			strings["Ignore"] ="<spring:message code="label.Ignore" />";
+			strings["None"] ="<spring:message code="label.None" />";
+			strings["WordCloud"] ="<spring:message code="label.DelphiChartWordCloud" />";
 			
 	 		return strings[label];
 	 	}

@@ -324,6 +324,7 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getChoosePropertiesRow("DelphiChartType", "None,WordCloud", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
 				}
 				getTextPropertiesRow("Text", element.originalTitle(), true);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);

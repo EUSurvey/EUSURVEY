@@ -170,7 +170,7 @@
 				$(this).parent().find('[data-toggle="tooltip"]').tooltip();
 
 				var chartwrapper = $(this);
-				loadGraphDataInner(chartwrapper, addChart, null, 'tableau.Tableau10', null);
+				loadGraphDataInner(chartwrapper, addChart, null, null, null);
 			});
 		}
 
@@ -269,7 +269,7 @@
 			// multiple lines => return as array
 			return result;
 		}
-
+		
 		function loadGraphDataInner(div, chartCallback, chartType, scheme, legend) {
 
 			var surveyid = div.data("survey-id");
@@ -290,8 +290,8 @@
 					showError(data.responseText);
 				},
 				success: function (result, textStatus) {
-					if (textStatus === "nocontent") {
-						var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
+					var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
+					if (textStatus === "nocontent") {						
 						$(elementWrapper).find(".delphi-chart").remove();
 						$(elementWrapper).find(".chart-wrapper").hide();
 						$(elementWrapper).find(".chart-controls").hide();
@@ -302,6 +302,22 @@
 					if (chartType == null) {
 						chartType = result.chartType;
 					}
+					
+					if (result.questionType === "FreeText") {
+						if (scheme == null) {
+							scheme = "d3.scale.category20";
+						}
+						
+						createWordCloud(div, result, chartType, true, scheme);
+						return;
+					}
+					
+					if (scheme == null) {
+						scheme = "tableau.Tableau10";
+					}
+					
+					$(elementWrapper).find("option[data-type='textual']").hide();
+					$(elementWrapper).find("option[data-type='numerical']").show();
 
 					var showLegendBox = result.questionType === "Matrix" || result.questionType === "Rating" || chartType === "Pie";
 					legend = legend == undefined ? showLegendBox : showLegendBox && legend;

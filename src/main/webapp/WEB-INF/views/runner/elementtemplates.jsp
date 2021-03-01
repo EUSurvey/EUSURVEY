@@ -427,7 +427,8 @@
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
-			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />	
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
 			<input type="hidden" data-bind="value: numRows, attr: {'name': 'rows' + id()}" />
 			<input type="hidden" data-bind="value: minCharacters, attr: {'name': 'min' + id()}" />
@@ -1249,6 +1250,7 @@
 						<tr>
 							<td style='padding-top:10px; padding-bottom:10px'>
 								<div class="delphi-chart-div"></div>
+								<div data-bind="attr: {id: 'wordcloud' + uniqueId()}" class="delphi-chart-div" style="display:none"></div>
 							</td>
 						</tr>
 					</table>
