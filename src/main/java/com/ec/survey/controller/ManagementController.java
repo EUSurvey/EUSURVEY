@@ -2662,7 +2662,7 @@ public class ManagementController extends BasicController {
 		return new ModelAndView(
 				"redirect:/" + survey.getShortname() + "/management/results?message=recalculatestarted");
 	}
-
+	
 	@RequestMapping(value = "/results")
 	public ModelAndView results(@PathVariable String shortname, HttpServletRequest request, Locale locale)
 			throws Exception {
