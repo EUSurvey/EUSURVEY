@@ -35,6 +35,9 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	public static final String APPLICATION_CAPTCHA_KEY = "captchaKey";
 	public @Value("${captcha.key}") String captchakey;	
 	
+	public static final String APPLICATION_CAPTCHA_SERVERPREFIX = "captchaServerPrefix";
+	public @Value("${captcha.serverprefix}") String captchaserverprefix;	
+	
 	public static final String APPLICATION_ARCHIVING = "enablearchiving";
 	public @Value("${ui.enablearchiving}") String enablearchiving;
 	
@@ -92,6 +95,8 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
         	
             modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_BYPASS, isByPassCaptcha());
             modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_KEY, captchakey);
+            modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_SERVERPREFIX, captchaserverprefix);
+            
             modelAndView.getModelMap().addAttribute(APPLICATION_ARCHIVING, enablearchiving != null && enablearchiving.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_OPC, enableopc != null && enableopc.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_PUBLICSURVEYS, enablepublicsurveys != null && enablepublicsurveys.equalsIgnoreCase("true"));
