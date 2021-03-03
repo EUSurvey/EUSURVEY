@@ -4,6 +4,7 @@ import com.ec.survey.tools.ConversionTools;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class DelphiTableEntry {
     private final List<DelphiTableAnswer> answers = new ArrayList<>();
@@ -15,6 +16,7 @@ public class DelphiTableEntry {
     private String answerSetUniqueCode;
     private final List<DelphiComment> comments = new ArrayList<>();
     private final List<DelphiTableFile> files = new ArrayList<>();
+    private final String uid = UUID.randomUUID().toString();
 
     public String getExplanation() {
         return explanation;
@@ -63,4 +65,8 @@ public class DelphiTableEntry {
     public List<DelphiTableFile> getFiles() {
         return files;
     }
+
+	public String getUid() {
+		return uid;
+	}
 }

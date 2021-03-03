@@ -1255,6 +1255,10 @@ legend {
 	font-weight: bold; white-space: pre; margin-right: 2px;
 }
 
+#delphi-hide-survey {
+ 	text-align: center; padding-top: 200px; z-index: 10; position: fixed; top: 20px; left: 0; right: 0; bottom: 0; background-color: #fff; opacity: 0.8;	
+}
+
 .delphi-chart-expand {
 	cursor: pointer;
 	float: right;

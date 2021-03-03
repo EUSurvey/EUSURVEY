@@ -109,6 +109,8 @@ function createWordCloud(div, result, chartType, forResults, scheme) {
 			$('#wordcloud' + questionuid).empty();
 		}
 		
+		$(div).closest(".elementwrapper, .statelement-wrapper").find(".chart-wrapper-loader").hide();
+		
 		return;	
 	}	
 	
@@ -164,6 +166,7 @@ function createWordCloud(div, result, chartType, forResults, scheme) {
 	    
 	    $(elementWrapper).find(".delphi-chart").remove();
 		$(elementWrapper).find(".chart-wrapper").show();
+		$(elementWrapper).find(".chart-wrapper-loader").hide();
 	    
 	    if (forResults) {
 	    
