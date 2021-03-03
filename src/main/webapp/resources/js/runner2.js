@@ -1179,9 +1179,6 @@ function selectPageAndScrollToQuestionIfSet() {
 			$(".single-page").hide();		
 			$(p).show();
 			checkPages();
-			//setTimeout(scrollToQuestionIfSet, 3000);
-		} else {
-			//setTimeout(scrollToQuestionIfSet, 7000);
 		}
 		
 		setTimeout(checkMissingElementsAndScroll, 2000);
