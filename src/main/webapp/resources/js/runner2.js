@@ -882,7 +882,7 @@ function addChart(div, chart) {
 	var elementWrapper = $(div).closest(".elementwrapper");
 
 	$(elementWrapper).find(".delphi-chart").remove();
-	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='300' height='220'></canvas>");
+	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='400' height='296'></canvas>");
 
 	$(elementWrapper).find(".chart-wrapper").show();
 
