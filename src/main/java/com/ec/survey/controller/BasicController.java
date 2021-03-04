@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
@@ -68,8 +69,6 @@ import com.ec.survey.tools.InvalidXHTMLException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.WeakAuthenticationException;
-import com.octo.captcha.service.CaptchaServiceException;
-import com.octo.captcha.service.multitype.MultiTypeCaptchaService;
 
 @Controller
 public class BasicController implements BeanFactoryAware {
@@ -137,6 +136,7 @@ public class BasicController implements BeanFactoryAware {
 	protected ReportingServiceProxy reportingService;
 
 	public @Value("${captcha.secret}") String captchasecret;
+	public @Value("${captcha.serverprefix}") String captchaserverprefix;	
 	public @Value("${ui.enableresponsive}") String enableresponsive;
 	private @Value("${ecaslogout}") String ecaslogout;
 	public @Value("${showecas}") String showecas;
@@ -152,9 +152,6 @@ public class BasicController implements BeanFactoryAware {
 
 	@Autowired
 	public ServletContext servletContext;
-
-	@Autowired
-	private MultiTypeCaptchaService captchaService;
 
 	@Value("${server.prefix}")
 	public String serverPrefix;
@@ -486,7 +483,6 @@ public class BasicController implements BeanFactoryAware {
 		URLConnection connection = null;
 		try {
 			if (!isByPassCaptcha()) {
-
 				String captcha = settingsService.get("captcha");
 				if (captcha.equalsIgnoreCase("recaptcha")) {
 					sessionService.initializeProxy();
@@ -503,30 +499,70 @@ public class BasicController implements BeanFactoryAware {
 							return inputLine.contains("true");
 						}
 					in.close();
-				} else if (captcha.equalsIgnoreCase("internal")) {
-					String str = request.getParameter("j_captcha_response");
+				}
+				if (captcha.equalsIgnoreCase("internal")) {
+					String str = request.getParameter("internal_captcha_response");
+					return sessionService.getCaptchaText(request).equals(str);
+				} 
+				if (captcha.equalsIgnoreCase("eucaptcha")) {
+					String str = request.getParameter("internal_captcha_response");
 					if (str == null)
+					{
 						str = request.getParameter("g-recaptcha-response");
-
-					boolean validCaptcha = false;
-					try {
-						validCaptcha = captchaService.validateResponseForID(request.getSession().getId(), str);
-					} catch (CaptchaServiceException e) {
-						// should not happen, may be thrown if the id is not valid
+					}
+					
+					String token = request.getParameter("captcha_token");
+					String id = request.getParameter("captcha_id");
+					String useaudio = request.getParameter("captcha_useaudio");
+					
+					if (token == null) {
+						String challenge = request.getParameter("recaptcha_challenge_field");
+						if (challenge != null && challenge.contains("|"))
+						{
+							String[] pair = challenge.split("\\|");
+							id = pair[0];
+							token = pair[1];
+							useaudio = pair[2];
+						}
+					}
+					
+					if (str == null || id == null || token == null) {
 						return false;
 					}
-					return validCaptcha;
-				} else {
-					return true;
+					
+					sessionService.initializeProxy();
+					URL url = new URL(captchaserverprefix + "validateCaptcha/" + id);
+					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+					conn.setRequestMethod("POST");
+					conn.setRequestProperty("jwtString", token);
+					conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+					
+					String postData = "captchaAnswer="  + str + "&useAudio=" + ("true".equalsIgnoreCase(useaudio));
+					byte[] postDataBytes = postData.getBytes("UTF-8");
+					
+					conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
+				    conn.setDoOutput(true);
+				    conn.getOutputStream().write(postDataBytes);
+				    
+				    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				    StringBuilder sb = new StringBuilder();
+			        for (int c; (c = in.read()) >= 0;) {
+			            sb.append((char)c);
+			        }
+			        String response = sb.toString();
+					in.close();
+					
+					return response.equalsIgnoreCase("{\"responseCaptcha\":\"success\"}");
 				}
 				return false;
 			} else {
-				logger.error("checkCaptcha Has been bypassing");
 				return true;
 			}
 		} catch (NullPointerException npe) {
 			// this happens when the captcha was not displayed. We can ignore it here as
 			// that is handled on the page itself
+		} catch (IOException ioe) {
+			// this happens when the eucaptcha returns "unsuccessful"			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
