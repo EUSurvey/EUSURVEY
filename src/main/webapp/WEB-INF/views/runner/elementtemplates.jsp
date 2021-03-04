@@ -1201,7 +1201,7 @@
 		<!-- /ko -->
 				
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">					
-			<div class="col-md-7">
+			<div class="col-md-6">
 				<div class="explanation-section">
 				
 					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff">
@@ -1238,7 +1238,7 @@
 					</table>
 				</div>				
 			</div>
-			<div class="col-md-5">
+			<div class="col-md-6">
 				<div class="chart-wrapper-loader loader">
 					<img src="${contextpath}/resources/images/ajax-loader.gif">
 				</div>
