@@ -7,6 +7,7 @@ public class DelphiTable {
     private List<DelphiTableEntry> entries = new ArrayList<>();
     private int offset;
     private int total;
+    private boolean showExplanationBox;
 
     public List<DelphiTableEntry> getEntries() {
         return entries;
@@ -31,4 +32,12 @@ public class DelphiTable {
     public void setTotal(int total) {
         this.total = total;
     }
+
+	public boolean isShowExplanationBox() {
+		return showExplanationBox;
+	}
+
+	public void setShowExplanationBox(boolean showExplanationBox) {
+		this.showExplanationBox = showExplanationBox;
+	}
 }

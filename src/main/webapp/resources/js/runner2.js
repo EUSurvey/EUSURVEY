@@ -1049,6 +1049,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 		},
 		success: function (result, textStatus) {
 			viewModel.delphiTableEntries.removeAll();
+			viewModel.showExplanationBox(result.showExplanationBox);
 
 			if (textStatus === "nocontent") {
 				return;

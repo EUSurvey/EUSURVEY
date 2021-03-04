@@ -3078,6 +3078,8 @@ public class RunnerController extends BasicController {
 			} else {
 				result = handleDelphiTableRawValueQuestion(question, orderBy, limit, offset);
 			}
+			
+			result.setShowExplanationBox(question.isShowExplanationBox());
 
 			return ResponseEntity.ok(result);
 		} catch (Exception e) {

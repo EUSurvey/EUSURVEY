@@ -17,7 +17,7 @@ function getNewElement(item)
 		element.isComparable = false;
 		element.css = "freetext";
 		element.numRows = 1;
-		element.isDelphiQuestion = isDelphi;	
+		element.isDelphiQuestion = isDelphi;
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("singlechoiceitem"))
 	{
@@ -29,7 +29,7 @@ function getNewElement(item)
 		element.order = 0;
 		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
 		element.orderedPossibleAnswers = element.possibleAnswers;
-		element.isDelphiQuestion = isDelphi;	
+		element.isDelphiQuestion = isDelphi;
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("rankingitem"))
@@ -435,7 +435,8 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		element.attributeName = element.shortname;
 		element.readonly = false;
 		
-		element.isDelphiQuestion = false;		
+		element.isDelphiQuestion = false;
+		element.showExplanationBox = true;
 	}
 	
 	if (type == "PossibleAnswer")
