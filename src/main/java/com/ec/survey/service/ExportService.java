@@ -249,12 +249,12 @@ public class ExportService extends BasicService {
 
 	@Transactional(readOnly = true)
 	public List<Export> getExports(int userId, String sortKey, boolean ascending, boolean determinestate, boolean onlynotnotified) {
-		return getExports(userId,sortKey,ascending,-1,-1, false, determinestate, onlynotnotified, false);
+		return getExports(userId,sortKey,ascending,-1,-1, false, determinestate, onlynotnotified);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<Export> getExports(int userId, String sortKey, boolean ascending, int page, int rowsPerPage, boolean eagerloading, boolean determinestate, boolean onlynotnotified, boolean overrideSurveyTitle) {
+	public List<Export> getExports(int userId, String sortKey, boolean ascending, int page, int rowsPerPage, boolean eagerloading, boolean determinestate, boolean onlynotnotified) {
 		Session session = sessionFactory.getCurrentSession();
 		
 		//I do this for security reasons as we will use string concatenation below (bad practice but hibernate does not allow to use parameters for ordering)
@@ -328,11 +328,6 @@ public class ExportService extends BasicService {
 					if (determinestate) determineValidState(export, true);
 				} else {
 					if (determinestate) determineValidState(export, false);
-				}
-				
-				if (overrideSurveyTitle)
-				{
-					export.setSurvey(surveyService.getSurveyInOriginalLanguage(export.getSurvey().getId(), export.getSurvey().getShortname(), export.getSurvey().getUniqueId()));
 				}
 				
 				result.add(export);

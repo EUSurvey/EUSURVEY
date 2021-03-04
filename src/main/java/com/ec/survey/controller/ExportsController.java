@@ -268,10 +268,10 @@ public class ExportsController extends BasicController {
 
 		if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement).equals(2)) {
 			exports = exportService.getExports(-1, sortKey, sortOrder.equalsIgnoreCase("asc"), page, itemsPerPage, true,
-					true, false, true);
+					true, false);
 		} else {
 			exports = exportService.getExports(user.getId(), sortKey, sortOrder.equalsIgnoreCase("asc"), page,
-					itemsPerPage, true, true, false, true);
+					itemsPerPage, true, true, false);
 		}
 		return exports;
 	}
