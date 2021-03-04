@@ -1201,7 +1201,7 @@ function delphiUpdate(div) {
 
 	const result = validateInput(div);
 	const message = $(div).find(".delphiupdatemessage").first();
-	$(message).removeClass("update-error");
+	$(message).attr("class", "delphiupdatemessage");
 	if (result == false) {
 		return;
 	}
@@ -1272,11 +1272,11 @@ function delphiUpdateContinued(div, successCallback) {
 		},
 		error: function(data)
 	    {
-			$(message).html(data.message).addClass("update-error");
+			$(message).html(data.responseJSON.message).addClass("update-error label label-danger");
 			$(loader).hide();
 		},
 		success: function (data) {
-			$(message).html(data.message).addClass("info");
+			$(message).html(data.message).addClass("label label-success");
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
 			
 			if (data.open) {
@@ -1356,7 +1356,7 @@ function updateDelphiElement(element, successCallback) {
 
 function updateQuestionsOnNavigation(page) {
 	if (isdelphi) {
-		$(".delphiupdatemessage").empty();
+		$(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
 		var section = $("#page" + page);
 		var found = $(section).find(".survey-element").is(function () {
 			return $(this).hasClass("sectionitem") === false;

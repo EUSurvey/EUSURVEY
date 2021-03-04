@@ -149,7 +149,7 @@ function propagateChange(element)
 	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
 	$(div).find(".explanation-section").show();
 	$(div).find(".explanation-file-upload-section").show();
-	$(div).find(".delphiupdatemessage").empty();
+	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
 }
 
 var downloadsurveypdflang;
