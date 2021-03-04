@@ -25,9 +25,7 @@
 			<thead style="background-position: initial initial; background-repeat: initial initial;">
 				<tr>
 					<c:if test="${publication == null}">
-						<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-							<th class="checkDelete">&nbsp;</th>
-						</c:if>
+						<th class="checkDelete">&nbsp;</th>
 						<th class="topaligned" style="width: 150px"><div style="width: 133px"><spring:message code="label.Actions" /></div></th>
 					</c:if>
 					<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
@@ -94,13 +92,9 @@
 				<c:if test="${publication == null || publication.isShowSearch()}">
 					<tr class="table-styled-filter">
 						<c:if test="${publication == null}">
-							<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-								<th class="checkDelete"><span data-toggle="tooltip" data-trigger="hover" data-original-title="<spring:message code="label.SelectAll" />"><input name="check-all-delete" id="check-all-delete" class="check checkDelete" style="margin-bottom: 8px !important;" type="checkbox" onclick="checkAllDelete()" /></span></th>
-							</c:if>
+							<th class="checkDelete"><span data-toggle="tooltip" data-trigger="hover" data-original-title="<spring:message code="label.SelectAll" />"><input name="check-all-delete" id="check-all-delete" class="check checkDelete" style="margin-bottom: 8px !important;" type="checkbox" onclick="checkAllDelete()" /></span></th>
 							<th>
-								<c:if test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
-									<a data-toggle="tooltip" title="<spring:message code="label.DeleteAll" />" class="iconbutton disabled" disabled="disabled" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-remove"></span></a>
-								</c:if>
+								<a data-toggle="tooltip" title="<spring:message code="label.DeleteAll" />" class="iconbutton disabled" disabled="disabled" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-remove"></span></a>
 							</th>
 						</c:if>
 						<c:forEach items="${form.getSurvey().getQuestions()}" var="question">
@@ -1100,26 +1094,26 @@ var closeOverlayDivsEnabled = false;
 							 	
 							 	if ($("#show-delete-checkboxes").is(":checked"))
 								{
-									//visible
+									$(td).show();
 									if ($("#check-all-delete").is(":checked"))
 									{
 										$(inp).attr("checked", "checked");
 									}
 								} else {
-									$(td).addClass("hiddenTableCell");
+									$(td).hide();
 								}
-							 								 	
+							 
 								td = document.createElement("td");
 								var a = document.createElement("a");
-								$(a).attr("data-toggle", "tooltip").attr("rel","tooltip").attr("title",'<spring:message code="label.Delete" />').addClass("iconbutton disabled").append('<span class="glyphicon glyphicon-remove"></span>');
+								$(a).attr("data-toggle", "tooltip").attr("rel","tooltip").attr("title",'<spring:message code="label.Delete" />').addClass("btn disabled btn-default").addClass("btn-xs").append('<span class="glyphicon glyphicon-remove"></span>');
 								$(td).append(a);
 								$(td).append("&nbsp;");
 								a = document.createElement("a");
-								$(a).attr("data-toggle", "tooltip").attr("rel","tooltip").attr("title",'<spring:message code="label.Edit" />').addClass("iconbutton disabled").append('<span class="glyphicon glyphicon-pencil"></span>');
+								$(a).attr("data-toggle", "tooltip").attr("rel","tooltip").attr("title",'<spring:message code="label.Edit" />').addClass("btn btn-default btn-xs disabled").append('<span class="glyphicon glyphicon-pencil"></span>');
 								$(td).append(a);
 								$(td).append("&nbsp;");
 								a = document.createElement("a");
-								$(a).attr("data-toggle", "tooltip").attr("rel","tooltip").attr("title",'<spring:message code="label.Print" />').addClass("iconbutton").attr("target","_blank").attr("href","<c:url value='/printcontribution/'/>?code=" + list[i] + "").append('<span class="glyphicon glyphicon-print"></span>');
+								$(a).attr("data-toggle", "tooltip").attr("rel","tooltip").attr("title",'<spring:message code="label.Print" />').addClass("btn btn-default btn-xs").attr("target","_blank").attr("href","<c:url value='/printcontribution/'/>?code=" + list[i] + "").append('<span class="glyphicon glyphicon-print"></span>');
 								$(td).append(a);
 								$(td).append("&nbsp;");
 								a = document.createElement("a");

@@ -1301,7 +1301,6 @@
 		var p_deleted = '<spring:message code="message.ParticipantsGroupDeletedSuccessfully" />';
 		var p_operations = '<spring:message code="message.OperationsExecutedSuccessfully" />';
 		var p_guestlistcreated = '<spring:message code="info.GuestListCreatedNew" />';
-		var p_guestlistsaved = '<spring:message code="info.GuestListSaved" />';
 		var p_mailsstarted = '<spring:message code="info.MailsStarted" />';
 	</script>
 	
@@ -1330,11 +1329,6 @@
 			<c:when test='${action == "guestlistcreated"}'>
 				<script type="text/javascript"> 
 					showSuccess(p_guestlistcreated);
-				</script>
-			</c:when>
-			<c:when test='${action == "guestlistsaved"}'>
-				<script type="text/javascript"> 
-					showSuccess(p_guestlistsaved);
 				</script>
 			</c:when>
 			<c:when test='${action == "mailsstarted"}'>
