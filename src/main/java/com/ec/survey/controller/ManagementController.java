@@ -978,6 +978,7 @@ public class ManagementController extends BasicController {
 		if (survey.getIsDelphi()) {
 			survey.setChangeContribution(true); // should always be activated for delphi surveys
 			survey.setSaveAsDraft(false); // should always be deactivated for delphi surveys
+			survey.setDownloadContribution(false); // should always be deactivated for delphi surveys
 		}
 		
 		if (survey.getIsOPC()) {
@@ -1405,7 +1406,7 @@ public class ManagementController extends BasicController {
 
 		if (creation) {
 			survey.setOwner(u);
-			survey.setDownloadContribution(true);
+			survey.setDownloadContribution(!survey.getIsDelphi());
 		}
 
 		if (!creation) {

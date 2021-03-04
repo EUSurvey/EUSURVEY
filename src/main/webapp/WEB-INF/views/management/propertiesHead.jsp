@@ -40,6 +40,7 @@
 			this.isUseMaxNumberContributionLink = ko.observable(${form.survey.isUseMaxNumberContributionLink});
 			this.sendConfirmationEmail = ko.observable(${form.survey.sendConfirmationEmail});
 			this.changeContribution = ko.observable(${form.survey.changeContribution});
+			this.downloadContribution = ko.observable(${form.survey.downloadContribution});
 			this.saveAsDraft = ko.observable(${form.survey.saveAsDraft});
 			
 			this.addLinksRow = function()
@@ -162,6 +163,15 @@
 					this.self.saveAsDraft(false); // should always be deactivated for delphi surveys
 				} else {
 					this.self.saveAsDraft(!this.self.saveAsDraft());
+				}
+			}
+			
+			this.toggleDownloadContribution = function()
+			{
+				if (this.self.delphi()) {
+					this.self.downloadContribution(false); // should always be deactivated for delphi surveys
+				} else {
+					this.self.downloadContribution(!this.self.downloadContribution());
 				}
 			}
 			
