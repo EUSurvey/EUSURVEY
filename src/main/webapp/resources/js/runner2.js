@@ -1060,6 +1060,8 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 			for (let i = 0; i < result.entries.length; i++) {
 				const entry = result.entries[i];
 				
+				entry.uid = getNewId(); // create uuid
+				
 				for (let j = 0; j < entry.answers.length; j++) {
 					entry.answers[j].uid = getNewId(); // create uuid
 				}
