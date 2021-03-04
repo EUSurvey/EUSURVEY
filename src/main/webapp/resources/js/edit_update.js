@@ -138,16 +138,9 @@ function update(input)
 			var checked = $(input).is(":checked");
 			var oldtext = element.isDelphiQuestion();
 			element.isDelphiQuestion(checked);
-			const mandatoryPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Mandatory');
-			if (mandatoryPropertyRow) {
-				if (checked) {
-					mandatoryPropertyRow.Disabled(true);
-					mandatoryPropertyRow.Value(false);
-					element.optional(true);
-				} else {
-					mandatoryPropertyRow.Disabled(false);
-				}
-			}
+			
+			adaptDelphiControls(element);			
+			
 			$('#' + id).toggleClass("delphi");
 			_undoProcessor.addUndoStep(["DelphiQuestion", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
 			break;
@@ -156,6 +149,12 @@ function update(input)
 			var oldValue = element.delphiChartType();
 			element.delphiChartType(newValue);
 			_undoProcessor.addUndoStep(["DelphiChartType", id, $(_elementProperties.selectedelement).index(), oldValue, newValue]);
+			break;
+		case "ShowExplanationBox":
+			var newValue = $(input).is(":checked");
+			var oldValue = element.showExplanationBox();
+			element.showExplanationBox(newValue);
+			_undoProcessor.addUndoStep(["ShowExplanationBox", id, $(_elementProperties.selectedelement).index(), oldValue, newValue]);
 			break;
 		case "Name":
 			var text = $(input).val();
