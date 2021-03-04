@@ -1262,7 +1262,9 @@ legend {
 
 .delphiupdatemessage {
 	margin-left: 20px;
-	margin-top: 10px;
+    margin-top: 10px;
+    font-size: 13px !important;
+    display: inline-block !important;
 }
 
 .contribution-link-dialog__link {
