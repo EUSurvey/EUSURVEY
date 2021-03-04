@@ -1497,7 +1497,7 @@ public class AnswerService extends BasicService {
 			String answerSetUniqueCode) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery(
-				"select count(*) from ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID INNER JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID where s.ISDRAFT = :isdraft AND ans.UNIQUECODE != :ansuid AND ((a.QUESTION_ID= :questionId and a.VALUE= :value and a.ANSWER_ISDRAFT=0) or (a.QUESTION_UID= :questionUid and a.VALUE= :value and a.ANSWER_ISDRAFT=0))")
+				"select count(*) from ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID INNER JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID where s.ISDRAFT = :isdraft AND ans.UNIQUECODE != :ansuid AND ((a.QUESTION_ID= :questionId and a.VALUE= :value and ans.ISDRAFT=0) or (a.QUESTION_UID= :questionUid and a.VALUE= :value and ans.ISDRAFT=0))")
 				.setBoolean("isdraft", surveyIsDraft).setString("value", value).setString("ansuid", answerSetUniqueCode)
 				.setString("questionUid", questionUid).setInteger("questionId", questionId);
 		return ConversionTools.getValue(query.uniqueResult());
