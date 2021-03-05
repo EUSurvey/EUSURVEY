@@ -263,7 +263,8 @@ function createNewDelphiBasicViewModel() {
 		delphiTableLimit: ko.observable(20),
 		delphiTableOffset: ko.observable(0),
 		delphiTableTotalEntries: ko.observable(0),
-		delphiTableOrder: ko.observable("UpdateDesc")
+		delphiTableOrder: ko.observable("UpdateDesc"),
+		showExplanationBox: ko.observable(true)
 	};
 }
 
@@ -307,6 +308,7 @@ function newBasicViewModel(element)
 		viewModel.css = ko.observable(element.css);
 		viewModel.optional = ko.observable(element.optional);
 		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
+		viewModel.showExplanationBox = ko.observable(element.showExplanationBox);
 		viewModel.delphiChartType = ko.observable(element.delphiChartType);
 
 		if (element.scoringItems != null) {

@@ -24,7 +24,9 @@
 					</a>
 				</div>
 			</th>
+			<!-- ko if: showExplanationBox() -->
 			<th style="width:33%">${form.getMessage("label.DelphiAnswersTableExplanation")}</th>
+			<!-- /ko -->
 			<th style="width:33%">${form.getMessage("label.Discussion")}</th>
 		</tr>
 		</thead>
@@ -44,6 +46,7 @@
 				<!-- /ko -->
 			</td>
 			<td><span data-bind="html: update"></span></td>
+			<!-- ko if: $parent.showExplanationBox() -->
 			<td>
 				<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: { 'id': 'expanded-explanation' + uid }">
 				<span class="text-to-be-truncated" data-bind="html: explanation"></span>
@@ -55,6 +58,7 @@
 				<a data-bind="attr: {href: '${contextpath}/files/${form.survey.uniqueId}/' + uid}, text: name"></a>
 				<!-- /ko -->
 			</td>
+			<!-- /ko -->
 			<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId}">
 				<!-- ko foreach: comments -->
 				<div class="delphi-comment" data-bind="attr: {'data-id': id}">

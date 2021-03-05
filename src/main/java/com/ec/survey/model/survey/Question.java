@@ -36,6 +36,7 @@ public abstract class Question extends Element {
 	private List<ScoringItem> scoringItems;
 	private boolean delphiQuestion;
 	private DelphiChartType delphiChartType;
+	private boolean showExplanationBox;
 
 	public Question() {
 	}
@@ -134,6 +135,15 @@ public abstract class Question extends Element {
 	public void setDelphiChartType(DelphiChartType delphiChartType) {
 		this.delphiChartType = delphiChartType == null ? DelphiChartType.Bar : delphiChartType;
 	}
+	
+	@Column(name = "DELPHIEXPLANATION")
+	public Boolean isShowExplanationBox() {
+		return showExplanationBox;
+	}
+
+	public void setShowExplanationBox(Boolean showExplanationBox) {
+		this.showExplanationBox = showExplanationBox == null ? true : showExplanationBox;
+	}
 
 	@OneToMany(targetEntity = ScoringItem.class, cascade = CascadeType.ALL)
 	@Fetch(value = FetchMode.SELECT)
@@ -166,6 +176,7 @@ public abstract class Question extends Element {
 		copy.setSubType(getSubType());
 		copy.setDisplayMode(getDisplayMode());
 		copy.setIsDelphiQuestion(getIsDelphiQuestion());
+		copy.setShowExplanationBox(isShowExplanationBox());
 		copy.setDelphiChartType(getDelphiChartType());
 
 		if (scoringItems != null) {

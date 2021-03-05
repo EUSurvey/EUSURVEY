@@ -1995,3 +1995,24 @@ function adaptSliderDisplay(isSlider)
 		$("tr[data-label='MaxDistanceToMedian']").hide();
 	}
 }
+
+function adaptDelphiControls(element) {
+	const mandatoryPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Mandatory');
+	if (mandatoryPropertyRow) {
+		if (element.isDelphiQuestion()) {
+			mandatoryPropertyRow.Disabled(true);
+			mandatoryPropertyRow.Value(false);
+			element.optional(true);
+		} else {
+			mandatoryPropertyRow.Disabled(false);
+		}
+	}
+	
+	if (element.isDelphiQuestion()) {
+		$("tr[data-label='ShowExplanationBox']").show();
+		$("tr[data-label='DelphiChartType']").show();
+	} else {
+		$("tr[data-label='ShowExplanationBox']").hide();
+		$("tr[data-label='DelphiChartType']").hide();
+	}
+}
