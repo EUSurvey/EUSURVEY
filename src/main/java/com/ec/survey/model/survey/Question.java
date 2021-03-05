@@ -260,6 +260,7 @@ public abstract class Question extends Element {
 
 			if (!(Objects.equals(getAttributeName(), question.getAttributeName()))) return true;
 			if (!(Objects.equals(getIsDelphiQuestion(), question.getIsDelphiQuestion()))) return true;
+			if (!(Objects.equals(isShowExplanationBox(), question.isShowExplanationBox()))) return true;
 			if (!(Objects.equals(getDelphiChartType(), question.getDelphiChartType()))) return true;
 		} else {
 			return true;
