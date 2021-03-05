@@ -138,13 +138,15 @@ function createWordCloud(div, result, chartType, forResults, scheme) {
 		$(div).find('.no-graph-image').hide();
 		$(div).find('.delphi-chart-expand').show();			
 				
-		var w = 300;
-		var h = 200;
+		var w = 400;
+		var h = 295;
 		var f = 10;
 	
 		var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 				
 		if (forResults) {
+			w = 300;
+			h = 200;
 			$(elementWrapper).find(".chart-type").val(chartType);
 			$(elementWrapper).find(".chart-scheme").val(scheme);
 			
