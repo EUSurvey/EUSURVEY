@@ -2,12 +2,13 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
+<div class="loader" data-bind="style: { display: delphiTableLoading() ? 'flex' : 'none' }">
+	<img src="${contextpath}/resources/images/ajax-loader.gif">
+</div>
 
 <!-- ko if: delphiTableEntries().length > 0 -->
 <div class="delphi-table">
-	<div class="loader" data-bind="style: { display: delphiTableLoading() ? 'flex' : 'none' }">
-		<img src="${contextpath}/resources/images/ajax-loader.gif">
-	</div>
+	
 	<table class="table table-condensed table-striped table-bordered">
 		<thead>
 		<tr class="area-header">
