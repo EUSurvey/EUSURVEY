@@ -1255,6 +1255,33 @@ legend {
 	font-weight: bold; white-space: pre; margin-right: 2px;
 }
 
+#chartjs-tooltip {
+	color: #fff;
+	background-color: #222;
+	opacity: 0.8;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	z-index: 10000;
+}
+
+#chartjs-tooltip th {
+	font-weight: bold;
+	padding-left: 2px;
+	text-align: left;
+}
+
+#chartjs-tooltip td {
+	padding-left: 10px;
+	text-align: left;
+}
+
+.chartjs-line {
+	width: 9px;
+	height: 9px;
+	display: inline-block;
+	margin-right: 4px;
+}
+
 #delphi-hide-survey {
  	text-align: center;
  	padding-top: 200px;
