@@ -656,6 +656,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					var elementWrapper = $(div).closest(".elementwrapper");
 					$(elementWrapper).find(".delphi-chart").remove();
 					$(elementWrapper).find(".chart-wrapper").hide();
+					$(elementWrapper).find(".chart-wrapper-loader").hide();
 				}
 
 				addStatisticsToAnswerText(div, null);
@@ -887,6 +888,8 @@ function addChart(div, chart) {
 	$(elementWrapper).find(".chart-wrapper").show();
 
 	new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
+	
+	$(elementWrapper).find(".chart-wrapper-loader").hide();
 }
 
 function addChartModal(_, chart) {
@@ -1058,6 +1061,12 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 			for (let i = 0; i < result.entries.length; i++) {
 				const entry = result.entries[i];
 				
+				entry.uid = getNewId(); // create uuid
+				
+				for (let j = 0; j < entry.answers.length; j++) {
+					entry.answers[j].uid = getNewId(); // create uuid
+				}
+				
 				entry.showCommentArea = function() {
 					hideCommentAndReplyForms();
 					this.isCommentFormVisible(true);
@@ -1164,8 +1173,10 @@ function loadMedianData(div, viewModel) {
 
 function selectPageAndScrollToQuestionIfSet() {
 	if (window.location.hash) {
-		//select correct page in case of multi-paging
 		
+		$('#delphi-hide-survey').show();
+		
+		//select correct page in case of multi-paging		
 		if ($(".single-page").length > 1)
 		{
 			const elementAnchorId = location.hash.substr(1);
@@ -1175,16 +1186,32 @@ function selectPageAndScrollToQuestionIfSet() {
 			$(".single-page").hide();		
 			$(p).show();
 			checkPages();
-			setTimeout(scrollToQuestionIfSet, 3000);
-		} else {
-			setTimeout(scrollToQuestionIfSet, 7000);
 		}
+		
+		setTimeout(checkMissingElementsAndScroll, 2000);
 	}
+}
+
+function checkMissingElementsAndScroll()
+{
+	var loaders = $('.delphi-table').find(".loader:visible").length;
+	
+	if (loaders == 0) {
+		loaders = $('.chart-wrapper-loader:visible').length;
+	}
+	
+	if (loaders > 0) {
+		setTimeout(checkMissingElementsAndScroll, 2000);
+		return;
+	}
+	
+	scrollToQuestionIfSet();
 }
 
 function scrollToQuestionIfSet() {
 	const elementAnchorId = location.hash.substr(1);
 	document.getElementById(elementAnchorId).scrollIntoView();
+	$('#delphi-hide-survey').hide();
 }
 
 var delphiUpdateFinished = false;

@@ -32,6 +32,11 @@
 			</div>
 		</div>
 	</div>
+	
+	<div id="delphi-hide-survey">
+		<div style="font-size: 25px; margin-bottom: 10px"><spring:message code="label.PleaseWait" /></div>
+		<img src="${contextpath}/resources/images/ajax-loader.gif"/>
+	</div>
 </c:if>
 
 		<c:choose>

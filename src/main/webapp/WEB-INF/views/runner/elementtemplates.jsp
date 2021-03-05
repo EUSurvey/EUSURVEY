@@ -1253,6 +1253,9 @@
 				<!-- /ko -->		
 			</div>
 			<div class="col-md-6">
+				<div class="chart-wrapper-loader loader">
+					<img src="${contextpath}/resources/images/ajax-loader.gif">
+				</div>
 				<div class='chart-wrapper'>
 					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: right">
 						<tr>
