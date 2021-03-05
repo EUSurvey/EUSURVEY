@@ -101,7 +101,7 @@ function getWordCloudData(result, f)
     return data;
 }
 
-function createWordCloud(div, result, chartType, forResults, scheme) {
+function createWordCloud(div, result, chartType, forResults, forStartpage, scheme) {
 	if (result.data.length==0 || chartType == 'None')
 	{
 		if (forResults) {
@@ -143,8 +143,11 @@ function createWordCloud(div, result, chartType, forResults, scheme) {
 		var f = 10;
 	
 		var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
-				
-		if (forResults) {
+
+		if (forStartpage) {
+			w = 300;
+			h = 200;
+		} else if (forResults) {
 			w = 300;
 			h = 200;
 			$(elementWrapper).find(".chart-type").val(chartType);

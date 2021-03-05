@@ -308,7 +308,7 @@
 							scheme = "d3.scale.category20";
 						}
 						
-						createWordCloud(div, result, chartType, true, scheme);
+						createWordCloud(div, result, chartType, true, false, scheme);
 						return;
 					}
 					

@@ -637,7 +637,7 @@ function wrapChartLabelCallback(value, index, values) {
 	return wrapLabel(value, 20);
 }
 
-function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback, removeIfEmpty, forModal) {
+function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback, removeIfEmpty, forModal, forStartpage) {
 	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
 
 	$.ajax({
@@ -666,7 +666,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			forModal = forModal === true;
 
 			if (result.questionType === "FreeText") {
-				createWordCloud(forModal ? null : div, result, result.chartType, false);
+				createWordCloud(forModal ? null : div, result, result.chartType, false, forStartpage);
 				return;
 			}			
 			
@@ -995,7 +995,7 @@ function loadGraphData(div) {
 	var questionuid = $(div).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false);
+	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false, false);
 }
 
 function loadGraphDataModal(div) {
@@ -1004,7 +1004,7 @@ function loadGraphDataModal(div) {
 	var questionuid = $(surveyElement).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true);
+	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false);
 }
 
 function firstDelphiTablePage(element) {
