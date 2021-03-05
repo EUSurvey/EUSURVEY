@@ -1217,7 +1217,7 @@
 				<!-- ko if: showExplanationBox() -->
 				<div class="explanation-section">
 				
-					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff">
+					<table class='table table-condensed table-bordered minh355' style="width: auto; margin-bottom: 0; background-color: #fff">
 						<tr>
 							<th class='area-header'>${form.getMessage("label.ExplainYourAnswer")}</th>
 						</tr>
@@ -1257,7 +1257,7 @@
 					<img src="${contextpath}/resources/images/ajax-loader.gif">
 				</div>
 				<div class='chart-wrapper'>
-					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: right">
+					<table class='table table-condensed table-bordered minh355' style="width: auto; margin-bottom: 0; background-color: #fff; float: right">
 						<tr>
 							<th class='area-header'>
 								<span>${form.getMessage("label.DelphiChartTitle")}</span>

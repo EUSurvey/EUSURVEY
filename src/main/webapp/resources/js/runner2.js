@@ -883,7 +883,7 @@ function addChart(div, chart) {
 	var elementWrapper = $(div).closest(".elementwrapper");
 
 	$(elementWrapper).find(".delphi-chart").remove();
-	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='400' height='296'></canvas>");
+	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='400' height='300'></canvas>");
 
 	$(elementWrapper).find(".chart-wrapper").show();
 
@@ -1052,12 +1052,13 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 		},
 		success: function (result, textStatus) {
 			viewModel.delphiTableEntries.removeAll();
-			viewModel.showExplanationBox(result.showExplanationBox);
-
+			
 			if (textStatus === "nocontent") {
 				return;
 			}
 
+			viewModel.showExplanationBox(result.showExplanationBox);
+			
 			for (let i = 0; i < result.entries.length; i++) {
 				const entry = result.entries[i];
 				
