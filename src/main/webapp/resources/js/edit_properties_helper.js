@@ -2013,6 +2013,7 @@ function adaptDelphiControls(element, isChecked) {
 	if (visibilityPropertyRow) {
 		if (isChecked) {
 			visibilityPropertyRow.Visible(false);
+			$('#idRemoveVisibility').click();
 		} else {
 			visibilityPropertyRow.Visible(true);
 		}
