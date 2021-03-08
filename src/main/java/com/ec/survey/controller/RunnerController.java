@@ -2420,11 +2420,10 @@ public class RunnerController extends BasicController {
 			Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
 			HashMap<Element, String> result = new HashMap<>();
 
-			Draft draft = null;
-			boolean validation = SurveyHelper.validateElement(element, answerSet, dependencies, result, answerService, invisibleElements, resources,
-					locale, null, request, draft);
+			final Map<Element, String> validation = SurveyHelper.validateAnswerSet(answerSet, answerService,
+					invisibleElements, resources, locale, null, request, true, user, fileService);
 			
-			if (!validation) {
+			if (!validation.isEmpty()) {
 				return new ResponseEntity<>(new DelphiUpdateResult(resources.getMessage("error.CheckValidation", null, locale)), HttpStatus.BAD_REQUEST);
 			}
 

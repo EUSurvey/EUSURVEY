@@ -139,8 +139,8 @@ function update(input)
 			var oldtext = element.isDelphiQuestion();
 			element.isDelphiQuestion(checked);
 			
-			adaptDelphiControls(element);			
-			
+			adaptDelphiControls(element);
+
 			$('#' + id).toggleClass("delphi");
 			_undoProcessor.addUndoStep(["DelphiQuestion", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
 			break;

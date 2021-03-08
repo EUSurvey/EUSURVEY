@@ -26,6 +26,7 @@ var PropertyRow = function()
 	this.EditShortnames = ko.observable(false);
 	this.Disabled = ko.observable(false);
 	this.Element = ko.observable(null);
+	this.IsVisible = ko.observable(true);
 	
 	this.PreviewItems = function()
 	{
@@ -332,7 +333,7 @@ var ElementProperties = function() {
 				getChoosePropertiesRow("Rows", "1,2,3,4,5,10,20,30,40,50", false, false, $(e).find("input[name^='rows']").val());
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
 				getMinMaxPropertiesRow("AcceptedNumberOfCharacters", 0, 5000, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
-				getVisibilityRow(false);
+				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -385,8 +386,8 @@ var ElementProperties = function() {
 				}
 				
 				getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
-				getVisibilityRow(false);			
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -419,8 +420,8 @@ var ElementProperties = function() {
 				getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false,  parseInt($(e).find("input[name^='order']").val()));
 				getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
 				getMinMaxPropertiesRow("NumberOfChoices", 0, 500, $(e).find("input[name^='choicemin']").val(), $(e).find("input[name^='choicemax']").val())
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
-				getVisibilityRow(false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -447,7 +448,7 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				// TODO DELPHI-189 getActionRow("childElements", "<span class='glyphicon glyphicon-plus'></span>", "addChildElements()", "<span class='glyphicon glyphicon-minus'></span>", "removeChildElement($(_elementProperties.selectedelement))");
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
-				getVisibilityRow(false);
+				getVisibilityRow(false, !isDelphiQuestion);
 
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -510,8 +511,8 @@ var ElementProperties = function() {
 				getChoosePropertiesRow("InitialSliderPosition", "Left,Middle,Right", false, false, $(e).find("input[name^='initialSliderPosition']").val());
 				//getCheckPropertiesRow("DisplayGraduationScale", $(e).find("input[name^='displayGraduationScale']").val() == 'true');
 	
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
-				getVisibilityRow(false);								
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 					
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -554,8 +555,8 @@ var ElementProperties = function() {
 				getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false,  parseInt($(e).find("input[name^='order']").val()));
 				getMinMaxPropertiesRow("NumberOfAnsweredRows", 0, null, $(e).find("input[name^='rowsmin']").val(), $(e).find("input[name^='rowsmax']").val())
 				getChoosePropertiesRow("Size", "fitToContent,fitToPage,manualColumnWidth", false, true, parseInt($(e).find("input[name^='tabletype']").val()));
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
-				getVisibilityRow(false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
@@ -621,9 +622,9 @@ var ElementProperties = function() {
 				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)");
 			
 				getChoosePropertiesRow("Size", "fitToContent,fitToPage,manualColumnWidth", false, true, parseInt($(e).find("input[name^='tabletype']").val()));
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
-				
-				getVisibilityRow(false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+
+				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
@@ -682,8 +683,8 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getMinMaxPropertiesRow("Values", 0, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
-				getVisibilityRow(false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -710,8 +711,8 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getMinMaxPropertiesRow("Values", 0, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
-				getVisibilityRow(false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -749,7 +750,7 @@ var ElementProperties = function() {
 				}
 				
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false');
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
 				getVisibilityRow(false);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -785,7 +786,7 @@ var ElementProperties = function() {
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getChoosePropertiesRow("Rows", "1,2,3,4,5,10,20,30,40,50", false, false, $(e).find("input[name^='rows']").val());
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
-				getVisibilityRow(false);
+				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
@@ -841,7 +842,7 @@ var ElementProperties = function() {
 				getChoosePropertiesRow("IconType", "Stars,Circles,Hearts", false, false, parseInt($(e).find("input[name^='iconType']").val()));
 				getNumberPropertiesRow("NumIcons", $(e).find("input[name^='numIcons']").val());
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
-				getVisibilityRow(false);
+				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				

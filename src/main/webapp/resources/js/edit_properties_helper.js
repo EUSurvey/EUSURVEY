@@ -198,7 +198,7 @@ function getCleanArray(arr)
 	return result;
 }
 
-function getVisibilityRow(multiselection)
+function getVisibilityRow(multiselection, isVisible = true)
 {
 	var label = "Visibility";
 	
@@ -206,7 +206,8 @@ function getVisibilityRow(multiselection)
 	row.Type("first");
 	row.ContentType("visibility");
 	row.Label(label);
-	row.LabelTitle(getPropertyLabel(label)); 
+	row.LabelTitle(getPropertyLabel(label));
+	row.IsVisible(isVisible);
 	
 	var selectedelement = $("#content").find(".selectedquestion").first();
 	var element = _elements[$(selectedelement).attr("data-id")];
@@ -2005,6 +2006,16 @@ function adaptDelphiControls(element) {
 			element.optional(true);
 		} else {
 			mandatoryPropertyRow.Disabled(false);
+		}
+	}
+
+	const visibilityPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Visibility');
+	if (visibilityPropertyRow) {
+		if (element.isDelphiQuestion()) {
+			visibilityPropertyRow.IsVisible(false);
+			$('#idRemoveVisibility').click();
+		} else {
+			visibilityPropertyRow.IsVisible(true);
 		}
 	}
 	
