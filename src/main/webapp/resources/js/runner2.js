@@ -972,6 +972,7 @@ function addChart(div, chart) {
 function addChartModal(_, chart) {
 	var modal = $("#delphi-chart-modal");
 	$(modal).find("canvas").remove();
+	$('#wordcloudmodal').remove();
 	$(modal).find(".modal-body").append("<canvas class='center-block' height='600' width='800'></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
 	$(modal).modal("show");
@@ -980,6 +981,7 @@ function addChartModal(_, chart) {
 function addChartModalStartPage(_, chart) {
 	var modal = $("#delphi-chart-modal-start-page");
 	$(modal).find("canvas").remove();
+	$('#wordcloudmodal').remove();
 	$(modal).find(".modal-body").append("<canvas class='center-block' height='600' width='800'></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
 	$(modal).modal("show");

@@ -121,7 +121,8 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 			modal =  $("#delphi-chart-modal");
 		}
 		
-		$(modal).find(".modal-body").empty();
+		$(modal).find("canvas").remove();
+		$('#wordcloudmodal').remove();
 		
 		div = document.createElement("div");
 		$(div).attr("id", "wordcloudmodal").css("height", "600px").attr("width", "800px").addClass("center-block");
