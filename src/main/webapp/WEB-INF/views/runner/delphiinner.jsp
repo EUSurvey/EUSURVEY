@@ -485,7 +485,7 @@
 								|| data.sections[i].questions[j].answer.length > 0)
 							{
 								var div = $('#delphiquestion' + data.sections[i].questions[j].uid);
-								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false);
+								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false, false, true);
 							}
 						}
 					}
@@ -502,7 +502,7 @@
 			var uniquecode = "${uniqueCode}";
 			var languagecode = "${form.language.code}";
 			var uid = $(element).closest(".question").attr("data-uid");
-			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true);
+			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true, false);
 		}
 
 		$(document).ready(function(){

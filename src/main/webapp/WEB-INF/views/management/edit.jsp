@@ -865,6 +865,7 @@
 			strings["Ignore"] ="<spring:message code="label.Ignore" />";
 			strings["None"] ="<spring:message code="label.None" />";
 			strings["WordCloud"] ="<spring:message code="label.DelphiChartWordCloud" />";
+			strings["ShowExplanationBox"] = "<spring:message code="label.ShowExplanationBox" />";
 			
 	 		return strings[label];
 	 	}

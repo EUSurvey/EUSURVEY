@@ -671,7 +671,14 @@
 							<div style="float: left">
 								<spring:message code="label.AllowSaveAsDraft" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-								<div class="help hideme"><spring:message code="info.AllowSaveAsDraft" /></div>
+								<div class="help hideme">
+									<!-- ko if: _properties.delphi() -->
+									<spring:message code="info.AllowSaveAsDraftDelphi" />
+									<!-- /ko -->
+									<!-- ko ifnot: _properties.delphi() -->
+									<spring:message code="info.AllowSaveAsDraft" />
+									<!-- /ko -->
+								</div>
 							</div>						
 							<div style="float: right">							
 								<div class="onoffswitch">
@@ -690,7 +697,14 @@
 							<div style="float: left">
 								<spring:message code="label.AllowChangeContributionNew" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-								<div class="help hideme"><spring:message code="info.AllowChangeContribution" /></div>
+								<div class="help hideme">
+									<!-- ko if: _properties.delphi() -->
+									<spring:message code="info.AllowChangeContributionDelphi" />
+									<!-- /ko -->
+									<!-- ko ifnot: _properties.delphi() -->
+									<spring:message code="info.AllowChangeContribution" />
+									<!-- /ko -->
+								</div>
 							</div>						
 							<div style="float: right">							
 								<div class="onoffswitch">
@@ -708,12 +722,19 @@
 							<div style="float: left">
 								<spring:message code="label.AllowDownloadContributionPDFnew" />
 								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
-								<div class="help hideme"><spring:message code="info.AllowDownloadContributionPDFnew" /></div>
+								<div class="help hideme">
+									<!-- ko if: _properties.delphi() -->
+									<spring:message code="info.AllowDownloadContributionPDFDelphi" />
+									<!-- /ko -->
+									<!-- ko ifnot: _properties.delphi() -->
+									<spring:message code="info.AllowDownloadContributionPDFnew" />
+									<!-- /ko -->
+								</div>
 							</div>						
 							<div style="float: right">
 								<div class="onoffswitch">
-									<form:checkbox path="survey.downloadContribution" class="onoffswitch-checkbox" id="myonoffswitchdcontribution" />
-									 <label class="onoffswitch-label" for="myonoffswitchdcontribution">
+									<form:checkbox path="survey.downloadContribution" class="onoffswitch-checkbox" data-bind="checked: _properties.downloadContribution()" />
+									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+(_properties.delphi() ? " disabled" : "")' onclick="_properties.toggleDownloadContribution()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>

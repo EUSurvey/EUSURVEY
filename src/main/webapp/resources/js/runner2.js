@@ -637,7 +637,7 @@ function wrapChartLabelCallback(value, index, values) {
 	return wrapLabel(value, 20);
 }
 
-function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback, removeIfEmpty, forModal) {
+function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode, chartCallback, removeIfEmpty, forModal, forStartpage) {
 	var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode;
 
 	$.ajax({
@@ -656,6 +656,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					var elementWrapper = $(div).closest(".elementwrapper");
 					$(elementWrapper).find(".delphi-chart").remove();
 					$(elementWrapper).find(".chart-wrapper").hide();
+					$(elementWrapper).find(".chart-wrapper-loader").hide();
 				}
 
 				addStatisticsToAnswerText(div, null);
@@ -665,7 +666,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			forModal = forModal === true;
 
 			if (result.questionType === "FreeText") {
-				createWordCloud(forModal ? null : div, result, result.chartType, false);
+				createWordCloud(forModal ? null : div, result, result.chartType, false, forStartpage);
 				return;
 			}			
 			
@@ -728,11 +729,13 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 						labels
 					}
 
-					chartOptions.legend.display = true;
+					chartOptions.legend.display = result.questions.length < 6;
 					break;
 
 				default:
 					addStatisticsToAnswerText(div, result);
+					var elementWrapper = $(div).closest(".elementwrapper");
+					$(elementWrapper).find(".chart-wrapper-loader").hide();
 					return;
 			}
 
@@ -775,6 +778,81 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			}
 
 			chart.options.tooltips = {
+					
+				 // Disable the on-canvas tooltip
+	            enabled: false,
+
+	            custom: function(tooltipModel) {
+	                // Tooltip Element
+	                var tooltipEl = document.getElementById('chartjs-tooltip');
+
+	                // Create element on first render
+	                if (!tooltipEl) {
+	                    tooltipEl = document.createElement('div');
+	                    tooltipEl.id = 'chartjs-tooltip';
+	                    tooltipEl.innerHTML = '<table></table>';
+	                    document.body.appendChild(tooltipEl);
+	                }
+
+	                // Hide if no tooltip
+	                if (tooltipModel.opacity === 0) {
+	                    tooltipEl.style.opacity = 0;
+	                    return;
+	                }
+
+	                // Set caret Position
+	                tooltipEl.classList.remove('above', 'below', 'no-transform');
+	                if (tooltipModel.yAlign) {
+	                    tooltipEl.classList.add(tooltipModel.yAlign);
+	                } else {
+	                    tooltipEl.classList.add('no-transform');
+	                }
+
+	                function getBody(bodyItem) {
+	                    return bodyItem.lines;
+	                }
+
+	                // Set Text
+	                if (tooltipModel.body) {
+	                    var titleLines = tooltipModel.title || [];
+	                    var bodyLines = tooltipModel.body.map(getBody);
+
+	                    var innerHtml = '<thead>';
+
+	                    titleLines.forEach(function(title) {
+	                        innerHtml += '<tr><th>' + title + '</th></tr>';
+	                    });
+	                    innerHtml += '</thead><tbody>';
+
+	                    bodyLines.forEach(function(body, i) {
+	                        var colors = tooltipModel.labelColors[i];
+	                        var style = 'background:' + colors.backgroundColor;
+	                        style += '; border-color:' + colors.borderColor;
+	                        style += '; border-width: 2px';
+	                        var span = '<div class="chartjs-line" style="' + style + '"></div>';
+	                        innerHtml += '<tr><td>' + span + body.join(" ") + '</td></tr>';
+	                    });
+	                    innerHtml += '</tbody>';
+
+	                    var tableRoot = tooltipEl.querySelector('table');
+	                    tableRoot.innerHTML = innerHtml;
+	                }
+
+	                // `this` will be the overall tooltip
+	                var position = this._chart.canvas.getBoundingClientRect();
+
+	                // Display, position, and set styles for font
+	                tooltipEl.style.opacity = 1;
+	                tooltipEl.style.position = 'absolute';
+	                tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+	                tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+	                tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
+	                tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px';
+	                tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
+	                tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
+	                tooltipEl.style.pointerEvents = 'none';
+	            },
+					
 				callbacks: {
 					title: chart.data.datasets.length === 1
 						? function (item, data) {
@@ -882,16 +960,19 @@ function addChart(div, chart) {
 	var elementWrapper = $(div).closest(".elementwrapper");
 
 	$(elementWrapper).find(".delphi-chart").remove();
-	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='400' height='296'></canvas>");
+	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='400' height='300'></canvas>");
 
 	$(elementWrapper).find(".chart-wrapper").show();
 
 	new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
+	
+	$(elementWrapper).find(".chart-wrapper-loader").hide();
 }
 
 function addChartModal(_, chart) {
 	var modal = $("#delphi-chart-modal");
 	$(modal).find("canvas").remove();
+	$('#wordcloudmodal').remove();
 	$(modal).find(".modal-body").append("<canvas class='center-block' height='600' width='800'></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
 	$(modal).modal("show");
@@ -900,6 +981,7 @@ function addChartModal(_, chart) {
 function addChartModalStartPage(_, chart) {
 	var modal = $("#delphi-chart-modal-start-page");
 	$(modal).find("canvas").remove();
+	$('#wordcloudmodal').remove();
 	$(modal).find(".modal-body").append("<canvas class='center-block' height='600' width='800'></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
 	$(modal).modal("show");
@@ -917,7 +999,7 @@ function loadGraphData(div) {
 	var questionuid = $(div).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false);
+	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false, false);
 }
 
 function loadGraphDataModal(div) {
@@ -926,7 +1008,7 @@ function loadGraphDataModal(div) {
 	var questionuid = $(surveyElement).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true);
+	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false);
 }
 
 function firstDelphiTablePage(element) {
@@ -1049,13 +1131,21 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 		},
 		success: function (result, textStatus) {
 			viewModel.delphiTableEntries.removeAll();
-
+			
 			if (textStatus === "nocontent") {
 				return;
 			}
 
+			viewModel.showExplanationBox(result.showExplanationBox);
+			
 			for (let i = 0; i < result.entries.length; i++) {
 				const entry = result.entries[i];
+				
+				entry.uid = getNewId(); // create uuid
+				
+				for (let j = 0; j < entry.answers.length; j++) {
+					entry.answers[j].uid = getNewId(); // create uuid
+				}
 				
 				entry.showCommentArea = function() {
 					hideCommentAndReplyForms();
@@ -1163,8 +1253,10 @@ function loadMedianData(div, viewModel) {
 
 function selectPageAndScrollToQuestionIfSet() {
 	if (window.location.hash) {
-		//select correct page in case of multi-paging
 		
+		$('#delphi-hide-survey').show();
+		
+		//select correct page in case of multi-paging		
 		if ($(".single-page").length > 1)
 		{
 			const elementAnchorId = location.hash.substr(1);
@@ -1174,16 +1266,32 @@ function selectPageAndScrollToQuestionIfSet() {
 			$(".single-page").hide();		
 			$(p).show();
 			checkPages();
-			setTimeout(scrollToQuestionIfSet, 3000);
-		} else {
-			setTimeout(scrollToQuestionIfSet, 7000);
 		}
+		
+		setTimeout(checkMissingElementsAndScroll, 2000);
 	}
+}
+
+function checkMissingElementsAndScroll()
+{
+	var loaders = $('.delphi-table').find(".loader:visible").length;
+	
+	if (loaders == 0) {
+		loaders = $('.chart-wrapper-loader:visible').length;
+	}
+	
+	if (loaders > 0) {
+		setTimeout(checkMissingElementsAndScroll, 2000);
+		return;
+	}
+	
+	scrollToQuestionIfSet();
 }
 
 function scrollToQuestionIfSet() {
 	const elementAnchorId = location.hash.substr(1);
 	document.getElementById(elementAnchorId).scrollIntoView();
+	$('#delphi-hide-survey').hide();
 }
 
 var delphiUpdateFinished = false;
@@ -1528,7 +1636,7 @@ function deleteDelphiComment(button, viewModel, isReply, errorCallback, successC
 
 function checkGoToDelphiStart(link)
 {
-	var button = $(link).parent().find("a[data-type='delphisavebutton']").first();
+	var button = $("a[data-type='delphisavebutton']:visible").not(".disabled").first();
 
 	var ansSetId = $('#IdAnswerSet').val();
 	var ansSetUniqueCode = $('#uniqueCode').val();
@@ -1542,7 +1650,7 @@ function checkGoToDelphiStart(link)
 		url = contextpath + "/editcontribution/" + ansSetUniqueCode;
 	}
 
-	if (!$(button).hasClass("disabled")) {
+	if ($(button).length > 0) {
 		$('#unsaveddelphichangesdialoglink').attr("href", url);
 		$('#unsaveddelphichangesdialog').modal("show");
 		return;

@@ -2650,6 +2650,12 @@ public class RunnerController extends BasicController {
 		frequencyAnalyzer.setStopWords(stopWords);
 		
 		List<String> texts = creator.getAnswers4FreeTextStatistics(survey, question);
+		
+		if (texts.size() < survey.getMinNumberDelphiStatistics()) {
+			// only show statistics for this question if the total number of answers exceeds the threshold
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}		
+		
 		final List<WordFrequency> wordFrequencies = frequencyAnalyzer.load(texts);
 		
 		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
@@ -3077,6 +3083,8 @@ public class RunnerController extends BasicController {
 			} else {
 				result = handleDelphiTableRawValueQuestion(question, orderBy, limit, offset);
 			}
+			
+			result.setShowExplanationBox(question.getShowExplanationBox());
 
 			return ResponseEntity.ok(result);
 		} catch (Exception e) {

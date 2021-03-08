@@ -101,13 +101,15 @@ function getWordCloudData(result, f)
     return data;
 }
 
-function createWordCloud(div, result, chartType, forResults, scheme) {
+function createWordCloud(div, result, chartType, forResults, forStartpage, scheme) {
 	if (result.data.length==0 || chartType == 'None')
 	{
 		if (forResults) {
 			var questionuid = div.data("uid");
 			$('#wordcloud' + questionuid).empty();
 		}
+		
+		$(div).closest(".elementwrapper, .statelement-wrapper").find(".chart-wrapper-loader").hide();
 		
 		return;	
 	}	
@@ -119,7 +121,8 @@ function createWordCloud(div, result, chartType, forResults, scheme) {
 			modal =  $("#delphi-chart-modal");
 		}
 		
-		$(modal).find(".modal-body").empty();
+		$(modal).find("canvas").remove();
+		$('#wordcloudmodal').remove();
 		
 		div = document.createElement("div");
 		$(div).attr("id", "wordcloudmodal").css("height", "600px").attr("width", "800px").addClass("center-block");
@@ -136,13 +139,18 @@ function createWordCloud(div, result, chartType, forResults, scheme) {
 		$(div).find('.no-graph-image').hide();
 		$(div).find('.delphi-chart-expand').show();			
 				
-		var w = 300;
-		var h = 200;
+		var w = 400;
+		var h = 295;
 		var f = 10;
 	
 		var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
-				
-		if (forResults) {
+
+		if (forStartpage) {
+			w = 300;
+			h = 200;
+		} else if (forResults) {
+			w = 300;
+			h = 200;
 			$(elementWrapper).find(".chart-type").val(chartType);
 			$(elementWrapper).find(".chart-scheme").val(scheme);
 			
@@ -164,6 +172,7 @@ function createWordCloud(div, result, chartType, forResults, scheme) {
 	    
 	    $(elementWrapper).find(".delphi-chart").remove();
 		$(elementWrapper).find(".chart-wrapper").show();
+		$(elementWrapper).find(".chart-wrapper-loader").hide();
 	    
 	    if (forResults) {
 	    
