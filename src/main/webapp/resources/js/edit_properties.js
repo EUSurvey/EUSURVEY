@@ -26,7 +26,7 @@ var PropertyRow = function()
 	this.EditShortnames = ko.observable(false);
 	this.Disabled = ko.observable(false);
 	this.Element = ko.observable(null);
-	this.Visible = ko.observable(true);
+	this.IsVisible = ko.observable(true);
 	
 	this.PreviewItems = function()
 	{
