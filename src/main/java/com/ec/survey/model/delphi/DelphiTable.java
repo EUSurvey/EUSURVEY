@@ -33,7 +33,7 @@ public class DelphiTable {
         this.total = total;
     }
 
-	public boolean isShowExplanationBox() {
+	public boolean getShowExplanationBox() {
 		return showExplanationBox;
 	}
 

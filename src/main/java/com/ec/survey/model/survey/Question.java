@@ -137,7 +137,7 @@ public abstract class Question extends Element {
 	}
 	
 	@Column(name = "DELPHIEXPLANATION")
-	public Boolean isShowExplanationBox() {
+	public Boolean getShowExplanationBox() {
 		return showExplanationBox;
 	}
 
@@ -176,7 +176,7 @@ public abstract class Question extends Element {
 		copy.setSubType(getSubType());
 		copy.setDisplayMode(getDisplayMode());
 		copy.setIsDelphiQuestion(getIsDelphiQuestion());
-		copy.setShowExplanationBox(isShowExplanationBox());
+		copy.setShowExplanationBox(getShowExplanationBox());
 		copy.setDelphiChartType(getDelphiChartType());
 
 		if (scoringItems != null) {
@@ -260,7 +260,7 @@ public abstract class Question extends Element {
 
 			if (!(Objects.equals(getAttributeName(), question.getAttributeName()))) return true;
 			if (!(Objects.equals(getIsDelphiQuestion(), question.getIsDelphiQuestion()))) return true;
-			if (!(Objects.equals(isShowExplanationBox(), question.isShowExplanationBox()))) return true;
+			if (!(Objects.equals(getShowExplanationBox(), question.getShowExplanationBox()))) return true;
 			if (!(Objects.equals(getDelphiChartType(), question.getDelphiChartType()))) return true;
 		} else {
 			return true;

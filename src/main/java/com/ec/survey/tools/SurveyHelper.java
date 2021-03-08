@@ -1643,8 +1643,8 @@ public class SurveyHelper {
 		freetext.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(freetext.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + freetext.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(freetext.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + freetext.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		freetext.setShowExplanationBox(showExplanationBox);
@@ -1795,8 +1795,8 @@ public class SurveyHelper {
 		regex.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(regex.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + regex.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(regex.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + regex.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		regex.setShowExplanationBox(showExplanationBox);
@@ -1988,8 +1988,8 @@ public class SurveyHelper {
 		number.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(number.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + number.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(number.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + number.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		number.setShowExplanationBox(showExplanationBox);
@@ -2167,8 +2167,8 @@ public class SurveyHelper {
 		date.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(date.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + date.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(date.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + date.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		date.setShowExplanationBox(showExplanationBox);
@@ -2283,8 +2283,8 @@ public class SurveyHelper {
 		time.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(time.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + time.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(time.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + time.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		time.setShowExplanationBox(showExplanationBox);
@@ -2416,8 +2416,8 @@ public class SurveyHelper {
 		rating.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(rating.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + rating.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(rating.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + rating.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		rating.setShowExplanationBox(showExplanationBox);
@@ -2591,8 +2591,8 @@ public class SurveyHelper {
 		singlechoice.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(singlechoice.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + singlechoice.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(singlechoice.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + singlechoice.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		singlechoice.setShowExplanationBox(showExplanationBox);
@@ -2870,8 +2870,8 @@ public class SurveyHelper {
 		multiplechoice.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(multiplechoice.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + multiplechoice.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(multiplechoice.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + multiplechoice.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		multiplechoice.setShowExplanationBox(showExplanationBox);
@@ -3143,8 +3143,8 @@ public class SurveyHelper {
 		rankingQuestion.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(rankingQuestion.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + rankingQuestion.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(rankingQuestion.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + rankingQuestion.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		rankingQuestion.setShowExplanationBox(showExplanationBox);
@@ -3270,8 +3270,8 @@ public class SurveyHelper {
 		matrix.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(matrix.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + matrix.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(matrix.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + matrix.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		matrix.setShowExplanationBox(showExplanationBox);
@@ -3496,8 +3496,8 @@ public class SurveyHelper {
 		table.setIsDelphiQuestion(isDelphiQuestion);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
-		if (log220 && !showExplanationBox.equals(table.isShowExplanationBox())) {
-			oldValues += " showExplanationBox: " + table.isShowExplanationBox();
+		if (log220 && !showExplanationBox.equals(table.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + table.getShowExplanationBox();
 			newValues += " showExplanationBox: " + showExplanationBox;
 		}
 		table.setShowExplanationBox(showExplanationBox);
