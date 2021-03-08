@@ -729,7 +729,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 						labels
 					}
 
-					chartOptions.legend.display = result.questions.length < 6;
+					chartOptions.legend.display = forModal || (result.questions.length < 6);
 					break;
 
 				default:
