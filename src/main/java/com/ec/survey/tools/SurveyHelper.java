@@ -884,7 +884,16 @@ public class SurveyHelper {
 		return answerSet;
 	}
 
-	private static void recreateDelphiExplanationUploadedFiles(AnswerSet answerSet, Survey survey, FileService fileService, AnswerExplanationService answerExplanationService) {
+	public static void recreateUploadedFiles(AnswerSet answerSet, Survey survey, FileService fileService,
+			AnswerExplanationService answerExplanationService) {
+
+		recreateDelphiExplanationUploadedFiles(answerSet, survey, fileService, answerExplanationService);
+		recreateUploadedAnswerFiles(answerSet, survey, fileService);
+	}
+
+	private static void recreateDelphiExplanationUploadedFiles(AnswerSet answerSet, Survey survey,
+			FileService fileService, AnswerExplanationService answerExplanationService) {
+
 		int answerSetId = answerSet.getId();
 		String surveyUniqueId = survey.getUniqueId();
 
@@ -925,9 +934,8 @@ public class SurveyHelper {
 		}
 	}
 
-	public static void recreateUploadedFiles(AnswerSet answerSet, Survey survey,
-			FileService fileService, AnswerExplanationService answerExplanationService) {
-		recreateDelphiExplanationUploadedFiles(answerSet, survey, fileService, answerExplanationService);
+	private static void recreateUploadedAnswerFiles(AnswerSet answerSet, Survey survey, FileService fileService) {
+
 		Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
 
 		for (Answer answer : answerSet.getAnswers()) {

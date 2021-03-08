@@ -223,15 +223,13 @@ public class AnswerService extends BasicService {
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
-				// delete temporary files folder
-				try {
-					java.io.File folder = fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(),
-							false);
-					java.io.File directory = new java.io.File(
-							folder.getPath() + Constants.PATH_DELIMITER + answerSet.getUniqueCode());
-					FileUtils.delete(directory);
-				} catch (Exception e) {
-					logger.error(e.getLocalizedMessage(), e);
+
+				// Do not delete uploaded answer files when submitting a Delphi questionnaire as these would be lost if
+				// they had not been saved yet. Let the DeleteTemporaryFolderUpdater worker clean up the mess.
+				if (!answerSet.getSurvey().getIsDelphi()) {
+					final String surveyUid = answerSet.getSurvey().getUniqueId();
+					final String answerSetUniqueCode = answerSet.getUniqueCode();
+					fileService.deleteUploadedAnswerFiles(surveyUid, answerSetUniqueCode);
 				}
 			}
 

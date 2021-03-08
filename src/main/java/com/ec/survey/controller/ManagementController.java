@@ -2560,7 +2560,6 @@ public class ManagementController extends BasicController {
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 			f.setValidation(validation);
 
-			// recreate uploaded files
 			SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 			ModelAndView model = new ModelAndView("management/test", "form", f);
