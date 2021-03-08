@@ -3216,6 +3216,9 @@ public class ManagementController extends BasicController {
 										s.append(" - ");
 									}
 									s.append(answer.getTitle());
+									
+									s.append("<span class='assignedValue hideme'>").append(form.getAnswerShortname(answer))
+									.append("</span>");
 								}
 								result.add(s.toString());
 							}

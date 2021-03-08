@@ -27,6 +27,7 @@ import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
+import com.ec.survey.model.Form;
 import com.ec.survey.model.ResultFilter;
 import com.ec.survey.model.Setting;
 import com.ec.survey.model.SqlPagination;
@@ -579,6 +580,8 @@ public class ReportingService extends BasicService {
 										} else {
 											v += answer.getTitle();
 										}
+										
+										v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
@@ -598,6 +601,8 @@ public class ReportingService extends BasicService {
 										} else {
 											v += answer.getTitle();
 										}
+										
+										v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);

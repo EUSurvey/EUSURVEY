@@ -1308,6 +1308,7 @@ var closeOverlayDivsEnabled = false;
 							$("#scrollareaheader").css("overflow-y","auto");
 						}
 					  
+					  checkAssignedValues();
 					  synchronizeTableSizes();
 					  
 					  $('[data-toggle="tooltip"]').tooltip({

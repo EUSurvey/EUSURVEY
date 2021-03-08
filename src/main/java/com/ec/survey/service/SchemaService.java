@@ -42,6 +42,24 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
+	
+	@Transactional
+	public void step96() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		Setting s = settingsService.getSetting("captcha");
+		if (s == null) {
+			s = new Setting();
+			s.setKey("captcha");		
+			session.saveOrUpdate(s);
+		}
+		s.setValue(isOss() ? "internal" : "eucaptcha");
+		s.setFormat("eucaptcha / recaptcha / internal / off");
+
+		status.setDbversion(96);
+		session.saveOrUpdate(status);
+	}
 
 	@Transactional
 	public void step95() {
