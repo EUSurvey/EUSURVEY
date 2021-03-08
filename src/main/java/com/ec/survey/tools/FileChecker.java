@@ -16,6 +16,6 @@ public class FileChecker {
 		final Map<String, Element> questions = survey.getQuestionMapByUniqueId();
 		final String questionUid = file.getQuestionUid();
 		final Element question = questions.get(questionUid);
-		return question.isDelphiElement();
+		return question != null && question.isDelphiElement();
 	}
 }

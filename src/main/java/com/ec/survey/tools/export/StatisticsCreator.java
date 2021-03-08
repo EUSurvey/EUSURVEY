@@ -598,6 +598,45 @@ public class StatisticsCreator implements Runnable {
 		numberQuestionStats.setValuesMagnitude(map);
 		return numberQuestionStats;
 	}
+	
+	@Transactional
+	public List<String> getAnswers4FreeTextStatistics(Survey survey, Question question) throws TooManyFiltersException {
+		Session session = sessionFactory.getCurrentSession();
+		HashMap<String, Object> values = new HashMap<>();
+		List<String> answers = new ArrayList<>();
+		
+		String where = answerService.getSql(null, survey.getId(), filter, values, true);
+		String sql = "SELECT a.VALUE, a.QUESTION_ID FROM ANSWERS_SET ans LEFT OUTER JOIN ANSWERS a ON a.AS_ID = ans.ANSWER_SET_ID where a.QUESTION_UID";
+		sql += " = :questionuid AND ans.ANSWER_SET_ID IN (" + where + ")";
+		values.put("questionuid", question.getUniqueId());
+
+		SQLQuery query = session.createSQLQuery(sql);
+		query.setReadOnly(true);
+
+		for (Entry<String, Object> entry : values.entrySet()) {
+			if (entry.getValue() instanceof String) {
+				query.setString(entry.getKey(), (String) entry.getValue());
+			} else if (entry.getValue() instanceof Integer) {
+				query.setInteger(entry.getKey(), (Integer) entry.getValue());
+			} else if (entry.getValue() instanceof Date) {
+				query.setTimestamp(entry.getKey(), (Date) entry.getValue());
+			}
+		}
+
+		query.setFetchSize(Integer.MIN_VALUE);
+		ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
+
+		while (results != null && results.next()) {
+			Object[] a = results.get();
+			String value = (String) a[0];
+			answers.add(value);			
+		}
+		if (null != results) {
+			results.close();
+		}
+		
+		return answers;
+	}
 
 	@Transactional
 	public int getAnswers4Statistics(Survey survey, Question question, Map<Integer, Integer> map,

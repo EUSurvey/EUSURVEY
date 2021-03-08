@@ -189,6 +189,7 @@
 				<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 				<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 				<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+				<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 				<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 				<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
 				<input type="hidden" data-bind="value: numColumns, attr: {'name': 'columns' + id()}" />
@@ -311,6 +312,7 @@
 				<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 				<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 				<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+				<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 				<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 				<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
 				<input type="hidden" data-bind="value: numColumns, attr: {'name': 'columns' + id()}" />
@@ -330,6 +332,28 @@
 		</div>
 	</div>
 	
+	<div id="ranking-question-template">
+		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
+
+		<ul class="ranking-ul-sortable">
+			<!-- ko foreach: observableChildElements() -->
+				<li data-bind='text: "Title: "+title'></li>
+			<!-- /ko -->
+		</ul>
+
+		<!-- ko if: foreditor -->
+			<input type="hidden" data-bind="value: 'rankingquestion', attr: {'name': 'type' + id()}" />
+			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
+			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
+
+			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
+			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+		<!-- /ko -->
+	</div>
+
 	<div id="password-template">
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
@@ -348,7 +372,8 @@
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
-			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />	
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
 			<input type="hidden" data-bind="value: numRows, attr: {'name': 'rows' + id()}" />
 			<input type="hidden" data-bind="value: minCharacters, attr: {'name': 'min' + id()}" />
@@ -406,7 +431,9 @@
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
-			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />	
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
+			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
 			<input type="hidden" data-bind="value: numRows, attr: {'name': 'rows' + id()}" />
 			<input type="hidden" data-bind="value: minCharacters, attr: {'name': 'min' + id()}" />
@@ -501,6 +528,7 @@
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 			<input type="hidden" data-bind="value: numIcons, attr: {'name': 'numIcons' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: iconType, attr: {'name': 'iconType' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
@@ -619,7 +647,8 @@
 			<input type="hidden" data-bind="value: max, attr: {'name': 'max' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
-			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />	
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
 			<input type="hidden" data-bind="value: isUnique, attr: {'name': 'unique' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
@@ -667,7 +696,8 @@
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
-			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />	
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
@@ -711,7 +741,8 @@
 			<input type="hidden" data-bind="value: maxString(), attr: {'name': 'max' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
-			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />	
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />	
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
@@ -764,7 +795,8 @@
 			<input type="hidden" data-bind="value: max(), attr: {'name': 'max' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
-			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />	
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>			
@@ -952,6 +984,7 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
 			<input type="hidden" data-bind="value: isInterdependent, attr: {'name': 'interdependent' + id()}" />
@@ -1085,7 +1118,8 @@
 			<input type="hidden" data-bind="value: tableType, attr: {'name': 'tabletype' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
-			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />	
+			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: widths, attr: {'name': 'widths' + id()}" />	
@@ -1179,10 +1213,11 @@
 		<!-- /ko -->
 				
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">					
-			<div class="col-md-7">
+			<div class="col-md-6">
+				<!-- ko if: showExplanationBox() -->
 				<div class="explanation-section">
 				
-					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff">
+					<table class='table table-condensed table-bordered minh355' style="width: auto; margin-bottom: 0; background-color: #fff">
 						<tr>
 							<th class='area-header'>${form.getMessage("label.ExplainYourAnswer")}</th>
 						</tr>
@@ -1198,7 +1233,6 @@
 									<div class="uploadinfo"
 										style="display: none; padding: 10px; color: #777;">${form.getMessage("label.UploadStarted")}</div>
 									<input type="hidden"
-										data-bind="attr: {'id': 'explanation' + id(), 'name':'explanation' + id()}"
 										value="files" />
 									<div class="uploaded-files"
 										data-bind="foreach: getFileAnswer(uniqueId())">
@@ -1215,11 +1249,17 @@
 							</td>
 						</tr>
 					</table>
-				</div>				
+				</div>
+				<!-- /ko -->		
 			</div>
-			<div class="col-md-5">
+			<div class="col-md-6">
+				<!-- ko if: !foreditor -->
+				<div class="chart-wrapper-loader">
+					<img src="${contextpath}/resources/images/ajax-loader.gif">
+				</div>
+				<!-- /ko -->
 				<div class='chart-wrapper'>
-					<table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff; float: right">
+					<table class='table table-condensed table-bordered minh355' style="width: auto; margin-bottom: 0; background-color: #fff; float: right">
 						<tr>
 							<th class='area-header'>
 								<span>${form.getMessage("label.DelphiChartTitle")}</span>
@@ -1229,6 +1269,7 @@
 						<tr>
 							<td style='padding-top:10px; padding-bottom:10px'>
 								<div class="delphi-chart-div"></div>
+								<div data-bind="attr: {id: 'wordcloud' + uniqueId()}" class="delphi-chart-div" style="display:none"></div>
 							</td>
 						</tr>
 					</table>

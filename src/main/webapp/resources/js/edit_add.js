@@ -17,7 +17,7 @@ function getNewElement(item)
 		element.isComparable = false;
 		element.css = "freetext";
 		element.numRows = 1;
-		element.isDelphiQuestion = isDelphi;	
+		element.isDelphiQuestion = isDelphi;
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("singlechoiceitem"))
 	{
@@ -29,9 +29,19 @@ function getNewElement(item)
 		element.order = 0;
 		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
 		element.orderedPossibleAnswers = element.possibleAnswers;
-		element.isDelphiQuestion = isDelphi;	
+		element.isDelphiQuestion = isDelphi;
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(item.attr("id"),"init", 2);
+	} else if (item.hasClass("rankingitem"))
+	{
+		element = getBasicElement("RankingQuestion", true, "Ranking Question", item.attr("id"), true);
+		element.childElements = [
+			getBasicElement("RankingElement", false, "Ranking Element 1", null, false),
+			getBasicElement("RankingElement", false, "Ranking Element 2", null, false),
+			getBasicElement("RankingElement", false, "Ranking Element 3", null, false),
+			];
+		element.isDelphiQuestion = isDelphi;
+		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("multiplechoiceitem"))
 	{
 		element = getBasicElement("MultipleChoiceQuestion", true, "Multiple Choice Question", item.attr("id"), true);
@@ -425,7 +435,8 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		element.attributeName = element.shortname;
 		element.readonly = false;
 		
-		element.isDelphiQuestion = false;		
+		element.isDelphiQuestion = false;
+		element.showExplanationBox = true;
 	}
 	
 	if (type == "PossibleAnswer")

@@ -21,7 +21,6 @@ import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizHelper;
 import com.ec.survey.tools.SurveyHelper;
-import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -314,7 +313,6 @@ public class ContributionController extends BasicController {
 
 			validCodesService.revalidate(answerSet.getUniqueCode(), newestSurvey);
 
-			// recreate uploaded files
 			SurveyHelper.recreateUploadedFiles(answerSet, translated, fileService, answerExplanationService);
 
 			return model;

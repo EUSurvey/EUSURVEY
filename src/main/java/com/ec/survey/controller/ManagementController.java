@@ -978,6 +978,7 @@ public class ManagementController extends BasicController {
 		if (survey.getIsDelphi()) {
 			survey.setChangeContribution(true); // should always be activated for delphi surveys
 			survey.setSaveAsDraft(false); // should always be deactivated for delphi surveys
+			survey.setDownloadContribution(false); // should always be deactivated for delphi surveys
 		}
 		
 		if (survey.getIsOPC()) {
@@ -1405,7 +1406,7 @@ public class ManagementController extends BasicController {
 
 		if (creation) {
 			survey.setOwner(u);
-			survey.setDownloadContribution(true);
+			survey.setDownloadContribution(!survey.getIsDelphi());
 		}
 
 		if (!creation) {
@@ -2559,7 +2560,6 @@ public class ManagementController extends BasicController {
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 			f.setValidation(validation);
 
-			// recreate uploaded files
 			SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 			ModelAndView model = new ModelAndView("management/test", "form", f);
@@ -2662,7 +2662,7 @@ public class ManagementController extends BasicController {
 		return new ModelAndView(
 				"redirect:/" + survey.getShortname() + "/management/results?message=recalculatestarted");
 	}
-
+	
 	@RequestMapping(value = "/results")
 	public ModelAndView results(@PathVariable String shortname, HttpServletRequest request, Locale locale)
 			throws Exception {
@@ -3216,6 +3216,9 @@ public class ManagementController extends BasicController {
 										s.append(" - ");
 									}
 									s.append(answer.getTitle());
+									
+									s.append("<span class='assignedValue hideme'>").append(form.getAnswerShortname(answer))
+									.append("</span>");
 								}
 								result.add(s.toString());
 							}

@@ -48,7 +48,7 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	
 	@Column(name = "LIKERT")
 	public Boolean getUseLikert() {
-		return useLikert != null ? useLikert : false;
+		return useLikert != null && useLikert && getIsDelphiQuestion();
 	}
 	
 	public void setUseLikert(Boolean useLikert) {

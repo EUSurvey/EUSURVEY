@@ -2,11 +2,13 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
+<div class="loader" data-bind="style: { display: delphiTableLoading() ? 'flex' : 'none' }">
+	<img src="${contextpath}/resources/images/ajax-loader.gif">
+</div>
+
 <!-- ko if: delphiTableEntries().length > 0 -->
 <div class="delphi-table">
-	<div class="loader" data-bind="style: { display: delphiTableLoading() ? 'flex' : 'none' }">
-		<img src="${contextpath}/resources/images/ajax-loader.gif">
-	</div>
+	
 	<table class="table table-condensed table-striped table-bordered">
 		<thead>
 		<tr class="area-header">
@@ -23,7 +25,9 @@
 					</a>
 				</div>
 			</th>
+			<!-- ko if: showExplanationBox() -->
 			<th style="width:33%">${form.getMessage("label.DelphiAnswersTableExplanation")}</th>
+			<!-- /ko -->
 			<th style="width:33%">${form.getMessage("label.Discussion")}</th>
 		</tr>
 		</thead>
@@ -36,15 +40,18 @@
 					<!-- ko if: question -->
 					<span data-bind="html: question"></span>:
 					<!-- /ko -->
-					<span data-bind="html: value"></span>
+					<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: {'id': 'expanded-answer' + uid}">
+					<span class="text-to-be-truncated" data-bind="html: value"></span>
+					<label class="text-read-more-label" role="button" data-bind="attr: {'for': 'expanded-answer' + uid} ">${form.getMessage("label.ShowAll")}</label>
 				</div>
 				<!-- /ko -->
 			</td>
 			<td><span data-bind="html: update"></span></td>
+			<!-- ko if: $parent.showExplanationBox() -->
 			<td>
-				<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: { 'id': 'expanded-explanation' + comments.map(c => c.id).join() }">
+				<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: { 'id': 'expanded-explanation' + uid }">
 				<span class="text-to-be-truncated" data-bind="html: explanation"></span>
-				<label class="text-read-more-label" role="button" data-bind="attr: { 'for': 'expanded-explanation' + comments.map(c => c.id).join() }">${form.getMessage("label.ShowAll")}</label>
+				<label class="text-read-more-label" role="button" data-bind="attr: { 'for': 'expanded-explanation' + uid }">${form.getMessage("label.ShowAll")}</label>
 				<!-- ko if: files.length > 0 && explanation.length > 0 -->
 				<br />
 				<!-- /ko -->
@@ -52,6 +59,7 @@
 				<a data-bind="attr: {href: '${contextpath}/files/${form.survey.uniqueId}/' + uid}, text: name"></a>
 				<!-- /ko -->
 			</td>
+			<!-- /ko -->
 			<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId}">
 				<!-- ko foreach: comments -->
 				<div class="delphi-comment" data-bind="attr: {'data-id': id}">

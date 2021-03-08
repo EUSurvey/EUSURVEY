@@ -26,6 +26,7 @@ var PropertyRow = function()
 	this.EditShortnames = ko.observable(false);
 	this.Disabled = ko.observable(false);
 	this.Element = ko.observable(null);
+	this.IsVisible = ko.observable(true);
 	
 	this.PreviewItems = function()
 	{
@@ -324,13 +325,15 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getChoosePropertiesRow("DelphiChartType", "None,WordCloud", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", element.originalTitle(), true);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getChoosePropertiesRow("Rows", "1,2,3,4,5,10,20,30,40,50", false, false, $(e).find("input[name^='rows']").val());
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
 				getMinMaxPropertiesRow("AcceptedNumberOfCharacters", 0, 5000, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
-				getVisibilityRow(false);
+				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -345,6 +348,10 @@ var ElementProperties = function() {
 					getQuizPropertiesRow();
 					getQuizPropertiesContent();
 				}
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
 			} else if ($(e).hasClass("singlechoiceitem"))
 			{
 				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
@@ -352,6 +359,7 @@ var ElementProperties = function() {
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
 					getChoosePropertiesRow("DelphiChartType", "Bar,Column,Line,Pie,Radar,Scatter", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))");
@@ -370,7 +378,7 @@ var ElementProperties = function() {
 					getChoosePropertiesRow("Display", "CountryOnly,ISOOnly,ISO+Country,Country+ISO", false, false, parseInt($(e).find("input[name^='displayMode']").val()));
 				}	 		
 			
-				if ($(e).find("input[name^='choicetype']").val() == 'likert')
+				if (isDelphi && $(e).find("input[name^='choicetype']").val() == 'likert')
 				{
 					getChoosePropertiesRow("MaxDistanceToMedian", "Ignore,0,1,2,3,4,5", false, false, $(e).find("input[name^='maxDistance']").val());
 				} else {				
@@ -378,8 +386,8 @@ var ElementProperties = function() {
 				}
 				
 				getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
-				getVisibilityRow(false);			
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -391,6 +399,11 @@ var ElementProperties = function() {
 					getQuizPropertiesRow();
 					getQuizPropertiesContent();
 				}
+				
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
 			} else if ($(e).hasClass("multiplechoiceitem"))
 			{
 				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
@@ -398,6 +411,7 @@ var ElementProperties = function() {
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
 					getChoosePropertiesRow("DelphiChartType", "Bar,Column,Line,Pie,Radar,Scatter", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getActionRow("PossibleAnswers", "<span class='glyphicon glyphicon-plus'></span>", "addPossibleAnswer()", "<span class='glyphicon glyphicon-minus'></span>", "removePossibleAnswer($(_elementProperties.selectedelement))");
@@ -406,8 +420,8 @@ var ElementProperties = function() {
 				getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false,  parseInt($(e).find("input[name^='order']").val()));
 				getChoosePropertiesRow("Columns", "1,2,3,4", false, false, $(e).find("input[name^='columns']").val());
 				getMinMaxPropertiesRow("NumberOfChoices", 0, 500, $(e).find("input[name^='choicemin']").val(), $(e).find("input[name^='choicemax']").val())
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
-				getVisibilityRow(false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -418,6 +432,30 @@ var ElementProperties = function() {
 				{
 					getQuizPropertiesRow();
 					getQuizPropertiesContent();
+				}
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
+			} else if ($(e).hasClass("rankingitem"))
+			{
+				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
+				if (isDelphi)
+				{
+					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
+				}
+				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
+				// TODO DELPHI-189 getActionRow("childElements", "<span class='glyphicon glyphicon-plus'></span>", "addChildElements()", "<span class='glyphicon glyphicon-minus'></span>", "removeChildElement($(_elementProperties.selectedelement))");
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
+
+				getAdvancedPropertiesRow();
+				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
+				
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
 				}
 			} else if ($(e).hasClass("answertext"))
 			{
@@ -453,6 +491,7 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getChoosePropertiesRow("DisplaySlider", "Number,Slider", false, false, $(e).find("input[name^='display']").val());
@@ -472,8 +511,8 @@ var ElementProperties = function() {
 				getChoosePropertiesRow("InitialSliderPosition", "Left,Middle,Right", false, false, $(e).find("input[name^='initialSliderPosition']").val());
 				//getCheckPropertiesRow("DisplayGraduationScale", $(e).find("input[name^='displayGraduationScale']").val() == 'true');
 	
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
-				getVisibilityRow(false);								
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 					
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -487,6 +526,11 @@ var ElementProperties = function() {
 					getQuizPropertiesContent();
 				}
 				
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
+				
 				adaptSliderDisplay($(e).find("input[name^='display']").val() === 'Slider');
 				
 			} else if ($(e).hasClass("matrixitem"))
@@ -496,6 +540,7 @@ var ElementProperties = function() {
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
 					getChoosePropertiesRow("DelphiChartType", "Bar,Column,Line,Pie,Radar,Scatter", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				
@@ -510,12 +555,17 @@ var ElementProperties = function() {
 				getChoosePropertiesRow("Order", "Original,Alphabetical,Random", false, false,  parseInt($(e).find("input[name^='order']").val()));
 				getMinMaxPropertiesRow("NumberOfAnsweredRows", 0, null, $(e).find("input[name^='rowsmin']").val(), $(e).find("input[name^='rowsmax']").val())
 				getChoosePropertiesRow("Size", "fitToContent,fitToPage,manualColumnWidth", false, true, parseInt($(e).find("input[name^='tabletype']").val()));
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
-				getVisibilityRow(false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
+				
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
 			} else if ($(e).hasClass("matrix-header"))
 			{
 				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
@@ -561,6 +611,7 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				
@@ -571,13 +622,18 @@ var ElementProperties = function() {
 				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)");
 			
 				getChoosePropertiesRow("Size", "fitToContent,fitToPage,manualColumnWidth", false, true, parseInt($(e).find("input[name^='tabletype']").val()));
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
-				
-				getVisibilityRow(false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+
+				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
+				
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
 			} else if ($(e).hasClass("table-header"))
 			{
 				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
@@ -622,12 +678,13 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getMinMaxPropertiesRow("Values", 0, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
-				getVisibilityRow(false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -639,29 +696,33 @@ var ElementProperties = function() {
 					getQuizPropertiesRow();
 					getQuizPropertiesContent();
 				}
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
 			} else if ($(e).hasClass("timeitem"))
 			{
 				const isDelphiQuestion = $(e).find("input[name^='delphiquestion']").val() == 'true';
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getMinMaxPropertiesRow("Values", 0, null, $(e).find("input[name^='min']").val(), $(e).find("input[name^='max']").val())
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);		
-				getVisibilityRow(false);
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
+				getVisibilityRow(false, !isDelphiQuestion);
 				
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
-								
-//				if (isQuiz)
-//				{
-//					getQuizPropertiesRow();
-//					getQuizPropertiesContent();
-//				}
+				
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
 			} else if ($(e).hasClass("textitem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
@@ -689,7 +750,7 @@ var ElementProperties = function() {
 				}
 				
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false');
-				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);	
+				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
 				getVisibilityRow(false);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
@@ -718,20 +779,26 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getTextPropertiesRow("RegularExpression", $(e).find("input[name^='regex']").first().val(), false);
 				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getChoosePropertiesRow("Rows", "1,2,3,4,5,10,20,30,40,50", false, false, $(e).find("input[name^='rows']").val());
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
-				getVisibilityRow(false);
+				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
 				getCheckPropertiesRow("Unique", $(e).find("input[name^='unique']").val() == 'true');
 				getCheckPropertiesRow("Comparable", $(e).find("input[name^='comparable']").val() == 'true');
 				getCheckPropertiesRow("Password", $(e).find("input[name^='password']").val() == 'true');
-				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());	
+				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
+				
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
 			} else if ($(e).hasClass("galleryitem"))
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
@@ -763,6 +830,7 @@ var ElementProperties = function() {
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
 					getChoosePropertiesRow("DelphiChartType", "Bar,Column,Line,Pie,Radar,Scatter", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
+					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				
@@ -774,9 +842,14 @@ var ElementProperties = function() {
 				getChoosePropertiesRow("IconType", "Stars,Circles,Hearts", false, false, parseInt($(e).find("input[name^='iconType']").val()));
 				getNumberPropertiesRow("NumIcons", $(e).find("input[name^='numIcons']").val());
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
-				getVisibilityRow(false);
+				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
+				
+				if (isDelphi)
+				{
+					adaptDelphiControls(element);
+				}
 			} else if ($(e).hasClass("ratingquestion"))
 			{				
 				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];

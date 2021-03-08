@@ -14,6 +14,12 @@ import com.ec.survey.model.survey.*;
 import com.ec.survey.service.*;
 import com.ec.survey.tools.*;
 import com.ec.survey.tools.export.StatisticsCreator;
+import com.kennycason.kumo.WordFrequency;
+import com.kennycason.kumo.nlp.FrequencyAnalyzer;
+import com.kennycason.kumo.nlp.normalize.CharacterStrippingNormalizer;
+import com.kennycason.kumo.nlp.normalize.LowerCaseNormalizer;
+import com.kennycason.kumo.nlp.normalize.TrimToEmptyNormalizer;
+
 import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -558,7 +564,6 @@ public class RunnerController extends BasicController {
 				model.addObject("invitation", invitation.getId());
 				model.addObject("participationGroup", participationGroup.getId());
 
-				// recreate uploaded files
 				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 				return model;
@@ -1250,18 +1255,43 @@ public class RunnerController extends BasicController {
 
 	@RequestMapping(value = "/delete/{id}/{uniqueCode}/{surveyUID}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public @ResponseBody String delete(@PathVariable String id, @PathVariable String uniqueCode,
-			@PathVariable String surveyUID, HttpServletRequest request, HttpServletResponse response) {
+			@PathVariable String surveyUID, HttpServletRequest request) {
 		try {
 
 			String fileName = request.getParameter("fileName");
-
 			fileName = Ucs2Utf8.unconvert(fileName);
-			String validFileName = validateDeleteParameters(id, uniqueCode, fileName, surveyUID);
+			if (fileName.contains(Constants.PATH_DELIMITER) || fileName.contains("\\") || fileName.contains("*")) {
+				throw new ValidationException("Invalid file name: " + fileName, "Invalid file name: " + fileName);
+			}
 
-			java.io.File file = new java.io.File(validFileName);
+			final int questionId = Integer.parseInt(id);
+			final Element question = surveyService.getElement(questionId);
+			final String questionUid = question.getUniqueId();
+			final Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, true);
+			final boolean isDelphi = survey.getIsDelphi() && (question != null) && (question.isDelphiElement());
 
-			if (file.exists() && file.delete()) {
-				String files = getFiles(file.getParentFile());
+			File parentDirectory = null;
+			if (isDelphi) {
+				final com.ec.survey.model.survey.base.File fileInDatabase = answerExplanationService.getExplanationFile(
+						survey.getUniqueId(), uniqueCode, questionUid, fileName);
+				if (fileInDatabase != null) {
+					final AnswerSet answerSet = answerService.get(uniqueCode);
+					answerExplanationService.removeFileFromExplanation(answerSet.getId(), questionUid,
+							fileInDatabase.getUid());
+					fileService.deleteFileFromDiskAndDatabase(survey.getUniqueId(), fileInDatabase);
+				}
+				parentDirectory = fileService.deleteUploadedExplanationFileAndReturnParentDirectoryIfSuccessful(
+						survey.getUniqueId(), uniqueCode, questionUid, fileName);
+			} else {
+				final String validFileName = validateDeleteParameters(questionId, uniqueCode, fileName, surveyUID);
+				final File file = new File(validFileName);
+				if (file.exists() && file.delete()) {
+					parentDirectory = file.getParentFile();
+				}
+			}
+
+			if (parentDirectory != null) {
+				String files = getFiles(parentDirectory);
 				return "{\"success\": true, \"files\": [" + files + "]}";
 			} else {
 				return "{\"success\": false}";
@@ -1275,31 +1305,19 @@ public class RunnerController extends BasicController {
 		return "{\"success\": false}";
 	}
 
-	private String validateDeleteParameters(String id, String uniqueCode, String fileName, String surveyUID)
+	private String validateDeleteParameters(int questionId, String uniqueCode, String fileName, String surveyUID)
 			throws ValidationException, IOException {
+
 		Validator validator = ESAPI.validator();
-		
-		int questionId = Integer.parseInt(id);
-		Element question = surveyService.getElement(questionId);
-		Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, true);
-		boolean isDelphi = survey.getIsDelphi() && (question!=null) && (question.isDelphiElement());
-		
-		java.io.File basePath;
-		if (isDelphi) {
-			basePath = fileService.getSurveyExplanationUploadsFolder(surveyUID, false);
-		} else {
-			basePath = fileService.getSurveyUploadsFolder(surveyUID, false);
-		}
-		String folderPath = basePath + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + question.getUniqueId();
+
+		java.io.File basePath = fileService.getSurveyUploadsFolder(surveyUID, false);
+		String folderPath = basePath + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + questionId;
 		String canonicalPath = new File(folderPath).getCanonicalPath();
 		boolean validDirectoryPath = validator.isValidDirectoryPath(
 				"check directory path in RunnerController.delete method", canonicalPath,
 				basePath, false);
 		if (!validDirectoryPath) {
 			throw new ValidationException("Invalid folder path: " + folderPath, "Invalid folder path: " + folderPath);
-		}
-		if (fileName.contains(Constants.PATH_DELIMITER) || fileName.contains("\\") || fileName.contains("*")) {
-			throw new ValidationException("Invalid file name: " + fileName, "Invalid file name: " + fileName);
 		}
 		return folderPath + Constants.PATH_DELIMITER + fileName;
 	}
@@ -1368,13 +1386,16 @@ public class RunnerController extends BasicController {
 			fos.close();
 
 			java.io.File folder;
+			java.io.File directory;
 			if ((element instanceof Question) && (((Question)element).getIsDelphiQuestion())) {
 				folder = fileService.getSurveyExplanationUploadsFolder(surveyuid, false);
+				directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, element.getUniqueId()));
+
 			} else {
 				folder = fileService.getSurveyUploadsFolder(surveyuid, false);
+				directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, id));
 			}
-			java.io.File directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, element.getUniqueId()));
-
+			
 			// we try 3 times to create the folders
 			boolean error = false;
 			if (!directory.exists() && !directory.mkdirs() && !directory.exists() && !directory.mkdirs()
@@ -1888,7 +1909,6 @@ public class RunnerController extends BasicController {
 				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 				f.setValidation(validation);
 
-				// recreate uploaded files
 				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
@@ -2414,11 +2434,10 @@ public class RunnerController extends BasicController {
 			Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
 			HashMap<Element, String> result = new HashMap<>();
 
-			Draft draft = null;
-			boolean validation = SurveyHelper.validateElement(element, answerSet, dependencies, result, answerService, invisibleElements, resources,
-					locale, null, request, draft);
+			final Map<Element, String> validation = SurveyHelper.validateAnswerSet(answerSet, answerService,
+					invisibleElements, resources, locale, null, request, true, user, fileService);
 			
-			if (!validation) {
+			if (!validation.isEmpty()) {
 				return new ResponseEntity<>(new DelphiUpdateResult(resources.getMessage("error.CheckValidation", null, locale)), HttpStatus.BAD_REQUEST);
 			}
 
@@ -2503,6 +2522,15 @@ public class RunnerController extends BasicController {
 				} else {
 					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 				}
+			}
+			
+			if (question instanceof FreeTextQuestion) {
+				
+				if (question.getDelphiChartType() == DelphiChartType.None) {
+					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+				}
+				
+				return handleDelphiFreetextQuestion(survey, question, creator);
 			}
 
 			Map<Integer, Integer> numberOfAnswersMap = new HashMap<>();
@@ -2605,6 +2633,55 @@ public class RunnerController extends BasicController {
 
 		if (result.getQuestions().isEmpty()) {
 			return ResponseEntity.noContent().build();
+		}
+
+		return ResponseEntity.ok(result);
+	}
+	
+	private static List<String> stopWords = null;
+	
+	private ResponseEntity<AbstractDelphiGraphData> handleDelphiFreetextQuestion(Survey survey, Question question, StatisticsCreator creator) throws TooManyFiltersException {
+		final FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
+		frequencyAnalyzer.setWordFrequenciesToReturn(200);
+		frequencyAnalyzer.addNormalizer(new LowerCaseNormalizer());
+		frequencyAnalyzer.addNormalizer(new TrimToEmptyNormalizer());
+		frequencyAnalyzer.addNormalizer(new CharacterStrippingNormalizer());
+		frequencyAnalyzer.setMinWordLength(3);
+				
+		if (stopWords == null) {
+			InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/StopWords/EN.txt");
+			String text;
+			try {
+				text = IOUtils.toString(inputStream, "UTF-8");
+				String[] stopWordsArray = text.split("\\R");
+				stopWords = Arrays.asList(stopWordsArray);
+			} catch (IOException e) {
+				logger.error(e.getLocalizedMessage(), e);
+				stopWords = Arrays.asList("and", "or");
+			}
+		}
+		
+		frequencyAnalyzer.setStopWords(stopWords);
+		
+		List<String> texts = creator.getAnswers4FreeTextStatistics(survey, question);
+		
+		if (texts.size() < survey.getMinNumberDelphiStatistics()) {
+			// only show statistics for this question if the total number of answers exceeds the threshold
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}		
+		
+		final List<WordFrequency> wordFrequencies = frequencyAnalyzer.load(texts);
+		
+		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
+		result.setChartType(question.getDelphiChartType());
+		result.setQuestionType(DelphiQuestionType.FreeText);
+		result.setLabel(question.getStrippedTitle());
+	
+		for (WordFrequency frequency : wordFrequencies) {
+			DelphiGraphEntry delphiGraphEntry = new DelphiGraphEntry();
+			delphiGraphEntry.setLabel(frequency.getWord());
+			delphiGraphEntry.setValue(frequency.getFrequency());
+			result.addEntry(delphiGraphEntry);
 		}
 
 		return ResponseEntity.ok(result);
@@ -3020,6 +3097,8 @@ public class RunnerController extends BasicController {
 			} else {
 				result = handleDelphiTableRawValueQuestion(question, orderBy, limit, offset);
 			}
+			
+			result.setShowExplanationBox(question.getShowExplanationBox());
 
 			return ResponseEntity.ok(result);
 		} catch (Exception e) {

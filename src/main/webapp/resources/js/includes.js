@@ -1848,7 +1848,7 @@ function initModals(item)
 		
 		if (!result) {
 			$(parent).closest(".survey-element").find("a[data-type='delphisavebutton']").addClass("disabled");
-			$(parent).closest(".survey-element").find(".delphiupdatemessage").empty();
+			$(parent).closest(".survey-element").find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
 		}
 		
 		return result;

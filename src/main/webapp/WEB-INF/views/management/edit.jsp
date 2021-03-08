@@ -188,6 +188,9 @@
 								<li id="drag_number" class="toolboxitem numberitem draggable"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
 								<li id="drag_date" class="toolboxitem dateitem draggable"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
 								<li id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
+								<c:if test="${form.survey.isDelphi}">
+									<li id="drag_ranking" class="toolboxitem rankingitem draggable"><span class="glyphicon glyphicon-sort"></span> <spring:message code="form.RankingQuestion" /></li>
+								</c:if>
 							</c:otherwise>
 						</c:choose>
 						<li id="drag_matrix" class="toolboxitem matrixitem draggable"><span class="glyphicon glyphicon-list-alt"></span> <spring:message code="form.Matrix" /></li>
@@ -628,6 +631,7 @@
 			if (element.hasClass("matrix-header")) return "<spring:message code='form.MatrixElement' />";
 			if (element.hasClass("table-header")) return "<spring:message code='form.Table' />";
 			if (element.hasClass("answertext")) return "<spring:message code='label.Answer' />";
+			if (element.hasClass("rankingitem")) return "<spring:message code='label.RankingQuestion' />";
 			if (element.find(".gallery-image").length > 0) return "<spring:message code='form.GalleryImage' />";
 			return "Template";
 		}
@@ -859,6 +863,9 @@
 			strings["Scatter"] ="<spring:message code="label.DelphiChartScatter" />";
 			strings["MaxDistanceToMedian"] ="<spring:message code="label.MaxDistanceToMedian" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.MaxDistanceToMedian" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 			strings["Ignore"] ="<spring:message code="label.Ignore" />";
+			strings["None"] ="<spring:message code="label.None" />";
+			strings["WordCloud"] ="<spring:message code="label.DelphiChartWordCloud" />";
+			strings["ShowExplanationBox"] = "<spring:message code="label.ShowExplanationBox" />";
 			
 	 		return strings[label];
 	 	}

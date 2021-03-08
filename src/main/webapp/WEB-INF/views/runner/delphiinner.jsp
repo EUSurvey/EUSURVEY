@@ -2,6 +2,10 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
+<script type="text/javascript" src="${contextpath}/resources/js/d3.v3.min.js?version=<%@include file="../version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/d3.layout.cloud.min.js?version=<%@include file="../version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/wordcloud.js?version=<%@include file="../version.txt" %>"></script>
+
 <style>
 	.section {
 		color: #fff;
@@ -220,7 +224,7 @@
 					<div class="sectioncontent">
 
 						<!-- ko foreach: questions -->
-						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid}">
+						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid, 'data-question-uid': uid}">
 							<div class="question-title">
 								<span data-bind="html: sectionViewModel.niceTitle(title)"></span>
 								<span style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
@@ -230,10 +234,12 @@
 								<span class="glyphicon glyphicon-signal"></span><br />
 								<span><spring:message code="info.NoData" /></span>
 							</div>
+							
+							<div data-bind="attr: {id: 'wordcloud' + uid}" class="delphi-chart-div" style="display: none; width: 300px; height: 200px"></div>
 							<div style="height: 200px;" class="delphi-chart-div">
 								<canvas class='delphi-chart' width='300' height='200'></canvas>
 							</div>
-
+							
 							<div class="question-footer">
 								<!--  ko if: maxDistanceExceeded && !changedForMedian -->
 									<div style="color: #f00; font-size: 30px; float: right;">
@@ -479,7 +485,7 @@
 								|| data.sections[i].questions[j].answer.length > 0)
 							{
 								var div = $('#delphiquestion' + data.sections[i].questions[j].uid);
-								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false);
+								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false, false, true);
 							}
 						}
 					}
@@ -496,7 +502,7 @@
 			var uniquecode = "${uniqueCode}";
 			var languagecode = "${form.language.code}";
 			var uid = $(element).closest(".question").attr("data-uid");
-			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true);
+			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true, false);
 		}
 
 		$(document).ready(function(){

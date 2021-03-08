@@ -198,7 +198,7 @@ function getCleanArray(arr)
 	return result;
 }
 
-function getVisibilityRow(multiselection)
+function getVisibilityRow(multiselection, isVisible = true)
 {
 	var label = "Visibility";
 	
@@ -206,7 +206,8 @@ function getVisibilityRow(multiselection)
 	row.Type("first");
 	row.ContentType("visibility");
 	row.Label(label);
-	row.LabelTitle(getPropertyLabel(label)); 
+	row.LabelTitle(getPropertyLabel(label));
+	row.IsVisible(isVisible);
 	
 	var selectedelement = $("#content").find(".selectedquestion").first();
 	var element = _elements[$(selectedelement).attr("data-id")];
@@ -1993,5 +1994,36 @@ function adaptSliderDisplay(isSlider)
 		$("tr[data-label='InitialSliderPosition']").hide();
 		$("tr[data-label='DisplayGraduationScale']").hide();
 		$("tr[data-label='MaxDistanceToMedian']").hide();
+	}
+}
+
+function adaptDelphiControls(element) {
+	const mandatoryPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Mandatory');
+	if (mandatoryPropertyRow) {
+		if (element.isDelphiQuestion()) {
+			mandatoryPropertyRow.Disabled(true);
+			mandatoryPropertyRow.Value(false);
+			element.optional(true);
+		} else {
+			mandatoryPropertyRow.Disabled(false);
+		}
+	}
+
+	const visibilityPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Visibility');
+	if (visibilityPropertyRow) {
+		if (element.isDelphiQuestion()) {
+			visibilityPropertyRow.IsVisible(false);
+			$('#idRemoveVisibility').click();
+		} else {
+			visibilityPropertyRow.IsVisible(true);
+		}
+	}
+	
+	if (element.isDelphiQuestion()) {
+		$("tr[data-label='ShowExplanationBox']").show();
+		$("tr[data-label='DelphiChartType']").show();
+	} else {
+		$("tr[data-label='ShowExplanationBox']").hide();
+		$("tr[data-label='DelphiChartType']").hide();
 	}
 }

@@ -223,15 +223,13 @@ public class AnswerService extends BasicService {
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
-				// delete temporary files folder
-				try {
-					java.io.File folder = fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(),
-							false);
-					java.io.File directory = new java.io.File(
-							folder.getPath() + Constants.PATH_DELIMITER + answerSet.getUniqueCode());
-					FileUtils.delete(directory);
-				} catch (Exception e) {
-					logger.error(e.getLocalizedMessage(), e);
+
+				// Do not delete uploaded answer files when submitting a Delphi questionnaire as these would be lost if
+				// they had not been saved yet. Let the DeleteTemporaryFolderUpdater worker clean up the mess.
+				if (!answerSet.getSurvey().getIsDelphi()) {
+					final String surveyUid = answerSet.getSurvey().getUniqueId();
+					final String answerSetUniqueCode = answerSet.getUniqueCode();
+					fileService.deleteUploadedAnswerFiles(surveyUid, answerSetUniqueCode);
 				}
 			}
 
@@ -1553,7 +1551,7 @@ public class AnswerService extends BasicService {
 			String answerSetUniqueCode) {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createSQLQuery(
-				"select count(*) from ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID INNER JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID where s.ISDRAFT = :isdraft AND ans.UNIQUECODE != :ansuid AND ((a.QUESTION_ID= :questionId and a.VALUE= :value and a.ANSWER_ISDRAFT=0) or (a.QUESTION_UID= :questionUid and a.VALUE= :value and a.ANSWER_ISDRAFT=0))")
+				"select count(*) from ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID INNER JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID where s.ISDRAFT = :isdraft AND ans.UNIQUECODE != :ansuid AND ((a.QUESTION_ID= :questionId and a.VALUE= :value and ans.ISDRAFT=0) or (a.QUESTION_UID= :questionUid and a.VALUE= :value and ans.ISDRAFT=0))")
 				.setBoolean("isdraft", surveyIsDraft).setString("value", value).setString("ansuid", answerSetUniqueCode)
 				.setString("questionUid", questionUid).setInteger("questionId", questionId);
 		return ConversionTools.getValue(query.uniqueResult());

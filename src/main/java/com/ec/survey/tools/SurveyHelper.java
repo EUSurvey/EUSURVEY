@@ -884,7 +884,16 @@ public class SurveyHelper {
 		return answerSet;
 	}
 
-	private static void recreateDelphiExplanationUploadedFiles(AnswerSet answerSet, Survey survey, FileService fileService, AnswerExplanationService answerExplanationService) {
+	public static void recreateUploadedFiles(AnswerSet answerSet, Survey survey, FileService fileService,
+			AnswerExplanationService answerExplanationService) {
+
+		recreateDelphiExplanationUploadedFiles(answerSet, survey, fileService, answerExplanationService);
+		recreateUploadedAnswerFiles(answerSet, survey, fileService);
+	}
+
+	private static void recreateDelphiExplanationUploadedFiles(AnswerSet answerSet, Survey survey,
+			FileService fileService, AnswerExplanationService answerExplanationService) {
+
 		int answerSetId = answerSet.getId();
 		String surveyUniqueId = survey.getUniqueId();
 
@@ -925,9 +934,8 @@ public class SurveyHelper {
 		}
 	}
 
-	public static void recreateUploadedFiles(AnswerSet answerSet, Survey survey,
-			FileService fileService, AnswerExplanationService answerExplanationService) {
-		recreateDelphiExplanationUploadedFiles(answerSet, survey, fileService, answerExplanationService);
+	private static void recreateUploadedAnswerFiles(AnswerSet answerSet, Survey survey, FileService fileService) {
+
 		Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
 
 		for (Answer answer : answerSet.getAnswers()) {
@@ -1641,6 +1649,21 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		freetext.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(freetext.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + freetext.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		freetext.setShowExplanationBox(showExplanationBox);
+		
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.None : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != freetext.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + freetext.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		freetext.setDelphiChartType(delphiChartType);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (isDelphiQuestion && !isOptional) {
@@ -1778,6 +1801,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		regex.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(regex.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + regex.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		regex.setShowExplanationBox(showExplanationBox);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (isDelphiQuestion && !isOptional) {
@@ -1964,6 +1994,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		number.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(number.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + number.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		number.setShowExplanationBox(showExplanationBox);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (isDelphiQuestion && !isOptional) {
@@ -2136,6 +2173,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		date.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(date.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + date.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		date.setShowExplanationBox(showExplanationBox);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (isDelphiQuestion && !isOptional) {
@@ -2245,6 +2289,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		time.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(time.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + time.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		time.setShowExplanationBox(showExplanationBox);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (isDelphiQuestion && !isOptional) {
@@ -2371,6 +2422,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		rating.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(rating.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + rating.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		rating.setShowExplanationBox(showExplanationBox);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (isDelphiQuestion && !isOptional) {
@@ -2539,6 +2597,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		singlechoice.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(singlechoice.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + singlechoice.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		singlechoice.setShowExplanationBox(showExplanationBox);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (isDelphiQuestion && !isOptional) {
@@ -2811,6 +2876,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		multiplechoice.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(multiplechoice.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + multiplechoice.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		multiplechoice.setShowExplanationBox(showExplanationBox);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (isDelphiQuestion && !isOptional) {
@@ -3020,6 +3092,95 @@ public class SurveyHelper {
 		return multiplechoice;
 	}
 
+	private static RankingQuestion getRankingQuestion(Map<String, String[]> parameterMap, Element currentElement, String id, String[] items, String[] originalItems, ServletContext servletContext, boolean log220) throws InvalidXHTMLException {
+		String oldValues = "";
+		String newValues = "";
+
+		RankingQuestion rankingQuestion;
+		if (currentElement instanceof RankingQuestion) {
+			rankingQuestion = (RankingQuestion) currentElement;
+
+			// make sure the childElements match the items given and that all are unique
+			List<Element> itemsToDelete = new ArrayList<>();
+			List<String> newUniqueItems = new ArrayList<>();
+			for (Element thatItem : rankingQuestion.getChildElements()) {
+				boolean found = false;
+				for (String item : items) {
+					if (thatItem.getTitle().equals(item)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					for (String item : originalItems) {
+						if (thatItem.getTitle().equals(item)) {
+							found = true;
+							break;
+						}
+					}
+				}
+				if (!found || newUniqueItems.contains(thatItem.getTitle())) {
+					itemsToDelete.add(thatItem);
+				} else {
+					newUniqueItems.add(thatItem.getTitle());
+				}
+			}
+
+			for (Element thatItem : itemsToDelete) {
+				rankingQuestion.getChildElements().remove(thatItem);
+			}
+
+		} else {
+			rankingQuestion = new RankingQuestion();
+			String uid = getString(parameterMap, "uid", id, servletContext);
+			rankingQuestion.setUniqueId(uid);
+		}
+
+		String title = getString(parameterMap, "text", id, servletContext);
+		if (log220 && !rankingQuestion.getTitle().equals(title)) {
+			oldValues += " title: " + rankingQuestion.getTitle();
+			newValues += " title: " + title;
+		}
+		rankingQuestion.setTitle(title);
+
+		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
+		if (log220 && !isDelphiQuestion.equals(rankingQuestion.getIsDelphiQuestion())) {
+			oldValues += " isDelphiQuestion: " + rankingQuestion.getIsDelphiQuestion();
+			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+		}
+		rankingQuestion.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(rankingQuestion.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + rankingQuestion.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		rankingQuestion.setShowExplanationBox(showExplanationBox);
+
+		String help = getString(parameterMap, "help", id, servletContext);
+		if (log220 && rankingQuestion.getHelp() != null && !rankingQuestion.getHelp().equals(help)) {
+			oldValues += " help: " + rankingQuestion.getHelp();
+			newValues += " help: " + help;
+		}
+		rankingQuestion.setHelp(help);
+
+		String shortname = getString(parameterMap, Constants.SHORTNAME, id, servletContext);
+		if (log220 && rankingQuestion.getShortname() != null && !rankingQuestion.getShortname().equals(shortname)) {
+			oldValues += " shortname: " + rankingQuestion.getShortname();
+			newValues += " shortname: " + shortname;
+		}
+		rankingQuestion.setShortname(shortname);
+
+		// TODO DELPHI-189 add other attributes, check also in elementtemplate and match them
+
+		if (log220 && oldValues.length() > 0) {
+			String[] oldnew = { oldValues, newValues };
+			rankingQuestion.getActivitiesToLog().put(220, oldnew);
+		}
+
+		return rankingQuestion;
+	}
+
 	private static Matrix getMatrix(Map<String, String[]> parameterMap, Element currentElement,
 			String id, Map<Integer, Element> elementsById, String[] dependenciesForAnswers,
 			HashMap<Matrix, HashMap<Integer, String>> matrixDependencies, ServletContext servletContext, boolean log220)
@@ -3115,6 +3276,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		matrix.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(matrix.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + matrix.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		matrix.setShowExplanationBox(showExplanationBox);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (isDelphiQuestion && !isOptional) {
@@ -3334,6 +3502,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		table.setIsDelphiQuestion(isDelphiQuestion);
+		
+		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
+		if (log220 && !showExplanationBox.equals(table.getShowExplanationBox())) {
+			oldValues += " showExplanationBox: " + table.getShowExplanationBox();
+			newValues += " showExplanationBox: " + showExplanationBox;
+		}
+		table.setShowExplanationBox(showExplanationBox);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (isDelphiQuestion && !isOptional) {
@@ -3552,6 +3727,37 @@ public class SurveyHelper {
 						dependencies, shortnamesForAnswers, correctForAnswers, pointsForAnswers, feedbackForAnswers,
 						servletContext, log220);
 			}
+		} else if (type.equalsIgnoreCase("rankingquestion")) {
+			String[] items = parameterMap.get("rankingitem" + id); // TODO DELPHI-189 make childElements editable
+			if (items == null) {
+				items = new String[0];
+			}
+
+			List<String> list = new ArrayList<>(Arrays.asList(items));
+			list.removeAll(Arrays.asList("", null));
+			items = list.toArray(new String[0]);
+
+			for (int i = 0; i < items.length; i++) {
+				if (items[i] != null)
+					items[i] = Tools.filterHTML(items[i]);
+			}
+
+			String[] originalItems = parameterMap.get("originalrankingitem" + id);  // TODO DELPHI-189 make childElements editable
+			if (originalItems == null) {
+				originalItems = new String[0];
+			}
+
+			list = new ArrayList<>(Arrays.asList(originalItems));
+			list.removeAll(Arrays.asList("", null));
+			originalItems = list.toArray(new String[0]);
+
+			for (int i = 0; i < originalItems.length; i++) {
+				if (originalItems[i] != null) {
+					originalItems[i] = Tools.filterHTML(originalItems[i]);
+				}
+			}
+
+			element = getRankingQuestion(parameterMap, currentElement, id, items, originalItems, servletContext, log220 && currentElement != null);
 		}
 
 		if (survey.getIsQuiz() && element instanceof Question) {

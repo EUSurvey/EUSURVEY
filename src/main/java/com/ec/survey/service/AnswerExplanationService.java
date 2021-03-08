@@ -303,6 +303,7 @@ public class AnswerExplanationService extends BasicService {
 		final Session session = sessionFactory.getCurrentSession();
 
 		final Survey survey = answerSet.getSurvey();
+		final String surveyUid = survey.getUniqueId();
 		for (Question question : survey.getQuestions()) {
 			final String questionUid = question.getUniqueId();
 			if (question.getIsDelphiQuestion()) {
@@ -310,8 +311,7 @@ public class AnswerExplanationService extends BasicService {
 				if (explanationData == null) {
 					continue;
 				}
-				
-				boolean hasNoLinkedAnswers;
+
 				List<Answer> answers;
 				if (question instanceof Matrix) {
 					Matrix matrix = (Matrix) question;
@@ -320,28 +320,23 @@ public class AnswerExplanationService extends BasicService {
 					answers = answerSet.getAnswers(question.getId(), questionUid);
 				}
 
-				hasNoLinkedAnswers = answers.isEmpty();
-				
-				if (hasNoLinkedAnswers) {
-					fileService.deleteExplanationFilesFromDisk(survey.getUniqueId(), answerSet.getUniqueCode(),
-							question.getUniqueId());
-				}
-
-				AnswerExplanation explanation = null;
+				AnswerExplanation explanation;
+				boolean hasNoLinkedAnswers = answers.isEmpty();
 				try {
 					explanation = getExplanation(answerSet.getId(), questionUid);
 
 					if (hasNoLinkedAnswers) {
-						explanation.getFiles().forEach(session::delete);
+						fileService.deleteUploadedExplanationFiles(surveyUid, answerSet.getUniqueCode(), questionUid);
+						fileService.deleteFilesFromDiskAndDatabase(surveyUid, explanation.getFiles());
 						session.delete(explanation);
 						continue;
 					}
 				} catch (NoSuchElementException ex) {
-					if (hasNoLinkedAnswers && !explanationData.files.isEmpty()) {
-						explanationData.files.forEach(session::delete);
+					if (hasNoLinkedAnswers) {
+						fileService.deleteUploadedExplanationFiles(surveyUid, answerSet.getUniqueCode(), questionUid);
 						explanationData.files.clear();
 					}
-					if ((explanationData.text.length() == 0) && (explanationData.files.isEmpty())) {
+					if (explanationData.text.length() == 0 && explanationData.files.isEmpty()) {
 						continue;
 					}
 
@@ -717,5 +712,49 @@ public class AnswerExplanationService extends BasicService {
 		return result;
 	}
 
+	@Transactional(readOnly = true)
+	public File getExplanationFile(final String surveyUid, final String uniqueCode, final String questiondUid,
+			final String fileName) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Query query = session
+				.createSQLQuery("SELECT f.FILE_ID, f.FILE_UID "
+						+ "FROM FILES f "
+						+ "JOIN ANSWERS_EXPLANATIONS_FILES aef ON aef.files_FILE_ID = f.FILE_ID "
+						+ "JOIN ANSWERS_EXPLANATIONS ae ON ae.ANSWER_EXPLANATION_ID = aef.ANSWERS_EXPLANATIONS_ANSWER_EXPLANATION_ID "
+						+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ae.ANSWER_SET_ID "
+						+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
+						+ "WHERE s.SURVEY_UID = :surveyUid AND ans.UNIQUECODE = :uniqueCode "
+							+ "AND ae.QUESTION_UID = :questionUid AND f.FILE_NAME = :fileName")
+				.setString("surveyUid", surveyUid)
+				.setString("uniqueCode", uniqueCode)
+				.setString("questionUid", questiondUid)
+				.setString("fileName", fileName);
+
+		@SuppressWarnings("rawtypes")
+		final Object result = query.uniqueResult();
+		if (result == null)
+			return null;
+		final Object[] element = (Object[]) result;
+
+		final int fileId = ConversionTools.getValue(element[0]);
+		final String fileUid = (String) element[1];
+
+		final File file = new File();
+		file.setId(fileId);
+		file.setName(fileName);
+		file.setUid(fileUid);
+		return file;
+	}
+
+	@Transactional
+	public void removeFileFromExplanation(final int answerSetId, final String questionUid, final String fileUid) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final AnswerExplanation explanation = getExplanation(answerSetId, questionUid);
+		explanation.getFiles().removeIf(f -> f.getUid().equals(fileUid));
+		session.saveOrUpdate(explanation);
+		session.flush();
+	}
 
 }

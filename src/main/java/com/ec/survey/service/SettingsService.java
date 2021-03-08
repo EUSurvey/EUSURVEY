@@ -13,10 +13,19 @@ import java.util.List;
 public class SettingsService extends BasicService {
 	
 	@Transactional(readOnly = true)
-	public String get( String key ) {
+	public String get(String key) {
 		Session session = sessionFactory.getCurrentSession();		
 		Query query = session.createQuery("SELECT value FROM Setting WHERE key = :key").setString("key", key);
 		return (String) query.uniqueResult();		
+	}
+	
+	@Transactional(readOnly = false)
+	public Setting getSetting(String key) {
+		Session session = sessionFactory.getCurrentSession();		
+		Query query = session.createQuery("FROM Setting WHERE key = :key").setString("key", key);
+		@SuppressWarnings("unchecked")
+		List<Setting> result = query.list();
+		return result.isEmpty() ? null : result.get(0);
 	}
 	
 	@Transactional(readOnly = true)
