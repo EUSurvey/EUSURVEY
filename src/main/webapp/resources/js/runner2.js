@@ -734,6 +734,8 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 
 				default:
 					addStatisticsToAnswerText(div, result);
+					var elementWrapper = $(div).closest(".elementwrapper");
+					$(elementWrapper).find(".chart-wrapper-loader").hide();
 					return;
 			}
 
