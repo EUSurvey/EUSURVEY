@@ -25,7 +25,7 @@ public class DeleteTemporaryFolderUpdater implements Runnable {
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.MONTH, -1);
 			
-			fileService.deleteOldTemporaryFolders(cal.getTime());	
+			fileService.deleteUploadedFilesFolders(cal.getTime());
 			
 			cal = Calendar.getInstance();
 			cal.add(Calendar.DATE, -7);
