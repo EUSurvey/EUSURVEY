@@ -1636,7 +1636,7 @@ function deleteDelphiComment(button, viewModel, isReply, errorCallback, successC
 
 function checkGoToDelphiStart(link)
 {
-	var button = $(link).parent().find("a[data-type='delphisavebutton']").first();
+	var button = $("a[data-type='delphisavebutton']:visible").not(".disabled").first();
 
 	var ansSetId = $('#IdAnswerSet').val();
 	var ansSetUniqueCode = $('#uniqueCode').val();
@@ -1650,7 +1650,7 @@ function checkGoToDelphiStart(link)
 		url = contextpath + "/editcontribution/" + ansSetUniqueCode;
 	}
 
-	if (!$(button).hasClass("disabled")) {
+	if ($(button).length > 0) {
 		$('#unsaveddelphichangesdialoglink').attr("href", url);
 		$('#unsaveddelphichangesdialog').modal("show");
 		return;
