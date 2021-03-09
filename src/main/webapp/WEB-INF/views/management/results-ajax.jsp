@@ -122,12 +122,12 @@
 						  });
 
 					  },
-					error: function () {
+					  error: function () {
 						//this means the asynchronous computation has been started
 						setTimeout(function () {
 							loadStatisticsAsync(publication);
 						}, 2000);
-					}
+					  }
 				});
 		}
 		
@@ -146,11 +146,29 @@
 						 }
 					  });
 				  },
-				error: function () {
-					//this means the asynchronous computation has been started
-					setTimeout(function () {
-						loadDelphiStatisticsAsync();
-					}, 2000);
+				  error: function (data) {
+						showError(data.responseText);
+					}
+			});
+			
+			$.ajax({
+				type:'GET',
+				  url: "${contextpath}/${form.survey.shortname}/management/statisticsDelphiMedianJSON",
+				  dataType: 'json',
+				  cache: false,
+				  success: function( statistics ) {
+					  $(".statDelphiMedian").each(function(){
+						 var id = $(this).attr("data-uid");
+						 if (statistics[id] != null)
+						 {
+						 	$(this).html(statistics[id]);
+						 } else {
+							 $(this).empty();
+						 }
+					  });
+				  },
+				error: function (data) {
+					showError(data.responseText);
 				}
 			});
 		}

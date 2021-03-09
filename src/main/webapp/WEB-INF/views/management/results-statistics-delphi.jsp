@@ -21,12 +21,14 @@
 					<tr>
 						<th><spring:message code="label.Element" /></td>
 						<th><spring:message code="label.CompletionRate" /></td>
+						<th><spring:message code="label.Median" /></td>
 					</tr>
 				</thead>
 				<tbody>
 					<tr style="background-color: #eee">
 						<td style="font-weight: bold"><spring:message code="label.Survey" /></td>
 						<td class="statDelphi" data-uid="0"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+						<td></td>
 					</tr>
 					
 					<c:forEach items="${form.getSurvey().getElements()}" var="element" varStatus="loop">
@@ -35,12 +37,14 @@
 								<tr>
 									<td style="font-weight: bold">${element.title}</td>
 									<td class="statDelphi" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+									<td></td>
 								</tr>
 							</c:when>
 							<c:when test="${element.isDelphiElement()}">
 								<tr>
 									<td style="padding-left: 20px;">${element.title}</td>
 									<td class="statDelphi" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+									<td class="statDelphiMedian" data-uid="${element.uniqueId}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
 								</tr>
 							</c:when>
 						</c:choose>			

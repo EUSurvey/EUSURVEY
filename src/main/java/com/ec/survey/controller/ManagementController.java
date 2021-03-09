@@ -11,6 +11,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.delphi.DelphiMedian;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SurveyException;
@@ -3461,6 +3462,72 @@ public class ManagementController extends BasicController {
 				return answerService.getCompletionRates(survey, filter);
 			}
 			
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+		
+		return null;
+	}
+	
+	@RequestMapping(value = "/statisticsDelphiMedianJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody Map<String, String> statisticsDelphiMedianJSON(@PathVariable String shortname, HttpServletRequest request) {
+	
+		try {
+			ResultFilter filter = sessionService.getLastResultFilter(request);
+			
+			Survey survey = null;
+			if (filter == null || filter.getSurveyId() == 0) {
+				return null;
+			} else {
+				survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
+			}
+			
+			if (survey == null) {
+			   return null;
+			}
+
+			Map<String, String> result = new HashMap<>();
+			
+			for (Element element : survey.getElements()) {
+				if (element instanceof SingleChoiceQuestion) {
+					SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)element;
+					
+					if (!singleChoiceQuestion.getUseLikert() || singleChoiceQuestion.getMaxDistance() <= -1) {
+					   continue;
+					}
+
+					DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, null, filter);
+					if (median == null) {
+						continue;
+					}
+					List<String> values = new ArrayList<>();
+					for (String uid : median.getMedianUids()) {
+						PossibleAnswer pa = singleChoiceQuestion.getPossibleAnswerByUniqueId(uid);
+						if (pa != null) {
+							values.add(pa.getTitle());
+						}
+					}
+					if (!values.isEmpty()) {
+						result.put(element.getUniqueId(), String.join(", ", values));
+					}
+				}
+				
+				if (element instanceof NumberQuestion) {
+					NumberQuestion numberQuestion = (NumberQuestion)element;
+					
+					if (!numberQuestion.isSlider() || numberQuestion.getMaxDistance() <= -1) {
+					   continue;
+					}
+					
+					DelphiMedian median = answerService.getMedian(survey, numberQuestion, null, filter);
+					if (median == null) {
+						continue;
+					}
+					result.put(element.getUniqueId(), Double.toString(median.getMedian()));
+				}
+			}
+			
+			return result;
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}

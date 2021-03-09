@@ -1,5 +1,6 @@
 package com.ec.survey.service;
 
+import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerComment;
 import com.ec.survey.model.AnswerExplanation;
@@ -299,7 +300,7 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional
-	public void createUpdateOrDeleteExplanations(AnswerSet answerSet) {
+	public void createUpdateOrDeleteExplanations(AnswerSet answerSet) throws Exception {
 		final Session session = sessionFactory.getCurrentSession();
 
 		final Survey survey = answerSet.getSurvey();
@@ -351,12 +352,12 @@ public class AnswerExplanationService extends BasicService {
 					if (question instanceof SingleChoiceQuestion) {
 						SingleChoiceQuestion choiceQuestion = (SingleChoiceQuestion) question;
 						if (choiceQuestion.getUseLikert() && choiceQuestion.getMaxDistance() > -1) {
-							median = answerService.getMedian(survey, choiceQuestion, answers.get(0));						
+							median = answerService.getMedian(survey, choiceQuestion, answers.get(0), null);						
 						}
 					} else if (question instanceof NumberQuestion) {
 						NumberQuestion numberQuestion = (NumberQuestion) question;
 						if (numberQuestion.isSlider() && numberQuestion.getMaxDistance() > -1) {
-							median = answerService.getMedian(survey, numberQuestion, answers.get(0));
+							median = answerService.getMedian(survey, numberQuestion, answers.get(0), null);
 						}
 					}
 					if (median != null && median.isMaxDistanceExceeded()) {
