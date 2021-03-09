@@ -254,6 +254,15 @@ var Actions = function() {
     	
 		updateDependenciesView();
 		deactivateLinks();
+		
+		var newCopiedElements = [];
+		$(this.copiedElements).each(function(){
+			var oldid = this.id();
+			var originalmodel = _elements[oldid];
+			var copiedmodel = originalmodel.copy();
+			newCopiedElements[newCopiedElements.length] = copiedmodel;
+    	});
+		this.copiedElements = newCopiedElements;
     }
     
     this.cutSelectedElement = function()
