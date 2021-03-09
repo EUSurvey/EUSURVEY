@@ -2260,16 +2260,27 @@ public class AnswerService extends BasicService {
 	}
 
 	@Transactional
-	public DelphiMedian getMedian(Survey survey, SingleChoiceQuestion singleChoiceQuestion, Answer answer) {
+	public DelphiMedian getMedian(Survey survey, SingleChoiceQuestion singleChoiceQuestion, Answer answer, ResultFilter filter) throws Exception {
 		int maxDistance = singleChoiceQuestion.getMaxDistance();
 		
-		Session session = sessionFactory.getCurrentSession();
+		Session session = sessionFactory.getCurrentSession();		
 		
-		SQLQuery query = session.createSQLQuery("SELECT a.PA_UID, count(*) FROM ANSWERS a " + 
+		String sql = "SELECT a.PA_UID, count(*) FROM ANSWERS a " + 
 				"JOIN ANSWERS_SET an on a.AS_ID = an.ANSWER_SET_ID " + 
 				"JOIN SURVEYS s ON an.SURVEY_ID = s.SURVEY_ID " + 
-				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :isDraft AND QUESTION_UID = :questionUid " + 
-				"GROUP BY a.PA_UID");
+				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :isDraft AND QUESTION_UID = :questionUid ";
+		
+		HashMap<String, Object> parameters = new HashMap<>();
+				
+		if (filter != null) {
+			String answersetsql = getSql(null, survey.getId(), filter, parameters, true);
+			sql += "AND an.ANSWER_SET_ID IN (" + answersetsql + ") ";
+		}		
+		
+		sql += "GROUP BY a.PA_UID";
+		
+		SQLQuery query = session.createSQLQuery(sql);
+		sqlQueryService.setParameters(query, parameters);
 		
 		query.setString("surveyUid", survey.getUniqueId());
 		query.setBoolean("isDraft", survey.getIsDraft());
@@ -2309,7 +2320,7 @@ public class AnswerService extends BasicService {
 				median.getMedianUids().add(pa.getUniqueId());
 			}
 			
-			if (pa.getUniqueId().equals(answer.getPossibleAnswerUniqueId()))
+			if (answer != null && pa.getUniqueId().equals(answer.getPossibleAnswerUniqueId()))
 			{
 				int distance = medianIndices[0] > index ? (medianIndices[0] - index) : (index - medianIndices[0]);
 				
@@ -2332,17 +2343,27 @@ public class AnswerService extends BasicService {
 	}
 	
 	@Transactional
-	public DelphiMedian getMedian(Survey survey, NumberQuestion numberQuestion, Answer answer) {
-		double maxDistance = numberQuestion.getMaxDistance();
-		double answerValue = Double.parseDouble(answer.getValue());
+	public DelphiMedian getMedian(Survey survey, NumberQuestion numberQuestion, Answer answer, ResultFilter filter) throws Exception {
+		double maxDistance = numberQuestion.getMaxDistance();		
 		
 		Session session = sessionFactory.getCurrentSession();
 		
-		SQLQuery query = session.createSQLQuery("SELECT a.VALUE, count(*) FROM ANSWERS a " + 
+		String sql = "SELECT a.VALUE, count(*) FROM ANSWERS a " + 
 				"JOIN ANSWERS_SET an on a.AS_ID = an.ANSWER_SET_ID " + 
 				"JOIN SURVEYS s ON an.SURVEY_ID = s.SURVEY_ID " + 
-				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :isDraft AND QUESTION_UID = :questionUid " + 
-				"GROUP BY a.VALUE");
+				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :isDraft AND QUESTION_UID = :questionUid ";
+		
+		HashMap<String, Object> parameters = new HashMap<>();
+				
+		if (filter != null) {
+			String answersetsql = getSql(null, survey.getId(), filter, parameters, true);
+			sql += "AND an.ANSWER_SET_ID IN (" + answersetsql + ") ";
+		}	
+		
+		sql += "GROUP BY a.VALUE";
+		
+		SQLQuery query = session.createSQLQuery(sql);
+		sqlQueryService.setParameters(query, parameters);
 		
 		query.setString("surveyUid", survey.getUniqueId());
 		query.setBoolean("isDraft", survey.getIsDraft());
@@ -2369,10 +2390,13 @@ public class AnswerService extends BasicService {
 		Double medianNumber = MathUtils.computeMedian(values.toArray(new Double[0]));
 		median.setMedian(medianNumber);
 		
-		double distance = Math.abs(medianNumber - answerValue);
-		
-		if (distance > maxDistance) {
-			median.setMaxDistanceExceeded(true);
+		if (answer != null) {
+			double answerValue = Double.parseDouble(answer.getValue());
+			double distance = Math.abs(medianNumber - answerValue);
+			
+			if (distance > maxDistance) {
+				median.setMaxDistanceExceeded(true);
+			}		
 		}
 				
 		return median;

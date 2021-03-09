@@ -2356,7 +2356,7 @@ public class RunnerController extends BasicController {
 						List<Answer> answers = answerSet.getAnswers(singleChoiceQuestion.getId(), singleChoiceQuestion.getUniqueId());
 						if (!answers.isEmpty())
 						{
-							median = answerService.getMedian(answerSet.getSurvey(), singleChoiceQuestion, answers.get(0));							
+							median = answerService.getMedian(answerSet.getSurvey(), singleChoiceQuestion, answers.get(0), null);							
 						}
 					}
 				}
@@ -2367,7 +2367,7 @@ public class RunnerController extends BasicController {
 						List<Answer> answers = answerSet.getAnswers(numberQuestion.getId(), numberQuestion.getUniqueId());
 						if (!answers.isEmpty())
 						{
-							median = answerService.getMedian(answerSet.getSurvey(), numberQuestion, answers.get(0));
+							median = answerService.getMedian(answerSet.getSurvey(), numberQuestion, answers.get(0), null);
 						}
 					}
 				}
@@ -2840,14 +2840,14 @@ public class RunnerController extends BasicController {
 										if (question instanceof SingleChoiceQuestion) {
 											SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)question;
 											if (singleChoiceQuestion.getUseLikert() && singleChoiceQuestion.getMaxDistance() > -1) {
-												median = answerService.getMedian(survey, singleChoiceQuestion, answer);												
+												median = answerService.getMedian(survey, singleChoiceQuestion, answer, null);												
 											}
 										}
 										
 										if (question instanceof NumberQuestion) {
 											NumberQuestion numberQuestion = (NumberQuestion)question;
 											if (numberQuestion.isSlider() && numberQuestion.getMaxDistance() > -1) {
-												median = answerService.getMedian(survey, numberQuestion, answer);												
+												median = answerService.getMedian(survey, numberQuestion, answer, null);												
 											}
 										}
 										
@@ -2992,7 +2992,7 @@ public class RunnerController extends BasicController {
 	}
 	
 	@GetMapping(value = "delphiMedian")
-	public ResponseEntity<DelphiMedian> delphiMedian(HttpServletRequest request) {
+	public ResponseEntity<DelphiMedian> delphiMedian(HttpServletRequest request) throws Exception {
 		String surveyid = request.getParameter("surveyid");
 		int sid = Integer.parseInt(surveyid);
 
@@ -3024,13 +3024,13 @@ public class RunnerController extends BasicController {
 			if (!singleChoiceQuestion.getUseLikert() || singleChoiceQuestion.getMaxDistance() == -1) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
-			median = answerService.getMedian(survey, singleChoiceQuestion, answer);
+			median = answerService.getMedian(survey, singleChoiceQuestion, answer, null);
 		} else {
 			NumberQuestion numberQuestion = (NumberQuestion) element;
 			if (!numberQuestion.isSlider() || numberQuestion.getMaxDistance() == -1) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
-			median = answerService.getMedian(survey, numberQuestion, answer);
+			median = answerService.getMedian(survey, numberQuestion, answer, null);
 		}
 	
 		if (null == median) {
