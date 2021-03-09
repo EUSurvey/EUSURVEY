@@ -2433,9 +2433,22 @@ public class RunnerController extends BasicController {
 			
 			Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
 			HashMap<Element, String> result = new HashMap<>();
+			
+			List<Element> elements = new ArrayList<>();
+			elements.add(element);
+			if (element instanceof ChoiceQuestion) {
+				for (Answer answer : answerSet.getAnswers()) {
+					if (!answer.getQuestionUniqueId().equals(element.getUniqueId())) {
+						Element candidate = survey.getElementsByUniqueId().get(answer.getQuestionUniqueId());
+						if (candidate != null && candidate instanceof FreeTextQuestion) {
+							elements.add(candidate);
+						}
+					}
+				}
+			}			
 
 			final Map<Element, String> validation = SurveyHelper.validateAnswerSet(answerSet, answerService,
-					invisibleElements, resources, locale, null, request, true, user, fileService);
+					invisibleElements, resources, locale, null, request, true, user, fileService, elements);
 			
 			if (!validation.isEmpty()) {
 				return new ResponseEntity<>(new DelphiUpdateResult(resources.getMessage("error.CheckValidation", null, locale)), HttpStatus.BAD_REQUEST);
