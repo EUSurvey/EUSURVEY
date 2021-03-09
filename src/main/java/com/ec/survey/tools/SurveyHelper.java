@@ -252,9 +252,19 @@ public class SurveyHelper {
 		return answerSet;
 	}
 
+	//answerSet.getSurvey().getElements()
 	public static Map<Element, String> validateAnswerSet(AnswerSet answerSet, AnswerService answerService,
 			Set<String> invisibleElements, MessageSource resources, Locale locale, String draftid,
 			HttpServletRequest request, boolean skipDraftCreation, User user, FileService fileService)
+			throws InterruptedException, IOException {
+		return validateAnswerSet(answerSet, answerService,
+						invisibleElements, resources, locale, draftid,
+						request, skipDraftCreation, user, fileService, answerSet.getSurvey().getElements());
+	}
+	
+	public static Map<Element, String> validateAnswerSet(AnswerSet answerSet, AnswerService answerService,
+			Set<String> invisibleElements, MessageSource resources, Locale locale, String draftid,
+			HttpServletRequest request, boolean skipDraftCreation, User user, FileService fileService, List<Element> elements)
 			throws InterruptedException, IOException {
 		Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
 		HashMap<Element, String> result = new HashMap<>();
@@ -269,7 +279,7 @@ public class SurveyHelper {
 
 		boolean lastSectionInvisible = false;
 
-		for (Element element : answerSet.getSurvey().getElements()) {
+		for (Element element : elements) {
 			element.setSurvey(answerSet.getSurvey());
 
 			if (!lastSectionInvisible || ((element instanceof Section) && ((Section) element).getLevel() == 1)) {
