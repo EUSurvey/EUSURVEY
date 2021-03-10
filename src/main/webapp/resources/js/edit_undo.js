@@ -658,6 +658,9 @@ var UndoProcessor = function() {
 			case "MaximumFileSize":
 				element.maxFileSize(step[3]);
 				break;
+			case "UseAndLogic":
+				element.useAndLogic(step[3]);
+				break;
 				
 		}
 		
@@ -1148,6 +1151,9 @@ var UndoProcessor = function() {
 				break;
 			case "MaximumFileSize":
 				element.maxFileSize(step[4]);
+				break;
+			case "UseAndLogic":
+				element.useAndLogic(step[4]);
 				break;
 		}
 		

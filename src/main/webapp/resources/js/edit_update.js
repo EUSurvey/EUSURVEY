@@ -1483,11 +1483,7 @@ function updateLogic(radio) {
 	var newValue = $(radio).val() == "true";
 	
 	if (oldValue != newValue) {
-		element.useAndLogic(newValue);
-		
+		element.useAndLogic(newValue);		
 		_undoProcessor.addUndoStep(["UseAndLogic", id, $(_elementProperties.selectedelement).index(), oldValue, newValue]);
 	}
-	
-	
-	
 }
