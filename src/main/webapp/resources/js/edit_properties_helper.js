@@ -253,7 +253,13 @@ function getVisibilityRow(multiselection)
 		{
 			$(triggers).addClass("triggers").append("<b>" + getPropertyLabel("visibleIfMatrixOrTriggered") + "</b>:<br />");
 		} else {
-			$(triggers).addClass("triggers").append("<b>" + getPropertyLabel("visibleIfTriggered") + "</b>:<br />");
+			
+			if (element.useAndLogic())
+			{
+				$(triggers).addClass("triggers").append("<b>" + getPropertyLabel("visibleIfTriggeredAnd") + "</b>:<br />");
+			} else {
+				$(triggers).addClass("triggers").append("<b>" + getPropertyLabel("visibleIfTriggered") + "</b>:<br />");
+			}
 		}
 				
 		for (var i = 0; i < mytriggers.length; i++)
@@ -1636,6 +1642,7 @@ function edit(span)
 		$(div).addClass("visibilitylist");
 		
 		var id = $("#content").find(".selectedquestion").first().attr("id");
+		var useAndLogic = $("#content").find(".selectedquestion").first().find("input[name^='useAndLogic']").val() == 'true';
 		
 		if ($("#content").find(".selectedquestion").first().hasClass("matrix-header") || $("#content").find(".selectedquestion").first().hasClass("table-header"))
 		{
@@ -1735,11 +1742,24 @@ function edit(span)
 			var tr = document.createElement("tr");
 			$(tr).addClass("propertyrow");
 			var td = document.createElement("td");
-			$(td).attr("colspan","2").append("<b>" + getPropertyLabel("PleaseSelectTriggers") + "<b><br />");
+			$(td).attr("colspan","2").append("<b>" + getPropertyLabel("PleaseChooseLogic") + "<b><br />");
+			
+			if (!useAndLogic) {
+				$(td).append(' &nbsp;&nbsp;<input type="radio" name="logic" value="false" checked="checked" onchange="updateLogic(this)" /> OR &nbsp;&nbsp;&nbsp; <input type="radio" name="logic" value="true" onchange="updateLogic(this)" /> AND<br /><br />');
+			} else {
+				$(td).append(' &nbsp;&nbsp;<input type="radio" name="logic" value="false" onchange="updateLogic(this)" /> OR &nbsp;&nbsp;&nbsp; <input type="radio" name="logic" value="true" checked="checked" onchange="updateLogic(this)" /> AND<br /><br />');
+			}
+		
+			$(td).append("<b>" + getPropertyLabel("PleaseSelectTriggers") + "<b><br />");
 			$(td).append(div);
 			$(td).append('<div style="text-align: right"><button id="btnSaveVisibility" class="btn btn-default btn-primary btn-sm" onclick="save(this)">' + getPropertyLabel("Apply") + '</button> <button class="btn btn-default btn-sm" onclick="cancel(this)">' + getPropertyLabel("Cancel") + '</button></div>');
 			$(tr).append(td);
 			$(_elementProperties.selectedproperty).after(tr);
+			
+			$("#properties").find('[data-toggle="tooltip"]').tooltip({
+			    trigger : 'hover',
+			    container: 'body'
+			});
 		}
 	} else if (label == "Columns")
 	{
