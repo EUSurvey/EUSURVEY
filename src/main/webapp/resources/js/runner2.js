@@ -1011,12 +1011,19 @@ function loadGraphDataModal(div) {
 	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false);
 }
 
+function scrollClosestDelphiTableIntoView(element) {
+	let delphiTable = $(element).closest(".delphi-table")[0];
+	let rect = delphiTable.getBoundingClientRect();
+	window.scrollBy(0, rect.top - 120); // offset for header
+}
+
 function firstDelphiTablePage(element) {
 	var uid = getDelphiQuestionUid(element);
 	var viewModel = getDelphiViewModel(element);
 
 	viewModel.delphiTableOffset(0);
-	loadTableData(uid, viewModel)
+	scrollClosestDelphiTableIntoView(element);
+	loadTableData(uid, viewModel);
 }
 
 function lastDelphiTablePage(element) {
@@ -1031,7 +1038,8 @@ function lastDelphiTablePage(element) {
 
 	var newOffset = viewModel.delphiTableTotalEntries() - overflow;
 	viewModel.delphiTableOffset(newOffset);
-	loadTableData(uid, viewModel)
+	scrollClosestDelphiTableIntoView(element);
+	loadTableData(uid, viewModel);
 }
 
 function previousDelphiTablePage(element) {
@@ -1039,7 +1047,8 @@ function previousDelphiTablePage(element) {
 	var viewModel = getDelphiViewModel(element);
 
 	viewModel.delphiTableOffset(Math.max(viewModel.delphiTableOffset() - viewModel.delphiTableLimit(), 0));
-	loadTableData(uid, viewModel)
+	scrollClosestDelphiTableIntoView(element);
+	loadTableData(uid, viewModel);
 }
 
 function nextDelphiTablePage(element) {
@@ -1050,7 +1059,8 @@ function nextDelphiTablePage(element) {
 
 	if (newOffset < viewModel.delphiTableTotalEntries()) {
 		viewModel.delphiTableOffset(newOffset);
-		loadTableData(uid, viewModel)
+		scrollClosestDelphiTableIntoView(element);
+		loadTableData(uid, viewModel);
 	}
 }
 
