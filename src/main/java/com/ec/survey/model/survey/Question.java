@@ -142,6 +142,7 @@ public abstract class Question extends Element {
 		copy.setLocked(getLocked());
 		copy.setSubType(getSubType());
 		copy.setDisplayMode(getDisplayMode());
+		copy.setUseAndLogic(getUseAndLogic());
 		
 		if (scoringItems != null)
 		{

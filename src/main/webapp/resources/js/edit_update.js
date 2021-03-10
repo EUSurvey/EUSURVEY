@@ -1086,7 +1086,28 @@ function updateVisibility(span, reset, ask, dialogresult)
 	{
 		$(triggers).append(getPropertyLabel("alwaysVisible"));
 	} else {
-		$(triggers).prepend("<b>" + getPropertyLabel("visibleIfTriggered") + "</b>:<br />");
+		var element = _elements[id];
+		
+		if ($(_elementProperties.selectedelement).hasClass("matrix-header"))
+		{
+			var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+			var parent = _elements[parentid];
+			if ($(_elementProperties.selectedelement).closest("tr").hasClass("matrix-question"))
+			{
+				var pos = $(_elementProperties.selectedelement).closest("tr").index();
+				element = parent.questionsOrdered()[pos];
+			} else {
+				var pos = $(_elementProperties.selectedelement).index();
+				element = parent.answers()[pos-1];
+			}
+		}
+		
+		if (element.useAndLogic())
+		{
+			$(triggers).prepend("<b>" + getPropertyLabel("visibleIfTriggeredAnd") + "</b>:<br />");
+		} else {
+			$(triggers).prepend("<b>" + getPropertyLabel("visibleIfTriggered") + "</b>:<br />");
+		}
 	}
 	
 	$(_elementProperties.selectedproperty).find(".propertycontent").find(".triggers").remove();
@@ -1438,5 +1459,31 @@ function updateIdentifier(element, id, text, noundo)
 	
 	if (!noundo && oldtext != text)
 	_undoProcessor.addUndoStep(["Identifier", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+}
+
+function updateLogic(radio) {
+	var id = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+	var element = _elements[id];
+		
+	if ($(_elementProperties.selectedelement).hasClass("matrix-header"))
+	{
+		var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+		var parent = _elements[parentid];
+		if ($(_elementProperties.selectedelement).closest("tr").hasClass("matrix-question"))
+		{
+			var pos = $(_elementProperties.selectedelement).closest("tr").index();
+			element = parent.questionsOrdered()[pos];
+		} else {
+			var pos = $(_elementProperties.selectedelement).index();
+			element = parent.answers()[pos-1];
+		}
+	}	
 	
+	var oldValue = element.useAndLogic();
+	var newValue = $(radio).val() == "true";
+	
+	if (oldValue != newValue) {
+		element.useAndLogic(newValue);		
+		_undoProcessor.addUndoStep(["UseAndLogic", id, $(_elementProperties.selectedelement).index(), oldValue, newValue]);
+	}
 }

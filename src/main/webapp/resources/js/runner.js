@@ -892,11 +892,14 @@ function handleElement(active, elementIds, i) {
 	
 	if (elementIds[i].length == 0) return;
 	
-	var element = $("[data-id=" + elementIds[i] + "]:not(.pagebutton, .pagebuttonli)").first();		
+	var element = $("[data-id=" + elementIds[i] + "]:not(.pagebutton, .pagebuttonli)").first();
+	var useAndLogic = $(element).attr("data-useAndLogic") == "true";
 	
 	var triggered = active;
-	if (!triggered)
-		triggered = isTriggered(element, true);
+	
+	if (useAndLogic || !triggered) {
+		triggered = isTriggered(element, true, false);
+	}
 				
 	if (triggered) {
 		if ($(element).hasClass("untriggered")) {
@@ -1090,7 +1093,8 @@ function getCachedIsTriggered(id)
 function isTriggered(element, stoprecursion) {
 		
 	var id =  $(element).attr("id");
-	if ($(element).hasClass("matrix-question")) id =  $(element).attr("data-id");
+	if ($(element).hasClass("matrix-question")) id = $(element).attr("data-id");
+	var useAndLogic = $(element).attr("data-useAndLogic") == "true";
 	
 	var r = getCachedIsTriggered(id);
 	if (r != null) return r;
@@ -1100,6 +1104,7 @@ function isTriggered(element, stoprecursion) {
 	if (triggers != null && triggers.length > 1) { //can be ";"
 		var triggerIds = triggers.split(";");
 		var i;
+		var result = false;
 		for (i = 0; i < triggerIds.length; ++i) {
 			var trigger = getCachedElementById(triggerIds[i]);
 			
@@ -1112,12 +1117,24 @@ function isTriggered(element, stoprecursion) {
 						if ($(trigger).closest(".matrix-question").length == 0
 								|| !$(trigger).closest(".matrix-question")
 										.hasClass("untriggered")) {
-							cachedIsTriggered[id] = true;
-							return true;
+							if (!useAndLogic) {
+								cachedIsTriggered[id] = true;
+								return true;
+							} else {
+								result = true;
+							}
 						}						
+					} else if (useAndLogic) {
+						cachedIsTriggered[id] = false;
+						return false;
 					}
 				}
-			}			
+			}
+		}
+			
+		if (useAndLogic) {
+			cachedIsTriggered[id] = result;
+			return result;
 		}
 	} 
 	if ($(element).hasClass("matrix-question"))

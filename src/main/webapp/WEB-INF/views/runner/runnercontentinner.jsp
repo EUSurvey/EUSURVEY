@@ -136,16 +136,16 @@
 								  </c:choose>								  
 								  	  <c:choose>
 										<c:when test="${element.isDummy() && element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-											<div class="emptyelement survey-element untriggered 1" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="margin-top: 5px; display: none;">
+											<div class="emptyelement survey-element untriggered 1" data-useAndLogic="${element.useAndLogic}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="margin-top: 5px; display: none;">
 										</c:when>
 										<c:when test="${element.getType() == 'Matrix' && element.getAllQuestionsDependent() && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-											<div class="emptyelement survey-element untriggered 2" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="display: none;">
+											<div class="emptyelement survey-element untriggered 2" data-useAndLogic="${element.useAndLogic}" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="display: none;">
 										</c:when>
 										<c:when test="${element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-											<div class="emptyelement survey-element untriggered 3" id="${element.id}" data-id="${element.id}" data-triggers="${element.triggers}" data-uid="${element.uniqueId}" style="display: none;">
+											<div class="emptyelement survey-element untriggered 3" data-useAndLogic="${element.useAndLogic}" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="display: none;">
 										</c:when>
 										<c:when test="${element.isDependent}">
-											<div class="emptyelement survey-element 3b" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}">
+											<div class="emptyelement survey-element 3b" data-useAndLogic="${element.useAndLogic}" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}">
 										</c:when>
 										<c:when test="${element.isDummy()}">
 											<div class="emptyelement survey-element 4" data-id="${element.id}" data-uid="${element.uniqueId}" style="margin-top: 5px;">

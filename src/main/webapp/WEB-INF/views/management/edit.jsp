@@ -741,7 +741,9 @@
 	 		strings["ConfirmationText"] = "<spring:message code="label.ConfirmationText" />";
 	 		strings["LabelText"] = "<spring:message code="label.LabelText" />";
 	 		strings["PleaseSelectTriggers"] = "<spring:message code="label.PleaseSelectTriggers" />";
+	 		strings["PleaseChooseLogic"] = "<spring:message code="label.PleaseChooseLogic" /> &nbsp;<a data-toggle='tooltip' data-html='true' data-placement='bottom' title='<spring:message code="info.PleaseChooseLogic" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["visibleIfTriggered"] = "<spring:message code="label.visibleIfTriggered" />";
+	 		strings["visibleIfTriggeredAnd"] = "<spring:message code="label.visibleIfTriggeredAnd" />"
 	 		strings["Dependencies"] = "<spring:message code="label.Dependencies" />";
 	 		strings["invalidMinMaxCharacters"] = "<spring:message code="error.invalidMinMaxCharacters" />";
 	 		strings["invalidMinMaxChoice"] = "<spring:message code="error.invalidMinMaxChoices" />";
