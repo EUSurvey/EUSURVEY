@@ -349,6 +349,7 @@ public class SurveyHelper {
 				// check dependency
 				if (parent == null ? question.getIsDependent() : question.getIsDependentMatrixQuestion()) {
 					boolean found = false;
+					boolean missing = false;
 					List<Element> deps = dependencies.get(question);
 					List<Element> questiondependencies = null;
 					if (deps != null)
@@ -385,19 +386,18 @@ public class SurveyHelper {
 												.get(candidate.getPosition() / (m.getColumns() - 1));
 										Element matrixAnswer = m.getAnswers()
 												.get(candidate.getPosition() % (m.getColumns() - 1));
-										if (answerSet.getMatrixAnswer(matrixQuestion.getId(),
-												matrixAnswer.getId()) != null
-												|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(),
-														matrixAnswer.getUniqueId()) != null) {
-											if (!invisibleElements.contains(matrixQuestion.getUniqueId())) {
-												found = true;
-											}
+										if ((answerSet.getMatrixAnswer(matrixQuestion.getId(), matrixAnswer.getId()) != null
+											|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null) && !invisibleElements.contains(matrixQuestion.getUniqueId())) {
+											found = true;
+										} else {
+											missing = true;
 										}
 									}
 								}
 							} else {
 								if (trigger instanceof PossibleAnswer) {
 									PossibleAnswer possibleAnswer = (PossibleAnswer) trigger;
+									boolean paFound = false;
 									for (Answer answer : answerSet.getAnswers(possibleAnswer.getQuestionId(),
 											answerSet.getSurvey().getElementsById().get(possibleAnswer.getQuestionId())
 													.getUniqueId())) {
@@ -406,12 +406,20 @@ public class SurveyHelper {
 														.getPossibleAnswerUniqueId().equals(trigger.getUniqueId())))
 												&& !invisibleElements.contains(answer.getQuestionUniqueId())) {
 											found = true;
+											paFound = true;
 										}
+									}
+									if (!paFound) {
+										missing = true;
 									}
 								}
 							}
 						}
 
+					if (element.getUseAndLogic() && missing) {
+						found = false;
+					}
+					
 					if (!found) {
 						invisibleElements.add(question.getUniqueId());
 					}
