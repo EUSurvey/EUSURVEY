@@ -1384,6 +1384,12 @@ var closeOverlayDivsEnabled = false;
 		}
 
 		function editDelphiComment(button) {
+			
+			$('.delphi-comment__cancel').each(function() {
+				if ($(this).is(":visible")) {
+					$(this).click();
+				}
+			});
 
 			const container = $(button).parent();
 			const textElement = $(container).find('span');
@@ -1398,7 +1404,7 @@ var closeOverlayDivsEnabled = false;
 			$(div).append('<textarea class="form-control">' + text + '</textarea>');
 			$(div).append('<a class="btn btn-xs btn-primary" onclick="saveChangedDelphiComment(this)">'
 				+ '<spring:message code="label.Save" /></a>');
-			$(div).append('<a class="btn btn-xs btn-default" onclick="cancelEditingDelphiComment(this)">'
+			$(div).append('<a class="btn btn-xs btn-default delphi-comment__cancel" onclick="cancelEditingDelphiComment(this)">'
 				+ '<spring:message code="label.Cancel" /></a>');
 			$(container).append(div);
 		}
