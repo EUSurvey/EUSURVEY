@@ -19,6 +19,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
+import org.owasp.esapi.ESAPI;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -558,9 +559,10 @@ public class AnswerExplanationService extends BasicService {
 					} else {
 						s.append("reply");
 					}
+
 					s.append("' data-id='").append(comment.getId()).append("' data-unique-code='")
 							.append(comment.getUniqueCode()).append("'>").append("<span>").append(userPrefix)
-							.append(comment.getText()).append("</span>").append("</div>");
+							.append(ESAPI.encoder().encodeForHTML(comment.getText())).append("</span>").append("</div>");
 				} else {
 					if (first) {
 						s.append(userPrefix).append(comment.getText());
