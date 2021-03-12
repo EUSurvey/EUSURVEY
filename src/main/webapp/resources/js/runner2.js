@@ -1316,12 +1316,13 @@ let currentDelphiUpdateType;
 let currentDelphiUpdateContainer;
 
 function delphiUpdate(div) {
-
-	const result = validateInput(div);
 	const message = $(div).find(".delphiupdatemessage").first();
 	$(message).attr("class", "delphiupdatemessage");
-	if (result == false) {
-		return;
+
+	if (!$(div).hasClass("single-page")) {
+		if (validateInput(div) == false) {
+			return;
+		}
 	}
 
 	if (isOneAnswerEmptyWhileItsExplanationIsNot(div)) {
@@ -1367,9 +1368,17 @@ function delphiUpdateContinued(div, successCallback) {
 	$(form).append('<input type="hidden" name="invitation" value="' + invitation + '" />');
 	var lang = $('#language\\.code').val();
 	$(form).append('<input type="hidden" name="languageCode" value="' + lang + '" />');
-	var id = $(div).attr("data-id");
+	var id = $(div).attr("data-id");	
+	var uid = $(div).attr("data-uid");	
+	
+	if ($(div).hasClass("single-page")) {
+		//this can happen on page change
+		var section = $(div).find(".survey-element.sectionitem").first();
+		id = $(section).attr("data-id");
+		uid = $(section).attr("data-uid");
+	}
+	
 	$(form).append('<input type="hidden" name="questionId" value="' + id + '" />');
-	var uid = $(div).attr("data-uid");
 	$(form).append('<input type="hidden" name="questionUid" value="' + uid + '" />');
 
 	//this is a workaround for a bug in jquery
