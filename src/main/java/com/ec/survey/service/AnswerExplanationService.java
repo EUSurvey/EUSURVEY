@@ -1,6 +1,5 @@
 package com.ec.survey.service;
 
-import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerComment;
 import com.ec.survey.model.AnswerExplanation;
@@ -549,7 +548,11 @@ public class AnswerExplanationService extends BasicService {
 		for (List<AnswerComment> list : commentsByParent.values()) {
 			boolean first = true;
 			for (AnswerComment comment : list) {
-				String userPrefix = usersByUid.get(comment.getUniqueCode()) + ": ";
+				String userPrefix = "";
+				
+				if (!comment.getText().equalsIgnoreCase(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
+					userPrefix = usersByUid.get(comment.getUniqueCode()) + ": ";
+				}
 
 				if (useHtml) {
 					s.append("<div class='");
