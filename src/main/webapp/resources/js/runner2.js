@@ -1011,12 +1011,19 @@ function loadGraphDataModal(div) {
 	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false);
 }
 
+function scrollClosestDelphiTableIntoView(element) {
+	let delphiTable = $(element).closest(".delphi-table")[0];
+	let rect = delphiTable.getBoundingClientRect();
+	window.scrollBy(0, rect.top - 120); // offset for header
+}
+
 function firstDelphiTablePage(element) {
 	var uid = getDelphiQuestionUid(element);
 	var viewModel = getDelphiViewModel(element);
 
 	viewModel.delphiTableOffset(0);
-	loadTableData(uid, viewModel)
+	scrollClosestDelphiTableIntoView(element);
+	loadTableData(uid, viewModel);
 }
 
 function lastDelphiTablePage(element) {
@@ -1031,7 +1038,8 @@ function lastDelphiTablePage(element) {
 
 	var newOffset = viewModel.delphiTableTotalEntries() - overflow;
 	viewModel.delphiTableOffset(newOffset);
-	loadTableData(uid, viewModel)
+	scrollClosestDelphiTableIntoView(element);
+	loadTableData(uid, viewModel);
 }
 
 function previousDelphiTablePage(element) {
@@ -1039,7 +1047,8 @@ function previousDelphiTablePage(element) {
 	var viewModel = getDelphiViewModel(element);
 
 	viewModel.delphiTableOffset(Math.max(viewModel.delphiTableOffset() - viewModel.delphiTableLimit(), 0));
-	loadTableData(uid, viewModel)
+	scrollClosestDelphiTableIntoView(element);
+	loadTableData(uid, viewModel);
 }
 
 function nextDelphiTablePage(element) {
@@ -1050,7 +1059,8 @@ function nextDelphiTablePage(element) {
 
 	if (newOffset < viewModel.delphiTableTotalEntries()) {
 		viewModel.delphiTableOffset(newOffset);
-		loadTableData(uid, viewModel)
+		scrollClosestDelphiTableIntoView(element);
+		loadTableData(uid, viewModel);
 	}
 }
 
@@ -1306,12 +1316,13 @@ let currentDelphiUpdateType;
 let currentDelphiUpdateContainer;
 
 function delphiUpdate(div) {
-
-	const result = validateInput(div);
 	const message = $(div).find(".delphiupdatemessage").first();
 	$(message).attr("class", "delphiupdatemessage");
-	if (result == false) {
-		return;
+
+	if (!$(div).hasClass("single-page")) {
+		if (validateInput(div) == false) {
+			return;
+		}
 	}
 
 	if (isOneAnswerEmptyWhileItsExplanationIsNot(div)) {
@@ -1357,9 +1368,17 @@ function delphiUpdateContinued(div, successCallback) {
 	$(form).append('<input type="hidden" name="invitation" value="' + invitation + '" />');
 	var lang = $('#language\\.code').val();
 	$(form).append('<input type="hidden" name="languageCode" value="' + lang + '" />');
-	var id = $(div).attr("data-id");
+	var id = $(div).attr("data-id");	
+	var uid = $(div).attr("data-uid");	
+	
+	if ($(div).hasClass("single-page")) {
+		//this can happen on page change
+		var section = $(div).find(".survey-element.sectionitem").first();
+		id = $(section).attr("data-id");
+		uid = $(section).attr("data-uid");
+	}
+	
 	$(form).append('<input type="hidden" name="questionId" value="' + id + '" />');
-	var uid = $(div).attr("data-uid");
 	$(form).append('<input type="hidden" name="questionUid" value="' + uid + '" />');
 
 	//this is a workaround for a bug in jquery

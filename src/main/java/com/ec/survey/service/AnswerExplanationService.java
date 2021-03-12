@@ -18,6 +18,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
+import org.owasp.esapi.ESAPI;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -299,7 +300,7 @@ public class AnswerExplanationService extends BasicService {
 	}
 
 	@Transactional
-	public void createUpdateOrDeleteExplanations(AnswerSet answerSet) {
+	public void createUpdateOrDeleteExplanations(AnswerSet answerSet) throws Exception {
 		final Session session = sessionFactory.getCurrentSession();
 
 		final Survey survey = answerSet.getSurvey();
@@ -351,12 +352,12 @@ public class AnswerExplanationService extends BasicService {
 					if (question instanceof SingleChoiceQuestion) {
 						SingleChoiceQuestion choiceQuestion = (SingleChoiceQuestion) question;
 						if (choiceQuestion.getUseLikert() && choiceQuestion.getMaxDistance() > -1) {
-							median = answerService.getMedian(survey, choiceQuestion, answers.get(0));						
+							median = answerService.getMedian(survey, choiceQuestion, answers.get(0), null);						
 						}
 					} else if (question instanceof NumberQuestion) {
 						NumberQuestion numberQuestion = (NumberQuestion) question;
 						if (numberQuestion.isSlider() && numberQuestion.getMaxDistance() > -1) {
-							median = answerService.getMedian(survey, numberQuestion, answers.get(0));
+							median = answerService.getMedian(survey, numberQuestion, answers.get(0), null);
 						}
 					}
 					if (median != null && median.isMaxDistanceExceeded()) {
@@ -547,7 +548,11 @@ public class AnswerExplanationService extends BasicService {
 		for (List<AnswerComment> list : commentsByParent.values()) {
 			boolean first = true;
 			for (AnswerComment comment : list) {
-				String userPrefix = usersByUid.get(comment.getUniqueCode()) + ": ";
+				String userPrefix = "";
+				
+				if (!comment.getText().equalsIgnoreCase(DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
+					userPrefix = usersByUid.get(comment.getUniqueCode()) + ": ";
+				}
 
 				if (useHtml) {
 					s.append("<div class='");
@@ -557,9 +562,10 @@ public class AnswerExplanationService extends BasicService {
 					} else {
 						s.append("reply");
 					}
+
 					s.append("' data-id='").append(comment.getId()).append("' data-unique-code='")
 							.append(comment.getUniqueCode()).append("'>").append("<span>").append(userPrefix)
-							.append(comment.getText()).append("</span>").append("</div>");
+							.append(ESAPI.encoder().encodeForHTML(comment.getText())).append("</span>").append("</div>");
 				} else {
 					if (first) {
 						s.append(userPrefix).append(comment.getText());
