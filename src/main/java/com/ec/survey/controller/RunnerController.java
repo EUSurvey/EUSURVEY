@@ -2398,6 +2398,11 @@ public class RunnerController extends BasicController {
 
 			final String questionUid = request.getParameter("questionUid");
 			final Survey survey = surveyService.getSurvey(surveyIdParsed);
+			
+			if (survey == null || !survey.getIsDelphi()) {
+				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			
 			final String languageCode = request.getParameter("languageCode");
 			final String answerSetUniqueCode = request.getParameter("ansSetUniqueCode");
 			final String invitationId = request.getParameter("invitation");
@@ -2431,21 +2436,24 @@ public class RunnerController extends BasicController {
 			
 			Set<String> invisibleElements = new HashSet<>();
 			
-			Map<Element, List<Element>> dependencies = answerSet.getSurvey().getTriggersByDependantElement();
-			HashMap<Element, String> result = new HashMap<>();
-			
 			List<Element> elements = new ArrayList<>();
 			elements.add(element);
 			if (element instanceof ChoiceQuestion) {
+				//use case: a choice question with a dependent "other" text box question
 				for (Answer answer : answerSet.getAnswers()) {
 					if (!answer.getQuestionUniqueId().equals(element.getUniqueId())) {
 						Element candidate = survey.getElementsByUniqueId().get(answer.getQuestionUniqueId());
-						if (candidate != null && candidate instanceof FreeTextQuestion) {
+						if (candidate instanceof FreeTextQuestion) {
 							elements.add(candidate);
 						}
 					}
 				}
-			}			
+			} else if (element instanceof Section) {
+				//use case: save all data during page change in a multi-page Delphi survey
+				for (Answer answer : answerSet.getAnswers()) {
+					elements.add(survey.getElementsByUniqueId().get(answer.getQuestionUniqueId()));						
+				}
+			}
 
 			final Map<Element, String> validation = SurveyHelper.validateAnswerSet(answerSet, answerService,
 					invisibleElements, resources, locale, null, request, true, user, fileService, elements);
