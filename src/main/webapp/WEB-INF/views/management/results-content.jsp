@@ -1343,6 +1343,11 @@ var closeOverlayDivsEnabled = false;
 		function extractTextFromComment(comment) {
 			// Format: User 1: Text
 			const colonIndex = comment.indexOf(':');
+			
+			if (colonIndex < 0) {
+				return comment;
+			}
+			
 			return comment.substring(colonIndex + 2);
 		}
 
