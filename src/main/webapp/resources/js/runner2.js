@@ -685,6 +685,61 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				legend: {display: false}
 			};
 
+			if (forStartpage) {
+				chartOptions.legend.labels = {
+					generateLabels: (chart) => {
+						// Original function code from Chart.js \src\plugins\plugin.legend.js
+						// Only text and hidden properties changed in returned object.
+						const datasets = chart.data.datasets;
+						const {labels} = chart.legend.options;
+						const usePointStyle = labels.usePointStyle;
+						const overrideStyle = labels.pointStyle;
+
+						return chart._getSortedDatasetMetas().map((meta) => {
+							const style = meta.controller.getStyle(usePointStyle ? 0 : undefined);
+							const borderWidth = isObject(style.borderWidth) ? (valueOrDefault(style.borderWidth.top, 0) + valueOrDefault(style.borderWidth.left, 0) + valueOrDefault(style.borderWidth.bottom, 0) + valueOrDefault(style.borderWidth.right, 0)) / 4 : style.borderWidth;
+
+							return {
+								text: truncateLabel(datasets[meta.index].label),
+								fillStyle: style.backgroundColor,
+								hidden: !!meta.hidden,
+								lineCap: style.borderCapStyle,
+								lineDash: style.borderDash,
+								lineDashOffset: style.borderDashOffset,
+								lineJoin: style.borderJoinStyle,
+								lineWidth: borderWidth,
+								strokeStyle: style.borderColor,
+								pointStyle: overrideStyle || style.pointStyle,
+								rotation: style.rotation,
+
+								// Below is extra data used for toggling the datasets
+								datasetIndex: meta.index
+							};
+						}, this);
+					}
+				}
+
+				function isObject(value) {
+					// Original function code from Chart.js
+					return value !== null && Object.prototype.toString.call(value) === '[object Object]';
+				}
+
+				function valueOrDefault(value, defaultValue) {
+					// Original function code from Chart.js
+					return typeof value === 'undefined' ? defaultValue : value;
+				}
+
+				const CHART_LEGEND_MAX_TEXT_LENGTH = 35;
+
+				function truncateLabel(text) {
+					if (text.length > CHART_LEGEND_MAX_TEXT_LENGTH) {
+						const shortenedText = text.substring(0, CHART_LEGEND_MAX_TEXT_LENGTH);
+						return shortenedText + "...";
+					}
+					return text;
+				}
+			}
+
 			chartOptions.scales.xAxes[0].ticks.callback = chartOptions.scales.yAxes[0].ticks.callback = forModal ? wrapChartLabelCallback : chartLabelCallback;
 
 			switch (result.questionType) {
