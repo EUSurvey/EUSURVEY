@@ -83,8 +83,13 @@ function displayOneTypeChart(result, typeNameAndUUID) {
 
 	let chartTitle = 'Comparison for ' + typeNameAndUUID.typeName;
 
-	$('.ecfRespondentChart_' + typeNameAndUUID.typeUUID).each(function(index, element){          
-		var ctx = element.getContext("2d");
+	$('.ecfRespondentChart_' + typeNameAndUUID.typeUUID).each(function(index, element){
+		
+		$(this).empty();
+		var canvas = document.createElement("canvas");
+		$(this).append(canvas);
+		
+		var ctx = canvas.getContext("2d");
 		var options = {
 			scale: {
 				angleLines: {

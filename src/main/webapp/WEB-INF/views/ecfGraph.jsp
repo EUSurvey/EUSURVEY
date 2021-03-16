@@ -23,8 +23,8 @@
          <c:when test="${!forpdf}">
 			<c:forEach var="competencyType"
 			items="${ecfIndividualResult.competenciesTypes}" varStatus="loop">
-				<div style="margin-top:20px;">
-					<canvas class="ecfRespondentChart_${competencyType.typeUUID}"></canvas>
+				<div class="ecfRespondentChart_${competencyType.typeUUID}" style="margin-top:20px;">
+				
 				</div>
 			</c:forEach>
          </c:when>
