@@ -665,7 +665,15 @@
 														</td>
 														<td>
 															<!-- ko if: finished && error == null && replies > 0 -->
-															<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxls/' + id}"><img src="/eusurvey/resources/images/file_extension_xls_small.png" alt="xls"></a>
+															
+															<!-- ko if: surveyHasUploadedFiles -->
+																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Downloadzip" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxlszip/' + id}"><img src="/eusurvey/resources/images/file_extension_zip_small.png" alt="zip"></a>
+															<!-- /ko -->
+															
+															<!-- ko if: !surveyHasUploadedFiles -->
+																<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.DownloadXLS" />" target="_blank" data-bind="attr: {href: '${contextpath}/archive/resultsxls/' + id}"><img src="/eusurvey/resources/images/file_extension_xls_small.png" alt="xls"></a>
+															<!-- /ko -->
+															
 															<!-- /ko -->	
 														</td>
 														<td>
