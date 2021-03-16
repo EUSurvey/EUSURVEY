@@ -655,11 +655,6 @@
 			</c:if>
 		</div>						
 	</div>
-	<c:if test="${form.survey.isECF}">
-		<div id="canvasContainerLeft"> 
-			<%@ include file="../ecfGraph.jsp" %>
-		</div>
-	</c:if>
-	
+
 </body>
 </html>
