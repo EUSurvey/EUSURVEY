@@ -261,6 +261,7 @@ function createNewDelphiBasicViewModel() {
 		delphiTableEntries: ko.observableArray(),
 		delphiTableLoading: ko.observable(false),
 		delphiTableLimit: ko.observable(20),
+		delphiTableNewComments: ko.observable(false),
 		delphiTableOffset: ko.observable(0),
 		delphiTableTotalEntries: ko.observable(0),
 		delphiTableOrder: ko.observable("UpdateDesc"),

@@ -2876,6 +2876,7 @@ public class RunnerController extends BasicController {
 							}
 
 							delphiQuestion.setAnswer(result);
+							delphiQuestion.setHasUnreadComments(answerExplanationService.hasUnreadComments(answerSet.getUniqueCode(), question.getUniqueId()));
 						}
 
 						currentDelphiSection.getQuestions().add(delphiQuestion);
@@ -2953,13 +2954,16 @@ public class RunnerController extends BasicController {
 		return !answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty();
 	}
 	
-	private void loadComments(DelphiTableEntry tableEntry, int answerSetId, String questionUid, String surveyUid) {
-		List<AnswerComment> comments = answerExplanationService.loadComments(answerSetId, questionUid);
+	private void loadComments(DelphiTableEntry tableEntry, int originalAnswerSetId, Integer currentAnswerSetId, String questionUid, String surveyUid) {
+		List<AnswerComment> comments = answerExplanationService.loadComments(originalAnswerSetId, questionUid);
+
+		boolean isOriginalAnswerer = currentAnswerSetId != null && originalAnswerSetId == currentAnswerSetId;
+
 		Map<Integer, DelphiComment> rootComments = new HashMap<>();
 		for (AnswerComment comment : comments) {
 
 			if (!uniqueCodeToUser.containsKey(surveyUid)) {
-				uniqueCodeToUser.put(surveyUid, new HashMap<String, String>());
+				uniqueCodeToUser.put(surveyUid, new HashMap<>());
 			}
 
 			Map<String, String> map = uniqueCodeToUser.get(surveyUid);
@@ -2976,13 +2980,38 @@ public class RunnerController extends BasicController {
 				date = comment.getDate();
 			}
 
-			DelphiComment delphiComment = new DelphiComment(user, comment.getText(), date, comment.getId(), comment.getUniqueCode());
+			boolean updateFlags = false;
+			boolean isUnread = false;
 
-			if (comment.getParent() == null) {
+			if (isOriginalAnswerer && !comment.getReadByParticipant()) {
+				comment.setReadByParticipant(true);
+				isUnread = true;
+				updateFlags = true;
+			}
+
+			AnswerComment parent = comment.getParent();
+
+			if (parent != null && currentAnswerSetId != null && !comment.getReadByParent()) {
+				AnswerSet currentAnswerSet = answerService.get(currentAnswerSetId);
+
+				if (currentAnswerSet != null && parent.getUniqueCode() != null && parent.getUniqueCode().equals(currentAnswerSet.getUniqueCode())) {
+					comment.setReadByParent(true);
+					isUnread = true;
+					updateFlags = true;
+				}
+			}
+
+			DelphiComment delphiComment = new DelphiComment(user, comment.getText(), date, comment.getId(), comment.getUniqueCode(), isUnread);
+
+			if (parent == null) {
 				tableEntry.getComments().add(delphiComment);
 				rootComments.put(comment.getId(), delphiComment);
 			} else {
-				rootComments.get(comment.getParent().getId()).getReplies().add(delphiComment);
+				rootComments.get(parent.getId()).getReplies().add(delphiComment);
+			}
+
+			if (updateFlags) {
+				answerExplanationService.saveOrUpdateComment(comment);
 			}
 		}
 	}
@@ -3105,20 +3134,50 @@ public class RunnerController extends BasicController {
 			} catch (Exception ignored) {
 			}
 
+			Integer answerSetId = answerSet != null ? answerSet.getId() : null;
+
 			DelphiTable result;
 
 			if (question instanceof ChoiceQuestion) {
-				result = handleDelphiTableChoiceQuestion((ChoiceQuestion) question, orderBy, limit, offset);
+				result = handleDelphiTableChoiceQuestion((ChoiceQuestion) question, orderBy, limit, offset, answerSetId);
 			} else if (question instanceof Matrix) {
-				result = handleDelphiTableMatrix((Matrix) question, orderBy, limit, offset);
+				result = handleDelphiTableMatrix((Matrix) question, orderBy, limit, offset, answerSetId);
 			} else if (question instanceof RatingQuestion) {
-				result = handleDelphiTableRatingQuestion((RatingQuestion) question, orderBy, limit, offset);
+				result = handleDelphiTableRatingQuestion((RatingQuestion) question, orderBy, limit, offset, answerSetId);
 			} else if (question instanceof Table) {
-				result = handleDelphiTableTable((Table) question, orderBy, limit, offset);
+				result = handleDelphiTableTable((Table) question, orderBy, limit, offset, answerSetId);
 			} else {
-				result = handleDelphiTableRawValueQuestion(question, orderBy, limit, offset);
+				result = handleDelphiTableRawValueQuestion(question, orderBy, limit, offset, answerSetId);
 			}
-			
+
+			for (DelphiTableEntry entry : result.getEntries()) {
+				boolean stopIteration = false;
+
+				for (DelphiComment comment : entry.getComments()) {
+					if (comment.isUnread()) {
+						result.setHasNewComments(true);
+						stopIteration = true;
+						break;
+					}
+
+					for (DelphiComment reply : comment.getReplies()) {
+						if (reply.isUnread()) {
+							result.setHasNewComments(true);
+							stopIteration = true;
+							break;
+						}
+					}
+
+					if (stopIteration) {
+						break;
+					}
+				}
+
+				if (stopIteration) {
+					break;
+				}
+			}
+
 			result.setShowExplanationBox(question.getShowExplanationBox());
 
 			return ResponseEntity.ok(result);
@@ -3159,7 +3218,7 @@ public class RunnerController extends BasicController {
 		return result;
 	}
 
-	private DelphiTable handleDelphiTableChoiceQuestion(ChoiceQuestion question, DelphiTableOrderBy orderBy, int limit, int offset) {
+	private DelphiTable handleDelphiTableChoiceQuestion(ChoiceQuestion question, DelphiTableOrderBy orderBy, int limit, int offset, Integer answerSetId) {
 		DelphiTable result = new DelphiTable();
 		result.setOffset(offset);
 
@@ -3194,7 +3253,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setAnswerSetUniqueCode(firstValue.getAnswerSetUniqueCode());
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdateDate(firstValue.getUpdate());
-			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			for (String value : values) {
@@ -3219,7 +3278,7 @@ public class RunnerController extends BasicController {
 		return result;
 	}
 
-	private DelphiTable handleDelphiTableMatrix(Matrix question, DelphiTableOrderBy orderBy, int limit, int offset) {
+	private DelphiTable handleDelphiTableMatrix(Matrix question, DelphiTableOrderBy orderBy, int limit, int offset, Integer answerSetId) {
 		DelphiTable result = new DelphiTable();
 		result.setOffset(offset);
 
@@ -3268,7 +3327,7 @@ public class RunnerController extends BasicController {
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdateDate(firstValue.getUpdate());
-			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
@@ -3277,7 +3336,7 @@ public class RunnerController extends BasicController {
 		return result;
 	}
 
-	private DelphiTable handleDelphiTableRatingQuestion(RatingQuestion question, DelphiTableOrderBy orderBy, int limit, int offset) {
+	private DelphiTable handleDelphiTableRatingQuestion(RatingQuestion question, DelphiTableOrderBy orderBy, int limit, int offset, Integer answerSetId) {
 		DelphiTable result = new DelphiTable();
 		result.setOffset(offset);
 
@@ -3320,7 +3379,7 @@ public class RunnerController extends BasicController {
 			tableEntry.getAnswers().addAll(sortedAnswers);
 			tableEntry.setExplanation(firstValue.getExplanation());
 			tableEntry.setUpdateDate(firstValue.getUpdate());
-			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
@@ -3371,6 +3430,9 @@ public class RunnerController extends BasicController {
 			comment.setUniqueCode(uniqueCode);
 			comment.setText(text);
 			comment.setDate(new Date());
+
+			// check if commentator is participant who gave the original answer
+			comment.setReadByParticipant(answerSet != null && answerSetIdParsed == answerSet.getId());
 			
 			if (parent != null) {
 				int parentCommentId = Integer.parseInt(parent);
@@ -3380,6 +3442,9 @@ public class RunnerController extends BasicController {
 					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 				}
 				comment.setParent(parentComment);
+
+				// check if commentator is also creator of parent comment
+				comment.setReadByParent(parentComment.getUniqueCode() != null && parentComment.getUniqueCode().equals(uniqueCode));
 			}
 
 			answerExplanationService.saveOrUpdateComment(comment);
@@ -3494,7 +3559,7 @@ public class RunnerController extends BasicController {
 		}
 	}
 
-	private DelphiTable handleDelphiTableRawValueQuestion(Question question, DelphiTableOrderBy orderBy, int limit, int offset) {
+	private DelphiTable handleDelphiTableRawValueQuestion(Question question, DelphiTableOrderBy orderBy, int limit, int offset, Integer answerSetId) {
 		DelphiTable result = new DelphiTable();
 		result.setOffset(offset);
 
@@ -3513,7 +3578,7 @@ public class RunnerController extends BasicController {
 			tableEntry.setExplanation(contrib.getExplanation());
 			tableEntry.setUpdateDate(contrib.getUpdate());
 			tableEntry.getAnswers().add(new DelphiTableAnswer(null, contrib.getValue()));
-			loadComments(tableEntry, contrib.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadComments(tableEntry, contrib.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, contrib.getAnswerSetId(), question.getUniqueId());
 
 			result.getEntries().add(tableEntry);
@@ -3522,7 +3587,7 @@ public class RunnerController extends BasicController {
 		return result;
 	}
 
-	private DelphiTable handleDelphiTableTable(Table question, DelphiTableOrderBy orderBy, int limit, int offset) {
+	private DelphiTable handleDelphiTableTable(Table question, DelphiTableOrderBy orderBy, int limit, int offset, Integer answerSetId) {
 		DelphiTable result = new DelphiTable();
 		result.setOffset(offset);
 
@@ -3546,7 +3611,7 @@ public class RunnerController extends BasicController {
 			}
 
 			result.getEntries().add(tableEntry);
-			loadComments(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId(), survey.getUniqueId());
+			loadComments(tableEntry, firstValue.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
 			loadFiles(tableEntry, firstValue.getAnswerSetId(), question.getUniqueId());
 		}
 

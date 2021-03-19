@@ -62,10 +62,12 @@
 			<!-- /ko -->
 			<td style="padding-top: 0; padding-bottom: 10px;" data-bind="attr: {'data-id': answerSetId}">
 				<!-- ko foreach: comments -->
-				<div class="delphi-comment" data-bind="attr: {'data-id': id}">
+				<div class="delphi-comment" data-bind="attr: {'data-id': id}, css: { 'new-delphi-comment': unread }">
 					<div style="margin-top: 5px;">
 						<!-- ko if: user && date -->
-						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
+						<span class="delphi-comment__user" data-bind="html: user"></span>
+						<span class="delphi-comment__date" data-bind="html: date"></span>
+						<br />
 						<!-- /ko -->
 						<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: {'id': 'expanded' + id}">
 						<span class="text-to-be-truncated" data-bind="hidden: isChangedCommentFormVisible, text: text"></span>
@@ -101,8 +103,11 @@
 						<!-- /ko -->
 					</div>
 					<!-- ko foreach: replies -->
-					<div class="delphi-comment__reply" data-bind="attr: {'data-id': id}">
-						<span class="delphi-comment__user" data-bind="html: user"></span> <span class="delphi-comment__date" data-bind="html: date"></span><br />
+					<div class="delphi-comment__reply" data-bind="attr: {'data-id': id}, css: { 'new-delphi-comment': unread }">
+						<span class="delphi-comment__user" data-bind="html: user"></span>
+						<span class="delphi-comment__date" data-bind="html: date"></span>
+						<br/>
+
 						<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: {'id': 'expanded' + id}">
 						<span class="text-to-be-truncated" data-bind="hidden: isChangedReplyFormVisible, text: text"></span>
 						<label class="text-read-more-label" role="button" data-bind="attr: {'for': 'expanded' + id}">${form.getMessage("label.ShowAll")}</label>

@@ -20,6 +20,8 @@ public class AnswerComment implements java.io.Serializable {
 	private String text;
 	private AnswerComment parent;
 	private Date date;
+	private Boolean readByParent; // whether creator of parent comment has read this comment
+	private Boolean readByParticipant; // whether participant that answered the survey has read this comment
 
 	public AnswerComment() {}
 
@@ -89,5 +91,23 @@ public class AnswerComment implements java.io.Serializable {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	@Column(name = "READ_BY_PARENT")
+	public Boolean getReadByParent() {
+		return readByParent != null ? readByParent : false;
+	}
+
+	public void setReadByParent(Boolean readByParent) {
+		this.readByParent = readByParent;
+	}
+
+	@Column(name = "READ_BY_PARTICIPANT")
+	public Boolean getReadByParticipant() {
+		return readByParticipant != null ? readByParticipant : false;
+	}
+
+	public void setReadByParticipant(Boolean readByParticipant) {
+		this.readByParticipant = readByParticipant;
 	}
 }

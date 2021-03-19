@@ -241,9 +241,14 @@
 							</div>
 							
 							<div class="question-footer">
-								<!--  ko if: maxDistanceExceeded && !changedForMedian -->
-									<div style="color: #f00; font-size: 30px; float: right;">
+								<!-- ko if: (maxDistanceExceeded && !changedForMedian) || hasUnreadComments -->
+									<div style="color:#f00; font-size:24px; float:right;">
+										<!-- ko if: maxDistanceExceeded && !changedForMedian -->
 										<span style="cursor: pointer" data-toggle="tooltip" title="<spring:message code="info.MaxDistanceExceeded" />"><img style="max-width:24px;" src="<c:url value="/resources/images/warning24.png"/>" alt="max distance exceeded" /></span>
+										<!-- /ko -->
+										<!-- ko if: hasUnreadComments -->
+										<span class="glyphicon glyphicon-comment new-delphi-comments-icon" data-toggle="tooltip" title="${form.getMessage("tooltip.NewComments")}"></span>
+										<!-- /ko -->
 									</div>
 								<!-- /ko -->							
 							

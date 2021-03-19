@@ -13,14 +13,16 @@ public class DelphiComment {
     private final int id;
     private final String answerSetUniqueCode;
     private final List<DelphiComment> replies;
+    private final boolean unread;
     
-    public DelphiComment(String user, String text, Date date, int id, String answerSetUniqueCode) {
+    public DelphiComment(String user, String text, Date date, int id, String answerSetUniqueCode, boolean unread) {
     	this.user = user;
     	this.text = text;
     	this.date = ConversionTools.getFullString(date);
     	this.id = id;
     	this.answerSetUniqueCode = answerSetUniqueCode;
     	this.replies = new ArrayList<>();
+    	this.unread = unread;
     }
     
     public String getUser() {
@@ -43,5 +45,9 @@ public class DelphiComment {
     
     public List<DelphiComment> getReplies() {
     	return replies;
+    }
+
+    public boolean isUnread() {
+        return unread;
     }
 }

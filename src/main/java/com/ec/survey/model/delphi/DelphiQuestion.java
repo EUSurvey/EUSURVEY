@@ -7,6 +7,7 @@ public class DelphiQuestion {
 	private String answer = "";
 	private boolean maxDistanceExceeded;
 	private boolean changedForMedian;
+	private boolean hasUnreadComments;
 
 	public String getTitle() {
 		return title;
@@ -53,5 +54,13 @@ public class DelphiQuestion {
 	}
 	public void setChangedForMedian(Boolean changedForMedian) {
 		this.changedForMedian = changedForMedian;
+	}
+
+	public boolean getHasUnreadComments() {
+		return hasUnreadComments;
+	}
+
+	public void setHasUnreadComments(boolean hasUnreadComments) {
+		this.hasUnreadComments = hasUnreadComments;
 	}
 }
