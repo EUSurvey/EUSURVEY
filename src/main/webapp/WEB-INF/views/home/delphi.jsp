@@ -97,8 +97,8 @@
 		</p>
 
 		<br />
-		<br /> <a class="btn btn-primary"
-			href="mailto:JRC-FORESIGHT@ec.europa.eu">Contact us</a>
+		<br />
+		<a class="btn btn-primary" href="${contextpath}/runner/contactform/${param.survey}">Contact us</a>
 
 	</div>
 	</div>
