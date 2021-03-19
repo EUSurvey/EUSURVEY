@@ -5,6 +5,7 @@ import java.util.List;
 
 public class DelphiTable {
     private List<DelphiTableEntry> entries = new ArrayList<>();
+    private boolean hasNewComments;
     private int offset;
     private int total;
     private boolean showExplanationBox;
@@ -40,4 +41,12 @@ public class DelphiTable {
 	public void setShowExplanationBox(boolean showExplanationBox) {
 		this.showExplanationBox = showExplanationBox;
 	}
+
+    public boolean getHasNewComments() {
+        return hasNewComments;
+    }
+
+    public void setHasNewComments(boolean hasNewComments) {
+        this.hasNewComments = hasNewComments;
+    }
 }

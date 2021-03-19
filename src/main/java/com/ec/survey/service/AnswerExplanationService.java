@@ -1,19 +1,14 @@
 package com.ec.survey.service;
 
-import com.ec.survey.model.Answer;
-import com.ec.survey.model.AnswerComment;
-import com.ec.survey.model.AnswerExplanation;
-import com.ec.survey.model.AnswerSet;
+import com.ec.survey.model.*;
 import com.ec.survey.model.delphi.DelphiContribution;
 import com.ec.survey.model.delphi.DelphiContributions;
 import com.ec.survey.model.delphi.DelphiMedian;
 import com.ec.survey.model.delphi.DelphiTableOrderBy;
-import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
-
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -23,13 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("answerExplanationService")
@@ -678,6 +667,34 @@ public class AnswerExplanationService extends BasicService {
 		final Session session = sessionFactory.getCurrentSession();
 		final Query query = session.createSQLQuery("SELECT COUNT(*) FROM ANSWERS_COMMENTS WHERE PARENT = :parent")
 				.setInteger("parent", id);
+		return ((BigInteger) query.uniqueResult()).intValue() > 0;
+	}
+
+	/**
+	 * Checks whether a user (answer set) needs to be notified about unread comments.
+	 * @param uniqueCode ID of answer set (user)
+	 * @param questionUid Question UID
+	 */
+	@Transactional(readOnly = true)
+	public boolean hasUnreadComments(String uniqueCode, String questionUid) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(""
+				+ "SELECT EXISTS "
+				+ "( "
+				+ "  SELECT * "
+				+ "  FROM answers_comments ac "
+				+ "  LEFT JOIN answers_comments parents ON ac.PARENT = parents.ANSWER_COMMENT_ID "
+				+ "  JOIN answers_set asets ON asets.ANSWER_SET_ID = ac.ANSWER_SET_ID "
+				+ "  WHERE ac.QUESTION_UID = :questionUid "
+				+ "  AND ("
+				+ "    (parents.ANSWER_SET_CODE = :uniqueCode AND (ac.READ_BY_PARENT = FALSE OR ac.READ_BY_PARENT IS NULL)) "
+				+ "    OR (asets.UNIQUECODE = :uniqueCode AND (ac.READ_BY_PARTICIPANT = FALSE OR ac.READ_BY_PARTICIPANT IS NULL)) "
+				+ "  )"
+				+ ")");
+
+		query.setString("uniqueCode", uniqueCode);
+		query.setString("questionUid", questionUid);
+
 		return ((BigInteger) query.uniqueResult()).intValue() > 0;
 	}
 

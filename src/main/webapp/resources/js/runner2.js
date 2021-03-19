@@ -1141,6 +1141,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 		},
 		success: function (result, textStatus) {
 			viewModel.delphiTableEntries.removeAll();
+			viewModel.delphiTableNewComments(false);
 			
 			if (textStatus === "nocontent") {
 				return;
@@ -1204,6 +1205,9 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 
 			viewModel.delphiTableOffset(result.offset);
 			viewModel.delphiTableTotalEntries(result.total);
+			viewModel.delphiTableNewComments(result.hasNewComments);
+
+			$('[data-toggle="tooltip"]').tooltip()
 
 			addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionUid);
 		}
