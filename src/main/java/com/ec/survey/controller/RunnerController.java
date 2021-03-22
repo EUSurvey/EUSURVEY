@@ -2788,18 +2788,24 @@ public class RunnerController extends BasicController {
 			
 			DelphiStructure structure = new DelphiStructure();
 			DelphiSection currentDelphiSection = new DelphiSection();
-			
+		
+			DelphiSection lastMainSection = null;
 			for (Element element : survey.getQuestionsAndSections()) {
 				if (element instanceof Section) {
+					Section section = (Section) element;
+					
 					currentDelphiSection = new DelphiSection();
 					currentDelphiSection.setTitle(element.getTitle());
+					currentDelphiSection.setLevel(section.getLevel());
+					structure.getSections().add(currentDelphiSection);
+					
+					if (section.getLevel() == 1) {
+						lastMainSection = currentDelphiSection;
+					}
+					
 				} else if (element instanceof Question) {
 					Question question = (Question)element;
 					if (question.getIsDelphiQuestion()) {
-						if (currentDelphiSection.getQuestions().isEmpty())
-						{
-							structure.getSections().add(currentDelphiSection);
-						}
 						
 						DelphiQuestion delphiQuestion = new DelphiQuestion();
 						delphiQuestion.setTitle(question.getTitle());
@@ -2880,6 +2886,8 @@ public class RunnerController extends BasicController {
 						}
 
 						currentDelphiSection.getQuestions().add(delphiQuestion);
+						currentDelphiSection.setHasDirectDelphiQuestions(true);
+						lastMainSection.setHasDelphiQuestions(true);
 					} else {
 						//non-delphi question
 						if (!structure.isUnansweredMandatoryQuestions() && !question.getOptional() && !question.getIsDependent()) 
