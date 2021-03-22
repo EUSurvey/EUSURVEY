@@ -787,6 +787,20 @@ function checkPages() {
 	 $(".matrixtable").each(function(){
 		 checkTableScrollButtons(this); 
 	 });
+	 
+	 //this is a fix for a bug in the bootstrapSlider library
+	 //https://github.com/seiyria/bootstrap-slider/issues/673
+	 if ($(".single-page").length > 1) {
+		 $(".single-page:visible").find(".sliderbox").each(function () {
+			if ($(this).closest(".survey-element").length > 0) {
+			 	var questionUid = $(this).closest(".survey-element").attr("data-uid");
+				var viewModel = modelsForSlider[questionUid]; 
+				var value = $(this).bootstrapSlider().bootstrapSlider('getValue');
+			    initSlider(this, false, viewModel);
+				$(this).bootstrapSlider().bootstrapSlider('setValue', value);
+			}
+		 });
+	 }
 }
 
 function checkSingleClick(answer){

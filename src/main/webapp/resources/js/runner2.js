@@ -478,6 +478,8 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	return viewModel;
 }
 
+var modelsForSlider = [];
+
 function initSlider(input, foreditor, viewModel)
 {
 	try {
@@ -491,6 +493,8 @@ function initSlider(input, foreditor, viewModel)
 		ticks_labels: viewModel.labels(),
 		enabled: !foreditor
 	});	
+	
+	modelsForSlider[viewModel.uniqueId()] = viewModel;
 }
 
 function getWidth(widths, index) {
