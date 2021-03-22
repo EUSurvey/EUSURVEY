@@ -793,14 +793,18 @@ function checkPages() {
 	 if ($(".single-page").length > 1) {
 		 $(".single-page:visible").find(".sliderbox").each(function () {
 			if ($(this).closest(".survey-element").length > 0) {
-			 	var questionUid = $(this).closest(".survey-element").attr("data-uid");
-				var viewModel = modelsForSlider[questionUid]; 
-				var value = $(this).bootstrapSlider().bootstrapSlider('getValue');
-			    initSlider(this, false, viewModel);
-				$(this).bootstrapSlider().bootstrapSlider('setValue', value);
+				refreshSlider(this);
 			}
 		 });
 	 }
+}
+
+function refreshSlider(input) {
+	var questionUid = $(input).closest(".survey-element").attr("data-uid");
+	var viewModel = modelsForSlider[questionUid]; 
+	var value = $(input).bootstrapSlider().bootstrapSlider('getValue');
+    initSlider(input, false, viewModel);
+	$(input).bootstrapSlider().bootstrapSlider('setValue', value);
 }
 
 function checkSingleClick(answer){
@@ -938,6 +942,9 @@ function handleElement(active, elementIds, i) {
 				$(element).find(".matrixtable").each(function(){
 					 checkTableScrollButtons(this); 
 				 });
+				$(element).find(".sliderbox").each(function(){
+					refreshSlider(this);
+				});
 			}
 			
 			$(element).find(".matrix-question").each(function(){
