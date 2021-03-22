@@ -15,10 +15,9 @@
 		font-size: 20px;
 		border-bottom: 2px solid #245077;
 	}
-
-	.section1 {
+	
+	.section1, .section2, .section3 {
 		color: #fff;
-		font-size: 20px;				
 		background-color: #245077;
 		margin-top: -11px;
 		margin-bottom: -11px;
@@ -28,23 +27,21 @@
 		border-top-right-radius: 5px;
 		padding: 10px;
 		min-height: 40px;
+	}
+
+	.section1 {		
+		font-size: 20px;
 	}
 	
 	.section2 {
-		color: #fff;
 		font-size: 18px;				
-		background-color: #245077;
-		margin-top: -11px;
-		margin-bottom: -11px;
-		margin-left: -18px;
-		margin-right: -18px;
-		border-top-left-radius: 5px;
-		border-top-right-radius: 5px;
-		padding: 10px;
-		min-height: 40px;
 	}
 	
-	.section1 a, .section2 a {
+	.section3 {
+		font-size: 16px;				
+	}
+	
+	.section1 a, .section2 a, .section3 a {
 		color: #fff;
 	}
 
