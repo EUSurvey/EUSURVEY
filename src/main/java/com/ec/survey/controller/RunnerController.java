@@ -2437,7 +2437,9 @@ public class RunnerController extends BasicController {
 			Set<String> invisibleElements = new HashSet<>();
 			
 			List<Element> elements = new ArrayList<>();
-			elements.add(element);
+			if (element != null) {
+				elements.add(element);
+			}
 			if (element instanceof ChoiceQuestion) {
 				//use case: a choice question with a dependent "other" text box question
 				for (Answer answer : answerSet.getAnswers()) {
@@ -2448,7 +2450,7 @@ public class RunnerController extends BasicController {
 						}
 					}
 				}
-			} else if (element instanceof Section) {
+			} else if (element == null || element instanceof Section) {
 				//use case: save all data during page change in a multi-page Delphi survey
 				for (Answer answer : answerSet.getAnswers()) {
 					elements.add(survey.getElementsByUniqueId().get(answer.getQuestionUniqueId()));						
