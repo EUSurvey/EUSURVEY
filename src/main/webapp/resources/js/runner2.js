@@ -478,6 +478,8 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	return viewModel;
 }
 
+var modelsForSlider = [];
+
 function initSlider(input, foreditor, viewModel)
 {
 	try {
@@ -491,6 +493,8 @@ function initSlider(input, foreditor, viewModel)
 		ticks_labels: viewModel.labels(),
 		enabled: !foreditor
 	});	
+	
+	modelsForSlider[viewModel.uniqueId()] = viewModel;
 }
 
 function getWidth(widths, index) {
@@ -1141,6 +1145,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 		},
 		success: function (result, textStatus) {
 			viewModel.delphiTableEntries.removeAll();
+			viewModel.delphiTableNewComments(false);
 			
 			if (textStatus === "nocontent") {
 				return;
@@ -1204,6 +1209,9 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 
 			viewModel.delphiTableOffset(result.offset);
 			viewModel.delphiTableTotalEntries(result.total);
+			viewModel.delphiTableNewComments(result.hasNewComments);
+
+			$('[data-toggle="tooltip"]').tooltip()
 
 			addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionUid);
 		}

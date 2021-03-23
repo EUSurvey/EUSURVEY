@@ -1301,7 +1301,18 @@ legend {
 	float: right;
 }
 
-.delphiupdatemessage {
+.glyphicon.new-delphi-comments-icon {
+	background-color: #337ab7;
+	border-radius: 50%;
+	color: white;
+	font-size: 14px;
+	height: 24px;
+	line-height: 24px;
+	text-align: center;
+	width: 24px;
+}
+
+.delphiupdatemessage, .newdelphicomments {
 	margin-left: 20px;
     margin-top: 10px;
     font-size: 13px !important;
@@ -1423,9 +1434,13 @@ legend {
 	margin-right: 15px;
 }
 
+.new-delphi-comment {
+	background-color: #dcf5fe;
+}
+
 .delphi-comment__reply {
 	margin-top: 10px;
-	margin-left: 20px;
+	padding-left: 20px;
 }
 
 .delphi-comment__actions a:first-child {

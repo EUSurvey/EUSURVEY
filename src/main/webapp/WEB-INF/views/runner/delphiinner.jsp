@@ -7,9 +7,17 @@
 <script type="text/javascript" src="${contextpath}/resources/js/wordcloud.js?version=<%@include file="../version.txt" %>"></script>
 
 <style>
-	.section {
+
+	.mainsection {
+		color: #245077;
+		margin-bottom: 20px;
+		margin-top: 40px;
+		font-size: 20px;
+		border-bottom: 2px solid #245077;
+	}
+	
+	.section1, .section2, .section3 {
 		color: #fff;
-		font-size: 16px;				
 		background-color: #245077;
 		margin-top: -11px;
 		margin-bottom: -11px;
@@ -20,8 +28,20 @@
 		padding: 10px;
 		min-height: 40px;
 	}
+
+	.section1 {		
+		font-size: 20px;
+	}
 	
-	.section a {
+	.section2 {
+		font-size: 18px;				
+	}
+	
+	.section3 {
+		font-size: 16px;				
+	}
+	
+	.section1 a, .section2 a, .section3 a {
 		color: #fff;
 	}
 
@@ -202,8 +222,15 @@
 			<input type="hidden" id="uniqueCode" name="originalUniqueCode" value="${uniqueCode}" />
 			<input type="hidden" id="survey.id" value="${form.survey.id}" />
 			<input type="hidden" id="language.code" value="${form.survey.language.code}" />
-						
+			
 			<div id="sections">
+				
+				<!-- ko if: unansweredMandatoryQuestions() == true -->		
+				<div style="text-align: center; margin-bottom: 20px;">
+					<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}"><spring:message code="label.Start" /></a>
+				</div>
+				<!-- /ko -->
+		
 				<!-- ko if: !loaded() -->
 				<div>
 					<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
@@ -211,71 +238,87 @@
 				<!-- /ko -->
 
 				<!-- ko foreach: sections -->
-				<div class="sectionwithquestions">
-
-					<div class="section">
-						<div style="float: right; margin-top: 4px; margin-right: 0px;">
-							<a onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-bottom"></span></a>
-							<a style="display: none" onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-left"></span></a>
+				
+					<!-- ko if: !hasDirectDelphiQuestions && hasDelphiQuestions -->
+						<div class="mainsection">
+							<span data-bind="html: title"></span>
 						</div>
-						<span data-bind="html: title"></span>
-					</div>
-
-					<div class="sectioncontent">
-
-						<!-- ko foreach: questions -->
-						<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid, 'data-question-uid': uid}">
-							<div class="question-title">
-								<span data-bind="html: sectionViewModel.niceTitle(title)"></span>
-								<span style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
+					<!-- /ko -->
+					
+					<!-- ko if: hasDirectDelphiQuestions -->
+					
+					<div class="sectionwithquestions">
+	
+						<div data-bind="attr: { class: 'section' + level }">
+							<div style="float: right; margin-top: 4px; margin-right: 0px;">
+								<a onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-bottom"></span></a>
+								<a style="display: none" onclick="toggle(this);"><span class="glyphicon glyphicon-triangle-left"></span></a>
 							</div>
-
-							<div class="no-graph-image">
-								<span class="glyphicon glyphicon-signal"></span><br />
-								<span><spring:message code="info.NoData" /></span>
-							</div>
-							
-							<div data-bind="attr: {id: 'wordcloud' + uid}" class="delphi-chart-div" style="display: none; width: 300px; height: 200px"></div>
-							<div style="height: 200px;" class="delphi-chart-div">
-								<canvas class='delphi-chart' width='300' height='200'></canvas>
-							</div>
-							
-							<div class="question-footer">
-								<!--  ko if: maxDistanceExceeded && !changedForMedian -->
-									<div style="color: #f00; font-size: 30px; float: right;">
-										<span style="cursor: pointer" data-toggle="tooltip" title="<spring:message code="info.MaxDistanceExceeded" />"><img style="max-width:24px;" src="<c:url value="/resources/images/warning24.png"/>" alt="max distance exceeded" /></span>
-									</div>
-								<!-- /ko -->							
-							
-								<!-- ko if: answer.length > 0 -->
-								<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: sectionViewModel.niceAnswer(answer)"></span></div>
+							<span data-bind="html: title"></span>
+						</div>
+	
+						<div class="sectioncontent">
+	
+							<!-- ko foreach: questions -->
+							<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid, 'data-question-uid': uid}">
+								<div class="question-title">
+									<span data-bind="html: sectionViewModel.niceTitle(title)"></span>
+									<span style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
+								</div>
+	
+								<div class="no-graph-image">
+									<span class="glyphicon glyphicon-signal"></span><br />
+									<span><spring:message code="info.NoData" /></span>
+								</div>
 								
-								<!-- ko if: $parents[1].unansweredMandatoryQuestions() == false -->								
-								<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}#E' + id}"><spring:message code="label.EditAnswer" /></a>
-								<!-- /ko -->
-							
-								<!-- /ko -->
-								<!-- ko if: answer.length == 0 -->
-								<div class="redanswer"><spring:message code="info.NotAnswered" /></div>
-			
-								<!-- ko if: $parents[1].unansweredMandatoryQuestions() == false -->
-								<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}#E' + id}"><spring:message code="label.Answer" /></a>
-								<!-- /ko -->
-						
-								<!-- /ko -->
-								<c:if test="${form.survey.isDelphiShowAnswers}">
-									<!-- ko if: isDelphiShowAnswersAndStatisticsInstantly || answer.length > 0 -->
-									<a class="btn btn-xs btn-default" onclick="openAnswersDialog(this);"><spring:message code="label.ShowAllAnswers" /></a>
+								<div data-bind="attr: {id: 'wordcloud' + uid}" class="delphi-chart-div" style="display: none; width: 300px; height: 200px"></div>
+								<div style="height: 200px;" class="delphi-chart-div">
+									<canvas class='delphi-chart' width='300' height='200'></canvas>
+								</div>
+								
+								<div class="question-footer">
+									<!-- ko if: (maxDistanceExceeded && !changedForMedian) || hasUnreadComments -->
+										<div style="color:#f00; font-size:24px; float:right;">
+											<!-- ko if: maxDistanceExceeded && !changedForMedian -->
+											<span style="cursor: pointer" data-toggle="tooltip" title="<spring:message code="info.MaxDistanceExceeded" />"><img style="max-width:24px;" src="<c:url value="/resources/images/warning24.png"/>" alt="max distance exceeded" /></span>
+											<!-- /ko -->
+											<!-- ko if: hasUnreadComments -->
+											<span class="glyphicon glyphicon-comment new-delphi-comments-icon" data-toggle="tooltip" title="${form.getMessage("tooltip.NewComments")}"></span>
+											<!-- /ko -->
+										</div>
+									<!-- /ko -->							
+								
+									<!-- ko if: answer.length > 0 -->
+									<div class="greenanswer"><spring:message code="info.YouAnswered" />: <span style="font-weight: bold" data-bind="html: sectionViewModel.niceAnswer(answer)"></span></div>
+									
+									<!-- ko if: $parents[1].unansweredMandatoryQuestions() == false -->								
+									<a class="btn btn-xs btn-default" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}#E' + id}"><spring:message code="label.EditAnswer" /></a>
 									<!-- /ko -->
-								</c:if>
 								
-							</div>
-						</div>					
-						<!-- /ko -->
-						
-						<div style="clear: both"></div>
+									<!-- /ko -->
+									<!-- ko if: answer.length == 0 -->
+									<div class="redanswer"><spring:message code="info.NotAnswered" /></div>
+				
+									<!-- ko if: $parents[1].unansweredMandatoryQuestions() == false -->
+									<a class="btn btn-xs btn-primary" data-bind="attr: {href:'?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}#E' + id}"><spring:message code="label.Answer" /></a>
+									<!-- /ko -->
+							
+									<!-- /ko -->
+									<c:if test="${form.survey.isDelphiShowAnswers}">
+										<!-- ko if: isDelphiShowAnswersAndStatisticsInstantly || answer.length > 0 -->
+										<a class="btn btn-xs btn-default" onclick="openAnswersDialog(this);"><spring:message code="label.ShowAllAnswers" /></a>
+										<!-- /ko -->
+									</c:if>
+									
+								</div>
+							</div>					
+							<!-- /ko -->
+							
+							<div style="clear: both"></div>
+						</div>
 					</div>
-				</div>
+					<!-- /ko -->
+				
 				<!-- /ko -->
 			</div>
 			
