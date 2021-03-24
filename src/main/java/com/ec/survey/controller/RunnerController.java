@@ -2889,7 +2889,16 @@ public class RunnerController extends BasicController {
 
 						currentDelphiSection.getQuestions().add(delphiQuestion);
 						currentDelphiSection.setHasDirectDelphiQuestions(true);
-						lastMainSection.setHasDelphiQuestions(true);
+						
+						//if the survey does not start with a section we create one
+						if (structure.getSections().isEmpty()) {
+							currentDelphiSection.setLevel(1);
+							structure.getSections().add(currentDelphiSection);
+						}
+												
+						if (lastMainSection != null) {
+							lastMainSection.setHasDelphiQuestions(true);
+						}
 					} else {
 						//non-delphi question
 						if (!structure.isUnansweredMandatoryQuestions() && !question.getOptional() && !question.getIsDependent()) 
