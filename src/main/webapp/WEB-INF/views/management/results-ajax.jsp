@@ -188,7 +188,7 @@
 				$(this).parent().find('[data-toggle="tooltip"]').tooltip();
 
 				var chartwrapper = $(this);
-				loadGraphDataInner(chartwrapper, addChart, null, null, null);
+				loadGraphDataInner(chartwrapper, addChart, null, null, null, 300);
 			});
 		}
 
@@ -200,7 +200,17 @@
 			var scheme = $(controls).find(".chart-scheme").first().val();
 			var legend = $(controls).find(".chart-legend").first().is(":checked");
 
-			loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend);
+			const size = $(chartwrapper).closest(".elementwrapper, .statelement-wrapper").find(".chart-size").first().val();
+			let canvasWidth;
+			if (size === 'medium') {
+				canvasWidth = 450;
+			} else if (size === 'large') {
+				canvasWidth = 600;
+			} else {
+				canvasWidth = 300;
+			}
+
+			loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend, canvasWidth);
 		}
 
 		function chartLabelCallback(value, index, values) {
@@ -288,7 +298,7 @@
 			return result;
 		}
 		
-		function loadGraphDataInner(div, chartCallback, chartType, scheme, legend) {
+		function loadGraphDataInner(div, chartCallback, chartType, scheme, legend, canvasWidth) {
 
 			var surveyid = div.data("survey-id");
 			var questionuid = div.data("question-uid");
@@ -360,6 +370,8 @@
 							}
 						}
 					};
+
+					truncateGraphLegendLabels(chartOptions, canvasWidth);
 
 					switch (result.questionType) {
 						case "MultipleChoice":
@@ -546,26 +558,29 @@
 					}
 
 					if (chartCallback instanceof Function) {
-						chartCallback(div, chart, chartType, showLegendBox);
+						chartCallback(div, chart, chartType, showLegendBox, canvasWidth);
 					}
 				}
 			});
 		}
 
-		function addChart(div, chart, chartType, showLegendBox) {
+		function addChart(div, chart, chartType, showLegendBox, canvasWidth) {
 			var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 
 			$(elementWrapper).find(".delphi-chart").remove();
 
 			var size = $(elementWrapper).find(".chart-size").first().val();
 
+			let canvasElement = "<canvas class='delphi-chart' width='" + canvasWidth + "' height='";
 			if (size === 'medium') {
-				$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='450' height='330' style='background-color: #fff;'></canvas>");
+				canvasElement += 330;
 			} else if (size === 'large') {
-				$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='600' height='440' style='background-color: #fff;'></canvas>");
-        	 } else {
-        		$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='300' height='220' style='background-color: #fff;'></canvas>");
-  		 	 }        	 
+				canvasElement += 440;
+			} else {
+				canvasElement += 220;
+			}
+			canvasElement += "' style='background-color: #fff;'></canvas>";
+			$(elementWrapper).find(".delphi-chart-div").append(canvasElement);
 
         	$(elementWrapper).find(".chart-wrapper").show();
         	$(elementWrapper).find(".chart-controls").show();
