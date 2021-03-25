@@ -397,7 +397,7 @@
 								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi?survey=${form.survey.shortname}">
 									${form.getMessage("label.Delphi")}
 								</a>
-								<c:if test="${form.survey.security.startsWith('open') && form.answerSets.size() > 0}">
+								<c:if test="${form.answerSets.size() > 0}">
 									<br /><br />
 									<a onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
 								</c:if>

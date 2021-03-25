@@ -1417,14 +1417,12 @@ function delphiUpdateContinued(div, successCallback) {
 			$(message).html(data.message).addClass("label label-success");
 			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
 			
-			if (data.open) {
-				const uniqueCode = $("#uniqueCode").val();
-				const key = HAS_SHOWN_SURVEY_LINK + uniqueCode;
-				if (localStorage.getItem(key) == null) {
-					localStorage.setItem(key, "true");
-					appendShowContributionLinkDialogToSidebar();
-					showContributionLinkDialog(data.link);
-				}
+			const uniqueCode = $("#uniqueCode").val();
+			const key = HAS_SHOWN_SURVEY_LINK + uniqueCode;
+			if (localStorage.getItem(key) == null) {
+				localStorage.setItem(key, "true");
+				appendShowContributionLinkDialogToSidebar();
+				showContributionLinkDialog(data.link);
 			}
 			
 			if (data.changedForMedian) {
