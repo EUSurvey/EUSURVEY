@@ -2402,13 +2402,20 @@ public class AnswerService extends BasicService {
 		return median;
 	}
 	
-	private void initializeHelperMaps(Survey survey, Map<String, List<String>> questionsBySection, Map<String, Integer> answersByQuestion, Map<String, String> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection) {
+	private void initializeHelperMaps(Survey survey, Map<String, List<String>> questionsBySection, Map<String, Integer> answersByQuestion, Map<String, List<String>> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection) {
 		String lastSection = "";
+		String lastL1section = "";
 		questionsBySection.put(lastSection, new ArrayList<String>());
 		
 		for (Element element : survey.getElements()) {
 			if (element instanceof Section) {
 				lastSection = element.getUniqueId();
+				
+				Section section = (Section)element;
+				if (section.getLevel() == 1) {
+					lastL1section = element.getUniqueId();
+				}
+				
 				questionsBySection.put(lastSection, new ArrayList<String>());
 				questionUidsPerAnswerAndSection.put(lastSection, new HashMap<String, List<String>>());
 			} else if (element.isDelphiElement()) {
@@ -2426,7 +2433,15 @@ public class AnswerService extends BasicService {
 				}
 				
 				questionsBySection.get(lastSection).add(element.getUniqueId());
-				sectionsByQuestion.put(element.getUniqueId(), lastSection);
+				
+				sectionsByQuestion.put(element.getUniqueId(), new ArrayList<>());
+				sectionsByQuestion.get(element.getUniqueId()).add(lastSection);
+				
+				if (!lastSection.equals(lastL1section)) {
+					questionsBySection.get(lastL1section).add(element.getUniqueId());
+					sectionsByQuestion.get(element.getUniqueId()).add(lastL1section);
+				}				
+								
 				answersByQuestion.put(element.getUniqueId(), 0);
 			}
 		}
@@ -2460,7 +2475,7 @@ public class AnswerService extends BasicService {
 		return result;
 	}
 	
-	private int parseAnswerSetsForCompletionRates(List<AnswerSet> answers, Map<String, Integer> answersByQuestion, Map<String, String> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection)
+	private int parseAnswerSetsForCompletionRates(List<AnswerSet> answers, Map<String, Integer> answersByQuestion, Map<String, List<String>> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection)
 	{
 		int completedContributions = 0;
 		for (AnswerSet answerSet : answers) {
@@ -2481,7 +2496,7 @@ public class AnswerService extends BasicService {
 		return completedContributions;
 	}
 	
-	private int parseAnswerRowsForCompletionRates(List<List<String>> answerRows, Map<String, Integer> answersByQuestion, Map<String, String> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection, Map<Integer, String> questionUidsByIndex)
+	private int parseAnswerRowsForCompletionRates(List<List<String>> answerRows, Map<String, Integer> answersByQuestion, Map<String, List<String>> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection, Map<Integer, String> questionUidsByIndex)
 	{
 		int completedContributions = 0;
 		for (List<String> answerRow : answerRows) {
@@ -2508,7 +2523,7 @@ public class AnswerService extends BasicService {
 		return completedContributions;
 	}
 	
-	private void internalParseForCompletionRates(String uniqueCode, String questionUid, List<String> listOfAnswer, Map<String, Integer> answersByQuestion, Map<String, String> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection)
+	private void internalParseForCompletionRates(String uniqueCode, String questionUid, List<String> listOfAnswer, Map<String, Integer> answersByQuestion, Map<String, List<String>> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection)
 	{
 		if (parentByQuestion.containsKey(questionUid)) {
 			questionUid = parentByQuestion.get(questionUid);
@@ -2522,21 +2537,25 @@ public class AnswerService extends BasicService {
 		}
 		
 		if (sectionsByQuestion.containsKey(questionUid)) {
-			String section = sectionsByQuestion.get(questionUid);
-			if (!questionUidsPerAnswerAndSection.containsKey(section)) {
-				questionUidsPerAnswerAndSection.put(section, new HashMap<String, List<String>>());
-			}
 			
-			Map<String, List<String>> questionUidsPerAnswer = questionUidsPerAnswerAndSection.get(section);
+			List<String> sections = sectionsByQuestion.get(questionUid);
 			
-			if (!questionUidsPerAnswer.containsKey(uniqueCode))
-			{
-				questionUidsPerAnswer.put(uniqueCode, new ArrayList<String>());
-			}
-			
-			if (!questionUidsPerAnswer.get(uniqueCode).contains(questionUid))
-			{
-				questionUidsPerAnswer.get(uniqueCode).add(questionUid);
+			for (String section : sections) {			
+				if (!questionUidsPerAnswerAndSection.containsKey(section)) {
+					questionUidsPerAnswerAndSection.put(section, new HashMap<String, List<String>>());
+				}
+				
+				Map<String, List<String>> questionUidsPerAnswer = questionUidsPerAnswerAndSection.get(section);
+				
+				if (!questionUidsPerAnswer.containsKey(uniqueCode))
+				{
+					questionUidsPerAnswer.put(uniqueCode, new ArrayList<String>());
+				}
+				
+				if (!questionUidsPerAnswer.get(uniqueCode).contains(questionUid))
+				{
+					questionUidsPerAnswer.get(uniqueCode).add(questionUid);
+				}
 			}
 		}
 	}
@@ -2547,7 +2566,7 @@ public class AnswerService extends BasicService {
 		int completedContributions = 0;
 		Map<String, List<String>> questionsBySection = new HashMap<>();		
 		Map<String, Integer> answersByQuestion = new HashMap<>();
-		Map<String, String> sectionsByQuestion = new HashMap<>();
+		Map<String, List<String>> sectionsByQuestion = new HashMap<>();
 		Map<String, String> parentByQuestion = new HashMap<>();		
 		Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection = new HashMap<>();
 		initializeHelperMaps(survey, questionsBySection, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
@@ -2559,7 +2578,7 @@ public class AnswerService extends BasicService {
 			List<Question> questions = survey.getQuestions();
 			
 			for (Question question : questions) {
-				if (question.isUsedInResults()) {
+				if (question.isUsedInResults() && filter.getVisibleQuestions().contains(question.getId().toString())) {
 					
 					if (question instanceof MatrixOrTable) {
 						MatrixOrTable parent = (MatrixOrTable)question;						
