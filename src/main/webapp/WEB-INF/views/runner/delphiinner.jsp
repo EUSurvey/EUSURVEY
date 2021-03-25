@@ -512,8 +512,7 @@
 					xhr.setRequestHeader(csrfheader, csrftoken);
 				},
 				error: function (data) {
-					//TODO
-					alert(data);
+					showError('${form.getMessage("error.DelphiGet")}');
 				},
 				success: function (data, textStatus) {
 					for (var i = 0; i < data.sections.length; i++) {
