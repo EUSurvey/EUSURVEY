@@ -185,8 +185,10 @@
 					</c:if>
 					
 					<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Info")}</div>
-					<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi">${form.getMessage("label.Delphi")}</a>
-					<c:if test="${form.survey.security.startsWith('open') && form.answerSets.size() > 0}">
+					<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi?survey=${form.survey.shortname}">
+						${form.getMessage("label.Delphi")}
+					</a>
+					<c:if test="${form.answerSets.size() > 0}">
 						<br /><br />
 						<a onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
 					</c:if>
@@ -512,8 +514,7 @@
 					xhr.setRequestHeader(csrfheader, csrftoken);
 				},
 				error: function (data) {
-					//TODO
-					alert(data);
+					showError('${form.getMessage("error.DelphiGet")}');
 				},
 				success: function (data, textStatus) {
 					for (var i = 0; i < data.sections.length; i++) {
@@ -528,7 +529,8 @@
 								|| data.sections[i].questions[j].answer.length > 0)
 							{
 								var div = $('#delphiquestion' + data.sections[i].questions[j].uid);
-								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false, false, true);
+								const canvasWidth = $(div).find('canvas').attr('width');
+								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false, false, true, canvasWidth);
 							}
 						}
 					}
@@ -545,7 +547,7 @@
 			var uniquecode = "${uniqueCode}";
 			var languagecode = "${form.language.code}";
 			var uid = $(element).closest(".question").attr("data-uid");
-			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true, false);
+			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true, false, 800);
 		}
 
 		$(document).ready(function(){
