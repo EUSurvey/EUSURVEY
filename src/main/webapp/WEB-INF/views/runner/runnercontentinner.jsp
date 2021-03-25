@@ -99,7 +99,7 @@
 					</c:if>
 					<span class="introduction">${form.survey.introduction}</span>					
 					
-					<div id="page-tabs" class="panel panel-default visible-lg" style="margin-top:20px;">
+					<div id="page-tabs" class="panel panel-default${responsive != null ? " visible-lg" : ""}" style="margin-top:20px;">
 						<div class="panel-body">
 							<div style="font-size: 20px;float:left; width:10%">${form.getMessage("label.Pages")}</div>
 							
