@@ -87,7 +87,6 @@ public class HomeController extends BasicController {
 		if (survey != null) {
 			model.put("contact", survey.getContact());
 			model.put("fixedContact", survey.getFixedContact());
-			model.put("fixedContactLabel", survey.getFixedContactLabel());
 		}
 
 		model.put("continueWithoutJavascript", true);
