@@ -96,9 +96,24 @@
 				Future of Customs in the EU 2040</a>.
 		</p>
 
-		<br />
-		<br /> <a class="btn btn-primary"
-			href="mailto:JRC-FORESIGHT@ec.europa.eu">Contact us</a>
+		<c:if test="${contact != null}">
+		<p>
+			<br />
+			<c:choose>
+				<c:when test="${contact.startsWith('form:')}">
+			<a class="btn btn-primary" data-toggle="tooltip" title="<spring:message code='info.ContactForm' />" href="${contextpath}/runner/contactform/${param.survey}">
+				</c:when>
+				<c:when test="${contact.contains('@')}">
+			<a class="btn btn-primary" href="mailto:<esapi:encodeForHTMLAttribute>${contact}</esapi:encodeForHTMLAttribute>">
+				</c:when>
+				<c:otherwise>
+			<a class="btn btn-primary" href="<esapi:encodeForHTMLAttribute>${fixedContact}</esapi:encodeForHTMLAttribute>" target="_blank">
+				</c:otherwise>
+			</c:choose>
+				Contact us
+			</a>
+		</p>
+		</c:if>
 
 	</div>
 	</div>
