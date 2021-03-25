@@ -1319,8 +1319,10 @@
 			</div>
 		</div>
 		
-		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">
-			<%@ include file="delphiAnswersTable.jsp" %>
+		<div class="row results-table-row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">
+			<div class="col-md-12">
+				<%@ include file="delphiAnswersTable.jsp" %>
+			</div>
 		</div>
 
 		<div class="modal delete-confirmation-dialog" data-backdrop="static">

@@ -1429,11 +1429,6 @@ legend {
 	background-color: #fff;
 }
 
-.survey-element .delphi-table {
-	margin-left: 35px;
-	margin-right: 15px;
-}
-
 .new-delphi-comment {
 	background-color: #dcf5fe;
 }
@@ -1495,6 +1490,14 @@ div.medianpa {
 .inline-loader {
 	display: none;
 	margin-left: 20px;
+}
+
+.results-table-row > div {
+	padding-left: 35px;
+}
+
+.results-table-row__link-hide {
+	display: none;
 }
 
 .delete-confirmation-dialog {
