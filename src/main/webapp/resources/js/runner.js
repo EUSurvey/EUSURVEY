@@ -1128,6 +1128,9 @@ function isTriggered(element, stoprecursion) {
 						cachedIsTriggered[id] = false;
 						return false;
 					}
+				} else if (useAndLogic) {
+					cachedIsTriggered[id] = false;
+					return false;
 				}
 			}
 		}
