@@ -103,17 +103,19 @@ public class Matrix extends MatrixOrTable {
 	@Transient
 	public String getDependentElementUIDsStrings()
 	{
-		StringBuilder result = new StringBuilder();
+		List<String> result = new ArrayList<>();
 
 		for (DependencyItem dep : dependentElements)
 		{
 			for (Element element: dep.getDependentElements())
 			{
-				result.append(element.getUniqueId()).append(dep.getPosition());
+				result.add(element.getUniqueId() + dep.getPosition());
 			}
 		}		
 		
-		return result.toString();
+		result.sort(Comparator.comparing(String::toString)); 
+		
+		return String.join(",", result);
 	}
 	
 	@Transient
