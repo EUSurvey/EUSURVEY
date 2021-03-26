@@ -642,6 +642,14 @@ function updateText(selectedelement, text, fromundo)
 		var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
 		var parent = _elements[parentid];
 		parent.getChild(uid).comment(text);
+	} else if ($(_elementProperties.selectedelement).hasClass("rankingitemtext"))
+	{
+		var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+		var parent = _elements[parentid];
+		var rankingitem = parent.rankingItems().filter(item => item.id() == id)[0];
+		oldtext = rankingitem.title();
+		rankingitem.title(text);
+		uid = rankingitem.uniqueId();
 	} else {
 		oldtext = $(_elementProperties.selectedelement).html();
 		$(_elementProperties.selectedelement).html(text);

@@ -336,12 +336,6 @@
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
 
-		<ul class="ranking-ul-sortable">
-			<!-- ko foreach: observableChildElements() -->
-				<li data-bind='text: "Title: "+title'></li>
-			<!-- /ko -->
-		</ul>
-
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'rankingquestion', attr: {'name': 'type' + id()}" />
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
@@ -352,6 +346,24 @@
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
 		<!-- /ko -->
+
+		<div class="rankingitem-list-container">
+			<div class="rankingitem-list">
+				<!-- ko foreach: rankingItems() -->
+				<div class="rankingitem-form-data">
+					<div class="rankigitem-decoration">&#x283F;&nbsp</div>
+					<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
+					<!-- ko if: $parent.foreditor -->
+					<input type="hidden" data-bind="value: shortname, attr: {'name': 'rankingitemshortname' + $parents[0].id(), 'data-id' : id()}" />
+					<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'rankingitemuid' + $parents[0].id(), 'data-id' : id()}" />
+					<textarea style="display: none" data-bind="text: title(), attr: {'name': 'rankingitemtitle' + $parents[0].id(), 'data-id' : id()}"></textarea>
+					<textarea style="display: none" data-bind="text: originalTitle(), attr: {'name': 'rankingitemoriginaltitle' + $parent.id(), 'data-id' : id()}"></textarea>
+					<!-- /ko -->
+				</div>
+				<!-- /ko -->
+			</div>
+		</div>
+
 	</div>
 
 	<div id="password-template">
