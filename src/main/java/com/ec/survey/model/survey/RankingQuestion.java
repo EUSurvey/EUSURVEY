@@ -32,8 +32,8 @@ public class RankingQuestion extends Question {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<Element> childElements = new ArrayList<>();
-	private List<Element> missingElements = new ArrayList<>();
+	private List<RankingItem> childElements = new ArrayList<>();
+	private List<RankingItem> missingElements = new ArrayList<>();
 
 	public RankingQuestion() {}
 	
@@ -41,33 +41,33 @@ public class RankingQuestion extends Question {
 		super(title, shortname, uid);
 	}
 
-	@OneToMany(targetEntity=Element.class, cascade = CascadeType.ALL)  
+	@OneToMany(targetEntity=RankingItem.class, cascade = CascadeType.ALL)
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "position asc")
 	@JoinColumn(nullable=true)
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-	public List<Element> getChildElements() {
+	public List<RankingItem> getChildElements() {
 		return childElements;
 	}
-	public void setChildElements(List<Element> childElements) {
+	public void setChildElements(List<RankingItem> childElements) {
 		this.childElements = childElements;	
 	}
 
 	@Transient
-	public List<Element> getMissingElements() {
+	public List<RankingItem> getMissingElements() {
 		return missingElements;
 	}	
-	public void setMissingElements(List<Element> missingElements) {
+	public void setMissingElements(List<RankingItem> missingElements) {
 		this.missingElements = missingElements;
 	}
 	
 	@Transient
-	public List<Element> getAllChildElements() {
+	public List<RankingItem> getAllChildElements() {
 		
 		if (!missingElements.isEmpty())
 		{
-			List<Element> result = new ArrayList<>();
-			for (Element thatElement : missingElements)
+			List<RankingItem> result = new ArrayList<>();
+			for (RankingItem thatElement : missingElements)
 			{
 				if (!result.contains(thatElement))
 				{
@@ -85,8 +85,8 @@ public class RankingQuestion extends Question {
 	}	
 	
 	@Transient
-	public Element getChildElement(int id) {
-		for (Element thatElement : getAllChildElements()) {
+	public RankingItem getChildElement(int id) {
+		for (RankingItem thatElement : getAllChildElements()) {
 			if (thatElement.getId() == id) {
 				return thatElement;
 			}
@@ -95,8 +95,8 @@ public class RankingQuestion extends Question {
 	}	
 	
 	@Transient
-	public Element getChildElementsByUniqueId(String uid) {
-		for (Element thatElement : getAllChildElements ()) {
+	public RankingItem getChildElementsByUniqueId(String uid) {
+		for (RankingItem thatElement : getAllChildElements ()) {
 			if (thatElement.getUniqueId() != null && thatElement.getUniqueId().length() > 0 && thatElement.getUniqueId().equals(uid)) {
 				return thatElement;
 			}
@@ -108,8 +108,8 @@ public class RankingQuestion extends Question {
 		RankingQuestion copy = new RankingQuestion();
 		baseCopy(copy);
 
-		for (Element thatElement : getChildElements()) {
-			Element elementCopy = thatElement.copy(fileDir);
+		for (RankingItem thatElement : getChildElements()) {
+			RankingItem elementCopy = thatElement.copy(fileDir);
 			copy.getChildElements().add(elementCopy);
 		}
 

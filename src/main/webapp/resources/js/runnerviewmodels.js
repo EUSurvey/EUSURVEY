@@ -712,21 +712,33 @@ function newRankingViewModel(element)
 {
 	var viewModel = newBasicViewModel(element);
 
-	viewModel.observableChildElements = ko.observableArray();
+	viewModel.rankingItems = newRankingItemViewModelForEach(element.childElements);
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
-
-	$.each(element.childElements, (index, that) => {
-		var child = {
-			"title": that.title,
-		};
-		viewModel.observableChildElements.push(child);
-		// TODO DELPHI-190: push to observable child elements
-	});
-
+	viewModel.minItems = function() { return 2; };
 	return viewModel;
 }
 
+function newRankingItemViewModelForEach(childElements)
+{
+	var viewModel = ko.observableArray();
+	$.each(childElements, (index, that) => {
+		viewModel.push(newRankingItemViewModel(that.id, that.uniqueId, that.shortname, that.title));
+	});
+	return viewModel;
+}
+
+function newRankingItemViewModel(id, uniqueId, shortname, title)
+{
+	var viewModel = newBasicViewModel();
+	viewModel.type = 'RankingItem';
+	viewModel.title = ko.observable(title);
+	viewModel.id = ko.observable(id);
+	viewModel.uniqueId = ko.observable(uniqueId);
+	viewModel.shortname = ko.observable(shortname);
+	viewModel.originalTitle = ko.observable(title);
+	return viewModel;
+}
 
 function newFreeTextViewModel(element)
 {

@@ -350,6 +350,40 @@ function getCombinedAnswerText(useparagraphs)
 	}
 }
 
+function getCombinedRankingText(useparagraphs)
+{
+	var id = $(_elementProperties.selectedelement).attr("data-id");
+	
+	if ($(_elementProperties.selectedelement).hasClass("rankingitemtext"))
+	{
+		id = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+	}
+
+	var element = _elements[id];
+
+	var result = "";
+	var arr = [];
+
+	$.each(element.rankingItems(), function(index, thatrankingitem) {
+		var title = thatrankingitem.title();
+		if (useparagraphs) {
+			if (title.startsWith("<p")) {
+				result += title;
+			} else {
+				result += "<p>" + title + "</p> ";
+			}
+		} else {
+			arr.push(title);
+		}
+	});
+
+	if (useparagraphs) {
+		return result;
+	} else {
+		return arr;
+	}
+}
+
 function goTo(id, event)
 {
 	var elem = $("#content").find("#" + id).last();

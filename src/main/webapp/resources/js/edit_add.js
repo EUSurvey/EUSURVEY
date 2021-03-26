@@ -36,9 +36,9 @@ function getNewElement(item)
 	{
 		element = getBasicElement("RankingQuestion", true, "Ranking Question", item.attr("id"), true);
 		element.childElements = [
-			getBasicElement("RankingElement", false, "Ranking Element 1", null, false),
-			getBasicElement("RankingElement", false, "Ranking Element 2", null, false),
-			getBasicElement("RankingElement", false, "Ranking Element 3", null, false),
+			getBasicElement("RankingItem", false, "Ranking Item 1", null, false),
+			getBasicElement("RankingItem", false, "Ranking Item 2", null, false),
+			getBasicElement("RankingItem", false, "Ranking Item 3", null, false),
 			];
 		element.isDelphiQuestion = isDelphi;
 		updateComplexityScore("addSimpleQuestion");
@@ -334,7 +334,11 @@ function addElementHandler(item)
 	$(item).find(".possibleanswerrow").find(".answertext").dblclick(function(e){
 		_elementProperties.showProperties(this, e, true);
 	});	
-	
+
+	$(item).find(".rankingitem-form-data").click(function(e) {
+		_elementProperties.showProperties($(this).find(".rankingitemtext")[0], e, false);
+	});	
+
 	$(item).find(".gallery-table").find("td").click(function(e) {
 		_elementProperties.showProperties(this, e, false);
     });
@@ -359,7 +363,15 @@ function addElementHandler(item)
 				    $(this).removeClass("survey-element-hovered");
 				  }
 				);
-	
+	$(item).find(".rankingitem-form-data").hover(
+			function() {
+				$(this).closest(".survey-element").removeClass(
+						"survey-element-hovered");
+				$(this).addClass("survey-element-hovered");
+			}, function() {
+				$(this).removeClass("survey-element-hovered");
+			});
+
 	$(item).find(".matrix-header, .table-header").hover(
 			  function() {
 				  	$(this).closest(".survey-element").removeClass("survey-element-hovered");

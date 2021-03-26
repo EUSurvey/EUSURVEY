@@ -48,6 +48,12 @@ var UndoProcessor = function() {
 			{
 				_elementProperties.selectedelement = $(".ratingquestion[data-id='" + id + "']");	
 			}
+
+			if ($(_elementProperties.selectedelement).length == 0)
+			{
+				_elementProperties.selectedelement = $(".rankingitemtext[data-id='" + id + "']");
+				element = _elementProperties.selectedelement[0];
+			}
 		}
 		
 		var skipRedo = false;
@@ -676,6 +682,15 @@ var UndoProcessor = function() {
 			case "MaxDistanceToMedian":
 				element.maxDistance(step[3]);
 				break;
+			case "ADDRANKINGITEM":
+				element.rankingItems.pop();
+				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
+			case "REMOVERANKINGITEM":
+				element.rankingItems.push(step[2]);
+				addElementHandler($(_elementProperties.selectedelement));
+				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -725,6 +740,12 @@ var UndoProcessor = function() {
 			if ($(_elementProperties.selectedelement).length == 0)
 			{
 				_elementProperties.selectedelement = $(".ratingquestion[data-id='" + id + "']");	
+			}
+
+			if ($(_elementProperties.selectedelement).length == 0)
+			{
+				_elementProperties.selectedelement = $(".rankingitemtext[data-id='" + id + "']");
+				element = _elementProperties.selectedelement[0];
 			}
 		}
 		
@@ -1183,6 +1204,15 @@ var UndoProcessor = function() {
 				break;
 			case "MaxDistanceToMedian":
 				element.maxDistance(step[4]);
+				break;
+			case "ADDRANKINGITEM":
+				element.rankingItems.push(step[2]);
+				addElementHandler($(_elementProperties.selectedelement));
+				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
+			case "REMOVERANKINGITEM":
+				element.rankingItems.pop();
+				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 		}
 		

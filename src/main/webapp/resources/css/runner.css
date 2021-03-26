@@ -130,6 +130,43 @@
 	color: #777;
 }
 
+.rankingitem-list-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+	margin-left: 15px;
+}
+
+.rankingitem-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.rankingitem-form-data {
+	display: flex;
+	text-align: left;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	border-style: solid;
+	border-color: #999;
+	border-width: 1px;
+	margin: 3px;
+	padding: 3px;
+}
+
+.rankingitem-decoration {
+	color: #333;
+	font-weight: normal;
+}
+
+.rankingitemtext {
+	color: #333;
+	word-wrap: break-word;
+	font-weight: normal;
+}
+
+
 .slidertooltipdelphivotes {
 	color: #ccc;
 }
