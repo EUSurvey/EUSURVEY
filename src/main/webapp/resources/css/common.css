@@ -1496,6 +1496,11 @@ div.medianpa {
 	padding-left: 35px;
 }
 
+.results-table-row__links {
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+
 .results-table-row__link-hide {
 	display: none;
 }
