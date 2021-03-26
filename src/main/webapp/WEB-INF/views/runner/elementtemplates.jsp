@@ -69,23 +69,27 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
-		<div class="answer-columns">
+		<div class="answer-columns" style="position: relative">
 		
-			<!-- ko if: likert -->
+			<!-- ko if: likert() && !(ismobile || istablet) -->
 						
 				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median answers-table' : 'likert-div answers-table'}">
-				
-					<div class="likert-bar" data-bind="attr: {'style' : 'width: ' + (possibleAnswers().length - 1) + '00px;'}"></div>
-				
-					<!-- ko foreach: possibleAnswers() -->
 					
-					<div class="likert-pa">
-						<input data-bind="enable: !$parents[0].readonly() && !$parents[0].foreditor, checked: getPAByQuestion2($parents[0].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[0].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[0].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[0].css + ' trigger check', name: 'answer' + $parents[0].id(), value: id()}" type="radio"  />
-						<div class="answertext" style="margin-left: 0; padding-left: 10px; padding-right: 10px;" data-bind="html: titleForDisplayMode($parents[0].displayMode()), attr: {'data-id' : id(), 'data-pa-uid' : uniqueId()}"></div>
-					</div>
+					<!-- ko if: !(ismobile || istablet) -->
+				
+						<div class="likert-bar" data-bind="attr: {'style' : 'width: ' + (possibleAnswers().length - 1) + '00px;'}"></div>
+					
+						<!-- ko foreach: possibleAnswers() -->
+						
+						<div class="likert-pa">
+							<input data-bind="enable: !$parents[0].readonly() && !$parents[0].foreditor, checked: getPAByQuestion2($parents[0].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[0].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[0].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[0].css + ' trigger check', name: 'answer' + $parents[0].id(), value: id()}" type="radio"  />
+							<div class="answertext" style="margin-left: 0; padding-left: 10px; padding-right: 10px;" data-bind="html: titleForDisplayMode($parents[0].displayMode()), attr: {'data-id' : id(), 'data-pa-uid' : uniqueId()}"></div>
+						</div>
+						<!-- /ko -->
+						
+						<div style="clear: both"></div>
+						
 					<!-- /ko -->
-					
-					<div style="clear: both"></div>
 				</div>		
 			
 				<!-- ko if: foreditor -->
@@ -105,9 +109,14 @@
 					<!-- /ko -->		
 			<!-- /ko -->
 			
-			<!-- ko ifnot: likert -->
-		
-				<!-- ko if: useRadioButtons -->
+			<!-- ko if: ismobile || istablet || !likert() -->
+			
+				<!-- ko if: likert() || useRadioButtons() -->
+				
+				<!-- ko if: likert() -->
+					<div class="likert-table-div"></div>
+				<!-- /ko -->	
+									
 				<table class="answers-table">
 					<tr class="hideme">
 						<th>radio button</th>
@@ -137,7 +146,7 @@
 											
 						<td style="vertical-align: top">
 							<!-- ko ifnot: id() == 'dummy' -->
-							<input data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id()}" type="radio"  />
+							<input style="position: relative" data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id()}" type="radio"  />
 							<!-- /ko -->	
 						</td>
 						<td style="padding-right: 15px; vertical-align: top">
@@ -153,7 +162,7 @@
 					<!-- /ko -->
 				</table>
 				<!-- /ko -->
-				<!-- ko ifnot: useRadioButtons -->
+				<!-- ko ifnot: useRadioButtons() || likert() -->
 				<div class="answer-column">		
 					<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice'}"  onchange="validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);">
 						<option data-bind="html: strip_tags(titleForDisplayMode($parents[0].displayMode())), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
