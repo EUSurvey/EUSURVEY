@@ -1687,6 +1687,20 @@ function checkGoToDelphiStart(link)
 	window.location = url;
 }
 
+function showResultsTable(button) {
+	$(button).hide();
+	const container = $(button).closest('.results-table-row');
+	$(container).find('.results-table-row__link-hide').show();
+	$(container).find('.delphi-table').show();
+}
+
+function hideResultsTable(button) {
+	$(button).hide();
+	const container = $(button).closest('.results-table-row');
+	$(container).find('.results-table-row__link-show').show();
+	$(container).find('.delphi-table').hide();
+}
+
 function openAskEmailToSendLinkDialog(button) {
 	$(button).closest('.modal').modal('hide');
 	$('#ask-email-dialog').modal('show');
