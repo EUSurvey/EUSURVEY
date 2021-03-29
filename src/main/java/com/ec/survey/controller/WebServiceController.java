@@ -1131,7 +1131,7 @@ public class WebServiceController extends BasicController {
 		if (user == null)
 			return "";
 
-		Survey survey = getSurvey(shortname, user, request, response, true, false);
+		Survey survey = getSurvey(shortname, user, request, response, false, false);
 		if (survey == null)
 			return "";
 
