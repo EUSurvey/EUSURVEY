@@ -1606,12 +1606,14 @@ public class ReportingService extends BasicService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getCountInternal(Survey survey, String quid, String auid, boolean noPrefixSearch, String where, Map<String, Object> values) {
+	public int getCountInternal(Survey survey, String quid, String auid, boolean noPrefixSearch, boolean noPostfixSearch, String where, Map<String, Object> values) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		String sql = "SELECT COUNT(*) FROM " + getOLAPTableName(survey) + " WHERE Q" + quid.replace("-", "");
 		if (auid == null) {
 			sql += " IS NOT NULL";
+		} else if (noPrefixSearch && noPostfixSearch) {
+			sql += " LIKE '" + auid + "'";			
 		} else if (noPrefixSearch) {
 			sql += " LIKE '" + auid + "%'";
 		} else {
