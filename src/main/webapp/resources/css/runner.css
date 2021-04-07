@@ -184,6 +184,12 @@
 	margin-left:5px
 }
 
+.questionhelp__text {
+	display: none;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+
 .limits {
 	margin-left:10px
 }

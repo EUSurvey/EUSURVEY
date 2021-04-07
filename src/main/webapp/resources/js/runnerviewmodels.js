@@ -7,7 +7,9 @@ function getNiceHelp(help)
 
 function addIconToHelp(help)
 {
-	return "<span onclick='$(this).next().toggle()' class='glyphicon glyphicon-question-sign'></span><div style='display: none; padding-top: 5px; padding-bottom: 5px;'>" + help + "</div>";
+	return "<span onclick='$(this).next().toggle()' class='glyphicon glyphicon-question-sign'></span>" +
+		"<div class='questionhelp__text'>" + help + "</div>" +
+		"<br />";
 }
 
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)
