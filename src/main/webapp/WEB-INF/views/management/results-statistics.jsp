@@ -456,14 +456,14 @@
 							
 											<td>
 												<div class="progress" style="width: 200px; margin-bottom: 2px;">
-												  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id.toString()}${answer}" style="width: ${statistics.requestedRecordsPercent[question.id.toString() + answer]}%;"></div>
+												  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id.toString()}${answer}" style="width: ${statistics.requestedRecordsPercent[question.getAnswerWithPrefix(answer)]}%;"></div>
 												</div>
 											</td>	
 							
 											<c:choose>
 												<c:when test="${statistics != null}">						
-													<td class="statRequestedRecords" data-id="${question.id.toString()}${answer}">${statistics.requestedRecords[question.id.toString() + answer]}</td>			
-													<td class="statRequestedRecordsPercent" data-id="${question.id.toString()}${answer}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString() + answer]}"/> %</td>		
+													<td class="statRequestedRecords" data-id="${question.id.toString()}${answer}">${statistics.requestedRecords[question.getAnswerWithPrefix(answer)]}</td>			
+													<td class="statRequestedRecordsPercent" data-id="${question.id.toString()}${answer}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.getAnswerWithPrefix(answer)]}"/> %</td>		
 												</c:when>
 												<c:otherwise>
 													<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id.toString()}${answer}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
