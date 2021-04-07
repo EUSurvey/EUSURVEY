@@ -1740,7 +1740,7 @@ function edit(span)
 			$(tr).show();			
 		} else {
 			var tr = document.createElement("tr");
-			$(tr).addClass("propertyrow");
+			$(tr).addClass("propertyrow visibilityrow");
 			var td = document.createElement("td");
 			$(td).attr("colspan","2").append("<b>" + getPropertyLabel("PleaseChooseLogic") + "<b><br />");
 			

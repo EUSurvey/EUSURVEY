@@ -1070,6 +1070,12 @@ function updateVisibility(span, reset, ask, dialogresult)
 			var id = $(this).attr("data-targetid");
 			oldtext = oldtext + id + ";";
 		});
+		
+		var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+		var parent = _elements[parentid];
+		parent.useAndLogic(false);
+		
+		$('.visibilityrow').remove();
 	}
 	
 	for (var i = 0; i < oldtriggers.length; i++)
