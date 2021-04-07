@@ -24,12 +24,12 @@
 	<div id="loadstatisticsbutton" class="hideme" style="text-align: center">
 		<a class="btn btn-default" onclick="loadStatisticsAsync(false);"><spring:message code="label.LoadStatistics" /></a>
 	</div>
-
 	
-		<div id="scrollareastatistics" class="scrollarea" style="height: auto">
+	<div id="scrollareastatistics" class="scrollarea" style="height: auto">
 
 		<c:forEach items="${form.getSurvey().getQuestionsAndSections()}" var="question">
 			<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
+			
 				<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
 			
 					<c:if test="${question.getType() == 'Section'}">
@@ -431,7 +431,78 @@
 	                        </div>
 	                    </c:if>
 
+					</c:if>		
+		
+					<c:if test="${question.getType() == 'NumberQuestion' && question.showStatisticsForNumberQuestion()}">
+						<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;">
+					
+							<div class="questiontitle" style="font-weight: bold;">${question.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${question.shortname})</span></div>
+							
+							<table class="statistics-table table table-bordered table-striped" style="margin-top: 5px; margin-left: 20px;">
+								<thead>
+									<tr>								
+										<th style="width: 300px">&#160;</th>
+										<th style="width: 200px">&#160;</th>
+										<th style="width: 1px"><spring:message code="label.Answers" /></th>
+										<th style="width: 90px"><spring:message code="label.Ratio" /></th>								
+									</tr>
+								</thead>						
+								<tbody>
+									<c:forEach items="${question.allPossibleAnswers}" var="answer" varStatus="status">
+										<tr data-position="${status.count}" data-value="${statistics.requestedRecordsPercent[question.id.toString() + answer]}">
+											<td>${answer}</td>
+							
+											<td>
+												<div class="progress" style="width: 200px; margin-bottom: 2px;">
+												  <div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id.toString()}${answer}" style="width: ${statistics.requestedRecordsPercent[question.id.toString() + answer]}%;"></div>
+												</div>
+											</td>	
+							
+											<c:choose>
+												<c:when test="${statistics != null}">						
+													<td class="statRequestedRecords" data-id="${question.id.toString()}${answer}">${statistics.requestedRecords[question.id.toString() + answer]}</td>			
+													<td class="statRequestedRecordsPercent" data-id="${question.id.toString()}${answer}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString() + answer]}"/> %</td>		
+												</c:when>
+												<c:otherwise>
+													<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id.toString()}${answer}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+													<td id="awaitingResultPercent" class="statRequestedRecordsPercent" data-id="${question.id.toString()}${answer}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+												</c:otherwise>
+											</c:choose>		
+										</tr>
+									</c:forEach>
+									<tr data-position="10000" class="noanswer">
+										<td><spring:message code="label.NoAnswer" /></td>
+										<td>
+											<div class="progress" style="width: 200px; margin-bottom: 2px;">											
+												<c:choose>
+													<c:when test="${statistics != null}">
+														<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}" style="width: ${statistics.requestedRecordsPercent[question.id.toString()]}%;"></div>
+													</c:when>
+													<c:otherwise>
+														<div class="chartRequestedRecordsPercent progress-bar" data-id="${question.id}"></div>
+													</c:otherwise>
+												</c:choose>
+											</div>
+										</td>
+										
+										<c:choose>
+											<c:when test="${statistics != null}">						
+												<td class="statRequestedRecords" data-id="${question.id}">${statistics.requestedRecords[question.id.toString()]}</td>			
+												<td class="statRequestedRecordsPercent" data-id="${question.id}"><fmt:formatNumber type="number" maxFractionDigits="2" value="${statistics.requestedRecordsPercent[question.id.toString()]}"/> %</td>		
+											</c:when>
+											<c:otherwise>
+												<td id="awaitingResult" class="statRequestedRecords" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>			
+												<td id="awaitingResult" class="statRequestedRecordsPercent" data-id="${question.id}"><img class="ajaxloaderimage" src="${contextpath}/resources/images/ajax-loader.gif" /></td>
+											</c:otherwise>
+										</c:choose>										
+										
+									</tr>
+								</tbody>
+							</table>
+							
+						</div>
 					</c:if>
+		
 				</c:if>
 			</c:if>		
 		</c:forEach>

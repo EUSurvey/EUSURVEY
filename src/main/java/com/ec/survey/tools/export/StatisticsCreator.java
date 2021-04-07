@@ -92,9 +92,10 @@ public class StatisticsCreator implements Runnable {
 		Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion = new HashMap<>();
 		Map<Integer, Map<Integer, Integer>> numberOfAnswersMapGallery = new HashMap<>();
 		Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset = new HashMap<>();
-
+		Map<String, Integer> numberOfNumberAnswersMap = new HashMap<>();
+	
 		int total = getAnswers4Statistics(survey, filter, numberOfAnswersMap, numberOfAnswersMapMatrix,
-				numberOfAnswersMapGallery, multipleChoiceSelectionsByAnswerset, numberOfAnswersMapRatingQuestion);
+				numberOfAnswersMapGallery, multipleChoiceSelectionsByAnswerset, numberOfAnswersMapRatingQuestion, numberOfNumberAnswersMap);
 		survey.setNumberOfAnswerSets(total);
 
 		List<Question> quizquestions = new ArrayList<>();
@@ -144,6 +145,11 @@ public class StatisticsCreator implements Runnable {
 			} else if (element instanceof GalleryQuestion) {
 				addStatistics4Gallery(survey, (GalleryQuestion) element, statistics, numberOfAnswersMapGallery,
 						numberOfAnswersMap);
+			} else if (element instanceof NumberQuestion) {
+				NumberQuestion number = (NumberQuestion) element;
+				if (number.showStatisticsForNumberQuestion()) {
+					addStatistics4NumberQuestion(survey, number, statistics, numberOfNumberAnswersMap, numberOfAnswersMap);
+				}
 			} else if (survey.getIsQuiz() && element instanceof Question) {
 				Question question = (Question) element;
 				if (question.getScoring() > 0) {
@@ -314,15 +320,15 @@ public class StatisticsCreator implements Runnable {
 
 	private void addReportingAnswers4Statistics(Question q, Map<Integer, Integer> map,
 			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<Integer, Integer>> mapGallery,
-			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Object> values, String where) {
+			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Object> values, String where, Map<String, Integer> mapNumberQuestion) {
 		if (q instanceof ChoiceQuestion) {
 			ChoiceQuestion choice = (ChoiceQuestion) q;
 			for (PossibleAnswer a : choice.getAllPossibleAnswers()) {
-				int count = reportingService.getCount(survey, choice.getUniqueId(), a.getUniqueId(), false, where,
+				int count = reportingService.getCount(survey, choice.getUniqueId(), a.getUniqueId(), false, false, where,
 						values);
 				map.put(a.getId(), count);
 			}
-			int count = reportingService.getCount(survey, choice.getUniqueId(), null, false, where, values);
+			int count = reportingService.getCount(survey, choice.getUniqueId(), null, false, false, where, values);
 			map.put(q.getId(), count);
 		} else if (q instanceof GalleryQuestion) {
 			GalleryQuestion g = (GalleryQuestion) q;
@@ -330,11 +336,11 @@ public class StatisticsCreator implements Runnable {
 				mapGallery.put(g.getId(), new HashMap<>());
 			}
 			for (int i = 0; i < g.getFiles().size(); i++) {
-				int count = reportingService.getCount(survey, g.getUniqueId(), Integer.toString(i), false, where,
+				int count = reportingService.getCount(survey, g.getUniqueId(), Integer.toString(i), false, false, where,
 						values);
 				mapGallery.get(g.getId()).put(i, count);
 			}
-			int count = reportingService.getCount(survey, g.getUniqueId(), null, false, where, values);
+			int count = reportingService.getCount(survey, g.getUniqueId(), null, false, false, where, values);
 			map.put(q.getId(), count);
 		} else if (q instanceof Matrix) {
 			Matrix matrix = (Matrix) q;
@@ -343,10 +349,10 @@ public class StatisticsCreator implements Runnable {
 					if (!mapMatrix.containsKey(matrixQuestion.getId()))
 						mapMatrix.put(matrixQuestion.getId(), new HashMap<>());
 					int count = reportingService.getCount(survey, matrixQuestion.getUniqueId(),
-							matrixAnswer.getUniqueId(), false, where, values);
+							matrixAnswer.getUniqueId(), false, false, where, values);
 					mapMatrix.get(matrixQuestion.getId()).put(matrixAnswer.getId(), count);
 				}
-				int count = reportingService.getCount(survey, matrixQuestion.getUniqueId(), null, false, where, values);
+				int count = reportingService.getCount(survey, matrixQuestion.getUniqueId(), null, false, false, where, values);
 				map.put(matrixQuestion.getId(), count);
 			}
 		} else if (q instanceof RatingQuestion) {
@@ -356,12 +362,22 @@ public class StatisticsCreator implements Runnable {
 					if (!mapRatingQuestion.containsKey(childQuestion.getId()))
 						mapRatingQuestion.put(childQuestion.getId(), new HashMap<>());
 					int count = reportingService.getCount(survey, childQuestion.getUniqueId(),
-							Integer.toString(i) + Constants.PATH_DELIMITER, true, where, values);
+							Integer.toString(i) + Constants.PATH_DELIMITER, true, false, where, values);
 					mapRatingQuestion.get(childQuestion.getId()).put(i, count);
 				}
-				int count = reportingService.getCount(survey, childQuestion.getUniqueId(), null, false, where, values);
+				int count = reportingService.getCount(survey, childQuestion.getUniqueId(), null, false, false, where, values);
 				map.put(childQuestion.getId(), count);
 			}
+		} else if (q instanceof NumberQuestion) {
+			NumberQuestion number = (NumberQuestion) q;
+			if (number.showStatisticsForNumberQuestion()) {
+				for (String answer : number.getAllPossibleAnswers()) {
+					int count = reportingService.getCount(survey, number.getUniqueId(), answer, true, true, where, values);
+					mapNumberQuestion.put(number.getUniqueId() + answer, count);
+				}
+			}
+			int count = reportingService.getCount(survey, number.getUniqueId(), null, false, false, where, values);
+			map.put(q.getId(), count);
 		}
 	}
 
@@ -371,7 +387,7 @@ public class StatisticsCreator implements Runnable {
 			Map<String, Integer> countsUID, Map<String, Integer> gallerycounts,
 			Map<String, Set<Integer>> answerSetQuestion, Map<String, Integer> matrixcounts,
 			Map<String, Integer> matrixcountsUID, Map<String, Integer> ratingquestioncounts,
-			Map<String, Integer> ratingquestioncountsUID) {
+			Map<String, Integer> ratingquestioncountsUID, Map<String, Integer> mapNumberQuestion) {
 		if (q instanceof ChoiceQuestion) {
 			ChoiceQuestion choice = (ChoiceQuestion) q;
 			for (PossibleAnswer a : choice.getAllPossibleAnswers()) {
@@ -432,6 +448,9 @@ public class StatisticsCreator implements Runnable {
 								? answerSetQuestion.get(childQuestion.getUniqueId()).size()
 								: 0);
 			}
+		} else if (q instanceof NumberQuestion) {
+			map.put(q.getId(),
+					answerSetQuestion.get(q.getUniqueId()) != null ? answerSetQuestion.get(q.getUniqueId()).size() : 0);
 		}
 	}
 
@@ -439,7 +458,7 @@ public class StatisticsCreator implements Runnable {
 			Set<String> multipleChoiceQuestionUids,
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset,
 			Map<String, Set<Integer>> answerSetQuestion, Map<String, Integer> counts, Map<String, Integer> countsUID, Map<String, Integer> matrixcounts, Map<String, Integer> matrixcountsUID,
-			Map<String, Integer> ratingquestioncounts, Map<String, Integer> ratingquestioncountsUID, Map<String, Integer> gallerycounts, Map<Integer, String> uniqueIdsById) {
+			Map<String, Integer> ratingquestioncounts, Map<String, Integer> ratingquestioncountsUID, Map<String, Integer> gallerycounts, Map<Integer, String> uniqueIdsById, Set<String> numberQuestionUids, Map<String, Integer> mapNumberQuestion) {
 		Object[] a = results.get();
 
 		Integer paid = ConversionTools.getValue(a[0]);
@@ -549,6 +568,15 @@ public class StatisticsCreator implements Runnable {
 					}
 				}
 			}
+			
+			if (numberQuestionUids.contains(quid)) {
+				key = quid + Double.valueOf(value).intValue();
+				if (mapNumberQuestion.containsKey(key)) {
+					mapNumberQuestion.put(key, mapNumberQuestion.get(key) + 1);
+				} else {
+					mapNumberQuestion.put(key, 1);
+				}
+			}
 		}
 	}
 
@@ -642,7 +670,7 @@ public class StatisticsCreator implements Runnable {
 	public int getAnswers4Statistics(Survey survey, Question question, Map<Integer, Integer> map,
 			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<Integer, Integer>> mapGallery,
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset,
-			Map<Integer, Map<Integer, Integer>> mapRatingQuestion) throws TooManyFiltersException {
+			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Integer> mapNumberQuestion) throws TooManyFiltersException {
 
 		boolean quiz = survey.getIsQuiz();
 		Set<String> multipleChoiceQuestionUids = new HashSet<>();
@@ -654,13 +682,20 @@ public class StatisticsCreator implements Runnable {
 			}
 		}
 		
+		Set<String> numberQuestionUids = new HashSet<>();
+		for (Question q : survey.getQuestions()) {
+			if (q instanceof NumberQuestion && ((NumberQuestion)q).showStatisticsForNumberQuestion()) {
+				numberQuestionUids.add(q.getUniqueId());
+			}
+		}
+		
 		//we do not use the reporting database for delphi surveys as the data has to be up to date at any time
 		if (!survey.getIsDelphi() && reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft())) {
 			Map<String, Object> values = new HashMap<>();
 			String where = ReportingService.getWhereClause(new ResultFilter(), values, survey);
 
 			try {
-				addReportingAnswers4Statistics(question, map, mapMatrix, mapGallery, mapRatingQuestion, values, where);
+				addReportingAnswers4Statistics(question, map, mapMatrix, mapGallery, mapRatingQuestion, values, where, mapNumberQuestion);
 
 				return reportingService.getCount(survey, where, values);
 			} catch (Exception e) {
@@ -724,14 +759,14 @@ public class StatisticsCreator implements Runnable {
 
 		while (results != null && results.next()) {
 			parseAnswers4Statistics(results, resultSets, quiz, multipleChoiceQuestionUids, multipleChoiceSelectionsByAnswerset, answerSetQuestion, counts, countsUID, matrixcounts, matrixcountsUID,
-					ratingquestioncounts, ratingquestioncountsUID, gallerycounts, uniqueIdsById);
+					ratingquestioncounts, ratingquestioncountsUID, gallerycounts, uniqueIdsById, numberQuestionUids, mapNumberQuestion);
 
 		}
 		results.close();
 
 		addMainAnswers4Statistics(question, map, mapMatrix, mapGallery, mapRatingQuestion, counts, countsUID,
 				gallerycounts, answerSetQuestion, matrixcounts, matrixcountsUID, ratingquestioncounts,
-				ratingquestioncountsUID);		
+				ratingquestioncountsUID, mapNumberQuestion);		
 
 		return resultSets.size();
 	}
@@ -740,7 +775,7 @@ public class StatisticsCreator implements Runnable {
 	public int getAnswers4Statistics(Survey survey, ResultFilter filter, Map<Integer, Integer> map,
 			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<Integer, Integer>> mapGallery,
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset,
-			Map<Integer, Map<Integer, Integer>> mapRatingQuestion) throws TooManyFiltersException {
+			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Integer> mapNumberQuestion) throws TooManyFiltersException {
 
 		boolean quiz = survey.getIsQuiz();
 		Set<String> multipleChoiceQuestionUids = new HashSet<>();
@@ -751,6 +786,13 @@ public class StatisticsCreator implements Runnable {
 				}
 			}
 		}
+		
+		Set<String> numberQuestionUids = new HashSet<>();
+		for (Question q : survey.getQuestions()) {
+			if (q instanceof NumberQuestion && ((NumberQuestion)q).showStatisticsForNumberQuestion()) {
+				numberQuestionUids.add(q.getUniqueId());
+			}
+		}
 
 		if (reportingService.OLAPTableExists(survey.getUniqueId(), survey.getIsDraft())) {
 
@@ -759,7 +801,7 @@ public class StatisticsCreator implements Runnable {
 
 			try {
 				for (Question q : survey.getQuestions()) {
-					addReportingAnswers4Statistics(q, map, mapMatrix, mapGallery, mapRatingQuestion, values, where);
+					addReportingAnswers4Statistics(q, map, mapMatrix, mapGallery, mapRatingQuestion, values, where, mapNumberQuestion);
 				}
 
 				return reportingService.getCount(survey, where, values);
@@ -805,7 +847,7 @@ public class StatisticsCreator implements Runnable {
 
 		while (results != null && results.next()) {
 			parseAnswers4Statistics(results, resultSets, quiz, multipleChoiceQuestionUids, multipleChoiceSelectionsByAnswerset, answerSetQuestion, counts, countsUID, matrixcounts, matrixcountsUID,
-					ratingquestioncounts, ratingquestioncountsUID, gallerycounts, uniqueIdsById);
+					ratingquestioncounts, ratingquestioncountsUID, gallerycounts, uniqueIdsById, numberQuestionUids, mapNumberQuestion);
 
 		}
 		results.close();
@@ -813,7 +855,7 @@ public class StatisticsCreator implements Runnable {
 		for (Question q : survey.getQuestions()) {
 			addMainAnswers4Statistics(q, map, mapMatrix, mapGallery, mapRatingQuestion, counts, countsUID,
 					gallerycounts, answerSetQuestion, matrixcounts, matrixcountsUID, ratingquestioncounts,
-					ratingquestioncountsUID);
+					ratingquestioncountsUID, mapNumberQuestion);
 		}
 
 		return resultSets.size();
@@ -958,6 +1000,30 @@ public class StatisticsCreator implements Runnable {
 		double percent = total == 0 ? 0 : (double) (survey.getNumberOfAnswerSets() - answered) / (double) total * 100;
 		statistics.getRequestedRecordsPercent().put(question.getId().toString(), percent);
 		statistics.getTotalsPercent().put(question.getId().toString(), percent);
+	}
+	
+	private void addStatistics4NumberQuestion(Survey survey, NumberQuestion number, Statistics statistics,
+			Map<String, Integer> numberOfNumberAnswersMap, Map<Integer, Integer> numberOfAnswersMap) {
+		int total = survey.getNumberOfAnswerSets();
+		
+		for (String answer : number.getAllPossibleAnswers()) {
+			int numberOfAnswers = 0;
+			if (numberOfNumberAnswersMap.containsKey(number.getUniqueId() + answer)) {
+				numberOfAnswers = numberOfNumberAnswersMap.get(number.getUniqueId() + answer);
+			}
+			double percent = total == 0 ? 0 : (double) numberOfAnswers / (double) total * 100;
+
+			statistics.getRequestedRecords().put(number.getId() + answer, numberOfAnswers);
+			statistics.getRequestedRecordsPercent().put(number.getId() + answer, percent);
+			statistics.getTotalsPercent().put(number.getId() + answer, percent);
+		}
+		
+		int answered = numberOfAnswersMap.get(number.getId());
+
+		statistics.getRequestedRecords().put(number.getId().toString(), survey.getNumberOfAnswerSets() - answered);
+		double percent = total == 0 ? 0 : (double) (survey.getNumberOfAnswerSets() - answered) / (double) total * 100;
+		statistics.getRequestedRecordsPercent().put(number.getId().toString(), percent);
+		statistics.getTotalsPercent().put(number.getId().toString(), percent);		
 	}
 
 }

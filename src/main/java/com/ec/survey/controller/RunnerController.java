@@ -2561,6 +2561,7 @@ public class RunnerController extends BasicController {
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapRatingQuestion = new HashMap<>();
 			Map<Integer, Map<Integer, Integer>> numberOfAnswersMapGallery = new HashMap<>();
 			Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset = new HashMap<>();
+			Map<String, Integer> numberOfAnswersMapNumberQuestion = new HashMap<>();
 
 			creator.getAnswers4Statistics(
 					survey,
@@ -2569,7 +2570,8 @@ public class RunnerController extends BasicController {
 					numberOfAnswersMapMatrix,
 					numberOfAnswersMapGallery,
 					multipleChoiceSelectionsByAnswerset,
-					numberOfAnswersMapRatingQuestion);
+					numberOfAnswersMapRatingQuestion,
+					numberOfAnswersMapNumberQuestion);
 
 			if (question instanceof ChoiceQuestion) {
 				return handleDelphiGraphChoiceQuestion(survey, (ChoiceQuestion) question, statistics, creator, numberOfAnswersMap, multipleChoiceSelectionsByAnswerset);
