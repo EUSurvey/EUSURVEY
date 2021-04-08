@@ -1103,6 +1103,9 @@ public class XlsExportCreator extends ExportCreator {
 
 		CellStyle percentStyle = wb.createCellStyle();
 		percentStyle.setDataFormat(wb.createDataFormat().getFormat("0.000%"));
+		
+		CellStyle numberStyle = wb.createCellStyle();
+		numberStyle.setDataFormat(wb.createDataFormat().getFormat("0"));
 
 		Drawing drawing = sheet.createDrawingPatriarch();
 		CreationHelper helper = wb.getCreationHelper();
@@ -1363,7 +1366,9 @@ public class XlsExportCreator extends ExportCreator {
 	
 							cellValue = answer;
 	
-							row.createCell(0).setCellValue(cellValue);
+							Cell icell = row.createCell(0);
+							icell.setCellValue(Integer.parseInt(cellValue));
+							icell.setCellStyle(numberStyle);
 	
 							Double percent = statistics.getRequestedRecordsPercent().get(number.getAnswerWithPrefix(answer));
 	
@@ -1375,8 +1380,7 @@ public class XlsExportCreator extends ExportCreator {
 									.setCellValue(statistics.getRequestedRecords().get(number.getAnswerWithPrefix(answer)));
 	
 							Cell pcell = row.createCell(3);
-							pcell.setCellValue(
-									percent / 100);
+							pcell.setCellValue(percent / 100);
 							pcell.setCellStyle(percentStyle);
 						}
 	
@@ -1394,8 +1398,7 @@ public class XlsExportCreator extends ExportCreator {
 								.setCellValue(statistics.getRequestedRecords().get(number.getId().toString()));
 	
 						Cell pcell = row.createCell(3);
-						pcell.setCellValue(
-								statistics.getRequestedRecordsPercent().get(number.getId().toString()) / 100);
+						pcell.setCellValue(statistics.getRequestedRecordsPercent().get(number.getId().toString()) / 100);
 						pcell.setCellStyle(percentStyle);
 	
 						rowIndex++;
