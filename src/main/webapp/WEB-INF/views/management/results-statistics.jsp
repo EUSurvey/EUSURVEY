@@ -28,15 +28,17 @@
 	<div id="scrollareastatistics" class="scrollarea" style="height: auto">
 
 		<c:forEach items="${form.getSurvey().getQuestionsAndSections()}" var="question">
+			
+		
+			<c:if test="${form.getSurvey().isDelphi && question.getType() == 'Section' && filter.visibleSection(question.getId(), form.getSurvey())}">
+				<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
+					<div class="sectiontitle section${question.level}">${form.getSectionTitle(question)}</div>
+				</div>
+			</c:if>		
+		
 			<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
-			
+						
 				<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
-			
-					<c:if test="${question.getType() == 'Section'}">
-						<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">
-							<div class="sectiontitle section${question.level}">${form.getSectionTitle(question)}</div>
-						</div>
-					</c:if>			
 				
 					<c:if test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion' }">
 					

@@ -1114,16 +1114,17 @@ public class XlsExportCreator extends ExportCreator {
 			visibleQuestions = filter.getVisibleQuestions();
 
 		for (Element question : survey.getQuestionsAndSections()) {
+			
+			if (question instanceof Section && survey.getIsDelphi() && filter.visibleSection(question.getId(), survey)) {
+				Cell cell = row.createCell(0);
+				cell.setCellStyle(boldstyle);
+				cell.setCellValue(ConversionTools.removeHTMLNoEscape(question.getTitle()));
+				rowIndex++;
+				row = sheet.createRow(rowIndex++);
+			}
 
 			if (filter == null || visibleQuestions.isEmpty() || visibleQuestions.contains(question.getId().toString())) {
-				if (question instanceof Section) {
-					Cell cell = row.createCell(0);
-					cell.setCellStyle(boldstyle);
-					cell.setCellValue(ConversionTools.removeHTMLNoEscape(question.getTitle()));
-					rowIndex++;
-					row = sheet.createRow(rowIndex++);
-				}
-
+				
 				if (question instanceof ChoiceQuestion) {
 					cellValue = question.getTitle();
 					if (export.getShowShortnames()) {
