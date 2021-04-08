@@ -112,7 +112,7 @@
 										title="${form.survey.isDelphi ? form.getMessage("label.SwitchPageDelphi") : ""}">
 
 										<a href="#page${rowCounter.index}" style="cursor:pointer;"
-										   onclick="selectPage(${rowCounter.index});">
+										   onclick="return selectPage(${rowCounter.index});">
 											<c:choose>
 												<c:when test="${page[0].getType() == 'Section' && page[0].tabTitle != null && page[0].tabTitle.length() > 0}">
 													${page[0].tabTitle}
