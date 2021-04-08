@@ -1058,21 +1058,22 @@ public class OdfExportCreator extends ExportCreator {
 
 		for (Element question : survey.getQuestionsAndSections()) {
 
+			if (question instanceof Section && survey.getIsDelphi() && export.getResultFilter().visibleSection(question.getId(), survey)) {
+				cell = sheet.getCellByPosition(0, rowIndex);
+				cell.setStringValue(ConversionTools.removeHTMLNoEscape(question.getTitle()));
+				cell.setDisplayText(ConversionTools.removeHTMLNoEscape(question.getTitle()));
+				Font font = cell.getFont();
+				font.setSize(10);
+				font.setFontStyle(FontStyle.BOLD);
+				cell.setFont(font);
+
+				rowIndex++;
+				rowIndex++;
+			}			
+			
 			if (export.getResultFilter() == null || visibleQuestions.isEmpty()
 					|| visibleQuestions.contains(question.getId().toString())) {
-				if (question instanceof Section) {
-					cell = sheet.getCellByPosition(0, rowIndex);
-					cell.setStringValue(ConversionTools.removeHTMLNoEscape(question.getTitle()));
-					cell.setDisplayText(ConversionTools.removeHTMLNoEscape(question.getTitle()));
-					Font font = cell.getFont();
-					font.setSize(10);
-					font.setFontStyle(FontStyle.BOLD);
-					cell.setFont(font);
-
-					rowIndex++;
-					rowIndex++;
-				}
-
+				
 				if (question instanceof ChoiceQuestion) {
 					cellValue = question.getTitle();
 					if (export.getShowShortnames()) {
@@ -1437,19 +1438,20 @@ public class OdfExportCreator extends ExportCreator {
 			visibleQuestions = export.getResultFilter().getVisibleQuestions();
 
 		for (Element question : survey.getQuestionsAndSections()) {
+
+			if (question instanceof Section && survey.getIsDelphi() && export.getResultFilter().visibleSection(question.getId(), survey)) {
+				Paragraph paragraph = document
+						.addParagraph(ConversionTools.removeHTMLNoEscape(question.getTitle()));
+				paragraph.getOdfElement().setProperty(OdfParagraphProperties.KeepWithNext, "always");
+
+				Font font = paragraph.getFont();
+				font.setFontStyle(FontStyle.BOLD);
+				paragraph.setFont(font);
+				document.addParagraph("");
+			}			
+			
 			if (export.getResultFilter() == null || visibleQuestions.isEmpty()
 					|| visibleQuestions.contains(question.getId().toString())) {
-
-				if (question instanceof Section) {
-					Paragraph paragraph = document
-							.addParagraph(ConversionTools.removeHTMLNoEscape(question.getTitle()));
-					paragraph.getOdfElement().setProperty(OdfParagraphProperties.KeepWithNext, "always");
-
-					Font font = paragraph.getFont();
-					font.setFontStyle(FontStyle.BOLD);
-					paragraph.setFont(font);
-					document.addParagraph("");
-				}
 
 				if (question instanceof ChoiceQuestion) {
 					cellValue = ConversionTools.removeHTMLNoEscape(question.getTitle());

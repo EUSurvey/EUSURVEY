@@ -74,20 +74,20 @@ public class DocExportCreator extends ExportCreator {
 		
         for (Element question : survey.getQuestionsAndSections()) {
         	
+        	if (question instanceof Section && survey.getIsDelphi() && export.getResultFilter().visibleSection(question.getId(), survey))
+    		{
+    			XWPFParagraph paragraph = document.createParagraph();
+    			        			
+    			if (paragraph.getCTP().getPPr() == null) paragraph.getCTP().addNewPPr();
+    			
+    			XWPFRun run = paragraph.createRun();
+    			run.setText(ConversionTools.removeHTMLNoEscape(question.getTitle()));	
+    			run.setBold(true);
+    		}        	
+        	
         	if (export.getResultFilter() == null || visibleQuestions.isEmpty() || visibleQuestions.contains(question.getId().toString()))
         	{
-        		if (question instanceof Section)
-        		{
-        			XWPFParagraph paragraph = document.createParagraph();
-        			        			
-        			if (paragraph.getCTP().getPPr() == null) paragraph.getCTP().addNewPPr();
-        			
-        			XWPFRun run = paragraph.createRun();
-        			run.setText(ConversionTools.removeHTMLNoEscape(question.getTitle()));	
-        			run.setBold(true);
-        		}
-        		
-				if (question instanceof ChoiceQuestion)
+        		if (question instanceof ChoiceQuestion)
 				{
 					cellValue = question.getTitle();
 					if (export.getShowShortnames())

@@ -1,5 +1,16 @@
 package com.ec.survey.model;
 
+import com.ec.survey.model.survey.ChoiceQuestion;
+import com.ec.survey.model.survey.DelphiChartType;
+import com.ec.survey.model.survey.Element;
+import com.ec.survey.model.survey.FreeTextQuestion;
+import com.ec.survey.model.survey.GalleryQuestion;
+import com.ec.survey.model.survey.Matrix;
+import com.ec.survey.model.survey.NumberQuestion;
+import com.ec.survey.model.survey.Question;
+import com.ec.survey.model.survey.RatingQuestion;
+import com.ec.survey.model.survey.Section;
+import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.Tools;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
@@ -326,6 +337,51 @@ public class ResultFilter implements java.io.Serializable {
 	public boolean visible(String questionId)
 	{
 		return visibleQuestions.contains(questionId);
+	}
+	
+	@Transient
+	public boolean visibleSection(int sectionId, Survey survey)
+	{
+		boolean correctSection = false;
+		int sectionLevel = 0;
+		Map<Integer, Element> elementsById = survey.getElementsById();
+		for (Element element : survey.getElements())
+		{
+			if (element.getId().equals(sectionId)) {
+				correctSection = true;
+				sectionLevel = ((Section)element).getLevel();
+			} else if (correctSection) {
+				if (element instanceof Section) {
+					if (((Section)element).getLevel() <= sectionLevel) {
+						return false;
+					}
+				} else {
+					if (visibleQuestions.contains(element.getId().toString())) {
+						Element question = elementsById.get(element.getId());
+						if (question instanceof ChoiceQuestion || question instanceof Matrix || question instanceof RatingQuestion) {
+							return true;
+						} else if (question instanceof GalleryQuestion) {
+							GalleryQuestion g = (GalleryQuestion)question;
+							if (g.getSelection()) {
+								return true;
+							}
+						} else if (question instanceof NumberQuestion) {
+							NumberQuestion n = (NumberQuestion)question;
+							if (n.showStatisticsForNumberQuestion()) {
+								return true;
+							}
+						} else if (question instanceof Question) {
+							Question q = (Question)question;
+							if (q.isDelphiElement() && q.getDelphiChartType() != DelphiChartType.None) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	@Transient
