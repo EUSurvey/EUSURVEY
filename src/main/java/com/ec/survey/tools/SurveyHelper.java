@@ -2005,6 +2005,14 @@ public class SurveyHelper {
 		}
 		number.setIsDelphiQuestion(isDelphiQuestion);
 		
+		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.None : DelphiChartType.valueOf(delphiChartTypeString);
+		if (log220 && delphiChartType != number.getDelphiChartType()) {
+			oldValues += " delphiChartType: " + number.getDelphiChartType();
+			newValues += " delphiChartType: " + delphiChartType;
+		}
+		number.setDelphiChartType(delphiChartType);
+		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(number.getShowExplanationBox())) {
 			oldValues += " showExplanationBox: " + number.getShowExplanationBox();
