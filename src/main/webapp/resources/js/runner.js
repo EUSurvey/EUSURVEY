@@ -600,6 +600,11 @@ function lastPage() {
 }
 
 function selectPage(val) {
+	
+	if (val == page) {
+		return;
+	}
+	
 	var validatedPerPage = $("#validatedPerPage").val().toLowerCase() == "true";
 	
 	var validate = val > page;
