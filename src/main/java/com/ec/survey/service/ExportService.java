@@ -338,7 +338,7 @@ public class ExportService extends BasicService {
 					if (determinestate) determineValidState(export, false);
 				}
 				
-				if (overrideSurveyTitle)
+				if (overrideSurveyTitle && export.getSurvey() != null)
 				{
 					export.setSurvey(surveyService.getSurveyInOriginalLanguage(export.getSurvey().getId(), export.getSurvey().getShortname(), export.getSurvey().getUniqueId()));
 				}
