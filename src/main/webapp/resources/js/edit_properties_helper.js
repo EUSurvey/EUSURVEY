@@ -540,8 +540,14 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 {
 	var row = new PropertyRow();
 	row.Type("first");
+
+	row.LabelTitle(getPropertyLabel(label));	
+	
+	if (label == "DelphiChartTypeNumber") {
+		label = "DelphiChartType";
+	}
+	
 	row.Label(label);
-	row.LabelTitle(getPropertyLabel(label));
 
 	var rowcontent = "";
 	var options = content.split(",");

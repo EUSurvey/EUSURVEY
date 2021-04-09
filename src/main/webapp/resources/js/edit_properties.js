@@ -522,6 +522,7 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getChoosePropertiesRow("DelphiChartTypeNumber", "Bar,Column,Line,Pie,Radar,Scatter", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
 					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);

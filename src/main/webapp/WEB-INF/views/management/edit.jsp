@@ -857,6 +857,7 @@
 	 		strings["MaximumFileSize"] = "<spring:message code="label.MaximumFileSize" />";
 	 		strings["DelphiQuestion"] = "<spring:message code="label.DelphiQuestion" />";
 			strings["DelphiChartType"] = "<spring:message code="label.DelphiChartType" />";
+			strings["DelphiChartTypeNumber"] = "<spring:message code="label.DelphiChartType" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.DelphiChartTypeNumber" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["Bar"] ="<spring:message code="label.DelphiChartBar" />";
 			strings["Column"] ="<spring:message code="label.DelphiChartColumn" />";
 			strings["Line"] ="<spring:message code="label.DelphiChartLine" />";

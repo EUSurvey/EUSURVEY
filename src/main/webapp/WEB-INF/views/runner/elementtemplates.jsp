@@ -669,6 +669,7 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
 			<input type="hidden" data-bind="value: isUnique, attr: {'name': 'unique' + id()}" />	
