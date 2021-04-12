@@ -693,6 +693,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			switch (result.questionType) {
 				case "MultipleChoice":
 				case "SingleChoice":
+				case "Number":
 					var graphData = result.data;
 
 					chartData = {
