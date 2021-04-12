@@ -43,7 +43,9 @@ import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
@@ -1101,10 +1103,7 @@ public class OdfExportCreator extends ExportCreator {
 						cell.removeContent();
 
 						if (percent > 0) {
-							org.odftoolkit.simple.draw.Image image = cell
-									.setImage(servletContext.getResource("/resources/images/chart.png").toURI());
-							image.getFrame().setRectangle(new FrameRectangle(0.05, 0.05, percent / 100 * 4.9, 0.36,
-									SupportedLinearMeasure.CM));
+							drawImage(percent);
 						}
 
 						cell = sheet.getCellByPosition(2, rowIndex);
@@ -1132,10 +1131,7 @@ public class OdfExportCreator extends ExportCreator {
 					cell.removeContent();
 
 					if (percent > 0) {
-						org.odftoolkit.simple.draw.Image image = cell
-								.setImage(servletContext.getResource("/resources/images/chart.png").toURI());
-						image.getFrame().setRectangle(
-								new FrameRectangle(0.05, 0.05, percent / 100 * 4.9, 0.36, SupportedLinearMeasure.CM));
+						drawImage(percent);
 					}
 					cell = sheet.getCellByPosition(2, rowIndex);
 					cell.setDoubleValue((double) statistics.getRequestedRecords().get(question.getId().toString()));
@@ -1174,10 +1170,7 @@ public class OdfExportCreator extends ExportCreator {
 						cell.removeContent();
 
 						if (percent > 0) {
-							org.odftoolkit.simple.draw.Image image = cell
-									.setImage(servletContext.getResource("/resources/images/chart.png").toURI());
-							image.getFrame().setRectangle(new FrameRectangle(0.05, 0.05, percent / 100 * 4.9, 0.36,
-									SupportedLinearMeasure.CM));
+							drawImage(percent);
 						}
 
 						cell = sheet.getCellByPosition(2, rowIndex);
@@ -1205,10 +1198,7 @@ public class OdfExportCreator extends ExportCreator {
 					cell.removeContent();
 
 					if (percent > 0) {
-						org.odftoolkit.simple.draw.Image image = cell
-								.setImage(servletContext.getResource("/resources/images/chart.png").toURI());
-						image.getFrame().setRectangle(
-								new FrameRectangle(0.05, 0.05, percent / 100 * 4.9, 0.36, SupportedLinearMeasure.CM));
+						drawImage(percent);
 					}
 					cell = sheet.getCellByPosition(2, rowIndex);
 					cell.setDoubleValue((double) statistics.getRequestedRecords().get(question.getId().toString()));
@@ -1255,10 +1245,7 @@ public class OdfExportCreator extends ExportCreator {
 							cell.removeContent();
 
 							if (percent > 0) {
-								org.odftoolkit.simple.draw.Image image = cell
-										.setImage(servletContext.getResource("/resources/images/chart.png").toURI());
-								image.getFrame().setRectangle(new FrameRectangle(0.05, 0.05, percent / 100 * 4.9, 0.36,
-										SupportedLinearMeasure.CM));
+								drawImage(percent);
 							}
 
 							cell = sheet.getCellByPosition(2, rowIndex);
@@ -1285,10 +1272,7 @@ public class OdfExportCreator extends ExportCreator {
 						cell = sheet.getCellByPosition(1, rowIndex);
 						cell.removeContent();
 						if (percent > 0) {
-							org.odftoolkit.simple.draw.Image image = cell
-									.setImage(servletContext.getResource("/resources/images/chart.png").toURI());
-							image.getFrame().setRectangle(new FrameRectangle(0.05, 0.05, percent / 100 * 4.9, 0.36,
-									SupportedLinearMeasure.CM));
+							drawImage(percent);
 						}
 						cell = sheet.getCellByPosition(2, rowIndex);
 						cell.setDoubleValue(
@@ -1334,10 +1318,7 @@ public class OdfExportCreator extends ExportCreator {
 							cell.removeContent();
 
 							if (percent > 0) {
-								org.odftoolkit.simple.draw.Image image = cell
-										.setImage(servletContext.getResource("/resources/images/chart.png").toURI());
-								image.getFrame().setRectangle(new FrameRectangle(0.05, 0.05, percent / 100 * 4.9, 0.36,
-										SupportedLinearMeasure.CM));
+								drawImage(percent);
 							}
 
 							cell = sheet.getCellByPosition(2, rowIndex);
@@ -1363,10 +1344,7 @@ public class OdfExportCreator extends ExportCreator {
 						cell = sheet.getCellByPosition(1, rowIndex);
 						cell.removeContent();
 						if (percent > 0) {
-							org.odftoolkit.simple.draw.Image image = cell
-									.setImage(servletContext.getResource("/resources/images/chart.png").toURI());
-							image.getFrame().setRectangle(new FrameRectangle(0.05, 0.05, percent / 100 * 4.9, 0.36,
-									SupportedLinearMeasure.CM));
+							drawImage(percent);
 						}
 						cell = sheet.getCellByPosition(2, rowIndex);
 						cell.setDoubleValue(
@@ -1383,10 +1361,85 @@ public class OdfExportCreator extends ExportCreator {
 						cell.removeContent();
 						rowIndex++;
 					}
+				} else if (question instanceof NumberQuestion) {
+					NumberQuestion numberQuestion = (NumberQuestion) question;
+					if (numberQuestion.showStatisticsForNumberQuestion()) {
+					
+						cellValue = question.getTitle();
+						if (export.getShowShortnames()) {
+							cellValue += " (" + question.getShortname() + ")";
+						}
+	
+						CreateTableForAnswerStat(cellValue);
+						
+						for (String answer : numberQuestion.getAllPossibleAnswers()) {
+							rowIndex++;
+	
+							cellValue = answer;
+							
+							cell = sheet.getCellByPosition(0, rowIndex);
+							cell.setStringValue(cellValue);
+							cell.setDisplayText(cellValue);
+							cell.setValueType(Constants.STRING);
+	
+							Double percent = statistics.getRequestedRecordsPercent().get(numberQuestion.getAnswerWithPrefix(answer));
+	
+							cell = sheet.getCellByPosition(1, rowIndex);
+							cell.removeContent();
+	
+							if (percent > 0) {
+								drawImage(percent);
+							}
+	
+							cell = sheet.getCellByPosition(2, rowIndex);
+							cell.setDoubleValue(
+									(double) statistics.getRequestedRecords().get(numberQuestion.getAnswerWithPrefix(answer)));
+							cell.setDisplayText(
+									statistics.getRequestedRecords().get(numberQuestion.getAnswerWithPrefix(answer)).toString());
+	
+							cell = sheet.getCellByPosition(3, rowIndex);
+							cell.setPercentageValue(percent);
+							cell.setDisplayText(df.format(percent) + "%");
+	
+						}
+						rowIndex++;
+						cell = sheet.getCellByPosition(0, rowIndex);
+						cell.setStringValue("No Answer");
+						cell.setDisplayText("No Answer");
+						cell.setValueType(Constants.STRING);
+	
+						Double percent = statistics.getRequestedRecordsPercent().get(question.getId().toString());
+	
+						cell = sheet.getCellByPosition(1, rowIndex);
+						cell.removeContent();
+	
+						if (percent > 0) {
+							drawImage(percent);
+						}
+						cell = sheet.getCellByPosition(2, rowIndex);
+						cell.setDoubleValue((double) statistics.getRequestedRecords().get(question.getId().toString()));
+						cell.setDisplayText(statistics.getRequestedRecords().get(question.getId().toString()).toString());
+	
+						cell = sheet.getCellByPosition(3, rowIndex);
+						cell.setPercentageValue(percent);
+						cell.setDisplayText(df.format(percent) + "%");
+	
+						rowIndex++;
+						cell = sheet.getCellByPosition(1, rowIndex);
+						cell.removeContent();
+						rowIndex++;
+					}
 				}
 			}
 		}
 		spreadsheet.save(outputStream);
+	}
+	
+	private void drawImage(double percent) throws MalformedURLException, URISyntaxException {
+		org.odftoolkit.simple.draw.Image image = cell
+				.setImage(servletContext.getResource("/resources/images/chart.png").toURI());
+		image.getFrame().setRectangle(
+				new FrameRectangle(0.05, 0.05, percent / 100 * 4.9, 0.36, SupportedLinearMeasure.CM));
 	}
 
 	private void CreateTableForAnswerStat(String title) {
@@ -1475,15 +1528,7 @@ public class OdfExportCreator extends ExportCreator {
 						Double percent = statistics.getRequestedRecordsPercent().get(possibleAnswer.getId().toString());
 
 						if (percent > 0) {
-							Paragraph p = row.getCellByIndex(1).addParagraph("");
-							Textbox t = p.addTextbox(
-									new FrameRectangle(0, 0, percent / 100 * 5, 0.5, SupportedLinearMeasure.CM));
-							t.setBackgroundColor(Color.BLUE);
-							Paragraph p2 = t.addParagraph(".");
-							Font font = p2.getFont();
-							font.setSize(6);
-							font.setColor(Color.BLUE);
-							p2.setFont(font);
+							drawChart(percent, row);
 						}
 						row.getCellByIndex(2).setDoubleValue(
 								(double) statistics.getRequestedRecords().get(possibleAnswer.getId().toString()));
@@ -1498,15 +1543,7 @@ public class OdfExportCreator extends ExportCreator {
 					row.getCellByIndex(0).setStringValue("No Answer");
 					Double percent = statistics.getRequestedRecordsPercent().get(question.getId().toString());
 					if (percent > 0) {
-						Paragraph p = row.getCellByIndex(1).addParagraph("");
-						Textbox t = p.addTextbox(
-								new FrameRectangle(0, 0, percent / 100 * 5, 0.5, SupportedLinearMeasure.CM));
-						t.setBackgroundColor(Color.BLUE);
-						Paragraph p2 = t.addParagraph(".");
-						Font font = p2.getFont();
-						font.setSize(6);
-						font.setColor(Color.BLUE);
-						p2.setFont(font);
+						drawChart(percent, row);
 					}
 					row.getCellByIndex(2)
 							.setDoubleValue((double) statistics.getRequestedRecords().get(question.getId().toString()));
@@ -1537,15 +1574,7 @@ public class OdfExportCreator extends ExportCreator {
 								.get(galleryQuestion.getId().toString() + "-" + i);
 
 						if (percent > 0) {
-							Paragraph p = row.getCellByIndex(1).addParagraph("");
-							Textbox t = p.addTextbox(
-									new FrameRectangle(0, 0, percent / 100 * 5, 0.5, SupportedLinearMeasure.CM));
-							t.setBackgroundColor(Color.BLUE);
-							Paragraph p2 = t.addParagraph(".");
-							Font font = p2.getFont();
-							font.setSize(6);
-							font.setColor(Color.BLUE);
-							p2.setFont(font);
+							drawChart(percent, row);
 						}
 
 						row.getCellByIndex(2).setDoubleValue((double) statistics.getRequestedRecords()
@@ -1562,15 +1591,7 @@ public class OdfExportCreator extends ExportCreator {
 					row.getCellByIndex(0).setStringValue("No Answer");
 					Double percent = statistics.getRequestedRecordsPercent().get(question.getId().toString());
 					if (percent > 0) {
-						Paragraph p = row.getCellByIndex(1).addParagraph("");
-						Textbox t = p.addTextbox(
-								new FrameRectangle(0, 0, percent / 100 * 5, 0.5, SupportedLinearMeasure.CM));
-						t.setBackgroundColor(Color.BLUE);
-						Paragraph p2 = t.addParagraph(".");
-						Font font = p2.getFont();
-						font.setSize(6);
-						font.setColor(Color.BLUE);
-						p2.setFont(font);
+						drawChart(percent, row);
 					}
 					row.getCellByIndex(2)
 							.setDoubleValue((double) statistics.getRequestedRecords().get(question.getId().toString()));
@@ -1609,15 +1630,7 @@ public class OdfExportCreator extends ExportCreator {
 									matrixAnswer);
 
 							if (percent > 0) {
-								Paragraph p = row.getCellByIndex(1).addParagraph("");
-								Textbox t = p.addTextbox(
-										new FrameRectangle(0, 0, percent / 100 * 5, 0.5, SupportedLinearMeasure.CM));
-								t.setBackgroundColor(Color.BLUE);
-								Paragraph p2 = t.addParagraph(".");
-								Font font = p2.getFont();
-								font.setSize(6);
-								font.setColor(Color.BLUE);
-								p2.setFont(font);
+								drawChart(percent, row);
 							}
 
 							row.getCellByIndex(2).setDoubleValue(
@@ -1633,15 +1646,7 @@ public class OdfExportCreator extends ExportCreator {
 						row.getCellByIndex(0).setStringValue("No Answer");
 						Double percent = statistics.getRequestedRecordsPercent().get(matrixQuestion.getId().toString());
 						if (percent > 0) {
-							Paragraph p = row.getCellByIndex(1).addParagraph("");
-							Textbox t = p.addTextbox(
-									new FrameRectangle(0, 0, percent / 100 * 5, 0.5, SupportedLinearMeasure.CM));
-							t.setBackgroundColor(Color.BLUE);
-							Paragraph p2 = t.addParagraph(".");
-							Font font = p2.getFont();
-							font.setSize(6);
-							font.setColor(Color.BLUE);
-							p2.setFont(font);
+							drawChart(percent, row);
 						}
 						row.getCellByIndex(2).setDoubleValue(
 								(double) statistics.getRequestedRecords().get(matrixQuestion.getId().toString()));
@@ -1676,15 +1681,7 @@ public class OdfExportCreator extends ExportCreator {
 							Double percent = statistics.getRequestedRecordsPercentForRatingQuestion(childQuestion, i);
 
 							if (percent > 0) {
-								Paragraph p = row.getCellByIndex(1).addParagraph("");
-								Textbox t = p.addTextbox(
-										new FrameRectangle(0, 0, percent / 100 * 5, 0.5, SupportedLinearMeasure.CM));
-								t.setBackgroundColor(Color.BLUE);
-								Paragraph p2 = t.addParagraph(".");
-								Font font = p2.getFont();
-								font.setSize(6);
-								font.setColor(Color.BLUE);
-								p2.setFont(font);
+								drawChart(percent, row);
 							}
 
 							row.getCellByIndex(2).setDoubleValue(
@@ -1700,15 +1697,7 @@ public class OdfExportCreator extends ExportCreator {
 						row.getCellByIndex(0).setStringValue("No Answer");
 						Double percent = statistics.getRequestedRecordsPercent().get(childQuestion.getId().toString());
 						if (percent > 0) {
-							Paragraph p = row.getCellByIndex(1).addParagraph("");
-							Textbox t = p.addTextbox(
-									new FrameRectangle(0, 0, percent / 100 * 5, 0.5, SupportedLinearMeasure.CM));
-							t.setBackgroundColor(Color.BLUE);
-							Paragraph p2 = t.addParagraph(".");
-							Font font = p2.getFont();
-							font.setSize(6);
-							font.setColor(Color.BLUE);
-							p2.setFont(font);
+							drawChart(percent, row);
 						}
 						row.getCellByIndex(2).setDoubleValue(
 								(double) statistics.getRequestedRecords().get(childQuestion.getId().toString()));
@@ -1720,10 +1709,70 @@ public class OdfExportCreator extends ExportCreator {
 
 						document.addParagraph("");
 					}
-				}
+				} else if (question instanceof NumberQuestion) {
+					NumberQuestion numberQuestion = (NumberQuestion) question;
+					
+					if (numberQuestion.showStatisticsForNumberQuestion()) {
+						cellValue = ConversionTools.removeHTMLNoEscape(question.getTitle());
+						if (export != null && export.getShowShortnames()) {
+							cellValue += " (" + question.getShortname() + ")";
+						}
+	
+						org.odftoolkit.simple.table.Table table = CreateTableForAnswer(document, cellValue);
+						
+						for (String answer : numberQuestion.getAllPossibleAnswers()) {
+							Row row = table.appendRow();
+	
+							cellValue = answer;	
+							row.getCellByIndex(0).setStringValue(cellValue);
+							row.getCellByIndex(0).setValueType(Constants.STRING);
+	
+							Double percent = statistics.getRequestedRecordsPercent().get(numberQuestion.getAnswerWithPrefix(answer));
+	
+							if (percent > 0) {
+								drawChart(percent, row);
+							}
+							row.getCellByIndex(2).setDoubleValue(
+									(double) statistics.getRequestedRecords().get(numberQuestion.getAnswerWithPrefix(answer)));
+							row.getCellByIndex(2).setStringValue(Integer
+									.toString(statistics.getRequestedRecords().get(numberQuestion.getAnswerWithPrefix(answer))));
+							row.getCellByIndex(3).setPercentageValue(percent);
+							row.getCellByIndex(3).setStringValue(df.format(percent) + "%");	
+						}
+	
+						Row row = table.appendRow();
+						row.getCellByIndex(0).setStringValue("No Answer");
+						Double percent = statistics.getRequestedRecordsPercent().get(question.getId().toString());
+						if (percent > 0) {
+							drawChart(percent, row);
+						}
+						row.getCellByIndex(2)
+								.setDoubleValue((double) statistics.getRequestedRecords().get(question.getId().toString()));
+						row.getCellByIndex(2).setStringValue(
+								Integer.toString(statistics.getRequestedRecords().get(question.getId().toString())));
+	
+						row.getCellByIndex(3).setStringValue(df.format(percent) + "%");
+	
+						row.getCellByIndex(2).setValueType("float");
+	
+						document.addParagraph("");
+					}
+				} 
 			}
 		}
 		document.save(outputStream);
+	}
+	
+	private void drawChart(double percent, Row row) {
+		Paragraph p = row.getCellByIndex(1).addParagraph("");
+		Textbox t = p.addTextbox(
+				new FrameRectangle(0, 0, percent / 100 * 5, 0.5, SupportedLinearMeasure.CM));
+		t.setBackgroundColor(Color.BLUE);
+		Paragraph p2 = t.addParagraph(".");
+		Font font = p2.getFont();
+		font.setSize(6);
+		font.setColor(Color.BLUE);
+		p2.setFont(font);
 	}
 
 	private org.odftoolkit.simple.table.Table CreateTableForAnswer(TextDocument document, String title) {

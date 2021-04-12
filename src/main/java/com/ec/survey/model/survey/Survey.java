@@ -2018,6 +2018,13 @@ final public class Survey implements java.io.Serializable {
 					|| question instanceof RatingQuestion) {
 				return false;
 			}
+			
+			if (question instanceof NumberQuestion) {
+				NumberQuestion number = (NumberQuestion) question;
+				if (number.showStatisticsForNumberQuestion()) {
+					return false;
+				}
+			}
 		}
 
 		return true;
