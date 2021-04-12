@@ -201,16 +201,28 @@
 			var legend = $(controls).find(".chart-legend").first().is(":checked");
 
 			const size = $(chartwrapper).closest(".elementwrapper, .statelement-wrapper").find(".chart-size").first().val();
-			let canvasWidth;
-			if (size === 'medium') {
-				canvasWidth = 450;
-			} else if (size === 'large') {
-				canvasWidth = 600;
-			} else {
-				canvasWidth = 300;
-			}
+			const canvasWidth = getChartCanvasHeightAndWidth(size).width;
 
 			loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend, canvasWidth);
+		}
+
+		function getChartCanvasHeightAndWidth(size) {
+			if (size === 'large') {
+				return {
+					height: 440,
+					width: 600
+				};
+			}
+			if (size === 'medium') {
+				return {
+					height: 330,
+					width: 450
+				};
+			}
+			return {
+				height: 220,
+				width: 300
+			};
 		}
 
 		function chartLabelCallback(value, index, values) {
@@ -565,22 +577,16 @@
 			});
 		}
 
-		function addChart(div, chart, chartType, showLegendBox, canvasWidth) {
+		function addChart(div, chart, chartType, showLegendBox) {
 			var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 
 			$(elementWrapper).find(".delphi-chart").remove();
 
-			var size = $(elementWrapper).find(".chart-size").first().val();
+			const size = $(elementWrapper).find(".chart-size").first().val();
+			const dimensions = getChartCanvasHeightAndWidth(size);
 
-			let canvasElement = "<canvas class='delphi-chart' width='" + canvasWidth + "' height='";
-			if (size === 'medium') {
-				canvasElement += 330;
-			} else if (size === 'large') {
-				canvasElement += 440;
-			} else {
-				canvasElement += 220;
-			}
-			canvasElement += "' style='background-color: #fff;'></canvas>";
+			const canvasElement = "<canvas class='delphi-chart' width='" + dimensions.width + "' height='"
+				+ dimensions.height + "' style='background-color: #fff;'></canvas>";
 			$(elementWrapper).find(".delphi-chart-div").append(canvasElement);
 
         	$(elementWrapper).find(".chart-wrapper").show();

@@ -1244,7 +1244,7 @@
 							<th class='area-header'>${form.getMessage("label.ExplainYourAnswer")}</th>
 						</tr>
 						<tr>
-							<td style='padding-top:10px; padding-bottom:10px'>
+							<td>
 								<textarea style="height: 125px" class="explanation-editor" data-bind="attr: {'id': 'explanation' + id(), name: 'explanation' + id()}"></textarea>			
 							</td>
 						</tr>
@@ -1280,18 +1280,18 @@
 					<img src="${contextpath}/resources/images/ajax-loader.gif">
 				</div>
 				<!-- /ko -->
-				<div class='chart-wrapper'>
-					<table class='table table-condensed table-bordered minh355' style="width: auto; margin-bottom: 0; background-color: #fff; float: right">
+				<div class="chart-wrapper">
+					<table class="table table-condensed table-bordered chart-wrapper__table">
 						<tr>
-							<th class='area-header'>
+							<th class="area-header">
 								<span>${form.getMessage("label.DelphiChartTitle")}</span>
 								<span onclick="loadGraphDataModal(this)" class="glyphicon glyphicon-resize-full delphi-chart-expand" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
 							</th>
 						</tr>
 						<tr>
-							<td style='padding-top:10px; padding-bottom:10px'>
-								<div class="delphi-chart-div"></div>
-								<div data-bind="attr: {id: 'wordcloud' + uniqueId()}" class="delphi-chart-div" style="display:none"></div>
+							<td class="chart-wrapper__chart-cell">
+								<div class="chart-wrapper__chart-container"></div>
+								<div data-bind="attr: {id: 'wordcloud' + uniqueId()}" class="chart-wrapper__word-cloud-container"></div>
 							</td>
 						</tr>
 					</table>

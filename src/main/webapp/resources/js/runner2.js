@@ -677,8 +677,8 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			
 			var chartData = {};
 			var chartOptions = {
+				maintainAspectRatio: false,
 				scaleShowValues: true,
-				responsive: false,
 				scales: {
 					yAxes: [{ticks: {beginAtZero: true, autoSkip: false}}],
 					xAxes: [{ticks: {beginAtZero: true, autoSkip: false}}]
@@ -886,7 +886,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			}
 
 			if (chartCallback instanceof Function) {
-				chartCallback(div, chart, canvasWidth);
+				chartCallback(div, chart);
 			}
 			addStatisticsToAnswerText(div, result);
 		}
@@ -964,11 +964,11 @@ function addStatisticsToAnswerText(div, result) {
 	}
 }
 
-function addChart(div, chart, canvasWidth) {
+function addChart(div, chart) {
 	var elementWrapper = $(div).closest(".elementwrapper");
 
 	$(elementWrapper).find(".delphi-chart").remove();
-	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='" + canvasWidth + "' height='300'></canvas>");
+	$(elementWrapper).find(".chart-wrapper__chart-container").show().append("<canvas class='delphi-chart'></canvas>");
 
 	$(elementWrapper).find(".chart-wrapper").show();
 
@@ -977,20 +977,20 @@ function addChart(div, chart, canvasWidth) {
 	$(elementWrapper).find(".chart-wrapper-loader").hide();
 }
 
-function addChartModal(_, chart, canvasWidth) {
+function addChartModal(_, chart) {
 	var modal = $("#delphi-chart-modal");
 	$(modal).find("canvas").remove();
 	$('#wordcloudmodal').remove();
-	$(modal).find(".modal-body").append("<canvas class='center-block' height='600' width='" + canvasWidth + "'></canvas>");
+	$(modal).find(".delphi-chart-modal__chart-container").show().append("<canvas></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
 	$(modal).modal("show");
 }
 
-function addChartModalStartPage(_, chart, canvasWidth) {
+function addChartModalStartPage(_, chart) {
 	var modal = $("#delphi-chart-modal-start-page");
 	$(modal).find("canvas").remove();
 	$('#wordcloudmodal').remove();
-	$(modal).find(".modal-body").append("<canvas class='center-block' height='600' width='" + canvasWidth + "'></canvas>");
+	$(modal).find(".delphi-chart-modal__chart-container").show().append("<canvas></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
 	$(modal).modal("show");
 }
@@ -1007,7 +1007,17 @@ function loadGraphData(div) {
 	var questionuid = $(div).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false, false, 400);
+
+	// Briefly show the wrapper to get the real width of the chart container.
+	const chartWrapper = $(div).closest('.elementwrapper').find('.chart-wrapper');
+	$(chartWrapper).show();
+	const canvasContainer = $(div).find('.chart-wrapper__chart-container')[0];
+	$(canvasContainer).show();
+	const canvasContainerWidth = canvasContainer.clientWidth;
+	$(canvasContainer).hide();
+	$(chartWrapper).hide();
+
+	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false, false, canvasContainerWidth);
 }
 
 function loadGraphDataModal(div) {
@@ -1016,7 +1026,17 @@ function loadGraphDataModal(div) {
 	var questionuid = $(surveyElement).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false, 800);
+
+	// Briefly show the modal to get the real width of the chart container.
+	const modal = $('#delphi-chart-modal');
+	$(modal).modal('show');
+	const canvasContainer = $(modal).find('.delphi-chart-modal__chart-container')[0];
+	$(canvasContainer).show();
+	const canvasContainerWidth = canvasContainer.clientWidth;
+	$(canvasContainer).hide();
+	$(modal).modal('hide');
+
+	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false, canvasContainerWidth);
 }
 
 function scrollClosestDelphiTableIntoView(element) {

@@ -1431,6 +1431,7 @@ legend {
 
 .delphi-table table.table {
 	background-color: #fff;
+	overflow-wrap: anywhere;
 }
 
 .new-delphi-comment {
@@ -1474,7 +1475,7 @@ div.medianpa {
 }
 
 .minh355 {
-	min-height: 355px;
+	min-height: 340px;
 }
 
 .explanation-section {
@@ -2378,4 +2379,42 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	color: red;
 	display: none;
 	margin-bottom: 5px;
+}
+
+.chart-wrapper__table {
+	background-color: #fff;
+	float: right;
+	margin-bottom: 0;
+	width: auto;
+}
+
+.chart-wrapper__chart-cell {
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
+
+.chart-wrapper__chart-container {
+	display: none;
+	height: 300px;
+	max-width: 400px;
+	width: 85vw;
+}
+
+.delphi-chart-modal__chart-container {
+	display: none;
+	height: 600px;
+	margin: 0 auto;
+	max-width: 800px;
+	width: 85vw;
+}
+
+.question__chart-container,
+.question__word-cloud-container {
+	height: 200px;
+	width: 300px;
+}
+
+.chart-wrapper__word-cloud-container,
+.question__word-cloud-container {
+	display: none;
 }

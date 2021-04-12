@@ -23,7 +23,7 @@
 		<thead>
 		<tr class="area-header">
 			<th style="width:33%">${form.getMessage("label.DelphiAnswersTableAnswer")}</th>
-			<th style="min-width:150px">
+			<th style="min-width:${responsive != null ? "120" : "150"}px">
 				<span>${form.getMessage("label.DelphiAnswersTableUpdate")}</span>
 				<div style="float: right">
 					<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />"

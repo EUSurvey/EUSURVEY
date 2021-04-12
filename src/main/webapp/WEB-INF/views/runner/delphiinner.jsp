@@ -113,10 +113,11 @@
 </style>
 
 	<div class="modal" id="delphi-chart-modal-start-page" data-backdrop="static">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-body">
 					<h1><spring:message code="label.Statistics" /></h1>
+					<div class="delphi-chart-modal__chart-container"></div>
 				</div>
 				<div class="modal-footer">
 					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
@@ -273,9 +274,9 @@
 									<span><spring:message code="info.NoData" /></span>
 								</div>
 								
-								<div data-bind="attr: {id: 'wordcloud' + uid}" class="delphi-chart-div" style="display: none; width: 300px; height: 200px"></div>
-								<div style="height: 200px;" class="delphi-chart-div">
-									<canvas class='delphi-chart' width='300' height='200'></canvas>
+								<div data-bind="attr: {id: 'wordcloud' + uid}" class="question__word-cloud-container"></div>
+								<div class="question__chart-container">
+									<canvas class='delphi-chart'></canvas>
 								</div>
 								
 								<div class="question-footer">
@@ -334,7 +335,7 @@
 	</div>
 
 	<div class="modal answers-table-modal" tabindex="-1" role="dialog" data-backdrop="static">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-header"><spring:message code="label.ResultsTable" /></div>
 				<div class="modal-body">
@@ -529,8 +530,8 @@
 								|| data.sections[i].questions[j].answer.length > 0)
 							{
 								var div = $('#delphiquestion' + data.sections[i].questions[j].uid);
-								const canvasWidth = $(div).find('canvas').attr('width');
-								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false, false, true, canvasWidth);
+								const canvasContainerWidth = $(div).find('.question__chart-container')[0].clientWidth;
+								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false, false, true, canvasContainerWidth);
 							}
 						}
 					}
@@ -547,7 +548,17 @@
 			var uniquecode = "${uniqueCode}";
 			var languagecode = "${form.language.code}";
 			var uid = $(element).closest(".question").attr("data-uid");
-			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true, false, 800);
+
+			// Briefly show the modal to get the real width of the chart container.
+			const modal = $('#delphi-chart-modal-start-page');
+			$(modal).modal('show');
+			const canvasContainer = $(modal).find('.delphi-chart-modal__chart-container')[0];
+			$(canvasContainer).show();
+			const canvasContainerWidth = canvasContainer.clientWidth;
+			$(canvasContainer).hide();
+			$(modal).modal('hide');
+
+			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true, false, canvasContainerWidth);
 		}
 
 		$(document).ready(function(){
