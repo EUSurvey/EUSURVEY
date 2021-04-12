@@ -2535,16 +2535,8 @@ public class RunnerController extends BasicController {
 
 			if (question instanceof NumberQuestion) {
 				NumberQuestion numq = (NumberQuestion) question;
-				if (numq.isSlider()) {
-					NumberQuestionStatistics numberQuestionStats = creator.getAnswers4NumberQuestionStatistics(survey, numq);
-					if (0 == numberQuestionStats.getNumberVotes() || !numberQuestionStats.isQuestionFound()) {
-						//participant may only see answers if he answered before
-						return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-					}
-					return handleDelphiNumberQuestion(survey, numq, numberQuestionStats);
-				} else {
-					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-				}
+				NumberQuestionStatistics numberQuestionStats = creator.getAnswers4NumberQuestionStatistics(survey, numq);
+				return handleDelphiNumberQuestion(survey, numq, numberQuestionStats);				
 			}
 			
 			if (question instanceof FreeTextQuestion) {
@@ -2713,13 +2705,13 @@ public class RunnerController extends BasicController {
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiNumberQuestion(Survey survey, NumberQuestion question, NumberQuestionStatistics numberQuestionStatistics) {
-		if (numberQuestionStatistics.getNumberVotes() < survey.getMinNumberDelphiStatistics()) {
+		if (numberQuestionStatistics.getNumberVotes() < survey.getMinNumberDelphiStatistics() || (!question.showStatisticsForNumberQuestion() && !question.isSlider())) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
-
+		
 		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
-		result.setChartType(question.getDelphiChartType());
+		result.setChartType(question.showStatisticsForNumberQuestion() ? question.getDelphiChartType() : DelphiChartType.None);
 
 		result.setQuestionType(DelphiQuestionType.Number);
 		result.setLabel(question.getStrippedTitle());
