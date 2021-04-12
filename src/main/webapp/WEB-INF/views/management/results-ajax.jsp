@@ -460,7 +460,7 @@
 						case "Radar":
 							chart.type = "radar";
 							delete chart.options.scales;
-							chart.options.scale = {pointLabels: {callback: chartLabelCallback}};
+							chart.options.scale = {pointLabels: {callback: chartLabelCallback}, ticks: {beginAtZero: true, precision: 0}};
 							break;
 						case "Scatter":
 							chart.type = "line";
