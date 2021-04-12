@@ -383,8 +383,6 @@
 						}
 					};
 
-					truncateGraphLegendLabels(chartOptions, canvasWidth);
-
 					switch (result.questionType) {
 						case "MultipleChoice":
 						case "SingleChoice":
@@ -394,12 +392,16 @@
 							chartData = {
 								datasets: [{
 									label: '',
+									originalLabel: '',
 									data: graphData.map(function (g) {
 										return g.value
 									})
 								}],
 								labels: graphData.map(function (g) {
-									return normalizeLabel(g.label)
+									return truncateLabel(g.label, canvasWidth);
+								}),
+								originalLabels: graphData.map(function (g) {
+									return g.label;
 								})
 							};
 							break;
@@ -409,6 +411,7 @@
 							var questions = result.questions;
 							var datasets = [];
 							var labels = undefined;
+							var originalLabels = undefined;
 
 							for (var i = 0; i < questions.length; i++) {
 								var question = questions[i];
@@ -417,11 +420,15 @@
 									data: question.data.map(function (d) {
 										return d.value;
 									}),
-									label: normalizeLabel(question.label)
+									label: truncateLabel(normalizeLabel(question.label), canvasWidth),
+									originalLabel: normalizeLabel(question.label)
 								});
 
-								if (!labels) {
+								if (!labels) {								
 									labels = question.data.map(function (d) {
+										return truncateLabel(normalizeLabel(d.label), canvasWidth);
+									});
+									originalLabels = question.data.map(function (d) {
 										return normalizeLabel(d.label);
 									});
 								}
@@ -429,7 +436,8 @@
 
 							chartData = {
 								datasets,
-								labels
+								labels,
+								originalLabels
 							}
 			
 							break;
@@ -549,22 +557,22 @@
 						callbacks: {
 							title: chart.data.datasets.length === 1
 									? function (item, data) {
-										var label = chart.type === "radar" ? data.labels[item[0].index] : item[0].label;
+										var label = chart.type === "radar" ? data.originalLabels[item[0].index] : item[0].originalLabel;
 										return wrapLabel(label, 30);
 									} : function (item, data) {
-										var label = chart.type === "pie" ? data.datasets[item[0].datasetIndex].label : data.labels[item[0].index];
+										var label = chart.type === "pie" ? data.datasets[item[0].datasetIndex].originalLabel : data.originalLabels[item[0].index];
 										return wrapLabel(label, 30);
 									},
 							label: chart.data.datasets.length === 1
 									? function (item, data) {
 										var label = chart.type === "pie"
-												? data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
+												? data.originalLabels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
 												: item.value;
 										return wrapLabel(label, 30);
 									} : function (item, data) {
 										var label = chart.type === "pie"
-												? data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
-												: data.datasets[item.datasetIndex].label + ": " + item.value;
+												? data.originalLabels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
+												: data.datasets[item.datasetIndex].originalLabel + ": " + item.value;
 										return wrapLabel(label, 30);
 									}
 						}
