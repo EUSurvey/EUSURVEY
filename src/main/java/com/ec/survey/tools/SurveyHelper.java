@@ -1724,6 +1724,11 @@ public class SurveyHelper {
 		}
 		freetext.setIsDelphiQuestion(isDelphiQuestion);
 		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !freetext.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + freetext.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
 		freetext.setUseAndLogic(useAndLogic);
 
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
