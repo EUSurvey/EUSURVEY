@@ -69,7 +69,7 @@ function newFilesViewModel(files)
 	return viewModel;
 }
 
-function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, title, originalTitle, isDependentMatrixQuestion, css, index)
+function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, title, originalTitle, isDependentMatrixQuestion, css, index, useAndLogic)
 {
 	var viewModel = newBasicViewModel();
 	viewModel.type = 'matrixitem';
@@ -83,6 +83,7 @@ function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, tit
 	viewModel.isDependentMatrixQuestion = ko.observable(isDependentMatrixQuestion);
 	viewModel.css = ko.observable(css);
 	viewModel.originalIndex = ko.observable(index);
+	viewModel.useAndLogic = ko.observable(useAndLogic);
 	return viewModel;
 }
 
@@ -91,7 +92,7 @@ function newMatrixItemsViewModel(items)
 	var viewModel = ko.observableArray();
 	for (var i = 0; i < items.length; i++)
 	{
-		viewModel.push(newMatrixItemViewModel(items[i].id, items[i].uniqueId, items[i].optional, items[i].shortname, items[i].readonly, items[i].title, items[i].originalTitle, items[i].isDependentMatrixQuestion, items[i].css, i));
+		viewModel.push(newMatrixItemViewModel(items[i].id, items[i].uniqueId, items[i].optional, items[i].shortname, items[i].readonly, items[i].title, items[i].originalTitle, items[i].isDependentMatrixQuestion, items[i].css, i, items[i].useAndLogic));
 	}
 	return viewModel;
 }
@@ -279,8 +280,9 @@ function newBasicViewModel(element)
 	
 	viewModel.scoringItems = ko.observableArray();
 	viewModel.optional = ko.observable(true);
-	viewModel.css = ko.observable(true);	
+	viewModel.css = ko.observable(true);
 	viewModel.maxDistanceExceeded = ko.observable(false);
+	viewModel.useAndLogic = ko.observable(false);
 	viewModel.median = ko.observable(0);
 	viewModel.changedForMedian = ko.observable(false);
 	
@@ -311,6 +313,7 @@ function newBasicViewModel(element)
 		viewModel.css = ko.observable(element.css);
 		viewModel.optional = ko.observable(element.optional);
 		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
+		viewModel.useAndLogic = ko.observable(element.useAndLogic);
 		viewModel.showExplanationBox = ko.observable(element.showExplanationBox);
 		viewModel.delphiChartType = ko.observable(element.delphiChartType);
 

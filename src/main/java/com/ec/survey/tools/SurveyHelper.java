@@ -397,6 +397,7 @@ public class SurveyHelper {
 				// check dependency
 				if (parent == null ? question.getIsDependent() : question.getIsDependentMatrixQuestion()) {
 					boolean found = false;
+					boolean missing = false;
 					List<Element> deps = dependencies.get(question);
 					List<Element> questiondependencies = null;
 					if (deps != null)
@@ -433,19 +434,18 @@ public class SurveyHelper {
 												.get(candidate.getPosition() / (m.getColumns() - 1));
 										Element matrixAnswer = m.getAnswers()
 												.get(candidate.getPosition() % (m.getColumns() - 1));
-										if (answerSet.getMatrixAnswer(matrixQuestion.getId(),
-												matrixAnswer.getId()) != null
-												|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(),
-														matrixAnswer.getUniqueId()) != null) {
-											if (!invisibleElements.contains(matrixQuestion.getUniqueId())) {
-												found = true;
-											}
+										if ((answerSet.getMatrixAnswer(matrixQuestion.getId(), matrixAnswer.getId()) != null
+											|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null) && !invisibleElements.contains(matrixQuestion.getUniqueId())) {
+											found = true;
+										} else {
+											missing = true;
 										}
 									}
 								}
 							} else {
 								if (trigger instanceof PossibleAnswer) {
 									PossibleAnswer possibleAnswer = (PossibleAnswer) trigger;
+									boolean paFound = false;
 									for (Answer answer : answerSet.getAnswers(possibleAnswer.getQuestionId(),
 											answerSet.getSurvey().getElementsById().get(possibleAnswer.getQuestionId())
 													.getUniqueId())) {
@@ -454,12 +454,20 @@ public class SurveyHelper {
 														.getPossibleAnswerUniqueId().equals(trigger.getUniqueId())))
 												&& !invisibleElements.contains(answer.getQuestionUniqueId())) {
 											found = true;
+											paFound = true;
 										}
+									}
+									if (!paFound) {
+										missing = true;
 									}
 								}
 							}
 						}
 
+					if (element.getUseAndLogic() && missing) {
+						found = false;
+					}
+					
 					if (!found) {
 						invisibleElements.add(question.getUniqueId());
 					}
@@ -1049,6 +1057,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		section.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !section.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + section.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		section.setUseAndLogic(useAndLogic);
 
 		int level = getInteger(parameterMap, "level", id);
 		if (log220 && !section.getLevel().equals(level)) {
@@ -1104,6 +1119,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		text.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !text.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + text.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		text.setUseAndLogic(useAndLogic);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (log220 && !isOptional.equals(text.getOptional())) {
@@ -1153,6 +1175,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		image.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !image.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + image.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		image.setUseAndLogic(useAndLogic);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (log220 && !isOptional.equals(image.getOptional())) {
@@ -1232,6 +1261,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		ruler.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !ruler.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + ruler.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		ruler.setUseAndLogic(useAndLogic);
 
 		ruler.setOptional(true);
 
@@ -1292,6 +1328,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		gallery.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !gallery.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + gallery.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		gallery.setUseAndLogic(useAndLogic);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (log220 && !isOptional.equals(gallery.getOptional())) {
@@ -1409,6 +1452,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		upload.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !upload.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + upload.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		upload.setUseAndLogic(useAndLogic);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (log220 && !isOptional.equals(upload.getOptional())) {
@@ -1474,6 +1524,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		download.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !download.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + download.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		download.setUseAndLogic(useAndLogic);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (log220 && !isOptional.equals(download.getOptional())) {
@@ -1571,6 +1628,13 @@ public class SurveyHelper {
 		}
 		confirmation.setShortname(shortname);
 
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !confirmation.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + confirmation.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		confirmation.setUseAndLogic(useAndLogic);
+		
 		confirmation.setOptional(false);
 
 		Boolean isUsetext = getBoolean(parameterMap, "usetext", id);
@@ -1652,7 +1716,7 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		freetext.setShortname(shortname);
-
+		
 		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
 		if (log220 && !isDelphiQuestion.equals(freetext.getIsDelphiQuestion())) {
 			oldValues += " isDelphiQuestion: " + freetext.getIsDelphiQuestion();
@@ -1660,6 +1724,8 @@ public class SurveyHelper {
 		}
 		freetext.setIsDelphiQuestion(isDelphiQuestion);
 		
+		freetext.setUseAndLogic(useAndLogic);
+
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(freetext.getShowExplanationBox())) {
 			oldValues += " showExplanationBox: " + freetext.getShowExplanationBox();
@@ -1804,14 +1870,21 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		regex.setShortname(shortname);
-
+		
 		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
 		if (log220 && !isDelphiQuestion.equals(regex.getIsDelphiQuestion())) {
 			oldValues += " isDelphiQuestion: " + regex.getIsDelphiQuestion();
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
+			regex.setIsDelphiQuestion(isDelphiQuestion);
 		}
-		regex.setIsDelphiQuestion(isDelphiQuestion);
 		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !regex.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + regex.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		regex.setUseAndLogic(useAndLogic);
+
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(regex.getShowExplanationBox())) {
 			oldValues += " showExplanationBox: " + regex.getShowExplanationBox();
@@ -1927,6 +2000,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		email.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !email.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + email.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		email.setUseAndLogic(useAndLogic);
 
 		Boolean isOptional = getBoolean(parameterMap, "optional", id);
 		if (log220 && !isOptional.equals(email.getOptional())) {
@@ -2004,6 +2084,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		number.setIsDelphiQuestion(isDelphiQuestion);
+
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !number.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + number.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		number.setUseAndLogic(useAndLogic);
 		
 		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
 		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.None : DelphiChartType.valueOf(delphiChartTypeString);
@@ -2184,14 +2271,21 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		date.setShortname(shortname);
-
+		
 		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
 		if (log220 && !isDelphiQuestion.equals(date.getIsDelphiQuestion())) {
 			oldValues += " isDelphiQuestion: " + date.getIsDelphiQuestion();
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		date.setIsDelphiQuestion(isDelphiQuestion);
-		
+
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !date.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + date.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		date.setUseAndLogic(useAndLogic);
+
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(date.getShowExplanationBox())) {
 			oldValues += " showExplanationBox: " + date.getShowExplanationBox();
@@ -2300,14 +2394,20 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		time.setShortname(shortname);
-
+		
 		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
 		if (log220 && !isDelphiQuestion.equals(time.getIsDelphiQuestion())) {
 			oldValues += " isDelphiQuestion: " + time.getIsDelphiQuestion();
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		time.setIsDelphiQuestion(isDelphiQuestion);
-		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !time.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + time.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}		
+		time.setUseAndLogic(useAndLogic);
+
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(time.getShowExplanationBox())) {
 			oldValues += " showExplanationBox: " + time.getShowExplanationBox();
@@ -2433,14 +2533,21 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		rating.setShortname(shortname);
-
+		
 		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
 		if (log220 && !isDelphiQuestion.equals(rating.getIsDelphiQuestion())) {
 			oldValues += " isDelphiQuestion: " + rating.getIsDelphiQuestion();
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		rating.setIsDelphiQuestion(isDelphiQuestion);
-		
+
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !rating.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + rating.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}	
+		rating.setUseAndLogic(useAndLogic);
+
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(rating.getShowExplanationBox())) {
 			oldValues += " showExplanationBox: " + rating.getShowExplanationBox();
@@ -2608,14 +2715,21 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		singlechoice.setShortname(shortname);
-
+		
 		Boolean isDelphiQuestion = getBoolean(parameterMap, "delphiquestion", id);
 		if (log220 && !isDelphiQuestion.equals(singlechoice.getIsDelphiQuestion())) {
 			oldValues += " isDelphiQuestion: " + singlechoice.getIsDelphiQuestion();
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		singlechoice.setIsDelphiQuestion(isDelphiQuestion);
-		
+
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !singlechoice.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + singlechoice.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}		
+		singlechoice.setUseAndLogic(useAndLogic);
+
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(singlechoice.getShowExplanationBox())) {
 			oldValues += " showExplanationBox: " + singlechoice.getShowExplanationBox();
@@ -2894,6 +3008,13 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		multiplechoice.setIsDelphiQuestion(isDelphiQuestion);
+
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !multiplechoice.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + multiplechoice.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		multiplechoice.setUseAndLogic(useAndLogic);
 		
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(multiplechoice.getShowExplanationBox())) {
@@ -3324,6 +3445,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		matrix.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !matrix.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + matrix.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		matrix.setUseAndLogic(useAndLogic);
 
 		Integer rows = getInteger(parameterMap, "matrixrows", id);
 		if (log220 && !rows.equals(matrix.getRows())) {
@@ -3564,6 +3692,13 @@ public class SurveyHelper {
 			newValues += " shortname: " + shortname;
 		}
 		table.setShortname(shortname);
+		
+		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
+		if (log220 && !table.getUseAndLogic().equals(useAndLogic)) {
+			oldValues += " useAndLogic: " + table.getUseAndLogic();
+			newValues += " useAndLogic: " + useAndLogic;
+		}
+		table.setUseAndLogic(useAndLogic);
 
 		Integer type = getInteger(parameterMap, "tabletype", id);
 		if (log220 && !type.equals(table.getTableType())) {

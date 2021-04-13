@@ -52,6 +52,7 @@ public class Section extends Element {
 		Section copy = new Section();
 		copy.setUniqueId(getUniqueId());
 		copy.setShortname(this.getShortname());
+		copy.setUseAndLogic(this.getUseAndLogic());
 		copy.tabTitle = tabTitle;
 		copy.setLevel(level);
 		copy.setSourceId(this.getId());
