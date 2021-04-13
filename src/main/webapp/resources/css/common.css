@@ -1410,9 +1410,12 @@ legend {
 	padding-top: 20px;
 }
 
-.delphi .questiontitle,
-.delphi .questionhelp__text {
-	margin-left: 20px;
+.survey-element.delphi > div {
+	padding: 0 15px;
+}
+
+.survey-element.delphi > div ~ div {
+	padding: 0;
 }
 
 .delphi .questiontitle {

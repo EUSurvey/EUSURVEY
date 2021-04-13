@@ -554,7 +554,7 @@
 															</c:otherwise>												
 														</c:choose>
 													</td>			
-													<td style="padding-right: 15px; vertical-align: top">
+													<td style="vertical-align: top">
 														<label for="${possibleanswer.id}"><div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.title}</div></label>
 													</td>				
 													<c:if test="${status.count % element.numColumns == 0 && status.count < element.possibleAnswers.size()}">
@@ -630,7 +630,7 @@
 															</c:otherwise>												
 														</c:choose>
 													</td>
-													<td style="padding-right: 15px; vertical-align: top">
+													<td style="vertical-align: top">
 														<label for="${possibleanswer.id}">
 															<div class="answertext" style="max-width: ${form.maxColumnWidth(element)}">${possibleanswer.getTitleForDisplayMode(element.displayMode)}</div>
 														</label>
