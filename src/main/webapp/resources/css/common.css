@@ -1410,8 +1410,12 @@ legend {
 	padding-top: 20px;
 }
 
-.delphi .questiontitle {
+.delphi .questiontitle,
+.delphi .questionhelp__text {
 	margin-left: 20px;
+}
+
+.delphi .questiontitle {
 	font-weight: bold !important;
 }
 
@@ -1427,11 +1431,7 @@ legend {
 
 .delphi-table table.table {
 	background-color: #fff;
-}
-
-.survey-element .delphi-table {
-	margin-left: 35px;
-	margin-right: 15px;
+	overflow-wrap: anywhere;
 }
 
 .new-delphi-comment {
@@ -1475,7 +1475,7 @@ div.medianpa {
 }
 
 .minh355 {
-	min-height: 355px;
+	min-height: 340px;
 }
 
 .explanation-section {
@@ -1495,6 +1495,19 @@ div.medianpa {
 .inline-loader {
 	display: none;
 	margin-left: 20px;
+}
+
+.results-table-row > div {
+	padding-left: 35px;
+}
+
+.results-table-row__links {
+	margin-bottom: 10px;
+	margin-left: 10px;
+}
+
+.results-table-row__link-hide {
+	display: none;
 }
 
 .delete-confirmation-dialog {
@@ -1524,7 +1537,7 @@ div.medianpa {
 }
 
 .likert-bar {
-	height: 6px; margin-top: 6px; margin-left: 50px; margin-right: 100px; background-color: #ddd; position: absolute;
+	height: 6px; margin-top: 6px; margin-left: 50px; margin-right: 100px; background-color: #ccc; position: absolute;
 }
 
 .chart-wrapper {
@@ -2366,4 +2379,42 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	color: red;
 	display: none;
 	margin-bottom: 5px;
+}
+
+.chart-wrapper__table {
+	background-color: #fff;
+	float: right;
+	margin-bottom: 0;
+	width: auto;
+}
+
+.chart-wrapper__chart-cell {
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
+
+.chart-wrapper__chart-container {
+	display: none;
+	height: 300px;
+	max-width: 400px;
+	width: 85vw;
+}
+
+.delphi-chart-modal__chart-container {
+	display: none;
+	height: 600px;
+	margin: 0 auto;
+	max-width: 800px;
+	width: 85vw;
+}
+
+.question__chart-container,
+.question__word-cloud-container {
+	height: 200px;
+	width: 300px;
+}
+
+.chart-wrapper__word-cloud-container,
+.question__word-cloud-container {
+	display: none;
 }

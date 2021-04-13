@@ -600,6 +600,11 @@ function lastPage() {
 }
 
 function selectPage(val) {
+	
+	if (val == page) {
+		return;
+	}
+	
 	var validatedPerPage = $("#validatedPerPage").val().toLowerCase() == "true";
 	
 	var validate = val > page;
@@ -642,7 +647,7 @@ function selectPage(val) {
 						}, "fast");
 					}
 					goToFirstValidationError($("#page" + (page))[0]);
-					return;
+					return false;
 				}
 			}			
 		} else {
@@ -659,6 +664,7 @@ function selectPage(val) {
 				}, "fast");
 			} else {
 				goToFirstValidationError($("#page" + page)[0]);
+				return false;
 			}
 		}
 	}

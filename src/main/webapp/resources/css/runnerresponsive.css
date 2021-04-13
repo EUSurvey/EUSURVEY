@@ -447,3 +447,13 @@ legend {
 	background-color: #ccc !important;
 	background-image: none !important;
 }
+
+.likert-table-div {
+	background-color: #ccc;
+	position: absolute;
+	top: 11px;
+	left: 28px;
+	width: 6px;
+	z-index: 0;
+	bottom: 11px;
+}

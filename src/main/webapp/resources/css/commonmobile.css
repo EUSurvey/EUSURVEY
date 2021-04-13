@@ -7,6 +7,9 @@
 
 .delphi-table {
 	background-color: #fff;
-	margin-left: 5px;
-	margin-right: 5px;
+}
+
+.results-table-row > div {
+	padding-left: 5px;
+	padding-right: 5px;
 }

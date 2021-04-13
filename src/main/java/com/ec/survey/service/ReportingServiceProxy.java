@@ -79,10 +79,10 @@ public class ReportingServiceProxy {
 		return reportingService.getCountInternal(survey, where, values);
 	}
 		
-	public int getCount(Survey survey, String quid, String auid, boolean noPrefixSearch, String where, Map<String, Object> values)
+	public int getCount(Survey survey, String quid, String auid, boolean noPrefixSearch, boolean noPostfixSearch, String where, Map<String, Object> values)
 	{
 		if (!isReportingDatabaseEnabled()) return -1;
-		return reportingService.getCountInternal(survey, quid, auid, noPrefixSearch, where, values);
+		return reportingService.getCountInternal(survey, quid, auid, noPrefixSearch, noPostfixSearch, where, values);
 	}
 	
 	public void addToDo(ToDo todo, String uid, String code, boolean executeTodoSync) {

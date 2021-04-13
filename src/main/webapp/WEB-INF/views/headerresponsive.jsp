@@ -19,7 +19,7 @@
 			<button onclick="$('#responsivemenu').slideToggle(500);" class="btn btn-primary" style="width: auto; margin: 0px;" type="button" id="dropdownMenu1"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span></button>
 		</div>
 		
-		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null}">
+		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null && mode != 'delphiStartPage'}">
 			
 			<div style="float: right">
 				<div class="dropdown" id="page-tabs">

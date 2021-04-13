@@ -69,23 +69,27 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
-		<div class="answer-columns">
+		<div class="answer-columns" style="position: relative">
 		
-			<!-- ko if: likert -->
+			<!-- ko if: likert() && !(ismobile || istablet) -->
 						
 				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median answers-table' : 'likert-div answers-table'}">
-				
-					<div class="likert-bar" data-bind="attr: {'style' : 'width: ' + (possibleAnswers().length - 1) + '00px;'}"></div>
-				
-					<!-- ko foreach: possibleAnswers() -->
 					
-					<div class="likert-pa">
-						<input data-bind="enable: !$parents[0].readonly() && !$parents[0].foreditor, checked: getPAByQuestion2($parents[0].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[0].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[0].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[0].css + ' trigger check', name: 'answer' + $parents[0].id(), value: id()}" type="radio"  />
-						<div class="answertext" style="margin-left: 0; padding-left: 10px; padding-right: 10px;" data-bind="html: titleForDisplayMode($parents[0].displayMode()), attr: {'data-id' : id(), 'data-pa-uid' : uniqueId()}"></div>
-					</div>
+					<!-- ko if: !(ismobile || istablet) -->
+				
+						<div class="likert-bar" data-bind="attr: {'style' : 'width: ' + (possibleAnswers().length - 1) + '00px;'}"></div>
+					
+						<!-- ko foreach: possibleAnswers() -->
+						
+						<div class="likert-pa">
+							<input data-bind="enable: !$parents[0].readonly() && !$parents[0].foreditor, checked: getPAByQuestion2($parents[0].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[0].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[0].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[0].css + ' trigger check', name: 'answer' + $parents[0].id(), value: id()}" type="radio"  />
+							<div class="answertext" style="margin-left: 0; padding-left: 10px; padding-right: 10px;" data-bind="html: titleForDisplayMode($parents[0].displayMode()), attr: {'data-id' : id(), 'data-pa-uid' : uniqueId()}"></div>
+						</div>
+						<!-- /ko -->
+						
+						<div style="clear: both"></div>
+						
 					<!-- /ko -->
-					
-					<div style="clear: both"></div>
 				</div>		
 			
 				<!-- ko if: foreditor -->
@@ -105,9 +109,14 @@
 					<!-- /ko -->		
 			<!-- /ko -->
 			
-			<!-- ko ifnot: likert -->
-		
-				<!-- ko if: useRadioButtons -->
+			<!-- ko if: ismobile || istablet || !likert() -->
+			
+				<!-- ko if: likert() || useRadioButtons() -->
+				
+				<!-- ko if: likert() -->
+					<div class="likert-table-div"></div>
+				<!-- /ko -->	
+									
 				<table class="answers-table">
 					<tr class="hideme">
 						<th>radio button</th>
@@ -137,7 +146,7 @@
 											
 						<td style="vertical-align: top">
 							<!-- ko ifnot: id() == 'dummy' -->
-							<input data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id()}" type="radio"  />
+							<input style="position: relative" data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id()}" type="radio"  />
 							<!-- /ko -->	
 						</td>
 						<td style="padding-right: 15px; vertical-align: top">
@@ -153,7 +162,7 @@
 					<!-- /ko -->
 				</table>
 				<!-- /ko -->
-				<!-- ko ifnot: useRadioButtons -->
+				<!-- ko ifnot: useRadioButtons() || likert() -->
 				<div class="answer-column">		
 					<select data-bind="foreach: orderedPossibleAnswers(false), enable: !readonly(), valueAllowUnset: true, value: getPAByQuestion3(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': css + ' single-choice'}"  onchange="validateInput($(this).parent(),true); checkDependenciesAsync(this); propagateChange(this);">
 						<option data-bind="html: strip_tags(titleForDisplayMode($parents[0].displayMode())), attr: {value: id(), 'data-dependencies': dependentElementsString(), 'id': 'trigger'+id()}" class="possible-answer trigger"></option>
@@ -336,12 +345,6 @@
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
 
-		<ul class="ranking-ul-sortable">
-			<!-- ko foreach: observableChildElements() -->
-				<li data-bind='text: "Title: "+title'></li>
-			<!-- /ko -->
-		</ul>
-
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'rankingquestion', attr: {'name': 'type' + id()}" />
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
@@ -352,6 +355,24 @@
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
 		<!-- /ko -->
+
+		<div class="rankingitem-list-container">
+			<div class="rankingitem-list">
+				<!-- ko foreach: rankingItems() -->
+				<div class="rankingitem-form-data">
+					<div class="rankigitem-decoration">&#x283F;&nbsp</div>
+					<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
+					<!-- ko if: $parent.foreditor -->
+					<input type="hidden" data-bind="value: shortname, attr: {'name': 'rankingitemshortname' + $parents[0].id(), 'data-id' : id()}" />
+					<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'rankingitemuid' + $parents[0].id(), 'data-id' : id()}" />
+					<textarea style="display: none" data-bind="text: title(), attr: {'name': 'rankingitemtitle' + $parents[0].id(), 'data-id' : id()}"></textarea>
+					<textarea style="display: none" data-bind="text: originalTitle(), attr: {'name': 'rankingitemoriginaltitle' + $parent.id(), 'data-id' : id()}"></textarea>
+					<!-- /ko -->
+				</div>
+				<!-- /ko -->
+			</div>
+		</div>
+
 	</div>
 
 	<div id="password-template">
@@ -648,6 +669,7 @@
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
+			<input type="hidden" data-bind="value: delphiChartType, attr: {'name': 'delphicharttype' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
 			<input type="hidden" data-bind="value: isUnique, attr: {'name': 'unique' + id()}" />	
@@ -1222,7 +1244,7 @@
 							<th class='area-header'>${form.getMessage("label.ExplainYourAnswer")}</th>
 						</tr>
 						<tr>
-							<td style='padding-top:10px; padding-bottom:10px'>
+							<td>
 								<textarea style="height: 125px" class="explanation-editor" data-bind="attr: {'id': 'explanation' + id(), name: 'explanation' + id()}"></textarea>			
 							</td>
 						</tr>
@@ -1258,18 +1280,18 @@
 					<img src="${contextpath}/resources/images/ajax-loader.gif">
 				</div>
 				<!-- /ko -->
-				<div class='chart-wrapper'>
-					<table class='table table-condensed table-bordered minh355' style="width: auto; margin-bottom: 0; background-color: #fff; float: right">
+				<div class="chart-wrapper">
+					<table class="table table-condensed table-bordered chart-wrapper__table">
 						<tr>
-							<th class='area-header'>
+							<th class="area-header">
 								<span>${form.getMessage("label.DelphiChartTitle")}</span>
 								<span onclick="loadGraphDataModal(this)" class="glyphicon glyphicon-resize-full delphi-chart-expand" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
 							</th>
 						</tr>
 						<tr>
-							<td style='padding-top:10px; padding-bottom:10px'>
-								<div class="delphi-chart-div"></div>
-								<div data-bind="attr: {id: 'wordcloud' + uniqueId()}" class="delphi-chart-div" style="display:none"></div>
+							<td class="chart-wrapper__chart-cell">
+								<div class="chart-wrapper__chart-container"></div>
+								<div data-bind="attr: {id: 'wordcloud' + uniqueId()}" class="chart-wrapper__word-cloud-container"></div>
 							</td>
 						</tr>
 					</table>
@@ -1298,8 +1320,10 @@
 			</div>
 		</div>
 		
-		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">
-			<%@ include file="delphiAnswersTable.jsp" %>
+		<div class="row results-table-row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">
+			<div class="col-md-12">
+				<%@ include file="delphiAnswersTable.jsp" %>
+			</div>
 		</div>
 
 		<div class="modal delete-confirmation-dialog" data-backdrop="static">

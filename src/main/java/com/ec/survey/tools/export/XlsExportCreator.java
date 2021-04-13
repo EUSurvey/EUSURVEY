@@ -1103,6 +1103,9 @@ public class XlsExportCreator extends ExportCreator {
 
 		CellStyle percentStyle = wb.createCellStyle();
 		percentStyle.setDataFormat(wb.createDataFormat().getFormat("0.000%"));
+		
+		CellStyle numberStyle = wb.createCellStyle();
+		numberStyle.setDataFormat(wb.createDataFormat().getFormat("0"));
 
 		Drawing drawing = sheet.createDrawingPatriarch();
 		CreationHelper helper = wb.getCreationHelper();
@@ -1114,16 +1117,17 @@ public class XlsExportCreator extends ExportCreator {
 			visibleQuestions = filter.getVisibleQuestions();
 
 		for (Element question : survey.getQuestionsAndSections()) {
+			
+			if (question instanceof Section && survey.getIsDelphi() && filter.visibleSection(question.getId(), survey)) {
+				Cell cell = row.createCell(0);
+				cell.setCellStyle(boldstyle);
+				cell.setCellValue(ConversionTools.removeHTMLNoEscape(question.getTitle()));
+				rowIndex++;
+				row = sheet.createRow(rowIndex++);
+			}
 
 			if (filter == null || visibleQuestions.isEmpty() || visibleQuestions.contains(question.getId().toString())) {
-				if (question instanceof Section) {
-					Cell cell = row.createCell(0);
-					cell.setCellStyle(boldstyle);
-					cell.setCellValue(ConversionTools.removeHTMLNoEscape(question.getTitle()));
-					rowIndex++;
-					row = sheet.createRow(rowIndex++);
-				}
-
+				
 				if (question instanceof ChoiceQuestion) {
 					cellValue = question.getTitle();
 					if (export.getShowShortnames()) {
@@ -1147,28 +1151,7 @@ public class XlsExportCreator extends ExportCreator {
 						if (percent == null)
 							percent = 0.0;
 
-						InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
-
-						int pictureIdx = wb.addPicture(org.apache.poi.util.IOUtils.toByteArray(pictureData),
-								Workbook.PICTURE_TYPE_PNG);
-
-						ClientAnchor anchor = helper.createClientAnchor();
-						// set top-left corner for the image
-						anchor.setCol1(1);
-						anchor.setCol2(1);
-						anchor.setRow1(rowIndex - 1);
-						anchor.setRow2(rowIndex - 1);
-
-						anchor.setDx1(15);
-						anchor.setDx2((int) (percent / 100 * 1020) - 15);
-
-						anchor.setDy1(50);
-						anchor.setDy2(220);
-
-						anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
-
-						// Creates a picture
-						drawing.createPicture(anchor, pictureIdx);
+						drawChart(percent, helper, drawing);
 
 						if (statistics.getRequestedRecords().get(possibleAnswer.getId().toString()) != null) {
 							row.createCell(2).setCellValue(
@@ -1189,28 +1172,7 @@ public class XlsExportCreator extends ExportCreator {
 						percent = 0.0;
 
 					if (percent > 0) {
-						InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
-
-						int pictureIdx = wb.addPicture(org.apache.poi.util.IOUtils.toByteArray(pictureData),
-								Workbook.PICTURE_TYPE_PNG);
-
-						ClientAnchor anchor = helper.createClientAnchor();
-						// set top-left corner for the image
-						anchor.setCol1(1);
-						anchor.setCol2(1);
-						anchor.setRow1(rowIndex - 1);
-						anchor.setRow2(rowIndex - 1);
-
-						anchor.setDx1(15);
-						anchor.setDx2((int) (percent / 100 * 1020) - 15);
-
-						anchor.setDy1(50);
-						anchor.setDy2(220);
-
-						anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
-
-						// Creates a picture
-						drawing.createPicture(anchor, pictureIdx);
+						drawChart(percent, helper, drawing);
 					}
 					if (statistics.getRequestedRecords().get(question.getId().toString()) != null) {
 						row.createCell(2)
@@ -1241,29 +1203,7 @@ public class XlsExportCreator extends ExportCreator {
 								.get(galleryQuestion.getId().toString() + "-" + i);
 
 						if (percent > 0) {
-
-							InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
-
-							int pictureIdx = wb.addPicture(org.apache.poi.util.IOUtils.toByteArray(pictureData),
-									Workbook.PICTURE_TYPE_PNG);
-
-							ClientAnchor anchor = helper.createClientAnchor();
-							// set top-left corner for the image
-							anchor.setCol1(1);
-							anchor.setCol2(1);
-							anchor.setRow1(rowIndex - 1);
-							anchor.setRow2(rowIndex - 1);
-
-							anchor.setDx1(15);
-							anchor.setDx2((int) (percent / 100 * 1020) - 15);
-
-							anchor.setDy1(50);
-							anchor.setDy2(220);
-
-							anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
-
-							// Creates a picture
-							drawing.createPicture(anchor, pictureIdx);
+							drawChart(percent, helper, drawing);
 						}
 
 						row.createCell(2).setCellValue(
@@ -1283,28 +1223,7 @@ public class XlsExportCreator extends ExportCreator {
 					Double percent = statistics.getRequestedRecordsPercent().get(question.getId().toString());
 
 					if (percent > 0) {
-						InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
-
-						int pictureIdx = wb.addPicture(org.apache.poi.util.IOUtils.toByteArray(pictureData),
-								Workbook.PICTURE_TYPE_PNG);
-
-						ClientAnchor anchor = helper.createClientAnchor();
-						// set top-left corner for the image
-						anchor.setCol1(1);
-						anchor.setCol2(1);
-						anchor.setRow1(rowIndex - 1);
-						anchor.setRow2(rowIndex - 1);
-
-						anchor.setDx1(15);
-						anchor.setDx2((int) (percent / 100 * 1020) - 15);
-
-						anchor.setDy1(50);
-						anchor.setDy2(220);
-
-						anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
-
-						// Creates a picture
-						drawing.createPicture(anchor, pictureIdx);
+						drawChart(percent, helper, drawing);
 					}
 					row.createCell(2).setCellValue(statistics.getRequestedRecords().get(question.getId().toString()));
 
@@ -1341,29 +1260,7 @@ public class XlsExportCreator extends ExportCreator {
 									matrixAnswer);
 
 							if (percent > 0) {
-								InputStream pictureData = servletContext
-										.getResourceAsStream("/resources/images/chart.png");
-
-								int pictureIdx = wb.addPicture(org.apache.poi.util.IOUtils.toByteArray(pictureData),
-										Workbook.PICTURE_TYPE_PNG);
-
-								ClientAnchor anchor = helper.createClientAnchor();
-								// set top-left corner for the image
-								anchor.setCol1(1);
-								anchor.setCol2(1);
-								anchor.setRow1(rowIndex - 1);
-								anchor.setRow2(rowIndex - 1);
-
-								anchor.setDx1(15);
-								anchor.setDx2((int) (percent / 100 * 1020) - 15);
-
-								anchor.setDy1(50);
-								anchor.setDy2(220);
-
-								anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
-
-								// Creates a picture
-								drawing.createPicture(anchor, pictureIdx);
+								drawChart(percent, helper, drawing);
 							}
 
 							row.createCell(2).setCellValue(
@@ -1383,28 +1280,7 @@ public class XlsExportCreator extends ExportCreator {
 						Double percent = statistics.getRequestedRecordsPercent().get(matrixQuestion.getId().toString());
 
 						if (percent > 0) {
-							InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
-
-							int pictureIdx = wb.addPicture(org.apache.poi.util.IOUtils.toByteArray(pictureData),
-									Workbook.PICTURE_TYPE_PNG);
-
-							ClientAnchor anchor = helper.createClientAnchor();
-							// set top-left corner for the image
-							anchor.setCol1(1);
-							anchor.setCol2(1);
-							anchor.setRow1(rowIndex - 1);
-							anchor.setRow2(rowIndex - 1);
-
-							anchor.setDx1(15);
-							anchor.setDx2((int) (percent / 100 * 1020) - 15);
-
-							anchor.setDy1(50);
-							anchor.setDy2(220);
-
-							anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
-
-							// Creates a picture
-							drawing.createPicture(anchor, pictureIdx);
+							drawChart(percent, helper, drawing);
 						}
 						row.createCell(2)
 								.setCellValue(statistics.getRequestedRecords().get(matrixQuestion.getId().toString()));
@@ -1440,29 +1316,7 @@ public class XlsExportCreator extends ExportCreator {
 							Double percent = statistics.getRequestedRecordsPercentForRatingQuestion(childQuestion, i);
 
 							if (percent > 0) {
-								InputStream pictureData = servletContext
-										.getResourceAsStream("/resources/images/chart.png");
-
-								int pictureIdx = wb.addPicture(org.apache.poi.util.IOUtils.toByteArray(pictureData),
-										Workbook.PICTURE_TYPE_PNG);
-
-								ClientAnchor anchor = helper.createClientAnchor();
-								// set top-left corner for the image
-								anchor.setCol1(1);
-								anchor.setCol2(1);
-								anchor.setRow1(rowIndex - 1);
-								anchor.setRow2(rowIndex - 1);
-
-								anchor.setDx1(15);
-								anchor.setDx2((int) (percent / 100 * 1020) - 15);
-
-								anchor.setDy1(50);
-								anchor.setDy2(220);
-
-								anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
-
-								// Creates a picture
-								drawing.createPicture(anchor, pictureIdx);
+								drawChart(percent, helper, drawing);
 							}
 
 							row.createCell(2)
@@ -1482,28 +1336,7 @@ public class XlsExportCreator extends ExportCreator {
 						Double percent = statistics.getRequestedRecordsPercent().get(childQuestion.getId().toString());
 
 						if (percent > 0) {
-							InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
-
-							int pictureIdx = wb.addPicture(org.apache.poi.util.IOUtils.toByteArray(pictureData),
-									Workbook.PICTURE_TYPE_PNG);
-
-							ClientAnchor anchor = helper.createClientAnchor();
-							// set top-left corner for the image
-							anchor.setCol1(1);
-							anchor.setCol2(1);
-							anchor.setRow1(rowIndex - 1);
-							anchor.setRow2(rowIndex - 1);
-
-							anchor.setDx1(15);
-							anchor.setDx2((int) (percent / 100 * 1020) - 15);
-
-							anchor.setDy1(50);
-							anchor.setDy2(220);
-
-							anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
-
-							// Creates a picture
-							drawing.createPicture(anchor, pictureIdx);
+							drawChart(percent, helper, drawing);
 						}
 						row.createCell(2)
 								.setCellValue(statistics.getRequestedRecords().get(childQuestion.getId().toString()));
@@ -1516,10 +1349,90 @@ public class XlsExportCreator extends ExportCreator {
 						rowIndex++;
 						row = sheet.createRow(rowIndex++);
 					}
+				} else if (question instanceof NumberQuestion) {
+
+					NumberQuestion number = (NumberQuestion) question;
+					if (number.showStatisticsForNumberQuestion()) {
+					
+						cellValue = question.getTitle();
+						if (export.getShowShortnames()) {
+							cellValue += " (" + question.getShortname() + ")";
+						}
+	
+						CreateTableForAnswer(cellValue, boldstyle);
+						
+						for (String answer : number.getAllPossibleAnswers()) {				
+							row = sheet.createRow(rowIndex++);
+	
+							cellValue = answer;
+	
+							Cell icell = row.createCell(0);
+							icell.setCellValue(Integer.parseInt(cellValue));
+							icell.setCellStyle(numberStyle);
+	
+							Double percent = statistics.getRequestedRecordsPercent().get(number.getAnswerWithPrefix(answer));
+	
+							if (percent > 0) {
+								drawChart(percent, helper, drawing);
+							}
+	
+							row.createCell(2)
+									.setCellValue(statistics.getRequestedRecords().get(number.getAnswerWithPrefix(answer)));
+	
+							Cell pcell = row.createCell(3);
+							pcell.setCellValue(percent / 100);
+							pcell.setCellStyle(percentStyle);
+						}
+	
+						row = sheet.createRow(rowIndex++);
+	
+						// noanswers
+						row.createCell(0).setCellValue("No Answer");
+	
+						Double percent = statistics.getRequestedRecordsPercent().get(number.getId().toString());
+	
+						if (percent > 0) {
+							drawChart(percent, helper, drawing);
+						}
+						row.createCell(2)
+								.setCellValue(statistics.getRequestedRecords().get(number.getId().toString()));
+	
+						Cell pcell = row.createCell(3);
+						pcell.setCellValue(statistics.getRequestedRecordsPercent().get(number.getId().toString()) / 100);
+						pcell.setCellStyle(percentStyle);
+	
+						rowIndex++;
+						row = sheet.createRow(rowIndex++);
+					}
 				}
 			}
 		}
 		wb.write(outputStream);
+	}
+	
+	private void drawChart(double percent, CreationHelper helper, Drawing drawing) throws IOException {
+		InputStream pictureData = servletContext.getResourceAsStream("/resources/images/chart.png");
+
+		int pictureIdx = wb.addPicture(org.apache.poi.util.IOUtils.toByteArray(pictureData),
+				Workbook.PICTURE_TYPE_PNG);
+
+		ClientAnchor anchor = helper.createClientAnchor();
+		// set top-left corner for the image
+		anchor.setCol1(1);
+		anchor.setCol2(1);
+		anchor.setRow1(rowIndex - 1);
+		anchor.setRow2(rowIndex - 1);
+
+		anchor.setDx1(15);
+		anchor.setDx2((int) (percent / 100 * 1020) - 15);
+
+		anchor.setDy1(50);
+		anchor.setDy2(220);
+
+		anchor.setAnchorType(ClientAnchor.MOVE_DONT_RESIZE);
+
+		// Creates a picture
+		drawing.createPicture(anchor, pictureIdx);
 	}
 
 	@Override

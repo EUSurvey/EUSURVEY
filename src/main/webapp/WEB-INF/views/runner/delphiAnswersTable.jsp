@@ -7,13 +7,23 @@
 </div>
 
 <!-- ko if: delphiTableEntries().length > 0 -->
-<div class="delphi-table">
+<c:if test='${mode != "delphiStartPage" && ismobile != null}'>
+<div class="results-table-row__links">
+	<a class="results-table-row__link-show" onclick="showResultsTable(this)">
+		<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> <spring:message code="label.ShowResults" />
+	</a>
+	<a class="results-table-row__link-hide" onclick="hideResultsTable(this)">
+		<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> <spring:message code="label.HideResults" />
+	</a>
+</div>
+</c:if>
+<div class="delphi-table" ${mode != 'delphiStartPage' && ismobile != null ? 'style="display: none;"' : ''}>
 	
 	<table class="table table-condensed table-striped table-bordered">
 		<thead>
 		<tr class="area-header">
 			<th style="width:33%">${form.getMessage("label.DelphiAnswersTableAnswer")}</th>
-			<th style="min-width:150px">
+			<th style="min-width:${responsive != null ? "120" : "150"}px">
 				<span>${form.getMessage("label.DelphiAnswersTableUpdate")}</span>
 				<div style="float: right">
 					<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />"

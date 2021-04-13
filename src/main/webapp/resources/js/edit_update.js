@@ -1484,6 +1484,15 @@ function updateIdentifier(element, id, text, noundo)
 			var pos = $(_elementProperties.selectedelement).index();
 			element = parent.answers()[pos-1];
 		}
+	} else if ($(_elementProperties.selectedelement).hasClass("rankingitemtext"))
+	{
+		var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+		var parent = _elements[parentid];
+		if (parent.type == "RankingQuestion") {
+			element = parent.rankingItems().filter((item) => item.id() == id)[0];
+		} else {
+			throw "could not find matching parent element";
+		}
 	}
 	
 	var oldtext = element.shortname(); 

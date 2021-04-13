@@ -540,8 +540,14 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 {
 	var row = new PropertyRow();
 	row.Type("first");
+
+	row.LabelTitle(getPropertyLabel(label));	
+	
+	if (label == "DelphiChartTypeNumber") {
+		label = "DelphiChartType";
+	}
+	
 	row.Label(label);
-	row.LabelTitle(getPropertyLabel(label));
 
 	var rowcontent = "";
 	var options = content.split(",");
@@ -839,7 +845,7 @@ function getActionRow(label, l1, action, l2, action2)
 	item.Value(action2);
 	row.ContentItems.push(item);	
 	
-	if (label == "Columns" || label == "Rows" || label == "PossibleAnswers" || label == "Questions")
+	if (label == "Columns" || label == "Rows" || label == "PossibleAnswers" || label == "Questions" || label == "RankingItem")
 	{
 		row.Edit(true);
 		row.EditShortnames(true);
@@ -847,7 +853,7 @@ function getActionRow(label, l1, action, l2, action2)
 	
 	_elementProperties.propertyRows.push(row);
 	
-	if (label == "Columns" || label == "Rows" || label == "PossibleAnswers" || label == "Questions")
+	if (label == "Columns" || label == "Rows" || label == "PossibleAnswers" || label == "Questions" || label == "RankingItem")
 	{
 		var id = "id" + idcounter++;
 		
@@ -1383,6 +1389,48 @@ function removePossibleAnswer()
 	updateNavigation($(_elementProperties.selectedelement), id);
 }
 
+function addRankingEntry()
+{
+	var id = $(_elementProperties.selectedelement).attr("data-id");
+	var element = _elements[id];
+	var text = "Ranking Item " + (element.rankingItems().length + 1);
+
+	var newrankingitem = newRankingItemViewModel(getNewId(), getNewId(), getNewShortname(), text);
+	element.rankingItems.push(newrankingitem);
+
+	if (element.rankingItems().length == element.minItems()+1) {
+		var removeButton = $("#btnRemoveRankingItems");
+		removeButton.tooltip("enable");
+	}
+
+	_undoProcessor.addUndoStep(["ADDRANKINGITEM", element.id(), newrankingitem]);
+	updateDependenciesView();
+	addElementHandler($(_elementProperties.selectedelement));
+
+	updateNavigation($(_elementProperties.selectedelement), id);
+}
+
+function removeRankingEntry()
+{
+	var id = $(_elementProperties.selectedelement).attr("data-id");
+	var element = _elements[id];
+	
+	removeValidationMarkup();
+	var oldrankingitem = element.rankingItems.pop();
+
+	if (element.rankingItems().length <= element.minItems()) {
+		var removeButton = $("#btnRemoveRankingItems");
+		removeButton.tooltip("hide");
+		removeButton.tooltip("disable");
+	}
+
+	_undoProcessor.addUndoStep(["REMOVERANKINGITEM", element.id(), oldrankingitem]);
+	updateDependenciesView();
+	addElementHandler($(_elementProperties.selectedelement));
+
+	updateNavigation($(_elementProperties.selectedelement), id);
+}
+
 function addColumn(noundo)
 {
 	var text;
@@ -1778,7 +1826,6 @@ function edit(span)
 	} else if (label == "PossibleAnswers")
 	{
 		var s = getCombinedAnswerText(true);
-		
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
 		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'xhtml'});
 		originaltext = s;
@@ -1788,7 +1835,10 @@ function edit(span)
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
 		originaltext = tinyMCE.get(_elementProperties.selectedid).getContent();
 		$(span).closest("tr").next().show();
-	} else {	
+	} else if (label == "RankingItems")
+	{
+		console.log("RankingItem can not be edited via TinyMCE.");
+	} else {
 		var tr = $(span).closest("tr").next();
 		_elementProperties.selectedid = $(tr).find("textarea").first().attr("id");	
 		$(tr).show();

@@ -632,6 +632,7 @@
 			if (element.hasClass("table-header")) return "<spring:message code='form.Table' />";
 			if (element.hasClass("answertext")) return "<spring:message code='label.Answer' />";
 			if (element.hasClass("rankingitem")) return "<spring:message code='label.RankingQuestion' />";
+			if (element.hasClass("rankingitemtext")) return "<spring:message code='label.RankingItem' />";
 			if (element.find(".gallery-image").length > 0) return "<spring:message code='form.GalleryImage' />";
 			return "Template";
 		}
@@ -704,6 +705,7 @@
 	 		strings["Alphabetical"] = "<spring:message code="label.AlphabeticalOrder" />";
 	 		strings["Random"] = "<spring:message code="label.RandomOrder" />";
 	 		strings["PossibleAnswers"] = "<spring:message code="label.PossibleAnswers" />";
+	 		strings["RankingItems"] = "<spring:message code="label.RankingItems" />";
 	 		strings["NumberOfChoices"] = "<spring:message code="label.NumberOfChoices" />";
 	 		strings["CheckBox"] = "<spring:message code="html.CheckBox" />";
 	 		strings["ListBox"] = "<spring:message code="html.ListBox" />";	 
@@ -855,6 +857,7 @@
 	 		strings["MaximumFileSize"] = "<spring:message code="label.MaximumFileSize" />";
 	 		strings["DelphiQuestion"] = "<spring:message code="label.DelphiQuestion" />";
 			strings["DelphiChartType"] = "<spring:message code="label.DelphiChartType" />";
+			strings["DelphiChartTypeNumber"] = "<spring:message code="label.DelphiChartType" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.DelphiChartTypeNumber" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["Bar"] ="<spring:message code="label.DelphiChartBar" />";
 			strings["Column"] ="<spring:message code="label.DelphiChartColumn" />";
 			strings["Line"] ="<spring:message code="label.DelphiChartLine" />";

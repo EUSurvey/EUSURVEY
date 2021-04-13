@@ -677,8 +677,8 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 			
 			var chartData = {};
 			var chartOptions = {
+				maintainAspectRatio: false,
 				scaleShowValues: true,
-				responsive: false,
 				scales: {
 					yAxes: [{ticks: {beginAtZero: true, autoSkip: false}}],
 					xAxes: [{ticks: {beginAtZero: true, autoSkip: false}}]
@@ -686,24 +686,27 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				legend: {display: false}
 			};
 
-			truncateGraphLegendLabels(chartOptions, canvasWidth);
-
 			chartOptions.scales.xAxes[0].ticks.callback = chartOptions.scales.yAxes[0].ticks.callback = forModal ? wrapChartLabelCallback : chartLabelCallback;
 
 			switch (result.questionType) {
 				case "MultipleChoice":
 				case "SingleChoice":
+				case "Number":
 					var graphData = result.data;
-
+														
 					chartData = {
 						datasets: [{
 							label: '',
+							originalLabel: '',
 							data: graphData.map(function (g) {
 								return g.value
 							})
 						}],
 						labels: graphData.map(function (g) {
-							return normalizeLabel(g.label);
+							return truncateLabel(g.label, canvasWidth);
+						}),
+						originalLabels: graphData.map(function (g) {
+							return g.label;
 						})
 					};
 					break;
@@ -713,6 +716,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 					var questions = result.questions;
 					var datasets = [];
 					var labels = undefined;
+					var originalLabels = undefined;
 
 					for (var i = 0; i < questions.length; i++) {
 						var question = questions[i];
@@ -721,19 +725,24 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 							data: question.data.map(function (d) {
 								return d.value;
 							}),
-							label: normalizeLabel(question.label)
+							label: truncateLabel(normalizeLabel(question.label), canvasWidth),
+							originalLabel: normalizeLabel(question.label)
 						});
 
 						if (!labels) {
 							labels = question.data.map(function (d) {
+								return truncateLabel(normalizeLabel(d.label), canvasWidth);
+							});
+							originalLabels = question.data.map(function (d) {
 								return normalizeLabel(d.label);
 							});
 						}
 					}
-
+					
 					chartData = {
 						datasets,
-						labels
+						labels,
+						originalLabels
 					}
 
 					chartOptions.legend.display = forModal || (result.questions.length < 6);
@@ -769,7 +778,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				case "Radar":
 					chart.type = "radar";
 					delete chart.options.scales;
-					chart.options.scale = {pointLabels: {callback: forModal ? wrapChartLabelCallback : chartLabelCallback}};
+					chart.options.scale = {pointLabels: {callback: forModal ? wrapChartLabelCallback : chartLabelCallback}, ticks: {beginAtZero: true, precision: 0}};
 					break;
 				case "Scatter":
 					chart.type = "line";
@@ -863,29 +872,29 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				callbacks: {
 					title: chart.data.datasets.length === 1
 						? function (item, data) {
-							var label = chart.type === "radar" ? data.labels[item[0].index] : item[0].label;
+							var label = chart.type === "radar" ? data.originalLabels[item[0].index] : item[0].originalLabel;
 							return wrapLabel(label, 30);
 						} : function (item, data) {
-							var label = chart.type === "pie" ? data.datasets[item[0].datasetIndex].label : data.labels[item[0].index];
+							var label = chart.type === "pie" ? data.datasets[item[0].datasetIndex].originalLabel : data.originalLabels[item[0].index];
 							return wrapLabel(label, 30);
 						},
 					label: chart.data.datasets.length === 1
 						? function (item, data) {
 							var label = chart.type === "pie"
-								? data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
+								? data.originalLabels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
 								: item.value;
 							return wrapLabel(label, 30);
 						} : function (item, data) {
 							var label = chart.type === "pie"
-								? data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
-								: data.datasets[item.datasetIndex].label + ": " + item.value;
+								? data.originalLabels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
+								: data.datasets[item.datasetIndex].originalLabel + ": " + item.value;
 							return wrapLabel(label, 30);
 						}
 				}
-			}
-
+			}		
+			
 			if (chartCallback instanceof Function) {
-				chartCallback(div, chart, canvasWidth);
+				chartCallback(div, chart);
 			}
 			addStatisticsToAnswerText(div, result);
 		}
@@ -963,11 +972,11 @@ function addStatisticsToAnswerText(div, result) {
 	}
 }
 
-function addChart(div, chart, canvasWidth) {
+function addChart(div, chart) {
 	var elementWrapper = $(div).closest(".elementwrapper");
 
 	$(elementWrapper).find(".delphi-chart").remove();
-	$(elementWrapper).find(".delphi-chart-div").append("<canvas class='delphi-chart' width='" + canvasWidth + "' height='300'></canvas>");
+	$(elementWrapper).find(".chart-wrapper__chart-container").show().append("<canvas class='delphi-chart'></canvas>");
 
 	$(elementWrapper).find(".chart-wrapper").show();
 
@@ -976,20 +985,20 @@ function addChart(div, chart, canvasWidth) {
 	$(elementWrapper).find(".chart-wrapper-loader").hide();
 }
 
-function addChartModal(_, chart, canvasWidth) {
+function addChartModal(_, chart) {
 	var modal = $("#delphi-chart-modal");
 	$(modal).find("canvas").remove();
 	$('#wordcloudmodal').remove();
-	$(modal).find(".modal-body").append("<canvas class='center-block' height='600' width='" + canvasWidth + "'></canvas>");
+	$(modal).find(".delphi-chart-modal__chart-container").show().append("<canvas></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
 	$(modal).modal("show");
 }
 
-function addChartModalStartPage(_, chart, canvasWidth) {
+function addChartModalStartPage(_, chart) {
 	var modal = $("#delphi-chart-modal-start-page");
 	$(modal).find("canvas").remove();
 	$('#wordcloudmodal').remove();
-	$(modal).find(".modal-body").append("<canvas class='center-block' height='600' width='" + canvasWidth + "'></canvas>");
+	$(modal).find(".delphi-chart-modal__chart-container").show().append("<canvas></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
 	$(modal).modal("show");
 }
@@ -1006,7 +1015,17 @@ function loadGraphData(div) {
 	var questionuid = $(div).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false, false, 400);
+
+	// Briefly show the wrapper to get the real width of the chart container.
+	const chartWrapper = $(div).closest('.elementwrapper').find('.chart-wrapper');
+	$(chartWrapper).show();
+	const canvasContainer = $(div).find('.chart-wrapper__chart-container')[0];
+	$(canvasContainer).show();
+	const canvasContainerWidth = canvasContainer.clientWidth;
+	$(canvasContainer).hide();
+	$(chartWrapper).hide();
+
+	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false, false, canvasContainerWidth);
 }
 
 function loadGraphDataModal(div) {
@@ -1015,7 +1034,17 @@ function loadGraphDataModal(div) {
 	var questionuid = $(surveyElement).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
 	var uniquecode = $('#uniqueCode').val();
-	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false, 800);
+
+	// Briefly show the modal to get the real width of the chart container.
+	const modal = $('#delphi-chart-modal');
+	$(modal).modal('show');
+	const canvasContainer = $(modal).find('.delphi-chart-modal__chart-container')[0];
+	$(canvasContainer).show();
+	const canvasContainerWidth = canvasContainer.clientWidth;
+	$(canvasContainer).hide();
+	$(modal).modal('hide');
+
+	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false, canvasContainerWidth);
 }
 
 function scrollClosestDelphiTableIntoView(element) {
@@ -1685,6 +1714,20 @@ function checkGoToDelphiStart(link)
 	}
 
 	window.location = url;
+}
+
+function showResultsTable(button) {
+	$(button).hide();
+	const container = $(button).closest('.results-table-row');
+	$(container).find('.results-table-row__link-hide').show();
+	$(container).find('.delphi-table').show();
+}
+
+function hideResultsTable(button) {
+	$(button).hide();
+	const container = $(button).closest('.results-table-row');
+	$(container).find('.results-table-row__link-show').show();
+	$(container).find('.delphi-table').hide();
 }
 
 function openAskEmailToSendLinkDialog(button) {

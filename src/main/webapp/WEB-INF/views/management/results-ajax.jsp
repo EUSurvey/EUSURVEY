@@ -201,16 +201,28 @@
 			var legend = $(controls).find(".chart-legend").first().is(":checked");
 
 			const size = $(chartwrapper).closest(".elementwrapper, .statelement-wrapper").find(".chart-size").first().val();
-			let canvasWidth;
-			if (size === 'medium') {
-				canvasWidth = 450;
-			} else if (size === 'large') {
-				canvasWidth = 600;
-			} else {
-				canvasWidth = 300;
-			}
+			const canvasWidth = getChartCanvasHeightAndWidth(size).width;
 
 			loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend, canvasWidth);
+		}
+
+		function getChartCanvasHeightAndWidth(size) {
+			if (size === 'large') {
+				return {
+					height: 440,
+					width: 600
+				};
+			}
+			if (size === 'medium') {
+				return {
+					height: 330,
+					width: 450
+				};
+			}
+			return {
+				height: 220,
+				width: 300
+			};
 		}
 
 		function chartLabelCallback(value, index, values) {
@@ -371,22 +383,25 @@
 						}
 					};
 
-					truncateGraphLegendLabels(chartOptions, canvasWidth);
-
 					switch (result.questionType) {
 						case "MultipleChoice":
 						case "SingleChoice":
+						case "Number":
 							var graphData = result.data;
 
 							chartData = {
 								datasets: [{
 									label: '',
+									originalLabel: '',
 									data: graphData.map(function (g) {
 										return g.value
 									})
 								}],
 								labels: graphData.map(function (g) {
-									return normalizeLabel(g.label)
+									return truncateLabel(g.label, canvasWidth);
+								}),
+								originalLabels: graphData.map(function (g) {
+									return g.label;
 								})
 							};
 							break;
@@ -396,6 +411,7 @@
 							var questions = result.questions;
 							var datasets = [];
 							var labels = undefined;
+							var originalLabels = undefined;
 
 							for (var i = 0; i < questions.length; i++) {
 								var question = questions[i];
@@ -404,11 +420,15 @@
 									data: question.data.map(function (d) {
 										return d.value;
 									}),
-									label: normalizeLabel(question.label)
+									label: truncateLabel(normalizeLabel(question.label), canvasWidth),
+									originalLabel: normalizeLabel(question.label)
 								});
 
-								if (!labels) {
+								if (!labels) {								
 									labels = question.data.map(function (d) {
+										return truncateLabel(normalizeLabel(d.label), canvasWidth);
+									});
+									originalLabels = question.data.map(function (d) {
 										return normalizeLabel(d.label);
 									});
 								}
@@ -416,7 +436,8 @@
 
 							chartData = {
 								datasets,
-								labels
+								labels,
+								originalLabels
 							}
 			
 							break;
@@ -447,7 +468,7 @@
 						case "Radar":
 							chart.type = "radar";
 							delete chart.options.scales;
-							chart.options.scale = {pointLabels: {callback: chartLabelCallback}};
+							chart.options.scale = {pointLabels: {callback: chartLabelCallback}, ticks: {beginAtZero: true, precision: 0}};
 							break;
 						case "Scatter":
 							chart.type = "line";
@@ -536,22 +557,22 @@
 						callbacks: {
 							title: chart.data.datasets.length === 1
 									? function (item, data) {
-										var label = chart.type === "radar" ? data.labels[item[0].index] : item[0].label;
+										var label = chart.type === "radar" ? data.originalLabels[item[0].index] : item[0].originalLabel;
 										return wrapLabel(label, 30);
 									} : function (item, data) {
-										var label = chart.type === "pie" ? data.datasets[item[0].datasetIndex].label : data.labels[item[0].index];
+										var label = chart.type === "pie" ? data.datasets[item[0].datasetIndex].originalLabel : data.originalLabels[item[0].index];
 										return wrapLabel(label, 30);
 									},
 							label: chart.data.datasets.length === 1
 									? function (item, data) {
 										var label = chart.type === "pie"
-												? data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
+												? data.originalLabels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
 												: item.value;
 										return wrapLabel(label, 30);
 									} : function (item, data) {
 										var label = chart.type === "pie"
-												? data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
-												: data.datasets[item.datasetIndex].label + ": " + item.value;
+												? data.originalLabels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
+												: data.datasets[item.datasetIndex].originalLabel + ": " + item.value;
 										return wrapLabel(label, 30);
 									}
 						}
@@ -564,22 +585,16 @@
 			});
 		}
 
-		function addChart(div, chart, chartType, showLegendBox, canvasWidth) {
+		function addChart(div, chart, chartType, showLegendBox) {
 			var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 
 			$(elementWrapper).find(".delphi-chart").remove();
 
-			var size = $(elementWrapper).find(".chart-size").first().val();
+			const size = $(elementWrapper).find(".chart-size").first().val();
+			const dimensions = getChartCanvasHeightAndWidth(size);
 
-			let canvasElement = "<canvas class='delphi-chart' width='" + canvasWidth + "' height='";
-			if (size === 'medium') {
-				canvasElement += 330;
-			} else if (size === 'large') {
-				canvasElement += 440;
-			} else {
-				canvasElement += 220;
-			}
-			canvasElement += "' style='background-color: #fff;'></canvas>";
+			const canvasElement = "<canvas class='delphi-chart' width='" + dimensions.width + "' height='"
+				+ dimensions.height + "' style='background-color: #fff;'></canvas>";
 			$(elementWrapper).find(".delphi-chart-div").append(canvasElement);
 
         	$(elementWrapper).find(".chart-wrapper").show();

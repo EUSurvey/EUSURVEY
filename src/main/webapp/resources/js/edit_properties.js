@@ -27,6 +27,12 @@ var PropertyRow = function()
 	this.Disabled = ko.observable(false);
 	this.Element = ko.observable(null);
 	this.IsVisible = ko.observable(true);
+	this.MinItems = function() {
+		if (this.Label() == "RankingItems") {
+			return 2;
+		}
+		return 1;
+	};
 	
 	this.PreviewItems = function()
 	{
@@ -43,6 +49,9 @@ var PropertyRow = function()
 		} else if (this.Label() == "Questions")
 		{	
 			arr = getQuestionsText(false);
+		} else if (this.Label() == "RankingItems")
+		{
+			arr = getCombinedRankingText(false);
 		}
 		
 		if (arr.length > 5)
@@ -446,7 +455,7 @@ var ElementProperties = function() {
 					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
-				// TODO DELPHI-189 getActionRow("childElements", "<span class='glyphicon glyphicon-plus'></span>", "addChildElements()", "<span class='glyphicon glyphicon-minus'></span>", "removeChildElement($(_elementProperties.selectedelement))");
+				getActionRow("RankingItems", "<span class='glyphicon glyphicon-plus'></span>", "addRankingEntry()", "<span class='glyphicon glyphicon-minus'></span>", "removeRankingEntry($(_elementProperties.selectedelement))");
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
 				getVisibilityRow(false, !isDelphiQuestion);
 
@@ -457,6 +466,28 @@ var ElementProperties = function() {
 				{
 					adaptDelphiControls(element);
 				}
+			} else if ($(e).hasClass("rankingitemtext"))
+			{
+				_actions.DeleteEnabled(false);
+
+				var id = $(e).attr("data-id");
+				var text = $("textarea[name^='rankingitemtitle'][data-id='" + id + "']")
+						.first().text();
+
+				getTextPropertiesRow("Text", text, true);
+				getAdvancedPropertiesRow();
+
+				var shortname = $(
+						"input[name^='rankingitemshortname'][data-id='" + id + "']")
+						.first().val();
+				getTextPropertiesRow("Identifier", shortname, false);
+
+				_actions.ChildSelected(true);
+
+				_actions.CopyEnabled(false);
+				_actions.CutEnabled(false);
+				_actions.MoveUpEnabled(false);
+				_actions.MoveDownEnabled(false);
 			} else if ($(e).hasClass("answertext"))
 			{
 				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
@@ -491,6 +522,7 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					getCheckPropertiesRow("DelphiQuestion", isDelphiQuestion);
+					getChoosePropertiesRow("DelphiChartTypeNumber", "Bar,Column,Line,Pie,Radar,Scatter", false, true, $(e).find("input[name^='delphicharttype']").val(), false);
 					getCheckPropertiesRow("ShowExplanationBox", $(e).find("input[name^='explanationbox']").val() == 'true');
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);

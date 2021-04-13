@@ -21,10 +21,11 @@
 
 <c:if test="${form.survey.isDelphi}">
 	<div class="modal" id="delphi-chart-modal" data-backdrop="static">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-body">
 					<h1><spring:message code="label.Statistics" /></h1>
+					<div class="delphi-chart-modal__chart-container"></div>
 				</div>
 				<div class="modal-footer">
 					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
@@ -112,7 +113,7 @@
 										title="${form.survey.isDelphi ? form.getMessage("label.SwitchPageDelphi") : ""}">
 
 										<a href="#page${rowCounter.index}" style="cursor:pointer;"
-										   onclick="selectPage(${rowCounter.index});">
+										   onclick="return selectPage(${rowCounter.index});">
 											<c:choose>
 												<c:when test="${page[0].getType() == 'Section' && page[0].tabTitle != null && page[0].tabTitle.length() > 0}">
 													${page[0].tabTitle}
