@@ -757,9 +757,14 @@ public class SurveyCreator {
 					answer.setPossibleAnswerUniqueId(firstAnswer.getUniqueId());
 					answerSet.addAnswer(answer);
 				}
-				
-				
-			}		
+			} else if (question instanceof NumberQuestion) {
+				Answer answer = new Answer();
+				answer.setAnswerSet(answerSet);
+				answer.setQuestionId(question.getId());
+				answer.setQuestionUniqueId(question.getUniqueId());
+				answer.setValue("42");
+				answerSet.addAnswer(answer);
+			}	
 		}
 		return answerSet;
 	}

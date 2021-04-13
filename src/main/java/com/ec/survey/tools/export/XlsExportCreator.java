@@ -528,6 +528,7 @@ public class XlsExportCreator extends ExportCreator {
 			rowIndex = insertHeader(sheets, publication, filter, export);
 
 			dateCellStyle = null;
+			cellStyles.clear();
 		}
 
 		if (dateCellStyle == null) {
