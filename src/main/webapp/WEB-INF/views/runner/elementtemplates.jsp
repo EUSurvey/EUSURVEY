@@ -1335,7 +1335,7 @@
 				<div class="delphiupdatemessage"></div>
 
 				<!-- ko if: delphiTableNewComments() -->
-				<div class="newdelphicomments label label-info">${form.getMessage("label.DelphiAnswersTableNewComments")}</div>
+				<div class="newdelphicomments label">${form.getMessage("label.DelphiAnswersTableNewComments")}</div>
 				<!-- /ko -->
 			</div>
 		</div>

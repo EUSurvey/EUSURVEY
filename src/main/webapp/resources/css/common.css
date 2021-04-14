@@ -1319,6 +1319,10 @@ legend {
     display: inline-block !important;
 }
 
+.newdelphicomments {
+	background-color: #337ab7 !important;
+}
+
 .contribution-link-dialog__link {
 	margin: 5px 0;
 	word-wrap: break-word;
@@ -1437,13 +1441,17 @@ legend {
 	overflow-wrap: anywhere;
 }
 
-.new-delphi-comment {
-	background-color: #dcf5fe;
+:not(.new-delphi-comment) > .new-delphi-comment {
+	border-left: 3px solid #337ab7;
 }
 
 .delphi-comment__reply {
 	margin-top: 10px;
 	padding-left: 20px;
+}
+
+:not(.new-delphi-comment) > .delphi-comment__reply.new-delphi-comment {
+	padding-left: 17px;
 }
 
 .delphi-comment__actions a:first-child {
