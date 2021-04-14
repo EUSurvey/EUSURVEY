@@ -1431,7 +1431,6 @@ public class SchemaService extends BasicService {
 		queryCreateIndex.executeUpdate();
 
 		if (showecas.equalsIgnoreCase("true") && !isCasOss()) {
-			logger.debug("Start CopyEcas");
 			domaintWorker.run();
 			copyEcasData();
 		}

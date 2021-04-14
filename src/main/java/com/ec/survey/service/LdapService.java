@@ -81,8 +81,7 @@ public class LdapService extends BasicService {
         try {
         	if (securityAuthentication == null || securityAuthentication.length() == 0) securityAuthentication = "simple";
         	
-        	logger.debug("LDAP INITIALIZE Context " + contextFactory +" URL " + url + " SecuAuth " + securityAuthentication +" SecuPrinc " + securityPrincipal );
-            // Create a Directory Context
+        	// Create a Directory Context
             Hashtable<String, String> env = new Hashtable<>();
             env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
             env.put(Context.PROVIDER_URL, url);
@@ -90,7 +89,6 @@ public class LdapService extends BasicService {
             env.put(Context.SECURITY_PRINCIPAL, securityPrincipal);
             env.put(Context.SECURITY_CREDENTIALS, securityCredentials);
             
-            logger.debug("LDAP SERVICE INITIALIZE " + env.toString());
             ctx = new InitialDirContext(env);
             logger.info("LDAP SERVICE INITIALIZECONTEXT DONE ");
         } catch (Exception e) {
@@ -136,7 +134,6 @@ public class LdapService extends BasicService {
             username = Tools.encodeForLDAP(username);
             String searchValue= String.format(ldapSearchUserFormat, username);
             Attributes attrs = ctx.getAttributes(searchValue);
-            logger.debug("getUserLDAPGroups CALLED FOR USER " + username);
             
             // get the attributes
             String department="";
@@ -256,10 +253,8 @@ public class LdapService extends BasicService {
 			String domainCode = "";
 			DepartmentItem currentDepartmentItem = null ;
 			try{
-				logger.debug("START SEARCH FOR DEPARTNMENTNUMBER");								
 				ne = ctx.search(ldapSearchFormat,searchString,sc);
-				logger.debug("SEARCH FOR DEPARTNMENTNUMBER DONE START LOOPING " );
-	
+			
 				while(ne.hasMore()){
 					departmentNumber="";
 					domainCode="";
@@ -277,9 +272,7 @@ public class LdapService extends BasicService {
 						domainCode = getAttributeValue(set_att, ldapMappingUserO,false) ;
 					}
 												            
-		            logger.debug("SEARCH DEPARTMENTNUMBER COUNT ATTRIBUTES NAME  IS " + set_att.size()  );
-
-					if (!StringUtils.isEmpty(departmentNumber)  && !StringUtils.isEmpty(domainCode))
+		        	if (!StringUtils.isEmpty(departmentNumber)  && !StringUtils.isEmpty(domainCode))
 					{						
 						currentDepartmentItem = new DepartmentItem(domainCode, departmentNumber) ;
 						if (!departmentNumbers.contains(currentDepartmentItem))
@@ -303,8 +296,6 @@ public class LdapService extends BasicService {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		
-		
-		logger.debug("RETURN DEPARTNMENTNUMBER WITH  " + departmentNumbers.size() );
 		return departmentNumbers;
     }
     
@@ -352,7 +343,6 @@ public class LdapService extends BasicService {
 				
 				String domainO =ldapMappingDomainO.replace(LDAP_CONSTANT_PREFIX, "");
 				String domainDesc=ldapMappingDomainDescription.replace(LDAP_CONSTANT_PREFIX, "");
-				logger.debug("ADD NEW DOMAIN WITH O " + domainO + " DESC " + domainDesc);
 				domains.put(domainO, domainDesc);						
 			}else{
 				SearchControls sc = getSearchControls(LdapSearchTypeEnum.DOMAIN);
@@ -370,7 +360,6 @@ public class LdapService extends BasicService {
 					setOfAttributes = sr.getAttributes();
 						attributeOrganization = setOfAttributes.get(ldapMappingDomainO);
 						attributeDescription=setOfAttributes.get(ldapMappingDomainDescription);
-						logger.debug("GetAllDomains get Domain with o value " + attributeOrganization.get());
 					if(attributeOrganization != null && attributeDescription != null)
 					{
 						domains.put((String)attributeOrganization.get(), (String) attributeDescription.get());

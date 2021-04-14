@@ -19,13 +19,11 @@ public class ValidCodesRemover implements Runnable {
 	
 	@Override
 	public void run() {
-		try {
-			logger.debug("ValidCodesRemover started");			
+		try {	
 			validCodesService.removeOldCodes();		
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-		}		
-		logger.debug("ValidCodesRemover completed");
+		}
 	}
 	
 }

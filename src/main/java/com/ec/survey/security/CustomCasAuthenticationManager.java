@@ -34,15 +34,9 @@ public class CustomCasAuthenticationManager implements UserDetailsService {
 	// org.springframework.security.core.userdetails.User
 	private  org.springframework.security.core.userdetails.User buildUserForAuthentication(User user, 
 		List<GrantedAuthority> authorities) {
-		logger.debug("in CustomCasAuthenticationManager buildUserForAuthentication");
-
-		for (GrantedAuthority authority : authorities) {
-			logger.debug("in MyUserDetailsService buildUserForAuthentication AUTH SHOW " + authority.getAuthority());
-		}
 		
 		org.springframework.security.core.userdetails.User value;
 		try {
-			logger.debug("in MyUserDetailsService buildUserForAuthentication try to create the Spring User");
 			value = new org.springframework.security.core.userdetails.User(user.getLogin(),null,true,true,true,true,authorities);	
 		} catch (Exception e) {
 			
@@ -53,7 +47,6 @@ public class CustomCasAuthenticationManager implements UserDetailsService {
 	}
 	
 	private User getUserFromDb(String userName){
-		logger.error("Start getUserFromDb for user coming from ldap authentication " + userName );
 		try {
 			User user = null;
 			try {					
