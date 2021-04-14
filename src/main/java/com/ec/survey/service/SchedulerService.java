@@ -158,8 +158,6 @@ public class SchedulerService extends BasicService {
 					
 					settingsService.update(Setting.LastSurveyToMigrate, Integer.toString(id));
 				}
-				
-				logger.debug("Finished fs migration");
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
@@ -331,13 +329,9 @@ public class SchedulerService extends BasicService {
 		
 		if(!isHost2ExecuteTask())
 			return;
-		
-		logger.debug("Try Start ldap sync schedule host compaptible to launch this task");
 		 
 		//|| !isCasOss()
 		if (!isShowEcas() ) return;
-		
-		logger.debug("Start ldap sync schedule try to execute");
 		
 		try {
 		
@@ -396,9 +390,7 @@ public class SchedulerService extends BasicService {
 					
 					domaintWorker.run();
 					departmentWorker.run();
-					ecasWorker.run();		
-				    
-					logger.debug("End ldap sync schedule");
+					ecasWorker.run();				  
 				}	
 			}
 		
@@ -507,21 +499,15 @@ public class SchedulerService extends BasicService {
 	public void doHourlySchedule() {	
 		if(!isHost2ExecuteTask())
 			return;
-
-		logger.debug("Start hourly schedule");
 	  
 		surveyWorker.run();
 		fileWorker.run();
-		
-		logger.debug("End hourly schedule");
 	 }
 	
 	@Scheduled(cron="0 0 4 * * *") //every night at 4 pm
 	public void doNightlySchedule() {
 		if(!isHost2ExecuteTask())
 			return;
-
-		logger.debug("Start nightly schedule");
 	  
 		exportWorker.run();
 		validCodesRemover.run();
@@ -532,8 +518,6 @@ public class SchedulerService extends BasicService {
 		sendReportedSurveysWorker.run();
 		deleteUserAccountsWorker.run();
 		answerSetAnonymWorker.run();
-		
-		logger.debug("End nightly schedule");
 	 }
 	
 	private boolean isHost2ExecuteTask(){

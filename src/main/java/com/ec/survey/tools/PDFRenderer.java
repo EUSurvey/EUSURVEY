@@ -22,7 +22,6 @@ public class PDFRenderer {
 	
 	public PDFRenderer(SessionService sessionService) {
 		renderer = new ITextRenderer();
-		logger.debug("PDFRender constructor is called  calling MyUserAgentCallback ");
 		MyUserAgentCallback uac = new MyUserAgentCallback(renderer.getOutputDevice(),sessionService);
 		uac.setSharedContext(renderer.getSharedContext());
 		renderer.getSharedContext().setUserAgentCallback(uac);

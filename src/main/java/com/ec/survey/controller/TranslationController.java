@@ -1110,25 +1110,16 @@ public class TranslationController extends BasicController {
 	 */
 	public void initMTCheck() {
 
-		logger.debug("TranslationController initMTCheck Called");
-
 		if (StringUtils.isEmpty(useECMT)) {
 			isMTAvailable = false;
 			return;
 		}
 
-		logger.debug("TranslationController useECMT Not Empty " + useECMT);
-
 		// if true then check if microsoft properties is set
 		// else if false then check that EC Mt is set
 		if (isUseECMT()) {
-			logger.debug("TranslationController useECMT True Check For MTServiceWSDL " + mtServiceWsdl);
 			isMTAvailable = StringUtils.isNotEmpty(mtServiceWsdl);
 		} else {
-			logger.debug("TranslationController useECMT False Check For msClientId " + msClientId + " CHECK "
-					+ !msClientId.trim().equalsIgnoreCase("your account here"));
-			logger.debug("TranslationController useECMT False Check For msClientId " + msClientId + " CHECK result is "
-					+ (StringUtils.isNotEmpty(msClientId) && !msClientId.trim().equalsIgnoreCase("your account here")));
 			isMTAvailable = (StringUtils.isNotEmpty(msClientId)
 					&& !msClientId.trim().equalsIgnoreCase("your account here"));
 		}

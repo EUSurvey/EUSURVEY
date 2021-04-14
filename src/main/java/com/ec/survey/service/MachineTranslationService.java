@@ -262,7 +262,6 @@ public class MachineTranslationService extends BasicService {
 
 		ftpURI = ftpClient.getFtpSourceURL();
 		
-		logger.debug("MachineTranslationService.translateTranslations Get FTP SOurce " +ftpURI);
 		// construct the return ftp path used in the call back to get translated file
 		if (ftpURI.endsWith(Constants.PATH_DELIMITER)){
 			ftpTargetPath = ftpURI;
@@ -278,7 +277,6 @@ public class MachineTranslationService extends BasicService {
 			logger.error("Error when try to put file to FTP " + e);
 		}
 		
-		logger.debug("MachineTranslationService.translateTranslations put file to FTP DONE  at location " +ftpURI);
 		ftpURI += originalFileName;
 		request.setFileURL(ftpURI);
 		
@@ -318,15 +316,12 @@ public class MachineTranslationService extends BasicService {
 			}
 		}
 	}
-
 	
 	private String buildDeliveryURLFromRequest(Request request){
 		String result="";
 		String startURL= StringUtils.remove(request.getFileURL(), ".html");
 		result = startURL + '/' + request.getUniqueId() + '_' + request.getTargetLangs() +".html";
-		logger.debug("MachineTranslationService.buildDeliveryURLFromRequest path is " + result);
-		return result;
-		
+		return result;		
 	}
 	
 	@Transactional

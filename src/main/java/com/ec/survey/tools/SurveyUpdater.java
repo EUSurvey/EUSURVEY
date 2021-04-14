@@ -149,8 +149,7 @@ public class SurveyUpdater implements Runnable {
 			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-		}		
-		logger.debug("SurveyUpdater completed");
+		}
 	}
 	
 }

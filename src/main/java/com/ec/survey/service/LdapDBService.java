@@ -37,8 +37,6 @@ public class LdapDBService extends BasicService {
 		@SuppressWarnings("unchecked")
 		List<DepartmentItem> existingDepartments = query.setResultTransformer(Transformers.aliasToBean(DepartmentItem.class)) .list();
 				
-		logger.debug("departments retrieved");
-		
 		//create new departments
 		for (DepartmentItem department: departments)
 		{
@@ -47,8 +45,6 @@ public class LdapDBService extends BasicService {
 				session.save(new Department(department.getName(),department.getDomainCode()));
 			}
 		}
-		
-		logger.debug("new departments saved");
 		
 		Query deleteQuery = session.createQuery("delete from Department d where d.domainCode = :domainCode and d.name = :department");
 		
@@ -63,8 +59,6 @@ public class LdapDBService extends BasicService {
 				deleteQuery.executeUpdate();
 			}
 		}
-		
-		logger.debug("old departments deleted");
 	}
 	
 	@Transactional(timeout=3000)

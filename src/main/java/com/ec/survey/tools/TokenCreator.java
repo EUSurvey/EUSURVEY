@@ -98,8 +98,7 @@ public class TokenCreator implements Runnable {
 			} catch (InterruptedException e1) {
 				logger.error(e1.getLocalizedMessage(), e1);
 			}
-		}		
-		logger.debug("TokenCreator completed");
+		}
 	}
 	
 }

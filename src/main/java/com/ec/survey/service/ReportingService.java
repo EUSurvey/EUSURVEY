@@ -1163,7 +1163,6 @@ public class ReportingService {
 		
 	private void executeInternal(String sql) {
 		lastQuery = sql;
-		logger.debug(sql);
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		SQLQuery createQuery = sessionReporting.createSQLQuery(sql);
 		createQuery.executeUpdate();		
@@ -1426,7 +1425,6 @@ public class ReportingService {
 				lastQuery = row.toString();
 				SQLQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
 				sqlQueryService.setParameters(createQuery, parameters);
-				logger.debug(lastQuery);
 				createQuery.executeUpdate();
 				
 				counter = 0;
@@ -1458,7 +1456,6 @@ public class ReportingService {
 			lastQuery = row.toString();
 			SQLQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
 			sqlQueryService.setParameters(createQuery, parameters);
-			logger.debug(lastQuery);
 			createQuery.executeUpdate();
 		}
 	}

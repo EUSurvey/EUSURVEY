@@ -56,9 +56,7 @@ public class TaskUpdater implements Runnable, BeanFactoryAware {
 	@Override
 	@Transactional
 	public void run() {
-		try {
-			logger.debug("TaskUpdater started");
-			
+		try {		
 			List<WebserviceTask> tasks = webserviceService.getTasksToRestart();
 			
 			for (WebserviceTask task : tasks) {
@@ -90,8 +88,7 @@ public class TaskUpdater implements Runnable, BeanFactoryAware {
 			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-		}		
-		logger.debug("TaskUpdater completed");
+		}
 	}
 	
 }
