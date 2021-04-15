@@ -144,7 +144,11 @@ function propagateChange(element)
 	{
 		$("#btnSaveDraft").removeClass("btn-default").addClass("btn-primary");
 	}
-	
+
+	const questionUid = $(element).closest(".survey-element").attr("data-uid");
+	const viewModel = modelsForSlider[questionUid];
+	viewModel.isAnswered(true);
+
 	var div = $(element).parents(".survey-element").last();
 	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
 	$(div).find(".explanation-section").show();

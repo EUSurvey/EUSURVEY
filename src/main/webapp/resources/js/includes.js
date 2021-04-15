@@ -896,8 +896,14 @@ function initModals(item)
 				 });
 				
 				if (!sessiontimeout && !networkproblems) {
+
+					// Empty value of unanswered input elements.
+					$(form).find("input[data-is-answered='false']").each(function() {
+						$(this).val('');
+					});
+
 					$(form).submit();
-					return;				
+					return;
 				}
 			}
 		

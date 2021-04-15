@@ -995,6 +995,15 @@ function newNumberViewModel(element)
 	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
 	
 	viewModel.maxDistance = ko.observable(element.maxDistance);
+
+	viewModel.isAnswered = ko.observable(false);
+	viewModel.isAnswered.subscribe(function () {
+		const input = $("#answer" + viewModel.id());
+		propagateChange($(input));
+	});
+	viewModel.markAsAnswered = function () {
+		this.isAnswered(true);
+	};
 	
 	if (viewModel.display() == 'Slider')
 	{
@@ -1069,6 +1078,7 @@ function newNumberViewModel(element)
 		
 		var ovalue = getValueByQuestion(this.uniqueId());
 		if (ovalue.length > 0) {
+			this.isAnswered(true);
 			return ovalue;
 		}
 		
