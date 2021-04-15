@@ -54,7 +54,7 @@ public class SchemaService extends BasicService {
 			s.setKey("captcha");		
 			session.saveOrUpdate(s);
 		}
-		s.setValue(isOss() ? "internal" : "eucaptcha");
+		s.setValue("internal");
 		s.setFormat("eucaptcha / recaptcha / internal / off");
 
 		status.setDbversion(96);
