@@ -51,6 +51,10 @@
 			margin-left: 20px;
 		}
 		
+		#faqcontent img {
+			border: 1px solid #999;
+		}
+		
 		#ulContainer {
 			margin-bottom: 50px;
 		}
@@ -1003,86 +1007,41 @@
 				Schneiden Sie das zu verschiebende Element aus und bringen Sie es mit der
 				Drag-und-Drop-Funktion in die gewünschte Position.
 			</p>
-			<h2>
-				Wie erreiche ich, dass gewisse Fragen nur angezeigt werden, wenn eine
-				bestimmte Antwort gegeben wurde („abhängige Elemente“)?
-			</h2>
+			
+			<h2>Sichtbarkeit (abhängige Fragen)</h2>
 			<p>
-				Mit dieser Funktion können Sie Elemente je nach den Antworten der Befragten
-				auf Einfachauswahl-/Mehrfachauswahl- und Matrixfragen anzeigen oder
-				ausblenden lassen (siehe auch
-				<a
-						href="_Toc_4_2"
-						>
-					„Wie erstelle ich einen Fragebogen mit dem EUSurvey Editor?)“
-				</a>
-				.
+				Mit dieser Funktion können Sie Fragen abhängig von den vorherigen Antworten des Teilnehmers entweder anzeigen oder ausblenden.
 			</p>
 			<p>
-				Standardmäßig ist für alle Elemente ständige Sichtbarkeit voreingestellt,
-				sodass Fragen und Antworten stets für alle Befragten sichtbar sind.
+				Standardmäßig sind alle Elemente immer sichtbar, so dass jeder die Frage beim Beantworten der Umfrage sieht.
 			</p>
 			<p>
-				Folgen Sie diesen Schritten, um eine abhängige Frage zu stellen:
-			</p>
-			<ol>
-				<li>
-					Einfachauswahl-/Mehrfachauswahl- oder Matrixfrage hinzufügen.
-				</li>
-				<li>
-					Weitere Elemente hinzufügen.
-				</li>
-				<li>
-					Wählen Sie ein auf eine Einfachauswahl-/Mehrfachauswahl- oder
-					Matrixfrage folgendes Element aus, das nur bei einer bestimmten Antwort
-					angezeigt werden soll.
-				</li>
-				<li>
-					Stift-Symbol anklicken und Sichtbarkeitseinstellungen vornehmen. Alle
-					Einfachauswahl-, Mehrfachauswahl- und Matrixfragen, die über dem
-					ausgewählten Element/den ausgewählten Elementen platziert sind, werden
-					mit dem Fragetext und den möglichen Antworten angezeigt.
-				</li>
-				<li>
-					Wählen Sie die Antwort aus, die - falls sie angekreuzt wird - zur
-					Anzeige des ausgewählten Elements führen soll.
-				</li>
-				<li>
-					Bestätigen Sie die Sichtbarkeitseinstellung durch Klick auf „Anwenden“.
-				</li>
-			</ol>
-			<p>
-				Wenn Sie mehrere Elemente auswählen, können Sie die
-				Sichtbarkeitseinstellungen für alle gleichzeitig vornehmen.
+				Die Sichtbarkeitsfunktion bietet 2 Möglichkeiten, die Anzeige von Folgefragen auszulösen:
+				<ul>
+					<li>'ODER': der Benutzer muss mindestens eines der ausgewählten Elemente auswählen, damit die Frage angezeigt wird;</li>
+					<li>'UND': der Benutzer muss alle ausgewählten Elemente auswählen, damit die Frage angezeigt wird.</li>
+				</ul>			
 			</p>
 			<p>
-				<b>Hinweis:</b>
-				Diese Änderungen wirken sich nur auf die Darstellung des Fragebogens auf
-				der Testseite und in der Veröffentlichung aus. Im Editor bleiben alle
-				Elemente weiterhin sichtbar.
+				Nachfolgend die Schritte zum Erstellen einer abhängigen Frage:
+				<ol>
+					<li>Gehen Sie zu der Frage, die Sie ausblenden/anzeigen möchten - klicken Sie auf Eigenschaften.</li>
+					<li>Klicken Sie auf das Stiftsymbol neben der Sichtbarkeitsfunktion.</li>
+					<li>Wählen Sie die anzuwendende Option: 'ODER' (Standard) oder 'UND'.</li>
+					<li>Verwenden Sie die Kontrollkästchen, um die Antwort(en) auszuwählen, die die Anzeige der Frage auslösen soll(en).</li>
+					<li>Klicken Sie auf "Übernehmen".</li>
+				</ol>
 			</p>
 			<p>
-				Bei Aktivierung erscheinen neben den verbundenen Elementen Pfeile, um die
-				Sichtbarkeitseinstellungen im Formular-Bereich anzuzeigen.
+			Wenn die Funktion verwendet wird, werden Pfeile neben den ausgewählten Elementen angezeigt, um die Sichtbarkeitseinstellungen im Formularbereich (in dem der Fragebogen dargestellt ist) anzuzeigen. Antworten, die eine Frage sichtbar machen, sind mit einem nach unten zeigenden Pfeil markiert. Fragen, die Sie entweder anzeigen oder ausblenden können, sind mit einem nach oben zeigenden Pfeil markiert.
 			</p>
+		
 			<p>
-				Antworten, die zur Anzeige eines Elements führen, werden mit einem nach
-				unten zeigenden Pfeil markiert.
-			</p>
+			Wenn Sie den Mauszeiger über die Pfeile (oder IDs im Bedienfeld "Elementeigenschaften") bewegen, werden die entsprechenden Elemente im Formularbereich und im Navigationsbereich hervorgehoben.</p>
 			<p>
-				Elemente, die infolge einer Antwort erscheinen, werden mit einem nach oben
-				zeigenden Pfeil markiert.
+				<b>Massenbearbeitung:</b> Wenn Sie mehrere Fragen auswählen, können Sie die Sichtbarkeitseinstellungen für alle Fragen gleichzeitig bearbeiten.
 			</p>
-			<p>
-				Wenn Sie den Mauszeiger über die Pfeile oder Bezeichnungen im Bereich
-				Elementeigenschaften bewegen, werden verbundene Elemente in den Bereichen
-				Formular und Navigation hervorgehoben.
-			</p>
-			<p>
-				Elemente mit den gewählten Sichtbarkeitseinstellungen erscheinen beim
-				Ausfüllen des Fragebogens erst, wenn mindestens eine der vorgegebenen
-				Antworten ausgewählt wurde.
-			</p>
+			
 			<h2>
 				Kann ich die Reihenfolge der Antworten auf eine Frage mit mehreren
 				Antworten, aus denen nur eine oder aber mehrere ausgewählt werden können,
