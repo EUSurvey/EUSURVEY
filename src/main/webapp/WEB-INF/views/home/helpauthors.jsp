@@ -50,6 +50,10 @@
 			margin-left: 20px;
 		}
 		
+		#faqcontent img {
+			border: 1px solid #999;
+		}
+		
 		#ulContainer {
 			margin-bottom: 50px;
 		}
@@ -920,78 +924,50 @@
 				Cut the item you want to move and use the drag-and-drop feature to move the
 				placeholder to where you want to paste it.
 			</p>
-			<h2>
-				How do I use the visibility feature (dependencies)    
-			</h2>
+						
+			<h2>Visibility feature (dependent questions)</h2>
 			<p>
-				With this feature, you can display and hide items depending on the answers
-				participants give to either single/multiple choice or matrix questions (see
-				also
-				<a href="TODO">
-					'How to create a questionnaire by using the EUSurvey editor?')
-				</a>
+				This feature allows you to either display or hide questions depending on the previous answers given by the participant.
 			</p>
 			<p>
-				By default, all items are set to always being visible, meaning that
-				everybody will see the question when answering the survey.
+				By default, all items are always visible, so everybody will see the question when answering the survey.
 			</p>
 			<p>
-				Follow these steps to create a dependent question.
-			</p>
-			<ol>
-				<li>
-					Add a single/multiple choice or matrix question to your questionnaire.
-				</li>
-				<li>
-					Add further items to your questionnaire.
-				</li>
-				<li>
-					Select an item that follows a single/multiple choice or matrix item and
-					that should only appear when a specific answer has been chosen.
-				</li>
-				<li>
-					Click the pen icon to edit the visibility settings. All available
-					single choice, multiple choice and matrix questions that are placed
-					above the selected item(s) are displayed, including the question text
-					and the possible answers.
-				</li>
-				<li>
-					Select the answer that, when chosen, will display the selected item.
-				</li>
-				<li>
-					Click 'Apply' to confirm the visibility setting.
-				</li>
-			</ol>
-			<p>
-				If multiple items are selected, you can edit the visibility settings for
-				all of them at once.
+				<img src="${contextpath}/resources/images/documentation/visibility.png" />
 			</p>
 			<p>
-				<strong>Note:</strong>
-				This change will only affect the questionnaire on the test page and in
-				published mode. All items will still be visible in the editor.
+				The visibility feature offers 2 options to trigger the display of subsequent questions:
+				<ul>
+					<li>'OR': the user needs to choose at least one of the selected items for the question to be displayed;</li>
+					<li>'AND': the user needs to choose all selected items for the question to be displayed.</li>
+				</ul>			
 			</p>
 			<p>
-				When activated, arrows are displayed next to the connected items to show
-				the visibility settings in the form area.
+				Below the steps to create a dependent question:
+				<ol>
+					<li>Go to the question you want to hide/display - click properties.</li>
+					<li>Click on the pen icon next to the visibility feature.</li>
+					<li>Select the option to be applied: 'OR' (default) or 'AND'.</li>
+					<li>Use the checkboxes to select the answer(s) that will trigger the display of the question.</li>
+					<li>Click 'Apply'.</li>
+				</ol>
 			</p>
 			<p>
-				Answers that trigger any item are marked with an arrow pointing down.
+				<img src="${contextpath}/resources/images/documentation/visibility2.png" />
 			</p>
 			<p>
-				Items that are triggered by any answer are marked with an arrow pointing
-				up.
+			When activated, arrows are displayed next to the connected items to show the visibility settings in the form area (where the questionnaire is build up). Answers that trigger an item are marked with an arrow pointing down. Items that you can either display or hide are marked with an arrow pointing up. 
 			</p>
 			<p>
-				When moving the pointer over the arrows or IDs in the element properties
-				pane, the connected items are highlighted in the form area and navigation
-				pane.
+				<img src="${contextpath}/resources/images/documentation/visibility3.png" />
 			</p>
 			<p>
-				Items with visibility settings that have been edited will be hidden in the
-				questionnaire until the respondent selects at least one of the configured
-				answers.
+			When moving the pointer over the arrows (or IDs in the Element Properties panel), the connected items are highlighted in the form area and navigation pane.
 			</p>
+			<p>
+				<b>Bulk editing:</b> If you select multiple questions, you can edit the visibility settings for all of them at once.
+			</p>			
+			
 			<h2>
 				Can I change the order of answers in a single or multiple choice question?
 			</h2>
@@ -1185,6 +1161,7 @@
 				<u> guide</u>
 				.
 			</p>
+			
 			<h1>
 				Survey security
 			</h1>
