@@ -502,6 +502,11 @@ public class BasicController implements BeanFactoryAware {
 				}
 				if (captcha.equalsIgnoreCase("internal")) {
 					String str = request.getParameter("internal_captcha_response");
+					if (str == null)
+					{
+						str = request.getParameter("g-recaptcha-response");
+					}
+					
 					return sessionService.getCaptchaText(request).equals(str);
 				} 
 				if (captcha.equalsIgnoreCase("eucaptcha")) {
