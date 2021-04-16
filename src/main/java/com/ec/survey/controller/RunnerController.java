@@ -3172,6 +3172,8 @@ public class RunnerController extends BasicController {
 				result = handleDelphiTableRawValueQuestion(question, orderBy, limit, offset, answerSetId);
 			}
 
+			result.setQuestionType(DelphiQuestionType.from(question));
+
 			for (DelphiTableEntry entry : result.getEntries()) {
 				boolean stopIteration = false;
 

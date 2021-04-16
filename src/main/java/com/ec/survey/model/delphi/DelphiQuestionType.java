@@ -1,5 +1,7 @@
 package com.ec.survey.model.delphi;
 
+import com.ec.survey.model.survey.*;
+
 public enum DelphiQuestionType {
     SingleChoice,
     MultipleChoice,
@@ -10,5 +12,49 @@ public enum DelphiQuestionType {
     Date,
     Time,
     RegEx,
-    Table
+    Table;
+
+    public static DelphiQuestionType from(Question question) {
+        if (question instanceof SingleChoiceQuestion) {
+            return SingleChoice;
+        }
+
+        if (question instanceof MultipleChoiceQuestion) {
+            return MultipleChoice;
+        }
+
+        if (question instanceof com.ec.survey.model.survey.Matrix) {
+            return Matrix;
+        }
+
+        if (question instanceof RatingQuestion) {
+            return Rating;
+        }
+
+        if (question instanceof FreeTextQuestion) {
+            return FreeText;
+        }
+
+        if (question instanceof NumberQuestion) {
+            return Number;
+        }
+
+        if (question instanceof DateQuestion) {
+            return Date;
+        }
+
+        if (question instanceof TimeQuestion) {
+            return Time;
+        }
+
+        if (question instanceof RegExQuestion) {
+            return RegEx;
+        }
+
+        if (question instanceof Table) {
+            return Table;
+        }
+
+        return null;
+    }
 }

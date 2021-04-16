@@ -51,7 +51,12 @@
 					<span data-bind="html: question"></span>:
 					<!-- /ko -->
 					<input class="text-read-more-checkbox" type="checkbox" data-bind="attr: {'id': 'expanded-answer' + uid}">
+					<!-- ko if: $parents[1].delphiTableShowQuestionHtml() -->
+					<span class="text-to-be-truncated" data-bind="html: value"></span>
+					<!-- /ko -->
+					<!-- ko ifnot: $parents[1].delphiTableShowQuestionHtml() -->
 					<span class="text-to-be-truncated" data-bind="text: value"></span>
+					<!-- /ko -->
 					<label class="text-read-more-label" role="button" data-bind="attr: {'for': 'expanded-answer' + uid} ">${form.getMessage("label.ShowAll")}</label>
 				</div>
 				<!-- /ko -->

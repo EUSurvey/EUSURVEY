@@ -7,6 +7,7 @@ public class DelphiTable {
     private List<DelphiTableEntry> entries = new ArrayList<>();
     private boolean hasNewComments;
     private int offset;
+    private DelphiQuestionType questionType;
     private int total;
     private boolean showExplanationBox;
 
@@ -48,5 +49,13 @@ public class DelphiTable {
 
     public void setHasNewComments(boolean hasNewComments) {
         this.hasNewComments = hasNewComments;
+    }
+
+    public DelphiQuestionType getQuestionType() {
+        return questionType;
+    }
+
+    public void setQuestionType(DelphiQuestionType questionType) {
+        this.questionType = questionType;
     }
 }
