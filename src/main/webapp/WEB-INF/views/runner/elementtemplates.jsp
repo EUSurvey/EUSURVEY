@@ -649,9 +649,12 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
-		<div class="limits">
-			${form.getMessage("info.MoveTheSliderOr")}&nbsp;<a data-bind="click: markAsAnswered">${form.getMessage("label.acceptTheInitialPosition")}</a>.
-		</div>
+
+		<!-- ko if: display() == 'Slider' -->
+			<div class="limits" data-bind="style: { visibility: isAnswered() ? 'hidden' : '' }">
+				${form.getMessage("info.MoveTheSliderOr")}&nbsp;<a data-bind="click: markAsAnswered">${form.getMessage("label.acceptTheInitialPosition")}</a>.
+			</div>
+		<!-- /ko -->
 		
 		<!-- ko if: display() != 'Slider' -->
 			<!-- ko if: min() != null && min() != 0 && max() != null && max() != 0 -->
