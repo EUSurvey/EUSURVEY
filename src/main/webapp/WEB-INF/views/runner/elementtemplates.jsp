@@ -652,7 +652,7 @@
 
 		<!-- ko if: display() == 'Slider' -->
 			<div class="limits" data-bind="style: { visibility: isAnswered() ? 'hidden' : '' }">
-				${form.getMessage("info.MoveTheSliderOr")}&nbsp;<a data-bind="click: markAsAnswered">${form.getMessage("label.acceptTheInitialPosition")}</a>.
+				${form.getMessage("info.MoveTheSliderOrAccept")}
 			</div>
 		<!-- /ko -->
 		

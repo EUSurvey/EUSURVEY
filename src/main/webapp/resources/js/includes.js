@@ -896,11 +896,8 @@ function initModals(item)
 				 });
 				
 				if (!sessiontimeout && !networkproblems) {
-
 					// Empty value of unanswered input elements.
-					$(form).find("input[data-is-answered='false']").each(function() {
-						$(this).val('');
-					});
+					$(form).find("input[data-is-answered='false']").val('');
 
 					$(form).submit();
 					return;
