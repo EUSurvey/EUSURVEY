@@ -650,7 +650,7 @@
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
 
-		<!-- ko if: display() == 'Slider' -->
+		<!-- ko if: display() == 'Slider' && ${form.survey.isDelphi} -->
 			<div class="limits" data-bind="style: { visibility: isAnswered() ? 'hidden' : '' }">
 				${form.getMessage("info.MoveTheSliderOrAccept")}
 			</div>
@@ -680,8 +680,9 @@
 			
 			<a data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
 			
-			<input class="sliderbox" type="text" onchange="propagateChange(this);"
-				   data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue(), 'data-is-answered': isAnswered() ? 'true' : 'false' }"
+			<input type="text"
+				   onchange="propagateChange(this);"
+				   data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'class': css() + ' sliderbox', 'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue(), 'data-is-answered': isAnswered() ? 'true' : 'false' }"
 			/>
 
 			<a data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
