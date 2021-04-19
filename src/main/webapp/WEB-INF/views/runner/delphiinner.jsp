@@ -470,7 +470,7 @@
 			}
 		});
 
-		const answersTableViewModel = createNewDelphiBasicViewModel();
+		const answersTableViewModel = new createNewDelphiBasicViewModel();
 
 		const isDelphiShowAnswersAndStatisticsInstantly = ${form.survey.isDelphiShowAnswersAndStatisticsInstantly};
 
