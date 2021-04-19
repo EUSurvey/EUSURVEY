@@ -152,13 +152,8 @@ public class RankingQuestion extends Question {
 	}
 
 	@Transient
-	public boolean isValidAnswer(String answerValuesStringly) {
-		return isValidAnswerViaUniqueIDs(answerValuesStringly) || isValidAnswerViaIDs(answerValuesStringly);
-	}
-
-	@Transient
-	private boolean isValidAnswerViaUniqueIDs(String answerValuesStringly) {
-		String[] answerValuesStringArray = answerValuesStringly.split(";");
+	public boolean isValidAnswer(String answerValues) {
+		String[] answerValuesStringArray = answerValues.split(";");
 		List<RankingItem> children = getChildElements();
 
 		if (answerValuesStringArray.length != children.size()) {
@@ -178,29 +173,4 @@ public class RankingQuestion extends Question {
 		}
 		return true;
 	}
-
-	@Transient
-	private boolean isValidAnswerViaIDs(String answerValuesStringly) { // TODO remove
-		String[] answerValuesStringArray = answerValuesStringly.split(";");
-		List<RankingItem> children = getChildElements();
-
-		if (answerValuesStringArray.length != children.size()) {
-			return false;
-		}
-		for (String valueString : answerValuesStringArray) {
-			int value = Integer.parseInt(valueString);
-			boolean isIdFound = false;
-			for (RankingItem child : children) {
-				if (child.getId() == value) {
-					isIdFound = true;
-					break;
-				}
-			}
-			if (!isIdFound) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 }

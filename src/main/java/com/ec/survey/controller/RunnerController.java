@@ -3168,6 +3168,8 @@ public class RunnerController extends BasicController {
 				result = handleDelphiTableRatingQuestion((RatingQuestion) question, orderBy, limit, offset, answerSetId);
 			} else if (question instanceof Table) {
 				result = handleDelphiTableTable((Table) question, orderBy, limit, offset, answerSetId);
+			} else if (question instanceof RankingQuestion) {
+				result = handleDelphiTableRankingQuestion((RankingQuestion) question, orderBy, limit, offset, answerSetId);
 			} else {
 				result = handleDelphiTableRawValueQuestion(question, orderBy, limit, offset, answerSetId);
 			}
@@ -3411,6 +3413,47 @@ public class RunnerController extends BasicController {
 
 		return result;
 	}
+	
+	private DelphiTable handleDelphiTableRankingQuestion(RankingQuestion question, DelphiTableOrderBy orderBy, int limit, int offset, Integer answerSetId) {
+		DelphiTable result = new DelphiTable();
+		result.setOffset(offset);
+
+		// get survey
+		Survey survey = question.getSurvey();
+
+		// get all contributions
+		DelphiContributions contributions = answerExplanationService.getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), survey.getIsDraft(), orderBy, limit, offset);
+		result.setTotal(contributions.getTotal());
+		
+		Map<String, RankingItem> children = question.getChildElementsByUniqueId();
+		
+		// no need to group by answer set because there can only be one answer per answer set
+		for (DelphiContribution contrib : contributions.getContributions()) {			
+			
+			List<String> rankingAnswerList = new ArrayList<>();			
+				
+			for (String uniqueId : contrib.getValue().split(";")) {
+				RankingItem child = children.get(uniqueId);
+				if (null != child) {
+					rankingAnswerList.add(child.getStrippedTitleNoEscape());
+				}
+			}
+		
+			String value = String.join("; ", rankingAnswerList);
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setAnswerSetId(contrib.getAnswerSetId());
+			tableEntry.setAnswerSetUniqueCode(contrib.getAnswerSetUniqueCode());
+			tableEntry.setExplanation(contrib.getExplanation());
+			tableEntry.setUpdateDate(contrib.getUpdate());
+			tableEntry.getAnswers().add(new DelphiTableAnswer(null, value));
+			loadComments(tableEntry, contrib.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
+			loadFiles(tableEntry, contrib.getAnswerSetId(), question.getUniqueId());
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return result;
+	}	
 	
 	@PostMapping(value = "/delphiAddComment")
 	public ResponseEntity<String> delphiAddComment(HttpServletRequest request) {
