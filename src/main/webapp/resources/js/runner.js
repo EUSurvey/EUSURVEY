@@ -144,7 +144,14 @@ function propagateChange(element)
 	{
 		$("#btnSaveDraft").removeClass("btn-default").addClass("btn-primary");
 	}
-	
+
+	const surveyElement = $(element).closest(".survey-element");
+	if ($(surveyElement).find(".slider-div").length) {
+		const questionUid = $(surveyElement).attr("data-uid");
+		const viewModel = modelsForSlider[questionUid];
+		viewModel.isAnswered(true);
+	}
+
 	var div = $(element).parents(".survey-element").last();
 	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
 	$(div).find(".explanation-section").show();

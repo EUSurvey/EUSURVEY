@@ -896,8 +896,13 @@ function initModals(item)
 				 });
 				
 				if (!sessiontimeout && !networkproblems) {
+					if (isdelphi) {
+						// Empty value of unanswered input elements.
+						$(form).find("input[data-is-answered='false']").val('');
+					}
+
 					$(form).submit();
-					return;				
+					return;
 				}
 			}
 		
@@ -1163,8 +1168,14 @@ function initModals(item)
 					result = false;
 				}
 			} else if ($(this).hasClass("tinymce")) {
-				if ($(this).val().length == 0)
-				{
+				if ($(this).val().length == 0) {
+					validationinfo += $(this).attr("name") + " (R) ";
+					$(this).after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
+					result = false;
+				}
+			} else if ($(this).hasClass("sliderbox")) {
+				const isAnswered = $(this).attr('data-is-answered') === 'true';
+				if (!isAnswered) {
 					validationinfo += $(this).attr("name") + " (R) ";
 					$(this).after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					result = false;

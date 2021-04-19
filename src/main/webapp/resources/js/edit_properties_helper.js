@@ -2049,7 +2049,9 @@ function getRowsText(useparagraphs)
 function adaptSliderDisplay(isSlider)
 {
 	if (isSlider) {
-		$("tr[data-label='Mandatory']").hide();
+		if (!isDelphi) {
+			$("tr[data-label='Mandatory']").hide();
+		}
 		$("tr[data-label='Unit']").hide();
 		$("tr[data-label='MinLabel']").show();
 		$("tr[data-label='MaxLabel']").show();
