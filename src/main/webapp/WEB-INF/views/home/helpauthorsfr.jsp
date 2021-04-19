@@ -1061,7 +1061,7 @@
 				<ol>
 					<li>Allez à la question que vous voulez cacher/afficher - cliquez sur les propriétés.</li>
 					<li>Cliquez sur l'icône du stylo à côté de la fonction de visibilité.</li>
-					<li>Sélectionnez l'option à appliquer : "OR" (par défaut) ou "AND". 4.</li>
+					<li>Sélectionnez l'option à appliquer : "OR" (par défaut) ou "AND".</li>
 					<li>Utilisez les cases à cocher pour sélectionner la ou les réponses qui déclencheront l'affichage de la question.</li>
 					<li>Cliquez sur "Appliquer".</li>
 				</ol>
