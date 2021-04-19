@@ -133,9 +133,7 @@
 				$("#results-source").find("option[value='draft']").prop('selected','selected');
 				$("#resetbutton").attr("href", $("#resetbutton").attr("href") + "&results-source=draft");
 			</c:if>
-			
-			//checkDeleteBoxes();
-		
+				
 			<c:if test="${message == 'success'}">
 				showSuccess('<spring:message code="message.ContributionDeleted" />');
 			</c:if>
@@ -282,17 +280,7 @@
 			adaptScrollArea();
 		}
 		
-// 		function switchAssignedValues()
-// 		{
-// 			if ($("#show-assigned-values").is(":checked"))
-// 			{
-// 				$("#show-assigned-values").removeAttr("checked");
-// 			} else {
-// 				$("#show-assigned-values").prop("checked","checked");
-// 			}
-// 			checkAssignedValues();
-// 		}
-		
+	
 		function checkAssignedValues()
 		{
 			if ($("#show-assigned-values").is(":checked"))
@@ -306,35 +294,6 @@
 				$("#dialog-show-assigned-values-false").prop("checked", "checked");
 			}
 		}
-		
-// 		function switchDeleteCheckboxes()
-// 		{
-// 			if ($("#show-delete-checkboxes").is(":checked"))
-// 			{
-// 				$("#show-delete-checkboxes").removeAttr("checked");
-// 			} else {
-// 				$("#show-delete-checkboxes").prop("checked","checked");
-// 			}
-// 			checkDeleteBoxes();
-// 		}
-		
-// 		function checkDeleteBoxes()
-// 		{
-// 			if ($("#show-delete-checkboxes").is(":checked") && $('#results-table-link').hasClass("btn-primary"))
-// 			{
-// 				$(".checkDelete").removeClass("hiddenTableCell");
-// 				$("#btnDeleteSelected").show();
-// 				checkDeleteButtonEnabled();
-// 				$("#show-delete-checkboxes-icon").removeClass("disabled");
-// 			} else {
-// 				$(".checkDelete").addClass("hiddenTableCell");
-// 				$("#contentstable").css("width","auto");
-// 				$("#btnDeleteSelected").hide();
-// 				$("#show-delete-checkboxes-icon").addClass("disabled");
-// 			}
-			
-// 			synchronizeTableSizes();
-// 		}
 		
 		function checkAllDelete()
 		{
@@ -866,7 +825,6 @@
 				</div>
 				
 				<div style="float: left; margin-top: 0px; margin-right: 20px;">
-					<!-- <b><spring:message code="label.Source" /></b>-->
 					<select onchange="$('#resultsForm').submit();" class="form-control" name="results-source" id="results-source" style="width: auto; margin-bottom: 0px; margin-left: 10px;">
 						<c:choose>
 							<c:when test="${!sessioninfo.owner.equals(USER.id) && USER.formPrivilege < 2 && USER.getLocalPrivilegeValue('AccessResults') < 1}">
@@ -891,9 +849,6 @@
 							</c:otherwise>
 						</c:choose>
 					</select>
-					
-					<!-- <a onclick="$(this).closest('form').submit()" class="btn btn-primary" style="margin-left: 30px"><spring:message code="label.Search" /></a>
-					<a id="resetbutton" onclick="$('#show-wait-image').modal('show');" class="btn btn-default" href="${contextpath}/${sessioninfo.shortname}/management/results?reset=true"><spring:message code="label.ResetFilter" /></a> -->
 				</div>
 				<div style="margin-top: 2px; margin-right: 10px; float: right;">
 					<a class="btn btn-default" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><spring:message code="label.Settings" /></a>
@@ -915,23 +870,6 @@
 							<input value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
 						</c:otherwise>
 					</c:choose>	
-					
-					<!-- <a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton disabled hideme" style="margin: 0px" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-trash"></span></a>
-
-					<input onclick="checkAssignedValues()" name="show-assigned-values" type="checkbox" class="hideme" id="show-assigned-values" />
-					<a id="show-assigned-values-icon" onclick="switchAssignedValues()" class="switchiconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ShowAssignedValues" />" data-placement="bottom"><span class="glyphicon glyphicon-tags"></span></a>
-					<span id="show-delete-checkboxes-div" style="margin-top: 10px;">
-						<c:choose>
-							<c:when test="${showdeletecheckboxes == true}">
-								<input onclick="checkDeleteBoxes()" checked="checked" value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
-								<a id="show-delete-checkboxes-icon" onclick="switchDeleteCheckboxes()" class="switchiconbutton" data-toggle="tooltip" title="<spring:message code="label.ShowDeleteCheckboxes" />" data-placement="bottom"><span class="glyphicon glyphicon-check"></span></a>
-							</c:when>
-							<c:otherwise>
-								<input onclick="checkDeleteBoxes()" value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
-								<a id="show-delete-checkboxes-icon" onclick="switchDeleteCheckboxes()" class="switchiconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ShowDeleteCheckboxes" />" data-placement="bottom"><span class="glyphicon glyphicon-check"></span></a>
-							</c:otherwise>
-						</c:choose>
-					</span>-->					
 					
 					<span id="content-export-buttons">
 						<span class="deactivatedexports">

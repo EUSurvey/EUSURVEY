@@ -4976,4 +4976,16 @@ public class SurveyService extends BasicService {
 		
 		mailService.SendHtmlMail(email, sender, sender, "Confirmation of your submission", mailtext, null);		
 	}
+
+	@Transactional
+	public Set<String> getRankingQuestionUids(int surveyId) {
+		Survey survey = getSurvey(surveyId);
+		Set<String> result = new HashSet<>();
+		for (Element element : survey.getElements()) {
+			if (element instanceof RankingQuestion) {
+				result.add(element.getUniqueId());
+			}
+		}
+		return result;
+	}
 }
