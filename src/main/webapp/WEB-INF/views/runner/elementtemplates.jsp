@@ -354,19 +354,31 @@
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'rankingquestion', attr: {'name': 'type' + id()}" />
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
+			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+
+			<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
+				${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable'")}
+			</div>
 		<!-- /ko -->
 
+		<!-- ko ifnot: foreditor -->
+		<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
+			${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable' data-bind='click: acceptInitialAnswer'")}
+		</div>
+		<!-- /ko -->
 		<div class="rankingitem-list-container">
 			<div class="rankingitem-list">
 				<!-- ko foreach: rankingItems() -->
 				<div class="rankingitem-form-data">
-					<div class="rankigitem-decoration">&#x283F;&nbsp</div>
+					<div class="rankingitem-decoration">&#x283F;</div>
+					<a class="rankingitem-button" tabindex="0" data-toggle="tooltip" title='${form.getMessage("label.MoveUp")}' data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }"><span class="glyphicon glyphicon-arrow-up"></span></a>
+					<a class="rankingitem-button" tabindex="0" data-toggle="tooltip" title='${form.getMessage("label.MoveDown")}' data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }"><span class="glyphicon glyphicon-arrow-down"></span></a>
 					<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
 					<!-- ko if: $parent.foreditor -->
 					<input type="hidden" data-bind="value: shortname, attr: {'name': 'rankingitemshortname' + $parents[0].id(), 'data-id' : id()}" />
@@ -378,6 +390,9 @@
 				<!-- /ko -->
 			</div>
 		</div>
+		<!-- ko ifnot: foreditor -->
+		<input type="hidden" data-bind="value:getAnswerValuesString(), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" type="text"></input>
+		<!-- /ko -->
 
 	</div>
 

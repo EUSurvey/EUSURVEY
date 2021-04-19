@@ -2838,6 +2838,15 @@ public class RunnerController extends BasicController {
 								}
 
 								delphiQuestion.setAnswer(result);
+							} else if (question instanceof RankingQuestion)
+							{
+								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+
+								if (!answers.isEmpty()) {
+									for (Answer answer : answers) {
+										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
+									}
+								}
 							} else {
 								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 
