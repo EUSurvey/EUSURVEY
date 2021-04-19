@@ -142,6 +142,13 @@ public class SurveyHelper {
 										|| (question instanceof TimeQuestion && value.equalsIgnoreCase("HH:mm:ss"))) {
 									continue;
 								}
+								if (question instanceof RankingQuestion) {
+									RankingQuestion rankingQuestion = (RankingQuestion) question;
+									if (!rankingQuestion.isValidAnswer(value)) {
+										continue;
+									}
+								}
+
 								Answer answer = new Answer();
 								answer.setAnswerSet(answerSet);
 								answer.setQuestionId(question.getId());
@@ -3316,7 +3323,15 @@ public class SurveyHelper {
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
 		}
 		rankingQuestion.setIsDelphiQuestion(isDelphiQuestion);
-		
+
+		// Enforce optionality of Delphi questions.
+		Boolean isOptional = isDelphiQuestion || getBoolean(parameterMap, "optional", id);
+		if (log220 && !isOptional.equals(rankingQuestion.getOptional())) {
+			oldValues += " optional: " + rankingQuestion.getOptional();
+			newValues += " optional: " + isOptional;
+		}
+		rankingQuestion.setOptional(isOptional);
+
 		Boolean showExplanationBox = getBoolean(parameterMap, "explanationbox", id);
 		if (log220 && !showExplanationBox.equals(rankingQuestion.getShowExplanationBox())) {
 			oldValues += " showExplanationBox: " + rankingQuestion.getShowExplanationBox();
@@ -4548,6 +4563,17 @@ public class SurveyHelper {
 						}
 					}
 				}
+
+				if (element instanceof RankingQuestion) {
+					RankingQuestion ranking = (RankingQuestion) element;
+					for (Element child : ranking.getChildElements()) {
+						if (translationsByKey.get(child.getUniqueId()) != null) {
+							child.setTitle(translationsByKey.get(child.getUniqueId()).getLabel());
+						} else if (translationsByKey.get(child.getId().toString()) != null) {
+							child.setTitle(translationsByKey.get(child.getId().toString()).getLabel());
+						}
+					}
+				}
 			}
 		}
 	}
@@ -4879,6 +4905,21 @@ public class SurveyHelper {
 						}
 					}
 					return answerValue;
+				} else if (question instanceof RankingQuestion) {
+					RankingQuestion rankingQuestion = (RankingQuestion) question;
+					List<String> rankingAnswerList = new ArrayList<>();
+					try {
+						Map<String, RankingItem> children = rankingQuestion.getChildElementsByUniqueId();
+						for (String uniqueId : answerValue.split(";")) {
+							RankingItem child = children.get(uniqueId);
+							if (null != child) {
+								rankingAnswerList.add(child.getStrippedTitleNoEscape());
+							}
+						}
+					} catch (org.hibernate.LazyInitializationException lazy) { // when we don't have a session
+						return answerValue; // fallback to display raw id numbers
+					}
+					return String.join("; ", rankingAnswerList);
 				} else if (question instanceof ChoiceQuestion) {
 					int possibleAnswerId = Integer.parseInt(answerValue);
 					ChoiceQuestion choicequestion = (ChoiceQuestion) question;

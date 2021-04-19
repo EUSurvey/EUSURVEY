@@ -790,6 +790,9 @@ public class SurveyService extends BasicService {
 			} else if (element instanceof GalleryQuestion) {
 				GalleryQuestion gallery = (GalleryQuestion) element;
 				Hibernate.initialize(gallery.getFiles());
+			} else if (element instanceof RankingQuestion) {
+				RankingQuestion ranking = (RankingQuestion) element;
+				Hibernate.initialize(ranking.getChildElements());
 			}
 		}
 	}

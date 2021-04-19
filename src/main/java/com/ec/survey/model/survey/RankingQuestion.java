@@ -1,7 +1,9 @@
 package com.ec.survey.model.survey;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -95,13 +97,12 @@ public class RankingQuestion extends Question {
 	}	
 	
 	@Transient
-	public RankingItem getChildElementsByUniqueId(String uid) {
+	public Map<String, RankingItem> getChildElementsByUniqueId() {
+		Map<String, RankingItem> map = new HashMap<>();
 		for (RankingItem thatElement : getAllChildElements ()) {
-			if (thatElement.getUniqueId() != null && thatElement.getUniqueId().length() > 0 && thatElement.getUniqueId().equals(uid)) {
-				return thatElement;
-			}
+			map.put(thatElement.getUniqueId(), thatElement);
 		}
-		return null;
+		return map;
 	}
 
 	public RankingQuestion copy(String fileDir) throws ValidationException {
@@ -114,6 +115,17 @@ public class RankingQuestion extends Question {
 		}
 
 		return copy;
+	}
+
+	@Transient
+	@Override
+	public String getCss()
+	{
+		String css = super.getCss();
+
+		css += " ranking";
+
+		return css.trim();
 	}
 
 	@Override
@@ -137,6 +149,58 @@ public class RankingQuestion extends Question {
 				return true;
 		}
 		return false;
+	}
+
+	@Transient
+	public boolean isValidAnswer(String answerValuesStringly) {
+		return isValidAnswerViaUniqueIDs(answerValuesStringly) || isValidAnswerViaIDs(answerValuesStringly);
+	}
+
+	@Transient
+	private boolean isValidAnswerViaUniqueIDs(String answerValuesStringly) {
+		String[] answerValuesStringArray = answerValuesStringly.split(";");
+		List<RankingItem> children = getChildElements();
+
+		if (answerValuesStringArray.length != children.size()) {
+			return false;
+		}
+		for (String valueString : answerValuesStringArray) {
+			boolean isIdFound = false;
+			for (RankingItem child : children) {
+				if (child.getUniqueId().equals(valueString)) {
+					isIdFound = true;
+					break;
+				}
+			}
+			if (!isIdFound) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Transient
+	private boolean isValidAnswerViaIDs(String answerValuesStringly) { // TODO remove
+		String[] answerValuesStringArray = answerValuesStringly.split(";");
+		List<RankingItem> children = getChildElements();
+
+		if (answerValuesStringArray.length != children.size()) {
+			return false;
+		}
+		for (String valueString : answerValuesStringArray) {
+			int value = Integer.parseInt(valueString);
+			boolean isIdFound = false;
+			for (RankingItem child : children) {
+				if (child.getId() == value) {
+					isIdFound = true;
+					break;
+				}
+			}
+			if (!isIdFound) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

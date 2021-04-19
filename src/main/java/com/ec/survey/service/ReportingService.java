@@ -42,6 +42,8 @@ import com.ec.survey.model.survey.MatrixOrTable;
 import com.ec.survey.model.survey.MultipleChoiceQuestion;
 import com.ec.survey.model.survey.NumberQuestion;
 import com.ec.survey.model.survey.Question;
+import com.ec.survey.model.survey.RankingItem;
+import com.ec.survey.model.survey.RankingQuestion;
 import com.ec.survey.model.survey.RatingQuestion;
 import com.ec.survey.model.survey.RegExQuestion;
 import com.ec.survey.model.survey.SingleChoiceQuestion;
@@ -643,6 +645,28 @@ public class ReportingService extends BasicService {
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
+							} else if (question instanceof RankingQuestion) {
+								RankingQuestion rankingQuestion = (RankingQuestion)question;
+								Map<String, RankingItem> children = rankingQuestion.getChildElementsByUniqueId();
+								String[] answerids = item.toString().split(";");						
+								String v = "";
+								for (String uniqueId : answerids)
+								{
+									if (v.length() > 0) v += ";";
+									RankingItem child = children.get(uniqueId);
+									if (child != null)
+									{
+										if (doNotReplaceAnswerIDs)
+										{
+											v += child.getId();
+										} else {
+											v += child.getStrippedTitleNoEscape();
+										}
+										
+										v += " <span class='assignedValue hideme'>(" +child.getShortname() + ")</span>";
+									}							
+								}						
+								row.add(v.length() > 0 ? v : null);
 							} else {
 								row.add(item.toString());
 							}
@@ -910,6 +934,8 @@ public class ReportingService extends BasicService {
 				for (Element child : rating.getChildElements()) {
 					putColumnNameAndType(columnNamesToType, child.getUniqueId(), "TEXT");
 				}
+			} else if (question instanceof RankingQuestion) {
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			}
 		}
 		return columnNamesToType;
@@ -1406,6 +1432,16 @@ public class ReportingService extends BasicService {
 					columns.add(ratingQuestion.getUniqueId());		
 					values.add(answers.isEmpty() ? null : "'" + answers.get(0).getValue() + "'");
 				}
+			} else if (question instanceof RankingQuestion) {
+				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
+				String d = null;
+				if (!answers.isEmpty())
+				{
+					d = answers.get(0).getValue();						
+				}
+				columns.add(question.getUniqueId());
+				values.add(":value" + parameters.size());
+				parameters.put("value" + parameters.size(), d);	
 			}
 		}
 		

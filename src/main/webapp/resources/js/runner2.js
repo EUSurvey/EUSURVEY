@@ -134,7 +134,6 @@ function addDelphiClassToContainerIfNeeded(element, container) {
 var modelsForDelphiQuestions = [];
 
 function addElementToContainer(element, container, foreditor, forskin) {
-
 	addDelphiClassToContainerIfNeeded(element, container);
 
 	var viewModel = getElementViewModel(element);
@@ -367,6 +366,11 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	});
 	
 	initModals($(container).find(".modal-dialog").first());
+
+	$(container).find(".rankingitem-list-container").each(function() {
+		const viewmodel = ko.dataFor(this);
+		viewmodel.initOn(this);
+	});
 	
 	$(container).find(".expand").TextAreaExpander();
 	

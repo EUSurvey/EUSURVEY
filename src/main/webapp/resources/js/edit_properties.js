@@ -456,6 +456,7 @@ var ElementProperties = function() {
 				}
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				getActionRow("RankingItems", "<span class='glyphicon glyphicon-plus'></span>", "addRankingEntry()", "<span class='glyphicon glyphicon-minus'></span>", "removeRankingEntry($(_elementProperties.selectedelement))");
+				getCheckPropertiesRow("Mandatory", $(e).find("input[name^='optional']").val() == 'false', isDelphiQuestion);
 				getTextPropertiesRow("Help", $(e).find("textarea[name^='help']").first().text(), true);
 				getVisibilityRow(false, !isDelphiQuestion);
 
