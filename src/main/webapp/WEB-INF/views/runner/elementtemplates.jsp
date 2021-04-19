@@ -653,10 +653,10 @@
 		<!-- ko if: display() == 'Slider' && ${form.survey.isDelphi} -->
 			<div class="limits" data-bind="style: { visibility: isAnswered() ? 'hidden' : '' }">
 				<!-- ko ifnot: foreditor -->
-				${form.getMessage("info.MoveTheSliderOrAccept").replace('{0}', 'data-bind="click: markAsAnswered"')}
+				${form.getMessage("info.MoveTheSliderOrAccept", "data-bind='click: markAsAnswered'")}
 				<!-- /ko -->
 				<!-- ko if: foreditor -->
-				${form.getMessage("info.MoveTheSliderOrAccept").replace('{0}', '')}
+				${form.getMessage("info.MoveTheSliderOrAccept", "")}
 				<!-- /ko -->
 			</div>
 		<!-- /ko -->
