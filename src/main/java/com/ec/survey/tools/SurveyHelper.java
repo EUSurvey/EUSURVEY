@@ -4907,19 +4907,8 @@ public class SurveyHelper {
 					return answerValue;
 				} else if (question instanceof RankingQuestion) {
 					RankingQuestion rankingQuestion = (RankingQuestion) question;
-					List<String> rankingAnswerList = new ArrayList<>();
-					try {
-						Map<String, RankingItem> children = rankingQuestion.getChildElementsByUniqueId();
-						for (String uniqueId : answerValue.split(";")) {
-							RankingItem child = children.get(uniqueId);
-							if (null != child) {
-								rankingAnswerList.add(child.getStrippedTitleNoEscape());
-							}
-						}
-					} catch (org.hibernate.LazyInitializationException lazy) { // when we don't have a session
-						return answerValue; // fallback to display raw id numbers
-					}
-					return String.join("; ", rankingAnswerList);
+					List<String> answerTitles = rankingQuestion.getAnswerWithStrippedTitleNoEscape(answerValue);
+					return String.join("; ", answerTitles);
 				} else if (question instanceof ChoiceQuestion) {
 					int possibleAnswerId = Integer.parseInt(answerValue);
 					ChoiceQuestion choicequestion = (ChoiceQuestion) question;

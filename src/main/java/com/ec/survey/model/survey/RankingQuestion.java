@@ -105,6 +105,19 @@ public class RankingQuestion extends Question {
 		return map;
 	}
 
+	@Transient
+	public List<String> getAnswerWithStrippedTitleNoEscape(String answerValue) {
+		Map<String, RankingItem> children = getChildElementsByUniqueId();
+		List<String> rankingAnswerList = new ArrayList<>();
+		for (String uniqueId : answerValue.split(";")) {
+			RankingItem child = children.get(uniqueId);
+			if (null != child) {
+				rankingAnswerList.add(child.getStrippedTitleNoEscape());
+			}
+		}
+		return rankingAnswerList;
+	}
+
 	public RankingQuestion copy(String fileDir) throws ValidationException {
 		RankingQuestion copy = new RankingQuestion();
 		baseCopy(copy);

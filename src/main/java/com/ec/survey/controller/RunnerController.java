@@ -3425,20 +3425,9 @@ public class RunnerController extends BasicController {
 		DelphiContributions contributions = answerExplanationService.getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), survey.getIsDraft(), orderBy, limit, offset);
 		result.setTotal(contributions.getTotal());
 		
-		Map<String, RankingItem> children = question.getChildElementsByUniqueId();
-		
 		// no need to group by answer set because there can only be one answer per answer set
 		for (DelphiContribution contrib : contributions.getContributions()) {			
-			
-			List<String> rankingAnswerList = new ArrayList<>();			
-				
-			for (String uniqueId : contrib.getValue().split(";")) {
-				RankingItem child = children.get(uniqueId);
-				if (null != child) {
-					rankingAnswerList.add(child.getStrippedTitleNoEscape());
-				}
-			}
-		
+			List<String> rankingAnswerList = question.getAnswerWithStrippedTitleNoEscape(contrib.getValue());
 			String value = String.join("; ", rankingAnswerList);
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(contrib.getAnswerSetId());
