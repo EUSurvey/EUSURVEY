@@ -649,6 +649,7 @@ public class SurveyService extends BasicService {
 		}
 		if (survey != null && synchronizeSurvey) {
 			synchronizeSurvey(survey, survey.getLanguage().getCode(), setSurvey);
+			Hibernate.initialize(survey.getOwner().getRoles());
 
 			session.setReadOnly(survey, readonly);
 			for (Element e : survey.getElementsRecursive(true)) {
