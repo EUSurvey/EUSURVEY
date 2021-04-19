@@ -259,17 +259,29 @@ function newScoringViewModel(element)
 }
 
 function createNewDelphiBasicViewModel() {
+	const self = this;
+	self.delphiTableEntries = ko.observableArray();
+	self.delphiTableLoading = ko.observable(false);
+	self.delphiTableLimit = ko.observable(20);
+	self.delphiTableNewComments = ko.observable(false);
+	self.delphiTableOffset = ko.observable(0);
+	self.delphiTableQuestionType = ko.observable("");
+	self.delphiTableShowQuestionHtml = ko.computed(function () {
+		// used to decide whether Knockout's html or text binding should be used
+		switch (self.delphiTableQuestionType()) {
+			case "SingleChoice":
+			case "MultipleChoice":
+			case "Matrix":
+				// only allow HTML for these three question types, as others don't need it or potentially allow XSS
+				return true;
 
-	return {
-		delphiTableEntries: ko.observableArray(),
-		delphiTableLoading: ko.observable(false),
-		delphiTableLimit: ko.observable(20),
-		delphiTableNewComments: ko.observable(false),
-		delphiTableOffset: ko.observable(0),
-		delphiTableTotalEntries: ko.observable(0),
-		delphiTableOrder: ko.observable("UpdateDesc"),
-		showExplanationBox: ko.observable(true)
-	};
+			default:
+				return false;
+		}
+	});
+	self.delphiTableTotalEntries = ko.observable(0);
+	self.delphiTableOrder = ko.observable("UpdateDesc");
+	self.showExplanationBox = ko.observable(true);
 }
 
 function newBasicViewModel(element)

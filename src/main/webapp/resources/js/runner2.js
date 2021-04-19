@@ -1187,6 +1187,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 				return;
 			}
 
+			viewModel.delphiTableQuestionType(result.questionType);
 			viewModel.showExplanationBox(result.showExplanationBox);
 			
 			for (let i = 0; i < result.entries.length; i++) {
