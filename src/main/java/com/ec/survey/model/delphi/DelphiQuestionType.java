@@ -12,7 +12,8 @@ public enum DelphiQuestionType {
     Date,
     Time,
     RegEx,
-    Table;
+    Table,
+    Ranking;
 
     public static DelphiQuestionType from(Question question) {
         if (question instanceof SingleChoiceQuestion) {
@@ -23,7 +24,7 @@ public enum DelphiQuestionType {
             return MultipleChoice;
         }
 
-        if (question instanceof com.ec.survey.model.survey.Matrix) {
+        if (question instanceof Matrix) {
             return Matrix;
         }
 
@@ -53,6 +54,10 @@ public enum DelphiQuestionType {
 
         if (question instanceof Table) {
             return Table;
+        }
+
+        if (question instanceof RankingQuestion) {
+            return Ranking;
         }
 
         return null;
