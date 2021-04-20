@@ -764,6 +764,20 @@ function newRankingViewModel(element)
 		return $.map(viewModel.answervalues(), uniqueId => viewModel.itemTitleLookup[uniqueId]);
 	});
 
+	viewModel.fixWidth = function(domElement) {
+		const rankingItemFormDatas = $(domElement).find(".rankingitem-form-data");
+		rankingItemFormDatas.each(function() {
+			$(this).css('width', 'auto');
+		});
+		let commonWidth = 0;
+		rankingItemFormDatas.each(function() {
+			commonWidth = Math.max(commonWidth, ($(this).width()));
+		});
+		rankingItemFormDatas.each(function() {
+			$(this).width(2 + commonWidth);
+		});
+	};
+
 	viewModel.initOn = function(domElement) {
 		const viewmodel = this;
 		if (viewmodel.foreditor) return;
@@ -786,13 +800,12 @@ function newRankingViewModel(element)
 			viewmodel.rankingItems(rankingItemReordered);
 			viewmodel.answervalues(formeranswervalues);
 		}
-		let commonWidth = 0;
-		$(domElement).find(".rankingitem-form-data").each(function() {
-			commonWidth = Math.max(commonWidth, ($(this).width()));
+
+		viewmodel.fixWidth(domElement);
+		window.addEventListener('resize', function() {
+			viewmodel.fixWidth(domElement);
 		});
-		$(domElement).find(".rankingitem-form-data").each(function() {
-			$(this).width(2 + commonWidth);
-		});
+
 		const self = $(domElement).find(".rankingitem-list")[0];
 		$(self).sortable({
 			update: function(event, ui) {
