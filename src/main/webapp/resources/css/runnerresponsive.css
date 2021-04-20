@@ -98,6 +98,7 @@
 .answertext {
 	color: #333;
 	margin-left: 5px;
+	word-break: break-all;
 	word-wrap: break-word;
 }
 
