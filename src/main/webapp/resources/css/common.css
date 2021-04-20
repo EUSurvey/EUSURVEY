@@ -1319,6 +1319,10 @@ legend {
     display: inline-block !important;
 }
 
+.delphiupdatemessage:empty, .newdelphicomments:empty {
+	display: none !important;
+}
+
 .newdelphicomments {
 	background-color: #337ab7 !important;
 }
