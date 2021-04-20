@@ -3652,6 +3652,23 @@ public class RunnerController extends BasicController {
 
 		Survey survey = question.getSurvey();
 
+		String[] colLabels = new String[question.getColumns()];
+		String[] rowLabels = new String[question.getRows()];
+
+		for (Element child : question.getChildElements()) {
+			Integer position = child.getPosition();
+
+			if (position < 1) {
+				continue;
+			}
+
+			if (position < question.getColumns()) {
+				colLabels[position] = child.getTitle();
+			} else {
+				rowLabels[position - question.getColumns() + 1] = child.getTitle();
+			}
+		}
+
 		for (List<DelphiContribution> entry : groupDelphiContributions(contributions)) {
 			DelphiContribution firstValue = entry.get(0);
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
@@ -3661,8 +3678,8 @@ public class RunnerController extends BasicController {
 			tableEntry.setUpdateDate(firstValue.getUpdate());
 
 			for (DelphiContribution contrib : entry) {
-				String col = Character.toString((char) ('A' + contrib.getColumn() - 1)); // column 1 is A
-				DelphiTableAnswer answer = new DelphiTableAnswer(col + contrib.getRow(), contrib.getValue());
+				String label = "<span>" + colLabels[contrib.getColumn()] + " - " + rowLabels[contrib.getRow()] + "</span>";
+				DelphiTableAnswer answer = new DelphiTableAnswer(label, contrib.getValue());
 				tableEntry.getAnswers().add(answer);
 			}
 
