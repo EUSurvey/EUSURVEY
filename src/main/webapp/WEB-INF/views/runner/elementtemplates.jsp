@@ -73,11 +73,11 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
-		<div class="answer-columns" style="position: relative">
+		<div class="answer-columns" style="position: relative; overflow-x:auto; padding-bottom: 8px;">
 		
 			<!-- ko if: likert() && !(ismobile || istablet) -->
 						
-				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median answers-table' : 'likert-div answers-table'}">
+				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median answers-table' : 'likert-div answers-table'}, style: { width: possibleAnswers().length * 100 + 'px' }">
 					
 					<!-- ko if: !(ismobile || istablet) -->
 				
@@ -144,7 +144,7 @@
 					</tr>
 					<!-- /ko -->				
 					
-					<!-- ko foreach: orderedPossibleAnswersByRows(${ismobile != null}, ${responsive != null}) -->
+					<!-- ko foreach: orderedPossibleAnswersByRows(true, ${responsive != null}) -->
 					<tr class="possibleanswerrow">				
 						<!-- ko foreach: $data -->					
 											
