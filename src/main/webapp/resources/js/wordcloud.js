@@ -123,12 +123,25 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 		
 		$(modal).find("canvas").remove();
 		$('#wordcloudmodal').remove();
+
+		let width;
+		let height;
+		if (isresponsive) {
+			width = 300;
+			height = 200;
+		} else {
+			width = 800;
+			height = 600;
+		}
 		
 		div = document.createElement("div");
-		$(div).attr("id", "wordcloudmodal").css("height", "600px").attr("width", "800px").addClass("center-block");
+		$(div).attr("id", "wordcloudmodal")
+			.css("height", height + "px")
+			.attr("width", width + "px")
+			.addClass("center-block");
 		$(modal).find(".modal-body").append(div);
 				
-		var vis = wordCloud('#wordcloudmodal', 800, 600);
+		var vis = wordCloud('#wordcloudmodal', width, height);
 		var data = getWordCloudData(result, 40);
 		vis.update(data);
 		
@@ -145,7 +158,7 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 	
 		var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 
-		if (forStartpage) {
+		if (forStartpage || isresponsive) {
 			w = 300;
 			h = 200;
 		} else if (forResults) {
