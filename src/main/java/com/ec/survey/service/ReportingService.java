@@ -324,6 +324,9 @@ public class ReportingService extends BasicService {
 								} else if (question instanceof TimeQuestion) {
 									where += columnname + " LIKE :answer" + i;
 									values.put(Constants.ANSWER + i,  "%" + answer + "%");
+								} else if (question instanceof RankingQuestion) {
+									where += columnname + " LIKE :answer" + i;
+									values.put(Constants.ANSWER + i, answer + "%");		
 								} else if (answer.contains("|")) { // Matrices
 									String answerUid = answer.substring(answer.indexOf('|')+1);
 									where += columnname + " LIKE :answer" + i;
@@ -344,7 +347,7 @@ public class ReportingService extends BasicService {
 									values.put(Constants.ANSWER + i, "%" + answer + "%");								
 								} else if (question instanceof GalleryQuestion) {
 									where += columnname + " LIKE :answer" + i;
-									values.put(Constants.ANSWER + i, "%" + answer + ";%");								
+									values.put(Constants.ANSWER + i, "%" + answer + ";%");		
 								} else { //Rating
 									where += columnname + " LIKE :answer" + i;
 									values.put(Constants.ANSWER + i, "%" + answer + "%");
