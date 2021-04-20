@@ -1726,6 +1726,8 @@ function showResultsTable(button) {
 	const container = $(button).closest('.results-table-row');
 	$(container).find('.results-table-row__link-hide').show();
 	$(container).find('.delphi-table').show();
+	const questionUid = $(button).closest(".survey-element").attr("data-uid");
+	addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionUid);
 }
 
 function hideResultsTable(button) {
