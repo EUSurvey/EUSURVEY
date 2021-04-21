@@ -69,11 +69,20 @@ public class RankingQuestion extends Question {
 		if (!missingElements.isEmpty())
 		{
 			List<RankingItem> result = new ArrayList<>();
-			for (RankingItem thatElement : missingElements)
+			
+			for (RankingItem child : childElements)
 			{
-				if (!result.contains(thatElement))
+				if (!result.contains(child))
 				{
-					result.add(thatElement);
+					result.add(child);
+				}
+			}
+			
+			for (RankingItem child : missingElements)
+			{
+				if (!result.contains(child))
+				{
+					result.add(child);
 				}
 			}
 			
@@ -111,6 +120,7 @@ public class RankingQuestion extends Question {
 		List<String> rankingAnswerList = new ArrayList<>();
 		for (String uniqueId : answerValue.split(";")) {
 			RankingItem child = children.get(uniqueId);
+
 			if (null != child) {
 				rankingAnswerList.add(child.getStrippedTitleNoEscape());
 			}
