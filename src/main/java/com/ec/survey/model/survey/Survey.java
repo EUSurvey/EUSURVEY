@@ -1091,11 +1091,16 @@ final public class Survey implements java.io.Serializable {
 
 	protected static Comparator<Element> newElementByPositionComparator() {
 		return (first, second) -> {
-			int result = first.getPosition().compareTo(second.getPosition());
+			
+			int result = 0;
+			if (first.getPosition() != null && second.getPosition() != null) {
+				result = first.getPosition().compareTo(second.getPosition());
+			}
 
 			// if both elements have the same position, the older one should be first
-			if (result == 0)
+			if (result == 0) {
 				result = first.getId().compareTo(second.getId());
+			}
 
 			return result;
 		};
