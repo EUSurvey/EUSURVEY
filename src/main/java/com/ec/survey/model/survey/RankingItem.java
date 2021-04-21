@@ -34,6 +34,7 @@ public class RankingItem extends Element {
 	{	
 		RankingItem copy = new RankingItem();
 		copy.setTitle(Tools.filterHTML(this.getTitle()));
+		copy.setSourceId(this.getId());
 		copy.setOriginalTitle(Tools.filterHTML(this.getOriginalTitle()));
 		copy.setShortname(this.getShortname());
 		copy.setUniqueId(getUniqueId());
