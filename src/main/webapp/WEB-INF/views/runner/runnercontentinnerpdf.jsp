@@ -645,8 +645,34 @@
 									</div>
 								</c:otherwise>
 							</c:choose>
+						</c:if>						
+					
+						<c:if test="${element.getType() == 'RankingQuestion'}">
+							<div class="ranking-question-initial-answer-message">
+								${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable' data-bind='click: acceptInitialAnswer'")}
+							</div>
+							<div class="rankingitem-list-container">
+								<div class="rankingitem-list">
+									<c:forEach items="${form.getRankingItems(element)}" var="child">			
+										<div class="rankingitem-form-data">
+											<table>
+												<tr>
+													<td>
+														<div class="rankingitem-decoration" style="padding-top: 2px">
+															<img src="${contextpath}/resources/images/drag.png" />
+														</div>														
+													</td>
+													<td>
+														<div class="rankingitemtext">${child.title}</div>	
+													</td>
+												</tr>
+											</table>							
+										</div>
+									</c:forEach>
+								</div>
+							</div>
 						</c:if>
-						
+					
 						<c:if test="${form.getValidationMessage(element).length() > 0}">
 							<div style="color: #f00" class="validation-error-server"><esapi:encodeForHTML>${form.getValidationMessage(element)}</esapi:encodeForHTML></div>
 						</c:if>
