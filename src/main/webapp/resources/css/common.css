@@ -2420,7 +2420,6 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	height: 600px;
 	margin: 0 auto;
 	max-width: 800px;
-	width: 85vw;
 }
 
 .question__chart-container,
