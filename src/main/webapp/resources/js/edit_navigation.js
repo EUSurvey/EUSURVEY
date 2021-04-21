@@ -11,7 +11,7 @@ var NavigationItem = function(type, css, id, title) {
     
     this.hasChildren = function()
     {
-    	if (this.type == "section" || this.type== "matrix" || this.type== "table" || this.type == "choicequestion" || this.type == "ratingquestion")
+    	if (this.type == "section" || this.type== "matrix" || this.type== "table" || this.type == "choicequestion" || this.type == "ratingquestion" || this.type == "rankingquestion")
     	{
     		return true;
     	}
@@ -96,6 +96,9 @@ var NavigationModel = function () {
     		} else if ($(e).hasClass("ratingitem")) {
     			ni.type = "ratingquestion";
     			ni.css = "navigationitemrating navquestion";
+    		} else if ($(e).hasClass("rankingitem")) {
+    			ni.type = "rankingquestion";
+    			ni.css = "navigationitemranking navquestion";
     		} else {
     			ni.css += " navquestion";
     		}
@@ -148,6 +151,11 @@ var NavigationModel = function () {
 		} else if ($(element).hasClass("ratingitem"))
 		{
 			$(element).find("textarea[name^=question]").each(function(){
+				ni.addItem(model.getNavigationItem(this, true));
+			});
+		} else if ($(element).hasClass("rankingitem"))
+		{
+			$(element).find("textarea[name^=rankingitemtitle]").each(function(){
 				ni.addItem(model.getNavigationItem(this, true));
 			});
 		}
@@ -394,6 +402,11 @@ function goTo(id, event)
 		
 		if ($(elem).length == 0)
 		{
+			elem = $("#content").find(".rankingitemtext[data-id=" + id + "]").first();
+		}
+		
+		if ($(elem).length == 0)
+		{
 			elem = $("#content").find(".ratingquestion[data-id=" + id + "]").first();
 		}
 	}	
@@ -476,6 +489,16 @@ function showHideElements(span)
 			$(span).removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
 		}
 	} else if ($(ni).hasClass("navigationitemrating"))
+	{
+		if ($(span).hasClass("glyphicon-chevron-down"))
+		{
+			$(ni).find(".navigationitem").hide(400);
+			$(span).removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
+		} else {
+			$(ni).find(".navigationitem").show(400);
+			$(span).removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
+		}
+	} else if ($(ni).hasClass("navigationitemranking"))
 	{
 		if ($(span).hasClass("glyphicon-chevron-down"))
 		{
