@@ -654,6 +654,10 @@ final public class Survey implements java.io.Serializable {
 				elementsRecursive.addAll(((RatingQuestion) element).getChildElements());
 				elementsRecursiveWithAnswers.addAll(((RatingQuestion) element).getChildElements());
 			}
+			if (element instanceof RankingQuestion) {
+				elementsRecursive.addAll(((RankingQuestion) element).getChildElements());
+				elementsRecursiveWithAnswers.addAll(((RankingQuestion) element).getChildElements());
+			}
 		}
 
 		if (answers) {

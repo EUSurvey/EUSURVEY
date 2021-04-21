@@ -248,6 +248,16 @@ public class TranslationsHelper {
 						}
 					}
 				}
+				
+				if (element instanceof RankingQuestion) {
+					RankingQuestion ranking = (RankingQuestion) element;
+					for (Element child : ranking.getChildElements()) {
+						translations.getTranslations()
+							.add(new Translation(child.getUniqueId(),
+								child.getTitle() != null ? child.getTitle() : "",
+								survey.getLanguage().getCode(), survey.getId(), translations));
+					}
+				}
 			} else {
 				logger.warn("element without unique id found: " + element.getId());
 			}
@@ -353,6 +363,13 @@ public class TranslationsHelper {
 					if (child instanceof Text) {
 						result.add(new KeyValue(child.getUniqueId(), "L"));
 					}
+				}
+			}
+			
+			if (element instanceof RankingQuestion) {
+				RankingQuestion ranking = (RankingQuestion) element;
+				for (Element child : ranking.getChildElements()) {
+					result.add(new KeyValue(child.getUniqueId(), "L"));
 				}
 			}
 		}
@@ -482,6 +499,14 @@ public class TranslationsHelper {
 						result.add(new KeyValue(child.getUniqueId(),
 								resources.getMessage("label.Text", null, "Text", locale)));
 					}
+				}
+			}
+			
+			if (element instanceof RankingQuestion) {
+				RankingQuestion ranking = (RankingQuestion) element;
+				for (Element child : ranking.getChildElements()) {
+					result.add(new KeyValue(child.getUniqueId(),
+							resources.getMessage("label.Text", null, "Text", locale)));
 				}
 			}
 		}
@@ -641,6 +666,17 @@ public class TranslationsHelper {
 				if (!(child instanceof EmptyElement)) {
 					childrenElement.appendChild(getElementNode(child, doc, translationByKey));
 				}
+			}
+			elementNode.appendChild(childrenElement);
+		}
+		
+		if (element instanceof RankingQuestion) {
+
+			RankingQuestion ranking = (RankingQuestion) element;
+			org.w3c.dom.Element childrenElement = doc.createElement("Children");
+
+			for (Element child : ranking.getChildElements()) {
+				childrenElement.appendChild(getElementNode(child, doc, translationByKey));
 			}
 			elementNode.appendChild(childrenElement);
 		}
@@ -1053,6 +1089,19 @@ public class TranslationsHelper {
 						}
 					}
 				}
+				
+				if (element instanceof RankingQuestion) {
+					RankingQuestion ranking = (RankingQuestion) element;
+					for (Element child : ranking.getChildElements()) {
+						label = getLabel(child, "", translationsByKey);
+						if (notNullOrEmpty(label)) {
+							row = sheet.createRow(rowIndex++);
+							addTextCell(row, 0, child.getUniqueId());
+							addTextCell(row, 1, descriptions.get(child.getUniqueId()));
+							addTextCell(row, 2, label);
+						}
+					}
+				}
 
 			}
 
@@ -1359,6 +1408,21 @@ public class TranslationsHelper {
 						}
 					}
 				}
+				
+				if (element instanceof RankingQuestion) {
+					RankingQuestion ranking = (RankingQuestion) element;
+					for (Element child : ranking.getChildElements()) {
+						label = getLabel(child, "", translationsByKey);
+						if (notNullOrEmpty(label)) {
+							cell = sheet.getCellByPosition(0, rowIndex);
+							cell.setStringValue(child.getUniqueId());
+							cell = sheet.getCellByPosition(1, rowIndex);
+							cell.setStringValue(descriptions.get(child.getUniqueId()));
+							cell = sheet.getCellByPosition(2, rowIndex++);
+							cell.setStringValue(label);
+						}
+					}
+				}
 			}
 
 			java.io.File temp = fileService.createTempFile("translation" + UUID.randomUUID().toString(), ".ods");
@@ -1577,6 +1641,21 @@ public class TranslationsHelper {
 					}
 				}
 
+				if (type.contains("RankingQuestion")) {
+					org.w3c.dom.Element children = (org.w3c.dom.Element) element.getElementsByTagName("Children")
+							.item(0);
+
+					for (int j = 0; j < children.getElementsByTagName("Element").getLength(); j++) {
+						org.w3c.dom.Element child = (org.w3c.dom.Element) children.getElementsByTagName("Element")
+								.item(j);
+						key = Tools.repairXML(child.getAttribute("key"));
+						label = getText(child.getElementsByTagName(Constants.LABEL), Constants.LABEL);
+
+						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
+					}
+				}
+
+				
 				org.w3c.dom.NodeList feedbackChildren = element.getElementsByTagName("Feedback");
 
 				for (int j = 0; j < feedbackChildren.getLength(); j++) {
@@ -2055,6 +2134,18 @@ public class TranslationsHelper {
 					}
 				}
 			}
+			
+			if (element instanceof RankingQuestion) {
+				RankingQuestion ranking = (RankingQuestion) element;
+				for (Element child : ranking.getChildElements()) {
+					if (translationsByKey.containsKey(child.getId().toString())
+							&& notNullOrEmpty(translationsByKey.get(child.getId().toString()).getLabel()))
+						child.setTitle(translationsByKey.get(child.getId().toString()).getLabel());
+					if (translationsByKey.containsKey(child.getUniqueId())
+							&& notNullOrEmpty(translationsByKey.get(child.getUniqueId()).getLabel()))
+						child.setTitle(translationsByKey.get(child.getUniqueId()).getLabel());
+				}
+			}
 		}
 	}
 
@@ -2133,6 +2224,16 @@ public class TranslationsHelper {
 
 						for (Element child : rating.getChildElements()) {
 							if (child instanceof Text && getLabel(child, "", translationMap).length() == 0) {
+								return false;
+							}
+						}
+					}
+					
+					if (element instanceof RankingQuestion) {
+						RankingQuestion ranking = (RankingQuestion) element;
+
+						for (Element child : ranking.getChildElements()) {
+							if (getLabel(child, "", translationMap).length() == 0) {
 								return false;
 							}
 						}
