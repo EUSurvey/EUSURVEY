@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.exception.DataException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -317,6 +318,14 @@ public class BasicController implements BeanFactoryAware {
 	@ExceptionHandler({ java.net.SocketException.class, ClientAbortException.class })
 	public void handleClientAbortException(Exception e, Locale locale, HttpServletRequest request) {
 		logger.info(e.getLocalizedMessage(), e);
+	}
+	
+	@ExceptionHandler({ DataException.class })
+	public void handleHibernateException(Exception e, Locale locale, HttpServletRequest request) {
+		logger.error(e.getLocalizedMessage(), e);
+		if (e.getCause() != null) {
+			logger.error(e.getCause().getLocalizedMessage(), e.getCause());
+		}
 	}
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
