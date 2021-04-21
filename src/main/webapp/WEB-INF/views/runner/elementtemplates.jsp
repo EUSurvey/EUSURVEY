@@ -348,6 +348,9 @@
 	</div>
 	
 	<div id="ranking-question-template">
+		<!-- ko if: optional() == false -->
+			<span class="mandatory">*</span>
+		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
 

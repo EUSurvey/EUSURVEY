@@ -333,6 +333,32 @@ public class Form {
 
 		return "";
 	}
+	
+	public List<RankingItem> getRankingItems(Element question) {
+		List<RankingItem> result = new ArrayList<>();
+		RankingQuestion rankingQuestion = (RankingQuestion)question;
+		
+		if (!answerSets.isEmpty()) {
+			String value = getValue(question);
+						
+			if (value != null && value.length() > 0) {
+				Map<String, RankingItem> children = rankingQuestion.getChildElementsByUniqueId();
+				String[] answerids = value.split(";");						
+				for (String uniqueId : answerids)
+				{
+					RankingItem child = children.get(uniqueId);
+					if (child != null)
+					{
+						result.add(child);
+					}							
+				}
+				
+				return result;				
+			}
+		}
+		
+		return rankingQuestion.getChildElements();
+	}
 
 	private Set<String> passwordQuestions = null;
 
