@@ -504,7 +504,6 @@ public class HomeController extends BasicController {
 	
 	@RequestMapping(value = Constants.PATH_DELIMITER, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView home(HttpServletRequest request) {
-		request.getSession().setAttribute("serverprefix",serverPrefix);
 		return basicwelcome(request);
 	}
 	

@@ -242,7 +242,6 @@ public class ManagementController extends BasicController {
 		}
 
 		ModelAndView overviewPage = new ModelAndView("management/overview", "form", form);
-		overviewPage.addObject("serverprefix", serverPrefix);
 		overviewPage.addObject("isPublished", form.getSurvey().getIsPublished());
 
 		List<Element> newElements = new ArrayList<>();
