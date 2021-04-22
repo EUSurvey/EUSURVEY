@@ -764,20 +764,6 @@ function newRankingViewModel(element)
 		return $.map(viewModel.answervalues(), uniqueId => viewModel.itemTitleLookup[uniqueId]);
 	});
 
-	viewModel.fixWidth = function(domElement) {
-		const rankingItemFormDatas = $(domElement).find(".rankingitem-form-data");
-		rankingItemFormDatas.each(function() {
-			$(this).css('width', 'auto');
-		});
-		let commonWidth = 0;
-		rankingItemFormDatas.each(function() {
-			commonWidth = Math.max(commonWidth, ($(this).width()));
-		});
-		rankingItemFormDatas.each(function() {
-			$(this).width(2 + commonWidth);
-		});
-	};
-
 	viewModel.initOn = function(domElement) {
 		const viewmodel = this;
 		if (viewmodel.foreditor) return;
@@ -801,13 +787,21 @@ function newRankingViewModel(element)
 			viewmodel.answervalues(formeranswervalues);
 		}
 
-		viewmodel.fixWidth(domElement);
-		window.addEventListener('resize', function() {
-			viewmodel.fixWidth(domElement);
-		});
-
 		const self = $(domElement).find(".rankingitem-list")[0];
 		$(self).sortable({
+			start: function(event, ui) {
+				const width = $(ui.item).width();
+				const rankingItemFormDatas = $(domElement).find(".rankingitem-form-data");
+				rankingItemFormDatas.each(function() {
+					$(this).width(2 + width);
+				});
+			},
+			stop: function(event, ui) {
+				const rankingItemFormDatas = $(domElement).find(".rankingitem-form-data");
+				rankingItemFormDatas.each(function() {
+					$(this).width("");
+				});
+			},
 			update: function(event, ui) {
 				const rankingitems = $(self).find(".rankingitemtext");
 				const newanswervalues = $.map(rankingitems, that => viewmodel.itemIdtoUniqueIdLookup[Number(that.id)]);
