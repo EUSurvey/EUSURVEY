@@ -26,6 +26,8 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	
 	public @Value("${ui.enableresponsive}") String enableresponsive;	
 	
+	public @Value("${server.prefix}") String serverPrefix;
+	
 	public static final String APPLICATION_SERVER_ENVIRONMENT = "serverEnv";
 	public @Value("${app.server.env}") String serverEnv;	
 	
@@ -94,6 +96,8 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             final ModelAndView modelAndView) throws Exception {
 
         if (modelAndView != null && modelAndView.hasView() && !modelAndView.getViewName().startsWith("redirect")) {
+        	
+        	modelAndView.getModelMap().addAttribute("serverprefix", serverPrefix);	
             modelAndView.getModelMap().addAttribute(APPLICATION_SERVER_ENVIRONMENT, serverEnv);       
         	
             modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_BYPASS, isByPassCaptcha());

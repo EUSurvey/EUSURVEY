@@ -484,7 +484,6 @@ public class ContributionController extends BasicController {
 							: answerSet.getDate();
 					model.addObject("submittedDate", ConversionTools.getFullString(submittedDate));
 					model.addObject("print", true);
-					model.addObject("serverprefix", serverPrefix);
 					model.addObject("invisibleElements", invisibleElements);
 
 					return model;
