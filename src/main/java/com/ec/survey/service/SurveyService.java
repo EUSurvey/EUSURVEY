@@ -29,6 +29,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import java.io.IOException;
@@ -4347,7 +4348,7 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public String getSurveyMetaDataXML(Survey survey) {
+	public String getSurveyMetaDataXML(Survey survey) throws NamingException {
 		int results = 0;
 		if (this.isReportingDatabaseEnabled()) {
 			results = reportingService.getCount(false, survey.getUniqueId());
