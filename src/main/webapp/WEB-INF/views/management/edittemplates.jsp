@@ -46,7 +46,7 @@
 			<td class="propertycontent">
 				<div class="rightaligned">
 					<span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" onclick="edit(this)" id="idEditVisibility"></span>
-					<span class="glyphicon glyphicon-trash" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Remove" />" onclick="resetVisibility(this)" id="idRemoveVisibility"></span>
+					<span class="glyphicon glyphicon-trash" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Remove" />" onclick="resetVisibility(this, false)" id="idRemoveVisibility"></span>
 				</div>
 				<div class="triggers" data-bind="html: Content"></div>
 			</td>

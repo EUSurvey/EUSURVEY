@@ -1639,10 +1639,10 @@ function showHideVisibilityElements(span)
 	}
 }
 
-function resetVisibility(button)
+function resetVisibility(button, noUndo)
 {
 	_elementProperties.selectedproperty = $(button).closest("tr");
-	updateVisibility(button, true, false, false);
+	updateVisibility(button, true, false, false, noUndo);
 }
 
 function resetFeedback(button)
@@ -2085,7 +2085,7 @@ function adaptDelphiControls(element) {
 	if (visibilityPropertyRow) {
 		if (element.isDelphiQuestion()) {
 			visibilityPropertyRow.IsVisible(false);
-			$('#idRemoveVisibility').click();
+			resetVisibility($('#idRemoveVisibility')[0], true);
 		} else {
 			visibilityPropertyRow.IsVisible(true);
 		}
