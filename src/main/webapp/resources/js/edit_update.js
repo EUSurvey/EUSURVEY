@@ -1035,7 +1035,7 @@ function updateFeedback(span, reset)
 }
 
 var selectedspan;
-function updateVisibility(span, reset, ask, dialogresult)
+function updateVisibility(span, reset, ask, dialogresult, noUndo)
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var triggers = document.createElement("div");
@@ -1174,7 +1174,10 @@ function updateVisibility(span, reset, ask, dialogresult)
 	if (list != null) $(list).closest("tr").hide();
 	
 	updateDependenciesView();
-	_undoProcessor.addUndoStep(["Visibility", id, $(_elementProperties.selectedelement).index(), oldtext, values, selectedquestions]);	
+	
+	if (!noUndo) {
+		_undoProcessor.addUndoStep(["Visibility", id, $(_elementProperties.selectedelement).index(), oldtext, values, selectedquestions]);
+	}
 }
 
 function save(span)
@@ -1194,7 +1197,7 @@ function save(span)
 	
 	switch (label) {
 		case "Visibility":
-			updateVisibility(span, false, true, false);
+			updateVisibility(span, false, true, false, false);
 			break;
 		case "EDITVALUES":
 			var oldvalues = [];
