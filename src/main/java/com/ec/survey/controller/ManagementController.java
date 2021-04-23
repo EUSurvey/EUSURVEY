@@ -3449,14 +3449,11 @@ public class ManagementController extends BasicController {
 		
 		try {
 			ResultFilter filter = sessionService.getLastResultFilter(request);
-			
-			Survey survey = null;
 			if (filter == null || filter.getSurveyId() == 0) {
-				return null;
-			} else {
-				survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
+				return Collections.emptyMap();
 			}
-			
+
+			Survey survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
 			if (survey != null) {
 				return answerService.getCompletionRates(survey, filter);
 			}
@@ -3465,7 +3462,7 @@ public class ManagementController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		
-		return null;
+		return Collections.emptyMap();
 	}
 	
 	@RequestMapping(value = "/statisticsDelphiMedianJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
@@ -3473,16 +3470,13 @@ public class ManagementController extends BasicController {
 	
 		try {
 			ResultFilter filter = sessionService.getLastResultFilter(request);
-			
-			Survey survey = null;
 			if (filter == null || filter.getSurveyId() == 0) {
-				return null;
-			} else {
-				survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
+				return Collections.emptyMap();
 			}
-			
+
+			Survey survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
 			if (survey == null) {
-			   return null;
+			   return Collections.emptyMap();
 			}
 
 			Map<String, String> result = new HashMap<>();
@@ -3531,7 +3525,7 @@ public class ManagementController extends BasicController {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		
-		return null;
+		return Collections.emptyMap();
 	}
 
 	@RequestMapping(value = "/preparecharts/{id}/{exportId}", method = { RequestMethod.GET, RequestMethod.HEAD })
