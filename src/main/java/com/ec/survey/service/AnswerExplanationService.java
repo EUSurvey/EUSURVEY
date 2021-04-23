@@ -89,7 +89,7 @@ public class AnswerExplanationService extends BasicService {
 						+ "LEFT JOIN FILES f ON aef.files_FILE_ID = f.FILE_ID "
 						+ "JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = ex.ANSWER_SET_ID "
 						+ "JOIN SURVEYS s ON s.SURVEY_ID = ans.SURVEY_ID "
-						+ "WHERE s.SURVEY_UID = :surveyUid AND S.ISDRAFT = :draft")
+						+ "WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :draft")
 				.setString("surveyUid", surveyUid).setBoolean("draft", draft);
 
 		@SuppressWarnings("rawtypes")
