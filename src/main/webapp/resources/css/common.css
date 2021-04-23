@@ -1557,7 +1557,13 @@ div.medianpa {
 
 .chart-wrapper {
 	display: none;
-	padding-left: 20px;
+	margin-bottom: 16px;
+	margin-right: 16px;
+}
+
+.chart-download {
+	color: inherit;
+	float: right;
 }
 
 .update-error {

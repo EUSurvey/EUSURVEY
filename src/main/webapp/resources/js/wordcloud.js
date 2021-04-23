@@ -107,12 +107,13 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 		if (forResults) {
 			var questionuid = div.data("uid");
 			$('#wordcloud' + questionuid).empty();
+			$(div).closest(".statelement-wrapper").find(".chart-download").hide();
 		}
 		
 		$(div).closest(".elementwrapper, .statelement-wrapper").find(".chart-wrapper-loader").hide();
 		
 		return;	
-	}	
+	}
 	
 	if (div == null) {
 		var modal = $("#delphi-chart-modal-start-page");
@@ -194,7 +195,7 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 			$(elementWrapper).find("option[data-type='textual']").show();
 			$(elementWrapper).find("option[data-type='numerical']").hide();
 			
-			var button = $(elementWrapper).find(".chart-download");	
+			var button = $(elementWrapper).find(".chart-download");
 			
 			setTimeout(function(){ 
 	
@@ -204,7 +205,7 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 				svgString2Image( svgString, w, h, save ); // passes Blob and filesize String to the callback
 				
 				function save( dataBlob ){
-					$(button).attr('href', dataBlob);
+					$(button).show().attr({href: dataBlob, download: "WordCloud.png"});
 				}			
 			
 			}, 1000);

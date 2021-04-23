@@ -89,7 +89,13 @@
 		}
 		
 		.statelement-wrapper {
-			width: 700px; margin-left: auto; margin-right: auto; margin-bottom: 10px;
+			background: #f8f8f8;
+			border: 1px solid #dddddd;
+			margin-bottom: 10px;
+			margin-left: auto;
+			margin-right: auto;
+			padding: 16px;
+			width: 700px;
 		}
 		
 		.chart-wrapper, .chart-controls {
@@ -97,12 +103,8 @@
 			display: none;
 		}
 		
-		.chart-controls {
-			padding: 20px;
-		}
-		
 		.chart-controls select {
-			width: auto;
+			width: 100%;
 			display: inline-block;
 			margin-bottom: 15px;
 		}
