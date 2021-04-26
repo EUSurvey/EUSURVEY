@@ -417,7 +417,7 @@ public class ReportingService extends BasicService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat) throws Exception {
+	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean forXmlExport) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
 		Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
@@ -503,7 +503,7 @@ public class ReportingService extends BasicService {
 	    		//automatically selected
 	    	} else if (question.equals("CREATED") || question.equals("UPDATED"))
 	    	{
-	    		if (useXmlDateFormat)
+	    		if (forXmlExport)
 	    		{
 	    			sql += ", DATE_FORMAT(Q" + question.replace("-", "") + ", \"%Y-%m-%d_%H-%i-%s\")";
 	    		} else {
@@ -586,7 +586,9 @@ public class ReportingService extends BasicService {
 											v += answer.getTitle();
 										}
 										
-										v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										if (!forXmlExport) {
+											v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										}
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
@@ -607,7 +609,9 @@ public class ReportingService extends BasicService {
 											v += answer.getTitle();
 										}
 										
-										v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										if (!forXmlExport) {
+											v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										}
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
@@ -661,12 +665,14 @@ public class ReportingService extends BasicService {
 									{
 										if (doNotReplaceAnswerIDs)
 										{
-											v += child.getId();
+											v += uniqueId;
 										} else {
-											v += child.getStrippedTitleNoEscape();
+											v += child.getTitle();
 										}
 										
-										v += " <span class='assignedValue hideme'>(" +child.getShortname() + ")</span>";
+										if (!forXmlExport) {
+											v += " <span class='assignedValue hideme'>(" +child.getShortname() + ")</span>";
+										}
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);

@@ -314,7 +314,23 @@ public class XmlExportCreator extends ExportCreator {
 
 							writer.writeCharacters(rating.getTitle() + ": " + childQuestion.getTitle());
 
-							writer.writeEndElement(); // MatrixQuestion
+							writer.writeEndElement(); // RatingQuestion
+						}
+					} else if (question instanceof RankingQuestion) {
+						RankingQuestion ranking = (RankingQuestion) question;
+
+						for (Element child : ranking.getChildElements()) {
+							writer.writeStartElement("RatingItem");
+							writer.writeAttribute("id", child.getUniqueId());
+							writer.writeAttribute("type", getNiceType(child));
+
+							if (export != null && export.getShowShortnames()) {
+								writer.writeAttribute("bid", child.getShortname());
+							}
+
+							writer.writeCharacters(child.getTitle());
+
+							writer.writeEndElement(); // RankingQuestion
 						}
 					}
 
@@ -339,7 +355,7 @@ public class XmlExportCreator extends ExportCreator {
 
 		FilesByTypes<Integer, String> explanationFilesOfSurvey =
 				answerExplanationService.getExplanationFilesByAnswerSetIdAndQuestionUid(form.getSurvey());
-		FilesByType<String> explanationFilesToExport = new FilesByType();
+		FilesByType<String> explanationFilesToExport = new FilesByType<>();
 
 		HashMap<String, Object> values = new HashMap<>();
 
@@ -587,6 +603,10 @@ public class XmlExportCreator extends ExportCreator {
 			return "Confirmation";
 		} else if (question instanceof RatingQuestion) {
 			return "Rating";
+		} else if (question instanceof RankingQuestion) {
+			return "Ranking";
+		} else if (question instanceof RankingItem) {
+			return "Ranking Item";
 		}
 
 		return question.getType();
@@ -801,7 +821,7 @@ public class XmlExportCreator extends ExportCreator {
 							if (sanswers != null) {
 
 								String[] answers;
-								if (question instanceof FreeTextQuestion) {
+								if (question instanceof FreeTextQuestion || question instanceof RankingQuestion) {
 									answers = new String[1];
 									answers[0] = sanswers;
 								} else {
@@ -858,6 +878,8 @@ public class XmlExportCreator extends ExportCreator {
 										answer.getPossibleAnswerUniqueId() != null
 												? answer.getPossibleAnswerUniqueId()
 												: "");
+							} else if (question instanceof RankingQuestion) {
+								writer.writeCharacters(answer.getValue());
 							} else if (question instanceof Upload) {
 								StringBuilder text = new StringBuilder();
 								if (filesByAnswer.containsKey(answer.getId())) {

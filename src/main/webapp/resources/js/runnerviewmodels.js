@@ -272,6 +272,7 @@ function createNewDelphiBasicViewModel() {
 			case "SingleChoice":
 			case "MultipleChoice":
 			case "Matrix":
+			case "Ranking":
 				// only allow HTML for these three question types, as others don't need it or potentially allow XSS
 				return true;
 
