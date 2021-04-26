@@ -396,10 +396,7 @@ textarea.freetext {
 .regex,
 .alignment-div,
 .input-group,
-.ratingtable,
-.explanation-file-upload-section,
-.explanation-section,
-.explanation-update-section {
+.ratingtable {
 	margin-left: 20px;
 }
 

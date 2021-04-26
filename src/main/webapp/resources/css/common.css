@@ -1313,7 +1313,6 @@ legend {
 }
 
 .delphiupdatemessage, .newdelphicomments {
-	margin-left: 20px;
     margin-top: 10px;
     font-size: 13px !important;
     display: inline-block !important;
@@ -1477,7 +1476,6 @@ legend {
 
 .maxDistanceExceededMessage {
 	color: #f00;
-	margin-left: 40px;
 	margin-top: 20px;
 }
 
@@ -1495,6 +1493,7 @@ div.medianpa {
 
 .explanation-section {
 	display: none;
+	margin-bottom: 10px;
 	max-width: 410px;
 }
 
@@ -1518,7 +1517,6 @@ div.medianpa {
 
 .results-table-row__links {
 	margin-bottom: 10px;
-	margin-left: 10px;
 }
 
 .results-table-row__link-hide {
@@ -1558,7 +1556,6 @@ div.medianpa {
 .chart-wrapper {
 	display: none;
 	margin-bottom: 16px;
-	margin-right: 16px;
 }
 
 .chart-download {
@@ -2404,7 +2401,6 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 
 .chart-wrapper__table {
 	background-color: #fff;
-	float: right;
 	margin-bottom: 0;
 	width: auto;
 }
@@ -2419,6 +2415,14 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	height: 300px;
 	max-width: 400px;
 	width: 85vw;
+}
+
+.delphi-template {
+	padding: 0 35px !important;
+}
+
+.delphi-template-mobile {
+	padding: 0 15px !important;
 }
 
 .delphi-chart-modal__chart-container {

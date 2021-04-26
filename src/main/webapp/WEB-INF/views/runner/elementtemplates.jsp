@@ -1267,7 +1267,7 @@
 		<!-- /ko -->
 	</div>
 
-	<div id="delphi-template">
+	<div id="delphi-template" data-bind="class: ismobile || istablet ? 'delphi-template-mobile' : 'delphi-template'">
 		<!-- ko if: isDelphiQuestion() -->
 		
 		<div class="delphichildren"></div>
@@ -1285,7 +1285,7 @@
 		<!-- /ko -->
 				
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">					
-			<div class="col-md-6">
+			<div class="col-md-6" data-bind="style: {'padding-right': ismobile ? 0 : undefined, 'padding-left': 0}">
 				<!-- ko if: showExplanationBox() -->
 				<div class="explanation-section">
 				
@@ -1324,13 +1324,13 @@
 				</div>
 				<!-- /ko -->		
 			</div>
-			<div class="col-md-6">
+			<div class="col-md-6" style="padding:0;">
 				<!-- ko if: !foreditor -->
 				<div class="chart-wrapper-loader">
 					<img src="${contextpath}/resources/images/ajax-loader.gif">
 				</div>
 				<!-- /ko -->
-				<div class="chart-wrapper">
+				<div class="chart-wrapper" data-bind="style: {float: ismobile || istablet ? 'left' : undefined}">
 					<table class="table table-condensed table-bordered chart-wrapper__table">
 						<tr>
 							<th class="area-header">
@@ -1351,7 +1351,7 @@
 		</div>
 		
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 0px;">
-			<div class="col-md-12">
+			<div class="col-md-12" style="padding:0;">
 				<div class="explanation-update-section">
 					<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
 					<span class="inline-loader">
@@ -1371,7 +1371,7 @@
 		</div>
 		
 		<div class="row results-table-row" style="margin-left: 0; margin-right: 0; margin-top: 20px;">
-			<div class="col-md-12">
+			<div class="col-md-12" style="padding:0;">
 				<%@ include file="delphiAnswersTable.jsp" %>
 			</div>
 		</div>
