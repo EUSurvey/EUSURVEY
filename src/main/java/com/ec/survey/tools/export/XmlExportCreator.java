@@ -385,7 +385,7 @@ public class XmlExportCreator extends ExportCreator {
 		}
 
 		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), filterWithMeta, null, false,
-				true, true, true, true);
+				true, true, true, true, false);
 
 		Map<String, List<File>> uploadedFilesByQuestionUID = new HashMap<>();
 
@@ -579,7 +579,7 @@ public class XmlExportCreator extends ExportCreator {
 		exportedNow = new Date();
 		
 		List<List<String>> answersets = reportingService.getAnswerSets(form.getSurvey(), export == null ? null : export.getResultFilter(), null, false,
-				true, true, true, true);
+				true, true, true, true, false);
 		
 
 		if (answersets != null) {
