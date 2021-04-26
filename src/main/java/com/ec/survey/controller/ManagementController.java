@@ -3285,7 +3285,7 @@ public class ManagementController extends BasicController {
 									s.append("<br />");
 								}
 
-								if (question instanceof ChoiceQuestion) {
+								if (question instanceof ChoiceQuestion || question instanceof RankingQuestion) {
 									s.append(form.getAnswerTitle(answer));
 								} else {
 									s.append(ConversionTools.escape(form.getAnswerTitle(answer)));

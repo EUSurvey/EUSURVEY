@@ -3427,7 +3427,7 @@ public class RunnerController extends BasicController {
 		
 		// no need to group by answer set because there can only be one answer per answer set
 		for (DelphiContribution contrib : contributions.getContributions()) {			
-			List<String> rankingAnswerList = question.getAnswerWithStrippedTitleNoEscape(contrib.getValue());
+			List<String> rankingAnswerList = question.getAnswer(contrib.getValue());
 			String value = String.join("; ", rankingAnswerList);
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
 			tableEntry.setAnswerSetId(contrib.getAnswerSetId());
