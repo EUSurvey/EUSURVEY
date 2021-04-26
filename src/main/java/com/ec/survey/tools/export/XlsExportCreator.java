@@ -318,7 +318,7 @@ public class XlsExportCreator extends ExportCreator {
 		}
 
 		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
-				publication == null || publication.getShowUploadedDocuments(), false, false);
+				publication == null || publication.getShowUploadedDocuments(), false, false, export != null && export.getShowShortnames());
 		List<Question> questions = form.getSurvey().getQuestions();
 
 		if (answersets != null) {
