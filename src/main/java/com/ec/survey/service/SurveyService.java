@@ -2337,6 +2337,7 @@ public class SurveyService extends BasicService {
 			logger.info("starting import of answers");
 
 			Map<String, Integer> keys = new HashMap<>();
+			Set<String> rankingQuestions = new HashSet<>();
 			for (Element element : survey.getElementsRecursive()) {
 				keys.put(element.getSourceId().toString(), element.getId());
 				if (element instanceof ChoiceQuestion) {
@@ -2345,6 +2346,8 @@ public class SurveyService extends BasicService {
 							keys.put(answer.getSourceId().toString(), answer.getId());
 						}
 					}
+				} else if (element instanceof RankingQuestion) {
+					rankingQuestions.add(element.getUniqueId());
 				}
 			}
 
@@ -2393,6 +2396,15 @@ public class SurveyService extends BasicService {
 						}
 
 						an.setPossibleAnswerUniqueId(oldToNewUniqueIds.get(an.getPossibleAnswerUniqueId()));
+					}
+					
+					if (an.getValue() != null && rankingQuestions.contains(an.getQuestionUniqueId())) {
+						String[] items = an.getValue().split(";");
+						String newValue = "";
+						for (String uid : items) {
+							newValue += oldToNewUniqueIds.get(uid) + ";";
+						}
+						an.setValue(newValue);
 					}
 				}
 				

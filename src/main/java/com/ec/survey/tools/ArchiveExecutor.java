@@ -267,8 +267,10 @@ public class ArchiveExecutor implements Runnable {
 	@Transactional
 	public void run()
 	{		
+		Session session = sessionFactory.getCurrentSession();
 		try {
 			createArchive();
+			session.flush();
 		} catch (Exception e) {
 			handleException(e);
 		}
