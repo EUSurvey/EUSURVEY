@@ -503,7 +503,7 @@ public class ReportingService extends BasicService {
 	    		//automatically selected
 	    	} else if (question.equals("CREATED") || question.equals("UPDATED"))
 	    	{
-	    		if (forXmlExport)
+	    		if (useXmlDateFormat)
 	    		{
 	    			sql += ", DATE_FORMAT(Q" + question.replace("-", "") + ", \"%Y-%m-%d_%H-%i-%s\")";
 	    		} else {
@@ -670,7 +670,7 @@ public class ReportingService extends BasicService {
 											v += child.getTitle();
 										}
 										
-										if (!forXmlExport) {
+										if (showShortnames) {
 											v += " <span class='assignedValue hideme'>(" +child.getShortname() + ")</span>";
 										}
 									}							
