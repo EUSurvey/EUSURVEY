@@ -417,7 +417,7 @@ public class ReportingService extends BasicService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean forXmlExport) throws Exception {
+	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
 		Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
@@ -586,7 +586,7 @@ public class ReportingService extends BasicService {
 											v += answer.getTitle();
 										}
 										
-										if (!forXmlExport) {
+										if (showShortnames) {
 											v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
 										}
 									}							
@@ -609,7 +609,7 @@ public class ReportingService extends BasicService {
 											v += answer.getTitle();
 										}
 										
-										if (!forXmlExport) {
+										if (showShortnames) {
 											v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
 										}
 									}							
@@ -1247,7 +1247,6 @@ public class ReportingService extends BasicService {
 		
 	private void executeInternal(String sql) {
 		lastQuery = sql;
-		logger.debug(sql);
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		SQLQuery createQuery = sessionReporting.createSQLQuery(sql);
 		createQuery.executeUpdate();		
@@ -1520,7 +1519,6 @@ public class ReportingService extends BasicService {
 				lastQuery = row.toString();
 				SQLQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
 				sqlQueryService.setParameters(createQuery, parameters);
-				logger.debug(lastQuery);
 				createQuery.executeUpdate();
 				
 				counter = 0;
@@ -1552,7 +1550,6 @@ public class ReportingService extends BasicService {
 			lastQuery = row.toString();
 			SQLQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
 			sqlQueryService.setParameters(createQuery, parameters);
-			logger.debug(lastQuery);
 			createQuery.executeUpdate();
 		}
 	}

@@ -80,12 +80,13 @@ public class ContributionController extends BasicController {
 		}
 
 		if (answerSetOrNull.getSurvey() != null) {
-			if (sessionService.userIsFormAdmin(answerSetOrNull.getSurvey(), user, request)) {
-				return answerSetOrNull;
-			}
-
 			Survey draftSurvey = surveyService.getSurveyByUniqueId(answerSetOrNull.getSurvey().getUniqueId(), false,
 					true);
+			
+			if (sessionService.userIsFormAdmin(draftSurvey, user, request)) {
+				return answerSetOrNull;
+			}
+			
 			// if participants are allowed to change their contribution
 			if (draftSurvey != null && draftSurvey.getChangeContribution()) {
 				return answerSetOrNull;
@@ -511,12 +512,6 @@ public class ContributionController extends BasicController {
 
 		if (answerSet == null) {
 			throw new NotFoundException();
-		}
-
-		Survey answerSetSurvey = answerSet.getSurvey();
-
-		if (!this.sessionService.userIsFormAdmin(answerSetSurvey, currentUser, request)) {
-			throw new ForbiddenException();
 		}
 
 		try {

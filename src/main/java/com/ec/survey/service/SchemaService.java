@@ -54,7 +54,7 @@ public class SchemaService extends BasicService {
 			s.setKey("captcha");		
 			session.saveOrUpdate(s);
 		}
-		s.setValue(isOss() ? "internal" : "eucaptcha");
+		s.setValue("internal");
 		s.setFormat("eucaptcha / recaptcha / internal / off");
 
 		status.setDbversion(96);
@@ -1431,7 +1431,6 @@ public class SchemaService extends BasicService {
 		queryCreateIndex.executeUpdate();
 
 		if (showecas.equalsIgnoreCase("true") && !isCasOss()) {
-			logger.debug("Start CopyEcas");
 			domaintWorker.run();
 			copyEcasData();
 		}

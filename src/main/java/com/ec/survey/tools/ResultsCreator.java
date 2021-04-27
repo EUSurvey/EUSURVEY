@@ -339,7 +339,6 @@ public class ResultsCreator implements Runnable, BeanFactoryAware {
 				logger.error(e1.getLocalizedMessage(), e1);
 			}
 		}
-		logger.debug("TokenCreator completed");
 	}
 
 }

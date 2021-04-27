@@ -18,16 +18,14 @@ public class ExportUpdater implements Runnable {
 	
 	@Override
 	public void run() {
-		try {
-			logger.debug("ExportUpdater started");			
+		try {	
 			exportService.applyExportTimeout();
 			
 			logger.info("Starting deletion of old exports");
 			exportService.deleteOldExports();			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-		}		
-		logger.debug("ExportUpdater completed");
+		}
 	}
 	
 }

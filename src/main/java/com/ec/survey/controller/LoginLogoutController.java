@@ -124,7 +124,6 @@ public class LoginLogoutController extends BasicController {
 			oldUser = "oldLogin:" + user.getLogin();
 		}
 		
-		logger.debug("LoginLogoutController".toUpperCase() + " ticket authentification is "+ticket);
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(oldUser, ticket);
 		Authentication authenticatedUser = customAuthenticationManager.authenticate(token);
 		SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
@@ -277,7 +276,6 @@ public class LoginLogoutController extends BasicController {
 				//check if the email address belongs to a user
 				// if it's for oss release then check if the OCAS is used if such the case then search for user of type ECAS
 				boolean searchForEcasUser =(super.isOss() && isCasOss());
-				logger.debug("forgotPassword search for user ECAS " + searchForEcasUser);
 				User user = administrationService.getUserForLogin(login, searchForEcasUser);
 				
 				if (!user.getEmail().equalsIgnoreCase(email))
@@ -320,7 +318,6 @@ public class LoginLogoutController extends BasicController {
 	
 	@RequestMapping(value = "/auth/reset/{code}", method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String resetPassword(@PathVariable String code, ModelMap model, Locale locale) {
-		logger.debug("Received request for sending forgot password mail");
 		if (isShowEcas()) model.put("showecas", true);
 		if (isCasOss()) model.put("casoss", true);
 		if (code == null || code.length() == 0)

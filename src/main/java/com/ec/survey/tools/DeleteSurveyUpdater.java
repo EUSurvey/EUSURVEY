@@ -26,8 +26,7 @@ public class DeleteSurveyUpdater implements Runnable {
 	@Override
 	public void run() {
 		int lastId = 0;
-		try {
-			logger.debug("DeleteSurveyUpdater started");			
+		try {		
 			List<Integer> surveys = surveyService.getSurveysMarkedDeleted();
 			
 			for (Integer id : surveys) {
@@ -42,8 +41,7 @@ public class DeleteSurveyUpdater implements Runnable {
 			
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-		}		
-		logger.debug("DeleteSurveyUpdater completed");
+		}
 	}
 	
 }

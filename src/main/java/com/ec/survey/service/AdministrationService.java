@@ -170,8 +170,6 @@ public class AdministrationService extends BasicService {
 
 	@Transactional
 	public boolean checkUserPassword(User user, String rawPassword) {
-		logger.debug("CHECKUSERPASSWORD CALLED " + user.getPassword() + " " + rawPassword);
-
 		String md5hash = Tools.md5hash(rawPassword);
 
 		if (user.getPassword().equals(md5hash)) {
@@ -341,7 +339,6 @@ public class AdministrationService extends BasicService {
 	@Transactional(readOnly = true)
 	public User getUserForLogin(String login, boolean ecas) throws MessageException {
 
-		logger.debug("getUserForLogin".toUpperCase() + " START CHECK USER " + login + " IS ECAS " + ecas);
 		Session session = sessionFactory.getCurrentSession();
 
 		String hql = "FROM User u where u.login = :login  AND u.type = :type";
@@ -354,12 +351,8 @@ public class AdministrationService extends BasicService {
 			query.setString("type", User.SYSTEM);
 		}
 
-		logger.debug("getUserForLogin".toUpperCase() + " START CHECK USER LAUNCH QUERY ");
-
 		@SuppressWarnings("unchecked")
 		List<User> list = query.list();
-
-		logger.debug("getUserForLogin".toUpperCase() + " START CHECK USER QUERY  EXECUTED WITH RESULT SIZE " + list.size());
 
 		if (list.isEmpty())
 			throw new MessageException("No user found for login " + login);

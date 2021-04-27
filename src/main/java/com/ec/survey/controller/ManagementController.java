@@ -3156,7 +3156,7 @@ public class ManagementController extends BasicController {
 			filter = answerService.initialize(filter);			
 			
 			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks,
-					false, showuploadedfiles, false, false);
+					false, showuploadedfiles, false, false, true);
 			 
 			if (answersets != null) {
 				Date updateDate = reportingService.getLastUpdate(survey);

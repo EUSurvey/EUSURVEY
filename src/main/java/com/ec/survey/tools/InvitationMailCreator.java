@@ -161,9 +161,7 @@ public class InvitationMailCreator implements Runnable {
 		}
 		
 		task.setMessage(message.toString());
-		mailService.save(task);		
-		
-		logger.debug("InvitationMailCreator completed");		
+		mailService.save(task);	
 	}
 	
 	private void createAndSendInvitation(ParticipationGroup participationGroup, EcasUser ecasUser, String senderAddress, String sendername, String reply, String subject, Survey survey, String text1, String text2, String mailtemplate) throws Exception {
