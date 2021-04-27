@@ -800,4 +800,27 @@ public class AttendeeService extends BasicService {
 			}
 		}		
 	}
+	
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public void activateInvitations(List<Integer> invitationsToActivate) {
+		Session session = sessionFactory.getCurrentSession();
+		for (int id : invitationsToActivate) {
+			Invitation invitation = (Invitation) session.get(Invitation.class, id);
+			if (invitation != null) {
+				invitation.setDeactivated(false);
+				session.saveOrUpdate(invitation);
+			}
+		}		
+	}
+	
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public void deleteInvitations(List<Integer> invitationsToDelete) {
+		Session session = sessionFactory.getCurrentSession();
+		for (int id : invitationsToDelete) {
+			Invitation invitation = (Invitation) session.get(Invitation.class, id);
+			if (invitation != null) {
+				session.delete(invitation);
+			}
+		}		
+	}
 }

@@ -134,7 +134,6 @@ function addDelphiClassToContainerIfNeeded(element, container) {
 var modelsForDelphiQuestions = [];
 
 function addElementToContainer(element, container, foreditor, forskin) {
-
 	addDelphiClassToContainerIfNeeded(element, container);
 
 	var viewModel = getElementViewModel(element);
@@ -367,6 +366,11 @@ function addElementToContainer(element, container, foreditor, forskin) {
 	});
 	
 	initModals($(container).find(".modal-dialog").first());
+
+	$(container).find(".rankingitem-list-container").each(function() {
+		const viewmodel = ko.dataFor(this);
+		viewmodel.initOn(this);
+	});
 	
 	$(container).find(".expand").TextAreaExpander();
 	
@@ -1183,6 +1187,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 				return;
 			}
 
+			viewModel.delphiTableQuestionType(result.questionType);
 			viewModel.showExplanationBox(result.showExplanationBox);
 			
 			for (let i = 0; i < result.entries.length; i++) {
@@ -1721,6 +1726,8 @@ function showResultsTable(button) {
 	const container = $(button).closest('.results-table-row');
 	$(container).find('.results-table-row__link-hide').show();
 	$(container).find('.delphi-table').show();
+	const questionUid = $(button).closest(".survey-element").attr("data-uid");
+	addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionUid);
 }
 
 function hideResultsTable(button) {

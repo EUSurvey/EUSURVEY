@@ -348,7 +348,7 @@ public class OdfExportCreator extends ExportCreator {
 		filter.setVisibleDiscussions(filter.getExportedDiscussions());
 		
 		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
-				publication == null || publication.getShowUploadedDocuments(), false, false);
+				publication == null || publication.getShowUploadedDocuments(), false, false, export != null && export.getShowShortnames());
 
 		if (answersets != null) {
 			for (List<String> row : answersets) {

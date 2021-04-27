@@ -339,7 +339,7 @@ public class XlsExportCreator extends ExportCreator {
 		filter.setVisibleDiscussions(filter.getExportedDiscussions());		
 
 		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
-				publication == null || publication.getShowUploadedDocuments(), false, false);
+				publication == null || publication.getShowUploadedDocuments(), false, false, export != null && export.getShowShortnames());
 		List<Question> questions = form.getSurvey().getQuestions();
 
 		if (answersets != null) {
@@ -575,6 +575,7 @@ public class XlsExportCreator extends ExportCreator {
 			rowIndex = insertHeader(sheets, publication, filter, export);
 
 			dateCellStyle = null;
+			cellStyles.clear();
 		}
 
 		if (dateCellStyle == null) {

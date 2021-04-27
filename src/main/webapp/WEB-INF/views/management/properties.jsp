@@ -602,9 +602,19 @@
 							<div style="float: right">								
 							
 								<c:choose>
+									<c:when test='${form.survey.isOPC}'>
+										<div class="onoffswitch">
+											<input type="checkbox" disabled="disabled" class="onoffswitch-checkbox" id="myonoffswitchprivacy" />									
+											
+											<label class="onoffswitch-label disabled" for="myonoffswitchprivacy">
+										        <span class="onoffswitch-inner"></span>
+										        <span class="onoffswitch-switch"></span>
+										    </label>
+									    </div>
+									</c:when>
 									<c:when test='${haspublishedanswers != null && (form.survey.security.equals("openanonymous") || form.survey.security.equals("securedanonymous"))}'>
 										<div class="onoffswitch">
-											<input type="checkbox" disabled="disabled" class="onoffswitch-checkbox"  checked="checked" id="myonoffswitchprivacy" />									
+											<input type="checkbox" disabled="disabled" class="onoffswitch-checkbox" checked="checked" id="myonoffswitchprivacy" />									
 										
 											<label class="onoffswitch-label disabled" for="myonoffswitchprivacy">
 										        <span class="onoffswitch-inner"></span>

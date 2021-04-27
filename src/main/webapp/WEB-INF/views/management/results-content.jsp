@@ -315,7 +315,44 @@
 														  
 														</div>
 													</c:when>
-													
+													<c:when test="${question.getType() == 'RankingQuestion'}">
+														<div>
+														  <a class="btn btn-default" onclick="showOverlayMenu(this)" >
+														    <span class="nobreak"><spring:message code="label.AllValues" /></span>
+														    <span class="caret"></span>
+														  </a>
+														  
+														  <div class="overlaymenu hideme maxH">
+														  	<a style="margin-bottom: 5px;"   onclick="$('#resultsForm').submit();" class="btn btn-default btn-sm btn-primary"><spring:message code="label.ApplyFilter" /></a><br />
+														  	<i><spring:message code="label.SelectFirstItem" /></i>
+														  	 <c:forEach items="${question.childElements}" var="child" varStatus="status">
+														    	<div>
+															    	<c:choose>
+																		<c:when test="${filter.contains(question.id, question.uniqueId, child.id, child.uniqueId) }">
+																			<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="radio" class="check checkFilterCell" value="${child.uniqueId}">${child.getStrippedTitle()}</input>
+																		</c:when>
+																		<c:otherwise>
+																			<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="radio" class="check checkFilterCell" value="${child.uniqueId}">${child.getStrippedTitle()}</input>
+																		</c:otherwise>
+																	</c:choose>
+														    	</div>
+															</c:forEach>
+														  </div>
+														  
+														  <div style="display: inline-block; margin: 0px;">
+																<a onclick="showOverlayMenu(this)" >
+															    	<span class="glyphicon glyphicon-option-vertical"></span>
+																</a>
+																<div class="resultoverlaymenu overlaymenu hideme" style="margin-top: 10px">
+																	<a onclick='clearFilterCellContent(this)'><spring:message code="label.ResetFilter" /></a><br />
+																	<c:if test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege == 2 || USER.getLocalPrivilegeValue('AccessResults') == 2}">
+	                                                 					<a onclick="showDeleteColumnDialog('${question.uniqueId}')"><spring:message code="label.BlankAnswers" /></a>
+																	</c:if>
+															   </div>
+														   </div>
+														  
+														</div>													
+													</c:when>
 													<c:when test="${question.getType() == 'DateQuestion'}">
 														<div class="btn-toolbar" style="margin: 0px; text-align: center; display: inline-block; vertical-align: middle;">
 															<div class="datefilter" style="float: left">

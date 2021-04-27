@@ -373,7 +373,7 @@
 						legend: {display: legend},
 						animation: {
 							onComplete: function (animation) {
-								$(div).closest(".statelement-wrapper").find('.chart-download').attr('href', this.toBase64Image());
+								$(div).closest(".statelement-wrapper").find('.chart-download').attr({href: this.toBase64Image(), download: result.questionType + ".png"});
 							}
 						},
 						plugins: {

@@ -642,6 +642,8 @@ public class AnswerService extends BasicService {
 
 			Map<String, String> filterValues = filter.getFilterValues();
 			if (filterValues != null && filterValues.size() > 0) {
+				Set<String> rankingQuestionUids = surveyId > -1 ? surveyService.getRankingQuestionUids(surveyId) : new HashSet<>();				
+				
 				int i = 0;
 				for (Entry<String, String> item : filterValues.entrySet()) {
 					String questionIdAndUid = item.getKey();
@@ -703,7 +705,12 @@ public class AnswerService extends BasicService {
 											answerPart = "a" + joincounter + ".VALUE LIKE :answer" + i;
 											values.put(Constants.ANSWER + i, "%" + answer + "%");
 										} else {
-											values.put(Constants.ANSWER + i, "%" + answer + "%");
+											// the filter on ranking questions is basically the first element in the sorted list
+											if (rankingQuestionUids.contains(questionUid)) {
+												values.put(Constants.ANSWER + i, answer + "%");
+											} else {											
+												values.put(Constants.ANSWER + i, "%" + answer + "%");
+											}
 										}
 									}
 
@@ -2571,7 +2578,7 @@ public class AnswerService extends BasicService {
 		Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection = new HashMap<>();
 		initializeHelperMaps(survey, questionsBySection, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
 				
-		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, false, false, false);
+		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, false, false, false, false);
 		if (answerRows != null) {
 			totalNumberOfContributions = answerRows.size();
 			Map<Integer, String> questionUidsByIndex = new HashMap<>();

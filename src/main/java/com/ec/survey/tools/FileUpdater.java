@@ -29,7 +29,6 @@ public class FileUpdater implements Runnable {
 	@Transactional
 	public void run() {
 		try {
-			logger.debug("FileUpdater started");
 			List<File> files = fileService.getAllInvalid();
 			
 			for (File file: files)
@@ -49,7 +48,6 @@ public class FileUpdater implements Runnable {
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}		
-		logger.debug("FileUpdater completed");
 	}
 	
 }

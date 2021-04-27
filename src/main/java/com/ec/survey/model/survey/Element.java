@@ -40,6 +40,7 @@ public abstract class Element implements java.io.Serializable {
 	private Boolean locked;
 	private String subType = "";
 	private Integer displayMode;
+	private Boolean useAndLogic = false;
 
 	private Map<Integer, String[]> activitiesToLog = new HashMap<>();
 
@@ -134,6 +135,15 @@ public abstract class Element implements java.io.Serializable {
 
 	public void setDisplayMode(Integer displayMode) {
 		this.displayMode = displayMode != null ? displayMode : 0;
+	}
+	
+	@Column(name = "ANDLOGIC")
+	public Boolean getUseAndLogic() {
+		return useAndLogic;
+	}
+
+	public void setUseAndLogic(Boolean useAndLogic) {
+		this.useAndLogic = useAndLogic != null ? useAndLogic : false;
 	}
 
 	@Transient
@@ -354,6 +364,8 @@ public abstract class Element implements java.io.Serializable {
 			return true;
 		if (position != null && !position.equals(element.position))
 			return true;
+		if (useAndLogic != null && !useAndLogic.equals(element.useAndLogic))
+			return true;
 		return (title != null && !title.equals(element.title));
 	}
 
@@ -380,7 +392,7 @@ public abstract class Element implements java.io.Serializable {
 		return !(this instanceof Ruler || this instanceof Confirmation || this instanceof Image
 				|| this instanceof Download || this instanceof Text
 				|| (this instanceof GalleryQuestion && !((GalleryQuestion) this).getSelection()));
-	}
+	}	
 	
 	@Transient
 	public boolean isDelphiElement() {

@@ -162,26 +162,26 @@
 													</c:choose>
 													<c:choose>
 													<c:when test="${element.isDummy() && element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-													<div class="emptyelement survey-element untriggered dependent 1"
+													<div class="emptyelement survey-element untriggered dependent 1" data-useAndLogic="${element.useAndLogic}"
 														 data-id="${element.id}" data-uid="${element.uniqueId}"
 														 data-triggers="${element.triggers}"
 														 style="margin-top: 5px; display: none;">
 														</c:when>
 														<c:when test="${element.getType() == 'Matrix' && element.getAllQuestionsDependent() && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-														<div class="emptyelement survey-element untriggered dependent 2"
+														<div class="emptyelement survey-element untriggered dependent 2" data-useAndLogic="${element.useAndLogic}"
 															 id="${element.id}" data-id="${element.id}"
 															 data-uid="${element.uniqueId}"
 															 data-triggers="${element.triggers}" style="display: none;">
 															</c:when>
 															<c:when test="${element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-															<div class="emptyelement survey-element untriggered dependent 3"
+															<div class="emptyelement survey-element untriggered dependent 3"  data-useAndLogic="${element.useAndLogic}"
 																 id="${element.id}" data-id="${element.id}"
 																 data-triggers="${element.triggers}"
 																 data-uid="${element.uniqueId}"
 																 style="display: none;">
 																</c:when>
 																<c:when test="${element.isDependent}">
-																<div class="emptyelement survey-element dependent 3b"
+																<div class="emptyelement survey-element dependent 3b"  data-useAndLogic="${element.useAndLogic}"
 																	 id="${element.id}"
 																	 data-id="${element.id}"
 																	 data-uid="${element.uniqueId}"
@@ -224,31 +224,31 @@
 
 									<c:if test="${submit == true}">
 										<div style="text-align: center; margin-top: 20px;">
-											<input type="button" id="btnPrevious" style="display: none;"
+											<input type="button" id="btnPrevious" style="display: none;" role="button" id="btnPrevious" aria-label="${form.getMessage("label.GoToPreviousPage")}"
 												   value="${form.getMessage("label.Previous")}"
 												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 												   title="${form.survey.isDelphi ? form.getMessage("label.PreviousPageDelphi") : ""}"
 												   onclick="previousPage();this.blur();" class="btn btn-default"/>
 											<c:choose>
 												<c:when test="${dialogmode != null }">
-													<input type="button" id="btnSubmit"
+													<input type="button" id="btnSubmit" role="button"
 														   value="${form.getMessage("label.Save")}"
 														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
 														   class="btn btn-primary"/>
-													<input type="button" id="btnSubmit2"
+													<input type="button" id="btnSubmit2" role="button"
 														   value="${form.getMessage("label.Close")}"
 														   onclick="window.open('', '_self', '');window.close();"
 														   class="btn btn-default"/>
 												</c:when>
 												<c:otherwise>
-													<input type="button" id="btnSubmit"
+													<input type="button" id="btnSubmit" role="button" id="btnSubmit" aria-label="${form.getMessage("label.Submit")}"
 														   value="${form.getMessage("label.Submit")}"
 														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
 														   class="btn btn-primary hidden"/>
 												</c:otherwise>
 											</c:choose>
 
-											<input type="button" id="btnNext" style="display: none;"
+											<input type="button" id="btnNext" style="display: none;" role="button" aria-label="${form.getMessage("label.GoToNextPage")}"
 												   value="${form.getMessage("label.Next")}"
 												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 												   title="${form.survey.isDelphi ? form.getMessage("label.NextPageDelphi") : ""}"

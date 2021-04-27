@@ -9,7 +9,8 @@
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'section', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
-			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: tabTitle, attr: {'name': 'tabtitle' + id()}" />	
 			<input type="hidden" data-bind="value: level, attr: {'name': 'level' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
@@ -22,6 +23,7 @@
 			<input type="hidden" data-bind="value: 'text', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: true, attr: {'name': 'optional' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 		<!-- /ko -->
@@ -37,6 +39,7 @@
 			<input type="hidden" data-bind="value: 'image', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: title, attr: {'name': 'name' + id()}" />	
 			<input type="hidden" data-bind="value: scale, attr: {'name': 'scale' + id()}" />	
 			<input type="hidden" data-bind="value: width, attr: {'name': 'width' + id()}" />	
@@ -55,6 +58,7 @@
 			<input type="hidden" data-bind="value: 'ruler', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: true, attr: {'name': 'optional' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<input type="hidden" data-bind="value: color, attr: {'name': 'color' + id()}" />
@@ -69,11 +73,11 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
-		<div class="answer-columns" style="position: relative">
+		<div class="answer-columns" style="position: relative; overflow-x:auto; padding-bottom: 8px;">
 		
 			<!-- ko if: likert() && !(ismobile || istablet) -->
 						
-				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median answers-table' : 'likert-div answers-table'}">
+				<div style="margin-top: 30px; display: inline-block; position: relative;" data-bind="attr: {'class' : maxDistance() > -1 ? 'likert-div median answers-table' : 'likert-div answers-table'}, style: { width: possibleAnswers().length * 100 + 'px' }">
 					
 					<!-- ko if: !(ismobile || istablet) -->
 				
@@ -140,7 +144,7 @@
 					</tr>
 					<!-- /ko -->				
 					
-					<!-- ko foreach: orderedPossibleAnswersByRows(${ismobile != null}, ${responsive != null}) -->
+					<!-- ko foreach: orderedPossibleAnswersByRows(true, ${responsive != null}) -->
 					<tr class="possibleanswerrow">				
 						<!-- ko foreach: $data -->					
 											
@@ -149,7 +153,7 @@
 							<input style="position: relative" data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id()}" type="radio"  />
 							<!-- /ko -->	
 						</td>
-						<td style="padding-right: 15px; vertical-align: top">
+						<td style="vertical-align: top">
 							<label data-bind="attr: {'for': id}">
 								<!-- ko ifnot: id() == 'dummy' -->
 								<div class="answertext" data-bind="html: titleForDisplayMode($parents[1].displayMode()), attr: {'data-id' : id()}"></div>
@@ -194,6 +198,7 @@
 				<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 				<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
 				<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+				<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 				<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />
 				<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 				<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
@@ -269,7 +274,7 @@
 						<input data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: !$parents[1].foreditor && getPAByQuestion($parents[1].uniqueId()).indexOf(uniqueId()) > -1, attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id()}" type="checkbox"  />
 						<!-- /ko -->
 					</td>
-					<td style="padding-right: 15px; vertical-align: top">
+					<td style="vertical-align: top">
 						<!-- ko ifnot: id() == 'dummy' -->
 						<label data-bind="attr: {'for': id}">
 							<div class="answertext" data-bind="html: title, attr: {'data-id' : id()}"></div>
@@ -317,6 +322,7 @@
 				<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 				<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
 				<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+				<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 				<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />
 				<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 				<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
@@ -342,25 +348,40 @@
 	</div>
 	
 	<div id="ranking-question-template">
+		<!-- ko if: optional() == false -->
+			<span class="mandatory">*</span>
+		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
 
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'rankingquestion', attr: {'name': 'type' + id()}" />
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
+			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
+
+			<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
+				${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable'")}
+			</div>
 		<!-- /ko -->
 
+		<!-- ko ifnot: foreditor -->
+		<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
+			${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable' data-bind='click: acceptInitialAnswer'")}
+		</div>
+		<!-- /ko -->
 		<div class="rankingitem-list-container">
 			<div class="rankingitem-list">
 				<!-- ko foreach: rankingItems() -->
 				<div class="rankingitem-form-data">
-					<div class="rankigitem-decoration">&#x283F;&nbsp</div>
+					<div class="rankingitem-decoration">&#x283F;</div>
+					<a class="rankingitem-button" tabindex="0" data-toggle="tooltip" title='${form.getMessage("label.MoveUp")}' data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }"><span class="glyphicon glyphicon-arrow-up"></span></a>
+					<a class="rankingitem-button" tabindex="0" data-toggle="tooltip" title='${form.getMessage("label.MoveDown")}' data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }"><span class="glyphicon glyphicon-arrow-down"></span></a>
 					<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
 					<!-- ko if: $parent.foreditor -->
 					<input type="hidden" data-bind="value: shortname, attr: {'name': 'rankingitemshortname' + $parents[0].id(), 'data-id' : id()}" />
@@ -372,6 +393,9 @@
 				<!-- /ko -->
 			</div>
 		</div>
+		<!-- ko ifnot: foreditor -->
+		<input type="hidden" data-bind="value:getAnswerValuesString(), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" type="text"></input>
+		<!-- /ko -->
 
 	</div>
 
@@ -391,6 +415,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
@@ -450,6 +475,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
@@ -529,6 +555,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: usetext, attr: {'name': 'usetext' + id()}" />
 			<input type="hidden" data-bind="value: useupload, attr: {'name': 'useupload' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
@@ -547,6 +574,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: numIcons, attr: {'name': 'numIcons' + id()}" />
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
@@ -624,6 +652,17 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
+
+		<!-- ko if: display() == 'Slider' && ${form.survey.isDelphi} -->
+			<div class="limits" data-bind="style: { visibility: isAnswered() ? 'hidden' : '' }">
+				<!-- ko ifnot: foreditor -->
+				${form.getMessage("info.MoveTheSliderOrAccept", "data-bind='click: markAsAnswered'")}
+				<!-- /ko -->
+				<!-- ko if: foreditor -->
+				${form.getMessage("info.MoveTheSliderOrAccept", "")}
+				<!-- /ko -->
+			</div>
+		<!-- /ko -->
 		
 		<!-- ko if: display() != 'Slider' -->
 			<!-- ko if: min() != null && min() != 0 && max() != null && max() != 0 -->
@@ -649,12 +688,13 @@
 			
 			<a data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
 			
-			<input class="sliderbox" type="text" onchange="propagateChange(this);"
-			 data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue()}"
-			 />
-			 
-			 <a data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
-		</div>	
+			<input type="text"
+				   onchange="propagateChange(this);"
+				   data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'class': css() + ' sliderbox', 'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue(), 'data-is-answered': isAnswered() ? 'true' : 'false' }"
+			/>
+
+			<a data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
+		</div>
 		<!-- /ko -->
 		
 		<!-- ko if: foreditor -->
@@ -662,6 +702,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: decimalPlaces, attr: {'name': 'decimalplaces' + id()}" />
 			<input type="hidden" data-bind="value: unit, attr: {'name': 'unit' + id()}" />
 			<input type="hidden" data-bind="value: min, attr: {'name': 'min' + id()}" />	
@@ -716,6 +757,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
@@ -759,6 +801,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: minString(), attr: {'name': 'min' + id()}" />	
 			<input type="hidden" data-bind="value: maxString(), attr: {'name': 'max' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
@@ -813,6 +856,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: min(), attr: {'name': 'min' + id()}" />	
 			<input type="hidden" data-bind="value: max(), attr: {'name': 'max' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
@@ -857,6 +901,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
@@ -886,6 +931,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
 		<!-- /ko -->
@@ -954,6 +1000,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: columns, attr: {'name': 'columns' + id()}" />
 			<input type="hidden" data-bind="value: selection, attr: {'name': 'selectable' + id()}" />
@@ -1002,6 +1049,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />
@@ -1037,7 +1085,7 @@
 		<!-- ko if: ismobile || istablet -->
 			<div data-bind="attr: {'class': 'matrixdiv' + css()}">
 				<!-- ko foreach: questions -->	
-					<div data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'id' : id(), 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId())}" style="margin-top: 10px;">
+					<div data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'id' : id(), 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()), 'data-useAndLogic': useAndLogic()}"}" style="margin-top: 10px;">
 						<!-- ko if: optional() == false -->
 							<span class="mandatory" style="position: absolute; margin-left: -7px;">*</span>
 						<!-- /ko -->
@@ -1075,6 +1123,7 @@
 					<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 					<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 					<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+					<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 					<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 					<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 					
@@ -1113,7 +1162,7 @@
 				</thead>
 				<tbody>					
 					<!-- ko foreach: questionsOrdered() -->			
-					<tr data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()) + ';' + ($parent.foreditor ? '' : getTriggersByQuestion($parent.uniqueId))}"> 
+					<tr data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()) + ';' + ($parent.foreditor ? '' : getTriggersByQuestion($parent.uniqueId)), 'data-useAndLogic': useAndLogic()}"> 
 						<th class="matrix-header" scope="row" data-bind="attr: {'id' : id(), 'data-id': id}">
 							<!-- ko if: optional() == false -->
 								<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 3px;">*</span>
@@ -1143,6 +1192,7 @@
 			<input type="hidden" data-bind="value: isDelphiQuestion, attr: {'name': 'delphiquestion' + id()}" />
 			<input type="hidden" data-bind="value: showExplanationBox, attr: {'name': 'explanationbox' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: widths, attr: {'name': 'widths' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
@@ -1315,7 +1365,7 @@
 				<div class="delphiupdatemessage"></div>
 
 				<!-- ko if: delphiTableNewComments() -->
-				<div class="newdelphicomments label label-info">${form.getMessage("label.DelphiAnswersTableNewComments")}</div>
+				<div class="newdelphicomments label">${form.getMessage("label.DelphiAnswersTableNewComments")}</div>
 				<!-- /ko -->
 			</div>
 		</div>

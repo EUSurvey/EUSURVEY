@@ -42,6 +42,8 @@ import com.ec.survey.model.survey.MatrixOrTable;
 import com.ec.survey.model.survey.MultipleChoiceQuestion;
 import com.ec.survey.model.survey.NumberQuestion;
 import com.ec.survey.model.survey.Question;
+import com.ec.survey.model.survey.RankingItem;
+import com.ec.survey.model.survey.RankingQuestion;
 import com.ec.survey.model.survey.RatingQuestion;
 import com.ec.survey.model.survey.RegExQuestion;
 import com.ec.survey.model.survey.SingleChoiceQuestion;
@@ -322,6 +324,9 @@ public class ReportingService extends BasicService {
 								} else if (question instanceof TimeQuestion) {
 									where += columnname + " LIKE :answer" + i;
 									values.put(Constants.ANSWER + i,  "%" + answer + "%");
+								} else if (question instanceof RankingQuestion) {
+									where += columnname + " LIKE :answer" + i;
+									values.put(Constants.ANSWER + i, answer + "%");		
 								} else if (answer.contains("|")) { // Matrices
 									String answerUid = answer.substring(answer.indexOf('|')+1);
 									where += columnname + " LIKE :answer" + i;
@@ -342,7 +347,7 @@ public class ReportingService extends BasicService {
 									values.put(Constants.ANSWER + i, "%" + answer + "%");								
 								} else if (question instanceof GalleryQuestion) {
 									where += columnname + " LIKE :answer" + i;
-									values.put(Constants.ANSWER + i, "%" + answer + ";%");								
+									values.put(Constants.ANSWER + i, "%" + answer + ";%");		
 								} else { //Rating
 									where += columnname + " LIKE :answer" + i;
 									values.put(Constants.ANSWER + i, "%" + answer + "%");
@@ -412,7 +417,7 @@ public class ReportingService extends BasicService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat) throws Exception {
+	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
 		Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
@@ -581,7 +586,9 @@ public class ReportingService extends BasicService {
 											v += answer.getTitle();
 										}
 										
-										v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										if (showShortnames) {
+											v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										}
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
@@ -602,7 +609,9 @@ public class ReportingService extends BasicService {
 											v += answer.getTitle();
 										}
 										
-										v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										if (showShortnames) {
+											v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										}
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
@@ -639,6 +648,30 @@ public class ReportingService extends BasicService {
 											v += file.getUid() + "|" + file.getNameForExport() + ";";
 										} else {
 											v += file.getNameForExport() + "<br />";
+										}
+									}							
+								}						
+								row.add(v.length() > 0 ? v : null);
+							} else if (question instanceof RankingQuestion) {
+								RankingQuestion rankingQuestion = (RankingQuestion)question;
+								Map<String, RankingItem> children = rankingQuestion.getChildElementsByUniqueId();
+								String[] answerids = item.toString().split(";");						
+								String v = "";
+								for (String uniqueId : answerids)
+								{
+									if (v.length() > 0) v += ";";
+									RankingItem child = children.get(uniqueId);
+									if (child != null)
+									{
+										if (doNotReplaceAnswerIDs)
+										{
+											v += uniqueId;
+										} else {
+											v += child.getTitle();
+										}
+										
+										if (showShortnames) {
+											v += " <span class='assignedValue hideme'>(" +child.getShortname() + ")</span>";
 										}
 									}							
 								}						
@@ -910,6 +943,8 @@ public class ReportingService extends BasicService {
 				for (Element child : rating.getChildElements()) {
 					putColumnNameAndType(columnNamesToType, child.getUniqueId(), "TEXT");
 				}
+			} else if (question instanceof RankingQuestion) {
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			}
 		}
 		return columnNamesToType;
@@ -1212,7 +1247,6 @@ public class ReportingService extends BasicService {
 		
 	private void executeInternal(String sql) {
 		lastQuery = sql;
-		logger.debug(sql);
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		SQLQuery createQuery = sessionReporting.createSQLQuery(sql);
 		createQuery.executeUpdate();		
@@ -1406,6 +1440,16 @@ public class ReportingService extends BasicService {
 					columns.add(ratingQuestion.getUniqueId());		
 					values.add(answers.isEmpty() ? null : "'" + answers.get(0).getValue() + "'");
 				}
+			} else if (question instanceof RankingQuestion) {
+				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
+				String d = null;
+				if (!answers.isEmpty())
+				{
+					d = answers.get(0).getValue();						
+				}
+				columns.add(question.getUniqueId());
+				values.add(":value" + parameters.size());
+				parameters.put("value" + parameters.size(), d);	
 			}
 		}
 		
@@ -1475,7 +1519,6 @@ public class ReportingService extends BasicService {
 				lastQuery = row.toString();
 				SQLQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
 				sqlQueryService.setParameters(createQuery, parameters);
-				logger.debug(lastQuery);
 				createQuery.executeUpdate();
 				
 				counter = 0;
@@ -1507,7 +1550,6 @@ public class ReportingService extends BasicService {
 			lastQuery = row.toString();
 			SQLQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
 			sqlQueryService.setParameters(createQuery, parameters);
-			logger.debug(lastQuery);
 			createQuery.executeUpdate();
 		}
 	}

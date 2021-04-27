@@ -2838,6 +2838,15 @@ public class RunnerController extends BasicController {
 								}
 
 								delphiQuestion.setAnswer(result);
+							} else if (question instanceof RankingQuestion)
+							{
+								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
+
+								if (!answers.isEmpty()) {
+									for (Answer answer : answers) {
+										result += SurveyHelper.getAnswerTitle(survey, answer, false) + " ";
+									}
+								}
 							} else {
 								List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());
 
@@ -3159,9 +3168,13 @@ public class RunnerController extends BasicController {
 				result = handleDelphiTableRatingQuestion((RatingQuestion) question, orderBy, limit, offset, answerSetId);
 			} else if (question instanceof Table) {
 				result = handleDelphiTableTable((Table) question, orderBy, limit, offset, answerSetId);
+			} else if (question instanceof RankingQuestion) {
+				result = handleDelphiTableRankingQuestion((RankingQuestion) question, orderBy, limit, offset, answerSetId);
 			} else {
 				result = handleDelphiTableRawValueQuestion(question, orderBy, limit, offset, answerSetId);
 			}
+
+			result.setQuestionType(DelphiQuestionType.from(question));
 
 			for (DelphiTableEntry entry : result.getEntries()) {
 				boolean stopIteration = false;
@@ -3401,6 +3414,36 @@ public class RunnerController extends BasicController {
 		return result;
 	}
 	
+	private DelphiTable handleDelphiTableRankingQuestion(RankingQuestion question, DelphiTableOrderBy orderBy, int limit, int offset, Integer answerSetId) {
+		DelphiTable result = new DelphiTable();
+		result.setOffset(offset);
+
+		// get survey
+		Survey survey = question.getSurvey();
+
+		// get all contributions
+		DelphiContributions contributions = answerExplanationService.getDelphiContributions(Collections.singletonList(question.getUniqueId()), question.getUniqueId(), survey.getIsDraft(), orderBy, limit, offset);
+		result.setTotal(contributions.getTotal());
+		
+		// no need to group by answer set because there can only be one answer per answer set
+		for (DelphiContribution contrib : contributions.getContributions()) {			
+			List<String> rankingAnswerList = question.getAnswer(contrib.getValue());
+			String value = String.join("; ", rankingAnswerList);
+			DelphiTableEntry tableEntry = new DelphiTableEntry();
+			tableEntry.setAnswerSetId(contrib.getAnswerSetId());
+			tableEntry.setAnswerSetUniqueCode(contrib.getAnswerSetUniqueCode());
+			tableEntry.setExplanation(contrib.getExplanation());
+			tableEntry.setUpdateDate(contrib.getUpdate());
+			tableEntry.getAnswers().add(new DelphiTableAnswer(null, value));
+			loadComments(tableEntry, contrib.getAnswerSetId(), answerSetId, question.getUniqueId(), survey.getUniqueId());
+			loadFiles(tableEntry, contrib.getAnswerSetId(), question.getUniqueId());
+
+			result.getEntries().add(tableEntry);
+		}
+
+		return result;
+	}	
+	
 	@PostMapping(value = "/delphiAddComment")
 	public ResponseEntity<String> delphiAddComment(HttpServletRequest request) {
 		try {
@@ -3609,6 +3652,23 @@ public class RunnerController extends BasicController {
 
 		Survey survey = question.getSurvey();
 
+		String[] colLabels = new String[question.getColumns()];
+		String[] rowLabels = new String[question.getRows()];
+
+		for (Element child : question.getChildElements()) {
+			Integer position = child.getPosition();
+
+			if (position < 1) {
+				continue;
+			}
+
+			if (position < question.getColumns()) {
+				colLabels[position] = child.getTitle();
+			} else {
+				rowLabels[position - question.getColumns() + 1] = child.getTitle();
+			}
+		}
+
 		for (List<DelphiContribution> entry : groupDelphiContributions(contributions)) {
 			DelphiContribution firstValue = entry.get(0);
 			DelphiTableEntry tableEntry = new DelphiTableEntry();
@@ -3618,8 +3678,8 @@ public class RunnerController extends BasicController {
 			tableEntry.setUpdateDate(firstValue.getUpdate());
 
 			for (DelphiContribution contrib : entry) {
-				String col = Character.toString((char) ('A' + contrib.getColumn() - 1)); // column 1 is A
-				DelphiTableAnswer answer = new DelphiTableAnswer(col + contrib.getRow(), contrib.getValue());
+				String label = "<span>" + colLabels[contrib.getColumn()] + " - " + rowLabels[contrib.getRow()] + "</span>";
+				DelphiTableAnswer answer = new DelphiTableAnswer(label, contrib.getValue());
 				tableEntry.getAnswers().add(answer);
 			}
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ec.survey.tools.Constants;
 
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,7 +38,7 @@ public class JSONController extends BasicController {
 	}
 	
 	@GetMapping(value = "/usersJSON", headers="Accept=*/*")
-	public @ResponseBody String[] participantsSearch(HttpServletRequest request, HttpServletResponse response ) {
+	public @ResponseBody String[] participantsSearch(HttpServletRequest request, HttpServletResponse response ) throws NamingException {
 		String name = request.getParameter("name");
 		if (name != null) name = name.trim();
 		

@@ -69,7 +69,7 @@ function newFilesViewModel(files)
 	return viewModel;
 }
 
-function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, title, originalTitle, isDependentMatrixQuestion, css, index)
+function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, title, originalTitle, isDependentMatrixQuestion, css, index, useAndLogic)
 {
 	var viewModel = newBasicViewModel();
 	viewModel.type = 'matrixitem';
@@ -83,6 +83,7 @@ function newMatrixItemViewModel(id, uniqueId, optional, shortname, readonly, tit
 	viewModel.isDependentMatrixQuestion = ko.observable(isDependentMatrixQuestion);
 	viewModel.css = ko.observable(css);
 	viewModel.originalIndex = ko.observable(index);
+	viewModel.useAndLogic = ko.observable(useAndLogic);
 	return viewModel;
 }
 
@@ -91,7 +92,7 @@ function newMatrixItemsViewModel(items)
 	var viewModel = ko.observableArray();
 	for (var i = 0; i < items.length; i++)
 	{
-		viewModel.push(newMatrixItemViewModel(items[i].id, items[i].uniqueId, items[i].optional, items[i].shortname, items[i].readonly, items[i].title, items[i].originalTitle, items[i].isDependentMatrixQuestion, items[i].css, i));
+		viewModel.push(newMatrixItemViewModel(items[i].id, items[i].uniqueId, items[i].optional, items[i].shortname, items[i].readonly, items[i].title, items[i].originalTitle, items[i].isDependentMatrixQuestion, items[i].css, i, items[i].useAndLogic));
 	}
 	return viewModel;
 }
@@ -258,17 +259,30 @@ function newScoringViewModel(element)
 }
 
 function createNewDelphiBasicViewModel() {
+	const self = this;
+	self.delphiTableEntries = ko.observableArray();
+	self.delphiTableLoading = ko.observable(false);
+	self.delphiTableLimit = ko.observable(20);
+	self.delphiTableNewComments = ko.observable(false);
+	self.delphiTableOffset = ko.observable(0);
+	self.delphiTableQuestionType = ko.observable("");
+	self.delphiTableShowQuestionHtml = ko.computed(function () {
+		// used to decide whether Knockout's html or text binding should be used
+		switch (self.delphiTableQuestionType()) {
+			case "SingleChoice":
+			case "MultipleChoice":
+			case "Matrix":
+			case "Ranking":
+				// only allow HTML for these three question types, as others don't need it or potentially allow XSS
+				return true;
 
-	return {
-		delphiTableEntries: ko.observableArray(),
-		delphiTableLoading: ko.observable(false),
-		delphiTableLimit: ko.observable(20),
-		delphiTableNewComments: ko.observable(false),
-		delphiTableOffset: ko.observable(0),
-		delphiTableTotalEntries: ko.observable(0),
-		delphiTableOrder: ko.observable("UpdateDesc"),
-		showExplanationBox: ko.observable(true)
-	};
+			default:
+				return false;
+		}
+	});
+	self.delphiTableTotalEntries = ko.observable(0);
+	self.delphiTableOrder = ko.observable("UpdateDesc");
+	self.showExplanationBox = ko.observable(true);
 }
 
 function newBasicViewModel(element)
@@ -279,8 +293,9 @@ function newBasicViewModel(element)
 	
 	viewModel.scoringItems = ko.observableArray();
 	viewModel.optional = ko.observable(true);
-	viewModel.css = ko.observable(true);	
+	viewModel.css = ko.observable(true);
 	viewModel.maxDistanceExceeded = ko.observable(false);
+	viewModel.useAndLogic = ko.observable(false);
 	viewModel.median = ko.observable(0);
 	viewModel.changedForMedian = ko.observable(false);
 	
@@ -311,6 +326,7 @@ function newBasicViewModel(element)
 		viewModel.css = ko.observable(element.css);
 		viewModel.optional = ko.observable(element.optional);
 		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
+		viewModel.useAndLogic = ko.observable(element.useAndLogic);
 		viewModel.showExplanationBox = ko.observable(element.showExplanationBox);
 		viewModel.delphiChartType = ko.observable(element.delphiChartType);
 
@@ -714,31 +730,173 @@ function newRankingViewModel(element)
 {
 	var viewModel = newBasicViewModel(element);
 
-	viewModel.rankingItems = newRankingItemViewModelForEach(element.childElements);
+	viewModel.rankingItems = newRankingItemViewModelForEach(element.childElements, viewModel);
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.minItems = function() { return 2; };
+	viewModel.answervalues = ko.observable($.map(viewModel.rankingItems(), item => item.uniqueId()));
+	viewModel.itemIdtoUniqueIdLookup = {};
+	$.each(element.childElements, (_, that) => {
+		viewModel.itemIdtoUniqueIdLookup[that.id] = that.uniqueId;
+	});
+	viewModel.isAnswered = ko.observable(false);
+	viewModel.answervalues.subscribe(function() {
+		viewModel.isAnswered(true);
+	});
+	viewModel.css = ko.observable(element.css);
+
+	viewModel.acceptInitialAnswer = function(_, event) {
+		const rankingItemList = $(event.target).closest(".rankingitem").find(".rankingitem-list")[0];
+		viewModel.isAnswered(true);
+		propagateChange(rankingItemList);
+	}
+
+	viewModel.originalItemUniqueIdOrder = $.map(element.childElements, item => item.uniqueId);
+	viewModel.itemTitleLookup = {};
+	$.each(element.childElements, (_, that) => {
+		viewModel.itemTitleLookup[that.uniqueId] = that.title;
+	});
+
+	viewModel.getAnswerValuesString = ko.computed(function() {
+		if (!viewModel.isAnswered()) return "";
+		return viewModel.answervalues().join(';');
+	});
+	viewModel.getAnswerValuesTitleList = ko.computed(function() {
+		return $.map(viewModel.answervalues(), uniqueId => viewModel.itemTitleLookup[uniqueId]);
+	});
+
+	viewModel.initOn = function(domElement) {
+		const viewmodel = this;
+		if (viewmodel.foreditor) return;
+		const formeranswervaluesstringly = getValueByQuestion(viewmodel.uniqueId());
+		const formeranswervalues = formeranswervaluesstringly.split(';');
+		const isAnswerFormatSemicolon = formeranswervalues.join(';') == formeranswervaluesstringly;
+		const isAnswerFormatLength = formeranswervalues.length == viewmodel.answervalues().length;
+		let allIdsValid = false;
+		if (isAnswerFormatSemicolon && isAnswerFormatLength) {
+			allIdsValid = true;
+			$.each(formeranswervalues, function(index, uniqueId) {
+				if (!(uniqueId in viewmodel.itemTitleLookup)) {
+					allIdsValid = false;
+				}
+			});
+		}
+		if (allIdsValid) {
+			const permutation = $.map(formeranswervalues, uniqueId => viewmodel.originalItemUniqueIdOrder.indexOf(uniqueId));
+			const rankingItemReordered = $.map(permutation, index => viewmodel.rankingItems()[index]);
+			viewmodel.rankingItems(rankingItemReordered);
+			viewmodel.answervalues(formeranswervalues);
+		}
+
+		const self = $(domElement).find(".rankingitem-list")[0];
+		$(self).sortable({
+			start: function(event, ui) {
+				const width = $(ui.item).width();
+				const rankingItemFormDatas = $(domElement).find(".rankingitem-form-data");
+				rankingItemFormDatas.each(function() {
+					$(this).width(2 + width);
+				});
+			},
+			stop: function(event, ui) {
+				const rankingItemFormDatas = $(domElement).find(".rankingitem-form-data");
+				rankingItemFormDatas.each(function() {
+					$(this).width("");
+				});
+			},
+			update: function(event, ui) {
+				const rankingitems = $(self).find(".rankingitemtext");
+				const newanswervalues = $.map(rankingitems, that => viewmodel.itemIdtoUniqueIdLookup[Number(that.id)]);
+				const parentUID = viewmodel.uniqueId();
+				values[parentUID] = newanswervalues.join(';');
+				viewmodel.answervalues(newanswervalues);
+				propagateChange(self);
+			},
+		});
+		$(domElement).disableSelection();
+	};
 	return viewModel;
 }
 
-function newRankingItemViewModelForEach(childElements)
+function newRankingItemViewModelForEach(childElements, parent)
 {
 	var viewModel = ko.observableArray();
 	$.each(childElements, (index, that) => {
-		viewModel.push(newRankingItemViewModel(that.id, that.uniqueId, that.shortname, that.title));
+		viewModel.push(newRankingItemViewModel(that.id, that.uniqueId, that.shortname, that.title, parent));
 	});
 	return viewModel;
 }
 
-function newRankingItemViewModel(id, uniqueId, shortname, title)
+var ArrayElementMovingTool = {
+	move : function(self, from, to) {
+		if (0 > from) return false;
+		if (0 > to) return false;
+		if (self.length <= from) return false;
+		if (self.length <= to) return false;
+		if (from == to) return false;
+		self.splice(to, 0, self.splice(from, 1)[0]);
+		return true;
+	},
+	moveRelative : function(self, from, steps) {
+		if (0 == steps) return false;
+		const to = from + steps;
+		return ArrayElementMovingTool.move(self, from, to);
+	},
+	moveItemRelative : function(self, item, steps) {
+		const index = self.indexOf(item);
+		if (-1 == index) return false;
+		return ArrayElementMovingTool.moveRelative(self, index, steps);
+	}
+};
+
+function newRankingItemViewModel(id, uniqueId, shortname, title, parent)
 {
 	var viewModel = newBasicViewModel();
+	viewModel.parent = parent;
 	viewModel.type = 'RankingItem';
 	viewModel.title = ko.observable(title);
 	viewModel.id = ko.observable(id);
 	viewModel.uniqueId = ko.observable(uniqueId);
 	viewModel.shortname = ko.observable(shortname);
 	viewModel.originalTitle = ko.observable(title);
+
+	viewModel.onMoveItem = function(_, event, steps) {
+		if (this.parent.foreditor) return;
+		var target = event.target;
+		var rankingitemList = $(target).closest(".rankingitem-list");
+		var rankingitems = $(rankingitemList).find(".rankingitemtext");
+		const actualOrder = $.map(rankingitems, that => this.parent.itemIdtoUniqueIdLookup[Number(that.id)]);
+		const answervalues = this.parent.answervalues();
+		if (ArrayElementMovingTool.moveItemRelative(answervalues, this.uniqueId(), steps)) {
+			this.parent.answervalues(answervalues);
+			const reIndex = $.map(answervalues, that => actualOrder.indexOf(that));
+			var rankingitemFormData = $(rankingitemList).find(".rankingitem-form-data");
+			var rankingitemFormDataReOrdered = $.map(reIndex, value => rankingitemFormData.get(value));
+			$.each(rankingitemFormDataReOrdered, (_, that) => $(rankingitemList).append(that));
+			target.focus();
+			propagateChange(target);
+		}
+	}
+
+	viewModel.onMoveUp = function(data, event) {
+		this.onMoveItem(data, event, -1);
+	}
+	viewModel.onMoveDown = function(data, event) {
+		this.onMoveItem(data, event, 1);
+	}
+	viewModel.onKeyDownMoveItem = function(data, event, steps) {
+		if ([" ", "Enter"].includes(event.key)) {
+			this.onMoveItem(data, event, steps);
+		} else {
+			return true; // allow default action
+		}
+	}
+	viewModel.onKeyDownMoveItemUp = function(data, event) {
+		return viewModel.onKeyDownMoveItem(data, event, -1);
+	}
+	viewModel.onKeyDownMoveItemDown = function(data, event, steps) {
+		return viewModel.onKeyDownMoveItem(data, event, 1);
+	}
+
 	return viewModel;
 }
 
@@ -845,6 +1003,15 @@ function newNumberViewModel(element)
 	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
 	
 	viewModel.maxDistance = ko.observable(element.maxDistance);
+
+	viewModel.isAnswered = ko.observable(false);
+	viewModel.isAnswered.subscribe(function () {
+		const input = $("#answer" + viewModel.id());
+		propagateChange($(input));
+	});
+	viewModel.markAsAnswered = function () {
+		this.isAnswered(true);
+	};
 	
 	if (viewModel.display() == 'Slider')
 	{
@@ -919,6 +1086,7 @@ function newNumberViewModel(element)
 		
 		var ovalue = getValueByQuestion(this.uniqueId());
 		if (ovalue.length > 0) {
+			this.isAnswered(true);
 			return ovalue;
 		}
 		

@@ -161,6 +161,9 @@
 			$("#new-survey-security-secured").prop("checked", "checked");
 			$("#new-survey-security-secured").attr("disabled", "disabled");
 			$("#new-survey-security-open").attr("disabled", "disabled");
+			
+			$("#new-survey-contact-type").val("email");
+			checkNewSurveyContactType();
 		}
 	}
 	

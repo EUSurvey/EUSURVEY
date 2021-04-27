@@ -49,7 +49,6 @@ public class ExportsRemover implements Runnable {
 				logger.error(e1.getLocalizedMessage(), e1);
 			}
 		}		
-		logger.debug("ExportsRemover completed");
 	}
 	
 }

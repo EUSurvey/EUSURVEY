@@ -25,7 +25,7 @@ import java.util.*;
 
 @Service("ldapService")
 public class LdapService extends BasicService {
-    private DirContext ctx;
+    //private DirContext ctx;
     
     public static final String LDAP_CONSTANT_PREFIX = "$";
     
@@ -77,33 +77,27 @@ public class LdapService extends BasicService {
 		return cassOss != null && cassOss.equalsIgnoreCase("true");
 	}
    
-    private void initialize() {
-        try {
-        	if (securityAuthentication == null || securityAuthentication.length() == 0) securityAuthentication = "simple";
-        	
-        	logger.debug("LDAP INITIALIZE Context " + contextFactory +" URL " + url + " SecuAuth " + securityAuthentication +" SecuPrinc " + securityPrincipal );
-            // Create a Directory Context
-            Hashtable<String, String> env = new Hashtable<>();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
-            env.put(Context.PROVIDER_URL, url);
-            env.put(Context.SECURITY_AUTHENTICATION, securityAuthentication);
-            env.put(Context.SECURITY_PRINCIPAL, securityPrincipal);
-            env.put(Context.SECURITY_CREDENTIALS, securityCredentials);
+    private DirContext initialize() throws NamingException {
+
+    	if (securityAuthentication == null || securityAuthentication.length() == 0) securityAuthentication = "simple";
+    	
+    	// Create a Directory Context
+        Hashtable<String, String> env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
+        env.put(Context.PROVIDER_URL, url);
+        env.put(Context.SECURITY_AUTHENTICATION, securityAuthentication);
+        env.put(Context.SECURITY_PRINCIPAL, securityPrincipal);
+        env.put(Context.SECURITY_CREDENTIALS, securityCredentials);
             
-            logger.debug("LDAP SERVICE INITIALIZE " + env.toString());
-            ctx = new InitialDirContext(env);
-            logger.info("LDAP SERVICE INITIALIZECONTEXT DONE ");
-        } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(), e);
-        }
+        return new InitialDirContext(env);
     }
       
-    public String getEmail(String userName) {
+    public String getEmail(String userName) throws NamingException {
     	
     	userName = Tools.encodeForLDAP(userName);
     	
         String email = "";
-        initialize();
+        DirContext ctx = initialize();
         try {
         	String searchValue= String.format(ldapSearchUserFormat, userName);
             Attributes attrs = ctx.getAttributes(searchValue);
@@ -111,32 +105,34 @@ public class LdapService extends BasicService {
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
         }
+        
+        ctx.close();
         return email;
     }
     
-	public String getMoniker(String login) {
-		  String moniker = "";
-	        initialize();
-	        try {
-	        	login = Tools.encodeForLDAP(login);
-	        	String searchValue= String.format(ldapSearchUserFormat, login);
-	            Attributes attrs = ctx.getAttributes(searchValue);
-	            moniker = (String) attrs.get(ldapMappingUserEcMoniker).get();
-	        } catch (Exception e) {
-	            logger.error(e.getLocalizedMessage(), e);
-	        }
-	        return moniker;
+	public String getMoniker(String login) throws NamingException {
+		String moniker = "";
+		DirContext ctx = initialize();
+        try {
+        	login = Tools.encodeForLDAP(login);
+        	String searchValue= String.format(ldapSearchUserFormat, login);
+            Attributes attrs = ctx.getAttributes(searchValue);
+            moniker = (String) attrs.get(ldapMappingUserEcMoniker).get();
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
+        }
+	    ctx.close();
+        return moniker;
 	}
    
     public List<String> getUserLDAPGroups(String username) {
 
         List<String> groups = new ArrayList<>();
         try {
-            initialize();
+        	DirContext ctx = initialize();
             username = Tools.encodeForLDAP(username);
             String searchValue= String.format(ldapSearchUserFormat, username);
             Attributes attrs = ctx.getAttributes(searchValue);
-            logger.debug("getUserLDAPGroups CALLED FOR USER " + username);
             
             // get the attributes
             String department="";
@@ -182,6 +178,8 @@ public class LdapService extends BasicService {
             } else {
             	groups.add("external");
             }
+            
+            ctx.close();
            
         } catch (javax.naming.NameNotFoundException e1)
         {
@@ -211,8 +209,7 @@ public class LdapService extends BasicService {
     	
     	try {
 	
-			initialize();
-
+    		DirContext ctx = initialize();
 	
 			// check if a constant is used in this case then just get the constant value instead 
 			// searching through the Ldap server
@@ -256,10 +253,8 @@ public class LdapService extends BasicService {
 			String domainCode = "";
 			DepartmentItem currentDepartmentItem = null ;
 			try{
-				logger.debug("START SEARCH FOR DEPARTNMENTNUMBER");								
 				ne = ctx.search(ldapSearchFormat,searchString,sc);
-				logger.debug("SEARCH FOR DEPARTNMENTNUMBER DONE START LOOPING " );
-	
+			
 				while(ne.hasMore()){
 					departmentNumber="";
 					domainCode="";
@@ -277,9 +272,7 @@ public class LdapService extends BasicService {
 						domainCode = getAttributeValue(set_att, ldapMappingUserO,false) ;
 					}
 												            
-		            logger.debug("SEARCH DEPARTMENTNUMBER COUNT ATTRIBUTES NAME  IS " + set_att.size()  );
-
-					if (!StringUtils.isEmpty(departmentNumber)  && !StringUtils.isEmpty(domainCode))
+		        	if (!StringUtils.isEmpty(departmentNumber)  && !StringUtils.isEmpty(domainCode))
 					{						
 						currentDepartmentItem = new DepartmentItem(domainCode, departmentNumber) ;
 						if (!departmentNumbers.contains(currentDepartmentItem))
@@ -299,12 +292,12 @@ public class LdapService extends BasicService {
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage(), e);
 			}	
+			
+			ctx.close();
     	} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		
-		
-		logger.debug("RETURN DEPARTNMENTNUMBER WITH  " + departmentNumbers.size() );
 		return departmentNumbers;
     }
     
@@ -315,7 +308,7 @@ public class LdapService extends BasicService {
     	
     	try {
 	
-			initialize();
+    		DirContext ctx = initialize();
 			// if empty then one domain mut be set as constant in the other domainField
 			if(StringUtils.isEmpty(ldapSearchDomainFormat)){
 				if (StringUtils.isEmpty(ldapMappingDomainDescription)){
@@ -352,35 +345,35 @@ public class LdapService extends BasicService {
 				
 				String domainO =ldapMappingDomainO.replace(LDAP_CONSTANT_PREFIX, "");
 				String domainDesc=ldapMappingDomainDescription.replace(LDAP_CONSTANT_PREFIX, "");
-				logger.debug("ADD NEW DOMAIN WITH O " + domainO + " DESC " + domainDesc);
 				domains.put(domainO, domainDesc);						
-			}else{
+			} else {
 				SearchControls sc = getSearchControls(LdapSearchTypeEnum.DOMAIN);
-			NamingEnumeration<SearchResult> ne = null; 
-	
-			Attributes setOfAttributes;
-			Attribute attributeOrganization;
-			Attribute attributeDescription;
-	
-			String searchString = "(objectClass=*)";
-			try{
-					ne = ctx.search(ldapSearchDomainFormat,searchString,sc);
-				while(ne.hasMore()){
-					SearchResult sr = ne.next();  
-					setOfAttributes = sr.getAttributes();
-						attributeOrganization = setOfAttributes.get(ldapMappingDomainO);
-						attributeDescription=setOfAttributes.get(ldapMappingDomainDescription);
-						logger.debug("GetAllDomains get Domain with o value " + attributeOrganization.get());
-					if(attributeOrganization != null && attributeDescription != null)
-					{
-						domains.put((String)attributeOrganization.get(), (String) attributeDescription.get());
+				NamingEnumeration<SearchResult> ne = null; 
+		
+				Attributes setOfAttributes;
+				Attribute attributeOrganization;
+				Attribute attributeDescription;
+		
+				String searchString = "(objectClass=*)";
+				try{
+						ne = ctx.search(ldapSearchDomainFormat,searchString,sc);
+					while(ne.hasMore()){
+						SearchResult sr = ne.next();  
+						setOfAttributes = sr.getAttributes();
+							attributeOrganization = setOfAttributes.get(ldapMappingDomainO);
+							attributeDescription=setOfAttributes.get(ldapMappingDomainDescription);
+						if(attributeOrganization != null && attributeDescription != null)
+						{
+							domains.put((String)attributeOrganization.get(), (String) attributeDescription.get());
+						}
 					}
-				}
-			} catch (Exception e) {
-				logger.error(e.getLocalizedMessage(), e);
-			}	
+				} catch (Exception e) {
+					logger.error(e.getLocalizedMessage(), e);
+				}	
 				
 			}
+			
+			ctx.close();
     	} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
@@ -406,11 +399,11 @@ public class LdapService extends BasicService {
 		getPool().execute(domainWorker);
 	}
 	
-	public List<EcasUser> getAllEcasUsers(Date lastLDAPSynchronizationDate)
+	public List<EcasUser> getAllEcasUsers(Date lastLDAPSynchronizationDate) throws NamingException
 	{
 		List<EcasUser> result = new ArrayList<>();
 	
-		initialize();
+		DirContext ctx = initialize();
 		
 		try {
 
@@ -531,14 +524,16 @@ public class LdapService extends BasicService {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 		
+		ctx.close();
+		
 		return result;
 	}
 	
-	public List<String> getAllEcasUserNames()
+	public List<String> getAllEcasUserNames() throws NamingException
 	{
 		List<String> ecasUserNamesStillActivated = new ArrayList<>();
 	
-		initialize();
+		DirContext ctx = initialize();
 		
 		try {
 
@@ -581,6 +576,8 @@ public class LdapService extends BasicService {
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
+		
+		ctx.close();
 		
 		return ecasUserNamesStillActivated;		
 	}
@@ -670,7 +667,7 @@ public class LdapService extends BasicService {
 		return result;
 	}
 
-	public String[] getECASLogins(String name, String department, String type, String first, String last, String email, String order) {
+	public String[] getECASLogins(String name, String department, String type, String first, String last, String email, String order) throws NamingException {
 		
 		name = Tools.encodeForLDAP(name);
 		department = Tools.encodeForLDAP(department);
@@ -681,7 +678,7 @@ public class LdapService extends BasicService {
 		
 		List<LdapSearchResult> ldqpUsers = new ArrayList<>();
 		
-		initialize();
+		DirContext ctx = initialize();
 		
 		try {
 			SearchControls sc = getSearchControls(LdapSearchTypeEnum.LOGIN);
@@ -804,6 +801,8 @@ public class LdapService extends BasicService {
 			
 			resultString.add("<tr id='" + login + "'><td>" + displayName + "</td><td>" + fname + "</td><td>" + lname + "</td><td>" + group + "</td></tr>");
 		}		
+		
+		ctx.close();
 		
 		return resultString.toArray(new String[resultString.size()]);
 	}

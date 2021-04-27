@@ -1,7 +1,9 @@
 package com.ec.survey.model.survey;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -67,11 +69,20 @@ public class RankingQuestion extends Question {
 		if (!missingElements.isEmpty())
 		{
 			List<RankingItem> result = new ArrayList<>();
-			for (RankingItem thatElement : missingElements)
+			
+			for (RankingItem child : childElements)
 			{
-				if (!result.contains(thatElement))
+				if (!result.contains(child))
 				{
-					result.add(thatElement);
+					result.add(child);
+				}
+			}
+			
+			for (RankingItem child : missingElements)
+			{
+				if (!result.contains(child))
+				{
+					result.add(child);
 				}
 			}
 			
@@ -95,13 +106,40 @@ public class RankingQuestion extends Question {
 	}	
 	
 	@Transient
-	public RankingItem getChildElementsByUniqueId(String uid) {
+	public Map<String, RankingItem> getChildElementsByUniqueId() {
+		Map<String, RankingItem> map = new HashMap<>();
 		for (RankingItem thatElement : getAllChildElements ()) {
-			if (thatElement.getUniqueId() != null && thatElement.getUniqueId().length() > 0 && thatElement.getUniqueId().equals(uid)) {
-				return thatElement;
+			map.put(thatElement.getUniqueId(), thatElement);
+		}
+		return map;
+	}
+	
+	@Transient
+	public List<String> getAnswer(String answerValue) {
+		Map<String, RankingItem> children = getChildElementsByUniqueId();
+		List<String> rankingAnswerList = new ArrayList<>();
+		for (String uniqueId : answerValue.split(";")) {
+			RankingItem child = children.get(uniqueId);
+
+			if (null != child) {
+				rankingAnswerList.add(child.getTitle());
 			}
 		}
-		return null;
+		return rankingAnswerList;
+	}
+
+	@Transient
+	public List<String> getAnswerWithStrippedTitleNoEscape(String answerValue) {
+		Map<String, RankingItem> children = getChildElementsByUniqueId();
+		List<String> rankingAnswerList = new ArrayList<>();
+		for (String uniqueId : answerValue.split(";")) {
+			RankingItem child = children.get(uniqueId);
+
+			if (null != child) {
+				rankingAnswerList.add(child.getStrippedTitleNoEscape());
+			}
+		}
+		return rankingAnswerList;
 	}
 
 	public RankingQuestion copy(String fileDir) throws ValidationException {
@@ -114,6 +152,17 @@ public class RankingQuestion extends Question {
 		}
 
 		return copy;
+	}
+
+	@Transient
+	@Override
+	public String getCss()
+	{
+		String css = super.getCss();
+
+		css += " ranking";
+
+		return css.trim();
 	}
 
 	@Override
@@ -139,4 +188,26 @@ public class RankingQuestion extends Question {
 		return false;
 	}
 
+	@Transient
+	public boolean isValidAnswer(String answerValues) {
+		String[] answerValuesStringArray = answerValues.split(";");
+		List<RankingItem> children = getChildElements();
+
+		if (answerValuesStringArray.length != children.size()) {
+			return false;
+		}
+		for (String valueString : answerValuesStringArray) {
+			boolean isIdFound = false;
+			for (RankingItem child : children) {
+				if (child.getUniqueId().equals(valueString)) {
+					isIdFound = true;
+					break;
+				}
+			}
+			if (!isIdFound) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

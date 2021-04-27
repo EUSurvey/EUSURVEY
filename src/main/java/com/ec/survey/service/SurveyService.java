@@ -29,6 +29,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import java.io.IOException;
@@ -665,6 +666,7 @@ public class SurveyService extends BasicService {
 		}
 		if (survey != null && synchronizeSurvey) {
 			synchronizeSurvey(survey, survey.getLanguage().getCode(), setSurvey);
+			Hibernate.initialize(survey.getOwner().getRoles());
 
 			session.setReadOnly(survey, readonly);
 			for (Element e : survey.getElementsRecursive(true)) {
@@ -790,6 +792,9 @@ public class SurveyService extends BasicService {
 			} else if (element instanceof GalleryQuestion) {
 				GalleryQuestion gallery = (GalleryQuestion) element;
 				Hibernate.initialize(gallery.getFiles());
+			} else if (element instanceof RankingQuestion) {
+				RankingQuestion ranking = (RankingQuestion) element;
+				Hibernate.initialize(ranking.getChildElements());
 			}
 		}
 	}
@@ -2332,6 +2337,7 @@ public class SurveyService extends BasicService {
 			logger.info("starting import of answers");
 
 			Map<String, Integer> keys = new HashMap<>();
+			Set<String> rankingQuestions = new HashSet<>();
 			for (Element element : survey.getElementsRecursive()) {
 				keys.put(element.getSourceId().toString(), element.getId());
 				if (element instanceof ChoiceQuestion) {
@@ -2340,6 +2346,8 @@ public class SurveyService extends BasicService {
 							keys.put(answer.getSourceId().toString(), answer.getId());
 						}
 					}
+				} else if (element instanceof RankingQuestion) {
+					rankingQuestions.add(element.getUniqueId());
 				}
 			}
 
@@ -2388,6 +2396,15 @@ public class SurveyService extends BasicService {
 						}
 
 						an.setPossibleAnswerUniqueId(oldToNewUniqueIds.get(an.getPossibleAnswerUniqueId()));
+					}
+					
+					if (an.getValue() != null && rankingQuestions.contains(an.getQuestionUniqueId())) {
+						String[] items = an.getValue().split(";");
+						String newValue = "";
+						for (String uid : items) {
+							newValue += oldToNewUniqueIds.get(uid) + ";";
+						}
+						an.setValue(newValue);
 					}
 				}
 				
@@ -3212,15 +3229,30 @@ public class SurveyService extends BasicService {
 		return (List<Object>) query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	private List<Object> GetAllRankingQuestionAnswers(String surveyUid, Set<String> rankingQuestionUids) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(
+				"SELECT DISTINCT QUESTION_UID, VALUE FROM ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID JOIN SURVEYS s ON  ans.SURVEY_ID =  s.SURVEY_ID WHERE s.ISDRAFT = FALSE AND s.SURVEY_UID = :surveyUid AND a.QUESTION_UID IN (" 
+									+ StringUtils.collectionToCommaDelimitedString(rankingQuestionUids) + ")")
+				.setString("surveyUid", surveyUid);
+
+		return (List<Object>) query.list();
+	}
+	
 	@Transactional(readOnly = true)
 	public void checkAndRecreateMissingElements(Survey survey, ResultFilter filter) {
 		List<Element> surveyelements = survey.getElementsRecursive(true);
 		Map<String, Element> surveyelementsbyuid = new HashMap<>();
 		Map<String, Element> missingelementuids = new HashMap<>();
+		Set<String> rankingQuestionUids = new HashSet<>();
 		for (Element element : surveyelements) {
 			surveyelementsbyuid.put(element.getUniqueId(), element);
+			if (element instanceof RankingQuestion) {
+				rankingQuestionUids.add("'" + element.getUniqueId() + "'");
+			}
 		}
-
+		
 		// the reporting database is not used here fore performance reasons
 		List<Object> res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
 
@@ -3303,6 +3335,11 @@ public class SurveyService extends BasicService {
 				} else {
 					survey.getMissingElements().add(missingquestion);
 					missingelementuids.put(questionUID, missingquestion);
+					
+					if (missingquestion instanceof RankingQuestion) {
+						rankingQuestionUids.add("'" + missingquestion.getUniqueId() + "'");
+					}
+					
 					if (filter != null) {
 						if (!filter.getVisibleQuestions().contains(missingquestion.getId().toString()))
 							filter.getVisibleQuestions().add(missingquestion.getId().toString());
@@ -3397,6 +3434,46 @@ public class SurveyService extends BasicService {
 							}
 						}
 					}
+				}
+			}
+		}
+		
+		if (!rankingQuestionUids.isEmpty()) {
+			List<Object> allRankingQuestionAnswers = GetAllRankingQuestionAnswers(survey.getUniqueId(), rankingQuestionUids);
+			Set<String> distinctRankingItemUids = new HashSet<>();
+			for (Object o : allRankingQuestionAnswers) {
+				Object[] a = (Object[]) o;
+
+				String questionUID = (String) a[0];
+				String rankingItemOrder = (String) a[1];
+				
+				for (String uniqueId : rankingItemOrder.split(";")) {
+					if (!distinctRankingItemUids.contains(uniqueId)) {
+						distinctRankingItemUids.add(uniqueId);
+						
+						RankingQuestion question = null;
+						if (surveyelementsbyuid.containsKey(questionUID))
+						{
+							question = (RankingQuestion) surveyelementsbyuid.get(questionUID);
+						} else if (missingelementuids.containsKey(questionUID))
+						{
+							question = (RankingQuestion) missingelementuids.get(questionUID);
+						} else {
+							logger.error("no ranking question found: " + questionUID);
+							continue;
+						}
+						
+						if (!question.getChildElementsByUniqueId().containsKey(uniqueId))
+						{
+							Element missingRankingItem = getNewestElementByUid(uniqueId);
+							if (missingRankingItem instanceof RankingItem) {
+								question.getMissingElements().add((RankingItem) missingRankingItem);
+								missingelementuids.put(missingRankingItem.getUniqueId(), missingRankingItem);
+							} else {
+								logger.info("unknown ranking item found: " + questionUID);
+							}
+						}						 
+					}				
 				}
 			}
 		}
@@ -4463,7 +4540,7 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	public String getSurveyMetaDataXML(Survey survey) {
+	public String getSurveyMetaDataXML(Survey survey) throws NamingException {
 		int results = 0;
 		if (this.isReportingDatabaseEnabled()) {
 			results = reportingService.getCount(false, survey.getUniqueId());
@@ -4972,5 +5049,17 @@ public class SurveyService extends BasicService {
 		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body.toString()).replace("[HOST]", host);
 		
 		mailService.SendHtmlMail(email, sender, sender, "Confirmation of your submission", mailtext, null);		
+	}
+
+	@Transactional
+	public Set<String> getRankingQuestionUids(int surveyId) {
+		Survey survey = getSurvey(surveyId);
+		Set<String> result = new HashSet<>();
+		for (Element element : survey.getElements()) {
+			if (element instanceof RankingQuestion) {
+				result.add(element.getUniqueId());
+			}
+		}
+		return result;
 	}
 }

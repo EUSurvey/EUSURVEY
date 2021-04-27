@@ -1035,7 +1035,7 @@ function updateFeedback(span, reset)
 }
 
 var selectedspan;
-function updateVisibility(span, reset, ask, dialogresult)
+function updateVisibility(span, reset, ask, dialogresult, noUndo)
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var triggers = document.createElement("div");
@@ -1123,6 +1123,12 @@ function updateVisibility(span, reset, ask, dialogresult)
 			var id = $(this).attr("data-targetid");
 			oldtext = oldtext + id + ";";
 		});
+		
+		var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+		var parent = _elements[parentid];
+		parent.useAndLogic(false);
+		
+		$('.visibilityrow').remove();
 	}
 	
 	for (var i = 0; i < oldtriggers.length; i++)
@@ -1139,7 +1145,28 @@ function updateVisibility(span, reset, ask, dialogresult)
 	{
 		$(triggers).append(getPropertyLabel("alwaysVisible"));
 	} else {
-		$(triggers).prepend("<b>" + getPropertyLabel("visibleIfTriggered") + "</b>:<br />");
+		var element = _elements[id];
+		
+		if ($(_elementProperties.selectedelement).hasClass("matrix-header"))
+		{
+			var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+			var parent = _elements[parentid];
+			if ($(_elementProperties.selectedelement).closest("tr").hasClass("matrix-question"))
+			{
+				var pos = $(_elementProperties.selectedelement).closest("tr").index();
+				element = parent.questionsOrdered()[pos];
+			} else {
+				var pos = $(_elementProperties.selectedelement).index();
+				element = parent.answers()[pos-1];
+			}
+		}
+		
+		if (element.useAndLogic())
+		{
+			$(triggers).prepend("<b>" + getPropertyLabel("visibleIfTriggeredAnd") + "</b>:<br />");
+		} else {
+			$(triggers).prepend("<b>" + getPropertyLabel("visibleIfTriggered") + "</b>:<br />");
+		}
 	}
 	
 	$(_elementProperties.selectedproperty).find(".propertycontent").find(".triggers").remove();
@@ -1147,7 +1174,10 @@ function updateVisibility(span, reset, ask, dialogresult)
 	if (list != null) $(list).closest("tr").hide();
 	
 	updateDependenciesView();
-	_undoProcessor.addUndoStep(["Visibility", id, $(_elementProperties.selectedelement).index(), oldtext, values, selectedquestions]);	
+	
+	if (!noUndo) {
+		_undoProcessor.addUndoStep(["Visibility", id, $(_elementProperties.selectedelement).index(), oldtext, values, selectedquestions]);
+	}
 }
 
 function save(span)
@@ -1167,7 +1197,7 @@ function save(span)
 	
 	switch (label) {
 		case "Visibility":
-			updateVisibility(span, false, true, false);
+			updateVisibility(span, false, true, false, false);
 			break;
 		case "EDITVALUES":
 			var oldvalues = [];
@@ -1500,5 +1530,31 @@ function updateIdentifier(element, id, text, noundo)
 	
 	if (!noundo && oldtext != text)
 	_undoProcessor.addUndoStep(["Identifier", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+}
+
+function updateLogic(radio) {
+	var id = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+	var element = _elements[id];
+		
+	if ($(_elementProperties.selectedelement).hasClass("matrix-header"))
+	{
+		var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+		var parent = _elements[parentid];
+		if ($(_elementProperties.selectedelement).closest("tr").hasClass("matrix-question"))
+		{
+			var pos = $(_elementProperties.selectedelement).closest("tr").index();
+			element = parent.questionsOrdered()[pos];
+		} else {
+			var pos = $(_elementProperties.selectedelement).index();
+			element = parent.answers()[pos-1];
+		}
+	}	
 	
+	var oldValue = element.useAndLogic();
+	var newValue = $(radio).val() == "true";
+	
+	if (oldValue != newValue) {
+		element.useAndLogic(newValue);		
+		_undoProcessor.addUndoStep(["UseAndLogic", id, $(_elementProperties.selectedelement).index(), oldValue, newValue]);
+	}
 }

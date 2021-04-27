@@ -107,12 +107,13 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 		if (forResults) {
 			var questionuid = div.data("uid");
 			$('#wordcloud' + questionuid).empty();
+			$(div).closest(".statelement-wrapper").find(".chart-download").hide();
 		}
 		
 		$(div).closest(".elementwrapper, .statelement-wrapper").find(".chart-wrapper-loader").hide();
 		
 		return;	
-	}	
+	}
 	
 	if (div == null) {
 		var modal = $("#delphi-chart-modal-start-page");
@@ -123,12 +124,26 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 		
 		$(modal).find("canvas").remove();
 		$('#wordcloudmodal').remove();
+
+		// Briefly show the modal to get the real width of its body.
+		$(modal).modal('show');
+		const modalBody = $(modal).find('.modal-body')[0];
+		const computedStyle = getComputedStyle(modalBody);
+		const modalBodyWidth = modalBody.clientWidth - parseFloat(computedStyle.paddingLeft)
+			- parseFloat(computedStyle.paddingRight);
+		$(modal).modal('hide');
+
+		let width = modalBodyWidth;
+		let height = modalBodyWidth * 3 / 4;
 		
 		div = document.createElement("div");
-		$(div).attr("id", "wordcloudmodal").css("height", "600px").attr("width", "800px").addClass("center-block");
+		$(div).attr("id", "wordcloudmodal")
+			.css("height", height + "px")
+			.attr("width", width + "px")
+			.addClass("center-block");
 		$(modal).find(".modal-body").append(div);
 				
-		var vis = wordCloud('#wordcloudmodal', 800, 600);
+		var vis = wordCloud('#wordcloudmodal', width, height);
 		var data = getWordCloudData(result, 40);
 		vis.update(data);
 		
@@ -145,7 +160,7 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 	
 		var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 
-		if (forStartpage) {
+		if (forStartpage || isresponsive) {
 			w = 300;
 			h = 200;
 		} else if (forResults) {
@@ -180,7 +195,7 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 			$(elementWrapper).find("option[data-type='textual']").show();
 			$(elementWrapper).find("option[data-type='numerical']").hide();
 			
-			var button = $(elementWrapper).find(".chart-download");	
+			var button = $(elementWrapper).find(".chart-download");
 			
 			setTimeout(function(){ 
 	
@@ -190,7 +205,7 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 				svgString2Image( svgString, w, h, save ); // passes Blob and filesize String to the callback
 				
 				function save( dataBlob ){
-					$(button).attr('href', dataBlob);
+					$(button).show().attr({href: dataBlob, download: "WordCloud.png"});
 				}			
 			
 			}, 1000);

@@ -1319,6 +1319,14 @@ legend {
     display: inline-block !important;
 }
 
+.delphiupdatemessage:empty, .newdelphicomments:empty {
+	display: none !important;
+}
+
+.newdelphicomments {
+	background-color: #337ab7 !important;
+}
+
 .contribution-link-dialog__link {
 	margin: 5px 0;
 	word-wrap: break-word;
@@ -1410,9 +1418,12 @@ legend {
 	padding-top: 20px;
 }
 
-.delphi .questiontitle,
-.delphi .questionhelp__text {
-	margin-left: 20px;
+.survey-element.delphi > div {
+	padding: 0 15px;
+}
+
+.survey-element.delphi > div ~ div {
+	padding: 0;
 }
 
 .delphi .questiontitle {
@@ -1434,13 +1445,17 @@ legend {
 	overflow-wrap: anywhere;
 }
 
-.new-delphi-comment {
-	background-color: #dcf5fe;
+:not(.new-delphi-comment) > .new-delphi-comment {
+	border-left: 3px solid #337ab7;
 }
 
 .delphi-comment__reply {
 	margin-top: 10px;
 	padding-left: 20px;
+}
+
+:not(.new-delphi-comment) > .delphi-comment__reply.new-delphi-comment {
+	padding-left: 17px;
 }
 
 .delphi-comment__actions a:first-child {
@@ -1542,7 +1557,13 @@ div.medianpa {
 
 .chart-wrapper {
 	display: none;
-	padding-left: 20px;
+	margin-bottom: 16px;
+	margin-right: 16px;
+}
+
+.chart-download {
+	color: inherit;
+	float: right;
 }
 
 .update-error {
@@ -2405,7 +2426,6 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	height: 600px;
 	margin: 0 auto;
 	max-width: 800px;
-	width: 85vw;
 }
 
 .question__chart-container,

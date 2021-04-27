@@ -29,9 +29,9 @@ public class ReportingServiceProxy {
 		return enablereportingdatabase != null && enablereportingdatabase.equalsIgnoreCase("true");
 	}
 	
-	public List<List<String>> getAnswerSets(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat) throws Exception {
+	public List<List<String>> getAnswerSets(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames) throws Exception {
 		if (!isReportingDatabaseEnabled()) return null;
-		return reportingService.getAnswerSetsInternal(survey, filter, sqlPagination, addlinks, forexport, showuploadedfiles, doNotReplaceAnswerIDs, useXmlDateFormat);
+		return reportingService.getAnswerSetsInternal(survey, filter, sqlPagination, addlinks, forexport, showuploadedfiles, doNotReplaceAnswerIDs, useXmlDateFormat, showShortnames);
 	}
 	
 	public List<Integer> getAnswerSetIDs(Survey survey, ResultFilter filter, SqlPagination sqlPagination) throws Exception {

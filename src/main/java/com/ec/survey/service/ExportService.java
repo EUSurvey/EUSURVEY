@@ -338,9 +338,12 @@ public class ExportService extends BasicService {
 					if (determinestate) determineValidState(export, false);
 				}
 				
-				if (overrideSurveyTitle && export.getSurvey() != null)
-				{
-					export.setSurvey(surveyService.getSurveyInOriginalLanguage(export.getSurvey().getId(), export.getSurvey().getShortname(), export.getSurvey().getUniqueId()));
+				if (overrideSurveyTitle && export.getSurvey() != null) {
+					try {
+						export.setSurvey(surveyService.getSurveyInOriginalLanguage(export.getSurvey().getId(), export.getSurvey().getShortname(), export.getSurvey().getUniqueId()));
+					} catch (Exception e) {
+						logger.error(e.getLocalizedMessage(), e);
+					}
 				}
 				
 				result.add(export);

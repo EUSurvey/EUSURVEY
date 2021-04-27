@@ -82,8 +82,6 @@ public class TestDataGenerator implements Runnable {
 	@Override
 	public void run() {
 		try {
-			logger.debug("testDataGenerator started");
-			
 			if (contacts > 0)
 			{
 				attendeeService.createDummyAttendees(contacts, user.getId());
@@ -111,8 +109,7 @@ public class TestDataGenerator implements Runnable {
 			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
-		}		
-		logger.debug("testDataGenerator completed");
+		}
 	}
 	
 }
