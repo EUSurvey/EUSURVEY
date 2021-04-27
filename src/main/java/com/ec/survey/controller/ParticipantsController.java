@@ -354,14 +354,12 @@ public class ParticipantsController extends BasicController {
 			if (id > 0) {
 				activityService.log(505, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
 						participationGroup.getNiceType());
-				return "successsaved";
 			} else {
 				activityService.log(501, null, participationGroup.getId().toString(), user.getId(), form.getSurvey().getUniqueId(),
 						participationGroup.getNiceType());
-				return "successcreated";
 			}
 
-			
+			return "success";
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}

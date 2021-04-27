@@ -1422,7 +1422,7 @@ function readCookiesForParent(parent)
 			var id = $(this).attr("data-id");
 			var value = readCookie(survey+id);
 
-			if (value != null && value.length > 0 && ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'internal_captcha_response'))) {
+			if (value != null && value.length > 0 && ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'j_captcha_response'))) {
 				if (type == "text") {
 					$(this).val(value);
 				} else if (type == "hidden" && $(this).attr("data-id") && ($(this).attr("id") == null || !strStartsWith($(this).attr("id"), 'regex'))) {
@@ -1497,7 +1497,7 @@ function saveCookies() {
 		
 		if (!$(this).hasClass("comparable-second"))
 		{
-			if ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'internal_captcha_response')) {
+			if ($(this).attr("id") == null || ($(this).attr("id") != 'hp-7fk9s82jShfgak' && $(this).attr("id") != 'j_captcha_response')) {
 				if (type == "text" || type == "hidden" || type == "password") {
 					createCookie(survey+id, $(this).val(), 7);
 				} else if (type == "radio" || type == "checkbox") {
