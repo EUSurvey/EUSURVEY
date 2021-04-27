@@ -1307,7 +1307,7 @@ public class AnswerService extends BasicService {
 		session.saveOrUpdate(w);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public WrongAttempts getWrongAttempts(String ip) throws MessageException {
 		Session session = sessionFactory.getCurrentSession();
 		Query query = session.createQuery("SELECT a FROM WrongAttempts a WHERE a.ip = :ip").setString("ip", ip);
@@ -1319,7 +1319,23 @@ public class AnswerService extends BasicService {
 		if (list.size() > 1) {
 			throw new MessageException("Multiple WrongAttempts found for ip " + ip);
 		}
-		return list.get(0);
+		
+		WrongAttempts result = list.get(0);
+		
+		if (result.getLockDate() != null) {		
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.DAY_OF_YEAR, -1);
+			Date yesterday = cal.getTime();
+			
+			if (result.getLockDate().before(yesterday)) {
+				result.setCounter(0);
+				result.setlockDate(null);
+				session.update(result);
+			}
+		}
+		
+		return result;
 	}
 
 	@Transactional(readOnly = false)
