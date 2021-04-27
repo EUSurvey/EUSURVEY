@@ -178,7 +178,8 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
-		
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
+			
 		<!-- ko if: minChoices() != 0 && maxChoices() != 0 -->
 			<div class='limits' data-bind="html: getMinMaxChoice(minChoices(), maxChoices())"></div>
 		<!-- /ko -->
@@ -188,8 +189,7 @@
 		<!-- ko if: minChoices() == 0 && maxChoices() != 0 -->
 			<div class='limits' data-bind="html: getMaxChoice(maxChoices())"></div>
 		<!-- /ko -->
-		
-		<span class='questionhelp' data-bind="html: niceHelp"></span>
+	
 		<div class="answer-columns">
 			<!-- ko if: useCheckboxes -->
 			<table class="answers-table">
@@ -339,6 +339,7 @@
 		<!-- /ko -->
 	
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 				
 		<!-- ko if: minCharacters() != 0 && maxCharacters() != 0 -->
 			<div class='limits' data-bind="html: getMinMaxCharacters(minCharacters(), maxCharacters())"></div>
@@ -349,8 +350,6 @@
 		<!-- ko if: minCharacters() == 0 && maxCharacters() != 0 -->
 			<div class='limits' data-bind="html: getMaxCharacters(maxCharacters())"></div>
 		<!-- /ko -->
-
-		<span class='questionhelp' data-bind="html: niceHelp"></span>
 	
 		<!-- ko if: type == "RegExQuestion" -->
 			<input type="hidden" data-bind="value: regex, attr: {'name': 'regex' + id()}" />
@@ -538,6 +537,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		
 		<!-- ko if: display() != 'Slider' -->
 			<!-- ko if: min() != null && min() != 0 && max() != null && max() != 0 -->
@@ -550,8 +550,6 @@
 				<div class='limits' data-bind="html: getMax(maxString())"></div>
 			<!-- /ko -->
 		<!-- /ko -->
-		
-		<span class='questionhelp' data-bind="html: niceHelp"></span>
 				
 		<!-- ko if: display() != 'Slider' -->
 			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" onkeyup="propagateChange();" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
@@ -642,6 +640,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		
 		<!-- ko if: min() != null && max() != null -->
 			<div class='limits' data-bind="html: getMinMaxDate(minString(), maxString())"></div>
@@ -653,7 +652,6 @@
 			<div class='limits' data-bind="html: getMaxDate(maxString())"></div>
 		<!-- /ko -->
 		
-		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="input-group">
 			<!-- ko if: !foreditor && !readonly() -->
 				<div class="input-group-addon" onclick='$(this).parent().find(".datepicker").datepicker( "show" );'><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
@@ -701,6 +699,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		
 		<!-- ko if: min() != null && max() != null && min() != '' && max() != ''  -->
 			<div class='limits' data-bind="html: getMinMaxDate(min(), max())"></div>
@@ -710,9 +709,8 @@
 		<!-- /ko -->
 		<!-- ko if: max() != null && max() != '' && (min() == null || min() == '') -->
 			<div class='limits' data-bind="html: getMaxDate(max())"></div>
-		<!-- /ko -->
+		<!-- /ko -->		
 		
-		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		<div class="input-group">
 			<div class="input-group-addon"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></div>
 			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'timepicker ' + css()}" onblur="validateInput($(this).parent().parent());propagateChange();" type="text" placeholder="HH:mm:ss" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
@@ -807,12 +805,11 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		
 		<!-- ko if: selection() && limit != null && limit() > 0 -->
 			<div class='limits' data-bind="html: getMaxSelections(limit())"></div>
 		<!-- /ko -->
-
-		<span class='questionhelp' data-bind="html: niceHelp"></span>
 		
 		<div class="gallery-div" style="width: 920px; max-width: 100%; text-align:left;">				
 			<!-- ko if: files().length == 0 -->
@@ -933,6 +930,7 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
+		<span class="questionhelp" data-bind="html: niceHelp"></span>
 		
 		<!-- ko if: minRows() != 0 && maxRows() != 0 -->
 			<div class='limits' data-bind="html: getMinMaxRows(minRows(), maxRows())"></div>
@@ -943,8 +941,6 @@
 		<!-- ko if: minRows() == 0 && maxRows() != 0 -->
 			<div class='limits' data-bind="html: getMaxRows(maxRows())"></div>
 		<!-- /ko -->
-				
-		<span class="questionhelp" data-bind="html: niceHelp"></span>
 		
 		<!-- ko if: ismobile || istablet -->
 			<div data-bind="attr: {'class': 'matrixdiv' + css()}">

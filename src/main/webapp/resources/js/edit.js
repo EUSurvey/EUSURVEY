@@ -20,9 +20,11 @@ $(function() {
 			if (ui.item.hasClass("copy"))
 			{
 				_actions.copyElement(ui.item);
+				checkContent();	
 			} else if (ui.item.hasClass("cut"))
 			{
 				_actions.pasteElement(ui.item);
+				checkContent();	
 			} else if (ui.item.hasClass("toolboxitem"))
 			{
 				addNewElement(ui.item, null);
@@ -87,11 +89,13 @@ $(function() {
 			var item = $(this).clone();
 			$("#content").append(item);
 			_actions.copyElement(item);
+			checkContent();	
 		} else if ($(this).hasClass("cut"))
 		{
 			var item = $(this).clone();
 			$("#content").append(item);
 			_actions.pasteElement(item);
+			checkContent();
 		} else {
 			var item = $(this).clone();
 			$("#content").append(item);
@@ -167,6 +171,19 @@ $(document).keyup(function(event){
 	if(event.which=="17")
 	    cntrlIsPressed = false;
 	
+    if (event.which=="13")
+    {
+    	var focused = $(document.activeElement);
+    	if (typeof focused != 'undefined' && focused.length > 0 && focused.closest(".properties").length > 0)
+    	{
+    		update(focused);
+    	}
+    }
+    
+    if ($('#mce-modal-block').is(":visible")) {
+    	return;
+    }
+    
     if (event.which=="46" && _actions.DeleteEnabled())
     {
     	var focused = $(document.activeElement);
@@ -175,15 +192,6 @@ $(document).keyup(function(event){
     		return;
     	}
         _actions.deleteElement();
-    }
-    
-    if (event.which=="13")
-    {
-    	var focused = $(document.activeElement);
-    	if (typeof focused != 'undefined' && focused.length > 0 && focused.closest(".properties").length > 0)
-    	{
-    		update(focused);
-    	}
     }
     
     if (cntrlIsPressed && event.which=="67" && _actions.CopyEnabled())

@@ -10,7 +10,7 @@ var Guestlist = function() {
 	this.runningMails = ko.observable(false);
 	this.error = ko.observable(false);
 	this.active = ko.observable(false);
-	this.attendees = ko.observableArray();
+	this.attendees = ko.observableArray().extend({ deferred: true });
 	this.tokens = ko.observableArray();
 	this.users = ko.observableArray();
 	
@@ -382,7 +382,7 @@ var Participants = function() {
 	this.Access = ko.observable(0);
 	this.groupToDelete = ko.observable(0);
 	this.selectedGroup = ko.observable(null);
-	this.Attendees = ko.observableArray();
+	this.Attendees = ko.observableArray().extend({ deferred: true });
 	this.Users = ko.observableArray();
 	this.attributeNames = ko.observableArray();
 	this.Domain = ko.observable("");
@@ -792,14 +792,18 @@ var Participants = function() {
 			  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 			  cache: false,
 			  success: function( data ) {						  
-				  if (data == "success") {
-					    showSuccess(p_guestlistcreated);
-					    self.Page(1);
-					    self.loadGuestlists();
-					} else {
-						showExport(data);
-					}
-					self.ShowWait(false);
+				if (data == "successcreated") {
+				   showSuccess(p_guestlistcreated);
+				   self.Page(1);
+				   self.loadGuestlists();
+				} else if (data == "successsaved") {
+					   showSuccess(p_guestlistsaved);
+					   self.Page(1);
+					   self.loadGuestlists();
+				} else {
+					showExport(data);
+				}
+				self.ShowWait(false);
 			}, error: function() {
 				  showGenericError();
 			  }

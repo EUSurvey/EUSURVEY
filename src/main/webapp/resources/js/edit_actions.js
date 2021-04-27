@@ -249,9 +249,6 @@ var Actions = function() {
     	item.remove();
     	
     	_elementProperties.deselectAll();
-    	$("#copiedtoolboxitem").hide();
-    	$("#cancelcopytoolboxitem").hide();
-    	this.PasteEnabled(false);
     	
     	_undoProcessor.addUndoStep(["COPYPASTE", ids]);
     	
@@ -298,7 +295,8 @@ var Actions = function() {
     		this.toggleToolboxPane();
     	}
     	
-		_actions.ElementSelected(false);				
+		_actions.ElementSelected(false);
+		checkContent();
     }
     
     this.cutSection = function(withchildren)
@@ -374,6 +372,7 @@ var Actions = function() {
     	
     	updateTitles();
     	deactivateLinks();
+    	checkContent();	
     }
 
     this.pasteElement = function(item)
@@ -433,6 +432,7 @@ var Actions = function() {
     	}
     	
     	deactivateLinks();
+    	checkContent();
     }
     
     this.cancelCut = function()
