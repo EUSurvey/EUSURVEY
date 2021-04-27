@@ -71,7 +71,6 @@ public class PDFService extends BasicService {
 
 	public java.io.File createSurveyPDF(Survey survey, String lang, java.io.File target) throws IOException {
 		String shortname = survey.getShortname();
-		logger.debug("Starting PDF creation for survey " + shortname);
 		FileOutputStream os = null;
 		PDFRenderer renderer = null;
 		try {
@@ -249,10 +248,8 @@ public class PDFService extends BasicService {
 				throw new MessageException("Not possible to obtain PDFRenderer from pool");
 			}
 			os = new FileOutputStream(target, false);
-			logger.debug("starting PDF creation renderer is starting creating PDF ");
 			renderer.createPDF(pdfhost + (isDraft ? "preparedraft/" : "preparecontribution/") + uniqueCode, os);
 
-			logger.debug("starting PDF creation renderer is done and return the output target file");
 			return target;
 		} catch (Exception ex) {
 			logger.error(String.format("PDF creation for answer %s could not be started.", uniqueCode));
@@ -268,7 +265,6 @@ public class PDFService extends BasicService {
 				}
 		}
 
-		logger.debug("starting PDF creation renderer is NOT done and return null as target");
 		return null;
 	}
 

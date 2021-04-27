@@ -778,6 +778,24 @@ function checkPages() {
 	 $(".matrixtable").each(function(){
 		 checkTableScrollButtons(this); 
 	 });
+	 
+	 //this is a fix for a bug in the bootstrapSlider library
+	 //https://github.com/seiyria/bootstrap-slider/issues/673
+	 if ($(".single-page").length > 1) {
+		 $(".single-page:visible").find(".sliderbox").each(function () {
+			if ($(this).closest(".survey-element").length > 0) {
+				refreshSlider(this);
+			}
+		 });
+	 }
+}
+
+function refreshSlider(input) {
+	var questionUid = $(input).closest(".survey-element").attr("data-uid");
+	var viewModel = modelsForSlider[questionUid]; 
+	var value = $(input).bootstrapSlider().bootstrapSlider('getValue');
+    initSlider(input, false, viewModel);
+	$(input).bootstrapSlider().bootstrapSlider('setValue', value);
 }
 
 function checkSingleClick(answer){
@@ -892,11 +910,14 @@ function handleElement(active, elementIds, i) {
 	
 	if (elementIds[i].length == 0) return;
 	
-	var element = $("[data-id=" + elementIds[i] + "]:not(.pagebutton, .pagebuttonli)").first();		
+	var element = $("[data-id=" + elementIds[i] + "]:not(.pagebutton, .pagebuttonli)").first();
+	var useAndLogic = $(element).attr("data-useAndLogic") == "true";
 	
 	var triggered = active;
-	if (!triggered)
-		triggered = isTriggered(element, true);
+	
+	if (useAndLogic || !triggered) {
+		triggered = isTriggered(element, true, false);
+	}
 				
 	if (triggered) {
 		if ($(element).hasClass("untriggered")) {
@@ -915,6 +936,9 @@ function handleElement(active, elementIds, i) {
 				$(element).find(".matrixtable").each(function(){
 					 checkTableScrollButtons(this); 
 				 });
+				$(element).find(".sliderbox").each(function(){
+					refreshSlider(this);
+				});
 			}
 			
 			$(element).find(".matrix-question").each(function(){
@@ -1090,7 +1114,8 @@ function getCachedIsTriggered(id)
 function isTriggered(element, stoprecursion) {
 		
 	var id =  $(element).attr("id");
-	if ($(element).hasClass("matrix-question")) id =  $(element).attr("data-id");
+	if ($(element).hasClass("matrix-question")) id = $(element).attr("data-id");
+	var useAndLogic = $(element).attr("data-useAndLogic") == "true";
 	
 	var r = getCachedIsTriggered(id);
 	if (r != null) return r;
@@ -1100,6 +1125,7 @@ function isTriggered(element, stoprecursion) {
 	if (triggers != null && triggers.length > 1) { //can be ";"
 		var triggerIds = triggers.split(";");
 		var i;
+		var result = false;
 		for (i = 0; i < triggerIds.length; ++i) {
 			var trigger = getCachedElementById(triggerIds[i]);
 			
@@ -1112,12 +1138,27 @@ function isTriggered(element, stoprecursion) {
 						if ($(trigger).closest(".matrix-question").length == 0
 								|| !$(trigger).closest(".matrix-question")
 										.hasClass("untriggered")) {
-							cachedIsTriggered[id] = true;
-							return true;
+							if (!useAndLogic) {
+								cachedIsTriggered[id] = true;
+								return true;
+							} else {
+								result = true;
+							}
 						}						
+					} else if (useAndLogic) {
+						cachedIsTriggered[id] = false;
+						return false;
 					}
+				} else if (useAndLogic) {
+					cachedIsTriggered[id] = false;
+					return false;
 				}
-			}			
+			}
+		}
+			
+		if (useAndLogic) {
+			cachedIsTriggered[id] = result;
+			return result;
 		}
 	} 
 	if ($(element).hasClass("matrix-question"))

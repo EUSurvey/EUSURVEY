@@ -51,6 +51,10 @@
 			margin-left: 20px;
 		}
 		
+		#faqcontent img {
+			border: 1px solid #999;
+		}
+		
 		#ulContainer {
 			margin-bottom: 50px;
 		}
@@ -1037,87 +1041,42 @@
 				coupez l’élément à déplacer et utilisez la méthode du glisser-déposer pour
 				déplacer l’espace réservé à l’emplacement où vous souhaitez coller
 				l’élément.
-			</p>
-			<h2>
-				Comment utiliser la fonction visibilité (dépendances)?
-			</h2>
+			</p>			
+			
+			<h2>Fonction de visibilité (questions dépendantes)</h2>
 			<p>
-				Cette fonction permet d’afficher ou de masquer des éléments en fonction des
-				réponses données par les participants aux questions soit à choix
-				unique/multiple, soit de type matrice (voir également
-				<a
-						href="#_Toc_4_2"
-						>
-					«Comment créer un questionnaire avec l’éditeur EUSurvey?»
-				</a>
+				Cette fonctionnalité vous permet d'afficher ou de masquer les questions en fonction des réponses précédentes données par le participant.
 			</p>
 			<p>
-				Par défaut, tous les éléments sont paramétrés pour être toujours visibles,
-				ce qui signifie que tous les participants verront l’ensemble des questions
-				lorsqu’ils répondront à l’enquête.
+				Par défaut, toutes les questions sont toujours visibles, de sorte que tout le monde verra la question lorsqu'il répondra à l'enquête.	</p>
+			<p>
+				La fonction de visibilité offre 2 options pour déclencher l'affichage des questions suivantes :
+				<ul>
+					<li>'OR' : l'utilisateur doit choisir au moins un des éléments sélectionnés pour que la question soit affichée ;</li>
+					<li>'AND' : l'utilisateur doit choisir tous les éléments sélectionnés pour que la question soit affichée.</li>
+				</ul>			
 			</p>
 			<p>
-				Suivez les étapes ci-dessous pour créer une question dépendante.
+				Voici les étapes à suivre pour créer une question dépendante :
+				<ol>
+					<li>Allez à la question que vous voulez cacher/afficher - cliquez sur les propriétés.</li>
+					<li>Cliquez sur l'icône du stylo à côté de la fonction de visibilité.</li>
+					<li>Sélectionnez l'option à appliquer : "OR" (par défaut) ou "AND".</li>
+					<li>Utilisez les cases à cocher pour sélectionner la ou les réponses qui déclencheront l'affichage de la question.</li>
+					<li>Cliquez sur "Appliquer".</li>
+				</ol>
 			</p>
-			<ol>
-				<li>
-					Ajoutez une question à choix unique/multiple ou une question de type
-					matrice à votre questionnaire.
-				</li>
-				<li>
-					Ajoutez d’autres éléments à votre questionnaire.
-				</li>
-				<li>
-					Sélectionnez une question à choix unique/multiple, ou de type matrice,
-					qui ne doit apparaître que si une réponse spécifique a été choisie.
-				</li>
-				<li>
-					Cliquez sur l’icône en forme de crayon pour modifier les paramètres de
-					visibilité. Toutes les questions disponibles à choix unique/multiple et
-					de type matrice, qui figurent au-dessus de l’élément ou des éléments
-					sélectionné(s) sont affichées, avec le texte des questions et les
-					réponses possibles.
-				</li>
-				<li>
-					Sélectionnez la réponse dont la sélection entraînera l’affichage de
-					l’élément sélectionné.
-				</li>
-				<li>
-					Cliquez sur «Appliquer» pour confirmer les paramètres de visibilité.
-				</li>
-			</ol>
+		
 			<p>
-				Si vous avez sélectionné plusieurs éléments, vous pouvez modifier leurs
-				paramètres de visibilité en une seule fois.
+			Lorsqu'il est activé, des flèches s'affichent à côté des éléments connectés pour indiquer les paramètres de visibilité dans la zone du formulaire (où le questionnaire est affiché). Les réponses qui déclenchent un élément sont marquées d'une flèche pointant vers le bas. Les éléments que vous pouvez afficher ou masquer sont marqués d'une flèche pointant vers le haut.</p>
+		
+			<p>
+			Lorsque vous déplacez le pointeur sur les flèches (ou les ID dans le panneau Propriétés de l'élément), les éléments connectés sont mis en évidence dans la zone du formulaire et le volet de navigation.
 			</p>
 			<p>
-				<b>Remarque:</b>
-				cette modification ne sera appliquée au questionnaire que dans la page test
-				ou lors de la publication du questionnaire. Tous les éléments resteront
-				visibles dans l’éditeur.
+				<b>Modification en masse : </b> Si vous sélectionnez plusieurs questions, vous pouvez modifier les paramètres de visibilité de toutes ces questions en même temps.
 			</p>
-			<p>
-				Une fois activés, les paramètres de visibilité sont indiqués dans la zone
-				du formulaire par des flèches situées à côté des éléments liés.
-			</p>
-			<p>
-				Les réponses qui déclenchent un élément sont indiquées par une flèche
-				pointant vers le bas.
-			</p>
-			<p>
-				Les éléments qui sont déclenchés par une réponse sont indiqués par une
-				flèche pointant vers le haut.
-			</p>
-			<p>
-				Lorsque vous pointez la souris sur les flèches ou les identifiants dans le
-				volet des propriétés de l’élément, les éléments liés sont mis en évidence
-				dans la zone du formulaire et dans le volet de navigation.
-			</p>
-			<p>
-				Les éléments dont les paramètres de visibilité ont été modifiés seront
-				masqués dans le questionnaire jusqu’à ce que le participant sélectionne au
-				moins une des réponses configurées.
-			</p>
+			
 			<h2>
 				Peut-on modifier l’ordre des réponses aux questions à choix unique ou
 				multiple?<u> </u>

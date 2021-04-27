@@ -142,6 +142,7 @@ public abstract class Question extends Element {
 		copy.setLocked(getLocked());
 		copy.setSubType(getSubType());
 		copy.setDisplayMode(getDisplayMode());
+		copy.setUseAndLogic(getUseAndLogic());
 		
 		if (scoringItems != null)
 		{
@@ -174,6 +175,8 @@ public abstract class Question extends Element {
 	{
 		if (getShortname() != null && !getShortname().equals(element.getShortname())) return true;
 		if (getTitle() != null && !getTitle().equals(element.getTitle())) return true;
+		
+		if (getUseAndLogic() != null && !getUseAndLogic().equals(element.getUseAndLogic())) return true;
 		
 		if (element instanceof Question)
 		{

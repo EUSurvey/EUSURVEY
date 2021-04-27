@@ -407,6 +407,8 @@ function addElementToContainer(element, container, foreditor, forskin)
 	return viewModel;
 }
 
+var modelsForSlider = [];
+
 function initSlider(input, foreditor, viewModel)
 {
 	try {
@@ -424,6 +426,7 @@ function initSlider(input, foreditor, viewModel)
 		enabled: !foreditor
 	});
 	
+	modelsForSlider[viewModel.uniqueId()] = viewModel;
 }
 
 function getWidth(widths, index)

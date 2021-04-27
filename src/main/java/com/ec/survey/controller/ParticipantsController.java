@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -559,7 +560,7 @@ public class ParticipantsController extends BasicController {
 	}
 
 	private List<EcasUser> getInvalidEcasUsers(int participationGroupId, String selectedAttendee,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws NamingException {
 		List<EcasUser> result = new ArrayList<>();
 
 		ParticipationGroup participationGroup = participationService.get(participationGroupId);

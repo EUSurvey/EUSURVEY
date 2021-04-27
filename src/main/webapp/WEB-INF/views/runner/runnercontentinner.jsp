@@ -136,16 +136,16 @@
 								  </c:choose>								  
 								  	  <c:choose>
 										<c:when test="${element.isDummy() && element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-											<div class="emptyelement survey-element untriggered 1" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="margin-top: 5px; display: none;">
+											<div class="emptyelement survey-element untriggered 1" data-useAndLogic="${element.useAndLogic}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="margin-top: 5px; display: none;">
 										</c:when>
 										<c:when test="${element.getType() == 'Matrix' && element.getAllQuestionsDependent() && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-											<div class="emptyelement survey-element untriggered 2" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="display: none;">
+											<div class="emptyelement survey-element untriggered 2" data-useAndLogic="${element.useAndLogic}" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="display: none;">
 										</c:when>
 										<c:when test="${element.isDependent && ((invisibleElements == null && forpdf == null) || invisibleElements.contains(element.uniqueId))}">
-											<div class="emptyelement survey-element untriggered 3" id="${element.id}" data-id="${element.id}" data-triggers="${element.triggers}" data-uid="${element.uniqueId}" style="display: none;">
+											<div class="emptyelement survey-element untriggered 3" data-useAndLogic="${element.useAndLogic}" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}" style="display: none;">
 										</c:when>
 										<c:when test="${element.isDependent}">
-											<div class="emptyelement survey-element 3b" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}">
+											<div class="emptyelement survey-element 3b" data-useAndLogic="${element.useAndLogic}" id="${element.id}" data-id="${element.id}" data-uid="${element.uniqueId}" data-triggers="${element.triggers}">
 										</c:when>
 										<c:when test="${element.isDummy()}">
 											<div class="emptyelement survey-element 4" data-id="${element.id}" data-uid="${element.uniqueId}" style="margin-top: 5px;">
@@ -176,18 +176,18 @@
 									
 				<c:if test="${submit == true}">
 					<div style="text-align: center; margin-top: 20px;">
-						<input type="button" id="btnPrevious" style="display: none;" value="${form.getMessage("label.Previous")}"  onclick="previousPage();" class="btn btn-default" />
+						<input type="button" role="button" id="btnPrevious" aria-label="${form.getMessage("label.GoToPreviousPage")}" style="display: none;" value="${form.getMessage("label.Previous")}"  onclick="previousPage();" class="btn btn-default" />
 						<c:choose>
 							<c:when test="${dialogmode != null }">
-								<input type="button" id="btnSubmit" value="${form.getMessage("label.Save")}" onclick="validateInputAndSubmitRunner($('#runnerForm'));" class="btn btn-primary" />
-								<input type="button" id="btnSubmit2" value="${form.getMessage("label.Close")}" onclick="window.open('', '_self', '');window.close();" class="btn btn-default" />
+								<input type="button" role="button" id="btnSubmit" value="${form.getMessage("label.Save")}" onclick="validateInputAndSubmitRunner($('#runnerForm'));" class="btn btn-primary" />
+								<input type="button" role="button" id="btnSubmit2" value="${form.getMessage("label.Close")}" onclick="window.open('', '_self', '');window.close();" class="btn btn-default" />
 							</c:when>
 							<c:otherwise>
-								<input type="button" id="btnSubmit" value="${form.getMessage("label.Submit")}" onclick="validateInputAndSubmitRunner($('#runnerForm'));" class="btn btn-primary hidden" />
+								<input type="button" role="button" id="btnSubmit" aria-label="${form.getMessage("label.Submit")}" value="${form.getMessage("label.Submit")}" onclick="validateInputAndSubmitRunner($('#runnerForm'));" class="btn btn-primary hidden" />
 							</c:otherwise>
 						</c:choose>
 						
-						<input type="button" id="btnNext" style="display: none;" value="${form.getMessage("label.Next")}"  onclick="nextPage();" class="btn btn-default btn-primary" />
+						<input type="button" role="button" id="btnNext" aria-label="${form.getMessage("label.GoToNextPage")}" style="display: none;" value="${form.getMessage("label.Next")}"  onclick="nextPage();" class="btn btn-default btn-primary" />
 					
 						<c:if test="${responsive != null && mode != 'editcontribution' && dialogmode == null && form.survey.saveAsDraft}">
 							<input type="button" id="btnSaveDraftMobile" value="${form.getMessage("label.SaveAsDraft")}" onclick="saveDraft('${mode}');" class="btn btn-default hidden" style="margin-left: 10px" />

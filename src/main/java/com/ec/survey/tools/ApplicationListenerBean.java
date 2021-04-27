@@ -32,8 +32,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
             //the event is thrown twice (one for each context), so we only count the last one
             if (applicationContext.getId().endsWith("dispatcher"))
             {           	
-            	logger.debug("checking database state..");
-	            HomeController homeController = (HomeController) applicationContext.getBean("homeController");
+                HomeController homeController = (HomeController) applicationContext.getBean("homeController");
 	            
 	            AdministrationService administrationService = (AdministrationService) applicationContext.getBean("administrationService");
 	            SurveyService surveyService = (SurveyService) applicationContext.getBean("surveyService");
@@ -45,15 +44,10 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 	            showEcas =( homeController.isShowEcas() || homeController.isCasOss());
 	            
 	            initializeDatabase(administrationService, surveyService, schemaService, skinService, homeController.servletContext, homeController.fileDir, homeController.createStressData != null && homeController.createStressData.equalsIgnoreCase("1"), showEcas, homeController.sender, fileService, homeController.createStressData != null && homeController.createStressData.equalsIgnoreCase("2"));
-	            logger.debug("checking database state finished");
-	            
-	            logger.debug("restarting stopped webservice tasks..");
-	    
+	        
 	        	TaskUpdater taskWorker = (TaskUpdater) applicationContext.getBean("taskWorker");
 	        	taskWorker.run();
-	            
-	            logger.debug("restarting stopped webservice tasks finished");
-            }
+	        }
         }		
 	}
 	
@@ -61,7 +55,6 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 	{
 	    java.io.File folder = new java.io.File(fileDir);
         if (!folder.exists()) folder.mkdirs();
-		logger.debug("InitializeDatabase check get all roles");		
 		List<Role> result = administrationService.getAllRoles();
 		if (result.isEmpty()) {
 			logger.info("InitializeDatabase No Roles create basic rule with showecas " + showecas);
@@ -113,7 +106,6 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			}
 						
 		} else {
-			logger.debug("InitializeDatabase Roles have been detected count roles " + result.size());
 			//update schema
 			try {
 				updateSchema(schemaService, servletContext);

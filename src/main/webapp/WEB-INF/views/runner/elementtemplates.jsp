@@ -9,7 +9,8 @@
 		<!-- ko if: foreditor -->
 			<input type="hidden" data-bind="value: 'section', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
-			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: tabTitle, attr: {'name': 'tabtitle' + id()}" />	
 			<input type="hidden" data-bind="value: level, attr: {'name': 'level' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
@@ -22,6 +23,7 @@
 			<input type="hidden" data-bind="value: 'text', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: true, attr: {'name': 'optional' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 		<!-- /ko -->
@@ -37,6 +39,7 @@
 			<input type="hidden" data-bind="value: 'image', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: title, attr: {'name': 'name' + id()}" />	
 			<input type="hidden" data-bind="value: scale, attr: {'name': 'scale' + id()}" />	
 			<input type="hidden" data-bind="value: width, attr: {'name': 'width' + id()}" />	
@@ -55,6 +58,7 @@
 			<input type="hidden" data-bind="value: 'ruler', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: true, attr: {'name': 'optional' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<input type="hidden" data-bind="value: color, attr: {'name': 'color' + id()}" />
@@ -148,6 +152,7 @@
 				<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 				<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 				<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+				<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 				<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />	
 				<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 				<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
@@ -266,6 +271,7 @@
 				<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 				<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 				<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+				<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 				<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />	
 				<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 				<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
@@ -303,6 +309,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
@@ -361,6 +368,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />
@@ -437,6 +445,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: usetext, attr: {'name': 'usetext' + id()}" />
 			<input type="hidden" data-bind="value: useupload, attr: {'name': 'useupload' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
@@ -455,6 +464,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: numIcons, attr: {'name': 'numIcons' + id()}" />
 			<input type="hidden" data-bind="value: iconType, attr: {'name': 'iconType' + id()}" />
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
@@ -568,6 +578,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: decimalPlaces, attr: {'name': 'decimalplaces' + id()}" />
 			<input type="hidden" data-bind="value: unit, attr: {'name': 'unit' + id()}" />
 			<input type="hidden" data-bind="value: min, attr: {'name': 'min' + id()}" />	
@@ -617,6 +628,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
 			<input type="hidden" data-bind="value: attributeName, attr: {'name': 'nameattribute' + id()}" />	
@@ -658,6 +670,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: minString(), attr: {'name': 'min' + id()}" />	
 			<input type="hidden" data-bind="value: maxString(), attr: {'name': 'max' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
@@ -710,6 +723,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: min(), attr: {'name': 'min' + id()}" />	
 			<input type="hidden" data-bind="value: max(), attr: {'name': 'max' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
@@ -752,6 +766,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
@@ -781,6 +796,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
 		<!-- /ko -->
@@ -850,6 +866,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 			<input type="hidden" data-bind="value: columns, attr: {'name': 'columns' + id()}" />
 			<input type="hidden" data-bind="value: selection, attr: {'name': 'selectable' + id()}" />
@@ -898,6 +915,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: isAttribute, attr: {'name': 'attribute' + id()}" />	
@@ -931,7 +949,7 @@
 		<!-- ko if: ismobile || istablet -->
 			<div data-bind="attr: {'class': 'matrixdiv' + css()}">
 				<!-- ko foreach: questions -->	
-					<div data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'id' : id(), 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId())}" style="margin-top: 10px;">
+					<div data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'id' : id(), 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()), 'data-useAndLogic': useAndLogic()}"}" style="margin-top: 10px;">
 						<!-- ko if: optional() == false -->
 							<span class="mandatory" style="position: absolute; margin-left: -7px;">*</span>
 						<!-- /ko -->
@@ -969,6 +987,7 @@
 					<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 					<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 					<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+					<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 					<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
 					<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>
 					
@@ -1007,7 +1026,7 @@
 				</thead>
 				<tbody>					
 					<!-- ko foreach: questionsOrdered() -->			
-					<tr data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()) + ';' + ($parent.foreditor ? '' : getTriggersByQuestion($parent.uniqueId))}"> 
+					<tr data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()) + ';' + ($parent.foreditor ? '' : getTriggersByQuestion($parent.uniqueId)), 'data-useAndLogic': useAndLogic()}"> 
 						<th class="matrix-header" scope="row" data-bind="attr: {'id' : id(), 'data-id': id}">
 							<!-- ko if: optional() == false -->
 								<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 3px;">*</span>
@@ -1035,6 +1054,7 @@
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
 			<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />	
 			<input type="hidden" data-bind="value: widths, attr: {'name': 'widths' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>

@@ -4,6 +4,7 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.service.LdapService;
 import org.apache.log4j.Logger;
 
+import javax.naming.NamingException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -75,7 +76,7 @@ public class EcasHelper {
       return result.toString();
    }
 
-	public static void readData(User user, LdapService ldapService) {		
+	public static void readData(User user, LdapService ldapService) throws NamingException {		
 		user.setDisplayName(ldapService.getMoniker(user.getLogin()));
 		user.setDepartments(ldapService.getUserLDAPGroups(user.getLogin()));		
 	}

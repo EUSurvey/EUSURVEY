@@ -422,7 +422,7 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat) throws Exception {
+	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
 		Map<String, Object> values = new HashMap<>();
@@ -589,7 +589,9 @@ public class ReportingService {
 											v += answer.getTitle();
 										}
 										
-										v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										if (showShortnames) {
+											v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										}
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
@@ -610,7 +612,9 @@ public class ReportingService {
 											v += answer.getTitle();
 										}
 										
-										v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										if (showShortnames) {
+											v += " <span class='assignedValue hideme'>(" +answer.getShortname() + ")</span>";
+										}
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
@@ -1163,7 +1167,6 @@ public class ReportingService {
 		
 	private void executeInternal(String sql) {
 		lastQuery = sql;
-		logger.debug(sql);
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		SQLQuery createQuery = sessionReporting.createSQLQuery(sql);
 		createQuery.executeUpdate();		
@@ -1426,7 +1429,6 @@ public class ReportingService {
 				lastQuery = row.toString();
 				SQLQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
 				sqlQueryService.setParameters(createQuery, parameters);
-				logger.debug(lastQuery);
 				createQuery.executeUpdate();
 				
 				counter = 0;
@@ -1458,7 +1460,6 @@ public class ReportingService {
 			lastQuery = row.toString();
 			SQLQuery createQuery = sessionReporting.createSQLQuery(lastQuery);				
 			sqlQueryService.setParameters(createQuery, parameters);
-			logger.debug(lastQuery);
 			createQuery.executeUpdate();
 		}
 	}

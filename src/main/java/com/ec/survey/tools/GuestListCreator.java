@@ -78,6 +78,8 @@ public class GuestListCreator implements Runnable {
 		ParticipationGroup g = participationService.get(groupId);
 
 		List<Integer> invitationsToDeactivate = new ArrayList<>();
+		List<Integer> invitationsToActivate = new ArrayList<>();
+		List<Integer> invitationsToDelete = new ArrayList<>();
 		
 		try {
 			
@@ -155,6 +157,11 @@ public class GuestListCreator implements Runnable {
 			 	 		if (tokens.contains(invitation.getUniqueId()))
 			 	 		{
 			 	 			tokens.remove(invitation.getUniqueId());
+			 	 			if (invitation.getDeactivated()) {
+			 	 				invitationsToActivate.add(invitation.getId());
+			 	 			}
+			 	 		} else {
+			 	 			invitationsToDelete.add(invitation.getId());
 			 	 		}
 			 	 	}
 										
@@ -184,6 +191,12 @@ public class GuestListCreator implements Runnable {
 		
 		if (!invitationsToDeactivate.isEmpty()) {
 			attendeeService.deactivateInvitations(invitationsToDeactivate);
+		}
+		if (!invitationsToActivate.isEmpty()) {
+			attendeeService.activateInvitations(invitationsToActivate);
+		}
+		if (!invitationsToDelete.isEmpty()) {
+			attendeeService.deleteInvitations(invitationsToDelete);
 		}
 	}
 

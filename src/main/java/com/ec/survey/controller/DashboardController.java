@@ -34,7 +34,7 @@ public class DashboardController extends BasicController {
 
 	private @Value("${server.prefix}") String host;
 
-	@RequestMapping(value = "/dashboard", method = { RequestMethod.GET, RequestMethod.HEAD })
+	@RequestMapping(value = {"/dashboard","/dashboard/runner"}, method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView dashboard(HttpServletRequest request, Locale locale, Model model)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
 			IOException {

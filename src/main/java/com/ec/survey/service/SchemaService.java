@@ -42,6 +42,24 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
+	
+	@Transactional
+	public void step96() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		Setting s = settingsService.getSetting("captcha");
+		if (s == null) {
+			s = new Setting();
+			s.setKey("captcha");		
+			session.saveOrUpdate(s);
+		}
+		s.setValue("internal");
+		s.setFormat("eucaptcha / recaptcha / internal / off");
+
+		status.setDbversion(96);
+		session.saveOrUpdate(status);
+	}
 
 	@Transactional
 	public void step95() {
@@ -1413,7 +1431,6 @@ public class SchemaService extends BasicService {
 		queryCreateIndex.executeUpdate();
 
 		if (showecas.equalsIgnoreCase("true") && !isCasOss()) {
-			logger.debug("Start CopyEcas");
 			domaintWorker.run();
 			copyEcasData();
 		}
