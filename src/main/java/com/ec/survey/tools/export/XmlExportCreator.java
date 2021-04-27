@@ -320,7 +320,7 @@ public class XmlExportCreator extends ExportCreator {
 						RankingQuestion ranking = (RankingQuestion) question;
 
 						for (Element child : ranking.getChildElements()) {
-							writer.writeStartElement("RatingItem");
+							writer.writeStartElement("RankingItem");
 							writer.writeAttribute("id", child.getUniqueId());
 							writer.writeAttribute("type", getNiceType(child));
 
