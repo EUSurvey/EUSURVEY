@@ -652,6 +652,13 @@ public class RunnerController extends BasicController {
 			}
 
 			ModelAndView result = new ModelAndView("thanks", Constants.UNIQUECODE, answerSet.getUniqueCode());
+			
+			if (survey.getIsECF()) {
+				result.addObject("isECF", true);
+				Set<ECFProfile> profiles = this.ecfService.getECFProfiles(survey);
+				result.addObject("ecfProfiles", profiles.stream().sorted().collect(Collectors.toList()));
+				result.addObject("ecfIndividualResult", this.ecfService.getECFIndividualResult(survey, answerSet));
+			}
 
 			if (survey.getIsOPC()) {
 				result.addObject("opcredirection", survey.getFinalConfirmationLink(opcredirect, lang));
@@ -2053,6 +2060,16 @@ public class RunnerController extends BasicController {
 
 			if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
 				result.addObject("participantsemail", answerSet.getResponderEmail());
+			}
+
+			if (survey.getIsECF()) {
+				result.addObject("isECF", true);
+				Set<ECFProfile> profiles = this.ecfService.getECFProfiles(survey);
+				result.addObject("ecfProfiles", profiles.stream().sorted().collect(Collectors.toList()));
+				// compute results
+				result.addObject("ecfIndividualResult", this.ecfService.getECFIndividualResult(survey, answerSet));
+				result.addObject("contextpath", contextpath);
+				result.addObject("surveyShortname", survey.getShortname());
 			}
 
 			result.addObject("isthankspage", true);

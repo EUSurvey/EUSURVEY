@@ -1643,3 +1643,97 @@ function is_local_storage_enabled() {
 	  return false;
 	}
 }
+
+function fetchECFResult() {
+	$.ajax({
+		type:'GET',
+		url: contextpath + "/" + surveyShortname + "/management/ecfResultJSON?answerSetId=" + uniqueCode,
+		cache: false,
+		success: function(ecfResult) {
+			if (ecfResult == null) {
+				setTimeout(function(){ fetchECFResult(); }, 10000);
+				return;
+			} else {
+				displayECFTable(ecfResult);
+				displayECFChart(ecfResult);
+				return ecfResult;
+			}
+		}
+	});
+}
+
+function displayECFTable(result) {
+	result.competencies.forEach(competency => {
+	$("#ecfResultTable > tbody:last-child").append('<tr><td>' + competency.name + '</td>'
+			+ '<td>' + competency.score + '</td>'
+			+ '<td>' + competency.targetScore + '</td>'
+			+ '<td>' + competency.scoreGap + '</td></tr>')
+			});
+}
+
+function displayECFChart(result) {
+	if (result) {
+		profileName = result.name;		
+		scores = [];
+		competencies = [];
+		targetScores = [];
+		result.competencies.forEach(competency => {
+			scores.push(competency.score);
+			competencies.push(competency.name);
+			targetScores.push(competency.targetScore);
+		});
+		
+		$('.ecfRespondentChart').each(function(index, element) { 
+			var ctx = element.getContext("2d");
+			var options = {
+				scale: {
+					angleLines: {
+						display: false
+					},
+						ticks: {
+							suggestedMin: 0,
+							suggestedMax: 4
+						}
+					},
+				maintainAspectRatio: true,
+				spanGaps: false,
+				elements: {
+					line: {
+						tension: 0.000001
+					}
+				},
+				plugins: {
+					filler: {
+						propagate: false
+					},
+					'samples-filler-analyser': {
+						target: 'chart-analyser'
+					}
+				}
+			};
+		
+			var myRadarChart = new Chart(ctx, {
+				type: 'radar',
+				data: {
+					labels: competencies,
+					datasets: [{
+						label: 'Your results',
+						data: scores,
+						backgroundColor: 'rgba(255, 99, 132, 0.2)',
+						borderColor: 'rgba(255, 99, 132, 1)',
+						borderWidth: 1
+					},
+					{
+						label: 'Target results for profile ' + profileName,
+						data: targetScores,
+						backgroundColor: 'rgba(97, 197, 255, 0.2)',
+						borderColor: 'rgba(97, 197, 255, 1)',
+						borderWidth: 1
+					}
+					]
+				},
+				options: options
+			});
+		});	
+	}
+}

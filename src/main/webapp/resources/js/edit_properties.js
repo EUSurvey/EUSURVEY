@@ -217,6 +217,7 @@ var ElementProperties = function() {
 		var id = $(e).attr("data-id");
 		var removeselection = false;
 		
+		// ACTIONS
 		if (!cntrlIsPressed && !shiftIsPressed && !$("#multiselectButton").hasClass("selected"))
 		{
 			$(".selectedquestion").removeClass("selectedquestion");
@@ -412,6 +413,12 @@ var ElementProperties = function() {
 				if (isDelphi)
 				{
 					adaptDelphiControls(element);
+				}
+
+				if (isECF)
+				{
+					getECFPropertiesRow();
+					getECFPropertiesContent();
 				}
 			} else if ($(e).hasClass("multiplechoiceitem"))
 			{

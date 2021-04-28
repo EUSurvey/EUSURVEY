@@ -10,6 +10,12 @@ import com.ec.survey.model.attendees.Invitation;
 import com.ec.survey.model.FilesByTypes;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.model.survey.ecf.ECFGlobalCompetencyResult;
+import com.ec.survey.model.survey.ecf.ECFGlobalResult;
+import com.ec.survey.model.survey.ecf.ECFOrganizationalCompetencyResult;
+import com.ec.survey.model.survey.ecf.ECFOrganizationalResult;
+import com.ec.survey.model.survey.ecf.ECFProfileCompetencyResult;
+import com.ec.survey.model.survey.ecf.ECFProfileResult;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -34,10 +40,32 @@ import java.util.*;
 @Scope("prototype")
 public class XlsExportCreator extends ExportCreator {
 
+	/** Manipulated in the initialization **/
 	CellStyle dateStyle;
 	CellStyle questionTitleStyle;
 	Workbook wb;
-
+	
+	/** Manipulated in the methods **/
+	private int lastSheet;
+	private Sheet sheet;
+	private Row row;
+	
+	/** Manipulated in the methods **/
+	private int columnIndexInsertHeader;
+	private int rowIndexInsertHeader;
+	private Sheet sheetInsertHeader;
+	private Row rowInsertHeader;
+	private Map<String, CellStyle> cellStyles = new HashMap<>();
+	
+	/** Manipulated in the methods **/
+	int rowIndex;
+	int columnIndex;
+	int counter;
+	String safeName;
+	List<Sheet> sheets = new ArrayList<>();
+	int fileCounter;
+	DecimalFormat df = new DecimalFormat("#.##");
+	
 	@Override
 	public void init() {
 		initWorkbook();
@@ -62,21 +90,17 @@ public class XlsExportCreator extends ExportCreator {
 			columnIndexInsertHeader = 0;
 			safeName = WorkbookUtil.createSafeSheetName("Content" + sheets.size());
 			sheetInsertHeader = wb.createSheet(safeName);
-			InitWorkbook(sheetInsertHeader, export);
+			initWorkbook(sheetInsertHeader, export);
 			sheets.add(sheetInsertHeader);
 			rowInsertHeader = sheetInsertHeader.createRow(rowIndexInsertHeader - 1);
 		}
 	}
-
-	private int columnIndexInsertHeader;
-	private int rowIndexInsertHeader;
-	private Sheet sheetInsertHeader;
-	private Row rowInsertHeader;
-
-	private int insertHeader(List<Sheet> sheets, Publication publication, ResultFilter filter, Export export) {
+	
+	private int insertHeader(List<Sheet> sheets, Publication publication, ResultFilter filter,Export export)
+	{
 		sheetInsertHeader = sheets.get(0);
-		rowIndexInsertHeader = InitWorkbook(sheetInsertHeader, export);
-
+		rowIndexInsertHeader = initWorkbook(sheetInsertHeader, export);
+		
 		List<Question> questions = form.getSurvey().getQuestions();
 		rowInsertHeader = sheetInsertHeader.createRow(rowIndexInsertHeader++);
 		columnIndexInsertHeader = 0;
@@ -224,18 +248,12 @@ public class XlsExportCreator extends ExportCreator {
 	}
 
 	@Override
-	void ExportContent(boolean sync) throws Exception {
-		ExportContent(null, sync);
-	}
-
-	int rowIndex;
-	int columnIndex;
-	int counter;
-	String safeName;
-	List<Sheet> sheets;
-	int fileCounter;
-
-	public void ExportContent(Publication publication, boolean sync) throws Exception {
+	void exportContent(boolean sync) throws Exception {		
+		exportContent(null, sync);
+	}	
+	
+	
+	public void exportContent(Publication publication, boolean sync) throws Exception {	
 		sheets = new ArrayList<>();
 
 		safeName = WorkbookUtil.createSafeSheetName("Content");
@@ -536,14 +554,11 @@ public class XlsExportCreator extends ExportCreator {
 
 		return cell;
 	}
-
-	private int lastSheet;
-	private Sheet sheet;
-	private Row row;
-
-	CellStyle dateCellStyle = null;
-	private Map<String, CellStyle> cellStyles = new HashMap<>();
 	
+	
+	
+	CellStyle dateCellStyle = null;
+
 	CellStyle cswrap = null;
 	
 	private void parseAnswerSet(AnswerSet answerSet, List<String> answerrow, Publication publication,
@@ -582,7 +597,7 @@ public class XlsExportCreator extends ExportCreator {
 			dateCellStyle = wb.createCellStyle();
 			dateCellStyle.setDataFormat((short) 14);
 		}
-		
+
 		sheet = sheets.get(0);
 		row = sheet.createRow(rowIndex++);
 		lastSheet = 0;
@@ -1065,7 +1080,7 @@ public class XlsExportCreator extends ExportCreator {
 	}
 
 	@Override
-	void ExportStatistics() throws Exception {
+	void exportStatistics() throws Exception {
 		safeName = WorkbookUtil.createSafeSheetName("Content");
 		sheet = wb.createSheet(safeName);
 
@@ -1437,11 +1452,10 @@ public class XlsExportCreator extends ExportCreator {
 	}
 
 	@Override
-	void ExportStatisticsQuiz() throws Exception {
-	}
-
-	private void CreateTableForAnswer(String title, CellStyle boldstyle) {
-		Cell cell = row.createCell(0); // TODO: bold
+	void exportStatisticsQuiz() throws Exception {}
+	
+	private void CreateTableForAnswer(String title, CellStyle boldstyle) {	
+		Cell cell = row.createCell(0); //TODO: bold
 		cell.setCellStyle(boldstyle);
 		cell.setCellValue(ConversionTools.removeHTMLNoEscape(title));
 
@@ -1453,9 +1467,8 @@ public class XlsExportCreator extends ExportCreator {
 		cell = row.createCell(3);
 		cell.setCellValue("Ratio");
 	}
-
-	private int InitWorkbook(Sheet sheet, Export export) {
-
+	
+	private int initWorkbook(Sheet sheet, Export export) {
 		sheet.setColumnWidth(0, 5000);
 		sheet.setColumnWidth(1, 5000);
 		sheet.setColumnWidth(2, 5000);
@@ -1484,12 +1497,12 @@ public class XlsExportCreator extends ExportCreator {
 		sheet.createRow(rowIndex++);
 		return rowIndex;
 	}
-
-	DecimalFormat df = new DecimalFormat("#.##");
-
+	
+	
+	
 	@Override
-	void ExportAddressBook() throws Exception {
-
+	void exportAddressBook() throws Exception {
+		
 		User user = administrationService.getUser(userId);
 
 		String safeName = WorkbookUtil.createSafeSheetName("Contacts");
@@ -1554,8 +1567,8 @@ public class XlsExportCreator extends ExportCreator {
 	}
 
 	@Override
-	void ExportActivities() throws Exception {
-
+	void exportActivities() throws Exception {
+		
 		String safeName = WorkbookUtil.createSafeSheetName("Activities");
 		Sheet sheet = wb.createSheet(safeName);
 
@@ -1679,9 +1692,10 @@ public class XlsExportCreator extends ExportCreator {
 	}
 
 	@Override
-	void ExportTokens() throws Exception {
-
-		if (dateCellStyle == null) {
+	void exportTokens() throws Exception {
+		
+		if (dateCellStyle == null)
+		{
 			dateCellStyle = wb.createCellStyle();
 			dateCellStyle.setDataFormat((short) 22);
 		}
@@ -1812,7 +1826,268 @@ public class XlsExportCreator extends ExportCreator {
 				}
 			}
 		}
-
 		wb.write(outputStream);
+	}
+
+	@Override
+	void exportECFGlobalResults() throws Exception {
+    	Survey survey = surveyService.getSurveyInOriginalLanguage(form.getSurvey().getId(), form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
+    	ResultFilter resultFilter = this.export.getResultFilter();
+    	
+		int pageNumber = 1;
+		int pageSize = Integer.MAX_VALUE;
+		
+		SqlPagination sqlPagination = new SqlPagination(pageNumber, pageSize);
+		ECFGlobalResult globalResult = this.ecfService.getECFGlobalResult(survey, sqlPagination, resultFilter);
+		exportOneECFGlobalResultSheet(globalResult);
+				
+		while (globalResult.getNumberOfPages() > pageNumber) {
+			pageNumber++;
+			sqlPagination = new SqlPagination(pageNumber, pageSize);
+			globalResult = this.ecfService.getECFGlobalResult(survey, sqlPagination, resultFilter);
+			exportOneECFGlobalResultSheet(globalResult);
+		}
+		
+		try {
+			wb.write(outputStream);
+			outputStream.close();
+		} catch (IOException e) {
+			logger.error(e.getCause());
+		}
+		finally {
+			wb.close();
+			outputStream.close();
+		}
+		
+	}
+	
+	private void exportOneECFGlobalResultSheet(ECFGlobalResult globalResult) {
+		String exportSheetName = resources.getMessage("label.ECF.Results", null,
+				"Individual Assessment Results and gaps", locale);
+		safeName = WorkbookUtil.createSafeSheetName(exportSheetName.substring(0, 29) + " " + globalResult.getPageNumber());
+		sheet = wb.createSheet(safeName);
+		sheets.add(sheet);
+
+		// TABLE HEADER
+		// FIRST ROW
+		row = sheet.createRow(rowIndex++);
+		columnIndex = 0;
+
+		String competenceLabel = resources.getMessage("label.ECF.Competence", null, "Competence", locale);
+		Cell firstCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		firstCellFirstRow.setCellValue(competenceLabel);
+
+		String targetLabel = resources.getMessage("label.ECF.Target", null, "Target", locale);
+		Cell secondCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		secondCellFirstRow.setCellValue(targetLabel);
+		boolean displayGap = (globalResult.getTotalResults().getTotalGaps() != null &&
+		globalResult.getTotalResults().getTotalScores().size() == globalResult.getTotalResults().getTotalGaps().size());
+
+		for (String participantName : globalResult.getIndividualResults().get(0).getParticipantsNames()) {
+			Cell participantCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+			participantCell.setCellValue("Score for " + participantName);
+			
+			if (displayGap) {
+				Cell participantGapCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+				participantGapCell.setCellValue("Gap for " + participantName);
+			} 
+		}
+		// SECOND ROW
+		row = sheet.createRow(rowIndex++);
+		columnIndex = 0;
+
+		String totalLabel = resources.getMessage("label.TotalUpperCase", null, "TOTAL", locale);
+		Cell firstCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		firstCellSecondRow.setCellValue(totalLabel);
+
+		Cell secondCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+		if (globalResult.getTotalResults() != null && globalResult.getTotalResults().getTotalTargetScore() != null) {
+			secondCellSecondRow.setCellValue(globalResult.getTotalResults().getTotalTargetScore());
+		} else {
+			secondCellSecondRow.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+		}
+		
+		for (int i = 0; i < globalResult.getTotalResults().getTotalScores().size(); i++) {
+			Integer totalScore = globalResult.getTotalResults().getTotalScores().get(i);
+			Cell totalScoreCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+			totalScoreCell.setCellValue(totalScore);
+
+			if (displayGap) {
+				Integer totalGap = globalResult.getTotalResults().getTotalGaps().get(i);
+				Cell totalGapCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+				totalGapCell.setCellValue(totalGap);
+			}
+		}
+
+		for (ECFGlobalCompetencyResult competencyResult : globalResult.getIndividualResults()) {
+			row = sheet.createRow(rowIndex++);
+			columnIndex = 0;
+
+			Cell competencyCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+			competencyCell.setCellValue(competencyResult.getCompetencyName());
+
+			Cell targetScoreCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+			if (competencyResult.getCompetencyTargetScore() != null) {
+				targetScoreCell.setCellValue(competencyResult.getCompetencyTargetScore());
+			} else {
+				targetScoreCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+			}
+
+			displayGap = displayGap && (competencyResult.getCompetencyScoreGaps() != null &&
+					competencyResult.getCompetencyScoreGaps().size() == competencyResult.getCompetencyScores().size());
+			for (int i = 0; i<competencyResult.getCompetencyScores().size(); i++) {
+				Integer score  = competencyResult.getCompetencyScores().get(i);
+				Cell scoreCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+				scoreCell.setCellValue(score);
+
+				if (displayGap) {
+					Cell gapCell = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+					Integer gap = competencyResult.getCompetencyScoreGaps().get(i);
+					gapCell.setCellValue(gap);
+				} 
+			}
+		}
+	}
+
+	@Override
+	void exportECFProfileResults() throws Exception {
+		Survey survey = surveyService.getSurveyInOriginalLanguage(form.getSurvey().getId(), form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
+    	ResultFilter resultFilter = this.export.getResultFilter();
+		ECFProfileResult ecfProfileResult = this.ecfService.getECFProfileResult(survey, resultFilter);
+		
+		String exportSheetName = resources.getMessage("label.ECF.Results2", null,
+				"Profile assessment results and gaps", locale);
+		safeName = WorkbookUtil.createSafeSheetName(exportSheetName);
+		sheet = wb.createSheet(safeName);
+		sheets.add(sheet);
+
+		// TABLE HEADER
+		// FIRST ROW
+		row = sheet.createRow(rowIndex++);
+		columnIndex = 0;
+		
+		String competenciesLabel = resources.getMessage("label.ECF.Competencies", null, "Competencies", locale);
+		Cell firstCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		firstCellFirstRow.setCellValue(competenciesLabel);
+
+		String targetLabel = resources.getMessage("label.ECF.Target", null, "Target", locale);
+		Cell secondCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		secondCellFirstRow.setCellValue(targetLabel);
+		
+		String averageLabel = resources.getMessage("label.ECF.Average", null, "Average score", locale);
+		Cell thirdCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		thirdCellFirstRow.setCellValue(averageLabel);
+		
+		String maxLabel = resources.getMessage("label.ECF.Max", null, "Max", locale);
+		Cell fourthCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		fourthCellFirstRow.setCellValue(maxLabel);
+		
+		for (ECFProfileCompetencyResult competencyResult : ecfProfileResult.getCompetencyResults()) {
+			row = sheet.createRow(rowIndex++);
+			columnIndex = 0;
+			
+			Cell firstCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+			firstCellSecondRow.setCellValue(competencyResult.getCompetencyName());
+
+			Cell secondCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+			if (competencyResult.getCompetencyTargetScore() != null && competencyResult.getCompetencyTargetScore() != 0) {
+				secondCellSecondRow.setCellValue(competencyResult.getCompetencyTargetScore());
+			} else {
+				secondCellSecondRow.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+			}
+			
+			Cell thirdCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+			thirdCellSecondRow.setCellValue(competencyResult.getCompetencyAverageScore());
+			
+			boolean displayGap = competencyResult.getCompetencyScoreGap() != null;
+			
+			if (displayGap) {
+				Cell fourthCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+				String plusOrMinus = competencyResult.getCompetencyScoreGap() > 0 ? "+": "";
+				fourthCellSecondRow.setCellValue(competencyResult.getCompetencyMaxScore() + " (" + plusOrMinus + competencyResult.getCompetencyScoreGap() + ")");
+			} else {
+				Cell fourthCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+				fourthCellSecondRow.setCellValue(competencyResult.getCompetencyMaxScore());
+			}
+		}
+		
+		try {
+			wb.write(outputStream);
+			outputStream.close();
+		} catch (IOException e) {
+			logger.error(e.getCause());
+		}
+		finally {
+			wb.close();
+			outputStream.close();
+		}
+	}
+
+	@Override
+	void exportECFOrganizationalResults() throws Exception {
+		Survey survey = surveyService.getSurveyInOriginalLanguage(form.getSurvey().getId(), form.getSurvey().getShortname(), form.getSurvey().getUniqueId());
+		ECFOrganizationalResult organizationalResult = this.ecfService.getECFOrganizationalResult(survey);
+		
+		String exportSheetName = resources.getMessage("label.ECF.Results3", null,
+				"Average and maximum score for all profiles", locale);
+		safeName = WorkbookUtil.createSafeSheetName(exportSheetName);
+		sheet = wb.createSheet(safeName);
+		sheets.add(sheet);
+
+		// TABLE HEADER
+		// FIRST ROW
+		row = sheet.createRow(rowIndex++);
+		columnIndex = 0;
+		
+		String competenciesLabel = resources.getMessage("label.ECF.Competencies", null, "Competencies", locale);
+		Cell firstCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		firstCellFirstRow.setCellValue(competenciesLabel);
+
+		String averageTargetLabel = resources.getMessage("label.ECF.AverageTarget", null, "Average target", locale);
+		Cell secondCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		secondCellFirstRow.setCellValue(averageTargetLabel);
+		
+		String averageScoreLabel = resources.getMessage("label.ECF.Average", null, "Average score", locale);
+		Cell thirdCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		thirdCellFirstRow.setCellValue(averageScoreLabel);
+		
+		String maxTargetLabel = resources.getMessage("label.ECF.MaxTarget", null, "Max target", locale);
+		Cell fourthCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		fourthCellFirstRow.setCellValue(maxTargetLabel);
+		
+		String maxLabel = resources.getMessage("label.ECF.Max", null, "Max", locale);
+		Cell fifthCellFirstRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+		fifthCellFirstRow.setCellValue(maxLabel);
+		
+		for (ECFOrganizationalCompetencyResult competencyResult : organizationalResult.getCompetencyResults()) {
+			row = sheet.createRow(rowIndex++);
+			columnIndex = 0;
+			
+			Cell firstCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+			firstCellSecondRow.setCellValue(competencyResult.getCompetencyName());
+
+			Cell secondCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+			secondCellSecondRow.setCellValue(competencyResult.getCompetencyAverageTarget());
+			
+			Cell thirdCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+			thirdCellSecondRow.setCellValue(competencyResult.getCompetencyAverageScore());
+			
+			Cell fourthCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+			fourthCellSecondRow.setCellValue(competencyResult.getCompetencyMaxTarget());
+			
+			Cell fifthCellSecondRow = row.createCell(columnIndex++, org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+			fifthCellSecondRow.setCellValue(competencyResult.getCompetencyMaxScore());
+		}
+		
+		try {
+			wb.write(outputStream);
+			outputStream.close();
+		} catch (IOException e) {
+			logger.error(e.getCause());
+		}
+		finally {
+			wb.close();
+			outputStream.close();
+		}
 	}
 }

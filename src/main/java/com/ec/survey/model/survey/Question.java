@@ -1,5 +1,6 @@
 package com.ec.survey.model.survey;
 
+import com.ec.survey.model.ECFCompetency;
 import com.ec.survey.tools.Tools;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -32,9 +33,10 @@ public abstract class Question extends Element {
 	private String attributeName;
 	private boolean isUnique;
 	private int scoring;
-	private int points = 1;
+	private int quizPoints = 1;
 	private List<ScoringItem> scoringItems;
 	private boolean delphiQuestion;
+	private ECFCompetency ecfCompetency;
 	private DelphiChartType delphiChartType;
 	private boolean showExplanationBox;
 
@@ -110,11 +112,11 @@ public abstract class Question extends Element {
 	}
 	
 	@Column(name = "POINTS")
-	public Integer getPoints() {
-		return points;
+	public Integer getQuizPoints() {
+		return quizPoints;
 	}
-	public void setPoints(Integer points) {
-		this.points = points != null ? points : 1;
+	public void setQuizPoints(Integer quizPoints) {
+		this.quizPoints = quizPoints != null ? quizPoints : 1;
 	}
 
 	@Column(name = "DELPHI")
@@ -157,6 +159,15 @@ public abstract class Question extends Element {
 		this.scoringItems = scoringItems;
 	}
 
+	@ManyToOne
+	@JoinColumn(name="ECF_COMPETENCY", nullable = true)    
+	public ECFCompetency getEcfCompetency() {
+		return ecfCompetency;
+	}	
+	public void setEcfCompetency(ECFCompetency ecfCompetency) {
+		this.ecfCompetency = ecfCompetency;
+	}
+
 	protected void baseCopy(Question copy)
 	{
 		copy.setIsAttribute(getIsAttribute());
@@ -170,7 +181,7 @@ public abstract class Question extends Element {
 		copy.setTitle(Tools.filterHTML(getTitle()));
 		copy.setPosition(this.getPosition());
 		copy.setIsUnique(getIsUnique());
-		copy.setPoints(points);
+		copy.setQuizPoints(quizPoints);
 		copy.setScoring(scoring);
 		copy.setLocked(getLocked());
 		copy.setSubType(getSubType());
@@ -180,7 +191,12 @@ public abstract class Question extends Element {
 		copy.setShowExplanationBox(getShowExplanationBox());
 		copy.setDelphiChartType(getDelphiChartType());
 
+		
+		if (ecfCompetency != null) {
+			copy.setEcfCompetency(this.getEcfCompetency());
+		}
 		if (scoringItems != null) {
+
 			copy.setScoringItems(new ArrayList<>());
 			for (ScoringItem item : scoringItems) {
 				copy.getScoringItems().add(item.copy());
@@ -231,7 +247,7 @@ public abstract class Question extends Element {
 				return true;
 			}
 
-			if (points != question.points)
+			if (quizPoints != question.quizPoints)
 			{
 				return true;
 			}

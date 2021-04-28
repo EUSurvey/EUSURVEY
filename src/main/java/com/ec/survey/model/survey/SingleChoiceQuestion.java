@@ -81,12 +81,12 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 		copy.useLikert = useLikert;
 		copy.setOrder(getOrder());
 		copy.maxDistance = maxDistance;
-
+		
 		for (PossibleAnswer possibleAnswer : getPossibleAnswers()) {
 			PossibleAnswer answerCopy = possibleAnswer.copy(fileDir);
 			copy.getPossibleAnswers().add(answerCopy);
 		}
-
+		
 		return copy;
 	}
 

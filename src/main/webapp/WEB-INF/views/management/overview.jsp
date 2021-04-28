@@ -148,6 +148,9 @@
 						<c:when test="${form.survey.isDelphi}">
 							<img data-toggle="tooltip" title="<spring:message code="label.Delphi" />" src="${contextpath}/resources/images/icons/24/delphi.png" />
 						</c:when>
+						<c:when test="${form.survey.isECF}">
+							<span data-toggle="tooltip" title="<spring:message code="label.ECF" />"  class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
+						</c:when>
 						<c:otherwise>
 							<img data-toggle="tooltip" title="<spring:message code="label.StandardSurvey" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/survey.png" />
 						</c:otherwise>

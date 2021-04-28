@@ -389,6 +389,12 @@
 						    <span class="glyphicon glyphicon-education" style="font-size: 15px"></span>
 						    <input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-quiz" value="quiz" />&#160;<spring:message code="label.Quiz" />
 						  </label>
+						  <c:if test="${enableecf}">
+						  	<label style="height: auto" class="btn btn-default hidecopy" title="<spring:message code="info.ECF" />" data-toggle='tooltip'>
+								<img style="height: 18px;" src="${contextpath}/resources/images/icons/24/table.png">
+								<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-ecf" value="ecf" />&#160;<spring:message code="label.ECF" />
+						  	</label>
+						  </c:if>
 						  <c:if test="${enableopc && USER.getGlobalPrivilegeValue('ECAccess') > 0}">
 							  <label style="height: auto" class="btn btn-default hidecopy" title="<spring:message code="info.OPC" />" data-toggle='tooltip'>
 							    <img style="height: 18px;" src="${contextpath}/resources/images/icons/24/people.png">
@@ -505,6 +511,7 @@
 	<input type="hidden" name="quiz" id="create-survey-quiz" value="" />
 	<input type="hidden" name="opc" id="create-survey-opc" value="" />
 	<input type="hidden" name="delphi" id="create-survey-delphi" value="" />
+	<input type="hidden" name="ecf" id="create-survey-ecf" value="" />
 	<input type="hidden" name="contact" id="create-survey-contact" value="" />
 	<input type="hidden" name="contactlabel" id="create-survey-contact-label" value="" />
 	<input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute>${origin}</esapi:encodeForHTMLAttribute>" />

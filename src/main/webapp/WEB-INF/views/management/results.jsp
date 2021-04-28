@@ -4,11 +4,12 @@
 <html>
 <head>
 	<title>EUSurvey - <spring:message code="label.Results" /></title>
-	
+	<script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js"></script>
 	<%@ include file="../includes.jsp" %>
 	
 	<link href="${contextpath}/resources/css/management.css" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/charts.css" rel="stylesheet" type="text/css" />
+	<link href="${contextpath}/resources/css/results.css" rel="stylesheet" type="text/css" />
 	
 	<script type="text/javascript" src="${contextpath}/resources/js/d3.v3.min.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/d3.layout.cloud.min.js?version=<%@include file="../version.txt" %>"></script>
@@ -382,118 +383,235 @@
 			switch(resultType)
 			{
 				case 'content':
-					$("#results-table-link").addClass("btn-primary");
-					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
-					
-					$("#results-table").find("tbody").removeClass('hidden');
-					$("#results-table").find(".RowsPerPage").removeClass('hidden');
-					$("#pager").removeClass('hidden');
-					$("#results-charts").addClass('hidden');
-					$("#results-statistics").addClass('hidden');
-					$("#results-statistics-delphi").addClass('hidden');
-					$("#results-statistics-quiz").addClass('hidden');
-					
-					$("#content-export-buttons").removeClass('hidden');
-					$("#charts-export-buttons").addClass('hidden');
-					$("#statistics-export-buttons").addClass('hidden');
-					$("#statistics-quiz-export-buttons").addClass('hidden');
-					
-					$("#search-buttons").show();				
-					$("#scrollarea").show();
-					
-					if ($('#tbllist-empty').is(":hidden"))
-					{
-						$("#scrollareaheader").css("overflow-x", "hidden");
-					}					
-					$("#scrollareaheader").scrollLeft($("#scrollarea").scrollLeft());
-					
-					if ($('#scrollarea').hasScrollBar())
-					{
-						$("#scrollareaheader").css("overflow-y","scroll");
-					} else {
-						$("#scrollareaheader").css("overflow-y","auto");
-					}
-					  
-					resetSliderPositions($("#contentstable"));
+					hideECF();
+					hideECF2();
+					hideECF3();
+					hideStatisticsQuiz();
+					hideStatistics();
+					hideStatisticsDelphi();
+					showContent();
 					break;
 				case 'statistics':
-					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-link").addClass("btn-primary");
-					
-					$("#results-table").find(".RowsPerPage").addClass('hidden');
-					$("#pager").addClass('hidden');
-					$("#results-charts").addClass('hidden');
-					$("#results-statistics").removeClass('hidden');
-					$("#results-statistics-quiz").addClass('hidden');
-					$("#results-statistics-delphi").addClass('hidden');
-					
-					$("#content-export-buttons").addClass('hidden');
-					$("#charts-export-buttons").addClass('hidden');
-					$("#statistics-export-buttons").removeClass('hidden');
-					$("#statistics-quiz-export-buttons").addClass('hidden');
-					
-					$("#scrollarea").hide();
-					
-					$("#scrollareaheader").css("overflow-x", "auto");
-					$("#scrollareaheader").css("overflow-y","auto");
-
-					delphiPopulateAllGraphs($("#results-statistics"));
-					doResize();
+					hideECF();
+					hideECF2();
+					hideECF3();
+					hideStatisticsQuiz();
+					hideStatisticsDelphi();
+					hideContent();
+					showStatistics();
 					break;
 				case 'statistics-quiz':
-					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-quiz-link").addClass("btn-primary");
-					
-					$("#results-table").find(".RowsPerPage").addClass('hidden');
-					$("#pager").addClass('hidden');
-					$("#results-charts").addClass('hidden');
-					$("#results-statistics").addClass('hidden');
-					$("#results-statistics-delphi").addClass('hidden');
-					$("#results-statistics-quiz").removeClass('hidden');
-					
-					$("#content-export-buttons").addClass('hidden');
-					$("#charts-export-buttons").addClass('hidden');
-					$("#statistics-export-buttons").addClass('hidden');
-					$("#statistics-quiz-export-buttons").removeClass('hidden');
-					
-					$("#scrollarea").hide();
-					
-					$("#scrollareaheader").css("overflow-x", "auto");
-					$("#scrollareaheader").css("overflow-y","auto");
+					hideECF();
+					hideECF2();
+					hideECF3();
+					hideStatistics();
+					hideContent();
+					hideStatisticsDelphi();
+					showStatisticsQuiz();
 					break;
 				case 'statistics-delphi':
-					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
-					$("#results-statistics-delphi-link").addClass("btn-primary");
+					hideECF();
+					hideECF2();
+					hideECF3();
+					hideStatistics();
+					hideContent();
+					hideStatisticsQuiz();
+					showStatisticsDelphi();
+					break;
+				case 'ecf':
+					hideStatisticsQuiz();
+					hideStatisticsDelphi();
+					hideContent();
+					hideStatistics();
+					hideECF2();
+					hideECF3();
+					showECF();
+					break;
 					
-					$("#results-table").find(".RowsPerPage").addClass('hidden');
-					$("#pager").addClass('hidden');
-					$("#results-charts").addClass('hidden');
-					$("#results-statistics").addClass('hidden');
-					$("#results-statistics-quiz").addClass('hidden');
-					$("#results-statistics-delphi").removeClass('hidden');
-					
-					$("#content-export-buttons").addClass('hidden');
-					$("#charts-export-buttons").addClass('hidden');
-					$("#statistics-export-buttons").addClass('hidden');
-					$("#statistics-quiz-export-buttons").addClass('hidden');
-					
-					$("#scrollarea").hide();
-					
-					$("#scrollareaheader").css("overflow-x", "auto");
-					$("#scrollareaheader").css("overflow-y","auto");
+				case 'ecf2':
+					hideECF();
+					hideECF3();
+					hideStatisticsQuiz();
+					hideStatisticsDelphi();
+					hideContent();
+					hideStatistics();
+					showECF2();
+					break;
+				
+				case 'ecf3':
+					hideECF();
+					hideECF2();
+					hideStatistics();
+					hideContent();
+					hideStatisticsQuiz();
+					hideStatisticsDelphi();
+					showECF3();
 					break;
 			}
 			
 			$('#resultType').val(resultType);
 			//checkDeleteBoxes();			
+		}
+		
+		// Shows all the elements present in the content
+		function showContent() {
+			console.log("showContent()");
+			$("#results-table-link").addClass("btn-primary");
+			$("#results-table").find("tbody").removeClass('hidden');
+			$("#results-table").find(".RowsPerPage").removeClass('hidden');
+			$("#pager").removeClass('hidden');
+					$("#results-statistics-delphi").addClass('hidden');
+			$("#content-export-buttons").removeClass('hidden');
+			$("#scrollarea").show();
+			
+			// Scrollareaheader
+			if ($('#tbllist-empty').is(":hidden"))
+			{
+				$("#scrollareaheader").css("overflow-x", "hidden");
+			}					
+			$("#scrollareaheader").scrollLeft($("#scrollarea").scrollLeft());
+			
+			if ($('#scrollarea').hasScrollBar())
+			{
+				$("#scrollareaheader").css("overflow-y","scroll");
+			} else {
+				$("#scrollareaheader").css("overflow-y","auto");
+			}
+			  
+			resetSliderPositions($("#contentstable"));
+					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
+			
+			// Nothing in hide
+			$("#search-buttons").show();				
+					$("#results-statistics-delphi").addClass('hidden');
+			
+			// Strange common to all?
+			$("#results-charts").addClass('hidden');
+			$("#charts-export-buttons").addClass('hidden');
+		}
+		
+		
+		// Hides all the elements present in the content
+		function hideContent() {
+			console.log("hideContent()");
+			$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
+			// $("#results-table").find("tbody").addClass('hidden');
+			$("#results-table").find(".RowsPerPage").addClass('hidden');
+			$("#pager").addClass('hidden');
+			$("#content-export-buttons").addClass('hidden');
+			$("#scrollarea").hide();
+			
+			$("#scrollareaheader").css("overflow-x", "auto");
+			$("#scrollareaheader").css("overflow-y","auto");
+		}
+		
+		function showStatistics() {
+			$("#results-statistics-link").addClass("btn-primary");
+			$("#results-statistics").removeClass('hidden');
+			$("#statistics-export-buttons").removeClass('hidden');
+					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
+			
+			$("#results-charts").addClass('hidden');
+			$("#charts-export-buttons").addClass('hidden');			
+		
+		
+			delphiPopulateAllGraphs($("#results-statistics"));
+			doResize();
+
+		}
+		
+		function hideStatistics() {
+			console.log("hideStatistics()");
+			$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
+			$("#results-statistics").addClass('hidden');
+			$("#statistics-export-buttons").addClass('hidden');
+		}
+		
+		function showStatisticsQuiz() {
+			console.log("showStatisticsQuiz()")
+			$("#results-statistics-quiz-link").addClass("btn-primary");
+			$("#results-statistics-quiz").removeClass('hidden');
+			$("#statistics-quiz-export-buttons").removeClass('hidden');
+			
+			// Strange?
+			$("#results-charts").addClass('hidden');
+			$("#charts-export-buttons").addClass('hidden');
+		}
+		function hideStatisticsQuiz() {
+			console.log("hideStatisticsQuiz()");
+			$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+			$("#results-statistics-quiz").addClass('hidden');
+			$("#statistics-quiz-export-buttons").addClass('hidden');
+		}
+			
+		function showStatisticsDelphi() {
+			$("#results-statistics-delphi-link").addClass("btn-primary");
+			$("#results-statistics-delphi").removeClass('hidden');
+		}
+		
+		function hideStatisticsDelphi() {
+			$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
+			$("#results-statistics-delphi").addClass('hidden');
+		}
+		
+		function showECF() {
+			console.log('showECF()');
+			$("#results-table").addClass('hidden');
+			$("#results-ecf").addClass("btn-primary");
+			$("#ecf-results").removeClass('hidden');
+			$("#ecf1-export-buttons").removeClass('hidden');
+			
+			// Strange?
+			$("#results-charts").addClass('hidden');
+			$("#charts-export-buttons").addClass('hidden');			
+		}
+		
+		function hideECF() {
+			console.log('hideECF');
+			$("#results-table").removeClass('hidden');
+			$("#ecf-results").addClass('hidden');
+			$("#results-ecf").removeClass("btn-primary").addClass("btn-default");
+			$("#ecf1-export-buttons").addClass('hidden');
+		}
+		
+		function showECF2() {
+			console.log('showECF2()');
+			$("#results-table").addClass('hidden');
+			$("#results-ecf2").addClass("btn-primary");
+			$("#ecf-results2").removeClass('hidden');
+			$("#ecf2-export-buttons").removeClass('hidden');
+			
+			// Strange?
+			$("#results-charts").addClass('hidden');
+			$("#charts-export-buttons").addClass('hidden');
+		}
+		
+		function hideECF2() {
+			console.log('hideECF2');
+			$("#results-table").removeClass('hidden');
+			$("#ecf-results2").addClass('hidden');
+			$("#results-ecf2").removeClass("btn-primary").addClass("btn-default");
+			$("#ecf2-export-buttons").addClass('hidden');
+		}
+		
+		function showECF3() {
+			console.log('showECF3()');
+			$("#results-table").addClass('hidden');
+			$("#results-ecf3").addClass("btn-primary");
+			$("#ecf-results3").removeClass('hidden');
+			$("#ecf3-export-buttons").removeClass('hidden');
+			
+			// Strange?
+			$("#results-charts").addClass('hidden');
+			$("#charts-export-buttons").addClass('hidden');
+		}
+		
+		function hideECF3() {
+			console.log('hideECF3');
+			$("#results-table").removeClass('hidden');
+			$("#ecf-results3").addClass('hidden');
+			$("#results-ecf3").removeClass("btn-primary").addClass("btn-default");
+			$("#ecf3-export-buttons").addClass('hidden');
 		}
 		
 		var exportType;
@@ -506,19 +624,49 @@
 			
 			if (type == "Content")
 			{
+				$('#exportnt-format-ecf1').hide();
+				$('#exportnt-format-ecf2').hide();
+				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-content').show();
 				$('#exportnt-format-statistics').hide();
 				$('#exportnt-format-statistics-quiz').hide();				
 			} else if (type == "Statistics")
 			{
+				$('#exportnt-format-ecf1').hide();
+				$('#exportnt-format-ecf2').hide();
+				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-content').hide();
 				$('#exportnt-format-statistics').show();
 				$('#exportnt-format-statistics-quiz').hide();				
 			} else if (type == "StatisticsQuiz")
 			{
+				$('#exportnt-format-ecf1').hide();
+				$('#exportnt-format-ecf2').hide();
+				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-content').hide();
 				$('#exportnt-format-statistics').hide();
 				$('#exportnt-format-statistics-quiz').show();				
+			} else if (type == "ECFGlobalResults") {
+				$('#exportnt-format-content').hide();
+				$('#exportnt-format-ecf1').show();
+				$('#exportnt-format-ecf2').hide();
+				$('#exportnt-format-ecf3').hide();
+				$('#exportnt-format-statistics').hide();
+				$('#exportnt-format-statistics-quiz').hide();	
+			} else if (type == "ECFProfileResults") {
+				$('#exportnt-format-ecf1').hide();
+				$('#exportnt-format-ecf2').show();
+				$('#exportnt-format-ecf3').hide();
+				$('#exportnt-format-content').hide();
+				$('#exportnt-format-statistics').hide();
+				$('#exportnt-format-statistics-quiz').hide();
+			} else if (type == "ECFOrganizationResults") {
+				$('#exportnt-format-ecf1').hide();
+				$('#exportnt-format-ecf2').hide();
+				$('#exportnt-format-ecf3').show();
+				$('#exportnt-format-content').hide();
+				$('#exportnt-format-statistics').hide();
+				$('#exportnt-format-statistics-quiz').hide();
 			}
 			
 			$('#export-name-type-dialog').find(".validation-error").hide();
@@ -552,6 +700,16 @@
 	        } else if (exportType === "StatisticsQuiz")
 	        {
 	        	format = $('#exportnt-format-statistics-quiz').val();
+	        }
+	        else if (exportType === "ECFGlobalResults")
+	        {
+	        	format = $('#exportnt-format-ecf1').val();
+	        } else if (exportType === "ECFProfileResults")
+	        {
+	        	format = $('#exportnt-format-ecf2').val();
+	        } else if (exportType === "ECFOrganizationResults")
+	        {
+	        	format = $('#exportnt-format-ecf3').val();
 	        }
 			
 	        startExport(name, format);
@@ -816,13 +974,18 @@
 					
 			<div style="vertical-align: middle; margin-left: auto; margin-right: auto; margin-top: 10px;">		
 				<div style="float: left; margin-top: 0px; margin-bottom: 0px;">		
-					<a id="results-table-link" class="btn btn-xs btn-primary" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
-					<a id="results-statistics-link" class="btn btn-default btn-xs" onclick="switchTo('statistics');"><img src="${contextpath}/resources/images/icons/24/percentage.png" /></a>
+					<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Results" />" id="results-table-link" class="btn btn-xs btn-primary" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
+					<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.Statistics" />" id="results-statistics-link" class="btn btn-default btn-xs" onclick="switchTo('statistics');"><img src="${contextpath}/resources/images/icons/24/percentage.png" /></a>
 					<c:if test="${form.survey.isQuiz}">
-						<a id="c" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
+						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.QuizResultPage" />" id="results-statistics-quiz-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
 					</c:if>
 					<c:if test="${form.survey.isDelphi}">
 						<a id="results-statistics-delphi-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-delphi');"><img src="${contextpath}/resources/images/icons/24/delphi.png" /></a>
+					</c:if>
+					<c:if test="${form.survey.isECF}">
+						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results" />" id="results-ecf" class="btn btn-default btn-xs" onclick="switchTo('ecf');"><span class="glyphicon glyphicon-user" style="font-size: 19px; color: #333"></span></a>
+						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results2" />" id="results-ecf2" class="btn btn-default btn-xs" onclick="switchTo('ecf2');"><span class="glyphicon glyphicon-eye-open" style="font-size: 19px; color: #333"></span></a>
+						<a data-toggle="tooltip" data-placement="bottom" title="<spring:message code="label.ECF.Results3" />" id="results-ecf3" class="btn btn-default btn-xs" onclick="switchTo('ecf3');"><span class="glyphicon glyphicon-globe" style="font-size: 19px; color: #333"></span></a>
 					</c:if>
 				</div>
 				
@@ -906,6 +1069,35 @@
 							<a class="btn btn-default" onclick="showExportDialog('StatisticsQuiz')"><spring:message code="label.Export" /></a>
 						</span>		
 					</span>
+					
+					<span id="ecf1-export-buttons" class="hidden">
+						<span class="deactivatedexports">
+							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	
+						</span>
+						<span class="activatedexports hideme">
+							<a class="btn btn-default" onclick="showExportDialog('ECFGlobalResults')"><spring:message code="label.Export" /></a>
+						</span>		
+					</span>
+					
+					<span id="ecf2-export-buttons" class="hidden">
+						<span class="deactivatedexports">
+							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	
+						</span>
+						<span class="activatedexports hideme">
+							<a class="btn btn-default" onclick="showExportDialog('ECFProfileResults')"><spring:message code="label.Export" /></a>
+						</span>		
+					</span>
+					
+					<span id="ecf3-export-buttons" class="hidden">
+						<span class="deactivatedexports">
+							<a class="btn btn-default disabled"><spring:message code="label.Export" /></a>	
+						</span>
+						<span class="activatedexports hideme">
+							<a class="btn btn-default" onclick="showExportDialog('ECFOrganizationResults')"><spring:message code="label.Export" /></a>
+						</span>		
+					</span>
+					
+					
 				</div>	
 				
 				<div style="clear: both"></div>	
@@ -930,6 +1122,11 @@
 				<%@ include file="results-statistics-quiz.jsp" %>
 				<%@ include file="results-statistics-delphi.jsp" %>
 				<%@ include file="results-ajax.jsp" %>	
+				<c:if test="${form.survey.isECF}">
+					<%@ include file="results-ecf.jsp" %>
+					<%@ include file="results-ecf2.jsp" %>
+					<%@ include file="results-ecf3.jsp" %>
+				</c:if>
 			</div>
 		</div>
 
@@ -1172,6 +1369,15 @@
 							</select>
 							<select class="form-control" id="exportnt-format-statistics-quiz">
 								<option value="pdf">PDF</option>
+							</select>
+							<select class="form-control" id="exportnt-format-ecf1">
+								<option value="xls">XLS</option>
+							</select>
+							<select class="form-control" id="exportnt-format-ecf2">
+								<option value="xls">XLS</option>
+							</select>
+							<select class="form-control" id="exportnt-format-ecf3">
+								<option value="xls">XLS</option>
 							</select>
 						</div>			
 					</td>

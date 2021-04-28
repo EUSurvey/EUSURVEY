@@ -111,7 +111,7 @@ function newRatingItemViewModel(id, uniqueId, optional, shortname, title, origin
 	return viewModel;
 }
 
-function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsString, title, scoring)
+function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsString, title, scoring, ecfScore, ecfProfile)
 {
 	var viewModel = newBasicViewModel();
 	viewModel.type = 'PossibleAnswer';
@@ -122,6 +122,8 @@ function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsSt
 	viewModel.title = ko.observable(title);
 	viewModel.originalTitle = ko.observable(title);
 	viewModel.scoring = newScoringViewModel(scoring);
+	viewModel.ecfScore = ko.observable(ecfScore);
+	viewModel.ecfProfile = ko.observable(ecfProfile);
 	
 	viewModel.titleForDisplayMode = function(displayMode)
 	{
@@ -146,7 +148,7 @@ function newPossibleAnswersViewModel(answers)
 	var viewModel = ko.observableArray();
 	for (var i = 0; i < answers.length; i++)
 	{
-		viewModel.push(newPossibleAnswerViewModel(answers[i].id, answers[i].uniqueId, answers[i].shortname, answers[i].dependentElementsString, answers[i].title, answers[i].scoring));
+		viewModel.push(newPossibleAnswerViewModel(answers[i].id, answers[i].uniqueId, answers[i].shortname, answers[i].dependentElementsString, answers[i].title, answers[i].scoring, answers[i].ecfScore, answers[i].ecfProfile));
 	}
 	return viewModel;
 }
@@ -286,6 +288,7 @@ function createNewDelphiBasicViewModel() {
 }
 
 function newBasicViewModel(element)
+//HERE
 {
 	const viewModel = new createNewDelphiBasicViewModel();
 	
@@ -393,7 +396,7 @@ function newBasicViewModel(element)
 	            	for (var i = 0; i < this.possibleAnswers().length; i++)
 			    	{
 			    		var copiedanswer = this.possibleAnswers()[i];
-			    		var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), copiedanswer.dependentElementsString(), copiedanswer.title(), copiedanswer.scoring);
+			    		var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), copiedanswer.dependentElementsString(), copiedanswer.title(), copiedanswer.scoring, copiedanswer.ecfScore(), copiedanswer.ecfProfile());
 			    		newanswer.originalId = copiedanswer.id();
 			    		copy[prop].push(newanswer);
 			    	}
@@ -707,6 +710,7 @@ function newSingleChoiceViewModel(element)
 	viewModel.maxChoices = ko.observable(0);
 	viewModel.choiceType = ko.observable(element.useLikert ? "likert" : (element.useRadioButtons ? "radio" : "select"));
 	viewModel.likert = ko.observable(element.useLikert);
+	viewModel.ecfCompetency = ko.observable(element.ecfCompetency);
 	viewModel.maxDistance = ko.observable(element.maxDistance);
 	
 	return viewModel;

@@ -37,9 +37,19 @@
 					</c:otherwise>
 				</c:choose>
 				
-				<%@ include file="../runner/runnercontentinnerpdf.jsp" %>	
+				<%@ include file="../runner/runnercontentinnerpdf.jsp" %>
+				<c:if test="${form.survey.isECF}">
+					<div id="canvasContainerLeft"> 	
+						<%@ include file="../ecfGraph.jsp" %>
+					</div>
+				</c:if>
 			</form:form>
 		
 		</div>
 		
 	</div>
+	<script>
+		var uniqueCode = "${theUniqueCode}";
+		var contextpath = "${contextpath}";
+		var surveyShortname = "${surveyShortname}";
+	</script>
