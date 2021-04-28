@@ -35,6 +35,9 @@ public class BasicService implements BeanFactoryAware {
 	@Resource(name = "answerService")
 	protected AnswerService answerService;
 	
+	@Resource
+	protected AnswerExplanationService answerExplanationService;
+	
 	@Resource(name = "participationService")
 	protected ParticipationService participationService;
 	
@@ -101,6 +104,7 @@ public class BasicService implements BeanFactoryAware {
 	protected @Autowired ServletContext servletContext;
 	
 	protected @Value("${enablereportingdatabase}") String enablereportingdatabase;
+	protected @Value("${ui.enabledelphi}") String enableDelphi;
 	
 	private ExecutorService pool;
 	private ExecutorService pdfpool;
@@ -199,4 +203,7 @@ public class BasicService implements BeanFactoryAware {
 		return (!StringUtils.isEmpty(oss) && oss.equalsIgnoreCase("true")); 
 	}
 
+	public boolean isDelphiEnabled() {
+		return (!StringUtils.isEmpty(enableDelphi) && enableDelphi.equalsIgnoreCase("true"));
+	}
 }

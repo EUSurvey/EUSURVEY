@@ -393,4 +393,13 @@ public abstract class Element implements java.io.Serializable {
 				|| this instanceof Download || this instanceof Text
 				|| (this instanceof GalleryQuestion && !((GalleryQuestion) this).getSelection()));
 	}	
+	
+	@Transient
+	public boolean isDelphiElement() {
+		if (this instanceof Question)
+		{
+			return ((Question)this).getIsDelphiQuestion();
+		}
+		return false;
+	}
 }

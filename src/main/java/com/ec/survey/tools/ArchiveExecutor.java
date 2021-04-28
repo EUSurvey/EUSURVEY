@@ -121,14 +121,14 @@ public class ArchiveExecutor implements Runnable {
 			resultFilter.setSurveyId(published.getId());
 			for (Element element : published.getElementsRecursive(false))
 			{
-				if (!resultFilter.getVisibleQuestions().contains(element.getId().toString()))
-				{
-					resultFilter.getVisibleQuestions().add(element.getId().toString());
-				}
-								
-				if (!resultFilter.getExportedQuestions().contains(element.getId().toString()))
-				{
-					resultFilter.getExportedQuestions().add(element.getId().toString());
+				resultFilter.getVisibleQuestions().add(element.getId().toString());
+				resultFilter.getExportedQuestions().add(element.getId().toString());
+				
+				if (element.isDelphiElement()) {
+					resultFilter.getVisibleExplanations().add(element.getId().toString());
+					resultFilter.getExportedExplanations().add(element.getId().toString());
+					resultFilter.getVisibleDiscussions().add(element.getId().toString());
+					resultFilter.getExportedDiscussions().add(element.getId().toString());
 				}
 			}
 			
@@ -171,6 +171,7 @@ public class ArchiveExecutor implements Runnable {
 
 	public void createArchive() throws Exception
 	{
+		Session session = sessionFactory.getCurrentSession();
 		logger.info("starting archiving of survey " + survey.getShortname());
 		
 		java.io.File folder = fileService.getArchiveFolder(survey.getUniqueId());		
@@ -221,6 +222,8 @@ public class ArchiveExecutor implements Runnable {
 			pdfService.createSurveyPDF(survey, survey.getLanguage().getCode(), new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + survey.getUniqueId() + ".pdf"));
 		}
 		
+		session.flush();
+		
 		logger.info("deleting survey " + survey.getShortname());
 		
 		//make sure the archive exists before finally deleting the survey
@@ -233,7 +236,10 @@ public class ArchiveExecutor implements Runnable {
 		
 		archive.setFinished(true);
 		
+		archive = (Archive) session.merge(archive);
 		archiveService.update(archive);
+		
+		session.flush();
 	}
 	
 	public void handleException(Exception e)

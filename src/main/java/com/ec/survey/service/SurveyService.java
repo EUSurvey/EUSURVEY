@@ -113,6 +113,7 @@ public class SurveyService extends BasicService {
 		stringBuilder.append(" ,s.QUIZ");
 		stringBuilder.append(" ,s.OPC");
 		stringBuilder.append(" ,s.HASPENDINGCHANGES");
+		stringBuilder.append(" ,s.DELPHI");
 		stringBuilder.append(" from SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
 		stringBuilder.append(
@@ -166,7 +167,9 @@ public class SurveyService extends BasicService {
 			survey.setIsQuiz((Boolean) row[rowIndex++]);// 18
 			survey.setIsOPC((Boolean) row[rowIndex++]);// 19
 
-			survey.setHasPendingChanges((Boolean) row[rowIndex]);// 20
+			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 20
+			
+			survey.setIsDelphi((Boolean) row[rowIndex]);// 21
 
 			surveys.add(survey);
 		}
@@ -348,6 +351,9 @@ public class SurveyService extends BasicService {
 				break;
 			case "brp":
 				sql.append(" AND s.OPC = 1");
+				break;
+			case "delphi":
+				sql.append(" AND s.DELPHI = 1");
 				break;
 			}
 		}
@@ -637,13 +643,23 @@ public class SurveyService extends BasicService {
 	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly) {
 		return getSurvey(id, loadTranslations, readonly, true, true);
 	}
-
+	
 	@Transactional
 	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly, boolean synchronizeSurvey,
 			boolean setSurvey) {
+		return getSurvey(id, loadTranslations, readonly, synchronizeSurvey, setSurvey, false);
+	}
+
+	@Transactional
+	public Survey getSurvey(int id, boolean loadTranslations, boolean readonly, boolean synchronizeSurvey,
+			boolean setSurvey, boolean initialize) {
 		Session session = sessionFactory.getCurrentSession();
 		Survey survey = (Survey) session.get(Survey.class, id);
-
+		
+		if (initialize) {
+			initializeSurvey(survey);
+		}
+		
 		if (survey != null && (survey.getIsDraft() || loadTranslations)) {
 			List<String> translations = translationService.getTranslationLanguagesForSurvey(survey.getId());
 			survey.setTranslations(translations);
@@ -776,13 +792,23 @@ public class SurveyService extends BasicService {
 			} else if (element instanceof GalleryQuestion) {
 				GalleryQuestion gallery = (GalleryQuestion) element;
 				Hibernate.initialize(gallery.getFiles());
+			} else if (element instanceof RankingQuestion) {
+				RankingQuestion ranking = (RankingQuestion) element;
+				Hibernate.initialize(ranking.getChildElements());
 			}
 		}
 	}
 
 	@Transactional(readOnly = true)
 	public Survey getSurvey(int id, String language) {
-		Survey survey = getSurvey(id, false, true, false, true);
+		Survey survey = getSurvey(id, false, true, false, true, false);
+		synchronizeSurvey(survey, language, true);
+		return survey;
+	}
+	
+	@Transactional(readOnly = true)
+	public Survey getSurvey(int id, String language, boolean initialize) {
+		Survey survey = getSurvey(id, false, true, false, true, initialize);
 		synchronizeSurvey(survey, language, true);
 		return survey;
 	}
@@ -1776,6 +1802,10 @@ public class SurveyService extends BasicService {
 					"DELETE a.* from ANSWERS a JOIN ANSWERS_SET an ON a.AS_ID = an.ANSWER_SET_ID WHERE an.SURVEY_ID = :id");
 			query2.setInteger("id", id).executeUpdate();
 
+			answerExplanationService.deleteExplanationFilesOfSurvey(id);
+			answerExplanationService.deleteCommentsOfSurvey(id);
+			answerExplanationService.deleteExplanationsOfSurvey(id);
+
 			Query query3 = session.createQuery("DELETE from AnswerSet a where a.surveyId = :id");
 			query3.setInteger("id", id).executeUpdate();
 
@@ -1803,6 +1833,7 @@ public class SurveyService extends BasicService {
 
 			Query query5 = session.createSQLQuery("DELETE FROM VALIDCODE WHERE VALIDCODE_SURVEYUID = :uid");
 			query5.setString("uid", uid).executeUpdate();
+			
 		}
 
 		List<Translations> translations = translationService.getTranslationsForSurvey(id, false);
@@ -2266,11 +2297,16 @@ public class SurveyService extends BasicService {
 		List<Translations> translations = null;
 		List<AnswerSet> answerSets = new ArrayList<>();
 		Map<Integer, List<File>> files = null;
-
+		
+		List<AnswerExplanation> explanations;
+		List<AnswerComment> comments;
+		
 		if (draft) {
 			translations = result.getTranslations();
 			answerSets = result.getAnswerSets();
 			files = result.getFiles();
+			explanations = result.getExplanations();
+			comments = result.getComments();
 		} else {
 			if (surveyid.equals(result.getActiveSurvey().getId())) {
 				translations = result.getActiveTranslations();
@@ -2288,6 +2324,9 @@ public class SurveyService extends BasicService {
 				}
 
 			files = result.getActiveFiles();
+			
+			explanations = result.getActiveExplanations();
+			comments = result.getActiveComments();
 		}
 
 		if (translations != null) {
@@ -2298,6 +2337,7 @@ public class SurveyService extends BasicService {
 			logger.info("starting import of answers");
 
 			Map<String, Integer> keys = new HashMap<>();
+			Set<String> rankingQuestions = new HashSet<>();
 			for (Element element : survey.getElementsRecursive()) {
 				keys.put(element.getSourceId().toString(), element.getId());
 				if (element instanceof ChoiceQuestion) {
@@ -2306,10 +2346,36 @@ public class SurveyService extends BasicService {
 							keys.put(answer.getSourceId().toString(), answer.getId());
 						}
 					}
+				} else if (element instanceof RankingQuestion) {
+					rankingQuestions.add(element.getUniqueId());
 				}
 			}
 
 			Set<AnswerSet> answerSets2 = new HashSet<>();
+			
+			Map<Integer, List<AnswerExplanation>> explanationsByAnswerId = new HashMap<>();
+			if (explanations != null) {
+				for (AnswerExplanation explanation : explanations) {
+					if (!explanationsByAnswerId.containsKey(explanation.getAnswerSetId()))
+					{
+						explanationsByAnswerId.put(explanation.getAnswerSetId(), new ArrayList<AnswerExplanation>());
+					}
+					
+					explanationsByAnswerId.get(explanation.getAnswerSetId()).add(explanation);
+				}
+			}
+			
+			Map<Integer, List<AnswerComment>> commentsByAnswerId = new HashMap<>();
+			if (comments != null) {
+				for (AnswerComment comment : comments) {
+					if (!commentsByAnswerId.containsKey(comment.getAnswerSetId()))
+					{
+						commentsByAnswerId.put(comment.getAnswerSetId(), new ArrayList<AnswerComment>());
+					}
+					
+					commentsByAnswerId.get(comment.getAnswerSetId()).add(comment);
+				}
+			}
 
 			while (!answerSets.isEmpty()) {
 				AnswerSet a = answerSets.remove(0);
@@ -2331,6 +2397,54 @@ public class SurveyService extends BasicService {
 
 						an.setPossibleAnswerUniqueId(oldToNewUniqueIds.get(an.getPossibleAnswerUniqueId()));
 					}
+					
+					if (an.getValue() != null && rankingQuestions.contains(an.getQuestionUniqueId())) {
+						String[] items = an.getValue().split(";");
+						String newValue = "";
+						for (String uid : items) {
+							newValue += oldToNewUniqueIds.get(uid) + ";";
+						}
+						an.setValue(newValue);
+					}
+				}
+				
+				if (explanationsByAnswerId.containsKey(a.getId())) {
+					for (AnswerExplanation explanation : explanationsByAnswerId.get(a.getId())) {						
+						AnswerSet.ExplanationData explanationData = new AnswerSet.ExplanationData();
+						explanationData.text = explanation.getText();					
+						for (File file : explanation.getFiles())
+						{
+							File copy = file.copy(null);
+							explanationData.files.add(copy);
+						}
+						
+						b.getExplanations().put(oldToNewUniqueIds.get(explanation.getQuestionUid()), explanationData);
+					}
+				}
+				
+				if (commentsByAnswerId.containsKey(a.getId())) {
+					Map<Integer, AnswerComment> commentsByOldId = new HashMap<>();
+					
+					for (AnswerComment comment : commentsByAnswerId.get(a.getId())) {						
+						AnswerComment copy = new AnswerComment();
+						copy.setQuestionUid(oldToNewUniqueIds.get(comment.getQuestionUid()));
+						copy.setUniqueCode(comment.getUniqueCode());
+						copy.setText(comment.getText());
+						copy.setDate(comment.getDate());
+						
+						commentsByOldId.put(comment.getId(), copy);
+						
+						if (comment.getParent() != null) {
+							copy.setParent(commentsByOldId.get(comment.getParent().getId()));
+						}
+						
+						if (!b.getComments().containsKey(oldToNewUniqueIds.get(comment.getQuestionUid())))
+						{
+							b.getComments().put(oldToNewUniqueIds.get(comment.getQuestionUid()), new ArrayList<>());
+						}						
+						
+						b.getComments().get(oldToNewUniqueIds.get(comment.getQuestionUid())).add(copy);
+					}
 				}
 
 				answerSets2.add(b);
@@ -2345,6 +2459,8 @@ public class SurveyService extends BasicService {
 			SaveAnswerSets(answerSets2, tempFileDir, null);
 			logger.info("finished import of answers");
 		}
+		
+		
 	}
 
 	@Transactional
@@ -2838,6 +2954,13 @@ public class SurveyService extends BasicService {
 
 			if (!Tools.isEqual(draftSurvey.getIsQuiz(), publishedSurvey.getIsQuiz()))
 				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draftSurvey.getIsOPC(), publishedSurvey.getIsOPC()))
+				hasPendingChanges = true;
+
+			if (!Tools.isEqual(draftSurvey.getIsDelphi(), publishedSurvey.getIsDelphi()))
+				hasPendingChanges = true;
+			
 			if (!Tools.isEqualIgnoreEmptyString(draftSurvey.getQuizWelcomeMessage(), publishedSurvey.getQuizWelcomeMessage()))
 				hasPendingChanges = true;
 			if (!Tools.isEqualIgnoreEmptyString(draftSurvey.getQuizResultsMessage(), publishedSurvey.getQuizResultsMessage()))
@@ -2866,7 +2989,16 @@ public class SurveyService extends BasicService {
 
 			if (!Tools.isEqual(draftSurvey.getMaxNumberContribution(), publishedSurvey.getMaxNumberContribution()))
 				hasPendingChanges = true;
+
+			if (!Tools.isEqual(draftSurvey.getIsDelphiShowAnswersAndStatisticsInstantly(), publishedSurvey.getIsDelphiShowAnswersAndStatisticsInstantly()))
+				hasPendingChanges = true;
 			
+			if (!Tools.isEqual(draftSurvey.getIsDelphiShowAnswers(), publishedSurvey.getIsDelphiShowAnswers()))
+				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draftSurvey.getMinNumberDelphiStatistics(), publishedSurvey.getMinNumberDelphiStatistics()))
+				hasPendingChanges = true;			
+
 			if (draftSurvey.getSendConfirmationEmail() != publishedSurvey.getSendConfirmationEmail())
 				hasPendingChanges = true;
 
@@ -3097,15 +3229,30 @@ public class SurveyService extends BasicService {
 		return (List<Object>) query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	private List<Object> GetAllRankingQuestionAnswers(String surveyUid, Set<String> rankingQuestionUids) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createSQLQuery(
+				"SELECT DISTINCT QUESTION_UID, VALUE FROM ANSWERS a INNER JOIN ANSWERS_SET ans ON ans.ANSWER_SET_ID = a.AS_ID JOIN SURVEYS s ON  ans.SURVEY_ID =  s.SURVEY_ID WHERE s.ISDRAFT = FALSE AND s.SURVEY_UID = :surveyUid AND a.QUESTION_UID IN (" 
+									+ StringUtils.collectionToCommaDelimitedString(rankingQuestionUids) + ")")
+				.setString("surveyUid", surveyUid);
+
+		return (List<Object>) query.list();
+	}
+	
 	@Transactional(readOnly = true)
 	public void checkAndRecreateMissingElements(Survey survey, ResultFilter filter) {
 		List<Element> surveyelements = survey.getElementsRecursive(true);
 		Map<String, Element> surveyelementsbyuid = new HashMap<>();
 		Map<String, Element> missingelementuids = new HashMap<>();
+		Set<String> rankingQuestionUids = new HashSet<>();
 		for (Element element : surveyelements) {
 			surveyelementsbyuid.put(element.getUniqueId(), element);
+			if (element instanceof RankingQuestion) {
+				rankingQuestionUids.add("'" + element.getUniqueId() + "'");
+			}
 		}
-
+		
 		// the reporting database is not used here fore performance reasons
 		List<Object> res = GetAllQuestionsAndPossibleAnswers(survey.getUniqueId());
 
@@ -3188,6 +3335,11 @@ public class SurveyService extends BasicService {
 				} else {
 					survey.getMissingElements().add(missingquestion);
 					missingelementuids.put(questionUID, missingquestion);
+					
+					if (missingquestion instanceof RankingQuestion) {
+						rankingQuestionUids.add("'" + missingquestion.getUniqueId() + "'");
+					}
+					
 					if (filter != null) {
 						if (!filter.getVisibleQuestions().contains(missingquestion.getId().toString()))
 							filter.getVisibleQuestions().add(missingquestion.getId().toString());
@@ -3282,6 +3434,46 @@ public class SurveyService extends BasicService {
 							}
 						}
 					}
+				}
+			}
+		}
+		
+		if (!rankingQuestionUids.isEmpty()) {
+			List<Object> allRankingQuestionAnswers = GetAllRankingQuestionAnswers(survey.getUniqueId(), rankingQuestionUids);
+			Set<String> distinctRankingItemUids = new HashSet<>();
+			for (Object o : allRankingQuestionAnswers) {
+				Object[] a = (Object[]) o;
+
+				String questionUID = (String) a[0];
+				String rankingItemOrder = (String) a[1];
+				
+				for (String uniqueId : rankingItemOrder.split(";")) {
+					if (!distinctRankingItemUids.contains(uniqueId)) {
+						distinctRankingItemUids.add(uniqueId);
+						
+						RankingQuestion question = null;
+						if (surveyelementsbyuid.containsKey(questionUID))
+						{
+							question = (RankingQuestion) surveyelementsbyuid.get(questionUID);
+						} else if (missingelementuids.containsKey(questionUID))
+						{
+							question = (RankingQuestion) missingelementuids.get(questionUID);
+						} else {
+							logger.error("no ranking question found: " + questionUID);
+							continue;
+						}
+						
+						if (!question.getChildElementsByUniqueId().containsKey(uniqueId))
+						{
+							Element missingRankingItem = getNewestElementByUid(uniqueId);
+							if (missingRankingItem instanceof RankingItem) {
+								question.getMissingElements().add((RankingItem) missingRankingItem);
+								missingelementuids.put(missingRankingItem.getUniqueId(), missingRankingItem);
+							} else {
+								logger.info("unknown ranking item found: " + questionUID);
+							}
+						}						 
+					}				
 				}
 			}
 		}
@@ -3775,7 +3967,7 @@ public class SurveyService extends BasicService {
 
 	public java.io.File exportSurvey(String shortname, SurveyService surveyService, boolean answers) {
 		return SurveyExportHelper.exportSurvey(shortname, surveyService, answers, translationService, answerService,
-				fileDir, sessionService, fileService, sessionFactory.getCurrentSession(), host);
+				fileDir, sessionService, fileService, sessionFactory.getCurrentSession(), host, answerExplanationService);
 	}
 
 	@Transactional(readOnly = true)
@@ -4364,7 +4556,7 @@ public class SurveyService extends BasicService {
 				.append("'>\n");
 
 		s.append("<SurveyType>")
-				.append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : "Standard"))
+				.append(survey.getIsQuiz() ? "Quiz" : (survey.getIsOPC() ? "BRP Public Consultation" : (survey.getIsDelphi() ? "Delphi" : "Standard")))
 				.append("</SurveyType>\n");
 
 		s.append("<Title>").append(survey.getTitle()).append("</Title>\n");
@@ -4857,5 +5049,17 @@ public class SurveyService extends BasicService {
 		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", body.toString()).replace("[HOST]", host);
 		
 		mailService.SendHtmlMail(email, sender, sender, "Confirmation of your submission", mailtext, null);		
+	}
+
+	@Transactional
+	public Set<String> getRankingQuestionUids(int surveyId) {
+		Survey survey = getSurvey(surveyId);
+		Set<String> result = new HashSet<>();
+		for (Element element : survey.getElements()) {
+			if (element instanceof RankingQuestion) {
+				result.add(element.getUniqueId());
+			}
+		}
+		return result;
 	}
 }

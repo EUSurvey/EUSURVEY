@@ -33,11 +33,15 @@
 			this.useConfLink =  ko.observable(${form.survey.confirmationPageLink});
 			this.useEscapeLink =  ko.observable(${form.survey.escapePageLink});
 			this.quiz = ko.observable(${form.survey.isQuiz});
+			this.delphi = ko.observable(${form.survey.isDelphi});
 			this.opc = ko.observable(${form.survey.isOPC});
 			this.multiPaging = ko.observable(${form.survey.multiPaging});
 			this.isUseMaxNumberContribution = ko.observable(${form.survey.isUseMaxNumberContribution});
 			this.isUseMaxNumberContributionLink = ko.observable(${form.survey.isUseMaxNumberContributionLink});
 			this.sendConfirmationEmail = ko.observable(${form.survey.sendConfirmationEmail});
+			this.changeContribution = ko.observable(${form.survey.changeContribution});
+			this.downloadContribution = ko.observable(${form.survey.downloadContribution});
+			this.saveAsDraft = ko.observable(${form.survey.saveAsDraft});
 			
 			this.addLinksRow = function()
 			{
@@ -142,6 +146,56 @@
 					deleteFile(v);
 				}
 				this.self.showBackgroundDocs($("#backgrounddocumentstable").find("tr").length > 1);
+			}
+
+			this.toggleChangeContribution = function()
+			{
+				if (this.self.delphi()) {
+					this.self.changeContribution(true); // should always be activated for delphi surveys
+				} else {
+					this.self.changeContribution(!this.self.changeContribution());
+				}
+			}
+			
+			this.toggleSaveAsDraft = function()
+			{
+				if (this.self.delphi()) {
+					this.self.saveAsDraft(false); // should always be deactivated for delphi surveys
+				} else {
+					this.self.saveAsDraft(!this.self.saveAsDraft());
+				}
+			}
+			
+			this.toggleDownloadContribution = function()
+			{
+				if (this.self.delphi()) {
+					this.self.downloadContribution(false); // should always be deactivated for delphi surveys
+				} else {
+					this.self.downloadContribution(!this.self.downloadContribution());
+				}
+			}
+			
+			this.toggleQuiz = function()
+			{
+				this.self.quiz(!this.self.quiz());
+			}
+			
+			this.toggleDelphi = function()
+			{
+				if (this.self.delphi()) { // switch to standard survey
+					this.self.delphi(false);
+				} else { // switch to delphi survey
+					this.self.delphi(true);
+					this.self.changeContribution(true); // should always be activated for delphi surveys
+				}
+			}
+			
+			this.isNormalSurvey = function()
+			{
+				if (this.self.quiz()) return false;
+				if (this.self.delphi()) return false;
+				if (this.self.opc()) return false;
+				return true;
 			}
 		}
 		
@@ -258,6 +312,13 @@
 				}
 				
 				result = validateInput($("#maxContributionInput").parent());
+				
+				if (result == false)
+				{
+					return;
+				}
+				
+				result = validateInput($("#minNumberDelphiStatistics").parent());
 				
 				if (result == false)
 				{

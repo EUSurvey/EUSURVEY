@@ -10,6 +10,10 @@
 	<link href="${contextpath}/resources/css/management.css" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/charts.css" rel="stylesheet" type="text/css" />
 	
+	<script type="text/javascript" src="${contextpath}/resources/js/d3.v3.min.js?version=<%@include file="../version.txt" %>"></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/d3.layout.cloud.min.js?version=<%@include file="../version.txt" %>"></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/wordcloud.js?version=<%@include file="../version.txt" %>"></script>
+	
 	<style>
 	
 		.hiddenTableCell {
@@ -83,6 +87,27 @@
 			font-size: 18px;
 			vertical-align: bottom;
 		}
+		
+		.statelement-wrapper {
+			background: #f8f8f8;
+			border: 1px solid #dddddd;
+			margin-bottom: 10px;
+			margin-left: auto;
+			margin-right: auto;
+			padding: 16px;
+			width: 700px;
+		}
+		
+		.chart-wrapper, .chart-controls {
+			float: left;
+			display: none;
+		}
+		
+		.chart-controls select {
+			width: 100%;
+			display: inline-block;
+			margin-bottom: 15px;
+		}
 	
 	</style>
 	
@@ -110,9 +135,7 @@
 				$("#results-source").find("option[value='draft']").prop('selected','selected');
 				$("#resetbutton").attr("href", $("#resetbutton").attr("href") + "&results-source=draft");
 			</c:if>
-			
-			//checkDeleteBoxes();
-		
+				
 			<c:if test="${message == 'success'}">
 				showSuccess('<spring:message code="message.ContributionDeleted" />');
 			</c:if>
@@ -174,6 +197,10 @@
 			$("#loadstatisticsbutton").show();
 			</c:otherwise>
 			</c:choose>
+			
+			<c:if test="${form.survey.isDelphi}">
+				loadDelphiStatisticsAsync();
+			</c:if>
 			
 			$(window).on('resize', doResize);
 			
@@ -255,17 +282,7 @@
 			adaptScrollArea();
 		}
 		
-// 		function switchAssignedValues()
-// 		{
-// 			if ($("#show-assigned-values").is(":checked"))
-// 			{
-// 				$("#show-assigned-values").removeAttr("checked");
-// 			} else {
-// 				$("#show-assigned-values").prop("checked","checked");
-// 			}
-// 			checkAssignedValues();
-// 		}
-		
+	
 		function checkAssignedValues()
 		{
 			if ($("#show-assigned-values").is(":checked"))
@@ -279,35 +296,6 @@
 				$("#dialog-show-assigned-values-false").prop("checked", "checked");
 			}
 		}
-		
-// 		function switchDeleteCheckboxes()
-// 		{
-// 			if ($("#show-delete-checkboxes").is(":checked"))
-// 			{
-// 				$("#show-delete-checkboxes").removeAttr("checked");
-// 			} else {
-// 				$("#show-delete-checkboxes").prop("checked","checked");
-// 			}
-// 			checkDeleteBoxes();
-// 		}
-		
-// 		function checkDeleteBoxes()
-// 		{
-// 			if ($("#show-delete-checkboxes").is(":checked") && $('#results-table-link').hasClass("btn-primary"))
-// 			{
-// 				$(".checkDelete").removeClass("hiddenTableCell");
-// 				$("#btnDeleteSelected").show();
-// 				checkDeleteButtonEnabled();
-// 				$("#show-delete-checkboxes-icon").removeClass("disabled");
-// 			} else {
-// 				$(".checkDelete").addClass("hiddenTableCell");
-// 				$("#contentstable").css("width","auto");
-// 				$("#btnDeleteSelected").hide();
-// 				$("#show-delete-checkboxes-icon").addClass("disabled");
-// 			}
-			
-// 			synchronizeTableSizes();
-// 		}
 		
 		function checkAllDelete()
 		{
@@ -396,6 +384,7 @@
 				case 'content':
 					$("#results-table-link").addClass("btn-primary");
 					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
 					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
 					
 					$("#results-table").find("tbody").removeClass('hidden');
@@ -403,6 +392,7 @@
 					$("#pager").removeClass('hidden');
 					$("#results-charts").addClass('hidden');
 					$("#results-statistics").addClass('hidden');
+					$("#results-statistics-delphi").addClass('hidden');
 					$("#results-statistics-quiz").addClass('hidden');
 					
 					$("#content-export-buttons").removeClass('hidden');
@@ -431,6 +421,7 @@
 				case 'statistics':
 					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
 					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
 					$("#results-statistics-link").addClass("btn-primary");
 					
 					$("#results-table").find(".RowsPerPage").addClass('hidden');
@@ -438,6 +429,7 @@
 					$("#results-charts").addClass('hidden');
 					$("#results-statistics").removeClass('hidden');
 					$("#results-statistics-quiz").addClass('hidden');
+					$("#results-statistics-delphi").addClass('hidden');
 					
 					$("#content-export-buttons").addClass('hidden');
 					$("#charts-export-buttons").addClass('hidden');
@@ -448,22 +440,50 @@
 					
 					$("#scrollareaheader").css("overflow-x", "auto");
 					$("#scrollareaheader").css("overflow-y","auto");
+
+					delphiPopulateAllGraphs($("#results-statistics"));
+					doResize();
 					break;
 				case 'statistics-quiz':
 					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
 					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-delphi-link").removeClass("btn-primary").addClass("btn-default");
 					$("#results-statistics-quiz-link").addClass("btn-primary");
 					
 					$("#results-table").find(".RowsPerPage").addClass('hidden');
 					$("#pager").addClass('hidden');
 					$("#results-charts").addClass('hidden');
 					$("#results-statistics").addClass('hidden');
+					$("#results-statistics-delphi").addClass('hidden');
 					$("#results-statistics-quiz").removeClass('hidden');
 					
 					$("#content-export-buttons").addClass('hidden');
 					$("#charts-export-buttons").addClass('hidden');
 					$("#statistics-export-buttons").addClass('hidden');
 					$("#statistics-quiz-export-buttons").removeClass('hidden');
+					
+					$("#scrollarea").hide();
+					
+					$("#scrollareaheader").css("overflow-x", "auto");
+					$("#scrollareaheader").css("overflow-y","auto");
+					break;
+				case 'statistics-delphi':
+					$("#results-table-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-quiz-link").removeClass("btn-primary").addClass("btn-default");
+					$("#results-statistics-delphi-link").addClass("btn-primary");
+					
+					$("#results-table").find(".RowsPerPage").addClass('hidden');
+					$("#pager").addClass('hidden');
+					$("#results-charts").addClass('hidden');
+					$("#results-statistics").addClass('hidden');
+					$("#results-statistics-quiz").addClass('hidden');
+					$("#results-statistics-delphi").removeClass('hidden');
+					
+					$("#content-export-buttons").addClass('hidden');
+					$("#charts-export-buttons").addClass('hidden');
+					$("#statistics-export-buttons").addClass('hidden');
+					$("#statistics-quiz-export-buttons").addClass('hidden');
 					
 					$("#scrollarea").hide();
 					
@@ -799,12 +819,14 @@
 					<a id="results-table-link" class="btn btn-xs btn-primary" onclick="switchTo('content');"><img src="${contextpath}/resources/images/icons/24/table.png" /></a>
 					<a id="results-statistics-link" class="btn btn-default btn-xs" onclick="switchTo('statistics');"><img src="${contextpath}/resources/images/icons/24/percentage.png" /></a>
 					<c:if test="${form.survey.isQuiz}">
-						<a id="results-statistics-quiz-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
+						<a id="c" class="btn btn-default btn-xs" onclick="switchTo('statistics-quiz');"><span class="glyphicon glyphicon-education" style="font-size: 19px; color: #333"></span></a>
+					</c:if>
+					<c:if test="${form.survey.isDelphi}">
+						<a id="results-statistics-delphi-link" class="btn btn-default btn-xs" onclick="switchTo('statistics-delphi');"><img src="${contextpath}/resources/images/icons/24/delphi.png" /></a>
 					</c:if>
 				</div>
 				
 				<div style="float: left; margin-top: 0px; margin-right: 20px;">
-					<!-- <b><spring:message code="label.Source" /></b>-->
 					<select onchange="$('#resultsForm').submit();" class="form-control" name="results-source" id="results-source" style="width: auto; margin-bottom: 0px; margin-left: 10px;">
 						<c:choose>
 							<c:when test="${!sessioninfo.owner.equals(USER.id) && USER.formPrivilege < 2 && USER.getLocalPrivilegeValue('AccessResults') < 1}">
@@ -829,9 +851,6 @@
 							</c:otherwise>
 						</c:choose>
 					</select>
-					
-					<!-- <a onclick="$(this).closest('form').submit()" class="btn btn-primary" style="margin-left: 30px"><spring:message code="label.Search" /></a>
-					<a id="resetbutton" onclick="$('#show-wait-image').modal('show');" class="btn btn-default" href="${contextpath}/${sessioninfo.shortname}/management/results?reset=true"><spring:message code="label.ResetFilter" /></a> -->
 				</div>
 				<div style="margin-top: 2px; margin-right: 10px; float: right;">
 					<a class="btn btn-default" id="btnConfigureFromResult" onclick="$('#configure-columns-dialog').modal('show')"><spring:message code="label.Settings" /></a>
@@ -853,23 +872,6 @@
 							<input value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
 						</c:otherwise>
 					</c:choose>	
-					
-					<!-- <a data-placement="bottom" data-toggle="tooltip" title="<spring:message code="label.Delete" />" class="iconbutton disabled hideme" style="margin: 0px" id="btnDeleteSelected" onclick="checkAndShowMultiDeleteDialog();"><span class="glyphicon glyphicon-trash"></span></a>
-
-					<input onclick="checkAssignedValues()" name="show-assigned-values" type="checkbox" class="hideme" id="show-assigned-values" />
-					<a id="show-assigned-values-icon" onclick="switchAssignedValues()" class="switchiconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ShowAssignedValues" />" data-placement="bottom"><span class="glyphicon glyphicon-tags"></span></a>
-					<span id="show-delete-checkboxes-div" style="margin-top: 10px;">
-						<c:choose>
-							<c:when test="${showdeletecheckboxes == true}">
-								<input onclick="checkDeleteBoxes()" checked="checked" value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
-								<a id="show-delete-checkboxes-icon" onclick="switchDeleteCheckboxes()" class="switchiconbutton" data-toggle="tooltip" title="<spring:message code="label.ShowDeleteCheckboxes" />" data-placement="bottom"><span class="glyphicon glyphicon-check"></span></a>
-							</c:when>
-							<c:otherwise>
-								<input onclick="checkDeleteBoxes()" value="true" name="show-delete-checkboxes" type="checkbox" class="hideme" id="show-delete-checkboxes" />
-								<a id="show-delete-checkboxes-icon" onclick="switchDeleteCheckboxes()" class="switchiconbutton disabled" data-toggle="tooltip" title="<spring:message code="label.ShowDeleteCheckboxes" />" data-placement="bottom"><span class="glyphicon glyphicon-check"></span></a>
-							</c:otherwise>
-						</c:choose>
-					</span>-->					
 					
 					<span id="content-export-buttons">
 						<span class="deactivatedexports">
@@ -926,6 +928,7 @@
 				<%@ include file="results-content.jsp" %>					
 				<%@ include file="results-statistics.jsp" %>
 				<%@ include file="results-statistics-quiz.jsp" %>
+				<%@ include file="results-statistics-delphi.jsp" %>
 				<%@ include file="results-ajax.jsp" %>	
 			</div>
 		</div>
@@ -982,6 +985,21 @@
 								<td style="vertical-align: top;"><input name="selected${question.id}" <c:if test="${filter.visible(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="${question.id}" /></td>
 								<td style="vertical-align: top; "><input name="exportselected${question.id}" <c:if test="${filter.exported(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="exported${question.id}" /></td>
 								<td>${question.title.length() > 0? question.getStrippedTitleAtMost100() : question.shortname}</td>
+							</tr>
+						</c:if>
+						
+						<c:if test="${question.getIsDelphiQuestion()}">
+							<tr>
+								<td style="vertical-align: top;"><input name="selectedexplanation${question.id}" <c:if test="${filter.explanationVisible(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="explanation${question.id}" /></td>
+								<td style="vertical-align: top; "><input name="exportselectedexplanation${question.id}" <c:if test="${filter.explanationExported(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="explanationexported${question.id}" /></td>
+
+								<td style="padding-left: 20px;"><spring:message code="label.Explanation" /></td>
+							</tr>
+							<tr>
+								<td style="vertical-align: top;"><input name="selecteddiscussion${question.id}" <c:if test="${filter.discussionVisible(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="discussion${question.id}" /></td>
+								<td style="vertical-align: top; "><input name="exportselecteddiscussion${question.id}" <c:if test="${filter.discussionExported(question.id.toString())}">checked="checked" data-checked="checked"</c:if> type="checkbox" class="check" id="discussionexported${question.id}" /></td>
+
+								<td style="padding-left: 20px;"><spring:message code="label.Discussion" /></td>
 							</tr>
 						</c:if>
 					</c:forEach>

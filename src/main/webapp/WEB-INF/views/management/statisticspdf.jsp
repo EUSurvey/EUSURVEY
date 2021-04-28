@@ -42,31 +42,40 @@
 		td {
 			word-break: break-all;
  			word-wrap: break-word;
-		}  
+ 			padding-right: 10px;
+		} 
+		
+		th {
+			text-align: left;
+			padding-right: 10px;
+		} 
 		
 		.statistics-table {
 			max-width: 95% !important;
-		}
-		
-		@media print{       
-            .progress{
-                background-color: #F5F5F5 !important;
-                -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#F5F5F5', endColorstr='#F5F5F5')" !important;
-            }
-            .progress-bar{
-                display: block !important;
-                background-color: #337ab7 !important;
-                -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#5BC0DE', endColorstr='#5BC0DE')" !important;
-            }
-
-            .progress, .progress > .progress-bar {
-                display: block !important;
-                -webkit-print-color-adjust: exact !important;
-
-                box-shadow: inset 0 0 !important;
-                -webkit-box-shadow: inset 0 0 !important;
-            }   
+		}		
+		     
+        .progress{
+         height: 20px;
+            background-color: #F5F5F5 !important;
+            -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#F5F5F5', endColorstr='#F5F5F5')" !important;
         }
+        .progress-bar{
+         height: 20px;
+            display: block !important;
+            background-color: #337ab7 !important;
+            -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#5BC0DE', endColorstr='#5BC0DE')" !important;
+        }
+
+        .progress, .progress > .progress-bar {
+            display: block !important;
+            -webkit-print-color-adjust: exact !important;
+
+            box-shadow: inset 0 0 !important;
+            -webkit-box-shadow: inset 0 0 !important;
+            
+            height: 20px;
+        }   
+        
 	  </style>
 	
 </head>

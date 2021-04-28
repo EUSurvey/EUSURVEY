@@ -8,8 +8,8 @@
 					<spring:message code="question.ApplyVisibilityToChildren" />
 				</div>
 				<div class="modal-footer">
-					<a  class="btn btn-primary" onclick="$('#askSectionVisibilityDialog').modal('hide');updateVisibility(selectedspan, false, false, true);"><spring:message code="label.Yes" /></a>
-					<a  class="btn btn-default" onclick="$('#askSectionVisibilityDialog').modal('hide');updateVisibility(selectedspan, false, false, false);"><spring:message code="label.No" /></a>                
+					<a  class="btn btn-primary" onclick="$('#askSectionVisibilityDialog').modal('hide');updateVisibility(selectedspan, false, false, true, false);"><spring:message code="label.Yes" /></a>
+					<a  class="btn btn-default" onclick="$('#askSectionVisibilityDialog').modal('hide');updateVisibility(selectedspan, false, false, false, false);"><spring:message code="label.No" /></a>                
 				</div>
 			</div>
 		</div>

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
@@ -16,7 +17,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,8 +38,12 @@ import com.ec.survey.model.survey.EmailQuestion;
 import com.ec.survey.model.survey.FreeTextQuestion;
 import com.ec.survey.model.survey.GalleryQuestion;
 import com.ec.survey.model.survey.Matrix;
+import com.ec.survey.model.survey.MatrixOrTable;
 import com.ec.survey.model.survey.MultipleChoiceQuestion;
 import com.ec.survey.model.survey.NumberQuestion;
+import com.ec.survey.model.survey.Question;
+import com.ec.survey.model.survey.RankingItem;
+import com.ec.survey.model.survey.RankingQuestion;
 import com.ec.survey.model.survey.RatingQuestion;
 import com.ec.survey.model.survey.RegExQuestion;
 import com.ec.survey.model.survey.SingleChoiceQuestion;
@@ -55,7 +59,7 @@ import com.ec.survey.tools.Tools;
 import org.hibernate.exception.SQLGrammarException;
 
 @Service("reportingService")
-public class ReportingService {
+public class ReportingService extends BasicService {
 
 	protected static final int MAX_COLUMN_NUMBER_IN_OLAP_TABLE = 1000;
 	
@@ -66,19 +70,7 @@ public class ReportingService {
 	
 	@Resource(name="sessionFactory")
 	protected SessionFactory sessionFactory;
-	
-	@Resource(name = "surveyService")
-	protected SurveyService surveyService;
-	
-	@Resource(name = "answerService")
-	protected AnswerService answerService;
-	
-	@Resource(name = "fileService")
-	protected FileService fileService;
-	
-	@Resource(name = "settingsService")
-	protected SettingsService settingsService;
-	
+		
 	@Autowired
 	private SqlQueryService sqlQueryService;
 	
@@ -332,6 +324,9 @@ public class ReportingService {
 								} else if (question instanceof TimeQuestion) {
 									where += columnname + " LIKE :answer" + i;
 									values.put(Constants.ANSWER + i,  "%" + answer + "%");
+								} else if (question instanceof RankingQuestion) {
+									where += columnname + " LIKE :answer" + i;
+									values.put(Constants.ANSWER + i, answer + "%");		
 								} else if (answer.contains("|")) { // Matrices
 									String answerUid = answer.substring(answer.indexOf('|')+1);
 									where += columnname + " LIKE :answer" + i;
@@ -352,7 +347,7 @@ public class ReportingService {
 									values.put(Constants.ANSWER + i, "%" + answer + "%");								
 								} else if (question instanceof GalleryQuestion) {
 									where += columnname + " LIKE :answer" + i;
-									values.put(Constants.ANSWER + i, "%" + answer + ";%");								
+									values.put(Constants.ANSWER + i, "%" + answer + ";%");		
 								} else { //Rating
 									where += columnname + " LIKE :answer" + i;
 									values.put(Constants.ANSWER + i, "%" + answer + "%");
@@ -425,12 +420,14 @@ public class ReportingService {
 	public List<List<String>> getAnswerSetsInternal(Survey survey, ResultFilter filter, SqlPagination sqlPagination, boolean addlinks, boolean forexport, boolean showuploadedfiles, boolean doNotReplaceAnswerIDs, boolean useXmlDateFormat, boolean showShortnames) throws Exception {
 		Session session = sessionFactoryReporting.getCurrentSession();
 		
+		Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
+		
 		Map<String, Object> values = new HashMap<>();
 		String where = getWhereClause(filter, values, survey);
 		
 		Map<String, Element> visibleQuestions = new LinkedHashMap<>();
 		
-		for (Element question : survey.getQuestions())
+		for (Question question : survey.getQuestions())
     	{
     		if (filter.getVisibleQuestions().contains(question.getId().toString()))
     		{
@@ -655,9 +652,88 @@ public class ReportingService {
 									}							
 								}						
 								row.add(v.length() > 0 ? v : null);
+							} else if (question instanceof RankingQuestion) {
+								RankingQuestion rankingQuestion = (RankingQuestion)question;
+								Map<String, RankingItem> children = rankingQuestion.getChildElementsByUniqueId();
+								String[] answerids = item.toString().split(";");						
+								String v = "";
+								for (String uniqueId : answerids)
+								{
+									if (v.length() > 0) v += ";";
+									RankingItem child = children.get(uniqueId);
+									if (child != null)
+									{
+										if (doNotReplaceAnswerIDs)
+										{
+											v += uniqueId;
+										} else {
+											v += child.getTitle();
+										}
+										
+										if (showShortnames) {
+											v += " <span class='assignedValue hideme'>(" +child.getShortname() + ")</span>";
+										}
+									}							
+								}						
+								row.add(v.length() > 0 ? v : null);
 							} else {
 								row.add(item.toString());
 							}
+							
+							if (question == null)
+							{
+								logger.info("question not found");
+							}
+								
+							if (survey.getIsDelphi() && question != null && question.isDelphiElement())
+							{
+								boolean skip = false;
+								
+								if (question instanceof MatrixOrTable)
+								{
+									//explanation and discussion columns are only added once (after the last matrix subquestion)
+									MatrixOrTable matrix = (MatrixOrTable)question;
+									List<Element> matrixQuestions = matrix.getQuestions();
+									Element lastQuestion = matrixQuestions.get(matrixQuestions.size()-1);
+									if (!lastQuestion.getUniqueId().equals(questionuid))
+									{
+										skip = true;
+									}
+								} else if (question instanceof RatingQuestion)
+								{
+									//explanation and discussion columns are only added once (after the last matrix subquestion)
+									RatingQuestion rating = (RatingQuestion)question;
+									List<Element> ratingQuestions = rating.getQuestions();
+									Element lastQuestion = ratingQuestions.get(ratingQuestions.size()-1);
+									if (!lastQuestion.getUniqueId().equals(questionuid))
+									{
+										skip = true;
+									}
+								}						
+								
+								if (!skip && filter.getVisibleExplanations().contains(question.getId().toString()))
+								{
+									try {
+										String explanation = answerExplanationService.getFormattedExplanationWithFiles(
+												ConversionTools.getValue(answerrow[1]), question.getUniqueId(),
+												survey.getUniqueId(), !forexport);
+										row.add(explanation);
+									} catch (NoSuchElementException ex) {
+										row.add("");
+									}
+								}
+								
+								if (!skip && filter.getVisibleDiscussions().contains(question.getId().toString()))
+								{
+									try {
+										String discussion = answerExplanationService.getDiscussion(ConversionTools.getValue(answerrow[1]), question.getUniqueId(), !forexport, usersByUid);
+										row.add(discussion);
+									} catch (NoSuchElementException ex) {
+										row.add("");
+									}
+								}
+							}
+							
 							counter++;
 						}
 				    }
@@ -669,6 +745,8 @@ public class ReportingService {
 			return rows;
 			
 		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			
 			return null;
 		}	
 	}
@@ -865,6 +943,8 @@ public class ReportingService {
 				for (Element child : rating.getChildElements()) {
 					putColumnNameAndType(columnNamesToType, child.getUniqueId(), "TEXT");
 				}
+			} else if (question instanceof RankingQuestion) {
+				putColumnNameAndType(columnNamesToType, question.getUniqueId(), "TEXT");
 			}
 		}
 		return columnNamesToType;
@@ -1360,6 +1440,16 @@ public class ReportingService {
 					columns.add(ratingQuestion.getUniqueId());		
 					values.add(answers.isEmpty() ? null : "'" + answers.get(0).getValue() + "'");
 				}
+			} else if (question instanceof RankingQuestion) {
+				List<Answer> answers = answerSet.getAnswers(question.getId(), question.getUniqueId());				
+				String d = null;
+				if (!answers.isEmpty())
+				{
+					d = answers.get(0).getValue();						
+				}
+				columns.add(question.getUniqueId());
+				values.add(":value" + parameters.size());
+				parameters.put("value" + parameters.size(), d);	
 			}
 		}
 		
@@ -1558,12 +1648,14 @@ public class ReportingService {
 	}
 	
 	@Transactional(readOnly = true, transactionManager = "transactionManagerReporting")
-	public int getCountInternal(Survey survey, String quid, String auid, boolean noPrefixSearch, String where, Map<String, Object> values) {
+	public int getCountInternal(Survey survey, String quid, String auid, boolean noPrefixSearch, boolean noPostfixSearch, String where, Map<String, Object> values) {
 		Session sessionReporting = sessionFactoryReporting.getCurrentSession();
 		
 		String sql = "SELECT COUNT(*) FROM " + getOLAPTableName(survey) + " WHERE Q" + quid.replace("-", "");
 		if (auid == null) {
 			sql += " IS NOT NULL";
+		} else if (noPrefixSearch && noPostfixSearch) {
+			sql += " LIKE '" + auid + "'";			
 		} else if (noPrefixSearch) {
 			sql += " LIKE '" + auid + "%'";
 		} else {

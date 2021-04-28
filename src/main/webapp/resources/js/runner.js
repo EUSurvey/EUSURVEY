@@ -73,8 +73,7 @@ function returnTrueForSpace(event)
 }
 
 function ratingClick(link)
-{
-	
+{	
 	var pos = $(link).index();
 	var icons = $(link).attr("data-icons");
 	
@@ -88,6 +87,7 @@ function ratingClick(link)
 	}
 	
 	updateRatingIcons(pos, $(link).parent());
+	propagateChange(link);
 }
 
 function updateRatingIcons(pos, parent)
@@ -135,15 +135,28 @@ function singleClick(r) {
 	  $(r).attr('previousValue', 'checked');
 	}
 	
-	propagateChange();
+	propagateChange(r);
 }
 
-function propagateChange()
+function propagateChange(element)
 {
 	if (!$("#btnSaveDraft").hasClass('disabled'))
 	{
 		$("#btnSaveDraft").removeClass("btn-default").addClass("btn-primary");
 	}
+
+	const surveyElement = $(element).closest(".survey-element");
+	if ($(surveyElement).find(".slider-div").length) {
+		const questionUid = $(surveyElement).attr("data-uid");
+		const viewModel = modelsForSlider[questionUid];
+		viewModel.isAnswered(true);
+	}
+
+	var div = $(element).parents(".survey-element").last();
+	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
+	$(div).find(".explanation-section").show();
+	$(div).find(".explanation-file-upload-section").show();
+	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
 }
 
 var downloadsurveypdflang;
@@ -234,7 +247,8 @@ function createUploader(instance, maxSize)
 	    },
 		onComplete : function(id, fileName, responseJSON) {
 			$(this.element).parent().find(".uploadinfo").hide();
-	    	updateFileList($(this.element), responseJSON);
+			updateFileList($(this.element), responseJSON);
+			$(this.element).closest(".survey-element").find("a[data-type='delphisavebutton']").removeClass("disabled");
 	    	
 	    	if (responseJSON.wrongextension)
 	    	{
@@ -550,7 +564,7 @@ function deleteFile(id, uniqueCode, fileName, button) {
 				updateFileList($(button).parent().parent().siblings(
 						".file-uploader").first(), data);
 			} else {
-				showRunnerError("Not possible to delete file");
+				showError("Not possible to delete file");
 			}
 	  }
 	});
@@ -580,7 +594,7 @@ function nextPage() {
 	{
 		if (!$("#tab" + (page + i)).hasClass("untriggered") && $("#tab" + (page + i)).find(".untriggered").length == 0)
 		{
-			selectPage(page + i);
+			selectPage(page + i);		
 			return;
 		} else {
 			i++;
@@ -593,6 +607,11 @@ function lastPage() {
 }
 
 function selectPage(val) {
+	
+	if (val == page) {
+		return;
+	}
+	
 	var validatedPerPage = $("#validatedPerPage").val().toLowerCase() == "true";
 	
 	var validate = val > page;
@@ -609,6 +628,7 @@ function selectPage(val) {
 					//ok
 					if (i == val-page-1)
 					{
+						updateQuestionsOnNavigation(page);
 						$(".single-page").hide();		
 						page = val;		
 						$("#page" + page).show();
@@ -622,6 +642,7 @@ function selectPage(val) {
 				} else {
 					if (i > 0)
 					{
+						updateQuestionsOnNavigation(page);
 						$(".single-page").hide();		
 						page = page + i;		
 						$("#page" + page).show();
@@ -633,12 +654,12 @@ function selectPage(val) {
 						}, "fast");
 					}
 					goToFirstValidationError($("#page" + (page))[0]);
-					return;
+					return false;
 				}
 			}			
 		} else {
 			if (!validate || !validatedPerPage || $("#hfsubmit").val() != 'true' || validateInput($("#page" + page))) {
-				
+				updateQuestionsOnNavigation(page);
 				$(".single-page").hide();		
 				page = val;		
 				$("#page" + page).show();
@@ -650,6 +671,7 @@ function selectPage(val) {
 				}, "fast");
 			} else {
 				goToFirstValidationError($("#page" + page)[0]);
+				return false;
 			}
 		}
 	}
@@ -1601,6 +1623,11 @@ function eraseCookie(name) {
 }
 
 function is_local_storage_enabled() {
+	if ($("#saveLocalBackup").length === 0) {
+		// local backup checkbox is not displayed => Delphi question => disable local storage
+		return false;
+	}
+
 	if (typeof (Storage) !== "undefined") {
     var ABCD=0;
 		try {

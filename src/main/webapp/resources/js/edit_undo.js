@@ -48,6 +48,12 @@ var UndoProcessor = function() {
 			{
 				_elementProperties.selectedelement = $(".ratingquestion[data-id='" + id + "']");	
 			}
+
+			if ($(_elementProperties.selectedelement).length == 0)
+			{
+				_elementProperties.selectedelement = $(".rankingitemtext[data-id='" + id + "']");
+				element = _elementProperties.selectedelement[0];
+			}
 		}
 		
 		var skipRedo = false;
@@ -365,6 +371,11 @@ var UndoProcessor = function() {
 					{
 						element.choiceType("list");
 						element.useCheckboxes(false);
+					} else if (step[3] == "LikertScale")
+					{
+						element.choiceType("likert");
+						element.useRadioButtons(false);
+						element.likert(true);
 					}
 					updateChoice();
 				}
@@ -443,6 +454,16 @@ var UndoProcessor = function() {
 				break;
 			case "Attribute":
 				element.isAttribute(step[3]);
+				break;
+			case "DelphiQuestion":
+				element.isDelphiQuestion(step[3]);
+				$('#' + id).toggleClass("delphi");
+				break;
+			case "DelphiChartType":
+				element.delphiChartType(step[3]);
+				break;
+			case "ShowExplanationBox":
+				element.showExplanationBox(step[3]);
 				break;
 			case "Name":
 				element.attributeName(step[3]);
@@ -658,10 +679,18 @@ var UndoProcessor = function() {
 			case "MaximumFileSize":
 				element.maxFileSize(step[3]);
 				break;
-			case "UseAndLogic":
-				element.useAndLogic(step[3]);
+			case "MaxDistanceToMedian":
+				element.maxDistance(step[3]);
 				break;
-				
+			case "ADDRANKINGITEM":
+				element.rankingItems.pop();
+				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
+			case "REMOVERANKINGITEM":
+				element.rankingItems.push(step[2]);
+				addElementHandler($(_elementProperties.selectedelement));
+				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
 		}
 		
 		var advancedopen = $(".advancedtogglebutton").find(".glyphicon-minus-sign").length > 0;
@@ -711,6 +740,12 @@ var UndoProcessor = function() {
 			if ($(_elementProperties.selectedelement).length == 0)
 			{
 				_elementProperties.selectedelement = $(".ratingquestion[data-id='" + id + "']");	
+			}
+
+			if ($(_elementProperties.selectedelement).length == 0)
+			{
+				_elementProperties.selectedelement = $(".rankingitemtext[data-id='" + id + "']");
+				element = _elementProperties.selectedelement[0];
 			}
 		}
 		
@@ -881,6 +916,11 @@ var UndoProcessor = function() {
 					{
 						element.choiceType("list");
 						element.useCheckboxes(false);
+					} else if (step[4] == "LikertScale")
+					{
+						element.choiceType("likert");
+						element.useRadioButtons(false);
+						element.likert(true);
 					}
 					updateChoice();
 				}
@@ -959,6 +999,16 @@ var UndoProcessor = function() {
 				break;
 			case "Attribute":
 				element.isAttribute(step[4]);
+				break;
+			case "DelphiQuestion":
+				element.isDelphiQuestion(step[4]);
+				$('#' + id).toggleClass("delphi");
+				break;
+			case "DelphiChartType":
+				element.delphiChartType(step[4]);
+				break;
+			case "ShowExplanationBox":
+				element.showExplanationBox(step[4]);
 				break;
 			case "Name":
 				element.attributeName(step[4]);
@@ -1152,8 +1202,17 @@ var UndoProcessor = function() {
 			case "MaximumFileSize":
 				element.maxFileSize(step[4]);
 				break;
-			case "UseAndLogic":
-				element.useAndLogic(step[4]);
+			case "MaxDistanceToMedian":
+				element.maxDistance(step[4]);
+				break;
+			case "ADDRANKINGITEM":
+				element.rankingItems.push(step[2]);
+				addElementHandler($(_elementProperties.selectedelement));
+				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
+				break;
+			case "REMOVERANKINGITEM":
+				element.rankingItems.pop();
+				updateNavigation($(_elementProperties.selectedelement), $(_elementProperties.selectedelement).attr("id"));
 				break;
 		}
 		

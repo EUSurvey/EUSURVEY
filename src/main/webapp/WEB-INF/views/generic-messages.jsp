@@ -312,7 +312,10 @@
 	$(function() {
 		ko.applyBindings(_messages, $("#messages-box")[0]);
 		ko.applyBindings(_messages, $("#messages-log")[0]);
-		ko.applyBindings(_messages, $("#messages-button")[0]);
+		
+		if ($("#messages-button").length > 0) {
+			ko.applyBindings(_messages, $("#messages-button")[0]);
+		}
 		
 		checkTimeout();
 	});

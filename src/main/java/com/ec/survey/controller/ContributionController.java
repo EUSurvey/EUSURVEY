@@ -21,7 +21,6 @@ import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizHelper;
 import com.ec.survey.tools.SurveyHelper;
-import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -57,8 +56,15 @@ public class ContributionController extends BasicController {
 	public AnswerSet getAnswerSet(String code, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		AnswerSet answerSetOrNull = null;
-		User user = sessionService.getCurrentUser(request);
+		User user;
 		answerSetOrNull = answerService.get(code);
+		
+		if (answerSetOrNull != null && answerSetOrNull.getSurvey().getIsDelphi() && request.getRequestURI().contains("editcontribution"))
+		{
+			user = sessionService.getCurrentUser(request, false, false);
+		} else {
+			user = sessionService.getCurrentUser(request);
+		}
 
 		if (answerSetOrNull == null) {
 			return null;
@@ -195,7 +201,14 @@ public class ContributionController extends BasicController {
 		Set<String> invisibleElements = new HashSet<>();
 		if (answerSet != null) {
 			// participants can only access it if the survey is still active
-			User u = sessionService.getCurrentUser(request);
+			User u;
+			
+			if (answerSet.getSurvey().getIsDelphi() && request.getRequestURI().contains("editcontribution"))
+			{
+				u = sessionService.getCurrentUser(request, false, false);
+			} else {
+				u = sessionService.getCurrentUser(request);
+			}
 
 			Survey draft = surveyService.getSurveyByUniqueId(answerSet.getSurvey().getUniqueId(), false, true);
 
@@ -206,10 +219,12 @@ public class ContributionController extends BasicController {
 					u = null;
 				}
 			}
-
-			if (request.getRequestURI().contains("preparecontribution")
+			
+			boolean isPDF = request.getRequestURI().contains("preparecontribution")
 					|| request.getRequestURI().contains("preparepublishedcontribution")
-					|| request.getRequestURI().contains("preparedraft")) {
+					|| request.getRequestURI().contains("preparedraft");
+
+			if (isPDF) {
 				// ignore authorization for PDF export
 			} else if (u == null && !draft.getIsActive()) {
 				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
@@ -268,6 +283,11 @@ public class ContributionController extends BasicController {
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 
 			ModelAndView model = new ModelAndView("contributions/edit", "form", f);
+			
+			if (!isPDF && newestSurvey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+				model = new ModelAndView("runner/delphi", "form", f);
+				model.addObject("isdelphipage", true);
+			}
 
 			model.addObject("submit", true);
 			model.addObject("answerSet", answerSet.getId());
@@ -294,8 +314,7 @@ public class ContributionController extends BasicController {
 
 			validCodesService.revalidate(answerSet.getUniqueCode(), newestSurvey);
 
-			// recreate uploaded files
-			SurveyHelper.recreateUploadedFiles(answerSet, translated, fileService);
+			SurveyHelper.recreateUploadedFiles(answerSet, translated, fileService, answerExplanationService);
 
 			return model;
 		} else {
@@ -466,7 +485,6 @@ public class ContributionController extends BasicController {
 							: answerSet.getDate();
 					model.addObject("submittedDate", ConversionTools.getFullString(submittedDate));
 					model.addObject("print", true);
-					model.addObject("serverprefix", serverPrefix);
 					model.addObject("invisibleElements", invisibleElements);
 
 					return model;

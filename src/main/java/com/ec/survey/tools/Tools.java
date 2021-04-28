@@ -306,4 +306,12 @@ public class Tools {
 	public static String encodeForJSON(String title) {
 		return JSONObject.escape(title);
 	}
+
+	public static <E> E getFromListOrDefault(int index, List<E> list, E defaultValue) {
+		if (index < 0) {
+				throw new IllegalArgumentException("index is less than 0: " + index);
+		}
+		return index <= list.size() -1 ? list.get(index) : defaultValue;
+	}
+
 }

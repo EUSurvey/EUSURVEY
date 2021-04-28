@@ -4,6 +4,8 @@ import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.Numbering;
+import com.ec.survey.tools.SurveyHelper;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -161,126 +163,7 @@ public class Form {
 	}
 
 	public String getAnswerTitle(Answer answer) {
-		String answerValue = answer.getValue();
-
-		try {
-
-			if (survey != null) {
-
-				Element question = null;
-
-				Map<Integer, Question> questionMap = survey.getQuestionMap();
-
-				if (questionMap != null) {
-					question = questionMap.get(answer.getQuestionId());
-				}
-
-				if (question == null) {
-					question = survey.getMatrixMap().get(answer.getQuestionId());
-				}
-
-				if (question == null) {
-					question = survey.getQuestionMapByUniqueId().get(answer.getQuestionUniqueId());
-				}
-
-				if (question == null) {
-					question = survey.getMissingElementsById().get(answer.getQuestionId());
-				}
-
-				if (question == null && answer.getQuestionUniqueId() != null
-						&& answer.getQuestionUniqueId().length() > 0) {
-					question = survey.getMissingElementsByUniqueId().get(answer.getQuestionUniqueId());
-				}
-
-				if (question == null && answer.getPossibleAnswerId() > 0) {
-					int possibleAnswerId = Integer.parseInt(answerValue);
-					if (survey.getMissingElementsById().containsKey(possibleAnswerId)) {
-						return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitle();
-					}
-
-					if (answer.getPossibleAnswerUniqueId() != null && answer.getPossibleAnswerUniqueId().length() > 0
-							&& survey.getElementsByUniqueId().containsKey(answer.getPossibleAnswerUniqueId())) {
-						return survey.getElementsByUniqueId().get(answer.getPossibleAnswerUniqueId())
-								.getStrippedTitle();
-					}
-
-					if (answer.getPossibleAnswerUniqueId() != null && answer.getPossibleAnswerUniqueId().length() > 0
-							&& survey.getMissingElementsByUniqueId().containsKey(answer.getPossibleAnswerUniqueId())) {
-						return survey.getMissingElementsByUniqueId().get(answer.getPossibleAnswerUniqueId())
-								.getStrippedTitle();
-					}
-				}
-
-				if (question instanceof FreeTextQuestion) {
-					if (publicationMode && answerValue != null && answerValue.length() > 0) {
-						FreeTextQuestion q = (FreeTextQuestion) question;
-						if (q.getIsPassword()) {
-							return "********";
-						}
-					}
-					return answerValue;
-				} else if (question instanceof ChoiceQuestion) {
-					int possibleAnswerId = Integer.parseInt(answerValue);
-					ChoiceQuestion choicequestion = (ChoiceQuestion) question;
-					if (choicequestion.getPossibleAnswer(possibleAnswerId) != null) {
-						return choicequestion.getPossibleAnswer(possibleAnswerId).getStrippedTitle();
-					} else {
-						if (survey.getMissingElementsById().containsKey(possibleAnswerId)) {
-							return survey.getMissingElementsById().get(possibleAnswerId).getStrippedTitle();
-						}
-					}
-
-					if (choicequestion.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId()) != null) {
-						return choicequestion.getPossibleAnswerByUniqueId(answer.getPossibleAnswerUniqueId())
-								.getStrippedTitle();
-					}
-
-					return "";
-				} else if (question instanceof Text || question instanceof Image || question instanceof EmptyElement) {
-					// could be inside a matrix
-					int possibleAnswerId = Integer.parseInt(answerValue);
-					for (Element element : survey.getElements()) {
-						if (element instanceof Matrix) {
-							for (Element child : ((Matrix) element).getChildElements()) {
-								if (child.getId().equals(possibleAnswerId) || (child.getUniqueId() != null
-										&& child.getUniqueId().equalsIgnoreCase(answer.getPossibleAnswerUniqueId()))) {
-									return child.getStrippedTitle();
-								}
-							}
-							for (Element child : ((Matrix) element).getMissingAnswers()) {
-								if (child.getId().equals(possibleAnswerId)) {
-									return child.getStrippedTitle();
-								}
-							}
-						}
-					}
-					for (Element element : survey.getMissingElements()) {
-						if (element instanceof Matrix) {
-							for (Element child : ((Matrix) element).getChildElements()) {
-								if (child.getId().equals(possibleAnswerId)) {
-									return child.getStrippedTitle();
-								}
-							}
-							for (Element child : ((Matrix) element).getMissingAnswers()) {
-								if (child.getId().equals(possibleAnswerId)) {
-									return child.getStrippedTitle();
-								}
-							}
-						} else if (element.getId().equals(possibleAnswerId)) {
-							return element.getStrippedTitle();
-						}
-					}
-
-					return "";
-				}
-			}
-
-		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(), e);
-			return "";
-		}
-
-		return answerValue;
+		return SurveyHelper.getAnswerTitle(survey, answer, publicationMode);
 	}
 
 	public String getAnswerShortname(Answer answer) {
@@ -449,6 +332,32 @@ public class Form {
 		}
 
 		return "";
+	}
+	
+	public List<RankingItem> getRankingItems(Element question) {
+		List<RankingItem> result = new ArrayList<>();
+		RankingQuestion rankingQuestion = (RankingQuestion)question;
+		
+		if (!answerSets.isEmpty()) {
+			String value = getValue(question);
+						
+			if (value != null && value.length() > 0) {
+				Map<String, RankingItem> children = rankingQuestion.getChildElementsByUniqueId();
+				String[] answerids = value.split(";");						
+				for (String uniqueId : answerids)
+				{
+					RankingItem child = children.get(uniqueId);
+					if (child != null)
+					{
+						result.add(child);
+					}							
+				}
+				
+				return result;				
+			}
+		}
+		
+		return rankingQuestion.getChildElements();
 	}
 
 	private Set<String> passwordQuestions = null;

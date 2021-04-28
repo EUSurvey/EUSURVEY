@@ -25,6 +25,11 @@ import java.util.*;
 		@UniqueConstraint(columnNames = { "UNIQUECODE", "ISDRAFT" }, name = "UNIQUECODE_UNIQUE") })
 public class AnswerSet implements java.io.Serializable {
 
+	public static class ExplanationData {
+		public String text = "";
+		public List<File> files = new ArrayList<>();
+	}
+
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String invitationId;
@@ -41,7 +46,12 @@ public class AnswerSet implements java.io.Serializable {
 	private String draftId;
 	private Boolean disclaimerMinimized;
 	private Boolean wcagMode;
+	private boolean medianWarningVisible;
 	private Integer score;
+	private Map<String, ExplanationData> explanations = new HashMap<>();
+	private Map<String, List<AnswerComment>> comments = new HashMap<>();
+	private boolean changedForMedian = false;
+	private boolean changeExplanationText = false;
 
 	@Id
 	@Column(name = "ANSWER_SET_ID")
@@ -277,6 +287,15 @@ public class AnswerSet implements java.io.Serializable {
 	}
 
 	@Transient
+	public boolean getMedianWarningVisible() {
+		return this.medianWarningVisible;
+	}
+	
+	public void setMedianWarningVisible(boolean medianWarningVisible) {
+		this.medianWarningVisible = medianWarningVisible;
+	}	
+	
+	@Transient
 	public String getNiceDate() {
 		return date != null ? ConversionTools.getFullString(date) : "";
 	}
@@ -352,4 +371,38 @@ public class AnswerSet implements java.io.Serializable {
 		}
 		return result;
 	}
+
+	@Transient
+	public Map<String, ExplanationData> getExplanations() {
+		return explanations;
+	}
+
+	public void setExplanations(Map<String, ExplanationData> explanations) {
+		this.explanations = explanations;
+	}
+	
+	@Transient
+	public Map<String, List<AnswerComment>> getComments() {
+		return comments;
+	}
+
+	public void setComments(Map<String, List<AnswerComment>> comments) {
+		this.comments = comments;
+	}
+
+	@Transient
+	public Boolean getChangedForMedian() {
+		return changedForMedian;
+	}
+	public void setChangedForMedian(Boolean changedForMedian) {
+		this.changedForMedian = changedForMedian;
+	}
+	
+	@Transient
+	public Boolean getChangeExplanationText() {
+		return changeExplanationText;
+	}
+	public void setChangeExplanationText(Boolean changeExplanationText) {
+		this.changeExplanationText = changeExplanationText;
+	}	
 }

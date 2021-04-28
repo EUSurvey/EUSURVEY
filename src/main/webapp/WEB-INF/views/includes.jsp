@@ -5,8 +5,6 @@
 	
 <script type="text/javascript" src="${contextpath}/resources/js/fileuploader.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/importsurvey.js?version=<%@include file="version.txt" %>"></script>
-<script type="text/javascript" src="${contextpath}/resources/js/tinymce/jquery.tinymce.min.js?version=<%@include file="version.txt" %>"></script>
-<script type="text/javascript" src="${contextpath}/resources/js/tinymce/tinymce.min.js?version=<%@include file="version.txt" %>"></script>
 
 <script type="text/javascript">	
 
@@ -169,7 +167,7 @@
 	var myConfigSettingEditor = {
 			
 			// Location of TinyMCE script
-			forced_root_block : '',
+			forced_root_block : false,
 			script_url : '${contextpath}/resources/js/tinymce/tinymce.min.js',
 			theme : "modern",
 			entity_encoding : "raw",
@@ -205,7 +203,6 @@
 			paste_text_use_dialog: true,
 			content_css : "${contextpath}/resources/css/tinymce.css",
 			popup_css_add : "${contextpath}/resources/css/tinymcepopup.css",
-			forced_root_block : false,
 			
 			force_br_newlines : true,
 			force_p_newlines : false,
@@ -394,7 +391,7 @@
 		
 		$('textarea.tinymce').each(function(){
 			$(this).tinymce(myConfigSetting2);
-		          });
+		});
 
 		$('textarea.tinymcealign').each(function(){
 			$(this).tinymce(myConfigSetting);

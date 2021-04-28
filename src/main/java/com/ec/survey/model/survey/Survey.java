@@ -56,7 +56,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 		@Index(name = "DRA_IDX", columnList = "ISDRAFT") })
 @Cacheable("com.ec.survey.model.survey.Survey")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Survey implements java.io.Serializable {
+final public class Survey implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	public static final String TITLE = "TITLE";
@@ -155,6 +155,7 @@ public class Survey implements java.io.Serializable {
 	private String ecasMode;
 	private Boolean logoInInfo;
 	private Boolean isQuiz;
+	private Boolean isDelphi;
 	private Boolean isOPC;
 	private Boolean showQuizIcons;
 	private Boolean showTotalScore;
@@ -175,6 +176,9 @@ public class Survey implements java.io.Serializable {
 	private Boolean isUseMaxNumberContributionLink = false;
 	private String maxNumberContributionLink = "";
 	private Boolean sendConfirmationEmail = false;
+	private Boolean isDelphiShowAnswersAndStatisticsInstantly = false;
+	private Boolean isDelphiShowAnswers = false;
+	private Integer minNumberDelphiStatistics = 5;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -650,6 +654,10 @@ public class Survey implements java.io.Serializable {
 				elementsRecursive.addAll(((RatingQuestion) element).getChildElements());
 				elementsRecursiveWithAnswers.addAll(((RatingQuestion) element).getChildElements());
 			}
+			if (element instanceof RankingQuestion) {
+				elementsRecursive.addAll(((RankingQuestion) element).getChildElements());
+				elementsRecursiveWithAnswers.addAll(((RankingQuestion) element).getChildElements());
+			}
 		}
 
 		if (answers) {
@@ -1083,11 +1091,16 @@ public class Survey implements java.io.Serializable {
 
 	protected static Comparator<Element> newElementByPositionComparator() {
 		return (first, second) -> {
-			int result = first.getPosition().compareTo(second.getPosition());
+			
+			int result = 0;
+			if (first.getPosition() != null && second.getPosition() != null) {
+				result = first.getPosition().compareTo(second.getPosition());
+			}
 
 			// if both elements have the same position, the older one should be first
-			if (result == 0)
+			if (result == 0) {
 				result = first.getId().compareTo(second.getId());
+			}
 
 			return result;
 		};
@@ -1264,6 +1277,15 @@ public class Survey implements java.io.Serializable {
 		this.isQuiz = isQuiz != null && isQuiz;
 	}
 
+	@Column(name = "DELPHI")
+	public Boolean getIsDelphi() {
+	    return isDelphi;
+	}
+
+	public void setIsDelphi(Boolean isDelphi) {
+	    this.isDelphi = isDelphi != null && isDelphi;
+	}
+
 	@Column(name = "OPC")
 	public Boolean getIsOPC() {
 		return isOPC;
@@ -1354,6 +1376,33 @@ public class Survey implements java.io.Serializable {
 
 	public void setTrustScore(Integer trustScore) {
 		this.trustScore = trustScore;
+	}
+
+	@Column(name = "DELPHIANSWERSANDSTATISTICSINSTANTLY")
+	public Boolean getIsDelphiShowAnswersAndStatisticsInstantly() {
+		return isDelphiShowAnswersAndStatisticsInstantly != null ? isDelphiShowAnswersAndStatisticsInstantly : false;
+	}
+
+	public void setIsDelphiShowAnswersAndStatisticsInstantly(Boolean isDelphiShowAnswersAndStatisticsInstantly) {
+		this.isDelphiShowAnswersAndStatisticsInstantly = isDelphiShowAnswersAndStatisticsInstantly != null ? isDelphiShowAnswersAndStatisticsInstantly : false;
+	}
+
+	@Column(name = "DELPHIANSWERS")
+	public Boolean getIsDelphiShowAnswers() {
+		return isDelphiShowAnswers  != null ? isDelphiShowAnswers : false;
+	}
+	
+	public void setIsDelphiShowAnswers(Boolean isDelphiShowAnswers) {
+		this.isDelphiShowAnswers = isDelphiShowAnswers != null ? isDelphiShowAnswers : false;
+	}
+
+	@Column(name = "DELPHIMINSTATISTICS")
+	public Integer getMinNumberDelphiStatistics() {
+		return minNumberDelphiStatistics != null ? minNumberDelphiStatistics : 5;
+	}
+
+	public void setMinNumberDelphiStatistics(Integer minNumberDelphiStatistics) {
+		this.minNumberDelphiStatistics = minNumberDelphiStatistics != null ? Math.max(minNumberDelphiStatistics, 1) : 5;
 	}
 
 	@Transient
@@ -1498,6 +1547,10 @@ public class Survey implements java.io.Serializable {
 		copy.setMaxNumberContribution(maxNumberContribution);
 		copy.setMaxNumberContributionText(Tools.filterHTML(maxNumberContributionText));
 		copy.setMaxNumberContributionLink(Tools.filterHTML(maxNumberContributionLink));
+		copy.isDelphi = isDelphi;
+		copy.isDelphiShowAnswersAndStatisticsInstantly = isDelphiShowAnswersAndStatisticsInstantly;
+		copy.isDelphiShowAnswers = isDelphiShowAnswers;
+		copy.minNumberDelphiStatistics = minNumberDelphiStatistics;
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -1974,6 +2027,13 @@ public class Survey implements java.io.Serializable {
 					|| question instanceof RatingQuestion) {
 				return false;
 			}
+			
+			if (question instanceof NumberQuestion) {
+				NumberQuestion number = (NumberQuestion) question;
+				if (number.showStatisticsForNumberQuestion()) {
+					return false;
+				}
+			}
 		}
 
 		return true;
@@ -2201,5 +2261,6 @@ public class Survey implements java.io.Serializable {
 	public void reorderElementsByPosition() {
 		elements.sort(Comparator.comparing(o -> (o.getPosition())));		
 	}
+
 
 }

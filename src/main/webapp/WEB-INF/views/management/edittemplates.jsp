@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 
 <script type="text/html" id="firstrow-template">
-	<tr data-bind="attr: {'data-label' : $data.Label, class:  ContentType() == 'scoring' ? (Value() != '0' ? 'firstpropertyrow quiz' : 'firstpropertyrow quiz hideme') : 'firstpropertyrow'}">
+	<tr data-bind="attr: {'data-label' : $data.Label, class:  ContentType() == 'scoring' ? (Value() != '0' ? 'firstpropertyrow quiz' : 'firstpropertyrow quiz hideme') : 'firstpropertyrow'}, visible: IsVisible">
 		<td class="propertylabel" data-bind="html: LabelTitle, attr: {'data-label' : $data.Label}"></td>
 		
 		<!--  ko if: ContentType() == 'html' -->							
@@ -46,14 +46,14 @@
 			<td class="propertycontent">
 				<div class="rightaligned">
 					<span class="glyphicon glyphicon-pencil" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Edit" />" onclick="edit(this)" id="idEditVisibility"></span>
-					<span class="glyphicon glyphicon-trash" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Remove" />" onclick="resetVisibility(this)" id="idRemoveVisibility"></span>
+					<span class="glyphicon glyphicon-trash" data-toggle="tooltip" data-placement="left" title="<spring:message code="label.Remove" />" onclick="resetVisibility(this, false)" id="idRemoveVisibility"></span>
 				</div>
 				<div class="triggers" data-bind="html: Content"></div>
 			</td>
 		<!-- /ko -->
 		<!--  ko if: ContentType() == 'checkbox' -->
 			<td class="propertycontent">
-				<input data-bind="checked: Value() == true, attr: {id: 'idProperty' + Label()}" type='checkbox' checked='checked' onclick='update(this)' />
+				<input data-bind="checked: Value, attr: {id: 'idProperty' + Label()}, disable: Disabled" type='checkbox' checked='checked' onclick='update(this)' />
 			</td>
 		<!-- /ko -->
 
@@ -145,7 +145,7 @@
 				</div>
 
 				<button data-toggle="tooltip" title="<spring:message code="label.Add" />" class="btn btn-default btn-sm" data-bind="html: ContentItems()[0].Label, attr: {id: ContentItems()[0].Id, 'onclick' : ContentItems()[0].Value}"></button>
-				<button data-toggle="tooltip" title="<spring:message code="label.Remove" />" data-bind="disable: (PreviewItems().length < 2), html: ContentItems()[1].Label, attr: {id: ContentItems()[1].Id, 'onclick' : ContentItems()[1].Value, 'class': 'btn btn-default btn-sm' + (PreviewItems().length < 2 ? ' disabled' : '')}"></button>
+				<button data-toggle="tooltip" title="<spring:message code="label.Remove" />" data-bind="disable: !(PreviewItems().length > MinItems()), attr: {'data-toggle': 'tooltip' },html: ContentItems()[1].Label, attr: {id: ContentItems()[1].Id, 'onclick' : ContentItems()[1].Value, 'class': 'btn btn-default btn-sm' + (PreviewItems().length > MinItems() ? '' : ' disabled')}"></button>
 			</td>
 		<!-- /ko -->
 		<!--  ko if: ContentType() == 'quizquestion' -->

@@ -198,7 +198,7 @@ function getCleanArray(arr)
 	return result;
 }
 
-function getVisibilityRow(multiselection)
+function getVisibilityRow(multiselection, isVisible = true)
 {
 	var label = "Visibility";
 	
@@ -206,7 +206,8 @@ function getVisibilityRow(multiselection)
 	row.Type("first");
 	row.ContentType("visibility");
 	row.Label(label);
-	row.LabelTitle(getPropertyLabel(label)); 
+	row.LabelTitle(getPropertyLabel(label));
+	row.IsVisible(isVisible);
 	
 	var selectedelement = $("#content").find(".selectedquestion").first();
 	var element = _elements[$(selectedelement).attr("data-id")];
@@ -504,6 +505,11 @@ function getNumberPropertiesRow(label, value)
 	row.Label(label);
 	row.LabelTitle(getPropertyLabel(label));
 	row.ContentType("number");
+	
+	if (label == "MaxDistanceToMedian" && value == "-1") 
+	{
+		value = "";
+	}	
 	row.Value(value);
 	
 	var inputid = getNewId();
@@ -520,6 +526,9 @@ function getNumberPropertiesRow(label, value)
 	if (label == "NumIcons")
 	{
 		$(input).spinner({ decimals:0, min:2, max:10, start:"", allowNull: true });
+	} else if (label == "MaxDistanceToMedian")
+	{
+		$(input).spinner({ decimals:2, min:0, start:"", allowNull: true });
 	} else {
 		$(input).spinner({ decimals:0, min:0, start:"", allowNull: true });
 	}	
@@ -537,8 +546,14 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 {
 	var row = new PropertyRow();
 	row.Type("first");
+
+	row.LabelTitle(getPropertyLabel(label));	
+	
+	if (label == "DelphiChartTypeNumber") {
+		label = "DelphiChartType";
+	}
+	
 	row.Label(label);
-	row.LabelTitle(getPropertyLabel(label));
 
 	var rowcontent = "";
 	var options = content.split(",");
@@ -648,11 +663,12 @@ function getChooseColor(label, value)
 	});
 }
 
-function getCheckPropertiesRow(label, value)
+function getCheckPropertiesRow(label, value, disabled = false)
 {
 	var row = new PropertyRow();
 	row.Type("first");
 	row.ContentType("checkbox");
+	row.Disabled(disabled);
 	row.Label(label);
 	row.LabelTitle(getPropertyLabel(label));
 	row.Value(value);
@@ -835,7 +851,7 @@ function getActionRow(label, l1, action, l2, action2)
 	item.Value(action2);
 	row.ContentItems.push(item);	
 	
-	if (label == "Columns" || label == "Rows" || label == "PossibleAnswers" || label == "Questions")
+	if (label == "Columns" || label == "Rows" || label == "PossibleAnswers" || label == "Questions" || label == "RankingItem")
 	{
 		row.Edit(true);
 		row.EditShortnames(true);
@@ -843,7 +859,7 @@ function getActionRow(label, l1, action, l2, action2)
 	
 	_elementProperties.propertyRows.push(row);
 	
-	if (label == "Columns" || label == "Rows" || label == "PossibleAnswers" || label == "Questions")
+	if (label == "Columns" || label == "Rows" || label == "PossibleAnswers" || label == "Questions" || label == "RankingItem")
 	{
 		var id = "id" + idcounter++;
 		
@@ -1379,6 +1395,48 @@ function removePossibleAnswer()
 	updateNavigation($(_elementProperties.selectedelement), id);
 }
 
+function addRankingEntry()
+{
+	var id = $(_elementProperties.selectedelement).attr("data-id");
+	var element = _elements[id];
+	var text = "Ranking Item " + (element.rankingItems().length + 1);
+
+	var newrankingitem = newRankingItemViewModel(getNewId(), getNewId(), getNewShortname(), text);
+	element.rankingItems.push(newrankingitem);
+
+	if (element.rankingItems().length == element.minItems()+1) {
+		var removeButton = $("#btnRemoveRankingItems");
+		removeButton.tooltip("enable");
+	}
+
+	_undoProcessor.addUndoStep(["ADDRANKINGITEM", element.id(), newrankingitem]);
+	updateDependenciesView();
+	addElementHandler($(_elementProperties.selectedelement));
+
+	updateNavigation($(_elementProperties.selectedelement), id);
+}
+
+function removeRankingEntry()
+{
+	var id = $(_elementProperties.selectedelement).attr("data-id");
+	var element = _elements[id];
+	
+	removeValidationMarkup();
+	var oldrankingitem = element.rankingItems.pop();
+
+	if (element.rankingItems().length <= element.minItems()) {
+		var removeButton = $("#btnRemoveRankingItems");
+		removeButton.tooltip("hide");
+		removeButton.tooltip("disable");
+	}
+
+	_undoProcessor.addUndoStep(["REMOVERANKINGITEM", element.id(), oldrankingitem]);
+	updateDependenciesView();
+	addElementHandler($(_elementProperties.selectedelement));
+
+	updateNavigation($(_elementProperties.selectedelement), id);
+}
+
 function addColumn(noundo)
 {
 	var text;
@@ -1581,10 +1639,10 @@ function showHideVisibilityElements(span)
 	}
 }
 
-function resetVisibility(button)
+function resetVisibility(button, noUndo)
 {
 	_elementProperties.selectedproperty = $(button).closest("tr");
-	updateVisibility(button, true, false, false);
+	updateVisibility(button, true, false, false, noUndo);
 }
 
 function resetFeedback(button)
@@ -1788,7 +1846,6 @@ function edit(span)
 	} else if (label == "PossibleAnswers")
 	{
 		var s = getCombinedAnswerText(true);
-		
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
 		tinyMCE.get(_elementProperties.selectedid).setContent(s, {format : 'xhtml'});
 		originaltext = s;
@@ -1798,7 +1855,10 @@ function edit(span)
 		_elementProperties.selectedid = $(span).closest("tr").next().find("textarea").first().attr("id");
 		originaltext = tinyMCE.get(_elementProperties.selectedid).getContent();
 		$(span).closest("tr").next().show();
-	} else {	
+	} else if (label == "RankingItems")
+	{
+		console.log("RankingItem can not be edited via TinyMCE.");
+	} else {
 		var tr = $(span).closest("tr").next();
 		_elementProperties.selectedid = $(tr).find("textarea").first().attr("id");	
 		$(tr).show();
@@ -1989,12 +2049,15 @@ function getRowsText(useparagraphs)
 function adaptSliderDisplay(isSlider)
 {
 	if (isSlider) {
-		$("tr[data-label='Mandatory']").hide();
+		if (!isDelphi) {
+			$("tr[data-label='Mandatory']").hide();
+		}
 		$("tr[data-label='Unit']").hide();
 		$("tr[data-label='MinLabel']").show();
 		$("tr[data-label='MaxLabel']").show();
 		$("tr[data-label='InitialSliderPosition']").show();
 		$("tr[data-label='DisplayGraduationScale']").show();
+		$("tr[data-label='MaxDistanceToMedian']").show();
 	} else {
 		$("tr[data-label='Mandatory']").show();
 		$("tr[data-label='Unit']").show();
@@ -2002,5 +2065,37 @@ function adaptSliderDisplay(isSlider)
 		$("tr[data-label='MaxLabel']").hide();
 		$("tr[data-label='InitialSliderPosition']").hide();
 		$("tr[data-label='DisplayGraduationScale']").hide();
+		$("tr[data-label='MaxDistanceToMedian']").hide();
+	}
+}
+
+function adaptDelphiControls(element) {
+	const mandatoryPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Mandatory');
+	if (mandatoryPropertyRow) {
+		if (element.isDelphiQuestion()) {
+			mandatoryPropertyRow.Disabled(true);
+			mandatoryPropertyRow.Value(false);
+			element.optional(true);
+		} else {
+			mandatoryPropertyRow.Disabled(false);
+		}
+	}
+
+	const visibilityPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Visibility');
+	if (visibilityPropertyRow) {
+		if (element.isDelphiQuestion()) {
+			visibilityPropertyRow.IsVisible(false);
+			resetVisibility($('#idRemoveVisibility')[0], true);
+		} else {
+			visibilityPropertyRow.IsVisible(true);
+		}
+	}
+	
+	if (element.isDelphiQuestion()) {
+		$("tr[data-label='ShowExplanationBox']").show();
+		$("tr[data-label='DelphiChartType']").show();
+	} else {
+		$("tr[data-label='ShowExplanationBox']").hide();
+		$("tr[data-label='DelphiChartType']").hide();
 	}
 }
