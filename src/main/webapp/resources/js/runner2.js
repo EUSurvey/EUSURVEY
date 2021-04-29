@@ -81,7 +81,7 @@ function addElement(element, foreditor, forskin)
 		$(container).append('<div style="color: #f00" class="validation-error-server">' + validation + '</div>');
 	}
 	
-	if (!foreditor)
+	if (!foreditor && doAnswersExist())
 	{       
  		checkTriggersAfterLoad(container);
  	 		                
