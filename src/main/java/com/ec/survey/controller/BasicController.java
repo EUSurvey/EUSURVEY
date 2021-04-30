@@ -249,6 +249,10 @@ public class BasicController implements BeanFactoryAware {
 				locale);
 		model.addObject(Constants.MESSAGE, message);
 		model.addObject("contextpath", contextpath);
+
+		String uisessiontimeout = settingsService.get("uisessiontimeout");
+		model.getModelMap().addAttribute("uisessiontimeout", uisessiontimeout);
+
 		return model;
 	}
 
