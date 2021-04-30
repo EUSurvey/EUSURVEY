@@ -45,6 +45,9 @@ import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Archive;
 import com.ec.survey.model.Draft;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.survey.Element;
+import com.ec.survey.model.survey.Matrix;
+import com.ec.survey.model.survey.RatingQuestion;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.ActivityService;
 import com.ec.survey.service.AdministrationService;
@@ -651,5 +654,22 @@ public class BasicController implements BeanFactoryAware {
 		taskExecutorLong.execute(export);
 
 		return true;
+	}
+	
+	protected boolean answerSetContainsAnswerForQuestion(AnswerSet answerSet, Element question) {
+		if (question instanceof Matrix) {
+			return !answerSet.getMatrixAnswers((Matrix) question).isEmpty();
+		}
+
+		if (question instanceof RatingQuestion) {
+			for (Element childQuestion : ((RatingQuestion) question).getChildElements()) {
+				if (!answerSet.getAnswers(childQuestion.getId(), childQuestion.getUniqueId()).isEmpty()) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		return !answerSet.getAnswers(question.getId(), question.getUniqueId()).isEmpty();
 	}
 }
