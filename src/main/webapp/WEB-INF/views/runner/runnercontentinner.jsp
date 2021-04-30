@@ -670,6 +670,17 @@
 			</c:forEach>
 	 	}
 	 	
+	 	function doAnswersExist() {
+	 		<c:choose>
+		 		<c:when test="${form.answerSets.size() == 0}">
+		 			return false;
+		 		</c:when>
+		 		<c:otherwise>
+		 			return true;
+		 		</c:otherwise>
+		 	</c:choose>	 		
+	 	}
+	 	
 	 	var invisibleElements = [];
 	 	function isInvisible(uniqueId)
 	 	{
