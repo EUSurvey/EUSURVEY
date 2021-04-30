@@ -4925,6 +4925,7 @@ public class SurveyService extends BasicService {
 		}
 
 		survey.setIsFrozen(true);
+		unpublish(survey, true, -1);
 		session.saveOrUpdate(survey);
 
 		// send email

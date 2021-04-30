@@ -509,6 +509,10 @@ public class ManagementController extends BasicController {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 
+		if (form.getSurvey().getIsFrozen()) {
+			throw new FrozenSurveyException();
+		}
+
 		User u = sessionService.getCurrentUser(request);
 		if (!u.getId().equals(form.getSurvey().getOwner().getId())
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
@@ -543,6 +547,10 @@ public class ManagementController extends BasicController {
 	public ModelAndView publish(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
+
+		if (form.getSurvey().getIsFrozen()) {
+			throw new FrozenSurveyException();
+		}
 
 		if (!form.getSurvey().getIsActive()) {
 			User u = sessionService.getCurrentUser(request);
