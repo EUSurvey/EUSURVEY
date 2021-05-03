@@ -87,7 +87,7 @@ public class SurveyCreator {
 				int noqfoc1 = noqfoc + 1;
 				
 				SingleChoiceQuestion singleChoiceQuestion = new SingleChoiceQuestion(
-						ecfCompetency.getName() + ": " + competencyNumberToQuestionNumberToText.get(ecfCompetency.getOrderNumber()).get(noqfoc1),
+						"<b>" + ecfCompetency.getName() + ":</b> " + competencyNumberToQuestionNumberToText.get(ecfCompetency.getOrderNumber()).get(noqfoc1),
 				"q" + noqfoc + ".competency." + ecfCompetency.getCompetenceUid(),
 				 UUID.randomUUID().toString());
 				singleChoiceQuestion.setPosition(ecfCompetency.getOrderNumber() + position);
