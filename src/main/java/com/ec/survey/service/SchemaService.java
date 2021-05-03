@@ -75,7 +75,7 @@ public class SchemaService extends BasicService {
 			}
 
 			Status status = getStatus();
-			status.setDbversion(97);
+			status.setDbversion(98);
 			session.saveOrUpdate(status);
 			
 		} catch (Exception e) {
@@ -115,7 +115,7 @@ public class SchemaService extends BasicService {
 			surveyService.publish(ecfSurvey, -1, -1, false, -1, false, false);
 
 			Status status = getStatus();
-			status.setDbversion(96);
+			status.setDbversion(97);
 			session.saveOrUpdate(status);
 		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
