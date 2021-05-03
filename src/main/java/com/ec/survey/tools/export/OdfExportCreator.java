@@ -950,6 +950,7 @@ public class OdfExportCreator extends ExportCreator {
 				}
 			}
 			if (filter.exported("languages")) {
+				cell = sheet.getCellByPosition(columnIndex++, rowIndex);
 				if (answerSet == null) {
 					cell.setDisplayText(answerrow.get(answerrowcounter));
 					cell.setStringValue(answerrow.get(answerrowcounter++));
