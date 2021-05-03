@@ -72,9 +72,11 @@ public class SkinService extends BasicService {
 			}		
 		}
 		
-		for (int i = 0; i < 5; i++)
+		for (int i = 4; i >= 0; i--)
 		{
-			result.add(i, defaultSkins[i]);
+			if (defaultSkins[i] != null) {
+				result.add(0, defaultSkins[i]);
+			}
 		}		
 		
 		return result;

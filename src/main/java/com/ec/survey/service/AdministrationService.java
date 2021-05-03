@@ -10,6 +10,7 @@ import com.ec.survey.tools.LoginAlreadyExistsException;
 import com.ec.survey.tools.Tools;
 
 import org.apache.commons.io.IOUtils;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -351,6 +352,15 @@ public class AdministrationService extends BasicService {
 		}
 
 		return result;
+	}
+	
+	@Transactional(readOnly = true)
+	public User getUserForLoginAndInitialize(String login, boolean ecas) throws MessageException {
+		User user = getUserForLogin(login, ecas);
+		if (user != null) {
+			Hibernate.initialize(user.getRoles());
+		}
+		return user;
 	}
 
 	@Transactional(readOnly = true)

@@ -76,7 +76,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			
 			try {
 			
-				User admin = administrationService.getUserForLogin(administrationService.getAdminUser(), false);
+				User admin = administrationService.getUserForLoginAndInitialize(administrationService.getAdminUser(), false);
 				
 				//default skin
 				Skin s = SkinCreator.createDefaultSkin(admin);

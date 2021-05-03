@@ -9,6 +9,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -46,7 +47,8 @@ public class RankingQuestion extends Question {
 	@OneToMany(targetEntity=RankingItem.class, cascade = CascadeType.ALL)
 	@Fetch(value = FetchMode.SELECT)
 	@OrderBy(value = "position asc")
-	@JoinColumn(nullable=true)
+	@JoinColumn(nullable=true, foreignKey = @ForeignKey(javax.persistence.ConstraintMode.NO_CONSTRAINT))
+	@org.hibernate.annotations.ForeignKey(name = "none")
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	public List<RankingItem> getChildElements() {
 		return childElements;
