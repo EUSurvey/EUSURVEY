@@ -220,12 +220,12 @@ public class StatisticsCreator implements Runnable {
 
 			for (String sectionUid : statistics.getMeanSectionScore().keySet()) {
 				statistics.getMeanSectionScore().put(sectionUid,
-						statistics.getMeanSectionScore().get(sectionUid) / total);
+						total == 0 ? 0 : statistics.getMeanSectionScore().get(sectionUid) / total);
 			}
 
 			statistics.setBestScore(bestScore);
 			statistics.setMaxScore(maxScore);
-			statistics.setMeanScore(counter == 0 ? 0.0 : ((double) totalScore / total));
+			statistics.setMeanScore((counter == 0 || total == 0) ? 0.0 : ((double) totalScore / total));
 			statistics.setTotal(total);
 
 			for (Question question : quizquestions) {
@@ -305,7 +305,11 @@ public class StatisticsCreator implements Runnable {
 			}
 		}
 
-		answerService.save(statistics);
+		try {
+			answerService.save(statistics);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
 
 		return statistics;
 	}
