@@ -88,7 +88,7 @@
 								<div id="ecDisclaimer">
 									<div style="float: right; margin-top: -15px; margin-right: -15px;">
 										<input type="hidden" id="disclaimerMinimized" name="disclaimerMinimized" value="${disclaimerMinimized}" />
-										<a style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" ><span class="glyphicon glyphicon-remove"></span></a>
+										<a style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
 									</div>								
 									<span class="ecDisclaimerTitle">${form.getMessage("label.Disclaimer")}</span>
 									<p>
@@ -377,7 +377,7 @@
 							
 							<c:choose>
 								<c:when test="${form.survey.contact.startsWith('form:')}">
-									<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
+									<a target="_blank" aria-label="${form.getMessage("label.ContactForm")} - ${form.getMessage("label.OpensInNewWindow")}" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
 								</c:when>
 								<c:when test="${form.survey.contact.contains('@')}">
 									<i class="icon icon-envelope" style="vertical-align: middle"></i>
@@ -395,7 +395,7 @@
 						<c:if test="${form.survey.isDelphi}">
 							<div class="contact-and-pdf__delphi-section">
 								<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Info")}</div>
-								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi?survey=${form.survey.shortname}">
+								<a target="_blank" aria-label="${form.getMessage("label.Delphi")} - ${form.getMessage("label.OpensInNewWindow")}" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi?survey=${form.survey.shortname}">
 									${form.getMessage("label.Delphi")}
 								</a>
 								<c:if test="${form.answerSets.size() > 0}">
@@ -404,7 +404,7 @@
 								</c:if>
 							</div>
 							<hr style="margin-top: 15px;" />
-						</c:if>						
+						</c:if>
 						
 						<c:if test="${!form.survey.isQuiz}">
 							<div>
@@ -437,7 +437,7 @@
 						</c:if>						
 						
 						<br /><br />
-						<a data-toggle="tooltip" title="${form.getMessage("tooltip.ReportAbuseLink")}" target="_blank" href="${contextpath}/home/reportAbuse?survey=${form.survey.id}" class="link visiblelink">${form.getMessage("label.ReportAbuseLink")}</a>						
+						<a data-toggle="tooltip" aria-label="${form.getMessage("label.ReportAbuseLink")} - ${form.getMessage("label.OpensInNewWindow")}" title="${form.getMessage("tooltip.ReportAbuseLink")}" target="_blank" href="${contextpath}/home/reportAbuse?survey=${form.survey.id}" class="link visiblelink">${form.getMessage("label.ReportAbuseLink")}</a>
 					</div>												
 				</div>
 			</c:if>

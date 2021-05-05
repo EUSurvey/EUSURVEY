@@ -7,8 +7,8 @@
 <div class="layout-footer" style="margin-top: 10px;">
 	
 	<c:choose>
-		<c:when test="${oss}">${form.getMessage("footer.fundedOSS")}</c:when>
-		<c:otherwise>${form.getMessage("footer.funded")}</c:otherwise>
+		<c:when test="${oss}">${form.getMessage("footer.fundedOSSNew")}</c:when>
+		<c:otherwise>${form.getMessage("footer.fundedNew")}</c:otherwise>
 	</c:choose>
 	
 	<br /><br />
