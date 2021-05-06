@@ -102,7 +102,8 @@ function displayOneTypeChart(result, typeNameAndUUID) {
 				},
 			title: {
 				display: true,
-				text: chartTitle
+				text: chartTitle,
+				fontSize: 14
 			},
 			maintainAspectRatio: true,
 			spanGaps: false,

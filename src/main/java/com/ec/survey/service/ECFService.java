@@ -790,9 +790,9 @@ public class ECFService extends BasicService {
 		clusterNameToType.put("Pre-award", "Procurement specific competencies");
 		clusterNameToType.put("Post-award", "Procurement specific competencies");
 
-		clusterNameToType.put("Self", "Professional competencies");
-		clusterNameToType.put("People", "Professional competencies");
-		clusterNameToType.put("Performance", "Professional competencies");
+		clusterNameToType.put("Self", "Soft competencies");
+		clusterNameToType.put("People", "Soft competencies");
+		clusterNameToType.put("Performance", "Soft competencies");
 		return clusterNameToType;
 
 	}

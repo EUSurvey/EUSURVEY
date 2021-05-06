@@ -3,21 +3,28 @@
 	<p>
 		<spring:message code="label.ECF.PleaseFindResults" />
 	</p>
-	<c:if test="${!print && !forpdf}">
-		<div class="col-xs-12 col-md-6 col-centered">
-			<div class="form-group">
-				<label for="select-job-profiles"><spring:message code="label.ECF.ProfileFilter" /></label> 
-				<select
-					onchange="fetchECFResult()" class="form-control"
-					name="select-job-profiles" id="select-job-profiles">
-					<c:forEach var="profile" items="${ecfProfiles}" varStatus="loop">
-						<option value="${profile.profileUid}">
-							${profile.name}</option>
-					</c:forEach>
-				</select>
+	<c:choose>
+		<c:when test="${!print && !forpdf}">
+			<div class="col-xs-12 col-md-6 col-centered">
+				<div class="form-group">
+					<label for="select-job-profiles"><spring:message code="label.ECF.ProfileFilter" /></label> 
+					<select
+						onchange="fetchECFResult()" class="form-control"
+						name="select-job-profiles" id="select-job-profiles">
+						<c:forEach var="profile" items="${ecfProfiles}" varStatus="loop">
+							<option value="${profile.profileUid}">
+								${profile.name}</option>
+						</c:forEach>
+					</select>
+				</div>
 			</div>
-		</div>
-	</c:if>
+		</c:when>
+		<c:otherwise>
+			<br />
+			<label for="select-job-profiles"><b><spring:message code="label.ECF.SelectedProfileFilter" /></b></label> 
+			<span>${ecfIndividualResult.profileName}</span>
+		</c:otherwise>
+	</c:choose>
 
 	<c:choose>
          <c:when test="${!forpdf}">
