@@ -865,7 +865,7 @@ public class ECFService extends BasicService {
 		competencyToOrder.put("C28 - Project management", 28);
 		competencyToOrder.put("C29 - Performance orientation", 29);
 		competencyToOrder.put("C30a - Risk management and internal control", 30);
-		competencyToOrder.put("C30b - Risk management and internal control", 30);
+		competencyToOrder.put("C30b - Risk management and internal control", 31);
 		return competencyToOrder;
 	}
 
@@ -905,214 +905,214 @@ public class ECFService extends BasicService {
 
 		Map<Integer, String> questionNumberToText1 = new HashMap<>();
 		questionNumberToText1.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know your organisation\'s procurement planning, policy priorities and budget?");
+				"<b>Knowledge question</b><br/> How well do you know your organisation\'s procurement planning, policy priorities and budget?");
 		questionNumberToText1.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to develop a procurement plan according to available budget resources?");
+				"<b>Skill question</b><br/> To what extent are you able to develop a procurement plan according to available budget resources?");
 		competencyNumberToQuestionNumberToText.put(1, questionNumberToText1);
 
 		Map<Integer, String> questionNumberToText2 = new HashMap<>();
 		questionNumberToText2.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the different phases of the procurement lifecycle, from pre-publication to post-award?");
+				"<b>Knowledge question</b><br/> How well do you know the different phases of the procurement lifecycle, from pre-publication to post-award?");
 		questionNumberToText2.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to follow the various phases of the procurement lifecycle?");
+				"<b>Skill question</b><br/> To what extent are you able to follow the various phases of the procurement lifecycle?");
 		competencyNumberToQuestionNumberToText.put(2, questionNumberToText2);
 
 		Map<Integer, String> questionNumberToText3 = new HashMap<>();
 		questionNumberToText3.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the legislation on public procurement and other relevant areas of law?");
+				"<b>Knowledge question</b><br/> How well do you know the legislation on public procurement and other relevant areas of law?");
 		questionNumberToText3.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to apply specific aspects of the procurement legislation, as well as other legal frameworks impacting procurement ?");
+				"<b>Skill question</b><br/> To what extent are you able to apply specific aspects of the procurement legislation, as well as other legal frameworks impacting procurement ?");
 		competencyNumberToQuestionNumberToText.put(3, questionNumberToText3);
 
 		Map<Integer, String> questionNumberToText4 = new HashMap<>();
 		questionNumberToText4.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know e-Procurement and other IT systems and tools?");
+				"<b>Knowledge question</b><br/> How well do you know e-Procurement and other IT systems and tools?");
 		questionNumberToText4.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able use e-procurement and other IT systems and tools?");
+				"<b>Skill question</b><br/> To what extent are you able use e-procurement and other IT systems and tools?");
 		competencyNumberToQuestionNumberToText.put(4, questionNumberToText4);
 
 		Map<Integer, String> questionNumberToText5 = new HashMap<>();
 		questionNumberToText5.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the relevant sustainability policies and how to promote them?");
+				"<b>Knowledge question</b><br/> How well do you know the relevant sustainability policies and how to promote them?");
 		questionNumberToText5.put(2,
-				"<b>Skill question:</b><br/> How well do you know incorporate environmental and sustainable objectives set by the organisation and national policies into the procurement process?");
+				"<b>Skill question</b><br/> How well do you know incorporate environmental and sustainable objectives set by the organisation and national policies into the procurement process?");
 		competencyNumberToQuestionNumberToText.put(5, questionNumberToText5);
 
 		Map<Integer, String> questionNumberToText6 = new HashMap<>();
 		questionNumberToText6.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the relevant innovation policies and how to promote them?");
+				"<b>Knowledge question</b><br/> How well do you know the relevant innovation policies and how to promote them?");
 		questionNumberToText6.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to incorporate innovation objectives set by the organisation and national policies into the procurement process?");
+				"<b>Skill question</b><br/> To what extent are you able to incorporate innovation objectives set by the organisation and national policies into the procurement process?");
 		competencyNumberToQuestionNumberToText.put(6, questionNumberToText6);
 
 		Map<Integer, String> questionNumberToText7 = new HashMap<>();
 		questionNumberToText7.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the features and specificities of one or more specific category of supplies, services or works?");
+				"<b>Knowledge question</b><br/> How well do you know the features and specificities of one or more specific category of supplies, services or works?");
 		questionNumberToText7.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to get the most out of one or more category of supplies, services or works?");
+				"<b>Skill question</b><br/> To what extent are you able to get the most out of one or more category of supplies, services or works?");
 		competencyNumberToQuestionNumberToText.put(7, questionNumberToText7);
 
 		Map<Integer, String> questionNumberToText8 = new HashMap<>();
 		questionNumberToText8.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know supplier management strategies and processes?");
+				"<b>Knowledge question</b><br/> How well do you know supplier management strategies and processes?");
 		questionNumberToText8.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to develop, manage and maintain relationship with suppliers while respecting public procurement principles?");
+				"<b>Skill question</b><br/> To what extent are you able to develop, manage and maintain relationship with suppliers while respecting public procurement principles?");
 		competencyNumberToQuestionNumberToText.put(8, questionNumberToText8);
 
 		Map<Integer, String> questionNumberToText9 = new HashMap<>();
 		questionNumberToText9.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know negotiation processes relevant in public procurement?");
+				"<b>Knowledge question</b><br/> How well do you know negotiation processes relevant in public procurement?");
 		questionNumberToText9.put(2,
-				"<b>Skill question:</b><br/> To what extent are we able to apply negotiation processes strategies during the procurement phases and contract management in accordance with public procurement principles and ethical standards?");
+				"<b>Skill question</b><br/> To what extent are we able to apply negotiation processes strategies during the procurement phases and contract management in accordance with public procurement principles and ethical standards?");
 		competencyNumberToQuestionNumberToText.put(9, questionNumberToText9);
 
 		Map<Integer, String> questionNumberToText10 = new HashMap<>();
 		questionNumberToText10.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know needs identification tools and techniques?");
+				"<b>Knowledge question</b><br/> How well do you know needs identification tools and techniques?");
 		questionNumberToText10.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to apply needs assessment techniques and tools for determining needs of the organisation and end-users regarding the subject-matter of the procurement?");
+				"<b>Skill question</b><br/> To what extent are you able to apply needs assessment techniques and tools for determining needs of the organisation and end-users regarding the subject-matter of the procurement?");
 		competencyNumberToQuestionNumberToText.put(10, questionNumberToText10);
 
 		Map<Integer, String> questionNumberToText11 = new HashMap<>();
 		questionNumberToText11.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know market analysis tools and appropriate market engagement techniques?");
+				"<b>Knowledge question</b><br/> How well do you know market analysis tools and appropriate market engagement techniques?");
 		questionNumberToText11.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to use market analysis and market engagement techniques to understand the characteristics and trends of the supplier market?");
+				"<b>Skill question</b><br/> To what extent are you able to use market analysis and market engagement techniques to understand the characteristics and trends of the supplier market?");
 		competencyNumberToQuestionNumberToText.put(11, questionNumberToText11);
 
 		Map<Integer, String> questionNumberToText12 = new HashMap<>();
 		questionNumberToText12.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the different procurement strategies, such as procedure types, use of lots, and kinds of contracts?");
+				"<b>Knowledge question</b><br/> How well do you know the different procurement strategies, such as procedure types, use of lots, and kinds of contracts?");
 		questionNumberToText12.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to determine among the range of available procurement strategies the one that fits best to the procurement at stake while reaching the organisation\'s objectives?");
+				"<b>Skill question</b><br/> To what extent are you able to determine among the range of available procurement strategies the one that fits best to the procurement at stake while reaching the organisation\'s objectives?");
 		competencyNumberToQuestionNumberToText.put(12, questionNumberToText12);
 
 		Map<Integer, String> questionNumberToText13 = new HashMap<>();
 		questionNumberToText13.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the requirements of drafting technical specifications?");
+				"<b>Knowledge question</b><br/> How well do you know the requirements of drafting technical specifications?");
 		questionNumberToText13.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to draft technical specifications that enable potential bidders to submit realistic offers that address the needs of the organisation?");
+				"<b>Skill question</b><br/> To what extent are you able to draft technical specifications that enable potential bidders to submit realistic offers that address the needs of the organisation?");
 		competencyNumberToQuestionNumberToText.put(13, questionNumberToText13);
 
 		Map<Integer, String> questionNumberToText14 = new HashMap<>();
 		questionNumberToText14.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the requirements of preparing tender documentation?");
+				"<b>Knowledge question</b><br/> How well do you know the requirements of preparing tender documentation?");
 		questionNumberToText14.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to prepare procurement documentation including appropriate exclusion, selection and award criteria?");
+				"<b>Skill question</b><br/> To what extent are you able to prepare procurement documentation including appropriate exclusion, selection and award criteria?");
 		competencyNumberToQuestionNumberToText.put(14, questionNumberToText14);
 
 		Map<Integer, String> questionNumberToText15 = new HashMap<>();
-		questionNumberToText15.put(1, "Knowledge question:</b><br/> How well do you know the evaluation process?");
+		questionNumberToText15.put(1, "<b>Knowledge question</b><br/> How well do you know the evaluation process?");
 		questionNumberToText15.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to evaluate offers against pre-defined criteria in an objective and transparent way?");
+				"<b>Skill question</b><br/> To what extent are you able to evaluate offers against pre-defined criteria in an objective and transparent way?");
 		competencyNumberToQuestionNumberToText.put(15, questionNumberToText15);
 
 		Map<Integer, String> questionNumberToText16 = new HashMap<>();
 		questionNumberToText16.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the principles of contract management?");
+				"<b>Knowledge question</b><br/> How well do you know the principles of contract management?");
 		questionNumberToText16.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to oversee contract implementation while ensuring technical compliance of the good, work or service delivered?");
+				"<b>Skill question</b><br/> To what extent are you able to oversee contract implementation while ensuring technical compliance of the good, work or service delivered?");
 		competencyNumberToQuestionNumberToText.put(16, questionNumberToText16);
 
 		Map<Integer, String> questionNumberToText17 = new HashMap<>();
 		questionNumberToText17.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the process for certification and payment?");
+				"<b>Knowledge question</b><br/> How well do you know the process for certification and payment?");
 		questionNumberToText17.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to apply verification principles and the financial control framework to verify the legal compliance of the procurement contract before proceeding to payment?");
+				"<b>Skill question</b><br/> To what extent are you able to apply verification principles and the financial control framework to verify the legal compliance of the procurement contract before proceeding to payment?");
 		competencyNumberToQuestionNumberToText.put(17, questionNumberToText17);
 
 		Map<Integer, String> questionNumberToText18 = new HashMap<>();
 		questionNumberToText18.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know contract monitoring tools and techniques?");
+				"<b>Knowledge question</b><br/> How well do you know contract monitoring tools and techniques?");
 		questionNumberToText18.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to evaluate the process, deliverables and outcomes of a procurement to draw lessons on how to improve the performance of future procurements?");
+				"<b>Skill question</b><br/> To what extent are you able to evaluate the process, deliverables and outcomes of a procurement to draw lessons on how to improve the performance of future procurements?");
 		competencyNumberToQuestionNumberToText.put(18, questionNumberToText18);
 
 		Map<Integer, String> questionNumberToText19 = new HashMap<>();
 		questionNumberToText19.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know conflict resolution and mediation processes and the functioning of the review system?");
+				"<b>Knowledge question</b><br/> How well do you know conflict resolution and mediation processes and the functioning of the review system?");
 		questionNumberToText19.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to prevent and resolve conflicts and manage complaints in the framework of the national review system?");
+				"<b>Skill question</b><br/> To what extent are you able to prevent and resolve conflicts and manage complaints in the framework of the national review system?");
 		competencyNumberToQuestionNumberToText.put(19, questionNumberToText19);
 
 		Map<Integer, String> questionNumberToText20 = new HashMap<>();
 		questionNumberToText20.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know change management techniques and tools?");
+				"<b>Knowledge question</b><br/> How well do you know change management techniques and tools?");
 		questionNumberToText20.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to anticipate and accommodate to changing tasks and circumstances and aim to continuously learn and grow?");
+				"<b>Skill question</b><br/> To what extent are you able to anticipate and accommodate to changing tasks and circumstances and aim to continuously learn and grow?");
 		competencyNumberToQuestionNumberToText.put(20, questionNumberToText20);
 
 		Map<Integer, String> questionNumberToText21 = new HashMap<>();
 		questionNumberToText21.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know analytical and critical thinking approaches and tools?");
+				"<b>Knowledge question</b><br/> How well do you know analytical and critical thinking approaches and tools?");
 		questionNumberToText21.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to use analytical and critical thinking in evaluating an information and/ or a situation and solving problems?");
+				"<b>Skill question</b><br/> To what extent are you able to use analytical and critical thinking in evaluating an information and/ or a situation and solving problems?");
 		competencyNumberToQuestionNumberToText.put(21, questionNumberToText21);
 
 		Map<Integer, String> questionNumberToText22 = new HashMap<>();
 		questionNumberToText22.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know communication tools and techniques and how to apply the public procurement principles in various communication situations?");
+				"<b>Knowledge question</b><br/> How well do you know communication tools and techniques and how to apply the public procurement principles in various communication situations?");
 		questionNumberToText22.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to communicate effectively by adapting the communication medium and message to the target audience while ensuring public procurement principles are respected?");
+				"<b>Skill question</b><br/> To what extent are you able to communicate effectively by adapting the communication medium and message to the target audience while ensuring public procurement principles are respected?");
 		competencyNumberToQuestionNumberToText.put(22, questionNumberToText22);
 
 		Map<Integer, String> questionNumberToText23 = new HashMap<>();
 		questionNumberToText23.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the procedural rules and principles as well as tools, codes and guidance document that help ensure adherence thereto?");
+				"<b>Knowledge question</b><br/> How well do you know the procedural rules and principles as well as tools, codes and guidance document that help ensure adherence thereto?");
 		questionNumberToText23.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to ensure compliance with applicable public procurement rules, principles, and ethical standards?");
+				"<b>Skill question</b><br/> To what extent are you able to ensure compliance with applicable public procurement rules, principles, and ethical standards?");
 		competencyNumberToQuestionNumberToText.put(23, questionNumberToText23);
 
 		Map<Integer, String> questionNumberToText24 = new HashMap<>();
-		questionNumberToText24.put(1, "Knowledge question:</b><br/> How well do you know collaboration tools and techniques?");
+		questionNumberToText24.put(1, "<b>Knowledge question</b><br/> How well do you know collaboration tools and techniques?");
 		questionNumberToText24.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to promote inclusive and collaborative thinking and processes?");
+				"<b>Skill question</b><br/> To what extent are you able to promote inclusive and collaborative thinking and processes?");
 		competencyNumberToQuestionNumberToText.put(24, questionNumberToText24);
 
 		Map<Integer, String> questionNumberToText25 = new HashMap<>();
 		questionNumberToText25.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the key concepts and methods of stakeholder management?");
+				"<b>Knowledge question</b><br/> How well do you know the key concepts and methods of stakeholder management?");
 		questionNumberToText25.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to create mutual trust that contribute to solid internal and external stakeholder relationships?");
+				"<b>Skill question</b><br/> To what extent are you able to create mutual trust that contribute to solid internal and external stakeholder relationships?");
 		competencyNumberToQuestionNumberToText.put(25, questionNumberToText25);
 
 		Map<Integer, String> questionNumberToText26 = new HashMap<>();
 		questionNumberToText26.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know the key concepts and methods of team management?");
+				"<b>Knowledge question</b><br/> How well do you know the key concepts and methods of team management?");
 		questionNumberToText26.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to tailor management and leadership methods and techniques to the team and circumstances thereby creating a conducive environment for achieving common goals?");
+				"<b>Skill question</b><br/> To what extent are you able to tailor management and leadership methods and techniques to the team and circumstances thereby creating a conducive environment for achieving common goals?");
 		competencyNumberToQuestionNumberToText.put(26, questionNumberToText26);
 
 		Map<Integer, String> questionNumberToText27 = new HashMap<>();
 		questionNumberToText27.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know your organisation\'s administrative structure, procedures and processes, internal culture and legal and policy framework?");
+				"<b>Knowledge question</b><br/> How well do you know your organisation\'s administrative structure, procedures and processes, internal culture and legal and policy framework?");
 		questionNumberToText27.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to understand both the procurement function and the organisation\'s structure and culture?");
+				"<b>Skill question</b><br/> To what extent are you able to understand both the procurement function and the organisation\'s structure and culture?");
 		competencyNumberToQuestionNumberToText.put(27, questionNumberToText27);
 
 		Map<Integer, String> questionNumberToText28 = new HashMap<>();
 		questionNumberToText28.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know project management tools and techniques relevant for the public administration?");
+				"<b>Knowledge question</b><br/> How well do you know project management tools and techniques relevant for the public administration?");
 		questionNumberToText28.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to apply project management tools and techniques to effectively carry out a procurement procedure and contract ?");
+				"<b>Skill question</b><br/> To what extent are you able to apply project management tools and techniques to effectively carry out a procurement procedure and contract ?");
 		competencyNumberToQuestionNumberToText.put(28, questionNumberToText28);
 
 		Map<Integer, String> questionNumberToText29 = new HashMap<>();
 		questionNumberToText29.put(1,
-				"<b>Knowledge question:</b><br/> How well do you know cost and performance management strategies and methods as well as Key Performance Indicators (KPIs) that help identify inefficiencies and monitor the financial performance of the procurement and the way it delivers value for money?");
+				"<b>Knowledge question</b><br/> How well do you know cost and performance management strategies and methods as well as Key Performance Indicators (KPIs) that help identify inefficiencies and monitor the financial performance of the procurement and the way it delivers value for money?");
 		questionNumberToText29.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to apply commercial and performance management strategies and methods to maximise value for money of procurement contracts?");
+				"<b>Skill question</b><br/> To what extent are you able to apply commercial and performance management strategies and methods to maximise value for money of procurement contracts?");
 		competencyNumberToQuestionNumberToText.put(29, questionNumberToText29);
 
 		Map<Integer, String> questionNumberToText30 = new HashMap<>();
-		questionNumberToText30.put(1, "<b>Knowledge question:</b><br/> How well do you know audit and control functions?");
+		questionNumberToText30.put(1, "<b>Knowledge question</b><br/> How well do you know audit and control functions?");
 		questionNumberToText30.put(2,
-				"<b>Skill question:</b><br/> To what extent are you able to carry out the different functions of inspection, control, audit, and evaluation applicable to public procurement?");
+				"<b>Skill question</b><br/> To what extent are you able to carry out the different functions of inspection, control, audit, and evaluation applicable to public procurement?");
 		competencyNumberToQuestionNumberToText.put(30, questionNumberToText30);
 		
 		Map<Integer, String> questionNumberToText31 = new HashMap<>();		
-		questionNumberToText31.put(1, "<b>Knowledge question:</b><br/> How well do you know audit risk management tools and techniques?");
-		questionNumberToText31.put(2, "<b>Skill question:</b><br/> To what extent are you able to monitor risks closely and apply mitigating measures and proactive approaches to protect the interest of the organisation?");
+		questionNumberToText31.put(1, "<b>Knowledge question</b><br/> How well do you know audit risk management tools and techniques?");
+		questionNumberToText31.put(2, "<b>Skill question</b><br/> To what extent are you able to monitor risks closely and apply mitigating measures and proactive approaches to protect the interest of the organisation?");
 		competencyNumberToQuestionNumberToText.put(31, questionNumberToText31);
 
 		return competencyNumberToQuestionNumberToText;
