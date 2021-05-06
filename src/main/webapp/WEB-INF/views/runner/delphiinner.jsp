@@ -227,12 +227,9 @@
 			<input type="hidden" id="language.code" value="${form.survey.language.code}" />
 			
 			<div id="sections">
-				
-				<!-- ko if: unansweredMandatoryQuestions() == true -->		
 				<div style="text-align: center; margin-bottom: 20px;">
 					<a class="btn btn-primary" href="?startDelphi=true&surveylanguage=${form.language.code}&originalUniqueCode=${uniqueCode}"><spring:message code="label.Start" /></a>
 				</div>
-				<!-- /ko -->
 		
 				<!-- ko if: !loaded() -->
 				<div>
