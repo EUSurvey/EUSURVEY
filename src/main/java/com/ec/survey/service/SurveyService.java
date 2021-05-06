@@ -167,11 +167,10 @@ public class SurveyService extends BasicService {
 			survey.setSecurity((String) row[rowIndex++]);// 17
 			survey.setIsQuiz((Boolean) row[rowIndex++]);// 18
 			survey.setIsOPC((Boolean) row[rowIndex++]);// 19
-
 				
 			survey.setHasPendingChanges((Boolean) row[rowIndex++]);// 19 or 20
-			survey.setIsECF((Boolean) row[rowIndex]);
-			survey.setIsDelphi((Boolean) row[rowIndex]);// 21
+			survey.setIsDelphi((Boolean) row[rowIndex++]);// 21
+			survey.setIsECF((Boolean) row[rowIndex]);			
 
 			surveys.add(survey);
 		}
