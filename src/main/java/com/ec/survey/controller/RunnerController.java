@@ -804,6 +804,12 @@ public class RunnerController extends BasicController {
 		}
 
 		if (!checkCaptcha(request)) {
+			model.put("contactFormReason", request.getParameter("contactreason"));
+			model.put("contactFormName", request.getParameter("name"));
+			model.put("contactFormMail", request.getParameter(Constants.EMAIL));
+			model.put("contactFormSubject", request.getParameter("subject"));
+			model.put("contactFormMessage", request.getParameter(Constants.MESSAGE));
+			model.put("survey", survey);
 			model.put("wrongcaptcha", true);
 			return "runner/contactForm";
 		}
