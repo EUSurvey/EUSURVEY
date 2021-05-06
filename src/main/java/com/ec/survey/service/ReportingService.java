@@ -468,19 +468,23 @@ public class ReportingService extends BasicService {
     			} else if (question instanceof Table)
     			{
     				Table table = (Table)question;
+    				String lastCell = "";
 	    			for (Element q : table.getQuestions())
 	    			{
 	    				for (Element a : table.getAnswers())
 		    			{
-	    					visibleQuestions.put(Tools.md5hash(q.getUniqueId() + a.getUniqueId()), null);
+	    					lastCell = Tools.md5hash(q.getUniqueId() + a.getUniqueId());
+	    					visibleQuestions.put(lastCell, null);
 		    			}	    				
-	    			}	 
+	    			}
+	    			visibleQuestions.put(lastCell, table);
+	    			
     			} else if (question instanceof RatingQuestion)
 	    		{
     				RatingQuestion rating = (RatingQuestion)question;
 	    			for (Element child : rating.getQuestions())
 	    			{
-	    				visibleQuestions.put(child.getUniqueId(), child);
+	    				visibleQuestions.put(child.getUniqueId(), rating);
 	    			}
 	    		} else if (question instanceof Upload) 
 	    		{
@@ -716,11 +720,11 @@ public class ReportingService extends BasicService {
 							if (survey.getIsDelphi() && question != null && question.isDelphiElement())
 							{
 								boolean skip = false;
-								
-								if (question instanceof MatrixOrTable)
+									
+								if (question instanceof Matrix)
 								{
 									//explanation and discussion columns are only added once (after the last matrix subquestion)
-									MatrixOrTable matrix = (MatrixOrTable)question;
+									Matrix matrix = (Matrix)question;
 									List<Element> matrixQuestions = matrix.getQuestions();
 									Element lastQuestion = matrixQuestions.get(matrixQuestions.size()-1);
 									if (!lastQuestion.getUniqueId().equals(questionuid))
