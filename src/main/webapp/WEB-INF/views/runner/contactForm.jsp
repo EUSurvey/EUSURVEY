@@ -117,26 +117,31 @@
 			<spring:message code="label.ContactFormText" arguments='${contextpath}/home/documentation' /><br /><br />
 			
 			<form:form id="supportForm" action="${contextpath}/runner/contactform/${survey.shortname}" method="post" >
-			
+
+				<spring:message code="support.CannotLogin" var="CannotLogin" />
+				<spring:message code="support.CannotComplete" var="CannotComplete" />
+				<spring:message code="support.CannotUpload" var="CannotUpload" />
+				<spring:message code="support.otherreason" var="OtherReason" />
+
 				<label><span class="mandatory">*</span><spring:message code="support.ContactReason" /></label><br />
-				<select class="form-control" style="max-width: 400px" name="contactreason">					
-					<option selected="selected"><spring:message code="support.CannotLogin" /></option>
-					<option><spring:message code="support.CannotComplete" /></option>
-					<option><spring:message code="support.CannotUpload" /></option>
-					<option><spring:message code="support.otherreason" /></option>						
+				<select class="form-control" style="max-width: 400px" name="contactreason">
+					<option <c:if test='${contactFormReason == null || contactFormReason == CannotLogin}'>selected="selected"</c:if>><c:out value="${CannotLogin}" /></option>
+					<option <c:if test='${contactFormReason == CannotComplete}'>selected="selected"</c:if>><c:out value="${CannotComplete}" /></option>
+					<option <c:if test='${contactFormReason == CannotUpload}'>selected="selected"</c:if>><c:out value="${CannotUpload}" /></option>
+					<option <c:if test='${contactFormReason == OtherReason}'>selected="selected"</c:if>><c:out value="${OtherReason}" /></option>
 				</select><br /><br />
 				
 				<label><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
-				<input type="text" class="form-control required" name="name" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
+				<input type="text" class="form-control required" name="name" value='${contactFormName != null ? contactFormName : USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
 				
 				<label><span class="mandatory">*</span><spring:message code="label.youremail" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
-				<input type="text" class="form-control required email" id="supportemail" name="email" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
+				<input type="text" class="form-control required email" id="supportemail" name="email" value='${contactFormMail != null ? contactFormMail : USER != null ? USER.getEmail() : "" }' /><br /><br />
 				
 				<label><span class="mandatory">*</span><spring:message code="support.subject" /></label><br />
-				<input type="text" class="form-control required" name="subject" /><br /><br />
+				<input type="text" class="form-control required" name="subject" value="${contactFormSubject}" /><br /><br />
 						
 				<label><span class="mandatory">*</span><spring:message code="support.yourmessagetoowner" /></label>
-				<textarea class="form-control required" rows="10" name="message"></textarea><br /><br />
+				<textarea class="form-control required" rows="10" name="message">${contactFormMessage}</textarea><br /><br />
 				
 				<label><spring:message code="support.upload" /></label>
 				<a data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
