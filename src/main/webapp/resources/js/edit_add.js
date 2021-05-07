@@ -162,7 +162,7 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleItem");
 	} else if (item.hasClass("uploaditem"))
 	{
-		element = getBasicElement("Upload", true, "Please upload your file", item.attr("id"), true);
+		element = getBasicElement("Upload", true, "Please upload your file(s)", item.attr("id"), true);
 		//element.help = "The maximum file size is 1 MB";
 		
 		if (isOPC)

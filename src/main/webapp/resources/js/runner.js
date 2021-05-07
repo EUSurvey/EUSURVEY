@@ -232,7 +232,7 @@ function createUploader(instance, maxSize)
 {
 	var uploader = new qq.FileUploader({
 	    element: instance,
-	    uploadButtonText: selectFileForUpload,
+	    uploadButtonText: selectFilesForUpload,
 				action : contextpath + '/runner/upload/'
 				+ $(instance).attr('data-id') + "/"
 				+ $("#uniqueCode").val() + "?survey=" + $(document.getElementById("survey.uniqueId")).val(),
@@ -267,6 +267,8 @@ function createUploader(instance, maxSize)
 			$(instance).closest(".survey-element").find(".validation-error").remove();			
 		},
 	});
+
+	$(".qq-uploader input[type='file']").attr("title", " ");
 }
 
 $(function() {
