@@ -306,6 +306,9 @@ public class AnswerExplanationService extends BasicService {
 				if (question instanceof Matrix) {
 					Matrix matrix = (Matrix) question;
 					answers = answerSet.getMatrixAnswers(matrix);
+				} else if (question instanceof RatingQuestion) {
+					RatingQuestion rating = (RatingQuestion) question;
+					answers = answerSet.getRatingAnswers(rating);
 				} else {
 					answers = answerSet.getAnswers(question.getId(), questionUid);
 				}
@@ -421,6 +424,11 @@ public class AnswerExplanationService extends BasicService {
 				if (question instanceof Matrix) {
 					Matrix matrix = (Matrix) question;
 					if (!answerSet.getMatrixAnswers(matrix).isEmpty()) {
+						continue;
+					}
+				} else if (question instanceof RatingQuestion) {
+					RatingQuestion rating = (RatingQuestion) question;
+					if (!answerSet.getRatingAnswers(rating).isEmpty()) {
 						continue;
 					}
 				} else {
