@@ -199,6 +199,7 @@ table {
 
 .iconbutton.disabled {
 	color: #ccc;
+	cursor: not-allowed;
 }
 
 .iconbutton.disabled .glyphicon, .switchiconbutton.disabled .glyphicon {
