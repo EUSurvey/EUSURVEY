@@ -2,6 +2,7 @@ package com.ec.survey.model;
 
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Matrix;
+import com.ec.survey.model.survey.RatingQuestion;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.ConversionTools;
@@ -230,6 +231,22 @@ public class AnswerSet implements java.io.Serializable {
 
 		return null;
 	}
+	
+	@Transient
+	public List<Answer> getRatingAnswers(RatingQuestion rating) {
+		List<Answer> result = new ArrayList<>();
+		Set<Integer> questionIds = new HashSet<>();
+		for (Element question : rating.getChildElements()) {
+			questionIds.add(question.getId());
+		}
+		for (Answer answer : answers) {
+			if (questionIds.contains(answer.getQuestionId())) {
+				result.add(answer);
+			}
+		}
+
+		return result;
+	}	
 
 	@Transient
 	public void clearAnswers(Element question) {
@@ -434,5 +451,5 @@ public class AnswerSet implements java.io.Serializable {
 	}
 	public void setChangeExplanationText(Boolean changeExplanationText) {
 		this.changeExplanationText = changeExplanationText;
-	}	
+	}
 }
