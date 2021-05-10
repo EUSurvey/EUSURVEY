@@ -2638,7 +2638,7 @@ public class SurveyHelper {
 
 			isOptional = true;
 			if (optionalsForQuestions != null && optionalsForQuestions.length > k)
-				isOptional = !optionalsForQuestions[k].equalsIgnoreCase("false");
+				isOptional = isDelphiQuestion || !optionalsForQuestions[k].equalsIgnoreCase("false");
 
 			((Question) q).setOptional(isOptional);
 
@@ -3522,11 +3522,8 @@ public class SurveyHelper {
 		}
 		matrix.setShowExplanationBox(showExplanationBox);
 
-		Boolean isOptional = getBoolean(parameterMap, "optional", id);
-		if (isDelphiQuestion && !isOptional) {
-			// Enforce optionality of Delphi questions.
-			isOptional = true;
-		}
+		// Enforce optionality of Delphi questions.
+		Boolean isOptional = isDelphiQuestion || getBoolean(parameterMap, "optional", id);
 		if (log220 && !isOptional.equals(matrix.getOptional())) {
 			oldValues += " optional: " + matrix.getOptional();
 			newValues += " optional: " + isOptional;
@@ -3596,6 +3593,9 @@ public class SurveyHelper {
 					Element child = new EmptyElement();
 					child.setPosition(j);
 					matrix.getChildElements().add(j, child);
+					if (isDelphiQuestion && child instanceof Question) {
+						((Question) child).setOptional(true);
+					}
 				} else {
 					String elementtype = parameterMap.get("type" + elementid)[0].toLowerCase();
 					Element currentChild;
@@ -3621,6 +3621,9 @@ public class SurveyHelper {
 						matrix.getChildElements().add(j, child);
 						if (log220) {
 							newLabels.append(child.getTitle()).append("(").append(child.getShortname()).append("),");
+						}
+						if (isDelphiQuestion && child instanceof Question) {
+							((Question) child).setOptional(true);
 						}
 					}
 
@@ -3755,11 +3758,8 @@ public class SurveyHelper {
 		}
 		table.setShowExplanationBox(showExplanationBox);
 
-		Boolean isOptional = getBoolean(parameterMap, "optional", id);
-		if (isDelphiQuestion && !isOptional) {
-			// Enforce optionality of Delphi questions.
-			isOptional = true;
-		}
+		// Enforce optionality of Delphi questions.
+		Boolean isOptional = isDelphiQuestion || getBoolean(parameterMap, "optional", id);
 		if (log220 && !isOptional.equals(table.getOptional())) {
 			oldValues += " optional: " + table.getOptional();
 			newValues += " optional: " + isOptional;
@@ -3792,6 +3792,9 @@ public class SurveyHelper {
 					Element child = new EmptyElement();
 					child.setPosition(j);
 					table.getChildElements().add(j, child);
+					if (isDelphiQuestion && child instanceof Question) {
+						((Question) child).setOptional(true);
+					}
 				} else {
 
 					Element currentChild;
@@ -3807,6 +3810,9 @@ public class SurveyHelper {
 					if (child != null) {
 						child.setPosition(j);
 						table.getChildElements().add(j, child);
+						if (isDelphiQuestion && child instanceof Question) {
+							((Question) child).setOptional(true);
+						}
 					}
 
 					if (log220) {
