@@ -19,7 +19,8 @@ import javax.persistence.*;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class NumberQuestion extends Question {
-	
+	public static final String MAXLABEL = "MAXLABEL";
+	public static final String MINLABEL = "MINLABEL";
 	public static final String UNIT = "UNIT";
 	private static final long serialVersionUID = 1L;
 

@@ -4491,6 +4491,24 @@ public class SurveyHelper {
 					} else {
 						number.setUnit("");
 					}
+
+					if (number.isSlider()) {
+						if (translationsByKey.get(number.getUniqueId() + NumberQuestion.MINLABEL) != null) {
+							number.setMinLabel(translationsByKey.get(number.getUniqueId() + NumberQuestion.MINLABEL).getLabel());
+						} else if (translationsByKey.get(number.getId().toString() + NumberQuestion.MINLABEL) != null) {
+							number.setMinLabel(translationsByKey.get(number.getId().toString() + NumberQuestion.MINLABEL).getLabel());
+						} else {
+							number.setMinLabel("");
+						}
+
+						if (translationsByKey.get(number.getUniqueId() + NumberQuestion.MAXLABEL) != null) {
+							number.setMaxLabel(translationsByKey.get(number.getUniqueId() + NumberQuestion.MAXLABEL).getLabel());
+						} else if (translationsByKey.get(number.getId().toString() + NumberQuestion.MAXLABEL) != null) {
+							number.setMaxLabel(translationsByKey.get(number.getId().toString() + NumberQuestion.MAXLABEL).getLabel());
+						} else {
+							number.setMaxLabel("");
+						}
+					}
 				}
 
 				if (element instanceof Confirmation) {
