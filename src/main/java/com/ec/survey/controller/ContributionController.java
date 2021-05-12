@@ -14,6 +14,9 @@ import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
+import com.ec.survey.exception.ECFException;
+import com.ec.survey.model.ECFProfile;
+import com.ec.survey.model.survey.ecf.ECFIndividualResult;
 import com.ec.survey.service.ValidCodesService;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
@@ -21,12 +24,12 @@ import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
 import com.ec.survey.tools.QuizHelper;
 import com.ec.survey.tools.SurveyHelper;
-import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -57,8 +61,15 @@ public class ContributionController extends BasicController {
 	public AnswerSet getAnswerSet(String code, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException {
 		AnswerSet answerSetOrNull = null;
-		User user = sessionService.getCurrentUser(request);
+		User user;
 		answerSetOrNull = answerService.get(code);
+		
+		if (answerSetOrNull != null && answerSetOrNull.getSurvey().getIsDelphi() && request.getRequestURI().contains("editcontribution"))
+		{
+			user = sessionService.getCurrentUser(request, false, false);
+		} else {
+			user = sessionService.getCurrentUser(request);
+		}
 
 		if (answerSetOrNull == null) {
 			return null;
@@ -128,6 +139,15 @@ public class ContributionController extends BasicController {
 		Form f = (Form) result.getModel().get("form");
 		SurveyHelper.calcTableWidths(f.getSurvey(), f);
 		f.setForPDF(true);
+
+		AnswerSet answerSet = this.answerService.get(code);
+		if (answerSet.getSurvey().getIsECF()) {
+			ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
+			List<String> base64ECFSpiderCharts = ecfService.spiderChartsB64ByECFType(individualResult);
+			result.addObject("base64ECFSpiderCharts", base64ECFSpiderCharts);
+			result.addObject("ecfIndividualResult", individualResult);
+		}
+
 		result.addObject("forpdf", "true");
 		result.addObject("submit", "false");
 		return result;
@@ -136,7 +156,7 @@ public class ContributionController extends BasicController {
 	@RequestMapping(value = "/preparedraft/{code}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparedraft(@PathVariable String code, Locale locale, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
-			InvalidURLException, InterruptedException, IOException {
+			InvalidURLException, InterruptedException, IOException, ECFException {
 		ModelAndView result = editContributionInner(code, locale, request, false, false, true);
 
 		Form f = (Form) result.getModel().get("form");
@@ -150,7 +170,7 @@ public class ContributionController extends BasicController {
 	@RequestMapping(value = "/preparepublishedcontribution/{id}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView showforpublishedpdf(@PathVariable String id, Locale locale, HttpServletRequest request)
 			throws NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenURLException,
-			InvalidURLException, InterruptedException, IOException {
+			InvalidURLException, InterruptedException, IOException, ECFException {
 		AnswerSet answerSet = answerService.get(Integer.parseInt(id));
 		ModelAndView result = editContributionInner(answerSet.getUniqueCode(), locale, request, false, false, false);
 		result.addObject("forpdf", "true");
@@ -158,6 +178,13 @@ public class ContributionController extends BasicController {
 
 		Form form = (Form) result.getModel().get("form");
 		form.setForPDF(true);
+
+		if (answerSet.getSurvey().getIsECF()) {
+			ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
+			List<String> base64SpiderCharts = ecfService.spiderChartsB64ByECFType(individualResult);
+			result.addObject("base64ECFSpiderCharts", base64SpiderCharts);
+			result.addObject("ecfIndividualResult", individualResult);
+		}
 
 		result.addObject("publication", form.getSurvey().getPublication());
 		return result;
@@ -195,7 +222,14 @@ public class ContributionController extends BasicController {
 		Set<String> invisibleElements = new HashSet<>();
 		if (answerSet != null) {
 			// participants can only access it if the survey is still active
-			User u = sessionService.getCurrentUser(request);
+			User u;
+			
+			if (answerSet.getSurvey().getIsDelphi() && request.getRequestURI().contains("editcontribution"))
+			{
+				u = sessionService.getCurrentUser(request, false, false);
+			} else {
+				u = sessionService.getCurrentUser(request);
+			}
 
 			Survey draft = surveyService.getSurveyByUniqueId(answerSet.getSurvey().getUniqueId(), false, true);
 
@@ -206,10 +240,12 @@ public class ContributionController extends BasicController {
 					u = null;
 				}
 			}
-
-			if (request.getRequestURI().contains("preparecontribution")
+			
+			boolean isPDF = request.getRequestURI().contains("preparecontribution")
 					|| request.getRequestURI().contains("preparepublishedcontribution")
-					|| request.getRequestURI().contains("preparedraft")) {
+					|| request.getRequestURI().contains("preparedraft");
+
+			if (isPDF) {
 				// ignore authorization for PDF export
 			} else if (u == null && !draft.getIsActive()) {
 				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
@@ -268,6 +304,11 @@ public class ContributionController extends BasicController {
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 
 			ModelAndView model = new ModelAndView("contributions/edit", "form", f);
+			
+			if (!isPDF && newestSurvey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+				model = new ModelAndView("runner/delphi", "form", f);
+				model.addObject("isdelphipage", true);
+			}
 
 			model.addObject("submit", true);
 			model.addObject("answerSet", answerSet.getId());
@@ -276,8 +317,12 @@ public class ContributionController extends BasicController {
 					: answerSet.getDate();
 			model.addObject("submittedDate", ConversionTools.getFullString(submittedDate));
 			model.addObject("invitationToken", answerSet.getInvitationId());
-
-			if (!fromBackOffice) {
+			model.addObject("isEcf", answerSet.getSurvey().getIsECF());
+			model.addObject("theUniqueCode", answerSet.getUniqueCode());
+			model.addObject("surveyShortname", answerSet.getSurvey().getShortname());
+			
+			if (!fromBackOffice)
+			{
 				model.addObject("runnermode", true);
 			}
 
@@ -294,8 +339,7 @@ public class ContributionController extends BasicController {
 
 			validCodesService.revalidate(answerSet.getUniqueCode(), newestSurvey);
 
-			// recreate uploaded files
-			SurveyHelper.recreateUploadedFiles(answerSet, translated, fileService);
+			SurveyHelper.recreateUploadedFiles(answerSet, translated, fileService, answerExplanationService);
 
 			return model;
 		} else {
@@ -428,6 +472,84 @@ public class ContributionController extends BasicController {
 			return new ModelAndView("redirect:/errors/500.html");
 		}
 	}
+	
+	@RequestMapping(value = "/ecfResultJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody ECFIndividualResult ecfResultJSON(HttpServletRequest request, Locale locale)
+	throws NotFoundException, InternalServerErrorException {
+		String answerSetIdOrNull = request.getParameter("answerSetId");
+		String profileUUIDOrNull = request.getParameter("profileUUID");
+		if (answerSetIdOrNull == null) {
+			throw new NotFoundException();
+		}
+		AnswerSet answerSet = answerService.get(answerSetIdOrNull);
+		
+		ECFIndividualResult ecfResult;
+		try {
+			if (profileUUIDOrNull != null && !profileUUIDOrNull.isEmpty()) {
+				ECFProfile profile = this.ecfService.getECFProfileByUUID(profileUUIDOrNull);
+				ecfResult = this.ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet, profile);
+			} else {
+				ecfResult = this.ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
+			}
+		} catch (ECFException e) {
+			throw new InternalServerErrorException(e);
+		}
+
+		return ecfResult;
+	}
+
+	@GetMapping(value = "/contribution/{uid}/preview")
+	public ModelAndView preview(@PathVariable String uid, HttpServletRequest request, Locale locale)
+			throws InterruptedException, IOException, InvalidURLException, ECFException {
+		if (uid != null && uid.length() > 0) {
+			AnswerSet answerSet = answerService.get(uid);
+			if (answerSet != null) {
+				Form form = new Form(resources);
+				Set<String> invisibleElements = new HashSet<>();
+				SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements, resources, locale, null,
+						request, true, null, fileService);
+
+				if (answerSet.getLanguageCode() != null && !answerSet.getSurvey().getLanguage().getCode()
+						.equalsIgnoreCase(answerSet.getLanguageCode())) {
+					Survey translated = SurveyHelper.createTranslatedSurvey(answerSet.getSurvey().getId(), answerSet.getLanguageCode(),
+							surveyService, translationService, true);
+					form.setSurvey(translated);
+					form.setLanguage(surveyService.getLanguage(answerSet.getLanguageCode()));
+				} else {
+					form.setSurvey(answerSet.getSurvey());
+					form.setLanguage(answerSet.getSurvey().getLanguage());
+				}
+				form.getAnswerSets().add(answerSet);
+				ModelAndView contributionsPrintModel = new ModelAndView("contributions/print", "form", form);
+				contributionsPrintModel.addObject("answerSet", answerSet.getId());
+				contributionsPrintModel.addObject("code", uid);
+				contributionsPrintModel.addObject("isEcf", answerSet.getSurvey().getIsECF());
+				java.util.Date submittedDate = answerSet.getUpdateDate() != null ? answerSet.getUpdateDate()
+						: answerSet.getDate();
+				contributionsPrintModel.addObject("submittedDate", ConversionTools.getFullString(submittedDate));
+				contributionsPrintModel.addObject("print", true);
+				
+
+				if (answerSet.getSurvey().getIsECF()) {
+					ECFIndividualResult individualResult = ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet);
+
+					List<String> base64SpiderCharts =  ecfService.spiderChartsB64ByECFType(individualResult);
+					contributionsPrintModel.addObject("base64ECFSpiderCharts", base64SpiderCharts);
+
+					String b64 = ecfService.individualResultToSpiderChartB64(individualResult);
+					contributionsPrintModel.addObject("base64ECFSpiderChart", b64);
+					contributionsPrintModel.addObject("ecfIndividualResult", individualResult);
+				}
+				
+				contributionsPrintModel.addObject("serverprefix", serverPrefix);
+				contributionsPrintModel.addObject("invisibleElements", invisibleElements);
+				contributionsPrintModel.addObject("launchPrint", false);
+				return contributionsPrintModel;
+			}
+		}
+		throw new InvalidURLException();
+	}
+
 
 	@RequestMapping(value = "/printcontribution", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView print(HttpServletRequest request, Locale locale) {
@@ -441,7 +563,7 @@ public class ContributionController extends BasicController {
 				answerSet = answerService.get(code);
 
 				if (answerSet != null) {
-					Form f = new Form(resources);
+					Form form = new Form(resources);
 					String lang = answerSet.getLanguageCode();
 
 					SurveyHelper.validateAnswerSet(answerSet, answerService, invisibleElements, resources, locale, null,
@@ -450,26 +572,31 @@ public class ContributionController extends BasicController {
 					if (lang != null && !answerSet.getSurvey().getLanguage().getCode().equalsIgnoreCase(lang)) {
 						Survey translated = SurveyHelper.createTranslatedSurvey(answerSet.getSurvey().getId(), lang,
 								surveyService, translationService, true);
-						f.setSurvey(translated);
-						f.setLanguage(surveyService.getLanguage(lang));
+						form.setSurvey(translated);
+						form.setLanguage(surveyService.getLanguage(lang));
 					} else {
-						f.setSurvey(answerSet.getSurvey());
-						f.setLanguage(answerSet.getSurvey().getLanguage());
+						form.setSurvey(answerSet.getSurvey());
+						form.setLanguage(answerSet.getSurvey().getLanguage());
 					}
 
-					f.getAnswerSets().add(answerSet);
+					form.getAnswerSets().add(answerSet);
 
-					ModelAndView model = new ModelAndView("contributions/print", "form", f);
-					model.addObject("answerSet", answerSet.getId());
-					model.addObject("code", code);
-					java.util.Date submittedDate = answerSet.getUpdateDate() != null ? answerSet.getUpdateDate()
-							: answerSet.getDate();
-					model.addObject("submittedDate", ConversionTools.getFullString(submittedDate));
-					model.addObject("print", true);
-					model.addObject("serverprefix", serverPrefix);
-					model.addObject("invisibleElements", invisibleElements);
+					ModelAndView contributionsPrintModel = new ModelAndView("contributions/print", "form", form);
+					contributionsPrintModel.addObject("answerSet", answerSet.getId());
+					contributionsPrintModel.addObject("code", code);
+					contributionsPrintModel.addObject("isEcf", answerSet.getSurvey().getIsECF());
+					if (answerSet.getSurvey().getIsECF()) {
+						contributionsPrintModel.addObject("ecfIndividualResult", this.ecfService.getECFIndividualResult(answerSet.getSurvey(), answerSet));
+					}
 
-					return model;
+					java.util.Date submittedDate = answerSet.getUpdateDate() != null ? answerSet.getUpdateDate() : answerSet.getDate();
+					contributionsPrintModel.addObject("submittedDate", ConversionTools.getFullString(submittedDate));
+					contributionsPrintModel.addObject("print", true);
+					contributionsPrintModel.addObject("serverprefix", serverPrefix);
+					contributionsPrintModel.addObject("invisibleElements", invisibleElements);
+					contributionsPrintModel.addObject("launchPrint", true); 
+
+					return contributionsPrintModel;
 				}
 			} catch (Exception e) {
 				logger.error(e.getLocalizedMessage(), e);

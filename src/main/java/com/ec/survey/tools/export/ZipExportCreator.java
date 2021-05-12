@@ -26,7 +26,7 @@ public class ZipExportCreator extends ExportCreator {
 	protected @Value("${export.fileDir}") String fileDir;
 	
 	@Override
-	void ExportContent(boolean sync) throws Exception {
+	void exportContent(boolean sync) throws Exception {
 		java.io.File temp = fileService.createTempFile("export" + UUID.randomUUID().toString(), ".zip");
 		final OutputStream out = new FileOutputStream(temp);
 		final ArchiveOutputStream os = new ArchiveStreamFactory().createArchiveOutputStream("zip", out);
@@ -71,27 +71,42 @@ public class ZipExportCreator extends ExportCreator {
 	}
 	
 	@Override
-	void ExportStatistics() throws Exception {
+	void exportStatistics() throws Exception {
 		throw new NotImplementedException();
 	}
 	
 	@Override
-	void ExportStatisticsQuiz() throws Exception {
+	void exportStatisticsQuiz() throws Exception {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	void ExportAddressBook() throws Exception {
+	void exportAddressBook() throws Exception {
 		throw new NotImplementedException();
 	}	
 
 	@Override
-	void ExportActivities() throws Exception {
+	void exportActivities() throws Exception {
 		throw new NotImplementedException();
 	}
 	
 	@Override
-	void ExportTokens() throws Exception {
+	void exportTokens() throws Exception {
+		throw new NotImplementedException();
+	}
+	
+	@Override
+	void exportECFGlobalResults() throws Exception {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	void exportECFProfileResults() throws Exception {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	void exportECFOrganizationalResults() throws Exception {
 		throw new NotImplementedException();
 	}	
 

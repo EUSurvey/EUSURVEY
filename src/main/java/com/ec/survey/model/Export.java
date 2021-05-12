@@ -22,9 +22,8 @@ public class Export implements java.io.Serializable {
 		Pending, Failed, Finished
 	}
 	
-	public enum ExportType
-	{
-		Content, Statistics, Charts, AddressBook, Activity, Tokens, Files, Survey, StatisticsQuiz
+	public enum ExportType {
+		Content, Statistics, Charts, AddressBook, Activity, Tokens, Files, Survey, StatisticsQuiz, ECFGlobalResults, ECFProfileResults, ECFOrganizationResults
 	}
 	
 	public enum ExportFormat
@@ -52,6 +51,10 @@ public class Export implements java.io.Serializable {
 	private Boolean addMeta = false;
 	private Integer participationGroup;
 	private String email;
+	private boolean forArchiving;
+	
+	// The profile to which we want to compare the ecf results
+	private String ecfProfileUid;
 	
 	@Id
 	@Column(name = "EXPORT_ID")
@@ -264,5 +267,12 @@ public class Export implements java.io.Serializable {
 		this.participationGroup = participationGroup;
 	}
 	
+	@Column(name = "EXPORT_FORARCHIVING")
+	public boolean isForArchiving() {
+		return forArchiving;
+	}
+	public void setForArchiving(boolean forArchiving) {
+		this.forArchiving = forArchiving;
+	}	
 }
 

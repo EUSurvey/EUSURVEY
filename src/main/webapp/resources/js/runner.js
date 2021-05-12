@@ -73,8 +73,7 @@ function returnTrueForSpace(event)
 }
 
 function ratingClick(link)
-{
-	
+{	
 	var pos = $(link).index();
 	var icons = $(link).attr("data-icons");
 	
@@ -88,6 +87,7 @@ function ratingClick(link)
 	}
 	
 	updateRatingIcons(pos, $(link).parent());
+	propagateChange(link);
 }
 
 function updateRatingIcons(pos, parent)
@@ -135,15 +135,28 @@ function singleClick(r) {
 	  $(r).attr('previousValue', 'checked');
 	}
 	
-	propagateChange();
+	propagateChange(r);
 }
 
-function propagateChange()
+function propagateChange(element)
 {
 	if (!$("#btnSaveDraft").hasClass('disabled'))
 	{
 		$("#btnSaveDraft").removeClass("btn-default").addClass("btn-primary");
 	}
+
+	const surveyElement = $(element).closest(".survey-element");
+	if ($(surveyElement).find(".slider-div").length) {
+		const questionUid = $(surveyElement).attr("data-uid");
+		const viewModel = modelsForSlider[questionUid];
+		viewModel.isAnswered(true);
+	}
+
+	var div = $(element).parents(".survey-element").last();
+	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
+	$(div).find(".explanation-section").show();
+	$(div).find(".explanation-file-upload-section").show();
+	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
 }
 
 var downloadsurveypdflang;
@@ -219,7 +232,7 @@ function createUploader(instance, maxSize)
 {
 	var uploader = new qq.FileUploader({
 	    element: instance,
-	    uploadButtonText: selectFileForUpload,
+	    uploadButtonText: selectFilesForUpload,
 				action : contextpath + '/runner/upload/'
 				+ $(instance).attr('data-id') + "/"
 				+ $("#uniqueCode").val() + "?survey=" + $(document.getElementById("survey.uniqueId")).val(),
@@ -234,7 +247,8 @@ function createUploader(instance, maxSize)
 	    },
 		onComplete : function(id, fileName, responseJSON) {
 			$(this.element).parent().find(".uploadinfo").hide();
-	    	updateFileList($(this.element), responseJSON);
+			updateFileList($(this.element), responseJSON);
+			$(this.element).closest(".survey-element").find("a[data-type='delphisavebutton']").removeClass("disabled");
 	    	
 	    	if (responseJSON.wrongextension)
 	    	{
@@ -253,6 +267,8 @@ function createUploader(instance, maxSize)
 			$(instance).closest(".survey-element").find(".validation-error").remove();			
 		},
 	});
+
+	$(".qq-uploader input[type='file']").attr("title", " ");
 }
 
 $(function() {
@@ -550,7 +566,7 @@ function deleteFile(id, uniqueCode, fileName, button) {
 				updateFileList($(button).parent().parent().siblings(
 						".file-uploader").first(), data);
 			} else {
-				showRunnerError("Not possible to delete file");
+				showError("Not possible to delete file");
 			}
 	  }
 	});
@@ -580,7 +596,7 @@ function nextPage() {
 	{
 		if (!$("#tab" + (page + i)).hasClass("untriggered") && $("#tab" + (page + i)).find(".untriggered").length == 0)
 		{
-			selectPage(page + i);
+			selectPage(page + i);		
 			return;
 		} else {
 			i++;
@@ -593,6 +609,11 @@ function lastPage() {
 }
 
 function selectPage(val) {
+	
+	if (val == page) {
+		return;
+	}
+	
 	var validatedPerPage = $("#validatedPerPage").val().toLowerCase() == "true";
 	
 	var validate = val > page;
@@ -609,6 +630,7 @@ function selectPage(val) {
 					//ok
 					if (i == val-page-1)
 					{
+						updateQuestionsOnNavigation(page);
 						$(".single-page").hide();		
 						page = val;		
 						$("#page" + page).show();
@@ -622,6 +644,7 @@ function selectPage(val) {
 				} else {
 					if (i > 0)
 					{
+						updateQuestionsOnNavigation(page);
 						$(".single-page").hide();		
 						page = page + i;		
 						$("#page" + page).show();
@@ -633,12 +656,12 @@ function selectPage(val) {
 						}, "fast");
 					}
 					goToFirstValidationError($("#page" + (page))[0]);
-					return;
+					return false;
 				}
 			}			
 		} else {
 			if (!validate || !validatedPerPage || $("#hfsubmit").val() != 'true' || validateInput($("#page" + page))) {
-				
+				updateQuestionsOnNavigation(page);
 				$(".single-page").hide();		
 				page = val;		
 				$("#page" + page).show();
@@ -650,6 +673,7 @@ function selectPage(val) {
 				}, "fast");
 			} else {
 				goToFirstValidationError($("#page" + page)[0]);
+				return false;
 			}
 		}
 	}
@@ -1601,6 +1625,11 @@ function eraseCookie(name) {
 }
 
 function is_local_storage_enabled() {
+	if ($("#saveLocalBackup").length === 0) {
+		// local backup checkbox is not displayed => Delphi question => disable local storage
+		return false;
+	}
+
 	if (typeof (Storage) !== "undefined") {
     var ABCD=0;
 		try {
@@ -1614,5 +1643,99 @@ function is_local_storage_enabled() {
 	  return ABCD==1234;
 	} else {
 	  return false;
+	}
+}
+
+function fetchECFResult() {
+	$.ajax({
+		type:'GET',
+		url: contextpath + "/" + surveyShortname + "/management/ecfResultJSON?answerSetId=" + uniqueCode,
+		cache: false,
+		success: function(ecfResult) {
+			if (ecfResult == null) {
+				setTimeout(function(){ fetchECFResult(); }, 10000);
+				return;
+			} else {
+				displayECFTable(ecfResult);
+				displayECFChart(ecfResult);
+				return ecfResult;
+			}
+		}
+	});
+}
+
+function displayECFTable(result) {
+	result.competencies.forEach(competency => {
+	$("#ecfResultTable > tbody:last-child").append('<tr><td>' + competency.name + '</td>'
+			+ '<td>' + competency.score + '</td>'
+			+ '<td>' + competency.targetScore + '</td>'
+			+ '<td>' + competency.scoreGap + '</td></tr>')
+			});
+}
+
+function displayECFChart(result) {
+	if (result) {
+		profileName = result.name;		
+		scores = [];
+		competencies = [];
+		targetScores = [];
+		result.competencies.forEach(competency => {
+			scores.push(competency.score);
+			competencies.push(competency.name);
+			targetScores.push(competency.targetScore);
+		});
+		
+		$('.ecfRespondentChart').each(function(index, element) { 
+			var ctx = element.getContext("2d");
+			var options = {
+				scale: {
+					angleLines: {
+						display: false
+					},
+						ticks: {
+							suggestedMin: 0,
+							suggestedMax: 4
+						}
+					},
+				maintainAspectRatio: true,
+				spanGaps: false,
+				elements: {
+					line: {
+						tension: 0.000001
+					}
+				},
+				plugins: {
+					filler: {
+						propagate: false
+					},
+					'samples-filler-analyser': {
+						target: 'chart-analyser'
+					}
+				}
+			};
+		
+			var myRadarChart = new Chart(ctx, {
+				type: 'radar',
+				data: {
+					labels: competencies,
+					datasets: [{
+						label: 'Your results',
+						data: scores,
+						backgroundColor: 'rgba(255, 99, 132, 0.2)',
+						borderColor: 'rgba(255, 99, 132, 1)',
+						borderWidth: 1
+					},
+					{
+						label: 'Target results for profile ' + profileName,
+						data: targetScores,
+						backgroundColor: 'rgba(97, 197, 255, 0.2)',
+						borderColor: 'rgba(97, 197, 255, 1)',
+						borderWidth: 1
+					}
+					]
+				},
+				options: options
+			});
+		});	
 	}
 }

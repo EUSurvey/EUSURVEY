@@ -7,7 +7,9 @@ function getNiceHelp(help)
 
 function addIconToHelp(help)
 {
-	return "<span onclick='$(this).next().toggle()' class='glyphicon glyphicon-question-sign'></span><div style='display: none; padding-top: 5px; padding-bottom: 5px;'>" + help + "</div>";
+	return "<span onclick='$(this).next().toggle()' class='glyphicon glyphicon-question-sign'></span>" +
+		"<div class='questionhelp__text'>" + help + "</div>" +
+		"<br />";
 }
 
 function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)
@@ -109,7 +111,7 @@ function newRatingItemViewModel(id, uniqueId, optional, shortname, title, origin
 	return viewModel;
 }
 
-function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsString, title, scoring)
+function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsString, title, scoring, ecfScore, ecfProfile)
 {
 	var viewModel = newBasicViewModel();
 	viewModel.type = 'PossibleAnswer';
@@ -120,6 +122,8 @@ function newPossibleAnswerViewModel(id, uniqueId, shortname, dependentElementsSt
 	viewModel.title = ko.observable(title);
 	viewModel.originalTitle = ko.observable(title);
 	viewModel.scoring = newScoringViewModel(scoring);
+	viewModel.ecfScore = ko.observable(ecfScore);
+	viewModel.ecfProfile = ko.observable(ecfProfile);
 	
 	viewModel.titleForDisplayMode = function(displayMode)
 	{
@@ -144,7 +148,7 @@ function newPossibleAnswersViewModel(answers)
 	var viewModel = ko.observableArray();
 	for (var i = 0; i < answers.length; i++)
 	{
-		viewModel.push(newPossibleAnswerViewModel(answers[i].id, answers[i].uniqueId, answers[i].shortname, answers[i].dependentElementsString, answers[i].title, answers[i].scoring));
+		viewModel.push(newPossibleAnswerViewModel(answers[i].id, answers[i].uniqueId, answers[i].shortname, answers[i].dependentElementsString, answers[i].title, answers[i].scoring, answers[i].ecfScore, answers[i].ecfProfile));
 	}
 	return viewModel;
 }
@@ -256,16 +260,47 @@ function newScoringViewModel(element)
 	return viewModel;
 }
 
+function createNewDelphiBasicViewModel() {
+	const self = this;
+	self.delphiTableEntries = ko.observableArray();
+	self.delphiTableLoading = ko.observable(false);
+	self.delphiTableLimit = ko.observable(20);
+	self.delphiTableNewComments = ko.observable(false);
+	self.delphiTableOffset = ko.observable(0);
+	self.delphiTableQuestionType = ko.observable("");
+	self.delphiTableShowQuestionHtml = ko.computed(function () {
+		// used to decide whether Knockout's html or text binding should be used
+		switch (self.delphiTableQuestionType()) {
+			case "SingleChoice":
+			case "MultipleChoice":
+			case "Matrix":
+			case "Ranking":
+				// only allow HTML for these three question types, as others don't need it or potentially allow XSS
+				return true;
+
+			default:
+				return false;
+		}
+	});
+	self.delphiTableTotalEntries = ko.observable(0);
+	self.delphiTableOrder = ko.observable("UpdateDesc");
+	self.showExplanationBox = ko.observable(true);
+}
+
 function newBasicViewModel(element)
+//HERE
 {
-	var viewModel = {};
+	const viewModel = new createNewDelphiBasicViewModel();
 	
 	viewModel.isViewModel = true;
 	
 	viewModel.scoringItems = ko.observableArray();
 	viewModel.optional = ko.observable(true);
 	viewModel.css = ko.observable(true);
+	viewModel.maxDistanceExceeded = ko.observable(false);
 	viewModel.useAndLogic = ko.observable(false);
+	viewModel.median = ko.observable(0);
+	viewModel.changedForMedian = ko.observable(false);
 	
 	viewModel.getScoringItem = function(id)
 	{
@@ -293,12 +328,13 @@ function newBasicViewModel(element)
 		viewModel.locked = ko.observable(element.locked);
 		viewModel.css = ko.observable(element.css);
 		viewModel.optional = ko.observable(element.optional);
+		viewModel.isDelphiQuestion = ko.observable(element.isDelphiQuestion);
 		viewModel.useAndLogic = ko.observable(element.useAndLogic);
-		
-		if (element.scoringItems != null)
-		{
-			for (var i = 0; i < element.scoringItems.length; i++)
-			{
+		viewModel.showExplanationBox = ko.observable(element.showExplanationBox);
+		viewModel.delphiChartType = ko.observable(element.delphiChartType);
+
+		if (element.scoringItems != null) {
+			for (var i = 0; i < element.scoringItems.length; i++) {
 				viewModel.scoringItems.push(newScoringViewModel(element.scoringItems[i]));
 			}
 		}
@@ -360,7 +396,7 @@ function newBasicViewModel(element)
 	            	for (var i = 0; i < this.possibleAnswers().length; i++)
 			    	{
 			    		var copiedanswer = this.possibleAnswers()[i];
-			    		var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), copiedanswer.dependentElementsString(), copiedanswer.title(), copiedanswer.scoring);
+			    		var newanswer = newPossibleAnswerViewModel(getNewId(), getNewId(), getNewShortname(), copiedanswer.dependentElementsString(), copiedanswer.title(), copiedanswer.scoring, copiedanswer.ecfScore(), copiedanswer.ecfProfile());
 			    		newanswer.originalId = copiedanswer.id();
 			    		copy[prop].push(newanswer);
 			    	}
@@ -672,7 +708,10 @@ function newSingleChoiceViewModel(element)
 	viewModel.useRadioButtons = ko.observable(element.useRadioButtons);	
 	viewModel.minChoices = ko.observable(0);
 	viewModel.maxChoices = ko.observable(0);
-	viewModel.choiceType = ko.observable(element.useRadioButtons ? "radio" : "select");
+	viewModel.choiceType = ko.observable(element.useLikert ? "likert" : (element.useRadioButtons ? "radio" : "select"));
+	viewModel.likert = ko.observable(element.useLikert);
+	viewModel.ecfCompetency = ko.observable(element.ecfCompetency);
+	viewModel.maxDistance = ko.observable(element.maxDistance);
 	
 	return viewModel;
 }
@@ -688,6 +727,180 @@ function newMultipleChoiceViewModel(element)
 	viewModel.choiceType = ko.observable(element.useCheckboxes ? "checkbox" : "list");
 	viewModel.noNegativeScore = ko.observable(element.noNegativeScore);	
 	
+	return viewModel;
+}
+
+function newRankingViewModel(element)
+{
+	var viewModel = newBasicViewModel(element);
+
+	viewModel.rankingItems = newRankingItemViewModelForEach(element.childElements, viewModel);
+	viewModel.help = ko.observable(element.help);
+	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
+	viewModel.minItems = function() { return 2; };
+	viewModel.answervalues = ko.observable($.map(viewModel.rankingItems(), item => item.uniqueId()));
+	viewModel.itemIdtoUniqueIdLookup = {};
+	$.each(element.childElements, (_, that) => {
+		viewModel.itemIdtoUniqueIdLookup[that.id] = that.uniqueId;
+	});
+	viewModel.isAnswered = ko.observable(false);
+	viewModel.answervalues.subscribe(function() {
+		viewModel.isAnswered(true);
+	});
+	viewModel.css = ko.observable(element.css);
+
+	viewModel.acceptInitialAnswer = function(_, event) {
+		const rankingItemList = $(event.target).closest(".rankingitem").find(".rankingitem-list")[0];
+		viewModel.isAnswered(true);
+		propagateChange(rankingItemList);
+	}
+
+	viewModel.originalItemUniqueIdOrder = $.map(element.childElements, item => item.uniqueId);
+	viewModel.itemTitleLookup = {};
+	$.each(element.childElements, (_, that) => {
+		viewModel.itemTitleLookup[that.uniqueId] = that.title;
+	});
+
+	viewModel.getAnswerValuesString = ko.computed(function() {
+		if (!viewModel.isAnswered()) return "";
+		return viewModel.answervalues().join(';');
+	});
+	viewModel.getAnswerValuesTitleList = ko.computed(function() {
+		return $.map(viewModel.answervalues(), uniqueId => viewModel.itemTitleLookup[uniqueId]);
+	});
+
+	viewModel.initOn = function(domElement) {
+		const viewmodel = this;
+		if (viewmodel.foreditor) return;
+		const formeranswervaluesstringly = getValueByQuestion(viewmodel.uniqueId());
+		const formeranswervalues = formeranswervaluesstringly.split(';');
+		const isAnswerFormatSemicolon = formeranswervalues.join(';') == formeranswervaluesstringly;
+		const isAnswerFormatLength = formeranswervalues.length == viewmodel.answervalues().length;
+		let allIdsValid = false;
+		if (isAnswerFormatSemicolon && isAnswerFormatLength) {
+			allIdsValid = true;
+			$.each(formeranswervalues, function(index, uniqueId) {
+				if (!(uniqueId in viewmodel.itemTitleLookup)) {
+					allIdsValid = false;
+				}
+			});
+		}
+		if (allIdsValid) {
+			const permutation = $.map(formeranswervalues, uniqueId => viewmodel.originalItemUniqueIdOrder.indexOf(uniqueId));
+			const rankingItemReordered = $.map(permutation, index => viewmodel.rankingItems()[index]);
+			viewmodel.rankingItems(rankingItemReordered);
+			viewmodel.answervalues(formeranswervalues);
+		}
+
+		const self = $(domElement).find(".rankingitem-list")[0];
+		$(self).sortable({
+			start: function(event, ui) {
+				const width = $(ui.item).width();
+				const rankingItemFormDatas = $(domElement).find(".rankingitem-form-data");
+				rankingItemFormDatas.each(function() {
+					$(this).width(2 + width);
+				});
+			},
+			stop: function(event, ui) {
+				const rankingItemFormDatas = $(domElement).find(".rankingitem-form-data");
+				rankingItemFormDatas.each(function() {
+					$(this).width("");
+				});
+			},
+			update: function(event, ui) {
+				const rankingitems = $(self).find(".rankingitemtext");
+				const newanswervalues = $.map(rankingitems, that => viewmodel.itemIdtoUniqueIdLookup[Number(that.id)]);
+				const parentUID = viewmodel.uniqueId();
+				values[parentUID] = newanswervalues.join(';');
+				viewmodel.answervalues(newanswervalues);
+				propagateChange(self);
+			},
+		});
+		$(domElement).disableSelection();
+	};
+	return viewModel;
+}
+
+function newRankingItemViewModelForEach(childElements, parent)
+{
+	var viewModel = ko.observableArray();
+	$.each(childElements, (index, that) => {
+		viewModel.push(newRankingItemViewModel(that.id, that.uniqueId, that.shortname, that.title, parent));
+	});
+	return viewModel;
+}
+
+var ArrayElementMovingTool = {
+	move : function(self, from, to) {
+		if (0 > from) return false;
+		if (0 > to) return false;
+		if (self.length <= from) return false;
+		if (self.length <= to) return false;
+		if (from == to) return false;
+		self.splice(to, 0, self.splice(from, 1)[0]);
+		return true;
+	},
+	moveRelative : function(self, from, steps) {
+		if (0 == steps) return false;
+		const to = from + steps;
+		return ArrayElementMovingTool.move(self, from, to);
+	},
+	moveItemRelative : function(self, item, steps) {
+		const index = self.indexOf(item);
+		if (-1 == index) return false;
+		return ArrayElementMovingTool.moveRelative(self, index, steps);
+	}
+};
+
+function newRankingItemViewModel(id, uniqueId, shortname, title, parent)
+{
+	var viewModel = newBasicViewModel();
+	viewModel.parent = parent;
+	viewModel.type = 'RankingItem';
+	viewModel.title = ko.observable(title);
+	viewModel.id = ko.observable(id);
+	viewModel.uniqueId = ko.observable(uniqueId);
+	viewModel.shortname = ko.observable(shortname);
+	viewModel.originalTitle = ko.observable(title);
+
+	viewModel.onMoveItem = function(_, event, steps) {
+		if (this.parent.foreditor) return;
+		var target = event.target;
+		var rankingitemList = $(target).closest(".rankingitem-list");
+		var rankingitems = $(rankingitemList).find(".rankingitemtext");
+		const actualOrder = $.map(rankingitems, that => this.parent.itemIdtoUniqueIdLookup[Number(that.id)]);
+		const answervalues = this.parent.answervalues();
+		if (ArrayElementMovingTool.moveItemRelative(answervalues, this.uniqueId(), steps)) {
+			this.parent.answervalues(answervalues);
+			const reIndex = $.map(answervalues, that => actualOrder.indexOf(that));
+			var rankingitemFormData = $(rankingitemList).find(".rankingitem-form-data");
+			var rankingitemFormDataReOrdered = $.map(reIndex, value => rankingitemFormData.get(value));
+			$.each(rankingitemFormDataReOrdered, (_, that) => $(rankingitemList).append(that));
+			target.focus();
+			propagateChange(target);
+		}
+	}
+
+	viewModel.onMoveUp = function(data, event) {
+		this.onMoveItem(data, event, -1);
+	}
+	viewModel.onMoveDown = function(data, event) {
+		this.onMoveItem(data, event, 1);
+	}
+	viewModel.onKeyDownMoveItem = function(data, event, steps) {
+		if ([" ", "Enter"].includes(event.key)) {
+			this.onMoveItem(data, event, steps);
+		} else {
+			return true; // allow default action
+		}
+	}
+	viewModel.onKeyDownMoveItemUp = function(data, event) {
+		return viewModel.onKeyDownMoveItem(data, event, -1);
+	}
+	viewModel.onKeyDownMoveItemDown = function(data, event, steps) {
+		return viewModel.onKeyDownMoveItem(data, event, 1);
+	}
+
 	return viewModel;
 }
 
@@ -793,6 +1006,17 @@ function newNumberViewModel(element)
 	viewModel.initialSliderPosition = ko.observable(element.initialSliderPosition != null ? element.initialSliderPosition : "Left");
 	viewModel.displayGraduationScale = ko.observable(element.displayGraduationScale);
 	
+	viewModel.maxDistance = ko.observable(element.maxDistance);
+
+	viewModel.isAnswered = ko.observable(false);
+	viewModel.isAnswered.subscribe(function () {
+		const input = $("#answer" + viewModel.id());
+		propagateChange($(input));
+	});
+	viewModel.markAsAnswered = function () {
+		this.isAnswered(true);
+	};
+	
 	if (viewModel.display() == 'Slider')
 	{
 		if (viewModel.min() == null)
@@ -832,6 +1056,10 @@ function newNumberViewModel(element)
 		return 10 ** (-1 * decimals);
 	}
 	
+	viewModel.getBootstrapSlider = function(inputelement) {
+		return $(inputelement).bootstrapSlider();
+	}
+
 	viewModel.increase = function(element)
 	{
 		var min = parseFloat(this.min());
@@ -839,8 +1067,10 @@ function newNumberViewModel(element)
 		var input = $("#answer" + element.id());
 		var value = parseFloat($(input).bootstrapSlider().bootstrapSlider('getValue'));
 		if (value < max) {
-			$(input).bootstrapSlider().bootstrapSlider('setValue', value + this.step());
+			$(input).bootstrapSlider().bootstrapSlider('setValue', value + this.step(), true);
 		}
+		
+		propagateChange($(input));
 	}
 	
 	viewModel.decrease = function(element)
@@ -850,15 +1080,19 @@ function newNumberViewModel(element)
 		var input = $("#answer" + element.id());
 		var value = parseFloat($(input).bootstrapSlider().bootstrapSlider('getValue'));
 		if (value > min) {
-			$(input).bootstrapSlider().bootstrapSlider('setValue', value - this.step());
+			$(input).bootstrapSlider().bootstrapSlider('setValue', value - this.step(), true);
 		}
+		
+		propagateChange($(input));
 	}
 	
 	viewModel.initialValue = function() {
+		
 		var ovalue = getValueByQuestion(this.uniqueId());
 		if (ovalue.length > 0) {
+			this.isAnswered(true);
 			return ovalue;
-		}		
+		}
 		
 		if (this.initialSliderPosition() === "Middle")
 		{

@@ -33,7 +33,9 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	}
 
 	private boolean useRadioButtons;
+	private Boolean useLikert;
 	private int numColumns = 1;
+	private Integer maxDistance = -1;
 
 	@Column(name = "RADIO")
 	public boolean getUseRadioButtons() {
@@ -42,6 +44,15 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 
 	public void setUseRadioButtons(boolean useRadioButtons) {
 		this.useRadioButtons = useRadioButtons;
+	}
+	
+	@Column(name = "LIKERT")
+	public Boolean getUseLikert() {
+		return useLikert != null && useLikert && getIsDelphiQuestion();
+	}
+	
+	public void setUseLikert(Boolean useLikert) {
+		this.useLikert = useLikert != null ? useLikert : false;
 	}
 
 	@Column(name = "NUMCOLUMNS")
@@ -52,19 +63,30 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 	public void setNumColumns(int numColumns) {
 		this.numColumns = numColumns;
 	}
+	
+	@Column(name = "MAXDISTANCE")
+	public Integer getMaxDistance() {
+		return maxDistance;
+	}
+
+	public void setMaxDistance(Integer maxDistance) {
+		this.maxDistance = maxDistance != null ? maxDistance : -1;
+	}
 
 	public SingleChoiceQuestion copy(String fileDir) throws ValidationException {
 		SingleChoiceQuestion copy = new SingleChoiceQuestion();
 		baseCopy(copy);
 		copy.numColumns = numColumns;
 		copy.useRadioButtons = useRadioButtons;
+		copy.useLikert = useLikert;
 		copy.setOrder(getOrder());
-
+		copy.maxDistance = maxDistance;
+		
 		for (PossibleAnswer possibleAnswer : getPossibleAnswers()) {
 			PossibleAnswer answerCopy = possibleAnswer.copy(fileDir);
 			copy.getPossibleAnswers().add(answerCopy);
 		}
-
+		
 		return copy;
 	}
 
@@ -80,9 +102,14 @@ public class SingleChoiceQuestion extends ChoiceQuestion {
 
 		if (useRadioButtons != single.useRadioButtons)
 			return true;
+		if (useLikert != single.useLikert)
+			return true;
 		if (numColumns != single.numColumns)
 			return true;
 		if (getPossibleAnswers().size() != single.getPossibleAnswers().size())
+			return true;
+		
+		if (maxDistance != single.maxDistance)
 			return true;
 
 		if (!Objects.equals(getOrder(), single.getOrder()))

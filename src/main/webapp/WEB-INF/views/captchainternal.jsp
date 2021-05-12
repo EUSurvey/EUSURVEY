@@ -111,7 +111,7 @@
 	  			<script type="text/javascript">
 					$(function() {	
 						$("#runner-captcha-error").show();
-						showError('${form.getMessage("error.captcha")}');
+						showError('<spring:message code="error.captcha" />');
 		  			});
 	  			</script>	  		
 	  		</c:if>

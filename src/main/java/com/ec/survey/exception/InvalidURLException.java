@@ -9,4 +9,11 @@ public class InvalidURLException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
+	public InvalidURLException() {
+		super();
+	}
+	public InvalidURLException(Throwable cause) {
+        super(cause);
+    }
+
 }

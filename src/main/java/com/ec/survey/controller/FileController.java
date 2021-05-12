@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ec.survey.tools.FileChecker;
 import net.sf.jmimemagic.Magic;
 
 import org.apache.catalina.connector.ClientAbortException;
@@ -161,8 +162,10 @@ public class FileController extends BasicController {
 				if (f.exists()) {
 					// check if it is an uploaded file
 					Survey survey = surveyService.getSurveyForUploadedFile(file.getId());
-					if (survey != null && !(survey.getPublication().isShowContent()
-							&& survey.getPublication().getShowUploadedDocuments())) {
+					if (survey != null
+							&& !FileChecker.isDelphiExplanationFile(file, survey)
+							&& !(survey.getPublication().isShowContent()
+								&& survey.getPublication().getShowUploadedDocuments())) {
 						User user = sessionService.getCurrentUser(request);
 						if (user == null)
 							throw new ForbiddenURLException();

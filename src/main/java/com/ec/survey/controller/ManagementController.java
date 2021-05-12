@@ -1,5 +1,10 @@
 package com.ec.survey.controller;
 
+import com.ec.survey.exception.BadRequestException;
+import com.ec.survey.exception.InternalServerErrorException;
+import com.ec.survey.exception.ECFException;
+import com.ec.survey.exception.httpexception.NotFoundException;
+import com.ec.survey.exception.ForbiddenException;
 import com.ec.survey.exception.ForbiddenURLException;
 import com.ec.survey.exception.FrozenSurveyException;
 import com.ec.survey.exception.InvalidURLException;
@@ -11,6 +16,7 @@ import com.ec.survey.model.administration.GlobalPrivilege;
 import com.ec.survey.model.administration.LocalPrivilege;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
+import com.ec.survey.model.delphi.DelphiMedian;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.SurveyException;
@@ -20,6 +26,7 @@ import com.ec.survey.tools.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -52,6 +59,13 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import com.ec.survey.model.survey.ecf.ECFIndividualResult;
+import com.ec.survey.model.survey.ecf.ECFProfileResult;
+import com.ec.survey.model.survey.ecf.ECFGlobalResult;
+import com.ec.survey.model.survey.ecf.ECFOrganizationalResult;
+import com.ec.survey.model.survey.ecf.ECFSummaryResult;
 
 @Controller
 @RequestMapping("/{shortname}/management")
@@ -63,6 +77,7 @@ public class ManagementController extends BasicController {
 	public @Value("${opc.users}") String opcusers;
 	public @Value("${opc.department:@null}") String opcdepartments;
 	public @Value("${opc.template}") String opctemplatesurvey;
+	public @Value("${ecf.template}") String ecfTemplateSurvey;
 
 	@InitBinder
 	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) {
@@ -240,7 +255,6 @@ public class ManagementController extends BasicController {
 		}
 
 		ModelAndView overviewPage = new ModelAndView("management/overview", "form", form);
-		overviewPage.addObject("serverprefix", serverPrefix);
 		overviewPage.addObject("isPublished", form.getSurvey().getIsPublished());
 
 		List<Element> newElements = new ArrayList<>();
@@ -495,6 +509,10 @@ public class ManagementController extends BasicController {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
 
+		if (form.getSurvey().getIsFrozen()) {
+			throw new FrozenSurveyException();
+		}
+
 		User u = sessionService.getCurrentUser(request);
 		if (!u.getId().equals(form.getSurvey().getOwner().getId())
 				&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
@@ -529,6 +547,10 @@ public class ManagementController extends BasicController {
 	public ModelAndView publish(String shortname, HttpServletRequest request, Locale locale) throws Exception {
 		Form form;
 		form = sessionService.getForm(request, shortname, false, false);
+
+		if (form.getSurvey().getIsFrozen()) {
+			throw new FrozenSurveyException();
+		}
 
 		if (!form.getSurvey().getIsActive()) {
 			User u = sessionService.getCurrentUser(request);
@@ -919,7 +941,11 @@ public class ManagementController extends BasicController {
 							&& request.getParameter("quiz").equalsIgnoreCase("true"));
 					copy.setIsOPC(request.getParameter("opc") != null
 							&& request.getParameter("opc").equalsIgnoreCase("true"));
-					copy.setSaveAsDraft(!copy.getIsQuiz());
+					copy.setIsDelphi(request.getParameter("delphi") != null
+							&& request.getParameter("delphi").equalsIgnoreCase("true"));
+					copy.setIsECF(request.getParameter("ecf") != null
+							&& request.getParameter("ecf").equalsIgnoreCase("true"));
+					copy.setSaveAsDraft(!copy.getIsQuiz() && !copy.getIsDelphi());
 
 					surveyService.update(copy, false, true, true, u.getId());
 
@@ -953,6 +979,58 @@ public class ManagementController extends BasicController {
 			return updateSurvey(new Form(resources), request, true, locale);
 		}
 	}
+
+	/** checks if the type of the given surves is only one of the possibilites (normal, quiz, opc, delphi)
+	*/
+	private boolean checkConclusiveSurveyType(Survey survey) {
+		boolean isQuiz = survey.getIsQuiz();
+		boolean isOPC = survey.getIsOPC();
+		boolean isDelphi = survey.getIsDelphi();
+		boolean isNormal = !(isQuiz || isOPC || isDelphi);
+		if ( isNormal && !isQuiz && !isOPC && !isDelphi) return true;
+		if (!isNormal &&  isQuiz && !isOPC && !isDelphi) return true;
+		if (!isNormal && !isQuiz &&  isOPC && !isDelphi) return true;
+		if (!isNormal && !isQuiz && !isOPC &&  isDelphi) return true;
+		return false;
+	}
+
+	/** when a particular Survey type has some conditions on properties, they are set here
+	 * @throws ValidationException 
+	*/
+	private void ensurePropertiesDependingOnSurveyType(Survey survey, boolean creation) throws ValidationException {
+		if (survey.getIsDelphi()) {
+			survey.setChangeContribution(true); // should always be activated for delphi surveys
+			survey.setSaveAsDraft(false); // should always be deactivated for delphi surveys
+			survey.setDownloadContribution(false); // should always be deactivated for delphi surveys
+		}
+		
+		if (survey.getIsOPC()) {
+			survey.setSecurity("secured");
+			survey.setEcasSecurity(true);
+			survey.setEcasMode("all");
+			survey.setCaptcha(false);
+			if (survey.getSkin() == null || !survey.getSkin().getName().equalsIgnoreCase("New Official EC Skin")) {
+				Skin ecSkin = skinService.getSkin("New Official EC Skin");
+				survey.setSkin(ecSkin);
+			}
+
+			if (creation) {
+				survey.setWcagCompliance(true);
+				survey.setShowPDFOnUnavailabilityPage(true);
+				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0) {
+					Survey template = surveyService.getSurveyByUniqueId(opctemplatesurvey, false, true);
+					template.copyElements(survey, surveyService, true);
+
+					// recreate unique ids
+					for (Element elem : survey.getElementsRecursive(true)) {
+						String newUniqueId = UUID.randomUUID().toString();
+						elem.setUniqueId(newUniqueId);
+					}
+				}
+			}		
+		}		
+	}
+
 
 	private ModelAndView updateSurvey(Form form, HttpServletRequest request, boolean creation, Locale locale)
 			throws Exception {
@@ -989,11 +1067,20 @@ public class ManagementController extends BasicController {
 					request.getParameter("quiz") != null && request.getParameter("quiz").equalsIgnoreCase("true"));
 			uploadedSurvey.setIsOPC(
 					request.getParameter("opc") != null && request.getParameter("opc").equalsIgnoreCase("true"));
+			uploadedSurvey.setIsDelphi(request.getParameter("delphi") != null
+					&& request.getParameter("delphi").equalsIgnoreCase("true"));
+			uploadedSurvey.setIsECF(
+					request.getParameter("ecf") != null && request.getParameter("ecf").equalsIgnoreCase("true"));
 			uploadedSurvey.setSaveAsDraft(!uploadedSurvey.getIsQuiz());
 
 			if (uploadedSurvey.getTitle() != null
 					&& !XHTMLValidator.validate(uploadedSurvey.getTitle(), servletContext, null)) {
 				throw new InvalidXHTMLException(uploadedSurvey.getTitle(), uploadedSurvey.getTitle());
+			}
+
+			// check for mutual exclusion of types quiz, opc, delphi (or normal)
+			if (!checkConclusiveSurveyType(uploadedSurvey)) {
+				throw new MessageException("multiple selected survey types at once");
 			}
 
 			// check if shortname already exists
@@ -1235,6 +1322,10 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getIsQuiz(), uploadedSurvey.getIsQuiz()))
 			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getIsOPC(), uploadedSurvey.getIsOPC()))
+			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getIsDelphi(), uploadedSurvey.getIsDelphi()))
+			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowTotalScore(), uploadedSurvey.getShowTotalScore()))
 			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getShowQuizIcons(), uploadedSurvey.getShowQuizIcons()))
@@ -1280,25 +1371,21 @@ public class ManagementController extends BasicController {
 		survey.setContactLabel(Tools.escapeHTML(uploadedSurvey.getContactLabel()));
 		survey.setIsQuiz(uploadedSurvey.getIsQuiz());
 		survey.setIsOPC(uploadedSurvey.getIsOPC());
+		survey.setIsDelphi(uploadedSurvey.getIsDelphi());
+		survey.setIsECF(uploadedSurvey.getIsECF());
 		survey.setSaveAsDraft(uploadedSurvey.getSaveAsDraft());
 		survey.setShowQuizIcons(uploadedSurvey.getShowQuizIcons());
 		survey.setShowTotalScore(uploadedSurvey.getShowTotalScore());
 		survey.setScoresByQuestion(uploadedSurvey.getScoresByQuestion());
 
-		if (survey.getIsOPC()) {
-			survey.setSecurity("secured");
-			survey.setEcasSecurity(true);
-			survey.setEcasMode("all");
-			survey.setCaptcha(false);
-			if (survey.getSkin() == null || !survey.getSkin().getName().equalsIgnoreCase("New Official EC Skin")) {
-				Skin ecSkin = skinService.getSkin("New Official EC Skin");
-				survey.setSkin(ecSkin);
-			}
-
+		survey.setIsDelphiShowAnswersAndStatisticsInstantly(uploadedSurvey.getIsDelphiShowAnswersAndStatisticsInstantly());
+		survey.setIsDelphiShowAnswers(uploadedSurvey.getIsDelphiShowAnswers());
+		survey.setMinNumberDelphiStatistics(uploadedSurvey.getMinNumberDelphiStatistics());
+		if (survey.getIsECF()) {
 			if (creation) {
 				survey.setWcagCompliance(true);
-				if (opctemplatesurvey != null && opctemplatesurvey.length() > 0) {
-					Survey template = surveyService.getSurveyByUniqueId(opctemplatesurvey, false, true);
+				if (ecfTemplateSurvey != null && ecfTemplateSurvey.length() > 0) {
+					Survey template = surveyService.getSurveyByAlias(ecfTemplateSurvey, true);
 					template.copyElements(survey, surveyService, true);
 
 					// recreate unique ids
@@ -1306,10 +1393,13 @@ public class ManagementController extends BasicController {
 						String newUniqueId = UUID.randomUUID().toString();
 						elem.setUniqueId(newUniqueId);
 					}
+
+					// recreate the ecf elements
+					survey = this.ecfService.copySurveyECFElements(survey);
 				}
 			}
 		}
-
+		
 		if (!creation) {
 			if (!uploadedSurvey.getSecurity().equals(survey.getSecurity())) {
 				if (survey.getSecurity().startsWith("open") && !uploadedSurvey.getSecurity().startsWith("open")) {
@@ -1338,8 +1428,10 @@ public class ManagementController extends BasicController {
 			}
 		}
 
-		if (!survey.getIsOPC())
+		if (!survey.getIsOPC()) {
 			survey.setSecurity(uploadedSurvey.getSecurity());
+		}
+		
 		survey.setMultiPaging(uploadedSurvey.getMultiPaging());
 
 		survey.setConfirmationPageLink(uploadedSurvey.getConfirmationPageLink());
@@ -1357,12 +1449,8 @@ public class ManagementController extends BasicController {
 		User u = sessionService.getCurrentUser(request);
 
 		if (creation) {
-			if (survey.getIsOPC()) {
-				survey.setShowPDFOnUnavailabilityPage(true);
-			}
-
 			survey.setOwner(u);
-			survey.setDownloadContribution(true);
+			survey.setDownloadContribution(!survey.getIsDelphi());
 		}
 
 		if (!creation) {
@@ -1839,8 +1927,11 @@ public class ManagementController extends BasicController {
 				String[] oldnew = { oldContributions.toString(), newContributions.toString() };
 				activitiesToLog.put(306, oldnew);
 			}
+		
 		}
 
+		ensurePropertiesDependingOnSurveyType(survey, creation);
+		
 		form.setSurvey(survey);
 		form.setLanguage(survey.getLanguage());
 
@@ -2395,7 +2486,7 @@ public class ManagementController extends BasicController {
 				form.setWcagCompliance(
 						draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 
-				SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), form.getSurvey(), fileService);
+				SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), form.getSurvey(), fileService, answerExplanationService);
 				uniqueCode = draft.getAnswerSet().getUniqueCode();
 
 				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
@@ -2422,6 +2513,9 @@ public class ManagementController extends BasicController {
 			if (survey.getIsQuiz() && request.getParameter("startQuiz") == null) {
 				result = new ModelAndView("management/testQuiz", "form", form);
 				result.addObject("isquizpage", true);
+			} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+				result = new ModelAndView("management/testDelphi", "form", form);
+				result.addObject("isdelphipage", true);
 			}
 		}
 
@@ -2440,18 +2534,20 @@ public class ManagementController extends BasicController {
 		User user = sessionService.getCurrentUser(request);
 
 		String uniqueCode = request.getParameter(Constants.UNIQUECODE);
-
-		ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
-		if (err != null)
-			return err;
-
+		
 		String lang = locale.getLanguage();
 		if (request.getParameter("language.code") != null && request.getParameter("language.code").length() == 2) {
 			lang = request.getParameter("language.code");
 		}
-
-		AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
-
+		
+		if (!survey.getIsDelphi()) {
+			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
+			if (err != null)
+				return err;
+		}
+		
+		AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);
+	
 		String newlang = request.getParameter("newlang");
 		String newlangpost = request.getParameter("newlangpost");
 		String newcss = request.getParameter("newcss");
@@ -2508,8 +2604,7 @@ public class ManagementController extends BasicController {
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 			f.setValidation(validation);
 
-			// recreate uploaded files
-			SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService);
+			SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			model.addObject("submit", true);
@@ -2611,7 +2706,7 @@ public class ManagementController extends BasicController {
 		return new ModelAndView(
 				"redirect:/" + survey.getShortname() + "/management/results?message=recalculatestarted");
 	}
-
+	
 	@RequestMapping(value = "/results")
 	public ModelAndView results(@PathVariable String shortname, HttpServletRequest request, Locale locale)
 			throws Exception {
@@ -2742,7 +2837,11 @@ public class ManagementController extends BasicController {
 		}
 
 		boolean filtered = false;
-
+		final String SELECTEDEXPLANATION = "selectedexplanation"; 
+		final String EXPORTSELECTEDEXPLANATION = "exportselectedexplanation";
+		final String SELECTEDDISCUSSION = "selecteddiscussion"; 
+		final String EXPORTSELECTEDDISCUSSION = "exportselecteddiscussion";
+		
 		if (!ignorePostParameters) {
 			if (request != null && request.getMethod().equalsIgnoreCase("POST")) {
 				filter.clearSelectedQuestions();
@@ -2752,30 +2851,31 @@ public class ManagementController extends BasicController {
 				String v = entry.getValue()[0];
 
 				if (v != null && v.trim().length() > 0) {
-					if (entry.getKey().equalsIgnoreCase("metafilterinvitation")) {
+					final String key = entry.getKey();
+					if (key.equalsIgnoreCase("metafilterinvitation")) {
 						filter.setInvitation(parameters.get("metafilterinvitation")[0].trim());
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafiltercase")) {
+					} else if (key.equalsIgnoreCase("metafiltercase")) {
 						filter.setCaseId(parameters.get("metafiltercase")[0].trim());
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilteruser")) {
+					} else if (key.equalsIgnoreCase("metafilteruser")) {
 						filter.setUser(parameters.get("metafilteruser")[0].trim());
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterdatefrom")) {
+					} else if (key.equalsIgnoreCase("metafilterdatefrom")) {
 						filter.setGeneratedFrom(
 								ConversionTools.getDate(parameters.get("metafilterdatefrom")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterdateto")) {
+					} else if (key.equalsIgnoreCase("metafilterdateto")) {
 						filter.setGeneratedTo(ConversionTools.getDate(parameters.get("metafilterdateto")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterupdatefrom")) {
+					} else if (key.equalsIgnoreCase("metafilterupdatefrom")) {
 						filter.setUpdatedFrom(
 								ConversionTools.getDate(parameters.get("metafilterupdatefrom")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterupdateto")) {
+					} else if (key.equalsIgnoreCase("metafilterupdateto")) {
 						filter.setUpdatedTo(ConversionTools.getDate(parameters.get("metafilterupdateto")[0].trim()));
 						filtered = true;
-					} else if (entry.getKey().equalsIgnoreCase("metafilterlanguage")) {
+					} else if (key.equalsIgnoreCase("metafilterlanguage")) {
 						Set<String> languages = new HashSet<>();
 						String[] langs = request.getParameterValues("metafilterlanguage");
 						if (langs != null && langs.length > 0) {
@@ -2783,17 +2883,25 @@ public class ManagementController extends BasicController {
 						}
 						filter.setLanguages(languages);
 						filtered = true;
-					} else if (entry.getKey().startsWith(Constants.FILTER)) {
-						String questionId = entry.getKey().substring(6);
+					} else if (key.startsWith(Constants.FILTER)) {
+						String questionId = key.substring(6);
 						String[] values = entry.getValue();
 						String value = StringUtils.arrayToDelimitedString(values, ";");
 						filter.getFilterValues().put(questionId, value);
 						filtered = true;
-					} else if (entry.getKey().startsWith("selected")) {
-						filter.getVisibleQuestions().add(entry.getKey().substring(8));
-					} else if (entry.getKey().startsWith("exportselected")) {
-						filter.addExportedQuestion(entry.getKey().substring(14));
-					} else if (entry.getKey().equalsIgnoreCase("sort")) {
+					} else if (key.startsWith(SELECTEDEXPLANATION)) {
+						filter.getVisibleExplanations().add(key.substring(SELECTEDEXPLANATION.length()));
+					} else if (key.startsWith(EXPORTSELECTEDEXPLANATION)) {
+						filter.getExportedExplanations().add(key.substring(EXPORTSELECTEDEXPLANATION.length()));
+					} else if (key.startsWith(SELECTEDDISCUSSION)) {
+						filter.getVisibleDiscussions().add(key.substring(SELECTEDDISCUSSION.length()));
+					} else if (key.startsWith(EXPORTSELECTEDDISCUSSION)) {
+						filter.getExportedDiscussions().add(key.substring(EXPORTSELECTEDDISCUSSION.length()));		
+					} else if (key.startsWith("selected")) {
+						filter.getVisibleQuestions().add(key.substring(8));
+					} else if (key.startsWith("exportselected")) {
+						filter.addExportedQuestion(key.substring(14));
+					} else if (key.equalsIgnoreCase("sort")) {
 						String sorting = entry.getValue()[0].trim();
 						if (sorting.equalsIgnoreCase("scoreDesc")) {
 							filter.setSortKey("score");
@@ -2955,7 +3063,29 @@ public class ManagementController extends BasicController {
 		if (forPDF) {
 			Statistics statistics = answerService.getStatisticsOrStartCreator(survey, filter, false, active && allanswers, false);
 			result.addObject("statistics", statistics);
-			filter.setVisibleQuestions(filter.getExportedQuestions());
+			Set<String> newids = new HashSet<>();
+			newids.addAll(filter.getExportedQuestions());
+			filter.setVisibleQuestions(newids);
+		}
+		
+		if (survey.getIsECF()) {
+			// Set<String> newids = new HashSet<>();
+			// newids.addAll(filter.getExportedQuestions());
+			// filter.setVisibleQuestions(newids);
+			SqlPagination sqlPagination = new SqlPagination(1, 10);
+			Set<ECFProfile> ecfProfiles = this.ecfService.getECFProfiles(survey);
+			result.addObject("ecfProfiles", ecfProfiles.stream().sorted().collect(Collectors.toList()));
+			
+			ECFGlobalResult ecfGlobalResult = this.ecfService.getECFGlobalResult(survey, sqlPagination);
+			ECFSummaryResult ecfSummaryResult = this.ecfService.getECFSummaryResult(survey);
+			ECFProfileResult ecfProfileResult = this.ecfService.getECFProfileResult(survey);
+			ECFOrganizationalResult ecfOrganizationalResult = this.ecfService.getECFOrganizationalResult(survey);
+			result.addObject("ecfGlobalResult", ecfGlobalResult);
+			result.addObject("ecfProfileResult", ecfProfileResult);
+			result.addObject("ecfOrganizationalResult", ecfOrganizationalResult);
+			result.addObject("ecfSummaryResult", ecfSummaryResult);
+			
+			result.addObject("surveyShortname", shortname);
 		}
 
 		result.addObject(Constants.FILTER, filter);
@@ -2981,7 +3111,11 @@ public class ManagementController extends BasicController {
 
 		// this is for security (prevent xss attack)
 		if (!resultType.equalsIgnoreCase("content") && !resultType.equalsIgnoreCase("charts")
-				&& !resultType.equalsIgnoreCase("statistics")) {
+				&& !resultType.equalsIgnoreCase("statistics") 
+				&& !resultType.equalsIgnoreCase("ecf")
+				&& !resultType.equalsIgnoreCase("ecf2")
+				&& !resultType.equalsIgnoreCase("ecf3")
+				) {
 			resultType = "content";
 		}
 
@@ -3012,7 +3146,7 @@ public class ManagementController extends BasicController {
 				logger.warn(e.getLocalizedMessage(), e);
 			}
 		}
-
+		result.addObject("contextpath", contextpath);
 		return result;
 	}
 
@@ -3089,9 +3223,11 @@ public class ManagementController extends BasicController {
 			boolean addlinks = isOwner || user == null || user.getFormPrivilege() > 1
 					|| user.getLocalPrivilegeValue("AccessResults") > 1
 					|| (form.getSurvey().getIsDraft() && user.getLocalPrivilegeValue("AccessDraft") > 0);
-			filter = answerService.initialize(filter);
+			filter = answerService.initialize(filter);			
+			
 			List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, sqlPagination, addlinks,
 					false, showuploadedfiles, false, false, true);
+			 
 			if (answersets != null) {
 				Date updateDate = reportingService.getLastUpdate(survey);
 				result.add(updateDate == null ? "" : ConversionTools.getFullString(updateDate));
@@ -3100,8 +3236,10 @@ public class ManagementController extends BasicController {
 				}
 				return result;
 			}
+			
+			Map<String, String> usersByUid = answerExplanationService.getUserAliases(survey.getUniqueId());
 
-			answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, false, active && !allanswers);
+			answerSets = answerService.getAnswers(survey, filter, sqlPagination, false, true, active && !allanswers);
 
 			boolean surveyExists = survey != null;
 
@@ -3134,7 +3272,7 @@ public class ManagementController extends BasicController {
 				result.add(answerSet.getUniqueCode());
 				result.add(answerSet.getId().toString());
 
-				for (Element question : survey.getQuestions()) {
+				for (Question question : survey.getQuestions()) {
 					if (visibleQuestions.contains(question) || survey.getMissingElements().contains(question)) {
 						if (question instanceof Matrix) {
 							for (Element matrixQuestion : ((Matrix) question).getQuestions()) {
@@ -3217,7 +3355,7 @@ public class ManagementController extends BasicController {
 									s.append("<br />");
 								}
 
-								if (question instanceof ChoiceQuestion) {
+								if (question instanceof ChoiceQuestion || question instanceof RankingQuestion) {
 									s.append(form.getAnswerTitle(answer));
 								} else {
 									s.append(ConversionTools.escape(form.getAnswerTitle(answer)));
@@ -3227,6 +3365,28 @@ public class ManagementController extends BasicController {
 										.append("</span>");
 							}
 							result.add(s.toString());
+						}
+						
+						if (survey.getIsDelphi() && question.getIsDelphiQuestion()) {
+
+							if (filter.getVisibleExplanations().contains(question.getId().toString())) {
+								try {
+									final String explanation = answerExplanationService.getFormattedExplanationWithFiles(
+											answerSet.getId(), question.getUniqueId(), survey.getUniqueId(), true);
+									result.add(explanation);
+								} catch (NoSuchElementException ex) {
+									result.add("");
+								}
+							}
+							
+							if (filter.getVisibleDiscussions().contains(question.getId().toString())) {
+								try {
+									String discussion = answerExplanationService.getDiscussion(answerSet.getId(), question.getUniqueId(), true, usersByUid);
+									result.add(discussion);
+								} catch (NoSuchElementException ex) {
+									result.add("");
+								}
+							}
 						}
 					}
 				}
@@ -3261,6 +3421,117 @@ public class ManagementController extends BasicController {
 		}
 
 		return null;
+	}
+
+	@RequestMapping(value = "/ecfGlobalResultsJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody ECFGlobalResult ecfGlobalResultsJSON(@PathVariable String shortname, HttpServletRequest request) 
+			throws NotFoundException, BadRequestException, InternalServerErrorException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenException {
+		// PARAMS
+		String pageNumberOrNull = request.getParameter("pageNumber");
+		String pageSizeOrNull = request.getParameter("pageSize");
+		String profileComparisonOrNull = request.getParameter("profileComparison");
+		String profileFilterOrNull = request.getParameter("profileFilter");
+		String orderByOrNull = request.getParameter("orderBy");
+		if (pageNumberOrNull == null || pageSizeOrNull == null) {
+			throw new BadRequestException();
+		}
+		
+		Integer pageNumber = Integer.valueOf(pageNumberOrNull);
+		Integer pageSize = Integer.valueOf(pageSizeOrNull);
+		
+
+		SqlPagination sqlPagination = new SqlPagination(pageNumber, pageSize);
+		
+		ResultFilter filter = sessionService.getLastResultFilter(request);
+		Survey survey = (filter != null) 
+				? surveyService.getSurvey(filter.getSurveyId(), true) 
+				: surveyService.getSurvey(shortname, false, true, false, false, null, true, false);
+				
+		this.sessionService.userIsResultReadAuthorized(survey, request);
+		User user = this.sessionService.getCurrentUser(request);
+
+		// ACTUAL CODE
+		try {
+			filter.setAnsweredECFProfileUID(profileFilterOrNull);
+			filter.setCompareToECFProfileUID(profileComparisonOrNull);
+			
+			if (orderByOrNull != null) {
+				ResultFilter.ResultFilterOrderBy resultFilterOrderBy = ResultFilter.ResultFilterOrderBy.parse(orderByOrNull);
+				String ascOrDesc = resultFilterOrderBy.toAscOrDesc();
+				String key = resultFilterOrderBy.toResultFilterSortKey().value();
+				filter.setSortOrder(ascOrDesc);
+				filter.setSortKey(key);
+			}
+			
+			
+			this.sessionService.setLastResultFilter(request, filter, user.getId(), survey.getId());
+			return this.ecfService.getECFGlobalResult(survey, sqlPagination, filter);
+		} catch (NotFoundException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new InternalServerErrorException(e);
+		}
+	}
+	
+	@RequestMapping(value = "/ecfProfileAssessmentResultsJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody ECFProfileResult ecfProfileAssessmentResultsJSON(@PathVariable String shortname, HttpServletRequest request) 
+			throws NotFoundException, BadRequestException, InternalServerErrorException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenException {
+		String profileOrNull = request.getParameter("profile");
+
+		// AUTHORISATION
+		// TODO: bypass if publication of these results?
+		ResultFilter filter = sessionService.getLastResultFilter(request);
+		Survey survey = (filter != null) 
+				? surveyService.getSurvey(filter.getSurveyId(), true) 
+				: surveyService.getSurvey(shortname, false, true, false, false, null, true, false);
+				
+		filter.setCompareToECFProfileUID(profileOrNull);
+		this.sessionService.userIsResultReadAuthorized(survey, request);
+		
+		try {
+			this.sessionService.setLastResultFilter(request, filter, sessionService.getCurrentUser(request).getId(), survey.getId());
+			return this.ecfService.getECFProfileResult(survey, filter);
+		} catch (NotFoundException e) {
+			throw e;
+		} catch (Exception e1) {
+			throw new InternalServerErrorException(e1);
+		}
+	}
+	
+	@RequestMapping(value = "/ecfOrganizationalResultsJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody ECFOrganizationalResult ecfOrganizationalResultsJSON(@PathVariable String shortname, HttpServletRequest request) 
+			throws NotFoundException, BadRequestException, InternalServerErrorException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenException {
+		ResultFilter filter = sessionService.getLastResultFilter(request);
+		Survey survey = (filter != null) 
+				? surveyService.getSurvey(filter.getSurveyId(), true) 
+				: surveyService.getSurvey(shortname, false, true, false, false, null, true, false);
+		this.sessionService.userIsResultReadAuthorized(survey, request);
+		
+		try {
+			return this.ecfService.getECFOrganizationalResult(survey);
+		} catch (Exception e) {
+			throw new InternalServerErrorException(e);
+		}
+	}
+
+	@RequestMapping(value = "/ecfResultJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody ECFIndividualResult ecfResultJSON(@PathVariable String shortname, HttpServletRequest request)
+	throws NotFoundException, InternalServerErrorException {
+		String answerSetIdOrNull = request.getParameter("answerSetId");
+		if (answerSetIdOrNull == null) {
+			throw new NotFoundException();
+		}
+		AnswerSet answerSet = answerService.get(answerSetIdOrNull);
+
+		ECFIndividualResult ecfResult;
+		try {
+			Survey survey = surveyService.getSurvey(shortname, false, true, false, false, null, true, false);
+			ecfResult = this.ecfService.getECFIndividualResult(survey, answerSet);
+		} catch (ECFException e) {
+			throw new InternalServerErrorException(e);
+		}
+
+		return ecfResult;
 	}
 
 	@RequestMapping(value = "/statisticsJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
@@ -3353,6 +3624,90 @@ public class ManagementController extends BasicController {
 
 		return null;
 	}
+	
+	@RequestMapping(value = "/statisticsDelphiJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody Map<String, String> statisticsDelphiJSON(@PathVariable String shortname, HttpServletRequest request) {
+		
+		try {
+			ResultFilter filter = sessionService.getLastResultFilter(request);
+			if (filter == null || filter.getSurveyId() == 0) {
+				return Collections.emptyMap();
+			}
+
+			Survey survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
+			if (survey != null) {
+				return answerService.getCompletionRates(survey, filter);
+			}
+			
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+		
+		return Collections.emptyMap();
+	}
+	
+	@RequestMapping(value = "/statisticsDelphiMedianJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
+	public @ResponseBody Map<String, String> statisticsDelphiMedianJSON(@PathVariable String shortname, HttpServletRequest request) {
+	
+		try {
+			ResultFilter filter = sessionService.getLastResultFilter(request);
+			if (filter == null || filter.getSurveyId() == 0) {
+				return Collections.emptyMap();
+			}
+
+			Survey survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
+			if (survey == null) {
+			   return Collections.emptyMap();
+			}
+
+			Map<String, String> result = new HashMap<>();
+			
+			for (Element element : survey.getElements()) {
+				if (element instanceof SingleChoiceQuestion) {
+					SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion)element;
+					
+					if (!singleChoiceQuestion.getUseLikert() || singleChoiceQuestion.getMaxDistance() <= -1) {
+					   continue;
+					}
+
+					DelphiMedian median = answerService.getMedian(survey, singleChoiceQuestion, null, filter);
+					if (median == null) {
+						continue;
+					}
+					List<String> values = new ArrayList<>();
+					for (String uid : median.getMedianUids()) {
+						PossibleAnswer pa = singleChoiceQuestion.getPossibleAnswerByUniqueId(uid);
+						if (pa != null) {
+							values.add(pa.getTitle());
+						}
+					}
+					if (!values.isEmpty()) {
+						result.put(element.getUniqueId(), String.join(", ", values));
+					}
+				}
+				
+				if (element instanceof NumberQuestion) {
+					NumberQuestion numberQuestion = (NumberQuestion)element;
+					
+					if (!numberQuestion.isSlider() || numberQuestion.getMaxDistance() <= -1) {
+					   continue;
+					}
+					
+					DelphiMedian median = answerService.getMedian(survey, numberQuestion, null, filter);
+					if (median == null) {
+						continue;
+					}
+					result.put(element.getUniqueId(), Double.toString(median.getMedian()));
+				}
+			}
+			
+			return result;
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+		
+		return Collections.emptyMap();
+	}
 
 	@RequestMapping(value = "/preparecharts/{id}/{exportId}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparecharts(@PathVariable String id, @PathVariable String exportId, Locale locale) {
@@ -3392,6 +3747,33 @@ public class ManagementController extends BasicController {
 
 		return null;
 	}
+	/**
+	 * Used to prepare a web page for PDF creation of the ECF Global Results
+	 */
+	@RequestMapping(value = "/prepareECFGlobalResults/{id}/{exportId}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView prepareECFGlobalResults(@PathVariable String id, @PathVariable String exportId, Locale locale, HttpServletRequest request) throws Exception {
+		Export export = exportService.getExport(Integer.parseInt(exportId), false);
+		if (export == null) {
+			logger.error("export is null");
+			return null;
+		}
+		
+		if (export.getState() != ExportState.Pending) {
+			logger.error("export state is " + export.getState());
+			return null;
+		}
+		
+		if (!export.getSurvey().getId().equals(Integer.parseInt(id))) {
+			logger.error("mismatch: " + export.getSurvey().getId() + " : " + id );
+			return null;
+		}
+		
+		Survey survey = this.surveyService.getSurvey(Integer.parseInt(id), false, true);
+		ResultFilter filter = export.getResultFilter().copy();
+		ECFGlobalResult ecfGlobalResult = null;
+		return new ModelAndView("management/ecfGlobalResultsPDF", "ecfGlobalResult", ecfGlobalResult);
+	}
+
 
 	@RequestMapping(value = "/preparestatistics/{id}/{exportId}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public ModelAndView preparestatistics(@PathVariable String id, @PathVariable String exportId, Locale locale,
@@ -3461,7 +3843,9 @@ public class ManagementController extends BasicController {
 		surveyService.initializeSurvey(survey);
 
 		ResultFilter filter = export.getResultFilter().copy();
-		filter.setVisibleQuestions(filter.getExportedQuestions());
+		Set<String> newids = new HashSet<>();
+		newids.addAll(filter.getExportedQuestions());
+		filter.setVisibleQuestions(newids);
 
 		if (filter.getLanguages() != null && filter.getLanguages().isEmpty()) {
 			filter.setLanguages(null);
@@ -3473,7 +3857,9 @@ public class ManagementController extends BasicController {
 		Publication publication = new Publication();
 		publication.setFilter(export.getResultFilter());
 
-		publication.getFilter().setVisibleQuestions(publication.getFilter().getExportedQuestions());
+		Set<String> newids2 = new HashSet<>();
+		newids.addAll(publication.getFilter().getExportedQuestions());
+		publication.getFilter().setVisibleQuestions(newids2);
 
 		publication.setAllQuestions(publication.getFilter().getVisibleQuestions().isEmpty());
 		results.addObject("publication", publication);
@@ -3485,6 +3871,11 @@ public class ManagementController extends BasicController {
 		results.setViewName("management/statisticsquizpdf");
 		results.addObject("forpdf", true);
 		return results;
+	}
+
+	@RequestMapping(value = "/prepareECFIndividualResults/{id}/{exportId}", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public ModelAndView prepareECFIndividualResults(@PathVariable String id, @PathVariable String exportId, Locale locale, HttpServletRequest request) throws Exception {
+		return null;
 	}
 
 	@RequestMapping(value = "/access", method = { RequestMethod.GET, RequestMethod.HEAD })

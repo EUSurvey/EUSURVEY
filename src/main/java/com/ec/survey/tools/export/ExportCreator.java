@@ -33,6 +33,9 @@ public abstract class ExportCreator implements Runnable {
 	@Resource(name = "attendeeService")
 	protected AttendeeService attendeeService;	
 	
+	@Resource(name = "answerExplanationService")
+	protected AnswerExplanationService answerExplanationService;
+	
 	@Resource(name = "participationService")
 	protected ParticipationService participationService;
 	
@@ -68,6 +71,9 @@ public abstract class ExportCreator implements Runnable {
 	
 	@Resource(name = "reportingServiceProxy")
 	protected ReportingServiceProxy reportingService;
+	
+	@Resource(name = "ecfService")
+	protected ECFService ecfService;
 	
 	private @Value("${smtpserver}") String smtpServer;
 	private @Value("${smtp.port}") String smtpPort;
@@ -112,12 +118,16 @@ public abstract class ExportCreator implements Runnable {
 	void init()
 	{}
 
-	abstract void ExportContent(boolean sync) throws Exception;
-	abstract void ExportStatistics() throws Exception;
-	abstract void ExportStatisticsQuiz() throws Exception;	
-	abstract void ExportAddressBook() throws Exception;
-	abstract void ExportActivities() throws Exception;
-	abstract void ExportTokens() throws Exception;
+	abstract void exportContent(boolean sync) throws Exception;
+	abstract void exportStatistics() throws Exception;
+	abstract void exportStatisticsQuiz() throws Exception;	
+	abstract void exportECFGlobalResults() throws Exception;
+	abstract void exportECFProfileResults() throws Exception;
+	abstract void exportECFOrganizationalResults() throws Exception;
+	abstract void exportAddressBook() throws Exception;
+	abstract void exportActivities() throws Exception;
+	abstract void exportTokens() throws Exception;
+	
 	
 	private void initAnswers() throws Exception
 	{
@@ -208,14 +218,17 @@ public abstract class ExportCreator implements Runnable {
 	private void innerRunBasic(boolean sync, Export export) throws Exception
 	{
 		switch (export.getType()) {
-			case Content: ExportContent(sync); break;
-			case Statistics: initAnswers(); ExportStatistics(); break;
-			case StatisticsQuiz: initAnswers(); ExportStatisticsQuiz(); break;
-			case AddressBook: ExportAddressBook(); break;
-			case Activity: ExportActivities(); break;
-			case Tokens: ExportTokens(); break;
-			case Files: ExportContent(sync); break;
-			case Survey: ExportContent(sync); break;
+			case Content: exportContent(sync); break;
+			case Statistics: initAnswers(); exportStatistics(); break;
+			case StatisticsQuiz: initAnswers(); exportStatisticsQuiz(); break;
+			case ECFGlobalResults: exportECFGlobalResults(); break;
+			case ECFProfileResults: exportECFProfileResults(); break;
+			case ECFOrganizationResults: exportECFOrganizationalResults(); break;
+			case AddressBook: exportAddressBook(); break;
+			case Activity: exportActivities(); break;
+			case Tokens: exportTokens(); break;
+			case Files: exportContent(sync); break;
+			case Survey: exportContent(sync); break;
 		default:
 			break;
 		}

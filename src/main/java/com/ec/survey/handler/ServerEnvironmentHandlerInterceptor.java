@@ -26,6 +26,8 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	
 	public @Value("${ui.enableresponsive}") String enableresponsive;	
 	
+	public @Value("${server.prefix}") String serverPrefix;
+	
 	public static final String APPLICATION_SERVER_ENVIRONMENT = "serverEnv";
 	public @Value("${app.server.env}") String serverEnv;	
 	
@@ -40,12 +42,18 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
 	
 	public static final String APPLICATION_ARCHIVING = "enablearchiving";
 	public @Value("${ui.enablearchiving}") String enablearchiving;
+
+	public static final String APPLICATION_DELPHI = "enabledelphi";
+	public @Value("${ui.enabledelphi}") String enabledelphi;
 	
 	public static final String APPLICATION_FILEMANAGEMENT = "enablefilemanagement";
 	public @Value("${ui.enablefilemanagement}") String enablefilemanagement;
 	
 	public static final String APPLICATION_OPC = "enableopc";
 	public @Value("${ui.enableopc}") String enableopc;
+	
+	public static final String APPLICATION_ECF = "enableecf";
+	public @Value("${ui.enableecf}") String enableecf;
 	
 	public static final String APPLICATION_PUBLICSURVEYS = "enablepublicsurveys";
 	public @Value("${ui.enablepublicsurveys}") String enablepublicsurveys;
@@ -91,6 +99,8 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             final ModelAndView modelAndView) throws Exception {
 
         if (modelAndView != null && modelAndView.hasView() && !modelAndView.getViewName().startsWith("redirect")) {
+        	
+        	modelAndView.getModelMap().addAttribute("serverprefix", serverPrefix);	
             modelAndView.getModelMap().addAttribute(APPLICATION_SERVER_ENVIRONMENT, serverEnv);       
         	
             modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_BYPASS, isByPassCaptcha());
@@ -98,7 +108,9 @@ public class ServerEnvironmentHandlerInterceptor extends HandlerInterceptorAdapt
             modelAndView.getModelMap().addAttribute(APPLICATION_CAPTCHA_SERVERPREFIX, captchaserverprefix);
             
             modelAndView.getModelMap().addAttribute(APPLICATION_ARCHIVING, enablearchiving != null && enablearchiving.equalsIgnoreCase("true"));
+			modelAndView.getModelMap().addAttribute(APPLICATION_DELPHI, enabledelphi != null && enabledelphi.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_OPC, enableopc != null && enableopc.equalsIgnoreCase("true"));
+            modelAndView.getModelMap().addAttribute(APPLICATION_ECF, enableecf != null && enableecf.equalsIgnoreCase("true"));
             modelAndView.getModelMap().addAttribute(APPLICATION_PUBLICSURVEYS, enablepublicsurveys != null && enablepublicsurveys.equalsIgnoreCase("true"));
                         
             modelAndView.getModelMap().addAttribute(APPLICATION_FILEMANAGEMENT, enablefilemanagement != null && enablefilemanagement.equalsIgnoreCase("true"));

@@ -2,6 +2,7 @@ package com.ec.survey.model;
 
 import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Matrix;
+import com.ec.survey.model.survey.RatingQuestion;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.ConversionTools;
@@ -25,6 +26,11 @@ import java.util.*;
 		@UniqueConstraint(columnNames = { "UNIQUECODE", "ISDRAFT" }, name = "UNIQUECODE_UNIQUE") })
 public class AnswerSet implements java.io.Serializable {
 
+	public static class ExplanationData {
+		public String text = "";
+		public List<File> files = new ArrayList<>();
+	}
+
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String invitationId;
@@ -41,8 +47,16 @@ public class AnswerSet implements java.io.Serializable {
 	private String draftId;
 	private Boolean disclaimerMinimized;
 	private Boolean wcagMode;
+	private boolean medianWarningVisible;
 	private Integer score;
-
+	private Map<String, ExplanationData> explanations = new HashMap<>();
+	private Map<String, List<AnswerComment>> comments = new HashMap<>();
+	private boolean changedForMedian = false;
+	private String ecfProfileUid;
+	private Integer ecfTotalScore;
+	private Integer ecfTotalGap;
+	private boolean changeExplanationText = false;
+	
 	@Id
 	@Column(name = "ANSWER_SET_ID")
 	@GeneratedValue
@@ -217,6 +231,22 @@ public class AnswerSet implements java.io.Serializable {
 
 		return null;
 	}
+	
+	@Transient
+	public List<Answer> getRatingAnswers(RatingQuestion rating) {
+		List<Answer> result = new ArrayList<>();
+		Set<Integer> questionIds = new HashSet<>();
+		for (Element question : rating.getChildElements()) {
+			questionIds.add(question.getId());
+		}
+		for (Answer answer : answers) {
+			if (questionIds.contains(answer.getQuestionId())) {
+				result.add(answer);
+			}
+		}
+
+		return result;
+	}	
 
 	@Transient
 	public void clearAnswers(Element question) {
@@ -277,6 +307,15 @@ public class AnswerSet implements java.io.Serializable {
 	}
 
 	@Transient
+	public boolean getMedianWarningVisible() {
+		return this.medianWarningVisible;
+	}
+	
+	public void setMedianWarningVisible(boolean medianWarningVisible) {
+		this.medianWarningVisible = medianWarningVisible;
+	}	
+	
+	@Transient
 	public String getNiceDate() {
 		return date != null ? ConversionTools.getFullString(date) : "";
 	}
@@ -302,6 +341,9 @@ public class AnswerSet implements java.io.Serializable {
 		copy.uniqueCode = uniqueCode;
 		copy.updateDate = updateDate;
 		copy.score = score;
+		copy.ecfProfileUid = ecfProfileUid;
+		copy.ecfTotalScore = ecfTotalScore;
+		copy.ecfTotalGap = ecfTotalGap;
 
 		for (Answer answer : answers) {
 			Answer copyanswer = answer.copy(copy, files);
@@ -339,7 +381,31 @@ public class AnswerSet implements java.io.Serializable {
 	public void setScore(Integer score) {
 		this.score = score;
 	}
-
+	
+	@Column(name = "ECF_PROFILE_UID")
+	public String getEcfProfileUid() {
+		return ecfProfileUid;
+	}
+	public void setEcfProfileUid(String ecfProfileUid) {
+		this.ecfProfileUid = ecfProfileUid;
+	}
+	
+	@Column(name = "ECF_TOTAL_SCORE")
+	public Integer getEcfTotalScore() {
+		return ecfTotalScore;
+	}
+	public void setEcfTotalScore(Integer ecfTotalScore) {
+		this.ecfTotalScore = ecfTotalScore;
+	}
+	
+	@Column(name = "ECF_TOTAL_GAP")
+	public Integer getEcfTotalGap() {
+		return ecfTotalGap;
+	}
+	public void setEcfTotalGap(Integer ecfTotalGap) {
+		this.ecfTotalGap = ecfTotalGap;
+	}
+	
 	@Transient
 	public List<String> getAllFiles() {
 		List<String> result = new ArrayList<>();
@@ -351,5 +417,39 @@ public class AnswerSet implements java.io.Serializable {
 			}
 		}
 		return result;
+	}
+
+	@Transient
+	public Map<String, ExplanationData> getExplanations() {
+		return explanations;
+	}
+
+	public void setExplanations(Map<String, ExplanationData> explanations) {
+		this.explanations = explanations;
+	}
+	
+	@Transient
+	public Map<String, List<AnswerComment>> getComments() {
+		return comments;
+	}
+
+	public void setComments(Map<String, List<AnswerComment>> comments) {
+		this.comments = comments;
+	}
+
+	@Transient
+	public Boolean getChangedForMedian() {
+		return changedForMedian;
+	}
+	public void setChangedForMedian(Boolean changedForMedian) {
+		this.changedForMedian = changedForMedian;
+	}
+	
+	@Transient
+	public Boolean getChangeExplanationText() {
+		return changeExplanationText;
+	}
+	public void setChangeExplanationText(Boolean changeExplanationText) {
+		this.changeExplanationText = changeExplanationText;
 	}
 }

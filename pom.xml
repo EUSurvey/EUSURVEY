@@ -7,7 +7,7 @@
 	<artifactId>eusurvey</artifactId>
 	<name>eusurvey</name>
 	<packaging>war</packaging>
-	<version>1.5.2</version>
+	<version>1.5.X - Delphi</version>
 	<properties>
 		<java-version>1.8</java-version>
 		<org.springframework-version>4.3.20.RELEASE</org.springframework-version>
@@ -146,11 +146,20 @@
 			<version>2.9.2</version>
 		</dependency>
 
+		<!-- PDF RENDERING -->
 		<dependency>
 			<groupId>org.xhtmlrenderer</groupId>
 			<artifactId>flying-saucer-core</artifactId>
 			<version>9.0.9</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/jfree/jfreechart -->
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0.13</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.xhtmlrenderer</groupId>
 			<artifactId>flying-saucer-pdf</artifactId>
@@ -575,8 +584,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>19.0</version>
-			<scope>test</scope>
+			<version>23.0</version>
 		</dependency>
 
 		<dependency>
@@ -588,13 +596,13 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.9.7</version>
+			<version>2.9.10</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.7</version>
+			<version>2.9.10.8</version>
 		</dependency>
 
 		<dependency>
@@ -633,6 +641,12 @@
 			<artifactId>microsoft-translator-java-api</artifactId>
 			<version>0.6.2</version>
 			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.kennycason</groupId>
+		    <artifactId>kumo-core</artifactId>
+		    <version>1.28</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -683,7 +697,7 @@
 									<format property="touch.time" pattern="dd/MM/yyyy HH:mm" />
 								</tstamp>
 								<property name="version.footer.build"
-									value="v${version} ${buildNumber} (${touch.time})" />
+									value="v${project.version} ${buildNumber} (${touch.time})" />
 								<scriptdef name="updatescmbranch"
 									language="javascript">
 									<![CDATA[

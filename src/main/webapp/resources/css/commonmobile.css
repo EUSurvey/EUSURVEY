@@ -4,3 +4,12 @@
 	margin-left: 0px !important;
 	top: 0px !important;
 }
+
+.delphi-table {
+	background-color: #fff;
+}
+
+.results-table-row > div {
+	padding-left: 5px;
+	padding-right: 5px;
+}

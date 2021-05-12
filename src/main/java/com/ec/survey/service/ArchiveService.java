@@ -35,7 +35,9 @@ public class ArchiveService extends BasicService {
 	public void update(Archive archive) {
 		Session session = sessionFactory.getCurrentSession();
 		archive = (Archive) session.merge(archive);
+		session.setReadOnly(archive, false);
 		session.update(archive);
+		session.flush();
 	}
 
 	@Transactional(readOnly = false)

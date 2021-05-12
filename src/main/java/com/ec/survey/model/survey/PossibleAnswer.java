@@ -1,5 +1,6 @@
 package com.ec.survey.model.survey;
 
+import com.ec.survey.model.ECFProfile;
 import com.ec.survey.tools.Tools;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -23,6 +24,8 @@ public class PossibleAnswer extends Element {
 	private DependencyItem dependentElements = new DependencyItem();
 	private String savedDependentElementsString = "";
 	private ScoringItem scoring;
+	private ECFProfile ecfProfile;
+	private Integer ecfScore;
 		
 	@Column(name="QUESTION_ID")
 	public int getQuestionId() {
@@ -40,6 +43,9 @@ public class PossibleAnswer extends Element {
 		copy.setSourceId(this.getId());
 		copy.setTitle(Tools.filterHTML(this.getTitle()));
 		copy.setPosition(this.getPosition());
+		copy.setEcfProfile(this.getEcfProfile());
+		copy.setEcfScore(this.ecfScore);
+		
 		if (scoring != null) copy.setScoring(scoring.copy());
 		
 		return copy;
@@ -60,6 +66,25 @@ public class PossibleAnswer extends Element {
 	}
 	public void setScoring(ScoringItem scoring) {
 		this.scoring = scoring;
+	}
+
+	/**
+	 * An ECF Question is either on a competency or a profile
+	 */
+	@OneToOne
+	@JoinColumn(name="ECF_PROFILE", nullable = true)    
+	public ECFProfile getEcfProfile() {
+		return ecfProfile;
+	}	
+	public void setEcfProfile(ECFProfile ecfProfile) {
+		this.ecfProfile = ecfProfile;
+	}
+	
+	public Integer getEcfScore() {
+		return ecfScore;
+	}
+	public void setEcfScore(Integer ecfScore) {
+		this.ecfScore = ecfScore;
 	}
 	
 	@Transient

@@ -33,6 +33,8 @@
 
 	<script type="text/javascript" src="${contextpath}/resources/js/fileuploader.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/runner.js?version=<%@include file="../version.txt" %>"></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="../version.txt" %>"></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/chartjs-plugin-colorschemes.min.js?version=<%@include file="../version.txt" %>"></script>
 	
 	<c:if test="${forpdf==null}">
 	<script type="text/javascript" src="${contextpath}/resources/js/runner2.js?version=<%@include file="../version.txt" %>"></script>
@@ -119,6 +121,7 @@
 								addElement(result[i], false, false);
 							}
 							applyStandardWidths();
+							selectPageAndScrollToQuestionIfSet();
 							readCookies();
 							$("#btnSubmit").removeClass("hidden");
 							$("#btnSaveDraft").removeClass("hidden");
@@ -139,6 +142,9 @@
 		$(element).siblings(".uploaded-files").first().empty();
 		
 		$(element).siblings(".validation-error").remove();
+
+		var surveyElement = $(element).closest(".survey-element");
+		$(surveyElement).find("a[data-type='delphisavebutton']").removeClass("disabled");
 		
 		for (var i = 0; i < responseJSON.files.length; i++) {
 			var f = responseJSON.files[i];
@@ -277,7 +283,8 @@
 					<%@ include file="../menu.jsp" %>	
 				</c:when>
 				<c:otherwise>
-					<%@ include file="../header.jsp" %>	 
+					<%@ include file="../header.jsp" %>	
+					<%@ include file="../generic-messages.jsp" %>
 				</c:otherwise>
 			</c:choose>
 		</c:if>

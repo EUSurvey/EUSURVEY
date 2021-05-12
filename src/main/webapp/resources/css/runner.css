@@ -126,6 +126,86 @@
 	width: 100%;
 }
 
+.answertextdelphivotes {
+	color: #777;
+}
+
+.rankingitem-list-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+	margin-left: 20px;
+}
+
+.rankingitem-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.rankingitem-form-data {
+	display: flex;
+	text-align: left;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	border-style: solid;
+	border-color: #999;
+	border-width: 1px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	padding: 5px;
+	cursor: move;
+	background-color: #f5f5f5;
+	border-radius: 5px;
+}
+
+.ranking-question-initial-answer-message {
+	margin-left: 10px;
+	font-style: italic;
+	color: #666;
+}
+
+.ranking-question-initial-answer-clickable {
+	color: #337ab7;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.ranking-question-initial-answer-clickable:hover {
+	color: #23527c;
+}
+
+.rankingitem-decoration {
+	color: #333;
+	font-weight: normal;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.rankingitem-button {
+	margin-left: -3px;
+	margin-right: 0px;
+	padding: 0px 4px;
+}
+
+.rankingitem-button:focus {
+	color: #23527c;
+}
+
+.rankingitemtext {
+	color: #333;
+	word-wrap: break-word;
+	font-weight: normal;
+	margin-left: 10px;
+	margin-right: 5px;
+}
+
+.slidertooltipdelphivotes {
+	color: #ccc;
+}
+
 .text {
 	font-size: 14px;	
 }
@@ -137,6 +217,12 @@
 .questionhelp {
 	color: #A6A6A6;
 	margin-left:5px
+}
+
+.questionhelp__text {
+	display: none;
+	padding-bottom: 5px;
+	padding-top: 5px;
 }
 
 .limits {
@@ -287,13 +373,30 @@ textarea.freetext {
 }
 
 .survey-element {
-	margin: 5px; 
-	margin-top: 25px;
+	margin: 25px 5px 5px 5px;
 	max-width: 980px;
 	overflow-x: auto;
 }
 
-.freetext, .number, .date, .matrixtable, .tabletable, .dataTable, .regex, .alignment-div, .input-group, .ratingtable {
+.survey-element-anchor {
+	position: relative;
+	top: -75px;
+}
+
+#bodyManagementTest .survey-element-anchor {
+	top: -145px;
+}
+
+.freetext,
+.number,
+.date,
+.matrixtable,
+.tabletable,
+.dataTable,
+.regex,
+.alignment-div,
+.input-group,
+.ratingtable {
 	margin-left: 20px;
 }
 
@@ -423,7 +526,7 @@ legend {
 }
 
 .slider-tick {
-	background-color: #eee !important;
+	background-color: #ccc !important;
 	background-image: none !important;
 	
     filter: none !important;

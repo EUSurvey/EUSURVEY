@@ -10,7 +10,7 @@
 	<%@ include file="../includes.jsp" %>
 	<link href="${contextpath}/resources/css/fileuploader.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css" />
-	
+	<script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/runner.js?version=<%@include file="../version.txt" %>"></script>
 	
 	<c:if test="${form.survey.skin != null && !form.wcagCompliance}">
@@ -62,9 +62,17 @@
 	<script type="text/javascript"> 
 		$(function() {	
 			$(".handsontableInput").hide();
-			setTimeout(function(){ window.print(); }, 3000);
+			if (launchPrint === "true") {
+				setTimeout(function(){ window.print(); }, 3000);
+			}
 			$("input[type=checkbox]").attr("disabled","disabled");
 		});			
+	</script>
+	
+	<script type="text/javascript">
+		var uniqueCode = "${code}"
+		var contextpath = "${contextpath}"
+		var launchPrint = "${launchPrint}"
 	</script>
 </head>
 <body id="printFromContribution">
@@ -87,7 +95,11 @@
 		</c:if>	
 					
 		<span class="introduction">${form.survey.introduction}</span>
-		
+		<c:if test="${form.survey.isECF}">
+			<div id="canvasContainerLeft"> 
+				<%@ include file="../ecfGraph.jsp" %>
+			</div>
+		</c:if>
 		<c:forEach var="page" items="${form.getPages()}" varStatus="rowCounter">
 					
 			<c:forEach var="element" items="${page}">
@@ -643,6 +655,6 @@
 			</c:if>
 		</div>						
 	</div>
-	
+
 </body>
 </html>

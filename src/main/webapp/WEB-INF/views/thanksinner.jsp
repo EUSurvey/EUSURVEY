@@ -3,6 +3,10 @@
 <div style="text-align: center; margin-top: 100px;" id="divThanksInner" name="${uniqueCode}">
 
 	<c:choose>
+		<c:when test="${form.survey.isECF}">
+			<div style="text-align: center; margin-top: 20px;" id="divThanksInner" name="${uniqueCode}">
+			<!--  no text -->
+		</c:when>
 		<c:when test="${text != null}">
 			${text}
 		</c:when>
@@ -25,7 +29,11 @@
 			</c:otherwise>
 		</c:choose>
 	</c:if>
-	
+	<c:if test="${isECF}">
+		<div id="canvasContainer"> 
+			<%@ include file="ecfGraph.jsp" %>
+		</div>
+	</c:if>
 	<c:if test="${notificationemailtext != null}">
 		<br /><br />
 		${notificationemailtext}
@@ -164,6 +172,10 @@
 </div>
 
 <script type="text/javascript">
+	var uniqueCode = "${uniqueCode}";
+	var contextpath = "${contextpath}";
+	var surveyShortname = "${surveyShortname}";
+
 	function startExport()
 	{
 		$("#ask-export-dialog").find(".validation-error").hide();

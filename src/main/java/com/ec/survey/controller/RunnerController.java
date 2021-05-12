@@ -1,10 +1,6 @@
 package com.ec.survey.controller;
 
-import com.ec.survey.exception.ForbiddenURLException;
-import com.ec.survey.exception.FrozenSurveyException;
-import com.ec.survey.exception.InvalidURLException;
-import com.ec.survey.exception.MessageException;
-import com.ec.survey.exception.SmtpServerNotConfiguredException;
+import com.ec.survey.exception.*;
 import com.ec.survey.model.*;
 import com.ec.survey.model.administration.EcasUser;
 import com.ec.survey.model.administration.GlobalPrivilege;
@@ -26,12 +22,7 @@ import org.springframework.orm.hibernate4.HibernateOptimisticLockingFailureExcep
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -41,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/runner")
@@ -138,6 +130,11 @@ public class RunnerController extends BasicController {
 				AnswerSet aws = answerService.getByInvitationCode(invitation.getUniqueId());
 				Date answerDate;
 				if (aws != null) {
+					if (aws.getSurvey().getIsDelphi())
+					{
+						return new ModelAndView("redirect:/editcontribution/" + aws.getUniqueCode());
+					}
+					
 					answerDate = aws.getDate();
 					String[] args = new String[] { ConversionTools.getFullString(answerDate) };
 					model.addObject("messageComplement", resources.getMessage("message.SubmittedOn", args,
@@ -277,7 +274,7 @@ public class RunnerController extends BasicController {
 									draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 
 							SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), f.getSurvey(),
-									fileService);
+									fileService, answerExplanationService);
 							uniqueCode = draft.getAnswerSet().getUniqueCode();
 
 							if (lang == null) {
@@ -307,7 +304,7 @@ public class RunnerController extends BasicController {
 
 								f.getAnswerSets().add(draft.getAnswerSet());
 								SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), f.getSurvey(),
-										fileService);
+										fileService, answerExplanationService);
 								uniqueCode = draft.getAnswerSet().getUniqueCode();
 
 								if (lang == null) {
@@ -328,6 +325,9 @@ public class RunnerController extends BasicController {
 								if (survey.getIsQuiz() && request.getParameter("startQuiz") == null) {
 									model = new ModelAndView("runner/quiz", "form", f);
 									model.addObject("isquizpage", true);
+								} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+									model = new ModelAndView("runner/delphi", "form", f);
+									model.addObject("isdelphipage", true);
 								}
 							}
 						} catch (Exception e) {
@@ -435,7 +435,7 @@ public class RunnerController extends BasicController {
 
 			Attendee attendee = attendeeService.get(invitation.getAttendeeId());
 
-			if (invitation.getAnswers() > 0) {
+			if (!survey.getIsDelphi() && invitation.getAnswers() > 0) {
 				ModelAndView model = new ModelAndView(Constants.VIEW_ERROR_GENERIC);
 				model.addObject(Constants.MESSAGE,
 						resources.getMessage("error.InvitationUsed", null, "The invitation was already used.", locale));
@@ -450,11 +450,7 @@ public class RunnerController extends BasicController {
 				}
 				return model;
 			}
-
-			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
-			if (err != null)
-				return err;
-
+			
 			if (SurveyHelper.isDeactivatedOrEndDateExceeded(survey, surveyService)) {
 				return getEscapePageModel(survey, request, device);
 			}
@@ -473,8 +469,14 @@ public class RunnerController extends BasicController {
 			}
 
 			User user = sessionService.getCurrentUser(request, false, false);
-			AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user,
-					fileService);
+
+			if (!survey.getIsDelphi()) {
+				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
+				if (err != null)
+					return err;
+			}
+
+			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, survey, uniqueCode, false, lang, user);
 
 			if (survey != null) {
 				survey = surveyService.getSurvey(survey.getId(), lang);
@@ -549,8 +551,7 @@ public class RunnerController extends BasicController {
 				model.addObject("invitation", invitation.getId());
 				model.addObject("participationGroup", participationGroup.getId());
 
-				// recreate uploaded files
-				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService);
+				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 				return model;
 			}
@@ -638,6 +639,13 @@ public class RunnerController extends BasicController {
 			}
 
 			ModelAndView result = new ModelAndView("thanks", Constants.UNIQUECODE, answerSet.getUniqueCode());
+			
+			if (survey.getIsECF()) {
+				result.addObject("isECF", true);
+				Set<ECFProfile> profiles = this.ecfService.getECFProfiles(survey);
+				result.addObject("ecfProfiles", profiles.stream().sorted().collect(Collectors.toList()));
+				result.addObject("ecfIndividualResult", this.ecfService.getECFIndividualResult(survey, answerSet));
+			}
 
 			if (survey.getIsOPC()) {
 				result.addObject("opcredirection", survey.getFinalConfirmationLink(opcredirect, lang));
@@ -796,6 +804,12 @@ public class RunnerController extends BasicController {
 		}
 
 		if (!checkCaptcha(request)) {
+			model.put("contactFormReason", request.getParameter("contactreason"));
+			model.put("contactFormName", request.getParameter("name"));
+			model.put("contactFormMail", request.getParameter(Constants.EMAIL));
+			model.put("contactFormSubject", request.getParameter("subject"));
+			model.put("contactFormMessage", request.getParameter(Constants.MESSAGE));
+			model.put("survey", survey);
 			model.put("wrongcaptcha", true);
 			return "runner/contactForm";
 		}
@@ -955,6 +969,13 @@ public class RunnerController extends BasicController {
 							int contributionsCount = answerService.userContributionsToSurvey(survey, user);
 							if (contributionsCount > 0 && (survey.getAllowedContributionsPerUser() == 1
 									|| survey.getAllowedContributionsPerUser() <= contributionsCount)) {
+								
+								if (survey.getIsDelphi())
+								{
+									AnswerSet aws = answerService.getUserContributionToSurvey(survey, user);
+									return new ModelAndView("redirect:/editcontribution/" + aws.getUniqueCode());
+								}
+								
 								request.getSession().removeAttribute("ECASSURVEY");
 								modelReturn.setViewName(Constants.VIEW_ERROR_GENERIC);
 								modelReturn.addObject("runnermode", true);
@@ -1167,6 +1188,13 @@ public class RunnerController extends BasicController {
 
 			// this code will be used as an identifier (for uploaded files etc)
 			String uniqueCode = UUID.randomUUID().toString();
+			if (survey.getIsDelphi() && request.getParameter("startDelphi") != null) {
+				String originalUniqueCode = request.getParameter("originalUniqueCode");
+				if (originalUniqueCode != null)
+				{
+					uniqueCode = originalUniqueCode;
+				}
+			}
 
 			if (draftid != null && draftid.trim().length() > 0) {
 				try {
@@ -1180,7 +1208,7 @@ public class RunnerController extends BasicController {
 						f.setWcagCompliance(
 								draft.getAnswerSet().getWcagMode() != null && draft.getAnswerSet().getWcagMode());
 
-						SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), survey, fileService);
+						SurveyHelper.recreateUploadedFiles(draft.getAnswerSet(), survey, fileService, answerExplanationService);
 						uniqueCode = draft.getAnswerSet().getUniqueCode();
 						model.addObject("draftid", draftid);
 
@@ -1205,6 +1233,10 @@ public class RunnerController extends BasicController {
 					model = new ModelAndView("runner/quiz", "form", f);
 					model.addObject("isquizpage", true);
 					model.addObject("runnermode", true);
+				} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
+					model = new ModelAndView("runner/delphi", "form", f);
+					model.addObject("isdelphipage", true);
+					model.addObject("runnermode", true);
 				}
 
 				validCodesService.add(uniqueCode, survey);
@@ -1223,19 +1255,43 @@ public class RunnerController extends BasicController {
 
 	@RequestMapping(value = "/delete/{id}/{uniqueCode}/{surveyUID}", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public @ResponseBody String delete(@PathVariable String id, @PathVariable String uniqueCode,
-			@PathVariable String surveyUID, HttpServletRequest request, HttpServletResponse response) {
+			@PathVariable String surveyUID, HttpServletRequest request) {
 		try {
 
 			String fileName = request.getParameter("fileName");
-
 			fileName = Ucs2Utf8.unconvert(fileName);
+			if (fileName.contains(Constants.PATH_DELIMITER) || fileName.contains("\\") || fileName.contains("*")) {
+				throw new ValidationException("Invalid file name: " + fileName, "Invalid file name: " + fileName);
+			}
 
-			String validFileName = validateDeleteParameters(id, uniqueCode, fileName, surveyUID);
+			final int questionId = Integer.parseInt(id);
+			final Element question = surveyService.getElement(questionId);
+			final String questionUid = question.getUniqueId();
+			final Survey survey = surveyService.getSurveyByUniqueId(surveyUID, false, true);
+			final boolean isDelphi = survey.getIsDelphi() && (question != null) && (question.isDelphiElement());
 
-			java.io.File file = new java.io.File(validFileName);
+			File parentDirectory = null;
+			if (isDelphi) {
+				final com.ec.survey.model.survey.base.File fileInDatabase = answerExplanationService.getExplanationFile(
+						survey.getUniqueId(), uniqueCode, questionUid, fileName);
+				if (fileInDatabase != null) {
+					final AnswerSet answerSet = answerService.get(uniqueCode);
+					answerExplanationService.removeFileFromExplanation(answerSet.getId(), questionUid,
+							fileInDatabase.getUid());
+					fileService.deleteFileFromDiskAndDatabase(survey.getUniqueId(), fileInDatabase);
+				}
+				parentDirectory = fileService.deleteUploadedExplanationFileAndReturnParentDirectoryIfSuccessful(
+						survey.getUniqueId(), uniqueCode, questionUid, fileName);
+			} else {
+				final String validFileName = validateDeleteParameters(questionId, uniqueCode, fileName, surveyUID);
+				final File file = new File(validFileName);
+				if (file.exists() && file.delete()) {
+					parentDirectory = file.getParentFile();
+				}
+			}
 
-			if (file.exists() && file.delete()) {
-				String files = getFiles(file.getParentFile());
+			if (parentDirectory != null) {
+				String files = getFiles(parentDirectory);
 				return "{\"success\": true, \"files\": [" + files + "]}";
 			} else {
 				return "{\"success\": false}";
@@ -1249,19 +1305,19 @@ public class RunnerController extends BasicController {
 		return "{\"success\": false}";
 	}
 
-	private String validateDeleteParameters(String id, String uniqueCode, String fileName, String surveyUID)
+	private String validateDeleteParameters(int questionId, String uniqueCode, String fileName, String surveyUID)
 			throws ValidationException, IOException {
+
 		Validator validator = ESAPI.validator();
-		String folderPath = fileService.getSurveyUploadsFolder(surveyUID, false) + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + id;
+
+		java.io.File basePath = fileService.getSurveyUploadsFolder(surveyUID, false);
+		String folderPath = basePath + Constants.PATH_DELIMITER + uniqueCode + Constants.PATH_DELIMITER + questionId;
 		String canonicalPath = new File(folderPath).getCanonicalPath();
 		boolean validDirectoryPath = validator.isValidDirectoryPath(
 				"check directory path in RunnerController.delete method", canonicalPath,
-				fileService.getSurveyUploadsFolder(surveyUID, false), false);
+				basePath, false);
 		if (!validDirectoryPath) {
 			throw new ValidationException("Invalid folder path: " + folderPath, "Invalid folder path: " + folderPath);
-		}
-		if (fileName.contains(Constants.PATH_DELIMITER) || fileName.contains("\\") || fileName.contains("*")) {
-			throw new ValidationException("Invalid file name: " + fileName, "Invalid file name: " + fileName);
 		}
 		return folderPath + Constants.PATH_DELIMITER + fileName;
 	}
@@ -1329,9 +1385,17 @@ public class RunnerController extends BasicController {
 			IOUtils.copy(is, fos);
 			fos.close();
 
-			java.io.File folder = fileService.getSurveyUploadsFolder(surveyuid, false);
-			java.io.File directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, id));
+			java.io.File folder;
+			java.io.File directory;
+			if ((element instanceof Question) && (((Question)element).getIsDelphiQuestion())) {
+				folder = fileService.getSurveyExplanationUploadsFolder(surveyuid, false);
+				directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, element.getUniqueId()));
 
+			} else {
+				folder = fileService.getSurveyUploadsFolder(surveyuid, false);
+				directory = new java.io.File(String.format("%s/%s/%s", folder.getPath(), uniqueCode, id));
+			}
+			
 			// we try 3 times to create the folders
 			boolean error = false;
 			if (!directory.exists() && !directory.mkdirs() && !directory.exists() && !directory.mkdirs()
@@ -1370,7 +1434,8 @@ public class RunnerController extends BasicController {
 				if (!error) {
 					String files = getFiles(directory);
 					response.setStatus(HttpServletResponse.SC_OK);
-
+					response.setContentType("application/json");
+					response.setCharacterEncoding("UTF-8");
 					writer.print("{\"success\": true, \"files\": [" + files + "], \"wrongextension\": " + wrongextension
 							+ "}");
 				}
@@ -1744,13 +1809,14 @@ public class RunnerController extends BasicController {
 				lang = request.getParameter("language.code");
 			}
 
-			ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
-			if (err != null)
-				return err;
-
 			User user = sessionService.getCurrentUser(request, false, false);
-			AnswerSet answerSet = SurveyHelper.parseAnswerSet(request, origsurvey, uniqueCode, false, lang,
-					user, fileService);
+			if (!origsurvey.getIsDelphi()) {
+				ModelAndView err = testDraftAlreadySubmittedByUniqueCode(uniqueCode, locale);
+				if (err != null)
+					return err;
+			}
+
+			AnswerSet answerSet = answerService.automaticParseAnswerSet(request, origsurvey, uniqueCode, false, lang, user);
 
 			String newlang = request.getParameter("newlang");
 			String newlangpost = request.getParameter("newlangpost");
@@ -1843,8 +1909,7 @@ public class RunnerController extends BasicController {
 				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 				f.setValidation(validation);
 
-				// recreate uploaded files
-				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService);
+				SurveyHelper.recreateUploadedFiles(answerSet, survey, fileService, answerExplanationService);
 
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
 				surveyService.initializeSkin(f.getSurvey());
@@ -1988,6 +2053,16 @@ public class RunnerController extends BasicController {
 
 			if (!survey.isAnonymous() && answerSet.getResponderEmail() != null) {
 				result.addObject("participantsemail", answerSet.getResponderEmail());
+			}
+
+			if (survey.getIsECF()) {
+				result.addObject("isECF", true);
+				Set<ECFProfile> profiles = this.ecfService.getECFProfiles(survey);
+				result.addObject("ecfProfiles", profiles.stream().sorted().collect(Collectors.toList()));
+				// compute results
+				result.addObject("ecfIndividualResult", this.ecfService.getECFIndividualResult(survey, answerSet));
+				result.addObject("contextpath", contextpath);
+				result.addObject("surveyShortname", survey.getShortname());
 			}
 
 			result.addObject("isthankspage", true);
@@ -2217,6 +2292,12 @@ public class RunnerController extends BasicController {
 					}
 				}
 			}
+			
+			//this can happen if a delphi survey is turned into a standard survey or the delphi extension is disabled
+			if (element.isDelphiElement() && !survey.getIsDelphi())
+			{
+				((Question)element).setIsDelphiQuestion(false);
+			}
 		}
 
 		for (Element element : result) {
@@ -2246,4 +2327,5 @@ public class RunnerController extends BasicController {
 
 		return result;
 	}
+
 }

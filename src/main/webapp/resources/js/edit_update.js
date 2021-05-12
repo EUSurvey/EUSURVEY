@@ -134,6 +134,28 @@ function update(input)
 			element.isAttribute(checked);
 			_undoProcessor.addUndoStep(["Attribute", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
 			break;
+		case "DelphiQuestion":
+			var checked = $(input).is(":checked");
+			var oldtext = element.isDelphiQuestion();
+			element.isDelphiQuestion(checked);
+			
+			adaptDelphiControls(element);
+
+			$('#' + id).toggleClass("delphi");
+			_undoProcessor.addUndoStep(["DelphiQuestion", id, $(_elementProperties.selectedelement).index(), oldtext, checked]);
+			break;
+		case "DelphiChartType":
+			var newValue = $(input).val();
+			var oldValue = element.delphiChartType();
+			element.delphiChartType(newValue);
+			_undoProcessor.addUndoStep(["DelphiChartType", id, $(_elementProperties.selectedelement).index(), oldValue, newValue]);
+			break;
+		case "ShowExplanationBox":
+			var newValue = $(input).is(":checked");
+			var oldValue = element.showExplanationBox();
+			element.showExplanationBox(newValue);
+			_undoProcessor.addUndoStep(["ShowExplanationBox", id, $(_elementProperties.selectedelement).index(), oldValue, newValue]);
+			break;
 		case "Name":
 			var text = $(input).val();
 			var oldtext = element.attributeName();
@@ -279,15 +301,25 @@ function update(input)
 					case "list":
 						oldtext = "ListBox";
 						break;
+					case "likert":
+						oldtext = "LikertScale";
+						break;
 				}
-				if (text == "RadioButton")
+				
+				if (text == "LikertScale")
+				{
+					element.likert(true);
+					element.choiceType("likert");				
+				} else if (text == "RadioButton")
 				{
 					element.useRadioButtons(true);
 					element.choiceType("radio");
+					element.likert(false);
 				} else if (text == "SelectBox")
 				{
 					element.choiceType("select");
 					element.useRadioButtons(false);
+					element.likert(false);
 				} else if (text == "CheckBox")
 				{
 					element.useCheckboxes(true);
@@ -938,14 +970,35 @@ function update(input)
 			_undoProcessor.addUndoStep(["Height", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			break;
 		case "MaximumFileSize":
-			var text = $(input).val();
-			
-			if (text.length == 0) text = "1";
-			
+			var text = $(input).val();			
+			if (text.length == 0) text = "1";			
 			var oldtext = element.maxFileSize();
-			element.maxFileSize(parseInt(text));
-			
+			element.maxFileSize(parseInt(text));			
 			_undoProcessor.addUndoStep(["MaximumFileSize", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
+			break;
+		case "MaxDistanceToMedian":
+			var text = $(input).val();	
+			var oldtext = element.maxDistance();
+			
+			if (element.type == "NumberQuestion")
+			{
+				if (text.trim().length == 0) {
+					text = "-1";
+				}				
+				
+				element.maxDistance(parseFloat(text));	
+			} else {
+				var index = $(input).prop('selectedIndex');
+				if (index == 0)
+				{
+					text = "-1";
+				}
+				
+				element.maxDistance(parseInt(text));			
+			}
+			
+			_undoProcessor.addUndoStep(["MaxDistanceToMedian", id, $(_elementProperties.selectedelement).index(), oldtext, text]);			
+		
 			break;
 		default:
 			throw label + " not implemented"; 
@@ -982,7 +1035,7 @@ function updateFeedback(span, reset)
 }
 
 var selectedspan;
-function updateVisibility(span, reset, ask, dialogresult)
+function updateVisibility(span, reset, ask, dialogresult, noUndo)
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var triggers = document.createElement("div");
@@ -1121,7 +1174,10 @@ function updateVisibility(span, reset, ask, dialogresult)
 	if (list != null) $(list).closest("tr").hide();
 	
 	updateDependenciesView();
-	_undoProcessor.addUndoStep(["Visibility", id, $(_elementProperties.selectedelement).index(), oldtext, values, selectedquestions]);	
+	
+	if (!noUndo) {
+		_undoProcessor.addUndoStep(["Visibility", id, $(_elementProperties.selectedelement).index(), oldtext, values, selectedquestions]);
+	}
 }
 
 function save(span)
@@ -1141,7 +1197,7 @@ function save(span)
 	
 	switch (label) {
 		case "Visibility":
-			updateVisibility(span, false, true, false);
+			updateVisibility(span, false, true, false, false);
 			break;
 		case "EDITVALUES":
 			var oldvalues = [];
@@ -1457,6 +1513,15 @@ function updateIdentifier(element, id, text, noundo)
 		} else {
 			var pos = $(_elementProperties.selectedelement).index();
 			element = parent.answers()[pos-1];
+		}
+	} else if ($(_elementProperties.selectedelement).hasClass("rankingitemtext"))
+	{
+		var parentid = $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+		var parent = _elements[parentid];
+		if (parent.type == "RankingQuestion") {
+			element = parent.rankingItems().filter((item) => item.id() == id)[0];
+		} else {
+			throw "could not find matching parent element";
 		}
 	}
 	

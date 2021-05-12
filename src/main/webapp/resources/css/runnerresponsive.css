@@ -98,7 +98,81 @@
 .answertext {
 	color: #333;
 	margin-left: 5px;
+	word-break: break-all;
 	word-wrap: break-word;
+}
+
+.rankingitem-list-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+	margin-left: 0px;
+}
+
+.rankingitem-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.rankingitem-form-data {
+	display: flex;
+	text-align: left;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	border-style: solid;
+	border-color: #999;
+	border-width: 1px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	padding: 3px;
+	cursor: move;
+	background-color: #f5f5f5;
+	border-radius: 5px;
+}
+
+.ranking-question-initial-answer-message {
+	margin-left: 10px;
+	margin-right: 10px;
+	font-style: italic;
+	color: #666;
+}
+
+.ranking-question-initial-answer-clickable {
+	color: #337ab7;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.ranking-question-initial-answer-clickable:hover {
+	color: #23527c;
+}
+
+.rankingitem-decoration {
+	color: #333;
+	font-weight: normal;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.rankingitem-button {
+	margin-left: -3px;
+	margin-right: 0px;
+	padding: 0px 4px;
+}
+
+.rankingitem-button:focus {
+	color: #23527c;
+}
+
+.rankingitemtext {
+	color: #333;
+	word-wrap: break-word;
+	font-weight: normal;
+	margin-left: 10px;
+	margin-right: 5px;
 }
 
 .text {
@@ -241,7 +315,17 @@ textarea.freetext {
 }
 
 .survey-element {
-	margin: 5px; margin-top: 25px;
+	margin: 25px 5px 5px 5px;
+	padding-top: 55px;
+}
+
+.survey-element-anchor {
+	position: relative;
+	top: -55px;
+}
+
+#bodyManagementTest .survey-element-anchor {
+	top: -125px;
 }
 
 .freetext, .email, .regex, .alignment-div, .text {
@@ -421,7 +505,7 @@ legend {
 }
 
 .slider-tick {
-	background-color: #eee !important;
+	background-color: #ccc !important;
 	background-image: none !important;
 	
     filter: none !important;
@@ -436,4 +520,14 @@ legend {
 .slider.slider-disabled .slider-handle {
 	background-color: #ccc !important;
 	background-image: none !important;
+}
+
+.likert-table-div {
+	background-color: #ccc;
+	position: absolute;
+	top: 11px;
+	left: 28px;
+	width: 6px;
+	z-index: 0;
+	bottom: 11px;
 }

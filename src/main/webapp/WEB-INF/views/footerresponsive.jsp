@@ -8,14 +8,14 @@
 	<c:choose>
 		<c:when test="${form != null}">
 			<c:choose>
-				<c:when test="${oss}">${form.getMessage("footer.fundedOSS")}</c:when>
-				<c:otherwise>${form.getMessage("footer.funded")}</c:otherwise>
+				<c:when test="${oss}">${form.getMessage("footer.fundedOSSNew")}</c:when>
+				<c:otherwise>${form.getMessage("footer.fundedNew")}</c:otherwise>
 			</c:choose>
 		</c:when>
 		<c:otherwise>
 			<c:choose>
-				<c:when test="${oss}"><spring:message code="footer.fundedOSS" /></c:when>
-				<c:otherwise><spring:message code="footer.funded" /></c:otherwise>
+				<c:when test="${oss}"><spring:message code="footer.fundedOSSNew" /></c:when>
+				<c:otherwise><spring:message code="footer.fundedNew" /></c:otherwise>
 			</c:choose>			
 		</c:otherwise>
 	</c:choose>	
