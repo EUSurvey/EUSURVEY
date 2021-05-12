@@ -195,6 +195,7 @@ public class ArchiveExecutor implements Runnable {
 			
 			logger.info("archiving results (Excel) of survey " + survey.getShortname());
 			
+			export.setForArchiving(true);			
 			exportService.startExport(form, export, true, resources,new Locale("en"), null, folder.getPath() + Constants.PATH_DELIMITER + published.getUniqueId() + "results.xls", true);
 			if (export.getState() == ExportState.Failed)
 			{
