@@ -350,14 +350,17 @@ public class XlsExportCreator extends ExportCreator {
 				}
 			}
 		}
-
 		
 		filter.setVisibleQuestions(filter.getExportedQuestions());
 		filter.setVisibleExplanations(filter.getExportedExplanations());
 		filter.setVisibleDiscussions(filter.getExportedDiscussions());		
 
-		List<List<String>> answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
+		List<List<String>> answersets = null;
+		
+		if (!export.isForArchiving()) {
+			answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
 				publication == null || publication.getShowUploadedDocuments(), false, false, export != null && export.getShowShortnames());
+		}
 		List<Question> questions = form.getSurvey().getQuestions();
 
 		if (answersets != null) {

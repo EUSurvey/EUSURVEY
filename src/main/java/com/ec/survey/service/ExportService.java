@@ -82,7 +82,7 @@ public class ExportService extends BasicService {
 			User user = administrationService.getUser(export.getUserId());
 			logger.info("Starting export check settings skipcheckworkerserver " + skipcheckworkerserver +" useworkerserver " + useworkerserver +" isworkerserver " + isworkerserver);
 			
-			if (!skipcheckworkerserver && useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false"))
+			if (!immediate && !skipcheckworkerserver && useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false"))
 			{
 				logger.info("calling worker server for export " + export.getId());
 				
