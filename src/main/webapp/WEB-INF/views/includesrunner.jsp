@@ -122,7 +122,7 @@
 			var invalidXHTML = "${form.getMessage("label.InvalidXHTML")}";
 			var serverPrefix='${serverprefix}';//+'runner/';
 			var selectFileForUpload = "${form.getMessage("label.SelectFileForUpload")}";
-			var selectFilesForUpload = "${form.getMessage("label.SelectFilesForUpload")}";
+			var selectFilesForUpload = "${form.getMessage("label.SelectFilesForUploadButton")}";
 			var uploadASkin = "${form.getMessage("label.uploadASkin")}";
 			var globalLanguage = '${requestContext.locale.language}';
 			var questionTextLabel = "${form.getMessage("label.QuestionText")}";
@@ -204,7 +204,7 @@
 			var invalidXHTML = "<spring:message code='label.InvalidXHTML' />";
 			var serverPrefix='${serverprefix}';//+'runner/';
 			var selectFileForUpload = "<spring:message code='label.SelectFileForUpload' />";
-			var selectFilesForUpload = "<spring:message code='label.SelectFilesForUpload' />";
+			var selectFilesForUpload = "<spring:message code='label.SelectFilesForUploadButton' />";
 			var uploadASkin = "<spring:message code='label.uploadASkin' />";
 			var globalLanguage = '${requestContext.locale.language}';
 			var questionTextLabel = "<spring:message code='label.QuestionText' />";
