@@ -51,7 +51,7 @@ public class Export implements java.io.Serializable {
 	private Boolean addMeta = false;
 	private Integer participationGroup;
 	private String email;
-	private boolean forArchiving;
+	private Boolean forArchiving;
 	
 	// The profile to which we want to compare the ecf results
 	private String ecfProfileUid;
@@ -268,10 +268,10 @@ public class Export implements java.io.Serializable {
 	}
 	
 	@Column(name = "EXPORT_FORARCHIVING")
-	public boolean isForArchiving() {
+	public Boolean isForArchiving() {
 		return forArchiving;
 	}
-	public void setForArchiving(boolean forArchiving) {
+	public void setForArchiving(Boolean forArchiving) {
 		this.forArchiving = forArchiving;
 	}	
 }
