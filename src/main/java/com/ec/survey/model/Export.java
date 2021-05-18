@@ -55,6 +55,8 @@ public class Export implements java.io.Serializable {
 	
 	// The profile to which we want to compare the ecf results
 	private String ecfProfileUid;
+
+	private String displayUsername;
 	
 	@Id
 	@Column(name = "EXPORT_ID")
@@ -273,6 +275,16 @@ public class Export implements java.io.Serializable {
 	}
 	public void setForArchiving(Boolean forArchiving) {
 		this.forArchiving = forArchiving;
-	}	
+	}
+
+	@Transient
+	public String getDisplayUsername() {
+		return displayUsername;
+	}
+
+	@Transient
+	public void setDisplayUsername(String displayUsername) {
+		this.displayUsername = displayUsername;
+	}
 }
 

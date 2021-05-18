@@ -251,6 +251,7 @@
 				
 				$(row).append('<td style="vertical-align: middle;"><div style="width: 400px; overflow: hidden;  word-break: break-all;">' + t + '</div></td>');
 				$(row).append('<td style="vertical-align: middle;">' + list[i].name + '</td>');
+				$(row).append('<td style="vertical-align: middle;">' + (list[i].displayUsername || "") + '</td>');
 
 				td = document.createElement("td");
 				$(td).attr({'style': 'vertical-align: middle; text-align: center;'});
@@ -389,6 +390,7 @@
 								</div>	 
 								<spring:message code="label.Name" />
 							</th>
+							<th><spring:message code="label.UserName" /></th>
 							<th style="text-align: center;"><spring:message code="label.Type" /></th>
 							<th style="min-width: 120px">
 								<div style="float: right">
@@ -403,7 +405,7 @@
 					</thead>
 					<tbody>
 						<tr id="export-loading">
-							<td colspan="7"  style="text-align: center">
+							<td colspan="8"  style="text-align: center">
 								<img src="${contextpath}/resources/images/ajax-loader.gif" />
 							</td>
 						</tr>
