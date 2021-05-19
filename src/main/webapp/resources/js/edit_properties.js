@@ -609,6 +609,7 @@ var ElementProperties = function() {
 			} else if ($(e).hasClass("matrix-header"))
 			{
 				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
+				const element = parent.getChild($(e).attr("data-id"));
 				
 				if (isOPC && parent != null && parent.hasOwnProperty("locked") && parent.locked())
 				{
@@ -644,6 +645,10 @@ var ElementProperties = function() {
 					_actions.CutEnabled(false);		
 					_actions.MoveUpEnabled(false);
 					_actions.MoveDownEnabled(false);
+
+					if (isDelphi) {
+						adaptDelphiChildControls(element, parent);
+					}
 				}
 			} else if ($(e).hasClass("mytableitem"))
 			{
@@ -677,7 +682,8 @@ var ElementProperties = function() {
 			} else if ($(e).hasClass("table-header"))
 			{
 				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
-				
+				const element = parent.getChild($(e).attr("data-id"));
+
 				if (isOPC && parent != null && parent.hasOwnProperty("locked") && parent.locked())
 				{
 					$("#lockedElementInfo").show();
@@ -711,6 +717,10 @@ var ElementProperties = function() {
 					_actions.CutEnabled(false);		
 					_actions.MoveUpEnabled(false);
 					_actions.MoveDownEnabled(false);
+
+					if (isDelphi) {
+						adaptDelphiChildControls(element, parent);
+					}
 				}
 			} else if ($(e).hasClass("dateitem"))
 			{
@@ -885,7 +895,6 @@ var ElementProperties = function() {
 				getVisibilityRow(false, !isDelphiQuestion);
 				getAdvancedPropertiesRow();
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
-				
 				if (isDelphi)
 				{
 					adaptDelphiControls(element);
@@ -893,6 +902,7 @@ var ElementProperties = function() {
 			} else if ($(e).hasClass("ratingquestion"))
 			{				
 				var parent = _elements[$(e).closest(".survey-element").attr("data-id")];
+				const element = parent.getChild($(e).attr("data-id"));
 				
 				if (isOPC && parent != null && parent.hasOwnProperty("locked") && parent.locked())
 				{
@@ -919,6 +929,10 @@ var ElementProperties = function() {
 					_actions.CutEnabled(false);		
 					_actions.MoveUpEnabled(false);
 					_actions.MoveDownEnabled(false);
+
+					if (isDelphi) {
+						adaptDelphiChildControls(element, parent);
+					}
 				}
 			} else if ($(e).find(".gallery-image").length > 0)
 			{
