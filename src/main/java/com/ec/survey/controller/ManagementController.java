@@ -3208,6 +3208,10 @@ public class ManagementController extends BasicController {
 			Survey draft = surveyService.getSurvey(shortname, true, false, false, false, null, true, false);
 			Survey survey = surveyService.getSurvey(filter.getSurveyId(), draft.getLanguage().getCode());
 
+			if (user != null) {
+				sessionService.upgradePrivileges(draft, user, request);
+			}
+			
 			boolean active = publicationmode || (boolean) request.getSession().getAttribute("results-source-active");
 			boolean allanswers = !publicationmode
 					&& (boolean) request.getSession().getAttribute("results-source-allanswers");
@@ -3246,11 +3250,7 @@ public class ManagementController extends BasicController {
 			if (!surveyExists) {
 				logger.error("Survey not set: " + request.getRequestURL());
 			}
-
-			if (user != null) {
-				sessionService.upgradePrivileges(draft, user, request);
-			}
-
+			
 			List<Element> visibleQuestions = new ArrayList<>();
 			for (String id : filter.getVisibleQuestions()) {
 				try {
