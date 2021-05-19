@@ -139,7 +139,7 @@
 					
 					 	<c:choose>
 					 		<c:when test="${rowCounter.index == 0}">
-								<div class="single-page" id="page${rowCounter.index}" tabindex="-1">
+								<div class="single-page" id="page${rowCounter.index}">
 							</c:when>
 							<c:otherwise>
 								<div class="single-page" id="page${rowCounter.index}" style="display: none">
@@ -293,12 +293,12 @@
 									<c:when test="${readonlyMode != null && readonlyMode == true}">
 										<div id="normalcss" style="color: #ccc">
 												${form.getMessage("label.Standard")}&#160;
-											<a class="link visiblelink css-switch disabled" id="css-switch-disabled"
+											<a tabindex="0" class="link visiblelink css-switch disabled" id="css-switch-disabled"
 											   style="color: #ccc">${form.getMessage("label.AccessibilityMode")}</a>
 										</div>
 
 										<div id="enhancedcss" class="hideme" style="color: #ccc">
-											<a class="link css-switch normal" id="css-switch-normal"
+											<a tabindex="0" class="link css-switch normal" id="css-switch-normal"
 											   style="color: #ccc">${form.getMessage("label.Standard")}</a>&#160;
 												${form.getMessage("label.AccessibilityMode")}
 										</div>
@@ -306,12 +306,12 @@
 									<c:otherwise>
 										<div id="normalcss">
 												${form.getMessage("label.Standard")}&#160;
-											<a class="link visiblelink css-switch disabled" id="css-switch-disabled"
+											<a tabindex="0" class="link visiblelink css-switch disabled" id="css-switch-disabled"
 											   onclick="switchCss('${mode}','wcag');">${form.getMessage("label.AccessibilityMode")}</a>
 										</div>
 
 										<div id="enhancedcss" class="hideme">
-											<a class="link css-switch normal" id="css-switch-normal"
+											<a tabindex="0" class="link css-switch normal" id="css-switch-normal"
 											   onclick="switchCss('${mode}','standard');">${form.getMessage("label.Standard")}</a>&#160;
 												${form.getMessage("label.AccessibilityMode")}
 										</div>

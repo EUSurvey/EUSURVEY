@@ -1,0 +1,24 @@
+:focus {
+	border: 2px solid #FFD617 !important;
+}
+
+.possibleanswerrow:focus-within {
+	border: 2px solid #FFD617 !important;
+}
+
+.matrix-cell:focus-within {
+	border: 2px solid #FFD617 !important;
+}
+
+.confirmationelement:focus-within {
+	border: 2px solid #FFD617 !important;
+}
+
+.galleryinfo:focus-within {
+	border: 2px solid #FFD617 !important;
+}
+
+/* needed for the fake button in a upload element */
+.btn:focus-within {
+	border: 2px solid #FFD617 !important;
+}
