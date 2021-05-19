@@ -207,7 +207,7 @@ function checkSurveyPDFReady(id) {
 
 function checkSurveyPDFResult(result) {
 	if (result == "exists") {
-		$("#download-survey-pdf-dialog-result").css("display", "inline-block");
+		$("#download-survey-pdf-dialog-result").css("display", "inline-block").focus();
 		$("#download-survey-pdf-dialog-spinner").hide();
 		$("#download-survey-pdf-dialog-running").hide();
 		$("#download-survey-pdf-dialog-ready").show();
