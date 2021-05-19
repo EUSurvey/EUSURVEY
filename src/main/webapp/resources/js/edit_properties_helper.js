@@ -2195,6 +2195,18 @@ function adaptDelphiControls(element) {
 			mandatoryPropertyRow.Disabled(true);
 			mandatoryPropertyRow.Value(false);
 			element.optional(true);
+			
+			let children = [];
+			if (["Matrix", "Table"].includes(element.type)) {
+				children = element.questions();
+			} else if (element.type === "RatingQuestion") {
+				children = element.childElements();
+			}
+			
+			for (let i = 0; i < children.length; i++) {
+				children[i].optional(true);
+			}
+			
 		} else {
 			mandatoryPropertyRow.Disabled(false);
 		}
@@ -2216,5 +2228,15 @@ function adaptDelphiControls(element) {
 	} else {
 		$("tr[data-label='ShowExplanationBox']").hide();
 		$("tr[data-label='DelphiChartType']").hide();
+	}
+}
+
+function adaptDelphiChildControls(element, parent) {
+	const mandatoryPropertyRow = _elementProperties.propertyRows().find(row => row.Label() === 'Mandatory');
+	if (parent.isDelphiQuestion()) {
+		mandatoryPropertyRow.Disabled(true);
+		mandatoryPropertyRow.Value(false);
+	} else {
+		mandatoryPropertyRow.Disabled(false);
 	}
 }
