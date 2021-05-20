@@ -2,6 +2,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 	
+	<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+		
 	<c:choose>
 		<c:when test="${forpdf == null && responsive == null}">
 			<div class="fullpageform">
@@ -22,7 +24,7 @@
 			
 			<c:if test="${forpdf == null}">
 				<div style="text-align: center; margin-bottom: 20px;">
-					<a id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail()" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
+					<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail()" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
 				</div>
 			</c:if>
 			
@@ -326,7 +328,7 @@
 		
 		<c:if test="${forpdf == null}">
 			<div style="text-align: center; margin-bottom: 20px;">
-				<a id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail()" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
+				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail()" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
 			</div>
 		</c:if>
 	</div>

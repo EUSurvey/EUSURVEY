@@ -1,0 +1,7 @@
+body, td, pre {
+font-size: 13px;
+}
+
+:focus {
+	border: 2px solid #FFD617 !important;
+}

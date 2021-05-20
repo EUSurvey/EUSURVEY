@@ -70,8 +70,10 @@
 							</c:when>
 							<c:otherwise>
 								<div id="localstorageinfo" class="visible-lg" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
-									<input class="check" type="checkbox" checked="checked" id="saveLocalBackup" onchange="checkLocalBackup()" />
-									<label for="saveLocalBackup">${form.getMessage("info.DeactivateLocalStorage")}</label>
+									<span class="focusborder">
+										<input class="check" type="checkbox" checked="checked" id="saveLocalBackup" onchange="checkLocalBackup()" />
+										<label for="saveLocalBackup">${form.getMessage("info.DeactivateLocalStorage")}</label>
+									</span>
 								</div>
 							</c:otherwise>
 						</c:choose>
@@ -88,7 +90,7 @@
 								<div id="ecDisclaimer">
 									<div style="float: right; margin-top: -15px; margin-right: -15px;">
 										<input type="hidden" id="disclaimerMinimized" name="disclaimerMinimized" value="${disclaimerMinimized}" />
-										<a style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
+										<a href="javascript:;" style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
 									</div>								
 									<span class="ecDisclaimerTitle">${form.getMessage("label.Disclaimer")}</span>
 									<p>
