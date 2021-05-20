@@ -214,7 +214,7 @@
 
 									<div class="hpdiv">
 										<label for="hp-7fk9s82jShfgak">${form.getMessage("info.leaveempty")}</label>
-										<textarea id="hp-7fk9s82jShfgak" name="hp-7fk9s82jShfgak" class="hp"
+										<textarea tabindex="-1" id="hp-7fk9s82jShfgak" name="hp-7fk9s82jShfgak" class="hp"
 												  autocomplete="false"></textarea>
 									</div>
 
