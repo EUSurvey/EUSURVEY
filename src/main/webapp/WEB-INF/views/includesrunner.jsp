@@ -281,7 +281,7 @@
 			language : globalLanguage,
 			image_advtab: true,
 			entities: '',
-			content_css: '${contextpath}/resources/css/tinymce.css',
+			content_css: '${contextpath}/resources/css/tinymceyellowfocus.css',
 			popup_css_add: '${contextpath}/resources/css/tinymcepopup.css',
 			forced_root_block: false,
 			browser_spellcheck: true,

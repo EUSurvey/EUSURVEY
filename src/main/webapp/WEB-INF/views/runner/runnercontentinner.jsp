@@ -70,8 +70,10 @@
 							</c:when>
 							<c:otherwise>
 								<div id="localstorageinfo" class="visible-lg" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
-									<input class="check" type="checkbox" checked="checked" id="saveLocalBackup" onchange="checkLocalBackup()" />
-									<label for="saveLocalBackup">${form.getMessage("info.DeactivateLocalStorage")}</label>
+									<span class="focusborder">
+										<input class="check" type="checkbox" checked="checked" id="saveLocalBackup" onchange="checkLocalBackup()" />
+										<label for="saveLocalBackup">${form.getMessage("info.DeactivateLocalStorage")}</label>
+									</span>
 								</div>
 							</c:otherwise>
 						</c:choose>
@@ -88,7 +90,7 @@
 								<div id="ecDisclaimer">
 									<div style="float: right; margin-top: -15px; margin-right: -15px;">
 										<input type="hidden" id="disclaimerMinimized" name="disclaimerMinimized" value="${disclaimerMinimized}" />
-										<a style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
+										<a href="javascript:;" style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
 									</div>								
 									<span class="ecDisclaimerTitle">${form.getMessage("label.Disclaimer")}</span>
 									<p>
@@ -139,7 +141,7 @@
 					
 					 	<c:choose>
 					 		<c:when test="${rowCounter.index == 0}">
-								<div class="single-page" id="page${rowCounter.index}" tabindex="-1">
+								<div class="single-page" id="page${rowCounter.index}">
 							</c:when>
 							<c:otherwise>
 								<div class="single-page" id="page${rowCounter.index}" style="display: none">
@@ -293,12 +295,12 @@
 									<c:when test="${readonlyMode != null && readonlyMode == true}">
 										<div id="normalcss" style="color: #ccc">
 												${form.getMessage("label.Standard")}&#160;
-											<a class="link visiblelink css-switch disabled" id="css-switch-disabled"
+											<a tabindex="0" class="link visiblelink css-switch disabled" id="css-switch-disabled"
 											   style="color: #ccc">${form.getMessage("label.AccessibilityMode")}</a>
 										</div>
 
 										<div id="enhancedcss" class="hideme" style="color: #ccc">
-											<a class="link css-switch normal" id="css-switch-normal"
+											<a tabindex="0" class="link css-switch normal" id="css-switch-normal"
 											   style="color: #ccc">${form.getMessage("label.Standard")}</a>&#160;
 												${form.getMessage("label.AccessibilityMode")}
 										</div>
@@ -306,12 +308,12 @@
 									<c:otherwise>
 										<div id="normalcss">
 												${form.getMessage("label.Standard")}&#160;
-											<a class="link visiblelink css-switch disabled" id="css-switch-disabled"
+											<a tabindex="0" class="link visiblelink css-switch disabled" id="css-switch-disabled"
 											   onclick="switchCss('${mode}','wcag');">${form.getMessage("label.AccessibilityMode")}</a>
 										</div>
 
 										<div id="enhancedcss" class="hideme">
-											<a class="link css-switch normal" id="css-switch-normal"
+											<a tabindex="0" class="link css-switch normal" id="css-switch-normal"
 											   onclick="switchCss('${mode}','standard');">${form.getMessage("label.Standard")}</a>&#160;
 												${form.getMessage("label.AccessibilityMode")}
 										</div>

@@ -57,15 +57,15 @@
 									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>">${form.getMessage("label.DoLogin")}</a> |
 								</c:when>
 								<c:when test="${USER != null}">
-									<span style="font-size: 13px; font-weight: normal;">${form.getMessage("label.Hello")}<b>&nbsp;<esapi:encodeForHTML>${USER.givenNameOrLogin}</esapi:encodeForHTML>&nbsp;<esapi:encodeForHTML>${fn:toUpperCase(USER.surName)}</esapi:encodeForHTML></b>&#160;&#160;(<a id="logoutBtnFromHeader"  onclick="logout()" class="visiblelink">${form.getMessage("label.logout")}</a>)</span>&#160;|
+									<span style="font-size: 13px; font-weight: normal;">${form.getMessage("label.Hello")}<b>&nbsp;<esapi:encodeForHTML>${USER.givenNameOrLogin}</esapi:encodeForHTML>&nbsp;<esapi:encodeForHTML>${fn:toUpperCase(USER.surName)}</esapi:encodeForHTML></b>&#160;&#160;(<a href="#" id="logoutBtnFromHeader"  onclick="logout()" class="visiblelink">${form.getMessage("label.logout")}</a>)</span>&#160;|
 								</c:when>
 								<c:otherwise>
 									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>">${form.getMessage("label.DoLogin")}</a> |
 								</c:otherwise>
 							</c:choose>
 					
-						<div  id="dropDownHelp" class="dropdown" style="display: inline-block;">
-								<a class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<div id="dropDownHelp" class="dropdown" style="display: inline-block;">
+								<a href="javascript:;" class="dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 									<spring:message code="label.Help" />&nbsp;
 									<span class="caret"></span>
 		  						</a>
@@ -81,7 +81,7 @@
 								|
 		
 								<div class="dropdown" >
-									<a class="dropdown-toggle" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+									<a href="javascript:;" class="dropdown-toggle" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
 										<spring:message code="label.Language" />&nbsp;
 										<span class="caret"></span>
 			  						</a>	
@@ -104,10 +104,10 @@
 															<a href="?language=${lang.value.code}&surveylanguage=${lang.value.code}"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></a>
 														</c:when>
 														<c:when test="${lang.value.code == form.language.code}">
-														<a class="skipScriptAnchor" onclick="$('.dropdown.open .dropdown-toggle').dropdown('toggle')"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></a>
+														<a href="javascript:;" class="skipScriptAnchor" onclick="$('.dropdown.open .dropdown-toggle').dropdown('toggle')"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></a>
 			  											</c:when>
 														<c:otherwise>					
-														<a class="skipScriptAnchor" onclick="changeLanguageSelectHeader('${mode}','<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>');"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></a>
+														<a href="javascript:;" class="skipScriptAnchor" onclick="changeLanguageSelectHeader('${mode}','<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>');"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></a>
 			  											</c:otherwise>	
 			  										</c:choose>	 
 			  									</li> 									  									
@@ -130,7 +130,7 @@
 							</c:choose>
 							
 							<div id="dropDownHelp" class="dropdown" style="display: inline-block;">
-								<a class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+								<a href="javascript:;" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
 									<spring:message code="label.Help" />&nbsp;
 									<span class="caret"></span>
 		  						</a>
@@ -146,7 +146,7 @@
 							 |
 		
 							<div class="dropdown">
-								<a class="dropdown-toggle" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+								<a href="javascript:;" class="dropdown-toggle" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
 									<spring:message code="label.Language" />&nbsp;
 									<span class="caret"></span>
 		  						</a>
