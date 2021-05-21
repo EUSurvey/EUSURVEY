@@ -296,12 +296,15 @@ public class SurveyHelper {
 				if (element instanceof Matrix) {
 					Matrix m = (Matrix) element;
 					boolean atLeastOneQuestionVisible = false;
-					for (Element matrixquestion : m.getQuestions()) {
-						matrixquestion.setSurvey(m.getSurvey());
-						validateElement(matrixquestion, answerSet, dependencies, result, answerService,
-								invisibleElements, resources, locale, m, request, draft);
-						if (!invisibleElements.contains(matrixquestion.getUniqueId())) {
-							atLeastOneQuestionVisible = true;
+					if (!invisibleElements.contains(m.getUniqueId()))
+					{			
+						for (Element matrixquestion : m.getQuestions()) {
+							matrixquestion.setSurvey(m.getSurvey());
+							validateElement(matrixquestion, answerSet, dependencies, result, answerService,
+									invisibleElements, resources, locale, m, request, draft);
+							if (!invisibleElements.contains(matrixquestion.getUniqueId())) {
+								atLeastOneQuestionVisible = true;
+							}
 						}
 					}
 					if (!atLeastOneQuestionVisible && !invisibleElements.contains(m.getUniqueId())) {
@@ -919,6 +922,10 @@ public class SurveyHelper {
 	private static void recreateDelphiExplanationUploadedFiles(AnswerSet answerSet, Survey survey,
 			FileService fileService, AnswerExplanationService answerExplanationService) {
 
+		if (answerSet.getId() == null) {
+			return;
+		}
+		
 		int answerSetId = answerSet.getId();
 		String surveyUniqueId = survey.getUniqueId();
 
