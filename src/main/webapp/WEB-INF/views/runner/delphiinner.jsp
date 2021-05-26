@@ -125,7 +125,7 @@
 					<div class="delphi-chart-modal__chart-container"></div>
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
+					<a  href="javascript:;" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
 				</div>
 			</div>
 		</div>
@@ -196,7 +196,7 @@
 					</a>
 					<c:if test="${form.answerSets.size() > 0}">
 						<br /><br />
-						<a onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
+						<a href="javascript:;" onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
 					</c:if>
 							
 				</div>												
@@ -311,7 +311,7 @@
 									<!-- /ko -->
 									<c:if test="${form.survey.isDelphiShowAnswers}">
 										<!-- ko if: isDelphiShowAnswersAndStatisticsInstantly || answer.length > 0 -->
-										<a class="btn btn-xs btn-default" onclick="openAnswersDialog(this);"><spring:message code="label.ShowAllAnswers" /></a>
+										<a href="javascript:;" class="btn btn-xs btn-default" onclick="openAnswersDialog(this);"><spring:message code="label.ShowAllAnswers" /></a>
 										<!-- /ko -->
 									</c:if>
 									
@@ -345,7 +345,7 @@
 					<%@ include file="delphiAnswersTable.jsp" %>
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close" /></a>
+					<a href="javascript:;" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close" /></a>
 				</div>
 			</div>
 		</div>
@@ -358,8 +358,8 @@
 					<spring:message code="message.DelphiConfirmDeleteComment" />
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
-					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+					<a href="javascript:;" class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
+					<a href="javascript:;" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
 				</div>
 			</div>
 		</div>

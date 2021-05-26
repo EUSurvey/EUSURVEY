@@ -91,13 +91,13 @@
 							<textarea class="form-control" data-bind="hasFocus: hasChangedCommentFieldFocus, value: changedComment"></textarea>
 							<c:choose>
 								<c:when test='${mode == "delphiStartPage"}'>
-									<a class="btn btn-xs btn-primary" onClick="saveChangedDelphiCommentFromStartPage(this, false)">${form.getMessage("label.Save")}</a>
+									<a href="javascript:;" class="btn btn-xs btn-primary" onClick="saveChangedDelphiCommentFromStartPage(this, false)">${form.getMessage("label.Save")}</a>
 								</c:when>
 								<c:otherwise>
-									<a class="btn btn-xs btn-primary" onClick="saveChangedDelphiCommentFromRunner(this, false)">${form.getMessage("label.Save")}</a>
+									<a href="javascript:;" class="btn btn-xs btn-primary" onClick="saveChangedDelphiCommentFromRunner(this, false)">${form.getMessage("label.Save")}</a>
 								</c:otherwise>
 							</c:choose>
-							<a class="btn btn-xs btn-default delphi-comment__cancel" data-bind="click: () => { isChangedCommentFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
+							<a href="javascript:;" class="btn btn-xs btn-default delphi-comment__cancel" data-bind="click: () => { isChangedCommentFormVisible(false); }">${form.getMessage("label.Cancel")}</a>
 						</div>
 						<!-- ko if: answerSetUniqueCode === "${uniqueCode}" && ((user && date) || replies.length === 0) -->
 						<div class="delphi-comment__actions">
@@ -140,7 +140,7 @@
 						</div>
 						<!-- ko if: answerSetUniqueCode === "${uniqueCode}" -->
 						<div class="delphi-comment__actions">
-							<a data-bind="click: editReply, hidden: isChangedReplyFormVisible">${form.getMessage("label.Edit")}</a>
+							<a href="javascript:;" data-bind="click: editReply, hidden: isChangedReplyFormVisible">${form.getMessage("label.Edit")}</a>
 							<c:choose>
 								<c:when test='${mode == "delphiStartPage"}'>
 									<a href="javascript:;" onClick="deleteDelphiCommentFromStartPage(this, true)" data-bind="hidden: isChangedReplyFormVisible">${form.getMessage("label.Delete")}</a>

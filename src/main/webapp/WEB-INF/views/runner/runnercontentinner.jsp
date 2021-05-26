@@ -28,7 +28,7 @@
 					<div class="delphi-chart-modal__chart-container"></div>
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
+					<a href="javascript:;" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
 				</div>
 			</div>
 		</div>
@@ -402,7 +402,7 @@
 								</a>
 								<c:if test="${form.answerSets.size() > 0}">
 									<br /><br />
-									<a onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
+									<a href="javascript:;" onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
 								</c:if>
 							</div>
 							<hr style="margin-top: 15px;" />

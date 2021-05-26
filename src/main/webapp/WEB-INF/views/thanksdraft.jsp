@@ -88,8 +88,8 @@
 		       	</span>
 			</div>
 			<div class="modal-footer">
-				<a class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
-				<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+				<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
+				<a href="javascript:;" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 			</div>
 			</div>
 			</div>
