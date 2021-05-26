@@ -1303,7 +1303,7 @@ public class OdfExportCreator extends ExportCreator {
 
 						CreateTableForAnswerStat(cellValue);
 
-						for (int i = 1; i < rating.getNumIcons(); i++) {
+						for (int i = 1; i <= rating.getNumIcons(); i++) {
 							rowIndex++;
 
 							cellValue = i + Constants.PATH_DELIMITER + rating.getNumIcons();
