@@ -177,21 +177,21 @@
 						
 						<c:choose>
 							<c:when test="${form.survey.contact.startsWith('form:')}">
-								<a href="#" target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}" aria-label="${form.getMessage("label.ContactForm")} - ${form.getMessage("label.OpensInNewWindow")}">${form.getMessage("label.ContactForm")}</a>
+								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}" aria-label="${form.getMessage("label.ContactForm")} - ${form.getMessage("label.OpensInNewWindow")}">${form.getMessage("label.ContactForm")}</a>
 							</c:when>
 							<c:when test="${form.survey.contact.contains('@')}">
 								<i class="icon icon-envelope" style="vertical-align: middle"></i>
-								<a href="#" class="link" href="mailto:<esapi:encodeForHTMLAttribute>${form.survey.contact}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${form.survey.contact}</esapi:encodeForHTML></a>
+								<a class="link" href="mailto:<esapi:encodeForHTMLAttribute>${form.survey.contact}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${form.survey.contact}</esapi:encodeForHTML></a>
 							</c:when>
 							<c:otherwise>
 								<i class="icon icon-globe" style="vertical-align: middle"></i>
-								<a href="#" target="_blank" class="link visiblelink" href="<esapi:encodeForHTMLAttribute>${form.survey.fixedContact}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${form.survey.fixedContactLabel}</esapi:encodeForHTML></a>
+								<a target="_blank" class="link visiblelink" href="<esapi:encodeForHTMLAttribute>${form.survey.fixedContact}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${form.survey.fixedContactLabel}</esapi:encodeForHTML></a>
 							</c:otherwise>
 						</c:choose>
 					</c:if>
 					
 					<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Info")}</div>
-					<a href="#" target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi?survey=${form.survey.shortname}">
+					<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi?survey=${form.survey.shortname}">
 						${form.getMessage("label.Delphi")}
 					</a>
 					<c:if test="${form.answerSets.size() > 0}">
