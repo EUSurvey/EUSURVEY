@@ -254,6 +254,8 @@ function createUploader(instance, maxSize)
 	    	{
 	    		 $(instance).closest(".survey-element").append("<div class='validation-error' aria-live='polite'>" + getWrongExtensionMessage(fileName) + "</div>");
 	    	}
+
+			$(".qq-uploader input[type='file']").attr("title", " ");
 		},
 		onError: function() {
 			$(this.element).parent().find(".uploadinfo").hide();
