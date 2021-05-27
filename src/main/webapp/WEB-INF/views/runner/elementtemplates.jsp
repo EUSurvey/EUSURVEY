@@ -1335,7 +1335,7 @@
 						<tr>
 							<th class="area-header">
 								<span>${form.getMessage("label.DelphiChartTitle")}</span>
-								<span onclick="loadGraphDataModal(this)" class="glyphicon glyphicon-resize-full delphi-chart-expand" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
+								<a href="javascript:;" onclick="loadGraphDataModal(this)" class="glyphicon glyphicon-resize-full delphi-chart-expand" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></a>
 							</th>
 						</tr>
 						<tr>
@@ -1353,7 +1353,7 @@
 		<div class="row" style="margin-left: 0; margin-right: 0; margin-top: 0px;">
 			<div class="col-md-12" style="padding:0;">
 				<div class="explanation-update-section">
-					<a href="javascript:;" class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
+					<a class="btn btn-primary disabled" data-type="delphisavebutton" onclick="if (!$(this).hasClass('disabled')) { delphiUpdate($(this).closest('.survey-element')) }">${form.getMessage("label.Save")}</a>
 					<span class="inline-loader">
 						<img class="center" src="${contextpath}/resources/images/ajax-loader.gif"/>
 					</span>
@@ -1383,8 +1383,8 @@
 						<spring:message code="message.DelphiConfirmDeleteComment" />
 					</div>
 					<div class="modal-footer">
-						<a class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
-						<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+						<a href="javascript:;" class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
+						<a href="javascript:;" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
 					</div>
 				</div>
 			</div>

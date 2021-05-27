@@ -39,8 +39,7 @@
 					<c:when test="${form.getLanguagesAlphabetical().size() > 1}">
 						<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}">
 							<c:if test="${lang.value.code == form.language.code}">
-								<a href="#" onclick="$('#choseRunnerLanguageDialog').show()">${lang.value.name}</a>
-								<a href="#" onclick="$('#choseRunnerLanguageDialog').show()">
+								<a href="#" onclick="$('#choseRunnerLanguageDialog').show()">${lang.value.name}
 									<span class="icon"></span>
 									<span class="langcode">${lang.value.code}</span>
 								</a>
@@ -94,13 +93,13 @@
 			<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}">
 				<c:choose>
 					<c:when test="${lang.value.code == form.language.code}">
-						<div class="selectedlang">
+						<div tabindex="0" class="selectedlang">
 							<div class="checkicon"></div>
 							${lang.value.name}
 						</div>
 					</c:when>
 					<c:otherwise>
-						<a onclick="changeLanguageSelectHeader('${mode}', '<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>')" class='langlink'>${lang.value.name}</a>
+						<a href="javascript:;" onclick="changeLanguageSelectHeader('${mode}', '<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>')" class='langlink'>${lang.value.name}</a>
 					</c:otherwise>
 				</c:choose>
 			</c:forEach>

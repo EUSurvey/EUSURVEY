@@ -105,7 +105,7 @@
 			$(element).siblings(".validation-error").remove();
 			
 			var surveyElement = $(element).closest(".survey-element");
-			$(surveyElement).find("a[data-type='delphisavebutton']").removeClass("disabled");
+			enableDelphiSaveButtons(surveyElement);
 
 			for (var i = 0; i < responseJSON.files.length; i++) {
 				var f = responseJSON.files[i];

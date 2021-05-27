@@ -1860,13 +1860,21 @@ function initModals(item)
 		});
 		
 		if (!result) {
-			$(parent).closest(".survey-element").find("a[data-type='delphisavebutton']").addClass("disabled");
+			disableDelphiSaveButtons($(parent).closest(".survey-element"));
 			$(parent).closest(".survey-element").find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
 		}
 		
 		return result;
 	}
+	
+	function disableDelphiSaveButtons(parent) {
+		$(parent).find("a[data-type='delphisavebutton']").addClass("disabled").removeAttr("href");
+	}
 
+	function enableDelphiSaveButtons(parent) {
+		$(parent).find("a[data-type='delphisavebutton']").removeClass("disabled").attr("href", "javascript:;");
+	}
+	
 	function isOneAnswerEmptyWhileItsExplanationIsNot(containers) {
 
 		function checkValueOfElement(element) {

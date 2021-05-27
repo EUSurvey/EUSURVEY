@@ -545,7 +545,7 @@ function delphiPrefill(editorElement) {
 				var uploaderElement = surveyElement.find(".explanation-file-upload-section").children(".file-uploader").first();
 				var updateinfo = {"success":true, "files":currentExplanationText.fileList, "wrongextension":false};
 				updateFileList(uploaderElement, updateinfo);
-				$(surveyElement).find("a[data-type='delphisavebutton']").addClass("disabled");
+				disableDelphiSaveButtons(surveyElement);
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 			surveyElement.find(".explanation-file-upload-section").show();
@@ -1449,7 +1449,7 @@ function delphiUpdateContinued(div, successCallback) {
 		},
 		success: function (data) {
 			$(message).html(data.message).addClass("label label-success");
-			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
+			disableDelphiSaveButtons(div);
 			
 			const uniqueCode = $("#uniqueCode").val();
 			const key = HAS_SHOWN_SURVEY_LINK + uniqueCode;
@@ -1489,7 +1489,7 @@ function delphiUpdateContinued(div, successCallback) {
 function appendShowContributionLinkDialogToSidebar() {
 	$("<br />").appendTo(".contact-and-pdf__delphi-section");
 	$("<br />").appendTo(".contact-and-pdf__delphi-section");
-	$('<a onclick="showContributionLinkDialog()">' + labelEditYourContributionLater + '</a>')
+	$('<a href="javascript:;" onclick="showContributionLinkDialog()">' + labelEditYourContributionLater + '</a>')
 		.appendTo(".contact-and-pdf__delphi-section");
 }
 
