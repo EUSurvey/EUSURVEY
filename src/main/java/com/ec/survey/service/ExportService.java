@@ -348,7 +348,7 @@ public class ExportService extends BasicService {
 
 				User user = (User) session.get(User.class, export.getUserId());
 				if (user != null) {
-					export.setDisplayUsername(user.getGivenNameOrLogin());
+					export.setDisplayUsername(user.getName());
 				}
 				
 				result.add(export);
