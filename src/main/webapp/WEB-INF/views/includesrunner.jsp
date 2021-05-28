@@ -356,35 +356,39 @@
 	 {	
 		 var cs = getCharacterCount(input);
 		 
-		 var classes = $(input).attr('class').split(" ");
-		 var min = 0;
-		 var max = 0;
-			
-		 for ( var i = 0, l = classes.length; i<l; ++i ) {
-		 	if (strStartsWith(classes[i], 'min'))
-		 	{
-		 		min = parseInt(classes[i].substring(3));
-		 		
-		 	} else if (strStartsWith(classes[i], 'max'))
-		 	{
-		 		max = parseInt(classes[i].substring(3));
-		 	};	 	
-		 };
+		 var attr = $(input).attr('class');
 		 
-		 $(input).closest(".survey-element").find(".charactercounter").text(cs);
-		 
-		 if (max > 0 && max - cs < 5)
-		 {
-			 $(input).closest(".survey-element").find(".glyphicon-alert").show();
-		 } else {
-			 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
-		 }
-		 
-		 if (max > 0 && max - cs < 0)
-		 {
-			 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#f00");
-		 } else {
-			 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
+		 if (typeof attr !== typeof undefined && attr !== false) {
+			 var classes =attr.split(" ");
+			 var min = 0;
+			 var max = 0;
+				
+			 for ( var i = 0, l = classes.length; i<l; ++i ) {
+			 	if (strStartsWith(classes[i], 'min'))
+			 	{
+			 		min = parseInt(classes[i].substring(3));
+			 		
+			 	} else if (strStartsWith(classes[i], 'max'))
+			 	{
+			 		max = parseInt(classes[i].substring(3));
+			 	};	 	
+			 };
+			 
+			 $(input).closest(".survey-element").find(".charactercounter").text(cs);
+			 
+			 if (max > 0 && max - cs < 5)
+			 {
+				 $(input).closest(".survey-element").find(".glyphicon-alert").show();
+			 } else {
+				 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
+			 }
+			 
+			 if (max > 0 && max - cs < 0)
+			 {
+				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#f00");
+			 } else {
+				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
+			 }
 		 }
 	 }
 	

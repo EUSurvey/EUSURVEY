@@ -1550,7 +1550,7 @@ function saveCookies() {
 }
 
 function clearAllCookies(surveyprefix) {
-	if (!is_local_storage_enabled()) {
+	if (!check_local_storage_enabled(false)) {
 		return;
 	}
 	
@@ -1627,7 +1627,12 @@ function eraseCookie(name) {
 }
 
 function is_local_storage_enabled() {
-	if ($("#saveLocalBackup").length === 0) {
+	return check_local_storage_enabled(true);
+}
+
+function check_local_storage_enabled(checkDelphi)
+{
+	if (checkDelphi && $("#saveLocalBackup").length === 0) {
 		// local backup checkbox is not displayed => Delphi question => disable local storage
 		return false;
 	}
