@@ -763,7 +763,6 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				data: chartData,
 				options: chartOptions
 			}
-
 			switch (result.chartType) {
 				case "Bar":
 					chart.type = "horizontalBar";
@@ -803,6 +802,11 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 	            enabled: false,
 
 	            custom: function(tooltipModel) {
+                	if (["Matrix", "SingleChoice"].includes(result.questionType) && chart.type === "radar") {
+                		if (tooltipModel.dataPoints && tooltipModel.dataPoints.length > 0 && tooltipModel.dataPoints[0].value === "0") {
+                			return;
+                		}
+                	}
 	                // Tooltip Element
 	                var tooltipEl = document.getElementById('chartjs-tooltip');
 
@@ -828,8 +832,35 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 	                    tooltipEl.classList.add('no-transform');
 	                }
 
-	                function getBody(bodyItem) {
+	                function getBody(bodyItem, index) {
+	                	if (result.questionType === "SingleChoice" && ["horizontalBar", "bar", "line", "radar"].includes(chart.type)) {
+               				const olabels = chartData.originalLabels;
+               				const dataIndex = tooltipModel.dataPoints[index].index;
+               				return [olabels[dataIndex]+": "+tooltipModel.dataPoints[index].value];
+	                	}
+	                	if (result.questionType === "Matrix" && chart.type === "radar" && tooltipModel.dataPoints[0].value === 0) {
+               				const olabels = chartData.originalLabels;
+               				const oquestions = chartData.datasets.map(ds => ds.label);
+               				const colI = tooltipModel.dataPoints[index].index;
+               				const rowI = tooltipModel.dataPoints[index].datasetIndex;
+               				return [oquestions[rowI]+": "+olabels[colI]];
+	                	}
 	                    return bodyItem.lines;
+	                }
+	                
+	                function getTitles(titleLines_, tooltipModel_) {
+	                	if (result.questionType === "Matrix") {
+	                		if (chart.type === "radar" && tooltipModel_.dataPoints[0].value === 0) {
+                				return [result.label];
+	                		}
+	                		if (["horizontalBar", "bar", "line", "radar"].includes(chart.type)) {
+	                			return [result.label].concat(titleLines_);
+	                		}
+	                	}
+                		if (result.questionType === "SingleChoice") {
+                			return [result.label];
+                		}
+	                	return titleLines_;
 	                }
 
 	                // Set Text
@@ -839,7 +870,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 
 	                    var innerHtml = '<thead>';
 
-	                    titleLines.forEach(function(title) {
+	                    getTitles(titleLines, tooltipModel).forEach(function(title) {
 	                        innerHtml += '<tr><th>' + title + '</th></tr>';
 	                    });
 	                    innerHtml += '</thead><tbody>';
