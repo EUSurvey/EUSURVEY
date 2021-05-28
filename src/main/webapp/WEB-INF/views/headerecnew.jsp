@@ -39,7 +39,7 @@
 					<c:when test="${form.getLanguagesAlphabetical().size() > 1}">
 						<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}">
 							<c:if test="${lang.value.code == form.language.code}">
-								<a href="#" onclick="$('#choseRunnerLanguageDialog').show()">${lang.value.name}
+								<a href="#" onclick="showModalDialog($('#choseRunnerLanguageDialog'), this)">${lang.value.name}
 									<span class="icon"></span>
 									<span class="langcode">${lang.value.code}</span>
 								</a>
@@ -78,12 +78,12 @@
 		</div>
 	</div>
 	
-	<div id="choseRunnerLanguageDialog">
+	<div id="choseRunnerLanguageDialog" role="dialog">
 		<div class="backgroundhider"></div>
 		<div id="choseRunnerLanguageDialogInner">		
 		
 			<div style="text-align: right; margin-right: 20px;">
-				<a href="" class="closedialog" onclick="$('#choseRunnerLanguageDialog').hide()">${form.getMessage("label.Close")}</a>
+				<a href="" class="closedialog" onclick="hideModalDialog($('#choseRunnerLanguageDialog'))">${form.getMessage("label.Close")}</a>
 			</div>
 			
 			<div class="dialogtitle">

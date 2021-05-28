@@ -3,19 +3,19 @@
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
 
-<div class="modal contribution-link-dialog" data-backdrop="static" role="dialog" tabindex="-1">
+<div class="modal" id="contribution-link-dialog" data-backdrop="static" role="dialog" tabindex="-1">
 	<div class="modal-dialog non-resizable">
 		<div class="modal-content">
 			<div class="modal-body">
 				<p>${form.getMessage("info.delphilink")}</p>
-				<p class="contribution-link-dialog__link"></p>
+				<p id="contribution-link-dialog__link"></p>
 				<p>${form.getMessage("info.delphiLinkInSidebar")}</p>
 			</div>
 			<div class="modal-footer">
 				<a href="javascript:;" class="btn btn-default" onclick="openAskEmailToSendLinkDialog(this)">
 					${form.getMessage("label.SendByEmail")}
 				</a>
-				<a href="javascript:;" class="btn btn-primary" data-dismiss="modal">${form.getMessage("label.Continue")}</a>
+				<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($('#contribution-link-dialog'))">${form.getMessage("label.Continue")}</a>
 			</div>
 		</div>
 	</div>

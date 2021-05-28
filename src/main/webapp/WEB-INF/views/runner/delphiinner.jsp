@@ -117,7 +117,7 @@
 
 </style>
 
-	<div class="modal" id="delphi-chart-modal-start-page" data-backdrop="static">
+	<div class="modal" role="dialog" id="delphi-chart-modal-start-page" data-backdrop="static">
 		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-body">
@@ -125,7 +125,7 @@
 					<div class="delphi-chart-modal__chart-container"></div>
 				</div>
 				<div class="modal-footer">
-					<a  href="javascript:;" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
+					<a href="javascript: hideModalDialog('#delphi-chart-modal-start-page')" class="btn btn-primary"><spring:message code="label.Close"/></a>
 				</div>
 			</div>
 		</div>
@@ -196,7 +196,7 @@
 					</a>
 					<c:if test="${form.answerSets.size() > 0}">
 						<br /><br />
-						<a href="javascript:;" onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
+						<a href="javascript:;" onclick="showContributionLinkDialog(this)">${form.getMessage("label.EditYourContributionLater")}</a>
 					</c:if>
 							
 				</div>												
@@ -268,7 +268,7 @@
 							<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid, 'data-question-uid': uid}">
 								<div class="question-title">
 									<span data-bind="html: sectionViewModel.niceTitle(title)"></span>
-									<span style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
+									<a href="javascript:;" style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></a>
 								</div>
 	
 								<div class="no-graph-image">
@@ -340,12 +340,12 @@
 		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-header"><spring:message code="label.ResultsTable" /></div>
-				<div class="modal-body">
+				<div class="modal-body" style="padding-top: 30px;">
 					<div class="answers-table-modal-error"></div>
 					<%@ include file="delphiAnswersTable.jsp" %>
 				</div>
 				<div class="modal-footer">
-					<a href="javascript:;" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close" /></a>
+					<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Close" /></a>
 				</div>
 			</div>
 		</div>
@@ -359,7 +359,7 @@
 				</div>
 				<div class="modal-footer">
 					<a href="javascript:;" class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
-					<a href="javascript:;" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+					<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Cancel" /></a>
 				</div>
 			</div>
 		</div>
@@ -370,10 +370,10 @@
 		const errorDelphiTableContributionCouldNotBeChanged = "${form.getMessage("error.DelphiTableContributionCouldNotBeChanged")}";
 		const errorDelphiTableContributionCouldNotBeDeleted = "${form.getMessage("error.DelphiTableContributionCouldNotBeDeleted")}";
 		const errorDelphiTableContributionCouldNotBeSubmitted = "${form.getMessage("error.DelphiTableContributionCouldNotBeSubmitted")}";
-
+		
 		function openAnswersDialog(element) {
 			$('.answers-table-modal-error').hide();
-			$('.answers-table-modal').modal('show');
+			showModalDialog($('.answers-table-modal'), element);
 
 			const languageCode = "${form.language.code}";
 			currentQuestionUidInModal = $(element).closest('.question').attr('data-uid');
@@ -436,7 +436,7 @@
 
 		function deleteDelphiCommentFromStartPage(element, isReply) {
 			const dialog = $(".delete-confirmation-dialog");
-			$(dialog).modal("show");
+			showModalDialog(dialog, element);
 
 			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
 			$(deleteButton).off("click");
@@ -545,6 +545,8 @@
 			 });
 		}
 
+		var callerAddChartModalStartPage = null;
+		
 		function loadDelphiModalStartPage(element) {
 			var surveyid = ${form.survey.id};
 			var uniquecode = "${uniqueCode}";
@@ -560,6 +562,7 @@
 			$(canvasContainer).hide();
 			$(modal).modal('hide');
 
+			callerAddChartModalStartPage = element;
 			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true, false, canvasContainerWidth);
 		}
 

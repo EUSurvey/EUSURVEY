@@ -1340,7 +1340,7 @@ legend {
 	background-color: #337ab7 !important;
 }
 
-.contribution-link-dialog__link {
+#contribution-link-dialog__link {
 	margin: 5px 0;
 	word-wrap: break-word;
 }
