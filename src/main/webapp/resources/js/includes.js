@@ -2640,3 +2640,40 @@ function initModals(item)
 		}
 		return text;
 	}
+	
+	var modalDialogCaller = null;
+	
+	function showModalDialog(dialog, caller) {		
+		$(dialog).on('keydown', function(e) {
+		    var target = e.target;
+		    var shiftPressed = e.shiftKey;
+		    // If TAB key pressed
+		    if (e.keyCode == 9) {
+	            // Find first or last input element in the dialog parent (depending on whether Shift was pressed). 
+	            // Input elements must be visible, and can be Input/Select/Button/Textarea.
+	            var borderElem = shiftPressed ?
+	                                $(target).closest('[role=dialog]').find('a:visible,input:visible,select:visible,button:visible,textarea:visible').first() 
+	                             :
+	                                $(target).closest('[role=dialog]').find('a:visible,input:visible,select:visible,button:visible,textarea:visible').last();
+	            if ($(borderElem).length) {
+	                if ($(target).is($(borderElem))) {
+	                    return false;
+	                } else {
+	                    return true;
+	                }
+	            }
+		    }
+		    return true;
+		});
+		
+		$(dialog).modal("show");		
+		$(dialog).find('a:visible,input:visible,select:visible,button:visible,textarea:visible').first().focus();
+		modalDialogCaller = caller;
+	}
+	
+	function hideModalDialog(dialog) {
+		$(dialog).modal("hide");
+		if (modalDialogCaller != null) {
+			$(modalDialogCaller).focus();
+		}
+	}

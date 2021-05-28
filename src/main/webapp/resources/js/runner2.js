@@ -1026,7 +1026,7 @@ function addChartModal(_, chart) {
 	$('#wordcloudmodal').remove();
 	$(modal).find(".delphi-chart-modal__chart-container").show().append("<canvas></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
-	$(modal).modal("show");
+	showModalDialog($(modal), callerAddChartModal);
 }
 
 function addChartModalStartPage(_, chart) {
@@ -1035,7 +1035,7 @@ function addChartModalStartPage(_, chart) {
 	$('#wordcloudmodal').remove();
 	$(modal).find(".delphi-chart-modal__chart-container").show().append("<canvas></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
-	$(modal).modal("show");
+	showModalDialog($(modal), callerAddChartModalStartPage);
 }
 
 function addStructureChart(div, chart) {
@@ -1063,6 +1063,8 @@ function loadGraphData(div) {
 	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false, false, canvasContainerWidth);
 }
 
+var callerAddChartModal = null;
+
 function loadGraphDataModal(div) {
 	var surveyElement = $(div).closest(".survey-element");
 	var surveyId = $('#survey\\.id').val();
@@ -1079,6 +1081,7 @@ function loadGraphDataModal(div) {
 	$(canvasContainer).hide();
 	$(modal).modal('hide');
 
+	callerAddChartModal = div;
 	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false, canvasContainerWidth);
 }
 
@@ -1487,7 +1490,7 @@ function delphiUpdateContinued(div, successCallback) {
 			if (localStorage.getItem(key) == null) {
 				localStorage.setItem(key, "true");
 				appendShowContributionLinkDialogToSidebar();
-				showContributionLinkDialog(data.link);
+				showContributionLinkDialog($(div).find("a[data-type='delphisavebutton']"), data.link);
 			}
 			
 			if (data.changedForMedian) {
@@ -1520,19 +1523,19 @@ function delphiUpdateContinued(div, successCallback) {
 function appendShowContributionLinkDialogToSidebar() {
 	$("<br />").appendTo(".contact-and-pdf__delphi-section");
 	$("<br />").appendTo(".contact-and-pdf__delphi-section");
-	$('<a href="javascript:;" onclick="showContributionLinkDialog()">' + labelEditYourContributionLater + '</a>')
+	$('<a href="javascript:;" onclick="showContributionLinkDialog(this)">' + labelEditYourContributionLater + '</a>')
 		.appendTo(".contact-and-pdf__delphi-section");
 }
 
-function showContributionLinkDialog(url) {
+function showContributionLinkDialog(caller, url) {
 	if (!url) {
 		const uniqueCode = $("#uniqueCode").val();
 		url = serverPrefix + "editcontribution/" + uniqueCode;
 	}
 	const link = document.createElement("a");
 	$(link).attr("href", url).html(url);
-	$(".contribution-link-dialog__link").empty().append(link);
-	$(".contribution-link-dialog").modal("show");
+	$("#contribution-link-dialog__link").empty().append(link);
+	showModalDialog($("#contribution-link-dialog"), caller);
 }
 
 function updateDelphiElement(element, successCallback) {
@@ -1745,7 +1748,7 @@ function checkGoToDelphiStart(link)
 
 	if ($(button).length > 0) {
 		$('#unsaveddelphichangesdialoglink').attr("href", url);
-		$('#unsaveddelphichangesdialog').modal("show");
+		showModalDialog($('#unsaveddelphichangesdialog'), button);
 		return;
 	}
 

@@ -686,14 +686,14 @@
 			<div style="float: right; padding-bottom: 20px;  max-width: 45%; text-align: center;" data-bind="html: maxLabel()"></div>
 			<div style="clear: both"></div>
 			
-			<a data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
+			<a href="javascript:;" data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
 			
 			<input type="text"
 				   onchange="propagateChange(this);"
 				   data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'class': css() + ' sliderbox', 'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue(), 'data-is-answered': isAnswered() ? 'true' : 'false' }"
 			/>
 
-			<a data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
+			<a href="javascript:;" data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
 		</div>
 		<!-- /ko -->
 		
@@ -1376,7 +1376,7 @@
 			</div>
 		</div>
 
-		<div class="modal delete-confirmation-dialog" data-backdrop="static">
+		<div class="modal delete-confirmation-dialog" role="dialog" data-backdrop="static">
 			<div class="modal-dialog modal-sm">
 				<div class="modal-content">
 					<div class="modal-body">
@@ -1384,7 +1384,7 @@
 					</div>
 					<div class="modal-footer">
 						<a href="javascript:;" class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
-						<a href="javascript:;" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+						<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Cancel" /></a>
 					</div>
 				</div>
 			</div>

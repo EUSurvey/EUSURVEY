@@ -20,7 +20,7 @@
 <input type="hidden" id="multipaging" value="${form.survey.multiPaging}" />
 
 <c:if test="${form.survey.isDelphi}">
-	<div class="modal" id="delphi-chart-modal" data-backdrop="static">
+	<div class="modal" role="dialog" id="delphi-chart-modal" data-backdrop="static">
 		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-body">
@@ -28,7 +28,7 @@
 					<div class="delphi-chart-modal__chart-container"></div>
 				</div>
 				<div class="modal-footer">
-					<a href="javascript:;" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
+					<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($('#delphi-chart-modal'))"><spring:message code="label.Close"/></a>
 				</div>
 			</div>
 		</div>
@@ -402,7 +402,7 @@
 								</a>
 								<c:if test="${form.answerSets.size() > 0}">
 									<br /><br />
-									<a href="javascript:;" onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
+									<a href="javascript:;" onclick="showContributionLinkDialog(this)">${form.getMessage("label.EditYourContributionLater")}</a>
 								</c:if>
 							</div>
 							<hr style="margin-top: 15px;" />
@@ -764,7 +764,7 @@
 
 		function deleteDelphiCommentFromRunner(button, isReply) {
 			const dialog = $(button).closest(".survey-element").children("div").eq(1).find(".delete-confirmation-dialog");
-			$(dialog).modal("show");
+			showModalDialog(dialog, button);
 
 			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
 			$(deleteButton).off("click");
@@ -777,7 +777,7 @@
 					loadTableData(questionUid, viewModel);
 				}
 
-				$(dialog).modal("hide");
+				hideModalDialog(dialog);
 				deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
 			});
 		}
