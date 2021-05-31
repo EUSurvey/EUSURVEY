@@ -1773,7 +1773,7 @@ function hideResultsTable(button) {
 
 function openAskEmailToSendLinkDialog(button) {
 	$(button).closest('.modal').modal('hide');
-	$('#ask-email-dialog').modal('show');
+	showModalDialog($('#ask-email-dialog'), button);
 }
 
 function sendDelphiMailLink() {

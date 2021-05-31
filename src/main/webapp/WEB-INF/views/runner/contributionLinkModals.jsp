@@ -21,7 +21,7 @@
 	</div>
 </div>
 
-<div class="modal" id="ask-email-dialog" data-backdrop="static">
+<div class="modal" id="ask-email-dialog" data-backdrop="static" role="dialog">
 	<div class="modal-dialog non-resizable">
 		<div class="modal-content">
 			<div class="modal-body">
@@ -33,7 +33,7 @@
 			</div>
 			<div class="modal-footer">
 				<a href="javascript:;" class="btn btn-primary" onclick="sendDelphiMailLink()">${form.getMessage("label.Send")}</a>
-				<a href="javascript:;" class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>
+				<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-email-dialog'))">${form.getMessage("label.Cancel")}</a>
 			</div>
 		</div>
 	</div>
