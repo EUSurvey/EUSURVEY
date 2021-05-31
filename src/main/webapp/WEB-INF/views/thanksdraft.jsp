@@ -55,7 +55,7 @@
 					<c:if test="${downloadContribution}">
 						<br /><br />
 						<h2><spring:message code="question.needcopydraft" /></h2>
-						<a onclick="showExportDialogAndFocusEmail()" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></a> 
+						<a onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></a> 
 					</c:if>
 				</div>
 			</div>

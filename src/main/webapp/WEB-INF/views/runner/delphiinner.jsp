@@ -119,7 +119,7 @@
 
 </style>
 
-	<div class="modal" role="dialog" id="delphi-chart-modal-start-page" data-backdrop="static">
+	<div class="modal" role="dialog" id="delphi-chart-modal-start-page" data-backdrop="static" role="dialog">
 		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-body">
@@ -557,7 +557,7 @@
 
 			// Briefly show the modal to get the real width of the chart container.
 			const modal = $('#delphi-chart-modal-start-page');
-			$(modal).modal('show');
+			showModalDialog(modal, element);
 			const canvasContainer = $(modal).find('.delphi-chart-modal__chart-container')[0];
 			$(canvasContainer).show();
 			const canvasContainerWidth = canvasContainer.clientWidth;

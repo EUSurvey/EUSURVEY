@@ -12,6 +12,7 @@
 			clearAllCookies('${surveyprefix}');
 		});	
 	</script>
+	<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 </head>
 <body>
 	<div class="page-wrap">
@@ -44,13 +45,13 @@
 							<a style="color: #FFF; font-weight: bold;" class="visiblelink" id="draftLinkFromThanksDraft" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${url}</esapi:encodeForHTML></a>
 							</div>
 							<br/>
-							<a style="text-decoration: none" class="btn btn-primary btn-lg" onclick="$('#ask-email-dialog').modal('show');">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
+							<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="$('#ask-email-dialog').modal('show');">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
 							<a id="copyme" class="btn btn-primary btn-lg" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>">${form.getMessage("label.CopyToClipboard")}</a>
 						</c:when>
 						<c:otherwise>					
 							<a class="draftLink visiblelink" id="draftLinkFromThanksDraft" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${url}</esapi:encodeForHTML></a>
 							<br/><br/>	
-							<a class="btn btn-primary aSpaced" onclick="$('#ask-email-dialog').modal('show');">${form.getMessage("label.SendLinkAsEmail")}</a>
+							<a href="javascript:;" class="btn btn-primary aSpaced" onclick="showModalDialog($('#ask-email-dialog'), this);">${form.getMessage("label.SendLinkAsEmail")}</a>
 							<a id="bookmarkme" class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>">${form.getMessage("label.SaveToBookMark")}</a>
 							<a id="copyme"class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>">${form.getMessage("label.CopyToClipboard")}</a>
 						</c:otherwise>
@@ -58,13 +59,13 @@
 					<c:if test="${downloadContribution}">
 						<br /><br />
 						<h2><spring:message code="question.needcopydraft" /></h2>
-						<a onclick="showExportDialogAndFocusEmail()" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></a>
+						<a href="javascript:;" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></a>
 					</c:if> 
 				</div>				
 			</div>
 		</div>
 		
-		<div class="modal fade" id="ask-export-dialog" data-backdrop="static">	
+		<div class="modal fade" id="ask-export-dialog" data-backdrop="static" role="dialog">	
 			<div class="modal-dialog">
 		    <div class="modal-content">
 			<div class="modal-header">
@@ -138,7 +139,7 @@
 			</div>
 		</div>
 		
-		<div class="modal fade" id="ask-email-dialog" data-backdrop="static">
+		<div class="modal" id="ask-email-dialog" data-backdrop="static" role="dialog">
 			<div class="modal-dialog">
 	    		<div class="modal-content">
 					<div class="modal-header">
@@ -176,16 +177,16 @@
 					<div class="modal-footer">
 						<c:choose>
 							<c:when test="${responsive != null}">
-								<a  style="text-decoration: none" class="btn btn-primary btn-lg btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</a>	
-								<a  style="text-decoration: none" class="btn btn-lg btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
+								<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</a>	
+								<a href="javascript:;" style="text-decoration: none" class="btn btn-lg btn-default" onclick="hideModalDialog($('#ask-email-dialog'))">${form.getMessage("label.Cancel")}</a>		
 							</c:when>
 							<c:when test="${runnermode == true}">
-								<a  class="btn btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</a>	
-								<a  class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
+								<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</a>	
+								<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-email-dialog'))">${form.getMessage("label.Cancel")}</a>		
 							</c:when>
 							<c:otherwise>
-								<a  class="btn btn-primary" onclick="sendMailLink()"><spring:message code="label.OK" /></a>	
-								<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+								<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink()"><spring:message code="label.OK" /></a>	
+								<a href="javascript:;" class="btn btn-default"  onclick="hideModalDialog($('#ask-email-dialog'))"><spring:message code="label.Cancel" /></a>		
 							</c:otherwise>	
 						</c:choose>				
 					</div>

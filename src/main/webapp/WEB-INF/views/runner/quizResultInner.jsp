@@ -24,7 +24,7 @@
 			
 			<c:if test="${forpdf == null}">
 				<div style="text-align: center; margin-bottom: 20px;">
-					<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail()" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
+					<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
 				</div>
 			</c:if>
 			
@@ -328,7 +328,7 @@
 		
 		<c:if test="${forpdf == null}">
 			<div style="text-align: center; margin-bottom: 20px;">
-				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail()" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
+				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
 			</div>
 		</c:if>
 	</div>
