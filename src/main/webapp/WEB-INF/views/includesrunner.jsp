@@ -122,7 +122,7 @@
 			var invalidXHTML = "${form.getMessage("label.InvalidXHTML")}";
 			var serverPrefix='${serverprefix}';//+'runner/';
 			var selectFileForUpload = "${form.getMessage("label.SelectFileForUpload")}";
-			var selectFilesForUpload = "${form.getMessage("label.SelectFilesForUpload")}";
+			var selectFilesForUpload = "${form.getMessage("label.SelectFilesForUploadButton")}";
 			var uploadASkin = "${form.getMessage("label.uploadASkin")}";
 			var globalLanguage = '${requestContext.locale.language}';
 			var questionTextLabel = "${form.getMessage("label.QuestionText")}";
@@ -204,7 +204,7 @@
 			var invalidXHTML = "<spring:message code='label.InvalidXHTML' />";
 			var serverPrefix='${serverprefix}';//+'runner/';
 			var selectFileForUpload = "<spring:message code='label.SelectFileForUpload' />";
-			var selectFilesForUpload = "<spring:message code='label.SelectFilesForUpload' />";
+			var selectFilesForUpload = "<spring:message code='label.SelectFilesForUploadButton' />";
 			var uploadASkin = "<spring:message code='label.uploadASkin' />";
 			var globalLanguage = '${requestContext.locale.language}';
 			var questionTextLabel = "<spring:message code='label.QuestionText' />";
@@ -281,7 +281,7 @@
 			language : globalLanguage,
 			image_advtab: true,
 			entities: '',
-			content_css: '${contextpath}/resources/css/tinymce.css',
+			content_css: '${contextpath}/resources/css/tinymceyellowfocus.css',
 			popup_css_add: '${contextpath}/resources/css/tinymcepopup.css',
 			forced_root_block: false,
 			browser_spellcheck: true,
@@ -295,7 +295,7 @@
 				editor.on('Change', function (event) {
 					try {
 					    // The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
-					    $('#' + event.target.id).closest('.survey-element').find('a[data-type="delphisavebutton"]').removeClass('disabled');
+					    enableDelphiSaveButtons($('#' + event.target.id).closest('.survey-element'));
 					} catch (e) {}
 				});
 			},
@@ -356,35 +356,39 @@
 	 {	
 		 var cs = getCharacterCount(input);
 		 
-		 var classes = $(input).attr('class').split(" ");
-		 var min = 0;
-		 var max = 0;
-			
-		 for ( var i = 0, l = classes.length; i<l; ++i ) {
-		 	if (strStartsWith(classes[i], 'min'))
-		 	{
-		 		min = parseInt(classes[i].substring(3));
-		 		
-		 	} else if (strStartsWith(classes[i], 'max'))
-		 	{
-		 		max = parseInt(classes[i].substring(3));
-		 	};	 	
-		 };
+		 var attr = $(input).attr('class');
 		 
-		 $(input).closest(".survey-element").find(".charactercounter").text(cs);
-		 
-		 if (max > 0 && max - cs < 5)
-		 {
-			 $(input).closest(".survey-element").find(".glyphicon-alert").show();
-		 } else {
-			 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
-		 }
-		 
-		 if (max > 0 && max - cs < 0)
-		 {
-			 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#f00");
-		 } else {
-			 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
+		 if (typeof attr !== typeof undefined && attr !== false) {
+			 var classes =attr.split(" ");
+			 var min = 0;
+			 var max = 0;
+				
+			 for ( var i = 0, l = classes.length; i<l; ++i ) {
+			 	if (strStartsWith(classes[i], 'min'))
+			 	{
+			 		min = parseInt(classes[i].substring(3));
+			 		
+			 	} else if (strStartsWith(classes[i], 'max'))
+			 	{
+			 		max = parseInt(classes[i].substring(3));
+			 	};	 	
+			 };
+			 
+			 $(input).closest(".survey-element").find(".charactercounter").text(cs);
+			 
+			 if (max > 0 && max - cs < 5)
+			 {
+				 $(input).closest(".survey-element").find(".glyphicon-alert").show();
+			 } else {
+				 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
+			 }
+			 
+			 if (max > 0 && max - cs < 0)
+			 {
+				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#f00");
+			 } else {
+				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
+			 }
 		 }
 	 }
 	

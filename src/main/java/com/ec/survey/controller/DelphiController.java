@@ -373,6 +373,7 @@ public class DelphiController extends BasicController {
 			return ResponseEntity.noContent().build();
 		}
 
+		result.setLabel(question.getStrippedTitle());
 		return ResponseEntity.ok(result);
 	}
 
@@ -478,6 +479,9 @@ public class DelphiController extends BasicController {
 			result.addEntry(entry);
 		}
 
+		if (question instanceof SingleChoiceQuestion) {
+			result.setLabel(question.getStrippedTitle());
+		}
 		return ResponseEntity.ok(result);
 	}
 

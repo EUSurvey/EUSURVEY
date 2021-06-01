@@ -169,6 +169,22 @@ public class TranslationsHelper {
 							.add(new Translation(number.getUniqueId() + NumberQuestion.UNIT,
 									number.getUnit() != null ? number.getUnit() : "", survey.getLanguage().getCode(),
 									survey.getId(), translations));
+
+					if (number.isSlider()) {
+						translations.getTranslations().add(new Translation(
+								number.getUniqueId() + NumberQuestion.MINLABEL,
+								number.getMinLabel() != null ? number.getMinLabel() : "",
+								survey.getLanguage().getCode(),
+								survey.getId(),
+								translations));
+
+						translations.getTranslations().add(new Translation(
+								number.getUniqueId() + NumberQuestion.MAXLABEL,
+								number.getMaxLabel() != null ? number.getMaxLabel() : "",
+								survey.getLanguage().getCode(),
+								survey.getId(),
+								translations));
+					}
 				}
 
 				if (element instanceof ChoiceQuestion) {
@@ -311,6 +327,11 @@ public class TranslationsHelper {
 
 			if (element instanceof NumberQuestion) {
 				result.add(new KeyValue(element.getUniqueId() + NumberQuestion.UNIT, "U"));
+
+				if (((NumberQuestion) element).isSlider()) {
+					result.add(new KeyValue(element.getUniqueId() + NumberQuestion.MINLABEL, "MIN"));
+					result.add(new KeyValue(element.getUniqueId() + NumberQuestion.MAXLABEL, "MAX"));
+				}
 			}
 
 			if (element instanceof ChoiceQuestion) {
@@ -435,8 +456,22 @@ public class TranslationsHelper {
 			}
 
 			if (element instanceof NumberQuestion) {
-				result.add(new KeyValue(element.getUniqueId() + NumberQuestion.UNIT,
-						resources.getMessage("label.Unit", null, "Unit", locale)));
+				result.add(new KeyValue(
+						element.getUniqueId() + NumberQuestion.UNIT,
+						resources.getMessage("label.Unit", null, "Unit", locale)
+				));
+
+				if (((NumberQuestion) element).isSlider()) {
+					result.add(new KeyValue(
+							element.getUniqueId() + NumberQuestion.MINLABEL,
+							resources.getMessage("label.MinLabel", null, "Min Label", locale)
+					));
+
+					result.add(new KeyValue(
+							element.getUniqueId()+ NumberQuestion.MAXLABEL,
+							resources.getMessage("label.MaxLabel", null, "Max Label", locale)
+					));
+				}
 			}
 
 			if (element instanceof ChoiceQuestion) {
@@ -599,6 +634,18 @@ public class TranslationsHelper {
 
 			unitNode.appendChild(doc.createCDATASection(label));
 			elementNode.appendChild(unitNode);
+
+			if (((NumberQuestion) element).isSlider()) {
+				org.w3c.dom.Element minLabelNode = doc.createElement("MinLabel");
+				label = getLabel(number, NumberQuestion.MINLABEL, translationByKey);
+				minLabelNode.appendChild(doc.createCDATASection(label));
+				elementNode.appendChild(minLabelNode);
+
+				org.w3c.dom.Element maxLabelNode = doc.createElement("MaxLabel");
+				label = getLabel(number, NumberQuestion.MAXLABEL, translationByKey);
+				maxLabelNode.appendChild(doc.createCDATASection(label));
+				elementNode.appendChild(maxLabelNode);
+			}
 		}
 
 		if (element instanceof Confirmation) {
@@ -985,6 +1032,24 @@ public class TranslationsHelper {
 						addTextCell(row, 1, descriptions.get(number.getUniqueId() + NumberQuestion.UNIT));
 						addTextCell(row, 2, label);
 					}
+
+					if (number.isSlider()) {
+						label = getLabel(number, NumberQuestion.MINLABEL, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							row = sheet.createRow(rowIndex++);
+							addTextCell(row, 0, number.getUniqueId());
+							addTextCell(row, 1, descriptions.get(number.getUniqueId() + NumberQuestion.MINLABEL));
+							addTextCell(row, 2, label);
+						}
+
+						label = getLabel(number, NumberQuestion.MAXLABEL, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							row = sheet.createRow(rowIndex++);
+							addTextCell(row, 0, number.getUniqueId());
+							addTextCell(row, 1, descriptions.get(number.getUniqueId() + NumberQuestion.MAXLABEL));
+							addTextCell(row, 2, label);
+						}
+					}
 				}
 
 				if (element instanceof Confirmation) {
@@ -1286,6 +1351,28 @@ public class TranslationsHelper {
 						cell = sheet.getCellByPosition(2, rowIndex++);
 						cell.setStringValue(label);
 					}
+
+					if (number.isSlider()) {
+						label = getLabel(number, NumberQuestion.MINLABEL, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							cell = sheet.getCellByPosition(0, rowIndex);
+							cell.setStringValue(number.getUniqueId());
+							cell = sheet.getCellByPosition(1, rowIndex);
+							cell.setStringValue(descriptions.get(number.getUniqueId() + NumberQuestion.MINLABEL));
+							cell = sheet.getCellByPosition(2, rowIndex++);
+							cell.setStringValue(label);
+						}
+
+						label = getLabel(number, NumberQuestion.MAXLABEL, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							cell = sheet.getCellByPosition(0, rowIndex);
+							cell.setStringValue(number.getUniqueId());
+							cell = sheet.getCellByPosition(1, rowIndex);
+							cell.setStringValue(descriptions.get(number.getUniqueId() + NumberQuestion.MAXLABEL));
+							cell = sheet.getCellByPosition(2, rowIndex++);
+							cell.setStringValue(label);
+						}
+					}
 				}
 
 				if (element instanceof Confirmation) {
@@ -1576,6 +1663,18 @@ public class TranslationsHelper {
 					String unit = getText(element.getElementsByTagName("Unit"), "Unit");
 					result.getTranslations()
 							.add(new Translation(key + NumberQuestion.UNIT, unit, lang, surveyId, result));
+
+					NodeList minLabelElements = element.getElementsByTagName("MinLabel");
+					if (minLabelElements.getLength() > 0) {
+						String minLabel = getText(minLabelElements, "MinLabel");
+						result.getTranslations().add(new Translation(key + NumberQuestion.MINLABEL, minLabel, lang, surveyId, result));
+					}
+
+					NodeList maxLabelElements = element.getElementsByTagName("MaxLabel");
+					if (maxLabelElements.getLength() > 0) {
+						String maxLabel = getText(maxLabelElements, "MaxLabel");
+						result.getTranslations().add(new Translation(key + NumberQuestion.MAXLABEL, maxLabel, lang, surveyId, result));
+					}
 				}
 
 				if (type.contains("Confirmation")) {
@@ -2034,6 +2133,24 @@ public class TranslationsHelper {
 				if (translationsByKey.containsKey(element.getUniqueId() + NumberQuestion.UNIT) && notNullOrEmpty(
 						translationsByKey.get(element.getUniqueId() + NumberQuestion.UNIT).getLabel()))
 					number.setUnit(translationsByKey.get(element.getUniqueId() + NumberQuestion.UNIT).getLabel());
+
+				if (number.isSlider()) {
+					if (translationsByKey.containsKey(element.getId().toString() + NumberQuestion.MINLABEL) && notNullOrEmpty(translationsByKey.get(element.getId().toString() + NumberQuestion.MINLABEL).getLabel())) {
+						number.setMinLabel(translationsByKey.get(element.getId().toString() + NumberQuestion.MINLABEL).getLabel());
+					}
+
+					if (translationsByKey.containsKey(element.getUniqueId() + NumberQuestion.MINLABEL) && notNullOrEmpty(translationsByKey.get(element.getUniqueId() + NumberQuestion.MINLABEL).getLabel())) {
+						number.setMinLabel(translationsByKey.get(element.getUniqueId() + NumberQuestion.MINLABEL).getLabel());
+					}
+
+					if (translationsByKey.containsKey(element.getId().toString() + NumberQuestion.MAXLABEL) && notNullOrEmpty(translationsByKey.get(element.getId().toString() + NumberQuestion.MAXLABEL).getLabel())) {
+						number.setMaxLabel(translationsByKey.get(element.getId().toString() + NumberQuestion.MAXLABEL).getLabel());
+					}
+
+					if (translationsByKey.containsKey(element.getUniqueId() + NumberQuestion.MAXLABEL) && notNullOrEmpty(translationsByKey.get(element.getUniqueId() + NumberQuestion.MAXLABEL).getLabel())) {
+						number.setMaxLabel(translationsByKey.get(element.getUniqueId() + NumberQuestion.MAXLABEL).getLabel());
+					}
+				}
 			}
 
 			if (element instanceof Confirmation) {

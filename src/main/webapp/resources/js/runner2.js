@@ -545,7 +545,7 @@ function delphiPrefill(editorElement) {
 				var uploaderElement = surveyElement.find(".explanation-file-upload-section").children(".file-uploader").first();
 				var updateinfo = {"success":true, "files":currentExplanationText.fileList, "wrongextension":false};
 				updateFileList(uploaderElement, updateinfo);
-				$(surveyElement).find("a[data-type='delphisavebutton']").addClass("disabled");
+				disableDelphiSaveButtons(surveyElement);
 			}
 			$('#' + editorElement[0].id).closest(".explanation-section").show();
 			surveyElement.find(".explanation-file-upload-section").show();
@@ -763,7 +763,6 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 				data: chartData,
 				options: chartOptions
 			}
-
 			switch (result.chartType) {
 				case "Bar":
 					chart.type = "horizontalBar";
@@ -803,6 +802,11 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 	            enabled: false,
 
 	            custom: function(tooltipModel) {
+                	if (["Matrix", "SingleChoice"].includes(result.questionType) && chart.type === "radar") {
+                		if (tooltipModel.dataPoints && tooltipModel.dataPoints.length > 0 && tooltipModel.dataPoints[0].value === "0") {
+                			return;
+                		}
+                	}
 	                // Tooltip Element
 	                var tooltipEl = document.getElementById('chartjs-tooltip');
 
@@ -828,8 +832,35 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 	                    tooltipEl.classList.add('no-transform');
 	                }
 
-	                function getBody(bodyItem) {
+	                function getBody(bodyItem, index) {
+	                	if (result.questionType === "SingleChoice" && ["horizontalBar", "bar", "line", "radar"].includes(chart.type)) {
+               				const olabels = chartData.originalLabels;
+               				const dataIndex = tooltipModel.dataPoints[index].index;
+               				return [olabels[dataIndex]+": "+tooltipModel.dataPoints[index].value];
+	                	}
+	                	if (result.questionType === "Matrix" && chart.type === "radar" && tooltipModel.dataPoints[0].value === 0) {
+               				const olabels = chartData.originalLabels;
+               				const oquestions = chartData.datasets.map(ds => ds.label);
+               				const colI = tooltipModel.dataPoints[index].index;
+               				const rowI = tooltipModel.dataPoints[index].datasetIndex;
+               				return [oquestions[rowI]+": "+olabels[colI]];
+	                	}
 	                    return bodyItem.lines;
+	                }
+	                
+	                function getTitles(titleLines_, tooltipModel_) {
+	                	if (result.questionType === "Matrix") {
+	                		if (chart.type === "radar" && tooltipModel_.dataPoints[0].value === 0) {
+                				return [result.label];
+	                		}
+	                		if (["horizontalBar", "bar", "line", "radar"].includes(chart.type)) {
+	                			return [result.label].concat(titleLines_);
+	                		}
+	                	}
+                		if (result.questionType === "SingleChoice") {
+                			return [result.label];
+                		}
+	                	return titleLines_;
 	                }
 
 	                // Set Text
@@ -839,7 +870,7 @@ function loadGraphDataInner(div, surveyid, questionuid, languagecode, uniquecode
 
 	                    var innerHtml = '<thead>';
 
-	                    titleLines.forEach(function(title) {
+	                    getTitles(titleLines, tooltipModel).forEach(function(title) {
 	                        innerHtml += '<tr><th>' + title + '</th></tr>';
 	                    });
 	                    innerHtml += '</thead><tbody>';
@@ -995,7 +1026,7 @@ function addChartModal(_, chart) {
 	$('#wordcloudmodal').remove();
 	$(modal).find(".delphi-chart-modal__chart-container").show().append("<canvas></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
-	$(modal).modal("show");
+	showModalDialog($(modal), callerAddChartModal);
 }
 
 function addChartModalStartPage(_, chart) {
@@ -1004,7 +1035,7 @@ function addChartModalStartPage(_, chart) {
 	$('#wordcloudmodal').remove();
 	$(modal).find(".delphi-chart-modal__chart-container").show().append("<canvas></canvas>");
 	new Chart($(modal).find("canvas")[0].getContext('2d'), chart);
-	$(modal).modal("show");
+	showModalDialog($(modal), callerAddChartModalStartPage);
 }
 
 function addStructureChart(div, chart) {
@@ -1032,6 +1063,8 @@ function loadGraphData(div) {
 	loadGraphDataInner(div, surveyId, questionuid, languagecode, uniquecode, addChart, true, false, false, canvasContainerWidth);
 }
 
+var callerAddChartModal = null;
+
 function loadGraphDataModal(div) {
 	var surveyElement = $(div).closest(".survey-element");
 	var surveyId = $('#survey\\.id').val();
@@ -1048,6 +1081,7 @@ function loadGraphDataModal(div) {
 	$(canvasContainer).hide();
 	$(modal).modal('hide');
 
+	callerAddChartModal = div;
 	loadGraphDataInner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false, canvasContainerWidth);
 }
 
@@ -1449,14 +1483,14 @@ function delphiUpdateContinued(div, successCallback) {
 		},
 		success: function (data) {
 			$(message).html(data.message).addClass("label label-success");
-			$(div).find("a[data-type='delphisavebutton']").addClass("disabled");
+			disableDelphiSaveButtons(div);
 			
 			const uniqueCode = $("#uniqueCode").val();
 			const key = HAS_SHOWN_SURVEY_LINK + uniqueCode;
 			if (localStorage.getItem(key) == null) {
 				localStorage.setItem(key, "true");
 				appendShowContributionLinkDialogToSidebar();
-				showContributionLinkDialog(data.link);
+				showContributionLinkDialog($(div).find("a[data-type='delphisavebutton']"), data.link);
 			}
 			
 			if (data.changedForMedian) {
@@ -1489,19 +1523,19 @@ function delphiUpdateContinued(div, successCallback) {
 function appendShowContributionLinkDialogToSidebar() {
 	$("<br />").appendTo(".contact-and-pdf__delphi-section");
 	$("<br />").appendTo(".contact-and-pdf__delphi-section");
-	$('<a onclick="showContributionLinkDialog()">' + labelEditYourContributionLater + '</a>')
+	$('<a href="javascript:;" onclick="showContributionLinkDialog(this)">' + labelEditYourContributionLater + '</a>')
 		.appendTo(".contact-and-pdf__delphi-section");
 }
 
-function showContributionLinkDialog(url) {
+function showContributionLinkDialog(caller, url) {
 	if (!url) {
 		const uniqueCode = $("#uniqueCode").val();
 		url = serverPrefix + "editcontribution/" + uniqueCode;
 	}
 	const link = document.createElement("a");
 	$(link).attr("href", url).html(url);
-	$(".contribution-link-dialog__link").empty().append(link);
-	$(".contribution-link-dialog").modal("show");
+	$("#contribution-link-dialog__link").empty().append(link);
+	showModalDialog($("#contribution-link-dialog"), caller);
 }
 
 function updateDelphiElement(element, successCallback) {
@@ -1714,7 +1748,7 @@ function checkGoToDelphiStart(link)
 
 	if ($(button).length > 0) {
 		$('#unsaveddelphichangesdialoglink').attr("href", url);
-		$('#unsaveddelphichangesdialog').modal("show");
+		showModalDialog($('#unsaveddelphichangesdialog'), button);
 		return;
 	}
 
@@ -1739,7 +1773,7 @@ function hideResultsTable(button) {
 
 function openAskEmailToSendLinkDialog(button) {
 	$(button).closest('.modal').modal('hide');
-	$('#ask-email-dialog').modal('show');
+	showModalDialog($('#ask-email-dialog'), button);
 }
 
 function sendDelphiMailLink() {

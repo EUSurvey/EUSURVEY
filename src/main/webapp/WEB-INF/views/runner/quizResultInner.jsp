@@ -2,6 +2,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 	
+	<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+		
 	<c:choose>
 		<c:when test="${forpdf == null && responsive == null}">
 			<div class="fullpageform">
@@ -22,7 +24,7 @@
 			
 			<c:if test="${forpdf == null}">
 				<div style="text-align: center; margin-bottom: 20px;">
-					<a id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail()" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
+					<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
 				</div>
 			</c:if>
 			
@@ -326,14 +328,14 @@
 		
 		<c:if test="${forpdf == null}">
 			<div style="text-align: center; margin-bottom: 20px;">
-				<a id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail()" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
+				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
 			</div>
 		</c:if>
 	</div>
 	
 	<c:if test="${forpdf == null}">
 	
-	<div class="modal fade" id="ask-export-dialog" data-backdrop="static">	
+	<div class="modal" id="ask-export-dialog" data-backdrop="static" role="dialog">	
 			<div class="modal-dialog">
 		    <div class="modal-content">
 			<div class="modal-header">
@@ -382,16 +384,16 @@
 			<div class="modal-footer">
 				<c:choose>
 					<c:when test="${responsive != null}">
-						<a style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-						<a style="text-decoration: none"  class="btn btn-default btn-lg" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
+						<a href="javascript:;" style="text-decoration: none"  class="btn btn-primary btn-lg" onclick="startExport()">${form.getMessage("label.OK")}</a>	
+						<a href="javascript:;" style="text-decoration: none"  class="btn btn-default btn-lg" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
 					</c:when>
 					<c:when test="${runnermode == true}">
-						<a  class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>	
-						<a  class="btn btn-default" data-dismiss="modal">${form.getMessage("label.Cancel")}</a>		
+						<a href="javascript:;" class="btn btn-primary" onclick="startExport()">${form.getMessage("label.OK")}</a>	
+						<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))">${form.getMessage("label.Cancel")}</a>		
 					</c:when>
 					<c:otherwise>
-						<a  class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
-						<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+						<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
+						<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-export-dialog'))"><spring:message code="label.Cancel" /></a>		
 					</c:otherwise>	
 				</c:choose>				
 			</div>

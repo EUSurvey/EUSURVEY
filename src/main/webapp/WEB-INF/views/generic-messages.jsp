@@ -351,9 +351,9 @@
 		}
 	}
 	
-	function showExportDialogAndFocusEmail()
+	function showExportDialogAndFocusEmail(caller)
 	{
-		$('#ask-export-dialog').modal('show');		
+		showModalDialog($('#ask-export-dialog'), caller);		
 		setTimeout(function() { $('#email').focus(); }, 1000);
 	}
 	

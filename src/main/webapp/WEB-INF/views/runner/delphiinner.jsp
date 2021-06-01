@@ -5,6 +5,7 @@
 <script type="text/javascript" src="${contextpath}/resources/js/d3.v3.min.js?version=<%@include file="../version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/d3.layout.cloud.min.js?version=<%@include file="../version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/wordcloud.js?version=<%@include file="../version.txt" %>"></script>
+<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 
 <style>
 
@@ -72,7 +73,13 @@
 		position: relative;
 	}
 	
+	.question .btn {
+		border-width: 2px;
+	}
+	
 	.question-title {
+		display: flex;
+		justify-content: space-between;
 		padding: 5px;
 		border-bottom: 1px solid #ccc;
 		margin-bottom: 5px;
@@ -112,7 +119,7 @@
 
 </style>
 
-	<div class="modal" id="delphi-chart-modal-start-page" data-backdrop="static">
+	<div class="modal" role="dialog" id="delphi-chart-modal-start-page" data-backdrop="static" role="dialog">
 		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-body">
@@ -120,7 +127,7 @@
 					<div class="delphi-chart-modal__chart-container"></div>
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
+					<a href="javascript: hideModalDialog('#delphi-chart-modal-start-page')" class="btn btn-primary"><spring:message code="label.Close"/></a>
 				</div>
 			</div>
 		</div>
@@ -154,10 +161,10 @@
 					<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}">
 						<c:choose>
 							<c:when test="${lang.value.code == form.language.code}">
-								<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>" selected="selected"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></option>
+								<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>" selected="selected"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></option>
 							</c:when>
 							<c:otherwise>
-								<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></option>
+								<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></option>
 							</c:otherwise>
 						</c:choose>
 					</c:forEach>
@@ -191,7 +198,7 @@
 					</a>
 					<c:if test="${form.answerSets.size() > 0}">
 						<br /><br />
-						<a onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
+						<a href="javascript:;" onclick="showContributionLinkDialog(this)">${form.getMessage("label.EditYourContributionLater")}</a>
 					</c:if>
 							
 				</div>												
@@ -263,7 +270,7 @@
 							<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid, 'data-question-uid': uid}">
 								<div class="question-title">
 									<span data-bind="html: sectionViewModel.niceTitle(title)"></span>
-									<span style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
+									<a href="javascript:;" style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></a>
 								</div>
 	
 								<div class="no-graph-image">
@@ -306,7 +313,7 @@
 									<!-- /ko -->
 									<c:if test="${form.survey.isDelphiShowAnswers}">
 										<!-- ko if: isDelphiShowAnswersAndStatisticsInstantly || answer.length > 0 -->
-										<a class="btn btn-xs btn-default" onclick="openAnswersDialog(this);"><spring:message code="label.ShowAllAnswers" /></a>
+										<a href="javascript:;" class="btn btn-xs btn-default" onclick="openAnswersDialog(this);"><spring:message code="label.ShowAllAnswers" /></a>
 										<!-- /ko -->
 									</c:if>
 									
@@ -335,12 +342,12 @@
 		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-header"><spring:message code="label.ResultsTable" /></div>
-				<div class="modal-body">
+				<div class="modal-body" style="padding-top: 30px;">
 					<div class="answers-table-modal-error"></div>
 					<%@ include file="delphiAnswersTable.jsp" %>
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close" /></a>
+					<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Close" /></a>
 				</div>
 			</div>
 		</div>
@@ -353,8 +360,8 @@
 					<spring:message code="message.DelphiConfirmDeleteComment" />
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
-					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+					<a href="javascript:;" class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
+					<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Cancel" /></a>
 				</div>
 			</div>
 		</div>
@@ -365,10 +372,10 @@
 		const errorDelphiTableContributionCouldNotBeChanged = "${form.getMessage("error.DelphiTableContributionCouldNotBeChanged")}";
 		const errorDelphiTableContributionCouldNotBeDeleted = "${form.getMessage("error.DelphiTableContributionCouldNotBeDeleted")}";
 		const errorDelphiTableContributionCouldNotBeSubmitted = "${form.getMessage("error.DelphiTableContributionCouldNotBeSubmitted")}";
-
+		
 		function openAnswersDialog(element) {
 			$('.answers-table-modal-error').hide();
-			$('.answers-table-modal').modal('show');
+			showModalDialog($('.answers-table-modal'), element);
 
 			const languageCode = "${form.language.code}";
 			currentQuestionUidInModal = $(element).closest('.question').attr('data-uid');
@@ -431,7 +438,7 @@
 
 		function deleteDelphiCommentFromStartPage(element, isReply) {
 			const dialog = $(".delete-confirmation-dialog");
-			$(dialog).modal("show");
+			showModalDialog(dialog, element);
 
 			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
 			$(deleteButton).off("click");
@@ -540,6 +547,8 @@
 			 });
 		}
 
+		var callerAddChartModalStartPage = null;
+		
 		function loadDelphiModalStartPage(element) {
 			var surveyid = ${form.survey.id};
 			var uniquecode = "${uniqueCode}";
@@ -548,13 +557,14 @@
 
 			// Briefly show the modal to get the real width of the chart container.
 			const modal = $('#delphi-chart-modal-start-page');
-			$(modal).modal('show');
+			showModalDialog(modal, element);
 			const canvasContainer = $(modal).find('.delphi-chart-modal__chart-container')[0];
 			$(canvasContainer).show();
 			const canvasContainerWidth = canvasContainer.clientWidth;
 			$(canvasContainer).hide();
 			$(modal).modal('hide');
 
+			callerAddChartModalStartPage = element;
 			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true, false, canvasContainerWidth);
 		}
 

@@ -20,7 +20,7 @@
 <input type="hidden" id="multipaging" value="${form.survey.multiPaging}" />
 
 <c:if test="${form.survey.isDelphi}">
-	<div class="modal" id="delphi-chart-modal" data-backdrop="static">
+	<div class="modal" role="dialog" id="delphi-chart-modal" data-backdrop="static">
 		<div class="modal-dialog${responsive != null ? "" : " modal-lg"}">
 			<div class="modal-content">
 				<div class="modal-body">
@@ -28,7 +28,7 @@
 					<div class="delphi-chart-modal__chart-container"></div>
 				</div>
 				<div class="modal-footer">
-					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close"/></a>
+					<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($('#delphi-chart-modal'))"><spring:message code="label.Close"/></a>
 				</div>
 			</div>
 		</div>
@@ -70,8 +70,10 @@
 							</c:when>
 							<c:otherwise>
 								<div id="localstorageinfo" class="visible-lg" style="margin-bottom: 10px; text-align: right; margin-right: 10px;">
-									<input class="check" type="checkbox" checked="checked" id="saveLocalBackup" onchange="checkLocalBackup()" />
-									<label for="saveLocalBackup">${form.getMessage("info.DeactivateLocalStorage")}</label>
+									<span class="focusborder">
+										<input class="check" type="checkbox" checked="checked" id="saveLocalBackup" onchange="checkLocalBackup()" />
+										<label for="saveLocalBackup">${form.getMessage("info.DeactivateLocalStorage")}</label>
+									</span>
 								</div>
 							</c:otherwise>
 						</c:choose>
@@ -88,7 +90,7 @@
 								<div id="ecDisclaimer">
 									<div style="float: right; margin-top: -15px; margin-right: -15px;">
 										<input type="hidden" id="disclaimerMinimized" name="disclaimerMinimized" value="${disclaimerMinimized}" />
-										<a style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
+										<a href="javascript:;" style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
 									</div>								
 									<span class="ecDisclaimerTitle">${form.getMessage("label.Disclaimer")}</span>
 									<p>
@@ -139,7 +141,7 @@
 					
 					 	<c:choose>
 					 		<c:when test="${rowCounter.index == 0}">
-								<div class="single-page" id="page${rowCounter.index}" tabindex="-1">
+								<div class="single-page" id="page${rowCounter.index}">
 							</c:when>
 							<c:otherwise>
 								<div class="single-page" id="page${rowCounter.index}" style="display: none">
@@ -214,7 +216,7 @@
 
 									<div class="hpdiv">
 										<label for="hp-7fk9s82jShfgak">${form.getMessage("info.leaveempty")}</label>
-										<textarea id="hp-7fk9s82jShfgak" name="hp-7fk9s82jShfgak" class="hp"
+										<textarea tabindex="-1" id="hp-7fk9s82jShfgak" name="hp-7fk9s82jShfgak" class="hp"
 												  autocomplete="false"></textarea>
 									</div>
 
@@ -293,12 +295,12 @@
 									<c:when test="${readonlyMode != null && readonlyMode == true}">
 										<div id="normalcss" style="color: #ccc">
 												${form.getMessage("label.Standard")}&#160;
-											<a class="link visiblelink css-switch disabled" id="css-switch-disabled"
+											<a tabindex="0" class="link visiblelink css-switch disabled" id="css-switch-disabled"
 											   style="color: #ccc">${form.getMessage("label.AccessibilityMode")}</a>
 										</div>
 
 										<div id="enhancedcss" class="hideme" style="color: #ccc">
-											<a class="link css-switch normal" id="css-switch-normal"
+											<a tabindex="0" class="link css-switch normal" id="css-switch-normal"
 											   style="color: #ccc">${form.getMessage("label.Standard")}</a>&#160;
 												${form.getMessage("label.AccessibilityMode")}
 										</div>
@@ -306,12 +308,12 @@
 									<c:otherwise>
 										<div id="normalcss">
 												${form.getMessage("label.Standard")}&#160;
-											<a class="link visiblelink css-switch disabled" id="css-switch-disabled"
+											<a tabindex="0" class="link visiblelink css-switch disabled" id="css-switch-disabled"
 											   onclick="switchCss('${mode}','wcag');">${form.getMessage("label.AccessibilityMode")}</a>
 										</div>
 
 										<div id="enhancedcss" class="hideme">
-											<a class="link css-switch normal" id="css-switch-normal"
+											<a tabindex="0" class="link css-switch normal" id="css-switch-normal"
 											   onclick="switchCss('${mode}','standard');">${form.getMessage("label.Standard")}</a>&#160;
 												${form.getMessage("label.AccessibilityMode")}
 										</div>
@@ -341,10 +343,10 @@
 							<c:forEach var="lang" items="${form.getLanguagesAlphabetical()}">
 								<c:choose>
 									<c:when test="${lang.value.code == form.language.code}">
-										<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>" selected="selected"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></option>
+										<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>" selected="selected"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></option>
 									</c:when>
 									<c:otherwise>
-										<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>"><esapi:encodeForHTML>[${lang.value.code}] ${lang.value.name}</esapi:encodeForHTML></option>
+										<option value="<esapi:encodeForHTML>${lang.value.code}</esapi:encodeForHTML>"><esapi:encodeForHTML>${lang.value.name}</esapi:encodeForHTML></option>
 									</c:otherwise>
 								</c:choose>
 							</c:forEach>
@@ -400,7 +402,7 @@
 								</a>
 								<c:if test="${form.answerSets.size() > 0}">
 									<br /><br />
-									<a onclick="showContributionLinkDialog()">${form.getMessage("label.EditYourContributionLater")}</a>
+									<a href="javascript:;" onclick="showContributionLinkDialog(this)">${form.getMessage("label.EditYourContributionLater")}</a>
 								</c:if>
 							</div>
 							<hr style="margin-top: 15px;" />
@@ -408,7 +410,7 @@
 						
 						<c:if test="${!form.survey.isQuiz}">
 							<div>
-								<a data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="link visiblelink" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
+								<a data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="link visiblelink" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}')">${form.getMessage("label.DownloadPDFversion")}</a>
 								<span id="download-survey-pdf-dialog-running" class="hideme">${form.getMessage("info.FileCreation")}</span>
 								<span id="download-survey-pdf-dialog-ready" class="hideme">${form.getMessage("info.FileCreated")}</span>
 								<div id="download-survey-pdf-dialog-spinner" class="hideme" style="padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>
@@ -762,7 +764,7 @@
 
 		function deleteDelphiCommentFromRunner(button, isReply) {
 			const dialog = $(button).closest(".survey-element").children("div").eq(1).find(".delete-confirmation-dialog");
-			$(dialog).modal("show");
+			showModalDialog(dialog, button);
 
 			var deleteButton = $(dialog).find(".delete-confirmation-dialog__confirmation-button");
 			$(deleteButton).off("click");
@@ -775,7 +777,7 @@
 					loadTableData(questionUid, viewModel);
 				}
 
-				$(dialog).modal("hide");
+				hideModalDialog(dialog);
 				deleteDelphiComment(button, viewModel, isReply, errorCallback, successCallback);
 			});
 		}

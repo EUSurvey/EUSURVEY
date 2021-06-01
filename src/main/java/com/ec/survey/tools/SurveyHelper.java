@@ -296,12 +296,15 @@ public class SurveyHelper {
 				if (element instanceof Matrix) {
 					Matrix m = (Matrix) element;
 					boolean atLeastOneQuestionVisible = false;
-					for (Element matrixquestion : m.getQuestions()) {
-						matrixquestion.setSurvey(m.getSurvey());
-						validateElement(matrixquestion, answerSet, dependencies, result, answerService,
-								invisibleElements, resources, locale, m, request, draft);
-						if (!invisibleElements.contains(matrixquestion.getUniqueId())) {
-							atLeastOneQuestionVisible = true;
+					if (!invisibleElements.contains(m.getUniqueId()))
+					{			
+						for (Element matrixquestion : m.getQuestions()) {
+							matrixquestion.setSurvey(m.getSurvey());
+							validateElement(matrixquestion, answerSet, dependencies, result, answerService,
+									invisibleElements, resources, locale, m, request, draft);
+							if (!invisibleElements.contains(matrixquestion.getUniqueId())) {
+								atLeastOneQuestionVisible = true;
+							}
 						}
 					}
 					if (!atLeastOneQuestionVisible && !invisibleElements.contains(m.getUniqueId())) {
@@ -919,6 +922,10 @@ public class SurveyHelper {
 	private static void recreateDelphiExplanationUploadedFiles(AnswerSet answerSet, Survey survey,
 			FileService fileService, AnswerExplanationService answerExplanationService) {
 
+		if (answerSet.getId() == null) {
+			return;
+		}
+		
 		int answerSetId = answerSet.getId();
 		String surveyUniqueId = survey.getUniqueId();
 
@@ -4490,6 +4497,24 @@ public class SurveyHelper {
 								translationsByKey.get(number.getId().toString() + NumberQuestion.UNIT).getLabel());
 					} else {
 						number.setUnit("");
+					}
+
+					if (number.isSlider()) {
+						if (translationsByKey.get(number.getUniqueId() + NumberQuestion.MINLABEL) != null) {
+							number.setMinLabel(translationsByKey.get(number.getUniqueId() + NumberQuestion.MINLABEL).getLabel());
+						} else if (translationsByKey.get(number.getId().toString() + NumberQuestion.MINLABEL) != null) {
+							number.setMinLabel(translationsByKey.get(number.getId().toString() + NumberQuestion.MINLABEL).getLabel());
+						} else {
+							number.setMinLabel("");
+						}
+
+						if (translationsByKey.get(number.getUniqueId() + NumberQuestion.MAXLABEL) != null) {
+							number.setMaxLabel(translationsByKey.get(number.getUniqueId() + NumberQuestion.MAXLABEL).getLabel());
+						} else if (translationsByKey.get(number.getId().toString() + NumberQuestion.MAXLABEL) != null) {
+							number.setMaxLabel(translationsByKey.get(number.getId().toString() + NumberQuestion.MAXLABEL).getLabel());
+						} else {
+							number.setMaxLabel("");
+						}
 					}
 				}
 

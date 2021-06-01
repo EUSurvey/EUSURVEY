@@ -167,16 +167,6 @@
 	color: #666;
 }
 
-.ranking-question-initial-answer-clickable {
-	color: #337ab7;
-	text-decoration: underline;
-	cursor: pointer;
-}
-
-.ranking-question-initial-answer-clickable:hover {
-	color: #23527c;
-}
-
 .rankingitem-decoration {
 	color: #333;
 	font-weight: normal;

@@ -39,7 +39,7 @@
 			$(function() {
 				$('#caseid').val('${code}');
 				$('#emailcontribution').val('${email}');
-				$('#download-contribution-dialog').modal('show');
+				showModalDialog($('#download-contribution-dialog'), $('#linkDownloadContribution'));
 				setTimeout(function() {createCaptcha();}, 100);
 			});			
 		</c:if>
@@ -81,7 +81,7 @@
 					  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
 					  success: function( data ) {						  
 						  if (data == "success") {
-								$('#download-contribution-dialog').modal('hide');
+							  	hideModalDialog($('#download-contribution-dialog'));
 								showSuccess(message_PublicationExportSuccess2.replace('{0}', val));
 						  	} else if (data == "errorcaptcha") {
 						  		$("#runner-captcha-error").show();
@@ -130,7 +130,7 @@
 				
 				<div style="text-align: center; margin-bottom: 40px;">
 					<a class="btn btn-default btn-sm" id="linkEditContribution" href="<c:url value="/home/editcontribution"/>"><spring:message code="label.EditContribution" /> <span class="glyphicon glyphicon-pencil" style="margin-left: 5px;"></span></a><br /><br />
-					<a class="btn btn-default btn-sm" id="linkDownloadContribution"  onclick="$('#download-contribution-dialog').modal('show'); setTimeout(function() {createCaptcha();}, 100);"><spring:message code="label.DownloadContribution" /> <img style="margin-left: 5px" src="/eusurvey/resources/images/file_extension_pdf_small.png" alt="<spring:message code="label.DownloadContribution" />" width="16px"/></a>
+					<a class="btn btn-default btn-sm" id="linkDownloadContribution" href="javascript:;" onclick="showModalDialog($('#download-contribution-dialog'), this); setTimeout(function() {createCaptcha();}, 100);"><spring:message code="label.DownloadContribution" /> <img style="margin-left: 5px" src="/eusurvey/resources/images/file_extension_pdf_small.png" alt="<spring:message code="label.DownloadContribution" />" width="16px"/></a>
 				</div>
 				
 				<div class="container" style="text-align: left">
@@ -188,7 +188,7 @@
 							<a id="linkEditContribution" href="<c:url value="/home/editcontribution"/>"><spring:message code="label.EditContribution" /><img style="margin-left: 5px" src="${contextpath}/resources/images/icons/24/link.png" alt="link" width="16px"/></a>
 								</span><br /><br />
 								<span style="color:#004F98; font-size:12pt; margin-left:95px; margin-right:20px; font-weight:bold;">
-							<a id="linkDownloadContribution"  onclick="$('#download-contribution-dialog').modal('show'); setTimeout(function() {createCaptcha();}, 100);"><spring:message code="label.DownloadContribution" /><img style="margin-left: 5px" src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="<spring:message code="label.DownloadContribution" />" width="16px"/></a>
+							<a id="linkDownloadContribution" href="javascript:;" onclick="showModalDialog($('#download-contribution-dialog'), this); setTimeout(function() {createCaptcha();}, 100);"><spring:message code="label.DownloadContribution" /><img style="margin-left: 5px" src="${contextpath}/resources/images/file_extension_pdf_small.png" alt="<spring:message code="label.DownloadContribution" />" width="16px"/></a>
 								</span>
 							</div>
 			
@@ -279,7 +279,7 @@
 			</script>
 		</c:if>
 		
-		<div class="modal" id="download-contribution-dialog" data-backdrop="static">
+		<div class="modal" role="dialog" aria-modal="true" id="download-contribution-dialog" data-backdrop="static">
 			<div class="modal-dialog">
 	   		<div class="modal-content">
 			<form:form action="${contextpath}/home/downloadcontribution" method="post" style="margin: 0px;">
@@ -312,8 +312,8 @@
 					
 				</div>
 				<div class="modal-footer">
-					<a  onclick="checkEmail()" class="btn btn-primary"><spring:message code="label.OK" /></a>
-					<a  class="btn btn-default" onclick="$('#download-contribution-dialog').modal('hide');"><spring:message code="label.Cancel" /></a>
+					<a href="javascript:;" onclick="checkEmail()" class="btn btn-primary"><spring:message code="label.OK" /></a>
+					<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#download-contribution-dialog'));"><spring:message code="label.Cancel" /></a>
 				</div>
 			</form:form>
 			</div>

@@ -1223,6 +1223,22 @@ public class SurveyService extends BasicService {
 							} else {
 								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
+						} else if (draftTranslation.getKey().endsWith(NumberQuestion.MINLABEL)) {
+							String draftKey = draftTranslation.getKey().replace(NumberQuestion.MINLABEL, "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + NumberQuestion.MINLABEL);
+								translationsCopy.getTranslations().add(translationCopy);
+							} else {
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
+							}
+						} else if (draftTranslation.getKey().endsWith(NumberQuestion.MAXLABEL)) {
+							String draftKey = draftTranslation.getKey().replace(NumberQuestion.MAXLABEL, "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + NumberQuestion.MAXLABEL);
+								translationsCopy.getTranslations().add(translationCopy);
+							} else {
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
+							}
 						} else if (draftTranslation.getKey().endsWith("CONFIRMATIONTEXT")) {
 							String draftKey = draftTranslation.getKey().replace("CONFIRMATIONTEXT", "");
 							if (publishedSurveyKeys.containsKey(draftKey)) {
@@ -2665,6 +2681,28 @@ public class SurveyService extends BasicService {
 				retVal = Integer.parseInt(uid);
 				if (elementsBySourceId.containsKey(retVal))
 					return elementsBySourceId.get(retVal).getUniqueId() + NumberQuestion.UNIT;
+			} else if (key.endsWith(NumberQuestion.MINLABEL)) {
+				uid = key.substring(0, key.indexOf(NumberQuestion.MINLABEL));
+
+				if (oldToNewUniqueIds.containsKey(uid)) {
+					return oldToNewUniqueIds.get(uid) + NumberQuestion.MINLABEL;
+				}
+
+				retVal = Integer.parseInt(uid);
+				if (elementsBySourceId.containsKey(retVal)) {
+					return elementsBySourceId.get(retVal).getUniqueId() + NumberQuestion.MINLABEL;
+				}
+			} else if (key.endsWith(NumberQuestion.MAXLABEL)) {
+				uid = key.substring(0, key.indexOf(NumberQuestion.MAXLABEL));
+
+				if (oldToNewUniqueIds.containsKey(uid)) {
+					return oldToNewUniqueIds.get(uid) + NumberQuestion.MAXLABEL;
+				}
+
+				retVal = Integer.parseInt(uid);
+				if (elementsBySourceId.containsKey(retVal)) {
+					return elementsBySourceId.get(retVal).getUniqueId() + NumberQuestion.MAXLABEL;
+				}
 			} else if (key.endsWith(Confirmation.LABEL)) {
 				uid = key.substring(0, key.indexOf(Confirmation.LABEL));
 

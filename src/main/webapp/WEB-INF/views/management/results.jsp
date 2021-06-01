@@ -629,7 +629,8 @@
 				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-content').show();
 				$('#exportnt-format-statistics').hide();
-				$('#exportnt-format-statistics-quiz').hide();				
+				$('#exportnt-format-statistics-quiz').hide();		
+				$('#exportnt-format-files').hide();
 			} else if (type == "Statistics")
 			{
 				$('#exportnt-format-ecf1').hide();
@@ -637,7 +638,8 @@
 				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-content').hide();
 				$('#exportnt-format-statistics').show();
-				$('#exportnt-format-statistics-quiz').hide();				
+				$('#exportnt-format-statistics-quiz').hide();
+				$('#exportnt-format-files').hide();
 			} else if (type == "StatisticsQuiz")
 			{
 				$('#exportnt-format-ecf1').hide();
@@ -645,14 +647,16 @@
 				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-content').hide();
 				$('#exportnt-format-statistics').hide();
-				$('#exportnt-format-statistics-quiz').show();				
+				$('#exportnt-format-statistics-quiz').show();
+				$('#exportnt-format-files').hide();
 			} else if (type == "ECFGlobalResults") {
 				$('#exportnt-format-content').hide();
 				$('#exportnt-format-ecf1').show();
 				$('#exportnt-format-ecf2').hide();
 				$('#exportnt-format-ecf3').hide();
 				$('#exportnt-format-statistics').hide();
-				$('#exportnt-format-statistics-quiz').hide();	
+				$('#exportnt-format-statistics-quiz').hide();
+				$('#exportnt-format-files').hide();
 			} else if (type == "ECFProfileResults") {
 				$('#exportnt-format-ecf1').hide();
 				$('#exportnt-format-ecf2').show();
@@ -660,6 +664,7 @@
 				$('#exportnt-format-content').hide();
 				$('#exportnt-format-statistics').hide();
 				$('#exportnt-format-statistics-quiz').hide();
+				$('#exportnt-format-files').hide();
 			} else if (type == "ECFOrganizationResults") {
 				$('#exportnt-format-ecf1').hide();
 				$('#exportnt-format-ecf2').hide();
@@ -667,6 +672,15 @@
 				$('#exportnt-format-content').hide();
 				$('#exportnt-format-statistics').hide();
 				$('#exportnt-format-statistics-quiz').hide();
+				$('#exportnt-format-files').hide();
+			} else if (type.indexOf("Files") == 0) {
+				$('#exportnt-format-ecf1').hide();
+				$('#exportnt-format-ecf2').hide();
+				$('#exportnt-format-ecf3').hide();
+				$('#exportnt-format-content').hide();
+				$('#exportnt-format-statistics').hide();
+				$('#exportnt-format-statistics-quiz').hide();
+				$('#exportnt-format-files').show();
 			}
 			
 			$('#export-name-type-dialog').find(".validation-error").hide();
@@ -710,6 +724,8 @@
 	        } else if (exportType === "ECFOrganizationResults")
 	        {
 	        	format = $('#exportnt-format-ecf3').val();
+	        } else if (exportType.indexOf("Files") == 0) {
+	        	format = "zip";
 	        }
 			
 	        startExport(name, format);
@@ -1378,6 +1394,9 @@
 							</select>
 							<select class="form-control" id="exportnt-format-ecf3">
 								<option value="xls">XLS</option>
+							</select>
+							<select class="form-control" id="exportnt-format-files">
+								<option value="zip">ZIP</option>
 							</select>
 						</div>			
 					</td>

@@ -1340,7 +1340,7 @@ legend {
 	background-color: #337ab7 !important;
 }
 
-.contribution-link-dialog__link {
+#contribution-link-dialog__link {
 	margin: 5px 0;
 	word-wrap: break-word;
 }
@@ -1570,6 +1570,10 @@ div.medianpa {
 .chart-wrapper {
 	display: none;
 	margin-bottom: 16px;
+}
+
+.statelement-wrapper > .chart-wrapper {
+	margin-right: 16px;
 }
 
 .chart-download {

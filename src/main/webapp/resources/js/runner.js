@@ -153,7 +153,7 @@ function propagateChange(element)
 	}
 
 	var div = $(element).parents(".survey-element").last();
-	$(div).find("a[data-type='delphisavebutton']").removeClass("disabled");
+	enableDelphiSaveButtons(div);
 	$(div).find(".explanation-section").show();
 	$(div).find(".explanation-file-upload-section").show();
 	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
@@ -207,7 +207,7 @@ function checkSurveyPDFReady(id) {
 
 function checkSurveyPDFResult(result) {
 	if (result == "exists") {
-		$("#download-survey-pdf-dialog-result").css("display", "inline-block");
+		$("#download-survey-pdf-dialog-result").css("display", "inline-block").focus();
 		$("#download-survey-pdf-dialog-spinner").hide();
 		$("#download-survey-pdf-dialog-running").hide();
 		$("#download-survey-pdf-dialog-ready").show();
@@ -248,12 +248,14 @@ function createUploader(instance, maxSize)
 		onComplete : function(id, fileName, responseJSON) {
 			$(this.element).parent().find(".uploadinfo").hide();
 			updateFileList($(this.element), responseJSON);
-			$(this.element).closest(".survey-element").find("a[data-type='delphisavebutton']").removeClass("disabled");
+			enableDelphiSaveButtons($(this.element).closest(".survey-element"));
 	    	
 	    	if (responseJSON.wrongextension)
 	    	{
 	    		 $(instance).closest(".survey-element").append("<div class='validation-error' aria-live='polite'>" + getWrongExtensionMessage(fileName) + "</div>");
 	    	}
+
+			$(".qq-uploader input[type='file']").attr("title", " ");
 		},
 		onError: function() {
 			$(this.element).parent().find(".uploadinfo").hide();
@@ -1548,7 +1550,7 @@ function saveCookies() {
 }
 
 function clearAllCookies(surveyprefix) {
-	if (!is_local_storage_enabled()) {
+	if (!check_local_storage_enabled(false)) {
 		return;
 	}
 	
@@ -1625,7 +1627,12 @@ function eraseCookie(name) {
 }
 
 function is_local_storage_enabled() {
-	if ($("#saveLocalBackup").length === 0) {
+	return check_local_storage_enabled(true);
+}
+
+function check_local_storage_enabled(checkDelphi)
+{
+	if (checkDelphi && $("#saveLocalBackup").length === 0) {
 		// local backup checkbox is not displayed => Delphi question => disable local storage
 		return false;
 	}

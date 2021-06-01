@@ -111,10 +111,10 @@
 				<c:if test="${caseidforpdfdownload != null}">			
 					<c:choose>
 						<c:when test="${responsive != null}">
-							<a style="text-decoration: none" onclick="showExportDialogAndFocusEmail()" class="btn btn-lg btn-default"><spring:message code="label.Download" /> PDF</a>		
+							<a style="text-decoration: none" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-lg btn-default"><spring:message code="label.Download" /> PDF</a>		
 						</c:when>
 						<c:otherwise>
-							<a onclick="showExportDialogAndFocusEmail()" class="btn btn-default"><spring:message code="label.Download" /> PDF</a>
+							<a onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default"><spring:message code="label.Download" /> PDF</a>
 						</c:otherwise>	
 					</c:choose>
 				</c:if>

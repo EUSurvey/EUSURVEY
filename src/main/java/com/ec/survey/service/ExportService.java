@@ -345,10 +345,16 @@ public class ExportService extends BasicService {
 						logger.error(e.getLocalizedMessage(), e);
 					}
 				}
+
+				User user = (User) session.get(User.class, export.getUserId());
+				if (user != null) {
+					export.setDisplayUsername(user.getName());
+				}
 				
 				result.add(export);
 			}
 		}
+
 		return result;
 	}
 	

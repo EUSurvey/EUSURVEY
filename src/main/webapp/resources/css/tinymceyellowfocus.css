@@ -1,0 +1,14 @@
+body, td, pre {
+font-size: 13px;
+}
+
+body {
+	box-sizing: border-box;
+	margin: 0;
+	min-height: 100vh;
+	padding: 8px;
+}
+
+:focus {
+	border: 2px solid #FFD617 !important;
+}

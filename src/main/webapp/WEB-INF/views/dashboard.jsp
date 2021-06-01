@@ -977,7 +977,7 @@
 											<td data-bind="html: $data[5]"></td>
 											<td>
 												<!-- ko if: $data[8] -->
-												<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.GetPDF" />" data-bind="click: function() {code = $data[1]; showExportDialogAndFocusEmail()}, attr: {'data-uid' : $data[1]}"><img src="${contextpath}/resources/images/file_extension_pdf_small.png"></a>
+												<a rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.GetPDF" />" data-bind="click: function() {code = $data[1]; showExportDialogAndFocusEmail(this)}, attr: {'data-uid' : $data[1]}"><img src="${contextpath}/resources/images/file_extension_pdf_small.png"></a>
 												<!-- /ko -->
 												
 												<!-- ko if: $data[6] -->

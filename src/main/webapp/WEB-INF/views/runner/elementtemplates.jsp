@@ -290,7 +290,7 @@
 			<div class="answer-column">													
 				<ul data-bind="attr: {'class':css + ' multiple-choice'}, foreach: orderedPossibleAnswers()">
 					<li data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion($parent.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '') , 'onclick' : $parent.readonly() || $parent.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this).children().first()); propagateChange($(this).children().first()); event.stopImmediatePropagation();'}">
-						<a data-bind="attr: {'data-shortname': shortname(), 'onkeypress': $parent.readonly() || $parent.foreditor ? 'return false;' : 'returnTrueForSpace(event);selectMultipleChoiceAnswer(this);propagateChange(this);'}" >
+						<a tabindex="0" data-bind="attr: {'data-shortname': shortname(), 'onkeypress': $parent.readonly() || $parent.foreditor ? 'return false;' : 'returnTrueForSpace(event);selectMultipleChoiceAnswer(this);propagateChange(this);'}" >
 							<span data-bind="html:  strip_tags(title()), attr: {'data-id' : id()}" class="answertext"></span>
 						</a>
 						<input data-bind="value: id(), checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id), attr: {'name': 'answer' + $parent.id(), 'id':id(), 'data-id': $parent.id() + id(), 'data-dependencies':dependentElementsString}" style="display: none" type="checkbox" />
@@ -607,7 +607,7 @@
 							<input data-bind="value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 			
 							<div data-bind="foreach: new Array($parent.numIcons())">
-								<a class="ratingitem" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
+								<a class="ratingitem" href="javascript:;" tabindex="0" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
 									<!-- ko if: $parents[1].iconType() == 0 -->
 								    <img src="${contextpath}/resources/images/star_grey.png" data-bind='title: $index()+1' />
 								    <!-- /ko -->
@@ -626,7 +626,7 @@
 						<input data-bind="value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 		
 						<div data-bind="foreach: new Array($parent.numIcons())">
-							<a class="ratingitem" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
+							<a class="ratingitem" href="javascript:;" tabindex="0" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
 								<!-- ko if: $parents[1].iconType() == 0 -->
 							    <img src="${contextpath}/resources/images/star_grey.png" data-bind='title: $index()+1' />
 							    <!-- /ko -->
@@ -686,14 +686,14 @@
 			<div style="float: right; padding-bottom: 20px;  max-width: 45%; text-align: center;" data-bind="html: maxLabel()"></div>
 			<div style="clear: both"></div>
 			
-			<a data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
+			<a href="javascript:;" data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
 			
 			<input type="text"
 				   onchange="propagateChange(this);"
 				   data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'class': css() + ' sliderbox', 'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue(), 'data-is-answered': isAnswered() ? 'true' : 'false' }"
 			/>
 
-			<a data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
+			<a href="javascript:;" data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
 		</div>
 		<!-- /ko -->
 		
@@ -1335,7 +1335,7 @@
 						<tr>
 							<th class="area-header">
 								<span>${form.getMessage("label.DelphiChartTitle")}</span>
-								<span onclick="loadGraphDataModal(this)" class="glyphicon glyphicon-resize-full delphi-chart-expand" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></span>
+								<a href="javascript:;" onclick="loadGraphDataModal(this)" class="glyphicon glyphicon-resize-full delphi-chart-expand" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></a>
 							</th>
 						</tr>
 						<tr>
@@ -1359,7 +1359,7 @@
 					</span>
 					
 					<br /><br />
-					<a class="link" onclick="return checkGoToDelphiStart(this)">${form.getMessage("label.ReturnToDelphiStart")}</a>
+					<a href="javascript:;" class="link" onclick="return checkGoToDelphiStart(this)">${form.getMessage("label.ReturnToDelphiStart")}</a>
 				</div>
 		
 				<div class="delphiupdatemessage"></div>
@@ -1376,15 +1376,15 @@
 			</div>
 		</div>
 
-		<div class="modal delete-confirmation-dialog" data-backdrop="static">
+		<div class="modal delete-confirmation-dialog" role="dialog" data-backdrop="static">
 			<div class="modal-dialog modal-sm">
 				<div class="modal-content">
 					<div class="modal-body">
 						<spring:message code="message.DelphiConfirmDeleteComment" />
 					</div>
 					<div class="modal-footer">
-						<a class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
-						<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+						<a href="javascript:;" class="btn btn-default delete-confirmation-dialog__confirmation-button"><spring:message code="label.Delete" /></a>
+						<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($(this).closest('.modal'))"><spring:message code="label.Cancel" /></a>
 					</div>
 				</div>
 			</div>

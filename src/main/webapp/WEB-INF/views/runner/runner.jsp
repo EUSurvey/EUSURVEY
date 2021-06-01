@@ -16,6 +16,7 @@
 		</c:when>
 		<c:otherwise>
 			<link id="runnerCss" href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+			<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 		</c:otherwise>
 	</c:choose>
 	
@@ -104,7 +105,7 @@
 			$(element).siblings(".validation-error").remove();
 			
 			var surveyElement = $(element).closest(".survey-element");
-			$(surveyElement).find("a[data-type='delphisavebutton']").removeClass("disabled");
+			enableDelphiSaveButtons(surveyElement);
 
 			for (var i = 0; i < responseJSON.files.length; i++) {
 				var f = responseJSON.files[i];

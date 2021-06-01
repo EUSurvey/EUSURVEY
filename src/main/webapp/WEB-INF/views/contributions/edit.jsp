@@ -26,6 +26,7 @@
 		</c:when>
 		<c:otherwise>
 			<link id="runnerCss" href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+			<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 		</c:otherwise>
 	</c:choose>
 	

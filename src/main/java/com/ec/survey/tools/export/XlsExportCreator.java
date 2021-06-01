@@ -357,7 +357,7 @@ public class XlsExportCreator extends ExportCreator {
 
 		List<List<String>> answersets = null;
 		
-		if (!export.isForArchiving()) {
+		if (export.isForArchiving() == null || !export.isForArchiving()) {
 			answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
 				publication == null || publication.getShowUploadedDocuments(), false, false, export != null && export.getShowShortnames());
 		}
