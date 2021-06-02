@@ -122,7 +122,7 @@
 						<c:otherwise>
 							<c:choose>
 								<c:when test="${USER != null && runnermode == null}">
-									<span style="font-size: 13px; font-weight: normal;"><spring:message code="label.Hello" /><b>&nbsp;<esapi:encodeForHTML>${USER.givenNameOrLogin}</esapi:encodeForHTML>&nbsp;<esapi:encodeForHTML>${fn:toUpperCase(USER.surName)}</esapi:encodeForHTML></b>&#160;&#160;(<a id="logoutBtnFromHeader" onclick="logout()"  class="visiblelink"><spring:message code="label.logout" /></a>)</span>&#160;|
+									<span style="font-size: 13px; font-weight: normal;"><spring:message code="label.Hello" /><b>&nbsp;<esapi:encodeForHTML>${USER.givenNameOrLogin}</esapi:encodeForHTML>&nbsp;<esapi:encodeForHTML>${fn:toUpperCase(USER.surName)}</esapi:encodeForHTML></b>&#160;&#160;(<a href="javascript:;" id="logoutBtnFromHeader" onclick="logout()"  class="visiblelink"><spring:message code="label.logout" /></a>)</span>&#160;|
 								</c:when>
 								<c:otherwise>
 									<a id="loginBtnFromHeader" href="<c:url value="/auth/login"/>"><spring:message code="label.DoLogin"></spring:message></a> |
