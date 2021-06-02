@@ -1677,7 +1677,8 @@ div.medianpa {
 
 }
 
-.dropdown-menu li > a:not(.menudropdownaction):hover
+.dropdown-menu li > a:not(.menudropdownaction):hover,
+.dropdown-menu li > a:not(.menudropdownaction):focus
 {
 	background-image: none !important;
 	background-color: #f5f5f5 !important;
