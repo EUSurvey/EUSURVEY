@@ -150,6 +150,9 @@ public class StatisticsCreator implements Runnable {
 				if (number.showStatisticsForNumberQuestion()) {
 					addStatistics4NumberQuestion(survey, number, statistics, numberOfNumberAnswersMap, numberOfAnswersMap);
 				}
+				if (survey.getIsQuiz() && number.getScoring() > 0) {
+					quizquestions.add(number);
+				}
 			} else if (survey.getIsQuiz() && element instanceof Question) {
 				Question question = (Question) element;
 				if (question.getScoring() > 0) {
