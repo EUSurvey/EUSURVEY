@@ -1233,7 +1233,8 @@ public class DelphiController extends BasicController {
 			final AnswerComment comment = answerExplanationService.getComment(idParsed);
 			if (comment == null
 					|| !comment.getUniqueCode().equals(uniqueCode)
-					|| comment.getText().equals(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
+					|| comment.getText().equals(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)
+					|| text.equals(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 			comment.setText(text);
