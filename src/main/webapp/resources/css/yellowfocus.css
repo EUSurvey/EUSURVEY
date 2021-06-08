@@ -1,8 +1,6 @@
-input:focus, a:focus, button:focus, textarea:focus, .slider-handle:focus, select:focus, .possibleanswerrow:focus-within, .matrix-cell:focus-within, .confirmationelement:focus-within, .galleryinfo:focus-within, .likert-pa:focus-within, .focusborder:focus-within {
-	border: 2px solid #FFD617 !important;
-}
-
-/* needed for the fake button in an upload element */
-.btn:focus-within {
-	border: 2px solid #FFD617 !important;
+.btn:focus-within, input:focus, a:focus, button:focus, textarea:focus, .slider-handle:focus, select:focus, .possibleanswerrow:focus-within, .matrix-cell:focus-within, .confirmationelement:focus-within, .galleryinfo:focus-within, .likert-pa:focus-within, .focusborder:focus-within {
+	outline: 2px solid #FFD617;
+	outline-offset: 0px;
+	color: inherit;
+	z-index: 10000;
 }

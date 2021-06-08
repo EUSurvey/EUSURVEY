@@ -73,7 +73,7 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
-		<div class="answer-columns" style="position: relative; overflow-x:auto; padding-bottom: 8px;">
+		<div class="answer-columns" style="position: relative; overflow-x:auto; padding-bottom: 8px; padding-top: 4px;">
 		
 			<!-- ko if: likert() && !(ismobile || istablet) -->
 						
