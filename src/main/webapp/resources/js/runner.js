@@ -636,7 +636,8 @@ function selectPage(val) {
 						$(".single-page").hide();		
 						page = val;		
 						$("#page" + page).show();
-						checkPages();		
+						checkPages();
+						$("#page" + page).focus();
 								
 						//CheckAllTriggers();
 						$("html, body").animate({
@@ -650,7 +651,7 @@ function selectPage(val) {
 						$(".single-page").hide();		
 						page = page + i;		
 						$("#page" + page).show();
-						checkPages();		
+						checkPages();
 								
 						//CheckAllTriggers();
 						$("html, body").animate({
@@ -667,7 +668,8 @@ function selectPage(val) {
 				$(".single-page").hide();		
 				page = val;		
 				$("#page" + page).show();
-				checkPages();		
+				checkPages();
+				$("#page" + page).focus();
 						
 				//CheckAllTriggers();
 				$("html, body").animate({
