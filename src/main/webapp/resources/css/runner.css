@@ -2,8 +2,16 @@
 	text-decoration: none;
 }
 
+.ratingitem {
+	display: inline-block;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+}
+
 .ratingitem img {
 	width: 24px;
+	height: 24px;
 }
 
  h1, h2, h3, h4, p, a, span, .surveytitle, .answertext, .runner-content, .sectiontitle, .questiontitle, .sectionlabel, .matrixlabel, .errorMess, .sectiondesc, .introduction, .ipmframe, .compulsory, .optional, .ipmactionbuttonsmall, .answer, .ipmbackground2, .ipmactivesectiontab, .ipminactivesectiontab, .fileuploadtext, .smalleritalic, .disclaimertitle, .disclaimertext
