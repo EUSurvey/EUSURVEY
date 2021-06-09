@@ -295,12 +295,12 @@
 									<c:when test="${readonlyMode != null && readonlyMode == true}">
 										<div id="normalcss" style="color: #ccc">
 												${form.getMessage("label.Standard")}&#160;
-											<a tabindex="0" class="link visiblelink css-switch disabled" id="css-switch-disabled"
+											<a href="javascript:;" class="link visiblelink css-switch disabled" id="css-switch-disabled"
 											   style="color: #ccc">${form.getMessage("label.AccessibilityMode")}</a>
 										</div>
 
 										<div id="enhancedcss" class="hideme" style="color: #ccc">
-											<a tabindex="0" class="link css-switch normal" id="css-switch-normal"
+											<a href="javascript:;" class="link css-switch normal" id="css-switch-normal"
 											   style="color: #ccc">${form.getMessage("label.Standard")}</a>&#160;
 												${form.getMessage("label.AccessibilityMode")}
 										</div>
@@ -308,12 +308,12 @@
 									<c:otherwise>
 										<div id="normalcss">
 												${form.getMessage("label.Standard")}&#160;
-											<a tabindex="0" class="link visiblelink css-switch disabled" id="css-switch-disabled"
+											<a href="javascript:;" class="link visiblelink css-switch disabled" id="css-switch-disabled"
 											   onclick="switchCss('${mode}','wcag');">${form.getMessage("label.AccessibilityMode")}</a>
 										</div>
 
 										<div id="enhancedcss" class="hideme">
-											<a tabindex="0" class="link css-switch normal" id="css-switch-normal"
+											<a href="javascript:;" class="link css-switch normal" id="css-switch-normal"
 											   onclick="switchCss('${mode}','standard');">${form.getMessage("label.Standard")}</a>&#160;
 												${form.getMessage("label.AccessibilityMode")}
 										</div>
