@@ -141,10 +141,10 @@
 					
 					 	<c:choose>
 					 		<c:when test="${rowCounter.index == 0}">
-								<div class="single-page" id="page${rowCounter.index}">
+								<div class="single-page" tabindex="-1" id="page${rowCounter.index}">
 							</c:when>
 							<c:otherwise>
-								<div class="single-page" id="page${rowCounter.index}" style="display: none">
+								<div class="single-page" tabindex="-1" id="page${rowCounter.index}" style="display: none">
 							</c:otherwise>
 						</c:choose>						
 							
