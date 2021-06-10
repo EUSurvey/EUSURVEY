@@ -2192,7 +2192,7 @@ public class RunnerController extends BasicController {
 		User user;
 		try {
 			user = sessionService.getCurrentUser(request, false, false);
-			skipChecks = user.getType().equalsIgnoreCase("ECAS");
+			skipChecks = user != null && user.getType().equalsIgnoreCase("ECAS");
 			if (skipChecks) {
 				email = user.getEmail();
 			}
