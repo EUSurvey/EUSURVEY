@@ -1,6 +1,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
-<div style="text-align: center; margin-top: 100px;" id="divThanksInner" name="${uniqueCode}">
+<div style="text-align: center;" id="divThanksInner" name="${uniqueCode}">
 
 	<c:choose>
 		<c:when test="${form.survey.isECF}">
@@ -73,27 +73,16 @@
 			</c:otherwise>	
 		</c:choose>
 	</c:if>
-</div>
 
-<c:if test="${asklogout != null}">
-	<div class="modal" id="ask-logout-dialog" data-backdrop="static">	
-	<div class="modal-dialog">
-    <div class="modal-content">
-	<div class="modal-body">
-		${form.getMessage("question.logout")}
-	</div>
-	<div class="modal-footer">
-		<a  class="btn btn-primary btn-default" onclick="logout()">${form.getMessage("label.Yes")}</a>	
-		<a  class="btn btn-default" data-dismiss="modal">${form.getMessage("label.No")}</a>		
-	</div>
-	</div>
-	</div>
-	</div>	
-	
-	<script type="text/javascript">
-		$("#ask-logout-dialog").modal("show");
-	</script>
-</c:if>
+	<c:if test="${asklogout != null}">
+		<div id="ask-logout-div" style="margin-top: 30px;">
+			${form.getMessage("question.logout")}<br /><br />	
+			<a href="javascript:;" class="btn btn-primary btn-default" onclick="logout()">${form.getMessage("label.Yes")}</a>	
+			<a href="javascript:;" class="btn btn-default" onclick="$('#ask-logout-div').hide()">${form.getMessage("label.No")}</a>		
+		</div>
+	</c:if>
+
+</div>
 
 <div class="modal" id="ask-export-dialog" data-backdrop="static" role="dialog">	
 	<div class="modal-dialog">
