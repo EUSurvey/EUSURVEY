@@ -402,7 +402,7 @@
 								</a>
 								<c:if test="${form.answerSets.size() > 0}">
 									<br /><br />
-									<a href="javascript:;" onclick="showContributionLinkDialog(this)">${form.getMessage("label.EditYourContributionLater")}</a>
+									<a id="editYourContributionLink" href="javascript:;" onclick="showContributionLinkDialog(this)">${form.getMessage("label.EditYourContributionLater")}</a>
 								</c:if>
 							</div>
 							<hr style="margin-top: 15px;" />
