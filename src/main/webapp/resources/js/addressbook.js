@@ -349,21 +349,26 @@ function addAttendee()
 		error = true;
 	}
 	
+	$("#add-attendee-error-ownerdoesnotexist").hide();
+	
 	if (error == false)
 	{
 		$.ajax({
 			type:'GET',
-			  url: contextpath + "/addressbook/attendeeExists",
-			  data: "email=" + $("#add-attendee-dialog").find("#email").val(),
-			  dataType: 'json',
+			  url: contextpath + "/addressbook/checkNewAttendee",
+			  data: "email=" + $("#add-attendee-dialog").find("#email").val() + "&owner=" + $("#add-attendee-dialog").find("#owner").val(),
+			  dataType: 'text',
 			  async: false,
 			  cache: false,
-			  success: function( exists ) {
+			  success: function( result ) {
 				  
-				  if (exists == true)
+				  if (result == "ATTENDEEEXISTS")
 				  {
 					  $("#add-attendee-dialog").modal("hide");
 					  $("#add-attendee-dialog-attendeeexists").modal("show");
+				  } else  if (result == "OWNERDOESNOTEXIST")
+				  { 
+					  $("#add-attendee-error-ownerdoesnotexist").show();					  
 				  } else {
 					  $("#add-attendee-form").modal("hide");	
 						$("#add-attendee-form").find("input").each(function(){
