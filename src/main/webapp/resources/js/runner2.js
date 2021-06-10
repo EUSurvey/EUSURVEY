@@ -1198,8 +1198,7 @@ function delphiUpdateContinued(div, successCallback) {
 			const key = HAS_SHOWN_SURVEY_LINK + uniqueCode;
 			if (localStorage.getItem(key) == null) {
 				localStorage.setItem(key, "true");
-				appendShowContributionLinkDialogToSidebar();
-				showContributionLinkDialog($(div).find("a[data-type='delphisavebutton']"), data.link);
+				appendShowContributionLinkDialogToSidebar(div, data);
 			}
 			
 			if (data.changedForMedian) {
@@ -1229,11 +1228,14 @@ function delphiUpdateContinued(div, successCallback) {
 	});
 }
 
-function appendShowContributionLinkDialogToSidebar() {
-	$("<br />").appendTo(".contact-and-pdf__delphi-section");
-	$("<br />").appendTo(".contact-and-pdf__delphi-section");
-	$('<a href="javascript:;" onclick="showContributionLinkDialog(this)">' + labelEditYourContributionLater + '</a>')
-		.appendTo(".contact-and-pdf__delphi-section");
+function appendShowContributionLinkDialogToSidebar(div, data) {
+	if ($('#editYourContributionLink').length == 0) {	
+		$("<br />").appendTo(".contact-and-pdf__delphi-section");
+		$("<br />").appendTo(".contact-and-pdf__delphi-section");
+		$('<a id="editYourContributionLink" href="javascript:;" onclick="showContributionLinkDialog(this)">' + labelEditYourContributionLater + '</a>')
+			.appendTo(".contact-and-pdf__delphi-section");
+		showContributionLinkDialog($(div).find("a[data-type='delphisavebutton']"), data.link);
+	}
 }
 
 function showContributionLinkDialog(caller, url) {
