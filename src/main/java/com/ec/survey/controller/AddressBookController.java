@@ -253,13 +253,27 @@ public class AddressBookController extends BasicController {
 		return attendeeService.getAttendees(ownerId, filter, newPage, itemsPerPage);
 	}
 	
-	@GetMapping(value = "/attendeeExists", headers="Accept=*/*")
-	public @ResponseBody boolean attendeeExists(HttpServletRequest request, HttpServletResponse response ) throws Exception {
+	@GetMapping(value = "/checkNewAttendee", headers="Accept=*/*")
+	public @ResponseBody String checkNewAttendee(HttpServletRequest request, HttpServletResponse response ) throws Exception {
 		Map<String,String[]> parameters = Ucs2Utf8.requestToHashMap(request);
 		String email = parameters.get(Constants.EMAIL)[0];
 		User user = sessionService.getCurrentUser(request);
+		String ownerlogin = parameters.get(Constants.OWNER)[0];
 		
-		return attendeeService.attendeeExists(email, user.getId());
+		if (user.getGlobalPrivileges().get(GlobalPrivilege.UserManagement) > 1 && ownerlogin.length() > 0)
+		{				
+			User owner = administrationService.getUserForLogin(ownerlogin);
+			if (owner == null)
+			{			
+				return "OWNERDOESNOTEXIST";
+			}					
+		}
+		
+		if (attendeeService.attendeeExists(email, user.getId())) {
+			return "ATTENDEEEXISTS";
+		}
+		
+		return "OK";
 	}
 	
 	@PostMapping(value = "/batchEdit")

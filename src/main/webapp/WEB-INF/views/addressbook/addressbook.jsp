@@ -547,6 +547,9 @@
 							      	<div class="input-group-addon"><img src="${contextpath}/resources/images/People.png" style="margin-top:-3px; margin-right: 2px;" /></div>
 							      	<input id="owner" class="form-control" name="owner" type="text" maxlength="255" style="width: 200px;" />
 							    </div>
+							    <div id="add-attendee-error-ownerdoesnotexist" class="hideme" style="color: #f00; margin: 10px;">
+							    	<spring:message code="error.unknownowner" />
+							    </div>
 							</td>
 							<td>&#160;</td>
 						</tr>
