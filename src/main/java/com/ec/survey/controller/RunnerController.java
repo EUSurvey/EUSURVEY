@@ -1696,7 +1696,7 @@ public class RunnerController extends BasicController {
 		User user;
 		try {
 			user = sessionService.getCurrentUser(request, false, false);
-			if (user.getType().equalsIgnoreCase("ECAS")) {
+			if (user != null && user.getType().equalsIgnoreCase("ECAS")) {
 				result.addObject("isecasuser", true);
 			}
 		} catch (NotAgreedToTosException | WeakAuthenticationException | NotAgreedToPsException e1) {
