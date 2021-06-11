@@ -2,6 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <c:if test="${forpdf == null}">
+	<script type="text/javascript" src="${contextpath}/resources/js/graph_data_loader.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript"> 
 		var statisticsrequestid = null;
 		function loadStatisticsAsync(publication)
@@ -188,7 +189,7 @@
 				$(this).parent().find('[data-toggle="tooltip"]').tooltip();
 
 				var chartwrapper = $(this);
-				loadGraphDataInner(chartwrapper, addChart, null, null, null, 300);
+				loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300);
 			});
 		}
 
@@ -203,7 +204,7 @@
 			const size = $(chartwrapper).closest(".elementwrapper, .statelement-wrapper").find(".chart-size").first().val();
 			const canvasWidth = getChartCanvasHeightAndWidth(size).width;
 
-			loadGraphDataInner(chartwrapper, addChart, chartType, scheme, legend, canvasWidth);
+			loadGraphDataInnerForResults(chartwrapper, addChart, chartType, scheme, legend, canvasWidth);
 		}
 
 		function getChartCanvasHeightAndWidth(size) {
@@ -310,281 +311,6 @@
 			return result;
 		}
 		
-		function loadGraphDataInner(div, chartCallback, chartType, scheme, legend, canvasWidth) {
-
-			var surveyid = div.data("survey-id");
-			var questionuid = div.data("question-uid");
-			var languagecode = div.data("language-code");
-			var uniquecode = ""; // not needed for privileged users like form managers
-
-			var data = "surveyid=" + surveyid + "&questionuid=" + questionuid + "&languagecode=" + languagecode + "&uniquecode=" + uniquecode + "&resultsview=true";
-
-			$.ajax({
-				type: "GET",
-				url: contextpath + "/runner/delphiGraph",
-				data: data,
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader(csrfheader, csrftoken);
-				},
-				error: function (data) {
-					showError(data.responseText);
-				},
-				success: function (result, textStatus) {
-					var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
-					if (textStatus === "nocontent") {						
-						$(elementWrapper).find(".delphi-chart").remove();
-						$(elementWrapper).find(".chart-wrapper").hide();
-						$(elementWrapper).find(".chart-controls").hide();
-
-						return;
-					}
-
-					if (chartType == null) {
-						chartType = result.chartType;
-					}
-					
-					if (result.questionType === "FreeText") {
-						if (scheme == null) {
-							scheme = "d3.scale.category20";
-						}
-						
-						createWordCloud(div, result, chartType, true, false, scheme);
-						return;
-					}
-					
-					if (scheme == null) {
-						scheme = "tableau.Tableau10";
-					}
-					
-					$(elementWrapper).find("option[data-type='textual']").hide();
-					$(elementWrapper).find("option[data-type='numerical']").show();
-
-					var showLegendBox = result.questionType === "Matrix" || result.questionType === "Rating" || chartType === "Pie";
-					legend = legend == undefined ? showLegendBox : showLegendBox && legend;
-
-					var chartData = {};
-					var chartOptions = {
-						scaleShowValues: true,
-						responsive: false,
-						scales: {
-							yAxes: [{ticks: {beginAtZero: true, autoSkip: false, callback: chartLabelCallback}}],
-							xAxes: [{ticks: {beginAtZero: true, autoSkip: false, callback: chartLabelCallback}}]
-						},
-						legend: {display: legend},
-						animation: {
-							onComplete: function (animation) {
-								$(div).closest(".statelement-wrapper").find('.chart-download').attr({href: this.toBase64Image(), download: result.questionType + ".png"});
-							}
-						},
-						plugins: {
-							colorschemes: {
-								scheme: scheme
-							}
-						}
-					};
-
-					switch (result.questionType) {
-						case "MultipleChoice":
-						case "SingleChoice":
-						case "Number":
-							var graphData = result.data;
-
-							chartData = {
-								datasets: [{
-									label: '',
-									originalLabel: '',
-									data: graphData.map(function (g) {
-										return g.value
-									})
-								}],
-								labels: graphData.map(function (g) {
-									return truncateLabel(g.label, canvasWidth);
-								}),
-								originalLabels: graphData.map(function (g) {
-									return g.label;
-								})
-							};
-							break;
-
-						case "Matrix":
-						case "Rating":
-							var questions = result.questions;
-							var datasets = [];
-							var labels = undefined;
-							var originalLabels = undefined;
-
-							for (var i = 0; i < questions.length; i++) {
-								var question = questions[i];
-
-								datasets.push({
-									data: question.data.map(function (d) {
-										return d.value;
-									}),
-									label: truncateLabel(normalizeLabel(question.label), canvasWidth),
-									originalLabel: normalizeLabel(question.label)
-								});
-
-								if (!labels) {								
-									labels = question.data.map(function (d) {
-										return truncateLabel(normalizeLabel(d.label), canvasWidth);
-									});
-									originalLabels = question.data.map(function (d) {
-										return normalizeLabel(d.label);
-									});
-								}
-							}
-
-							chartData = {
-								datasets,
-								labels,
-								originalLabels
-							}
-			
-							break;
-
-						default:
-							return;
-					}
-
-					var chart = {
-						data: chartData,
-						options: chartOptions
-					}
-
-					switch (chartType) {
-						case "Bar":
-							chart.type = "horizontalBar";
-							break;
-						case "Column":
-							chart.type = "bar";
-							break;
-						case "Line":
-							chart.type = "line";
-							break;
-						case "Pie":
-							chart.type = "pie";
-							delete chart.options.scales;
-							break;
-						case "Radar":
-							chart.type = "radar";
-							delete chart.options.scales;
-							chart.options.scale = {pointLabels: {callback: chartLabelCallback}, ticks: {beginAtZero: true, precision: 0}};
-							break;
-						case "Scatter":
-							chart.type = "line";
-							chart.options.showLines = false;
-							break;
-						default:
-							chart.type = "horizontalBar";
-							break;
-					}
-
-					chart.options.tooltips = {
-						 // Disable the on-canvas tooltip
-			            enabled: false,
-
-			            custom: function(tooltipModel) {
-			                // Tooltip Element
-			                var tooltipEl = document.getElementById('chartjs-tooltip');
-
-			                // Create element on first render
-			                if (!tooltipEl) {
-			                    tooltipEl = document.createElement('div');
-			                    tooltipEl.id = 'chartjs-tooltip';
-			                    tooltipEl.innerHTML = '<table></table>';
-			                    document.body.appendChild(tooltipEl);
-			                }
-
-			                // Hide if no tooltip
-			                if (tooltipModel.opacity === 0) {
-			                    tooltipEl.style.opacity = 0;
-			                    return;
-			                }
-
-			                // Set caret Position
-			                tooltipEl.classList.remove('above', 'below', 'no-transform');
-			                if (tooltipModel.yAlign) {
-			                    tooltipEl.classList.add(tooltipModel.yAlign);
-			                } else {
-			                    tooltipEl.classList.add('no-transform');
-			                }
-
-			                function getBody(bodyItem) {
-			                    return bodyItem.lines;
-			                }
-
-			                // Set Text
-			                if (tooltipModel.body) {
-			                    var titleLines = tooltipModel.title || [];
-			                    var bodyLines = tooltipModel.body.map(getBody);
-
-			                    var innerHtml = '<thead>';
-
-			                    titleLines.forEach(function(title) {
-			                        innerHtml += '<tr><th>' + title + '</th></tr>';
-			                    });
-			                    innerHtml += '</thead><tbody>';
-
-			                    bodyLines.forEach(function(body, i) {
-			                        var colors = tooltipModel.labelColors[i];
-			                        var style = 'background:' + colors.backgroundColor;
-			                        style += '; border-color:' + colors.borderColor;
-			                        style += '; border-width: 2px';
-			                        var span = '<div class="chartjs-line" style="' + style + '"></div>';
-			                        innerHtml += '<tr><td>' + span + body.join(" ") + '</td></tr>';
-			                    });
-			                    innerHtml += '</tbody>';
-
-			                    var tableRoot = tooltipEl.querySelector('table');
-			                    tableRoot.innerHTML = innerHtml;
-			                }
-
-			                // `this` will be the overall tooltip
-			                var position = this._chart.canvas.getBoundingClientRect();
-
-			                // Display, position, and set styles for font
-			                tooltipEl.style.opacity = 1;
-			                tooltipEl.style.position = 'absolute';
-			                tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
-			                tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
-			                tooltipEl.style.fontFamily = tooltipModel._bodyFontFamily;
-			                tooltipEl.style.fontSize = tooltipModel.bodyFontSize + 'px';
-			                tooltipEl.style.fontStyle = tooltipModel._bodyFontStyle;
-			                tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
-			                tooltipEl.style.pointerEvents = 'none';
-			            },							
-							
-						callbacks: {
-							title: chart.data.datasets.length === 1
-									? function (item, data) {
-										var label = chart.type === "radar" ? data.originalLabels[item[0].index] : item[0].originalLabel;
-										return wrapLabel(label, 30);
-									} : function (item, data) {
-										var label = chart.type === "pie" ? data.datasets[item[0].datasetIndex].originalLabel : data.originalLabels[item[0].index];
-										return wrapLabel(label, 30);
-									},
-							label: chart.data.datasets.length === 1
-									? function (item, data) {
-										var label = chart.type === "pie"
-												? data.originalLabels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
-												: item.value;
-										return wrapLabel(label, 30);
-									} : function (item, data) {
-										var label = chart.type === "pie"
-												? data.originalLabels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index]
-												: data.datasets[item.datasetIndex].originalLabel + ": " + item.value;
-										return wrapLabel(label, 30);
-									}
-						}
-					}
-
-					if (chartCallback instanceof Function) {
-						chartCallback(div, chart, chartType, showLegendBox, canvasWidth);
-					}
-				}
-			});
-		}
-
 		function addChart(div, chart, chartType, showLegendBox) {
 			var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
 

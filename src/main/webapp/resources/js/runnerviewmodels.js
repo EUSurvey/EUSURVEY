@@ -324,7 +324,7 @@ function newBasicViewModel(element)
 		viewModel.uniqueId = ko.observable(element.uniqueId);
 		viewModel.shortname = ko.observable(element.shortname);
 		viewModel.scoring = ko.observable(element.scoring);
-		viewModel.points = ko.observable(element.points);
+		viewModel.points = ko.observable(element.quizPoints);
 		viewModel.locked = ko.observable(element.locked);
 		viewModel.css = ko.observable(element.css);
 		viewModel.optional = ko.observable(element.optional);

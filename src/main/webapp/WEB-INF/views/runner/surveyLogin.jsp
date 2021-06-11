@@ -9,6 +9,8 @@
 	<title>EUSurvey - <spring:message code="label.Survey" /></title>
 	<%@ include file="../includes.jsp" %>
 	
+	<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+		
 	<style type="text/css">
 		.authenticationdiv {
 			width: 220px; margin-left: auto; margin-right: auto;
@@ -66,12 +68,12 @@
 							
 							<c:choose>
 								<c:when test="${casoss !=null}">
-									<a onclick="$(this).closest('form').submit()">
+									<a href="javascript:;" onclick="$(this).closest('form').submit()">
 										<img src="${contextpath}/resources/images/cas_logo.png" alt="cas logo" />
 									</a>
 								</c:when>
 								<c:otherwise>
-									<a class="btn btn-primary" onclick="$(this).closest('form').submit()">
+									<a href="javascript:;" class="btn btn-primary" onclick="$(this).closest('form').submit()">
 										<spring:message code="login.AccessViaEULogin" />
 									</a><br />
 									<a target="_blank" href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi"><spring:message code="label.Register" /></a>

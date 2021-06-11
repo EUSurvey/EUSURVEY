@@ -49,7 +49,7 @@
 				</div>
 			</c:when>
 			<c:otherwise>
-				<div class="fullpage">
+				<div class="fullpage" style="padding-top: 100px;">
 					<%@ include file="thanksinner.jsp" %>
 					<%@ include file="generic-messages.jsp" %>
 				</div>

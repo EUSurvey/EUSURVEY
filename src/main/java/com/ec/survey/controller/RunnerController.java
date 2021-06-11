@@ -1692,6 +1692,16 @@ public class RunnerController extends BasicController {
 		if (survey.getEcasSecurity() && survey.getConfirmationPageLink()) {
 			request.getSession().invalidate();
 		}
+		
+		User user;
+		try {
+			user = sessionService.getCurrentUser(request, false, false);
+			if (user != null && user.getType().equalsIgnoreCase("ECAS")) {
+				result.addObject("isecasuser", true);
+			}
+		} catch (NotAgreedToTosException | WeakAuthenticationException | NotAgreedToPsException e1) {
+			// ignore
+		}			
 
 		return result;
 	}
@@ -2175,12 +2185,24 @@ public class RunnerController extends BasicController {
 	@RequestMapping(value = "/sendmaillink", headers = "Accept=*/*", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public @ResponseBody String sendDraftLinkByMail(HttpServletRequest request, HttpServletResponse response) {
 
-		if (!checkCaptcha(request)) {
+		Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
+		String email = parameters.get(Constants.EMAIL)[0];
+		boolean skipChecks = false;
+		
+		User user;
+		try {
+			user = sessionService.getCurrentUser(request, false, false);
+			skipChecks = user != null && user.getType().equalsIgnoreCase("ECAS");
+			if (skipChecks) {
+				email = user.getEmail();
+			}
+		} catch (NotAgreedToTosException | WeakAuthenticationException | NotAgreedToPsException e1) {
+			// ignore
+		}			
+				
+		if (!skipChecks && !checkCaptcha(request)) {
 			return "errorcaptcha";
 		} else {
-
-			Map<String, String[]> parameters = Ucs2Utf8.requestToHashMap(request);
-			String email = parameters.get(Constants.EMAIL)[0];
 			String link = parameters.get("link")[0];
 			String id = parameters.get("id")[0];
 

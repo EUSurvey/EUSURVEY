@@ -73,7 +73,7 @@
 		<!-- /ko -->
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class='questionhelp' data-bind="html: niceHelp"></span>
-		<div class="answer-columns" style="position: relative; overflow-x:auto; padding-bottom: 8px;">
+		<div class="answer-columns" style="position: relative; overflow-x:auto; padding-bottom: 8px; padding-top: 4px;">
 		
 			<!-- ko if: likert() && !(ismobile || istablet) -->
 						
@@ -144,7 +144,7 @@
 					</tr>
 					<!-- /ko -->				
 					
-					<!-- ko foreach: orderedPossibleAnswersByRows(true, ${responsive != null}) -->
+					<!-- ko foreach: orderedPossibleAnswersByRows(${ismobile != null}, ${responsive != null}) -->
 					<tr class="possibleanswerrow">				
 						<!-- ko foreach: $data -->					
 											
@@ -153,7 +153,7 @@
 							<input style="position: relative" data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parents[1].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id()}" type="radio"  />
 							<!-- /ko -->	
 						</td>
-						<td style="vertical-align: top">
+						<td style="vertical-align: top; padding-right: 15px;">
 							<label data-bind="attr: {'for': id}">
 								<!-- ko ifnot: id() == 'dummy' -->
 								<div class="answertext" data-bind="html: titleForDisplayMode($parents[1].displayMode()), attr: {'data-id' : id()}"></div>
@@ -274,7 +274,7 @@
 						<input data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: !$parents[1].foreditor && getPAByQuestion($parents[1].uniqueId()).indexOf(uniqueId()) > -1, attr: {'data-id': $parents[1].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onclick: $parents[1].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[1].css + ' trigger check', name: 'answer' + $parents[1].id(), value: id()}" type="checkbox"  />
 						<!-- /ko -->
 					</td>
-					<td style="vertical-align: top">
+					<td style="vertical-align: top; padding-right: 10px;">
 						<!-- ko ifnot: id() == 'dummy' -->
 						<label data-bind="attr: {'for': id}">
 							<div class="answertext" data-bind="html: title, attr: {'data-id' : id()}"></div>

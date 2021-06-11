@@ -535,7 +535,7 @@
 							{
 								var div = $('#delphiquestion' + data.sections[i].questions[j].uid);
 								const canvasContainerWidth = $(div).find('.question__chart-container')[0].clientWidth;
-								loadGraphDataInner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false, false, true, canvasContainerWidth);
+								loadGraphDataInnerForRunner(div, surveyid, data.sections[i].questions[j].uid, languagecode, uniquecode, addStructureChart, false, false, true, canvasContainerWidth);
 							}
 						}
 					}
@@ -565,7 +565,7 @@
 			$(modal).modal('hide');
 
 			callerAddChartModalStartPage = element;
-			loadGraphDataInner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true, false, canvasContainerWidth);
+			loadGraphDataInnerForRunner(null, surveyid, uid, languagecode, uniquecode, addChartModalStartPage, false, true, false, canvasContainerWidth);
 		}
 
 		$(document).ready(function(){

@@ -45,13 +45,31 @@
 							<a style="color: #FFF; font-weight: bold;" class="visiblelink" id="draftLinkFromThanksDraft" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${url}</esapi:encodeForHTML></a>
 							</div>
 							<br/>
-							<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="$('#ask-email-dialog').modal('show');">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
+							
+							<c:choose>
+								<c:when test="${isecasuser != null}">
+									<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
+								</c:when>
+								<c:otherwise>
+										<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg" onclick="$('#ask-email-dialog').modal('show');">${form.getMessage("label.SendLinkAsEmail")}</a> <br /><br />
+								</c:otherwise>
+							</c:choose>
+							
 							<a id="copyme" class="btn btn-primary btn-lg" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>">${form.getMessage("label.CopyToClipboard")}</a>
 						</c:when>
 						<c:otherwise>					
 							<a class="draftLink visiblelink" id="draftLinkFromThanksDraft" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>"><esapi:encodeForHTML>${url}</esapi:encodeForHTML></a>
 							<br/><br/>	
-							<a href="javascript:;" class="btn btn-primary aSpaced" onclick="showModalDialog($('#ask-email-dialog'), this);">${form.getMessage("label.SendLinkAsEmail")}</a>
+							
+							<c:choose>
+								<c:when test="${isecasuser != null}">
+									<a href="javascript:;" class="btn btn-primary aSpaced" onclick="sendMailLink(true)">${form.getMessage("label.SendLinkAsEmail")}</a>
+								</c:when>
+								<c:otherwise>
+									<a href="javascript:;" class="btn btn-primary aSpaced" onclick="showModalDialog($('#ask-email-dialog'), this);">${form.getMessage("label.SendLinkAsEmail")}</a>
+								</c:otherwise>
+							</c:choose>
+							
 							<a id="bookmarkme" class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>">${form.getMessage("label.SaveToBookMark")}</a>
 							<a id="copyme"class="aSpaced" href="<esapi:encodeForHTMLAttribute>${url}</esapi:encodeForHTMLAttribute>">${form.getMessage("label.CopyToClipboard")}</a>
 						</c:otherwise>
@@ -177,15 +195,15 @@
 					<div class="modal-footer">
 						<c:choose>
 							<c:when test="${responsive != null}">
-								<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</a>	
+								<a href="javascript:;" style="text-decoration: none" class="btn btn-primary btn-lg btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</a>	
 								<a href="javascript:;" style="text-decoration: none" class="btn btn-lg btn-default" onclick="hideModalDialog($('#ask-email-dialog'))">${form.getMessage("label.Cancel")}</a>		
 							</c:when>
 							<c:when test="${runnermode == true}">
-								<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink()">${form.getMessage("label.OK")}</a>	
+								<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink(false)">${form.getMessage("label.OK")}</a>	
 								<a href="javascript:;" class="btn btn-default" onclick="hideModalDialog($('#ask-email-dialog'))">${form.getMessage("label.Cancel")}</a>		
 							</c:when>
 							<c:otherwise>
-								<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink()"><spring:message code="label.OK" /></a>	
+								<a href="javascript:;" class="btn btn-primary" onclick="sendMailLink(false)"><spring:message code="label.OK" /></a>	
 								<a href="javascript:;" class="btn btn-default"  onclick="hideModalDialog($('#ask-email-dialog'))"><spring:message code="label.Cancel" /></a>		
 							</c:otherwise>	
 						</c:choose>				
@@ -310,9 +328,9 @@
 			
 		});
 		
-			function sendMailLink()
+		
+			function sendMailLink(skip)
 			{
-				
 				$("#ask-email-dialog").find(".validation-error").hide();
 				$("#ask-email-dialog").find(".validation-error-keep").hide();
 				
@@ -323,18 +341,22 @@
 			    var uresponse = getResponse($("#ask-email-dialog"));
 			    
 			    var id = '${surveyID}';
+			    
+			    if (!skip) {
 				
-				if (mail.trim().length == 0 || !validateEmail(mail))
-				{
-					$("#ask-email-dialog-error").show();
-					return;
+					if (mail.trim().length == 0 || !validateEmail(mail))
+					{
+						$("#ask-email-dialog-error").show();
+						return;
+					}
+					
+					if (uresponse.trim().length == 0)
+				    {
+						$("#ask-email-dialog").find("#runner-captcha-empty-error").show();
+				    	return;
+				    }
+				
 				}
-				
-				if (uresponse.trim().length == 0)
-			    {
-					$("#ask-email-dialog").find("#runner-captcha-empty-error").show();
-			    	return;
-			    }
 	
 				$.ajax({
 					type:'GET',
