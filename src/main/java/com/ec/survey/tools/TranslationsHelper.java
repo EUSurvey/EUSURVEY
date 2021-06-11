@@ -1540,6 +1540,8 @@ public class TranslationsHelper {
 
 		typeSuffixByShortType.put("T", "TABTITLE");
 		typeSuffixByShortType.put("U", "UNIT");
+		typeSuffixByShortType.put("MIN", "MINLABEL");
+		typeSuffixByShortType.put("MAX", "MAXLABEL");
 		typeSuffixByShortType.put("H", "help");
 		typeSuffixByShortType.put("CT", "CONFIRMATIONTEXT");
 		typeSuffixByShortType.put("CL", "CONFIRMATIONLABEL");
