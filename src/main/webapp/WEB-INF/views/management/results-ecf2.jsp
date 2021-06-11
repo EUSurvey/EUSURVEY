@@ -63,6 +63,13 @@
 			</div>
 		</div>
 	</div>
+	
+	<div class="row">
+		<div class="col-lg-12">
+			<canvas id="ecfAvgScoreChart" style="display: none;"></canvas>
+			<canvas id="ecfMaxScoreChart" style="display: none; margin-top: 20px; margin-bottom: 20px;"></canvas>			
+		</div>
+	</div>
 
 	<div class="row">
 		<div id="resultsContainerMax"
