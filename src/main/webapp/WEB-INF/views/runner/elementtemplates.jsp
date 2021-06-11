@@ -1082,37 +1082,6 @@
 			<div class='limits' data-bind="html: getMaxRows(maxRows())"></div>
 		<!-- /ko -->
 		
-		<!-- ko if: ismobile || istablet -->
-			<div data-bind="attr: {'class': 'matrixdiv' + css()}">
-				<!-- ko foreach: questions -->	
-					<div data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'id' : id(), 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()), 'data-useAndLogic': useAndLogic()}"}" style="margin-top: 10px;">
-						<!-- ko if: optional() == false -->
-							<span class="mandatory" style="position: absolute; margin-left: -7px;">*</span>
-						<!-- /ko -->
-						<div data-bind="html: title" style="font-size: 90%"></div>										
-						<div class="answer-columns" style="margin-top: 5px; font-size: 90%;">
-							<table class="answers-table mobile-matrix">							
-								<tbody data-bind="foreach: $parent.answers">
-									<tr>
-										<td>
-											<input data-bind="enable: !$parents[1].readonly(), checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id()), attr: {value: id().toString(), 'onclick': $parents[1].readonly() ? 'return false;' : 'checkSingleClick(this); event.stopImmediatePropagation();', 'id': $parent.id().toString() + id().toString(), 'data-id': $parent.id().toString() + id().toString(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'class': $parent.css() + ' trigger', 'name': 'answer' + $parent.id(), 'data-dependencies': $parents[1].dependentElementsStrings()[$index() + ($parentContext.$index() * ($parents[1].columns()-1))], 'data-cellid' : $parent.id() + '|' + id(), type: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', role: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', 'data-dummy': getPAByQuestion2($parent.uniqueId(), uniqueId(), id())}" />
-											<input type="hidden" data-bind="attr: {'name': 'dependencies' + $parents[1].id(), 'value': $parents[1].dependentElementsStrings()[$index() + ($parentContext.$index() * ($parents[1].columns()-1))]}" />	
-										</td>
-										<td>
-											<label data-bind="attr: {for: $parent.id() + id()}">
-												<span class="answertext" data-bind="html: title"></span>
-											</label>																													
-										</td>
-									</tr>
-								</tbody>												
-							</table>
-						</div>
-					</div>
-				<!-- /ko -->				
-			</div>
-		<!-- /ko -->
-		
-		<!-- ko if: !ismobile && !istablet  -->
 		<div style="width: 100%">
 			
 			<!-- ko if: foreditor -->
@@ -1136,51 +1105,52 @@
 			</div>
 			<!-- /ko -->
 		
-			<table data-bind="attr: {'class':'matrixtable ' + css(), 'style': tableType() == 1 ? 'width: 900px' : 'width: auto; max-width: auto'}">			
-				<thead>
-					<tr>
-						<th class="matrix-header firstCell" data-bind="attr: {'data-id': id(), 'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">
-							<!-- ko if: foreditor -->
-							<textarea style="display: none" data-bind="text: firstCellText, attr: {'name': 'firstCellText' + id()}"></textarea>
-							<!-- /ko -->
-							<span class="matrixheadertitle" data-bind="html: firstCellText"></span>
-						</th>
-						<!-- ko foreach: answers -->
-						<th class="matrix-header" scope="col" data-bind="attr: {'id' : id(), 'data-id': id(), 'style': $parent.tableType() != 2 ? '' : 'width: ' + getWidth($parent.widths(), $index()+1)}">
-							<!-- ko if: $parent.foreditor -->
-							<input type="hidden" data-bind="value: 'text', attr: {'name': 'type' + id()}" />
-							<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
-							<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
-							<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
-							<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
-							<textarea style="display: none" data-bind="text: title, attr: {'name': 'text' + id()}"></textarea>
+			<div class="table-responsive">
+				<table data-bind="attr: {'class':'matrixtable ' + css(), 'style': tableType() == 1 ? 'width: 900px' : 'width: auto; max-width: auto'}">			
+					<thead>
+						<tr>
+							<th class="matrix-header firstCell" data-bind="attr: {'data-id': id(), 'style': tableType() != 2 ? '' : 'width: ' + getWidth(widths(), 0)}">
+								<!-- ko if: foreditor -->
+								<textarea style="display: none" data-bind="text: firstCellText, attr: {'name': 'firstCellText' + id()}"></textarea>
+								<!-- /ko -->
+								<span class="matrixheadertitle" data-bind="html: firstCellText"></span>
+							</th>
+							<!-- ko foreach: answers -->
+							<th class="matrix-header" scope="col" data-bind="attr: {'id' : id(), 'data-id': id(), 'style': $parent.tableType() != 2 ? '' : 'width: ' + getWidth($parent.widths(), $index()+1)}">
+								<!-- ko if: $parent.foreditor -->
+								<input type="hidden" data-bind="value: 'text', attr: {'name': 'type' + id()}" />
+								<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
+								<input type="hidden" data-bind="value: optional, attr: {'name': 'optional' + id()}" />
+								<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
+								<input type="hidden" data-bind="value: readonly, attr: {'name': 'readonly' + id()}" />
+								<textarea style="display: none" data-bind="text: title, attr: {'name': 'text' + id()}"></textarea>
+								 <!-- /ko -->
+								<span class="matrixheadertitle" data-bind="html: title"></span>
+							</th>
 							 <!-- /ko -->
-							<span class="matrixheadertitle" data-bind="html: title"></span>
-						</th>
-						 <!-- /ko -->
-					</tr>
-				</thead>
-				<tbody>					
-					<!-- ko foreach: questionsOrdered() -->			
-					<tr data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()) + ';' + ($parent.foreditor ? '' : getTriggersByQuestion($parent.uniqueId)), 'data-useAndLogic': useAndLogic()}"> 
-						<th class="matrix-header" scope="row" data-bind="attr: {'id' : id(), 'data-id': id}">
-							<!-- ko if: optional() == false -->
-								<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 3px;">*</span>
-							<!-- /ko -->
-							<span class="matrixheadertitle" data-bind="html: title"></span>
-						</th>
-						<!-- ko foreach: $parent.answers -->
-							<td class="matrix-cell">
-						 		<input type="radio" data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id()), attr: {value: id(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'onclick': $parents[1].readonly() ? 'return false;' : 'checkSingleClick(this); event.stopImmediatePropagation();propagateChange(this);', 'id': $parent.id().toString() + id().toString(), 'data-id': $parent.id().toString() + id().toString(), 'aria-labelledby': $parent.id().toString() + ' ' + id().toString(), 'class': $parent.css() + ' trigger', 'name': 'answer' + $parent.id(), 'data-dependencies': $parents[1].dependentElementsStrings()[$index() + ($parent.originalIndex() * ($parents[1].columns()-1))], 'data-cellid' : $parent.id() + '|' + id(), type: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', role: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', 'data-dummy': getPAByQuestion2($parent.uniqueId(), uniqueId(), id())}" />
-							</td>
-						 <!-- /ko -->
-					</tr>
-					<!-- /ko -->
-				</tbody>
-			</table>
+						</tr>
+					</thead>
+					<tbody>					
+						<!-- ko foreach: questionsOrdered() -->			
+						<tr data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'data-id': id(), 'data-triggers': getTriggersByQuestion(uniqueId()) + ';' + ($parent.foreditor ? '' : getTriggersByQuestion($parent.uniqueId)), 'data-useAndLogic': useAndLogic()}"> 
+							<th class="matrix-header" scope="row" data-bind="attr: {'id' : id(), 'data-id': id}">
+								<!-- ko if: optional() == false -->
+									<span class="mandatory" style="position: absolute; margin-left: -7px; margin-top: 3px;">*</span>
+								<!-- /ko -->
+								<span class="matrixheadertitle" data-bind="html: title"></span>
+							</th>
+							<!-- ko foreach: $parent.answers -->
+								<td class="matrix-cell">
+							 		<input type="radio" data-bind="enable: !$parents[1].readonly() && !$parents[1].foreditor, checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id()), attr: {value: id(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'onclick': $parents[1].readonly() ? 'return false;' : 'checkSingleClick(this); event.stopImmediatePropagation();propagateChange(this);', 'id': $parent.id().toString() + id().toString(), 'data-id': $parent.id().toString() + id().toString(), 'aria-labelledby': $parent.id().toString() + ' ' + id().toString(), 'class': $parent.css() + ' trigger', 'name': 'answer' + $parent.id(), 'data-dependencies': $parents[1].dependentElementsStrings()[$index() + ($parent.originalIndex() * ($parents[1].columns()-1))], 'data-cellid' : $parent.id() + '|' + id(), type: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', role: $parents[1].isSingleChoice() ? 'radio' : 'checkbox', 'data-dummy': getPAByQuestion2($parent.uniqueId(), uniqueId(), id())}" />
+								</td>
+							 <!-- /ko -->
+						</tr>
+						<!-- /ko -->
+					</tbody>
+				</table>
+			</div>
 		</div>
-		
-		<!-- /ko -->
+
 	</div>
 	
 	<div id="table-template">
@@ -1204,25 +1174,7 @@
 		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id()}'></label>
 		<span class="questionhelp" data-bind="html: niceHelp"></span>	
 		
-		<!-- ko if: ismobile || istablet -->
-			<!-- ko foreach: questions -->	
-				<div data-bind="attr: {'class': $data.isDependentMatrixQuestion() && isInvisible($data.uniqueId()) ? 'matrix-question untriggered hideme':'matrix-question', 'id' : id(), 'data-id': id(), 'triggers': getTriggersByQuestion(uniqueId())}" style="margin-top: 10px;">
-					<div data-bind="html: title" style="font-size: 90%; font-weight: bold"></div>										
-					<div style="margin-top: 5px;;">
-						<div  data-bind="foreach: $parent.answers">
-							<!-- ko if: optional() == false -->
-								<span class="mandatory" style="position: absolute; margin-left: -7px;">*</span>
-							<!-- /ko -->				
-							<div data-bind="html: title" style="font-size: 90%"></div>	
-							<textarea onblur="validateInput($(this).closest('.tabletable').parent(), true)" data-bind="enable: !$parents[1].readonly(), value: getTableAnswer($parents[1].uniqueId(), $parentContext.$index()+1, $index()+1), attr: {'data-id': $parents[1].id() + $parentContext.$index() + '' + $index(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'class':$parents[1].css() + ' ' + $parents[0].css(), 'name':'answer' + $parents[1].id() + '|' + ($parentContext.$index()+1) + '|' + ($index()+1)}"></textarea>
-						</div>
-					</div>
-				</div>
-			<!-- /ko -->		
-		<!-- /ko -->
-		
-		<!-- ko if: !ismobile && !istablet -->
-		<div style="width: 100%">
+		<div class="table-responsive">
 
 			<table data-bind="attr: {'data-widths':widths(), 'id':id(), 'data-readonly': readonly, 'style': tableType() == 1 ? 'width: 900px' : 'width: auto; max-width: auto'}" class="tabletable">	
 				<tbody>
@@ -1264,7 +1216,6 @@
 				</tbody>
 			</table>
 		</div>
-		<!-- /ko -->
 	</div>
 
 	<div id="delphi-template" data-bind="class: ismobile || istablet ? 'delphi-template-mobile' : 'delphi-template'">
