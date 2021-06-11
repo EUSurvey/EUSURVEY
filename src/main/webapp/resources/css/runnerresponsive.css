@@ -348,6 +348,7 @@ input[type="text"].time {
 
 .tabletable textarea {
 	width: 100% !important;
+	min-width: 60px;
 	/*height: 100% !important;*/
 	margin: 0px !important;
 	display: block;
