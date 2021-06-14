@@ -39,7 +39,9 @@
 						      <li><a href="#advanced"><spring:message code="label.Advanced" /></a></li>
 						      <li><a href="#security"><spring:message code="label.Security" /></a></li>
 						      <li><a href="#appearance"><spring:message code="label.Appearance" /></a></li>
-						      <li><a href="#publishresults"><spring:message code="label.PublishResults" /></a></li>
+						      <c:if test="${!form.survey.isOPC}">
+						      	<li><a href="#publishresults"><spring:message code="label.PublishResults" /></a></li>
+						      </c:if>
 						      <li><a href="#specialpages"><spring:message code="label.SpecialPages" /></a></li>
 						      <li><a href="#type"><spring:message code="label.Type" /></a></li>						      
 						    </ul>			
@@ -911,129 +913,131 @@
 				</table>
 			</div>
 			
-			<div class="propertiesbox">
-				<a class="anchor" id="publishresults"></a>
-				<label><spring:message code="label.PublishResults" /></label>
-				<table class="table table-bordered">
-					<tr>
-						<td style="padding-bottom: 20px">
-							<spring:message code="label.PublishingURLnew" />: 
-							<a class="visiblelink" target="_blank" href="${serverprefix}publication/${form.survey.shortname}">${serverprefix}publication/${form.survey.shortname}</a>						
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div style="float: left">
-								<spring:message code="label.Publish" />
-								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
-								<div class="help hideme"><spring:message code="info.Publish" /></div>	
-							</div>
-							<div style="float: right; min-width: 150px;">	
-								<form:checkbox id="showContent" path="survey.publication.showContent" class="check" /><spring:message code="label.Contributions" /><br />
-								<form:checkbox id="showStatistics" path="survey.publication.showStatistics" class="check" /><spring:message code="label.Statistics" /><br />
-								<form:checkbox path="survey.publication.showSearch" class="check hidden" /><!--<spring:message code="label.Search" /><br />-->
-								<c:choose>
-									<c:when test="${!form.survey.hasUploadElement}">
-										<form:checkbox path="survey.publication.showUploadedDocuments" class="check hideme" />										
-									</c:when>
-									<c:otherwise>
-										<form:checkbox path="survey.publication.showUploadedDocuments" class="check" /><spring:message code="label.UploadedDocuments" />
-									</c:otherwise>
-								</c:choose>
-							</div>
-						</td> 
-					</tr>
-					<tr data-bind="attr:{class: selectedQuestions() ? 'nobottomborder' : ''}">
-						<td>
-							<div style="float: left">
-								<spring:message code="label.QuestionsToPublish" />
-								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
-								<div class="help hideme"><spring:message code="info.QuestionsToPublishNew" /></div>
-							</div>
-							<div style="float: right;  min-width: 150px;">	
-								<form:radiobutton data-bind="click: function() {selectedQuestions(false); return true;}" path="survey.publication.allQuestions" value="true" id="questionsToPublishAll" class="check" name="questionsToPublish" /><spring:message code="label.AllQuestions" /><br />
-								<form:radiobutton data-bind="click: function() {selectedQuestions(true); return true;}" path="survey.publication.allQuestions" value="false" class="check" name="questionsToPublish" /><spring:message code="label.Selection" /><br />
-							</div>
-						</td>
-					</tr>
-					<tr class="noborder" data-bind="visible: selectedQuestions">
-						<td>
-							<div style="float: right; max-width: 600px;">	
-								<div id="questionsToPublishDiv" class="well scrollablediv">
-									<table>
-									<c:forEach items="${form.survey.getQuestions()}" var="question">
-										<c:if test="${!question.getType().equals('Image') && !question.getType().equals('Text') && !question.getType().equals('Download')}">									
-											<tr>
-												<td>
-													<input type="checkbox" class="check" name="question${question.id}" value="${question.id}" <c:if test="${form.survey.publication.isSelected(question.id)}">checked="checked"</c:if> />
-												</td>
-												<td>
-													${question.title}
-												</td>
-											</tr>
-										</c:if>																
-									</c:forEach>
-									</table>
+			<c:if test="${!form.survey.isOPC}">			
+				<div class="propertiesbox">
+					<a class="anchor" id="publishresults"></a>
+					<label><spring:message code="label.PublishResults" /></label>
+					<table class="table table-bordered">
+						<tr>
+							<td style="padding-bottom: 20px">
+								<spring:message code="label.PublishingURLnew" />: 
+								<a class="visiblelink" target="_blank" href="${serverprefix}publication/${form.survey.shortname}">${serverprefix}publication/${form.survey.shortname}</a>						
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div style="float: left">
+									<spring:message code="label.Publish" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+									<div class="help hideme"><spring:message code="info.Publish" /></div>	
 								</div>
-							</div>
-						</td>
-					</tr>
-					<tr data-bind="attr:{class: selectedContributions() ? 'nobottomborder' : ''}">
-						<td>
-							<div style="float: left">
-								<spring:message code="label.Contributions" />
-								<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
-								<div class="help hideme"><spring:message code="info.ContributionsNew" /></div>	
-							</div>
-							<div style="float: right; min-width: 150px;">
-								<form:radiobutton data-bind="click: function() {selectedContributions(false); return true;}" path="survey.publication.allContributions" value="true" onclick="checkSelections()" id="contributionsToPublishAll" class="check" name="contributionsToPublish" /><spring:message code="label.AllContributions" /><br />
-								<form:radiobutton data-bind="click: function() {selectedContributions(true); return true;}" path="survey.publication.allContributions" value="false" onclick="checkSelections()" class="check" name="contributionsToPublish" /><spring:message code="label.Selection" /><br />
-							</div>
-						</td>
-					</tr>
-					<tr class="noborder" data-bind="visible: selectedContributions">
-						<td>
-							<div style="float: right; max-width: 600px;">	
-								<div class="scrollablediv" id="contributionsToPublishDiv">
-									<c:forEach items="${form.survey.getQuestions()}" var="question">
-										<c:choose>
-											<c:when test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion'}">
-												<div class="well">
-													${question.title}
-													<div>
-														<c:forEach items="${question.possibleAnswers}" var="possibleanswer" varStatus="status">
-															<input type="checkbox" class="check" name="contribution${question.id}|${question.uniqueId}" value="${possibleanswer.id}|${possibleanswer.uniqueId}" <c:if test="${form.survey.publication.filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId)}">checked="checked"</c:if> />${possibleanswer.title}<br />
-														</c:forEach>
+								<div style="float: right; min-width: 150px;">	
+									<form:checkbox id="showContent" path="survey.publication.showContent" class="check" /><spring:message code="label.Contributions" /><br />
+									<form:checkbox id="showStatistics" path="survey.publication.showStatistics" class="check" /><spring:message code="label.Statistics" /><br />
+									<form:checkbox path="survey.publication.showSearch" class="check hidden" /><!--<spring:message code="label.Search" /><br />-->
+									<c:choose>
+										<c:when test="${!form.survey.hasUploadElement}">
+											<form:checkbox path="survey.publication.showUploadedDocuments" class="check hideme" />										
+										</c:when>
+										<c:otherwise>
+											<form:checkbox path="survey.publication.showUploadedDocuments" class="check" /><spring:message code="label.UploadedDocuments" />
+										</c:otherwise>
+									</c:choose>
+								</div>
+							</td> 
+						</tr>
+						<tr data-bind="attr:{class: selectedQuestions() ? 'nobottomborder' : ''}">
+							<td>
+								<div style="float: left">
+									<spring:message code="label.QuestionsToPublish" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+									<div class="help hideme"><spring:message code="info.QuestionsToPublishNew" /></div>
+								</div>
+								<div style="float: right;  min-width: 150px;">	
+									<form:radiobutton data-bind="click: function() {selectedQuestions(false); return true;}" path="survey.publication.allQuestions" value="true" id="questionsToPublishAll" class="check" name="questionsToPublish" /><spring:message code="label.AllQuestions" /><br />
+									<form:radiobutton data-bind="click: function() {selectedQuestions(true); return true;}" path="survey.publication.allQuestions" value="false" class="check" name="questionsToPublish" /><spring:message code="label.Selection" /><br />
+								</div>
+							</td>
+						</tr>
+						<tr class="noborder" data-bind="visible: selectedQuestions">
+							<td>
+								<div style="float: right; max-width: 600px;">	
+									<div id="questionsToPublishDiv" class="well scrollablediv">
+										<table>
+										<c:forEach items="${form.survey.getQuestions()}" var="question">
+											<c:if test="${!question.getType().equals('Image') && !question.getType().equals('Text') && !question.getType().equals('Download')}">									
+												<tr>
+													<td>
+														<input type="checkbox" class="check" name="question${question.id}" value="${question.id}" <c:if test="${form.survey.publication.isSelected(question.id)}">checked="checked"</c:if> />
+													</td>
+													<td>
+														${question.title}
+													</td>
+												</tr>
+											</c:if>																
+										</c:forEach>
+										</table>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr data-bind="attr:{class: selectedContributions() ? 'nobottomborder' : ''}">
+							<td>
+								<div style="float: left">
+									<spring:message code="label.Contributions" />
+									<a onclick="$(this).closest('td').find('.help').toggle()"><span class='glyphicon glyphicon-info-sign'></span></a>
+									<div class="help hideme"><spring:message code="info.ContributionsNew" /></div>	
+								</div>
+								<div style="float: right; min-width: 150px;">
+									<form:radiobutton data-bind="click: function() {selectedContributions(false); return true;}" path="survey.publication.allContributions" value="true" onclick="checkSelections()" id="contributionsToPublishAll" class="check" name="contributionsToPublish" /><spring:message code="label.AllContributions" /><br />
+									<form:radiobutton data-bind="click: function() {selectedContributions(true); return true;}" path="survey.publication.allContributions" value="false" onclick="checkSelections()" class="check" name="contributionsToPublish" /><spring:message code="label.Selection" /><br />
+								</div>
+							</td>
+						</tr>
+						<tr class="noborder" data-bind="visible: selectedContributions">
+							<td>
+								<div style="float: right; max-width: 600px;">	
+									<div class="scrollablediv" id="contributionsToPublishDiv">
+										<c:forEach items="${form.survey.getQuestions()}" var="question">
+											<c:choose>
+												<c:when test="${question.getType() == 'MultipleChoiceQuestion' || question.getType() == 'SingleChoiceQuestion'}">
+													<div class="well">
+														${question.title}
+														<div>
+															<c:forEach items="${question.possibleAnswers}" var="possibleanswer" varStatus="status">
+																<input type="checkbox" class="check" name="contribution${question.id}|${question.uniqueId}" value="${possibleanswer.id}|${possibleanswer.uniqueId}" <c:if test="${form.survey.publication.filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId)}">checked="checked"</c:if> />${possibleanswer.title}<br />
+															</c:forEach>
+														</div>
 													</div>
-												</div>
-											</c:when>
-										</c:choose>
-									</c:forEach>
+												</c:when>
+											</c:choose>
+										</c:forEach>
+									</div>
 								</div>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div style="float: left"><spring:message code="label.Password" /></div>
-							<div style="float: right">
-								<c:choose>
-									<c:when test="${form.survey.publication.password != null && form.survey.publication.password.length() > 0}">
-										<form:password class="form-control" maxlength="255" autocomplete="off" value="********" path="survey.publication.password" style="margin: 0px;" onchange="$('#clearpublicationpassword').val($(this).val())" />
-										<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpublicationpassword" readonly="readonly" disabled="disabled" value="${form.survey.publication.password}" />
-										<input class="check" type="checkbox" onclick="checkShowPublicationPassword(this)" /><spring:message code="label.ShowPassword" />
-									</c:when>
-									<c:otherwise>
-										<form:password class="form-control" maxlength="255" autocomplete="off" path="survey.publication.password" style="margin: 0px;" onchange="$('#clearpublicationpassword').val($(this).val())" />
-										<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpublicationpassword" readonly="readonly" disabled="disabled" />
-										<input class="check" type="checkbox" onclick="checkShowPublicationPassword(this)" /><spring:message code="label.ShowPassword" />
-									</c:otherwise>
-								</c:choose>
-							</div>								
-						</td>
-					</tr>
-				</table>
-			</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div style="float: left"><spring:message code="label.Password" /></div>
+								<div style="float: right">
+									<c:choose>
+										<c:when test="${form.survey.publication.password != null && form.survey.publication.password.length() > 0}">
+											<form:password class="form-control" maxlength="255" autocomplete="off" value="********" path="survey.publication.password" style="margin: 0px;" onchange="$('#clearpublicationpassword').val($(this).val())" />
+											<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpublicationpassword" readonly="readonly" disabled="disabled" value="${form.survey.publication.password}" />
+											<input class="check" type="checkbox" onclick="checkShowPublicationPassword(this)" /><spring:message code="label.ShowPassword" />
+										</c:when>
+										<c:otherwise>
+											<form:password class="form-control" maxlength="255" autocomplete="off" path="survey.publication.password" style="margin: 0px;" onchange="$('#clearpublicationpassword').val($(this).val())" />
+											<input class="form-control" style="display: none; width: auto" type="text" maxlength="255" id="clearpublicationpassword" readonly="readonly" disabled="disabled" />
+											<input class="check" type="checkbox" onclick="checkShowPublicationPassword(this)" /><spring:message code="label.ShowPassword" />
+										</c:otherwise>
+									</c:choose>
+								</div>								
+							</td>
+						</tr>
+					</table>
+				</div>
+			</c:if>
 			
 			<div class="propertiesbox">
 				<a class="anchor" id="specialpages"></a>
