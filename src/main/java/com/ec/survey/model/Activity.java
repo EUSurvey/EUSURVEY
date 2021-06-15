@@ -133,7 +133,7 @@ public class Activity implements java.io.Serializable {
 		if (logID < 600) return "GuestList";
 		if (logID < 700) return "Privileges";
 		if (logID < 800) return "Messages";
-		if (logID < 900) return "Comments";
+		if (logID < 900) return "Comment";
 		return "";
 	}
 	
