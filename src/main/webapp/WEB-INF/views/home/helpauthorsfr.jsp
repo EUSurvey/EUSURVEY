@@ -3375,7 +3375,7 @@
 				).
 			</p>
 			<p>
-				<b>Créer un enquête anonyme:</b>
+				<b>Créer une enquête anonyme:</b>
 			</p>
 			<p>
 				Vous pouvez choisir de créer une enquête anonyme en utilisant l'option "Mode enquête anonyme" dans les propriétés de l'enquête. Si cette option est activée, les contributions à votre enquête seront anonymes car EUSurvey n'enregistrera pas de données personnelles telles que les adresses IP. Si vous souhaitez que votre enquête soit totalement anonyme, n'incluez pas de questions collectant des données personnelles dans la conception de votre enquête.
