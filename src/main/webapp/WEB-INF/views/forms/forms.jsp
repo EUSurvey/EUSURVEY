@@ -543,9 +543,12 @@
 							<spring:message code="label.NumberOfReplies" />
 							<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('replies',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
 											
-							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Title" /> / <spring:message code="label.Alias" /></h4>
-							<input id="txtKeywordSearch" class="form-control" name="keywords" type="text" maxlength="100" style="width:150px; margin-top: 7px; display:inline;" value='<esapi:encodeForHTMLAttribute>${filter.keywords}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-default" style="margin-bottom: 3px;" value="OK" id="btnSearchSurveys"/>
-							
+							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Alias" /></h4>
+							<input id="txtAliasSearch" class="form-control" name="name" type="text" maxlength="100" style="width:150px; margin-top: 7px; display:inline;" value='<esapi:encodeForHTMLAttribute>${filter.shortname}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-default" style="margin-bottom: 3px;" value="OK" id="btnSearchSurveysAlias"/>
+						
+							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Title" /></h4>
+							<input id="txtTitleSearch" class="form-control" name="title" type="text" maxlength="100" style="width:150px; margin-top: 7px; display:inline;" value='<esapi:encodeForHTMLAttribute>${filter.title}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-default" style="margin-bottom: 3px;" value="OK" id="btnSearchSurveysTitle"/>
+													
 							<h4 style="margin-top: 20px;"><spring:message code="label.Status" />:</h4>					
 					
 							<c:choose>
