@@ -157,11 +157,13 @@ public class LdapDBService extends BasicService {
 		if (name != null && name.length() > 0)
 		{
 			hql += " AND CONCAT(u.givenName,' ', u.surname) LIKE :name";			
+		} else {
+			hql += " AND CONCAT(u.givenName,' ', u.surname) LIKE :name";
 		}
 		
 		if (email != null && email.length() > 0)
 		{
-			hql += " AND u.email LIKE :email";			
+			hql += " AND u.email != 'UNKNOWN'";			
 		}
 		
 		if (department != null && department.length() > 0 && !department.equalsIgnoreCase("undefined"))
