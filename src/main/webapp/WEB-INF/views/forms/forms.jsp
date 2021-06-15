@@ -341,6 +341,7 @@
 							  
 							  $(td).append("&nbsp;");
 							  
+							  <c:if test="${enablearchiving}">
 								if(list[i].state != 'Running' && (list[i].fullFormManagementRights))
 								{
 									var a = document.createElement("a");
@@ -368,9 +369,9 @@
 									
 									$(a).append("<span class='glyphicon glyphicon-import' style='color: #ccc'></span>");
 									$(td).append(a);
-								}
-								
+								}								
 								 $(td).append("&nbsp;");
+								 </c:if>
 								
 								if (list[i].state != 'Running')
 								{
