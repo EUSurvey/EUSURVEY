@@ -644,7 +644,7 @@
 															
 							</div>
 							<div style="clear: both"></div>
-							<div class="help hideme"><spring:message code="info.AnonymousSurveyMode" /></div>
+							<div class="help hideme"><spring:message code="info.AnonymousSurveyModeNew" /></div>
 						</td>
 					</tr>
 					<tr>

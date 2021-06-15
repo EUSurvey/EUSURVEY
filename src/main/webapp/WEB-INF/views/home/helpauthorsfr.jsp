@@ -231,13 +231,9 @@
 				électronique contenant un lien d’accès individuel à votre enquête.
 			</p>
 			<p>
-				<b>Protection des données à caractère personnel</b>
+				<b>Confidentialité avancée</b>
 				<br/>
-				En créant un formulaire anonyme, vous garantissez le respect de la vie
-				privée des participants.
-			</p>
-			<p>
-				Vous n’aurez pas accès aux paramètres de connexion des participants.
+				Vous pouvez garantir à vos participants de rester anonymes en activant le "mode enquête anonyme". Si cette option est activée, toutes les contributions seront anonymes. Cela signifie qu'aucune donnée relative à l'utilisateur ne sera enregistrée par le système.
 			</p>
 			<p>
 				<b>Personnalisation de l’apparence</b>
@@ -3379,25 +3375,10 @@
 				).
 			</p>
 			<p>
-				<b>Créer un sondage anonyme:</b>
+				<b>Créer une enquête anonyme:</b>
 			</p>
 			<p>
-				vous pouvez choisir de créer un sondage anonyme en activant l’option    <b>«Anonymous survey mode»</b> dans la section «Sécurité» de la page
-				«Propriétés».
-			</p>
-			<p>
-				Toutes les informations utilisateur collectées seront alors    <b>remplacées</b> par <b>«Anonyme»</b>.
-			</p>
-			<p>
-				Toutefois, l’adresse IP de chaque connexion au serveur est enregistrée pour
-				des raisons de sécurité (voir
-				<a
-						href="https://ec.europa.eu/eusurvey/home/privacystatement?language=fr"
-						target="_blank"
-						>
-					déclaration relative à la protection de la vie privée
-				</a>
-				).
+				Vous pouvez choisir de créer une enquête anonyme en utilisant l'option "Mode enquête anonyme" dans les propriétés de l'enquête. Si cette option est activée, les contributions à votre enquête seront anonymes car EUSurvey n'enregistrera pas de données personnelles telles que les adresses IP. Si vous souhaitez que votre enquête soit totalement anonyme, n'incluez pas de questions collectant des données personnelles dans la conception de votre enquête.
 			</p>
 			<h2>
 				Les enquêtes doivent-elles inclure une déclaration relative à la protection
