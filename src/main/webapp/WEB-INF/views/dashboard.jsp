@@ -619,17 +619,23 @@
 															<!-- /ko -->
 																							
 															<!-- ko if: fullFormManagementRights && numberOfAnswerSetsPublished < 2001 && state != 'Running' -->	
-															<a data-bind="click: function(data, event) { showArchiveDialog(shortname, id, 'true'); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Archive" />"><span class="glyphicon glyphicon-import"></span></a>
+															<c:if test="${enablearchiving}">
+																<a data-bind="click: function(data, event) { showArchiveDialog(shortname, id, 'true'); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Archive" />"><span class="glyphicon glyphicon-import"></span></a>
+															</c:if>
 															<a data-bind="click: function(data, event) { showDeleteDialog(id); }" class="actionRowAction" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove"></span></a>
 															<!-- /ko -->
 														
-															<!-- ko if: !fullFormManagementRights -->	
-															<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
+															<!-- ko if: !fullFormManagementRights -->
+															<c:if test="${enablearchiving}">
+																<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.Archive" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
+															</c:if>
 															<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Delete" />"><span class="glyphicon glyphicon-remove" style="color: #ccc"></span></a>
 															<!-- /ko -->	
 															
 															<!-- ko if: fullFormManagementRights && (numberOfAnswerSetsPublished > 2000 || state == 'Running')  -->	
-															<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.ArchiveDisabled" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
+															<c:if test="${enablearchiving}">
+																<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="tooltip.ArchiveDisabled" />"><span class="glyphicon glyphicon-import" style="color: #ccc"></span></a>
+															</c:if>
 															<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="info.CannotDeleteRunningSurvey" />"><span class="glyphicon glyphicon-remove" style="color: #ccc"></span></a>
 															<!-- /ko -->												
 															
