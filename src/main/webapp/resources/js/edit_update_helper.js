@@ -525,7 +525,7 @@ function updatePossibleAnswers(selectedelement, text, inundo)
 	if (!inundo)
 	{
 		_undoProcessor.addUndoStep(["PossibleAnswers", $(_elementProperties.selectedelement).attr("id"), $(_elementProperties.selectedelement).index(), oldtext, text]);
-		if (dependenciesfound) showMessage(getPropertyLabel("checkVisibilities"));
+		if (dependenciesfound) showInfo(getPropertyLabel("checkVisibilities"));
 	}
 	return true;
 }

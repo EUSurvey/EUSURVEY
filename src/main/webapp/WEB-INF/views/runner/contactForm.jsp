@@ -59,7 +59,7 @@
 			var uploader = new qq.FileUploader({
 			    element: $("#file-uploader-support")[0],
 			    action: contextpath + '/home/support/uploadfile',
-			    uploadButtonText: selectFileForUpload,
+			    uploadButtonText: selectFileForUploadRunner,
 			    params: {
 			    	'_csrf': csrftoken
 			    },
