@@ -1240,14 +1240,9 @@ public class DelphiController extends BasicController {
 			}
 			if (formManager) {
 				final int userid = sessionService.getCurrentUser(request).getId();
-				AnswerSet answerset = answerService.get(uniqueCode);
-				if (answerset == null) {
-					answerset = answerService.getDraft(uniqueCode).getAnswerSet();
-				}
-				final String surveyID = answerset.getSurvey().getUniqueId();
-				activityService.log(801, "id: " + comment.getId() + " ;text:" + comment.getText(),
-						comment.getId() + ":" + text, userid,
-						surveyID);
+				final String surveyID = surveyService.getSurveyForQuestion(comment.getQuestionUid()).getUniqueId();
+				activityService.log(801, "id: " + comment.getId() + "; text: " + comment.getText(),
+						"id: " + comment.getId() + "; text: " + text, userid, surveyID);
 			}
 			comment.setText(text);
 			comment.setDate(new Date());
@@ -1279,14 +1274,9 @@ public class DelphiController extends BasicController {
 			}
 			if (formManager) {
 				final int userid = sessionService.getCurrentUser(request).getId();
-				AnswerSet answerset = answerService.get(uniqueCode);
-				if (answerset == null) {
-					answerset = answerService.getDraft(uniqueCode).getAnswerSet();
-				}
-				final String surveyID = answerset.getSurvey().getUniqueId();
-				activityService.log(802, "id: " + comment.getId() + " ;text: " + comment.getText(),
-						null, userid,
-						surveyID);
+				final String surveyID = surveyService.getSurveyForQuestion(comment.getQuestionUid()).getUniqueId();
+				activityService.log(802, "id: " + comment.getId() + "; text: " + comment.getText(),
+						null, userid, surveyID);
 			}
 			if (!answerExplanationService.hasCommentChildren(idParsed)) {
 				answerExplanationService.deleteComment(comment);

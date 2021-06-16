@@ -743,7 +743,14 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			logger.info("starting upgrade step 98");
 			schemaService.step98();
 			status = schemaService.getStatus();
-		} 
+		}
+
+		if (status.getDbversion() < 99)
+		{
+			logger.info("starting upgrade step 99");
+			schemaService.step99();
+			status = schemaService.getStatus();
+		}
 	}
 
 	public static Survey createSurvey(int answerCount, User user, Language objLang, SurveyService surveyService, AnswerService answerService, String fileDir, boolean init, MessageSource resources, Locale locale, Integer questions, boolean archivesurvey, ArchiveService archiveService, BeanFactory context,TaskExecutor taskExecutor, FileService fileService) throws Exception {

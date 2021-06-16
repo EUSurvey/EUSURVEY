@@ -238,7 +238,7 @@ public class ActivityService extends BasicService {
 				case "Messages":
 					hql += " AND logID > 700 AND logID < 800";
 					break;
-				case "Comments":
+				case "Comment":
 					hql += " AND logID > 800 AND logID < 900";
 					break;
 				default:
