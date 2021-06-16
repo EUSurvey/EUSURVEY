@@ -9,6 +9,6 @@
 	outline-offset: -3px;
 }
 
-.btn-primary:focus {
+.btn-primary:focus, .pagebutton.active a:focus {
 	color: #fff !important;
 }
