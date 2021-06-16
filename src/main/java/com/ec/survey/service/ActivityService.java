@@ -238,6 +238,9 @@ public class ActivityService extends BasicService {
 				case "Messages":
 					hql += " AND logID > 700 AND logID < 800";
 					break;
+				case "Comment":
+					hql += " AND logID > 800 AND logID < 900";
+					break;
 				default:
 					break;
 			}
@@ -303,7 +306,7 @@ public class ActivityService extends BasicService {
 					hql += " AND logID = 120"; break;
 				case "n/a":
 					hql += " AND logID IN :logids"; 
-					Integer[] logids = {101,102,103,104,401,402,403,404,405,406,601,602,603};
+					Integer[] logids = {101,102,103,104,401,402,403,404,405,406,601,602,603,801,802};
 					params.put("logids", logids);
 					break;
 				case "PageWiseValidation":
@@ -373,7 +376,7 @@ public class ActivityService extends BasicService {
 					break;
 				case "Deleted":
 					hql += " AND logID IN :logids4"; 
-					Integer[] logids4 = {104,219,222,311,315,402,405,502};
+					Integer[] logids4 = {104,219,222,311,315,402,405,502,802};
 					params.put("logids4", logids4);
 					break;
 				case "Disabled":
@@ -384,7 +387,7 @@ public class ActivityService extends BasicService {
 					hql += " AND logID = 223"; break;
 				case "Modified":
 					hql += " AND logID IN :logids5"; 
-					Integer[] logids5 = {602,105,106,109,110,111,112,113,114,115,116,117,118,119,120,121,122,207,208,209,210,211,212,213,214,215,216,217,220,225,226,301,302,303,304,305,306,403,505};
+					Integer[] logids5 = {602,105,106,109,110,111,112,113,114,115,116,117,118,119,120,121,122,207,208,209,210,211,212,213,214,215,216,217,220,225,226,301,302,303,304,305,306,403,505,801};
 					params.put("logids5", logids5);
 					break;
 				case "Opened":

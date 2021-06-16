@@ -132,7 +132,8 @@ public class Activity implements java.io.Serializable {
 		if (logID < 500) return "TestContribution";
 		if (logID < 600) return "GuestList";
 		if (logID < 700) return "Privileges";
-		if (logID < 800) return "Messages";		
+		if (logID < 800) return "Messages";
+		if (logID < 900) return "Comment";
 		return "";
 	}
 	
@@ -257,6 +258,8 @@ public class Activity implements java.io.Serializable {
 		if (logID == 602) return MODIFIED;
 		if (logID == 603) return REMOVED;
 		if (logID == 701) return SENT;
+		if (logID == 801) return MODIFIED;
+		if (logID == 802) return DELETED;
 		return "";
 	}
 	
