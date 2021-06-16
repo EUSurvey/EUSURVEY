@@ -661,7 +661,7 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				
 				var rows = $(e).find(".tabletable").first().find("tr").length-1;
-				var mandatoryrows = $(e).find("td[data-optional=false]").length;
+				var mandatoryrows = $(e).find("th[data-optional=false]").length;
 				getCheckPropertiesRow("Mandatory", rows == mandatoryrows, isDelphiQuestion);
 				getActionRow("Columns", "<span class='glyphicon glyphicon-plus'></span>", "addColumn(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeColumn(false)");
 				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)");
