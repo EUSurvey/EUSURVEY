@@ -1525,7 +1525,7 @@ public class WebServiceController extends BasicController {
 			}
 
 			response.setStatus(200);
-			surveyService.unpublish(survey, true, user.getId());
+			surveyService.unpublish(survey, true, user.getId(), false);
 			webserviceService.increaseServiceRequest(user.getId());
 			return "1";
 
