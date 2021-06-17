@@ -1,13 +1,9 @@
-.btn:focus-within, input:focus, a:focus, button:focus, textarea:focus, .slider-handle:focus, select:focus, .matrix-cell:focus-within, .confirmationelement:focus-within, .galleryinfo:focus-within, .likert-pa:focus-within, .focusborder:focus-within {
+.btn:focus-within, input:focus, a:focus, button:focus, textarea:focus, .slider-handle:focus, select:focus, .possibleanswerrow:focus-within, .matrix-cell:focus-within, .confirmationelement:focus-within, .galleryinfo:focus-within, .likert-pa:focus-within, .focusborder:focus-within {
 	outline: 2px solid #FFD617 !important;
 	outline-offset: 0px;
 	color: inherit !important;
 	z-index: 10000;
 }
-
- .focusborder:focus-within input, .matrix-cell:focus-within input {
- 	outline: 0 !important;
- }
 
 .dropdown-menu li a:focus {
 	outline-offset: -3px;
