@@ -865,8 +865,6 @@ function initModals(item)
 				var div = document.createElement("div");
 				$(div).attr("id","exceptionlogdiv").addClass("validation-error").attr("aria-live", "polite").css("color","#999");
 				$(div).append(varErrorCheckValidation).append("<br />");
-				//$(div).append(varErrorCheckValidation2).append("<br />");
-				//$(div).append("<span style='color: #bbb; font-style: italic'>" + validationinfo + "</span>");
 				$("#btnSubmit").parent().append(div); 
 			} else if ($(".g-recaptcha.unset").length > 0)	{
 				$('#runner-captcha-empty-error').show();
@@ -920,7 +918,7 @@ function initModals(item)
 		
 		if (sessiontimeout)
 		{
-			$("#sessiontimeoutdialog").modal('show');
+			showSessionError();
 		} else if (networkproblems) {
 			$("#networkproblemsdialog").modal('show');
 		} else if (errorhappened)

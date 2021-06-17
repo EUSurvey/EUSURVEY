@@ -1375,7 +1375,7 @@ function submitToChangeLanguageOrView(lang, mode)
 	
 	if (sessiontimeout)
 	{
-		$("#sessiontimeoutdialog").modal('show');
+		showSessionError();
 	} else if (networkproblems) {
 		$("#networkproblemsdialog").modal('show');
 	} else {			
@@ -1419,7 +1419,7 @@ function saveDraft(mode) {
 	
 	if (sessiontimeout)
 	{
-		$("#sessiontimeoutdialog").modal('show');
+		showSessionError();
 	} else if (networkproblems) {
 		$("#networkproblemsdialog").modal('show');
 	} else {	
