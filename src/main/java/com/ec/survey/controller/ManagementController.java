@@ -582,7 +582,7 @@ public class ManagementController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
-		surveyService.unpublish(form.getSurvey(), true, u.getId());
+		surveyService.unpublish(form.getSurvey(), true, u.getId(), false);
 		activityService.log(105, "published", "unpublished", u.getId(), form.getSurvey().getUniqueId());
 		return overview(shortname, request, locale);
 	}
