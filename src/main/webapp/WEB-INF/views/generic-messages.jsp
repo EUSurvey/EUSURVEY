@@ -187,7 +187,7 @@
 		this.deleteMessage = function() {
 			this.Deleted(true);
 			_messages.saveToLocalStorage();
-		}
+		};
 	}
 	
 	var Messages = function() {
