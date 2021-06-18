@@ -28,8 +28,4 @@
 		<div id="properties-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/properties"/>"><spring:message code="label.Properties" /></a></div>
 		<div id="activity-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/activity"/>"><spring:message code="label.Activity" /></a></div>
 	</c:if>
-	
-	<div id="sessiontimeout" class="InactiveLinkButton" style="display: none">
-		${uisessiontimeout}
-	</div>
 </div>
