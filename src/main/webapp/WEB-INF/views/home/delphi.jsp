@@ -101,7 +101,7 @@
 			<br />
 			<c:choose>
 				<c:when test="${contact.startsWith('form:')}">
-			<a class="btn btn-primary" data-toggle="tooltip" title="<spring:message code='info.ContactForm' />" href="${contextpath}/runner/contactform/${param.survey}">
+			<a class="btn btn-primary" data-toggle="tooltip" title="<spring:message code='info.ContactForm' />" aria-label="<spring:message code='info.ContactForm' />" href="${contextpath}/runner/contactform/${param.survey}">
 				</c:when>
 				<c:when test="${contact.contains('@')}">
 			<a class="btn btn-primary" href="mailto:<esapi:encodeForHTMLAttribute>${contact}</esapi:encodeForHTMLAttribute>">

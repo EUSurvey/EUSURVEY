@@ -380,8 +380,8 @@
 				<!-- ko foreach: rankingItems() -->
 				<div class="rankingitem-form-data">
 					<div class="rankingitem-decoration">&#x283F;</div>
-					<a class="rankingitem-button" tabindex="0" data-toggle="tooltip" title='${form.getMessage("label.MoveUp")}' data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }"><span class="glyphicon glyphicon-arrow-up"></span></a>
-					<a class="rankingitem-button" tabindex="0" data-toggle="tooltip" title='${form.getMessage("label.MoveDown")}' data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }"><span class="glyphicon glyphicon-arrow-down"></span></a>
+					<a class="rankingitem-button" tabindex="0" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" aria-label="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }"><span class="glyphicon glyphicon-arrow-up"></span></a>
+					<a class="rankingitem-button" tabindex="0" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" aria-label="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }"><span class="glyphicon glyphicon-arrow-down"></span></a>
 					<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
 					<!-- ko if: $parent.foreditor -->
 					<input type="hidden" data-bind="value: shortname, attr: {'name': 'rankingitemshortname' + $parents[0].id(), 'data-id' : id()}" />
@@ -508,7 +508,7 @@
 		<!-- ko if: maxCharacters() > 0 -->	
 			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'maxlength':maxCharacters(), 'data-rows':numRows(), 'rows':numRows()}"  onkeyup="countChar(this);propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
 			<div class="charactercounterdiv" style="max-width: 645px; text-align: right; color: #777; margin-left: 20px;">
-				<span class="glyphicon glyphicon-alert" style="display: none; margin-right: 5px;" data-toggle="tooltip" title='${form.getMessage("info.charactercounter")}'></span>
+				<span class="glyphicon glyphicon-alert" style="display: none; margin-right: 5px;" data-toggle="tooltip" title="${form.getMessage("info.charactercounter")}" aria-label="${form.getMessage("info.charactercounter")}"></span>
 				<span class="charactercounter">0</span> / <span data-bind="text: maxCharacters()"></span>
 			</div>
 		<!-- /ko -->
@@ -888,7 +888,7 @@
 		<input type="hidden" data-bind="attr: {'id': 'answer' + id(), 'name':'answer' + id()}" value="files" />				
 		<div class="uploaded-files" data-bind="foreach: getFileAnswer(uniqueId())">
 			<div>
-				<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
+				<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" aria-label="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
 					<span style="margin-right: 10px;" class="glyphicon glyphicon-trash"></span>
 				</a>
 				<span data-bind="html: $data"></span>
@@ -1260,7 +1260,7 @@
 									<div class="uploaded-files"
 										data-bind="foreach: getFileAnswer(uniqueId())">
 										<div>
-											<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
+											<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" aria-label="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
 												<span style="margin-right: 10px;"
 												class="glyphicon glyphicon-trash"></span>
 											</a> <span data-bind="html: $data"></span>
@@ -1286,7 +1286,7 @@
 						<tr>
 							<th class="area-header">
 								<span>${form.getMessage("label.DelphiChartTitle")}</span>
-								<a href="javascript:;" onclick="loadGraphDataModal(this)" class="glyphicon glyphicon-resize-full delphi-chart-expand" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></a>
+								<a href="javascript:;" onclick="loadGraphDataModal(this)" class="glyphicon glyphicon-resize-full delphi-chart-expand" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}" aria-label="${form.getMessage("tooltip.ExpandChart")}"></a>
 							</th>
 						</tr>
 						<tr>
