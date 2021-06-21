@@ -26,11 +26,11 @@
 			<th style="min-width:${responsive != null ? "120" : "150"}px">
 				<span>${form.getMessage("label.DelphiAnswersTableUpdate")}</span>
 				<div style="float: right">
-					<a href="javascript:;" data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />"
+					<a href="javascript:;" data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" aria-label="<spring:message code="label.SortAscending" />"
 					   onclick="sortDelphiTable(this,'UpdateAsc');" class="">
 						<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
 					</a>
-					<a href="javascript:;" data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" onclick="sortDelphiTable(this,'UpdateDesc');" class="">
+					<a href="javascript:;" data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" aria-label="<spring:message code="label.SortDescending" />" onclick="sortDelphiTable(this,'UpdateDesc');" class="">
 						<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
 					</a>
 				</div>

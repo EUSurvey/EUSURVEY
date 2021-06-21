@@ -225,7 +225,7 @@
 					</div>
 							
 					<label><spring:message code="support.upload" /></label>
-					<a data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
+					<a data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />" aria-label="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
 					<div id="file-uploader-support"></div>
 					<div id="file-uploader-support-div"></div>
 					
