@@ -850,6 +850,17 @@
 					<tr class="subelement noborder">
 						<td>
 							<div style="float: left">
+								<spring:message code="label.LogoAlternativeText" />
+							</div>
+							<div style="float: right">
+								<form:input htmlEscape="false" path="survey.logoText" type="text" class="form-control" style="width: 500px" />
+							</div>
+							<div style="clear: both"></div>					
+						</td>
+					</tr>	
+					<tr class="subelement noborder">
+						<td>
+							<div style="float: left">
 								<spring:message code="label.LogoPosition" />
 							</div>
 							<div style="float: right">
