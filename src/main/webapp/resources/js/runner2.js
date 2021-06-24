@@ -1518,6 +1518,16 @@ function sendDelphiMailLink() {
 	$('#ask-email-dialog').modal('hide');
 }
 
+function hideTooltipsOnEscape(e) {
+	if ("Escape" === e.key) {
+		$('[data-toggle="tooltip"]').tooltip("hide");
+	}
+}
+
+(function () {
+	$(document).keyup(hideTooltipsOnEscape);
+})()
+
 (function($) { // custom jquery plugin
 	$.fn.ApplyCustomTooltips = function() {
 		var selectedObjects = this;
