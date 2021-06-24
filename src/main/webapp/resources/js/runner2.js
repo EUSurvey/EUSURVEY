@@ -991,8 +991,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 			viewModel.delphiTableTotalEntries(result.total);
 			viewModel.delphiTableNewComments(result.hasNewComments);
 
-			$('[data-toggle="tooltip"]').tooltip()
-
+			$('[data-toggle="tooltip"]').ApplyCustomTooltips();
 			addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionUid);
 		}
 	 });
@@ -1518,3 +1517,26 @@ function sendDelphiMailLink() {
 	
 	$('#ask-email-dialog').modal('hide');
 }
+
+(function($) { // custom jquery plugin
+	$.fn.ApplyCustomTooltips = function() {
+		var selectedObjects = this;
+		selectedObjects.tooltip({
+			trigger: "manual"
+		}).on("mouseenter", function() {
+			var self = this;
+			$(".tooltip").attr("aria-live", "assertive");
+			$(self).tooltip("show");
+			$(".tooltip").on("mouseleave", function() {
+				$(self).tooltip("hide");
+			});
+		}).on("mouseleave", function() {
+			var self = this;
+			setTimeout(function() {
+				if (!$(".tooltip:hover").length) {
+					$(self).tooltip("hide");
+				}
+			}, 300);
+		});
+	}
+}(jQuery));
