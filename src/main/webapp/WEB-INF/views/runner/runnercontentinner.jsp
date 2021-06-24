@@ -87,15 +87,18 @@
 					<c:if test="${(form.answerSets.size() == 0 || !form.answerSets[0].disclaimerMinimized)}">
 						<c:if test="${!oss}">
 							<c:if test="${(form.survey.owner.type == 'ECAS' && form.survey.owner.getGlobalPrivilegeValue('ECAccess') == 0) || form.survey.owner.type == 'SYSTEM'  }">
-								<div id="ecDisclaimer">
+								<div id="ecDisclaimer" class="focusborder">
+									<div tabindex="0" style="float: left">
+										<span class="ecDisclaimerTitle">${form.getMessage("label.Disclaimer")}</span>
+										<p>
+											${form.getMessage("info.Disclaimer")}
+										</p>					
+									</div>
 									<div style="float: right; margin-top: -15px; margin-right: -15px;">
 										<input type="hidden" id="disclaimerMinimized" name="disclaimerMinimized" value="${disclaimerMinimized}" />
 										<a href="javascript:;" style="cursor: pointer" onclick="$('#disclaimerMinimized').val('true'); $('#ecDisclaimer').hide();" aria-label="${form.getMessage("label.Close")}"><span class="glyphicon glyphicon-remove"></span></a>
 									</div>								
-									<span class="ecDisclaimerTitle">${form.getMessage("label.Disclaimer")}</span>
-									<p>
-										${form.getMessage("info.Disclaimer")}
-									</p>								
+									<div style="clear: both"></div>
 								</div>
 							</c:if>
 						</c:if>	
