@@ -542,7 +542,7 @@
 
 					sectionViewModel.loaded(true);
 					sectionViewModel.unansweredMandatoryQuestions(data.unansweredMandatoryQuestions);
-					$('[data-toggle="tooltip"]').tooltip()
+					$('[data-toggle="tooltip"]').ApplyCustomTooltips();
 				}
 			 });
 		}

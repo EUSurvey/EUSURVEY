@@ -95,7 +95,7 @@
 				$("#btnSubmit").removeClass("hidden");
 				$("#btnSaveDraft").removeClass("hidden");
 				$("#btnSaveDraftMobile").removeClass("hidden");
-				$('[data-toggle="tooltip"]').tooltip(); 
+				$('[data-toggle="tooltip"]').ApplyCustomTooltips();
 			}
 		}
 		
