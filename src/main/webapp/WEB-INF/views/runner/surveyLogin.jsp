@@ -34,6 +34,11 @@
 			margin-bottom: 5px;
 		}
 		
+		.validation-error {
+			position: relative;
+			margin-top: 10px;
+		}
+		
 	</style>
 </head>
 <body style="text-align: center;">
@@ -46,12 +51,6 @@
 				${surveyname}
 			</div>
 			
-			<c:if test="${error != null}">
-				<div id="login-error" class="alert alert-danger">
-			 		<esapi:encodeForHTML>${error}</esapi:encodeForHTML>
-			 	</div>
-		 	</c:if>
-		 	
 		 	<c:if test="${info != null}">
 				<div id="login-info" class="alert alert-success">
 			 		<esapi:encodeForHTML>${info}</esapi:encodeForHTML>
@@ -106,6 +105,13 @@
 									<span class="input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
 		   							<input class="form-control" id="j_password" name="password" autocomplete="off" type="password" />
 		 						</div>
+		 						
+		 						<c:if test="${error != null}">
+									<div id="login-error" aria-live="polite" class="validation-error" tabindex="0">
+								 		<esapi:encodeForHTML>${error}</esapi:encodeForHTML>
+								 	</div>
+							 	</c:if>
+		 						
 							</div>
 							
 							<div style="margin-top: 10px;">
@@ -143,6 +149,11 @@
 	
 	<script type="text/javascript">
 		$("#j_password").focus();
+		
+		<c:if test="${error != null}">
+			$("#j_password").attr("aria-invalid", "true").attr("aria-describedby", "login-error");
+			$(".validation-error").first().focus();
+		</c:if>
 	</script>
 	
 	<c:if test="${internalUsersOnly != null}">

@@ -307,7 +307,7 @@
 	vertical-align: top;
 }
 
-.validation-error {
+.validation-error, .validation-error-server {
 	color: #f00; position: absolute;
 }
 
