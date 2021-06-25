@@ -83,7 +83,8 @@ function addElement(element, foreditor, forskin)
 	var validation = getValidationMessageByQuestion(uniqueId);
 	if (validation.length > 0)
 	{
-		$(container).append('<div style="color: #f00" class="validation-error-server">' + validation + '</div>');
+		$(container).append('<div style="color: #f00" tabindex="0" class="validation-error-server" aria-live="polite">' + validation + '</div>');
+		$(container).find(".validation-error-server").first().focus();
 	}
 	
 	if (!foreditor && doAnswersExist())

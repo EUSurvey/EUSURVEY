@@ -431,6 +431,8 @@ function update(input)
 						update(this);
 					});
 				});
+				
+				return;
 			}
 			
 			if (element.display() === "Slider") {
