@@ -1313,7 +1313,7 @@
 					</span>
 					
 					<br /><br />
-					<a href="javascript:;" class="link" onclick="return checkGoToDelphiStart(this)">${form.getMessage("label.ReturnToDelphiStart")}</a>
+					<a href="javascript:;" data-type="delphireturntostart" class="link" onclick="return checkGoToDelphiStart(this)">${form.getMessage("label.ReturnToDelphiStart")}</a>
 				</div>
 		
 				<div class="delphiupdatemessage"></div>
