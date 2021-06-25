@@ -1527,7 +1527,7 @@ function hideTooltipsOnEscape(e) {
 
 (function () {
 	$(document).keyup(hideTooltipsOnEscape);
-})()
+})();
 
 (function($) { // custom jquery plugin
 	$.fn.ApplyCustomTooltips = function() {
