@@ -1013,8 +1013,9 @@ function newNumberViewModel(element)
 		const input = $("#answer" + viewModel.id());
 		propagateChange($(input));
 	});
-	viewModel.markAsAnswered = function () {
+	viewModel.markAsAnswered = function (data) {
 		this.isAnswered(true);
+		tinyMCE.get('explanation' + data.id()).execCommand('mceFocus',false);
 	};
 	
 	if (viewModel.display() == 'Slider')

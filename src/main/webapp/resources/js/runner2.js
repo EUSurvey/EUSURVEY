@@ -775,8 +775,8 @@ function loadGraphData(div) {
 
 var callerAddChartModal = null;
 
-function loadGraphDataModal(div) {
-	var surveyElement = $(div).closest(".survey-element");
+function loadGraphDataModal(link) {
+	var surveyElement = $(link).closest(".survey-element");
 	var surveyId = $('#survey\\.id').val();
 	var questionuid = $(surveyElement).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
@@ -784,14 +784,15 @@ function loadGraphDataModal(div) {
 
 	// Briefly show the modal to get the real width of the chart container.
 	const modal = $('#delphi-chart-modal');
-	$(modal).modal('show');
+	showModalDialog(modal, link);
+	
 	const canvasContainer = $(modal).find('.delphi-chart-modal__chart-container')[0];
 	$(canvasContainer).show();
 	const canvasContainerWidth = canvasContainer.clientWidth;
 	$(canvasContainer).hide();
 	$(modal).modal('hide');
 
-	callerAddChartModal = div;
+	callerAddChartModal = link;
 	loadGraphDataInnerForRunner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false, canvasContainerWidth);
 }
 
@@ -1234,7 +1235,7 @@ function appendShowContributionLinkDialogToSidebar(div, data) {
 		$("<br />").appendTo(".contact-and-pdf__delphi-section");
 		$('<a id="editYourContributionLink" href="javascript:;" onclick="showContributionLinkDialog(this)">' + labelEditYourContributionLater + '</a>')
 			.appendTo(".contact-and-pdf__delphi-section");
-		showContributionLinkDialog($(div).find("a[data-type='delphisavebutton']"), data.link);
+		showContributionLinkDialog($(div).find("a[data-type='delphireturntostart']"), data.link);
 	}
 }
 
