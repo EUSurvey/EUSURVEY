@@ -367,34 +367,39 @@
 				${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable'")}
 			</div>
 		<!-- /ko -->
-
-		<!-- ko ifnot: foreditor -->
-		<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
-			${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable' data-bind='click: acceptInitialAnswer'")}
-		</div>
-		<!-- /ko -->
-		<div class="rankingitem-list-container">
-			<div role="list" class="rankingitem-list" data-bind="attr: {'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
-				<!-- ko foreach: rankingItems() -->
-				<div role="listitem" class="rankingitem-form-data">
-					<div class="rankingitem-decoration">&#x283F;</div>
-					<a class="rankingitem-button" tabindex="0" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" aria-label="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }"><span class="glyphicon glyphicon-arrow-up"></span></a>
-					<a class="rankingitem-button" tabindex="0" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" aria-label="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }"><span class="glyphicon glyphicon-arrow-down"></span></a>
-					<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
-					<!-- ko if: $parent.foreditor -->
-					<input type="hidden" data-bind="value: shortname, attr: {'name': 'rankingitemshortname' + $parents[0].id(), 'data-id' : id()}" />
-					<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'rankingitemuid' + $parents[0].id(), 'data-id' : id()}" />
-					<textarea style="display: none" data-bind="text: title(), attr: {'name': 'rankingitemtitle' + $parents[0].id(), 'data-id' : id()}"></textarea>
-					<textarea style="display: none" data-bind="text: originalTitle(), attr: {'name': 'rankingitemoriginaltitle' + $parent.id(), 'data-id' : id()}"></textarea>
+		
+		<div role="list" tabindex="0" class="focussable" data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id()}">
+		
+			<!-- ko ifnot: foreditor -->
+			<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
+				${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable' data-bind='click: acceptInitialAnswer'")}
+			</div>
+			<!-- /ko -->	
+		
+			<div class="rankingitem-list-container" >
+			
+				<div class="rankingitem-list">
+					<!-- ko foreach: rankingItems() -->
+					<div tabindex="0" role="listitem" class="rankingitem-form-data focussable" data-bind="attr: {'aria-labelledby': id()}">
+						<div class="rankingitem-decoration">&#x283F;</div>
+						<a role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveUp")}" aria-label="${form.getMessage("label.MoveUp")}" data-bind="click: onMoveUp, event: { keydown: onKeyDownMoveItemUp }"><span class="glyphicon glyphicon-arrow-up"></span></a>
+						<a role="button" class="rankingitem-button" href="javascript:;" data-toggle="tooltip" title="${form.getMessage("label.MoveDown")}" aria-label="${form.getMessage("label.MoveDown")}" data-bind="click: onMoveDown, event: { keydown: onKeyDownMoveItemDown }"><span class="glyphicon glyphicon-arrow-down"></span></a>
+						<div class="rankingitemtext" data-bind="html: title(), attr: {'id' : id(), 'data-id' : id()}"></div>
+						<!-- ko if: $parent.foreditor -->
+						<input type="hidden" data-bind="value: shortname, attr: {'name': 'rankingitemshortname' + $parents[0].id(), 'data-id' : id()}" />
+						<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'rankingitemuid' + $parents[0].id(), 'data-id' : id()}" />
+						<textarea style="display: none" data-bind="text: title(), attr: {'name': 'rankingitemtitle' + $parents[0].id(), 'data-id' : id()}"></textarea>
+						<textarea style="display: none" data-bind="text: originalTitle(), attr: {'name': 'rankingitemoriginaltitle' + $parent.id(), 'data-id' : id()}"></textarea>
+						<!-- /ko -->
+					</div>
 					<!-- /ko -->
 				</div>
-				<!-- /ko -->
 			</div>
-		</div>
-		<!-- ko ifnot: foreditor -->
-		<input type="hidden" data-bind="value:getAnswerValuesString(), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" type="text"></input>
-		<!-- /ko -->
+			<!-- ko ifnot: foreditor -->
+			<input type="hidden" data-bind="value:getAnswerValuesString(), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css()}" type="text"></input>
+			<!-- /ko -->
 
+		</div>
 	</div>
 
 	<div id="password-template">
