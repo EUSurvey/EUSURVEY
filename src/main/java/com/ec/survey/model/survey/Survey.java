@@ -68,6 +68,7 @@ final public class Survey implements java.io.Serializable {
 	public static final String CONFIRMATIONPAGE = "CONFIRMATIONPAGE";
 	public static final String CONFIRMATIONLINK = "CONFIRMATIONLINK";
 	public static final String INTRODUCTION = "INTRODUCTION";
+	public static final String LOGOTEXT = "LOGOTEXT";
 	public static final String IPMINTRODUCTION = "IPMINTRODUCTION";
 	public static final String HELP = "HELP";
 	public static final String QUIZWELCOMEMESSAGE = "QUIZWELCOMEMESSAGE";
@@ -183,6 +184,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isDelphiShowAnswersAndStatisticsInstantly = false;
 	private Boolean isDelphiShowAnswers = false;
 	private Integer minNumberDelphiStatistics = 5;
+	private String logoText;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1457,6 +1459,7 @@ final public class Survey implements java.io.Serializable {
 			if (logo != null) {
 				result.append(" logo: ").append(logo.getName()).append(";");
 				result.append(" logoInInfo: ").append(logoInInfo).append(";");
+				result.append(" logoText: ").append(logoText).append(";");
 			}
 
 			result.append(" confirmationPage: ").append(confirmationPage).append(";");
@@ -1543,6 +1546,7 @@ final public class Survey implements java.io.Serializable {
 			copy.logo = copyLogo;
 		}
 		copy.logoInInfo = logoInInfo;
+		copy.logoText = logoText;
 
 		copy.confirmationPage = Tools.filterHTML(confirmationPage);
 		copy.confirmationLink = this.getConfirmationLink();
@@ -1824,6 +1828,15 @@ final public class Survey implements java.io.Serializable {
 
 	public void setPublication(Publication publication) {
 		this.publication = publication;
+	}
+
+	@Column(name = "LOGOTEXT")
+	public String getLogoText() {
+		return logoText;
+	}
+
+	public void setLogoText(String logoText) {
+		this.logoText = logoText;
 	}
 
 	@Transient
@@ -2298,6 +2311,4 @@ final public class Survey implements java.io.Serializable {
 	public void reorderElementsByPosition() {
 		elements.sort(Comparator.comparing(o -> (o.getPosition())));		
 	}
-
-
 }

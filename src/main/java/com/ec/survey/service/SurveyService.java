@@ -1188,6 +1188,7 @@ public class SurveyService extends BasicService {
 					translationCopy.setSurveyId(publishedSurvey.getId());
 					translationCopy.setTranslations(translationsCopy);
 					if (draftTranslation.getKey().equalsIgnoreCase(Survey.TITLE) 
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.LOGOTEXT)
 							|| draftTranslation.getKey().equalsIgnoreCase(Survey.INTRODUCTION)
 							|| draftTranslation.getKey().equalsIgnoreCase(Survey.ESCAPEPAGE)
 							|| draftTranslation.getKey().equalsIgnoreCase(Survey.ESCAPELINK)
@@ -2652,6 +2653,8 @@ public class SurveyService extends BasicService {
 
 		if (key.equalsIgnoreCase(Survey.TITLE))
 			return key;
+		if (key.equalsIgnoreCase(Survey.LOGOTEXT))
+			return key;
 		if (key.equalsIgnoreCase(Survey.INTRODUCTION))
 			return key;
 		if (key.equalsIgnoreCase(Survey.ESCAPEPAGE))
@@ -3008,7 +3011,9 @@ public class SurveyService extends BasicService {
 			if (!Tools.isFileEqual(draftSurvey.getLogo(), publishedSurvey.getLogo()))
 				hasPendingChanges = true;
 			if (!draftSurvey.getLogoInInfo().equals(publishedSurvey.getLogoInInfo()))
-				hasPendingChanges = true;
+				hasPendingChanges = true;			
+			if (!Tools.isEqual(draftSurvey.getLogoText(), publishedSurvey.getLogoText()))
+				hasPendingChanges = true;			
 			if (!Tools.isEqual(draftSurvey.getSkin(), publishedSurvey.getSkin()))
 				hasPendingChanges = true;
 			if (draftSurvey.getSectionNumbering() != publishedSurvey.getSectionNumbering())

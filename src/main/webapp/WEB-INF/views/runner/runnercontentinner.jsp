@@ -43,17 +43,17 @@
 		<c:choose>
 				<c:when test="${publication != null}">
 					<div style="width: 220px; max-width: 220px">
-						<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" style="width: 220px" />
+						<img alt="${form.survey.logoText}" src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" style="width: 220px" />
 					</div>
 				</c:when>
 				<c:when test="${form.survey.logo != null && !form.survey.logoInInfo}">
 					<div style="max-width: 900px">
-						<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" style="max-width: 1300px;" />
+						<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="${form.survey.logoText}" style="max-width: 1300px;" />
 					</div>
 				</c:when>
 				<c:when test="${form.survey.logo != null && responsive != null}">
 					<div style="max-width: 100%">
-						<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" style="max-width: 100%;" />
+						<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="${form.survey.logoText}" style="max-width: 100%;" />
 					</div>
 				</c:when>
 			</c:choose>						

@@ -1802,8 +1802,14 @@ public class ManagementController extends BasicController {
 			if (!uploadedSurvey.getLogoInInfo().equals(survey.getLogoInInfo())) {
 				hasPendingChanges = true;
 			}
-
+			
 			survey.setLogoInInfo(uploadedSurvey.getLogoInInfo());
+			
+			if (!Objects.equals(uploadedSurvey.getLogoText(), survey.getLogoText())) {
+				hasPendingChanges = true;
+			}
+
+			survey.setLogoText(ConversionTools.escape(uploadedSurvey.getLogoText()));
 
 			if (survey.getPublication().isShowContent() != uploadedSurvey.getPublication().isShowContent()) {
 				String[] oldnew = { survey.getPublication().isShowContent() ? "published" : "unpublished",
