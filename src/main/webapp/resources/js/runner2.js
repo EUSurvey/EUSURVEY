@@ -1535,14 +1535,14 @@ function hideTooltipsOnEscape(e) {
 		var selectedObjects = this;
 		selectedObjects.tooltip({
 			trigger: "manual"
-		}).on("mouseenter", function() {
+		}).on("mouseenter focusin", function() {
 			var self = this;
 			$(".tooltip").attr("aria-live", "assertive");
 			$(self).tooltip("show");
 			$(".tooltip").on("mouseleave", function() {
 				$(self).tooltip("hide");
 			});
-		}).on("mouseleave", function() {
+		}).on("mouseleave focusout", function() {
 			var self = this;
 			setTimeout(function() {
 				if (!$(".tooltip:hover").length) {
