@@ -787,7 +787,6 @@ function initModals(item)
 		});
 		
 		$(parent).find("[aria-invalid]").removeAttr("aria-invalid");
-		$(parent).find("[aria-describedby]").removeAttr("aria-describedby");
 		
 		$("#exceptionlogdiv").remove();
 	}
