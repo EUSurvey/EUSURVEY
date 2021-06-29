@@ -868,7 +868,7 @@ function newRankingItemViewModel(id, uniqueId, shortname, title, parent)
 		var target = event.target;
 		var rankingitemList = $(target).closest(".rankingitem-list");
 		var rankingitems = $(rankingitemList).find(".rankingitemtext");
-		const actualOrder = $.map(rankingitems, that => this.parent.itemIdtoUniqueIdLookup[Number(that.id)]);
+		const actualOrder = $.map(rankingitems, that => this.id.parent.itemIdtoUniqueIdLookup[Number(that.id)]);
 		const answervalues = this.id.parent.answervalues();
 		if (ArrayElementMovingTool.moveItemRelative(answervalues, this.uniqueId(), steps)) {
 			this.id.parent.answervalues(answervalues);
