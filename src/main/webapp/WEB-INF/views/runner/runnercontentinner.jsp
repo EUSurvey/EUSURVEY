@@ -283,7 +283,7 @@
 							<c:if test="${form.survey.logo != null && form.survey.logoInInfo}">
 								<img style="max-width: 100%; margin-top: 10px;"
 									 src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />"
-									 alt="logo"/>
+									 alt="${form.survey.logoText}"/>
 								<hr style="margin-top: 15px;"/>
 							</c:if>
 
