@@ -529,7 +529,7 @@ public class FileService extends BasicService {
 						break;
 					}
 					if (!skipexport) {
-						String filePath = exportService.getTempExportFilePath(export, null);
+						String filePath = exportService.getExportFilePath(export, null);
 						Path file = Paths.get(filePath);
 						if (file.toFile().exists() && filter.isValidExtension(export.getFormat().toString().toUpperCase())) {
 							FileResult fresult = getFileResult(file, export, archivedir);
@@ -1626,7 +1626,7 @@ public class FileService extends BasicService {
 
 		List<Export> exports = exportService.getSurveyExports(survey.getId());
 		for (Export export : exports) {
-			String filePath = exportService.getTempExportFilePath(export, null);
+			String filePath = exportService.getExportFilePath(export, null);
 
 			if (export.getZipped() != null && export.getZipped()) {
 				filePath += ".zip";
@@ -1649,7 +1649,7 @@ public class FileService extends BasicService {
 		List<Export> exports = exportService.getExports(user, "", false, false, false);
 		for (Export export : exports) {
 			if (export.getSurvey() == null) {
-				String filePath = exportService.getTempExportFilePath(export, null);
+				String filePath = exportService.getExportFilePath(export, null);
 
 				if (export.getZipped() != null && export.getZipped()) {
 					filePath += ".zip";
@@ -1676,7 +1676,7 @@ public class FileService extends BasicService {
 			List<Export> exports = exportService.getExports(userid, "", false, false, false);
 			for (Export export : exports) {
 				if (export.getSurvey() == null) {
-					String filePath = exportService.getTempExportFilePath(export, null);
+					String filePath = exportService.getExportFilePath(export, null);
 
 					if (export.getZipped() != null && export.getZipped()) {
 						filePath += ".zip";

@@ -117,9 +117,13 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 	
 	if (div == null) {
 		var modal = $("#delphi-chart-modal-start-page");
+		var caller;
 		
 		if (modal.length == 0) {
 			modal =  $("#delphi-chart-modal");
+			caller = callerAddChartModal;
+		} else {
+			caller = callerAddChartModalStartPage;
 		}
 		
 		$(modal).find("canvas").remove();
@@ -147,7 +151,7 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 		var data = getWordCloudData(result, 40);
 		vis.update(data);
 		
-		$(modal).modal("show");
+		showModalDialog(modal, caller);
 	} else {
 		var questionuid = div.data("uid");
 		$('#wordcloud' + questionuid).empty().show().next().hide();

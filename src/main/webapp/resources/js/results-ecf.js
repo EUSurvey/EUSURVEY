@@ -235,6 +235,14 @@
 						return;
 					} else {
 						displayECFTable2(profileAssessmentResult);
+						
+						if (profileAssessmentResult.name == null) {
+							$('#ecfAvgScoreChart').hide();
+							$('#ecfMaxScoreChart').hide();
+						} else {						
+							displayECFAvgScoreChartByProfileResults(profileAssessmentResult, profileComparisonUUID);
+							displayECFMaxScoreChartByProfileResults(profileAssessmentResult, profileComparisonUUID);
+						}
 						return profileAssessmentResult;
 					}
 				}
@@ -346,6 +354,36 @@
 				});
 				displayECFChart("Max scores vs Max target scores for " + competenciesType.typeName, "#ecfMaxChart_" + competenciesType.typeUUID, maxScores, maxTargetScores, competencies, "Max scores", "Max target scores");
 			});
+		}
+	}
+	
+	function displayECFAvgScoreChartByProfileResults(profileAssessmentResult, profileComparisonUUID, profileName) {
+		if (profileAssessmentResult) {
+			avgScores = [];
+			competencies = [];
+			targetScores = [];
+			profileAssessmentResult.competencyResults.forEach(competencyResult => {
+				avgScores.push(competencyResult.competencyAverageScore);
+				competencies.push(competencyResult.competencyName);
+				targetScores.push(competencyResult.competencyTargetScore);
+			});
+			displayECFChart("Average score vs target scores for " + profileAssessmentResult.name, "#ecfAvgScoreChart", avgScores, targetScores, competencies, "Avg scores", "Target scores");
+			$('#ecfAvgScoreChart').show();
+		}
+	}
+	
+	function displayECFMaxScoreChartByProfileResults(profileAssessmentResult, profileComparisonUUID, profileName) {
+		if (profileAssessmentResult) {
+			maxScores = [];
+			competencies = [];
+			targetScores = [];
+			profileAssessmentResult.competencyResults.forEach(competencyResult => {
+				maxScores.push(competencyResult.competencyMaxScore);
+				competencies.push(competencyResult.competencyName);
+				targetScores.push(competencyResult.competencyTargetScore);
+			});
+			displayECFChart("Max score vs target scores for " + profileAssessmentResult.name, "#ecfMaxScoreChart", maxScores, targetScores, competencies, "Max scores", "Target scores");
+			$('#ecfMaxScoreChart').show();
 		}
 	}
 	

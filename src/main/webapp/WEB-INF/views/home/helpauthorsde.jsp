@@ -223,12 +223,7 @@
 			<p>
 				<b>Umfassender Datenschutz</b>
 				<br/>
-				Durch die Erstellung anonymer Fragebögen können Sie den Schutz der
-				persönlichen Daten der Befragten garantieren.
-			</p>
-			<p>
-				Sie haben dann nicht die Möglichkeit, auf die Verbindungsdaten der
-				Befragten zuzugreifen.
+				Sie können Ihren Teilnehmern garantieren, anonym zu bleiben, indem Sie den Modus 'Anonyme Umfrage' aktivieren. Wenn aktiviert, werden alle Beiträge anonymisiert. Das bedeutet, dass keine benutzerbezogenen Daten vom System gespeichert werden.
 			</p>
 			<p>
 				<b>Erscheinungsbild individuell anpassen</b>
@@ -3320,23 +3315,7 @@
 				<b>Erstellen einer anonymen Umfrage:</b>
 			</p>
 			<p>
-				Sie können eine anonyme Umfrage erstellen, indem Sie in den Eigenschaften
-				Ihrer Umfrage unter „Sicherheit“ die Option „Privatsphäre“ auf „<b>Nein</b>
-				“ stellen.
-			</p>
-			<p>
-				In diesem Fall werden alle nutzerbezogenen Daten durch    <b>„Anonym“ ersetzt</b>.
-			</p>
-			<p>
-				Zusätzlich wird aus Sicherheitsgründen bei jedem Server-Zugriff die
-				IP-Adresse der Verbindung gespeichert (siehe
-				<a
-						href="https://ec.europa.eu/eusurvey/home/privacystatement"
-						target="_blank"
-						>
-					Datenschutzerklärung
-				</a>
-				).
+				Sie können eine anonyme Umfrage erstellen, indem Sie den Modus „Anonyme Umfrage“ in den Umfrageeigenschaften verwenden. Wenn diese Option aktiviert ist, werden die Beiträge zu Ihrer Umfrage anonym sein, da EUSurvey keine persönlichen Daten wie IP-Adressen speichert. Wenn Sie möchten, dass Ihre Umfrage vollständig anonym ist, sollten Sie keine Fragen in Ihren Umfrageentwurf aufnehmen, die persönliche Daten erfassen.
 			</p>
 			<h2>
 				Muss ich eine Datenschutzerklärung in meine Umfrage aufnehmen?

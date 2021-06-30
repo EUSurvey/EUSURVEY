@@ -1812,28 +1812,11 @@ public class AnswerService extends BasicService {
 
 		return null;
 	}
-
-	@Transactional(readOnly = false)
-	public int getNumberOfDrafts(int id) {
+	
+	public int getNumberOfDraftsInner(List<Integer> allVersions)
+	{
 		Session session = sessionFactory.getCurrentSession();
-		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(id);
-		if (allVersions.isEmpty()) {
-			return 0;
-		}
-
-		String query = "SELECT count(*) FROM ANSWERS_SET ans WHERE ans.SURVEY_ID IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions)
-				+ ") AND ans.ISDRAFT = 1 AND ans.UNIQUECODE NOT IN (SELECT UNIQUECODE FROM ANSWERS_SET WHERE SURVEY_ID IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans.ISDRAFT = 0)";
-
-		Query q = session.createSQLQuery(query);
-		return ConversionTools.getValue(q.uniqueResult());
-	}
-
-	@Transactional(readOnly = false)
-	public int getNumberOfDrafts(String uid) {
-		Session session = sessionFactory.getCurrentSession();
-		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(uid);
+		
 		if (allVersions.isEmpty()) {
 			return 0;
 		}
@@ -1845,6 +1828,18 @@ public class AnswerService extends BasicService {
 
 		Query q = session.createSQLQuery(query);
 		return ConversionTools.getValue(q.uniqueResult());
+	}
+
+	@Transactional(readOnly = false)
+	public int getNumberOfDrafts(int id) {
+		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(id);
+		return getNumberOfDraftsInner(allVersions);
+	}
+
+	@Transactional(readOnly = false)
+	public int getNumberOfDrafts(String uid) {
+		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(uid);
+		return getNumberOfDraftsInner(allVersions);
 	}
 
 	@Transactional(readOnly = false)

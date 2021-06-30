@@ -1,14 +1,22 @@
-.btn:focus-within, input:focus, a:focus, button:focus, textarea:focus, .slider-handle:focus, select:focus, .possibleanswerrow:focus-within, .matrix-cell:focus-within, .confirmationelement:focus-within, .galleryinfo:focus-within, .likert-pa:focus-within, .focusborder:focus-within {
+div.validation-error:focus, div.validation-error-server:focus, div.validation-error-keep:focus, .btn:focus-within, input:focus, a:focus, button:focus, textarea:focus, .slider-handle:focus, select:focus, .matrix-cell:focus-within, .confirmationelement:focus-within, .galleryinfo:focus-within, .likert-pa:focus-within, .focusborder:focus-within, .focussable:focus {
 	outline: 2px solid #FFD617 !important;
 	outline-offset: 0px;
 	color: inherit !important;
 	z-index: 10000;
 }
 
+ .focusborder:focus-within input, .matrix-cell:focus-within input, .galleryinfo:focus-within input, .confirmationelement:focus-within input {
+ 	outline: 0 !important;
+ }
+
 .dropdown-menu li a:focus {
 	outline-offset: -3px;
 }
 
-.btn-primary:focus {
+.btn-primary:focus, .pagebutton.active a:focus {
 	color: #fff !important;
+}
+
+div.validation-error:focus, div.validation-error-server:focus, div.validation-error-keep:focus  {
+	color: #f00 !important;
 }

@@ -12,7 +12,6 @@ import com.ec.survey.model.survey.Element;
 import com.ec.survey.model.survey.Survey;
 import com.ec.survey.model.survey.Text;
 import com.ec.survey.tools.Constants;
-import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.export.*;
 
@@ -111,7 +110,7 @@ public class ExportService extends BasicService {
 			
 			logger.info("Starting export " + export.getName());
 			
-			if (exportFilePath == null) exportFilePath = getTempExportFilePath(export, uid);
+			if (exportFilePath == null) exportFilePath = getExportFilePath(export, uid);
 			ExportCreator exportCreator = null;
 			switch (export.getFormat()) {
 			case doc: 
@@ -190,7 +189,7 @@ public class ExportService extends BasicService {
 		}
 	}
 
-	public String getTempExportFilePath(Export export, String uid) {
+	public String getExportFilePath(Export export, String uid) {
 		
 		if (uid != null && uid.length() > 0 && !uid.equals("null"))
 		{
@@ -204,10 +203,10 @@ public class ExportService extends BasicService {
 			return String.format("%s/%s", folder.getPath(), uid);
 		}
 		
-		return getTempExportFilePath(export.getId(),export.getFormat());
+		return getExportFilePath(export.getId(),export.getFormat());
 	}
 	
-	private String getTempExportFilePath(int id, ExportFormat format)
+	private String getExportFilePath(int id, ExportFormat format)
 	{
 		Export export = get(id,  false);
 		
@@ -373,15 +372,14 @@ public class ExportService extends BasicService {
 	public void deleteSurveyExports(int surveyId) throws IOException {
 		Session session = sessionFactory.getCurrentSession();
 		
-		Query query = session.createQuery("SELECT e.id, e.format FROM Export e WHERE e.survey.id = :id");
+		Query query = session.createQuery("FROM Export e WHERE e.survey.id = :id");
 		query.setInteger("id", surveyId);
 		
 		@SuppressWarnings("unchecked")
-		List<Object[]> data = query.list();
-		for (Object[] export : data)
-		{
-			java.io.File f = new java.io.File(getTempExportFilePath(ConversionTools.getValue(export[0]),(ExportFormat) export[1]));
-			Files.deleteIfExists(f.toPath());
+		List<Export> exports = query.list();
+		for (Export export : exports)
+		{		
+			deleteExportFiles(export);
 		}		
 		
 		query = session.createQuery("DELETE FROM Export e WHERE e.survey.id = :id");
@@ -429,13 +427,7 @@ public class ExportService extends BasicService {
 	public void deleteExport(Export export) {
 		try
 		{
-			String filePath = getTempExportFilePath(export, null);
-
-			File file = new File(filePath);
-			Files.delete(file.toPath());
-			
-			file = new File(filePath + ".zip");
-			Files.deleteIfExists(file.toPath());
+			deleteExportFiles(export);
 				
 			Session session = sessionFactory.getCurrentSession();
 			
@@ -449,6 +441,29 @@ public class ExportService extends BasicService {
 		{
 			logger.error(e.getLocalizedMessage(), e);		
 		}
+	}
+		
+	private void deleteExportFiles(Export export) throws IOException {
+		String filePath = getExportFilePath(export, null);
+
+		File file = new File(filePath);
+		Files.deleteIfExists(file.toPath());
+		
+		if (export.isTypeContent() && export.getFormat() == ExportFormat.xls) {
+			int counter = 1;
+			File additionalFile = new File(getExportPathWithSuffix(filePath, "xls", counter++));
+			while (additionalFile.exists()) {
+				Files.delete(additionalFile.toPath());
+				additionalFile = new File(getExportPathWithSuffix(filePath, "xls", counter++));
+			}
+		}
+		
+		file = new File(filePath + ".zip");
+		Files.deleteIfExists(file.toPath());
+	}
+	
+	public static String getExportPathWithSuffix(String exportFilePath, String ext, int fileCounter) {
+		return exportFilePath.replace("." + ext, "_" + fileCounter + "." + ext);
 	}
 
 	void determineValidState(Export export, boolean evict) {
@@ -575,9 +590,8 @@ public class ExportService extends BasicService {
 	}
 
 	public void recreateExport(Export export, Locale locale, MessageSource resources) throws IOException {
-		String filePath = exportService.getTempExportFilePath(export, null);
-		File file = new File(filePath);
-		Files.deleteIfExists(file.toPath());
+		deleteExportFiles(export);
+	
 		export.setState(ExportState.Pending);
 		export.setDate(new Date());
 		Form form = new Form(resources);
@@ -742,25 +756,8 @@ public class ExportService extends BasicService {
 			List<Export> exports = query.list();
 			
 			for (Export export : exports) {
-				String filePath = getTempExportFilePath(export, null);
-
-				File file = new File(filePath);
-				if (file.exists())
-				{
-					Files.delete(file.toPath());
-					counter++;
-				}
 				
-				if (export.getZipped() == null || export.getZipped())
-				{
-					file = new File(filePath + ".zip");
-					if (file.exists())
-					{
-						Files.delete(file.toPath());
-						counter++;
-					}
-				}
-				
+				deleteExportFiles(export);
 				session.delete(export);
 			}
 			

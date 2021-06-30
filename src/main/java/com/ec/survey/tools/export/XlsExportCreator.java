@@ -16,6 +16,7 @@ import com.ec.survey.model.survey.ecf.ECFOrganizationalCompetencyResult;
 import com.ec.survey.model.survey.ecf.ECFOrganizationalResult;
 import com.ec.survey.model.survey.ecf.ECFProfileCompetencyResult;
 import com.ec.survey.model.survey.ecf.ECFProfileResult;
+import com.ec.survey.service.ExportService;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -583,7 +584,7 @@ public class XlsExportCreator extends ExportCreator {
 			columnIndexInsertHeader = 0;
 			String ext = FilenameUtils.getExtension(exportFilePath);
 
-			outputStream = new FileOutputStream(exportFilePath.replace("." + ext, "_" + fileCounter + "." + ext));
+			outputStream = new FileOutputStream(ExportService.getExportPathWithSuffix(exportFilePath, ext, fileCounter));
 
 			initWorkbook();
 

@@ -447,8 +447,6 @@
 					}
 				}
 			}
-
-			window.setTimeout(updateSessionTimeout, 10000);		
 			
 			<c:choose>
 				<c:when test="${saved != null}">

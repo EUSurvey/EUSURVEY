@@ -66,6 +66,13 @@ public class TranslationsHelper {
 							survey.getIntroduction() != null ? survey.getIntroduction() : "",
 							survey.getLanguage().getCode(), survey.getId(), translations));
 		}
+		
+		if (complete || notNullOrEmpty(survey.getLogoText())) {
+			translations.getTranslations()
+					.add(new Translation(Survey.LOGOTEXT,
+							survey.getLogoText() != null ? survey.getLogoText() : "",
+							survey.getLanguage().getCode(), survey.getId(), translations));
+		}
 
 		if (complete || notNullOrEmpty(survey.getEscapePage())) {
 			translations.getTranslations()
@@ -295,6 +302,8 @@ public class TranslationsHelper {
 
 		result.add(new KeyValue(Survey.QUIZWELCOMEMESSAGE, "L"));
 		result.add(new KeyValue(Survey.QUIZRESULTSMESSAGE, "L"));
+		
+		result.add(new KeyValue(Survey.LOGOTEXT, "L"));		
 
 		for (String key : survey.getUsefulLinks().keySet()) {
 			String[] data = key.split("#");
@@ -402,6 +411,9 @@ public class TranslationsHelper {
 		List<KeyValue> result = new ArrayList<>();
 
 		result.add(new KeyValue(Survey.TITLE, resources.getMessage("label.Title", null, "Title", locale)));
+
+		result.add(new KeyValue(Survey.LOGOTEXT, resources.getMessage("label.LogoAlternativeText", null, "Alternative Text", locale)));
+		
 		result.add(new KeyValue(Survey.CONFIRMATIONPAGE,
 				resources.getMessage("label.ConfirmationPage", null, "Confirmation Page", locale)));
 		result.add(new KeyValue(Survey.ESCAPEPAGE,
@@ -769,6 +781,15 @@ public class TranslationsHelper {
 				title = "";
 			surveyTitle.appendChild(doc.createCDATASection(title));
 			rootElement.appendChild(surveyTitle);
+			
+			org.w3c.dom.Element logoText = doc.createElement("LogoText");
+			String logotext = "";
+			if (translationByKey.containsKey(Survey.LOGOTEXT))
+				logotext = translationByKey.get(Survey.LOGOTEXT);
+			if (logotext == null)
+				logotext = "";
+			logoText.appendChild(doc.createCDATASection(logotext));
+			rootElement.appendChild(logoText);
 
 			org.w3c.dom.Element surveyQuizWelcome = doc.createElement("QuizWelcomePage");
 			String quizwelcome = "";
@@ -920,6 +941,11 @@ public class TranslationsHelper {
 			addTextCell(row, 0, Survey.TITLE);
 			addTextCell(row, 1, descriptions.get(Survey.TITLE));
 			addTextCell(row, 2, translationsByKey.get(Survey.TITLE) != null ? translationsByKey.get(Survey.TITLE) : "");
+			
+			row = sheet.createRow(rowIndex++);
+			addTextCell(row, 0, Survey.LOGOTEXT);
+			addTextCell(row, 1, descriptions.get(Survey.LOGOTEXT));
+			addTextCell(row, 2, translationsByKey.get(Survey.LOGOTEXT) != null ? translationsByKey.get(Survey.LOGOTEXT) : "");
 
 			if (translationsByKey.get(Survey.QUIZWELCOMEMESSAGE) != null
 					&& translationsByKey.get(Survey.QUIZWELCOMEMESSAGE).length() > 0) {
@@ -1223,6 +1249,16 @@ public class TranslationsHelper {
 				cell.setStringValue(Survey.TITLE);
 				cell = sheet.getCellByPosition(1, rowIndex);
 				cell.setStringValue(descriptions.get(Survey.TITLE));
+				cell = sheet.getCellByPosition(2, rowIndex++);
+				cell.setStringValue(label);
+			}
+			
+			label = translationsByKey.get(Survey.LOGOTEXT) != null ? translationsByKey.get(Survey.LOGOTEXT) : "";
+			if (notNullOrEmpty(label)) {
+				cell = sheet.getCellByPosition(0, rowIndex);
+				cell.setStringValue(Survey.LOGOTEXT);
+				cell = sheet.getCellByPosition(1, rowIndex);
+				cell.setStringValue(descriptions.get(Survey.LOGOTEXT));
 				cell = sheet.getCellByPosition(2, rowIndex++);
 				cell.setStringValue(label);
 			}
@@ -1604,6 +1640,15 @@ public class TranslationsHelper {
 			result.setTitle(title);
 			result.getTranslations().add(new Translation(Survey.TITLE, title, lang, surveyId, result));
 
+			
+			try {
+				String logoText = getText(translation.getElementsByTagName("LogoText"), "LogoText");
+				result.getTranslations()
+						.add(new Translation(Survey.LOGOTEXT, logoText, lang, surveyId, result));
+			} catch (Exception e) {
+				//ignore
+			}
+			
 			try {
 				String quizwelcome = getText(translation.getElementsByTagName("QuizWelcomePage"), "QuizWelcomePage");
 				result.getTranslations()
@@ -2039,6 +2084,9 @@ public class TranslationsHelper {
 		if (translationsByKey.containsKey(Survey.TITLE)
 				&& notNullOrEmpty(translationsByKey.get(Survey.TITLE).getLabel()))
 			survey.setTitle(translationsByKey.get(Survey.TITLE).getLabel());
+		if (translationsByKey.containsKey(Survey.LOGOTEXT)
+				&& notNullOrEmpty(translationsByKey.get(Survey.LOGOTEXT).getLabel()))
+			survey.setLogoText(translationsByKey.get(Survey.LOGOTEXT).getLabel());
 		if (translationsByKey.containsKey(Survey.INTRODUCTION)
 				&& notNullOrEmpty(translationsByKey.get(Survey.INTRODUCTION).getLabel()))
 			survey.setIntroduction(translationsByKey.get(Survey.INTRODUCTION).getLabel());
@@ -2278,6 +2326,10 @@ public class TranslationsHelper {
 
 			if ((!translationMap.containsKey(Survey.TITLE) || translationMap.get(Survey.TITLE) == null
 					|| translationMap.get(Survey.TITLE).trim().length() == 0))
+				return false;
+			if (survey.getLogoText() != null && survey.getLogoText().trim().length() > 0
+					&& (!translationMap.containsKey(Survey.LOGOTEXT)
+							|| translationMap.get(Survey.LOGOTEXT).trim().length() == 0))
 				return false;
 			if (survey.getIntroduction() != null && survey.getIntroduction().trim().length() > 0
 					&& (!translationMap.containsKey(Survey.INTRODUCTION)

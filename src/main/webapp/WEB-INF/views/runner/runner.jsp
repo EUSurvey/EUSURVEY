@@ -95,7 +95,7 @@
 				$("#btnSubmit").removeClass("hidden");
 				$("#btnSaveDraft").removeClass("hidden");
 				$("#btnSaveDraftMobile").removeClass("hidden");
-				$('[data-toggle="tooltip"]').tooltip(); 
+				$('[data-toggle="tooltip"]').ApplyCustomTooltips();
 			}
 		}
 		
@@ -362,22 +362,6 @@
 		</c:if>
 	
 	</c:if>
-		
-	<div class="modal" id="sessiontimeoutdialog" role="dialog">
-		<div class="modal-dialog" role="document">
-		    <div class="modal-content">
-			    <div class="modal-header">
-			    	<spring:message code="label.SessionTimeout" />
-			    </div>
-				<div class="modal-body">	
-					<spring:message code="info.SessionTimeout" />
-				</div>
-				<div class="modal-footer">
-					<a onclick="$('#sessiontimeoutdialog').modal('hide')" target="_blank" class="btn btn-primary"><spring:message code="label.OK" /></a>
-				</div>
-			</div>
-		</div>
-	</div>
 	
 	<div class="modal" id="networkproblemsdialog" role="dialog">
 		<div class="modal-dialog" role="document">

@@ -582,7 +582,7 @@ public class ManagementController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
-		surveyService.unpublish(form.getSurvey(), true, u.getId());
+		surveyService.unpublish(form.getSurvey(), true, u.getId(), false);
 		activityService.log(105, "published", "unpublished", u.getId(), form.getSurvey().getUniqueId());
 		return overview(shortname, request, locale);
 	}
@@ -1009,6 +1009,11 @@ public class ManagementController extends BasicController {
 			survey.setEcasSecurity(true);
 			survey.setEcasMode("all");
 			survey.setCaptcha(false);
+			survey.getPublication().setShowContent(false);
+			survey.getPublication().setShowUploadedDocuments(false);
+			survey.getPublication().setShowStatistics(false);
+			survey.getPublication().setShowCharts(false);
+					
 			if (survey.getSkin() == null || !survey.getSkin().getName().equalsIgnoreCase("New Official EC Skin")) {
 				Skin ecSkin = skinService.getSkin("New Official EC Skin");
 				survey.setSkin(ecSkin);
@@ -1030,7 +1035,6 @@ public class ManagementController extends BasicController {
 			}		
 		}		
 	}
-
 
 	private ModelAndView updateSurvey(Form form, HttpServletRequest request, boolean creation, Locale locale)
 			throws Exception {
@@ -1798,8 +1802,14 @@ public class ManagementController extends BasicController {
 			if (!uploadedSurvey.getLogoInInfo().equals(survey.getLogoInInfo())) {
 				hasPendingChanges = true;
 			}
-
+			
 			survey.setLogoInInfo(uploadedSurvey.getLogoInInfo());
+			
+			if (!Objects.equals(uploadedSurvey.getLogoText(), survey.getLogoText())) {
+				hasPendingChanges = true;
+			}
+
+			survey.setLogoText(ConversionTools.escape(uploadedSurvey.getLogoText()));
 
 			if (survey.getPublication().isShowContent() != uploadedSurvey.getPublication().isShowContent()) {
 				String[] oldnew = { survey.getPublication().isShowContent() ? "published" : "unpublished",

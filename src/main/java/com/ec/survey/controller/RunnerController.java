@@ -218,7 +218,7 @@ public class RunnerController extends BasicController {
 						throw new FrozenSurveyException();
 					}
 
-					Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
+					Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 							survey.getLanguage(), resources, contextpath);
 
 					String lang = request.getParameter("surveylanguage");

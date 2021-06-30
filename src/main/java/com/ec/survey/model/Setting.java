@@ -119,6 +119,8 @@ public class Setting {
 		ids.add(602);
 		ids.add(603);
 		ids.add(701);
+		ids.add(801);
+		ids.add(802);
 		return ids;
 	}
 	

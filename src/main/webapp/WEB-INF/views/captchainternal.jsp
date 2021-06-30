@@ -100,18 +100,18 @@
 					
 			   		<c:choose>
 						<c:when test="${form != null}">
-							<div id="runner-captcha-error" class="validation-error-keep hideme">${form.getMessage("message.captchawrongnew")}</div>	
+							<div id="runner-captcha-error" tabindex="0" class="validation-error-keep hideme">${form.getMessage("message.captchawrongnew")}</div>	
 						</c:when>
 						<c:otherwise>
-							<div id="runner-captcha-error" class="validation-error-keep hideme"><spring:message code="message.captchawrongnew" /></div>	
+							<div id="runner-captcha-error" tabindex="0" class="validation-error-keep hideme"><spring:message code="message.captchawrongnew" /></div>	
 						</c:otherwise>
 					</c:choose>	
 						
 	  		<c:if test="${wrongcaptcha != null && wrongcaptcha == true }">
 	  			<script type="text/javascript">
 					$(function() {	
-						$("#runner-captcha-error").show();
-						showError('<spring:message code="error.captcha" />');
+						$("#runner-captcha-error").show().attr("aria-live", "polite").focus();
+						$("#internal_captcha_response").attr("aria-invalid", "true").attr("aria-describedby", "runner-captcha-error");
 		  			});
 	  			</script>	  		
 	  		</c:if>

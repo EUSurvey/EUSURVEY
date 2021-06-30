@@ -143,7 +143,7 @@ public class SurveyUpdater implements Runnable {
 			surveys = surveyService.getSurveysToStop();
 			for (Survey survey: surveys)
 			{
-				surveyService.unpublish(survey, true, -1);
+				surveyService.unpublish(survey, true, -1, false);
 				activityService.log(106, "published", "unpublished", -1, survey.getUniqueId());
 			}
 			

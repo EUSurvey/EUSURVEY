@@ -248,7 +248,7 @@ public class SurveyService extends BasicService {
 				", (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported");// 15
 		stringBuilder.append(" from SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
-		stringBuilder.append(" where ");
+		stringBuilder.append(" where s.ISDRAFT = 1 AND ");
 		String sql = stringBuilder.toString();
 
 		if (filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("ARCHIVED")) {
@@ -1188,6 +1188,7 @@ public class SurveyService extends BasicService {
 					translationCopy.setSurveyId(publishedSurvey.getId());
 					translationCopy.setTranslations(translationsCopy);
 					if (draftTranslation.getKey().equalsIgnoreCase(Survey.TITLE) 
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.LOGOTEXT)
 							|| draftTranslation.getKey().equalsIgnoreCase(Survey.INTRODUCTION)
 							|| draftTranslation.getKey().equalsIgnoreCase(Survey.ESCAPEPAGE)
 							|| draftTranslation.getKey().equalsIgnoreCase(Survey.ESCAPELINK)
@@ -1384,7 +1385,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public void unpublish(Survey survey, boolean deactivateAutoPublishing, int userId) {
+	public void unpublish(Survey survey, boolean deactivateAutoPublishing, int userId, boolean freeze) {
 		Session session = sessionFactory.getCurrentSession();
 
 		Survey publishedSurvey = this.getSurvey(survey.getShortname(), false, false, false, false, null, false, false);
@@ -1408,6 +1409,10 @@ public class SurveyService extends BasicService {
 		session.setReadOnly(ob, false);
 
 		ob.setIsActive(false);
+		if (freeze) {
+			ob.setIsFrozen(true);
+			survey.setIsFrozen(true);
+		}
 
 		if (deactivateAutoPublishing) {
 			ob.setAutomaticPublishing(false);
@@ -2648,6 +2653,8 @@ public class SurveyService extends BasicService {
 
 		if (key.equalsIgnoreCase(Survey.TITLE))
 			return key;
+		if (key.equalsIgnoreCase(Survey.LOGOTEXT))
+			return key;
 		if (key.equalsIgnoreCase(Survey.INTRODUCTION))
 			return key;
 		if (key.equalsIgnoreCase(Survey.ESCAPEPAGE))
@@ -3004,7 +3011,9 @@ public class SurveyService extends BasicService {
 			if (!Tools.isFileEqual(draftSurvey.getLogo(), publishedSurvey.getLogo()))
 				hasPendingChanges = true;
 			if (!draftSurvey.getLogoInInfo().equals(publishedSurvey.getLogoInInfo()))
-				hasPendingChanges = true;
+				hasPendingChanges = true;			
+			if (!Tools.isEqual(draftSurvey.getLogoText(), publishedSurvey.getLogoText()))
+				hasPendingChanges = true;			
 			if (!Tools.isEqual(draftSurvey.getSkin(), publishedSurvey.getSkin()))
 				hasPendingChanges = true;
 			if (draftSurvey.getSectionNumbering() != publishedSurvey.getSectionNumbering())
@@ -4954,17 +4963,14 @@ public class SurveyService extends BasicService {
 
 	@Transactional
 	public void freeze(String surveyId, String mailText) throws Exception {
-		Session session = sessionFactory.getCurrentSession();
 		Survey survey = getSurvey(Integer.parseInt(surveyId));
 
 		if (survey == null) {
 			throw new MessageException("survey does not exist");
 		}
-
-		survey.setIsFrozen(true);
-		unpublish(survey, true, -1);
-		session.saveOrUpdate(survey);
-
+	
+		unpublish(survey, true, -1, true);
+	
 		// send email
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);

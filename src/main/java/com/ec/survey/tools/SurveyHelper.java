@@ -4418,6 +4418,8 @@ public class SurveyHelper {
 
 			if (translationsByKey.get(Survey.TITLE) != null)
 				survey.setTitle(translationsByKey.get(Survey.TITLE).getLabel());
+			if (translationsByKey.get(Survey.LOGOTEXT) != null)
+				survey.setLogoText(translationsByKey.get(Survey.LOGOTEXT).getLabel());
 			if (translationsByKey.get(Survey.INTRODUCTION) != null)
 				survey.setIntroduction(translationsByKey.get(Survey.INTRODUCTION).getLabel());
 			if (translationsByKey.get(Survey.ESCAPEPAGE) != null)
