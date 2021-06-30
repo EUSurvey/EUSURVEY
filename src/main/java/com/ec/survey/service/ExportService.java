@@ -55,6 +55,10 @@ public class ExportService extends BasicService {
 			Hibernate.initialize(export.getResultFilter().getLanguages());
 			Hibernate.initialize(export.getResultFilter().getFilterValues());
 			Hibernate.initialize(export.getResultFilter().getVisibleQuestions());
+			Hibernate.initialize(export.getResultFilter().getVisibleExplanations());
+			Hibernate.initialize(export.getResultFilter().getExportedExplanations());
+			Hibernate.initialize(export.getResultFilter().getVisibleDiscussions());
+			Hibernate.initialize(export.getResultFilter().getExportedDiscussions());
 		}
 		session.saveOrUpdate(export);
 		session.flush();		
@@ -78,7 +82,7 @@ public class ExportService extends BasicService {
 			User user = administrationService.getUser(export.getUserId());
 			logger.info("Starting export check settings skipcheckworkerserver " + skipcheckworkerserver +" useworkerserver " + useworkerserver +" isworkerserver " + isworkerserver);
 			
-			if (!skipcheckworkerserver && useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false"))
+			if (!immediate && !skipcheckworkerserver && useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("false"))
 			{
 				logger.info("calling worker server for export " + export.getId());
 				
@@ -317,6 +321,10 @@ public class ExportService extends BasicService {
 						Hibernate.initialize(export.getResultFilter().getFilterValues());
 						Hibernate.initialize(export.getResultFilter().getVisibleQuestions());
 						Hibernate.initialize(export.getResultFilter().getExportedQuestions());
+						Hibernate.initialize(export.getResultFilter().getVisibleExplanations());
+						Hibernate.initialize(export.getResultFilter().getExportedExplanations());
+						Hibernate.initialize(export.getResultFilter().getVisibleDiscussions());
+						Hibernate.initialize(export.getResultFilter().getExportedDiscussions());
 					}
 					
 					if (export.getActivityFilter() != null)
@@ -337,10 +345,16 @@ public class ExportService extends BasicService {
 						logger.error(e.getLocalizedMessage(), e);
 					}
 				}
+
+				User user = (User) session.get(User.class, export.getUserId());
+				if (user != null) {
+					export.setDisplayUsername(user.getName());
+				}
 				
 				result.add(export);
 			}
 		}
+
 		return result;
 	}
 	
@@ -396,6 +410,10 @@ public class ExportService extends BasicService {
 					Hibernate.initialize(export.getResultFilter().getExportedQuestions());
 					Hibernate.initialize(export.getResultFilter().getFilterValues());
 					Hibernate.initialize(export.getResultFilter().getVisibleQuestions());
+					Hibernate.initialize(export.getResultFilter().getVisibleExplanations());
+					Hibernate.initialize(export.getResultFilter().getExportedExplanations());
+					Hibernate.initialize(export.getResultFilter().getVisibleDiscussions());
+					Hibernate.initialize(export.getResultFilter().getExportedDiscussions());
 				}
 			}
 			
@@ -499,12 +517,17 @@ public class ExportService extends BasicService {
 		return count > 0 ;
 	}
 	
-	@Transactional
+	@Transactional(readOnly = false, propagation=Propagation.REQUIRES_NEW)
 	public void update(Export export) {
-		Session session = sessionFactory.getCurrentSession();
-		export = (Export) session.merge(export);
-		session.setReadOnly(export, false);
-		session.saveOrUpdate(export);
+		try {
+			Session session = sessionFactory.getCurrentSession();
+			export = (Export) session.merge(export);
+			session.setReadOnly(export, false);
+			session.saveOrUpdate(export);
+			session.flush();
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
 	}
 
 	@Transactional(readOnly = false, propagation=Propagation.REQUIRES_NEW)

@@ -103,10 +103,10 @@ public class ResultCreator implements Runnable {
 	    	export.setResultFilter(filter);	    	
 	    
 			xlsExportCreator.init(0,form,export,fileDir + uid, resources, locale, "", "");			
-			xlsExportCreator.ExportContent(null, false);
+			xlsExportCreator.exportContent(null, false);
 			
 			xmlExportCreator.init(0,form,export,fileDir + uid, resources, locale, "", "");
-			xmlExportCreator.ExportContent(false);
+			xmlExportCreator.exportContent(false);
 			
 			AnswerSet answerSet = answerService.getByInvitationCode(t.getToken());
 			java.io.File answerPDF = pdfService.createAnswerPDF(answerSet);

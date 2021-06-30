@@ -251,6 +251,7 @@
 				
 				$(row).append('<td style="vertical-align: middle;"><div style="width: 400px; overflow: hidden;  word-break: break-all;">' + t + '</div></td>');
 				$(row).append('<td style="vertical-align: middle;">' + list[i].name + '</td>');
+				$(row).append('<td style="vertical-align: middle;">' + (list[i].displayUsername || "") + '</td>');
 
 				td = document.createElement("td");
 				$(td).attr({'style': 'vertical-align: middle; text-align: center;'});
@@ -289,22 +290,7 @@
 				td = document.createElement("td");
 				$(td).attr({'style': 'vertical-align: middle; text-align: center;'});
 
-				if(list[i].state != 'Pending')
-				{
-					if(!list[i].valid)
-					{
-						var a = document.createElement("a");
-						$(a).attr("data-toggle","tooltip").attr("title", "<spring:message code="info.ResultsUpdated" />").attr("href","${contextpath}/exports/recreate/" + list[i].id).addClass("iconbutton").html('<span class="glyphicon glyphicon-refresh"></span>');
-						$(td).append(a);
-					}
-				}
-
-				$(row).append(td);
-
-				td = document.createElement("td");
-				$(td).attr({'style': 'vertical-align: middle; text-align: center;'});
-
-				if(list[i].finished)
+				if (list[i].finished)
 				{
 					$(td).append('<a data-toggle="tooltip" title="' + getExportTooltip(list[i].format) +'" href="${contextpath}/exports/download/'+ list[i].id +'"><img src="${contextpath}/resources/images/file_extension_'+ list[i].format +'_small.png" name="'+list[i].format+'" /></a>');
 					$(td).removeClass("export-pending");
@@ -319,11 +305,24 @@
 
 				td = document.createElement("td");
 				$(td).attr({'style': 'vertical-align: middle; text-align: center;'});
-				
-				if(list[i].state != 'Pending')
-				{
-					$(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.DeleteThisExport" />"   onclick="showDeleteDialog(' + list[i].id +')" class="iconbutton"><span class="glyphicon glyphicon-remove"></span></a>');									
-				}
+
+			  	if (list[i].state != 'Pending') {
+					const a = document.createElement("a");
+					$(a).attr("data-toggle", "tooltip").addClass("iconbutton").html('<span class="glyphicon glyphicon-refresh"></span>');
+
+					if (list[i].valid) {
+						$(a).attr("title", "<spring:message code="info.ExportUpToDate" />").addClass("disabled");
+					} else {
+						$(a).attr({
+							title: "<spring:message code="info.UpdateExport" />",
+							href: "${contextpath}/exports/recreate/" + list[i].id
+						})
+					}
+
+					$(td).append(a);
+
+					$(td).append('<a data-toggle="tooltip" rel="tooltip" title="<spring:message code="tooltip.DeleteThisExport" />"   onclick="showDeleteDialog(' + list[i].id + ')" class="iconbutton"><span class="glyphicon glyphicon-remove"></span></a>');
+			  	}
 				
 				$(row).append(td);
 
@@ -391,6 +390,7 @@
 								</div>	 
 								<spring:message code="label.Name" />
 							</th>
+							<th><spring:message code="label.UserName" /></th>
 							<th style="text-align: center;"><spring:message code="label.Type" /></th>
 							<th style="min-width: 120px">
 								<div style="float: right">
@@ -398,7 +398,6 @@
 								</div>	 
 								<spring:message code="label.Date" />
 							</th>
-							<th style="text-align: center;"><spring:message code="label.Update" /></th>
 							<th style="text-align: center;"><spring:message code="label.Result" /></th>
 							<th><spring:message code="label.Actions" /></th>
 						</tr>

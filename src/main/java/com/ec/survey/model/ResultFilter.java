@@ -1,5 +1,16 @@
 package com.ec.survey.model;
 
+import com.ec.survey.model.survey.ChoiceQuestion;
+import com.ec.survey.model.survey.DelphiChartType;
+import com.ec.survey.model.survey.Element;
+import com.ec.survey.model.survey.FreeTextQuestion;
+import com.ec.survey.model.survey.GalleryQuestion;
+import com.ec.survey.model.survey.Matrix;
+import com.ec.survey.model.survey.NumberQuestion;
+import com.ec.survey.model.survey.Question;
+import com.ec.survey.model.survey.RatingQuestion;
+import com.ec.survey.model.survey.Section;
+import com.ec.survey.model.survey.Survey;
 import com.ec.survey.tools.Tools;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
@@ -12,6 +23,9 @@ import javax.persistence.*;
 import java.util.*;
 import java.util.Map.Entry;
 
+/**
+ * Defines the results we want to extract from the database. Hence, gives options to filter but also to order by.
+ */
 @Entity
 @Table(name = "RESULTFILTER")
 @Cacheable
@@ -21,6 +35,167 @@ public class ResultFilter implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public enum ResultFilterOrderBy {
+		NAME_ASC("nameAsc"),
+		NAME_DESC("nameDesc"),
+		SCORE_ASC("scoreAsc"),
+		SCORE_DESC("scoreDesc"),
+		DATE_ASC("dateAsc"),
+		DATE_DESC("dateDesc"),
+		REPLIES_ASC("repliesAsc"),
+		REPLIES_DESC("repliesDesc"),
+		CREATED_ASC("createdAsc"),
+		CREATED_DESC("createdDesc"),
+		ECFSCORE_ASC("ecfScoreAsc"),
+		ECFSCORE_DESC("ecfScoreDesc"),
+		ECFGAP_ASC("ecfGapAsc"),
+		ECFGAP_DESC("ecfGapDesc"),
+		UNKNOWN(null);
+		
+		String value;
+		
+		ResultFilterOrderBy(String value) {
+			this.value = value;
+		}
+		
+		public static ResultFilterOrderBy parse(String value) {
+			if (value.equalsIgnoreCase(NAME_ASC.value())) {
+				return NAME_ASC;
+			}
+			if (value.equalsIgnoreCase(SCORE_ASC.value())) {
+				return SCORE_ASC;
+			}
+			if (value.equalsIgnoreCase(DATE_ASC.value())) {
+				return DATE_ASC;
+			}
+			if (value.equalsIgnoreCase(REPLIES_ASC.value())) {
+				return REPLIES_ASC;
+			}
+			if (value.equalsIgnoreCase(CREATED_ASC.value())) {
+				return CREATED_ASC;
+			}
+			if (value.equalsIgnoreCase(ECFSCORE_ASC.value())) {
+				return ECFSCORE_ASC;
+			}
+			if (value.equalsIgnoreCase(ECFGAP_ASC.value())) {
+				return ECFGAP_ASC;
+			}
+			if (value.equalsIgnoreCase(NAME_DESC.value())) {
+				return NAME_DESC;
+			}
+			if (value.equalsIgnoreCase(SCORE_DESC.value())) {
+				return SCORE_DESC;
+			}
+			if (value.equalsIgnoreCase(DATE_DESC.value())) {
+				return DATE_DESC;
+			}
+			if (value.equalsIgnoreCase(REPLIES_DESC.value())) {
+				return REPLIES_DESC;
+			}
+			if (value.equalsIgnoreCase(CREATED_DESC.value())) {
+				return CREATED_DESC;
+			}
+			if (value.equalsIgnoreCase(ECFSCORE_DESC.value())) {
+				return ECFSCORE_DESC;
+			}
+			if (value.equalsIgnoreCase(ECFGAP_DESC.value())) {
+				return ECFGAP_DESC;
+			}
+			return UNKNOWN;
+		}
+		
+		public String value() {
+			return this.value;
+		}
+		
+		public ResultFilterSortKey toResultFilterSortKey() {
+			switch(this) {
+			case NAME_ASC: return ResultFilterSortKey.NAME;
+			case NAME_DESC: return ResultFilterSortKey.NAME;		
+			case SCORE_ASC: return ResultFilterSortKey.SCORE;
+			case SCORE_DESC: return ResultFilterSortKey.SCORE;
+			case DATE_ASC: return ResultFilterSortKey.DATE;
+			case DATE_DESC: return ResultFilterSortKey.DATE;
+			case REPLIES_ASC: return ResultFilterSortKey.REPLIES;
+			case REPLIES_DESC: return ResultFilterSortKey.REPLIES;
+			case CREATED_ASC: return ResultFilterSortKey.CREATED;
+			case CREATED_DESC: return ResultFilterSortKey.CREATED;
+			case ECFSCORE_ASC: return ResultFilterSortKey.ECFSCORE;
+			case ECFSCORE_DESC: return ResultFilterSortKey.ECFSCORE;
+			case ECFGAP_ASC: return ResultFilterSortKey.ECFGAP;
+			case ECFGAP_DESC: return ResultFilterSortKey.ECFGAP;
+			default: return ResultFilterSortKey.UNKNOWN;
+			}
+		}
+		
+		public String toAscOrDesc() {
+			switch(this) {
+			case NAME_ASC: return "ASC";
+			case NAME_DESC: return "DESC";
+			case SCORE_ASC: return "ASC";
+			case SCORE_DESC: return "DESC";
+			case DATE_ASC: return "ASC";
+			case DATE_DESC: return "DESC";
+			case REPLIES_ASC: return "ASC";
+			case REPLIES_DESC: return "DESC";
+			case CREATED_ASC: return "ASC";
+			case CREATED_DESC: return "DESC";
+			case ECFSCORE_ASC: return "ASC";
+			case ECFSCORE_DESC: return "DESC";
+			case ECFGAP_ASC: return "ASC";
+			case ECFGAP_DESC: return "DESC";
+			default: return "";
+			}
+		}
+	}
+	
+	public enum ResultFilterSortKey {
+		NAME("name"),
+		SCORE("score"),
+		DATE("date"),
+		REPLIES("replies"),
+		CREATED("created"),
+		ECFSCORE("ecfScore"),
+		ECFGAP("ecfGap"),
+		UNKNOWN(null);
+		
+		String value;
+		
+		ResultFilterSortKey(String value) {
+			this.value = value;
+		}
+		
+		public static ResultFilterSortKey parse(String value) {
+			if (value.equalsIgnoreCase(NAME.value())) {
+				return NAME;
+			}
+			if (value.equalsIgnoreCase(SCORE.value())) {
+				return SCORE;
+			}
+			if (value.equalsIgnoreCase(DATE.value())) {
+				return DATE;
+			}
+			if (value.equalsIgnoreCase(REPLIES.value())) {
+				return REPLIES;
+			}
+			if (value.equalsIgnoreCase(CREATED.value())) {
+				return CREATED;
+			}
+			if (value.equalsIgnoreCase(ECFSCORE.value())) {
+				return ECFSCORE;
+			}
+			if (value.equalsIgnoreCase(ECFGAP.value())) {
+				return ECFGAP;
+			}
+			return UNKNOWN;
+		}
+		
+		public String value() {
+			return this.value;
+		}
+	}
+	
 	private int id;
 	private Integer userId;
 	private String invitation;
@@ -46,10 +221,20 @@ public class ResultFilter implements java.io.Serializable {
 	private Map<String, String> filterValues = new HashMap<>();
 	private Set<String> visibleQuestions = new HashSet<>();
 	private Set<String> exportedQuestions = new HashSet<>();
+	
+	private Set<String> visibleExplanations = new HashSet<>();
+	private Set<String> exportedExplanations = new HashSet<>();
+	private Set<String> visibleDiscussions = new HashSet<>();
+	private Set<String> exportedDiscussions = new HashSet<>();
+	
 	private Boolean createdOrUpdated = false;
 	private Boolean onlyReallyUpdated = false;
 	private Boolean noTestAnswers = false;
 	private Boolean defaultQuestions = true;
+	
+	// Only ECF answers with the following ecf Profile
+	private String answeredECFProfileUID;
+	private String compareToECFProfileUID;
 	
 	public void clearResultFilter() {
 		invitation = null;
@@ -67,11 +252,16 @@ public class ResultFilter implements java.io.Serializable {
 		createdOrUpdated = false;
 		onlyReallyUpdated = false;
 		noTestAnswers = false;
+		answeredECFProfileUID = null;
 	}	
 
 	public void clearSelectedQuestions() {
 		visibleQuestions.clear();
-		exportedQuestions.clear();		
+		exportedQuestions.clear();
+		visibleExplanations.clear();
+		exportedExplanations.clear();
+		visibleDiscussions.clear();
+		exportedDiscussions.clear();
 	}
 
 	@Id
@@ -240,6 +430,42 @@ public class ResultFilter implements java.io.Serializable {
 		this.exportedQuestions = exportedQuestions;
 	}
 	
+	@ElementCollection
+	@Cascade(value={CascadeType.ALL})
+	public Set<String> getVisibleExplanations() {
+		return visibleExplanations;
+	}
+	public void setVisibleExplanations(Set<String> visibleExplanations) {
+		this.visibleExplanations = visibleExplanations;
+	}
+	
+	@ElementCollection
+	@Cascade(value={CascadeType.ALL})
+	public Set<String> getExportedExplanations() {
+		return exportedExplanations;
+	}
+	public void setExportedExplanations(Set<String> exportedExplanations) {
+		this.exportedExplanations = exportedExplanations;
+	}
+	
+	@ElementCollection
+	@Cascade(value={CascadeType.ALL})
+	public Set<String> getVisibleDiscussions() {
+		return visibleDiscussions;
+	}
+	public void setVisibleDiscussions(Set<String> visibleDiscussions) {
+		this.visibleDiscussions = visibleDiscussions;
+	}
+	
+	@ElementCollection
+	@Cascade(value={CascadeType.ALL})
+	public Set<String> getExportedDiscussions() {
+		return exportedDiscussions;
+	}
+	public void setExportedDiscussions(Set<String> exportedDiscussions) {
+		this.exportedDiscussions = exportedDiscussions;
+	}
+	
 	@Transient
 	public void addExportedQuestion(String question)
 	{
@@ -283,12 +509,81 @@ public class ResultFilter implements java.io.Serializable {
 	}
 	
 	@Transient
+	public boolean visibleSection(int sectionId, Survey survey)
+	{
+		boolean correctSection = false;
+		int sectionLevel = 0;
+		Map<Integer, Element> elementsById = survey.getElementsById();
+		for (Element element : survey.getElements())
+		{
+			if (element.getId().equals(sectionId)) {
+				correctSection = true;
+				sectionLevel = ((Section)element).getLevel();
+			} else if (correctSection) {
+				if (element instanceof Section) {
+					if (((Section)element).getLevel() <= sectionLevel) {
+						return false;
+					}
+				} else {
+					if (visibleQuestions.contains(element.getId().toString())) {
+						Element question = elementsById.get(element.getId());
+						if (question instanceof ChoiceQuestion || question instanceof Matrix || question instanceof RatingQuestion) {
+							return true;
+						} else if (question instanceof GalleryQuestion) {
+							GalleryQuestion g = (GalleryQuestion)question;
+							if (g.getSelection()) {
+								return true;
+							}
+						} else if (question instanceof NumberQuestion) {
+							NumberQuestion n = (NumberQuestion)question;
+							if (n.showStatisticsForNumberQuestion()) {
+								return true;
+							}
+						} else if (question instanceof Question) {
+							Question q = (Question)question;
+							if (q.isDelphiElement() && q.getDelphiChartType() != DelphiChartType.None) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	@Transient
 	public boolean exported(String questionId)
 	{
 		//Fallback for old filter that have no exported questions
 		if (exportedQuestions == null || exportedQuestions.isEmpty()) return visible(questionId);
 		
 		return exportedQuestions.contains(questionId);
+	}
+	
+	@Transient
+	public boolean explanationVisible(String questionId)
+	{
+		return visibleExplanations.contains(questionId);
+	}
+	
+	@Transient
+	public boolean explanationExported(String questionId)
+	{
+		return exportedExplanations.contains(questionId);
+	}
+	
+	@Transient
+	public boolean discussionVisible(String questionId)
+	{
+		return visibleDiscussions.contains(questionId);
+	}
+	
+	@Transient
+	public boolean discussionExported(String questionId)
+	{
+		return exportedDiscussions.contains(questionId);
 	}
 	
 	@Transient
@@ -356,28 +651,18 @@ public class ResultFilter implements java.io.Serializable {
 		result.append(this.updatedTo);
 		result.append(this.createdOrUpdated);
 		result.append(this.onlyReallyUpdated);
+		result.append(this.answeredECFProfileUID == null ? "" : this.answeredECFProfileUID);
 	
 		result.append(this.languages == null ? "" : StringUtils.join(this.languages, ""));
 		result.append(StringUtils.join(this.filterValues.keySet(), ""));
 		result.append(StringUtils.join(this.filterValues.values(), ""));
-		
-		//visibleQuestions
-		if (visibleQuestions != null && !visibleQuestions.isEmpty())
-		{
-			SortedSet<String> sortedVisibleQuestions = new TreeSet<>(visibleQuestions);
-			for (String id : sortedVisibleQuestions)
-			{
-				result.append(id);
-			}
-		}
-		if (exportedQuestions != null && !exportedQuestions.isEmpty())
-		{
-			SortedSet<String> sortedExportedQuestions = new TreeSet<>(exportedQuestions);
-			for (String id : sortedExportedQuestions)
-			{
-				result.append(id);
-			}
-		}
+
+		sortAndAppendSetIdsToStringBuilder(visibleQuestions, result);
+		sortAndAppendSetIdsToStringBuilder(exportedQuestions, result);
+		sortAndAppendSetIdsToStringBuilder(visibleExplanations, result);
+		sortAndAppendSetIdsToStringBuilder(exportedExplanations, result);
+		sortAndAppendSetIdsToStringBuilder(visibleDiscussions, result);
+		sortAndAppendSetIdsToStringBuilder(exportedDiscussions, result);
 		
 		if (allAnswers)
 		{
@@ -385,6 +670,16 @@ public class ResultFilter implements java.io.Serializable {
 		}
 		
 		return Tools.md5hash(result.toString());
+	}
+
+	private void sortAndAppendSetIdsToStringBuilder(final Set<String> set, final StringBuilder builder) {
+
+		if (set != null && !set.isEmpty()) {
+			final SortedSet<String> sortedSet = new TreeSet<>(set);
+			for (String id : sortedSet) {
+				builder.append(id);
+			}
+		}
 	}
 	
 	@Transient
@@ -398,9 +693,11 @@ public class ResultFilter implements java.io.Serializable {
 		if (updatedTo != null) return false;
 		if (languages != null && !languages.isEmpty()) return false;
 		if (filterValues != null && !filterValues.isEmpty()) return false;
+		if (answeredECFProfileUID != null && !answeredECFProfileUID.isEmpty()) return false;
 		
 		return true;
 	}
+
 	public ResultFilter merge(ResultFilter copy) {
 		copy.caseId = caseId;
 
@@ -438,6 +735,22 @@ public class ResultFilter implements java.io.Serializable {
 		Set<String> newExportedQuestions = new HashSet<>();
         newExportedQuestions.addAll(exportedQuestions);
 		copy.exportedQuestions = newExportedQuestions;
+		
+		Set<String> newVisibleExplanations = new HashSet<>();
+        newVisibleExplanations.addAll(visibleExplanations);
+		copy.visibleExplanations = newVisibleExplanations;
+
+		Set<String> newExportedExplanations = new HashSet<>();
+        newExportedExplanations.addAll(exportedExplanations);
+		copy.exportedExplanations = newExportedExplanations;
+		
+		Set<String> newVisibleDiscussions = new HashSet<>();
+		newVisibleDiscussions.addAll(visibleDiscussions);
+		copy.visibleDiscussions = newVisibleDiscussions;
+
+		Set<String> newExportedDiscussions = new HashSet<>();
+		newExportedDiscussions.addAll(exportedDiscussions);
+		copy.exportedDiscussions = newExportedDiscussions;
 
 		copy.surveyId = surveyId;
 		copy.userId = userId;
@@ -451,6 +764,7 @@ public class ResultFilter implements java.io.Serializable {
 		copy.surveyEndDateTo = surveyEndDateTo;
 		
 		copy.defaultQuestions = defaultQuestions;
+		copy.answeredECFProfileUID = answeredECFProfileUID;
 
 		return copy;
 	}
@@ -524,6 +838,22 @@ public class ResultFilter implements java.io.Serializable {
 	}
 	public void setDefaultQuestions(Boolean defaultQuestions) {
 		this.defaultQuestions = defaultQuestions;
+	}
+
+	@Column(name = "RESFILTER_ANS_ECF_PROFILE_UID")
+	public String getAnsweredECFProfileUID() {
+		return answeredECFProfileUID;
+	}
+	public void setAnsweredECFProfileUID(String ecfProfileUid) {
+		this.answeredECFProfileUID = ecfProfileUid;
+	}
+
+	@Column(name = "RESFILTER_COMP_ECF_PROFILE_UID")
+	public String getCompareToECFProfileUID() {
+		return compareToECFProfileUID;
+	}
+	public void setCompareToECFProfileUID(String compareToECFProfileUID) {
+		this.compareToECFProfileUID = compareToECFProfileUID;
 	}
 
 }

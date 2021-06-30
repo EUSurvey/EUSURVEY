@@ -10,6 +10,7 @@ import com.ec.survey.tools.LoginAlreadyExistsException;
 import com.ec.survey.tools.Tools;
 
 import org.apache.commons.io.IOUtils;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -130,6 +131,23 @@ public class AdministrationService extends BasicService {
 		sqlQueryService.setParameters(query, parameters);
 
 		return query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY).setFirstResult(sqlPagination.getFirstResult()).setMaxResults(sqlPagination.getMaxResult()).list();
+	}
+
+	@Transactional(readOnly = true)
+	public User getUser(UserFilter filter) throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+
+		HashMap<String, Object> parameters = new HashMap<>();
+		Query query = session.createQuery(getHql(filter, parameters));
+		sqlQueryService.setParameters(query, parameters);
+
+		@SuppressWarnings("unchecked")
+		List<User> list = query.setReadOnly(true).setMaxResults(1).list();
+
+		if (list.size()>=1) {
+			return list.get(0);
+		}
+		return null;
 	}
 
 	@Transactional(readOnly = true)
@@ -334,6 +352,15 @@ public class AdministrationService extends BasicService {
 		}
 
 		return result;
+	}
+	
+	@Transactional(readOnly = true)
+	public User getUserForLoginAndInitialize(String login, boolean ecas) throws MessageException {
+		User user = getUserForLogin(login, ecas);
+		if (user != null) {
+			Hibernate.initialize(user.getRoles());
+		}
+		return user;
 	}
 
 	@Transactional(readOnly = true)

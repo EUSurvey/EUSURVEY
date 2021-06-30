@@ -23,6 +23,8 @@ public class Constants {
 	
 	public static final String MESSAGE = "message";
 	
+	public static final String OWNER = "owner";
+	
 	public static final String PATH_DELIMITER = "/";
 	
 	public static final String SHORTNAME = "shortname";

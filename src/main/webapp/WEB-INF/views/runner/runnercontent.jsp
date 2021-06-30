@@ -90,4 +90,18 @@
 				$("#holf").modal("show");
 			</script>
 		</c:if>		
+		
+		<div class="modal" id="unsaveddelphichangesdialog" role="dialog" data-backdrop="static">
+			<div class="modal-dialog modal-sm">
+    		<div class="modal-content">
+			<div class="modal-body">		
+				<spring:message code="info.UnsavedDelphiChange" />
+			</div>
+			<div class="modal-footer">
+				<a href="javascript:;" class="btn btn-default" id="unsaveddelphichangesdialoglink"><spring:message code="label.Yes" /></a>				
+				<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($('#unsaveddelphichangesdialog'))"><spring:message code="label.Cancel" /></a>				
+			</div>
+			</div>
+			</div>
+		</div>
 	</div>

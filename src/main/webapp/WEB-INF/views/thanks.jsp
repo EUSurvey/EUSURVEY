@@ -5,6 +5,7 @@
 <head>
 	<title>EUSurvey - <spring:message code="label.Thanks" /></title>	
 	<%@ include file="includes.jsp" %>
+	<script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/runner.js?version=<%@include file="version.txt" %>"></script>
 	<script type="text/javascript"> 
 		$(function() {					
@@ -14,13 +15,15 @@
 			</c:if>		
 		});			
 	</script>
-	
+		
 	<c:if test='${form.survey.skin != null && form.survey.skin.name.equals("New Official EC Skin")}'>
 		<link href="${contextpath}/resources/css/ecnew.css" rel="stylesheet" type="text/css"></link>
 	</c:if>
 	<c:if test='${form.survey.skin != null && form.survey.skin.name.equals("ECA Skin")}'>
 		<link href="${contextpath}/resources/css/ecanew.css" rel="stylesheet" type="text/css"></link>
 	</c:if>
+	
+	<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 </head>
 <body>
 	<div class="page-wrap">
@@ -38,10 +41,21 @@
 			</c:otherwise>
 		</c:choose>
 	
-		<div class="fullpage">
-			<%@ include file="thanksinner.jsp" %>
-			<%@ include file="generic-messages.jsp" %>
-		</div>
+		<c:choose>
+			<c:when test="${form.survey.isECF}">
+				<div class="fullpagesmaller">
+					<%@ include file="thanksinner.jsp" %>
+					<%@ include file="generic-messages.jsp" %>
+				</div>
+			</c:when>
+			<c:otherwise>
+				<div class="fullpage" style="padding-top: 100px;">
+					<%@ include file="thanksinner.jsp" %>
+					<%@ include file="generic-messages.jsp" %>
+				</div>
+			</c:otherwise>
+		</c:choose>
+		
 	</div>
 	
 	<c:choose>

@@ -41,7 +41,6 @@ public class GraphicsController extends BasicController {
         plot.setBaseSectionPaint(Color.blue);
         plot.setSectionPaint("Score",new Color(51,122,183));
         plot.setSectionPaint("Other", Color.lightGray);
-        plot.setShadowGenerator(null);        
         plot.setShadowPaint(Color.white);
                 
         try {

@@ -688,13 +688,15 @@ function internalSave(close)
 		var id = $(this).attr("id");
 		ids = "";
 		
+		var matrix = $(this).find(".matrixtable").first();
+		
 		input = document.createElement("input");
-		var rows = $(this).find("tr").length;
+		var rows = $(matrix).find("tr").length;
 		$(input).attr("type", "hidden").attr("name", "matrixrows" + id).val(rows);
 		$(this).append(input);
 		
 		input = document.createElement("input");
-		var cols = $(this).find("tr").first().find("td, th").length;
+		var cols = $(matrix).find("tr").first().find("td, th").length;
 		$(input).attr("type", "hidden").attr("name", "matrixcols" + id).val(cols);
 		$(this).append(input);
 		
@@ -704,7 +706,7 @@ function internalSave(close)
 		{
 			for (var c = 0; c < cols; c++)
 			{
-				var row = $(this).find("tr")[r];
+				var row = $(matrix).find("tr")[r];
 				var cell = $(row).find("td, th")[c];
 				
 				if (r == 0)
@@ -746,17 +748,19 @@ function internalSave(close)
 		var uids = "";
 		var optionals = "";
 		
+		var table = $(this).find(".tabletable").first();
+		
 		input = document.createElement("input");
-		var rows = $(this).find("tr").length;
+		var rows = $(table).find("tr").length;
 		$(input).attr("type", "hidden").attr("name", "rows" + id).val(rows);
 		$(this).append(input);
 		
 		input = document.createElement("input");
-		var cols = $(this).find("tr").first().find("td, th").length;
+		var cols = $(table).find("tr").first().find("td, th").length;
 		$(input).attr("type", "hidden").attr("name", "columns" + id).val(cols);
 		$(this).append(input);
 		
-		$(this).find("tr").first().find("td, th").each(function(index){
+		$(table).find("tr").first().find("td, th").each(function(index){
 			if ($(this).find(".ui-resizable-handle").length > 0)
 			$(this).resizable( "destroy" );								
 		});
@@ -767,7 +771,7 @@ function internalSave(close)
 		{
 			for (var c = 0; c < cols; c++)
 			{
-				var row = $(this).find("tr")[r];
+				var row = $(table).find("tr")[r];
 				var cell = $(row).find("td, th")[c];
 				
 				if (r == 0)

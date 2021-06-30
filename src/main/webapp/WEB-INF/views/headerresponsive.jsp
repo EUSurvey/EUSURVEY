@@ -19,7 +19,7 @@
 			<button onclick="$('#responsivemenu').slideToggle(500);" class="btn btn-primary" style="width: auto; margin: 0px;" type="button" id="dropdownMenu1"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span></button>
 		</div>
 		
-		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null}">
+		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null && mode != 'delphiStartPage'}">
 			
 			<div style="float: right">
 				<div class="dropdown" id="page-tabs">
@@ -171,10 +171,20 @@
 					</div>
 				</c:if>
 				
+				<c:if test="${form.survey.isDelphi}">
+					<div style="margin-top: 10px">
+						<b>${form.getMessage("label.Info")}</b>
+						<div style="margin-top: 5px">
+							<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi/runner">${form.getMessage("label.Delphi")}</a>
+						</div>
+					</div>
+					<hr style="margin-top: 15px;" />
+				</c:if>
+				
 				<c:if test="${escapemode == null && !form.survey.isQuiz}">
 					<!-- pdf download -->	
 					<div style="padding-left: 10px; margin-top: 10px;">
-						<button data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="btn btn-default" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}'); return false;">${form.getMessage("label.DownloadPDFversion")}</button>
+						<button data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="btn btn-default" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}'); return false;">${form.getMessage("label.DownloadPDFversion")}</button>
 						<span id="download-survey-pdf-dialog-running" style="display: none">${form.getMessage("info.FileCreation")}</span>
 						<div id="download-survey-pdf-dialog-ready" style="display: none;">${form.getMessage("info.FileCreated")}</div>
 						<div id="download-survey-pdf-dialog-spinner" style="display: none; padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>

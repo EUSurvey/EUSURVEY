@@ -76,7 +76,7 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			
 			try {
 			
-				User admin = administrationService.getUserForLogin(administrationService.getAdminUser(), false);
+				User admin = administrationService.getUserForLoginAndInitialize(administrationService.getAdminUser(), false);
 				
 				//default skin
 				Skin s = SkinCreator.createDefaultSkin(admin);
@@ -730,6 +730,20 @@ public class ApplicationListenerBean implements ApplicationListener<ContextRefre
 			schemaService.step96();
 			status = schemaService.getStatus();
 		}
+		
+		if (status.getDbversion() < 97)
+		{
+			logger.info("starting upgrade step 97");
+			schemaService.step97();
+			status = schemaService.getStatus();
+		}
+		
+		if (status.getDbversion() < 98)
+		{
+			logger.info("starting upgrade step 98");
+			schemaService.step98();
+			status = schemaService.getStatus();
+		} 
 	}
 
 	public static Survey createSurvey(int answerCount, User user, Language objLang, SurveyService surveyService, AnswerService answerService, String fileDir, boolean init, MessageSource resources, Locale locale, Integer questions, boolean archivesurvey, ArchiveService archiveService, BeanFactory context,TaskExecutor taskExecutor, FileService fileService) throws Exception {

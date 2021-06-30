@@ -23,6 +23,8 @@
 <link href="${contextpath}/resources/css/common.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 <link href="${contextpath}/resources/css/bootstrap-slider.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 
+<link href="${contextpath}/resources/css/Chart.min.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
+
 <c:if test="${ismobile != null}">
 	<link href="${contextpath}/resources/css/commonmobile.css?version=<%@include file="version.txt" %>" rel="stylesheet" type="text/css"></link>
 </c:if>
@@ -65,6 +67,7 @@
 <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="version.txt" %>'></script>
 <script type="text/javascript" src="${contextpath}/resources/js/jquery-1.12.3.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/jquery-ui.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/jquery.ui.touch-punch.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/spin.min.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/jquery.hotkeys.js?version=<%@include file="version.txt" %>"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/bootstrap.js?version=<%@include file="version.txt" %>"></script>
@@ -74,12 +77,18 @@
 <script type="text/javascript" src="${contextpath}/resources/js/system.js?version=<%@include file="version.txt" %>"></script>
 <script src="https://ec.europa.eu/wel/cookie-consent/consent.js" type="text/javascript"></script>
 <script type="text/javascript" src="${contextpath}/resources/js/bootstrap-slider.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/tinymce/jquery.tinymce.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/tinymce/tinymce.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/Chart.min.js?version=<%@include file="version.txt" %>"></script>
+<script type="text/javascript" src="${contextpath}/resources/js/chartjs-plugin-colorschemes.min.js?version=<%@include file="version.txt" %>"></script>
  
 <script type="text/javascript">
 	if (top != self) top.location=location;
 	
 	var contextpath = "${contextpath}";
 	var isresponsive = ${responsive != null};
+	var isdelphi = ${form != null && form.survey.getIsDelphi()};
+	var delphiStartPageUrl = '${pageContext.request.getAttribute("javax.servlet.forward.request_uri")}?${pageContext.request.getQueryString().replace("startDelphi=true&", "").replace("startDelphi=true", "?")}';
 
 	<c:choose>
 		<c:when test="${form != null && form.getResources() != null && resultType == null}">
@@ -113,7 +122,7 @@
 			var invalidXHTML = "${form.getMessage("label.InvalidXHTML")}";
 			var serverPrefix='${serverprefix}';//+'runner/';
 			var selectFileForUpload = "${form.getMessage("label.SelectFileForUpload")}";
-			var selectFilesForUpload = "${form.getMessage("label.SelectFilesForUpload")}";
+			var selectFilesForUpload = "${form.getMessage("label.SelectFilesForUploadButton")}";
 			var uploadASkin = "${form.getMessage("label.uploadASkin")}";
 			var globalLanguage = '${requestContext.locale.language}';
 			var questionTextLabel = "${form.getMessage("label.QuestionText")}";
@@ -155,12 +164,15 @@
 			var varwaitfordependencies = "${form.getMessage("info.WaitForDependencies")}";
 			var varErrorCheckValidation = "${form.getMessage("error.CheckValidation")}";
 			var varErrorCheckValidation2 = "${form.getMessage("error.CheckValidation2")}";
+			var labelEditYourContributionLater =  '${form.getMessage("label.EditYourContributionLater")}';
 			var labelmore = "${form.getMessage("label.more")}";
 			var labelless = "${form.getMessage("label.less")}";
 			var labelfrom = "${form.getMessage("label.from")}";
 			var labelto = "${form.getMessage("label.To")}";
 			var messageuploadnoconnection = "${form.getMessage("message.uploadnoconnection")}";
 			var messageuploadwrongextension = "${form.getMessage("message.messageuploadwrongextension")}";
+			var labelnewexplanation = "${form.getMessage("label.NewExplanation")}";
+			var labeloldexplanation = "${form.getMessage("label.OldExplanation")}";
 		</c:when>
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
@@ -192,7 +204,7 @@
 			var invalidXHTML = "<spring:message code='label.InvalidXHTML' />";
 			var serverPrefix='${serverprefix}';//+'runner/';
 			var selectFileForUpload = "<spring:message code='label.SelectFileForUpload' />";
-			var selectFilesForUpload = "<spring:message code='label.SelectFilesForUpload' />";
+			var selectFilesForUpload = "<spring:message code='label.SelectFilesForUploadButton' />";
 			var uploadASkin = "<spring:message code='label.uploadASkin' />";
 			var globalLanguage = '${requestContext.locale.language}';
 			var questionTextLabel = "<spring:message code='label.QuestionText' />";
@@ -240,6 +252,8 @@
 			var labelto = "<spring:message code='label.To' />";
 			var messageuploadnoconnection = "<spring:message code='message.uploadnoconnection' />";
 			var messageuploadwrongextension =  "<spring:message code='message.messageuploadwrongextension' />";
+			var labelnewexplanation = "<spring:message code='label.NewExplanation' />";
+			var labeloldexplanation = "<spring:message code='label.OldExplanation' />";
 		</c:otherwise>
 	</c:choose>
 	
@@ -249,6 +263,52 @@
 	
 	<c:if test="${surveyeditorsaved != null}">
 	 	localStorage.removeItem("SurveyEditorBackup${surveyeditorsaved}");
+	</c:if>
+	
+	<c:if test="${forpdf == null}">
+	
+	var explanationEditorConfig = {
+			script_url: '${contextpath}/resources/js/tinymce/tinymce.min.js',
+			theme: 'modern',
+			entity_encoding: 'raw',
+			menubar: false,
+			toolbar: ['bold italic underline strikethrough | undo redo | bullist numlist | link code | fontsizeselect forecolor fontselect'],
+			plugins: 'paste link image code textcolor',
+			font_formats:
+				'Sans Serif=FreeSans, Arial, Helvetica, Tahoma, Verdana, sans-serif;' +
+				'Serif=FreeSerif,Times,serif;' +
+				'Mono=FreeMono,Courier, mono;',
+			language : globalLanguage,
+			image_advtab: true,
+			entities: '',
+			content_css: '${contextpath}/resources/css/tinymceyellowfocus.css',
+			popup_css_add: '${contextpath}/resources/css/tinymcepopup.css',
+			forced_root_block: false,
+			browser_spellcheck: true,
+			paste_postprocess: function(pl, o) {
+				o.node.innerHTML = replaceBRs(strip_tags(o.node.innerHTML, '<p><br>'));
+			},
+			setup: function(editor) {
+				editor.on('init', function(event) {
+					delphiPrefill($(event.target));
+				});
+				editor.on('Change', function (event) {
+					try {
+					    // The editor element needs to be retrieved again. Otherwise, closest() will return no elements.
+					    enableDelphiSaveButtons($('#' + event.target.id).closest('.survey-element'));
+					} catch (e) {}
+				});
+			},
+			relative_urls: false,
+			remove_script_host: false,
+			document_base_url: serverPrefix,
+			default_link_target: '_blank',
+			anchor_top: false,
+			anchor_bottom: false,
+			branding: false,
+			invalid_elements: 'html,head,body',
+			object_resizing: false
+		};
 	</c:if>
 	
 </script>
@@ -296,35 +356,39 @@
 	 {	
 		 var cs = getCharacterCount(input);
 		 
-		 var classes = $(input).attr('class').split(" ");
-		 var min = 0;
-		 var max = 0;
-			
-		 for ( var i = 0, l = classes.length; i<l; ++i ) {
-		 	if (strStartsWith(classes[i], 'min'))
-		 	{
-		 		min = parseInt(classes[i].substring(3));
-		 		
-		 	} else if (strStartsWith(classes[i], 'max'))
-		 	{
-		 		max = parseInt(classes[i].substring(3));
-		 	};	 	
-		 };
+		 var attr = $(input).attr('class');
 		 
-		 $(input).closest(".survey-element").find(".charactercounter").text(cs);
-		 
-		 if (max > 0 && max - cs < 5)
-		 {
-			 $(input).closest(".survey-element").find(".glyphicon-alert").show();
-		 } else {
-			 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
-		 }
-		 
-		 if (max > 0 && max - cs < 0)
-		 {
-			 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#f00");
-		 } else {
-			 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
+		 if (typeof attr !== typeof undefined && attr !== false) {
+			 var classes =attr.split(" ");
+			 var min = 0;
+			 var max = 0;
+				
+			 for ( var i = 0, l = classes.length; i<l; ++i ) {
+			 	if (strStartsWith(classes[i], 'min'))
+			 	{
+			 		min = parseInt(classes[i].substring(3));
+			 		
+			 	} else if (strStartsWith(classes[i], 'max'))
+			 	{
+			 		max = parseInt(classes[i].substring(3));
+			 	};	 	
+			 };
+			 
+			 $(input).closest(".survey-element").find(".charactercounter").text(cs);
+			 
+			 if (max > 0 && max - cs < 5)
+			 {
+				 $(input).closest(".survey-element").find(".glyphicon-alert").show();
+			 } else {
+				 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
+			 }
+			 
+			 if (max > 0 && max - cs < 0)
+			 {
+				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#f00");
+			 } else {
+				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
+			 }
 		 }
 	 }
 	

@@ -41,6 +41,7 @@
 	<script type="text/javascript" src="${contextpath}/resources/js/fileuploader.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/runner.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/runner2.js?version=<%@include file="../version.txt" %>"></script>
+	<script type="text/javascript" src="${contextpath}/resources/js/graph_data_loader.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" src="${contextpath}/resources/js/runnerviewmodels.js?version=<%@include file="../version.txt" %>"></script>
     <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="../version.txt" %>'></script>
 	
@@ -70,6 +71,7 @@
 							addElement(result[i], false, false);
 						}
 						applyStandardWidths();
+						selectPageAndScrollToQuestionIfSet();
 						checkPages();
 						readCookies();
 						$("#btnSubmit").removeClass("hidden");
@@ -98,6 +100,9 @@
 			
 			$(element).siblings(".validation-error").remove();
 			
+			var surveyElement = $(element).closest(".survey-element");
+			enableDelphiSaveButtons(surveyElement);
+
 			for (var i = 0; i < responseJSON.files.length; i++) {
 				var f = responseJSON.files[i];
 				var div = document.createElement("div");

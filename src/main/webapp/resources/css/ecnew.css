@@ -18,8 +18,7 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	text-align: left;
-	padding-top: 70px;
-    height: 155px;
+    height: 75px;
 }
 
 #header .languages {
@@ -327,7 +326,7 @@ body {
 .bottom-footer-items ul li a:visited,
 .bottom-footer-items ul li a:hover,
 .bottom-footer-items ul li a:focus,
-.bottom-footer-items ul li a:active{color:#fff;text-decoration:none;}
+.bottom-footer-items ul li a:active{color:#fff !important;text-decoration:none;}
 
 .ecl-footer__site-corporate {
     background-color: #4073af;

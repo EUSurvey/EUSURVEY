@@ -7,8 +7,8 @@
 
 <div style="margin-top: 10px;">
 	<c:choose>
-		<c:when test="${oss}">${form.getMessage("footer.fundedOSS")}</c:when>
-		<c:otherwise>${form.getMessage("footer.funded")}</c:otherwise>
+		<c:when test="${oss}">${form.getMessage("footer.fundedOSSNew")}</c:when>
+		<c:otherwise>${form.getMessage("footer.fundedNew")}</c:otherwise>
 	</c:choose>
 </div>
 
@@ -25,7 +25,7 @@
 				           <a style="margin-riht: 10px;" href="<c:url value="/home/documentation"/>">${form.getMessage("label.Documentation")}</a>
 						</li>	
 				         <li class="ecl-footer__menu-item">
-				         	<a target="_blank" href="<c:url value="/home/helpparticipants"/>">${form.getMessage("label.FAQ")}
+							 <a target="_blank" href="<c:url value="/home/helpparticipants"/>" aria-label="${form.getMessage("label.FAQ")} - ${form.getMessage("label.OpensInNewWindow")}">${form.getMessage("label.FAQ")}</a>
 				         </li>
 				      </ul>
 	            </div>

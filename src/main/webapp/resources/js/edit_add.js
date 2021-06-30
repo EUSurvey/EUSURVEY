@@ -17,6 +17,7 @@ function getNewElement(item)
 		element.isComparable = false;
 		element.css = "freetext";
 		element.numRows = 1;
+		element.isDelphiQuestion = isDelphi;
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("singlechoiceitem"))
 	{
@@ -28,8 +29,19 @@ function getNewElement(item)
 		element.order = 0;
 		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
 		element.orderedPossibleAnswers = element.possibleAnswers;
+		element.isDelphiQuestion = isDelphi;
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(item.attr("id"),"init", 2);
+	} else if (item.hasClass("rankingitem"))
+	{
+		element = getBasicElement("RankingQuestion", true, "Ranking Question", item.attr("id"), true);
+		element.childElements = [
+			getBasicElement("RankingItem", false, "Ranking Item 1", null, false),
+			getBasicElement("RankingItem", false, "Ranking Item 2", null, false),
+			getBasicElement("RankingItem", false, "Ranking Item 3", null, false),
+			];
+		element.isDelphiQuestion = isDelphi;
+		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("multiplechoiceitem"))
 	{
 		element = getBasicElement("MultipleChoiceQuestion", true, "Multiple Choice Question", item.attr("id"), true);
@@ -41,6 +53,7 @@ function getNewElement(item)
 		element.order = 0;
 		element.possibleAnswers = [getBasicElement("PossibleAnswer", false, "Answer 1", null, false), getBasicElement("PossibleAnswer", false, "Answer 2", null, false)];
 		element.orderedPossibleAnswers = element.possibleAnswers;
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addChoiceQuestion");
 		updateListSummary(item.attr("id"),"init", 2);
 	} else if (item.hasClass("numberitem"))
@@ -51,6 +64,7 @@ function getNewElement(item)
 		element.min = null;
 		element.max = null;
 		element.css = "number";
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("matrixitem"))
 	{
@@ -78,6 +92,7 @@ function getNewElement(item)
 		element.questions = getMatrixQuestions(element);
 		element.questionsOrdered = element.questions;
 		element.dependentElementsStrings = [""];
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addTableOrMatrixQuestion");
 	} else if (item.hasClass("mytableitem"))
 	{
@@ -100,6 +115,7 @@ function getNewElement(item)
 		element.answers = getMatrixAnswers(element);
 		element.questions = getMatrixQuestions(element);
 		element.dependentElementsStrings = [""];
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addTableOrMatrixQuestion");
 	} else if (item.hasClass("dateitem"))
 	{
@@ -109,6 +125,7 @@ function getNewElement(item)
 		element.max = null;
 		element.maxString = null;
 		element.css = "date";
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("timeitem"))
 	{
@@ -118,6 +135,7 @@ function getNewElement(item)
 		element.max = null;
 		element.maxString = null;
 		element.css = "time";
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("textitem"))
 	{
@@ -144,7 +162,7 @@ function getNewElement(item)
 		updateComplexityScore("addSimpleItem");
 	} else if (item.hasClass("uploaditem"))
 	{
-		element = getBasicElement("Upload", true, "Please upload your file", item.attr("id"), true);
+		element = getBasicElement("Upload", true, "Please upload your file(s)", item.attr("id"), true);
 		//element.help = "The maximum file size is 1 MB";
 		
 		if (isOPC)
@@ -172,6 +190,7 @@ function getNewElement(item)
 		element.css = "regex";
 		element.numRows = 1;
 		element.regex = "";
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");
 	} else if (item.hasClass("galleryitem"))
 	{
@@ -199,7 +218,7 @@ function getNewElement(item)
 		element.iconType = 0;
 		element.confirmationlabel = "Show";
 		element.childElements = [getBasicElement("Text", false, "Question 1", null, false), getBasicElement("Text", false, "Question 2", null, false)];
-		
+		element.isDelphiQuestion = isDelphi;	
 		updateComplexityScore("addSimpleQuestion");	
 	} else if (item.hasClass("countriesitem") || item.hasClass("languagesitem") || item.hasClass("dgsitem") || item.hasClass("unsitem") || item.hasClass("agenciesitem")) {
 		item.addClass("singlechoiceitem");
@@ -210,7 +229,7 @@ function getNewElement(item)
 		element.useRadioButtons = true;
 		element.numColumns = 1;
 		element.order = 1;
-		
+		element.isDelphiQuestion = isDelphi;	
 		element.possibleAnswers = [];
 		
 		updateComplexityScore("addChoiceQuestion");
@@ -315,7 +334,11 @@ function addElementHandler(item)
 	$(item).find(".possibleanswerrow").find(".answertext").dblclick(function(e){
 		_elementProperties.showProperties(this, e, true);
 	});	
-	
+
+	$(item).find(".rankingitem-form-data").click(function(e) {
+		_elementProperties.showProperties($(this).find(".rankingitemtext")[0], e, false);
+	});	
+
 	$(item).find(".gallery-table").find("td").click(function(e) {
 		_elementProperties.showProperties(this, e, false);
     });
@@ -340,7 +363,15 @@ function addElementHandler(item)
 				    $(this).removeClass("survey-element-hovered");
 				  }
 				);
-	
+	$(item).find(".rankingitem-form-data").hover(
+			function() {
+				$(this).closest(".survey-element").removeClass(
+						"survey-element-hovered");
+				$(this).addClass("survey-element-hovered");
+			}, function() {
+				$(this).removeClass("survey-element-hovered");
+			});
+
 	$(item).find(".matrix-header, .table-header").hover(
 			  function() {
 				  	$(this).closest(".survey-element").removeClass("survey-element-hovered");
@@ -414,7 +445,10 @@ function getBasicElement(type, isquestion, title, id, addoptionalplaceholder)
 		element.isAttribute = false;
 		element.isUnique = false;
 		element.attributeName = element.shortname;
-		element.readonly = false;		
+		element.readonly = false;
+		
+		element.isDelphiQuestion = false;
+		element.showExplanationBox = true;
 	}
 	
 	if (type == "PossibleAnswer")

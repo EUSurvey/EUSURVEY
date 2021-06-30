@@ -145,6 +145,12 @@
 						<c:when test="${form.survey.isOPC}">
 							<img data-toggle="tooltip" title="<spring:message code="label.OPC" />" src="${contextpath}/resources/images/icons/24/people.png" />
 						</c:when>
+						<c:when test="${form.survey.isDelphi}">
+							<img data-toggle="tooltip" title="<spring:message code="label.Delphi" />" src="${contextpath}/resources/images/icons/24/delphi.png" />
+						</c:when>
+						<c:when test="${form.survey.isECF}">
+							<span data-toggle="tooltip" title="<spring:message code="label.ECF" />"  class="glyphicon glyphicon-user" style="font-size: 24px; color: #333"></span>
+						</c:when>
 						<c:otherwise>
 							<img data-toggle="tooltip" title="<spring:message code="label.StandardSurvey" />" style="width: 32px" src="${contextpath}/resources/images/icons/64/survey.png" />
 						</c:otherwise>
@@ -194,6 +200,9 @@
 						</td>
 						<td rowspan="5" style="vertical-align: top; text-align: right;">
 							<c:choose>
+								<c:when test="${form.survey.isFrozen}">
+									<button class="btn btn-default disabled" data-toggle="tooltip" title="<esapi:encodeForHTMLAttribute><spring:message code="info.SurveyFrozen" /></esapi:encodeForHTMLAttribute>"><spring:message code="label.Publish" /></button>
+								</c:when>
 								<c:when test="${form.survey.isPublished && form.survey.isActive && (sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1)}">
 									<a id="btnOverviewUnpublish" onclick="checkUnpublish();" class="btn btn-primary"><spring:message code="label.Unpublish" /></a>
 								</c:when>
@@ -290,7 +299,7 @@
 							
 							<c:choose>
 								<c:when test="${USER.canCreateSurveys}">
-									<a class="actionRowAction" onclick="copySurvey('${form.survey.id}', $('#originaltitle').html(), '${form.survey.language.code}', '${form.survey.security}', '${form.survey.isQuiz}')" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
+									<a class="actionRowAction" onclick="copySurvey('${form.survey.id}', $('#originaltitle').html(), '${form.survey.language.code}', '${form.survey.security}', '${form.survey.isQuiz}', '${form.survey.isDelphi}')" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy"></span></a>
 								</c:when>
 								<c:otherwise>
 									<a class="actionRowAction disabled" rel="tooltip" data-toggle="tooltip" title="<spring:message code="label.Copy" />"><span class="glyphicon glyphicon-copy disabled"></span></a>

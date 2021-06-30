@@ -4,6 +4,8 @@ import com.ec.survey.model.Answer;
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Export;
 import com.ec.survey.model.ResultFilter;
+import com.ec.survey.model.FilesByTypes;
+import com.ec.survey.model.FilesByType;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.tools.Constants;
@@ -43,10 +45,14 @@ public class XmlExportCreator extends ExportCreator {
 	private Date exportedNow = null;
 
 	private static final String ANSWER = "Answer";
+	private static final String EXPLANATION = "Explanation";
+	private static final String EXPLANATION_FILE = "ExplanationFile";
+	private static final String EXPLANATION_TEXT = "ExplanationText";
+	private static final String DISCUSSION = "Discussion";
 	
 	@Override
 	@Transactional
-	public void ExportContent(boolean sync) throws Exception {
+	public void exportContent(boolean sync) throws Exception {
 		exportContent(sync, export, false);
 	}
 
@@ -308,7 +314,23 @@ public class XmlExportCreator extends ExportCreator {
 
 							writer.writeCharacters(rating.getTitle() + ": " + childQuestion.getTitle());
 
-							writer.writeEndElement(); // MatrixQuestion
+							writer.writeEndElement(); // RatingQuestion
+						}
+					} else if (question instanceof RankingQuestion) {
+						RankingQuestion ranking = (RankingQuestion) question;
+
+						for (Element child : ranking.getChildElements()) {
+							writer.writeStartElement("RankingItem");
+							writer.writeAttribute("id", child.getUniqueId());
+							writer.writeAttribute("type", getNiceType(child));
+
+							if (export != null && export.getShowShortnames()) {
+								writer.writeAttribute("bid", child.getShortname());
+							}
+
+							writer.writeCharacters(child.getTitle());
+
+							writer.writeEndElement(); // RankingQuestion
 						}
 					}
 
@@ -330,6 +352,10 @@ public class XmlExportCreator extends ExportCreator {
 				filesByAnswer.get(file.getAnswerId()).add(file);
 			}
 		}
+
+		FilesByTypes<Integer, String> explanationFilesOfSurvey =
+				answerExplanationService.getExplanationFilesByAnswerSetIdAndQuestionUid(form.getSurvey());
+		FilesByType<String> explanationFilesToExport = new FilesByType<>();
 
 		HashMap<String, Object> values = new HashMap<>();
 
@@ -399,10 +425,15 @@ public class XmlExportCreator extends ExportCreator {
 					questions = questionlists.get(lang);
 				}
 				parseAnswerSet(form.getSurvey(), writer, questions, null, row, row.get(1), filesByAnswer,
-						uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail);
+						uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta, ECASUserLoginsByEmail, null, null,
+						explanationFilesOfSurvey, explanationFilesToExport);
 			}
 		} else {
 
+			//it is not possible to query the database after the result query was executed
+			Map<Integer, Map<String, String>> explanations = answerExplanationService.getAllExplanations(form.getSurvey());
+			Map<Integer, Map<String, String>> discussions = answerExplanationService.getAllDiscussions(form.getSurvey());
+					
 			String sql = "select ans.ANSWER_SET_ID, a.QUESTION_ID, a.QUESTION_UID, a.VALUE, a.ANSWER_COL, a.ANSWER_ID, a.ANSWER_ROW, a.PA_ID, a.PA_UID, ans.UNIQUECODE, ans.ANSWER_SET_DATE, ans.ANSWER_SET_UPDATE, ans.ANSWER_SET_INVID, ans.RESPONDER_EMAIL, ans.ANSWER_SET_LANG, a.AS_ID, ans.SCORE FROM ANSWERS a RIGHT JOIN ANSWERS_SET ans ON a.AS_ID = ans.ANSWER_SET_ID where ans.ANSWER_SET_ID IN ("
 					+ answerService.getSql(null, form.getSurvey().getId(),
 							export == null ? null : export.getResultFilter(), values, true)
@@ -451,7 +482,8 @@ public class XmlExportCreator extends ExportCreator {
 					if (lastAnswerSet > 0) {
 						parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()),
 								answerSet, null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(),
-								filterWithMeta, ECASUserLoginsByEmail);
+								filterWithMeta, ECASUserLoginsByEmail, explanations, discussions,
+								explanationFilesOfSurvey, explanationFilesToExport);
 					}
 
 					answerSet = new AnswerSet();
@@ -479,14 +511,14 @@ public class XmlExportCreator extends ExportCreator {
 			if (lastAnswerSet > 0)
 				parseAnswerSet(form.getSurvey(), writer, questionlists.get(answerSet.getLanguageCode()), answerSet,
 						null, list, filesByAnswer, uploadedFilesByQuestionUID, export.getAddMeta(), filterWithMeta,
-						ECASUserLoginsByEmail);
+						ECASUserLoginsByEmail, explanations, discussions, explanationFilesOfSurvey, explanationFilesToExport);
 			results.close();
 		}
 
 		writer.writeEndElement(); // Answers
 		writer.writeEndElement(); // Results
 
-		if (!uploadedFiles.isEmpty()) {
+		if (!uploadedFiles.isEmpty() || explanationFilesToExport.hasFiles()) {
 			// there are multiple files
 			java.io.File temp = new java.io.File(exportFilePath + ".zip");
 			final OutputStream out = new FileOutputStream(temp);
@@ -508,6 +540,17 @@ public class XmlExportCreator extends ExportCreator {
 					}
 				}
 			}
+
+			explanationFilesToExport.applyFunctionOnEachFile((questionUid, explanationFile) -> {
+				java.io.File file = fileService.getSurveyFile(form.getSurvey().getUniqueId(), explanationFile.getUid());
+
+				if (file.exists()) {
+					os.putArchiveEntry(new ZipArchiveEntry(questionUid + Constants.PATH_DELIMITER +
+							explanationFile.getUid() + "_" + explanationFile.getName()));
+					IOUtils.copy(new FileInputStream(file), os);
+					os.closeArchiveEntry();
+				}
+			});
 
 			os.close();
 
@@ -560,6 +603,10 @@ public class XmlExportCreator extends ExportCreator {
 			return "Confirmation";
 		} else if (question instanceof RatingQuestion) {
 			return "Rating";
+		} else if (question instanceof RankingQuestion) {
+			return "Ranking";
+		} else if (question instanceof RankingItem) {
+			return "Ranking Item";
 		}
 
 		return question.getType();
@@ -632,7 +679,9 @@ public class XmlExportCreator extends ExportCreator {
 	void parseAnswerSet(Survey survey, XMLStreamWriter writer, List<Element> questions, AnswerSet answerSet,
 			List<String> row, String list, Map<Integer, List<File>> filesByAnswer,
 			Map<String, List<File>> uploadedFilesByQuestionUID, boolean meta, ResultFilter filter,
-			Map<String, String> ECASUserLoginsByEmail) throws XMLStreamException {
+			Map<String, String> ECASUserLoginsByEmail, Map<Integer, Map<String, String>> explanations,
+			Map<Integer, Map<String, String>> discussions, FilesByTypes<Integer, String> explanationFilesOfSurvey,
+			FilesByType<String> explanationFilesToExport) throws XMLStreamException {
 		writer.writeStartElement("AnswerSet");
 
 		if (survey.getSecurity().contains("anonymous")) {
@@ -772,7 +821,7 @@ public class XmlExportCreator extends ExportCreator {
 							if (sanswers != null) {
 
 								String[] answers;
-								if (question instanceof FreeTextQuestion) {
+								if (question instanceof FreeTextQuestion || question instanceof RankingQuestion) {
 									answers = new String[1];
 									answers[0] = sanswers;
 								} else {
@@ -829,6 +878,8 @@ public class XmlExportCreator extends ExportCreator {
 										answer.getPossibleAnswerUniqueId() != null
 												? answer.getPossibleAnswerUniqueId()
 												: "");
+							} else if (question instanceof RankingQuestion) {
+								writer.writeCharacters(answer.getValue());
 							} else if (question instanceof Upload) {
 								StringBuilder text = new StringBuilder();
 								if (filesByAnswer.containsKey(answer.getId())) {
@@ -851,23 +902,111 @@ public class XmlExportCreator extends ExportCreator {
 						}
 					}
 				}
+				
+				if (question.isDelphiElement() && filter != null && filter.explanationExported(question.getId().toString())) {
+
+					final String questionUid = question.getUniqueId();
+					String explanation = "";
+
+					if (answerSet == null) {
+						
+						final String cellContent = row.get(answerrowcounter++);
+						final int lastLineBreakPosition = cellContent.lastIndexOf("\n");
+						String filesPart = "";
+						if (lastLineBreakPosition == -1) {
+							explanation = cellContent;
+							
+							if (explanation.contains("|"))
+							{
+								filesPart = cellContent;
+								explanation = "";
+							}
+						} else {
+							explanation = cellContent.substring(0, lastLineBreakPosition);
+							filesPart = cellContent.substring(lastLineBreakPosition + 1);						
+						}
+						
+						final String[] filesParts = filesPart.split(";");
+						for (final String part : filesParts) {
+							if (part.contains("|")) {
+								final String fileUid = part.substring(0, part.indexOf("|"));
+								final String fileName = part.substring(part.indexOf("|") + 1);
+								final File file = new File();
+								file.setUid(fileUid);
+								file.setName(fileName);
+								explanationFilesToExport.addFile(questionUid, file);
+							}
+						}
+					} else {
+						final int answerSetId = answerSet.getId();
+
+						if (explanations.containsKey(answerSetId) &&
+								explanations.get(answerSetId).containsKey(questionUid)) {
+							explanation = explanations.get(answerSetId).get(questionUid);
+						}
+
+						explanationFilesOfSurvey.getFiles(answerSetId, questionUid)
+								.forEach(file -> explanationFilesToExport.addFile(questionUid, file));
+					}
+					
+					if (!explanation.isEmpty() || explanationFilesToExport.hasFiles())
+					{
+						writer.writeStartElement(EXPLANATION);
+						writer.writeAttribute("qid", questionUid);
+						if (!explanation.isEmpty()) {
+							writer.writeStartElement(EXPLANATION_TEXT);
+							writer.writeCharacters(ConversionTools.removeHTMLNoEscape(explanation));
+							writer.writeEndElement(); // EXPLANATION_TEXT
+						}
+						for (final File file : explanationFilesToExport.getFiles(questionUid)) {
+							writer.writeStartElement(EXPLANATION_FILE);
+							writer.writeCharacters(ConversionTools.removeHTMLNoEscape(file.getNameForExport()));
+							writer.writeEndElement(); // EXPLANATION_FILE
+						}
+						writer.writeEndElement(); // EXPLANATION
+					}
+				}
+				
+				if (question.isDelphiElement() && filter != null && filter.discussionExported(question.getId().toString())) {
+					String discussion = "";				
+					if (answerSet == null) {
+						discussion = row.get(answerrowcounter++);
+					} else {
+						try {
+							if (discussions.containsKey(answerSet.getId()) && discussions.get(answerSet.getId()).containsKey(question.getUniqueId()))
+							{
+								discussion = discussions.get(answerSet.getId()).get(question.getUniqueId());
+							}
+						} catch (NoSuchElementException ex) {
+							//ignore
+						}					
+					}
+					
+					if (!discussion.isEmpty())
+					{
+						writer.writeStartElement(DISCUSSION);
+						writer.writeAttribute("qid", question.getUniqueId());					
+						writer.writeCharacters(ConversionTools.removeHTMLNoEscape(discussion));					
+						writer.writeEndElement(); // Discussion
+					}
+				}
 			}
 		}
 		writer.writeEndElement(); // AnswerSet
 	}
 
 	@Override
-	void ExportStatistics() throws Exception {
+	void exportStatistics() throws Exception {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	void ExportStatisticsQuiz() throws Exception {
+	void exportStatisticsQuiz() throws Exception {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	void ExportAddressBook() throws Exception {
+	void exportAddressBook() throws Exception {
 		throw new NotImplementedException();
 	}
 
@@ -888,12 +1027,27 @@ public class XmlExportCreator extends ExportCreator {
 	}
 
 	@Override
-	void ExportActivities() throws Exception {
+	void exportActivities() throws Exception {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	void ExportTokens() throws Exception {
+	void exportTokens() throws Exception {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	void exportECFGlobalResults() throws Exception {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	void exportECFProfileResults() throws Exception {
+		throw new NotImplementedException();
+	}
+
+	@Override
+	void exportECFOrganizationalResults() throws Exception {
 		throw new NotImplementedException();
 	}
 

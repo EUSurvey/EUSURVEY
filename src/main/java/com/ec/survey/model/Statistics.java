@@ -196,7 +196,7 @@ public class Statistics {
 	{
 		String id = question.getId().toString() + answer.toString();
 		Object result = totalsPercent.get(id);
-		return (double) (result != null ? result : 0);
+		return (double) (result != null ? result : 0.0);
 	}
 	
 	@Transient

@@ -522,8 +522,6 @@ public class ParticipantsController extends BasicController {
 
 		ModelAndView result = new ModelAndView("management/send-invitations", "form", form);
 
-		result.addObject("serverprefix", host);
-
 		ParticipationGroup participationGroup = participationService.get(Integer.parseInt(id));
 
 		result.addObject("senderSubject",

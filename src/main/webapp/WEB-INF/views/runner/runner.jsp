@@ -16,6 +16,7 @@
 		</c:when>
 		<c:otherwise>
 			<link id="runnerCss" href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+			<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 		</c:otherwise>
 	</c:choose>
 	
@@ -26,6 +27,7 @@
       
 	<c:if test="${forpdf==null}">
 		<script type="text/javascript" src="${contextpath}/resources/js/runner2.js?version=<%@include file="../version.txt" %>"></script>
+		<script type="text/javascript" src="${contextpath}/resources/js/graph_data_loader.js?version=<%@include file="../version.txt" %>"></script>
 		<script type="text/javascript" src="${contextpath}/resources/js/runnerviewmodels.js?version=<%@include file="../version.txt" %>"></script>
 	    <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="../version.txt" %>'></script>
    	</c:if>		
@@ -79,6 +81,7 @@
 						}
 						applyStandardWidths();
 						setTimeout(loadElements, 500);
+						selectPageAndScrollToQuestionIfSet();
 					}
 				});
 			} else {
@@ -102,6 +105,9 @@
 			
 			$(element).siblings(".validation-error").remove();
 			
+			var surveyElement = $(element).closest(".survey-element");
+			enableDelphiSaveButtons(surveyElement);
+
 			for (var i = 0; i < responseJSON.files.length; i++) {
 				var f = responseJSON.files[i];
 				var div = document.createElement("div");

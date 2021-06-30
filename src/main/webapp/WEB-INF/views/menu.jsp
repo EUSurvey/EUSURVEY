@@ -77,7 +77,7 @@
 
 <div id="export-available-box" class="alert message-success-right hideme">
 	<div style="float: right; margin-left: 10px;"><a onclick="$(this).parent().parent().hide();"><span class="glyphicon glyphicon-remove"></span></a></div>
-	<div style="float: left; margin: 5px; margin-top: 5px; margin-right: 10px"><img src="${contextpath}/resources/images/check.png" id="system-message-box-icon" alt="system message icon"></div>
+	<div style="float: left; margin: 5px; margin-top: 5px; margin-right: 10px"><img src="${contextpath}/resources/images/check.png" alt="system message icon"></div>
 	<div class="generic-box-text">
 		<spring:message code="label.Export" />&nbsp;<span id="export-available-box-name" style="font-weight: bold;"></span>&nbsp;<spring:message code="label.availableForDownload" /><br />
 		<spring:message code="label.GoTo" />&nbsp;<a class="visiblelink" href="<c:url value="/exports/list"/>"><spring:message code="label.ExportPage" /></a>
@@ -268,7 +268,7 @@
 		$('#add-survey-dialog').modal();
 	}
 	
-	function copySurvey(id, title, lang, security, isQuiz)
+	function copySurvey(id, title, lang, security, isQuiz, isDelphi)
 	{
 		var login = '${USER.login}';
 		var contact = "${USER.email}";
@@ -299,12 +299,23 @@
 		if (isQuiz == 'true')
 		{
 			$("#new-survey-type-normal").closest("label").removeClass("active");
+			$("#new-survey-type-delphi").closest("label").removeClass("active");
 			$("#new-survey-type-quiz").closest("label").addClass("active");
 			$("#new-survey-type-quiz").attr("checked", "checked");
 		} else {
-			$("#new-survey-type-normal").closest("label").addClass("active");
-			$("#new-survey-type-quiz").closest("label").removeClass("active");
-			$("#new-survey-type-normal").attr("checked", "checked");
+			if (isDelphi == 'true')
+			{
+				$("#new-survey-type-normal").closest("label").removeClass("active");
+				$("#new-survey-type-quiz").closest("label").removeClass("active");
+				$("#new-survey-type-delphi").closest("label").addClass("active");
+				$("#new-survey-type-delphi").attr("checked", "checked");
+			} else {
+				$("#new-survey-type-normal").closest("label").addClass("active");
+				$("#new-survey-type-quiz").closest("label").removeClass("active");
+				$("#new-survey-type-delphi").closest("label").removeClass("active");
+				$("#new-survey-type-normal").attr("checked", "checked");
+			}	
+			
 		}
 		
 		$('#add-survey-dialog').modal();
@@ -384,6 +395,18 @@
 							    <input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-opc" value="opc" />&#160;<spring:message code="label.OPC" />
 							  </label>
 						  </c:if>
+						 <c:if test="${enableecf}">
+						  	<label style="height: auto" class="btn btn-default hidecopy" title="<spring:message code="info.ECF" />" data-toggle='tooltip'>
+								<img style="height: 18px;" src="${contextpath}/resources/images/icons/24/table.png">
+								<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-ecf" value="ecf" />&#160;<spring:message code="label.ECF" />
+						  	</label>
+						  </c:if>
+						  <c:if test="${enabledelphi}">
+								<label style="height: auto" class="btn btn-default" title="<spring:message code="info.Delphi" />" data-toggle='tooltip'>
+									<img style="height: 18px;" src="${contextpath}/resources/images/icons/24/delphi.png">
+									<input type="radio" onchange="checkSurveyTypes()" name="new-survey-type" id="new-survey-type-delphi" value="delphi" />&#160;<spring:message code="label.Delphi" />
+								</label>
+					      </c:if>
 						</div>
 					</td>
 				</tr>
@@ -487,6 +510,8 @@
 	<input type="hidden" name="listform" id="create-survey-listform" value="" />
 	<input type="hidden" name="quiz" id="create-survey-quiz" value="" />
 	<input type="hidden" name="opc" id="create-survey-opc" value="" />
+	<input type="hidden" name="delphi" id="create-survey-delphi" value="" />
+	<input type="hidden" name="ecf" id="create-survey-ecf" value="" />
 	<input type="hidden" name="contact" id="create-survey-contact" value="" />
 	<input type="hidden" name="contactlabel" id="create-survey-contact-label" value="" />
 	<input type="hidden" name="origin" value="<esapi:encodeForHTMLAttribute>${origin}</esapi:encodeForHTMLAttribute>" />

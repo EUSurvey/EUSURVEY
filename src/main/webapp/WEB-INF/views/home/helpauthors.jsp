@@ -3179,9 +3179,8 @@
 						'Privacy Statement template for surveys and consultations'
 					</a>
 				</u>
-			</p>
-
-		</div>
+			</p>		
+	</div> <!-- faqcontent -->
 	</div>
 	</div>
 

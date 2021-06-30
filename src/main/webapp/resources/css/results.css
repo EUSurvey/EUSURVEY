@@ -1,0 +1,32 @@
+#ecf-results {padding: 1.5em;}
+#ecf-results2 {padding: 1.5em;}
+#ecf-results3 {padding: 1.5em;}
+ 
+
+#ecfResultTable {
+	margin-bottom: 1em;
+	margin-top: 1em;
+}
+
+
+.numberOfAnswers {
+	display: inline;
+}
+
+.inlineChart {
+	display: inline-block;
+	margin-top: 3em;
+}
+
+.h-50 {
+	height: 100%;
+}
+
+.headerrow th {
+	text-align: left;
+	vertical-align: top !important;
+}
+
+.individual {
+	text-decoration: underline;
+}

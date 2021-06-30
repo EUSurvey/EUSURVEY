@@ -41,10 +41,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 	private @Value("${server.prefix}") String host;
 
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-	
-		request.getSession().setAttribute("serverprefix", host);		
-			
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {		
 		SecurityContext securityContext = SecurityContextHolder.getContext();
 		
 		User user = null;

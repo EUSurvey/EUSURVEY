@@ -169,6 +169,22 @@ public class TranslationsHelper {
 							.add(new Translation(number.getUniqueId() + NumberQuestion.UNIT,
 									number.getUnit() != null ? number.getUnit() : "", survey.getLanguage().getCode(),
 									survey.getId(), translations));
+
+					if (number.isSlider()) {
+						translations.getTranslations().add(new Translation(
+								number.getUniqueId() + NumberQuestion.MINLABEL,
+								number.getMinLabel() != null ? number.getMinLabel() : "",
+								survey.getLanguage().getCode(),
+								survey.getId(),
+								translations));
+
+						translations.getTranslations().add(new Translation(
+								number.getUniqueId() + NumberQuestion.MAXLABEL,
+								number.getMaxLabel() != null ? number.getMaxLabel() : "",
+								survey.getLanguage().getCode(),
+								survey.getId(),
+								translations));
+					}
 				}
 
 				if (element instanceof ChoiceQuestion) {
@@ -248,6 +264,16 @@ public class TranslationsHelper {
 						}
 					}
 				}
+				
+				if (element instanceof RankingQuestion) {
+					RankingQuestion ranking = (RankingQuestion) element;
+					for (Element child : ranking.getChildElements()) {
+						translations.getTranslations()
+							.add(new Translation(child.getUniqueId(),
+								child.getTitle() != null ? child.getTitle() : "",
+								survey.getLanguage().getCode(), survey.getId(), translations));
+					}
+				}
 			} else {
 				logger.warn("element without unique id found: " + element.getId());
 			}
@@ -301,6 +327,11 @@ public class TranslationsHelper {
 
 			if (element instanceof NumberQuestion) {
 				result.add(new KeyValue(element.getUniqueId() + NumberQuestion.UNIT, "U"));
+
+				if (((NumberQuestion) element).isSlider()) {
+					result.add(new KeyValue(element.getUniqueId() + NumberQuestion.MINLABEL, "MIN"));
+					result.add(new KeyValue(element.getUniqueId() + NumberQuestion.MAXLABEL, "MAX"));
+				}
 			}
 
 			if (element instanceof ChoiceQuestion) {
@@ -353,6 +384,13 @@ public class TranslationsHelper {
 					if (child instanceof Text) {
 						result.add(new KeyValue(child.getUniqueId(), "L"));
 					}
+				}
+			}
+			
+			if (element instanceof RankingQuestion) {
+				RankingQuestion ranking = (RankingQuestion) element;
+				for (Element child : ranking.getChildElements()) {
+					result.add(new KeyValue(child.getUniqueId(), "L"));
 				}
 			}
 		}
@@ -418,8 +456,22 @@ public class TranslationsHelper {
 			}
 
 			if (element instanceof NumberQuestion) {
-				result.add(new KeyValue(element.getUniqueId() + NumberQuestion.UNIT,
-						resources.getMessage("label.Unit", null, "Unit", locale)));
+				result.add(new KeyValue(
+						element.getUniqueId() + NumberQuestion.UNIT,
+						resources.getMessage("label.Unit", null, "Unit", locale)
+				));
+
+				if (((NumberQuestion) element).isSlider()) {
+					result.add(new KeyValue(
+							element.getUniqueId() + NumberQuestion.MINLABEL,
+							resources.getMessage("label.MinLabel", null, "Min Label", locale)
+					));
+
+					result.add(new KeyValue(
+							element.getUniqueId()+ NumberQuestion.MAXLABEL,
+							resources.getMessage("label.MaxLabel", null, "Max Label", locale)
+					));
+				}
 			}
 
 			if (element instanceof ChoiceQuestion) {
@@ -482,6 +534,14 @@ public class TranslationsHelper {
 						result.add(new KeyValue(child.getUniqueId(),
 								resources.getMessage("label.Text", null, "Text", locale)));
 					}
+				}
+			}
+			
+			if (element instanceof RankingQuestion) {
+				RankingQuestion ranking = (RankingQuestion) element;
+				for (Element child : ranking.getChildElements()) {
+					result.add(new KeyValue(child.getUniqueId(),
+							resources.getMessage("label.Text", null, "Text", locale)));
 				}
 			}
 		}
@@ -574,6 +634,18 @@ public class TranslationsHelper {
 
 			unitNode.appendChild(doc.createCDATASection(label));
 			elementNode.appendChild(unitNode);
+
+			if (((NumberQuestion) element).isSlider()) {
+				org.w3c.dom.Element minLabelNode = doc.createElement("MinLabel");
+				label = getLabel(number, NumberQuestion.MINLABEL, translationByKey);
+				minLabelNode.appendChild(doc.createCDATASection(label));
+				elementNode.appendChild(minLabelNode);
+
+				org.w3c.dom.Element maxLabelNode = doc.createElement("MaxLabel");
+				label = getLabel(number, NumberQuestion.MAXLABEL, translationByKey);
+				maxLabelNode.appendChild(doc.createCDATASection(label));
+				elementNode.appendChild(maxLabelNode);
+			}
 		}
 
 		if (element instanceof Confirmation) {
@@ -641,6 +713,17 @@ public class TranslationsHelper {
 				if (!(child instanceof EmptyElement)) {
 					childrenElement.appendChild(getElementNode(child, doc, translationByKey));
 				}
+			}
+			elementNode.appendChild(childrenElement);
+		}
+		
+		if (element instanceof RankingQuestion) {
+
+			RankingQuestion ranking = (RankingQuestion) element;
+			org.w3c.dom.Element childrenElement = doc.createElement("Children");
+
+			for (Element child : ranking.getChildElements()) {
+				childrenElement.appendChild(getElementNode(child, doc, translationByKey));
 			}
 			elementNode.appendChild(childrenElement);
 		}
@@ -949,6 +1032,24 @@ public class TranslationsHelper {
 						addTextCell(row, 1, descriptions.get(number.getUniqueId() + NumberQuestion.UNIT));
 						addTextCell(row, 2, label);
 					}
+
+					if (number.isSlider()) {
+						label = getLabel(number, NumberQuestion.MINLABEL, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							row = sheet.createRow(rowIndex++);
+							addTextCell(row, 0, number.getUniqueId());
+							addTextCell(row, 1, descriptions.get(number.getUniqueId() + NumberQuestion.MINLABEL));
+							addTextCell(row, 2, label);
+						}
+
+						label = getLabel(number, NumberQuestion.MAXLABEL, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							row = sheet.createRow(rowIndex++);
+							addTextCell(row, 0, number.getUniqueId());
+							addTextCell(row, 1, descriptions.get(number.getUniqueId() + NumberQuestion.MAXLABEL));
+							addTextCell(row, 2, label);
+						}
+					}
 				}
 
 				if (element instanceof Confirmation) {
@@ -1050,6 +1151,19 @@ public class TranslationsHelper {
 								addTextCell(row, 1, descriptions.get(child.getUniqueId()));
 								addTextCell(row, 2, label);
 							}
+						}
+					}
+				}
+				
+				if (element instanceof RankingQuestion) {
+					RankingQuestion ranking = (RankingQuestion) element;
+					for (Element child : ranking.getChildElements()) {
+						label = getLabel(child, "", translationsByKey);
+						if (notNullOrEmpty(label)) {
+							row = sheet.createRow(rowIndex++);
+							addTextCell(row, 0, child.getUniqueId());
+							addTextCell(row, 1, descriptions.get(child.getUniqueId()));
+							addTextCell(row, 2, label);
 						}
 					}
 				}
@@ -1237,6 +1351,28 @@ public class TranslationsHelper {
 						cell = sheet.getCellByPosition(2, rowIndex++);
 						cell.setStringValue(label);
 					}
+
+					if (number.isSlider()) {
+						label = getLabel(number, NumberQuestion.MINLABEL, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							cell = sheet.getCellByPosition(0, rowIndex);
+							cell.setStringValue(number.getUniqueId());
+							cell = sheet.getCellByPosition(1, rowIndex);
+							cell.setStringValue(descriptions.get(number.getUniqueId() + NumberQuestion.MINLABEL));
+							cell = sheet.getCellByPosition(2, rowIndex++);
+							cell.setStringValue(label);
+						}
+
+						label = getLabel(number, NumberQuestion.MAXLABEL, translationsByKey);
+						if (notNullOrEmpty(label)) {
+							cell = sheet.getCellByPosition(0, rowIndex);
+							cell.setStringValue(number.getUniqueId());
+							cell = sheet.getCellByPosition(1, rowIndex);
+							cell.setStringValue(descriptions.get(number.getUniqueId() + NumberQuestion.MAXLABEL));
+							cell = sheet.getCellByPosition(2, rowIndex++);
+							cell.setStringValue(label);
+						}
+					}
 				}
 
 				if (element instanceof Confirmation) {
@@ -1359,6 +1495,21 @@ public class TranslationsHelper {
 						}
 					}
 				}
+				
+				if (element instanceof RankingQuestion) {
+					RankingQuestion ranking = (RankingQuestion) element;
+					for (Element child : ranking.getChildElements()) {
+						label = getLabel(child, "", translationsByKey);
+						if (notNullOrEmpty(label)) {
+							cell = sheet.getCellByPosition(0, rowIndex);
+							cell.setStringValue(child.getUniqueId());
+							cell = sheet.getCellByPosition(1, rowIndex);
+							cell.setStringValue(descriptions.get(child.getUniqueId()));
+							cell = sheet.getCellByPosition(2, rowIndex++);
+							cell.setStringValue(label);
+						}
+					}
+				}
 			}
 
 			java.io.File temp = fileService.createTempFile("translation" + UUID.randomUUID().toString(), ".ods");
@@ -1389,6 +1540,8 @@ public class TranslationsHelper {
 
 		typeSuffixByShortType.put("T", "TABTITLE");
 		typeSuffixByShortType.put("U", "UNIT");
+		typeSuffixByShortType.put("MIN", "MINLABEL");
+		typeSuffixByShortType.put("MAX", "MAXLABEL");
 		typeSuffixByShortType.put("H", "help");
 		typeSuffixByShortType.put("CT", "CONFIRMATIONTEXT");
 		typeSuffixByShortType.put("CL", "CONFIRMATIONLABEL");
@@ -1512,6 +1665,18 @@ public class TranslationsHelper {
 					String unit = getText(element.getElementsByTagName("Unit"), "Unit");
 					result.getTranslations()
 							.add(new Translation(key + NumberQuestion.UNIT, unit, lang, surveyId, result));
+
+					NodeList minLabelElements = element.getElementsByTagName("MinLabel");
+					if (minLabelElements.getLength() > 0) {
+						String minLabel = getText(minLabelElements, "MinLabel");
+						result.getTranslations().add(new Translation(key + NumberQuestion.MINLABEL, minLabel, lang, surveyId, result));
+					}
+
+					NodeList maxLabelElements = element.getElementsByTagName("MaxLabel");
+					if (maxLabelElements.getLength() > 0) {
+						String maxLabel = getText(maxLabelElements, "MaxLabel");
+						result.getTranslations().add(new Translation(key + NumberQuestion.MAXLABEL, maxLabel, lang, surveyId, result));
+					}
 				}
 
 				if (type.contains("Confirmation")) {
@@ -1577,6 +1742,21 @@ public class TranslationsHelper {
 					}
 				}
 
+				if (type.contains("RankingQuestion")) {
+					org.w3c.dom.Element children = (org.w3c.dom.Element) element.getElementsByTagName("Children")
+							.item(0);
+
+					for (int j = 0; j < children.getElementsByTagName("Element").getLength(); j++) {
+						org.w3c.dom.Element child = (org.w3c.dom.Element) children.getElementsByTagName("Element")
+								.item(j);
+						key = Tools.repairXML(child.getAttribute("key"));
+						label = getText(child.getElementsByTagName(Constants.LABEL), Constants.LABEL);
+
+						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
+					}
+				}
+
+				
 				org.w3c.dom.NodeList feedbackChildren = element.getElementsByTagName("Feedback");
 
 				for (int j = 0; j < feedbackChildren.getLength(); j++) {
@@ -1955,6 +2135,24 @@ public class TranslationsHelper {
 				if (translationsByKey.containsKey(element.getUniqueId() + NumberQuestion.UNIT) && notNullOrEmpty(
 						translationsByKey.get(element.getUniqueId() + NumberQuestion.UNIT).getLabel()))
 					number.setUnit(translationsByKey.get(element.getUniqueId() + NumberQuestion.UNIT).getLabel());
+
+				if (number.isSlider()) {
+					if (translationsByKey.containsKey(element.getId().toString() + NumberQuestion.MINLABEL) && notNullOrEmpty(translationsByKey.get(element.getId().toString() + NumberQuestion.MINLABEL).getLabel())) {
+						number.setMinLabel(translationsByKey.get(element.getId().toString() + NumberQuestion.MINLABEL).getLabel());
+					}
+
+					if (translationsByKey.containsKey(element.getUniqueId() + NumberQuestion.MINLABEL) && notNullOrEmpty(translationsByKey.get(element.getUniqueId() + NumberQuestion.MINLABEL).getLabel())) {
+						number.setMinLabel(translationsByKey.get(element.getUniqueId() + NumberQuestion.MINLABEL).getLabel());
+					}
+
+					if (translationsByKey.containsKey(element.getId().toString() + NumberQuestion.MAXLABEL) && notNullOrEmpty(translationsByKey.get(element.getId().toString() + NumberQuestion.MAXLABEL).getLabel())) {
+						number.setMaxLabel(translationsByKey.get(element.getId().toString() + NumberQuestion.MAXLABEL).getLabel());
+					}
+
+					if (translationsByKey.containsKey(element.getUniqueId() + NumberQuestion.MAXLABEL) && notNullOrEmpty(translationsByKey.get(element.getUniqueId() + NumberQuestion.MAXLABEL).getLabel())) {
+						number.setMaxLabel(translationsByKey.get(element.getUniqueId() + NumberQuestion.MAXLABEL).getLabel());
+					}
+				}
 			}
 
 			if (element instanceof Confirmation) {
@@ -2055,6 +2253,18 @@ public class TranslationsHelper {
 					}
 				}
 			}
+			
+			if (element instanceof RankingQuestion) {
+				RankingQuestion ranking = (RankingQuestion) element;
+				for (Element child : ranking.getChildElements()) {
+					if (translationsByKey.containsKey(child.getId().toString())
+							&& notNullOrEmpty(translationsByKey.get(child.getId().toString()).getLabel()))
+						child.setTitle(translationsByKey.get(child.getId().toString()).getLabel());
+					if (translationsByKey.containsKey(child.getUniqueId())
+							&& notNullOrEmpty(translationsByKey.get(child.getUniqueId()).getLabel()))
+						child.setTitle(translationsByKey.get(child.getUniqueId()).getLabel());
+				}
+			}
 		}
 	}
 
@@ -2133,6 +2343,16 @@ public class TranslationsHelper {
 
 						for (Element child : rating.getChildElements()) {
 							if (child instanceof Text && getLabel(child, "", translationMap).length() == 0) {
+								return false;
+							}
+						}
+					}
+					
+					if (element instanceof RankingQuestion) {
+						RankingQuestion ranking = (RankingQuestion) element;
+
+						for (Element child : ranking.getChildElements()) {
+							if (getLabel(child, "", translationMap).length() == 0) {
 								return false;
 							}
 						}

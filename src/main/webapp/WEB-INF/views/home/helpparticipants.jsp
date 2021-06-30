@@ -377,8 +377,7 @@
 				    public/shared computer)’. Subsequently, no data will be stored on your
 				    computer.
 				</p>
-			
-			</div>
+			</div> <!-- faqcontent -->
 		</div>
 	</div>
 	

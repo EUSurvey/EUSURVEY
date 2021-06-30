@@ -4,12 +4,14 @@ import com.ec.survey.exception.MessageException;
 import com.ec.survey.exception.SmtpServerNotConfiguredException;
 import com.ec.survey.exception.TooManyFiltersException;
 import com.ec.survey.model.*;
+import com.ec.survey.model.ResultFilter.ResultFilterSortKey;
 import com.ec.survey.model.administration.Role;
 import com.ec.survey.model.administration.User;
 import com.ec.survey.model.attendees.Attendee;
 import com.ec.survey.model.attendees.Attribute;
 import com.ec.survey.model.attendees.AttributeName;
 import com.ec.survey.model.attendees.Invitation;
+import com.ec.survey.model.delphi.DelphiMedian;
 import com.ec.survey.model.survey.*;
 import com.ec.survey.model.survey.base.File;
 import com.ec.survey.service.ReportingService.ToDo;
@@ -17,8 +19,10 @@ import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import com.ec.survey.tools.FileUtils;
 import com.ec.survey.tools.InvalidEmailException;
+import com.ec.survey.tools.MathUtils;
 import com.ec.survey.tools.NotAgreedToPsException;
 import com.ec.survey.tools.NotAgreedToTosException;
+import com.ec.survey.tools.SurveyHelper;
 import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 import com.ec.survey.tools.export.StatisticsCreator;
@@ -55,7 +59,7 @@ public class AnswerService extends BasicService {
 
 	@Resource(name = "validCodesService")
 	private ValidCodesService validCodesService;
-
+	
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void internalSaveAnswerSet(AnswerSet answerSet, String fileDir, String draftid,
 			boolean invalidateExportsAndStatistics, boolean createAttendees) throws Exception {
@@ -172,8 +176,20 @@ public class AnswerService extends BasicService {
 
 			answerSet.setUpdateDate(new Date());
 			boolean newAnswer = answerSet.getId() == null;
+			
+			if (answerSet.getSurvey().getIsECF()) {
+				this.ecfService.setAnswerSetECFComponents(answerSet.getSurvey(), answerSet);
+			}
+			
 			session.saveOrUpdate(answerSet);
 			session.flush();
+			
+			if (answerSet.getSurvey().getIsDelphi()) {
+				answerExplanationService.deleteCommentsForDeletedAnswers(answerSet);
+				answerExplanationService.createComments(answerSet);
+				answerExplanationService.createUpdateOrDeleteExplanations(answerSet);
+			}			
+			
 			if (!answerSet.getSurvey().getIsDraft()) {
 				if (newAnswer) {
 					reportingService.addToDo(ToDo.NEWCONTRIBUTION, answerSet.getSurvey().getUniqueId(),
@@ -213,15 +229,13 @@ public class AnswerService extends BasicService {
 				} catch (Exception e) {
 					logger.error(e.getLocalizedMessage(), e);
 				}
-				// delete temporary files folder
-				try {
-					java.io.File folder = fileService.getSurveyUploadsFolder(answerSet.getSurvey().getUniqueId(),
-							false);
-					java.io.File directory = new java.io.File(
-							folder.getPath() + Constants.PATH_DELIMITER + answerSet.getUniqueCode());
-					FileUtils.delete(directory);
-				} catch (Exception e) {
-					logger.error(e.getLocalizedMessage(), e);
+
+				// Do not delete uploaded answer files when submitting a Delphi questionnaire as these would be lost if
+				// they had not been saved yet. Let the DeleteTemporaryFolderUpdater worker clean up the mess.
+				if (!answerSet.getSurvey().getIsDelphi()) {
+					final String surveyUid = answerSet.getSurvey().getUniqueId();
+					final String answerSetUniqueCode = answerSet.getUniqueCode();
+					fileService.deleteUploadedAnswerFiles(surveyUid, answerSetUniqueCode);
 				}
 			}
 
@@ -389,7 +403,16 @@ public class AnswerService extends BasicService {
 
 		return result;
 	}
+	
+	@Transactional(readOnly = true)
+	public List<AnswerSet> getAnswersFromReporting(Survey survey, SqlPagination sqlPagination) throws Exception {
+		return this.getAnswers(survey, null, sqlPagination, false, false, true);
+	}
 
+	/**
+	 * Returns all the AnswerSets for a specific survey, given a specific Pagination
+	 * ResultFilter can be null to avoid filtering
+	 */
 	@Transactional(readOnly = true)
 	public List<AnswerSet> getAnswers(Survey survey, ResultFilter filter, SqlPagination sqlPagination,
 			boolean loadDraftIds, boolean initFiles, boolean usereportingdatabase) throws Exception {
@@ -563,6 +586,11 @@ public class AnswerService extends BasicService {
 				where.append(" AND ans.UNIQUECODE = :uniqueCode");
 				values.put(Constants.UNIQUECODE, filter.getCaseId().trim());
 			}
+			
+			if (filter.getAnsweredECFProfileUID() != null && filter.getAnsweredECFProfileUID().length() > 0) {
+				where.append(" AND ans.ECF_PROFILE_UID = :profileUid");
+				values.put("profileUid", filter.getAnsweredECFProfileUID());
+			}
 
 			if (filter.getDraftId() != null && filter.getDraftId().length() > 0) {
 				where.append(" AND d.DRAFT_UID = :draftId");
@@ -634,6 +662,8 @@ public class AnswerService extends BasicService {
 
 			Map<String, String> filterValues = filter.getFilterValues();
 			if (filterValues != null && filterValues.size() > 0) {
+				Set<String> rankingQuestionUids = surveyId > -1 ? surveyService.getRankingQuestionUids(surveyId) : new HashSet<>();				
+				
 				int i = 0;
 				for (Entry<String, String> item : filterValues.entrySet()) {
 					String questionIdAndUid = item.getKey();
@@ -695,7 +725,12 @@ public class AnswerService extends BasicService {
 											answerPart = "a" + joincounter + ".VALUE LIKE :answer" + i;
 											values.put(Constants.ANSWER + i, "%" + answer + "%");
 										} else {
-											values.put(Constants.ANSWER + i, "%" + answer + "%");
+											// the filter on ranking questions is basically the first element in the sorted list
+											if (rankingQuestionUids.contains(questionUid)) {
+												values.put(Constants.ANSWER + i, answer + "%");
+											} else {											
+												values.put(Constants.ANSWER + i, "%" + answer + "%");
+											}
 										}
 									}
 
@@ -746,11 +781,24 @@ public class AnswerService extends BasicService {
 					}
 				}
 			}
-
-			if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("score")) {
+			
+			switch (ResultFilterSortKey.parse(filter.getSortKey())) {
+			case NAME:
+				where.append(" ORDER BY CASE WHEN ans.RESPONDER_EMAIL IS NULL THEN ans.UNIQUECODE ELSE ans.RESPONDER_EMAIL END ").append(filter.getSortOrder());
+				break;
+			case SCORE:
 				where.append(" ORDER BY ans.SCORE ").append(filter.getSortOrder());
-			} else if (filter.getSortKey() != null && filter.getSortKey().equalsIgnoreCase("date")) {
+				break;
+			case DATE:
 				where.append(" ORDER BY ans.ANSWER_SET_DATE ").append(filter.getSortOrder());
+				break;
+			case ECFSCORE:
+				where.append(" ORDER BY ans.ECF_TOTAL_SCORE " ).append(filter.getSortOrder());
+				break;
+			case ECFGAP:
+				where.append(" ORDER BY ABS(ans.ECF_TOTAL_GAP) ").append(filter.getSortOrder());
+				break;
+			default :
 			}
 		}
 
@@ -824,6 +872,11 @@ public class AnswerService extends BasicService {
 
 		@SuppressWarnings("unchecked")
 		List<AnswerSet> answerSets = query.list();
+
+		Survey survey = surveyService.getSurvey(surveyid, false, true);
+		if (survey != null && survey.getIsDelphi()) {
+			answerSets.forEach(set -> answerExplanationService.deleteExplanationByAnswerSet(set));
+		}
 
 		for (AnswerSet answerSet : answerSets) {
 			try {
@@ -1162,6 +1215,27 @@ public class AnswerService extends BasicService {
 
 		return ConversionTools.getValue(query.uniqueResult());
 	}
+	
+	@Transactional(readOnly = true)
+	public AnswerSet getUserContributionToSurvey(Survey survey, User user) {
+		Session session = sessionFactory.getCurrentSession();
+
+		String queryString = "SELECT ans.ANSWER_SET_ID from ANSWERS_SET ans inner join SURVEYS s on ans.SURVEY_ID = s.SURVEY_ID WHERE s.SURVEY_UID = :uid AND s.ISDRAFT = 0 AND ans.ISDRAFT = 0 AND (ans.RESPONDER_EMAIL = :mail1 OR ans.RESPONDER_EMAIL = :mail2)";
+		SQLQuery query = session.createSQLQuery(queryString);
+		query.setString("uid", survey.getUniqueId()).setString("mail1", user.getEmail()).setString("mail2",
+				Tools.md5hash(user.getEmail()));
+
+		@SuppressWarnings("rawtypes")
+		List res = query.setMaxResults(1).list();
+		
+		for (Object o : res) {
+			Integer i = ConversionTools.getValue(o);
+			AnswerSet answerSet = (AnswerSet) session.get(AnswerSet.class, i);
+			return answerSet;
+		}
+
+		return null;
+	}
 
 	@Transactional(readOnly = true)
 	public int getNumberOfAnswerSets(Survey survey, ResultFilter filter) throws Exception {
@@ -1219,6 +1293,10 @@ public class AnswerService extends BasicService {
 			boolean publishedSurvey = !answerSet.getSurvey().getIsDraft();
 			reportingService.removeFromOLAPTable(answerSet.getSurvey().getUniqueId(), answerSet.getUniqueCode(),
 					publishedSurvey);
+		}
+
+		if (answerSet.getSurvey().getIsDelphi()) {
+			answerExplanationService.deleteExplanationByAnswerSet(answerSet);
 		}
 
 		Session session = sessionFactory.getCurrentSession();
@@ -2092,6 +2170,10 @@ public class AnswerService extends BasicService {
 		Hibernate.initialize(filter.getFilterValues());
 		Hibernate.initialize(filter.getExportedQuestions());
 		Hibernate.initialize(filter.getVisibleQuestions());
+		Hibernate.initialize(filter.getExportedExplanations());
+		Hibernate.initialize(filter.getVisibleExplanations());
+		Hibernate.initialize(filter.getExportedDiscussions());
+		Hibernate.initialize(filter.getVisibleDiscussions());
 		Hibernate.initialize(filter.getLanguages());
 		return filter;
 	}
@@ -2152,6 +2234,7 @@ public class AnswerService extends BasicService {
 			
 			Query queryAnswerSets = session.createSQLQuery(sqlAnswerSets);
 			sqlQueryService.setParameters(queryAnswerSets, parameters);
+			@SuppressWarnings("rawtypes")
 			List answersetIds = queryAnswerSets.list();		
 			
 			sql += " AND ans.ANSWER_SET_ID IN (" +StringUtils.collectionToCommaDelimitedString(answersetIds) + ")";
@@ -2195,6 +2278,376 @@ public class AnswerService extends BasicService {
 		deleteContributionPDFs(survey);		
 		
 		activityService.log(315, null, questionUID, userId, survey.getUniqueId());
-	}	
+	}
 	
+	public AnswerSet automaticParseAnswerSet(HttpServletRequest request, Survey survey, String uniqueCode,
+											 boolean update, String lang, User user) throws IOException
+	{
+		AnswerSet answerSet = null;
+		
+		if (survey.getIsDelphi() && surveyService.answerSetExists(uniqueCode, false, true))
+		{
+			AnswerSet existingAnswerSet = answerService.get(uniqueCode);
+			answerSet = SurveyHelper.parseAndMergeAnswerSet(request, survey, uniqueCode, existingAnswerSet, lang, user, fileService);
+		}
+
+		if (answerSet == null)
+		{
+			answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
+		}	
+	
+		return answerSet;
+	}
+
+	@Transactional
+	public DelphiMedian getMedian(Survey survey, SingleChoiceQuestion singleChoiceQuestion, Answer answer, ResultFilter filter) throws Exception {
+		int maxDistance = singleChoiceQuestion.getMaxDistance();
+		
+		Session session = sessionFactory.getCurrentSession();		
+		
+		String sql = "SELECT a.PA_UID, count(*) FROM ANSWERS a " + 
+				"JOIN ANSWERS_SET an on a.AS_ID = an.ANSWER_SET_ID " + 
+				"JOIN SURVEYS s ON an.SURVEY_ID = s.SURVEY_ID " + 
+				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :isDraft AND QUESTION_UID = :questionUid ";
+		
+		HashMap<String, Object> parameters = new HashMap<>();
+				
+		if (filter != null) {
+			String answersetsql = getSql(null, survey.getId(), filter, parameters, true);
+			sql += "AND an.ANSWER_SET_ID IN (" + answersetsql + ") ";
+		}		
+		
+		sql += "GROUP BY a.PA_UID";
+		
+		SQLQuery query = session.createSQLQuery(sql);
+		sqlQueryService.setParameters(query, parameters);
+		
+		query.setString("surveyUid", survey.getUniqueId());
+		query.setBoolean("isDraft", survey.getIsDraft());
+		query.setString("questionUid", singleChoiceQuestion.getUniqueId());
+		
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
+
+		Map<String, Integer> countsForPossibleAnswerUid = new HashMap<>();
+		for (Object o : res) {
+			Object[] a = (Object[]) o;			
+			countsForPossibleAnswerUid.put((String) a[0], ConversionTools.getValue(a[1]));
+		}
+		
+		List<Integer> values = new ArrayList<>();
+		int index = 0;
+		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {
+			if (countsForPossibleAnswerUid.containsKey(pa.getUniqueId())) {
+				int count = countsForPossibleAnswerUid.get(pa.getUniqueId());
+				for (int i = 0; i < count; i++) {
+					values.add(index);
+				}
+			}
+			index++;
+		}
+		
+		DelphiMedian median = new DelphiMedian();
+		
+		int length = values.size();
+		if (length == 0) return null;
+		
+		Integer[] medianIndices = MathUtils.computeMedianIndices(values.toArray(new Integer[0]));
+		
+		index = 0;
+		for (PossibleAnswer pa : singleChoiceQuestion.getPossibleAnswers()) {			
+			if (medianIndices[0] == index || medianIndices[1] == index) {
+				median.getMedianUids().add(pa.getUniqueId());
+			}
+			
+			if (answer != null && pa.getUniqueId().equals(answer.getPossibleAnswerUniqueId()))
+			{
+				int distance = medianIndices[0] > index ? (medianIndices[0] - index) : (index - medianIndices[0]);
+				
+				if (medianIndices[0] != medianIndices[1]) {
+					int distanceUpper = medianIndices[1] > index ? (medianIndices[1] - index) : (index - medianIndices[1]);
+					if (distanceUpper < distance) {
+						distance = distanceUpper;
+					}
+				}				
+				
+				if (distance > maxDistance) {
+					median.setMaxDistanceExceeded(true);
+				}
+			}
+			
+			index++;
+		}
+		
+		return median;
+	}
+	
+	@Transactional
+	public DelphiMedian getMedian(Survey survey, NumberQuestion numberQuestion, Answer answer, ResultFilter filter) throws Exception {
+		double maxDistance = numberQuestion.getMaxDistance();		
+		
+		Session session = sessionFactory.getCurrentSession();
+		
+		String sql = "SELECT a.VALUE, count(*) FROM ANSWERS a " + 
+				"JOIN ANSWERS_SET an on a.AS_ID = an.ANSWER_SET_ID " + 
+				"JOIN SURVEYS s ON an.SURVEY_ID = s.SURVEY_ID " + 
+				"WHERE s.SURVEY_UID = :surveyUid AND s.ISDRAFT = :isDraft AND QUESTION_UID = :questionUid ";
+		
+		HashMap<String, Object> parameters = new HashMap<>();
+				
+		if (filter != null) {
+			String answersetsql = getSql(null, survey.getId(), filter, parameters, true);
+			sql += "AND an.ANSWER_SET_ID IN (" + answersetsql + ") ";
+		}	
+		
+		sql += "GROUP BY a.VALUE";
+		
+		SQLQuery query = session.createSQLQuery(sql);
+		sqlQueryService.setParameters(query, parameters);
+		
+		query.setString("surveyUid", survey.getUniqueId());
+		query.setBoolean("isDraft", survey.getIsDraft());
+		query.setString("questionUid", numberQuestion.getUniqueId());
+		
+		@SuppressWarnings("rawtypes")
+		List res = query.list();
+
+		List<Double> values = new ArrayList<>();
+		for (Object o : res) {
+			Object[] a = (Object[]) o;			
+			double value = Double.parseDouble((String)a[0]);
+			int count = ConversionTools.getValue(a[1]);
+			for (int i = 0; i < count; i++) {
+				values.add(value);
+			}
+		}
+				
+		DelphiMedian median = new DelphiMedian();
+		
+		int length = values.size();
+		if (length == 0) return null;		
+			
+		Double medianNumber = MathUtils.computeMedian(values.toArray(new Double[0]));
+		median.setMedian(medianNumber);
+		
+		if (answer != null) {
+			double answerValue = Double.parseDouble(answer.getValue());
+			double distance = Math.abs(medianNumber - answerValue);
+			
+			if (distance > maxDistance) {
+				median.setMaxDistanceExceeded(true);
+			}		
+		}
+				
+		return median;
+	}
+	
+	private void initializeHelperMaps(Survey survey, Map<String, List<String>> questionsBySection, Map<String, Integer> answersByQuestion, Map<String, List<String>> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection) {
+		String lastSection = "";
+		String lastL1section = "";
+		questionsBySection.put(lastSection, new ArrayList<String>());
+		
+		for (Element element : survey.getElements()) {
+			if (element instanceof Section) {
+				lastSection = element.getUniqueId();
+				
+				Section section = (Section)element;
+				if (section.getLevel() == 1) {
+					lastL1section = element.getUniqueId();
+				}
+				
+				questionsBySection.put(lastSection, new ArrayList<String>());
+				questionUidsPerAnswerAndSection.put(lastSection, new HashMap<String, List<String>>());
+			} else if (element.isDelphiElement()) {
+				
+				if (element instanceof MatrixOrTable) {
+					MatrixOrTable matrix = (MatrixOrTable)element;
+					for (Element matrixQuestion : matrix.getQuestions()) {
+						parentByQuestion.put(matrixQuestion.getUniqueId(), element.getUniqueId());
+					}
+				} else if (element instanceof RatingQuestion) {
+					RatingQuestion rating = (RatingQuestion)element;
+					for (Element ratingQuestion : rating.getQuestions()) {
+						parentByQuestion.put(ratingQuestion.getUniqueId(), element.getUniqueId());
+					}
+				}
+				
+				questionsBySection.get(lastSection).add(element.getUniqueId());
+				
+				sectionsByQuestion.put(element.getUniqueId(), new ArrayList<>());
+				sectionsByQuestion.get(element.getUniqueId()).add(lastSection);
+				
+				if (!lastSection.equals(lastL1section)) {
+					questionsBySection.get(lastL1section).add(element.getUniqueId());
+					sectionsByQuestion.get(element.getUniqueId()).add(lastL1section);
+				}				
+								
+				answersByQuestion.put(element.getUniqueId(), 0);
+			}
+		}
+	}
+	
+	private Map<String, String> createCompletionRatesResult(Survey survey, Map<String, List<String>> questionsBySection, Map<String, Integer> answersByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection, int totalNumberOfContributions, int completedContributions) {
+		Map<String, String> result = new HashMap<>();
+		for (Element element : survey.getElements()) {
+			if (element instanceof Section) {
+				String section = element.getUniqueId();
+				int counter = 0;
+				int numberOfQuestionsInSection = questionsBySection.get(section).size();
+				Map<String, List<String>> questionUidsPerAnswer = questionUidsPerAnswerAndSection.get(section);
+				
+				for (String answerSetUniqueCode : questionUidsPerAnswer.keySet())
+				{
+					if (questionUidsPerAnswer.get(answerSetUniqueCode).size() == numberOfQuestionsInSection) {
+						counter++;
+					}
+				}			
+		
+				result.put(element.getUniqueId(), getPercentage(counter / (double)totalNumberOfContributions));
+				
+			} else if (element.isDelphiElement()) {
+				result.put(element.getUniqueId(), getPercentage(answersByQuestion.get(element.getUniqueId()) / (double)totalNumberOfContributions));
+			}
+		}		
+				
+		result.put("0", getPercentage(completedContributions / (double)totalNumberOfContributions));
+		
+		return result;
+	}
+	
+	private int parseAnswerSetsForCompletionRates(List<AnswerSet> answers, Map<String, Integer> answersByQuestion, Map<String, List<String>> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection)
+	{
+		int completedContributions = 0;
+		for (AnswerSet answerSet : answers) {
+			List<String> listOfAnswer = new ArrayList<String>();
+			String uniqueCode = answerSet.getUniqueCode();
+			
+			for (Answer answer : answerSet.getAnswers())
+			{
+				String questionUid = answer.getQuestionUniqueId();
+				internalParseForCompletionRates(uniqueCode, questionUid, listOfAnswer, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
+			}
+			
+			if (listOfAnswer.size() == answersByQuestion.size()) {
+				completedContributions++;
+			}
+		}	
+		
+		return completedContributions;
+	}
+	
+	private int parseAnswerRowsForCompletionRates(List<List<String>> answerRows, Map<String, Integer> answersByQuestion, Map<String, List<String>> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection, Map<Integer, String> questionUidsByIndex)
+	{
+		int completedContributions = 0;
+		for (List<String> answerRow : answerRows) {
+			List<String> listOfAnswer = new ArrayList<>();
+			
+			String uniqueCode = answerRow.get(0);
+			
+			for (int i = 0; i < questionUidsByIndex.size(); i++)
+			{
+				//the first two items in the array are the contribution code and contribution id
+				String value = answerRow.get(2 + i);
+				if (value != null && value.length() > 0)
+				{
+					String questionUid = questionUidsByIndex.get(i);
+					internalParseForCompletionRates(uniqueCode, questionUid, listOfAnswer, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
+				}
+			}
+			
+			if (listOfAnswer.size() == answersByQuestion.size()) {
+				completedContributions++;
+			}
+		}	
+		
+		return completedContributions;
+	}
+	
+	private void internalParseForCompletionRates(String uniqueCode, String questionUid, List<String> listOfAnswer, Map<String, Integer> answersByQuestion, Map<String, List<String>> sectionsByQuestion, Map<String, String> parentByQuestion, Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection)
+	{
+		if (parentByQuestion.containsKey(questionUid)) {
+			questionUid = parentByQuestion.get(questionUid);
+		}
+		
+		if (answersByQuestion.containsKey(questionUid) && !listOfAnswer.contains(questionUid))
+		{
+			listOfAnswer.add(questionUid);
+			
+			answersByQuestion.put(questionUid, answersByQuestion.get(questionUid) + 1);
+		}
+		
+		if (sectionsByQuestion.containsKey(questionUid)) {
+			
+			List<String> sections = sectionsByQuestion.get(questionUid);
+			
+			for (String section : sections) {			
+				if (!questionUidsPerAnswerAndSection.containsKey(section)) {
+					questionUidsPerAnswerAndSection.put(section, new HashMap<String, List<String>>());
+				}
+				
+				Map<String, List<String>> questionUidsPerAnswer = questionUidsPerAnswerAndSection.get(section);
+				
+				if (!questionUidsPerAnswer.containsKey(uniqueCode))
+				{
+					questionUidsPerAnswer.put(uniqueCode, new ArrayList<String>());
+				}
+				
+				if (!questionUidsPerAnswer.get(uniqueCode).contains(questionUid))
+				{
+					questionUidsPerAnswer.get(uniqueCode).add(questionUid);
+				}
+			}
+		}
+	}
+
+	@Transactional
+	public Map<String, String> getCompletionRates(Survey survey, ResultFilter filter) throws Exception {
+		int totalNumberOfContributions = 0;
+		int completedContributions = 0;
+		Map<String, List<String>> questionsBySection = new HashMap<>();		
+		Map<String, Integer> answersByQuestion = new HashMap<>();
+		Map<String, List<String>> sectionsByQuestion = new HashMap<>();
+		Map<String, String> parentByQuestion = new HashMap<>();		
+		Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection = new HashMap<>();
+		initializeHelperMaps(survey, questionsBySection, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
+				
+		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, false, false, false, false);
+		if (answerRows != null) {
+			totalNumberOfContributions = answerRows.size();
+			Map<Integer, String> questionUidsByIndex = new HashMap<>();
+			List<Question> questions = survey.getQuestions();
+			
+			for (Question question : questions) {
+				if (question.isUsedInResults() && filter.getVisibleQuestions().contains(question.getId().toString())) {
+					
+					if (question instanceof MatrixOrTable) {
+						MatrixOrTable parent = (MatrixOrTable)question;						
+						for (Element child: parent.getQuestions()) {
+							questionUidsByIndex.put(questionUidsByIndex.size(), child.getUniqueId());
+						}
+					} else if (question instanceof RatingQuestion) {
+						RatingQuestion parent = (RatingQuestion)question;
+						for (Element child: parent.getQuestions()) {
+							questionUidsByIndex.put(questionUidsByIndex.size(), child.getUniqueId());
+						}						
+					} else {
+						questionUidsByIndex.put(questionUidsByIndex.size(), question.getUniqueId());
+					}
+				}
+			}
+			
+			completedContributions = parseAnswerRowsForCompletionRates(answerRows, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection, questionUidsByIndex);
+		} else {
+			List<AnswerSet> answers = getAllAnswers(survey.getId(), filter);
+			totalNumberOfContributions = answers.size();							
+			completedContributions = parseAnswerSetsForCompletionRates(answers, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
+		}		
+		
+		return createCompletionRatesResult(survey, questionsBySection, answersByQuestion, questionUidsPerAnswerAndSection, totalNumberOfContributions, completedContributions);
+	}
+	
+	private String getPercentage(double value) {
+	    int number = (int) Math.round(value * 100);
+	    return number + " %";
+	}
 }

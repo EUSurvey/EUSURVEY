@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 
 import com.ec.survey.model.AnswerSet;
 import com.ec.survey.model.Draft;
+import com.ec.survey.model.survey.Survey;
 import com.ec.survey.service.AnswerService;
 import com.ec.survey.service.AttendeeService;
 import com.ec.survey.service.MailService;
 import com.ec.survey.service.PDFService;
 import com.ec.survey.service.ParticipationService;
+import com.ec.survey.service.SurveyService;
 
 @Service("answerExecutor")
 @Scope("prototype")
@@ -37,6 +39,9 @@ public class AnswerExecutor implements Runnable {
 	
 	@Resource(name="participationService")
 	private ParticipationService participationService;
+	
+	@Resource(name="surveyService")
+	private SurveyService surveyService;
 	
 	public @Autowired ServletContext servletContext;
 	
@@ -80,7 +85,8 @@ public class AnswerExecutor implements Runnable {
 	    				
 			if (file != null && this.email != null && this.email.length() > 0)
 			{
-				String body = "Dear EUSurvey user,<br /><br />A PDF copy of your " + contributionordraft + " to survey '<b>" + answerSet.getSurvey().cleanTitle() + "</b>' has been created and is attached to this email.";
+				Survey survey = surveyService.getSurveyInOriginalLanguage(answerSet.getSurvey().getId(), answerSet.getSurvey().getShortname(), answerSet.getSurvey().getUniqueId());
+				String body = "Dear EUSurvey user,<br /><br />A PDF copy of your " + contributionordraft + " to survey '<b>" + survey.cleanTitle() + "</b>' has been created and is attached to this email.";
 			
 				if (answerSet.getIsDraft())
 				{

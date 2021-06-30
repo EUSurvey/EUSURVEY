@@ -76,8 +76,12 @@ public class EcasHelper {
       return result.toString();
    }
 
-	public static void readData(User user, LdapService ldapService) throws NamingException {		
-		user.setDisplayName(ldapService.getMoniker(user.getLogin()));
-		user.setDepartments(ldapService.getUserLDAPGroups(user.getLogin()));		
+	public static void readData(User user, LdapService ldapService) throws NamingException {
+		try {
+			user.setDisplayName(ldapService.getMoniker(user.getLogin()));
+			user.setDepartments(ldapService.getUserLDAPGroups(user.getLogin()));	
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
 	}
 }

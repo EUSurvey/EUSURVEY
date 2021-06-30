@@ -55,7 +55,7 @@
 					<c:if test="${downloadContribution}">
 						<br /><br />
 						<h2><spring:message code="question.needcopydraft" /></h2>
-						<a onclick="showExportDialogAndFocusEmail()" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></a> 
+						<a onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.GetPDF" /></a> 
 					</c:if>
 				</div>
 			</div>
@@ -88,8 +88,8 @@
 		       	</span>
 			</div>
 			<div class="modal-footer">
-				<a class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
-				<a class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
+				<a href="javascript:;" class="btn btn-primary" onclick="startExport()"><spring:message code="label.OK" /></a>	
+				<a href="javascript:;" class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>		
 			</div>
 			</div>
 			</div>

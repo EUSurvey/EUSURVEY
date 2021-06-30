@@ -78,10 +78,9 @@ $(function() {
 
 function initModals(item)
 {
+	if ($(item).hasClass("non-resizable")) return;
+
 	$(item).on("resize", function(event, ui) {
-    	//this is raised for all children too but we only want to handle the parents
-    	//if (ui.originalElement.hasClass("modal"))
-    	//{
 		modalResize(ui);
 		if (!$(this).hasClass("resized"))
 		{
@@ -93,8 +92,7 @@ function initModals(item)
 			$(this).resizable( "option", "minHeight", h );
 			$(this).resizable( "option", "minWidth", w );
 
-		};		
-    	//}
+		};
 	});
 	
 	
@@ -110,7 +108,7 @@ function initModals(item)
 	    minWidth: w
 	});
 }
-             
+
     if (!String.prototype.trim) {
     	String.prototype.trim=function(){return this.replace(/^\s+|\s+$/g, '');};
 	}
@@ -712,28 +710,30 @@ function initModals(item)
 	}
 	
 	function checkNoBreaks()
-	{					
-		$(".nobreak").each(function(){
-			if ($(this).attr("data-text")) {
-				$(this).text($(this).attr("data-text"));
-				//$(this).removeAttr("data-text");
-			}
-		});
+	{	
+		if(!$("#results-table").hasClass("hidden")) {				
+			$(".nobreak").each(function(){
+				if ($(this).attr("data-text")) {
+					$(this).text($(this).attr("data-text"));
+					//$(this).removeAttr("data-text");
+				}
+			});
+					
+			$(".nobreak").each(function(){
+				var text = $(this).text();
 				
-		$(".nobreak").each(function(){
-			var text = $(this).text();
-			
-			if ($(this).parent().height() > 30)
-			{
-				$(this).attr("data-text",text);
-			}
-			
-			while ($(this).parent().height() > 30  || ($(this).closest("div").width() - $(this).width() < 70))
-			{
-				text = text.substring(0, text.length - 2);
-				$(this).text(text + "...");	
-			}
-		});
+				if ($(this).parent().height() > 30)
+				{
+					$(this).attr("data-text",text);
+				}
+				
+				while ($(this).parent().height() > 30  || ($(this).closest("div").width() - $(this).width() < 70))
+				{
+					text = text.substring(0, text.length - 2);
+					$(this).text(text + "...");	
+				}
+			});
+		}
 	}
 	
 	function clearFilterCellContent(link)
@@ -833,8 +833,20 @@ function initModals(item)
 	
 	var validationinfo = "";
 	
-	function validateInputAndSubmitRunner(form)
-	{		
+	function validateInputAndSubmitRunner(form) {
+
+		if (isdelphi && isOneAnswerEmptyWhileItsExplanationIsNot($(form).find(".survey-element.delphi"))) {
+			currentDelphiUpdateType = DELPHI_UPDATE_TYPE.ENTIRE_FORM;
+			currentDelphiUpdateContainer = form;
+			$('.confirm-explanation-deletion-modal').modal('show');
+			return;
+		}
+
+		validateInputAndSubmitRunnerContinued(form);
+	}
+
+	function validateInputAndSubmitRunnerContinued(form) {
+
 		$("#btnSubmit").hide();
 		$("#busydialog").modal('show');
 		$("#exceptionlogdiv").remove();
@@ -886,8 +898,13 @@ function initModals(item)
 				 });
 				
 				if (!sessiontimeout && !networkproblems) {
+					if (isdelphi) {
+						// Empty value of unanswered input elements.
+						$(form).find("input[data-is-answered='false']").val('');
+					}
+
 					$(form).submit();
-					return;				
+					return;
 				}
 			}
 		
@@ -947,12 +964,9 @@ function initModals(item)
 		resetValidationErrors(parent);		
 		
 		$(parent).find(".required").each(function(){
-			
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;
-			}
-			
+
+			if (isElementInvisible(this)) return;
+
 			if ($(this).closest(".hidecopy").length > 0 && !$(this).closest(".hidecopy").is(":visible"))
 			{
 				return;
@@ -1156,8 +1170,14 @@ function initModals(item)
 					result = false;
 				}
 			} else if ($(this).hasClass("tinymce")) {
-				if ($(this).val().length == 0)
-				{
+				if ($(this).val().length == 0) {
+					validationinfo += $(this).attr("name") + " (R) ";
+					$(this).after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
+					result = false;
+				}
+			} else if ($(this).hasClass("sliderbox")) {
+				const isAnswered = $(this).attr('data-is-answered') === 'true';
+				if (!isAnswered) {
 					validationinfo += $(this).attr("name") + " (R) ";
 					$(this).after("<div class='validation-error' aria-live='polite'>" + requiredText + "</div>");
 					result = false;
@@ -1194,11 +1214,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".interdependent").each(function(){
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var s = "";
 			$(this).find("input:checked").each(function(){
@@ -1217,12 +1234,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".comparable").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			if ($(this).hasClass("comparable-second")) return;
 			
 			var value = $(this).val();
@@ -1242,12 +1255,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".regex").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var value = $(this).val();
 			if (value.trim().length == 0) return;
@@ -1268,12 +1277,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".uuid").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var value = $(this).val().trim();
 			if (value.trim().length == 0) return;
@@ -1293,12 +1298,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".email").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var value = $(this).val().trim();
 			if (value.trim().length == 0) return;
@@ -1329,12 +1330,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".date").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var value = $(this).val();
 			
@@ -1400,12 +1397,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".time").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var value = $(this).val();
 			
@@ -1463,12 +1456,8 @@ function initModals(item)
 			{
 				label = $(this).html();
 			} else {
-				
-				//only if visible
-				if ($(this).closest(".survey-element").hasClass("untriggered"))
-				{
-					return;	
-				}
+
+				if (isElementInvisible(this)) return;
 				
 				label = $(this).val();
 			}
@@ -1488,12 +1477,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".targeturl").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var value = $(this).val();
 			if (value.trim().length == 0) return;
@@ -1511,12 +1496,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".url").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var value = $(this).val();
 			if (value.trim().length == 0) return;
@@ -1568,12 +1549,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".freetext").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var classes = $(this).attr('class').split(" ");
 			var value = $(this).val();
@@ -1622,12 +1599,8 @@ function initModals(item)
 		$(parent).find(".htCore").each(function(){
 			
 			var correct = true;
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 
 			$(this).find("td").each(function()	{
 				
@@ -1646,12 +1619,9 @@ function initModals(item)
 
 		});
 		
-		$(parent).find(".matrixtable").each(function(){			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+		$(parent).find(".matrixtable").each(function(){
+
+			if (isElementInvisible(this)) return;
 			
 			var classes = $(this).attr('class').split(" ");
 			
@@ -1693,12 +1663,9 @@ function initModals(item)
 			};			
 		});
 		
-		$(parent).find(".matrixdiv").each(function(){			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+		$(parent).find(".matrixdiv").each(function(){
+
+			if (isElementInvisible(this)) return;
 			
 			var classes = $(this).attr('class').split(" ");
 			
@@ -1738,12 +1705,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".selection").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var classes = $(this).attr('class').split(" ");
 			var value = $(this).closest(".gallery-table").find(":checked").length;
@@ -1764,12 +1727,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".number").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered") || $(this).val() == "")
-			{
-				return;	
-			}			
+
+			if (isElementInvisible(this) || $(this).val() == "") return;
 			
 			var classes = $(this).attr('class').split(" ");
 			var value = parseFloat($(this).val());
@@ -1837,12 +1796,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".listbox").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			var classes = $(this).attr('class').split(" ");
 			var value = $(this).find(":checked").length;
@@ -1871,12 +1826,8 @@ function initModals(item)
 		});
 		
 		$(parent).find(".answer-columns").each(function(){
-			
-			//only if visible
-			if ($(this).closest(".survey-element").hasClass("untriggered"))
-			{
-				return;	
-			}
+
+			if (isElementInvisible(this)) return;
 			
 			if ($(this).find(".checkboxes").length > 0)
 			{
@@ -1908,7 +1859,127 @@ function initModals(item)
 			}
 		});
 		
+		if (!result) {
+			disableDelphiSaveButtons($(parent).closest(".survey-element"));
+			$(parent).closest(".survey-element").find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
+		}
+		
 		return result;
+	}
+	
+	function disableDelphiSaveButtons(parent) {
+		$(parent).find("a[data-type='delphisavebutton']").addClass("disabled").removeAttr("href");
+	}
+
+	function enableDelphiSaveButtons(parent) {
+		$(parent).find("a[data-type='delphisavebutton']").removeClass("disabled").attr("href", "javascript:;");
+	}
+	
+	function isOneAnswerEmptyWhileItsExplanationIsNot(containers) {
+
+		function checkValueOfElement(element) {
+
+			const value = $(element).val();
+			if (value.trim().length === 0) throw true;
+		}
+
+		function hasExplanationTextOrFiles(element) {
+
+			return element.find("textarea[name^='explanation']").val() !== ""
+				|| element.find(".uploaded-files").children().length !== 0;
+		}
+
+		let surveyDelphiElements = containers;
+		for (let i = 0; i < surveyDelphiElements.length; i++) {
+			const element = $(surveyDelphiElements[i]);
+			if (isElementInvisible(element) || !hasExplanationTextOrFiles(element)) continue;
+
+			try {
+				if (element.hasClass("dateitem")) {
+					checkValueOfElement(element.find(".date"));
+				} else if (element.hasClass("numberitem")) {
+					checkValueOfElement(element.find(".number,.sliderbox"));
+				} else if (element.hasClass("ratingitem")) {
+					checkValueOfElement(element.find(".rating"));
+				} else if (element.hasClass("regexitem")) {
+					checkValueOfElement(element.find(".regex"));
+				} else if (element.hasClass("timeitem")) {
+					checkValueOfElement(element.find(".time"));
+				}
+			} catch (e) {
+				if (e === true) {
+					return true;
+				} else {
+					throw e;
+				}
+			}
+
+			if (element.hasClass("freetextitem")) {
+				if (getCharacterCount(element.find(".freetext")) === 0) {
+					return true;
+				}
+			} else if (element.hasClass("matrixitem")) {
+				let answeredQuestionsCount = 0;
+				element.find(".matrixdiv").each(function () {
+
+					$(this).find(".answers-table").each(function () {
+						if ($(this).find("input:checked").length > 0) {
+							answeredQuestionsCount++;
+						}
+					});
+				});
+				element.find(".matrixtable").each(function() {
+
+					$(this).find("tr").each(function(index)	{
+						if (index > 0)
+						{
+							if ($(this).find("input:checked").length > 0)
+							{
+								answeredQuestionsCount++;
+							}
+						}
+					});
+				});
+				if (answeredQuestionsCount === 0) return true;
+			} else if (element.hasClass("multiplechoiceitem") || element.hasClass("singlechoiceitem")) {
+				let answeredQuestionsCount = 0;
+				if (element.find(".check").length > 0)
+				{
+					const checkedCheckboxCount = element.find(".check:checked").length;
+					if (checkedCheckboxCount > 0) {
+						answeredQuestionsCount += checkedCheckboxCount;
+					}
+				}
+				if (element.hasClass("multiplechoiceitem")) {
+					element.find(".answer-column").each(function() {
+						const selectionCount = $(this).find(".selected-choice").length;
+						if (selectionCount > 0) {
+							answeredQuestionsCount += selectionCount;
+						}
+					});
+				} else if (element.find(".single-choice").val()) {
+					answeredQuestionsCount++;
+				}
+				if (answeredQuestionsCount === 0) return true;
+			} else if (element.hasClass("mytableitem")) {
+				const cells = element.find(".tabletable").find("textarea");
+				let filledCellCount = cells.length;
+				cells.each(function() {
+
+					const value = $(this).val();
+					if (value.trim().length === 0) {
+						filledCellCount--;
+					}
+				});
+				if (filledCellCount === 0) return true;
+			}
+		}
+
+		return false;
+	}
+
+	function isElementInvisible(element) {
+		return $(element).closest(".survey-element").hasClass("untriggered");
 	}
 	
 	function parseDate2(dateString)
@@ -2161,6 +2232,20 @@ function initModals(item)
 			$("#create-survey-opc").val("true");
 		} else {
 			$("#create-survey-opc").val("false");
+		}
+		
+		if ($("#new-survey-type-delphi:checked").length > 0)
+		{
+			$("#create-survey-delphi").val("true");
+		} else {
+			$("#create-survey-delphi").val("false");	
+		}
+		
+		if ($("#new-survey-type-ecf:checked").length > 0)
+		{
+			$("#create-survey-ecf").val("true");
+		} else {
+			$("#create-survey-ecf").val("false");
 		}
 		
 		if ($("#new-survey-contact-type").val() == "form")
@@ -2542,4 +2627,53 @@ function initModals(item)
 			return sprefix + "Z";
 		}
 		return sprefix + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".substring(counter,counter+1);				
+	}
+	
+	const CHART_LEGEND_LABEL_DIVISOR = 9;
+	
+	function truncateLabel(text, canvasWidth) {
+		const maxLegendTextLength = Math.round(canvasWidth / CHART_LEGEND_LABEL_DIVISOR);
+		
+		if (text.length > maxLegendTextLength) {
+			const shortenedText = text.substring(0, maxLegendTextLength);
+			return shortenedText + "...";
+		}
+		return text;
+	}
+	
+	var modalDialogCaller = null;
+	
+	function showModalDialog(dialog, caller) {		
+		$(dialog).on('keydown', function(e) {
+		    var target = e.target;
+		    var shiftPressed = e.shiftKey;
+		    // If TAB key pressed
+		    if (e.keyCode == 9) {
+	            // Find first or last input element in the dialog parent (depending on whether Shift was pressed). 
+	            // Input elements must be visible, and can be Input/Select/Button/Textarea.
+	            var borderElem = shiftPressed ?
+	                                $(target).closest('[role=dialog]').find('a:visible,input:visible,select:visible,button:visible,textarea:visible').first() 
+	                             :
+	                                $(target).closest('[role=dialog]').find('a:visible,input:visible,select:visible,button:visible,textarea:visible').last();
+	            if ($(borderElem).length) {
+	                if ($(target).is($(borderElem))) {
+	                    return false;
+	                } else {
+	                    return true;
+	                }
+	            }
+		    }
+		    return true;
+		});
+		
+		$(dialog).modal("show");		
+		$(dialog).find('a:visible,input:visible,select:visible,button:visible,textarea:visible').first().focus();
+		modalDialogCaller = caller;
+	}
+	
+	function hideModalDialog(dialog) {
+		$(dialog).modal("hide");
+		if (modalDialogCaller != null) {
+			$(modalDialogCaller).focus();
+		}
 	}

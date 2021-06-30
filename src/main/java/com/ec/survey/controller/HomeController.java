@@ -17,12 +17,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -79,6 +74,32 @@ public class HomeController extends BasicController {
 		model.addAttribute("runnermode", true);
 		model.addAttribute("oss", super.isOss());
 		return "home/about";
+	}
+	
+	@RequestMapping(value = "/home/delphi", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String delphi(
+			final ModelMap model, final @RequestParam(value = "survey", required = false) String uidOrShortname) {
+
+		Survey survey = surveyService.getSurvey(uidOrShortname, false, true, false, false, null, true, true);
+		if (survey == null) {
+			survey = surveyService.getSurvey(uidOrShortname, true, true, false, false, null, true, true);
+		}
+		if (survey != null) {
+			model.put("contact", survey.getContact());
+			model.put("fixedContact", survey.getFixedContact());
+		}
+
+		model.put("continueWithoutJavascript", true);
+		model.put("oss", super.isOss());
+		return "home/delphi";
+	}
+	
+	@RequestMapping(value = "/home/delphi/runner", method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String delphiRunner(Locale locale, Model model) {
+		model.addAttribute("continueWithoutJavascript", true);
+		model.addAttribute("runnermode", true);
+		model.addAttribute("oss", super.isOss());
+		return "home/delphi";
 	}
 	
 	@RequestMapping(value = "/home/download", method = {RequestMethod.GET, RequestMethod.HEAD})
@@ -483,7 +504,6 @@ public class HomeController extends BasicController {
 	
 	@RequestMapping(value = Constants.PATH_DELIMITER, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public ModelAndView home(HttpServletRequest request) {
-		request.getSession().setAttribute("serverprefix",serverPrefix);
 		return basicwelcome(request);
 	}
 	

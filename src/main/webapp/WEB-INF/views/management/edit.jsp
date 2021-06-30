@@ -188,6 +188,9 @@
 								<li id="drag_number" class="toolboxitem numberitem draggable"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
 								<li id="drag_date" class="toolboxitem dateitem draggable"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
 								<li id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
+								<c:if test="${form.survey.isDelphi}">
+									<li id="drag_ranking" class="toolboxitem rankingitem draggable"><span class="glyphicon glyphicon-sort"></span> <spring:message code="form.RankingQuestion" /></li>
+								</c:if>
 							</c:otherwise>
 						</c:choose>
 						<li id="drag_matrix" class="toolboxitem matrixitem draggable"><span class="glyphicon glyphicon-list-alt"></span> <spring:message code="form.Matrix" /></li>
@@ -290,6 +293,18 @@
 						<!-- ko template: { name: 'quiz-template' } --><!-- /ko -->
 					<!-- /ko -->
 					
+					<!--  ko if: Type() == 'ecf' -->
+						<!-- ko template: { name: 'ecf-template' } --><!-- /ko -->
+					<!-- /ko -->
+					
+					<!--  ko if: Type() == 'ecfAnswersToScores' -->
+						<!-- ko template: { name: 'ecfanswerstoscores-template' } --><!-- /ko --> 
+					<!-- /ko --> 
+
+					<!--  ko if: Type() == 'ecfAnswersToProfiles' -->
+						<!-- ko template: { name: 'ecfanswerstoprofiles-template' } --><!-- /ko --> 
+					<!-- /ko --> 
+
 					<!--  ko if: Type() == 'slider' -->
 						<!-- ko template: { name: 'slider-template' } --><!-- /ko -->
 					<!-- /ko -->
@@ -379,7 +394,9 @@
 		var surveyShortname = "${form.survey.shortname}";
 		var surveyUniqueId = "${form.survey.uniqueId}";
 		var isQuiz = ${form.survey.isQuiz};
+		var isECF = ${form.survey.isECF};
 		var isOPC = ${form.survey.isOPC};
+		var isDelphi = ${form.survey.isDelphi};
 		var automaticNumbering = ${form.survey.sectionNumbering != 0 || form.survey.questionNumbering != 0};
 		
 		var lowLevel = '<spring:message code="label.Complexity.low" />';
@@ -627,6 +644,8 @@
 			if (element.hasClass("matrix-header")) return "<spring:message code='form.MatrixElement' />";
 			if (element.hasClass("table-header")) return "<spring:message code='form.Table' />";
 			if (element.hasClass("answertext")) return "<spring:message code='label.Answer' />";
+			if (element.hasClass("rankingitem")) return "<spring:message code='label.RankingQuestion' />";
+			if (element.hasClass("rankingitemtext")) return "<spring:message code='label.RankingItem' />";
 			if (element.find(".gallery-image").length > 0) return "<spring:message code='form.GalleryImage' />";
 			return "Template";
 		}
@@ -694,10 +713,12 @@
 	 		strings["Columns"] = "<spring:message code="label.Columns" />";
 	 		strings["RadioButton"] = "<spring:message code="html.RadioButton" />";
 	 		strings["SelectBox"] = "<spring:message code="html.SelectBox" />";	 
+	 		strings["LikertScale"] = "<spring:message code="html.LikertScale" />";
 	 		strings["Original"] = "<spring:message code="label.OriginalOrder" />";
 	 		strings["Alphabetical"] = "<spring:message code="label.AlphabeticalOrder" />";
 	 		strings["Random"] = "<spring:message code="label.RandomOrder" />";
 	 		strings["PossibleAnswers"] = "<spring:message code="label.PossibleAnswers" />";
+	 		strings["RankingItems"] = "<spring:message code="label.RankingItems" />";
 	 		strings["NumberOfChoices"] = "<spring:message code="label.NumberOfChoices" />";
 	 		strings["CheckBox"] = "<spring:message code="html.CheckBox" />";
 	 		strings["ListBox"] = "<spring:message code="html.ListBox" />";	 
@@ -818,6 +839,10 @@
 	 		strings["numberinvaliddecimals"] = "<spring:message code="validation.numberinvaliddecimals" />";
 	 		strings["invalidPositiveNumber"] = "<spring:message code="validation.invalidPositiveNumber" />";
 	 		strings["max255Characters"] = "<spring:message code="validation.max255Characters" />";
+	 		strings["ECFProfileSelection"] = "<spring:message code="label.ECFProfileSelection" />";
+	 		strings["ECFCompetencyQuestion"] = "<spring:message code="label.ECFCompetencyQuestion" />";
+			strings["ECFSelectedCompetency"] = "<spring:message code="label.ECFSelectedCompetency" />";
+			strings["ECFSelectedProfile"] = "<spring:message code="label.ECFSelectedProfile" />";
 	 		strings["QuizQuestion"] = "<spring:message code="label.QuizQuestion" />";
 	 		strings["Points"] = "<spring:message code="label.Points" />";
 	 		strings["empty"] = "<spring:message code="label.empty" />";
@@ -848,8 +873,22 @@
 	 		strings["ISO+Country"] = "<spring:message code="label.ISO+Country" />";
 	 		strings["ISOOnly"] = "<spring:message code="label.ISOOnly" />";	 		
 	 		
-	 		strings["MaximumFileSize"] = "<spring:message code="label.MaximumFileSize" />";	 		
-
+	 		strings["MaximumFileSize"] = "<spring:message code="label.MaximumFileSize" />";
+	 		strings["DelphiQuestion"] = "<spring:message code="label.DelphiQuestion" />";
+			strings["DelphiChartType"] = "<spring:message code="label.DelphiChartType" />";
+			strings["DelphiChartTypeNumber"] = "<spring:message code="label.DelphiChartType" />&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.DelphiChartTypeNumber" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
+	 		strings["Bar"] ="<spring:message code="label.DelphiChartBar" />";
+			strings["Column"] ="<spring:message code="label.DelphiChartColumn" />";
+			strings["Line"] ="<spring:message code="label.DelphiChartLine" />";
+			strings["Pie"] ="<spring:message code="label.DelphiChartPie" />";
+			strings["Radar"] ="<spring:message code="label.DelphiChartRadar" />";
+			strings["Scatter"] ="<spring:message code="label.DelphiChartScatter" />";
+			strings["MaxDistanceToMedian"] ="<spring:message code="label.MaxDistanceToMedian" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.MaxDistanceToMedian" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
+			strings["Ignore"] ="<spring:message code="label.Ignore" />";
+			strings["None"] ="<spring:message code="label.None" />";
+			strings["WordCloud"] ="<spring:message code="label.DelphiChartWordCloud" />";
+			strings["ShowExplanationBox"] = "<spring:message code="label.ShowExplanationBox" />";
+			
 	 		return strings[label];
 	 	}
 	</script>

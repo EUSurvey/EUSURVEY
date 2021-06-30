@@ -998,6 +998,8 @@ public class FileService extends BasicService {
 		// get survey files
 		for (int surveyID : surveyIDs) {
 			Survey survey = surveyService.getSurvey(surveyID);
+			final FilesByTypes<Integer, String> explanationFiles =
+					answerExplanationService.getExplanationFilesByAnswerSetIdAndQuestionUid(survey);
 
 			if (!onlySurveyFiles) {
 				for (String lang : translationService.getTranslationLanguagesForSurvey(surveyID, false)) {
@@ -1064,6 +1066,16 @@ public class FileService extends BasicService {
 
 						result.add(file);
 					}
+				}
+
+				if (question.isDelphiElement()) {
+					explanationFiles.applyFunctionOnEachFile((answerSetId, questionUid, explanationFile) -> {
+						if (questionUid.equalsIgnoreCase(question.getUniqueId())) {
+							
+							java.io.File file = fileService.getSurveyFile(survey.getUniqueId(), explanationFile.getUid());
+							result.add(file);
+						}
+					});
 				}
 			}
 
@@ -1440,6 +1452,13 @@ public class FileService extends BasicService {
 		return folder;
 	}
 
+	public java.io.File getSurveyExplanationUploadsFolder(String surveyUID, boolean create) {
+		java.io.File folder = new java.io.File(surveysDir + surveyUID.substring(0, 1) + Constants.PATH_DELIMITER + surveyUID + "/EXPLANATION_UPLOADS/");
+		if (!folder.exists() && create)
+			folder.mkdirs();
+		return folder;
+	}
+
 	public java.io.File getSurveyFile(String surveyUID, String fileUID) {
 		java.io.File folder = getSurveyFilesFolder(surveyUID);
 		return new java.io.File(folder.getPath() + Constants.PATH_DELIMITER + fileUID);
@@ -1769,33 +1788,44 @@ public class FileService extends BasicService {
 		return deletecounter.getValue();
 	}
 
-	public int deleteOldTemporaryFolders(Date before) throws IOException {
-		List<String> surveyUIDs = surveyService.getAllSurveyUIDs(false);
-		int deletecounter = 0;
+	public int deleteUploadedFilesFolders(final Date before) throws IOException {
+
+		final List<String> surveyUIDs = surveyService.getAllSurveyUIDs(false);
+		int deleteCounter = 0;
 
 		for (String surveyUID : surveyUIDs) {
 			if (surveyUID != null && surveyUID.length() > 0) {
-				java.io.File folder = getSurveyUploadsFolder(surveyUID, false);
-				if (folder.exists()) {
-					java.io.File[] fList = folder.listFiles();
-					for (java.io.File file : fList) {
-						if (file.isDirectory()) {
-							Date modified = new Date(file.lastModified());
-							if (modified.before(before)) {
-								try {
-									FileUtils.deleteDirectory(file);
-									deletecounter++;
-								} catch (Exception e) {
-									logger.error("not possible to delete folder " + file.getAbsolutePath());
-								}
-							}
-						}
+				final java.io.File answerUploadsFolder = getSurveyUploadsFolder(surveyUID, false);
+				deleteCounter += deleteUploadedFilesSubfolders(before, answerUploadsFolder);
+				final java.io.File explanationUploadsFolder = getSurveyExplanationUploadsFolder(surveyUID, false);
+				deleteCounter += deleteUploadedFilesSubfolders(before, explanationUploadsFolder);
+			}
+		}
+
+		return deleteCounter;
+	}
+
+	private int deleteUploadedFilesSubfolders(final Date before, final java.io.File folder) {
+
+		if (!folder.exists())
+			return 0;
+
+		final java.io.File[] fList = folder.listFiles();
+		int deleteCounter = 0;
+		for (java.io.File file : fList) {
+			if (file.isDirectory()) {
+				final Date modified = new Date(file.lastModified());
+				if (modified.before(before)) {
+					try {
+						FileUtils.deleteDirectory(file);
+						deleteCounter++;
+					} catch (Exception e) {
+						logger.error("not possible to delete folder " + file.getAbsolutePath());
 					}
 				}
 			}
 		}
-
-		return deletecounter;
+		return deleteCounter;
 	}
 
 	public int deleteOldSurveyPDFs(String surveyUID, int id) throws IOException {
@@ -1870,6 +1900,60 @@ public class FileService extends BasicService {
 			}
 		}
 		return deletecounter;
+	}
+
+	public void deleteUploadedAnswerFiles(final String surveyUid, final String answerSetUniqueCode) {
+
+		final java.io.File rootFolder = getSurveyUploadsFolder(surveyUid,false);
+		deleteUploadedFilesDirectory(answerSetUniqueCode, rootFolder.getPath(), "");
+	}
+
+	public void deleteUploadedExplanationFiles(final String surveyUid, final String answerSetUniqueCode,
+			final String questionUid) {
+
+		final java.io.File rootFolder = getSurveyExplanationUploadsFolder(surveyUid, false);
+		final String suffix = Constants.PATH_DELIMITER + questionUid;
+		deleteUploadedFilesDirectory(answerSetUniqueCode, rootFolder.getPath(), suffix);
+	}
+
+	private void deleteUploadedFilesDirectory(final String answerSetUniqueCode, final String rootFolderPath,
+			final String suffix) {
+
+		final java.io.File directory = new java.io.File(rootFolderPath + Constants.PATH_DELIMITER
+				+ answerSetUniqueCode + suffix);
+		try {
+			FileUtils.deleteDirectory(directory);
+		} catch (IOException e) {
+			logger.error("The directory with its content could not be deleted: " + directory.getAbsolutePath());
+			logger.error(e);
+		}
+	}
+
+	public java.io.File deleteUploadedExplanationFileAndReturnParentDirectoryIfSuccessful(final String surveyUid,
+			final String answerSetUniqueCode, final String questionUid, final String fileName) {
+
+		final java.io.File rootFolder = getSurveyExplanationUploadsFolder(surveyUid, false);
+		final String filePath = rootFolder + Constants.PATH_DELIMITER + answerSetUniqueCode
+				+ Constants.PATH_DELIMITER + questionUid + Constants.PATH_DELIMITER + fileName;
+		final java.io.File file = new java.io.File(filePath);
+		if (file.exists() && file.delete()) {
+			return file.getParentFile();
+		}
+		return null;
+	}
+
+	public void deleteFileFromDiskAndDatabase(final String surveyUid, final File file) {
+
+		final java.io.File fileOnDisk = getSurveyFile(surveyUid, file.getUid());
+		if (!fileOnDisk.delete()) {
+			logger.error("The file could not be deleted: " + fileOnDisk.getAbsolutePath());
+		}
+		delete(file.getId());
+	}
+
+	public void deleteFilesFromDiskAndDatabase(final String surveyUid, final List<File> files) {
+
+		files.forEach(file -> fileService.deleteFileFromDiskAndDatabase(surveyUid, file));
 	}
 
 }
