@@ -1281,7 +1281,7 @@ public class FileService extends BasicService {
 		int counter = 0;
 
 		if (files == null) {
-			List<FileResult> fileresults = getFiles(filter);
+			List<FileResult> fileresults = getFiles2(filter);
 			for (FileResult fileresult : fileresults) {
 				if (Files.deleteIfExists(Paths.get(fileresult.getFilePath())))
 				{
