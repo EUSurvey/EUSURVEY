@@ -4319,14 +4319,16 @@ public class SurveyService extends BasicService {
 		survey.setIsDeleted(false);
 
 		if (alias != null && alias.length() > 0) {
-			survey.setShortname(alias);
-
-			for (int pid : surveyService.getAllPublishedSurveyVersions(survey.getId())) {
-				Survey s = (Survey) session.get(Survey.class, pid);
-				s.setIsDeleted(false);
+			survey.setShortname(alias);			
+		}
+		
+		for (int pid : surveyService.getAllPublishedSurveyVersions(survey.getId())) {
+			Survey s = (Survey) session.get(Survey.class, pid);
+			s.setIsDeleted(false);
+			if (alias != null && alias.length() > 0) {
 				s.setShortname(alias);
-				session.saveOrUpdate(s);
 			}
+			session.saveOrUpdate(s);
 		}
 
 		session.saveOrUpdate(survey);
