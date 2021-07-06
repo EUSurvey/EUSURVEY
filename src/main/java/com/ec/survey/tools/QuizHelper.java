@@ -13,18 +13,32 @@ public class QuizHelper {
 	{
 		return getQuizResult(answerSet, answerSet.getSurvey());
 	}
-	
-	public static QuizResult getQuizResult(AnswerSet answerSet, Survey survey) {	
+
+	public static QuizResult getQuizResult(AnswerSet answerSet, Survey survey)
+	{
+		return getQuizResult(answerSet, survey, null);
+	}
+
+	public static QuizResult getQuizResult(AnswerSet answerSet, final Set<String> invisibleElements)
+	{
+		return getQuizResult(answerSet, answerSet.getSurvey(), invisibleElements);
+	}
+
+	public static QuizResult getQuizResult(AnswerSet answerSet, Survey survey, final Set<String> invisibleElements)
+	{
 		QuizResult result = new QuizResult();
-		
+
 		int score = 0;
 		int maximumScore = 0;
-		
+
 		String currentSectionUid = null; 
 		int currentSectionScore = 0;
 		int currentSectionMaxScore = 0;
 		
 		for (Element element : survey.getElements()) {
+			if (invisibleElements != null && invisibleElements.contains(element.getUniqueId())) {
+				continue;
+			}
 			if (element instanceof Section)
 			{
 				if (currentSectionUid != null)
