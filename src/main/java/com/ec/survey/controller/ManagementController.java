@@ -2662,7 +2662,7 @@ public class ManagementController extends BasicController {
 			result.addObject("invisibleElements", invisibleElements);
 			result.addObject(form);
 			result.addObject("surveyprefix", survey.getId() + ".");
-			result.addObject("quiz", QuizHelper.getQuizResult(answerSet));
+			result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 			result.addObject("isquizresultpage", true);
 			return result;
 		}
