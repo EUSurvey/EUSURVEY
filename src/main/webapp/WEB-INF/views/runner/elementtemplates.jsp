@@ -615,10 +615,10 @@
 								    <img src="${contextpath}/resources/images/star_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 								    <!-- /ko -->
 								    <!-- ko if: $parents[1].iconType() == 1 -->
-								    <img src="${contextpath}/resources/images/nav_plain_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()" />
+								    <img src="${contextpath}/resources/images/nav_plain_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 								    <!-- /ko -->
 								    <!-- ko if: $parents[1].iconType() == 2 -->
-								    <img src="${contextpath}/resources/images/heart_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()" />
+								    <img src="${contextpath}/resources/images/heart_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 								    <!-- /ko -->
 							    </a>
 							</div>
@@ -634,10 +634,10 @@
 							    <img src="${contextpath}/resources/images/star_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 							    <!-- /ko -->
 							    <!-- ko if: $parents[1].iconType() == 1 -->
-							    <img src="${contextpath}/resources/images/nav_plain_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()" />
+							    <img src="${contextpath}/resources/images/nav_plain_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 							    <!-- /ko -->
 							    <!-- ko if: $parents[1].iconType() == 2 -->
-							    <img src="${contextpath}/resources/images/heart_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()" />
+							    <img src="${contextpath}/resources/images/heart_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 							    <!-- /ko -->
 						    </a>
 						</div>
