@@ -1894,8 +1894,8 @@ public class SurveyHelper {
 		if (log220 && !isDelphiQuestion.equals(regex.getIsDelphiQuestion())) {
 			oldValues += " isDelphiQuestion: " + regex.getIsDelphiQuestion();
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
-			regex.setIsDelphiQuestion(isDelphiQuestion);
 		}
+		regex.setIsDelphiQuestion(isDelphiQuestion);
 		
 		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
 		if (log220 && !regex.getUseAndLogic().equals(useAndLogic)) {
