@@ -877,7 +877,7 @@ function newRankingItemViewModel(id, uniqueId, shortname, title, parent)
 			var rankingitemFormDataReOrdered = $.map(reIndex, value => rankingitemFormData.get(value));
 			$.each(rankingitemFormDataReOrdered, (_, that) => $(rankingitemList).append(that));
 			target.focus();
-			propagateChange(target);
+			propagateChange(rankingitemList);
 		}
 	}
 

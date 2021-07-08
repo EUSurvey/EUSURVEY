@@ -350,6 +350,10 @@ function initModals(item)
 					
 					$("#" + $(this).attr("data-from")).addClass("max" + dateText.replace(/\//g,""));
 				}
+				
+				if ($(this).closest(".survey-element").length > 0) {
+					propagateChange(this);
+				}
 			 }
 		});
 	
@@ -411,6 +415,10 @@ function initModals(item)
 								$("#" + $(inst.input).attr("data-from")).removeClass (function (index, css) {
 								    return (css.match (/(^|\s)max\S+/g) || []).join(' ');
 								});
+							}
+							
+							if ($(inst.input).closest(".survey-element").length > 0) {
+								propagateChange(inst.input);
 							}
 							
 						}).hover(function(event){$(this).removeClass("ui-state-hover"); event.stopPropagation();},function(){})

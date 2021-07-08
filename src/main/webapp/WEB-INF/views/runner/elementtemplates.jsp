@@ -509,14 +509,14 @@
 		<!-- /ko -->
 	
 		<!-- ko if: maxCharacters() > 0 -->	
-			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'maxlength':maxCharacters(), 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}"  onkeyup="countChar(this);propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
+			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'maxlength':maxCharacters(), 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}"  onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
 			<div class="charactercounterdiv" style="max-width: 645px; text-align: right; color: #777; margin-left: 20px;">
 				<span class="glyphicon glyphicon-alert" style="display: none; margin-right: 5px;" data-toggle="tooltip" title="${form.getMessage("info.charactercounter")}" aria-label="${form.getMessage("info.charactercounter")}"></span>
 				<span class="charactercounter">0</span> / <span data-bind="text: maxCharacters()"></span>
 			</div>
 		<!-- /ko -->
 		<!-- ko if: maxCharacters() == 0 -->	
-			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}" onkeyup="countChar(this);propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
+			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}" onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
 		<!-- /ko -->
 		<!-- ko if: isComparable() -->		
 			<br /><span style="margin-left: 20px">${form.getMessage("label.PleaseRepeat")}</span>:<br />
@@ -680,7 +680,7 @@
 		<!-- /ko -->
 				
 		<!-- ko if: display() != 'Slider' -->
-			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onkeyup="propagateChange(this);" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" oninput="propagateChange(this);" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
 		<!-- /ko -->
 		
 		<!-- ko if: display() == 'Slider' -->		
@@ -796,7 +796,7 @@
 			<!-- ko if: foreditor || readonly() -->
 				<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
 			<!-- /ko -->
-			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'datepicker ' + css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onblur="if(validateInput($(this).parent().parent())) { propagateChange(this); }" type="text" placeholder="DD/MM/YYYY" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'datepicker ' + css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onblur="if($(this).val().length > 0 && validateInput($(this).parent().parent())) { propagateChange(this); }" oninput="propagateChange(this);" type="text" placeholder="DD/MM/YYYY" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
 		</div>
 		
 		<!-- ko if: foreditor -->
@@ -851,7 +851,7 @@
 		
 		<div class="input-group">
 			<div class="input-group-addon"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></div>
-			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'timepicker ' + css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onblur="if(validateInput($(this).parent().parent())) { propagateChange(this); }" type="text" placeholder="HH:mm:ss" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'timepicker ' + css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onblur="if(validateInput($(this).parent().parent())) { propagateChange(this); }" oninput="propagateChange(this);" type="text" placeholder="HH:mm:ss" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
 		</div>
 		
 		<!-- ko if: foreditor -->
@@ -1211,7 +1211,7 @@
 						</th>
 						<!-- ko foreach: $parent.answers -->
 							<td style="padding: 2px;">
-								<textarea onblur="validateInput($(this).closest('.tabletable').parent(), true)" onkeyup="propagateChange(this);" data-bind="enable: !$parents[1].readonly(), value: getTableAnswer($parents[1].uniqueId(), $parentContext.$index()+1, $index()+1), attr: {'data-id': $parents[1].id() + $parentContext.$index() + '' + $index(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'class':$parents[1].css() + ' ' + $parents[0].css(), 'name':'answer' + $parents[1].id() + '|' + ($parentContext.$index()+1) + '|' + ($index()+1), 'aria-labelledby': $parent.id().toString() + ' ' + id().toString()}"></textarea>
+								<textarea onblur="validateInput($(this).closest('.tabletable').parent(), true)" oninput="propagateChange(this);" data-bind="enable: !$parents[1].readonly(), value: getTableAnswer($parents[1].uniqueId(), $parentContext.$index()+1, $index()+1), attr: {'data-id': $parents[1].id() + $parentContext.$index() + '' + $index(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'class':$parents[1].css() + ' ' + $parents[0].css(), 'name':'answer' + $parents[1].id() + '|' + ($parentContext.$index()+1) + '|' + ($index()+1), 'aria-labelledby': $parent.id().toString() + ' ' + id().toString()}"></textarea>
 							</td>
 						 <!-- /ko -->
 					</tr>
