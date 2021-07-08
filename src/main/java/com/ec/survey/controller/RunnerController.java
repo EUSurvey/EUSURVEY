@@ -632,7 +632,7 @@ public class RunnerController extends BasicController {
 				form.getAnswerSets().add(answerSet);
 				result.addObject(form);
 				result.addObject("surveyprefix", survey.getId() + ".");
-				result.addObject("quiz", QuizHelper.getQuizResult(answerSet));
+				result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 				result.addObject("isquizresultpage", true);
 				result.addObject("invisibleElements", invisibleElements);
 				return result;
@@ -2044,7 +2044,7 @@ public class RunnerController extends BasicController {
 				form.getAnswerSets().add(answerSet);
 				result.addObject(form);
 				result.addObject("surveyprefix", survey.getId() + ".");
-				result.addObject("quiz", QuizHelper.getQuizResult(answerSet));
+				result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 				result.addObject("isquizresultpage", true);
 				result.addObject("invisibleElements", invisibleElements);
 				return result;

@@ -62,7 +62,7 @@
 								<c:forEach var="page" items="${form.getPages()}" varStatus="rowCounter">
 				 					<c:forEach var="element" items="${page}">
 				 						<c:if test="${element.getType() == 'Section'}">
-					 						<c:if test='${!quiz.getSectionScore(element.uniqueId).equals("0/0")}'>		
+					 						<c:if test='${!quiz.getSectionScore(element.uniqueId).equals("0/0") && !(invisibleElements != null && invisibleElements.contains(element.uniqueId))}'>
 												<tr>
 													<td style="width: 225px">${element.getTitle()}</td>
 													<td style="width: 50px">${quiz.getSectionScoreValue(element.uniqueId)}</td>

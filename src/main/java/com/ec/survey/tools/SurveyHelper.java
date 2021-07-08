@@ -260,7 +260,7 @@ public class SurveyHelper {
 	}
 
 	//answerSet.getSurvey().getElements()
-	public static Map<Element, String> validateAnswerSet(AnswerSet answerSet, AnswerService answerService,
+	public static Map<Element, String>  validateAnswerSet(AnswerSet answerSet, AnswerService answerService,
 			Set<String> invisibleElements, MessageSource resources, Locale locale, String draftid,
 			HttpServletRequest request, boolean skipDraftCreation, User user, FileService fileService)
 			throws InterruptedException, IOException {
