@@ -1117,7 +1117,7 @@ function delphiUpdate(div) {
 	if (isOneAnswerEmptyWhileItsExplanationIsNot(div)) {
 		currentDelphiUpdateType = DELPHI_UPDATE_TYPE.ONE_QUESTION;
 		currentDelphiUpdateContainer = div;
-		$('.confirm-explanation-deletion-modal').modal("show");
+		showModalDialog($('.confirm-explanation-deletion-modal'), $(div).find("[data-type='delphisavebutton']").first());
 		return;
 	}
 
@@ -1126,7 +1126,7 @@ function delphiUpdate(div) {
 
 function confirmExplanationDeletion() {
 
-	$('.confirm-explanation-deletion-modal').modal("hide");
+	hideModalDialog($('.confirm-explanation-deletion-modal'));
 	if (currentDelphiUpdateType === DELPHI_UPDATE_TYPE.ONE_QUESTION) {
 		delphiUpdateContinued(currentDelphiUpdateContainer, () => {
 			$(currentDelphiUpdateContainer).find("textarea[name^='explanation']").val("");

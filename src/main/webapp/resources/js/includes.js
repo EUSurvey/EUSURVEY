@@ -848,7 +848,7 @@ function initModals(item)
 		if (isdelphi && isOneAnswerEmptyWhileItsExplanationIsNot($(form).find(".survey-element.delphi"))) {
 			currentDelphiUpdateType = DELPHI_UPDATE_TYPE.ENTIRE_FORM;
 			currentDelphiUpdateContainer = form;
-			$('.confirm-explanation-deletion-modal').modal('show');
+			showModalDialog($('.confirm-explanation-deletion-modal'), $('#btnSubmit'));
 			return;
 		}
 
