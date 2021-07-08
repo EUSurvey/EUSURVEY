@@ -449,15 +449,15 @@
 			
 			<div style="clear: both"></div>
 
-			<div class="modal confirm-explanation-deletion-modal" data-backdrop="static">
+			<div class="modal confirm-explanation-deletion-modal" role="dialog" data-backdrop="static">
 				<div class="modal-dialog modal-sm">
 					<div class="modal-content">
 						<div class="modal-body">
 							<spring:message code="info.ConfirmExplanationDeletion" />
 						</div>
 						<div class="modal-footer">
-							<a class="btn btn-default" onclick="confirmExplanationDeletion()"><spring:message code="label.Confirm" /></a>
-							<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+							<a href="javascript:;" class="btn btn-default" onclick="confirmExplanationDeletion()"><spring:message code="label.Confirm" /></a>
+							<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog('.confirm-explanation-deletion-modal')"><spring:message code="label.Cancel" /></a>
 						</div>
 					</div>
 				</div>
