@@ -140,6 +140,11 @@ function singleClick(r) {
 
 function checkHasValue(element) {
 	
+	if (element == null || $(element).length == 0)
+	{
+		return false;
+	}
+		
 	if ($(element).hasClass("rankingitem-list")) {
 		return true;
 	}
