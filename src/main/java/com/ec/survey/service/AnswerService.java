@@ -1514,7 +1514,7 @@ public class AnswerService extends BasicService {
 	@Transactional
 	public Statistics getStatisticsOrStartCreator(Survey survey, ResultFilter filter, boolean useEagerLoading, boolean allanswers,
 			boolean asynchronous) throws Exception {
-		// filter = answerService.initialize(filter);
+		filter = answerService.initialize(filter);
 		Statistics statistics = getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers), useEagerLoading);
 
 		if (statistics == null) {
