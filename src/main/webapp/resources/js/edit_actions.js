@@ -730,12 +730,15 @@ var Actions = function() {
     	}
     	
     	var arr = [];
-    	for (var elementid in _elements) {
-    	    if (_elements.hasOwnProperty(elementid)) {
-    	    	var element = _elements[elementid];
-    	    	arr.push(element);
-    	    }
-    	}
+    	
+    	$("#content").find(".survey-element").each(function(){
+    		var elementid = $(this).attr("id");
+    		 if (_elements.hasOwnProperty(elementid)) {
+     	    	var element = _elements[elementid];
+     	    	arr.push(element);
+     	    }
+    	})
+    	
     	var value = ko.toJSON(arr);
     	
     	try {
@@ -760,30 +763,28 @@ var Actions = function() {
     	
     	var arr = JSON.parse(value);
     	_elements = {};
-    	for (var i = 0; i < arr.length; i++) {
-    		var element = arr[i];
-    		_elements[element.id] = element;
-    	}
     	
     	$("#content").find(".survey-element").each(function(){
     		ko.cleanNode($(this)[0]);
     	})
     	
     	$("#content").empty();
-    	
-    	for (var elementid in _elements) {
-    	    if (_elements.hasOwnProperty(elementid)) {
-    	    	var emptyelement = document.createElement("li");
-    	    	$(emptyelement).addClass("emptyelement survey-element").attr("id", elementid).attr("data-id", elementid);
-    	    	$("#content").append(emptyelement);
     	    	
-    	    	var element = _elements[elementid];
-    	    	element.isViewModel = false;
-    	    	var model = getElementViewModel(element);
-    	    	 _elements[elementid] = model;
-    	    	var item = addElement(element, true, false);
-				addElementHandler(item);
-    	    }
+    	for (var i = 0; i < arr.length; i++) {
+    		var element = arr[i];
+    		var elementid = element.id;
+    		_elements[elementid] = element;
+    	
+	    	var emptyelement = document.createElement("li");
+	    	$(emptyelement).addClass("emptyelement survey-element").attr("id", elementid).attr("data-id", elementid);
+	    	$("#content").append(emptyelement);
+	    	
+	    	var element = _elements[elementid];
+	    	element.isViewModel = false;
+	    	var model = getElementViewModel(element);
+	    	 _elements[elementid] = model;
+	    	var item = addElement(element, true, false);
+			addElementHandler(item);    	    
     	}
     	
     	_undoProcessor.clear();
