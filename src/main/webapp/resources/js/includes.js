@@ -2717,3 +2717,26 @@ function initModals(item)
 			$(modalDialogCaller).focus();
 		}
 	}
+	
+	(function($) { // custom jquery plugin
+		$.fn.ApplyCustomTooltips = function() {
+			var selectedObjects = this;
+			selectedObjects.tooltip({
+				trigger: "manual"
+			}).on("mouseenter focusin", function() {
+				var self = this;
+				$(".tooltip").attr("aria-live", "assertive");
+				$(self).tooltip("show");
+				$(".tooltip").on("mouseleave", function() {
+					$(self).tooltip("hide");
+				});
+			}).on("mouseleave focusout", function() {
+				var self = this;
+				setTimeout(function() {
+					if (!$(".tooltip:hover").length) {
+						$(self).tooltip("hide");
+					}
+				}, 30);
+			});
+		}
+	}(jQuery));
