@@ -18,6 +18,8 @@
 	</script>
 </c:if>
 
+<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+	
 </head>
 
 <body>

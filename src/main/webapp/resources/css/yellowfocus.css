@@ -13,7 +13,7 @@ div.validation-error:focus, div.validation-error-server:focus, div.validation-er
 	outline-offset: -3px;
 }
 
-.btn-primary:focus, .pagebutton.active a:focus {
+.btn-primary:focus, .pagebutton.active a:focus, .boxlink:focus {
 	color: #fff !important;
 }
 
