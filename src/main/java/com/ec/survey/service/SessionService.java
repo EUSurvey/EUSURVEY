@@ -367,6 +367,8 @@ public class SessionService extends BasicService {
 					&& request.getParameter("surveysOwn").equalsIgnoreCase("own");
 			boolean filterShared = request.getParameter("surveysShared") != null
 					&& request.getParameter("surveysShared").equalsIgnoreCase("shared");
+			boolean filterAny = request.getParameter("surveysShared") != null
+					&& request.getParameter("surveysShared").equalsIgnoreCase("any");
 
 			String status = "";
 			if (filterDraft)
@@ -380,7 +382,9 @@ public class SessionService extends BasicService {
 			filter.setLanguages(request.getParameterValues("languages"));
 			filter.setOwner(request.getParameter("owner"));
 
-			if (filterOwn && filterShared) {
+			if (filterAny) {
+				filter.setSelector("any");
+			} else if (filterOwn && filterShared) {
 				filter.setSelector("all");
 			} else if (filterOwn) {
 				filter.setSelector("my");
