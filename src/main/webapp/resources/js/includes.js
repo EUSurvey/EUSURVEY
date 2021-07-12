@@ -2059,7 +2059,7 @@ function initModals(item)
 	}
 		
 	function isValidTime(t) {
-		return /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])?$/.test(t);
+		return /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9]):([0-5]?[0-9])$/.test(t);
 	}
 	
 	function parseMinMaxDate(s)
