@@ -9,6 +9,8 @@
 	<title>EUSurvey - <spring:message code="label.ContactForm" /></title>
 	<%@ include file="../includes.jsp" %>
 	
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+		
 	<script type="text/javascript">
 		function checkAndSubmit()
 		{
@@ -160,7 +162,7 @@
 		       	</span>
 		       	
 		       	<div style="text-align: center; margin: 50px;">
-		       		<a class="btn btn-primary" onclick="checkAndSubmit()"><spring:message code="label.Submit" /></a>
+		       		<a href="javascript:;" class="btn btn-primary" onclick="checkAndSubmit()"><spring:message code="label.Submit" /></a>
 		       	</div>
 			
 			</form:form>

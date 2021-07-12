@@ -6,6 +6,7 @@
 <head>
 	<title>EUSurvey - <spring:message code="label.Documentation" /></title>	
 	<%@ include file="../includes.jsp" %>	
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 	
 	<style type="text/css">
 
