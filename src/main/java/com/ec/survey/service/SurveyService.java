@@ -429,7 +429,9 @@ public class SurveyService extends BasicService {
 		} 
 		
 		if (filter.getUser() != null) {
-			if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("my")) {
+			if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("any") && filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) > 1) {
+				// form administrators can see all surveys
+			} else if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("my")) {
 				// Overriding owner with current user
 				sql.append(" AND (s.OWNER = :ownerId)");
 				oQueryParameters.put("ownerId", filter.getUser().getId());
@@ -445,7 +447,7 @@ public class SurveyService extends BasicService {
 							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 				}
-			} else if (filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
+			} else {
 				// Searching for the last case, assuming selector is "all"
 				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
 					sql.append(

@@ -103,6 +103,7 @@
 			</c:if>
 			
 			$('[data-toggle="tooltip"]').tooltip(); 
+			checkAnySurveySelected();
 		});	
 		
 		function showExportDialog(type, format)
@@ -479,6 +480,16 @@
 			//dummy
 		}
 		
+		function checkAnySurveySelected() {
+			if ($('#surveysAny').is(":checked")) {
+				$('#surveysOwn').prop("checked", "checked").prop("disabled", true);
+				$('#surveysShared').prop("checked", "checked").prop("disabled", true);
+			} else {
+				$('#surveysOwn').prop("disabled", false);
+				$('#surveysShared').prop("disabled", false);
+			}
+		}
+		
 	</script>
 		
 </head>
@@ -513,21 +524,32 @@
 							<h4 style="margin-top: 20px;"><spring:message code="label.Surveys" />:</h4>     
  							<c:choose>
 								<c:when test='${filter.selector == "all" || filter.selector == "my"}'>
- 									<input class="check" checked="checked" value="own" type="checkbox" name="surveysOwn"/> <spring:message code="label.MySurveys" />
+ 									<input class="check" checked="checked" value="own" type="checkbox" name="surveysOwn" id="surveysOwn" /> <spring:message code="label.MySurveys" />
 								</c:when>
 								<c:otherwise>                                                                                                                   
-									<input class="check" value="own" type="checkbox" name="surveysOwn"/> <spring:message code="label.MySurveys" />
+									<input class="check" value="own" type="checkbox" name="surveysOwn" id="surveysOwn" /> <spring:message code="label.MySurveys" />
 								</c:otherwise>                                                                                                          
 							</c:choose>                     
 							<br />
 							<c:choose>
 								<c:when test='${filter.selector == "all" || filter.selector == "shared"}'>
-									<input class="check" checked="checked" value="shared" type="checkbox" name="surveysShared" /> <spring:message code="label.SharedWithMe" />
+									<input class="check" checked="checked" value="shared" type="checkbox" name="surveysShared" id="surveysShared" /> <spring:message code="label.SharedWithMe" />
 								</c:when>
 								<c:otherwise>                                                                                                                   
-									<input class="check" value="shared" type="checkbox" name="surveysShared" /> <spring:message code="label.SharedWithMe" />      
+									<input class="check" value="shared" type="checkbox" name="surveysShared" id="surveysShared" /> <spring:message code="label.SharedWithMe" />      
 								</c:otherwise>                                                                                                          
-							</c:choose>					
+							</c:choose>
+							<c:if test="${USER.formPrivilege > 1}">
+								<br />
+								<c:choose>
+									<c:when test='${filter.selector == "any"}'>
+										<input class="check" checked="checked" value="any" type="checkbox" id="surveysAny" name="surveysShared" onclick="checkAnySurveySelected()" /> <spring:message code="label.AllSurveysNew" />
+									</c:when>
+									<c:otherwise>                                                                                                                   
+										<input class="check" value="any" type="checkbox" name="surveysShared" id="surveysAny" onclick="checkAnySurveySelected()" /> <spring:message code="label.AllSurveysNew" />      
+									</c:otherwise>                                                                                                          
+								</c:choose>
+							</c:if>
 									
 							<h4 style="margin-top: 20px;"><spring:message code="publicSurveys.order" />:</h4>
 							
