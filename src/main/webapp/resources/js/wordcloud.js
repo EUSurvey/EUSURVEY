@@ -196,6 +196,8 @@ function createWordCloud(div, result, chartType, forResults, forStartpage, schem
 	    if (forResults) {
 	    
 			$(elementWrapper).find(".chart-controls").show();			
+			$(elementWrapper).find(".chart-scheme-group").first().show();
+			$(elementWrapper).find(".chart-size-group").first().show();
 			$(elementWrapper).find("option[data-type='textual']").show();
 			$(elementWrapper).find("option[data-type='numerical']").hide();
 			
