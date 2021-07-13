@@ -131,11 +131,16 @@ public abstract class Question extends Element {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "DELPHICHARTTYPE")
 	public DelphiChartType getDelphiChartType() {
-		return delphiChartType == null ? DelphiChartType.Bar : delphiChartType;
+		return delphiChartType == null ? getDefaultDelphiChartType() : delphiChartType;
 	}
 
 	public void setDelphiChartType(DelphiChartType delphiChartType) {
-		this.delphiChartType = delphiChartType == null ? DelphiChartType.Bar : delphiChartType;
+		this.delphiChartType = delphiChartType == null ? getDefaultDelphiChartType() : delphiChartType;
+	}
+
+	@Transient
+	public DelphiChartType getDefaultDelphiChartType() {
+		return this.delphiQuestion ? DelphiChartType.Bar : DelphiChartType.None;
 	}
 	
 	@Column(name = "DELPHIEXPLANATION")
