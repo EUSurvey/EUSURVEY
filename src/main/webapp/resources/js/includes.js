@@ -962,19 +962,19 @@ function initModals(item)
 			},
 			andFocus : function(element, text) {
 				const self = addValidationError;
-				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='0' aria-live='polite'>" + text + "</div>");
+				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
 				self.commonImpl(element);
 				$(element).next(".validation-error").first().focus();
 			},
 			toElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
-				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='0' aria-live='polite'>" + text + "</div>");
+				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
 				self.commonImpl(element);
 				$(target).find(".validation-error").first().focus();
 			},
 			afterElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
-				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='0' aria-live='polite'>" + text + "</div>");
+				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
 				self.commonImpl(element);
 				$(target).next(".validation-error").first().focus();
 			}

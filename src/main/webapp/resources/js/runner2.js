@@ -133,6 +133,7 @@ function addDelphiClassToContainerIfNeeded(element, container) {
 }
 
 var modelsForDelphiQuestions = [];
+var lastFocusedContainer = null;
 
 function addElementToContainer(element, container, foreditor, forskin) {
 	addDelphiClassToContainerIfNeeded(element, container);
@@ -347,6 +348,15 @@ function addElementToContainer(element, container, foreditor, forskin) {
 					}
 		});
 	});
+	
+	$(container).focusin(function() {
+		if (lastFocusedContainer == null || $(container).attr("data-id") != lastFocusedContainer.attr("data-id")) {
+			if (lastFocusedContainer != null) {
+				validateInput(lastFocusedContainer,true);
+			}
+			lastFocusedContainer = $(container);
+		}
+	})
 	
 	$(container).find(".confirmationelement").each(function(){
 		var cols = this;
@@ -1523,6 +1533,12 @@ function sendDelphiMailLink() {
 function hideTooltipsOnEscape(e) {
 	if ("Escape" === e.key) {
 		$('[data-toggle="tooltip"]').tooltip("hide");
+	}
+}
+
+function validateLastContainer() {
+	if (lastFocusedContainer != null) {
+		validateInput(lastFocusedContainer, true);
 	}
 }
 
