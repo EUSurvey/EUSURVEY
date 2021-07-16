@@ -879,7 +879,7 @@ function DashboardViewModel()
 		var points = [];
 		for (var i = 0; i < this.contributions().days.length; i++)
 		{
-			var point = [];
+			var point = {};
 			point.x = this.contributions().days[i];
 			point.y = this.contributions().answers[i];
 			points[points.length] = point;
@@ -1090,7 +1090,7 @@ function DashboardViewModel()
 		{
 			for (var j = 0; j < this.endDates().surveyNames[i].length; j++)
 			{
-				var point = [];
+				var point = {};
 				point.id = points.length;
 				point.start = this.endDates().days[i];
 				point.content = this.endDates().surveyNames[i][j];
