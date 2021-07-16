@@ -12,13 +12,14 @@ function addIconToHelp(help)
 		"<br />";
 }
 
-function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)
+function newFileViewModel(uid, name, comment, longdesc, cleanComment, width, desc)
 {
 	var viewModel = [];
 	viewModel.uid =  ko.observable(uid == "null" ? "" : uid);
 	viewModel.name = ko.observable(name == "null" ? "" : name);
 	viewModel.comment = ko.observable(comment == "null" ? "" : comment);
 	viewModel.longdesc = ko.observable(longdesc == "null" ? "" : longdesc);
+	viewModel.desc = ko.observable(desc == "null" ? "" : desc);
 	viewModel.cleanComment = ko.observable(cleanComment);
 	viewModel.width = ko.observable(width);
 		
@@ -63,7 +64,7 @@ function newFilesViewModel(files)
 	for (var i = 0; i < files.length; i++)
 	{
 		if (files[i].name != null)
-		viewModel.push(newFileViewModel(files[i].uid, files[i].name, files[i].comment, files[i].longdesc, files[i].cleanComment, files[i].width));
+		viewModel.push(newFileViewModel(files[i].uid, files[i].name, files[i].comment, files[i].longdesc, files[i].cleanComment, files[i].width, files[i].description));
 	}
 	
 	return viewModel;

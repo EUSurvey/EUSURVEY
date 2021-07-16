@@ -2,6 +2,8 @@ package com.ec.survey.model.survey;
 
 
 import com.ec.survey.model.survey.base.File;
+import com.ec.survey.tools.Tools;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -141,7 +143,7 @@ public class GalleryQuestion extends Question {
 			boolean found = false;
 			for (File otherFile: gallery.files)
 			{
-				if (otherFile.getName().equals(file.getName()) && otherFile.getComment().equals(file.getComment()))
+				if (otherFile.getName().equals(file.getName()) && otherFile.getComment().equals(file.getComment()) && Tools.isEqual(file.getDescription(), otherFile.getDescription()))
 				{
 					found = true;
 					break;
@@ -155,7 +157,7 @@ public class GalleryQuestion extends Question {
 			boolean found = false;
 			for (File otherFile: files)
 			{
-				if (otherFile.getName().equals(file.getName()) && otherFile.getComment().equals(file.getComment()))
+				if (otherFile.getName().equals(file.getName()) && otherFile.getComment().equals(file.getComment()) && Tools.isEqual(file.getDescription(), otherFile.getDescription()))
 				{
 					found = true;
 					break;

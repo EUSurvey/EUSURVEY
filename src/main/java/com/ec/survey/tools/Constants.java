@@ -9,6 +9,8 @@ public class Constants {
 	
 	public static final String DELETED = "deleted";
 	
+	public static final String DESCRIPTION = "Description";
+	
 	public static final String EDITED = "edited";
 	
 	public static final String EMAIL = "email";

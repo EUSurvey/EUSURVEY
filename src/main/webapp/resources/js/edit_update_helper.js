@@ -280,7 +280,7 @@ function updateGallery(file)
 	
 	if (file != null)
 	{
-		element.files.push(newFileViewModel(file.id, file.name,  file.comment, file.longdesc, file.cleanComment, file.width));
+		element.files.push(newFileViewModel(file.id, file.name,  file.comment, file.longdesc, file.cleanComment, file.width, file.desc));
 	}
 	
 	addElementHandler($(_elementProperties.selectedelement));

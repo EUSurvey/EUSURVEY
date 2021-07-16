@@ -1414,6 +1414,7 @@ public class SurveyHelper {
 			String uid = getString(parameterMap, "image" + i, id, servletContext);
 			String comment = getString(parameterMap, "comment" + i, id, servletContext);
 			String longdesc = getString(parameterMap, "longdesc" + i, id, servletContext);
+			String desc = getString(parameterMap, "desc" + i, id, servletContext);
 			String name = getString(parameterMap, "name" + i, id, servletContext);
 
 			try {
@@ -1422,6 +1423,7 @@ public class SurveyHelper {
 				file.setComment(comment);
 				file.setPosition(i);
 				file.setLongdesc(longdesc);
+				file.setDescription(desc);
 				gallery.getFiles().add(file);
 				if (log220) {
 					newFiles.append(file.getName()).append("(").append(file.getComment()).append("),");
@@ -4609,6 +4611,15 @@ public class SurveyHelper {
 							child.setTitle(translationsByKey.get(child.getUniqueId()).getLabel());
 						} else if (translationsByKey.get(child.getId().toString()) != null) {
 							child.setTitle(translationsByKey.get(child.getId().toString()).getLabel());
+						}
+					}
+				}
+				
+				if (element instanceof GalleryQuestion) {
+					GalleryQuestion gallery = (GalleryQuestion) element;
+					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+						if (translationsByKey.get(child.getUid()) != null) {
+							child.setDescription(translationsByKey.get(child.getUid()).getLabel());
 						}
 					}
 				}
