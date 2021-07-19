@@ -189,7 +189,7 @@
 								<li title="<spring:message code="form.Date.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_date" class="toolboxitem dateitem draggable"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
 								<li title="<spring:message code="form.Time.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
 								<c:if test="${form.survey.isDelphi}">
-									<li title="<spring:message code="form.RankingQuestion.Tooltip" />" data-toggle="tooltip" data-container="body" id="drag_ranking" class="toolboxitem rankingitem draggable"><span class="glyphicon glyphicon-sort"></span> <spring:message code="form.RankingQuestion" /></li>
+									<li title="<spring:message code="form.RankingQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_ranking" class="toolboxitem rankingitem draggable"><span class="glyphicon glyphicon-sort"></span> <spring:message code="form.RankingQuestion" /></li>
 								</c:if>
 							</c:otherwise>
 						</c:choose>
@@ -426,6 +426,7 @@
 			$('[data-toggle="tooltip"]').tooltip({
 			    trigger : 'hover'
 			});
+			$(window).scroll(function() {$('[data-toggle="tooltip"]').tooltip("hide");});
 			
 			triggers = {};
 	 		<c:forEach var="element" items="${form.survey.getElementsRecursive(true)}">
