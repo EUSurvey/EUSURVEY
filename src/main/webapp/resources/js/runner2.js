@@ -264,6 +264,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		$(container).find(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 		$(container).find(".qq-upload-drop-area").css("margin-left", "-1000px");
 		$(container).find(".qq-upload-list").hide();
+		$(container).find("input[type=file]").attr("aria-label", infolabeluploadbutton);
 	} 
 	
 	if (element.type == 'DateQuestion') {

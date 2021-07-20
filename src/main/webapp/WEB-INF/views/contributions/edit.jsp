@@ -153,11 +153,12 @@
 			var div = document.createElement("div");
 			
 			var del = document.createElement("a");
-			$(del).attr("href", "#").attr(
+			$(del).attr("href", "#").attr("data-toggle","tooltip").attr("title","${form.getMessage("label.RemoveUploadedFile")}").attr("aria-label",f).attr(
 					"onclick",
 					"deleteFile('" + $(element).attr('data-id') + "','"
 							+ $("#uniqueCode").val() + "','" + f + "', this);return false;");
 			
+			$(del).tooltip();
 			var ic = document.createElement("i");
 			$(ic).addClass("glyphicon glyphicon-trash").css("margin-right",
 					"10px");

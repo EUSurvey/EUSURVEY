@@ -689,14 +689,16 @@
 			<div style="float: right; padding-bottom: 20px;  max-width: 45%; text-align: center;" data-bind="html: maxLabel()"></div>
 			<div style="clear: both"></div>
 			
-			<a href="javascript:;" data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
+			<a href="javascript:;" data-bind='click: decrease'><svg aria-label="${form.getMessage("info.DecreaseSliderValue")}" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+				  <path stroke="#337ab7" stroke-width="3" fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg></a>
 			
 			<input type="text"
 				   onchange="propagateChange(this);"
 				   data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'class': css() + ' sliderbox', 'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue(), 'data-is-answered': isAnswered() ? 'true' : 'false', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id() }"
 			/>
 
-			<a href="javascript:;" data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
+			<a href="javascript:;" data-bind='click: increase'><svg aria-label="${form.getMessage("info.IncreaseSliderValue")}" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+  					<path stroke="#337ab7" stroke-width="3" fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg></a>
 		</div>
 		<!-- /ko -->
 		
@@ -891,10 +893,10 @@
 		<input type="hidden" data-bind="attr: {'id': 'answer' + id(), 'name':'answer' + id()}" value="files" />				
 		<div class="uploaded-files" data-bind="foreach: getFileAnswer(uniqueId())">
 			<div>
-				<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" aria-label="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
+				<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id(), 'aria-label' : $data}">
 					<span style="margin-right: 10px;" class="glyphicon glyphicon-trash"></span>
 				</a>
-				<span data-bind="html: $data"></span>
+				<span data-bind="id: html: $data"></span>
 			</div>				
 		</div>				
 		<div data-bind="attr: {'class': css() + ' file-uploader', 'data-id':id}" style="margin-left: 10px; margin-top: 10px;"></div>
@@ -920,7 +922,7 @@
 			<!-- ko if: $parent.foreditor -->
 			<input type="hidden" data-bind="value: uid(), attr: {'name': 'files' + $parent.id()}" />	
 			<!-- /ko -->
-			<a class="visiblelink" target="_blank" data-bind="attr: {'href': '${contextpath}/files/${form.survey.uniqueId}/' + uid()}, html: name"></a> <br />
+			<a class="visiblelink" target="_blank" data-bind="attr: {'href': '${contextpath}/files/${form.survey.uniqueId}/' + uid(), 'aria-label' : '${form.getMessage("label.DownloadFile")} ' + name()}, html: name"></a> <br />
 		</div>
 		<!-- ko if: foreditor -->
 		
@@ -1264,7 +1266,7 @@
 									<div class="uploaded-files"
 										data-bind="foreach: getFileAnswer(uniqueId())">
 										<div>
-											<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" aria-label="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
+											<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="attr: {'id' : 'uploadlink' + $parent.id(), 'aria-label' : $data}, click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}">
 												<span style="margin-right: 10px;"
 												class="glyphicon glyphicon-trash"></span>
 											</a> <span data-bind="html: $data"></span>
