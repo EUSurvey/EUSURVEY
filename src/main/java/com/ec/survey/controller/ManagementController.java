@@ -1345,6 +1345,10 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getMaxNumberContribution(), uploadedSurvey.getMaxNumberContribution()))
 			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getTimeLimit(), uploadedSurvey.getTimeLimit()))
+			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getShowCountdown(), uploadedSurvey.getShowCountdown()))
+			hasPendingChanges = true;
 
 		if (!uploadedSurvey.getShowTotalScore()) {
 			uploadedSurvey.setScoresByQuestion(false);
@@ -1381,6 +1385,8 @@ public class ManagementController extends BasicController {
 		survey.setShowQuizIcons(uploadedSurvey.getShowQuizIcons());
 		survey.setShowTotalScore(uploadedSurvey.getShowTotalScore());
 		survey.setScoresByQuestion(uploadedSurvey.getScoresByQuestion());
+		survey.setTimeLimit(uploadedSurvey.getTimeLimit());
+		survey.setShowCountdown(uploadedSurvey.getShowCountdown());
 
 		survey.setIsDelphiShowAnswersAndStatisticsInstantly(uploadedSurvey.getIsDelphiShowAnswersAndStatisticsInstantly());
 		survey.setIsDelphiShowAnswers(uploadedSurvey.getIsDelphiShowAnswers());
@@ -2531,6 +2537,8 @@ public class ManagementController extends BasicController {
 
 		result.addObject("submit", true);
 		result.addObject(Constants.UNIQUECODE, uniqueCode);
+		
+		sessionService.setFormStartDate(request, form, uniqueCode);
 
 		return result;
 	}
@@ -2572,6 +2580,7 @@ public class ManagementController extends BasicController {
 			survey = surveyService.getSurvey(survey.getId(), newlang);
 			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
 					survey.getLanguage(), resources, contextpath);
+			sessionService.setFormStartDate(request, f, uniqueCode);
 			f.getAnswerSets().add(answerSet);
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 
@@ -2586,6 +2595,7 @@ public class ManagementController extends BasicController {
 			survey = surveyService.getSurvey(survey.getId(), newlang);
 			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
 					survey.getLanguage(), resources, contextpath);
+			sessionService.setFormStartDate(request, f, uniqueCode);
 			f.getAnswerSets().add(answerSet);
 			if (newcss != null && newcss.equalsIgnoreCase("wcag")) {
 				answerSet.setWcagMode(true);
@@ -2609,7 +2619,7 @@ public class ManagementController extends BasicController {
 			}
 			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
 					survey.getLanguage(), resources, contextpath);
-
+			sessionService.setFormStartDate(request, f, uniqueCode);
 			f.getAnswerSets().add(answerSet);
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 			f.setValidation(validation);
@@ -2633,6 +2643,7 @@ public class ManagementController extends BasicController {
 			}
 			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
 					survey.getLanguage(), resources, contextpath);
+			sessionService.setFormStartDate(request, f, uniqueCode);
 			f.getAnswerSets().add(answerSet);
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			model.addObject("submit", true);
@@ -2647,7 +2658,7 @@ public class ManagementController extends BasicController {
 			answerSet.setResponderEmail(user.getEmail());
 		}
 
-		saveAnswerSet(answerSet, fileDir, request.getParameter("draftid"), -1);
+		saveAnswerSet(answerSet, fileDir, request.getParameter("draftid"), -1, request);
 
 		survey = surveyService.getSurvey(survey.getId(), lang);
 
@@ -2656,6 +2667,7 @@ public class ManagementController extends BasicController {
 					answerSet.getUniqueCode());
 			Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
 					translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+			sessionService.setFormStartDate(request, form, uniqueCode);
 			form.setSurvey(survey);
 			form.getAnswerSets().add(answerSet);
 
@@ -2679,6 +2691,7 @@ public class ManagementController extends BasicController {
 
 		Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
 				translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+		sessionService.setFormStartDate(request, form, uniqueCode);
 		form.setSurvey(survey);
 
 		result.addObject(form);

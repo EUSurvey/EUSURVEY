@@ -42,6 +42,7 @@
 			this.changeContribution = ko.observable(${form.survey.changeContribution});
 			this.downloadContribution = ko.observable(${form.survey.downloadContribution});
 			this.saveAsDraft = ko.observable(${form.survey.saveAsDraft});
+			this.timeLimit = ko.observable("${form.survey.timeLimit}");
 			
 			this.addLinksRow = function()
 			{
@@ -152,6 +153,8 @@
 			{
 				if (this.self.delphi()) {
 					this.self.changeContribution(true); // should always be activated for delphi surveys
+				} else if (this.timeLimit().length > 0) {
+					this.self.changeContribution(false); // should always be deactivated if a timelimit is set
 				} else {
 					this.self.changeContribution(!this.self.changeContribution());
 				}
@@ -159,8 +162,8 @@
 			
 			this.toggleSaveAsDraft = function()
 			{
-				if (this.self.delphi()) {
-					this.self.saveAsDraft(false); // should always be deactivated for delphi surveys
+				if (this.self.delphi() || this.timeLimit().length > 0) {
+					this.self.saveAsDraft(false); // should always be deactivated for delphi surveys or if a timelimit is set
 				} else {
 					this.self.saveAsDraft(!this.self.saveAsDraft());
 				}
@@ -178,6 +181,16 @@
 			this.toggleQuiz = function()
 			{
 				this.self.quiz(!this.self.quiz());
+			}
+			
+			this.checkTimeLimit = function(i) 
+			{
+				this.timeLimit($(i).val());
+				
+				if (this.timeLimit().length > 0) {
+					this.self.saveAsDraft(false);
+					this.self.changeContribution(false);
+				}
 			}
 			
 			this.toggleDelphi = function()
@@ -205,7 +218,6 @@
 		{
 			try {				
 				$("#propertiespage").find(".validation-error").remove();
-				var tabs;
 				var invalid = false;
 			
 				if (!checkShortname($('#edit-survey-shortname').val(), '${form.survey.id}'))
@@ -304,7 +316,7 @@
 				
 				if (invalid) return;
 				
-				var result = validateInput(tabs);
+				var result = validateInput($('#save-form'));
 				
 				if (result == false)
 				{

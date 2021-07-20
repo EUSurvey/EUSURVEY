@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.MessageSource;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -39,6 +40,8 @@ public class Form {
 	private MessageSource resources;
 
 	private String contextpath;
+	private Date startDate = new Date();
+	private Date currentDate = new Date();
 
 	protected static final Logger logger = Logger.getLogger(Form.class);
 
@@ -712,4 +715,30 @@ public class Form {
 		return "none";
 	}
 
+	@DateTimeFormat(pattern = ConversionTools.DateTimeFormatJS)
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	@DateTimeFormat(pattern = ConversionTools.DateTimeFormatJS)
+	public Date getCurrentDate() {
+		return currentDate;
+	}
+
+	public void setCurrentDate(Date currentDate) {
+		this.currentDate = currentDate;
+	}
+	
+	public long getPassedTimeInSeconds() {
+		if (this.startDate == null || this.currentDate == null) {
+			return 0;
+		}
+		
+		long milliSeconds = this.currentDate.getTime() - this.startDate.getTime();		
+		return milliSeconds / 1000;
+	}
 }

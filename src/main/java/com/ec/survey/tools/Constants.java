@@ -29,6 +29,8 @@ public class Constants {
 	
 	public static final String SHORTNAME = "shortname";
 	
+	public static final String START = "start";
+	
 	public static final String STRING = "string";
 	
 	public static final String SURVEY = "survey";

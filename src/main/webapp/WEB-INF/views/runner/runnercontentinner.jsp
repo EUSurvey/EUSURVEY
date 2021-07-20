@@ -286,6 +286,14 @@
 									 alt="${form.survey.logoText}"/>
 								<hr style="margin-top: 15px;"/>
 							</c:if>
+							
+							<c:if test="${mode != 'editcontribution' && form.survey.timeLimit.length() > 0}">
+								<div class="linkstitle">
+									${form.getMessage("label.CountdownTimer")}
+								</div>
+								<div style="font-size: 20px;" id="countdowntimer">${form.survey.timeLimit}</div>
+								<hr style="margin-top: 15px;"/>								
+							</c:if>
 
 							<c:if test='${runnermode == null  || form.survey.skin == null || !form.survey.skin.name.equals("New Official EC Skin")}'>
 
@@ -458,6 +466,19 @@
 						<div class="modal-footer">
 							<a href="javascript:;" class="btn btn-default" onclick="confirmExplanationDeletion()"><spring:message code="label.Confirm" /></a>
 							<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog('.confirm-explanation-deletion-modal')"><spring:message code="label.Cancel" /></a>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="modal" id="quizTimeoutDialog" data-backdrop="static" role="dialog">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<spring:message code="info.CountdownExceeded" />
+						</div>
+						<div class="modal-footer">
+							<a class="btn btn-default"  data-dismiss="modal"><spring:message code="label.Close" /></a>
 						</div>
 					</div>
 				</div>
@@ -787,4 +808,52 @@
 	 	
 	 	initializeAnswerData();
 	 	initializeTriggers();
+	 	
+	 	<c:if test="${mode != 'editcontribution' && form.survey.timeLimit.length() > 0}">
+			var countdownTimerSeconds = ${form.survey.timeLimitInSeconds};			
+			var passedSeconds = ${form.getPassedTimeInSeconds()};			
+			var startDateJS = new Date();
+					
+			function updateCountdown() {
+				var currentTime = new Date();
+				var rest = countdownTimerSeconds - passedSeconds - Math.floor((currentTime - startDateJS) / 1000); 
+				
+				if (rest < 1) {
+					//timeout
+					$('#countdowntimer').html("00:00:00")
+					$('#btnSubmit').remove();
+					$('.single-page').remove();
+					$('#quizTimeoutDialog').modal("show");
+					return;
+				} else if (rest < 61) {
+					//red color
+					$('#countdowntimer').addClass("lightred");
+				}
+				
+				//update
+				var hours = Math.floor(rest / 3600);
+				rest = rest - (hours * 3600);
+				var minutes = Math.floor(rest / 60);
+				rest = rest - (minutes * 60);
+				
+				var minuteSeparator = ":";			
+				if (minutes < 10) {
+					minuteSeparator = ":0";
+				}	
+				
+				var secondSeparator = ":";			
+				if (rest < 10) {
+					secondSeparator = ":0";
+				}	
+				
+				$('#countdowntimer').html(hours + minuteSeparator + minutes + secondSeparator + rest);
+				
+				window.setTimeout(function() {
+					updateCountdown();
+				}, 1000);
+			}
+			
+			updateCountdown();
+	
+		</c:if>
 	</script>
