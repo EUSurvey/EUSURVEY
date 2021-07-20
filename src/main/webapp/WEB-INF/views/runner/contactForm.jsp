@@ -94,6 +94,7 @@
 			$(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 			$(".qq-upload-list").hide();
 			$(".qq-upload-drop-area").css("margin-left", "-1000px");
+			$("input[type=file]").attr("aria-label", "<spring:message code="info.uploadbutton" />");
 			
 			<c:if test="${messagesent != null}">
 				showSuccess('<spring:message code="support.messagesentowner" />')

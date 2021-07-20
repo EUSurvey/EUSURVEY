@@ -229,36 +229,34 @@
 
 									<c:if test="${submit == true}">
 										<div style="text-align: center; margin-top: 20px;">
-											<input type="button" id="btnPrevious" style="display: none;" role="button" id="btnPrevious" aria-label="${form.getMessage("label.GoToPreviousPage")}"
-												   value="${form.getMessage("label.Previous")}"
+											<a id="btnPrevious" style="display: none;" role="button" id="btnPrevious" aria-label="${form.getMessage("label.GoToPreviousPage")}"
+												   href="javascript:;"
 												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 												   title="${form.survey.isDelphi ? form.getMessage("label.PreviousPageDelphi") : ""}"
-												   onclick="previousPage();this.blur();" class="btn btn-default"/>
+												   onclick="previousPage();this.blur();" class="btn btn-default">${form.getMessage("label.Previous")}</a>
 											<c:choose>
 												<c:when test="${dialogmode != null }">
-													<input type="button" id="btnSubmit" role="button"
-														   value="${form.getMessage("label.Save")}"
+													<a id="btnSubmit" role="button"
+														   href="javascript:;"
 														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
-														   class="btn btn-primary"/>
-													<input type="button" id="btnSubmit2" role="button"
-														   value="${form.getMessage("label.Close")}"
+														   class="btn btn-primary">${form.getMessage("label.Save")}</a>
+													<a id="btnSubmit2" role="button" href="javascript:;"
 														   onclick="window.open('', '_self', '');window.close();"
-														   class="btn btn-default"/>
+														   class="btn btn-default">${form.getMessage("label.Close")}</a>
 												</c:when>
 												<c:otherwise>
-													<input type="button" id="btnSubmit" role="button" id="btnSubmit" aria-label="${form.getMessage("label.Submit")}"
-														   value="${form.getMessage("label.Submit")}"
+													<a id="btnSubmit" role="button" id="btnSubmit" href="javascript:;"
 														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
-														   class="btn btn-primary hidden"/>
+														   class="btn btn-primary hidden">${form.getMessage("label.Submit")}</a>
 												</c:otherwise>
 											</c:choose>
 
-											<input type="button" id="btnNext" style="display: none;" role="button" aria-label="${form.getMessage("label.GoToNextPage")}"
-												   value="${form.getMessage("label.Next")}"
+											<a id="btnNext" style="display: none;" role="button" aria-label="${form.getMessage("label.GoToNextPage")}"
+												   href="javascript:;"
 												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 												   title="${form.survey.isDelphi ? form.getMessage("label.NextPageDelphi") : ""}"
 												   onclick="nextPage();this.blur();"
-												   class="btn btn-default btn-primary"/>
+												   class="btn btn-default btn-primary">${form.getMessage("label.Next")}</a>
 
 											<c:if test="${responsive != null && mode != 'editcontribution' && dialogmode == null && form.survey.saveAsDraft}">
 												<input type="button" id="btnSaveDraftMobile"
