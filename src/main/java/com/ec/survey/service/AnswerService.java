@@ -2289,7 +2289,7 @@ public class AnswerService extends BasicService {
 		if (answerSet == null)
 		{
 			answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
-		}	
+		}
 	
 		return answerSet;
 	}

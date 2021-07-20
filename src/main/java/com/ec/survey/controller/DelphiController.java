@@ -185,7 +185,7 @@ public class DelphiController extends BasicController {
 				return new ResponseEntity<>(new DelphiUpdateResult(resources.getMessage("error.CheckValidation", null, locale)), HttpStatus.BAD_REQUEST);
 			}
 
-			saveAnswerSet(answerSet, fileDir, null, -1);
+			saveAnswerSet(answerSet, fileDir, null, -1, request);
 			
 			DelphiUpdateResult updateResult = new DelphiUpdateResult(resources.getMessage("message.ChangesSaved", null, locale));
 			updateResult.setLink(serverPrefix + "editcontribution/" + answerSet.getUniqueCode());

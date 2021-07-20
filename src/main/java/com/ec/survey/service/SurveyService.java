@@ -3074,7 +3074,13 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			
 			if (!Tools.isEqual(draftSurvey.getMinNumberDelphiStatistics(), publishedSurvey.getMinNumberDelphiStatistics()))
-				hasPendingChanges = true;			
+				hasPendingChanges = true;	
+			
+			if (!Tools.isEqual(draftSurvey.getTimeLimit(), publishedSurvey.getTimeLimit()))
+				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draftSurvey.getShowCountdown(), publishedSurvey.getShowCountdown()))
+				hasPendingChanges = true;	
 
 			if (draftSurvey.getSendConfirmationEmail() != publishedSurvey.getSendConfirmationEmail())
 				hasPendingChanges = true;

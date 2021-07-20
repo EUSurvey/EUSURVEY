@@ -21,7 +21,7 @@
 		
 			<div class="surveytitle">${form.survey.title} - <spring:message code="label.Results" /></div><br />
 			<div style="margin-bottom: 20px;">${form.survey.quizResultsMessage}</div>
-			
+		
 			<c:if test="${forpdf == null}">
 				<div style="text-align: center; margin-bottom: 20px;">
 					<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
@@ -320,6 +320,10 @@
 				<tr>
 					<td style="padding-right: 10px"><spring:message code="label.CompletedAt" /></td>
 					<td>${form.answerSets[0].niceDate}</td>
+				</tr>
+				<tr>
+					<td style="padding-right: 10px"><spring:message code="label.CompletionTime" /></td>
+					<td>${form.answerSets[0].completionTime()}</td>
 				</tr>
 				
 			</table>			

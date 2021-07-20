@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import java.net.*;
+import java.util.Date;
 import java.util.List;
 
 @Service("sessionService")
@@ -656,4 +657,21 @@ public class SessionService extends BasicService {
 	public String getContextPath() {
 		return servletContext.getContextPath();
 	}
+	
+	public void setFormStartDate(HttpServletRequest request, Form form, String uniqueCode) {
+		Date startDate = (Date)request.getSession().getAttribute(Constants.START + uniqueCode);
+		if (startDate != null) {
+			form.setStartDate(startDate);
+		}
+		
+		request.getSession().setAttribute(Constants.START + uniqueCode, form.getStartDate());
+	}
+	
+	public void SetUniqueCodeForForm(HttpServletRequest request, int surveyId, String uniqueCode) {
+		request.getSession().setAttribute(Constants.UNIQUECODE + surveyId, uniqueCode);
+	}
+
+	public void ClearUniqueCodeForForm(HttpServletRequest request, int surveyId)  {
+		request.getSession().removeAttribute(Constants.UNIQUECODE + surveyId);		
+	}	
 }

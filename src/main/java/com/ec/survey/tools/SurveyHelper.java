@@ -64,7 +64,12 @@ public class SurveyHelper {
 
 		answerSet.setSurvey(survey);
 		answerSet.setSurveyId(survey.getId());
-		answerSet.setUniqueCode(uniqueCode);
+		answerSet.setUniqueCode(uniqueCode);		
+		
+		if (survey.getTimeLimit().length() > 0) {
+			Date startDate = (Date) request.getSession().getAttribute(Constants.START + uniqueCode);
+			answerSet.setStartDate(startDate);
+		}
 
 		if (request.getParameter("disclaimerMinimized") != null) {
 			answerSet.setDisclaimerMinimized(request.getParameter("disclaimerMinimized").equalsIgnoreCase("true"));

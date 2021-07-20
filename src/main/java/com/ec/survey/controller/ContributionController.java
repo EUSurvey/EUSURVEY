@@ -421,7 +421,7 @@ public class ContributionController extends BasicController {
 					return model;
 				}
 
-				saveAnswerSet(oldAnswerSet, fileDir, null, u == null ? -1 : u.getId());
+				saveAnswerSet(oldAnswerSet, fileDir, null, u == null ? -1 : u.getId(), request);
 
 				List<String> newFileUIDs = oldAnswerSet.getAllFiles();
 

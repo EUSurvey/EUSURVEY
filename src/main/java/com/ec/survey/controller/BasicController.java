@@ -388,7 +388,7 @@ public class BasicController implements BeanFactoryAware {
 		return model;
 	}
 
-	public void saveAnswerSet(AnswerSet answerSet, String fileDir, String draftid, int userid) throws Exception {
+	public void saveAnswerSet(AnswerSet answerSet, String fileDir, String draftid, int userid, HttpServletRequest request) throws Exception {
 		boolean saved = false;
 
 		int counter = 1;
@@ -403,6 +403,7 @@ public class BasicController implements BeanFactoryAware {
 		while (!saved) {
 			try {
 				answerService.internalSaveAnswerSet(answerSet, fileDir, draftid, true, true);
+				sessionService.ClearUniqueCodeForForm(request, answerSet.getSurvey().getId());
 				if (answerSet.getId() != null) {
 					if (existingAnswerSet) {
 						String newvalues = answerSet.serialize();
