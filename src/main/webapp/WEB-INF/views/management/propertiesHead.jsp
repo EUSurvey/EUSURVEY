@@ -205,6 +205,14 @@
 				}
 			}
 			
+			this.toggleShowCountdown = function()
+			{
+				if (this.timeLimit().length == 0) {
+					return;
+				}
+				this.self.showCountdown(!this.self.showCountdown());
+			}
+			
 			this.toggleDelphi = function()
 			{
 				if (this.self.delphi()) { // switch to standard survey

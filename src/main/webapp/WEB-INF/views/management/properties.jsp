@@ -1270,12 +1270,12 @@
 										</td>
 										<td style="padding-top: 15px; width: 50px;">
 											<div class="onoffswitch">
-												<form:checkbox path="survey.showCountdown" class="onoffswitch-checkbox" id="myonoffswitchshowcountdown" />
-												 <label class="onoffswitch-label" for="myonoffswitchshowcountdown" data-bind='class: "onoffswitch-label"+ ((_properties.timeLimit().length == 0) ? " disabled" : "")' onclick="_properties.toggleShowCountdown()">
+												<form:checkbox path="survey.showCountdown" class="onoffswitch-checkbox" data-bind="checked: _properties.showCountdown()" />
+												 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.timeLimit().length == 0) ? " disabled" : "")' onclick="_properties.toggleShowCountdown()">
 											        <span class="onoffswitch-inner"></span>
 											        <span class="onoffswitch-switch"></span>
 											    </label>
-											</div>		
+											</div>							
 										</td>
 									</tr>
 								</table>					
