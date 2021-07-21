@@ -143,6 +143,11 @@ public abstract class Question extends Element {
 		return this.delphiQuestion ? DelphiChartType.Bar : DelphiChartType.None;
 	}
 	
+	@Transient
+	public DelphiChartDataType getDelphiChartDataType() {
+		return DelphiChartDataType.Numerical;
+	}
+
 	@Column(name = "DELPHIEXPLANATION")
 	public Boolean getShowExplanationBox() {
 		return showExplanationBox;

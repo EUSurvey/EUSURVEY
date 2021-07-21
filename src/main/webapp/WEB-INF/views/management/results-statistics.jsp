@@ -305,13 +305,13 @@
 					</c:if>
 										
 					<c:if test="${question.getType() == 'FreeTextQuestion'}">				
-						<c:if test='${form.getSurvey().isDelphi && question.isDelphiElement() && (question.getDelphiChartType() != "None")}'>
+						<c:if test='${form.getSurvey().isDelphi && question.isDelphiElement()}'>
 							<div style="width: 700px; margin-left: auto; margin-right: auto;">
 								<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
 							</div>
 							
 	                        <div class="statelement-wrapper">
-                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}" data-initial-chart-type="${question.getDelphiChartType()}" data-chart-data-type="${question.getDelphiChartDataType()}">
                                      <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
                                          <tr>
                                              <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
