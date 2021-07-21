@@ -43,6 +43,7 @@
 			this.downloadContribution = ko.observable(${form.survey.downloadContribution});
 			this.saveAsDraft = ko.observable(${form.survey.saveAsDraft});
 			this.timeLimit = ko.observable("${form.survey.timeLimit}");
+			this.showCountdown = ko.observable(${form.survey.showCountdown});
 			
 			this.addLinksRow = function()
 			{
@@ -190,6 +191,17 @@
 				if (this.timeLimit().length > 0) {
 					this.self.saveAsDraft(false);
 					this.self.changeContribution(false);
+				} else {
+					this.self.showCountdown(false);
+				}
+			}
+			
+			this.toggleShowCountdown = function()
+			{
+				if (this.timeLimit().length == 0) {
+					this.self.showCountdown(false); // should always be deactivated if no timelimit is set
+				} else {
+					this.self.showCountdown(!this.self.showCountdown());
 				}
 			}
 			
@@ -378,6 +390,14 @@
 					
 					if (result == false)
 					{
+						return;
+					}
+				}
+				
+				if ($('#survey\\.timeLimit').val().length > 0) {
+					var v = $('#survey\\.timeLimit').val().replaceAll("0", "").replaceAll(":", "");
+					if (v.length == 0) {
+						$("#survey\\.timeLimit").after("<div class='validation-error'>" + timeLimitNotZero + "</div>");
 						return;
 					}
 				}

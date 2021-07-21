@@ -287,7 +287,7 @@
 								<hr style="margin-top: 15px;"/>
 							</c:if>
 							
-							<c:if test="${mode != 'editcontribution' && form.survey.timeLimit.length() > 0}">
+							<c:if test="${mode != 'editcontribution' && form.survey.timeLimit.length() > 0 && form.survey.showCountdown}">
 								<div class="linkstitle">
 									${form.getMessage("label.CountdownTimer")}
 								</div>

@@ -173,6 +173,7 @@
 			var messageuploadwrongextension = "${form.getMessage("message.messageuploadwrongextension")}";
 			var labelnewexplanation = "${form.getMessage("label.NewExplanation")}";
 			var labeloldexplanation = "${form.getMessage("label.OldExplanation")}";
+			var timeLimitNotZero = "${form.getMessage("error.timeLimitNotZero")}";
 		</c:when>
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
@@ -254,6 +255,7 @@
 			var labelnewexplanation = "<spring:message code='label.NewExplanation' />";
 			var labeloldexplanation = "<spring:message code='label.OldExplanation' />";
 			var selectFileForUploadRunner = "<spring:message code='label.SelectFileForUpload' />";
+			var timeLimitNotZero =  "<spring:message code='error.timeLimitNotZero' />";
 		</c:otherwise>
 	</c:choose>
 	
