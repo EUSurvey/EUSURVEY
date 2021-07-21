@@ -233,12 +233,13 @@
 												   value="${form.getMessage("label.Previous")}"
 												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 												   title="${form.survey.isDelphi ? form.getMessage("label.PreviousPageDelphi") : ""}"
-												   onclick="previousPage();this.blur();" class="btn btn-default"/>
+												   onclick="previousPage();this.blur();" onfocusin="validateLastContainer()" class="btn btn-default"/>
 											<c:choose>
 												<c:when test="${dialogmode != null }">
 													<input type="button" id="btnSubmit" role="button"
 														   value="${form.getMessage("label.Save")}"
 														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
+														   onfocusin="validateLastContainer()"
 														   class="btn btn-primary"/>
 													<input type="button" id="btnSubmit2" role="button"
 														   value="${form.getMessage("label.Close")}"
@@ -249,6 +250,7 @@
 													<input type="button" id="btnSubmit" role="button" id="btnSubmit" aria-label="${form.getMessage("label.Submit")}"
 														   value="${form.getMessage("label.Submit")}"
 														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
+														   onfocusin="validateLastContainer()"
 														   class="btn btn-primary hidden"/>
 												</c:otherwise>
 											</c:choose>
@@ -258,6 +260,7 @@
 												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 												   title="${form.survey.isDelphi ? form.getMessage("label.NextPageDelphi") : ""}"
 												   onclick="nextPage();this.blur();"
+												   onfocusin="validateLastContainer()"
 												   class="btn btn-default btn-primary"/>
 
 											<c:if test="${responsive != null && mode != 'editcontribution' && dialogmode == null && form.survey.saveAsDraft}">
