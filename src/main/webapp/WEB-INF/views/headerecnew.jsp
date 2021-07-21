@@ -7,7 +7,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 	<div class="lang-en" id="header">
-		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null && mode != 'delphiStartPage' && mode != 'editcontribution' && form.survey.timeLimit.length() > 0}">
+		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null && mode != 'delphiStartPage' && mode != 'editcontribution' && form.survey.timeLimit.length() > 0  && form.survey.showCountdown}">
 			<div style="position: fixed; right: 10px; top: 10px; font-size: 18px; z-index: 1000; background-color: #fff; padding: 5px;">
 				${form.getMessage("label.CountdownTimer")}			
 				<span style="margin-left: 10px;" id="countdowntimer">${form.survey.timeLimit}</span>

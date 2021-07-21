@@ -13,7 +13,7 @@
 			<a class="logolink" href="<c:url value="/home/welcome"/>"><span class="logolink" style="padding-top:3px; font-family: steinerregular;"><img src="${contextpath}/resources/images/logo_eusurvey_white-tiny.png" style="margin-top: -3px; max-width:24px;" alt="EUSurvey"/> EUSurvey</span></a>
 		</div>
 		
-		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null && mode != 'delphiStartPage' && mode != 'editcontribution' && form.survey.timeLimit.length() > 0}">
+		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null && mode != 'delphiStartPage' && mode != 'editcontribution' && form.survey.timeLimit.length() > 0  && form.survey.showCountdown}">
 			<div style="float: left; padding-top: 5px; padding-left: 20px; font-size: 18px;">
 				${form.getMessage("label.CountdownTimer")}			
 				<span style="margin-left: 10px;" id="countdowntimer">${form.survey.timeLimit}</span>
