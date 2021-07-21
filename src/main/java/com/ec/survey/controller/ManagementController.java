@@ -898,7 +898,7 @@ public class ManagementController extends BasicController {
 
 				try {
 
-					surveyService.copyFiles(copy, new HashMap<>(), false, null, original.getUniqueId());
+					Map<String, String> convertedUIDs = surveyService.copyFiles(copy, new HashMap<>(), false, null, original.getUniqueId());
 
 					Map<String, String> oldToNewUniqueIds = new HashMap<>();
 					oldToNewUniqueIds.put("", ""); // leave blank for old surveys that have no uniqueIds
@@ -951,7 +951,7 @@ public class ManagementController extends BasicController {
 
 					List<Translations> translations = translationService.getTranslationsForSurvey(original.getId(),
 							false, false);
-					surveyService.copyTranslations(translations, copy, oldToNewUniqueIds, null, newTitle);
+					surveyService.copyTranslations(translations, copy, oldToNewUniqueIds, null, newTitle, convertedUIDs);
 
 					Form form = new Form(resources);
 					form.setSurvey(copy);

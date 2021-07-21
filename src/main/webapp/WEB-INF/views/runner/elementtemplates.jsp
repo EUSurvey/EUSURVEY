@@ -983,13 +983,14 @@
 								<span data-bind='html: name().replace("%20"," "), attr: {id: "answerlabel" + $parents[1].id() + $index()}'></span>
 							</div>
 							<a onclick="showGalleryBrowser($(this).parent())">																	
-								<img class="gallery-image" data-bind="attr: {'alt': cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px', 'longdesc' : longdesc()}"  style="max-width: 100%;" />	
+								<img class="gallery-image" data-bind="attr: {'alt': desc(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px', 'longdesc' : longdesc()}"  style="max-width: 100%;" />	
 							</a>
 							<div class="comment" data-bind="html: comment"></div>	
 							<!-- ko if: $parents[1].foreditor -->
 								<input type="hidden" data-bind="value: name, attr: {'name': 'name' + ($parentContext.$index() * $parents[1].columns() + $index() + 1) + $parents[1].id()}" />	
 								<input type="hidden" data-bind="value: uid, attr: {'name': 'image' + ($parentContext.$index() * $parents[1].columns() + $index() + 1) + $parents[1].id()}" />	
 								<input type="hidden" data-bind="value: longdesc, attr: {'name': 'longdesc' + ($parentContext.$index() * $parents[1].columns() + $index() + 1) + $parents[1].id()}" />	
+								<input type="hidden" data-bind="value: desc, attr: {'name': 'desc' + ($parentContext.$index() * $parents[1].columns() + $index() + 1) + $parents[1].id()}" />	
 								<textarea style="display: none" data-bind="text: comment, attr: {'name': 'comment' + ($parentContext.$index() * $parents[1].columns() + $index() + 1) + $parents[1].id()}"></textarea>
 							<!-- /ko -->						
 						</td>
@@ -1030,7 +1031,7 @@
 								<span data-bind='html: name().replace("%20"," ")'></span>
 							</div>
 						
-							<img style="width: 95%;" data-bind="attr: {'alt':cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+uid(), 'longdesc' : longdesc()}" />	
+							<img style="width: 95%;" data-bind="attr: {'alt': desc(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+uid(), 'longdesc' : longdesc()}" />	
 							<div class="gallery-image-comment" style="text-align: center; padding: 15px;" data-bind="html: comment()"></div>							
 						</div>
 				  </div>

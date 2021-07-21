@@ -1171,6 +1171,14 @@ public class SurveyService extends BasicService {
 					}
 				}
 			}
+			if (element instanceof GalleryQuestion) {
+				GalleryQuestion gallery = (GalleryQuestion) element;
+				if (gallery.getFiles() != null) {
+					for (com.ec.survey.model.survey.base.File file : gallery.getFiles()) {
+						publishedSurveyKeys.put(file.getUid(), file.getUid());
+					}
+				}
+			}
 		}
 		List<Translations> draftTranslationsList = translationService.getTranslationsForSurvey(draftSurvey.getId(), true);
 		for (Translations draftTranslations : draftTranslationsList) {
@@ -2272,14 +2280,14 @@ public class SurveyService extends BasicService {
 					result.getSurvey().getUniqueId());
 
 			Map<String, String> oldToNewUniqueIds = importDraftSurvey(copy, result, user);
-			importSurveyData(result, true, copy, oldToNewUniqueIds, result.getSurvey().getId());
+			importSurveyData(result, true, copy, oldToNewUniqueIds, result.getSurvey().getId(), convertedUIDs);
 
 			if (result.getActiveSurvey() != null && result.getActiveAnswerSets() != null
 					&& !result.getActiveAnswerSets().isEmpty()) {
 				Map<Integer, Integer> oldSourceIdsById = getSourceIdsById(result.getActiveSurvey());
 				for (int id : result.getOldSurveys().keySet()) {
 					Survey copyOld = importOldPublishedSurvey(result.getOldSurveys().get(id), user, oldToNewUniqueIds);
-					importSurveyData(result, false, copyOld, oldToNewUniqueIds, id);
+					importSurveyData(result, false, copyOld, oldToNewUniqueIds, id, convertedUIDs);
 				}
 				copyActive = result.getActiveSurvey().copy(this, user, fileDir, false, -1, -1, false, false, true, null,
 						null);
@@ -2287,7 +2295,7 @@ public class SurveyService extends BasicService {
 						result.getSurvey().getUniqueId());
 
 				importPublishedSurvey(copyActive, result, user, oldToNewUniqueIds, oldSourceIdsById);
-				importSurveyData(result, false, copyActive, oldToNewUniqueIds, result.getActiveSurvey().getId());
+				importSurveyData(result, false, copyActive, oldToNewUniqueIds, result.getActiveSurvey().getId(), convertedUIDs);
 			}
 
 			for (String fileuid : convertedUIDs.keySet()) {
@@ -2344,7 +2352,7 @@ public class SurveyService extends BasicService {
 	}
 
 	private void importSurveyData(ImportResult result, boolean draft, Survey survey,
-			Map<String, String> oldToNewUniqueIds, Integer surveyid) throws Exception {
+			Map<String, String> oldToNewUniqueIds, Integer surveyid, Map<String, String> convertedFileUIDs) throws Exception {
 		List<Translations> translations = null;
 		List<AnswerSet> answerSets = new ArrayList<>();
 		Map<Integer, List<File>> files = null;
@@ -2381,7 +2389,7 @@ public class SurveyService extends BasicService {
 		}
 
 		if (translations != null) {
-			copyTranslations(translations, survey, oldToNewUniqueIds, result, true);
+			copyTranslations(translations, survey, oldToNewUniqueIds, result, true, convertedFileUIDs);
 		}
 
 		if (answerSets != null && !answerSets.isEmpty()) {
@@ -2547,7 +2555,7 @@ public class SurveyService extends BasicService {
 	}
 
 	public void copyTranslations(List<Translations> translations, Survey survey, Map<String, String> oldToNewUniqueIds,
-			ImportResult result, boolean newTitle) {
+			ImportResult result, boolean newTitle, Map<String, String> convertedFileUIDs) {
 		Map<Integer, Element> elementsBySourceId = survey.getElementsBySourceId();
 
 		for (Translations tOriginal : translations) {
@@ -2571,7 +2579,7 @@ public class SurveyService extends BasicService {
 					tr.setSurveyId(survey.getId());
 
 					if (result == null || !result.isFromIPM()) {
-						tr.setKey(translateKey(trOriginal.getKey(), elementsBySourceId, oldToNewUniqueIds));
+						tr.setKey(translateKey(trOriginal.getKey(), elementsBySourceId, oldToNewUniqueIds, convertedFileUIDs));
 					} else {
 						if (trOriginal.getKey().equalsIgnoreCase(Survey.IPMINTRODUCTION)) {
 							for (com.ec.survey.model.survey.Element element : survey.getElements()) {
@@ -2648,7 +2656,7 @@ public class SurveyService extends BasicService {
 	}
 
 	private String translateKey(String key, Map<Integer, Element> elementsBySourceId,
-			Map<String, String> oldToNewUniqueIds) {
+			Map<String, String> oldToNewUniqueIds, Map<String, String> convertedFileUIDs) {
 
 		if (key == null)
 			return key;
@@ -2765,6 +2773,8 @@ public class SurveyService extends BasicService {
 					return elementsBySourceId.get(retVal).getUniqueId() + "FIRSTCELL";
 			} else if (oldToNewUniqueIds.containsKey(key)) {
 				return oldToNewUniqueIds.get(key);
+			} else if (convertedFileUIDs.containsKey(key)) {
+				return convertedFileUIDs.get(key);
 			} else {
 				retVal = Integer.parseInt(key);
 				if (elementsBySourceId.containsKey(retVal))
@@ -2815,7 +2825,7 @@ public class SurveyService extends BasicService {
 			logger.info("unknown key " + key + "found in translation");
 		}
 
-		return translateKey(key2, elementsBySourceId, oldToNewUniqueIds);
+		return translateKey(key2, elementsBySourceId, oldToNewUniqueIds, new HashMap<String, String>());
 	}
 
 	@SuppressWarnings("unchecked")

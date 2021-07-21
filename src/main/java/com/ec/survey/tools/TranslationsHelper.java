@@ -281,6 +281,16 @@ public class TranslationsHelper {
 								survey.getLanguage().getCode(), survey.getId(), translations));
 					}
 				}
+				
+				if (element instanceof GalleryQuestion) {
+					GalleryQuestion gallery = (GalleryQuestion) element;
+					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+						translations.getTranslations()
+							.add(new Translation(child.getUid(),
+								child.getDescription() != null ? child.getDescription() : "",
+								survey.getLanguage().getCode(), survey.getId(), translations));
+					}
+				}
 			} else {
 				logger.warn("element without unique id found: " + element.getId());
 			}
@@ -400,6 +410,13 @@ public class TranslationsHelper {
 				RankingQuestion ranking = (RankingQuestion) element;
 				for (Element child : ranking.getChildElements()) {
 					result.add(new KeyValue(child.getUniqueId(), "L"));
+				}
+			}
+			
+			if (element instanceof GalleryQuestion) {
+				GalleryQuestion gallery = (GalleryQuestion) element;
+				for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+					result.add(new KeyValue(child.getUid(), "L"));
 				}
 			}
 		}
@@ -556,6 +573,14 @@ public class TranslationsHelper {
 							resources.getMessage("label.Text", null, "Text", locale)));
 				}
 			}
+			
+			if (element instanceof GalleryQuestion) {
+				GalleryQuestion gallery = (GalleryQuestion) element;
+				for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+					result.add(new KeyValue(child.getUid(), 
+							resources.getMessage("label.DescriptiveText", null, "Descriptive Text", locale)));
+				}
+			}
 		}
 
 		return result;
@@ -574,6 +599,37 @@ public class TranslationsHelper {
 			logger.error(e.getLocalizedMessage(), e);
 			return "";
 		}
+	}
+	
+	private static String getLabel(com.ec.survey.model.survey.base.File file, String suffix, Map<String, String> translationByKey) {
+		try {
+			String label = "";
+			if (translationByKey.containsKey(file.getUid() + suffix)) {
+				label = translationByKey.get(file.getUid() + suffix);
+			} else if (translationByKey.containsKey(file.getId().toString() + suffix)) {
+				label = translationByKey.get(file.getId().toString() + suffix);
+			}
+			return label != null ? label : "";
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+			return "";
+		}
+	}
+	
+	private static org.w3c.dom.Element getFileNode(com.ec.survey.model.survey.base.File element, Document doc,
+			HashMap<String, String> translationByKey) {
+		org.w3c.dom.Element fileNode = doc.createElement("File");
+		
+		Attr attr = doc.createAttribute("key");
+		attr.setValue(element.getUid());
+		fileNode.setAttributeNode(attr);
+		
+		String label = getLabel(element, "", translationByKey);
+		org.w3c.dom.Element labelNode = doc.createElement(Constants.DESCRIPTION);
+		labelNode.appendChild(doc.createCDATASection(label));
+		fileNode.appendChild(labelNode);
+	
+		return fileNode;
 	}
 
 	private static org.w3c.dom.Element getElementNode(Element element, Document doc,
@@ -736,6 +792,17 @@ public class TranslationsHelper {
 
 			for (Element child : ranking.getChildElements()) {
 				childrenElement.appendChild(getElementNode(child, doc, translationByKey));
+			}
+			elementNode.appendChild(childrenElement);
+		}
+		
+		if (element instanceof GalleryQuestion) {
+
+			GalleryQuestion gallery = (GalleryQuestion) element;
+			org.w3c.dom.Element childrenElement = doc.createElement("Children");
+
+			for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+				childrenElement.appendChild(getFileNode(child, doc, translationByKey));
 			}
 			elementNode.appendChild(childrenElement);
 		}
@@ -1193,7 +1260,19 @@ public class TranslationsHelper {
 						}
 					}
 				}
-
+				
+				if (element instanceof GalleryQuestion) {
+					GalleryQuestion gallery = (GalleryQuestion) element;
+					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+						label = getLabel(child, "", translationsByKey);
+						if (notNullOrEmpty(label)) {
+							row = sheet.createRow(rowIndex++);
+							addTextCell(row, 0, child.getUid());
+							addTextCell(row, 1, descriptions.get(child.getUid()));
+							addTextCell(row, 2, label);
+						}
+					}
+				}
 			}
 
 			java.io.File temp = fileService.createTempFile("translation" + UUID.randomUUID().toString(), ".xls");
@@ -1546,6 +1625,21 @@ public class TranslationsHelper {
 						}
 					}
 				}
+				
+				if (element instanceof GalleryQuestion) {
+					GalleryQuestion gallery = (GalleryQuestion) element;
+					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+						label = getLabel(child, "", translationsByKey);
+						if (notNullOrEmpty(label)) {
+							cell = sheet.getCellByPosition(0, rowIndex);
+							cell.setStringValue(child.getUid());
+							cell = sheet.getCellByPosition(1, rowIndex);
+							cell.setStringValue(descriptions.get(child.getUid()));
+							cell = sheet.getCellByPosition(2, rowIndex++);
+							cell.setStringValue(label);
+						}
+					}
+				}
 			}
 
 			java.io.File temp = fileService.createTempFile("translation" + UUID.randomUUID().toString(), ".ods");
@@ -1800,7 +1894,20 @@ public class TranslationsHelper {
 						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
 					}
 				}
+				
+				if (type.contains("GalleryQuestion")) {
+					org.w3c.dom.Element children = (org.w3c.dom.Element) element.getElementsByTagName("Children")
+							.item(0);
 
+					for (int j = 0; j < children.getElementsByTagName("File").getLength(); j++) {
+						org.w3c.dom.Element child = (org.w3c.dom.Element) children.getElementsByTagName("File")
+								.item(j);
+						key = Tools.repairXML(child.getAttribute("key"));
+						label = getText(child.getElementsByTagName(Constants.DESCRIPTION), Constants.DESCRIPTION);
+
+						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
+					}
+				}
 				
 				org.w3c.dom.NodeList feedbackChildren = element.getElementsByTagName("Feedback");
 
@@ -2311,6 +2418,15 @@ public class TranslationsHelper {
 					if (translationsByKey.containsKey(child.getUniqueId())
 							&& notNullOrEmpty(translationsByKey.get(child.getUniqueId()).getLabel()))
 						child.setTitle(translationsByKey.get(child.getUniqueId()).getLabel());
+				}
+			}
+			
+			if (element instanceof GalleryQuestion) {
+				GalleryQuestion gallery = (GalleryQuestion) element;
+				for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+					if (translationsByKey.containsKey(child.getUid())
+							&& notNullOrEmpty(translationsByKey.get(child.getUid()).getLabel()))
+						child.setDescription(translationsByKey.get(child.getUid()).getLabel());
 				}
 			}
 		}
