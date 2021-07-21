@@ -131,7 +131,7 @@ public abstract class Question extends Element {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "DELPHICHARTTYPE")
 	public DelphiChartType getDelphiChartType() {
-		if (delphiQuestion && (delphiChartType == DelphiChartType.None)) {
+		if (delphiQuestion && !(this instanceof FreeTextQuestion) && (delphiChartType == DelphiChartType.None)) {
 			return getDefaultDelphiChartType(); 
 		}		
 		
