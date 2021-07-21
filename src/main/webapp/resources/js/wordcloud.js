@@ -102,17 +102,27 @@ function getWordCloudData(result, f)
 }
 
 function createWordCloud(div, result, chartType, forResults, forStartpage, scheme) {
-	if (result.data.length==0 || chartType == 'None')
-	{
-		if (forResults) {
+	if (!forResults) {
+		if (result.data.length==0 || chartType == 'None') {
+			$(div).closest(".elementwrapper, .statelement-wrapper").find(".chart-wrapper-loader").hide();
+			return;
+		}
+	} else {
+		if (result.data.length==0) {
 			var questionuid = div.data("uid");
 			$('#wordcloud' + questionuid).empty();
 			$(div).closest(".statelement-wrapper").find(".chart-download").hide();
+			$(div).closest(".elementwrapper, .statelement-wrapper").find(".chart-wrapper-loader").hide();
+			return;
 		}
-		
-		$(div).closest(".elementwrapper, .statelement-wrapper").find(".chart-wrapper-loader").hide();
-		
-		return;	
+		if (chartType == 'None') {
+			var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
+			$(elementWrapper).find(".chart-controls").show();
+			$(elementWrapper).find("option[data-type='textual']").show();
+			$(elementWrapper).find("option[data-type='numerical']").hide();
+			$(elementWrapper).find(".chart-type").first().val("None");
+			return;
+		}
 	}
 	
 	if (div == null) {

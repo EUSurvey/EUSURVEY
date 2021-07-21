@@ -81,6 +81,12 @@ public class FreeTextQuestion extends Question {
 		this.answer = answer;
 	}
 	
+	@Transient
+	@Override
+	public DelphiChartDataType getDelphiChartDataType() {
+		return DelphiChartDataType.Textual;
+	}
+
 	public FreeTextQuestion copy(String fileDir) throws ValidationException
 	{
 		FreeTextQuestion copy = new FreeTextQuestion();

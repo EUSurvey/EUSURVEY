@@ -188,8 +188,9 @@
 
 				$(this).parent().find('[data-toggle="tooltip"]').tooltip();
 
-				var chartwrapper = $(this);
-				if (${form.survey.isDelphi}) {
+				const chartwrapper = $(this);
+				const initialChartType = $(chartwrapper).data("initial-chart-type");
+				if (${form.survey.isDelphi} && initialChartType != "None") {
 					loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300);
 				} else {
 					addChart(this, null, "None", false);
@@ -363,7 +364,12 @@
 				$(controls).find(".chart-scheme-group").first().hide();
 				$(controls).find(".chart-size-group").first().hide();
 				$(controls).find(".chart-legend-group").first().hide();
-				$(elementWrapper).find("option[data-type='textual']").hide();
+				const chartDataType = $(elementWrapper).find(".chart-wrapper").data("chart-data-type");
+				if (chartDataType == "Textual") {
+					$(elementWrapper).find("option[data-type='numerical']").hide();
+				} else {
+					$(elementWrapper).find("option[data-type='textual']").hide();
+				}
 				$(elementWrapper).find(".chart-wrapper").hide();
 			} else {
 				$(controls).find(".chart-scheme-group").first().show();

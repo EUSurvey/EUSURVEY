@@ -261,11 +261,6 @@ public class DelphiController extends BasicController {
 			}
 			
 			if (question instanceof FreeTextQuestion) {
-				
-				if (question.getDelphiChartType() == DelphiChartType.None) {
-					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-				}
-				
 				return handleDelphiFreetextQuestion(survey, question, creator);
 			}
 
