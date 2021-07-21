@@ -2606,7 +2606,7 @@ public class AnswerService extends BasicService {
 		Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection = new HashMap<>();
 		initializeHelperMaps(survey, questionsBySection, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
 				
-		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, false, false, false, false);
+		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, true, false, false, false);
 		if (answerRows != null) {
 			totalNumberOfContributions = answerRows.size();
 			Map<Integer, String> questionUidsByIndex = new HashMap<>();
