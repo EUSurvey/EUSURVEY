@@ -305,31 +305,29 @@
 					</c:if>
 										
 					<c:if test="${question.getType() == 'FreeTextQuestion'}">				
-						<c:if test='${form.getSurvey().isDelphi && question.isDelphiElement()}'>
-							<div style="width: 700px; margin-left: auto; margin-right: auto;">
-								<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
-							</div>
-							
-	                        <div class="statelement-wrapper">
-                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}" data-initial-chart-type="${question.getDelphiChartType()}" data-chart-data-type="${question.getDelphiChartDataType()}">
-                                     <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                         <tr>
-                                             <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-												 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-											 </th>
-                                         </tr>
-                                         <tr>
-                                             <td style='padding-top:10px; padding-bottom:10px'>
-                                                 <div id="wordcloud${question.uniqueId}" class="delphi-chart-div" style="min-width: 300px; min-height: 220px"></div>
-                                             </td>
-                                         </tr>
-                                     </table>
-                                     <div style="clear: both"></div>
-                                </div>
-                                <div class="chart-controls"></div>
-                                <div style="clear: both"></div>
-	                        </div>
-	                    </c:if>	
+						<div style="width: 700px; margin-left: auto; margin-right: auto;">
+							<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
+						</div>
+
+                        <div class="statelement-wrapper">
+                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}" data-initial-chart-type="${question.getDelphiChartType()}" data-chart-data-type="${question.getDelphiChartDataType()}">
+                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+                                        <tr>
+                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+											    <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+										    </th>
+                                        </tr>
+                                        <tr>
+                                            <td style='padding-top:10px; padding-bottom:10px'>
+                                                <div id="wordcloud${question.uniqueId}" class="delphi-chart-div" style="min-width: 300px; min-height: 220px"></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div style="clear: both"></div>
+                               </div>
+                               <div class="chart-controls"></div>
+                               <div style="clear: both"></div>
+                        </div>
 					</c:if>
 					
 					<c:if test="${question.getType() == 'RatingQuestion'}">

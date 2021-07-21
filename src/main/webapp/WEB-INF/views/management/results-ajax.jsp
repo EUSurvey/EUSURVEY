@@ -190,8 +190,12 @@
 
 				const chartwrapper = $(this);
 				const initialChartType = $(chartwrapper).data("initial-chart-type");
-				if (${form.survey.isDelphi} && initialChartType != "None") {
-					loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300);
+				if (${form.survey.isDelphi}) {
+					if (initialChartType == 'None') {
+						addChart(this, null, initialChartType, false);
+					} else {
+						loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300);
+					}
 				} else {
 					addChart(this, null, "None", false);
 				}

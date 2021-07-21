@@ -397,7 +397,7 @@ public class DelphiController extends BasicController {
 		
 		List<String> texts = creator.getAnswers4FreeTextStatistics(survey, question);
 		
-		if (texts.size() < survey.getMinNumberDelphiStatistics()) {
+		if (texts.isEmpty() || (survey.getIsDelphi() && texts.size() < survey.getMinNumberDelphiStatistics())) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}		
