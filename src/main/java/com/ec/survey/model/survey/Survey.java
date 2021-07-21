@@ -2336,7 +2336,7 @@ final public class Survey implements java.io.Serializable {
 	
 	@Transient
 	public int getTimeLimitInSeconds() {
-		if (timeLimit.length() == 0) return -1;
+		if (timeLimit == null || timeLimit.length() == 0) return -1;
 		
 		String[] arr = timeLimit.split(":");
 		return Integer.parseInt(arr[0]) * 3600 + Integer.parseInt(arr[1]) * 60 + Integer.parseInt(arr[2]);		
