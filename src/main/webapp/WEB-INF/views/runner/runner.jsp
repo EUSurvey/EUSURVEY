@@ -116,7 +116,7 @@
 						"onclick",
 						'deleteFile("' + $(element).attr('data-id') + '","'
 								+ $("#uniqueCode").val() + '","' + f + '", this);return false;');
-				$(del).tooltip();
+				$(del).ApplyCustomTooltips();
 				
 				var ic = document.createElement("span");
 				$(ic).addClass("glyphicon glyphicon-trash").css("margin-right",	"10px");

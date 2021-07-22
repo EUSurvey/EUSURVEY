@@ -896,7 +896,7 @@
 				<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id(), 'aria-label' : $data}">
 					<span style="margin-right: 10px;" class="glyphicon glyphicon-trash"></span>
 				</a>
-				<span data-bind="id: html: $data"></span>
+				<span data-bind="html: $data"></span>
 			</div>				
 		</div>				
 		<div data-bind="attr: {'class': css() + ' file-uploader', 'data-id':id}" style="margin-left: 10px; margin-top: 10px;"></div>
