@@ -10,10 +10,12 @@ $(function() {
 			originalindex = $(ui.item).index();
 			$(".draggable-active").append("<div class='droppable-text'>" + getPropertyLabel("dropelementhere") + "</div>");
 			
-			if ($(".selectedquestion").length > 1)
+			if ($(".survey-element.selectedquestion").length > 1)
 			{
-				draggedelements = $("#content").find(".selectedquestion");
-			}			
+				draggedelements = $("#content").find(".survey-element.selectedquestion");
+			} else {
+				draggedelements = null;
+			}
 		},
 		stop: function(event, ui) {
 			
