@@ -69,6 +69,8 @@ function loadGraphDataInnerCommon(div, queryParams, flags, chartCallback, chartT
 					$(elementWrapper).find(".chart-wrapper").hide();
 					if (flags.forResults) {
 						$(elementWrapper).find(".chart-controls").hide();
+						$(elementWrapper).find(".no-chart-results-message").text(infoNoData);
+						$(elementWrapper).find(".chart-wrapper").data("has-no-data", "true");
 					} else {
 						$(elementWrapper).find(".chart-wrapper-loader").hide();
 					}

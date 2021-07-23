@@ -327,6 +327,7 @@
                                </div>
                                <div class="chart-controls"></div>
                                <div style="clear: both"></div>
+                               <div class="no-chart-results-message"></div>
                         </div>
 					</c:if>
 					
