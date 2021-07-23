@@ -599,11 +599,21 @@ public class ManagementController extends BasicController {
 					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
 				throw new ForbiddenURLException();
 			}
-
+			
+			String oldValue = null;
+			if (activityService.isEnabled(107)) {
+				Survey published = surveyService.getSurvey(form.getSurvey().getShortname(), false, false, false, false, null,
+						true, false);
+				
+				if (published != null) {
+					oldValue = published.serialize(false);
+				}
+			}
+			
 			surveyService.applyChanges(form.getSurvey(), false, u.getId(), false);
 
 			if (activityService.isEnabled(107)) {
-				activityService.log(107, null, form.getSurvey().serialize(false), u.getId(),
+				activityService.log(107, oldValue, form.getSurvey().serialize(false), u.getId(),
 						form.getSurvey().getUniqueId());
 			}
 		} catch (Exception e) {
