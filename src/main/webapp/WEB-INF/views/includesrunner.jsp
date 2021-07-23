@@ -175,6 +175,7 @@
 			var labeloldexplanation = "${form.getMessage("label.OldExplanation")}";
 			var timeLimitNotZero = "${form.getMessage("error.timeLimitNotZero")}";
 			var infolabeluploadbutton = "${form.getMessage("info.uploadbutton")}";
+			var infoNoData = "${form.getMessage("info.NoData")}";
 		</c:when>
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
@@ -258,6 +259,7 @@
 			var selectFileForUploadRunner = "<spring:message code='label.SelectFileForUpload' />";
 			var timeLimitNotZero = "<spring:message code='error.timeLimitNotZero' />";
 			var infolabeluploadbutton = "<spring:message code='info.uploadbutton' />";
+			var infoNoData = "<spring:message code='info.NoData' />";
 		</c:otherwise>
 	</c:choose>
 	
