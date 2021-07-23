@@ -254,7 +254,7 @@ public class ParticipantsController extends BasicController {
 				}
 			}
 
-			return g.getEcasUsers();
+			return result;
 		} else {
 			List<Invitation> result = new ArrayList<>();
 			for (Invitation i : attendeeService.getInvitationsForParticipationGroup(g.getId())) {
