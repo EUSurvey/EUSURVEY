@@ -256,7 +256,7 @@
 			var labelnewexplanation = "<spring:message code='label.NewExplanation' />";
 			var labeloldexplanation = "<spring:message code='label.OldExplanation' />";
 			var selectFileForUploadRunner = "<spring:message code='label.SelectFileForUpload' />";
-			var infolabeluploadbutton = "<spring:message code='info.uploadbutton' />";
+			var timeLimitNotZero = "<spring:message code='error.timeLimitNotZero' />";
 			var infolabeluploadbutton = "<spring:message code='info.uploadbutton' />";
 		</c:otherwise>
 	</c:choose>
