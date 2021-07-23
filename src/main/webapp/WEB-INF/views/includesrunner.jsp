@@ -397,6 +397,11 @@
 			 } else {
 				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
 			 }
+
+			 if(max - cs <= 0)
+			 {
+				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#f00");
+			 }
 		 }
 	 }
 	
