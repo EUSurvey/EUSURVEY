@@ -628,13 +628,11 @@
 		}
 		
 		.subelement.noborder td, .subsubelement.noborder td {
-			border: 0px solid #f5f4f4 !important;
-			border-top: 1px solid #f5f4f4 !important;
+			border: 0px !important;			
 		}
 		
 		.nobottomborder td {
-			border: 0px solid #f5f4f4 !important;
-			border-bottom: 1px solid #f5f4f4 !important;
+			border: 0px !important;
 		}
 		
 		#logo-cell img {
