@@ -637,7 +637,7 @@ function newChoiceViewModel(element)
 		result[result.length] = list;
 		
 		var limit = this.numColumns();
-		if (responsive) limit = 3;
+		if (responsive && limit > 3) limit = 3;
 		if (mobile) limit = 1;
 		
 		for (var i = 0; i < orderedPossibleAnswers.length; i++)
