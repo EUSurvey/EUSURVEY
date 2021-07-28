@@ -157,7 +157,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isFrozen;
 	private boolean ecasSecurity;
 	private String ecasMode;
-	private Boolean logoInInfo;
+	private Boolean logoInInfo = true;
 	private Boolean isQuiz;
 	private Boolean isDelphi;
 	private Boolean isOPC;
