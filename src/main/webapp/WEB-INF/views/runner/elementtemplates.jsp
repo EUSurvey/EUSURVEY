@@ -689,6 +689,7 @@
 			<div style="float: right; padding-bottom: 20px;  max-width: 45%; text-align: center;" data-bind="html: maxLabel()"></div>
 			<div style="clear: both"></div>
 			
+			<div class="slider-widget-box">
 			<a href="javascript:;" data-bind='click: decrease'><svg aria-label="${form.getMessage("info.DecreaseSliderValue")}" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
 				  <path stroke="#337ab7" stroke-width="3" fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg></a>
 			
@@ -699,6 +700,7 @@
 
 			<a href="javascript:;" data-bind='click: increase'><svg aria-label="${form.getMessage("info.IncreaseSliderValue")}" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
   					<path stroke="#337ab7" stroke-width="3" fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg></a>
+			</div>
 		</div>
 		<!-- /ko -->
 		
