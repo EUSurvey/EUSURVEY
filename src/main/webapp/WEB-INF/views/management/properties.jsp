@@ -1260,7 +1260,7 @@
 									<tr>
 										<td colspan="2">
 											<div style="text-align: right">
-												<form:input style="width: 100px; display: inline" placeholder="hh:mm:ss" class="form-control time" path="survey.timeLimit" oninput="_properties.checkTimeLimit(this)" ></form:input>
+												<form:input style="width: 100px; display: inline" placeholder="HH:mm:ss" class="form-control time" path="survey.timeLimit" oninput="_properties.checkTimeLimit(this)" ></form:input>
 											</div>
 										</td>
 									</tr>
