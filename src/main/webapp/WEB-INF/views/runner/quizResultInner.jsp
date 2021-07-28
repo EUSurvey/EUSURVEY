@@ -22,7 +22,7 @@
 			<div class="surveytitle">${form.survey.title} - <spring:message code="label.Results" /></div><br />
 			<div style="margin-bottom: 20px;">${form.survey.quizResultsMessage}</div>
 		
-			<c:if test="${forpdf == null}">
+			<c:if test="${forpdf == null && form.survey.downloadContribution}">
 				<div style="text-align: center; margin-bottom: 20px;">
 					<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
 				</div>
@@ -330,7 +330,7 @@
 			
 		</div>
 		
-		<c:if test="${forpdf == null}">
+		<c:if test="${forpdf == null && form.survey.downloadContribution}">
 			<div style="text-align: center; margin-bottom: 20px;">
 				<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
 			</div>
