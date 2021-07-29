@@ -80,6 +80,9 @@
 				$('#forgot-password-dialog').modal('show');
 			</c:if>
 			
+			<c:if test="${responsive != null}">
+				$("#responsiveinfo-dialog").modal("show");
+			</c:if>			
 		});
 		
 		function switchPanels()
@@ -252,7 +255,7 @@
 		</div>
 		</div>
 	</div>
-	
+		
 	<c:if test="${error != null}">
 		<script type="text/javascript">
 			switchPanels();
