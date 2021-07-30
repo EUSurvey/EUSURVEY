@@ -440,7 +440,7 @@ public class OdfExportCreator extends ExportCreator {
 			final ArchiveOutputStream os = new ArchiveStreamFactory().createArchiveOutputStream("zip", out);
 
 			if (publication != null) {
-				os.putArchiveEntry(new ZipArchiveEntry(FilenameUtils.getName(exportFilePath + ".xls")));
+				os.putArchiveEntry(new ZipArchiveEntry(FilenameUtils.getName(exportFilePath + ".ods")));
 			} else {
 				os.putArchiveEntry(new ZipArchiveEntry(FilenameUtils.getName(exportFilePath)));
 			}
