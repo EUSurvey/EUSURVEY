@@ -138,6 +138,15 @@ function singleClick(r) {
 	propagateChange(r);
 }
 
+function singleKeyUp(event, target, isParentReadOnly) {
+	if (isParentReadOnly) {
+		return;
+	}
+	if (event.code === "Space" && $(target).is(":checked")) {
+		$(target).attr("previousValue", "checked").removeAttr("checked");
+	}
+}
+
 function checkHasValue(element) {
 	
 	if (element == null || $(element).length == 0)
