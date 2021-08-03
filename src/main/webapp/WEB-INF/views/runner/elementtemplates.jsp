@@ -610,7 +610,7 @@
 							<input data-bind="value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 			
 							<div data-bind="foreach: new Array($parent.numIcons())">
-								<a class="ratingitem" role="listitem" href="javascript:;" tabindex="0" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()">
+								<a class="ratingitem" role="listitem" href="javascript:;" tabindex="0" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
 									<!-- ko if: $parents[1].iconType() == 0 -->
 								    <img src="${contextpath}/resources/images/star_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 								    <!-- /ko -->
