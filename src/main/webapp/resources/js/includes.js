@@ -1503,7 +1503,7 @@ function initModals(item)
 				if ($(this).parent().find(".validation-error").length == 0)
 				{
 					validationinfo += $(this).attr("name") + " (XHTML) ";
-					addValidationError.andFocus(this, $(this).parent(), invalidXHTML);
+					addValidationError.andFocus(this, invalidXHTML);
 		    		
 					$(this).focus();
 					result = false;
@@ -1522,7 +1522,7 @@ function initModals(item)
 		    	if ($(this).parent().find(".validation-error").length == 0)
 				{
 		    		validationinfo += $(this).attr("name") + " (URL) ";
-		    		addValidationError.andFocus(this, $(this).parent(), invalidURL);
+		    		addValidationError.andFocus(this, invalidURL);
 					result = false;
 				};
 		    } 			
@@ -1539,7 +1539,7 @@ function initModals(item)
 		    	if ($(this).parent().find(".validation-error").length == 0)
 				{
 		    		validationinfo += $(this).attr("name") + " (URL) ";
-		    		addValidationError.andFocus(this, $(this).parent(), invalidURL);
+		    		addValidationError.andFocus(this, invalidURL);
 					result = false;
 				};
 		    }			
@@ -1552,10 +1552,10 @@ function initModals(item)
 			 var reg = /^[a-zA-Z0-9-_]+$/;
 			 if ($(this).parent().find(".validation-error").length == 0)
 			    if( !reg.test( value ) ) {
-			    	addValidationError.andFocus(this, $(this).parent(), shortnameText);
+			    	addValidationError.andFocus(this, shortnameText);
 					result = false;
 			    } else if( value.indexOf("__") > -1 ) {
-			    	addValidationError.andFocus(this, $(this).parent(), shortnameText2);
+			    	addValidationError.andFocus(this, shortnameText2);
 					result = false;
 			    } ;
 		});
@@ -1567,10 +1567,10 @@ function initModals(item)
 			 var reg = /^[a-zA-Z0-9-_]+$/;
 			 if ($(this).parent().find(".validation-error").length == 0)
 			    if( !reg.test( value ) ) {
-			    	addValidationError.andFocus(this, $(this).parent(), shortnameText);
+			    	addValidationError.andFocus(this, shortnameText);
 					result = false;
 			    } else if( value.indexOf("__") > -1 ) {
-			    	addValidationError.andFocus(this, $(this).parent(), shortnameText2);
+			    	addValidationError.andFocus(this, shortnameText2);
 					result = false;
 			    } ;
 		});

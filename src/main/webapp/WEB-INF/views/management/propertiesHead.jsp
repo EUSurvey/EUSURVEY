@@ -336,6 +336,24 @@
 				
 				if (invalid) return;
 				
+				if ($("#survey-contact-type").val() == "url") {
+					$("#survey\\.contact").removeClass("email").addClass("url");
+					result = validateInput($("#survey\\.contact").parent());
+					
+					if (result == false)
+					{
+						return;
+					}
+				} else {
+					$("#survey\\.contact").removeClass("url").addClass("email");
+					result = validateInput($("#survey\\.contact").parent());
+					
+					if (result == false)
+					{
+						return;
+					}
+				}				
+				
 				var result = validateInput($('#save-form'));
 				
 				if (result == false)
@@ -383,24 +401,6 @@
 						return;
 					}
 				</c:if>		
-				
-				if ($("#survey-contact-type").val() == "url") {
-					$("#survey\\.contact").removeClass("email").addClass("url");
-					result = validateInput($("#survey\\.contact").parent());
-					
-					if (result == false)
-					{
-						return;
-					}
-				} else {
-					$("#survey\\.contact").removeClass("url").addClass("email");
-					result = validateInput($("#survey\\.contact").parent());
-					
-					if (result == false)
-					{
-						return;
-					}
-				}
 				
 				if ($('#survey\\.timeLimit').val().length > 0) {
 					var v = $('#survey\\.timeLimit').val().replaceAll("0", "").replaceAll(":", "");
