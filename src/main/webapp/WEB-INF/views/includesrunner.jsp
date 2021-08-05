@@ -397,6 +397,16 @@
 			 } else {
 				 $(input).closest(".survey-element").find(".charactercounterdiv").css("color", "#777");
 			 }
+
+			 if(max > 0 && max - cs <= 0)
+			 {
+				 $(input).closest(".survey-element").find(".glyphicon-alert").hide();
+				 $(input).closest(".survey-element").find(".characterlimitreached").show();
+				 $(input).closest(".survey-element").find(".charactersused").hide();
+			 } else {
+				 $(input).closest(".survey-element").find(".characterlimitreached").hide();
+				 $(input).closest(".survey-element").find(".charactersused").show();
+			 }
 		 }
 	 }
 	
