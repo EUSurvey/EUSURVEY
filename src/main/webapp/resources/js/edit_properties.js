@@ -937,6 +937,7 @@ var ElementProperties = function() {
 			} else if ($(e).find(".gallery-image").length > 0)
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='comment']").first().text(), true);
+				getTextPropertiesRow("DescriptiveText", $(e).find("input[name^='desc']").first().val(), false);
 				getTextPropertiesRow("LongDescription", $(e).find("input[name^='longdesc']").first().val(), false);
 				getTextPropertiesRow("Title", $(e).find("input[name^='name']").first().val(), false);
 				

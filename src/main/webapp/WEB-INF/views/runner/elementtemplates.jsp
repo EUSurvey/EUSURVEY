@@ -509,14 +509,14 @@
 		<!-- /ko -->
 	
 		<!-- ko if: maxCharacters() > 0 -->	
-			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'maxlength':maxCharacters(), 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}"  onkeyup="countChar(this);propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
+			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'maxlength':maxCharacters(), 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}"  onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
 			<div class="charactercounterdiv" style="max-width: 645px; text-align: right; color: #777; margin-left: 20px;">
 				<span class="glyphicon glyphicon-alert" style="display: none; margin-right: 5px;" data-toggle="tooltip" title="${form.getMessage("info.charactercounter")}" aria-label="${form.getMessage("info.charactercounter")}"></span>
 				<span class="charactercounter">0</span> / <span data-bind="text: maxCharacters()"></span>
 			</div>
 		<!-- /ko -->
 		<!-- ko if: maxCharacters() == 0 -->	
-			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}" onkeyup="countChar(this);propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
+			<textarea data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css() + ' expand', 'data-rows':numRows(), 'rows':numRows(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id(), 'aria-required':!optional()}" onkeyup="countChar(this);" oninput="propagateChange(this);" onblur="validateInput($(this).parent(),true)"></textarea>
 		<!-- /ko -->
 		<!-- ko if: isComparable() -->		
 			<br /><span style="margin-left: 20px">${form.getMessage("label.PleaseRepeat")}</span>:<br />
@@ -610,15 +610,15 @@
 							<input data-bind="value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'name' : 'answer' + id(), 'class' : 'rating ' + css()}" data-type="rating" type="hidden"></input>
 			
 							<div data-bind="foreach: new Array($parent.numIcons())">
-								<a class="ratingitem" role="listitem" href="javascript:;" tabindex="0" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()">
+								<a class="ratingitem" role="listitem" href="javascript:;" tabindex="0" onclick="ratingClick(this)" data-bind="attr: {'data-icons' : $parents[1].numIcons(), 'data-shortname': $parents[1].shortname()}">
 									<!-- ko if: $parents[1].iconType() == 0 -->
 								    <img src="${contextpath}/resources/images/star_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 								    <!-- /ko -->
 								    <!-- ko if: $parents[1].iconType() == 1 -->
-								    <img src="${contextpath}/resources/images/nav_plain_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()" />
+								    <img src="${contextpath}/resources/images/nav_plain_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 								    <!-- /ko -->
 								    <!-- ko if: $parents[1].iconType() == 2 -->
-								    <img src="${contextpath}/resources/images/heart_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()" />
+								    <img src="${contextpath}/resources/images/heart_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 								    <!-- /ko -->
 							    </a>
 							</div>
@@ -634,10 +634,10 @@
 							    <img src="${contextpath}/resources/images/star_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 							    <!-- /ko -->
 							    <!-- ko if: $parents[1].iconType() == 1 -->
-							    <img src="${contextpath}/resources/images/nav_plain_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()" />
+							    <img src="${contextpath}/resources/images/nav_plain_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 							    <!-- /ko -->
 							    <!-- ko if: $parents[1].iconType() == 2 -->
-							    <img src="${contextpath}/resources/images/heart_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()" />
+							    <img src="${contextpath}/resources/images/heart_grey.png" data-bind="title: $index()+1, attr: {'alt': $index()+1 + ' / ' + $parents[1].numIcons(), 'aria-label': $parent.title() + ' ' + ($index()+1) + labelOf + $parents[1].numIcons()}" />
 							    <!-- /ko -->
 						    </a>
 						</div>
@@ -680,7 +680,7 @@
 		<!-- /ko -->
 				
 		<!-- ko if: display() != 'Slider' -->
-			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onkeyup="propagateChange(this);" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" oninput="propagateChange(this);" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
 		<!-- /ko -->
 		
 		<!-- ko if: display() == 'Slider' -->		
@@ -689,14 +689,16 @@
 			<div style="float: right; padding-bottom: 20px;  max-width: 45%; text-align: center;" data-bind="html: maxLabel()"></div>
 			<div style="clear: both"></div>
 			
-			<a href="javascript:;" data-bind='click: decrease'><span class="glyphicon glyphicon-chevron-left"></span></a>
+			<a href="javascript:;" data-bind='click: decrease'><svg aria-label="${form.getMessage("info.DecreaseSliderValue")}" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+				  <path stroke="#337ab7" stroke-width="3" fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg></a>
 			
 			<input type="text"
 				   onchange="propagateChange(this);"
 				   data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'class': css() + ' sliderbox', 'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'data-slider-min' : min(), 'data-slider-max' : max(), 'precision' : decimalPlaces(), 'data-slider-step' : step(),'data-slider-ticks' : ticks(), 'data-slider-value' : initialValue(), 'data-is-answered': isAnswered() ? 'true' : 'false', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id() }"
 			/>
 
-			<a href="javascript:;" data-bind='click: increase'><span class="glyphicon glyphicon-chevron-right"></span></a>
+			<a href="javascript:;" data-bind='click: increase'><svg aria-label="${form.getMessage("info.IncreaseSliderValue")}" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+  					<path stroke="#337ab7" stroke-width="3" fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg></a>
 		</div>
 		<!-- /ko -->
 		
@@ -796,7 +798,7 @@
 			<!-- ko if: foreditor || readonly() -->
 				<div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></div>
 			<!-- /ko -->
-			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'datepicker ' + css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onblur="if(validateInput($(this).parent().parent())) { propagateChange(this); }" type="text" placeholder="DD/MM/YYYY" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'datepicker ' + css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onblur="if($(this).val().length > 0 && validateInput($(this).parent().parent())) { propagateChange(this); }" oninput="propagateChange(this);" type="text" placeholder="DD/MM/YYYY" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
 		</div>
 		
 		<!-- ko if: foreditor -->
@@ -851,7 +853,7 @@
 		
 		<div class="input-group">
 			<div class="input-group-addon"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></div>
-			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'timepicker ' + css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onblur="if(validateInput($(this).parent().parent())) { propagateChange(this); }" type="text" placeholder="HH:mm:ss" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
+			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class': 'timepicker ' + css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" onblur="if(validateInput($(this).parent().parent())) { propagateChange(this); }" oninput="propagateChange(this);" type="text" placeholder="HH:mm:ss" style="display: inline; margin-left:0px; margin-bottom:0px !important;"></input>
 		</div>
 		
 		<!-- ko if: foreditor -->
@@ -891,7 +893,7 @@
 		<input type="hidden" data-bind="attr: {'id': 'answer' + id(), 'name':'answer' + id()}" value="files" />				
 		<div class="uploaded-files" data-bind="foreach: getFileAnswer(uniqueId())">
 			<div>
-				<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" aria-label="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
+				<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id(), 'aria-label' : $data}">
 					<span style="margin-right: 10px;" class="glyphicon glyphicon-trash"></span>
 				</a>
 				<span data-bind="html: $data"></span>
@@ -920,7 +922,7 @@
 			<!-- ko if: $parent.foreditor -->
 			<input type="hidden" data-bind="value: uid(), attr: {'name': 'files' + $parent.id()}" />	
 			<!-- /ko -->
-			<a class="visiblelink" target="_blank" data-bind="attr: {'href': '${contextpath}/files/${form.survey.uniqueId}/' + uid()}, html: name"></a> <br />
+			<a class="visiblelink" target="_blank" data-bind="attr: {'href': '${contextpath}/files/${form.survey.uniqueId}/' + uid(), 'aria-label' : '${form.getMessage("label.DownloadFile")} ' + name()}, html: name"></a> <br />
 		</div>
 		<!-- ko if: foreditor -->
 		
@@ -983,13 +985,14 @@
 								<span data-bind='html: name().replace("%20"," "), attr: {id: "answerlabel" + $parents[1].id() + $index()}'></span>
 							</div>
 							<a onclick="showGalleryBrowser($(this).parent())">																	
-								<img class="gallery-image" data-bind="attr: {'alt': cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px', 'longdesc' : longdesc()}"  style="max-width: 100%;" />	
+								<img class="gallery-image" data-bind="attr: {'alt': desc(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+ uid(), 'data-width': width(), 'data-original-width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns()), 'width': Math.round((850-20-($parents[1].columns()*30))/$parents[1].columns())+'px', 'longdesc' : longdesc()}"  style="max-width: 100%;" />	
 							</a>
 							<div class="comment" data-bind="html: comment"></div>	
 							<!-- ko if: $parents[1].foreditor -->
 								<input type="hidden" data-bind="value: name, attr: {'name': 'name' + ($parentContext.$index() * $parents[1].columns() + $index() + 1) + $parents[1].id()}" />	
 								<input type="hidden" data-bind="value: uid, attr: {'name': 'image' + ($parentContext.$index() * $parents[1].columns() + $index() + 1) + $parents[1].id()}" />	
 								<input type="hidden" data-bind="value: longdesc, attr: {'name': 'longdesc' + ($parentContext.$index() * $parents[1].columns() + $index() + 1) + $parents[1].id()}" />	
+								<input type="hidden" data-bind="value: desc, attr: {'name': 'desc' + ($parentContext.$index() * $parents[1].columns() + $index() + 1) + $parents[1].id()}" />	
 								<textarea style="display: none" data-bind="text: comment, attr: {'name': 'comment' + ($parentContext.$index() * $parents[1].columns() + $index() + 1) + $parents[1].id()}"></textarea>
 							<!-- /ko -->						
 						</td>
@@ -1030,7 +1033,7 @@
 								<span data-bind='html: name().replace("%20"," ")'></span>
 							</div>
 						
-							<img style="width: 95%;" data-bind="attr: {'alt':cleanComment(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+uid(), 'longdesc' : longdesc()}" />	
+							<img style="width: 95%;" data-bind="attr: {'alt': desc(), 'src':'${contextpath}/files/${form.survey.uniqueId}/'+uid(), 'longdesc' : longdesc()}" />	
 							<div class="gallery-image-comment" style="text-align: center; padding: 15px;" data-bind="html: comment()"></div>							
 						</div>
 				  </div>
@@ -1211,7 +1214,7 @@
 						</th>
 						<!-- ko foreach: $parent.answers -->
 							<td style="padding: 2px;">
-								<textarea onblur="validateInput($(this).closest('.tabletable').parent(), true)" onkeyup="propagateChange(this);" data-bind="enable: !$parents[1].readonly(), value: getTableAnswer($parents[1].uniqueId(), $parentContext.$index()+1, $index()+1), attr: {'data-id': $parents[1].id() + $parentContext.$index() + '' + $index(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'class':$parents[1].css() + ' ' + $parents[0].css(), 'name':'answer' + $parents[1].id() + '|' + ($parentContext.$index()+1) + '|' + ($index()+1), 'aria-labelledby': $parent.id().toString() + ' ' + id().toString()}"></textarea>
+								<textarea onblur="validateInput($(this).closest('.tabletable').parent(), true)" oninput="propagateChange(this);" data-bind="enable: !$parents[1].readonly(), value: getTableAnswer($parents[1].uniqueId(), $parentContext.$index()+1, $index()+1), attr: {'data-id': $parents[1].id() + $parentContext.$index() + '' + $index(), 'data-shortname': $parent.shortname() + '|' + shortname(), 'class':$parents[1].css() + ' ' + $parents[0].css(), 'name':'answer' + $parents[1].id() + '|' + ($parentContext.$index()+1) + '|' + ($index()+1), 'aria-labelledby': $parent.id().toString() + ' ' + id().toString()}"></textarea>
 							</td>
 						 <!-- /ko -->
 					</tr>
@@ -1263,7 +1266,7 @@
 									<div class="uploaded-files"
 										data-bind="foreach: getFileAnswer(uniqueId())">
 										<div>
-											<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" aria-label="${form.getMessage("label.RemoveUploadedFile")}" data-bind="click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}, attr: {'id' : 'uploadlink' + $parent.id() }">
+											<a data-toggle="tooltip" title="${form.getMessage("label.RemoveUploadedFile")}" data-bind="attr: {'id' : 'uploadlink' + $parent.id(), 'aria-label' : $data}, click: function() {deleteFile($parent.id(),'${uniqueCode}',$data,$('#uploadlink' + $parent.id()));return false;}">
 												<span style="margin-right: 10px;"
 												class="glyphicon glyphicon-trash"></span>
 											</a> <span data-bind="html: $data"></span>

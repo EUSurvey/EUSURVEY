@@ -350,6 +350,10 @@ function initModals(item)
 					
 					$("#" + $(this).attr("data-from")).addClass("max" + dateText.replace(/\//g,""));
 				}
+				
+				if ($(this).closest(".survey-element").length > 0) {
+					propagateChange(this);
+				}
 			 }
 		});
 	
@@ -411,6 +415,10 @@ function initModals(item)
 								$("#" + $(inst.input).attr("data-from")).removeClass (function (index, css) {
 								    return (css.match (/(^|\s)max\S+/g) || []).join(' ');
 								});
+							}
+							
+							if ($(inst.input).closest(".survey-element").length > 0) {
+								propagateChange(inst.input);
 							}
 							
 						}).hover(function(event){$(this).removeClass("ui-state-hover"); event.stopPropagation();},function(){})
@@ -840,7 +848,7 @@ function initModals(item)
 		if (isdelphi && isOneAnswerEmptyWhileItsExplanationIsNot($(form).find(".survey-element.delphi"))) {
 			currentDelphiUpdateType = DELPHI_UPDATE_TYPE.ENTIRE_FORM;
 			currentDelphiUpdateContainer = form;
-			$('.confirm-explanation-deletion-modal').modal('show');
+			showModalDialog($('.confirm-explanation-deletion-modal'), $('#btnSubmit'));
 			return;
 		}
 
@@ -954,19 +962,19 @@ function initModals(item)
 			},
 			andFocus : function(element, text) {
 				const self = addValidationError;
-				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='0' aria-live='polite'>" + text + "</div>");
+				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
 				self.commonImpl(element);
 				$(element).next(".validation-error").first().focus();
 			},
 			toElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
-				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='0' aria-live='polite'>" + text + "</div>");
+				$(target).append("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
 				self.commonImpl(element);
 				$(target).find(".validation-error").first().focus();
 			},
 			afterElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
-				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='0' aria-live='polite'>" + text + "</div>");
+				$(target).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
 				self.commonImpl(element);
 				$(target).next(".validation-error").first().focus();
 			}
@@ -1495,7 +1503,7 @@ function initModals(item)
 				if ($(this).parent().find(".validation-error").length == 0)
 				{
 					validationinfo += $(this).attr("name") + " (XHTML) ";
-					addValidationError.andFocus(this, $(this).parent(), invalidXHTML);
+					addValidationError.andFocus(this, invalidXHTML);
 		    		
 					$(this).focus();
 					result = false;
@@ -1514,7 +1522,7 @@ function initModals(item)
 		    	if ($(this).parent().find(".validation-error").length == 0)
 				{
 		    		validationinfo += $(this).attr("name") + " (URL) ";
-		    		addValidationError.andFocus(this, $(this).parent(), invalidURL);
+		    		addValidationError.andFocus(this, invalidURL);
 					result = false;
 				};
 		    } 			
@@ -1531,7 +1539,7 @@ function initModals(item)
 		    	if ($(this).parent().find(".validation-error").length == 0)
 				{
 		    		validationinfo += $(this).attr("name") + " (URL) ";
-		    		addValidationError.andFocus(this, $(this).parent(), invalidURL);
+		    		addValidationError.andFocus(this, invalidURL);
 					result = false;
 				};
 		    }			
@@ -1544,10 +1552,10 @@ function initModals(item)
 			 var reg = /^[a-zA-Z0-9-_]+$/;
 			 if ($(this).parent().find(".validation-error").length == 0)
 			    if( !reg.test( value ) ) {
-			    	addValidationError.andFocus(this, $(this).parent(), shortnameText);
+			    	addValidationError.andFocus(this, shortnameText);
 					result = false;
 			    } else if( value.indexOf("__") > -1 ) {
-			    	addValidationError.andFocus(this, $(this).parent(), shortnameText2);
+			    	addValidationError.andFocus(this, shortnameText2);
 					result = false;
 			    } ;
 		});
@@ -1559,10 +1567,10 @@ function initModals(item)
 			 var reg = /^[a-zA-Z0-9-_]+$/;
 			 if ($(this).parent().find(".validation-error").length == 0)
 			    if( !reg.test( value ) ) {
-			    	addValidationError.andFocus(this, $(this).parent(), shortnameText);
+			    	addValidationError.andFocus(this, shortnameText);
 					result = false;
 			    } else if( value.indexOf("__") > -1 ) {
-			    	addValidationError.andFocus(this, $(this).parent(), shortnameText2);
+			    	addValidationError.andFocus(this, shortnameText2);
 					result = false;
 			    } ;
 		});
@@ -2051,7 +2059,7 @@ function initModals(item)
 	}
 		
 	function isValidTime(t) {
-		return /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])?$/.test(t);
+		return /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9]):([0-5]?[0-9])$/.test(t);
 	}
 	
 	function parseMinMaxDate(s)
@@ -2709,3 +2717,26 @@ function initModals(item)
 			$(modalDialogCaller).focus();
 		}
 	}
+	
+	(function($) { // custom jquery plugin
+		$.fn.ApplyCustomTooltips = function() {
+			var selectedObjects = this;
+			selectedObjects.tooltip({
+				trigger: "manual"
+			}).on("mouseenter focusin", function() {
+				var self = this;
+				$(".tooltip").attr("aria-live", "assertive");
+				$(self).tooltip("show");
+				$(".tooltip").on("mouseleave", function() {
+					$(self).tooltip("hide");
+				});
+			}).on("mouseleave focusout", function() {
+				var self = this;
+				setTimeout(function() {
+					if (!$(".tooltip:hover").length) {
+						$(self).tooltip("hide");
+					}
+				}, 30);
+			});
+		}
+	}(jQuery));

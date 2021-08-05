@@ -2,7 +2,7 @@
 	text-decoration: none;
 }
 
-.ratingitem {
+a.ratingitem {
 	display: inline-block;
     margin: 0;
     padding: 0;

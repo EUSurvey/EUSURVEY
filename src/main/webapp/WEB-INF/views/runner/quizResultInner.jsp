@@ -21,7 +21,7 @@
 		
 			<div class="surveytitle">${form.survey.title} - <spring:message code="label.Results" /></div><br />
 			<div style="margin-bottom: 20px;">${form.survey.quizResultsMessage}</div>
-			
+		
 			<c:if test="${forpdf == null}">
 				<div style="text-align: center; margin-bottom: 20px;">
 					<a href="javascript:;" id="pdfDownloadButtonThanksInner" onclick="showExportDialogAndFocusEmail(this)" class="btn btn-default">${form.getMessage("label.GetPDF")}</a>		
@@ -62,7 +62,7 @@
 								<c:forEach var="page" items="${form.getPages()}" varStatus="rowCounter">
 				 					<c:forEach var="element" items="${page}">
 				 						<c:if test="${element.getType() == 'Section'}">
-					 						<c:if test='${!quiz.getSectionScore(element.uniqueId).equals("0/0")}'>		
+					 						<c:if test='${!quiz.getSectionScore(element.uniqueId).equals("0/0") && !(invisibleElements != null && invisibleElements.contains(element.uniqueId))}'>
 												<tr>
 													<td style="width: 225px">${element.getTitle()}</td>
 													<td style="width: 50px">${quiz.getSectionScoreValue(element.uniqueId)}</td>
@@ -320,6 +320,10 @@
 				<tr>
 					<td style="padding-right: 10px"><spring:message code="label.CompletedAt" /></td>
 					<td>${form.answerSets[0].niceDate}</td>
+				</tr>
+				<tr>
+					<td style="padding-right: 10px"><spring:message code="label.CompletionTime" /></td>
+					<td>${form.answerSets[0].completionTime()}</td>
 				</tr>
 				
 			</table>			

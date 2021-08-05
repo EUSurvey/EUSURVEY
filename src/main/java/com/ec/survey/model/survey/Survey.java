@@ -185,6 +185,8 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isDelphiShowAnswers = false;
 	private Integer minNumberDelphiStatistics = 5;
 	private String logoText;
+	private Boolean isShowCountdown = true;
+	private String timeLimit;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1589,6 +1591,8 @@ final public class Survey implements java.io.Serializable {
 		copy.isDelphiShowAnswersAndStatisticsInstantly = isDelphiShowAnswersAndStatisticsInstantly;
 		copy.isDelphiShowAnswers = isDelphiShowAnswers;
 		copy.minNumberDelphiStatistics = minNumberDelphiStatistics;
+		copy.timeLimit = timeLimit;
+		copy.isShowCountdown = isShowCountdown;
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -2311,4 +2315,30 @@ final public class Survey implements java.io.Serializable {
 	public void reorderElementsByPosition() {
 		elements.sort(Comparator.comparing(o -> (o.getPosition())));		
 	}
+
+	@Column(name = "SHOWCOUNTDOWN")
+	public Boolean getShowCountdown() {
+		return isShowCountdown != null ? isShowCountdown : false;
+	}
+
+	public void setShowCountdown(Boolean isShowCountdown) {
+		this.isShowCountdown = isShowCountdown != null ? isShowCountdown : false;
+	}
+
+	@Column(name = "TIMELIMIT")
+	public String getTimeLimit() {
+		return timeLimit != null ? timeLimit :  "";
+	}
+
+	public void setTimeLimit(String timeLimit) {
+		this.timeLimit = timeLimit != null ? timeLimit :  "";
+	}
+	
+	@Transient
+	public int getTimeLimitInSeconds() {
+		if (timeLimit == null || timeLimit.length() == 0) return -1;
+		
+		String[] arr = timeLimit.split(":");
+		return Integer.parseInt(arr[0]) * 3600 + Integer.parseInt(arr[1]) * 60 + Integer.parseInt(arr[2]);		
+	}	
 }

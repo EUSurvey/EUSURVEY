@@ -8,6 +8,8 @@
 		<spring:message code="label.Download" />
 	</title>
 	<%@ include file="../includes.jsp" %>
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+	
 	<c:if test="${runnermode != null }">
 		<script type="text/javascript">
 			$(function () {
@@ -55,6 +57,8 @@
 		<div style="margin-bottom: 30px">
 			<a target="_blank" href="https://github.com/EUSurvey/EUSURVEY/tree/develop">https://github.com/EUSurvey/EUSURVEY/tree/develop</a>
 		</div>
+
+	</div>
 
 	</div>
 	<%@ include file="../footer.jsp" %>

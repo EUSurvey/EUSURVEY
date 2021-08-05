@@ -719,18 +719,30 @@ var Actions = function() {
     	updateDependenciesView();
     }
     
+    this.getBackupName = function() {
+    	var survey = $(document.getElementById("survey.id")).val();
+    	return "SurveyEditorBackup" + survey; 	
+    }
+    
     this.backup = function(){
-    	if (!is_local_storage_enabled() || !this.BackupEnabled()) {
+    	if (!check_local_storage_enabled(false) || !this.BackupEnabled()) {
     		return;
     	}
     	
-    	var survey = $(document.getElementById("survey.id")).val();
-    	var name = "SurveyEditorBackup" + survey; 	
+    	var arr = [];
     	
-    	var value = ko.toJSON(_elements);
+    	$("#content").find(".survey-element").each(function(){
+    		var elementid = $(this).attr("id");
+    		 if (_elements.hasOwnProperty(elementid)) {
+     	    	var element = _elements[elementid];
+     	    	arr.push(element);
+     	    }
+    	})
+    	
+    	var value = ko.toJSON(arr);
     	
     	try {
-			localStorage.setItem(name, value);
+			localStorage.setItem(this.getBackupName(), value);
 		} catch(e) {
 		    if(e.name == "NS_ERROR_FILE_CORRUPTED") {
 		    	showError("Sorry, it looks like your browser storage has been corrupted. Please clear your storage by going to Tools -> Clear Recent History -> Cookies and set time range to 'Everything'. This will remove the corrupted browser storage across all sites.");
@@ -739,41 +751,40 @@ var Actions = function() {
     }
     
     this.deleteBackup = function() {
-    	var survey = $(document.getElementById("survey.id")).val();
-    	var name = "SurveyEditorBackup" + survey;
-    	var value = localStorage.removeItem(name);
+    	var value = localStorage.removeItem(this.getBackupName());
     }
     
     this.restore = function(){
-    	if (!is_local_storage_enabled() || !this.BackupEnabled()) {
+    	if (!check_local_storage_enabled(false) || !this.BackupEnabled()) {
     		return;
     	}
     	
-    	var survey = $(document.getElementById("survey.id")).val();
-    	var name = "SurveyEditorBackup" + survey;
+    	var value = localStorage.getItem(this.getBackupName());
     	
-    	var value = localStorage.getItem(name);
-    	
-    	_elements = JSON.parse(value);
+    	var arr = JSON.parse(value);
+    	_elements = {};
     	
     	$("#content").find(".survey-element").each(function(){
     		ko.cleanNode($(this)[0]);
     	})
     	
     	$("#content").empty();
-    	
-    	for (var elementid in _elements) {
-    	    if (_elements.hasOwnProperty(elementid)) {
-    	    	var emptyelement = document.createElement("li");
-    	    	$(emptyelement).addClass("emptyelement").attr("id", elementid).attr("data-id", elementid);
-    	    	$("#content").append(emptyelement);
     	    	
-    	    	var element = _elements[elementid];
-    	    	element.isViewModel = false;
-    	    	var model = getElementViewModel(element);
-    	    	var item = addElement(element, true, false);
-				addElementHandler(item);
-    	    }
+    	for (var i = 0; i < arr.length; i++) {
+    		var element = arr[i];
+    		var elementid = element.id;
+    		_elements[elementid] = element;
+    	
+	    	var emptyelement = document.createElement("li");
+	    	$(emptyelement).addClass("emptyelement survey-element").attr("id", elementid).attr("data-id", elementid);
+	    	$("#content").append(emptyelement);
+	    	
+	    	var element = _elements[elementid];
+	    	element.isViewModel = false;
+	    	var model = getElementViewModel(element);
+	    	 _elements[elementid] = model;
+	    	var item = addElement(element, true, false);
+			addElementHandler(item);    	    
     	}
     	
     	_undoProcessor.clear();

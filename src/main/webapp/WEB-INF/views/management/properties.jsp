@@ -695,7 +695,7 @@
 							<div style="float: right">							
 								<div class="onoffswitch">
 									<form:checkbox path="survey.saveAsDraft" class="onoffswitch-checkbox" id="myonoffswitchdraft" data-bind="checked: _properties.saveAsDraft()"  />
-									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+(_properties.delphi() ? " disabled" : "")' onclick="_properties.toggleSaveAsDraft()">
+									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.delphi() || _properties.timeLimit().length > 0) ? " disabled" : "")' onclick="_properties.toggleSaveAsDraft()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -721,7 +721,7 @@
 							<div style="float: right">							
 								<div class="onoffswitch">
 									<form:checkbox path="survey.changeContribution" class="onoffswitch-checkbox" data-bind="checked: _properties.changeContribution()" />
-									<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+(_properties.delphi() ? " disabled" : "")' onclick="_properties.toggleChangeContribution()">
+									<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.delphi() || _properties.timeLimit().length > 0) ? " disabled" : "")' onclick="_properties.toggleChangeContribution()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -1243,6 +1243,46 @@
 							<div class="help" id="showtotalscorehelp" style="display: none">
 								<spring:message code="info.ShowTotalScoreNew" />
 							</div>		
+						</td>
+					</tr>
+					
+					<tr class="subelement" data-bind="visible: quiz">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.SetATimeLimit" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help" style="display: none">
+									<spring:message code="info.SetATimeLimit" />
+								</div>		
+							</div>
+							<div style="float: right; max-width: 500px;">
+								<table>
+									<tr>
+										<td colspan="2">
+											<div style="text-align: right">
+												<form:input style="width: 100px; display: inline" placeholder="HH:mm:ss" class="form-control time" path="survey.timeLimit" oninput="_properties.checkTimeLimit(this)" ></form:input>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td style="padding-right: 15px; padding-top: 15px; text-align: right;">
+											<spring:message code="label.ShowCountdownTimer" />
+										</td>
+										<td style="padding-top: 15px; width: 50px;">
+											<div class="onoffswitch">
+												<form:checkbox path="survey.showCountdown" class="onoffswitch-checkbox" data-bind="checked: _properties.showCountdown()" />
+												 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.timeLimit().length == 0) ? " disabled" : "")' onclick="_properties.toggleShowCountdown()">
+											        <span class="onoffswitch-inner"></span>
+											        <span class="onoffswitch-switch"></span>
+											    </label>
+											</div>							
+										</td>
+									</tr>
+								</table>					
+							</div>
+							
+							<div style="clear: both"></div>
+						
 						</td>
 					</tr>
 					

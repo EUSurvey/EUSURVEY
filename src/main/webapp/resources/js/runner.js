@@ -138,11 +138,64 @@ function singleClick(r) {
 	propagateChange(r);
 }
 
+function checkHasValue(element) {
+	
+	if (element == null || $(element).length == 0)
+	{
+		return false;
+	}
+		
+	if ($(element).hasClass("rankingitem-list")) {
+		return true;
+	}
+	
+	if ($(element).hasClass("ratingitem")) {
+		return $(element).closest('.ratingtable').find("input[value*='/']").length > 0;
+	}
+	
+	if ($(element).is(":radio")) {		
+		if ($(element).closest('.matrix-cell').length > 0) {
+			return $(element).closest('.matrixtable').find("input:checked").length > 0;
+		}
+		
+		return $(element).is(":checked");
+	}
+	
+	if ($(element).is(":checkbox")) {
+		if ($(element).closest('.matrix-cell').length > 0) {
+			return $(element).closest('.matrixtable').find("input:checked").length > 0;
+		}
+		
+		return $(element).closest('.answers-table').find("input:checked").length > 0;
+	}
+	
+	if ($(element).is("a")) {
+		return $(element).closest(".listbox").find("input:checked").length > 0;
+	}
+	
+	if ($(element).closest('.tabletable').length > 0) {
+		return $(element).closest('.tabletable').find("textarea").filter(function() {
+			  return $(this).val() != "";
+		}).length > 0;
+	}
+	
+	return $(element).val().length > 0;
+}
+
 function propagateChange(element)
 {
 	if (!$("#btnSaveDraft").hasClass('disabled'))
 	{
 		$("#btnSaveDraft").removeClass("btn-default").addClass("btn-primary");
+	}
+	
+	var div = $(element).parents(".survey-element").last();
+	
+	if (!checkHasValue(element)) {
+		disableDelphiSaveButtons(div);
+		$(div).find(".explanation-section").hide();
+		$(div).find(".explanation-file-upload-section").hide();
+		return;
 	}
 
 	const surveyElement = $(element).closest(".survey-element");
@@ -151,8 +204,7 @@ function propagateChange(element)
 		const viewModel = modelsForSlider[questionUid];
 		viewModel.isAnswered(true);
 	}
-
-	var div = $(element).parents(".survey-element").last();
+	
 	enableDelphiSaveButtons(div);
 	$(div).find(".explanation-section").show();
 	$(div).find(".explanation-file-upload-section").show();

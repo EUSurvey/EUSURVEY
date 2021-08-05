@@ -144,6 +144,19 @@
 			$('#mode').val('users');
 			$("#surveyform").submit();
 		}
+		
+		function showConfirmDeleteFilesDialog() {
+			if ($('#checkall').is(":checked")) {
+				var text = '<spring:message code="question.DeleteAllFiles" />';
+				$('#confirmdeletefilesdialog').find(".modal-body").html(text);
+			} else {
+				var text = '<spring:message code="question.DeleteFiles" arguments="[FILES]" />';
+				var selectedFiles = $('.selectedfile:checked').length;
+				text = text.replace('[FILES]', selectedFiles);
+				$('#confirmdeletefilesdialog').find(".modal-body").html(text);
+			}
+			$('#confirmdeletefilesdialog').modal('show')
+		}
 	</script>
 		
 </head>
@@ -191,6 +204,7 @@
 					    	
 					    	<button type="submit" onclick="$('#mode').val('surveys')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.Search" /></button>
 					    	<button type="submit" onclick="$('#mode').val('surveysbulkdownload')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.DownloadSelectedFiles" /></button>
+					    	<a onclick="showConfirmDeleteFilesDialog()" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.DeleteSelectedFiles" /></a>
 				    		<button type="submit" onclick="$('#mode').val('surveysreset')" class="btn btn-default" style="margin-top: 10px"><spring:message code="label.Reset" /></button>
 				    	</div>
 				    	<div style="float: left; margin-left: 20px; margin-top: 10px;">
@@ -243,7 +257,7 @@
 					<tbody>
 						<c:forEach items="${paging.items}" var="file">
 							<tr>
-								<td><input name="checkfile" onclick="$('.checkall').removeAttr('checked')" value="<esapi:encodeForHTMLAttribute>${file.filePath}</esapi:encodeForHTMLAttribute>" type="checkbox" /></td>
+								<td><input class="selectedfile" name="checkfile" onclick="$('.checkall').removeAttr('checked')" value="<esapi:encodeForHTMLAttribute>${file.filePath}</esapi:encodeForHTMLAttribute>" type="checkbox" /></td>
 								<td><div class="limitedtext filepath">${file.filePath}</div></td>
 								<td><div class="limitedtext">${file.fileName}</div></td>
 								<td><div class="limitedtext">${file.fileUid}</div></td>
@@ -300,6 +314,20 @@
 				<c:if test="${paging != null}">				
 					<%@ include file="../paging.jsp" %>					
 				</c:if>		
+				
+				<div class="modal" id="confirmdeletefilesdialog" data-backdrop="static">
+					<div class="modal-dialog">
+			    	<div class="modal-content">	    	
+					<div class="modal-body">
+						<spring:message code="question.DeleteFiles" />
+					</div>
+					<div class="modal-footer">
+						<input type="submit" onclick="$('#mode').val('surveysbulkdelete')" class="btn btn-primary" value="<spring:message code="label.Yes" />"/>		
+						<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>		
+					</div>
+					</div>
+					</div>			
+				</div>
 		  	
 		  	</form:form>
 		</div>	

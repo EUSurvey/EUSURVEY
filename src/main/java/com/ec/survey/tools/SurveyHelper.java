@@ -64,7 +64,12 @@ public class SurveyHelper {
 
 		answerSet.setSurvey(survey);
 		answerSet.setSurveyId(survey.getId());
-		answerSet.setUniqueCode(uniqueCode);
+		answerSet.setUniqueCode(uniqueCode);		
+		
+		if (survey.getTimeLimit().length() > 0) {
+			Date startDate = (Date) request.getSession().getAttribute(Constants.START + uniqueCode);
+			answerSet.setStartDate(startDate);
+		}
 
 		if (request.getParameter("disclaimerMinimized") != null) {
 			answerSet.setDisclaimerMinimized(request.getParameter("disclaimerMinimized").equalsIgnoreCase("true"));
@@ -260,7 +265,7 @@ public class SurveyHelper {
 	}
 
 	//answerSet.getSurvey().getElements()
-	public static Map<Element, String> validateAnswerSet(AnswerSet answerSet, AnswerService answerService,
+	public static Map<Element, String>  validateAnswerSet(AnswerSet answerSet, AnswerService answerService,
 			Set<String> invisibleElements, MessageSource resources, Locale locale, String draftid,
 			HttpServletRequest request, boolean skipDraftCreation, User user, FileService fileService)
 			throws InterruptedException, IOException {
@@ -1409,6 +1414,7 @@ public class SurveyHelper {
 			String uid = getString(parameterMap, "image" + i, id, servletContext);
 			String comment = getString(parameterMap, "comment" + i, id, servletContext);
 			String longdesc = getString(parameterMap, "longdesc" + i, id, servletContext);
+			String desc = getString(parameterMap, "desc" + i, id, servletContext);
 			String name = getString(parameterMap, "name" + i, id, servletContext);
 
 			try {
@@ -1417,6 +1423,7 @@ public class SurveyHelper {
 				file.setComment(comment);
 				file.setPosition(i);
 				file.setLongdesc(longdesc);
+				file.setDescription(desc);
 				gallery.getFiles().add(file);
 				if (log220) {
 					newFiles.append(file.getName()).append("(").append(file.getComment()).append("),");
@@ -1894,8 +1901,8 @@ public class SurveyHelper {
 		if (log220 && !isDelphiQuestion.equals(regex.getIsDelphiQuestion())) {
 			oldValues += " isDelphiQuestion: " + regex.getIsDelphiQuestion();
 			newValues += " isDelphiQuestion: " + isDelphiQuestion;
-			regex.setIsDelphiQuestion(isDelphiQuestion);
 		}
+		regex.setIsDelphiQuestion(isDelphiQuestion);
 		
 		boolean useAndLogic = getBoolean(parameterMap, "useAndLogic", id);
 		if (log220 && !regex.getUseAndLogic().equals(useAndLogic)) {
@@ -2607,7 +2614,7 @@ public class SurveyHelper {
 		rating.setIconType(iconType);
 
 		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
-		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? rating.getDefaultDelphiChartType() : DelphiChartType.valueOf(delphiChartTypeString);
 		if (log220 && delphiChartType != rating.getDelphiChartType()) {
 			oldValues += " delphiChartType: " + rating.getDelphiChartType();
 			newValues += " delphiChartType: " + delphiChartType;
@@ -2789,7 +2796,7 @@ public class SurveyHelper {
 		singlechoice.setIsAttribute(attribute);
 
 		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
-		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? singlechoice.getDefaultDelphiChartType() : DelphiChartType.valueOf(delphiChartTypeString);
 		if (log220 && delphiChartType != singlechoice.getDelphiChartType()) {
 			oldValues += " delphiChartType: " + singlechoice.getDelphiChartType();
 			newValues += " delphiChartType: " + delphiChartType;
@@ -3075,7 +3082,7 @@ public class SurveyHelper {
 		multiplechoice.setIsAttribute(attribute);
 
 		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
-		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? multiplechoice.getDefaultDelphiChartType() : DelphiChartType.valueOf(delphiChartTypeString);
 		if (log220 && delphiChartType != multiplechoice.getDelphiChartType()) {
 			oldValues += " delphiChartType: " + multiplechoice.getDelphiChartType();
 			newValues += " delphiChartType: " + delphiChartType;
@@ -3581,7 +3588,7 @@ public class SurveyHelper {
 		matrix.setWidths(widths);
 
 		String delphiChartTypeString = getString(parameterMap, "delphicharttype", id, servletContext);
-		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? DelphiChartType.Bar : DelphiChartType.valueOf(delphiChartTypeString);
+		DelphiChartType delphiChartType = StringUtils.isNullOrEmpty(delphiChartTypeString) ? matrix.getDefaultDelphiChartType() : DelphiChartType.valueOf(delphiChartTypeString);
 		if (log220 && delphiChartType != matrix.getDelphiChartType()) {
 			oldValues += " delphiChartType: " + matrix.getDelphiChartType();
 			newValues += " delphiChartType: " + delphiChartType;
@@ -4604,6 +4611,15 @@ public class SurveyHelper {
 							child.setTitle(translationsByKey.get(child.getUniqueId()).getLabel());
 						} else if (translationsByKey.get(child.getId().toString()) != null) {
 							child.setTitle(translationsByKey.get(child.getId().toString()).getLabel());
+						}
+					}
+				}
+				
+				if (element instanceof GalleryQuestion) {
+					GalleryQuestion gallery = (GalleryQuestion) element;
+					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+						if (translationsByKey.get(child.getUid()) != null) {
+							child.setDescription(translationsByKey.get(child.getUid()).getLabel());
 						}
 					}
 				}

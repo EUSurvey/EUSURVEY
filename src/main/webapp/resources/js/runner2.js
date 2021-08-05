@@ -133,6 +133,7 @@ function addDelphiClassToContainerIfNeeded(element, container) {
 }
 
 var modelsForDelphiQuestions = [];
+var lastFocusedContainer = null;
 
 function addElementToContainer(element, container, foreditor, forskin) {
 	addDelphiClassToContainerIfNeeded(element, container);
@@ -263,6 +264,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		$(container).find(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 		$(container).find(".qq-upload-drop-area").css("margin-left", "-1000px");
 		$(container).find(".qq-upload-list").hide();
+		$(container).find("input[type=file]").attr("aria-label", infolabeluploadbutton);
 	} 
 	
 	if (element.type == 'DateQuestion') {
@@ -347,6 +349,15 @@ function addElementToContainer(element, container, foreditor, forskin) {
 					}
 		});
 	});
+	
+	$(container).focusin(function() {
+		if (lastFocusedContainer == null || $(container).attr("data-id") != lastFocusedContainer.attr("data-id")) {
+			if (lastFocusedContainer != null) {
+				validateInput(lastFocusedContainer,true);
+			}
+			lastFocusedContainer = $(container);
+		}
+	})
 	
 	$(container).find(".confirmationelement").each(function(){
 		var cols = this;
@@ -1117,7 +1128,7 @@ function delphiUpdate(div) {
 	if (isOneAnswerEmptyWhileItsExplanationIsNot(div)) {
 		currentDelphiUpdateType = DELPHI_UPDATE_TYPE.ONE_QUESTION;
 		currentDelphiUpdateContainer = div;
-		$('.confirm-explanation-deletion-modal').modal("show");
+		showModalDialog($('.confirm-explanation-deletion-modal'), $(div).find("[data-type='delphisavebutton']").first());
 		return;
 	}
 
@@ -1126,7 +1137,7 @@ function delphiUpdate(div) {
 
 function confirmExplanationDeletion() {
 
-	$('.confirm-explanation-deletion-modal').modal("hide");
+	hideModalDialog($('.confirm-explanation-deletion-modal'));
 	if (currentDelphiUpdateType === DELPHI_UPDATE_TYPE.ONE_QUESTION) {
 		delphiUpdateContinued(currentDelphiUpdateContainer, () => {
 			$(currentDelphiUpdateContainer).find("textarea[name^='explanation']").val("");
@@ -1526,29 +1537,12 @@ function hideTooltipsOnEscape(e) {
 	}
 }
 
+function validateLastContainer() {
+	if (lastFocusedContainer != null) {
+		validateInput(lastFocusedContainer, true);
+	}
+}
+
 (function () {
 	$(document).keyup(hideTooltipsOnEscape);
 })();
-
-(function($) { // custom jquery plugin
-	$.fn.ApplyCustomTooltips = function() {
-		var selectedObjects = this;
-		selectedObjects.tooltip({
-			trigger: "manual"
-		}).on("mouseenter focusin", function() {
-			var self = this;
-			$(".tooltip").attr("aria-live", "assertive");
-			$(self).tooltip("show");
-			$(".tooltip").on("mouseleave", function() {
-				$(self).tooltip("hide");
-			});
-		}).on("mouseleave focusout", function() {
-			var self = this;
-			setTimeout(function() {
-				if (!$(".tooltip:hover").length) {
-					$(self).tooltip("hide");
-				}
-			}, 300);
-		});
-	}
-}(jQuery));

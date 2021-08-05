@@ -110,27 +110,25 @@
 							
 						</div>
 
- 						<c:if test="${form.getSurvey().isDelphi && question.isDelphiElement()}">
-	                        <div class="statelement-wrapper">
-                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
-                                     <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                         <tr>
-                                             <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-												 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-											 </th>
-                                         </tr>
-                                         <tr>
-                                             <td style='padding-top:10px; padding-bottom:10px'>
-                                                 <div class="delphi-chart-div"></div>
-                                             </td>
-                                         </tr>
-                                     </table>
-                                     <div style="clear: both"></div>
-                                </div>
-                                <div class="chart-controls"></div>
-                                <div style="clear: both"></div>
-	                        </div>
-	                    </c:if>
+                        <div class="statelement-wrapper">
+                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+                                        <tr>
+                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+											 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+										 </th>
+                                        </tr>
+                                        <tr>
+                                            <td style='padding-top:10px; padding-bottom:10px'>
+                                                <div class="delphi-chart-div"></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div style="clear: both"></div>
+                               </div>
+                               <div class="chart-controls"></div>
+                               <div style="clear: both"></div>
+                        </div>
 
 					</c:if>
 					
@@ -284,56 +282,53 @@
 							
 						</div>
 
-						<c:if test="${form.getSurvey().isDelphi && question.isDelphiElement()}">
-	                        <div class="statelement-wrapper">
-                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                        <div class="statelement-wrapper">
+                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                   <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+                                       <tr>
+                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+											<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+										</th>
+                                       </tr>
+                                       <tr>
+                                           <td style='padding-top:10px; padding-bottom:10px'>
+                                               <div class="delphi-chart-div"></div>
+                                           </td>
+                                       </tr>
+                                   </table>
+                                   <div style="clear: both"></div>
+                               </div>
+                               <div class="chart-controls"></div>
+                               <div style="clear: both"></div>
+                        </div>
+
+					</c:if>
+										
+					<c:if test="${forpdf == null && question.getType() == 'FreeTextQuestion'}">				
+						<div style="width: 700px; margin-left: auto; margin-right: auto;">
+							<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
+						</div>
+
+                        <div class="statelement-wrapper">
+                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}" data-initial-chart-type="${question.getDelphiChartType()}" data-chart-data-type="${question.getDelphiChartDataType()}">
                                     <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
                                         <tr>
                                             <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-												<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-											</th>
+											    <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+										    </th>
                                         </tr>
                                         <tr>
                                             <td style='padding-top:10px; padding-bottom:10px'>
-                                                <div class="delphi-chart-div"></div>
+                                                <div id="wordcloud${question.uniqueId}" class="delphi-chart-div" style="min-width: 300px; min-height: 220px"></div>
                                             </td>
                                         </tr>
                                     </table>
                                     <div style="clear: both"></div>
-                                </div>
-                                <div class="chart-controls"></div>
-                                <div style="clear: both"></div>
-	                        </div>
-	                    </c:if>
-
-					</c:if>
-										
-					<c:if test="${question.getType() == 'FreeTextQuestion'}">				
-						<c:if test='${form.getSurvey().isDelphi && question.isDelphiElement() && (question.getDelphiChartType() != "None")}'>
-							<div style="width: 700px; margin-left: auto; margin-right: auto;">
-								<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
-							</div>
-							
-	                        <div class="statelement-wrapper">
-                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
-                                     <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                         <tr>
-                                             <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-												 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-											 </th>
-                                         </tr>
-                                         <tr>
-                                             <td style='padding-top:10px; padding-bottom:10px'>
-                                                 <div id="wordcloud${question.uniqueId}" class="delphi-chart-div" style="min-width: 300px; min-height: 220px"></div>
-                                             </td>
-                                         </tr>
-                                     </table>
-                                     <div style="clear: both"></div>
-                                </div>
-                                <div class="chart-controls"></div>
-                                <div style="clear: both"></div>
-	                        </div>
-	                    </c:if>	
+                               </div>
+                               <div class="chart-controls"></div>
+                               <div style="clear: both"></div>
+                               <div class="no-chart-results-message"></div>
+                        </div>
 					</c:if>
 					
 					<c:if test="${question.getType() == 'RatingQuestion'}">
@@ -419,27 +414,25 @@
 							
 						</div>
 
-						<c:if test="${form.getSurvey().isDelphi && question.isDelphiElement()}">
-	                        <div class="statelement-wrapper">
-                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
-                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                        <tr>
-                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-												<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-											</th>
-                                        </tr>
-                                        <tr>
-                                            <td style='padding-top:10px; padding-bottom:10px'>
-                                                <div class="delphi-chart-div"></div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <div style="clear: both"></div>
-                                </div>
-                                <div class="chart-controls"></div>
-                                <div style="clear: both"></div>
-	                        </div>
-	                    </c:if>
+                        <div class="statelement-wrapper">
+                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                   <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+                                       <tr>
+                                           <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+											<a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+										</th>
+                                       </tr>
+                                       <tr>
+                                           <td style='padding-top:10px; padding-bottom:10px'>
+                                               <div class="delphi-chart-div"></div>
+                                           </td>
+                                       </tr>
+                                   </table>
+                                   <div style="clear: both"></div>
+                               </div>
+                               <div class="chart-controls"></div>
+                               <div style="clear: both"></div>
+                        </div>
 
 					</c:if>		
 		
@@ -512,27 +505,25 @@
 							
 						</div>
 						
-						<c:if test="${form.getSurvey().isDelphi && question.isDelphiElement()}">
-	                        <div class="statelement-wrapper">
-                                <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
-                                     <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
-                                         <tr>
-                                             <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
-												 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
-											 </th>
-                                         </tr>
-                                         <tr>
-                                             <td style='padding-top:10px; padding-bottom:10px'>
-                                                 <div class="delphi-chart-div"></div>
-                                             </td>
-                                         </tr>
-                                     </table>
-                                     <div style="clear: both"></div>
-                                </div>
-                                <div class="chart-controls"></div>
-                                <div style="clear: both"></div>
-	                        </div>
-	                    </c:if>
+                        <div class="statelement-wrapper">
+                               <div class='chart-wrapper' data-survey-id="${form.getSurvey().id}" data-question-uid="${question.uniqueId}" data-uid="${question.uniqueId}" data-language-code="${form.getSurvey().language.code}">
+                                    <table class='table table-condensed table-bordered' style="width: auto; margin-bottom: 0; background-color: #fff;">
+                                        <tr>
+                                            <th class='statistics-area-header'>${form.getMessage("label.DelphiChartTitle")}
+											 <a class="chart-download" target="_blank" download="chart.png" data-toggle="tooltip" title="<spring:message code="label.DownloadPNG" />"><span class="glyphicon glyphicon-save"></span></a>
+										 </th>
+                                        </tr>
+                                        <tr>
+                                            <td style='padding-top:10px; padding-bottom:10px'>
+                                                <div class="delphi-chart-div"></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div style="clear: both"></div>
+                               </div>
+                               <div class="chart-controls"></div>
+                               <div style="clear: both"></div>
+                        </div>
 					</c:if>
 		
 				</c:if>
@@ -551,10 +542,12 @@
     	<option data-type="numerical" value="Pie"><spring:message code="label.DelphiChartPie" /></option>
     	<option data-type="numerical" value="Radar"><spring:message code="label.DelphiChartRadar" /></option>
     	<option data-type="numerical" value="Scatter"><spring:message code="label.DelphiChartScatter" /></option>
-    	<option data-type="textual" value="None"><spring:message code="label.None" /></option>
+    	<option data-type="none" value="None"><spring:message code="label.None" /></option>
     	<option data-type="textual" value="WordCloud"><spring:message code="label.DelphiChartWordCloud" /></option>
-    </select><br />
+    </select>
     
+    <span class="chart-scheme-group" style="display: none">
+    <br />
     <label><spring:message code="label.ColorScheme" /></label><br />
     <select onchange="changeChart(this)" class="chart-scheme form-control">
 		<option data-type="numerical" selected="selected" value="tableau.Tableau10">Default</option>
@@ -641,17 +634,21 @@
 		<option data-type="textual" value="d3.scale.category20" >Style B</option>
 		<option data-type="textual" value="d3.scale.category20b">Style C</option>
 		<option data-type="textual" value="d3.scale.category20c">Style D</option>
-    </select><br />
+    </select>
+    </span>
     
+    <span class="chart-size-group" style="display: none">
+    <br />
     <label><spring:message code="label.Size" /></label><br />
     <select onchange="changeChart(this)" class="chart-size form-control">
     	<option selected="selected" value="small"><spring:message code="label.Small" /></option>
     	<option value="medium"><spring:message code="label.Middle" /></option>
     	<option value="large"><spring:message code="label.Large" /></option>
     </select>
-    <br />
+    </span>
     
     <span class="chart-legend-group" style="display: none">
+	    <br />
     	<input class="chart-legend" onchange="changeChart(this)" type="checkbox" checked="checked" /> <spring:message code="label.Legend" />
     </span>
 </div>

@@ -325,6 +325,10 @@ public class RunnerController extends BasicController {
 								if (survey.getIsQuiz() && request.getParameter("startQuiz") == null) {
 									model = new ModelAndView("runner/quiz", "form", f);
 									model.addObject("isquizpage", true);
+								} else if (survey.getIsQuiz()) {
+									// the start date for the time limit starts when the user left the quiz start page
+									sessionService.SetUniqueCodeForForm(request, survey.getId(), uniqueCode);
+									sessionService.setFormStartDate(request, f, uniqueCode);
 								} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
 									model = new ModelAndView("runner/delphi", "form", f);
 									model.addObject("isdelphipage", true);
@@ -496,6 +500,7 @@ public class RunnerController extends BasicController {
 				survey = surveyService.getSurvey(survey.getId(), newlang);
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 
@@ -513,6 +518,7 @@ public class RunnerController extends BasicController {
 				survey = surveyService.getSurvey(survey.getId(), newlang);
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				if (newcss != null && newcss.equalsIgnoreCase("wcag")) {
 					answerSet.setWcagMode(true);
@@ -536,7 +542,7 @@ public class RunnerController extends BasicController {
 				// load form
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
-
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 
@@ -559,6 +565,7 @@ public class RunnerController extends BasicController {
 			if (answerSet.getSurvey().getCaptcha() && !checkCaptcha(request)) {
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
 				surveyService.initializeSkin(f.getSurvey());
@@ -603,7 +610,7 @@ public class RunnerController extends BasicController {
 			boolean hibernateOptimisticLockingFailureExceptionCatched = false;
 
 			try {
-				saveAnswerSet(answerSet, fileDir, request.getParameter("draftid"), -1);
+				saveAnswerSet(answerSet, fileDir, request.getParameter("draftid"), -1, request);
 				attendeeService.update(invitation);
 			} catch (HibernateOptimisticLockingFailureException | ConstraintViolationException he) {
 				logger.info(he.getLocalizedMessage(), he);
@@ -613,6 +620,7 @@ public class RunnerController extends BasicController {
 			if (hibernateOptimisticLockingFailureExceptionCatched) {
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
 				surveyService.initializeSkin(f.getSurvey());
@@ -628,11 +636,12 @@ public class RunnerController extends BasicController {
 				ModelAndView result = new ModelAndView("runner/quizResult", Constants.UNIQUECODE, answerSet.getUniqueCode());
 				Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
 						translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+				sessionService.setFormStartDate(request, form, uniqueCode);
 				form.setSurvey(survey);
 				form.getAnswerSets().add(answerSet);
 				result.addObject(form);
 				result.addObject("surveyprefix", survey.getId() + ".");
-				result.addObject("quiz", QuizHelper.getQuizResult(answerSet));
+				result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 				result.addObject("isquizresultpage", true);
 				result.addObject("invisibleElements", invisibleElements);
 				return result;
@@ -1194,6 +1203,11 @@ public class RunnerController extends BasicController {
 				{
 					uniqueCode = originalUniqueCode;
 				}
+			} else if (survey.getTimeLimit().length() > 0) {
+				String oldUniqueCode = (String)request.getSession().getAttribute(Constants.UNIQUECODE + survey.getId());
+				if (oldUniqueCode != null) {
+					uniqueCode = oldUniqueCode;
+				}
 			}
 
 			if (draftid != null && draftid.trim().length() > 0) {
@@ -1233,6 +1247,10 @@ public class RunnerController extends BasicController {
 					model = new ModelAndView("runner/quiz", "form", f);
 					model.addObject("isquizpage", true);
 					model.addObject("runnermode", true);
+				} else if (survey.getIsQuiz()) {
+					// the start date for the time limit starts when the user left the quiz start page
+					sessionService.SetUniqueCodeForForm(request, survey.getId(), uniqueCode);
+					sessionService.setFormStartDate(request, f, uniqueCode);
 				} else if (survey.getIsDelphi() && request.getParameter("startDelphi") == null) {
 					model = new ModelAndView("runner/delphi", "form", f);
 					model.addObject("isdelphipage", true);
@@ -1243,6 +1261,7 @@ public class RunnerController extends BasicController {
 			}
 
 			request.getSession().setAttribute(Constants.UNIQUECODE, uniqueCode);
+					
 			model.addObject(Constants.UNIQUECODE, uniqueCode);
 			return model;
 		}
@@ -1842,6 +1861,7 @@ public class RunnerController extends BasicController {
 				Survey survey = surveyService.getSurvey(origsurvey.getId(), newlang);
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 
@@ -1858,6 +1878,7 @@ public class RunnerController extends BasicController {
 				survey = surveyService.getSurvey(survey.getId(), newlang);
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				if (newcss != null && newcss.equalsIgnoreCase("wcag")) {
 					answerSet.setWcagMode(true);
@@ -1915,6 +1936,7 @@ public class RunnerController extends BasicController {
 				}
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 				f.setValidation(validation);
@@ -1940,6 +1962,7 @@ public class RunnerController extends BasicController {
 				}
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
 				surveyService.initializeSkin(f.getSurvey());
@@ -1951,7 +1974,7 @@ public class RunnerController extends BasicController {
 			}
 
 			try {
-				saveAnswerSet(answerSet, fileDir, request.getParameter("draftid"), -1);
+				saveAnswerSet(answerSet, fileDir, request.getParameter("draftid"), -1, request);
 			} catch (InvalidEmailException ie) {
 				Survey survey = origsurvey;
 				if (request.getParameter("language.code") != null
@@ -1960,6 +1983,7 @@ public class RunnerController extends BasicController {
 				}
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				validation.put((Element) ie.getElement(),
 						resources.getMessage("error.InvalidEmail", null, "The email address is not valid", locale));
@@ -1981,6 +2005,7 @@ public class RunnerController extends BasicController {
 				}
 				Form f = new Form(survey, translationService.getActiveTranslationsForSurvey(survey.getId()),
 						survey.getLanguage(), resources, contextpath);
+				sessionService.setFormStartDate(request, f, uniqueCode);
 				f.getAnswerSets().add(answerSet);
 				ModelAndView model = new ModelAndView("runner/runner", "form", f);
 				surveyService.initializeSkin(f.getSurvey());
@@ -2040,11 +2065,12 @@ public class RunnerController extends BasicController {
 				ModelAndView result = new ModelAndView("runner/quizResult", Constants.UNIQUECODE, answerSet.getUniqueCode());
 				Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
 						translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+				sessionService.setFormStartDate(request, form, uniqueCode);
 				form.setSurvey(survey);
 				form.getAnswerSets().add(answerSet);
 				result.addObject(form);
 				result.addObject("surveyprefix", survey.getId() + ".");
-				result.addObject("quiz", QuizHelper.getQuizResult(answerSet));
+				result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 				result.addObject("isquizresultpage", true);
 				result.addObject("invisibleElements", invisibleElements);
 				return result;
@@ -2080,6 +2106,7 @@ public class RunnerController extends BasicController {
 
 			Form form = new Form(resources, surveyService.getLanguage(lang),
 					translationService.getActiveTranslationsForSurvey(survey.getId()), contextpath);
+			sessionService.setFormStartDate(request, form, uniqueCode);
 			form.setSurvey(survey);
 
 			result.addObject("form", form);

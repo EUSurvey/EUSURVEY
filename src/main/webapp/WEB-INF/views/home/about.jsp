@@ -8,6 +8,8 @@
 		<spring:message code="label.About" />
 	</title>
 	<%@ include file="../includes.jsp" %>
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+	
 	<c:if test="${runnermode != null }">
 		<script type="text/javascript">
 			$(function () {
@@ -87,13 +89,13 @@
 		</c:choose>
 	
 		<spring:message code="message.about.paragraph.four" htmlEscape="false"></spring:message>
-		<a onclick="$('#thrid-party-dialog').modal()">
+		<a href="javascript:;" onclick="showModalDialog($('#third-party-dialog'), this)">
 			<spring:message code="message.about.paragraph.four.linkText"></spring:message>
 		</a> <br />
 		<br />
 		</div>
 	
-		<div class="modal" id="thrid-party-dialog" data-backdrop="static">
+		<div class="modal" id="third-party-dialog" role="dialog" data-backdrop="static">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -109,7 +111,7 @@
 						</ul>
 					</div>
 					<div class="modal-footer">
-						<a class="btn btn-primary" data-dismiss="modal">
+						<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog($('#third-party-dialog'))">
 							<spring:message code="label.Close" /></a>
 					</div>
 				</div>

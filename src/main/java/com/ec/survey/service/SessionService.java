@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import java.net.*;
+import java.util.Date;
 import java.util.List;
 
 @Service("sessionService")
@@ -367,6 +368,8 @@ public class SessionService extends BasicService {
 					&& request.getParameter("surveysOwn").equalsIgnoreCase("own");
 			boolean filterShared = request.getParameter("surveysShared") != null
 					&& request.getParameter("surveysShared").equalsIgnoreCase("shared");
+			boolean filterAny = request.getParameter("surveysShared") != null
+					&& request.getParameter("surveysShared").equalsIgnoreCase("any");
 
 			String status = "";
 			if (filterDraft)
@@ -380,7 +383,9 @@ public class SessionService extends BasicService {
 			filter.setLanguages(request.getParameterValues("languages"));
 			filter.setOwner(request.getParameter("owner"));
 
-			if (filterOwn && filterShared) {
+			if (filterAny) {
+				filter.setSelector("any");
+			} else if (filterOwn && filterShared) {
 				filter.setSelector("all");
 			} else if (filterOwn) {
 				filter.setSelector("my");
@@ -468,8 +473,7 @@ public class SessionService extends BasicService {
 		List<ResultFilter> result = query.list();
 
 		if (!result.isEmpty()) {
-			Hibernate.initialize(result.get(0).getLanguages());
-			return result.get(0);
+			return answerService.initialize(result.get(0));
 		}
 
 		return null;
@@ -652,4 +656,21 @@ public class SessionService extends BasicService {
 	public String getContextPath() {
 		return servletContext.getContextPath();
 	}
+	
+	public void setFormStartDate(HttpServletRequest request, Form form, String uniqueCode) {
+		Date startDate = (Date)request.getSession().getAttribute(Constants.START + uniqueCode);
+		if (startDate != null) {
+			form.setStartDate(startDate);
+		}
+		
+		request.getSession().setAttribute(Constants.START + uniqueCode, form.getStartDate());
+	}
+	
+	public void SetUniqueCodeForForm(HttpServletRequest request, int surveyId, String uniqueCode) {
+		request.getSession().setAttribute(Constants.UNIQUECODE + surveyId, uniqueCode);
+	}
+
+	public void ClearUniqueCodeForForm(HttpServletRequest request, int surveyId)  {
+		request.getSession().removeAttribute(Constants.UNIQUECODE + surveyId);		
+	}	
 }

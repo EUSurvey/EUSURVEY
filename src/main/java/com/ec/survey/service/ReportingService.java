@@ -1368,7 +1368,10 @@ public class ReportingService extends BasicService {
 				String d = null;
 				if (!answers.isEmpty())
 				{
-					d = answers.get(0).getValue();						
+					d = answers.get(0).getValue();
+					if (d != null && d.endsWith(":")) {
+						d += "00";
+					}
 				}
 				columns.add(question.getUniqueId());
 				values.add(":value" + parameters.size());

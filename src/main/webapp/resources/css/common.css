@@ -1269,6 +1269,16 @@ legend {
 	font-weight: bold; white-space: pre; margin-right: 2px;
 }
 
+.tooltip-inner a {
+	color: #fff;
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+.tooltip-inner a:hover {
+	color: #ddd;
+}
+
 #chartjs-tooltip {
 	color: #fff;
 	background-color: #222;

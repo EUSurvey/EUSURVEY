@@ -124,7 +124,7 @@ public class ContributionController extends BasicController {
 		form.getAnswerSets().add(answerSet);
 		result.addObject(form);
 		result.addObject("surveyprefix", answerSet.getSurvey().getId() + ".");
-		result.addObject("quiz", QuizHelper.getQuizResult(answerSet));
+		result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 		form.setForPDF(true);
 		result.addObject("forpdf", "true");
 		result.addObject("invisibleElements", invisibleElements);
@@ -421,7 +421,7 @@ public class ContributionController extends BasicController {
 					return model;
 				}
 
-				saveAnswerSet(oldAnswerSet, fileDir, null, u == null ? -1 : u.getId());
+				saveAnswerSet(oldAnswerSet, fileDir, null, u == null ? -1 : u.getId(), request);
 
 				List<String> newFileUIDs = oldAnswerSet.getAllFiles();
 

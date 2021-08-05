@@ -1514,7 +1514,7 @@ public class AnswerService extends BasicService {
 	@Transactional
 	public Statistics getStatisticsOrStartCreator(Survey survey, ResultFilter filter, boolean useEagerLoading, boolean allanswers,
 			boolean asynchronous) throws Exception {
-		// filter = answerService.initialize(filter);
+		filter = answerService.initialize(filter);
 		Statistics statistics = getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers), useEagerLoading);
 
 		if (statistics == null) {
@@ -2289,7 +2289,7 @@ public class AnswerService extends BasicService {
 		if (answerSet == null)
 		{
 			answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
-		}	
+		}
 	
 		return answerSet;
 	}
@@ -2606,7 +2606,7 @@ public class AnswerService extends BasicService {
 		Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection = new HashMap<>();
 		initializeHelperMaps(survey, questionsBySection, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
 				
-		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, false, false, false, false);
+		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, true, false, false, false);
 		if (answerRows != null) {
 			totalNumberOfContributions = answerRows.size();
 			Map<Integer, String> questionUidsByIndex = new HashMap<>();

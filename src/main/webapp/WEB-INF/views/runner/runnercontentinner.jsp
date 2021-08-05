@@ -229,36 +229,37 @@
 
 									<c:if test="${submit == true}">
 										<div style="text-align: center; margin-top: 20px;">
-											<input type="button" id="btnPrevious" style="display: none;" role="button" id="btnPrevious" aria-label="${form.getMessage("label.GoToPreviousPage")}"
-												   value="${form.getMessage("label.Previous")}"
+											<a id="btnPrevious" style="display: none;" role="button" id="btnPrevious" aria-label="${form.getMessage("label.GoToPreviousPage")}"
+												   href="javascript:;"
 												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 												   title="${form.survey.isDelphi ? form.getMessage("label.PreviousPageDelphi") : ""}"
-												   onclick="previousPage();this.blur();" class="btn btn-default"/>
+												   onclick="previousPage();this.blur();" onfocusin="validateLastContainer()" class="btn btn-default">${form.getMessage("label.Previous")}</a>
 											<c:choose>
 												<c:when test="${dialogmode != null }">
-													<input type="button" id="btnSubmit" role="button"
-														   value="${form.getMessage("label.Save")}"
+													<a id="btnSubmit" role="button"
+														   href="javascript:;"
 														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
-														   class="btn btn-primary"/>
-													<input type="button" id="btnSubmit2" role="button"
-														   value="${form.getMessage("label.Close")}"
+														   onfocusin="validateLastContainer()"
+														   class="btn btn-primary">${form.getMessage("label.Save")}</a>
+													<a id="btnSubmit2" role="button" href="javascript:;"
 														   onclick="window.open('', '_self', '');window.close();"
-														   class="btn btn-default"/>
+														   class="btn btn-default">${form.getMessage("label.Close")}</a>
 												</c:when>
 												<c:otherwise>
-													<input type="button" id="btnSubmit" role="button" id="btnSubmit" aria-label="${form.getMessage("label.Submit")}"
-														   value="${form.getMessage("label.Submit")}"
+													<a id="btnSubmit" role="button" id="btnSubmit" href="javascript:;"
 														   onclick="validateInputAndSubmitRunner($('#runnerForm'));"
-														   class="btn btn-primary hidden"/>
+														   onfocusin="validateLastContainer()"
+														   class="btn btn-primary hidden">${form.getMessage("label.Submit")}</a>
 												</c:otherwise>
 											</c:choose>
 
-											<input type="button" id="btnNext" style="display: none;" role="button" aria-label="${form.getMessage("label.GoToNextPage")}"
-												   value="${form.getMessage("label.Next")}"
+											<a id="btnNext" style="display: none;" role="button" aria-label="${form.getMessage("label.GoToNextPage")}"
+												   href="javascript:;"
 												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 												   title="${form.survey.isDelphi ? form.getMessage("label.NextPageDelphi") : ""}"
 												   onclick="nextPage();this.blur();"
-												   class="btn btn-default btn-primary"/>
+												   onfocusin="validateLastContainer()"
+												   class="btn btn-default btn-primary">${form.getMessage("label.Next")}</a>
 
 											<c:if test="${responsive != null && mode != 'editcontribution' && dialogmode == null && form.survey.saveAsDraft}">
 												<input type="button" id="btnSaveDraftMobile"
@@ -285,6 +286,14 @@
 									 src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />"
 									 alt="${form.survey.logoText}"/>
 								<hr style="margin-top: 15px;"/>
+							</c:if>
+							
+							<c:if test="${mode != 'editcontribution' && form.survey.timeLimit.length() > 0 && form.survey.showCountdown}">
+								<div class="linkstitle">
+									${form.getMessage("label.CountdownTimer")}
+								</div>
+								<div style="font-size: 20px;" id="countdowntimer">${form.survey.timeLimit}</div>
+								<hr style="margin-top: 15px;"/>								
 							</c:if>
 
 							<c:if test='${runnermode == null  || form.survey.skin == null || !form.survey.skin.name.equals("New Official EC Skin")}'>
@@ -449,15 +458,28 @@
 			
 			<div style="clear: both"></div>
 
-			<div class="modal confirm-explanation-deletion-modal" data-backdrop="static">
+			<div class="modal confirm-explanation-deletion-modal" role="dialog" data-backdrop="static">
 				<div class="modal-dialog modal-sm">
 					<div class="modal-content">
 						<div class="modal-body">
 							<spring:message code="info.ConfirmExplanationDeletion" />
 						</div>
 						<div class="modal-footer">
-							<a class="btn btn-default" onclick="confirmExplanationDeletion()"><spring:message code="label.Confirm" /></a>
-							<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>
+							<a href="javascript:;" class="btn btn-default" onclick="confirmExplanationDeletion()"><spring:message code="label.Confirm" /></a>
+							<a href="javascript:;" class="btn btn-primary" onclick="hideModalDialog('.confirm-explanation-deletion-modal')"><spring:message code="label.Cancel" /></a>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="modal" id="quizTimeoutDialog" data-backdrop="static" role="dialog">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<spring:message code="info.CountdownExceeded" />
+						</div>
+						<div class="modal-footer">
+							<a class="btn btn-default"  data-dismiss="modal"><spring:message code="label.Close" /></a>
 						</div>
 					</div>
 				</div>
@@ -787,4 +809,52 @@
 	 	
 	 	initializeAnswerData();
 	 	initializeTriggers();
+	 	
+	 	<c:if test="${mode != 'editcontribution' && form.survey.timeLimit.length() > 0}">
+			var countdownTimerSeconds = ${form.survey.timeLimitInSeconds};			
+			var passedSeconds = ${form.getPassedTimeInSeconds()};			
+			var startDateJS = new Date();
+					
+			function updateCountdown() {
+				var currentTime = new Date();
+				var rest = countdownTimerSeconds - passedSeconds - Math.floor((currentTime - startDateJS) / 1000); 
+				
+				if (rest < 1) {
+					//timeout
+					$('#countdowntimer').html("00:00:00")
+					$('#btnSubmit').remove();
+					$('.single-page').remove();
+					$('#quizTimeoutDialog').modal("show");
+					return;
+				} else if (rest < 61) {
+					//red color
+					$('#countdowntimer').addClass("lightred");
+				}
+				
+				//update
+				var hours = Math.floor(rest / 3600);
+				rest = rest - (hours * 3600);
+				var minutes = Math.floor(rest / 60);
+				rest = rest - (minutes * 60);
+				
+				var minuteSeparator = ":";			
+				if (minutes < 10) {
+					minuteSeparator = ":0";
+				}	
+				
+				var secondSeparator = ":";			
+				if (rest < 10) {
+					secondSeparator = ":0";
+				}	
+				
+				$('#countdowntimer').html(hours + minuteSeparator + minutes + secondSeparator + rest);
+				
+				window.setTimeout(function() {
+					updateCountdown();
+				}, 1000);
+			}
+			
+			updateCountdown();
+	
+		</c:if>
 	</script>
