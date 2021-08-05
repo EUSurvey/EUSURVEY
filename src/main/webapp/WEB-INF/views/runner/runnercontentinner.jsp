@@ -502,6 +502,11 @@
 	 		var s = '${form.getMessage("limits.MinMaxCharacters", "[min]","[max]")}';
 	 		return s.replace("[min]", min).replace("[max]", max);
 	 	}
+		function getCharacterCountInfo(max)
+		{
+			var s = '${form.getMessage("info.CharactersUsed", " ", "[max]")}';
+			return s.replace("[max]", max);
+		}
 	 	function getMinCharacters(min)
 	 	{
 	 		var s = '${form.getMessage("limits.MinCharacters", "[min]")}';
