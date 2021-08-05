@@ -1552,10 +1552,10 @@ function initModals(item)
 			 var reg = /^[a-zA-Z0-9-_]+$/;
 			 if ($(this).parent().find(".validation-error").length == 0)
 			    if( !reg.test( value ) ) {
-			    	addValidationError.andFocus(this, shortnameText);
+			    	addValidationError.toElementAndFocus(this, $(this).parent(), shortnameText);
 					result = false;
 			    } else if( value.indexOf("__") > -1 ) {
-			    	addValidationError.andFocus(this, shortnameText2);
+			    	addValidationError.toElementAndFocus(this, $(this).parent(), shortnameText2);
 					result = false;
 			    } ;
 		});
@@ -1567,10 +1567,10 @@ function initModals(item)
 			 var reg = /^[a-zA-Z0-9-_]+$/;
 			 if ($(this).parent().find(".validation-error").length == 0)
 			    if( !reg.test( value ) ) {
-			    	addValidationError.andFocus(this, shortnameText);
+			    	addValidationError.toElementAndFocus(this, $(this).parent(), shortnameText);
 					result = false;
 			    } else if( value.indexOf("__") > -1 ) {
-			    	addValidationError.andFocus(this, shortnameText2);
+			    	addValidationError.toElementAndFocus(this, $(this).parent(), shortnameText2);
 					result = false;
 			    } ;
 		});

@@ -252,13 +252,21 @@
 .slider-horizontal {	
 	margin-top: 20px;
 	margin-bottom: 10px;
-	width: 300px !important;
+	width: 100px !important;
+	margin-left: 22px;
+	margin-right: 22px;
+	flex: 1 1 300px;
 }
 
 .slider-div {
 	padding: 20px;
 	padding-left: 20px;
 	max-width: 420px;
+}
+
+.slider-widget-box {
+	display: flex;
+	align-items: center;
 }
 
 .numbering {

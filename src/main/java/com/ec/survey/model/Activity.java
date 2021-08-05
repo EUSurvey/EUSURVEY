@@ -241,6 +241,7 @@ public class Activity implements java.io.Serializable {
 		if (logID == 312) return STARTED;
 		if (logID == 313) return MODIFIED;
 		if (logID == 314) return STARTED;
+		if (logID == 315) return DELETED;
 		if (logID == 401) return SUBMITTED;
 		if (logID == 402) return DELETED;
 		if (logID == 403) return MODIFIED;

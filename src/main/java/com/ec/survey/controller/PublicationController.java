@@ -332,7 +332,7 @@ public class PublicationController extends BasicController {
 						} else if (question instanceof Upload) {
 							if (answer.getFiles() != null && !answer.getFiles().isEmpty()) {
 								for (File file : answer.getFiles()) {
-									String name = "<a target='blank' href='" + contextpath + "/files/" + file.getUid()
+									String name = "<a target='blank' href='" + contextpath + "/files/" + survey.getUniqueId() + "/" + file.getUid()
 											+ "'>" + file.getName() + "</a><br />";
 
 									if (result.containsKey(answer.getQuestionId().toString())) {
