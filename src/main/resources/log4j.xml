@@ -99,11 +99,10 @@
      </logger>
 
   	<logger name="org.hibernate">
-        <level value="info" />
+        <level value="warn" />
         <appender-ref ref="info" />
     	<appender-ref ref="error" />
     	<appender-ref ref="console" />
-    	<appender-ref ref="debug" /> 
     </logger>
  	
 	<!-- Root Logger -->
