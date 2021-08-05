@@ -534,6 +534,11 @@
 			}
 		}
 		
+		function getCharacterCountInfo(max)
+		{
+			var s = '${form.getMessage("info.CharactersUsed", "[current]", "[max]")}';
+			return s.replace("[max]", max).replace("[current]", "0");
+		}
 		function getMinMaxCharacters(min,max)
 	 	{
 	 		var s = '<spring:message code="limits.MinMaxCharacters" arguments="[min],[max]" />';

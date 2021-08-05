@@ -497,17 +497,17 @@
 		<%@ include file="elementtemplates.jsp" %>
 			
 	<script type="text/javascript">
+		function getCharacterCountInfo(max)
+		{
+			var s = '${form.getMessage("info.CharactersUsed", "[current]", "[max]")}';
+			return s.replace("[max]", max).replace("[current]", "<span class='charactercounter'>0</span>");
+		}
 		function getMinMaxCharacters(min,max)
 	 	{
 	 		var s = '${form.getMessage("limits.MinMaxCharacters", "[min]","[max]")}';
 	 		return s.replace("[min]", min).replace("[max]", max);
 	 	}
-		function getCharacterCountInfo(max)
-		{
-			var s = '${form.getMessage("info.CharactersUsed", " ", "[max]")}';
-			return s.replace("[max]", max);
-		}
-	 	function getMinCharacters(min)
+		function getMinCharacters(min)
 	 	{
 	 		var s = '${form.getMessage("limits.MinCharacters", "[min]")}';
 	 		return s.replace("[min]", min);
