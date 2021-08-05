@@ -175,6 +175,12 @@ a.ratingitem {
 	color: #666;
 }
 
+.question-reset-answer-message {
+	margin-left: 10px;
+	font-style: italic;
+	color: #666;
+}
+
 .rankingitem-decoration {
 	color: #333;
 	font-weight: normal;

@@ -155,7 +155,7 @@ function checkHasValue(element) {
 	}
 		
 	if ($(element).hasClass("rankingitem-list")) {
-		return true;
+		return ko.dataFor(element).isAnswered();
 	}
 	
 	if ($(element).hasClass("ratingitem")) {
