@@ -304,7 +304,7 @@
 
 					</c:if>
 										
-					<c:if test="${question.getType() == 'FreeTextQuestion'}">				
+					<c:if test="${forpdf == null && question.getType() == 'FreeTextQuestion'}">				
 						<div style="width: 700px; margin-left: auto; margin-right: auto;">
 							<div class="questiontitle" style="font-weight: bold">${question.getStrippedTitleNoEscape()} : ${childQuestion.title} <span class="assignedValue ${showShortnames == null ? 'hideme' : ''}">(${childQuestion.shortname})</span></div>
 						</div>
@@ -327,6 +327,7 @@
                                </div>
                                <div class="chart-controls"></div>
                                <div style="clear: both"></div>
+                               <div class="no-chart-results-message"></div>
                         </div>
 					</c:if>
 					

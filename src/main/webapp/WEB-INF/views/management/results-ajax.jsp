@@ -380,6 +380,10 @@
 				$(controls).find(".chart-size-group").first().show();
 				$(elementWrapper).find(".chart-wrapper").show();
 			}
+			const hasNoData = $(elementWrapper).find(".chart-wrapper").data("has-no-data");
+			if (hasNoData === "true") {
+				$(elementWrapper).find(".chart-controls").hide();
+			}
         }
 
 	</script>

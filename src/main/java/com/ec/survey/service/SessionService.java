@@ -473,8 +473,7 @@ public class SessionService extends BasicService {
 		List<ResultFilter> result = query.list();
 
 		if (!result.isEmpty()) {
-			Hibernate.initialize(result.get(0).getLanguages());
-			return result.get(0);
+			return answerService.initialize(result.get(0));
 		}
 
 		return null;

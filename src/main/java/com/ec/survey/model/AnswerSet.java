@@ -105,13 +105,18 @@ public class AnswerSet implements java.io.Serializable {
 			return "-";
 		}
 		
-		long milliSeconds = this.date.getTime() - this.startDate.getTime();
+		double created = this.date.getTime();
+		created = created / 1000;
 		
-		if (milliSeconds < 0) {
+		double started = this.startDate.getTime();
+		started = started / 1000;
+		
+		long seconds = Math.round(created) - Math.round(started);
+		
+		if (seconds < 0) {
 			return "-";
-		}
+		}	
 		
-		long seconds = milliSeconds / 1000;
 		long hours = seconds / 3600;
 		seconds = seconds - (hours * 3600);
 		long minutes = seconds / 60;

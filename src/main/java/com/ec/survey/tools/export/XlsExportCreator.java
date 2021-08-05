@@ -352,13 +352,18 @@ public class XlsExportCreator extends ExportCreator {
 			}
 		}
 		
-		filter.setVisibleQuestions(filter.getExportedQuestions());
-		filter.setVisibleExplanations(filter.getExportedExplanations());
-		filter.setVisibleDiscussions(filter.getExportedDiscussions());		
-
+		filter.getVisibleQuestions().clear();
+		filter.getVisibleQuestions().addAll(filter.getExportedQuestions());
+		
+		filter.getVisibleExplanations().clear();
+		filter.getVisibleExplanations().addAll(filter.getExportedExplanations());
+		
+		filter.getVisibleDiscussions().clear();
+		filter.getVisibleDiscussions().addAll(filter.getExportedDiscussions());
+		
 		List<List<String>> answersets = null;
 		
-		if (export.isForArchiving() == null || !export.isForArchiving()) {
+		if (export == null || export.isForArchiving() == null || !export.isForArchiving()) {
 			answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
 				publication == null || publication.getShowUploadedDocuments(), false, false, export != null && export.getShowShortnames());
 		}

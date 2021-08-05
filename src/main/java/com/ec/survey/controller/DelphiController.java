@@ -403,6 +403,9 @@ public class DelphiController extends BasicController {
 		}		
 		
 		final List<WordFrequency> wordFrequencies = frequencyAnalyzer.load(texts);
+		if (wordFrequencies.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
 		
 		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
 		result.setChartType(question.getDelphiChartType());

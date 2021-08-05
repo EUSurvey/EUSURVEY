@@ -26,6 +26,7 @@ import com.ec.survey.tools.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.hibernate.Session;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -3666,6 +3667,9 @@ public class ManagementController extends BasicController {
 			if (filter == null || filter.getSurveyId() == 0) {
 				return Collections.emptyMap();
 			}
+						
+			filter.getVisibleExplanations().clear();
+			filter.getVisibleDiscussions().clear();
 
 			Survey survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
 			if (survey != null) {
