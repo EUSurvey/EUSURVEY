@@ -756,6 +756,25 @@ function newRankingViewModel(element)
 		propagateChange(rankingItemList);
 	}
 
+	viewModel.resetOrder = function(_, event) {
+		viewModel.answervalues(viewModel.originalItemUniqueIdOrder);
+		viewModel.isAnswered(false);
+
+		const thatRanking = $(event.target).closest(".rankingitem");
+
+		const rankingItemsTexts = thatRanking.find(".rankingitemtext");
+		const rankingItemUniqueIds = $.map(rankingItemsTexts, that => viewModel.itemIdtoUniqueIdLookup[Number(that.id)]);
+		const permutation = $.map(viewModel.originalItemUniqueIdOrder, uniqueId => rankingItemUniqueIds.indexOf(uniqueId));
+
+		const rankingItemList = thatRanking.find(".rankingitem-list")[0];
+		const rankingItemFormDatas = thatRanking.find(".rankingitem-form-data");
+		$.each(permutation, function(_, permuteIndex) {
+			const thatItemDiv = $(rankingItemFormDatas).eq(permuteIndex);
+			$(rankingItemList).append(thatItemDiv);
+		});
+		propagateChange(rankingItemList);
+	}
+
 	viewModel.originalItemUniqueIdOrder = $.map(element.childElements, item => item.uniqueId);
 	viewModel.itemTitleLookup = {};
 	$.each(element.childElements, (_, that) => {
@@ -1018,7 +1037,18 @@ function newNumberViewModel(element)
 		this.isAnswered(true);
 		tinyMCE.get('explanation' + data.id()).execCommand('mceFocus',false);
 	};
-	
+
+	viewModel.resetToInitialPosition = function(_, event) {
+		const input = $("#answer" + viewModel.id());
+		const initialValue = viewModel.initialValue();
+
+		$(input).bootstrapSlider().bootstrapSlider("setValue", initialValue);
+		$(input).val("");
+		viewModel.isAnswered(false);
+		propagateChange($(input));
+		$(input).val(initialValue.toString());
+	}
+
 	if (viewModel.display() == 'Slider')
 	{
 		if (viewModel.min() == null)
