@@ -371,6 +371,7 @@
 				const chartDataType = $(elementWrapper).find(".chart-wrapper").data("chart-data-type");
 				if (chartDataType == "Textual") {
 					$(elementWrapper).find("option[data-type='numerical']").hide();
+					$(elementWrapper).find(".chart-scheme").first().val("Style B");
 				} else {
 					$(elementWrapper).find("option[data-type='textual']").hide();
 				}
