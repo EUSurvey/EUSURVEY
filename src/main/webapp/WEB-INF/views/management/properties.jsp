@@ -851,11 +851,13 @@
 						<td>
 							<div style="float: left">
 								<spring:message code="label.LogoAlternativeText" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
 							</div>
 							<div style="float: right">
 								<form:input htmlEscape="false" path="survey.logoText" type="text" class="form-control" style="width: 500px" />
 							</div>
 							<div style="clear: both"></div>					
+							<div class="help hideme"><spring:message code="help.LogoAlternativeText" /></div>
 						</td>
 					</tr>	
 					<tr class="subelement noborder">
