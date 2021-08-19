@@ -147,7 +147,7 @@ final public class Survey implements java.io.Serializable {
 	private String confirmationLink = "";
 	private String escapeLink = "";
 	private List<String> translations;
-	private List<String> completeTranslations;
+	private List<Language> completeTranslations;
 	private Publication publication = new Publication();
 	private Map<Integer, String[]> activitiesToLog = new HashMap<>();
 	private String audience;
@@ -1768,17 +1768,18 @@ final public class Survey implements java.io.Serializable {
 	}
 
 	@Transient
-	public List<String> getCompleteTranslations() {
+	public List<Language> getCompleteTranslations() {
 		return completeTranslations;
 	}
 
-	public void setCompleteTranslations(List<String> translations) {
+	public void setCompleteTranslations(List<Language> translations) {
 		this.completeTranslations = translations;
 	}
 
 	@Transient
 	public boolean containsCompleteTranslations(String code) {
-		return (completeTranslations != null && completeTranslations.contains(code));
+		return completeTranslations != null &&
+				completeTranslations.stream().map(t -> t.getCode()).anyMatch(c -> c.equals(code));
 	}
 
 	@Transient
