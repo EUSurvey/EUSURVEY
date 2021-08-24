@@ -1252,7 +1252,11 @@
 				Can I create my translations offline?    
 			</h2>
 			<p>
-				Yes! The workflow to follow is:
+				Yes! Open your survey, go to the "Translations" page and export your survey as an XLS, ODS or XML file
+				to perform the translation offline. The translation can then be imported back into your survey.
+			</p>
+			<p>
+				The usual workflow to follow is:
 			</p>
 			<p>
 				<ol>
@@ -1274,13 +1278,20 @@
 					<li>
 						Click 'Upload existing translation' to import the translation.
 					</li>
+					<li>
+						Select the language of the new translation.
+					</li>
+					<li>
+						You may deselect individual labels that you do not want to include.
+					</li>
 				</ol>
 			</p>
 			<p>
-				That's done. Verify the translation from the 'Test' tab.
+				You can now verify the translation from the 'Test' tab.
 			</p>
 			<h2>
-				How do I publish/unpublish my translations?
+				How do I publish/unpublish my translations? Why can't I publish this translation? What is an
+				"Incomplete" translation?
 			</h2>
 			<p>
 				To publish a survey in multiple languages,:
@@ -1302,7 +1313,6 @@
 					</li>
 				</ol>
 			</p>
-
 			<p>
 				If the survey had been published before the translations were
 				added/removed, click on "Apply Changes".
@@ -1313,8 +1323,8 @@
 				'Complete').
 			</p>
 			<p>
-				To ensure your translation has no empty labels, use the online translation
-				editor. Look for cells with a red background.
+				Please make sure your translation has no empty labels by using the online translation editor. Look for
+				cells with a red background.
 			</p>
 			<h2>
 				Can I upload a translation in a non-European language?    
@@ -1333,9 +1343,8 @@
 				What does 'Request Machine Translation' mean?    
 			</h2>
 			<p>
-				A <strong>Machine Translation (MT)</strong> can automatically translate
-				your questionnaire on EUSurvey. The tool uses the Commission eTranslation
-				service.
+				EUSurvey can provide automatic translations of your questionnaire by using a <strong>Machine Translation
+				(MT)</strong>. The application uses the MT@EC service provided by the European Commission.
 			</p>
 			<p>
 				On the 'Translations' page, you can request machine translations in several
@@ -1388,9 +1397,8 @@
 				Instructions for EU staff    
 			</h2>
 			<p>
-				You should contact DGT's editing unit before finalising your survey. Its
-				editors will check that your survey is clearly drafted and presented. For
-				more info, see
+				You are encouraged to contact DGT before you finalise your survey. Its Editing unit (email: DGT-EDIT)
+				will check that your survey is clearly drafted and presented. For more info, see
 				<a
 						href="https://myintracomm.ec.europa.eu/serv/en/dgt/Pages/index.aspx"
 						target="_blank"
@@ -1414,34 +1422,20 @@
 				How do I publish my survey?    
 			</h2>
 			<p>
-				To publish a survey from a current working draft:
-			</p>
-			<p>
-				&#8594; go to the 'Overview' page and click on 'Publish'.
-			</p>
-			<p>
-				After confirmation, the system will automatically create a working copy of
-				your survey and put it online, along with the translations you selected for
-				publication (See '
+				To publish a survey from a current working draft, please go to the "Overview" page and click on
+				"Publish". After confirmation, the system will automatically create a working copy of your survey
+				and put it online, along with the set of translations you have selected for publication on the
+				"Translations" page (See '
 				<a href="#_Toc_7_5">
 					How do I publish/unpublish my translations?
 				</a>
-				').
+				'). You will find the link to your published survey in "Survey Location" on the "Overview" page.
 			</p>
 			<p>
-				Find the link to your published survey under 'Survey Location' on the
-				'Overview' page.
-			</p>
-			<p>
-				To unpublish your survey &#8594; click the 'Unpublish' button.
-			</p>
-			<p>
-				You can still access the unpublished survey, along with your current
-				working draft.
-			</p>
-			<p>
-				This means that the unpublished survey doesn't have to be replaced by your
-				current working draft but can be republished if necessary.
+				To unpublish your survey, just click the "Unpublish" button. The unpublished survey will stay available
+				to you in the form in which it was published, along with your current working draft. This means that the
+				unpublished survey does not have to be replaced by your current working draft but can be republished if
+				necessary.
 			</p>
 			<h2>
 				Can I customise the URL to my survey?    
@@ -1450,8 +1444,7 @@
 				Yes!
 			</p>
 			<p>
-				By changing your survey's 'Alias' you can get a more meaningful URL for
-				your survey.
+				By changing your survey's 'Alias' you can make the URL to your survey more meaningful.
 			</p>
 			<p>
 				<ol>
@@ -1467,12 +1460,12 @@
 				An alias can only contain alphanumeric characters and hyphens.
 			</p>
 			<p>
-				If you change the alias of a published survey &#8594; go to the 'Overview' page
+				If you change the alias of a published survey, go to the 'Overview' page
 				and click on 'Apply Changes'.
 			</p>
 			<p>
-				Aliases must be unique in EUSurvey. If another survey has already taken
-				your alias, you will get a warning
+				Please note that aliases have to be unique in EUSurvey. You will get a warning if your alias has already
+				been taken by another survey.
 			</p>
 			<h2>
 				Can I link directly to a translation of my survey?    
@@ -1480,14 +1473,14 @@
 			<p>
 				When you send out invitations containing the link or use the link to the
 				published form on the 'Overview' page, by default the link points to the
-				form in the main language.
+				form in the pivot language.
 			</p>
 			<p>
-				You can also<strong> bring respondents directly</strong> to a specific
-				translation:
+				You can also<strong> redirect respondents directly</strong> to a specific
+				translation by using this link:
 			</p>
 			<p>
-				<strong>https://ec.europa.eu/eusurvey/runner/SurveyAlias?surveylanguage=LC</strong>
+				https://ec.europa.eu/eusurvey/runner/<strong>SurveyAlias</strong>?surveylanguage=<strong>LC</strong>
 			</p>
 			<p>
 				Where:
@@ -1499,7 +1492,7 @@
 				</li>
 				<li>
 					<strong>LC</strong>
-					is the wished <strong>ISO 639-1 language code</strong> (e.g. FR for
+					is the appropriate <strong>ISO 639-1 language code</strong> (e.g. FR for
 					French, DE for German, etc.)
 				</li>
 			</ul>
@@ -1527,7 +1520,7 @@
 				Can I receive a reminder of when my survey will end?    
 			</h2>
 			<p>
-				Yes, EUSurvey can send you a reminder email before your survey ends. This
+				Yes, EUSurvey can send you an email reminder when your survey is about to end. This
 				allows you to prepare the next steps (e.g. organising resources for result
 				analysis).
 			</p>
