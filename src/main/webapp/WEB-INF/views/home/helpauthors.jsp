@@ -100,102 +100,78 @@
 				
 			</ul>
 		</div>
-	
-	<div id="faqcontent">
+
+		<div id="faqcontent">
 			<h1>
 				General questions
 			</h1>
 			<h2>
-				What is EUSurvey?    
+				What is EUSurvey?
 			</h2>
 			<p>
-				It's an online tool that you can use to create, publish and manage
-				questionnaires and other interactive forms.
+				EUSurvey is an online survey management tool to create, publish and manage questionnaires and other
+				interactive forms in most web browsers.
 			</p>
 			<h2>
-				When should I use EUSurvey?    
+				When do I use EUSurvey?
 			</h2>
 			<p>
-				Whenever you want to:
-				<ul>
-					<li>
-						put a questionnaire or interactive form online
-					</li>
-					<li>
-						record a large number of similar datasets.
-					</li>
-				</ul>
+				Use EUSurvey whenever you want to make a questionnaire or interactive form accessible online, or to
+				record a large number of similar datasets.
 			</p>
 			<h2>
-				What are EUSurvey's technical limits?    
+				What are the limits of EUSurvey?
 			</h2>
 			<p>
-				It may not be suitable for your project if:
+				Please open the <a href="https://ec.europa.eu/eusurvey/home/documentation">Support</a> page to find the
+				"Usability limits" of the tool.
+			</p>
+			<p>
+				EUSurvey may not be the right tool for your project if:
 				<ul>
 					<li>
-						different respondents work on the same contribution (answer) before
-						it's submitted
+						different participants need to work on the same contribution before it is submitted
 					</li>
 					<li>
-						answers need to be validated before being submitted.
+						contributions need to be validated before they can be submitted
 					</li>
 				</ul>
 			</p>
 			<p>
-				For more details:
-				<ul>
-					<li>
-						see the <a href="https://ec.europa.eu/eusurvey/home/documentation">support</a>
-						page for 'usability limits' of the tool
-					</li>
-					<li>
-						Contact the EUSurvey support team <a href="https://ec.europa.eu/eusurvey/home/support">here</a>.
-					</li>
-				</ul>
+				Please contact DIGIT-EUSURVEY-SUPPORT for additional information, upcoming features and possible
+				workarounds.
 			</p>
 			<h2>
-				Features of EUSurvey    
+				What are the features of EUSurvey?
 			</h2>
 			<p>
-				<strong>Customisable forms</strong>
+				<strong>Customizable forms</strong>
 				<br/>
-				You can choose various types of questions, e.g.:
-
-				<ul>
-					<li>
-						simple text and multiple-choice questions
-					</li>
-					<li>
-						spreadsheet questions
-					</li>
-					<li>
-						multimedia survey items.
-					</li>
-				</ul>
-			</p>
-			<p>
-				Structure your survey using special structural elements.
+				In the easy-to-use editor you can choose from a variety of question types; from simple text and
+				multiple-choice questions to spreadsheet questions or multimedia survey elements. Structure your survey
+				using special structural elements.
 			</p>
 			<p>
 				<strong>Dependent questions</strong>
 				<br/>
-				EUSurvey can display further questions and fields, depending on the
-				respondent's answers, making the survey more interactive.
+				EUSurvey can display additional questions and fields, depending on the answers given by the participant,
+				making the survey interactive.
 			</p>
 			<p>
 				<strong>Scheduled publishing</strong>
 				<br/>
-				Publish and unpublish your survey automatically whenever you want.
+				Publish and unpublish your survey automatically at a specified point in time.
 			</p>
 			<p>
-				<strong>Change after publishing</strong>
+				<strong>Modify your form after publication</strong>
 				<br/>
-				Change a published survey without losing any answers.
+				You can modify a published survey without losing any contributions.
 			</p>
 			<p>
 				<strong>Languages</strong>
 				<br/>
-				The user interface is available in 23 EU languages.
+				The user interface is available in 23 of the official EU languages, and you can translate your form into
+				any of the 136 languages covered by ISO 639-1, from Abkhaz to Zulu.
 			</p>
 			<p>
 				You can translate your form into any of the 136 languages covered by the
@@ -205,469 +181,399 @@
 			<p>
 				<strong>Security</strong>
 				<br/>
-				EUSurvey has the required set-up to secure online forms.
+				EUSurvey has the infrastructure needed to secure the online forms.
 			</p>
 			<p>
-				<strong>Send invitations directly </strong>
+				<strong>Sending out invitations directly from the application</strong>
 				<br/>
-				You can manage your contacts and send out emails with individual access
-				links to your survey.
+				Selected contacts can be managed in the 'Address Book' and used to send out individual emails to every
+				single contact containing individual access links.
 			</p>
 			<p>
 				<strong>Advanced privacy</strong>
 				<br/>
-				You can guarantee to your participants to remain anonymous by activating the 'Anonymous survey mode'. If activated, all contributions will be anonymous. This means that no user-related data will be saved by the system.
+				You can guarantee the participant's privacy by creating an anonymous form. Connection details will then
+				not be available to you as the author of the form.
 			</p>
 			<p>
-				<strong>Customised look/feel</strong>
+				<strong>Customise the look and feel</strong>
+				<br/>
+				With the built-in CSS style editor and embedded rich-text editors for all visible elements, you have
+				full control over the form's layout. A large list of survey themes makes it easy to adapt the form to a
+				project's identity. You can choose between single page and multi-page surveys
 			</p>
-			<ul>
-				<li>
-					change any aspect of the form's layout using flexible tools
-				</li>
-				<li>
-					adapt your form to a specific project using our large list of survey
-					themes
-				</li>
-				<li>
-					choose between single page and multi-page surveys.
-				</li>
-			</ul>
-		</p>
-		<p>
-			<strong>Save answer as a draft</strong>
-			<br/>
-			Respondents can save their answer as a draft on the server and continue
-			later.
-		</p>
-		<p>
-			<strong>Answer offline </strong>
-			<br/>
-			Respondents can answer a form offline before submitting it to the server
-			when completed.
-		</p>
-		<p>
-			<strong>Automatic numbering</strong>
-			<br/>
-			To structure your survey, EUSurvey can number the different sections.
-		</p>
-		<p>
-			<strong>High-contrast version</strong>
-			<br/>
-			Visually-impaired respondents can choose a high-contrast version of the
-			survey. This is created automatically for each form.
-		</p>
-		<p>
-			<strong>Uploading supporting files</strong>
-			<br/>
-			You can upload files to your survey, which every respondent can download.
-		</p>
-		<h2>
-			Form management
-		</h2>
-		<p>
-			<strong>Working together</strong>
-			<br/>
-			For surveys managed by multiple users, EUSurvey lets you provide permission
-			for other users to test a survey or to analyse the results.
-		</p>
-		<h2>
-			Result management
-		</h2>
-		<p>
-			<strong>Analyse your results</strong>
-			<br/>
-			You can analyse basic results and present data in histograms and chart
-			views.
-		</p>
-		<p>
-			You can also create standard spreadsheet formats of the survey results, to
-			use in statistical applications.
-		</p>
-		<p>
-			<strong>Publish your results</strong>
-			<br/>
-			You can publish a sub-set of all submitted answers on the application's
-			internal pages. The system can automatically calculate and create
-			statistics and charts.
-		</p>
-		<p>
-			<strong>Edit submitted answers</strong>
-			<br/>
-			Respondents can change their answer after submission, if needed.
-		</p>
-		<h2>
-			Where do I get more information about EUSurvey    
-		</h2>
-		<p>
-			Need<strong> practical help</strong>? Click '
-			<a href="https://ec.europa.eu/eusurvey/home/documentation" target="_blank">
-				Support
-			</a>
-			' (under <em>'Help'</em> at the top-right of the screen).
-		</p>
-		<p>
-			Want details about EUSurvey's background and funding? Click '
-			<a href="https://ec.europa.eu/eusurvey/home/about" target="_blank">
-				About
-			</a>
-			'.
-		</p>
-		<h2>
-			Who do I contact if there are technical problems?    
-		</h2>
-		<p>
-			<strong>EU staff</strong>
-			- contact your IT helpdesk and ask them to forward the problem to the
-			EUSurvey support team (describing it as precisely as possible).
-		</p>
-		<p>
-			External users - contact the Commission's
-			<a
-					href="mailto:EC-CENTRAL-HELPDESK@ec.europa.eu?subject=Incident%20Creation%20Request%20for%20DIGIT%20EUSURVEY%20SUPPORT%20&amp;body=%20Dear%20Helpdesk,%0D%0DCould%20you%20please%20open%20a%20ticket%20to%20DIGIT%20EUSURVEY%20SUPPORT%20with%20the%20following%20description:"
-					target="_blank"
-					>
-				Central Helpdesk
-			</a>
-			.
-		</p>
-		<h2>
-			How can I leave feedback on improving EUSurvey?    
-		</h2>
-		<p>
-			To leave comments and feedback, ask your IT helpdesk or the Central
-			Helpdesk to forward them to the EUSurvey support team.
-		</p>
-		<p>
-			The support team will get back to you as soon as possible.
-		</p>
-		<h2>
-			Which browsers are supported by EUSurvey?    
-		</h2>
-		<p>
-			Microsoft Edge, Mozilla Firefox and Google Chrome (the last 2 versions).
-		</p>
-		<p>
-			Using other browsers might cause compatibility problems.
-		</p>
-		<h2>
-			EUSurvey disclaimer (for non-EU users only)    
-		</h2>
-		<p>
-			In all questionnaires and invitation emails sent by a user who is not an <strong> EU official</strong>, the following disclaimer will be displayed:
-		</p>
-		<p>
-			Disclaimer
-			<br/>
-			<em>
-				The European Commission is not responsible for the content of
-				questionnaires created using the EUSurvey service - it remains the sole
-				responsibility of the form creator and manager. The use of EUSurvey
-				service does not imply a recommendation or endorsement, by the European
-				Commission, of the views expressed within them.
-			</em>
-		</p>
-		<h2>
-			Can respondents use a mobile device to answer?    
-		</h2>
-		<p>
-			Yes, anyone can answer using a mobile phone or tablet PC.
-		</p>
-		<h2>
-			Is there a minimum screen size?
-		</h2>
-		<p>
-			No, the questionnaires will adapt to the size of the screen used by
-			respondents.
-		</p>
-		<p>
-			However, to<em> create</em> and <em>manage</em> surveys, we recommend a
-			minimum resolution of 1680x1050 pixels for a good user experience.
-		</p>
-		<h1>
-			Logging in/creating an account
-		</h1>
-		<h2>
-			I have an EU Login account. Do I need to register separately for EUSurvey?    
-		</h2>
-		<p>
-			No, an EU Login account is enough.
-		</p>
-		<p>
-			To access EUSurvey, click on the login button on the
-			<a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">
-				EUSurvey homepage
-			</a>.
-		</p>
-		<h2>
-			How do I connect to EUSurvey?<u> </u>
-		</h2>
-		<p>
-			After you click on 'login' on the <u>EUSurvey homepage</u>, you will be
-			redirected to the EUSurvey login screen.
-		</p>
-		<p>
-			There, choose the option that matches your personal case:
-			<ul>
-				<li>
-					<strong>If you work for an EU institution </strong>
-					- choose the second option to connect, using your EU Login username and
-					password.
-				</li>
-				<li>
-					<strong>If you don't work for an EU institution (externals)</strong>
-					- choose the first option to connect. You'll need to have previously
-					registered your mobile phone to pass the
-					<a href="https://en.wikipedia.org/wiki/Help:Two-factor_authentication">
-						two-factor authentication
-					</a>.
-				</li>
-			</ul>
-		</p>
-		<p>
-			<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cg">
-				Create an EU Login account
-			</a>
-			(if you don't already have one)
-		</p>
-		<p>
-			<a
-					href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi?ticket=ST-21002212-zzlP2O5Vk7v3Lrybvgu0tmdvnRA0XlwiJHbSfmzmifWYFm6R6x8wLNtKCziamsRjpHDNxt0piYplSsJkaRelQ9S-rS0vSrmBGYCBAqIgQI5dC4-SYzvmgEAHJps6zYyn5lODmUR3BUcznA8ENrwzMnuwoj7ocalACSrpk4iD6QMHyJSBuhF98UCNUhkyYu25tH0I20"
-					>
-				Register your mobile phone
-			</a>
-			(If you don't work for an EU institution)
-		</p>
-		<h1>
-			Creating a survey
-		</h1>
-		<h2>
-			How do I create a new survey?    
-		</h2>
-		<p>
-			On the 'Welcome' or the 'Surveys' page:
-			<ol>
-				<li>
-					Click <strong>New Survey</strong> &#8594; then <strong>Create new Survey</strong> - and a dialogue box will open.
-				</li>
-				<li>
-					Once you have entered all mandatory information, click 'Create'.
-				</li>
-				<li>
-					The tool will load your new survey into the system and open the 'Editor'
-					automatically so you can start adding the detail.
-				</li>
-			</ul>
-		</p>
-		<h2>
-			What type of surveys can I create?    
-		</h2>
-		<p>
-			You can choose between the following options:
-			<ul>
-				<li>
-					<strong>Standard survey</strong>
-					<br />
-					A conventional questionnaire.
-				</li>
-				<li>
-					<strong>Quiz</strong>
-					<br/>
-					In a quiz, a final score is calculated for each participant. These can be
-					used e.g. as skill tests or electronic exams. For more details see the
-					<a
-							href="https://circabc.europa.eu/sd/a/400e1268-1329-413b-b873-b42e41369a07/EUSurvey_Quiz_Guide.pdf"
-							target="_blank"
-							>
-						EUSurvey quiz guide
-					</a>.
-					<br />
-					<br />
-					The quiz includes:
-					<ul>
-						<li>
-							a scoring feature
-						</li>
-						<li>
-							verification of participants' answers
-						</li>
-						<li>
-							the possibility to provide feedback to your participants, depending on
-							their answers
-						</li>
-						<li>
-							additional result analysis designed specifically for quizzes.
-						</li>
-					</ul>
-				</li>
-				<li>
-					<strong>BRP public consultation</strong>
-					<br/>
-					Specifically for public consultations run via the Better Regulation Portal
-					(published on the
-					<a href="https://ec.europa.eu/info/law/better-regulation/have-your-say">
-						'Have your say'
-					</a>
-					Europa website).
-					<br/>
-					<br/>
-					The BRP template provides:
-					<ul>
-						<li>
-							set <strong>metadata fields</strong> allowing uniform identification of
-							respondents across different surveys, thus simplifying the reporting;
-						</li>
-						<li>
-							tailored<strong> privacy statement</strong> accounting for the specific
-							constraints of public consultations;
-						</li>
-						<li>
-							<strong>automatic opening and closing</strong> of the survey from BRP;
-						</li>
-						<li>
-							automatic synchronisation (sending of data) of the respondents' answers
-							to BRP for further processing.
-						</li>
-					</ul>
-				</li>
+			<p>
+				<strong>Save a contribution as draft</strong>
+				<br/>
+				You can allow participants to save their contribution as a draft on the server and continue later.
+			</p>
+			<p>
+				<strong>Offline answering</strong>
+				<br/>
+				With EUSurvey, you can answer a form offline before submitting a contribution to the server at a later
+				point in time.
+			</p>
+			<p>
+				<strong>Automatic numbering</strong>
+				<br/>
+				To structure your survey, EUSurvey can number your form's elements for you.
+			</p>
+			<p>
+				<strong>Enhanced contrast</strong>
+				<br/>
+				Visually impaired participants can choose a high-contrast version of the survey. This is created
+				automatically for each form.
+			</p>
+			<p>
+				<strong>Uploading supporting files</strong>
+				<br/>
+				You can add files to your survey by uploading them. These files can be downloaded by every participant
+				in your survey.
 			</p>
 			<h2>
-				How do I import an existing survey from my computer?    
+				Form management
 			</h2>
 			<p>
-				<ol>
-					<li>
-						Go to the 'Welcome' page or the 'Surveys' page.
-					</li>
-					<li>
-						Click on the 'New Survey' 'Import Survey' option - a dialogue box will open.
-					</li>
-					<li>
-						Once you have selected the survey file from your computer, click on
-						'Import' and it will be added to EUSurvey.
-					</li>
-				</ol>
-
-				Note: you can only import surveys as zip files or with the file extension '.eus'.
+				<strong>Working together</strong>
+				<br/>
+				For surveys that are managed by multiple users, EUSurvey lets you define advanced permissions for other
+				users to test a survey or to analyse the results.
 			</p>
 			<h2>
-				Where can I find all the surveys that I have created?    
+				Result management
 			</h2>
 			<p>
-				There are 2 ways:
+				<strong>Analysing your results</strong>
+				<br/>
+				EUSurvey offers basic result analysis capabilities and visualization of data in histograms and chart
+				views. You can also export survey results to standard spreadsheet formats in order to import them into
+				statistical applications.
+			</p>
+			<p>
+				<strong>Publishing your results</strong>
+				<br/>
+				Use the possibilities EUSurvey offers to publish a sub-set of all submitted answers on the internal
+				pages of the application. Statistics and charts can be calculated and created automatically by the
+				system.
+			</p>
+			<p>
+				<strong>Editing submitted contributions</strong>
+				<br/>
+				Let your participants modify a contribution after it has been submitted, if they want to.
+			</p>
+			<h2>
+				Where do I find additional information about EUSurvey?
+			</h2>
+			<p>
+				Please find practical information behind the "
+				<a href="https://ec.europa.eu/eusurvey/home/documentation" target="_blank">
+					Support
+				</a>
+				" link under "Help" at the top-right of the application. Consult the "
+				<a href="https://ec.europa.eu/eusurvey/home/about" target="_blank">
+					About
+				</a>
+				" page for additional information on the application's background and funding.
+			</p>
+			<h2>
+				Whom do I contact if there are technical problems with EUSurvey?
+			</h2>
+			<p>
+				EU staff should contact their IT helpdesk and ask them to forward the problem to DIGIT-EUSURVEY-SUPPORT,
+				describing it as precisely as possible.
+			</p>
+			<p>
+				External users should contact the Commission's
+				<a
+						href="mailto:EC-CENTRAL-HELPDESK@ec.europa.eu?subject=Incident%20Creation%20Request%20for%20DIGIT%20EUSURVEY%20SUPPORT%20&amp;body=%20Dear%20Helpdesk,%0D%0DCould%20you%20please%20open%20a%20ticket%20to%20DIGIT%20EUSURVEY%20SUPPORT%20with%20the%20following%20description:"
+						target="_blank"
+						>
+					CENTRAL HELPDESK
+				</a>
+				.
+			</p>
+			<h2>
+				Whom do I contact if I have new ideas for improving EUSurvey?
+			</h2>
+			<p>
+				We always welcome your comments and feedback! Please ask your IT helpdesk or the CENTRAL HELPDESK to
+				forward your suggestions to the EUSurvey support team. The support team will get back to you as soon as
+				possible to discuss the relevant use cases and whether your idea can be incorporated in a future version
+				of the application.
+			</p>
+			<h2>
+				Which browsers are supported by EUSurvey?
+			</h2>
+			<p>
+				The last two versions of Microsoft Edge, Mozilla Firefox and Google Chrome are supported by EUSurvey.
+				Using other browsers might cause compatibility problems.
+			</p>
+			<h2>
+				EUSurvey disclaimer (for non-EU users only)
+			</h2>
+			<p>
+				For all questionnaires and invitation mails coming from a survey that has been created by a user
+				<strong>not working officially for the EU institutions</strong>, the following disclaimer will be
+				displayed in the survey and email message:
+			</p>
+			<p>
+				Disclaimer
+				<br/>
+				<em>
+					The European Commission is not responsible for the content of
+					questionnaires created using the EUSurvey service - it remains the sole
+					responsibility of the form creator and manager. The use of EUSurvey
+					service does not imply a recommendation or endorsement, by the European
+					Commission, of the views expressed within them.
+				</em>
+			</p>
+			<h2>
+				Can my participants answer my survey from a mobile device?
+			</h2>
+			<p>
+				Yes, EUSurvey features a responsive design for the published survey. This means, the design of the
+				questionnaire will adapt to the resolution of the device used to enter your survey. This will allow
+				your participants to conveniently contribute to your survey from a mobile device (mobile phone or
+				tablet PC).
+			</p>
+			<h2>
+				Is there a minimum screen size?
+			</h2>
+			<p>
+				The online questionnaires are fully responsive and adapt to the size of your device, allowing to fill in
+				the questionnaire with any screen size.
+			</p>
+			<p>
+				For creating and managing surveys, we recommend to use a minimum resolution of 1680x1050 pixels for a
+				good user experience.
+			</p>
+			<h1>
+				Login and EU Login registration
+			</h1>
+			<h2>
+				I have an EU Login account. Do I need to register separately for EUSurvey?
+			</h2>
+			<p>
+				No, there is no need to register separately to EUSurvey. An EU Login account is enough. You can access
+				EUSurvey by clicking on the login button on the
+				<a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">
+					EUSurvey homepage
+				</a>
+				. This takes you to the login screen (see below for more details).
+			</p>
+			<h2>
+				How do I connect to EUSurvey?<u> </u>
+			</h2>
+			<p>
+				Please click on the login button on the
+				<a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">
+					EUSurvey homepage
+				</a>
+				. You will be redirected to the EUSurvey login screen.
+			</p>
+			<p>
+				Once you arrived on the login screen, you have to choose the option corresponding to your personal case:
 				<ul>
 					<li>
-						on the dashboard page, you will find a list of all the surveys you have created; or
+						<strong>If you work for an EU institution, </strong>
+						choose the second option to connect to the EUSurvey application.
+						Your EU Login username and password will then be sufficient.
 					</li>
 					<li>
-						go to the 'Surveys' page &#8594; select the 'My Surveys' option in the search panel.
+						<strong>If you don't work for an EU institution (Externals), </strong>
+						choose the first option to connect to the EUSurvey application. You will need to have previously
+						registered your mobile phone to pass the
+						<a href="https://en.wikipedia.org/wiki/Help:Two-factor_authentication">
+							two-factor authentication
+						</a>.
 					</li>
 				</ul>
+			</p>
+			<p>
+				If you don't have an EU Login account, please create one by clicking
+				<a href="https://webgate.ec.europa.eu/cas/eim/external/register.cgi">
+					here
+				</a>
+				.
+			</p>
+			<p>
+				In case you don't work for an EU institution, please also register your mobile phone by clicking
+				<a
+						href="https://ecas.ec.europa.eu/cas/userdata/mobileApp/manageMyMobileDevices.cgi"
+						>
+					here
+				</a>
+				.
+			</p>
+			<h1>
+				Creating a survey
+			</h1>
+			<h2>
+				How do I create a new survey?
+			</h2>
+			<p>
+				On the "Welcome" page or the "Surveys" page, click on "New Survey" "Create new Survey" option and a
+				dialogue box will open. Once you have entered all mandatory information, click on "Create". The
+				application will load your new survey into the system and open the "Editor" automatically, so you can
+				start adding elements to your survey right away.
+			</p>
+			<h2>
+				What type of surveys can I create?
+			</h2>
+			<p>
+				When creating a new questionnaire, you can choose between the following options:
+				<ul>
+					<li>
+						<strong>Standard survey</strong>
+						<br />
+						It is the standard type of the survey to create a questionnaire.
+					</li>
+					<li>
+						<strong>Quiz</strong>
+						<br/>
+						A quiz is a special type of survey that allows calculating a final score for each participant.
+						Such surveys can be used e.g. as skill tests or electronic exams. You will find detailed
+						information about the creation of a quiz survey in the
+						<a
+								href="https://circabc.europa.eu/sd/a/400e1268-1329-413b-b873-b42e41369a07/EUSurvey_Quiz_Guide.pdf"
+								target="_blank"
+								>
+							EUSurvey quiz guide
+						</a>
+						.
+						<br />
+						<br />
+						The quiz mod includes amongst others:
+						<ul>
+							<li>
+								A scoring feature
+							</li>
+							<li>
+								The verification of participants' answers
+							</li>
+							<li>
+								The possibility to provide feedback to your participants, depending on their answers
+							</li>
+							<li>
+								Additional result analysis that has been specifically designed for quizzes
+							</li>
+						</ul>
+					</li>
+					<li>
+						<strong>BRP Public Consultation</strong>
+						<br/>
+						This survey type is used specifically for running public consultations via the Better Regulation
+						Portal (published on the "
+						<a href="https://ec.europa.eu/info/law/better-regulation/have-your-say">
+							Have your say
+						</a>
+						" Europa website).
+						<br/>
+						<br/>
+						The BRP template provides:
+						<ul>
+							<li>
+								Dedicated, immutable metadata fields allowing uniform identification of respondents
+								across different surveys and thus simplifying the reporting
+							</li>
+							<li>
+								Tailored privacy statement taking into account the specific constraints of public
+								consultations
+							</li>
+							<li>
+								Automatic opening and closing of the survey from BRP
+							</li>
+							<li>
+								Automatic synchronisation of the respondents’ answers to BRP for further processing
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</p>
+			<h2>
+				How do I import an existing survey from my computer?
+			</h2>
+			<p>
+				On the "Welcome" page or the "Surveys" page, click on "New Survey" "Import Survey" option and a dialogue
+				box will open. Once you have selected a survey file from your computer, click on "Import" and your
+				survey will be added to EUSurvey.
+			</p>
+			<p>
+				Note: you can only import surveys as zip files or with the file extension .eus.
+			</p>
+			<h2>
+				Where can I find all surveys that I have created?
+			</h2>
+			<p>
+				There are two ways to find them. First, on the dashboard page, you will find a list of all the surveys
+				you have created. The second way is to go to the "Surveys" page and select the "My Surveys" option in
+				the search panel.
 			</p>
 			<h2>
 				How do I open an existing survey for editing, etc.?
 			</h2>
 			<p>
-				Go to the 'Surveys' page.
-				<ol>
-					<li>
-						Click on the 'Open' icon of the survey you want - the 'Overview' page
-						will open with several new tabs.
-					</li>
-					<li>
-						Go to the 'Editor'.
-					</li>
-					<li>
-						Test your survey, or access the survey's 'Results', 'Translations', 'Properties', etc.
-					</li>
-				</ol>
+				From the "Surveys" page, click on the "Open" icon of the survey you want and the "Overview" page will
+				open with several new tabs. From here you can go to the "Editor", test your survey, or access the
+				survey's "Results", "Translations", "Properties" etc.
 			</p>
 			<h2>
 				How do I export an existing survey?    
 			</h2>
 			<p>
-				On the 'Surveys' page, search for the survey you want to export. You can
-				either:
+				On the "Surveys" page, search for the survey you want to export. You can either
 
 				<ul>
 					<li>
-						click on the 'Export' icon; or
+						click on the "Export" icon, OR
 					</li>
 					<li>
-						click on the 'Open' icon &#8594; from the 'Overview' page, click on the 'Export' icon.
+						click on the "Open" icon, and from the "Overview" page, click on the "Export" icon.
 					</li>
 				</ul>
 			</p>
 			<p>
-				Your survey, together with all your settings, will be saved to your
-				computer.
-			</p>
-			<p>
-				The file extension of an EUSurvey form file is '.eus'.
+				Your survey, together with all your settings, will be saved to your computer.
+				The file extension of an EUSurvey form file is ".eus".
 			</p>
 			<h2>
 				How do I copy an existing survey?    
 			</h2>
 			<p>
-				Go to the 'Surveys' page.
-				<ol>
-					<li>
-						Open the survey you want and click on the 'Copy' icon.
-					</li>
-					<li>
-						In the dialogue box that opens you can change the necessary settings.
-					</li>
-					<li>
-						Click on 'Create'.
-					</li>
-					<li>
-						Your survey will be added to the list on the 'Surveys' page &#8594; you can
-						start editing.
-					</li>
-				</ol>
+				On the "Surveys" page, open the survey you want and click on the "Copy" icon. In the dialogue box that
+				opens you can modify the necessary settings, and then click on "Create". Your survey will be added to
+				the list on the "Surveys" page. You can start editing right away.
 			</p>
 			<h2>
 				How do I remove an existing survey?    
 			</h2>
 			<p>
-				Go to the 'Surveys' page.
-				<ol>
-					<li>
-						Open the survey you want.
-					</li>
-					<li>
-						Click on the 'Delete' icon.
-					</li>
-				</ol>
-
-				Once you have confirmed, your survey will be removed from the list of
-				surveys.
+				On the "Surveys" page, open the survey you want and click on the "Delete" icon. Once you have confirmed,
+				your survey will be removed from the list of surveys.
 			</p>
 			<p>
 				<strong>
-					<u>Beware</u>
-				</strong>: deleting a survey removes <strong>
-					<u>all traces</u>
-				</strong> of your
-				questions and your results from the EUSurvey system! <u>This cannot be undone</u>!
+					<u>Beware:</u>
+				</strong> deleting a survey removes <strong>
+					<u>every trace</u>
+				</strong> of your questions and your results from the EUSurvey system! <u>This cannot be undone!</u>
 			</p>
 			<h2>
-				How do I create WCAG compliant questionnaires with EUSurvey?    
+				How do I create WCAG compliant questionnaires with EUSurvey?
 			</h2>
 			<p>
-				The Web Content Accessibility Guidelines (WCAG) are guidelines for making
-				content accessible, primarily for people with disabilities, but also for
-				software such as mobile phones.
+				The Web Content Accessibility Guidelines (WCAG) consist of a set of guidelines for making content
+				accessible, primarily for people with disabilities, but also for software such as mobile phones.
 			</p>
 			<p>
-				If you want your survey to be WCAG-compliant, please follow the
-				instructions explained
+				If you wish to make your survey WCAG compliant, please follow the instructions explained
 				<a
 						href="https://circabc.europa.eu/d/a/workspace/SpacesStore/78b03213-5cf4-4aab-8e90-ada7e2eb1101/WCAG_tutorial%20.pdf"
 						target="_blank"
 						>
 					in this document
-				</a>.
+				</a>
+				.
 			</p>
 			<h1>
 				Editing a survey
@@ -676,476 +582,404 @@
 				How do I start the Editor?    
 			</h2>
 			<p>
-				First make sure that you have opened an existing survey then go to the 'Surveys' page:
-				<ol>
-					<li>
-						Click the 'Open' icon for the survey you want to edit.
-					</li>
-					<li>
-						From the 'Overview' page, click 'Editor' to open it and start editing.
-					</li>
-				</ol>
-
-				Make sure you regularly save your work.
+				First make sure that you have opened an existing survey: Go to the "Surveys" page and click the "Open"
+				icon of the survey you want to edit. From the "Overview" page, click "Editor" to open it and to start
+				with the editing of your questionnaire.
+			</p>
+			<p>
+				Please make sure to save your work from time to time.
 			</p>
 			<h2>
 				How do I create a questionnaire via the EUSurvey editor?    
 			</h2>
 			<p>
-				The editor consists of 5 different areas.
-
-				<ol type="i">
-					<li>
-						<strong>Navigation panel:</strong>
-						provides a structured view of the questionnaire, in which all items are
-						represented by their respective text label.
-						<br />
-						When you select an item in the navigation panel, the Form area jumps to the
-						selected item, which is then highlighted in blue.
-					</li>
-					<li>
-						<strong>Toolbox pane:</strong>
-						contains all the various items that you can add to your questionnaire,
-						either by using the drag-and-drop feature or by double-clicking them.
-					</li>
-					<li>
-						<strong>Form area:</strong>
-						provides a preview of the questionnaire; items can be added to it and
-						selected for editing.
-					</li>
-					<li>
-						<strong>Element properties:</strong>
-						displays the settings for selected items.
-						<br />
-						You can edit the items here, e.g. by changing the question text, adding
-						help messages and changing all relevant settings to adapt the question to
-						your needs.
-					</li>
-					<li>
-						<strong>Toolbar:</strong>
-						includes all available basic tasks that you can perform when creating the
-						questionnaire.
-					</li>
-				</ol>
-
-				For detailed information on how to use the 'Editor', go to the
+				The editor is used to create a questionnaire. You can use it to add questions and other elements to your
+				questionnaire.
+			</p>
+			<p>
+				You will find detailed information about the functionalities of the Editor in the
 				<a
 						href="https://ec.europa.eu/eusurvey/resources/documents/Editor_Guide.pdf"
 						target="_blank"
-						>
+					>
 					EUSurvey Editor Guide
-				</a>.
+				</a>
+				.
+			</p>
+			<p>
+				The editor consists of five different areas:
+				<ol type="i">
+					<li>
+						<strong>Navigation pane:</strong>
+						<br/>
+						The Navigation pane provides a structured view of the questionnaire. All elements are
+						represented by their respective text label in the questionnaire. When you select an element in
+						the Navigation pane, the Form area jumps to the selected item which is then highlighted in blue.
+					</li>
+					<li>
+						<strong>Toolbox pane:</strong>
+						<br/>
+						The Toolbox pane contains all the element types that you can add to your questionnaire.
+						You can add elements either by using the drag-and-drop feature or by double-clicking them.
+					</li>
+					<li>
+						<strong>Form area:</strong>
+						<br/>
+						Provides a preview of the questionnaire; elements can be added to it and selected for editing.
+					</li>
+					<li>
+						<strong>Element properties pane:</strong>
+						<br/>
+						It displays the settings for selected elements. You can edit the elements here, e.g. by changing
+						the question text, adding help messages and changing all relevant settings to adapt the question
+						to your needs.
+					</li>
+					<li>
+						<strong>Toolbar:</strong>
+						<br/>
+						It includes all available basic tasks that you can perform when creating the questionnaire.
+					</li>
+				</ol>
 			</p>
 			<h2>
 				How do I add or remove questions to my questionnaire?    
 			</h2>
 			<p>
-				To add new items to your form or remove existing ones, first:
+				To add new elements to your form or remove existing ones, first open the editor.
 			</p>
 			<p>
-				&#8594; open the editor.
+				In the editor you will find a Toolbox of available elements on the left and the Form area in the middle
+				of the screen. The elements contain default texts, with the name of the element displayed as the
+				question text. To add a new element (question, text field, image, etc.), select one from the Toolbox.
+				You can add elements either by using the drag-and-drop feature or by double-clicking them.
 			</p>
 			<p>
-				Here, you will find a toolbox of available items on the left and the form
-				area in the middle of the screen.
-			</p>
-			<p>
-				The items contain default texts, with the item's name displayed as the
-				question text.
-			</p>
-			<p>
-				To add a new item (question, text field, image, etc.):
-			</p>
-			<p>
-				&#8594; select one from the toolbox - you can either use the drag-and-drop
-				feature or double-click on it.
-			</p>
-			<p>
-				To remove an item from the form:
-			</p>
-			<p>
-				&#8594; click the item to select it and click 'Delete'; as soon as you have
-				confirmed, the item will be removed.
+				To remove an element from the form, you can click the element to select it. Click on "Delete"; as soon
+				as you have confirmed, the element will be removed from the questionnaire.
 			</p>
 			<p>
 				See also
 				<a href="#_Toc_4_2">
-					'How to create a questionnaire via the EUSurvey editor?')
+					"How do I create a questionnaire by using the EUSurvey editor?"
 				</a>
 			</p>
 			<h2>
-				How do I edit items in my questionnaire?    
+				How do I edit elements in my questionnaire?
 			</h2>
 			<p>
-				Items can be <strong>selected for editing in the form area</strong> and    <strong>edited in the element properties pane</strong> of the Editor - see
+				The elements in your questionnaire will be <strong>selected for editing in the Form area</strong> and
+				<strong>edited in the Element properties pane</strong> of the Editor. See
 				<a href="#_Toc_4_2">
-					'How to create a questionnaire via the EUSurvey editor?')
+					"How do I create a questionnaire by using the EUSurvey editor?"
 				</a>
 			</p>
 			<p>
-				Click an item in the form area to select it.
-			</p>
-			<p>
-				Your selected item appears in blue, with the respective options visible in
-				the element properties pane. You can edit the elements there, e.g.
-				changing/editing the text in the question, adding help messages and
-				changing all relevant settings to adapt the question to your needs.
+				You can click an element in the Form area to select it. The selected element appears in blue, with the
+				respective options visible in the Element properties pane. You can edit the elements there, e.g.
+				changing the question text, adding help messages and changing all relevant settings to adapt the
+				question to your needs.
 			</p>
 			<p>
 				To edit a text:
 			</p>
 			<ol>
 				<li>
-					click on the text or the pen icon
+					Click on the text or the pen icon.
 				</li>
 				<li>
-					change the text.
+					Modify the text.
 				</li>
 				<li>
-					click "Apply" to see the changes in the form area.
+					Click "Apply" to see the changes in the Form area.
 				</li>
 			</ol>
 			<p>
-				By default, the element properties pane displays all the basic options.
+				By default, the Element properties pane displays all the basic options. To display more options,
+				click "Advanced".
 			</p>
 			<p>
-				To display more options, click 'Advanced'.
-			</p>
-			<p>
-				For matrix and text questions, you can also choose the individual
-				questions/answers/rows/columns for the item by clicking the respective
-				label text as indicated below. This way, you can e.g. select individual
-				questions of a matrix or table item and make them mandatory.
+				For matrix and text questions, you can also choose the individual questions/answers/rows/columns of the
+				element by clicking the respective label text as indicated below. This way, you can e.g. select
+				individual questions of a matrix or table element and make them mandatory.
 			</p>
 			<h2>
 				How do I copy items?    
 			</h2>
 			<p>
-				To copy items in your form:
+				To copy elements in your form, first open the Editor.
 			</p>
 			<p>
-				&#8594; open the Editor.
+				Any elements that have been copied or cut are depicted by a placeholder at the top of the Toolbox pane.
+				You can add them to the questionnaire again using the drag-and-drop feature. You can also use the button
+				next to the element to cancel this operation.
 			</p>
 			<ol>
 				<li>
-					Select the item(s).
+					Select the element(s).
 				</li>
 				<li>
-					Click 'Copy'.
+					Click "Copy".
 				</li>
 				<li>
-					Move the placeholder from the toolbox to the form area as described
-					above or select the item in the form area and click 'Paste after'.
+					Move the placeholder from the Toolbox to the Form area as described above or select the element in
+					the Form area and click "Paste after".
 				</li>
 			</ol>
 			<p>
-				Any items copied or cut are depicted by an icon at the top of the toolbox
-				pane.
-			</p>
-			<p>
-				v add them to the questionnaire again using the drag-and-drop feature.
-			</p>
-			<p>
-				To cancel:
-			</p>
-			<p>
-				&#8594; use the button next to the item.
-			</p>
-			<p>
 				See also
 				<a href="#_Toc_4_2">
-					'How to create a questionnaire via the EUSurvey editor?')
+					"How do I create a questionnaire by using the EUSurvey editor?"
 				</a>
 			</p>
 			<h2>
 				How do I add or remove possible answers in choice questions?    
 			</h2>
 			<p>
-				<ol>
-					<li>
-						Click the plus button in the element properties pane to add answers; click the minus button to remove them.
-					</li>
-					<li>
-						Edit the existing answers by clicking the pen icon next to 'Possible
-						answers'.
-					</li>
-					<li>
-						Edit them in the rich text editor.
-					</li>
-				</ol>
-
+				You can add or remove possible answers by clicking the plus/minus button in the Element properties pane.
+				Edit the text of the existing answer options by clicking the pen icon next to "Possible answers".
+				You can then edit them in the rich text editor.
+			</p>
+			<p>
 				See also
 				<a href="#_Toc_4_2">
-					'How to create a questionnaire via the EUSurvey editor?')
+					"How do I create a questionnaire by using the EUSurvey editor?"
 				</a>
 			</p>
 			<h2>
 				Can I make a question mandatory?    
 			</h2>
 			<p>
-				<ol>
-					<li>
-						In the editor, select the question element that you want to make mandatory.
-					</li>
-					<li>
-						Then, go to the element properties pane.
-					</li>
-					<li>
-						Tick the Mandatory check-box.
-					</li>
-				</ol>
-
-				The mandatory question will be preceded with a red asterisk.
+				In the editor, select the check box in the Element properties pane after selecting the respective element.
+			</p>
+			<p>
+				Mandatory questions will be marked with a red asterisk to the left of the question text.
 			</p>
 			<h2>
 				How do I move items within the questionnaire?    
 			</h2>
 			<p>
-				In the editor, you can change the position of an item in your questionnaire
-				by using one of the following options:
+				In the editor, you can change the position of an element in your questionnaire by using one of the
+				following options:
 			</p>
 			<p>
-				&#8594; Drag-and-drop:
+				<strong>Drag-and-drop:</strong>
 				<br/>
-				Select the item in the form area; drag it to where you want in the
-				questionnaire.
+				Select the element in the Form area and drag it to where you want in the questionnaire.
 			</p>
 			<p>
-				&#8594; Move buttons:
+				<strong>Move buttons:</strong>
 				<br/>
-				Select the item you want to move; use the move up/move down buttons in the
-				Toolbar on top of the form area.
+				Select the element you want to move and use the move up/move down buttons in the Toolbar on top of the
+				Form Area to move it up or down.
 			</p>
 			<p>
-				&#8594; Cut-and-paste:
+				<strong>Cut-and-paste:</strong>
 				<br/>
-				Cut the item you want to move and use the drag-and-drop feature to move the
-				placeholder to where you want to paste it.
+				Cut the element you want to move and use the drag-and-drop feature to move the placeholder to where you
+				want to put it.
 			</p>
 						
-			<h2>Visibility feature (dependent questions)</h2>
+			<h2>How do I use the visibility feature (dependencies)?</h2>
 			<p>
-				This feature allows you to either display or hide questions depending on the previous answers given by the participant.
+				Using this feature in the editor, you can display and hide elements depending on answers given by
+				participants to either single/multiple choice or matrix questions (see also
+				<a href="#_Toc_4_2">
+					"How do I create a questionnaire by using the EUSurvey editor?"
+				</a>
+				)
 			</p>
 			<p>
-				By default, all items are always visible, so everybody will see the question when answering the survey.
+				By default, all elements are set to always visible, which means that everybody will see the question
+				when answering the survey.
 			</p>
 			<p>
-				<img src="${contextpath}/resources/images/documentation/visibility.png" />
-			</p>
-			<p>
-				The visibility feature offers 2 options to trigger the display of subsequent questions:
-				<ul>
-					<li>'OR': the user needs to choose at least one of the selected items for the question to be displayed;</li>
-					<li>'AND': the user needs to choose all selected items for the question to be displayed.</li>
-				</ul>			
-			</p>
-			<p>
-				Below the steps to create a dependent question:
+				To create a dependent question:
 				<ol>
-					<li>Go to the question you want to hide/display - click properties.</li>
-					<li>Click on the pen icon next to the visibility feature.</li>
-					<li>Select the option to be applied: 'OR' (default) or 'AND'.</li>
-					<li>Use the checkboxes to select the answer(s) that will trigger the display of the question.</li>
-					<li>Click 'Apply'.</li>
+					<li>Add a single/multiple choice or matrix question to your questionnaire.</li>
+					<li>Add further elements to your questionnaire.</li>
+					<li>Select an element that follows a single/multiple choice or matrix element and that should only
+						appear when a specific answer has been chosen.</li>
+					<li>Click the pen icon to edit the visibility settings. All available questions of the type single
+						choice, multiple choice and matrix that are placed above the selected element(s) are displayed,
+						including the question text and the possible answers.</li>
+					<li>Select the answer that, when chosen, will display the selected element.</li>
+					<li>Click "Apply" to confirm the visibility setting.</li>
 				</ol>
 			</p>
 			<p>
-				<img src="${contextpath}/resources/images/documentation/visibility2.png" />
+				If multiple elements are selected, you can edit the visibility settings for all of them at once.
 			</p>
 			<p>
-			When activated, arrows are displayed next to the connected items to show the visibility settings in the form area (where the questionnaire is build up). Answers that trigger an item are marked with an arrow pointing down. Items that you can either display or hide are marked with an arrow pointing up. 
+				<strong>Note:</strong> This modification will only affect the questionnaire on the Test page and in
+				published mode. All elements will still be visible in the editor.
 			</p>
 			<p>
-				<img src="${contextpath}/resources/images/documentation/visibility3.png" />
+				When activated, arrows are displayed next to the connected elements to visualise the visibility settings
+				in the Form area. Answers that trigger any element are displayed with an arrow pointing down. Elements
+				that are triggered by any answer are marked with an arrow pointing up.
 			</p>
 			<p>
-			When moving the pointer over the arrows (or IDs in the Element Properties panel), the connected items are highlighted in the form area and navigation pane.
-			</p>
-			<p>
-				<b>Bulk editing:</b> If you select multiple questions, you can edit the visibility settings for all of them at once.
+				When moving the pointer over the arrows or IDs in the Element properties pane, the connected elements
+				are highlighted in the Form area and Navigation pane.
 			</p>			
-			
+			<p>
+				Elements with visibility settings that have been edited will be hidden in the questionnaire until at
+				least one of the configured answers has been selected by the participant when filling in the questionnaire.
+			</p>
 			<h2>
-				Can I change the order of answers in a single or multiple choice question?
+				Can I generate the order of answers in a single or multiple choice question?
 			</h2>
 			<p>
-				When creating a single or multiple choice question, you can generate their
-				answers in three different ways:
-
+				When creating a single or multiple choice question, you will have the option to generate their answers
+				in three different ways:
 				<ul>
 					<li>
-						original order
+						Original Order
 					</li>
 					<li>
-						alphabetical order
+						Alphabetical Order
 					</li>
 					<li>
-						random order
-					</li>
-				</ul>
-
-			</p>
-			<p>
-				Original order: this option displays the original order of your answers.
-			</p>
-			<p>
-				Alphabetical order: select this option if the answers should be displayed
-				alphabetically.
-			</p>
-			<p>
-				Random order: select this option if the answers should be randomly
-				displayed.
-			</p>
-			<h2>
-				How do I give other users permission to edit my survey?    
-			</h2>
-			<p>
-				<ol>
-					<li>
-						Open your survey and open the 'Privileges' page.
-					</li>
-					<li>
-						Click on 'Add new user' or 'Add department'.
-					</li>
-					<li>
-						A wizard pops up that guides you through the process of adding users.
-					</li>
-					<li>
-						You can give them specific access rights - simply click on the colour to
-						change the rights.
-
-						<ul>
-							<li>
-								green: access to read and write
-							</li>
-							<li>
-								yellow: access to read
-							</li>
-							<li>
-								red: no access
-							</li>
-						</ul>
+						Random Order
 					</li>
 				</ul>
 			</p>
 			<p>
-				Added users will automatically see your survey in their list of surveys
-				next time they log into EUSurvey.
+				Original Order: This option will display the original order of your answers on the survey.
 			</p>
 			<p>
-				External owners or survey organisers cannot see EU fields on the
-				'Privileges' tab/'Add users' button. Therefore, they cannot provide access
-				to these individuals directly.
-			</p>
-			<p>
-				<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>
-				to request access for external users.
-			</p>
-			<p>
-				Read more about this under '
-				<a href="#_Toc_10_7">
-					How do I give other users access to my survey?
-				</a>'
-			</p>
-			<h2>
-				Which languages are supported by the application?    
-			</h2>
-			<p>
-				Languages which can be encoded in '3byte UTF-8' can be used to create a
+				Alphabetical Order: You can select this option if the answers should be displayed alphabetically on the
 				survey.
 			</p>
+			<p>
+				Random Order: You can choose this option if the answers should be randomly displayed on the survey.
+			</p>
 			<h2>
-				Why UTF-8 and which fonts should be used?    
+				How do I give other users permission to edit my survey?
 			</h2>
 			<p>
-				Targeted participants can easily display the survey if they have the font
-				you used installed in their browser. UTF-8 is the most common encoding for
-				the HTML pages. By contrast, choosing non-supported fonts may affect the
-				rendering of PDF export.
+				Open your survey and open the "Privileges" page. Click on "Add new user" or "Add department". A wizard
+				will pop up that guides you through the process of adding users. Next you can give them specific access
+				rights. Simply click on the colour to change the rights.
 			</p>
 			<p>
-				We recommend using these <strong>supported character sets</strong>:
+				<ul>
+					<li>
+						Green: Read and Write access
+					</li>
+					<li>
+						Yellow: Read access
+					</li>
+					<li>
+						Red: No access
+					</li>
+				</ul>
+			</p>
+			<p>
+				Added users will automatically see your survey in their list of surveys next time they log into EUSurvey.
+			</p>
+			<p>
+				External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button,
+				therefore, they cannot provide access for these persons directly. Please
+				<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>
+				to request privileges for external users.
+			</p>
+			<p>
+				Read more about this under
+				<a href="#_Toc_10_7">
+					"How do I give other users access to my survey?"
+				</a>
+			</p>
+			<h2>
+				Which languages are supported by the application?
+			</h2>
+			<p>
+				Languages which can be encoded in "3byte UTF-8" can be used to create a	survey.
+			</p>
+			<h2>
+				So why UTF-8 and which fonts should be used?
+			</h2>
+			<p>
+				Keep in mind that the target group of participants can display the survey easily if the font you used
+				is installed in their browser. UTF-8 is the most common encoding for the HTML pages.
+				On the other hand, choosing non-supported fonts may affect the rendering of PDF export.
+			</p>
+			<p>
+				We recommend using the <strong>supported character sets</strong> listed below:
 			</p>
 			<ul>
 				<li>
-					Freesans
+					Freesans (
 					<a
-							href="https://circabc.europa.eu/d/a/workspace/SpacesStore/602784e1-bb06-4b0d-a474-eae77dbe2d11/EUSurvey-SupportedCharacterSet(freesans).txt"
+							href="https://circabc.europa.eu/sd/a/36f72861-fc6e-4fe1-87d6-0a8e1c6fa161/EUSurvey-SupportedCharacterSet(freesans).txt"
 							target="_blank"
 							>
-						(
-						https://circabc.europa.eu/sd/a/36f72861-fc6e-4fe1-87d6-0a8e1c6fa161/EUSurvey-SupportedCharacterSet(freesans).txt)
+						https://circabc.europa.eu/sd/a/36f72861-fc6e-4fe1-87d6-0a8e1c6fa161/EUSurvey-SupportedCharacterSet(freesans).txt
 					</a>
+					)
 				</li>
 				<li>
-					Freemono
+					Freemono (
 					<a
-							href="https://circabc.europa.eu/d/a/workspace/SpacesStore/dfc640e9-56ac-4d25-8361-4b07dbbd0579/EUSurvey-SupportedCharacterSet(freemono).txt"
+							href="https://circabc.europa.eu/sd/a/55ce0f35-b3cc-4712-80bf-af42800a278f/EUSurvey-SupportedCharacterSet(freemono).txt"
 							target="_blank"
 							>
-						(
-						https://circabc.europa.eu/sd/a/55ce0f35-b3cc-4712-80bf-af42800a278f/EUSurvey-SupportedCharacterSet(freemono).txt)
+						https://circabc.europa.eu/sd/a/55ce0f35-b3cc-4712-80bf-af42800a278f/EUSurvey-SupportedCharacterSet(freemono).txt
 					</a>
+					)
 				</li>
 				<li>
-					Freeserif
+					Freeserif (
 					<a
-							href="https://circabc.europa.eu/d/a/workspace/SpacesStore/5b98b11a-f306-4d97-aab3-ec1c7a24965f/EUSurvey-SupportedCharacterSet(freeserif).txt"
+							href="https://circabc.europa.eu/sd/a/29cd78bb-9eeb-40b1-a22f-b54700750537/EUSurvey-SupportedCharacterSet(freeserif).txt"
 							target="_blank"
 							>
-						(
-						https://circabc.europa.eu/sd/a/29cd78bb-9eeb-40b1-a22f-b54700750537/EUSurvey-SupportedCharacterSet(freeserif).txt)
+						https://circabc.europa.eu/sd/a/29cd78bb-9eeb-40b1-a22f-b54700750537/EUSurvey-SupportedCharacterSet(freeserif).txt
 					</a>
+					)
 				</li>
 				<li>
-					Commonly supported character-set
+					Commonly supported character-set (
 					<a
-							href="https://circabc.europa.eu/d/a/workspace/SpacesStore/621396c0-92d3-49a3-acd0-546b0c1a170b/EUSurvey-SupportedCharacterSet(common).txt"
+							href="https://circabc.europa.eu/sd/a/1eb30efd-e2d8-4c3b-9f55-533bb903f7d0/EUSurvey-SupportedCharacterSet(common).txt"
 							target="_blank"
 							>
-						(
 						https://circabc.europa.eu/sd/a/1eb30efd-e2d8-4c3b-9f55-533bb903f7d0/EUSurvey-SupportedCharacterSet(common).txt
 					</a>
+					)
 				</li>
 			</ul>
 			<p>
-				<strong>'Freesans' is the default font used</strong>
+				<strong>"Freesans" is the default font used</strong>
 			</p>
 			<p>
 				If in doubt, run a PDF export of your final survey to check if it is
-				rendered correctly in PDF.
+				rendered correctly in PDF Beware however that some contributions may not to be rendered correctly in PDF.
+				Your participants, indeed, are free to choose any font among those which are supported by the application.
 			</p>
 			<p>
-				However, be aware that some answers may not to be rendered correctly in
-				PDF. Your respondents can choose any font from those supported by the
-				application.
-			</p>
-			<p>
-				Even though the tool cannot render the characters respondents use, these
-				will be saved correctly on the EUSurvey's database. Thus, they can be
-				exported from the results page.
+				Even though the application is unable to render the characters they have used, these are saved correctly
+				on EUSurvey's database. Thus, they can be exported from the results page.
 			</p>
 			<h2>
 				What does 'Complexity' mean?    
 			</h2>
 			<p>
-				Adding too many items or dependencies to your survey makes it too
-				'complex'. This can lead to the system slowing down for participants when
-				filling out your questionnaire.
+				Adding too many elements or dependencies to your survey can lead to performance issues for the
+				participants who want to fill out your questionnaire, because it is too "complex".
 			</p>
 			<p>
 				Your survey could have a high level of complexity for several reasons:
 			</p>
 			<ul>
 				<li>
-					too many table/matrix items
+					You use too many table/matrix elements
 				</li>
 				<li>
-					too many dependencies
+					You use too many dependencies
 				</li>
 				<li>
-					too many cascading dependencies
+					You use too many cascading dependencies
 				</li>
 			</ul>
 			<p>
@@ -1154,12 +988,9 @@
 						href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf"
 						target="_blank"
 						>
-					best practices
-				</a>
-				<u> guide</u>
-				.
+					best practices guide
+				</a>.
 			</p>
-			
 			<h1>
 				Survey security
 			</h1>
@@ -1167,118 +998,100 @@
 				How do I restrict access to my survey?    
 			</h2>
 			<p>
-				By default, a survey is publicly available as soon as it has been
-				published.
-			</p>
-			<p>
-				To allow only privileged users to access the survey:
-			</p>
-			<p>
-				&#8594; set it to <strong>'Secured'</strong> in the 'Security settings' on the
-				'Properties' page.
-			</p>
-			<p>
-				You can then allow access to your privileged users by means of the
-				following actions below.
+				By default, an EUSurvey online form is publicly available as soon as it has been published. You can
+				change this and allow only privileged users to access the survey by setting the survey to
+				<strong>"Secured"</strong> in the "Security settings" on the "Properties" page. You can then allow
+				access to your privileged users by either:
 			</p>
 			<ul>
 				<li>
-					You can invite your respondents with the EUSurvey invitation module
-					(see '
+					Inviting your participants with the EUSurvey invitation module (see '
 					<a href="#_Toc_13_0">
-						Inviting respondents
+						Inviting participants
 					</a>
-					<u>'</u>
-					). Each respondent will get a unique access link. OR
+					'). Each participant will get a unique access link. OR
 				</li>
 				<li>
-					You can secure your survey via EU Login. In the 'Properties' page
-					enable the options 'Secure your survey' and 'Secure with EU Login'. If
-					you are an EU staff member, you can choose either to:
-
-					<ul>
-						<li>
-							allow all users with an EU Login account (EU staff and external EU Login
-							accounts) to access your survey, or
-						</li>
-						<li>
-							grant access only to EU staff. OR
-						</li>
-					</ul>
-
+					Securing your survey by EU Login. In the "Properties" page enable the options “Secure your survey”
+					and "Secure with EU Login". If you are a member of an EU body, you can choose either to allow all
+					users with an EU Login account (members of the EU institutions and external EU Login accounts) to
+					access your survey, or to grant access only to members of the EU institutions. OR
 				</li>
 				<li>
-					Set up a password which will be the same for all respondents to whom
-					you will send the survey location link and the global password (see "
+					Setting up a password. This will be the same for all participants and you will have to communicate
+					it to your audience. Practically, you will send the survey location link and the global password
+					(see "
 					<a href="#_Toc_5_2">
-						How do I set a password for my survey?"
+						How do I set a password for my survey?
 					</a>
-					).
+					").
 				</li>
 			</ul>
-
 			<h2>
 				How do I set a password for my survey?    
 			</h2>
 			<p>
-				Go to the 'Secured with password' option under 'Properties'.
+				To protect your survey with a password, edit the "Secured with password" option under "Properties". To
+				invite individual contacts to access your secured survey, please read the Help section
 			</p>
 			<p>
 				To invite individuals to access your secured survey, see '
 				<a href="#_Toc_13_0">
-					Inviting respondents
+					Inviting participants
 				</a>
 				'.
 			</p>
 			<h2>
-				How do I ensure that a user does not submit an excessive number of answers?    
+				How do I ensure that an user does not submit more than a defined number of contributions to my survey?
 			</h2>
 			<p>
-				In the 'Properties' page, enable the options 'Secure your survey' and
-				'Secure with EU Login' .
+				To ensure that an user does not submit more than a defined number of contributions to your survey, in
+				the "Properties" page enable the options “Secure your survey” and "Secure with EU Login" and set the
+				number in the “Contributions per user” option.
 			</p>
 			<p>
 				Set the number in the 'Contribution per user' option.
 			</p>			
 			
-			<h2>How to limit the number of contributions from a survey?</h2>
+			<h2>How do I limit the number of contributions to a survey?</h2>
 			<p>
-				You can change the number of contributions a survey can accept by going to Properties &gt;&gt; Advanced. By default, there is no limit to the number of contributions but if a limit is set then the survey will no longer be accessible as soon as it is reached. This can be used for event registration forms for example.
+				You can change the number of contributions a survey can accept by going to Properties &gt;&gt; Advanced. By
+				default, there is no limit to the number of contributions but if a limit is set then the survey will no
+				longer be accessible as soon as it is reached. This can be used for event registration forms for example.
 			</p>			
 			
 			<h2>
-				How do I prevent robots from submitting multiple answers?    
+				How do I prevent robots from submitting multiple answers?
 			</h2>
 			<p>
 				Automatic scripts can falsify an online survey's outcome by submitting a
 				high number of answers. To prevent this, you can use EUSurvey to make
-				respondents solve a    <a href="http://fr.wikipedia.org/wiki/CAPTCHA" target="_blank">CAPTCHA</a>
+				respondents solve a <a href="http://en.wikipedia.org/wiki/CAPTCHA" target="_blank">CAPTCHA</a>
 				challenge before submitting an answer.
 			</p>
 			<p>
 				You can enable/disable the CAPTCHA in the 'Security' under 'Properties'.
 			</p>
 			<p>
-				N.B. Although this won't prevent all fraud, it might discourage people
-				continually trying to falsify survey results.
+				N.B. Although this won't make fraud impossible, it might discourage people from continuing to try to
+				falsify survey results.
 			</p>
 			<h2>
-				Can I enable respondents to access their answers after submission?    
+				Can I enable my participants to access their contributions after submission?
 			</h2>
 			<p>
 				Yes!
 			</p>
 			<p>
-				Go to 'Security' under 'Properties' &#8594; enable the 'Allow participants to
-				change their contribution' option.
+				Go to "Security" under "Properties" and enable “Allow participants to change their contribution” option.
+				Participants need to know the contribution-ID that was shown after they submitted their contribution.
 			</p>
 			<p>
 				Participants need to know their contribution-ID, provided after they
 				submitted their answer.
 			</p>
 			<p>
-				To edit/change their answers after submission, participants should go to
-				the EUSurvey homepage
+				To change contributions after submission, participants should go to the EUSurvey homepage
 				<a href="https://ec.europa.eu/eusurvey" target="_blank">
 					https://ec.europa.eu/eusurvey
 				</a>
@@ -1292,8 +1105,8 @@
 						>
 					access page for individual contributions
 				</a>
-				. Here, participants must fill in their individual contribution-ID for the
-				system to open it for editing.
+				. On this page participants must fill in their individual contribution-ID and the system will open their
+				contribution. This way they can edit their contribution after it has been submitted.
 			</p>
 			<h1>
 				Testing a survey
@@ -1302,54 +1115,31 @@
 				Can I test my survey and see what it looks like once it has been published?    
 			</h2>
 			<p>
-				Yes. Open it in EUSurvey and click on 'Test'.
-			</p>
-			<p>
-				You will see its current draft, and you can test every feature of the
-				published form.
-			</p>
-			<p>
-				You can also save your test answer as a draft or directly submit it.
+				Yes. Please open the survey in EUSurvey and click on "Test". You will see the current draft of your
+				survey, and you can access every feature of the published form. You can save the test as a draft or
+				directly submit it as your contribution.
 			</p>
 			<h2>
-				How can my colleagues test my survey before it's published?    
+				How can my colleagues test my survey before it is published?
 			</h2>
 			<p>
-				To give your colleagues access to your survey's 'test' page:
-				<ol>
-					<li>
-						open your survey in EUSurvey
-					</li>
-					<li>
-						go to the 'Privileges' tab and click on 'Add User' or 'Add Department'
-					</li>
-					<li>
-						A wizard will guide you through the process of adding your colleagues.
-					</li>
-				</ol>
+				The "Test"-page of your survey can also be tested by your colleagues. To give access to this page, open
+				your survey in EUSurvey, go to the "Privileges" tab and click on "Add User" or "Add Department". A
+				wizard will guide you through the process of adding your colleagues. To give them appropriate access
+				rights for testing, change the colour of "Access Form Preview" to "Green". Simply click on the colour
+				to change the rights.
 			</p>
 			<p>
-				To give them appropriate access rights for testing:
-			</p>
-			<p>
-				&#8594; change the colour of 'Access Form Preview' to green - simply click on the
-				colour to change the rights.
-			</p>
-			<p>
-				The added users will automatically see the survey in their 'Surveys' page
-				once they log in.
-			</p>
-			<p>
-				Read more about this under "
+				The added users will automatically see the survey in their "Surveys" page once they log into the EUSurvey
+				application. Read more about this under
 				<a href="#_Toc_10_7">
 					How do I give other users access to my survey?
 				</a>
 				"
 			</p>
 			<p>
-				External owners or survey organisers cannot see EU fields on the
-				'Privileges' tab/'Add users' button. Therefore, they cannot provide access
-				for these individuals directly.
+				External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button,
+				therefore, they cannot provide access for these persons directly. Please
 			</p>
 			<p>
 				<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>
@@ -1362,9 +1152,11 @@
 				How do I translate a survey?    
 			</h2>
 			<p>
+				EUSurvey offers various ways to make the survey available in multiple languages.
+			</p>
+			<p>
 				Important: Be sure to finish editing and testing your survey before
-				starting on translations!
-
+				starting on the translations!
 				<ol>
 					<li>
 						Open your survey and go to the 'Translations' page.
@@ -1385,20 +1177,17 @@
 				</ol>
 			</p>
 			<p>
-				For more information on how to add new labels to your newly created
-				translation, read '
+				Please read '
 				<a href="#_Toc_7_3">
 					Can I edit an existing translation online?
 				</a>
-				'.
+				' for more information on how to add new labels to your newly created
+				translation, .
 			</p>
 			<p>
-				Select the 'To Publish' box if the translation is to be published along
-				with your survey.
-			</p>
-			<p>
-				Once you add a translation for publishing, respondents can choose from the
-				available languages directly from the survey link.
+				Don't forget to select the box "To Publish" if the translation is to be published along with your survey.
+				Once you add a translation for publishing, participants can choose from the available languages directly
+				from the survey link.
 			</p>
 			<h2>
 				How can I upload an existing translation to my survey?    
@@ -1435,16 +1224,16 @@
 						Select 'Edit Translations' from the action icons.
 					</li>
 					<li>
-						Click 'Ok' &#8594; this will open the online translation editor allowing you
-						to edit multiple translations at a time.
+						Click on the 'Ok' button. This will open the online translation editor that will allow you to
+						edit multiple translations at a time.
 					</li>
 					<li>
-						Click 'Save' to make sure that your changes are written to the system.
+						Please click the "Save" button to make sure that your changes are written to the system.
 					</li>
 				</ol>
 			</p>
 			<p>
-				To edit just one translation:
+				In order to edit only one translation:
 			</p>
 			<p>
 				<ol>

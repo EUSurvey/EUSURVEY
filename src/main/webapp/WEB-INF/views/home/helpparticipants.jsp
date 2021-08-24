@@ -137,124 +137,109 @@
 				    How can I contact the survey owner?
 				</h2>
 				<p>
-				    Use the ‘Contact’ option on the panel on the right-hand side.
+					You can contact the survey owner using the "Contact" option on the survey right panel.
 				</p>
 				<h1>
 				    Accessing a survey
 				</h1>
 				<h2>
-				    What does the following message mean? ‘The url you entered was not
-				    correct’.
+					What does "The url you entered was not correct" mean?
 				</h2>
 				<p>
-			        EUSurvey cannot authorise your access to the survey.
+					It means the system cannot authorise you to access the survey. This is mostly the case
+					when a once active invitation has been deleted or deactivated as the activation period has expired.
 				</p>
 				<p>
 				    This means that a previously active invitation has been deleted or
 				    deactivated after the activation period has expired.
 				</p>
 				<p>
-				    If you think you are using a valid access link, contact the survey author.
+					If you think you are using a valid access link, please contact the author of the survey.
 				</p>
 				<h2>
-				    What does ‘Page not found’ mean?
+				    What does "Page not found" mean?
 				</h2>
 				<p>
-				    It means either that:
+				    It means:
 				</p>
 				<ul>
 				    <li>
-				        you’re using an invalid link to access your survey ; or
+						you are using an incorrect link to access your survey on EUSurvey, or
 				    </li>
 				    <li>
-				        the survey you want to access to has already been removed.
+						the survey you are looking for has already been removed from the system.
 				    </li>
 				</ul>
 				<p>
-				    If you think the link is valid, inform the survey author. Otherwise, inform
-				    the body that published the invalid link.
+				    If you think the link is valid, please inform the author of the survey directly.
+					Otherwise, please inform the body responsible for publishing the link that it is incorrect.
 				</p>
 				<h2>
-			        What does the following message mean: ‘This survey has not yet been
-			        published or has already been unpublished in the meantime’?
+					What does "This survey has not yet been published or has already been unpublished in the meantime” mean?
 				</h2>
 				<p>
-				    It means that the invitation to participate has been sent out but the
-				    survey organisers have not yet published or have already unpublished the
-				    survey.
+					This is mostly the case when the invitation has been sent out, but the survey has not yet been
+					published or has already been unpublished by the survey organizers
 				</p>
 				<p>
-				    For more details, contact the survey owner.
+					For further information, please contact the survey owner.
 				</p>
 				<h2>
 				    Which browsers are supported by EUSurvey?
 				</h2>
 				<p>
-				    Microsoft Edge (last 2 versions) and Mozilla Firefox and Google Chrome
-				    (latest versions).
-				</p>
-				<p>
-				    Using other browsers might cause compatibility issues.
+					The last two versions of Microsoft Edge and the latest version of Mozilla Firefox and Google Chrome
+					are supported by EUSurvey. Using other browsers might cause compatibility issues.
 				</p>
 				<h2>
-				    Can I answer a survey using my mobile phone or tablet PC?
+					Can I answer to a survey using my mobile phone or my tablet PC?
 				</h2>
 				<p>
-				    Yes, the questionnaire’s design will adapt to the size and resolution of
-				    your device’s screen..
+					Yes, EUSurvey features a responsive design for the published survey. This means, the design of the
+					questionnaire will adapt to the screen size and resolution of the device you use.
 				</p>
 				<h1>
 				    Submitting a contribution
 				</h1>
 				<h2>
-				    What does the following message mean: ‘This value is not a valid
-				    number/date/e-mail address’?
+					What does "This value is not a valid number/date/e-mail address" mean?
 				</h2>
 				<p>
-				    The survey author can specify certain types of questions that involve a
-				    certain input format, e.g. a number, a date or an e-mail address.
-				</p>
-				<p>
-				    Dates must be in DD/MM/YYYY format.
+					In EUSurvey, the author of a survey can specify special types of questions that expect a certain
+					input format, for example, a number, a date or an e-mail address.
+					Dates have to be given in a DD/MM/YYYY format.
 				</p>
 				<h2>
-				    When answering a matrix question why does the answer I selected disappear?
+					Why does my selected answer disappear when answering a matrix question?
 				</h2>
 				<p>
-				    Some matrix questions are configured in such a way so that you can only
-				    select each possible answer once. This is sometimes used for ranking the
-				    answers given.
+					This is a possible feature of the matrix question where you can only select each possible answer
+					once. It can be used to ensure a "ranking" on given answers.
 				</p>
 				<h1>
-				    After submitting your contribution
+					After contributing
 				</h1>
 				<h2>
 				    Can I view/print my contribution after it has been submitted?
 				</h2>
 				<p>
-				    Yes.
-				</p>
-				<p>
-				    After submitting, click the print option on the confirmation page.
+					Yes. Right after submitting, the system will offer you a print option on the Confirmation page.
 				</p>
 				<h2>
 				    How can I save a PDF copy of my Contribution?
 				</h2>
 				<p>
-				    Yes.
+					Right after submitting, the system will offer you the possibility to request to receive an email
+					with a PDF copy of your contribution attached.
 				</p>
 				<p>
-				    After submitting, you can request via email a PDF copy of your
-				    contribution.
-				</p>
-				<p>
-				    Click ‘Get PDF’ on the confirmation page.
+					Please use the ‘Get PDF’ button on the Confirmation page for this purpose.
 				</p>
 				<h2>
 				    Can I edit my contribution once it has been submitted?
 				</h2>
 				<p>
-				    This varies for each survey, depending on its set-up.
+				    TThis varies for each survey, depending on how it has been set up.
 				</p>
 				<p>
 				    For some surveys, you can
@@ -267,12 +252,12 @@
 				    , but for others this feature might not be enabled.
 				</p>
 				<p>
-				    To edit your submitted contribution, use the contribution ID that you got
-				    from the confirmation page. This ID also appears on some PDF documents
-				    related to your contribution.
+					In order to edit your submitted contribution, please use the Contribution ID that you previously
+					noted from the Confirmation page. The Contribution ID appears also on some PDF documents related
+					to your contribution.
 				</p>
 				<p>
-				If you didn’t save the contribution ID, click the ‘    <a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>’ form.
+					In case you did not save the Contribution ID, please use the "<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>" form.
 				</p>
 				<h2>
 				    I just contributed to a survey. Can I see other people’s answers?
@@ -293,61 +278,57 @@
 				    .
 				</p>
 				<h2>
-				    Why my PDF viewer gives me an error message saying ‘Insufficient Image
-				    data’?
+					My PDF viewer gives me an error message saying "Insufficient Image data"
 				</h2>
 				<p>
-				    If you upload corrupted images, the PDF reader cannot display the image
-				    properly.
-				    <br/>
+					Uploading corrupted images can lead to the PDF reader not being able to display the image properly.
+					<br/>
 				    This will lead to an internal error with your PDF reader.
 				</p>
 				<p>
-				    To correct this, you must either repair or remove the image.
+					To correct this problem, you must either repair or remove the image.
 				</p>
 				<h2>
-				    Why are the little boxes displayed on the PDF export of the survey?
+					Why are little boxes shown on the PDF export of the survey?
 				</h2>
 				<p>
-				    These may appear if the survey authors or participants use fonts that
-				    aren’t supported by EUSurvey.
+					This may occur if the fonts used by the survey authors or participants are not supported by the application.
 				</p>
 				<p>
-				    If EUSurvey doesn’t have the character you require, it is replaced with a
-				    little box to show that the PDF rendering engine does not support this
-				    character.
+					In case the respective character cannot be found on the system, the application replaces it by a
+					little box to show that this character is not supported by the PDF rendering engine.
 				</p>
 				<p>
-				    If you use an unsupported character, then you are advised to report it via
-				    the ‘Contact’ section on the right hand-side.
+					Please feel free to report to the contact information located in the information area, that an
+					unsupported character has been used.
 				</p>
 				<p>
-				    This does not affect your contribution. Once your answers have been saved
-				    correctly, they can be easily viewed and exported by the survey author,
-				    even if the PDF rendering engine is unable to render your PDF correctly.
+					Please notice that this does not have any effect on your contribution. Once your contribution has
+					been saved correctly, it can easily be visualized and exported by the responsible authority for the
+					survey, even if the PDF engine of the application has not been able to render your PDF correctly.
 				</p>
 				<h2>
-				    Where can I find my saved drafts of my answers?
+					Where can I find my answers saved as draft?
 				</h2>
 				<p>
-				    After clicking on ‘save as draft’, you will be automatically redirected to
-				    a page with a link to where you can retrieve your draft to edit and submit
-				    your answers.
+					After clicking on "save as draft", you will automatically be re-directed to a page showing you a
+					link where you can retrieve your draft to edit and submit your answers.
 				</p>
 				<p>
-				    <b>Be sure to save this link!</b>
-				    Send it by email, save it to your favourites or copy it to the clipboard.
+				    <b>Please save this link!</b>
+					You can send it by E-mail, save it to your favourites or copy it to the clipboard.
 				</p>
 				<h1 class="empty">
-				    Reporting an abuse
+					Report Abuse
 				</h1>
 				<p>
-				    Click ‘Report Abuse’ on the right-hand side of the panel if a survey
-				    contains illegal content or violates the rights of others (including
-				    intellectual property rights, competition law and general law).
+					If a survey contains illegal content or violate the rights of others (including intellectual
+					property rights, competition law and general law), please use the ‘Report Abuse’ link on the
+					right-side panel.
 				</p>
 				<p>
-				For more details, see EUSurvey’s    <a href="https://ec.europa.eu/eusurvey/home/tos">Terms of Service</a>.
+					Please refer to the EUSurvey <a href="https://ec.europa.eu/eusurvey/home/tos">Terms of Service</a>
+					for more information on this matter.
 				</p>
 				<h1>
 				    Privacy
@@ -356,27 +337,18 @@
 				    This system uses cookies. What information is saved there?
 				</h2>
 				<p>
-				    EUSurvey uses session cookies to ensure reliable communication between the
-				    client and the server. Your browser must be configured to accept cookies.
-				    They disappear once the session is finished.
+					The system uses session "cookies" in order to ensure reliable communication between the client and
+					the server. Therefore, your browser must be configured to accept "cookies". The cookies disappear
+					once the session has been terminated.
 				</p>
 				<p>
-				    The system saves copies of your input to a survey locally, so there is a
-				    backup in cases such as the server not being available during submission,
-				    or your computer being switched off accidentally.
-				</p>
-				<p>
-				    The local storage contains the question IDs and your draft answers.
-				</p>
-				<p>
-				    Once you successfully submit the survey to the server, or have successfully
-				    saved a draft on the server, the data is removed from local storage.
-				</p>
-				<p>
-				    You can disable this feature by clicking the checkbox above the survey:
-				    ‘Save a backup on your local computer (disable if you are using a
-				    public/shared computer)’. Subsequently, no data will be stored on your
-				    computer.
+					The system uses local storage to save copies of your input to a survey, in order to have a backup if
+					the server is not available during submission, or your computer is switched off accidentally, or any
+					other cause. The local storage contains the IDs of the questions and the draft answers. Once you
+					successfully submitted the survey to the server, or you have successfully saved a draft on the server,
+					the data is removed from local storage. There is a checkbox above the survey "Save a backup on your
+					local computer (disable if you are using a public/shared computer)" to disable the feature. In that
+					case, no data will be stored on your computer.
 				</p>
 			</div> <!-- faqcontent -->
 		</div>
