@@ -10,14 +10,14 @@ function change(input, event)
 function update(input)
 {
 	var label = "";
-	
+
 	if ($(input).closest(".firstpropertyrow").length > 0)
 	{
 		label = $(input).closest(".firstpropertyrow").find(".propertylabel").first().attr("data-label");
 	} else {
 		label = $(input).attr("data-label");
 	}
-		
+
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var element = _elements[id];
 	
@@ -68,12 +68,43 @@ function update(input)
 			updateIdentifier(element, id, text, false);			
 			break;
 		case "Rows":
+			if(element.type == "Matrix")
+			{
+				if(element.isInterdependent())
+				{
+					checkInterdependentMatrix(input);
+				}
+			} else {
+				var text = $(input).val();
+				var oldtext = element.numRows();
+				element.numRows(parseInt(text));
+				//the following line is needed to reset the height of the textarea
+				$(_elementProperties.selectedelement).find("textarea.freetext, textarea.regex").css("height","");
+				_undoProcessor.addUndoStep(["Rows", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			}
+			break;
+		case "Columns":
 			var text = $(input).val();
-			var oldtext = element.numRows(); 
-			element.numRows(parseInt(text));
-			//the following line is needed to reset the height of the textarea
-			$(_elementProperties.selectedelement).find("textarea.freetext, textarea.regex").css("height","");
-			_undoProcessor.addUndoStep(["Rows", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			var oldindex;
+			var newindex = parseInt(text);
+			if (element.type == "GalleryQuestion")
+			{
+				oldindex = element.columns();
+				element.columns(newindex);
+				updateGallery();
+			} else if(element.type == "Matrix"){
+				if(element.isInterdependent())
+				{
+					checkInterdependentMatrix(input);
+				}
+			} else {
+				oldindex = element.numColumns();
+				element.numColumns(newindex);
+				updateChoice();
+
+				checkNumColumns(input, element);
+			}
+			_undoProcessor.addUndoStep(["Columns", id, oldindex, newindex]);
 			break;
 		case "AcceptedNumberOfCharacters":
 			
@@ -342,24 +373,6 @@ function update(input)
 			var oldtext = element.unit();
 			element.unit(text);
 			_undoProcessor.addUndoStep(["Unit", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
-			break;
-		case "Columns":
-			var text = $(input).val();
-			var oldindex;
-			var newindex = parseInt(text);
-			if (element.type == "GalleryQuestion")
-			{
-				oldindex = element.columns();
-				element.columns(newindex);			
-				updateGallery();
-			} else {		
-				oldindex = element.numColumns();
-				element.numColumns(newindex);
-				updateChoice();
-				
-				checkNumColumns(input, element);
-			}
-			_undoProcessor.addUndoStep(["Columns", id, oldindex, newindex]);
 			break;
 		case "Size":
 			var size = $(input).val();
@@ -722,6 +735,15 @@ function update(input)
 			var checked = $(input).is(":checked");
 			element.isInterdependent(checked);
 			_undoProcessor.addUndoStep(["Interdependency", id, $(_elementProperties.selectedelement).index(), !checked, checked]);
+			if(element.type == "Matrix") {
+				if(checked){
+					checkInterdependentMatrix(input);
+				} else {
+					removeValidationMarkup($(".firstpropertyrow[data-label=Columns]"));
+					removeValidationMarkup($(".firstpropertyrow[data-label=Rows]"));
+					removeValidationMarkup($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+				}
+			}
 			break;
 		case "QuizQuestion":
 			var checked = $(input).is(":checked");
@@ -1215,7 +1237,7 @@ function save(span)
 	{
 		label = "EDITVALUES";
 	}
-	
+
 	switch (label) {
 		case "Visibility":
 			updateVisibility(span, false, true, false, false);
@@ -1290,7 +1312,6 @@ function save(span)
 		default:		
 			_elementProperties.selectedid = $(span).closest("tr").find("textarea").first().attr("id");
 			var text = tinyMCE.get(_elementProperties.selectedid).getContent({format: 'xhtml'});
-			
 			var doc = new DOMParser().parseFromString(text, 'text/html');
 			text = new XMLSerializer().serializeToString(doc);
 			
@@ -1326,26 +1347,25 @@ function save(span)
 					{
 						return;
 					}
-					
 					updateColumns(element, columns)
 					_undoProcessor.addUndoStep(["Columns", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 					
-					addElementHandler($(_elementProperties.selectedelement));					
+					addElementHandler($(_elementProperties.selectedelement));
+					update($("tr[data-label='Columns']"));
 					break;
 				case "Rows":
 					var oldtext = getRowsText(true);			
 					var rows = splitText(text);
-					
+
 					if (!checkRows(rows))
 					{
 						return;
-					}		
-					
+					}
 					updateRows(element, rows);
-		
 					_undoProcessor.addUndoStep(["Rows", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 					
 					addElementHandler($(_elementProperties.selectedelement));
+					update($("tr[data-label='Rows']"));
 					break;
 				case "Questions":
 					var oldtext = getQuestionsText(true);			

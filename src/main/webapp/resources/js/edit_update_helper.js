@@ -273,6 +273,22 @@ function checkInputStates()
 	}
 }
 
+function checkInterdependentMatrix(input)
+{
+	var columnstext = getColumnsText(true);
+	var columns = splitText(columnstext).length;
+	var rowstext = getRowsText(true);
+	var rows = splitText(rowstext).length;
+
+	if (columns < rows) {
+		addValidationInfo(input, "invalidInterdependencyCriteria");
+	} else {
+		removeValidationMarkup($(".firstpropertyrow[data-label=Columns]"));
+		removeValidationMarkup($(".firstpropertyrow[data-label=Rows]"));
+		removeValidationMarkup($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+	}
+}
+
 function updateGallery(file)
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
