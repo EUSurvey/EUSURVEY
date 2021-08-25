@@ -642,6 +642,8 @@ function addValidationInfo(input, type)
 		label = getPropertyLabel("invalidStartEndTime");
 	} else if (type == "maxinvalidmatrix") {
 		label = getPropertyLabel("invalidMatrixRows");
+	} else if (type == "invalidInterdependcyCriterias") {
+		label = getPropertyLabel("invalidInterdependencyCriteria");
 	} else {
 		label = getPropertyLabel(type);
 	}

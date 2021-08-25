@@ -601,7 +601,7 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
-				
+
 				if (isDelphi)
 				{
 					adaptDelphiControls(element);
