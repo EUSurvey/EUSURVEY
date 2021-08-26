@@ -124,7 +124,7 @@
 			</h2>
 			<p>
 				Please open the <a href="https://ec.europa.eu/eusurvey/home/documentation">Support</a> page to find the
-				"Usability limits" of the tool.
+				'Usability limits' of the tool.
 			</p>
 			<p>
 				EUSurvey may not be the right tool for your project if:
@@ -265,15 +265,15 @@
 				Where do I find additional information about EUSurvey?
 			</h2>
 			<p>
-				Please find practical information behind the "
+				Please find practical information behind the '
 				<a href="https://ec.europa.eu/eusurvey/home/documentation" target="_blank">
 					Support
 				</a>
-				" link under "Help" at the top-right of the application. Consult the "
+				' link under 'Help' at the top-right of the application. Consult the '
 				<a href="https://ec.europa.eu/eusurvey/home/about" target="_blank">
 					About
 				</a>
-				" page for additional information on the application's background and funding.
+				' page for additional information on the application's background and funding.
 			</p>
 			<h2>
 				Whom do I contact if there are technical problems with EUSurvey?
@@ -412,9 +412,9 @@
 				How do I create a new survey?
 			</h2>
 			<p>
-				On the "Welcome" page or the "Surveys" page, click on "New Survey" "Create new Survey" option and a
-				dialogue box will open. Once you have entered all mandatory information, click on "Create". The
-				application will load your new survey into the system and open the "Editor" automatically, so you can
+				On the 'Welcome' page or the 'Surveys' page, click on 'New Survey' 'Create new Survey' option and a
+				dialogue box will open. Once you have entered all mandatory information, click on 'Create'. The
+				application will load your new survey into the system and open the 'Editor' automatically, so you can
 				start adding elements to your survey right away.
 			</p>
 			<h2>
@@ -463,11 +463,11 @@
 						<strong>BRP Public Consultation</strong>
 						<br/>
 						This survey type is used specifically for running public consultations via the Better Regulation
-						Portal (published on the "
+						Portal (published on the '
 						<a href="https://ec.europa.eu/info/law/better-regulation/have-your-say">
 							Have your say
 						</a>
-						" Europa website).
+						' Europa website).
 						<br/>
 						<br/>
 						The BRP template provides:
@@ -494,8 +494,8 @@
 				How do I import an existing survey from my computer?
 			</h2>
 			<p>
-				On the "Welcome" page or the "Surveys" page, click on "New Survey" "Import Survey" option and a dialogue
-				box will open. Once you have selected a survey file from your computer, click on "Import" and your
+				On the 'Welcome' page or the 'Surveys' page, click on 'New Survey' 'Import Survey' option and a dialogue
+				box will open. Once you have selected a survey file from your computer, click on 'Import' and your
 				survey will be added to EUSurvey.
 			</p>
 			<p>
@@ -506,49 +506,49 @@
 			</h2>
 			<p>
 				There are two ways to find them. First, on the dashboard page, you will find a list of all the surveys
-				you have created. The second way is to go to the "Surveys" page and select the "My Surveys" option in
+				you have created. The second way is to go to the 'Surveys' page and select the 'My Surveys' option in
 				the search panel.
 			</p>
 			<h2>
 				How do I open an existing survey for editing, etc.?
 			</h2>
 			<p>
-				From the "Surveys" page, click on the "Open" icon of the survey you want and the "Overview" page will
-				open with several new tabs. From here you can go to the "Editor", test your survey, or access the
-				survey's "Results", "Translations", "Properties" etc.
+				From the 'Surveys' page, click on the 'Open' icon of the survey you want and the 'Overview' page will
+				open with several new tabs. From here you can go to the 'Editor', test your survey, or access the
+				survey's 'Results', 'Translations', 'Properties' etc.
 			</p>
 			<h2>
 				How do I export an existing survey?    
 			</h2>
 			<p>
-				On the "Surveys" page, search for the survey you want to export. You can either
+				On the 'Surveys' page, search for the survey you want to export. You can either
 
 				<ul>
 					<li>
-						click on the "Export" icon, OR
+						click on the 'Export' icon, OR
 					</li>
 					<li>
-						click on the "Open" icon, and from the "Overview" page, click on the "Export" icon.
+						click on the 'Open' icon, and from the 'Overview' page, click on the 'Export' icon.
 					</li>
 				</ul>
 			</p>
 			<p>
 				Your survey, together with all your settings, will be saved to your computer.
-				The file extension of an EUSurvey form file is ".eus".
+				The file extension of an EUSurvey form file is '.eus'.
 			</p>
 			<h2>
 				How do I copy an existing survey?    
 			</h2>
 			<p>
-				On the "Surveys" page, open the survey you want and click on the "Copy" icon. In the dialogue box that
-				opens you can modify the necessary settings, and then click on "Create". Your survey will be added to
-				the list on the "Surveys" page. You can start editing right away.
+				On the 'Surveys' page, open the survey you want and click on the 'Copy' icon. In the dialogue box that
+				opens you can modify the necessary settings, and then click on 'Create'. Your survey will be added to
+				the list on the 'Surveys' page. You can start editing right away.
 			</p>
 			<h2>
 				How do I remove an existing survey?    
 			</h2>
 			<p>
-				On the "Surveys" page, open the survey you want and click on the "Delete" icon. Once you have confirmed,
+				On the 'Surveys' page, open the survey you want and click on the 'Delete' icon. Once you have confirmed,
 				your survey will be removed from the list of surveys.
 			</p>
 			<p>
@@ -582,8 +582,8 @@
 				How do I start the Editor?    
 			</h2>
 			<p>
-				First make sure that you have opened an existing survey: Go to the "Surveys" page and click the "Open"
-				icon of the survey you want to edit. From the "Overview" page, click "Editor" to open it and to start
+				First make sure that you have opened an existing survey: Go to the 'Surveys' page and click the 'Open'
+				icon of the survey you want to edit. From the 'Overview' page, click 'Editor' to open it and to start
 				with the editing of your questionnaire.
 			</p>
 			<p>
@@ -654,13 +654,13 @@
 				You can add elements either by using the drag-and-drop feature or by double-clicking them.
 			</p>
 			<p>
-				To remove an element from the form, you can click the element to select it. Click on "Delete"; as soon
+				To remove an element from the form, you can click the element to select it. Click on 'Delete'; as soon
 				as you have confirmed, the element will be removed from the questionnaire.
 			</p>
 			<p>
 				See also
 				<a href="#_Toc_4_2">
-					"How do I create a questionnaire by using the EUSurvey editor?"
+					'How do I create a questionnaire by using the EUSurvey editor?'
 				</a>
 			</p>
 			<h2>
@@ -670,7 +670,7 @@
 				The elements in your questionnaire will be <strong>selected for editing in the Form area</strong> and
 				<strong>edited in the Element properties pane</strong> of the Editor. See
 				<a href="#_Toc_4_2">
-					"How do I create a questionnaire by using the EUSurvey editor?"
+					'How do I create a questionnaire by using the EUSurvey editor?'
 				</a>
 			</p>
 			<p>
@@ -690,12 +690,12 @@
 					Modify the text.
 				</li>
 				<li>
-					Click "Apply" to see the changes in the Form area.
+					Click 'Apply' to see the changes in the Form area.
 				</li>
 			</ol>
 			<p>
 				By default, the Element properties pane displays all the basic options. To display more options,
-				click "Advanced".
+				click 'Advanced'.
 			</p>
 			<p>
 				For matrix and text questions, you can also choose the individual questions/answers/rows/columns of the
@@ -718,17 +718,17 @@
 					Select the element(s).
 				</li>
 				<li>
-					Click "Copy".
+					Click 'Copy'.
 				</li>
 				<li>
 					Move the placeholder from the Toolbox to the Form area as described above or select the element in
-					the Form area and click "Paste after".
+					the Form area and click 'Paste after'.
 				</li>
 			</ol>
 			<p>
 				See also
 				<a href="#_Toc_4_2">
-					"How do I create a questionnaire by using the EUSurvey editor?"
+					'How do I create a questionnaire by using the EUSurvey editor?'
 				</a>
 			</p>
 			<h2>
@@ -736,13 +736,13 @@
 			</h2>
 			<p>
 				You can add or remove possible answers by clicking the plus/minus button in the Element properties pane.
-				Edit the text of the existing answer options by clicking the pen icon next to "Possible answers".
+				Edit the text of the existing answer options by clicking the pen icon next to 'Possible answers'.
 				You can then edit them in the rich text editor.
 			</p>
 			<p>
 				See also
 				<a href="#_Toc_4_2">
-					"How do I create a questionnaire by using the EUSurvey editor?"
+					'How do I create a questionnaire by using the EUSurvey editor?'
 				</a>
 			</p>
 			<h2>
@@ -784,7 +784,7 @@
 				Using this feature in the editor, you can display and hide elements depending on answers given by
 				participants to either single/multiple choice or matrix questions (see also
 				<a href="#_Toc_4_2">
-					"How do I create a questionnaire by using the EUSurvey editor?"
+					'How do I create a questionnaire by using the EUSurvey editor?'
 				</a>
 				)
 			</p>
@@ -803,7 +803,7 @@
 						choice, multiple choice and matrix that are placed above the selected element(s) are displayed,
 						including the question text and the possible answers.</li>
 					<li>Select the answer that, when chosen, will display the selected element.</li>
-					<li>Click "Apply" to confirm the visibility setting.</li>
+					<li>Click 'Apply' to confirm the visibility setting.</li>
 				</ol>
 			</p>
 			<p>
@@ -858,7 +858,7 @@
 				How do I give other users permission to edit my survey?
 			</h2>
 			<p>
-				Open your survey and open the "Privileges" page. Click on "Add new user" or "Add department". A wizard
+				Open your survey and open the 'Privileges' page. Click on 'Add new user' or 'Add department'. A wizard
 				will pop up that guides you through the process of adding users. Next you can give them specific access
 				rights. Simply click on the colour to change the rights.
 			</p>
@@ -887,14 +887,14 @@
 			<p>
 				Read more about this under
 				<a href="#_Toc_10_7">
-					"How do I give other users access to my survey?"
+					'How do I give other users access to my survey?'
 				</a>
 			</p>
 			<h2>
 				Which languages are supported by the application?
 			</h2>
 			<p>
-				Languages which can be encoded in "3byte UTF-8" can be used to create a	survey.
+				Languages which can be encoded in '3byte UTF-8' can be used to create a	survey.
 			</p>
 			<h2>
 				So why UTF-8 and which fonts should be used?
@@ -950,7 +950,7 @@
 				</li>
 			</ul>
 			<p>
-				<strong>"Freesans" is the default font used</strong>
+				<strong>'Freesans' is the default font used</strong>
 			</p>
 			<p>
 				If in doubt, run a PDF export of your final survey to check if it is
@@ -966,7 +966,7 @@
 			</h2>
 			<p>
 				Adding too many elements or dependencies to your survey can lead to performance issues for the
-				participants who want to fill out your questionnaire, because it is too "complex".
+				participants who want to fill out your questionnaire, because it is too 'complex'.
 			</p>
 			<p>
 				Your survey could have a high level of complexity for several reasons:
@@ -1000,7 +1000,7 @@
 			<p>
 				By default, an EUSurvey online form is publicly available as soon as it has been published. You can
 				change this and allow only privileged users to access the survey by setting the survey to
-				<strong>"Secured"</strong> in the "Security settings" on the "Properties" page. You can then allow
+				<strong>'Secured'</strong> in the 'Security settings' on the 'Properties' page. You can then allow
 				access to your privileged users by either:
 			</p>
 			<ul>
@@ -1012,26 +1012,26 @@
 					'). Each participant will get a unique access link. OR
 				</li>
 				<li>
-					Securing your survey by EU Login. In the "Properties" page enable the options “Secure your survey”
-					and "Secure with EU Login". If you are a member of an EU body, you can choose either to allow all
+					Securing your survey by EU Login. In the 'Properties' page enable the options “Secure your survey”
+					and 'Secure with EU Login'. If you are a member of an EU body, you can choose either to allow all
 					users with an EU Login account (members of the EU institutions and external EU Login accounts) to
 					access your survey, or to grant access only to members of the EU institutions. OR
 				</li>
 				<li>
 					Setting up a password. This will be the same for all participants and you will have to communicate
 					it to your audience. Practically, you will send the survey location link and the global password
-					(see "
+					(see '
 					<a href="#_Toc_5_2">
 						How do I set a password for my survey?
 					</a>
-					").
+					').
 				</li>
 			</ul>
 			<h2>
 				How do I set a password for my survey?    
 			</h2>
 			<p>
-				To protect your survey with a password, edit the "Secured with password" option under "Properties". To
+				To protect your survey with a password, edit the 'Secured with password' option under 'Properties'. To
 				invite individual contacts to access your secured survey, please read the Help section
 			</p>
 			<p>
@@ -1046,7 +1046,7 @@
 			</h2>
 			<p>
 				To ensure that an user does not submit more than a defined number of contributions to your survey, in
-				the "Properties" page enable the options “Secure your survey” and "Secure with EU Login" and set the
+				the 'Properties' page enable the options “Secure your survey” and 'Secure with EU Login' and set the
 				number in the “Contributions per user” option.
 			</p>
 			<p>
@@ -1083,7 +1083,7 @@
 				Yes!
 			</p>
 			<p>
-				Go to "Security" under "Properties" and enable “Allow participants to change their contribution” option.
+				Go to 'Security' under 'Properties' and enable 'Allow participants to change their contribution' option.
 				Participants need to know the contribution-ID that was shown after they submitted their contribution.
 			</p>
 			<p>
@@ -1115,7 +1115,7 @@
 				Can I test my survey and see what it looks like once it has been published?    
 			</h2>
 			<p>
-				Yes. Please open the survey in EUSurvey and click on "Test". You will see the current draft of your
+				Yes. Please open the survey in EUSurvey and click on 'Test'. You will see the current draft of your
 				survey, and you can access every feature of the published form. You can save the test as a draft or
 				directly submit it as your contribution.
 			</p>
@@ -1123,25 +1123,23 @@
 				How can my colleagues test my survey before it is published?
 			</h2>
 			<p>
-				The "Test"-page of your survey can also be tested by your colleagues. To give access to this page, open
-				your survey in EUSurvey, go to the "Privileges" tab and click on "Add User" or "Add Department". A
+				The 'Test'-page of your survey can also be tested by your colleagues. To give access to this page, open
+				your survey in EUSurvey, go to the 'Privileges' tab and click on 'Add User' or 'Add Department'. A
 				wizard will guide you through the process of adding your colleagues. To give them appropriate access
-				rights for testing, change the colour of "Access Form Preview" to "Green". Simply click on the colour
+				rights for testing, change the colour of 'Access Form Preview' to 'Green'. Simply click on the colour
 				to change the rights.
 			</p>
 			<p>
-				The added users will automatically see the survey in their "Surveys" page once they log into the EUSurvey
-				application. Read more about this under
+				The added users will automatically see the survey in their 'Surveys' page once they log into the EUSurvey
+				application. Read more about this under '
 				<a href="#_Toc_10_7">
 					How do I give other users access to my survey?
 				</a>
-				"
+				'
 			</p>
 			<p>
 				External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button,
 				therefore, they cannot provide access for these persons directly. Please
-			</p>
-			<p>
 				<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>
 				to request privileges for external users.
 			</p>
@@ -1185,7 +1183,7 @@
 				translation, .
 			</p>
 			<p>
-				Don't forget to select the box "To Publish" if the translation is to be published along with your survey.
+				Don't forget to select the box 'To Publish' if the translation is to be published along with your survey.
 				Once you add a translation for publishing, participants can choose from the available languages directly
 				from the survey link.
 			</p>
@@ -1228,7 +1226,7 @@
 						edit multiple translations at a time.
 					</li>
 					<li>
-						Please click the "Save" button to make sure that your changes are written to the system.
+						Please click the 'Save' button to make sure that your changes are written to the system.
 					</li>
 				</ol>
 			</p>
@@ -1252,7 +1250,7 @@
 				Can I create my translations offline?    
 			</h2>
 			<p>
-				Yes! Open your survey, go to the "Translations" page and export your survey as an XLS, ODS or XML file
+				Yes! Open your survey, go to the 'Translations' page and export your survey as an XLS, ODS or XML file
 				to perform the translation offline. The translation can then be imported back into your survey.
 			</p>
 			<p>
@@ -1291,7 +1289,7 @@
 			</p>
 			<h2>
 				How do I publish/unpublish my translations? Why can't I publish this translation? What is an
-				"Incomplete" translation?
+				'Incomplete' translation?
 			</h2>
 			<p>
 				To publish a survey in multiple languages,:
@@ -1302,11 +1300,11 @@
 						open your survey
 					</li>
 					<li>
-						go to the "Translations" page
+						go to the 'Translations' page
 					</li>
 					<li>
 						tick/untick the individual translations you want to publish/unpublish
-						under "To Publish".
+						under 'To Publish'.
 					</li>
 					<li>
 						Then go to the 'Overview' page of your survey to publish your survey.
@@ -1315,7 +1313,7 @@
 			</p>
 			<p>
 				If the survey had been published before the translations were
-				added/removed, click on "Apply Changes".
+				added/removed, click on 'Apply Changes'.
 			</p>
 			<p>
 				To ensure that no translations with missing text are published, you cannot
@@ -1422,17 +1420,17 @@
 				How do I publish my survey?    
 			</h2>
 			<p>
-				To publish a survey from a current working draft, please go to the "Overview" page and click on
-				"Publish". After confirmation, the system will automatically create a working copy of your survey
+				To publish a survey from a current working draft, please go to the 'Overview' page and click on
+				'Publish'. After confirmation, the system will automatically create a working copy of your survey
 				and put it online, along with the set of translations you have selected for publication on the
-				"Translations" page (See '
+				'Translations' page (See '
 				<a href="#_Toc_7_5">
 					How do I publish/unpublish my translations?
 				</a>
-				'). You will find the link to your published survey in "Survey Location" on the "Overview" page.
+				'). You will find the link to your published survey in 'Survey Location' on the 'Overview' page.
 			</p>
 			<p>
-				To unpublish your survey, just click the "Unpublish" button. The unpublished survey will stay available
+				To unpublish your survey, just click the 'Unpublish' button. The unpublished survey will stay available
 				to you in the form in which it was published, along with your current working draft. This means that the
 				unpublished survey does not have to be replaced by your current working draft but can be republished if
 				necessary.
@@ -1594,8 +1592,8 @@
 				'Overview' page so the changes are visible in the published survey.
 			</p>
 			<p>
-				If you want to remove answers from your survey, please Read: "Will I
-				lose any answers submitted when I change my form?".
+				If you want to remove answers from your survey, please Read: 'Will I
+				lose any answers submitted when I change my form?'.
 			</p>
 			<h2>
 				Will I lose any submitted answers when I change my form?    
@@ -1774,7 +1772,7 @@
 					</li>
 					<li>
 						When clicking on 'Add user', you must select the correct Domain (for
-						example "European Commission").
+						example 'European Commission').
 					</li>
 					<li>
 						Enter the login, email address or any other field and click on 'Search'.

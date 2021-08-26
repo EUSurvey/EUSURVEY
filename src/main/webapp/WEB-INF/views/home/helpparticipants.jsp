@@ -137,13 +137,13 @@
 				    How can I contact the survey owner?
 				</h2>
 				<p>
-					You can contact the survey owner using the "Contact" option on the survey right panel.
+					You can contact the survey owner using the 'Contact' option on the survey right panel.
 				</p>
 				<h1>
 				    Accessing a survey
 				</h1>
 				<h2>
-					What does "The url you entered was not correct" mean?
+					What does 'The url you entered was not correct' mean?
 				</h2>
 				<p>
 					It means the system cannot authorise you to access the survey. This is mostly the case
@@ -157,7 +157,7 @@
 					If you think you are using a valid access link, please contact the author of the survey.
 				</p>
 				<h2>
-				    What does "Page not found" mean?
+				    What does 'Page not found' mean?
 				</h2>
 				<p>
 				    It means:
@@ -175,7 +175,7 @@
 					Otherwise, please inform the body responsible for publishing the link that it is incorrect.
 				</p>
 				<h2>
-					What does "This survey has not yet been published or has already been unpublished in the meantime” mean?
+					What does 'This survey has not yet been published or has already been unpublished in the meantime” mean?
 				</h2>
 				<p>
 					This is mostly the case when the invitation has been sent out, but the survey has not yet been
@@ -202,7 +202,7 @@
 				    Submitting a contribution
 				</h1>
 				<h2>
-					What does "This value is not a valid number/date/e-mail address" mean?
+					What does 'This value is not a valid number/date/e-mail address' mean?
 				</h2>
 				<p>
 					In EUSurvey, the author of a survey can specify special types of questions that expect a certain
@@ -214,7 +214,7 @@
 				</h2>
 				<p>
 					This is a possible feature of the matrix question where you can only select each possible answer
-					once. It can be used to ensure a "ranking" on given answers.
+					once. It can be used to ensure a 'ranking' on given answers.
 				</p>
 				<h1>
 					After contributing
@@ -257,7 +257,7 @@
 					to your contribution.
 				</p>
 				<p>
-					In case you did not save the Contribution ID, please use the "<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>" form.
+					In case you did not save the Contribution ID, please use the '<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>' form.
 				</p>
 				<h2>
 				    I just contributed to a survey. Can I see other people’s answers?
@@ -278,7 +278,7 @@
 				    .
 				</p>
 				<h2>
-					My PDF viewer gives me an error message saying "Insufficient Image data"
+					My PDF viewer gives me an error message saying 'Insufficient Image data'
 				</h2>
 				<p>
 					Uploading corrupted images can lead to the PDF reader not being able to display the image properly.
@@ -311,7 +311,7 @@
 					Where can I find my answers saved as draft?
 				</h2>
 				<p>
-					After clicking on "save as draft", you will automatically be re-directed to a page showing you a
+					After clicking on 'save as draft', you will automatically be re-directed to a page showing you a
 					link where you can retrieve your draft to edit and submit your answers.
 				</p>
 				<p>
@@ -337,8 +337,8 @@
 				    This system uses cookies. What information is saved there?
 				</h2>
 				<p>
-					The system uses session "cookies" in order to ensure reliable communication between the client and
-					the server. Therefore, your browser must be configured to accept "cookies". The cookies disappear
+					The system uses session 'cookies' in order to ensure reliable communication between the client and
+					the server. Therefore, your browser must be configured to accept 'cookies'. The cookies disappear
 					once the session has been terminated.
 				</p>
 				<p>
@@ -346,8 +346,8 @@
 					the server is not available during submission, or your computer is switched off accidentally, or any
 					other cause. The local storage contains the IDs of the questions and the draft answers. Once you
 					successfully submitted the survey to the server, or you have successfully saved a draft on the server,
-					the data is removed from local storage. There is a checkbox above the survey "Save a backup on your
-					local computer (disable if you are using a public/shared computer)" to disable the feature. In that
+					the data is removed from local storage. There is a checkbox above the survey 'Save a backup on your
+					local computer (disable if you are using a public/shared computer)' to disable the feature. In that
 					case, no data will be stored on your computer.
 				</p>
 			</div> <!-- faqcontent -->
