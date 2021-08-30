@@ -196,7 +196,7 @@
 				deleteUserMessage();
 			}
 			_messages.saveToLocalStorage();
-		}
+		};
 		
 		this.deleteMessage = function() {
 			this.Deleted(true);
@@ -456,4 +456,15 @@
 			});
 	}	
 	
+	function testTimeoutExpiration(restTime) {
+		lastEditDate.setDate(lastEditDate.getDate()-1);
+		sessiontimeout = 300;
+		if (Number.isInteger(restTime)) {
+			sessiontimeout = restTime;
+		}
+		refreshTimeout();
+		checkTimeout();
+		console.log("Function for testing purposes. Set Timeout to", timeoutTime);
+	}
+
 </script>
