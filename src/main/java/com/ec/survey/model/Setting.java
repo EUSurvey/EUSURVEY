@@ -103,7 +103,7 @@ public class Setting {
 		for (int i = 201; i < 229; i++) {
 			ids.add(i);
 		}
-		for (int i = 301; i < 315; i++) {
+		for (int i = 301; i < 316; i++) {
 			ids.add(i);
 		}
 		ids.add(401);
