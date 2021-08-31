@@ -636,12 +636,12 @@ public class ManagementController extends BasicController {
 
 		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
 
-		List<String> completed = new ArrayList<>();
+		List<Language> completed = new ArrayList<>();
 		List<Translations> translations = translationService.getTranslationsForSurvey(survey.getId(), false, true,
 				false);
 		for (Translations translation : translations) {
 			if (translation.getComplete()) {
-				completed.add(translation.getLanguage().getCode());
+				completed.add(translation.getLanguage());
 			}
 		}
 		survey.setCompleteTranslations(completed);
