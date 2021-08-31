@@ -778,6 +778,11 @@ public class SurveyService extends BasicService {
 		Hibernate.initialize(survey.getPublication().getFilter().getExportedQuestions());
 		Hibernate.initialize(survey.getPublication().getFilter().getFilterValues());
 		Hibernate.initialize(survey.getPublication().getFilter().getLanguages());
+		
+		Hibernate.initialize(survey.getPublication().getFilter().getVisibleExplanations());
+		Hibernate.initialize(survey.getPublication().getFilter().getVisibleDiscussions());
+		Hibernate.initialize(survey.getPublication().getFilter().getExportedExplanations());
+		Hibernate.initialize(survey.getPublication().getFilter().getExportedDiscussions());
 
 		if (survey.getSkin() != null) {
 			Hibernate.initialize(survey.getSkin().getElements());

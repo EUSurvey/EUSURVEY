@@ -27,8 +27,7 @@
 	
 	<div id="scrollareastatistics" class="scrollarea" style="height: auto">
 
-		<c:forEach items="${form.getSurvey().getQuestionsAndSections()}" var="question">
-			
+		<c:forEach items="${form.getSurvey().getQuestionsAndSections()}" var="question">			
 		
 			<c:if test="${form.getSurvey().isDelphi && question.getType() == 'Section' && filter.visibleSection(question.getId(), form.getSurvey())}">
 				<div class="statelement cell${question.id}" style="width: 700px; margin-left: auto; margin-right: auto;">

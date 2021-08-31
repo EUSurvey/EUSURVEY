@@ -426,7 +426,7 @@
 					 </c:if>
 					 <c:if test="${publication.showStatistics}">
 					 	 <div class="tab-pane <c:if test="${selectedtab == 3}">active</c:if>" id="statistics">							
-				 		  	<div style="text-align: center; position: fixed; top: 60px; padding: 20px; width: 100%; left:0px; background-color: #fff;">
+				 		  	<div style="text-align: center; position: fixed; top: 60px; padding: 20px; width: 100%; left:0px; background-color: #fff; z-index:999">
 				  		  		<b><spring:message code="label.Export" /></b>
 								
 								<span class="deactivatedstatexports">
