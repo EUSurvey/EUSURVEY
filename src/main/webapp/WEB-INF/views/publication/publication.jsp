@@ -42,6 +42,11 @@
 		.filtertools {
 			float: right;
 		}
+		
+		table.table-styled > thead .glyphicon
+		{
+			 color:#333;
+		}
 	
 	</style>
 	
