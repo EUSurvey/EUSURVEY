@@ -419,7 +419,9 @@ public class AddressBookController extends BasicController {
 				String delimiter = "comma";
 				if (filename.toLowerCase().endsWith("csv"))
 				{
-					String content = IOUtils.toString(new FileInputStream(file));
+					FileInputStream fis = new FileInputStream(file);
+					String content = IOUtils.toString(fis);
+					fis.close();
 					if (StringUtils.countOccurrencesOf(content, ";") > StringUtils.countOccurrencesOf(content, ","))
 					{
 						delimiter = "semicolon";
@@ -789,7 +791,7 @@ public class AddressBookController extends BasicController {
             	result.addObject("target", "importAttendeesCheck");
             	
             	//delete temporary file
-            	Files.delete(file.toPath());
+            	Files.delete(file.toPath());            	
              }                  
              
          } catch (Exception e) {
