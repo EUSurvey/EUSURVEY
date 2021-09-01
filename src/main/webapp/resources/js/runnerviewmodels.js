@@ -773,7 +773,9 @@ function newRankingViewModel(element)
 			$(rankingItemList).append(thatItemDiv);
 		});
 		propagateChange(rankingItemList);
-	}
+		const surveyElement = $(rankingItemList).parents(".survey-element").last();
+		enableDelphiSaveButtons(surveyElement);
+	};
 
 	viewModel.originalItemUniqueIdOrder = $.map(element.childElements, item => item.uniqueId);
 	viewModel.itemTitleLookup = {};
@@ -1046,7 +1048,9 @@ function newNumberViewModel(element)
 		$(input).val("");
 		viewModel.isAnswered(false);
 		propagateChange($(input));
-	}
+		const surveyElement = $(input).parents(".survey-element").last();
+		enableDelphiSaveButtons(surveyElement);
+	};
 
 	if (viewModel.display() == 'Slider')
 	{
