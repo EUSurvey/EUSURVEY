@@ -733,17 +733,22 @@ function update(input)
 			break;
 		case "Interdependency":
 			var checked = $(input).is(":checked");
-			element.isInterdependent(checked);
-			_undoProcessor.addUndoStep(["Interdependency", id, $(_elementProperties.selectedelement).index(), !checked, checked]);
 			if(element.type == "Matrix") {
 				if(checked){
-					checkInterdependentMatrix(input);
+					if (!checkInterdependentMatrix(input)) {
+						$(input).removeAttr("checked");
+						return;
+					}
 				} else {
 					removeValidationMarkup($(".firstpropertyrow[data-label=Columns]"));
 					removeValidationMarkup($(".firstpropertyrow[data-label=Rows]"));
 					removeValidationMarkup($("#idPropertyInterdependency").closest(".firstpropertyrow"));
 				}
 			}
+			
+			element.isInterdependent(checked);
+			_undoProcessor.addUndoStep(["Interdependency", id, $(_elementProperties.selectedelement).index(), !checked, checked]);
+			
 			break;
 		case "QuizQuestion":
 			var checked = $(input).is(":checked");

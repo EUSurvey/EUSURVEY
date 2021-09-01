@@ -282,11 +282,14 @@ function checkInterdependentMatrix(input)
 
 	if (columns < rows) {
 		addValidationInfo(input, "invalidInterdependencyCriteria");
+		return false;
 	} else {
 		removeValidationMarkup($(".firstpropertyrow[data-label=Columns]"));
 		removeValidationMarkup($(".firstpropertyrow[data-label=Rows]"));
 		removeValidationMarkup($("#idPropertyInterdependency").closest(".firstpropertyrow"));
 	}
+	
+	return true;
 }
 
 function updateGallery(file)
