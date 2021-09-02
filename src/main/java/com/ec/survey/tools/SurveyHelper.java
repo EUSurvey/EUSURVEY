@@ -1090,6 +1090,13 @@ public class SurveyHelper {
 			newValues += " level: " + level;
 		}
 		section.setLevel(level);
+		
+		Integer order = getInteger(parameterMap, "order", id);
+		if (log220 && !order.equals(section.getOrder())) {
+			oldValues += " order: " + section.getOrder();
+			newValues += " order: " + order;
+		}
+		section.setOrder(order);
 
 		String tabtitle = getString(parameterMap, "tabtitle", id, servletContext);
 		if (log220 && section.getTabTitle() != null && !section.getTabTitle().equals(tabtitle)) {

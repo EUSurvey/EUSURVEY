@@ -11,7 +11,8 @@
 			<input type="hidden" data-bind="value: 'section', attr: {'name': 'type' + id()}" />	
 			<input type="hidden" data-bind="value: uniqueId(), attr: {'name': 'uid' + id()}" />	
 			<input type="hidden" data-bind="value: shortname, attr: {'name': 'shortname' + id()}" />
-			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />	
+			<input type="hidden" data-bind="value: useAndLogic, attr: {'name': 'useAndLogic' + id()}" />
+			<input type="hidden" data-bind="value: order, attr: {'name': 'order' + id()}" />	
 			<input type="hidden" data-bind="value: tabTitle, attr: {'name': 'tabtitle' + id()}" />	
 			<input type="hidden" data-bind="value: level, attr: {'name': 'level' + id()}" />	
 			<textarea style="display: none" data-bind="text: originalTitle, attr: {'name': 'text' + id()}"></textarea>

@@ -297,6 +297,15 @@ function update(input)
 			_undoProcessor.addUndoStep(["Order", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
 			addElementHandler($(_elementProperties.selectedelement));
 			break;
+		case "OrderSection":
+			var text = $(input).val();
+			var oldtext = element.order();
+			var order = 0;
+			if (text == "Random") order = 1;
+			element.order(order);
+			_undoProcessor.addUndoStep(["OrderSection", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+			addElementHandler($(_elementProperties.selectedelement));
+			break;
 		case "Style":
 			if ($(_elementProperties.selectedelement).hasClass("matrixitem"))
 			{
