@@ -897,7 +897,7 @@ function newRankingItemViewModel(id, uniqueId, shortname, title, parent)
 			var rankingitemFormDataReOrdered = $.map(reIndex, value => rankingitemFormData.get(value));
 			$.each(rankingitemFormDataReOrdered, (_, that) => $(rankingitemList).append(that));
 			target.focus();
-			propagateChange(rankingitemList);
+			propagateChange(rankingitemList[0]);
 		}
 	}
 
@@ -1040,13 +1040,12 @@ function newNumberViewModel(element)
 
 	viewModel.resetToInitialPosition = function(_, event) {
 		const input = $("#answer" + viewModel.id());
-		const initialValue = viewModel.initialValue();
+		const initialDefaultValue = viewModel.initialDefaultValue();
 
-		$(input).bootstrapSlider().bootstrapSlider("setValue", initialValue);
+		$(input).bootstrapSlider().bootstrapSlider("setValue", initialDefaultValue);
 		$(input).val("");
 		viewModel.isAnswered(false);
 		propagateChange($(input));
-		$(input).val(initialValue.toString());
 	}
 
 	if (viewModel.display() == 'Slider')
@@ -1117,7 +1116,7 @@ function newNumberViewModel(element)
 		
 		propagateChange($(input));
 	}
-	
+
 	viewModel.initialValue = function() {
 		
 		var ovalue = getValueByQuestion(this.uniqueId());
@@ -1125,7 +1124,10 @@ function newNumberViewModel(element)
 			this.isAnswered(true);
 			return ovalue;
 		}
-		
+		return viewModel.initialDefaultValue();
+	};
+
+	viewModel.initialDefaultValue = function() {
 		if (this.initialSliderPosition() === "Middle")
 		{
 			var min = parseInt(this.min());
@@ -1143,7 +1145,7 @@ function newNumberViewModel(element)
 		}
 		
 		return this.min();
-	}
+	};
 	
 	return viewModel;
 }

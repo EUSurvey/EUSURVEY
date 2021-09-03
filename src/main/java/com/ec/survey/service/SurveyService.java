@@ -216,9 +216,9 @@ public class SurveyService extends BasicService {
 		return result;
 	}
 
-	private List<String> getCompletedTranslations(Survey survey) {
+	private List<Language> getCompletedTranslations(Survey survey) {
 		return translationService.getTranslationsForSurvey(survey.getId(), false).stream()
-				.filter(Translations::getActive).map(t -> t.getLanguage().getCode()).collect(toList());
+				.filter(Translations::getActive).map(t -> t.getLanguage()).collect(toList());
 	}
 
 	public List<Survey> getSurveysIncludingPublicationDates(SurveyFilter filter, SqlPagination sqlPagination)
@@ -778,6 +778,11 @@ public class SurveyService extends BasicService {
 		Hibernate.initialize(survey.getPublication().getFilter().getExportedQuestions());
 		Hibernate.initialize(survey.getPublication().getFilter().getFilterValues());
 		Hibernate.initialize(survey.getPublication().getFilter().getLanguages());
+		
+		Hibernate.initialize(survey.getPublication().getFilter().getVisibleExplanations());
+		Hibernate.initialize(survey.getPublication().getFilter().getVisibleDiscussions());
+		Hibernate.initialize(survey.getPublication().getFilter().getExportedExplanations());
+		Hibernate.initialize(survey.getPublication().getFilter().getExportedDiscussions());
 
 		if (survey.getSkin() != null) {
 			Hibernate.initialize(survey.getSkin().getElements());

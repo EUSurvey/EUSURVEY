@@ -552,7 +552,17 @@ td.table-header {
 	padding: 0;
 	margin-left: 5px !important;
 	margin-right: 5px !important;
-	autocomplete: off;	
+	autocomplete: chrome-off;
+}
+
+.ui-spinner-input::-webkit-outer-spin-button,
+.ui-spinner-input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.ui-spinner-input[type=number] {
+	-moz-appearance:textfield;
 }
 
 .actionbuttons .glyphicon:not(.switchbutton) {

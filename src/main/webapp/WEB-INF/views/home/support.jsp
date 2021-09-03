@@ -93,7 +93,7 @@
 				{
 			    	if (responseJSON.success)
 			    	{
-			    		$("#file-uploader-support-div").append("<div class='uploadedfile' data-id='" + responseJSON.uid + "'>" + responseJSON.name + "<a onclick='deleteUploadedFile(this)'><span class='glyphicon glyphicon-trash'></span></a><input type='hidden' name='uploadedfile' value='" + responseJSON.uid + "' /></div>")
+			    		$("#file-uploader-support-div").append("<div class='uploadedfile' data-id='" + responseJSON.uid + "'>" + responseJSON.name + "<a href='#' onclick='deleteUploadedFile(this); return false;'><span class='glyphicon glyphicon-trash'></span></a><input type='hidden' name='uploadedfile' value='" + responseJSON.uid + "' /></div>")
 				    	$("#file-uploader-support-div").show();
 			    		
 			    		if ($(".uploadedfile").length > 1)

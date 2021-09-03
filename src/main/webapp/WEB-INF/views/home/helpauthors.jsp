@@ -1540,6 +1540,10 @@
 				</a>
 				language code.
 			</p>
+			<p>
+				It is not possible to select a non-European language as the pivot language
+				of your survey.
+			</p>
 			<h2>
 				What does 'Request Machine Translation' mean?    
 			</h2>

@@ -712,6 +712,7 @@
 	 		strings["RegistrationForm"] = "<spring:message code="label.RegistrationForm" />";
 	 		strings["Advanced"] = "<spring:message code="label.Advanced" />";
 	 		strings["invalidMinMaxCharacters"] = "<spring:message code="error.invalidMinMaxCharacters" />";
+			strings["invalidInterdependencyCriteria"] = "<spring:message code="error.invalidInterdependencyCriteria" />";
 	 		strings["Style"] = "<spring:message code="label.Style" />";
 	 		strings["Order"] = "<spring:message code="label.Order" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.Order" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["Columns"] = "<spring:message code="label.Columns" />";
