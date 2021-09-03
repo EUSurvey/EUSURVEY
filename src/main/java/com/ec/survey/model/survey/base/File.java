@@ -106,7 +106,7 @@ public class File implements java.io.Serializable {
 	}
 	
 	//this one is only used for gallery images
-		@Column(name = "FILE_DESC")
+	@Column(name = "FILE_DESC")
 	public String getDescription() {
 		return description;
 	}
