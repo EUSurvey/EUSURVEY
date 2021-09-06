@@ -450,7 +450,7 @@ public class SurveyHelper {
 										Element matrixAnswer = m.getAnswers()
 												.get(candidate.getPosition() % (m.getColumns() - 1));
 										if ((answerSet.getMatrixAnswer(matrixQuestion.getId(), matrixAnswer.getId()) != null
-											|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null) && !invisibleElements.contains(matrixQuestion.getUniqueId())) {
+											|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null) && !invisibleElements.contains(matrixQuestion.getUniqueId()) && !invisibleElements.contains(m.getUniqueId())) {
 											found = true;
 										} else {
 											missing = true;
