@@ -89,15 +89,17 @@
 							</div>
 							<div style="float: right">
 								<form:select path="survey.language" class="form-control required" style="width: auto;">
-									<c:forEach items="${form.survey.completeTranslations}" var="language">				
-										<c:choose>
-											<c:when test="${form.survey.language.code.equals(language)}">
-												<form:option selected="selected" value="${language}"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></form:option>
-											</c:when>
-											<c:otherwise>
-												<form:option value="${language}"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></form:option>
-											</c:otherwise>
-										</c:choose>
+									<c:forEach items="${form.survey.completeTranslations}" var="language">
+										<c:if test="${language.official}">
+											<c:choose>
+												<c:when test="${form.survey.language.code.equals(language.code)}">
+													<form:option selected="selected" value="${language.code}"><esapi:encodeForHTML>${language.code}</esapi:encodeForHTML></form:option>
+												</c:when>
+												<c:otherwise>
+													<form:option value="${language.code}"><esapi:encodeForHTML>${language.code}</esapi:encodeForHTML></form:option>
+												</c:otherwise>
+											</c:choose>
+										</c:if>
 									</c:forEach>
 								</form:select>		
 							</div>

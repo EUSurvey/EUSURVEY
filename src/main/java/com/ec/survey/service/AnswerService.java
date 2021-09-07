@@ -1501,7 +1501,7 @@ public class AnswerService extends BasicService {
 	public Statistics getStatisticsOrStartCreator(int statisticsRequestId) throws Exception {
 		StatisticsRequest statisticsRequest = answerService.getStatisticRequest(statisticsRequestId);
 		Survey survey = surveyService.getSurvey(statisticsRequest.getSurveyId());
-		return this.getStatisticsOrStartCreator(survey, statisticsRequest.getFilter(), false, statisticsRequest.isAllanswers(), true);
+		return this.getStatisticsOrStartCreator(survey, statisticsRequest.getFilter().copy(), false, statisticsRequest.isAllanswers(), true);
 	}
 	
 	/**
