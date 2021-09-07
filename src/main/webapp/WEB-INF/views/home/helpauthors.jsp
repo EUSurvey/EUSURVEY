@@ -1008,7 +1008,7 @@
 					'). Each participant will get a unique access link. OR
 				</li>
 				<li>
-					Securing your survey by EU Login. In the 'Properties' page enable the options “Secure your survey”
+					Securing your survey by EU Login. In the 'Properties' page enable the options 'Secure your survey'
 					and 'Secure with EU Login'. If you are a member of an EU body, you can choose either to allow all
 					users with an EU Login account (members of the EU institutions and external EU Login accounts) to
 					access your survey, or to grant access only to members of the EU institutions. OR
@@ -1028,10 +1028,7 @@
 			</h2>
 			<p>
 				To protect your survey with a password, edit the 'Secured with password' option under 'Properties'. To
-				invite individual contacts to access your secured survey, please read the Help section
-			</p>
-			<p>
-				To invite individuals to access your secured survey, see '
+				invite individual contacts to access your secured survey, please read the Help section '
 				<a href="#_Toc_13_0">
 					Inviting participants
 				</a>
@@ -1042,9 +1039,9 @@
 			</h2>
 			<p>
 				To ensure that an user does not submit more than a defined number of contributions to your survey, in
-				the 'Properties' page enable the options “Secure your survey” and 'Secure with EU Login' and set the
-				number in the “Contributions per user” option.
-			</p>
+				the 'Properties' page enable the options 'Secure your survey' and 'Secure with EU Login' and set the
+				number in the 'Contributions per user' option.
+			</p> <!-- TODO continue here, soure txt line 1083 -->
 			<p>
 				Set the number in the 'Contribution per user' option.
 			</p>			
