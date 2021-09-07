@@ -174,11 +174,6 @@
 				any of the 136 languages covered by ISO 639-1, from Abkhaz to Zulu.
 			</p>
 			<p>
-				You can translate your form into any of the 136 languages covered by the
-				ISO 639-1 classification (ISO 639 is a standardized nomenclature used to
-				classify languages.).
-			</p>
-			<p>
 				<strong>Security</strong>
 				<br/>
 				EUSurvey has the infrastructure needed to secure the online forms.
@@ -362,7 +357,7 @@
 				. This takes you to the login screen (see below for more details).
 			</p>
 			<h2>
-				How do I connect to EUSurvey?<u> </u>
+				How do I connect to EUSurvey?
 			</h2>
 			<p>
 				Please click on the login button on the
@@ -443,7 +438,7 @@
 						.
 						<br />
 						<br />
-						The quiz mod includes amongst others:
+						The quiz mode includes amongst others:
 						<ul>
 							<li>
 								A scoring feature
@@ -484,7 +479,7 @@
 								Automatic opening and closing of the survey from BRP
 							</li>
 							<li>
-								Automatic synchronisation of the respondents’ answers to BRP for further processing
+								Automatic synchronisation of the respondents&rsquo; answers to BRP for further processing
 							</li>
 						</ul>
 					</li>
@@ -953,13 +948,7 @@
 				<strong>'Freesans' is the default font used</strong>
 			</p>
 			<p>
-				If in doubt, run a PDF export of your final survey to check if it is
-				rendered correctly in PDF Beware however that some contributions may not to be rendered correctly in PDF.
-				Your participants, indeed, are free to choose any font among those which are supported by the application.
-			</p>
-			<p>
-				Even though the application is unable to render the characters they have used, these are saved correctly
-				on EUSurvey's database. Thus, they can be exported from the results page.
+				In case of doubt, run a PDF export of your final survey to check if your survey is rendered correctly in PDF. Beware however that some contributions may not to be rendered correctly in PDF. Your participants, indeed, are free to choose any font among those which are supported by the application. Even though the application is unable to render the characters they have used, these are saved correctly on the EUSurvey's database. Thus they can be exported from the results page.
 			</p>
 			<h2>
 				What does 'Complexity' mean?    
