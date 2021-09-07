@@ -3509,11 +3509,9 @@ public class ManagementController extends BasicController {
 	
 	@RequestMapping(value = "/ecfProfileAssessmentResultsJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public @ResponseBody ECFProfileResult ecfProfileAssessmentResultsJSON(@PathVariable String shortname, HttpServletRequest request) 
-			throws NotFoundException, BadRequestException, InternalServerErrorException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenException {
+			throws NotFoundException, InternalServerErrorException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenException {
 		String profileOrNull = request.getParameter("profile");
 
-		// AUTHORISATION
-		// TODO: bypass if publication of these results?
 		ResultFilter filter = sessionService.getLastResultFilter(request);
 		Survey survey = (filter != null) 
 				? surveyService.getSurvey(filter.getSurveyId(), true) 
