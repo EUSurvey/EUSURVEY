@@ -948,7 +948,14 @@
 				<strong>'Freesans' is the default font used</strong>
 			</p>
 			<p>
-				In case of doubt, run a PDF export of your final survey to check if your survey is rendered correctly in PDF. Beware however that some contributions may not to be rendered correctly in PDF. Your participants, indeed, are free to choose any font among those which are supported by the application. Even though the application is unable to render the characters they have used, these are saved correctly on the EUSurvey's database. Thus they can be exported from the results page.
+				In case of doubt, run a PDF export of your final survey to check
+				if your survey is rendered correctly in PDF. Beware however that
+				some contributions may not to be rendered correctly in PDF. Your
+				participants, indeed, are free to choose any font among those which
+				are supported by the application. Even though the application is
+				unable to render the characters they have used, these are saved
+				correctly on the EUSurvey's database. Thus they can be exported from
+				the results page.
 			</p>
 			<h2>
 				What does 'Complexity' mean?    
