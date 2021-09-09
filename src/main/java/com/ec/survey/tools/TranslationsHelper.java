@@ -291,7 +291,7 @@ public class TranslationsHelper {
 										child.getComment() != null ? child.getComment() : "",
 										survey.getLanguage().getCode(), survey.getId(), translations));
 						translations.getTranslations()
-							.add(new Translation(child.getUid() + GalleryQuestion.DESCRIPTIVETEXT,
+							.add(new Translation(child.getUid(),
 								child.getDescription() != null ? child.getDescription() : "",
 								survey.getLanguage().getCode(), survey.getId(), translations));
 						translations.getTranslations()
@@ -426,7 +426,7 @@ public class TranslationsHelper {
 				GalleryQuestion gallery = (GalleryQuestion) element;
 				for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
 					result.add(new KeyValue(child.getUid() + GalleryQuestion.TEXT, "GT"));
-					result.add(new KeyValue(child.getUid() + GalleryQuestion.DESCRIPTIVETEXT, "GDT"));
+					result.add(new KeyValue(child.getUid(), "GDT"));
 					result.add(new KeyValue(child.getUid() + GalleryQuestion.TITLE, "GL"));
 
 				}
@@ -588,7 +588,7 @@ public class TranslationsHelper {
 			if (element instanceof GalleryQuestion) {
 				GalleryQuestion gallery = (GalleryQuestion) element;
 				for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
-					result.add(new KeyValue(child.getUid() + GalleryQuestion.DESCRIPTIVETEXT,
+					result.add(new KeyValue(child.getUid(),
 							resources.getMessage("label.DescriptiveText", null, "Descriptive Text", locale)));
 					result.add(new KeyValue(child.getUid() + GalleryQuestion.TEXT,
 							resources.getMessage("label.Text", null, "Text", locale)));
@@ -826,7 +826,7 @@ public class TranslationsHelper {
 				galleryImage.appendChild(textNode);
 
 				org.w3c.dom.Element descriptiveTextNode = doc.createElement("GalleryDescriptiveText");
-				label = getLabel(child, GalleryQuestion.DESCRIPTIVETEXT, translationByKey);
+				label = getLabel(child, "", translationByKey);
 				descriptiveTextNode.appendChild(doc.createCDATASection(label));
 				galleryImage.appendChild(descriptiveTextNode);
 
@@ -1304,11 +1304,11 @@ public class TranslationsHelper {
 							addTextCell(row, 1, descriptions.get(child.getUid() + GalleryQuestion.TEXT));
 							addTextCell(row, 2, label);
 						}
-						label = getLabel(child, GalleryQuestion.DESCRIPTIVETEXT, translationsByKey);
+						label = getLabel(child,"", translationsByKey);
 						if (notNullOrEmpty(label)) {
 							row = sheet.createRow(rowIndex++);
 							addTextCell(row, 0, child.getUid());
-							addTextCell(row, 1, descriptions.get(child.getUid() + GalleryQuestion.DESCRIPTIVETEXT));
+							addTextCell(row, 1, descriptions.get(child.getUid()));
 							addTextCell(row, 2, label);
 						}
 						label = getLabel(child, GalleryQuestion.TITLE, translationsByKey);
@@ -1685,12 +1685,12 @@ public class TranslationsHelper {
 							cell = sheet.getCellByPosition(2, rowIndex++);
 							cell.setStringValue(label);
 						}
-						label = getLabel(child, GalleryQuestion.DESCRIPTIVETEXT, translationsByKey);
+						label = getLabel(child, "", translationsByKey);
 						if (notNullOrEmpty(label)) {
 							cell = sheet.getCellByPosition(0, rowIndex);
 							cell.setStringValue(child.getUid()) ;
 							cell = sheet.getCellByPosition(1, rowIndex);
-							cell.setStringValue(descriptions.get(child.getUid() + GalleryQuestion.DESCRIPTIVETEXT));
+							cell.setStringValue(descriptions.get(child.getUid()));
 							cell = sheet.getCellByPosition(2, rowIndex++);
 							cell.setStringValue(label);
 						}
@@ -1743,7 +1743,7 @@ public class TranslationsHelper {
 		typeSuffixByShortType.put("F", "FEEDBACK");
 		typeSuffixByShortType.put("FC", "FIRSTCELL");
 		typeSuffixByShortType.put("GT", "GALLERYTEXT");
-		typeSuffixByShortType.put("GDT", "GALLERYDESCRIPTIVETEXT");
+		typeSuffixByShortType.put("GDT", "");
 		typeSuffixByShortType.put("GL", "TITLE");
 
 		return typeSuffixByShortType;
@@ -1975,7 +1975,7 @@ public class TranslationsHelper {
 						label = getText(child.getElementsByTagName("GalleryText"), "GalleryText");
 						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
 
-						key = Tools.repairXML(child.getAttribute("key")) + GalleryQuestion.DESCRIPTIVETEXT;
+						key = Tools.repairXML(child.getAttribute("key"));
 						label = getText(child.getElementsByTagName("GalleryDescriptiveText"), "GalleryDescriptiveText");
 						result.getTranslations().add(new Translation(key, label, lang, surveyId, result));
 
@@ -2503,9 +2503,9 @@ public class TranslationsHelper {
 					if (translationsByKey.containsKey(child.getUid() + GalleryQuestion.TEXT)
 							&& notNullOrEmpty(translationsByKey.get(child.getUid()+ GalleryQuestion.TEXT).getLabel()))
 						child.setComment(translationsByKey.get(child.getUid() + GalleryQuestion.TEXT).getLabel());
-					if (translationsByKey.containsKey(child.getUid() + GalleryQuestion.DESCRIPTIVETEXT)
-							&& notNullOrEmpty(translationsByKey.get(child.getUid() + GalleryQuestion.DESCRIPTIVETEXT).getLabel()))
-						child.setDescription(translationsByKey.get(child.getUid() + GalleryQuestion.DESCRIPTIVETEXT).getLabel());
+					if (translationsByKey.containsKey(child.getUid())
+							&& notNullOrEmpty(translationsByKey.get(child.getUid()).getLabel()))
+						child.setDescription(translationsByKey.get(child.getUid()).getLabel());
 					if (translationsByKey.containsKey(child.getUid() + GalleryQuestion.TITLE)
 							&& notNullOrEmpty(translationsByKey.get(child.getUid() + GalleryQuestion.TITLE).getLabel()))
 						child.setName(translationsByKey.get(child.getUid() + GalleryQuestion.TITLE).getLabel());

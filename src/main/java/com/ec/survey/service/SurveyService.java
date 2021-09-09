@@ -1306,15 +1306,7 @@ public class SurveyService extends BasicService {
 							} else {
 								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
-						} else if (draftTranslation.getKey().endsWith("GALLERYDESCRIPTIVETEXT")) {
-							String draftKey = draftTranslation.getKey().replace("GALLERYDESCRIPTIVETEXT", "");
-							if (publishedSurveyKeys.containsKey(draftKey)) {
-								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "GALLERYDESCRIPTIVETEXT");
-								translationsCopy.getTranslations().add(translationCopy);
-							} else {
-								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
-							}
-						} else if (draftTranslation.getKey().endsWith("TITLE")) {
+						}  else if (draftTranslation.getKey().endsWith("TITLE")) {
 							String draftKey = draftTranslation.getKey().replace("TITLE", "");
 							if (publishedSurveyKeys.containsKey(draftKey)) {
 								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "TITLE");
@@ -2807,15 +2799,6 @@ public class SurveyService extends BasicService {
 				retVal = Integer.parseInt(uid);
 				if (elementsBySourceId.containsKey(retVal))
 					return elementsBySourceId.get(retVal).getUniqueId() + GalleryQuestion.TITLE;
-			} else if (key.endsWith(GalleryQuestion.DESCRIPTIVETEXT)) {
-				uid = key.substring(0, key.indexOf(GalleryQuestion.DESCRIPTIVETEXT));
-
-				if (oldToNewUniqueIds.containsKey(uid)) {
-					return oldToNewUniqueIds.get(uid) + GalleryQuestion.DESCRIPTIVETEXT;
-				}
-				retVal = Integer.parseInt(uid);
-				if (elementsBySourceId.containsKey(retVal))
-					return elementsBySourceId.get(retVal).getUniqueId() + GalleryQuestion.DESCRIPTIVETEXT;
 			} else if (key.endsWith(GalleryQuestion.TEXT)) {
 				uid = key.substring(0, key.indexOf(GalleryQuestion.TEXT));
 				if (oldToNewUniqueIds.containsKey(uid)) {

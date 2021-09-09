@@ -26,7 +26,6 @@ public class GalleryQuestion extends Question {
 	private static final long serialVersionUID = 1L;
 
 	public static final String TEXT = "GALLERYTEXT";
-	public static final String DESCRIPTIVETEXT = "GALLERYDESCRIPTIVETEXT";
 	public static final String TITLE = "TITLE";
 
 	public GalleryQuestion() {}
