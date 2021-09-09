@@ -3,6 +3,8 @@ package com.ec.survey.service;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
@@ -85,6 +87,12 @@ public class ReportingServiceProxy {
 		return reportingService.getCountInternal(survey, quid, auid, noPrefixSearch, noPostfixSearch, where, values);
 	}
 	
+	public int getAnswerSetsByQuestionUID(Survey survey, String quid, Map<Integer, Set<String>> answersByAnswerSetID)
+	{
+		if (!isReportingDatabaseEnabled()) return -1;
+		return reportingService.getAnswerSetsByQuestionUIDInternal(survey, quid, answersByAnswerSetID);
+	}
+
 	public void addToDo(ToDo todo, String uid, String code, boolean executeTodoSync) {
 		if (!isReportingDatabaseEnabled()) return;
 		reportingService.addToDoInternal(todo, uid, code, executeTodoSync);

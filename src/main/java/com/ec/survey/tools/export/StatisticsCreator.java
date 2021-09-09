@@ -327,7 +327,7 @@ public class StatisticsCreator implements Runnable {
 
 	private void addReportingAnswers4Statistics(Question q, Map<Integer, Integer> map,
 			Map<Integer, Map<Integer, Integer>> mapMatrix, Map<Integer, Map<Integer, Integer>> mapGallery,
-			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Object> values, String where, Map<String, Integer> mapNumberQuestion) {
+			Map<Integer, Map<Integer, Integer>> mapRatingQuestion, Map<String, Object> values, String where, Map<String, Integer> mapNumberQuestion, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset) {
 		if (q instanceof ChoiceQuestion) {
 			ChoiceQuestion choice = (ChoiceQuestion) q;
 			for (PossibleAnswer a : choice.getAllPossibleAnswers()) {
@@ -337,6 +337,23 @@ public class StatisticsCreator implements Runnable {
 			}
 			int count = reportingService.getCount(survey, choice.getUniqueId(), null, false, false, where, values);
 			map.put(q.getId(), count);
+			if (q instanceof MultipleChoiceQuestion) {
+				Set<String> paUIDs = new HashSet<>();
+				for (PossibleAnswer a : choice.getPossibleAnswers()) {
+					paUIDs.add(a.getUniqueId());
+				}
+				String choiceUID = choice.getUniqueId();
+				Map<Integer, Set<String>> answersByAnswerSetID = new HashMap<>();
+				reportingService.getAnswerSetsByQuestionUID(survey, choiceUID, answersByAnswerSetID);
+				for (Map.Entry<Integer, Set<String>> entry : answersByAnswerSetID.entrySet()) {
+					Integer answerSetID = entry.getKey();
+					Set<String> answerUIDs = entry.getValue();
+					answerUIDs.retainAll(paUIDs);
+					Map<String, Set<String>> multipleChoiceSelection = multipleChoiceSelectionsByAnswerset.getOrDefault(answerSetID, new HashMap<>());
+					multipleChoiceSelection.put(choiceUID, answerUIDs);
+					multipleChoiceSelectionsByAnswerset.put(answerSetID, multipleChoiceSelection);
+				}
+			}
 		} else if (q instanceof GalleryQuestion) {
 			GalleryQuestion g = (GalleryQuestion) q;
 			if (!mapGallery.containsKey(g.getId())) {
@@ -702,7 +719,7 @@ public class StatisticsCreator implements Runnable {
 			String where = ReportingService.getWhereClause(new ResultFilter(), values, survey);
 
 			try {
-				addReportingAnswers4Statistics(question, map, mapMatrix, mapGallery, mapRatingQuestion, values, where, mapNumberQuestion);
+				addReportingAnswers4Statistics(question, map, mapMatrix, mapGallery, mapRatingQuestion, values, where, mapNumberQuestion, multipleChoiceSelectionsByAnswerset);
 
 				return reportingService.getCount(survey, where, values);
 			} catch (Exception e) {
@@ -808,7 +825,7 @@ public class StatisticsCreator implements Runnable {
 
 			try {
 				for (Question q : survey.getQuestions()) {
-					addReportingAnswers4Statistics(q, map, mapMatrix, mapGallery, mapRatingQuestion, values, where, mapNumberQuestion);
+					addReportingAnswers4Statistics(q, map, mapMatrix, mapGallery, mapRatingQuestion, values, where, mapNumberQuestion, multipleChoiceSelectionsByAnswerset);
 				}
 
 				return reportingService.getCount(survey, where, values);
