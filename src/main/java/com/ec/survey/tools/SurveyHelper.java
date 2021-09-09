@@ -4614,12 +4614,18 @@ public class SurveyHelper {
 						}
 					}
 				}
-				
+
 				if (element instanceof GalleryQuestion) {
 					GalleryQuestion gallery = (GalleryQuestion) element;
 					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+						if (translationsByKey.get(child.getUid() + GalleryQuestion.TEXT) != null) {
+							child.setComment(translationsByKey.get(child.getUid() + GalleryQuestion.TEXT).getLabel());
+						}
 						if (translationsByKey.get(child.getUid()) != null) {
 							child.setDescription(translationsByKey.get(child.getUid()).getLabel());
+						}
+						if (translationsByKey.get(child.getUid() + GalleryQuestion.TITLE) != null) {
+							child.setName(translationsByKey.get(child.getUid() + GalleryQuestion.TITLE).getLabel());
 						}
 					}
 				}

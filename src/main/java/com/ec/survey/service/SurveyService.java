@@ -1298,7 +1298,22 @@ public class SurveyService extends BasicService {
 							} else {
 								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
 							}
-							
+						} else if (draftTranslation.getKey().endsWith("GALLERYTEXT")) {
+							String draftKey = draftTranslation.getKey().replace("GALLERYTEXT", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "GALLERYTEXT");
+								translationsCopy.getTranslations().add(translationCopy);
+							} else {
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
+							}
+						}  else if (draftTranslation.getKey().endsWith("TITLE")) {
+							String draftKey = draftTranslation.getKey().replace("TITLE", "");
+							if (publishedSurveyKeys.containsKey(draftKey)) {
+								translationCopy.setKey(publishedSurveyKeys.get(draftKey) + "TITLE");
+								translationsCopy.getTranslations().add(translationCopy);
+							} else {
+								logger.info("key " + draftTranslation.getKey() + " not found in key map for translation");
+							}
 						} else if (publishedSurveyKeys.containsKey(draftTranslation.getKey())) {
 							translationCopy.setKey(publishedSurveyKeys.get(draftTranslation.getKey()));
 							translationsCopy.getTranslations().add(translationCopy);
@@ -2662,7 +2677,6 @@ public class SurveyService extends BasicService {
 
 	private String translateKey(String key, Map<Integer, Element> elementsBySourceId,
 			Map<String, String> oldToNewUniqueIds, Map<String, String> convertedFileUIDs) {
-
 		if (key == null)
 			return key;
 
@@ -2776,6 +2790,23 @@ public class SurveyService extends BasicService {
 				retVal = Integer.parseInt(uid);
 				if (elementsBySourceId.containsKey(retVal))
 					return elementsBySourceId.get(retVal).getUniqueId() + "FIRSTCELL";
+			} else if (key.endsWith(GalleryQuestion.TITLE)) {
+				uid = key.substring(0, key.indexOf(GalleryQuestion.TITLE));
+
+				if (oldToNewUniqueIds.containsKey(uid)) {
+					return oldToNewUniqueIds.get(uid) + GalleryQuestion.TITLE;
+				}
+				retVal = Integer.parseInt(uid);
+				if (elementsBySourceId.containsKey(retVal))
+					return elementsBySourceId.get(retVal).getUniqueId() + GalleryQuestion.TITLE;
+			} else if (key.endsWith(GalleryQuestion.TEXT)) {
+				uid = key.substring(0, key.indexOf(GalleryQuestion.TEXT));
+				if (oldToNewUniqueIds.containsKey(uid)) {
+					return oldToNewUniqueIds.get(uid) + GalleryQuestion.TEXT;
+				}
+				retVal = Integer.parseInt(uid);
+				if (elementsBySourceId.containsKey(retVal))
+					return elementsBySourceId.get(retVal).getUniqueId() + GalleryQuestion.TEXT;
 			} else if (oldToNewUniqueIds.containsKey(key)) {
 				return oldToNewUniqueIds.get(key);
 			} else if (convertedFileUIDs.containsKey(key)) {
