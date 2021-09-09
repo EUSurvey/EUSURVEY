@@ -1692,7 +1692,7 @@ public class TranslationsHelper {
 							cell = sheet.getCellByPosition(1, rowIndex);
 							cell.setStringValue(descriptions.get(child.getUid()));
 							cell = sheet.getCellByPosition(2, rowIndex++);
-							cell.setStringValue(label);
+							cell.setStringValue(	label);
 						}
 						label = getLabel(child, GalleryQuestion.TITLE, translationsByKey);
 						if (notNullOrEmpty(label)) {
@@ -2503,9 +2503,11 @@ public class TranslationsHelper {
 					if (translationsByKey.containsKey(child.getUid() + GalleryQuestion.TEXT)
 							&& notNullOrEmpty(translationsByKey.get(child.getUid()+ GalleryQuestion.TEXT).getLabel()))
 						child.setComment(translationsByKey.get(child.getUid() + GalleryQuestion.TEXT).getLabel());
+
 					if (translationsByKey.containsKey(child.getUid())
 							&& notNullOrEmpty(translationsByKey.get(child.getUid()).getLabel()))
 						child.setDescription(translationsByKey.get(child.getUid()).getLabel());
+
 					if (translationsByKey.containsKey(child.getUid() + GalleryQuestion.TITLE)
 							&& notNullOrEmpty(translationsByKey.get(child.getUid() + GalleryQuestion.TITLE).getLabel()))
 						child.setName(translationsByKey.get(child.getUid() + GalleryQuestion.TITLE).getLabel());
