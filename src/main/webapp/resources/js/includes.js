@@ -960,11 +960,17 @@ function initModals(item)
 				$(element).attr("aria-invalid", "true");
 				$(element).attr("aria-describedby", "validationError" + self.validationErrorCounter++);
 			},
-			andFocus : function(element, text) {
+			andFocusWhen : function(element, text, isFocusChanging) {
 				const self = addValidationError;
 				$(element).after("<div class='validation-error' id='validationError" + self.validationErrorCounter + "' tabindex='-1' aria-live='polite'>" + text + "</div>");
 				self.commonImpl(element);
-				$(element).next(".validation-error").first().focus();
+				if (isFocusChanging) {
+					$(element).next(".validation-error").first().focus();
+				}
+			},
+			andFocus : function(element, text) {
+				const self = addValidationError;
+				self.andFocusWhen(element, text, true);
 			},
 			toElementAndFocus : function(element, target, text) {
 				const self = addValidationError;
@@ -1279,13 +1285,17 @@ function initModals(item)
 			var value = $(this).val();
 			var second = $(this).parent().find(".comparable-second").first().val();
 			
+			const viewModel = ko.dataFor($(this).parent()[0]);
+			viewModel.values.first.onValidation(value);
+
 			if ((!blur || value.length > 0 && second.length > 0) && value != "********")
 			{
 				if ($(this).parent().find(".validation-error").length == 0)
 				if (value != second)
 				{
 					validationinfo += $(this).attr("name") + " (COMP) ";
-					addValidationError.andFocus($(this).parent().find(".comparable-second"), nomatchText);
+					const useFocusChange = viewModel.values.checkAnyChangesOnValidation();
+					addValidationError.andFocusWhen($(this).parent().find(".comparable-second"), nomatchText, useFocusChange);
 					result = false;
 				};
 			}
@@ -1893,6 +1903,9 @@ function initModals(item)
 	}
 	
 	function validateInputForSecondAnswer(element) {
+		const viewModel = ko.dataFor($(element).parent()[0]);
+		const secondValue = $(element).val();
+		viewModel.values.second.onValidation(secondValue);
 		var result = validateInput($(element).parent(), true);
 		if (result) {
 			//no other validation error -> check if empty
@@ -1901,7 +1914,8 @@ function initModals(item)
 				otherId = otherId.substring(0, otherId.length - 1);
 				var other = $("textarea[data-id='" + otherId + "']");
 				if ($(other).val().trim().length > 0) {
-					addValidationError.andFocus($(element), nomatchText);
+					const useFocusChange = viewModel.values.checkAnyChangesOnValidation();
+					addValidationError.andFocusWhen($(element), nomatchText, useFocusChange);
 				}
 			}			
 		}
