@@ -1917,6 +1917,9 @@ function initModals(item)
 					const useFocusChange = viewModel.values.checkAnyChangesOnValidation();
 					addValidationError.andFocusWhen($(element), nomatchText, useFocusChange);
 				}
+			} else {
+				const div = $(element).closest(".survey-element");
+				enableDelphiSaveButtons(div);
 			}			
 		}
 	}
