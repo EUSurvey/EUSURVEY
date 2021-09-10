@@ -677,7 +677,7 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 	var rowcontent = "";
 	var options = content.split(",");
 	var name = getNewId();
-	if (label == "Style" || label == "Order" || label == "Display" || label == "DisplaySlider" || label == "InitialSliderPosition")
+	if (label == "Style" || label == "Order" || label == "OrderSection" || label == "Display" || label == "DisplaySlider" || label == "InitialSliderPosition")
 	{
 		row.ContentType("radio");
 		row.Content(options);

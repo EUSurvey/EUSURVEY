@@ -521,7 +521,8 @@ function newSectionViewModel(element)
 {
 	var viewModel = newBasicViewModel(element)
 	viewModel.level = ko.observable(element.level);	
-	viewModel.tabTitle = ko.observable(element.tabTitle);	
+	viewModel.tabTitle = ko.observable(element.tabTitle);
+	viewModel.order = ko.observable(element.order);	
 	
 	return viewModel;
 }
