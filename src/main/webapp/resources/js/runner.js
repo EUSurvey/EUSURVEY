@@ -214,6 +214,10 @@ function propagateChange(element)
 		viewModel.isAnswered(true);
 	}
 	
+	if ($(surveyElement).find("textarea.unique").length > 0) {
+		$(surveyElement).find(".validation-error-server").remove();
+	}
+	
 	enableDelphiSaveButtons(div);
 	$(div).find(".explanation-section").show();
 	$(div).find(".explanation-file-upload-section").show();
