@@ -856,7 +856,7 @@ public class AnswerService extends BasicService {
 		}
 
 		Session session = sessionFactory.getCurrentSession();
-		StringBuilder sql = new StringBuilder("From AnswerSet a where a.uniqueCode in (");
+		StringBuilder sql = new StringBuilder("From AnswerSet a where a.isDraft = false and a.uniqueCode in (");
 		int counter = 0;
 		for (String uniqueCode : answerSetsUIDS) {
 			if (counter > 0) {
