@@ -316,7 +316,7 @@ public class DashboardController extends BasicController {
 				for (String uid : uids) {
 					List<Integer> list = new ArrayList<>();
 					// 1: The number of invitations
-					list.add(participationService.getNumberOfInvitations(uid));
+					list.add(participationService.getNumberOfOpenInvitations(uid));
 					// 2: The number of drafts
 					list.add(answerService.getNumberOfDrafts(uid));
 					listOfList.add(list);

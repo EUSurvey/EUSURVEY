@@ -186,7 +186,7 @@ public class SurveyService extends BasicService {
 			survey.setCompleteTranslations(this.getCompletedTranslations(survey));
 
 			if (addInvitedAndDrafts) {
-				survey.setNumberOfInvitations(participationService.getNumberOfInvitations(survey.getUniqueId()));
+				survey.setNumberOfInvitations(participationService.getNumberOfOpenInvitations(survey.getUniqueId()));
 				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
 			} else {
 				survey.setNumberOfInvitations(-1);
