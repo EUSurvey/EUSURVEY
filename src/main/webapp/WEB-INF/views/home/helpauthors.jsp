@@ -1286,7 +1286,7 @@
 				Publishing a survey
 			</h1>
 			<h2>
-				How do I publish my survey?    
+				How do I publish my survey?
 			</h2>
 			<p>
 				To publish a survey from a current working draft, please go to the 'Overview' page and click on
@@ -1308,27 +1308,12 @@
 				Can I customise the URL to my survey?    
 			</h2>
 			<p>
-				Yes!
-			</p>
-			<p>
-				By changing your survey's 'Alias' you can make the URL to your survey more meaningful.
-			</p>
-			<p>
-				<ol>
-					<li>
-						Open the survey and go to the 'Properties' page.
-					</li>
-					<li>
-						Change your survey's alias under the 'Basic' section.
-					</li>
-				</ol>
-			</p>
-			<p>
-				An alias can only contain alphanumeric characters and hyphens.
-			</p>
-			<p>
-				If you change the alias of a published survey, go to the 'Overview' page
-				and click on 'Apply Changes'.
+				Yes! By changing your survey's 'Alias' you can make the URL to
+				your survey more meaningful. Open the survey and go to the
+				'Properties' page. Change your survey's alias under the 'Basic'
+				section. An alias can only contain alphanumeric characters and
+				hyphens. If you change the alias of a published survey, go to the
+				'Overview' page and click on 'Apply Changes'.
 			</p>
 			<p>
 				Please note that aliases have to be unique in EUSurvey. You will get a warning if your alias has already
@@ -1350,80 +1335,54 @@
 				https://ec.europa.eu/eusurvey/runner/<strong>SurveyAlias</strong>?surveylanguage=<strong>LC</strong>
 			</p>
 			<p>
-				Where:
+				Just replace:
 			</p>
 			<ul>
 				<li>
-					<strong>SurveyAlias</strong>
-					is your <strong>survey's alias</strong>
+					<strong>SurveyAlias</strong> with the <strong>alias of your survey</strong>
 				</li>
 				<li>
-					<strong>LC</strong>
-					is the appropriate <strong>ISO 639-1 language code</strong> (e.g. FR for
+					<strong>LC</strong> with the appropriate <strong>ISO 639-1 language code</strong> (e.g. FR for
 					French, DE for German, etc.)
 				</li>
 			</ul>
 			<h2>
-				How can I schedule my survey to be published while I'm on holiday?
+				How do I make my survey publish itself while I am on holiday?
 			</h2>
 			<p>
-				You can schedule your survey to be published automatically at any time.
-			</p>
-			<p>
-				<ol>
-					<li>
-						Open the survey and go to the 'Properties' page.
-					</li>
-					<li>
-						Enable the 'Automatic survey publishing' option under the 'Advanced'
-						section.
-					</li>
-					<li>
-						Specify your surveys' start- and end-date.
-					</li>
-				</ol>
+				You can schedule your survey to be published automatically at any
+				time. Open the survey and go to the 'Properties' page. Enable the
+				'Automatic survey publishing' option under the 'Advanced' section,
+				then specify the start- and expiry-date of your survey.
 			</p>
 			<h2>
 				Can I receive a reminder of when my survey will end?    
 			</h2>
 			<p>
-				Yes, EUSurvey can send you an email reminder when your survey is about to end. This
+				EUSurvey can send you an email reminder when your survey is about to end. This
 				allows you to prepare the next steps (e.g. organising resources for result
 				analysis).
 			</p>
 			<p>
-				To enable this option:
-			</p>
-			<p>
-				<ol>
-					<li>
-						open the survey and go to the 'Properties' page
-					</li>
-					<li>
-						go to the 'Advanced' section and under 'reminder' specify how long in
-						advance you want a reminder
-					</li>
-					<li>
-						click on 'Save'.
-					</li>
-				</ol>
-			</p>
-			<p>
-				The reminder email will be sent to all form managers.
+				To enable this option, open the survey and go to the
+				'Properties' page. Select 'Advanced Settings' section and, click on
+				the 'Edit' button and enable 'End Notification', specifying how long
+				in advance you expect an email. Click on 'Save'. The reminder email
+				will be delivered to all Form Managers
 			</p>
 			<h2>
 				For EU staff: What are the official requirements for launching an open public
 				consultation ('Your Voice in Europe' website)?   
 			</h2>
 			<p>
-				Follow
+				PLease carefully follow
 				<a
 						href="https://circabc.europa.eu/sd/d/fc02d2ac-d94f-42ed-b866-b3429e0d717b/Survey_publication_your_voice_in_europe_NEW.pdf"
 						target="_blank"
 						>
 					the procedure
 				</a>
-				from the Commission's Secretariat-General for launching an open public
+				from the SG for launching an open public
 				consultation on the
 				<a
 						href="http://ec.europa.eu/yourvoice/consultations/index_en.htm"
