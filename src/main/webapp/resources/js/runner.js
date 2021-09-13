@@ -200,6 +200,8 @@ function propagateChange(element)
 	
 	var div = $(element).parents(".survey-element").last();
 	
+	enableDelphiSaveButtons(div);
+	
 	if (!checkHasValue(element)) {
 		//disableDelphiSaveButtons(div);
 		$(div).find(".explanation-section").hide();
@@ -216,9 +218,8 @@ function propagateChange(element)
 	
 	if ($(surveyElement).find("textarea.unique").length > 0) {
 		$(surveyElement).find(".validation-error-server").remove();
-	}
+	}	
 	
-	enableDelphiSaveButtons(div);
 	$(div).find(".explanation-section").show();
 	$(div).find(".explanation-file-upload-section").show();
 	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();
