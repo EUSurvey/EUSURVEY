@@ -1619,239 +1619,166 @@
 				Analysing, exporting and publishing results
 			</h1>
 			<h2>
-				Where can I find the answers submitted by my respondents?    
+				Where can I find the contributions submitted by my respondents?
 			</h2>
 			<p>
-				Open your survey in EUSurvey &#8594; click the 'Results' page.
-			</p>
-			<p>
-				Initially, you'll see the full content of all submitted answers in a table.
-			</p>
-			<p>
-				You can view the results in 2 different ways:
+				Open your survey in EUSurvey (also see '<a href="#_Toc_3_5"> How
+					do I open an existing survey for editing etc.? </a>') and go to the
+				'Results' page. Initially, you'll see the full content of all
+				submitted contributions in a table. You can view the results in 2
+				different ways:
 			</p>
 			<ul>
 				<li>
-					full content
+					Full Content
 				</li>
 				<li>
-					statistics
+					Statistics
 				</li>
 			</ul>
 			<p>
-				To switch view modes &#8594; click the icons in the upper left corner of the
-				screen.
-			</p>
-			<p>
-				See also '
-				<a href="#_Toc_3_5">
-					How do I open an existing survey for editing etc.?
-				</a>
-				'
+				You can switch view modes by clicking the icons in the upper
+				left corner of the screen.
 			</p>
 			<h2>
-				How can I download submitted answers?    
+				How can I download submitted contributions?
 			</h2>
 			<p>
-				<ol>
-					<li>
-						Open your survey, go to the 'Results' page.
-					</li>
-					<li>
-						Click 'Export' in the top right-hand corner.
-					</li>
-					<li>
-						Select from the available export file formats.
-					</li>
-					<li>
-						Specify a name in the dialogue box - under this name the export file
-						will appear on the 'Export' page.
-					</li>
-				</ol>
-			</p>
-			<p>
-				Different export file formats are available, depending on the view mode
-				(full content/statistics).
-			</p>
-			<p>
-				N.B. The export file will contain the set of questions defined as
-				exportable and the filtered search results.
+				To export submitted answers from EUSurvey to your computer,
+				open your survey and go to the 'Results' page. Click on the
+				'Export' button in the top right-hand corner of the page, select
+				from the available export file formats and specify a name in the
+				dialogue box. Under this name the export file will appear on the
+				'Export' page. Different export file formats are available,
+				depending on the view mode (Full Content/ Statistics). N.B. The
+				export file will contain the set of configured questions only as
+				well as the current search results of a filter process.
 			</p>
 			<h2>
-				How can I extract the draft answers?    
+				How can I extract the Draft answers?
 			</h2>
 			<p>
-				This is currently not allowed by our privacy policy.
-			</p>
-			<p>
-				On your Dashboard, you can see the number of saved draft answers to your
-				survey.
+				On your Dashboard you can see the number of the saved Draft
+				contributions for your survey. Your participants have the option to
+				save their work as a Draft and continue the filling in a later time.
+				According with our privacy policy, as a form manager you are not
+				allowed to extract the Draft answers.
 			</p>
 			<h2>
-				How can I access and analyse a defined subset of answers?    
+				How can I access and analyse a defined subset of all contributions?
 			</h2>
 			<p>
-				On the 'Results' page:
-			</p>
-			<p>
-				<ul>
-					<li>
-						search for keywords in free-text answers or
-					</li>
-					<li>
-						select individual answers from choice-questions in the filter bar.
-					</li>
-				</ul>
-			</p>
-			<p>
-				This limits the full set of answers to a subset of answers.
-			</p>
-			<p>
-				For performance reasons you can only set a maximum of 3 filters!
-			</p>
-			<p>
-				You can change the view mode anytime, so you can carry out an advanced
-				statistical analysis of the data collected.
-			</p>
-			<p>
-				Note: to view and analyse results, you need certain privileges (see '
-				<a href="#_Toc_10_7">
-					How do I give other users access to my survey's results?
-				</a>
-				').
-			</p>
-			<p>
-				To export a subset of contributions, read 'How can I download submitted
-				contributions?'.
-			</p>
-			<p>
-				See also '
-				<a href="#_Toc_10_1">
-					Where can I find the answers submitted by my respondents?
-				</a>
-				'
+				On the 'Results' page (see '<a href="#_Toc_10_1"> Where can I
+					find the contributions submitted by my participants? </a>') search for
+				keywords in free-text answers or select individual answers from
+				choice-questions in the filter bar. This limits the full set of
+				answers to a subset of contributions. For performance reasons you
+				can only set a maximum of 3 filters! At any point you can change the
+				view mode, so you can carry out an advanced statistical analysis of
+				the data collected. Note: to view and analyse results, you need
+				certain privileges (see '<a href="#_Toc_10_7"> How do I give
+					other users access to the results of my survey? </a>'). To export a
+				subset of contributions, please read '<a href="#_Toc_10_2">How
+					can I download submitted contributions?</a>'.
 			</p>
 			<h2>
-				How can I publish my results?    
+				How can I get back to the full set of answers, after
+				defining a subset of contributions?
 			</h2>
 			<p>
-				<ol>
-					<li>
-						Open the survey.
-					</li>
-					<li>
-						Go to the 'Properties' page and select 'Publish Results'.
-					</li>
-					<li>
-						Here you will find the URL of the published results.
-					</li>
-					<li>
-						Choose which questions/answers/contributions you would like to publish.
-					</li>
-					<li>
-						To go there directly &#8594; click 'Edit Results Publication' from the
-						'Overview' page.
-					</li>
-					<li>
-						Be sure to select something in 'Publish Results' under 'Publish',
-						otherwise the system won't publish any results.
-					</li>
-				</ol>
+				To visualize the full set of answers, click the 'Reset' button
+				at the top of the 'Results' page or deactivate every search you've
+				performed on the filter-bar on this page.
 			</p>
 			<h2>
-				How can I access the published results?    
+				How can I publish my results?
 			</h2>
 			<p>
-				Open the 'Overview' page &#8594; click on the 'Published' hyperlink right next to
-				'Results'.
+				Open the survey, go to the 'Properties' page and select
+				'Publish Results' section. Here you will find the URL of the
+				published results and able to choose which
+				questions/answers/contributions you would like to publish. You can
+				also go there directly by clicking on 'Edit Results Publication'
+				from the 'Overview' page of your survey.
 			</p>
 			<p>
-				Everybody who knows this address can access your results.
+				Please be sure to select something in 'Publish Results'
+				under 'Publish', otherwise the system will not publish any
+				results.
 			</p>
 			<h2>
-				How do I give other users access to my survey's results?    
+				How can I access the published results?
 			</h2>
 			<p>
-				Open your survey &#8594; go to the 'Privileges' page and give other users access
-				to your results.
-			</p>
-			<p>
-				Read more about this under '
-				<a href="#_Toc_10_7">
-					How do I give other users access to my survey?
-				</a>
-				'.
+				Open the 'Overview' page and click on the 'Published'
+				hyperlink right next to the word 'Results'. This will direct you
+				to the published results. Everybody who knows this address can
+				access your results.
 			</p>
 			<h2>
-				I cannot unzip my exported files - can I solve this?    
+				How do I give other users access to the results of my survey?
 			</h2>
 			<p>
-				This might happen if the name of the files contained in your folder is too
-				long.
+				Open your survey, go to the 'Privileges' page and give results
+				access to other users. Read more about this under '<a
+					href="#_Toc_10_7"> How do I give other users access to my
+					survey? </a>'.
 			</p>
+			<h2>
+				I cannot unzip my exported files
+			</h2>
 			<p>
-				Windows has a maximum length of 260 characters for directory locations on
-				the hard drive.
-			</p>
-			<p>
-				Possible solutions for this are:
+				This might happen if the name of the files contained in your
+				folder is too long. Windows has a maximum length of 260 characters
+				for directory locations on the hard drive. Possible solutions for
+				this are:
 			</p>
 			<ul>
 				<li>
-					unzip the folder in the root directory of your operating system, e.g.
-					unpack at 'C:' instead of 'C:\Users\USERNAME\Desktop'; or
+					Unzip the folder in the root directory of your operating system, e.g.
+					unpack at 'C:' instead of 'C:\Users\USERNAME\Desktop'
 				</li>
 				<li>
-					when unpacking the files, rename the target folder to shorten the
+					Or when unpacking the files, rename the target folder to shorten the
 					directory length.
 				</li>
 			</ul>
 			<h2>
-				Published results - how to protect personal information uploaded by respondents    
+				Published results - protection of personal information uploaded by participants
 			</h2>
 			<p>
-				Under data protection rules, the form manager can publish files uploaded
-				with a respondent's answer along with the other results.
-			</p>
-			<p>
-				To do so &#8594; tick the 'Uploaded elements' check box.
-			</p>
-			<p>
-				This is in the corresponding section on the 'Properties' page under the
-				'Publish Results' section.
-			</p>
-			<p>
-				This check box will only appear if your survey contains an uploaded file.
+				For data protection rules, the form manager has to actively
+				make the choice to publish files uploaded to a contribution by the
+				participant along with the other results. To do so, tick the
+				'"Uploaded elements' check box in the corresponding section on the
+				'Properties' page under 'Publish Results' section. Please note that
+				this check box will only appear if your survey contains an 'uploaded
+				element'.
 			</p>
 			<h2>
-				How do I design a survey to publish the results either with or without
-				personal information?    
+				How do I design a survey to publish the results with or without personal information?
 			</h2>
 			<p>
-				If you want your respondents to choose whether or not their personal
-				information can be published, follow
-				<a
-						href="https://circabc.europa.eu/sd/d/e68ff760-226f-40e9-b7cb-d3dcdd04bfb1/How_to_publish_survey_results_anonymously.pdf"
-						target="_blank"
-						>
-					these instructions
-				</a>
-				to build the survey to fit what is required.
+				If you want to let your participants choose, whether their personal
+				information will be published along with their answers, follow <a
+					href="https://circabc.europa.eu/sd/d/e68ff760-226f-40e9-b7cb-d3dcdd04bfb1/How_to_publish_survey_results_anonymously.pdf"
+					target="_blank"> these instructions </a> to build the survey
+				to fit these requirements.
 			</p>
 			<h2>
-				Why are my results not up-to-date?    
+				Why are my results not up-to-date?
 			</h2>
 			<p>
-				A new database was introduced to improve EUSurvey's performance on queries
-				on surveys' results.
+				A new database has been introduced which shall improve
+				EUSurvey's performance when querying your survey's results. However,
+				this can lead to some delays until the latest data is displayed on
+				the Results page of your survey. This delay should not be more than
+				12 hours.
 			</p>
 			<p>
-				However, this results sometimes in some delays in displaying latest data on
-				the 'Results' page.
-			</p>
-			<p>
-				This delay should not be more than 12 hours; if it is more than 12 hours, &#8594;
-				contact EUSurvey    <a href="https://ec.europa.eu/eusurvey/home/support">support</a>.
+				If the displayed data is older than 12 hours, please contact
+				EUSurvey&nbsp;<a href="https://ec.europa.eu/eusurvey/home/support">support
+				</a>.
 			</p>
 			<h1>
 				Design and layout
