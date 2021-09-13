@@ -1041,26 +1041,16 @@
 				To ensure that an user does not submit more than a defined number of contributions to your survey, in
 				the 'Properties' page enable the options 'Secure your survey' and 'Secure with EU Login' and set the
 				number in the 'Contributions per user' option.
-			</p> <!-- TODO continue here, soure txt line 1083 -->
-			<p>
-				Set the number in the 'Contribution per user' option.
-			</p>			
-			
-			<h2>How do I limit the number of contributions to a survey?</h2>
-			<p>
-				You can change the number of contributions a survey can accept by going to Properties &gt;&gt; Advanced. By
-				default, there is no limit to the number of contributions but if a limit is set then the survey will no
-				longer be accessible as soon as it is reached. This can be used for event registration forms for example.
-			</p>			
-			
+			</p>
 			<h2>
-				How do I prevent robots from submitting multiple answers?
+				What do I do to prevent robots from submitting multiple contributions to my survey?
 			</h2>
 			<p>
-				Automatic scripts can falsify an online survey's outcome by submitting a
-				high number of answers. To prevent this, you can use EUSurvey to make
-				respondents solve a <a href="http://en.wikipedia.org/wiki/CAPTCHA" target="_blank">CAPTCHA</a>
-				challenge before submitting an answer.
+				Automatic scripts can falsify the outcome of an online survey by
+				submitting a high number of contributions. To prevent this, you can
+				use EUSurvey to make participants solve a
+				<a href="http://en.wikipedia.org/wiki/CAPTCHA" target="_blank">CAPTCHA</a> challenge
+				before submitting a contribution.
 			</p>
 			<p>
 				You can enable/disable the CAPTCHA in the 'Security' under 'Properties'.
@@ -1073,39 +1063,25 @@
 				Can I enable my participants to access their contributions after submission?
 			</h2>
 			<p>
-				Yes!
-			</p>
-			<p>
-				Go to 'Security' under 'Properties' and enable 'Allow participants to change their contribution' option.
-				Participants need to know the contribution-ID that was shown after they submitted their contribution.
-			</p>
-			<p>
-				Participants need to know their contribution-ID, provided after they
-				submitted their answer.
-			</p>
-			<p>
-				To change contributions after submission, participants should go to the EUSurvey homepage
-				<a href="https://ec.europa.eu/eusurvey" target="_blank">
-					https://ec.europa.eu/eusurvey
-				</a>
-				.
-			</p>
-			<p>
-				Below the 'Register Now!' button is a link to the
-				<a
-						href="https://ec.europa.eu/eusurvey/home/editcontribution"
-						target="_blank"
-						>
-					access page for individual contributions
-				</a>
-				. On this page participants must fill in their individual contribution-ID and the system will open their
-				contribution. This way they can edit their contribution after it has been submitted.
+				Yes! Go to 'Security' under 'Properties' and enable 'Allow
+				participants to change their contribution' option. Participants need
+				to know the contribution-ID that was shown after they submitted
+				their contribution. To change contributions after submission,
+				participants should go to the EUSurvey homepage <a
+					href="https://ec.europa.eu/eusurvey" target="_blank">https://ec.europa.eu/eusurvey</a>.
+				Below the 'Register Now!' button is a link to the <a
+					href="https://ec.europa.eu/eusurvey/home/editcontribution"
+					target="_blank"> access page for individual
+					contributions </a>. On this page participants must fill in their
+				individual contribution-ID and the system will open their
+				contribution. This way they can edit their contribution after it has
+				been submitted.
 			</p>
 			<h1>
 				Testing a survey
-			</p>
+			</h1>
 			<h2>
-				Can I test my survey and see what it looks like once it has been published?    
+				Can I see how my survey will behave after it has been published?
 			</h2>
 			<p>
 				Yes. Please open the survey in EUSurvey and click on 'Test'. You will see the current draft of your
