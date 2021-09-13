@@ -1787,206 +1787,102 @@
 				How do I change the general look and feel of my survey?    
 			</h2>
 			<p>
-				<ol>
-					<li>
-						Open your survey, go to the 'Properties' page.
-					</li>
-					<li>
-						Select 'Appearance' section.
-					</li>
-					<li>
-						Choose a new survey skin using the drop-down menu under 'Skin' &#8594; click
-						'Save'.
-					</li>
-				</ol>
-			</p>
-			<p>
-				If you've already published your survey &#8594; go to the 'Overview' page and
-				click on 'Apply Changes'.
+				Open your survey, go to the 'Properties' page and select
+				'Appearance' section. Choose a new survey skin from the available
+				skins under 'Skin' using the drop-down menu. Click on 'Save'. If you
+				have already published your survey, please remember to go to the
+				'Overview' page and click on 'Apply Changes'.
 			</p>
 			<h2>
 				How can I create my own survey themes?    
 			</h2>
 			<p>
-				<ol>
-					<li>
-						Go to the 'Settings' page, at the top of your screen &#8594; select 'Skins'.
-					</li>
-					<li>
-						Click on 'Create a new Skin'.
-					</li>
-					<li>
-						This will open the skin editor for survey themes.
-					</li>
-				</ol>
-			</p>
-			<p>
-				You can copy an existing theme and use the online skin editor to change
-				this template if needed.
+				On EUSurvey's 'Settings' page, at the top of your screen,
+				select 'Skins' and click on 'Create a new Skin'. This will open the
+				skin editor for survey themes. You can copy an existing theme as a
+				basis and use the online skin editor to modify this template as
+				necessary.
 			</p>
 			<h2>
 				How do I add a logo to my survey?    
 			</h2>
 			<p>
-				To place your project/company logo in the top right-hand corner of your
-				survey &#8594; upload an image file to the 'Appearance' section on the
-				'Properties' page.
-			</p>
-			<p>
-				If you've already published your survey &#8594; go to the 'Overview' page and
-				click on 'Apply Changes'.
+				To let your project/company logo appear in the top right-hand
+				corner of your survey, upload an image file to the 'Appearance'
+				section on the 'Properties' page. If you have already published your
+				survey, please remember to go to the 'Overview' page and click on
+				'Apply Changes'.
 			</p>
 			<h2>
 				How do I add useful links to my survey?    
 			</h2>
 			<p>
-				<ol>
-					<li>
-						Open your survey.
-					</li>
-					<li>
-						Go to the 'Properties' page and select 'Advanced'.
-					</li>
-					<li>
-						Add labels and URLs under 'Useful links'.
-					</li>
-					<li>
-						These links will appear on the right-hand side of each page of your
-						survey.
-					</li>
-				</ol>
-			</p>
-			<p>
-				If you've already published your survey &#8594; go to the 'Overview' page and
-				click on 'Apply Changes'.
+				Open your survey, go to the 'Properties' page and select
+				'Advanced' section. Add labels and URLs under 'Useful links'. These
+				links will appear on every page on the right-hand side of your
+				survey. If you have already published your survey, please remember
+				to go to the 'Overview' page and click on 'Apply Changes'.
 			</p>
 			<h2>
 				Where do I upload background documents for my survey?    
 			</h2>
 			<p>
-				<ol>
-					<li>
-						Open your survey.
-					</li>
-					<li>
-						Go to the 'Properties' page and select 'Advanced'.
-					</li>
-					<li>
-						Upload a file under 'Background Documents'.
-					</li>
-					<li>
-						These documents will appear on the right-hand side of each page of your
-						survey.
-					</li>
-				</ol>
-			</p>
-			<p>
-				If you've already published your survey &#8594; go to the 'Overview' page and
-				click on 'Apply Changes'.
+				Open your survey, go to the 'Properties' page and select
+				'Advanced' section. Upload a file under 'Background Documents'.
+				These documents will appear on every page on the right-hand side of
+				your survey. If you have already published your survey, please
+				remember to go to the 'Overview' page and click on 'Apply Changes'.
 			</p>
 			<h2>
 				How do I create a multi-page survey?    
 			</h2>
 			<p>
-				Top-level sections of your survey can be divided into individual pages
-				automatically.
-			</p>
-			<p>
-				<ol>
-					<li>
-						Open your survey.
-					</li>
-					<li>
-						Go to the 'Properties' page and select 'Appearance' section.
-					</li>
-					<li>
-						Enable 'Multi-Paging' and click on 'Save'.
-					</li>
-				</ol>
-			</p>
-			<p>
-				If you've already published your survey &#8594; go to the 'Overview' page and
-				click on 'Apply Changes'.
+				Top-level sections of your survey can be divided into
+				individual pages automatically. Open your survey, go to the
+				'Properties' page and select 'Appearance' section. Enable
+				'Multi-Paging' and click on 'Save'. If you have already published
+				your survey, please remember to go to the 'Overview' page and click
+				on 'Apply Changes'.
 			</p>
 			<h2>
 				How do I enable automatic numbering for my survey?    
 			</h2>
-			<p>	
-				To add auto-numbering to all Sections/uestions:
-			</p>
 			<p>
-				<ol>
-					<li>
-						Open your survey, go to the 'Properties' page and select 'Appearance'.
-					</li>
-					<li>
-						Enable and select your preferences for 'Automatic Numbering Sections'
-						and/or 'Automatic Numbering Questions'.
-					</li>
-					<li>
-						Click on 'Save'.
-					</li>
-				</ol>
-			</p>
-			<p>
-				If you've already published your survey &#8594; go to the 'Overview' page and
-				click on 'Apply Changes'.
+				To add auto-numbering to all sections and question elements of
+				your form, open your survey, go to the 'Properties' page and select
+				'Appearance' section. Enable and select your preferences for
+				'Automatic Numbering Sections' and/or 'Automatic Numbering
+				Questions', finally click on Save. If you have already published
+				your survey, please remember to go to the 'Overview' page and click
+				on 'Apply Changes'.
 			</p>
 			<h2>
 				Can I create a customised skin for my survey?    
 			</h2>
 			<p>
-				Yes, follow the steps here to create a new skin for your survey.
+				To create a new skin for your survey, go to the 'Settings'
+				page and select 'Skins'. Open the 'Create a new skin' tab where you
+				can change the look of different elements of your survey: question
+				and answer text, survey title, help text and many more.
 			</p>
 			<p>
-				<ol>
-					<li>
-						Go to the 'Settings' page &#8594; select 'Skins'.
-					</li>
-					<li>
-						Open the 'Create a new skin' tab &#8594; change the look of different items in
-						your survey: question and answer text, survey title, help text and many
-						more.
-					</li>
-					<li>
-						Give your new skin a name.
-					</li>
-					<li>
-						Select the item that you want to skin.
-					</li>
-					<li>
-						On the right of the screen you find a box where you can change the font
-						of your item:
-
-						<ul>
-							<li>
-								foreground and background colour
-							</li>
-							<li>
-								font style, family, size and weight.
-							</li>
-						</ul>
-					</li>
-					<li>
-						Below, in the 'Skin Preview Survey', you can see how the changed item
-						looks in your survey.
-					</li>
-					<li>
-						Click on 'Save'.
-					</li>
-				</ol>
+				First give a name to your new skin. Then select the item that
+				you want to skin. On the right side of the screen you find a box
+				where you can change the font of your item: foreground and
+				background colour, font style, font family, font size and font
+				weight. Below, in the 'Skin Preview Survey', you can immediately see
+				how the modified item looks like in your survey. Then click on
+				'Save'.
 			</p>
 			<p>
-				If you want to change several items  change one after the other &#8594; save
-				them at the end when all items are finalised (you don't have to click save
-				after you change each item).
+				If you want to change several items, you can modify one after
+				the other and save them at the end when all items are finalised. It
+				is not necessary to do a save after each modified item.
 			</p>
 			<p>
-				To adapt your survey to your new skin &#8594; go to the 'Properties' page and
-				select 'Appearance'.
-			</p>
-			<p>
-				Choose your new skin in the 'Skin' drop-down menu &#8594; click on 'Save'.
+				To adapt your survey to your new skin, go to the 'Properties'
+				page and select 'Appearance' section. Choose your new skin in the
+				'Skin' drop-down menu. Then click on 'Save'.
 			</p>
 			<h1>
 				Managing contacts and invitations
