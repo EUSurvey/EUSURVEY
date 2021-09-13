@@ -1120,36 +1120,19 @@
 			</h2>
 			<p>
 				EUSurvey offers various ways to make the survey available in multiple languages.
-			</p>
-			<p>
 				Important: Be sure to finish editing and testing your survey before
 				starting on the translations!
-				<ol>
-					<li>
-						Open your survey and go to the 'Translations' page.
-					</li>
-					<li>
-						Click on 'Add New Translation'.
-					</li>
-					<li>
-						Select the language from the list of supported languages.
-					</li>
-					<li>
-						If the required language does not appear in the list, select 'other' and
-						specify a valid two-letter ISO 639-1 language code.
-					</li>
-					<li>
-						Click 'OK' to add the empty translation form to your survey.
-					</li>
-				</ol>
 			</p>
 			<p>
+				Open your survey and go to the 'Translations' page. Click on 'Add
+				New Translation'. Select the language from the list of supported
+				languages. If the required language does not appear in the list,
+				select 'other' and specify a valid two-letter ISO 639-1 language
+				code. Click 'OK' to add the empty translation form to your survey.
 				Please read '
-				<a href="#_Toc_7_3">
-					Can I edit an existing translation online?
-				</a>
-				' for more information on how to add new labels to your newly created
-				translation, .
+				<a href="#_Toc_7_3"> Can I edit an existing translation online?
+				</a> ' for more information on how to add new labels to your newly
+				created translation.
 			</p>
 			<p>
 				Don't forget to select the box 'To Publish' if the translation is to be published along with your survey.
@@ -1160,60 +1143,26 @@
 				How can I upload an existing translation to my survey?    
 			</h2>
 			<p>
-				<ol>
-					<li>
-						Open your survey and open the 'Translations' page.
-					</li>
-					<li>
-						Click on 'Upload existing translation'.
-					</li>
-					<li>
-						A wizard will guide you through the process of uploading the
-						translation.
-					</li>
-				</ol>
+				Open your survey and open the 'Translations' page. Click on
+				'Upload existing translation'. A wizard will guide you through the
+				process of uploading the translation.
 			</p>
 			<h2>
 				Can I edit an existing translation online?    
 			</h2>
 			<p>
-				Yes!
+				Yes! Open your survey, go to the 'Translations' page and select
+				one or more translations to edit. Select 'Edit Translations' from
+				the action menu just below the list of available translations and
+				click on the 'Ok' button. This will open the online translation
+				editor that will allow you to edit multiple translations at a time.
+				Please click the 'Save' button to make sure that your changes are
+				written to the system.
 			</p>
 			<p>
-				<ol>
-					<li>
-						Open your survey, go to the 'Translations' page.
-					</li>
-					<li>
-						Select one or more translations to edit.
-					</li>
-					<li>
-						Select 'Edit Translations' from the action icons.
-					</li>
-					<li>
-						Click on the 'Ok' button. This will open the online translation editor that will allow you to
-						edit multiple translations at a time.
-					</li>
-					<li>
-						Please click the 'Save' button to make sure that your changes are written to the system.
-					</li>
-				</ol>
-			</p>
-			<p>
-				In order to edit only one translation:
-			</p>
-			<p>
-				<ol>
-					<li>
-						open your survey
-					</li>
-					<li>
-						go to the 'Translations' page
-					</li>
-					<li>
-						click on the Pen icon in the 'Action' column.
-					</li>
-				</ol>
+				In order to edit only one translation, open your survey, go to the
+				'Translations' page and click on the Pen icon in the 'Action'
+				column.
 			</p>
 			<h2>
 				Can I create my translations offline?    
@@ -1223,92 +1172,45 @@
 				to perform the translation offline. The translation can then be imported back into your survey.
 			</p>
 			<p>
-				The usual workflow to follow is:
-			</p>
-			<p>
-				<ol>
-					<li>
-						Go to 'Translations'
-					</li>
-					<li>
-						Export a language having the status 'Complete' into XLS.
-					</li>
-					<li>
-						Change the language code (ISO 639-1) at the top of the file (Cell B1).
-					</li>
-					<li>
-						Translate all available text labels into the new language (Column C).
-					</li>
-					<li>
-						Once the survey has been translated offline, save it.
-					</li>
-					<li>
-						Click 'Upload existing translation' to import the translation.
-					</li>
-					<li>
-						Select the language of the new translation.
-					</li>
-					<li>
-						You may deselect individual labels that you do not want to include.
-					</li>
-				</ol>
-			</p>
-			<p>
-				You can now verify the translation from the 'Test' tab.
+				The usual workflow is to export a language version with status
+				'Complete' and then translate all available text labels into the new
+				language. Ensure that the new language code is specified at the
+				beginning of the form to ensure that the system recognizes the
+				language of your translation. Once the survey has been translated
+				offline, click 'Upload existing translation' to add it to the
+				system. To ensure that no translation is overwritten by accident,
+				you will have to specify the language version you are about to
+				upload. For security reasons you can select individual labels to
+				replace if you do not want all labels to be taken into account.
 			</p>
 			<h2>
 				How do I publish/unpublish my translations? Why can't I publish this translation? What is an
 				'Incomplete' translation?
 			</h2>
 			<p>
-				To publish a survey in multiple languages,:
+				To publish a survey in multiple languages, open your survey, go to
+				the 'Translations' page and tick/untick the individual translations
+				you want to publish/unpublish under 'To Publish'. Then change to the
+				'Overview' page of your survey to publish your survey. If the survey
+				had been published before the translations were added/removed, click
+				on 'Apply Changes'.
 			</p>
 			<p>
-				<ol>
-					<li>
-						open your survey
-					</li>
-					<li>
-						go to the 'Translations' page
-					</li>
-					<li>
-						tick/untick the individual translations you want to publish/unpublish
-						under 'To Publish'.
-					</li>
-					<li>
-						Then go to the 'Overview' page of your survey to publish your survey.
-					</li>
-				</ol>
-			</p>
-			<p>
-				If the survey had been published before the translations were
-				added/removed, click on 'Apply Changes'.
-			</p>
-			<p>
-				To ensure that no translations with missing text are published, you cannot
-				publish translations that have empty labels (translations that are not
-				'Complete').
-			</p>
-			<p>
-				Please make sure your translation has no empty labels by using the online translation editor. Look for
-				cells with a red background.
+				To ensure that no translations with missing text are
+				published, you cannot publish translations that have empty labels
+				(translations that are not 'Complete'). Please make sure your
+				translation has no empty labels by using the online translation
+				editor. Look for cells with a red background.
 			</p>
 			<h2>
 				Can I upload a translation in a non-European language?    
 			</h2>
 			<p>
-				The application also supports non-European languages.
-			</p>
-			<p>
-				Select 'Other' in the uploading process and introduce a valid two-letter
+				The application also supports non-European languages. Select 'Other'
+				in the uploading process and introduce a valid two-letter
 				<a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">
-					ISO 639-1
-				</a>
-				language code.
-			</p>
-			<p>
-				It is not possible to select a non-European language as the pivot language
-				of your survey.
+					ISO 639-1 </a> language code. It is not possible to select a
+				non-European language as the pivot language of your survey.
 			</p>
 			<h2>
 				What does 'Request Machine Translation' mean?    
@@ -1318,34 +1220,30 @@
 				(MT)</strong>. The application uses the MT@EC service provided by the European Commission.
 			</p>
 			<p>
-				On the 'Translations' page, you can request machine translations in several
-				ways:
+				On the 'Translations' page, there are several ways to request machine translation:
 			</p>
 			<ul>
 				<li>
-					when adding a new translation, tick the 'Request Machine Translation'
-					checkbox (for a translation of your survey's pivot language)
+					When adding a new translation, tick the checkbox 'Request Machine Translation'
+					(for a translation of your survey's pivot language)
 				</li>
 				<li>
-					click the 'Request Translations' button in the 'Action' column (for a
+					Click the 'Request Translations' button in the 'Action' column (for a
 					translation of your survey's pivot language)
 				</li>
 				<li>
-					select all languages you want to translate your survey into (including
-					at least one complete translation); then select 'Request Translations'
-					and click 'Ok'.
+					Select all languages you want to be translated (including at
+					least one complete translation). Then select 'Request Translations'
+					from the select box below your translations and click 'Ok'.
 				</li>
 			</ul>
 			<p>
 				The status of the translations will change to 'Requested', until they are
-				completed.
+				finished. To see when the status has changed, check the 'Translations' page.
 			</p>
 			<p>
-				For changes in the status, check the 'Translations' page.
-			</p>
-			<p>
-				Machine translations will work like other translations you added manually,
-				i.e. they won't be published automatically, and adding new items to your
+				Machine translations will behave like other translations you added manually,
+				i.e. they will not be published automatically, and adding new elements to your
 				survey will make them incomplete (to complete them, you'll have to request
 				a new translation).
 			</p>
@@ -1379,12 +1277,10 @@
 				.
 			</p>
 			<p>
-				DGT can also translate your survey into the official EU languages.
-			</p>
-			<p>
-				Export it as an XML file and send it via Poetry with the requester code of
-				the DG concerned. It should be a maximum of 15,000 characters, excl. spaces
-				(Word count).
+				You can also get your survey translated into the official EU
+				languages by DGT. First export it as an XML file and send it via
+				Poetry with the requester code of the DG concerned. It should be a
+				maximum of 15 000 characters, excl. spaces (Word count).
 			</p>
 			<h1>
 				Publishing a survey
