@@ -1399,25 +1399,20 @@
 				If I discover an error in my survey, can I correct it?    
 			</h2>
 			<p>
-				Yes, you can edit and change the survey as often as you want and add or
-				change any additional (dependent) questions.
+				Yes, you can edit and change the survey as often as you want and
+				add or change any additional (dependent) question. However, please
+				note that the more changes you make the less usable the collected
+				data will be, given that different participants in your survey might
+				have responded to different surveys. So, to make sure that you can
+				still compare the full set of answers, it is recommended that you
+				avoid changing the structure of your survey at all. Please note that
+				you are fully responsible for every change you apply to your survey
+				during its lifetime.
 			</p>
 			<p>
-				However, the more changes you make the less usable the collected data will
-				be, as different respondents to your survey might have responded to
-				different surveys.
-			</p>
-			<p>
-				So, to ensure that you can still compare all of the answers, you should
-				avoid changing your survey's structure.
-			</p>
-			<p>
-				Please note that you are fully responsible for every change you apply to
-				your survey during its lifetime.
-			</p>
-			<p>
-				To change an already published survey &#8594; click on 'Apply Changes' on the
-				'Overview' page so the changes are visible in the published survey.
+				If you do want to change an already published survey, please
+				remember to click on 'Apply Changes' on the survey's 'Overview' page
+				to make sure the changes are visible in the published survey.
 			</p>
 			<p>
 				If you want to remove answers from your survey, please Read: 'Will I
@@ -1427,52 +1422,42 @@
 				Will I lose any submitted answers when I change my form?    
 			</h2>
 			<p>
-				No, unless you delete your survey from the system.
-			</p>
-			<p>
-				However, all data collected might not be visible if you remove individual
-				questions while your survey is active, as the search only shows the most
-				recently published form.
-			</p>
-			<p>
-				To view all answers, even to questions removed while your survey was
-				active:
-			</p>
-			<p>
-				&#8594; select 'Contributions (including deleted questions)' from the drop-down
-				list on the 'Results' tab.
+				No answers are lost, unless you delete your survey from the
+				system. However, you might not be able to visualize the full set of
+				collected data if you have removed individual questions from your
+				survey during the active period of your survey. This is because the
+				search mask always represents the most recently published form only.
+				Please select the 'Contributions (including deleted questions)'
+				option from the drop-down list on the Results tab to visualize all
+				answers, even those to questions that were removed during the active
+				period of your survey.
 			</p>
 			<h2>
 				How can I change the title of my survey?    
 			</h2>
 			<p>
-				Open the survey, go to the 'Properties' page &#8594; change your survey's title
-				under 'Basic' section.
-			</p>
-			<p>
-				If you have already published your survey, go to the 'Overview' page and
-				click 'Apply Changes'.
+				Open the survey, go to the 'Properties' page. Change your survey's
+				title under 'Basic' section. If you have already published your
+				survey, go to the 'Overview' page and click 'Apply Changes'.
 			</p>
 			<h2>
 				How can I change my survey's contact information?    
 			</h2>
 			<p>
-				Open the survey and go to the 'Properties' page.
-			</p>
-			<p>
-				Choose between the following 'Contact' options under 'Basic Settings':
+				Open the survey and go to the 'Properties' page. You can choose
+				between the following 'Contact' options under 'Basic Settings':
 			</p>
 			<p>
 				<ul>
 					<li>
-						contact form: users can contact you using a form
+						Contact form: This allows users to contact you using a form.
 					</li>
 					<li>
-						email: users can contact you directly by email (your email will be
+						E-mail: This allows users to contact you directly by email (your email will be
 						disclosed)
 					</li>
 					<li>
-						webpage: this direct users to a specific webpage.
+						Web-page: This directs users to a specific webpage.
 					</li>
 				</ul>
 			</p>
@@ -1484,261 +1469,151 @@
 				How do I adjust the default confirmation message?    
 			</h2>
 			<p>
-				After respondents submit their answers, they receive a confirmation
-				message.
-			</p>
-			<p>
-				To change the default message:
-			</p>
-			<p>
-				<ol>
-					<li>
-						open the survey, go to the 'Properties' page
-					</li>
-					<li>
-						change the confirmation message under the 'Special Pages' section.
-					</li>
-				</ol>
-			</p>
-			<p>
-				If you have already published your survey, go to the 'Overview' page and
-				click 'Apply Changes'.
+				The confirmation message is what participants see when they
+				have submitted their contribution. To change the default message,
+				open the survey, go to the 'Properties' page and change the
+				confirmation message under 'Special Pages'. If you have already
+				published your survey, please remember to go to the 'Overview' page
+				and click on 'Apply Changes'.
 			</p>
 			<h2>
 				How do I adjust the default escape message?    
 			</h2>
 			<p>
-				The escape page contains the message that your respondents see if your
-				survey is not available.
-			</p>
-			<p>
-				To change the default message:
-			</p>
-			<p>
-				<ol>
-					<li>
-						open the survey, go to the 'Properties'
-					</li>
-					<li>
-						click on 'Edit' under the 'Special Pages' section &#8594; change the option on
-						the 'Unavailability Page'.
-					</li>
-				</ol>
-			</p>
-			<p>
-				If you have already published your survey, go to the 'Overview' page and
-				click on 'Apply Changes'.
+				The escape page contains the message that your participants
+				see if your survey is not available. To change the default message,
+				open the survey, go to the 'Properties' and go the 'Special Pages'.
+				You will find the 'Unavailability Page' option. If you have already
+				published your survey, please remember to go to the 'Overview' page
+				and click on 'Apply Changes'.
 			</p>
 			<h2>
-				Can I archive a survey?<u> </u>
+				Archiving feature
 			</h2>
 			<p>
-				Yes, you can archive your survey, as well as reload it or to relaunch it on
-				a later date.
+				You can archive your survey with all its submitted answers to
+				reload it or to launch the same survey again at a later point in
+				time. To archive your survey, select the 'Archive Survey' icon in
+				the action menu of the 'Overview' page.
 			</p>
 			<p>
-				To archive your survey &#8594; select the 'Archive Survey' icon in the action
-				menu on the 'Overview' page.
-			</p>
-			<p>
-				Archived surveys cannot be edited or be used to collect any data.
-			</p>
-			<p>
-				However, you can export results or request a PDF-file of your survey.
-			</p>
-			<p>
-				From the 'Dashboard' page, you can access your archived survey as well as
-				restore it.
-			</p>
-			<p>
-				A restored survey can be edited again.
+				Archived surveys cannot be edited or collect any data. But you
+				can export results or request a PDF-file of your survey. The
+				archived survey will be available from the 'Dashboard' page, from
+				where it can also be restored. A restored survey can be edited
+				again.
 			</p>
 			<h2>
-				How do I grant other users access to my survey?    
+				How do I give other users access to my survey?
 			</h2>
 			<p>
-				You can grant access to other users for different purposes:
+				In EUSurvey, you can grant access to other users for different purposes:
 			</p>
 			<ul>
 				<li>
-					testing the survey ('Access Form Preview')
+					Testing the survey ('Access Form Preview')
 				</li>
 				<li>
-					accessing the results ('Results')
+					Accessing the results ('Results')
 				</li>
 				<li>
-					editing the survey ('Form Management')
+					Editing the survey ('Form Management')
 				</li>
 			</ul>
 			<p>
-				To grant access to an individual or a department: open your survey, go to
-				the 'Privileges' page.
-			</p>
-			<p>
+				In order to provide them access, open your survey and go to the
+				'Privileges' page. You can grant access to a person or a department.
 				The following access rights are possible:
 			</p>
 			<p>
 				<ul>
 					<li>
-						green: access to read and write
+						Green: Read and write access
 					</li>
 					<li>
-						yellow: access to read
+						Yellow: Read access
 					</li>
 					<li>
-						red: No access
+						Red: No access
 					</li>
 				</ul>
 			</p>
 			<p>
-				<ol>
-					<li>
-						Click on 'Add user' or 'Add department' on the 'Privileges' page.
-					</li>
-					<li>
-						A window pops up to show you how to add users.
-					</li>
-					<li>
-						When clicking on 'Add user', you must select the correct Domain (for
-						example 'European Commission').
-					</li>
-					<li>
-						Enter the login, email address or any other field and click on 'Search'.
-					</li>
-					<li>
-						Select the user and click 'Ok'.
-					</li>
-					<li>
-						When clicking on 'Add department', select the correct field.
-					</li>
-					<li>
-						Find the right department, then click 'Ok'.
-					</li>
-				</ol>
+				In order to proceed, please click on 'Add user' or 'Add
+				department' on the 'Privileges' page. A window will pop up that
+				guides you through the process of adding users.
 			</p>
 			<p>
-				You will then be redirected to the 'Privileges' page.
+				By clicking on 'Add user', you will have to select the correct
+				domain (i.e. European Commission), then enter the login, E-mail
+				address or any other field and click on 'Search'. Then select the
+				user and click on 'Ok'.
 			</p>
 			<p>
-				Here, click on the red icons to set the appropriate access rights:
+				By selecting 'Add department', select the correct domain and
+				navigate to the right department. Then click on 'Ok'.
 			</p>
-			<ul type="disc">
+			<p>
+				External owners or survey organizers cannot see EU domains on
+				the Privileges tab / Add users button, therefore, they cannot
+				provide access for these persons directly. Please Contact us to
+				request privileges for external users.
+			</p>
+			<p>
+				You will then be redirected to the 'Privileges' page where you
+				can set the right permissions by clicking on the red icons:
+			</p>
+			<ul>
 				<li>
-					To grant the right to test your survey:
-
-					<ul>
-						<li>
-							Change the colour of 'Access Form Preview' to 'Green' (click on the
-							colour to change the rights)
-						</li>
-						<li>
-							The survey will automatically appear in their 'Surveys' page once they
-							log into EUSurvey (see also '
-							<a href="#_Toc_6_2">
-								How can my colleagues test my survey before it is published?
-							</a>
-							').
-						</li>
-					</ul>
+					To grant the right to test your survey:<br> Change the colour of
+					'Access Form Preview' to 'Green'. Simply click on the colour to
+					change the rights. The added users will automatically see the
+					survey in their 'Surveys' page once they log in to the EUSurvey
+					application (see also '<a href="#_Toc_6_2"> How can my
+						colleagues test my survey before it is published? </a> ').
 				</li>
 				<li>
-					To grant the right to access your survey's results:
-
-					<ul>
-						<li>
-							If the colour of 'Results' is 'Yellow', users can only view the results,
-							not edit or delete anything.
-						</li>
-						<li>
-							If you change the colour to 'Green', they can view, edit and delete the
-							answers (see also '
-							<a href="#_Toc_10_7">
-								How do I give other users access to my survey's results?
-							</a>
-							').
-						</li>
-					</ul>
+					To grant the right to access the results of your survey:<br>
+					Change the colour of 'Results' to 'Yellow'. The users can only view
+					the results, but cannot edit or delete anything. If you change the
+					colour to 'Green', they can view, edit and delete the answers (see
+					also '<a href="#_Toc_10_7"> How do I give other users access
+						to my survey's results? </a> ').
 				</li>
 				<li>
-					To grant the right to edit your survey:
-
-					<ul>
-						<li>
-							Select 'Green' &#8594; users can now edit it.
-						</li>
-						<li>
-							They will automatically see your survey in their list of surveys (see
-							also '
-							<a href="#_Toc_4_11">
-								How do I give other users permission to edit my survey?
-							</a>
-							').
-						</li>
-					</ul>
+					To grant the right to edit your survey:<br> By changing the
+					colour to 'Yellow', the privileged users can only view your
+					survey. But if you select 'Green', they can also edit it. They
+					will automatically see your survey in their list of surveys (see
+					also ' <a href="#_Toc_4_11"> How do I give other users
+						permission to edit my survey? </a> ').
 				</li>
 				<li>
-					To grant the right to manage invitations of your survey:
-
-					<ul>			
-						<li>
-							If the colour is 'Yellow' &#8594; users can only view your invitations.
-						</li>
-						<li>
-							Select 'Green' &#8594; users can edit it.
-						</li>
-						<li>
-							They will automatically see your survey in their list of surveys (see
-							also '
-							<a href="#_Toc_4_11">
-								How do I give other users permission to edit my survey?
-							</a>
-							').
-						</li>
-					</ul>
+					To grant the access right to manage invitations of your
+					survey:<br> By changing the colour to 'Yellow', the privileged users
+					can only view your invitations. But if you select 'Green', they
+					can also edit it. They will automatically see your survey in their
+					list of surveys (see also '<a href="#_Toc_4_11"> How do I give
+						other users permission to edit my survey? </a> ').
 				</li>
 			</ul>
-
-
 			<p>
-				Setting all 4 circles to 'Green' will grant the user full access rights to
-				your survey.
-			</p>
-			<p>
-				External owners or survey organisers cannot see EU fields on the
-				'Privileges' tab/'Add users' button. Therefore, they cannot directly grant
-				access to these users.
-			</p>
-			<p>
-				Please <a href="https://ec.europa.eu/eusurvey/home/support">contact us</a>
-				to request privileges for external users.
+				If you set all 4 circles to 'Green', the privileged user will
+				have full rights permission to your survey.
 			</p>
 			<h2>
-				What are activity logs?    
+				What are Activity logs?
 			</h2>
 			<p>
-				Activity logs monitor and log the activity on your survey. You can check
-				which user applied which change to your survey and when.
-			</p>
-			<p>
-				You can also export the activity logs into several file formats such as
-				xls, csv and ods.
-			</p>
-			<p>
-				To enter the activity log of your survey &#8594; click on the 'Activity' page,
-				next to 'Properties'.
-			</p>
-			<p>
-				If the activity logs are empty, they may have been deactivated across the
-				system.
-			</p>
-			<p>
-				Find
-				<a
-						href="https://ec.europa.eu/eusurvey/resources/documents/ActivityLogEvents.xlsx"
-						>
-					here
-				</a>
-				a list of the logged events.
+				Activity logs monitor and log the activity on your survey. This way,
+				you can check which user applied which change to your survey and at
+				what time. You can also export the activity logs into several file
+				formats such as xls, csv and ods. Enter the activity log of your
+				survey by clicking on the 'Activity' page, next to 'Properties'. If
+				the activity logs are empty, it may be that they are deactivated
+				system-wide. Find <a
+					href="https://ec.europa.eu/eusurvey/resources/documents/ActivityLogEvents.xlsx">
+					here </a> a list of the logged events.
 			</p>
 			<h1>
 				Analysing, exporting and publishing results
