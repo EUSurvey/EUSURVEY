@@ -21,6 +21,7 @@ public class Section extends Element {
 	private static final long serialVersionUID = 1L;
 	private int level = 1;
 	private String tabTitle;
+	private Integer order;
 	
 	public Section(String ptitle, String shortname, String uid) {
 		setTitle(ptitle);
@@ -46,6 +47,14 @@ public class Section extends Element {
 	public void setLevel(Integer level) {
 		this.level = level;
 	}
+	
+	@Column(name = "SECTIONORDER")
+	public Integer getOrder() {
+		return order != null ? order : 0;
+	}
+	public void setOrder(Integer order) {
+		this.order = order != null ? order : 0;
+	}	
 
 	public Section copy(String fileDir)
 	{
@@ -58,6 +67,7 @@ public class Section extends Element {
 		copy.setSourceId(this.getId());
 		copy.setTitle(this.getTitle());
 		copy.setPosition(this.getPosition());
+		copy.setOrder(this.getOrder());
 		
 		return copy;
 	}
@@ -69,8 +79,11 @@ public class Section extends Element {
 		if (!(element instanceof Section)) return true;
 		
 		Section section = (Section)element;
+		
+		if (getOrder() != null && !getOrder().equals(section.getOrder())) {
+			return true;
+		}
 
 		return getLevel() != null && !getLevel().equals(section.getLevel());
-
 	}
 }

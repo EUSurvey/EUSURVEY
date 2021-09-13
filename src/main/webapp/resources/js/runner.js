@@ -200,8 +200,10 @@ function propagateChange(element)
 	
 	var div = $(element).parents(".survey-element").last();
 	
+	enableDelphiSaveButtons(div);
+	
 	if (!checkHasValue(element)) {
-		disableDelphiSaveButtons(div);
+		//disableDelphiSaveButtons(div);
 		$(div).find(".explanation-section").hide();
 		$(div).find(".explanation-file-upload-section").hide();
 		return;
@@ -214,7 +216,10 @@ function propagateChange(element)
 		viewModel.isAnswered(true);
 	}
 	
-	enableDelphiSaveButtons(div);
+	if ($(surveyElement).find("textarea.unique").length > 0) {
+		$(surveyElement).find(".validation-error-server").remove();
+	}	
+	
 	$(div).find(".explanation-section").show();
 	$(div).find(".explanation-file-upload-section").show();
 	$(div).find(".delphiupdatemessage").attr("class","delphiupdatemessage").empty();

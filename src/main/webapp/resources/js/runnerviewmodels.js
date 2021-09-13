@@ -521,7 +521,8 @@ function newSectionViewModel(element)
 {
 	var viewModel = newBasicViewModel(element)
 	viewModel.level = ko.observable(element.level);	
-	viewModel.tabTitle = ko.observable(element.tabTitle);	
+	viewModel.tabTitle = ko.observable(element.tabTitle);
+	viewModel.order = ko.observable(element.order);	
 	
 	return viewModel;
 }
@@ -943,7 +944,40 @@ function newFreeTextViewModel(element)
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.css = ko.observable(element.css);
-	
+
+	viewModel.values = {first:{}, second:{}};
+	viewModel.values.first.onLastValidation = ko.observable();
+	viewModel.values.first.hasChangedOnValidation = ko.observable(false);
+	viewModel.values.second.onLastValidation = ko.observable();
+	viewModel.values.second.hasChangedOnValidation = ko.observable(false);
+
+	viewModel.values.first.onValidation = function(newVal) {
+		const that = viewModel.values.first;
+		const oldVal = that.onLastValidation();
+		that.onLastValidation(newVal);
+		const hasChanged = newVal != oldVal;
+		if (hasChanged) {
+			that.hasChangedOnValidation(hasChanged);
+		}
+	};
+
+	viewModel.values.second.onValidation = function(newVal) {
+		const that = viewModel.values.second;
+		const oldVal = that.onLastValidation();
+		that.onLastValidation(newVal);
+		const hasChanged = newVal != oldVal;
+		if (hasChanged) {
+			that.hasChangedOnValidation(hasChanged);
+		}
+	};
+
+	viewModel.values.checkAnyChangesOnValidation = function() {
+		const hasChanged = viewModel.values.first.hasChangedOnValidation() || viewModel.values.second.hasChangedOnValidation();
+		viewModel.values.first.hasChangedOnValidation(false);
+		viewModel.values.second.hasChangedOnValidation(false);
+		return hasChanged;
+	};
+
 	return viewModel;
 }
 

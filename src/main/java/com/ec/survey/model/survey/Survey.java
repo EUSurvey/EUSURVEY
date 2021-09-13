@@ -1,6 +1,7 @@
 package com.ec.survey.model.survey;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -565,6 +566,72 @@ final public class Survey implements java.io.Serializable {
 
 	public void setElements(List<Element> elements) {
 		this.elements = elements;
+	}
+	
+	@Transient
+	public List<Element> getElementsOrdered() {
+		List<Element> elements = new ArrayList<>();
+		
+		Section currentSection = null;
+		List<Element> currentSectionElements = new ArrayList<>();
+		for (Element element : getElements()) {
+			boolean skip = false;
+			if (element instanceof Section) {
+				Section section = (Section)element;
+				if (section.getLevel().equals(1) && section.getOrder().equals(1)) {
+					copyOrderedElements(currentSectionElements, elements);
+										
+					currentSection = section;
+					currentSectionElements = new ArrayList<>();
+					elements.add(section);
+					skip = true;
+				} else if (section.getLevel().equals(1)) {
+					copyOrderedElements(currentSectionElements, elements);
+					currentSectionElements = new ArrayList<>();
+					currentSection = null;
+				} else if (currentSection != null) {
+					// this means we have a sub-section inside a section that is randomized
+					// the structure should be the same, so we only randomize until a sub-section occurs
+					copyOrderedElements(currentSectionElements, elements);
+					currentSectionElements = new ArrayList<>();
+					elements.add(section);
+					skip = true;
+				}
+			}
+			
+			if (!skip) {
+				if (currentSection == null) {
+					elements.add(element);
+				} else {
+					currentSectionElements.add(element);
+				}
+			}			
+		}
+		
+		copyOrderedElements(currentSectionElements, elements);
+		
+		return elements;
+	}
+	
+	private void copyOrderedElements(List<Element> sectionElements, List<Element> result) {
+		List<Element> elementsToRandomize = new ArrayList<>();
+		if (!sectionElements.isEmpty()) {
+			for (Element element : sectionElements) {
+				if (element.getIsTriggerOrDependent()) {
+					result.add(element);
+				} else {
+					elementsToRandomize.add(element);
+				}
+			}
+			
+			if (!elementsToRandomize.isEmpty()) {
+				Collections.shuffle(elementsToRandomize);
+				
+				for (Element element : elementsToRandomize) {
+					result.add(element);
+				}
+			}
+		}
 	}
 
 	@Transient
