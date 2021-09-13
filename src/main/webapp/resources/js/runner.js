@@ -201,7 +201,7 @@ function propagateChange(element)
 	var div = $(element).parents(".survey-element").last();
 	
 	if (!checkHasValue(element)) {
-		disableDelphiSaveButtons(div);
+		//disableDelphiSaveButtons(div);
 		$(div).find(".explanation-section").hide();
 		$(div).find(".explanation-file-upload-section").hide();
 		return;
