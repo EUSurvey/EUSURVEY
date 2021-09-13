@@ -1064,6 +1064,10 @@ function loadMedianData(div, viewModel) {
 function selectPageAndScrollToQuestionIfSet() {
 	if (window.location.hash) {
 		
+		if (window.location.hash.indexOf("page") > -1) {
+			return;
+		}
+		
 		$('#delphi-hide-survey').show();
 		
 		//select correct page in case of multi-paging		
