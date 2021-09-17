@@ -750,11 +750,13 @@ function newRankingViewModel(element)
 		viewModel.isAnswered(true);
 	});
 	viewModel.css = ko.observable(element.css);
+	viewModel.itemCount = function() { return viewModel.rankingItems().length;}
 
-	viewModel.acceptInitialAnswer = function(_, event) {
+	viewModel.acceptInitialAnswer = function(data, event) {
 		const rankingItemList = $(event.target).closest(".rankingitem").find(".rankingitem-list")[0];
 		viewModel.isAnswered(true);
 		propagateChange(rankingItemList);
+		tinyMCE.get('explanation' + data.id()).execCommand('mceFocus',false);
 	}
 
 	viewModel.resetOrder = function(_, event) {
