@@ -384,7 +384,10 @@
 			<div class="rankingitem-list-container" data-bind="attr: {id: 'ranking-item-list-container' + id()}">
 				<div class="rankingitem-list">
 
+
+					<!-- ko ifnot: foreditor -->
 					<span class="screen-reader-only" data-bind="html: getInitialOrderInfoText(), attr: {id: 'listorderinfo' + id()}"></span>
+					<!-- /ko -->
 
 					<!-- ko foreach: rankingItems() -->
 					<div tabindex="0" role="listitem" class="rankingitem-form-data focussable" data-bind="attr: {'aria-labelledby': id()}">
