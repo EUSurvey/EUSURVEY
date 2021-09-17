@@ -1501,7 +1501,7 @@ public class AnswerService extends BasicService {
 	public Statistics getStatisticsOrStartCreator(int statisticsRequestId) throws Exception {
 		StatisticsRequest statisticsRequest = answerService.getStatisticRequest(statisticsRequestId);
 		Survey survey = surveyService.getSurvey(statisticsRequest.getSurveyId());
-		return this.getStatisticsOrStartCreator(survey, statisticsRequest.getFilter(), false, statisticsRequest.isAllanswers(), true);
+		return this.getStatisticsOrStartCreator(survey, statisticsRequest.getFilter().copy(), false, statisticsRequest.isAllanswers(), true);
 	}
 	
 	/**
@@ -1514,7 +1514,7 @@ public class AnswerService extends BasicService {
 	@Transactional
 	public Statistics getStatisticsOrStartCreator(Survey survey, ResultFilter filter, boolean useEagerLoading, boolean allanswers,
 			boolean asynchronous) throws Exception {
-		// filter = answerService.initialize(filter);
+		filter = answerService.initialize(filter);
 		Statistics statistics = getStatisticsForFilterHash(survey.getId(), filter.getHash(allanswers), useEagerLoading);
 
 		if (statistics == null) {
@@ -1812,28 +1812,11 @@ public class AnswerService extends BasicService {
 
 		return null;
 	}
-
-	@Transactional(readOnly = false)
-	public int getNumberOfDrafts(int id) {
+	
+	public int getNumberOfDraftsInner(List<Integer> allVersions)
+	{
 		Session session = sessionFactory.getCurrentSession();
-		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(id);
-		if (allVersions.isEmpty()) {
-			return 0;
-		}
-
-		String query = "SELECT count(*) FROM ANSWERS_SET ans WHERE ans.SURVEY_ID IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions)
-				+ ") AND ans.ISDRAFT = 1 AND ans.UNIQUECODE NOT IN (SELECT UNIQUECODE FROM ANSWERS_SET WHERE SURVEY_ID IN ("
-				+ StringUtils.collectionToCommaDelimitedString(allVersions) + ") AND ans.ISDRAFT = 0)";
-
-		Query q = session.createSQLQuery(query);
-		return ConversionTools.getValue(q.uniqueResult());
-	}
-
-	@Transactional(readOnly = false)
-	public int getNumberOfDrafts(String uid) {
-		Session session = sessionFactory.getCurrentSession();
-		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(uid);
+		
 		if (allVersions.isEmpty()) {
 			return 0;
 		}
@@ -1845,6 +1828,18 @@ public class AnswerService extends BasicService {
 
 		Query q = session.createSQLQuery(query);
 		return ConversionTools.getValue(q.uniqueResult());
+	}
+
+	@Transactional(readOnly = false)
+	public int getNumberOfDrafts(int id) {
+		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(id);
+		return getNumberOfDraftsInner(allVersions);
+	}
+
+	@Transactional(readOnly = false)
+	public int getNumberOfDrafts(String uid) {
+		List<Integer> allVersions = surveyService.getAllPublishedSurveyVersions(uid);
+		return getNumberOfDraftsInner(allVersions);
 	}
 
 	@Transactional(readOnly = false)
@@ -2294,7 +2289,7 @@ public class AnswerService extends BasicService {
 		if (answerSet == null)
 		{
 			answerSet = SurveyHelper.parseAnswerSet(request, survey, uniqueCode, false, lang, user, fileService);
-		}	
+		}
 	
 		return answerSet;
 	}
@@ -2611,7 +2606,7 @@ public class AnswerService extends BasicService {
 		Map<String, Map<String, List<String>>> questionUidsPerAnswerAndSection = new HashMap<>();
 		initializeHelperMaps(survey, questionsBySection, answersByQuestion, sectionsByQuestion, parentByQuestion, questionUidsPerAnswerAndSection);
 				
-		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, false, false, false, false);
+		List<List<String>> answerRows = reportingService.getAnswerSets(survey, filter, null, false, false, true, false, false, false);
 		if (answerRows != null) {
 			totalNumberOfContributions = answerRows.size();
 			Map<Integer, String> questionUidsByIndex = new HashMap<>();

@@ -431,6 +431,8 @@ function update(input)
 						update(this);
 					});
 				});
+				
+				return;
 			}
 			
 			if (element.display() === "Slider") {
@@ -552,7 +554,6 @@ function update(input)
 			break;
 		case "DescriptiveText":
 			var text = $(input).val();	
-			var oldtext = element.originalTitle();
 			
 			if (text != oldtext)
 			{
@@ -560,9 +561,29 @@ function update(input)
 				{
 					return;
 				}
-				element.originalTitle(text);
-				_undoProcessor.addUndoStep(["DescriptiveText", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
-				updateNavigation($(_elementProperties.selectedelement), id);
+				
+				if ($(_elementProperties.selectedelement).is("td"))
+				{
+					var galleryid =  $(_elementProperties.selectedelement).closest(".survey-element").attr("data-id");
+					var gallery = _elements[galleryid];
+					var uid = $(_elementProperties.selectedelement).attr("data-uid");
+					for (var i = 0; i < gallery.files().length; i++)
+					{
+						var file = gallery.files()[i];
+						if (file.uid() == uid)
+						{
+							var oldtext = file.desc();
+							file.desc(text);
+							_undoProcessor.addUndoStep(["DescriptionGallery", galleryid, uid, oldtext, text]);
+							break;
+						}
+					}
+				} else {
+					var oldtext = element.originalTitle();
+					element.originalTitle(text);
+					_undoProcessor.addUndoStep(["DescriptiveText", id, $(_elementProperties.selectedelement).index(), oldtext, text]);
+					updateNavigation($(_elementProperties.selectedelement), id);
+				}
 			}
 			break;
 		case "LongDescription":

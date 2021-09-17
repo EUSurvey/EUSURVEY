@@ -280,7 +280,7 @@ function updateGallery(file)
 	
 	if (file != null)
 	{
-		element.files.push(newFileViewModel(file.id, file.name,  file.comment, file.longdesc, file.cleanComment, file.width));
+		element.files.push(newFileViewModel(file.id, file.name,  file.comment, file.longdesc, file.cleanComment, file.width, file.desc));
 	}
 	
 	addElementHandler($(_elementProperties.selectedelement));
@@ -525,7 +525,7 @@ function updatePossibleAnswers(selectedelement, text, inundo)
 	if (!inundo)
 	{
 		_undoProcessor.addUndoStep(["PossibleAnswers", $(_elementProperties.selectedelement).attr("id"), $(_elementProperties.selectedelement).index(), oldtext, text]);
-		if (dependenciesfound) showMessage(getPropertyLabel("checkVisibilities"));
+		if (dependenciesfound) showInfo(getPropertyLabel("checkVisibilities"));
 	}
 	return true;
 }

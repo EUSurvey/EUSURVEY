@@ -145,6 +145,8 @@ public class SurveySearchController extends BasicController {
 		String mode = request.getParameter("surveys");
 
 		SurveyFilter filter = new SurveyFilter();
+		filter.setSelector("any");
+		
 		SurveyFilter reportedFilter = new SurveyFilter();
 		SurveyFilter frozenFilter = new SurveyFilter();
 		ArchiveFilter archivedFilter = new ArchiveFilter();

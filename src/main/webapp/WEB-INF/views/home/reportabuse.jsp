@@ -5,10 +5,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>EUSurvey - <spring:message code="contribution.edit" /></title>	
+	<title>EUSurvey - <spring:message code="label.ReportAbuseLink" /></title>	
 	<%@ include file="../includes.jsp" %>
 	<%@ include file="../generic-messages.jsp" %>
-	
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+		
 	<script>
 		function checkReportAbuse()
 		{
@@ -16,14 +17,14 @@
 			$('#ReportAbuse-error-invalidemail').hide();
 			
 			if (!$("input[name='abuseType']:checked").val()) {
-				$('#ReportAbuse-error-noselection').show();
+				$('#ReportAbuse-error-noselection').show().focus();
 				return false;
 		    }
 						
 			if ($('#abuseEmail').val().length != 0)
 			{
 				if (!validateEmail($('#abuseEmail').val())) {
-					$('#ReportAbuse-error-invalidemail').show();
+					$('#ReportAbuse-error-invalidemail').show().focus();
 					return false;
 				}
 			}
@@ -62,7 +63,7 @@
 					<input type="radio" name="abuseType" class="check" value="promo" /><spring:message code="info.ReportAbusePromo" /><br />
 					<input type="radio" name="abuseType" class="check" value="others" /><spring:message code="info.ReportAbuseOthers" /><br />
 					
-					<div id="ReportAbuse-error-noselection" class="validation-error hideme"> 
+					<div tabindex="-1" id="ReportAbuse-error-noselection" class="validation-error hideme"> 
 						<spring:message code="message.NoElementSelected" />
 					</div>
 					
@@ -78,7 +79,7 @@
 						<input class="form-control" id="abuseEmail" name="abuseEmail" type="text" value="${AbuseEmail}" style="max-width: 400px;" />
 					</div>				
 					
-					<div id="ReportAbuse-error-invalidemail" class="validation-error hideme"> 
+					<div tabindex="-1" id="ReportAbuse-error-invalidemail" class="validation-error hideme"> 
 						<spring:message code="error.InvalidEmail" />
 					</div>
 					

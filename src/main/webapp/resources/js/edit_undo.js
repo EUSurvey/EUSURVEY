@@ -578,6 +578,23 @@ var UndoProcessor = function() {
 					}
 				}
 				break;
+			case "DescriptionGallery":
+				var galleryid =  step[1];
+				var gallery = _elements[galleryid];
+				var uid = step[2];
+				
+				_elementProperties.selectedelement = $("td[data-uid='" + step[2] + "']");
+								
+				for (var i = 0; i < gallery.files().length; i++)
+				{
+					var file = gallery.files()[i];
+					if (file.uid() == uid)
+					{
+						file.desc(step[3]);
+						break;
+					}
+				}
+				break;
 			case "RegularExpression":
 				element.regex(step[3]);
 				break;
@@ -1105,6 +1122,23 @@ var UndoProcessor = function() {
 					if (file.uid() == uid)
 					{
 						file.longdesc(step[4]);
+						break;
+					}
+				}
+				break;
+			case "DescriptionGallery":
+				var galleryid =  step[1];
+				var gallery = _elements[galleryid];
+				var uid = step[2];
+				
+				_elementProperties.selectedelement = $("td[data-uid='" + step[2] + "']");
+								
+				for (var i = 0; i < gallery.files().length; i++)
+				{
+					var file = gallery.files()[i];
+					if (file.uid() == uid)
+					{
+						file.desc(step[4]);
 						break;
 					}
 				}

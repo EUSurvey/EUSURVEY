@@ -68,6 +68,7 @@ final public class Survey implements java.io.Serializable {
 	public static final String CONFIRMATIONPAGE = "CONFIRMATIONPAGE";
 	public static final String CONFIRMATIONLINK = "CONFIRMATIONLINK";
 	public static final String INTRODUCTION = "INTRODUCTION";
+	public static final String LOGOTEXT = "LOGOTEXT";
 	public static final String IPMINTRODUCTION = "IPMINTRODUCTION";
 	public static final String HELP = "HELP";
 	public static final String QUIZWELCOMEMESSAGE = "QUIZWELCOMEMESSAGE";
@@ -183,6 +184,9 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isDelphiShowAnswersAndStatisticsInstantly = false;
 	private Boolean isDelphiShowAnswers = false;
 	private Integer minNumberDelphiStatistics = 5;
+	private String logoText;
+	private Boolean isShowCountdown = true;
+	private String timeLimit;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -1457,6 +1461,7 @@ final public class Survey implements java.io.Serializable {
 			if (logo != null) {
 				result.append(" logo: ").append(logo.getName()).append(";");
 				result.append(" logoInInfo: ").append(logoInInfo).append(";");
+				result.append(" logoText: ").append(logoText).append(";");
 			}
 
 			result.append(" confirmationPage: ").append(confirmationPage).append(";");
@@ -1543,6 +1548,7 @@ final public class Survey implements java.io.Serializable {
 			copy.logo = copyLogo;
 		}
 		copy.logoInInfo = logoInInfo;
+		copy.logoText = logoText;
 
 		copy.confirmationPage = Tools.filterHTML(confirmationPage);
 		copy.confirmationLink = this.getConfirmationLink();
@@ -1585,6 +1591,8 @@ final public class Survey implements java.io.Serializable {
 		copy.isDelphiShowAnswersAndStatisticsInstantly = isDelphiShowAnswersAndStatisticsInstantly;
 		copy.isDelphiShowAnswers = isDelphiShowAnswers;
 		copy.minNumberDelphiStatistics = minNumberDelphiStatistics;
+		copy.timeLimit = timeLimit;
+		copy.isShowCountdown = isShowCountdown;
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -1824,6 +1832,15 @@ final public class Survey implements java.io.Serializable {
 
 	public void setPublication(Publication publication) {
 		this.publication = publication;
+	}
+
+	@Column(name = "LOGOTEXT")
+	public String getLogoText() {
+		return logoText;
+	}
+
+	public void setLogoText(String logoText) {
+		this.logoText = logoText;
 	}
 
 	@Transient
@@ -2299,5 +2316,29 @@ final public class Survey implements java.io.Serializable {
 		elements.sort(Comparator.comparing(o -> (o.getPosition())));		
 	}
 
+	@Column(name = "SHOWCOUNTDOWN")
+	public Boolean getShowCountdown() {
+		return isShowCountdown != null ? isShowCountdown : false;
+	}
 
+	public void setShowCountdown(Boolean isShowCountdown) {
+		this.isShowCountdown = isShowCountdown != null ? isShowCountdown : false;
+	}
+
+	@Column(name = "TIMELIMIT")
+	public String getTimeLimit() {
+		return timeLimit != null ? timeLimit :  "";
+	}
+
+	public void setTimeLimit(String timeLimit) {
+		this.timeLimit = timeLimit != null ? timeLimit :  "";
+	}
+	
+	@Transient
+	public int getTimeLimitInSeconds() {
+		if (timeLimit == null || timeLimit.length() == 0) return -1;
+		
+		String[] arr = timeLimit.split(":");
+		return Integer.parseInt(arr[0]) * 3600 + Integer.parseInt(arr[1]) * 60 + Integer.parseInt(arr[2]);		
+	}	
 }

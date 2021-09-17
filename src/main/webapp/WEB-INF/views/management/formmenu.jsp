@@ -28,45 +28,4 @@
 		<div id="properties-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/properties"/>"><spring:message code="label.Properties" /></a></div>
 		<div id="activity-button" class="InactiveLinkButton"><i class="glyphicon glyphicon-play"></i><a href="<c:url value="/${sessioninfo.shortname}/management/activity"/>"><spring:message code="label.Activity" /></a></div>
 	</c:if>
-	
-	<div id="sessiontimeout" class="InactiveLinkButton" style="display: none">
-		${uisessiontimeout}
-	</div>
 </div>
-
-	 <div class="modal" id="sessiontimeoutdialog" role="dialog">
-		<div class="modal-dialog" role="document">
-		    <div class="modal-content">
-			    <div class="modal-header">
-			    	<spring:message code="label.SessionTimeout" />
-			    </div>
-				<div class="modal-body">	
-					<spring:message code="info.SessionTimeout" />
-				</div>
-				<div class="modal-footer">
-					<a onclick="$('#sessiontimeoutdialog').modal('hide')" target="_blank" class="btn btn-primary"><spring:message code="label.OK" /></a>
-				</div>
-			</div>
-		</div>
-	</div>
-
-<script type="text/javascript">
-	var lastloadingtime = new Date();
-	var sessiontimeoutminutes = ${uisessiontimeout};
-	
-	function updateSessionTimeout(){
-		var currenttime = new Date();
-		var diffMs = (currenttime - lastloadingtime); // milliseconds
-		var minutes = Math.floor((diffMs/1000)/60);
-		
-		if (minutes > sessiontimeoutminutes)
-		{
-			$("#sessiontimeoutdialog").modal("show");
-			return;
-		}
-		
-		$("#sessiontimeout").html((sessiontimeoutminutes - minutes).toString());
-		window.setTimeout(updateSessionTimeout, 10000);
-	}
-
-</script>

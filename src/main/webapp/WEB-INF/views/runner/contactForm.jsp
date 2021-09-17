@@ -9,6 +9,8 @@
 	<title>EUSurvey - <spring:message code="label.ContactForm" /></title>
 	<%@ include file="../includes.jsp" %>
 	
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+		
 	<script type="text/javascript">
 		function checkAndSubmit()
 		{
@@ -59,7 +61,7 @@
 			var uploader = new qq.FileUploader({
 			    element: $("#file-uploader-support")[0],
 			    action: contextpath + '/home/support/uploadfile',
-			    uploadButtonText: selectFileForUpload,
+			    uploadButtonText: selectFileForUploadRunner,
 			    params: {
 			    	'_csrf': csrftoken
 			    },
@@ -92,6 +94,7 @@
 			$(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 			$(".qq-upload-list").hide();
 			$(".qq-upload-drop-area").css("margin-left", "-1000px");
+			$("input[type=file]").attr("aria-label", "<spring:message code="info.uploadbutton" />");
 			
 			<c:if test="${messagesent != null}">
 				showSuccess('<spring:message code="support.messagesentowner" />')
@@ -144,7 +147,7 @@
 				<textarea class="form-control required" rows="10" name="message">${contactFormMessage}</textarea><br /><br />
 				
 				<label><spring:message code="support.upload" /></label>
-				<a data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
+				<a data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />" aria-label="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
 				<div id="file-uploader-support"></div>
 				<div id="file-uploader-support-div"></div>
 				
@@ -160,7 +163,7 @@
 		       	</span>
 		       	
 		       	<div style="text-align: center; margin: 50px;">
-		       		<a class="btn btn-primary" onclick="checkAndSubmit()"><spring:message code="label.Submit" /></a>
+		       		<a href="javascript:;" class="btn btn-primary" onclick="checkAndSubmit()"><spring:message code="label.Submit" /></a>
 		       	</div>
 			
 			</form:form>

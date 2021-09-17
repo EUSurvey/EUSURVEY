@@ -248,7 +248,7 @@ public class SurveyService extends BasicService {
 				", (SELECT COUNT(DISTINCT SURABUSE_ID) FROM SURABUSE WHERE SURABUSE_SURVEY = s.SURVEY_UID) as reported");// 15
 		stringBuilder.append(" from SURVEYS s");
 		stringBuilder.append(" LEFT JOIN MV_SURVEYS_NUMBERPUBLISHEDANSWERS npa on s.SURVEY_UID = npa.SURVEYUID");
-		stringBuilder.append(" where ");
+		stringBuilder.append(" where s.ISDRAFT = 1 AND ");
 		String sql = stringBuilder.toString();
 
 		if (filter.getSurveys() != null && filter.getSurveys().equalsIgnoreCase("ARCHIVED")) {
@@ -429,7 +429,9 @@ public class SurveyService extends BasicService {
 		} 
 		
 		if (filter.getUser() != null) {
-			if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("my")) {
+			if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("any") && filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) > 1) {
+				// form administrators can see all surveys
+			} else if (filter.getSelector() != null && filter.getSelector().equalsIgnoreCase("my")) {
 				// Overriding owner with current user
 				sql.append(" AND (s.OWNER = :ownerId)");
 				oQueryParameters.put("ownerId", filter.getUser().getId());
@@ -445,7 +447,7 @@ public class SurveyService extends BasicService {
 							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 				}
-			} else if (filter.getUser().getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2) {
+			} else {
 				// Searching for the last case, assuming selector is "all"
 				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
 					sql.append(
@@ -1169,6 +1171,14 @@ public class SurveyService extends BasicService {
 					}
 				}
 			}
+			if (element instanceof GalleryQuestion) {
+				GalleryQuestion gallery = (GalleryQuestion) element;
+				if (gallery.getFiles() != null) {
+					for (com.ec.survey.model.survey.base.File file : gallery.getFiles()) {
+						publishedSurveyKeys.put(file.getUid(), file.getUid());
+					}
+				}
+			}
 		}
 		List<Translations> draftTranslationsList = translationService.getTranslationsForSurvey(draftSurvey.getId(), true);
 		for (Translations draftTranslations : draftTranslationsList) {
@@ -1188,6 +1198,7 @@ public class SurveyService extends BasicService {
 					translationCopy.setSurveyId(publishedSurvey.getId());
 					translationCopy.setTranslations(translationsCopy);
 					if (draftTranslation.getKey().equalsIgnoreCase(Survey.TITLE) 
+							|| draftTranslation.getKey().equalsIgnoreCase(Survey.LOGOTEXT)
 							|| draftTranslation.getKey().equalsIgnoreCase(Survey.INTRODUCTION)
 							|| draftTranslation.getKey().equalsIgnoreCase(Survey.ESCAPEPAGE)
 							|| draftTranslation.getKey().equalsIgnoreCase(Survey.ESCAPELINK)
@@ -1384,7 +1395,7 @@ public class SurveyService extends BasicService {
 	}
 
 	@Transactional
-	public void unpublish(Survey survey, boolean deactivateAutoPublishing, int userId) {
+	public void unpublish(Survey survey, boolean deactivateAutoPublishing, int userId, boolean freeze) {
 		Session session = sessionFactory.getCurrentSession();
 
 		Survey publishedSurvey = this.getSurvey(survey.getShortname(), false, false, false, false, null, false, false);
@@ -1408,6 +1419,10 @@ public class SurveyService extends BasicService {
 		session.setReadOnly(ob, false);
 
 		ob.setIsActive(false);
+		if (freeze) {
+			ob.setIsFrozen(true);
+			survey.setIsFrozen(true);
+		}
 
 		if (deactivateAutoPublishing) {
 			ob.setAutomaticPublishing(false);
@@ -2265,14 +2280,14 @@ public class SurveyService extends BasicService {
 					result.getSurvey().getUniqueId());
 
 			Map<String, String> oldToNewUniqueIds = importDraftSurvey(copy, result, user);
-			importSurveyData(result, true, copy, oldToNewUniqueIds, result.getSurvey().getId());
+			importSurveyData(result, true, copy, oldToNewUniqueIds, result.getSurvey().getId(), convertedUIDs);
 
 			if (result.getActiveSurvey() != null && result.getActiveAnswerSets() != null
 					&& !result.getActiveAnswerSets().isEmpty()) {
 				Map<Integer, Integer> oldSourceIdsById = getSourceIdsById(result.getActiveSurvey());
 				for (int id : result.getOldSurveys().keySet()) {
 					Survey copyOld = importOldPublishedSurvey(result.getOldSurveys().get(id), user, oldToNewUniqueIds);
-					importSurveyData(result, false, copyOld, oldToNewUniqueIds, id);
+					importSurveyData(result, false, copyOld, oldToNewUniqueIds, id, convertedUIDs);
 				}
 				copyActive = result.getActiveSurvey().copy(this, user, fileDir, false, -1, -1, false, false, true, null,
 						null);
@@ -2280,7 +2295,7 @@ public class SurveyService extends BasicService {
 						result.getSurvey().getUniqueId());
 
 				importPublishedSurvey(copyActive, result, user, oldToNewUniqueIds, oldSourceIdsById);
-				importSurveyData(result, false, copyActive, oldToNewUniqueIds, result.getActiveSurvey().getId());
+				importSurveyData(result, false, copyActive, oldToNewUniqueIds, result.getActiveSurvey().getId(), convertedUIDs);
 			}
 
 			for (String fileuid : convertedUIDs.keySet()) {
@@ -2337,7 +2352,7 @@ public class SurveyService extends BasicService {
 	}
 
 	private void importSurveyData(ImportResult result, boolean draft, Survey survey,
-			Map<String, String> oldToNewUniqueIds, Integer surveyid) throws Exception {
+			Map<String, String> oldToNewUniqueIds, Integer surveyid, Map<String, String> convertedFileUIDs) throws Exception {
 		List<Translations> translations = null;
 		List<AnswerSet> answerSets = new ArrayList<>();
 		Map<Integer, List<File>> files = null;
@@ -2374,7 +2389,7 @@ public class SurveyService extends BasicService {
 		}
 
 		if (translations != null) {
-			copyTranslations(translations, survey, oldToNewUniqueIds, result, true);
+			copyTranslations(translations, survey, oldToNewUniqueIds, result, true, convertedFileUIDs);
 		}
 
 		if (answerSets != null && !answerSets.isEmpty()) {
@@ -2540,7 +2555,7 @@ public class SurveyService extends BasicService {
 	}
 
 	public void copyTranslations(List<Translations> translations, Survey survey, Map<String, String> oldToNewUniqueIds,
-			ImportResult result, boolean newTitle) {
+			ImportResult result, boolean newTitle, Map<String, String> convertedFileUIDs) {
 		Map<Integer, Element> elementsBySourceId = survey.getElementsBySourceId();
 
 		for (Translations tOriginal : translations) {
@@ -2564,7 +2579,7 @@ public class SurveyService extends BasicService {
 					tr.setSurveyId(survey.getId());
 
 					if (result == null || !result.isFromIPM()) {
-						tr.setKey(translateKey(trOriginal.getKey(), elementsBySourceId, oldToNewUniqueIds));
+						tr.setKey(translateKey(trOriginal.getKey(), elementsBySourceId, oldToNewUniqueIds, convertedFileUIDs));
 					} else {
 						if (trOriginal.getKey().equalsIgnoreCase(Survey.IPMINTRODUCTION)) {
 							for (com.ec.survey.model.survey.Element element : survey.getElements()) {
@@ -2641,12 +2656,14 @@ public class SurveyService extends BasicService {
 	}
 
 	private String translateKey(String key, Map<Integer, Element> elementsBySourceId,
-			Map<String, String> oldToNewUniqueIds) {
+			Map<String, String> oldToNewUniqueIds, Map<String, String> convertedFileUIDs) {
 
 		if (key == null)
 			return key;
 
 		if (key.equalsIgnoreCase(Survey.TITLE))
+			return key;
+		if (key.equalsIgnoreCase(Survey.LOGOTEXT))
 			return key;
 		if (key.equalsIgnoreCase(Survey.INTRODUCTION))
 			return key;
@@ -2756,6 +2773,8 @@ public class SurveyService extends BasicService {
 					return elementsBySourceId.get(retVal).getUniqueId() + "FIRSTCELL";
 			} else if (oldToNewUniqueIds.containsKey(key)) {
 				return oldToNewUniqueIds.get(key);
+			} else if (convertedFileUIDs.containsKey(key)) {
+				return convertedFileUIDs.get(key);
 			} else {
 				retVal = Integer.parseInt(key);
 				if (elementsBySourceId.containsKey(retVal))
@@ -2806,7 +2825,7 @@ public class SurveyService extends BasicService {
 			logger.info("unknown key " + key + "found in translation");
 		}
 
-		return translateKey(key2, elementsBySourceId, oldToNewUniqueIds);
+		return translateKey(key2, elementsBySourceId, oldToNewUniqueIds, new HashMap<String, String>());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -3004,7 +3023,9 @@ public class SurveyService extends BasicService {
 			if (!Tools.isFileEqual(draftSurvey.getLogo(), publishedSurvey.getLogo()))
 				hasPendingChanges = true;
 			if (!draftSurvey.getLogoInInfo().equals(publishedSurvey.getLogoInInfo()))
-				hasPendingChanges = true;
+				hasPendingChanges = true;			
+			if (!Tools.isEqual(draftSurvey.getLogoText(), publishedSurvey.getLogoText()))
+				hasPendingChanges = true;			
 			if (!Tools.isEqual(draftSurvey.getSkin(), publishedSurvey.getSkin()))
 				hasPendingChanges = true;
 			if (draftSurvey.getSectionNumbering() != publishedSurvey.getSectionNumbering())
@@ -3063,7 +3084,13 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;
 			
 			if (!Tools.isEqual(draftSurvey.getMinNumberDelphiStatistics(), publishedSurvey.getMinNumberDelphiStatistics()))
-				hasPendingChanges = true;			
+				hasPendingChanges = true;	
+			
+			if (!Tools.isEqual(draftSurvey.getTimeLimit(), publishedSurvey.getTimeLimit()))
+				hasPendingChanges = true;
+			
+			if (!Tools.isEqual(draftSurvey.getShowCountdown(), publishedSurvey.getShowCountdown()))
+				hasPendingChanges = true;	
 
 			if (draftSurvey.getSendConfirmationEmail() != publishedSurvey.getSendConfirmationEmail())
 				hasPendingChanges = true;
@@ -4310,14 +4337,16 @@ public class SurveyService extends BasicService {
 		survey.setIsDeleted(false);
 
 		if (alias != null && alias.length() > 0) {
-			survey.setShortname(alias);
-
-			for (int pid : surveyService.getAllPublishedSurveyVersions(survey.getId())) {
-				Survey s = (Survey) session.get(Survey.class, pid);
-				s.setIsDeleted(false);
+			survey.setShortname(alias);			
+		}
+		
+		for (int pid : surveyService.getAllPublishedSurveyVersions(survey.getId())) {
+			Survey s = (Survey) session.get(Survey.class, pid);
+			s.setIsDeleted(false);
+			if (alias != null && alias.length() > 0) {
 				s.setShortname(alias);
-				session.saveOrUpdate(s);
 			}
+			session.saveOrUpdate(s);
 		}
 
 		session.saveOrUpdate(survey);
@@ -4954,17 +4983,14 @@ public class SurveyService extends BasicService {
 
 	@Transactional
 	public void freeze(String surveyId, String mailText) throws Exception {
-		Session session = sessionFactory.getCurrentSession();
 		Survey survey = getSurvey(Integer.parseInt(surveyId));
 
 		if (survey == null) {
 			throw new MessageException("survey does not exist");
 		}
-
-		survey.setIsFrozen(true);
-		unpublish(survey, true, -1);
-		session.saveOrUpdate(survey);
-
+	
+		unpublish(survey, true, -1, true);
+	
 		// send email
 		InputStream inputStream = servletContext.getResourceAsStream("/WEB-INF/Content/mailtemplateeusurvey.html");
 		String mailtext = IOUtils.toString(inputStream, "UTF-8").replace("[CONTENT]", mailText).replace("[HOST]", host);

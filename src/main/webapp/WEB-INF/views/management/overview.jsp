@@ -264,28 +264,30 @@
 						<td class="overview-label"><spring:message code="label.Answers" /></td>
 						<td><esapi:encodeForHTML>${form.survey.numberOfAnswerSetsPublished}</esapi:encodeForHTML></td>
 					</tr>
-					<tr>
-						<td class="overview-label"><spring:message code="label.Results" /></td>
-						<td>
-							<c:choose>
-								<c:when test="${form.survey.publication.showContent || form.survey.publication.showCharts || form.survey.publication.showStatistics}">
-									<a class="visiblelink" target="_blank" href="${serverprefix}publication/${form.survey.shortname}"><spring:message code="label.Published" /></a>
-								</c:when>
-								<c:otherwise>
-									<spring:message code="label.Unpublished" />
-								</c:otherwise>
-							</c:choose>
-							&nbsp;
-							<c:choose>
-								<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
-									<a href="properties?tab=6&editelem=showContent" class="visiblelink" title="<spring:message code="label.EditResultPublication" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
-								</c:when>
-								<c:otherwise>
-									<a class="visiblelinkdisabled"><spring:message code="label.EditResultPublication" /></a>								
-								</c:otherwise>
-							</c:choose>		
-						</td>					
+					<c:if test="${!form.survey.isOPC}">
+						<tr>
+							<td class="overview-label"><spring:message code="label.Results" /></td>
+							<td>
+								<c:choose>
+									<c:when test="${form.survey.publication.showContent || form.survey.publication.showCharts || form.survey.publication.showStatistics}">
+										<a class="visiblelink" target="_blank" href="${serverprefix}publication/${form.survey.shortname}"><spring:message code="label.Published" /></a>
+									</c:when>
+									<c:otherwise>
+										<spring:message code="label.Unpublished" />
+									</c:otherwise>
+								</c:choose>
+								&nbsp;
+								<c:choose>
+									<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1}">
+										<a href="properties?tab=6&editelem=showContent" class="visiblelink" title="<spring:message code="label.EditResultPublication" />" data-toggle="tooltip"><span class="glyphicon glyphicon-pencil"></span></a>
+									</c:when>
+									<c:otherwise>
+										<a class="visiblelinkdisabled"><spring:message code="label.EditResultPublication" /></a>								
+									</c:otherwise>
+								</c:choose>		
+							</td>					
 					</tr>
+					</c:if>
 					<tr>
 						<td colspan="4" class="surveyactions" style="padding-top: 30px;">
 							<c:choose>

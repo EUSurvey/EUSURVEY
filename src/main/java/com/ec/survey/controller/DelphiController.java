@@ -185,7 +185,7 @@ public class DelphiController extends BasicController {
 				return new ResponseEntity<>(new DelphiUpdateResult(resources.getMessage("error.CheckValidation", null, locale)), HttpStatus.BAD_REQUEST);
 			}
 
-			saveAnswerSet(answerSet, fileDir, null, -1);
+			saveAnswerSet(answerSet, fileDir, null, -1, request);
 			
 			DelphiUpdateResult updateResult = new DelphiUpdateResult(resources.getMessage("message.ChangesSaved", null, locale));
 			updateResult.setLink(serverPrefix + "editcontribution/" + answerSet.getUniqueCode());
@@ -216,7 +216,7 @@ public class DelphiController extends BasicController {
 			String languageCode = request.getParameter("languagecode");
 			Survey survey = surveyService.getSurvey(sid, languageCode);
 
-			if (survey == null || !survey.getIsDelphi()) {
+			if (survey == null) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
 
@@ -243,8 +243,8 @@ public class DelphiController extends BasicController {
 			}
 
 			Question question = (Question) element;
-			if (!question.getIsDelphiQuestion() || (!privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly()
-					&& !answerSetContainsAnswerForQuestion(answerSet, question))) {
+			if (!privileged && !survey.getIsDelphiShowAnswersAndStatisticsInstantly()
+					&& !answerSetContainsAnswerForQuestion(answerSet, question)) {
 				return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 			}
 
@@ -261,11 +261,6 @@ public class DelphiController extends BasicController {
 			}
 			
 			if (question instanceof FreeTextQuestion) {
-				
-				if (question.getDelphiChartType() == DelphiChartType.None) {
-					return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-				}
-				
 				return handleDelphiFreetextQuestion(survey, question, creator);
 			}
 
@@ -313,7 +308,7 @@ public class DelphiController extends BasicController {
 		Collection<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
 		int contributions = answerExplanationService.getTotalDelphiContributions(uids, survey.getIsDraft());
 
-		if (contributions < survey.getMinNumberDelphiStatistics()) {
+		if (survey.getIsDelphi() && contributions < survey.getMinNumberDelphiStatistics()) {
 			return ResponseEntity.noContent().build();
 		}
 
@@ -349,7 +344,7 @@ public class DelphiController extends BasicController {
 		Collection<String> uids = question.getQuestions().stream().map(Element::getUniqueId).collect(Collectors.toList());
 		int contributions = answerExplanationService.getTotalDelphiContributions(uids, survey.getIsDraft());
 
-		if (contributions < survey.getMinNumberDelphiStatistics()) {
+		if (survey.getIsDelphi() && contributions < survey.getMinNumberDelphiStatistics()) {
 			return ResponseEntity.noContent().build();
 		}
 
@@ -402,12 +397,15 @@ public class DelphiController extends BasicController {
 		
 		List<String> texts = creator.getAnswers4FreeTextStatistics(survey, question);
 		
-		if (texts.size() < survey.getMinNumberDelphiStatistics()) {
+		if (texts.isEmpty() || (survey.getIsDelphi() && texts.size() < survey.getMinNumberDelphiStatistics())) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}		
 		
 		final List<WordFrequency> wordFrequencies = frequencyAnalyzer.load(texts);
+		if (wordFrequencies.isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
 		
 		DelphiGraphDataSingle result = new DelphiGraphDataSingle();
 		result.setChartType(question.getDelphiChartType());
@@ -425,7 +423,7 @@ public class DelphiController extends BasicController {
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiNumberQuestion(Survey survey, NumberQuestion question, NumberQuestionStatistics numberQuestionStatistics) {
-		if (numberQuestionStatistics.getNumberVotes() < survey.getMinNumberDelphiStatistics() || (!question.showStatisticsForNumberQuestion() && !question.isSlider())) {
+		if ((survey.getIsDelphi() && numberQuestionStatistics.getNumberVotes() < survey.getMinNumberDelphiStatistics()) || (!question.showStatisticsForNumberQuestion() && !question.isSlider())) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
@@ -450,7 +448,7 @@ public class DelphiController extends BasicController {
 	}
 
 	private ResponseEntity<AbstractDelphiGraphData> handleDelphiGraphChoiceQuestion(Survey survey, ChoiceQuestion question, Statistics statistics, StatisticsCreator creator, Map<Integer, Integer> numberOfAnswersMap, Map<Integer, Map<String, Set<String>>> multipleChoiceSelectionsByAnswerset) throws Exception {
-		if (numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics()) {
+		if (survey.getIsDelphi() && numberOfAnswersMap.get(question.getId()) < survey.getMinNumberDelphiStatistics()) {
 			// only show statistics for this question if the total number of answers exceeds the threshold
 			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
 		}
@@ -1224,8 +1222,9 @@ public class DelphiController extends BasicController {
 			final int idParsed = Integer.parseInt(id);
 
 			final String text = request.getParameter("text");
-
 			final String uniqueCode = request.getParameter("uniqueCode");
+			final boolean formManager = request.getParameter("formManager") != null;
+
 			if (uniqueCode == null || uniqueCode.isEmpty()) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
@@ -1233,8 +1232,15 @@ public class DelphiController extends BasicController {
 			final AnswerComment comment = answerExplanationService.getComment(idParsed);
 			if (comment == null
 					|| !comment.getUniqueCode().equals(uniqueCode)
-					|| comment.getText().equals(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
+					|| comment.getText().equals(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)
+					|| text.equals(AnswerExplanationService.DELETED_DELPHI_COMMENT_WITH_REPLIES_TEXT)) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			if (formManager) {
+				final int userid = sessionService.getCurrentUser(request).getId();
+				final String surveyID = surveyService.getSurveyForQuestion(comment.getQuestionUid()).getUniqueId();
+				activityService.log(801, "id: " + comment.getId() + "; text: " + comment.getText(),
+						"id: " + comment.getId() + "; text: " + text, userid, surveyID);
 			}
 			comment.setText(text);
 			comment.setDate(new Date());
@@ -1254,6 +1260,8 @@ public class DelphiController extends BasicController {
 			final int idParsed = Integer.parseInt(id);
 
 			final String uniqueCode = request.getParameter("uniqueCode");
+			final boolean formManager = request.getParameter("formManager") != null;
+
 			if (uniqueCode == null || uniqueCode.isEmpty()) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 			}
@@ -1261,6 +1269,12 @@ public class DelphiController extends BasicController {
 			final AnswerComment comment = answerExplanationService.getComment(idParsed);
 			if (comment == null || !comment.getUniqueCode().equals(uniqueCode)) {
 				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			}
+			if (formManager) {
+				final int userid = sessionService.getCurrentUser(request).getId();
+				final String surveyID = surveyService.getSurveyForQuestion(comment.getQuestionUid()).getUniqueId();
+				activityService.log(802, "id: " + comment.getId() + "; text: " + comment.getText(),
+						null, userid, surveyID);
 			}
 			if (!answerExplanationService.hasCommentChildren(idParsed)) {
 				answerExplanationService.deleteComment(comment);

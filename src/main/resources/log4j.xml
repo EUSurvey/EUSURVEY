@@ -99,25 +99,11 @@
      </logger>
 
   	<logger name="org.hibernate">
-        <level value="warn" />     
-        <appender-ref ref="info" />   
-    	<appender-ref ref="error" />
-    	<appender-ref ref="console" />
-    </logger>
-
- 	<logger name="org.hibernate.SQL">
         <level value="warn" />
         <appender-ref ref="info" />
     	<appender-ref ref="error" />
     	<appender-ref ref="console" />
     </logger>
-
- 	<logger name="org.hibernate.tool.hbm2ddl">
- 		<level value="warn"/>
- 		<appender-ref ref="info" />
- 		<appender-ref ref="error" />
- 		<appender-ref ref="console" />
- 	</logger>
  	
 	<!-- Root Logger -->
 	<root>

@@ -83,7 +83,8 @@ function addElement(element, foreditor, forskin)
 	var validation = getValidationMessageByQuestion(uniqueId);
 	if (validation.length > 0)
 	{
-		$(container).append('<div style="color: #f00" class="validation-error-server">' + validation + '</div>');
+		$(container).append('<div style="color: #f00" tabindex="0" class="validation-error-server" aria-live="polite">' + validation + '</div>');
+		$(container).find(".validation-error-server").first().focus();
 	}
 	
 	if (!foreditor && doAnswersExist())
@@ -132,6 +133,7 @@ function addDelphiClassToContainerIfNeeded(element, container) {
 }
 
 var modelsForDelphiQuestions = [];
+var lastFocusedContainer = null;
 
 function addElementToContainer(element, container, foreditor, forskin) {
 	addDelphiClassToContainerIfNeeded(element, container);
@@ -262,6 +264,7 @@ function addElementToContainer(element, container, foreditor, forskin) {
 		$(container).find(".qq-upload-button").addClass("btn btn-default").removeClass("qq-upload-button");
 		$(container).find(".qq-upload-drop-area").css("margin-left", "-1000px");
 		$(container).find(".qq-upload-list").hide();
+		$(container).find("input[type=file]").attr("aria-label", infolabeluploadbutton);
 	} 
 	
 	if (element.type == 'DateQuestion') {
@@ -346,6 +349,15 @@ function addElementToContainer(element, container, foreditor, forskin) {
 					}
 		});
 	});
+	
+	$(container).focusin(function() {
+		if (lastFocusedContainer == null || $(container).attr("data-id") != lastFocusedContainer.attr("data-id")) {
+			if (lastFocusedContainer != null) {
+				validateInput(lastFocusedContainer,true);
+			}
+			lastFocusedContainer = $(container);
+		}
+	})
 	
 	$(container).find(".confirmationelement").each(function(){
 		var cols = this;
@@ -774,8 +786,8 @@ function loadGraphData(div) {
 
 var callerAddChartModal = null;
 
-function loadGraphDataModal(div) {
-	var surveyElement = $(div).closest(".survey-element");
+function loadGraphDataModal(link) {
+	var surveyElement = $(link).closest(".survey-element");
 	var surveyId = $('#survey\\.id').val();
 	var questionuid = $(surveyElement).attr("data-uid");
 	var languagecode = $('#language\\.code').val();
@@ -783,14 +795,15 @@ function loadGraphDataModal(div) {
 
 	// Briefly show the modal to get the real width of the chart container.
 	const modal = $('#delphi-chart-modal');
-	$(modal).modal('show');
+	showModalDialog(modal, link);
+	
 	const canvasContainer = $(modal).find('.delphi-chart-modal__chart-container')[0];
 	$(canvasContainer).show();
 	const canvasContainerWidth = canvasContainer.clientWidth;
 	$(canvasContainer).hide();
 	$(modal).modal('hide');
 
-	callerAddChartModal = div;
+	callerAddChartModal = link;
 	loadGraphDataInnerForRunner(surveyElement, surveyId, questionuid, languagecode, uniquecode, addChartModal, false, true, false, canvasContainerWidth);
 }
 
@@ -991,8 +1004,7 @@ function loadTableDataInner(languageCode, questionUid, surveyId, uniqueCode, vie
 			viewModel.delphiTableTotalEntries(result.total);
 			viewModel.delphiTableNewComments(result.hasNewComments);
 
-			$('[data-toggle="tooltip"]').tooltip()
-
+			$('[data-toggle="tooltip"]').ApplyCustomTooltips();
 			addTruncatedClassIfNeededForExplanationsAndDelphiCommentTexts(questionUid);
 		}
 	 });
@@ -1116,7 +1128,7 @@ function delphiUpdate(div) {
 	if (isOneAnswerEmptyWhileItsExplanationIsNot(div)) {
 		currentDelphiUpdateType = DELPHI_UPDATE_TYPE.ONE_QUESTION;
 		currentDelphiUpdateContainer = div;
-		$('.confirm-explanation-deletion-modal').modal("show");
+		showModalDialog($('.confirm-explanation-deletion-modal'), $(div).find("[data-type='delphisavebutton']").first());
 		return;
 	}
 
@@ -1125,7 +1137,7 @@ function delphiUpdate(div) {
 
 function confirmExplanationDeletion() {
 
-	$('.confirm-explanation-deletion-modal').modal("hide");
+	hideModalDialog($('.confirm-explanation-deletion-modal'));
 	if (currentDelphiUpdateType === DELPHI_UPDATE_TYPE.ONE_QUESTION) {
 		delphiUpdateContinued(currentDelphiUpdateContainer, () => {
 			$(currentDelphiUpdateContainer).find("textarea[name^='explanation']").val("");
@@ -1234,7 +1246,7 @@ function appendShowContributionLinkDialogToSidebar(div, data) {
 		$("<br />").appendTo(".contact-and-pdf__delphi-section");
 		$('<a id="editYourContributionLink" href="javascript:;" onclick="showContributionLinkDialog(this)">' + labelEditYourContributionLater + '</a>')
 			.appendTo(".contact-and-pdf__delphi-section");
-		showContributionLinkDialog($(div).find("a[data-type='delphisavebutton']"), data.link);
+		showContributionLinkDialog($(div).find("a[data-type='delphireturntostart']"), data.link);
 	}
 }
 
@@ -1518,3 +1530,19 @@ function sendDelphiMailLink() {
 	
 	$('#ask-email-dialog').modal('hide');
 }
+
+function hideTooltipsOnEscape(e) {
+	if ("Escape" === e.key) {
+		$('[data-toggle="tooltip"]').tooltip("hide");
+	}
+}
+
+function validateLastContainer() {
+	if (lastFocusedContainer != null) {
+		validateInput(lastFocusedContainer, true);
+	}
+}
+
+(function () {
+	$(document).keyup(hideTooltipsOnEscape);
+})();

@@ -7,17 +7,25 @@
 <title>EUSurvey - <spring:message code="label.Delphi" />
 </title>
 <%@ include file="../includes.jsp"%>
-<c:if test="${runnermode != null }">
+
 	<script type="text/javascript">
 		$(function() {
+			
+			<c:if test="${runnermode != null }">
+			
 			$(".headerlink, .header a").each(function() {
 				if ($(this).attr("href").indexOf("?") == -1)
 					$(this).attr("href", $(this).attr("href") + "/runner");
 			});
+			
+			</c:if>
+			
+			$('[data-toggle="tooltip"]').tooltip(); 
 		});
 	</script>
-</c:if>
 
+<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+	
 </head>
 
 <body>

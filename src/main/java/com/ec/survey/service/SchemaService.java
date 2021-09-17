@@ -47,6 +47,32 @@ public class SchemaService extends BasicService {
 
 	@Resource(name = "domainWorker")
 	private DomainUpdater domaintWorker;
+
+	@Transactional
+	public void step99() {
+		Session session = sessionFactory.getCurrentSession();
+		Status status = getStatus();
+
+		String existing = settingsService.get("801ActivityEnabled");
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey("801ActivityEnabled");
+			s.setValue("true");
+			s.setFormat("true / false");
+			session.saveOrUpdate(s);
+		}
+		existing = settingsService.get("802ActivityEnabled");
+		if (existing == null) {
+			Setting s = new Setting();
+			s.setKey("802ActivityEnabled");
+			s.setValue("true");
+			s.setFormat("true / false");
+			session.saveOrUpdate(s);
+		}
+
+		status.setDbversion(99);
+		session.saveOrUpdate(status);
+	}
 	
 	
 	@Transactional 

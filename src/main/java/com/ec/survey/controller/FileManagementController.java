@@ -204,6 +204,29 @@ public class FileManagementController extends BasicController {
 				fileService.startExport(inputFilter, checkall ? null : files2export, user);
 				result.addObject("info", resources.getMessage("info.DownloadStarted", null, "Exported", locale));
 			}
+		} else if (mode.endsWith("bulkdelete"))
+		{
+			boolean checkall = request.getParameter("checkall") != null && request.getParameter("checkall").equalsIgnoreCase("true") ;
+			String[] files2delete = request.getParameterValues("checkfile");
+			inputFilter = (FileFilter) request.getSession().getAttribute("lastfilesfilter");
+			mode = mode.replace("bulkdelete", "");
+			
+			if (!checkall && (files2delete == null || files2delete.length == 0))
+			{
+				result.addObject(Constants.ERROR, "Please select at least one file");
+				fileerror = true;
+				inputFilter = (FileFilter) request.getSession().getAttribute("lastfilefilter");
+				if (inputFilter == null)
+				{
+					inputFilter = new FileFilter();
+					inputFilter.setSearchInFileSystem(searchInFileSystem);
+				}
+			} else {					
+				inputFilter.setPage(1);
+				inputFilter.setItemsPerPage(Integer.MAX_VALUE);
+				int deleted = fileService.deleteAll(inputFilter, checkall ? null : files2delete);
+				result.addObject("info", resources.getMessage("info.FilesDeleted", new String[] { Integer.toString(deleted) }, "Deleted", locale));
+			}
 		} else if (mode.endsWith("reset")) {
 	 		mode = mode.replace("reset", "");
 	 	 	request.getSession().removeAttribute("lastfilefilter");

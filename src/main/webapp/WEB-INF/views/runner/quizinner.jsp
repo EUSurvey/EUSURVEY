@@ -11,7 +11,7 @@
 			<div class="right-area" style="z-index: 1; position: relative; float: right;">
 						
 				<c:if test="${form.survey.logo != null && form.survey.logoInInfo}">
-					<img style="max-width: 100%" src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" />
+					<img style="max-width: 100%" src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="${form.survey.logoText}" />
 					<hr style="margin-top: 15px;" />
 				</c:if>			
 				
@@ -42,7 +42,7 @@
 						
 						<c:choose>
 							<c:when test="${form.survey.contact.startsWith('form:')}">
-								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}" aria-label="${form.getMessage("label.ContactForm")} - ${form.getMessage("label.OpensInNewWindow")}">${form.getMessage("label.ContactForm")}</a>
+								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" aria-label="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}" aria-label="${form.getMessage("label.ContactForm")} - ${form.getMessage("label.OpensInNewWindow")}">${form.getMessage("label.ContactForm")}</a>
 							</c:when>
 							<c:when test="${form.survey.contact.contains('@')}">
 								<i class="icon icon-envelope" style="vertical-align: middle"></i>
@@ -68,7 +68,7 @@
 		</c:choose>
 			<c:if test="${form.survey.logo != null && !form.survey.logoInInfo}">
 				<div style="max-width: 900px">
-					<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" style="max-width: 900px;" />
+					<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="${form.survey.logoText}" style="max-width: 900px;" />
 				</div>
 			</c:if>
 		

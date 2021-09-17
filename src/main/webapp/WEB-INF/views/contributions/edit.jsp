@@ -96,6 +96,51 @@
  	
  	<c:if test="${runnermode != null && forpdf==null}">
 		<script type="text/javascript">
+		
+			function loadElements() {
+				var ids = "";
+				var counter = 0;
+				
+				if ($(".emptyelement").length > 0)
+				{				
+					$(".emptyelement").each(function(){
+						ids += $(this).attr("data-id") + '-';
+						counter++;
+						if (counter > 20)
+						{
+							return false;	
+						}
+					})	
+					 
+					 var s = "ids=" + ids + "&survey=${form.survey.id}&slang=${form.language.code}&as=${answerSet}";
+						
+						$.ajax({
+							type:'GET',
+							dataType: 'json',
+							url: "${contextpath}/runner/elements/${form.survey.id}",
+							data: s,
+							cache: false,
+							success: function( result ) {	
+								for (var i = 0; i < result.length; i++)
+								{
+									addElement(result[i], false, false);
+								}
+								applyStandardWidths();
+								setTimeout(loadElements, 500);
+								selectPageAndScrollToQuestionIfSet();																
+							},
+							error: function( result ) {	
+								alert(result);
+							}
+						});
+				} else {
+					readCookies();
+					$("#btnSubmit").removeClass("hidden");
+					$("#btnSaveDraft").removeClass("hidden");
+					$("#btnSaveDraftMobile").removeClass("hidden");
+				}
+			}
+		
 			$(function() {
 				 $(".headerlink, .header a").each(function(){
 					 if ($(this).attr("href") && $(this).attr("href").indexOf("?") == -1)
@@ -103,36 +148,7 @@
 				 });
 				 
 				 <c:if test="${forpdf == null}">
-				 
-				 var ids = "";
-					$(".emptyelement").each(function(){
-						ids += $(this).attr("data-id") + '-';
-					})	
-				 
-				 var s = "ids=" + ids + "&survey=${form.survey.id}&slang=${form.language.code}&as=${answerSet}";
-					
-					$.ajax({
-						type:'GET',
-						dataType: 'json',
-						url: "${contextpath}/runner/elements/${form.survey.id}",
-						data: s,
-						cache: false,
-						success: function( result ) {	
-							for (var i = 0; i < result.length; i++)
-							{
-								addElement(result[i], false, false);
-							}
-							applyStandardWidths();
-							selectPageAndScrollToQuestionIfSet();
-							readCookies();
-							$("#btnSubmit").removeClass("hidden");
-							$("#btnSaveDraft").removeClass("hidden");
-							$("#btnSaveDraftMobile").removeClass("hidden");
-						},
-						error: function( result ) {	
-							alert(result);
-						}
-					});
+				 	loadElements();				
 				</c:if>
 			});
 		</script>
@@ -153,11 +169,12 @@
 			var div = document.createElement("div");
 			
 			var del = document.createElement("a");
-			$(del).attr("href", "#").attr(
+			$(del).attr("href", "#").attr("data-toggle","tooltip").attr("title","${form.getMessage("label.RemoveUploadedFile")}").attr("aria-label",f).attr(
 					"onclick",
 					"deleteFile('" + $(element).attr('data-id') + "','"
 							+ $("#uniqueCode").val() + "','" + f + "', this);return false;");
 			
+			$(del).tooltip();
 			var ic = document.createElement("i");
 			$(ic).addClass("glyphicon glyphicon-trash").css("margin-right",
 					"10px");
@@ -346,7 +363,7 @@
 					
 					<c:choose>
 						<c:when test="${form.survey.contact.startsWith('form:')}">
-							<a class="link visibleLink" target="_blank" data-toggle="tooltip" title="<spring:message code="info.ContactForm" />" href="${contextpath}/runner/contactform/${form.survey.shortname}"><spring:message code="label.ContactForm" /></a>
+							<a class="link visibleLink" target="_blank" data-toggle="tooltip" title="<spring:message code="info.ContactForm" />" aria-label="<spring:message code="info.ContactForm" />" href="${contextpath}/runner/contactform/${form.survey.shortname}"><spring:message code="label.ContactForm" /></a>
 						</c:when>
 						<c:when test="${form.survey.contact.contains('@')}">
 							<i class="icon icon-envelope" style="vertical-align: middle"></i>

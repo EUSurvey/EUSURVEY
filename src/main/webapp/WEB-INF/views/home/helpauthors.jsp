@@ -4,8 +4,9 @@
 <html>
 <head>
 	<title>EUSurvey - <spring:message code="label.Documentation" /></title>	
-	<%@ include file="../includes.jsp" %>	
-	
+	<%@ include file="../includes.jsp" %>
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+		
 	<style type="text/css">
 
 		<c:choose>
@@ -215,10 +216,7 @@
 			<p>
 				<strong>Advanced privacy</strong>
 				<br/>
-				By creating an anonymous form, you guarantee your respondents' privacy.
-			</p>
-			<p>
-				You won't be able to access their connection details.
+				You can guarantee to your participants to remain anonymous by activating the 'Anonymous survey mode'. If activated, all contributions will be anonymous. This means that no user-related data will be saved by the system.
 			</p>
 			<p>
 				<strong>Customised look/feel</strong>
@@ -3111,22 +3109,10 @@
 				<strong>Creating an anonymous survey:</strong>
 			</p>
 			<p>
-				You can create an anonymous survey by setting the 'Privacy' in the
-				'Security Settings' of your properties to <strong>'No'.</strong>
+				You can choose to create an anonymous survey by using the 'Anonymous survey mode' option in the survey properties. If activated, contributions to your survey will be anonymous as EUSurvey will not save any personal data such as IP addresses. If you want your survey to be fully anonymous, do not include questions collecting personal data in your survey design.
 			</p>
 			<p>
-				Then, all collected user information will be <strong>replaced</strong> by    <strong>'Anonymous'</strong>.
-			</p>
-			<p>
-				However, the IP of every connection is saved for security reasons for every
-				server request (see
-				<a
-						href="https://ec.europa.eu/eusurvey/home/privacystatement"
-						target="_blank"
-						>
-					privacy statement on the protection of personal data
-				</a>
-				).
+				<img src="${contextpath}/resources/images/documentation/anonymity.png" />
 			</p>
 			<h2>
 				Do I need to include a privacy statement?    

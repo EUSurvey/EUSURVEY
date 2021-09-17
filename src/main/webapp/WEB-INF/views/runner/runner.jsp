@@ -16,7 +16,7 @@
 		</c:when>
 		<c:otherwise>
 			<link id="runnerCss" href="${contextpath}/resources/css/runner.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
-			<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+			<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 		</c:otherwise>
 	</c:choose>
 	
@@ -95,7 +95,7 @@
 				$("#btnSubmit").removeClass("hidden");
 				$("#btnSaveDraft").removeClass("hidden");
 				$("#btnSaveDraftMobile").removeClass("hidden");
-				$('[data-toggle="tooltip"]').tooltip(); 
+				$('[data-toggle="tooltip"]').ApplyCustomTooltips();
 			}
 		}
 		
@@ -111,19 +111,16 @@
 			for (var i = 0; i < responseJSON.files.length; i++) {
 				var f = responseJSON.files[i];
 				var div = document.createElement("div");
-				
-				
-				
 				var del = document.createElement("a");
-				$(del).attr("data-toggle","tooltip").attr("title","${form.getMessage("label.RemoveUploadedFile")}").attr("href", "#").attr(
+				$(del).attr("data-toggle","tooltip").attr("id", "uploadlink" + $(element).attr('data-id')).attr("title","${form.getMessage("label.RemoveUploadedFile")}").attr("aria-label",f).attr("href", "#").attr(
 						"onclick",
 						'deleteFile("' + $(element).attr('data-id') + '","'
 								+ $("#uniqueCode").val() + '","' + f + '", this);return false;');
-				$(del).tooltip(); 
+				$(del).ApplyCustomTooltips();
 				
 				var ic = document.createElement("span");
 				$(ic).addClass("glyphicon glyphicon-trash").css("margin-right",	"10px");
-				$(del).append(ic);		
+				$(del).append(ic);
 				$(div).html(f);		
 				$(div).prepend(del);
 				
@@ -362,22 +359,6 @@
 		</c:if>
 	
 	</c:if>
-		
-	<div class="modal" id="sessiontimeoutdialog" role="dialog">
-		<div class="modal-dialog" role="document">
-		    <div class="modal-content">
-			    <div class="modal-header">
-			    	<spring:message code="label.SessionTimeout" />
-			    </div>
-				<div class="modal-body">	
-					<spring:message code="info.SessionTimeout" />
-				</div>
-				<div class="modal-footer">
-					<a onclick="$('#sessiontimeoutdialog').modal('hide')" target="_blank" class="btn btn-primary"><spring:message code="label.OK" /></a>
-				</div>
-			</div>
-		</div>
-	</div>
 	
 	<div class="modal" id="networkproblemsdialog" role="dialog">
 		<div class="modal-dialog" role="document">

@@ -26,6 +26,7 @@ import com.ec.survey.tools.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.hibernate.Session;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -582,7 +583,7 @@ public class ManagementController extends BasicController {
 			throw new ForbiddenURLException();
 		}
 
-		surveyService.unpublish(form.getSurvey(), true, u.getId());
+		surveyService.unpublish(form.getSurvey(), true, u.getId(), false);
 		activityService.log(105, "published", "unpublished", u.getId(), form.getSurvey().getUniqueId());
 		return overview(shortname, request, locale);
 	}
@@ -898,7 +899,7 @@ public class ManagementController extends BasicController {
 
 				try {
 
-					surveyService.copyFiles(copy, new HashMap<>(), false, null, original.getUniqueId());
+					Map<String, String> convertedUIDs = surveyService.copyFiles(copy, new HashMap<>(), false, null, original.getUniqueId());
 
 					Map<String, String> oldToNewUniqueIds = new HashMap<>();
 					oldToNewUniqueIds.put("", ""); // leave blank for old surveys that have no uniqueIds
@@ -951,7 +952,7 @@ public class ManagementController extends BasicController {
 
 					List<Translations> translations = translationService.getTranslationsForSurvey(original.getId(),
 							false, false);
-					surveyService.copyTranslations(translations, copy, oldToNewUniqueIds, null, newTitle);
+					surveyService.copyTranslations(translations, copy, oldToNewUniqueIds, null, newTitle, convertedUIDs);
 
 					Form form = new Form(resources);
 					form.setSurvey(copy);
@@ -1009,6 +1010,11 @@ public class ManagementController extends BasicController {
 			survey.setEcasSecurity(true);
 			survey.setEcasMode("all");
 			survey.setCaptcha(false);
+			survey.getPublication().setShowContent(false);
+			survey.getPublication().setShowUploadedDocuments(false);
+			survey.getPublication().setShowStatistics(false);
+			survey.getPublication().setShowCharts(false);
+					
 			if (survey.getSkin() == null || !survey.getSkin().getName().equalsIgnoreCase("New Official EC Skin")) {
 				Skin ecSkin = skinService.getSkin("New Official EC Skin");
 				survey.setSkin(ecSkin);
@@ -1030,7 +1036,6 @@ public class ManagementController extends BasicController {
 			}		
 		}		
 	}
-
 
 	private ModelAndView updateSurvey(Form form, HttpServletRequest request, boolean creation, Locale locale)
 			throws Exception {
@@ -1341,6 +1346,10 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (!Tools.isEqual(survey.getMaxNumberContribution(), uploadedSurvey.getMaxNumberContribution()))
 			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getTimeLimit(), uploadedSurvey.getTimeLimit()))
+			hasPendingChanges = true;
+		if (!Tools.isEqual(survey.getShowCountdown(), uploadedSurvey.getShowCountdown()))
+			hasPendingChanges = true;
 
 		if (!uploadedSurvey.getShowTotalScore()) {
 			uploadedSurvey.setScoresByQuestion(false);
@@ -1377,6 +1386,8 @@ public class ManagementController extends BasicController {
 		survey.setShowQuizIcons(uploadedSurvey.getShowQuizIcons());
 		survey.setShowTotalScore(uploadedSurvey.getShowTotalScore());
 		survey.setScoresByQuestion(uploadedSurvey.getScoresByQuestion());
+		survey.setTimeLimit(uploadedSurvey.getTimeLimit());
+		survey.setShowCountdown(uploadedSurvey.getShowCountdown());
 
 		survey.setIsDelphiShowAnswersAndStatisticsInstantly(uploadedSurvey.getIsDelphiShowAnswersAndStatisticsInstantly());
 		survey.setIsDelphiShowAnswers(uploadedSurvey.getIsDelphiShowAnswers());
@@ -1798,8 +1809,14 @@ public class ManagementController extends BasicController {
 			if (!uploadedSurvey.getLogoInInfo().equals(survey.getLogoInInfo())) {
 				hasPendingChanges = true;
 			}
-
+			
 			survey.setLogoInInfo(uploadedSurvey.getLogoInInfo());
+			
+			if (!Objects.equals(uploadedSurvey.getLogoText(), survey.getLogoText())) {
+				hasPendingChanges = true;
+			}
+
+			survey.setLogoText(ConversionTools.escape(uploadedSurvey.getLogoText()));
 
 			if (survey.getPublication().isShowContent() != uploadedSurvey.getPublication().isShowContent()) {
 				String[] oldnew = { survey.getPublication().isShowContent() ? "published" : "unpublished",
@@ -2521,6 +2538,8 @@ public class ManagementController extends BasicController {
 
 		result.addObject("submit", true);
 		result.addObject(Constants.UNIQUECODE, uniqueCode);
+		
+		sessionService.setFormStartDate(request, form, uniqueCode);
 
 		return result;
 	}
@@ -2562,6 +2581,7 @@ public class ManagementController extends BasicController {
 			survey = surveyService.getSurvey(survey.getId(), newlang);
 			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
 					survey.getLanguage(), resources, contextpath);
+			sessionService.setFormStartDate(request, f, uniqueCode);
 			f.getAnswerSets().add(answerSet);
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 
@@ -2576,6 +2596,7 @@ public class ManagementController extends BasicController {
 			survey = surveyService.getSurvey(survey.getId(), newlang);
 			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
 					survey.getLanguage(), resources, contextpath);
+			sessionService.setFormStartDate(request, f, uniqueCode);
 			f.getAnswerSets().add(answerSet);
 			if (newcss != null && newcss.equalsIgnoreCase("wcag")) {
 				answerSet.setWcagMode(true);
@@ -2599,7 +2620,7 @@ public class ManagementController extends BasicController {
 			}
 			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
 					survey.getLanguage(), resources, contextpath);
-
+			sessionService.setFormStartDate(request, f, uniqueCode);
 			f.getAnswerSets().add(answerSet);
 			f.setWcagCompliance(answerSet.getWcagMode() != null && answerSet.getWcagMode());
 			f.setValidation(validation);
@@ -2623,6 +2644,7 @@ public class ManagementController extends BasicController {
 			}
 			Form f = new Form(survey, translationService.getTranslationsForSurvey(survey.getId(), true),
 					survey.getLanguage(), resources, contextpath);
+			sessionService.setFormStartDate(request, f, uniqueCode);
 			f.getAnswerSets().add(answerSet);
 			ModelAndView model = new ModelAndView("management/test", "form", f);
 			model.addObject("submit", true);
@@ -2637,7 +2659,7 @@ public class ManagementController extends BasicController {
 			answerSet.setResponderEmail(user.getEmail());
 		}
 
-		saveAnswerSet(answerSet, fileDir, request.getParameter("draftid"), -1);
+		saveAnswerSet(answerSet, fileDir, request.getParameter("draftid"), -1, request);
 
 		survey = surveyService.getSurvey(survey.getId(), lang);
 
@@ -2646,13 +2668,14 @@ public class ManagementController extends BasicController {
 					answerSet.getUniqueCode());
 			Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
 					translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+			sessionService.setFormStartDate(request, form, uniqueCode);
 			form.setSurvey(survey);
 			form.getAnswerSets().add(answerSet);
 
 			result.addObject("invisibleElements", invisibleElements);
 			result.addObject(form);
 			result.addObject("surveyprefix", survey.getId() + ".");
-			result.addObject("quiz", QuizHelper.getQuizResult(answerSet));
+			result.addObject("quiz", QuizHelper.getQuizResult(answerSet, invisibleElements));
 			result.addObject("isquizresultpage", true);
 			return result;
 		}
@@ -2669,6 +2692,7 @@ public class ManagementController extends BasicController {
 
 		Form form = new Form(resources, surveyService.getLanguage(locale.getLanguage().toUpperCase()),
 				translationService.getActiveTranslationsForSurvey(answerSet.getSurvey().getId()), contextpath);
+		sessionService.setFormStartDate(request, form, uniqueCode);
 		form.setSurvey(survey);
 
 		result.addObject(form);
@@ -3633,6 +3657,9 @@ public class ManagementController extends BasicController {
 			if (filter == null || filter.getSurveyId() == 0) {
 				return Collections.emptyMap();
 			}
+						
+			filter.getVisibleExplanations().clear();
+			filter.getVisibleDiscussions().clear();
 
 			Survey survey = surveyService.getSurvey(filter.getSurveyId(), false, true);
 			if (survey != null) {

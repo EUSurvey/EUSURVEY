@@ -121,7 +121,7 @@
 			var invalidPrecisionText = "${form.getMessage("validation.invalidPrecisionNumber")}";
 			var invalidXHTML = "${form.getMessage("label.InvalidXHTML")}";
 			var serverPrefix='${serverprefix}';//+'runner/';
-			var selectFileForUpload = "${form.getMessage("label.SelectFileForUpload")}";
+			var selectFileForUploadRunner = "${form.getMessage("label.SelectFileForUpload")}";
 			var selectFilesForUpload = "${form.getMessage("label.SelectFilesForUploadButton")}";
 			var uploadASkin = "${form.getMessage("label.uploadASkin")}";
 			var globalLanguage = '${requestContext.locale.language}';
@@ -173,6 +173,9 @@
 			var messageuploadwrongextension = "${form.getMessage("message.messageuploadwrongextension")}";
 			var labelnewexplanation = "${form.getMessage("label.NewExplanation")}";
 			var labeloldexplanation = "${form.getMessage("label.OldExplanation")}";
+			var timeLimitNotZero = "${form.getMessage("error.timeLimitNotZero")}";
+			var infolabeluploadbutton = "${form.getMessage("info.uploadbutton")}";
+			var infoNoData = "${form.getMessage("info.NoData")}";
 		</c:when>
 		<c:otherwise>
 			var unsavedChangesText = "<spring:message code='message.UnsavedChanges' />";	
@@ -203,7 +206,6 @@
 			var invalidPrecisionText = "<spring:message code='validation.invalidPrecisionNumber' />";
 			var invalidXHTML = "<spring:message code='label.InvalidXHTML' />";
 			var serverPrefix='${serverprefix}';//+'runner/';
-			var selectFileForUpload = "<spring:message code='label.SelectFileForUpload' />";
 			var selectFilesForUpload = "<spring:message code='label.SelectFilesForUploadButton' />";
 			var uploadASkin = "<spring:message code='label.uploadASkin' />";
 			var globalLanguage = '${requestContext.locale.language}';
@@ -254,9 +256,15 @@
 			var messageuploadwrongextension =  "<spring:message code='message.messageuploadwrongextension' />";
 			var labelnewexplanation = "<spring:message code='label.NewExplanation' />";
 			var labeloldexplanation = "<spring:message code='label.OldExplanation' />";
+			var selectFileForUploadRunner = "<spring:message code='label.SelectFileForUpload' />";
+			var timeLimitNotZero = "<spring:message code='error.timeLimitNotZero' />";
+			var infolabeluploadbutton = "<spring:message code='info.uploadbutton' />";
+			var infoNoData = "<spring:message code='info.NoData' />";
 		</c:otherwise>
 	</c:choose>
 	
+	var selectFileForUpload = "<spring:message code='label.SelectFileForUpload' />";
+		
 	var versionfootersource = "<%@include file="versionfooter.txt" %>";
 	var version = versionfootersource.substring(versionfootersource.indexOf("(")+1);
 	version = version.substring(0, version.indexOf(" "));

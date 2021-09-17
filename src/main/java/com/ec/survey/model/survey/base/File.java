@@ -29,6 +29,7 @@ public class File implements java.io.Serializable {
 	private Integer answerId;
 	private String longdesc;
 	private String questionUid;
+	private String description;
 	
 	@Id
 	@Column(name = "FILE_ID", nullable = false)
@@ -104,6 +105,15 @@ public class File implements java.io.Serializable {
 		this.longdesc = longdesc;
 	}
 	
+	//this one is only used for gallery images
+		@Column(name = "FILE_DESC")
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 	@Transient
 	public File copy(String fileDir)
 	{
@@ -113,6 +123,7 @@ public class File implements java.io.Serializable {
 		copyFile.comment = comment;
 		copyFile.position = position;
 		copyFile.longdesc = longdesc;
+		copyFile.description = description;
 
 		return copyFile;
 	}

@@ -231,7 +231,7 @@ public class ActivityFilter implements java.io.Serializable {
 	@Transient
 	public String[] getAllObjects()
 	{
-		String[] result = {"Survey","DraftSurvey","Results","Contribution","GuestList","Privileges","Messages"};
+		String[] result = {"Survey","DraftSurvey","Results","Contribution","GuestList","Privileges","Messages","Comment"};
 		Arrays.sort(result);
 		return result;
 	}

@@ -188,18 +188,39 @@
 
 				$(this).parent().find('[data-toggle="tooltip"]').tooltip();
 
-				var chartwrapper = $(this);
-				loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300);
+				const chartwrapper = $(this);
+				const initialChartType = $(chartwrapper).data("initial-chart-type");
+				if (${form.survey.isDelphi}) {
+					if (initialChartType == 'None') {
+						addChart(this, null, initialChartType, false);
+					} else {
+						loadGraphDataInnerForResults(chartwrapper, addChart, null, null, null, 300);
+					}
+				} else {
+					addChart(this, null, "None", false);
+				}
 			});
 		}
 
 		function changeChart(select) {
-			var controls = $(select).closest(".chart-controls");		
+			const controls = $(select).closest(".chart-controls");
 			
-			var chartwrapper = $(select).closest(".statelement-wrapper").find(".chart-wrapper").first();
-			var chartType = $(controls).find(".chart-type").first().val();
-			var scheme = $(controls).find(".chart-scheme").first().val();
-			var legend = $(controls).find(".chart-legend").first().is(":checked");
+			const chartwrapper = $(select).closest(".statelement-wrapper").find(".chart-wrapper").first();
+			const chartType = $(controls).find(".chart-type").first().val();
+			const chartTypeSet = new Set(["Bar", "Column", "Line", "Pie", "Radar", "Scatter", "WordCloud"]);
+			if (!chartTypeSet.has(chartType)) {
+				$(controls).find(".chart-scheme-group").first().hide();
+				$(controls).find(".chart-size-group").first().hide();
+				$(controls).find(".chart-legend-group").first().hide();
+				$(chartwrapper).hide();
+				return;
+			} else {
+				$(controls).find(".chart-scheme-group").first().show();
+				$(controls).find(".chart-size-group").first().show();
+				$(chartwrapper).show();
+			}
+			const scheme = $(controls).find(".chart-scheme").first().val();
+			const legend = $(controls).find(".chart-legend").first().is(":checked");
 
 			const size = $(chartwrapper).closest(".elementwrapper, .statelement-wrapper").find(".chart-size").first().val();
 			const canvasWidth = getChartCanvasHeightAndWidth(size).width;
@@ -312,7 +333,10 @@
 		}
 		
 		function addChart(div, chart, chartType, showLegendBox) {
-			var elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
+			const chartTypeSet = new Set(["Bar", "Column", "Line", "Pie", "Radar", "Scatter", "WordCloud"]);
+			const isDrawChart = chartTypeSet.has(chartType);
+			const elementWrapper = $(div).closest(".elementwrapper, .statelement-wrapper");
+			const controls = $(elementWrapper).find(".chart-controls");
 
 			$(elementWrapper).find(".delphi-chart").remove();
 
@@ -330,13 +354,36 @@
         		$(this).val(chartType);
         	});
 
-			if (showLegendBox) {
+			if (showLegendBox && isDrawChart) {
 				$(elementWrapper).find(".chart-legend-group").show();
 			} else {
 				$(elementWrapper).find(".chart-legend-group").hide();
 			}
 
-        	new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
+			if (!!chart) {
+				new Chart($(elementWrapper).find(".delphi-chart")[0].getContext('2d'), chart);
+			}
+
+			if (!isDrawChart) {
+				$(controls).find(".chart-scheme-group").first().hide();
+				$(controls).find(".chart-size-group").first().hide();
+				$(controls).find(".chart-legend-group").first().hide();
+				const chartDataType = $(elementWrapper).find(".chart-wrapper").data("chart-data-type");
+				if (chartDataType == "Textual") {
+					$(elementWrapper).find("option[data-type='numerical']").hide();
+				} else {
+					$(elementWrapper).find("option[data-type='textual']").hide();
+				}
+				$(elementWrapper).find(".chart-wrapper").hide();
+			} else {
+				$(controls).find(".chart-scheme-group").first().show();
+				$(controls).find(".chart-size-group").first().show();
+				$(elementWrapper).find(".chart-wrapper").show();
+			}
+			const hasNoData = $(elementWrapper).find(".chart-wrapper").data("has-no-data");
+			if (hasNoData === "true") {
+				$(elementWrapper).find(".chart-controls").hide();
+			}
         }
 
 	</script>

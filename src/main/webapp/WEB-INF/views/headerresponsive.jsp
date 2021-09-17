@@ -13,6 +13,13 @@
 			<a class="logolink" href="<c:url value="/home/welcome"/>"><span class="logolink" style="padding-top:3px; font-family: steinerregular;"><img src="${contextpath}/resources/images/logo_eusurvey_white-tiny.png" style="margin-top: -3px; max-width:24px;" alt="EUSurvey"/> EUSurvey</span></a>
 		</div>
 		
+		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null && isquizresultpage == null && mode != 'delphiStartPage' && mode != 'editcontribution' && form.survey.timeLimit.length() > 0  && form.survey.showCountdown}">
+			<div style="float: left; padding-top: 5px; padding-left: 20px; font-size: 18px;">
+				${form.getMessage("label.CountdownTimer")}			
+				<span style="margin-left: 10px;" id="countdowntimer">${form.survey.timeLimit}</span>
+			</div>							
+		</c:if>
+		
 		<div style="float: right; margin-left: 10px;">
 			<a class="messageicon" id="systemmessagebutton" style="display: none;"  onclick="$('#system-message-box').show();"><img style="vertical-align: middle; max-width:24px;" src="<c:url value="/resources/images/info24.png"/>" alt="system message" /></a>
 			<a class="messageicon" id="warningmessagebutton" style="display: none;"  onclick="$('#generic-warning-box').show();"><img style="vertical-align: bottom; max-width:24px;" src="<c:url value="/resources/images/warning24.png"/>" alt="system message" /></a>
@@ -156,7 +163,7 @@
 						<div style="margin-top: 5px">						
 							<c:choose>
 								<c:when test="${form.survey.contact.startsWith('form:')}">
-									<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
+									<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" aria-label="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}">${form.getMessage("label.ContactForm")}</a>
 								</c:when>
 								<c:when test="${form.survey.contact.contains('@')}">
 									<i class="icon icon-envelope" style="vertical-align: middle"></i>
@@ -175,7 +182,7 @@
 					<div style="margin-top: 10px">
 						<b>${form.getMessage("label.Info")}</b>
 						<div style="margin-top: 5px">
-							<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi/runner">${form.getMessage("label.Delphi")}</a>
+							<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" aria-label="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi/runner">${form.getMessage("label.Delphi")}</a>
 						</div>
 					</div>
 					<hr style="margin-top: 15px;" />
@@ -184,7 +191,7 @@
 				<c:if test="${escapemode == null && !form.survey.isQuiz}">
 					<!-- pdf download -->	
 					<div style="padding-left: 10px; margin-top: 10px;">
-						<button data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="btn btn-default" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}'); return false;">${form.getMessage("label.DownloadPDFversion")}</button>
+						<button data-toggle="tooltip" title="${form.getMessage("label.DownloadEmptyPDFversion")}" aria-label="${form.getMessage("label.DownloadEmptyPDFversion")}" id="download-survey-pdf-link" class="btn btn-default" href="#" onclick="downloadSurveyPDF('${form.survey.id}','${form.language.code}','${uniqueCode}'); return false;">${form.getMessage("label.DownloadPDFversion")}</button>
 						<span id="download-survey-pdf-dialog-running" style="display: none">${form.getMessage("info.FileCreation")}</span>
 						<div id="download-survey-pdf-dialog-ready" style="display: none;">${form.getMessage("info.FileCreated")}</div>
 						<div id="download-survey-pdf-dialog-spinner" style="display: none; padding-left: 5px;"><img src="${contextpath}/resources/images/ajax-loader.gif" /></div>

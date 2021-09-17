@@ -7,7 +7,8 @@
 <title>EUSurvey - <spring:message code="label.Support" />
 </title>
 	<%@ include file="../includes.jsp" %>	
-	
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+		
 	<script type="text/javascript">
 		function checkAndSubmit()
 		{
@@ -225,7 +226,7 @@
 					</div>
 							
 					<label><spring:message code="support.upload" /></label>
-					<a data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
+					<a data-toggle="tooltip" title="<spring:message code="support.maxfilesize" />" aria-label="<spring:message code="support.maxfilesize" />"><span class="glyphicon glyphicon-question-sign"></span></a>
 					<div id="file-uploader-support"></div>
 					<div id="file-uploader-support-div"></div>
 					
@@ -241,7 +242,7 @@
 			       	</span>
 			       	
 			       	<div style="text-align: center; margin: 50px;">
-			       		<a class="btn btn-primary" onclick="checkAndSubmit()"><spring:message code="label.Submit" /></a>
+			       		<a href="javascript:;" class="btn btn-primary" onclick="checkAndSubmit()"><spring:message code="label.Submit" /></a>
 			       	</div>
 			    </form:form>
 		    </c:otherwise>

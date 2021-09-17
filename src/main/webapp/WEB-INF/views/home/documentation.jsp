@@ -5,6 +5,8 @@
 <head>
 	<title>EUSurvey - <spring:message code="label.Documentation" /></title>	
 	<%@ include file="../includes.jsp" %>	
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+	
 	<c:if test="${runnermode != null }">
 		<script type="text/javascript">
 			$(function() {
@@ -184,7 +186,7 @@
 				</c:otherwise>
 			</c:choose>
 					
-			<a id="docLimits" onclick="$('.uselimits').show()" class="boxlink" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.usabilityLimits" /></a>
+			<a href="javascript:;" id="docLimits" onclick="$('.uselimits').show()" class="boxlink" style="background-image:url('${contextpath}/resources/images/icons/64/right_4.png');"><spring:message code="label.usabilityLimits" /></a>
 			
 			<div class="pageheader uselimits hideme">
 				<br /><br />

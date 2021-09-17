@@ -163,7 +163,7 @@
 				<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapseStructure" aria-expanded="true"><spring:message code="label.Structure" /></a></div>
 				<div id="collapseStructure" class="accordion-body collapse in">
 					<ul>
-						<li id="drag_section" class="toolboxitem sectionitem draggable"><span class="glyphicon glyphicon-folder-open"></span> <spring:message code="form.Section" /></li>
+						<li title="<spring:message code="form.Section.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_section" class="toolboxitem sectionitem draggable"><span class="glyphicon glyphicon-folder-open"></span> <spring:message code="form.Section" /></li>
 					</ul>
 				</div>
 			</div>			
@@ -174,27 +174,27 @@
 					<ul>
 						<c:choose>
 							<c:when test="${form.survey.isQuiz}">
-								<li id="drag_freetext" class="toolboxitem freetextitem draggable quiz"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="form.FreeText" /></li>
-								<li id="drag_simplechoice" class="toolboxitem singlechoiceitem draggable quiz"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="form.SingleChoice" /></li>
-								<li id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable quiz"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
-								<li id="drag_number" class="toolboxitem numberitem draggable quiz"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
-								<li id="drag_date" class="toolboxitem dateitem draggable quiz"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
-								<li id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
+								<li title='<spring:message code="form.FreeText.Tooltip" arguments="https://ec.europa.eu/eusurvey/runner/TutorialEUSurvey" />' data-html="true" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_freetext" class="toolboxitem freetextitem draggable quiz"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="form.FreeText" /></li>
+								<li title='<spring:message code="form.SingleChoice.Tooltip" arguments="https://ec.europa.eu/eusurvey/runner/TutorialEUSurvey" />' data-html="true" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_simplechoice" class="toolboxitem singlechoiceitem draggable quiz"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="form.SingleChoice" /></li>
+								<li title='<spring:message code="form.MultipleChoice.Tooltip" arguments="https://ec.europa.eu/eusurvey/runner/TutorialEUSurvey" />' data-html="true" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable quiz"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
+								<li title="<spring:message code="form.NumberSlider.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_number" class="toolboxitem numberitem draggable quiz"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
+								<li title="<spring:message code="form.Date.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_date" class="toolboxitem dateitem draggable quiz"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
+								<li title="<spring:message code="form.Time.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
 							</c:when>
 							<c:otherwise>
-								<li id="drag_freetext" class="toolboxitem freetextitem draggable"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="form.FreeText" /></li>
-								<li id="drag_simplechoice" class="toolboxitem singlechoiceitem draggable"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="form.SingleChoice" /></li>
-								<li id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
-								<li id="drag_number" class="toolboxitem numberitem draggable"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
-								<li id="drag_date" class="toolboxitem dateitem draggable"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
-								<li id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
+								<li title='<spring:message code="form.FreeText.Tooltip" arguments="https://ec.europa.eu/eusurvey/runner/TutorialEUSurvey" />' data-html="true" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_freetext" class="toolboxitem freetextitem draggable"><span class="glyphicon glyphicon-pencil"></span> <spring:message code="form.FreeText" /></li>
+								<li title='<spring:message code="form.SingleChoice.Tooltip" arguments="https://ec.europa.eu/eusurvey/runner/TutorialEUSurvey" />' data-html="true" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_simplechoice" class="toolboxitem singlechoiceitem draggable"><span class="glyphicon glyphicon-ok-circle"></span> <spring:message code="form.SingleChoice" /></li>
+								<li title='<spring:message code="form.MultipleChoice.Tooltip" arguments="https://ec.europa.eu/eusurvey/runner/TutorialEUSurvey" />' data-html="true" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_multiplechoice" class="toolboxitem multiplechoiceitem draggable"><span class="glyphicon glyphicon-check"></span> <spring:message code="form.MultipleChoice" /></li>
+								<li title="<spring:message code="form.NumberSlider.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_number" class="toolboxitem numberitem draggable"><span class="glyphicon glyphicon-sound-5-1"></span> <spring:message code="form.NumberSlider" /></li>
+								<li title="<spring:message code="form.Date.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_date" class="toolboxitem dateitem draggable"><span class="glyphicon glyphicon-calendar"></span> <spring:message code="form.Date" /></li>
+								<li title="<spring:message code="form.Time.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_time" class="toolboxitem timeitem draggable"><span class="glyphicon glyphicon-time"></span> <spring:message code="form.Time" /></li>
 								<c:if test="${form.survey.isDelphi}">
-									<li id="drag_ranking" class="toolboxitem rankingitem draggable"><span class="glyphicon glyphicon-sort"></span> <spring:message code="form.RankingQuestion" /></li>
+									<li title="<spring:message code="form.RankingQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_ranking" class="toolboxitem rankingitem draggable"><span class="glyphicon glyphicon-sort"></span> <spring:message code="form.RankingQuestion" /></li>
 								</c:if>
 							</c:otherwise>
 						</c:choose>
-						<li id="drag_matrix" class="toolboxitem matrixitem draggable"><span class="glyphicon glyphicon-list-alt"></span> <spring:message code="form.Matrix" /></li>
-						<li id="drag_tableelement" class="toolboxitem mytableitem draggable"><span class="glyphicon glyphicon-list"></span> <spring:message code="form.Table" /></li>
+						<li title="<spring:message code="form.Matrix.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_matrix" class="toolboxitem matrixitem draggable"><span class="glyphicon glyphicon-list-alt"></span> <spring:message code="form.Matrix" /></li>
+						<li title="<spring:message code="form.Table.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_tableelement" class="toolboxitem mytableitem draggable"><span class="glyphicon glyphicon-list"></span> <spring:message code="form.Table" /></li>
 					</ul>
 				</div>
 			</div>
@@ -203,9 +203,9 @@
 				<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapseMedia" aria-expanded="true"><spring:message code="label.TextAndMedia" /></a></div>
 				<div id="collapseMedia" class="accordion-body collapse in">
 					<ul>
-						<li id="drag_text" class="toolboxitem textitem draggable"><span class="glyphicon glyphicon-font"></span> <spring:message code="form.Text" /></li>
-						<li class="toolboxitem imageitem draggable"><span class="glyphicon glyphicon-picture"></span> <spring:message code="form.Image" /></li>
-						<li class="toolboxitem ruleritem draggable"><span class="glyphicon glyphicon-minus"></span> <spring:message code="form.Line" /></li>
+						<li title="<spring:message code="form.Text.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" id="drag_text" class="toolboxitem textitem draggable"><span class="glyphicon glyphicon-font"></span> <spring:message code="form.Text" /></li>
+						<li title="<spring:message code="form.Image.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem imageitem draggable"><span class="glyphicon glyphicon-picture"></span> <spring:message code="form.Image" /></li>
+						<li title="<spring:message code="form.Line.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem ruleritem draggable"><span class="glyphicon glyphicon-minus"></span> <spring:message code="form.Line" /></li>
 					</ul>
 				</div>
 			</div>
@@ -214,13 +214,13 @@
 				<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapseSpecial" aria-expanded="true"><spring:message code="label.Special" /></a></div>
 				<div id="collapseSpecial" class="accordion-body collapse in">
 					<ul>
-						<li class="toolboxitem uploaditem draggable"><span class="glyphicon glyphicon-arrow-up"></span> <spring:message code="form.FileUpload" /></li>
-						<li class="toolboxitem downloaditem draggable"><span class="glyphicon glyphicon-arrow-down"></span> <spring:message code="form.FileDownload" /></li>
-						<li class="toolboxitem emailitem draggable"><span class="glyphicon glyphicon-envelope"></span> <spring:message code="label.Email" /></li>
-						<li class="toolboxitem regexitem draggable"><span class="glyphicon glyphicon-asterisk"></span> <spring:message code="label.RegEx" /></li>
-						<li class="toolboxitem galleryitem draggable"><span class="glyphicon glyphicon-th"></span> <spring:message code="form.Gallery" /></li>
-						<li class="toolboxitem confirmationitem draggable"><span class="glyphicon glyphicon-ok"></span> <spring:message code="form.Confirmation" /></li>
-						<li class="toolboxitem ratingitem draggable"><span class="glyphicon glyphicon-star"></span> <spring:message code="form.Rating" /></li>
+						<li title="<spring:message code="form.FileUpload.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem uploaditem draggable"><span class="glyphicon glyphicon-arrow-up"></span> <spring:message code="form.FileUpload" /></li>
+						<li title="<spring:message code="form.FileDownload.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem downloaditem draggable"><span class="glyphicon glyphicon-arrow-down"></span> <spring:message code="form.FileDownload" /></li>
+						<li title="<spring:message code="form.EmailQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem emailitem draggable"><span class="glyphicon glyphicon-envelope"></span> <spring:message code="label.Email" /></li>
+						<li title="<spring:message code="form.RegExQuestion.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem regexitem draggable"><span class="glyphicon glyphicon-asterisk"></span> <spring:message code="label.RegEx" /></li>
+						<li title="<spring:message code="form.Gallery.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem galleryitem draggable"><span class="glyphicon glyphicon-th"></span> <spring:message code="form.Gallery" /></li>
+						<li title="<spring:message code="form.Confirmation.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem confirmationitem draggable"><span class="glyphicon glyphicon-ok"></span> <spring:message code="form.Confirmation" /></li>
+						<li title="<spring:message code="form.Rating.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem ratingitem draggable"><span class="glyphicon glyphicon-star"></span> <spring:message code="form.Rating" /></li>
 					</ul>
 				</div>
 			</div>
@@ -229,13 +229,13 @@
 				<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapsePredefined" aria-expanded="true"><spring:message code="label.Predefined" /></a></div>
 				<div id="collapsePredefined" class="accordion-body collapse in">
 					<ul>
-						<li class="toolboxitem agenciesitem draggable"><span class="glyphicon glyphicon-star"></span> <spring:message code="form.predefined.euagencies" /></li>
-						<li class="toolboxitem countriesitem draggable"><span class="glyphicon glyphicon-globe"></span> <spring:message code="form.predefined.eucountries" /></li>
-						<li class="toolboxitem languagesitem draggable"><span class="glyphicon glyphicon-flag"></span> <spring:message code="form.predefined.eulanguages" /></li>
+						<li title="<spring:message code="form.predefined.euagencies.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem agenciesitem draggable"><span class="glyphicon glyphicon-star"></span> <spring:message code="form.predefined.euagencies" /></li>
+						<li title="<spring:message code="form.predefined.eucountries.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem countriesitem draggable"><span class="glyphicon glyphicon-globe"></span> <spring:message code="form.predefined.eucountries" /></li>
+						<li title="<spring:message code="form.predefined.eulanguages.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem languagesitem draggable"><span class="glyphicon glyphicon-flag"></span> <spring:message code="form.predefined.eulanguages" /></li>
                                                 <c:if test="${!oss}">
-                                                    <li class="toolboxitem dgsitem draggable"><span class="glyphicon glyphicon-home"></span> <spring:message code="form.predefined.dgsnew" /></li>
+                                                    <li title="<spring:message code="form.predefined.dgsnew.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem dgsitem draggable"><span class="glyphicon glyphicon-home"></span> <spring:message code="form.predefined.dgsnew" /></li>
                                                 </c:if>                                                
-						<li class="toolboxitem unsitem draggable"><span class="glyphicon"><img style="vertical-align: bottom;" src="${contextpath}/resources/images/unlogo.png" /></span> <spring:message code="form.predefined.uns" /></li>
+						<li title="<spring:message code="form.predefined.uns.Tooltip" />" data-toggle="tooltip" data-placement="right" data-container="body" class="toolboxitem unsitem draggable"><span class="glyphicon"><img style="vertical-align: bottom;" src="${contextpath}/resources/images/unlogo.png" /></span> <spring:message code="form.predefined.uns" /></li>
 					</ul>
 				</div>
 			</div>
@@ -426,6 +426,7 @@
 			$('[data-toggle="tooltip"]').tooltip({
 			    trigger : 'hover'
 			});
+			$(window).scroll(function() {$('[data-toggle="tooltip"]').tooltip("hide");});
 			
 			triggers = {};
 	 		<c:forEach var="element" items="${form.survey.getElementsRecursive(true)}">
@@ -447,8 +448,6 @@
 					}
 				}
 			}
-
-			window.setTimeout(updateSessionTimeout, 10000);		
 			
 			<c:choose>
 				<c:when test="${saved != null}">
@@ -891,6 +890,8 @@
 			
 	 		return strings[label];
 	 	}
+	 	
+	 	$('[data-toggle="tooltip"]').ApplyCustomTooltips();
 	</script>
 
 </body>

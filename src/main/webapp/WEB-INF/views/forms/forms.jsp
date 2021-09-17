@@ -103,6 +103,7 @@
 			</c:if>
 			
 			$('[data-toggle="tooltip"]').tooltip(); 
+			checkAnySurveySelected();
 		});	
 		
 		function showExportDialog(type, format)
@@ -341,6 +342,7 @@
 							  
 							  $(td).append("&nbsp;");
 							  
+							  <c:if test="${enablearchiving}">
 								if(list[i].state != 'Running' && (list[i].fullFormManagementRights))
 								{
 									var a = document.createElement("a");
@@ -368,9 +370,9 @@
 									
 									$(a).append("<span class='glyphicon glyphicon-import' style='color: #ccc'></span>");
 									$(td).append(a);
-								}
-								
+								}								
 								 $(td).append("&nbsp;");
+								 </c:if>
 								
 								if (list[i].state != 'Running')
 								{
@@ -478,6 +480,16 @@
 			//dummy
 		}
 		
+		function checkAnySurveySelected() {
+			if ($('#surveysAny').is(":checked")) {
+				$('#surveysOwn').prop("checked", "checked").prop("disabled", true);
+				$('#surveysShared').prop("checked", "checked").prop("disabled", true);
+			} else {
+				$('#surveysOwn').prop("disabled", false);
+				$('#surveysShared').prop("disabled", false);
+			}
+		}
+		
 	</script>
 		
 </head>
@@ -512,21 +524,32 @@
 							<h4 style="margin-top: 20px;"><spring:message code="label.Surveys" />:</h4>     
  							<c:choose>
 								<c:when test='${filter.selector == "all" || filter.selector == "my"}'>
- 									<input class="check" checked="checked" value="own" type="checkbox" name="surveysOwn"/> <spring:message code="label.MySurveys" />
+ 									<input class="check" checked="checked" value="own" type="checkbox" name="surveysOwn" id="surveysOwn" /> <spring:message code="label.MySurveys" />
 								</c:when>
 								<c:otherwise>                                                                                                                   
-									<input class="check" value="own" type="checkbox" name="surveysOwn"/> <spring:message code="label.MySurveys" />
+									<input class="check" value="own" type="checkbox" name="surveysOwn" id="surveysOwn" /> <spring:message code="label.MySurveys" />
 								</c:otherwise>                                                                                                          
 							</c:choose>                     
 							<br />
 							<c:choose>
 								<c:when test='${filter.selector == "all" || filter.selector == "shared"}'>
-									<input class="check" checked="checked" value="shared" type="checkbox" name="surveysShared" /> <spring:message code="label.SharedWithMe" />
+									<input class="check" checked="checked" value="shared" type="checkbox" name="surveysShared" id="surveysShared" /> <spring:message code="label.SharedWithMe" />
 								</c:when>
 								<c:otherwise>                                                                                                                   
-									<input class="check" value="shared" type="checkbox" name="surveysShared" /> <spring:message code="label.SharedWithMe" />      
+									<input class="check" value="shared" type="checkbox" name="surveysShared" id="surveysShared" /> <spring:message code="label.SharedWithMe" />      
 								</c:otherwise>                                                                                                          
-							</c:choose>					
+							</c:choose>
+							<c:if test="${USER.formPrivilege > 1}">
+								<br />
+								<c:choose>
+									<c:when test='${filter.selector == "any"}'>
+										<input class="check" checked="checked" value="any" type="checkbox" id="surveysAny" name="surveysShared" onclick="checkAnySurveySelected()" /> <spring:message code="label.AllSurveysNew" />
+									</c:when>
+									<c:otherwise>                                                                                                                   
+										<input class="check" value="any" type="checkbox" name="surveysShared" id="surveysAny" onclick="checkAnySurveySelected()" /> <spring:message code="label.AllSurveysNew" />      
+									</c:otherwise>                                                                                                          
+								</c:choose>
+							</c:if>
 									
 							<h4 style="margin-top: 20px;"><spring:message code="publicSurveys.order" />:</h4>
 							
@@ -542,9 +565,12 @@
 							<spring:message code="label.NumberOfReplies" />
 							<a data-toggle="tooltip" data-title="<spring:message code="label.SortAscending" />" class="sortlink" onclick="sort('replies',true);" class=""><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a><a data-toggle="tooltip" data-title="<spring:message code="label.SortDescending" />" class="sortlink" onclick="sort('replies',false);" class=""><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a><br />
 											
-							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Title" /> / <spring:message code="label.Alias" /></h4>
-							<input id="txtKeywordSearch" class="form-control" name="keywords" type="text" maxlength="100" style="width:150px; margin-top: 7px; display:inline;" value='<esapi:encodeForHTMLAttribute>${filter.keywords}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-default" style="margin-bottom: 3px;" value="OK" id="btnSearchSurveys"/>
-							
+							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Alias" /></h4>
+							<input id="txtAliasSearch" class="form-control" name="name" type="text" maxlength="100" style="width:150px; margin-top: 7px; display:inline;" value='<esapi:encodeForHTMLAttribute>${filter.shortname}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-default" style="margin-bottom: 3px;" value="OK" id="btnSearchSurveysAlias"/>
+						
+							<h4 style="margin-top: 20px; margin-bottom: 5px"><spring:message code="label.Title" /></h4>
+							<input id="txtTitleSearch" class="form-control" name="title" type="text" maxlength="100" style="width:150px; margin-top: 7px; display:inline;" value='<esapi:encodeForHTMLAttribute>${filter.title}</esapi:encodeForHTMLAttribute>' /><input rel="tooltip" title="<spring:message code="label.Search" />" type="submit" class="btn btn-default" style="margin-bottom: 3px;" value="OK" id="btnSearchSurveysTitle"/>
+													
 							<h4 style="margin-top: 20px;"><spring:message code="label.Status" />:</h4>					
 					
 							<c:choose>

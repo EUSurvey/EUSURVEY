@@ -187,7 +187,7 @@
 		this.deleteMessage = function() {
 			this.Deleted(true);
 			_messages.saveToLocalStorage();
-		}
+		};
 	}
 	
 	var Messages = function() {
@@ -383,7 +383,15 @@
 	function getTimeoutMilliseconds()
 	{
 		var currentTime = new Date();
-		return Math.abs(currentTime - timeoutTime); 
+		return timeoutTime - currentTime; 
+	}
+	
+	function showSessionError()
+	{
+		//forcing timeout by setting the timeoutTime to yesterday
+		timeoutTime.setDate(timeoutTime.getDate() - 1);
+		$('#timeout-dialog').modal('show');
+		updateTimeout();
 	}
 			
 	function updateTimeout()

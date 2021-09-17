@@ -9,6 +9,8 @@ public class Constants {
 	
 	public static final String DELETED = "deleted";
 	
+	public static final String DESCRIPTION = "Description";
+	
 	public static final String EDITED = "edited";
 	
 	public static final String EMAIL = "email";
@@ -28,6 +30,8 @@ public class Constants {
 	public static final String PATH_DELIMITER = "/";
 	
 	public static final String SHORTNAME = "shortname";
+	
+	public static final String START = "start";
 	
 	public static final String STRING = "string";
 	

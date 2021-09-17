@@ -1400,7 +1400,7 @@ var closeOverlayDivsEnabled = false;
 			$.ajax({
 				type: "POST",
 				url: contextpath + "/runner/deleteDelphiComment/" + encodeURIComponent(commentId),
-				data: "uniqueCode=" + answerSetUniqueCode,
+				data: "uniqueCode=" + answerSetUniqueCode + "&formManager=1",
 				beforeSend: (xhr) => { xhr.setRequestHeader(csrfheader, csrftoken); },
 				error: () => {
 					$("#show-wait-image").modal("hide");
@@ -1473,7 +1473,7 @@ var closeOverlayDivsEnabled = false;
 			$.ajax({
 				type: "POST",
 				url: contextpath + "/runner/editDelphiComment/" + encodeURIComponent(commentId),
-				data: "text=" + encodeURIComponent(text) + "&uniqueCode=" + answerSetUniqueCode,
+				data: "text=" + encodeURIComponent(text) + "&uniqueCode=" + answerSetUniqueCode + "&formManager=1",
 				beforeSend: (xhr) => { xhr.setRequestHeader(csrfheader, csrftoken); },
 				error: () => {
 					$("#show-wait-image").modal("hide");

@@ -149,7 +149,7 @@
 	
 			<div class="right-area" style="z-index: 1; position: relative; float: right;">						
 				<c:if test="${form.survey.logo != null && form.survey.logoInInfo}">
-					<img style="max-width: 100%" src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" />
+					<img style="max-width: 100%" src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="${form.survey.logoText}" />
 					<hr style="margin-top: 15px;" />
 				</c:if>			
 				
@@ -179,7 +179,7 @@
 						
 						<c:choose>
 							<c:when test="${form.survey.contact.startsWith('form:')}">
-								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}" aria-label="${form.getMessage("label.ContactForm")} - ${form.getMessage("label.OpensInNewWindow")}">${form.getMessage("label.ContactForm")}</a>
+								<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("info.ContactForm")}" aria-label="${form.getMessage("info.ContactForm")}" href="${contextpath}/runner/contactform/${form.survey.shortname}" aria-label="${form.getMessage("label.ContactForm")} - ${form.getMessage("label.OpensInNewWindow")}">${form.getMessage("label.ContactForm")}</a>
 							</c:when>
 							<c:when test="${form.survey.contact.contains('@')}">
 								<i class="icon icon-envelope" style="vertical-align: middle"></i>
@@ -193,7 +193,7 @@
 					</c:if>
 					
 					<div class="linkstitle" style="margin-bottom: 5px;">${form.getMessage("label.Info")}</div>
-					<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi?survey=${form.survey.shortname}">
+					<a target="_blank" class="link visibleLink" data-toggle="tooltip" title="${form.getMessage("label.Delphi")}" aria-label="${form.getMessage("label.Delphi")}" href="${contextpath}/home/delphi?survey=${form.survey.shortname}">
 						${form.getMessage("label.Delphi")}
 					</a>
 					<c:if test="${form.answerSets.size() > 0}">
@@ -208,7 +208,7 @@
 		<div style="padding: 20px">
 			<c:if test="${form.survey.logo != null && !form.survey.logoInInfo}">
 				<div style="max-width: 900px">
-					<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="logo" style="max-width: 900px;" />
+					<img src="<c:url value="/files/${form.survey.uniqueId}/${form.survey.logo.uid}" />" alt="${form.survey.logoText}" style="max-width: 900px;" />
 				</div>
 			</c:if>
 		
@@ -270,7 +270,7 @@
 							<div class="question" data-bind="attr: {id: 'delphiquestion' + uid, 'data-uid': uid, 'data-question-uid': uid}">
 								<div class="question-title">
 									<span data-bind="html: sectionViewModel.niceTitle(title)"></span>
-									<a href="javascript:;" style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}"></a>
+									<a href="javascript:;" style="display:none;" class="glyphicon glyphicon-resize-full delphi-chart-expand" onclick="loadDelphiModalStartPage(this)" data-toggle="tooltip" title="${form.getMessage("tooltip.ExpandChart")}" aria-label="${form.getMessage("tooltip.ExpandChart")}"></a>
 								</div>
 	
 								<div class="no-graph-image">
@@ -287,10 +287,10 @@
 									<!-- ko if: (maxDistanceExceeded && !changedForMedian) || hasUnreadComments -->
 										<div style="color:#f00; font-size:24px; float:right;">
 											<!-- ko if: maxDistanceExceeded && !changedForMedian -->
-											<span style="cursor: pointer" data-toggle="tooltip" title="<spring:message code="info.MaxDistanceExceeded" />"><img style="max-width:24px;" src="<c:url value="/resources/images/warning24.png"/>" alt="max distance exceeded" /></span>
+											<span style="cursor: pointer" data-toggle="tooltip" title="<spring:message code="info.MaxDistanceExceeded" />" aria-label="<spring:message code="info.MaxDistanceExceeded" />"><img style="max-width:24px;" src="<c:url value="/resources/images/warning24.png"/>" alt="max distance exceeded" /></span>
 											<!-- /ko -->
 											<!-- ko if: hasUnreadComments -->
-											<span class="glyphicon glyphicon-comment new-delphi-comments-icon" data-toggle="tooltip" title="${form.getMessage("tooltip.NewComments")}"></span>
+											<span class="glyphicon glyphicon-comment new-delphi-comments-icon" data-toggle="tooltip" title="${form.getMessage("tooltip.NewComments")}" aria-label="${form.getMessage("tooltip.NewComments")}"></span>
 											<!-- /ko -->
 										</div>
 									<!-- /ko -->							
@@ -491,7 +491,7 @@
 		    		return title;
 		    	}
 		    	
-		    	return "<span data-toggle='tooltip' data-html='true' title='" + title + "'>" + title.substring(0,75) + "...</span>";
+				return "<span data-toggle='tooltip' data-html='true' title='" + title + "' aria-label='" + title + "'>" + title.substring(0,75) + "...</span>";
 			},
 			
 			niceAnswer: function(answer)
@@ -500,7 +500,7 @@
 		    		return answer;
 		    	}
 		    	
-		    	return "<span data-toggle='tooltip' title='" + answer + "'>" + answer.substring(0,20) + "...</span>";
+				return "<span data-toggle='tooltip' title='" + answer + "' aria-label='" + answer + "'>" + answer.substring(0,20) + "...</span>";
 			}
 		};
 		
@@ -542,7 +542,7 @@
 
 					sectionViewModel.loaded(true);
 					sectionViewModel.unansweredMandatoryQuestions(data.unansweredMandatoryQuestions);
-					$('[data-toggle="tooltip"]').tooltip()
+					$('[data-toggle="tooltip"]').ApplyCustomTooltips();
 				}
 			 });
 		}

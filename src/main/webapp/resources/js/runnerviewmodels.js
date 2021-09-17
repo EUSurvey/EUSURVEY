@@ -12,13 +12,14 @@ function addIconToHelp(help)
 		"<br />";
 }
 
-function newFileViewModel(uid, name, comment, longdesc, cleanComment, width)
+function newFileViewModel(uid, name, comment, longdesc, cleanComment, width, desc)
 {
 	var viewModel = [];
 	viewModel.uid =  ko.observable(uid == "null" ? "" : uid);
 	viewModel.name = ko.observable(name == "null" ? "" : name);
 	viewModel.comment = ko.observable(comment == "null" ? "" : comment);
 	viewModel.longdesc = ko.observable(longdesc == "null" ? "" : longdesc);
+	viewModel.desc = ko.observable(desc == "null" ? "" : desc);
 	viewModel.cleanComment = ko.observable(cleanComment);
 	viewModel.width = ko.observable(width);
 		
@@ -63,7 +64,7 @@ function newFilesViewModel(files)
 	for (var i = 0; i < files.length; i++)
 	{
 		if (files[i].name != null)
-		viewModel.push(newFileViewModel(files[i].uid, files[i].name, files[i].comment, files[i].longdesc, files[i].cleanComment, files[i].width));
+		viewModel.push(newFileViewModel(files[i].uid, files[i].name, files[i].comment, files[i].longdesc, files[i].cleanComment, files[i].width, files[i].description));
 	}
 	
 	return viewModel;
@@ -734,7 +735,7 @@ function newRankingViewModel(element)
 {
 	var viewModel = newBasicViewModel(element);
 
-	viewModel.rankingItems = newRankingItemViewModelForEach(element.childElements, viewModel);
+	viewModel.rankingItems = newRankingItemViewModelForEach(element.childElements || element.rankingItems, viewModel);
 	viewModel.help = ko.observable(element.help);
 	viewModel.niceHelp = ko.observable(getNiceHelp(element.help));
 	viewModel.minItems = function() { return 2; };
@@ -855,29 +856,29 @@ var ArrayElementMovingTool = {
 function newRankingItemViewModel(id, uniqueId, shortname, title, parent)
 {
 	var viewModel = newBasicViewModel();
-	viewModel.parent = parent;
 	viewModel.type = 'RankingItem';
 	viewModel.title = ko.observable(title);
 	viewModel.id = ko.observable(id);
+	viewModel.id.parent = parent;
 	viewModel.uniqueId = ko.observable(uniqueId);
 	viewModel.shortname = ko.observable(shortname);
 	viewModel.originalTitle = ko.observable(title);
 
 	viewModel.onMoveItem = function(_, event, steps) {
-		if (this.parent.foreditor) return;
+		if (this.id.parent.foreditor) return;
 		var target = event.target;
 		var rankingitemList = $(target).closest(".rankingitem-list");
 		var rankingitems = $(rankingitemList).find(".rankingitemtext");
-		const actualOrder = $.map(rankingitems, that => this.parent.itemIdtoUniqueIdLookup[Number(that.id)]);
-		const answervalues = this.parent.answervalues();
+		const actualOrder = $.map(rankingitems, that => this.id.parent.itemIdtoUniqueIdLookup[Number(that.id)]);
+		const answervalues = this.id.parent.answervalues();
 		if (ArrayElementMovingTool.moveItemRelative(answervalues, this.uniqueId(), steps)) {
-			this.parent.answervalues(answervalues);
+			this.id.parent.answervalues(answervalues);
 			const reIndex = $.map(answervalues, that => actualOrder.indexOf(that));
 			var rankingitemFormData = $(rankingitemList).find(".rankingitem-form-data");
 			var rankingitemFormDataReOrdered = $.map(reIndex, value => rankingitemFormData.get(value));
 			$.each(rankingitemFormDataReOrdered, (_, that) => $(rankingitemList).append(that));
 			target.focus();
-			propagateChange(target);
+			propagateChange(rankingitemList);
 		}
 	}
 
@@ -1013,8 +1014,9 @@ function newNumberViewModel(element)
 		const input = $("#answer" + viewModel.id());
 		propagateChange($(input));
 	});
-	viewModel.markAsAnswered = function () {
+	viewModel.markAsAnswered = function (data) {
 		this.isAnswered(true);
+		tinyMCE.get('explanation' + data.id()).execCommand('mceFocus',false);
 	};
 	
 	if (viewModel.display() == 'Slider')

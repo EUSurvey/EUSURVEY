@@ -16,6 +16,7 @@ import com.ec.survey.model.survey.ecf.ECFOrganizationalCompetencyResult;
 import com.ec.survey.model.survey.ecf.ECFOrganizationalResult;
 import com.ec.survey.model.survey.ecf.ECFProfileCompetencyResult;
 import com.ec.survey.model.survey.ecf.ECFProfileResult;
+import com.ec.survey.service.ExportService;
 import com.ec.survey.tools.Constants;
 import com.ec.survey.tools.ConversionTools;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -351,13 +352,18 @@ public class XlsExportCreator extends ExportCreator {
 			}
 		}
 		
-		filter.setVisibleQuestions(filter.getExportedQuestions());
-		filter.setVisibleExplanations(filter.getExportedExplanations());
-		filter.setVisibleDiscussions(filter.getExportedDiscussions());		
-
+		filter.getVisibleQuestions().clear();
+		filter.getVisibleQuestions().addAll(filter.getExportedQuestions());
+		
+		filter.getVisibleExplanations().clear();
+		filter.getVisibleExplanations().addAll(filter.getExportedExplanations());
+		
+		filter.getVisibleDiscussions().clear();
+		filter.getVisibleDiscussions().addAll(filter.getExportedDiscussions());
+		
 		List<List<String>> answersets = null;
 		
-		if (export.isForArchiving() == null || !export.isForArchiving()) {
+		if (export == null || export.isForArchiving() == null || !export.isForArchiving()) {
 			answersets = reportingService.getAnswerSets(survey, filter, null, false, true,
 				publication == null || publication.getShowUploadedDocuments(), false, false, export != null && export.getShowShortnames());
 		}
@@ -583,7 +589,7 @@ public class XlsExportCreator extends ExportCreator {
 			columnIndexInsertHeader = 0;
 			String ext = FilenameUtils.getExtension(exportFilePath);
 
-			outputStream = new FileOutputStream(exportFilePath.replace("." + ext, "_" + fileCounter + "." + ext));
+			outputStream = new FileOutputStream(ExportService.getExportPathWithSuffix(exportFilePath, ext, fileCounter));
 
 			initWorkbook();
 

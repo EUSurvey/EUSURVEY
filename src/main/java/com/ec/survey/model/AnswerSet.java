@@ -15,6 +15,7 @@ import org.hibernate.annotations.FetchMode;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+
 import java.util.*;
 
 /**
@@ -56,6 +57,7 @@ public class AnswerSet implements java.io.Serializable {
 	private Integer ecfTotalScore;
 	private Integer ecfTotalGap;
 	private boolean changeExplanationText = false;
+	private Date startDate;
 	
 	@Id
 	@Column(name = "ANSWER_SET_ID")
@@ -86,6 +88,41 @@ public class AnswerSet implements java.io.Serializable {
 
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
+	}
+	
+	@Column(name = "ANSWER_SET_STARTED")
+	@DateTimeFormat(pattern = ConversionTools.DateTimeFormat)
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	
+	public String completionTime() {
+		if (this.startDate == null || this.date == null) {
+			return "-";
+		}
+		
+		double created = this.date.getTime();
+		created = created / 1000;
+		
+		double started = this.startDate.getTime();
+		started = started / 1000;
+		
+		long seconds = Math.round(created) - Math.round(started);
+		
+		if (seconds < 0) {
+			return "-";
+		}	
+		
+		long hours = seconds / 3600;
+		seconds = seconds - (hours * 3600);
+		long minutes = seconds / 60;
+		seconds = seconds - (minutes * 60);
+		
+		return hours + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
 	}
 
 	@Column(name = "SURVEY_ID", insertable = false, updatable = false)

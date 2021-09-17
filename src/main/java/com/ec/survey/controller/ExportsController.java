@@ -338,7 +338,7 @@ public class ExportsController extends BasicController {
 				headers.setContentType(MediaType.TEXT_PLAIN);
 				return new ResponseEntity<>(msg.getBytes(), headers, HttpStatus.FORBIDDEN);
 			}
-			String filePath = exportService.getTempExportFilePath(export, null);
+			String filePath = exportService.getExportFilePath(export, null);
 
 			if (export.getZipped() != null && export.getZipped()) {
 				filePath += ".zip";

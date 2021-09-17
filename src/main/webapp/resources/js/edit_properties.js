@@ -661,7 +661,7 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='text']").first().text(), true);
 				
 				var rows = $(e).find(".tabletable").first().find("tr").length-1;
-				var mandatoryrows = $(e).find("td[data-optional=false]").length;
+				var mandatoryrows = $(e).find("th[data-optional=false]").length;
 				getCheckPropertiesRow("Mandatory", rows == mandatoryrows, isDelphiQuestion);
 				getActionRow("Columns", "<span class='glyphicon glyphicon-plus'></span>", "addColumn(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeColumn(false)");
 				getActionRow("Rows", "<span class='glyphicon glyphicon-plus'></span>", "addRow(false)", "<span class='glyphicon glyphicon-minus'></span>", "removeRow(false)");
@@ -937,6 +937,7 @@ var ElementProperties = function() {
 			} else if ($(e).find(".gallery-image").length > 0)
 			{
 				getTextPropertiesRow("Text", $(e).find("textarea[name^='comment']").first().text(), true);
+				getTextPropertiesRow("DescriptiveText", $(e).find("input[name^='desc']").first().val(), false);
 				getTextPropertiesRow("LongDescription", $(e).find("input[name^='longdesc']").first().val(), false);
 				getTextPropertiesRow("Title", $(e).find("input[name^='name']").first().val(), false);
 				
