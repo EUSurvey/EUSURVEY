@@ -341,7 +341,7 @@
 				<input type="hidden" data-bind="value: noNegativeScore, attr: {'name': 'noNegativeScore' + id()}" />
 		
 				<input type="hidden" data-bind="value: subType, attr: {'name': 'subType' + id()}" />
-				<input type="hidden" data-bind=w"value: displayMode, attr: {'name': 'displayMode' + id()}" />
+				<input type="hidden" data-bind="value: displayMode, attr: {'name': 'displayMode' + id()}" />
 			<!-- /ko -->
 		</div>
 	</div>
@@ -371,20 +371,21 @@
 		
 		<div tabindex="0" class="focussable" data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id()}">
 
-			<span class="screen-reader-only" data-bind="html: getRankingQuestionInfo(itemCount()), attr: {id: 'listcountinfo' + id()}"></span>
-
 			<!-- ko ifnot: foreditor -->
+			<span class="screen-reader-only" data-bind="html: getRankingQuestionInfo(itemCount()), attr: {id: 'listcountinfo' + id()}"></span>
 			<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
-				${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable' data-bind='click: acceptInitialAnswer' aria-owns='ranking-item-list-container'")}
+				${form.getMessage("label.HintOnInitialRankingOrder", "class='ranking-question-initial-answer-clickable' data-bind='click: acceptInitialAnswer\' , attr: {\'aria-owns\': \'ranking-item-list-container\' + id()}'")}
 			</div>
 			<div class="question-reset-answer-message" data-bind="hidden: !isAnswered()">
 				<a href="javascript:;" data-bind="click: resetOrder">${form.getMessage("label.ResetOrder")}</a>
 			</div>
 			<!-- /ko -->
 
-			<div id="ranking-item-list-container" class="rankingitem-list-container">
+			<div class="rankingitem-list-container" data-bind="attr: {id: 'ranking-item-list-container' + id()}">
 				<div class="rankingitem-list">
+
 					<span class="screen-reader-only" data-bind="html: getInitialOrderInfoText(), attr: {id: 'listorderinfo' + id()}"></span>
+
 					<!-- ko foreach: rankingItems() -->
 					<div tabindex="0" role="listitem" class="rankingitem-form-data focussable" data-bind="attr: {'aria-labelledby': id()}">
 						<div class="rankingitem-decoration">&#x283F;</div>
