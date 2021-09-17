@@ -15,7 +15,7 @@
 		<org.slf4j-version>1.5.10</org.slf4j-version>
 		<version.number>444</version.number>
 		<svnName>1.1.9</svnName>
-		<camel.version>2.22.1</camel.version>
+		<camel.version>3.0.1</camel.version>
 		<svn.buildNumber.doUpdate>false</svn.buildNumber.doUpdate>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
