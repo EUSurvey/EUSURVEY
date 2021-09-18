@@ -1049,7 +1049,7 @@
 				Automatic scripts can falsify the outcome of an online survey by
 				submitting a high number of contributions. To prevent this, you can
 				use EUSurvey to make participants solve a
-				<a href="http://en.wikipedia.org/wiki/CAPTCHA" target="_blank">CAPTCHA</a> challenge
+				<a href="http://en.wikipedia.org/wiki/CAPTCHA" target="_blank">CAPTCHA</a> challenge
 				before submitting a contribution.
 			</p>
 			<p>
@@ -1067,9 +1067,9 @@
 				participants to change their contribution' option. Participants need
 				to know the contribution-ID that was shown after they submitted
 				their contribution. To change contributions after submission,
-				participants should go to the EUSurvey homepage <a
+				participants should go to the EUSurvey homepage <a
 					href="https://ec.europa.eu/eusurvey" target="_blank">https://ec.europa.eu/eusurvey</a>.
-				Below the 'Register Now!' button is a link to the <a
+				Below the 'Register Now!' button is a link to the <a
 					href="https://ec.europa.eu/eusurvey/home/editcontribution"
 					target="_blank"> access page for individual
 					contributions </a>. On this page participants must fill in their
@@ -1750,7 +1750,7 @@
 				For data protection rules, the form manager has to actively
 				make the choice to publish files uploaded to a contribution by the
 				participant along with the other results. To do so, tick the
-				'"Uploaded elements' check box in the corresponding section on the
+				'Uploaded elements' check box in the corresponding section on the
 				'Properties' page under 'Publish Results' section. Please note that
 				this check box will only appear if your survey contains an 'uploaded
 				element'.
@@ -1891,41 +1891,31 @@
 				What is the 'Address Book'?    
 			</h2>
 			<p>
-				In the 'Address Book' you can create your own groups of respondents.
-			</p>
-			<p>
+				In the 'Address Book' you can create your own groups of participants.
 				This way you can invite people or organisations who match certain criteria
-				(e.g. male, over 21).
-			</p>
-			<p>
-				Every potential respondent is stored as a contact in the address book along
-				with an unlimited list of attributes which can be edited.
-			</p>
-			<p>
-				To save contacts to your address book they must have an identifier ('Name')
-				and an email address.
-			</p>
+				(e.g. 'male', and 'older than 21').	Every potential participant is stored
+				as a contact in the address book along with an unlimited list of editable
+				attributes. You can save any contact to your address book as long as they
+				have an identifier ('Name') and an email address.
 			<h2>
-				What are a contact's 'Attributes'?    
+				What are the 'Attributes' of a contact?
 			</h2>
 			<p>
 				Each contact saved in the address book has a variable set of attributes
-				such as 'Country', 'Phone', 'Remarks', etc.
-			</p>
-			<p>
-				You can create a new attribute by editing a contact.
+				such as 'Country', 'Phone', 'Remarks', etc. You can create a new attribute
+				by editing a contact.
 			</p>
 			<p>
 				<ol>
 					<li>
-						Go to the 'Edit Contact' window &#8594; 'attributes' menu and select 'New...'.
+						In the 'Edit Contact' window, open the 'attributes' menu and select 'New...'.
 					</li>
 					<li>
-						A new window will pop up where you can edit the new attribute.
+						A new window will pop up where you can define the name of the new attribute.
 					</li>
 					<li>
 						The newly created attribute will appear as a column in the address book
-						- it can also be added to a set of contacts.
+						and can also be added to a set of contacts.
 					</li>
 				</ol>
 			</p>
@@ -1933,9 +1923,7 @@
 				How do I add new contacts to my address book?    
 			</h2>
 			<p>
-				Go to the 'Address Book' &#8594; click on 'Add Contact' to add a single contact.
-			</p>
-			<p>
+				Go to the 'Address Book' page and click on 'Add Contact' to add a single contact.
 				You can click on 'Import' to upload an existing list of contacts in XLS,
 				ODS, CSV or TXT format.
 			</p>
@@ -1950,11 +1938,11 @@
 				What is a 'Registration Form'?    
 			</h2>
 			<p>
-				This is a form that automatically creates contacts from the personal data
-				that respondents submit.
+				A registration form can be understood as a survey that automatically creates
+				contacts from the personal data that participants submit.
 			</p>
 			<p>
-				You can create one by following these steps.
+				To enable this feature:
 			</p>
 			<p>
 				<ol>
@@ -1971,23 +1959,21 @@
 			</p>
 			<p>
 				When this is selected, the system inserts 2 compulsory free-text questions
-				('Name' and 'Email').
+				('Name' and 'Email') to ensure that every participant enters valid personal
+				data.
 			</p>
 			<p>
-				This is to ensure every participant enters valid personal data.
-			</p>
-			<p>
-				By enabling the 'Attribute' option for individual questions, the user can
+				By enabling the 'Attribute' option for individual questions, you can
 				choose what other information is stored about the newly created contact
 				(e.g. a text-question with the attribute 'Telephone' can be used to store
-				the respondent's phone number in the address book).
+				the participant's phone number in the address book).
 			</p>
 			<h2>
 				How do I import multiple contacts from a file to my address book?    
 			</h2>
 			<p>
-				To import a list of contacts into the system, EUSurvey has a wizard that
-				guides you to the import procedure.
+				To import a list of contacts into the system, EUSurvey offers a wizard that
+				guides you through the import procedure.
 			</p>
 			<p>
 				The following file formats are supported:
@@ -2012,17 +1998,17 @@
 			<p>
 				<ol>
 					<li>
-						select 'Import' from your 'Address Book' page
+						Select 'Import' from your 'Address Book' page.
 					</li>
 					<li>
-						select the file in which you have saved your contacts
+						Select the file in which you have saved your contacts.
 					</li>
 					<li>
-						specify if your file contains a header row or not
+						Specify if your file contains a header row or not.
 					</li>
 					<li>
-						specify the type of separator you used for CSV and TXT files (most
-						probable character is suggested by default).
+						Specify the type of separator you used for CSV and TXT files (the
+						most probable character is suggested by default).
 					</li>
 				</ol>
 			</p>
@@ -2032,25 +2018,26 @@
 			<p>
 				<ol>
 					<li>
-						the system will ask you to map the individual columns to new attributes
+						The system will ask you to map the individual columns to new attributes
 						for your contacts (the mandatory attributes 'Name' and 'Email' must be
-						mapped in order to proceed)
+						mapped in order to proceed).
 					</li>
 					<li>
-						once you click 'Next', the system loads your file into the system,
-						displaying the individual contacts to be imported
+						Once you click 'Next', the system loads your file into the system,
+						displaying the individual contacts that will be imported.
+						You can unselect individual contacts you don't want to import
 					</li>
 					<li>
-						you can unselect individual contacts you don't want to import
-					</li>
-					<li>
-						click 'Save' to save your contacts to your address book.
+						Click 'Save' to save your contacts to your address book.
 					</li>
 				</ol>
 			</p>
 			<h2>
 				How do I edit an attribute for multiple contacts at a time?    
 			</h2>
+			<p>
+				To edit an attribute value for multiple contacts:
+			</p>
 			<p>
 				<ol>
 					<li>
@@ -2076,36 +2063,30 @@
 				Can I export contacts from my address book to my computer?    
 			</h2>
 			<p>
-				Yes.
-			</p>
-			<p>
-				On your 'Address Book' page, click an icon in the top right-hand corner
-				representing individual file formats.
+				Yes, on your 'Address Book' page, please click an icon in the top right-hand
+				corner representing individual file formats.
 			</p>
 			<p>
 				You will find the exported contacts on the 'Exports' page.
 			</p>
 			<h1>
-				Inviting respondents
+				Inviting participants
 			</h1>
 			<h2>
-				How do I specify a set of possible respondents? What is a 'Guest List'?    
+				How do I specify a set of possible participants? What is a 'Guest List'?
 			</h2>
 			<p>
-				You can group selected contacts and send each one an email with individual
+				You can group selected contacts and send each one an email containing individual
 				access links. This group is called a 'Guest List'.
 			</p>
 			<p>
-				Aside from the survey password, this is an another way to allow people to
+				It is the second way, in addition to the general survey password, to allow people to
 				take part in your survey.
 			</p>
 			<p>
-				To invite multiple contacts &#8594; open your survey, go to the 'Participants'
-				page.
-			</p>
-			<p>
-				Choose one of the following types of guest lists to start a wizard that
-				will guide you through the process:
+				To invite multiple contacts to your survey, open your survey and go to the
+				'Participants' page. Choose one of the following types of guest lists to start
+				a wizard that will guide you through the process:
 			</p>
 			<ul>
 				<li>
@@ -2115,32 +2096,32 @@
 					Select contacts from the 'Address Book' to add them to your guest list
 					(see '
 					<a href="#_Toc_12_1">
-						What is the "Address Book?
+						What is the 'Address Book'?
 					</a>
-					')
+					').
 				</li>
 				<li>
 					<strong>EU list</strong>
 					'EU institutions and other bodies' (EU staff only)
 					<br/>
 					Select multiple departments from your institution/agency to add
-					everyone working in those department to your guest list
+					all persons working in those department to your guest list.
 				</li>
 				<li>
 					<strong>Token list</strong>
 					<br/>
-					Create a list of tokens (or 'Unique Codes') to be distributed offline
-					to access a secured online survey.
+					Create a list of tokens (or 'Unique Codes') that can be distributed
+					offline to access a secured online survey.
 				</li>
 			</ul>
 			<p>
-				Use the search function on your address book &#8594; click the '&gt;&gt;' button
-				on the next screen to move contacts from your address book to your new
-				guest list.
+				Please use the search function on your address book and click the '&gt;&gt;'
+				button on the middle of the next screen to move contacts from your address
+				book to your new guest list.
 			</p>
 			<p>
-				Click 'Save' to create a new guest list with all the contacts you want for
-				your survey.
+				Click 'Save' to create a new guest list with all the contacts you want to
+				invite to take part in your survey.
 			</p>
 			<p>
 				See below to learn how to send emails with individual access links to
@@ -2158,13 +2139,11 @@
 						Go to the 'Participants' page.
 					</li>
 					<li>
-						To edit the guest list &#8594; click on the little pen icon.
+						To edit the guest list, click on the little pen icon.
 					</li>
 					<li>
-						To remove a list &#8594; first click on the 'Deactivate' button.
-					</li>
-					<li>
-						Then click on the 'Remove' button to delete the list.
+						To remove a list, first click on the 'Deactivate' button.
+						Then you can click on the 'Remove' button to delete the list.
 					</li>
 				</ol>
 			</p>
@@ -2172,7 +2151,7 @@
 				How do I send my participants an invitation email?    
 			</h2>
 			<p>
-				Once you have created a new guest-list, you can send them invitation
+				Once you have created a new guest list, you can send them invitation
 				emails.
 			</p>
 			<p>
@@ -2182,7 +2161,7 @@
 			<p>
 				<strong>
 					This means that everyone who receives an email invitation sent from
-					EUSurvey can only submit one single contribution (answer).
+					EUSurvey can only submit one single contribution.
 				</strong>
 			</p>
 			<p>
@@ -2195,17 +2174,17 @@
 						mail design' box - by default, the used style is 'EUSurvey'.
 					</li>
 					<li>
-						Then you can change the subject and content of your email and add a
+						You may then change the subject and content of your email and add a
 						'reply-to' email address - all replies to your invitation email will then
 						be sent to this address.
 					</li>
 					<li>
-						Then save your email text &#8594; it will be available for all your guest
-						lists and surveys - you will find it in the dropdown list of the 'Use mail
+						Save your email text. It will be available for all your guest lists
+						and surveys - you will find it in the dropdown list of the 'Use mail
 						template' box.
 					</li>
 					<li>
-						Then click on 'Next' &#8594; a wizard will guide you through the invitation
+						Click on 'Next'. a wizard will guide you through the invitation
 						process.
 					</li>
 				</ol>
@@ -2215,7 +2194,7 @@
 			</h2>
 			<p>
 				Follow the steps below to create a list of tokens (i.e. unique
-				authentication codes) to be distributed offline to access a secured online
+				authentication codes) that can be distributed offline to access a secured online
 				questionnaire.
 			</p>
 			<p>
@@ -2238,7 +2217,7 @@
 			</p>
 			<p>
 				In the way outlined below, use the created tokens to build up individual
-				access links to be sent out in emails to the participants:
+				access links that can be sent out in emails to the participants:
 			</p>
 			<p>
 				https://ec.europa.eu/eusurvey/runner/<strong>SurveyAlias</strong>/<strong>TOKEN</strong>
@@ -2254,7 +2233,7 @@
 				</li>
 				<li>
 					<strong>TOKEN</strong>
-					with the token you choose from the token list
+					with an unique token from the token list
 				</li>
 			</ul>
 			<h1>
@@ -2264,32 +2243,30 @@
 				How do I change my password?    
 			</h2>
 			<p>
-				Users need to change their EU Login password if they lose it.
-			</p>
-			<p>
-				To do this: go to the EU Login page &#8594; click on 'Forgot your Password?'.
+				Access to the EUSurvey reference installation at the European Commission is
+				managed using EU Login, so EUSurvey users are asked to change their EU Login
+				password if they have lost it. This can be done by clicking on 'Forgot your
+				Password?' on the EU Login page.
 			</p>
 			<h2>
 				How do I change my email address?    
 			</h2>
 			<p>
-				If you access EUSurvey using an EU Login user account, you can change your
-				email address by following the steps below:
-			</p>
-			<p>
-				Connect to EU Login &#8594; after logging on, select 'Modify my personal data'
-				from the 'Account information' tab.
+				If you access EUSurvey using an EU Login user account, you cannot change your
+				email address in EUSurvey. Instead, connect to EU Login and after logging on,
+				select 'Modify my personal data' from the 'Account information' tab.
 			</p>
 			<p>
 				If you use the OSS version of EUSurvey or you're a business user of the API
-				interface v connect to the application &gt; go to 'Settings' &gt; 'My
+				interface, please connect to the application. Under 'Settings' &gt; 'My
 				Account' &gt; click on 'E-mail'.
 			</p>
 			<h2>
 				How do I change my default language?    
 			</h2>
 			<p>
-				Go to 'Settings' &gt; 'My Account' and click on 'Language'.
+				It is possible to change the default language for new surveys. Go to
+				'Settings' &gt; 'My Account' and click on 'Language'.
 			</p>
 			<p>
 				Once the update is saved, the system will propose the configured language
@@ -2307,10 +2284,10 @@
 			</p>
 			<p>
 				Therefore, the user's browser must be configured to accept 'cookies', which
-				disappear once the session is finished.
+				disappear once the session has been terminated.
 			</p>
 			<p>
-				The system uses local storage to save copies of the respondent's input to a
+				The system uses local storage to save copies of the participant's input to a
 				survey. This is to ensure there is a backup if the server is not available
 				during submission, the user's computer is switched off accidentally, etc.
 			</p>
@@ -2324,15 +2301,16 @@
 			<p>
 				There is a checkbox above the survey - 'Save a backup on your local
 				computer (disable if you are using a public/shared computer)' - to disable
-				the feature, so no data is stored on the used computer.
+				this feature. In that case, no data will be stored on the used computer.
 			</p>
 			<h2>
-				What information is stored by EUSurvey when respondents submit a
-				contribution (answer)?    
+				What information is stored by EUSurvey when participants submit a
+				contribution?
 			</h2>
 			<p>
-				This depends on your survey's security settings and on the method used to
-				invite your participants to take part.
+				The information that is saved by EUSurvey depends on the security
+				settings of your survey as well as on the method you use to invite
+				your participants to contribute to your survey.
 			</p>
 			<p>
 				<strong>Publicly accessible open survey:</strong>
@@ -2378,7 +2356,7 @@
 				account.
 			</p>
 			<p>
-				However, the IP of every connection is saved for security reasons for every
+				In addition, the IP of every connection is saved for security reasons for every
 				server request (see
 				<a
 						href="https://ec.europa.eu/eusurvey/home/privacystatement"
@@ -2393,10 +2371,12 @@
 			</p>
 			<p>
 				If you use EUSurvey to send invitations to your participants on a
-				guest-list on the 'Participants' page, it will send    <strong>a unique invitation link</strong> to each participant.
+				guest list on the 'Participants' page, it will send
+				<strong>an unique invitation link</strong> to each participant.
 			</p>
 			<p>
-				On submission, EUSurvey will save an invitation number that can be used    <strong>to match</strong> the invited participant with the submitted
+				On submission, EUSurvey will save an invitation number that can be used
+				<strong>to match</strong> the invited participant with the submitted
 				contributions. This action is independent from your survey's security
 				settings.
 			</p>
@@ -2415,7 +2395,11 @@
 				<strong>Creating an anonymous survey:</strong>
 			</p>
 			<p>
-				You can choose to create an anonymous survey by using the 'Anonymous survey mode' option in the survey properties. If activated, contributions to your survey will be anonymous as EUSurvey will not save any personal data such as IP addresses. If you want your survey to be fully anonymous, do not include questions collecting personal data in your survey design.
+				You can choose to create an anonymous survey by using the 'Anonymous survey mode'
+				option in the survey properties. If activated, contributions to your survey will
+				be anonymous as EUSurvey will not save any personal data such as IP addresses.
+				If you want your survey to be fully anonymous, do not include questions
+				collecting personal data in your survey design.
 			</p>
 			<p>
 				<img src="${contextpath}/resources/images/documentation/anonymity.png" />
@@ -2428,7 +2412,7 @@
 				your survey.
 			</p>
 			<p>
-				Be aware that your participants may not want to take part if you cannot
+				Please note that your participants may not want to take part if you cannot
 				guarantee the confidentiality of the data submitted.
 			</p>
 			<p>
@@ -2450,7 +2434,7 @@
 				together with the questionnaire.
 			</p>
 			<p>
-				Contact the DPC (Data Protection Coordinator) of your DG to validate the
+				Please contact the DPC (Data Protection Coordinator) of your DG to validate the
 				privacy statement.
 			</p>
 			<p>

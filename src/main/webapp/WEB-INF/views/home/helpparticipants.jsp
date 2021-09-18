@@ -175,7 +175,7 @@
 					Otherwise, please inform the body responsible for publishing the link that it is incorrect.
 				</p>
 				<h2>
-					What does 'This survey has not yet been published or has already been unpublished in the meantime” mean?
+					What does 'This survey has not yet been published or has already been unpublished in the meantime' mean?
 				</h2>
 				<p>
 					This is mostly the case when the invitation has been sent out, but the survey has not yet been
