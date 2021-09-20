@@ -64,11 +64,10 @@
 				 						<c:if test="${element.getType() == 'Section'}">
 					 						<c:if test='${!quiz.getSectionScore(element.uniqueId).equals("0/0") && !(invisibleElements != null && invisibleElements.contains(element.uniqueId))}'>
 												<tr>
+													<c:set var="scoring" value="${quiz.getSectionScore(element.uniqueId)}" />
 													<td style="width: 225px">${element.getTitle()}</td>
-													<td style="width: 50px">${quiz.getSectionScoreValue(element.uniqueId)}</td>
-													<td style="width: 225px">												
-														<c:set var="scoring" value="${quiz.getSectionScore(element.uniqueId)}" />
-														
+													<td style="width: 50px">${scoring}</td>
+													<td style="width: 225px">
 														<div class="progress noprogressbackground" style="width: 200px; margin-bottom: 2px;">
 														  <div class="progress-bar" style="width: ${quiz.getSectionScoreValue(element.uniqueId) / quiz.getMaxSectionScore() * 100}%;"></div>
 														</div>

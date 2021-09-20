@@ -46,15 +46,21 @@
     <script type='text/javascript' src='${contextpath}/resources/js/knockout-3.5.1.js?version=<%@include file="../version.txt" %>'></script>
 	
 	<script type="text/javascript"> 
-		$(function() {					
-			$("#form-menu-tab").addClass("active");
-			$("#test-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
+	
+		function loadElements() {
+			var ids = "";
 			
 			if ($(".emptyelement").length > 0)
-			{			
-				var ids = "";
+			{				
+				var counter = 0;
+				
 				$(".emptyelement").each(function(){
 					ids += $(this).attr("data-id") + '-';
+					counter++;
+					if (counter > 20)
+					{
+						return false;	
+					}
 				})	
 			 
 			 	var s = "ids=" + ids + "&survey=${form.survey.id}&slang=${form.language.code}&as=${answerSet}";
@@ -71,13 +77,8 @@
 							addElement(result[i], false, false);
 						}
 						applyStandardWidths();
+						setTimeout(loadElements, 500);
 						selectPageAndScrollToQuestionIfSet();
-						checkPages();
-						readCookies();
-						$("#btnSubmit").removeClass("hidden");
-						$("#btnSaveDraft").removeClass("hidden");
-						$("#btnSaveDraftMobile").removeClass("hidden");
-						$('[data-toggle="tooltip"]').tooltip(); 
 					},
 					error: function( result ) {	
 						alert(result);
@@ -92,6 +93,13 @@
 				$("#btnSaveDraftMobile").removeClass("hidden");
 				$('[data-toggle="tooltip"]').tooltip(); 
 			}
+		}
+	
+		$(function() {					
+			$("#form-menu-tab").addClass("active");
+			$("#test-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
+			
+			loadElements();
 		});			
 		
 		function updateFileList(element, responseJSON) {
