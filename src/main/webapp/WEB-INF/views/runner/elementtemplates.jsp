@@ -374,7 +374,7 @@
 			<!-- ko ifnot: foreditor -->
 			<span class="screen-reader-only" data-bind="html: getRankingQuestionInfo(itemCount()), attr: {id: 'listcountinfo' + id()}"></span>
 			<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
-				${form.getMessage("label.HintOnInitialRankingOrder", "class='ranking-question-initial-answer-clickable' data-bind='click: acceptInitialAnswer\' , attr: {\'aria-owns\': \'ranking-item-list-container\' + id()}'")}
+				${form.getMessage("label.HintOnInitialRankingOrder")}
 			</div>
 			<div class="question-reset-answer-message" data-bind="hidden: !isAnswered()">
 				<a href="javascript:;" data-bind="click: resetOrder">${form.getMessage("label.ResetOrder")}</a>
