@@ -372,6 +372,7 @@
 		<div tabindex="0" class="focussable" data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id()}">
 
 			<!-- ko ifnot: foreditor -->
+			<span class="screen-reader-only" data-bind="html: title"></span>
 			<span class="screen-reader-only" data-bind="html: getRankingQuestionInfo(itemCount()), attr: {id: 'listcountinfo' + id()}"></span>
 			<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
 				${form.getMessage("label.HintOnInitialRankingOrder")}
@@ -383,7 +384,6 @@
 
 			<div class="rankingitem-list-container" data-bind="attr: {id: 'ranking-item-list-container' + id()}">
 				<div class="rankingitem-list">
-
 
 					<!-- ko ifnot: foreditor -->
 					<span class="screen-reader-only" data-bind="html: getInitialOrderInfoText(), attr: {id: 'listorderinfo' + id()}"></span>
