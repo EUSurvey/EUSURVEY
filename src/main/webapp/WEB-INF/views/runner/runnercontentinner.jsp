@@ -537,6 +537,16 @@
 	 		var s = '${form.getMessage("limits.MaxSelections", "[max]")}';
 	 		return s.replace("[max]", max);
 	 	}
+
+		function getRankingQuestionInfo(max)
+		{
+			var s = '${form.getMessage("label.RankingListInitialState", "[max]")}';
+			return s.replace("[max]", max);
+		}
+		function getInitialOrderInfoText()
+		{
+			return '${form.getMessage("label.InitialOrder")}';
+		}
 	 	
 	 	function round(value)
 	 	{
