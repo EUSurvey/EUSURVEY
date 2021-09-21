@@ -369,10 +369,10 @@
 			</div>
 		<!-- /ko -->
 		
-		<div tabindex="0" class="focussable" data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id()}">
+		<div tabindex="0" class="focussable" role="group"  data-bind="attr: {id: 'answer' + id(), 'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questioninfo' + id() +  ' questionhelp' + id()}">
 
 			<!-- ko ifnot: foreditor -->
-			<span class="screen-reader-only" data-bind="html: title"></span>
+		
 			<span class="screen-reader-only" data-bind="html: getRankingQuestionInfo(itemCount()), attr: {id: 'listcountinfo' + id()}"></span>
 			<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
 				${form.getMessage("label.HintOnInitialRankingOrder")}
