@@ -365,7 +365,7 @@
 			<textarea style="display: none" data-bind="text: help, attr: {'name': 'help' + id()}"></textarea>
 
 			<div class="ranking-question-initial-answer-message" data-bind="hidden: isAnswered">
-				${form.getMessage("label.HintOnInitialRankingOrder", " class='ranking-question-initial-answer-clickable'")}
+				${form.getMessage("label.HintOnInitialRankingOrderEditor")}
 			</div>
 		<!-- /ko -->
 		
