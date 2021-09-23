@@ -455,6 +455,15 @@ td.table-header {
 	float: right;
 }
 
+.tooltip-wrapper {
+	display: inline-block;
+	cursor: pointer;
+}
+
+.tooltip-wrapper button{
+	pointer-events: none;
+}
+
 .glyphicon.black {
 	top: 4px;
 	font-size: 14px;
