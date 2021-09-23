@@ -289,7 +289,7 @@
 			<div class="answer-column">													
 				<ul role="listbox" data-bind="foreach: orderedPossibleAnswers(false), attr: {'class':css + ' multiple-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
 					<li data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion($parent.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '') , 'onclick' : $parent.readonly() || $parent.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this).children().first()); propagateChange($(this).children().first()); event.stopImmediatePropagation();'}">
-						<a tabindex="0" data-bind="attr: {'data-shortname': shortname(), 'onkeypress': $parent.readonly() || $parent.foreditor ? 'return false;' : 'returnTrueForSpace(event);selectMultipleChoiceAnswer(this);propagateChange(this);'}" >
+						<a tabindex="0" data-bind="attr: {'data-shortname': shortname(), 'onkeypress': $parent.readonly() || $parent.foreditor ? 'return false;' : 'returnTrueForSpace(event); preventScrollOnSpaceInput(event); selectMultipleChoiceAnswer(this);propagateChange(this);'}" >
 							<span data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></span>
 						</a>
 						<input data-bind="value: id(), checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id), attr: {'name': 'answer' + $parent.id(), 'id':id(), 'data-id': $parent.id() + id(), 'data-dependencies': dependentElementsString, 'aria-labelledby': 'answerlabel' + id()}" style="display: none" type="checkbox" />
