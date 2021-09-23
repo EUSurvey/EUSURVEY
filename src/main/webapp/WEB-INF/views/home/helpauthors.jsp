@@ -437,7 +437,6 @@
 						</a>
 						.
 						<br />
-						<br />
 						The quiz mode includes amongst others:
 						<ul>
 							<li>
@@ -463,7 +462,6 @@
 							Have your say
 						</a>
 						' Europa website).
-						<br/>
 						<br/>
 						The BRP template provides:
 						<ul>
@@ -655,7 +653,7 @@
 			<p>
 				See also
 				<a href="#_Toc_4_2">
-					'How do I create a questionnaire by using the EUSurvey editor?'
+					'How do I create a questionnaire via the EUSurvey editor?'
 				</a>
 			</p>
 			<h2>
@@ -665,7 +663,7 @@
 				The elements in your questionnaire will be <strong>selected for editing in the Form area</strong> and
 				<strong>edited in the Element properties pane</strong> of the Editor. See
 				<a href="#_Toc_4_2">
-					'How do I create a questionnaire by using the EUSurvey editor?'
+					'How do I create a questionnaire via the EUSurvey editor?'
 				</a>
 			</p>
 			<p>
@@ -723,7 +721,7 @@
 			<p>
 				See also
 				<a href="#_Toc_4_2">
-					'How do I create a questionnaire by using the EUSurvey editor?'
+					'How do I create a questionnaire via the EUSurvey editor?'
 				</a>
 			</p>
 			<h2>
@@ -737,7 +735,7 @@
 			<p>
 				See also
 				<a href="#_Toc_4_2">
-					'How do I create a questionnaire by using the EUSurvey editor?'
+					'How do I create a questionnaire via the EUSurvey editor?'
 				</a>
 			</p>
 			<h2>
@@ -779,7 +777,7 @@
 				Using this feature in the editor, you can display and hide elements depending on answers given by
 				participants to either single/multiple choice or matrix questions (see also
 				<a href="#_Toc_4_2">
-					'How do I create a questionnaire by using the EUSurvey editor?'
+					'How do I create a questionnaire via the EUSurvey editor?'
 				</a>
 				)
 			</p>
@@ -876,12 +874,12 @@
 			<p>
 				External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button,
 				therefore, they cannot provide access for these persons directly. Please
-				<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>
+				<a href="https://ec.europa.eu/eusurvey/home/support">contact us</a>
 				to request privileges for external users.
 			</p>
 			<p>
 				Read more about this under
-				<a href="#_Toc_10_7">
+				<a href="#_Toc_9_8">
 					'How do I give other users access to my survey?'
 				</a>
 			</p>
@@ -1053,7 +1051,7 @@
 				before submitting a contribution.
 			</p>
 			<p>
-				You can enable/disable the CAPTCHA in the 'Security' under 'Properties'.
+				You can enable/disable the CAPTCHA in the 'Security' settings under 'Properties'.
 			</p>
 			<p>
 				N.B. Although this won't make fraud impossible, it might discourage people from continuing to try to
@@ -1063,7 +1061,7 @@
 				Can I enable my participants to access their contributions after submission?
 			</h2>
 			<p>
-				Yes! Go to 'Security' under 'Properties' and enable 'Allow
+				Yes! Go to 'Security' at the 'Properties' page and enable 'Allow
 				participants to change their contribution' option. Participants need
 				to know the contribution-ID that was shown after they submitted
 				their contribution. To change contributions after submission,
@@ -1101,7 +1099,7 @@
 			<p>
 				The added users will automatically see the survey in their 'Surveys' page once they log into the EUSurvey
 				application. Read more about this under '
-				<a href="#_Toc_10_7">
+				<a href="#_Toc_9_8">
 					How do I give other users access to my survey?
 				</a>
 				'
@@ -1109,7 +1107,7 @@
 			<p>
 				External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button,
 				therefore, they cannot provide access for these persons directly. Please
-				<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>
+				<a href="https://ec.europa.eu/eusurvey/home/support">contact us</a>
 				to request privileges for external users.
 			</p>
 			<h1>
@@ -1153,15 +1151,15 @@
 			<p>
 				Yes! Open your survey, go to the 'Translations' page and select
 				one or more translations to edit. Select 'Edit Translations' from
-				the action menu just below the list of available translations and
-				click on the 'Ok' button. This will open the online translation
+				the action menu just above the list of available translations and
+				click on the 'OK' button. This will open the online translation
 				editor that will allow you to edit multiple translations at a time.
 				Please click the 'Save' button to make sure that your changes are
 				written to the system.
 			</p>
 			<p>
 				In order to edit only one translation, open your survey, go to the
-				'Translations' page and click on the Pen icon in the 'Action'
+				'Translations' page and click on the pen icon in the 'Actions'
 				column.
 			</p>
 			<h2>
@@ -1228,13 +1226,13 @@
 					(for a translation of your survey's pivot language)
 				</li>
 				<li>
-					Click the 'Request Translations' button in the 'Action' column (for a
+					Click the 'Request Translations' button in the 'Actions' column (for a
 					translation of your survey's pivot language)
 				</li>
 				<li>
 					Select all languages you want to be translated (including at
 					least one complete translation). Then select 'Request Translations'
-					from the select box below your translations and click 'Ok'.
+					from the select box below your translations and click 'OK'.
 				</li>
 			</ul>
 			<p>
@@ -1368,14 +1366,14 @@
 				'Properties' page. Select 'Advanced Settings' section and, click on
 				the 'Edit' button and enable 'End Notification', specifying how long
 				in advance you expect an email. Click on 'Save'. The reminder email
-				will be delivered to all Form Managers
+				will be delivered to all form managers
 			</p>
 			<h2>
 				For EU staff: What are the official requirements for launching an open public
 				consultation ('Your Voice in Europe' website)?   
 			</h2>
 			<p>
-				PLease carefully follow
+				Please carefully follow
 				<a
 						href="https://circabc.europa.eu/sd/d/fc02d2ac-d94f-42ed-b866-b3429e0d717b/Survey_publication_your_voice_in_europe_NEW.pdf"
 						target="_blank"
@@ -1436,7 +1434,7 @@
 				How can I change the title of my survey?    
 			</h2>
 			<p>
-				Open the survey, go to the 'Properties' page. Change your survey's
+				Open the survey and go to the 'Properties' page. Change your survey's
 				title under 'Basic' section. If you have already published your
 				survey, go to the 'Overview' page and click 'Apply Changes'.
 			</p>
@@ -1445,16 +1443,16 @@
 			</h2>
 			<p>
 				Open the survey and go to the 'Properties' page. You can choose
-				between the following 'Contact' options under 'Basic Settings':
+				between the following 'Contact' options under 'Basic' settings:
 			</p>
 			<p>
 				<ul>
 					<li>
-						Contact form: This allows users to contact you using a form.
+						Contact Form: This allows users to contact you using a form.
 					</li>
 					<li>
 						E-mail: This allows users to contact you directly by email (your email will be
-						disclosed)
+						disclosed).
 					</li>
 					<li>
 						Web-page: This directs users to a specific webpage.
@@ -1482,8 +1480,8 @@
 			<p>
 				The escape page contains the message that your participants
 				see if your survey is not available. To change the default message,
-				open the survey, go to the 'Properties' and go the 'Special Pages'.
-				You will find the 'Unavailability Page' option. If you have already
+				open the survey, go to the 'Properties' page.
+				You will find the 'Unavailability Page' option under 'Special Pages'. If you have already
 				published your survey, please remember to go to the 'Overview' page
 				and click on 'Apply Changes'.
 			</p>
@@ -1556,7 +1554,7 @@
 			<p>
 				External owners or survey organizers cannot see EU domains on
 				the Privileges tab / Add users button, therefore, they cannot
-				provide access for these persons directly. Please Contact us to
+				provide access for these persons directly. Please contact us to
 				request privileges for external users.
 			</p>
 			<p>
@@ -1669,7 +1667,7 @@
 			</h2>
 			<p>
 				On the 'Results' page (see '<a href="#_Toc_10_1"> Where can I
-					find the contributions submitted by my participants? </a>') search for
+					find the contributions submitted by my respondents? </a>') search for
 				keywords in free-text answers or select individual answers from
 				choice-questions in the filter bar. This limits the full set of
 				answers to a subset of contributions. For performance reasons you
@@ -1696,7 +1694,7 @@
 			<p>
 				Open the survey, go to the 'Properties' page and select
 				'Publish Results' section. Here you will find the URL of the
-				published results and able to choose which
+				published results and will be able to choose which
 				questions/answers/contributions you would like to publish. You can
 				also go there directly by clicking on 'Edit Results Publication'
 				from the 'Overview' page of your survey.
@@ -2105,7 +2103,7 @@
 					'EU institutions and other bodies' (EU staff only)
 					<br/>
 					Select multiple departments from your institution/agency to add
-					all persons working in those department to your guest list.
+					all persons working in those departments to your guest list.
 				</li>
 				<li>
 					<strong>Token list</strong>
@@ -2184,7 +2182,7 @@
 						template' box.
 					</li>
 					<li>
-						Click on 'Next'. a wizard will guide you through the invitation
+						Click on 'Next'. A wizard will guide you through the invitation
 						process.
 					</li>
 				</ol>
@@ -2253,7 +2251,7 @@
 			</h2>
 			<p>
 				If you access EUSurvey using an EU Login user account, you cannot change your
-				email address in EUSurvey. Instead, connect to EU Login and after logging on,
+				email address in EUSurvey. Instead, connect to EU Login and after login,
 				select 'Modify my personal data' from the 'Account information' tab.
 			</p>
 			<p>
@@ -2419,8 +2417,7 @@
 				<strong>For EU staff only:</strong>
 			</p>
 			<p>
-				Note the policy on the 'protection of natural persons with regard to the
-				processing of personal data...' under
+				We draw your attention to the policy on the "protection of natural persons with regard to the processing of personal data
 				<a
 						href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2018.295.01.0039.01.ENG&amp;toc=OJ:L:2018:295:TOC"
 						target="_blank"
@@ -2430,21 +2427,16 @@
 				.
 			</p>
 			<p>
-				If personal data is collected, a privacy statement must be published
-				together with the questionnaire.
+				If personal data is collected, a privacy statement must be drafted and then published together with the questionnaire. 
 			</p>
 			<p>
-				Please contact the DPC (Data Protection Coordinator) of your DG to validate the
-				privacy statement.
+				Please contact the DPC (Data Protection Coordinator) of your DG in order to validate the privacy statement. 
 			</p>
 			<p>
-				Furthermore, any collection of personal data must be notified to the Data
-				Protection Officer (DPO). Contact your DPC if you need assistance on
-				notifying the DPO.
+				Additionally, any collection of personal data must be notified to the Data Protection Officer (DPO). Please contact your DPC if you need assistance for notification to the DPO.
 			</p>
 			<p>
-				Below is a privacy statement template that you could use for your surveys.
-				You must change and adapt it to your needs:
+				Please find below a privacy statement template that you could use for your surveys. You must change and adapt it to your needs:
 			</p>
 			<p>
 				Template:
