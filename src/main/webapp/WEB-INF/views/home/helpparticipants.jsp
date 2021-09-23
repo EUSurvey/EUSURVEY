@@ -179,7 +179,7 @@
 				</h2>
 				<p>
 					This is mostly the case when the invitation has been sent out, but the survey has not yet been
-					published or has already been unpublished by the survey organizers
+					published or has already been unpublished by the survey organizers.
 				</p>
 				<p>
 					For further information, please contact the survey owner.
@@ -233,13 +233,13 @@
 					with a PDF copy of your contribution attached.
 				</p>
 				<p>
-					Please use the ‘Get PDF’ button on the Confirmation page for this purpose.
+					Please use the ‘Get PDF’ button on the 'Confirmation' page for this purpose.
 				</p>
 				<h2>
 				    Can I edit my contribution once it has been submitted?
 				</h2>
 				<p>
-				    TThis varies for each survey, depending on how it has been set up.
+				    This varies for each survey, depending on how it has been set up.
 				</p>
 				<p>
 				    For some surveys, you can
@@ -253,7 +253,7 @@
 				</p>
 				<p>
 					In order to edit your submitted contribution, please use the Contribution ID that you previously
-					noted from the Confirmation page. The Contribution ID appears also on some PDF documents related
+					noted from the 'Confirmation' page. The Contribution ID appears also on some PDF documents related
 					to your contribution.
 				</p>
 				<p>
