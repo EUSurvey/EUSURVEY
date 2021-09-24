@@ -1607,6 +1607,11 @@ function removeColumn(noundo)
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
 	var element = _elements[id];
+
+	if(element.answers().length <= 1) {
+		return;
+	}
+
 	var col = element.answers.pop();
 	
 	if (element.type == "Matrix")

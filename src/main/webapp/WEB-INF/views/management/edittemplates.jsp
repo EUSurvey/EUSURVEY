@@ -163,7 +163,9 @@
 				</div>
 
 				<button data-toggle="tooltip" title="<spring:message code="label.Add" />" class="btn btn-default btn-sm" data-bind="html: ContentItems()[0].Label, attr: {id: ContentItems()[0].Id, 'onclick' : ContentItems()[0].Value}"></button>
-				<button data-toggle="tooltip" title="<spring:message code="label.Remove" />" data-bind="disable: !(PreviewItems().length > MinItems()), attr: {'data-toggle': 'tooltip' },html: ContentItems()[1].Label, attr: {id: ContentItems()[1].Id, 'onclick' : ContentItems()[1].Value, 'class': 'btn btn-default btn-sm' + (PreviewItems().length > MinItems() ? '' : ' disabled')}"></button>
+				<span class="tooltip-wrapper" tabindex="0" data-toggle="tooltip" title="<spring:message code="label.Remove"/>" data-bind="attr: {'onclick': ContentItems()[1].Value}">
+					<button data-bind="disable: !(PreviewItems().length > MinItems()),html: ContentItems()[1].Label, attr: {id: ContentItems()[1].Id, 'class': 'btn btn-default btn-sm' + (PreviewItems().length > MinItems() ? '' : '')}"></button>
+				</span>
 			</td>
 		<!-- /ko -->
 		<!--  ko if: ContentType() == 'quizquestion' -->

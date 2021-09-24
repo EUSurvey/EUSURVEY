@@ -74,6 +74,8 @@ function update(input)
 				{
 					checkInterdependentMatrix(input);
 				}
+			} else if(element.type == "Table") {
+				break;
 			} else {
 				var text = $(input).val();
 				var oldtext = element.numRows();
@@ -97,6 +99,8 @@ function update(input)
 				{
 					checkInterdependentMatrix(input);
 				}
+			} else if(element.type == "Table") {
+				break;
 			} else {
 				oldindex = element.numColumns();
 				element.numColumns(newindex);
