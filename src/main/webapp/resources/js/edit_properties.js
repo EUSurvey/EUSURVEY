@@ -324,7 +324,14 @@ var ElementProperties = function() {
 			} else	if ($(e).hasClass("sectionitem"))
 			{
 				getTextPropertiesRow("Text", element.originalTitle(), true);
-				getChoosePropertiesRow("Level", "1,2,3", false, false, $(e).find("input[name^='level']").val());
+				
+				var level = $(e).find("input[name^='level']").val();
+				
+				getChoosePropertiesRow("Level", "1,2,3", false, false, level);
+				if (level === "1") {
+					getChoosePropertiesRow("OrderSection", "Original,Random", false, false, parseInt($(e).find("input[name^='order']").val()));
+				}
+				
 				getTextPropertiesRow("TabTitle", $(e).find("input[name^='tabtitle']").val(), false);
 				getVisibilityRow(false);
 				getAdvancedPropertiesRow();
@@ -601,7 +608,7 @@ var ElementProperties = function() {
 				getTextPropertiesRow("Identifier", $(e).find("input[name^='shortname']").val(), false);
 				getCheckPropertiesRow("ReadOnly", $(e).find("input[name^='readonly']").val() == 'true');
 				getRegistrationFormRow($(e).find("input[name^='attribute']").val(), $(e).find("input[name^='nameattribute']").val());
-				
+
 				if (isDelphi)
 				{
 					adaptDelphiControls(element);

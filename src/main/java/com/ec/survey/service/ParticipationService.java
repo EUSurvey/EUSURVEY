@@ -289,11 +289,9 @@ public class ParticipationService extends BasicService {
 		"FROM Invitation i, ParticipationGroup pg " + 
 		"WHERE pg.surveyUid=:uid " + 
 		"AND i.participationGroupId = pg.id " +
-		"AND i.answers = 0").setString("uid", surveyuid);
+		"AND i.answers = 0 and (i.deactivated = false OR i.deactivated is null)").setString("uid", surveyuid);
 		return ConversionTools.getValue(hquery.uniqueResult());
 	}
-
-
 
 	public List<Invitation> getInvitations(User user, SqlPagination paging, String survey, String surveystatus, Date expiryStart, Date expiryEnd, Date startInv, Date endInv) {
 		Session session = sessionFactory.getCurrentSession();

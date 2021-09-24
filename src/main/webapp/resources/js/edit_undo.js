@@ -393,6 +393,11 @@ var UndoProcessor = function() {
 				if (step[3] == "2") order = 2;		
 				element.order(order);
 				break;
+			case "OrderSection":
+				var order = 0;
+				if (step[3] == "1") order = 1;	
+				element.order(order);
+				break;
 			case "Columns":
 				if (element.type == "GalleryQuestion")
 				{
@@ -953,6 +958,11 @@ var UndoProcessor = function() {
 				var order = 0;
 				if (step[4] == "Alphabetical") order = 1;
 				if (step[4] == "Random") order = 2;		
+				element.order(order);
+				break;
+			case "OrderSection":
+				var order = 0;
+				if (step[4] == "Random") order = 1;		
 				element.order(order);
 				break;
 			case "Columns":

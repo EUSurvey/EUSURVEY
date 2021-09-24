@@ -42,6 +42,11 @@
 		.filtertools {
 			float: right;
 		}
+		
+		table.table-styled > thead .glyphicon
+		{
+			 color:#333;
+		}
 	
 	</style>
 	
@@ -121,18 +126,11 @@
 		
 		function hideResults()
 		{
-			<c:choose>
-				<c:when test="${publication.isShowSearch()}">
-					$("#scrollarea").hide();
-					$("#results-table").css("min-height", "0px");
-					$(".contentonly").hide();
-					
-					$("#scrollareaheader").css("overflow-x", "auto");
-				</c:when>
-				<c:otherwise>
-					$(".tab-pane-x").hide();
-				</c:otherwise>
-			</c:choose>
+			$("#scrollarea").hide();
+			$("#results-table").css("min-height", "0px");
+			$(".contentonly").hide();
+			
+			$("#scrollareaheader").css("overflow-x", "auto");			
 			
 			if ($('#scrollarea').hasScrollBar())
 			{
@@ -405,40 +403,35 @@
 				<div class="tab-content" style="overflow: visible;">
 					<c:if test="${publication.showContent}">
 						<div class="tab-pane-x <c:if test="${selectedtab == 1}">active</c:if>" id="content" style="min-width: 800px">
-							<c:if test="${publication == null || publication.isShowSearch()}">
-								<div class="contentonly" style="text-align: center; position: fixed; top: 60px; padding: 20px; width: 100%; height: 66px; left:0px; background-color: #fff; z-index: 999">
-									<div style="width: 850px; margin-left: auto; margin-right: auto">
-										<div style="text-align: right; height: 36px; float: right; width: 200px;">
-											<b><spring:message code="label.Export" /></b>										
-											<span class="deactivatedexports">
-												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />"><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
-												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />"><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
-											</span>
-											<span class="activatedexports" style="display: none">
-												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('resultsxls');" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
-												<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('resultsods');" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
-											</span>										
-								  		</div>
-										<div style="text-align: center; margin-left: 200px">
-											<input type="submit" class="btn btn-default" value="<spring:message code="label.Search" />" />
-											<a class="btn btn-default" href="${contextpath}/publication/${form.survey.shortname}"><spring:message code="label.Reset" /></a>
-										</div>
+							<div class="contentonly" style="text-align: center; position: fixed; top: 60px; padding: 20px; width: 100%; height: 66px; left:0px; background-color: #fff; z-index: 999">
+								<div style="width: 850px; margin-left: auto; margin-right: auto">
+									<div style="text-align: right; height: 36px; float: right; width: 200px;">
+										<b><spring:message code="label.Export" /></b>										
+										<span class="deactivatedexports">
+											<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />"><img src="${contextpath}/resources/images/file_extension_xls_small_grey.png" /></a>
+											<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />"><img src="${contextpath}/resources/images/file_extension_ods_small_grey.png" /></a>
+										</span>
+										<span class="activatedexports" style="display: none">
+											<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportxls" />" onclick="showExportDialog('resultsxls');" ><img src="${contextpath}/resources/images/file_extension_xls_small.png" /></a>
+											<a data-toggle="tooltip" title="<spring:message code="tooltip.Exportods" />" onclick="showExportDialog('resultsods');" ><img src="${contextpath}/resources/images/file_extension_ods_small.png" /></a>
+										</span>										
+							  		</div>
+									<div style="text-align: center; margin-left: 200px">
+										<input type="submit" class="btn btn-default" value="<spring:message code="label.Search" />" />
+										<a class="btn btn-default" href="${contextpath}/publication/${form.survey.shortname}"><spring:message code="label.Reset" /></a>
 									</div>
 								</div>
-							</c:if>
-							
+							</div>
+														
 					  		<%@ include file="../management/results-content.jsp" %>	
 					  	</div>
 					  	<div class="tab-pane <c:if test="${selectedtab == 2}">active</c:if>" id="individual">
 				  			<%@ include file="../management/results-individual.jsp" %>					  		
-				  			<c:if test="${paging.items.size() == 0 && !publication.isShowSearch()}">
-								<div style="min-width: 400px; font-size: 20px; text-align: center; padding: 10px; color: #36B500;"><spring:message code="message.NoResults" /></div>
-							</c:if>
 					  	</div>
 					 </c:if>
 					 <c:if test="${publication.showStatistics}">
 					 	 <div class="tab-pane <c:if test="${selectedtab == 3}">active</c:if>" id="statistics">							
-				 		  	<div style="text-align: center; position: fixed; top: 60px; padding: 20px; width: 100%; left:0px; background-color: #fff;">
+				 		  	<div style="text-align: center; position: fixed; top: 60px; padding: 20px; width: 100%; left:0px; background-color: #fff; z-index:999">
 				  		  		<b><spring:message code="label.Export" /></b>
 								
 								<span class="deactivatedstatexports">

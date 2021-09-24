@@ -600,11 +600,21 @@ public class ManagementController extends BasicController {
 					&& u.getLocalPrivileges().get(LocalPrivilege.FormManagement) < 2) {
 				throw new ForbiddenURLException();
 			}
-
+			
+			String oldValue = null;
+			if (activityService.isEnabled(107)) {
+				Survey published = surveyService.getSurvey(form.getSurvey().getShortname(), false, false, false, false, null,
+						true, false);
+				
+				if (published != null) {
+					oldValue = published.serialize(false);
+				}
+			}
+			
 			surveyService.applyChanges(form.getSurvey(), false, u.getId(), false);
 
 			if (activityService.isEnabled(107)) {
-				activityService.log(107, null, form.getSurvey().serialize(false), u.getId(),
+				activityService.log(107, oldValue, form.getSurvey().serialize(false), u.getId(),
 						form.getSurvey().getUniqueId());
 			}
 		} catch (Exception e) {
@@ -626,12 +636,12 @@ public class ManagementController extends BasicController {
 
 		Survey survey = surveyService.getSurveyByShortname(shortname, true, user, request, false, true, true, false);
 
-		List<String> completed = new ArrayList<>();
+		List<Language> completed = new ArrayList<>();
 		List<Translations> translations = translationService.getTranslationsForSurvey(survey.getId(), false, true,
 				false);
 		for (Translations translation : translations) {
 			if (translation.getComplete()) {
-				completed.add(translation.getLanguage().getCode());
+				completed.add(translation.getLanguage());
 			}
 		}
 		survey.setCompleteTranslations(completed);
@@ -3499,11 +3509,9 @@ public class ManagementController extends BasicController {
 	
 	@RequestMapping(value = "/ecfProfileAssessmentResultsJSON", method = { RequestMethod.GET, RequestMethod.HEAD })
 	public @ResponseBody ECFProfileResult ecfProfileAssessmentResultsJSON(@PathVariable String shortname, HttpServletRequest request) 
-			throws NotFoundException, BadRequestException, InternalServerErrorException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenException {
+			throws NotFoundException, InternalServerErrorException, NotAgreedToTosException, WeakAuthenticationException, NotAgreedToPsException, ForbiddenException {
 		String profileOrNull = request.getParameter("profile");
 
-		// AUTHORISATION
-		// TODO: bypass if publication of these results?
 		ResultFilter filter = sessionService.getLastResultFilter(request);
 		Survey survey = (filter != null) 
 				? surveyService.getSurvey(filter.getSurveyId(), true) 

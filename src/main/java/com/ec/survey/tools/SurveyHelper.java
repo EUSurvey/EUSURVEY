@@ -450,7 +450,7 @@ public class SurveyHelper {
 										Element matrixAnswer = m.getAnswers()
 												.get(candidate.getPosition() % (m.getColumns() - 1));
 										if ((answerSet.getMatrixAnswer(matrixQuestion.getId(), matrixAnswer.getId()) != null
-											|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null) && !invisibleElements.contains(matrixQuestion.getUniqueId())) {
+											|| answerSet.getMatrixAnswer(matrixQuestion.getUniqueId(), matrixAnswer.getUniqueId()) != null) && !invisibleElements.contains(matrixQuestion.getUniqueId()) && !invisibleElements.contains(m.getUniqueId())) {
 											found = true;
 										} else {
 											missing = true;
@@ -1090,6 +1090,13 @@ public class SurveyHelper {
 			newValues += " level: " + level;
 		}
 		section.setLevel(level);
+		
+		Integer order = getInteger(parameterMap, "order", id);
+		if (log220 && !order.equals(section.getOrder())) {
+			oldValues += " order: " + section.getOrder();
+			newValues += " order: " + order;
+		}
+		section.setOrder(order);
 
 		String tabtitle = getString(parameterMap, "tabtitle", id, servletContext);
 		if (log220 && section.getTabTitle() != null && !section.getTabTitle().equals(tabtitle)) {
@@ -4614,12 +4621,18 @@ public class SurveyHelper {
 						}
 					}
 				}
-				
+
 				if (element instanceof GalleryQuestion) {
 					GalleryQuestion gallery = (GalleryQuestion) element;
 					for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
+						if (translationsByKey.get(child.getUid() + GalleryQuestion.TEXT) != null) {
+							child.setComment(translationsByKey.get(child.getUid() + GalleryQuestion.TEXT).getLabel());
+						}
 						if (translationsByKey.get(child.getUid()) != null) {
 							child.setDescription(translationsByKey.get(child.getUid()).getLabel());
+						}
+						if (translationsByKey.get(child.getUid() + GalleryQuestion.TITLE) != null) {
+							child.setName(translationsByKey.get(child.getUid() + GalleryQuestion.TITLE).getLabel());
 						}
 					}
 				}

@@ -80,6 +80,9 @@
 				$('#forgot-password-dialog').modal('show');
 			</c:if>
 			
+			<c:if test="${responsive != null}">
+				$("#responsiveinfo-dialog").modal("show");
+			</c:if>			
 		});
 		
 		function switchPanels()
@@ -199,14 +202,14 @@
 								<label for="username"><spring:message code="label.UserName" /></label>
 								<div class="input-group">
 							    	<div class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></div>
-							    	<input class="form-control" id="username" name="username" type="text" maxlength="255" autocomplete="off" style="width: 300px;" />
+							    	<input class="form-control" id="username" name="username" type="text" maxlength="255" style="width: 300px;" />
 							    </div>
 							</p>
 							<p>
 								<label for="password"><spring:message code="label.Password" /></label>
 								<div class="input-group">
 							    	<div class="input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></div>
-							    	<input class="form-control" id="password" name="password" type="password" maxlength="255" autocomplete="off" style="width: 300px;" />
+							    	<input class="form-control" id="password" name="password" type="password" maxlength="255" style="width: 300px;" />
 							    </div>				
 							</p>
 							<div style="margin-top: 30px;">
@@ -252,7 +255,7 @@
 		</div>
 		</div>
 	</div>
-	
+		
 	<c:if test="${error != null}">
 		<script type="text/javascript">
 			switchPanels();

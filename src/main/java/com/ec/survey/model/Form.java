@@ -277,7 +277,15 @@ public class Form {
 		Integer currentPage = 0;
 		ArrayList<Element> currentList = new ArrayList<>();
 		pages.add(currentList);
-		for (Element element : survey.getElements()) {
+		
+		List<Element> elements = null;
+		if (forPDF) {
+			elements = survey.getElements();
+		} else {
+			elements = survey.getElementsOrdered();
+		}
+		
+		for (Element element : elements) {
 			if (survey.getMultiPaging() && element instanceof Section && ((Section) element).getLevel() == 1) {
 				if (currentPage == 0 && currentList.isEmpty()) {
 					// this is the very first sections -> no need to break

@@ -677,7 +677,7 @@ function getChoosePropertiesRow(label, content, multiple, edit, value, useRadioB
 	var rowcontent = "";
 	var options = content.split(",");
 	var name = getNewId();
-	if (label == "Style" || label == "Order" || label == "Display" || label == "DisplaySlider" || label == "InitialSliderPosition")
+	if (label == "Style" || label == "Order" || label == "OrderSection" || label == "Display" || label == "DisplaySlider" || label == "InitialSliderPosition")
 	{
 		row.ContentType("radio");
 		row.Content(options);
@@ -794,6 +794,10 @@ function getCheckPropertiesRow(label, value, disabled = false)
 
 	var id = "id" + idcounter++;
 	_elementProperties.propertyRows.push(row);
+
+	if(label == "Interdependency" && value){
+		checkInterdependentMatrix($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+	}
 }
 
 function getRegistrationFormRow(attrvalue, namevalue)
@@ -996,6 +1000,16 @@ function getActionRow(label, l1, action, l2, action2)
 		row.Content(rowcontent);
 		_elementProperties.propertyRows.push(row);
 	}
+
+	var input = $("#" + "btnAdd" + label);
+	$(input).click(function() {
+		update(this)
+	});
+
+	input = $("#" + "btnRemove" + label);
+	$(input).click(function() {
+		update(this)
+	});
 }
 
 function getUploadRow(label)
@@ -1734,7 +1748,8 @@ function cancel(button)
 	}
 
 	$(button).closest(".propertyrow").removeClass("invalidinput").hide();
-	$(_elementProperties.selectedproperty).removeClass("invalidinput").find(".validationinfobutton").remove();	
+	$(_elementProperties.selectedproperty).removeClass("invalidinput").find(".validationinfobutton").remove();
+	update($("tr[data-label='Columns']"));
 }
 
 

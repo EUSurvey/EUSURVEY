@@ -534,6 +534,11 @@
 			}
 		}
 		
+		function getCharacterCountInfo(max)
+		{
+			var s = '${form.getMessage("info.CharactersUsed", "[current]", "[max]")}';
+			return s.replace("[max]", max).replace("[current]", "0");
+		}
 		function getMinMaxCharacters(min,max)
 	 	{
 	 		var s = '<spring:message code="limits.MinMaxCharacters" arguments="[min],[max]" />';
@@ -707,8 +712,10 @@
 	 		strings["RegistrationForm"] = "<spring:message code="label.RegistrationForm" />";
 	 		strings["Advanced"] = "<spring:message code="label.Advanced" />";
 	 		strings["invalidMinMaxCharacters"] = "<spring:message code="error.invalidMinMaxCharacters" />";
+			strings["invalidInterdependencyCriteria"] = "<spring:message code="error.invalidInterdependencyCriteria" />";
 	 		strings["Style"] = "<spring:message code="label.Style" />";
 	 		strings["Order"] = "<spring:message code="label.Order" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.Order" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
+	 		strings["OrderSection"] = "<spring:message code="label.Order" />&nbsp;<a data-toggle='tooltip' data-html='true' data-placement='right' title='<spring:message code="info.OrderSection" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["Columns"] = "<spring:message code="label.Columns" />";
 	 		strings["RadioButton"] = "<spring:message code="html.RadioButton" />";
 	 		strings["SelectBox"] = "<spring:message code="html.SelectBox" />";	 

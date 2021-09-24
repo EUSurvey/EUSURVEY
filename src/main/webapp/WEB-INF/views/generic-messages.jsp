@@ -164,6 +164,20 @@
 	</div>	
 </div>
 
+<c:if test="${responsive != null}">
+	<div class="modal" id="responsiveinfo-dialog" data-backdrop="static">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<spring:message code="info.useDesktopPC" />
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Close" /></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</c:if>
 
 <script type="text/javascript">
 	
@@ -182,7 +196,7 @@
 				deleteUserMessage();
 			}
 			_messages.saveToLocalStorage();
-		}
+		};
 		
 		this.deleteMessage = function() {
 			this.Deleted(true);
@@ -442,4 +456,15 @@
 			});
 	}	
 	
+	function testTimeoutExpiration(restTime) {
+		lastEditDate.setDate(lastEditDate.getDate()-1);
+		sessiontimeout = 300;
+		if (Number.isInteger(restTime)) {
+			sessiontimeout = restTime;
+		}
+		refreshTimeout();
+		checkTimeout();
+		console.log("Function for testing purposes. Set Timeout to", timeoutTime);
+	}
+
 </script>

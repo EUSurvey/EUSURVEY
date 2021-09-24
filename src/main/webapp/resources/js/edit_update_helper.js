@@ -273,6 +273,25 @@ function checkInputStates()
 	}
 }
 
+function checkInterdependentMatrix(input)
+{
+	var columnstext = getColumnsText(true);
+	var columns = splitText(columnstext).length;
+	var rowstext = getRowsText(true);
+	var rows = splitText(rowstext).length;
+
+	if (columns < rows) {
+		addValidationInfo(input, "invalidInterdependencyCriteria");
+		return false;
+	} else {
+		removeValidationMarkup($(".firstpropertyrow[data-label=Columns]"));
+		removeValidationMarkup($(".firstpropertyrow[data-label=Rows]"));
+		removeValidationMarkup($("#idPropertyInterdependency").closest(".firstpropertyrow"));
+	}
+	
+	return true;
+}
+
 function updateGallery(file)
 {
 	var id = $(_elementProperties.selectedelement).attr("data-id");
