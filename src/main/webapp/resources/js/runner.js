@@ -72,6 +72,11 @@ function returnTrueForSpace(event)
 	return false;
 }
 
+function preventScrollOnSpaceInput(event){
+	if(event.keyCode == 32)
+		event.preventDefault();
+}
+
 function ratingClick(link)
 {	
 	var pos = $(link).index();
