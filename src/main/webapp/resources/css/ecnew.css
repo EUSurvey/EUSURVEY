@@ -260,7 +260,7 @@ body {
 
 #choseRunnerLanguageDialog .langlink {
 	background-color: #fff;
-	color: #004494;
+	color: #004494 !important;
 	width: 350px;
 	display: inline-block;
 	padding-top: 10px;
