@@ -558,8 +558,8 @@ public class OdfExportCreator extends ExportCreator {
 										}
 									}
 
-									cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
-									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
+									cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
+									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
 								}
 								cell.setValueType(Constants.STRING);
 							}
@@ -580,10 +580,10 @@ public class OdfExportCreator extends ExportCreator {
 									StringBuilder cellValue = new StringBuilder();
 									if (!answers.isEmpty()) {
 										cellValue.append((cellValue.length() > 0) ? ";" : "")
-												.append(ConversionTools.removeHTMLNoEscape(answers.get(0).getValue()));
+												.append(ConversionTools.removeHTMLNoEscape(answers.get(0).getValue(), true));
 									}
-									cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
-									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
+									cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
+									cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
 								}
 								cell.setValueType(Constants.STRING);
 							}
@@ -689,8 +689,8 @@ public class OdfExportCreator extends ExportCreator {
 										if (answer == null)
 											answer = "";
 
-										cell.setStringValue(ConversionTools.removeHTMLNoEscape(answer));
-										cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answer));
+										cell.setStringValue(ConversionTools.removeHTMLNoEscape(answer, true));
+										cell.setDisplayText(ConversionTools.removeHTMLNoEscape(answer, true));
 									}
 									cell.setValueType(Constants.STRING);
 								}
@@ -721,8 +721,8 @@ public class OdfExportCreator extends ExportCreator {
 									}
 								}
 
-								cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
-								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
+								cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
+								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
 							}
 							cell.setValueType(Constants.STRING);
 						} else if (question instanceof NumberQuestion
@@ -782,9 +782,11 @@ public class OdfExportCreator extends ExportCreator {
 
 								if (!answers.isEmpty()) {
 									cellValue = ConversionTools.getDate(answers.get(0).getValue());
-									Calendar c = Calendar.getInstance();
-									c.setTime(cellValue);
-									cell.setDateValue(c);
+									if (cellValue != null) {
+										Calendar c = Calendar.getInstance();
+										c.setTime(cellValue);
+										cell.setDateValue(c);
+									}
 								}
 							}
 						
@@ -808,8 +810,8 @@ public class OdfExportCreator extends ExportCreator {
 										cellValue.append(" ").append(form.getAnswerShortname(answer));
 									}
 								}
-								cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
-								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString()));
+								cell.setStringValue(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
+								cell.setDisplayText(ConversionTools.removeHTMLNoEscape(cellValue.toString(), true));
 							}
 							cell.setValueType(Constants.STRING);
 						}
