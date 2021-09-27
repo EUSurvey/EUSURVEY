@@ -355,8 +355,6 @@
     <div class="modal-content">
 	<div class="modal-header"><spring:message code="label.SurveyLinks" /></div>
 	<div class="modal-body" style="max-height: 500px; overflow: auto; word-break: break-all;">	
-		<div style="color: #777; margin-bottom: 20px;"><spring:message code="info.SurveyLinks" /></div>
-		
 		<table class="table table-bordered table-striped">
 			<tr>
 				<th><spring:message code="label.Language" /></th>
@@ -379,8 +377,7 @@
 						</td>
 					</tr>
 		 		</c:if>
-	 		</c:forEach>			
-			
+	 		</c:forEach>
 		</table>
 	</div>
 	<div class="modal-footer">
