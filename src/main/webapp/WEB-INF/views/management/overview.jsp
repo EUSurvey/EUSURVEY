@@ -10,13 +10,8 @@
 	
 	<link href="${contextpath}/resources/css/management.css" rel="stylesheet" type="text/css" />
 	<link href="${contextpath}/resources/css/form.css" rel="stylesheet" type="text/css" />
-	
+		
 	<script type="text/javascript"> 
-		$(function() {					
-			$("#form-menu-tab").addClass("active");
-			$("#overview-button").removeClass("InactiveLinkButton").addClass("ActiveLinkButton");
-			$('[data-toggle="tooltip"]').tooltip(); 
-		});
 		
 		function showExportDialog(type, format)
 		{
@@ -199,6 +194,13 @@
 							${form.survey.owner.getFirstLastName()}
 						</td>
 						<td rowspan="5" style="vertical-align: top; text-align: right;">
+						
+							<c:if test="${form.survey.isCriticalComplexity()}">
+								<div class="alert-message">
+									<spring:message code="info.CriticalComplexity" arguments="${contextpath}/home/support?assistance=1" />
+								</div>						
+							</c:if>
+						
 							<c:choose>
 								<c:when test="${form.survey.isFrozen}">
 									<button class="btn btn-default disabled" data-toggle="tooltip" title="<esapi:encodeForHTMLAttribute><spring:message code="info.SurveyFrozen" /></esapi:encodeForHTMLAttribute>"><spring:message code="label.Publish" /></button>

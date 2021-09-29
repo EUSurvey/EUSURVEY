@@ -188,6 +188,7 @@ final public class Survey implements java.io.Serializable {
 	private String logoText;
 	private Boolean isShowCountdown = true;
 	private String timeLimit;
+	private Boolean criticalComplexity = false;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -2402,11 +2403,20 @@ final public class Survey implements java.io.Serializable {
 		this.timeLimit = timeLimit != null ? timeLimit :  "";
 	}
 	
+	@Column(name = "CRITICALCOMPLEXITY")
+	public Boolean isCriticalComplexity() {
+		return criticalComplexity;
+	}
+
+	public void setCriticalComplexity(Boolean criticalComplexity) {
+		this.criticalComplexity = criticalComplexity != null ? criticalComplexity : false;
+	}
+	
 	@Transient
 	public int getTimeLimitInSeconds() {
 		if (timeLimit == null || timeLimit.length() == 0) return -1;
 		
 		String[] arr = timeLimit.split(":");
 		return Integer.parseInt(arr[0]) * 3600 + Integer.parseInt(arr[1]) * 60 + Integer.parseInt(arr[2]);		
-	}	
+	}
 }

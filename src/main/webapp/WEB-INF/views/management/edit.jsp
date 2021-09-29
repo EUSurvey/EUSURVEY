@@ -323,6 +323,7 @@
 		<input type="hidden" id="sectionNumbering" value="${form.survey.sectionNumbering}" />
 		<input type="hidden" id="questionNumbering" value="${form.survey.questionNumbering}" />
 		<input type="hidden" id="regform" value="${form.survey.registrationForm}" />
+		<input type="hidden" id="criticalComplexity" name="criticalComplexity" value="" />
 		<form:hidden path="survey.id"/>
 
 		<div id="editcontent">
