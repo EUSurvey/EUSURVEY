@@ -4,7 +4,8 @@ var draggedelements = null;
 $(function() {
 	$(".sortable").sortable({
 		placeholder: "draggable-active",
-		scroll: false,
+		scroll: true,
+		scrollSensitivity: 100,
 		handle: "div",
 		start: function(e, ui) {
 			originalindex = $(ui.item).index();

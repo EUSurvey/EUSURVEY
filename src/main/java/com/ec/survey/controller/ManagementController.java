@@ -1402,22 +1402,19 @@ public class ManagementController extends BasicController {
 		survey.setIsDelphiShowAnswersAndStatisticsInstantly(uploadedSurvey.getIsDelphiShowAnswersAndStatisticsInstantly());
 		survey.setIsDelphiShowAnswers(uploadedSurvey.getIsDelphiShowAnswers());
 		survey.setMinNumberDelphiStatistics(uploadedSurvey.getMinNumberDelphiStatistics());
-		if (survey.getIsECF()) {
-			if (creation) {
-				survey.setWcagCompliance(true);
-				if (ecfTemplateSurvey != null && ecfTemplateSurvey.length() > 0) {
-					Survey template = surveyService.getSurveyByAlias(ecfTemplateSurvey, true);
-					template.copyElements(survey, surveyService, true);
+		if (survey.getIsECF() && creation) {
+			if (ecfTemplateSurvey != null && ecfTemplateSurvey.length() > 0) {
+				Survey template = surveyService.getSurveyByAlias(ecfTemplateSurvey, true);
+				template.copyElements(survey, surveyService, true);
 
-					// recreate unique ids
-					for (Element elem : survey.getElementsRecursive(true)) {
-						String newUniqueId = UUID.randomUUID().toString();
-						elem.setUniqueId(newUniqueId);
-					}
-
-					// recreate the ecf elements
-					survey = this.ecfService.copySurveyECFElements(survey);
+				// recreate unique ids
+				for (Element elem : survey.getElementsRecursive(true)) {
+					String newUniqueId = UUID.randomUUID().toString();
+					elem.setUniqueId(newUniqueId);
 				}
+
+				// recreate the ecf elements
+				survey = this.ecfService.copySurveyECFElements(survey);
 			}
 		}
 		
