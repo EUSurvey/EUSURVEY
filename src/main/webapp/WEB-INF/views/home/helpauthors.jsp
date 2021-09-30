@@ -1208,7 +1208,7 @@
 				in the uploading process and introduce a valid two-letter
 				<a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">
 					ISO 639-1 </a> language code. It is not possible to select a
-				non-European language as the pivot language of your survey.
+				non-European language as the main language of your survey.
 			</p>
 			<h2>
 				What does 'Request Machine Translation' mean?    
@@ -1223,11 +1223,11 @@
 			<ul>
 				<li>
 					When adding a new translation, tick the checkbox 'Request Machine Translation'
-					(for a translation of your survey's pivot language)
+					(for a translation of your survey's main language)
 				</li>
 				<li>
 					Click the 'Request Translations' button in the 'Actions' column (for a
-					translation of your survey's pivot language)
+					translation of your survey's main language)
 				</li>
 				<li>
 					Select all languages you want to be translated (including at
@@ -1323,7 +1323,7 @@
 			<p>
 				When you send out invitations containing the link or use the link to the
 				published form on the 'Overview' page, by default the link points to the
-				form in the pivot language.
+				form in the main language.
 			</p>
 			<p>
 				You can also<strong> redirect respondents directly</strong> to a specific
