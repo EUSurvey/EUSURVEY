@@ -618,7 +618,7 @@ public class ReportingService extends BasicService {
 										{
 											v += answerid;
 										} else {
-											v += answer.getTitle();
+											v += answer.getStrippedTitle();
 										}
 										
 										if (showShortnames) {
@@ -641,7 +641,7 @@ public class ReportingService extends BasicService {
 										{
 											v += answerid;
 										} else {
-											v += answer.getTitle();
+											v += answer.getStrippedTitle();
 										}
 										
 										if (showShortnames) {
