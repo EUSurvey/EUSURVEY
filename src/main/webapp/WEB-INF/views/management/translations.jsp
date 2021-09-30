@@ -289,7 +289,7 @@
 								<td style="vertical-align: middle">
 									<c:choose>
 										<c:when test="${translation.language == form.survey.language}">
-											<span class="label label-info"><spring:message code="label.PivotLanguage" /></span>
+											<span class="label label-info"><spring:message code="label.MainLanguage" /></span>
 										</c:when>
 										<c:when test="${translation.complete && translation.active}">
 											<span class="label label-success"><spring:message code="label.Published" /></span>

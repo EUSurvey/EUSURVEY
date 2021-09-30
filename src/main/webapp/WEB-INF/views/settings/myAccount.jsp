@@ -161,7 +161,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td><label><b><spring:message code="label.DefaultPivotLanguage" /></b></label></td>
+					<td><label><b><spring:message code="label.DefaultMainLanguage" /></b></label></td>
 					<td id="change-pivotlang-dialog">
 						<span><esapi:encodeForHTML>${USER.defaultPivotLanguage}</esapi:encodeForHTML></span>
 						<div style="float: right">
