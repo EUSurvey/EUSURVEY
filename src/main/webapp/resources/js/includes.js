@@ -1286,7 +1286,9 @@ function initModals(item)
 			var second = $(this).parent().find(".comparable-second").first().val();
 			
 			const viewModel = ko.dataFor($(this).parent()[0]);
-			viewModel.values.first.onValidation(value);
+			if (typeof viewModel != 'undefined') {
+				viewModel.values.first.onValidation(value);
+			}
 
 			if ((!blur || value.length > 0 && second.length > 0) && value != "********")
 			{
@@ -1294,7 +1296,7 @@ function initModals(item)
 				if (value != second)
 				{
 					validationinfo += $(this).attr("name") + " (COMP) ";
-					const useFocusChange = viewModel.values.checkAnyChangesOnValidation();
+					const useFocusChange = typeof viewModel != 'undefined' ? viewModel.values.checkAnyChangesOnValidation() : false;
 					addValidationError.andFocusWhen($(this).parent().find(".comparable-second"), nomatchText, useFocusChange);
 					result = false;
 				};
