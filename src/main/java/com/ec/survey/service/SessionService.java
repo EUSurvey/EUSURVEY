@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -445,17 +446,47 @@ public class SessionService extends BasicService {
 		}
 
 		if (filter != null && filter.getDefaultQuestions() != null && filter.getDefaultQuestions()) {
-			filter.getVisibleQuestions().clear();
-			filter.getExportedQuestions().clear();
-
 			Survey survey = surveyService.getSurvey(filter.getSurveyId());
+			
+			List<String> ids = new ArrayList<>();
+			List<String> allids = new ArrayList<>();
 
 			for (Element question : survey.getQuestions()) {
 				if (question.isUsedInResults()) {
-					if (filter.getVisibleQuestions().size() < 20) {
-						filter.getVisibleQuestions().add(question.getId().toString());
+					if (ids.size() < 20) {
+						ids.add(question.getId().toString());
 					}
-					filter.getExportedQuestions().add(question.getId().toString());
+					allids.add(question.getId().toString());
+				}
+			}
+			
+			List<String> idsToRemove = new ArrayList<>();
+			for (String id : filter.getVisibleQuestions()) {
+				if (!ids.contains(id)) {
+					idsToRemove.add(id);
+				}
+			}
+			for (String id : idsToRemove) {
+				filter.getVisibleQuestions().remove(id);
+			}			
+			for (String id : ids) {
+				if (!filter.getVisibleQuestions().contains(id)) {
+					filter.getVisibleQuestions().add(id);
+				}
+			}
+			
+			idsToRemove = new ArrayList<>();
+			for (String id : filter.getExportedQuestions()) {
+				if (!allids.contains(id)) {
+					idsToRemove.add(id);
+				}
+			}
+			for (String id : idsToRemove) {
+				filter.getExportedQuestions().remove(id);
+			}
+			for (String id : allids) {
+				if (!filter.getExportedQuestions().contains(id)) {
+					filter.getExportedQuestions().add(id);
 				}
 			}
 		}
