@@ -523,8 +523,6 @@ public class SessionService extends BasicService {
 	@Transactional
 	public void setLastResultFilter(HttpServletRequest request, ResultFilter filter, int user, int survey)
 			throws InterruptedException {
-		request.getSession().setAttribute("ResultFilter", filter);
-
 		// there can only be changes during a POST
 		if (request.getMethod().equalsIgnoreCase("POST")) {
 			boolean saved = false;
@@ -552,6 +550,9 @@ public class SessionService extends BasicService {
 				}
 			}
 		}
+		
+		answerService.initialize(filter);
+		request.getSession().setAttribute("ResultFilter", filter.copy());
 	}
 
 	@Transactional
