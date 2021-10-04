@@ -3665,6 +3665,9 @@ public class ManagementController extends BasicController {
 			if (filter == null || filter.getSurveyId() == 0) {
 				return Collections.emptyMap();
 			}
+			
+			//the changes shall not be saved to the database 
+			filter = filter.copy();
 						
 			filter.getVisibleExplanations().clear();
 			filter.getVisibleDiscussions().clear();
