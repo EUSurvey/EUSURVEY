@@ -956,34 +956,25 @@
 				the results page.
 			</p>
 			<h2>
-				What does 'Complexity' mean?    
+				Complexity indicator  
 			</h2>
 			<p>
-				Adding too many elements or dependencies to your survey can lead to performance issues for the
-				participants who want to fill out your questionnaire, because it is too 'complex'.
+				Keeping your survey short and simple will ease the filling of your survey by the respondents and lead to a better user experience. Of course, sometimes you need to add branch logic using dependencies (i.e. dependent questions that are hidden/displayed depending on the previous answers given). This is fine, but please bear in mind that adding too many items or dependencies to your survey makes it too 'complex'. This can lead to the system slowing down for participants when filling out your questionnaire.
 			</p>
 			<p>
-				Your survey could have a high level of complexity for several reasons:
+				Therefore there is a little indicator at the top-right corner of the form editor:<br />
+				<img src="${contextpath}/resources/images/documentation/complexity.png" />
 			</p>
-			<ul>
-				<li>
-					You use too many table/matrix elements
-				</li>
-				<li>
-					You use too many dependencies
-				</li>
-				<li>
-					You use too many cascading dependencies
-				</li>
-			</ul>
 			<p>
-				For more information, see our
-				<a
-						href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf"
-						target="_blank"
-						>
-					best practices guide
-				</a>.
+				Your survey could have a high level of complexity for several reasons: 
+				<ul>
+					<li>too many dependencies</li>
+					<li>too many cascading dependencies</li>
+					<li>too many table/matrix items</li>
+				</ul>
+			</p>
+			<p>
+				For more information, see our <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">best practices guide</a> and do not hesitate to contact the <a href="${contextpath}/home/support?assistance=1">EUSurvey support team</a> for assistance in re-designing your form if needed.
 			</p>
 			<h1>
 				Survey security

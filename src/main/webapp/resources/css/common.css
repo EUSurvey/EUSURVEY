@@ -911,6 +911,11 @@ h2 {
 	color: #000 !important;
 }
 
+.alert-message {
+	color: #f00;
+	margin-bottom: 5px;
+}
+
 .redlink {
 	color: #800;
 	font-size: 80%;
