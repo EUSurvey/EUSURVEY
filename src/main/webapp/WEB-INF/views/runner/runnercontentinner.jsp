@@ -12,6 +12,7 @@
 <script type="text/javascript" src="${contextpath}/resources/js/wordcloud.js?version=<%@include file="../version.txt" %>"></script>
 
 <input type="hidden" id="validatedPerPage" value="${form.survey.validatedPerPage}" />
+<input type="hidden" id="preventGoingBack" value="${form.survey.preventGoingBack}" />
 <input type="hidden" id="newlang" name="newlang" value="${form.language.code }" />
 <input type="hidden" id="newlangpost" name="newlangpost" value="false" />
 <input type="hidden" id="newcss" name="newcss" value="" />
@@ -116,21 +117,40 @@
 										class="pagebutton ${rowCounter.index == 0 ? "active" : ""}"
 										data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
 										title="${form.survey.isDelphi ? form.getMessage("label.SwitchPageDelphi") : ""}">
+										
+										<c:choose>
+											<c:when test="${form.survey.preventGoingBack == false}">
+												<a href="#page${rowCounter.index}" style="cursor:pointer;" onclick="return selectPage(${rowCounter.index});">
+												<c:choose>
+													<c:when test="${page[0].getType() == 'Section' && page[0].tabTitle != null && page[0].tabTitle.length() > 0}">
+														${page[0].tabTitle}
+													</c:when>
+													<c:when test="${page[0].getType() == 'Section'}">
+														<esapi:encodeForHTML>${page[0].shortname}</esapi:encodeForHTML>
+													</c:when>
+													<c:otherwise>
+														${form.getMessage("label.Start")}
+													</c:otherwise>
+												</c:choose>
+												</a>
+											</c:when>
+											<c:otherwise>
+												<a class="noHover">
+												<c:choose>
+													<c:when test="${page[0].getType() == 'Section' && page[0].tabTitle != null && page[0].tabTitle.length() > 0}">
+														${page[0].tabTitle}
+													</c:when>
+													<c:when test="${page[0].getType() == 'Section'}">
+														<esapi:encodeForHTML>${page[0].shortname}</esapi:encodeForHTML>
+													</c:when>
+													<c:otherwise>
+														${form.getMessage("label.Start")}
+													</c:otherwise>
+												</c:choose>
+												</a>
+											</c:otherwise>
+										</c:choose>
 
-										<a href="#page${rowCounter.index}" style="cursor:pointer;"
-										   onclick="return selectPage(${rowCounter.index});">
-											<c:choose>
-												<c:when test="${page[0].getType() == 'Section' && page[0].tabTitle != null && page[0].tabTitle.length() > 0}">
-													${page[0].tabTitle}
-												</c:when>
-												<c:when test="${page[0].getType() == 'Section'}">
-													<esapi:encodeForHTML>${page[0].shortname}</esapi:encodeForHTML>
-												</c:when>
-												<c:otherwise>
-													${form.getMessage("label.Start")}
-												</c:otherwise>
-											</c:choose>
-										</a>
 									</li>
 								</c:forEach>
 								</ul>
@@ -229,11 +249,14 @@
 
 									<c:if test="${submit == true}">
 										<div style="text-align: center; margin-top: 20px;">
-											<a id="btnPrevious" style="display: none;" role="button" id="btnPrevious" aria-label="${form.getMessage("label.GoToPreviousPage")}"
-												   href="javascript:;"
-												   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
-												   title="${form.survey.isDelphi ? form.getMessage("label.PreviousPageDelphi") : ""}"
-												   onclick="previousPage();this.blur();" onfocusin="validateLastContainer()" class="btn btn-default">${form.getMessage("label.Previous")}</a>
+											
+											<c:if test="${form.survey.preventGoingBack == false}">											
+												<a id="btnPrevious" style="display: none;" role="button" id="btnPrevious" aria-label="${form.getMessage("label.GoToPreviousPage")}"
+													   href="javascript:;"
+													   data-toggle="${form.survey.isDelphi ? "tooltip" : ""}"
+													   title="${form.survey.isDelphi ? form.getMessage("label.PreviousPageDelphi") : ""}"
+													   onclick="previousPage();this.blur();" onfocusin="validateLastContainer()" class="btn btn-default">${form.getMessage("label.Previous")}</a>
+											</c:if>
 											<c:choose>
 												<c:when test="${dialogmode != null }">
 													<a id="btnSubmit" role="button"

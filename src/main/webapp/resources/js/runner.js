@@ -688,6 +688,7 @@ function selectPage(val) {
 	}
 	
 	var validatedPerPage = $("#validatedPerPage").val().toLowerCase() == "true";
+	var preventGoingBack = $("#preventGoingBack").val().toLowerCase() == "true";
 	
 	var validate = val > page;
 		

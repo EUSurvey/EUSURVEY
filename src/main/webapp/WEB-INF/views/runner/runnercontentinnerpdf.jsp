@@ -7,6 +7,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="esapi" uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API" %>
 
+	<input type="hidden" id="preventGoingBack" value="${form.survey.preventGoingBack}" />
 	<input type="hidden" id="validatedPerPage" value="${form.survey.validatedPerPage}" />
 	<input type="hidden" id="newlang" name="newlang" value="${form.language.code }" />
 	<input type="hidden" id="newcss" name="newcss" value="" />
