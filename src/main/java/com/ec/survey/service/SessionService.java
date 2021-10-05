@@ -19,7 +19,6 @@ import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Value;
@@ -206,6 +205,26 @@ public class SessionService extends BasicService {
 			}
 		}
 		return true;
+	}
+	
+	public boolean userCanEditResults(Survey survey, User user, HttpServletRequest request) {
+		if (survey.getOwner().getId().equals(user.getId()))
+			return true;
+		if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2)
+			return true;
+
+		try {
+			upgradePrivileges(survey, user, request);
+			if (user.getLocalPrivileges().get(LocalPrivilege.FormManagement) == 2)
+				return true;
+			
+			if (user.getLocalPrivileges().get(LocalPrivilege.AccessResults) == 2)
+				return true;
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return false;
 	}
 
 	public boolean userIsFormAdmin(Survey survey, User user, HttpServletRequest request) {
