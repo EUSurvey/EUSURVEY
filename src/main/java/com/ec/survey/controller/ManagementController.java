@@ -1317,6 +1317,8 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (survey.getValidatedPerPage() != uploadedSurvey.getValidatedPerPage())
 			hasPendingChanges = true;
+		if (survey.getPreventGoingBack() != uploadedSurvey.getPreventGoingBack())
+			hasPendingChanges = true;
 		if (!Objects.equals(survey.getWcagCompliance(), uploadedSurvey.getWcagCompliance()))
 			hasPendingChanges = true;
 		if (!Tools.isFileEqual(survey.getLogo(), uploadedSurvey.getLogo()))
@@ -1497,9 +1499,11 @@ public class ManagementController extends BasicController {
 						uploadedSurvey.getValidatedPerPage() ? "enabled" : "disabled" };
 				activitiesToLog.put(121, oldnew);
 			}
-
+		
 			survey.setValidatedPerPage(uploadedSurvey.getValidatedPerPage());
-
+			
+			survey.setPreventGoingBack(uploadedSurvey.getPreventGoingBack());
+			
 			survey.setAllowedContributionsPerUser(uploadedSurvey.getAllowedContributionsPerUser());
 
 			if (!Objects.equals(uploadedSurvey.getWcagCompliance(), survey.getWcagCompliance())) {

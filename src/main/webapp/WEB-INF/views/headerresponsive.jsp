@@ -26,7 +26,7 @@
 			<button onclick="$('#responsivemenu').slideToggle(500);" class="btn btn-primary" style="width: auto; margin: 0px;" type="button" id="dropdownMenu1"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span></button>
 		</div>
 		
-		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null && mode != 'delphiStartPage'}">
+		<c:if test="${form != null && form.getSurvey() != null && isquizpage == null && mode != 'delphiStartPage' && !form.getSurvey().preventGoingBack}">
 			
 			<div style="float: right">
 				<div class="dropdown" id="page-tabs">
@@ -45,21 +45,23 @@
 								<li data-id="${page[0].id}" id="tab${rowCounter.index}" class="pagebuttonli">
 							</c:otherwise>
 						</c:choose>
-							<a class="pagebutton" style="text-decoration: none;" onclick="selectPage(${rowCounter.index});" data-id="${page[0].id}">
-								<div style="white-space: normal; word-wrap: break-word">
-								<c:choose>
-									<c:when test="${page[0].getType() == 'Section' && page[0].tabTitle != null && page[0].tabTitle.length() > 0}">
-										${page[0].tabTitle}
-									</c:when>
-									<c:when test="${page[0].getType() == 'Section'}">
-										<esapi:encodeForHTML>${page[0].shortname}</esapi:encodeForHTML>
-									</c:when>
-									<c:otherwise>
-										${form.getMessage("label.Start")}
-									</c:otherwise>
-								</c:choose>
-								</div>												
-							</a>
+											
+						<a class="pagebutton" style="text-decoration: none;" onclick="selectPage(${rowCounter.index});" data-id="${page[0].id}">
+							<div style="white-space: normal; word-wrap: break-word">
+							<c:choose>
+								<c:when test="${page[0].getType() == 'Section' && page[0].tabTitle != null && page[0].tabTitle.length() > 0}">
+									${page[0].tabTitle}
+								</c:when>
+								<c:when test="${page[0].getType() == 'Section'}">
+									<esapi:encodeForHTML>${page[0].shortname}</esapi:encodeForHTML>
+								</c:when>
+								<c:otherwise>
+									${form.getMessage("label.Start")}
+								</c:otherwise>
+							</c:choose>
+							</div>												
+						</a>
+										
 						</li>
 					</c:forEach>				    
 				    

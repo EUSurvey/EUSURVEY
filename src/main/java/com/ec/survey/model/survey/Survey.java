@@ -188,6 +188,7 @@ final public class Survey implements java.io.Serializable {
 	private String logoText;
 	private Boolean isShowCountdown = true;
 	private String timeLimit;
+	private boolean preventGoingBack = false;
 	private Boolean criticalComplexity = false;
 
 	@Id
@@ -860,6 +861,15 @@ final public class Survey implements java.io.Serializable {
 	public void setValidatedPerPage(boolean validatedPerPage) {
 		this.validatedPerPage = validatedPerPage;
 	}
+	
+	@Column(name = "PREVENTGOINGBACK")
+	public Boolean getPreventGoingBack() {
+		return preventGoingBack;
+	}
+
+	public void setPreventGoingBack(Boolean preventGoingBack) {
+		this.preventGoingBack = preventGoingBack != null ? preventGoingBack : false;
+	}	
 
 	@Column(name = "MULTIPAGING")
 	public boolean getMultiPaging() {
@@ -1549,6 +1559,7 @@ final public class Survey implements java.io.Serializable {
 			result.append(" notifyAll: ").append(notifyAll).append(";");
 			result.append(" showPDFOnUnavailabilityPage: ").append(showPDFOnUnavailabilityPage).append(";");
 			result.append(" showDocsOnUnavailabilityPage: ").append(showDocsOnUnavailabilityPage).append(";");
+			result.append(" preventGoingBack: ").append(preventGoingBack).append(";");
 
 			try {
 				if (backgroundDocuments != null)
@@ -1661,6 +1672,7 @@ final public class Survey implements java.io.Serializable {
 		copy.minNumberDelphiStatistics = minNumberDelphiStatistics;
 		copy.timeLimit = timeLimit;
 		copy.isShowCountdown = isShowCountdown;
+		copy.setPreventGoingBack(preventGoingBack);
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;

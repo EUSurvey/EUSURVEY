@@ -2526,3 +2526,7 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 .question__word-cloud-container {
 	display: none;
 }
+
+.noHover {
+	pointer-events: none;
+}
