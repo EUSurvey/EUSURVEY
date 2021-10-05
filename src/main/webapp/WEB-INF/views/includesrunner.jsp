@@ -83,7 +83,7 @@
 <script type="text/javascript" src="${contextpath}/resources/js/chartjs-plugin-colorschemes.min.js?version=<%@include file="version.txt" %>"></script>
  
 <script type="text/javascript">
-	if (top != self) top.location=location;
+	//if (top != self) top.location=location;
 	
 	var contextpath = "${contextpath}";
 	var isresponsive = ${responsive != null};

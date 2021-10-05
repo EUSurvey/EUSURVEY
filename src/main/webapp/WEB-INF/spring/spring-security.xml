@@ -21,9 +21,11 @@
 		/> -->
 		
 		<security:csrf request-matcher-ref="csrfSecurityRequestMatcher" />
+		
 		<security:headers>
-			<security:frame-options policy="SAMEORIGIN"/>
-		</security:headers>
+        	<security:frame-options disabled="true"></security:frame-options>
+        	<security:content-security-policy policy-directives="frame-ancestors ${frameancestors:@null}"   />
+   		</security:headers>
 		
 		<security:session-management session-fixation-protection="newSession"/>
 
