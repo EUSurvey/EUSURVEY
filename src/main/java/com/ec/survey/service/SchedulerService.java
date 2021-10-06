@@ -91,6 +91,8 @@ public class SchedulerService extends BasicService {
 
 	public @Value("${showecas}") String showecas;	
 	public @Value("${host.executing.task:@null}") String hostExecutingTask;
+	public @Value("${host.executing.todotask:@null}") String hostExecutingTODOTask;
+	public @Value("${host.executing.ldaptask:@null}") String hostExecutingLDAPTask;
 		
 	public boolean isShowEcas()
 	{
@@ -99,7 +101,7 @@ public class SchedulerService extends BasicService {
 	
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void migrateFSSchedule() {	
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteStandardTask())
 			return;
 		
 		try {
@@ -169,7 +171,7 @@ public class SchedulerService extends BasicService {
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void deleteAnswerPDFSchedule() {
 		
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteStandardTask())
 			return;
 		
 		try {
@@ -255,7 +257,7 @@ public class SchedulerService extends BasicService {
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void doLDAPRemoveDeletedUsersSyncSchedule() {
 		
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteLDAPTask())
 			return;
 
 		if (!isShowEcas()) return;	
@@ -327,7 +329,7 @@ public class SchedulerService extends BasicService {
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void doLDAPSyncSchedule() {
 		
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteLDAPTask())
 			return;
 		 
 		//|| !isCasOss()
@@ -401,7 +403,7 @@ public class SchedulerService extends BasicService {
 	
 	@Scheduled(fixedDelay=600000) //every 10 minutes
 	public void migrateReportingSchedule() {	
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteTODOTask())
 			return;
 		
 		try {
@@ -474,7 +476,7 @@ public class SchedulerService extends BasicService {
 		
 		if (!isReportingDatabaseEnabled()) return;
 		
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteTODOTask())
 			return;
 		
 		List<ToDoItem> todos = reportingService.getToDos();
@@ -497,7 +499,7 @@ public class SchedulerService extends BasicService {
 	
 	@Scheduled(cron="0 0 * * * *") //every hour
 	public void doHourlySchedule() {	
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteStandardTask())
 			return;
 	  
 		surveyWorker.run();
@@ -506,7 +508,7 @@ public class SchedulerService extends BasicService {
 	
 	@Scheduled(cron="0 0 4 * * *") //every night at 4 pm
 	public void doNightlySchedule() {
-		if(!isHost2ExecuteTask())
+		if(!isHost2ExecuteStandardTask())
 			return;
 	  
 		exportWorker.run();
@@ -520,17 +522,44 @@ public class SchedulerService extends BasicService {
 		answerSetAnonymWorker.run();
 	 }
 	
-	private boolean isHost2ExecuteTask(){
+	private boolean isHost2ExecuteLDAPTask() {
+		return isHost2ExecuteTask(true, false);
+	}
+
+	private boolean isHost2ExecuteTODOTask() {
+		return isHost2ExecuteTask(false, true);
+	}
+	
+	private boolean isHost2ExecuteStandardTask() {
+		return isHost2ExecuteTask(false, false);
+	}
+	
+	private boolean isHost2ExecuteTask(boolean ldap, boolean todo){
 		
 		if (useworkerserver.equalsIgnoreCase("true") && isworkerserver.equalsIgnoreCase("true"))
 		{
 			return false;
 		}
-				
-		// if nothing specified then assume that it's OK 
-		if (StringUtils.isEmpty(hostExecutingTask)){
-			logger.debug("The property host.executing.task= is empty and scheduler will be executed");
-			return true;
+		
+		String host = hostExecutingTask;		
+		
+		if (ldap) {
+			host = hostExecutingLDAPTask;
+			if (StringUtils.isEmpty(host)){
+				logger.debug("The property host.executing.ldaptask is empty and scheduler will be executed");
+				return true;
+			}
+		} else if (todo) {
+			host = hostExecutingTODOTask;
+			if (StringUtils.isEmpty(host)){
+				logger.debug("The property host.executing.todotask is empty and scheduler will be executed");
+				return true;
+			}
+		} else {
+			if (StringUtils.isEmpty(host)){
+				logger.debug("The property host.executing.task is empty and scheduler will be executed");
+				return true;
+			}
 		}
 
 		Enumeration<NetworkInterface> ipAddresses=null;
@@ -543,7 +572,7 @@ public class SchedulerService extends BasicService {
 		for(NetworkInterface netint : Collections.list(ipAddresses)){						
 			Enumeration<InetAddress> inetAddrs = netint.getInetAddresses();
 			for(InetAddress inetAddr: Collections.list(inetAddrs)){
-				if (StringUtils.contains(inetAddr.getHostName().toLowerCase(), hostExecutingTask.toLowerCase())){
+				if (StringUtils.contains(inetAddr.getHostName().toLowerCase(), host.toLowerCase())){
 					return true;
 				}
 					
