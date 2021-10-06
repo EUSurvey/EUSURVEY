@@ -202,12 +202,12 @@ public class AnswerSet implements java.io.Serializable {
 	@Transient
 	public List<Answer> getMatrixAnswers(Matrix matrix) {
 		List<Answer> result = new ArrayList<>();
-		Set<Integer> questionIds = new HashSet<>();
+		Set<String> questionUids = new HashSet<>();
 		for (Element question : matrix.getQuestions()) {
-			questionIds.add(question.getId());
+			questionUids.add(question.getUniqueId());
 		}
 		for (Answer answer : answers) {
-			if (questionIds.contains(answer.getQuestionId())) {
+			if (questionUids.contains(answer.getQuestionUniqueId())) {
 				result.add(answer);
 			}
 		}
