@@ -1942,6 +1942,7 @@ div.medianpa {
 	max-height: 100px;
 	overflow-x: hidden;
 	overflow-y: auto;
+	overflow-wrap: break-word;
 }
 
 .overlaymenu {
