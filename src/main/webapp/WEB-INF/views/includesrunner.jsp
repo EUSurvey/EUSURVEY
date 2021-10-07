@@ -129,7 +129,7 @@
 			var typeLabel = "${form.getMessage("label.Type")}";
 			var ignoreLabel = "${form.getMessage("label.Ignore")}";
 			var sectionTitleLabel = "${form.getMessage("label.SectionText")}";
-			var descriptiveTextLabel = "${form.getMessage("label.DescriptiveText")}";
+			var alternativeTextLabel = "${form.getMessage("label.AlternativeText")}";
 			var modifyElementLabel = "${form.getMessage("label.modifyElement")}";
 			var deleteElementLabel = "${form.getMessage("label.deleteElement")}";
 			var cutElementLabel = "${form.getMessage("label.cutElement")}";
@@ -213,7 +213,7 @@
 			var typeLabel = "<spring:message code='label.Type' />";
 			var ignoreLabel = "<spring:message code='label.Ignore' />";
 			var sectionTitleLabel = "$<spring:message code='label.SectionText' />";
-			var descriptiveTextLabel = "<spring:message code='label.DescriptiveText' />";
+			var alternativeTextLabel = "<spring:message code='label.AlternativeText' />";
 			var modifyElementLabel = "<spring:message code='label.modifyElement' />";
 			var deleteElementLabel = "<spring:message code='label.deleteElement' />";
 			var cutElementLabel = "<spring:message code='label.cutElement' />";

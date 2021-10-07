@@ -418,15 +418,15 @@ function getDeleteElementRow(element, addignorebutton)
 	if ($(element).hasClass("sectionitem")) {
 		$(td).append("<b>" + sectionTitleLabel + "</b>:");
 	} else if ($(element).hasClass("textitem")) {
-		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else if ($(element).hasClass("imageitem")) {
-		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else if ($(element).hasClass("ruleritem")) {
-		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else if ($(element).hasClass("uploaditem")) {
-		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else if ($(element).hasClass("downloaditem")) {
-		$(td).append("<b>" + descriptiveTextLabel + "</b>:");
+		$(td).append("<b>" + alternativeTextLabel + "</b>:");
 	} else {
 		$(td).append("<b>" + questionTextLabel + "</b>:");
 	}
