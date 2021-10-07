@@ -282,7 +282,9 @@ function addElementToContainer(element, container, foreditor, forskin) {
 			viewModel.columns(1);
 		} else if (viewModel.istablet)
 		{
-			viewModel.columns(2);
+			if (viewModel.columns() > 2) {
+				viewModel.columns(2);
+			}
 		}
 	}
 	
