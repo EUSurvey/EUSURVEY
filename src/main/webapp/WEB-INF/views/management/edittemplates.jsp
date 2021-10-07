@@ -246,7 +246,7 @@
 <script type="text/html" id="tinymce-template">
 	<tr class="propertyrow tinymcerow hideme">
 		<td colspan='2'>
-			<textarea data-bind="html: TinyMCEContent(), attr: {id: TinyMCEId()}"></textarea>
+			<textarea data-bind="text: TinyMCEContent(), attr: {id: TinyMCEId()}"></textarea>
 			<div class='edittextbuttons'>
 				<button data-bind="attr: {id: 'idBtnSave' + Label()}" class='btn btn-default btn-primary btn-sm' onclick='save(this)'><spring:message code="label.Apply" /></button>
 				<button data-bind="attr: {id: 'idBtnCancel' + Label()}" class='btn btn-default btn-sm' onclick='cancel(this);event.stopPropagation()'><spring:message code="label.Cancel" /></button>
