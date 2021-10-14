@@ -253,8 +253,14 @@
 										<option></option>
 										<c:forEach items="${filter.getAllProperties()}" var="property">
 											<c:choose>
+												<c:when test='${filter.property == property && property == "PivotLanguage"}'>
+													<option selected="selected" value="${property}"><spring:message code="label.MainLanguage" /></option>
+												</c:when>
 												<c:when test="${filter.property == property}">
 													<option selected="selected" value="${property}"><spring:message code="label.${property}" /></option>
+												</c:when>
+												<c:when test='${property == "PivotLanguage"}'>
+													<option value="${property}"><spring:message code="label.MainLanguage" /></option>
 												</c:when>
 												<c:otherwise>
 													<option value="${property}"><spring:message code="label.${property}" /></option>
