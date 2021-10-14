@@ -189,7 +189,7 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isShowCountdown = true;
 	private String timeLimit;
 	private boolean preventGoingBack = false;
-	private Boolean criticalComplexity = false;
+	private Boolean criticalComplexity;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -2417,8 +2417,8 @@ final public class Survey implements java.io.Serializable {
 	}
 	
 	@Column(name = "CRITICALCOMPLEXITY")
-	public Boolean isCriticalComplexity() {
-		return criticalComplexity;
+	public Boolean getCriticalComplexity() {
+		return criticalComplexity != null ? criticalComplexity : false;
 	}
 
 	public void setCriticalComplexity(Boolean criticalComplexity) {

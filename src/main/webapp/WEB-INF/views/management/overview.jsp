@@ -195,7 +195,7 @@
 						</td>
 						<td rowspan="5" style="vertical-align: top; text-align: right;">
 						
-							<c:if test="${form.survey.isCriticalComplexity()}">
+							<c:if test="${form.survey.getCriticalComplexity()}">
 								<div class="alert-message">
 									<spring:message code="info.CriticalComplexity" arguments="${contextpath}/home/support?assistance=1" />
 								</div>						
