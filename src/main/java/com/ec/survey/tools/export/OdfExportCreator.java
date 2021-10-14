@@ -1961,7 +1961,7 @@ public class OdfExportCreator extends ExportCreator {
 
 				if (filter.exported("property")) {
 					cell = sheet.getCellByPosition(cellIndex++, rowIndex);
-					cell.setStringValue(activity.getProperty());
+					cell.setStringValue(activity.getProperty() != "PivotLanguage" ? activity.getProperty() : "MainLanguage");
 				}
 
 				if (filter.exported("event")) {

@@ -1665,7 +1665,7 @@ public class XlsExportCreator extends ExportCreator {
 
 				if (filter.exported("property")) {
 					cell = row.createCell(cellIndex++);
-					cell.setCellValue(activity.getProperty());
+					cell.setCellValue(activity.getProperty() != "PivotLanguage" ? activity.getProperty() : "MainLanguage");
 				}
 
 				if (filter.exported("event")) {
