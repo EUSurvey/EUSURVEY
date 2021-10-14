@@ -266,21 +266,18 @@
 				$("#add-user-department-div").show();
 				$("#add-user-firstname-div").show();
 				$("#add-user-lastname-div").show();
-				$("#add-user-domain-div").css("width", "500px");				
-				//$("#search-results-div").css("height", "208px");	
+				$("#eulogin-span").show();
 			} else if ($("#add-user-type-ecas").val() == "external")
 			{
 				$("#add-user-department-div").hide();
 				$("#add-user-firstname-div").show();
 				$("#add-user-lastname-div").show();
-				$("#add-user-domain-div").css("width", "500px");
-				//$("#search-results-div").css("height", "208px");	
+				$("#eulogin-span").show();
 			} else {
 				$("#add-user-department-div").hide();
 				$("#add-user-firstname-div").hide();
 				$("#add-user-lastname-div").hide();
-				$("#add-user-domain-div").css("width", "500px");
-				//$("#search-results-div").css("height", "278px");	
+				$("#eulogin-span").hide();
 			}
 		}
 		
@@ -395,11 +392,11 @@
 						$(body).append(users[i]);
 					  }
                                           
-                                          var hiddenTableHeaders = $("#search-results th.hideme");
-                                          for (var i = 0; i < hiddenTableHeaders.length; i++ )
+                      var hiddenTableHeaders = $("#search-results th.hideme");
+                      for (var i = 0; i < hiddenTableHeaders.length; i++ )
 					  {                                              
-                                              $('#search-results td:nth-child(' + hiddenTableHeaders[i].cellIndex + ')').hide();
-                                          }
+                    	  $('#search-results td:nth-child(' + hiddenTableHeaders[i].cellIndex + ')').hide();
+                      }
 					  
 					  if (type != "system" && users.length >= 100)
 					  {
