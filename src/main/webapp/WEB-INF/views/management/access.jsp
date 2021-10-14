@@ -43,6 +43,11 @@
 			margin-right: 5px !important;
 		}
 		
+		#add-user-dialog label {
+			margin-bottom: 0;
+			margin-top: 10px;
+		}
+		
 	</style>
 	<script type="text/javascript" src="${contextpath}/resources/js/access.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" >
@@ -348,17 +353,39 @@
 	<div class="modal" id="add-user-dialog" data-backdrop="static">
 		<div class="modal-dialog modal-lg">
     	<div class="modal-content">
-		<div class="modal-header"><spring:message code="label.SelectPrivilegedUser" /></div>
+		<div class="modal-header">			
+			<spring:message code="label.AddUser" />
+			&nbsp;
+			<a onclick="$(this).closest('.modal-header').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+													
+			<div style="clear: both"></div>
+			<div class="help" style="display: none; margin-top: 10px;">
+				<span><spring:message code="info.AddUserAccess" /></span>	
+			</div>	
+		</div>
 		<div class="modal-body">
 			<c:choose>
 				<c:when test="${USER.getGlobalPrivilegeValue('ECAccess') > 0}">
-					<div style="width: 450px" id="add-user-domain-div">
-						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
-						<select id="add-user-type-ecas" onchange="checkUserType()" style="width: 450px" >
-							<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
-								<option value="${domain.key}">${domain.value} </option>
-							</c:forEach>
-						</select>	
+					<div style="float: left; width: 250px;  margin-right: 10px;">
+						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
+						<input type="text" maxlength="255" id="add-user-email" />
+					</div>
+				
+					<div style="clear: both"></div>
+					
+					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-firstname-div">
+						<label for="add-department-name"><spring:message code="label.FirstName" /></label><br />
+						<input type="text" maxlength="255" id="add-first-name" />
+					</div>
+					
+					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-lastname-div">						
+						<label for="add-last-name"><spring:message code="label.LastName" /></label><br />
+						<input type="text" maxlength="255" id="add-last-name" />
+					</div>	
+					
+					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
+						<label for="add-user-name"><spring:message code="label.UserName" /><span id="eulogin-span"> (EU Login)</span></label><br />
+						<input type="text" maxlength="255" id="add-user-name" />
 					</div>
 					
 					<div style="clear: both"></div>
@@ -368,65 +395,47 @@
 						<input type="text" maxlength="255" id="add-department-name" />
 					</div>
 					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-firstname-div">
-						<label for="add-department-name"><spring:message code="label.FirstName" /></label><br />
-						<input type="text" maxlength="255" id="add-first-name" />
+					<div style="float: left; width: 510px" id="add-user-domain-div">
+						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
+						<select id="add-user-type-ecas" onchange="checkUserType()" style="width: 510px" >
+							<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
+								<option value="${domain.key}">${domain.value} </option>
+							</c:forEach>
+						</select>	
 					</div>
 					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
-						<label for="add-user-name"><spring:message code="label.Login" /></label><br />
-						<input type="text" maxlength="255" id="add-user-name" />
-					</div>
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-lastname-div">						
-						<label for="add-last-name"><spring:message code="label.LastName" /></label><br />
-						<input type="text" maxlength="255" id="add-last-name" />
-					</div>			
-					
+				</c:when>
+				<c:when test="${USER.type == 'SYSTEM'}">
 					<div style="float: left; width: 250px;  margin-right: 10px;">
 						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
 						<input type="text" maxlength="255" id="add-user-email" />
 					</div>
 					
-				</c:when>
-				<c:when test="${USER.type == 'SYSTEM'}">
+					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
+						<label for="add-user-name"><spring:message code="label.UserName" /></label><br />
+						<input type="text" maxlength="255" id="add-user-name" />
+					</div>
+					
+					<div style="clear: both"></div>
+					
 					<div style="width: 250px" id="add-user-domain-div">
 						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
 						<select id="add-user-type-ecas" onchange="checkUserType()">
 							<option value="system" selected="selected"><spring:message code="label.System" /></option>
 						</select>
 					</div>
-										
-					<div style="clear: both"></div>
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
-						<label for="add-user-name"><spring:message code="label.Login" /></label><br />
-						<input type="text" maxlength="255" id="add-user-name" />
-					</div>
-					
+				</c:when>	
+				<c:otherwise>
 					<div style="float: left; width: 250px;  margin-right: 10px;">
 						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
 						<input type="text" maxlength="255" id="add-user-email" />
 					</div>
-				</c:when>	
-				<c:otherwise>
-					<div style="width: 250px" id="add-user-domain-div">
-						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
-						<select id="add-user-type-ecas" onchange="checkUserType()">
-							<option value="external" selected="selected"><spring:message code="label.EXT" /></option>
-						</select>
-					</div>
-										
+					
 					<div style="clear: both"></div>
 					
 					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-firstname-div">
 						<label for="add-department-name"><spring:message code="label.FirstName" /></label><br />
 						<input type="text" maxlength="255" id="add-first-name" />
-					</div>
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
-						<label for="add-user-name"><spring:message code="label.Login" /></label><br />
-						<input type="text" maxlength="255" id="add-user-name" />
 					</div>
 					
 					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-lastname-div">						
@@ -434,9 +443,18 @@
 						<input type="text" maxlength="255" id="add-last-name" />
 					</div>	
 					
-					<div style="float: left; width: 250px;  margin-right: 10px;">
-						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
-						<input type="text" maxlength="255" id="add-user-email" />
+					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
+						<label for="add-user-name"><spring:message code="label.UserName" /></label><br />
+						<input type="text" maxlength="255" id="add-user-name" />
+					</div>
+					
+					<div style="clear: both"></div>		
+					
+					<div style="width: 250px" id="add-user-domain-div">
+						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
+						<select id="add-user-type-ecas" onchange="checkUserType()">
+							<option value="external" selected="selected"><spring:message code="label.EXT" /></option>
+						</select>
 					</div>
 				</c:otherwise>
 			</c:choose>
@@ -452,10 +470,10 @@
 				<table id="search-results" class="table table-bordered table-hover table-styled" style="max-width: none; margin-bottom: 0px">
 					<thead>
 						<tr>
-							<th onclick="searchUser('login');"><spring:message code="label.Login" /></th>
+							<th onclick="searchUser('login');"><spring:message code="label.UserName" /></th>
 							<th onclick="searchUser('first');"><spring:message code="label.FirstName" /></th>
 							<th onclick="searchUser('last',);"><spring:message code="label.LastName" /></th>
-                                                        <th onclick="searchUser('department');" <c:if test="${oss}">class="hideme"</c:if> ><spring:message code="label.Department" /></th>
+                            <th onclick="searchUser('department');" <c:if test="${oss}">class="hideme"</c:if> ><spring:message code="label.Department" /></th>
 						</tr>
 					</thead>
 					<tbody></tbody>
