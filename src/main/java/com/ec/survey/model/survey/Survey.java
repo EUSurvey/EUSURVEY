@@ -1673,6 +1673,7 @@ final public class Survey implements java.io.Serializable {
 		copy.timeLimit = timeLimit;
 		copy.isShowCountdown = isShowCountdown;
 		copy.setPreventGoingBack(preventGoingBack);
+		copy.criticalComplexity = criticalComplexity;
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
