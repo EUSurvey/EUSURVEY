@@ -229,6 +229,8 @@ public abstract class MatrixOrTable extends Question {
 		if (getShortname() != null && !getShortname().equals(element.getShortname())) return true;
 		if (getTitle() != null && !getTitle().equals(element.getTitle())) return true;
 		
+		if (getUseAndLogic() != null && !getUseAndLogic().equals(element.getUseAndLogic()))	return true;
+		
 		if (element instanceof Question)
 		{
 			Question question = (Question) element;
