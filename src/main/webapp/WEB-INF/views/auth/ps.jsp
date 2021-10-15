@@ -91,15 +91,19 @@ body {
 						<c:if test="${readonly == null}">
 							<input type="submit" class="btn btn-primary" value="<spring:message code="label.Iaccept" />" />
 							&nbsp;
-							<a aria-label="<spring:message code="label.Idonotaccept" />" tabindex="0" class="btn btn-default" onclick="logout()"><spring:message code="label.Idonotaccept" /></a>
+							<a role="button" aria-label="<spring:message code="label.Idonotaccept" />" tabindex="0" class="btn btn-default" onclick="logout()"><spring:message code="label.Idonotaccept" /></a>
 						</c:if>
 					</div>		
 	
 				</div>
+				
+			</div>
 			
 		</form:form>
-	
+		
 		</div>
+	
+		
 	</div>
 	<c:if test="${readonly != null}">
 		<%@ include file="../footer.jsp"%>
