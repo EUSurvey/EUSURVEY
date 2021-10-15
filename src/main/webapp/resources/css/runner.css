@@ -224,9 +224,17 @@ a.ratingitem {
 }
 
 .questionhelp__text {
-	display: none;
 	padding-bottom: 5px;
 	padding-top: 5px;
+}
+
+.sr-only {
+	position: absolute;
+	left: -10000px;
+	top: auto;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
 }
 
 .limits {

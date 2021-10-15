@@ -707,15 +707,19 @@
 			<span data-bind='html: title'></span>
 		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
-
+		
 		<!-- ko if: display() == 'Slider' && ${form.survey.isDelphi} -->
-			<div class="limits" data-bind="hidden: isAnswered, attr: {id: 'questioninfo' + id()}">
-				<!-- ko ifnot: foreditor -->
-				${form.getMessage("info.MoveTheSliderOrAccept", "data-bind='click: markAsAnswered'")}
-				<!-- /ko -->
-				<!-- ko if: foreditor -->
-				${form.getMessage("info.MoveTheSliderOrAccept", "")}
-				<!-- /ko -->
+			<div tabindex="0" class="focussable" role="group"  data-bind="attr: {'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questionhelp' + id()}">
+		
+				<div class="limits" data-bind="hidden: isAnswered, attr: {id: 'questioninfo' + id()}">
+					<!-- ko ifnot: foreditor -->
+					${form.getMessage("info.MoveTheSliderOrAccept", "data-bind='click: markAsAnswered'")}
+					<!-- /ko -->
+					<!-- ko if: foreditor -->
+					${form.getMessage("info.MoveTheSliderOrAccept", "")}
+					<!-- /ko -->
+				</div>
+			
 			</div>
 		<!-- /ko -->
 		
@@ -735,7 +739,7 @@
 			<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'answer' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}" oninput="propagateChange(this);" onblur="validateInput($(this).parent())" type="text"></input><span class="unit-text" data-bind="html: unit"></span>
 		<!-- /ko -->
 		
-		<!-- ko if: display() == 'Slider' -->		
+		<!-- ko if: display() == 'Slider' -->
 			<div class="question-reset-answer-message" data-bind="hidden: !isAnswered()">
 				<a href="javascript:;" data-bind="click: resetToInitialPosition">${form.getMessage("label.ResetToInitialPosition")}<a>
 			</div>

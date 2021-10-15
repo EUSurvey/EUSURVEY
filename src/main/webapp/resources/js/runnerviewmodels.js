@@ -5,10 +5,14 @@ function getNiceHelp(help)
 	return addIconToHelp(help);	
 }
 
+function toggleVisibility(span) {
+	$(span).toggleClass("sr-only");
+}
+
 function addIconToHelp(help)
 {
-	return "<span onclick='$(this).next().toggle()' class='glyphicon glyphicon-question-sign'></span>" +
-		"<div class='questionhelp__text'>" + help + "</div>" +
+	return "<span onclick='toggleVisibility($(this).next())' class='glyphicon glyphicon-question-sign'></span>" +
+		"<div class='questionhelp__text sr-only'>" + help + "</div>" +
 		"<br />";
 }
 
