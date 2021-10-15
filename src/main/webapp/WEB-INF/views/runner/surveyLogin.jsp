@@ -9,7 +9,7 @@
 	<title>EUSurvey - <spring:message code="label.Survey" /></title>
 	<%@ include file="../includes.jsp" %>
 	
-	<link id="runnerCss" href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 		
 	<style type="text/css">
 		.authenticationdiv {

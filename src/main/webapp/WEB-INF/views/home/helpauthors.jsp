@@ -2065,10 +2065,10 @@
 				How do I specify a set of possible participants? What is a 'Guest List'?
 			</h2>
 			<p>
-				In EUSurvey you can group selected contacts and send out individual emails to every single contact containing individual access links. This is called a "Guest List". It is the second way, in addition to the general survey password, in which you can give people the opportunity to complete your survey.
+				In EUSurvey you can group selected contacts and send out individual emails to every single contact containing individual access links. This is called a 'Guest List'. It is the second way, in addition to the general survey password, in which you can give people the opportunity to complete your survey.
 			</p>
 			<p>
-				To invite multiple contacts to your survey, open your survey and go to the "Participants" page. Choose one of the following types of guest lists to start a wizard that will guide you through the process:
+				To invite multiple contacts to your survey, open your survey and go to the 'Participants' page. Choose one of the following types of guest lists to start a wizard that will guide you through the process:
 			</p>
 			<ul>
 				<li>
@@ -2087,7 +2087,7 @@
 					'EU institutions and other bodies' (EU staff only)
 					<br/>
 					Select multiple departments from your institution/agency to add
-					all persons working in this department to your guest list
+					all persons working in those departments to your guest list
 				</li>
 				<li>
 					<strong>Token list</strong>
@@ -2098,7 +2098,7 @@
 			</ul>
 			<p>
 				Please use the search functionality on your address book and click the '&gt;&gt;'
-				button on the middle of the next screen to move contacts from your address book to your new guest list. Clicking "Save" will create a new guest list with all the contacts you want to invite to take part in your survey.
+				button on the middle of the next screen to move contacts from your address book to your new guest list. Clicking 'Save' will create a new guest list with all the contacts you want to invite to take part in your survey.
 			</p>		
 			<p>
 				Please keep on reading to learn how you can send emails with individual access links to configured contacts from one of your guest lists.
@@ -2169,24 +2169,24 @@
 				How to use tokens to create a link?
 			</h2>
 			<p>
-				To create a list of tokens (or "Unique Codes") that can be distributed offline to access a secured online questionnaire, open your survey and go to the "Participants" page. Click on "Token list" to start a wizard that will guide you through the process. Choose a name for the group and select "Tokens" from the types of Guest lists.
+				To create a list of tokens (or 'Unique Codes') that can be distributed offline to access a secured online questionnaire, open your survey and go to the 'Participants' page. Click on 'Token list' to start a wizard that will guide you through the process. Choose a name for the group and select 'Tokens' from the types of Guest lists.
 			</p>
 			<p>
 				Use the created tokens to build up individual access links you can send out in emails to the participants on this way:
 			</p>
 			<p>
-				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00">SurveyAlias</span>/<span style="color: #f00">TOKEN</span>
+				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00; font-weight: bold">SurveyAlias</span>/<span style="color: #f00; font-weight: bold">TOKEN</span>
 			</p>
 			<p>
 				Just replace:
 			</p>
 			<ul>
 				<li>
-					<span style="color: #f00">SurveyAlias</span>
+					<span style="color: #f00; font-weight: bold">SurveyAlias</span>
 					with the <strong>alias of your survey</strong>
 				</li>
 				<li>
-					<span style="color: #f00">TOKEN</span>
+					<span style="color: #f00; font-weight: bold">TOKEN</span>
 					with one of the tokens from the token list
 				</li>
 			</ul>
