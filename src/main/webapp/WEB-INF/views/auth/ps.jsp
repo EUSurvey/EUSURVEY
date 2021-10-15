@@ -11,6 +11,7 @@
 <head>
 <title>EUSurvey - Terms of Service</title>
 <%@ include file="../includes.jsp"%>
+	<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 
 <style>
 
@@ -90,7 +91,7 @@ body {
 						<c:if test="${readonly == null}">
 							<input type="submit" class="btn btn-primary" value="<spring:message code="label.Iaccept" />" />
 							&nbsp;
-							<a class="btn btn-default" onclick="logout()"><spring:message code="label.Idonotaccept" /></a>
+							<a aria-label="<spring:message code="label.Idonotaccept" />" tabindex="0" class="btn btn-default" onclick="logout()"><spring:message code="label.Idonotaccept" /></a>
 						</c:if>
 					</div>		
 	
