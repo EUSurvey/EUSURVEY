@@ -11,6 +11,7 @@
 <head>
 <title>EUSurvey - Terms of Service</title>
 <%@ include file="../includes.jsp"%>
+<link href="${contextpath}/resources/css/yellowfocus.css?version=<%@include file="../version.txt" %>" rel="stylesheet" type="text/css"></link>
 
 <style>
 .priv li {
@@ -109,8 +110,8 @@ body {
 	
 			<div style="margin-bottom: 20px;">
 				<div style="float: right; font-size: 125%">
-					[<a id="switchEN">EN</a>] [<a id="switchFR">FR</a>] [<a
-						id="switchDE">DE</a>]
+					[<a aria-label="<spring:message code="label.SwitchToEnglish" />" tabindex="0" id="switchEN">EN</a>] [<a aria-label="<spring:message code="label.SwitchToFrench" />" tabindex="0" id="switchFR">FR</a>] [<a
+						aria-label="<spring:message code="label.SwitchToGerman" />" tabindex="0" id="switchDE">DE</a>]
 				</div>	
 	
 				<div id="tos_EN">
@@ -204,10 +205,14 @@ body {
 						</div>
 					</c:if>
 				</div>
+	
+			</div>
+	
 		</form:form>
 	
-		</div>
 	</div>
+	</div>
+
 	<c:if test="${readonly != null}">
 		<%@ include file="../footer.jsp"%>
 	</c:if>
