@@ -132,13 +132,13 @@ body {
 						<div style="text-align: center">
 							<input type="checkbox" class="check" name="accepted"
 								id="acceptedEN" value="true" /><span class="mandatory">*</span>
-							I accept the Terms of Service
+							<label for="acceptedEN">I accept the Terms of Service</label>
 							<div class="validation-error hideme" id="mustacceptEN">You
 								have to accept the Terms of Service to be able to use EUSurvey</div>
 							<br />
 							<br /> <input type="submit" class="btn btn-primary"
-								value="Submit" id="submitAcceptTosEN" /> <a
-								onclick="logout()"
+								value="Submit" id="submitAcceptTosEN" /> <a role="button"
+								tabindex="0" onclick="logout()"
 								class="btn btn-default" style="margin-left: 50px">Cancel</a>
 						</div>
 					</c:if>
@@ -163,14 +163,14 @@ body {
 						<div style="text-align: center">
 							<input type="checkbox" class="check" name="accepted"
 								id="acceptedDE" value="true" /><span class="mandatory">*</span>
-							Ich stimme den Nutzungsbedingungen zu
+							<label for="acceptedDE">Ich stimme den Nutzungsbedingungen zu</label>
 							<div class="validation-error hideme" id="mustacceptDE">Sie
 								müssen die Nutzungsbedingungen akzeptieren, um EUSurvey benutzen
 								zu können.</div>
 							<br />
 							<br /> <input type="submit" class="btn btn-primary"
-								value="Abschicken" id="submitAcceptTosEN" /> <a
-								onclick="logout()"
+								value="Abschicken" id="submitAcceptTosEN" /> <a role="button"
+								tabindex="0" onclick="logout()"
 								class="btn btn-default" style="margin-left: 50px">Abbrechen</a>
 						</div>
 					</c:if>
@@ -193,14 +193,14 @@ body {
 						<div style="text-align: center">
 							<input type="checkbox" class="check" name="accepted"
 								id="acceptedFR" value="true" /><span class="mandatory">*</span>
-							J'accepte les conditions d'utilisation
+							<label for="acceptedFR">J'accepte les conditions d'utilisation</label>
 							<div class="validation-error hideme" id="mustacceptFR">Pour
 								utiliser EUSurvey, vous devez accepter les conditions
 								d'utilisation.</div>
 							<br />
 							<br /> <input type="submit" class="btn btn-primary"
-								value="Soumettre" id="submitAcceptTosFR" /> <a
-								onclick="logout()"
+								value="Soumettre" id="submitAcceptTosFR" /> <a role="button"
+								tabindex="0" onclick="logout()"
 								class="btn btn-default" style="margin-left: 50px">Annuler</a>
 						</div>
 					</c:if>
