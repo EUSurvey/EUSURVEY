@@ -73,7 +73,11 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		<div class="answer-columns" style="position: relative; overflow-x:auto; padding-bottom: 8px; padding-top: 4px;">
 		
@@ -87,7 +91,10 @@
 					
 					<div class="likert-pa">
 						<input data-bind="enable: !$parents[0].readonly() && !$parents[0].foreditor, checked: getPAByQuestion2($parents[0].uniqueId(), uniqueId(), id()), attr: {'data-id': $parents[0].id() + '' + id(), 'id': id(), 'data-shortname': shortname(), 'data-dependencies': dependentElementsString(), onkeyup: 'singleKeyUp(event, this, '+$parents[0].readonly()+')', onclick: $parents[0].readonly() ? 'return false;' : 'singleClick(this); checkDependenciesAsync(this);', class: $parents[0].css + ' trigger check', name: 'answer' + $parents[0].id(), value: id(), 'aria-labelledby': 'answerlabel' + id()}" type="radio"  />
-						<div class="answertext" style="margin-left: 0; padding-left: 10px; padding-right: 10px;" data-bind="html: titleForDisplayMode($parents[0].displayMode()), attr: {'data-id' : id(), 'data-pa-uid' : uniqueId(), id: 'answerlabel' + id()}"></div>
+						<div class="answertext" style="margin-left: 0; padding-left: 10px; padding-right: 10px;" data-bind="attr: {'data-id' : id(), 'data-pa-uid' : uniqueId(), id: 'answerlabel' + id()}">
+							<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
+							<span data-bind="html: titleForDisplayMode($parents[0].displayMode())"></span>
+						</div>
 					</div>
 					<!-- /ko -->
 					
@@ -154,10 +161,12 @@
 						</td>
 						<td style="vertical-align: top; padding-right: 15px;">
 							<label data-bind="attr: {'for': id, 'id': 'answerlabel' + id()}">
+								<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>			
+							
 								<!-- ko ifnot: id() == 'dummy' -->
 								<div class="answertext" data-bind="html: titleForDisplayMode($parents[1].displayMode()), attr: {'data-id' : id()}"></div>
 								<!-- /ko -->	
-							</label>
+							</label>							
 						</td>					
 					
 						<!-- /ko -->
@@ -227,7 +236,12 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+	
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
+		
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 			
 		<!-- ko if: minChoices() != 0 && maxChoices() != 0 -->
@@ -266,7 +280,7 @@
 				<!-- /ko -->	
 				
 				<!-- ko foreach: orderedPossibleAnswersByRows(${ismobile != null}, ${responsive != null}) -->
-				<tr class="possibleanswerrow">					
+				<tr class="possibleanswerrow" role="listitem">					
 					<!-- ko foreach: $data -->
 					<td style="vertical-align: top">
 						<!-- ko ifnot: id() == 'dummy' -->
@@ -275,9 +289,13 @@
 					</td>
 					<td style="vertical-align: top; padding-right: 10px;">
 						<!-- ko ifnot: id() == 'dummy' -->
-						<label data-bind="attr: {'for': id, id: 'answerlabel' + id()}">
+						<label data-bind="attr: {'for': id, 'id': 'answerlabel' + id()}">
+							<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>			
+						
+							<!-- ko ifnot: id() == 'dummy' -->
 							<div class="answertext" data-bind="html: title, attr: {'data-id' : id()}"></div>
-						</label>
+							<!-- /ko -->	
+						</label>						
 						<!-- /ko -->
 					</td>	
 					<!-- /ko -->
@@ -288,8 +306,9 @@
 			<!-- ko ifnot: useCheckboxes -->
 			<div class="answer-column">													
 				<ul role="listbox" data-bind="foreach: orderedPossibleAnswers(false), attr: {'class':css + ' multiple-choice', 'aria-labelledby':'questiontitle' + id(), 'aria-describedby':'questioninfo' + id() + ' questionhelp' + id()}">
-					<li data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion($parent.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '') , 'onclick' : $parent.readonly() || $parent.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this).children().first()); propagateChange($(this).children().first()); event.stopImmediatePropagation();'}">
-						<a tabindex="0" data-bind="attr: {'data-shortname': shortname(), 'onkeypress': $parent.readonly() || $parent.foreditor ? 'return false;' : 'returnTrueForSpace(event); preventScrollOnSpaceInput(event); selectMultipleChoiceAnswer(this);propagateChange(this);'}" >
+					<li role="listitem" data-bind="attr: { 'data-id': id(), 'class': 'possible-answer trigger ' + (getPAByQuestion($parent.uniqueId()).indexOf(uniqueId()) > -1 ? 'selected-choice' : '') , 'onclick' : $parent.readonly() || $parent.foreditor ? 'return false;' : 'selectMultipleChoiceAnswer($(this).children().first()); propagateChange($(this).children().first()); event.stopImmediatePropagation();'}">
+						<a tabindex="0" data-bind="attr: {'data-shortname': shortname(), 'onkeypress': $parent.readonly() || $parent.foreditor ? 'return false;' : 'returnTrueForSpace(event);selectMultipleChoiceAnswer(this);propagateChange(this);'}" >
+							<span class="screen-reader-only">${form.getMessage("label.Answer")} </span>
 							<span data-bind="html: strip_tags(title()), attr: {'data-id' : id(), 'id': 'answerlabel' + id()}" class="answertext"></span>
 						</a>
 						<input data-bind="value: id(), checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id), attr: {'name': 'answer' + $parent.id(), 'id':id(), 'data-id': $parent.id() + id(), 'data-dependencies': dependentElementsString, 'aria-labelledby': 'answerlabel' + id()}" style="display: none" type="checkbox" />
@@ -350,7 +369,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 
 		<!-- ko if: foreditor -->
@@ -416,7 +438,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		<input data-bind="enable: !readonly(), value:getValueByQuestion(uniqueId()), attr: {'id': 'input' + id(), 'data-id':id(), 'data-shortname': shortname(), 'name' : 'answer' + id(), 'class':css(), 'aria-labelledby':'questiontitle' + id(), 'aria-describedby': 'questionhelp' + id()}" onfocus="clearStars(this);" onkeyup="countChar(this); propagateChange(this);" onblur="validateInput($(this).parent(), true)" autocomplete="off" type="password"></input>
 		<!-- ko if: isComparable -->		
@@ -459,7 +484,10 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 	
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 				
 		<!-- ko if: minCharacters() != 0 && maxCharacters() != 0 -->
@@ -542,7 +570,12 @@
 			<span class="mandatory">*</span>
 		<!-- /ko -->
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
-		<label class='questiontitle confirmationelement' data-bind='html: title, attr: {id: "questiontitle" + id()}'></label>
+		
+		<label class='questiontitle confirmationelement' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
+		
 		<!-- ko if: usetext -->																					
 			<a href="javascript:;" class="confirmationlabel" style="margin-left: 40px; cursor: pointer;" onclick="$(this).parent().find('.confirmation-dialog').modal('show')" data-bind="html:confirmationlabel"></a>
 			<div class="modal confirmation-dialog">
@@ -582,7 +615,10 @@
 	</div>
 	
 	<div id="rating-template">
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 
 		<!-- ko if: foreditor -->
@@ -666,7 +702,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 
 		<!-- ko if: display() == 'Slider' && ${form.survey.isDelphi} -->
@@ -769,7 +808,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		<div class="input-group" style="margin-left: 20px;">
 	    	<div class="input-group-addon" style="margin-bottom: 5px">@</div>
@@ -795,7 +837,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
 		<!-- ko if: min() != null && max() != null -->
@@ -856,7 +901,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
 		<!-- ko if: min() != null && max() != null && min() != '' && max() != ''  -->
@@ -896,7 +944,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class="questionhelp" data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>	
 		<!-- ko if: extensions() != null && extensions().length > 0 -->
 			<div class="questionhelp">
@@ -964,7 +1015,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
 		<!-- ko if: selection() && limit != null && limit() > 0 -->
@@ -1093,7 +1147,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class="questionhelp" data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
 		<!-- ko if: minRows() != 0 && maxRows() != 0 -->
@@ -1195,7 +1252,10 @@
 		<!-- ko if: optional() == false -->
 			<span class="mandatory">*</span>
 		<!-- /ko -->
-		<label class='questiontitle' data-bind='html: title, attr: {for: "answer" + id(), id: "questiontitle" + id()}'></label>
+		<label class='questiontitle' data-bind='attr: {for: "answer" + id(), id: "questiontitle" + id()}'>
+			<span class="screen-reader-only">${form.getMessage("form.Question")}</span>
+			<span data-bind='html: title'></span>
+		</label>
 		<span class="questionhelp" data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>	
 		
 		<div class="table-responsive">
