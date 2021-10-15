@@ -911,6 +911,11 @@ h2 {
 	color: #000 !important;
 }
 
+.alert-message {
+	color: #f00;
+	margin-bottom: 5px;
+}
+
 .redlink {
 	color: #800;
 	font-size: 80%;
@@ -1069,7 +1074,7 @@ legend {
 /* } */
 
 /* .surveytitle { */
-/* /* 	color: #787878; */ */
+/* /* 	color: #787878; */
 /* 	font-size: 24px; */
 /* 	font-weight: bold; */
 /* 	line-height: 24px; */
@@ -1937,6 +1942,7 @@ div.medianpa {
 	max-height: 100px;
 	overflow-x: hidden;
 	overflow-y: auto;
+	overflow-wrap: break-word;
 }
 
 .overlaymenu {
@@ -2527,8 +2533,12 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], input[type="rad
 	height: 1px;
 	width: 1px;
 	clip: rect(1px 1px 1px 1px);
-	clip: rect(1px,1px,1px,1px);
+	clip: rect(1px, 1px, 1px, 1px);
 	clip-path: polygon(0px 0px, 0px 0px, 0px 0px);
 	-webkit-clip-path: polygon(0px 0px, 0px 0px, 0px 0px);
 	overflow: hidden !important;
+}
+
+.noHover {
+	pointer-events: none;
 }

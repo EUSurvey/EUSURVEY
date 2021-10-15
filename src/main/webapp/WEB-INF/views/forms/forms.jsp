@@ -293,7 +293,7 @@
 						  {
 							  if (list[i].translations[t] ==  list[i].language.code)
 							  {
-								$(td).append('<div data-toggle="tooltip" title="<spring:message code="label.PivotLanguage" />" class="language pivotlanguage">' + list[i].translations[t] + '</div>');
+								$(td).append('<div data-toggle="tooltip" title="<spring:message code="label.MainLanguage" />" class="language pivotlanguage">' + list[i].translations[t] + '</div>');
 							  } else if (list[i].completeTranslations != null && $.inArray(list[i].translations[t], list[i].completeTranslations) > -1)
 							  {
 								$(td).append('<div data-toggle="tooltip" title="<spring:message code="label.Available" />" class="language">' + list[i].translations[t] + '</div>');  
@@ -764,7 +764,7 @@
 												<c:forEach items="${survey.translations}" var="language">
 													<c:choose>
 														<c:when test="${survey.language.code == language}">
-															<div data-toggle="tooltip" title="<spring:message code="label.PivotLanguage" />" class="language pivotlanguage"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></div>
+															<div data-toggle="tooltip" title="<spring:message code="label.MainLanguage" />" class="language pivotlanguage"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></div>
 														</c:when>
 														<c:when test="${survey.completeTranslations != null && survey.containsCompleteTranslations(language)}">
 															<div data-toggle="tooltip" title="<spring:message code="label.Available" />" class="language"><esapi:encodeForHTML>${language}</esapi:encodeForHTML></div>

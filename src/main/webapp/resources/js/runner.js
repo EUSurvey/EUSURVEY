@@ -72,6 +72,11 @@ function returnTrueForSpace(event)
 	return false;
 }
 
+function preventScrollOnSpaceInput(event){
+	if(event.keyCode == 32)
+		event.preventDefault();
+}
+
 function ratingClick(link)
 {	
 	var pos = $(link).index();
@@ -683,6 +688,7 @@ function selectPage(val) {
 	}
 	
 	var validatedPerPage = $("#validatedPerPage").val().toLowerCase() == "true";
+	var preventGoingBack = $("#preventGoingBack").val().toLowerCase() == "true";
 	
 	var validate = val > page;
 		

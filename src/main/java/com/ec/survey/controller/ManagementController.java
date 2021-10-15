@@ -26,7 +26,6 @@ import com.ec.survey.tools.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.hibernate.Session;
 import org.owasp.esapi.errors.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -1317,6 +1316,8 @@ public class ManagementController extends BasicController {
 			hasPendingChanges = true;
 		if (survey.getValidatedPerPage() != uploadedSurvey.getValidatedPerPage())
 			hasPendingChanges = true;
+		if (survey.getPreventGoingBack() != uploadedSurvey.getPreventGoingBack())
+			hasPendingChanges = true;
 		if (!Objects.equals(survey.getWcagCompliance(), uploadedSurvey.getWcagCompliance()))
 			hasPendingChanges = true;
 		if (!Tools.isFileEqual(survey.getLogo(), uploadedSurvey.getLogo()))
@@ -1402,22 +1403,19 @@ public class ManagementController extends BasicController {
 		survey.setIsDelphiShowAnswersAndStatisticsInstantly(uploadedSurvey.getIsDelphiShowAnswersAndStatisticsInstantly());
 		survey.setIsDelphiShowAnswers(uploadedSurvey.getIsDelphiShowAnswers());
 		survey.setMinNumberDelphiStatistics(uploadedSurvey.getMinNumberDelphiStatistics());
-		if (survey.getIsECF()) {
-			if (creation) {
-				survey.setWcagCompliance(true);
-				if (ecfTemplateSurvey != null && ecfTemplateSurvey.length() > 0) {
-					Survey template = surveyService.getSurveyByAlias(ecfTemplateSurvey, true);
-					template.copyElements(survey, surveyService, true);
+		if (survey.getIsECF() && creation) {
+			if (ecfTemplateSurvey != null && ecfTemplateSurvey.length() > 0) {
+				Survey template = surveyService.getSurveyByAlias(ecfTemplateSurvey, true);
+				template.copyElements(survey, surveyService, true);
 
-					// recreate unique ids
-					for (Element elem : survey.getElementsRecursive(true)) {
-						String newUniqueId = UUID.randomUUID().toString();
-						elem.setUniqueId(newUniqueId);
-					}
-
-					// recreate the ecf elements
-					survey = this.ecfService.copySurveyECFElements(survey);
+				// recreate unique ids
+				for (Element elem : survey.getElementsRecursive(true)) {
+					String newUniqueId = UUID.randomUUID().toString();
+					elem.setUniqueId(newUniqueId);
 				}
+
+				// recreate the ecf elements
+				survey = this.ecfService.copySurveyECFElements(survey);
 			}
 		}
 		
@@ -1500,9 +1498,11 @@ public class ManagementController extends BasicController {
 						uploadedSurvey.getValidatedPerPage() ? "enabled" : "disabled" };
 				activitiesToLog.put(121, oldnew);
 			}
-
+		
 			survey.setValidatedPerPage(uploadedSurvey.getValidatedPerPage());
-
+			
+			survey.setPreventGoingBack(uploadedSurvey.getPreventGoingBack());
+			
 			survey.setAllowedContributionsPerUser(uploadedSurvey.getAllowedContributionsPerUser());
 
 			if (!Objects.equals(uploadedSurvey.getWcagCompliance(), survey.getWcagCompliance())) {
@@ -3665,6 +3665,9 @@ public class ManagementController extends BasicController {
 			if (filter == null || filter.getSurveyId() == 0) {
 				return Collections.emptyMap();
 			}
+			
+			//the changes shall not be saved to the database 
+			filter = filter.copy();
 						
 			filter.getVisibleExplanations().clear();
 			filter.getVisibleDiscussions().clear();

@@ -253,8 +253,14 @@
 										<option></option>
 										<c:forEach items="${filter.getAllProperties()}" var="property">
 											<c:choose>
+												<c:when test='${filter.property == property && property == "PivotLanguage"}'>
+													<option selected="selected" value="${property}"><spring:message code="label.MainLanguage" /></option>
+												</c:when>
 												<c:when test="${filter.property == property}">
 													<option selected="selected" value="${property}"><spring:message code="label.${property}" /></option>
+												</c:when>
+												<c:when test='${property == "PivotLanguage"}'>
+													<option value="${property}"><spring:message code="label.MainLanguage" /></option>
 												</c:when>
 												<c:otherwise>
 													<option value="${property}"><spring:message code="label.${property}" /></option>
@@ -316,7 +322,18 @@
 								</c:choose>
 							</c:if>
 							<c:if test='${filter.visible("object") == true}'><td><spring:message code="label.${activity.getObject()}" /></td></c:if>
-							<c:if test='${filter.visible("property") == true}'><td><spring:message code="label.${activity.property}" /></td></c:if>
+							<c:if test='${filter.visible("property") == true}'>
+								<td>
+									<c:choose>
+										<c:when test='${activity.property == "PivotLanguage"}'>
+											<spring:message code="label.MainLanguage" />
+										</c:when>
+										<c:otherwise>								
+											<spring:message code="label.${activity.property}" />
+										</c:otherwise>
+									</c:choose>
+								</td>
+							</c:if>
 							<c:if test='${filter.visible("event") == true}'><td><spring:message code="label.${activity.event}" /></td></c:if>
 							<c:if test='${filter.visible("description") == true}'><td><spring:message code="logging.${activity.logID}" /></td></c:if>
 							<c:if test='${filter.visible("oldvalue") == true}'><td>${activity.oldValue}</td></c:if>

@@ -323,6 +323,7 @@
 		<input type="hidden" id="sectionNumbering" value="${form.survey.sectionNumbering}" />
 		<input type="hidden" id="questionNumbering" value="${form.survey.questionNumbering}" />
 		<input type="hidden" id="regform" value="${form.survey.registrationForm}" />
+		<input type="hidden" id="criticalComplexity" name="criticalComplexity" value="" />
 		<form:hidden path="survey.id"/>
 
 		<div id="editcontent">
@@ -753,7 +754,7 @@
 	 		strings["Align"] = "<spring:message code="label.Align" />";
 	 		strings["LongDescription"] = "<spring:message code="label.LongDesc" />";
 	 		strings["LongDescriptionInfo"] = "&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.LongDescription" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
-	 		strings["DescriptiveText"] = "<spring:message code="label.DescriptiveText" />";
+	 		strings["DescriptiveText"] = "<spring:message code="label.AlternativeText" />";
 	 		strings["DescriptiveTextInfo"] = "&nbsp;<a data-toggle='tooltip' data-placement='right' title='<spring:message code="info.DescriptiveText" />'><span class='glyphicon glyphicon-question-sign'></span></a>";
 	 		strings["UploadFile"] = "<spring:message code="label.UploadFile" />";
 	 		strings["UploadFiles"] = "<spring:message code="label.UploadFiles" />";

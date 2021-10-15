@@ -437,7 +437,6 @@
 						</a>
 						.
 						<br />
-						<br />
 						The quiz mode includes amongst others:
 						<ul>
 							<li>
@@ -463,7 +462,6 @@
 							Have your say
 						</a>
 						' Europa website).
-						<br/>
 						<br/>
 						The BRP template provides:
 						<ul>
@@ -655,7 +653,7 @@
 			<p>
 				See also
 				<a href="#_Toc_4_2">
-					'How do I create a questionnaire by using the EUSurvey editor?'
+					'How do I create a questionnaire via the EUSurvey editor?'
 				</a>
 			</p>
 			<h2>
@@ -665,7 +663,7 @@
 				The elements in your questionnaire will be <strong>selected for editing in the Form area</strong> and
 				<strong>edited in the Element properties pane</strong> of the Editor. See
 				<a href="#_Toc_4_2">
-					'How do I create a questionnaire by using the EUSurvey editor?'
+					'How do I create a questionnaire via the EUSurvey editor?'
 				</a>
 			</p>
 			<p>
@@ -723,7 +721,7 @@
 			<p>
 				See also
 				<a href="#_Toc_4_2">
-					'How do I create a questionnaire by using the EUSurvey editor?'
+					'How do I create a questionnaire via the EUSurvey editor?'
 				</a>
 			</p>
 			<h2>
@@ -737,7 +735,7 @@
 			<p>
 				See also
 				<a href="#_Toc_4_2">
-					'How do I create a questionnaire by using the EUSurvey editor?'
+					'How do I create a questionnaire via the EUSurvey editor?'
 				</a>
 			</p>
 			<h2>
@@ -779,7 +777,7 @@
 				Using this feature in the editor, you can display and hide elements depending on answers given by
 				participants to either single/multiple choice or matrix questions (see also
 				<a href="#_Toc_4_2">
-					'How do I create a questionnaire by using the EUSurvey editor?'
+					'How do I create a questionnaire via the EUSurvey editor?'
 				</a>
 				)
 			</p>
@@ -876,12 +874,12 @@
 			<p>
 				External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button,
 				therefore, they cannot provide access for these persons directly. Please
-				<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>
+				<a href="https://ec.europa.eu/eusurvey/home/support">contact us</a>
 				to request privileges for external users.
 			</p>
 			<p>
 				Read more about this under
-				<a href="#_Toc_10_7">
+				<a href="#_Toc_9_8">
 					'How do I give other users access to my survey?'
 				</a>
 			</p>
@@ -958,34 +956,25 @@
 				the results page.
 			</p>
 			<h2>
-				What does 'Complexity' mean?    
+				Complexity indicator  
 			</h2>
 			<p>
-				Adding too many elements or dependencies to your survey can lead to performance issues for the
-				participants who want to fill out your questionnaire, because it is too 'complex'.
+				Keeping your survey short and simple will ease the filling of your survey by the respondents and lead to a better user experience. Of course, sometimes you need to add branch logic using dependencies (i.e. dependent questions that are hidden/displayed depending on the previous answers given). This is fine, but please bear in mind that adding too many items or dependencies to your survey makes it too 'complex'. This can lead to the system slowing down for participants when filling out your questionnaire.
 			</p>
 			<p>
-				Your survey could have a high level of complexity for several reasons:
+				Therefore there is a little indicator at the top-right corner of the form editor:<br />
+				<img src="${contextpath}/resources/images/documentation/complexity.png" />
 			</p>
-			<ul>
-				<li>
-					You use too many table/matrix elements
-				</li>
-				<li>
-					You use too many dependencies
-				</li>
-				<li>
-					You use too many cascading dependencies
-				</li>
-			</ul>
 			<p>
-				For more information, see our
-				<a
-						href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf"
-						target="_blank"
-						>
-					best practices guide
-				</a>.
+				Your survey could have a high level of complexity for several reasons: 
+				<ul>
+					<li>too many dependencies</li>
+					<li>too many cascading dependencies</li>
+					<li>too many table/matrix items</li>
+				</ul>
+			</p>
+			<p>
+				For more information, see our <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">best practices guide</a> and do not hesitate to contact the <a href="${contextpath}/home/support?assistance=1">EUSurvey support team</a> for assistance in re-designing your form if needed.
 			</p>
 			<h1>
 				Survey security
@@ -1053,7 +1042,7 @@
 				before submitting a contribution.
 			</p>
 			<p>
-				You can enable/disable the CAPTCHA in the 'Security' under 'Properties'.
+				You can enable/disable the CAPTCHA in the 'Security' settings under 'Properties'.
 			</p>
 			<p>
 				N.B. Although this won't make fraud impossible, it might discourage people from continuing to try to
@@ -1063,7 +1052,7 @@
 				Can I enable my participants to access their contributions after submission?
 			</h2>
 			<p>
-				Yes! Go to 'Security' under 'Properties' and enable 'Allow
+				Yes! Go to 'Security' at the 'Properties' page and enable 'Allow
 				participants to change their contribution' option. Participants need
 				to know the contribution-ID that was shown after they submitted
 				their contribution. To change contributions after submission,
@@ -1101,7 +1090,7 @@
 			<p>
 				The added users will automatically see the survey in their 'Surveys' page once they log into the EUSurvey
 				application. Read more about this under '
-				<a href="#_Toc_10_7">
+				<a href="#_Toc_9_8">
 					How do I give other users access to my survey?
 				</a>
 				'
@@ -1109,7 +1098,7 @@
 			<p>
 				External owners or survey organizers cannot see EU domains on the Privileges tab / Add users button,
 				therefore, they cannot provide access for these persons directly. Please
-				<a href="https://ec.europa.eu/eusurvey/home/support">Contact us</a>
+				<a href="https://ec.europa.eu/eusurvey/home/support">contact us</a>
 				to request privileges for external users.
 			</p>
 			<h1>
@@ -1153,15 +1142,15 @@
 			<p>
 				Yes! Open your survey, go to the 'Translations' page and select
 				one or more translations to edit. Select 'Edit Translations' from
-				the action menu just below the list of available translations and
-				click on the 'Ok' button. This will open the online translation
+				the action menu just above the list of available translations and
+				click on the 'OK' button. This will open the online translation
 				editor that will allow you to edit multiple translations at a time.
 				Please click the 'Save' button to make sure that your changes are
 				written to the system.
 			</p>
 			<p>
 				In order to edit only one translation, open your survey, go to the
-				'Translations' page and click on the Pen icon in the 'Action'
+				'Translations' page and click on the pen icon in the 'Actions'
 				column.
 			</p>
 			<h2>
@@ -1210,7 +1199,7 @@
 				in the uploading process and introduce a valid two-letter
 				<a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">
 					ISO 639-1 </a> language code. It is not possible to select a
-				non-European language as the pivot language of your survey.
+				non-European language as the main language of your survey.
 			</p>
 			<h2>
 				What does 'Request Machine Translation' mean?    
@@ -1225,16 +1214,16 @@
 			<ul>
 				<li>
 					When adding a new translation, tick the checkbox 'Request Machine Translation'
-					(for a translation of your survey's pivot language)
+					(for a translation of your survey's main language)
 				</li>
 				<li>
-					Click the 'Request Translations' button in the 'Action' column (for a
-					translation of your survey's pivot language)
+					Click the 'Request Translations' button in the 'Actions' column (for a
+					translation of your survey's main language)
 				</li>
 				<li>
 					Select all languages you want to be translated (including at
 					least one complete translation). Then select 'Request Translations'
-					from the select box below your translations and click 'Ok'.
+					from the select box below your translations and click 'OK'.
 				</li>
 			</ul>
 			<p>
@@ -1325,7 +1314,7 @@
 			<p>
 				When you send out invitations containing the link or use the link to the
 				published form on the 'Overview' page, by default the link points to the
-				form in the pivot language.
+				form in the main language.
 			</p>
 			<p>
 				You can also<strong> redirect respondents directly</strong> to a specific
@@ -1368,14 +1357,14 @@
 				'Properties' page. Select 'Advanced Settings' section and, click on
 				the 'Edit' button and enable 'End Notification', specifying how long
 				in advance you expect an email. Click on 'Save'. The reminder email
-				will be delivered to all Form Managers
+				will be delivered to all form managers
 			</p>
 			<h2>
 				For EU staff: What are the official requirements for launching an open public
 				consultation ('Your Voice in Europe' website)?   
 			</h2>
 			<p>
-				PLease carefully follow
+				Please carefully follow
 				<a
 						href="https://circabc.europa.eu/sd/d/fc02d2ac-d94f-42ed-b866-b3429e0d717b/Survey_publication_your_voice_in_europe_NEW.pdf"
 						target="_blank"
@@ -1436,7 +1425,7 @@
 				How can I change the title of my survey?    
 			</h2>
 			<p>
-				Open the survey, go to the 'Properties' page. Change your survey's
+				Open the survey and go to the 'Properties' page. Change your survey's
 				title under 'Basic' section. If you have already published your
 				survey, go to the 'Overview' page and click 'Apply Changes'.
 			</p>
@@ -1445,16 +1434,16 @@
 			</h2>
 			<p>
 				Open the survey and go to the 'Properties' page. You can choose
-				between the following 'Contact' options under 'Basic Settings':
+				between the following 'Contact' options under 'Basic' settings:
 			</p>
 			<p>
 				<ul>
 					<li>
-						Contact form: This allows users to contact you using a form.
+						Contact Form: This allows users to contact you using a form.
 					</li>
 					<li>
 						E-mail: This allows users to contact you directly by email (your email will be
-						disclosed)
+						disclosed).
 					</li>
 					<li>
 						Web-page: This directs users to a specific webpage.
@@ -1482,8 +1471,8 @@
 			<p>
 				The escape page contains the message that your participants
 				see if your survey is not available. To change the default message,
-				open the survey, go to the 'Properties' and go the 'Special Pages'.
-				You will find the 'Unavailability Page' option. If you have already
+				open the survey, go to the 'Properties' page.
+				You will find the 'Unavailability Page' option under 'Special Pages'. If you have already
 				published your survey, please remember to go to the 'Overview' page
 				and click on 'Apply Changes'.
 			</p>
@@ -1556,7 +1545,7 @@
 			<p>
 				External owners or survey organizers cannot see EU domains on
 				the Privileges tab / Add users button, therefore, they cannot
-				provide access for these persons directly. Please Contact us to
+				provide access for these persons directly. Please contact us to
 				request privileges for external users.
 			</p>
 			<p>
@@ -1669,7 +1658,7 @@
 			</h2>
 			<p>
 				On the 'Results' page (see '<a href="#_Toc_10_1"> Where can I
-					find the contributions submitted by my participants? </a>') search for
+					find the contributions submitted by my respondents? </a>') search for
 				keywords in free-text answers or select individual answers from
 				choice-questions in the filter bar. This limits the full set of
 				answers to a subset of contributions. For performance reasons you
@@ -1696,7 +1685,7 @@
 			<p>
 				Open the survey, go to the 'Properties' page and select
 				'Publish Results' section. Here you will find the URL of the
-				published results and able to choose which
+				published results and will be able to choose which
 				questions/answers/contributions you would like to publish. You can
 				also go there directly by clicking on 'Edit Results Publication'
 				from the 'Overview' page of your survey.
@@ -2076,56 +2065,43 @@
 				How do I specify a set of possible participants? What is a 'Guest List'?
 			</h2>
 			<p>
-				You can group selected contacts and send each one an email containing individual
-				access links. This group is called a 'Guest List'.
+				In EUSurvey you can group selected contacts and send out individual emails to every single contact containing individual access links. This is called a "Guest List". It is the second way, in addition to the general survey password, in which you can give people the opportunity to complete your survey.
 			</p>
 			<p>
-				It is the second way, in addition to the general survey password, to allow people to
-				take part in your survey.
-			</p>
-			<p>
-				To invite multiple contacts to your survey, open your survey and go to the
-				'Participants' page. Choose one of the following types of guest lists to start
-				a wizard that will guide you through the process:
+				To invite multiple contacts to your survey, open your survey and go to the "Participants" page. Choose one of the following types of guest lists to start a wizard that will guide you through the process:
 			</p>
 			<ul>
 				<li>
 					<strong>Contact list</strong>
 					'Address Book'
 					<br/>
-					Select contacts from the 'Address Book' to add them to your guest list
-					(see '
+					Select contacts from the 'Address Book' (see '
 					<a href="#_Toc_12_1">
 						What is the 'Address Book'?
 					</a>
-					').
+					') to add them to your guest list
+					
 				</li>
 				<li>
 					<strong>EU list</strong>
 					'EU institutions and other bodies' (EU staff only)
 					<br/>
 					Select multiple departments from your institution/agency to add
-					all persons working in those department to your guest list.
+					all persons working in this department to your guest list
 				</li>
 				<li>
 					<strong>Token list</strong>
 					<br/>
 					Create a list of tokens (or 'Unique Codes') that can be distributed
-					offline to access a secured online survey.
+					offline to access a secured online survey
 				</li>
 			</ul>
 			<p>
-				Please use the search function on your address book and click the '&gt;&gt;'
-				button on the middle of the next screen to move contacts from your address
-				book to your new guest list.
-			</p>
+				Please use the search functionality on your address book and click the '&gt;&gt;'
+				button on the middle of the next screen to move contacts from your address book to your new guest list. Clicking "Save" will create a new guest list with all the contacts you want to invite to take part in your survey.
+			</p>		
 			<p>
-				Click 'Save' to create a new guest list with all the contacts you want to
-				invite to take part in your survey.
-			</p>
-			<p>
-				See below to learn how to send emails with individual access links to
-				configured contacts from one of your guest lists.
+				Please keep on reading to learn how you can send emails with individual access links to configured contacts from one of your guest lists.
 			</p>
 			<h2>
 				How do I edit/remove an existing guest list?    
@@ -2184,7 +2160,7 @@
 						template' box.
 					</li>
 					<li>
-						Click on 'Next'. a wizard will guide you through the invitation
+						Click on 'Next'. A wizard will guide you through the invitation
 						process.
 					</li>
 				</ol>
@@ -2193,47 +2169,25 @@
 				How to use tokens to create a link?
 			</h2>
 			<p>
-				Follow the steps below to create a list of tokens (i.e. unique
-				authentication codes) that can be distributed offline to access a secured online
-				questionnaire.
+				To create a list of tokens (or "Unique Codes") that can be distributed offline to access a secured online questionnaire, open your survey and go to the "Participants" page. Click on "Token list" to start a wizard that will guide you through the process. Choose a name for the group and select "Tokens" from the types of Guest lists.
 			</p>
 			<p>
-				<ol>
-					<li>
-						Open your survey.
-					</li>
-					<li>
-						Go to the 'Participants' page.
-					</li>
-					<li>
-						Click on 'Token list' to start a wizard to guide you through the
-						process.
-					</li>
-					<li>
-						Choose a name for the group and select 'Tokens' from the different types
-						of guest lists.
-					</li>
-				</ol>
+				Use the created tokens to build up individual access links you can send out in emails to the participants on this way:
 			</p>
 			<p>
-				In the way outlined below, use the created tokens to build up individual
-				access links that can be sent out in emails to the participants:
-			</p>
-			<p>
-				https://ec.europa.eu/eusurvey/runner/<strong>SurveyAlias</strong>/<strong>TOKEN</strong>
+				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00">SurveyAlias</span>/<span style="color: #f00">TOKEN</span>
 			</p>
 			<p>
 				Just replace:
 			</p>
 			<ul>
 				<li>
-					<strong>SurveyAlias</strong>
-					with your <strong>survey's</strong>
-					<strong>alias</strong>
+					<span style="color: #f00">SurveyAlias</span>
+					with the <strong>alias of your survey</strong>
 				</li>
 				<li>
-					<strong>TOKEN</strong>
-					with an unique token from the token list
+					<span style="color: #f00">TOKEN</span>
+					with one of the tokens from the token list
 				</li>
 			</ul>
 			<h1>
@@ -2253,7 +2207,7 @@
 			</h2>
 			<p>
 				If you access EUSurvey using an EU Login user account, you cannot change your
-				email address in EUSurvey. Instead, connect to EU Login and after logging on,
+				email address in EUSurvey. Instead, connect to EU Login and after login,
 				select 'Modify my personal data' from the 'Account information' tab.
 			</p>
 			<p>
@@ -2419,8 +2373,7 @@
 				<strong>For EU staff only:</strong>
 			</p>
 			<p>
-				Note the policy on the 'protection of natural persons with regard to the
-				processing of personal data...' under
+				We draw your attention to the policy on the "protection of natural persons with regard to the processing of personal data
 				<a
 						href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2018.295.01.0039.01.ENG&amp;toc=OJ:L:2018:295:TOC"
 						target="_blank"
@@ -2430,21 +2383,16 @@
 				.
 			</p>
 			<p>
-				If personal data is collected, a privacy statement must be published
-				together with the questionnaire.
+				If personal data is collected, a privacy statement must be drafted and then published together with the questionnaire. 
 			</p>
 			<p>
-				Please contact the DPC (Data Protection Coordinator) of your DG to validate the
-				privacy statement.
+				Please contact the DPC (Data Protection Coordinator) of your DG in order to validate the privacy statement. 
 			</p>
 			<p>
-				Furthermore, any collection of personal data must be notified to the Data
-				Protection Officer (DPO). Contact your DPC if you need assistance on
-				notifying the DPO.
+				Additionally, any collection of personal data must be notified to the Data Protection Officer (DPO). Please contact your DPC if you need assistance for notification to the DPO.
 			</p>
 			<p>
-				Below is a privacy statement template that you could use for your surveys.
-				You must change and adapt it to your needs:
+				Please find below a privacy statement template that you could use for your surveys. You must change and adapt it to your needs:
 			</p>
 			<p>
 				Template:

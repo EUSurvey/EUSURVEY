@@ -589,7 +589,7 @@ public class TranslationsHelper {
 				GalleryQuestion gallery = (GalleryQuestion) element;
 				for (com.ec.survey.model.survey.base.File child : gallery.getFiles()) {
 					result.add(new KeyValue(child.getUid(),
-							resources.getMessage("label.DescriptiveText", null, "Descriptive Text", locale)));
+							resources.getMessage("label.AlternativeText", null, "Alternative Text", locale)));
 					result.add(new KeyValue(child.getUid() + GalleryQuestion.TEXT,
 							resources.getMessage("label.Text", null, "Text", locale)));
 					result.add(new KeyValue(child.getUid() + GalleryQuestion.TITLE,

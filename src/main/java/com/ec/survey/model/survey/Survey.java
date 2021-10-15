@@ -188,6 +188,8 @@ final public class Survey implements java.io.Serializable {
 	private String logoText;
 	private Boolean isShowCountdown = true;
 	private String timeLimit;
+	private boolean preventGoingBack = false;
+	private Boolean criticalComplexity;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -859,6 +861,15 @@ final public class Survey implements java.io.Serializable {
 	public void setValidatedPerPage(boolean validatedPerPage) {
 		this.validatedPerPage = validatedPerPage;
 	}
+	
+	@Column(name = "PREVENTGOINGBACK")
+	public Boolean getPreventGoingBack() {
+		return preventGoingBack;
+	}
+
+	public void setPreventGoingBack(Boolean preventGoingBack) {
+		this.preventGoingBack = preventGoingBack != null ? preventGoingBack : false;
+	}	
 
 	@Column(name = "MULTIPAGING")
 	public boolean getMultiPaging() {
@@ -1548,6 +1559,7 @@ final public class Survey implements java.io.Serializable {
 			result.append(" notifyAll: ").append(notifyAll).append(";");
 			result.append(" showPDFOnUnavailabilityPage: ").append(showPDFOnUnavailabilityPage).append(";");
 			result.append(" showDocsOnUnavailabilityPage: ").append(showDocsOnUnavailabilityPage).append(";");
+			result.append(" preventGoingBack: ").append(preventGoingBack).append(";");
 
 			try {
 				if (backgroundDocuments != null)
@@ -1660,6 +1672,8 @@ final public class Survey implements java.io.Serializable {
 		copy.minNumberDelphiStatistics = minNumberDelphiStatistics;
 		copy.timeLimit = timeLimit;
 		copy.isShowCountdown = isShowCountdown;
+		copy.setPreventGoingBack(preventGoingBack);
+		copy.criticalComplexity = criticalComplexity;
 
 		if (copyNumberOfAnswerSets) {
 			int numberOfAnswerSets1 = pnumberOfAnswerSets > -1 ? pnumberOfAnswerSets : numberOfAnswerSetsPublished;
@@ -2402,11 +2416,20 @@ final public class Survey implements java.io.Serializable {
 		this.timeLimit = timeLimit != null ? timeLimit :  "";
 	}
 	
+	@Column(name = "CRITICALCOMPLEXITY")
+	public Boolean getCriticalComplexity() {
+		return criticalComplexity != null ? criticalComplexity : false;
+	}
+
+	public void setCriticalComplexity(Boolean criticalComplexity) {
+		this.criticalComplexity = criticalComplexity != null ? criticalComplexity : false;
+	}
+	
 	@Transient
 	public int getTimeLimitInSeconds() {
 		if (timeLimit == null || timeLimit.length() == 0) return -1;
 		
 		String[] arr = timeLimit.split(":");
 		return Integer.parseInt(arr[0]) * 3600 + Integer.parseInt(arr[1]) * 60 + Integer.parseInt(arr[2]);		
-	}	
+	}
 }

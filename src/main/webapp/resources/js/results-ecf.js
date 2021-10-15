@@ -384,9 +384,9 @@
 					targetScores2.push(competencyResult.competencyTargetScore);
 				}
 			});
-			displayECFChart(profileAssessmentResult.name + " - Procurement specific competencies - Average score", "#ecfAvgScoreChart", avgScores, targetScores, competencies, "Avg scores", "Target scores");
+			displayECFChart("Procurement specific competencies - Average score", "#ecfAvgScoreChart", avgScores, targetScores, competencies, "Avg scores", "Target scores");
 			$('#ecfAvgScoreChart').show();
-			displayECFChart(profileAssessmentResult.name + " - Professional competencies - Average score", "#ecfAvgScoreChart2", avgScores2, targetScores2, competencies2, "Avg scores", "Target scores");
+			displayECFChart("Professional competencies - Average score", "#ecfAvgScoreChart2", avgScores2, targetScores2, competencies2, "Avg scores", "Target scores");
 			$('#ecfAvgScoreChart2').show();
 		}
 	}
@@ -416,9 +416,9 @@
 					targetScores2.push(competencyResult.competencyTargetScore);
 				}
 			});
-			displayECFChart(profileAssessmentResult.name + " - Procurement specific competencies - Maximum score", "#ecfMaxScoreChart", maxScores, targetScores, competencies, "Max scores", "Target scores");
+			displayECFChart("Procurement specific competencies - Maximum score", "#ecfMaxScoreChart", maxScores, targetScores, competencies, "Max scores", "Target scores");
 			$('#ecfMaxScoreChart').show();
-			displayECFChart(profileAssessmentResult.name + " - Professional competencies - Maximum score", "#ecfMaxScoreChart2", maxScores2, targetScores2, competencies2, "Max scores", "Target scores");
+			displayECFChart("Professional competencies - Maximum score", "#ecfMaxScoreChart2", maxScores2, targetScores2, competencies2, "Max scores", "Target scores");
 			$('#ecfMaxScoreChart2').show();
 		}
 	}

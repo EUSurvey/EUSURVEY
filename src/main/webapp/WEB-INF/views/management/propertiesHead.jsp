@@ -44,6 +44,7 @@
 			this.saveAsDraft = ko.observable(${form.survey.saveAsDraft});
 			this.timeLimit = ko.observable("${form.survey.timeLimit}");
 			this.showCountdown = ko.observable(${form.survey.showCountdown});
+			this.preventGoingBack = ko.observable(${form.survey.preventGoingBack});
 			
 			this.addLinksRow = function()
 			{
@@ -154,8 +155,8 @@
 			{
 				if (this.self.delphi()) {
 					this.self.changeContribution(true); // should always be activated for delphi surveys
-				} else if (this.timeLimit().length > 0) {
-					this.self.changeContribution(false); // should always be deactivated if a timelimit is set
+				} else if (this.timeLimit().length > 0 || this.self.preventGoingBack()) {
+					this.self.changeContribution(false); // should always be deactivated if a timelimit is set or preventGoingBack is set
 				} else {
 					this.self.changeContribution(!this.self.changeContribution());
 				}
@@ -163,8 +164,8 @@
 			
 			this.toggleSaveAsDraft = function()
 			{
-				if (this.self.delphi() || this.timeLimit().length > 0) {
-					this.self.saveAsDraft(false); // should always be deactivated for delphi surveys or if a timelimit is set
+				if (this.self.delphi() || this.timeLimit().length > 0 || this.self.preventGoingBack()) {
+					this.self.saveAsDraft(false); // should always be deactivated for delphi surveys or if a timelimit is set or if preventGoingBack is set
 				} else {
 					this.self.saveAsDraft(!this.self.saveAsDraft());
 				}
@@ -176,6 +177,28 @@
 					this.self.downloadContribution(false); // should always be deactivated for delphi surveys
 				} else {
 					this.self.downloadContribution(!this.self.downloadContribution());
+				}
+			}
+			
+			this.toggleMultiPaging = function()
+			{
+				this.self.multiPaging(!this.self.multiPaging());
+				
+				if (!this.self.multiPaging()) {
+					this.self.preventGoingBack(false);
+				}
+			}
+			
+			this.togglePreventGoingBack = function()
+			{
+				if (this.self.delphi()) {
+					this.self.preventGoingBack(false); // should always be deactivated for delphi surveys
+				} else {
+					this.self.preventGoingBack(!this.self.preventGoingBack());
+					if (this.self.preventGoingBack()) {
+						this.self.changeContribution(false);
+						this.self.saveAsDraft(false);
+					}
 				}
 			}
 			
@@ -220,6 +243,7 @@
 				} else { // switch to delphi survey
 					this.self.delphi(true);
 					this.self.changeContribution(true); // should always be activated for delphi surveys
+					this.self.preventGoingBack(false);
 				}
 			}
 			

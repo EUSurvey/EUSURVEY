@@ -292,11 +292,7 @@ public class DashboardController extends BasicController {
 			}
 
 			SqlPagination paging = new SqlPagination(page, 10);
-			List<Survey> surveyList = surveyService.getSurveysIncludingTranslationLanguages(filter, paging, false, false);
-
-			surveyService.generateAccessInformation(surveyList, u);
-
-			return surveyList;
+			return surveyService.getSurveysForDashboard(filter, paging, u);
 		} catch (Exception ex) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			logger.error(ex.getMessage(), ex);

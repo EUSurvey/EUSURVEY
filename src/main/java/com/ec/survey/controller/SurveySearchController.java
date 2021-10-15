@@ -148,9 +148,14 @@ public class SurveySearchController extends BasicController {
 		filter.setSelector("any");
 		
 		SurveyFilter reportedFilter = new SurveyFilter();
+		reportedFilter.setSelector("any");
+		
 		SurveyFilter frozenFilter = new SurveyFilter();
+		frozenFilter.setSelector("any");
+		
 		ArchiveFilter archivedFilter = new ArchiveFilter();
 		SurveyFilter deletedSurveysFilter = new SurveyFilter();
+		deletedSurveysFilter.setSelector("any");
 
 		if (mode.equalsIgnoreCase("archived")) {
 			archivedFilter.setUniqueId(request.getParameter("archiveuid"));
@@ -285,14 +290,8 @@ public class SurveySearchController extends BasicController {
 			}
 
 			SqlPagination sqlPagination = new SqlPagination(Integer.parseInt(page), Integer.parseInt(rows));
-			List<Survey> surveys = surveyService.getSurveysIncludingPublicationDates(filter, sqlPagination);
-
-			for (Survey survey : surveys) {
-				survey.setTitle(survey.cleanTitle());
-				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
-			}
-
-			return surveys;
+			
+			return surveyService.getSurveysForSurveySearch(filter, sqlPagination, true, false);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
@@ -345,7 +344,8 @@ public class SurveySearchController extends BasicController {
 
 		SqlPagination sqlPagination = new SqlPagination(page, itemsPerPage);
 		filter.setSurveys("DELETED");
-		return surveyService.getSurveysIncludingPublicationDates(filter, sqlPagination);
+		
+		return surveyService.getSurveysForSurveySearch(filter, sqlPagination, false, false);
 	}
 
 	@RequestMapping(value = "/administration/reportedsurveysjson", method = { RequestMethod.GET, RequestMethod.HEAD })
@@ -362,14 +362,8 @@ public class SurveySearchController extends BasicController {
 			filter.setSurveys("REPORTED");
 
 			SqlPagination sqlPagination = new SqlPagination(Integer.parseInt(page), Integer.parseInt(rows));
-			List<Survey> surveys = surveyService.getSurveysIncludingPublicationDates(filter, sqlPagination);
-
-			for (Survey survey : surveys) {
-				survey.setTitle(survey.cleanTitle());
-				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
-			}
-
-			return surveys;
+			
+			return surveyService.getSurveysForSurveySearch(filter, sqlPagination, true, true);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
@@ -392,14 +386,8 @@ public class SurveySearchController extends BasicController {
 			filter.setSurveys("FROZEN");
 
 			SqlPagination sqlPagination = new SqlPagination(Integer.parseInt(page), Integer.parseInt(rows));
-			List<Survey> surveys = surveyService.getSurveysIncludingPublicationDates(filter, sqlPagination);
-
-			for (Survey survey : surveys) {
-				survey.setTitle(survey.cleanTitle());
-				survey.setNumberOfDrafts(answerService.getNumberOfDrafts(survey.getId()));
-			}
-
-			return surveys;
+			
+			return surveyService.getSurveysForSurveySearch(filter, sqlPagination, true, true);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}

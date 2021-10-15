@@ -19,7 +19,6 @@ import com.ec.survey.tools.Tools;
 import com.ec.survey.tools.WeakAuthenticationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +29,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -205,6 +205,26 @@ public class SessionService extends BasicService {
 			}
 		}
 		return true;
+	}
+	
+	public boolean userCanEditResults(Survey survey, User user, HttpServletRequest request) {
+		if (survey.getOwner().getId().equals(user.getId()))
+			return true;
+		if (user.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) == 2)
+			return true;
+
+		try {
+			upgradePrivileges(survey, user, request);
+			if (user.getLocalPrivileges().get(LocalPrivilege.FormManagement) == 2)
+				return true;
+			
+			if (user.getLocalPrivileges().get(LocalPrivilege.AccessResults) == 2)
+				return true;
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage(), e);
+		}
+
+		return false;
 	}
 
 	public boolean userIsFormAdmin(Survey survey, User user, HttpServletRequest request) {
@@ -445,17 +465,47 @@ public class SessionService extends BasicService {
 		}
 
 		if (filter != null && filter.getDefaultQuestions() != null && filter.getDefaultQuestions()) {
-			filter.getVisibleQuestions().clear();
-			filter.getExportedQuestions().clear();
-
 			Survey survey = surveyService.getSurvey(filter.getSurveyId());
+			
+			List<String> ids = new ArrayList<>();
+			List<String> allids = new ArrayList<>();
 
 			for (Element question : survey.getQuestions()) {
 				if (question.isUsedInResults()) {
-					if (filter.getVisibleQuestions().size() < 20) {
-						filter.getVisibleQuestions().add(question.getId().toString());
+					if (ids.size() < 20) {
+						ids.add(question.getId().toString());
 					}
-					filter.getExportedQuestions().add(question.getId().toString());
+					allids.add(question.getId().toString());
+				}
+			}
+			
+			List<String> idsToRemove = new ArrayList<>();
+			for (String id : filter.getVisibleQuestions()) {
+				if (!ids.contains(id)) {
+					idsToRemove.add(id);
+				}
+			}
+			for (String id : idsToRemove) {
+				filter.getVisibleQuestions().remove(id);
+			}			
+			for (String id : ids) {
+				if (!filter.getVisibleQuestions().contains(id)) {
+					filter.getVisibleQuestions().add(id);
+				}
+			}
+			
+			idsToRemove = new ArrayList<>();
+			for (String id : filter.getExportedQuestions()) {
+				if (!allids.contains(id)) {
+					idsToRemove.add(id);
+				}
+			}
+			for (String id : idsToRemove) {
+				filter.getExportedQuestions().remove(id);
+			}
+			for (String id : allids) {
+				if (!filter.getExportedQuestions().contains(id)) {
+					filter.getExportedQuestions().add(id);
 				}
 			}
 		}
@@ -492,8 +542,6 @@ public class SessionService extends BasicService {
 	@Transactional
 	public void setLastResultFilter(HttpServletRequest request, ResultFilter filter, int user, int survey)
 			throws InterruptedException {
-		request.getSession().setAttribute("ResultFilter", filter);
-
 		// there can only be changes during a POST
 		if (request.getMethod().equalsIgnoreCase("POST")) {
 			boolean saved = false;
@@ -521,6 +569,9 @@ public class SessionService extends BasicService {
 				}
 			}
 		}
+		
+		answerService.initialize(filter);
+		request.getSession().setAttribute("ResultFilter", filter.copy());
 	}
 
 	@Transactional

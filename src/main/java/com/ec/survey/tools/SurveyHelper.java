@@ -4236,6 +4236,10 @@ public class SurveyHelper {
 				elem.setUniqueId(newUniqueId);
 			}
 		}
+		
+		if (request.getParameter("criticalComplexity") != null) {
+			survey.setCriticalComplexity(request.getParameter("criticalComplexity").toString().equalsIgnoreCase("true"));
+		}
 
 		if (log217) {
 			String newOrder = survey.serialize(true);
