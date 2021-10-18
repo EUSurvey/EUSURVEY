@@ -110,8 +110,8 @@ body {
 	
 			<div style="margin-bottom: 20px;">
 				<div style="float: right; font-size: 125%">
-					[<a aria-label="<spring:message code="label.SwitchToEnglish" />" tabindex="0" id="switchEN">EN</a>] [<a aria-label="<spring:message code="label.SwitchToFrench" />" tabindex="0" id="switchFR">FR</a>] [<a
-						aria-label="<spring:message code="label.SwitchToGerman" />" tabindex="0" id="switchDE">DE</a>]
+					[<a role="button" aria-label="<spring:message code="label.SwitchToEnglish" />" tabindex="0" id="switchEN">EN</a>] [<a role="button" aria-label="<spring:message code="label.SwitchToFrench" />" tabindex="0" id="switchFR">FR</a>] [<a
+						role="button" aria-label="<spring:message code="label.SwitchToGerman" />" tabindex="0" id="switchDE">DE</a>]
 				</div>	
 	
 				<div id="tos_EN">
