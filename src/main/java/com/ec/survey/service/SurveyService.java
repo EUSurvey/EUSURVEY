@@ -622,24 +622,24 @@ public class SurveyService extends BasicService {
 				// Overriding condition by sharing condition
 				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
 					sql.append(
-							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
+							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 					oQueryParameters.put("login", filter.getUser().getLogin());
 				} else {
 					sql.append(
-							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
+							" AND (s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 				}
 			} else {
 				// Searching for the last case, assuming selector is "all"
 				if (filter.getUser().getType().equalsIgnoreCase("ECAS")) {
 					sql.append(
-							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
+							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :ownerId OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 					oQueryParameters.put("login", filter.getUser().getLogin());
 				} else {
 					sql.append(
-							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')))");
+							" AND (s.OWNER = :ownerId OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE a.ACCESS_USER = :ownerId AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :ownerId))");
 					oQueryParameters.put("ownerId", filter.getUser().getId());
 				}
 			}
@@ -3096,6 +3096,107 @@ public class SurveyService extends BasicService {
 			return result.get(0);
 		return null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public List<ResultAccess> getResultAccesses(ResultAccess resultAccess, String uid, int page, int rows, String name, String order) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		String sql = "FROM ResultAccess a WHERE a.surveyUID = :uid";
+		
+		if (name != null && name.length() > 0) {
+			sql += " AND a.user IN (SELECT u.id FROM User u WHERE concat(u.givenName, ' ', u.surName, ' ', u.login) LIKE :name)";
+		}
+		
+		if (resultAccess != null) {
+			sql += " AND a.owner = :user"; 
+		}
+		
+		sql += " ORDER BY a." + order + " DESC";
+		
+		Query query = session.createQuery(sql).setString("uid", uid);
+		
+		if (resultAccess != null) {
+			query.setInteger("user", resultAccess.getUser());
+		}
+		
+		if (name != null && name.length() > 0) {
+			query.setString("name", "%" + name + "%");
+		}
+		
+		List<ResultAccess> accesses = query.setFirstResult((page - 1) * rows).setMaxResults(rows).list();
+		
+		for (ResultAccess access : accesses) {
+			String userName = administrationService.getUser(access.getUser()).getFirstLastName();
+			access.setUserName(userName);
+			
+			if (access.getResultFilter() != null && !access.getResultFilter().getFilterValues().isEmpty()) {
+				
+				StringBuilder filter = new StringBuilder();
+				
+				Survey survey = getSurveyByUniqueId(access.getSurveyUID(), false, true);
+				Map<String, Element> elementsByUniqueId = survey.getElementsByUniqueId();
+				
+				for (String questionUID : access.getResultFilter().getFilterValues().keySet()) {
+					
+					Element question = elementsByUniqueId.get(questionUID);
+					String value = access.getResultFilter().getFilterValues().get(questionUID);
+					
+					filter.append("<b>").append(question.getStrippedTitleAtMost100()).append("</b><br />");
+					
+					if (question instanceof ChoiceQuestion || question instanceof Text) {
+						Element answer = elementsByUniqueId.get(value);
+						if (answer != null) {
+							filter.append(answer.getStrippedTitleAtMost100());
+						} else {
+							filter.append(value);
+						}			
+					} else {
+						filter.append(value);
+					}
+					
+					filter.append("</br>");
+				}
+				
+				access.setFilter(filter.toString());
+			}
+		}
+		
+		return accesses;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public ResultAccess getResultAccess(String surveyUID, int userId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("FROM ResultAccess a WHERE a.surveyUID = :uid AND a.user = :id").setString("uid", surveyUID).setInteger("id", userId);
+		List<ResultAccess> accesses = query.list();
+		if (accesses.isEmpty()) {
+			return null;
+		}
+		return accesses.get(0);
+	}
+	
+	@Transactional
+	public ResultAccess getResultAccess(int id) {
+		Session session = sessionFactory.getCurrentSession();
+		return (ResultAccess) session.get(ResultAccess.class, id);
+	}
+
+	@Transactional
+	public void deleteResultAccess(ResultAccess access) {
+		Session session = sessionFactory.getCurrentSession();
+		session.delete(access);
+	}
+	
+	@Transactional
+	public void saveResultAccess(ResultAccess access) {
+		Session session = sessionFactory.getCurrentSession();
+		if (access.getDate() == null) {
+			access.setDate(new Date());
+		}
+		session.saveOrUpdate(access);
+	}
 
 	@Transactional
 	public void save(Template template) {
@@ -3314,6 +3415,9 @@ public class SurveyService extends BasicService {
 				hasPendingChanges = true;	
 
 			if (draftSurvey.getSendConfirmationEmail() != publishedSurvey.getSendConfirmationEmail())
+				hasPendingChanges = true;
+			
+			if (draftSurvey.getDedicatedResultPrivileges() != publishedSurvey.getDedicatedResultPrivileges())
 				hasPendingChanges = true;
 
 			if (!hasPendingChanges)
@@ -4636,9 +4740,9 @@ public class SurveyService extends BasicService {
 		if (type != null && type.equalsIgnoreCase("my")) {
 			ownerwhere = "s.OWNER = :userid";
 		} else if (type != null && type.equalsIgnoreCase("shared")) {
-			ownerwhere = "s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
+			ownerwhere = "s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :userid)";
 		} else {
-			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%'))";
+			ownerwhere = "s.OWNER = :userid OR s.SURVEY_ID in (Select a.SURVEY FROM SURACCESS a WHERE (a.ACCESS_USER = :userid OR a.ACCESS_DEPARTMENT IN (SELECT GRPS FROM ECASGROUPS WHERE eg_ID = (SELECT USER_ID FROM ECASUSERS WHERE USER_LOGIN = :login))) AND (a.ACCESS_PRIVILEGES like '%2%' or a.ACCESS_PRIVILEGES like '%1%')) OR s.SURVEY_UID in (SELECT r.SURVEY FROM RESULTACCESS r WHERE r.RESACC_USER = :userid)";
 		}
 
 		return ownerwhere;

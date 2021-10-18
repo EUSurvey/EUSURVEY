@@ -458,7 +458,25 @@
 								<a data-bind="visible: !showBackgroundDocs(), click: addDocRow" data-toggle="tooltip" title="<spring:message code="label.AddBackgroundDocument" />" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span></a>
 							</div>
 						</td>
-					</tr>					
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
+								<spring:message code="label.DedicatedResultPrivileges" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.DedicatedResultPrivileges" /></div>
+							</div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.dedicatedResultPrivileges" class="onoffswitch-checkbox" id="myonoffswitchdedicatedResultPrivileges" />
+									<label class="onoffswitch-label" for="myonoffswitchdedicatedResultPrivileges">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+							    </div>
+							</div>
+						</td>
+					</tr>				
 				</table>
 			</div>		
 			

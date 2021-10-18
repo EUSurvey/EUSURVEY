@@ -220,6 +220,10 @@ public class SessionService extends BasicService {
 			
 			if (user.getLocalPrivileges().get(LocalPrivilege.AccessResults) == 2)
 				return true;
+			
+			if (user.getResultAccess() != null && !user.getResultAccess().isReadonly()) {
+				return true;
+			}
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
@@ -279,6 +283,8 @@ public class SessionService extends BasicService {
 	public void upgradePrivileges(Survey survey, User user, HttpServletRequest request) throws ForbiddenURLException {
 		if (user == null)
 			throw new ForbiddenURLException();
+		
+		user.setResultAccess(null);	
 
 		Access access = null;
 		if (!survey.getOwner().getId().equals(user.getId())) {
@@ -310,6 +316,16 @@ public class SessionService extends BasicService {
 						allowed = true;
 					}
 				}
+				
+				// check result access
+				if (survey.getDedicatedResultPrivileges()) {
+					ResultAccess resultAccess = surveyService.getResultAccess(survey.getUniqueId(), user.getId());
+					if (resultAccess != null) {
+						user.setResultAccess(resultAccess);					
+						allowed = true;
+					}
+				}
+				
 				if (!allowed) {
 					throw new ForbiddenURLException();
 				}

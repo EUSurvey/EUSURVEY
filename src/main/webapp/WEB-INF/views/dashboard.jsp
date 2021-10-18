@@ -85,7 +85,7 @@
 							<spring:message code="info.NoSharedSurveys" />
 						</div>
 							
-						<div class="container-fluid" style="display: none" data-bind="visible: (lastEditedSurveyShortname() != null && lastEditedSurveyShortname().length > 0) || surveysMode() == 'archived'">
+						<div class="container-fluid" style="display: none" data-bind="visible: (lastEditedSurveyShortname() != null && lastEditedSurveyShortname().length > 0) || surveysMode() == 'archived' || (surveys() != null && surveys().length != 0)">
 														
 							<div class="row" style="margin-bottom: 10px;">				
 								<div class="col-md-6" >

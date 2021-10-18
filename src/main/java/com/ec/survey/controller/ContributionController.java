@@ -265,7 +265,8 @@ public class ContributionController extends BasicController {
 			} else {
 				if (!u.getId().equals(answerSet.getSurvey().getOwner().getId())
 						&& u.getGlobalPrivileges().get(GlobalPrivilege.FormManagement) < 2
-						&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1) {
+						&& u.getLocalPrivileges().get(LocalPrivilege.AccessResults) < 1
+						&& (u.getResultAccess() == null || u.getResultAccess().isReadonly())) {
 					throw new ForbiddenURLException();
 				}
 			}

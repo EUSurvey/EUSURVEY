@@ -1008,12 +1008,13 @@
 				<div style="float: left; margin-top: 0px; margin-right: 20px;">
 					<select onchange="$('#resultsForm').submit();" class="form-control" name="results-source" id="results-source" style="width: auto; margin-bottom: 0px; margin-left: 10px;">
 						<c:choose>
-							<c:when test="${!sessioninfo.owner.equals(USER.id) && USER.formPrivilege < 2 && USER.getLocalPrivilegeValue('AccessResults') < 1}">
+							<c:when test="${!sessioninfo.owner.equals(USER.id) && USER.formPrivilege < 2 && USER.getLocalPrivilegeValue('AccessResults') < 1 && USER.getResultAccess() == null}">
 									<option selected="selected" value="draft"><spring:message code="label.TestAnswers" /></option>
 							</c:when>						
 							<c:when test="${sessioninfo.owner.equals(USER.id) || USER.formPrivilege > 1 ||
 											USER.getLocalPrivilegeValue('FormManagement') > 1 ||
-											USER.getLocalPrivilegeValue('AccessResults') > 0}">											
+											USER.getLocalPrivilegeValue('AccessResults') > 0 ||
+											USER.getResultAccess() != null}">											
 								<c:choose>
 									<c:when test="${!form.getSurvey().getIsDraft() || form.getSurvey().getIsPublished()}">
 										<option value="draft"><spring:message code="label.TestAnswers" /></option>

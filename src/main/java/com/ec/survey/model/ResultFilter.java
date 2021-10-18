@@ -236,6 +236,8 @@ public class ResultFilter implements java.io.Serializable {
 	private String answeredECFProfileUID;
 	private String compareToECFProfileUID;
 	
+	private List<String> readOnlyFilterQuestions = new ArrayList<>();
+	
 	public void clearResultFilter() {
 		invitation = null;
 		caseId = null;
@@ -855,5 +857,12 @@ public class ResultFilter implements java.io.Serializable {
 	public void setCompareToECFProfileUID(String compareToECFProfileUID) {
 		this.compareToECFProfileUID = compareToECFProfileUID;
 	}
-
+	
+	@Transient 
+	public List<String> getReadOnlyFilterQuestions() {
+		return readOnlyFilterQuestions;
+	}
+	public void setReadOnlyFilterQuestions(List<String> readOnlyFilterQuestions) {
+		this.readOnlyFilterQuestions = readOnlyFilterQuestions;
+	}
 }

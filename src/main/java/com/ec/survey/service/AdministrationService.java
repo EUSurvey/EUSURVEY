@@ -672,6 +672,36 @@ public class AdministrationService extends BasicService {
 
 		return hql.toString();
 	}
+	
+	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+	public void createDummyUsers(int users, String shortname) {
+		Session session = sessionFactory.getCurrentSession();
+		
+		String surveyUID = null;
+		if (shortname != null && shortname.length() > 0) {
+			Survey survey = surveyService.getSurveyByAlias(shortname, true);
+			surveyUID = survey.getUniqueId();
+		}
+		
+		for (int i = 0; i < users; i++) {
+			User user = new User();
+			user.setGivenName("Dummy");
+			user.setSurName("User " + i);
+			user.setLogin("dummy" + i);
+			user.setEmail("dummy@noserver.aa");
+			user.setType(User.SYSTEM);
+			
+			session.save(user);
+			
+			if (surveyUID != null) {
+				ResultAccess resAccess = new ResultAccess();
+				resAccess.setSurveyUID(surveyUID);
+				resAccess.setUser(user.getId());
+				resAccess.setOwner(1);
+				surveyService.saveResultAccess(resAccess);	
+			}
+		}
+	}
 
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public void createDummyEcasUsers(int counter) {

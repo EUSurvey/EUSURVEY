@@ -189,7 +189,8 @@ final public class Survey implements java.io.Serializable {
 	private Boolean isShowCountdown = true;
 	private String timeLimit;
 	private boolean preventGoingBack = false;
-	private Boolean criticalComplexity;
+	private Boolean criticalComplexity = false;
+	private Boolean dedicatedResultPrivileges = false;
 
 	@Id
 	@Column(name = "SURVEY_ID", nullable = false)
@@ -743,6 +744,41 @@ final public class Survey implements java.io.Serializable {
 			return elementsRecursive;
 		}
 	}
+	
+	@Transient
+	public Map<Element, List<Element>> getElementsForResultAccessFilter() {
+		Map<Element, List<Element>> result = new LinkedHashMap<>();
+		
+		for (Element element : elements) {
+			if (element instanceof Section || element instanceof Image || element instanceof Download || element instanceof Upload || element instanceof Ruler|| element instanceof Text || element instanceof RankingQuestion || element instanceof RatingQuestion || element instanceof Confirmation || element instanceof GalleryQuestion) {
+				continue;
+			}
+			
+			if (element instanceof ChoiceQuestion) {
+				List<Element> children = new ArrayList<>();
+				for (Element child : ((ChoiceQuestion) element).getPossibleAnswers()) {
+					children.add(child);
+				}
+				result.put(element, children);
+			} else if (element instanceof FreeTextQuestion || element instanceof RegExQuestion || element instanceof NumberQuestion || element instanceof DateQuestion || element instanceof TimeQuestion || element instanceof EmailQuestion) {
+				result.put(element, new ArrayList<Element>());
+			} else if (element instanceof MatrixOrTable) {
+				for (Element subquestion : ((MatrixOrTable) element).getQuestions()) {
+					if (element instanceof Matrix) {
+						List<Element> children = new ArrayList<>();
+						for (Element child : ((Matrix) element).getAnswers()) {
+							children.add(child);
+						}
+						result.put(subquestion, children);
+					} else {
+						result.put(subquestion, new ArrayList<Element>());
+					}
+				}
+			}			
+		}
+		
+		return result;
+	}	
 
 	@Column(name = "LISTFORM")
 	public boolean getListForm() {
@@ -1673,6 +1709,7 @@ final public class Survey implements java.io.Serializable {
 		copy.timeLimit = timeLimit;
 		copy.isShowCountdown = isShowCountdown;
 		copy.setPreventGoingBack(preventGoingBack);
+		copy.setDedicatedResultPrivileges(dedicatedResultPrivileges);
 		copy.criticalComplexity = criticalComplexity;
 
 		if (copyNumberOfAnswerSets) {
@@ -2423,6 +2460,15 @@ final public class Survey implements java.io.Serializable {
 
 	public void setCriticalComplexity(Boolean criticalComplexity) {
 		this.criticalComplexity = criticalComplexity != null ? criticalComplexity : false;
+	}
+	
+	@Column(name = "RESULTPRIVILEGES")
+	public Boolean getDedicatedResultPrivileges() {
+		return dedicatedResultPrivileges;
+	}
+
+	public void setDedicatedResultPrivileges(Boolean dedicatedResultPrivileges) {
+		this.dedicatedResultPrivileges = dedicatedResultPrivileges != null ? dedicatedResultPrivileges : false;
 	}
 	
 	@Transient
