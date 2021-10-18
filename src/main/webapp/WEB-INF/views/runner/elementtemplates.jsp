@@ -314,6 +314,7 @@
 						<input data-bind="value: id(), checked: getPAByQuestion2($parent.uniqueId(), uniqueId(), id), attr: {'name': 'answer' + $parent.id(), 'id':id(), 'data-id': $parent.id() + id(), 'data-dependencies': dependentElementsString, 'aria-labelledby': 'answerlabel' + id()}" style="display: none" type="checkbox" />
 					</li>	
 				</ul>
+				
 				<!-- ko if: foreditor -->
 					<!-- ko foreach: possibleAnswers() -->
 					<div class="possibleanswerrow hidden">	
@@ -330,6 +331,7 @@
 					<!-- /ko -->
 				<!-- /ko -->		
 			</div>
+			<div style="clear: both"></div>
 			<!-- /ko -->
 		
 			<input type="hidden" data-bind="value: choiceType, attr: {'name': 'choicetype' + id()}" />
