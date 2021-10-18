@@ -345,7 +345,7 @@ function createUploader(instance, maxSize)
 	
 	
 	setTimeout(function(){ 
-		$(".qq-uploader input[type='file']").attr("aria-label", $("#questiontitle" +  $(instance).attr('data-id')).text());
+		$(".qq-uploader input[type='file']").removeAttr("aria-label").attr("aria-labelledby", "questiontitle" +  $(instance).attr('data-id')).attr("aria-describedby", "questionhelp" +  $(instance).attr('data-id'));
 	}, 3000);
 }
 
