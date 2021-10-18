@@ -711,7 +711,7 @@
 		<span class='questionhelp' data-bind="html: niceHelp, attr:{id: 'questionhelp' + id()}"></span>
 		
 		<!-- ko if: display() == 'Slider' && ${form.survey.isDelphi} -->
-			<div tabindex="0" class="focussable" role="group"  data-bind="attr: {'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questionhelp' + id()}">
+			<div tabindex="0" class="focussable" role="group" data-bind="hidden: isAnswered, attr: {'aria-labelledby': 'questiontitle' + id(), 'aria-describedby' : 'questionhelp' + id()}">
 		
 				<div class="limits" data-bind="hidden: isAnswered, attr: {id: 'questioninfo' + id()}">
 					<!-- ko ifnot: foreditor -->
@@ -743,7 +743,7 @@
 		
 		<!-- ko if: display() == 'Slider' -->
 			<div class="question-reset-answer-message" data-bind="hidden: !isAnswered()">
-				<a href="javascript:;" data-bind="click: resetToInitialPosition">${form.getMessage("label.ResetToInitialPosition")}</a>
+				<a href="javascript:;" data-bind="click: resetToInitialPosition, attr: {'aria-describedby' : 'questiontitle' + id()}">${form.getMessage("label.ResetToInitialPosition")}</a>
 			</div>
 		<div data-bind="attr: {'class' : maxDistance() > -1 ? 'slider-div median' : 'slider-div'}">
 			<div style="float: left; margin-left: -20px; padding-bottom: 20px; max-width: 45%; text-align: center;" data-bind="html: minLabel()"></div>
