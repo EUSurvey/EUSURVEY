@@ -151,7 +151,7 @@
 <p>
     A rendszer által történő azonosításhoz a felhasználónak felhasználónévre és
     jelszóra van szüksége, amelyet az EULogin
-    <a href="#ftn1">
+    <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     szolgáltatás kezel. Az EULogin által végzett személyesadat-kezelés módjára

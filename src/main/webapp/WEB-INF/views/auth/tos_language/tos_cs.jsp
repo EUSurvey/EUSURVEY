@@ -147,7 +147,7 @@
 <p>
     K tomu, aby systém mohl uživatele identifikovat, je zapotřebí uživatelské
     jméno a heslo, které spravuje služba EULogin
-    <a
+    <a  aria-labelledby="ftn1"
         href="#ftn1"
     >
         [1]

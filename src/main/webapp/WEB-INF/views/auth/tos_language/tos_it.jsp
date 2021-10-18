@@ -145,7 +145,7 @@ del trattamento con l'apposito    <a href="https://ec.europa.eu/eusurvey/home/su
 <p>
     Per essere identificato dal sistema l'utente ha bisogno di una coppia
     login/password che è gestita dal sevizio EULogin
-    <a href="#ftn1">
+    <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . Per maggiori informazioni su come EULogin tratta i suoi dati personali,

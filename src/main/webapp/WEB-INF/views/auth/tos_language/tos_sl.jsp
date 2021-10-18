@@ -152,7 +152,7 @@
 <p>
     Da bi sistem identificiral uporabnika, mora ta imeti uporabniško ime in
     geslo, ki ju upravlja storitev EULogin
-    <a href="#ftn1">
+    <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . Več informacij o tem, kako storitev EULogin obdeluje vaše osebne podatke,

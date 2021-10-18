@@ -162,7 +162,7 @@ et à la libre circulation de ces données [abrogeant le règlement (CE) n    <s
 <p>
     Pour être identifié par le système, l’utilisateur a besoin d’un nom
     d’utilisateur et d’un mot de passe, gérés par le service EULogin
-    <a href="#ftn1">
+    <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . Pour en savoir plus sur la manière dont EULogin traite vos données à

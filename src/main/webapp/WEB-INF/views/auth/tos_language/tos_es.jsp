@@ -152,7 +152,7 @@
 <p>
     Para su identificación por el sistema, el usuario necesita un nombre de
     usuario y una contraseña, que son gestionados por el servicio EULogin
-    <a href="#ftn1">
+    <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . Para más información sobre cómo EULogin trata sus datos personales,

@@ -139,7 +139,7 @@
 <p>
     Jotta järjestelmä voi tunnistaa käyttäjän, tämä tarvitsee
     käyttäjätunnuksen/salasanan, jota EULogin
-    <a href="#ftn1">
+    <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     -palvelu hallinnoi. Lisätietoja siitä, miten EULogin käsittelee

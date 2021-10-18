@@ -151,7 +151,7 @@ theagmháil a dhéanamh leis an Rialaitheoir Sonraí tríd an bh    <a href="htt
     Chun go n-aithneoidh an córas é, ní mór don úsáideoir an cúpla ainm logála
     isteach/pasfhocal a bheith aige, a bhíonn á bhainistiú ag an tseirbhís
     EULogin
-   <a href="#ftn1">
+   <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . Chun tuilleadh faisnéise a fháil faoin gcaoi a bpróiseálann EULogin do

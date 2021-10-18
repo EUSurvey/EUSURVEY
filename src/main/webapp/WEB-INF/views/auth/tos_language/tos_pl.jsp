@@ -147,7 +147,7 @@
 <p>
     Aby użytkownik mógł być rozpoznany przez system, potrzebuje nazwy
     użytkownika i hasła, którymi zarządza serwis EULogin
-    <a href="#ftn1">
+    <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . Więcej informacji na temat przetwarzania danych osobowych przez system

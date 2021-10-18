@@ -154,7 +154,7 @@ taħt jiġifieri din id-dikjarazzjoni ta’ privatezza tispjega kif id-    <em>d
 <p>
     Biex jiġi identifikat mis-sistema, l-utent jeħtieġ login/password, li hija
     ġestita mis-servizz tal-EU Login
-    <a href="#ftn1">
+    <a aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
 . Għal aktar informazzjoni dwar kif l-EULogin qed jipproċessa d-    <em>data</em> personali tiegħek, jekk jogħġbok irreferi għad-

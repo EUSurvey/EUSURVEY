@@ -145,7 +145,7 @@
 <p>
     Da bi ga sustav identificirao, korisnik mora imati korisničko ime i
     lozinku, kojima se upravlja putem usluge EULogin
-   <a href="#ftn1">
+   <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . Više informacija o tome kako EULogin obrađuje vaše osobne podatke možete
