@@ -343,9 +343,8 @@ function createUploader(instance, maxSize)
 
 	$(".qq-uploader input[type='file']").attr("title", " ");
 	
-	
 	setTimeout(function(){ 
-		$(".qq-uploader input[type='file']").removeAttr("aria-label").attr("aria-labelledby", "questiontitle" +  $(instance).attr('data-id')).attr("aria-describedby", "questionhelp" +  $(instance).attr('data-id'));
+		$(".file-uploader[data-id='" + $(instance).attr('data-id') + "']").find(".qq-uploader input[type='file']").removeAttr("aria-label").attr("aria-labelledby", "questiontitle" + $(instance).attr('data-id')).attr("aria-describedby", "questionhelp" +  $(instance).attr('data-id'));
 	}, 3000);
 }
 
