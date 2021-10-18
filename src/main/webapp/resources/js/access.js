@@ -10,21 +10,30 @@
 			    if(e.keyCode == 13){
 			    	searchUser();
 			    }
-			}) ;
+			});
 			
 			$('#add-department-name').keyup(function(e){
 			    if(e.keyCode == 13){
 			    	searchUser();
 			    }
-			}) ;
+			});
 			
 			$('#add-group-name').keyup(function(e){
 			    if(e.keyCode == 13){
 			    	addGroup($('#add-group-name').val());
 			    	$('#add-group-dialog').modal("hide");
 			    }
-			}) ;
+			});
 			
+			$("input[type='text']").placeholder();
+			
+			loadResultAccesses("date");
+			
+			$('#resacc-user-name').keyup(function(e){
+			    if(e.keyCode == 13){
+			    	firstPage();
+			    }
+			});
 		});
 		
 		function loadTopDepartments(domain)
@@ -210,8 +219,10 @@
 			}
 		}
 		
-		function showAddUserDialog()
+		function showAddUserDialog(results)
 		{
+			$("#add-resultMode").val(results);
+			
 			// select european commision if exists
 			var exists = false;
 			$('#add-user-type-ecas option').each(function(){
@@ -354,8 +365,10 @@
 			$("#remove-form").submit();
 		}
 		
-		function showRemoveDialog(id, login)
+		function showRemoveDialog(id, login, results)
 		{
+			$("#remove-resultMode").val(results);
+			
 			selectedId = id;
 			$('#remove-user-dialog').modal();
 		}
@@ -418,3 +431,204 @@
 			$("#search-results-none").hide();
 			
 		}
+				
+	var cachedAccesses = null;
+	
+	function firstPage() {
+		page = 1;
+		loadResultAccesses("date");
+	}
+	
+	function previousPage() {
+		if (page == 1) return;
+		
+		page--;
+		loadResultAccesses("date");
+	}
+	
+	function nextPage() {
+		if (cachedAccesses.length < rows) return;
+		
+		page++;
+		loadResultAccesses("date");
+	}
+	
+	function loadResultAccesses(order)
+	{
+		var name = $("#resacc-user-name").val();
+		
+		var s = "name=" + name + "&order=" + order + "&page=" + page + "&rows=" + rows;
+		
+		$.ajax({
+			type:'GET',
+			  url: contextpath + "/" + surveyUID + "/management/resultAccessesJSON",
+			  data: s,
+			  dataType: 'json',
+			  cache: false,
+			  success: function( accesses ) {
+			  
+				  if (accesses.length > 0) {
+					  $('#tbllist-empty-results').hide();
+					  $('#results-paging').show();
+				  } else {
+					  $('#tbllist-empty-results').show();
+					  $('#results-paging').hide();
+				  }
+				  
+				  $("#tblResultPrivileges").find("tbody").empty();
+				  var body = $("#tblResultPrivileges").find("tbody").first();
+				  
+				  for (var i = 0; i < accesses.length; i++ )
+				  {
+					  var tr = document.createElement("tr");
+					  addTableCell(tr, accesses[i].userName);
+					  addFilterTableCell(tr, accesses[i]);
+					  addReadonlyTableCell(tr, accesses[i]);
+					  
+					  if ($('#tblResultPrivileges').find("thead").find("tr").first().find("th").length == 4)
+					  {
+						  addActionTableCell(tr, accesses[i]);
+					  }					  
+										  
+					  $(body).append(tr);
+				  }
+				  
+				  $('[data-toggle="tooltip"]').tooltip();
+				  cachedAccesses = accesses;
+				  
+				  $('#results-first').text((page-1)*rows + 1);
+				  $('#results-last').text((page-1)*rows + accesses.length);
+				  
+				  if (page == 1) {
+					  $('#gotoFirst').attr("disabled", "disabled").addClass("disabled");
+					  $('#gotoPrevious').attr("disabled", "disabled").addClass("disabled");
+				  } else {
+					  $('#gotoFirst').removeAttr("disabled").removeClass("disabled");
+					  $('#gotoPrevious').removeAttr("disabled").removeClass("disabled");
+				  }
+				  
+				  if (accesses.length == rows) {
+					  $('#gotoNext').removeAttr("disabled").removeClass("disabled");
+				  } else {
+					  $('#gotoNext').attr("disabled", "disabled").addClass("disabled");
+				  }
+              
+			  }, error: function(e) {
+				  showError(e);
+			}});
+	}
+	
+	function addFilterTableCell(tr, access) {
+		 var td = document.createElement("td");
+		 $(td).css("vertical-align", "middle");
+		 
+		 if (access.filter == null || access.filter.length == 0) {
+			 $(td).html(noFilterMessage);
+		 } else {
+			 $(td).html(access.filter);
+		 }
+		 
+		 var btn = document.createElement("a");
+		 $(btn).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "Edit").html('<span class="glyphicon glyphicon-pencil"></span>').css("float", "right");
+		 $(btn).attr("onclick", "showEditFilterDialog(" + access.id + ")");
+		 $(td).prepend(btn);
+		 
+		 $(tr).append(td);
+	}
+	
+	function addActionTableCell(tr, access) {
+		var td = document.createElement("td");
+		$(td).css("vertical-align", "middle");
+		
+		var btn = document.createElement("a");
+		$(btn).addClass("iconbutton").attr("data-toggle", "tooltip").attr("title", "Remove").html('<span class="glyphicon glyphicon-remove"></span>').attr("onclick", "showRemoveDialog(" + access.id + ",'" + access.userName + "', true);").css("float", "right");
+		$(td).append(btn);
+		
+		$(tr).append(td);
+	}
+	
+	function addReadonlyTableCell(tr, access) {
+		var value = access.readonly;
+		
+		var td = document.createElement("td");
+		$(td).css("vertical-align", "middle");
+		 
+		var select = document.createElement("select");
+		$(select).addClass("form-control").attr("data-id", access.id);
+		$(select).attr("onchange", "changeAccess(this)")
+		 
+		var option = document.createElement("option");
+		$(option).val("false").html(labelreadwrite);
+				 
+		$(select).append(option);
+		option = document.createElement("option");
+		$(option).val("true").html(labelreadonly);
+		
+		$(select).append(option);		 
+		$(td).append(select);		 
+		$(tr).append(td);
+		
+		if (value) {
+			$(select).val(value ? "true" : "false");
+		}
+	}
+	
+	function addTableCell(tr, text) {
+		 var td = document.createElement("td");
+		 $(td).css("vertical-align", "middle");
+		 $(td).html(text);
+		 $(tr).append(td);
+	}
+	
+	function showEditFilterDialog(id) {
+		$('#accessid').val(id);
+		
+		$('#edit-filter-dialog').find("select").val("");
+		$('#edit-filter-dialog').find("input[type='text']").val("");
+		
+		if (cachedAccesses != null) {
+			for (var i = 0; i < cachedAccesses.length; i++) {
+				if (cachedAccesses[i].id == id) {
+					if (cachedAccesses[i].resultFilter != null) {
+						for (var quid in cachedAccesses[i].resultFilter.filterValues) {
+							$('#edit-filter-dialog').find("#" + quid).val(cachedAccesses[i].resultFilter.filterValues[quid]);
+							
+							if (cachedAccesses[i].readonlyFilterQuestions != null && cachedAccesses[i].readonlyFilterQuestions.indexOf(quid) > -1) {
+								$('#edit-filter-dialog').find("#" + quid).attr("disabled", "disabled");
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
+		
+		$('#edit-filter-dialog').modal('show');
+	}
+	
+	function updateResultFilter() {
+		$('#resultpage').val(page);
+		$('#updateResultFilterForm').submit();
+	}
+	
+	function changeAccess(select) {
+		var id = $(select).attr("data-id");
+		var value = $(select).val();
+		var s = "accessid=" + id + "&readonly=" + value;
+		
+		$.ajax({
+			type:'POST',
+			  beforeSend: function(xhr){xhr.setRequestHeader(csrfheader, csrftoken);},
+			  url: contextpath + "/" + surveyUID + "/management/updateResultAccessTypeJSON",
+			  data: s,
+			  dataType: 'json',
+			  cache: false,
+			  success: function(success) {
+				  if (!success) {
+					  showError(errorOperationFailed);
+				  }
+			  }, error: function(e) {
+				  showError(e);
+			}});
+		
+	}

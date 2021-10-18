@@ -1,6 +1,8 @@
 package com.ec.survey.model.administration;
 
+import com.ec.survey.model.ResultAccess;
 import com.ec.survey.model.attendees.AttributeName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.hibernate.annotations.Cache;
@@ -62,6 +64,7 @@ public class User implements java.io.Serializable {
 	private boolean deleteRequested;
 	private String deleteCode;
 	private Date deleteDate;
+	private ResultAccess resultAccess;
 
 	public static final String ECAS = "ECAS";
 	public static final String SYSTEM = "SYSTEM";
@@ -484,6 +487,17 @@ public class User implements java.io.Serializable {
 			}
 		}
 		privilegesLoaded = true;
+	}
+	
+
+	@Transient
+	@JsonIgnore
+	public ResultAccess getResultAccess() {
+		return resultAccess;
+	}
+
+	public void setResultAccess(ResultAccess resultAccess) {
+		this.resultAccess = resultAccess;
 	}
 
 	@Transient
