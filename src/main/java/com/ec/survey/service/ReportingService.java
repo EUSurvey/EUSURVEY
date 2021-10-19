@@ -115,10 +115,10 @@ public class ReportingService extends BasicService {
 		
 		if (filter != null) {
 			
-			if ( filter.getFilterValues() != null &&  filter.getFilterValues().size() > 3)
-			{
-				throw new TooManyFiltersException("too many result filters");
-			}			
+//			if ( filter.getFilterValues() != null &&  filter.getFilterValues().size() > 3)
+//			{
+//				throw new TooManyFiltersException("too many result filters");
+//			}			
 			
 			if (filter.getInvitation() != null && filter.getInvitation().length() > 0)
 			{

@@ -750,7 +750,7 @@ final public class Survey implements java.io.Serializable {
 		Map<Element, List<Element>> result = new LinkedHashMap<>();
 		
 		for (Element element : elements) {
-			if (element instanceof Section || element instanceof Image || element instanceof Download || element instanceof Upload || element instanceof Ruler|| element instanceof Text || element instanceof RankingQuestion || element instanceof RatingQuestion || element instanceof Confirmation || element instanceof GalleryQuestion) {
+			if (element instanceof MatrixOrTable || element instanceof Section || element instanceof Image || element instanceof Download || element instanceof Upload || element instanceof Ruler|| element instanceof Text || element instanceof RankingQuestion || element instanceof RatingQuestion || element instanceof Confirmation || element instanceof GalleryQuestion) {
 				continue;
 			}
 			
@@ -762,19 +762,7 @@ final public class Survey implements java.io.Serializable {
 				result.put(element, children);
 			} else if (element instanceof FreeTextQuestion || element instanceof RegExQuestion || element instanceof NumberQuestion || element instanceof DateQuestion || element instanceof TimeQuestion || element instanceof EmailQuestion) {
 				result.put(element, new ArrayList<Element>());
-			} else if (element instanceof MatrixOrTable) {
-				for (Element subquestion : ((MatrixOrTable) element).getQuestions()) {
-					if (element instanceof Matrix) {
-						List<Element> children = new ArrayList<>();
-						for (Element child : ((Matrix) element).getAnswers()) {
-							children.add(child);
-						}
-						result.put(subquestion, children);
-					} else {
-						result.put(subquestion, new ArrayList<Element>());
-					}
-				}
-			}			
+			}	
 		}
 		
 		return result;
