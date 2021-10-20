@@ -156,7 +156,7 @@
 <p>
     Um vom System identifiziert werden zu können, benötigen die Benutzer einen
     Benutzernamen und ein Passwort, die vom EU Login
-    <a
+    <a  aria-labelledby="ftn1"
         href="#ftn1"
     >
         [1]

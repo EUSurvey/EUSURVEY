@@ -151,7 +151,7 @@
 <p>
     Om door het systeem te worden geïdentificeerd, heeft de gebruiker een login
     met bijbehorend wachtwoord nodig dat door de EULogin
-    <a href="#ftn1">
+    <a aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     -dienst wordt beheerd. Voor verdere informatie over de manier waarop

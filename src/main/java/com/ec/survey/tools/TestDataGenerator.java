@@ -12,6 +12,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.ec.survey.model.administration.User;
+import com.ec.survey.service.AdministrationService;
 import com.ec.survey.service.AnswerService;
 import com.ec.survey.service.ArchiveService;
 import com.ec.survey.service.AttendeeService;
@@ -45,6 +46,9 @@ public class TestDataGenerator implements Runnable {
 	@Resource(name = "attendeeService")
 	private AttendeeService attendeeService;
 	
+	@Resource(name = "administrationService")
+	private AdministrationService administrationService;
+	
 	@Autowired
 	protected MessageSource resources;	
 	
@@ -60,10 +64,11 @@ public class TestDataGenerator implements Runnable {
 	private BeanFactory context;
 	private int surveys;
 	private int contacts;
+	private int users;
 	
 	private boolean archive = false;
 	
-	public void init(User user, int answers, String fileDir, String sender, String email, String shortname, Integer questions, boolean archive, BeanFactory context, int files, int surveys, int contacts)
+	public void init(User user, int answers, String fileDir, String sender, String email, String shortname, Integer questions, boolean archive, BeanFactory context, int files, int surveys, int contacts, int users)
 	{
 		this.user = user;
 		this.answers = answers;
@@ -77,12 +82,15 @@ public class TestDataGenerator implements Runnable {
 		this.files = files;
 		this.surveys = surveys;
 		this.contacts = contacts;
+		this.users = users;
 	}
 	
 	@Override
 	public void run() {
 		try {
-			if (contacts > 0)
+			if (users > 0) {
+				administrationService.createDummyUsers(users, shortname);
+			} else if (contacts > 0)
 			{
 				attendeeService.createDummyAttendees(contacts, user.getId());
 				if (email != null) mailService.SendHtmlMail(email, sender, sender, "Test data generated", contacts + " contacts have been generated", null);

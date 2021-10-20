@@ -567,9 +567,9 @@ public class AnswerService extends BasicService {
 
 		if (filter != null) {
 
-			if (filter.getFilterValues() != null && filter.getFilterValues().size() > 3) {
-				throw new TooManyFiltersException("too many result filters");
-			}
+//			if (filter.getFilterValues() != null && filter.getFilterValues().size() > 3) {
+//				throw new TooManyFiltersException("too many result filters");
+//			}
 
 			if (filter.getStatus() != null && filter.getStatus().length() > 0
 					&& !filter.getStatus().equalsIgnoreCase("All")) {

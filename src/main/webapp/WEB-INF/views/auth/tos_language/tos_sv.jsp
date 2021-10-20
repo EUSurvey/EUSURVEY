@@ -143,7 +143,7 @@
 <p>
     För att identifieras av systemet behöver du ett användarnamn och ett
     lösenord, som hanteras via verktyget EULogin
-    <a href="#ftn1">
+    <a aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . För mer information om hur EULogin behandlar personuppgifter kan du gå in

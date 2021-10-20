@@ -321,7 +321,7 @@
 	<div class="modal-dialog">
     <div class="modal-content">
 	<div class="modal-body">
-		<spring:message code="info.KeepPivotTranslation" />
+		<spring:message code="info.KeepMainTranslation" />
 	</div>
 	<div class="modal-footer">
 		<a class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>			
@@ -378,9 +378,9 @@
 	  	<spring:message code="label.RequestTranslationHeader" /><span id="current-lang-request" name ="current-lang-request"></span> 
 	  </div>	
 	  <div class="modal-body">			 
-	  	<spring:message code="label.PivotLanguage"/> 
+	  	<spring:message code="label.MainLanguage"/>
 	  	<br />
-	  	<spring:message code="label.PivotExplanation"/>
+	  	<spring:message code="label.MainExplanation"/>
 	  	<br />
 	  	<select id="pivotlangs" name="pivotlangs" >
 				<c:forEach items="${completedTranslations}" var="trans">				

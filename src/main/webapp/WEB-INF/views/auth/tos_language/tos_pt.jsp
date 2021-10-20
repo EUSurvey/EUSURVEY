@@ -148,7 +148,7 @@
 <p>
     Para ser identificado pelo sistema, o utilizador necessita de um nome de
     utilizador / senha, gerido pelo serviço EU Login
-    <a href="#ftn1">
+    <a aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     . Para mais informações sobre o tratamento dos seus dados pessoais pelo EU

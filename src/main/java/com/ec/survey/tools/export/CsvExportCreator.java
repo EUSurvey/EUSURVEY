@@ -280,10 +280,10 @@ public class CsvExportCreator extends ExportCreator {
 				{
 					if (first)
 					{
-						writefirst(out, activity.getProperty());
+						writefirst(out, activity.getProperty() != "PivotLanguage" ? activity.getProperty() : "MainLanguage");
 						first = false;
 					} else {
-						write(out, activity.getProperty());
+						write(out, activity.getProperty() != "PivotLanguage" ? activity.getProperty() : "MainLanguage");
 					}
 				}
 				

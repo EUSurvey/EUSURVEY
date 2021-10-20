@@ -137,7 +137,7 @@ valdytoją užpildydamas    <a href="https://ec.europa.eu/eusurvey/home/support"
 <p>
     Tam, kad sistema atpažintų naudotoją, jam reikia prisijungimo vardo ir
     slaptažodžio. Jiems tvarkyti naudojama „EU Login“
-    <a href="#ftn1">
+    <a  aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     paslauga. Daugiau informacijos apie tai, kaip „EU Login“ tvarko jūsų asmens

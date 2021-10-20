@@ -72,6 +72,11 @@ function returnTrueForSpace(event)
 	return false;
 }
 
+function preventScrollOnSpaceInput(event){
+	if(event.keyCode == 32)
+		event.preventDefault();
+}
+
 function ratingClick(link)
 {	
 	var pos = $(link).index();
@@ -321,7 +326,7 @@ function createUploader(instance, maxSize)
 	    		 $(instance).closest(".survey-element").append("<div class='validation-error' aria-live='polite'>" + getWrongExtensionMessage(fileName) + "</div>");
 	    	}
 
-			$(".qq-uploader input[type='file']").attr("title", " ");
+			$(".qq-uploader input[type='file']").attr("title", " ");			
 		},
 		onError: function() {
 			$(this.element).parent().find(".uploadinfo").hide();
@@ -337,6 +342,10 @@ function createUploader(instance, maxSize)
 	});
 
 	$(".qq-uploader input[type='file']").attr("title", " ");
+	
+	setTimeout(function(){ 
+		$(".file-uploader[data-id='" + $(instance).attr('data-id') + "']").find(".qq-uploader input[type='file']").removeAttr("aria-label").attr("aria-labelledby", "questiontitle" + $(instance).attr('data-id')).attr("aria-describedby", "questionhelp" +  $(instance).attr('data-id'));
+	}, 3000);
 }
 
 $(function() {
@@ -683,6 +692,7 @@ function selectPage(val) {
 	}
 	
 	var validatedPerPage = $("#validatedPerPage").val().toLowerCase() == "true";
+	var preventGoingBack = $("#preventGoingBack").val().toLowerCase() == "true";
 	
 	var validate = val > page;
 		

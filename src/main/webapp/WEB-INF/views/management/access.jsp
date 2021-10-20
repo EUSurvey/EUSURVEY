@@ -42,10 +42,31 @@
 		.dep-tree .check {
 			margin-right: 5px !important;
 		}
+
+		#tblResultPrivileges select {
+			background-color: #fff;
+		}
+		
+		a.disabled {
+			color: #ccc;
+
+		#add-user-dialog label {
+			margin-bottom: 0;
+			margin-top: 10px;
+		}
 		
 	</style>
 	<script type="text/javascript" src="${contextpath}/resources/js/access.js?version=<%@include file="../version.txt" %>"></script>
 	<script type="text/javascript" >
+	
+		var surveyUID = "${form.survey.uniqueId}";
+		var noFilterMessage = '<spring:message code="label.NoFilter" />';
+		var labelreadonly = '<spring:message code="label.ReadingAccess" />';
+		var labelreadwrite = '<spring:message code="label.ReadWriteAccess" />';
+		var errorOperationFailed = '<spring:message code="error.OperationFailed" />';
+		var page = ${resultspage};
+		var rows = 20;
+		
 		$(document).ready(function(){
 			$("tr.readonly").each(function(){
 				$(this).find("img").removeAttr("onclick").css("cursor", "default");
@@ -84,6 +105,10 @@
 			})
 			
 			$('[data-toggle="tooltip"]').tooltip(); 
+			
+			<c:if test="${selectSecondTab != null}">
+				$('#resultsTab').tab('show');
+			</c:if>
 		})
 	</script>
 </head>
@@ -103,6 +128,7 @@
 			<input type="hidden" name="target" value="addUser" />
 			<input type="hidden" name="login" id="add-form-login" value="" />
 			<input type="hidden" name="ecas" id="add-form-ecas" value="" />
+			<input type="hidden" name="resultMode" id="add-resultMode" value="false" />
 		</form:form>
 		
 		<form:form style="display: none" id="add-form-group" method="POST" action="access">
@@ -113,252 +139,90 @@
 		<form:form style="display: none" id="remove-form" method="POST" action="access">
 			<input type="hidden" name="target" value="removeUser" />
 			<input type="hidden" name="id" id="remove-id" value="" />
+			<input type="hidden" name="resultMode" id="remove-resultMode" value="false" />
 		</form:form>
 		
-		<div id="action-bar" class="container action-bar">
-			<div class="row">
-				<div class="col-md-12" style="text-align: center">
-					<c:choose>
-						<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">
-							<a  id="btnAddUserFromAccess" class="btn btn-default" onclick="showAddUserDialog()"><spring:message code="label.AddUser" /></a>
-							<c:if test="${USER.getGlobalPrivilegeValue('ECAccess') > 0}">
-								<a id="btnAddDptFromAccess" class="btn btn-default" onclick="showAddDepartmentDialog()"><spring:message code="label.AddDepartment" /></a>
-							</c:if>
-						</c:when>
-						<c:otherwise>
-							<a class="btn disabled btn-default"><spring:message code="label.AddUser" /></a>
-						</c:otherwise>
-					</c:choose>
+		<c:if test="${showFirstTab && showSecondTab }">
+			<div id="action-bar" class="container action-bar">
+				<div class="row">
+					<div class="col-md-12" style="text-align: center;">
+					 	<ul class="nav nav-tabs" role="tablist">
+						    <li role="presentation" class="active"><a href="#global" aria-controls="global" role="tab" data-toggle="tab"><spring:message code="label.StandardPrivileges" /></a></li>
+						    <li role="presentation"><a href="#results" id="resultsTab" aria-controls="results" role="tab" data-toggle="tab"><spring:message code="label.DedicatedResultPrivileges" /></a></li>
+						</ul>
+					</div>
 				</div>
 			</div>
-		</div>	
+		</c:if>
 	
 		<div class="fullpageform" style="padding-top: 0px;">
-	
-			<table id="tblPrivilegesFromAccess" class="table table-bordered table-striped table-styled" style="margin-left: auto; margin-right: auto; margin-top: 40px; width: 500px;">
-			
-				<thead>
-					<tr style="text-align: center;">
-						<th style="vertical-align: middle;"><spring:message code="label.User" />
-	                                            <c:if test="${!oss}">/ <spring:message code="label.Department" /></c:if>
-	                                        </th>
-						<th style="vertical-align: middle;"><spring:message code="label.Type" /></th>
-						<th style="vertical-align: middle; width: 20%; text-align: center"><spring:message code="label.AccessFormPreview" /></th>
-						<th style="vertical-align: middle; width: 20%; text-align: center"><spring:message code="label.Results" /></th>
-						<th style="vertical-align: middle; width: 20%; text-align: center"><spring:message code="label.FormManagement" /></th>
-						<th style="vertical-align: middle; width: 20%; text-align: center"><spring:message code="label.ManageInvitations" /></th>
-						<th style="width: 10%"><spring:message code="label.Actions" /></th>
-					</tr>
-				</thead>
+		
+			<c:choose>
+				<c:when test="${showFirstTab && showSecondTab }">
+					<div class="tab-content" style="padding-top: 0px; border: 1px solid #ddd; margin-top: -6px; max-width: 1139px; margin-left: auto; margin-right: auto;">
+						<div role="tabpanel" class="tab-pane active" id="global">
+							<%@ include file="access-general.jsp" %>
+						</div>
 				
-				<tbody>
+						<div role="tabpanel" class="tab-pane" id="results">
+							<%@ include file="access-results.jsp" %>
+						</div>
+					</div>
+				</c:when>
+				<c:when test="${showFirstTab}">
+					<div style="padding-top: 130px;">
+						<%@ include file="access-general.jsp" %>
+					</div>
+				</c:when>
+				<c:when test="${showSecondTab}">
+					<div style="padding-top: 130px;">
+						<%@ include file="access-results.jsp" %>
+					</div>
+				</c:when>
+			</c:choose>
 			
-				<c:forEach items="${accesses}" var="access">
-					<c:choose>
-						<c:when test="${access.readonly}">
-							<tr id="accessrow${access.id}" class="readonly">
-						</c:when>
-						<c:otherwise>
-							<tr id="accessrow${access.id}">
-						</c:otherwise>
-					</c:choose>			
-					
-						<td style="vertical-align: middle;">
-							<c:choose>
-								<c:when test="${access.department != null && access.department.length() > 0}">
-									<esapi:encodeForHTML>${access.department}</esapi:encodeForHTML>
-								</c:when>
-								<c:otherwise>
-									<c:if test="${access.user.isExternal() and (!oss)}">
-										<span class="externaluser hideme"></span>
-									</c:if>
-									<esapi:encodeForHTML>${access.user.name} ${access.user.department}</esapi:encodeForHTML>
-								</c:otherwise>
-							</c:choose>
-						</td>
-						<td style="text-align: center; vertical-align: middle;">
-							<c:choose>
-								<c:when test="${access.department != null && access.department.length() > 0}">
-									<img data-toggle="tooltip" title="<spring:message code="label.Department"/>" src="${contextpath}/resources/images/group.png" alt="Group" />
-								</c:when>
-								<c:otherwise>
-									<img data-toggle="tooltip" title="<spring:message code="label.User"/>" src="${contextpath}/resources/images/user.png" alt="User" />
-								</c:otherwise>
-							</c:choose>
-						</td>
-						<c:choose>
-							<c:when test="${USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('FormManagement') > 1 || form.survey.owner.id == USER.id}">
-								<td style="text-align: center">
-									<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 2}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" onclick="changePrivilege('AccessDraft',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 1}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" onclick="changePrivilege('AccessDraft',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 0}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" onclick="changePrivilege('AccessDraft',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-									</c:if>
-								</td>
-								<td style="text-align: center">
-									<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 2}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" onclick="changePrivilege('AccessResults',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 1}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" onclick="changePrivilege('AccessResults',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 0}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" onclick="changePrivilege('AccessResults',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-									</c:if>	
-								</td>
-								<td style="text-align: center">
-									<c:choose>
-										<c:when test="${access.user.formPrivilege < 1}">
-											<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGrey" src="${contextpath}/resources/images/bullet_ball_glass_gray.png" alt="none" />
-										</c:when>
-										<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 2}">
-											<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" onclick="changePrivilege('FormManagement',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-										</c:when>
-										<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 1}">
-											<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" onclick="changePrivilege('FormManagement',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-										</c:when>
-										<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 0}">
-											<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" onclick="changePrivilege('FormManagement',${access.id});" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-										</c:when>		
-									</c:choose>
-								</td>
-								<td style="text-align: center">
-									<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 2}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" onclick="changePrivilege('ManageInvitations',${access.id});" src="/eusurvey/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 1}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" onclick="changePrivilege('ManageInvitations',${access.id});" src="/eusurvey/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 0}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" onclick="changePrivilege('ManageInvitations',${access.id});" src="/eusurvey/resources/images/bullet_ball_glass_red.png" alt="none" />
-									</c:if>	
-								</td>
-								<td style="vertical-align: middle; text-align: center">
-									<c:if test="${!access.readonly}">
-										<a data-toggle="tooltip" title="<spring:message code="label.Remove"/>" class="iconbutton" onclick="showRemoveDialog(${access.id},'${access.user.login}');"><span class="glyphicon glyphicon-remove"></span></a>
-									</c:if>	
-								</td>
-							</c:when>
-							<c:otherwise>
-								<td style="text-align: center">
-									<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 2}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 1}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('AccessDraft') == 0}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-									</c:if>
-								</td>
-								<td style="text-align: center">
-									<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 2}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 1}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('AccessResults') == 0}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-									</c:if>	
-								</td>
-								<td style="text-align: center">
-									<c:choose>
-										<c:when test="${access.user.formPrivilege < 1}">
-											<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGrey"  src="${contextpath}/resources/images/bullet_ball_glass_gray.png" alt="none" />
-										</c:when>
-										<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 2}">
-											<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-										</c:when>
-										<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 1}">
-											<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-										</c:when>
-										<c:when test="${access.getLocalPrivilegeValue('FormManagement') == 0}">
-											<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="none" />
-										</c:when>		
-									</c:choose>
-								</td>
-								<td style="text-align: center">
-									<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 2}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletGreen" src="/eusurvey/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 1}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletYellow" src="/eusurvey/resources/images/bullet_ball_glass_yellow.png" alt="read" />
-									</c:if>
-									<c:if test="${access.getLocalPrivilegeValue('ManageInvitations') == 0}">
-										<img data-toggle="tooltip" title="<spring:message code="label.EditRights"/>" class="roleBulletRed" src="/eusurvey/resources/images/bullet_ball_glass_red.png" alt="none" />
-									</c:if>	
-								</td>
-								<td style="vertical-align: middle; text-align: center">
-									<c:if test="${!access.readonly}">
-										<a data-toggle="tooltip" title="<spring:message code="label.Remove"/>" class="iconbutton"><span class="glyphicon glyphicon-remove"></span></a>
-									</c:if>
-								</td>
-							</c:otherwise>
-						</c:choose>
-					</tr>
-				</c:forEach>
-				
-				</tbody>
-			
-			</table>
-			
-				<div id="tbllist-empty" class="noDataPlaceHolder" <c:if test="${accesses.size() == 0}">style="display:block;"</c:if>>
-					<p>
-						<spring:message code="label.NoDataPrivilegeText"/>&nbsp;<img src="${contextpath}/resources/images/icons/32/forbidden_grey.png" alt="no data"/>
-					<p>
-				</div>
-			
-			</div>
 		</div>
+		
+	</div>
 
 	<%@ include file="../footer.jsp" %>	
-
-	<div class="modal" id="user-dialog" data-backdrop="static">
-		<div class="modal-dialog">
-    	<div class="modal-content">
-		<div class="modal-body">
-			<a onclick="updatePrivilege(0);" id="btnNoAccessPrivilegFromDialog" class="btn btn-default" style="margin-right: 10px;">
-		  		<img src="${contextpath}/resources/images/bullet_ball_glass_red.png" alt="read/write" />
-		  	</a>
-		  	<spring:message code="label.NoAccess" /><br />
-		  	<span id="yellowArea">
-			  	<a onclick="updatePrivilege(1);" id="btnROAccessPrivilegFromDialog" class="btn btn-default" style="margin-right: 10px;">
-			  		<img src="${contextpath}/resources/images/bullet_ball_glass_yellow.png" alt="read/write" />
-			  	</a>
-			  	<spring:message code="label.ReadingAccess" /><br />
-		  	</span>
-		  	<a onclick="updatePrivilege(2);" id="btnRWAccessPrivilegFromDialog" class="btn btn-default" style="margin-right: 10px;">
-		  		<img src="${contextpath}/resources/images/bullet_ball_glass_green.png" alt="read/write" />
-		  	</a>
-		  	<spring:message code="label.ReadWriteAccess" />
-		</div>
-		<div class="modal-footer">
-			<img id="wait-animation" class="hideme" style="margin-right:120px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-		  	<a  class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Cancel" /></a>			
-		</div>
-		</div>
-		</div>
-	</div>
 
 	<div class="modal" id="add-user-dialog" data-backdrop="static">
 		<div class="modal-dialog modal-lg">
     	<div class="modal-content">
-		<div class="modal-header"><spring:message code="label.SelectPrivilegedUser" /></div>
+		<div class="modal-header">			
+			<spring:message code="label.AddUser" />
+			&nbsp;
+			<a onclick="$(this).closest('.modal-header').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+													
+			<div style="clear: both"></div>
+			<div class="help" style="display: none; margin-top: 10px;">
+				<span><spring:message code="info.AddUserAccess" /></span>	
+			</div>	
+		</div>
 		<div class="modal-body">
 			<c:choose>
 				<c:when test="${USER.getGlobalPrivilegeValue('ECAccess') > 0}">
-					<div style="width: 450px" id="add-user-domain-div">
-						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
-						<select id="add-user-type-ecas" onchange="checkUserType()" style="width: 450px" >
-							<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
-								<option value="${domain.key}">${domain.value} </option>
-							</c:forEach>
-						</select>	
+					<div style="float: left; width: 250px;  margin-right: 10px;">
+						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
+						<input type="text" maxlength="255" id="add-user-email" />
+					</div>
+				
+					<div style="clear: both"></div>
+					
+					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-firstname-div">
+						<label for="add-department-name"><spring:message code="label.FirstName" /></label><br />
+						<input type="text" maxlength="255" id="add-first-name" />
+					</div>
+					
+					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-lastname-div">						
+						<label for="add-last-name"><spring:message code="label.LastName" /></label><br />
+						<input type="text" maxlength="255" id="add-last-name" />
+					</div>	
+					
+					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
+						<label for="add-user-name"><spring:message code="label.UserName" /><span id="eulogin-span"> (EU Login)</span></label><br />
+						<input type="text" maxlength="255" id="add-user-name" />
 					</div>
 					
 					<div style="clear: both"></div>
@@ -368,65 +232,47 @@
 						<input type="text" maxlength="255" id="add-department-name" />
 					</div>
 					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-firstname-div">
-						<label for="add-department-name"><spring:message code="label.FirstName" /></label><br />
-						<input type="text" maxlength="255" id="add-first-name" />
+					<div style="float: left; width: 510px" id="add-user-domain-div">
+						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
+						<select id="add-user-type-ecas" onchange="checkUserType()" style="width: 510px" >
+							<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
+								<option value="${domain.key}">${domain.value} </option>
+							</c:forEach>
+						</select>	
 					</div>
 					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
-						<label for="add-user-name"><spring:message code="label.Login" /></label><br />
-						<input type="text" maxlength="255" id="add-user-name" />
-					</div>
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-lastname-div">						
-						<label for="add-last-name"><spring:message code="label.LastName" /></label><br />
-						<input type="text" maxlength="255" id="add-last-name" />
-					</div>			
-					
+				</c:when>
+				<c:when test="${USER.type == 'SYSTEM'}">
 					<div style="float: left; width: 250px;  margin-right: 10px;">
 						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
 						<input type="text" maxlength="255" id="add-user-email" />
 					</div>
 					
-				</c:when>
-				<c:when test="${USER.type == 'SYSTEM'}">
+					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
+						<label for="add-user-name"><spring:message code="label.UserName" /></label><br />
+						<input type="text" maxlength="255" id="add-user-name" />
+					</div>
+					
+					<div style="clear: both"></div>
+					
 					<div style="width: 250px" id="add-user-domain-div">
 						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
 						<select id="add-user-type-ecas" onchange="checkUserType()">
 							<option value="system" selected="selected"><spring:message code="label.System" /></option>
 						</select>
 					</div>
-										
-					<div style="clear: both"></div>
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
-						<label for="add-user-name"><spring:message code="label.Login" /></label><br />
-						<input type="text" maxlength="255" id="add-user-name" />
-					</div>
-					
+				</c:when>	
+				<c:otherwise>
 					<div style="float: left; width: 250px;  margin-right: 10px;">
 						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
 						<input type="text" maxlength="255" id="add-user-email" />
 					</div>
-				</c:when>	
-				<c:otherwise>
-					<div style="width: 250px" id="add-user-domain-div">
-						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
-						<select id="add-user-type-ecas" onchange="checkUserType()">
-							<option value="external" selected="selected"><spring:message code="label.EXT" /></option>
-						</select>
-					</div>
-										
+					
 					<div style="clear: both"></div>
 					
 					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-firstname-div">
 						<label for="add-department-name"><spring:message code="label.FirstName" /></label><br />
 						<input type="text" maxlength="255" id="add-first-name" />
-					</div>
-					
-					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
-						<label for="add-user-name"><spring:message code="label.Login" /></label><br />
-						<input type="text" maxlength="255" id="add-user-name" />
 					</div>
 					
 					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-lastname-div">						
@@ -434,9 +280,18 @@
 						<input type="text" maxlength="255" id="add-last-name" />
 					</div>	
 					
-					<div style="float: left; width: 250px;  margin-right: 10px;">
-						<label for="add-user-name"><spring:message code="label.EmailAddress" /></label><br />
-						<input type="text" maxlength="255" id="add-user-email" />
+					<div style="float: left; width: 250px;  margin-right: 10px;" id="add-user-name-div">
+						<label for="add-user-name"><spring:message code="label.UserName" /></label><br />
+						<input type="text" maxlength="255" id="add-user-name" />
+					</div>
+					
+					<div style="clear: both"></div>		
+					
+					<div style="width: 250px" id="add-user-domain-div">
+						<label for="add-user-type-ecas"><spring:message code="label.Domain" /></label><br />
+						<select id="add-user-type-ecas" onchange="checkUserType()">
+							<option value="external" selected="selected"><spring:message code="label.EXT" /></option>
+						</select>
 					</div>
 				</c:otherwise>
 			</c:choose>
@@ -452,10 +307,10 @@
 				<table id="search-results" class="table table-bordered table-hover table-styled" style="max-width: none; margin-bottom: 0px">
 					<thead>
 						<tr>
-							<th onclick="searchUser('login');"><spring:message code="label.Login" /></th>
+							<th onclick="searchUser('login');"><spring:message code="label.UserName" /></th>
 							<th onclick="searchUser('first');"><spring:message code="label.FirstName" /></th>
 							<th onclick="searchUser('last',);"><spring:message code="label.LastName" /></th>
-                                                        <th onclick="searchUser('department');" <c:if test="${oss}">class="hideme"</c:if> ><spring:message code="label.Department" /></th>
+                            <th onclick="searchUser('department');" <c:if test="${oss}">class="hideme"</c:if> ><spring:message code="label.Department" /></th>
 						</tr>
 					</thead>
 					<tbody></tbody>
@@ -473,39 +328,6 @@
 		</div>
 	</div>
 	
-	<div class="modal" id="add-group-dialog" data-backdrop="static">
-		<div class="modal-dialog">
-    	<div class="modal-content">
-		<div class="modal-header"><spring:message code="label.SelectPrivilegedDepartment" /></div>
-		<div class="modal-body">
-			
-			<div id="add-group-domain-div" style="margin-bottom: 10px;">
-				<label for="add-group-type-ecas"><spring:message code="label.Domain" /></label>
-				<select id="add-group-type-ecas" onchange="domainChaged()"  style="width: 450px" >
-					<c:forEach items="${domains}" var="domain" varStatus="rowCounter">
-						<option value="${domain.key}">${domain.value} </option>	
-					</c:forEach>
-				</select>	
-			</div>
-			
-			<div style="height: 400px; overflow: auto;" id="add-group-tree-div" >
-				<label for="add-group-name"><spring:message code="label.SelectADepartment" />:</label>
-				
-				<ul id="tree" class="dep-tree" style="-moz-user-select: none;">
-	
-				</ul>
-			</div>	
-						
-		</div>
-		<div class="modal-footer">
-			<img id="add-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a id="btnOkAddDptFromAccess"  onclick="addGroup();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.OK" /></a>
-			<a id="btnCancelAdddDptFromAccess"  class="btn btn-default" data-dismiss="modal"><spring:message code="label.Cancel" /></a>				
-		</div>
-		</div>
-		</div>
-	</div>
-	
 	<div class="modal" id="remove-user-dialog" data-backdrop="static">
 		<div class="modal-dialog modal-sm">
     	<div class="modal-content">
@@ -514,23 +336,8 @@
 		</div>
 		<div class="modal-footer">
 			<img id="remove-wait-animation" class="hideme" style="margin-right:90px;" src="${contextpath}/resources/images/ajax-loader.gif" />
-			<a  id="btnOkDeleteFromAccess" onclick="removeUser();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
-			<a  id="btnCancelDeleteFromAccess" class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>			
-		</div>
-		</div>
-		</div>
-	</div>
-	
-	<div class="modal" id="ManageInvitations4Externals-dialog" data-backdrop="static">
-		<div class="modal-dialog modal-sm">
-    	<div class="modal-content">
-    	<div class="modal-header"><spring:message code="label.Warning" /></div>
-		<div class="modal-body">
-			<spring:message code="question.ManageInvitations4Externals" />
-		</div>
-		<div class="modal-footer">
-			<a  onclick="updatePrivilege2();" class="btn btn-primary"><spring:message code="label.Yes" /></a>
-			<a  class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>			
+			<a id="btnOkDeleteFromAccess" onclick="removeUser();" class="btn btn-primary" data-dismiss="modal"><spring:message code="label.Yes" /></a>
+			<a id="btnCancelDeleteFromAccess" class="btn btn-default" data-dismiss="modal"><spring:message code="label.No" /></a>			
 		</div>
 		</div>
 		</div>

@@ -458,7 +458,25 @@
 								<a data-bind="visible: !showBackgroundDocs(), click: addDocRow" data-toggle="tooltip" title="<spring:message code="label.AddBackgroundDocument" />" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span></a>
 							</div>
 						</td>
-					</tr>					
+					</tr>
+					<tr>
+						<td>
+							<div style="float: left">
+								<spring:message code="label.DedicatedResultPrivileges" />
+								<a onclick="$(this).closest('td').find('.help').toggle()"><span class="glyphicon glyphicon-info-sign"></span></a>
+								<div class="help hideme"><spring:message code="info.DedicatedResultPrivileges" /></div>
+							</div>
+							<div style="float: right">
+								<div class="onoffswitch">
+									<form:checkbox path="survey.dedicatedResultPrivileges" class="onoffswitch-checkbox" id="myonoffswitchdedicatedResultPrivileges" />
+									<label class="onoffswitch-label" for="myonoffswitchdedicatedResultPrivileges">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+							    </div>
+							</div>
+						</td>
+					</tr>				
 				</table>
 			</div>		
 			
@@ -697,7 +715,7 @@
 							<div style="float: right">							
 								<div class="onoffswitch">
 									<form:checkbox path="survey.saveAsDraft" class="onoffswitch-checkbox" id="myonoffswitchdraft" data-bind="checked: _properties.saveAsDraft()"  />
-									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.delphi() || _properties.timeLimit().length > 0) ? " disabled" : "")' onclick="_properties.toggleSaveAsDraft()">
+									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.delphi() || _properties.timeLimit().length > 0 || _properties.preventGoingBack()) ? " disabled" : "")' onclick="_properties.toggleSaveAsDraft()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -723,7 +741,7 @@
 							<div style="float: right">							
 								<div class="onoffswitch">
 									<form:checkbox path="survey.changeContribution" class="onoffswitch-checkbox" data-bind="checked: _properties.changeContribution()" />
-									<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.delphi() || _properties.timeLimit().length > 0) ? " disabled" : "")' onclick="_properties.toggleChangeContribution()">
+									<label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+((_properties.delphi() || _properties.timeLimit().length > 0 || _properties.preventGoingBack()) ? " disabled" : "")' onclick="_properties.toggleChangeContribution()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -772,8 +790,8 @@
 							</div>						
 							<div style="float: right">
 								<div class="onoffswitch">
-									<input type="checkbox" data-bind="checked: multiPaging" name="survey.multiPaging" class="onoffswitch-checkbox" id="myonoffswitchmultiPaging" />
-									 <label class="onoffswitch-label" for="myonoffswitchmultiPaging">
+									<form:checkbox path="survey.multiPaging" class="onoffswitch-checkbox" id="myonoffswitchmultiPaging" data-bind="checked: _properties.multiPaging()" />
+									 <label class="onoffswitch-label" onclick="_properties.toggleMultiPaging()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>
@@ -790,6 +808,22 @@
 								<div class="onoffswitch">
 									<form:checkbox path="survey.validatedPerPage" class="onoffswitch-checkbox" id="myonoffswitchvalidatedPerPage" />
 									 <label class="onoffswitch-label" for="myonoffswitchvalidatedPerPage">
+								        <span class="onoffswitch-inner"></span>
+								        <span class="onoffswitch-switch"></span>
+								    </label>
+								</div>
+							</div>	
+						</td>
+					</tr>
+					<tr class="subelement noborder" data-bind="visible: multiPaging">
+						<td>
+							<div style="float: left">
+								<spring:message code="label.PreventGoingBack" />
+							</div>
+							<div style="float: right">							
+								<div class="onoffswitch">
+									<form:checkbox path="survey.preventGoingBack" class="onoffswitch-checkbox" id="myonoffswitchPreventGoingBack" data-bind="checked: _properties.preventGoingBack()" />
+									 <label class="onoffswitch-label" data-bind='class: "onoffswitch-label"+ ((_properties.delphi()) ? " disabled" : "")' onclick="_properties.togglePreventGoingBack()">
 								        <span class="onoffswitch-inner"></span>
 								        <span class="onoffswitch-switch"></span>
 								    </label>

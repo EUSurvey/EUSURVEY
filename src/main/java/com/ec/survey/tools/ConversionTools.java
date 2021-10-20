@@ -164,7 +164,15 @@ public class ConversionTools {
 	
 	public static String removeHTMLNoEscape(String htmlString)
 	{
+		return removeHTMLNoEscape(htmlString, false);
+	}
+	
+	public static String removeHTMLNoEscape(String htmlString, boolean removeInvalidHtmlEntities)
+	{
 		if (htmlString == null) return "";
+		if (removeInvalidHtmlEntities ) {
+			htmlString = removeInvalidHtmlEntities(htmlString);
+		}
 		return Jsoup.parse(htmlString).text().trim();
 	}
 	

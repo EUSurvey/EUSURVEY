@@ -85,7 +85,7 @@
 							<spring:message code="info.NoSharedSurveys" />
 						</div>
 							
-						<div class="container-fluid" style="display: none" data-bind="visible: (lastEditedSurveyShortname() != null && lastEditedSurveyShortname().length > 0) || surveysMode() == 'archived'">
+						<div class="container-fluid" style="display: none" data-bind="visible: (lastEditedSurveyShortname() != null && lastEditedSurveyShortname().length > 0) || surveysMode() == 'archived' || (surveys() != null && surveys().length != 0)">
 														
 							<div class="row" style="margin-bottom: 10px;">				
 								<div class="col-md-6" >
@@ -592,7 +592,7 @@
 														<td data-bind="html: numberOfAnswerSetsPublished"></td>
 														<td style="word-break: break-all; word-wrap: break-word;">
 															<!-- ko foreach: translations -->
-															<div data-toggle="tooltip" title="Available" data-bind="html: $data, attr: {class: $data == $parent.language.code ? 'language pivotlanguage' : $.inArray($data, $parent.completeTranslations) > -1 ? 'language' : ' language languageUnpublished', title: $data == $parent.language.code ? '<spring:message code="label.PivotLanguage" />' : $.inArray($data, $parent.completeTranslations) > -1 ? '<spring:message code="label.Available" />' : '<spring:message code="label.NotYetAvailable" />'}"></div>
+															<div data-toggle="tooltip" title="Available" data-bind="html: $data, attr: {class: $data == $parent.language.code ? 'language pivotlanguage' : $.inArray($data, $parent.completeTranslations) > -1 ? 'language' : ' language languageUnpublished', title: $data == $parent.language.code ? '<spring:message code="label.MainLanguage" />' : $.inArray($data, $parent.completeTranslations) > -1 ? '<spring:message code="label.Available" />' : '<spring:message code="label.NotYetAvailable" />'}"></div>
 															<!-- /ko -->
 														</td>
 														<td class="surveyactions">

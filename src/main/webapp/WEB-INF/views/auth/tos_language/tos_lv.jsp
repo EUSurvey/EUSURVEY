@@ -138,7 +138,7 @@ datu pārzini ar šīs    <a href="https://ec.europa.eu/eusurvey/home/support">v
 <p>
     Lai sistēma spētu lietotāju identificēt, tam nepieciešams pāris
     “pieteikumvārds / parole”; tos pārvalda pakalpojums <em>EULogin</em>
-    <a href="#ftn1">
+    <a aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
 . Papildu informācijai par to, kā jūsu persondatus apstrādā    <em>EULogin</em>, lūdzam skatīt

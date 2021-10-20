@@ -111,6 +111,9 @@
 						<c:if test="${publication == null || publication.isAllQuestions() || publication.isSelected(question.id)}">
 							<c:if test="${filter == null || filter.visibleQuestions.contains(question.id.toString())}">
 								<c:choose>
+									<c:when test="${filter.getReadOnlyFilterQuestions().contains(question.uniqueId)}">
+										<th></th>
+									</c:when>
 									<c:when test="${question.getType() == 'Image' || question.getType() == 'Text' || question.getType() == 'Download' || question.getType() == 'Confirmation' || question.getType() == 'Ruler'}"></c:when>
 									<c:when test="${question.getType() == 'GalleryQuestion' && !question.selection}"></c:when>
 									<c:when test="${question.getType() == 'Matrix'}">
@@ -128,10 +131,10 @@
 															<div>
 																<c:choose>
 																	<c:when test="${filter.contains(matrixQuestion.id, matrixQuestion.uniqueId, possibleanswer.id, possibleanswer.uniqueId) }">
-																		<input checked="checked" name="filter${matrixQuestion.id}|${matrixQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}" />${possibleanswer.title}
+																		<input checked="checked" name="filter${matrixQuestion.id}|${matrixQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}" />${possibleanswer.strippedTitle}
 																	</c:when>
 																	<c:otherwise>
-																		<input name="filter${matrixQuestion.id}|${matrixQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}" />${possibleanswer.title}
+																		<input name="filter${matrixQuestion.id}|${matrixQuestion.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}" />${possibleanswer.strippedTitle}
 																	</c:otherwise>
 																</c:choose>
 															</div>
@@ -289,10 +292,10 @@
 													    	<div>
 														    	<c:choose>
 																	<c:when test="${filter.contains(question.id, question.uniqueId, possibleanswer.id, possibleanswer.uniqueId) }">
-																		<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}">${possibleanswer.title}</input>
+																		<input checked="checked" name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}">${possibleanswer.strippedTitle}</input>
 																	</c:when>
 																	<c:otherwise>
-																		<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}">${possibleanswer.title}</input>
+																		<input name="filter${question.id}|${question.uniqueId}" data-stopPropagation="true" type="checkbox" class="check checkFilterCell" value="${possibleanswer.id}|${possibleanswer.uniqueId}">${possibleanswer.strippedTitle}</input>
 																	</c:otherwise>
 																</c:choose>
 													    	</div>
@@ -1112,7 +1115,7 @@ var closeOverlayDivsEnabled = false;
 						 var tr = document.createElement("tr");
 						 
 						 <c:choose>
-							 <c:when test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1)}">
+							 <c:when test="${publication == null && (sessioninfo.owner == USER.id || USER.formPrivilege > 1 || USER.getLocalPrivilegeValue('AccessResults') > 1 || (USER.getResultAccess() != null && !USER.getResultAccess().isReadonly()))}">
 							 
 							 	var td = document.createElement("td");
 							 	$(td).addClass("checkDelete").css("min-width","13px");

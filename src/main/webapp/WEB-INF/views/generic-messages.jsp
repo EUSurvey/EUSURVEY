@@ -12,7 +12,7 @@
 	</div>
 </div>
 
-<div id="messages-box-div">
+<div id="messages-box-div" style="display: none">
 	<div id="messages-box">
 		<!-- ko foreach: systemMessages -->
 			<!-- ko if: Hidden() == false -->
@@ -332,6 +332,8 @@
 		}
 		
 		checkTimeout();
+		
+		$('#messages-box-div').show();
 	});
 	
 	function showInfo(text)

@@ -1710,12 +1710,12 @@
 			<ul>
 				<li>
 					au moment d’ajouter une nouvelle traduction, cochez la case «Demander
-					une traduction automatique» (pour une traduction depuis la langue pivot
+					une traduction automatique» (pour une traduction depuis la langue principale
 					de votre enquête);
 				</li>
 				<li>
 					cliquez sur l’icône «Demander une traduction» dans la colonne «Actions»
-					(pour une traduction depuis la langue pivot de votre enquête);
+					(pour une traduction depuis la langue principale de votre enquête);
 				</li>
 				<li>
 					sélectionnez toutes les langues vers lesquelles vous souhaitez faire
@@ -1856,7 +1856,7 @@
 			<p>
 				Lorsque vous envoyez des invitations, ou utilisez le lien vers le
 				formulaire publié figurant sur la page «Aperçu», le lien renvoie par défaut
-				vers le formulaire dans la langue pivot.
+				vers le formulaire dans la langue principale.
 			</p>
 			<p>
 				Cependant, il est également possible de    <b>rediriger les participants directement</b> vers la traduction souhaitée,

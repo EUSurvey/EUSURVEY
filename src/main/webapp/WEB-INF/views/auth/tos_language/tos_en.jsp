@@ -139,7 +139,7 @@ Controller using the    <a href="https://ec.europa.eu/eusurvey/home/support">con
 <p>
     To be identified by the system, the user needs a couple login / password,
     which is managed by the EULogin
-    <a href="#ftn1">
+    <a aria-labelledby="ftn1" href="#ftn1">
         [1]
     </a>
     service. For further information on how EULogin is processing your personal

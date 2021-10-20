@@ -149,7 +149,7 @@ kontakte den dataansvarlige via    <a href="https://ec.europa.eu/eusurvey/home/s
 <p>
     For at blive identificeret af systemet har brugeren brug for et login og
     tilhørende password, som administreres af EULogin
-   <a
+   <a  aria-labelledby="ftn1"
         href="#ftn1"
     >
         [1]

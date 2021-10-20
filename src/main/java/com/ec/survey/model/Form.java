@@ -481,7 +481,7 @@ public class Form {
 							.append("/resources/images/checkboxchecked.png' />");
 				} else {
 					titlePrefix.append("<input type='checkbox' checked='checked' class='required check' name='answer")
-							.append(question.getId()).append("' /> ");
+							.append(question.getId()).append("' aria-labelledby='questiontitle").append(question.getId()).append("' /> ");
 				}
 			} else {
 				if (forPDF) {
@@ -489,7 +489,7 @@ public class Form {
 							.append("/resources/images/checkbox.png' />");
 				} else {
 					titlePrefix.append("<input type='checkbox' class='required check' name='answer")
-							.append(question.getId()).append("' /> ");
+							.append(question.getId()).append("' aria-labelledby='questiontitle").append(question.getId()).append("' /> ");
 				}
 			}
 		}
