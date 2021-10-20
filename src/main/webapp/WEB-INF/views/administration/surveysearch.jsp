@@ -1606,6 +1606,7 @@
 					<table id="search-results" class="table table-bordered table-hover table-styled" style="max-width: none; margin-bottom: 0px">
 						<thead>
 							<tr>
+								<th onclick="searchUser('mail');"><spring:message code="label.Email" /></th>
 								<th onclick="searchUser('login');"><spring:message code="label.Login" /></th>
 								<th onclick="searchUser('first');"><spring:message code="label.FirstName" /></th>
 								<th onclick="searchUser('last',);"><spring:message code="label.LastName" /></th>
