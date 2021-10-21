@@ -130,7 +130,7 @@ public class XmlExportCreator extends ExportCreator {
 						writer.writeStartElement("MatrixQuestion");
 						writer.writeAttribute("id", matrixQuestion.getUniqueId());
 						writer.writeAttribute("type", (matrix.getIsSingleChoice() ? "Single Choice" : "Multiple Choice")
-								+ " Matrix Question: ");
+								+ " Matrix Question");
 
 						if (export != null && export.getShowShortnames()) {
 							writer.writeAttribute("bid", matrixQuestion.getShortname());
