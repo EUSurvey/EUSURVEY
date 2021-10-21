@@ -72,9 +72,6 @@
 			</div>
 		</c:when>
 		<c:when test="${responsive == null && runnermode == true}">
-			<c:if test="${form.survey.isECF}">
-				</div>
-			</c:if>
 			<%@ include file="footerSurveyLanguages.jsp" %>
 		</c:when>
 		<c:otherwise>
