@@ -1564,10 +1564,10 @@ function initModals(item)
 			 var reg = /^[a-zA-Z0-9-_]+$/;
 			 if ($(this).parent().find(".validation-error").length == 0)
 			    if( !reg.test( value ) ) {
-			    	addValidationError.toElementAndFocus(this, $(this).parent(), shortnameText);
+			    	addValidationError.afterElementAndFocus(this, this, shortnameText);
 					result = false;
 			    } else if( value.indexOf("__") > -1 ) {
-			    	addValidationError.toElementAndFocus(this, $(this).parent(), shortnameText2);
+			    	addValidationError.afterElementAndFocus(this, this, shortnameText2);
 					result = false;
 			    } ;
 		});
