@@ -1603,6 +1603,7 @@ div.medianpa {
 .validation-error {
 	color: #f00;
 	font-size: 13px;
+	z-index: 1 !important;
 }
 
 .area-header {
