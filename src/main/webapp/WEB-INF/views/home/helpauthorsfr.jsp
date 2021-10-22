@@ -1380,39 +1380,22 @@
 				les résultats de l’enquête.
 			</p>
 			<h2>
-				Est-il possible d’autoriser les participants à accéder à leurs
-				contributions après envoi?
+				Puis-je permettre aux personnes interrogées d'accéder à leur contribution après sa soumission?
 			</h2>
 			<p>
 				Oui!
 			</p>
 			<p>
-				Dans la section «Sécurité» de la page «Propriétés» &#8594; activez l’option
-				«Allow participants to change their contribution».
+				Oui. Cliquez sur «Sécurité» sous l'onglet «Propriétés», puis activez l'option <b>«Permettre aux participants de modifier leur contribution»</b>.
 			</p>
 			<p>
-				Les participants auront besoin du numéro d’identification de leur
-				contribution, qui leur est donné après la soumission de celle-ci.
+				Pour éditer/modifier leur contribution après soumission, les participants peuvent se rendre sur cette page: <a href="https://ec.europa.eu/eusurvey/home/editcontribution" target="_blank">https://ec.europa.eu/eusurvey/home/editcontribution</a>
 			</p>
 			<p>
-				Pour modifier leur contribution après envoi, les participants doivent
-				ouvrir la page d’accueil d’EUSurvey
-				<a href="https://ec.europa.eu/eusurvey/?language=fr" target="_blank">
-					https://ec.europa.eu/eusurvey/?language=fr
-				</a>
-				.
+				Les participants à votre enquête devront connaître leur identifiant de contribution. Cet identifiant leur est fourni lors de la soumission de leur contribution sur la page de confirmation.
 			</p>
 			<p>
-				Sous le bouton «Inscrivez-vous dès maintenant!», un lien permet d’accéder
-				<a
-						href="https://ec.europa.eu/eusurvey/home/editcontribution?language=fr"
-						target="_blank"
-						>
-					à la page de modification des contributions individuelles
-				</a>
-				. Sur cette page, les participants doivent indiquer le numéro
-				d’identification de leur contribution individuelle pour l’ouvrir et la
-				modifier.
+				Veuillez noter que le lien 'Modifier une contribution' est accessible sur la page d'accueil d'EUSurvey: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
 			</p>
 			<h1>
 				Tester une enquête
