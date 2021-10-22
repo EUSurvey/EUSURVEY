@@ -1243,38 +1243,25 @@
 				Ces contributions peuvent donc être exportées depuis la page des résultats.
 			</p>
 			<h2>
-				Que signifie la notion de «Complexité»?
+				Indicateur de complexité
 			</h2>
 			<p>
-				Ajouter trop d’éléments ou trop de dépendances rend votre enquête trop
-				«complexe», ce qui peut entraîner un ralentissement du système pour les
-				participants au moment de remplir votre questionnaire.
+				Si votre enquête est courte et simple, les personnes interrogées auront plus de facilité à la remplir et l'expérience utilisateur sera meilleure. Bien sûr, il est parfois nécessaire d'ajouter une logique de branche en utilisant des dépendances (c'est-à-dire des questions dépendantes qui sont cachées/affichées en fonction des réponses précédentes). C'est faisable, mais n'oubliez pas que l'ajout de trop d'éléments ou de dépendances à votre enquête la rend trop ‘complexe’. Cela peut entraîner un ralentissement du système pour les participants qui remplissent votre questionnaire.
 			</p>
 			<p>
-				Votre enquête pourrait présenter un niveau de complexité élevé pour
-				plusieurs raisons:
+				C'est pourquoi, il y a un petit indicateur dans le coin supérieur droit de l'éditeur du questionnaire:<br />
+				<img src="${contextpath}/resources/images/documentation/complexityFR.png" />
 			</p>
-			<ul>
-				<li>
-					trop de tables/matrices;
-				</li>
-				<li>
-					trop de dépendances;
-				</li>
-				<li>
-					trop de dépendances imbriquées.
-				</li>
-			</ul>
 			<p>
-				Pour de plus amples informations, veuillez consulter notre
-				<a
-						href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf"
-						target="_blank"
-						>
-					guide des
-				</a>
-				<u> bonnes pratiques</u>
-				.
+				Votre enquête peut présenter un niveau de complexité élevé pour plusieurs raisons:
+				<ul>
+					<li>trop de dépendances</li>
+					<li>trop de dépendances en cascade</li>
+					<li>trop d'éléments de tableau/matrice</li>
+				</ul>
+			</p>
+			<p>
+				Pour plus d'informations, consultez notre <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">guide des meilleures pratiques</a> et n'hésitez pas à contacter <a href="${contextpath}/home/support?assistance=1">l'équipe de support EUSurvey</a> pour obtenir de l'aide afin de revoir la conception de votre formulaire si nécessaire.
 			</p>
 			<h1>
 				Sécurité des enquêtes

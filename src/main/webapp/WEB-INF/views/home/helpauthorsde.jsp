@@ -1204,37 +1204,25 @@
 				gespeichert. Sie können somit von der Ergebnisseite aus exportiert werden.
 			</p>
 			<h2>
-				Was bedeutet „Komplexität“?
+				Indikator für Komplexität  
 			</h2>
 			<p>
-				Wenn Sie zu viele Elemente oder Abhängigkeiten in Ihre Umfrage einbauen,
-				wird sie zu „komplex“. Dies kann dazu führen, dass das System für die
-				Teilnehmer beim Ausfüllen Ihres Fragebogens verlangsamt wird.
+				Wenn Sie Ihre Umfrage kurz und einfach halten, erleichtert dies den Teilnehmern das Ausfüllen der Umfrage und führt zu einer besseren Benutzererfahrung. Natürlich müssen Sie manchmal eine Verzweigungslogik mithilfe von Abhängigkeiten hinzufügen (d. h. Fragen, die abhängig von den zuvor gegebenen Antworten ausgeblendet/angezeigt werden). Das ist in Ordnung, aber bedenken Sie bitte, dass das Hinzufügen von zu vielen Elementen oder Abhängigkeiten Ihre Umfrage zu "komplex" macht. Dies kann dazu führen, dass das System für die Teilnehmer beim Ausfüllen Ihres Fragebogens langsamer wird.
 			</p>
 			<p>
-				Dass Ihr Fragebogen eine hohe Komplexität aufweist, kann mehrere Gründe
-				haben:
+				Aus diesem Grund befindet sich in der oberen rechten Ecke des Formular-Editors ein kleiner Indikator:<br />
+				<img src="${contextpath}/resources/images/documentation/complexityDE.png" />
 			</p>
-			<ul>
-				<li>
-					zu viele Tabellen-/Matrix-Elemente
-				</li>
-				<li>
-					zu viele Abhängigkeiten
-				</li>
-				<li>
-					zu viele kaskadierende Abhängigkeiten
-				</li>
-			</ul>
 			<p>
-				Für mehr Informationen hierzu siehe unseren
-				<a
-						href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf"
-						target="_blank"
-						>
-					best practices
-				</a>
-				-Leitfaden.
+				Ihre Umfrage könnte aus verschiedenen Gründen einen hohen Komplexitätsgrad aufweisen: 
+				<ul>
+					<li>zu viele Abhängigkeiten</li>
+					<li>zu viele kaskadierende Abhängigkeiten</li>
+					<li>zu viele Tabellen-/Matrixelemente</li>
+				</ul>
+			</p>
+			<p>
+				Weitere Informationen finden Sie in unserem <a href="https://circabc.europa.eu/sd/d/281e626e-279e-45df-8581-1f6e04feff51/BestPractices-EUSurvey.pdf">Leitfaden für bewährte Praktiken</a>, und zögern Sie nicht, sich an das <a href="${contextpath}/home/support?assistance=1">EUSurvey-Supportteam</a> zu wenden, um bei Bedarf Unterstützung bei der Neugestaltung Ihres Formulars zu erhalten.
 			</p>
 			<h1>
 				Sicherheit der Umfrage
