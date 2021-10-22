@@ -3092,33 +3092,15 @@
 				Wie kann ich Token verwenden, um einen Link zu erstellen?
 			</h2>
 			<p>
-				Gehen Sie wie im Folgenden beschrieben vor, um eine Liste von Zugangscodes
-				(d. h. individuelle Authentifizierungscodes) zu erstellen, die offline
-				verteilt werden können, und den Zugriff auf eine geschützte Online-Umfrage
-				ermöglichen.
+				Um eine Liste von Token (Authentifizierungs-Token) zu erstellen, die für den Zugriff auf
+				einen gesicherten Online-Fragebogen verteilt werden können, öffnen Sie Ihre Umfrage und gehen Sie auf die Seite "Teilnehmer".
+				Klicken Sie auf "Token-Liste", um einen Assistenten zu starten, der Sie durch den Prozess führen wird.
+				Wählen Sie einen Namen für die Gruppe und wählen Sie "Token" aus den Arten von Gästelisten.
 			</p>
 			<p>
-				<ol>
-					<li>
-						Öffnen Sie Ihre Umfrage.
-					</li>
-					<li>
-						Gehen Sie zur Seite „Teilnehmer“:
-					</li>
-					<li>
-						Klicken Sie auf „Token list“, um einen Assistenten aufzurufen, der Sie
-						Schritt für Schritt durch den Prozess führt.
-					</li>
-					<li>
-						Geben Sie einen Namen für die Gruppe an und wählen Sie „Tokens“ für die
-						verschiedenen Gästelistearten aus.
-					</li>
-				</ol>
-			</p>
-			<p>
-				Nutzen Sie die erstellten Zugangscodes wie im Folgenden beschrieben, um
-				individuelle Zugangslinks zu erstellen, die per E-Mail an die Teilnehmer
-				verschickt werden können:
+				Verwenden Sie die erstellten Token, um individuelle Zugangslinks zu erstellen,
+				die Sie per E-Mail an die Teilnehmer senden können,
+				indem Sie die folgende URL verwenden:
 			</p>
 			<p>
 				https://ec.europa.eu/eusurvey/runner/<b>SurveyAlias</b>/<b>TOKEN</b>
@@ -3128,15 +3110,10 @@
 			</p>
 			<ul>
 				<li>
-					<b>SurveyAlias</b>
-					<b> durch den </b>
-					<b>Aliasnamen Ihrer Umfrage</b>
-					<b> </b>
-					und
+					<b>SurveyAlias</b> mit dem <b>Alias Ihrer Umfrage</b>
 				</li>
 				<li>
-					<b>TOKEN</b>
-					durch den Zugangscode, den Sie aus der Token-Liste auswählen.
+					<b>TOKEN</b> mit einem der Token aus der Tokenliste
 				</li>
 			</ul>
 			<h1>
