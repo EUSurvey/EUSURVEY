@@ -1338,38 +1338,19 @@
 				diese Weise erschwert werden.
 			</p>
 			<h2>
-				Kann ich es den Umfrageteilnehmern erlauben, nach dem Einsenden ihrer
-				Antworten auf diese zuzugreifen?
+				Kann ich den Umfrageteilnehmern die Möglichkeit geben, nach der Übermittlung auf ihren Beitrag zuzugreifen?
 			</h2>
 			<p>
-				Ja!
+				Ja. Klicken Sie unter der Registerkarte "Eigenschaften" auf "Sicherheit" und aktivieren Sie dann die Option "Ermöglicht Teilnehmern, ihren Beitrag zu ändern".
 			</p>
 			<p>
-				Gehen Sie unter „Eigenschaften“ zu „Sicherheit“ ? aktivieren Sie die Option
-				„Änderung der Beiträge durch deren Einsender ermöglichen“.
+				Um ihren Beitrag nach der Übermittlung zu bearbeiten/ändern, können die Teilnehmer auf diese Seite gehen: <a href="https://ec.europa.eu/eusurvey/home/editcontribution" target="_blank">https://ec.europa.eu/eusurvey/home/editcontribution</a>
 			</p>
 			<p>
-				Die Teilnehmer brauchen hierfür ihre Beitrags-Kennnummer, die ihnen nach
-				Einreichung ihrer Antworten angezeigt wurde.
+				Ihre Umfrageteilnehmer müssen ihre Beitrags-ID kennen. Diese ID wird ihnen bei der Übermittlung ihrer Antworten auf der Bestätigungsseite mitgeteilt.
 			</p>
 			<p>
-				Um ihre Antworten nach der Einsendung zu bearbeiten/zu ändern, müssen die
-				Teilnehmer auf die Startseite von EUSurvey gehen:
-				<a href="https://ec.europa.eu/eusurvey" target="_blank">
-					https://ec.europa.eu/eusurvey
-				</a>
-				.
-			</p>
-			<p>
-				Unterhalb der Schaltfläche „Registrieren“ gibt es einen Link zur
-				<a
-						href="https://ec.europa.eu/eusurvey/home/editcontribution"
-						target="_blank"
-						>
-					Zugangsseite für individuelle Beiträge
-				</a>
-				. Hier müssen die Teilnehmer die Kennnummer ihres jeweiligen Beitrags
-				angeben, der dann vom System zur Bearbeitung geöffnet wird.
+				Bitte beachten Sie, dass der Link "Beitrag bearbeiten" auf der EUSurvey-Startseite zu finden ist: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
 			</p>
 			<h1>
 				Umfrage testen

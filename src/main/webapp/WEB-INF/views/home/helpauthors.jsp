@@ -1049,22 +1049,19 @@
 				falsify survey results.
 			</p>
 			<h2>
-				Can I enable my participants to access their contributions after submission?
+				Can I enable survey respondents to access their contribution after submission?
 			</h2>
 			<p>
-				Yes! Go to 'Security' at the 'Properties' page and enable 'Allow
-				participants to change their contribution' option. Participants need
-				to know the contribution-ID that was shown after they submitted
-				their contribution. To change contributions after submission,
-				participants should go to the EUSurvey homepage <a
-					href="https://ec.europa.eu/eusurvey" target="_blank">https://ec.europa.eu/eusurvey</a>.
-				Below the 'Register Now!' button is a link to the <a
-					href="https://ec.europa.eu/eusurvey/home/editcontribution"
-					target="_blank"> access page for individual
-					contributions </a>. On this page participants must fill in their
-				individual contribution-ID and the system will open their
-				contribution. This way they can edit their contribution after it has
-				been submitted.
+				Yes. Click on 'Security' under the 'Properties' tab, and then, enable the <b>'Allow participants to change their contribution'</b> option.
+			</p>
+			<p>
+				To edit/change their contribution after submission, participants can go to this page: <a href="https://ec.europa.eu/eusurvey/home/editcontribution" target="_blank">https://ec.europa.eu/eusurvey/home/editcontribution</a>
+			</p>
+			<p>
+				Your survey participants will need to know their contribution ID. This ID is provided to them upon submission of their contribution on the Confirmation page.
+			</p>
+			<p>
+				Please note that the 'Edit contribution' link is accessible on the EUSurvey landing page: <a href="https://ec.europa.eu/eusurvey/home/welcome" target="_blank">https://ec.europa.eu/eusurvey/home/welcome</a>
 			</p>
 			<h1>
 				Testing a survey
