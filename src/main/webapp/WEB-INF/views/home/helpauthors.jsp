@@ -2169,10 +2169,10 @@
 				How to use tokens to create a link?
 			</h2>
 			<p>
-				To create a list of tokens (or 'Unique Codes') that can be distributed offline to access a secured online questionnaire, open your survey and go to the 'Participants' page. Click on 'Token list' to start a wizard that will guide you through the process. Choose a name for the group and select 'Tokens' from the types of Guest lists.
+				In order to create a list of tokens (Authentication Tokens) that can be distributed to access a secured online questionnaire, open your survey and go to the "Participants" page. Click on "Create new Guest List" to start a wizard that will guide you through the process. Choose a name for the group and select "Tokens" from the types of Guest lists.
 			</p>
 			<p>
-				Use the created tokens to build up individual access links you can send out in emails to the participants on this way:
+				Use the created tokens to build up individual access links you can send per emails to the participants using the URL below:
 			</p>
 			<p>
 				https://ec.europa.eu/eusurvey/runner/<span style="color: #f00; font-weight: bold">SurveyAlias</span>/<span style="color: #f00; font-weight: bold">TOKEN</span>

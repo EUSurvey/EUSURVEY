@@ -3153,48 +3153,28 @@
 				</ol>
 			</p>
 			<h2>
-				Comment utiliser des jetons pour créer un lien?
+				Comment utiliser des jetons (tokens) pour créer un lien ?
 			</h2>
 			<p>
-				Suivez les étapes ci-dessous pour créer une liste de jetons (c’est-à-dire
-				de codes d’authentification uniques) qui peuvent être distribués hors ligne
-				afin d’accéder à une enquête en ligne sécurisée.
+				Afin de créer une liste de tokens (Tokens d'authentification) qui peuvent être distribués pour accéder à un questionnaire en ligne sécurisé, ouvrez votre enquête et allez à la page "Participants".
+				Cliquez sur "Créer une nouvelle liste d'invités" pour lancer un assistant qui vous guidera tout au long du processus.
+				Choisissez un nom pour le groupe et sélectionnez "Tokens" parmi les types de listes d'invités.
 			</p>
 			<p>
-				<ol>
-					<li>
-						Ouvrez votre enquête.
-					</li>
-					<li>
-						Allez à la page «Participants».
-					</li>
-					<li>
-						Cliquez sur «Token list» pour lancer un assistant qui vous guidera tout
-						au long du processus.
-					</li>
-					<li>
-						Choisissez un nom pour le groupe et sélectionnez «Tokens» parmi les
-						différents types de listes d’invités.
-					</li>
-				</ol>
-			</p>
-			<p>
-				Utilisez les jetons créés pour générer des liens d’accès individuels qui
-				peuvent être envoyés par courrier électronique aux participants, comme
-				suit:
+				Utilisez les tokens créés pour créer des liens d'accès individuels que vous pouvez envoyer par courrier électronique aux participants en utilisant l'URL ci-dessous:
 			</p>
 			<p>
 				https://ec.europa.eu/eusurvey/runner/<b>SurveyAlias</b>/<b>TOKEN</b>
 			</p>
 			<p>
-				Il vous suffit de remplacer:
+				Il suffit de remplacer:
 			</p>
 			<ul>
 				<li>
-					«<b>SurveyAlias</b>» par <b>l’alias</b> <b>de votre enquête</b>; et
+					<b>SurveyAlias</b> par <b>l’Alias</b> <b>de votre enquête</b>
 				</li>
 				<li>
-					«<b>TOKEN</b>» par le jeton de la liste que vous souhaitez utiliser.
+					<b>TOKEN</b> avec un des jetons de la liste
 				</li>
 			</ul>
 			<h1>
