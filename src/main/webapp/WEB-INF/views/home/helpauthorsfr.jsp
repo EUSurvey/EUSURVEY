@@ -1383,9 +1383,6 @@
 				Puis-je permettre aux personnes interrogées d'accéder à leur contribution après sa soumission?
 			</h2>
 			<p>
-				Oui!
-			</p>
-			<p>
 				Oui. Cliquez sur «Sécurité» sous l'onglet «Propriétés», puis activez l'option <b>«Permettre aux participants de modifier leur contribution»</b>.
 			</p>
 			<p>
