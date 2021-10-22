@@ -962,7 +962,7 @@
 				Keeping your survey short and simple will ease the filling of your survey by the respondents and lead to a better user experience. Of course, sometimes you need to add branch logic using dependencies (i.e. dependent questions that are hidden/displayed depending on the previous answers given). This is fine, but please bear in mind that adding too many items or dependencies to your survey makes it too 'complex'. This can lead to the system slowing down for participants when filling out your questionnaire.
 			</p>
 			<p>
-				Therefore there is a little indicator at the top-right corner of the form editor:<br />
+				This is why there is a little indicator at the top-right corner of the form editor:<br />
 				<img src="${contextpath}/resources/images/documentation/complexity.png" />
 			</p>
 			<p>
