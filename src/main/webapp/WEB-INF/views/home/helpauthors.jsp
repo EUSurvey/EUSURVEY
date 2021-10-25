@@ -1766,6 +1766,87 @@
 				EUSurvey&nbsp;<a href="https://ec.europa.eu/eusurvey/home/support">support
 				</a>.
 			</p>
+			<h2>How can I retrieve files uploaded
+				by contributors?</h2>
+
+			<p>EUSurvey offers different formats of export: XLS, PDF, ODS and XML. <br>
+
+				Depending on the selected format, the structure and content of the
+				exported files for the 'File Upload' element is as described below:</p>
+
+			<h4>Results export in XLS</h4>
+
+			<p>1. An Excel file containing the following information:</p>
+
+			<p>Alias: Survey Alias (example: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+				Export Date: Date in the format 'dd-mm-yyyy hh&nbsp;:mm' (example: 28-09-2020
+				15:28)</p>
+
+			<p>A table composed as below:</p>
+			<ul>
+				<li>Each column represents a different 'File Upload'
+					question.</li>
+
+				<li>Each line represents a different contribution.</li>
+
+				<li>Each cell contains all names of the uploaded
+					files.</li>
+			</ul>
+
+			<p>2. Folders corresponding to each contribution and named with the
+				contribution ID. It contains sub-folders for each 'File upload' question (Upload_1,
+				Upload_2 etc.). </p>
+
+			<p>For instance:</p>
+
+			<p>Folder: 6cf0463c-29f4-4bea-a195-10e77c61dda1<br>
+
+				Sub-folder: Upload_1 (corresponding to the first File Upload
+				question) contains all files uploaded.<br>
+
+				Sub-folder: Upload_2 (corresponding to the second File Upload
+				question) contains all files uploaded.</p>
+
+			<h4>Results export in PDF</h4>
+
+			<p>1. Folder named 'PDFs' containing all survey contributions as PDF
+				documents.</p>
+
+			<p>2. Folders corresponding to each contribution and named with the contribution
+				ID.<br>
+				It contains sub-folders for each 'File upload' question (Upload_1,
+				Upload_2 etc.).</p>
+
+			<h4>Results export in ODS</h4>
+
+			<p>1. An Open Office file containing the following information:</p>
+
+			<p>Alias Survey Alias (example: 6459a3c9-e517-4a34-8e5d-70185db022c3)<br>
+				Export Date Date in the format 'dd-mm-yyyy hh :mm' (example: 28-09-2020 15:28)</p>
+
+			<p>A table composed as below:</p>
+
+			<ul>
+				<li>Each column represents a different 'File Upload'
+					question.</li>
+
+				<li>Each line represents a different contribution.</li>
+
+				<li>Each cell contains all names of the uploaded
+					files.</li>
+			</ul>
+
+			<p>2. Folders corresponding to each contribution and named with the
+				contribution ID.<br>
+				It contains sub-folders for each 'File upload' question (Upload_1,
+				Upload_2 etc.).</p>
+
+			<h4>Results export inXML</h4>
+
+			<p>This export is made of an XML file containing the Results in a structured way.<br>
+
+				<b>Uploaded files are not available in that case.</b></p>
+
 			<h1>
 				Design and layout
 			</h1>
