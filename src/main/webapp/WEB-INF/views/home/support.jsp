@@ -12,8 +12,11 @@
 	<script type="text/javascript">
 		function checkAndSubmit()
 		{
+			let supportForm = $("#supportForm")
 			$(".validation-error").remove();
-			var result = validateInput($("#supportForm"));
+			var result = validateInput(supportForm);
+
+			saveFormInputs(supportForm)
 			
 			 if ($(".g-recaptcha.unset").length > 0)	{
 				$('#runner-captcha-error').show();
@@ -22,11 +25,55 @@
 			
 			if (result == false)
 			{
-				goToFirstValidationError($("#supportForm"));
+				goToFirstValidationError(supportForm);
 			} else {
-				$("#supportForm").submit();
+				supportForm.submit();
 			}			
 		}
+
+		function saveFormInputs(form){
+			let formInputs = form.find("input, textarea, select")
+
+			let saveObject = {}
+
+			formInputs.each(function(){
+				let element = $(this);
+				let id = element.attr("id")
+				if (id){
+					saveObject[id] = element.val()
+				}
+			});
+
+			saveObject["file-uploader-support-div"] = $("#file-uploader-support-div").html()
+
+			window.sessionStorage.setItem("supportFormSave", JSON.stringify(saveObject))
+		}
+
+		$(document).ready(function(){
+			//Run async because the runner-captcha-error is set visible in another document.ready function
+			window.setTimeout(function() {
+				let captchaError = $("#runner-captcha-error")
+				if (captchaError.is(":visible")) {
+
+					let supportFormSave = window.sessionStorage.getItem("supportFormSave")
+					if (supportFormSave) {
+						supportFormSave = JSON.parse(supportFormSave)
+
+						$.each(supportFormSave, function (key, value) {
+							if (key == "file-uploader-support-div") {
+								$("#" + key).html(value)
+							} else {
+								$("#" + key).val(value)
+							}
+
+							if (key == "contactreason"){
+								showHideAdditionalInfo()
+							}
+						})
+					}
+				}
+			}, 100) //0 works too, tested in ff and chrome but you never know
+		})
 		
 		function showHideAdditionalInfo()
 		{
@@ -178,7 +225,7 @@
 				
 				<form:form id="supportForm" method="POST" action="${contextpath}/home/support?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data" modelAttribute="form">
 					<label><span class="mandatory">*</span><spring:message code="support.ContactReason" /></label><br />
-					<select class="form-control" onchange="showHideAdditionalInfo()" style="max-width: 400px" name="contactreason">			
+					<select class="form-control" onchange="showHideAdditionalInfo()" style="max-width: 400px" name="contactreason" id="contactreason">
 						<c:choose>
 							<c:when test="${fromerrorpage != null}">
 								<option><spring:message code="support.GeneralQuestion" /></option>
@@ -212,27 +259,27 @@
 						<label><spring:message code="skin.SurveyTitle" /></label><br />
 						<textarea class="form-control" rows="3" style="width: 400px" name="additionalsurveyinfotitle" id="additionalsurveyinfotitle" ></textarea><br />
 						<label><spring:message code="label.SurveyAlias" /></label><br />
-						<input type="text" class="form-control" name="additionalsurveyinfoalias" /><br /><br />
+						<input type="text" class="form-control" name="additionalsurveyinfoalias" id="additionalsurveyinfoalias" /><br /><br />
 					</div>
 					
 					<label><span class="mandatory">*</span><spring:message code="label.yourname" /></label><br />
-					<input type="text" class="form-control required" name="name" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
+					<input type="text" class="form-control required" name="name" id="yourname" value='${USER != null ? USER.getFirstLastName() : "" }' /><br /><br />
 					
 					<label><span class="mandatory">*</span><spring:message code="label.youremail" /></label> <span class="helptext">(<spring:message code="support.forlatercontact" />)</span><br />
 					<input type="text" class="form-control required email" id="supportemail" name="email" value='${USER != null ? USER.getEmail() : "" }' /><br /><br />
 					
 					<label><span class="mandatory">*</span><spring:message code="support.subject" /></label><br />
-					<input type="text" class="form-control required" name="subject" /><br /><br />
+					<input type="text" class="form-control required" name="subject" id="supportsubject" /><br /><br />
 							
 					<label><span class="mandatory">*</span><spring:message code="support.yourmessagetous" /></label>
 					<div class="helptext"><spring:message code="support.yourmessagetoushelp" /></div>
-					<textarea class="form-control required" rows="10" name="message"></textarea><br /><br />
+					<textarea class="form-control required" rows="10" name="message" id="supportmessage"></textarea><br /><br />
 					
 					<div id="additionalinfodiv">
 						<label><spring:message code="support.additionalinfo" /></label>
 						<div class="helptext"><spring:message code="support.additionalinfohelp" /></div>
 						<textarea class="form-control" rows="6" name="additionalinfo" id="additionalinfo" readonly="readonly">${additionalinfo}</textarea>
-						<input type="checkbox" onclick="toggleAdditionalInfo(this)" /> <spring:message code="label.ClickToEdit" /><br /><br />
+						<input type="checkbox" onclick="toggleAdditionalInfo(this)" id="additionalinfoedit"/> <spring:message code="label.ClickToEdit" /><br /><br />
 					</div>
 							
 					<label><spring:message code="support.upload" /></label>
