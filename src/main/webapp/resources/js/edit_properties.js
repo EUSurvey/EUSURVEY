@@ -273,12 +273,11 @@ var ElementProperties = function() {
 			$(".navigationitem[data-id=" + id + "]").addClass("selectedquestion");
 			$(".navigationitem[data-id='navanswer" + id + "']").addClass("selectedquestion");
 		}
-		
-		if (!$("#cancelcuttoolboxitem").is(":visible") && !$("#cancelcopytoolboxitem").is(":visible"))
-		{
-			_actions.CopyEnabled(true);
-			_actions.CutEnabled(true);
-		}
+
+
+		_actions.CopyEnabled(true);
+		_actions.CutEnabled(true);
+
 		
 		if ($("#content").find(".selectedquestion").not(".locked").length > 0)
 		{
