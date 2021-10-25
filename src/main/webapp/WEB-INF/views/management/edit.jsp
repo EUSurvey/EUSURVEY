@@ -149,15 +149,16 @@
 		
 			<ul style="margin-top: 0px">
 				<li id="copiedtoolboxitem" class="toolboxitem copy draggable" style="display: none"><span class="glyphicon glyphicon-copy"></span> <spring:message code="label.Copy" /></li>
+				<li id="cancelcopytoolboxitem" style="display: none">
+					<a onclick="_actions.cancelCopy();" class="btn btn-xs btn-default"><spring:message code="label.Cancel" /></a>
+				</li>
 				<li id="cuttoolboxitem" class="toolboxitem cut draggable" style="display: none"><span class="glyphicon glyphicon-copy"></span> <spring:message code="label.Cut" /></li>
+				<li id="cancelcuttoolboxitem" style="display: none">
+					<a onclick="_actions.cancelCut();" class="btn btn-xs btn-default"><spring:message code="label.Cancel" /></a>
+				</li>
 			</ul>
 			
-			<div id="cancelcuttoolboxitem" style="display: none">
-				<a onclick="_actions.cancelCut();" class="btn btn-xs btn-default"><spring:message code="label.Cancel" /></a>
-			</div>
-			<div id="cancelcopytoolboxitem" style="display: none">
-				<a onclick="_actions.cancelCopy();" class="btn btn-xs btn-default"><spring:message code="label.Cancel" /></a>
-			</div>
+
 			
 			<div class="toolboxgroup accordion-group" style="margin-top: 5px;">
 				<div class="toolboxheader"><a class="accordion-toggle" data-toggle="collapse" href="#collapseStructure" aria-expanded="true"><spring:message code="label.Structure" /></a></div>

@@ -5,7 +5,7 @@ var Actions = function() {
 	this.NavigationPaneEnabled = ko.observable(true);
 	this.ToolboxPaneEnabled = ko.observable(true);
 	this.PropertiesPaneEnabled = ko.observable(true);
-	
+
 	//buttons
 	this.UndoEnabled= ko.observable(false);
 	this.RedoEnabled= ko.observable(false);
@@ -85,6 +85,10 @@ var Actions = function() {
     this.copySelectedElement = function () {
     	var model = this;
 		if ($("#copyElementButton").hasClass("disabled")) return;
+
+		if ($("#cuttoolboxitem").is(":visible")){
+			this.cancelCut()
+		}
 		
 		this.copiedElements = [];
 		$("#content").find(".selectedquestion").each(function(){
@@ -103,8 +107,8 @@ var Actions = function() {
 		$("#copiedtoolboxitem").show();
 		$("#cancelcopytoolboxitem").show();
 		
-		this.CopyEnabled(false);
-		this.CutEnabled(false);
+		this.CopyEnabled(true);
+		this.CutEnabled(true);
 		this.PasteEnabled(true);
 		
 		if (!$("#showtoolboxbutton").hasClass("selected"))
@@ -115,6 +119,11 @@ var Actions = function() {
     
     this.copySection = function(withchildren)
     {
+
+		if ($("#cuttoolboxitem").is(":visible")){
+			this.cancelCut()
+		}
+
     	if (withchildren)
     	{
     		var model = this;
@@ -146,8 +155,8 @@ var Actions = function() {
     	$("#copiedtoolboxitem").show();
 		$("#cancelcopytoolboxitem").show();
 		
-		this.CopyEnabled(false);
-		this.CutEnabled(false);
+		this.CopyEnabled(true);
+		this.CutEnabled(true);
 		this.PasteEnabled(true);
 		
 		if (!$("#showtoolboxbutton").hasClass("selected"))
@@ -268,6 +277,15 @@ var Actions = function() {
     this.cutSelectedElement = function()
     {
     	if ($("#cutElementButton").hasClass("disabled")) return;
+
+    	let cuttoolboxitem = $("#cuttoolboxitem")
+
+    	if (cuttoolboxitem.is(":visible")){
+    		this.cancelCut()
+		}
+    	if ($("#copiedtoolboxitem").is(":visible")){
+    		this.cancelCopy()
+		}
     	
     	this.cutElements = $("#content").find(".selectedquestion");
     	
@@ -277,13 +295,13 @@ var Actions = function() {
 			return;
 		}			
     	
-    	$(this.cutElements).hide();
+    	$(this.cutElements).attr("cut-item", "");
     	
     	$(this.cutElements).each(function(){
     		removeFromNavigation($(this).attr("id"));
     	});
-    	
-    	$("#cuttoolboxitem").show();
+
+		cuttoolboxitem.show();
     	$("#cancelcuttoolboxitem").show();
     	
     	_actions.CopyEnabled(false);
@@ -301,6 +319,14 @@ var Actions = function() {
     
     this.cutSection = function(withchildren)
     {
+    	let cuttoolboxitem = $("#cuttoolboxitem");
+		if (cuttoolboxitem.is(":visible")){
+			this.cancelCut();
+		}
+		if ($("#copiedtoolboxitem").is(":visible")){
+			this.cancelCopy()
+		}
+
     	if (withchildren)
     	{
     		var model = this;
@@ -320,14 +346,14 @@ var Actions = function() {
     			model.cutElements[model.cutElements.length] = this;
     		});
     	}
-    	
-    	$(this.cutElements).hide();
+
+		$(this.cutElements).attr("cut-item", "");
     	
     	$(this.cutElements).each(function(){
     		removeFromNavigation($(this).attr("id"));
     	});
     
-    	$("#cuttoolboxitem").show();
+    	cuttoolboxitem.show();
     	$("#cancelcuttoolboxitem").show();
     	
     	_actions.CopyEnabled(false);
@@ -347,10 +373,14 @@ var Actions = function() {
     this.pasteElementAfter = function()
     {    	
     	if ($("#pasteButton").hasClass("disabled")) return;
-    	
-    	if ($("#copiedtoolboxitem").is(":visible"))
+
+    	let copiedtoolboxitem = $("#copiedtoolboxitem");
+    	let cuttoolboxitem = $("#cuttoolboxitem");
+    	let isClipboardCopy = true
+
+    	if (copiedtoolboxitem.is(":visible"))
     	{
-    		var item = $("#copiedtoolboxitem").clone();
+    		var item = copiedtoolboxitem.clone();
     		
     		if ($(_elementProperties.selectedelement).length > 0)
         	{
@@ -360,7 +390,7 @@ var Actions = function() {
         	}
     		this.copyElement($(item));	
     	} else {
-    		var item = $("#cuttoolboxitem").clone();
+    		var item = cuttoolboxitem.clone();
     		if ($(_elementProperties.selectedelement).length > 0)
 	    	{
 	    		$(_elementProperties.selectedelement).after(item);	
@@ -384,7 +414,7 @@ var Actions = function() {
     		ids = ids + $(this).attr("id") + ";";
     		oldpos = oldpos + $(this).index() + ";";
     		newpos = newpos + item.index() + ";";
-    		item.before($(this).show());
+    		item.before($(this).removeAttr("cut-item"));
     		addToNavigation($(this), $(this).index());
     	});	
     	
@@ -421,14 +451,12 @@ var Actions = function() {
 	    	_elementProperties.deselectAll();
 	    	$("#cuttoolboxitem").hide();
 	    	$("#cancelcuttoolboxitem").hide();
-	    	this.PasteEnabled(false);
+	    	this.PasteEnabled(!!$("#copiedtoolboxitem").is(":visible"));
 	    	
 	    	updateDependenciesView();
 	    	_undoProcessor.addUndoStep(["CUTPASTE", ids, oldpos, newpos]);
     	} else {
-    		$(this.cutElements).each(function(){
-    			$(this).hide();
-    		});
+    		$(this.cutElements).attr("cut-item", "");
     	}
     	
     	deactivateLinks();
@@ -437,7 +465,7 @@ var Actions = function() {
     
     this.cancelCut = function()
     {
-    	$(_actions.cutElements).show();
+    	$(_actions.cutElements).removeAttr("cut-item");
     	
     	$(_actions.cutElements).each(function(){
     		addToNavigation($(this), $(this).index())
@@ -448,7 +476,7 @@ var Actions = function() {
     	
     	this.CopyEnabled(true);
     	this.CutEnabled(true);
-    	this.PasteEnabled(false);
+    	this.PasteEnabled(!!$("#copiedtoolboxitem").is(":visible"));
     }
 
     this.cancelCopy = function()
@@ -458,7 +486,7 @@ var Actions = function() {
     	
     	this.CopyEnabled(true);
     	this.CutEnabled(true);
-    	this.PasteEnabled(false);
+    	this.PasteEnabled(!!$("#cuttoolboxitem").is(":visible"));
     }
     
     this.moveElementDown = function()
